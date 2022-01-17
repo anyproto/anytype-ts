@@ -632,34 +632,9 @@ class Util {
 			};
 		};
 
-		if ([ 'm4v' ].indexOf(e) >= 0) {
-			icon = 'video';
-		};
-			
-		if ([ 'csv', 'json', 'txt', 'doc', 'docx', 'md' ].indexOf(e) >= 0) {
-			icon = 'text';
-		};
-			
-		if ([ 'zip', 'gzip', 'tar', 'gz', 'rar' ].indexOf(e) >= 0) {
-			icon = 'archive';
-		};
+		// Detect by mime type
 
-		if ([ 'xls', 'xlsx', 'sqlite' ].indexOf(e) >= 0) {
-			icon = 'table';
-		};
-
-		if ([ 'ppt', 'pptx' ].indexOf(e) >= 0) {
-			icon = 'presentation';
-		};
-
-		for (let k in Constant.extension) {
-			if (Constant.extension[k].indexOf(e) >= 0) {
-				icon = k;
-				break;
-			};
-		};
-
-		if (!icon && t.length) {
+		if (t.length) {
 			if ([ 'image', 'video', 'text', 'audio' ].indexOf(t[0]) >= 0) {
 				icon = t[0];
 			};
@@ -678,6 +653,37 @@ class Util {
 			
 			if ([ 'vnd.openxmlformats-officedocument.spreadsheetml.sheet' ].indexOf(t[1]) >= 0) {
 				icon = 'table';
+			};
+		};
+
+		// Detect by extension
+		
+		if (!icon) {
+			if ([ 'm4v' ].indexOf(e) >= 0) {
+				icon = 'video';
+			};
+				
+			if ([ 'csv', 'json', 'txt', 'doc', 'docx', 'md' ].indexOf(e) >= 0) {
+				icon = 'text';
+			};
+				
+			if ([ 'zip', 'gzip', 'tar', 'gz', 'rar' ].indexOf(e) >= 0) {
+				icon = 'archive';
+			};
+	
+			if ([ 'xls', 'xlsx', 'sqlite' ].indexOf(e) >= 0) {
+				icon = 'table';
+			};
+	
+			if ([ 'ppt', 'pptx' ].indexOf(e) >= 0) {
+				icon = 'presentation';
+			};
+	
+			for (let k in Constant.extension) {
+				if (Constant.extension[k].indexOf(e) >= 0) {
+					icon = k;
+					break;
+				};
 			};
 		};
 
@@ -840,6 +846,29 @@ class Util {
 			ipcRenderer.send('urlOpen', $(this).attr('href'));
 		});
 	};
+
+	renderLinks (obj: any) {
+		const self = this;
+
+		obj.find('a').unbind('click').click(function (e: any) {
+			e.preventDefault();
+			const el = $(this);
+
+			if (el.hasClass('path')) {
+				self.onPath(el.attr('href'));
+			} else {
+				self.onUrl(el.attr('href'));
+			};
+		});
+	};
+	
+	onUrl (url: string) {
+		ipcRenderer.send('urlOpen', url);
+	};
+
+	onPath (path: string) {
+		ipcRenderer.send('pathOpen', path);
+	};
 	
 	emailCheck (v: string) {
 		return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,5})+$/.test(String(v || ''));
@@ -945,7 +974,7 @@ class Util {
 		return JSON.stringify(change.newValue) === JSON.stringify(obj[change.name]) ? null : change;
 	};
 
-	getScrollContainer (isPopup?: boolean) {
+	getScrollContainer (isPopup: boolean) {
 		return $(isPopup ? '#popupPage #innerWrap' : window);
 	};
 

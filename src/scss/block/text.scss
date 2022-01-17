@@ -26,12 +26,12 @@
 			name { display: none; }
 		}
 
-		lnk { position: relative; margin-right: 18px; }
+		lnk { position: relative; }
 		lnk, obj { cursor: pointer; color: inherit; border-bottom: 1px solid $colorMediumGrey; text-decoration: none; }
 		lnk.disabled, obj.disabled { border-width: 0px; }
 		lnk::after {
 			content: ""; display: inline-block; background-image: url('~img/icon/link.svg'); background-repeat: no-repeat;
-			width: 14px; height: 14px; vertical-align: middle; margin: -7px; position: absolute; right: -10px; top: 50%;
+			width: 14px; height: 14px; vertical-align: middle; margin: 0px 0px 4px 4px;
 		}
 
 		mention { cursor: pointer; white-space: nowrap; display: inline; user-select: all; }

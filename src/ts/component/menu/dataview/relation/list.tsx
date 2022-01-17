@@ -28,6 +28,7 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 		
 		this.onAdd = this.onAdd.bind(this);
 		this.onClick = this.onClick.bind(this);
+		this.onSortStart = this.onSortStart.bind(this);
 		this.onSortEnd = this.onSortEnd.bind(this);
 		this.onSwitch = this.onSwitch.bind(this);
 		this.onScroll = this.onScroll.bind(this);
@@ -138,6 +139,7 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 					lockToContainerEdges={true}
 					transitionDuration={150}
 					distance={10}
+					onSortStart={this.onSortStart}
 					onSortEnd={this.onSortEnd}
 					useDragHandle={true}
 					helperClass="isDragging"
@@ -229,7 +231,7 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 		const relations = DataUtil.viewGetRelations(rootId, blockId, view);
 		const menuIdEdit = 'dataviewRelationEdit';
 
-		const onAdd = (message: any) => {
+		const onAdd = () => {
 			getData(getView().id, 0);
 
 			if (data.onAdd) {
@@ -246,10 +248,17 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 				...data,
 				menuIdEdit: menuIdEdit,
 				filter: '',
+				ref: 'dataview',
 				skipIds: relations.map((it: I.ViewRelation) => { return it.relationKey; }),
 				onAdd: onAdd,
-				addCommand: (rootId: string, blockId: string, relation: any) => {
-					DataUtil.dataviewRelationAdd(rootId, blockId, relation, getView(), onAdd);
+				addCommand: (rootId: string, blockId: string, relation: any, onChange?: (relation: any) => void) => {
+					DataUtil.dataviewRelationAdd(rootId, blockId, relation, getView(), () => {
+						onAdd();
+
+						if (onChange) {
+							onChange(relation);
+						};
+					});
 				},
 				listCommand: (rootId: string, blockId: string, callBack?: (message: any) => void) => {
 					C.BlockDataviewRelationListAvailable(rootId, blockId, callBack);
@@ -267,7 +276,7 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 	onClick (e: any, item: any) {
 		const { param, getId } = this.props;
 		const { data } = param;
-		const { readonly } = data;
+		const { readonly, getView } = data;
 
 		if (readonly) {
 			return;
@@ -280,19 +289,32 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 			data: {
 				...data,
 				relationKey: item.relationKey,
+				updateCommand: (rootId: string, blockId: string, relation: any) => {
+					DataUtil.dataviewRelationUpdate(rootId, blockId, relation, getView());
+				},
 			}
 		});
 	};
 
+	onSortStart () {
+		const { dataset } = this.props;
+		const { selection } = dataset;
+
+		selection.preventSelect(true);
+	};
+
 	onSortEnd (result: any) {
 		const { oldIndex, newIndex } = result;
-		const { param } = this.props;
+		const { param, dataset } = this.props;
+		const { selection } = dataset;
 		const { data } = param;
 		const { getView } = data;
 		const view = getView();
 		
 		view.relations = arrayMove(view.relations, oldIndex, newIndex);
 		this.save();
+
+		selection.preventSelect(false);
 	};
 
 	onSwitch (e: any, item: any, v: boolean) {

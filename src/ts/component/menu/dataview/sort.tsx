@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Icon, IconObject, Select } from 'ts/component';
-import { I, C, DataUtil, Util, keyboard } from 'ts/lib';
+import { I, C, DataUtil, Util, keyboard, analytics } from 'ts/lib';
 import arrayMove from 'array-move';
 import { menuStore, dbStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -28,6 +28,7 @@ const MenuSort = observer(class MenuSort extends React.Component<Props, {}> {
 		
 		this.onAdd = this.onAdd.bind(this);
 		this.onRemove = this.onRemove.bind(this);
+		this.onSortStart = this.onSortStart.bind(this);
 		this.onSortEnd = this.onSortEnd.bind(this);
 		this.onScroll = this.onScroll.bind(this);
 	};
@@ -144,6 +145,7 @@ const MenuSort = observer(class MenuSort extends React.Component<Props, {}> {
 					lockToContainerEdges={true}
 					transitionDuration={150}
 					distance={10}
+					onSortStart={this.onSortStart}
 					onSortEnd={this.onSortEnd}
 					useDragHandle={true}
 					helperClass="isDragging"
@@ -271,13 +273,15 @@ const MenuSort = observer(class MenuSort extends React.Component<Props, {}> {
 
 		const obj = $(`#${getId()}`);
 		const content = obj.find('.content');
-
-		view.sorts.push({ 
+		const newItem = { 
 			relationKey: relationOptions[0].id, 
 			type: I.SortType.Asc,
-		});
+		};
 
+		view.sorts.push(newItem);
 		content.animate({ scrollTop: content.get(0).scrollHeight }, 50);
+
+		analytics.event('AddSort', { type: newItem.type });
 		this.save();
 	};
 
@@ -293,6 +297,9 @@ const MenuSort = observer(class MenuSort extends React.Component<Props, {}> {
 		};
 		
 		item[k] = v;
+
+		analytics.event('ChangeSortValue', { type: item.type });
+
 		this.save();
 		this.forceUpdate();
 	};
@@ -307,17 +314,29 @@ const MenuSort = observer(class MenuSort extends React.Component<Props, {}> {
 		this.save();
 
 		menuStore.close('select');
+		analytics.event('RemoveSort');
+	};
+
+	onSortStart () {
+		const { dataset } = this.props;
+		const { selection } = dataset;
+
+		selection.preventSelect(true);
 	};
 	
 	onSortEnd (result: any) {
-		const { oldIndex, newIndex } = result;
-		const { param } = this.props;
+		const { oldIndex, newIndex,  } = result;
+		const { param, dataset } = this.props;
+		const { selection } = dataset;
 		const { data } = param;
 		const { getView } = data;
 		const view = getView();
 
 		view.sorts = arrayMove(view.sorts, oldIndex, newIndex);
 		this.save();
+
+		selection.preventSelect(false);
+		analytics.event('RepositionSort');
 	};
 
 	save () {
@@ -344,7 +363,8 @@ const MenuSort = observer(class MenuSort extends React.Component<Props, {}> {
 		const { getId, position } = this.props;
 		const items = this.getItems();
 		const obj = $(`#${getId()} .content`);
-		const height = Math.max(HEIGHT + 58, Math.min(360, items.length * HEIGHT + 58));
+		const offset = 62;
+		const height = Math.max(HEIGHT + offset, Math.min(360, items.length * HEIGHT + offset));
 
 		obj.css({ height: height });
 		position();

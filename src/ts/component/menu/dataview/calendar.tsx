@@ -2,6 +2,7 @@ import * as React from 'react';
 import { I, Util, translate, keyboard } from 'ts/lib';
 import { Select } from 'ts/component';
 import { observer } from 'mobx-react';
+import { menuStore } from '../../../store';
 
 const Constant = require('json/constant.json');
 
@@ -128,15 +129,15 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<Props, 
 		this.props.position();
 	};
 
-	setValue (v: number, save: boolean, close: boolean) {
-		const { param } = this.props;
+	setValue (value: number, save: boolean, close: boolean) {
+		const { param, id } = this.props;
 		const { data } = param;
 		const { onChange } = data;
 
-		data.value = v;
+		menuStore.updateData(id, { value });
 
 		if (save) {
-			onChange(v);
+			onChange(value);
 		};
 		if (close) {
 			this.props.close();

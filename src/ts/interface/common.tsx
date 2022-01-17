@@ -41,7 +41,7 @@ export enum NavigationType {
 };
 
 export interface Option {
-	id: string;
+	id: any;
 	name: string;
 	icon?: string;
 };

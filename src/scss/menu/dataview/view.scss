@@ -27,7 +27,7 @@
 
 			.clickable { width: calc(100% - 22px); margin-right: 10px; display: flex; align-items: center; }
 		}
-		.item.big:hover {
+		.item.big.hover {
 			.clickable { width: calc(100% - 52px); }
 		}
 

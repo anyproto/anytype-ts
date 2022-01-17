@@ -198,6 +198,8 @@ class Cell extends React.Component<Props, {}> {
 		};
 
 		let setOff = () => {
+			keyboard.disableBlur(false);
+
 			if (this.ref) {
 				if (this.ref.onBlur) {
 					this.ref.onBlur();
@@ -212,7 +214,6 @@ class Cell extends React.Component<Props, {}> {
 
 			if (menuId) {
 				window.setTimeout(() => {
-					keyboard.disableBlur(false);
 					$(bodyContainer).removeClass('overMenu');
 				}, Constant.delay.menu);
 			};

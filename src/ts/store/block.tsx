@@ -47,6 +47,7 @@ class BlockStore {
             clearAll: action,
             add: action,
             update: action,
+			updateContent: action,
             updateStructure: action,
             delete: action
         });
@@ -118,11 +119,18 @@ class BlockStore {
 	};
 
     update (rootId: string, param: any) {
-		let block = this.getLeaf(rootId, param.id);
+		const block = this.getLeaf(rootId, param.id);
 		if (!block) {
 			return;
 		};
 		set(block, param);
+	};
+
+	updateContent (rootId: string, blockId: string, content: any) {
+		const block = this.getLeaf(rootId, blockId);
+		if (block) {
+			set(block.content, content);
+		};
 	};
 
 	clear (rootId: string) {

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { getRange } from 'selection-ranges';
-import { I, M, C, Key, focus, keyboard, scrollOnMove, Util } from 'ts/lib';
+import { I, M, C, Key, focus, keyboard, scrollOnMove, Util, analytics } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { commonStore, blockStore, menuStore } from 'ts/store';
 import { throttle } from 'lodash';
@@ -104,7 +104,9 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			};
 
 			if (next && ids.indexOf(next.id) < 0) {
-				C.BlockListMove(rootId, rootId, ids, next.id, (dir < 0 ? I.BlockPosition.Top : I.BlockPosition.Bottom));
+				C.BlockListMove(rootId, rootId, ids, next.id, (dir < 0 ? I.BlockPosition.Top : I.BlockPosition.Bottom), () => {
+					analytics.event('ReorderBlock', { count: ids.length });
+				});
 			};
 		});
 
@@ -201,10 +203,11 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
 		const el = node.find('#selection-rect');
+		const pageContainer = $(Util.getPageContainer(isPopup ? 'popup' : 'page'));
 		
 		el.css({ transform: 'translate3d(0px, 0px, 0px)', width: 0, height: 0 }).show();
 
-		this.nodes = node.find('.selectable');
+		this.nodes = pageContainer.find('.selectable');
 		this.x = e.pageX;
 		this.y = e.pageY;
 		this.moved = false;
@@ -214,9 +217,9 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		this.top = Util.getScrollContainer(isPopup).scrollTop();
 
 		if (isPopup) {
-			const container = $('#popupPage #innerWrap');
-			if (container.length) {
-				this.containerOffset = container.offset();
+			const popupContainer = $('#popupPage #innerWrap');
+			if (popupContainer.length) {
+				this.containerOffset = popupContainer.offset();
 				this.x -= this.containerOffset.left;
 				this.y -= this.containerOffset.top - this.top;
 			};

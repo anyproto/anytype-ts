@@ -10,7 +10,7 @@ import arrayMove from 'array-move';
 import HeadRow from './grid/head/row';
 import BodyRow from './grid/body/row';
 
-interface Props extends I.ViewComponent {}
+interface Props extends I.ViewComponent {};
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
@@ -25,6 +25,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 		this.cellPosition = this.cellPosition.bind(this);
 		this.onCellAdd = this.onCellAdd.bind(this);
 		this.onResizeStart = this.onResizeStart.bind(this);
+		this.onSortStart = this.onSortStart.bind(this);
 		this.onSortEnd = this.onSortEnd.bind(this);
 	};
 
@@ -42,7 +43,13 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 				<div className="scroll">
 					<div className="scrollWrap">
 						<div className="viewItem viewGrid">
-							<HeadRow {...this.props} onCellAdd={this.onCellAdd} onSortEnd={this.onSortEnd} onResizeStart={this.onResizeStart} />
+							<HeadRow 
+								{...this.props} 
+								onCellAdd={this.onCellAdd} 
+								onSortStart={this.onSortStart} 
+								onSortEnd={this.onSortEnd} 
+								onResizeStart={this.onResizeStart}
+							/>
 
 							<WindowScroller scrollElement={isPopup ? $('#popupPage #innerWrap').get(0) : window}>
 								{({ height, isScrolling, registerChild, scrollTop }) => {
@@ -287,8 +294,16 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 		});
 	};
 
+	onSortStart () {
+		const { dataset } = this.props;
+		const { selection } = dataset;
+
+		selection.preventSelect(true);
+	};
+
 	onSortEnd (result: any) {
-		const { rootId, block, getView } = this.props;
+		const { rootId, block, getView, dataset } = this.props;
+		const { selection } = dataset;
 		const { oldIndex, newIndex } = result;
 		const view = getView();
 		const filtered = view.relations.filter((it: any) => { return it.isVisible; });
@@ -297,6 +312,8 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 		
 		view.relations = arrayMove(view.relations, oldIdx, newIdx);
 		C.BlockDataviewViewUpdate(rootId, block.id, view.id, view);
+
+		selection.preventSelect(false);
 	};
 	
 });

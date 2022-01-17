@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Input } from 'ts/component';
-import { I, Util, keyboard, translate } from 'ts/lib';
+import { I, Util, keyboard, translate, analytics } from 'ts/lib';
 
 interface Props extends I.Menu {};
 
@@ -96,6 +96,8 @@ class MenuSearchText extends React.Component<Props, {}> {
 		if (!value) {
 			return;
 		};
+
+		analytics.event('SearchWords', { length: value.length });
 
 		findAndReplaceDOMText(searchContainer.get(0), {
 			preset: 'prose',

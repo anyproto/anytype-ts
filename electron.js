@@ -372,7 +372,7 @@ function createWindow () {
 				break;
 
 			case 'close':
-				exit(false);
+				win.close();
 				break;
 		};
 	});

@@ -96,12 +96,14 @@ import 'scss/popup/shortcut.scss';
 import 'scss/popup/confirm.scss';
 import 'scss/popup/page.scss';
 import 'scss/popup/template.scss';
+import 'scss/popup/export.scss';
 
 import 'emoji-mart/css/emoji-mart.css';
 import 'scss/menu/common.scss';
 import 'scss/menu/account.scss';
 import 'scss/menu/smile.scss';
 import 'scss/menu/help.scss';
+import 'scss/menu/onboarding.scss';
 import 'scss/menu/select.scss';
 import 'scss/menu/button.scss';
 import 'scss/menu/thread.scss';
@@ -138,6 +140,7 @@ import 'scss/menu/dataview/source.scss';
 import 'scss/media/print.scss';
 
 import 'scss/theme/dark/common.scss';
+import { Action } from './lib';
 
 interface RouteElement { path: string; };
 interface Props {};
@@ -209,6 +212,7 @@ declare global {
 		I: any;
 		Go: any;
 		Graph: any;
+		$: any;
 	}
 };
 
@@ -218,6 +222,7 @@ window.Dispatcher = dispatcher;
 window.Analytics = () => { return analytics.instance; };
 window.I = I;
 window.Go = (route: string) => { Util.route(route); };
+window.$ = $;
 
 class RoutePage extends React.Component<RouteComponentProps, {}> { 
 
@@ -315,6 +320,7 @@ class App extends React.Component<Props, State> {
 	init () {
 		Util.init(history);
 		keyboard.init();
+		analytics.init();
 		
 		Storage.delete('lastSurveyCanceled');
 
@@ -593,11 +599,11 @@ class App extends React.Component<Props, State> {
 
 		switch (key) {
 			case 'undo':
-				C.BlockUndo(rootId);
+				keyboard.onUndo(rootId);
 				break;
 
 			case 'redo':
-				C.BlockRedo(rootId);
+				keyboard.onRedo(rootId);
 				break;
 
 			case 'create':
@@ -605,24 +611,7 @@ class App extends React.Component<Props, State> {
 				break;
 
 			case 'save':
-				options = { 
-					properties: [ 'openDirectory' ],
-				};
-
-				dialog.showOpenDialog(options).then((result: any) => {
-					const files = result.filePaths;
-					if ((files == undefined) || !files.length) {
-						return;
-					};
-
-					C.Export(files[0], [ rootId ], I.ExportFormat.Protobuf, true, true, (message: any) => {
-						if (message.error.code) {
-							return;
-						};
-
-						ipcRenderer.send('pathOpen', files[0]);
-					});
-				});
+				Action.export([ rootId ], I.ExportFormat.Protobuf, true, true, true);
 				break;
 
 			case 'exportTemplates':

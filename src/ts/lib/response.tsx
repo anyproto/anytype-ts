@@ -359,6 +359,12 @@ const WorkspaceCreate = (response: any) => {
 	};
 };
 
+const UnsplashDownload = (response: any) => {
+	return {
+		image: Mapper.From.BlockFile(response.getImage()),
+	};
+};
+
 export {
 	DebugSync,
 
@@ -434,4 +440,6 @@ export {
 	CloneTemplate,
 
 	WorkspaceCreate,
+
+	UnsplashDownload,
 };

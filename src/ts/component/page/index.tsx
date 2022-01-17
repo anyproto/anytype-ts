@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { I, Util, Storage, analytics, keyboard } from 'ts/lib';
+import { I, Onboarding, Util, Storage, analytics, keyboard } from 'ts/lib';
 import { authStore, commonStore, menuStore, popupStore, blockStore } from 'ts/store';
 
 import PageAuthInvite from './auth/invite';
@@ -73,14 +73,12 @@ class Page extends React.Component<Props, {}> {
 	refChild: any;
 
 	render () {
-		const { isPopup } = this.props;
 		const match = this.getMatch();
 		const path = [ match.params.page, match.params.action ].join('/');
 		const showNotice = !Boolean(Storage.get('firstRun'));
 
 		if (showNotice) {
 			Components['/'] = PageAuthNotice;
-			Storage.set('firstRun', 1);
 		};
 
 		const Component = Components[path];
@@ -121,7 +119,7 @@ class Page extends React.Component<Props, {}> {
 
 	getMatch () {
 		const { match, matchPopup, isPopup } = this.props;
-		return isPopup ? matchPopup : match;
+		return (isPopup ? matchPopup : match) || { params: {} };
 	};
 
 	getRootId () {
@@ -172,16 +170,24 @@ class Page extends React.Component<Props, {}> {
 		this.unbind();
 
 		win.on('resize.page' + (isPopup ? 'Popup' : ''), () => { this.resize(); });
+
+		if (!isPopup) {
+			keyboard.setMatch(match);
+		};
+
+		Onboarding.start(Util.toCamelCase([ match.params?.page, match.params?.action ].join('-')), isPopup);
 		
 		if (isPopup) {
 			return;
 		};
-
-		keyboard.setMatch(match);
-
+		
 		window.setTimeout(() => {
 			if (isMain && account) {
-				if (!popupNewBlock) {
+				if (!Storage.get('onboarding')) {
+					Storage.set('popupNewBlock', 1);
+				};
+
+				if (!popupNewBlock && Storage.get('onboarding')) {
 					popupStore.open('help', { data: { document: 'whatsNew' } });
 					Storage.set('popupNewBlock', 1);
 				};
@@ -190,6 +196,13 @@ class Page extends React.Component<Props, {}> {
 
 			if (isMainIndex) {
 				if (account && askSurvey && !popupStore.isOpen() && !lastSurveyCanceled && (lastSurveyTime <= Util.time() - 86400 * days)) {
+					analytics.event('SurveyShow');
+
+					const onClose = () => {
+						Storage.set('lastSurveyCanceled', 1);
+						Storage.set('lastSurveyTime', Util.time());
+					};
+
 					popupStore.open('confirm', {
 						data: {
 							title: 'We need your opinion',
@@ -200,11 +213,11 @@ class Page extends React.Component<Props, {}> {
 							onConfirm: () => {
 								ipcRenderer.send('urlOpen', Util.sprintf(Constant.survey, account.id));
 								Storage.set('lastSurveyTime', Util.time());
+
+								analytics.event('SurveyOpen');
 							},
-							onCancel: () => {
-								Storage.set('lastSurveyCanceled', 1);
-								Storage.set('lastSurveyTime', Util.time());
-							},
+							onClose: onClose,
+							onCancel: onClose,
 						},
 					});
 				};
@@ -243,12 +256,27 @@ class Page extends React.Component<Props, {}> {
 	};
 	
 	event () {
-		const match = this.getMatch();
-		const page = String(match.params.page || 'index');
-		const action = String(match.params.action || 'index');
-		const path = [ 'page', page, action ].join('-');
-		
-		analytics.event(Util.toUpperCamelCase(path));
+		let match = this.getMatch();
+		let page = String(match.params.page || 'index');
+		let action = String(match.params.action || 'index');
+		let id = String(match.params.id || '');
+		let showNotice = !Boolean(Storage.get('firstRun'));
+		let params: any = { page, action };
+		let isMain = page == 'main';
+		let isMainType = isMain && (action == 'type');
+		let isMainRelation = isMain && (action == 'relation');
+
+		if (showNotice) {
+			params.page = 'auth';
+			params.action = 'notice';
+			Storage.set('firstRun', 1);
+		};
+
+		if (isMainType || isMainRelation) {
+			params.id = id;
+		};
+
+		analytics.event('page', { params });
 	};
 	
 	getClass (prefix: string) {
@@ -294,7 +322,7 @@ class Page extends React.Component<Props, {}> {
 			};			
 		});
 	};
-	
+
 };
 
 export default Page;

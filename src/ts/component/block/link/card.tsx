@@ -107,7 +107,7 @@ const LinkCard = observer(class LinkCard extends React.Component<Props, {}> {
                         x={coverX} 
                         y={coverY} 
                         scale={coverScale} 
-                        withScale={false}
+                        withScale={true}
                     >
                         {content}
                     </Cover>

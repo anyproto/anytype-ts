@@ -37,13 +37,12 @@ class PopupStore {
 			this.popupList.push({ id: id, param: param });
 		};
 
-		analytics.event(Util.toCamelCase('Popup-' + id), param.data);
 		menuStore.closeAll();
 	};
 
     get (id: string): I.Popup {
 		return this.popupList.find((item: I.Popup) => { return item.id == id; });
-	}
+	};
 
     update (id: string, param: any) {
 		const item = this.get(id);

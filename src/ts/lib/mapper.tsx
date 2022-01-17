@@ -83,6 +83,80 @@ const Mapper = {
 				details: Decode.decodeStruct(obj.getDetails()),
 			};
 		},
+
+		BlockLayout: (obj: any) => {
+			return {
+				style: obj.getStyle(),
+			};
+		},
+
+		BlockDiv: (obj: any) => {
+			return {
+				style: obj.getStyle(),
+			};
+		},
+
+		BlockLink: (obj: any) => {
+			return {
+				style: obj.getStyle(),
+				targetBlockId: obj.getTargetblockid(),
+				fields: Decode.decodeStruct(obj.getFields()),
+			};
+		},
+
+		BlockBookmark: (obj: any) => {
+			return {
+				url: obj.getUrl(),
+				title: obj.getTitle(),
+				description: obj.getDescription(),
+				imageHash: obj.getImagehash(),
+				faviconHash: obj.getFaviconhash(),
+				type: obj.getType(),
+			};
+		},
+
+		BlockText: (obj: any) => {
+			return {
+				text: obj.getText(),
+				style: obj.getStyle(),
+				checked: obj.getChecked(),
+				color: obj.getColor(),
+				marks: (obj.getMarks().getMarksList() || []).map(Mapper.From.Mark),
+			};
+		},
+
+		BlockFile: (obj: any) => {
+			return {
+				hash: obj.getHash(),
+				name: obj.getName(),
+				type: obj.getType(),
+				style: obj.getStyle(),
+				mime: obj.getMime(),
+				size: obj.getSize(),
+				addedAt: obj.getAddedat(),
+				state: obj.getState(),
+			};
+		},
+
+		BlockDataview: (obj: any) => {
+			return {
+				sources: obj.getSourceList(),
+				views: (obj.getViewsList() || []).map(Mapper.From.View),
+				relations: (obj.getRelationsList() || []).map(Mapper.From.Relation),
+			};
+		},
+
+		BlockRelation: (obj: any) => {
+			return {
+				key: obj.getKey(),
+			};
+		},
+
+		BlockLatex: (obj: any) => {
+			return {
+				text: obj.getText(),
+			};
+		},
 	
 		Block: (obj: any): I.Block => {
 			let type = Mapper.From.BlockType(obj.getContentCase());
@@ -100,77 +174,39 @@ const Mapper = {
 			};
 	
 			if (type == I.BlockType.Layout) {
-				item.content = {
-					style: content.getStyle(),
-				};
+				item.content = Mapper.From.BlockLayout(content);
 			};
 	
 			if (type == I.BlockType.Link) {
-				item.content = {
-					style: content.getStyle(),
-					targetBlockId: content.getTargetblockid(),
-					fields: Decode.decodeStruct(content.getFields()),
-				};
+				item.content = Mapper.From.BlockLink(content);
 			};
 	
 			if (type == I.BlockType.Div) {
-				item.content = {
-					style: content.getStyle(),
-				};
+				item.content = Mapper.From.BlockDiv(content);
 			};
 	
 			if (type == I.BlockType.Bookmark) {
-				item.content = {
-					url: content.getUrl(),
-					title: content.getTitle(),
-					description: content.getDescription(),
-					imageHash: content.getImagehash(),
-					faviconHash: content.getFaviconhash(),
-					type: content.getType(),
-				};
+				item.content = Mapper.From.BlockBookmark(content);
 			};
 	
 			if (type == I.BlockType.Text) {
-				item.content = {
-					text: content.getText(),
-					style: content.getStyle(),
-					checked: content.getChecked(),
-					color: content.getColor(),
-					marks: (content.getMarks().getMarksList() || []).map(Mapper.From.Mark),
-				};
+				item.content = Mapper.From.BlockText(content);
 			};
 	
 			if (type == I.BlockType.File) {
-				item.content = {
-					hash: content.getHash(),
-					name: content.getName(),
-					type: content.getType(),
-					style: content.getStyle(),
-					mime: content.getMime(),
-					size: content.getSize(),
-					addedAt: content.getAddedat(),
-					state: content.getState(),
-				};
+				item.content = Mapper.From.BlockFile(content);
 			};
 	
 			if (type == I.BlockType.Dataview) {
-				item.content = {
-					sources: content.getSourceList(),
-					views: (content.getViewsList() || []).map(Mapper.From.View),
-					relations: (content.getRelationsList() || []).map(Mapper.From.Relation),
-				};
+				item.content = Mapper.From.BlockDataview(content);
 			};
 
 			if (type == I.BlockType.Relation) {
-				item.content = {
-					key: content.getKey(),
-				};
+				item.content = Mapper.From.BlockRelation(content);
 			};
 
 			if (type == I.BlockType.Latex) {
-				item.content = {
-					text: content.getText(),
-				};
+				item.content = Mapper.From.BlockLatex(content);
 			};
 	
 			return item;

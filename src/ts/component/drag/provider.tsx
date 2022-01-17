@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { DragLayer } from 'ts/component';
-import { I, C, focus, keyboard, Util, scrollOnMove } from 'ts/lib';
+import { I, C, focus, keyboard, Util, scrollOnMove, analytics } from 'ts/lib';
 import { blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
@@ -289,15 +289,11 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 		switch (this.type) {
 			default:
 				C.BlockListMove(contextId, targetContextId, this.ids || [], targetId, position, () => {
-					/*
-					if (selection) {
-						selection.set(this.ids);
-					};
-					*/
-		
 					if (target.isTextToggle() && (position == I.BlockPosition.Inner)) {
 						blockStore.toggle(rootId, targetId, true);
 					};
+
+					analytics.event('ReorderBlock', { count: this.ids.length });
 				});
 				break;
 

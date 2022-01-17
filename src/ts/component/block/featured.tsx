@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { I, C, DataUtil, Util, focus } from 'ts/lib';
+import { I, C, DataUtil, Util, focus, analytics } from 'ts/lib';
 import { Cell } from 'ts/component';
 import { observer } from 'mobx-react';
 import { blockStore, detailStore, dbStore, menuStore } from 'ts/store';
@@ -37,7 +37,6 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		this.onSource = this.onSource.bind(this);
 		this.onFocus = this.onFocus.bind(this);
 		this.onCellClick = this.onCellClick.bind(this);
-		this.onCellChange = this.onCellChange.bind(this);
 		this.onMouseEnter = this.onMouseEnter.bind(this);
 		this.onMouseLeave = this.onMouseLeave.bind(this);
 		this.onRelation = this.onRelation.bind(this);
@@ -270,15 +269,6 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		};
 	};
 
-	onCellChange (id: string, relationKey: string, value: any) {
-		const { rootId } = this.props;
-		const relation = dbStore.getRelation(rootId, rootId, relationKey);
-		const details = [ 
-			{ key: relationKey, value: DataUtil.formatRelationValue(relation, value, true) },
-		];
-		C.BlockSetDetails(rootId, details);
-	};
-
 	onMouseEnter (e: any, relationKey: string) {
 		const { rootId } = this.props;
 		const cell = $('#' + DataUtil.cellId(PREFIX, relationKey, 0));
@@ -325,7 +315,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 					noClose: true,
 					onOver: this.onTypeOver,
 					onSelect: (e: any, item: any) => {
-						item.arrow ? this.onTypeOver(e, item) : this.onTypeSelect(e, item);
+						this.onTypeSelect(e, item);
 					},
 				},
 			});
@@ -385,6 +375,8 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 					onSelect: (item: any) => {
 						C.BlockObjectTypeSet(rootId, item.id);
 						this.menuContext.close();
+
+						analytics.event('ChangeObjectType', { objectType: item.id });
 					},
 					dataSort: (c1: any, c2: any) => {
 						let i1 = types.indexOf(c1.id);
@@ -412,17 +404,17 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		};
 
 		if (menuId) {
-			if (menuStore.isOpen(menuId)) {
-				menuStore.update(menuId, menuParam);
-			} else {
-				menuStore.closeAll(Constant.menuIds.featuredType, () => {
-					menuStore.open(menuId, menuParam);
-				});
-			};
+			menuStore.closeAll(Constant.menuIds.featuredType, () => {
+				menuStore.open(menuId, menuParam);
+			});
 		};
 	};
 
 	onTypeSelect (e: any, item: any) {
+		if (item.arrow) {
+			return;
+		};
+
 		const { rootId } = this.props;
 		const object = detailStore.get(rootId, rootId, [ Constant.relationKey.setOf ]);
 		const type: any = dbStore.getObjectType(object.type);
@@ -516,8 +508,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 		if (!isPopup) {
 			param.fixedY = Util.sizeHeader();
-			param.className = 'fixed';
-			param.classNameWrap = 'fromHeader';
+			param.classNameWrap = 'fixed fromHeader';
 		};
 
 		menuStore.closeAll(null, () => { menuStore.open('blockRelationView', param); });
@@ -543,7 +534,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 	getStoreId (): string {
 		const { rootId, traceId } = this.props;
-		return rootId.replace('-' + traceId, '');
+		return String(rootId || '').replace('-' + traceId, '');
 	};
 	
 });

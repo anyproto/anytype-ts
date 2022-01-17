@@ -1,4 +1,4 @@
-import { I, C, Util, DataUtil, crumbs, Storage, focus, history as historyPopup, analytics } from 'ts/lib';
+import { I, C, Util, DataUtil, crumbs, Storage, focus, history as historyPopup, analytics, Docs } from 'ts/lib';
 import { commonStore, authStore, blockStore, menuStore, popupStore } from 'ts/store';
 
 const { ipcRenderer } = window.require('electron');
@@ -32,7 +32,7 @@ class Keyboard {
 	init () {
 		this.unbind();
 		
-		let win = $(window); 
+		const win = $(window); 
 		win.on('keydown.common', (e: any) => { this.onKeyDown(e); });
 		win.on('keyup.common', (e: any) => { this.onKeyUp(e); });
 		win.on('mousedown.common', (e: any) => { this.onMouseDown(e); });
@@ -48,6 +48,8 @@ class Keyboard {
 
 	onScroll (e: any) {
 		Util.tooltipHide(false);
+
+		$(window).trigger('resize.menuOnboarding');
 	};
 
 	onMouseDown (e: any) {
@@ -99,8 +101,11 @@ class Keyboard {
 		// Close popups
 		this.shortcut('escape', e, (pressed: string) => {
 			e.preventDefault();
-			popupStore.closeLast();
-			menuStore.closeAll();
+			if (menuStore.isOpen()) {
+				menuStore.closeLast();
+			} else {
+				popupStore.closeLast();
+			};
 			Util.previewHide(false);
 		});
 
@@ -124,9 +129,7 @@ class Keyboard {
 				popupStore.open('search', { 
 					preventResize: true,
 					data: { 
-						type: I.NavigationType.Go, 
-						disableFirstKey: true,
-						rootId: rootId,
+						rootId,
 					}, 
 				});
 			});
@@ -211,7 +214,7 @@ class Keyboard {
 	getRootId (): string {
 		const isPopup = this.isPopup();
 		const popupMatch = this.getPopupMatch();
-		return isPopup ? popupMatch.id : (this.match?.params?.id || blockStore.root);
+		return isPopup ? popupMatch.params.id : (this.match?.params?.id || blockStore.root);
 	};
 
 	onKeyUp (e: any) {
@@ -342,6 +345,18 @@ class Keyboard {
 		};
 	};
 
+	onUndo (rootId: string, callBack?: (message: any) => void) {
+		C.BlockUndo(rootId, callBack);
+
+		analytics.event('Undo');
+	};
+
+	onRedo (rootId: string, callBack?: (message: any) => void) {
+		C.BlockRedo(rootId, callBack);
+
+		analytics.event('Redo');
+	};
+
 	onPrint () {
 		const { theme } = commonStore;
 		const isPopup = this.isPopup();
@@ -358,17 +373,20 @@ class Keyboard {
 
 		html.removeClass('withPopup');
 		Util.addBodyClass('theme', theme);
+
+		analytics.event('Print');
 	};
 
 	onSearch () {
-		const popup = popupStore.get('page');
+		const isPopup = this.isPopup();
 		const popupMatch = this.getPopupMatch();
 
 		// Do not allow in set or store
-		if (!popup && (this.isMainSet() || this.isMainStore()) || (popup && ([ 'set', 'store' ].indexOf(popupMatch.action) >= 0))) {
+		if (!isPopup && (this.isMainSet() || this.isMainStore()) || (isPopup && ([ 'set', 'store' ].indexOf(popupMatch.params.action) >= 0))) {
 			return;
 		};
 
+		menuStore.closeAll([ 'blockContext' ]);
 		window.setTimeout(() => {
 			menuStore.open('searchText', {
 				element: '#header',
@@ -376,7 +394,7 @@ class Keyboard {
 				horizontal: I.MenuDirection.Right,
 				classNameWrap: 'fromHeader',
 				data: {
-					isPopup: popupStore.isOpen(),
+					isPopup,
 				},
 			});
 		}, Constant.delay.menu);
@@ -384,7 +402,11 @@ class Keyboard {
 
 	getPopupMatch () {
 		const popup = popupStore.get('page');
-		return popup && popup?.param.data.matchPopup.params || {};
+		return popup && popup?.param.data.matchPopup || {};
+	};
+
+	getMatch () {
+		return (this.isPopup() ? this.getPopupMatch() : this.match) || { params: {} };
 	};
 
 	ctrlByPlatform (e: any) {
@@ -432,6 +454,14 @@ class Keyboard {
 		this.isPinChecked = v;
 	};
 
+	setMatch (match: any) {
+		this.match = match;
+	};
+
+	setSource (source: any) {
+		this.source = Util.objectCopy(source);
+	};
+
 	initPinCheck () {
 		const { account } = authStore;
 		const { pinTime } = commonStore;
@@ -456,14 +486,6 @@ class Keyboard {
 				});
 			};
 		}, pinTime);
-	};
-
-	setMatch (match: any) {
-		this.match = match;
-	};
-
-	setSource (source: any) {
-		this.source = Util.objectCopy(source);
 	};
 
 	restoreSource () {
@@ -582,7 +604,7 @@ class Keyboard {
 		const platform = Util.getPlatform();
 		return platform == I.Platform.Mac ? 'cmd' : 'ctrl';
 	};
-	
+
 };
 
 export enum Key {

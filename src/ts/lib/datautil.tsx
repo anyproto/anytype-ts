@@ -369,9 +369,10 @@ class DataUtil {
 				return;
 			};
 
-			analytics.init();
 			commonStore.gatewaySet(message.gatewayUrl);
-			authStore.deviceSet(message.deviceId);
+			analytics.device(message.deviceId);
+			analytics.profile(authStore.account);
+			analytics.event('OpenAccount');
 			
 			blockStore.rootSet(root);
 			blockStore.storeSetType(message.marketplaceTypeId);
@@ -546,8 +547,6 @@ class DataUtil {
 			{ key: 'coverScale', value: scale },
 		];
 		C.BlockSetDetails(rootId, details, callBack);
-
-		analytics.event('PageSetCover', { type: type, id: id });
 	};
 
 	pageSetDone (rootId: string, done: boolean, callBack?: (message: any) => void) {
@@ -572,16 +571,12 @@ class DataUtil {
 		if (!block) {
 			return;
 		};
+
+		text = String(text || '');
+		marks = marks || [];
 		
 		if (update) {
-			blockStore.update(rootId, { 
-				...block, 
-				content: { 
-					...block.content, 
-					text: String(text || ''), 
-					marks: marks || [],
-				},
-			});
+			blockStore.updateContent(rootId, block.id, { text, marks });
 		};
 
 		C.BlockSetTextText(rootId, block.id, text, marks, (message: any) => {
@@ -1398,6 +1393,11 @@ class DataUtil {
 		dbStore.metaSet(subId, '', meta);
 		C.ObjectSearchSubscribe(subId, view.filters, view.sorts, keys, block.content.sources, '', offset, limit, true, '', '');
 	};
+
+	coverIsImage (type: I.CoverType) {
+		return [ I.CoverType.Upload, I.CoverType.Image, I.CoverType.Source ].includes(type);
+	};
+
 };
 
 export default new DataUtil();

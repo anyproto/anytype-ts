@@ -2,7 +2,7 @@ import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
 import { Icon } from 'ts/component';
-import { C, Util, DataUtil, I, translate } from 'ts/lib';
+import { C, Util, DataUtil, I, translate, analytics } from 'ts/lib';
 import { detailStore } from 'ts/store';
 
 interface Props extends RouteComponentProps<any> {
@@ -13,7 +13,7 @@ interface State {
 	version: I.HistoryVersion;
 };
 
-const HeaderMainHistory = observer(class HeaderMainHistory extends React.Component<Props, {}> {
+const HeaderMainHistory = observer(class HeaderMainHistory extends React.Component<Props, State> {
 
 	state = {
 		version: null,
@@ -56,6 +56,8 @@ const HeaderMainHistory = observer(class HeaderMainHistory extends React.Compone
 	};
 
 	onRestore (e: any) {
+		e.persist();
+
 		const { rootId } = this.props;
 		const { version } = this.state;
 		const object = detailStore.get(rootId, rootId, []);
@@ -66,6 +68,8 @@ const HeaderMainHistory = observer(class HeaderMainHistory extends React.Compone
 
 		C.HistorySetVersion(rootId, version.id, (message: any) => {
 			DataUtil.objectOpenEvent(e, object);
+
+			analytics.event('RestoreFromHistory');
 		});
 	};
 

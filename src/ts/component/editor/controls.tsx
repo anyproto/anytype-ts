@@ -2,8 +2,8 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Icon } from 'ts/component';
-import { I, C, focus, DataUtil, Util, translate } from 'ts/lib';
-import { commonStore, menuStore, blockStore, detailStore } from 'ts/store';
+import { I, C, focus, DataUtil, Util, translate, analytics } from 'ts/lib';
+import { menuStore, blockStore, detailStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any> {
@@ -42,6 +42,11 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 			return null;
 		};
 
+		const object = detailStore.get(rootId, rootId, Constant.coverRelationKeys);
+		if ((object.coverType != I.CoverType.None) && object.coverId) {
+			return null;
+		};
+
 		const checkType = blockStore.checkBlockType(rootId);
 		const allowedDetails = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const allowedLayout = !checkType && allowedDetails && !root.isObjectSet() && blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Layout ]);
@@ -51,7 +56,7 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 
 		return (
 			<div 
-				className="editorControls"
+				className="editorControls editorControlElements"
 				onDragOver={this.onDragOver} 
 				onDragLeave={this.onDragLeave} 
 				onDrop={this.onDrop}
@@ -162,6 +167,8 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 
 		focus.clear(true);
 		DataUtil.pageSetCover(rootId, I.CoverType.Color, color.id, 0, 0, 0);
+
+		analytics.event('SetCover', { type: I.CoverType.Color, id: color.id });
 	};
 
 	onLayout (e: any) {
@@ -181,9 +188,6 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 			data: {
 				rootId: rootId,
 				value: object.layout,
-				onChange: (layout: I.ObjectLayout) => {
-					DataUtil.pageSetLayout(rootId, layout);
-				},
 			}
 		});
 	};

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, C, DataUtil, translate } from 'ts/lib';
+import { I, analytics, DataUtil, translate } from 'ts/lib';
 import { Input, MenuItemVertical, Button, Icon, Switch } from 'ts/component';
 import { dbStore, menuStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -64,10 +64,10 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 
 			opts = (
 				<div className="section noLine">
-					<div className="name">Type of target object</div>
-					<MenuItemVertical 
-						id="object-type" 
-						onMouseEnter={this.onObjectType} 
+					<div className="name">Limit object Types</div>
+					<MenuItemVertical
+						id="object-type"
+						onMouseEnter={this.onObjectType}
 						arrow={!isReadonly}
 						{...typeProps}
 					/>
@@ -274,7 +274,11 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		};
 
 		const { getId } = this.props;
-		const relation = this.getRelation();
+		
+		let relation: any = this.getRelation();
+		if (!relation) {
+			relation = { format: this.format };
+		};
 
 		this.menuOpen('dataviewObjectValues', { 
 			element: `#${getId()} #item-object-type`,
@@ -292,9 +296,14 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 					const type = dbStore.getObjectType(it.id);
 					return { ...type, layout: I.ObjectLayout.Type };
 				},
-				onChange: (value: any) => {
+				onChange: (value: any, callBack?: () => void) => {
 					this.objectTypes = value;
+					this.save();
 					this.forceUpdate();
+
+					if (callBack) {
+						callBack();
+					};
 				},
 			}
 		});
@@ -356,6 +365,8 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 
 		this.add(newRelation);
 		close();
+
+		analytics.event('DuplicateRelation');
 	};
 
 	onRemove (e: any) {
@@ -367,6 +378,8 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 			deleteCommand(rootId, blockId, relationKey);
 		};
 		close();
+
+		analytics.event('DeleteRelation');
 	};
 
 	onSubmit (e: any) {
@@ -403,10 +416,10 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 	add (newRelation: any) {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, addCommand } = data;
+		const { rootId, blockId, addCommand, onChange } = data;
 
 		if (addCommand) {
-			addCommand(rootId, blockId, newRelation);
+			addCommand(rootId, blockId, newRelation, onChange);
 		};
 	};
 

@@ -487,6 +487,8 @@ class MenuBlockAction extends React.Component<Props, State> {
 					onChange: (color: string) => {
 						C.BlockListSetBackgroundColor(rootId, blockIds, color, (message: any) => {
 							this.setFocus(blockIds[0]);
+
+							analytics.event('ChangeBlockBackground', { color: color, count: blockIds.length });
 						});
 
 						close();
@@ -504,6 +506,8 @@ class MenuBlockAction extends React.Component<Props, State> {
 					onSelect: (align: I.BlockAlign) => {
 						C.BlockListSetAlign(rootId, blockIds, align, (message: any) => {
 							this.setFocus(blockIds[0]);
+
+							analytics.event('ChangeBlockAlign', { align, count: blockIds.length });
 						});
 
 						close();
@@ -538,7 +542,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 		};
 
 		const ids = DataUtil.selectionGet(blockId, false, data);
-		analytics.event(Util.toUpperCamelCase(`${getId()}-action`), { id: item.itemId });
+		//analytics.event(Util.toUpperCamelCase(`${getId()}-action`), { id: item.itemId });
 
 		switch (item.itemId) {
 			case 'download':
@@ -565,12 +569,16 @@ class MenuBlockAction extends React.Component<Props, State> {
 					
 				// Background colors
 				if (item.isBgColor) {
-					C.BlockListSetBackgroundColor(rootId, blockIds, item.value);
+					C.BlockListSetBackgroundColor(rootId, blockIds, item.value, () => {
+						analytics.event('ChangeBlockBackground', { color: item.value, count: blockIds.length });
+					});
 				} else 
 					
 				// Align
 				if (item.isAlign) {
-					C.BlockListSetAlign(rootId, blockIds, item.itemId);
+					C.BlockListSetAlign(rootId, blockIds, item.itemId, () => {
+						analytics.event('ChangeBlockAlign', { align: item.itemId, count: blockIds.length });
+					});
 				} else 
 					
 				// Blocks

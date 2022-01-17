@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Filter, Icon } from 'ts/component';
-import { I, Util, DataUtil, Key, keyboard } from 'ts/lib';
+import { I, Util, DataUtil, analytics, keyboard } from 'ts/lib';
 import { commonStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
@@ -251,7 +251,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 	onClick (e: any, item: any) {
 		const { close, param, getId } = this.props;
 		const { data, classNameWrap } = param;
-		const { rootId, blockId, menuIdEdit, addCommand, onAdd } = data;
+		const { rootId, blockId, menuIdEdit, addCommand, onAdd, ref, onChange } = data;
 
 		e.preventDefault();
 		e.stopPropagation();
@@ -272,12 +272,14 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 				classNameWrap: classNameWrap,
 				data: {
 					...data,
-					onChange: () => { 
+					onChange: (relation: any) => { 
 						close(); 
 						
 						if (onAdd) {
 							onAdd();
 						};
+
+						analytics.event('CreateRelation', { format: relation.format, type: ref });
 					},
 					rebind: this.rebind,
 				}
@@ -285,7 +287,8 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		} else 
 		if (addCommand) {
 			close(); 
-			addCommand(rootId, blockId, item);
+			addCommand(rootId, blockId, item, onChange);
+			analytics.event('AddExistingRelation', { format: item.format, type: ref });
 		};
 	};
 
@@ -293,7 +296,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		const { getId, position } = this.props;
 		const items = this.getItems();
 		const obj = $(`#${getId()} .content`);
-		const offset = 60;
+		const offset = 68;
 		const height = Math.max(HEIGHT * 1 + offset, Math.min(280, items.length * HEIGHT + offset));
 
 		obj.css({ height: height });

@@ -5,7 +5,7 @@ import { Icon, IconObject, Tag } from 'ts/component';
 import { detailStore, dbStore, menuStore, blockStore } from 'ts/store';
 import { I, C, DataUtil } from 'ts/lib';
 import arrayMove from 'array-move';
-import { translate, Util, keyboard } from 'ts/lib';
+import { translate, Util, keyboard, analytics } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCache } from 'react-virtualized';
 import 'react-virtualized/styles.css';
@@ -30,6 +30,7 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<Pro
 		this.save = this.save.bind(this);
 		this.onAdd = this.onAdd.bind(this);
 		this.onRemove = this.onRemove.bind(this);
+		this.onSortStart = this.onSortStart.bind(this);
 		this.onSortEnd = this.onSortEnd.bind(this);
 		this.onScroll = this.onScroll.bind(this);
 	};
@@ -229,6 +230,7 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<Pro
 					lockToContainerEdges={true}
 					transitionDuration={150}
 					distance={10}
+					onSortStart={this.onSortStart}
 					onSortEnd={this.onSortEnd}
 					useDragHandle={true}
 					helperClass="isDragging"
@@ -311,15 +313,17 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<Pro
 		const first = relationOptions[0];
 		const conditions = DataUtil.filterConditionsByType(first.format);
 		const condition = conditions.length ? conditions[0].id : I.FilterCondition.None;
-
-		view.filters.push({ 
+		const newItem = { 
 			relationKey: first.id, 
 			operator: I.FilterOperator.And, 
 			condition: condition as I.FilterCondition,
 			value: DataUtil.formatRelationValue(first, null, false),
-		});
+		};
 
+		view.filters.push(newItem);
 		obj.animate({ scrollTop: obj.get(0).scrollHeight }, 50);
+
+		analytics.event('AddFilter', { condition: newItem.condition });
 		this.save();
 	};
 
@@ -333,6 +337,7 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<Pro
 		this.save();
 
 		menuStore.close('select');
+		analytics.event('RemoveFilter');
 	};
 
 	onOver (e: any, item: any) {
@@ -356,9 +361,17 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<Pro
 			}
 		});
 	};
+
+	onSortStart () {
+		const { dataset } = this.props;
+		const { selection } = dataset;
+
+		selection.preventSelect(true);
+	};
 	
 	onSortEnd (result: any) {
-		const { param } = this.props;
+		const { param, dataset } = this.props;
+		const { selection } = dataset;
 		const { data } = param;
 		const { getView } = data;
 		const view = getView();
@@ -366,6 +379,9 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<Pro
 
 		view.filters = arrayMove(view.filters, oldIndex, newIndex);
 		this.save();
+
+		selection.preventSelect(false);
+		analytics.event('RepositionFilter');
 	};
 
 	save () {
@@ -422,7 +438,8 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<Pro
 		const { getId, position } = this.props;
 		const items = this.getItems();
 		const obj = $(`#${getId()} .content`);
-		const height = Math.max(HEIGHT + 58, Math.min(360, items.length * HEIGHT + 58));
+		const offset = 62;
+		const height = Math.max(HEIGHT + offset, Math.min(360, items.length * HEIGHT + offset));
 
 		obj.css({ height: height });
 		position();

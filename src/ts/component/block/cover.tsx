@@ -70,7 +70,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 		const { rootId, readonly } = this.props;
 		const object = detailStore.get(rootId, rootId, [ 'iconImage', 'iconEmoji' ].concat(Constant.coverRelationKeys), true);
 		const { coverType, coverId } = object;
-		const isImage = [ I.CoverType.Upload, I.CoverType.Image ].indexOf(coverType) >= 0;
+		const isImage = DataUtil.coverIsImage(coverType);
 		const root = blockStore.getLeaf(rootId, rootId);
 
 		if (!root) {
@@ -78,9 +78,16 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 		};
 
 		const allowedDetails = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
-		const allowedLayout = allowedDetails || blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Layout ]);
+		const allowedLayout = !root.isObjectSet() && (allowedDetails || blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Layout ]));
+		const allowedIcon = !object.iconEmoji && !object.iconImage && !root.isObjectTask();
 
+		let image = null;
 		let elements = null;
+
+		if (coverType == I.CoverType.Source) {
+			image = detailStore.get(rootId, coverId);
+		};
+
 		if (isEditing) {
 			elements = (
 				<React.Fragment>
@@ -109,7 +116,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 			elements = (
 				<React.Fragment>
 					<div className="controlButtons">
-						{!object.iconEmoji && !object.iconImage && !root.isObjectTask() ? (
+						{allowedIcon ? (
 							<div id="button-icon" className="btn white withIcon" onClick={this.onIcon}>
 								<Icon className="icon" />
 								<div className="txt">{translate('editorControlIcon')}</div>
@@ -121,7 +128,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 							<div className="txt">{translate('editorControlCover')}</div>
 						</div>
 
-						{!root.isObjectSet() && allowedLayout ? (
+						{allowedLayout ? (
 							<div id="button-layout" className="btn white withIcon" onClick={this.onLayout}>
 								<Icon className="layout" />
 								<div className="txt">{translate('editorControlLayout')}</div>
@@ -154,8 +161,14 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 				)}
 
 				{!readonly ? (
-					<div id="elements" className="elements">
+					<div id="elements" className="elements editorControlElements">
 						{elements}
+					</div>
+				) : ''}
+
+				{coverType == I.CoverType.Source ? (
+					<div className="author">
+						Photo by <a href="https://unsplash.com/@anniespratt?utm_source=your_app_name&utm_medium=referral">Annie Spratt</a> on <a href="https://unsplash.com/?utm_source=your_app_name&utm_medium=referral">Unsplash</a>
 					</div>
 				) : ''}
 			</div>
@@ -166,12 +179,14 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 		this._isMounted = true;
 		this.resize();
 
-		const win = $(window);
-		win.unbind('resize.cover').on('resize.cover', () => { this.resize(); });
+		Util.renderLink($(ReactDOM.findDOMNode(this)));
+		$(window).unbind('resize.cover').on('resize.cover', () => { this.resize(); });
 	};
 	
 	componentDidUpdate () {
 		this.resize();
+
+		Util.renderLink($(ReactDOM.findDOMNode(this)));
 	};
 	
 	componentWillUnmount () {
@@ -252,9 +267,6 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 			data: {
 				rootId: rootId,
 				value: object.layout,
-				onChange: (layout: I.ObjectLayout) => {
-					DataUtil.pageSetLayout(rootId, layout);
-				},
 			}
 		});
 	};
@@ -327,6 +339,13 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 	};
 	
 	onEdit (e: any) {
+		const { rootId } = this.props;
+		const object = detailStore.get(rootId, rootId, Constant.coverRelationKeys, true);
+
+		this.coords.x = object.coverX;
+		this.coords.y = object.coverY;
+		this.scale = object.coverScale;
+
 		this.setState({ isEditing: true });
 	};
 	
@@ -334,15 +353,18 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 		this.setState({ loading: true });
 	};
 	
-	onUpload (hash: string) {
+	onUpload (type: I.CoverType, hash: string) {
 		const { rootId } = this.props;
 
 		this.old = detailStore.get(rootId, rootId, Constant.coverRelationKeys, true);
+		this.coords.x = 0;
+		this.coords.y = -0.25;
+		this.scale = 0;
 
-		DataUtil.pageSetCover(rootId, I.CoverType.Upload, hash, 0, -0.5);
-
-		this.loaded = false;
-		this.setState({ loading: false, isEditing: true, justUploaded: true });
+		DataUtil.pageSetCover(rootId, type, hash, this.coords.x, this.coords.y, this.scale, () => {
+			this.loaded = false;
+			this.setState({ loading: false, isEditing: true, justUploaded: true });
+		});
 	};
 	
 	onSave (e: any) {
@@ -382,7 +404,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 		const object = detailStore.get(rootId, rootId, Constant.coverRelationKeys, true);
 		const { coverId, coverType } = object;
 		const node = $(ReactDOM.findDOMNode(this));
-		const isImage = [ I.CoverType.Upload, I.CoverType.Image ].indexOf(coverType) >= 0;
+		const isImage = DataUtil.coverIsImage(coverType);
 		
 		if (!isImage || !node.hasClass('wrap')) {
 			return;
@@ -415,8 +437,8 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 			this.cover.css({ opacity: 0 });
 			el.onload = cb;
 		};
-		
-		if (coverType == I.CoverType.Upload) {
+
+		if ([ I.CoverType.Upload, I.CoverType.Source ].includes(coverType)) {
 			el.src = commonStore.imageUrl(coverId, Constant.size.cover);
 		};
 
@@ -519,7 +541,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 
 		this.rect.cw = rect.width;
 		this.rect.ch = rect.height;
-		
+
 		this.x = coverX * this.rect.cw;
 		this.y = coverY * this.rect.ch;
 

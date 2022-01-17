@@ -1,8 +1,9 @@
-import { I, C, focus } from 'ts/lib';
+import { I, C, focus, analytics } from 'ts/lib';
 import { commonStore, authStore, blockStore, detailStore, dbStore } from 'ts/store';
 
 const Constant = require('json/constant.json');
 const { ipcRenderer } = window.require('electron');
+const { dialog } = window.require('@electron/remote');
 
 class Action {
 
@@ -44,10 +45,20 @@ class Action {
 
 		C.ObjectSearchUnsubscribe([ subId ]);
 	};
+
+	upload (type: I.FileType, rootId: string, blockId: string, url: string, path: string, callBack?: (message: any) => void) {
+		C.BlockUpload(rootId, blockId, url, path, (message: any) => {
+			if (callBack) {
+				callBack(message);
+			};
+
+			analytics.event('UploadMedia', { type: type, middleTime: message.middleTime });
+		});
+	};
 	
 	download (block: I.Block) {
 		const { content } = block;
-		const { hash } = content;
+		const { type, hash } = content;
 
 		if (!hash) {
 			return;
@@ -55,12 +66,20 @@ class Action {
 		
 		const url = block.isFileImage() ? commonStore.imageUrl(hash, Constant.size.image) : commonStore.fileUrl(hash);
 		ipcRenderer.send('download', url);
+
+		analytics.event('DownloadMedia', { type });
 	};
 
-	duplicate (rootId: string, blockId: string, blockIds: string[]) {
+	duplicate (rootId: string, blockId: string, blockIds: string[], callBack?: (message: any) => void) {
 		C.BlockListDuplicate(rootId, blockIds, blockId, I.BlockPosition.Bottom, (message: any) => {
 			const lastId = message.blockIds && message.blockIds.length ? message.blockIds[message.blockIds.length - 1] : '';
 			this.focusToEnd(rootId, lastId);
+
+			if (callBack) {
+				callBack(message);
+			};
+
+			analytics.event('DuplicateBlock', { count: message.blockIds.length });
 		});
 	};
 
@@ -73,6 +92,8 @@ class Action {
 			if (next) {
 				this.focusToEnd(rootId, next.id);
 			};
+
+			analytics.event('DeleteBlock', { count: blockIds.length });
 		});
 	};
 
@@ -86,7 +107,28 @@ class Action {
 		focus.set(id, { from: length, to: length });
 		focus.apply();
 	};
-		
+
+	export (ids: string[], format: I.ExportFormat, zip: boolean, nested: boolean, files: boolean) {
+		const options = { 
+			properties: [ 'openDirectory' ],
+		};
+
+		dialog.showOpenDialog(options).then((result: any) => {
+			const files = result.filePaths;
+			if ((files == undefined) || !files.length) {
+				return;
+			};
+
+			C.Export(files[0], ids, format, zip, nested, files, (message: any) => {
+				if (message.error.code) {
+					return;
+				};
+
+				ipcRenderer.send('pathOpen', files[0]);
+			});
+		});
+	};
+
 };
 
 export default new Action();

@@ -26,7 +26,7 @@
 
 			.txt { width: calc(100% - 74px); line-height: 20px; height: 40px; display: flex; flex-direction: column; }
 		}
-		.item.empty { padding: 13px 16px; }
+		.item.empty { margin: 8px 0px; padding: 14px 16px; }
 
 		.item:hover, .item.hover {
 			.buttons { opacity: 1; }

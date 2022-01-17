@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { I, C, DataUtil, Util, translate } from 'ts/lib';
+import { I, C, DataUtil, Util, translate, analytics } from 'ts/lib';
 import { Cover } from 'ts/component';
 import { detailStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -31,7 +31,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 		const sections = this.getSections();
 		const object = detailStore.get(rootId, rootId, [ 'coverType' ], true);
 		const { coverType } = object;
-		const canEdit = coverType && [ I.CoverType.Upload, I.CoverType.Image ].indexOf(coverType) >= 0;
+		const canEdit = DataUtil.coverIsImage(coverType);
 
 		const Section = (item: any) => (
 			<div className="section">
@@ -119,8 +119,10 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 				};
 
 				if (onUpload) {
-					onUpload(message.hash);
+					onUpload(I.CoverType.Upload, message.hash);
 				};
+
+				analytics.event('SetCover', { type: I.CoverType.Upload });
 			});
 		});
 	};
@@ -138,22 +140,24 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 	};
 
 	onRemove (e: any) {
-		const { param } = this.props;
+		const { param, close } = this.props;
 		const { data } = param;
 		const { rootId } = data;
 
 		DataUtil.pageSetCover(rootId, I.CoverType.None, '');
-		this.props.close();
+		close();
+
+		analytics.event('RemoveCover');
 	};
 
 	onSelect (e: any, item: any) {
-		const { param } = this.props;
+		const { param, close } = this.props;
 		const { data } = param;
 		const { rootId, onSelect, onUpload, onUploadStart } = data;
 		const object = detailStore.get(rootId, rootId, Constant.coverRelationKeys, true);
 
 		if (!object.coverId) {
-			this.props.close();
+			close();
 		};
 
 		if (item.type == I.CoverType.Source) {
@@ -161,23 +165,21 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 				onUploadStart();
 			};
 
-			console.log(item);
-
-			/*
-			C.UploadFile(item.full, '', I.FileType.Image, true, (message: any) => {
+			C.UnsplashDownload(item.id, (message: any) => {
 				if (message.error.code) {
 					return;
 				};
 
-				if (onUpload) {
-					onUpload(message.hash);
-				};
+				onUpload(item.type, message.image.hash);
 			});
-			*/
+
+			close();
 		} else
 		if (onSelect) {
 			onSelect(item);
 		};
+
+		analytics.event('SetCover', { type: item.type, id: item.id });
 	};
 
 	getSections () {

@@ -14,7 +14,7 @@ html.themeDark {
 
     #root > .loaderWrapper { background: $colorBlack; }
     #root > .loaderWrapper {
-        .logo { background-image: url('~img/theme/dark/logo/color.svg'); }
+        .logo { background-image: url('#{$themePath}/logo/color.svg'); }
     }
 
     ::selection { color: $colorBlack; }
@@ -55,6 +55,8 @@ html.themeDark {
     .isTag.tagColor-teal { color: $colorTeal !important; background: rgba(15, 200, 186, 0.25) !important; }
     .isTag.tagColor-lime { color: $colorLime !important; background: rgba(93, 212, 0, 0.25) !important; }
 
+    .isStatus.tagColor-default { color: $colorPrimary !important; }
+
     /* Components */
     /* ---------------------------------------------------------------- */
 
@@ -85,7 +87,7 @@ html.themeDark {
     .select { border-color: $colorLinePrimary; }
     .select:hover, .select.active { background: $colorHover; }
     .select {
-        .icon.arrow { background-image: url('~img/theme/dark/arrow/select/dark.svg') !important; }
+        .icon.arrow { background-image: url('#{$themePath}/arrow/select/dark.svg') !important; }
     }
 
     .inputWithFile { background: $colorHover; color: $colorSecondary; border-color: transparent; }
@@ -100,9 +102,9 @@ html.themeDark {
         .item.add { border-color: $colorLinePrimary; }
         .item:before { background: $colorHover; }
 
-        .icon.arrow { background-image: url('~img/theme/dark/arrow/template0.svg'); }
-        .icon.arrow:hover { background-image: url('~img/theme/dark/arrow/template1.svg'); }
-        .icon.arrow.disabled:hover { background-image: url('~img/theme/dark/arrow/template0.svg'); }
+        .icon.arrow { background-image: url('#{$themePath}/arrow/template0.svg'); }
+        .icon.arrow:hover { background-image: url('#{$themePath}/arrow/template1.svg'); }
+        .icon.arrow.disabled:hover { background-image: url('#{$themePath}/arrow/template0.svg'); }
     }
 
     /* PreviewObject */
@@ -110,7 +112,7 @@ html.themeDark {
     .previewObject {
         .border { border-color: $colorLinePrimary; }
         .loaderWrapper { border-color: $colorLinePrimary; }
-        .icon.logo { background-image: url('~img/theme/dark/icon/type/logo.svg'); }
+        .icon.logo { background-image: url('#{$themePath}/icon/type/logo.svg'); }
         .heading {
             .iconObject { background-color: $colorBgIcon; box-shadow: 0px 0px 0px 1px $colorBlack inset; }
             .featured { color: $colorSecondary; }
@@ -154,13 +156,13 @@ html.themeDark {
         .pageItem.active { color: $colorOrange; }
         .pageItem.list:hover { color: $colorPrimary; }
 
-        .icon.arrow { background-image: url('~img/theme/dark/arrow/pager0.svg'); }
-        .icon.arrow:hover { background-image: url('~img/theme/dark/arrow/pager1.svg'); }
-        .icon.arrow.disabled:hover { background-image: url('~img/theme/dark/arrow/pager0.svg'); }
+        .icon.arrow { background-image: url('#{$themePath}/arrow/pager0.svg'); }
+        .icon.arrow:hover { background-image: url('#{$themePath}/arrow/pager1.svg'); }
+        .icon.arrow.disabled:hover { background-image: url('#{$themePath}/arrow/pager0.svg'); }
 
-        .icon.arrow.end { background-image: url('~img/theme/dark/arrow/pagerEnd0.svg'); cursor: pointer; }
-        .icon.arrow.end:hover { background-image: url('~img/theme/dark/arrow/pagerEnd1.svg'); }
-        .icon.arrow.end.disabled:hover { background-image: url('~img/theme/dark/arrow/pagerEnd0.svg'); }
+        .icon.arrow.end { background-image: url('#{$themePath}/arrow/pagerEnd0.svg'); cursor: pointer; }
+        .icon.arrow.end:hover { background-image: url('#{$themePath}/arrow/pagerEnd1.svg'); }
+        .icon.arrow.end.disabled:hover { background-image: url('#{$themePath}/arrow/pagerEnd0.svg'); }
     }
 
     /* Progress */
@@ -177,7 +179,7 @@ html.themeDark {
 
     /* Icon */
 
-    .icon.ghost { background-image: url('~img/theme/dark/icon/ghost.svg'); }
+    .icon.ghost { background-image: url('#{$themePath}/icon/ghost.svg'); }
 
     /* IconObject */
 
@@ -198,16 +200,16 @@ html.themeDark {
         .btn:hover { color: $colorPrimary; }
 
         .btn {
-            .icon.icon { background-image: url('~img/theme/dark/icon/add/icon0.svg'); }
-            .icon.addCover { background-image: url('~img/theme/dark/icon/add/cover0.svg'); }
-            .icon.layout { background-image: url('~img/theme/dark/icon/add/layout0.svg'); }
-            .icon.relation { background-image: url('~img/theme/dark/icon/add/relation0.svg');  }
+            .icon.icon { background-image: url('#{$themePath}/icon/add/icon0.svg'); }
+            .icon.addCover { background-image: url('#{$themePath}/icon/add/cover0.svg'); }
+            .icon.layout { background-image: url('#{$themePath}/icon/add/layout0.svg'); }
+            .icon.relation { background-image: url('#{$themePath}/icon/add/relation0.svg');  }
         }
         .btn:hover, .btn.hover {
-            .icon.icon { background-image: url('~img/theme/dark/icon/add/icon1.svg'); }
-            .icon.addCover { background-image: url('~img/theme/dark/icon/add/cover1.svg'); }
-            .icon.layout { background-image: url('~img/theme/dark/icon/add/layout1.svg'); }
-            .icon.relation { background-image: url('~img/theme/dark/icon/add/relation1.svg');  }
+            .icon.icon { background-image: url('#{$themePath}/icon/add/icon1.svg'); }
+            .icon.addCover { background-image: url('#{$themePath}/icon/add/cover1.svg'); }
+            .icon.layout { background-image: url('#{$themePath}/icon/add/layout1.svg'); }
+            .icon.relation { background-image: url('#{$themePath}/icon/add/relation1.svg');  }
         }
     }
 
@@ -238,14 +240,14 @@ html.themeDark {
         .side {
             .item { color: $colorSecondary; }
             .item {
-                .icon.arrow { background-image: url('~img/theme/dark/arrow/history0.svg'); margin: 0px; }
+                .icon.arrow { background-image: url('#{$themePath}/arrow/history0.svg'); margin: 0px; }
             }
         }
         
 		.item.grey:hover { color: $colorPrimary; }
 
 		.item:hover {
-			.icon.arrow { background-image: url('~img/theme/dark/arrow/history1.svg'); }
+			.icon.arrow { background-image: url('#{$themePath}/arrow/history1.svg'); }
 		}
     }
 

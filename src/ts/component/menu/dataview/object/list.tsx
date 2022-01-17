@@ -299,10 +299,9 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 				value = value.slice(value.length - maxCount, value.length);
 			};
 
-			data.value = value;
-
 			onChange(value, () => {
-				menuStore.updateData(MENU_ID, { value: value });
+				menuStore.updateData(this.props.id, { value });
+				menuStore.updateData(MENU_ID, { value });
 				position();
 			});
 		};

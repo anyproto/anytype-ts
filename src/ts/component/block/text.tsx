@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Select, Marker, Loader, IconObject, Icon } from 'ts/component';
-import { I, C, keyboard, Key, Util, DataUtil, Mark, focus, Storage, translate } from 'ts/lib';
+import { I, C, keyboard, Key, Util, DataUtil, Mark, focus, Storage, translate, analytics } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { getRange } from 'selection-ranges';
 import { commonStore, blockStore, detailStore, menuStore } from 'ts/store';
@@ -210,13 +210,18 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 	
 	componentDidUpdate () {
 		const { block } = this.props;
-		const { content } = block
+		const { content } = block;
+		const { focused } = focus.state;
 
 		this.marks = Util.objectCopy(content.marks || []);
 		this.setValue(content.text);
 
 		if (content.text) {
 			this.placeholderHide();
+		};
+
+		if (focused == block.id) {
+			focus.apply();
 		};
 	};
 	
@@ -604,19 +609,32 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		const menuOpenAdd = menuStore.isOpen('blockAdd');
 		const menuOpenMention = menuStore.isOpen('blockMention');
 		const menuOpenSmile = menuStore.isOpen('smile');
+		const saveKeys: string[] = [
+			`${cmd}+shift+arrowup`, 
+			`${cmd}+shift+arrowdown`, 
+			`${cmd}+c`, 
+			`${cmd}+x`, 
+			`${cmd}+d`, 
+			`${cmd}+a`,
+		];
 
 		keyboard.shortcut('enter, shift+enter', e, (pressed: string) => {
-			if (block.isTextCode() && (pressed == 'enter')) {
-				return;
-			};
-			if (block.isText() && !block.isTextCode() && pressed.match('shift')) {
-				return;
-			};
 			if (menuOpen) {
+				e.preventDefault();
 				return;
 			};
 
-			e.preventDefault();
+			let pd = true;
+			if (block.isTextCode() && (pressed == 'enter')) {
+				pd = false;
+			};
+			if (block.isText() && !block.isTextCode() && pressed.match('shift')) {
+				pd = false;
+			};
+			if (pd) {
+				e.preventDefault();
+			};
+			
 			DataUtil.blockSetText(rootId, block, value, this.marks, true, () => {
 				onKeyDown(e, value, this.marks, range);
 			});
@@ -628,7 +646,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			keyboard.disableContext(false);
 		});
 
-		keyboard.shortcut(`${cmd}+shift+arrowup, ${cmd}+shift+arrowdown, ${cmd}+c, ${cmd}+x, ${cmd}+d, ${cmd}+a`, e, (pressed: string) => {
+		keyboard.shortcut(saveKeys.join(' '), e, (pressed: string) => {
 			e.preventDefault();
 
 			DataUtil.blockSetText(rootId, block, value, this.marks, true, () => {
@@ -739,6 +757,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			'```':			 I.TextStyle.Code,
 		};
 		const Length: any = {};
+
 		Length[I.TextStyle.Bulleted] = 1;
 		Length[I.TextStyle.Checkbox] = 2;
 		Length[I.TextStyle.Numbered] = 2;
@@ -752,12 +771,20 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		const menuOpenAdd = menuStore.isOpen('blockAdd');
 		const menuOpenMention = menuStore.isOpen('blockMention');
 		
+		let ret = false;
 		let value = this.getValue();
 		let cmdParsed = false;
+		let newBlock: any = {};
 		let cb = (message: any) => {
 			keyboard.setFocus(false);
 			focus.set(message.blockId, { from: 0, to: 0 });
 			focus.apply();
+
+			analytics.event('CreateBlock', { 
+				middleTime: message.middleTime, 
+				type: newBlock.type, 
+				style: newBlock.content?.style,
+			});
 		};
 		let symbolBefore = range ? value[range.from - 1] : '';
 		let isSpaceBefore = range ? (!range.from || (value[range.from - 2] == ' ') || (value[range.from - 2] == '\n')) : false;
@@ -812,26 +839,12 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 
 		// Make div
 		if (value == '---') {
-			C.BlockCreate({ type: I.BlockType.Div }, rootId, id, I.BlockPosition.Replace, cb);
+			newBlock.type = I.BlockType.Div;
 			cmdParsed = true;
 		};
 		
-		// Make file
-		if (value == '/file') {
-			C.BlockCreate({ type: I.BlockType.File, content: { type: I.FileType.File } }, rootId, id, I.BlockPosition.Replace, cb);
-			cmdParsed = true;
-		};
-		
-		// Make image
-		if (value == '/image') {
-			C.BlockCreate({ type: I.BlockType.File, content: { type: I.FileType.Image } }, rootId, id, I.BlockPosition.Replace, cb);
-			cmdParsed = true;
-		};
-		
-		// Make video
-		if (value == '/video') {
-			C.BlockCreate({ type: I.BlockType.File, content: { type: I.FileType.Video } }, rootId, id, I.BlockPosition.Replace, cb);
-			cmdParsed = true;
+		if (newBlock.type) {
+			C.BlockCreate(newBlock, rootId, id, I.BlockPosition.Replace, cb);
 		};
 
 		if (block.canHaveMarks()) {
@@ -848,18 +861,16 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 					value = value.replace(reg, (s: string, p: string) => { return s.replace(p, ''); });
 					this.marks = Mark.adjust(this.getMarksFromHtml().marks, 0, -(Length[style] + 1));
 
-					const newBlock: any = { 
-						type: I.BlockType.Text, 
-						fields: {},
-						content: { 
-							...content, 
-							marks: this.marks,
-							checked: false,
-							text: value, 
-							style: style,
-						},
+					newBlock.type = I.BlockType.Text;
+					newBlock.fields = {};
+					newBlock.content = { 
+						...content, 
+						marks: this.marks,
+						checked: false,
+						text: value, 
+						style: style,
 					};
-					
+
 					if (style == I.TextStyle.Code) {
 						newBlock.fields = { lang: (Storage.get('codeLang') || Constant.default.codeLang) };
 						newBlock.content.marks = [];
@@ -877,10 +888,6 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			return;
 		};
 
-		keyboard.shortcut('backspace', e, (pressed: string) => {
-			menuStore.close('blockContext');
-		});
-
 		this.placeholderCheck();
 
 		if (block.canHaveMarks()) {
@@ -896,7 +903,18 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			};
 		};
 
-		this.setText(this.marks, false);
+		keyboard.shortcut('backspace, delete', e, (pressed: string) => {
+			menuStore.close('blockContext');
+
+			this.marks = Mark.checkRanges(value, this.marks);
+			DataUtil.blockSetText(rootId, block, value, this.marks, true);
+
+			ret = true;
+		});
+
+		if (!ret) {
+			this.setText(this.marks, false);
+		};
 	};
 
 	onMention () {
@@ -1008,6 +1026,8 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			if (callBack) {
 				callBack();
 			};
+
+			analytics.event('Writing');
 		});
 	};
 	
@@ -1041,6 +1061,17 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 
 		if (!this.preventSaveOnBlur) {
 			this.setText(this.marks, true);
+		};
+
+		let key = '';
+		if (block.isTextTitle()) {
+			key = 'SetObjectTitle';
+		};
+		if (block.isTextDescription()) {
+			key = 'SetObjectDescription';
+		};
+		if (key) {
+			analytics.event(key);
 		};
 	};
 	

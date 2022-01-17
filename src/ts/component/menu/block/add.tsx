@@ -521,11 +521,19 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 			};
 
 			if (item.isBgColor) {
-				C.BlockListSetBackgroundColor(rootId, [ blockId ], item.value, onCommand);
+				C.BlockListSetBackgroundColor(rootId, [ blockId ], item.value, (message: any) => {
+					onCommand(message);
+
+					analytics.event('ChangeBlockBackground', { color: item.value, count: 1 });
+				});
 			};
 
 			if (item.isAlign) {
-				C.BlockListSetAlign(rootId, [ blockId ], item.itemId, onCommand);
+				C.BlockListSetAlign(rootId, [ blockId ], item.itemId, (message: any) => {
+					onCommand(message);
+
+					analytics.event('ChangeBlockAlign', { align: item.itemId, count: 1 });
+				});
 			};
 
 			if (item.isAction) {
@@ -599,7 +607,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 
 							DataUtil.objectOpenPopup({ ...details, id: message.targetId });
 
-							analytics.event('ObjectCreate', {
+							analytics.event('CreateObject', {
 								objectType: item.objectTypeId,
 								layout: template?.layout,
 								template: (template && template.templateIsBundled ? template.id : 'custom'),
@@ -643,6 +651,8 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 								$(`#block-${blockId} .info`).trigger('click');
 							}, Constant.delay.menu);
 						};
+
+						analytics.event('CreateBlock', { type: item.type, style: param.content.style, params: { fileType: item.itemId } });
 					});
 				};
 			};

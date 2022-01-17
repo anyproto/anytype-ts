@@ -1,9 +1,9 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { I, M, C, DataUtil } from 'ts/lib';
+import { I, M, C, DataUtil, analytics } from 'ts/lib';
 import { Block, Drag, Button } from 'ts/component';
-import { commonStore, blockStore } from 'ts/store';
+import { commonStore, blockStore, detailStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any> {
@@ -162,11 +162,14 @@ const EditorHeaderPage = observer(class EditorHeaderPage extends React.Component
 
 	onClone (e: any) {
 		const { rootId } = this.props;
+		const object = detailStore.get(rootId, rootId);
 
 		C.CloneTemplate(rootId, (message: any) => {
 			if (message.id) {
 				DataUtil.objectOpen({ id: message.id });
 			};
+
+			analytics.event('CreateTemplate', { objectType: object.targetObjectType });
 		});
 	};
 

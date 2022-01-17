@@ -69,10 +69,10 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 
 			opts = (
 				<div className="section noLine">
-					<div className="name">Type of target object</div>
-					<MenuItemVertical 
-						id="object-type" 
-						onMouseEnter={this.onObjectType} 
+					<div className="name">Limit object Types</div>
+					<MenuItemVertical
+						id="object-type"
+						onMouseEnter={this.onObjectType}
 						arrow={!isReadonly}
 						{...typeProps}
 					/>
@@ -251,7 +251,11 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		};
 
 		const { getId } = this.props;
-		const relation = this.getRelation();
+		
+		let relation: any = this.getRelation();
+		if (!relation) {
+			relation = { format: this.format };
+		};
 
 		this.menuOpen('dataviewObjectValues', { 
 			element: `#${getId()} #item-object-type`,
@@ -269,9 +273,19 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 					const type = dbStore.getObjectType(it.id);
 					return { ...type, layout: I.ObjectLayout.Type };
 				},
-				onChange: (value: any) => {
+				onChange: (value: any, callBack?: () => void) => {
+					const vr = this.getViewRelation();
+
 					this.objectTypes = value;
 					this.forceUpdate();
+
+					if (vr) {
+						this.save();
+					};
+
+					if (callBack) {
+						callBack();
+					};
 				},
 			}
 		});
@@ -363,6 +377,8 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		};
 
 		this.save();
+		this.menuClose();
+		this.props.close();
 	};
 
 	onChange () {
@@ -411,28 +427,27 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		};
 
 		relation ? this.update(newRelation) : this.add(newRelation);
-
-		this.menuClose();
-		close();
 	};
 
 	add (newRelation: any) {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, getView, onChange } = data;
-		const view = getView();
+		const { rootId, blockId, addCommand, onChange } = data;
 
-		DataUtil.dataviewRelationAdd(rootId, blockId, newRelation, view, onChange);
+		if (addCommand) {
+			addCommand(rootId, blockId, newRelation, onChange);
+		};
 	};
 
 	update (newRelation: any) {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, getView, onChange } = data;
-		const view = getView();
+		const { rootId, blockId, updateCommand } = data;
 		const relation = this.getViewRelation();
-		
-		DataUtil.dataviewRelationUpdate(rootId, blockId, Object.assign(relation, newRelation), view, onChange);
+
+		if (updateCommand) {
+			updateCommand(rootId, blockId, Object.assign(relation, newRelation));
+		};
 	};
 
 	getRelation (): I.Relation {

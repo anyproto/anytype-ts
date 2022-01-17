@@ -13,6 +13,7 @@ const $ = require('jquery');
 const { dialog } = window.require('@electron/remote');
 const { ipcRenderer } = window.require('electron');
 const Constant = require('json/constant.json');
+const MENU_ID = 'dataviewFileList';
 
 const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends React.Component<Props, {}> {
 
@@ -21,6 +22,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 	constructor (props: any) {
 		super(props);
 
+		this.onSortStart = this.onSortStart.bind(this);
 		this.onSortEnd = this.onSortEnd.bind(this);
 		this.onAdd = this.onAdd.bind(this);
 		this.onUpload = this.onUpload.bind(this);
@@ -72,7 +74,9 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 					<div className="clickable" onClick={(e: any) => { DataUtil.objectOpenPopup(item); }}>
 						{content}
 					</div>
-					<Icon className="more" onClick={(e: any) => { this.onMore(e, item); }} />
+					<div className="buttons">
+						<Icon className="more" onClick={(e: any) => { this.onMore(e, item); }} />
+					</div>
 				</div>
 			);
 		});
@@ -102,6 +106,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 							lockToContainerEdges={true}
 							transitionDuration={150}
 							distance={10}
+							onSortStart={this.onSortStart}
 							onSortEnd={this.onSortEnd}
 							useDragHandle={true}
 							helperClass="isDragging"
@@ -121,20 +126,31 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 		this._isMounted = false;
 		menuStore.close('searchObject');
     };
+
+	onSortStart () {
+		const { dataset } = this.props;
+		const { selection } = dataset;
+
+		selection.preventSelect(true);
+	};
     
     onSortEnd (result: any) {
 		const { oldIndex, newIndex } = result;
-		const { param } = this.props;
+		const { param, dataset, id } = this.props;
+		const { selection } = dataset;
 		const { data } = param;
 		
 		let value = Util.objectCopy(data.value || []);
 		value = arrayMove(value, oldIndex, newIndex);
 
+		menuStore.updateData(id, { value });
 		this.save(value);
+
+		selection.preventSelect(false);
     };
 
 	onAdd (e: any) {
-		const { getId, getSize, close, param } = this.props;
+		const { getId, getSize, close, param, id } = this.props;
 		const { data } = param;
 		const { classNameWrap } = param;
 
@@ -154,8 +170,12 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 				filters: [
 					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: [ I.ObjectLayout.File, I.ObjectLayout.Image ] }
 				],
-				onChange: (value: string[]) => {
+				onChange: (value: string[], callBack?: () => void) => {
 					this.save(value);
+
+					if (callBack) {
+						callBack();
+					};
 				}
 			}
 		});
@@ -196,12 +216,12 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 		const { onChange } = data;
 
 		onChange(value, () => {
-			menuStore.updateData(id, { value: value });
+			menuStore.updateData(id, { value });
 		});
 	};
 
 	onMore (e: any, item: any) {
-		const { getId, param, id } = this.props;
+		const { getId, param, id, position } = this.props;
 		const { data, classNameWrap } = param;
 		const { onChange } = data;
 		const element = $(`#${getId()} #item-${item.id}`);
@@ -246,8 +266,9 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 							value = Util.arrayUnique(value);
 
 							onChange(value, () => {
-								menuStore.updateData(id, { value: value });
-								menuStore.updateData('dataviewFileList', { value: value });
+								menuStore.updateData(id, { value });
+								menuStore.updateData(MENU_ID, { value });
+								position();
 							});
 							break;
 					};

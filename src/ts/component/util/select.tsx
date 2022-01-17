@@ -12,15 +12,15 @@ interface Props {
 	menuClassName?: string;
 	menuClassNameWrap?: string;
 	menuWidth?: number;
-	value: string;
+	value: any;
 	options: I.Option[];
 	noFilter: boolean;
 	horizontal?: I.MenuDirection;
-	onChange? (id: string): void;
+	onChange? (id: any): void;
 };
 
 interface State {
-	value: string;
+	value: any;
 	options: I.Option[];
 };
 

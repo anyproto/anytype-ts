@@ -62,7 +62,7 @@ const LinkPreview = (url: string, callBack?: (message: any) => void) => {
 	dispatcher.request('linkPreview', request, callBack);
 };
 
-const Export = (path: string, ids: string[], format: I.ExportFormat, zip: boolean, includeNested: boolean, callBack?: (message: any) => void) => {
+const Export = (path: string, ids: string[], format: I.ExportFormat, zip: boolean, includeNested: boolean, includeFiles: boolean, callBack?: (message: any) => void) => {
 	const request = new Rpc.Export.Request();
 
 	request.setPath(path);
@@ -70,6 +70,7 @@ const Export = (path: string, ids: string[], format: I.ExportFormat, zip: boolea
 	request.setFormat(format);
 	request.setZip(zip);
 	request.setIncludenested(includeNested);
+	request.setIncludefiles(includeFiles);
 
 	dispatcher.request('export', request, callBack);
 };
@@ -945,6 +946,10 @@ const ObjectSearch = (filters: I.Filter[], sorts: I.Sort[], keys: string[], full
 };
 
 const OnSubscribe = (subId: string, keys: string[], message: any) => {
+	if (message.error.code) {
+		return;
+	};
+
 	if (message.counters) {
 		dbStore.metaSet(subId, '', { total: message.counters.total });
 	};
@@ -1247,6 +1252,14 @@ const WorkspaceSetIsHighlighted = (objectId: string, isHightlighted: boolean, ca
 	dispatcher.request('workspaceSetIsHighlighted', request, callBack);
 };
 
+const UnsplashDownload = (id: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.UnsplashDownload.Request();
+	
+	request.setDownloadrequest(id);
+
+	dispatcher.request('unsplashDownload', request, callBack);
+};
+
 export {
 	VersionGet,
 	DebugSync,
@@ -1395,4 +1408,6 @@ export {
 	WorkspaceCreate,
 	WorkspaceSelect,
 	WorkspaceSetIsHighlighted,
+
+	UnsplashDownload,
 };

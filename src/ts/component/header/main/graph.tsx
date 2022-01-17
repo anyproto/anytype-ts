@@ -116,10 +116,7 @@ const HeaderMainGraph = observer(class HeaderMainEdit extends React.Component<Pr
 
 		popupStore.open('search', {
 			preventResize: true, 
-			data: {
-				rootId: rootId,
-				type: I.NavigationType.Go, 
-			},
+			data: { rootId },
 		});
 	};
 

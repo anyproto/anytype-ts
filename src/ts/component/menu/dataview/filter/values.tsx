@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, DataUtil, Util, translate, keyboard } from 'ts/lib';
+import { I, DataUtil, Util, translate, keyboard, analytics } from 'ts/lib';
 import { Select, Tag, Icon, IconObject, Input, MenuItemVertical } from 'ts/component';
 import { menuStore, dbStore, detailStore } from 'ts/store';
 import { observable } from 'mobx';
@@ -391,6 +391,8 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 
 			view.setFilter(itemId, item);
 
+			analytics.event('ChangeFilterValue', { condition: item.condition });
+
 			save();
 			this.forceUpdate();
 		}, timeout ? TIMEOUT : 0);
@@ -447,7 +449,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 
 		menuStore.closeAll([ 'select' ], () => {
 			if (menuStore.isOpen('dataviewCalendar')) {
-				menuStore.updateData('dataviewCalendar', { value: value });
+				menuStore.updateData('dataviewCalendar', { value });
 			} else {
 				this.onCalendar(value);
 			};

@@ -185,13 +185,13 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 			// Undo
 			keyboard.shortcut(`${cmd}+z`, e, (pressed: string) => {
 				e.preventDefault();
-				C.BlockUndo(rootId, (message: any) => { focus.clear(true); });
+				keyboard.onUndo(rootId, (message: any) => { focus.clear(true); });
 			});
 
 			// Redo
 			keyboard.shortcut(`${cmd}+shift+z`, e, (pressed: string) => {
 				e.preventDefault();
-				C.BlockRedo(rootId, (message: any) => { focus.clear(true); });
+				keyboard.onRedo(rootId, (message: any) => { focus.clear(true); });
 			});
 		};
 		
@@ -442,13 +442,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 
 		const value = this.getValue();
 
-		blockStore.update(rootId, { 
-			...block, 
-			content: { 
-				...block.content, 
-				text: value,
-			},
-		});
+		blockStore.updateContent(rootId, block.id, { text: value });
 		C.BlockSetLatexText(rootId, block.id, value, callBack);
 	};
 

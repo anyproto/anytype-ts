@@ -115,8 +115,8 @@ initColor = () => {
 		case 'dark':
 			Color = {
 				bg: '#2c2b27',
-				text: '#cbc9bd',
-				iconText: '#cbc9bd',
+				text: '#dfddd3',
+				iconText: '#dfddd3',
 				link: {
 					0: '#525148',
 					1: '#8c9ea5',
@@ -157,34 +157,47 @@ initForces = () => {
 };
 
 updateForces = () => {
+	const center = forceProps.center;
+	const charge = forceProps.charge;
+	const collide = forceProps.collide;
+	const link = forceProps.link;
+	const forceX = forceProps.forceX;
+	const forceY = forceProps.forceY;
+
 	simulation.force('center')
-	.x(width * forceProps.center.x)
-	.y(height * forceProps.center.y);
+	.x(width * center.x)
+	.y(height * center.y);
 
 	simulation.force('charge')
-	.strength(forceProps.charge.strength * forceProps.charge.enabled)
-	.distanceMin(forceProps.charge.distanceMin)
-	.distanceMax(forceProps.charge.distanceMax);
+	.strength(charge.strength * charge.enabled)
+	.distanceMin(charge.distanceMin)
+	.distanceMax(charge.distanceMax);
 
 	simulation.force('collide')
-	.strength(forceProps.collide.strength * forceProps.collide.enabled)
-	.radius(10 * forceProps.collide.radius)
-	.iterations(forceProps.collide.iterations);
+	.strength(collide.strength * collide.enabled)
+	.radius(10 * collide.radius)
+	.iterations(collide.iterations);
 
 	simulation.force('link')
 	.id(d => d.id)
-	.distance(forceProps.link.distance)
-	.strength(forceProps.link.strength * forceProps.link.enabled)
-	.iterations(forceProps.link.iterations)
-	.links(forceProps.link.enabled ? edges : []);
+	.distance(link.distance)
+	.strength(link.strength * link.enabled)
+	.iterations(link.iterations)
+	.links(link.enabled ? edges : []);
 
 	simulation.force('forceX')
-	.strength(forceProps.forceX.strength * forceProps.forceX.enabled)
-	.x(width * forceProps.forceX.x);
+	.strength((d) => {
+		const hasLinks = (d.sourceCnt + d.targetCnt) > 0;
+		return hasLinks ? 0 : forceX.strength * forceX.enabled;
+	})
+	.x(width * forceX.x);
 
 	simulation.force('forceY')
-	.strength(forceProps.forceY.strength * forceProps.forceY.enabled)
-	.y(height * forceProps.forceY.y);
+	.strength((d) => {
+		const hasLinks = (d.sourceCnt + d.targetCnt) > 0;
+		return hasLinks ? 0 : forceY.strength * forceY.enabled;
+	})
+	.y(height * forceY.y);
 
 	simulation.alpha(1).restart();
 };
@@ -507,7 +520,7 @@ const isIconCircle = (d) => {
 
 const nameCircleIcon = (d) => {
 	ctx.save();
-	ctx.font = font;  
+	ctx.font = d.font;  
 	ctx.fillStyle = Color.iconText;
 	ctx.textAlign = 'center';
 	ctx.textBaseline = 'middle';
