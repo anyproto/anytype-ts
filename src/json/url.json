@@ -5,8 +5,7 @@
 	"twitter": "https://twitter.com/AnytypeLabs",
 	"feedback": "https://community.anytype.io/composer",
 	"unsplash": {
-		"author": "https://unsplash.com/@%s?%s",
-		"site": "https://unsplash.com/?%s",
-		"utm": "utm_source=Anytype&utm_medium=referral"
+		"site": "https://unsplash.com/",
+		"utm": "?utm_source=Anytype&utm_medium=referral"
 	}
 }
