@@ -122,7 +122,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		let archive = null;
 		let fav = null;
 		let highlight = null;
-		let lockPage = null;
+		let pageLock = null;
 
 		let undo = { id: 'undo', name: 'Undo', withCaption: true, caption: `${cmd}+Z` };
 		let redo = { id: 'redo', name: 'Redo', withCaption: true, caption: `${cmd}+Shift+Z` };
@@ -132,10 +132,10 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		let turn = { id: 'turnObject', icon: 'object', name: 'Turn into object', arrow: true };
 		let align = { id: 'align', name: 'Align', icon: [ 'align', DataUtil.alignIcon(object.layoutAlign) ].join(' '), arrow: true };
 		let history = { id: 'history', name: 'Version history', withCaption: true, caption: (platform == I.Platform.Mac ? `${cmd}+Y` : `Ctrl+H`) };
-		let share = { id: 'sharePage', icon: 'share', name: 'Share' };
-		let removePage = { id: 'removePage', icon: 'remove', name: 'Delete' };
-		let removeBlock = { id: 'removeBlock', icon: 'remove', name: 'Delete' };
-		let exportPage = { id: 'exportPage', icon: 'export', name: 'Export' };
+		let share = { id: 'pageShare', icon: 'share', name: 'Share' };
+		let pageRemove = { id: 'pageRemove', icon: 'remove', name: 'Delete' };
+		let pageExport = { id: 'pageExport', icon: 'export', name: 'Export' };
+		let blockRemove = { id: 'blockRemove', icon: 'remove', name: 'Delete' };
 
 		if (object.isFavorite) {
 			fav = { id: 'unfav', name: 'Remove from Favorites' };
@@ -144,15 +144,15 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		};
 
 		if (isTemplate) {	
-			template = { id: 'createPage', icon: 'template', name: 'Create object' };
+			template = { id: 'pageCreate', icon: 'template', name: 'Create object' };
 		} else {
-			template = { id: 'createTemplate', icon: 'template', name: 'Use as a template' };
+			template = { id: 'templateCreate', icon: 'template', name: 'Use as a template' };
 		};
 
 		if (object.isArchived) {
-			archive = { id: 'unarchivePage', icon: 'restore', name: 'Restore from bin' };
+			archive = { id: 'pageUnarchive', icon: 'restore', name: 'Restore from bin' };
 		} else {
-			archive = { id: 'archivePage', icon: 'remove', name: 'Move to bin' };
+			archive = { id: 'pageArchive', icon: 'remove', name: 'Move to bin' };
 		};
 
 		if (object.isHighlighted) {
@@ -162,9 +162,9 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		};
 
 		if (block.fields.isLocked) {
-			lockPage = { id: 'unlockPage', icon: 'unlock', name: 'Unlock page' };
+			pageLock = { id: 'pageUnlock', icon: 'pageUnlock', name: 'Unlock page' };
 		} else {
-			lockPage = { id: 'lockPage', icon: 'lock', name: 'Lock page' };
+			pageLock = { id: 'pageLock', icon: 'pageLock', name: 'Lock page' };
 		};
 
 		// Restrictions
@@ -181,7 +181,8 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const allowedExport = config.experimental;
 
 		if (!allowedArchive)	 archive = null;
-		if (!allowedDelete)		 removePage = null;
+		if (!allowedDelete)		 pageRemove = null;
+		if (!allowedExport)		 pageExport = null;
 		if (!allowedShare)		 share = null;
 		if (!allowedHighlight)	 highlight = null;
 		if (!allowedSearch)		 search = null;
@@ -189,12 +190,11 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		if (!allowedBlock)		 undo = redo = null;
 		if (!allowedTemplate)	 template = null;
 		if (!allowedFav)		 fav = null;
-		if (!allowedExport)		 exportPage = null;
 
 		let sections = [];
 		if (block.isObjectType() || block.isObjectRelation() || block.isObjectFileKind() || block.isObjectSet() || block.isObjectSpace()) {
 			sections = [
-				{ children: [ archive, removePage ] },
+				{ children: [ archive, pageRemove ] },
 				{ children: [ fav, highlight ] },
 				{ children: [ search ] },
 				{ children: [ print ] },
@@ -203,10 +203,10 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		} else
 		if (block.isPage()) {
 			sections = [
-				{ children: [ undo, redo, history, archive, removePage ] },
-				{ children: [ fav, template, lockPage ] },
+				{ children: [ undo, redo, history, archive, pageRemove ] },
+				{ children: [ fav, template, pageLock ] },
 				{ children: [ search ] },
-				{ children: [ print, exportPage ] },
+				{ children: [ print, pageExport ] },
 				{ children: [ highlight ] },
 			];
 			sections = sections.map((it: any, i: number) => { return { ...it, id: 'page' + i }; });
@@ -216,7 +216,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				move,
 				align,
 				//{ id: 'copy', name: 'Duplicate' },
-				removeBlock,
+				blockRemove,
 			]});
 		};
 
@@ -404,10 +404,6 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				*/
 				break;
 				
-			case 'exportPage':
-				popupStore.open('export', { data: { rootId } });
-				break;
-
 			case 'history':
 				DataUtil.objectOpenEvent(e, { layout: I.ObjectLayout.History, id: object.id });
 				break;
@@ -418,8 +414,12 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			case 'search':
 				keyboard.onSearch();
 				break;
+
+			case 'pageExport':
+				popupStore.open('export', { data: { rootId } });
+				break;
 				
-			case 'archivePage':
+			case 'pageArchive':
 				C.ObjectSetIsArchived(rootId, true, (message: any) => {
 					if (message.error.code) {
 						return;
@@ -448,7 +448,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				});
 				break;
 
-			case 'unarchivePage':
+			case 'pageUnarchive':
 				C.ObjectSetIsArchived(rootId, false, (message: any) => {
 					if (message.error.code) {
 						return;
@@ -462,43 +462,19 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				});
 				break;
 
-			case 'fav':
-				C.ObjectSetIsFavorite(rootId, true, () => {
-					analytics.event('AddToFavorites', { count: 1 });
-				});
-				break;
-
-			case 'unfav':
-				C.ObjectSetIsFavorite(rootId, false, () => {
-					analytics.event('RemoveFromFavorites', { count: 1 });
-				});
-				break;
-
-			case 'lockPage':
+			case 'pageLock':
 				C.BlockListSetFields(rootId, [
 					{ blockId: blockId, fields: { ...block.fields, isLocked: true } },
 				]);
 				break;
 
-			case 'unlockPage':
+			case 'pageUnlock':
 				C.BlockListSetFields(rootId, [
 					{ blockId: blockId, fields: { ...block.fields, isLocked: false } },
 				]);
 				break;
 
-			case 'removeBlock':
-				C.BlockUnlink(rootId, [ blockId ], (message: any) => {
-					if (!isPopup) {
-						if (block.isPage()) {
-							Util.route('/main/index');
-						};
-					} else {
-						popupStore.close('page');
-					};
-				});
-				break;
-
-			case 'createPage':
+			case 'pageCreate':
 				DataUtil.pageCreate('', '', {}, I.BlockPosition.Bottom, rootId, {}, (message: any) => {
 					DataUtil.objectOpen({ id: message.targetId });
 
@@ -510,15 +486,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				});
 				break;
 
-			case 'createTemplate':
-				C.MakeTemplate(rootId, (message: any) => {
-					DataUtil.objectOpenPopup({ id: message.id, layout: object.layout });
-
-					analytics.event('CreateTemplate', { objectType: object.type });
-				});
-				break;
-
-			case 'removePage':
+			case 'pageRemove':
 				C.ObjectListDelete([ object.id ], (message: any) => {
 					if (block.isPage()) {
 						Util.route('/main/index');
@@ -528,7 +496,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				});
 				break;
 
-			case 'sharePage':
+			case 'pageShare':
 				C.ObjectShareByLink(object.id, (message: any) => {
 					if (message.error.code) {
 						return;
@@ -546,6 +514,38 @@ class MenuBlockMore extends React.Component<Props, {}> {
 							}
 						}
 					});
+				});
+				break;
+
+			case 'fav':
+				C.ObjectSetIsFavorite(rootId, true, () => {
+					analytics.event('AddToFavorites', { count: 1 });
+				});
+				break;
+
+			case 'unfav':
+				C.ObjectSetIsFavorite(rootId, false, () => {
+					analytics.event('RemoveFromFavorites', { count: 1 });
+				});
+				break;
+
+			case 'blockRemove':
+				C.BlockUnlink(rootId, [ blockId ], (message: any) => {
+					if (!isPopup) {
+						if (block.isPage()) {
+							Util.route('/main/index');
+						};
+					} else {
+						popupStore.close('page');
+					};
+				});
+				break;
+
+			case 'templateCreate':
+				C.MakeTemplate(rootId, (message: any) => {
+					DataUtil.objectOpenPopup({ id: message.id, layout: object.layout });
+
+					analytics.event('CreateTemplate', { objectType: object.type });
 				});
 				break;
 
