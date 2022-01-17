@@ -365,10 +365,14 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		
 		const { rootId } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
-		const allowed = !root?.fields.isLocked && blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Block ]);
+		const allowed = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Block ]);
 		const checkType = blockStore.checkBlockType(rootId);
 
 		if (!root || !allowed || checkType) {
+			return;
+		};
+
+		if (root.fields.isLocked) {
 			return;
 		};
 		
