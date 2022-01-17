@@ -68,27 +68,20 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 	};
 
 	load () {
-		$.ajax({
-			url: Util.sprintf(Url.unsplash.api, 24),
-			headers: {
-				'Authorization': 'Client-ID ' + Constant.unsplash,
-			},
-			type: 'GET',
-			contentType: 'application/json',
-			success: (data: any) => {
-				for (let item of data) {
-					this.items.push({
-						id: item.id,
-						type: I.CoverType.Source,
-						src: item.urls.thumb,
-						full: item.urls.full,
-						download: item.links.download,
-						user: item.user,
-					});
-				};
+		C.UnsplashSearch(24, (message: any) => {
+			if (message.error.code) {
+				return;
+			};
 
-				this.forceUpdate();
-			}
+			message.pictures.forEach((item: any) => {
+				this.items.push({
+					id: item.id,
+					type: I.CoverType.Source,
+					src: item.url + '&q=80&w=200',
+				});
+			});
+
+			this.forceUpdate();
 		});
 	};
 

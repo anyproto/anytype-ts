@@ -83,10 +83,23 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 		const allowedIcon = !object.iconEmoji && !object.iconImage && !root.isObjectTask();
 
 		let image = null;
+		let author = null;
 		let elements = null;
+		let content = null;
 
 		if (coverType == I.CoverType.Source) {
 			image = detailStore.get(rootId, coverId);
+			author = (
+				<div className="author">
+					Photo by <a href={Util.sprintf(Url.unsplash.author, 'anniespratt', Url.unsplash.utm)}>Annie Spratt</a> on <a href={Util.sprintf(Url.unsplash.site, Url.unsplash.utm)}>Unsplash</a>
+				</div>
+			);
+		};
+
+		if (isImage) { 
+			content = <img id="cover" src="" className={[ 'cover', 'type' + coverType, coverId ].join(' ')} />;
+		} else {
+			content = <Cover id={coverId} image={coverId} type={coverType} className={coverId} />;
 		};
 
 		if (isEditing) {
@@ -145,6 +158,14 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 			);
 		};
 
+		if (!readonly) {
+			elements = (
+				<div id="elements" className="elements editorControlElements">
+					{elements}
+				</div>
+			);
+		};
+
 		return (
 			<div 
 				className={[ 'wrap', (isEditing ? 'isEditing' : '') ].join(' ')} 
@@ -154,24 +175,9 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 				onDrop={this.onDrop}
 			>
 				{loading ? <Loader /> : ''}
-
-				{isImage ? (
-					<img id="cover" src="" className={[ 'cover', 'type' + coverType, coverId ].join(' ')} />
-				) : (
-					<Cover id={coverId} image={coverId} type={coverType} className={coverId} />
-				)}
-
-				{!readonly ? (
-					<div id="elements" className="elements editorControlElements">
-						{elements}
-					</div>
-				) : ''}
-
-				{coverType == I.CoverType.Source ? (
-					<div className="author">
-						Photo by <a href={Util.sprintf(Url.unsplash.author, 'anniespratt', Url.unsplash.utm)}>Annie Spratt</a> on <a href={Util.sprintf(Url.unsplash.site, Url.unsplash.utm)}>Unsplash</a>
-					</div>
-				) : ''}
+				{content}
+				{elements}
+				{author}
 			</div>
 		);
 	};

@@ -1252,10 +1252,18 @@ const WorkspaceSetIsHighlighted = (objectId: string, isHightlighted: boolean, ca
 	dispatcher.request('workspaceSetIsHighlighted', request, callBack);
 };
 
+const UnsplashSearch = (limit: number, callBack?: (message: any) => void) => {
+	const request = new Rpc.UnsplashSearch.Request();
+	
+	request.setMaxforrandom(limit);
+
+	dispatcher.request('unsplashSearch', request, callBack);
+};
+
 const UnsplashDownload = (id: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.UnsplashDownload.Request();
 	
-	request.setDownloadrequest(id);
+	request.setUnsplashphotoidrequest(id);
 
 	dispatcher.request('unsplashDownload', request, callBack);
 };
@@ -1409,5 +1417,6 @@ export {
 	WorkspaceSelect,
 	WorkspaceSetIsHighlighted,
 
+	UnsplashSearch,
 	UnsplashDownload,
 };

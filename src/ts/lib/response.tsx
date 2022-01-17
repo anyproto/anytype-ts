@@ -359,6 +359,12 @@ const WorkspaceCreate = (response: any) => {
 	};
 };
 
+const UnsplashSearch = (response: any) => {
+	return {
+		pictures: (response.getPicturesList() || []).map(Mapper.From.UnsplashPicture),
+	};
+};
+
 const UnsplashDownload = (response: any) => {
 	return {
 		image: Mapper.From.BlockFile(response.getImage()),
@@ -441,5 +447,6 @@ export {
 
 	WorkspaceCreate,
 
+	UnsplashSearch,
 	UnsplashDownload,
 };

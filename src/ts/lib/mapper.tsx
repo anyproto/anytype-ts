@@ -400,6 +400,15 @@ const Mapper = {
             };
         },
 
+		UnsplashPicture: (obj: any) => {
+			return {
+                id: obj.getId(),
+				url: obj.getUrl(),
+				artist: obj.getArtist(),
+				artistUrl: obj.getArtisturl(),
+            };
+		},
+
     },
 
 	//------------------------------------------------------------
