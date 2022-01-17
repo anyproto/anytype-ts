@@ -430,9 +430,100 @@ const Mapper = {
 
 		Fields: (obj: any) => {
 			const item = new Rpc.BlockList.Set.Fields.Request.BlockField();
+
 			item.setBlockid(obj.blockId);
 			item.setFields(Encode.encodeStruct(obj.fields || {}));
+
 			return item;
+		},
+
+		BlockLayout: (obj: any) => {
+			const content = new Model.Block.Content.Layout();
+			
+			content.setStyle(obj.style);
+
+			return content;
+		},
+
+		BlockText: (obj: any) => {
+			const marks = (obj.marks || []).map(Mapper.To.Mark);
+			const content = new Model.Block.Content.Text();
+
+			content.setText(obj.text);
+			content.setStyle(obj.style);
+			content.setChecked(obj.checked);
+			content.setColor(obj.color);
+			content.setMarks(new Model.Block.Content.Text.Marks().setMarksList(marks));
+
+			return content;
+		},
+
+		BlockFile: (obj: any) => {
+			const content = new Model.Block.Content.File();
+	
+			content.setHash(obj.hash);
+			content.setName(obj.name);
+			content.setType(obj.type);
+			content.setMime(obj.mime);
+			content.setSize(obj.size);
+			content.setAddedat(obj.addedAt);
+			content.setState(obj.state);
+
+			return content;
+		},
+
+		BlockBookmark: (obj: any) => {
+			const content = new Model.Block.Content.Bookmark();
+	
+			content.setUrl(obj.url);
+			content.setTitle(obj.title);
+			content.setDescription(obj.description);
+			content.setImagehash(obj.imageHash);
+			content.setFaviconhash(obj.faviconHash);
+			content.setType(obj.type);
+
+			return content;
+		},
+
+		BlockLink: (obj: any) => {
+			const content = new Model.Block.Content.Link();
+	
+			content.setStyle(obj.style);
+			content.setTargetblockid(obj.targetBlockId);
+
+			return content;
+		},
+
+		BlockDiv: (obj: any) => {
+			const content = new Model.Block.Content.Div();
+
+			content.setStyle(obj.style);
+
+			return content;
+		},
+
+		BlockRelation: (obj: any) => {
+			const content = new Model.Block.Content.Relation();
+
+			content.setKey(obj.key);
+
+			return content;
+		},
+
+		BlockLatex: (obj: any) => {
+			const content = new Model.Block.Content.Latex();
+	
+			content.setText(obj.text);
+
+			return content;
+		},
+
+		BlockDataview: (obj: any) => {
+			const content = new Model.Block.Content.Dataview();
+	
+			content.setViewsList(obj.views.map(Mapper.To.View));
+	
+			return content;
 		},
 
 		Block: (obj: any) => {
@@ -454,93 +545,39 @@ const Mapper = {
 			};
 
 			if (obj.type == I.BlockType.Layout) {
-                content = new Model.Block.Content.Layout();
-
-                content.setStyle(obj.content.style);
-    
-                block.setLayout(content);
+                block.setLayout(Mapper.To.BlockLayout(obj.content));
             };
 	
 			if (obj.type == I.BlockType.Text) {
-				const marks = (obj.content.marks || []).map(Mapper.To.Mark);
-	
-				content = new Model.Block.Content.Text();
-	
-				content.setText(obj.content.text);
-				content.setStyle(obj.content.style);
-				content.setChecked(obj.content.checked);
-				content.setColor(obj.content.color);
-				content.setMarks(new Model.Block.Content.Text.Marks().setMarksList(marks));
-	
-				block.setText(content);
+				block.setText(Mapper.To.BlockText(obj.content));
 			};
 	
 			if (obj.type == I.BlockType.File) {
-				content = new Model.Block.Content.File();
-	
-				content.setHash(obj.content.hash);
-				content.setName(obj.content.name);
-				content.setType(obj.content.type);
-				content.setMime(obj.content.mime);
-				content.setSize(obj.content.size);
-				content.setAddedat(obj.content.addedAt);
-				content.setState(obj.content.state);
-	
-				block.setFile(content);
+				block.setFile(Mapper.To.BlockFile(obj.content));
 			};
 	
 			if (obj.type == I.BlockType.Bookmark) {
-				content = new Model.Block.Content.Bookmark();
-	
-				content.setUrl(obj.content.url);
-				content.setTitle(obj.content.title);
-				content.setDescription(obj.content.description);
-				content.setImagehash(obj.content.imageHash);
-				content.setFaviconhash(obj.content.faviconHash);
-				content.setType(obj.content.type);
-	
-				block.setBookmark(content);
+				block.setBookmark(Mapper.To.BlockBookmark(obj.content));
 			};
 
 			if (obj.type == I.BlockType.Link) {
-				content = new Model.Block.Content.Link();
-	
-				content.setStyle(obj.content.style);
-				content.setTargetblockid(obj.content.targetBlockId);
-	
-				block.setLink(content);
+				block.setLink(Mapper.To.BlockLink(obj.content));
 			};
 
 			if (obj.type == I.BlockType.Div) {
-				content = new Model.Block.Content.Div();
-
-				content.setStyle(obj.content.style);
-	
-				block.setDiv(content);
+				block.setDiv(Mapper.To.BlockDiv(obj.content));
 			};
 
 			if (obj.type == I.BlockType.Relation) {
-				content = new Model.Block.Content.Relation();
-
-				content.setKey(obj.content.key);
-	
-				block.setRelation(content);
+				block.setRelation(Mapper.To.BlockRelation(obj.content));
 			};
 
 			if (obj.type == I.BlockType.Latex) {
-				content = new Model.Block.Content.Latex();
-	
-				content.setText(obj.content.text);
-	
-				block.setLatex(content);
+				block.setLatex(Mapper.To.BlockLatex(obj.content));
 			};
 
 			if (obj.type == I.BlockType.Dataview) {
-				content = new Model.Block.Content.Dataview();
-	
-				content.setViewsList(obj.content.views.map(Mapper.To.View));
-	
-				block.setDataview(content);
+				block.setDataview(Mapper.To.BlockDataview(obj.content));
 			};
 
 			return block;
