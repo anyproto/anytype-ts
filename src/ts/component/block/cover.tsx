@@ -15,6 +15,7 @@ interface State {
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
+const Url = require('json/url.json');
 const { dialog } = window.require('@electron/remote');
 
 const BlockCover = observer(class BlockCover extends React.Component<Props, State> {
@@ -168,7 +169,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 
 				{coverType == I.CoverType.Source ? (
 					<div className="author">
-						Photo by <a href="https://unsplash.com/@anniespratt?utm_source=your_app_name&utm_medium=referral">Annie Spratt</a> on <a href="https://unsplash.com/?utm_source=your_app_name&utm_medium=referral">Unsplash</a>
+						Photo by <a href={Util.sprintf(Url.unsplash.author, 'anniespratt', Url.unsplash.utm)}>Annie Spratt</a> on <a href={Util.sprintf(Url.unsplash.site, Url.unsplash.utm)}>Unsplash</a>
 					</div>
 				) : ''}
 			</div>

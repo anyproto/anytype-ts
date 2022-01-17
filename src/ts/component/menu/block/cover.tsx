@@ -69,7 +69,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 
 	load () {
 		$.ajax({
-			url: Util.sprintf(Url.unsplash, 24),
+			url: Util.sprintf(Url.unsplash.api, 24),
 			headers: {
 				'Authorization': 'Client-ID ' + Constant.unsplash,
 			},

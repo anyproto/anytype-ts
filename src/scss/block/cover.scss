@@ -33,7 +33,7 @@
 	.elements { width: 704px; height: 100%; position: absolute; left: 50%; margin-left: -352px; bottom: 0px; z-index: 1; opacity: 0; }
 	.elements:hover, .elements.hover, .elements.active { opacity: 1; }
 	
-	.author { @include text-small; position: absolute; right: 16px; bottom: 16px; z-index: 3; }
+	.author { @include text-small; position: absolute; right: 16px; bottom: 16px; z-index: 3; text-shadow: 1px 1px 1px rgba(0,0,0,0.5);  }
 
 	.elements {
 		.controlButtons { position: absolute; left: 0px; bottom: 18px; width: 100%; }

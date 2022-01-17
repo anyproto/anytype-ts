@@ -4,5 +4,10 @@
 	"telegram": "https://t.me/anytype",
 	"twitter": "https://twitter.com/AnytypeLabs",
 	"feedback": "https://community.anytype.io/composer",
-	"unsplash": "https://api.unsplash.com/photos/random?count=%d"
+	"unsplash": {
+		"api": "https://api.unsplash.com/photos/random?count=%d",
+		"author": "https://unsplash.com/@%s?%s",
+		"site": "https://unsplash.com/?%s",
+		"utm": "utm_source=Anytype&utm_medium=referral"
+	}
 }
