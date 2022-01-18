@@ -157,15 +157,13 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 
 		let editor = null;
 		if (readonly) {
-			editor = (
-				<div id="value" className={cv.join(' ')} />
-			);
+			editor = <div id="value" className={cv.join(' ')} />;
 		} else {
 			editor = (
 				<div
 					id="value"
 					className={cv.join(' ')}
-					contentEditable={!readonly}
+					contentEditable={true}
 					suppressContentEditableWarning={true}
 					onKeyDown={this.onKeyDown}
 					onKeyUp={this.onKeyUp}
@@ -1129,15 +1127,13 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 	
 	onSelect (e: any) {
 		const { rootId, dataset, block, isPopup } = this.props;
-		const { from, to } = focus.state.range;
 		const ids = DataUtil.selectionGet('', false, this.props);
 
 		focus.set(block.id, this.getRange());
 		keyboard.setFocus(true);
 		
-		const { range } = focus.state;
-		const currentFrom = range.from;
-		const currentTo = range.to;
+		const currentFrom = focus.state.range.from;
+		const currentTo = focus.state.range.to;
 
 		window.clearTimeout(this.timeoutContext);
 
@@ -1260,6 +1256,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		
 		const node = $(ReactDOM.findDOMNode(this));
 		const range = getRange(node.find('#value').get(0) as Element);
+
 		return range ? { from: range.start, to: range.end } : null;
 	};
 	
