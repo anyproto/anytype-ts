@@ -163,7 +163,19 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 			};
 
 			if (relation.format == I.RelationType.Number) {
-				value = value !== null ? new Intl.NumberFormat().format(value) : '';
+				if (value !== null) {
+					let parts = new Intl.NumberFormat().formatToParts(value);
+					parts = parts.map((it: any) => {
+						if (it.value == ',') {
+							it.value = '&thinsp;';
+						};
+						return it.value;
+					});
+
+					value = parts.join('');
+				} else {
+					value = '';
+				};
 			};
 		};
 
