@@ -408,9 +408,9 @@ class Keyboard {
 
 		C.BlockListSetFields(rootId, [
 			{ blockId: rootId, fields: { ...block.fields, isLocked: v } },
-		], (message: any) => {
-			analytics.event((v ? 'LockPage' : 'UnlockPage'));
-		});
+		]);
+		
+		analytics.event((v ? 'LockPage' : 'UnlockPage'));
 	};
 
 	onToggleLock (rootId: string) {
