@@ -248,7 +248,7 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 	
 	componentDidMount () {
 		const { id, param } = this.props;
-		const { onOpen, classNameWrap } = param;
+		const { onOpen } = param;
 
 		this._isMounted = true;
 
@@ -259,7 +259,6 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 		this.setActive();
 		
 		const win = $(window);
-		const node = $(ReactDOM.findDOMNode(this));
 		const obj = $(`#${this.getId()}`);
 		const el = this.getElement();
 
@@ -277,14 +276,7 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 			onOpen(this);
 		};
 
-		if (popupStore.isOpen()) {
-			node.addClass('fromPopup');
-		};
-
-		if (classNameWrap) {
-			node.addClass(classNameWrap);
-		};
-
+		this.setClass();
 		analytics.event('menu', { params: { id } });
 	};
 
@@ -343,6 +335,10 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 
 		if (classNameWrap) {
 			cn.push(classNameWrap);	
+		};
+
+		if (popupStore.isOpen()) {
+			cn.push('fromPopup');
 		};
 
 		node.attr({ class: cn.join(' ') });
