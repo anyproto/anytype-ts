@@ -161,6 +161,10 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 					value = '';
 				};
 			};
+
+			if (relation.format == I.RelationType.Number) {
+				value = value !== null ? new Intl.NumberFormat().format(value) : '';
+			};
 		};
 
 		let content: any = null;
