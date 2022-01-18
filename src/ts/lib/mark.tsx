@@ -472,8 +472,6 @@ class Mark {
 				p4 = String(p4 || '');
 				p5 = String(p5 || '');
 
-				console.log(s, p1, p2, p3, p4, p5);
-
 				let from = (Number(text.indexOf(s)) || 0) + p1.length;
 				let to = from + p3.length;
 				let replace = String((p1 + p3 + ' ') || '').replace(new RegExp('\\$', 'g'), '$$$');
