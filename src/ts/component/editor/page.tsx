@@ -465,6 +465,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const { selection } = dataset || {};
 		const { focused } = focus.state;
 		const menuOpen = menuStore.isOpen();
+		const popupOpen = popupStore.isOpenList([ 'search' ]);
 
 		if (keyboard.isFocused || !selection) {
 			return;
@@ -476,6 +477,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		// Select all
 		keyboard.shortcut(`${cmd}+a`, e, (pressed: string) => {
+			if (popupOpen) {
+				return;
+			};
+
 			e.preventDefault();
 			this.onSelectAll();
 		});
@@ -653,7 +658,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		// Restore focus
 		keyboard.shortcut('arrowup, arrowdown, arrowleft, arrowright', e, (pressed: string) => {
-			if (menuOpen || popupStore.isOpen('search')) {
+			if (menuOpen || popupOpen) {
 				return;
 			};
 
@@ -664,7 +669,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		// Enter
 		keyboard.shortcut('enter', e, (pressed: string) => {
-			if (menuOpen || popupStore.isOpen('search')) {
+			if (menuOpen || popupOpen) {
 				return;
 			};
 
