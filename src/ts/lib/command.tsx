@@ -1151,6 +1151,14 @@ const ObjectToSet = (contextId: string, sources: string[], callBack?: (message: 
 	dispatcher.request('objectToSet', request, callBack);
 };
 
+const ObjectDuplicate = (id: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.ToSet.Request();
+	
+	request.setContextid(id);
+
+	dispatcher.request('objectDuplicate', request, callBack);
+};
+
 const ObjectListDelete = (ids: string[], callBack?: (message: any) => void) => {
 	const request = new Rpc.ObjectList.Delete.Request();
 	
@@ -1366,6 +1374,7 @@ export {
 	ObjectTypeRelationRemove,
 
 	SetCreate,
+
 	ObjectRelationOptionAdd,
     ObjectRelationOptionUpdate,
     ObjectRelationOptionDelete,
@@ -1387,6 +1396,7 @@ export {
 	ObjectSearchSubscribe,
 	ObjectIdsSubscribe,
 	ObjectSearchUnsubscribe,
+	ObjectDuplicate,
 	
 	ObjectListDelete,
 	ObjectListSetIsArchived,

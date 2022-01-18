@@ -135,6 +135,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		let share = { id: 'pageShare', icon: 'share', name: 'Share' };
 		let pageRemove = { id: 'pageRemove', icon: 'remove', name: 'Delete' };
 		let pageExport = { id: 'pageExport', icon: 'export', name: 'Export' };
+		let pageCopy = { id: 'pageCopy', icon: 'copy', name: 'Duplicate' };
 		let blockRemove = { id: 'blockRemove', icon: 'remove', name: 'Delete' };
 
 		if (object.isFavorite) {
@@ -206,7 +207,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				{ children: [ undo, redo, history, archive, pageRemove ] },
 				{ children: [ fav, template, pageLock ] },
 				{ children: [ search ] },
-				{ children: [ print, pageExport ] },
+				{ children: [ print, pageExport, pageCopy ] },
 				{ children: [ highlight ] },
 			];
 			sections = sections.map((it: any, i: number) => { return { ...it, id: 'page' + i }; });
@@ -215,7 +216,6 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				turn,
 				move,
 				align,
-				//{ id: 'copy', name: 'Duplicate' },
 				blockRemove,
 			]});
 		};
@@ -408,11 +408,16 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				DataUtil.objectOpenEvent(e, { layout: I.ObjectLayout.History, id: object.id });
 				break;
 			
-			case 'copy':
-				break;
-
 			case 'search':
 				keyboard.onSearch();
+				break;
+
+			case 'pageCopy':
+				C.ObjectDuplicate(rootId, (message: any) => {
+					if (!message.error.code) {
+						DataUtil.objectOpenPopup({ id: message.id, layout: object.layout });
+					};
+				});
 				break;
 
 			case 'pageExport':
