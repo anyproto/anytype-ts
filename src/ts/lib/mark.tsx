@@ -394,7 +394,8 @@ class Mark {
 			return '';
 		});
 
-		html = this.fromUnicode(text);
+		text = this.fromUnicode(text);
+		html = text;
 
 		html.replace(rh, (s: string, p1: string, p2: string, p3: string) => {
 			p1 = String(p1 || '').trim();
