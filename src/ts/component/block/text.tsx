@@ -890,17 +890,22 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 
 		this.placeholderCheck();
 
+		let text = '';
 		if (block.canHaveMarks()) {
-			let { marks, text } = this.getMarksFromHtml();
-			this.marks = marks;
+			let parsed = this.getMarksFromHtml();
 
-			if (value != text) {
-				this.setValue(text);
+			text = parsed.text;
+			this.marks = parsed.marks;
+		} else {
+			text = Mark.fromUnicode(value);
+		};
 
-				const diff = value.length - text.length;
-				focus.set(focus.state.focused, { from: focus.state.range.from - diff, to: focus.state.range.to - diff });
-				focus.apply();
-			};
+		if (value != text) {
+			this.setValue(text);
+
+			const diff = value.length - text.length;
+			focus.set(focus.state.focused, { from: focus.state.range.from - diff, to: focus.state.range.to - diff });
+			focus.apply();
 		};
 
 		keyboard.shortcut('backspace, delete', e, (pressed: string) => {

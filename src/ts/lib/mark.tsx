@@ -390,24 +390,11 @@ class Mark {
 			if (p == '&lt;') p = '<';
 			if (p == '&gt;') p = '>';
 			if (p == '&amp;') p = '&';
-			if (p == '->') p = '→';
-			if (p == '<-') p = '←';
 			text = text.replace(s, p);
 			return '';
 		});
 
-		html = text;
-
-		// Unicode symbols
-		html.replace(/(-->|<--|<-->|->|<-)\s/g, (s: string, p: string) => {
-			if (p == '->') p = '→';
-			if (p == '<-') p = '←';
-			if (p == '-->') p = '⟶';
-			if (p == '<--') p = '⟵';
-			if (p == '<-->') p = '⟷';
-			text = text.replace(s, p + ' ');
-			return '';
-		});
+		html = this.fromUnicode(text);
 
 		html.replace(rh, (s: string, p1: string, p2: string, p3: string) => {
 			p1 = String(p1 || '').trim();
@@ -442,6 +429,24 @@ class Mark {
 		});
 
 		return this.fromMarkdown(text, marks, restricted);
+	};
+
+	// Unicode symbols
+	fromUnicode (html: string): string {
+		let text = html;
+
+		html.replace(/(-->|<--|<-->|->|<-|--)\s/g, (s: string, p: string) => {
+			if (p == '--') p = '—';
+			if (p == '->') p = '→';
+			if (p == '<-') p = '←';
+			if (p == '-->') p = '⟶';
+			if (p == '<--') p = '⟵';
+			if (p == '<-->') p = '⟷';
+			text = text.replace(s, p + ' ');
+			return '';
+		});
+
+		return text;
 	};
 
 	fromMarkdown (html: string, marks: I.Mark[], restricted: I.MarkType[]) {
