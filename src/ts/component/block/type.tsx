@@ -120,11 +120,7 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 				return ret; 
 			});
 
-			items.sort((c1: any, c2: any) => {
-				if (c1._sortWeight_ > c2._sortWeight_) return -1;
-				if (c1._sortWeight_ < c2._sortWeight_) return 1;
-				return 0;
-			});
+			items.sort(DataUtil.sortByWeight);
 		};
 
 		return items;
