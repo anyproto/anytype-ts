@@ -1255,7 +1255,7 @@ const WorkspaceSetIsHighlighted = (objectId: string, isHightlighted: boolean, ca
 const UnsplashSearch = (limit: number, callBack?: (message: any) => void) => {
 	const request = new Rpc.UnsplashSearch.Request();
 	
-	request.setMaxforrandom(limit);
+	request.setLimit(limit);
 
 	dispatcher.request('unsplashSearch', request, callBack);
 };
@@ -1263,7 +1263,7 @@ const UnsplashSearch = (limit: number, callBack?: (message: any) => void) => {
 const UnsplashDownload = (id: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.UnsplashDownload.Request();
 	
-	request.setUnsplashphotoidrequest(id);
+	request.setPictureid(id);
 
 	dispatcher.request('unsplashDownload', request, callBack);
 };
