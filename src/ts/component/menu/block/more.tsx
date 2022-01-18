@@ -463,15 +463,11 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				break;
 
 			case 'pageLock':
-				C.BlockListSetFields(rootId, [
-					{ blockId: blockId, fields: { ...block.fields, isLocked: true } },
-				]);
+				keyboard.onLock(rootId, true);
 				break;
 
 			case 'pageUnlock':
-				C.BlockListSetFields(rootId, [
-					{ blockId: blockId, fields: { ...block.fields, isLocked: false } },
-				]);
+				keyboard.onLock(rootId, false);
 				break;
 
 			case 'pageCreate':

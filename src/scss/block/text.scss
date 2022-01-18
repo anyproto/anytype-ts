@@ -88,7 +88,7 @@
 	.block.blockText > .wrapContent > .selectable > .dropTarget .value.isFocused { background: none; }
 
 	.block.blockText.isReadonly > .wrapContent > .selectable > .dropTarget .marker.check { cursor: default; }
-	.block.blockText.isReadonly > .wrapContent > .selectable > .dropTarget .value { min-height: 24px; }
+	.block.blockText.isReadonly > .wrapContent > .selectable > .dropTarget .value { min-height: 24px; cursor: text !important; user-select: text !important; }
 	.block.blockText.isReadonly > .wrapContent > .selectable > .dropTarget .placeholder { display: none; }
 
 	.block.blockText.isReadonly.code > .wrapContent > .selectable > .dropTarget { padding: 16px; }
