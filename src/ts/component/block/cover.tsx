@@ -88,10 +88,10 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 		let content = null;
 
 		if (coverType == I.CoverType.Source) {
-			image = detailStore.get(rootId, coverId, [ 'authorUrl', 'authorPhoto' ], true);
+			image = detailStore.get(rootId, coverId, [ 'artistUrl', 'artistPhoto' ], true);
 			author = (
 				<div className="author">
-					Photo by <a href={image.authorUrl + Url.unsplash.utm}>{image.artistPhoto}</a> on <a href={Url.unsplash.site + Url.unsplash.utm}>Unsplash</a>
+					Photo by <a href={image.artistUrl + Url.unsplash.utm}>{image.artistPhoto}</a> on <a href={Url.unsplash.site + Url.unsplash.utm}>Unsplash</a>
 				</div>
 			);
 		};
