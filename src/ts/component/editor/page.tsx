@@ -88,7 +88,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const children = blockStore.getChildren(rootId, rootId, (it: any) => { return !it.isLayoutHeader(); });
 		const length = childrenIds.length;
 		const width = root.fields?.width;
-		const allowed = !root.fields?.isLocked && blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Block, I.RestrictionObject.Details ]); 
+		const readonly = this.isReadonly();
 
 		return (
 			<div id="editorWrapper">
@@ -106,7 +106,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 							onMenuAdd={this.onMenuAdd}
 							onPaste={this.onPaste}
 							onResize={(v: number) => { this.onResize(v); }}
-							readonly={!allowed}
+							readonly={readonly}
 							getWrapper={this.getWrapper}
 							getWrapperWidth={this.getWrapperWidth}
 						/>
@@ -121,7 +121,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 								onKeyUp={this.onKeyUpBlock}  
 								onMenuAdd={this.onMenuAdd}
 								onPaste={this.onPaste}
-								readonly={!allowed}
+								readonly={readonly}
 								getWrapper={this.getWrapper}
 								getWrapperWidth={this.getWrapperWidth}
 							/>
@@ -365,10 +365,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		
 		const { rootId } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
-		const allowed = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Block ]);
 		const checkType = blockStore.checkBlockType(rootId);
+		const readonly = this.isReadonly();
 
-		if (!root || !allowed || checkType) {
+		if (!root || readonly || checkType) {
 			return;
 		};
 
@@ -466,14 +466,16 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const { focused } = focus.state;
 		const menuOpen = menuStore.isOpen();
 		const popupOpen = popupStore.isOpenList([ 'search' ]);
+		const root = blockStore.getLeaf(rootId, rootId);
 
-		if (keyboard.isFocused || !selection) {
+		if (keyboard.isFocused || !selection || !root) {
 			return;
 		};
 		
 		const block = blockStore.getLeaf(rootId, focused);
 		const ids = selection.get();
 		const cmd = keyboard.ctrlKey();
+		const readonly = this.isReadonly();
 
 		// Select all
 		keyboard.shortcut(`${cmd}+a`, e, (pressed: string) => {
@@ -622,6 +624,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		// Remove blocks
 		keyboard.shortcut('backspace, delete', e, (pressed: string) => {
+			if (readonly) {
+				return;
+			};
+
 			e.preventDefault();
 			this.blockRemove(block);
 		});
@@ -1700,9 +1706,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	onLastClick (e: any) {
 		const { rootId } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
-		const allowed = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Block ]);
+		const readonly = this.isReadonly();
 
-		if (!root || !allowed) {
+		if (!root || readonly) {
 			return;
 		};
 
@@ -1815,6 +1821,13 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		w = (mw - Constant.size.editor) * w;
 		this.width = w = Math.max(Constant.size.editor, Math.min(mw, Constant.size.editor + w));
 		return w;
+	};
+
+	isReadonly () {
+		const { rootId } = this.props;
+		const root = blockStore.getLeaf(rootId, rootId);
+		const allowed = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Block ]);
+		return root?.fields.isLocked || !allowed;
 	};
 
 });
