@@ -1088,11 +1088,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		// Enter
 		keyboard.shortcut('enter, shift+enter', e, (pressed: string) => {
 			if (block.isTextCode() && (pressed == 'enter')) {
-				console.log('return 1');
 				return;
 			};
 			if (!block.isText() && keyboard.isFocused) {
-				console.log('return 2');
 				return;
 			};
 			if (block.isText() && !block.isTextCode() && pressed.match('shift')) {
