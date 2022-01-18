@@ -890,13 +890,14 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 
 		this.placeholderCheck();
 
-		let text = '';
+		let text = value;
 		if (block.canHaveMarks()) {
 			let parsed = this.getMarksFromHtml();
 
 			text = parsed.text;
 			this.marks = parsed.marks;
-		} else {
+		} else 
+		if (!block.isTextCode()) {
 			text = Mark.fromUnicode(value);
 		};
 
