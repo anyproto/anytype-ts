@@ -1047,6 +1047,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		// Tab, indent block
 		keyboard.shortcut('tab, shift+tab', e, (pressed: string) => {
+			if (menuOpen) {
+				return;
+			};
+
 			e.preventDefault();
 			
 			const shift = pressed.match('shift');
