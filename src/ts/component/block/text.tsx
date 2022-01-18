@@ -905,11 +905,6 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 
 		keyboard.shortcut('backspace, delete', e, (pressed: string) => {
 			menuStore.close('blockContext');
-
-			this.marks = Mark.checkRanges(value, this.marks);
-			DataUtil.blockSetText(rootId, block, value, this.marks, true);
-
-			ret = true;
 		});
 
 		if (!ret) {

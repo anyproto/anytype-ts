@@ -87,8 +87,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const childrenIds = blockStore.getChildrenIds(rootId, rootId);
 		const children = blockStore.getChildren(rootId, rootId, (it: any) => { return !it.isLayoutHeader(); });
 		const length = childrenIds.length;
-		const width = root?.fields?.width;
-		const allowed = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Block, I.RestrictionObject.Details ]); 
+		const width = root.fields?.width;
+		const allowed = !root.fields?.isLocked && blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Block, I.RestrictionObject.Details ]); 
 
 		return (
 			<div id="editorWrapper">
@@ -366,10 +366,13 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const { rootId } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
 		const allowed = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Block ]);
-		const object = detailStore.get(rootId, rootId);
 		const checkType = blockStore.checkBlockType(rootId);
 
 		if (!root || !allowed || checkType) {
+			return;
+		};
+
+		if (root.fields.isLocked) {
 			return;
 		};
 		
@@ -462,6 +465,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const { selection } = dataset || {};
 		const { focused } = focus.state;
 		const menuOpen = menuStore.isOpen();
+		const popupOpen = popupStore.isOpenList([ 'search' ]);
 
 		if (keyboard.isFocused || !selection) {
 			return;
@@ -473,6 +477,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		// Select all
 		keyboard.shortcut(`${cmd}+a`, e, (pressed: string) => {
+			if (popupOpen) {
+				return;
+			};
+
 			e.preventDefault();
 			this.onSelectAll();
 		});
@@ -650,7 +658,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		// Restore focus
 		keyboard.shortcut('arrowup, arrowdown, arrowleft, arrowright', e, (pressed: string) => {
-			if (menuOpen || popupStore.isOpen('search')) {
+			if (menuOpen || popupOpen) {
 				return;
 			};
 
@@ -661,7 +669,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		// Enter
 		keyboard.shortcut('enter', e, (pressed: string) => {
-			if (menuOpen || popupStore.isOpen('search')) {
+			if (menuOpen || popupOpen) {
 				return;
 			};
 
