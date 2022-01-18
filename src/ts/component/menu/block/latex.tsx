@@ -280,20 +280,17 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<Pro
 					} else 
 					if (n.match(regS)) {
 						w = 1000;
-					} else 
-					if (n.match(regC)) {
-						w = 100;
 					};
 					c._sortWeight_ = w;
 					s._sortWeight_ += w;
 					return c;
 				});
-				s.children.sort(DataUtil.sortByWeight);
+				s.children.sort((c1: any, c2: any) => DataUtil.sortByWeight(c1, c2));
 				return s;
 			});
-
-			sections.sort(DataUtil.sortByWeight);
+			sections.sort((c1: any, c2: any) => DataUtil.sortByWeight(c1, c2));
 		};
+
 		return sections;
 	};
 

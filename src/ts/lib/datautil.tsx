@@ -932,11 +932,11 @@ class DataUtil {
 				s._sortWeight_ += c._sortWeight_;
 				return ret; 
 			});
-			s.children.sort(this.sortByWeight);
+			s.children.sort((c1: any, c2: any) => this.sortByWeight(c1, c2));
 			return s.children.length > 0;
 		});
 
-		sections.sort(this.sortByWeight);
+		sections.sort((c1: any, c2: any) => this.sortByWeight(c1, c2));
 		return sections;
 	};
 	
@@ -1237,7 +1237,7 @@ class DataUtil {
 	sortByWeight (c1: any, c2: any) {
 		if (c1._sortWeight_ > c2._sortWeight_) return -1;
 		if (c1._sortWeight_ < c2._sortWeight_) return 1;
-		return 0;
+		return this.sortByName(c1, c2);
 	};
 
 	checkRelationValue (relation: any, value: any): boolean {
