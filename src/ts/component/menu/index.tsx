@@ -276,7 +276,6 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 			onOpen(this);
 		};
 
-		this.setClass();
 		analytics.event('menu', { params: { id } });
 	};
 
