@@ -7,6 +7,7 @@ import { commonStore } from 'ts/store';
 import 'katex/dist/katex.min.css';
 import 'react-virtualized/styles.css';
 import { menuStore } from '../../../store';
+import { C } from '../../../lib';
 
 interface Props extends I.Menu {}
 
@@ -260,14 +261,36 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<Pro
 				c.comment = String(c.comment || '').replace(/`/g, '');
 				return c;
 			});
-			it.children.sort(DataUtil.sortByName);
 			return it;
 		});
 
 		if (filter.text) {
 			sections = DataUtil.menuSectionsFilter(sections, filter.text);
-			sections.sort(DataUtil.sortByName);
+
+			const regS = new RegExp('/^' + filter.text + '/', 'gi');
+			const regC = new RegExp(filter.text, 'gi');
+
+			sections = sections.map((s: any) => {
+				s._sortWeight_ = 0;
+				s.children = s.children.map((c: any) => {
+					const n = c.name.replace(/\\/g, '');
+					let w = 0;
+					if (n === filter.text) {
+						w = 10000;
+					} else 
+					if (n.match(regS)) {
+						w = 1000;
+					};
+					c._sortWeight_ = w;
+					s._sortWeight_ += w;
+					return c;
+				});
+				s.children.sort((c1: any, c2: any) => DataUtil.sortByWeight(c1, c2));
+				return s;
+			});
+			sections.sort((c1: any, c2: any) => DataUtil.sortByWeight(c1, c2));
 		};
+
 		return sections;
 	};
 
