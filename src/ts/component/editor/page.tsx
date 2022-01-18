@@ -485,6 +485,15 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			this.onSelectAll();
 		});
 
+		// Lock/Unlock
+		keyboard.shortcut(`ctrl+shift+l`, e, (pressed: string) => {
+			if (menuOpen || popupOpen) {
+				return;
+			};
+
+			keyboard.onToggleLock(rootId);
+		});
+
 		// Copy
 		keyboard.shortcut(`${cmd}+c`, e, (pressed: string) => {
 			this.onCopy(e, false);
@@ -736,6 +745,15 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				};
 			});
 		};
+
+		// Lock/Unlock
+		keyboard.shortcut(`ctrl+shift+l`, e, (pressed: string) => {
+			if (menuOpen) {
+				return;
+			};
+
+			keyboard.onToggleLock(rootId);
+		});
 
 		// Copy
 		keyboard.shortcut(`${cmd}+c`, e, (pressed: string) => {

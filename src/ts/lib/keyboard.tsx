@@ -400,6 +400,28 @@ class Keyboard {
 		}, Constant.delay.menu);
 	};
 
+	onLock (rootId: string, v: boolean) {
+		const block = blockStore.getLeaf(rootId, rootId);
+		if (!block) {
+			return;
+		};
+
+		C.BlockListSetFields(rootId, [
+			{ blockId: rootId, fields: { ...block.fields, isLocked: v } },
+		], (message: any) => {
+			analytics.event((v ? 'LockPage' : 'UnlockPage'));
+		});
+	};
+
+	onToggleLock (rootId: string) {
+		const block = blockStore.getLeaf(rootId, rootId);
+		if (!block) {
+			return;
+		};
+
+		this.onLock(rootId, !block.fields.isLocked);		
+	};
+
 	getPopupMatch () {
 		const popup = popupStore.get('page');
 		return popup && popup?.param.data.matchPopup || {};
