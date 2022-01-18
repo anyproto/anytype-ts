@@ -157,15 +157,13 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 
 		let editor = null;
 		if (readonly) {
-			editor = (
-				<div id="value" className={cv.join(' ')} />
-			);
+			editor = <div id="value" className={cv.join(' ')} />;
 		} else {
 			editor = (
 				<div
 					id="value"
 					className={cv.join(' ')}
-					contentEditable={!readonly}
+					contentEditable={true}
 					suppressContentEditableWarning={true}
 					onKeyDown={this.onKeyDown}
 					onKeyUp={this.onKeyUp}
@@ -890,26 +888,27 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 
 		this.placeholderCheck();
 
+		let text = value;
 		if (block.canHaveMarks()) {
-			let { marks, text } = this.getMarksFromHtml();
-			this.marks = marks;
+			let parsed = this.getMarksFromHtml();
 
-			if (value != text) {
-				this.setValue(text);
+			text = parsed.text;
+			this.marks = parsed.marks;
+		} else 
+		if (!block.isTextCode()) {
+			text = Mark.fromUnicode(value);
+		};
 
-				const diff = value.length - text.length;
-				focus.set(focus.state.focused, { from: focus.state.range.from - diff, to: focus.state.range.to - diff });
-				focus.apply();
-			};
+		if (value != text) {
+			this.setValue(text);
+
+			const diff = value.length - text.length;
+			focus.set(focus.state.focused, { from: focus.state.range.from - diff, to: focus.state.range.to - diff });
+			focus.apply();
 		};
 
 		keyboard.shortcut('backspace, delete', e, (pressed: string) => {
 			menuStore.close('blockContext');
-
-			this.marks = Mark.checkRanges(value, this.marks);
-			DataUtil.blockSetText(rootId, block, value, this.marks, true);
-
-			ret = true;
 		});
 
 		if (!ret) {
@@ -1134,15 +1133,13 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 	
 	onSelect (e: any) {
 		const { rootId, dataset, block, isPopup } = this.props;
-		const { from, to } = focus.state.range;
 		const ids = DataUtil.selectionGet('', false, this.props);
 
 		focus.set(block.id, this.getRange());
 		keyboard.setFocus(true);
 		
-		const { range } = focus.state;
-		const currentFrom = range.from;
-		const currentTo = range.to;
+		const currentFrom = focus.state.range.from;
+		const currentTo = focus.state.range.to;
 
 		window.clearTimeout(this.timeoutContext);
 
@@ -1265,6 +1262,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		
 		const node = $(ReactDOM.findDOMNode(this));
 		const range = getRange(node.find('#value').get(0) as Element);
+
 		return range ? { from: range.start, to: range.end } : null;
 	};
 	
