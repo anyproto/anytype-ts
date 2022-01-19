@@ -5,13 +5,13 @@ import { I, C, Util, DataUtil, focus, translate } from 'ts/lib';
 import { commonStore, blockStore, detailStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
-interface Props extends I.BlockComponent {}
+interface Props extends I.BlockComponent {};
 
 interface State {
 	isEditing: boolean;
 	justUploaded: boolean;
 	loading: boolean;
-}
+};
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');

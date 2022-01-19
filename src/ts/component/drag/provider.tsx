@@ -8,7 +8,7 @@ import { throttle } from 'lodash';
 
 interface Props {
 	dataset?: any;
-}
+};
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
