@@ -47,12 +47,18 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 			return null;
 		};
 
-		const checkType = blockStore.checkBlockType(rootId);
-		const allowedDetails = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
-		const allowedLayout = !checkType && allowedDetails && !root.isObjectSet() && blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Layout ]);
-		const allowedRelation = !checkType && allowedDetails;
-		const allowIcon = !checkType && allowedDetails && !root.isObjectTask() && !root.isObjectNote();
-		const allowCover = !checkType && allowedDetails && !root.isObjectNote();
+		let checkType = blockStore.checkBlockType(rootId);
+		let allowedDetails = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
+		let allowedLayout = !checkType && allowedDetails && !root.isObjectSet() && blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Layout ]);
+		let allowedRelation = !checkType;
+		let allowedIcon = !checkType && allowedDetails && !root.isObjectTask() && !root.isObjectNote();
+		let allowedCover = !checkType && allowedDetails && !root.isObjectNote();
+
+		if (root.fields.isLocked) {
+			allowedIcon = false;
+			allowedLayout = false;
+			allowedCover = false;
+		};
 
 		return (
 			<div 
@@ -62,14 +68,14 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 				onDrop={this.onDrop}
 			>
 				<div className="controlButtons">
-					{allowIcon ? (
+					{allowedIcon ? (
 						<div id="button-icon" className="btn" onClick={this.onIcon}>
 							<Icon className="icon" />
 							<div className="txt">{translate('editorControlIcon')}</div>
 						</div>
 					) : ''}
 
-					{allowCover ? (
+					{allowedCover ? (
 						<div id="button-cover" className="btn" onClick={this.onCover}>
 							<Icon className="addCover" />
 							<div className="txt">{translate('editorControlCover')}</div>

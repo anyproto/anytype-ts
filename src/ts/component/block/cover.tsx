@@ -78,8 +78,9 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 		};
 
 		const allowedDetails = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
-		const allowedLayout = !root.isObjectSet() && (allowedDetails || blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Layout ]));
-		const allowedIcon = !object.iconEmoji && !object.iconImage && !root.isObjectTask();
+		const allowedIcon = !readonly && !object.iconEmoji && !object.iconImage && !root.isObjectTask();
+		const allowedCover = !readonly;
+		const allowedLayout = !readonly && !root.isObjectSet() && (allowedDetails || blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Layout ]));
 
 		let elements = null;
 		if (isEditing) {
@@ -117,10 +118,12 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 							</div>
 						) : ''}
 
-						<div id="button-cover" className="btn white withIcon" onClick={this.onCover}>
-							<Icon className="addCover" />
-							<div className="txt">{translate('editorControlCover')}</div>
-						</div>
+						{allowedCover ? (
+							<div id="button-cover" className="btn white withIcon" onClick={this.onCover}>
+								<Icon className="addCover" />
+								<div className="txt">{translate('editorControlCover')}</div>
+							</div>
+						) : ''}
 
 						{allowedLayout ? (
 							<div id="button-layout" className="btn white withIcon" onClick={this.onLayout}>
@@ -138,6 +141,12 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 			);
 		};
 
+		elements = (
+			<div id="elements" className="elements editorControlElements">
+				{elements}
+			</div>
+		);
+
 		return (
 			<div 
 				className={[ 'wrap', (isEditing ? 'isEditing' : '') ].join(' ')} 
@@ -154,11 +163,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 					<Cover id={coverId} image={coverId} type={coverType} className={coverId} />
 				)}
 
-				{!readonly ? (
-					<div id="elements" className="elements editorControlElements">
-						{elements}
-					</div>
-				) : ''}
+				{elements}
 			</div>
 		);
 	};
