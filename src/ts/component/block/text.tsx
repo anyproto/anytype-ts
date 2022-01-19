@@ -200,21 +200,23 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 	componentDidMount () {
 		const { block } = this.props;
 		const { content } = block;
+		const { marks, text } = content;
 
-		this.marks = Util.objectCopy(content.marks || []);
+		this.marks = Util.objectCopy(marks || []);
 		this._isMounted = true;
-		this.setValue(content.text);
+		this.setValue(text);
 	};
 	
 	componentDidUpdate () {
 		const { block } = this.props;
 		const { content } = block;
+		const { marks, text } = content;
 		const { focused } = focus.state;
 
-		this.marks = Util.objectCopy(content.marks || []);
-		this.setValue(content.text);
+		this.marks = Util.objectCopy(marks || []);
+		this.setValue(text);
 
-		if (content.text) {
+		if (text) {
 			this.placeholderHide();
 		};
 
@@ -240,7 +242,6 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		const fields = block.fields || {};
 		const node = $(ReactDOM.findDOMNode(this));
 		const value = node.find('#value');
-		const img = node.find('#img');
 		
 		let text = String(v || '');
 		if (text === '\n') {
@@ -784,14 +785,15 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 				style: newBlock.content?.style,
 			});
 		};
-		let symbolBefore = range ? value[range.from - 1] : '';
-		let isSpaceBefore = range ? (!range.from || (value[range.from - 2] == ' ') || (value[range.from - 2] == '\n')) : false;
-		let reg = null;
 
+		const symbolBefore = range ? value[range.from - 1] : '';
+		const isSpaceBefore = range ? (!range.from || (value[range.from - 2] == ' ') || (value[range.from - 2] == '\n')) : false;
 		const canOpenMenuAdd = (symbolBefore == '/') && !this.preventMenu && !keyboard.isSpecial(k) && !menuOpenAdd && !block.isTextCode() && !block.isTextTitle() && !block.isTextDescription();
 		const canOpenMentionMenu = (symbolBefore == '@') && !this.preventMenu && (isSpaceBefore || (range.from == 1)) && !keyboard.isSpecial(k) && !menuOpenMention && !block.isTextCode() && !block.isTextTitle() && !block.isTextDescription();
+		const parsed = this.getMarksFromHtml();
 
 		this.preventMenu = false;
+		this.marks = parsed.marks;
 		
 		if (menuOpenAdd) {
 			if (k == Key.space) {
@@ -826,6 +828,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			DataUtil.blockSetText(rootId, block, value, this.marks, true, () => {
 				onMenuAdd(id, Util.stringCut(value, range.from - 1, range.from), range);
 			});
+			return;
 		};
 
 		// Open mention menu
@@ -833,6 +836,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			DataUtil.blockSetText(rootId, block, value, this.marks, true, () => {
 				this.onMention();
 			});
+			return;
 		};
 
 		// Make div
@@ -848,7 +852,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		if (block.canHaveMarks()) {
 			// Parse markdown commands
 			for (let k in Markdown) {
-				reg = new RegExp(`^(${k} )`);
+				const reg = new RegExp(`^(${k} )`);
 				const style = Markdown[k];
 
 				if ((style == I.TextStyle.Numbered) && block.isTextHeader()) {
@@ -857,7 +861,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 
 				if (value.match(reg) && (content.style != style)) {
 					value = value.replace(reg, (s: string, p: string) => { return s.replace(p, ''); });
-					this.marks = Mark.adjust(this.getMarksFromHtml().marks, 0, -(Length[style] + 1));
+					this.marks = Mark.adjust(this.marks, 0, -(Length[style] + 1));
 
 					newBlock.type = I.BlockType.Text;
 					newBlock.fields = {};
@@ -886,14 +890,15 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			return;
 		};
 
+		keyboard.shortcut('backspace, delete', e, (pressed: string) => {
+			menuStore.close('blockContext');
+		});
+
 		this.placeholderCheck();
 
 		let text = value;
 		if (block.canHaveMarks()) {
-			let parsed = this.getMarksFromHtml();
-
 			text = parsed.text;
-			this.marks = parsed.marks;
 		} else 
 		if (!block.isTextCode()) {
 			text = Mark.fromUnicode(value);
@@ -906,10 +911,6 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			focus.set(focus.state.focused, { from: focus.state.range.from - diff, to: focus.state.range.to - diff });
 			focus.apply();
 		};
-
-		keyboard.shortcut('backspace, delete', e, (pressed: string) => {
-			menuStore.close('blockContext');
-		});
 
 		if (!ret) {
 			this.setText(this.marks, false);
@@ -1037,7 +1038,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		if (block.isTextCode()) {
 			marks = [];
 		};
-		
+
 		DataUtil.blockSetText(rootId, block, value, marks, true);
 	};
 	
