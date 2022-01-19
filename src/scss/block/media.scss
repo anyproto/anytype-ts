@@ -114,7 +114,9 @@
 
 			.react-pdf__Document { width: 100%; display: inline-block; position: relative; flex-grow: 1; }
 			.react-pdf__Page { position: static !important; }
-			.react-pdf__Page__svg { width: 100% !important; height: 100% !important; overflow: hidden; }
+			.react-pdf__Page__svg, .react-pdf__Page__canvas { 
+				width: 100% !important; height: 100% !important; overflow: hidden; 
+			}
 			.react-pdf__Page__svg svg { width: 100%; height: auto; }
 			.react-pdf__Page__textContent { width: 100% !important; height: auto !important; }
 			.react-pdf__Page__annotations { display: none; }

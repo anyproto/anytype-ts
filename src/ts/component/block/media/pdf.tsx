@@ -120,7 +120,7 @@ const BlockPdf = observer(class BlockPdf extends React.Component<Props, State> {
 						<Document
 							file={commonStore.fileUrl(hash)}
 							onLoadSuccess={this.onDocumentLoad}
-							renderMode="svg"
+							renderMode="canvas"
 							loading={<Loader />}
 						>
 							<Page 
