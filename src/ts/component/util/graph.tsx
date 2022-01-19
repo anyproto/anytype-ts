@@ -53,13 +53,13 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 		},
 		forceX: {
 			enabled: true,
-			strength: 0.5,
-			x: 0.5
+			strength: 0.3,
+			x: 0.3
 		},
 		forceY: {
 			enabled: true,
-			strength: 0.5,
-			y: 0.5
+			strength: 0.3,
+			y: 0.3
 		},
 
 		orphans: true,
