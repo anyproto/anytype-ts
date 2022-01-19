@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { I, focus, DataUtil } from 'ts/lib';
+import { Title } from 'ts/component';
 import { blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -70,6 +71,7 @@ const BlockTableOfContents = observer(class BlockTableOfContents extends React.C
 
 		return (
 			<div className={cn.join(' ')} tabIndex={0} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp} onFocus={this.onFocus}>
+				<Title text="Table of Contents" />
 				{childrenIds.map((id: string, i: number) => {
 					return (
 						<Item key={i} id={id} depth={0} />

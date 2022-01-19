@@ -4,6 +4,8 @@
 	.block.blockTableOfContents { padding: 6px 0px; }
 	.block.blockTableOfContents { 
 
+		.title { @include text-header1; margin: 0px 0px 20px 0px; }
+
 		.item > .children { padding-left: 20px; }
 		.item.blockLayout > .children { padding: 0px; }
 
