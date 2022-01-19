@@ -93,7 +93,7 @@ class DetailStore {
 	};
 
     delete (rootId: string, id: string, keys: string[]) {
-		let map = this.map.get(rootId);
+		let map = this.map.get(rootId) || new Map();
 		let list = this.getArray(rootId, id);
 
 		list = list.filter((it: Detail) => { return keys.indexOf(it.relationKey) < 0 });
