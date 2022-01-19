@@ -885,8 +885,22 @@ class DataUtil {
 	};
 	
 	menuSectionsFilter (sections: any[], filter: string) {
-		const regS = new RegExp('/^' + Util.filterFix(filter) + '/', 'gi');
-		const regC = new RegExp(Util.filterFix(filter), 'gi');
+		const f = Util.filterFix(filter);
+		const regS = new RegExp('/^' + f + '/', 'gi');
+		const regC = new RegExp(f, 'gi');
+		const getWeight = (s: string) => {
+			let w = 0;
+			if (s == f) {
+				w = 10000;
+			} else
+			if (s.match(regS)) {
+				w = 1000;
+			} else 
+			if (s.match(regC)) {
+				w = 100;
+			};
+			return w;
+		};
 		
 		sections = sections.filter((s: any) => {
 			if (s.name.match(regC)) {
@@ -902,11 +916,11 @@ class DataUtil {
 				} else 
 				if (c.name && c.name.match(regC)) {
 					ret = true;
-					c._sortWeight_ = (c.name.match(regS) ? 10000 : 1000);
+					c._sortWeight_ = getWeight(c.name);
 				} else 
 				if (c.description && c.description.match(regC)) {
 					ret = true;
-					c._sortWeight_ = (c.description.match(regS) ? 100 : 10);
+					c._sortWeight_ = getWeight(c.description);
 				} else
 				if (c.aliases && c.aliases.length) {
 					for (let alias of c.aliases) {
@@ -919,20 +933,11 @@ class DataUtil {
 				s._sortWeight_ += c._sortWeight_;
 				return ret; 
 			});
-			s.children.sort((c1: any, c2: any) => {
-				if (c1._sortWeight_ > c2._sortWeight_) return -1;
-				if (c1._sortWeight_ < c2._sortWeight_) return 1;
-				return 0;
-			});
+			s.children.sort((c1: any, c2: any) => this.sortByWeight(c1, c2));
 			return s.children.length > 0;
 		});
 
-		sections.sort((c1: any, c2: any) => {
-			if (c1._sortWeight_ > c2._sortWeight_) return -1;
-			if (c1._sortWeight_ < c2._sortWeight_) return 1;
-			return 0;
-		});
-		
+		sections.sort((c1: any, c2: any) => this.sortByWeight(c1, c2));
 		return sections;
 	};
 	
@@ -1228,6 +1233,12 @@ class DataUtil {
 		if (c1.isHidden && !c2.isHidden) return 1;
 		if (!c1.isHidden && c2.isHidden) return -1;
 		return 0;
+	};
+
+	sortByWeight (c1: any, c2: any) {
+		if (c1._sortWeight_ > c2._sortWeight_) return -1;
+		if (c1._sortWeight_ < c2._sortWeight_) return 1;
+		return this.sortByName(c1, c2);
 	};
 
 	checkRelationValue (relation: any, value: any): boolean {

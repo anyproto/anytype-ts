@@ -46,6 +46,11 @@
 	.icon.expand { background-image: url('~img/icon/header/expand.svg'); }
 	.icon.graph { background-image: url('~img/icon/header/graph.svg'); }
 
+	.icon.lock { 
+		width: 8px !important; height: 20px !important; background-image: url('~img/icon/lock.svg'); opacity: 1 !important; 
+		flex-shrink: 0; margin-left: 6px !important;
+	}
+
 	.side { position: absolute; top: 5px; height: 28px; line-height: 28px; }
 
 	.side.left { left: 6px; z-index: 1; }

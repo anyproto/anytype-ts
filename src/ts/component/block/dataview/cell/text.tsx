@@ -161,6 +161,24 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 					value = '';
 				};
 			};
+
+			if (relation.format == I.RelationType.Number) {
+				if (value !== null) {
+					let parts = new Intl.NumberFormat('en-GB').formatToParts(value);
+					
+					if (parts && parts.length) {
+						parts = parts.map((it: any) => {
+							if (it.value == ',') {
+								it.value = '&thinsp;';
+							};
+							return it.value;
+						});
+						value = parts.join('');
+					};
+				} else {
+					value = '';
+				};
+			};
 		};
 
 		let content: any = null;
@@ -225,7 +243,7 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 		const record = getRecord(index);
 
 		this._isMounted = true;
-		this.value = DataUtil.formatRelationValue(relation, record[relation.relationKey], true);
+		this.setValue(DataUtil.formatRelationValue(relation, record[relation.relationKey], true));
 	};
 
 	componentDidUpdate () {
@@ -313,7 +331,7 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 	};
 
 	onChange (v: any) {
-		this.value = v;
+		this.setValue(v);
 	};
 
 	onKeyUp (e: any, value: string) {
@@ -327,7 +345,7 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 			menuStore.updateData('button', { disabled: !value });
 		};
 
-		this.value = value;
+		this.setValue(value);
 
 		keyboard.shortcut('enter', e, (pressed: string) => {
 			e.preventDefault();
@@ -345,7 +363,8 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 
 	onKeyUpDate (e: any, value: any) {
 		const { onChange } = this.props;
-		this.value = this.fixDateValue(value);
+
+		this.setValue(this.fixDateValue(value));
 
 		if (this.value) {
 			menuStore.updateData(MENU_ID, { value: this.value });
@@ -365,33 +384,32 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 	};
 
 	onBlur (e: any) {
-		let { relation, onChange, index, getRecord } = this.props;
+		const { relation, onChange, index, getRecord } = this.props;
+		const record = getRecord(index);
 
-		if (!this.ref || keyboard.isBlurDisabled) {
+		if (!this.ref || keyboard.isBlurDisabled || !record) {
 			return;
 		};
-
-		let value = this.ref.getValue();
-		let record = getRecord(index);
 
 		keyboard.setFocus(false);
 		this.range = null;
 
-		if (relation.format == I.RelationType.Date) {
-			value = this.fixDateValue(value);
-		} else 
-		if (JSON.stringify(record[relation.relationKey]) === JSON.stringify(value)) {
+		if (JSON.stringify(record[relation.relationKey]) === JSON.stringify(this.value)) {
 			this.setEditing(false);
 			return;
 		};
 
 		if (onChange) {
-			onChange(value, () => {
+			onChange(this.value, () => {
 				if (!menuStore.isOpen(MENU_ID)) {
 					this.setEditing(false);
 				};
 			});
 		};
+	};
+
+	setValue (v: any) {
+		this.value = v;
 	};
 
 	fixDateValue (v: any) {

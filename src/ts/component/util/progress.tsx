@@ -91,8 +91,7 @@ const Progress = observer(class Progress extends React.Component<Props, {}> {
 		this.width = this.obj.outerWidth();
 
 		if (coords) {
-			const { x, y } = this.checkCoords(coords.x, coords.y);
-			this.setStyle(this.obj, x, y);
+			this.setStyle(coords.x, coords.y);
 		};
 	};
 
@@ -110,10 +109,10 @@ const Progress = observer(class Progress extends React.Component<Props, {}> {
 
 	onDragMove (e: any) {
 		const win = $(window);
-		const { x, y } = this.checkCoords(e.pageX - this.dx - win.scrollLeft(), e.pageY - this.dy - win.scrollTop());
+		const x = e.pageX - this.dx - win.scrollLeft();
+		const y = e.pageY - this.dy - win.scrollTop();
 
-		this.setStyle(this.obj, x, y);
-		Storage.set('progress', { x, y });
+		this.setStyle(x, y);
 	};
 
 	onDragEnd (e: any) {
@@ -134,8 +133,11 @@ const Progress = observer(class Progress extends React.Component<Props, {}> {
 		return { x, y };
 	};
 
-	setStyle (obj: any, x: number, y: number) {
-		obj.css({ margin: 0, left: x, top: y });
+	setStyle (x: number, y: number) {
+		const coords = this.checkCoords(x, y);
+		
+		this.obj.css({ margin: 0, left: coords.x, top: coords.y });
+		Storage.set('progress', coords);
 	};
 	
 });
