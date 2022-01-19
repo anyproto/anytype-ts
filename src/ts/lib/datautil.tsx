@@ -35,6 +35,26 @@ class DataUtil {
 		};
 		return ret;
 	};
+
+	textClass (v: I.TextStyle): string {
+		let c = '';
+		switch (v) {
+			default:
+			case I.TextStyle.Paragraph:		 c = 'paragraph'; break;
+			case I.TextStyle.Header1:		 c = 'header1'; break;
+			case I.TextStyle.Header2:		 c = 'header2'; break;
+			case I.TextStyle.Header3:		 c = 'header3'; break;
+			case I.TextStyle.Quote:			 c = 'quote'; break;
+			case I.TextStyle.Code:			 c = 'code'; break;
+			case I.TextStyle.Bulleted:		 c = 'bulleted'; break;
+			case I.TextStyle.Numbered:		 c = 'numbered'; break;
+			case I.TextStyle.Toggle:		 c = 'toggle'; break;
+			case I.TextStyle.Checkbox:		 c = 'checkbox'; break;
+			case I.TextStyle.Title:			 c = 'title'; break;
+			case I.TextStyle.Description:	 c = 'description'; break;
+		};
+		return c;
+	};
 	
 	styleIcon (type: I.BlockType, v: number): string {
 		let icon = '';
@@ -42,9 +62,7 @@ class DataUtil {
 			case I.BlockType.Text:
 				switch (v) {
 					default:					 icon = this.textClass(v); break;
-					case I.TextStyle.Paragraph:	 icon = 'text'; break;
 					case I.TextStyle.Code:		 icon = 'kbd'; break;
-					case I.TextStyle.Bulleted:	 icon = 'list'; break;
 				};
 				break;
 
@@ -112,26 +130,6 @@ class DataUtil {
 		};
 
 		return c.join(' ');
-	};
-
-	textClass (v: I.TextStyle): string {
-		let c = '';
-		switch (v) {
-			default:
-			case I.TextStyle.Paragraph:		 c = 'paragraph'; break;
-			case I.TextStyle.Header1:		 c = 'header1'; break;
-			case I.TextStyle.Header2:		 c = 'header2'; break;
-			case I.TextStyle.Header3:		 c = 'header3'; break;
-			case I.TextStyle.Quote:			 c = 'quote'; break;
-			case I.TextStyle.Code:			 c = 'code'; break;
-			case I.TextStyle.Bulleted:		 c = 'bulleted'; break;
-			case I.TextStyle.Numbered:		 c = 'numbered'; break;
-			case I.TextStyle.Toggle:		 c = 'toggle'; break;
-			case I.TextStyle.Checkbox:		 c = 'checkbox'; break;
-			case I.TextStyle.Title:			 c = 'title'; break;
-			case I.TextStyle.Description:	 c = 'description'; break;
-		};
-		return c;
 	};
 
 	layoutClass (id: string, layout: I.ObjectLayout) {
@@ -595,25 +593,27 @@ class DataUtil {
 	
 	menuGetBlockText () {
 		return [
-			{ id: I.TextStyle.Paragraph, icon: 'text', lang: 'Paragraph' },
-			{ id: I.TextStyle.Header1, icon: 'header1', lang: 'Header1', aliases: [ 'h1', 'head1' ] },
-			{ id: I.TextStyle.Header2, icon: 'header2', lang: 'Header2', aliases: [ 'h2', 'head2' ] },
-			{ id: I.TextStyle.Header3, icon: 'header3', lang: 'Header3', aliases: [ 'h3', 'head3' ] },
-			{ id: I.TextStyle.Quote, icon: 'quote', lang: 'Quote' },
+			{ id: I.TextStyle.Paragraph, lang: 'Paragraph' },
+			{ id: I.TextStyle.Header1, lang: 'Header1', aliases: [ 'h1', 'head1' ] },
+			{ id: I.TextStyle.Header2, lang: 'Header2', aliases: [ 'h2', 'head2' ] },
+			{ id: I.TextStyle.Header3, lang: 'Header3', aliases: [ 'h3', 'head3' ] },
+			{ id: I.TextStyle.Quote, lang: 'Quote' },
 		].map((it: any) => {
 			it.type = I.BlockType.Text;
+			it.icon = this.textClass(it.id);
 			return this.menuMapperBlock(it);
 		});
 	};
 	
 	menuGetBlockList () {
 		return [
-			{ id: I.TextStyle.Checkbox, icon: 'checkbox', lang: 'Checkbox', aliases: [ 'todo' ] },
-			{ id: I.TextStyle.Bulleted, icon: 'list', lang: 'Bulleted' },
-			{ id: I.TextStyle.Numbered, icon: 'numbered', lang: 'Numbered' },
-			{ id: I.TextStyle.Toggle, icon: 'toggle', lang: 'Toggle' },
+			{ id: I.TextStyle.Checkbox, lang: 'Checkbox', aliases: [ 'todo' ] },
+			{ id: I.TextStyle.Bulleted, lang: 'Bulleted' },
+			{ id: I.TextStyle.Numbered, lang: 'Numbered' },
+			{ id: I.TextStyle.Toggle, lang: 'Toggle' },
 		].map((it: any) => {
 			it.type = I.BlockType.Text;
+			it.icon = this.textClass(it.id);
 			return this.menuMapperBlock(it);
 		});
 	};
