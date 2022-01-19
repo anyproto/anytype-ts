@@ -87,34 +87,10 @@ const BlockImage = observer(class BlockImage extends React.Component<Props, {}> 
 	
 	componentDidMount () {
 		this._isMounted = true;
-		this.rebind();
 	};
 	
 	componentWillUnmount () {
 		this._isMounted = false;
-		this.unbind();
-	};
-	
-	rebind () {
-		if (!this._isMounted) {
-			return;
-		};
-		
-		const node = $(ReactDOM.findDOMNode(this));
-		
-		node.unbind('resizeStart resize resizeEnd');
-		node.on('resizeStart', (e: any, oe: any) => { this.onResizeStart(oe, true); });
-		node.on('resize', (e: any, oe: any) => { this.onResize(oe, true); });
-		node.on('resizeEnd', (e: any, oe: any) => { this.onResizeEnd(oe, true); });
-	};
-	
-	unbind () {
-		if (!this._isMounted) {
-			return;
-		};
-		
-		const node = $(ReactDOM.findDOMNode(this));
-		node.unbind('resize');
 	};
 	
 	onKeyDown (e: any) {
