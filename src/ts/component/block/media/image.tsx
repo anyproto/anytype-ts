@@ -242,8 +242,7 @@ const BlockImage = observer(class BlockImage extends React.Component<Props, {}> 
 		const { block } = this.props;
 		const { id, fields } = block;
 		const el = $('#selectable-' + id);
-		
-		let width = Number(fields.width) || 1;
+		const width = Number(fields.width) || 1;
 		
 		if (!el.length) {
 			return width;
