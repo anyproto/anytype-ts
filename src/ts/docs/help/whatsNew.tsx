@@ -6,7 +6,23 @@ export default [
 	{ type: I.BlockType.Cover, param: { type: I.CoverType.Image, id: 'c4', y: -0.2, withScale: true } },
 	{ type: I.BlockType.IconPage, icon: '👋' },
 
-	{ style: I.TextStyle.Title, text: `Updates for 13 January, 2022` },
+	{ style: I.TextStyle.Title, text: `Updates for 19 January, 2022` },
+	{ style: I.TextStyle.Header2, text: `Enhancements` },
+	{ style: I.TextStyle.Bulleted, text: `Cache DNS requests on the application level. We decided to implement caching on our side because not all OS (like Linux Ubuntu for example) provide for such a thing. Thanks, <a href="https://community.anytype.io/t/excessive-network-activity-dns-requests/3374/13">_flo, kEbZeCK</a>` },
+	{ style: I.TextStyle.Bulleted, text: `-> conversion to arrow now works in description. Thanks, <a href="https://community.anytype.io/t/conversion-to-arrow-doesnt-work-in-description">kEbZeCK</a>` },
+	{ style: I.TextStyle.Header2, text: `Bugs` },
+	{ style: I.TextStyle.Bulleted, text: `Ctrl+A in the search bar resulted in selecting all in the background. Thanks, <a href="https://community.anytype.io/t/ctrl-a-in-search-bar-results-in-select-all-in-background">kEbZeCK</a>` },
+	{ style: I.TextStyle.Bulleted, text: `Images got broken and stopped showing in some cases. Thanks, <a href="https://community.anytype.io/t/images-got-broken-relation-value-lost">mkoechli, Tanzeel098, JGsource, GooRusa, lynxlove, edwards</a>, <a href="https://community.anytype.io/t/failed-to-load-pdf-file/4173">sebro, tempapy</a>` },
+	{ style: I.TextStyle.Bulleted, text: `All orphaned objects were rendered too close to an opened object in Graph. Now they are next to the left` },
+	{ style: I.TextStyle.Bulleted, text: `Backspace deleted all letters in spelling Chinese characters. Thanks, <a href="https://community.anytype.io/t/backspace-will-delete-all-letters-in-spelling-chinese-characters">simon shi</a>` },
+	{ style: I.TextStyle.Bulleted, text: `After creating a non-text type block, pressing Enter didn't create a new empty block below` },
+	{ style: I.TextStyle.Bulleted, text: `LaTeX command autofill inserted the wrong command. Thanks, <a href="https://community.anytype.io/t/latex-command-autofill-inserts-the-wrong-command">Skyler</a>` },
+	{ style: I.TextStyle.Bulleted, text: `The autocomplete box sometimes appeared behind the popup box of the note. Thanks, <a href="https://community.anytype.io/t/inline-link-autocomplete-shows-behind-the-pop-up-page-on-empty-lines">utau0324</a>` },
+	{ style: I.TextStyle.Bulleted, text: `Windows. After closing Anytype, it could not be opened again. Thanks, <a href="https://community.anytype.io/t/failed-to-load-pdf-file/4173">sebro</a>` },
+
+	{ type: I.BlockType.Div, style: I.DivStyle.Dot },
+
+	{ style: I.TextStyle.Header1, text: `Updates for 13 January, 2021` },
 	{ style: I.TextStyle.Header2, text: `Happy New Year` },
 	{ text: `In 2022 we will open Anytype to even more users, allowing everyone to experience our new metaphor for computing. This milestone is, in no small part, thanks to your incredible feedback. Thank you for a tremendous 2021, and we look forward to building Anytype with you in 2022.` },
 
