@@ -65,7 +65,6 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 	};
 	
 	render () {
-		const { config } = commonStore;
 		const { isEditing, loading } = this.state;
 		const { rootId, readonly } = this.props;
 		const object = detailStore.get(rootId, rootId, [ 'iconImage', 'iconEmoji' ].concat(Constant.coverRelationKeys), true);
@@ -544,7 +543,9 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 	};
 	
 	onDragOver (e: any) {
-		if (!this._isMounted || !e.dataTransfer.files || !e.dataTransfer.files.length) {
+		const { readonly } = this.props;
+
+		if (!this._isMounted || !e.dataTransfer.files || !e.dataTransfer.files.length || readonly) {
 			return;
 		};
 		
@@ -553,7 +554,9 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 	};
 	
 	onDragLeave (e: any) {
-		if (!this._isMounted || !e.dataTransfer.files || !e.dataTransfer.files.length) {
+		const { readonly } = this.props;
+
+		if (!this._isMounted || !e.dataTransfer.files || !e.dataTransfer.files.length || readonly) {
 			return;
 		};
 		
@@ -562,11 +565,12 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 	};
 	
 	onDrop (e: any) {
-		if (!this._isMounted || !e.dataTransfer.files || !e.dataTransfer.files.length) {
+		const { rootId, dataset, readonly } = this.props;
+
+		if (!this._isMounted || !e.dataTransfer.files || !e.dataTransfer.files.length || readonly) {
 			return;
 		};
 		
-		const { rootId, dataset } = this.props;
 		const { preventCommonDrop } = dataset || {};
 		const file = e.dataTransfer.files[0].path;
 		const node = $(ReactDOM.findDOMNode(this));
