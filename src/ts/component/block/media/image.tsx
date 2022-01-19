@@ -70,7 +70,7 @@ const BlockImage = observer(class BlockImage extends React.Component<Props, {}> 
 				
 			case I.FileState.Done:
 				element = (
-					<div id="wrap" className="wrap resizable" style={css}>
+					<div id="wrap" className="wrap" style={css}>
 						<img className="media" src={this.getUrl()} onDragStart={(e: any) => { e.preventDefault(); }} onClick={this.onClick} onLoad={this.onLoad} onError={this.onError} />
 						<Icon className="resize" onMouseDown={(e: any) => { this.onResizeStart(e, false); }} />
 					</div>
