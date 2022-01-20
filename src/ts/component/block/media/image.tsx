@@ -70,7 +70,7 @@ const BlockImage = observer(class BlockImage extends React.Component<Props, {}> 
 				
 			case I.FileState.Done:
 				element = (
-					<div id="wrap" className="wrap resizable" style={css}>
+					<div id="wrap" className="wrap" style={css}>
 						<img className="media" src={this.getUrl()} onDragStart={(e: any) => { e.preventDefault(); }} onClick={this.onClick} onLoad={this.onLoad} onError={this.onError} />
 						<Icon className="resize" onMouseDown={(e: any) => { this.onResizeStart(e, false); }} />
 					</div>
@@ -87,34 +87,10 @@ const BlockImage = observer(class BlockImage extends React.Component<Props, {}> 
 	
 	componentDidMount () {
 		this._isMounted = true;
-		this.rebind();
 	};
 	
 	componentWillUnmount () {
 		this._isMounted = false;
-		this.unbind();
-	};
-	
-	rebind () {
-		if (!this._isMounted) {
-			return;
-		};
-		
-		const node = $(ReactDOM.findDOMNode(this));
-		
-		node.unbind('resizeStart resize resizeEnd');
-		node.on('resizeStart', (e: any, oe: any) => { this.onResizeStart(oe, true); });
-		node.on('resize', (e: any, oe: any) => { this.onResize(oe, true); });
-		node.on('resizeEnd', (e: any, oe: any) => { this.onResizeEnd(oe, true); });
-	};
-	
-	unbind () {
-		if (!this._isMounted) {
-			return;
-		};
-		
-		const node = $(ReactDOM.findDOMNode(this));
-		node.unbind('resize');
 	};
 	
 	onKeyDown (e: any) {
@@ -266,8 +242,7 @@ const BlockImage = observer(class BlockImage extends React.Component<Props, {}> 
 		const { block } = this.props;
 		const { id, fields } = block;
 		const el = $('#selectable-' + id);
-		
-		let width = Number(fields.width) || 1;
+		const width = Number(fields.width) || 1;
 		
 		if (!el.length) {
 			return width;

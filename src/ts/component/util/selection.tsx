@@ -608,6 +608,8 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	};
 	
 	injectProps (children: any) {
+		keyboard.setSelection(this);
+
 		return React.Children.map(children, (child: any) => {
 			if (!child) {
 				return;
