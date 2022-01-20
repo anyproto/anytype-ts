@@ -643,6 +643,8 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 						DataUtil.objectOpenPopup({ ...details, id: message.targetId });
 					});
 				} else {
+					keyboard.setFocus(false);
+
 					blockCreate(blockId, position, param, (blockId: string) => {
 
 						// Auto-open BlockRelation suggest menu

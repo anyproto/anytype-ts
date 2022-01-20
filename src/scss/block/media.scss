@@ -90,10 +90,10 @@
 
 		.pdfWrapper { 
 			width: 100%; overflow: hidden; position: relative; padding: 12px; box-shadow: 0px 0px 0px 1px $colorBorderDark;
-			border-radius: 6px;
+			border-radius: 6px; display: flex; flex-direction: column; gap: 6px 0px;
 		}
 		.pdfWrapper {
-			.info { @include text-common; margin-bottom: 6px; text-align: center; }
+			.info { @include text-common; text-align: center; flex-shrink: 0; }
 			.info {
 				.name {
 					min-width: 40px; max-width: calc(100% - 180px); height: 24px; line-height: 24px; display: inline-block;
@@ -105,14 +105,18 @@
 				}
 			}
 
-			.pager { margin-top: 6px; }
+			.pager { flex-shrink: 0; }
 			.pager {
 				.icon { opacity: 0 !important; }
 			}
-			.loaderWrapper { width: 100%; position: relative; }
 
-			.react-pdf__Document { width: 100%; display: inline-block; }
-			.react-pdf__Page__svg { width: 100% !important; height: 100% !important; overflow: hidden; }
+			.loaderWrapper { width: 100%; height: 100%; position: absolute; left: 0px; top: 0px; }
+
+			.react-pdf__Document { width: 100%; display: inline-block; position: relative; flex-grow: 1; }
+			.react-pdf__Page { position: static !important; }
+			.react-pdf__Page__svg, .react-pdf__Page__canvas { 
+				width: 100% !important; height: 100% !important; overflow: hidden; 
+			}
 			.react-pdf__Page__svg svg { width: 100%; height: auto; }
 			.react-pdf__Page__textContent { width: 100% !important; height: auto !important; }
 			.react-pdf__Page__annotations { display: none; }
