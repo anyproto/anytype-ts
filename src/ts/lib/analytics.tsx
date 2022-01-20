@@ -32,7 +32,6 @@ class Analytics {
 		};
 
 		const platform = Util.getPlatform();
-		const { account } = authStore;
 
 		C.MetricsSetParameters(platform);
 
@@ -52,9 +51,7 @@ class Analytics {
 			osVersion: os.release(),
 		});
 
-		if (this.debug()) {
-			console.log('[Analytics.init]', this.instance);
-		};
+		console.log('[Analytics.init]', this.instance);
 
 		this.isInit = true;
 	};
@@ -74,7 +71,12 @@ class Analytics {
 			return;
 		};
 
-		this.instance.setDeviceId(id);
+		const identify = new amplitude.Identify().set('middlewareDeviceId', id);
+		amplitude.identify(identify);
+
+		if (this.debug()) {
+			console.log('[Analytics.device]', id);
+		};
 	};
 
 	setContext (context: string, id: string) {
