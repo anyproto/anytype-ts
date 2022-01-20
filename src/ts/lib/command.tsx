@@ -1252,6 +1252,22 @@ const WorkspaceSetIsHighlighted = (objectId: string, isHightlighted: boolean, ca
 	dispatcher.request('workspaceSetIsHighlighted', request, callBack);
 };
 
+const UnsplashSearch = (limit: number, callBack?: (message: any) => void) => {
+	const request = new Rpc.UnsplashSearch.Request();
+	
+	request.setLimit(limit);
+
+	dispatcher.request('unsplashSearch', request, callBack);
+};
+
+const UnsplashDownload = (id: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.UnsplashDownload.Request();
+	
+	request.setPictureid(id);
+
+	dispatcher.request('unsplashDownload', request, callBack);
+};
+
 export {
 	VersionGet,
 	DebugSync,
@@ -1400,4 +1416,7 @@ export {
 	WorkspaceCreate,
 	WorkspaceSelect,
 	WorkspaceSetIsHighlighted,
+
+	UnsplashSearch,
+	UnsplashDownload,
 };

@@ -3,8 +3,8 @@
 .menus {
 	.menu.menuBlockCover { width: 410px; }
 	.menu.menuBlockCover {
-		.content { padding: 0px; overflow: visible; max-height: unset; }
-		.sections { overflow: overlay; height: 380px; }
+		.content { padding: 0px; overflow: visible; max-height: 366px; }
+		.sections { overflow: auto; height: 325px; }
 
 		.head { border-bottom: 1px solid $colorLightGrey; padding: 11px 16px; font-weight: 500; color: $colorMediumGrey; }
 		.head {
