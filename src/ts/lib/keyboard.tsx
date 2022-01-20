@@ -124,6 +124,7 @@ class Keyboard {
 					popupStore.closeLast();
 				};
 			};
+			
 			Util.previewHide(false);
 		});
 
