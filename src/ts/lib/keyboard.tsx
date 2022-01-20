@@ -376,7 +376,7 @@ class Keyboard {
 		analytics.event('Redo');
 	};
 
-	printApply (className: string) {
+	printApply (className: string, clearTheme: boolean) {
 		const isPopup = this.isPopup();
 		const html = $('html');
 
@@ -390,7 +390,9 @@ class Keyboard {
 			html.addClass(className);
 		};
 
-		Util.addBodyClass('theme', '');
+		if (clearTheme) {
+			Util.addBodyClass('theme', '');
+		};
 		focus.clearRange(true);
 	};
 
@@ -402,7 +404,7 @@ class Keyboard {
 	};
 
 	onPrint () {
-		this.printApply('print');
+		this.printApply('print', true);
 
 		window.print();
 
@@ -414,7 +416,7 @@ class Keyboard {
 		const rootId = this.getRootId();
 		const object = detailStore.get(rootId, rootId);
 
-		this.printApply('save');
+		this.printApply('save', false);
 		ipcRenderer.send('winCommand', 'saveAsHTML', { name: object.name });
 	};
 

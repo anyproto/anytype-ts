@@ -62,6 +62,8 @@ html.printMedia {
 			
 			.inner.vertical { padding: 0px; }
 		}
+
+		.block.blockText.code > .wrapContent > .selectable > .dropTarget > .flex .value { white-space: pre; }
 	}
 }
 
