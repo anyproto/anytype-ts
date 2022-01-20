@@ -574,7 +574,7 @@ class DataUtil {
 
 		text = String(text || '');
 		marks = marks || [];
-		
+
 		if (update) {
 			blockStore.updateContent(rootId, block.id, { text, marks });
 		};
