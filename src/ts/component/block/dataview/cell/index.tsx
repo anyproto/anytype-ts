@@ -213,9 +213,7 @@ class Cell extends React.Component<Props, {}> {
 			commonStore.cellId = '';
 
 			if (menuId) {
-				window.setTimeout(() => {
-					$(bodyContainer).removeClass('overMenu');
-				}, Constant.delay.menu);
+				window.setTimeout(() => { $(bodyContainer).removeClass('overMenu'); }, Constant.delay.menu);
 			};
 		};
 

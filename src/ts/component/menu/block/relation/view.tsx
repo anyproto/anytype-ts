@@ -34,11 +34,22 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const { data, classNameWrap } = param;
 		const { rootId, readonly } = data;
 		const sections = this.getSections();
-		const block = blockStore.getLeaf(rootId, rootId);
-		const allowedBlock = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Block ]);
-		const allowedRelation = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Relation ]);
-		const allowedValue = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
+		const root = blockStore.getLeaf(rootId, rootId);
 		const object = detailStore.get(rootId, rootId, [ Constant.relationKey.featured ]);
+
+		if (!root) {
+			return null;
+		};
+
+		let allowedBlock = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Block ]);
+		let allowedRelation = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Relation ]);
+		let allowedValue = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
+
+		if (root.fields.isLocked) {
+			allowedBlock = false;
+			allowedRelation = false;
+			allowedValue = false;
+		};
 
 		const Section = (section: any) => (
 			<div id={'section-' + section.id} className="section">
@@ -60,7 +71,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 								{...this.props}
 								{...item}
 								rootId={rootId}
-								block={block}
+								block={root}
 								onEdit={this.onEdit}
 								onRef={(id: string, ref: any) => { this.cellRefs.set(id, ref); }}
 								onFav={this.onFav}

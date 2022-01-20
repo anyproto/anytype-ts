@@ -5,13 +5,13 @@ import { I, C, Util, DataUtil, focus, translate } from 'ts/lib';
 import { commonStore, blockStore, detailStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
-interface Props extends I.BlockComponent {}
+interface Props extends I.BlockComponent {};
 
 interface State {
 	isEditing: boolean;
 	justUploaded: boolean;
 	loading: boolean;
-}
+};
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
@@ -65,7 +65,6 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 	};
 	
 	render () {
-		const { config } = commonStore;
 		const { isEditing, loading } = this.state;
 		const { rootId, readonly } = this.props;
 		const object = detailStore.get(rootId, rootId, [ 'iconImage', 'iconEmoji' ].concat(Constant.coverRelationKeys), true);
@@ -78,8 +77,9 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 		};
 
 		const allowedDetails = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
-		const allowedLayout = !root.isObjectSet() && (allowedDetails || blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Layout ]));
-		const allowedIcon = !object.iconEmoji && !object.iconImage && !root.isObjectTask();
+		const allowedIcon = !readonly && !object.iconEmoji && !object.iconImage && !root.isObjectTask();
+		const allowedCover = !readonly;
+		const allowedLayout = !readonly && !root.isObjectSet() && (allowedDetails || blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Layout ]));
 
 		let elements = null;
 		if (isEditing) {
@@ -117,10 +117,12 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 							</div>
 						) : ''}
 
-						<div id="button-cover" className="btn white withIcon" onClick={this.onCover}>
-							<Icon className="addCover" />
-							<div className="txt">{translate('editorControlCover')}</div>
-						</div>
+						{allowedCover ? (
+							<div id="button-cover" className="btn white withIcon" onClick={this.onCover}>
+								<Icon className="addCover" />
+								<div className="txt">{translate('editorControlCover')}</div>
+							</div>
+						) : ''}
 
 						{allowedLayout ? (
 							<div id="button-layout" className="btn white withIcon" onClick={this.onLayout}>
@@ -138,6 +140,12 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 			);
 		};
 
+		elements = (
+			<div id="elements" className="elements editorControlElements">
+				{elements}
+			</div>
+		);
+
 		return (
 			<div 
 				className={[ 'wrap', (isEditing ? 'isEditing' : '') ].join(' ')} 
@@ -154,11 +162,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 					<Cover id={coverId} image={coverId} type={coverType} className={coverId} />
 				)}
 
-				{!readonly ? (
-					<div id="elements" className="elements editorControlElements">
-						{elements}
-					</div>
-				) : ''}
+				{elements}
 			</div>
 		);
 	};
@@ -539,7 +543,9 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 	};
 	
 	onDragOver (e: any) {
-		if (!this._isMounted || !e.dataTransfer.files || !e.dataTransfer.files.length) {
+		const { readonly } = this.props;
+
+		if (!this._isMounted || !e.dataTransfer.files || !e.dataTransfer.files.length || readonly) {
 			return;
 		};
 		
@@ -548,7 +554,9 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 	};
 	
 	onDragLeave (e: any) {
-		if (!this._isMounted || !e.dataTransfer.files || !e.dataTransfer.files.length) {
+		const { readonly } = this.props;
+
+		if (!this._isMounted || !e.dataTransfer.files || !e.dataTransfer.files.length || readonly) {
 			return;
 		};
 		
@@ -557,11 +565,12 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 	};
 	
 	onDrop (e: any) {
-		if (!this._isMounted || !e.dataTransfer.files || !e.dataTransfer.files.length) {
+		const { rootId, dataset, readonly } = this.props;
+
+		if (!this._isMounted || !e.dataTransfer.files || !e.dataTransfer.files.length || readonly) {
 			return;
 		};
 		
-		const { rootId, dataset } = this.props;
 		const { preventCommonDrop } = dataset || {};
 		const file = e.dataTransfer.files[0].path;
 		const node = $(ReactDOM.findDOMNode(this));

@@ -886,13 +886,21 @@ class Util {
 		return `./img/cover/${preview ? 'preview/' : ''}${id}.jpg`;
 	};
 
-	selectionRect () {
+	selectionRange (): Range {
 		let sel: Selection = window.getSelection();
-		let rect: any = { x: 0, y: 0, width: 0, height: 0 };
 		let range: Range = null;
 
 		if (sel && (sel.rangeCount > 0)) {
 			range = sel.getRangeAt(0);
+		};
+
+		return range;
+	};
+
+	selectionRect () {
+		let rect: any = { x: 0, y: 0, width: 0, height: 0 };
+		let range = this.selectionRange();
+		if (range) {
 			rect = range.getBoundingClientRect() as DOMRect;
 		};
 		return this.objectCopy(rect);

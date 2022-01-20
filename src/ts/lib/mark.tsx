@@ -15,6 +15,20 @@ const Tags = [
 	'obj',
 ];
 
+const Patterns = {
+	'-->': '⟶',
+	'<--': '⟵',
+	'<-->': '⟷',
+	'->': '→',
+	'<-': '←',
+	'--': '—',
+	'—>': '⟶',
+	'<—': '⟵',
+	'(c)': '©',
+	'(r)': '®',
+	'(tm)': '™',
+};
+
 enum Overlap {
 	Equal		 = 0,		 // a == b
 	Outer		 = 1,		 // b inside a
@@ -390,24 +404,12 @@ class Mark {
 			if (p == '&lt;') p = '<';
 			if (p == '&gt;') p = '>';
 			if (p == '&amp;') p = '&';
-			if (p == '->') p = '→';
-			if (p == '<-') p = '←';
 			text = text.replace(s, p);
 			return '';
 		});
 
+		text = this.fromUnicode(text);
 		html = text;
-
-		// Unicode symbols
-		html.replace(/(-->|<--|<-->|->|<-)\s/g, (s: string, p: string) => {
-			if (p == '->') p = '→';
-			if (p == '<-') p = '←';
-			if (p == '-->') p = '⟶';
-			if (p == '<--') p = '⟵';
-			if (p == '<-->') p = '⟷';
-			text = text.replace(s, p + ' ');
-			return '';
-		});
 
 		html.replace(rh, (s: string, p1: string, p2: string, p3: string) => {
 			p1 = String(p1 || '').trim();
@@ -444,6 +446,22 @@ class Mark {
 		return this.fromMarkdown(text, marks, restricted);
 	};
 
+	// Unicode symbols
+	fromUnicode (html: string): string {
+		let text = html;
+		let keys = Object.keys(Patterns).map((it: any) => { return Util.filterFix(it) });
+		let reg = new RegExp('(' + keys.join('|') + ')\\s', 'g');
+
+		html.replace(reg, (s: string, p: string) => {
+			if (Patterns[p]) {
+				text = text.replace(s, Patterns[p] + ' ');
+			};
+			return '';
+		});
+
+		return text;
+	};
+
 	fromMarkdown (html: string, marks: I.Mark[], restricted: I.MarkType[]) {
 		let text = html;
 		let test = /[`\*_~\[]{1}/.test(text);
@@ -465,8 +483,6 @@ class Mark {
 				p3 = String(p3 || '');
 				p4 = String(p4 || '');
 				p5 = String(p5 || '');
-
-				console.log(s, p1, p2, p3, p4, p5);
 
 				let from = (Number(text.indexOf(s)) || 0) + p1.length;
 				let to = from + p3.length;

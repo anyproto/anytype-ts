@@ -31,9 +31,9 @@ const CONFIG_NAME = 'devconfig';
 let env = {};
 let deeplinkingUrl;
 
-if (isDev && (process.platform === 'win32')) {
+if (isDev && is.windows) {
 	if (!app.isDefaultProtocolClient(protocol)) {
-		app.setAsDefaultProtocolClient(protocol, process.execPath, [ resolve(process.argv[1]) ]);
+		app.setAsDefaultProtocolClient(protocol, process.execPath, [ process.argv[1] ]);
 	};
 } else {
 	if (!app.isDefaultProtocolClient(protocol)) {
@@ -49,7 +49,7 @@ let isUpdating = false;
 let userPath = app.getPath('userData');
 let tmpPath = path.join(userPath, 'tmp');
 let waitLibraryPromise;
-let useGRPC = !process.env.ANYTYPE_USE_ADDON && (env.USE_GRPC || process.env.ANYTYPE_USE_GRPC || (process.platform == "win32") || is.development);
+let useGRPC = !process.env.ANYTYPE_USE_ADDON && (env.USE_GRPC || process.env.ANYTYPE_USE_GRPC || is.windows || is.development);
 let defaultChannel = version.match('alpha') ? 'alpha' : 'latest';
 let timeoutUpdate = 0;
 let server;
@@ -141,7 +141,10 @@ nativeTheme.on('updated', () => {
 
 function initTray () {
 	tray = new Tray (trayIcon());
+	
 	tray.setToolTip('Anytype');
+	tray.on('click', () => { win.show(); });
+
 	tray.setContextMenu(Menu.buildFromTemplate([
 		{ label: 'Open Anytype', click: () => { win.show(); } },
 
@@ -217,6 +220,9 @@ function createWindow () {
 
 	if (process.platform == 'linux') {
 		param.icon = image;
+	} else {
+		param.frame = false;
+		param.titleBarStyle = 'hidden';
 	};
 
 	if (process.platform == 'darwin') {
@@ -225,13 +231,8 @@ function createWindow () {
 		param.trafficLightPosition = { x: 20, y: 18 };
 	};
 
-	if (process.platform == 'win32') {
-		param.icon = path.join(__dirname, '/electron/icon.ico');
-	};
-
-	if (process.platform != 'linux') {
-		param.frame = false;
-		param.titleBarStyle = 'hidden';
+	if (is.windows) {
+		param.icon = path.join(__dirname, '/electron/icon64x64.png');
 	};
 
 	win = new BrowserWindow(param);
@@ -775,6 +776,7 @@ app.on('second-instance', (event, argv, cwd) => {
 		if (win.isMinimized()) {
 			win.restore();
 		};
+		win.show();
 		win.focus();
 	};
 });

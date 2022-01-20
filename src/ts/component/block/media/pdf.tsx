@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import { InputWithFile, Loader, Error, Pager } from 'ts/component';
 import { I, C, translate, focus, Action, Util } from 'ts/lib';
 import { commonStore, detailStore } from 'ts/store';
@@ -27,6 +28,7 @@ const BlockPdf = observer(class BlockPdf extends React.Component<Props, State> {
 		pages: 0,
 		page: 1,
 	};
+	height: number = 0;
 
 	constructor (props: any) {
 		super(props);
@@ -37,7 +39,9 @@ const BlockPdf = observer(class BlockPdf extends React.Component<Props, State> {
 		this.onFocus = this.onFocus.bind(this);
 		this.onChangeUrl = this.onChangeUrl.bind(this);
 		this.onChangeFile = this.onChangeFile.bind(this);
-	}
+		this.onDocumentLoad = this.onDocumentLoad.bind(this);
+		this.onPageRender = this.onPageRender.bind(this);
+	};
 
 	render () {
 		const { rootId, block, readonly } = this.props;
@@ -60,6 +64,10 @@ const BlockPdf = observer(class BlockPdf extends React.Component<Props, State> {
 		
 		if (width) {
 			css.width = (width * 100) + '%';
+		};
+
+		if (this.height) {
+			css.minHeight = this.height;
 		};
 		
 		switch (state) {
@@ -111,11 +119,15 @@ const BlockPdf = observer(class BlockPdf extends React.Component<Props, State> {
 
 						<Document
 							file={commonStore.fileUrl(hash)}
-							onLoadSuccess={({ numPages }) => { this.setState({ pages: numPages }); }}
-							renderMode="svg"
+							onLoadSuccess={this.onDocumentLoad}
+							renderMode="canvas"
 							loading={<Loader />}
 						>
-							<Page pageNumber={page} loading={<Loader />} />
+							<Page 
+								pageNumber={page} 
+								loading={<Loader />} 
+								onRenderSuccess={this.onPageRender}
+							/>
 						</Document>
 
 						{pager}
@@ -177,6 +189,19 @@ const BlockPdf = observer(class BlockPdf extends React.Component<Props, State> {
 			};
 		});
 	};
+
+	onDocumentLoad (result: any) {
+		const { numPages } = result;
+		this.setState({ pages: numPages });
+	};
+
+	onPageRender () {
+		const node = $(ReactDOM.findDOMNode(this));
+		const wrap = node.find('.wrap');
+
+		this.height = wrap.outerHeight();
+	};
+
 });
 
 export default BlockPdf;

@@ -8,7 +8,7 @@ import { throttle } from 'lodash';
 
 interface Props {
 	dataset?: any;
-}
+};
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
@@ -119,6 +119,11 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 		};
 
 		const rootId = keyboard.getRootId();
+		const root = blockStore.getLeaf(rootId, rootId);
+		if (!root || root.fields.isLocked) {
+			return;
+		};
+
 		const dt = (e.dataTransfer || e.originalEvent.dataTransfer);
 		const last = blockStore.getFirstBlock(rootId, -1, (it: I.Block) => {
 			return !it.isSystem() && !it.isLayoutFooter();

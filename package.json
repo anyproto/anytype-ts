@@ -1,6 +1,6 @@
 {
 	"name": "anytype2",
-	"version": "0.23.1-alpha",
+	"version": "0.23.6-alpha",
 	"description": "Anytype",
 	"main": "electron.js",
 	"scripts": {
@@ -128,11 +128,10 @@
 		"mathjax-electron": "^3.0.0",
 		"mem": "^6.1.1",
 		"mobx": "^6.3.2",
-		"mobx-decorators": "^6.0.1",
-		"mobx-devtools-mst": "^0.9.26",
 		"mobx-logger": "^0.7.1",
 		"mobx-react": "^6.3.1",
 		"mobx-state-tree": "^3.17.2",
+		"node-gyp": "^8.4.1",
 		"node-loader": "^1.0.2",
 		"npm": "^7.19.1",
 		"npm-run-all": "^4.1.5",
