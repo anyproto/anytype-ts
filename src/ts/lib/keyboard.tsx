@@ -18,6 +18,7 @@ class Keyboard {
 	match: any = {};
 	matchPopup: any = {};
 	source: any = null;
+	selection: any = null;
 	
 	isDragging: boolean = false;
 	isResizing: boolean = false;
@@ -103,8 +104,25 @@ class Keyboard {
 			e.preventDefault();
 			if (menuStore.isOpen()) {
 				menuStore.closeLast();
-			} else {
-				popupStore.closeLast();
+			} else 
+			if (popupStore.isOpen()) {
+				let canClose = true;
+
+				if (this.selection) {
+					const ids = this.selection.get();
+					if (ids.length) {
+						canClose = false;
+					};
+				};
+				if (Util.selectionRange()) {
+					$(document.activeElement).blur();
+					window.getSelection().removeAllRanges();
+					canClose = false;
+				};
+
+				if (canClose) {
+					popupStore.closeLast();
+				};
 			};
 			Util.previewHide(false);
 		});
@@ -482,6 +500,10 @@ class Keyboard {
 
 	setSource (source: any) {
 		this.source = Util.objectCopy(source);
+	};
+
+	setSelection (v: any) {
+		this.selection = v;
 	};
 
 	initPinCheck () {
