@@ -3,7 +3,9 @@ html.printMedia {
 	@page:first { margin-top: 0px; }
 
 	body { margin: 0px; -webkit-print-color-adjust: exact; }
-	
+
+	#selection * { user-select: text; }
+
 	#drag, #previewLink, .menu, 
 	.editorControls, .controlButtons, 
 	html.withPopup .page.isFull, 
@@ -50,6 +52,7 @@ html.printMedia {
 		
 		.block.blockText {
 			.placeholder { display: none !important; }
+			.value { -webkit-user-modify: unset !important; }
 		}
 		
 		.block.blockBookmark {
