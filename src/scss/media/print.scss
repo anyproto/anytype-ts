@@ -2,8 +2,6 @@ html.printMedia {
 	@page { size: A4; margin: 0px 1.5cm; }
 	@page:first { margin-top: 0px; }
 
-	* { overflow: visible !important; }
-
 	body { margin: 0px; -webkit-print-color-adjust: exact; }
 	
 	#drag, #previewLink, .menu, 
@@ -18,6 +16,7 @@ html.printMedia {
 		.dimmer { display: none !important; }
 	}
 	
+	.editorWrapper.withIcon .blocks { margin-top: 2cm; }
 	.editorWrapper #editorSize { display: none !important; }
 
 	.pageMainEdit #bodyWrapper { padding: 0px !important; }
