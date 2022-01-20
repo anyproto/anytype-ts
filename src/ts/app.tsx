@@ -464,6 +464,7 @@ class App extends React.Component<Props, State> {
 						textCancel: 'Later',
 						onConfirm: () => {
 							ipcRenderer.send('updateConfirm');
+							Storage.delete('popupNewBlock');
 						},
 						onCancel: () => {
 							ipcRenderer.send('updateCancel');
@@ -491,7 +492,6 @@ class App extends React.Component<Props, State> {
 		ipcRenderer.on('download-progress', this.onProgress);
 
 		ipcRenderer.on('update-downloaded', (e: any, text: string) => {
-			Storage.delete('popupNewBlock');
 			commonStore.progressClear(); 
 		});
 

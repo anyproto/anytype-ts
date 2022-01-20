@@ -15,6 +15,20 @@ const Tags = [
 	'obj',
 ];
 
+const Patterns = {
+	'-->': '⟶',
+	'<--': '⟵',
+	'<-->': '⟷',
+	'->': '→',
+	'<-': '←',
+	'--': '—',
+	'—>': '⟶',
+	'<—': '⟵',
+	'(c)': '©',
+	'(r)': '®',
+	'(tm)': '™',
+};
+
 enum Overlap {
 	Equal		 = 0,		 // a == b
 	Outer		 = 1,		 // b inside a
@@ -435,15 +449,13 @@ class Mark {
 	// Unicode symbols
 	fromUnicode (html: string): string {
 		let text = html;
+		let keys = Object.keys(Patterns).map((it: any) => { return Util.filterFix(it) });
+		let reg = new RegExp('(' + keys.join('|') + ')\\s', 'g');
 
-		html.replace(/(-->|<--|<-->|->|<-|--)\s/g, (s: string, p: string) => {
-			if (p == '--') p = '—';
-			if (p == '->') p = '→';
-			if (p == '<-') p = '←';
-			if (p == '-->') p = '⟶';
-			if (p == '<--') p = '⟵';
-			if (p == '<-->') p = '⟷';
-			text = text.replace(s, p + ' ');
+		html.replace(reg, (s: string, p: string) => {
+			if (Patterns[p]) {
+				text = text.replace(s, Patterns[p] + ' ');
+			};
 			return '';
 		});
 

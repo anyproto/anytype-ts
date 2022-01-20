@@ -47,6 +47,7 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<Pro
 		const object = detailStore.get(breadcrumbs, rootId, [ 'templateIsBundled' ]);
 		const canSync = !object.templateIsBundled && !root.isObjectFileKind();
 		const cn = [ 'header', 'headerMainEdit' ];
+		const isLocked = root.fields.isLocked;
 
 		return (
 			<div id="header" className={cn.join(' ')}>
@@ -65,6 +66,7 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<Pro
 							<div className="flex">
 								<IconObject object={object} size={18} />
 								<div className="name">{object.name}</div>
+								{isLocked ? <Icon className="lock" /> : ''}
 							</div>
 						</div>
 					</div>

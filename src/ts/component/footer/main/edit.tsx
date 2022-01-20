@@ -3,13 +3,14 @@ import { RouteComponentProps } from 'react-router';
 import { Icon } from 'ts/component';
 import { I, DataUtil, focus } from 'ts/lib';
 import { menuStore, blockStore } from 'ts/store';
+import { observer } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any>  {
 	rootId: string;
 	isPopup?: boolean;
 };
 
-class FooterMainEdit extends React.Component<Props, {}> {
+const FooterMainEdit = observer(class FooterMainEdit extends React.Component<Props, {}> {
 	
 	constructor (props: any) {
 		super(props);
@@ -19,15 +20,14 @@ class FooterMainEdit extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { rootId, isPopup } = this.props;
+		const { rootId } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
 
 		if (!root) {
 			return null;
 		};
 
-		const allowed = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Block ]);
-		const canAdd = allowed && !root.isObjectRelation() && !root.isObjectType() && !root.isObjectSet() && !root.isObjectFileKind();
+		const canAdd = this.canAdd();
 
 		return (
 			<div id="footer" className="footer footerMainEdit">
@@ -37,17 +37,29 @@ class FooterMainEdit extends React.Component<Props, {}> {
 		);
 	};
 
+	canAdd () {
+		const { rootId } = this.props;
+		const root = blockStore.getLeaf(rootId, rootId);
+
+		if (!root) {
+			return false;
+		};
+
+		const allowed = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Block ]);
+		return allowed && !root.fields.isLocked && !root.isObjectRelation() && !root.isObjectType() && !root.isObjectSet() && !root.isObjectFileKind();
+	};
+
 	onAdd (e: any) {
 		const { rootId } = this.props;
 		const { focused } = focus.state;
 		const root = blockStore.getLeaf(rootId, rootId);
-		const fb = blockStore.getLeaf(rootId, focused);
-		const allowed = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Block ]);
+		const canAdd = this.canAdd();
 
-		if (!root || !allowed) {
+		if (!root || !canAdd) {
 			return;
 		};
 		
+		let fb = blockStore.getLeaf(rootId, focused);
 		let targetId = '';
 		let position = I.BlockPosition.Bottom;
 		
@@ -78,6 +90,6 @@ class FooterMainEdit extends React.Component<Props, {}> {
 		});
 	};
 	
-};
+});
 
 export default FooterMainEdit;
