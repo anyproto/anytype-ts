@@ -99,7 +99,7 @@ class Keyboard {
 			this.shortcut('alt+arrowright', e, (pressed: string) => { this.forward(); });
 		};
 
-		// Close popups
+		// Close popups and menus
 		this.shortcut('escape', e, (pressed: string) => {
 			e.preventDefault();
 			if (menuStore.isOpen()) {
@@ -108,16 +108,16 @@ class Keyboard {
 			if (popupStore.isOpen()) {
 				let canClose = true;
 
+				if (Util.selectionRange()) {
+					$(document.activeElement).blur();
+					window.getSelection().removeAllRanges();
+					canClose = false;
+				} else
 				if (this.selection) {
 					const ids = this.selection.get();
 					if (ids.length) {
 						canClose = false;
 					};
-				};
-				if (Util.selectionRange()) {
-					$(document.activeElement).blur();
-					window.getSelection().removeAllRanges();
-					canClose = false;
 				};
 
 				if (canClose) {
