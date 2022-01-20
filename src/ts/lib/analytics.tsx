@@ -71,8 +71,7 @@ class Analytics {
 			return;
 		};
 
-		const identify = new amplitude.Identify().set('middlewareDeviceId', id);
-		amplitude.identify(identify);
+		this.instance.setUserProperties({ middlewareDeviceId: id });
 
 		if (this.debug()) {
 			console.log('[Analytics.device]', id);
