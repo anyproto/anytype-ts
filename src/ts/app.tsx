@@ -610,6 +610,14 @@ class App extends React.Component<Props, State> {
 				keyboard.pageCreate();
 				break;
 
+			case 'saveAsHTML':
+				keyboard.onSaveAsHTML();
+				break;
+
+			case 'saveAsHTMLSuccess':
+				keyboard.printRemove();
+				break;
+
 			case 'save':
 				Action.export([ rootId ], I.ExportFormat.Protobuf, true, true, true);
 				break;
@@ -693,10 +701,6 @@ class App extends React.Component<Props, State> {
 
 	onClose (e: any) {
 		ipcRenderer.send('winCommand', 'close');
-	};
-
-	onSave (e: any) {
-		ipcRenderer.send('winCommand', 'save');
 	};
 
 };

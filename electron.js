@@ -48,6 +48,7 @@ remote.initialize();
 let isUpdating = false;
 let userPath = app.getPath('userData');
 let tmpPath = path.join(userPath, 'tmp');
+let exportPath = path.join(userPath, 'export');
 let waitLibraryPromise;
 let useGRPC = !process.env.ANYTYPE_USE_ADDON && (env.USE_GRPC || process.env.ANYTYPE_USE_GRPC || is.windows || is.development);
 let defaultChannel = version.match('alpha') ? 'alpha' : 'latest';
@@ -96,6 +97,7 @@ if (process.env.DATA_PATH) {
 };
 
 try { fs.mkdirSync(tmpPath); } catch (e) {};
+try { fs.mkdirSync(exportPath); } catch (e) {};
 
 if (useGRPC) {
 	server = require('./electron/server.js');
@@ -358,7 +360,9 @@ function createWindow () {
 		send.apply(this, args);
 	});
 
-	ipcMain.on('winCommand', (e, cmd) => {
+	ipcMain.on('winCommand', (e, cmd, param) => {
+		param = param || {};
+
 		switch (cmd) {
 			case 'menu':
 				menu.popup({ x: 16, y: 38 });
@@ -374,6 +378,10 @@ function createWindow () {
 
 			case 'close':
 				win.hide();
+				break;
+
+			case 'saveAsHTML':
+				savePage(param.name);
 				break;
 		};
 	});
@@ -642,7 +650,7 @@ function menuInit () {
 				},
 				{
 					label: 'Save page as HTML',
-					click: () => { savePage();	}
+					click: () => { send('command', 'saveAsHTML');	}
 				},
 			]
 		});
@@ -858,10 +866,14 @@ function exit (relaunch) {
 	};
 };
 
-function savePage () {
-	win.webContents.savePage(tmpPath + '/page.mhtml', 'MHTML').then(() => {
-		console.log('Page was saved successfully.')
-	}).catch(err => {
-		console.log(err);
+function savePage (name) {
+	name = String(name || 'untitled').replace(/[^a-z0-9]/gi, '_').toLowerCase();
+
+	win.webContents.savePage(path.join(exportPath, name + '.mhtml'), 'MHTML').then(() => {
+		shell.openPath(exportPath);
+		send('command', 'saveAsHTMLSuccess');
+	}).catch(err => { 
+		send('command', 'saveAsHTMLSuccess');
+		console.log(err); 
 	});
 };

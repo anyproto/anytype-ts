@@ -1,5 +1,5 @@
-@media print {
-	@page { size: A4; margin: 1.5cm; }
+html.printMedia {
+	@page { size: A4; margin: 0px 1.5cm; }
 	@page:first { margin-top: 0px; }
 
 	* { overflow: visible !important; }
@@ -18,8 +18,10 @@
 		.dimmer { display: none !important; }
 	}
 	
-	#editorWrapper { width: 100% !important; }
+	#editorWrapper { margin-top: -52px; }
 	.editorWrapper #editorSize { display: none !important; }
+
+	.pageMainEdit #bodyWrapper { padding: 0px; }
 
 	.pageMainType, .pageMainRelation {
 		.wrapper {
@@ -39,7 +41,7 @@
 
 	.block.blockCover { left: 0px; top: 0px; width: 100%; }
 
-	.blocks { margin: 0px !important; }
+	.blocks { padding: 0px 0.5cm; }
 	.blocks {
 		.wrapMenu .icon.dnd { display: none; }
 		#button-block-add { display: none; }
@@ -60,4 +62,11 @@
 			.inner.vertical { padding: 0px; }
 		}
 	}
+}
+
+html.printMedia.print {
+	#editorWrapper { width: 100% !important; }
+}
+
+html.printMedia.save {
 }
