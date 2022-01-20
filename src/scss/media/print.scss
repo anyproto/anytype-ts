@@ -18,11 +18,9 @@ html.printMedia {
 		.dimmer { display: none !important; }
 	}
 	
-	#editorWrapper { margin-top: -52px; }
 	.editorWrapper #editorSize { display: none !important; }
 
-	.pageMainEdit #bodyWrapper { padding: 0px; }
-
+	.pageMainEdit #bodyWrapper { padding: 0px !important; }
 	.pageMainType, .pageMainRelation {
 		.wrapper {
 			.head {
@@ -39,7 +37,7 @@ html.printMedia {
 		}
 	}
 
-	.block.blockCover { left: 0px; top: 0px; width: 100%; }
+	.block.blockCover { left: 0px !important; top: 0px !important; width: 100%; }
 
 	.blocks { padding: 0px 0.5cm; }
 	.blocks {
