@@ -695,6 +695,10 @@ class App extends React.Component<Props, State> {
 		ipcRenderer.send('winCommand', 'close');
 	};
 
+	onSave (e: any) {
+		ipcRenderer.send('winCommand', 'save');
+	};
+
 };
 
 export default App;

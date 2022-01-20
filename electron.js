@@ -640,6 +640,10 @@ function menuInit () {
 					label: 'Create workspace',
 					click: () => { send('commandGlobal', 'workspace');	}
 				},
+				{
+					label: 'Save page as HTML',
+					click: () => { savePage();	}
+				},
 			]
 		});
 	};
@@ -852,4 +856,12 @@ function exit (relaunch) {
 	} else {
 		send('shutdown', relaunch);
 	};
+};
+
+function savePage () {
+	win.webContents.savePage(tmpPath + '/page.mhtml', 'MHTML').then(() => {
+		console.log('Page was saved successfully.')
+	}).catch(err => {
+		console.log(err);
+	});
 };
