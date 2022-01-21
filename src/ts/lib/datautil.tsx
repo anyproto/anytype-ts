@@ -1,4 +1,4 @@
-import { I, C, M, keyboard, crumbs, translate, Util, history as historyPopup, Storage, analytics } from 'ts/lib';
+import { I, C, M, keyboard, crumbs, translate, Util, history as historyPopup, Storage, analytics, Relation } from 'ts/lib';
 import { commonStore, blockStore, detailStore, dbStore, popupStore } from 'ts/store';
 import { authStore } from '../store';
 
@@ -35,6 +35,26 @@ class DataUtil {
 		};
 		return ret;
 	};
+
+	textClass (v: I.TextStyle): string {
+		let c = '';
+		switch (v) {
+			default:
+			case I.TextStyle.Paragraph:		 c = 'paragraph'; break;
+			case I.TextStyle.Header1:		 c = 'header1'; break;
+			case I.TextStyle.Header2:		 c = 'header2'; break;
+			case I.TextStyle.Header3:		 c = 'header3'; break;
+			case I.TextStyle.Quote:			 c = 'quote'; break;
+			case I.TextStyle.Code:			 c = 'code'; break;
+			case I.TextStyle.Bulleted:		 c = 'bulleted'; break;
+			case I.TextStyle.Numbered:		 c = 'numbered'; break;
+			case I.TextStyle.Toggle:		 c = 'toggle'; break;
+			case I.TextStyle.Checkbox:		 c = 'checkbox'; break;
+			case I.TextStyle.Title:			 c = 'title'; break;
+			case I.TextStyle.Description:	 c = 'description'; break;
+		};
+		return c;
+	};
 	
 	styleIcon (type: I.BlockType, v: number): string {
 		let icon = '';
@@ -42,9 +62,7 @@ class DataUtil {
 			case I.BlockType.Text:
 				switch (v) {
 					default:					 icon = this.textClass(v); break;
-					case I.TextStyle.Paragraph:	 icon = 'text'; break;
 					case I.TextStyle.Code:		 icon = 'kbd'; break;
-					case I.TextStyle.Bulleted:	 icon = 'list'; break;
 				};
 				break;
 
@@ -65,11 +83,21 @@ class DataUtil {
 
 		let c = [];
 		switch (block.type) {
-			case I.BlockType.Text:		 c.push('blockText ' + this.textClass(style)); break;
-			case I.BlockType.Layout:	 c.push('blockLayout c' + style); break;
-			case I.BlockType.IconPage:	 c.push('blockIconPage'); break;
-			case I.BlockType.IconUser:	 c.push('blockIconUser'); break;
-				
+			case I.BlockType.Text:					 c.push('blockText ' + this.textClass(style)); break;
+			case I.BlockType.Layout:				 c.push('blockLayout c' + style); break;
+			case I.BlockType.IconPage:				 c.push('blockIconPage'); break;
+			case I.BlockType.IconUser:				 c.push('blockIconUser'); break;
+			case I.BlockType.Bookmark:				 c.push('blockBookmark'); break;
+			case I.BlockType.Dataview:				 c.push('blockDataview'); break;
+			case I.BlockType.Div:					 c.push('blockDiv c' + style); break;
+			case I.BlockType.Link:					 c.push('blockLink'); break;
+			case I.BlockType.Cover:					 c.push('blockCover'); break;
+			case I.BlockType.Relation:				 c.push('blockRelation'); break;
+			case I.BlockType.Featured:				 c.push('blockFeatured'); break;
+			case I.BlockType.Type:					 c.push('blockType'); break;
+			case I.BlockType.Latex:					 c.push('blockLatex'); break;
+			case I.BlockType.TableOfContents:		 c.push('blockTableOfContents'); break;
+
 			case I.BlockType.File:
 				if (state == I.FileState.Done) {
 					c.push('withFile');
@@ -99,39 +127,9 @@ class DataUtil {
 						break;
 				};
 				break;
-				
-			case I.BlockType.Bookmark:	 c.push('blockBookmark'); break;
-			case I.BlockType.Dataview:	 c.push('blockDataview'); break;
-			case I.BlockType.Div:		 c.push('blockDiv c' + style); break;
-			case I.BlockType.Link:		 c.push('blockLink'); break;
-			case I.BlockType.Cover:		 c.push('blockCover'); break;
-			case I.BlockType.Relation:	 c.push('blockRelation'); break;
-			case I.BlockType.Featured:	 c.push('blockFeatured'); break;
-			case I.BlockType.Type:		 c.push('blockType'); break;
-			case I.BlockType.Latex:		 c.push('blockLatex'); break;
 		};
 
 		return c.join(' ');
-	};
-
-	textClass (v: I.TextStyle): string {
-		let c = '';
-		switch (v) {
-			default:
-			case I.TextStyle.Paragraph:		 c = 'paragraph'; break;
-			case I.TextStyle.Header1:		 c = 'header1'; break;
-			case I.TextStyle.Header2:		 c = 'header2'; break;
-			case I.TextStyle.Header3:		 c = 'header3'; break;
-			case I.TextStyle.Quote:			 c = 'quote'; break;
-			case I.TextStyle.Code:			 c = 'code'; break;
-			case I.TextStyle.Bulleted:		 c = 'bulleted'; break;
-			case I.TextStyle.Numbered:		 c = 'numbered'; break;
-			case I.TextStyle.Toggle:		 c = 'toggle'; break;
-			case I.TextStyle.Checkbox:		 c = 'checkbox'; break;
-			case I.TextStyle.Title:			 c = 'title'; break;
-			case I.TextStyle.Description:	 c = 'description'; break;
-		};
-		return c;
 	};
 
 	layoutClass (id: string, layout: I.ObjectLayout) {
@@ -152,23 +150,7 @@ class DataUtil {
 	};
 
 	relationTypeName (v: I.RelationType): string {
-		let c = '';
-		switch (v) {
-			default:
-			case I.RelationType.LongText:	 c = 'longText'; break;
-			case I.RelationType.ShortText:	 c = 'shortText'; break;
-			case I.RelationType.Number:		 c = 'number'; break;
-			case I.RelationType.Date:		 c = 'date'; break;
-			case I.RelationType.Status:		 c = 'status'; break;
-			case I.RelationType.Tag:		 c = 'tag'; break;
-			case I.RelationType.File:		 c = 'file'; break;
-			case I.RelationType.Checkbox:	 c = 'checkbox'; break;
-			case I.RelationType.Url:		 c = 'url'; break;
-			case I.RelationType.Email:		 c = 'email'; break;
-			case I.RelationType.Phone:		 c = 'phone'; break;
-			case I.RelationType.Object:		 c = 'object'; break;
-		};
-		return c;
+		return Util.toCamelCase(I.RelationType[v]);
 	};
 
 	relationClass (v: I.RelationType): string {
@@ -269,77 +251,6 @@ class DataUtil {
 			case I.BlockAlign.Right:	 icon = 'right'; break;
 		};
 		return icon;
-	};
-
-	filterConditionsByType (type: I.RelationType): any[] {
-		let ret = [
-			{ id: I.FilterCondition.None,		 name: translate('filterConditionNone') }, 
-		];
-
-		switch (type) {
-			case I.RelationType.ShortText: 
-			case I.RelationType.LongText: 
-			case I.RelationType.Url: 
-			case I.RelationType.Email: 
-			case I.RelationType.Phone: 
-				ret = ret.concat([ 
-					{ id: I.FilterCondition.Equal,		 name: translate('filterConditionEqual') }, 
-					{ id: I.FilterCondition.NotEqual,	 name: translate('filterConditionNotEqual') }, 
-					{ id: I.FilterCondition.Like,		 name: translate('filterConditionLike') }, 
-					{ id: I.FilterCondition.NotLike,	 name: translate('filterConditionNotLike') },
-					{ id: I.FilterCondition.Empty,		 name: translate('filterConditionEmpty') }, 
-					{ id: I.FilterCondition.NotEmpty,	 name: translate('filterConditionNotEmpty') },
-				]);
-				break;
-
-			case I.RelationType.Object: 
-			case I.RelationType.Status: 
-			case I.RelationType.Tag: 
-				ret = ret.concat([ 
-					{ id: I.FilterCondition.In,			 name: translate('filterConditionInArray') }, 
-					{ id: I.FilterCondition.AllIn,		 name: translate('filterConditionAllIn') }, 
-					{ id: I.FilterCondition.Equal,		 name: translate('filterConditionEqual') },
-					{ id: I.FilterCondition.NotIn,		 name: translate('filterConditionNotInArray') },
-					{ id: I.FilterCondition.Empty,		 name: translate('filterConditionEmpty') }, 
-					{ id: I.FilterCondition.NotEmpty,	 name: translate('filterConditionNotEmpty') },
-				]);
-				break;
-			
-			case I.RelationType.Number:
-				ret = ret.concat([ 
-					{ id: I.FilterCondition.Equal,			 name: '=' }, 
-					{ id: I.FilterCondition.NotEqual,		 name: '≠' }, 
-					{ id: I.FilterCondition.Greater,		 name: '>' }, 
-					{ id: I.FilterCondition.Less,			 name: '<' }, 
-					{ id: I.FilterCondition.GreaterOrEqual,	 name: '≥' }, 
-					{ id: I.FilterCondition.LessOrEqual,	 name: '≤' },
-					{ id: I.FilterCondition.Empty,		 name: translate('filterConditionEmpty') }, 
-					{ id: I.FilterCondition.NotEmpty,	 name: translate('filterConditionNotEmpty') },
-				]);
-				break;
-
-			case I.RelationType.Date:
-				ret = ret.concat([ 
-					{ id: I.FilterCondition.Equal,			 name: translate('filterConditionEqual') }, 
-					{ id: I.FilterCondition.NotEqual,		 name: translate('filterConditionNotEqual') }, 
-					{ id: I.FilterCondition.Greater,		 name: translate('filterConditionGreaterDate') }, 
-					{ id: I.FilterCondition.Less,			 name: translate('filterConditionLessDate') }, 
-					{ id: I.FilterCondition.GreaterOrEqual,	 name: translate('filterConditionGreaterOrEqualDate') }, 
-					{ id: I.FilterCondition.LessOrEqual,	 name: translate('filterConditionLessOrEqualDate') },
-					{ id: I.FilterCondition.Empty,			 name: translate('filterConditionEmpty') }, 
-					{ id: I.FilterCondition.NotEmpty,		 name: translate('filterConditionNotEmpty') },
-				]);
-				break;
-			
-			case I.RelationType.Checkbox:
-			default:
-				ret = ret.concat([ 
-					{ id: I.FilterCondition.Equal,			 name: translate('filterConditionEqual') }, 
-					{ id: I.FilterCondition.NotEqual,		 name: translate('filterConditionNotEqual') },
-				]);
-				break;
-		};
-		return ret;
 	};
 	
 	selectionGet (id: string, withChildren: boolean, props: any): string[] {
@@ -595,25 +506,27 @@ class DataUtil {
 	
 	menuGetBlockText () {
 		return [
-			{ id: I.TextStyle.Paragraph, icon: 'text', lang: 'Paragraph' },
-			{ id: I.TextStyle.Header1, icon: 'header1', lang: 'Header1', aliases: [ 'h1', 'head1' ] },
-			{ id: I.TextStyle.Header2, icon: 'header2', lang: 'Header2', aliases: [ 'h2', 'head2' ] },
-			{ id: I.TextStyle.Header3, icon: 'header3', lang: 'Header3', aliases: [ 'h3', 'head3' ] },
-			{ id: I.TextStyle.Quote, icon: 'quote', lang: 'Quote' },
+			{ id: I.TextStyle.Paragraph, lang: 'Paragraph' },
+			{ id: I.TextStyle.Header1, lang: 'Header1', aliases: [ 'h1', 'head1' ] },
+			{ id: I.TextStyle.Header2, lang: 'Header2', aliases: [ 'h2', 'head2' ] },
+			{ id: I.TextStyle.Header3, lang: 'Header3', aliases: [ 'h3', 'head3' ] },
+			{ id: I.TextStyle.Quote, lang: 'Quote' },
 		].map((it: any) => {
 			it.type = I.BlockType.Text;
+			it.icon = this.textClass(it.id);
 			return this.menuMapperBlock(it);
 		});
 	};
 	
 	menuGetBlockList () {
 		return [
-			{ id: I.TextStyle.Checkbox, icon: 'checkbox', lang: 'Checkbox', aliases: [ 'todo' ] },
-			{ id: I.TextStyle.Bulleted, icon: 'list', lang: 'Bulleted' },
-			{ id: I.TextStyle.Numbered, icon: 'numbered', lang: 'Numbered' },
-			{ id: I.TextStyle.Toggle, icon: 'toggle', lang: 'Toggle' },
+			{ id: I.TextStyle.Checkbox, lang: 'Checkbox', aliases: [ 'todo' ] },
+			{ id: I.TextStyle.Bulleted, lang: 'Bulleted' },
+			{ id: I.TextStyle.Numbered, lang: 'Numbered' },
+			{ id: I.TextStyle.Toggle, lang: 'Toggle' },
 		].map((it: any) => {
 			it.type = I.BlockType.Text;
+			it.icon = this.textClass(it.id);
 			return this.menuMapperBlock(it);
 		});
 	};
@@ -627,7 +540,8 @@ class DataUtil {
 			{ type: I.BlockType.File, id: I.FileType.Pdf, icon: 'pdf', lang: 'Pdf' },
 			{ type: I.BlockType.Bookmark, id: 'bookmark', icon: 'bookmark', lang: 'Bookmark' },
 			{ type: I.BlockType.Text, id: I.TextStyle.Code, icon: 'code', lang: 'Code' },
-			{ type: I.BlockType.Latex, id: I.BlockType.Latex, icon: 'latex', lang: 'Latex' }
+			{ type: I.BlockType.Latex, id: I.BlockType.Latex, icon: 'latex', lang: 'Latex' },
+			{ type: I.BlockType.TableOfContents, id: I.BlockType.TableOfContents, icon: 'latex', lang: 'TableOfContents' }
 		];
 		return ret.map(this.menuMapperBlock);
 	};
@@ -944,14 +858,16 @@ class DataUtil {
 		sections = Util.objectCopy(sections);
 		sections = sections.filter((it: any) => { return it.children.length > 0; });
 		sections = sections.map((s: any, i: number) => {
-			s.id = s.id || i;
-			s.children = s.children.map((it: any, i: number) => {
-				it.id = it.id || i;
-				it.itemId = it.id;
-				it.id = [ s.id, it.id ].join('-');
-				it.color = it.color || s.color || '';
-				return it;
+			s.id = (undefined !== s.id) ? s.id : i;
+
+			s.children = s.children.map((c: any, i: number) => {
+				c.id = (undefined !== c.id) ? c.id : i;
+				c.itemId = c.id;
+				c.id = [ s.id, c.id ].join('-');
+				c.color = c.color || s.color || '';
+				return c;
 			});
+
 			s.children = Util.arrayUniqueObjects(s.children, 'itemId');
 			return s;
 		});
@@ -959,10 +875,6 @@ class DataUtil {
 		return sections;
 	};
 	
-	cellId (prefix: string, relationKey: string, id: any) {
-		return [ prefix, relationKey, id.toString() ].join('-');
-	};
-
 	viewGetRelations (rootId: string, blockId: string, view: I.View): I.ViewRelation[] {
 		const { config } = commonStore;
 
@@ -1011,79 +923,11 @@ class DataUtil {
 			return new M.ViewRelation({
 				...vr,
 				relationKey: relation.relationKey,
-				width: this.relationWidth(vr.width, relation.format),
+				width: Relation.width(vr.width, relation.format),
 			});
 		});
 
 		return Util.arrayUniqueObjects(ret, 'relationKey');
-	};
-
-	getRelationOptions (rootId: string, blockId: string, view: I.View) {
-		let relations: any[] = this.viewGetRelations(rootId, blockId, view).filter((it: I.ViewRelation) => { 
-			const relation = dbStore.getRelation(rootId, blockId, it.relationKey);
-			return relation && (relation.format != I.RelationType.File) && (it.relationKey != Constant.relationKey.done);
-		});
-		let idxName = relations.findIndex((it: any) => { return it.relationKey == Constant.relationKey.name; });
-
-		relations.splice((idxName >= 0 ? idxName + 1 : 0), 0, {
-			relationKey: Constant.relationKey.done,
-		});
-
-		let ret: any[] = [];
-		relations.forEach((it: I.ViewRelation) => {
-			const relation: any = dbStore.getRelation(rootId, blockId, it.relationKey);
-			if (!relation) {
-				return;
-			};
-
-			ret.push({ 
-				id: relation.relationKey, 
-				icon: 'relation ' + this.relationClass(relation.format),
-				name: relation.name, 
-				isHidden: relation.isHidden,
-				format: relation.format,
-				maxCount: relation.maxCount,
-			});
-		});
-		return ret;
-	};
-
-	getRelationStringValue (value: any) {
-		if (('object' == typeof(value)) && value && value.hasOwnProperty('length')) {
-			return String(value.length ? value[0] : '');
-		} else {
-			return String(value || '');
-		};
-	};
-
-	getRelationArrayValue (value: any): string[] {
-		value = Util.objectCopy(value || []);
-		if ('object' != typeof(value)) {
-			value = value ? [ value ] : [];
-		};
-		value = value.filter((it: string) => { return it; });
-		return Util.arrayUnique(value);
-	};
-
-	getRelationUrlScheme (type: I.RelationType, value: any): string {
-		value = String(value || '');
-
-		let ret = '';
-		if (type == I.RelationType.Url && !value.match(/:\/\//)) {
-			ret = 'http://';
-		};
-		if (type == I.RelationType.Email) {
-			ret = 'mailto:';
-		};
-		if (type == I.RelationType.Phone) {
-			ret = 'tel:';
-		};
-		return ret;
-	};
-
-	relationWidth (width: number, format: I.RelationType): number {
-		const size = Constant.size.dataview.cell;
-		return Number(width || size['format' + format]) || size.default;
 	};
 
 	dataviewRelationAdd (rootId: string, blockId: string, relation: any, view?: I.View, callBack?: (message: any) => void) {
@@ -1100,7 +944,7 @@ class DataUtil {
 			} else {
 				relation.relationKey = message.relationKey;
 				relation.isVisible = true;
-				relation.width = this.relationWidth(0, relation.format);
+				relation.width = Relation.width(0, relation.format);
 
 				view.relations.push(relation);
 			};
@@ -1238,75 +1082,6 @@ class DataUtil {
 		if (c1._sortWeight_ > c2._sortWeight_) return -1;
 		if (c1._sortWeight_ < c2._sortWeight_) return 1;
 		return this.sortByName(c1, c2);
-	};
-
-	checkRelationValue (relation: any, value: any): boolean {
-		value = this.formatRelationValue(relation, value, false);
-
-		let ret = false;
-		switch (relation.format) {
-			default:
-				ret = value ? true : false;
-				break;
-
-			case I.RelationType.Status:
-			case I.RelationType.File:
-			case I.RelationType.Tag:
-			case I.RelationType.Object:
-			case I.RelationType.Relations:
-				ret = value.length ? true : false;
-				break;
-		};
-		return ret;
-	};
-
-	formatRelationValue (relation: any, value: any, maxCount: boolean) {
-		switch (relation.format) {
-			default:
-				value = String(value || '');
-				break;
-
-			case I.RelationType.Number:
-				value = String(value || '').replace(/,\s?/g, '.').replace(/[^\d\.e+]*/gi, '');
-				if ((value === '') || (value === undefined)) {
-					value = null;
-				};
-				if (value !== null) {
-					value = Number(value);
-				};
-				if (isNaN(value)) {
-					value = null;
-				};
-				break;
-			case I.RelationType.Date:
-				if ((value === '') || (value === undefined)) {
-					value = null;
-				};
-				if (value !== null) {
-					value = parseFloat(String(value || '0'));
-				};
-				break;
-
-			case I.RelationType.Checkbox:
-				value = Boolean(value);
-				break;
-
-			case I.RelationType.Status:
-			case I.RelationType.File:
-			case I.RelationType.Tag:
-			case I.RelationType.Object:
-			case I.RelationType.Relations:
-				value = Util.objectCopy(value || []);
-				value = Util.arrayUnique(value);
-				value = value.map((it: any) => { return String(it || ''); });
-				value = value.filter((it: any) => { return it; });
-
-				if (maxCount && relation.maxCount) {
-					value = value.slice(value.length - relation.maxCount, value.length);
-				};
-				break;
-		};
-		return value;
 	};
 
 	checkObjectWithRelationCnt (relationKey: string, type: string, ids: string[], limit: number, callBack?: (message: any) => void) {

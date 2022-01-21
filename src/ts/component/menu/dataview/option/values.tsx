@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Icon, Tag } from 'ts/component';
-import { I, Util, DataUtil, keyboard, Key, translate } from 'ts/lib';
+import { I, Util, DataUtil, keyboard, Relation } from 'ts/lib';
 import arrayMove from 'array-move';
 import { menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -197,7 +197,7 @@ const MenuOptionValues = observer(class MenuOptionValues extends React.Component
 		const { data } = param;
 		const relation = data.relation.get();
 
-		let value: any[] = DataUtil.getRelationArrayValue(data.value);
+		let value: any[] = Relation.getArrayValue(data.value);
 		value = value.map((id: string) => { 
 			return (relation.selectDict || []).find((it: any) => { return it.id == id; });
 		});
@@ -271,7 +271,7 @@ const MenuOptionValues = observer(class MenuOptionValues extends React.Component
 		const { data } = param;
 		const { onChange } = data;
 		
-		let value = DataUtil.getRelationArrayValue(data.value);
+		let value = Relation.getArrayValue(data.value);
 		value = value.filter((it: any) => { return it != item.id; });
 		value = Util.arrayUnique(value);
 
@@ -295,7 +295,7 @@ const MenuOptionValues = observer(class MenuOptionValues extends React.Component
 		const { data } = param;
 		const { onChange } = data;
 
-		let value = DataUtil.getRelationArrayValue(data.value);
+		let value = Relation.getArrayValue(data.value);
 		value = arrayMove(value, oldIndex - 2, newIndex - 2);
 		value = Util.arrayUnique(value);
 

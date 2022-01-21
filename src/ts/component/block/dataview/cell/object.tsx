@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { I, Util, DataUtil, translate } from 'ts/lib';
+import { I, Relation, DataUtil, translate } from 'ts/lib';
 import { observer } from 'mobx-react';
 
 import ItemObject from './item/object';
@@ -33,7 +33,7 @@ const CellObject = observer(class CellObject extends React.Component<Props, Stat
 			return null;
 		};
 
-		let value = DataUtil.getRelationArrayValue(record[relation.relationKey]);
+		let value = Relation.getArrayValue(record[relation.relationKey]);
 		let length = value.length;
 
 		if (length >= 3) {

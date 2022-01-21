@@ -63,8 +63,7 @@
 			.iconObject { background-color: $colorVeryLightGrey; }
 		}
 		.item.isBig {
-			.icon.text { background-image: url('~img/icon/menu/action/block/text1.svg'); }
-			.icon.list { background-image: url('~img/icon/menu/action/block/list1.svg'); }
+			.icon.paragraph { background-image: url('~img/icon/menu/action/block/paragraph1.svg'); }
 			
 			.icon.header1 { background-image: url('~img/icon/menu/action/block/header11.svg'); }
 			.icon.header2 { background-image: url('~img/icon/menu/action/block/header21.svg'); }
@@ -77,6 +76,7 @@
 			.icon.human { background-image: url('~img/icon/menu/action/block/human1.svg'); }
 			.icon.existing { background-image: url('~img/icon/menu/action/block/existing1.svg'); }
 			
+			.icon.bulleted { background-image: url('~img/icon/menu/action/block/bulleted1.svg'); }
 			.icon.checkbox { background-image: url('~img/icon/menu/action/block/checkbox1.svg'); }
 			.icon.numbered { background-image: url('~img/icon/menu/action/block/numbered1.svg'); }
 			.icon.toggle { background-image: url('~img/icon/menu/action/block/toggle1.svg'); }

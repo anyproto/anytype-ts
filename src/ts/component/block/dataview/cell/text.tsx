@@ -1,14 +1,14 @@
 import * as React from 'react';
-import { I, Util, DataUtil, keyboard, translate } from 'ts/lib';
+import { I, Util, DataUtil, keyboard, translate, Relation } from 'ts/lib';
 import { Icon, Input, IconObject } from 'ts/component';
 import { commonStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
-interface Props extends I.Cell {}
+interface Props extends I.Cell {};
 
 interface State { 
 	isEditing: boolean; 
-}
+};
 
 const $ = require('jquery');
 const raf = require('raf');
@@ -60,7 +60,7 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 		let value = record[relation.relationKey];
 
 		if ([ I.RelationType.Date, I.RelationType.Number ].includes(relation.format)) {
-			value = DataUtil.formatRelationValue(relation, record[relation.relationKey], true);
+			value = Relation.formatRelationValue(relation, record[relation.relationKey], true);
 			if (relation.format == I.RelationType.Number) {
 				value = value === null ? null : String(value);
 			};
@@ -163,18 +163,12 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 			};
 
 			if (relation.format == I.RelationType.Number) {
+				let mapped = Relation.mapRelationValue(relation, value);
+				if (mapped !== null) {
+					value = mapped;
+				} else
 				if (value !== null) {
-					let parts = new Intl.NumberFormat('en-GB').formatToParts(value);
-					
-					if (parts && parts.length) {
-						parts = parts.map((it: any) => {
-							if (it.value == ',') {
-								it.value = '&thinsp;';
-							};
-							return it.value;
-						});
-						value = parts.join('');
-					};
+					value = Util.formatNumber(value);
 				} else {
 					value = '';
 				};
@@ -243,7 +237,7 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 		const record = getRecord(index);
 
 		this._isMounted = true;
-		this.setValue(DataUtil.formatRelationValue(relation, record[relation.relationKey], true));
+		this.setValue(Relation.formatRelationValue(relation, record[relation.relationKey], true));
 	};
 
 	componentDidUpdate () {
@@ -278,7 +272,7 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 			};
 
 			if (relation.format == I.RelationType.Number) {
-				value = DataUtil.formatRelationValue(relation, this.value, true);
+				value = Relation.formatRelationValue(relation, this.value, true);
 				value = value === null ? null : String(value);
 			};
 

@@ -3,10 +3,9 @@ import * as ReactDOM from 'react-dom';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Icon, IconObject, Tag } from 'ts/component';
 import { detailStore, dbStore, menuStore, blockStore } from 'ts/store';
-import { I, C, DataUtil } from 'ts/lib';
-import arrayMove from 'array-move';
-import { translate, Util, keyboard, analytics } from 'ts/lib';
+import { I, C, DataUtil, translate, Util, keyboard, analytics, Relation } from 'ts/lib';
 import { observer } from 'mobx-react';
+import arrayMove from 'array-move';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCache } from 'react-virtualized';
 import 'react-virtualized/styles.css';
 
@@ -60,7 +59,7 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<Pro
 		
 		const Item = SortableElement((item: any) => {
 			const relation = item.relation;
-			const conditionOptions = DataUtil.filterConditionsByType(relation.format);
+			const conditionOptions = Relation.filterConditionsByType(relation.format);
 			const condition: any = conditionOptions.find((it: any) => { return it.id == item.condition; }) || {};
 
 			let value = null;
@@ -117,7 +116,7 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<Pro
 						);
 					};
 
-					list = DataUtil.getRelationArrayValue(item.value).map((it: string) => { return detailStore.get(subId, it, []); });
+					list = Relation.getArrayValue(item.value).map((it: string) => { return detailStore.get(subId, it, []); });
 					list = list.filter((it: any) => { return !it._empty_; });
 
 					value = (
@@ -311,13 +310,13 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<Pro
 
 		const obj = $(`#${getId()} .content`);
 		const first = relationOptions[0];
-		const conditions = DataUtil.filterConditionsByType(first.format);
+		const conditions = Relation.filterConditionsByType(first.format);
 		const condition = conditions.length ? conditions[0].id : I.FilterCondition.None;
 		const newItem = { 
 			relationKey: first.id, 
 			operator: I.FilterOperator.And, 
 			condition: condition as I.FilterCondition,
-			value: DataUtil.formatRelationValue(first, null, false),
+			value: Relation.formatRelationValue(first, null, false),
 		};
 
 		view.filters.push(newItem);
@@ -425,7 +424,7 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<Pro
 		const { data } = param;
 		const { rootId, blockId, getView } = data;
 
-		return DataUtil.getRelationOptions(rootId, blockId, getView());
+		return Relation.getOptions(rootId, blockId, getView());
 	};
 
 	onScroll ({ clientHeight, scrollHeight, scrollTop }) {

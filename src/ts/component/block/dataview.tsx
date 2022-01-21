@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { I, C, Util, DataUtil, analytics, translate, keyboard, Onboarding } from 'ts/lib';
+import { I, C, Util, DataUtil, analytics, translate, keyboard, Onboarding, Relation } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { blockStore, menuStore, dbStore, detailStore, popupStore } from 'ts/store';
 import { throttle } from 'lodash';
@@ -291,7 +291,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				continue;
 			};
 
-			newRecord[filter.relationKey] = DataUtil.formatRelationValue(relation, filter.value, true);
+			newRecord[filter.relationKey] = Relation.formatRelationValue(relation, filter.value, true);
 		};
 
 		this.creating = true;
@@ -309,7 +309,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 				dbStore.recordsSet(subId, '', arrayMove(records, oldIndex, newIndex));
 
-				const id = DataUtil.cellId('dataviewCell', 'name', newIndex);
+				const id = Relation.cellId('dataviewCell', 'name', newIndex);
 				const ref = this.cellRefs.get(id);
 
 				if (ref && (view.type == I.ViewType.Grid)) {
@@ -396,7 +396,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		const { rootId, block } = this.props;
 		const relation = dbStore.getRelation(rootId, block.id, relationKey);
-		const id = DataUtil.cellId('dataviewCell', relationKey, index);
+		const id = Relation.cellId('dataviewCell', relationKey, index);
 		const ref = this.cellRefs.get(id);
 		const record = this.getRecord(index);
 		const view = this.getView();
@@ -406,7 +406,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		if ((view.type == I.ViewType.List) && ([ I.RelationType.Url, I.RelationType.Email, I.RelationType.Phone ].indexOf(relation.format) >= 0)) {
-			const scheme = DataUtil.getRelationUrlScheme(relation.format, record[relationKey]);
+			const scheme = Relation.getUrlScheme(relation.format, record[relationKey]);
 			ipcRenderer.send('urlOpen', scheme + record[relationKey]);
 			return;
 		};
@@ -428,7 +428,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			return;
 		};
 
-		value = DataUtil.formatRelationValue(relation, value, true);
+		value = Relation.formatRelationValue(relation, value, true);
 
 		let obj: any = { id: record.id };
 		obj[relationKey] = value;
@@ -436,7 +436,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		detailStore.update(subId, record.id, obj);
 		C.BlockSetDetails(record.id, [ { key: relationKey, value: value } ], callBack);
 
-		const key = DataUtil.checkRelationValue(relation, value) ? 'ChangeRelationValue' : 'DeleteRelationValue';		
+		const key = Relation.checkRelationValue(relation, value) ? 'ChangeRelationValue' : 'DeleteRelationValue';		
 		analytics.event(key, { type: 'dataview' });
 	};
 

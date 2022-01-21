@@ -292,7 +292,7 @@ class Analytics {
 		};
 
 		const code = (undefined !== map[id]) ? map[id] : id;
-		return code ? Util.toCamelCase([ prefix, code ].join('-')) : '';
+		return code ? Util.toUpperCamelCase([ prefix, code ].join('-')) : '';
 	};
 
 };

@@ -554,7 +554,7 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 		this.timeout = window.setTimeout(() => { 
 			this.save(); 
 
-			analytics.event(Util.toCamelCase([ 'SetType', item.id ].join('-')));
+			analytics.event(Util.toUpperCamelCase([ 'SetType', item.id ].join('-')));
 		}, 500);
 	};
 

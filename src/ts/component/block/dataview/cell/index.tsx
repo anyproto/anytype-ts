@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, DataUtil, Util, keyboard } from 'ts/lib';
+import { I, DataUtil, Util, keyboard, Relation } from 'ts/lib';
 import { commonStore, menuStore, dbStore } from 'ts/store';
 import { observable } from 'mobx';
 
@@ -57,10 +57,10 @@ class Cell extends React.Component<Props, {}> {
 			return null;
 		};
 
-		const id = DataUtil.cellId(idPrefix, relation.relationKey, index);
+		const id = Relation.cellId(idPrefix, relation.relationKey, index);
 		const canEdit = this.canEdit();
 
-		let check = DataUtil.checkRelationValue(relation, record[relation.relationKey]);
+		let check = Relation.checkRelationValue(relation, record[relation.relationKey]);
 		if (relation.relationKey == Constant.relationKey.name) {
 			check = true;
 		};
@@ -155,7 +155,7 @@ class Cell extends React.Component<Props, {}> {
 		const relation = this.getRelation();
 		const record = getRecord(index);
 		const { config } = commonStore;
-		const cellId = DataUtil.cellId(idPrefix, relation.relationKey, index);
+		const cellId = Relation.cellId(idPrefix, relation.relationKey, index);
 
 		if (!this.canEdit()) {
 			return;
@@ -334,7 +334,7 @@ class Cell extends React.Component<Props, {}> {
 				};
 
 				if (e.shiftKey && value) {
-					const scheme = DataUtil.getRelationUrlScheme(relation.format, value);
+					const scheme = Relation.getUrlScheme(relation.format, value);
 					ipcRenderer.send('urlOpen', scheme + value);
 
 					ret = true;
@@ -354,7 +354,7 @@ class Cell extends React.Component<Props, {}> {
 							value = this.ref.ref.getValue();
 						};
 
-						const scheme = DataUtil.getRelationUrlScheme(relation.format, value);
+						const scheme = Relation.getUrlScheme(relation.format, value);
 						
 						if (item.id == 'go') {
 							ipcRenderer.send('urlOpen', scheme + value);
@@ -420,7 +420,7 @@ class Cell extends React.Component<Props, {}> {
 			return null;
 		};
 
-		value = DataUtil.formatRelationValue(relation, value, true);
+		value = Relation.formatRelationValue(relation, value, true);
 		if (onCellChange) {
 			onCellChange(record.id, relation.relationKey, value, callBack);
 		};
@@ -429,7 +429,7 @@ class Cell extends React.Component<Props, {}> {
 	onMouseEnter (e: any) {
 		const { onMouseEnter, showTooltip, tooltipX, tooltipY, idPrefix, index } = this.props;
 		const relation = this.getRelation();
-		const cell = $(`#${DataUtil.cellId(idPrefix, relation.relationKey, index)}`);
+		const cell = $(`#${Relation.cellId(idPrefix, relation.relationKey, index)}`);
 
 		if (onMouseEnter) {
 			onMouseEnter(e);

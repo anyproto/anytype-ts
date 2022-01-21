@@ -20,7 +20,7 @@
 		.error { margin: 0px; @include text-small; line-height: 22px; }
 		
 		.wrap { max-width: 100%; position: relative; display: inline-block; overflow: hidden; }
-		.media { width: 100%; display: block; }
+		.media { width: 100%; display: block; cursor: pointer; }
 
 		.wrap.broken { 
 			@include text-common; position: relative; width: 100% !important; line-height: 20px; padding: 11px 13px; border-radius: 6px; border: solid 1px $colorLightGrey; 
@@ -112,7 +112,7 @@
 
 			.loaderWrapper { width: 100%; height: 100%; position: absolute; left: 0px; top: 0px; }
 
-			.react-pdf__Document { width: 100%; display: inline-block; position: relative; flex-grow: 1; }
+			.react-pdf__Document { width: 100%; display: inline-block; position: relative; flex-grow: 1; cursor: pointer; }
 			.react-pdf__Page { position: static !important; }
 			.react-pdf__Page__svg, .react-pdf__Page__canvas { 
 				width: 100% !important; height: 100% !important; overflow: hidden; 

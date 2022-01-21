@@ -2,9 +2,9 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Icon, IconObject, MenuItemVertical } from 'ts/component';
-import { I, C, Util, DataUtil } from 'ts/lib';
+import { I, C, Util, DataUtil, Relation } from 'ts/lib';
 import { observer } from 'mobx-react';
-import { commonStore, blockStore, detailStore, menuStore } from 'ts/store';
+import { commonStore, detailStore, menuStore } from 'ts/store';
 import arrayMove from 'array-move';
 
 interface Props extends I.Menu {}
@@ -33,7 +33,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 		const { data } = param;
 		const { rootId, subId } = data;
 		
-		let value = DataUtil.getRelationArrayValue(data.value);
+		let value = Relation.getArrayValue(data.value);
 		value = value.map((it: string) => { return detailStore.get(subId, it, []); });
 		value = value.filter((it: any) => { return !it._empty_; });
 

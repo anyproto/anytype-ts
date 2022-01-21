@@ -535,8 +535,8 @@ class Dispatcher {
 					id = data.getId();
 					subIds = data.getSubidsList() || [];
 					block = blockStore.getLeaf(rootId, id);
-
 					details = Decode.decodeStruct(data.getDetails());
+					
 					detailStore.update(rootId, { id: id, details: details }, true);
 
 					// Subscriptions
