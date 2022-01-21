@@ -276,6 +276,7 @@ class Keyboard {
 			Util.history.goBack();
 		};
 
+		menuStore.closeAll();
 		this.restoreSource();
 
 		analytics.event('HistoryBack');
@@ -294,6 +295,7 @@ class Keyboard {
 			Util.history.goForward();
 		};
 
+		menuStore.closeAll();
 		analytics.event('HistoryForward');
 	};
 
