@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, DataUtil, Util, translate, keyboard, analytics } from 'ts/lib';
+import { I, DataUtil, Util, translate, keyboard, analytics, Relation } from 'ts/lib';
 import { Select, Tag, Icon, IconObject, Input, MenuItemVertical } from 'ts/component';
 import { menuStore, dbStore, detailStore } from 'ts/store';
 import { observable } from 'mobx';
@@ -47,7 +47,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		const item = view.getFilter(itemId);
 		const relation: any = dbStore.getRelation(rootId, blockId, item.relationKey) || {};
 		const relationOptions = this.getRelationOptions();
-		const conditionOptions = DataUtil.filterConditionsByType(relation.format);
+		const conditionOptions = Relation.filterConditionsByType(relation.format);
 		const checkboxOptions: I.Option[] = [
 			{ id: '1', name: 'Checked' },
 			{ id: '0', name: 'Unchecked' },
@@ -100,7 +100,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 					);
 				};
 
-				list = DataUtil.getRelationArrayValue(item.value).map((id: string) => { 
+				list = Relation.getArrayValue(item.value).map((id: string) => { 
 					return (relation.selectDict || []).find((it: any) => { return it.id == id; });
 				});
 				list = list.filter((it: any) => { return it && it.id; });
@@ -134,7 +134,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 					);
 				};
 
-				list = DataUtil.getRelationArrayValue(item.value).map((it: string) => { return detailStore.get(subId, it, []); })
+				list = Relation.getArrayValue(item.value).map((it: string) => { return detailStore.get(subId, it, []); })
 				list = list.filter((it: any) => { return !it._empty_; });
 
 				value = (
@@ -294,7 +294,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		const item = getView().getFilter(itemId);
 		const relation: any = dbStore.getRelation(rootId, blockId, item.relationKey) || {};
 		const relationOptions = this.getRelationOptions();
-		const conditionOptions = DataUtil.filterConditionsByType(relation.format);
+		const conditionOptions = Relation.filterConditionsByType(relation.format);
 		const relationOption: any = relationOptions.find((it: any) => { return it.id == item.relationKey; }) || {};
 		const conditionOption: any = conditionOptions.find((it: any) => { return it.id == item.condition; }) || {};
 
@@ -321,7 +321,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 				break;
 
 			case 'condition':
-				options = DataUtil.filterConditionsByType(item.format);	
+				options = Relation.filterConditionsByType(item.format);	
 				key = 'condition';
 				break;
 		};
@@ -373,19 +373,19 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 			// Remove value when we change relation, filter non unique entries
 			if (k == 'relationKey') {
 				const relation = dbStore.getRelation(rootId, blockId, v);
-				const conditions = DataUtil.filterConditionsByType(relation.format);
+				const conditions = Relation.filterConditionsByType(relation.format);
 
 				item.condition = conditions.length ? conditions[0].id : I.FilterCondition.None;
-				item.value = DataUtil.formatRelationValue(relation, null, false);
+				item.value = Relation.formatRelationValue(relation, null, false);
 			};
 
 			if (k == 'value') {
-				item[k] = DataUtil.formatRelationValue(relation, item[k], false);
+				item[k] = Relation.formatRelationValue(relation, item[k], false);
 			};
 	
 			if (k == 'condition') {
 				if ([ I.FilterCondition.None, I.FilterCondition.Empty, I.FilterCondition.NotEmpty ].indexOf(v) >= 0) {
-					item.value = DataUtil.formatRelationValue(relation, null, false);
+					item.value = Relation.formatRelationValue(relation, null, false);
 				};
 			};
 
@@ -409,7 +409,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 			return;
 		};
 
-		let value = DataUtil.getRelationArrayValue(item.value);
+		let value = Relation.getArrayValue(item.value);
 		value = value.filter((it: any) => { return it != element.id; });
 		value = Util.arrayUnique(value);
 
@@ -543,7 +543,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		const { data } = param;
 		const { rootId, blockId, getView } = data;
 
-		return DataUtil.getRelationOptions(rootId, blockId, getView());
+		return Relation.getOptions(rootId, blockId, getView());
 	};
 
 	checkClear (v: any) {

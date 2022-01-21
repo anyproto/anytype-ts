@@ -144,13 +144,15 @@ class Util {
 	};
 	
 	toUpperCamelCase (str: string) {
-		return this.toCamelCase('_' + str);
+		const s = this.toCamelCase(str);
+		return s.substr(0, 1).toUpperCase() + s.substr(1, s.length);
 	};
 	
 	toCamelCase (str: string) {
-		return str.replace(/[_\-\s]([a-zA-Z]{1})/g, (s: string, p1: string) => {
+		const s = str.replace(/[_\-\s]([a-zA-Z]{1})/g, (s: string, p1: string) => {
 			return String(p1 || '').toUpperCase();
 		});
+		return s.substr(0, 1).toLowerCase() + s.substr(1, s.length);
 	};
 
 	fromCamelCase (str: string, symbol: string) {
@@ -165,7 +167,7 @@ class Util {
 		};
 		return s.substr(0, 1).toUpperCase() + s.substr(1, s.length).toLowerCase();
 	};
-	
+
 	objectCopy (o: any): any {
 		return JSON.parse(JSON.stringify(o || {}));
 	};
@@ -597,6 +599,24 @@ class Util {
 	round (v: number, l: number) {
 		let d = Math.pow(10, l);
 		return d > 0 ? Math.round(v * d) / d : Math.round(v);
+	};
+
+	formatNumber (v: number): string {
+		v = Number(v) || 0;
+
+		let ret = String(v || '');
+		let parts = new Intl.NumberFormat('en-GB').formatToParts(v);
+					
+		if (parts && parts.length) {
+			parts = parts.map((it: any) => {
+				if (it.value == ',') {
+					it.value = '&thinsp;';
+				};
+				return it.value;
+			});
+			ret = parts.join('');
+		};
+		return ret;
 	};
 	
 	fileSize (v: number) {

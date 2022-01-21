@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { I, DataUtil } from 'ts/lib';
+import { I, DataUtil, Relation } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { Cell, Cover, Icon } from 'ts/component';
 import * as ReactDOM from 'react-dom';
@@ -70,7 +70,7 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 				{cover}
 				<div className="inner">
 					{relations.map((relation: any, i: number) => {
-						const id = DataUtil.cellId(idPrefix, relation.relationKey, index);
+						const id = Relation.cellId(idPrefix, relation.relationKey, index);
 						return (
 							<Cell 
 								elementId={id}
@@ -130,7 +130,7 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 
 		const subId = dbStore.getSubId(rootId, block.id);
 		const record = getRecord(index);
-		const value = DataUtil.getRelationArrayValue(record[view.coverRelationKey]);
+		const value = Relation.getArrayValue(record[view.coverRelationKey]);
 
 		let picture = '';
 		for (let id of value) {

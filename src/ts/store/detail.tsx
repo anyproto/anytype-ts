@@ -1,5 +1,5 @@
 import { observable, action, set, intercept, makeObservable } from 'mobx';
-import { I, Util, DataUtil, translate } from 'ts/lib';
+import { I, Relation, DataUtil, translate } from 'ts/lib';
 
 const Constant = require('json/constant.json');
 
@@ -147,8 +147,8 @@ class DetailStore {
 			name,
 			layout,
 			snippet,
-			type: DataUtil.getRelationStringValue(object.type),
-			iconImage: DataUtil.getRelationStringValue(object.iconImage),
+			type: Relation.getStringValue(object.type),
+			iconImage: Relation.getStringValue(object.iconImage),
 			layoutAlign: Number(object.layoutAlign) || I.BlockAlign.Left,
 			recommendedLayout: Number(object.recommendedLayout) || I.ObjectLayout.Page,
 			relationFormat: Number(object.relationFormat) || I.RelationType.LongText,

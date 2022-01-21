@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Icon, IconObject, ObjectName } from 'ts/component';
-import { I, DataUtil, keyboard } from 'ts/lib';
+import { I, DataUtil, keyboard, Relation } from 'ts/lib';
 import arrayMove from 'array-move';
 import { commonStore, detailStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -183,7 +183,7 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 		const { data } = param;
 		const { rootId, subId, valueMapper, nameAdd } = data;
 
-		let value: any[] = DataUtil.getRelationArrayValue(data.value);
+		let value: any[] = Relation.getArrayValue(data.value);
 		value = value.map((it: string) => { return detailStore.get(subId, it, []); });
 
 		if (valueMapper) {
@@ -240,11 +240,11 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 		const { onChange } = data;
 		const relation = data.relation.get();
 		
-		let value = DataUtil.getRelationArrayValue(data.value);
+		let value = Relation.getArrayValue(data.value);
 		value = value.filter((it: any) => { return it != item.id; });
 		
 		if (relation) {
-			value = DataUtil.formatRelationValue(relation, value, true);
+			value = Relation.formatRelationValue(relation, value, true);
 		};
 
 		this.n = -1;
@@ -270,9 +270,9 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 		const { onChange } = data;
 		const relation = data.relation.get();
 
-		let value = DataUtil.getRelationArrayValue(data.value);
+		let value = Relation.getArrayValue(data.value);
 		value = arrayMove(value, oldIndex - 1, newIndex - 1);
-		value = DataUtil.formatRelationValue(relation, value, true);
+		value = Relation.formatRelationValue(relation, value, true);
 
 		onChange(value, () => {
 			menuStore.updateData(id, { value });
