@@ -154,6 +154,18 @@ class Relation {
 		return ret;
 	};
 
+	mapRelationValue (relation: any, value: any) {
+		switch (relation.relationKey) {
+			case 'sizeInBytes':
+				return Util.fileSize(value);
+
+			case 'widthInPixels':
+			case 'heightInPixels':
+				return Util.formatNumber(value) + 'px';
+		};
+		return null;
+	};
+
 	getOptions (rootId: string, blockId: string, view: I.View) {
 		let relations: any[] = DataUtil.viewGetRelations(rootId, blockId, view).filter((it: I.ViewRelation) => { 
 			const relation = dbStore.getRelation(rootId, blockId, it.relationKey);

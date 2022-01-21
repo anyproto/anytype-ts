@@ -600,6 +600,24 @@ class Util {
 		let d = Math.pow(10, l);
 		return d > 0 ? Math.round(v * d) / d : Math.round(v);
 	};
+
+	formatNumber (v: number): string {
+		v = Number(v) || 0;
+
+		let ret = String(v || '');
+		let parts = new Intl.NumberFormat('en-GB').formatToParts(v);
+					
+		if (parts && parts.length) {
+			parts = parts.map((it: any) => {
+				if (it.value == ',') {
+					it.value = '&thinsp;';
+				};
+				return it.value;
+			});
+			ret = parts.join('');
+		};
+		return ret;
+	};
 	
 	fileSize (v: number) {
 		v = Number(v) || 0;
