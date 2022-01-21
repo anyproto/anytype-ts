@@ -1,10 +1,10 @@
-importScripts('d3/d3-quadtree.min.js');
-importScripts('d3/d3-zoom.min.js');
-importScripts('d3/d3-drag.min.js');
-importScripts('d3/d3-dispatch.min.js');
-importScripts('d3/d3-timer.min.js');
-importScripts('d3/d3-selection.min.js');
-importScripts('d3/d3-force.min.js');
+importScripts('./d3/d3-quadtree.min.js');
+importScripts('./d3/d3-zoom.min.js');
+importScripts('./d3/d3-drag.min.js');
+importScripts('./d3/d3-dispatch.min.js');
+importScripts('./d3/d3-timer.min.js');
+importScripts('./d3/d3-selection.min.js');
+importScripts('./d3/d3-force.min.js');
 
 // CONSTANTS
 

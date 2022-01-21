@@ -96,7 +96,6 @@ const MenuBlockStyle = observer(class MenuBlockStyle extends React.Component<Pro
 		let hasTurnList = true;
 		let hasTurnDiv = true;
 		let hasTurnFile = true;
-
 		let sections: any[] = [];
 
 		for (let id of blockIds) {

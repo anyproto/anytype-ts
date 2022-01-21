@@ -36,6 +36,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 			{ type: I.MarkType.Bold, icon: 'bold', name: 'Bold' },
 			{ type: I.MarkType.Italic, icon: 'italic', name: 'Italic' },
 			{ type: I.MarkType.Strike, icon: 'strike', name: 'Strikethrough' },
+			{ type: I.MarkType.Under, icon: 'underline', name: 'Underline' },
 			{ type: I.MarkType.Link, icon: 'link', name: 'Link' },
 			{ type: I.MarkType.Code, icon: 'kbd', name: 'Code' },
 		];

@@ -6,6 +6,25 @@ const Rpc = Commands.Rpc;
 
 const Mapper = {
 
+	BlockType: (v: number): I.BlockType => {
+		let t = I.BlockType.Empty;
+		let V = Model.Block.ContentCase;
+
+		if (v == V.SMARTBLOCK)			 t = I.BlockType.Page;
+		if (v == V.TEXT)				 t = I.BlockType.Text;
+		if (v == V.FILE)				 t = I.BlockType.File;
+		if (v == V.LAYOUT)				 t = I.BlockType.Layout;
+		if (v == V.DIV)					 t = I.BlockType.Div;
+		if (v == V.BOOKMARK)			 t = I.BlockType.Bookmark;
+		if (v == V.LINK)				 t = I.BlockType.Link;
+		if (v == V.DATAVIEW)			 t = I.BlockType.Dataview;
+		if (v == V.RELATION)			 t = I.BlockType.Relation;
+		if (v == V.FEATUREDRELATIONS)	 t = I.BlockType.Featured;
+		if (v == V.LATEX)				 t = I.BlockType.Latex;
+		if (v == V.TABLEOFCONTENTS)		 t = I.BlockType.TableOfContents;
+		return t;
+	},
+
 	From: {
 
 		Account: (obj: any): I.Account => {
@@ -58,24 +77,6 @@ const Mapper = {
                 url: obj.getUrl(),
             };
         },
-
-		BlockType: (v: number): I.BlockType => {
-			let t = I.BlockType.Empty;
-			let V = Model.Block.ContentCase;
-
-			if (v == V.SMARTBLOCK)			 t = I.BlockType.Page;
-			if (v == V.TEXT)				 t = I.BlockType.Text;
-			if (v == V.FILE)				 t = I.BlockType.File;
-			if (v == V.LAYOUT)				 t = I.BlockType.Layout;
-			if (v == V.DIV)					 t = I.BlockType.Div;
-			if (v == V.BOOKMARK)			 t = I.BlockType.Bookmark;
-			if (v == V.LINK)				 t = I.BlockType.Link;
-			if (v == V.DATAVIEW)			 t = I.BlockType.Dataview;
-			if (v == V.RELATION)			 t = I.BlockType.Relation;
-			if (v == V.FEATUREDRELATIONS)	 t = I.BlockType.Featured;
-			if (v == V.LATEX)				 t = I.BlockType.Latex;
-			return t;
-		},
 
 		Details: (obj: any): any => {
 			return {
@@ -159,7 +160,7 @@ const Mapper = {
 		},
 	
 		Block: (obj: any): I.Block => {
-			let type = Mapper.From.BlockType(obj.getContentCase());
+			let type = Mapper.BlockType(obj.getContentCase());
 			let fn = 'get' + Util.ucFirst(type);
 			let content = obj[fn] ? obj[fn]() : {};
 	
@@ -587,6 +588,12 @@ const Mapper = {
 
 			if (obj.type == I.BlockType.Dataview) {
 				block.setDataview(Mapper.To.BlockDataview(obj.content));
+			};
+
+			if (obj.type == I.BlockType.TableOfContents) {
+				content = new Model.Block.Content.TableOfContents();
+	
+				block.setTableofcontents(content);
 			};
 
 			return block;

@@ -18,6 +18,7 @@ import BlockRelation from './relation';
 import BlockFeatured from './featured';
 import BlockType from './type';
 import BlockLatex from './latex';
+import BlockTableOfContents from './tableOfContents';
 
 import BlockFile from './media/file';
 import BlockImage from './media/image';
@@ -192,6 +193,10 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 
 			case I.BlockType.Latex:
 				blockComponent = <BlockLatex ref={setRef} {...this.props} />;
+				break;
+
+			case I.BlockType.TableOfContents:
+				blockComponent = <BlockTableOfContents ref={setRef} {...this.props} />;
 				break;
 		};
 
