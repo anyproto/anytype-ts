@@ -152,25 +152,7 @@ class DataUtil {
 	};
 
 	relationTypeName (v: I.RelationType): string {
-		console.log(Util.toCamelCase(I.RelationType[v]));
-
-		let c = '';
-		switch (v) {
-			default:
-			case I.RelationType.LongText:	 c = 'longText'; break;
-			case I.RelationType.ShortText:	 c = 'shortText'; break;
-			case I.RelationType.Number:		 c = 'number'; break;
-			case I.RelationType.Date:		 c = 'date'; break;
-			case I.RelationType.Status:		 c = 'status'; break;
-			case I.RelationType.Tag:		 c = 'tag'; break;
-			case I.RelationType.File:		 c = 'file'; break;
-			case I.RelationType.Checkbox:	 c = 'checkbox'; break;
-			case I.RelationType.Url:		 c = 'url'; break;
-			case I.RelationType.Email:		 c = 'email'; break;
-			case I.RelationType.Phone:		 c = 'phone'; break;
-			case I.RelationType.Object:		 c = 'object'; break;
-		};
-		return c;
+		return Util.toCamelCase(I.RelationType[v]);
 	};
 
 	relationClass (v: I.RelationType): string {
