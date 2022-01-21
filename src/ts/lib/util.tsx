@@ -144,13 +144,15 @@ class Util {
 	};
 	
 	toUpperCamelCase (str: string) {
-		return this.toCamelCase('_' + str);
+		const s = this.toCamelCase(str);
+		return s.substr(0, 1).toUpperCase() + s.substr(1, s.length);
 	};
 	
 	toCamelCase (str: string) {
-		return str.replace(/[_\-\s]([a-zA-Z]{1})/g, (s: string, p1: string) => {
+		const s = str.replace(/[_\-\s]([a-zA-Z]{1})/g, (s: string, p1: string) => {
 			return String(p1 || '').toUpperCase();
 		});
+		return s.substr(0, 1).toLowerCase() + s.substr(1, s.length);
 	};
 
 	fromCamelCase (str: string, symbol: string) {
@@ -165,7 +167,7 @@ class Util {
 		};
 		return s.substr(0, 1).toUpperCase() + s.substr(1, s.length).toLowerCase();
 	};
-	
+
 	objectCopy (o: any): any {
 		return JSON.parse(JSON.stringify(o || {}));
 	};

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Cell } from 'ts/component';
-import { I, C, DataUtil, Util, focus, analytics } from 'ts/lib';
+import { I, C, DataUtil, Util, focus, analytics, Relation } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { menuStore, detailStore, dbStore, blockStore } from 'ts/store';
 
@@ -31,7 +31,7 @@ const BlockRelation = observer(class BlockRelation extends React.Component<Props
 		const { key } = content;
 		const relation = dbStore.getRelation(rootId, rootId, key);
 		const idPrefix = 'blockRelationCell' + block.id;
-		const id = DataUtil.cellId(idPrefix, key, '0');
+		const id = Relation.cellId(idPrefix, key, '0');
 		const allowedValue = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]) && relation && !relation.isReadonlyValue;
 
 		return (
@@ -141,11 +141,11 @@ const BlockRelation = observer(class BlockRelation extends React.Component<Props
 		const { rootId } = this.props;
 		const relation = dbStore.getRelation(rootId, rootId, relationKey);
 		const details = [ 
-			{ key: relationKey, value: DataUtil.formatRelationValue(relation, value, true) },
+			{ key: relationKey, value: Relation.formatRelationValue(relation, value, true) },
 		];
 		C.BlockSetDetails(rootId, details, callBack);
 
-		const key = DataUtil.checkRelationValue(relation, value) ? 'ChangeRelationValue' : 'DeleteRelationValue';	
+		const key = Relation.checkRelationValue(relation, value) ? 'ChangeRelationValue' : 'DeleteRelationValue';	
 		analytics.event(key, { type: 'block' });
 	};
 

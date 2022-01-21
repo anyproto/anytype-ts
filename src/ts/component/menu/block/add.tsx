@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { MenuItemVertical, Icon, Cell } from 'ts/component';
-import { I, keyboard, Key, C, focus, Action, Util, DataUtil, Storage, translate, analytics } from 'ts/lib';
+import { I, keyboard, Key, C, focus, Action, Util, DataUtil, Storage, translate, analytics, Relation } from 'ts/lib';
 import { blockStore, commonStore, dbStore, menuStore, detailStore, popupStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
@@ -73,7 +73,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 				content = <div className={[ 'sectionName', (index == 0 ? 'first' : '') ].join(' ')} style={param.style}>{item.name}</div>;
 			} else
 			if (item.isRelation) {
-				const id = DataUtil.cellId(idPrefix, item.relationKey, '0');
+				const id = Relation.cellId(idPrefix, item.relationKey, '0');
 				const record = detailStore.get(rootId, rootId, [ item.relationKey ]);
 
 				content = (
