@@ -4,6 +4,7 @@ import { InputWithFile, Loader, Icon, Error } from 'ts/component';
 import { I, C, translate, focus, Action } from 'ts/lib';
 import { commonStore, popupStore } from 'ts/store';
 import { observer } from 'mobx-react';
+import { DataUtil } from '../../../lib';
 
 interface Props extends I.BlockComponent {}
 
@@ -221,13 +222,12 @@ const BlockImage = observer(class BlockImage extends React.Component<Props, {}> 
 		if (e.shiftKey || e.ctrlKey || e.metaKey) {
 			return;
 		};
-		
-		popupStore.open('preview', {
-			data: {
-				type: I.FileType.Image,
-				url: this.getUrl(),
-			}
-		});
+
+		const { block } = this.props;
+		const { content } = block;
+		const { hash } = content;
+
+		DataUtil.objectOpenPopup({ id: hash, layout: I.ObjectLayout.Image });
 	};
 	
 	getUrl () {
