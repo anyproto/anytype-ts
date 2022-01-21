@@ -162,6 +162,10 @@ class Relation {
 			case 'widthInPixels':
 			case 'heightInPixels':
 				return Util.formatNumber(value) + 'px';
+
+			case 'layout':
+				value = Number(value) || I.ObjectLayout.Page;
+				return I.ObjectLayout[value];
 		};
 		return null;
 	};
