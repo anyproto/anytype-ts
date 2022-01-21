@@ -133,6 +133,11 @@ class Keyboard {
 			popupStore.open('shortcut', {});
 		});
 
+		// Lock/Unlock
+		keyboard.shortcut(`ctrl+shift+l`, e, (pressed: string) => {
+			keyboard.onToggleLock();
+		});
+
 		if (isMain) {
 			// Print
 			keyboard.shortcut(`${cmd}+p`, e, (pressed: string) => {
@@ -432,7 +437,8 @@ class Keyboard {
 		analytics.event((v ? 'LockPage' : 'UnlockPage'));
 	};
 
-	onToggleLock (rootId: string) {
+	onToggleLock () {
+		const rootId = this.getRootId();
 		const block = blockStore.getLeaf(rootId, rootId);
 		if (!block) {
 			return;
