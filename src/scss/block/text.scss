@@ -34,6 +34,10 @@
 			width: 14px; height: 14px; vertical-align: middle; margin: 0px 0px 4px 4px;
 		}
 
+		lnk, obj {
+			underline { text-decoration: none; }
+		}
+
 		mention { cursor: pointer; white-space: nowrap; display: inline; user-select: all; }
 		mention * { user-select: text; }
 		mention {
