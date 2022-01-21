@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Icon, Pager } from 'ts/component';
-import { I, C, Util, DataUtil, translate, keyboard } from 'ts/lib';
+import { Icon } from 'ts/component';
+import { I, C, Util, translate, keyboard, Relation } from 'ts/lib';
 import { dbStore, menuStore, blockStore } from 'ts/store';
 import { AutoSizer, WindowScroller, List } from 'react-virtualized';
 import { observer } from 'mobx-react';
@@ -247,7 +247,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 		const { getView } = this.props;
 		const view = getView();
 		const node = $(ReactDOM.findDOMNode(this));
-		const el = node.find(`#${DataUtil.cellId('head', relationKey, '')}`);
+		const el = node.find(`#${Relation.cellId('head', relationKey, '')}`);
 		const offset = el.offset();
 		const idx = view.relations.findIndex((it: I.ViewRelation) => { return it.relationKey == relationKey; });
 		const size = Constant.size.dataview.cell;

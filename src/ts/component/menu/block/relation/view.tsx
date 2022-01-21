@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, C, DataUtil, Util } from 'ts/lib';
-import { Icon } from 'ts/component';
+import { I, C, DataUtil, Util, Relation } from 'ts/lib';
 import { commonStore, blockStore, detailStore, dbStore, menuStore } from 'ts/store';
+import { Icon } from 'ts/component';
 import { observer } from 'mobx-react';
 
 import Item from 'ts/component/menu/item/relationView';
@@ -58,7 +58,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 				</div>
 				<div className="items">
 					{section.children.map((item: any, i: number) => {
-						const id = DataUtil.cellId(PREFIX, item.relationKey, '0');
+						const id = Relation.cellId(PREFIX, item.relationKey, '0');
 						
 						let canFav = allowedValue;
 						if (([ I.ObjectLayout.Set ].indexOf(object.layout) >= 0) && (item.relationKey == Constant.relationKey.description)) {
@@ -307,7 +307,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 			return;
 		};
 
-		const id = DataUtil.cellId(PREFIX, relationKey, index);
+		const id = Relation.cellId(PREFIX, relationKey, index);
 		const ref = this.cellRefs.get(id);
 
 		if (ref) {
@@ -317,7 +317,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 
 	scrollTo (relationKey: string, index: number) {
 		const { getId } = this.props;
-		const id = DataUtil.cellId(PREFIX, relationKey, index);
+		const id = Relation.cellId(PREFIX, relationKey, index);
 		const obj = $(`#${getId()}`);
 		const container = obj.find('.content');
 		const cell = obj.find(`#${id}`);
@@ -336,11 +336,11 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const { rootId } = data;
 		const relation = dbStore.getRelation(rootId, rootId, relationKey);
 		const details = [ 
-			{ key: relationKey, value: DataUtil.formatRelationValue(relation, value, true) },
+			{ key: relationKey, value: Relation.formatRelationValue(relation, value, true) },
 		];
 		C.BlockSetDetails(rootId, details, callBack);
 
-		const key = DataUtil.checkRelationValue(relation, value) ? 'ChangeRelationValue' : 'DeleteRelationValue';	
+		const key = Relation.checkRelationValue(relation, value) ? 'ChangeRelationValue' : 'DeleteRelationValue';	
 		analytics.event(key, { type: 'menu' });
 	};
 

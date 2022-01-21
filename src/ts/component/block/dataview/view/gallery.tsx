@@ -1,6 +1,5 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
-import { I, DataUtil} from 'ts/lib';
+import { I, Relation } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { dbStore, detailStore } from 'ts/store';
 import { AutoSizer, WindowScroller, Masonry, CellMeasurer, CellMeasurerCache, createMasonryCellPositioner } from 'react-virtualized';
@@ -51,7 +50,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<Props, {}
 					continue;
 				};
 
-				const v = DataUtil.getRelationArrayValue(item[k]);
+				const v = Relation.getArrayValue(item[k]);
 				if ([ I.RelationType.Object, I.RelationType.File ].includes(relation.format) && v && v.length) {
 					v.forEach((it: string) => {
 						const object = detailStore.get(rootId, it, []);

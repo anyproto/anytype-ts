@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Filter, MenuItemVertical, Icon, Loader, ObjectName } from 'ts/component';
-import { I, C, Util, keyboard, DataUtil } from 'ts/lib';
+import { I, C, Util, keyboard, DataUtil, Relation } from 'ts/lib';
 import { commonStore, dbStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
@@ -204,7 +204,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		const { param } = this.props;
 		const { data } = param;
 		const { canAdd } = data;
-		const value = DataUtil.getRelationArrayValue(data.value);
+		const value = Relation.getArrayValue(data.value);
 		
 		let ret = Util.objectCopy(this.items);
 
@@ -291,7 +291,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 				return;
 			};
 
-			let value = DataUtil.getRelationArrayValue(data.value);
+			let value = Relation.getArrayValue(data.value);
 			value.push(id);
 			value = Util.arrayUnique(value);
 

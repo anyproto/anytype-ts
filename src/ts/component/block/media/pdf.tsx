@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { InputWithFile, Loader, Error, Pager } from 'ts/component';
-import { I, C, translate, focus, Action, Util } from 'ts/lib';
+import { I, C, translate, focus, Action, Util, DataUtil } from 'ts/lib';
 import { commonStore, detailStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { Document, Page } from 'react-pdf';
@@ -41,6 +41,7 @@ const BlockPdf = observer(class BlockPdf extends React.Component<Props, State> {
 		this.onChangeFile = this.onChangeFile.bind(this);
 		this.onDocumentLoad = this.onDocumentLoad.bind(this);
 		this.onPageRender = this.onPageRender.bind(this);
+		this.onClick = this.onClick.bind(this);
 	};
 
 	render () {
@@ -122,6 +123,7 @@ const BlockPdf = observer(class BlockPdf extends React.Component<Props, State> {
 							onLoadSuccess={this.onDocumentLoad}
 							renderMode="canvas"
 							loading={<Loader />}
+							onClick={this.onClick}
 						>
 							<Page 
 								pageNumber={page} 
@@ -200,6 +202,18 @@ const BlockPdf = observer(class BlockPdf extends React.Component<Props, State> {
 		const wrap = node.find('.wrap');
 
 		this.height = wrap.outerHeight();
+	};
+
+	onClick (e: any) {
+		if (e.shiftKey || e.ctrlKey || e.metaKey) {
+			return;
+		};
+
+		const { block } = this.props;
+		const { content } = block;
+		const { hash } = content;
+
+		DataUtil.objectOpenPopup({ id: hash, layout: I.ObjectLayout.Image });
 	};
 
 });

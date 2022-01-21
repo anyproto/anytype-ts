@@ -3,6 +3,7 @@ import { InputWithFile, Loader, IconObject, Error } from 'ts/component';
 import { I, C, Util, focus, translate, Action } from 'ts/lib';
 import { commonStore, detailStore, popupStore } from 'ts/store';
 import { observer } from 'mobx-react';
+import { DataUtil } from '../../../lib';
 
 interface Props extends I.BlockComponent {}
 
@@ -129,22 +130,8 @@ const BlockFile = observer(class BlockFile extends React.Component<Props, {}> {
 		const { block } = this.props;
 		const { content } = block;
 		const { hash } = content;
-		const icon = Util.fileIcon(content);
 		
-		if (icon == 'image') {
-			popupStore.open('preview', {
-				data: {
-					type: I.FileType.Image,
-					url: commonStore.fileUrl(hash),
-				}
-			});
-		} else {
-			C.DownloadFile(hash, path.join(userPath, 'tmp'), (message: any) => {
-				if (message.path) {
-					ipcRenderer.send('pathOpen', message.path);
-				};
-			});
-		};
+		DataUtil.objectOpenPopup({ id: hash, layout: I.ObjectLayout.File });
 	};
 	
 });

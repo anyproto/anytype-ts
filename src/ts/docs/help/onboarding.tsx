@@ -297,7 +297,7 @@ export default {
     typeSelect: [
         {
             name: 'Choose a Type for Object',
-            description: 'Types define objects through layouts, templates, and relations. You have Note by defalt',
+            description: 'Types define objects through layouts, templates, and relations. You have Note by default',
             param: {
                 common: {
                     container: true,

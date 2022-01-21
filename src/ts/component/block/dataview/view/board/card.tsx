@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Draggable } from 'react-beautiful-dnd';
-import { I, DataUtil } from 'ts/lib';
+import { I, Relation } from 'ts/lib';
 import { dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import Cell from 'ts/component/block/dataview/cell';
@@ -38,7 +38,7 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 						style={getItemStyle(snapshot, provided.draggableProps.style)}
 					>
 						{relations.map((relation: any, i: number) => {
-							const id = DataUtil.cellId(idPrefix, relation.relationKey, index);
+							const id = Relation.cellId(idPrefix, relation.relationKey, index);
 							return (
 								<Cell 
 									key={'board-cell-' + view.id + relation.relationKey} 

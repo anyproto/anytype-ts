@@ -1,12 +1,10 @@
 import * as React from 'react';
 import { Icon, Tag, Filter } from 'ts/component';
-import { I, Util, DataUtil, keyboard, Key } from 'ts/lib';
-import arrayMove from 'array-move';
-import { commonStore, menuStore } from 'ts/store';
+import { I, Util, DataUtil, keyboard, Relation } from 'ts/lib';
+import { menuStore } from 'ts/store';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import 'react-virtualized/styles.css';
 import { observer } from 'mobx-react';
-import { observable } from 'mobx';
 
 interface Props extends I.Menu {}
 
@@ -224,7 +222,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 		const { data } = param;
 		const { onChange, maxCount } = data;
 
-		let value = DataUtil.getRelationArrayValue(data.value);
+		let value = Relation.getArrayValue(data.value);
 		value.push(id);
 		value = Util.arrayUnique(value);
 
@@ -304,7 +302,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 		const { data } = param;
 		const { canAdd, filterMapper } = data;
 		const relation = data.relation.get();
-		const value = DataUtil.getRelationArrayValue(data.value);
+		const value = Relation.getArrayValue(data.value);
 
 		let items = Util.objectCopy(relation.selectDict || []);
 		let sections: any = {};

@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { I, DataUtil, Util, translate, keyboard } from 'ts/lib';
-import { Icon, Filter, MenuItemVertical } from 'ts/component';
+import { I, DataUtil, Relation, translate, keyboard } from 'ts/lib';
+import { Filter, MenuItemVertical } from 'ts/component';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
 import { menuStore } from 'ts/store';
@@ -164,7 +164,7 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<Pro
 		const { option, rootId, blockId, record, onChange, optionCommand } = data;
 		const relation = data.relation.get();
 		
-		let value = DataUtil.getRelationArrayValue(data.value);
+		let value = Relation.getArrayValue(data.value);
 		value = value.filter((it: any) => { return it != option.id; });
 
 		relation.selectDict = relation.selectDict.filter((it: any) => { return it.id != option.id; });

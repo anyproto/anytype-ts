@@ -343,7 +343,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 		};
 
 		Storage.set('tabStore', id);
-		analytics.event(Util.toCamelCase([ 'ScreenLibrary', id ].join('-')));
+		analytics.event(Util.toUpperCamelCase([ 'ScreenLibrary', id ].join('-')));
 
 		this.state.tab = id;
 		this.setState({ tab: id, loading: true });

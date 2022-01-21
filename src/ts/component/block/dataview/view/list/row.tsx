@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, DataUtil } from 'ts/lib';
+import { I, Relation } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { Cell } from 'ts/component';
 import { dbStore } from 'ts/store';
@@ -29,7 +29,7 @@ const Row = observer(class Row extends React.Component<Props, {}> {
 		return (
 			<div className="row" style={style}>
 				{relations.map((relation: any, i: number) => {
-					const id = DataUtil.cellId(idPrefix, relation.relationKey, index);
+					const id = Relation.cellId(idPrefix, relation.relationKey, index);
 					return (
 						<Cell 
 							key={'list-cell-' + relation.relationKey}
