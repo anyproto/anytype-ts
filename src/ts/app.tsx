@@ -213,6 +213,9 @@ declare global {
 		Go: any;
 		Graph: any;
 		$: any;
+
+		Config: any;
+		Renderer: any;
 	}
 };
 

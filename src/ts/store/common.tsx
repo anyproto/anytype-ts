@@ -76,7 +76,7 @@ class CommonStore {
     };
 
     get config(): any {
-		return { ...this.configObj, debug: this.configObj.debug || {} };
+		return window.Config || { ...this.configObj, debug: this.configObj.debug || {} };
 	};
 
     get progress(): I.Progress {

@@ -1102,13 +1102,7 @@ class Util {
 
 	getRenderer () {
 		const electron: any = window.require('electron') || {};
-		const renderer: any = electron.ipcRenderer || {};
-
-		renderer.send = renderer.send || (() => {});
-		renderer.removeAllListeners = renderer.removeAllListeners || (() => {});
-		renderer.on = renderer.on || (() => {});
-
-		return renderer;
+		return electron.ipcRenderer || window.Renderer;
 	};
 
 };
