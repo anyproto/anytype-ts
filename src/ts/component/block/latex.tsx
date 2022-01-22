@@ -108,7 +108,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 		const length = this.text.length;
 
 		this._isMounted = true;
-		this.range = { start: length, end: length };
+		this.setRange({ start: length, end: length });
 		this.setValue(this.text);
 
 		node.unbind('resize').on('resize', (e: any) => { this.resize(); });
@@ -173,7 +173,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 		const { block } = this.props;
 		focus.set(block.id, { from: 0, to: 0 });
 
-		this.focus();
+		//this.focus();
 	};
 
 	onKeyDownBlock (e: any) {
@@ -285,7 +285,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 		this.setValue(Util.stringInsert(this.getValue(), cb.getData('text/plain'), range.start, range.end));
 
 		const length = this.getValue().length;
-		this.range = { start: length, end: length };
+		this.setRange({ start: length, end: length });
 		this.focus();
 	};
 
@@ -345,11 +345,13 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 						if (isTemplate) {
 							text = ' ' + text;
 						};
+						
 						this.setValue(Util.stringInsert(this.getValue(), text, from, to));
+						this.save();
 
 						const length = this.getValue().length;
-						this.range = { start: length, end: length };
-						this.save();
+						this.setRange({ start: length, end: length });
+						this.focus();
 					},
 				},
 			});
@@ -377,9 +379,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 		};
 		
 		const node = $(ReactDOM.findDOMNode(this));
-		const input = node.find('#input');
-
-		return String(input.get(0).innerText || '');
+		return String(node.find('#input').get(0).innerText || '');
 	};
 
 	setContent (value: string) {
@@ -446,6 +446,10 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 		C.BlockSetLatexText(rootId, block.id, value, callBack);
 	};
 
+	setRange (range: any) {
+		this.range = range || { start: 0, end: 0 };
+	};
+
 	onSelect (e: any) {
 		const { dataset } = this.props;
 		const { selection } = dataset || {};
@@ -453,9 +457,10 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 		const input = node.find('#input');
 		const win = $(window);
 
-		this.range = getRange(input.get(0));
+		this.setRange(getRange(input.get(0)));
 		
 		selection.preventSelect(true);
+
 		win.unbind('mouseup.latex').on('mouseup.latex', (e: any) => {	
 			selection.preventSelect(false);
 			win.unbind('mouseup.latex');
@@ -468,8 +473,8 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 
 		value.css({ height: 'auto' });
 		value.css({ height: value.height() + 20 });
-	};в
-	
+	};
+
 });
 
 export default BlockLatex;
