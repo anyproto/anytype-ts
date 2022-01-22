@@ -156,7 +156,8 @@ const { app, dialog, process } = window.require('@electron/remote');
 const version = app.getVersion();
 const userPath = app.getPath('userData');
 const fs = window.require('fs');
-const memoryHistory = require('history').createMemoryHistory;
+const hs = require('history');
+const memoryHistory = hs.createMemoryHistory;
 const history = memoryHistory();
 const Constant =  require('json/constant.json');
 
@@ -214,6 +215,7 @@ declare global {
 		Graph: any;
 		$: any;
 
+		isWebVersion: boolean;
 		Config: any;
 		Renderer: any;
 	}

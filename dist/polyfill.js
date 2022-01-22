@@ -31,8 +31,7 @@ window.require = window.require || function (mod) {
             ret.getGlobal = function (v) {
                 switch (v) {
                     case 'serverAddr':
-                        return 'http://127.0.0.1:61266';
-                        break;
+                        return window.serverAddr;
                 };
             };
             break;
