@@ -3,7 +3,7 @@ let RendererEvents = {};
 window.Config = {
     debug: {
         mw: true,
-    }
+    },
 };
 
 window.Renderer = {
@@ -11,11 +11,8 @@ window.Renderer = {
     removeAllListeners: function () {},
     on: function (id, callBack) {
         RendererEvents[id] = callBack;
-
-        console.log(RendererEvents);
     },
 };
-
 
 window.require = window.require || function (mod) {
     let ret = {};
@@ -42,7 +39,7 @@ window.require = window.require || function (mod) {
 
         case 'os':
             ret.platform = function () { return 'darwin'; };
-            ret.release = function () {};
+            ret.release = function () { return ''; };
             break;
 
     };
