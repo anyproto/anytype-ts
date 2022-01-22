@@ -104,7 +104,6 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 		const node = $(ReactDOM.findDOMNode(this));
 
 		this.text = String(block.content.text || '');
-
 		const length = this.text.length;
 
 		this._isMounted = true;
@@ -140,6 +139,10 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 		this.unbind();
 
 		$(window).on('click.latex', (e: any) => {
+			if (!this._isMounted) {
+				return;
+			};
+
 			if ($(e.target).parents(`#block-${block.id}`).length > 0) {
 				return;
 			};
@@ -161,6 +164,10 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 	};
 
 	focus () {
+		if (!this._isMounted) {
+			return;
+		};
+
 		const node = $(ReactDOM.findDOMNode(this));
 		const input = node.find('#input');
 
@@ -173,7 +180,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 		const { block } = this.props;
 		focus.set(block.id, { from: 0, to: 0 });
 
-		//this.focus();
+		this.focus();
 	};
 
 	onKeyDownBlock (e: any) {
@@ -210,6 +217,10 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 	};
 
 	onKeyDownInput (e: any) {
+		if (!this._isMounted) {
+			return;
+		};
+
 		const { filter } = commonStore;
 		const node = $(ReactDOM.findDOMNode(this));
 		const input = node.find('#input');
@@ -224,6 +235,10 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 	};
 
 	onKeyUpInput (e: any) {
+		if (!this._isMounted) {
+			return;
+		};
+
 		const { filter } = commonStore;
 		const value = this.getValue();
 		const k = e.key.toLowerCase();
@@ -274,6 +289,10 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 	};
 
 	onPaste (e: any) {
+		if (!this._isMounted) {
+			return;
+		};
+
 		e.preventDefault();
 
 		const node = $(ReactDOM.findDOMNode(this));
@@ -301,6 +320,10 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 	};
 
 	onTemplate (e: any) {
+		if (!this._isMounted) {
+			return;
+		};
+
 		const node = $(ReactDOM.findDOMNode(this));
 		const input = node.find('#input');
 		const el: any = input.get(0);
@@ -311,9 +334,12 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 	};
 
 	onMenu (e: any, element: string, isTemplate: boolean) {
+		if (!this._isMounted) {
+			return;
+		};
+
 		const { rootId, block } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
-		const input = node.find('#input');
 		const win = $(window);
 
 		raf(() => {
@@ -451,6 +477,10 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 	};
 
 	onSelect (e: any) {
+		if (!this._isMounted) {
+			return;
+		};
+
 		const { dataset } = this.props;
 		const { selection } = dataset || {};
 		const node = $(ReactDOM.findDOMNode(this));
@@ -468,6 +498,10 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 	};
 
 	resize () {
+		if (!this._isMounted) {
+			return;
+		};
+
 		const node = $(ReactDOM.findDOMNode(this));
 		const value = node.find('#value');
 
