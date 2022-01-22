@@ -14,7 +14,6 @@ interface Props extends I.BlockComponent, RouteComponentProps<any> {
 	onToggle?(e: any): void;
 };
 
-const { ipcRenderer } = window.require('electron');
 const Constant = require('json/constant.json');
 const $ = require('jquery');
 const raf = require('raf');
@@ -297,6 +296,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		const value = node.find('#value');
 		const items = value.find('lnk');
 		const self = this;
+		const renderer = Util.getRenderer();
 
 		if (!items.length) {
 			return;
@@ -311,7 +311,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 
 			el.unbind('click.link').on('click.link', function (e: any) {
 				e.preventDefault();
-				ipcRenderer.send('urlOpen', $(this).attr('href'));
+				renderer.send('urlOpen', $(this).attr('href'));
 			});
 			
 			Util.previewShow($(this), {

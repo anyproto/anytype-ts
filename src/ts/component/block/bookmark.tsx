@@ -4,11 +4,11 @@ import { Icon, InputWithFile } from 'ts/component';
 import { I, C, focus } from 'ts/lib';
 import { commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
+import { Util } from '../../lib';
 
-interface Props extends I.BlockComponent {}
+interface Props extends I.BlockComponent {};
 
 const $ = require('jquery');
-const { ipcRenderer } = window.require('electron');
 
 const BlockBookmark = observer(class BlockBookmark extends React.Component<Props, {}> {
 
@@ -110,10 +110,9 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<Props
 		};
 		
 		const { block } = this.props;
-		const { content } = block;
-		const { url } = content;
-		
-		ipcRenderer.send('urlOpen', url);
+		const renderer = Util.getRenderer();
+	
+		renderer.send('urlOpen', block.content.url);
 	};
 	
 	onChangeUrl (e: any, url: string) {

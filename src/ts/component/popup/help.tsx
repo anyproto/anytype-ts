@@ -8,7 +8,6 @@ import Block from 'ts/component/block/help';
 interface Props extends I.Popup, RouteComponentProps<any> {};
 
 const Url = require('json/url.json');
-const { ipcRenderer } = window.require('electron');
 const $ = require('jquery');
 const raf = require('raf');
 

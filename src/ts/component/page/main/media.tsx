@@ -16,7 +16,6 @@ interface State {
 };
 
 const $ = require('jquery');
-const { ipcRenderer } = window.require('electron');
 const { app } = window.require('@electron/remote')
 const path = window.require('path');
 const userPath = app.getPath('userData');
@@ -243,10 +242,11 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<Props
 		const blocks = blockStore.getBlocks(rootId);
 		const block = blocks.find((it: I.Block) => { return it.isFile(); });
 		const { content } = block;
+		const renderer = Util.getRenderer();
 
 		C.DownloadFile(content.hash, path.join(userPath, 'tmp'), (message: any) => {
 			if (message.path) {
-				ipcRenderer.send('pathOpen', message.path);
+				renderer.send('pathOpen', message.path);
 			};
 		});
 	};
@@ -256,8 +256,9 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<Props
 		const blocks = blockStore.getBlocks(rootId);
 		const block = blocks.find((it: I.Block) => { return it.isFile(); });
 		const { content } = block;
+		const renderer = Util.getRenderer();
 		
-		ipcRenderer.send('download', commonStore.fileUrl(content.hash));
+		renderer.send('download', commonStore.fileUrl(content.hash));
 	};
 
 	getRootId () {

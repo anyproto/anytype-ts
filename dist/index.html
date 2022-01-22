@@ -3,6 +3,41 @@
 	<head>
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<title>Anytype</title>
+
+		<script type="text/javascript">
+			window.require = window.require || function (mod) {
+				ret = {};
+
+				switch (mod) {
+					case '@electron/remote':
+						ret.app = {
+							getVersion: function () { return ''; },
+							getPath: function () { return ''; },
+						};
+
+						ret.process = {
+							getSystemVersion: function () { return ''; },
+						};
+
+						ret.getGlobal = function (v) {
+							switch (v) {
+								case 'serverAddr':
+									return 'http://127.0.0.1:61266';
+									break;
+							};
+						};
+						break;
+
+					case 'os':
+						ret.platform = function () { return 'Mac'; };
+						ret.release = function () {};
+						break;
+
+				};
+
+				return ret;
+			};
+		</script>
 	</head>
 	<body>
 		<div id="root"></div>

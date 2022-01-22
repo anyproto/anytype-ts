@@ -11,7 +11,6 @@ pdfjs.GlobalWorkerOptions.workerSrc = 'workers/pdf.min.js';
 
 interface Props extends I.BlockComponent {}
 
-const { ipcRenderer } = window.require('electron');
 const { app } = window.require('@electron/remote');
 const userPath = app.getPath('userData');
 const path = window.require('path');
@@ -184,10 +183,11 @@ const BlockPdf = observer(class BlockPdf extends React.Component<Props, State> {
 		const { block } = this.props;
 		const { content } = block;
 		const { hash } = content;
+		const renderer = Util.getRenderer();
 		
 		C.DownloadFile(hash, path.join(userPath, 'tmp'), (message: any) => {
 			if (message.path) {
-				ipcRenderer.send('pathOpen', message.path);
+				renderer.send('pathOpen', message.path);
 			};
 		});
 	};

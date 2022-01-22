@@ -28,7 +28,6 @@ interface Cover {
 };
 
 const $ = require('jquery');
-const { ipcRenderer } = window.require('electron');
 
 class CommonStore {
 
@@ -189,11 +188,13 @@ class CommonStore {
 	};
 
 	themeSet (v: string) {
+		const renderer = Util.getRenderer();
+
 		this.themeId = v;
 		Storage.set('theme', v);
 		Util.addBodyClass('theme', v);
 
-		ipcRenderer.send('configSet', { theme: v });
+		renderer.send('configSet', { theme: v });
 		analytics.event('ThemeSet', { id: v });
 	};
 

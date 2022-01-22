@@ -20,7 +20,6 @@ interface State {
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
-const { ipcRenderer } = window.require('electron');
 
 const BlockDataview = observer(class BlockDataview extends React.Component<Props, State> {
 
@@ -400,6 +399,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const ref = this.cellRefs.get(id);
 		const record = this.getRecord(index);
 		const view = this.getView();
+		const renderer = Util.getRenderer();
 
 		if (!relation || !ref || !record) {
 			return;
@@ -407,7 +407,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		if ((view.type == I.ViewType.List) && ([ I.RelationType.Url, I.RelationType.Email, I.RelationType.Phone ].indexOf(relation.format) >= 0)) {
 			const scheme = Relation.getUrlScheme(relation.format, record[relationKey]);
-			ipcRenderer.send('urlOpen', scheme + record[relationKey]);
+			renderer.send('urlOpen', scheme + record[relationKey]);
 			return;
 		};
 

@@ -12,8 +12,6 @@ interface State {
 	loading: boolean;
 };
 
-const { ipcRenderer } = window.require('electron');
-
 const PageAccountSelect = observer(class PageAccountSelect extends React.Component<Props, State> {
 
 	state = {
@@ -100,9 +98,10 @@ const PageAccountSelect = observer(class PageAccountSelect extends React.Compone
 
 	onSelect (account: I.Account) {
 		const { phrase } = authStore;
+		const renderer = Util.getRenderer();
 		
 		authStore.accountSet(account);
-		ipcRenderer.send('keytarSet', account.id, phrase);
+		renderer.send('keytarSet', account.id, phrase);
 		Util.route('/auth/setup/select');
 	};
 	

@@ -1,8 +1,7 @@
-import { I, C, focus, analytics } from 'ts/lib';
+import { I, C, focus, analytics, Util } from 'ts/lib';
 import { commonStore, authStore, blockStore, detailStore, dbStore } from 'ts/store';
 
 const Constant = require('json/constant.json');
-const { ipcRenderer } = window.require('electron');
 const { dialog } = window.require('@electron/remote');
 
 class Action {
@@ -59,13 +58,14 @@ class Action {
 	download (block: I.Block) {
 		const { content } = block;
 		const { type, hash } = content;
+		const renderer = Util.getRenderer();
 
 		if (!hash) {
 			return;
 		};
 		
 		const url = block.isFileImage() ? commonStore.imageUrl(hash, Constant.size.image) : commonStore.fileUrl(hash);
-		ipcRenderer.send('download', url);
+		renderer.send('download', url);
 
 		analytics.event('DownloadMedia', { type });
 	};
@@ -109,6 +109,7 @@ class Action {
 	};
 
 	export (ids: string[], format: I.ExportFormat, zip: boolean, nested: boolean, files: boolean) {
+		const renderer = Util.getRenderer();
 		const options = { 
 			properties: [ 'openDirectory' ],
 		};
@@ -124,7 +125,7 @@ class Action {
 					return;
 				};
 
-				ipcRenderer.send('pathOpen', files[0]);
+				renderer.send('pathOpen', files[0]);
 			});
 		});
 	};

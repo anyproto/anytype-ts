@@ -9,7 +9,6 @@ interface Props extends I.Menu {
 };
 
 const $ = require('jquery');
-const { ipcRenderer } = window.require('electron');
 const Constant = require('json/constant.json');
 
 class MenuBlockMore extends React.Component<Props, {}> {
@@ -363,6 +362,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const { blockId, rootId, onSelect, isPopup } = data;
 		const { root, breadcrumbs } = blockStore;
 		const block = blockStore.getLeaf(rootId, blockId);
+		const renderer = Util.getRenderer();
 		
 		if (!block || item.arrow) {
 			return;
@@ -400,7 +400,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				/*
 				C.BlockGetPublicWebURL(rootId, (message: any) => {
 					if (message.url) {
-						ipcRenderer.send('urlOpen', message.url);
+						renderer.send('urlOpen', message.url);
 					};
 				});
 				*/

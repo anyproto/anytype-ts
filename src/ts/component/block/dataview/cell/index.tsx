@@ -25,7 +25,6 @@ interface Props extends I.Cell {
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
-const { ipcRenderer } = window.require('electron');
 
 class Cell extends React.Component<Props, {}> {
 
@@ -156,6 +155,7 @@ class Cell extends React.Component<Props, {}> {
 		const record = getRecord(index);
 		const { config } = commonStore;
 		const cellId = Relation.cellId(idPrefix, relation.relationKey, index);
+		const renderer = Util.getRenderer();
 
 		if (!this.canEdit()) {
 			return;
@@ -335,7 +335,7 @@ class Cell extends React.Component<Props, {}> {
 
 				if (e.shiftKey && value) {
 					const scheme = Relation.getUrlScheme(relation.format, value);
-					ipcRenderer.send('urlOpen', scheme + value);
+					renderer.send('urlOpen', scheme + value);
 
 					ret = true;
 					break;
@@ -357,7 +357,7 @@ class Cell extends React.Component<Props, {}> {
 						const scheme = Relation.getUrlScheme(relation.format, value);
 						
 						if (item.id == 'go') {
-							ipcRenderer.send('urlOpen', scheme + value);
+							renderer.send('urlOpen', scheme + value);
 						};
 
 						if (item.id == 'copy') {
