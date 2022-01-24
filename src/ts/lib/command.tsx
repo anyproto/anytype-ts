@@ -1252,9 +1252,10 @@ const WorkspaceSetIsHighlighted = (objectId: string, isHightlighted: boolean, ca
 	dispatcher.request('workspaceSetIsHighlighted', request, callBack);
 };
 
-const UnsplashSearch = (limit: number, callBack?: (message: any) => void) => {
+const UnsplashSearch = (query: string, limit: number, callBack?: (message: any) => void) => {
 	const request = new Rpc.UnsplashSearch.Request();
 	
+	request.setQuery(query);
 	request.setLimit(limit);
 
 	dispatcher.request('unsplashSearch', request, callBack);

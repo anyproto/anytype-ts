@@ -19,6 +19,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 		filter: '',
 	};
 	items: any[] = [];
+	filter: string = '';
 	refFilter: any = null;
 	timeout: number = 0;
 
@@ -84,11 +85,18 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 	};
 
 	componentDidUpdate () {
-		this.load();
+		const { filter } = this.state;
+		
+		if (this.filter != filter) {
+			this.filter = filter;
+			this.load();
+		};
 	};
 
 	load () {
-		C.UnsplashSearch(24, (message: any) => {
+		const { filter } = this.state;
+
+		C.UnsplashSearch(filter, 24, (message: any) => {
 			if (message.error.code) {
 				return;
 			};
@@ -179,11 +187,9 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 			};
 
 			C.UnsplashDownload(item.id, (message: any) => {
-				if (message.error.code) {
-					return;
+				if (!message.error.code) {
+					onUpload(item.type, message.hash);
 				};
-
-				onUpload(item.type, message.image.hash);
 			});
 
 			close();
