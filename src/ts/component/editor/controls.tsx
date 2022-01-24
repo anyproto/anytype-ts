@@ -36,13 +36,8 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 
 	render (): any {
 		const { rootId } = this.props;
-		const root = blockStore.getLeaf(rootId, rootId);
-
-		if (!root) {
-			return null;
-		};
-
 		const object = detailStore.get(rootId, rootId, Constant.coverRelationKeys);
+		
 		if ((object.coverType != I.CoverType.None) && object.coverId) {
 			return null;
 		};
