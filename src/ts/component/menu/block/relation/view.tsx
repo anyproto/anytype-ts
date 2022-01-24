@@ -336,7 +336,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const { rootId } = data;
 		const relation = dbStore.getRelation(rootId, rootId, relationKey);
 		const details = [ 
-			{ key: relationKey, value: Relation.formatRelationValue(relation, value, true) },
+			{ key: relationKey, value: Relation.formatValue(relation, value, true) },
 		];
 		C.BlockSetDetails(rootId, details, callBack);
 

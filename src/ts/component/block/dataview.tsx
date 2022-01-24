@@ -291,7 +291,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				continue;
 			};
 
-			newRecord[filter.relationKey] = Relation.formatRelationValue(relation, filter.value, true);
+			newRecord[filter.relationKey] = Relation.formatValue(relation, filter.value, true);
 		};
 
 		this.creating = true;
@@ -428,7 +428,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			return;
 		};
 
-		value = Relation.formatRelationValue(relation, value, true);
+		value = Relation.formatValue(relation, value, true);
 
 		let obj: any = { id: record.id };
 		obj[relationKey] = value;
