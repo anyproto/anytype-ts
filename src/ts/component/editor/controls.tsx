@@ -9,6 +9,7 @@ import { observer } from 'mobx-react';
 interface Props extends RouteComponentProps<any> {
 	rootId: string;
 	isPopup?: boolean;
+	readonly?: boolean;
 	dataset?: any;
 	resize?: () => void;
 };
@@ -35,7 +36,7 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 	};
 
 	render (): any {
-		const { rootId } = this.props;
+		const { rootId, readonly } = this.props;
 		const object = detailStore.get(rootId, rootId, Constant.coverRelationKeys);
 		
 		if ((object.coverType != I.CoverType.None) && object.coverId) {
@@ -51,6 +52,7 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 			>
 				<ControlButtons 
 					rootId={rootId} 
+					readonly={readonly}
 					onIcon={this.onIcon} 
 					onCover={this.onCover}
 					onLayout={this.onLayout}

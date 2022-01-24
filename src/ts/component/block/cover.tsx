@@ -67,7 +67,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 	
 	render () {
 		const { isEditing, loading } = this.state;
-		const { rootId } = this.props;
+		const { rootId, readonly } = this.props;
 		const object = detailStore.get(rootId, rootId, [ 'iconImage', 'iconEmoji' ].concat(Constant.coverRelationKeys), true);
 		const { coverType, coverId } = object;
 		const isImage = DataUtil.coverIsImage(coverType);
@@ -125,6 +125,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 			elements = (
 				<ControlButtons 
 					rootId={rootId} 
+					readonly={readonly}
 					onIcon={this.onIcon} 
 					onCover={this.onCover}
 					onLayout={this.onLayout}

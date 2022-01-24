@@ -6,6 +6,7 @@ import { observer } from 'mobx-react';
 
 interface Props {
 	rootId: string;
+	readonly?: boolean;
 	onIcon: (e: any) => void;
 	onCover: (e: any) => void;
 	onLayout: (e: any) => void;
@@ -19,7 +20,7 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 	};
 
 	render (): any {
-		const { rootId, onIcon, onCover, onLayout, onRelation } = this.props;
+		const { rootId, readonly, onIcon, onCover, onLayout, onRelation } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
 
 		if (!root) {
@@ -37,6 +38,13 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 			allowedIcon = false;
 			allowedLayout = false;
 			allowedCover = false;
+		};
+
+		if (readonly) {
+			allowedIcon = false;
+			allowedLayout = false;
+			allowedCover = false;
+			allowedRelation = false;
 		};
 
 		return (
