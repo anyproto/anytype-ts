@@ -930,10 +930,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		commonStore.filterSet(range.from - 1, '');
 
 		raf(() => {
-			let rect = Util.selectionRect();
-			if (!rect.x && !rect.y && !rect.width && !rect.height) {
-				rect = null;
-			};
+			const rect = Util.selectionRect();
 
 			menuStore.open('blockMention', {
 				element: el,
@@ -970,13 +967,9 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		const { rootId, block } = this.props;
 		const win = $(window);
 		const range = this.getRange();
-		
-		let rect = Util.selectionRect();
-		let value = this.getValue();
+		const rect = Util.selectionRect();
 
-		if (!rect.x && !rect.y && !rect.width && !rect.height) {
-			rect = null;
-		};
+		let value = this.getValue();
 
 		menuStore.open('smile', {
 			element: '#block-' + block.id,
@@ -1153,11 +1146,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 
 		const win = $(window);
 		const el = $('#block-' + block.id);
-
-		let rect = Util.selectionRect();
-		if (!rect.x && !rect.y && !rect.width && !rect.height) {
-			rect = null;
-		};
+		const rect = Util.selectionRect();
 
 		menuStore.closeAll([ 'blockAdd', 'blockMention' ]);
 
