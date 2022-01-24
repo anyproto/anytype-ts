@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Icon } from 'ts/component';
+import { ControlButtons } from 'ts/component';
 import { I, C, focus, DataUtil, Util, translate, analytics } from 'ts/lib';
 import { menuStore, blockStore, detailStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -47,19 +47,6 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 			return null;
 		};
 
-		let checkType = blockStore.checkBlockType(rootId);
-		let allowedDetails = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
-		let allowedLayout = !checkType && allowedDetails && !root.isObjectSet() && blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Layout ]);
-		let allowedRelation = !checkType;
-		let allowedIcon = !checkType && allowedDetails && !root.isObjectTask() && !root.isObjectNote();
-		let allowedCover = !checkType && allowedDetails && !root.isObjectNote();
-
-		if (root.fields.isLocked) {
-			allowedIcon = false;
-			allowedLayout = false;
-			allowedCover = false;
-		};
-
 		return (
 			<div 
 				className="editorControls editorControlElements"
@@ -67,35 +54,13 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 				onDragLeave={this.onDragLeave} 
 				onDrop={this.onDrop}
 			>
-				<div className="controlButtons">
-					{allowedIcon ? (
-						<div id="button-icon" className="btn" onClick={this.onIcon}>
-							<Icon className="icon" />
-							<div className="txt">{translate('editorControlIcon')}</div>
-						</div>
-					) : ''}
-
-					{allowedCover ? (
-						<div id="button-cover" className="btn" onClick={this.onCover}>
-							<Icon className="addCover" />
-							<div className="txt">{translate('editorControlCover')}</div>
-						</div>
-					) : ''}
-
-					{allowedLayout ? (
-						<div id="button-layout" className="btn" onClick={this.onLayout}>
-							<Icon className="layout" />
-							<div className="txt">{translate('editorControlLayout')}</div>
-						</div>
-					) : ''}
-
-					{allowedRelation ? (
-						<div id="button-relation" className="btn" onClick={this.onRelation}>
-							<Icon className="relation" />
-							<div className="txt">{translate('editorControlRelation')}</div>
-						</div>
-					) : ''}
-				</div>
+				<ControlButtons 
+					rootId={rootId} 
+					onIcon={this.onIcon} 
+					onCover={this.onCover}
+					onLayout={this.onLayout}
+					onRelation={this.onRelation}
+				/>
 			</div>
 		);
 	};

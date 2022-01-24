@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Icon, Drag, Cover, Loader } from 'ts/component';
+import { Icon, Drag, Cover, Loader, ControlButtons } from 'ts/component';
 import { I, C, Util, DataUtil, focus, translate } from 'ts/lib';
 import { commonStore, blockStore, detailStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -66,7 +66,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 	
 	render () {
 		const { isEditing, loading } = this.state;
-		const { rootId, readonly } = this.props;
+		const { rootId } = this.props;
 		const object = detailStore.get(rootId, rootId, [ 'iconImage', 'iconEmoji' ].concat(Constant.coverRelationKeys), true);
 		const { coverType, coverId } = object;
 		const isImage = [ I.CoverType.Upload, I.CoverType.Image ].indexOf(coverType) >= 0;
@@ -75,11 +75,6 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 		if (!root) {
 			return null;
 		};
-
-		const allowedDetails = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
-		const allowedIcon = !readonly && !object.iconEmoji && !object.iconImage && !root.isObjectTask();
-		const allowedCover = !readonly;
-		const allowedLayout = !readonly && !root.isObjectSet() && (allowedDetails || blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Layout ]));
 
 		let elements = null;
 		if (isEditing) {
@@ -108,35 +103,13 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 			);
 		} else {
 			elements = (
-				<React.Fragment>
-					<div className="controlButtons">
-						{allowedIcon ? (
-							<div id="button-icon" className="btn white withIcon" onClick={this.onIcon}>
-								<Icon className="icon" />
-								<div className="txt">{translate('editorControlIcon')}</div>
-							</div>
-						) : ''}
-
-						{allowedCover ? (
-							<div id="button-cover" className="btn white withIcon" onClick={this.onCover}>
-								<Icon className="addCover" />
-								<div className="txt">{translate('editorControlCover')}</div>
-							</div>
-						) : ''}
-
-						{allowedLayout ? (
-							<div id="button-layout" className="btn white withIcon" onClick={this.onLayout}>
-								<Icon className="layout" />
-								<div className="txt">{translate('editorControlLayout')}</div>
-							</div>
-						) : ''}
-
-						<div id="button-relation" className="btn white withIcon" onClick={this.onRelation}>
-							<Icon className="relation" />
-							<div className="txt">{translate('editorControlRelation')}</div>
-						</div>
-					</div>
-				</React.Fragment>
+				<ControlButtons 
+					rootId={rootId} 
+					onIcon={this.onIcon} 
+					onCover={this.onCover}
+					onLayout={this.onLayout}
+					onRelation={this.onRelation}
+				/>
 			);
 		};
 
