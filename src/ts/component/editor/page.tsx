@@ -1024,116 +1024,127 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		// Backspace
 		keyboard.shortcut('backspace, delete', e, (pressed: string) => {
-			if (block.isText()) {
-				const ids = selection.get(true);
-				if ((pressed == 'backspace') && !range.to) {
-					if (block.isTextList()) {
-						C.BlockListSetTextStyle(rootId, [ block.id ], I.TextStyle.Paragraph);
-					} else {
-						ids.length ? this.blockRemove(block) : this.blockMerge(block, -1);
-					};
-				};
-
-				if ((pressed == 'delete') && (range.to == length)) {
-					ids.length ? this.blockRemove(block) : this.blockMerge(block, 1);
-				};
-			};
-			if (!block.isText() && !keyboard.isFocused) {
-				this.blockRemove(block);
-			};
+			this.onBackspaceBlock(e, block, range, pressed);
 		});
 
 		// Tab, indent block
 		keyboard.shortcut('tab, shift+tab', e, (pressed: string) => {
-			if (menuOpen) {
-				return;
+			if (!menuOpen) {
+				this.onTabBlock(e, block, pressed);
 			};
-
-			e.preventDefault();
-			
-			const shift = pressed.match('shift');
-			const element = blockStore.getMapElement(rootId, block.id);
-			const parent = blockStore.getLeaf(rootId, element.parentId);
-			const parentElement = blockStore.getMapElement(rootId, parent.id);
-
-			if (!element || !parentElement) {
-				return;
-			};
-
-			const idx = parentElement.childrenIds.indexOf(block.id);
-			const nextId = parentElement.childrenIds[idx - 1];
-			const next = nextId ? blockStore.getLeaf(rootId, nextId) : blockStore.getNextBlock(rootId, block.id, -1);
-			const obj = shift ? parent : next;
-			
-			let canTab = obj && !block.isTextTitle() && obj.canHaveChildren() && block.isIndentable();
-			if (!shift && parentElement.childrenIds.length && (block.id == parentElement.childrenIds[0])) {
-				canTab = false;
-			};
-
-			if (!canTab) {
-				return;
-			};
-
-			C.BlockListMove(rootId, rootId, [ block.id ], obj.id, (shift ? I.BlockPosition.Bottom : I.BlockPosition.Inner), (message: any) => {
-				window.setTimeout(() => {
-					focus.apply();
-				});
-
-				if (next && next.isTextToggle()) {
-					blockStore.toggle(rootId, next.id, true);
-				};
-
-				analytics.event('ReorderBlock', { count: 1 });
-			});
 		});
 
 		// Enter
 		keyboard.shortcut('enter, shift+enter', e, (pressed: string) => {
-			if (block.isTextCode() && (pressed == 'enter')) {
-				return;
-			};
-			if (!block.isText() && keyboard.isFocused) {
-				return;
-			};
-			if (block.isText() && !block.isTextCode() && pressed.match('shift')) {
-				return;
-			};
-
-			const menus = menuStore.list;
-			const menuCheck = (menus.length > 1) || ((menus.length == 1) && (menus[0].id != 'blockContext'));
-			
-			if (menuCheck) {
-				return;
-			};
-			
-			e.preventDefault();
-			e.stopPropagation();
-
-			let replace = !range.to && block.isTextList() && !length;
-			if (replace) {
-				C.BlockListSetTextStyle(rootId, [ block.id ], I.TextStyle.Paragraph);
-			} else 
-			if (!block.isText()) {  
-				this.blockCreate(block.id, I.BlockPosition.Bottom, {
-					type: I.BlockType.Text,
-					style: I.TextStyle.Paragraph,
-				});
-			} else {
-				this.blockSplit(block, range);
-			};
-
-			if (blockStore.checkBlockType(rootId)) {
-				const object = detailStore.get(rootId, rootId, []);
-
-				analytics.event('CreateObject', {
-					objectType: object.type,
-					layout: object.layout,
-				});
-			};
+			this.onEnterBlock(e, block, range, pressed);
 		});
 	};
 	
 	onKeyUpBlock (e: any, text: string, marks: I.Mark[], range: I.TextRange) {
+	};
+
+	onBackspaceBlock (e: any, block: any, range: I.TextRange, pressed: string) {
+		const { dataset, rootId } = this.props;
+		const { selection } = dataset || {};
+		const isDelete = pressed == 'delete';
+		const ids = selection.get(true);
+
+		if (block.isText()) {
+			if (!isDelete && !range.to) {
+				if (block.isTextList()) {
+					C.BlockListSetTextStyle(rootId, [ block.id ], I.TextStyle.Paragraph);
+				} else {
+					ids.length ? this.blockRemove(block) : this.blockMerge(block, -1);
+				};
+			};
+
+			if (isDelete && (range.to == length)) {
+				ids.length ? this.blockRemove(block) : this.blockMerge(block, 1);
+			};
+		};
+		if (!block.isText() && !keyboard.isFocused) {
+			this.blockRemove(block);
+		};
+	};
+
+	onTabBlock (e: any, block: I.Block, pressed: string) {
+		e.preventDefault();
+			
+		const { rootId } = this.props;
+		const isShift = pressed.match('shift');
+		const element = blockStore.getMapElement(rootId, block.id);
+		const parent = blockStore.getLeaf(rootId, element.parentId);
+		const parentElement = blockStore.getMapElement(rootId, parent.id);
+
+		if (!element || !parentElement) {
+			return;
+		};
+
+		const idx = parentElement.childrenIds.indexOf(block.id);
+		const nextId = parentElement.childrenIds[idx - 1];
+		const next = nextId ? blockStore.getLeaf(rootId, nextId) : blockStore.getNextBlock(rootId, block.id, -1);
+		const obj = isShift ? parent : next;
+		
+		let canTab = obj && !block.isTextTitle() && obj.canHaveChildren() && block.isIndentable();
+		if (!isShift && parentElement.childrenIds.length && (block.id == parentElement.childrenIds[0])) {
+			canTab = false;
+		};
+
+		if (!canTab) {
+			return;
+		};
+
+		C.BlockListMove(rootId, rootId, [ block.id ], obj.id, (isShift ? I.BlockPosition.Bottom : I.BlockPosition.Inner), (message: any) => {
+			window.setTimeout(() => { focus.apply(); });
+
+			if (next && next.isTextToggle()) {
+				blockStore.toggle(rootId, next.id, true);
+			};
+
+			analytics.event('ReorderBlock', { count: 1 });
+		});
+	};
+
+	onEnterBlock (e: any, block: I.Block, range: I.TextRange, pressed: string) {
+		const { rootId } = this.props;
+
+		if (block.isTextCode() && (pressed == 'enter')) {
+			return;
+		};
+		if (!block.isText() && keyboard.isFocused) {
+			return;
+		};
+		if (block.isText() && !block.isTextCode() && pressed.match('shift')) {
+			return;
+		};
+
+		const menus = menuStore.list;
+		const menuCheck = (menus.length > 1) || ((menus.length == 1) && (menus[0].id != 'blockContext'));
+		
+		if (menuCheck) {
+			return;
+		};
+		
+		e.preventDefault();
+		e.stopPropagation();
+
+		let replace = !range.to && block.isTextList() && !length;
+		if (replace) {
+			C.BlockListSetTextStyle(rootId, [ block.id ], I.TextStyle.Paragraph);
+		} else 
+		if (!block.isText()) {  
+			this.blockCreate(block.id, I.BlockPosition.Bottom, {
+				type: I.BlockType.Text,
+				style: I.TextStyle.Paragraph,
+			});
+		} else {
+			this.blockSplit(block, range);
+		};
+
+		if (blockStore.checkBlockType(rootId)) {
+			const object = detailStore.get(rootId, rootId, []);
+			analytics.event('CreateObject', { objectType: object.type, layout: object.layout });
+		};
 	};
 
 	onArrow (e: any, pressed: string, length: number) {
