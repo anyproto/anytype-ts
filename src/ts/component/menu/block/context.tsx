@@ -1,8 +1,7 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { Icon } from 'ts/component';
-import { I, C, Mark, Util, DataUtil, focus, keyboard, analytics, Storage } from 'ts/lib';
-import { blockStore, menuStore } from 'ts/store';
+import { I, C, Mark, DataUtil, focus, keyboard, Storage } from 'ts/lib';
+import { blockStore, menuStore, commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {};
@@ -22,6 +21,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 		const { param } = this.props;
 		const { data } = param;
 		const { range } = focus.state;
+		const { config } = commonStore;
 		const { blockId, rootId, marks } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
 
@@ -43,7 +43,11 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 		
 		// You can't make headers bold, since they are already bold
 		if (block.isTextHeader()) {
-			markActions = markActions.filter((it: any) => { return [ I.MarkType.Bold ].indexOf(it.type) < 0; });
+			markActions = markActions.filter((it: any) => { return ![ I.MarkType.Bold ].includes(it.type); });
+		};
+
+		if (!config.experimental) {
+			markActions = markActions.filter((it: any) => { return ![ I.MarkType.Under ].includes(it.type); });
 		};
 		
 		let icon = DataUtil.styleIcon(type, style);
