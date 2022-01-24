@@ -15,11 +15,12 @@ const Constant = require('json/constant.json');
 
 const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Props, State> {
 
-	items: any[] = [];
-	refFilter: any = null;
 	state = {
 		filter: '',
 	};
+	items: any[] = [];
+	refFilter: any = null;
+	timeout: number = 0;
 
 	constructor (props: any) {
 		super(props);
@@ -195,7 +196,8 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 	};
 
 	onFilterChange (v: string) {
-		this.setState({ filter: v });
+		window.clearTimeout(this.timeout);
+		this.timeout = window.setTimeout(() => { this.setState({ filter: v }); }, 500);
 	};
 
 	getSections () {
