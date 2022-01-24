@@ -138,23 +138,24 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 				break;
 
 			case 'wallpaper':
-				let colors = [ 'yellow', 'orange', 'pink', 'red', 'purple', 'navy', 'blue', 'ice', 'teal', 'green' ];
-				let gradients = [ 'yellow', 'red', 'blue', 'teal', 'pinkOrange', 'bluePink', 'greenOrange', 'sky' ];
 				let covers1 = [];
-				let covers2 = colors.map((it: string) => { return { id: it, image: '', type: I.CoverType.Color }; });
-				let covers3 = gradients.map((it: string) => { return { id: it, image: '', type: I.CoverType.Gradient }; });
-
 				if (coverImage) {
 					covers1.push({ id: coverImage, image: coverImage, type: I.CoverType.Upload });
 				};
-				for (let i = 1; i <= 13; ++i) {
+				for (let i = 1; i <= Constant.coverCnt; ++i) {
 					covers1.push({ id: 'c' + i, image: '', type: I.CoverType.Image });
 				};
 
 				let sections = [
 					{ name: translate('popupSettingsPicture'), children: covers1 },
-					{ name: translate('popupSettingsColor'), children: covers2 },
-					{ name: translate('popupSettingsGradient'), children: covers3 },
+					{ 
+						name: translate('popupSettingsColor'), 
+						children: DataUtil.coverColors().map((it: any) => { return { ...it, image: '' }; }),
+					},
+					{ 
+						name: translate('popupSettingsGradient'), 
+						children: DataUtil.coverGradients().map((it: any) => { return { ...it, image: '' }; }), 
+					},
 				];
 
 				Item = (item: any) => (

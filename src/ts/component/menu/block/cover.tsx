@@ -202,21 +202,9 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 		let { filter } = this.state;
 		let sections: any[] = [
 			{ name: 'Solid colors', children: DataUtil.coverColors() },
-			{ name: 'Gradients', children: [
-				{ type: I.CoverType.Gradient, id: 'yellow' },
-				{ type: I.CoverType.Gradient, id: 'red' },
-				{ type: I.CoverType.Gradient, id: 'blue' },
-				{ type: I.CoverType.Gradient, id: 'teal' },
-				{ type: I.CoverType.Gradient, id: 'pinkOrange' },
-				{ type: I.CoverType.Gradient, id: 'bluePink' },
-				{ type: I.CoverType.Gradient, id: 'greenOrange' },
-				{ type: I.CoverType.Gradient, id: 'sky' },
-			] as any[] },
-
+			{ name: 'Gradients', children: DataUtil.coverGradients() },
 			{ name: 'Unsplash', children: this.items },
 		];
-
-		console.log(this.items);
 
 		sections = DataUtil.menuSectionsFilter(sections, filter);
 		return sections;

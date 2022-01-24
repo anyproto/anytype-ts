@@ -10,6 +10,8 @@
 		"linux":	"Linux"
 	},
 
+	"coverCnt": 13,
+
 	"default": {
 		"lang": "en",
 		"cover": 12,
