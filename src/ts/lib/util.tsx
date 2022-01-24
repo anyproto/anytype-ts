@@ -188,7 +188,7 @@ class Util {
 					o[k] = this.fieldsMap(o[k]['fieldsMap']);
 				};
 			} else 
-			if (!o[k]) {
+			if (('undefined' == typeof(o[k])) || (o[k] === null)) {
 				delete(o[k]);
 			};
 		};

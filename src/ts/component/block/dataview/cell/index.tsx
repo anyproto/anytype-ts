@@ -420,7 +420,7 @@ class Cell extends React.Component<Props, {}> {
 			return null;
 		};
 
-		value = Relation.formatRelationValue(relation, value, true);
+		value = Relation.formatValue(relation, value, true);
 		if (onCellChange) {
 			onCellChange(record.id, relation.relationKey, value, callBack);
 		};

@@ -376,16 +376,16 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 				const conditions = Relation.filterConditionsByType(relation.format);
 
 				item.condition = conditions.length ? conditions[0].id : I.FilterCondition.None;
-				item.value = Relation.formatRelationValue(relation, null, false);
+				item.value = Relation.formatValue(relation, null, false);
 			};
 
 			if (k == 'value') {
-				item[k] = Relation.formatRelationValue(relation, item[k], false);
+				item[k] = Relation.formatValue(relation, item[k], false);
 			};
 	
 			if (k == 'condition') {
 				if ([ I.FilterCondition.None, I.FilterCondition.Empty, I.FilterCondition.NotEmpty ].indexOf(v) >= 0) {
-					item.value = Relation.formatRelationValue(relation, null, false);
+					item.value = Relation.formatValue(relation, null, false);
 				};
 			};
 

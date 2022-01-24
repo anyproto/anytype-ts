@@ -494,17 +494,29 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		// Cut
 		keyboard.shortcut(`${cmd}+x`, e, (pressed: string) => {
+			if (readonly) {
+				return;
+			};
+
 			this.onCopy(e, true);
 		});
 
 		// Undo
 		keyboard.shortcut(`${cmd}+z`, e, (pressed: string) => {
+			if (readonly) {
+				return;
+			};
+
 			e.preventDefault();
 			keyboard.onUndo(rootId, (message: any) => { focus.clear(true); });
 		});
 
 		// Redo
 		keyboard.shortcut(`${cmd}+shift+z`, e, (pressed: string) => {
+			if (readonly) {
+				return;
+			};
+			
 			e.preventDefault();
 			keyboard.onRedo(rootId, (message: any) => { focus.clear(true); });
 		});
@@ -563,7 +575,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				type = I.MarkType.Color;
 			});
 
-			if (type !== null) {
+			if (!readonly && (type !== null)) {
 				e.preventDefault();
 
 				if (type == I.MarkType.Link) {
@@ -588,6 +600,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 			// Duplicate
 			keyboard.shortcut(`${cmd}+d`, e, (pressed: string) => {
+				if (readonly) {
+					return;
+				};
+
 				e.preventDefault();
 				Action.duplicate(rootId, ids[ids.length - 1], ids, () => { focus.clear(true); });
 			});
@@ -627,7 +643,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		keyboard.shortcut('tab, shift+tab', e, (pressed: string) => {
 			e.preventDefault();
 			
-			if (!ids.length) {
+			if (!ids.length || readonly) {
 				return;
 			};
 
@@ -675,7 +691,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		// Enter
 		keyboard.shortcut('enter', e, (pressed: string) => {
-			if (menuOpen || popupOpen) {
+			if (menuOpen || popupOpen || readonly) {
 				return;
 			};
 
