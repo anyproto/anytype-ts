@@ -10,7 +10,10 @@
                 .head { padding: 10px 4px; width: 100%; }
             }
 
-            .card { width: 100%; margin-bottom: 8px; background: $colorWhite; }
+            .card { 
+                width: 100%; margin-bottom: 8px; background: $colorWhite; border: 1px solid $colorBorderDark; 
+                border-radius: 12px; padding: 16px;
+            }
             
             .card.add { min-height: unset; text-align: center; padding: 10px 0px; margin: 0px; line-height: 1; transition: $transitionFast; cursor: pointer; }
             .card.add {

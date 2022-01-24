@@ -3,12 +3,13 @@ import * as ReactDOM from 'react-dom';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import { I } from 'ts/lib';
 import { observer } from 'mobx-react';
-import { dbStore } from 'ts/store';
+import { dbStore, detailStore } from 'ts/store';
+
 import Column from './board/column';
 
-interface Props extends I.ViewComponent {}
+interface Props extends I.ViewComponent {};
 
-const GROUP = 'name';
+const GROUP = 'done';
 const Constant = require('json/constant.json');
 const $ = require('jquery');
 
@@ -60,9 +61,20 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 	};
 
 	onDragStart () {
+		const { dataset } = this.props;
+		const { selection } = dataset || {};
+
+		selection.preventSelect(true);
+
+		console.log('onDragStart');
 	};
 
 	onDragEnd () {
+		const { dataset } = this.props;
+		const { selection } = dataset || {};
+
+		selection.preventSelect(false);
+		console.log('onDragEnd');
 	};
 
 	resize () {
@@ -86,29 +98,32 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 			margin = (ww - mw) / 2; 
 		};
 
-		columns.css({  });
+		//columns.css({  });
 		scroll.css({ width: ww, marginLeft: -margin, paddingLeft: margin });
 		viewItem.css({ width: vw });
 	};
 	
 	getColumns (): any[] {
 		const { rootId, block } = this.props;
-		const records = dbStore.getRecords(rootId, block.id);
+		const subId = dbStore.getSubId(rootId, block.id);
+		const records = dbStore.getRecords(subId, '');
+		const columns: any[] = [];
 
-		let columns: any[] = [];
-		for (let i in records) {
-			let item = records[i];
-			let value = item[GROUP] || '';
-			let col = columns.find((col) => { return col.value == value; });
-			
-			item.index = i;
+		records.forEach((it: any, i: number) => {
+			const object = detailStore.get(subId, it.id, [ GROUP ]);
+			const value = object[GROUP] || '';
 
-			if (!col) {
-				col = { value: value, list: [] }
-				columns.push(col);
+			let column = columns.find((col) => { return col.value == value; });
+			if (!column) {
+				column = { value: value, list: [] }
+				columns.push(column);
 			};
-			col.list.push(item);
-		};
+
+			column.list.push({ id: object.id, index: i });
+		});
+
+		console.log(columns);
+
 		return columns;
 	};
 	
