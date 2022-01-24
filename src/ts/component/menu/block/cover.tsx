@@ -1,17 +1,25 @@
 import * as React from 'react';
-import { I, C, DataUtil, Util, translate, analytics } from 'ts/lib';
-import { Cover } from 'ts/component';
+import { I, C, DataUtil, translate, analytics } from 'ts/lib';
+import { Cover, Filter } from 'ts/component';
 import { detailStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {};
 
+interface State {
+	filter: string;
+};
+
 const { dialog } = window.require('@electron/remote');
 const Constant = require('json/constant.json');
 
-const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Props, {}> {
+const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Props, State> {
 
 	items: any[] = [];
+	refFilter: any = null;
+	state = {
+		filter: '',
+	};
 
 	constructor (props: any) {
 		super(props);
@@ -20,12 +28,14 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 		this.onEdit = this.onEdit.bind(this);
 		this.onRemove = this.onRemove.bind(this);
 		this.onSelect = this.onSelect.bind(this);
+		this.onFilterChange = this.onFilterChange.bind(this);
 	};
 
 	render () {
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId } = data;
+		const { filter } = this.state;
 		const sections = this.getSections();
 		const object = detailStore.get(rootId, rootId, [ 'coverType' ], true);
 		const { coverType } = object;
@@ -44,7 +54,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 		);
 
 		return (
-			<div>
+			<div className="wrap">
 				<div className="head">
 					<div className="btn" onClick={this.onUpload}>{translate('menuBlockCoverUpload')}</div>
 					{canEdit ? (
@@ -52,6 +62,13 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 					) : ''}
 					<div className="btn" onClick={this.onRemove}>{translate('menuBlockCoverRemove')}</div>
 				</div>
+
+				<Filter 
+					ref={(ref: any) => { this.refFilter = ref; }}
+					value={filter}
+					onChange={this.onFilterChange} 
+				/>
+
 				<div className="sections">
 					{sections.map((section: any, i: number) => {
 						return <Section key={i} {...section} />;
@@ -62,6 +79,10 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 	};
 
 	componentDidMount () {
+		this.load();
+	};
+
+	componentDidUpdate () {
 		this.load();
 	};
 
@@ -173,7 +194,12 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 		analytics.event('SetCover', { type: item.type, id: item.id });
 	};
 
+	onFilterChange (v: string) {
+		this.setState({ filter: v });
+	};
+
 	getSections () {
+		let { filter } = this.state;
 		let sections: any[] = [
 			{ name: 'Solid colors', children: DataUtil.coverColors() },
 			{ name: 'Gradients', children: [
@@ -189,6 +215,10 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 
 			{ name: 'Unsplash', children: this.items },
 		];
+
+		console.log(this.items);
+
+		sections = DataUtil.menuSectionsFilter(sections, filter);
 		return sections;
 	};
 });
