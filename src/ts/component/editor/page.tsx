@@ -707,6 +707,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	};
 
 	onKeyDownBlock (e: any, text: string, marks: I.Mark[], range: any) {
+		range = range || {};
+
 		const { dataset, rootId } = this.props;
 		const { focused } = focus.state;
 		const { selection } = dataset || {};
@@ -719,11 +721,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const platform = Util.getPlatform();
 		const menuOpen = menuStore.isOpen();
 		const cmd = keyboard.ctrlKey();
-		
-		let length = String(text || '').length;
-		range = range || {};
 
 		// Last line break doesn't expand range.to
+		let length = String(text || '').length;
 		if (length && (text[length - 1] == '\n')) {
 			length--;
 		};
@@ -755,14 +755,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			});
 		};
 
-		// Copy
-		keyboard.shortcut(`${cmd}+c`, e, (pressed: string) => {
-			this.onCopy(e, false);
-		});
-
-		// Cut
-		keyboard.shortcut(`${cmd}+x`, e, (pressed: string) => {
-			this.onCopy(e, true);
+		// Copy/Cut
+		keyboard.shortcut(`${cmd}+c, ${cmd}+x`, e, (pressed: string) => {
+			this.onCopy(e, pressed.match('x') ? true : false);
 		});
 
 		// Undo
@@ -1251,12 +1246,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		commonStore.filterSet(0, '');
 		focus.clear(true);
 
-		const newBlock = {
-			type: I.BlockType.Text,
-			//style: I.TextStyle.Paragraph,
-		};
-		
-		this.blockCreate(block.id, this.hoverPosition, newBlock, (blockId: string) => {
+		this.blockCreate(block.id, this.hoverPosition, { type: I.BlockType.Text }, (blockId: string) => {
 			$('.placeholder.c' + blockId).text(translate('placeholderFilter'));
 			this.onMenuAdd(blockId, '', { from: 0, to: 0 });
 		});
@@ -1265,6 +1255,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	onMenuAdd (blockId: string, text: string, range: I.TextRange) {
 		const { rootId } = this.props;
 		const block = blockStore.getLeaf(rootId, blockId);
+
 		if (!block) {
 			return;
 		};
@@ -1847,19 +1838,18 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	};
 
 	getWidth (w: number) {
-		w = Number(w) || 0;
-
-		const { isPopup } = this.props;
+		const { isPopup, rootId } = this.props;
 		const container = Util.getScrollContainer(isPopup);
 		const mw = container.width() - 120;
-		const { rootId } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
 		
 		if (root && root.isObjectSet()) {
 			return container.width() - 192;
 		};
 
+		w = Number(w) || 0;
 		w = (mw - Constant.size.editor) * w;
+
 		this.width = w = Math.max(Constant.size.editor, Math.min(mw, Constant.size.editor + w));
 		return w;
 	};
