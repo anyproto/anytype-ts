@@ -645,13 +645,11 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			keyboard.disableContext(false);
 		});
 
-		keyboard.shortcut(saveKeys.join(' '), e, (pressed: string) => {
+		keyboard.shortcut(saveKeys.join(', '), e, (pressed: string) => {
 			e.preventDefault();
-
 			DataUtil.blockSetText(rootId, block, value, this.marks, true, () => {
 				onKeyDown(e, value, this.marks, range);
 			});
-
 			ret = true;
 		});
 
