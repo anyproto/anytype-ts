@@ -35,7 +35,7 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 		},
 		charge: {
 			enabled: true,
-			strength: -50,
+			strength: -30,
 			distanceMin: 20,
 			distanceMax: 200
 		},
@@ -47,19 +47,19 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 		},
 		link: {
 			enabled: true,
-			strength: 0.1,
-			distance: 20,
+			strength: 0.3,
+			distance: 50,
 			iterations: 3
 		},
 		forceX: {
-			enabled: false,
-			strength: 0.1,
-			x: 0.5
+			enabled: true,
+			strength: 0.3,
+			x: 0.3
 		},
 		forceY: {
-			enabled: false,
-			strength: 0.1,
-			y: 0.5
+			enabled: true,
+			strength: 0.3,
+			y: 0.3
 		},
 
 		orphans: true,
@@ -86,14 +86,12 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 		);
 	};
 
-	componentDidMount () {
-		window.Graph = this;
-	};
-
 	componentWillUnmount () {
 		if (this.worker) {
 			this.worker.terminate();
 		};
+
+		$('body').removeClass('cp');
 	};
 
 	init () {
@@ -102,6 +100,7 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 		const density = window.devicePixelRatio;
 		const elementId = '#graph' + (isPopup ? '-popup' : '');
 		const transform: any = {};
+		const fontFamily = 'Helvetica';
 		
 		this.width = node.width();
 		this.height = node.height();
@@ -124,13 +123,23 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 			const targetCnt = this.edges.filter((it: any) => { return it.target == d.id; }).length;
 
 			d.layout = Number(d.layout) || 0;
-			d.name = d.name || translate('defaultNamePage');
-			d.name = SmileUtil.strip(d.name);
-			d.shortName = Util.shorten(d.name, 16);
-			d.radius = Math.max(3, Math.min(10, sourceCnt + targetCnt));
+			d.radius = Math.max(3, Math.min(8, sourceCnt + targetCnt));
 			d.isRoot = d.id == rootId;
 			d.isOrphan = !targetCnt && !sourceCnt;
 			d.src = this.imageSrc(d);
+			d.sourceCnt = sourceCnt;
+			d.targetCnt = targetCnt;
+
+			if (d.layout == I.ObjectLayout.Note) {
+				d.name = d.snippet || translate('commonEmpty');
+			} else {
+				d.name = d.name || DataUtil.defaultName('page');
+			};
+
+			d.name = SmileUtil.strip(d.name);
+			d.shortName = Util.shorten(d.name, 16);
+			d.letter = d.name.trim().substr(0, 1).toUpperCase();
+			d.font = `${d.radius}px ${fontFamily}`;
 
 			// Clear icon props to fix image size
 			if (d.layout == I.ObjectLayout.Task) {
@@ -272,10 +281,9 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 				break;
 
 			case 'onMouseMove':
-				const d = data.node;
 				if (!this.isDragging) {
-					this.subject = d;
-					d ? body.addClass('cp') : body.removeClass('cp');
+					this.subject = this.nodes.find((d: any) => { return d.id == data.node; });
+					this.subject ? body.addClass('cp') : body.removeClass('cp');
 				};
 				break;
 
@@ -312,6 +320,10 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 				
 			case I.ObjectLayout.Human:
 				src = d.iconImage ? commonStore.imageUrl(d.iconImage, 160) : '';
+				break;
+
+			case I.ObjectLayout.Note:
+				src = 'img/icon/note.svg';
 				break;
 				
 			default:

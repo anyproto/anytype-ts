@@ -1,7 +1,7 @@
 @import "~scss/_vars";
 
 .pageMainType {
-	.wrapper { width: 704px; margin: 0px auto; padding: 144px 0px 80px 0px; user-select: none; }
+	.wrapper { width: 704px; margin: 0px auto; padding: 126px 0px 80px 0px; user-select: none; }
 	.wrapper {
 
 		.block {
@@ -106,6 +106,10 @@
 			tbody { border-top: 1px solid $colorLightGrey; }
 
 			.cellContent { width: 100%; overflow: hidden; height: 20px; line-height: 20px; }
+
+			.cellContent {
+				.empty { display: block; }
+			}
 
 			.cellContent.c-object {
 				.wrap { white-space: nowrap; }

@@ -1,5 +1,5 @@
 import { observable, action, set, intercept, makeObservable } from 'mobx';
-import { I, Util, DataUtil, translate } from 'ts/lib';
+import { I, Relation, DataUtil, translate } from 'ts/lib';
 
 const Constant = require('json/constant.json');
 
@@ -46,7 +46,7 @@ class DetailStore {
 	};
 
     update (rootId: string, item: any, clear: boolean) {
-		if (!item.id || !item.details) {
+		if (!item || !item.id || !item.details) {
 			return;
 		};
 
@@ -93,7 +93,7 @@ class DetailStore {
 	};
 
     delete (rootId: string, id: string, keys: string[]) {
-		let map = this.map.get(rootId);
+		let map = this.map.get(rootId) || new Map();
 		let list = this.getArray(rootId, id);
 
 		list = list.filter((it: Detail) => { return keys.indexOf(it.relationKey) < 0 });
@@ -108,7 +108,7 @@ class DetailStore {
     get (rootId: string, id: string, keys?: string[], forceKeys?: boolean): any {
 		let list = this.getArray(rootId, id);
 		if (!list.length) {
-			return { _empty_: true };
+			return { id, _empty_: true };
 		};
 		
 		let object: any = {};
@@ -147,10 +147,11 @@ class DetailStore {
 			name,
 			layout,
 			snippet,
-			type: DataUtil.convertRelationValueToString(object.type),
-			iconImage: DataUtil.convertRelationValueToString(object.iconImage),
+			type: Relation.getStringValue(object.type),
+			iconImage: Relation.getStringValue(object.iconImage),
 			layoutAlign: Number(object.layoutAlign) || I.BlockAlign.Left,
 			recommendedLayout: Number(object.recommendedLayout) || I.ObjectLayout.Page,
+			relationFormat: Number(object.relationFormat) || I.RelationType.LongText,
 			coverX: Number(object.coverX) || 0,
 			coverY: Number(object.coverY) || 0,
 			coverScale: Number(object.coverScale) || 0,

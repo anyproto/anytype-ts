@@ -14,6 +14,12 @@
 		.item:hover::before { background: $colorHover; }
 		.item.disabled:hover::before { opacity: 0; }
 
+		.item.withCaption {
+			.caption { 
+				@include text-common; line-height: 20px; width: 40px; padding-right: 16px; overflow: visible;
+			}
+		}
+
 		.icon.arrow { 
 			width: 20px; height: 20px; position: absolute; right: 14px; top: 50%; margin: -10px 0px 0px 0px; 
 			background-image: url('~img/arrow/menu.svg'); 
@@ -66,6 +72,8 @@
 			.cellContent {
 				.name { line-height: 22px; }
 			}
+
+			.cellContent.isName { display: flex; }
 
 			.cell { 
 				padding: 5px 8px; border-radius: 4px; width: calc(100% - 236px); line-height: 22px; transition: background 0.2s ease-in-out; 
@@ -124,10 +132,7 @@
 			}
 
 			.cell.c-longText {
-				.name, span { 
-					-webkit-line-clamp: 3; -webkit-box-orient: vertical; display: -webkit-box; overflow: hidden; word-wrap: break-word; 
-					line-height: 22px;
-				}
+				.name, span { @include clamp3; word-wrap: break-word; line-height: 22px; }
 			}
 			.cell.isEditing.c-longText {
 				.cellContent { box-shadow: 0px 0px; visibility: hidden; }
@@ -148,9 +153,12 @@
 			.line { margin: 0px; position: absolute; top: 0px; left: 32px; width: calc(100% - 64px); }
 			.info { width: 100%; }
 		}
-		.item.add:hover { 
-			.info { background: $colorHover; } 
-		}
 	}
 
+}
+
+body.isDragging {
+	.menus {
+		.menu.menuBlockRelationView { opacity: 0.5; }
+	}
 }

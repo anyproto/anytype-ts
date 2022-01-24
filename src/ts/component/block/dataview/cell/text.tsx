@@ -1,14 +1,14 @@
 import * as React from 'react';
-import { I, Util, DataUtil, keyboard, translate } from 'ts/lib';
+import { I, Util, DataUtil, keyboard, translate, Relation } from 'ts/lib';
 import { Icon, Input, IconObject } from 'ts/component';
 import { commonStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
-interface Props extends I.Cell {}
+interface Props extends I.Cell {};
 
 interface State { 
 	isEditing: boolean; 
-}
+};
 
 const $ = require('jquery');
 const raf = require('raf');
@@ -60,7 +60,7 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 		let value = record[relation.relationKey];
 
 		if ([ I.RelationType.Date, I.RelationType.Number ].includes(relation.format)) {
-			value = DataUtil.formatRelationValue(relation, record[relation.relationKey], true);
+			value = Relation.formatValue(relation, record[relation.relationKey], true);
 			if (relation.format == I.RelationType.Number) {
 				value = value === null ? null : String(value);
 			};
@@ -161,6 +161,19 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 					value = '';
 				};
 			};
+
+			if (relation.format == I.RelationType.Number) {
+				if (value !== null) {
+					let mapped = Relation.mapValue(relation, value);
+					if (mapped !== null) {
+						value = mapped;
+					} else {
+						value = Util.formatNumber(value);
+					};
+				} else {
+					value = '';
+				};
+			};
 		};
 
 		let content: any = null;
@@ -185,7 +198,7 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 
 			value = value || DataUtil.defaultName('page');
 			if (record.layout == I.ObjectLayout.Note) {
-				value = record.snippet || '<span class="emptyText">Empty</span>';
+				value = record.snippet || `<span class="emptyText">${translate('commonEmpty')}</span>`;
 			};
 
 			content = (
@@ -198,7 +211,7 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 							onCheckbox={this.onCheckbox}
 							size={size} 
 							iconSize={is}
-							canEdit={canEdit} 
+							canEdit={!record.isReadonly} 
 							offsetY={4} 
 							object={record} 
 						/>
@@ -225,7 +238,7 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 		const record = getRecord(index);
 
 		this._isMounted = true;
-		this.value = DataUtil.formatRelationValue(relation, record[relation.relationKey], true);
+		this.setValue(Relation.formatValue(relation, record[relation.relationKey], true));
 	};
 
 	componentDidUpdate () {
@@ -260,7 +273,7 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 			};
 
 			if (relation.format == I.RelationType.Number) {
-				value = DataUtil.formatRelationValue(relation, this.value, true);
+				value = Relation.formatValue(relation, this.value, true);
 				value = value === null ? null : String(value);
 			};
 
@@ -279,10 +292,8 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 				cellPosition(id);
 			};
 		} else {
-			raf(() => {
-				cell.removeClass('isEditing');
-				cell.find('.cellContent').css({ left: '', right: '' });
-			});
+			cell.removeClass('isEditing');
+			cell.find('.cellContent').css({ left: '', right: '' });
 		};
 
 		if (commonStore.cellId) {
@@ -315,7 +326,7 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 	};
 
 	onChange (v: any) {
-		this.value = v;
+		this.setValue(v);
 	};
 
 	onKeyUp (e: any, value: string) {
@@ -329,7 +340,7 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 			menuStore.updateData('button', { disabled: !value });
 		};
 
-		this.value = value;
+		this.setValue(value);
 
 		keyboard.shortcut('enter', e, (pressed: string) => {
 			e.preventDefault();
@@ -339,7 +350,7 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 					menuStore.closeAll(Constant.menuIds.cell);
 
 					this.range = null;
-					this.setState({ isEditing: false });
+					this.setEditing(false);
 				});
 			};
 		});
@@ -347,7 +358,8 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 
 	onKeyUpDate (e: any, value: any) {
 		const { onChange } = this.props;
-		this.value = this.fixDateValue(value);
+
+		this.setValue(this.fixDateValue(value));
 
 		if (this.value) {
 			menuStore.updateData(MENU_ID, { value: this.value });
@@ -367,33 +379,32 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 	};
 
 	onBlur (e: any) {
-		let { relation, onChange, index, getRecord } = this.props;
+		const { relation, onChange, index, getRecord } = this.props;
+		const record = getRecord(index);
 
-		if (!this.ref || keyboard.isBlurDisabled) {
+		if (!this.ref || keyboard.isBlurDisabled || !record) {
 			return;
 		};
-
-		let value = this.ref.getValue();
-		let record = getRecord(index);
 
 		keyboard.setFocus(false);
 		this.range = null;
 
-		if (relation.format == I.RelationType.Date) {
-			value = this.fixDateValue(value);
-		} else 
-		if (JSON.stringify(record[relation.relationKey]) === JSON.stringify(value)) {
-			this.setState({ isEditing: false });
+		if (JSON.stringify(record[relation.relationKey]) === JSON.stringify(this.value)) {
+			this.setEditing(false);
 			return;
 		};
 
 		if (onChange) {
-			onChange(value, () => {
+			onChange(this.value, () => {
 				if (!menuStore.isOpen(MENU_ID)) {
-					this.setState({ isEditing: false });
+					this.setEditing(false);
 				};
 			});
 		};
+	};
+
+	setValue (v: any) {
+		this.value = v;
 	};
 
 	fixDateValue (v: any) {

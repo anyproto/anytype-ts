@@ -48,17 +48,8 @@ const HeaderMainNavigation = observer(class HeaderMainNavigation extends React.C
 				<div className="side left">
 					<Icon className="expand big" tooltip="Open as object" onClick={this.onOpen} />
 					<Icon className="home big" tooltip="Home" onClick={this.onHome} />
-					{isPopup ? (
-						<React.Fragment>
-							<Icon className={[ 'back', 'big', (!historyPopup.checkBack() ? 'disabled' : '') ].join(' ')} tooltip="Back" onClick={this.onBack} />
-							<Icon className={[ 'forward', 'big', (!historyPopup.checkForward() ? 'disabled' : '') ].join(' ')} tooltip="Forward" onClick={this.onForward} />
-						</React.Fragment>
-					) : (
-						<React.Fragment>
-							<Icon className="back big" tooltip="Back" onClick={this.onBack} />
-							<Icon className="forward big" tooltip="Forward" onClick={this.onForward} />
-						</React.Fragment>
-					)}
+					<Icon className={[ 'back', 'big', (!keyboard.checkBack() ? 'disabled' : '') ].join(' ')} tooltip="Back" onClick={this.onBack} />
+					<Icon className={[ 'forward', 'big', (!keyboard.checkForward() ? 'disabled' : '') ].join(' ')} tooltip="Forward" onClick={this.onForward} />
 					<Icon className="graph big" tooltip="Open as graph" onClick={this.onGraph} />
 				</div>
 
@@ -95,7 +86,7 @@ const HeaderMainNavigation = observer(class HeaderMainNavigation extends React.C
 	};
 
 	onHome (e: any) {
-		this.props.history.push('/main/index');
+		Util.route('/main/index');
 	};
 	
 	onBack (e: any) {
@@ -108,7 +99,10 @@ const HeaderMainNavigation = observer(class HeaderMainNavigation extends React.C
 
 	onOpen () {
 		const { rootId } = this.props;
-		this.props.history.push('/main/navigation/' + rootId);
+
+		popupStore.closeAll(null, () => {
+			DataUtil.objectOpen({ id: rootId, layout: I.ObjectLayout.Navigation });
+		});
 	};
 
 	onGraph (e: any) {
@@ -123,10 +117,7 @@ const HeaderMainNavigation = observer(class HeaderMainNavigation extends React.C
 
 		popupStore.open('search', {
 			preventResize: true, 
-			data: {
-				rootId: rootId,
-				type: I.NavigationType.Go, 
-			},
+			data: { rootId },
 		});
 	};
 

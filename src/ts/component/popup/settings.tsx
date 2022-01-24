@@ -190,6 +190,10 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 				break;
 
 			case 'phrase':
+				analytics.event('ScreenKeychain', {
+					type: !this.onConfirmPhrase ? 'ScreenSettings' : 'BeforeLogout'
+				});
+
 				content = (
 					<div>
 						<Head id="index" name={translate('popupSettingsTitle')} />
@@ -205,6 +209,11 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 								className="isBlurred"
 								onFocus={this.onFocusPhrase} 
 								onBlur={this.onBlurPhrase} 
+								onCopy={() => { 
+									analytics.event('KeychainCopy', { 
+										type: !this.onConfirmPhrase ? 'ScreenSettings' : 'BeforeLogout'
+									}); 
+								}}
 								placeholder="witch collapse practice feed shame open despair creek road again ice least lake tree young address brain envelope" 
 								readonly={true} 
 							/>
@@ -247,6 +256,8 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 									onClick={() => {
 										this.onConfirmPin = this.onTurnOffPin;
 										this.onPage('pinConfirm');
+
+										analytics.event('PinCodeOff');
 									}} 
 								/>
 
@@ -256,6 +267,8 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 									onClick={() => {
 										this.onConfirmPin = () => { this.onPage('pinSelect'); };
 										this.onPage('pinConfirm');
+
+										analytics.event('PinCodeChange');
 									}} 
 								/>
 							</div>
@@ -266,6 +279,8 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 									className="blank" 
 									onClick={() => {
 										this.onPage('pinSelect');
+
+										analytics.event('PinCodeOn');
 									}} 
 								/>
 							</div>
@@ -359,18 +374,15 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 						<Label text={translate('popupSettingsImportFirst')} />
 
 						<div className="path">
-							<b>{translate('popupSettingsImportGetTitle')}</b><br/>
-							<IconObject object={{ iconEmoji: ':gear:' }} /> Settings & Members → <IconObject object={{ iconEmoji: ':house:' }} /> Settings → Export all workspace content → <br/>
-							Export format : "Markdown & CSV".
-						</div>
-
-						<div className="path">
 							<b>{translate('popupSettingsImportPageTitle')}</b><br/>
 							Three dots menu on the top-left corner → <IconObject object={{ iconEmoji: ':paperclip:' }} /> Export →  <br/> Export format : "Markdown & CSV".
 						</div>
 
 						<Label className="last" text={translate('popupSettingsImportZip')} />
+						
 						<Button text={translate('popupSettingsImportOk')} onClick={() => { this.onImport('notion'); }} />
+
+						<Label className="last" text={translate('popupSettingsImportWarning')} />
 					</div>
 				);
 				break;
@@ -445,21 +457,19 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 							</div>
 						</div>
 
-						{config.experimental ? (
-							<div className="row cp textColor textColor-red" onClick={this.onFileOffload}>
-								<div className="side left">
-									<Label text="Clear file cache" />
-								</div>
-								<div className="side right" />
+						<div className="row cp textColor textColor-red" onClick={this.onFileOffload}>
+							<div className="side left">
+								<Label text="Clear file cache" />
 							</div>
-						) : ''}
+							<div className="side right" />
+						</div>
 					</div>
 				);
 				break;
 		};
 
 		return (
-			<div className={'tab ' + Util.toCamelCase('tab-' + page)}>
+			<div className={[ 'tab', Util.toCamelCase('tab-' + page) ].join(' ')}>
 				{loading ? <Loader id="loader" /> : ''}
 				{content}
 			</div>
@@ -506,7 +516,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 
 			this.setState({ loading: true });
 
-			C.UploadFile('', files[0], I.FileType.Image, true, (message: any) => {
+			C.UploadFile('', files[0], I.FileType.Image, (message: any) => {
 				if (message.error.code) {
 					return;
 				};
@@ -515,6 +525,8 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 
 				commonStore.coverSet('', message.hash, I.CoverType.Upload);
 				DataUtil.pageSetCover(root, I.CoverType.Upload, message.hash);
+
+				analytics.event('SettingsWallpaperUpload', { middleTime: message.middleTime });
 			});
 		});
 	};
@@ -578,6 +590,8 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 
 		this.prevPage = page;
 		popupStore.updateData(this.props.id, { page: id });
+
+		analytics.event('settings', { params: { id } });
 	};
 
 	onCover (item: any) {
@@ -585,10 +599,12 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 
 		DataUtil.pageSetCover(root, item.type, item.image || item.id);
 		commonStore.coverSet(item.id, item.image, item.type);
+
+		analytics.event('SettingsWallpaperSet', { type: item.type, id: item.id });
 	};
 
 	onLogout (e: any) {
-		const { history, close } = this.props;
+		const { close } = this.props;
 
 		this.onConfirmPhrase = () => {
 			close();
@@ -596,7 +612,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 			window.setTimeout(() => {
 				C.AccountStop(false);
 				authStore.logout();
-				history.push('/');
+				Util.route('/');
 	
 				this.pinConfirmed = false;
 				this.onConfirmPhrase = null;
@@ -608,7 +624,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 
 	onImport (format: string) {
 		const platform = Util.getPlatform();
-		const { history, close } = this.props;
+		const { close } = this.props;
 		const { root } = blockStore;
 		const options: any = { 
 			properties: [ 'openFile' ],
@@ -628,7 +644,9 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 			};
 
 			close();
-			C.BlockImportMarkdown(root, files[0]);
+			C.BlockImportMarkdown(root, files[0], (message: any) => {
+				analytics.event('ImportFromNotion', { middleTime: message.middleTime });
+			});
 		});
 	};
 
@@ -651,7 +669,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 
 					close();
 
-					C.Export(files[0], [], format, true, (message: any) => {	
+					C.Export(files[0], [], format, true, true, true, (message: any) => {	
 						if (message.error.code) {
 							popupStore.open('confirm', {
 								data: {
@@ -666,6 +684,8 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 							return;
 						};
 						ipcRenderer.send('pathOpen', files[0]);
+
+						analytics.event('ExportMarkdown', { middleTime: message.middleTime });
 					});
 				});
 				break;
@@ -673,14 +693,15 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 	};
 
 	onFileOffload (e: any) {
+		analytics.event('ScreenFileOffloadWarning');
+
 		popupStore.open('confirm',{
 			data: {
 				title: 'Are you sure?',
-				text: 'All encrypted files that have been successfully backed up to anytype cafe servers will be offloaded from your device. You will need an internet connection to download them again.',
+				text: 'All media files will be deleted from your current device. They can be downloaded again from a backup node or another device.',
 				textConfirm: 'Yes',
 				onConfirm: () => {
 					this.setState({ loading: true });
-
 
 					C.FileListOffload([], false, (message: any) => {
 						if (message.error.code) {
@@ -692,11 +713,13 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 						popupStore.open('confirm',{
 							data: {
 								title: 'Files offloaded',
-								text: Util.sprintf('Files: %s, Size: %s', message.files, Util.fileSize(message.bytes)),
+								//text: Util.sprintf('Files: %s, Size: %s', message.files, Util.fileSize(message.bytes)),
 								textConfirm: 'Ok',
 								canCancel: false,
 							}
 						});
+
+						analytics.event('FileOffload', { middleTime: message.middleTime });
 					});
 				},
 				onCancel: () => {
@@ -707,7 +730,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 
 	onTypeChange (id: string) {
 		commonStore.defaultTypeSet(id);
-		analytics.event('DefaultTypeChanged', { objectType: id });
+		analytics.event('DefaultTypeChange', { objectType: id });
 	};
 
 	init () {

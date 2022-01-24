@@ -17,6 +17,7 @@
 	"commonProgress": { "en": "Processing..." },
 	"commonArchived": { "en": "Object is in the bin" },
 	"commonDeleted": { "en": "Non-existent object" },
+	"commonEmpty": { "en": "Empty" },
 
 	"month1": { "en": "January" },
 	"month2": { "en": "February" },
@@ -178,6 +179,9 @@
 	"blockNameAudio": { "en": "Audio" },
 	"blockTextAudio": { "en": "Upload playable audio" },
 
+	"blockNamePdf": { "en": "PDF" },
+	"blockTextPdf": { "en": "Upload a PDF file" },
+
 	"blockNameBookmark": { "en": "Bookmark" },
 	"blockTextBookmark": { "en": "Save your favorite link with summary" },
 
@@ -190,6 +194,12 @@
 	"blockNameDot": { "en": "Dots divider" },
 	"blockTextDot": { "en": "Separate information with three dots" },
 
+	"blockNameLink": { "en": "Show as link" },
+	"blockTextLink": { "en": "Display file as a link" },
+
+	"blockNameEmbed": { "en": "Show as embed" },
+	"blockTextEmbed": { "en": "Embed file into the document" },
+
 	"blockNameRelation": { "en": "Relation" },
 	"blockTextRelation": { "en": "Meaningful connection between objects" },
 
@@ -198,6 +208,15 @@
 
 	"blockNameLatex": { "en": "LaTex" },
 	"blockTextLatex": { "en": "Display a math equations" },
+
+	"blockNameTable": { "en": "Table" },
+	"blockTextTable": { "en": "" },
+
+	"blockNameGallery": { "en": "Gallery" },
+	"blockTextGallery": { "en": "" },
+
+	"blockNameList": { "en": "List" },
+	"blockTextList": { "en": "" },
 
 	"blockTextToggleEmpty": { "en": "Empty toggle. Click and drop block inside" },
 
@@ -239,6 +258,7 @@
 	"popupSettingsImportPageTitle": { "en": "Get certain pages:" },
 	"popupSettingsImportZip": { "en": "After that you need to select Zip archive and Anytype will do the rest." },
 	"popupSettingsImportOk": { "en": "Import data" },
+	"popupSettingsImportWarning": { "en": "Please don’t add entire Notion workspace content if it’s too big. Anytype has different data structure and can’t parse Notion databases at the moment." },
 	"popupSettingsExportTitle": { "en": "Export" },
 	"popupSettingsExportMarkdownTitle": { "en": "Export to markdown" },
 	"popupSettingsExportMarkdownText": { "en": "All your workspace data except columns and text color styling will be exported to markdown. It’s a free and readable format that can be opened and edited with many free and beautiful applications.<br/><br/>If you want to add all your data back in Anytype, use the <b>Import</b> section." },

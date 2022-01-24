@@ -32,20 +32,29 @@ jobs:
         run: npm install --save-dev webpack-cli
 
       - name: Update Addon
+        if: matrix.os != 'macos-latest'
         shell: bash  
         run: ./update.sh ${{secrets.USER}} ${{secrets.TOKEN}} ${{matrix.os}}
+
+      - name: Update Addon
+        if: matrix.os == 'macos-latest'
+        shell: bash  
+        run: |
+          ./update.sh ${{secrets.USER}} ${{secrets.TOKEN}} ${{matrix.os}} arm
+          ./update.sh ${{secrets.USER}} ${{secrets.TOKEN}} ${{matrix.os}} amd
 
       - name: Update Deps
         run: npm run build:deps
 
       - name: Build Front
+        if: matrix.os == 'macos-latest'
         uses: samuelmeuli/action-electron-builder@v1
-        if: matrix.os != 'macos-11'
         with:
           github_token: ${{secrets.TOKEN}}
           mac_certs: ${{ secrets.MAC_CERT_TEXT }}
           mac_certs_password: ${{ secrets.MAC_CERT_PASS }}
           release: ${{ startsWith(github.ref, 'refs/tags/v') }}
+          args: --arm64 --x64
         env:
           DEBUG: electron-builder
           APPLEID: ${{ secrets.APPLEID }}
@@ -54,14 +63,13 @@ jobs:
           DO_SECRET_KEY: ${{ secrets.DO_SECRET_KEY }}
 
       - name: Build Front
+        if: matrix.os != 'macos-latest'
         uses: samuelmeuli/action-electron-builder@v1
-        if: matrix.os == 'macos-11'
         with:
           github_token: ${{secrets.TOKEN}}
           mac_certs: ${{ secrets.MAC_CERT_TEXT }}
           mac_certs_password: ${{ secrets.MAC_CERT_PASS }}
           release: ${{ startsWith(github.ref, 'refs/tags/v') }}
-          args: '--arm64'
         env:
           DEBUG: electron-builder
           APPLEID: ${{ secrets.APPLEID }}
@@ -83,14 +91,8 @@ jobs:
         run: |
           mv dist/*.exe artifacts
 
-      #- name: Upload artifacts
-      #  uses: actions/upload-artifact@v1
-      #  with:
-      #    name: ${{matrix.os}}
-      #    path: artifacts
-
       - name: Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v0.1.14
         if: startsWith(github.ref, 'refs/tags/')
         with:
           files: "artifacts/**"

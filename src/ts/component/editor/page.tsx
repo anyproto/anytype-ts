@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Block, Icon, Loader, Deleted } from 'ts/component';
 import { commonStore, blockStore, detailStore, menuStore, popupStore } from 'ts/store';
-import { I, C, Key, Util, DataUtil, Mark, focus, keyboard, crumbs, Storage, Mapper, Action, translate } from 'ts/lib';
+import { I, C, Key, Util, DataUtil, Mark, focus, keyboard, crumbs, Storage, Mapper, Action, translate, analytics } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 
@@ -87,8 +87,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const childrenIds = blockStore.getChildrenIds(rootId, rootId);
 		const children = blockStore.getChildren(rootId, rootId, (it: any) => { return !it.isLayoutHeader(); });
 		const length = childrenIds.length;
-		const width = root?.fields?.width;
-		const allowed = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Block, I.RestrictionObject.Details ]); 
+		const width = root.fields?.width;
+		const readonly = this.isReadonly();
 
 		return (
 			<div id="editorWrapper">
@@ -96,7 +96,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				
 				<div id={'editor-' + rootId} className="editor">
 					<div className="blocks">
-						<Icon id="button-add" className="buttonAdd" onClick={this.onAdd} />
+						<Icon id="button-block-add" className="buttonAdd" onClick={this.onAdd} />
 
 						<EditorHeaderPage 
 							{...this.props} 
@@ -106,7 +106,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 							onMenuAdd={this.onMenuAdd}
 							onPaste={this.onPaste}
 							onResize={(v: number) => { this.onResize(v); }}
-							readonly={!allowed}
+							readonly={readonly}
 							getWrapper={this.getWrapper}
 							getWrapperWidth={this.getWrapperWidth}
 						/>
@@ -121,7 +121,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 								onKeyUp={this.onKeyUpBlock}  
 								onMenuAdd={this.onMenuAdd}
 								onPaste={this.onPaste}
-								readonly={!allowed}
+								readonly={readonly}
 								getWrapper={this.getWrapper}
 								getWrapperWidth={this.getWrapperWidth}
 							/>
@@ -135,14 +135,22 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	};
 	
 	componentDidMount () {
-		const { isPopup } = this.props;
+		const { dataset, isPopup } = this.props;
+		const { selection } = dataset || {};
 
 		this._isMounted = true;
-		const win = $(window);
-		const namespace = isPopup ? '.popup' : '';
-		
 		this.unbind();
 		this.open();
+
+		keyboard.disableClose(false);
+
+		const win = $(window);
+		const namespace = isPopup ? '.popup' : '';
+
+		let ids: string[] = [];
+		if (selection) {
+			ids = selection.get(true);
+		};
 		
 		win.on('mousemove.editor' + namespace, throttle((e: any) => { this.onMouseMove(e); }, THROTTLE));
 		win.on('keydown.editor' + namespace, (e: any) => { this.onKeyDownEditor(e); });
@@ -151,15 +159,18 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				this.onPaste(e); 
 			};
 		});
-		win.on('focus.editor' + namespace, (e: any) => { 
-			focus.apply(); 
-			this.getScrollContainer().scrollTop(this.scrollTop);
+		win.on('focus.editor' + namespace, (e: any) => {
+			if (!ids.length) {
+				focus.restore();
+				focus.apply(); 
+			};
+			Util.getScrollContainer(isPopup).scrollTop(this.scrollTop);
 		});
 
 		this.resize();
 		win.on('resize.editor' + namespace, (e: any) => { this.resize(); });
 
-		this.getScrollContainer().on('scroll.editor' + namespace, (e: any) => { this.onScroll(e); });
+		Util.getScrollContainer(isPopup).on('scroll.editor' + namespace, (e: any) => { this.onScroll(e); });
 
 		Storage.set('askSurvey', 1);
 
@@ -168,13 +179,14 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	};
 
 	componentDidUpdate () {
+		const { isPopup } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
 		const resizable = node.find('.resizable');
 		
 		this.open();
 		
 		focus.apply();
-		this.getScrollContainer().scrollTop(this.scrollTop);
+		Util.getScrollContainer(isPopup).scrollTop(this.scrollTop);
 
 		if (resizable.length) {
 			resizable.trigger('resizeInit');
@@ -192,11 +204,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		focus.clear(false);
 		window.clearInterval(this.timeoutScreen);
 		ipcRenderer.removeAllListeners('commandEditor');
-	};
-
-	getScrollContainer () {
-		const { isPopup } = this.props;
-		return isPopup ? $('#popupPage #innerWrap') : $(window);
 	};
 
 	getWrapper () {
@@ -222,12 +229,12 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		C.BlockOpen(this.id, '', (message: any) => {
 			if (message.error.code) {
 				if (message.error.code == Errors.Code.ANYTYPE_NEEDS_UPGRADE) {
-					Util.onErrorUpdate(() => { history.push('/main/index'); });
+					Util.onErrorUpdate(() => { Util.route('/main/index'); });
 				} else 
 				if (message.error.code == Errors.Code.NOT_FOUND) {
 					this.setState({ isDeleted: true });
 				} else {
-					history.push('/main/index');
+					Util.route('/main/index');
 				};
 				return;
 			};
@@ -238,7 +245,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			this.loading = false;
 			this.focusTitle();
 			this.forceUpdate();
-			this.getScrollContainer().scrollTop(Storage.getScroll('editor' + (isPopup ? 'Popup' : ''), rootId));
+			
+			Util.getScrollContainer(isPopup).scrollTop(Storage.getScroll('editor' + (isPopup ? 'Popup' : ''), rootId));
 
 			if (onOpen) {
 				onOpen();
@@ -301,13 +309,12 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	
 	close () {
 		const { isPopup, rootId, match } = this.props;
-		const object = detailStore.get(rootId, rootId);
 		
 		let close = true;
 		if (isPopup && (match.params.id == rootId)) {
 			close = false;
 		};
-		if (object.type == Constant.typeId.template) {
+		if (keyboard.isCloseDisabled) {
 			close = false;
 		};
 
@@ -358,11 +365,14 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		
 		const { rootId } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
-		const allowed = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Block ]);
-		const object = detailStore.get(rootId, rootId);
 		const checkType = blockStore.checkBlockType(rootId);
+		const readonly = this.isReadonly();
 
-		if (!root || !allowed || checkType) {
+		if (!root || readonly || checkType) {
+			return;
+		};
+
+		if (root.fields.isLocked) {
 			return;
 		};
 		
@@ -377,7 +387,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const rectContainer = (container.get(0) as Element).getBoundingClientRect() as DOMRect;
 		const featured = node.find(`#block-${Constant.blockId.featured}`);
 		const st = win.scrollTop();
-		const add = node.find('#button-add');
+		const add = node.find('#button-block-add');
 		const { pageX, pageY } = e;
 
 		let offset = 140;
@@ -454,17 +464,25 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const { dataset, rootId } = this.props;
 		const { selection } = dataset || {};
 		const { focused } = focus.state;
+		const menuOpen = menuStore.isOpen();
+		const popupOpen = popupStore.isOpenList([ 'search' ]);
+		const root = blockStore.getLeaf(rootId, rootId);
 
-		if (keyboard.isFocused || !selection) {
+		if (keyboard.isFocused || !selection || !root) {
 			return;
 		};
 		
 		const block = blockStore.getLeaf(rootId, focused);
 		const ids = selection.get();
 		const cmd = keyboard.ctrlKey();
+		const readonly = this.isReadonly();
 
 		// Select all
 		keyboard.shortcut(`${cmd}+a`, e, (pressed: string) => {
+			if (popupOpen) {
+				return;
+			};
+
 			e.preventDefault();
 			this.onSelectAll();
 		});
@@ -476,19 +494,31 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		// Cut
 		keyboard.shortcut(`${cmd}+x`, e, (pressed: string) => {
+			if (readonly) {
+				return;
+			};
+
 			this.onCopy(e, true);
 		});
 
 		// Undo
 		keyboard.shortcut(`${cmd}+z`, e, (pressed: string) => {
+			if (readonly) {
+				return;
+			};
+
 			e.preventDefault();
-			C.BlockUndo(rootId, (message: any) => { focus.clear(true); });
+			keyboard.onUndo(rootId, (message: any) => { focus.clear(true); });
 		});
 
 		// Redo
 		keyboard.shortcut(`${cmd}+shift+z`, e, (pressed: string) => {
+			if (readonly) {
+				return;
+			};
+			
 			e.preventDefault();
-			C.BlockRedo(rootId, (message: any) => { focus.clear(true); });
+			keyboard.onRedo(rootId, (message: any) => { focus.clear(true); });
 		});
 
 		// History
@@ -545,7 +575,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				type = I.MarkType.Color;
 			});
 
-			if (type !== null) {
+			if (!readonly && (type !== null)) {
 				e.preventDefault();
 
 				if (type == I.MarkType.Link) {
@@ -555,20 +585,27 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 						data: {
 							filter: '',
 							onChange: (newType: I.MarkType, param: string) => {
-								C.BlockListSetTextMark(rootId, ids, { type: newType, param: param, range: { from: 0, to: 0 } });
+								C.BlockListSetTextMark(rootId, ids, { type: newType, param: param, range: { from: 0, to: 0 } }, (message: any) => {
+									analytics.event('ChangeTextStyle', { type: newType, count: ids.length });
+								});
 							}
 						}
 					});
 				} else {
-					C.BlockListSetTextMark(rootId, ids, { type: type, param: param, range: { from: 0, to: 0 } });
+					C.BlockListSetTextMark(rootId, ids, { type: type, param: param, range: { from: 0, to: 0 } }, (message: any) => {
+						analytics.event('ChangeTextStyle', { type, count: ids.length });
+					});
 				};
 			};
 
 			// Duplicate
 			keyboard.shortcut(`${cmd}+d`, e, (pressed: string) => {
+				if (readonly) {
+					return;
+				};
+
 				e.preventDefault();
-				focus.clear(true);
-				C.BlockListDuplicate(rootId, ids, ids[ids.length - 1], I.BlockPosition.Bottom, (message: any) => {});
+				Action.duplicate(rootId, ids[ids.length - 1], ids, () => { focus.clear(true); });
 			});
 
 			// Open action menu
@@ -594,6 +631,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		// Remove blocks
 		keyboard.shortcut('backspace, delete', e, (pressed: string) => {
+			if (readonly) {
+				return;
+			};
+
 			e.preventDefault();
 			this.blockRemove(block);
 		});
@@ -602,7 +643,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		keyboard.shortcut('tab, shift+tab', e, (pressed: string) => {
 			e.preventDefault();
 			
-			if (!ids.length) {
+			if (!ids.length || readonly) {
 				return;
 			};
 
@@ -631,13 +672,15 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 					if (next && next.isTextToggle()) {
 						blockStore.toggle(rootId, next.id, true);
 					};
+
+					analytics.event('ReorderBlock', { count: ids.length });
 				});
 			};
 		});
 
 		// Restore focus
 		keyboard.shortcut('arrowup, arrowdown, arrowleft, arrowright', e, (pressed: string) => {
-			if (menuStore.isOpen()) {
+			if (menuOpen || popupOpen) {
 				return;
 			};
 
@@ -648,7 +691,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		// Enter
 		keyboard.shortcut('enter', e, (pressed: string) => {
-			if (menuStore.isOpen()) {
+			if (menuOpen || popupOpen || readonly) {
 				return;
 			};
 
@@ -729,13 +772,13 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		// Undo
 		keyboard.shortcut(`${cmd}+z`, e, (pressed: string) => {
 			e.preventDefault();
-			C.BlockUndo(rootId, (message: any) => { focus.clear(true); });
+			keyboard.onUndo(rootId, (message: any) => { focus.clear(true); });
 		});
 
 		// Redo
 		keyboard.shortcut(`${cmd}+shift+z`, e, (pressed: string) => {
 			e.preventDefault();
-			C.BlockRedo(rootId, (message: any) => { focus.clear(true); });
+			keyboard.onRedo(rootId, (message: any) => { focus.clear(true); });
 		});
 
 		// History
@@ -747,12 +790,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		// Duplicate
 		keyboard.shortcut(`${cmd}+d`, e, (pressed: string) => {
 			e.preventDefault();
-			C.BlockListDuplicate(rootId, [ block.id ], block.id, I.BlockPosition.Bottom, (message: any) => {
-				if (message.blockIds.length) {
-					focus.set(message.blockIds[message.blockIds.length - 1], { from: length, to: length });
-					focus.apply();
-				};
-			});
+			Action.duplicate(rootId, block.id, [ block.id ]);
 		});
 
 		// Open action menu
@@ -918,6 +956,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 			C.BlockListMove(rootId, rootId, [ block.id ], next.id, position, (message: any) => {
 				focus.apply();
+
+				analytics.event('ReorderBlock', { count: 1 });
 			});
 		});
 
@@ -941,7 +981,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		});
 
 		// Expand selection
-		keyboard.shortcut('shift+arrowup, shift+arrowup, shift+arrowdown, shift+arrowdown', e, (pressed: string) => {
+		keyboard.shortcut('shift+arrowup, shift+arrowdown', e, (pressed: string) => {
 			if (selection.get(true).length) {
 				return;
 			};
@@ -973,11 +1013,11 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				menuStore.closeAll([ 'blockContext', 'blockAction' ]);
 			};
 
-			if ((dir < 0) && (sy - 4 <= vy)) {
+			if ((dir < 0) && (sy - 4 <= vy) && (range.from == 0)) {
 				cb();
 			};
 
-			if ((dir > 0) && (sy + sRect.height + lh >= vy + vRect.height)) {
+			if ((dir > 0) && (sy + sRect.height + lh >= vy + vRect.height) && (range.to == length)) {
 				cb();
 			};
 		});
@@ -1005,6 +1045,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		// Tab, indent block
 		keyboard.shortcut('tab, shift+tab', e, (pressed: string) => {
+			if (menuOpen) {
+				return;
+			};
+
 			e.preventDefault();
 			
 			const shift = pressed.match('shift');
@@ -1020,7 +1064,11 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			const nextId = parentElement.childrenIds[idx - 1];
 			const next = nextId ? blockStore.getLeaf(rootId, nextId) : blockStore.getNextBlock(rootId, block.id, -1);
 			const obj = shift ? parent : next;
-			const canTab = obj && !block.isTextTitle() && obj.canHaveChildren() && block.isIndentable();
+			
+			let canTab = obj && !block.isTextTitle() && obj.canHaveChildren() && block.isIndentable();
+			if (!shift && parentElement.childrenIds.length && (block.id == parentElement.childrenIds[0])) {
+				canTab = false;
+			};
 
 			if (!canTab) {
 				return;
@@ -1034,6 +1082,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				if (next && next.isTextToggle()) {
 					blockStore.toggle(rootId, next.id, true);
 				};
+
+				analytics.event('ReorderBlock', { count: 1 });
 			});
 		});
 
@@ -1070,6 +1120,15 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				});
 			} else {
 				this.blockSplit(block, range);
+			};
+
+			if (blockStore.checkBlockType(rootId)) {
+				const object = detailStore.get(rootId, rootId, []);
+
+				analytics.event('CreateObject', {
+					objectType: object.type,
+					layout: object.layout,
+				});
 			};
 		});
 	};
@@ -1148,11 +1207,13 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		
 		commonStore.filterSet(0, '');
 		focus.clear(true);
-		
-		this.blockCreate(block.id, this.hoverPosition, {
+
+		const newBlock = {
 			type: I.BlockType.Text,
-			style: I.TextStyle.Paragraph,
-		}, (blockId: string) => {
+			//style: I.TextStyle.Paragraph,
+		};
+		
+		this.blockCreate(block.id, this.hoverPosition, newBlock, (blockId: string) => {
 			$('.placeholder.c' + blockId).text(translate('placeholderFilter'));
 			this.onMenuAdd(blockId, '', { from: 0, to: 0 });
 		});
@@ -1194,7 +1255,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	
 	onScroll (e: any) {
 		const { rootId, isPopup } = this.props;
-		const top = this.getScrollContainer().scrollTop();
+		const top = Util.getScrollContainer(isPopup).scrollTop();
 
 		if (Math.abs(top - this.scrollTop) >= 10) {
 			this.uiHide();
@@ -1228,17 +1289,22 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		});
 		blocks = Util.arrayUniqueObjects(blocks, 'id');
 
-		blocks.map((it: I.Block) => {
+		blocks = blocks.map((it: I.Block) => {
+			const element = blockStore.getMapElement(rootId, it.id);
+
 			if (it.type == I.BlockType.Text) {
 				text.push(String(it.content.text || ''));
 			};
+
+			it.childrenIds = element.childrenIds;
+			return it;
 		});
 		
 		range = Util.objectCopy(range);
 		if (focusBlock) {
 			range = Util.rangeFixOut(focusBlock.content.text, range);
 		};
-		
+
 		const data = { 
 			text: text.join('\n'), 
 			html: null, 
@@ -1267,8 +1333,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			};
 		};
 		
-		Util.clipboardCopy(data, () => {
+		Util.clipboardCopy(data, () => { 
 			C[cmd](rootId, blocks, range, cb);
+
+			analytics.event('CopyBlock');
 		});
 	};
 	
@@ -1368,7 +1436,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 					onSelect: (event: any, item: any) => {
 						if (item.id == 'cancel') {
 							const to = range.from + url.length;
-							const value = Util.stringInsert(block.content.text, url, range.from, range.from);
+							const value = Util.stringInsert(block.content.text, url + ' ', range.from, range.from);
 							const marks = Util.objectCopy(block.content.marks || []);
 
 							marks.push({
@@ -1378,13 +1446,18 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 							});
 
 							DataUtil.blockSetText(rootId, block, value, marks, true, () => {
-								focus.set(block.id, { from: to, to: to });
+								focus.set(block.id, { from: to + 1, to: to + 1 });
 								focus.apply();
 							});
 						};
 
 						if (item.id == 'bookmark') {
-							C.BlockBookmarkCreateAndFetch(rootId, focused, length ? I.BlockPosition.Bottom : I.BlockPosition.Replace, url);
+							C.BlockBookmarkCreateAndFetch(rootId, focused, length ? I.BlockPosition.Bottom : I.BlockPosition.Replace, url, (message: any) => {
+								analytics.event('CreateBlock', { 
+									middleTime: message.middleTime, 
+									type: I.BlockType.Bookmark, 
+								});
+							});
 						};
 					},
 				}
@@ -1424,6 +1497,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			};
 			
 			this.focus(id, from, to, true);
+
+			analytics.event('PasteBlock');
 		});
 	};
 
@@ -1475,6 +1550,12 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			if (callBack) {
 				callBack(message.blockId);
 			};
+
+			analytics.event('CreateBlock', { 
+				middleTime: message.middleTime, 
+				type: param.type, 
+				style: param.content?.style,
+			});
 		});
 	};
 	
@@ -1511,6 +1592,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			if (next) {
 				this.focus(blockId, to, to, false);
 			};
+
+			analytics.event('DeleteBlock', { count: 1 });
 		};
 
 		if (next.isText()) {
@@ -1554,12 +1637,16 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			style = content.style;
 		};
 
-		if ((!isToggle && !isOpen && childrenIds.length > 0) || (isToggle && isOpen)) {
+		if (isCode || (isToggle && isOpen)) {
+			style = I.TextStyle.Paragraph;
+		};
+
+		if (isToggle && isOpen) {
 			mode = I.BlockSplitMode.Inner;
 		};
 
-		if (isCode || (isToggle && isOpen)) {
-			style = I.TextStyle.Paragraph;
+		if (!isToggle && !isOpen && (childrenIds.length > 0)) {
+			mode = I.BlockSplitMode.Top;
 		};
 
 		range = Util.rangeFixOut(content.text, range);
@@ -1569,11 +1656,14 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				return;
 			};
 
-			this.focus(message.blockId, 0, 0, true);
+			const focusId = (mode == I.BlockSplitMode.Top) ? focused.id : message.blockId;
+			this.focus(focusId, 0, 0, true);
 
 			if (isToggle && isOpen) {
 				blockStore.toggle(rootId, message.blockId, true);
 			};
+
+			analytics.event('CreateBlock', { middleTime: message.middleTime, type: I.BlockType.Text, style });
 		});
 	};
 	
@@ -1618,9 +1708,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	onLastClick (e: any) {
 		const { rootId } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
-		const allowed = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Block ]);
+		const readonly = this.isReadonly();
 
-		if (!root || !allowed) {
+		if (!root || readonly) {
 			return;
 		};
 
@@ -1659,15 +1749,13 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const note = node.find('#note');
 		const blocks = node.find('.blocks');
 		const last = node.find('.blockLast');
-		const controls = node.find('.editorControls');
 		const size = node.find('#editorSize');
 		const cover = node.find('.block.blockCover');
-		const wrapper = $('.pageMainEdit .wrapper');
 		const obj = $(isPopup ? '#popupPage #innerWrap' : '.page.isFull');
 		const header = obj.find('#header');
 		const root = blockStore.getLeaf(rootId, rootId);
-		const container = this.getScrollContainer();
-		const hh = header.height();
+		const container = Util.getScrollContainer(isPopup);
+		const hh = isPopup ? header.height() : Util.sizeHeader();
 
 		if (blocks.length && last.length) {
 			const ct = isPopup ? container.offset().top : 0;
@@ -1680,17 +1768,11 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		if (note.length) {
 			note.css({ top: hh });
 		};
-		if (controls.length) {	
-			controls.css({ top: hh });
-		};
 		if (size.length) {
 			size.css({ top: hh + 8 });
 		};
 		if (cover.length) {
 			cover.css({ top: hh });
-		};
-		if (isPopup) {
-			wrapper.css({ paddingTop: hh });
 		};
 
 		this.onResize(root?.fields?.width);
@@ -1703,7 +1785,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		focus.apply();
 
 		if (scroll) {
-			focus.scroll(isPopup);
+			focus.scroll(isPopup, id);
 		};
 
 		this.resize();
@@ -1728,7 +1810,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	getWidth (w: number) {
 		w = Number(w) || 0;
 
-		const container = this.getScrollContainer();
+		const { isPopup } = this.props;
+		const container = Util.getScrollContainer(isPopup);
 		const mw = container.width() - 120;
 		const { rootId } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
@@ -1740,6 +1823,13 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		w = (mw - Constant.size.editor) * w;
 		this.width = w = Math.max(Constant.size.editor, Math.min(mw, Constant.size.editor + w));
 		return w;
+	};
+
+	isReadonly () {
+		const { rootId } = this.props;
+		const root = blockStore.getLeaf(rootId, rootId);
+		const allowed = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Block ]);
+		return root?.fields.isLocked || !allowed;
 	};
 
 });

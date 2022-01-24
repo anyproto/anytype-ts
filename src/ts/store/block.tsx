@@ -1,7 +1,6 @@
 import { observable, action, computed, set, makeObservable } from 'mobx';
-import { I, M, Util, Storage, Mark } from 'ts/lib';
+import { I, M, Util, Storage, Mark, translate } from 'ts/lib';
 import { detailStore, commonStore } from 'ts/store';
-import { DataUtil } from '../lib';
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
@@ -48,6 +47,7 @@ class BlockStore {
             clearAll: action,
             add: action,
             update: action,
+			updateContent: action,
             updateStructure: action,
             delete: action
         });
@@ -119,11 +119,18 @@ class BlockStore {
 	};
 
     update (rootId: string, param: any) {
-		let block = this.getLeaf(rootId, param.id);
+		const block = this.getLeaf(rootId, param.id);
 		if (!block) {
 			return;
 		};
 		set(block, param);
+	};
+
+	updateContent (rootId: string, blockId: string, content: any) {
+		const block = this.getLeaf(rootId, blockId);
+		if (block) {
+			set(block.content, content);
+		};
 	};
 
 	clear (rootId: string) {
@@ -231,9 +238,9 @@ class BlockStore {
 		return element ? (element.childrenIds || []) : [];
 	};
 
-    getChildren (rootId: string, id: string, filter?: (it: any) => boolean) {
+    getChildren (rootId: string, blockId: string, filter?: (it: any) => boolean) {
 		let blocks = this.getBlocks(rootId);
-		let childrenIds = this.getChildrenIds(rootId, id);
+		let childrenIds = this.getChildrenIds(rootId, blockId);
 		
 		return childrenIds.map((it: string) => {
 			return blocks.find((item: any) => { return item.id == it; });
@@ -457,11 +464,16 @@ class BlockStore {
 
 				const { from, to } = mark.range;
 				const object = detailStore.get(rootId, mark.param, []);
-				const old = text.substr(from, to - from);
-				const name = Util.shorten(object.name, 30);
 
 				if (object._empty_) {
 					continue;
+				};
+
+				let old = text.substr(from, to - from);
+				let name = Util.shorten(object.name, 30);
+
+				if (object.layout == I.ObjectLayout.Note) {
+					name = name || translate('commonEmpty');
 				};
 
 				if (old != name) {
@@ -492,18 +504,20 @@ class BlockStore {
 
 	checkDraft (rootId: string) {
 		const object = detailStore.get(rootId, rootId, []);
-		const root = this.getMapElement(rootId, rootId);
+		const root = this.getLeaf(rootId, rootId);
+		const rootElement = this.getMapElement(rootId, rootId);
+
 		const footer = this.getMapElement(rootId, Constant.blockId.footer);
 		if (!footer) {
 			return;
 		};
 
 		const cnt = object.layout == I.ObjectLayout.Note ? 3 : 2;
+		const checkBlocks = rootElement.childrenIds.length <= cnt;
 		const checkType = object.type == commonStore.type;
-		const checkBlocks = checkType && (root.childrenIds.length <= cnt);
 
 		let change = false;
-		if (checkBlocks) {
+		if (checkBlocks && checkType) {
 			if (!footer.childrenIds.includes(Constant.blockId.type)) {
 				footer.childrenIds.push(Constant.blockId.type);
 				change = true;

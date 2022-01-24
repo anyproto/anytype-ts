@@ -1,17 +1,12 @@
-import { I, C, M, keyboard, crumbs, translate, Util, history as historyPopup, Storage, analytics } from 'ts/lib';
+import { I, C, M, keyboard, crumbs, translate, Util, history as historyPopup, Storage, analytics, Relation } from 'ts/lib';
 import { commonStore, blockStore, detailStore, dbStore, popupStore } from 'ts/store';
+import { authStore } from '../store';
 
 const Constant = require('json/constant.json');
 const Errors = require('json/error.json');
 
 class DataUtil {
 
-	history: any = null;
-
-	init (history: any) {
-		this.history = history;
-	};
-	
 	map (list: any[], field: string): any {
 		list = list|| [] as any[];
 		
@@ -64,13 +59,13 @@ class DataUtil {
 		return icon;
 	};
 
-	blockClass (block: any) {
+	blockClass (block: any, isDragging?: boolean) {
 		const { content } = block;
 		const { style, type, state } = content;
 
 		let c = [];
 		switch (block.type) {
-			case I.BlockType.Text:	 c.push('blockText ' + this.textClass(style)); break;
+			case I.BlockType.Text:		 c.push('blockText ' + this.textClass(style)); break;
 			case I.BlockType.Layout:	 c.push('blockLayout c' + style); break;
 			case I.BlockType.IconPage:	 c.push('blockIconPage'); break;
 			case I.BlockType.IconUser:	 c.push('blockIconUser'); break;
@@ -79,12 +74,17 @@ class DataUtil {
 				if (state == I.FileState.Done) {
 					c.push('withFile');
 				};
+
+				if (isDragging || (style == I.FileStyle.Link)) {
+					c.push('blockFile');
+					break;
+				};
+
 				switch (type) {
 					default: 
 					case I.FileType.File: 
 						c.push('blockFile');
 						break;
-						
 					case I.FileType.Image: 
 						c.push('blockMedia isImage');
 						break;
@@ -93,6 +93,9 @@ class DataUtil {
 						break;
 					case I.FileType.Audio: 
 						c.push('blockMedia isAudio');
+						break;
+					case I.FileType.Pdf: 
+						c.push('blockMedia isPdf');
 						break;
 				};
 				break;
@@ -149,23 +152,7 @@ class DataUtil {
 	};
 
 	relationTypeName (v: I.RelationType): string {
-		let c = '';
-		switch (v) {
-			default:
-			case I.RelationType.LongText:	 c = 'longText'; break;
-			case I.RelationType.ShortText:	 c = 'shortText'; break;
-			case I.RelationType.Number:		 c = 'number'; break;
-			case I.RelationType.Date:		 c = 'date'; break;
-			case I.RelationType.Status:		 c = 'status'; break;
-			case I.RelationType.Tag:		 c = 'tag'; break;
-			case I.RelationType.File:		 c = 'file'; break;
-			case I.RelationType.Checkbox:	 c = 'checkbox'; break;
-			case I.RelationType.Url:		 c = 'url'; break;
-			case I.RelationType.Email:		 c = 'email'; break;
-			case I.RelationType.Phone:		 c = 'phone'; break;
-			case I.RelationType.Object:		 c = 'object'; break;
-		};
-		return c;
+		return Util.toCamelCase(I.RelationType[v]);
 	};
 
 	relationClass (v: I.RelationType): string {
@@ -267,77 +254,6 @@ class DataUtil {
 		};
 		return icon;
 	};
-
-	filterConditionsByType (type: I.RelationType): any[] {
-		let ret = [
-			{ id: I.FilterCondition.None,		 name: translate('filterConditionNone') }, 
-		];
-
-		switch (type) {
-			case I.RelationType.ShortText: 
-			case I.RelationType.LongText: 
-			case I.RelationType.Url: 
-			case I.RelationType.Email: 
-			case I.RelationType.Phone: 
-				ret = ret.concat([ 
-					{ id: I.FilterCondition.Equal,		 name: translate('filterConditionEqual') }, 
-					{ id: I.FilterCondition.NotEqual,	 name: translate('filterConditionNotEqual') }, 
-					{ id: I.FilterCondition.Like,		 name: translate('filterConditionLike') }, 
-					{ id: I.FilterCondition.NotLike,	 name: translate('filterConditionNotLike') },
-					{ id: I.FilterCondition.Empty,		 name: translate('filterConditionEmpty') }, 
-					{ id: I.FilterCondition.NotEmpty,	 name: translate('filterConditionNotEmpty') },
-				]);
-				break;
-
-			case I.RelationType.Object: 
-			case I.RelationType.Status: 
-			case I.RelationType.Tag: 
-				ret = ret.concat([ 
-					{ id: I.FilterCondition.In,			 name: translate('filterConditionInArray') }, 
-					{ id: I.FilterCondition.AllIn,		 name: translate('filterConditionAllIn') }, 
-					{ id: I.FilterCondition.Equal,		 name: translate('filterConditionEqual') },
-					{ id: I.FilterCondition.NotIn,		 name: translate('filterConditionNotInArray') },
-					{ id: I.FilterCondition.Empty,		 name: translate('filterConditionEmpty') }, 
-					{ id: I.FilterCondition.NotEmpty,	 name: translate('filterConditionNotEmpty') },
-				]);
-				break;
-			
-			case I.RelationType.Number:
-				ret = ret.concat([ 
-					{ id: I.FilterCondition.Equal,			 name: '=' }, 
-					{ id: I.FilterCondition.NotEqual,		 name: '≠' }, 
-					{ id: I.FilterCondition.Greater,		 name: '>' }, 
-					{ id: I.FilterCondition.Less,			 name: '<' }, 
-					{ id: I.FilterCondition.GreaterOrEqual,	 name: '≥' }, 
-					{ id: I.FilterCondition.LessOrEqual,	 name: '≤' },
-					{ id: I.FilterCondition.Empty,		 name: translate('filterConditionEmpty') }, 
-					{ id: I.FilterCondition.NotEmpty,	 name: translate('filterConditionNotEmpty') },
-				]);
-				break;
-
-			case I.RelationType.Date:
-				ret = ret.concat([ 
-					{ id: I.FilterCondition.Equal,			 name: translate('filterConditionEqual') }, 
-					{ id: I.FilterCondition.NotEqual,		 name: translate('filterConditionNotEqual') }, 
-					{ id: I.FilterCondition.Greater,		 name: translate('filterConditionGreaterDate') }, 
-					{ id: I.FilterCondition.Less,			 name: translate('filterConditionLessDate') }, 
-					{ id: I.FilterCondition.GreaterOrEqual,	 name: translate('filterConditionGreaterOrEqualDate') }, 
-					{ id: I.FilterCondition.LessOrEqual,	 name: translate('filterConditionLessOrEqualDate') },
-					{ id: I.FilterCondition.Empty,			 name: translate('filterConditionEmpty') }, 
-					{ id: I.FilterCondition.NotEmpty,		 name: translate('filterConditionNotEmpty') },
-				]);
-				break;
-			
-			case I.RelationType.Checkbox:
-			default:
-				ret = ret.concat([ 
-					{ id: I.FilterCondition.Equal,			 name: translate('filterConditionEqual') }, 
-					{ id: I.FilterCondition.NotEqual,		 name: translate('filterConditionNotEqual') },
-				]);
-				break;
-		};
-		return ret;
-	};
 	
 	selectionGet (id: string, withChildren: boolean, props: any): string[] {
 		const { dataset } = props;
@@ -367,6 +283,9 @@ class DataUtil {
 			};
 
 			commonStore.gatewaySet(message.gatewayUrl);
+			analytics.device(message.deviceId);
+			analytics.profile(authStore.account);
+			analytics.event('OpenAccount');
 			
 			blockStore.rootSet(root);
 			blockStore.storeSetType(message.marketplaceTypeId);
@@ -378,12 +297,7 @@ class DataUtil {
 			});
 			
 			if (profile) {
-				C.BlockOpen(profile, '', (message: any) => {
-					if (message.error.code == Errors.Code.ANYTYPE_NEEDS_UPGRADE) {
-						Util.onErrorUpdate();
-						return;
-					};
-
+				C.ObjectIdsSubscribe(Constant.subIds.profile, [ profile ], Constant.defaultRelationKeys, true, (message: any) => {
 					blockStore.profileSet(profile);
 				});
 			};
@@ -396,7 +310,7 @@ class DataUtil {
 					return;
 				};
 
-				const object = detailStore.get(root, root, [ 'coverId', 'coverType' ]);
+				const object = detailStore.get(root, root, Constant.coverRelationKeys);
 
 				if (!object._empty_ && object.coverId && (object.coverType != I.CoverType.None)) {
 					commonStore.coverSet(object.coverId, object.coverId, object.coverType);
@@ -417,16 +331,18 @@ class DataUtil {
 
 		this.pageInit(() => {
 			keyboard.initPinCheck();
-			this.history.push(redirectTo ? redirectTo : '/main/index');
+			Util.route(redirectTo ? redirectTo : '/main/index', true);
 		});
 	};
 
 	objectOpenEvent (e: any, object: any, popupParam?: any) {
+		const { root } = blockStore;
+
 		e.preventDefault();
 		e.stopPropagation();
 
-		if (e.shiftKey || e.ctrlKey || e.metaKey || popupStore.isOpen('page')) {
-			this.objectOpenPopup(object);
+		if ((e.shiftKey || e.ctrlKey || e.metaKey || popupStore.isOpen('page'))) {
+			this.objectOpenPopup(object, popupParam);
 		} else {
 			this.objectOpen(object);
 		};
@@ -445,19 +361,32 @@ class DataUtil {
 			id = '';
 		};
 
-		if (action) {
-			this.history.push('/main/' + action + (id ? '/' + id : ''));
+		if (!action) {
+			return;
 		};
+
+		let route = [ '', 'main', action ];
+		if (id) {
+			route.push(id);
+		};
+		Util.route(route.join('/'));
 	};
 
 	objectOpenPopup (object: any, popupParam?: any) {
-		let param: any = Object.assign(popupParam || {}, {});
+		const { root } = blockStore;
+		const action = this.actionByLayout(object.layout);
+
+		if ((action == 'edit') && (object.id == root)) {
+			this.objectOpen(object);
+			return;
+		};
 		
+		let param: any = Object.assign(popupParam || {}, {});
 		param.data = Object.assign(param.data || {}, { 
 			matchPopup: { 
 				params: {
 					page: 'main',
-					action: this.actionByLayout(object.layout),
+					action: action,
 					id: object.id,
 				},
 			},
@@ -465,7 +394,7 @@ class DataUtil {
 
 		keyboard.setSource(null);
 		historyPopup.pushMatch(param.data.matchPopup);
-		popupStore.open('page', param);
+		window.setTimeout(() => { popupStore.open('page', param); }, Constant.delay.popup);
 	};
 
 	actionByLayout (v: I.ObjectLayout): string {
@@ -488,7 +417,9 @@ class DataUtil {
 	
 	pageCreate (rootId: string, targetId: string, details: any, position: I.BlockPosition, templateId: string, fields: any, callBack?: (message: any) => void) {
 		details = details || {};
-		details.type = details.type || commonStore.type;
+		if (!templateId) {
+			details.type = details.type || commonStore.type;
+		};
 		
 		C.BlockCreatePage(rootId, targetId, details, position, templateId, fields, (message: any) => {
 			if (message.error.code) {
@@ -529,8 +460,6 @@ class DataUtil {
 			{ key: 'coverScale', value: scale },
 		];
 		C.BlockSetDetails(rootId, details, callBack);
-
-		analytics.event('PageSetCover', { type: type, id: id });
 	};
 
 	pageSetDone (rootId: string, done: boolean, callBack?: (message: any) => void) {
@@ -555,16 +484,12 @@ class DataUtil {
 		if (!block) {
 			return;
 		};
-		
+
+		text = String(text || '');
+		marks = marks || [];
+
 		if (update) {
-			blockStore.update(rootId, { 
-				...block, 
-				content: { 
-					...block.content, 
-					text: String(text || ''), 
-					marks: marks || [],
-				},
-			});
+			blockStore.updateContent(rootId, block.id, { text, marks });
 		};
 
 		C.BlockSetTextText(rootId, block.id, text, marks, (message: any) => {
@@ -612,6 +537,7 @@ class DataUtil {
 			{ type: I.BlockType.File, id: I.FileType.Image, icon: 'image', lang: 'Image' },
 			{ type: I.BlockType.File, id: I.FileType.Video, icon: 'video', lang: 'Video' },
 			{ type: I.BlockType.File, id: I.FileType.Audio, icon: 'audio', lang: 'Audio' },
+			{ type: I.BlockType.File, id: I.FileType.Pdf, icon: 'pdf', lang: 'Pdf' },
 			{ type: I.BlockType.Bookmark, id: 'bookmark', icon: 'bookmark', lang: 'Bookmark' },
 			{ type: I.BlockType.Text, id: I.TextStyle.Code, icon: 'code', lang: 'Code' },
 			{ type: I.BlockType.Latex, id: I.BlockType.Latex, icon: 'latex', lang: 'Latex' }
@@ -689,6 +615,17 @@ class DataUtil {
 		].map(this.menuMapperBlock);
 	};
 
+	menuGetBlockDataview () {
+		return [
+			{ id: I.ViewType.Grid, icon: '', lang: 'Table' },
+			{ id: I.ViewType.Gallery, icon: '', lang: 'Gallery' },
+			{ id: I.ViewType.List, icon: '', lang: 'List' },
+		].map((it: any) => {
+			it.type = I.BlockType.Dataview;
+			return this.menuMapperBlock(it);
+		});
+	};
+
 	menuGetTurnPage () {
 		const { config } = commonStore;
 		const ret = [];
@@ -722,7 +659,14 @@ class DataUtil {
 			{ type: I.BlockType.Div, id: I.DivStyle.Dot, icon: 'dot', lang: 'Dot' },
 		].map(this.menuMapperBlock);
 	};
-	
+
+	menuGetTurnFile () {
+		return [
+			{ type: I.BlockType.File, id: I.FileStyle.Link, lang: 'Link' },
+			{ type: I.BlockType.File, id: I.FileStyle.Embed, lang: 'Embed' },
+		].map(this.menuMapperBlock);
+	};
+
 	// Action menu
 	menuGetActions (hasFile: boolean, hasLink: boolean) {
 		let { config } = commonStore;
@@ -853,8 +797,22 @@ class DataUtil {
 	};
 	
 	menuSectionsFilter (sections: any[], filter: string) {
-		const regS = new RegExp('/^' + Util.filterFix(filter) + '/', 'gi');
-		const regC = new RegExp(Util.filterFix(filter), 'gi');
+		const f = Util.filterFix(filter);
+		const regS = new RegExp('/^' + f + '/', 'gi');
+		const regC = new RegExp(f, 'gi');
+		const getWeight = (s: string) => {
+			let w = 0;
+			if (s == f) {
+				w = 10000;
+			} else
+			if (s.match(regS)) {
+				w = 1000;
+			} else 
+			if (s.match(regC)) {
+				w = 100;
+			};
+			return w;
+		};
 		
 		sections = sections.filter((s: any) => {
 			if (s.name.match(regC)) {
@@ -870,11 +828,11 @@ class DataUtil {
 				} else 
 				if (c.name && c.name.match(regC)) {
 					ret = true;
-					c._sortWeight_ = (c.name.match(regS) ? 10000 : 1000);
+					c._sortWeight_ = getWeight(c.name);
 				} else 
 				if (c.description && c.description.match(regC)) {
 					ret = true;
-					c._sortWeight_ = (c.description.match(regS) ? 100 : 10);
+					c._sortWeight_ = getWeight(c.description);
 				} else
 				if (c.aliases && c.aliases.length) {
 					for (let alias of c.aliases) {
@@ -887,20 +845,11 @@ class DataUtil {
 				s._sortWeight_ += c._sortWeight_;
 				return ret; 
 			});
-			s.children.sort((c1: any, c2: any) => {
-				if (c1._sortWeight_ > c2._sortWeight_) return -1;
-				if (c1._sortWeight_ < c2._sortWeight_) return 1;
-				return 0;
-			});
+			s.children.sort((c1: any, c2: any) => this.sortByWeight(c1, c2));
 			return s.children.length > 0;
 		});
 
-		sections.sort((c1: any, c2: any) => {
-			if (c1._sortWeight_ > c2._sortWeight_) return -1;
-			if (c1._sortWeight_ < c2._sortWeight_) return 1;
-			return 0;
-		});
-		
+		sections.sort((c1: any, c2: any) => this.sortByWeight(c1, c2));
 		return sections;
 	};
 	
@@ -923,10 +872,6 @@ class DataUtil {
 		return sections;
 	};
 	
-	cellId (prefix: string, relationKey: string, id: any) {
-		return [ prefix, relationKey, id.toString() ].join('-');
-	};
-
 	viewGetRelations (rootId: string, blockId: string, view: I.View): I.ViewRelation[] {
 		const { config } = commonStore;
 
@@ -975,71 +920,11 @@ class DataUtil {
 			return new M.ViewRelation({
 				...vr,
 				relationKey: relation.relationKey,
-				width: this.relationWidth(vr.width, relation.format),
+				width: Relation.width(vr.width, relation.format),
 			});
 		});
 
 		return Util.arrayUniqueObjects(ret, 'relationKey');
-	};
-
-	getRelationOptions (rootId: string, blockId: string, view: I.View) {
-		let relations: any[] = this.viewGetRelations(rootId, blockId, view).filter((it: I.ViewRelation) => { 
-			const relation = dbStore.getRelation(rootId, blockId, it.relationKey);
-			return relation && (relation.format != I.RelationType.File) && (it.relationKey != Constant.relationKey.done);
-		});
-		let idxName = relations.findIndex((it: any) => { return it.relationKey == Constant.relationKey.name; });
-
-		relations.splice((idxName >= 0 ? idxName + 1 : 0), 0, {
-			relationKey: Constant.relationKey.done,
-		});
-
-		let ret: any[] = [];
-		relations.forEach((it: I.ViewRelation) => {
-			const relation: any = dbStore.getRelation(rootId, blockId, it.relationKey);
-			if (!relation) {
-				return;
-			};
-
-			ret.push({ 
-				id: relation.relationKey, 
-				icon: 'relation ' + this.relationClass(relation.format),
-				name: relation.name, 
-				isHidden: relation.isHidden,
-				format: relation.format,
-				maxCount: relation.maxCount,
-			});
-		});
-		return ret;
-	};
-
-	getRelationArrayValue (value: any): string[] {
-		value = Util.objectCopy(value || []);
-		if ('object' != typeof(value)) {
-			value = value ? [ value ] : [];
-		};
-		value = value.filter((it: string) => { return it; });
-		return Util.arrayUnique(value);
-	};
-
-	getRelationUrlScheme (type: I.RelationType, value: any): string {
-		value = String(value || '');
-
-		let ret = '';
-		if (type == I.RelationType.Url && !value.match(/:\/\//)) {
-			ret = 'http://';
-		};
-		if (type == I.RelationType.Email) {
-			ret = 'mailto:';
-		};
-		if (type == I.RelationType.Phone) {
-			ret = 'tel:';
-		};
-		return ret;
-	};
-
-	relationWidth (width: number, format: I.RelationType): number {
-		const size = Constant.size.dataview.cell;
-		return Number(width || size['format' + format]) || size.default;
 	};
 
 	dataviewRelationAdd (rootId: string, blockId: string, relation: any, view?: I.View, callBack?: (message: any) => void) {
@@ -1056,7 +941,7 @@ class DataUtil {
 			} else {
 				relation.relationKey = message.relationKey;
 				relation.isVisible = true;
-				relation.width = this.relationWidth(0, relation.format);
+				relation.width = Relation.width(0, relation.format);
 
 				view.relations.push(relation);
 			};
@@ -1099,7 +984,7 @@ class DataUtil {
 	checkDetails (rootId: string, blockId?: string) {
 		blockId = blockId || rootId;
 
-		const object = detailStore.get(rootId, blockId, [ 'coverType', 'coverId', 'creator', 'layoutAlign', 'templateIsBundled' ]);
+		const object = detailStore.get(rootId, blockId, [ 'creator', 'layoutAlign', 'templateIsBundled' ].concat(Constant.coverRelationKeys));
 		const childrenIds = blockStore.getChildrenIds(rootId, blockId);
 		const checkType = blockStore.checkBlockType(rootId);
 		const { iconEmoji, iconImage, coverType, coverId, type } = object;
@@ -1190,81 +1075,10 @@ class DataUtil {
 		return 0;
 	};
 
-	checkRelationValue (relation: any, value: any): boolean {
-		value = this.formatRelationValue(relation, value, false);
-
-		let ret = false;
-		switch (relation.format) {
-			default:
-				ret = value ? true : false;
-				break;
-
-			case I.RelationType.Status:
-			case I.RelationType.File:
-			case I.RelationType.Tag:
-			case I.RelationType.Object:
-			case I.RelationType.Relations:
-				ret = value.length ? true : false;
-				break;
-		};
-		return ret;
-	};
-
-	formatRelationValue (relation: any, value: any, maxCount: boolean) {
-		switch (relation.format) {
-			default:
-				value = String(value || '');
-				break;
-
-			case I.RelationType.Number:
-				value = String(value || '').replace(/,\s?/g, '.').replace(/[^\d\.e+]*/gi, '');
-				if ((value === '') || (value === undefined)) {
-					value = null;
-				};
-				if (value !== null) {
-					value = Number(value);
-				};
-				if (isNaN(value)) {
-					value = null;
-				};
-				break;
-			case I.RelationType.Date:
-				if ((value === '') || (value === undefined)) {
-					value = null;
-				};
-				if (value !== null) {
-					value = parseFloat(String(value || '0'));
-				};
-				break;
-
-			case I.RelationType.Checkbox:
-				value = Boolean(value);
-				break;
-
-			case I.RelationType.Status:
-			case I.RelationType.File:
-			case I.RelationType.Tag:
-			case I.RelationType.Object:
-			case I.RelationType.Relations:
-				value = Util.objectCopy(value || []);
-				value = Util.arrayUnique(value);
-				value = value.map((it: any) => { return String(it || ''); });
-				value = value.filter((it: any) => { return it; });
-
-				if (maxCount && relation.maxCount) {
-					value = value.slice(value.length - relation.maxCount, value.length);
-				};
-				break;
-		};
-		return value;
-	};
-
-	convertRelationValueToString (value: any) {
-		if (('object' == typeof(value)) && value.hasOwnProperty('length')) {
-			return String(value.length ? value[0] : '');
-		} else {
-			return String(value || '');
-		};
+	sortByWeight (c1: any, c2: any) {
+		if (c1._sortWeight_ > c2._sortWeight_) return -1;
+		if (c1._sortWeight_ < c2._sortWeight_) return 1;
+		return this.sortByName(c1, c2);
 	};
 
 	checkObjectWithRelationCnt (relationKey: string, type: string, ids: string[], limit: number, callBack?: (message: any) => void) {
@@ -1340,20 +1154,27 @@ class DataUtil {
 		return fields;
 	};
 
-	getDataviewData (rootId: string, blockId: string, id: string, offset: number, limit: number, clear: boolean, callBack?: (message: any) => void) {
+	getDataviewData (rootId: string, blockId: string, id: string, keys: string[], offset: number, limit: number, clear: boolean, callBack?: (message: any) => void) {
+		const view = dbStore.getView(rootId, blockId, id);
+		if (!view) {
+			return;
+		};
+
+		const subId = dbStore.getSubId(rootId, blockId);
 		const { viewId } = dbStore.getMeta(rootId, blockId);
 		const viewChange = id != viewId;
 		const meta: any = { offset: offset };
+		const block = blockStore.getLeaf(rootId, blockId);
 
 		if (viewChange) {
 			meta.viewId = id;
 		};
 		if (viewChange || clear) {
-			dbStore.recordsSet(rootId, blockId, []);
+			dbStore.recordsSet(subId, '', []);
 		};
 
-		dbStore.metaSet(rootId, blockId, meta);
-		C.BlockDataviewViewSetActive(rootId, blockId, id, offset, limit, callBack);
+		dbStore.metaSet(subId, '', meta);
+		C.ObjectSearchSubscribe(subId, view.filters, view.sorts, keys, block.content.sources, '', offset, limit, true, '', '');
 	};
 };
 

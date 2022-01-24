@@ -1,12 +1,11 @@
 import * as React from 'react';
 import { Icon, IconObject } from 'ts/component';
-import { detailStore, menuStore, commonStore } from 'ts/store';
-import { I, C, DataUtil } from 'ts/lib';
+import { I, C, DataUtil, Relation } from 'ts/lib';
 import { Util, keyboard } from 'ts/lib';
 import { observer } from 'mobx-react';
-import { dbStore } from '../../../store';
+import { detailStore, menuStore, commonStore } from 'ts/store';
 
-interface Props extends I.Menu {}
+interface Props extends I.Menu {};
 
 const Constant = require('json/constant.json');
 const $ = require('jquery');
@@ -44,13 +43,6 @@ const MenuSource = observer(class MenuSource extends React.Component<Props, {}> 
 			);
 		};
 		
-		const ItemAdd = (item: any) => (
-			<div id="item-add" className="item add" onClick={this.onAdd}>
-				<Icon className="plus" />
-				<div className="name">Add a relation</div>
-			</div>
-		);
-		
 		return (
 			<div className="items">
 				<div className="scrollWrap">
@@ -63,10 +55,20 @@ const MenuSource = observer(class MenuSource extends React.Component<Props, {}> 
 						</div>
 					) : ''}
 				</div>
+				
 				{!types.length && config.experimental ? (
 					<div className="bottom">
 						<div className="line" />
-						<ItemAdd disabled={true} /> 
+						<div 
+							id="item-add" 
+							className="item add" 
+							onClick={this.onAdd} 
+							onMouseEnter={() => { this.props.setHover({ id: 'add' }); }} 
+							onMouseLeave={() => { this.props.setHover(); }}
+						>
+							<Icon className="plus" />
+							<div className="name">Add a relation</div>
+						</div>
 					</div>
 				) : ''}
 			</div>
@@ -195,7 +197,7 @@ const MenuSource = observer(class MenuSource extends React.Component<Props, {}> 
 		const { rootId } = data;
 		const object = detailStore.get(rootId, rootId, [ Constant.relationKey.setOf ]);
 
-		return Util.arrayUnique(DataUtil.getRelationArrayValue(object[Constant.relationKey.setOf]).filter((it: string) => {
+		return Util.arrayUnique(Relation.getArrayValue(object[Constant.relationKey.setOf]).filter((it: string) => {
 			const object = detailStore.get(rootId, it, []);
 			return !object._empty_;
 		}));

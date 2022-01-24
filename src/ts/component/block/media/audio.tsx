@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { InputWithFile, Icon, Loader, Error, Drag } from 'ts/component';
-import { I, C, translate, focus, Util, keyboard } from 'ts/lib';
+import { I, translate, focus, Util, keyboard, Action } from 'ts/lib';
 import { commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -92,7 +92,7 @@ const BlockAudio = observer(class BlockAudio extends React.Component<Props, {}> 
 								id="volume" 
 								ref={(ref: any) => { this.refVolume = ref; }} 
 								value={1} 
-								onMove={(v: number) => { this.onVolume(v); }} 
+								onMove={(e: any, v: number) => { this.onVolume(v); }} 
 							/>
 						</div>
 					</div>
@@ -213,16 +213,12 @@ const BlockAudio = observer(class BlockAudio extends React.Component<Props, {}> 
 
 	onChangeUrl (e: any, url: string) {
 		const { rootId, block } = this.props;
-		const { id } = block;
-		
-		C.BlockUpload(rootId, id, url, '');
+		Action.upload(I.FileType.Audio, rootId, block.id, url, '');
 	};
 	
 	onChangeFile (e: any, path: string) {
 		const { rootId, block } = this.props;
-		const { id } = block;
-		
-		C.BlockUpload(rootId, id, '', path);
+		Action.upload(I.FileType.Audio, rootId, block.id, '', path);
 	};
 
 	onPlay () {

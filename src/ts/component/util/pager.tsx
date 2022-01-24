@@ -5,6 +5,7 @@ interface Props {
 	offset: number;
 	limit: number;
 	total: number;
+	isShort?: boolean;
 	pageLimit?: number;
 	onChange?: (page: number) => void;
 };
@@ -20,7 +21,7 @@ class Pager extends React.Component<Props, {}> {
 	};
 	
 	render () {
-		const { pageLimit, limit } = this.props;
+		const { pageLimit, limit, isShort } = this.props;
 		
 		let offset = Number(this.props.offset) || 0;
 		let total = Number(this.props.total) || 0;
@@ -46,30 +47,52 @@ class Pager extends React.Component<Props, {}> {
 			</div>
 		);
 
+		let startPage = null; 
+		let endPage = null;
+		let list = null;
+		
+		if (!isShort && (start > 1)) {
+			startPage = (
+				<React.Fragment>
+					<Item id="1" />
+					<div className="dots">...</div>
+				</React.Fragment>
+			);
+		};
+
+		if (!isShort && (end < pages)) {
+			endPage = (
+				<React.Fragment>
+					<div className="dots">...</div>
+					<Item id={pages} />
+				</React.Fragment>
+			);
+		};
+
+		if (isShort) {
+			list = <div className="pageItem list">{page} of {pages}</div>;
+		} else {
+			list = (
+				<React.Fragment>
+					{items.map((item, i) => (
+						<Item key={i} {...item} />
+					))}
+				</React.Fragment>
+			);
+		};
+		
 		if (items.length > 1) {
 			return (
-				<div className="pager">
+				<div className={[ 'pager', (isShort ? 'isShort' : '') ].join(' ')}>
+					{isShort ? <Icon className={[ 'arrow', 'end', 'left', (page == 1 ? 'disabled' : '') ].join(' ')} onClick={() => { this.onChange(1); }} /> : ''}
 					<Icon className={[ 'arrow', 'left', (page == 1 ? 'disabled' : '') ].join(' ')} onClick={() => { this.onChange(page - 1); }} />
 					
-					{start > 1 ? (
-						<React.Fragment>
-							<Item id="1" />
-							<div className="dots">...</div>
-						</React.Fragment>
-					) : ''}
-
-					{items.map((item, i) => {
-						return <Item key={i} {...item} />;
-					})}
-
-					{end < pages ? (
-						<React.Fragment>
-							<div className="dots">...</div>
-							<Item id={pages} />
-						</React.Fragment>
-					) : ''}
+					{startPage}
+					{list}
+					{endPage}
 
 					<Icon className={[ 'arrow', 'right', (page == pages ? 'disabled' : '') ].join(' ')} onClick={() => { this.onChange(page + 1); }} />
+					{isShort ? <Icon className={[ 'arrow', 'end', 'right', (page == pages ? 'disabled' : '') ].join(' ')} onClick={() => { this.onChange(pages); }} /> : ''}
 				</div>
 			);
 		} else {

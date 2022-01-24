@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Loader, IconObject, Cover, Icon, Block, Button } from 'ts/component';
+import { Loader, IconObject, Cover, Icon, Block, Button, ObjectName, ObjectDescription } from 'ts/component';
 import { detailStore } from 'ts/store';
 import { I, C, M, DataUtil } from 'ts/lib';
 import { observer } from 'mobx-react';
@@ -15,6 +15,8 @@ interface Props extends RouteComponentProps<any> {
 interface State {
 	loading: boolean;
 };
+
+const TRACE = 'preview';
 
 const GraphPreview = observer(class PreviewObject extends React.Component<Props, State> {
 	
@@ -50,7 +52,7 @@ const GraphPreview = observer(class PreviewObject extends React.Component<Props,
 			<div className={cn.join(' ')}>
 				{loading ? <Loader /> : (
 					<React.Fragment>
-						{coverType && coverId ? <Cover type={coverType} id={coverId} image={coverId} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={true} /> : ''}
+						{coverType && coverId ? <Cover type={coverType} id={coverId} image={coverId} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={false} /> : ''}
 						<div className="heading">
 							{isTask ? (
 								<Icon className={[ 'checkbox', (object.done ? 'active' : '') ].join(' ')} />
@@ -59,14 +61,14 @@ const GraphPreview = observer(class PreviewObject extends React.Component<Props,
 							)}
 
 							{layout == I.ObjectLayout.Note ? (
-								<div className="description">{name}</div>
+								<ObjectName object={object} className="description" />
 							) : (
 								<React.Fragment>
-									<div className="title">{name}</div>
-									<div className="description">{description || snippet}</div>
+									<ObjectName object={object} className="title" />
+									<ObjectDescription object={object} className="description" />
 								</React.Fragment>
 							)}
-							<Block {...this.props} key={featured.id} rootId={rootId} iconSize={20} block={featured} readonly={true} />
+							<Block {...this.props} key={featured.id} rootId={contextId} traceId={TRACE} iconSize={20} block={featured} readonly={true} />
 						</div>
 						<div className="buttons">
 							<Button text="Open" onClick={(e: any) => { DataUtil.objectOpenPopup(object); }} />
@@ -102,7 +104,7 @@ const GraphPreview = observer(class PreviewObject extends React.Component<Props,
 		this.id = rootId;
 		this.setState({ loading: true });
 
-		C.BlockShow(rootId, 'preview', (message: any) => {
+		C.BlockShow(rootId, TRACE, (message: any) => {
 			if (!this._isMounted) {
 				return;
 			};
@@ -114,7 +116,7 @@ const GraphPreview = observer(class PreviewObject extends React.Component<Props,
 
 	getRootId () {
 		const { rootId } = this.props;
-		return [ rootId, 'preview' ].join('-');
+		return [ rootId, TRACE ].join('-');
 	};
 
 });

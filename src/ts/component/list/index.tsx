@@ -32,7 +32,7 @@ const ListIndex = observer(class ListIndex extends React.Component<Props, {}> {
 		if (!element) {
 			return null;
 		};
-		
+
 		const childrenIds = blockStore.getChildrenIds(root, root);
 		const length = childrenIds.length;
 		const children = getList();
@@ -104,7 +104,7 @@ const ListIndex = observer(class ListIndex extends React.Component<Props, {}> {
 		});
 
 		return (
-			<div>
+			<div className="list">
 				<List 
 					axis="xy" 
 					transitionDuration={150}

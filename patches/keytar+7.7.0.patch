@@ -1,0 +1,34 @@
+diff --git a/node_modules/keytar/README.md b/node_modules/keytar/README.md
+index 91141b7..e70d398 100644
+--- a/node_modules/keytar/README.md
++++ b/node_modules/keytar/README.md
+@@ -1,3 +1,5 @@
++For unknown reason, if the app is built on GitHub Actions, `app-x64.asar.unpacked/node_modules/keytar/build/Release/keytar.node` is ARM64 binary (couldn't reproduce to on M1 Mac) so we opt to use universal binary instead.
++
+ # keytar - Node module to manage system keychain
+ 
+ [![Travis Build Status](https://travis-ci.org/atom/node-keytar.svg?branch=master)](https://travis-ci.org/atom/node-keytar)
+diff --git a/node_modules/keytar/binding.gyp b/node_modules/keytar/binding.gyp
+index 9be3dcb..df66b96 100644
+--- a/node_modules/keytar/binding.gyp
++++ b/node_modules/keytar/binding.gyp
+@@ -7,7 +7,18 @@
+       ],
+       'cflags!': [ '-fno-exceptions' ],
+       'cflags_cc!': [ '-fno-exceptions' ],
+-      'xcode_settings': { 'GCC_ENABLE_CPP_EXCEPTIONS': 'YES',
++      'xcode_settings': {
++        'OTHER_CFLAGS': [
++          '-arch x86_64',
++          '-arch arm64'
++        ],
++        'OTHER_LDFLAGS': [
++          '-Wl, -bind_at_load',
++          '-framework CoreFoundation -framework CoreServices',
++          '-arch x86_64',
++          '-arch arm64'
++        ],
++        'GCC_ENABLE_CPP_EXCEPTIONS': 'YES',
+         'CLANG_CXX_LIBRARY': 'libc++',
+         'MACOSX_DEPLOYMENT_TARGET': '10.7',
+       },

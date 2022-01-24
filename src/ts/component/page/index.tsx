@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { I, Util, Storage, analytics, keyboard } from 'ts/lib';
+import { I, Onboarding, Util, Storage, analytics, keyboard } from 'ts/lib';
 import { ListPopup, Sidebar } from 'ts/component';
-import { authStore, commonStore, menuStore, popupStore } from 'ts/store';
+import { authStore, commonStore, menuStore, popupStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 import PageAuthInvite from './auth/invite';
@@ -63,6 +63,7 @@ const Components: any = {
 };
 
 interface Props extends RouteComponentProps<any> {
+	dataset?: any;
 	isPopup?: boolean;
 	matchPopup?: any;
 	rootId?: string;
@@ -77,7 +78,6 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 		const { isPopup } = this.props;
 		const { sidebar } = commonStore;
 		const { fixed, width } = sidebar;
-
 		const match = this.getMatch();
 		const { page, action } = match.params || {};
 		const path = [ page, action ].join('/');
@@ -86,7 +86,6 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 
 		if (showNotice) {
 			Components['/'] = PageAuthNotice;
-			Storage.set('firstRun', 1);
 		};
 
 		const Component = Components[path];
@@ -136,12 +135,10 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 	componentDidMount () {
 		this._isMounted = true;
 		this.init();
-		Util.previewHide(true);
 	};
 
 	componentDidUpdate () {
 		this.init();
-		Util.previewHide(true);
 	};
 	
 	componentWillUnmount () {
@@ -155,20 +152,25 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 		};
 
 		menuStore.closeAll();
+		Util.tooltipHide(true);
 		Util.previewHide(true);
 	};
 
 	getMatch () {
 		const { match, matchPopup, isPopup } = this.props;
-		return isPopup ? matchPopup : match;
+		return (isPopup ? matchPopup : match) || { params: {} };
+	};
+
+	getRootId () {
+		const match = this.getMatch();
+		return match?.params?.id || blockStore.root;
 	};
 
 	init () {
 		const { account } = authStore;
-		const { isPopup, history } = this.props;
+		const { isPopup, history, dataset } = this.props;
 		const match = this.getMatch();
 		const popupNewBlock = Storage.get('popupNewBlock');
-		const popupIntroBlock = Storage.get('popupIntroBlock');
 		const isIndex = !match.params.page;
 		const isAuth = match.params.page == 'auth';
 		const isMain = match.params.page == 'main';
@@ -183,18 +185,21 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 		const path = [ match.params.page, match.params.action ].join('/');
 		const Component = Components[path];
 
+		Util.tooltipHide(true);
+		Util.previewHide(true);
+
 		if (!Component) {
-			history.push('/main/index');
+			Util.route('/main/index');
 			return;
 		};
 
 		if (isMain && !account) {
-			history.push('/');
+			Util.route('/');
 			return;
 		};
 
 		if (pin && !keyboard.isPinChecked && !isPinCheck && !isAuth && !isIndex) {
-			history.push('/auth/pin-check');
+			Util.route('/auth/pin-check');
 			return;
 		};
 
@@ -204,32 +209,34 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 		this.unbind();
 
 		win.on('resize.page' + (isPopup ? 'Popup' : ''), () => { this.resize(); });
+
+		if (!isPopup) {
+			keyboard.setMatch(match);
+		};
+
+		Onboarding.start(Util.toCamelCase([ match.params?.page, match.params?.action ].join('-')), isPopup);
 		
 		if (isPopup) {
 			return;
 		};
-
-		keyboard.setMatch(match);
-		popupStore.closeAll();
-		menuStore.closeAll();
-
+		
 		window.setTimeout(() => {
 			if (isMain && account) {
-				if (!popupIntroBlock) {
-					popupStore.open('help', { data: { document: 'intro' } });
-					Storage.set('popupIntroBlock', 1);
-					Storage.set('popupNewBlock', 1);
-				} else
-				if (!popupNewBlock) {
-					popupStore.open('help', { data: { document: 'whatsNew' } });
+				if (!Storage.get('onboarding')) {
 					Storage.set('popupNewBlock', 1);
 				};
 
+				if (!popupNewBlock && Storage.get('onboarding')) {
+					popupStore.open('help', { data: { document: 'whatsNew' } });
+					Storage.set('popupNewBlock', 1);
+				};
 				Storage.set('redirect', history.location.pathname);
 			};
 
 			if (isMainIndex) {
 				if (account && askSurvey && !popupStore.isOpen() && !lastSurveyCanceled && (lastSurveyTime <= Util.time() - 86400 * days)) {
+					analytics.event('SurveyShow');
+
 					popupStore.open('confirm', {
 						data: {
 							title: 'We need your opinion',
@@ -240,6 +247,8 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 							onConfirm: () => {
 								ipcRenderer.send('urlOpen', Util.sprintf(Constant.survey, account.id));
 								Storage.set('lastSurveyTime', Util.time());
+
+								analytics.event('SurveyOpen');
 							},
 							onCancel: () => {
 								Storage.set('lastSurveyCanceled', 1);
@@ -258,7 +267,6 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 
 	shareCheck () {
 		const shareSuccess = Storage.get('shareSuccess');
-
 		if (!shareSuccess) {
 			return;
 		};
@@ -284,12 +292,27 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 	};
 	
 	event () {
-		const match = this.getMatch();
-		const page = String(match.params.page || 'index');
-		const action = String(match.params.action || 'index');
-		const path = [ 'page', page, action ].join('-');
-		
-		analytics.event(Util.toUpperCamelCase(path));
+		let match = this.getMatch();
+		let page = String(match.params.page || 'index');
+		let action = String(match.params.action || 'index');
+		let id = String(match.params.id || '');
+		let showNotice = !Boolean(Storage.get('firstRun'));
+		let params: any = { page, action };
+		let isMain = page == 'main';
+		let isMainType = isMain && (action == 'type');
+		let isMainRelation = isMain && (action == 'relation');
+
+		if (showNotice) {
+			params.page = 'auth';
+			params.action = 'notice';
+			Storage.set('firstRun', 1);
+		};
+
+		if (isMainType || isMainRelation) {
+			params.id = id;
+		};
+
+		analytics.event('page', { params });
 	};
 	
 	getClass (prefix: string) {

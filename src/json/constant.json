@@ -34,7 +34,8 @@
 		"image": [ "jpg", "jpeg", "png", "gif", "svg", "webp" ],
 		"video": [ "mp4", "m4v", "mov" ],
 		"cover": [ "jpg", "jpeg", "png" ],
-		"audio": [ "mp3", "m4a", "flac", "ogg", "wav" ]
+		"audio": [ "mp3", "m4a", "flac", "ogg", "wav" ],
+		"pdf": [ "pdf" ]
 	},
 
 	"limit": {
@@ -45,6 +46,12 @@
 		"store": {
 			"records": 50
 		}
+	},
+
+	"subIds": {
+		"index": "index",
+		"search": "search",
+		"profile": "profile"
 	},
 
 	"menuIds": {
@@ -69,7 +76,7 @@
 			"searchObject"
 		],
 		"relationEdit": [
-			"select", "searchObject", "dataviewDate"
+			"select", "searchObject", "dataviewDate", "dataviewObjectValues", "dataviewObjectList"
 		],
 		"layout": [
 			"blockAlign"
@@ -84,6 +91,14 @@
 			"searchObject"
 		]
 	},
+
+	"coverRelationKeys": [
+		"coverId",
+		"coverType",
+		"coverX",
+		"coverY",
+		"coverScale"
+	],
 
 	"defaultRelationKeys": [ 
 		"id", 

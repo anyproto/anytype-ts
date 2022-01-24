@@ -21,7 +21,13 @@ const CellCheckbox = observer(class CellCheckbox extends React.Component<Props, 
 		};
 
 		const value = this.getValue();
-		return <Icon className={[ 'checkbox', (value ? 'active' : '') ].join(' ')} />;
+		const cn = [];
+
+		if (value) {
+			cn.push('active');
+		};
+
+		return <Icon className={cn.join(' ')} />;
 	};
 
 	getValue () {

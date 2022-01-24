@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { Tag, Icon } from 'ts/component';
-import { I, Util, DataUtil, translate } from 'ts/lib';
+import { I, Relation, DataUtil, translate } from 'ts/lib';
 import { observer } from 'mobx-react';
+import { menuStore } from 'ts/store';
 
 interface Props extends I.Cell {}
 interface State { 
@@ -33,7 +34,7 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 			return null;
 		};
 
-		let value = DataUtil.getRelationArrayValue(record[relation.relationKey]);
+		let value = Relation.getArrayValue(record[relation.relationKey]);
 		value = value.map((id: string) => { 
 			return (relation.selectDict || []).find((it: any) => { return it.id == id; });
 		});
@@ -104,7 +105,8 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 		
 		if (onChange) {
 			onChange([], () => {
-				this.setEditing(false);
+				menuStore.updateData('dataviewOptionValues', { value: [] });
+				menuStore.updateData('dataviewOptionList', { value: [] });
 			});
 		};
 	};

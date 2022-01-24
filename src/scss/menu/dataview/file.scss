@@ -22,6 +22,7 @@
 			.name { line-height: 20px; width: calc(100% - 26px); @include text-overflow-nw; }
 			.clickable { width: calc(100% - 20px); display: inline-block; vertical-align: top; }
 			.icon.more { background-color: $colorWhite; }
+			.icon.dnd { height: auto; align-self: stretch; background-position: top center; background-size: 20px; }
 		}
 		.item.isImage {
 			.icon.more { top: 12px; right: 12px; margin: 0px; }

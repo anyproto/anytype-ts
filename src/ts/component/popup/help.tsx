@@ -5,9 +5,7 @@ import { Label, Icon, Cover } from 'ts/component';
 import { I, Docs, Util, translate } from 'ts/lib';
 import Block from 'ts/component/block/help';
 
-interface Props extends I.Popup, RouteComponentProps<any> {
-	history: any;
-};
+interface Props extends I.Popup, RouteComponentProps<any> {};
 
 const Url = require('json/url.json');
 const { ipcRenderer } = window.require('electron');
@@ -37,8 +35,8 @@ class PopupHelp extends React.Component<Props, {}> {
 					</div>
 					<div className="side right">
 						<Label text={translate('popupHelpLabel')} />
-						<Icon onClick={(e) => { this.onUrl(Url.telegram); }} className="telegram" />
-						<Icon onClick={(e) => { this.onUrl(Url.twitter); }} className="twitter" />
+						<Icon onClick={(e) => { Util.onUrl(Url.telegram); }} className="telegram" />
+						<Icon onClick={(e) => { Util.onUrl(Url.twitter); }} className="twitter" />
 					</div>
 				</div>
 				
@@ -57,44 +55,21 @@ class PopupHelp extends React.Component<Props, {}> {
 	
 	componentDidMount () {
 		this._isMounted = true;
-
-		this.renderLinks();
 		this.rebind();
 		this.resize();
+
+		Util.renderLink($(ReactDOM.findDOMNode(this)));
 	};
 
 	componentDidUpdate () {
-		this.renderLinks();
 		this.resize();
+
+		Util.renderLink($(ReactDOM.findDOMNode(this)));
 	};
 
 	componentWillUnmount () {
 		this._isMounted = false;
 		this.unbind();
-	};
-
-	renderLinks () {
-		const node = $(ReactDOM.findDOMNode(this));
-		const self = this;
-
-		node.find('a').unbind('click').click(function (e: any) {
-			e.preventDefault();
-			const el = $(this);
-
-			if (el.hasClass('path')) {
-				self.onPath(el.attr('href'));
-			} else {
-				self.onUrl(el.attr('href'));
-			};
-		});
-	};
-	
-	onUrl (url: string) {
-		ipcRenderer.send('urlOpen', url);
-	};
-
-	onPath (path: string) {
-		ipcRenderer.send('pathOpen', path);
 	};
 
 	rebind () {

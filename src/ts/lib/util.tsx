@@ -2,6 +2,7 @@ import { I, keyboard } from 'ts/lib';
 import { commonStore, popupStore } from 'ts/store';
 import { v4 as uuidv4 } from 'uuid';
 import { translate } from '.';
+import { menuStore } from '../store';
 
 const { ipcRenderer } = window.require('electron');
 const raf = require('raf');
@@ -17,12 +18,18 @@ const path = window.require('path');
 const Cover = require('json/cover.json');
 
 class Util {
+
+	history: any = null;
+
+	init (history: any) {
+		this.history = history;
+	};
 	
 	timeoutTooltip: number = 0;
 	timeoutPreviewShow: number = 0;
 	timeoutPreviewHide: number = 0;
 	isPreviewOpen: boolean = false;
-	
+
 	sprintf (...args: any[]) {
 		let regex = /%%|%(\d+\$)?([-+#0 ]*)(\*\d+\$|\*|\d+)?(\.(\*\d+\$|\*|\d+))?([scboxXuidfegEG])/g;
 		let a = arguments, i = 0, format = a[i++];
@@ -137,13 +144,15 @@ class Util {
 	};
 	
 	toUpperCamelCase (str: string) {
-		return this.toCamelCase('_' + str);
+		const s = this.toCamelCase(str);
+		return s.substr(0, 1).toUpperCase() + s.substr(1, s.length);
 	};
 	
 	toCamelCase (str: string) {
-		return str.replace(/[_\-\s]([a-zA-Z]{1})/g, (s: string, p1: string) => {
+		const s = str.replace(/[_\-\s]([a-zA-Z]{1})/g, (s: string, p1: string) => {
 			return String(p1 || '').toUpperCase();
 		});
+		return s.substr(0, 1).toLowerCase() + s.substr(1, s.length);
 	};
 
 	fromCamelCase (str: string, symbol: string) {
@@ -158,7 +167,7 @@ class Util {
 		};
 		return s.substr(0, 1).toUpperCase() + s.substr(1, s.length).toLowerCase();
 	};
-	
+
 	objectCopy (o: any): any {
 		return JSON.parse(JSON.stringify(o || {}));
 	};
@@ -179,7 +188,7 @@ class Util {
 					o[k] = this.fieldsMap(o[k]['fieldsMap']);
 				};
 			} else 
-			if (!o[k]) {
+			if (('undefined' == typeof(o[k])) || (o[k] === null)) {
 				delete(o[k]);
 			};
 		};
@@ -591,6 +600,24 @@ class Util {
 		let d = Math.pow(10, l);
 		return d > 0 ? Math.round(v * d) / d : Math.round(v);
 	};
+
+	formatNumber (v: number): string {
+		v = Number(v) || 0;
+
+		let ret = String(v || '');
+		let parts = new Intl.NumberFormat('en-GB').formatToParts(v);
+					
+		if (parts && parts.length) {
+			parts = parts.map((it: any) => {
+				if (it.value == ',') {
+					it.value = '&thinsp;';
+				};
+				return it.value;
+			});
+			ret = parts.join('');
+		};
+		return ret;
+	};
 	
 	fileSize (v: number) {
 		v = Number(v) || 0;
@@ -625,27 +652,9 @@ class Util {
 			};
 		};
 
-		if ([ 'm4v' ].indexOf(e) >= 0) {
-			icon = 'video';
-		};
-			
-		if ([ 'csv', 'json', 'txt', 'doc', 'docx', 'md' ].indexOf(e) >= 0) {
-			icon = 'text';
-		};
-			
-		if ([ 'zip', 'gzip', 'tar', 'gz', 'rar' ].indexOf(e) >= 0) {
-			icon = 'archive';
-		};
+		// Detect by mime type
 
-		if ([ 'xls', 'xlsx', 'sqlite' ].indexOf(e) >= 0) {
-			icon = 'table';
-		};
-
-		if ([ 'ppt', 'pptx' ].indexOf(e) >= 0) {
-			icon = 'presentation';
-		};
-		
-		if (!icon && t.length) {
+		if (t.length) {
 			if ([ 'image', 'video', 'text', 'audio' ].indexOf(t[0]) >= 0) {
 				icon = t[0];
 			};
@@ -664,6 +673,37 @@ class Util {
 			
 			if ([ 'vnd.openxmlformats-officedocument.spreadsheetml.sheet' ].indexOf(t[1]) >= 0) {
 				icon = 'table';
+			};
+		};
+
+		// Detect by extension
+		
+		if (!icon) {
+			if ([ 'm4v' ].indexOf(e) >= 0) {
+				icon = 'video';
+			};
+				
+			if ([ 'csv', 'json', 'txt', 'doc', 'docx', 'md' ].indexOf(e) >= 0) {
+				icon = 'text';
+			};
+				
+			if ([ 'zip', 'gzip', 'tar', 'gz', 'rar' ].indexOf(e) >= 0) {
+				icon = 'archive';
+			};
+	
+			if ([ 'xls', 'xlsx', 'sqlite' ].indexOf(e) >= 0) {
+				icon = 'table';
+			};
+	
+			if ([ 'ppt', 'pptx' ].indexOf(e) >= 0) {
+				icon = 'presentation';
+			};
+	
+			for (let k in Constant.extension) {
+				if (Constant.extension[k].indexOf(e) >= 0) {
+					icon = k;
+					break;
+				};
 			};
 		};
 
@@ -826,6 +866,29 @@ class Util {
 			ipcRenderer.send('urlOpen', $(this).attr('href'));
 		});
 	};
+
+	renderLinks (obj: any) {
+		const self = this;
+
+		obj.find('a').unbind('click').click(function (e: any) {
+			e.preventDefault();
+			const el = $(this);
+
+			if (el.hasClass('path')) {
+				self.onPath(el.attr('href'));
+			} else {
+				self.onUrl(el.attr('href'));
+			};
+		});
+	};
+	
+	onUrl (url: string) {
+		ipcRenderer.send('urlOpen', url);
+	};
+
+	onPath (path: string) {
+		ipcRenderer.send('pathOpen', path);
+	};
 	
 	emailCheck (v: string) {
 		return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,5})+$/.test(String(v || ''));
@@ -843,13 +906,21 @@ class Util {
 		return `./img/cover/${preview ? 'preview/' : ''}${id}.jpg`;
 	};
 
-	selectionRect () {
+	selectionRange (): Range {
 		let sel: Selection = window.getSelection();
-		let rect: any = { x: 0, y: 0, width: 0, height: 0 };
 		let range: Range = null;
 
 		if (sel && (sel.rangeCount > 0)) {
 			range = sel.getRangeAt(0);
+		};
+
+		return range;
+	};
+
+	selectionRect () {
+		let rect: any = { x: 0, y: 0, width: 0, height: 0 };
+		let range = this.selectionRange();
+		if (range) {
 			rect = range.getBoundingClientRect() as DOMRect;
 		};
 		return this.objectCopy(rect);
@@ -917,11 +988,25 @@ class Util {
 		return { page, action };
 	};
 
+	route (route: string, replace?: boolean) {
+		const method = replace ? 'replace' : 'push';
+
+		this.tooltipHide(true);
+		this.previewHide(true);
+
+		menuStore.closeAll();
+		popupStore.closeAll(null, () => { this.history[method](route); });
+	};
+
 	intercept (obj: any, change: any) {
 		return JSON.stringify(change.newValue) === JSON.stringify(obj[change.name]) ? null : change;
 	};
 
-	getScrollContainer (type: string) {
+	getScrollContainer (isPopup: boolean) {
+		return $(isPopup ? '#popupPage #innerWrap' : window);
+	};
+
+	getBodyContainer (type: string) {
 		switch (type) {
 			default:
 			case 'page':
@@ -958,12 +1043,7 @@ class Util {
 	};
 
 	sizeHeader (): number {
-		const platform = this.getPlatform();
-		let s = 52;
-		if (platform == I.Platform.Windows) {
-			s = 68;
-		};
-		return s;
+		return this.getPlatform() == I.Platform.Windows ? 68 : 52;
 	};
 
 	deleteFolderRecursive (p: string) {
@@ -1010,6 +1090,7 @@ class Util {
 			return Math.abs(curr - goal) < Math.abs(prev - goal) ? curr : prev;
 		});
 	};
+
 };
 
 export default new Util();

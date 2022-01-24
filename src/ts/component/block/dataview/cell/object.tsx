@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { I, Util, DataUtil, translate } from 'ts/lib';
+import { I, Relation, DataUtil, translate } from 'ts/lib';
 import { observer } from 'mobx-react';
 
 import ItemObject from './item/object';
@@ -25,7 +25,7 @@ const CellObject = observer(class CellObject extends React.Component<Props, Stat
 	};
 
 	render () {
-		const { rootId, getRecord, index, relation, iconSize, placeholder, elementMapper, arrayLimit } = this.props;
+		const { rootId, subId, getRecord, index, relation, iconSize, placeholder, elementMapper, arrayLimit } = this.props;
 		const record = getRecord(index);
 		const cn = [ 'wrap' ];
 
@@ -33,7 +33,7 @@ const CellObject = observer(class CellObject extends React.Component<Props, Stat
 			return null;
 		};
 
-		let value = DataUtil.getRelationArrayValue(record[relation.relationKey]);
+		let value = Relation.getArrayValue(record[relation.relationKey]);
 		let length = value.length;
 
 		if (length >= 3) {
@@ -50,7 +50,16 @@ const CellObject = observer(class CellObject extends React.Component<Props, Stat
 					<React.Fragment>
 						<span className="over">
 							{value.map((id: string) => (
-								<ItemObject key={id} rootId={rootId} id={id} iconSize={iconSize} onClick={this.onClick} relation={relation} elementMapper={elementMapper} />
+								<ItemObject 
+									key={id} 
+									rootId={rootId} 
+									subId={subId} 
+									id={id} 
+									iconSize={iconSize} 
+									onClick={this.onClick} 
+									relation={relation} 
+									elementMapper={elementMapper} 
+								/>
 							))}
 						</span>
 						{arrayLimit && (length > arrayLimit) ? <div className="more">+{length - arrayLimit}</div> : ''}

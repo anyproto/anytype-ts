@@ -57,7 +57,7 @@ class AuthStore {
     };
 
 	get path (): string {
-		return this.dataPath || '';
+		return String(this.dataPath || '');
     };
 
 	pathSet (v: string) {
@@ -100,7 +100,6 @@ class AuthStore {
 		this.accountItem = account as I.Account;
 
 		Storage.set('accountId', account.id);
-		analytics.profile(account);
 		Sentry.setUser({ id: account.id });
     };
 
@@ -133,6 +132,8 @@ class AuthStore {
 	};
 
 	logout () {
+		analytics.event('LogOut');
+
 		Storage.logout();
 
 		keyboard.setPinChecked(false);

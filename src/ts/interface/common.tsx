@@ -11,9 +11,11 @@ export enum Platform {
 	Linux = 'Linux',
 };
 
-export enum DragItem {
-	Block = 'block',
-	Menu = 'menu',
+export enum DragType {
+	None	 = '',
+	Block	 = 'block',
+	Menu	 = 'menu',
+	Relation = 'relation',
 };
 
 export enum CoverType {
@@ -38,7 +40,7 @@ export enum NavigationType {
 };
 
 export interface Option {
-	id: string;
+	id: any;
 	name: string;
 	icon?: string;
 };

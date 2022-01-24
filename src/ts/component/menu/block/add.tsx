@@ -1,15 +1,15 @@
 import * as React from 'react';
 import { MenuItemVertical, Icon, Cell } from 'ts/component';
-import { I, keyboard, Key, C, focus, Action, Util, DataUtil, Storage, translate, analytics } from 'ts/lib';
+import { I, keyboard, Key, C, focus, Action, Util, DataUtil, Storage, translate, analytics, Relation } from 'ts/lib';
 import { blockStore, commonStore, dbStore, menuStore, detailStore, popupStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
-interface Props extends I.Menu {}
+interface Props extends I.Menu {};
 
 interface State {
 	loading: boolean;
-}
+};
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
@@ -73,7 +73,8 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 				content = <div className={[ 'sectionName', (index == 0 ? 'first' : '') ].join(' ')} style={param.style}>{item.name}</div>;
 			} else
 			if (item.isRelation) {
-				const id = DataUtil.cellId(idPrefix, item.relationKey, '0');
+				const id = Relation.cellId(idPrefix, item.relationKey, '0');
+				const record = detailStore.get(rootId, rootId, [ item.relationKey ]);
 
 				content = (
 					<div 
@@ -92,15 +93,16 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 						>
 							<Cell 
 								rootId={rootId}
+								subId={rootId}
 								storeId={rootId}
 								block={block}
 								relationKey={item.relationKey}
-								getRecord={() => { return detailStore.get(rootId, rootId, [ item.relationKey ], true); }}
+								getRecord={() => { return record; }}
 								viewType={I.ViewType.Grid}
 								index={0}
 								idPrefix={idPrefix}
 								menuClassName="fromBlock"
-								scrollContainer={Util.getScrollContainer('menuBlockAdd')}
+								bodyContainer={Util.getBodyContainer('menuBlockAdd')}
 								pageContainer={Util.getPageContainer('menuBlockAdd')}
 								readonly={true}
 								canOpen={false}
@@ -323,6 +325,10 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 			{ id: 'object', name: 'Objects', children: DataUtil.menuGetBlockObject() },
 		];
 
+		if (config.experimental) {
+			sections.push({ id: 'dataview', name: 'Set', children: DataUtil.menuGetBlockDataview() });
+		};
+
 		sections = sections.map((s: any) => {
 			s.children = s.children.map((c: any) => {
 				c.isBig = true;
@@ -515,11 +521,19 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 			};
 
 			if (item.isBgColor) {
-				C.BlockListSetBackgroundColor(rootId, [ blockId ], item.value, onCommand);
+				C.BlockListSetBackgroundColor(rootId, [ blockId ], item.value, (message: any) => {
+					onCommand(message);
+
+					analytics.event('ChangeBlockBackground', { color: item.value, count: 1 });
+				});
 			};
 
 			if (item.isAlign) {
-				C.BlockListSetAlign(rootId, [ blockId ], item.itemId, onCommand);
+				C.BlockListSetAlign(rootId, [ blockId ], item.itemId, (message: any) => {
+					onCommand(message);
+
+					analytics.event('ChangeBlockAlign', { align: item.itemId, count: 1 });
+				});
 			};
 
 			if (item.isAction) {
@@ -566,6 +580,15 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 					param.content.key = item.relationKey;
 				};
 
+				if (item.type == I.BlockType.Dataview) {
+					param.content.views = [
+						{ 
+							name: item.name,
+							type: item.itemId,
+						}
+					];
+				};
+
 				if ((item.type == I.BlockType.Text) && (item.itemId != I.TextStyle.Code)) {
 					C.BlockListTurnInto(rootId, [ blockId ], item.itemId, onCommand);
 				} else 
@@ -584,7 +607,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 
 							DataUtil.objectOpenPopup({ ...details, id: message.targetId });
 
-							analytics.event('ObjectCreate', {
+							analytics.event('CreateObject', {
 								objectType: item.objectTypeId,
 								layout: template?.layout,
 								template: (template && template.templateIsBundled ? template.id : 'custom'),
@@ -620,6 +643,8 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 						DataUtil.objectOpenPopup({ ...details, id: message.targetId });
 					});
 				} else {
+					keyboard.setFocus(false);
+
 					blockCreate(blockId, position, param, (blockId: string) => {
 
 						// Auto-open BlockRelation suggest menu
@@ -628,6 +653,8 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 								$(`#block-${blockId} .info`).trigger('click');
 							}, Constant.delay.menu);
 						};
+
+						analytics.event('CreateBlock', { type: item.type, style: param.content.style, params: { fileType: item.itemId } });
 					});
 				};
 			};
@@ -650,9 +677,9 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 	};
 
 	moveToPage (type: string) {
-		const { param } = this.props;
+		const { param, dataset } = this.props;
 		const { data } = param;
-		const { blockId, rootId, dataset } = data;
+		const { blockId, rootId,  } = data;
 		const { selection } = dataset || {};
 		
 		let ids = [];

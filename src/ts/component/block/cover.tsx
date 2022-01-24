@@ -5,13 +5,13 @@ import { I, C, Util, DataUtil, focus, translate } from 'ts/lib';
 import { commonStore, blockStore, detailStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
-interface Props extends I.BlockComponent {}
+interface Props extends I.BlockComponent {};
 
 interface State {
 	isEditing: boolean;
 	justUploaded: boolean;
 	loading: boolean;
-}
+};
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
@@ -65,10 +65,9 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 	};
 	
 	render () {
-		const { config } = commonStore;
 		const { isEditing, loading } = this.state;
 		const { rootId, readonly } = this.props;
-		const object = detailStore.get(rootId, rootId, [ 'iconImage', 'iconEmoji', 'coverType', 'coverId', 'coverX', 'coverY', 'coverScale' ], true);
+		const object = detailStore.get(rootId, rootId, [ 'iconImage', 'iconEmoji' ].concat(Constant.coverRelationKeys), true);
 		const { coverType, coverId } = object;
 		const isImage = [ I.CoverType.Upload, I.CoverType.Image ].indexOf(coverType) >= 0;
 		const root = blockStore.getLeaf(rootId, rootId);
@@ -78,7 +77,9 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 		};
 
 		const allowedDetails = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
-		const allowedLayout = allowedDetails || blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Layout ]);
+		const allowedIcon = !readonly && !object.iconEmoji && !object.iconImage && !root.isObjectTask();
+		const allowedCover = !readonly;
+		const allowedLayout = !readonly && !root.isObjectSet() && (allowedDetails || blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Layout ]));
 
 		let elements = null;
 		if (isEditing) {
@@ -109,19 +110,21 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 			elements = (
 				<React.Fragment>
 					<div className="controlButtons">
-						{!object.iconEmoji && !object.iconImage && !root.isObjectTask() ? (
+						{allowedIcon ? (
 							<div id="button-icon" className="btn white withIcon" onClick={this.onIcon}>
 								<Icon className="icon" />
 								<div className="txt">{translate('editorControlIcon')}</div>
 							</div>
 						) : ''}
 
-						<div id="button-cover" className="btn white withIcon" onClick={this.onCover}>
-							<Icon className="addCover" />
-							<div className="txt">{translate('editorControlCover')}</div>
-						</div>
+						{allowedCover ? (
+							<div id="button-cover" className="btn white withIcon" onClick={this.onCover}>
+								<Icon className="addCover" />
+								<div className="txt">{translate('editorControlCover')}</div>
+							</div>
+						) : ''}
 
-						{!root.isObjectSet() && allowedLayout ? (
+						{allowedLayout ? (
 							<div id="button-layout" className="btn white withIcon" onClick={this.onLayout}>
 								<Icon className="layout" />
 								<div className="txt">{translate('editorControlLayout')}</div>
@@ -136,6 +139,12 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 				</React.Fragment>
 			);
 		};
+
+		elements = (
+			<div id="elements" className="elements editorControlElements">
+				{elements}
+			</div>
+		);
 
 		return (
 			<div 
@@ -153,11 +162,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 					<Cover id={coverId} image={coverId} type={coverType} className={coverId} />
 				)}
 
-				{!readonly ? (
-					<div id="elements" className="elements">
-						{elements}
-					</div>
-				) : ''}
+				{elements}
 			</div>
 		);
 	};
@@ -224,7 +229,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 				return;
 			};
 			
-			C.UploadFile('', files[0], I.FileType.Image, true, (message: any) => {
+			C.UploadFile('', files[0], I.FileType.Image, (message: any) => {
 				if (message.error.code) {
 					return;
 				};
@@ -252,25 +257,24 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 			data: {
 				rootId: rootId,
 				value: object.layout,
-				onChange: (layout: I.ObjectLayout) => {
-					DataUtil.pageSetLayout(rootId, layout);
-				},
 			}
 		});
 	};
 
 	onRelation () {
-		const { isPopup, rootId, block } = this.props;
+		const { isPopup, rootId } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
 		const elements = node.find('#elements');
 		const container = $(isPopup ? '#popupPage #innerWrap' : window);
-		const st = container.scrollTop();
-		const rect = { x: container.width() / 2 , y: Util.sizeHeader() + st, width: 1, height: 1 };
+		const rect = { x: container.width() / 2 , y: Util.sizeHeader(), width: 0, height: 0 };
+		const cnw = [ 'fixed' ];
 
 		if (isPopup) {
 			const offset = container.offset();
 			rect.x += offset.left;
 			rect.y += offset.top;
+		} else {
+			cnw.push('fromHeader');
 		};
 
 		const param: any = {
@@ -279,6 +283,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 			noFlipX: true,
 			noFlipY: true,
 			subIds: Constant.menuIds.cell,
+			classNameWrap: cnw.join(' '),
 			onOpen: () => {
 				elements.addClass('hover');
 			},
@@ -287,12 +292,9 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 				menuStore.closeAll();
 			},
 			data: {
-				rootId: rootId,
+				rootId,
+				isPopup,
 			},
-		};
-
-		if (!isPopup) {
-			param.classNameWrap = 'fromHeader';
 		};
 
 		menuStore.closeAll(null, () => { menuStore.open('blockRelationView', param); });
@@ -337,7 +339,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 	onUpload (hash: string) {
 		const { rootId } = this.props;
 
-		this.old = detailStore.get(rootId, rootId, [ 'coverType', 'coverId', 'coverX', 'coverY', 'coverScale' ], true);
+		this.old = detailStore.get(rootId, rootId, Constant.coverRelationKeys, true);
 
 		DataUtil.pageSetCover(rootId, I.CoverType.Upload, hash, 0, -0.5);
 
@@ -350,7 +352,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 		e.stopPropagation();
 		
 		const { rootId } = this.props;
-		const object = detailStore.get(rootId, rootId, [ 'coverType', 'coverId' ], true);
+		const object = detailStore.get(rootId, rootId, Constant.coverRelationKeys, true);
 
 		DataUtil.pageSetCover(rootId, object.coverType, object.coverId, this.coords.x, this.coords.y, this.scale, () => {
 			this.old = null;
@@ -379,7 +381,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 		};
 		
 		const { rootId } = this.props;
-		const object = detailStore.get(rootId, rootId, [ 'coverId', 'coverType' ], true);
+		const object = detailStore.get(rootId, rootId, Constant.coverRelationKeys, true);
 		const { coverId, coverType } = object;
 		const node = $(ReactDOM.findDOMNode(this));
 		const isImage = [ I.CoverType.Upload, I.CoverType.Image ].indexOf(coverType) >= 0;
@@ -541,7 +543,9 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 	};
 	
 	onDragOver (e: any) {
-		if (!this._isMounted || !e.dataTransfer.files || !e.dataTransfer.files.length) {
+		const { readonly } = this.props;
+
+		if (!this._isMounted || !e.dataTransfer.files || !e.dataTransfer.files.length || readonly) {
 			return;
 		};
 		
@@ -550,7 +554,9 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 	};
 	
 	onDragLeave (e: any) {
-		if (!this._isMounted || !e.dataTransfer.files || !e.dataTransfer.files.length) {
+		const { readonly } = this.props;
+
+		if (!this._isMounted || !e.dataTransfer.files || !e.dataTransfer.files.length || readonly) {
 			return;
 		};
 		
@@ -559,11 +565,12 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 	};
 	
 	onDrop (e: any) {
-		if (!this._isMounted || !e.dataTransfer.files || !e.dataTransfer.files.length) {
+		const { rootId, dataset, readonly } = this.props;
+
+		if (!this._isMounted || !e.dataTransfer.files || !e.dataTransfer.files.length || readonly) {
 			return;
 		};
 		
-		const { rootId, dataset } = this.props;
 		const { preventCommonDrop } = dataset || {};
 		const file = e.dataTransfer.files[0].path;
 		const node = $(ReactDOM.findDOMNode(this));
@@ -572,7 +579,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 		preventCommonDrop(true);
 		this.setState({ loading: true });
 		
-		C.UploadFile('', file, I.FileType.Image, true, (message: any) => {
+		C.UploadFile('', file, I.FileType.Image, (message: any) => {
 			this.setState({ loading: false });
 			preventCommonDrop(false);
 			

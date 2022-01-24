@@ -1,14 +1,15 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import { RouteComponentProps } from 'react-router';
 import { Router, Route, Switch, Redirect } from 'react-router-dom';
 import { Provider } from 'mobx-react';
 import { enableLogging } from 'mobx-logger';
-import { Page, ListMenu, Progress, Tooltip, Preview, Icon, Sidebar } from './component';
+import { Page, SelectionProvider, DragProvider, Progress, Tooltip, Preview, Icon, ListPopup, ListMenu } from './component';
 import { commonStore, authStore, blockStore, detailStore, dbStore, menuStore, popupStore } from './store';
 import { I, C, Util, DataUtil, keyboard, Storage, analytics, dispatcher, translate } from 'ts/lib';
 import { throttle } from 'lodash';
 import * as Sentry from '@sentry/browser';
-import { configure } from "mobx";
+import { configure } from 'mobx';
 
 configure({ enforceActions: 'never' });
 
@@ -96,12 +97,14 @@ import 'scss/popup/shortcut.scss';
 import 'scss/popup/confirm.scss';
 import 'scss/popup/page.scss';
 import 'scss/popup/template.scss';
+import 'scss/popup/export.scss';
 
 import 'emoji-mart/css/emoji-mart.css';
 import 'scss/menu/common.scss';
 import 'scss/menu/account.scss';
 import 'scss/menu/smile.scss';
 import 'scss/menu/help.scss';
+import 'scss/menu/onboarding.scss';
 import 'scss/menu/select.scss';
 import 'scss/menu/button.scss';
 import 'scss/menu/thread.scss';
@@ -138,6 +141,7 @@ import 'scss/menu/dataview/source.scss';
 import 'scss/media/print.scss';
 
 import 'scss/theme/dark/common.scss';
+import { Action } from './lib';
 
 interface RouteElement { path: string; };
 interface Props {};
@@ -170,6 +174,7 @@ const rootStore = {
 };
 
 console.log('[OS Version]', process.getSystemVersion());
+console.log('[APP Version]', version, 'isPackaged', app.isPackaged, 'Arch', process.arch);
 
 /*
 enableLogging({
@@ -180,8 +185,6 @@ enableLogging({
 	compute: true,
 });
 */
-
-console.log('[Version]', version, 'isPackaged', app.isPackaged);
 
 Sentry.init({
 	release: version,
@@ -210,17 +213,37 @@ declare global {
 		I: any;
 		Go: any;
 		Graph: any;
+		$: any;
 	}
 };
 
 window.Store = rootStore;
 window.Cmd = C;
-window.Util = Util;
 window.Dispatcher = dispatcher;
 window.Analytics = () => { return analytics.instance; };
 window.I = I;
-window.Go = (route: string) => { history.push(route); };
-window.Graph = {};
+window.Go = (route: string) => { Util.route(route); };
+window.$ = $;
+
+class RoutePage extends React.Component<RouteComponentProps, {}> { 
+
+	constructor (props: any) {
+		super(props);
+	};
+
+	render () {
+		return (
+			<SelectionProvider>
+				<DragProvider>
+					<ListPopup key="listPopup" {...this.props} />
+					<ListMenu key="listMenu" {...this.props} />
+
+					<Page {...this.props} />
+				</DragProvider>
+			</SelectionProvider>
+		);
+	};
+};
 
 class App extends React.Component<Props, State> {
 	
@@ -255,7 +278,6 @@ class App extends React.Component<Props, State> {
 			<Router history={history}>
 				<Provider {...rootStore}>
 					<div>
-						<ListMenu history={history} />
 						<Preview />
 						<Progress />
 						<Tooltip />
@@ -277,9 +299,8 @@ class App extends React.Component<Props, State> {
 
 						<Switch>
 							{Routes.map((item: RouteElement, i: number) => (
-								<Route path={item.path} exact={true} key={i} component={Page} />
+								<Route path={item.path} exact={true} key={i} component={RoutePage} />
 							))}
-
 							<Redirect to='/main/index' />
 						</Switch>
 					</div>
@@ -298,8 +319,10 @@ class App extends React.Component<Props, State> {
 	};
 	
 	init () {
-		keyboard.init(history);
-		DataUtil.init(history);
+		Util.init(history);
+		keyboard.init();
+		analytics.init();
+		
 		Storage.delete('lastSurveyCanceled');
 
 		const storageKeys = [
@@ -365,7 +388,7 @@ class App extends React.Component<Props, State> {
 
 					if (value) {
 						authStore.phraseSet(value);
-						history.push('/auth/setup/init');
+						Util.route('/auth/setup/init', true);
 					} else {
 						Storage.logout();
 					};
@@ -383,7 +406,7 @@ class App extends React.Component<Props, State> {
 		});
 		
 		ipcRenderer.on('route', (e: any, route: string) => {
-			history.push(route);
+			Util.route(route);
 		});
 
 		ipcRenderer.on('popup', (e: any, id: string, param: any, close?: boolean) => {
@@ -400,7 +423,12 @@ class App extends React.Component<Props, State> {
 
 		ipcRenderer.on('checking-for-update', (e: any, auto: boolean) => {
 			if (!auto) {
-				commonStore.progressSet({ status: 'Checking for update...', current: 0, total: 1 });
+				commonStore.progressSet({ 
+					status: 'Checking for update...', 
+					current: 0, 
+					total: 1, 
+					isUnlocked: true 
+				});
 			};
 		});
 
@@ -437,6 +465,7 @@ class App extends React.Component<Props, State> {
 						textCancel: 'Later',
 						onConfirm: () => {
 							ipcRenderer.send('updateConfirm');
+							Storage.delete('popupNewBlock');
 						},
 						onCancel: () => {
 							ipcRenderer.send('updateCancel');
@@ -464,7 +493,6 @@ class App extends React.Component<Props, State> {
 		ipcRenderer.on('download-progress', this.onProgress);
 
 		ipcRenderer.on('update-downloaded', (e: any, text: string) => {
-			Storage.delete('popupNewBlock');
 			commonStore.progressClear(); 
 		});
 
@@ -496,8 +524,6 @@ class App extends React.Component<Props, State> {
 
 		ipcRenderer.on('config', (e: any, config: any) => { 
 			commonStore.configSet(config, true);
-			analytics.init();
-
 			this.initTheme(config.theme);
 		});
 
@@ -574,11 +600,11 @@ class App extends React.Component<Props, State> {
 
 		switch (key) {
 			case 'undo':
-				C.BlockUndo(rootId);
+				keyboard.onUndo(rootId);
 				break;
 
 			case 'redo':
-				C.BlockRedo(rootId);
+				keyboard.onRedo(rootId);
 				break;
 
 			case 'create':
@@ -586,24 +612,7 @@ class App extends React.Component<Props, State> {
 				break;
 
 			case 'save':
-				options = { 
-					properties: [ 'openDirectory' ],
-				};
-
-				dialog.showOpenDialog(options).then((result: any) => {
-					const files = result.filePaths;
-					if ((files == undefined) || !files.length) {
-						return;
-					};
-
-					C.Export(files[0], [ rootId ], I.ExportFormat.Protobuf, true, (message: any) => {
-						if (message.error.code) {
-							return;
-						};
-
-						ipcRenderer.send('pathOpen', files[0]);
-					});
-				});
+				Action.export([ rootId ], I.ExportFormat.Protobuf, true, true, true);
 				break;
 
 			case 'exportTemplates':

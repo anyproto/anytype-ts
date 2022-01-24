@@ -2,19 +2,18 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Icon, IconObject, ListIndex, Cover, HeaderMainIndex as Header, FooterMainIndex as Footer, Filter } from 'ts/component';
-import { commonStore, blockStore, detailStore, menuStore, dbStore } from 'ts/store';
+import { commonStore, blockStore, detailStore, menuStore, dbStore, popupStore } from 'ts/store';
 import { observer } from 'mobx-react';
-import { I, C, Util, DataUtil, translate, crumbs, Storage, analytics } from 'ts/lib';
+import { I, C, Util, DataUtil, translate, crumbs, Storage, analytics, keyboard, Action } from 'ts/lib';
 import arrayMove from 'array-move';
-import { popupStore } from '../../../store';
-import { keyboard } from '../../../lib';
 
-interface Props extends RouteComponentProps<any> {}
+interface Props extends RouteComponentProps<any> {
+	dataset?: any;
+};
 
 interface State {
 	tab: I.TabIndex;
 	filter: string;
-	pages: any[];
 	loading: boolean;
 };
 
@@ -32,7 +31,6 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 	state = {
 		tab: I.TabIndex.Favorite,
 		filter: '',
-		pages: [],
 		loading: false,
 	};
 
@@ -51,6 +49,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		this.onSortEnd = this.onSortEnd.bind(this);
 		this.onSearch = this.onSearch.bind(this);
 		this.onFilterChange = this.onFilterChange.bind(this);
+		this.onFilterClear = this.onFilterClear.bind(this);
 		this.onSelectionDelete = this.onSelectionDelete.bind(this);
 		this.onSelectionArchive = this.onSelectionArchive.bind(this);
 		this.onSelectionFavorite = this.onSelectionFavorite.bind(this);
@@ -73,9 +72,15 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 			return null;
 		};
 
-		const object = detailStore.get(profile, profile, []);
+		const object = detailStore.get(Constant.subIds.profile, profile);
 		const { name } = object;
 		const list = this.getList();
+		const length = list.length;
+
+		// Subscriptions
+		list.forEach((it: any) => {
+			const { name, iconEmoji, iconImage, type, layout, relationFormat } = it;
+		});
 	
 		let selectionButtons = [
 			{ id: 'selectAll', icon: 'all', name: 'Select all' },
@@ -124,7 +129,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 						onSortStart={this.onSortStart}
 						onSortEnd={this.onSortEnd}
 						getList={this.getList}
-						helperContainer={() => { return $('#documents').get(0); }} 
+						helperContainer={() => { return $('#documents .list').get(0); }} 
 						canDrag={canDrag}
 					/>
 				);
@@ -139,9 +144,11 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 				
 				<div id="body" className="wrapper">
 					<div id="title" className="title">
-						{name ? Util.sprintf(translate('indexHi'), Util.shorten(name, 24)) : ''}
+						<div className="side left">
+							<span>{name ? Util.sprintf(translate('indexHi'), Util.shorten(name, 24)) : ''}</span>
+						</div>
 						
-						<div className="rightMenu">
+						<div className="side right">
 							<Icon id="button-account" className="account" tooltip="Accounts" onClick={this.onAccount} />
 							<Icon id="button-add" className="add" tooltip="Add new object" onClick={this.onAdd} />
 							<Icon id="button-store" className="store" tooltip="Library" onClick={this.onStore} />
@@ -165,6 +172,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 										placeholderFocus="" 
 										value={filter}
 										onChange={this.onFilterChange}
+										onClear={this.onFilterClear}
 									/>
 								</div>
 								{(tab.id == I.TabIndex.Recent) && list.length ? <div className="btn" onClick={this.onClear}>Clear</div> : ''}
@@ -172,7 +180,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 						</div>
 						<div id="selectWrap" className="tabWrap">
 							<div className="tabs">
-								<div id="selectCnt" className="side left"></div>
+								<div id="selectCnt" className="side left" />
 								<div className="side right">
 									{selectionButtons.map((item: any, i: number) => (
 										<div id={'button-' + item.id} key={i} className="element" onClick={(e: any) => { this.onSelection(e, item); }}>
@@ -195,12 +203,13 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 		const tabs = this.getTabs();
 
-		crumbs.delete(I.CrumbsType.Page);
-
 		this.onTab(Storage.get('tabIndex') || tabs[0].id);
 		this.onScroll();
 		this.selectionRender();
 		this.rebind();
+
+		crumbs.delete(I.CrumbsType.Page);
+		analytics.setContext('', '');
 	};
 	
 	componentDidUpdate () {
@@ -221,6 +230,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		this.unbind();
 
 		menuStore.closeAll(Constant.menuIds.index);
+		Action.dbClear(Constant.subIds.index);
 	};
 
 	rebind () {
@@ -315,10 +325,10 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 		this.selected = [];
 		this.state.tab = id;	
-		this.setState({ tab: id, pages: [] });
+		this.setState({ tab: id });
 
 		Storage.set('tabIndex', id);
-		analytics.event('TabHome', { tab: tab.name });
+		analytics.event('SelectHomeTab', { tab: tab.name });
 
 		this.load();
 	};
@@ -362,14 +372,18 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.Equal, value: false });
 		};
 
+		if (filter) {
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'name', condition: I.FilterCondition.Like, value: filter });
+		};
+
 		this.setState({ loading: true });
 
-		C.ObjectSearch(filters, sorts, Constant.defaultRelationKeys, filter, 0, 100, (message: any) => {
+		C.ObjectSearchSubscribe(Constant.subIds.index, filters, sorts, Constant.defaultRelationKeys, [], '', 0, 100, true, '', '', (message: any) => {
 			if (!this._isMounted || message.error.code) {
 				return;
 			};
 
-			this.setState({ loading: false, pages: message.records });
+			this.setState({ loading: false });
 		});
 	};
 
@@ -378,7 +392,6 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 		const node = $(ReactDOM.findDOMNode(this));
 		const searchWrap = node.find('#searchWrap');
-		const page = $('.page');
 
 		if (searchWrap.hasClass('active')) {
 			return;
@@ -386,24 +399,21 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 		searchWrap.addClass('active');
 		this.refFilter.focus();
-
-		window.setTimeout(() => {
-			page.unbind('click').on('click', (e: any) => {
-				if ($.contains(searchWrap.get(0), e.target)) {
-					return;
-				};
-
-				searchWrap.removeClass('active');
-				page.unbind('click');
-
-				window.setTimeout(() => { this.setFilter(''); }, 210);
-			});
-		}, 210);
 	};
 
 	onFilterChange (v: string) {
 		window.clearTimeout(this.timeoutFilter);
 		this.timeoutFilter = window.setTimeout(() => { this.setFilter(v); }, 500);
+	};
+
+	onFilterClear () {
+		const node = $(ReactDOM.findDOMNode(this));
+		const searchWrap = node.find('#searchWrap');
+
+		searchWrap.removeClass('active');
+
+		this.refFilter.blur();
+		this.setFilter('');
 	};
 
 	setFilter (v: string) {
@@ -414,8 +424,12 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		if (this.refFilter) {
 			this.refFilter.setValue(v);
 		};
+		
+		this.state.filter = v;
 		this.setState({ filter: v });
 		this.load();
+
+		analytics.event('SearchQuery', { route: 'ScreenHome', length: v.length });
 	};
 
 	onAccount () {
@@ -427,7 +441,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 	
 	onProfile (e: any) {
 		const { profile } = blockStore;
-		const object = detailStore.get(profile, profile, []);
+		const object = detailStore.get(Constant.subIds.profile, profile);
 
 		DataUtil.objectOpenEvent(e, object);
 	};
@@ -458,18 +472,17 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 		if (e.shiftKey) {
 			const list = this.getList();
-			const idxInList = list.findIndex(it => it.id == item.id);
+			const idx = list.findIndex(it => it.id == item.id);
 			
-			if ((idxInList >= 0) && (this.selected.length > 0)) {
-				const selectedItemsIndexes = this.getSelectedListItemsIndexes();
-				const selectedItemsIndexesWithoutCurrent = selectedItemsIndexes.filter(i => i != idxInList);
-				const closestSelectedIdx = Util.findClosestElement(selectedItemsIndexesWithoutCurrent, idxInList);
+			if ((idx >= 0) && (this.selected.length > 0)) {
+				const selectedIndexes = this.getSelectedIndexes().filter(i => i != idx);
+				const closest = Util.findClosestElement(selectedIndexes, idx);
 				
-				if (isFinite(closestSelectedIdx)) {
-					const [ start, end ] = this.getSelectionRangeFromTwoIndexes(closestSelectedIdx, idxInList);
-					const itemIdsToSelect = list.slice(start, end).map(item => item.id);
+				if (isFinite(closest)) {
+					const [ start, end ] = this.getSelectionRange(closest, idx);
+					const ids = list.slice(start, end).map(item => item.id);
 
-					this.selected = this.selected.concat(itemIdsToSelect);
+					this.selected = this.selected.concat(ids);
 				};
 			};
 		} else {
@@ -483,6 +496,8 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 		this.selected = Util.arrayUnique(this.selected);
 		this.selectionRender();
+
+		analytics.event('MultiSelectHome', { count: this.selected.length });
 	};
 
 	selectionRender () {
@@ -517,6 +532,8 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		e.preventDefault();
 		e.stopPropagation();
 
+		const l = this.selected.length;
+
 		switch (item.id) {
 			case 'delete':
 				this.onSelectionDelete();
@@ -524,22 +541,32 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 			case 'archive':
 				this.onSelectionArchive(true);
+
+				analytics.event('MoveToBin', { count: l });
 				break;
 
 			case 'restore':
 				this.onSelectionArchive(false);
+
+				analytics.event('RestoreFromBin', { count: l });
 				break;
 
 			case 'fav':
 				this.onSelectionFavorite(true);
+
+				analytics.event('AddToFavorites', { count: l });
 				break;
 
 			case 'unfav':
 				this.onSelectionFavorite(false);
+
+				analytics.event('RemoveFromFavorites', { count: l });
 				break;
 
 			case 'selectAll':
 				this.onSelectionAll();
+
+				analytics.event('MultiSelectHome', { count: l });
 				break;
 
 			case 'selectNone':
@@ -557,19 +584,24 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		const l = this.selected.length;
 		const ids = this.getSelectedObjectIds();
 
-		this.selected = [];
-		this.selectionRender();
+		const cb = () => {
+			this.selected = [];
+			this.selectionRender();
+		};
 
+		analytics.event('ShowDeletionWarning');
 		popupStore.open('confirm', {
 			data: {
 				title: `Are you sure you want to delete ${l} ${Util.cntWord(l, 'object', 'objects')}?`,
 				text: 'These objects will be deleted irrevocably. You can’t undo this action.',
 				textConfirm: 'Delete',
-				onConfirm: () => {
-					C.ObjectListDelete(ids, () => {
-						this.load();
-					});
-				}
+				onConfirm: () => { 
+					C.ObjectListDelete(ids); 
+					cb();
+
+					analytics.event('RemoveCompletely', { count: l });
+				},
+				onCancel: () => { cb(); }
 			},
 		});
 	};
@@ -588,7 +620,6 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 					dbStore.objectTypeUpdate({ id: object.id, isArchived: v });
 				};
 			});
-			this.load();
 		});
 	};
 
@@ -598,7 +629,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		this.selected = [];
 		this.selectionRender();
 
-		C.ObjectListSetIsFavorite(ids, v, this.load);
+		C.ObjectListSetIsFavorite(ids, v);
 	};
 
 	onSelectionAll () {
@@ -617,18 +648,12 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 	};
 
 	onStore (e: any) {
-		DataUtil.objectOpenPopup({ layout: I.ObjectLayout.Store }, {
-			onClose: () => { this.load(); }
-		});
+		DataUtil.objectOpenPopup({ layout: I.ObjectLayout.Store });
 	};
 	
 	onAdd (e: any) {
 		DataUtil.pageCreate('', '', { isDraft: true }, I.BlockPosition.Bottom, '', {}, (message: any) => {
-			this.load();
-
-			DataUtil.objectOpenPopup({ id: message.targetId }, {
-				onClose: () => { this.load(); }
-			});
+			DataUtil.objectOpenPopup({ id: message.targetId });
 		});
 	};
 
@@ -729,18 +754,26 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 					switch (el.id) {
 						case 'archive':
 							this.onSelectionArchive(true);
+
+							analytics.event('MoveToBin', { count: 1 });
 							break;
 
 						case 'unarchive':
 							this.onSelectionArchive(false);
+
+							analytics.event('RemoveFromFavorites', { count: 1 });
 							break;
 
 						case 'fav':
 							this.onSelectionFavorite(true);
+
+							analytics.event('AddToFavorites', { count: 1 });
 							break;
 
 						case 'unfav':
 							this.onSelectionFavorite(false);
+
+							analytics.event('RemoveFromFavorites', { count: 1 });
 							break;
 
 						case 'remove':
@@ -753,13 +786,21 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 	};
 
 	onSortStart (param: any) {
+		const { dataset } = this.props;
 		const { node } = param;
+		const { selection } = dataset;
 
 		this.id = $(node).data('id');
+
+		selection.preventSelect(true);
 	};
 	
 	onSortEnd (result: any) {
 		const { oldIndex, newIndex } = result;
+		const { dataset } = this.props;
+		const { selection } = dataset;
+
+		selection.preventSelect(false);
 		
 		if (oldIndex == newIndex) {
 			return;
@@ -781,6 +822,8 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 		blockStore.updateStructure(root, root, arrayMove(element.childrenIds, oidx, nidx));
 		C.BlockListMove(root, root, [ current.id ], target.id, position);
+
+		analytics.event('ReorderObjects', { route: 'ScreenHome' });
 	};
 	
 	resize () {
@@ -801,21 +844,22 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		const width = Math.floor((maxWidth - size.margin * (cnt - 1)) / cnt);
 		const height = this.getListHeight();
 
-		items.css({ width: width }).removeClass('last');
+		items.css({ width: width });
 		title.css({ width: maxWidth });
 		body.css({ width: maxWidth });
 		documents.css({ marginTop: wh - size.titleY - height - hh });
 
 		items.each((i: number, item: any) => {
 			item = $(item);
+
+			const n = i + 1;
 			const icon = item.find('.iconObject');
 
-			if ((i + 1) >= cnt && ((i + 1) % cnt === 0) && (list.length + 1 > cnt)) {
-				item.addClass('last');
-			};
 			if (icon.length) {
 				item.addClass('withIcon');
 			};
+
+			item.css({ marginRight: (n % cnt == 0) ? 0 : '' });
 		});
 
 		this.onScroll();
@@ -829,8 +873,9 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 	getList () {
 		const { root, recent } = blockStore;
 		const { config } = commonStore;
-		const { tab, filter, pages } = this.state;
-		
+		const { tab, filter } = this.state;
+		const records = dbStore.getRecords(Constant.subIds.index, '');
+
 		let reg = null;
 		let list: any[] = [];
 		let rootId = root;
@@ -841,7 +886,6 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		};
 
 		switch (tab) {
-			default:
 			case I.TabIndex.Favorite:
 			case I.TabIndex.Recent:
 				if (tab == I.TabIndex.Recent) {
@@ -881,26 +925,25 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 				break;
 
-			case I.TabIndex.Archive:
-			case I.TabIndex.Set:
-			case I.TabIndex.Space:
-			case I.TabIndex.Shared:
-				list = pages;
+			default:
+				list = records.map((it: any) => {
+					return detailStore.get(Constant.subIds.index, it.id);
+				});
 				break;
 		};
 
 		return list;
 	};
 
-	getSelectedListItemsIndexes () {
+	getSelectedIndexes () {
 		const list = this.getList();
-		const selectedItemsIndexes = this.selected.map(selectedItemId => {
-			return list.findIndex(it => it.id === selectedItemId);
+		const indexes = this.selected.map(id => {
+			return list.findIndex(it => it.id === id);
 		});
-		return selectedItemsIndexes.filter(idx => idx >= 0);
+		return indexes.filter(idx => idx >= 0);
 	};
 
-	getSelectionRangeFromTwoIndexes (index1: number, index2: number) {
+	getSelectionRange (index1: number, index2: number) {
 		const [ start, end ] = (index1 >= index2) ? [ index2, index1 ] : [ index1 + 1, index2 + 1 ];
 		return [ start, end ];
 	};

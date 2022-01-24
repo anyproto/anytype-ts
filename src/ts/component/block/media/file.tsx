@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { InputWithFile, Loader, IconObject, Error } from 'ts/component';
-import { I, C, Util, focus, translate } from 'ts/lib';
+import { I, C, Util, focus, translate, Action } from 'ts/lib';
 import { commonStore, detailStore, popupStore } from 'ts/store';
 import { observer } from 'mobx-react';
+import { DataUtil } from '../../../lib';
 
 interface Props extends I.BlockComponent {}
 
@@ -22,7 +23,6 @@ const BlockFile = observer(class BlockFile extends React.Component<Props, {}> {
 		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onFocus = this.onFocus.bind(this);
 		this.onOpen = this.onOpen.bind(this);
-		this.onDownload = this.onDownload.bind(this);
 		this.onChangeUrl = this.onChangeUrl.bind(this);
 		this.onChangeFile = this.onChangeFile.bind(this);
 	};
@@ -30,7 +30,7 @@ const BlockFile = observer(class BlockFile extends React.Component<Props, {}> {
 	render () {
 		const { rootId, block, readonly } = this.props;
 		const { id, content } = block;
-		const { state } = content;
+		const { state, style } = content;
 		
 		let object = detailStore.get(rootId, content.hash, [ 'sizeInBytes' ]);
 		if (object._empty_) {
@@ -75,7 +75,6 @@ const BlockFile = observer(class BlockFile extends React.Component<Props, {}> {
 							<span className="name">{name}</span>
 							<span className="size">{Util.fileSize(sizeInBytes)}</span>
 						</span>
-						<span className="download" onClick={this.onDownload}>{translate('blockFileDownload')}</span>
 					</React.Fragment>
 				);
 				break;
@@ -119,45 +118,20 @@ const BlockFile = observer(class BlockFile extends React.Component<Props, {}> {
 	
 	onChangeUrl (e: any, url: string) {
 		const { rootId, block } = this.props;
-		const { id } = block;
-		
-		C.BlockUpload(rootId, id, url, '');
+		Action.upload(I.FileType.File, rootId, block.id, url, '');
 	};
 	
 	onChangeFile (e: any, path: string) {
 		const { rootId, block } = this.props;
-		const { id } = block;
-		
-		C.BlockUpload(rootId, id, '', path);
+		Action.upload(I.FileType.File, rootId, block.id, '', path);
 	};
 	
 	onOpen (e: any) {
 		const { block } = this.props;
 		const { content } = block;
 		const { hash } = content;
-		const icon = Util.fileIcon(content);
 		
-		if (icon == 'image') {
-			popupStore.open('preview', {
-				data: {
-					type: I.FileType.Image,
-					url: commonStore.fileUrl(hash),
-				}
-			});
-		} else {
-			C.DownloadFile(hash, path.join(userPath, 'tmp'), (message: any) => {
-				if (message.path) {
-					ipcRenderer.send('pathOpen', message.path);
-				};
-			});
-		};
-	};
-	
-	onDownload (e: any) {
-		const { block } = this.props;
-		const { content } = block;
-		
-		ipcRenderer.send('download', commonStore.fileUrl(content.hash));
+		DataUtil.objectOpenPopup({ id: hash, layout: I.ObjectLayout.File });
 	};
 	
 });

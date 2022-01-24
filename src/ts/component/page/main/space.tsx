@@ -66,7 +66,7 @@ const PageMainSpace = observer(class PageMainSpace extends React.Component<Props
 
 		const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, align: object.layoutAlign, childrenIds: [], fields: {}, content: {} });
 		const allowedDetails = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
-		const highlighted = dbStore.getData(rootId, BLOCK_ID_HIGHLIGHTED);
+		const highlighted = dbStore.getRecords(this.getSubIdHighlighted(), '');
 
 		if (object.name == DataUtil.defaultName('page')) {
 			object.name = '';
@@ -135,7 +135,7 @@ const PageMainSpace = observer(class PageMainSpace extends React.Component<Props
 							<div className="content">
 								<ListObjectPreview 
 									key="listTemplate"
-									getItems={() => { return dbStore.getData(rootId, BLOCK_ID_HIGHLIGHTED); }}
+									getItems={() => { return highlighted; }}
 									canAdd={false}
 									onClick={(e: any, item: any) => { DataUtil.objectOpenPopup(item); }} 
 								/>
@@ -190,7 +190,6 @@ const PageMainSpace = observer(class PageMainSpace extends React.Component<Props
 	};
 
 	open () {
-		const { history } = this.props;
 		const rootId = this.getRootId();
 
 		if (this.id == rootId) {
@@ -206,7 +205,7 @@ const PageMainSpace = observer(class PageMainSpace extends React.Component<Props
 				if (message.error.code == Errors.Code.NOT_FOUND) {
 					this.setState({ isDeleted: true });
 				} else {
-					history.push('/main/index');
+					Util.route('/main/index');
 				};
 				return;
 			};
@@ -230,9 +229,11 @@ const PageMainSpace = observer(class PageMainSpace extends React.Component<Props
 	getDataviewData (blockId: string, limit: number) {
 		const rootId = this.getRootId();
 		const views = dbStore.getViews(rootId, blockId);
+		const block = blockStore.getLeaf(rootId, blockId);
 
 		if (views.length) {
-			DataUtil.getDataviewData(rootId, blockId, views[0].id, 0, limit, true);
+			const view = views[0];
+			C.ObjectSearchSubscribe(this.getSubIdHighlighted(), view.filters, view.sorts, [ 'id' ], block.content.sources, '', 0, 0, true, '', '');
 		};
 	};
 
@@ -270,13 +271,20 @@ const PageMainSpace = observer(class PageMainSpace extends React.Component<Props
 			data: {
 				filter: '',
 				rootId: rootId,
+				ref: 'space',
 				menuIdEdit: 'blockRelationEdit',
 				skipIds: relations.map((it: I.Relation) => { return it.relationKey; }),
 				listCommand: (rootId: string, blockId: string, callBack?: (message: any) => void) => {
 					C.ObjectRelationListAvailable(rootId, callBack);
 				},
-				addCommand: (rootId: string, blockId: string, relation: any) => {
-					C.ObjectRelationAdd(rootId, relation, () => { menuStore.close('relationSuggest'); });
+				addCommand: (rootId: string, blockId: string, relation: any, onChange?: (relation: any) => void) => {
+					C.ObjectRelationAdd(rootId, relation, () => { 
+						menuStore.close('relationSuggest'); 
+
+						if (onChange) {
+							onChange(relation);
+						};
+					});
 				},
 			}
 		});
@@ -410,12 +418,8 @@ const PageMainSpace = observer(class PageMainSpace extends React.Component<Props
 		
 		const win = $(window);
 		const { isPopup } = this.props;
-		const rootId = this.getRootId();
-		const check = DataUtil.checkDetails(rootId);
 		const node = $(ReactDOM.findDOMNode(this));
 		const cover = node.find('.block.blockCover');
-		const controls = node.find('.editorControls');
-		const wrapper = node.find('.blocks.wrapper');
 		const obj = $(isPopup ? '#popupPage #innerWrap' : '.page.isFull');
 		const header = obj.find('#header');
 		const hh = header.height();
@@ -424,17 +428,12 @@ const PageMainSpace = observer(class PageMainSpace extends React.Component<Props
 			cover.css({ top: hh });
 		};
 
-		if (controls.length) {	
-			controls.css({ top: hh, height: 128 - hh });
-			wrapper.css({ paddingTop: 128 - hh + 10 });
-		};
-
-		if (check.withCover) {
-			wrapper.css({ paddingTop: 330 });
-		};
-
 		obj.css({ minHeight: isPopup ? '' : win.height() });
-		node.css({ paddingTop: hh });
+		node.css({ paddingTop: isPopup ? 0 : hh });
+	};
+
+	getSubIdHighlighted () {
+		return dbStore.getSubId(this.getRootId(), BLOCK_ID_HIGHLIGHTED);
 	};
 
 });

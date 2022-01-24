@@ -2,13 +2,9 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
-import { HeaderMainEdit as Header, FooterMainEdit as Footer, Loader, Block, Button, IconObject, Pager, Deleted } from 'ts/component';
-import { I, M, C, DataUtil, Util, crumbs, Action } from 'ts/lib';
+import { HeaderMainEdit as Header, FooterMainEdit as Footer, Loader, Block, Button, IconObject, Deleted } from 'ts/component';
+import { I, M, C, DataUtil, Util, crumbs, Action, keyboard } from 'ts/lib';
 import { commonStore, blockStore, detailStore } from 'ts/store';
-import { Document, Page } from 'react-pdf';
-import { pdfjs } from 'react-pdf';
-
-pdfjs.GlobalWorkerOptions.workerSrc = 'workers/pdf.min.js';
 
 interface Props extends RouteComponentProps<any> {
 	rootId: string;
@@ -16,8 +12,6 @@ interface Props extends RouteComponentProps<any> {
 };
 
 interface State {
-	pages: number;
-	page: number;
 	isDeleted: boolean;
 };
 
@@ -38,8 +32,6 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<Props
 	loading: boolean = false;
 
 	state = {
-		pages: 0,
-		page: 1,
 		isDeleted: false,
 	};
 
@@ -51,7 +43,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<Props
 	};
 
 	render () {
-		const { page, pages, isDeleted } = this.state;
+		const { isDeleted } = this.state;
 
 		if (isDeleted) {
 			return <Deleted {...this.props} />;
@@ -73,7 +65,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<Props
 		const isVideo = file?.isFileVideo();
 		const isImage = file?.isFileImage();
 		const isAudio = file?.isFileAudio();
-		const isPdf = file?.content.mime == 'application/pdf';
+		const isPdf = file?.isFilePdf();
 		const cn = [ 'blocks' ];
 
 		if (isVideo || isImage || isAudio) {
@@ -100,35 +92,10 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<Props
 		};
 
 		let content = null;
-		let pager = null;
 
 		if (file) {
-			if (isVideo || isImage || isAudio) {
+			if (isVideo || isImage || isAudio || isPdf) {
 				content = <Block {...this.props} key={file.id} rootId={rootId} block={file} readonly={true} />;
-			} else 
-			if (isPdf) {
-				content = (
-					<div className="pdfWrapper">
-						<Document
-							file={commonStore.fileUrl(file.content.hash)}
-							onLoadSuccess={({ numPages }) => { this.setState({ pages: numPages }); }}
-							renderMode="svg"
-							loading={<Loader />}
-						>
-							<Page pageNumber={page} loading={<Loader />} />
-						</Document>
-					</div>
-				);
-
-				pager = (
-					<Pager 
-						offset={page - 1} 
-						limit={1} 
-						total={pages} 
-						pageLimit={5}
-						onChange={(page: number) => { this.setState({ page }); }} 
-					/>
-				);
 			} else {
 				content = <IconObject object={object} size={96} />;
 			};
@@ -143,7 +110,6 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<Props
 						<React.Fragment>
 							<div className="side left">
 								{content}
-								{pager}
 							</div>
 
 							<div className="side right">
@@ -196,7 +162,6 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<Props
 	};
 
 	open () {
-		const { history } = this.props;
 		const rootId = this.getRootId();
 
 		if (this.id == rootId) {
@@ -212,7 +177,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<Props
 				if (message.error.code == Errors.Code.NOT_FOUND) {
 					this.setState({ isDeleted: true });
 				} else {
-					history.push('/main/index');
+					Util.route('/main/index');
 				};
 				return;
 			};
@@ -265,9 +230,8 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<Props
 						left: '50%',
 						top: '50%',
 						width: w, 
-						height: h, 
-						marginTop: -h / 2, 
-						marginLeft: -w / 2,
+						height: h,
+						transform: 'translate3d(-50%, -50%, 0px)',
 					});
 				};
 			});
@@ -310,7 +274,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<Props
 		const wh = container.height();
 
 		if (blocks.hasClass('vertical')) {
-			blocks.css({ height: wh });
+			blocks.css({ minHeight: wh });
 		};
 
 		if (empty.length) {

@@ -5,6 +5,7 @@ import { Frame, Cover, Title, Label, Error, Button, IconObject, HeaderAuth as He
 import { Storage, translate, C, DataUtil, Util } from 'ts/lib';
 import { commonStore, authStore } from 'ts/store';
 import { observer } from 'mobx-react';
+import { analytics } from '../../../lib';
 
 interface Props extends RouteComponentProps<any> {}
 interface State {
@@ -66,7 +67,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<Props
 					<IconObject size={64} object={{ iconEmoji: icon }} />
 					<Title text={title} />
 					<Error text={error} />
-					{error ? <Button text={translate('authSetupBack')} onClick={() => { history.goBack(); }} /> : ''}
+					{error ? <Button text={translate('authSetupBack')} onClick={() => { Util.route('/'); }} /> : ''}
 				</Frame>
 			</div>
 		);
@@ -118,7 +119,6 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<Props
 	};
 	
 	init () {
-		const { history } = this.props;
 		const { path, phrase } = authStore;
 		const accountId = Storage.get('accountId');
 
@@ -148,16 +148,15 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<Props
 					};
 				});
 			} else {
-				history.push('/auth/account-select');
+				Util.route('/auth/account-select');
 			};
 		});
 	};
 	
 	add () {
-		const { history, match } = this.props;
+		const { match } = this.props;
 		const { name, icon, code, phrase } = authStore;
 
-		Storage.delete('popupIntroBlock');
 		commonStore.defaultTypeSet(Constant.typeId.note);
 		
 		C.AccountCreate(name, icon, code, (message: any) => {
@@ -175,21 +174,22 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<Props
 				authStore.accountSet(message.account);
 				authStore.previewSet('');
 
+				Storage.set('popupNewBlock', 1);
 				ipcRenderer.send('keytarSet', accountId, phrase);
+				analytics.event('CreateAccount');
 				
 				if (match.params.id == 'register') {
-					history.push('/auth/success');
+					Util.route('/auth/success');
 				};
 					
 				if (match.params.id == 'add') {
-					history.push('/auth/pin-select/add');
+					Util.route('/auth/pin-select/add');
 				};
 			};
 		});
 	};
 	
 	select () {
-		const { history } = this.props;
 		const { account, path } = authStore;
 		
 		C.AccountSelect(account.id, path, (message: any) => {
@@ -205,14 +205,14 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<Props
 				authStore.accountSet(message.account);
 				
 				DataUtil.pageInit(() => {
-					history.push('/main/index');
+					Util.route('/main/index');
 				});
 			};
 		}); 
 	};
 
 	share () {
-		const { history, location } = this.props;
+		const { location } = this.props;
 		const param = Util.searchParam(location.search);
 
 		C.ObjectAddWithObjectId(param.id, param.payload, (message: any) => {
@@ -220,7 +220,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<Props
 				this.setError(message.error.description);
 			} else {
 				Storage.set('shareSuccess', 1);
-				history.push('/main/index');
+				Util.route('/main/index');
 			};
 		});
 	};

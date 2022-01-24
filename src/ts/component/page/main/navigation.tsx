@@ -1,13 +1,12 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Icon, Button, Cover, Loader, IconObject, HeaderMainNavigation as Header } from 'ts/component';
-import { I, C, Util, DataUtil, crumbs, keyboard, Key, focus, translate } from 'ts/lib';
-import { blockStore } from 'ts/store';
+import { Icon, Button, Cover, Loader, IconObject, HeaderMainNavigation as Header, ObjectName, ObjectDescription } from 'ts/component';
+import { I, C, DataUtil, crumbs, keyboard, Key, focus, translate } from 'ts/lib';
+import { blockStore, popupStore, commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import 'react-virtualized/styles.css';
-import { popupStore } from '../../../store';
 
 interface Props extends RouteComponentProps<any> {
 	rootId: string;
@@ -77,24 +76,15 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 		);
 
 		const Item = (item: any) => {
-			let { layout, name, description, snippet } = item.details || {};
-			let isRoot = item.id == root;
-
-			if (layout == I.ObjectLayout.Note) {
-				name = snippet || <span className="empty">Empty</span>;
-				description = '';
-			} else {
-				name = name || DataUtil.defaultName('page');
-				description = description || snippet;
-			};
+			let { layout, name, description, snippet } = item || {};
 
 			return (
 				<div id={'item-' + item.id} className="item" onMouseOver={(e: any) => { this.onOver(e, item); }}>
 					<div className="inner" onClick={(e: any) => { this.onClick(e, item); }}>
-						{isRoot ? iconHome : <IconObject object={item.details} forceLetter={true} size={48} />}
+						{item.isRoot ? iconHome : <IconObject object={item} forceLetter={true} size={48} />}
 						<div className="info">
-							<div className="name">{name}</div>
-							<div className="descr">{description}</div>
+							<ObjectName object={item} />
+							<ObjectDescription object={item} />
 						</div>
 					</div>
 					<Icon className="arrow" />
@@ -131,40 +121,28 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 		};
 
 		const Selected = (item: any) => {
-			let { name, description, layout, snippet, coverType, coverId, coverX, coverY, coverScale } = item.details;
-			let isRoot = item.id == root;
+			let { name, description, layout, snippet, coverType, coverId, coverX, coverY, coverScale } = item;
 			let icon = null;
 			let withScale = true;
 			let withButtons = true;
 
-			if (isRoot) {
+			if (item.isRoot) {
 				icon = iconHome;
-				name = 'Home';
-				description = '';
 				withScale = false;
-				withButtons = false;
 				
 				if (!coverId && !coverType) {
 					coverId = 'c' + Constant.default.cover;
 					coverType = I.CoverType.Image;
 				};
 			} else {
-				icon = <IconObject object={item.details} forceLetter={true} size={48} />;
-
-				if (layout == I.ObjectLayout.Note) {
-					name = snippet || <span className="empty">Empty</span>;
-					description = '';
-				} else {
-					name = name || DataUtil.defaultName('page');
-					description = description || snippet;
-				};
+				icon = <IconObject object={item} forceLetter={true} size={48} />;
 			};
 
 			return (
 				<div id={'item-' + item.id} className="selected">
 					{icon}
-					<div className="name">{name}</div>
-					<div className="descr">{description}</div>
+					<ObjectName object={item} />
+					<ObjectDescription object={item} />
 					
 					{coverId && coverType ? <Cover type={coverType} id={coverId} image={coverId} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={withScale} /> : ''}
 				
@@ -345,7 +323,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 			const hh = header.height();
 			const oh = obj.height() - hh;
 
-			node.css({ paddingTop: hh });
+			node.css({ paddingTop: isPopup ? 0 : hh });
 			sides.css({ height: oh });
 			items.css({ height: oh });
 			empty.css({ height: oh, lineHeight: oh + 'px' });
@@ -495,8 +473,8 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 				return;
 			};
 
-			let pagesIn = message.object.links.inbound;
-			let pagesOut = message.object.links.outbound;
+			let pagesIn = message.object.links.inbound.map(this.getPage);
+			let pagesOut = message.object.links.outbound.map(this.getPage);
 
 			pagesIn = pagesIn.filter(filter);
 			pagesOut = pagesOut.filter(filter);
@@ -505,7 +483,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 			this.setState({ 
 				n: 0,
 				loading: false,
-				info: message.object.info,
+				info: this.getPage(message.object.info),
 				pagesIn: pagesIn,
 				pagesOut: pagesOut,
 			});
@@ -514,8 +492,29 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 		});
 	};
 
-	filterMapper (it: I.PageInfo) {
-		return !it.details.isArchived && !it.details.isDeleted;
+	filterMapper (it: any) {
+		const { config } = commonStore;
+
+		let ret = !it.isArchived && !it.isDeleted;
+		if (!config.debug.ho) {
+			ret = ret && !it.isHidden;
+		};
+		if (!config.experimental) {
+			ret = ret && ![ Constant.typeId.space ].includes(it.type);
+		};
+		return ret;
+	};
+
+	getPage (item: any) {
+		const { root } = blockStore;
+
+		item = { ...item.details };
+		item.isRoot = item.id == root;
+
+		if (item.isRoot) {
+			item.name = 'Home';
+		};
+		return item;
 	};
 
 	onClick (e: any, item: I.PageInfo) {
@@ -528,8 +527,12 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 	};
 
 	onConfirm (e: any, item: I.PageInfo) {
+		if (e.persist) {
+			e.persist();
+		};
+
 		crumbs.cut(I.CrumbsType.Page, 0, () => {
-			DataUtil.objectOpenEvent(e, item.details);
+			DataUtil.objectOpenEvent(e, item);
 		});
 	};
 

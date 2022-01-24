@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Frame, Cover, Title, Label, Error, Pin, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
-import { translate, Storage } from 'ts/lib';
+import { translate, Util } from 'ts/lib';
 import { commonStore, authStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -53,10 +53,10 @@ const PageAuthPinSelect = observer(class PageAuthPinSelect extends React.Compone
     };
 
 	onSuccess (pin: string) {
-		const { match, history } = this.props;
+		const { match } = this.props;
 
 		authStore.pinSet(pin);
-		history.push('/auth/pin-confirm/' + match.params.id);
+		Util.route('/auth/pin-confirm/' + match.params.id);
 	};
 	
 });

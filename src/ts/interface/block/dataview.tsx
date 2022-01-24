@@ -79,8 +79,9 @@ export interface ViewComponent {
 	rootId: string;
 	block: I.Block;
 	readonly: boolean;
-	scrollContainer?: string;
+	bodyContainer?: string;
 	pageContainer?: string;
+	dataset?: any;
 	isPopup?: boolean;
 	onRef?(ref: any, id: string): void;
 	getData(viewId: string, offset: number): void;
@@ -108,6 +109,7 @@ export interface View {
 
 export interface Cell {
 	rootId: string;
+	subId: string;
 	block: I.Block;
 	id?: string;
 	idPrefix?: string;
@@ -117,7 +119,7 @@ export interface Cell {
 	readonly?: boolean;
 	canOpen?: boolean;
 	canEdit?: boolean;
-	scrollContainer?: string;
+	bodyContainer?: string;
 	pageContainer?: string;
 	isInline?: boolean;
 	iconSize?: number;

@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Filter, MenuItemVertical } from 'ts/component';
-import { I, C, keyboard, Key, DataUtil, Util, focus, Action, translate, analytics } from 'ts/lib';
-import { commonStore, blockStore, menuStore, dbStore } from 'ts/store';
+import { I, C, keyboard, DataUtil, Util, focus, Action, translate, analytics } from 'ts/lib';
+import { commonStore, blockStore, menuStore } from 'ts/store';
 
 interface Props extends I.Menu {};
 interface State {
@@ -163,10 +163,11 @@ class MenuBlockAction extends React.Component<Props, State> {
 		let sections: any[] = [];
 		
 		if (filter) {
-			const turnText = { id: 'turnText', icon: '', name: 'Turn into text', color: '', children: DataUtil.menuGetBlockText() };
-			const turnList = { id: 'turnList', icon: '', name: 'Turn into list', color: '', children: DataUtil.menuGetBlockList() };
+			const turnText = { id: 'turnText', icon: '', name: 'Text style', color: '', children: DataUtil.menuGetBlockText() };
+			const turnList = { id: 'turnList', icon: '', name: 'List style', color: '', children: DataUtil.menuGetBlockList() };
 			const turnPage = { id: 'turnPage', icon: '', name: 'Turn into object', color: '', children: DataUtil.menuGetTurnPage() };
-			const turnDiv = { id: 'turnDiv', icon: '', name: 'Turn into divider', color: '', children: DataUtil.menuGetTurnDiv() };
+			const turnDiv = { id: 'turnDiv', icon: '', name: 'Divider style', color: '', children: DataUtil.menuGetTurnDiv() };
+			const turnFile = { id: 'turnFile', icon: '', name: 'File style', color: '', children: DataUtil.menuGetTurnFile() };
 			const action = { id: 'action', icon: '', name: 'Actions', color: '', children: [] };
 			const align = { id: 'align', icon: '', name: 'Align', color: '', children: [] };
 			const bgColor = { id: 'bgColor', icon: '', name: 'Background', color: '', children: DataUtil.menuGetBgColors() };
@@ -176,6 +177,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 			let hasTurnPage = true;
 			let hasTurnList = true;
 			let hasTurnDiv = true;
+			let hasTurnFile = true;
 			let hasFile = true;
 			let hasLink = true;
 			let hasQuote = false;
@@ -194,6 +196,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 				if (!block.canTurnPage())		 hasTurnPage = false;
 				if (!block.canTurnList())		 hasTurnList = false;
 				if (!block.isDiv())				 hasTurnDiv = false;
+				if (!block.isFile())			 hasTurnFile = false;
 				if (!block.canHaveAlign())		 hasAlign = false;
 				if (!block.canHaveColor())		 hasColor = false;
 				if (!block.canHaveBackground())	 hasBg = false;
@@ -210,6 +213,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 			if (hasTurnPage)	 sections.push(turnPage);
 			if (hasTurnList)	 sections.push(turnList);
 			if (hasTurnDiv)		 sections.push(turnDiv);
+			if (hasTurnFile)	 sections.push(turnFile);
 			if (hasColor)		 sections.push(color);
 			if (hasBg)			 sections.push(bgColor);
 
@@ -225,20 +229,18 @@ class MenuBlockAction extends React.Component<Props, State> {
 
 			sections = DataUtil.menuSectionsFilter(sections, filter);
 		} else {
-			sections = [
-				{ 
-					children: [
-						{ id: 'remove', icon: 'remove', name: 'Delete', caption: 'Del' },
-						{ id: 'copy', icon: 'copy', name: 'Duplicate', caption: `${cmd} + D` },
-						{ id: 'move', icon: 'move', name: 'Move to', arrow: true },
-					] 
-				},
-				{ 
-					children: [
-						//{ id: 'comment', icon: 'comment', name: 'Comment' },
-					]
-				},
-			];
+			const section1: any = { 
+				children: [
+					{ id: 'remove', icon: 'remove', name: 'Delete', caption: 'Del' },
+					{ id: 'copy', icon: 'copy', name: 'Duplicate', caption: `${cmd} + D` },
+					{ id: 'move', icon: 'move', name: 'Move to', arrow: true },
+				] 
+			};
+			const section2: any = { 
+				children: [
+					//{ id: 'comment', icon: 'comment', name: 'Comment' },
+				]
+			};
 
 			let hasTurnText = true;
 			let hasTurnObject = true;
@@ -275,43 +277,48 @@ class MenuBlockAction extends React.Component<Props, State> {
 			};
 
 			if (hasTurnObject) {
-				sections[0].children.splice(2, 0, { id: 'turnObject', icon: 'object', name: 'Turn into object', arrow: true });
+				section1.children.splice(2, 0, { id: 'turnObject', icon: 'object', name: 'Turn into object', arrow: true });
 			};
 
 			if (hasFile) {
-				sections[0].children.push({ id: 'download', icon: 'download', name: 'Download' });
-				sections[0].children.push({ id: 'openFileAsObject', icon: 'expand', name: 'Open as object' });
-				//sections[0].children.push({ id: 'rename', icon: 'rename', name: 'Rename' })
-				//sections[0].children.push({ id: 'replace', icon: 'replace', name: 'Replace' })
+				section1.children = section1.children.concat([
+					{ id: 'download', icon: 'download', name: 'Download' },
+					{ id: 'openFileAsObject', icon: 'expand', name: 'Open as object' },
+					//{ id: 'rename', icon: 'rename', name: 'Rename' },
+					//{ id: 'replace', icon: 'replace', name: 'Replace' }
+				]);
+				section2.children.push({ id: 'turnStyle', icon: 'customize', name: 'Appearance', arrow: true, isFile: true },);
 			};
 
 			if (hasLink) {
-				sections[0].children.push({ id: 'linkSettings', icon: 'customize', name: 'Appearance', arrow: true });
+				section1.children.push({ id: 'linkSettings', icon: 'customize', name: 'Appearance', arrow: true });
 			};
 
 			if (hasTitle) {
-				sections[0].children = [];
+				section1.children = [];
 			};
 
 			if (hasTurnText) {
-				sections[1].children.push({ id: 'turnStyle', icon: DataUtil.styleIcon(I.BlockType.Text, style), name: 'Text style', arrow: true });
+				section2.children.push({ id: 'turnStyle', icon: DataUtil.styleIcon(I.BlockType.Text, style), name: 'Text style', arrow: true });
 			};
 
 			if (hasTurnDiv) {
-				sections[1].children.push({ id: 'turnStyle', icon: DataUtil.styleIcon(I.BlockType.Div, style), name: 'Divider style', arrow: true, isDiv: true });
+				section2.children.push({ id: 'turnStyle', icon: DataUtil.styleIcon(I.BlockType.Div, style), name: 'Divider style', arrow: true, isDiv: true });
 			};
 
 			if (hasAlign) {
-				sections[1].children.push({ id: 'align', icon: [ 'align', DataUtil.alignIcon(align) ].join(' '), name: 'Align', arrow: true });
+				section2.children.push({ id: 'align', icon: [ 'align', DataUtil.alignIcon(align) ].join(' '), name: 'Align', arrow: true });
 			};
 
 			if (hasColor) {
-				sections[1].children.push({ id: 'color', icon: 'color', name: 'Color', arrow: true, isTextColor: true, value: (color || 'default') });
+				section2.children.push({ id: 'color', icon: 'color', name: 'Color', arrow: true, isTextColor: true, value: (color || 'default') });
 			};
 
 			if (hasBg) {
-				sections[1].children.push({ id: 'background', icon: 'color', name: 'Background', arrow: true, isBgColor: true, value: (bgColor || 'default') });
+				section2.children.push({ id: 'background', icon: 'color', name: 'Background', arrow: true, isBgColor: true, value: (bgColor || 'default') });
 			};
+
+			sections = [ section1, section2 ];
 		};
 
 		return DataUtil.menuSectionsMap(sections);
@@ -339,9 +346,9 @@ class MenuBlockAction extends React.Component<Props, State> {
 			return;
 		};
 		
-		const { param, close, getId, setActive } = this.props;
+		const { param, close, getId, setActive, dataset } = this.props;
 		const { data } = param;
-		const { blockId, blockIds, rootId, dataset } = data;
+		const { blockId, blockIds, rootId } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
 		const { config } = commonStore;
 		
@@ -377,7 +384,6 @@ class MenuBlockAction extends React.Component<Props, State> {
 				blockId: blockId,
 				blockIds: blockIds,
 				rebind: this.rebind,
-				dataset: dataset,
 			},
 		};
 
@@ -385,7 +391,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 			case 'turnStyle':
 				menuId = 'blockStyle';
 
-				if (item.isDiv) {
+				if (item.isDiv || item.isFile) {
 					menuParam.offsetY = 0;
 					menuParam.vertical = I.MenuDirection.Center;
 				};
@@ -397,9 +403,15 @@ class MenuBlockAction extends React.Component<Props, State> {
 								this.setFocus(blockIds[0]);
 							});
 						};
-							
+
 						if (item.type == I.BlockType.Div) {
 							C.BlockListSetDivStyle(rootId, blockIds, item.itemId, (message: any) => {
+								this.setFocus(blockIds[0]);
+							});
+						};
+
+						if (item.type == I.BlockType.File) {
+							C.BlockListSetFileStyle(rootId, blockIds, item.itemId, (message: any) => {
 								this.setFocus(blockIds[0]);
 							});
 						};
@@ -475,6 +487,8 @@ class MenuBlockAction extends React.Component<Props, State> {
 					onChange: (color: string) => {
 						C.BlockListSetBackgroundColor(rootId, blockIds, color, (message: any) => {
 							this.setFocus(blockIds[0]);
+
+							analytics.event('ChangeBlockBackground', { color: color, count: blockIds.length });
 						});
 
 						close();
@@ -492,6 +506,8 @@ class MenuBlockAction extends React.Component<Props, State> {
 					onSelect: (align: I.BlockAlign) => {
 						C.BlockListSetAlign(rootId, blockIds, align, (message: any) => {
 							this.setFocus(blockIds[0]);
+
+							analytics.event('ChangeBlockAlign', { align, count: blockIds.length });
 						});
 
 						close();
@@ -526,7 +542,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 		};
 
 		const ids = DataUtil.selectionGet(blockId, false, data);
-		analytics.event(Util.toUpperCamelCase(`${getId()}-action`), { id: item.itemId });
+		//analytics.event(Util.toUpperCamelCase(`${getId()}-action`), { id: item.itemId });
 
 		switch (item.itemId) {
 			case 'download':
@@ -553,18 +569,25 @@ class MenuBlockAction extends React.Component<Props, State> {
 					
 				// Background colors
 				if (item.isBgColor) {
-					C.BlockListSetBackgroundColor(rootId, blockIds, item.value);
+					C.BlockListSetBackgroundColor(rootId, blockIds, item.value, () => {
+						analytics.event('ChangeBlockBackground', { color: item.value, count: blockIds.length });
+					});
 				} else 
 					
 				// Align
 				if (item.isAlign) {
-					C.BlockListSetAlign(rootId, blockIds, item.itemId);
+					C.BlockListSetAlign(rootId, blockIds, item.itemId, () => {
+						analytics.event('ChangeBlockAlign', { align: item.itemId, count: blockIds.length });
+					});
 				} else 
 					
 				// Blocks
 				if (item.isBlock) {
 					if (item.type == I.BlockType.Div) {
 						C.BlockListSetDivStyle(rootId, blockIds, item.itemId);
+					} else 
+					if (item.type == I.BlockType.File) {
+						C.BlockListSetFileStyle(rootId, blockIds, item.itemId);
 					} else {
 						C.BlockListTurnInto(rootId, blockIds, item.itemId, () => {
 							this.setFocus(blockIds[0]);
@@ -583,9 +606,9 @@ class MenuBlockAction extends React.Component<Props, State> {
 	};
 
 	moveToPage (type: string) {
-		const { param } = this.props;
+		const { param, dataset } = this.props;
 		const { data } = param;
-		const { blockId, rootId, dataset } = data;
+		const { blockId, rootId } = data;
 		const { selection } = dataset || {};
 		
 		let ids = [];

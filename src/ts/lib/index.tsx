@@ -11,6 +11,7 @@ import Util from './util';
 import DataUtil from './datautil';
 import SmileUtil from './smileutil';
 import Mark from './mark';
+import Relation from './relation';
 import { focus } from './focus';
 import { Encode, Decode } from './struct';
 import { scrollOnMove } from './scrollOnMove';
@@ -19,16 +20,17 @@ import { crumbs } from './crumbs';
 import { history } from './history';
 import Action from './action';
 import * as Docs from 'ts/docs';
+import Onboarding from './onboarding';
 
 const Constant = require('json/constant.json');
 const Text = require('json/text.json');
 const lang = Storage.get('lang') || Constant.default.lang;
 
 const translate = (key: string): string => {
-	if (!Text[key]) {
+	if (undefined === Text[key]) {
 		return `*No key: ${key}*`;
 	};
-	if (!Text[key][lang]) {
+	if (undefined === Text[key][lang]) {
 		return `*No ${lang}: ${key}*`;
 	};
 	return Text[key][lang];
@@ -44,6 +46,7 @@ export {
 	DataUtil,
 	SmileUtil,
 	Mark,
+	Relation,
 	I,
 	C,
 	Response,
@@ -58,4 +61,5 @@ export {
 	Decode,
 	Mapper,
 	Action,
+	Onboarding,
 };

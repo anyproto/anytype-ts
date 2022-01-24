@@ -93,7 +93,7 @@ const PageAuthRegister = observer(class PageAuthRegister extends React.Component
 	onSubmit (e: any) {
 		e.preventDefault();
 		
-		const { match, history } = this.props;
+		const { match } = this.props;
 		
 		this.nameRef.setError(false);
 
@@ -105,7 +105,7 @@ const PageAuthRegister = observer(class PageAuthRegister extends React.Component
 		};
 		
 		if (!error) {
-			history.push('/auth/invite/' + match.params.id);
+			Util.route('/auth/invite/' + match.params.id);
 		} else {
 			this.setState({ error: error });
 		};

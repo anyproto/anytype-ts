@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Filter, MenuItemVertical, Icon, Loader } from 'ts/component';
-import { I, C, Util, Key, keyboard, DataUtil } from 'ts/lib';
+import { I, C, Util, Relation, keyboard, DataUtil } from 'ts/lib';
 import { commonStore, dbStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
@@ -201,8 +201,8 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 	getItems () {
 		const { param } = this.props;
 		const { data } = param;
-		const value = DataUtil.getRelationArrayValue(data.value);
-		
+		const value = Relation.getArrayValue(data.value);
+
 		let ret = Util.objectCopy(this.items);
 		ret = ret.filter((it: I.SelectOption) => { return value.indexOf(it.id) < 0; });
 		return ret;
@@ -274,7 +274,7 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 			return;
 		};
 
-		let value = DataUtil.getRelationArrayValue(data.value);
+		let value = Relation.getArrayValue(data.value);
 		value.push(item.id);
 		value = Util.arrayUnique(value);
 
@@ -282,11 +282,11 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 			value = value.slice(value.length - maxCount, value.length);
 		};
 
-		data.value = value;
-
-		menuStore.updateData(MENU_ID, { value: value });
-		onChange(value);
-		position();
+		onChange(value, () => {
+			menuStore.updateData(this.props.id, { value });
+			menuStore.updateData(MENU_ID, { value });
+			position();
+		});
 	};
 
 	resize () {

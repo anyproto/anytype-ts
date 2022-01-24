@@ -9,7 +9,7 @@
 }
 
 .pageAuthRegister {
-    .iconObject { background-image: url('~img/theme/dark/icon/picture.svg'); }
+    .iconObject { background-image: url('#{$themePath}/icon/picture.svg'); }
 }
 
 /* PageMainIndex */
@@ -26,8 +26,8 @@
         .item { background: rgba(0,0,0,0.5); transition: background 0.2s ease-in-out; }
         .item {
             .type { color: $colorSecondary; }
-            .icon.more { background-image: url('~img/theme/dark/icon/index/more0.svg'); }
-			.icon.more:hover, .icon.more.hover { background-image: url('~img/theme/dark/icon/index/more1.svg'); }
+            .icon.more { background-image: url('#{$themePath}/icon/index/more0.svg'); }
+			.icon.more:hover, .icon.more.hover { background-image: url('#{$themePath}/icon/index/more1.svg'); }
 
             .empty { color: $colorSecondary; }
         }
@@ -106,12 +106,12 @@
         .section.template {
 			.btn { color: $colorSecondary; }
 			.btn {
-				.icon.plus { background-image: url('~img/theme/dark/icon/plus/template0.svg'); }
+				.icon.plus { background-image: url('#{$themePath}/icon/plus/template0.svg'); }
 			}
 
 			.btn:hover { color: $colorPrimary; }
 			.btn:hover {
-				.icon.plus { background-image: url('~img/theme/dark/icon/plus/template1.svg'); }
+				.icon.plus { background-image: url('#{$themePath}/icon/plus/template1.svg'); }
 			}
 
 			.listPreviewObject {
@@ -177,7 +177,7 @@
         .item:hover, .item.active { background: $colorHover; }
         .item {
             .name { color: $colorSecondary; }
-            .icon.arrow { background-image: url('~img/theme/dark/arrow/historyList.svg'); }
+            .icon.arrow { background-image: url('#{$themePath}/arrow/historyList.svg'); }
         }
     }
 }

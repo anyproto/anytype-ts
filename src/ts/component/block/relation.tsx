@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Cell } from 'ts/component';
-import { I, C, DataUtil, Util, focus } from 'ts/lib';
+import { I, C, DataUtil, Util, focus, analytics, Relation } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { menuStore, detailStore, dbStore, blockStore } from 'ts/store';
 
@@ -31,7 +31,7 @@ const BlockRelation = observer(class BlockRelation extends React.Component<Props
 		const { key } = content;
 		const relation = dbStore.getRelation(rootId, rootId, key);
 		const idPrefix = 'blockRelationCell' + block.id;
-		const id = DataUtil.cellId(idPrefix, key, '0');
+		const id = Relation.cellId(idPrefix, key, '0');
 		const allowedValue = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]) && relation && !relation.isReadonlyValue;
 
 		return (
@@ -55,6 +55,7 @@ const BlockRelation = observer(class BlockRelation extends React.Component<Props
 							<Cell 
 								ref={(ref: any) => { this.refCell = ref; }}
 								rootId={rootId}
+								subId={rootId}
 								storeId={rootId}
 								block={block}
 								relationKey={relation.relationKey}
@@ -65,7 +66,7 @@ const BlockRelation = observer(class BlockRelation extends React.Component<Props
 								idPrefix={idPrefix}
 								menuClassName="fromBlock"
 								onCellChange={this.onCellChange}
-								scrollContainer={Util.getScrollContainer(isPopup ? 'popup' : 'page')}
+								bodyContainer={Util.getBodyContainer(isPopup ? 'popup' : 'page')}
 								pageContainer={Util.getPageContainer(isPopup ? 'popup' : 'page')}
 								optionCommand={this.optionCommand}
 							/>
@@ -113,10 +114,11 @@ const BlockRelation = observer(class BlockRelation extends React.Component<Props
 				filter: '',
 				menuIdEdit: 'blockRelationEdit',
 				skipIds: [],
+				ref: 'block',
 				listCommand: (rootId: string, blockId: string, callBack?: (message: any) => void) => {
 					C.ObjectRelationListAvailable(rootId, callBack);
 				},
-				addCommand: (rootId: string, blockId: string, relation: any) => {
+				addCommand: (rootId: string, blockId: string, relation: any, onChange?: (relation: any) => void) => {
 					C.ObjectRelationAdd(rootId, relation, (message: any) => {
 						if (message.error.code) {
 							return;
@@ -125,6 +127,10 @@ const BlockRelation = observer(class BlockRelation extends React.Component<Props
 						C.BlockRelationSetKey(rootId, block.id, message.relation.relationKey, () => { 
 							menuStore.close('relationSuggest'); 
 						});
+
+						if (onChange) {
+							onChange(relation);
+						};
 					});
 				},
 			}
@@ -135,9 +141,12 @@ const BlockRelation = observer(class BlockRelation extends React.Component<Props
 		const { rootId } = this.props;
 		const relation = dbStore.getRelation(rootId, rootId, relationKey);
 		const details = [ 
-			{ key: relationKey, value: DataUtil.formatRelationValue(relation, value, true) },
+			{ key: relationKey, value: Relation.formatValue(relation, value, true) },
 		];
 		C.BlockSetDetails(rootId, details, callBack);
+
+		const key = Relation.checkRelationValue(relation, value) ? 'ChangeRelationValue' : 'DeleteRelationValue';	
+		analytics.event(key, { type: 'block' });
 	};
 
 	onCellClick (e: any) {

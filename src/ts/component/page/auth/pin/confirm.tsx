@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Frame, Cover, Title, Label, Error, Pin, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
-import { Storage, translate } from 'ts/lib';
+import { Storage, Util, translate } from 'ts/lib';
 import { commonStore, authStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -62,18 +62,18 @@ const PageAuthPinConfirm = observer(class PageAuthPinConfirm extends React.Compo
 	};
 
 	onSuccess (pin: string) {
-		const { match, history } = this.props;
+		const { match } = this.props;
 		const isAdd = match.params.id == 'add';
 		const isSelect = match.params.id == 'select';
 
 		Storage.set('pin', sha1(pin));
 				
 		if (isSelect) {
-			history.push('/auth/setup/select');
+			Util.route('/auth/setup/select');
 		};
 			
 		if (isAdd) {
-			history.push('/main/index');
+			Util.route('/main/index');
 		};
 	};
 

@@ -1,4 +1,4 @@
-import { I, Util, SmileUtil, Storage } from 'ts/lib';
+import { I, Util, analytics } from 'ts/lib';
 
 const $ = require('jquery');
 const Tags = [ 
@@ -14,6 +14,20 @@ const Tags = [
 	'emoji', 
 	'obj',
 ];
+
+const Patterns = {
+	'-->': '⟶',
+	'<--': '⟵',
+	'<-->': '⟷',
+	'->': '→',
+	'<-': '←',
+	'--': '—',
+	'—>': '⟶',
+	'<—': '⟵',
+	'(c)': '©',
+	'(r)': '®',
+	'(tm)': '™',
+};
 
 enum Overlap {
 	Equal		 = 0,		 // a == b
@@ -140,6 +154,8 @@ class Mark {
 		if (add) {
 			map[type].push(mark);
 		};
+
+		analytics.event('ChangeTextStyle', { type, count: 1 });
 		return Util.unmap(map).sort(this.sort);
 	};
 	
@@ -345,7 +361,7 @@ class Mark {
 		obj.find('font').removeAttr('face').each((i: number, item: any) => {
 			item = $(item);
 			item.html(item.find('span').html());
-		})
+		});
 
 		obj.find('emoji').removeAttr('class').html(' ');
 		return obj;
@@ -363,6 +379,16 @@ class Mark {
 		let text = html;
 		let marks: any[] = [];
 
+		// TODO: find classes by color or background
+		html.replace(/<font color="([^"]+)">([^<]*)<\/font>/g, (s: string, p1: string, p2: string) => {
+			text = text.replace(s, p2);
+			return '';
+		});
+		html.replace(/<span style="background-color: ([^;]+);">([^<]*)<\/span>/g, (s: string, p1: string, p2: string) => {
+			text = text.replace(s, p2);
+			return '';
+		});
+
 		// Fix browser markup bug
 		html.replace(/<\/?(i|b|font|search)>/g, (s: string, p: string) => {
 			let r = '';
@@ -378,24 +404,12 @@ class Mark {
 			if (p == '&lt;') p = '<';
 			if (p == '&gt;') p = '>';
 			if (p == '&amp;') p = '&';
-			if (p == '->') p = '→';
-			if (p == '<-') p = '←';
 			text = text.replace(s, p);
 			return '';
 		});
 
+		text = this.fromUnicode(text);
 		html = text;
-
-		// Unicode symbols
-		html.replace(/(-->|<--|<-->|->|<-)\s/g, (s: string, p: string) => {
-			if (p == '->') p = '→';
-			if (p == '<-') p = '←';
-			if (p == '-->') p = '⟶';
-			if (p == '<--') p = '⟵';
-			if (p == '<-->') p = '⟷';
-			text = text.replace(s, p + ' ');
-			return '';
-		});
 
 		html.replace(rh, (s: string, p1: string, p2: string, p3: string) => {
 			p1 = String(p1 || '').trim();
@@ -430,6 +444,22 @@ class Mark {
 		});
 
 		return this.fromMarkdown(text, marks, restricted);
+	};
+
+	// Unicode symbols
+	fromUnicode (html: string): string {
+		let text = html;
+		let keys = Object.keys(Patterns).map((it: any) => { return Util.filterFix(it) });
+		let reg = new RegExp('(' + keys.join('|') + ')\\s', 'g');
+
+		html.replace(reg, (s: string, p: string) => {
+			if (Patterns[p]) {
+				text = text.replace(s, Patterns[p] + ' ');
+			};
+			return '';
+		});
+
+		return text;
 	};
 
 	fromMarkdown (html: string, marks: I.Mark[], restricted: I.MarkType[]) {

@@ -4,6 +4,8 @@
 	.menuWrap { position: absolute; left: 0px; top: 0px; width: 100%; z-index: 19; }
 	.menuWrap.fromPopup { z-index: 103; }
 	.menuWrap.fromHeader { z-index: 103; }
+	.menuWrap.fixed { position: fixed; }
+	.menuWrap.fixed .menu { position: fixed; }
 
 	.dimmer { position: fixed; left: 0px; top: 0px; width: 100%; height: 100%; background: rgba(0,0,0,0); }
 	#menu-polygon { z-index: 1000; position: absolute; }
@@ -34,6 +36,15 @@
 	
 	.menu {
 		.input { user-select: text; }
+		
+		.arrowDirection { 
+			width: 17px; height: 8px; transition: none; background-image: url('~img/arrow/menuDirection.svg');
+			position: absolute;
+		}
+		.arrowDirection.c1 { top: -8px; }
+		.arrowDirection.c2 { bottom: -8px; transform: rotateZ(180deg); }
+		.arrowDirection.c3 { left: -12px; transform: rotateZ(-90deg); }
+		.arrowDirection.c4 { right: -12px; transform: rotateZ(90deg); }
 	}
 	
 	.menu.vertical { width: 224px; }
@@ -112,7 +123,7 @@
 			.txt { width: 100%; }
 		}
 
-		.item.withCaption { display: flex; }
+		.item.withCaption { display: flex; align-items: stretch; }
 		.item.withCaption {
 			.iconObject, .icon.dnd { flex-shrink: 0; }
 			.name { width: 100%; margin-right: 6px; }
@@ -133,8 +144,6 @@
 		}
 
 		.line { height: 1px; margin: 8px 14px 7px 14px; background: $colorLightGrey; }
-		.input { border-radius: 4px; }
-
 		.sectionName { padding: 5px 14px; @include text-small; color: $colorDarkGrey; font-weight: 500; }
 		
 		.section { padding: 8px 0px 0px 0px; }

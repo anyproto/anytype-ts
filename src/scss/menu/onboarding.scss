@@ -1,0 +1,38 @@
+@import "~scss/_vars";
+
+.menus {
+	.menu.menuOnboarding { width: 288px; background: #000; color: #fff; }
+	.menu.menuOnboarding {
+		.content { padding: 12px 16px; }
+		.wrap { display: flex; flex-direction: column; }
+
+		.name { @include text-paragraph; letter-spacing: -0.2px; font-weight: 600; margin-bottom: 6px; width: calc(100% - 20px); }
+		.descr { line-height: 18px; }
+		.descr {
+			.icon { width: 16px; height: 16px; margin: -2px 0px 0px 0px; }
+		}
+
+		a { color: #fff; text-decoration: underline; }
+
+		.icon.close { 
+			width: 16px; height: 16px; position: absolute; right: 14px; top: 16px; background-image: url('~img/icon/menu/onboarding/close0.svg'); 
+			cursor: pointer;
+		}
+		.icon.close:hover { background-image: url('~img/icon/menu/onboarding/close1.svg'); }
+		
+		.bottom { display: flex; flex-direction: row; align-items: stretch; margin: 10px -2px 0px -2px; }
+		.bottom {
+			.icon.arrow { 
+				width: 16px; height: 18px; flex-shrink: 0; background-image: url('~img/arrow/onboarding0.svg'); 
+				cursor: pointer; background-size: 16px 16px; background-position: left center;
+			}
+			.icon.arrow:hover { background-image: url('~img/arrow/onboarding1.svg'); }
+			.icon.arrow.disabled { opacity: 0; }
+			.icon.arrow.disabled:hover { background-image: url('~img/arrow/onboarding0.svg'); }
+
+			.icon.arrow.right { transform: rotateZ(180deg); }
+			
+			.number { @include text-small; flex-grow: 1; text-align: center; color: $colorMediumGrey;  }
+		}
+	}
+}

@@ -2,8 +2,8 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Icon } from 'ts/component';
-import { I, C, focus, DataUtil, Util, translate } from 'ts/lib';
-import { commonStore, menuStore, blockStore, detailStore } from 'ts/store';
+import { I, C, focus, DataUtil, Util, translate, analytics } from 'ts/lib';
+import { menuStore, blockStore, detailStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any> {
@@ -37,34 +37,45 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 	render (): any {
 		const { rootId } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
-		const allowedDetails = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
-		const checkType = blockStore.checkBlockType(rootId);
 
-		if (!root || !allowedDetails || checkType) {
+		if (!root) {
 			return null;
 		};
 
-		const allowedLayout = !root.isObjectSet() && blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Layout ]);
-		const allowedRelation = true;
-		const allowIcon = !root.isObjectTask() && !root.isObjectNote();
-		const allowCover = !root.isObjectNote();
+		const object = detailStore.get(rootId, rootId, Constant.coverRelationKeys);
+		if ((object.coverType != I.CoverType.None) && object.coverId) {
+			return null;
+		};
+
+		let checkType = blockStore.checkBlockType(rootId);
+		let allowedDetails = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
+		let allowedLayout = !checkType && allowedDetails && !root.isObjectSet() && blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Layout ]);
+		let allowedRelation = !checkType;
+		let allowedIcon = !checkType && allowedDetails && !root.isObjectTask() && !root.isObjectNote();
+		let allowedCover = !checkType && allowedDetails && !root.isObjectNote();
+
+		if (root.fields.isLocked) {
+			allowedIcon = false;
+			allowedLayout = false;
+			allowedCover = false;
+		};
 
 		return (
 			<div 
-				className="editorControls"
+				className="editorControls editorControlElements"
 				onDragOver={this.onDragOver} 
 				onDragLeave={this.onDragLeave} 
 				onDrop={this.onDrop}
 			>
 				<div className="controlButtons">
-					{allowIcon ? (
+					{allowedIcon ? (
 						<div id="button-icon" className="btn" onClick={this.onIcon}>
 							<Icon className="icon" />
 							<div className="txt">{translate('editorControlIcon')}</div>
 						</div>
 					) : ''}
 
-					{allowCover ? (
+					{allowedCover ? (
 						<div id="button-cover" className="btn" onClick={this.onCover}>
 							<Icon className="addCover" />
 							<div className="txt">{translate('editorControlCover')}</div>
@@ -145,7 +156,7 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 				return;
 			};
 			
-			C.UploadFile('', files[0], I.FileType.Image, true, (message: any) => {
+			C.UploadFile('', files[0], I.FileType.Image, (message: any) => {
 				if (message.error.code) {
 					return;
 				};
@@ -162,6 +173,8 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 
 		focus.clear(true);
 		DataUtil.pageSetCover(rootId, I.CoverType.Color, color.id, 0, 0, 0);
+
+		analytics.event('SetCover', { type: I.CoverType.Color, id: color.id });
 	};
 
 	onLayout (e: any) {
@@ -181,9 +194,6 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 			data: {
 				rootId: rootId,
 				value: object.layout,
-				onChange: (layout: I.ObjectLayout) => {
-					DataUtil.pageSetLayout(rootId, layout);
-				},
 			}
 		});
 	};
@@ -194,11 +204,14 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 		const container = $(isPopup ? '#popupPage #innerWrap' : window);
 		const st = container.scrollTop();
 		const rect = { x: container.width() / 2 , y: Util.sizeHeader() + st, width: 1, height: 1 };
+		const cnw = [ 'fixed' ];
 
 		if (isPopup) {
 			const offset = container.offset();
 			rect.x += offset.left;
 			rect.y += offset.top;
+		} else {
+			cnw.push('fromHeader');
 		};
 
 		const param: any = {
@@ -207,6 +220,7 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 			noFlipX: true,
 			noFlipY: true,
 			subIds: Constant.menuIds.cell,
+			classNameWrap: cnw.join(' '),
 			onOpen: () => {
 				node.addClass('hover');
 			},
@@ -218,10 +232,6 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 				isPopup: isPopup,
 				rootId: rootId,
 			},
-		};
-
-		if (!isPopup) {
-			param.classNameWrap = 'fromHeader';
 		};
 
 		menuStore.closeAll(null, () => { menuStore.open('blockRelationView', param); });
@@ -259,7 +269,7 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 		preventCommonDrop(true);
 		this.setState({ loading: true });
 		
-		C.UploadFile('', file, I.FileType.Image, true, (message: any) => {
+		C.UploadFile('', file, I.FileType.Image, (message: any) => {
 			this.setState({ loading: false });
 			preventCommonDrop(false);
 			

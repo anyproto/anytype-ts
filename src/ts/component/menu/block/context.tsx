@@ -5,7 +5,7 @@ import { I, C, Mark, Util, DataUtil, focus, keyboard, analytics, Storage } from 
 import { blockStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
-interface Props extends I.Menu {}
+interface Props extends I.Menu {};
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
@@ -61,7 +61,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 			<div className="flex">
 				{block.canTurn() ? (
 					<div className="section">
-						<Icon id={'button-' + blockId + '-style'} arrow={true} tooltip="Switch style" className={[ icon, 'blockStyle' ].join(' ')} onMouseDown={(e: any) => { this.onMark(e, 'style'); }} />
+						<Icon id={'button-' + blockId + '-style'} arrow={true} tooltip="Switch style" tooltipY={I.MenuDirection.Top} className={[ icon, 'blockStyle' ].join(' ')} onMouseDown={(e: any) => { this.onMark(e, 'style'); }} />
 					</div>
 				) : ''}
 				
@@ -80,21 +80,21 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 							if (isSet) {
 								cn.push('active');
 							};
-							return <Icon id={`button-${blockId}-${action.type}`} key={i} className={cn.join(' ')} tooltip={action.name} onMouseDown={(e: any) => { this.onMark(e, action.type); }} />;
+							return <Icon id={`button-${blockId}-${action.type}`} key={i} className={cn.join(' ')} tooltip={action.name} tooltipY={I.MenuDirection.Top}  onMouseDown={(e: any) => { this.onMark(e, action.type); }} />;
 						})}
 					</div>
 				) : ''}
 				
 				{block.canHaveMarks() ? (
 					<div className="section">
-						<Icon id={`button-${blockId}-${I.MarkType.Color}`} className="color" inner={color} tooltip="Сolor" onMouseDown={(e: any) => { this.onMark(e, I.MarkType.Color); }} />
-						<Icon id={`button-${blockId}-${I.MarkType.BgColor}`} className="color" inner={background} tooltip="Background" onMouseDown={(e: any) => { this.onMark(e, I.MarkType.BgColor); }} />
+						<Icon id={`button-${blockId}-${I.MarkType.Color}`} className="color" inner={color} tooltip="Сolor" tooltipY={I.MenuDirection.Top}  onMouseDown={(e: any) => { this.onMark(e, I.MarkType.Color); }} />
+						<Icon id={`button-${blockId}-${I.MarkType.BgColor}`} className="color" inner={background} tooltip="Background" tooltipY={I.MenuDirection.Top}  onMouseDown={(e: any) => { this.onMark(e, I.MarkType.BgColor); }} />
 					</div>
 				) : ''}
 				
 				<div className="section">
-					<Icon id={'button-' + blockId + '-comment'} className="comment dn" tooltip="Comment" onMouseDown={(e: any) => {}} />
-					<Icon id={'button-' + blockId + '-more'} className="more" tooltip="More options" onMouseDown={(e: any) => { this.onMark(e, 'more'); }} />
+					<Icon id={'button-' + blockId + '-comment'} className="comment dn" tooltip="Comment" tooltipY={I.MenuDirection.Top}  onMouseDown={(e: any) => {}} />
+					<Icon id={'button-' + blockId + '-more'} className="more" tooltip="More options" tooltipY={I.MenuDirection.Top}  onMouseDown={(e: any) => { this.onMark(e, 'more'); }} />
 				</div>
 			</div>
 		);
@@ -104,9 +104,9 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { param, close, getId } = this.props;
+		const { param, close, getId, dataset } = this.props;
 		const { data } = param;
-		const { blockId, blockIds, rootId, onChange, dataset, range } = data;
+		const { blockId, blockIds, rootId, onChange, range } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
 
 		if (!block) {
@@ -117,7 +117,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 
 		keyboard.disableContext(true);
 		focus.set(blockId, range);
-		analytics.event(Util.toUpperCamelCase(`${getId()}-action`), { id: type });
+		//analytics.event(Util.toUpperCamelCase(`${getId()}-action`), { id: type });
 
 		if (type != 'style') {
 			focus.apply();
@@ -135,7 +135,6 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 				rootId: rootId,
 				blockId: blockId,
 				blockIds: blockIds,
-				dataset: dataset,
 			} as any,
 		};
 		
@@ -143,7 +142,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 			
 			default:
 				marks = Mark.toggle(marks, { type: type, param: '', range: { from: from, to: to } });
-				menuStore.updateData(this.props.id, { marks: marks });
+				menuStore.updateData(this.props.id, { marks });
 				onChange(marks);
 				break;
 				
@@ -200,7 +199,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 					skipIds: [ rootId ],
 					onChange: (newType: I.MarkType, param: string) => {
 						marks = Mark.toggleLink({ type: newType, param: param, range: { from: from, to: to } }, marks);
-						menuStore.updateData(this.props.id, { marks: marks });
+						menuStore.updateData(this.props.id, { marks });
 						onChange(marks);
 
 						window.setTimeout(() => { focus.apply(); }, 15);
@@ -222,7 +221,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 						Storage.set('color', param);
 
 						marks = Mark.toggle(marks, { type: I.MarkType.Color, param: param, range: { from: from, to: to } });
-						menuStore.updateData(this.props.id, { marks: marks });
+						menuStore.updateData(this.props.id, { marks });
 						onChange(marks);
 					},
 				});
@@ -242,7 +241,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 						Storage.set('bgColor', param);
 
 						marks = Mark.toggle(marks, { type: I.MarkType.BgColor, param: param, range: { from: from, to: to } });
-						menuStore.updateData(this.props.id, { marks: marks });
+						menuStore.updateData(this.props.id, { marks });
 						onChange(marks);
 					},
 				});

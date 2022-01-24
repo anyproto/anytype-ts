@@ -1,12 +1,10 @@
 import * as React from 'react';
 import { Icon, Tag, Filter } from 'ts/component';
-import { I, Util, DataUtil, keyboard, Key } from 'ts/lib';
-import arrayMove from 'array-move';
-import { commonStore, menuStore } from 'ts/store';
+import { I, Util, DataUtil, keyboard, Relation } from 'ts/lib';
+import { menuStore } from 'ts/store';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import 'react-virtualized/styles.css';
 import { observer } from 'mobx-react';
-import { observable } from 'mobx';
 
 interface Props extends I.Menu {}
 
@@ -185,6 +183,13 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 		let item = this.getItems(false)[this.n];
 		let ret = false;
 
+		if (this.n == -1) {
+			keyboard.shortcut('enter', e, (pressed: string) => {
+				this.onOptionAdd();
+				ret = true;
+			});
+		};
+
 		keyboard.shortcut('arrowright', e, (pressed: string) => {
 			this.onEdit(e, item);
 			ret = true;
@@ -217,7 +222,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 		const { data } = param;
 		const { onChange, maxCount } = data;
 
-		let value = DataUtil.getRelationArrayValue(data.value);
+		let value = Relation.getArrayValue(data.value);
 		value.push(id);
 		value = Util.arrayUnique(value);
 
@@ -229,8 +234,8 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 			};
 		};
 
-		data.value = value;
-		menuStore.updateData(MENU_ID, { value: value });
+		menuStore.updateData(this.props.id, { value });
+		menuStore.updateData(MENU_ID, { value });
 
 		onChange(value);
 	};
@@ -244,6 +249,14 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 		const option = { text: filter, color: colors[Util.rand(1, colors.length - 1)].value };
 
 		if (!option.text) {
+			return;
+		};
+
+		const items = this.getItems(false);
+		const match = items.find((it: any) => { return it.text == option.text; });
+
+		if (match) {
+			this.onValueAdd(match.id);
 			return;
 		};
 
@@ -289,7 +302,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 		const { data } = param;
 		const { canAdd, filterMapper } = data;
 		const relation = data.relation.get();
-		const value = DataUtil.getRelationArrayValue(data.value);
+		const value = Relation.getArrayValue(data.value);
 
 		let items = Util.objectCopy(relation.selectDict || []);
 		let sections: any = {};

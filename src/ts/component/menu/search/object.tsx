@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { MenuItemVertical, Filter, Loader, Label, ObjectName } from 'ts/component';
-import { I, C, keyboard, Util, crumbs, DataUtil, translate } from 'ts/lib';
+import { I, C, keyboard, Util, crumbs, DataUtil, translate, analytics } from 'ts/lib';
 import { commonStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
@@ -233,7 +233,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		const { param } = this.props;
 		const { data } = param;
 		const { type, dataMapper, dataSort, skipIds } = data;
-		const { filter } = this.state;
+		const filter = Util.filterFix(this.state.filter);
 		const { config } = commonStore;
 		
 		const filters: any[] = [
@@ -284,6 +284,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 				this.items.sort(dataSort);
 			};
 
+			analytics.event('SearchQuery', { route: 'MenuSearch', length: filter.length });
 			this.setState({ loading: false });
 		});
 	};

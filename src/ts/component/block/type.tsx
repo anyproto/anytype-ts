@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { IconObject, Filter } from 'ts/component';
-import { I, C, DataUtil, Util, focus, keyboard, analytics, history as historyPopup, Storage } from 'ts/lib';
+import { I, C, DataUtil, Util, Onboarding, focus, keyboard, analytics, history as historyPopup, Storage } from 'ts/lib';
 import { dbStore, popupStore, detailStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -81,6 +81,10 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 		);
 	};
 
+	componentDidMount () {
+		Onboarding.start('typeSelect', this.props.isPopup);
+	};
+
 	componentWillUnmount() {
 		this.unbind();
 	};
@@ -116,11 +120,7 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 				return ret; 
 			});
 
-			items.sort((c1: any, c2: any) => {
-				if (c1._sortWeight_ > c2._sortWeight_) return -1;
-				if (c1._sortWeight_ < c2._sortWeight_) return 1;
-				return 0;
-			});
+			items.sort((c1: any, c2: any) => DataUtil.sortByWeight(c1, c2));
 		};
 
 		return items;
@@ -228,7 +228,9 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 	};
 
 	onClick (e: any, item: any) {
-		e.persist();
+		if (e.persist) {
+			e.persist();
+		};
 
 		const { rootId, isPopup } = this.props;
 		const param = {
@@ -237,7 +239,7 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 		};
 		const namespace = isPopup ? '.popup' : '';
 
-		this.getScrollContainer().scrollTop(0);
+		Util.getScrollContainer(isPopup).scrollTop(0);
 		Storage.setScroll('editor' + (isPopup ? 'Popup' : ''), rootId, 0);
 
 		let first = null;
@@ -270,7 +272,7 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 				C.BlockObjectTypeSet(rootId, item.id, onTemplate);
 			};
 
-			analytics.event('ObjectCreate', {
+			analytics.event('CreateObject', {
 				objectType: item.id,
 				layout: template?.layout,
 				template: (template && template.isBundledTemplate ? template.id : 'custom'),
@@ -292,6 +294,11 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 					historyPopup.clear();
 				};
 				DataUtil.objectOpenEvent(e, { id: message.id, layout: I.ObjectLayout.Set });
+
+				analytics.event('CreateObject', {
+					objectType: Constant.typeId.set,
+					layout: I.ObjectLayout.Set,
+				});
 			});
 		} else {
 			DataUtil.checkTemplateCnt([ item.id ], (message: any) => {
@@ -315,11 +322,6 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 		this.setState({ filter: this.ref.getValue() });
 	};
 
-	getScrollContainer () {
-		const { isPopup } = this.props;
-		return isPopup ? $('#popupPage #innerWrap') : $(window);
-	};
-	
 });
 
 export default BlockType;

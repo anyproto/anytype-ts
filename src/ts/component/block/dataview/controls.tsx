@@ -3,6 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { Icon } from 'ts/component';
 import { C, I, Util, analytics } from 'ts/lib';
 import { menuStore, dbStore, blockStore } from 'ts/store';
+import { observable } from 'mobx';
 import { observer } from 'mobx-react';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import arrayMove from 'array-move';
@@ -27,6 +28,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 		super(props);
 
 		this.onButton = this.onButton.bind(this);
+		this.onSortStart = this.onSortStart.bind(this);
 		this.onSortEnd = this.onSortEnd.bind(this);
 		this.onViewAdd = this.onViewAdd.bind(this);
 	};
@@ -66,7 +68,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 				id={'view-item-' + item.id} 
 				className={'viewItem ' + (item.active ? 'active' : '')} 
 				onClick={(e: any) => { this.onViewSet(item); }} 
-				onContextMenu={(e: any) => { this.onViewEdit(e, item); }}
+				onContextMenu={(e: any) => { this.onViewEdit(e, '#views #view-item-' + item.id, item); }}
 			>
 				{item.name}
 			</div>
@@ -83,7 +85,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 					/>
 				))}
 
-				{allowedView ? <Icon id="button-view-add" className="plus" onClick={this.onViewAdd} /> : ''}
+				{allowedView ? <Icon id="button-view-add" className="plus" tooltip="Create new view" onClick={this.onViewAdd} /> : ''}
 			</div>
 		));
 		
@@ -91,12 +93,13 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 			<div className={cn.join(' ')}>
 				<div className="sides">
 					<div id="sideLeft" className="side left">
+						<span />
 						<div className="first">
 							<div 
 								id={'view-item-' + view.id} 
 								className="viewItem active" 
 								onClick={(e: any) => { this.onButton(e, `view-item-${view.id}`, 'dataviewViewList'); }} 
-								onContextMenu={(e: any) => { this.onViewEdit(e, view); }}
+								onContextMenu={(e: any) => { this.onViewEdit(e, '.first #view-item-' + view.id, view); }}
 							>
 								{view.name}
 								<Icon className="arrow" />
@@ -109,6 +112,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 							lockToContainerEdges={true}
 							transitionDuration={150}
 							distance={10}
+							onSortStart={this.onSortStart}
 							onSortEnd={this.onSortEnd}
 							helperClass="isDragging"
 							helperContainer={() => { return $(`#block-${block.id} .views`).get(0); }}
@@ -169,7 +173,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 				blockId: block.id, 
 				getData: getData,
 				getView: getView,
-				view: getView(),
+				view: observable.box(getView()),
 			},
 		});
 	};
@@ -196,16 +200,17 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 		menuStore.open('dataviewViewEdit', {
 			element: `#button-view-add`,
 			horizontal: I.MenuDirection.Center,
+			noFlipY: true,
 			data: {
 				rootId: rootId,
 				blockId: block.id,
 				getData: getData,
 				getView: getView,
-				view: { 
+				view: observable.box({ 
 					type: I.ViewType.Grid,
 					relations: relations,
 					filters: filters,
-				},
+				}),
 				onSave: () => {
 					this.forceUpdate();
 				},
@@ -215,39 +220,54 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 
 	onViewSet (item: any) {
 		this.props.getData(item.id, 0);
-		analytics.event('BlockDataviewViewSet', { type: item.type });
+
+		analytics.event('SwitchView', { type: item.type });
 	};
 
-	onViewEdit (e: any, item: any) {
+	onViewEdit (e: any, element: string, item: any) {
 		e.stopPropagation();
 
-		const { rootId, block, getView } = this.props;
+		const { rootId, block, getView, getData } = this.props;
 		const allowed = blockStore.isAllowed(rootId, block.id, [ I.RestrictionDataview.View ]);
 
 		menuStore.open('dataviewViewEdit', { 
-			element: $(e.currentTarget),
+			element: element,
 			horizontal: I.MenuDirection.Center,
+			noFlipY: true,
 			data: {
 				rootId: rootId,
 				blockId: block.id,
 				readonly: !allowed,
-				view: item,
+				view: observable.box(item),
 				getView: getView,
+				getData: getData,
 				onSave: () => { this.forceUpdate(); },
 			}
 		});
 	};
 
+	onSortStart () {
+		const { dataset } = this.props;
+		const { selection } = dataset;
+
+		selection.preventSelect(true);
+	};
+
 	onSortEnd (result: any) {
 		const { oldIndex, newIndex } = result;
-		const { rootId, block } = this.props;
+		const { rootId, block, dataset } = this.props;
+		const { selection } = dataset;
 
 		let views = dbStore.getViews(rootId, block.id);
 		let view = views[oldIndex];
 		let ids = arrayMove(views.map((it: any) => { return it.id; }), oldIndex, newIndex);
 
 		dbStore.viewsSort(rootId, block.id, ids);
-		C.BlockDataviewViewSetPosition(rootId, block.id, view.id, newIndex);
+		C.BlockDataviewViewSetPosition(rootId, block.id, view.id, newIndex, () => {
+			analytics.event('RepositionView');
+		});
+
+		selection.preventSelect(false);
 	};
 
 	resize () {
@@ -255,7 +275,6 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 		const views = node.find('#views');
 		const sideLeft = node.find('#sideLeft');
 
-		menuStore.closeAll([ 'dataviewViewList', 'dataviewViewEdit' ]);
 		views.width() > sideLeft.outerWidth() ? sideLeft.addClass('small') : sideLeft.removeClass('small');
 	};
 

@@ -168,7 +168,6 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, St
 	};
 
 	open () {
-		const { history } = this.props;
 		const rootId = this.getRootId();
 
 		if (this.id == rootId) {
@@ -184,7 +183,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, St
 				if (message.error.code == Errors.Code.NOT_FOUND) {
 					this.setState({ isDeleted: true });
 				} else {
-					history.push('/main/index');
+					Util.route('/main/index');
 				};
 				return;
 			};
@@ -211,7 +210,6 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, St
 		if (isPopup && (match.params.id == rootId)) {
 			close = false;
 		};
-
 		if (close) {
 			Action.pageClose(rootId, true);
 		};
@@ -237,13 +235,20 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, St
 			data: {
 				filter: '',
 				rootId: rootId,
+				ref: 'set',
 				menuIdEdit: 'blockRelationEdit',
 				skipIds: relations.map((it: I.Relation) => { return it.relationKey; }),
 				listCommand: (rootId: string, blockId: string, callBack?: (message: any) => void) => {
 					C.ObjectRelationListAvailable(rootId, callBack);
 				},
-				addCommand: (rootId: string, blockId: string, relation: any) => {
-					C.ObjectRelationAdd(rootId, relation, () => { menuStore.close('relationSuggest'); });
+				addCommand: (rootId: string, blockId: string, relation: any, onChange?: (relation: any) => void) => {
+					C.ObjectRelationAdd(rootId, relation, () => { 
+						menuStore.close('relationSuggest'); 
+
+						if (onChange) {
+							onChange(relation);
+						};
+					});
 				},
 			}
 		});
@@ -377,27 +382,14 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, St
 		
 		const win = $(window);
 		const { isPopup } = this.props;
-		const rootId = this.getRootId();
-		const check = DataUtil.checkDetails(rootId);
 		const node = $(ReactDOM.findDOMNode(this));
 		const cover = node.find('.block.blockCover');
-		const controls = node.find('.editorControls');
-		const wrapper = node.find('.blocks.wrapper');
 		const obj = $(isPopup ? '#popupPage #innerWrap' : '.page.isFull');
 		const header = obj.find('#header');
 		const hh = header.height();
 
 		if (cover.length) {
 			cover.css({ top: hh });
-		};
-
-		if (controls.length) {	
-			controls.css({ top: hh, height: 128 - hh });
-			wrapper.css({ paddingTop: 128 - hh + 10 });
-		};
-
-		if (check.withCover) {
-			wrapper.css({ paddingTop: 330 });
 		};
 
 		obj.css({ minHeight: isPopup ? '' : win.height() });

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { I, DataUtil } from 'ts/lib';
+import { translate } from '../../../lib';
 
 interface Props {
 	object: any;
@@ -18,7 +19,7 @@ class Name extends React.Component<Props, {}> {
 
 		let name = '';
 		if (layout == I.ObjectLayout.Note) {
-			name = snippet || <span className="empty">Empty</span>;
+			name = snippet || <span className="empty">{translate('commonEmpty')}</span>;
 		} else {
 			name = object.name || DataUtil.defaultName('page');
 		};

@@ -14,13 +14,14 @@ html.themeDark {
 
     #root > .loaderWrapper { background: $colorBlack; }
     #root > .loaderWrapper {
-        .logo { background-image: url('~img/theme/dark/logo/color.svg'); }
+        .logo { background-image: url('#{$themePath}/logo/color.svg'); }
     }
 
     ::selection { color: $colorBlack; }
 	
     .cover::after {
         content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: rgba(0,0,0,0.2);
+        border-radius: inherit;
     }
     .cover.type2.black { background-color: #000 !important; }
 
@@ -29,20 +30,32 @@ html.themeDark {
     ::-webkit-input-placeholder { color: $colorTertiary !important; }
     ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.5); }
 
-    .bgColor { color: $colorTertiary; }
     .textColor-default { color: $colorPrimary; }
 
+    .bgColor-grey { background: rgba(140, 158, 165, 0.25) !important; }
+    .bgColor-yellow { background: rgba(236, 217, 27, 0.25) !important; }
+    .bgColor-orange { background: rgba(255, 181, 34, 0.25) !important; }
+    .bgColor-red { background: rgba(245, 85, 34, 0.25) !important; }
+    .bgColor-pink { background: rgba(229, 28, 160, 0.25) !important; }
+    .bgColor-purple { background: rgba(171, 80, 204, 0.25) !important; }
+    .bgColor-blue { background: rgba(62, 88, 235, 0.25) !important; }
+    .bgColor-ice { background: rgba(42, 167, 238, 0.25) !important; }
+    .bgColor-teal { background: rgba(15, 200, 186, 0.25) !important; }
+    .bgColor-lime { background: rgba(93, 212, 0, 0.25) !important; }
+
     .isTag.tagColor-default { color: $colorPrimary !important; background: $colorBlack !important; box-shadow: 0px 0px 0px 1px $colorLinePrimary inset; }
-    .isTag.tagColor-grey { color: #4b4b4b !important; background: #b0b0b0 !important; }
-    .isTag.tagColor-yellow { color: #ad8620 !important; background: #f9d77e !important; }
-    .isTag.tagColor-orange { color: #a85c34 !important; background: #f4ad88 !important; }
-    .isTag.tagColor-red { color: #a64949 !important; background: #f5a6a6 !important; }
-    .isTag.tagColor-pink { color: #965088 !important; background: #eda2de !important; }
-    .isTag.tagColor-purple { color: #6948b4 !important; background: #c8b2fa !important; }
-    .isTag.tagColor-blue { color: #274ccd !important; background: #99afff !important; }
-    .isTag.tagColor-ice { color: #3d69aa !important; background: #a4c7fa !important; }
-    .isTag.tagColor-teal { color: #2f876f !important; background: #8bdac4 !important; }
-    .isTag.tagColor-lime { color: #388a2b !important; background: #b1f5a6 !important; }
+    .isTag.tagColor-grey { color: #8C9EA5 !important; background: rgba(140, 158, 165, 0.25) !important; }
+    .isTag.tagColor-yellow { color: $colorYellow !important; background: rgba(236, 217, 27, 0.25) !important; }
+    .isTag.tagColor-orange { color: $colorOrange !important; background: rgba(255, 181, 34, 0.25) !important; }
+    .isTag.tagColor-red { color: $colorRed !important; background: rgba(245, 85, 34, 0.25) !important; }
+    .isTag.tagColor-pink { color: $colorPink !important; background: rgba(229, 28, 160, 0.25) !important; }
+    .isTag.tagColor-purple { color: $colorPurple !important; background: rgba(171, 80, 204, 0.25) !important; }
+    .isTag.tagColor-blue { color: $colorBlue !important; background: rgba(62, 88, 235, 0.25) !important; }
+    .isTag.tagColor-ice { color: $colorIce !important; background: rgba(42, 167, 238, 0.25) !important; }
+    .isTag.tagColor-teal { color: $colorTeal !important; background: rgba(15, 200, 186, 0.25) !important; }
+    .isTag.tagColor-lime { color: $colorLime !important; background: rgba(93, 212, 0, 0.25) !important; }
+
+    .isStatus.tagColor-default { color: $colorPrimary !important; }
 
     /* Components */
     /* ---------------------------------------------------------------- */
@@ -74,7 +87,7 @@ html.themeDark {
     .select { border-color: $colorLinePrimary; }
     .select:hover, .select.active { background: $colorHover; }
     .select {
-        .icon.arrow { background-image: url('~img/theme/dark/arrow/select/dark.svg') !important; }
+        .icon.arrow { background-image: url('#{$themePath}/arrow/select/dark.svg') !important; }
     }
 
     .inputWithFile { background: $colorHover; color: $colorSecondary; border-color: transparent; }
@@ -89,9 +102,9 @@ html.themeDark {
         .item.add { border-color: $colorLinePrimary; }
         .item:before { background: $colorHover; }
 
-        .icon.arrow { background-image: url('~img/theme/dark/arrow/template0.svg'); }
-        .icon.arrow:hover { background-image: url('~img/theme/dark/arrow/template1.svg'); }
-        .icon.arrow.disabled:hover { background-image: url('~img/theme/dark/arrow/template0.svg'); }
+        .icon.arrow { background-image: url('#{$themePath}/arrow/template0.svg'); }
+        .icon.arrow:hover { background-image: url('#{$themePath}/arrow/template1.svg'); }
+        .icon.arrow.disabled:hover { background-image: url('#{$themePath}/arrow/template0.svg'); }
     }
 
     /* PreviewObject */
@@ -99,7 +112,7 @@ html.themeDark {
     .previewObject {
         .border { border-color: $colorLinePrimary; }
         .loaderWrapper { border-color: $colorLinePrimary; }
-        .icon.logo { background-image: url('~img/theme/dark/icon/type/logo.svg'); }
+        .icon.logo { background-image: url('#{$themePath}/icon/type/logo.svg'); }
         .heading {
             .iconObject { background-color: $colorBgIcon; box-shadow: 0px 0px 0px 1px $colorBlack inset; }
             .featured { color: $colorSecondary; }
@@ -109,6 +122,12 @@ html.themeDark {
         .blocks {
             .element {
                 .line { background: $colorSecondary; }
+
+                .inner {
+                    .bookmark {
+                        .side.left { border-color: $colorLinePrimary; }
+                    }
+                }
             }
         }
     }
@@ -135,10 +154,15 @@ html.themeDark {
     .pager {
         .pageItem:hover { color: $colorPrimary; }
         .pageItem.active { color: $colorOrange; }
+        .pageItem.list:hover { color: $colorPrimary; }
 
-        .icon.arrow { background-image: url('~img/theme/dark/arrow/pager0.svg'); }
-        .icon.arrow:hover { background-image: url('~img/theme/dark/arrow/pager1.svg'); }
-        .icon.arrow.disabled:hover { background-image: url('~img/theme/dark/arrow/pager0.svg'); }
+        .icon.arrow { background-image: url('#{$themePath}/arrow/pager0.svg'); }
+        .icon.arrow:hover { background-image: url('#{$themePath}/arrow/pager1.svg'); }
+        .icon.arrow.disabled:hover { background-image: url('#{$themePath}/arrow/pager0.svg'); }
+
+        .icon.arrow.end { background-image: url('#{$themePath}/arrow/pagerEnd0.svg'); cursor: pointer; }
+        .icon.arrow.end:hover { background-image: url('#{$themePath}/arrow/pagerEnd1.svg'); }
+        .icon.arrow.end.disabled:hover { background-image: url('#{$themePath}/arrow/pagerEnd0.svg'); }
     }
 
     /* Progress */
@@ -155,17 +179,19 @@ html.themeDark {
 
     /* Icon */
 
-    .icon.ghost { background-image: url('~img/theme/dark/icon/ghost.svg'); }
+    .icon.ghost { background-image: url('#{$themePath}/icon/ghost.svg'); }
 
     /* IconObject */
 
-    .iconObject.c56 { background-color: $colorBgIcon; }
-    .iconObject.c64 { background-color: $colorBgIcon; }
-    .iconObject.c96 { background-color: $colorBgIcon; }
-    .iconObject.c112 { background-color: $colorBgIcon; }
-    .iconObject.c128 { background-color: $colorBgIcon; }
-    .iconObject.c40.isRelation, .iconObject.c48.isRelation { background-color: $colorBgIcon; }
-    .iconObject.withLetter { background-color: $colorBgIcon; }
+    .iconObject.c40.isRelation, 
+    .iconObject.c48.isRelation,
+    .iconObject.c56, 
+    .iconObject.c64, 
+    .iconObject.c96,
+    .iconObject.c112,
+    .iconObject.c128,
+    .iconObject.withLetter
+    { background-color: $colorBgIcon; }
 
     /* EditorControls */
 
@@ -174,16 +200,16 @@ html.themeDark {
         .btn:hover { color: $colorPrimary; }
 
         .btn {
-            .icon.icon { background-image: url('~img/theme/dark/icon/add/icon0.svg'); }
-            .icon.addCover { background-image: url('~img/theme/dark/icon/add/cover0.svg'); }
-            .icon.layout { background-image: url('~img/theme/dark/icon/add/layout0.svg'); }
-            .icon.relation { background-image: url('~img/theme/dark/icon/add/relation0.svg');  }
+            .icon.icon { background-image: url('#{$themePath}/icon/add/icon0.svg'); }
+            .icon.addCover { background-image: url('#{$themePath}/icon/add/cover0.svg'); }
+            .icon.layout { background-image: url('#{$themePath}/icon/add/layout0.svg'); }
+            .icon.relation { background-image: url('#{$themePath}/icon/add/relation0.svg');  }
         }
         .btn:hover, .btn.hover {
-            .icon.icon { background-image: url('~img/theme/dark/icon/add/icon1.svg'); }
-            .icon.addCover { background-image: url('~img/theme/dark/icon/add/cover1.svg'); }
-            .icon.layout { background-image: url('~img/theme/dark/icon/add/layout1.svg'); }
-            .icon.relation { background-image: url('~img/theme/dark/icon/add/relation1.svg');  }
+            .icon.icon { background-image: url('#{$themePath}/icon/add/icon1.svg'); }
+            .icon.addCover { background-image: url('#{$themePath}/icon/add/cover1.svg'); }
+            .icon.layout { background-image: url('#{$themePath}/icon/add/layout1.svg'); }
+            .icon.relation { background-image: url('#{$themePath}/icon/add/relation1.svg');  }
         }
     }
 
@@ -214,14 +240,14 @@ html.themeDark {
         .side {
             .item { color: $colorSecondary; }
             .item {
-                .icon.arrow { background-image: url('~img/theme/dark/arrow/history0.svg'); margin: 0px; }
+                .icon.arrow { background-image: url('#{$themePath}/arrow/history0.svg'); margin: 0px; }
             }
         }
         
 		.item.grey:hover { color: $colorPrimary; }
 
 		.item:hover {
-			.icon.arrow { background-image: url('~img/theme/dark/arrow/history1.svg'); }
+			.icon.arrow { background-image: url('#{$themePath}/arrow/history1.svg'); }
 		}
     }
 
