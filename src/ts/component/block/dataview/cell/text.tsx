@@ -163,12 +163,13 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 			};
 
 			if (relation.format == I.RelationType.Number) {
-				let mapped = Relation.mapRelationValue(relation, value);
-				if (mapped !== null) {
-					value = mapped;
-				} else
 				if (value !== null) {
-					value = Util.formatNumber(value);
+					let mapped = Relation.mapRelationValue(relation, value);
+					if (mapped !== null) {
+						value = mapped;
+					} else {
+						value = Util.formatNumber(value);
+					};
 				} else {
 					value = '';
 				};
