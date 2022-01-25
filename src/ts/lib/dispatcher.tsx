@@ -542,6 +542,7 @@ class Dispatcher {
 					// Subscriptions
 					subIds.forEach((it: string) => {
 						const [ subId, dep ] = it.split('/');
+
 						if (!dep) {
 							const record = dbStore.getRecord(subId, '', id);
 							if (!record) {
