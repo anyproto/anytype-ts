@@ -346,12 +346,10 @@ class MenuBlockAction extends React.Component<Props, State> {
 			return;
 		};
 		
-		const { param, close, getId, setActive, dataset } = this.props;
+		const { param, close, getId, setActive } = this.props;
 		const { data } = param;
 		const { blockId, blockIds, rootId } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
-		const { config } = commonStore;
-		
 		if (!block) {
 			return;
 		};
@@ -371,6 +369,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 		const el = node.find('#item-' + item.id);
 		const offsetX = node.outerWidth();
 		
+		let ids: string[] = [];
 		let filters = [];
 		let menuId = '';
 		let menuParam: I.MenuParam = {
@@ -389,6 +388,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 
 		switch (item.itemId) {
 			case 'turnStyle':
+				ids = DataUtil.selectionGet(blockId, true, this.props);
 				menuId = 'blockStyle';
 
 				if (item.isDiv || item.isFile) {
@@ -399,19 +399,19 @@ class MenuBlockAction extends React.Component<Props, State> {
 				menuParam.data = Object.assign(menuParam.data, {
 					onSelect: (item: any) => {
 						if (item.type == I.BlockType.Text) {
-							C.BlockListTurnInto(rootId, blockIds, item.itemId, (message: any) => {
+							C.BlockListTurnInto(rootId, ids, item.itemId, (message: any) => {
 								this.setFocus(blockIds[0]);
 							});
 						};
 
 						if (item.type == I.BlockType.Div) {
-							C.BlockListSetDivStyle(rootId, blockIds, item.itemId, (message: any) => {
+							C.BlockListSetDivStyle(rootId, ids, item.itemId, (message: any) => {
 								this.setFocus(blockIds[0]);
 							});
 						};
 
 						if (item.type == I.BlockType.File) {
-							C.BlockListSetFileStyle(rootId, blockIds, item.itemId, (message: any) => {
+							C.BlockListSetFileStyle(rootId, ids, item.itemId, (message: any) => {
 								this.setFocus(blockIds[0]);
 							});
 						};
