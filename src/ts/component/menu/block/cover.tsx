@@ -105,7 +105,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 				this.items.push({
 					id: item.id,
 					type: I.CoverType.Source,
-					src: item.url + '&w=200',
+					src: item.url,
 				});
 			});
 
