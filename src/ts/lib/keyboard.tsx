@@ -205,10 +205,17 @@ class Keyboard {
 		let targetId = '';
 		let position = I.BlockPosition.Bottom;
 		let rootId = '';
+		let root: any = null;
 		let details: any = { isDraft: true };
 		
 		if (this.isMainEditor()) {
 			rootId = this.getRootId();
+			root = blockStore.getLeaf(rootId, rootId);
+
+			if (!root || root.isLocked()) {
+				return;
+			};
+
 			details = {};
 
 			const fb = blockStore.getLeaf(rootId, focused);

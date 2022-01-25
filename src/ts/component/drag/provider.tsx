@@ -120,7 +120,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 
 		const rootId = keyboard.getRootId();
 		const root = blockStore.getLeaf(rootId, rootId);
-		if (!root || root.fields.isLocked) {
+		if (!root || root.isLocked()) {
 			return;
 		};
 

@@ -46,7 +46,7 @@ const FooterMainEdit = observer(class FooterMainEdit extends React.Component<Pro
 		};
 
 		const allowed = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Block ]);
-		return allowed && !root.fields.isLocked && !root.isObjectRelation() && !root.isObjectType() && !root.isObjectSet() && !root.isObjectFileKind();
+		return allowed && !root.isLocked() && !root.isObjectRelation() && !root.isObjectType() && !root.isObjectSet() && !root.isObjectFileKind();
 	};
 
 	onAdd (e: any) {
