@@ -368,14 +368,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const checkType = blockStore.checkBlockType(rootId);
 		const readonly = this.isReadonly();
 
-		if (!root || readonly || checkType) {
+		if (!root || readonly || checkType || (root && root.isLocked())) {
 			return;
 		};
 
-		if (root.fields.isLocked) {
-			return;
-		};
-		
 		const container = $('.editor');
 		if (!container.length) {
 			return;

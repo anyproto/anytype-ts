@@ -201,6 +201,7 @@ class DbStore {
 			meta.total = Number(meta.total) || 0;
 			meta.offset = Math.max(0, Number(meta.offset) || 0);
 			meta.viewId = String(meta.viewId || '');
+			meta.keys = meta.keys || [];
 			meta = observable(meta);
 
 			intercept(meta as any, (change: any) => {

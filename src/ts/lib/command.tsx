@@ -951,7 +951,7 @@ const OnSubscribe = (subId: string, keys: string[], message: any) => {
 	};
 
 	if (message.counters) {
-		dbStore.metaSet(subId, '', { total: message.counters.total });
+		dbStore.metaSet(subId, '', { total: message.counters.total, keys: keys });
 	};
 
 	let details = [];
