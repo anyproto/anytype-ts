@@ -188,7 +188,7 @@ class Util {
 					o[k] = this.fieldsMap(o[k]['fieldsMap']);
 				};
 			} else 
-			if (!o[k]) {
+			if (('undefined' == typeof(o[k])) || (o[k] === null)) {
 				delete(o[k]);
 			};
 		};
@@ -923,7 +923,13 @@ class Util {
 		if (range) {
 			rect = range.getBoundingClientRect() as DOMRect;
 		};
-		return this.objectCopy(rect);
+		rect = this.objectCopy(rect);
+
+		if (!rect.x && !rect.y && !rect.width && !rect.height) {
+			rect = null;
+		};
+
+		return rect;
 	};
 
 	cntWord (cnt: any, w1: string, w2?: string) {

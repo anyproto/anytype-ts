@@ -532,7 +532,8 @@ class DataUtil {
 	};
 
 	menuGetBlockMedia () {
-		let ret: any[] = [
+		const { config } = commonStore;
+		const ret: any[] = [
 			{ type: I.BlockType.File, id: I.FileType.File, icon: 'file', lang: 'File' },
 			{ type: I.BlockType.File, id: I.FileType.Image, icon: 'image', lang: 'Image' },
 			{ type: I.BlockType.File, id: I.FileType.Video, icon: 'video', lang: 'Video' },
@@ -541,8 +542,11 @@ class DataUtil {
 			{ type: I.BlockType.Bookmark, id: 'bookmark', icon: 'bookmark', lang: 'Bookmark' },
 			{ type: I.BlockType.Text, id: I.TextStyle.Code, icon: 'code', lang: 'Code' },
 			{ type: I.BlockType.Latex, id: I.BlockType.Latex, icon: 'latex', lang: 'Latex' },
-			{ type: I.BlockType.TableOfContents, id: I.BlockType.TableOfContents, icon: 'latex', lang: 'TableOfContents' }
 		];
+
+		if (config.experimental) {
+			ret.push({ type: I.BlockType.TableOfContents, id: I.BlockType.TableOfContents, icon: 'latex', lang: 'TableOfContents' });
+		};
 		return ret.map(this.menuMapperBlock);
 	};
 

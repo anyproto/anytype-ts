@@ -316,7 +316,7 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<Pro
 			relationKey: first.id, 
 			operator: I.FilterOperator.And, 
 			condition: condition as I.FilterCondition,
-			value: Relation.formatRelationValue(first, null, false),
+			value: Relation.formatValue(first, null, false),
 		};
 
 		view.filters.push(newItem);

@@ -60,7 +60,7 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 		let value = record[relation.relationKey];
 
 		if ([ I.RelationType.Date, I.RelationType.Number ].includes(relation.format)) {
-			value = Relation.formatRelationValue(relation, record[relation.relationKey], true);
+			value = Relation.formatValue(relation, record[relation.relationKey], true);
 			if (relation.format == I.RelationType.Number) {
 				value = value === null ? null : String(value);
 			};
@@ -163,12 +163,13 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 			};
 
 			if (relation.format == I.RelationType.Number) {
-				let mapped = Relation.mapRelationValue(relation, value);
-				if (mapped !== null) {
-					value = mapped;
-				} else
 				if (value !== null) {
-					value = Util.formatNumber(value);
+					let mapped = Relation.mapValue(relation, value);
+					if (mapped !== null) {
+						value = mapped;
+					} else {
+						value = Util.formatNumber(value);
+					};
 				} else {
 					value = '';
 				};
@@ -237,7 +238,7 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 		const record = getRecord(index);
 
 		this._isMounted = true;
-		this.setValue(Relation.formatRelationValue(relation, record[relation.relationKey], true));
+		this.setValue(Relation.formatValue(relation, record[relation.relationKey], true));
 	};
 
 	componentDidUpdate () {
@@ -272,7 +273,7 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 			};
 
 			if (relation.format == I.RelationType.Number) {
-				value = Relation.formatRelationValue(relation, this.value, true);
+				value = Relation.formatValue(relation, this.value, true);
 				value = value === null ? null : String(value);
 			};
 

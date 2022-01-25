@@ -244,7 +244,7 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 		value = value.filter((it: any) => { return it != item.id; });
 		
 		if (relation) {
-			value = Relation.formatRelationValue(relation, value, true);
+			value = Relation.formatValue(relation, value, true);
 		};
 
 		this.n = -1;
@@ -272,7 +272,7 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 
 		let value = Relation.getArrayValue(data.value);
 		value = arrayMove(value, oldIndex - 1, newIndex - 1);
-		value = Relation.formatRelationValue(relation, value, true);
+		value = Relation.formatValue(relation, value, true);
 
 		onChange(value, () => {
 			menuStore.updateData(id, { value });
