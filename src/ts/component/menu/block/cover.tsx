@@ -211,10 +211,10 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 		let sections: any[] = [
 			{ name: 'Solid colors', children: DataUtil.coverColors() },
 			{ name: 'Gradients', children: DataUtil.coverGradients() },
-			{ name: 'Unsplash', children: this.items },
 		];
-
 		sections = DataUtil.menuSectionsFilter(sections, filter);
+		sections.push({ name: 'Unsplash', children: this.items });
+
 		return sections;
 	};
 });
