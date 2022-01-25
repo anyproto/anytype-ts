@@ -35,3 +35,6 @@ Follow instructions at [go-anytype-middleware](https://github.com/anytypeio/go-a
 ------------
 
 	npm run dist:(mac|win|linux)
+	
+### NPM env vars	
+	- ELECTRON_SKIP_NOTARIZE=1 - skip MacOS notarization process
