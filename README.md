@@ -19,7 +19,14 @@ Follow instructions at [go-anytype-middleware](https://github.com/anytypeio/go-a
 ## Run the local dev-server
 ------------
 
+	### MacOS, Linux
+	------------
+
 	SERVER_PORT=<PORT> ANYPROF=:<PROFILER_PORT> npm run start:dev
+
+	### Windows
+
+	SERVER_PORT=<PORT> ANYPROF=:<PROFILER_PORT> npm run start:dev-win
 	
 	### NPM env vars
 	------------
@@ -28,7 +35,7 @@ Follow instructions at [go-anytype-middleware](https://github.com/anytypeio/go-a
 	
 	### GO env vars
 	
-	- ANYPROF - profiler port, access [http://localhost:<PORT>/debug/pprof/profile?seconds=30](http://localhost:<PORT>/debug/pprof/profile?seconds=30) for profiling
+	- ANYPROF - profiler port, access http://localhost:<PORT>/debug/pprof/profile?seconds=30 for profiling
   
 ## Build
 ------------
