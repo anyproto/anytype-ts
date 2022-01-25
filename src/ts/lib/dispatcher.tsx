@@ -630,64 +630,81 @@ class Dispatcher {
 					break;
 
 				case 'subscriptionAdd':
-					if (rootId.match('/dep')) {
-						break;
-					};
-
 					id = data.getId();
 					afterId = data.getAfterid();
+					subId = data.getSubid();
 
-					records = dbStore.getRecords(rootId, '');
-					oldIndex = records.findIndex((it: any) => { return it.id == id; });
-					newIndex = 0;
+					(() => {
+						const [ sid, dep ] = subId.split('/');
 
-					if (afterId) {
-						newIndex = records.findIndex((it: any) => { return it.id == afterId; });
-					};
+						if (dep) {
+							return;
+						};
 
-					dbStore.recordsSet(rootId, '', arrayMove(records, oldIndex, newIndex));
+						records = dbStore.getRecords(sid, '');
+						oldIndex = records.findIndex((it: any) => { return it.id == id; });
+						newIndex = 0;
+	
+						if (afterId) {
+							newIndex = records.findIndex((it: any) => { return it.id == afterId; });
+						};
+	
+						dbStore.recordsSet(sid, '', arrayMove(records, oldIndex, newIndex));
+					})();
 					break;
 
 				case 'subscriptionRemove':
-					if (rootId.match('/dep')) {
-						break;
-					};
-
 					id = data.getId();
-					dbStore.recordDelete(rootId, '', id);
+					subId = data.getSubid();
+
+					(() => {
+						const [ sid, dep ] = subId.split('/');
+
+						if (!dep) {
+							dbStore.recordDelete(sid, '', id);
+						};
+					})();
 					break;
 
 				case 'subscriptionPosition':
-					if (rootId.match('/dep')) {
-						break;
-					};
-
 					id = data.getId();
 					afterId = data.getAfterid();
+					subId = data.getSubid();
 
-					records = dbStore.getRecords(rootId, '');
-					oldIndex = records.findIndex((it: any) => { return it.id == id; });
-					newIndex = 0;
+					(() => {
+						const [ sid, dep ] = subId.split('/');
 
-					if (afterId) {
-						newIndex = records.findIndex((it: any) => { return it.id == afterId; });
-					};
+						if (!dep) {
+							dbStore.recordDelete(sid, '', id);
+						};
 
-					if (oldIndex != newIndex) {
-						dbStore.recordsSet(rootId, '', arrayMove(records, oldIndex, newIndex));
-					};
+						records = dbStore.getRecords(sid, '');
+						oldIndex = records.findIndex((it: any) => { return it.id == id; });
+						newIndex = 0;
+
+						if (afterId) {
+							newIndex = records.findIndex((it: any) => { return it.id == afterId; });
+						};
+
+						if (oldIndex != newIndex) {
+							dbStore.recordsSet(sid, '', arrayMove(records, oldIndex, newIndex));
+						};
+					})();
 					break;
 
 				case 'subscriptionCounters':
-					if (rootId.match('/dep')) {
-						break;
-					};
-
 					const total = data.getTotal();
 					const nextCount = data.getNextcount();
 					const prevCount = data.getPrevcount();
+					subId = data.getSubid();
 
-					dbStore.metaSet(rootId, '', { total: total });
+					(() => {
+						const [ sid, dep ] = subId.split('/');
+
+						if (dep) {
+							dbStore.metaSet(sid, '', { total: total });
+						};
+					})();
 					break;
 
 				case 'processNew':
