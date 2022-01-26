@@ -1100,7 +1100,6 @@ class Util {
 	resizeHeaderFooter (width: number) {
 		const { sidebar } = commonStore;
 		const { fixed, snap } = sidebar;
-		const win = $(window);
 		const header = $('#page #header');
 		const footer = $('#page #footer');
 		const css: any = {};
@@ -1111,6 +1110,9 @@ class Util {
 		if (fixed) {
 			css.width = header.outerWidth() - width;
 		};
+
+		console.log(css, width);
+		console.trace();
 
 		header.removeClass('withSidebar');
 

@@ -352,9 +352,6 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 	};
 	
 	resize () {
-		const { sidebar } = commonStore;
-		const { width } = sidebar;
-
 		raf(() => {
 			if (!this._isMounted) {
 				return;
@@ -363,8 +360,6 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 			if (this.refChild && this.refChild.resize) {
 				this.refChild.resize();			
 			};
-
-			Util.resizeHeaderFooter(width);
 		});
 	};
 	
