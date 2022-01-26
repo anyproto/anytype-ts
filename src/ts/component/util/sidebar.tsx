@@ -27,16 +27,20 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		nodes: [],
 		edges: [],
 	};
-	ox: number = 0;
 	loaded: boolean = false;
 	top: number = 0;
 	id: string = '';
+	dx: number = 0;
+	dy: number = 0;
+	width: number = 0;
+	height: number = 0;
 
 	constructor (props: any) {
 		super(props);
 
 		this.onExpand = this.onExpand.bind(this);
 		this.onResizeStart = this.onResizeStart.bind(this);
+		this.onDragStart = this.onDragStart.bind(this);
 		this.onMouseLeave = this.onMouseLeave.bind(this);
 	};
 
@@ -44,11 +48,18 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		const { account } = authStore;
 		const { sidebar } = commonStore;
 		const { root, profile } = blockStore;
-		const { width, height, x, y, fixed } = sidebar;
+		const { width, height, x, y, fixed, snap } = sidebar;
 		const { loading } = this.state;
 		const sections = this.getSections();
 		const css: any = { width: sidebar.width };
 		const cn = [ 'sidebar' ];
+
+		if (snap == I.MenuDirection.Left) {
+			cn.push('left');
+		};
+		if (snap == I.MenuDirection.Right) {
+			cn.push('right');
+		};
 
 		if (!account) {
 			return null;
@@ -129,7 +140,8 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 
 		return (
             <div id="sidebar" className={cn.join(' ')} style={css} onMouseLeave={this.onMouseLeave}>
-				<div className="head">
+
+				<div className="head" onMouseDown={this.onDragStart}>
 					<Icon className={fixed ? 'close' : 'expand'} onClick={this.onExpand} />
 				</div>
 				
@@ -194,13 +206,17 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 	};
 
 	restore () {
+		const { sidebar } = commonStore;
+		const { x, y, snap } = sidebar;
 		const node = $(ReactDOM.findDOMNode(this));
 		const body = node.find('.body');
 		const toggle = Storage.getToggle('sidebar');
 
 		toggle.forEach((it: string) => { this.childrenShow(it); });
 		body.scrollTop(this.top);
+
 		this.setActive();
+		this.setStyle(x, y, snap);
 	};
 
 	load () {
@@ -374,13 +390,17 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 	};
 
 	onMouseLeave (e: any) {
-		if (!this._isMounted || keyboard.isResizing) {
+		if (!this._isMounted || keyboard.isResizing || keyboard.isDragging) {
 			return;
 		};
 
-		const node = $(ReactDOM.findDOMNode(this));
+		const { sidebar } = commonStore;
+		const { x, snap } = sidebar;
 
-		node.removeClass('active');
+		if (snap) {
+			const node = $(ReactDOM.findDOMNode(this));
+			node.removeClass('active');
+		};
 	};
 
 	onResizeStart (e: any) {
@@ -393,8 +413,10 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		const node = $(ReactDOM.findDOMNode(this));
 		const win = $(window);
 		const body = $('body');
+		const offset = node.offset();
 		
-		this.ox = node.offset().left;
+		this.dx = e.pageX - offset.left;
+		this.dy = e.pageY - offset.top;
 
 		if (selection) {
 			selection.preventSelect(true);
@@ -409,7 +431,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 
 	onResizeMove (e: any) {
 		const node = $(ReactDOM.findDOMNode(this));
-		const w = this.getWidth(e.pageX - this.ox);
+		const w = this.getWidth(e.pageX - this.dx);
 
 		this.resizeHeaderFooter(w);
 
@@ -421,7 +443,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		const { dataset } = this.props;
 		const { selection } = dataset || {};
 
-		commonStore.sidebarSet({ width: this.getWidth(e.pageX - this.ox) });
+		commonStore.sidebarSet({ width: this.getWidth(e.pageX - this.dx) });
 
 		if (selection) {
 			selection.preventSelect(false);
@@ -432,9 +454,104 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		$(window).unbind('mousemove.sidebar mouseup.sidebar');
 	};
 
+	onDragStart (e: any) {
+		const { dataset } = this.props;
+		const { selection } = dataset || {};
+		const { sidebar } = commonStore;
+		const { fixed } = sidebar;
+
+		if (fixed) {
+			return;
+		};
+
+		const win = $(window);
+		const node = $(ReactDOM.findDOMNode(this));
+		const offset = node.offset();
+
+		this.width = node.width();
+		this.height = node.height();
+		this.dx = e.pageX - offset.left;
+		this.dy = e.pageY - offset.top;
+
+		keyboard.setDrag(true);
+		if (selection) {
+			selection.preventSelect(false);
+		};
+
+		win.unbind('mousemove.sidebar mouseup.sidebar');
+		win.on('mousemove.sidebar', (e: any) => { this.onDragMove(e); });
+		win.on('mouseup.sidebar', (e: any) => { this.onDragEnd(e); });
+	};
+
+	onDragMove (e: any) {
+		const win = $(window);
+		const x = e.pageX - this.dx - win.scrollLeft();
+		const y = e.pageY - this.dy - win.scrollTop();
+
+		this.setStyle(x, y, null);
+	};
+
+	onDragEnd (e: any) {
+		const { dataset } = this.props;
+		const { selection } = dataset || {};
+		const { sidebar } = commonStore;
+		const { width } = sidebar;
+		const win = $(window);
+		
+		let x = e.pageX - this.dx - win.scrollLeft();
+		let y = e.pageY - this.dy - win.scrollTop();
+		let snap = null;
+
+		if (x <= 20) {
+			snap = I.MenuDirection.Left;
+		};
+		if (x + width >= win.width() - 20) {
+			snap = I.MenuDirection.Right;
+		};
+
+		if (snap !== null) {
+			x = y = 0;
+		};
+
+		commonStore.sidebarSet({ x, y, snap });
+		this.setStyle(x, y, snap);
+
+		$(window).unbind('mousemove.sidebar mouseup.sidebar');
+
+		keyboard.setDrag(false);
+		if (selection) {
+			selection.preventSelect(false);
+		};
+	};
+
 	getWidth (w: number) {
 		const size = Constant.size.sidebar;
 		return Math.max(size.min, Math.min(size.max, w));
+	};
+
+	checkCoords (x: number, y: number): { x: number, y: number } {
+		const win = $(window);
+
+		x = Number(x);
+		x = Math.max(0, x);
+		x = Math.min(win.width() - this.width, x);
+
+		y = Number(y);
+		y = Math.max(Util.sizeHeader(), y);
+		y = Math.min(win.height() - this.height, y);
+
+		return { x, y };
+	};
+
+	setStyle (x: number, y: number, snap: I.MenuDirection) {
+		const node = $(ReactDOM.findDOMNode(this));
+		const coords = this.checkCoords(x, y);
+
+		if (snap === null) {
+			node.css({ left: coords.x, top: coords.y });
+		} else {
+			node.css({ left: '', top: '' });
+		};
 	};
 
 	resize () {

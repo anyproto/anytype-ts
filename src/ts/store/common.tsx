@@ -1,7 +1,6 @@
 import { observable, action, computed, set, makeObservable } from 'mobx';
 import { I, Storage, Util } from 'ts/lib';
 import { analytics } from 'ts/lib';
-import { blockStore, detailStore } from 'ts/store';
 
 const Constant = require('json/constant.json');
 
@@ -33,6 +32,7 @@ interface Sidebar {
 	width: number;
 	height: number;
 	fixed: boolean;
+	snap: I.MenuDirection;
 };
 
 const $ = require('jquery');
@@ -51,7 +51,7 @@ class CommonStore {
 	public themeId: string = '';
 	public typeId: string = '';
 	public pinTimeId: number = 0;
-	public sidebarObj: Sidebar = { width: 0, height: 0, x: 0, y: 0, fixed: false };
+	public sidebarObj: Sidebar = { width: 0, height: 0, x: 0, y: 0, fixed: false, snap: I.MenuDirection.Left };
 
     constructor() {
         makeObservable(this, {
