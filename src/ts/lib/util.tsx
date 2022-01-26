@@ -1091,6 +1091,21 @@ class Util {
 		});
 	};
 
+	resizeHeader (width: number) {
+		const { sidebar } = commonStore;
+		const { fixed } = sidebar;
+		const win = $(window);
+		const header = $('#page #header');
+		
+		let w = win.width();
+		if (fixed) {
+			w -= width;
+		};
+
+		header.css({ width: w });
+		fixed ? header.addClass('withSidebar') : header.removeClass('withSidebar');
+	};
+
 };
 
 export default new Util();

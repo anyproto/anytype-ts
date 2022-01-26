@@ -299,23 +299,9 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 	};
 
 	resizeHeader (width: number) {
-		const { isPopup } = this.props;
-		if (isPopup) {
-			return;
+		if (!this.props.isPopup) {
+			Util.resizeHeader(width);
 		};
-
-		const { sidebar } = commonStore;
-		const { fixed } = sidebar;
-		const win = $(window);
-		const header = $('#page #header');
-		
-		let w = win.width();
-		if (fixed) {
-			w -= width;
-		};
-
-		header.css({ width: w });
-		fixed ? header.addClass('withSidebar') : header.removeClass('withSidebar');
 	};
 
 });
