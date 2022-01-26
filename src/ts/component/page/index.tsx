@@ -77,7 +77,7 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 	render () {
 		const { isPopup } = this.props;
 		const { config, sidebar } = commonStore;
-		const { snap, fixed, width } = sidebar;
+		const { snap, fixed } = sidebar;
 		const match = this.getMatch();
 		const { page, action } = match.params || {};
 		const path = [ page, action ].join('/');
@@ -111,14 +111,14 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 						<div className="pageFlex">
 							{sb}
 							{wrap}
-							<div id="sidebarDummy" style={{ width: width }} />
+							<div id="sidebarDummy" />
 						</div>
 					);
 				} else {
 					content = (
 						<div className="pageFlex">
 							{sb}
-							<div id="sidebarDummy" style={{ width: width }} />
+							<div id="sidebarDummy" />
 							{wrap}
 						</div>
 					);

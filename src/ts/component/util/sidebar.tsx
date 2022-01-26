@@ -215,6 +215,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		const node = $(ReactDOM.findDOMNode(this));
 		const body = node.find('.body');
 		const toggle = Storage.getToggle('sidebar');
+		const dummy = $('#sidebarDummy');
 
 		this.width = node.width();
 		this.height = node.height();
@@ -224,6 +225,8 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 
 		this.setActive();
 		this.setStyle(x, y, snap);
+
+		dummy.css({ width: this.width });
 	};
 
 	load () {
