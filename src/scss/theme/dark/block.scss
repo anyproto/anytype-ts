@@ -191,6 +191,10 @@
 
     .block.blockBookmark {
         .inner { border-color: transparent; background-color: $colorHover; }
+        .inner.vertical {
+            .side.right { border-color: $colorLinePrimary; }
+        }
+
         .name { color: $colorPrimary; }
         .descr { color: $colorSecondary; }
         .link { color: $colorSecondary; }

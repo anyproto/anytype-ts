@@ -368,14 +368,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const checkType = blockStore.checkBlockType(rootId);
 		const readonly = this.isReadonly();
 
-		if (!root || readonly || checkType) {
+		if (!root || readonly || checkType || (root && root.isLocked())) {
 			return;
 		};
 
-		if (root.fields.isLocked) {
-			return;
-		};
-		
 		const container = $('.editor');
 		if (!container.length) {
 			return;
@@ -707,6 +703,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	};
 
 	onKeyDownBlock (e: any, text: string, marks: I.Mark[], range: any) {
+		range = range || {};
+
 		const { dataset, rootId } = this.props;
 		const { focused } = focus.state;
 		const { selection } = dataset || {};
@@ -716,18 +714,12 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			return;
 		};
 		
-		const win = $(window);
 		const platform = Util.getPlatform();
 		const menuOpen = menuStore.isOpen();
-		const st = win.scrollTop();
-		const element = $(`#block-${block.id}`);
-		const value = element.find('#value');
 		const cmd = keyboard.ctrlKey();
-		
-		let length = String(text || '').length;
-		range = range || {};
 
 		// Last line break doesn't expand range.to
+		let length = String(text || '').length;
 		if (length && (text[length - 1] == '\n')) {
 			length--;
 		};
@@ -759,14 +751,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			});
 		};
 
-		// Copy
-		keyboard.shortcut(`${cmd}+c`, e, (pressed: string) => {
-			this.onCopy(e, false);
-		});
-
-		// Cut
-		keyboard.shortcut(`${cmd}+x`, e, (pressed: string) => {
-			this.onCopy(e, true);
+		// Copy/Cut
+		keyboard.shortcut(`${cmd}+c, ${cmd}+x`, e, (pressed: string) => {
+			this.onCopy(e, pressed.match('x') ? true : false);
 		});
 
 		// Undo
@@ -818,78 +805,25 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		if (block.canHaveMarks() && range.to && (range.from != range.to)) {
 			let type = null;
 			let param = '';
+			let markParam = [
+				{ key: `${cmd}+b`,		 type: I.MarkType.Bold,		 param: '' },
+				{ key: `${cmd}+i`,		 type: I.MarkType.Italic,	 param: '' },
+				{ key: `${cmd}+shift+s`, type: I.MarkType.Strike,	 param: '' },
+				{ key: `${cmd}+k`,		 type: I.MarkType.Link,		 param: '' },
+				{ key: `${cmd}+l`,		 type: I.MarkType.Code,		 param: '' },
+				{ key: `${cmd}+shift+h`, type: I.MarkType.BgColor,	 param: Storage.get('bgColor') },
+				{ key: `${cmd}+shift+c`, type: I.MarkType.Color,	 param: Storage.get('color') },
+			];
 
-			// Bold
-			keyboard.shortcut(`${cmd}+b`, e, (pressed: string) => {
-				type = I.MarkType.Bold;
-			});
-
-			// Italic
-			keyboard.shortcut(`${cmd}+i`, e, (pressed: string) => {
-				type = I.MarkType.Italic;
-			});
-
-			// Strike
-			keyboard.shortcut(`${cmd}+shift+s`, e, (pressed: string) => {
-				type = I.MarkType.Strike;
-			});
-			
-			// Link
-			keyboard.shortcut(`${cmd}+k`, e, (pressed: string) => {
-				type = I.MarkType.Link;
-			});
-
-			// Code
-			keyboard.shortcut(`${cmd}+l`, e, (pressed: string) => {
-				type = I.MarkType.Code;
-			});
-
-			// BgColor
-			keyboard.shortcut(`${cmd}+shift+h`, e, (pressed: string) => {
-				param = Storage.get('bgColor');
-				type = I.MarkType.BgColor;
-			});
-
-			// Color
-			keyboard.shortcut(`${cmd}+shift+c`, e, (pressed: string) => {
-				param = Storage.get('color');
-				type = I.MarkType.Color;
-			});
+			for (let item of markParam) {
+				keyboard.shortcut(item.key, e, (pressed: string) => {
+					type = item.type;
+					param = item.param;
+				});
+			};
 
 			if (type !== null) {
-				e.preventDefault();
-
-				const mark = Mark.getInRange(marks, type, range);
-
-				if (type == I.MarkType.Link) {
-					const el = $(`#block-${block.id}`);
-
-					let rect = Util.selectionRect();
-					if (!rect.x && !rect.y && !rect.width && !rect.height) {
-						rect = null;
-					};
-
-					menuStore.close('blockContext', () => {
-						menuStore.open('blockLink', {
-							element: el,
-							rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
-							horizontal: I.MenuDirection.Center,
-							data: {
-								filter: mark ? mark.param : '',
-								type: mark ? mark.type : null,
-								onChange: (newType: I.MarkType, param: string) => {
-									marks = Mark.toggleLink({ type: newType, param: param, range: range }, marks);
-									DataUtil.blockSetText(rootId, block, text, marks, true, () => { focus.apply(); });
-								}
-							}
-						});
-					});
-				} else {
-					marks = Mark.toggle(marks, { type: type, param: mark ? '' : param, range: range });
-					DataUtil.blockSetText(rootId, block, text, marks, true, () => {
-						focus.apply();
-					});
-				};
+				this.onMarkBlock(e, type, text, marks, param, range);
 			};
 		};
 
@@ -916,224 +850,324 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			};
 		});
 
-		keyboard.shortcut(`${cmd}+shift+arrowup, ${cmd}+shift+arrowdown`, e, (pressed: string) => {
-			if (menuOpen) {
-				return;
-			};
-			
-			e.preventDefault();
-
-			const dir = pressed.match(Key.up) ? -1 : 1;
-			const next = blockStore.getNextBlock(rootId, block.id, dir, (it: any) => {
-				return !it.isIcon() && !it.isTextTitle() && !it.isSystem();
-			});
-
-			if (!next) {
-				return;
-			};
-
-			const element = blockStore.getMapElement(rootId, block.id);
-			const parentElement = blockStore.getMapElement(rootId, block.parentId);
-			const nextElement = blockStore.getMapElement(rootId, next.id)
-			const nextParent = blockStore.getLeaf(rootId, next.parentId);
-			const nextParentElement = blockStore.getMapElement(rootId, next.parentId);
-
-			if (!element || !parentElement || !nextElement || !nextParent || !nextParentElement) {
-				return;
-			};
-
-			let isFirst = block.id == parentElement.childrenIds[0];
-			let isLast = block.id == parentElement.childrenIds[parentElement.childrenIds.length - 1];
-			let position = dir < 0 ? I.BlockPosition.Top : I.BlockPosition.Bottom;
-
-			if ((dir > 0) && next.canHaveChildren() && nextElement.childrenIds.length) {
-				position = isLast ? I.BlockPosition.Top : I.BlockPosition.InnerFirst;
-			};
-
-			if ((dir < 0) && nextParent.canHaveChildren() && nextParentElement.childrenIds.length && (element.parentId != nextParent.id)) {
-				position = isFirst ? I.BlockPosition.Top : I.BlockPosition.Bottom;
-			};
-
-			C.BlockListMove(rootId, rootId, [ block.id ], next.id, position, (message: any) => {
-				focus.apply();
-
-				analytics.event('ReorderBlock', { count: 1 });
-			});
-		});
-
-		// Last/first block
-		keyboard.shortcut(`${cmd}+arrowup, ${cmd}+arrowdown`, e, (pressed: string) => {
-			if (menuOpen) {
-				return;
-			};
-			
-			e.preventDefault();
-
-			const dir = pressed.match(Key.up) ? -1 : 1;
-			const next = blockStore.getFirstBlock(rootId, -dir, (item: any) => { return item.isFocusable(); });
-			if (!next) {
-				return;
-			};
-
-			const l = next.getLength();
-			focus.set(next.id, (dir < 0 ? { from: 0, to: 0 } : { from: l, to: l }));
-			focus.apply();
-		});
-
 		// Expand selection
 		keyboard.shortcut('shift+arrowup, shift+arrowdown', e, (pressed: string) => {
-			if (selection.get(true).length) {
-				return;
-			};
-
-			let sRect = Util.selectionRect();
-			let vRect: any = {};
-			if (value && value.length) {
-				vRect = value.get(0).getBoundingClientRect();
-			} else 
-			if (element && element.length) {
-				vRect = element.get(0).getBoundingClientRect()
-			};
-
-			if (!sRect.y && !sRect.x && !sRect.width && !sRect.height) {
-				sRect = vRect;
-			};
-
-			const dir = pressed.match(Key.up) ? -1 : 1;
-			const lh = parseInt(value.css('line-height'));
-			const sy = sRect.y + st;
-			const vy = vRect.y + st;
-
-			const cb = () => {
-				e.preventDefault();
-
-				focus.clear(true);
-				selection.set([ block.id ]);
-
-				menuStore.closeAll([ 'blockContext', 'blockAction' ]);
-			};
-
-			if ((dir < 0) && (sy - 4 <= vy) && (range.from == 0)) {
-				cb();
-			};
-
-			if ((dir > 0) && (sy + sRect.height + lh >= vy + vRect.height) && (range.to == length)) {
-				cb();
-			};
+			this.onShiftArrowBlock(e, range, pressed);
 		});
 
 		// Backspace
 		keyboard.shortcut('backspace, delete', e, (pressed: string) => {
-			if (block.isText()) {
-				const ids = selection.get(true);
-				if ((pressed == 'backspace') && !range.to) {
-					if (block.isTextList()) {
-						C.BlockListSetTextStyle(rootId, [ block.id ], I.TextStyle.Paragraph);
-					} else {
-						ids.length ? this.blockRemove(block) : this.blockMerge(block, -1);
-					};
-				};
-
-				if ((pressed == 'delete') && (range.to == length)) {
-					ids.length ? this.blockRemove(block) : this.blockMerge(block, 1);
-				};
-			};
-			if (!block.isText() && !keyboard.isFocused) {
-				this.blockRemove(block);
-			};
-		});
-
-		// Tab, indent block
-		keyboard.shortcut('tab, shift+tab', e, (pressed: string) => {
-			if (menuOpen) {
-				return;
-			};
-
-			e.preventDefault();
-			
-			const shift = pressed.match('shift');
-			const element = blockStore.getMapElement(rootId, block.id);
-			const parent = blockStore.getLeaf(rootId, element.parentId);
-			const parentElement = blockStore.getMapElement(rootId, parent.id);
-
-			if (!element || !parentElement) {
-				return;
-			};
-
-			const idx = parentElement.childrenIds.indexOf(block.id);
-			const nextId = parentElement.childrenIds[idx - 1];
-			const next = nextId ? blockStore.getLeaf(rootId, nextId) : blockStore.getNextBlock(rootId, block.id, -1);
-			const obj = shift ? parent : next;
-			
-			let canTab = obj && !block.isTextTitle() && obj.canHaveChildren() && block.isIndentable();
-			if (!shift && parentElement.childrenIds.length && (block.id == parentElement.childrenIds[0])) {
-				canTab = false;
-			};
-
-			if (!canTab) {
-				return;
-			};
-
-			C.BlockListMove(rootId, rootId, [ block.id ], obj.id, (shift ? I.BlockPosition.Bottom : I.BlockPosition.Inner), (message: any) => {
-				window.setTimeout(() => {
-					focus.apply();
-				});
-
-				if (next && next.isTextToggle()) {
-					blockStore.toggle(rootId, next.id, true);
-				};
-
-				analytics.event('ReorderBlock', { count: 1 });
-			});
+			this.onBackspaceBlock(e, range, pressed);
 		});
 
 		// Enter
 		keyboard.shortcut('enter, shift+enter', e, (pressed: string) => {
-			if (block.isTextCode() && (pressed == 'enter')) {
-				return;
-			};
-			if (!block.isText() && keyboard.isFocused) {
-				return;
-			};
-			if (block.isText() && !block.isTextCode() && pressed.match('shift')) {
-				return;
-			};
-
-			const menus = menuStore.list;
-			const menuCheck = (menus.length > 1) || ((menus.length == 1) && (menus[0].id != 'blockContext'));
-			
-			if (menuCheck) {
-				return;
-			};
-			
-			e.preventDefault();
-			e.stopPropagation();
-
-			let replace = !range.to && block.isTextList() && !length;
-			if (replace) {
-				C.BlockListSetTextStyle(rootId, [ block.id ], I.TextStyle.Paragraph);
-			} else 
-			if (!block.isText()) {  
-				this.blockCreate(block.id, I.BlockPosition.Bottom, {
-					type: I.BlockType.Text,
-					style: I.TextStyle.Paragraph,
-				});
-			} else {
-				this.blockSplit(block, range);
-			};
-
-			if (blockStore.checkBlockType(rootId)) {
-				const object = detailStore.get(rootId, rootId, []);
-
-				analytics.event('CreateObject', {
-					objectType: object.type,
-					layout: object.layout,
-				});
-			};
+			this.onEnterBlock(e, range, pressed);
 		});
+
+		if (!menuOpen) {
+			// Tab, indent block
+			keyboard.shortcut('tab, shift+tab', e, (pressed: string) => {
+				this.onTabBlock(e, pressed);
+			});
+
+			// Last/first block
+			keyboard.shortcut(`${cmd}+arrowup, ${cmd}+arrowdown`, e, (pressed: string) => {
+				this.onCtrlArrowBlock(e, pressed);
+			});
+
+			// Move blocks with arrows
+			keyboard.shortcut(`${cmd}+shift+arrowup, ${cmd}+shift+arrowdown`, e, (pressed: string) => {
+				this.onCtrlShiftArrowBlock(e, pressed);
+			});
+		};
 	};
 	
 	onKeyUpBlock (e: any, text: string, marks: I.Mark[], range: I.TextRange) {
+	};
+
+	// Move blocks with arrows
+	onCtrlShiftArrowBlock (e: any, pressed: string) {
+		e.preventDefault();
+
+		const { rootId } = this.props;
+		const { focused } = focus.state;
+		const block = blockStore.getLeaf(rootId, focused);
+
+		if (!block) {
+			return;
+		};
+
+		const dir = pressed.match(Key.up) ? -1 : 1;
+		const next = blockStore.getNextBlock(rootId, block.id, dir, (it: any) => {
+			return !it.isIcon() && !it.isTextTitle() && !it.isSystem();
+		});
+
+		if (!next) {
+			return;
+		};
+
+		const element = blockStore.getMapElement(rootId, block.id);
+		const parentElement = blockStore.getMapElement(rootId, block.parentId);
+		const nextElement = blockStore.getMapElement(rootId, next.id)
+		const nextParent = blockStore.getLeaf(rootId, next.parentId);
+		const nextParentElement = blockStore.getMapElement(rootId, next.parentId);
+
+		if (!element || !parentElement || !nextElement || !nextParent || !nextParentElement) {
+			return;
+		};
+
+		let isFirst = block.id == parentElement.childrenIds[0];
+		let isLast = block.id == parentElement.childrenIds[parentElement.childrenIds.length - 1];
+		let position = dir < 0 ? I.BlockPosition.Top : I.BlockPosition.Bottom;
+
+		if ((dir > 0) && next.canHaveChildren() && nextElement.childrenIds.length) {
+			position = isLast ? I.BlockPosition.Top : I.BlockPosition.InnerFirst;
+		};
+
+		if ((dir < 0) && nextParent.canHaveChildren() && nextParentElement.childrenIds.length && (element.parentId != nextParent.id)) {
+			position = isFirst ? I.BlockPosition.Top : I.BlockPosition.Bottom;
+		};
+
+		C.BlockListMove(rootId, rootId, [ block.id ], next.id, position, (message: any) => {
+			focus.apply();
+
+			analytics.event('ReorderBlock', { count: 1 });
+		});
+	};
+
+	// Move focus to first/last block
+	onCtrlArrowBlock (e: any, pressed: string) {
+		e.preventDefault();
+
+		const { rootId } = this.props;
+		const dir = pressed.match(Key.up) ? -1 : 1;
+		const next = blockStore.getFirstBlock(rootId, -dir, (item: any) => { return item.isFocusable(); });
+		if (!next) {
+			return;
+		};
+
+		const l = next.getLength();
+		focus.set(next.id, (dir < 0 ? { from: 0, to: 0 } : { from: l, to: l }));
+		focus.apply();
+	};
+
+	// Expand selection up/down
+	onShiftArrowBlock (e: any, range: I.TextRange, pressed: string) {
+		const { dataset, rootId } = this.props;
+		const { selection } = dataset || {};
+		const { focused } = focus.state;
+		const block = blockStore.getLeaf(rootId, focused);
+
+		if (!block || selection.get(true).length) {
+			return;
+		};
+
+		const win = $(window);
+		const st = win.scrollTop();
+		const element = $(`#block-${block.id}`);
+		const value = element.find('#value');
+
+		let sRect = Util.selectionRect();
+		let vRect: any = {};
+		if (value && value.length) {
+			vRect = value.get(0).getBoundingClientRect();
+		} else 
+		if (element && element.length) {
+			vRect = element.get(0).getBoundingClientRect()
+		};
+
+		if (!sRect) {
+			sRect = vRect;
+		};
+
+		const dir = pressed.match(Key.up) ? -1 : 1;
+		const lh = parseInt(value.css('line-height'));
+		const sy = sRect.y + st;
+		const vy = vRect.y + st;
+
+		const cb = () => {
+			e.preventDefault();
+
+			focus.clear(true);
+			selection.set([ block.id ]);
+
+			menuStore.closeAll([ 'blockContext', 'blockAction' ]);
+		};
+
+		if ((dir < 0) && (sy - 4 <= vy) && (range.from == 0)) {
+			cb();
+		};
+
+		if ((dir > 0) && (sy + sRect.height + lh >= vy + vRect.height) && (range.to == length)) {
+			cb();
+		};
+	};
+
+	// Markup
+	onMarkBlock (e: any, type: I.MarkType, text: string, marks: I.Mark[], param: string, range: I.TextRange) {
+		e.preventDefault();
+
+		const { rootId } = this.props;
+		const { focused } = focus.state;
+		const block = blockStore.getLeaf(rootId, focused);
+
+		if (!block) {
+			return;
+		};
+
+		const mark = Mark.getInRange(marks, type, range);
+		const el = $(`#block-${block.id}`);
+		const win = $(window);
+		const rect = Util.selectionRect();
+
+		if (type == I.MarkType.Link) {
+			menuStore.close('blockContext', () => {
+				menuStore.open('blockLink', {
+					element: el,
+					rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
+					horizontal: I.MenuDirection.Center,
+					data: {
+						filter: mark ? mark.param : '',
+						type: mark ? mark.type : null,
+						onChange: (newType: I.MarkType, param: string) => {
+							marks = Mark.toggleLink({ type: newType, param: param, range: range }, marks);
+							DataUtil.blockSetText(rootId, block, text, marks, true, () => { focus.apply(); });
+						}
+					}
+				});
+			});
+		} else {
+			marks = Mark.toggle(marks, { type: type, param: mark ? '' : param, range: range });
+			DataUtil.blockSetText(rootId, block, text, marks, true, () => { focus.apply(); });
+		};
+	};
+
+	// Backspace / Delete
+	onBackspaceBlock (e: any, range: I.TextRange, pressed: string) {
+		const { dataset, rootId } = this.props;
+		const { selection } = dataset || {};
+		const { focused } = focus.state;
+		const block = blockStore.getLeaf(rootId, focused);
+
+		if (!block) {
+			return;
+		};
+
+		const isDelete = pressed == 'delete';
+		const ids = selection.get(true);
+
+		if (block.isText()) {
+			if (!isDelete && !range.to) {
+				if (block.isTextList()) {
+					C.BlockListSetTextStyle(rootId, [ block.id ], I.TextStyle.Paragraph);
+				} else {
+					ids.length ? this.blockRemove(block) : this.blockMerge(block, -1);
+				};
+			};
+
+			if (isDelete && (range.to == length)) {
+				ids.length ? this.blockRemove(block) : this.blockMerge(block, 1);
+			};
+		};
+		if (!block.isText() && !keyboard.isFocused) {
+			this.blockRemove(block);
+		};
+	};
+
+	// Indentation
+	onTabBlock (e: any, pressed: string) {
+		e.preventDefault();
+			
+		const { rootId } = this.props;
+		const { focused } = focus.state;
+		const block = blockStore.getLeaf(rootId, focused);
+
+		if (!block) {
+			return;
+		};
+
+		const isShift = pressed.match('shift');
+		const element = blockStore.getMapElement(rootId, block.id);
+		const parent = blockStore.getLeaf(rootId, element.parentId);
+		const parentElement = blockStore.getMapElement(rootId, parent.id);
+
+		if (!element || !parentElement) {
+			return;
+		};
+
+		const idx = parentElement.childrenIds.indexOf(block.id);
+		const nextId = parentElement.childrenIds[idx - 1];
+		const next = nextId ? blockStore.getLeaf(rootId, nextId) : blockStore.getNextBlock(rootId, block.id, -1);
+		const obj = isShift ? parent : next;
+		
+		let canTab = obj && !block.isTextTitle() && obj.canHaveChildren() && block.isIndentable();
+		if (!isShift && parentElement.childrenIds.length && (block.id == parentElement.childrenIds[0])) {
+			canTab = false;
+		};
+
+		if (!canTab) {
+			return;
+		};
+
+		C.BlockListMove(rootId, rootId, [ block.id ], obj.id, (isShift ? I.BlockPosition.Bottom : I.BlockPosition.Inner), (message: any) => {
+			window.setTimeout(() => { focus.apply(); });
+
+			if (next && next.isTextToggle()) {
+				blockStore.toggle(rootId, next.id, true);
+			};
+
+			analytics.event('ReorderBlock', { count: 1 });
+		});
+	};
+
+	// Split
+	onEnterBlock (e: any, range: I.TextRange, pressed: string) {
+		const { rootId } = this.props;
+		const { focused } = focus.state;
+		const block = blockStore.getLeaf(rootId, focused);
+
+		if (!block) {
+			return;
+		};
+
+		if (block.isTextCode() && (pressed == 'enter')) {
+			return;
+		};
+		if (!block.isText() && keyboard.isFocused) {
+			return;
+		};
+		if (block.isText() && !block.isTextCode() && pressed.match('shift')) {
+			return;
+		};
+
+		const menus = menuStore.list;
+		const menuCheck = (menus.length > 1) || ((menus.length == 1) && (menus[0].id != 'blockContext'));
+		
+		if (menuCheck) {
+			return;
+		};
+		
+		e.preventDefault();
+		e.stopPropagation();
+
+		let replace = !range.to && block.isTextList() && !length;
+		if (replace) {
+			C.BlockListSetTextStyle(rootId, [ block.id ], I.TextStyle.Paragraph);
+		} else 
+		if (!block.isText()) {  
+			this.blockCreate(block.id, I.BlockPosition.Bottom, {
+				type: I.BlockType.Text,
+				style: I.TextStyle.Paragraph,
+			});
+		} else {
+			this.blockSplit(block, range);
+		};
+
+		if (blockStore.checkBlockType(rootId)) {
+			const object = detailStore.get(rootId, rootId, []);
+			analytics.event('CreateObject', { objectType: object.type, layout: object.layout });
+		};
 	};
 
 	onArrow (e: any, pressed: string, length: number) {
@@ -1208,12 +1242,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		commonStore.filterSet(0, '');
 		focus.clear(true);
 
-		const newBlock = {
-			type: I.BlockType.Text,
-			//style: I.TextStyle.Paragraph,
-		};
-		
-		this.blockCreate(block.id, this.hoverPosition, newBlock, (blockId: string) => {
+		this.blockCreate(block.id, this.hoverPosition, { type: I.BlockType.Text }, (blockId: string) => {
 			$('.placeholder.c' + blockId).text(translate('placeholderFilter'));
 			this.onMenuAdd(blockId, '', { from: 0, to: 0 });
 		});
@@ -1222,16 +1251,13 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	onMenuAdd (blockId: string, text: string, range: I.TextRange) {
 		const { rootId } = this.props;
 		const block = blockStore.getLeaf(rootId, blockId);
+
 		if (!block) {
 			return;
 		};
 
 		const win = $(window);
-
-		let rect = Util.selectionRect();
-		if (!rect.x && !rect.y && !rect.width && !rect.height) {
-			rect = null;
-		};
+		const rect = Util.selectionRect();
 
 		commonStore.filterSet(range.from, '');
 		menuStore.open('blockAdd', { 
@@ -1808,19 +1834,18 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	};
 
 	getWidth (w: number) {
-		w = Number(w) || 0;
-
-		const { isPopup } = this.props;
+		const { isPopup, rootId } = this.props;
 		const container = Util.getScrollContainer(isPopup);
 		const mw = container.width() - 120;
-		const { rootId } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
 		
 		if (root && root.isObjectSet()) {
 			return container.width() - 192;
 		};
 
+		w = Number(w) || 0;
 		w = (mw - Constant.size.editor) * w;
+
 		this.width = w = Math.max(Constant.size.editor, Math.min(mw, Constant.size.editor + w));
 		return w;
 	};

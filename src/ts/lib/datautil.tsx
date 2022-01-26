@@ -35,6 +35,26 @@ class DataUtil {
 		};
 		return ret;
 	};
+
+	textClass (v: I.TextStyle): string {
+		let c = '';
+		switch (v) {
+			default:
+			case I.TextStyle.Paragraph:		 c = 'paragraph'; break;
+			case I.TextStyle.Header1:		 c = 'header1'; break;
+			case I.TextStyle.Header2:		 c = 'header2'; break;
+			case I.TextStyle.Header3:		 c = 'header3'; break;
+			case I.TextStyle.Quote:			 c = 'quote'; break;
+			case I.TextStyle.Code:			 c = 'code'; break;
+			case I.TextStyle.Bulleted:		 c = 'bulleted'; break;
+			case I.TextStyle.Numbered:		 c = 'numbered'; break;
+			case I.TextStyle.Toggle:		 c = 'toggle'; break;
+			case I.TextStyle.Checkbox:		 c = 'checkbox'; break;
+			case I.TextStyle.Title:			 c = 'title'; break;
+			case I.TextStyle.Description:	 c = 'description'; break;
+		};
+		return c;
+	};
 	
 	styleIcon (type: I.BlockType, v: number): string {
 		let icon = '';
@@ -42,9 +62,7 @@ class DataUtil {
 			case I.BlockType.Text:
 				switch (v) {
 					default:					 icon = this.textClass(v); break;
-					case I.TextStyle.Paragraph:	 icon = 'text'; break;
 					case I.TextStyle.Code:		 icon = 'kbd'; break;
-					case I.TextStyle.Bulleted:	 icon = 'list'; break;
 				};
 				break;
 
@@ -65,11 +83,21 @@ class DataUtil {
 
 		let c = [];
 		switch (block.type) {
-			case I.BlockType.Text:		 c.push('blockText ' + this.textClass(style)); break;
-			case I.BlockType.Layout:	 c.push('blockLayout c' + style); break;
-			case I.BlockType.IconPage:	 c.push('blockIconPage'); break;
-			case I.BlockType.IconUser:	 c.push('blockIconUser'); break;
-				
+			case I.BlockType.Text:					 c.push('blockText ' + this.textClass(style)); break;
+			case I.BlockType.Layout:				 c.push('blockLayout c' + style); break;
+			case I.BlockType.IconPage:				 c.push('blockIconPage'); break;
+			case I.BlockType.IconUser:				 c.push('blockIconUser'); break;
+			case I.BlockType.Bookmark:				 c.push('blockBookmark'); break;
+			case I.BlockType.Dataview:				 c.push('blockDataview'); break;
+			case I.BlockType.Div:					 c.push('blockDiv c' + style); break;
+			case I.BlockType.Link:					 c.push('blockLink'); break;
+			case I.BlockType.Cover:					 c.push('blockCover'); break;
+			case I.BlockType.Relation:				 c.push('blockRelation'); break;
+			case I.BlockType.Featured:				 c.push('blockFeatured'); break;
+			case I.BlockType.Type:					 c.push('blockType'); break;
+			case I.BlockType.Latex:					 c.push('blockLatex'); break;
+			case I.BlockType.TableOfContents:		 c.push('blockTableOfContents'); break;
+
 			case I.BlockType.File:
 				if (state == I.FileState.Done) {
 					c.push('withFile');
@@ -99,39 +127,9 @@ class DataUtil {
 						break;
 				};
 				break;
-				
-			case I.BlockType.Bookmark:	 c.push('blockBookmark'); break;
-			case I.BlockType.Dataview:	 c.push('blockDataview'); break;
-			case I.BlockType.Div:		 c.push('blockDiv c' + style); break;
-			case I.BlockType.Link:		 c.push('blockLink'); break;
-			case I.BlockType.Cover:		 c.push('blockCover'); break;
-			case I.BlockType.Relation:	 c.push('blockRelation'); break;
-			case I.BlockType.Featured:	 c.push('blockFeatured'); break;
-			case I.BlockType.Type:		 c.push('blockType'); break;
-			case I.BlockType.Latex:		 c.push('blockLatex'); break;
 		};
 
 		return c.join(' ');
-	};
-
-	textClass (v: I.TextStyle): string {
-		let c = '';
-		switch (v) {
-			default:
-			case I.TextStyle.Paragraph:		 c = 'paragraph'; break;
-			case I.TextStyle.Header1:		 c = 'header1'; break;
-			case I.TextStyle.Header2:		 c = 'header2'; break;
-			case I.TextStyle.Header3:		 c = 'header3'; break;
-			case I.TextStyle.Quote:			 c = 'quote'; break;
-			case I.TextStyle.Code:			 c = 'code'; break;
-			case I.TextStyle.Bulleted:		 c = 'bulleted'; break;
-			case I.TextStyle.Numbered:		 c = 'numbered'; break;
-			case I.TextStyle.Toggle:		 c = 'toggle'; break;
-			case I.TextStyle.Checkbox:		 c = 'checkbox'; break;
-			case I.TextStyle.Title:			 c = 'title'; break;
-			case I.TextStyle.Description:	 c = 'description'; break;
-		};
-		return c;
 	};
 
 	layoutClass (id: string, layout: I.ObjectLayout) {
@@ -508,31 +506,34 @@ class DataUtil {
 	
 	menuGetBlockText () {
 		return [
-			{ id: I.TextStyle.Paragraph, icon: 'text', lang: 'Paragraph' },
-			{ id: I.TextStyle.Header1, icon: 'header1', lang: 'Header1', aliases: [ 'h1', 'head1' ] },
-			{ id: I.TextStyle.Header2, icon: 'header2', lang: 'Header2', aliases: [ 'h2', 'head2' ] },
-			{ id: I.TextStyle.Header3, icon: 'header3', lang: 'Header3', aliases: [ 'h3', 'head3' ] },
-			{ id: I.TextStyle.Quote, icon: 'quote', lang: 'Quote' },
+			{ id: I.TextStyle.Paragraph, lang: 'Paragraph' },
+			{ id: I.TextStyle.Header1, lang: 'Header1', aliases: [ 'h1', 'head1' ] },
+			{ id: I.TextStyle.Header2, lang: 'Header2', aliases: [ 'h2', 'head2' ] },
+			{ id: I.TextStyle.Header3, lang: 'Header3', aliases: [ 'h3', 'head3' ] },
+			{ id: I.TextStyle.Quote, lang: 'Quote' },
 		].map((it: any) => {
 			it.type = I.BlockType.Text;
+			it.icon = this.textClass(it.id);
 			return this.menuMapperBlock(it);
 		});
 	};
 	
 	menuGetBlockList () {
 		return [
-			{ id: I.TextStyle.Checkbox, icon: 'checkbox', lang: 'Checkbox', aliases: [ 'todo' ] },
-			{ id: I.TextStyle.Bulleted, icon: 'list', lang: 'Bulleted' },
-			{ id: I.TextStyle.Numbered, icon: 'numbered', lang: 'Numbered' },
-			{ id: I.TextStyle.Toggle, icon: 'toggle', lang: 'Toggle' },
+			{ id: I.TextStyle.Checkbox, lang: 'Checkbox', aliases: [ 'todo' ] },
+			{ id: I.TextStyle.Bulleted, lang: 'Bulleted' },
+			{ id: I.TextStyle.Numbered, lang: 'Numbered' },
+			{ id: I.TextStyle.Toggle, lang: 'Toggle' },
 		].map((it: any) => {
 			it.type = I.BlockType.Text;
+			it.icon = this.textClass(it.id);
 			return this.menuMapperBlock(it);
 		});
 	};
 
 	menuGetBlockMedia () {
-		let ret: any[] = [
+		const { config } = commonStore;
+		const ret: any[] = [
 			{ type: I.BlockType.File, id: I.FileType.File, icon: 'file', lang: 'File' },
 			{ type: I.BlockType.File, id: I.FileType.Image, icon: 'image', lang: 'Image' },
 			{ type: I.BlockType.File, id: I.FileType.Video, icon: 'video', lang: 'Video' },
@@ -540,8 +541,12 @@ class DataUtil {
 			{ type: I.BlockType.File, id: I.FileType.Pdf, icon: 'pdf', lang: 'Pdf' },
 			{ type: I.BlockType.Bookmark, id: 'bookmark', icon: 'bookmark', lang: 'Bookmark' },
 			{ type: I.BlockType.Text, id: I.TextStyle.Code, icon: 'code', lang: 'Code' },
-			{ type: I.BlockType.Latex, id: I.BlockType.Latex, icon: 'latex', lang: 'Latex' }
+			{ type: I.BlockType.Latex, id: I.BlockType.Latex, icon: 'latex', lang: 'Latex' },
 		];
+
+		if (config.experimental) {
+			ret.push({ type: I.BlockType.TableOfContents, id: I.BlockType.TableOfContents, icon: 'latex', lang: 'TableOfContents' });
+		};
 		return ret.map(this.menuMapperBlock);
 	};
 
@@ -857,14 +862,16 @@ class DataUtil {
 		sections = Util.objectCopy(sections);
 		sections = sections.filter((it: any) => { return it.children.length > 0; });
 		sections = sections.map((s: any, i: number) => {
-			s.id = s.id || i;
-			s.children = s.children.map((it: any, i: number) => {
-				it.id = it.id || i;
-				it.itemId = it.id;
-				it.id = [ s.id, it.id ].join('-');
-				it.color = it.color || s.color || '';
-				return it;
+			s.id = (undefined !== s.id) ? s.id : i;
+
+			s.children = s.children.map((c: any, i: number) => {
+				c.id = (undefined !== c.id) ? c.id : i;
+				c.itemId = c.id;
+				c.id = [ s.id, c.id ].join('-');
+				c.color = c.color || s.color || '';
+				return c;
 			});
+
 			s.children = Util.arrayUniqueObjects(s.children, 'itemId');
 			return s;
 		});

@@ -269,11 +269,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 
 	updateRect () {
 		const win = $(window);
-
-		let rect = Util.selectionRect();
-		if (!rect.x && !rect.y && !rect.width && !rect.height) {
-			rect = null;
-		};
+		const rect = Util.selectionRect();
 
 		if (!rect || !menuStore.isOpen('blockLatex')) {
 			return;
@@ -339,16 +335,12 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 		};
 
 		const { rootId, block } = this.props;
-		const node = $(ReactDOM.findDOMNode(this));
 		const win = $(window);
 
 		raf(() => {
 			let rect = null;
 			if (element == 'input') {
 				rect = Util.selectionRect();
-				if (!rect.x && !rect.y && !rect.width && !rect.height) {
-					rect = null;
-				};
 			};
 
 			menuStore.open('blockLatex', {

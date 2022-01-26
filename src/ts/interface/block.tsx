@@ -9,22 +9,23 @@ export interface PageInfo {
 };
 
 export enum BlockType {
-	Empty		 = '',
-	Page		 = 'page',
-	Dataview	 = 'dataview',
-	Layout		 = 'layout',
-	Text		 = 'text',
-	File		 = 'file',
-	Bookmark	 = 'bookmark',
-	IconPage	 = 'iconPage',
-	IconUser	 = 'iconUser',
-	Div			 = 'div',
-	Link		 = 'link',
-	Cover		 = 'cover',
-	Relation	 = 'relation',
-	Featured	 = 'featured',
-	Type		 = 'type',
-	Latex		 = 'latex',
+	Empty				 = '',
+	Page				 = 'page',
+	Dataview			 = 'dataview',
+	Layout				 = 'layout',
+	Text				 = 'text',
+	File				 = 'file',
+	Bookmark			 = 'bookmark',
+	IconPage			 = 'iconPage',
+	IconUser			 = 'iconUser',
+	Div					 = 'div',
+	Link				 = 'link',
+	Cover				 = 'cover',
+	Relation			 = 'relation',
+	Featured			 = 'featured',
+	Type				 = 'type',
+	Latex				 = 'latex',
+	TableOfContents		 = 'tableOfContents',
 };
 
 export enum BlockPosition {
@@ -83,6 +84,7 @@ export interface Block {
 	
 	getLength?(): number;
 	isSystem?(): boolean;
+	isLocked?(): boolean;
 
 	canHaveChildren?(): boolean;
 	canHaveAlign?(): boolean;

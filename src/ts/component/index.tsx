@@ -73,6 +73,8 @@ import Cell from './block/dataview/cell';
 import ObjectName from './util/object/name';
 import ObjectDescription from './util/object/description';
 
+import ControlButtons  from './editor/controlButtons';
+
 export {
 	Page,
 	EditorPage,
@@ -134,4 +136,5 @@ export {
 	Sidebar,
 	ObjectName,
 	ObjectDescription,
+	ControlButtons,
 };

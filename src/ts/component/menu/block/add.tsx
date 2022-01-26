@@ -653,8 +653,6 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 								$(`#block-${blockId} .info`).trigger('click');
 							}, Constant.delay.menu);
 						};
-
-						analytics.event('CreateBlock', { type: item.type, style: param.content.style, params: { fileType: item.itemId } });
 					});
 				};
 			};

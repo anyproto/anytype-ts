@@ -951,7 +951,7 @@ const OnSubscribe = (subId: string, keys: string[], message: any) => {
 	};
 
 	if (message.counters) {
-		dbStore.metaSet(subId, '', { total: message.counters.total });
+		dbStore.metaSet(subId, '', { total: message.counters.total, keys: keys });
 	};
 
 	let details = [];
@@ -1149,6 +1149,14 @@ const ObjectToSet = (contextId: string, sources: string[], callBack?: (message: 
 	request.setSourceList(sources);
 
 	dispatcher.request('objectToSet', request, callBack);
+};
+
+const ObjectDuplicate = (id: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.ToSet.Request();
+	
+	request.setContextid(id);
+
+	dispatcher.request('objectDuplicate', request, callBack);
 };
 
 const ObjectListDelete = (ids: string[], callBack?: (message: any) => void) => {
@@ -1366,6 +1374,7 @@ export {
 	ObjectTypeRelationRemove,
 
 	SetCreate,
+
 	ObjectRelationOptionAdd,
     ObjectRelationOptionUpdate,
     ObjectRelationOptionDelete,
@@ -1387,6 +1396,7 @@ export {
 	ObjectSearchSubscribe,
 	ObjectIdsSubscribe,
 	ObjectSearchUnsubscribe,
+	ObjectDuplicate,
 	
 	ObjectListDelete,
 	ObjectListSetIsArchived,
