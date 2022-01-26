@@ -6,7 +6,8 @@ import { observer } from 'mobx-react';
 import { authStore, blockStore, commonStore } from 'ts/store';
 
 interface Props {
-	isPopup: boolean;
+	isPopup?: boolean;
+	dataset?: any;
 };
 
 interface State {
@@ -295,11 +296,17 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 			return;
 		};
 
+		const { dataset } = this.props;
+		const { selection } = dataset || {};
 		const node = $(ReactDOM.findDOMNode(this));
 		const win = $(window);
 		const body = $('body');
 		
 		this.ox = node.offset().left;
+
+		if (selection) {
+			selection.preventSelect(true);
+		};
 
 		keyboard.setResize(true);
 		body.addClass('colResize');
@@ -319,7 +326,14 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 	};
 
 	onResizeEnd (e: any) {
+		const { dataset } = this.props;
+		const { selection } = dataset || {};
+
 		commonStore.sidebarSet({ width: this.getWidth(e.pageX - this.ox) });
+
+		if (selection) {
+			selection.preventSelect(false);
+		};
 
 		keyboard.setResize(false);
 		$('body').removeClass('colResize');

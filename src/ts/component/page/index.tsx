@@ -99,7 +99,7 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 			</div>
 		);
 
-		let sb = <Sidebar isPopup={isPopup} />;
+		let sb = <Sidebar {...this.props} />;
 		let content = null;
 
 		if (isPopup || !showSidebar) {
