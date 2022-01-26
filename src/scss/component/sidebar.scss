@@ -36,6 +36,7 @@
     .body { overflow-x: hidden; overflow-y: overlay; padding: 16px 12px 16px 6px; height: 100%; }
     .body {
 
+        .section { margin-bottom: 12px; }
         .section { 
             .sectionHead {
                 margin-bottom: 8px; display: flex; flex-direction: row; align-items: center; gap: 0px 6px;
@@ -66,6 +67,7 @@
             }
             .children { overflow: hidden; height: 0px; transition: height 0.2s ease-in-out; }
         }
+        .item:last-child { margin: 0px; }
         .item.active > .flex > .icon.arrow { transform: rotate(0deg); }
         .item.active > .flex { margin-bottom: 4px; }
     }

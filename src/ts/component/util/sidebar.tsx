@@ -60,16 +60,22 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 
         let depth = 0;
 
-		const Section = (item: any) => (
+		const Section = (section: any) => (
 			<div className="section">
 				<div className="sectionHead">
-					<div className="name">{item.name}</div>
-					<div className="cnt">{item.children.length || ''}</div>
+					<div className="name">{section.name}</div>
+					<div className="cnt">{section.children.length || ''}</div>
 				</div>
 				<div className="items">
-					{item.children.map((item: any, i: number) => {
-						return <Item key={item.id + '-' + depth} {...item} depth={depth} />;
-					})}
+					{section.children.map((child: any, i: number) => (
+						<Item 
+							key={child.id + '-' + depth} 
+							{...child} 
+							sectionId={section.id} 
+							parentId="" 
+							depth={depth} 
+						/>
+					))}
 				</div>
 			</div>
 		);
@@ -77,7 +83,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
         const Item = (item: any) => {
 			let css: any = { paddingLeft: (item.depth + 1) * 6 };
 			let length = item.children.length;
-			let id = [ item.id, item.depth ].join('-');
+			let id = [ item.sectionId, item.parentId, item.id, item.depth ].join('-');
 			let cn = [ 'item', 'depth' + item.depth ];
 
 			if ((item.depth > 0) && !item.children.length) {
@@ -94,7 +100,13 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 
 					<div id={`children-${id}`} className="children">
 						{item.children.map((child: any, i: number) => (
-							<Item key={child.id + '-' + item.depth} {...child} depth={item.depth + 1} />
+							<Item 
+								key={child.id + '-' + item.depth} 
+								{...child} 
+								sectionId={item.sectionId} 
+								parentId={item.id} 
+								depth={item.depth + 1} 
+							/>
 						))}
 					</div>
                 </div>
@@ -166,8 +178,6 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		const body = node.find('.body');
 		const toggle = Storage.getToggle('sidebar');
 
-		console.log('RESTORE', this.top);
-
 		toggle.forEach((it: string) => { this.childrenShow(it, false); });
 		body.scrollTop(this.top);
 	};
@@ -223,8 +233,6 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		const body = node.find('.body');
 
 		this.top = body.scrollTop();
-
-		console.log(this.top);
 	};
 
 	onToggle (e: any, id: string) {
@@ -288,15 +296,32 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 
 		let sections: any[] = [
 			{ id: I.TabIndex.Favorite, name: 'Favorites' },
-			{ id: I.TabIndex.Set, name: 'Sets', load: true },
+			{ id: I.TabIndex.Recent, name: 'Recent' },
+			{ id: I.TabIndex.Set, name: 'Sets' },
 		];
+		let children: I.Block[] = [];
+		let ids: string[] = [];
 
 		sections = sections.map((s: any) => {
 			s.children = [];
 
 			switch (s.id) {
 				case I.TabIndex.Favorite:
-					s.children = tree;
+					children = blockStore.getChildren(blockStore.root, blockStore.root, (it: I.Block) => { return it.isLink(); });
+					ids = children.map((it: I.Block) => { return it.content.targetBlockId; });
+
+					s.children = tree.filter((c: any) => {
+						return ids.includes(c.id);
+					});
+					break;
+
+				case I.TabIndex.Recent:
+					children = blockStore.getChildren(blockStore.recent, blockStore.recent, (it: I.Block) => { return it.isLink(); });
+					ids = children.map((it: I.Block) => { return it.content.targetBlockId; });
+
+					s.children = tree.filter((c: any) => {
+						return ids.includes(c.id);
+					});
 					break;
 
 				case I.TabIndex.Set:
