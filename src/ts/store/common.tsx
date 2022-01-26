@@ -214,12 +214,17 @@ class CommonStore {
 	};
 
 	sidebarSet (v: any) {
+		const win = $(window);
 		const size = Constant.size.sidebar;
 
 		v = Object.assign(this.sidebarObj, v);
-		v.width = Number(v.width) || 0;
-		v.width = Math.max(size.min, Math.min(size.max, v.width));
 		v.fixed = Boolean(v.fixed);
+		
+		v.width = Number(v.width) || 0;
+		v.width = Math.max(size.width.min, Math.min(size.width.max, v.width));
+		
+		v.height = Number(v.height) || 0;
+		v.height = Math.max(size.height.min, Math.min(win.height() - Util.sizeHeader(), v.height));
 
 		set(this.sidebarObj, v);
 		Storage.set('sidebar', v);

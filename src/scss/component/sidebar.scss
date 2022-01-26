@@ -7,7 +7,7 @@
 }
 
 .sidebar { 
-    width: 240px; height: calc(100% - 64px); position: fixed; top: 52px; background-color: #fff;
+    position: fixed; background-color: #fff;
     z-index: 21; border-radius: 12px; box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2); display: flex; flex-direction: column;
     transition: transform 0.2s ease-in-out; 
 }
@@ -19,17 +19,17 @@
 }
 .sidebar.active { transform: translate3d(0px,0px,0px); }
 
-.sidebar.right {
-    .resize { right: auto; left: 0px; }
+.sidebar.right-h {
+    .resize-h { right: auto; left: 0px; }
 }
 
 .sidebar {
-    .resize { width: 10px; height: 100%; position: absolute; top: 0px; right: 0px; cursor: col-resize; }
-
+    .resize-h { width: 10px; height: 100%; position: absolute; top: 0px; right: 0px; cursor: col-resize; }
+    .resize-v { height: 10px; width: 100%; position: absolute; bottom: 0px; left: 0px; cursor: row-resize; }
 
     .loaderWrapper { position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; }
 
-    .head { padding: 16px; border-bottom: 1px solid $colorLightGrey; position: relative; height: 96px; }
+    .head { padding: 16px; border-bottom: 1px solid $colorLightGrey; position: relative; height: 96px; flex-shrink: 0; }
     .head {
         .icon.expand { 
             width: 44px; height: 32px; background-size: 20px 20px; background-image: url('~img/icon/header/expand.svg');
@@ -44,7 +44,10 @@
         .icon.close:hover { background-color: $colorVeryLightGrey; }
     }
     
-    .body { overflow-x: hidden; overflow-y: overlay; padding: 16px 12px 16px 6px; height: 100%; position: relative; }
+    .body { 
+        overflow-x: hidden; overflow-y: overlay; padding: 16px 12px 16px 6px; height: 100%; position: relative; 
+        flex-grow: 1;
+    }
     .body {
         .icon.arrow { 
             width: 20px; height: 20px; background-image: url('~img/arrow/select/dark.svg'); flex-shrink: 0; 

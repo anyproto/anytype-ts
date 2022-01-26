@@ -51,7 +51,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		const { width, height, x, y, fixed, snap } = sidebar;
 		const { loading } = this.state;
 		const sections = this.getSections();
-		const css: any = { width: sidebar.width };
+		const css: any = { width };
 		const cn = [ 'sidebar' ];
 
 		if (snap == I.MenuDirection.Left) {
@@ -67,6 +67,8 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 
 		if (fixed) {
 			cn.push('fixed');
+		} else {
+			css.height = height;
 		};
 
         let depth = 0;
@@ -157,7 +159,8 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 					)}
 				</div>
 
-				<div className="resize" onMouseDown={this.onResizeStart} />
+				<div className="resize-h" onMouseDown={(e: any) => { this.onResizeStart(e, I.MenuType.Horizontal); }} />
+				<div className="resize-v" onMouseDown={(e: any) => { this.onResizeStart(e, I.MenuType.Vertical); }} />
             </div>
 		);
 	};
@@ -406,17 +409,23 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		};
 	};
 
-	onResizeStart (e: any) {
+	onResizeStart (e: any, dir: I.MenuType) {
 		if (!this._isMounted) {
 			return;
 		};
 
 		const { dataset } = this.props;
 		const { selection } = dataset || {};
+		const { sidebar } = commonStore;
+		const { fixed } = sidebar;
 		const node = $(ReactDOM.findDOMNode(this));
 		const win = $(window);
 		const body = $('body');
 		const offset = node.offset();
+
+		if (fixed && (dir == I.MenuType.Vertical)) {
+			return;
+		};
 		
 		this.width = node.width();
 		this.height = node.height();
@@ -430,34 +439,47 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		keyboard.setResize(true);
 		body.addClass('colResize');
 		win.unbind('mousemove.sidebar mouseup.sidebar');
-		win.on('mousemove.sidebar', (e: any) => { this.onResizeMove(e); });
-		win.on('mouseup.sidebar', (e: any) => { this.onResizeEnd(e); });
+		win.on('mousemove.sidebar', (e: any) => { this.onResizeMove(e, dir); });
+		win.on('mouseup.sidebar', (e: any) => { this.onResizeEnd(e, dir); });
 	};
 
-	onResizeMove (e: any) {
+	onResizeMove (e: any, dir: I.MenuType) {
 		const { sidebar } = commonStore;
 		const { snap } = sidebar;
 		const node = $(ReactDOM.findDOMNode(this));
-		
+
 		let d = 0;
-		if (snap == I.MenuDirection.Right) {
-			d = this.ox - e.pageX + this.width;
-		} else {
-			d = e.pageX - this.ox;
+
+		if (dir == I.MenuType.Horizontal) {
+			if (snap == I.MenuDirection.Right) {
+				d = this.ox - e.pageX + this.width;
+			} else {
+				d = e.pageX - this.ox;
+			};
+	
+			this.width = this.getWidth(d);
+	
+			this.resizeHeaderFooter(this.width);
+			node.css({ width: this.width });
+			$('#sidebarDummy').css({ width: this.width });
 		};
 
-		const w = this.getWidth(d);
-
-		this.resizeHeaderFooter(w);
-		node.css({ width: w });
-		$('#sidebarDummy').css({ width: w });
+		if (dir == I.MenuType.Vertical) {
+			this.height = this.getHeight(e.pageY - this.oy);
+			node.css({ height: this.height });
+		};
 	};
 
-	onResizeEnd (e: any) {
+	onResizeEnd (e: any, dir: I.MenuType) {
 		const { dataset } = this.props;
 		const { selection } = dataset || {};
 
-		commonStore.sidebarSet({ width: this.getWidth(e.pageX - this.ox) });
+		if (dir == I.MenuType.Horizontal) {
+			commonStore.sidebarSet({ width: this.width });
+		};
+		if (dir == I.MenuType.Vertical) {
+			commonStore.sidebarSet({ height: this.height });
+		};
 
 		if (selection) {
 			selection.preventSelect(false);
@@ -539,8 +561,14 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 	};
 
 	getWidth (w: number) {
-		const size = Constant.size.sidebar;
+		const size = Constant.size.sidebar.width;
 		return Math.max(size.min, Math.min(size.max, w));
+	};
+
+	getHeight (h: number) {
+		const win = $(window);
+		const size = Constant.size.sidebar.height;
+		return Math.max(size.min, Math.min(win.height() - Util.sizeHeader(), h));
 	};
 
 	checkCoords (x: number, y: number): { x: number, y: number } {
