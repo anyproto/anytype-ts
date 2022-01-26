@@ -80,7 +80,6 @@ class MenuContext extends React.Component<Props, {}> {
 		let archive = null;
 		let fav = null;
 
-		let pageRemove = { id: 'pageRemove', icon: 'remove', name: 'Delete' };
 		let pageCopy = { id: 'pageCopy', icon: 'copy', name: 'Duplicate' };
 
 		if (object.isFavorite) {
@@ -97,15 +96,13 @@ class MenuContext extends React.Component<Props, {}> {
 
 		// Restrictions
 		const allowedArchive = !object.isReadonly;
-		const allowedDelete = allowedArchive && object.isArchived;
 		const allowedFav = !object.isReadonly && !object.isArchived;
 
 		if (!allowedArchive)	 archive = null;
-		if (!allowedDelete)		 pageRemove = null;
 		if (!allowedFav)		 fav = null;
 
 		let sections = [
-			{ children: [ fav, pageCopy, archive, pageRemove ] },
+			{ children: [ fav, pageCopy, archive ] },
 		];
 
 		sections = sections.filter((section: any) => {
@@ -166,12 +163,6 @@ class MenuContext extends React.Component<Props, {}> {
 						return;
 					};
 					analytics.event('RestoreFromBin', { count: 1 });
-				});
-				break;
-
-			case 'pageRemove':
-				C.ObjectListDelete([ objectId ], (message: any) => {
-					analytics.event('RemoveCompletely', { count: 1 });
 				});
 				break;
 
