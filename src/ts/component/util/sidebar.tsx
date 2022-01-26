@@ -42,6 +42,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		this.onExpand = this.onExpand.bind(this);
 		this.onResizeStart = this.onResizeStart.bind(this);
 		this.onDragStart = this.onDragStart.bind(this);
+		this.onMouseEnter = this.onMouseEnter.bind(this);
 		this.onMouseLeave = this.onMouseLeave.bind(this);
 	};
 
@@ -142,7 +143,13 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
         };
 
 		return (
-            <div id="sidebar" className={cn.join(' ')} style={css} onMouseLeave={this.onMouseLeave}>
+            <div 
+				id="sidebar" 
+				className={cn.join(' ')} 
+				style={css} 
+				onMouseEnter={this.onMouseEnter} 
+				onMouseLeave={this.onMouseLeave}
+			>
 
 				<div className="head" onMouseDown={this.onDragStart}>
 					<Icon className={fixed ? 'close' : 'expand'} onMouseDown={this.onExpand} />
@@ -407,6 +414,10 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		return [ sectionId, parentId, id, depth ].join('-');
 	};
 
+	onMouseEnter (e: any) {
+		window.clearTimeout(this.timeout);
+	};
+
 	onMouseLeave (e: any) {
 		if (!this._isMounted || keyboard.isResizing || keyboard.isDragging) {
 			return;
@@ -454,7 +465,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		};
 
 		keyboard.setResize(true);
-		body.addClass('colResize');
+		body.addClass(dir == I.MenuType.Vertical ? 'rowResize' : 'colResize');
 		win.unbind('mousemove.sidebar mouseup.sidebar');
 		win.on('mousemove.sidebar', (e: any) => { this.onResizeMove(e, dir); });
 		win.on('mouseup.sidebar', (e: any) => { this.onResizeEnd(e, dir); });
@@ -505,7 +516,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		};
 
 		keyboard.setResize(false);
-		$('body').removeClass('colResize');
+		$('body').removeClass('rowResize colResize');
 		$(window).unbind('mousemove.sidebar mouseup.sidebar');
 	};
 

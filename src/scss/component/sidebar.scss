@@ -14,7 +14,6 @@
 .sidebar.left { left: 0px; transform: translate3d(-100%,0px,0px); }
 .sidebar.right { 
     right: 0px; transform: translate3d(100%,0px,0px); 
-
 }
 .sidebar.fixed { 
     height: 100%; top: 0px; transform: translate3d(0px,0px,0px); border-radius: 0px; box-shadow: 0px 0px; 
@@ -23,13 +22,17 @@
 .sidebar.active { transform: translate3d(0px,0px,0px); }
 
 .sidebar.right {
-    .resize-h { right: auto; left: 0px; }
+    .resize-h { right: auto; left: -5px; }
 }
+
 .sidebar.fixed.right { border-left: 1px solid $colorLightGrey; border-right: 0px; }
+.sidebar.fixed {
+    .resize-v { display: none; }
+}
 
 .sidebar {
-    .resize-h { width: 10px; height: 100%; position: absolute; top: 0px; right: 0px; cursor: col-resize; }
-    .resize-v { height: 10px; width: 100%; position: absolute; bottom: 0px; left: 0px; cursor: row-resize; }
+    .resize-h { width: 10px; height: 100%; position: absolute; top: 0px; right: -5px; cursor: col-resize; }
+    .resize-v { height: 10px; width: 100%; position: absolute; bottom: -5px; left: 0px; cursor: row-resize; }
 
     .loaderWrapper { position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; }
 
@@ -60,6 +63,7 @@
         .children { overflow: hidden; height: 0px; }
 
         .section { margin-bottom: 12px; }
+        .section:last-child { margin: 0px; }
         .section { 
             .sectionHead { display: flex; flex-direction: row; align-items: center; gap: 0px 6px; cursor: pointer; }
             .sectionHead {

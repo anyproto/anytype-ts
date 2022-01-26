@@ -13,6 +13,9 @@ body {
 }
 body.colResize { cursor: col-resize !important; }
 body.colResize * { cursor: col-resize !important; user-select: none !important; }
+body.rowResize { cursor: row-resize !important; }
+body.rowResize * { cursor: row-resize !important; user-select: none !important; }
+
 body.grab { cursor: grab !important; }
 body.fullScreen {
 	#drag { display: none; }
