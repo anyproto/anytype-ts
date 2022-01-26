@@ -517,7 +517,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 
 		keyboard.setDrag(true);
 		if (selection) {
-			selection.preventSelect(false);
+			selection.preventSelect(true);
 		};
 
 		win.unbind('mousemove.sidebar mouseup.sidebar');
