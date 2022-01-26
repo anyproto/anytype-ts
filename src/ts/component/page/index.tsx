@@ -77,7 +77,7 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 	render () {
 		const { isPopup } = this.props;
 		const { sidebar } = commonStore;
-		const { fixed, width } = sidebar;
+		const { snap, fixed, width } = sidebar;
 		const match = this.getMatch();
 		const { page, action } = match.params || {};
 		const path = [ page, action ].join('/');
@@ -106,14 +106,23 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 			content = wrap;
 		} else {
 			if (fixed) {
-				content = (
-					<div className="pageFlex">
-						{sb}
-						<div id="sidebarDummy" style={{ width: width }} />
-						
-						{wrap}
-					</div>
-				);
+				if (snap == I.MenuDirection.Right) {
+					content = (
+						<div className="pageFlex">
+							{sb}
+							{wrap}
+							<div id="sidebarDummy" style={{ width: width }} />
+						</div>
+					);
+				} else {
+					content = (
+						<div className="pageFlex">
+							{sb}
+							<div id="sidebarDummy" style={{ width: width }} />
+							{wrap}
+						</div>
+					);
+				};
 			} else {
 				content = (
 					<React.Fragment>

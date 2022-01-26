@@ -1099,26 +1099,33 @@ class Util {
 
 	resizeHeaderFooter (width: number) {
 		const { sidebar } = commonStore;
-		const { fixed } = sidebar;
+		const { fixed, snap } = sidebar;
 		const win = $(window);
 		const header = $('#page #header');
 		const footer = $('#page #footer');
+		const css: any = {};
 		
-		let w = win.width();
+		css.width = win.width();
 		if (fixed) {
-			w -= width;
+			css.width -= width;
 		};
 
-		header.css({ width: w });
-		footer.css({ width: w });
+		header.removeClass('withSidebar');
 
-		if (fixed) {
-			header.addClass('withSidebar');
-			footer.addClass('withSidebar');
+		if (snap == I.MenuDirection.Right) {
+			css.left = 0;
+			css.right = '';
 		} else {
-			header.removeClass('withSidebar');
-			footer.removeClass('withSidebar');
+			css.right = 0;
+			css.left = '';
+
+			if (fixed) {
+				header.addClass('withSidebar');
+			};
 		};
+
+		header.css(css);
+		footer.css(css);
 	};
 
 };

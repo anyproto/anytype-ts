@@ -34,6 +34,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 	oy: number = 0;
 	width: number = 0;
 	height: number = 0;
+	timeout: number = 0;
 
 	constructor (props: any) {
 		super(props);
@@ -403,10 +404,15 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		const { sidebar } = commonStore;
 		const { x, snap } = sidebar;
 
-		if (snap) {
+		if (!snap) {
+			return;
+		};
+
+		window.clearTimeout(this.timeout);
+		this.timeout = window.setTimeout(() => {
 			const node = $(ReactDOM.findDOMNode(this));
 			node.removeClass('active');
-		};
+		}, 300);
 	};
 
 	onResizeStart (e: any, dir: I.MenuType) {
