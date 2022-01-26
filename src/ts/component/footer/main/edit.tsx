@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Icon } from 'ts/component';
-import { I, DataUtil, focus } from 'ts/lib';
-import { menuStore, blockStore } from 'ts/store';
+import { I, DataUtil, focus, Util } from 'ts/lib';
+import { menuStore, blockStore, commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any>  {
@@ -35,6 +35,14 @@ const FooterMainEdit = observer(class FooterMainEdit extends React.Component<Pro
 				<Icon id="button-help" className="big help" tooltip="Help" tooltipY={I.MenuDirection.Top} onClick={this.onHelp} />
 			</div>
 		);
+	};
+
+	componentDidMount () {
+		this.resize();
+	};
+
+	componentDidUpdate () {
+		this.resize();
 	};
 
 	canAdd () {
@@ -88,6 +96,16 @@ const FooterMainEdit = observer(class FooterMainEdit extends React.Component<Pro
 			vertical: I.MenuDirection.Top,
 			horizontal: I.MenuDirection.Right,
 		});
+	};
+
+	resize () {
+		const { isPopup } = this.props;
+		const { sidebar } = commonStore;
+		const { width } = sidebar;
+
+		if (!isPopup) {
+			Util.resizeHeaderFooter(width);
+		};
 	};
 	
 });
