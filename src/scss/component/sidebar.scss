@@ -7,21 +7,25 @@
 }
 
 .sidebar { 
-    position: fixed; background-color: #fff;
-    z-index: 21; border-radius: 12px; box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2); display: flex; flex-direction: column;
+    position: fixed; background-color: #fff;  z-index: 21; border-radius: 12px; 
+    box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2); display: flex; flex-direction: column;
     transition: transform 0.2s ease-in-out; 
 }
 .sidebar.left { left: 0px; transform: translate3d(-100%,0px,0px); }
-.sidebar.right { right: 0px; transform: translate3d(100%,0px,0px); }
+.sidebar.right { 
+    right: 0px; transform: translate3d(100%,0px,0px); 
+
+}
 .sidebar.fixed { 
     height: 100%; top: 0px; transform: translate3d(0px,0px,0px); border-radius: 0px; box-shadow: 0px 0px; 
     border-right: 1px solid $colorLightGrey;
 }
 .sidebar.active { transform: translate3d(0px,0px,0px); }
 
-.sidebar.right-h {
+.sidebar.right {
     .resize-h { right: auto; left: 0px; }
 }
+.sidebar.fixed.right { border-left: 1px solid $colorLightGrey; border-right: 0px; }
 
 .sidebar {
     .resize-h { width: 10px; height: 100%; position: absolute; top: 0px; right: 0px; cursor: col-resize; }
