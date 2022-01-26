@@ -443,6 +443,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	onContext (e: any, id: string): void {
+		e.preventDefault();
+		e.stopPropagation();
+
 		const { rootId, block } = this.props;
 		const { x, y } = keyboard.mouse.page;
 		const subId = dbStore.getSubId(rootId, block.id);

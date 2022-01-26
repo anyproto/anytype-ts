@@ -34,7 +34,12 @@ const BodyRow = observer(class BodyRow extends React.Component<Props, {}> {
 		};
 		
 		return (
-			<div id={'row-' + index} className={cn.join(' ')} style={style} onContextMenu={(e: any) => { onContext(e, record.id); }}>
+			<div 
+				id={'row-' + index} 
+				className={cn.join(' ')} 
+				style={style} 
+				onContextMenu={(e: any) => { onContext(e, record.id); }}
+			>
 				{relations.map((relation: any, i: number) => (
 					<Cell 
 						key={'grid-cell-' + relation.relationKey + record.id} 
