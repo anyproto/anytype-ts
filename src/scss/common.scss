@@ -12,7 +12,7 @@ body {
 	overscroll-behavior: none;
 }
 body.colResize { cursor: col-resize !important; }
-body.colResize * { cursor: col-resize !important; }
+body.colResize * { cursor: col-resize !important; user-select: none !important; }
 body.grab { cursor: grab !important; }
 body.fullScreen {
 	#drag { display: none; }

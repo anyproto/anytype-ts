@@ -1097,6 +1097,37 @@ class Util {
 		});
 	};
 
+	resizeHeaderFooter (width: number) {
+		const { sidebar } = commonStore;
+		const { fixed, snap } = sidebar;
+		const win = $(window);
+		const header = $('#page #header');
+		const footer = $('#page #footer');
+		const css: any = {};
+		
+		css.width = win.width();
+		if (fixed) {
+			css.width -= width;
+		};
+
+		header.removeClass('withSidebar');
+
+		if (snap == I.MenuDirection.Right) {
+			css.left = 0;
+			css.right = '';
+		} else {
+			css.right = 0;
+			css.left = '';
+
+			if (fixed) {
+				header.addClass('withSidebar');
+			};
+		};
+
+		header.css(css);
+		footer.css(css);
+	};
+
 };
 
 export default new Util();
