@@ -538,10 +538,10 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		let y = e.pageY - this.oy - win.scrollTop();
 		let snap = null;
 
-		if (x <= 20) {
+		if (x <= 0) {
 			snap = I.MenuDirection.Left;
 		};
-		if (x + width >= win.width() - 20) {
+		if (x + width >= win.width()) {
 			snap = I.MenuDirection.Right;
 		};
 
