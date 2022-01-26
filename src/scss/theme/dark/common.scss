@@ -270,6 +270,10 @@ html.themeDark {
         .body {
             .item {
                 .flex:hover::before { background: $colorHover; }
+
+                .icon.arrow { 
+                    background-image: url('~img/arrow/select/light.svg');
+                }
             }
         }
     }

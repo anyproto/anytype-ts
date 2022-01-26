@@ -52,7 +52,6 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 			return null;
 		};
 
-
 		if (fixed) {
 			cn.push('fixed');
 		};
@@ -74,6 +73,10 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 			let css: any = { paddingLeft: (item.depth + 1) * 6 };
 			let length = item.children.length;
 			let id = [ item.id, item.depth ].join('-');
+
+			if ((item.depth > 0) && !item.children.length) {
+				css.paddingLeft += 20;
+			};
 
             return (
                 <div id={`item-${id}`} className={[ 'item', 'depth' + item.depth ].join(' ')}>
