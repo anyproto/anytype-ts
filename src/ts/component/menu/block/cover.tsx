@@ -96,6 +96,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 	load () {
 		const { filter } = this.state;
 
+		this.items = [];
 		C.UnsplashSearch(filter, 24, (message: any) => {
 			if (message.error.code) {
 				return;
