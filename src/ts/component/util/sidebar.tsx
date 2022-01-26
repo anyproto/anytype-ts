@@ -123,7 +123,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
                 <div id={`item-${id}`} className={cn.join(' ')}>
                     <div className="flex" style={css} onMouseDown={(e: any) => { this.onClick(e, item); }}>
 						{length ? <Icon className="arrow" onMouseDown={(e: any) => { this.onToggle(e, id); }} /> : ''}
-                        <IconObject object={...item} size={20} />
+                        <IconObject object={...item} size={20} forceLetter={true} />
 						<ObjectName object={item} />
                     </div>
 
