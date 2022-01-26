@@ -1111,9 +1111,6 @@ class Util {
 			css.width = header.outerWidth() - width;
 		};
 
-		console.log(css, width);
-		console.trace();
-
 		header.removeClass('withSidebar');
 
 		if (snap == I.MenuDirection.Right) {

@@ -462,18 +462,18 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 
 	onResizeMove (e: any, dir: I.MenuType) {
 		const { sidebar } = commonStore;
-		const { snap } = sidebar;
+		const { snap, width } = sidebar;
 		const node = $(ReactDOM.findDOMNode(this));
 
 		let d = 0;
 
 		if (dir == I.MenuType.Horizontal) {
 			if (snap == I.MenuDirection.Right) {
-				d = this.ox - e.pageX + this.width;
+				d = this.ox - e.pageX + width;
 			} else {
 				d = e.pageX - this.ox;
 			};
-	
+
 			this.width = this.getWidth(d);
 	
 			this.resizeHeaderFooter(this.width);
@@ -490,13 +490,15 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 	onResizeEnd (e: any, dir: I.MenuType) {
 		const { dataset } = this.props;
 		const { selection } = dataset || {};
+		const update: any = {};
 
 		if (dir == I.MenuType.Horizontal) {
-			commonStore.sidebarSet({ width: this.width });
+			update.width = this.width;
 		};
 		if (dir == I.MenuType.Vertical) {
-			commonStore.sidebarSet({ height: this.height });
+			update.height = this.height;
 		};
+		commonStore.sidebarSet(update);
 
 		if (selection) {
 			selection.preventSelect(false);
@@ -547,8 +549,6 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 	onDragEnd (e: any) {
 		const { dataset } = this.props;
 		const { selection } = dataset || {};
-		const { sidebar } = commonStore;
-		const { width } = sidebar;
 		const win = $(window);
 		
 		let x = e.pageX - this.ox - win.scrollLeft();
@@ -558,7 +558,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		if (x <= 0) {
 			snap = I.MenuDirection.Left;
 		};
-		if (x + width >= win.width()) {
+		if (x + this.width >= win.width()) {
 			snap = I.MenuDirection.Right;
 		};
 
