@@ -258,6 +258,22 @@ html.themeDark {
         .icon.big { background-color: $colorBgIcon; }
     }
 
+    /* Sidebar */
+    /* ---------------------------------------------------------------- */
+
+    .sidebar { 
+        background-color: $colorBlack; color: $colorPrimary; border-color: $colorLinePrimary; 
+        box-shadow: 0px 4px 16px rgb(0 0 0 / 20%), 0px 0px 0px 1px #393933 inset;
+    }
+    .sidebar {
+        .head { border-color: $colorLinePrimary; }
+        .body {
+            .item {
+                .flex:hover::before { background: $colorHover; }
+            }
+        }
+    }
+
     @import "./menu.scss";
     @import "./popup.scss";
     @import "./page.scss";
