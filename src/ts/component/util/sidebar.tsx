@@ -44,7 +44,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		const { root, profile } = blockStore;
 		const { width, height, x, y, fixed } = sidebar;
 		const { loading } = this.state;
-        const tree = this.getTree();
+		const sections = this.getSections();
 		const css: any = { width: sidebar.width };
 		const cn = [ 'sidebar' ];
 
@@ -52,14 +52,26 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 			return null;
 		};
 
+
 		if (fixed) {
 			cn.push('fixed');
 		};
 
         let depth = 0;
 
+		const Section = (item: any) => (
+			<div className="section">
+				<div className="name">{item.name}</div>
+				<div className="items">
+					{item.children.map((item: any, i: number) => {
+						return <Item key={item.id + '-' + depth} {...item} depth={depth} />;
+					})}
+				</div>
+			</div>
+		);
+
         const Item = (item: any) => {
-			let css: any = { paddingLeft: item.depth * 6 };
+			let css: any = { paddingLeft: (item.depth + 1) * 6 };
 			let length = item.children.length;
 			let id = [ item.id, item.depth ].join('-');
 
@@ -87,9 +99,9 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 				</div>
 				
 				<div className="body">
-					{tree.map((item: any, i: number) => (
-						<Item key={item.id + '-' + depth} {...item} depth={depth} />
-					))}
+					{sections.map((section: any, i: number) => {
+						return <Section key={i} {...section} />;
+					})}
 				</div>
 
 				<div className="resize" onMouseDown={this.onResizeStart} />
@@ -205,6 +217,35 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 				}, 200);
 			});
 		};
+	};
+
+	getSections () {
+		const tree = this.getTree();
+
+		let sections: any[] = [
+			{ id: I.TabIndex.Favorite, name: 'Favorites' },
+			{ id: I.TabIndex.Set, name: 'Sets', load: true },
+		];
+
+		sections = sections.map((s: any) => {
+			s.children = [];
+
+			switch (s.id) {
+				case I.TabIndex.Favorite:
+					s.children = tree;
+					break;
+
+				case I.TabIndex.Set:
+					s.children = tree.filter((c: any) => {
+						return c.type == Constant.typeId.set;
+					});
+					break;
+
+			};
+			return s;
+		});
+
+		return sections;
 	};
 
     getTree () {

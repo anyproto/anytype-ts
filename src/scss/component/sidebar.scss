@@ -35,11 +35,14 @@
     
     .body { overflow-x: hidden; overflow-y: overlay; padding: 16px 12px 16px 6px; height: 100%; }
     .body {
-        .item { cursor: pointer; border-radius: 4px; }
 
+        .section { }
+        .section > .name { @include text-paragraph; font-weight: 600; margin-bottom: 8px; }
+
+        .item { cursor: pointer; border-radius: 4px; margin-bottom: 8px; }
         .item {
             .flex { 
-                position: relative; padding: 2px 0px; border-radius: inherit; line-height: 20px; 
+                position: relative; padding: 2px 6px; border-radius: inherit; line-height: 20px; 
                 flex-direction: row;
             }
             .flex::before {
