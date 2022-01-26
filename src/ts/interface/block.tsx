@@ -84,6 +84,7 @@ export interface Block {
 	
 	getLength?(): number;
 	isSystem?(): boolean;
+	isLocked?(): boolean;
 
 	canHaveChildren?(): boolean;
 	canHaveAlign?(): boolean;

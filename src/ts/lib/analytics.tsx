@@ -134,17 +134,21 @@ class Analytics {
 				data.style = Number(data.style) || 0;
 
 				if (data.type == I.BlockType.Text) {
-					data.style = I.TextStyle[data.style].toLowerCase();
+					data.style = I.TextStyle[data.style];
 				} else
 				if (data.type == I.BlockType.Div) {
-					data.style = I.DivStyle[data.style].toLowerCase();
+					data.style = I.DivStyle[data.style];
 				} else
 				if (data.type == I.BlockType.File) {
 					if (undefined !== data.params?.fileType) {
 						data.fileType = Number(data.params.fileType) || 0;
-						data.type = I.FileType[data.fileType].toLowerCase();
+						data.type = I.FileType[data.fileType];
 					};
-					data.style = I.FileStyle[data.style].toLowerCase();
+					if (data.style == I.FileStyle.Auto) {
+						data.style = I.FileStyle.Embed;
+					};
+
+					data.style = I.FileStyle[data.style];
 				} else {
 					delete(data.style);
 				};
@@ -153,7 +157,7 @@ class Analytics {
 			case 'SetCover':
 			case 'SettingsWallpaperSet':
 				data.type = Number(data.type) || 0;
-				data.type = I.CoverType[data.type].toLowerCase();
+				data.type = I.CoverType[data.type];
 				data.id = String(data.id || '').replace(/^c([\d]+)/, '$1');
 
 				if (data.type == I.CoverType.Upload) {
@@ -164,36 +168,36 @@ class Analytics {
 			case 'AddView':
 			case 'SwitchView':
 				data.type = Number(data.type) || 0;
-				data.type = I.ViewType[data.type].toLowerCase();
+				data.type = I.ViewType[data.type];
 				break;
 
 			case 'AddFilter':
 			case 'ChangeFilterValue':
 				data.condition = Number(data.condition) || 0;
-				data.condition = I.FilterCondition[data.condition].toLowerCase();
+				data.condition = I.FilterCondition[data.condition];
 				break;
 
 			case 'AddSort':
 			case 'ChangeSortValue':
 				data.type = Number(data.type) || 0;
-				data.type = I.SortType[data.type].toLowerCase();
+				data.type = I.SortType[data.type];
 				break;
 
 			case 'ChangeTextStyle':
 				data.type = Number(data.type) || 0;
-				data.type = I.MarkType[data.type].toLowerCase();
+				data.type = I.MarkType[data.type];
 				break;
 
 			case 'UploadMedia':
 			case 'DownloadMedia':
 				data.type = Number(data.type) || 0;
-				data.type = I.FileType[data.type].toLowerCase();
+				data.type = I.FileType[data.type];
 				break;
 
 			case 'CreateRelation':
 			case 'AddExistingRelation':
 				data.format = Number(data.format) || 0;
-				data.format = I.RelationType[data.format].toLowerCase();
+				data.format = I.RelationType[data.format];
 				break;
 		};
 
@@ -216,11 +220,11 @@ class Analytics {
 		};
 
 		if (undefined !== converted.layout) {
-			converted.layout = I.ObjectLayout[converted.layout].toLowerCase();
+			converted.layout = I.ObjectLayout[converted.layout];
 		};
 
 		if (undefined !== converted.align) {
-			converted.align = I.BlockAlign[converted.align].toLowerCase();
+			converted.align = I.BlockAlign[converted.align];
 		};
 
 		param = Object.assign(param, converted);

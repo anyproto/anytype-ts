@@ -34,7 +34,7 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 		let allowedIcon = !checkType && allowedDetails && !root.isObjectTask() && !root.isObjectNote();
 		let allowedCover = !checkType && allowedDetails && !root.isObjectNote();
 
-		if (root.fields.isLocked) {
+		if (root.isLocked()) {
 			allowedIcon = false;
 			allowedLayout = false;
 			allowedCover = false;

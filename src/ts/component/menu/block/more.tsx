@@ -163,9 +163,9 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		};
 
 		if (block.fields.isLocked) {
-			pageLock = { id: 'pageUnlock', icon: 'pageUnlock', name: 'Unlock page' };
+			pageLock = { id: 'pageUnlock', icon: 'pageUnlock', name: 'Unlock page', caption: `Ctrl+Shift+L` };
 		} else {
-			pageLock = { id: 'pageLock', icon: 'pageLock', name: 'Lock page' };
+			pageLock = { id: 'pageLock', icon: 'pageLock', name: 'Lock page', caption: `Ctrl+Shift+L` };
 		};
 
 		// Restrictions
