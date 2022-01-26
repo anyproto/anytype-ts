@@ -379,7 +379,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		const node = $(ReactDOM.findDOMNode(this));
 		const w = this.getWidth(e.pageX - this.ox);
 
-		this.resizeHeader(w);
+		this.resizeHeaderFooter(w);
 
 		node.css({ width: w });
 		$('#sidebarDummy').css({ width: w });
@@ -413,12 +413,12 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		const { sidebar } = commonStore;
 		const { width } = sidebar;
 
-		this.resizeHeader(width);
+		this.resizeHeaderFooter(width);
 	};
 
-	resizeHeader (width: number) {
+	resizeHeaderFooter (width: number) {
 		if (!this.props.isPopup) {
-			Util.resizeHeader(width);
+			Util.resizeHeaderFooter(width);
 		};
 	};
 

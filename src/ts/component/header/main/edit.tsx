@@ -226,7 +226,7 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<Pro
 		const { width } = sidebar;
 
 		if (!isPopup) {
-			Util.resizeHeader(width);
+			Util.resizeHeaderFooter(width);
 		};
 	};
 	

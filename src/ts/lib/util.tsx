@@ -1097,11 +1097,12 @@ class Util {
 		});
 	};
 
-	resizeHeader (width: number) {
+	resizeHeaderFooter (width: number) {
 		const { sidebar } = commonStore;
 		const { fixed } = sidebar;
 		const win = $(window);
 		const header = $('#page #header');
+		const footer = $('#page #footer');
 		
 		let w = win.width();
 		if (fixed) {
@@ -1109,7 +1110,15 @@ class Util {
 		};
 
 		header.css({ width: w });
-		fixed ? header.addClass('withSidebar') : header.removeClass('withSidebar');
+		footer.css({ width: w });
+
+		if (fixed) {
+			header.addClass('withSidebar');
+			footer.addClass('withSidebar');
+		} else {
+			header.removeClass('withSidebar');
+			footer.removeClass('withSidebar');
+		};
 	};
 
 };
