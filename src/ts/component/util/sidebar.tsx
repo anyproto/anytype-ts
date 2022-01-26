@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, C, DataUtil, Util, keyboard } from 'ts/lib';
+import { I, C, DataUtil, Util, keyboard, Storage } from 'ts/lib';
 import { IconObject, Icon, ObjectName } from 'ts/component';
 import { observer } from 'mobx-react';
 import { authStore, blockStore, commonStore } from 'ts/store';
@@ -30,6 +30,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 	};
 	ox: number = 0;
 	loaded: boolean = false;
+	top: number = 0;
 
 	constructor (props: any) {
 		super(props);
@@ -61,7 +62,10 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 
 		const Section = (item: any) => (
 			<div className="section">
-				<div className="name">{item.name}</div>
+				<div className="sectionHead">
+					<div className="name">{item.name}</div>
+					<div className="cnt">{item.children.length || ''}</div>
+				</div>
 				<div className="items">
 					{item.children.map((item: any, i: number) => {
 						return <Item key={item.id + '-' + depth} {...item} depth={depth} />;
@@ -74,15 +78,16 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 			let css: any = { paddingLeft: (item.depth + 1) * 6 };
 			let length = item.children.length;
 			let id = [ item.id, item.depth ].join('-');
+			let cn = [ 'item', 'depth' + item.depth ];
 
 			if ((item.depth > 0) && !item.children.length) {
 				css.paddingLeft += 20;
 			};
 
             return (
-                <div id={`item-${id}`} className={[ 'item', 'depth' + item.depth ].join(' ')}>
+                <div id={`item-${id}`} className={cn.join(' ')}>
                     <div className="flex" style={css} onClick={(e: any) => { this.onClick(e, item); }}>
-						{length ? <Icon className="arrow" onClick={(e: any) => { this.toggle(e, item); }} /> : ''}
+						{length ? <Icon className="arrow" onClick={(e: any) => { this.onToggle(e, id); }} /> : ''}
                         <IconObject object={...item} size={20} />
 						<ObjectName object={item} />
                     </div>
@@ -117,25 +122,54 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		this._isMounted = true;
 		this.init();
 		this.resize();
-
-		$(window).unbind('resize.sidebar').on('resize.sidebar', (e: any) => { this.resize(); });
+		this.rebind();
+		this.restore();
 	};
 
 	componentDidUpdate () {
 		this.init();
 		this.resize();
+		this.restore();
 	};
 
 	componentWillUnmount () {
 		this._isMounted = false;
-		
+		this.unbind();
+	};
+
+	rebind () {
+		const node = $(ReactDOM.findDOMNode(this));
+		const body = node.find('.body');
+
+		this.unbind();
+
+		$(window).on('resize.sidebar', (e: any) => { this.resize(); });
+		body.on('scroll', (e: any) => { this.onScroll(); });
+	};
+
+	unbind () {
+		const node = $(ReactDOM.findDOMNode(this));
+		const body = node.find('.body');
+
 		$(window).unbind('resize.sidebar');
+		body.unbind('.scroll');
 	};
 
 	init () {
 		if (!this.loaded && !this.state.loading) {
 			this.load();
 		};
+	};
+
+	restore () {
+		const node = $(ReactDOM.findDOMNode(this));
+		const body = node.find('.body');
+		const toggle = Storage.getToggle('sidebar');
+
+		console.log('RESTORE', this.top);
+
+		toggle.forEach((it: string) => { this.childrenShow(it, false); });
+		body.scrollTop(this.top);
 	};
 
 	load () {
@@ -184,7 +218,16 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		});
 	};
 
-	toggle (e: any, item: any) {
+	onScroll () {
+		const node = $(ReactDOM.findDOMNode(this));
+		const body = node.find('.body');
+
+		this.top = body.scrollTop();
+
+		console.log(this.top);
+	};
+
+	onToggle (e: any, id: string) {
 		if (!this._isMounted) {
 			return;
 		};
@@ -193,34 +236,51 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		e.stopPropagation();
 
 		const node = $(ReactDOM.findDOMNode(this));
-		const el = node.find(`#item-${item.id}-${item.depth}`);
-		const children = el.find(`#children-${item.id}-${item.depth}`);
+		const el = node.find(`#item-${id}`);
 
-		let height = 0;
+		el.hasClass('active') ? this.childrenHide(id, true) : this.childrenShow(id, true);
+	};
 
-		if (el.hasClass('active')) {
-			el.removeClass('active');
-			height = children.height();
-			children.css({ overflow: 'hidden', height: height });
+	childrenShow (id: string, animate: boolean) {
+		const node = $(ReactDOM.findDOMNode(this));
+		const el = node.find(`#item-${id}`);
+		const children = el.find(`#children-${id}`);
 
-			raf(() => {
-				children.css({ height: 0 });
-			});
-		} else {
-			el.addClass('active');
+		el.addClass('active');
+		children.css({ overflow: 'visible', height: 'auto' });
 
-			children.css({ overflow: 'visible', height: 'auto' });
-
-			height = children.height();
+		if (animate) {
+			const height = children.height();
 			children.css({ overflow: 'hidden', height: 0 });
+	
 			raf(() => {
 				children.css({ height: height });
-
+	
 				window.setTimeout(() => {
 					children.css({ overflow: 'visible', height: 'auto' });
 				}, 200);
 			});
 		};
+
+		Storage.setToggle('sidebar', id, true);
+	};
+
+	childrenHide (id: string, animate: boolean) {
+		const node = $(ReactDOM.findDOMNode(this));
+		const el = node.find(`#item-${id}`).removeClass('active');
+		const children = el.find(`#children-${id}`);
+		const height = children.height();
+
+		if (animate) {
+			children.css({ overflow: 'hidden', height: height });
+			raf(() => {
+				children.css({ height: 0 });
+			});
+		} else {
+			children.css({ overflow: 'hidden', height: 0 });
+		};
+
+		Storage.setToggle('sidebar', id, false);
 	};
 
 	getSections () {

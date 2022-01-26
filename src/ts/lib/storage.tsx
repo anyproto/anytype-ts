@@ -51,9 +51,13 @@ class Storage {
 		return obj;
 	};
 
-	checkToggle (rootId: string, id: string): boolean {
+	getToggle (rootId: string) {
 		const map = this.get('toggle') || {};
-		return (map[rootId] || []).indexOf(id) >= 0;
+		return map[rootId] || [];
+	};
+
+	checkToggle (rootId: string, id: string): boolean {
+		return this.getToggle(rootId).indexOf(id) >= 0;
 	};
 
 	setScroll (key: string, rootId: string, scroll: number) {
