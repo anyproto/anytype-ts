@@ -81,7 +81,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		);
 
         const Item = (item: any) => {
-			let css: any = { paddingLeft: (item.depth + 1) * 6 };
+			let css: any = { paddingLeft: 6 + item.depth * 4 };
 			let length = item.children.length;
 			let id = [ item.sectionId, item.parentId, item.id, item.depth ].join('-');
 			let cn = [ 'item', 'depth' + item.depth ];

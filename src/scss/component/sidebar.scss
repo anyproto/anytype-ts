@@ -39,7 +39,7 @@
         .section { margin-bottom: 12px; }
         .section { 
             .sectionHead {
-                margin-bottom: 8px; display: flex; flex-direction: row; align-items: center; gap: 0px 6px;
+                margin-bottom: 8px; display: flex; flex-direction: row; align-items: center; gap: 0px 6px; padding: 0px 8px;
             }
             .sectionHead {
                 .name { @include text-paragraph; @include text-overflow-nw; font-weight: 600; flex-grow: 1; }
