@@ -1,9 +1,9 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { I, C, DataUtil, Util, keyboard, Storage } from 'ts/lib';
-import { IconObject, Icon, ObjectName } from 'ts/component';
-import { observer } from 'mobx-react';
+import { IconObject, Icon, ObjectName, Loader } from 'ts/component';
 import { authStore, blockStore, commonStore } from 'ts/store';
+import { observer } from 'mobx-react';
 
 interface Props {
 	isPopup?: boolean;
@@ -14,7 +14,6 @@ interface State {
 	loading: boolean;
 };
 
-const raf = require('raf');
 const $ = require('jquery');
 const Constant = require('json/constant.json');
 
@@ -127,9 +126,15 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 				</div>
 				
 				<div className="body">
-					{sections.map((section: any, i: number) => {
-						return <Section key={i} {...section} />;
-					})}
+					{loading ? (
+						<Loader />
+					) : (
+						<React.Fragment>
+							{sections.map((section: any, i: number) => (
+								<Section key={i} {...section} />
+							))}
+						</React.Fragment>
+					)}
 				</div>
 
 				<div className="resize" onMouseDown={this.onResizeStart} />
