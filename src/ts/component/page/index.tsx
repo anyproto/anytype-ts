@@ -76,13 +76,13 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 
 	render () {
 		const { isPopup } = this.props;
-		const { sidebar } = commonStore;
+		const { config, sidebar } = commonStore;
 		const { snap, fixed, width } = sidebar;
 		const match = this.getMatch();
 		const { page, action } = match.params || {};
 		const path = [ page, action ].join('/');
 		const showNotice = !Boolean(Storage.get('firstRun'));
-		const showSidebar = (page == 'main') && (action != 'index');
+		const showSidebar = config.experimental && (page == 'main') && (action != 'index');
 
 		if (showNotice) {
 			Components['/'] = PageAuthNotice;
