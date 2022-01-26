@@ -185,7 +185,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		const body = node.find('.body');
 		const toggle = Storage.getToggle('sidebar');
 
-		toggle.forEach((it: string) => { this.childrenShow(it, false); });
+		toggle.forEach((it: string) => { this.childrenShow(it); });
 		body.scrollTop(this.top);
 	};
 
@@ -253,48 +253,26 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		const node = $(ReactDOM.findDOMNode(this));
 		const el = node.find(`#item-${id}`);
 
-		el.hasClass('active') ? this.childrenHide(id, true) : this.childrenShow(id, true);
+		el.hasClass('active') ? this.childrenHide(id) : this.childrenShow(id);
 	};
 
-	childrenShow (id: string, animate: boolean) {
+	childrenShow (id: string) {
 		const node = $(ReactDOM.findDOMNode(this));
 		const el = node.find(`#item-${id}`);
 		const children = el.find(`#children-${id}`);
 
 		el.addClass('active');
 		children.css({ overflow: 'visible', height: 'auto' });
-
-		if (animate) {
-			const height = children.height();
-			children.css({ overflow: 'hidden', height: 0 });
-	
-			raf(() => {
-				children.css({ height: height });
-	
-				window.setTimeout(() => {
-					children.css({ overflow: 'visible', height: 'auto' });
-				}, 200);
-			});
-		};
-
 		Storage.setToggle('sidebar', id, true);
 	};
 
-	childrenHide (id: string, animate: boolean) {
+	childrenHide (id: string) {
 		const node = $(ReactDOM.findDOMNode(this));
-		const el = node.find(`#item-${id}`).removeClass('active');
+		const el = node.find(`#item-${id}`);
 		const children = el.find(`#children-${id}`);
-		const height = children.height();
 
-		if (animate) {
-			children.css({ overflow: 'hidden', height: height });
-			raf(() => {
-				children.css({ height: 0 });
-			});
-		} else {
-			children.css({ overflow: 'hidden', height: 0 });
-		};
-
+		el.removeClass('active');
+		children.css({ overflow: 'hidden', height: 0 });
 		Storage.setToggle('sidebar', id, false);
 	};
 

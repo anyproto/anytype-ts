@@ -39,7 +39,7 @@
             width: 20px; height: 20px; background-image: url('~img/arrow/select/dark.svg'); flex-shrink: 0; 
             transform: rotate(-90deg); transition: none; cursor: pointer;
         }
-        .children { overflow: hidden; height: 0px; transition: height 0.2s ease-in-out; }
+        .children { overflow: hidden; height: 0px; }
 
         .section { margin-bottom: 12px; }
         .section { 
