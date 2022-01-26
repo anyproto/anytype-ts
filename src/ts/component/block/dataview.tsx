@@ -299,12 +299,14 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const create = (template: any) => {
 			C.BlockDataviewRecordCreate(rootId, block.id, newRecord, template?.id, (message: any) => {
 				this.creating = false;
+
 				if (message.error.code) {
 					return;
 				};
 
+				const newRecord = message.record;
 				const records = dbStore.getRecords(subId, '');
-				const oldIndex = records.findIndex((it: any) => { return it.id == message.record.id; });
+				const oldIndex = records.findIndex((it: any) => { return it.id == newRecord.id; });
 				const newIndex = dir > 0 ? records.length - 1 : 0;
 
 				dbStore.recordsSet(subId, '', arrayMove(records, oldIndex, newIndex));
@@ -316,13 +318,11 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					window.setTimeout(() => { ref.onClick(e); }, 15);
 				};
 
-				if (template) {
-					analytics.event('CreateObject', {
-						objectType: template.targetObjectType,
-						layout: template.layout,
-						template: (template.templateIsBundled ? template.id : 'custom'),
-					});
-				};
+				analytics.event('CreateObject', {
+					objectType: newRecord.type,
+					layout: newRecord.layout,
+					template: template ? (template.templateIsBundled ? template.id : 'custom') : '',
+				});
 			});
 		};
 
