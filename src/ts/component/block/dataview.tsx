@@ -41,6 +41,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		this.onRowAdd = this.onRowAdd.bind(this);
 		this.onCellClick = this.onCellClick.bind(this);
 		this.onCellChange = this.onCellChange.bind(this);
+		this.onContext = this.onContext.bind(this);
 		this.optionCommand = this.optionCommand.bind(this);
 	};
 
@@ -109,6 +110,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 						onCellClick={this.onCellClick}
 						onCellChange={this.onCellChange}
 						optionCommand={this.optionCommand}
+						onContext={this.onContext}
 					/>
 				</div>
 			</div>
@@ -438,6 +440,24 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		const key = Relation.checkRelationValue(relation, value) ? 'ChangeRelationValue' : 'DeleteRelationValue';		
 		analytics.event(key, { type: 'dataview' });
+	};
+
+	onContext (e: any, id: string): void {
+		e.preventDefault();
+		e.stopPropagation();
+
+		const { rootId, block } = this.props;
+		const { x, y } = keyboard.mouse.page;
+		const subId = dbStore.getSubId(rootId, block.id);
+
+		menuStore.open('dataviewContext', {
+			rect: { width: 0, height: 0, x: x + 20, y: y },
+			vertical: I.MenuDirection.Center,
+			data: {
+				objectId: id,
+				subId,
+			}
+		});
 	};
 
 	optionCommand (code: string, rootId: string, blockId: string, relationKey: string, recordId: string, option: I.SelectOption, callBack?: (message: any) => void) {

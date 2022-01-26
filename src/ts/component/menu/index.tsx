@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, keyboard, Util } from 'ts/lib';
+import { I, keyboard, Util, analytics } from 'ts/lib';
 import { Dimmer, Icon } from 'ts/component';
 import { menuStore, popupStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -10,6 +10,7 @@ import MenuOnboarding from './onboarding';
 import MenuAccount from './account';
 import MenuSelect from './select';
 import MenuButton from './button';
+
 import MenuSmile from './smile';
 import MenuSmileSkin from './smile/skin';
 
@@ -60,7 +61,7 @@ import MenuDataviewOptionValues from './dataview/option/values';
 import MenuDataviewDate from './dataview/date';
 import MenuDataviewText from './dataview/text';
 import MenuDataviewSource from './dataview/source';
-import { analytics } from '../../lib';
+import MenuDataviewContext from './dataview/context';
 
 interface Props extends I.Menu {
 	dataset?: any;
@@ -84,6 +85,7 @@ const Components: any = {
 	account:				 MenuAccount,
 	select:					 MenuSelect,
 	button:					 MenuButton,
+
 	smile:					 MenuSmile,
 	smileSkin:				 MenuSmileSkin,
 
@@ -134,6 +136,7 @@ const Components: any = {
 	dataviewDate:			 MenuDataviewDate,
 	dataviewText:			 MenuDataviewText,
 	dataviewSource:			 MenuDataviewSource,
+	dataviewContext:		 MenuDataviewContext,
 };
 
 const Menu = observer(class Menu extends React.Component<Props, State> {

@@ -17,7 +17,7 @@ const Row = observer(class Row extends React.Component<Props, {}> {
 	_isMounted: boolean = false;
 
 	render () {
-		const { rootId, block, index, getView, onCellClick, onRef, style } = this.props;
+		const { rootId, block, index, getView, onCellClick, onRef, style, getRecord, onContext } = this.props;
 		const view = getView();
 		const relations = view.relations.filter((it: any) => { 
 			return it.isVisible && dbStore.getRelation(rootId, block.id, it.relationKey); 
@@ -25,9 +25,14 @@ const Row = observer(class Row extends React.Component<Props, {}> {
 		const idPrefix = 'dataviewCell';
 		const { hideIcon } = view;
 		const subId = dbStore.getSubId(rootId, block.id);
+		const record = getRecord(index);
 
 		return (
-			<div className="row" style={style}>
+			<div 
+				className="row" 
+				style={style}
+				onContextMenu={(e: any) => { onContext(e, record.id); }}
+			>
 				{relations.map((relation: any, i: number) => {
 					const id = Relation.cellId(idPrefix, relation.relationKey, index);
 					return (
