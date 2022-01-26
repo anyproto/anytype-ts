@@ -19,7 +19,13 @@
 }
 .sidebar.active { transform: translate3d(0px,0px,0px); }
 
+.sidebar.right {
+    .resize { right: auto; left: 0px; }
+}
+
 .sidebar {
+    .resize { width: 10px; height: 100%; position: absolute; top: 0px; right: 0px; cursor: col-resize; }
+
 
     .loaderWrapper { position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; }
 
@@ -77,6 +83,4 @@
         .item.active > .flex { margin-bottom: 4px; }
         .item.hover > .flex::before { background: $colorHover; }
     }
-
-    .resize { width: 10px; height: 100%; position: absolute; right: 0px; top: 0px; cursor: col-resize; }
 }
