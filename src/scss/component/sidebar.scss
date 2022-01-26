@@ -62,7 +62,7 @@
             .name { @include text-overflow-nw; display: inline-block; width: 100%; line-height: 20px; }
             .icon.arrow { 
                 width: 20px; height: 20px; background-image: url('~img/arrow/select/dark.svg'); flex-shrink: 0; 
-                margin-right: 4px; transform: rotate(-90deg);
+                margin-right: 4px; transform: rotate(-90deg); transition: none;
             }
             .children { overflow: hidden; height: 0px; transition: height 0.2s ease-in-out; }
         }

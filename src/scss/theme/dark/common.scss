@@ -265,6 +265,7 @@ html.themeDark {
         background-color: $colorBlack; color: $colorPrimary; border-color: $colorLinePrimary; 
         box-shadow: 0px 4px 16px rgb(0 0 0 / 20%), 0px 0px 0px 1px #393933 inset;
     }
+    .sidebar.fixed { box-shadow: 0px 0px; }
     .sidebar {
         .head { border-color: $colorLinePrimary; }
         .body {
