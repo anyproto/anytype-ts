@@ -269,12 +269,12 @@ html.themeDark {
     .sidebar {
         .head { border-color: $colorLinePrimary; }
         .body {
+            .icon.arrow { 
+                background-image: url('~img/arrow/select/light.svg');
+            }
+            
             .item {
                 .flex:hover::before { background: $colorHover; }
-
-                .icon.arrow { 
-                    background-image: url('~img/arrow/select/light.svg');
-                }
             }
         }
     }

@@ -60,31 +60,38 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 
         let depth = 0;
 
-		const Section = (section: any) => (
-			<div className="section">
-				<div className="sectionHead">
-					<div className="name">{section.name}</div>
-					<div className="cnt">{section.children.length || ''}</div>
+		const Section = (section: any) => {
+			const length = section.children.length;
+			const id = [ 'section', section.id ].join('-');
+
+			return (
+				<div id={`item-${id}`} className="section">
+					<div className="sectionHead">
+						{length ? <Icon className="arrow" onClick={(e: any) => { this.onToggle(e, id); }} /> : ''}
+						<div className="name">{section.name}</div>
+						<div className="cnt">{section.children.length || ''}</div>
+					</div>
+
+					<div id={`children-${id}`} className="children">
+						{section.children.map((child: any, i: number) => (
+							<Item 
+								key={child.id + '-' + depth} 
+								{...child} 
+								sectionId={section.id} 
+								parentId="" 
+								depth={depth} 
+							/>
+						))}
+					</div>
 				</div>
-				<div className="items">
-					{section.children.map((child: any, i: number) => (
-						<Item 
-							key={child.id + '-' + depth} 
-							{...child} 
-							sectionId={section.id} 
-							parentId="" 
-							depth={depth} 
-						/>
-					))}
-				</div>
-			</div>
-		);
+			);
+		};
 
         const Item = (item: any) => {
-			let css: any = { paddingLeft: 6 + item.depth * 4 };
-			let length = item.children.length;
-			let id = [ item.sectionId, item.parentId, item.id, item.depth ].join('-');
-			let cn = [ 'item', 'depth' + item.depth ];
+			const css: any = { paddingLeft: 6 + item.depth * 4 };
+			const length = item.children.length;
+			const id = [ item.sectionId, item.parentId, item.id, item.depth ].join('-');
+			const cn = [ 'item', 'depth' + item.depth ];
 
 			if ((item.depth > 0) && !item.children.length) {
 				css.paddingLeft += 20;

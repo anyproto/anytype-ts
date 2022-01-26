@@ -35,17 +35,22 @@
     
     .body { overflow-x: hidden; overflow-y: overlay; padding: 16px 12px 16px 6px; height: 100%; }
     .body {
+        .icon.arrow { 
+            width: 20px; height: 20px; background-image: url('~img/arrow/select/dark.svg'); flex-shrink: 0; 
+            transform: rotate(-90deg); transition: none; cursor: pointer;
+        }
+        .children { overflow: hidden; height: 0px; transition: height 0.2s ease-in-out; }
 
         .section { margin-bottom: 12px; }
         .section { 
-            .sectionHead {
-                margin-bottom: 8px; display: flex; flex-direction: row; align-items: center; gap: 0px 6px; padding: 0px 8px;
-            }
+            .sectionHead { display: flex; flex-direction: row; align-items: center; gap: 0px 6px; }
             .sectionHead {
                 .name { @include text-paragraph; @include text-overflow-nw; font-weight: 600; flex-grow: 1; }
                 .cnt { flex-shrink: 0; text-align: right; @include text-small; flex-basis: 20px; }
             }
         }
+        .section.active > .sectionHead > .icon.arrow { transform: rotate(0deg); }
+        .section.active > .sectionHead { margin-bottom: 8px; }
 
         .item { cursor: pointer; border-radius: 4px; margin-bottom: 4px; }
         .item {
@@ -61,11 +66,6 @@
     
             .iconObject { flex-shrink: 0; }
             .name { @include text-overflow-nw; display: inline-block; width: 100%; line-height: 20px; }
-            .icon.arrow { 
-                width: 20px; height: 20px; background-image: url('~img/arrow/select/dark.svg'); flex-shrink: 0; 
-                transform: rotate(-90deg); transition: none;
-            }
-            .children { overflow: hidden; height: 0px; transition: height 0.2s ease-in-out; }
         }
         .item:last-child { margin: 0px; }
         .item.active > .flex > .icon.arrow { transform: rotate(0deg); }
