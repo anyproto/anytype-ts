@@ -276,6 +276,7 @@ html.themeDark {
             .item {
                 .flex:hover::before { background: $colorHover; }
             }
+            .item.hover > .flex::before { background: $colorHover; }
         }
     }
 

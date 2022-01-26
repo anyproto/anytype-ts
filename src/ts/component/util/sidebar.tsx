@@ -30,6 +30,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 	ox: number = 0;
 	loaded: boolean = false;
 	top: number = 0;
+	id: string = '';
 
 	constructor (props: any) {
 		super(props);
@@ -192,6 +193,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 
 		toggle.forEach((it: string) => { this.childrenShow(it); });
 		body.scrollTop(this.top);
+		this.setActive();
 	};
 
 	load () {
@@ -353,7 +355,20 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 	};
 
 	onClick (e: any, item: any) {
+		this.id = [ item.sectionId, item.parentId, item.id, item.depth ].join('-');
+
 		DataUtil.objectOpenEvent(e, item);
+		this.setActive();
+	};
+
+	setActive () {
+		const node = $(ReactDOM.findDOMNode(this));
+
+		node.find('.item.hover').removeClass('hover');
+
+		if (this.id) {
+			node.find(`#item-${this.id}`).addClass('hover');
+		};
 	};
 
 	onMouseLeave (e: any) {
