@@ -323,31 +323,20 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 					children = blockStore.getChildren(blockStore.root, blockStore.root, (it: I.Block) => { return it.isLink(); });
 					ids = children.map((it: I.Block) => { return it.content.targetBlockId; });
 
-					s.children = tree.filter((c: any) => {
-						return ids.includes(c.id);
-					});
+					s.children = tree.filter((c: any) => { return ids.includes(c.id); });
+					s.children.sort((c1: any, c2: any) => { return this.sortByIds(ids, c1, c2); });
 					break;
 
 				case I.TabIndex.Recent:
 					children = blockStore.getChildren(blockStore.recent, blockStore.recent, (it: I.Block) => { return it.isLink(); });
-					ids = children.map((it: I.Block) => { return it.content.targetBlockId; }).slice(0, 20);
+					ids = children.map((it: I.Block) => { return it.content.targetBlockId; }).reverse().slice(0, 20);
 
-					s.children = tree.filter((c: any) => {
-						return ids.includes(c.id);
-					});
-					s.children.sort((c1: any, c2: any) => {
-						const i1 = ids.indexOf(c1.id);
-						const i2 = ids.indexOf(c2.id);
-						if (i1 > i2) return -1; 
-						if (i1 < i2) return 1;
-						return 0;
-					});
+					s.children = tree.filter((c: any) => { return ids.includes(c.id); });
+					s.children.sort((c1: any, c2: any) => { return this.sortByIds(ids, c1, c2); });
 					break;
 
 				case I.TabIndex.Set:
-					s.children = tree.filter((c: any) => {
-						return c.type == Constant.typeId.set;
-					});
+					s.children = tree.filter((c: any) => { return c.type == Constant.typeId.set; });
 					s.children = s.children.slice(0, 20);
 					break;
 
@@ -356,6 +345,14 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		});
 
 		return sections;
+	};
+
+	sortByIds (ids: string[], c1: any, c2: any) {
+		const i1 = ids.indexOf(c1.id);
+		const i2 = ids.indexOf(c2.id);
+		if (i1 > i2) return 1; 
+		if (i1 < i2) return -1;
+		return 0;
 	};
 
     getTree () {
