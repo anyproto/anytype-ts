@@ -65,7 +65,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 
             return (
                 <div id={`item-${id}`} className={[ 'item', 'depth' + item.depth ].join(' ')}>
-                    <div className="flex" style={css} onClick={(e: any) => { DataUtil.objectOpenPopup(item); }}>
+                    <div className="flex" style={css} onClick={(e: any) => { this.onClick(e, item); }}>
 						{length ? <Icon className="arrow" onClick={(e: any) => { this.toggle(e, item); }} /> : ''}
                         <IconObject object={...item} size={20} />
 						<ObjectName object={item} />
@@ -230,6 +230,10 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 	onExpand (e: any) {
 		const { sidebar } = commonStore;
 		commonStore.sidebarSet({ fixed: !sidebar.fixed });
+	};
+
+	onClick (e: any, item: any) {
+		DataUtil.objectOpenEvent(e, item);
 	};
 
 	onMouseLeave (e: any) {
