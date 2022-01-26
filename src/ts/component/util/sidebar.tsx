@@ -66,8 +66,15 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 
 			return (
 				<div id={`item-${id}`} className="section">
-					<div className="sectionHead">
-						{length ? <Icon className="arrow" onClick={(e: any) => { this.onToggle(e, id); }} /> : ''}
+					<div 
+						className="sectionHead" 
+						onClick={(e: any) => { 
+							if (length) {
+								this.onToggle(e, id); 
+							};
+						}}
+					>
+						{length ? <Icon className="arrow" /> : ''}
 						<div className="name">{section.name}</div>
 						<div className="cnt">{section.children.length || ''}</div>
 					</div>
@@ -206,18 +213,6 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 			{ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.Equal, value: false },
 			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
 			{ 
-				operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, 
-				value: [ 
-					Constant.typeId.relation,
-					Constant.typeId.type,
-					Constant.typeId.template,
-					Constant.typeId.file,
-					Constant.typeId.image,
-					Constant.typeId.video,
-					Constant.typeId.audio,
-				] 
-			},
-			{ 
 				operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, 
 				value: [
 					'_anytype_profile',
@@ -313,6 +308,13 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 
 					s.children = tree.filter((c: any) => {
 						return ids.includes(c.id);
+					});
+					s.children.sort((c1: any, c2: any) => {
+						const i1 = ids.indexOf(c1.id);
+						const i2 = ids.indexOf(c2.id);
+						if (i1 > i2) return -1; 
+						if (i1 < i2) return 1;
+						return 0;
 					});
 					break;
 

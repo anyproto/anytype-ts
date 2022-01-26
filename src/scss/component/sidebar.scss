@@ -46,7 +46,7 @@
 
         .section { margin-bottom: 12px; }
         .section { 
-            .sectionHead { display: flex; flex-direction: row; align-items: center; gap: 0px 6px; }
+            .sectionHead { display: flex; flex-direction: row; align-items: center; gap: 0px 6px; cursor: pointer; }
             .sectionHead {
                 .name { @include text-paragraph; @include text-overflow-nw; font-weight: 600; flex-grow: 1; }
                 .cnt { flex-shrink: 0; text-align: right; @include text-small; flex-basis: 20px; }
