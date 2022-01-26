@@ -82,7 +82,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 				<div id={`item-${id}`} className="section">
 					<div 
 						className="sectionHead" 
-						onClick={(e: any) => { 
+						onMouseDown={(e: any) => { 
 							if (length) {
 								this.onToggle(e, id); 
 							};
@@ -111,7 +111,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
         const Item = (item: any) => {
 			const css: any = { paddingLeft: 6 + item.depth * 4 };
 			const length = item.children.length;
-			const id = [ item.sectionId, item.parentId, item.id, item.depth ].join('-');
+			const id = this.getId(item);
 			const cn = [ 'item', 'depth' + item.depth ];
 
 			if ((item.depth > 0) && !item.children.length) {
@@ -120,8 +120,8 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 
             return (
                 <div id={`item-${id}`} className={cn.join(' ')}>
-                    <div className="flex" style={css} onClick={(e: any) => { this.onClick(e, item); }}>
-						{length ? <Icon className="arrow" onClick={(e: any) => { this.onToggle(e, id); }} /> : ''}
+                    <div className="flex" style={css} onMouseDown={(e: any) => { this.onClick(e, item); }}>
+						{length ? <Icon className="arrow" onMouseDown={(e: any) => { this.onToggle(e, id); }} /> : ''}
                         <IconObject object={...item} size={20} />
 						<ObjectName object={item} />
                     </div>
@@ -145,7 +145,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
             <div id="sidebar" className={cn.join(' ')} style={css} onMouseLeave={this.onMouseLeave}>
 
 				<div className="head" onMouseDown={this.onDragStart}>
-					<Icon className={fixed ? 'close' : 'expand'} onClick={this.onExpand} />
+					<Icon className={fixed ? 'close' : 'expand'} onMouseDown={this.onExpand} />
 				</div>
 				
 				<div className="body">
@@ -330,7 +330,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 
 				case I.TabIndex.Recent:
 					children = blockStore.getChildren(blockStore.recent, blockStore.recent, (it: I.Block) => { return it.isLink(); });
-					ids = children.map((it: I.Block) => { return it.content.targetBlockId; });
+					ids = children.map((it: I.Block) => { return it.content.targetBlockId; }).slice(0, 20);
 
 					s.children = tree.filter((c: any) => {
 						return ids.includes(c.id);
@@ -348,6 +348,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 					s.children = tree.filter((c: any) => {
 						return c.type == Constant.typeId.set;
 					});
+					s.children = s.children.slice(0, 20);
 					break;
 
 			};
@@ -378,12 +379,18 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
     };
 
 	onExpand (e: any) {
+		e.preventDefault();
+		e.stopPropagation();
+
 		const { sidebar } = commonStore;
 		commonStore.sidebarSet({ fixed: !sidebar.fixed });
 	};
 
 	onClick (e: any, item: any) {
-		this.id = [ item.sectionId, item.parentId, item.id, item.depth ].join('-');
+		e.preventDefault();
+		e.stopPropagation();
+
+		this.id = this.getId(item);
 
 		DataUtil.objectOpenEvent(e, item);
 		this.setActive();
@@ -397,6 +404,10 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		if (this.id) {
 			node.find(`#item-${this.id}`).addClass('hover');
 		};
+	};
+
+	getId ({ sectionId, parentId, id, depth }) {
+		return [ sectionId, parentId, id, depth ].join('-');
 	};
 
 	onMouseLeave (e: any) {
