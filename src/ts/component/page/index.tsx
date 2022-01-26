@@ -133,12 +133,7 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 			};
 		};
 		
-		return (
-			<React.Fragment>
-				{!isPopup ? <ListPopup key="listPopup" {...this.props} /> : ''}
-				{content}
-			</React.Fragment>
-		);
+		return content;
 	};
 	
 	componentDidMount () {

@@ -183,6 +183,7 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<Pro
 	onNavigation (e: any) {
 		DataUtil.objectOpenPopup({ id: this.props.rootId, layout: I.ObjectLayout.Navigation });
 	};
+	
 	onGraph (e: any) {
 		DataUtil.objectOpenPopup({ id: this.props.rootId, layout: I.ObjectLayout.Graph });
 	};

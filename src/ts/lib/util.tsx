@@ -1105,9 +1105,11 @@ class Util {
 		const footer = $('#page #footer');
 		const css: any = {};
 		
-		css.width = win.width();
+		header.css({ width: '' });
+
+		css.width = '';
 		if (fixed) {
-			css.width -= width;
+			css.width = header.outerWidth() - width;
 		};
 
 		header.removeClass('withSidebar');

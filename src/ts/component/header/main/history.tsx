@@ -1,12 +1,13 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { observer } from 'mobx-react';
 import { Icon } from 'ts/component';
 import { C, Util, DataUtil, I, translate, analytics } from 'ts/lib';
-import { detailStore } from 'ts/store';
+import { detailStore, commonStore } from 'ts/store';
+import { observer } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any> {
 	rootId: string;
+	isPopup?: boolean;
 };
 
 interface State {
@@ -48,6 +49,14 @@ const HeaderMainHistory = observer(class HeaderMainHistory extends React.Compone
 		);
 	};
 
+	componentDidMount () {
+		this.resize();
+	};
+
+	componentDidUpdate () {
+		this.resize();
+	};
+
 	onBack (e: any) {
 		const { rootId } = this.props;
 		const object = detailStore.get(rootId, rootId, []);
@@ -75,6 +84,16 @@ const HeaderMainHistory = observer(class HeaderMainHistory extends React.Compone
 
 	setVersion (version: I.HistoryVersion) {
 		this.setState({ version });
+	};
+
+	resize () {
+		const { isPopup } = this.props;
+		const { sidebar } = commonStore;
+		const { width } = sidebar;
+
+		if (!isPopup) {
+			Util.resizeHeaderFooter(width);
+		};
 	};
 
 });
