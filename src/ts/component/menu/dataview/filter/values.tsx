@@ -393,8 +393,6 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 				};
 			};
 
-			console.log('view.setFilter', JSON.stringify(item, null, 3));
-
 			view.setFilter(itemId, item);
 
 			analytics.event('ChangeFilterValue', { condition: item.condition });
