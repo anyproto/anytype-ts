@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { IconEmoji } from 'ts/component';
-import { I, Util, SmileUtil, DataUtil } from 'ts/lib';
+import { I, Util, SmileUtil, DataUtil, FileUtil } from 'ts/lib';
 import { commonStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -30,7 +30,7 @@ interface Props {
 	onCheckbox?(e: any): void;
 	onMouseEnter?(e: any): void;
 	onMouseLeave?(e: any): void;
-}
+};
 
 const IDS40 = [ 
 	I.ObjectLayout.Page, 
@@ -253,13 +253,13 @@ const IconObject = observer(class IconObject extends React.Component<Props, {}> 
 					icon = <img src={commonStore.imageUrl(id, iconSize * 2)} className={icn.join(' ')} />;
 				} else {
 					icn = icn.concat([ 'iconFile', 'c' + iconSize ]);
-					icon = <img src={File[Util.fileIcon(object)]} className={icn.join(' ')} />;
+					icon = <img src={File[FileUtil.icon(object)]} className={icn.join(' ')} />;
 				};
 				break;
 
 			case I.ObjectLayout.File:
 				icn = icn.concat([ 'iconFile', 'c' + iconSize ]);
-				icon = <img src={File[Util.fileIcon(object)]} className={icn.join(' ')} />;
+				icon = <img src={File[FileUtil.icon(object)]} className={icn.join(' ')} />;
 				break;
 
 			case I.ObjectLayout.Dashboard:

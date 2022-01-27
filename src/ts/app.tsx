@@ -6,7 +6,7 @@ import { Provider } from 'mobx-react';
 import { enableLogging } from 'mobx-logger';
 import { Page, SelectionProvider, DragProvider, Progress, Tooltip, Preview, Icon, ListPopup, ListMenu } from './component';
 import { commonStore, authStore, blockStore, detailStore, dbStore, menuStore, popupStore } from './store';
-import { I, C, Util, DataUtil, keyboard, Storage, analytics, dispatcher, translate } from 'ts/lib';
+import { I, C, Util, FileUtil, keyboard, Storage, analytics, dispatcher, translate } from 'ts/lib';
 import { throttle } from 'lodash';
 import * as Sentry from '@sentry/browser';
 import { configure } from 'mobx';
@@ -567,7 +567,7 @@ class App extends React.Component<Props, State> {
 
 	logToFile (name: string, message: any) {
 		let logsDir = path.join(userPath, 'logs');
-		let log = path.join(logsDir, name + '_' + Util.dateForFile() + '.json');
+		let log = path.join(logsDir, name + '_' + FileUtil.date() + '.json');
 		try {
 			fs.writeFileSync(log, JSON.stringify(message, null, 5), 'utf-8');
 		} catch(e) {
@@ -670,7 +670,7 @@ class App extends React.Component<Props, State> {
 
 	onProgress (e: any, progress: any) {
 		commonStore.progressSet({ 
-			status: Util.sprintf('Downloading update... %s/%s', Util.fileSize(progress.transferred), Util.fileSize(progress.total)), 
+			status: Util.sprintf('Downloading update... %s/%s', FileUtil.size(progress.transferred), FileUtil.size(progress.total)), 
 			current: progress.transferred, 
 			total: progress.total,
 			isUnlocked: true,

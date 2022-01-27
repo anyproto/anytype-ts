@@ -1,16 +1,10 @@
 import * as React from 'react';
 import { InputWithFile, Loader, IconObject, Error } from 'ts/component';
-import { I, C, Util, focus, translate, Action } from 'ts/lib';
-import { commonStore, detailStore, popupStore } from 'ts/store';
+import { I, Util, DataUtil, FileUtil, focus, translate, Action } from 'ts/lib';
+import { detailStore } from 'ts/store';
 import { observer } from 'mobx-react';
-import { DataUtil } from '../../../lib';
 
-interface Props extends I.BlockComponent {}
-
-const { ipcRenderer } = window.require('electron');
-const { app } = window.require('@electron/remote')
-const path = window.require('path');
-const userPath = app.getPath('userData');
+interface Props extends I.BlockComponent {};
 
 const BlockFile = observer(class BlockFile extends React.Component<Props, {}> {
 
@@ -73,7 +67,7 @@ const BlockFile = observer(class BlockFile extends React.Component<Props, {}> {
 						<span className="cp" onMouseDown={this.onOpen}>
 							<IconObject object={{ ...object, layout: I.ObjectLayout.File }} size={24} />
 							<span className="name">{name}</span>
-							<span className="size">{Util.fileSize(sizeInBytes)}</span>
+							<span className="size">{FileUtil.size(sizeInBytes)}</span>
 						</span>
 					</React.Fragment>
 				);

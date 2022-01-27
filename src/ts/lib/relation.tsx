@@ -1,4 +1,4 @@
-import { I, DataUtil, Util, translate } from 'ts/lib';
+import { I, DataUtil, Util, FileUtil, translate } from 'ts/lib';
 import { dbStore } from 'ts/store';
 
 const Constant = require('json/constant.json');
@@ -157,7 +157,7 @@ class Relation {
 	mapValue (relation: any, value: any) {
 		switch (relation.relationKey) {
 			case 'sizeInBytes':
-				return Util.fileSize(value);
+				return FileUtil.size(value);
 
 			case 'widthInPixels':
 			case 'heightInPixels':

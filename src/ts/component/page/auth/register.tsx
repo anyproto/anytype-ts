@@ -3,7 +3,7 @@ import { RouteComponentProps } from 'react-router';
 import { Frame, Cover, Title, Error, Input, Button, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
 import { commonStore, authStore } from 'ts/store';
 import { observer } from 'mobx-react';
-import { Util, translate } from 'ts/lib';
+import { FileUtil, Util, translate } from 'ts/lib';
 
 interface Props extends RouteComponentProps<any> {}
 interface State {
@@ -80,7 +80,7 @@ const PageAuthRegister = observer(class PageAuthRegister extends React.Component
 			let path = files[0];
 			
 			authStore.iconSet(path);
-			Util.loadPreviewBase64(Util.makeFileFromPath(path), {}, (image: string, param: any) => {
+			FileUtil.loadPreviewBase64(FileUtil.fromPath(path), {}, (image: string, param: any) => {
 				authStore.previewSet(image);
 			});
 		});
