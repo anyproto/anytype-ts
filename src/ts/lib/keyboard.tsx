@@ -1,5 +1,5 @@
 import { I, C, Util, DataUtil, crumbs, Storage, focus, history as historyPopup, analytics, Docs } from 'ts/lib';
-import { commonStore, authStore, blockStore, menuStore, popupStore } from 'ts/store';
+import { commonStore, authStore, blockStore, detailStore, menuStore, popupStore } from 'ts/store';
 
 const { ipcRenderer } = window.require('electron');
 
@@ -390,24 +390,48 @@ class Keyboard {
 		analytics.event('Redo');
 	};
 
-	onPrint () {
-		const { theme } = commonStore;
+	printApply (className: string, clearTheme: boolean) {
 		const isPopup = this.isPopup();
 		const html = $('html');
 
+		html.addClass('printMedia');
+		
 		if (isPopup) {
 			html.addClass('withPopup');
 		};
 
-		Util.addBodyClass('theme', '');
+		if (className) {
+			html.addClass(className);
+		};
 
+		if (clearTheme) {
+			Util.addBodyClass('theme', '');
+		};
 		focus.clearRange(true);
+	};
+
+	printRemove () {
+		const { theme } = commonStore;
+
+		$('html').removeClass('withPopup printMedia print save');
+		Util.addBodyClass('theme', theme);
+	};
+
+	onPrint () {
+		this.printApply('print', true);
+
 		window.print();
 
-		html.removeClass('withPopup');
-		Util.addBodyClass('theme', theme);
-
+		this.printRemove();
 		analytics.event('Print');
+	};
+
+	onSaveAsHTML () {
+		const rootId = this.getRootId();
+		const object = detailStore.get(rootId, rootId);
+
+		this.printApply('save', false);
+		ipcRenderer.send('winCommand', 'saveAsHTML', { name: object.name });
 	};
 
 	onSearch () {

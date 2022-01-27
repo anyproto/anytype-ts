@@ -48,6 +48,7 @@ remote.initialize();
 let isUpdating = false;
 let userPath = app.getPath('userData');
 let tmpPath = path.join(userPath, 'tmp');
+let exportPath = path.join(userPath, 'export');
 let waitLibraryPromise;
 let useGRPC = !process.env.ANYTYPE_USE_ADDON && (env.USE_GRPC || process.env.ANYTYPE_USE_GRPC || is.windows || is.development);
 let defaultChannel = version.match('alpha') ? 'alpha' : 'latest';
@@ -96,6 +97,7 @@ if (process.env.DATA_PATH) {
 };
 
 try { fs.mkdirSync(tmpPath); } catch (e) {};
+try { fs.mkdirSync(exportPath); } catch (e) {};
 
 if (useGRPC) {
 	server = require('./electron/server.js');
@@ -358,7 +360,9 @@ function createWindow () {
 		send.apply(this, args);
 	});
 
-	ipcMain.on('winCommand', (e, cmd) => {
+	ipcMain.on('winCommand', (e, cmd, param) => {
+		param = param || {};
+
 		switch (cmd) {
 			case 'menu':
 				menu.popup({ x: 16, y: 38 });
@@ -374,6 +378,10 @@ function createWindow () {
 
 			case 'close':
 				win.hide();
+				break;
+
+			case 'saveAsHTML':
+				savePage(param.name);
 				break;
 		};
 	});
@@ -640,6 +648,10 @@ function menuInit () {
 					label: 'Create workspace',
 					click: () => { send('commandGlobal', 'workspace');	}
 				},
+				{
+					label: 'Save page as HTML',
+					click: () => { send('command', 'saveAsHTML');	}
+				},
 			]
 		});
 	};
@@ -852,4 +864,16 @@ function exit (relaunch) {
 	} else {
 		send('shutdown', relaunch);
 	};
+};
+
+function savePage (name) {
+	name = String(name || 'untitled').replace(/[^a-z0-9]/gi, '-').toLowerCase();
+
+	win.webContents.savePage(path.join(exportPath, name + '.mhtml'), 'MHTML').then(() => {
+		shell.openPath(exportPath);
+		send('command', 'saveAsHTMLSuccess');
+	}).catch(err => { 
+		send('command', 'saveAsHTMLSuccess');
+		console.log(err); 
+	});
 };
