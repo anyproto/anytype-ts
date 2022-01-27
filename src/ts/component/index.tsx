@@ -60,6 +60,8 @@ import Filter from './util/filter';
 import Icon from './util/icon';
 import IconObject from './util/iconObject';
 
+import Sidebar from './util/sidebar';
+
 import Preview from './util/preview';
 import PreviewLink from './util/preview/link';
 import PreviewObject from './util/preview/object';
@@ -67,6 +69,11 @@ import PreviewObject from './util/preview/object';
 import Graph from './util/graph';
 
 import Cell from './block/dataview/cell';
+
+import ObjectName from './util/object/name';
+import ObjectDescription from './util/object/description';
+
+import ControlButtons  from './editor/controlButtons';
 
 export {
 	Page,
@@ -126,4 +133,8 @@ export {
 	PreviewObject,
 	Graph,
 	Cell,
+	Sidebar,
+	ObjectName,
+	ObjectDescription,
+	ControlButtons,
 };

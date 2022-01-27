@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { IconObject, Filter } from 'ts/component';
-import { I, C, DataUtil, Util, focus, keyboard, analytics, history as historyPopup } from 'ts/lib';
+import { I, C, DataUtil, Util, Onboarding, focus, keyboard, analytics, history as historyPopup, Storage } from 'ts/lib';
 import { dbStore, popupStore, detailStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -81,6 +81,10 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 		);
 	};
 
+	componentDidMount () {
+		Onboarding.start('typeSelect', this.props.isPopup);
+	};
+
 	componentWillUnmount() {
 		this.unbind();
 	};
@@ -95,9 +99,11 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 	};
 
 	getItems () {
+		const { rootId } = this.props;
 		const { filter } = this.state;
+		const object = detailStore.get(rootId, rootId, []);
 		
-		let items = DataUtil.getObjectTypesForNewObject(true);
+		let items = DataUtil.getObjectTypesForNewObject(true).filter((it: any) => { return it.id != object.type; });
 		if (filter) {
 			const reg = new RegExp(Util.filterFix(filter), 'gi');
 
@@ -114,11 +120,7 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 				return ret; 
 			});
 
-			items.sort((c1: any, c2: any) => {
-				if (c1._sortWeight_ > c2._sortWeight_) return -1;
-				if (c1._sortWeight_ < c2._sortWeight_) return 1;
-				return 0;
-			});
+			items.sort((c1: any, c2: any) => DataUtil.sortByWeight(c1, c2));
 		};
 
 		return items;
@@ -220,32 +222,47 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 			} else {
 				y = el.offset().top;
 			};
-
-			if (y >= h - o) {
-				container.scrollTop(y - h + o);
-			};
+			
+			container.scrollTop(Math.max(0, y - h + o));
 		};
 	};
 
 	onClick (e: any, item: any) {
+		if (e.persist) {
+			e.persist();
+		};
+
 		const { rootId, isPopup } = this.props;
 		const param = {
 			type: I.BlockType.Text,
 			style: I.TextStyle.Paragraph,
 		};
+		const namespace = isPopup ? '.popup' : '';
+
+		Util.getScrollContainer(isPopup).scrollTop(0);
+		Storage.setScroll('editor' + (isPopup ? 'Popup' : ''), rootId, 0);
+
+		let first = null;
 
 		const create = (template: any) => {
+
 			const onBlock = (id: string) => {
-				focus.set(id, { from: 0, to: 0 });
-				focus.apply();
+				if (first) {
+					const l = first.getLength();
+					
+					focus.set(first.id, { from: l, to: l });
+					focus.apply();
+
+					$(window).trigger('resize.editor' + namespace);
+				};
 			};
 
 			const onTemplate = () => {
-				const block = blockStore.getFirstBlock(rootId, 1, (it: any) => { return it.isText(); });
-				if (!block) {
+				first = blockStore.getFirstBlock(rootId, 1, (it: any) => { return it.isText(); });
+				if (!first) {
 					C.BlockCreate(param, rootId, '', I.BlockPosition.Bottom, (message: any) => { onBlock(message.blockId); });
 				} else {
-					onBlock(block.id);
+					onBlock(first.id);
 				};
 			};
 
@@ -255,7 +272,7 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 				C.BlockObjectTypeSet(rootId, item.id, onTemplate);
 			};
 
-			analytics.event('ObjectCreate', {
+			analytics.event('CreateObject', {
 				objectType: item.id,
 				layout: template?.layout,
 				template: (template && template.isBundledTemplate ? template.id : 'custom'),
@@ -277,6 +294,11 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 					historyPopup.clear();
 				};
 				DataUtil.objectOpenEvent(e, { id: message.id, layout: I.ObjectLayout.Set });
+
+				analytics.event('CreateObject', {
+					objectType: Constant.typeId.set,
+					layout: I.ObjectLayout.Set,
+				});
 			});
 		} else {
 			DataUtil.checkTemplateCnt([ item.id ], (message: any) => {
@@ -299,7 +321,7 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 	onFilterChange (e: any) {
 		this.setState({ filter: this.ref.getValue() });
 	};
-	
+
 });
 
 export default BlockType;

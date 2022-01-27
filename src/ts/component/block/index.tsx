@@ -10,10 +10,6 @@ import BlockDataview from './dataview';
 import BlockText from './text';
 import BlockIconPage from './iconPage';
 import BlockIconUser from './iconUser';
-import BlockFile from './file';
-import BlockImage from './image';
-import BlockVideo from './video';
-import BlockAudio from './audio';
 import BlockBookmark from './bookmark';
 import BlockLink from './link';
 import BlockCover from './cover';
@@ -23,13 +19,21 @@ import BlockFeatured from './featured';
 import BlockType from './type';
 import BlockLatex from './latex';
 import BlockTable from './table';
+import BlockTableOfContents from './tableOfContents';
+
+import BlockFile from './media/file';
+import BlockImage from './media/image';
+import BlockVideo from './media/video';
+import BlockAudio from './media/audio';
+import BlockPdf from './media/pdf'; 
 
 interface Props extends I.BlockComponent, RouteComponentProps<any> {
 	index?: any;
 	css?: any;
 	className?: string;
 	iconSize?: number;
-}
+	isDragging?: boolean;
+};
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
@@ -41,6 +45,10 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 
 	public static defaultProps = {
 		align: I.BlockAlign.Left,
+		traceId: '',
+		history: null,
+		location: null,
+		match: null,
 	};
 
 	_isMounted: boolean = false;
@@ -61,7 +69,7 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { rootId, css, index, className, block, readonly } = this.props;
+		const { rootId, css, className, block, readonly, isDragging } = this.props;
 		const { id, type, fields, content, align, bgColor } = block;
 
 		if (!id) {
@@ -69,10 +77,11 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 		};
 
 		const { style, checked } = content;
+		const index = Number(this.props.index) || 0;
 
 		let canSelect = true;
 		let canDrop = !readonly;
-		let cn: string[] = [ 'block', 'align' + align, DataUtil.blockClass(block) ];
+		let cn: string[] = [ 'block', 'align' + align, DataUtil.blockClass(block, isDragging), 'index-' + index ];
 		let cd: string[] = [ 'wrapContent' ];
 		let blockComponent = null;
 		let empty = null;
@@ -80,9 +89,6 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 		
 		if (className) {
 			cn.push(className);
-		};
-		if (index) {
-			cn.push('index-' + index);
 		};
 		if (fields.isUnwrapped) {
 			cn.push('isUnwrapped');
@@ -110,20 +116,26 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 				
 			case I.BlockType.IconPage:
 				canSelect = false;
-				canDrop = false;
 				blockComponent = <BlockIconPage ref={setRef} {...this.props} />;
 				break;
 				
 			case I.BlockType.IconUser:
 				canSelect = false;
-				canDrop = false;
 				blockComponent = <BlockIconUser ref={setRef} {...this.props} />;
 				break;
 				
 			case I.BlockType.File:
+				// Processing File style Link.
+				// Making Embed as a default one
+
+				if (isDragging || (style == I.FileStyle.Link)) {
+					blockComponent = <BlockFile ref={setRef} {...this.props} />;
+					break;
+				};
+
+				// Process Embed File
 				switch (content.type) {
 					default: 
-					case I.FileType.File: 
 						blockComponent = <BlockFile ref={setRef} {...this.props} />;
 						break;
 						
@@ -138,7 +150,12 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 					case I.FileType.Audio: 
 						blockComponent = <BlockAudio ref={setRef} {...this.props} />;
 						break;
+
+					case I.FileType.Pdf:
+						blockComponent = <BlockPdf ref={setRef} {...this.props} />;
+						break;
 				};
+
 				break;
 				
 			case I.BlockType.Bookmark:
@@ -146,7 +163,6 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 				break;
 			
 			case I.BlockType.Dataview:
-				canSelect = false;
 				blockComponent = <BlockDataview ref={setRef} {...this.props} />;
 				break;
 				
@@ -183,13 +199,17 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 			case I.BlockType.Table:
 				blockComponent = <BlockTable ref={setRef} {...this.props} />;
 				break;
+				
+			case I.BlockType.TableOfContents:
+				blockComponent = <BlockTableOfContents ref={setRef} {...this.props} />;
+				break;
 		};
-		
+
 		let object = null;
 
 		if (canDrop) {
 			object = (
-				<DropTarget {...this.props} rootId={rootId} id={id} style={style} type={type} dropType={I.DragItem.Block}>
+				<DropTarget {...this.props} rootId={rootId} id={id} style={style} type={type} dropType={I.DragType.Block}>
 					{blockComponent}
 				</DropTarget>
 			);
@@ -229,8 +249,8 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 			} else {
 				rowDropTargets = (
 					<React.Fragment>
-						<DropTarget {...this.props} className="targetTop" rootId={rootId} id={id} style={style} type={type} dropType={I.DragItem.Block} />
-						<DropTarget {...this.props} className="targetBot" rootId={rootId} id={id} style={style} type={type} dropType={I.DragItem.Block} />
+						<DropTarget {...this.props} className="targetTop" rootId={rootId} id={id} style={style} type={type} dropType={I.DragType.Block} />
+						<DropTarget {...this.props} className="targetBot" rootId={rootId} id={id} style={style} type={type} dropType={I.DragType.Block} />
 					</React.Fragment>
 				);
 			};
@@ -287,8 +307,7 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 		const { rootId, block } = this.props;
 
 		if (block.id && block.isTextToggle()) {
-			const node = $(ReactDOM.findDOMNode(this));
-			Storage.checkToggle(rootId, block.id) ? node.addClass('isToggled') : node.removeClass('isToggled');
+			blockStore.toggle(rootId, block.id, Storage.checkToggle(rootId, block.id));
 		};
 	};
 	
@@ -327,7 +346,7 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 		selection.preventClear(true);
 
 		const ids: string[] = DataUtil.selectionGet(block.id, false, this.props);
-		onDragStart(e, I.DragItem.Block, ids, this);
+		onDragStart(e, I.DragType.Block, ids, this);
 	};
 	
 	onMenuDown (e: any) {
@@ -385,7 +404,7 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 		const node = $(ReactDOM.findDOMNode(this));
 		const prevBlockId = childrenIds[index - 1];
 		const offset = (prevBlockId ? node.find('#block-' + prevBlockId).offset().left : 0) + Constant.size.blockMenu ;
-		const add = $('#button-add');
+		const add = $('#button-block-add');
 		
 		if (selection) {
 			selection.preventSelect(true);

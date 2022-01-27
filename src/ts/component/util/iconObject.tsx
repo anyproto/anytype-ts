@@ -116,8 +116,8 @@ const CheckboxTask0 = require('img/icon/object/checkbox0.svg');
 const CheckboxTask1 = require('img/icon/object/checkbox1.svg');
 const Ghost = require('img/icon/ghost.svg');
 
-const Color = {
-	grey:	 '#dfddd0',
+const BgColor = {
+	grey:	 '#f3f2ec',
 	black:	 '#2c2b27',
 	brown:	 '#aca996',
 	orange:	 '#ffb522',
@@ -127,6 +127,17 @@ const Color = {
 	teal:	 '#0fc8ba',
 	lime:	 '#5dd400',
 	green:	 '#57c600',
+};
+
+const Color = {
+	'':		 '#aca996',
+	dark:	 '#dfddd3'
+};
+
+const Theme = {
+	dark: {
+		grey: '#484843',
+	}
 };
 
 const $ = require('jquery');
@@ -151,6 +162,7 @@ const IconObject = observer(class IconObject extends React.Component<Props, {}> 
 
 	render () {
 		const { className, size, canEdit, forceLetter } = this.props;
+		const { theme } = commonStore;
 		const object = this.getObject();
 		const layout = Number(object.layout) || I.ObjectLayout.Page;
 		const { id, name, iconEmoji, iconImage, iconClass, done, relationFormat, isDeleted } = object || {};
@@ -257,7 +269,7 @@ const IconObject = observer(class IconObject extends React.Component<Props, {}> 
 		};
 
 		if (isDeleted) {
-			icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
+			icn = [ 'iconCommon', 'c' + iconSize ];
 			icon = <img src={Ghost} className={icn.join(' ')} />;
 		};
 
@@ -340,9 +352,13 @@ const IconObject = observer(class IconObject extends React.Component<Props, {}> 
 	iconSize () {
 		const { size, iconSize, forceLetter } = this.props;
 		const object = this.getObject();
-		const { layout, iconImage, iconEmoji } = object;
+		const { layout, iconImage, iconEmoji, isDeleted } = object;
 
 		let s = IconSize[size];
+
+		if (isDeleted) {
+			return s;
+		};
 
 		if ((size == 18) && (layout == I.ObjectLayout.Task)) {
 			s = 16;
@@ -386,15 +402,29 @@ const IconObject = observer(class IconObject extends React.Component<Props, {}> 
 		return s;
 	};
 
-	userSvg (): string {
+	svgBgColor () {
 		const { color } = this.props;
+		const { theme } = commonStore;
+
+		if (Theme[theme] && Theme[theme][color]) {
+			return Theme[theme][color];
+		};
+		return BgColor[color];
+	};
+
+	svgColor () {
+		const { theme } = commonStore;
+		return Color[theme];
+	};
+
+	userSvg (): string {
 		const object = this.getObject();
 		const layout = Number(object.layout) || I.ObjectLayout.Page;
 		const iconSize = this.iconSize();
 		const name = this.iconName();
-
-		const circle = `<circle cx="50%" cy="50%" r="50%" fill="${Color[color]}" />`;
-		const text = `<text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" fill="#fff" font-family="Helvetica" font-weight="medium" font-size="${this.fontSize(layout, iconSize)}px">${name}</text>`;
+		
+		const circle = `<circle cx="50%" cy="50%" r="50%" fill="${this.svgBgColor()}" />`;
+		const text = `<text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" fill="${this.svgColor()}" font-family="Helvetica" font-weight="medium" font-size="${this.fontSize(layout, iconSize)}px">${name}</text>`;
 		const svg = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Layer_1" x="0px" y="0px" viewBox="0 0 ${iconSize} ${iconSize}" xml:space="preserve" height="${iconSize}px" width="${iconSize}px">${circle}${text}</svg>`;
 
 		return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
@@ -406,7 +436,7 @@ const IconObject = observer(class IconObject extends React.Component<Props, {}> 
 		const iconSize = this.iconSize();
 		const name = this.iconName();
 
-		const text = `<text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" fill="#CBC9BD" font-family="Helvetica" font-weight="medium" font-size="${this.fontSize(layout, iconSize)}px">${name}</text>`;
+		const text = `<text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" fill="${this.svgColor()}" font-family="Helvetica" font-weight="medium" font-size="${this.fontSize(layout, iconSize)}px">${name}</text>`;
 		const svg = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Layer_1" x="0px" y="0px" viewBox="0 0 ${iconSize} ${iconSize}" xml:space="preserve" height="${iconSize}px" width="${iconSize}px">${text}</svg>`;
 
 		return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));

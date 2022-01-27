@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { MenuItemVertical, Loader, Filter } from 'ts/component';
+import { MenuItemVertical, Loader, Filter, ObjectName } from 'ts/component';
 import { I, C, Util, keyboard, DataUtil } from 'ts/lib';
 import { commonStore, dbStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -10,7 +10,7 @@ interface Props extends I.Menu {}
 
 interface State {
 	loading: boolean;
-}
+};
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
@@ -39,6 +39,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 		
 		this.onClick = this.onClick.bind(this);
 		this.onFilterChange = this.onFilterChange.bind(this);
+		this.onFilterClear = this.onFilterClear.bind(this);
 		this.onScroll = this.onScroll.bind(this);
 	};
 	
@@ -64,10 +65,6 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 				cn.push('isHidden');
 			};
 
-			let name = item.name || DataUtil.defaultName('page');
-			if (item.layout == I.ObjectLayout.Note) {
-				name = item.snippet ? item.snippet : <span className="empty">Empty</span>;
-			};
 
 			let content = null;
 
@@ -79,7 +76,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 						id={item.id}
 						object={object}
 						icon={item.icon}
-						name={name}
+						name={<ObjectName object={item} />}
 						onMouseEnter={(e: any) => { this.onOver(e, item); }} 
 						onClick={(e: any) => { this.onClick(e, item); }}
 						withDescription={true}
@@ -113,6 +110,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 					placeholder="Paste link or search objects" 
 					value={filter}
 					onChange={this.onFilterChange}
+					onClear={this.onFilterClear}
 				/>
 
 				<div className="items">
@@ -202,6 +200,14 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 
 	onFilterChange (e: any) {
 		menuStore.updateData(this.props.id, { filter: this.refFilter.getValue() });
+	};
+
+	onFilterClear () {
+		const { param } = this.props;
+		const { data } = param;
+		const { type, onChange } = data;
+
+		onChange(type, '');
 	};
 
 	getSections () {

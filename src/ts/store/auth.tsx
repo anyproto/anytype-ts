@@ -43,6 +43,7 @@ class AuthStore {
 			accountSet: action,
 			threadSet: action,
 			threadRemove: action,
+			clearAll: action,
 			logout: action,
 		});
 	};
@@ -56,12 +57,11 @@ class AuthStore {
     };
 
 	get path (): string {
-		return this.dataPath || Storage.get('dataPath') || '';
+		return String(this.dataPath || '');
     };
 
 	pathSet (v: string) {
 		this.dataPath = v;
-		Storage.set('dataPath', v);
     };
 
 	pinSet (v: string) {
@@ -100,7 +100,6 @@ class AuthStore {
 		this.accountItem = account as I.Account;
 
 		Storage.set('accountId', account.id);
-		analytics.profile(account);
 		Sentry.setUser({ id: account.id });
     };
 
@@ -121,21 +120,29 @@ class AuthStore {
 		return this.threadMap.get(rootId) || {};
     };
 
+	clearAll () {
+		this.accountItem = null;
+		this.accountList = [];
+		this.icon = '';
+		this.preview = '';
+		this.name = '';
+		this.phrase = '';
+		this.code = '';
+		this.threadMap = new Map();
+	};
+
 	logout () {
+		analytics.event('LogOut');
+
 		Storage.logout();
 
 		keyboard.setPinChecked(false);
-		crumbs.delete(I.CrumbsType.Page);
-		crumbs.delete(I.CrumbsType.Recent);
-
 		commonStore.coverSetDefault();
 
-		blockStore.breadcrumbsSet('');
-		blockStore.recentSet('');
 		blockStore.clearAll();
 		detailStore.clearAll();
-
-		dbStore.objectTypesClear();
+		dbStore.clearAll();
+		this.clearAll();
 
 		this.accountItem = null;
 		this.nameSet('');

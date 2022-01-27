@@ -79,8 +79,9 @@ export interface ViewComponent {
 	rootId: string;
 	block: I.Block;
 	readonly: boolean;
-	scrollContainer?: string;
+	bodyContainer?: string;
 	pageContainer?: string;
+	dataset?: any;
 	isPopup?: boolean;
 	onRef?(ref: any, id: string): void;
 	getData(viewId: string, offset: number): void;
@@ -88,6 +89,7 @@ export interface ViewComponent {
 	getView?(): View;
 	onRowAdd?: (e: any, dir: number) => void;
 	onCellClick?(e: any, key: string, index: number): void;
+	onContext?(e: any, id: string): void;
 	onCellChange?: (id: string, key: string, value: any, callBack?: (message: any) => void) => void;
 	optionCommand?: (code: string, rootId: string, blockId: string, relationKey: string, recordId: string, option: I.SelectOption, callBack?: (message: any) => void) => void;
 };
@@ -108,6 +110,7 @@ export interface View {
 
 export interface Cell {
 	rootId: string;
+	subId: string;
 	block: I.Block;
 	id?: string;
 	idPrefix?: string;
@@ -117,7 +120,7 @@ export interface Cell {
 	readonly?: boolean;
 	canOpen?: boolean;
 	canEdit?: boolean;
-	scrollContainer?: string;
+	bodyContainer?: string;
 	pageContainer?: string;
 	isInline?: boolean;
 	iconSize?: number;

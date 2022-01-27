@@ -4,9 +4,7 @@ import { Loader, Title, Label, ListObjectPreview } from 'ts/component';
 import { I, C, focus, Util, Action } from 'ts/lib';
 import { dbStore } from 'ts/store';
 
-interface Props extends I.Popup, RouteComponentProps<any> {
-	history: any;
-};
+interface Props extends I.Popup, RouteComponentProps<any> {};
 
 interface State {
 	items: any[];

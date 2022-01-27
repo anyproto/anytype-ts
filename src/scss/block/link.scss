@@ -23,13 +23,14 @@
 
 		.linkCard { display: inline-block; vertical-align: top; width: 100%; }
         .linkCard {
-            .sides { display: flex; overflow: hidden; transition: border-color 0.2s ease-in-out; }
+            .sides { display: flex; overflow: hidden; transition: border-color 0.2s ease-in-out; z-index: 1; position: relative; }
+
             .side.left { flex-shrink: 0; margin: 0px 16px 0px 0px; }
             .side.left:empty { display: none; }
             .side.right { width: 100%; position: relative; }
 
             .iconObject { margin: 0px; }
-            .cover { position: static; padding: 68px 12px 12px 12px; border-radius: 6px; color: $colorBlack; }
+            .cover { position: relative; padding: 68px 12px 12px 12px; border-radius: 6px; color: $colorBlack; }
 
             .side.right {
                 .txt { width: 100%; }
@@ -44,13 +45,13 @@
                 }
 
                 .cardDescription { 
-                    @include text-common; color: $colorVeryDarkGrey; overflow: hidden; -webkit-line-clamp: 2; 
-                    -webkit-box-orient: vertical; display: -webkit-box; margin: 2px 0px 0px 0px;
+                    @include text-common; @include clamp2; color: $colorVeryDarkGrey; overflow: hidden;
+                    margin: 2px 0px 0px 0px;
                 }
                 .cardDescription:empty { display: none; }
 
                 .archive {
-                    border-radius: 3px; background-color: #f3f2ec; @include text-small; color: $colorMediumGrey; 
+                    border-radius: 3px; background-color: $colorVeryLightGrey; @include text-small; color: $colorMediumGrey; 
                     padding: 0px 6px; display: none; position: absolute; right: 0px; top: 0px; vertical-align: middle;
                 }
             }
@@ -107,20 +108,22 @@
 
         .linkCard.card { margin: 3px 0px; }
         .linkCard.card {
-            .sides { border: 1px solid #dfddd0; }
+            .sides { border: 1px solid $colorBorderDark; }
+            .sides.hidden { visibility: hidden; }
+            .cardName span::before { display: none; }
         }
         .linkCard.withCover {
             .sides { border: 0px; }
         }
         .linkCard.card, .linkCard.withCover {
-            .sides { padding: 16px; background: #fff; border-radius: 6px; }
+            .sides { padding: 16px; background: $colorWhite; border-radius: 6px; }
         }
 
         .linkCard.align1 { text-align: center; }
         .linkCard.align1 {
             .sides { display: block; }
             .side.left { margin: 0px 0px 8px 0px; }
-            .side.right { width: 100% !important; }
+            .side.right { width: 100% !important; line-height: unset !important; }
             .iconObject { display: inline-block; }
         }
 

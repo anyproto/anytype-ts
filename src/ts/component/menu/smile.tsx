@@ -5,6 +5,7 @@ import { I, C, Util, SmileUtil, keyboard, Storage, translate } from 'ts/lib';
 import { menuStore } from 'ts/store';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import 'react-virtualized/styles.css';
+import { analytics } from '../../lib';
 
 interface Props extends I.Menu {};
 interface State {
@@ -148,7 +149,7 @@ class MenuSmile extends React.Component<Props, State> {
 						)}
 					</InfiniteLoader>
 					{!sections.length ? (
-						<div className="empty">
+						<div className="emptySearch">
 							<div 
 								className="txt" 
 								dangerouslySetInnerHTML={{ __html: Util.sprintf(translate('menuSmileEmpty'), filter) }} 
@@ -311,7 +312,7 @@ class MenuSmile extends React.Component<Props, State> {
 				return;
 			};
 
-			C.UploadFile('', files[0], I.FileType.Image, true, (message: any) => {
+			C.UploadFile('', files[0], I.FileType.Image, (message: any) => {
 				if (message.error.code) {
 					return;
 				};
@@ -336,6 +337,8 @@ class MenuSmile extends React.Component<Props, State> {
 		if (onSelect) {
 			onSelect(SmileUtil.nativeById(id, this.skin));
 		};
+
+		analytics.event(id ? 'SetIcon' : 'RemoveIcon');
 	};
 
 	onMouseEnter (e: any, item: any) {

@@ -20,6 +20,7 @@ const envPath = path.join(__dirname, 'electron', 'env.json');
 const systemVersion = process.getSystemVersion();
 const protocol = 'anytype';
 const remote = require('@electron/remote/main');
+const isDev = require('electron-is-dev');
 
 const TIMEOUT_UPDATE = 600 * 1000;
 const MIN_WIDTH = 752;
@@ -28,6 +29,17 @@ const KEYTAR_SERVICE = 'Anytype';
 const CONFIG_NAME = 'devconfig';
 
 let env = {};
+let deeplinkingUrl;
+
+if (isDev && is.windows) {
+	if (!app.isDefaultProtocolClient(protocol)) {
+		app.setAsDefaultProtocolClient(protocol, process.execPath, [ process.argv[1] ]);
+	};
+} else {
+	if (!app.isDefaultProtocolClient(protocol)) {
+		app.setAsDefaultProtocolClient(protocol);
+	};
+};
 try { env = JSON.parse(fs.readFileSync(envPath)); } catch (e) {};
 
 app.setAsDefaultProtocolClient(protocol);
@@ -37,7 +49,7 @@ let isUpdating = false;
 let userPath = app.getPath('userData');
 let tmpPath = path.join(userPath, 'tmp');
 let waitLibraryPromise;
-let useGRPC = !process.env.ANYTYPE_USE_ADDON && (env.USE_GRPC || process.env.ANYTYPE_USE_GRPC || (process.platform == "win32") || is.development);
+let useGRPC = !process.env.ANYTYPE_USE_ADDON && (env.USE_GRPC || process.env.ANYTYPE_USE_GRPC || is.windows || is.development);
 let defaultChannel = version.match('alpha') ? 'alpha' : 'latest';
 let timeoutUpdate = 0;
 let server;
@@ -122,29 +134,34 @@ function trayIcon () {
 };
 
 nativeTheme.on('updated', () => {
-	tray.setImage(trayIcon());
+	if (tray) {
+		tray.setImage(trayIcon());
+	};
 });
 
 function initTray () {
 	tray = new Tray (trayIcon());
+	
 	tray.setToolTip('Anytype');
+	tray.on('click', () => { win.show(); });
+
 	tray.setContextMenu(Menu.buildFromTemplate([
 		{ label: 'Open Anytype', click: () => { win.show(); } },
 
 		{ type: 'separator' },
 
-		{ label: 'Settings', click: () => { win.show(); send('popup', 'settings'); } },
+		{ label: 'Settings', click: () => { win.show(); send('popup', 'settings', {}, true); } },
 		{ label: 'Check for updates', click: () => { win.show(); checkUpdate(false); } },
 
 		{ type: 'separator' },
 
-		{ label: 'Import', click: () => { win.show(); send('popup', 'settings', { data: { page: 'importIndex' } }); } },
-		{ label: 'Export', click: () => { win.show(); send('popup', 'settings', { data: { page: 'exportMarkdown' } }); } },
+		{ label: 'Import', click: () => { win.show(); send('popup', 'settings', { data: { page: 'importIndex' } }, true); } },
+		{ label: 'Export', click: () => { win.show(); send('popup', 'settings', { data: { page: 'exportMarkdown' } }, true); } },
 		
 		{ type: 'separator' },
 
 		{ label: 'New object', click: () => { win.show(); send('command', 'create'); } },
-		{ label: 'Search object', click: () => { win.show(); send('popup', 'search', { preventResize: true }); } },
+		{ label: 'Search object', click: () => { win.show(); send('popup', 'search', { preventResize: true }, true); } },
 		
 		{ type: 'separator' },
 
@@ -185,7 +202,7 @@ function createWindow () {
 	});
 
 	let param = {
-		backgroundColor: '#fff',
+		backgroundColor: getBgColor(),
 		show: false,
 		x: state.x,
 		y: state.y,
@@ -203,6 +220,9 @@ function createWindow () {
 
 	if (process.platform == 'linux') {
 		param.icon = image;
+	} else {
+		param.frame = false;
+		param.titleBarStyle = 'hidden';
 	};
 
 	if (process.platform == 'darwin') {
@@ -211,13 +231,8 @@ function createWindow () {
 		param.trafficLightPosition = { x: 20, y: 18 };
 	};
 
-	if (process.platform == 'win32') {
-		param.icon = path.join(__dirname, '/electron/icon.ico');
-	};
-
-	if (process.platform != 'linux') {
-		param.frame = false;
-		param.titleBarStyle = 'hidden';
+	if (is.windows) {
+		param.icon = path.join(__dirname, '/electron/icon64x64.png');
 	};
 
 	win = new BrowserWindow(param);
@@ -227,6 +242,10 @@ function createWindow () {
 
 	win.once('ready-to-show', () => {
 		win.show();
+
+		if (deeplinkingUrl) {
+			send('route', deeplinkingUrl.replace(`${protocol}://`, '/'));
+		};
 	});
 
 	win.on('close', (e) => {
@@ -235,7 +254,7 @@ function createWindow () {
 		};
 		
 		e.preventDefault();
-		if (process.platform == 'darwin') {
+		if (process.platform != 'linux') {
 			if (win.isFullScreen()) {
 				win.setFullScreen(false);
 				win.once('leave-full-screen', () => { win.hide(); });
@@ -306,6 +325,10 @@ function createWindow () {
 		exit(true);
 	});
 
+	ipcMain.on('configSet', (e, config) => {
+		setConfig(config);
+	});
+
 	ipcMain.on('updateCancel', (e) => {
 		isUpdating = false;
 		clearTimeout(timeoutUpdate);
@@ -350,28 +373,32 @@ function createWindow () {
 				break;
 
 			case 'close':
-				exit(false);
+				win.hide();
 				break;
 		};
 	});
 
-	storage.get(CONFIG_NAME, (error, data) => {
-		config = data || {};
-		config.channel = String(config.channel || defaultChannel);
+	autoUpdaterInit();
+	menuInit();
+};
 
-		if (error) {
-			console.error(error);
-		};
+function getBgColor () {
+	let { theme } = config;
+	let bg = '#fff';
 
-		Util.log('info', 'Config: ' + JSON.stringify(config, null, 3));
+	switch (theme) {
+		case 'dark':
+			bg = '#2c2b27';
+			break;
+	};
 
-		autoUpdaterInit();
-		menuInit();
-	});
+	return bg;
 };
 
 function openAboutWindow () {
+	let { theme } = config;
     let window = new BrowserWindow({
+		backgroundColor: getBgColor(),
         width: 400,
         height: 400,
         useContentSize: true,
@@ -383,7 +410,7 @@ function openAboutWindow () {
 		},
     });
 
-    window.loadURL('file://' + path.join(__dirname, 'electron', 'about.html?version=' + version));
+    window.loadURL('file://' + path.join(__dirname, 'electron', `about.html?version=${version}&theme=${theme}`));
 
 	window.once('closed', () => {
         window = null;
@@ -423,6 +450,10 @@ function menuInit () {
 				{
 					label: 'Check for updates',
 					click: () => { checkUpdate(false); }
+				},
+				{
+					label: 'Settings',
+					click: () => { send('popup', 'settings', {}); }
 				},
 				{ type: 'separator' },
 				{
@@ -522,10 +553,6 @@ function menuInit () {
 					label: 'What\'s new',
 					click: () => { send('popup', 'help', { data: { document: 'whatsNew' } }); }
 				},
-				{
-					label: 'Introduction',
-					click: () => { send('popup', 'help', { data: { document: 'intro' } }); }
-				},
 			]
 		},
 	];
@@ -539,7 +566,6 @@ function menuInit () {
 			mw: 'Middleware', 
 			th: 'Threads', 
 			an: 'Analytics', 
-			dm: 'Dark Mode',
 			js: 'JSON',
 		};
 		const flagMenu = [];
@@ -551,21 +577,12 @@ function menuInit () {
 					config.debug[i] = !config.debug[i];
 					setConfig({ debug: config.debug });
 					
-					if ([ 'ui', 'ho', 'dm' ].includes(i)) {
+					if ([ 'ho' ].includes(i)) {
 						win.reload();
 					};
 				}
 			});
 		};
-
-		/*
-		flagMenu.push({
-			label: 'Dark mode', type: 'checkbox', checked: nativeTheme.shouldUseDarkColors,
-			click: () => {
-				nativeTheme.themeSource = !nativeTheme.shouldUseDarkColors ? 'dark' : 'light';
-			}
-		});
-		*/
 
 		menuParam.push({
 			label: 'Debug',
@@ -610,6 +627,10 @@ function menuInit () {
 				{
 					label: 'Export templates',
 					click: () => { send('command', 'exportTemplates'); }
+				},
+				{
+					label: 'Export objects',
+					click: () => { send('command', 'exportObjects'); }
 				},
 				{
 					label: 'Export localstore',
@@ -729,15 +750,33 @@ function autoUpdaterInit () {
 	});
 };
 
-app.on('ready', waitForLibraryAndCreateWindows);
+app.on('ready', () => {
+	storage.get(CONFIG_NAME, (error, data) => {
+		config = data || {};
+		config.channel = String(config.channel || defaultChannel);
+
+		if (error) {
+			console.error(error);
+		};
+
+		Util.log('info', 'Config: ' + JSON.stringify(config, null, 3));
+
+		waitForLibraryAndCreateWindows();
+	});
+});
 
 app.on('second-instance', (event, argv, cwd) => {
 	Util.log('info', 'second-instance');
+
+	if (process.platform !== 'darwin') {
+		deeplinkingUrl = argv.find((arg) => arg.startsWith(`${protocol}://`));
+	};
 
 	if (win) {
 		if (win.isMinimized()) {
 			win.restore();
 		};
+		win.show();
 		win.focus();
 	};
 });
@@ -767,9 +806,7 @@ app.on('activate', () => {
 });
 
 app.on('open-url', (e, url) => {
-	if (process.platform == 'win32') {
-		url = process.argv.slice(1);
-	};
+	e.preventDefault();
 	send('route', url.replace(`${protocol}://`, '/'));
 });
 

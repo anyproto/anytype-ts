@@ -7,7 +7,7 @@
 	.block.blockMedia {
 		.focusable.isFocused { background: none; }
 		.focusable.isFocused::before { 
-			content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: rgba(134, 125, 66, 0.1); z-index: 1; 
+			content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: $colorHover; z-index: 1; 
 			pointer-events: none; border-radius: 6px;
 		}
 
@@ -16,23 +16,26 @@
 			background-image: url('~img/icon/resize.svg'); opacity: 0; cursor: nwse-resize;
 		}
 
-		.loaderWrapper { border-radius: 4px; border: solid 1px #d2d0c2; height: 48px; width: 100%; }
+		.loaderWrapper { border-radius: 4px; border: solid 1px $colorBorderDark; height: 48px; width: 100%; }
 		.error { margin: 0px; @include text-small; line-height: 22px; }
 		
 		.wrap { max-width: 100%; position: relative; display: inline-block; overflow: hidden; }
-		.media { width: 100%; display: block; }
+		.media { width: 100%; display: block; cursor: pointer; }
 
 		.wrap.broken { 
-			@include text-common; position: static; width: 100%; line-height: 20px; padding: 11px 13px; border-radius: 6px; border: solid 1px $colorLightGrey; 
+			@include text-common; position: relative; width: 100% !important; line-height: 20px; padding: 11px 13px; border-radius: 6px; border: solid 1px $colorLightGrey; 
 			color: $colorMediumGrey; height: 44px;
 		}
 		.wrap.broken {
 			img:before { 
-				content: " "; display: block; position: absolute; left: 13px; top: 11px; height: calc(100% - 22px); width: calc(100% - 26px);
-				background: #fff;
+				content: " "; display: block; position: absolute; left: 0px; top: 0px; height: 100%; width: 100%;
+				background: $colorWhite; border-radius: inherit;
 			}
 
-			img:after { content: "🔗" " Image is broken"; display: block; text-align: center; position: absolute; left: 13px; top: 11px; }
+			img:after { 
+				content: "🔗" " Image is broken"; display: block; text-align: center; position: absolute; left: 0px; top: 0px; 
+				@include text-overflow-nw; padding: 11px 13px; width: calc(100% - 26px); height: calc(100% - 22px);
+			}
 			
 			.icon.resize { display: none; }
 		}
@@ -45,10 +48,16 @@
 			}
 			.name span { display: inline-block; min-width: 100%; height: 100%; }
 			.icon { vertical-align: top; transition: none; }
-			.icon.play { width: 20px; height: 20px; margin-right: 6px; background-image: url('~img/icon/audio/play.svg'); cursor: pointer; }
+			.icon.play { 
+				width: 20px; height: 20px; margin-right: 6px; background-image: url('~img/icon/audio/play.svg'); 
+				cursor: pointer; margin-left: -4px;
+			}
 			.icon.play.active { background-image: url('~img/icon/audio/pause.svg'); }
 
-			.icon.volume { width: 20px; height: 20px; margin-right: 6px; background-image: url('~img/icon/audio/volume.svg'); cursor: pointer; }
+			.icon.volume { 
+				width: 20px; height: 20px; margin-right: 6px; background-image: url('~img/icon/audio/volume.svg'); 
+				cursor: pointer; margin-left: -2px;
+			}
 			.icon.volume.active { background-image: url('~img/icon/audio/mute.svg'); }
 
 			.time { @include text-small; text-align: right; line-height: 20px; position: absolute; right: 0px; bottom: 0px; }
@@ -58,7 +67,7 @@
 				.icon { width: 6px; height: 6px; border: 0px; background: none;  }
 				.bullet { width: 6px; height: 6px; border-radius: 100%; background: #f09c0e; } 
 				.fill { background: #f09c0e; }
-				.back { background: rgba(134, 125, 66, 0.08); }
+				.back { background: $colorHover; }
 			}
 
 			#time { margin: 6px 0px; width: 100%; display: block; }
@@ -69,6 +78,7 @@
 		}
 
 		video { height: 100%; }
+
 		.videoControls {
 			.icon.play {
 				width: 64px; height: 64px; border-radius: 100%; position: absolute; left: 50%; top: 50%; margin: -32px 0px 0px -32px;
@@ -76,6 +86,46 @@
 				background-size: 24px 28px; background-position: 24px center;
 			}
 			.icon.play:hover { background-color: rgba(255,255,255,0.9); }
+		}
+
+		.pdfWrapper { 
+			width: 100%; overflow: hidden; position: relative; padding: 12px; box-shadow: 0px 0px 0px 1px $colorBorderDark;
+			border-radius: 6px; display: flex; flex-direction: column; gap: 6px 0px;
+		}
+		.pdfWrapper {
+			.info { @include text-common; text-align: center; flex-shrink: 0; }
+			.info {
+				.name {
+					min-width: 40px; max-width: calc(100% - 180px); height: 24px; line-height: 24px; display: inline-block;
+					vertical-align: top; cursor: pointer; @include text-overflow-nw;  
+				}
+				.size {
+					@include text-common; max-width: 100px; height: 24px; line-height: 24px; color: $colorMediumGrey; margin: 0px 8px;
+					display: inline-block; vertical-align: top;
+				}
+			}
+
+			.pager { flex-shrink: 0; }
+			.pager {
+				.icon { opacity: 0 !important; }
+			}
+
+			.loaderWrapper { width: 100%; height: 100%; position: absolute; left: 0px; top: 0px; }
+
+			.react-pdf__Document { width: 100%; display: inline-block; position: relative; flex-grow: 1; cursor: pointer; }
+			.react-pdf__Page { position: static !important; }
+			.react-pdf__Page__svg, .react-pdf__Page__canvas { 
+				width: 100% !important; height: 100% !important; overflow: hidden; 
+			}
+			.react-pdf__Page__svg svg { width: 100%; height: auto; }
+			.react-pdf__Page__textContent { width: 100% !important; height: auto !important; }
+			.react-pdf__Page__annotations { display: none; }
+		}
+		.pdfWrapper:hover {
+			.pager {
+				.icon.disabled { opacity: 0.5 !important; }
+				.icon { opacity: 1 !important; }
+			}
 		}
 				
 		.icon.dots {
@@ -94,7 +144,7 @@
 		.icon.dots { opacity: 1; }
 	}
 	
-	.block.blockMedia > .wrapContent > .selectable.isSelected > .dropTarget > .focusable > .wrap {
+	.block.blockMedia > .wrapContent > .selectable.isSelectionSelected > .dropTarget > .focusable > .wrap {
 		.icon.resize { opacity: 1; }
 		.icon.dots { opacity: 1; }
 	}
@@ -105,6 +155,6 @@
 		.icon.play { display: none; }
 	}
 
-	.block.blockMedia.isAudio > .wrapContent { background-color: #f3f2ec; }
+	.block.blockMedia.isAudio.withFile > .wrapContent { background-color: $colorVeryLightGrey; }
 	.block.blockMedia.isAudio > .wrapContent > .selectable > .dropTarget > .focusable > .wrap { width: 100%; padding: 16px; border-radius: 6px; overflow: hidden; }
 }

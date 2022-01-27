@@ -30,6 +30,7 @@ const Preview = observer(class Preview extends React.Component<Props, State> {
 		this.onCopy = this.onCopy.bind(this);
 		this.onEdit = this.onEdit.bind(this);
 		this.onUnlink = this.onUnlink.bind(this);
+		this.position = this.position.bind(this);
 	};
 	
 	render () {
@@ -50,7 +51,7 @@ const Preview = observer(class Preview extends React.Component<Props, State> {
 					</div>
 				);
 
-				content = <PreviewLink ref={(ref: any) => { this.ref = ref; }} url={param} />;
+				content = <PreviewLink ref={(ref: any) => { this.ref = ref; }} url={param} position={this.position} />;
 				break;
 
 			case I.MarkType.Object:
@@ -62,7 +63,7 @@ const Preview = observer(class Preview extends React.Component<Props, State> {
 					);
 				};
 
-				content = <PreviewObject ref={(ref: any) => { this.ref = ref; }} rootId={param} />;
+				content = <PreviewObject ref={(ref: any) => { this.ref = ref; }} rootId={param} position={this.position} />;
 				break;
 		};
 
@@ -84,15 +85,6 @@ const Preview = observer(class Preview extends React.Component<Props, State> {
 		);
 	};
 	
-	componentDidUpdate () {
-		const { preview } = commonStore;
-		const { type, param } = preview;
-
-		if (type && param && Util.isPreviewOpen) {
-			this.show();
-		};
-	};
-
 	onClick (e: any) {
 		const { preview } = commonStore;
 		const { type, param, object } = preview;
@@ -128,11 +120,10 @@ const Preview = observer(class Preview extends React.Component<Props, State> {
 		menuStore.open('blockLink', {
 			rect: { ...rect, height: 0, y: rect.y + $(window).scrollTop() },
 			horizontal: I.MenuDirection.Center,
-			onOpen: () => {
-				Util.previewHide(true);
-			},
+			onOpen: () => { Util.previewHide(true); },
 			data: {
 				filter: mark ? mark.param : '',
+				type: mark ? mark.type : null,
 				onChange: (newType: I.MarkType, param: string) => {
 					onChange(Mark.toggleLink({ type: newType, param: param, range: range }, marks));
 				}
@@ -148,9 +139,14 @@ const Preview = observer(class Preview extends React.Component<Props, State> {
 		Util.previewHide(true);
 	};
 
-	show () {
+	position () {
 		const { preview } = commonStore;
 		const { element } = preview;
+		
+		if (!element || !element.length) {
+			return;
+		};
+
 		const win = $(window);
 		const obj = $('#preview');
 		const poly = obj.find('.polygon');
@@ -183,7 +179,7 @@ const Preview = observer(class Preview extends React.Component<Props, State> {
 		
 		obj.removeClass('top bottom');
 		poly.css(pcss);
-		
+
 		if (offset.top + oh + nh >= st + wh) {
 			typeY = I.MenuDirection.Top;
 		};

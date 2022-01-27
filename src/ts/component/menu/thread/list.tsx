@@ -26,8 +26,9 @@ const MenuThreadList = observer(class MenuThreadList extends React.Component<Pro
 		const { data } = param;
 		const { rootId } = data;
 		const thread = authStore.threadGet(rootId);
-		const { accounts, cafe } = thread;
-		const { status } = cafe || {};
+		const accounts = thread.accounts || [];
+		const cafe = thread.cafe || {};
+		const status = cafe.status || I.ThreadStatus.Unknown;
 
 		const Item = (item: any) => (
 			<div 
@@ -123,6 +124,11 @@ const MenuThreadList = observer(class MenuThreadList extends React.Component<Pro
 		};
 
 		const top = item.offset().top - $(window).scrollTop();
+		const cnw = [ 'fixed' ];
+		
+		if (classNameWrap) {
+			cnw.push(classNameWrap);
+		};
 
 		if (!menuStore.isOpen(MENU_ID, id)) {
 			menuStore.close(MENU_ID, () => {
@@ -132,8 +138,7 @@ const MenuThreadList = observer(class MenuThreadList extends React.Component<Pro
 					horizontal: I.MenuDirection.Right,
 					offsetX: 272,
 					fixedY: top,
-					className: 'fixed',
-					classNameWrap: classNameWrap,
+					classNameWrap: cnw.join(' '),
 					noDimmer: true,
 					data: {
 						...data,

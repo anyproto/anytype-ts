@@ -1,7 +1,6 @@
 import { observable, action, computed, set, makeObservable } from 'mobx';
-import { I, M, Util, Storage, Mark } from 'ts/lib';
+import { I, M, Util, Storage, Mark, translate } from 'ts/lib';
 import { detailStore, commonStore } from 'ts/store';
-import { DataUtil } from '../lib';
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
@@ -48,6 +47,7 @@ class BlockStore {
             clearAll: action,
             add: action,
             update: action,
+			updateContent: action,
             updateStructure: action,
             delete: action
         });
@@ -119,11 +119,18 @@ class BlockStore {
 	};
 
     update (rootId: string, param: any) {
-		let block = this.getLeaf(rootId, param.id);
+		const block = this.getLeaf(rootId, param.id);
 		if (!block) {
 			return;
 		};
 		set(block, param);
+	};
+
+	updateContent (rootId: string, blockId: string, content: any) {
+		const block = this.getLeaf(rootId, blockId);
+		if (block) {
+			set(block.content, content);
+		};
 	};
 
 	clear (rootId: string) {
@@ -132,6 +139,14 @@ class BlockStore {
 	};
 
     clearAll () {
+		this.profileSet('');
+		this.storeSetType('');
+		this.storeSetTemplate('');
+		this.storeSetRelation('');
+		this.breadcrumbsSet('');
+		this.recentSet('');
+		this.rootSet('');
+
 		this.blockMap = new Map();
 		this.treeMap = new Map();
 		this.restrictionMap = new Map();
@@ -223,11 +238,11 @@ class BlockStore {
 		return element ? (element.childrenIds || []) : [];
 	};
 
-    getChildren (rootId: string, id: string, filter?: (it: any) => boolean) {
+    getChildren (rootId: string, blockId: string, filter?: (it: any) => boolean) {
 		let blocks = this.getBlocks(rootId);
-		let childrenIds = this.getChildrenIds(rootId, id);
+		let childrenIds = this.getChildrenIds(rootId, blockId);
 		
-		let childBlocks = childrenIds.map((it: string) => {
+		return childrenIds.map((it: string) => {
 			return blocks.find((item: any) => { return item.id == it; });
 		}).filter((it: any) => {
 			if (!it) {
@@ -238,13 +253,12 @@ class BlockStore {
 			};
 			return true;
 		});
-		return childBlocks;
 	};
 
     // If check is present - find next block if check passes or continue to next block in "dir" direction, else just return next block;
     getNextBlock (rootId: string, id: string, dir: number, check?: (item: I.Block) => any, list?: any): any {
 		if (!list) {
-			list = this.unwrapTree([ this.wrapTree(rootId) ]);
+			list = this.unwrapTree([ this.wrapTree(rootId, rootId) ]);
 		};
 
 		let idx = list.findIndex((item: I.Block) => { return item.id == id; });
@@ -261,7 +275,7 @@ class BlockStore {
 	};
 
     getFirstBlock (rootId: string, dir: number, check: (item: I.Block) => any): I.Block {
-		const list = this.unwrapTree([ this.wrapTree(rootId) ]).filter(check);
+		const list = this.unwrapTree([ this.wrapTree(rootId, rootId) ]).filter(check);
 		return dir > 0 ? list[0] : list[list.length - 1];
 	};
 
@@ -276,16 +290,17 @@ class BlockStore {
 		};
 	};
 
-    setNumbers (rootId: string) {
-		const container = $('#editor-' + rootId);
-		if (!container.length) {
-			return;
-		};
-
-		const root = this.wrapTree(rootId);
+    updateNumbers (rootId: string) {
+		const root = this.wrapTree(rootId, rootId);
 		if (!root) {
 			return;
 		};
+
+		this.updateNumbersTree([ root ]);
+	};
+
+	updateNumbersTree (tree: any[]) {
+		tree = (tree || []).filter((it: any) => { return it; });
 
 		const unwrap = (list: any) => {
 			list = list || [];
@@ -324,7 +339,7 @@ class BlockStore {
 			};
 		};
 
-		cb(unwrap([ root ]));
+		cb(unwrap(tree));
 	};
 
     getStructure (list: I.Block[]) {
@@ -355,24 +370,15 @@ class BlockStore {
 		return map;
 	};
 
-    getTree (rootId: string, list: I.Block[]): I.Block[] {
+    getTree (rootId: string, list: any[]): any[] {
 		list = Util.objectCopy(list || []);
-
-		let map: any = {};
-
 		for (let item of list) {
-			map[item.id] = item;
+			item.childBlocks = this.getTree(item.id, this.getChildren(rootId, item.id));
 		};
-
-		for (let item of list) {
-			map[item.id].childrenIds = this.getChildrenIds(rootId, item.id);
-			map[item.id].childBlocks = this.getChildren(rootId, item.id);
-		};
-
-		return (map[rootId] || {}).childBlocks || [];
+		return list;
 	};
 
-    wrapTree (rootId: string) {
+    wrapTree (rootId: string, blockId: string) {
 		let map = this.getMap(rootId);
 		let ret: any = {};
 
@@ -384,29 +390,23 @@ class BlockStore {
 			};
 		};
 
-		return ret[rootId];
+		return ret[blockId];
 	};
 
     unwrapTree (tree: any[]): any[] {
-		tree = tree || [];
+		tree = (tree || []).filter((it: any) => { return it; });
 
 		let ret = [] as I.Block[];
 		for (let item of tree) {
-			if (!item) {
-				continue;
-			};
-
 			let cb = item.childBlocks;
-
-			if (cb) {
-				try { delete(item.childBlocks); } catch (e) {};
-			};
 			
 			ret.push(item);
 			
 			if (cb && cb.length) {
 				ret = ret.concat(this.unwrapTree(cb));
 			};
+
+			delete(item.childBlocks);
 		};
 		return ret;
 	};
@@ -464,15 +464,16 @@ class BlockStore {
 
 				const { from, to } = mark.range;
 				const object = detailStore.get(rootId, mark.param, []);
-				const old = text.substr(from, to - from);
 
 				if (object._empty_) {
 					continue;
 				};
 
-				let name = (object.name || DataUtil.defaultName('page'));
+				let old = text.substr(from, to - from);
+				let name = Util.shorten(object.name, 30);
+
 				if (object.layout == I.ObjectLayout.Note) {
-					name = object.snippet || name;
+					name = name || translate('commonEmpty');
 				};
 
 				if (old != name) {
@@ -503,18 +504,20 @@ class BlockStore {
 
 	checkDraft (rootId: string) {
 		const object = detailStore.get(rootId, rootId, []);
-		const root = this.getMapElement(rootId, rootId);
+		const root = this.getLeaf(rootId, rootId);
+		const rootElement = this.getMapElement(rootId, rootId);
+
 		const footer = this.getMapElement(rootId, Constant.blockId.footer);
 		if (!footer) {
 			return;
 		};
 
 		const cnt = object.layout == I.ObjectLayout.Note ? 3 : 2;
+		const checkBlocks = rootElement.childrenIds.length <= cnt;
 		const checkType = object.type == commonStore.type;
-		const checkBlocks = checkType && (root.childrenIds.length <= cnt);
 
 		let change = false;
-		if (checkBlocks) {
+		if (checkBlocks && checkType) {
 			if (!footer.childrenIds.includes(Constant.blockId.type)) {
 				footer.childrenIds.push(Constant.blockId.type);
 				change = true;

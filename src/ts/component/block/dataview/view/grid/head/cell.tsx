@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { I, DataUtil, keyboard } from 'ts/lib';
+import { I, DataUtil, keyboard, Relation } from 'ts/lib';
 import { SortableElement } from 'react-sortable-hoc';
 import { menuStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -27,7 +27,7 @@ const HeadCell = observer(class HeadCell extends React.Component<Props, {}> {
 		const { rootId, block, relationKey, index, onResizeStart } = this.props;
 		const relation: any = dbStore.getRelation(rootId, block.id, relationKey) || {};
 		const { format, name } = relation;
-		const width = DataUtil.relationWidth(this.props.width, relation.format);
+		const width = Relation.width(this.props.width, relation.format);
 		const size = Constant.size.dataview.cell;
 
 		const Cell = SortableElement((item: any) => {
@@ -38,7 +38,7 @@ const HeadCell = observer(class HeadCell extends React.Component<Props, {}> {
 			};
 
 			return (
-				<div id={DataUtil.cellId('head', relationKey, '')} className={cn.join(' ')} style={{ width: width }}>
+				<div id={Relation.cellId('head', relationKey, '')} className={cn.join(' ')} style={{ width: width }}>
 					<div className="cellContent">
 						<Handle {...relation} onClick={this.onEdit} />
 						<div className="resize" onMouseDown={(e: any) => { onResizeStart(e, relationKey); }}>
@@ -60,7 +60,7 @@ const HeadCell = observer(class HeadCell extends React.Component<Props, {}> {
 		};
 
 		menuStore.open('dataviewRelationEdit', { 
-			element: '#' + DataUtil.cellId('head', relationKey, ''),
+			element: '#' + Relation.cellId('head', relationKey, ''),
 			horizontal: I.MenuDirection.Center,
 			data: {
 				getData: getData,
@@ -69,6 +69,13 @@ const HeadCell = observer(class HeadCell extends React.Component<Props, {}> {
 				blockId: block.id,
 				relationKey: relationKey,
 				readonly: readonly,
+				addCommand: (rootId: string, blockId: string, relation: any, onChange?: (relation: any) => void) => {
+					DataUtil.dataviewRelationAdd(rootId, blockId, relation, getView(), () => {
+						if (onChange) {
+							onChange(relation);
+						};
+					});
+				},
 				updateCommand: (rootId: string, blockId: string, relation: any) => {
 					DataUtil.dataviewRelationUpdate(rootId, blockId, relation, getView());
 				},

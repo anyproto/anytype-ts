@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { I, Util, Storage, analytics, keyboard } from 'ts/lib';
-import { ListPopup } from 'ts/component';
-import { authStore, commonStore, menuStore, popupStore } from 'ts/store';
+import { I, Onboarding, Util, Storage, analytics, keyboard } from 'ts/lib';
+import { ListPopup, Sidebar } from 'ts/component';
+import { authStore, commonStore, menuStore, popupStore, blockStore } from 'ts/store';
+import { observer } from 'mobx-react';
 
 import PageAuthInvite from './auth/invite';
 import PageAuthNotice from './auth/notice';
@@ -30,7 +31,6 @@ import PageMainGraph from './main/graph';
 import PageMainNavigation from './main/navigation';
 
 const { ipcRenderer } = window.require('electron');
-const { process } = window.require('@electron/remote');
 const Constant = require('json/constant.json');
 const $ = require('jquery');
 const raf = require('raf');
@@ -63,51 +63,86 @@ const Components: any = {
 };
 
 interface Props extends RouteComponentProps<any> {
+	dataset?: any;
 	isPopup?: boolean;
 	matchPopup?: any;
 	rootId?: string;
 };
 
-class Page extends React.Component<Props, {}> {
+const Page = observer(class Page extends React.Component<Props, {}> {
 
 	_isMounted: boolean = false;
 	refChild: any;
 
 	render () {
 		const { isPopup } = this.props;
+		const { config, sidebar } = commonStore;
+		const { snap, fixed } = sidebar;
 		const match = this.getMatch();
-		const path = [ match.params.page, match.params.action ].join('/');
+		const { page, action } = match.params || {};
+		const path = [ page, action ].join('/');
 		const showNotice = !Boolean(Storage.get('firstRun'));
+		const showSidebar = config.experimental && (page == 'main') && (action != 'index');
 
 		if (showNotice) {
 			Components['/'] = PageAuthNotice;
-			Storage.set('firstRun', 1);
 		};
 
 		const Component = Components[path];
 		if (!Component) {
 			return <div>Page component "{path}" not found</div>;
 		};
-		
-		return (
-			<React.Fragment>
-				{!isPopup ? <ListPopup key="listPopup" {...this.props} /> : ''}
-				<div className={'page ' + this.getClass('page')}>
-					<Component ref={(ref: any) => this.refChild = ref} {...this.props} />
-				</div>
-			</React.Fragment>
+
+		const wrap = (
+			<div id="page" className={'page ' + this.getClass('page')}>
+				<Component ref={(ref: any) => this.refChild = ref} {...this.props} />
+			</div>
 		);
+
+		let sb = <Sidebar {...this.props} />;
+		let content = null;
+
+		if (isPopup || !showSidebar) {
+			content = wrap;
+		} else {
+			if (fixed) {
+				if (snap == I.MenuDirection.Right) {
+					content = (
+						<div className="pageFlex">
+							{sb}
+							{wrap}
+							<div id="sidebarDummy" />
+						</div>
+					);
+				} else {
+					content = (
+						<div className="pageFlex">
+							{sb}
+							<div id="sidebarDummy" />
+							{wrap}
+						</div>
+					);
+				};
+			} else {
+				content = (
+					<React.Fragment>
+						{sb}
+						{wrap}
+					</React.Fragment>
+				);
+			};
+		};
+		
+		return content;
 	};
 	
 	componentDidMount () {
 		this._isMounted = true;
 		this.init();
-		Util.previewHide(true);
 	};
 
 	componentDidUpdate () {
 		this.init();
-		Util.previewHide(true);
 	};
 	
 	componentWillUnmount () {
@@ -121,20 +156,25 @@ class Page extends React.Component<Props, {}> {
 		};
 
 		menuStore.closeAll();
+		Util.tooltipHide(true);
 		Util.previewHide(true);
 	};
 
 	getMatch () {
 		const { match, matchPopup, isPopup } = this.props;
-		return isPopup ? matchPopup : match;
+		return (isPopup ? matchPopup : match) || { params: {} };
+	};
+
+	getRootId () {
+		const match = this.getMatch();
+		return match?.params?.id || blockStore.root;
 	};
 
 	init () {
 		const { account } = authStore;
-		const { isPopup, history } = this.props;
+		const { isPopup, history, dataset } = this.props;
 		const match = this.getMatch();
 		const popupNewBlock = Storage.get('popupNewBlock');
-		const popupIntroBlock = Storage.get('popupIntroBlock');
 		const isIndex = !match.params.page;
 		const isAuth = match.params.page == 'auth';
 		const isMain = match.params.page == 'main';
@@ -149,18 +189,21 @@ class Page extends React.Component<Props, {}> {
 		const path = [ match.params.page, match.params.action ].join('/');
 		const Component = Components[path];
 
+		Util.tooltipHide(true);
+		Util.previewHide(true);
+
 		if (!Component) {
-			history.push('/main/index');
+			Util.route('/main/index');
 			return;
 		};
 
 		if (isMain && !account) {
-			history.push('/');
+			Util.route('/');
 			return;
 		};
 
 		if (pin && !keyboard.isPinChecked && !isPinCheck && !isAuth && !isIndex) {
-			history.push('/auth/pin-check');
+			Util.route('/auth/pin-check');
 			return;
 		};
 
@@ -170,32 +213,34 @@ class Page extends React.Component<Props, {}> {
 		this.unbind();
 
 		win.on('resize.page' + (isPopup ? 'Popup' : ''), () => { this.resize(); });
+
+		if (!isPopup) {
+			keyboard.setMatch(match);
+		};
+
+		Onboarding.start(Util.toCamelCase([ match.params?.page, match.params?.action ].join('-')), isPopup);
 		
 		if (isPopup) {
 			return;
 		};
-
-		keyboard.setMatch(match);
-		popupStore.closeAll();
-		menuStore.closeAll();
-
+		
 		window.setTimeout(() => {
 			if (isMain && account) {
-				if (!popupIntroBlock) {
-					popupStore.open('help', { data: { document: 'intro' } });
-					Storage.set('popupIntroBlock', 1);
-					Storage.set('popupNewBlock', 1);
-				} else
-				if (!popupNewBlock) {
-					popupStore.open('help', { data: { document: 'whatsNew' } });
+				if (!Storage.get('onboarding')) {
 					Storage.set('popupNewBlock', 1);
 				};
 
+				if (!popupNewBlock && Storage.get('onboarding')) {
+					popupStore.open('help', { data: { document: 'whatsNew' } });
+					Storage.set('popupNewBlock', 1);
+				};
 				Storage.set('redirect', history.location.pathname);
 			};
 
 			if (isMainIndex) {
 				if (account && askSurvey && !popupStore.isOpen() && !lastSurveyCanceled && (lastSurveyTime <= Util.time() - 86400 * days)) {
+					analytics.event('SurveyShow');
+
 					popupStore.open('confirm', {
 						data: {
 							title: 'We need your opinion',
@@ -206,6 +251,8 @@ class Page extends React.Component<Props, {}> {
 							onConfirm: () => {
 								ipcRenderer.send('urlOpen', Util.sprintf(Constant.survey, account.id));
 								Storage.set('lastSurveyTime', Util.time());
+
+								analytics.event('SurveyOpen');
 							},
 							onCancel: () => {
 								Storage.set('lastSurveyCanceled', 1);
@@ -224,7 +271,6 @@ class Page extends React.Component<Props, {}> {
 
 	shareCheck () {
 		const shareSuccess = Storage.get('shareSuccess');
-
 		if (!shareSuccess) {
 			return;
 		};
@@ -233,8 +279,8 @@ class Page extends React.Component<Props, {}> {
 
 		popupStore.open('confirm', {
 			data: {
-				title: 'Anytype shared information with you',
-				text: 'New objects are syncing. You can find them in Shared tab in Home within a few minute',
+				title: 'You\'ve got shared objects!',
+				text: 'They will be accessible in the "Shared" tab in Home within a minute',
 				textConfirm: 'Ok',
 				canCancel: false,
 				onConfirm: () => {
@@ -250,12 +296,27 @@ class Page extends React.Component<Props, {}> {
 	};
 	
 	event () {
-		const match = this.getMatch();
-		const page = String(match.params.page || 'index');
-		const action = String(match.params.action || 'index');
-		const path = [ 'page', page, action ].join('-');
-		
-		analytics.event(Util.toUpperCamelCase(path));
+		let match = this.getMatch();
+		let page = String(match.params.page || 'index');
+		let action = String(match.params.action || 'index');
+		let id = String(match.params.id || '');
+		let showNotice = !Boolean(Storage.get('firstRun'));
+		let params: any = { page, action };
+		let isMain = page == 'main';
+		let isMainType = isMain && (action == 'type');
+		let isMainRelation = isMain && (action == 'relation');
+
+		if (showNotice) {
+			params.page = 'auth';
+			params.action = 'notice';
+			Storage.set('firstRun', 1);
+		};
+
+		if (isMainType || isMainRelation) {
+			params.id = id;
+		};
+
+		analytics.event('page', { params });
 	};
 	
 	getClass (prefix: string) {
@@ -272,22 +333,21 @@ class Page extends React.Component<Props, {}> {
 	};
 	
 	setBodyClass () {
-		const { isPopup } = this.props;
-		const { config } = commonStore;
+		const { config, theme } = commonStore;
 		const platform = Util.getPlatform();
 		const cn = [ 
 			this.getClass('body'), 
 			Util.toCamelCase([ 'platform', platform ].join('-')),
 		];
-		const obj = $(isPopup ? '#popupPage #wrap' : 'html');
+		const obj = $('html');
+
+		if (theme) {
+			cn.push(Util.toCamelCase(`theme-${theme}`));
+		};
 
 		if (config.debug.ui) {
 			cn.push('debug');
 		};
-		if (config.debug.dm) {
-			cn.push('dark');
-		};
-
 		obj.attr({ class: cn.join(' ') });
 	};
 	
@@ -299,10 +359,10 @@ class Page extends React.Component<Props, {}> {
 
 			if (this.refChild && this.refChild.resize) {
 				this.refChild.resize();			
-			};			
+			};
 		});
 	};
 	
-};
+});
 
 export default Page;

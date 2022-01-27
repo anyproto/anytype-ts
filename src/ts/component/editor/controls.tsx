@@ -1,16 +1,18 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Icon } from 'ts/component';
-import { I, C, focus, DataUtil, Util, translate } from 'ts/lib';
-import { commonStore, menuStore, blockStore, detailStore } from 'ts/store';
+import { ControlButtons } from 'ts/component';
+import { I, C, focus, DataUtil, Util, translate, analytics } from 'ts/lib';
+import { menuStore, blockStore, detailStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any> {
 	rootId: string;
 	isPopup?: boolean;
+	readonly?: boolean;
 	dataset?: any;
-}
+	resize?: () => void;
+};
 
 const { dialog } = window.require('@electron/remote');
 const Constant = require('json/constant.json');
@@ -34,56 +36,28 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 	};
 
 	render (): any {
-		const { rootId } = this.props;
-		const root = blockStore.getLeaf(rootId, rootId);
-		const allowedDetails = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
-		const checkType = blockStore.checkBlockType(rootId);
-
-		if (!root || !allowedDetails || checkType) {
+		const { rootId, readonly } = this.props;
+		const object = detailStore.get(rootId, rootId, Constant.coverRelationKeys);
+		
+		if ((object.coverType != I.CoverType.None) && object.coverId) {
 			return null;
 		};
 
-		const allowedLayout = !root.isObjectSet() && blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Layout ]);
-		const allowedRelation = true;
-		const allowIcon = !root.isObjectTask() && !root.isObjectNote();
-		const allowCover = !root.isObjectNote();
-
 		return (
 			<div 
-				className="editorControls"
+				className="editorControls editorControlElements"
 				onDragOver={this.onDragOver} 
 				onDragLeave={this.onDragLeave} 
 				onDrop={this.onDrop}
 			>
-				<div className="controlButtons">
-					{allowIcon ? (
-						<div id="button-icon" className="btn" onClick={this.onIcon}>
-							<Icon className="icon" />
-							<div className="txt">{translate('editorControlIcon')}</div>
-						</div>
-					) : ''}
-
-					{allowCover ? (
-						<div id="button-cover" className="btn" onClick={this.onCover}>
-							<Icon className="addCover" />
-							<div className="txt">{translate('editorControlCover')}</div>
-						</div>
-					) : ''}
-
-					{allowedLayout ? (
-						<div id="button-layout" className="btn" onClick={this.onLayout}>
-							<Icon className="layout" />
-							<div className="txt">{translate('editorControlLayout')}</div>
-						</div>
-					) : ''}
-
-					{allowedRelation ? (
-						<div id="button-relation" className="btn" onClick={this.onRelation}>
-							<Icon className="relation" />
-							<div className="txt">{translate('editorControlRelation')}</div>
-						</div>
-					) : ''}
-				</div>
+				<ControlButtons 
+					rootId={rootId} 
+					readonly={readonly}
+					onIcon={this.onIcon} 
+					onCover={this.onCover}
+					onLayout={this.onLayout}
+					onRelation={this.onRelation}
+				/>
 			</div>
 		);
 	};
@@ -91,11 +65,15 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 	componentDidMount () {
 		this._isMounted = true;
 	};
-	
+
+	componentDidUpdate () {
+		this.props.resize();
+	};
+
 	componentWillUnmount () {
 		this._isMounted = false;
 	};
-	
+
 	onIcon (e: any) {
 		const { rootId } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
@@ -140,7 +118,7 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 				return;
 			};
 			
-			C.UploadFile('', files[0], I.FileType.Image, true, (message: any) => {
+			C.UploadFile('', files[0], I.FileType.Image, (message: any) => {
 				if (message.error.code) {
 					return;
 				};
@@ -157,6 +135,8 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 
 		focus.clear(true);
 		DataUtil.pageSetCover(rootId, I.CoverType.Color, color.id, 0, 0, 0);
+
+		analytics.event('SetCover', { type: I.CoverType.Color, id: color.id });
 	};
 
 	onLayout (e: any) {
@@ -176,9 +156,6 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 			data: {
 				rootId: rootId,
 				value: object.layout,
-				onChange: (layout: I.ObjectLayout) => {
-					DataUtil.pageSetLayout(rootId, layout);
-				},
 			}
 		});
 	};
@@ -189,11 +166,14 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 		const container = $(isPopup ? '#popupPage #innerWrap' : window);
 		const st = container.scrollTop();
 		const rect = { x: container.width() / 2 , y: Util.sizeHeader() + st, width: 1, height: 1 };
+		const cnw = [ 'fixed' ];
 
 		if (isPopup) {
 			const offset = container.offset();
 			rect.x += offset.left;
 			rect.y += offset.top;
+		} else {
+			cnw.push('fromHeader');
 		};
 
 		const param: any = {
@@ -202,6 +182,7 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 			noFlipX: true,
 			noFlipY: true,
 			subIds: Constant.menuIds.cell,
+			classNameWrap: cnw.join(' '),
 			onOpen: () => {
 				node.addClass('hover');
 			},
@@ -213,10 +194,6 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 				isPopup: isPopup,
 				rootId: rootId,
 			},
-		};
-
-		if (!isPopup) {
-			param.classNameWrap = 'fromHeader';
 		};
 
 		menuStore.closeAll(null, () => { menuStore.open('blockRelationView', param); });
@@ -254,7 +231,7 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 		preventCommonDrop(true);
 		this.setState({ loading: true });
 		
-		C.UploadFile('', file, I.FileType.Image, true, (message: any) => {
+		C.UploadFile('', file, I.FileType.Image, (message: any) => {
 			this.setState({ loading: false });
 			preventCommonDrop(false);
 			

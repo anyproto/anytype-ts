@@ -10,7 +10,7 @@
 		.dimmer { transition: none; }
 
 		.head { 
-			height: 28px; position: fixed; top: -40px; left: 50%; background: #fff; width: 100%; border-radius: 6px;
+			height: 28px; position: fixed; top: -40px; left: 50%; background: $colorWhite; width: 100%; border-radius: 6px;
 			transform: translateX(-50%); padding: 4px 8px; -webkit-app-region: no-drag;
 		}
 		.head {
@@ -47,27 +47,27 @@
 
 			.item { 
 				cursor: pointer; transition: $transitionFast; position: relative; height: 32px; line-height: 22px; padding: 7px 16px; white-space: nowrap;
-				display: flex;
+				display: flex; gap: 0px 6px; align-items: center;
 			}
 			.item {
-				.iconObject { transition: $transitionFast; vertical-align: top; margin-right: 6px; flex-shrink: 0; }
-				.name { @include text-overflow-nw; line-height: 18px; display: inline-block; vertical-align: top; flex-shrink: 0; max-width: 50%; }
-				.type { flex-shrink: 0; max-width: 33%; }
-				.descr { @include text-small; @include text-overflow-nw; color: $colorDarkGrey; display: inline-block; vertical-align: top; }
+				.iconObject { transition: $transitionFast; vertical-align: top; flex-shrink: 0; flex-grow: 0; }
+				.name { @include text-overflow-nw; line-height: 18px; display: inline-block; vertical-align: top; flex-shrink: 0; flex-grow: 0; max-width: 50%; }
+				.descr { @include text-small; @include text-overflow-nw; color: $colorDarkGrey; flex-shrink: 1; flex-grow: 1; }
+				.type { @include text-small; @include text-overflow-nw; color: $colorDarkGrey; flex-shrink: 0; max-width: 33%; flex-grow: 0; }
 
-				.div { width: 2px; height: 18px; line-height: 18px; margin: 0px 6px; display: inline-block; vertical-align: top; flex-shrink: 0; }
+				.div { width: 2px; height: 18px; line-height: 18px; display: inline-block; vertical-align: top; flex-shrink: 0; flex-grow: 0; }
 				.div {
 					.inner { width: 2px; height: 2px; border-radius: 100%; display: inline-block; vertical-align: middle; background: $colorMediumGrey; }
 				}
 			}
 
-			.item.active { background-color: rgba(172, 169, 150, 0.1); }
+			.item.active { background-color: $colorHover; }
 		}
 	}
 }
 
 html.platformWindows {
 	.popups {
-		.popup.popupSearch .innerWrap { top: 68px; }
+		.popup.popupSearch .innerWrap { top: 74px; }
 	}
 }

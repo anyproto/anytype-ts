@@ -1,13 +1,11 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
-import { Icon, IconObject, Tag } from 'ts/component';
-import { detailStore, dbStore, menuStore, blockStore } from 'ts/store';
-import { I, C, DataUtil } from 'ts/lib';
-import arrayMove from 'array-move';
-import { translate, Util, keyboard } from 'ts/lib';
+import { Icon, IconObject } from 'ts/component';
+import { I, C, DataUtil, Relation } from 'ts/lib';
+import { Util, keyboard } from 'ts/lib';
 import { observer } from 'mobx-react';
+import { detailStore, menuStore, commonStore } from 'ts/store';
 
-interface Props extends I.Menu {}
+interface Props extends I.Menu {};
 
 const Constant = require('json/constant.json');
 const $ = require('jquery');
@@ -25,6 +23,7 @@ const MenuSource = observer(class MenuSource extends React.Component<Props, {}> 
 	};
 	
 	render () {
+		const { config } = commonStore;
 		const items = this.getItems();
 		const types = this.getObjects().filter((it: any) => { return it.type == Constant.typeId.type; })
 		
@@ -44,13 +43,6 @@ const MenuSource = observer(class MenuSource extends React.Component<Props, {}> 
 			);
 		};
 		
-		const ItemAdd = (item: any) => (
-			<div id="item-add" className="item add" onClick={this.onAdd}>
-				<Icon className="plus" />
-				<div className="name">Add a relation</div>
-			</div>
-		);
-		
 		return (
 			<div className="items">
 				<div className="scrollWrap">
@@ -63,10 +55,20 @@ const MenuSource = observer(class MenuSource extends React.Component<Props, {}> 
 						</div>
 					) : ''}
 				</div>
-				{!types.length ? (
+				
+				{!types.length && config.experimental ? (
 					<div className="bottom">
 						<div className="line" />
-						<ItemAdd disabled={true} /> 
+						<div 
+							id="item-add" 
+							className="item add" 
+							onClick={this.onAdd} 
+							onMouseEnter={() => { this.props.setHover({ id: 'add' }); }} 
+							onMouseLeave={() => { this.props.setHover(); }}
+						>
+							<Icon className="plus" />
+							<div className="name">Add a relation</div>
+						</div>
 					</div>
 				) : ''}
 			</div>
@@ -146,7 +148,7 @@ const MenuSource = observer(class MenuSource extends React.Component<Props, {}> 
 				return;
 			};
 
-			const types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map((it: any) => { return it.id; });
+			const types = DataUtil.getObjectTypesForNewObject(false).map((it: any) => { return it.id; });
 			const filters = [
 				{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: types }
 			];
@@ -165,6 +167,14 @@ const MenuSource = observer(class MenuSource extends React.Component<Props, {}> 
 					placeholder: 'Change object type',
 					placeholderFocus: 'Change object type',
 					filters: filters,
+					dataSort: (c1: any, c2: any) => {
+						let i1 = types.indexOf(c1.id);
+						let i2 = types.indexOf(c2.id);
+
+						if (i1 > i2) return 1;
+						if (i1 < i2) return -1;
+						return 0;
+					},
 					onSelect: (item: any) => {
 						this.save([ item.id ]);
 					}
@@ -187,7 +197,7 @@ const MenuSource = observer(class MenuSource extends React.Component<Props, {}> 
 		const { rootId } = data;
 		const object = detailStore.get(rootId, rootId, [ Constant.relationKey.setOf ]);
 
-		return Util.arrayUnique(DataUtil.getRelationArrayValue(object[Constant.relationKey.setOf]).filter((it: string) => {
+		return Util.arrayUnique(Relation.getArrayValue(object[Constant.relationKey.setOf]).filter((it: string) => {
 			const object = detailStore.get(rootId, it, []);
 			return !object._empty_;
 		}));

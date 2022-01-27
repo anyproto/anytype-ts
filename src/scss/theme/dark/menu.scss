@@ -1,0 +1,275 @@
+@import "~scss/_vars";
+@import "~scss/theme/dark/_vars";
+
+.menus {
+
+    /* Common */
+
+    .menu { background: $colorBgLight; box-shadow: 0px 4px 16px rgb(0 0 0 / 20%), 0px 0px 0px 1px #393933 inset; }
+
+    .menu {
+        .icon.paragraph { background-image: url('#{$themePath}/icon/menu/action/block/paragraph0.svg'); }
+		
+		.icon.header1 { background-image: url('#{$themePath}/icon/menu/action/block/header10.svg'); }
+		.icon.header2 { background-image: url('#{$themePath}/icon/menu/action/block/header20.svg'); }
+		.icon.header3 { background-image: url('#{$themePath}/icon/menu/action/block/header30.svg'); }
+		.icon.quote { background-image: url('#{$themePath}/icon/menu/action/block/quote0.svg'); }
+		
+        .icon.bulleted { background-image: url('#{$themePath}/icon/menu/action/block/bulleted0.svg'); }
+		.icon.numbered { background-image: url('#{$themePath}/icon/menu/action/block/numbered0.svg'); }
+		.icon.toggle { background-image: url('#{$themePath}/icon/menu/action/block/toggle0.svg'); }
+
+        .icon.color {
+            .inner.textColor-default { background-color: $colorPrimary; }
+            .inner.bgColor-default { background: transparent; }
+        }
+
+        .arrowDirection { background-image: url('#{$themePath}/arrow/menuDirection.svg'); }
+    }
+
+    /* Vertical */
+
+    .menu.vertical {
+        .tabs { border-color: $colorLineSecondary; }
+        .tabs {
+            .tab:hover, .tab.active { color: $colorPrimary; }
+        }
+
+        .line { background: $colorLineSecondary; }
+        .section::after { background: $colorLineSecondary; }
+
+        .item { background: $colorBgLight; }
+        .item.hover::before { background: $colorHover; }
+        .item {
+            .icon.delete:hover, .icon.more:hover { background-color: $colorHover; }
+            .icon.arrow { background-image: url('#{$themePath}/arrow/menu.svg'); }
+			.icon.chk { background-image: url('#{$themePath}/icon/menu/checkbox.svg'); }
+        }
+
+        .loaderWrapper { background: $colorBgLight; }
+    }
+
+    /* Horizontal */
+
+    .menu.horizontal {
+        .section { border-color: $colorLineSecondary; }
+    }
+
+    /* MenuBlockAdd */
+
+    .menu.menuBlockAdd {
+        .item.isBig {
+            .iconObject { background: $colorBgIcon; }
+
+            .icon.paragraph { background-image: url('#{$themePath}/icon/menu/action/block/paragraph1.svg'); }
+            
+            .icon.header1 { background-image: url('#{$themePath}/icon/menu/action/block/header11.svg'); }
+            .icon.header2 { background-image: url('#{$themePath}/icon/menu/action/block/header21.svg'); }
+            .icon.header3 { background-image: url('#{$themePath}/icon/menu/action/block/header31.svg'); }
+            .icon.quote { background-image: url('#{$themePath}/icon/menu/action/block/quote1.svg'); }
+            
+            .icon.bulleted { background-image: url('#{$themePath}/icon/menu/action/block/bulleted1.svg'); }
+            .icon.numbered { background-image: url('#{$themePath}/icon/menu/action/block/numbered1.svg'); }
+            .icon.toggle { background-image: url('#{$themePath}/icon/menu/action/block/toggle1.svg'); }
+        }
+
+        .sectionName::before { background-color: $colorLineSecondary; }
+    }
+
+    /* MenuSmile */
+
+    .menu.menuSmile {
+        .head { border-color: $colorLineSecondary; color: $colorSecondary; }
+        .head {
+            .btn:hover, .btn.active { color: $colorPrimary; }
+        }
+
+        .emptySearch {
+			b { color: $colorPrimary; }
+			.label { color: $colorSecondary; }
+		}
+    }
+
+    /* MenuBlockCover */
+
+    .menu.menuBlockCover {
+        .head { border-color: $colorLineSecondary; color: $colorSecondary; }
+        .head {
+            .btn:hover, .btn.active { color: $colorPrimary; }
+        }
+    }
+
+    /* MenuBlockRelationView */
+
+    .menu.menuBlockRelationView {
+        .section > .name { color: $colorPrimary; }
+
+        .info { color: $colorSecondary; }
+        .info.canEdit:hover { background: $colorHover; }
+        .cell.canEdit:hover { background: $colorHover; }
+        .item.add:hover { 
+            .info { background: $colorHover; } 
+        }
+    }
+
+    /* MenuBlockRelationEdit */
+
+    .menu.menuBlockRelationEdit {
+        .input { border-color: $colorLinePrimary; }
+    }
+
+     /* MenuDataviewRelationEdit */
+
+     .menu.menuDataviewRelationEdit {
+        .input { border-color: $colorLinePrimary; }
+        .item:hover::before { background: $colorHover; }
+    }
+
+    /* MenuDataviewText */
+
+    .menu.menuDataviewText {
+        #input { background: $colorBlack; }
+    }
+
+    /* MenuDataviewRelationList */
+
+    .menu.menuDataviewRelationList {
+        .item:hover::before { background: $colorHover; }
+    }
+
+    /* MenuDataviewFileValues */
+
+    .menu.menuDataviewFileValues {
+		.item { color: $colorPrimary; }
+        .item:hover::before { background: $colorHover; }
+		.item {
+            .icon.more { background-color: $colorHover; }
+        }
+    }
+
+    /* MenuDataviewSort */
+
+    .menu.menuDataviewSort {
+        .item {
+            .select.grey { color: $colorSecondary; }
+        }
+    }
+
+    /* MenuDataviewOptionEdit */
+
+    .menu.menuDataviewOptionEdit {
+		.item:hover::before { background: $colorHover; }
+	}
+
+    /* MenuSearchObject */
+
+    .menu.menuSearchObject {
+		.emptySearch {
+			b { color: $colorPrimary; }
+			.label { color: $colorSecondary; }
+		}
+    }
+
+    .menu.menuSearchObject.big {
+        .item {
+            .iconObject { background: $colorBgIcon; }
+        }
+    }
+
+    /* MenuThreadList */
+
+    .menu.menuThreadList {
+        .item { border-color: $colorLineSecondary; }
+        .item:hover::before { background: $colorHover; }
+    }
+
+    /* MenuBlockMore */
+
+    .menu.menuBlockMore {
+        .item:hover::before { background: $colorHover; }
+    }
+
+    /* MenuHelp */
+
+    .menu.menuHelp {
+        .item:hover::before { background: $colorHover; }
+    }
+
+    /* MenuButton */
+
+	.menu.menuButton {
+		.item { color: $colorSecondary; }
+		.item:hover { color: $colorPrimary; }
+	}
+
+    /* MenuDataviewCalendar */
+
+    .menu.menuDataviewCalendar {
+        .select {
+			.icon.arrow { background-image: url('#{$themePath}/arrow/select/big.svg'); }
+		}
+        .day:hover { background: #f9d77e; color: #ad8620 !important; }
+        .day.active { color: $colorOrange; }
+    }
+
+    /* MenuBlockLatex */
+
+    .menu.menuBlockLatex.isTemplate {
+        .item > .inner { border-color: $colorLinePrimary; }
+    }
+
+    /* MenuBlockContext */
+
+    .menu.menuBlockContext {
+		.icon:hover { background-color: $colorHover; }
+
+        .icon.active.bold { background-image: url('#{$themePath}/icon/menu/action/mark/bold1.svg'); }
+		.icon.active.kbd { background-image: url('#{$themePath}/icon/menu/action/mark/code1.svg'); }
+		.icon.active.italic { background-image: url('#{$themePath}/icon/menu/action/mark/italic1.svg'); }
+		.icon.active.link { background-image: url('#{$themePath}/icon/menu/action/mark/link1.svg'); }
+		.icon.active.strike { background-image: url('#{$themePath}/icon/menu/action/mark/strike1.svg'); }
+    }
+
+    /* MenuBlockLinkSettings */
+
+    .menu.menuBlockLinkSettings {
+        .section.card {
+            .item { color: $colorSecondary; }
+            .item {
+                .icon.style-text { background-image: url('#{$themePath}/icon/menu/linkSettings/text0.svg'); }
+			    .icon.style-card { background-image: url('#{$themePath}/icon/menu/linkSettings/card0.svg'); }
+            }
+
+            .item:hover { color: $colorPrimary; box-shadow: 0px 0px 0px 1px $colorLinePrimary inset; }
+            .item:hover {
+				.icon.style-text { background-image: url('#{$themePath}/icon/menu/linkSettings/text1.svg'); }		
+				.icon.style-card { background-image: url('#{$themePath}/icon/menu/linkSettings/card1.svg'); }
+			}
+
+            .item.active { color: $colorPrimary; background: $colorHover; }
+			.item.active {
+				.icon.style-text { background-image: url('#{$themePath}/icon/menu/linkSettings/text2.svg'); }		
+				.icon.style-card { background-image: url('#{$themePath}/icon/menu/linkSettings/card2.svg'); }
+			}
+        }
+
+        .buttons {
+            .button.grey { box-shadow: 0px 0px 0px 1px $colorLineSecondary inset; color: $colorSecondary; }
+            .button.grey:hover { box-shadow: 0px 0px 0px 1px $colorLinePrimary inset; color: $colorPrimary; }
+        }
+    }
+
+    /* MenuOnboarding */
+
+	.menu.menuOnboarding { width: 288px; background: #fff; color: #000; box-shadow: 0px 4px 16px rgb(0 0 0 / 20%); }
+	.menu.menuOnboarding {
+		a { color: #000; }
+
+        .icon.close:hover { background-image: url('#{$themePath}/icon/menu/onboarding/close1.svg'); }
+
+        .bottom {
+			.icon.arrow:hover { background-image: url('#{$themePath}/arrow/onboarding1.svg'); }
+			.icon.arrow.disabled:hover { background-image: url('~img/arrow/onboarding0.svg'); }
+        }
+	}
+}

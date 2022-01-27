@@ -66,6 +66,10 @@ class Block implements I.Block {
 		return self;
 	};
 
+	isLocked (): boolean {
+		return this.fields.isLocked;
+	};
+
 	canHaveChildren (): boolean {
 		return !this.isSystem() && (this.isTextParagraph() || this.isTextList());
 	};
@@ -79,7 +83,7 @@ class Block implements I.Block {
 	};
 
 	canHaveBackground (): boolean {
-		return !this.isSystem();
+		return !this.isSystem() && !this.isFilePdf();
 	};
 
 	canHaveMarks () {
@@ -234,10 +238,6 @@ class Block implements I.Block {
 		return this.type == I.BlockType.Link;
 	};
 
-	isLinkPage (): boolean {
-		return this.isLink() && (this.content.style == I.LinkStyle.Page);
-	};
-
 	isTable (): boolean {
 		return this.type == I.BlockType.Table;
 	};
@@ -259,19 +259,31 @@ class Block implements I.Block {
 	};
 
 	isFileFile (): boolean {
-		return this.isFile() && (this.content.type == I.FileType.File);
+		return this.isFile() && (this.content.type == I.FileType.File) && this.isFileStyleLink();
 	};
 
 	isFileImage (): boolean {
-		return this.isFile() && (this.content.type == I.FileType.Image);
+		return this.isFile() && (this.content.type == I.FileType.Image) && this.isFileStyleEmbed();
 	};
 	
 	isFileVideo (): boolean {
-		return this.isFile() && (this.content.type == I.FileType.Video);
+		return this.isFile() && (this.content.type == I.FileType.Video) && this.isFileStyleEmbed();
 	};
 
 	isFileAudio (): boolean {
-		return this.isFile() && (this.content.type == I.FileType.Audio);
+		return this.isFile() && (this.content.type == I.FileType.Audio) && this.isFileStyleEmbed();
+	};
+	
+	isFilePdf (): boolean {
+		return this.isFile() && (this.content.type == I.FileType.Pdf) && this.isFileStyleEmbed();
+	};
+
+	isFileStyleLink (): boolean {
+		return this.isFile() && (this.content.style == I.FileStyle.Link);
+	};
+
+	isFileStyleEmbed (): boolean {
+		return this.isFile() && (this.content.style != I.FileStyle.Link);
 	};
 
 	isBookmark (): boolean {

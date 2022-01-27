@@ -1,7 +1,7 @@
 body, html { width: 100%; height: 100%; -webkit-user-select: none; user-select: none; -webkit-app-region: drag; }
 
 body { 
-    margin: 0; color: #2c2b27; background: #fff; font-family: Helvetica, Arial, sans-serif; display: flex;
+    margin: 0; color: #2c2b27; font-family: Helvetica, Arial, sans-serif; display: flex;
     flex-direction: column; justify-content: center; align-items: center; font-size: 12px;
 }
 
@@ -38,3 +38,7 @@ body {
     background: #ffb522; color: #fff;
 }
 .buttons button:hover { background: #f1981a; }
+
+html.dark body { color: #a09f92; }
+html.dark .title { color: #dfddd3; }
+html.dark .copyright { color: #5b5a51; }

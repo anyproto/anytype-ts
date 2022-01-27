@@ -6,6 +6,7 @@ import { blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 import Panel from './graph/panel';
+import { analytics } from '../../../lib';
 
 interface Props extends RouteComponentProps<any> {
 	rootId: string;
@@ -114,6 +115,8 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 	};
 
 	load () {
+		console.log('GRAPH load');
+
 		const filters: any[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.Equal, value: false },
 			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
@@ -124,6 +127,8 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 					Constant.typeId.relation,
 					Constant.typeId.type,
 					Constant.typeId.template,
+					Constant.typeId.space,
+					
 					Constant.typeId.file,
 					Constant.typeId.image,
 					Constant.typeId.video,
@@ -146,7 +151,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 				return;
 			};
 
-			this.data.edges = message.edges.filter(d => { return d.source !== d.target; });
+			this.data.edges = message.edges.filter(d => { return !d.isHidden && (d.source !== d.target); });
 			this.data.nodes = message.nodes;
 			this.refGraph.init();
 
@@ -159,14 +164,11 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 		const win = $(window);
 		const obj = $(isPopup ? '#popupPage #innerWrap' : '.page.isFull');
 		const wrapper = obj.find('.wrapper');
+		const header = obj.find('#header');
+		const hh = header.height();
+		const height = isPopup && !obj.hasClass('full') ? obj.height() : win.height();
 
-		let height = 0;
-		if (isPopup) {
-			height = obj.height();
-		} else {
-			height = win.height();
-		};
-
+		wrapper.css({ height: height })
 		wrapper.find('.side').css({ height: height });
 		
 		if (isPopup) {
@@ -193,6 +195,8 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 	onClickObject (object: any) {
 		this.togglePanel(true);
 		this.refPanel.setState({ view: I.GraphView.Preview, rootId: object.id });
+
+		analytics.event('GraphSelectNode');
 	};
 
 	getRootId () {
@@ -203,11 +207,15 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 	onSwitch (id: string, v: any) {
 		this.refGraph.forceProps[id] = v;
 		this.refGraph.updateProps();
+
+		analytics.event('GraphSettings', { id });
 	};
 
 	onFilterChange (v: string) {
 		this.refGraph.forceProps.filter = v ? new RegExp(Util.filterFix(v), 'gi') : '';
 		this.refGraph.updateProps();
+
+		analytics.event('SearchQuery', { route: 'ScreenGraph', length: v.length });
 	};
 
 });

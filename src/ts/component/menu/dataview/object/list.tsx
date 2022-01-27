@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { Filter, MenuItemVertical, Icon, Loader } from 'ts/component';
-import { I, C, Util, Key, keyboard, DataUtil } from 'ts/lib';
+import { Filter, MenuItemVertical, Icon, Loader, ObjectName } from 'ts/component';
+import { I, C, Util, keyboard, DataUtil, Relation } from 'ts/lib';
 import { commonStore, dbStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
@@ -10,7 +10,7 @@ interface Props extends I.Menu {}
 
 interface State {
 	loading: boolean;
-}
+};
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
@@ -49,10 +49,12 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		const { data } = param;
 		const { filter } = data;
 		const items = this.getItems();
+		const placeholderFocus = data.placeholderFocus || 'Filter objects...';
 
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
 			const type: any = dbStore.getObjectType(item.type) || {};
+			const name = <ObjectName object={item} />;
 
 			let content = null;
 			if (item.id == 'add') {
@@ -67,7 +69,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 					<MenuItemVertical 
 						id={item.id}
 						object={item}
-						name={item.name}
+						name={name}
 						onMouseEnter={(e: any) => { this.onOver(e, item); }} 
 						onClick={(e: any) => { this.onClick(e, item); }}
 						withCaption={true}
@@ -95,7 +97,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 			<div className="wrap">
 				<Filter 
 					ref={(ref: any) => { this.refFilter = ref; }} 
-					placeholderFocus="Filter objects..." 
+					placeholderFocus={placeholderFocus} 
 					value={filter}
 					onChange={this.onFilterChange} 
 				/>
@@ -202,7 +204,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		const { param } = this.props;
 		const { data } = param;
 		const { canAdd } = data;
-		const value = DataUtil.getRelationArrayValue(data.value);
+		const value = Relation.getArrayValue(data.value);
 		
 		let ret = Util.objectCopy(this.items);
 
@@ -289,7 +291,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 				return;
 			};
 
-			let value = DataUtil.getRelationArrayValue(data.value);
+			let value = Relation.getArrayValue(data.value);
 			value.push(id);
 			value = Util.arrayUnique(value);
 
@@ -297,11 +299,11 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 				value = value.slice(value.length - maxCount, value.length);
 			};
 
-			data.value = value;
-
-			menuStore.updateData(MENU_ID, { value: value });
-			onChange(value);
-			position();
+			onChange(value, () => {
+				menuStore.updateData(this.props.id, { value });
+				menuStore.updateData(MENU_ID, { value });
+				position();
+			});
 		};
 
 		if (item.id == 'add') {

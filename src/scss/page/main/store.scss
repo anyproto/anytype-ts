@@ -5,7 +5,7 @@
 
 	.content { height: 100%; padding-top: 40px; }
 
-	.head { width: 100%; height: 40px; padding: 8px 0px; text-align: center; position: absolute; top: 0px; left: 0px; z-index: 1; background: #fff; }
+	.head { width: 100%; height: 40px; padding: 8px 0px; text-align: center; position: absolute; top: 0px; left: 0px; z-index: 1; background: $colorWhite; }
 	.head {
 		.tabs { 
 			white-space: nowrap; background: $colorLightGrey; display: inline-block; height: 28px; padding: 2px; border-radius: 6px;
@@ -15,7 +15,7 @@
 				display: inline-block; margin-right: 4px; width: 124px; border-radius: 4px; height: 24px; line-height: 24px;
 				font-weight: 500; cursor: pointer;
 			}
-			.item.active { background: #fff; }
+			.item.active { background: $colorWhite; }
 			.item:last-child { margin: 0px; }
 		}
 	}
@@ -48,20 +48,29 @@
 
 		.items { height: 100%; }
 		.items {
-			.row { white-space: nowrap; }
+			.row { display: flex; flex-direction: row; flex-wrap: nowrap; align-items: stretch; }
 
 			.item { display: inline-block; vertical-align: top; position: relative; cursor: pointer; }
 			.item {
 				.iconObject.isObjectType, .iconObject.isRelation { position: absolute; left: 0px; top: 0px; }
-				.iconObject.isHuman { vertical-align: middle; margin: -1px 4px 0px 0px; }
 
-				.info { height: 100%; position: relative; }
+				.info { height: 100%; position: relative; display: flex; align-items: center; }
 				.info {
+
 					.txt { width: 100%; vertical-align: middle; }
-					.name { @include text-overflow-nw; line-height: 22px; }
+					.name { @include text-overflow-nw; line-height: 22px; width: 100%; }
 					.descr { width: 100%; @include text-small; color: $colorDarkGrey; @include text-overflow-nw; margin: 2px 0px; }
-					.author { @include text-small; color: $colorDarkGrey; line-height: 18px; margin-bottom: 2px; }
-					.line { width: 100%; height: 1px; background: $colorLightGrey; position: absolute; left: 0px; }
+					.descr:empty { display: none; }
+					
+					.author { 
+						@include text-overflow-nw; width: 100%; @include text-small; color: $colorDarkGrey; line-height: 18px;
+						display: flex; gap: 0px 4px;
+					}
+					.author {
+						.iconObject { position: relative; }
+					}
+			
+					.line { width: 100%; height: 1px; background: $colorBorderLight; position: absolute; left: 0px; }
 				}
 
 				.button { height: 28px; line-height: 24px; position: absolute; right: 0px; top: 50%; margin-top: -14px; display: none; }
@@ -72,24 +81,23 @@
 				.button { display: block; }
 			}
 
-			.item.type { margin: 0px 32px 32px 0px; width: calc(50% - 16px); height: 64px; padding-left: 80px; line-height: 64px; }
-			.item.type:nth-child(2n + 2) { margin-right: 0px; }
+			.item.type { width: calc(50% - 16px); margin-right: 32px; height: 64px; padding-left: 80px; line-height: 64px; }
+			.item.type:last-child { margin-right: 0px; }
 			.item.type {
 				.line { bottom: -16px; }
 			}
 
 			.item.template { margin: 0px 24px 28px 0px; width: 304px; height: 252px; }
-			.item.template:nth-child(3n + 3) { margin-right: 0px; }
+			.item.type:last-child { margin-right: 0px; }
 			.item.template {
 				.img { width: 100%; height: 180px; border-radius: 8px; margin-bottom: 12px; background-color: $colorBlack; }
 				.cover { width: 100%; height: 100%; position: relative; border-radius: inherit; }
 			}
 
-			.item.relation { width: calc(33% - 15px); padding-left: 60px; height: 48px; margin: 0px 30px 16px 0px; line-height: 46px; }
-			.item.relation:nth-child(3n + 3) { margin-right: 0px; }
+			.item.relation { width: calc((100% - 32px) / 3); margin-right: 16px; padding-left: 60px; height: 48px; line-height: 48px; }
+			.item.relation:last-child { margin-right: 0px; }
 			.item.relation {
 				.line { bottom: -8px; }
-				.item:nth-child(2n + 2) { margin-right: 0px; }
 			}
 
 		}
@@ -100,6 +108,7 @@
 			.label { margin: 0px; }
 			.button { display: none; }
 		}
+
 		.item {
 			.descr { display: none; }
 		}

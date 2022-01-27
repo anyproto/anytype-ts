@@ -2,6 +2,7 @@ import { authStore, commonStore, blockStore, detailStore, dbStore } from 'ts/sto
 import { Util, I, M, Decode, translate, analytics, Response, Mapper } from 'ts/lib';
 import * as Sentry from '@sentry/browser';
 import { crumbs } from '.';
+import arrayMove from 'array-move';
 
 const Service = require('lib/pb/protos/service/service_grpc_web_pb');
 const Commands = require('lib/pb/protos/commands_pb');
@@ -10,7 +11,23 @@ const path = require('path');
 const Constant = require('json/constant.json');
 const { app, getGlobal } = window.require('@electron/remote');
 
-const SORT_IDS = [ 'objectShow', 'blockAdd', 'blockDelete', 'blockSetChildrenIds' ];
+const SORT_IDS = [ 
+	'objectShow', 
+	'blockAdd', 
+	'blockDelete', 
+	'blockSetChildrenIds', 
+	'objectDetailsSet', 
+	'objectDetailsAmend', 
+	'objectDetailsUnset', 
+	'subscriptionAdd', 
+	'subscriptionRemove', 
+	'subscriptionPosition', 
+	'subscriptionCounters',
+	'blockDataviewSourceSet',
+	'blockDataviewViewSet',
+	'blockDataviewViewDelete',
+];
+const SKIP_IDS = [ 'blockOpenBreadcrumbs', 'blockSetBreadcrumbs' ];
 
 /// #if USE_ADDON
 const bindings = window.require('bindings')({
@@ -111,13 +128,15 @@ class Dispatcher {
 		if (v == V.BLOCKDATAVIEWVIEWDELETE)		 t = 'blockDataviewViewDelete';
 		if (v == V.BLOCKDATAVIEWVIEWORDER)		 t = 'blockDataviewViewOrder';
 
+		if (v == V.BLOCKDATAVIEWSOURCESET)		 t = 'blockDataviewSourceSet';
+
 		if (v == V.BLOCKDATAVIEWRELATIONSET)	 t = 'blockDataviewRelationSet';
 		if (v == V.BLOCKDATAVIEWRELATIONDELETE)	 t = 'blockDataviewRelationDelete';
 
-		if (v == V.BLOCKDATAVIEWRECORDSSET)		 t = 'blockDataviewRecordsSet';
-		if (v == V.BLOCKDATAVIEWRECORDSINSERT)	 t = 'blockDataviewRecordsInsert';
-		if (v == V.BLOCKDATAVIEWRECORDSUPDATE)	 t = 'blockDataviewRecordsUpdate';
-		if (v == V.BLOCKDATAVIEWRECORDSDELETE)	 t = 'blockDataviewRecordsDelete';
+		if (v == V.SUBSCRIPTIONADD)				 t = 'subscriptionAdd';
+		if (v == V.SUBSCRIPTIONREMOVE)			 t = 'subscriptionRemove';
+		if (v == V.SUBSCRIPTIONPOSITION)		 t = 'subscriptionPosition';
+		if (v == V.SUBSCRIPTIONCOUNTERS)		 t = 'subscriptionCounters';
 
 		if (v == V.PROCESSNEW)					 t = 'processNew';
 		if (v == V.PROCESSUPDATE)				 t = 'processUpdate';
@@ -164,24 +183,31 @@ class Dispatcher {
 		let blocks: any[] = [];
 		let id: string = '';
 		let self = this;
+		let block: any = null;
+		let details: any = null;
+		let viewId: string = '';
+		let keys: string[] = [];
+		let ids: string[] = [];
+		let subIds: string[] = [];
+		let subId: string = '';
+		let afterId: string = '';
+		let records: any[] = [];
+		let oldIndex: number = 0;
+		let newIndex: number = 0;
 
 		messages.sort((c1: any, c2: any) => { return self.sort(c1, c2); });
 
 		for (let message of messages) {
-			let block: any = null;
-			let details: any = null;
-			let viewId: string = '';
-			let keys: string[] = [];
-			let ids: string[] = [];
 			let type = this.eventType(message.getValueCase());
 			let fn = 'get' + Util.ucFirst(type);
 			let data = message[fn] ? message[fn]() : {};
 			let needLog = (debugThread && (type == 'threadStatus')) || (debugCommon && (type != 'threadStatus'));
-			
-			if (needLog) {
-				log(rootId, type, data, message.getValueCase());
-			};
 
+			// Do not log breadcrumbs details to clean up logs
+			if (rootId.match('virtualBreadcrumbs')) {
+				needLog = false;
+			};
+			
 			switch (type) {
 
 				case 'accountShow':
@@ -237,6 +263,7 @@ class Dispatcher {
 							dbStore.relationsClear(rootId, blockId);
 							dbStore.viewsClear(rootId, blockId);
 							dbStore.metaClear(rootId, blockId);
+							dbStore.recordsClear(rootId, blockId);
 						};
 
 						blockStore.delete(rootId, blockId);
@@ -354,6 +381,10 @@ class Dispatcher {
 						block.content.type = data.getType().getValue();
 					};
 
+					if (data.hasStyle()) {
+						block.content.style = data.getStyle().getValue();
+					};
+
 					if (data.hasState()) {
 						block.content.state = data.getState().getValue();
 					};
@@ -455,7 +486,8 @@ class Dispatcher {
 
 				case 'blockDataviewViewDelete':
 					id = data.getId();
-					viewId = dbStore.getMeta(rootId, id).viewId;
+					subId = dbStore.getSubId(rootId, id);
+					viewId = dbStore.getMeta(subId, '').viewId;
 					
 					const deleteId = data.getViewid();
 					dbStore.viewDelete(rootId, id, deleteId);
@@ -463,7 +495,8 @@ class Dispatcher {
 					if (deleteId == viewId) {
 						const views = dbStore.getViews(rootId, id);
 						viewId = views.length ? views[views.length - 1].id : '';
-						dbStore.metaSet(rootId, id, { viewId: viewId });
+
+						dbStore.metaSet(subId, '', { viewId: viewId });
 					};
 					break;
 
@@ -472,40 +505,16 @@ class Dispatcher {
 					dbStore.viewsSort(rootId, id, data.getViewidsList());
 					break; 
 
-				case 'blockDataviewRecordsSet':
+				case 'blockDataviewSourceSet':
 					id = data.getId();
-					data.records = (data.getRecordsList() || []).map((it: any) => { return Decode.decodeStruct(it) || {}; });
-					dbStore.recordsSet(rootId, id, data.records);
-					dbStore.metaSet(rootId, id, { viewId: data.getViewid(), total: data.getTotal() });
-					break;
+					block = blockStore.getLeaf(rootId, id);
 
-				case 'blockDataviewRecordsInsert':
-					id = data.getId();
-					data.records = data.getRecordsList() || [];
-
-					for (let item of data.records) {
-						item = Decode.decodeStruct(item) || {};
-						dbStore.recordAdd(rootId, id, item, 1);
+					if (!block || !block.id) {
+						break;
 					};
-					break;
 
-				case 'blockDataviewRecordsUpdate':
-					id = data.getId();
-					data.records = data.getRecordsList() || [];
-
-					for (let item of data.records) {
-						item = Decode.decodeStruct(item) || {};
-						dbStore.recordUpdate(rootId, id, item);
-					};
-					break;
-
-				case 'blockDataviewRecordsDelete':
-					id = data.getId();
-					ids = data.getRemovedList() || [];
-
-					for (let recordId of ids) {
-						dbStore.recordDelete(rootId, id, recordId);
-					};
+					block.content.sources = data.getSourceList();
+					blockStore.update(rootId, block);
 					break;
 
 				case 'blockDataviewRelationSet':
@@ -524,10 +533,25 @@ class Dispatcher {
 
 				case 'objectDetailsSet':
 					id = data.getId();
+					subIds = data.getSubidsList() || [];
 					block = blockStore.getLeaf(rootId, id);
-
 					details = Decode.decodeStruct(data.getDetails());
+					
 					detailStore.update(rootId, { id: id, details: details }, true);
+
+					// Subscriptions
+					subIds.forEach((it: string) => {
+						const [ subId, dep ] = it.split('/');
+
+						if (!dep) {
+							const record = dbStore.getRecord(subId, '', id);
+							if (!record) {
+								dbStore.recordAdd(subId, '', { id: id }, -1);
+							};
+						};
+						
+						detailStore.update(subId, { id: id, details: details }, true);
+					});
 
 					if ((id == rootId) && block && (undefined !== details.layout) && (block.layout != details.layout)) {
 						blockStore.update(rootId, { id: rootId, layout: details.layout });
@@ -536,6 +560,7 @@ class Dispatcher {
 
 				case 'objectDetailsAmend':
 					id = data.getId();
+					subIds = data.getSubidsList() || [];
 					block = blockStore.getLeaf(rootId, id);
 
 					details = {};
@@ -544,16 +569,37 @@ class Dispatcher {
 					};
 					detailStore.update(rootId, { id: id, details: details }, false);
 
+					// Subscriptions
+					subIds.forEach((it: string) => {
+						const [ subId, dep ] = it.split('/');
+						if (!dep) {
+							const record = dbStore.getRecord(subId, '', id);
+							if (!record) {
+								dbStore.recordAdd(subId, '', { id: id }, -1);
+							};
+						};
+						detailStore.update(subId, { id: id, details: details }, false);
+					});
+
 					if ((id == rootId) && block) {
 						if ((undefined !== details.layout) && (block.layout != details.layout)) {
 							blockStore.update(rootId, { id: rootId, layout: details.layout });
 						};
+
+						blockStore.checkDraft(rootId);
 					};
 					break;
 
 				case 'objectDetailsUnset':
 					id = data.getId();
+					subIds = data.getSubidsList() || [];
 					keys = data.getKeysList() || [];
+
+					// Subscriptions
+					subIds.forEach((it: string) => {
+						const [ subId, dep ] = it.split('/');
+						detailStore.delete(subId, '', keys);
+					});
 					
 					detailStore.delete(rootId, id, keys);
 					blockStore.checkDraft(rootId);
@@ -583,6 +629,67 @@ class Dispatcher {
 					};
 					break;
 
+				case 'subscriptionAdd':
+					if (rootId.match('/dep')) {
+						break;
+					};
+
+					id = data.getId();
+					afterId = data.getAfterid();
+
+					records = dbStore.getRecords(rootId, '');
+					oldIndex = records.findIndex((it: any) => { return it.id == id; });
+					newIndex = 0;
+
+					if (afterId) {
+						newIndex = records.findIndex((it: any) => { return it.id == afterId; });
+					};
+
+					dbStore.recordsSet(rootId, '', arrayMove(records, oldIndex, newIndex));
+					break;
+
+				case 'subscriptionRemove':
+					if (rootId.match('/dep')) {
+						break;
+					};
+
+					id = data.getId();
+					dbStore.recordDelete(rootId, '', id);
+					break;
+
+				case 'subscriptionPosition':
+					if (rootId.match('/dep')) {
+						break;
+					};
+
+					id = data.getId();
+					afterId = data.getAfterid();
+
+					records = dbStore.getRecords(rootId, '');
+					oldIndex = records.findIndex((it: any) => { return it.id == id; });
+					newIndex = 0;
+
+					if (afterId) {
+						newIndex = records.findIndex((it: any) => { return it.id == afterId; });
+					};
+
+					if (oldIndex != newIndex) {
+						dbStore.recordsSet(rootId, '', arrayMove(records, oldIndex, newIndex));
+					};
+					break;
+
+				case 'subscriptionCounters':
+					if (rootId.match('/dep')) {
+						break;
+					};
+
+					const total = data.getTotal();
+					const nextCount = data.getNextcount();
+					const prevCount = data.getPrevcount();
+
+					dbStore.metaSet(rootId, '', { total: total });
+					break;
+
 				case 'processNew':
 				case 'processUpdate':
 				case 'processDone':
@@ -610,33 +717,35 @@ class Dispatcher {
 					};
 					break;
 			};
+
+			if (needLog) {
+				log(rootId, type, data, message.getValueCase());
+			};
 		};
 		
 		window.clearTimeout(this.timeoutEvent[rootId]);
 		this.timeoutEvent[rootId] = window.setTimeout(() => { 
-			blockStore.setNumbers(rootId); 
+			blockStore.updateNumbers(rootId); 
 			blockStore.updateMarkup(rootId);
 		}, 10);
 	};
 
 	sort (c1: any, c2: any) {
-		let type1 = this.eventType(c1.getValueCase());
-		let type2 = this.eventType(c2.getValueCase());
+		let idx1 = SORT_IDS.findIndex((it: string) => { return it == this.eventType(c1.getValueCase()); });
+		let idx2 = SORT_IDS.findIndex((it: string) => { return it == this.eventType(c2.getValueCase()); });
 
-		for (let id of SORT_IDS) {
-			if ((type1 == id) && (type2 != id)) {
-				return -1;
-			};
-			if ((type2 == id) && (type1 != id)) {
-				return 1;
-			};
-		};
+		if (idx1 > idx2) return 1;
+		if (idx1 < idx2) return -1;
 		return 0;
 	};
 
 	onObjectShow (rootId: string, message: any) {
 		let { blocks, details, restrictions } = message;
 		let root = blocks.find((it: any) => { return it.id == rootId; });
+
+		if (root && root.fields.analyticsContext) {
+			analytics.setContext(root.fields.analyticsContext, root.fields.analyticsOriginalId);
+		};
 
 		dbStore.relationsSet(rootId, rootId, message.relations);
 		dbStore.objectTypesSet(message.objectTypes);
@@ -691,7 +800,7 @@ class Dispatcher {
 
 		blockStore.set(rootId, blocks);
 		blockStore.setStructure(rootId, structure);
-		blockStore.setNumbers(rootId); 
+		blockStore.updateNumbers(rootId); 
 		blockStore.updateMarkup(rootId);
 		blockStore.checkDraft(rootId);
 	};
@@ -711,7 +820,7 @@ class Dispatcher {
 		let t2 = 0;
 		let d = null;
 
-		if (debug) {
+		if (debug && !SKIP_IDS.includes(type)) {
 			console.log(`%cRequest.${type}`, 'font-weight: bold; color: blue;');
 			d = Util.objectClear(data.toObject());
 			console.log(config.debug.js ? JSON.stringify(d, null, 3) : d);
@@ -745,10 +854,10 @@ class Dispatcher {
 				if (message.error.code) {
 					console.error('Error', type, 'code:', message.error.code, 'description:', message.error.description);
 					Sentry.captureMessage(type + ': ' + message.error.description);
-					analytics.event('Error', { cmd: type, code: message.error.code });
+					analytics.event('Exception', { method: type, code: message.error.code });
 				};
 
-				if (debug) {
+				if (debug && !SKIP_IDS.includes(type)) {
 					console.log(`%cCallback.${type}`, 'font-weight: bold; color: green;');
 					d = Util.objectClear(response.toObject());
 					console.log(config.debug.js ? JSON.stringify(d, null, 3) : d);
@@ -758,25 +867,24 @@ class Dispatcher {
 					this.event(message.event, true);
 				};
 
+				const middleTime = Math.ceil(t1 - t0);
+				message.middleTime = middleTime;
+
 				if (callBack) {
 					callBack(message);
 				};
 
 				t2 = performance.now();
-				const middleTime = Math.ceil(t1 - t0);
+				
 				const renderTime = Math.ceil(t2 - t1);
 				const totalTime = middleTime + renderTime;
 
-				data.middleTime = middleTime;
-				data.renderTime = renderTime;
-				analytics.event(upper, data);
-
-				if (debug) {
+				if (debug && !SKIP_IDS.includes(type)) {
 					const times = [
 						'Middle time:', middleTime + 'ms',
 						'Render time:', renderTime + 'ms',
 						'Total time:', totalTime + 'ms',
-					]
+					];
 					console.log(`%cCallback.${type}`, 'font-weight: bold; color: green;', times.join('\t'));
 				};
 			});

@@ -48,8 +48,6 @@ class MenuStore {
 		} else {
 			this.menuList.push({ id: id, param: param });
 		};
-
-		analytics.event(Util.toCamelCase('Menu-' + id));
 	};
 
     update (id: string, param: any) {
@@ -63,8 +61,7 @@ class MenuStore {
     updateData (id: string, data: any) {
 		const item = this.get(id);
 		if (item) {
-			item.param.data = Object.assign(item.param.data, data);
-			this.update(id, item.param);
+			set(item.param.data, data);
 		};
 	};
 
@@ -96,7 +93,6 @@ class MenuStore {
 
     close (id: string, callBack?: () => void) {
 		const item = this.get(id);
-
 		if (!item) {
 			if (callBack) {
 				callBack();
@@ -142,14 +138,20 @@ class MenuStore {
     closeAll (ids?: string[], callBack?: () => void) {
 		const items = ids && ids.length ? this.menuList.filter((it: I.Menu) => { return ids.includes(it.id); }) : this.menuList;
 
+		this.clearTimeout();
+
 		for (let item of items) {
 			this.close(item.id);
 		};
 
-		this.clearTimeout();
-
 		if (callBack) {
 			this.timeout = window.setTimeout(() => { callBack(); }, Constant.delay.menu);
+		};
+	};
+
+	closeLast () {
+		if (this.menuList.length) {
+			this.close(this.menuList[this.menuList.length - 1].id);
 		};
 	};
 

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { I } from 'ts/lib';
+import { commonStore } from 'ts/store';
 
 interface Props {
 	id: string;
@@ -11,20 +12,39 @@ interface Props {
 };
 
 const Constant = require('json/constant.json');
-const Bullets = {
-	black:	 require('img/icon/bullet/black.svg'),
+const Icons = {
+	bullets: {
+		default: require('img/icon/bullet/default.svg'),
+	},
+	checkbox: {
+		0:		 require('img/icon/marker/checkbox0.svg'),
+		1:		 require('img/icon/marker/checkbox1.svg'),
+	},
+	task: {
+		0:		 require('img/icon/object/checkbox0.svg'),
+		1:		 require('img/icon/object/checkbox1.svg'),
+	},
+	toggle:		 require('img/icon/marker/toggle.svg'),
 };
-const Checkbox0 = require('img/icon/marker/checkbox0.svg');
-const Checkbox1 = require('img/icon/marker/checkbox1.svg');
-const CheckboxTask0 = require('img/icon/object/checkbox0.svg');
-const CheckboxTask1 = require('img/icon/object/checkbox1.svg');
-const Toggle = require('img/icon/marker/toggle.svg');
 
 for (let c of Constant.textColor) {
-	Bullets[c] = require(`img/icon/bullet/${c}.svg`);
+	Icons.bullets[c] = require(`img/icon/bullet/${c}.svg`);
+};
+
+const Theme = {
+	dark: {
+		bullets: {
+			default: require('img/theme/dark/icon/bullet/default.svg'),
+		},
+		toggle:		 require('img/theme/dark/icon/marker/toggle.svg'),
+	},
 };
 
 class Marker extends React.Component<Props, {}> {
+
+	public static defaultProps = {
+		color: 'default',
+	};
 
 	render () {
 		const { id, type, color, className, active, onClick } = this.props;
@@ -46,7 +66,7 @@ class Marker extends React.Component<Props, {}> {
 		
 		switch (type) {
 			case I.TextStyle.Bulleted:
-				inner = <img src={Bullets[color] || Bullets.black} />
+				inner = <img src={this.getBullet()} />
 				break;
 				
 			case I.TextStyle.Numbered:
@@ -54,15 +74,15 @@ class Marker extends React.Component<Props, {}> {
 				break;
 				
 			case I.TextStyle.Checkbox:
-				inner = <img src={active ? Checkbox1 : Checkbox0} />;
+				inner = <img src={Icons.checkbox[Number(active)]} />;
 				break;
 
 			case 'checkboxTask':
-				inner = <img src={active ? CheckboxTask1 : CheckboxTask0} />;
+				inner = <img src={Icons.task[Number(active)]} />;
 				break;
 			
 			case I.TextStyle.Toggle:
-				inner = <img src={Toggle} />;
+				inner = <img src={this.getToggle()} />;
 				break;
 		};
 		
@@ -71,6 +91,21 @@ class Marker extends React.Component<Props, {}> {
 				{inner}
 			</div>
 		);
+	};
+
+	getBullet () {
+		const { theme } = commonStore;
+		const t = Theme[theme];
+		const color = this.props.color || 'default';
+
+		return (t && t.bullets[color]) ? t.bullets[color] : Icons.bullets[color];
+	};
+
+	getToggle () {
+		const { theme } = commonStore;
+		const t = Theme[theme];
+
+		return (t && t.toggle) ? t.toggle : Icons.toggle;
 	};
 	
 };

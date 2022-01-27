@@ -4,7 +4,7 @@ import { RouteComponentProps } from 'react-router';
 import { Page } from 'ts/component';
 import { observer } from 'mobx-react';
 
-interface Props extends I.Popup, RouteComponentProps<any> {}
+interface Props extends I.Popup, RouteComponentProps<any> {};
 
 const $ = require('jquery');
 const raf = require('raf');
@@ -77,7 +77,10 @@ const PopupPage = observer(class PopupPage extends React.Component<Props, {}> {
 			const win = $(window);
 			const obj = $(`#${getId()} #innerWrap`);
 			const loader = obj.find('#loader');
-			const width = Math.max(1096, Math.min(1096, win.width() - 128));
+			const ww = win.width();
+			const width = Math.max(1096, Math.min(1096, ww - 128));
+
+			width >= ww ? obj.addClass('full') : obj.removeClass('full');
 
 			obj.css({ width: width });
 			loader.css({ width: width, height: obj.height() });

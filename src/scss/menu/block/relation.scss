@@ -2,19 +2,6 @@
 
 .menus {
 
-	.menu.menuBlockRelationView {
-		.icon.edit { display: none; }
-		.icon.checkbox { width: 20px; height: 20px; vertical-align: top; background-image: url('~img/icon/dataview/checkbox0.svg'); }
-		.icon.checkbox.active { background-image: url('~img/icon/dataview/checkbox1.svg'); }
-
-		.sides { display: flex; }
-
-		.info { 
-			width: 192px; @include text-overflow-nw; line-height: 20px; border-radius: 4px; transition: background 0.2s ease-in-out; 
-			flex-shrink: 0; margin-right: 6px;
-		}
-	}
-
 	.menu.menuBlockRelationEdit {
 		.wrap { padding: 0px 16px 8px 16px; }
 		.line { height: 1px; margin: 8px 0px; background: $colorLightGrey; }
@@ -24,8 +11,14 @@
 		.button { width: 100%; }
 		.button.grey { cursor: default; }
 
-		.item:hover::before { background: rgba(172, 169, 150, 0.1); }
+		.item:hover::before { background: $colorHover; }
 		.item.disabled:hover::before { opacity: 0; }
+
+		.item.withCaption {
+			.caption { 
+				@include text-common; line-height: 20px; width: 40px; padding-right: 16px; overflow: visible;
+			}
+		}
 
 		.icon.arrow { 
 			width: 20px; height: 20px; position: absolute; right: 14px; top: 50%; margin: -10px 0px 0px 0px; 
@@ -35,6 +28,12 @@
 
 	.menu.menuBlockRelationView { width: auto; }
 	.menu.menuBlockRelationView {
+		.icon.edit { display: none; }
+		.icon.checkbox { width: 20px; height: 20px; vertical-align: top; background-image: url('~img/icon/dataview/checkbox0.svg'); }
+		.icon.checkbox.active { background-image: url('~img/icon/dataview/checkbox1.svg'); }
+
+		.sides { display: flex; }
+
 		.content { overflow: hidden; max-height: unset; padding: 0px; }
 		.input { @include text-common; line-height: 20px; vertical-align: top; display: inline-block; height: 21px; padding: 0px; border: 0px; padding: 0px; }
 
@@ -60,22 +59,27 @@
 				margin: 0px; opacity: 0; position: absolute; right: -38px; top: 0px;
 			}
 			.icon.fav.active { background-image: url('~img/icon/fav1.svg'); }
-			.icon.fav:hover { background-color: rgba(172,169,150,0.1); }
+			.icon.fav:hover { background-color: $colorHover; }
 
-			.info { padding: 5px 0px; color: $colorDarkGrey; }
+			.info { 
+				width: 192px; @include text-overflow-nw; line-height: 20px; border-radius: 4px; transition: background 0.2s ease-in-out; 
+				flex-shrink: 0; margin-right: 6px; padding: 5px 0px; color: $colorDarkGrey;
+			}
 			.info.canEdit { cursor: pointer; }
-			.info.canEdit:hover { background: rgba(172,169,150,0.1); }
+			.info.canEdit:hover { background: $colorHover; }
 
 			.cellContent { min-height: 22px; }
 			.cellContent {
 				.name { line-height: 22px; }
 			}
 
+			.cellContent.isName { display: flex; }
+
 			.cell { 
 				padding: 5px 8px; border-radius: 4px; width: calc(100% - 236px); line-height: 22px; transition: background 0.2s ease-in-out; 
 				position: relative; margin-right: 6px;
 			}
-			.cell.canEdit:hover { background: rgba(172,169,150,0.1); }
+			.cell.canEdit:hover { background: $colorHover; }
 			.cell.canEdit {
 				.cellContent {
 					.empty { display: block; }
@@ -90,7 +94,7 @@
 
 			.cell.isEditing { padding: 0px; }
 			.cell.isEditing {
-				.cellContent { position: relative; height: auto !important; min-height: 32px; }
+				.cellContent { position: relative; height: auto !important; min-height: 32px; border-radius: 4px; }
 				.cellContent.isName .input { height: 20px; line-height: 20px; }
 				.icon.clear { right: 8px; }
 				.icon.fav { display: none !important; }
@@ -128,10 +132,7 @@
 			}
 
 			.cell.c-longText {
-				.name, span { 
-					-webkit-line-clamp: 3; -webkit-box-orient: vertical; display: -webkit-box; overflow: hidden; word-wrap: break-word; 
-					line-height: 22px;
-				}
+				.name, span { @include clamp3; word-wrap: break-word; line-height: 22px; }
 			}
 			.cell.isEditing.c-longText {
 				.cellContent { box-shadow: 0px 0px; visibility: hidden; }
@@ -152,9 +153,12 @@
 			.line { margin: 0px; position: absolute; top: 0px; left: 32px; width: calc(100% - 64px); }
 			.info { width: 100%; }
 		}
-		.item.add:hover { 
-			.info { background: rgba(172,169,150,0.1); } 
-		}
 	}
 
+}
+
+body.isDragging {
+	.menus {
+		.menu.menuBlockRelationView { opacity: 0.5; }
+	}
 }

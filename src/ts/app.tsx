@@ -1,14 +1,15 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import { RouteComponentProps } from 'react-router';
 import { Router, Route, Switch, Redirect } from 'react-router-dom';
 import { Provider } from 'mobx-react';
 import { enableLogging } from 'mobx-logger';
-import { Page, ListMenu, Progress, Tooltip, Preview, Icon } from './component';
+import { Page, SelectionProvider, DragProvider, Progress, Tooltip, Preview, Icon, ListPopup, ListMenu } from './component';
 import { commonStore, authStore, blockStore, detailStore, dbStore, menuStore, popupStore } from './store';
 import { I, C, Util, DataUtil, keyboard, Storage, analytics, dispatcher, translate } from 'ts/lib';
 import { throttle } from 'lodash';
 import * as Sentry from '@sentry/browser';
-import { configure } from "mobx"
+import { configure } from 'mobx';
 
 configure({ enforceActions: 'never' });
 
@@ -43,7 +44,8 @@ import 'scss/component/pager.scss';
 import 'scss/component/pin.scss';
 import 'scss/component/sync.scss';
 import 'scss/component/filter.scss';
-import 'scss/component/list/template.scss';
+import 'scss/component/sidebar.scss';
+import 'scss/component/list/previewObject.scss';
 
 import 'scss/component/preview/common.scss';
 import 'scss/component/preview/link.scss';
@@ -85,6 +87,7 @@ import 'scss/block/featured.scss';
 import 'scss/block/type.scss';
 import 'scss/block/latex.scss';
 import 'scss/block/table.scss';
+import 'scss/block/tableOfContents.scss';
 
 import 'scss/popup/common.scss';
 import 'scss/popup/settings.scss';
@@ -96,12 +99,14 @@ import 'scss/popup/shortcut.scss';
 import 'scss/popup/confirm.scss';
 import 'scss/popup/page.scss';
 import 'scss/popup/template.scss';
+import 'scss/popup/export.scss';
 
 import 'emoji-mart/css/emoji-mart.css';
 import 'scss/menu/common.scss';
 import 'scss/menu/account.scss';
 import 'scss/menu/smile.scss';
 import 'scss/menu/help.scss';
+import 'scss/menu/onboarding.scss';
 import 'scss/menu/select.scss';
 import 'scss/menu/button.scss';
 import 'scss/menu/thread.scss';
@@ -136,7 +141,9 @@ import 'scss/menu/dataview/view.scss';
 import 'scss/menu/dataview/source.scss';
 
 import 'scss/media/print.scss';
-import 'scss/media/dark.scss';
+
+import 'scss/theme/dark/common.scss';
+import { Action } from './lib';
 
 interface RouteElement { path: string; };
 interface Props {};
@@ -169,6 +176,7 @@ const rootStore = {
 };
 
 console.log('[OS Version]', process.getSystemVersion());
+console.log('[APP Version]', version, 'isPackaged', app.isPackaged, 'Arch', process.arch);
 
 /*
 enableLogging({
@@ -179,8 +187,6 @@ enableLogging({
 	compute: true,
 });
 */
-
-console.log('[Version]', version, 'isPackaged', app.isPackaged);
 
 Sentry.init({
 	release: version,
@@ -209,17 +215,37 @@ declare global {
 		I: any;
 		Go: any;
 		Graph: any;
+		$: any;
 	}
 };
 
 window.Store = rootStore;
 window.Cmd = C;
-window.Util = Util;
 window.Dispatcher = dispatcher;
 window.Analytics = () => { return analytics.instance; };
 window.I = I;
-window.Go = (route: string) => { history.push(route); };
-window.Graph = {};
+window.Go = (route: string) => { Util.route(route); };
+window.$ = $;
+
+class RoutePage extends React.Component<RouteComponentProps, {}> { 
+
+	constructor (props: any) {
+		super(props);
+	};
+
+	render () {
+		return (
+			<SelectionProvider>
+				<DragProvider>
+					<ListPopup key="listPopup" {...this.props} />
+					<ListMenu key="listMenu" {...this.props} />
+
+					<Page {...this.props} />
+				</DragProvider>
+			</SelectionProvider>
+		);
+	};
+};
 
 class App extends React.Component<Props, State> {
 	
@@ -254,7 +280,6 @@ class App extends React.Component<Props, State> {
 			<Router history={history}>
 				<Provider {...rootStore}>
 					<div>
-						<ListMenu history={history} />
 						<Preview />
 						<Progress />
 						<Tooltip />
@@ -276,9 +301,8 @@ class App extends React.Component<Props, State> {
 
 						<Switch>
 							{Routes.map((item: RouteElement, i: number) => (
-								<Route path={item.path} exact={true} key={i} component={Page} />
+								<Route path={item.path} exact={true} key={i} component={RoutePage} />
 							))}
-
 							<Redirect to='/main/index' />
 						</Switch>
 					</div>
@@ -289,15 +313,25 @@ class App extends React.Component<Props, State> {
 
 	componentDidMount () {
 		this.init();
+		this.initTheme(commonStore.theme);
+	};
+
+	componentDidUpdate () {
+		this.initTheme(commonStore.theme);
 	};
 	
 	init () {
-		keyboard.init(history);
-		DataUtil.init(history);
+		Util.init(history);
+		keyboard.init();
+		analytics.init();
+		
 		Storage.delete('lastSurveyCanceled');
 
+		const storageKeys = [
+			'theme', 'pinTime', 'defaultType', 'sidebar'
+		];
+
 		const cover = Storage.get('cover');
-		const coverImg = Storage.get('coverImg');
 		const lastSurveyTime = Number(Storage.get('lastSurveyTime')) || 0;
 		const redirect = Storage.get('redirect');
 
@@ -311,40 +345,25 @@ class App extends React.Component<Props, State> {
 		};
 
 		cover ? commonStore.coverSet(cover.id, cover.image, cover.type) : commonStore.coverSetDefault();
-		if (coverImg) {
-			commonStore.coverSetUploadedImage(coverImg);
-		};
+
+		storageKeys.forEach((it: string) => {
+			commonStore[Util.toCamelCase(it + '-Set')](Storage.get(it));
+		});
 		
 		this.setIpcEvents();
 		this.setWindowEvents();
 	};
 
-	preload () {
-		const prefix = './dist/';
-		const fr = new RegExp(/\.png|gif|jpg|svg/);
-		
-		const readDir = (prefix: string, folder: string) => {
-			const fp = path.join(prefix, folder);
-			fs.readdir(fp, (err: any, files: string[]) => {
-				if (err) {
-					return;
-				};
+	initTheme (theme: string) {
+		const head = $('head');
 
-				let images: string[] = [];
-				for (let file of files) {
-					const fn = path.join(fp, file);
-					const isDir = fs.lstatSync(fn).isDirectory();
-					if (isDir) {
-						readDir(fp, file);
-					} else 
-					if (file.match(fr)) {
-						images.push(fn.replace(/^dist\//, ''));
-					};
-				};
-				Util.cacheImages(images);
-			});
+		head.find('#link-prism').remove();
+
+		if (theme) {
+			head.append(`<link id="link-prism" rel="stylesheet" href="./css/theme/${theme}/prism.css" />`);
 		};
-		readDir(prefix, 'img');
+
+		Util.addBodyClass('theme', theme);
 	};
 
 	setIpcEvents () {
@@ -371,7 +390,7 @@ class App extends React.Component<Props, State> {
 
 					if (value) {
 						authStore.phraseSet(value);
-						history.push('/auth/setup/init');
+						Util.route('/auth/setup/init', true);
 					} else {
 						Storage.logout();
 					};
@@ -381,32 +400,37 @@ class App extends React.Component<Props, State> {
 
 		ipcRenderer.on('dataPath', (e: any, dataPath: string) => {
 			authStore.pathSet(dataPath);
-			this.preload();
 
 			window.setTimeout(() => {
 				logo.css({ opacity: 0 });
-				window.setTimeout(() => {
-					this.setState({ loading: false });
-				}, 600);
+				window.setTimeout(() => { this.setState({ loading: false }); }, 600);
 			}, 2000);
 		});
 		
 		ipcRenderer.on('route', (e: any, route: string) => {
-			history.push(route);
+			Util.route(route);
 		});
 
-		ipcRenderer.on('popup', (e: any, id: string, param: any) => {
+		ipcRenderer.on('popup', (e: any, id: string, param: any, close?: boolean) => {
 			param = param || {};
 			param.data = param.data || {};
 			param.data.rootId = keyboard.getRootId();
 
-			popupStore.closeAll();
+			if (close) {
+				popupStore.closeAll();
+			};
+			
 			window.setTimeout(() => { popupStore.open(id, param); }, Constant.delay.popup);
 		});
 
 		ipcRenderer.on('checking-for-update', (e: any, auto: boolean) => {
 			if (!auto) {
-				commonStore.progressSet({ status: 'Checking for update...', current: 0, total: 1 });
+				commonStore.progressSet({ 
+					status: 'Checking for update...', 
+					current: 0, 
+					total: 1, 
+					isUnlocked: true 
+				});
 			};
 		});
 
@@ -443,6 +467,7 @@ class App extends React.Component<Props, State> {
 						textCancel: 'Later',
 						onConfirm: () => {
 							ipcRenderer.send('updateConfirm');
+							Storage.delete('popupNewBlock');
 						},
 						onCancel: () => {
 							ipcRenderer.send('updateCancel');
@@ -470,7 +495,6 @@ class App extends React.Component<Props, State> {
 		ipcRenderer.on('download-progress', this.onProgress);
 
 		ipcRenderer.on('update-downloaded', (e: any, text: string) => {
-			Storage.delete('popupNewBlock');
 			commonStore.progressClear(); 
 		});
 
@@ -498,12 +522,11 @@ class App extends React.Component<Props, State> {
 
 		ipcRenderer.on('import', this.onImport);
 		ipcRenderer.on('export', this.onExport);
-
 		ipcRenderer.on('command', this.onCommand);
 
 		ipcRenderer.on('config', (e: any, config: any) => { 
-			commonStore.configSet(config, true); 
-			analytics.init();
+			commonStore.configSet(config, true);
+			this.initTheme(config.theme);
 		});
 
 		ipcRenderer.on('enter-full-screen', () => {
@@ -579,11 +602,11 @@ class App extends React.Component<Props, State> {
 
 		switch (key) {
 			case 'undo':
-				C.BlockUndo(rootId);
+				keyboard.onUndo(rootId);
 				break;
 
 			case 'redo':
-				C.BlockRedo(rootId);
+				keyboard.onRedo(rootId);
 				break;
 
 			case 'create':
@@ -591,24 +614,7 @@ class App extends React.Component<Props, State> {
 				break;
 
 			case 'save':
-				options = { 
-					properties: [ 'openDirectory' ],
-				};
-
-				dialog.showOpenDialog(options).then((result: any) => {
-					const files = result.filePaths;
-					if ((files == undefined) || !files.length) {
-						return;
-					};
-
-					C.Export(files[0], [ rootId ], I.ExportFormat.Protobuf, true, (message: any) => {
-						if (message.error.code) {
-							return;
-						};
-
-						ipcRenderer.send('pathOpen', files[0]);
-					});
-				});
+				Action.export([ rootId ], I.ExportFormat.Protobuf, true, true, true);
 				break;
 
 			case 'exportTemplates':

@@ -1,5 +1,5 @@
 import { observable, action, set, intercept, makeObservable } from 'mobx';
-import { I, DataUtil, translate } from 'ts/lib';
+import { I, Relation, DataUtil, translate } from 'ts/lib';
 
 const Constant = require('json/constant.json');
 
@@ -46,7 +46,7 @@ class DetailStore {
 	};
 
     update (rootId: string, item: any, clear: boolean) {
-		if (!item.id || !item.details) {
+		if (!item || !item.id || !item.details) {
 			return;
 		};
 
@@ -93,7 +93,7 @@ class DetailStore {
 	};
 
     delete (rootId: string, id: string, keys: string[]) {
-		let map = this.map.get(rootId);
+		let map = this.map.get(rootId) || new Map();
 		let list = this.getArray(rootId, id);
 
 		list = list.filter((it: Detail) => { return keys.indexOf(it.relationKey) < 0 });
@@ -108,7 +108,7 @@ class DetailStore {
     get (rootId: string, id: string, keys?: string[], forceKeys?: boolean): any {
 		let list = this.getArray(rootId, id);
 		if (!list.length) {
-			return { _empty_: true };
+			return { id, _empty_: true };
 		};
 		
 		let object: any = {};
@@ -125,7 +125,8 @@ class DetailStore {
 		};
 
 		let layout = Number(object.layout) || I.ObjectLayout.Page;
-		let name = String(object.name || DataUtil.defaultName('page'))
+		let name = String(object.name || DataUtil.defaultName('page'));
+		let snippet = String(object.snippet || '').replace(/\n/g, ' ');
 
 		if (layout == I.ObjectLayout.Note) {
 			object.coverType = I.CoverType.None;
@@ -133,7 +134,7 @@ class DetailStore {
 			object.iconEmoji = '';
 			object.iconImage = '';
 
-			name = object.snippet;
+			name = snippet;
 		};
 
 		if (object.isDeleted) {
@@ -142,13 +143,15 @@ class DetailStore {
 
 		return {
 			...object,
-			id: id,
-			name: name,
-			type: DataUtil.convertRelationValueToString(object.type),
-			iconImage: DataUtil.convertRelationValueToString(object.iconImage),
-			layout: layout,
+			id,
+			name,
+			layout,
+			snippet,
+			type: Relation.getStringValue(object.type),
+			iconImage: Relation.getStringValue(object.iconImage),
 			layoutAlign: Number(object.layoutAlign) || I.BlockAlign.Left,
 			recommendedLayout: Number(object.recommendedLayout) || I.ObjectLayout.Page,
+			relationFormat: Number(object.relationFormat) || I.RelationType.LongText,
 			coverX: Number(object.coverX) || 0,
 			coverY: Number(object.coverY) || 0,
 			coverScale: Number(object.coverScale) || 0,

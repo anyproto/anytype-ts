@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
-import { Icon, IconObject } from 'ts/component';
-import { blockStore, detailStore, dbStore } from 'ts/store';
+import { Icon, IconObject, ObjectName } from 'ts/component';
+import { blockStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { I, DataUtil } from 'ts/lib';
 
@@ -32,7 +32,7 @@ const ListIndex = observer(class ListIndex extends React.Component<Props, {}> {
 		if (!element) {
 			return null;
 		};
-		
+
 		const childrenIds = blockStore.getChildrenIds(root, root);
 		const length = childrenIds.length;
 		const children = getList();
@@ -50,15 +50,10 @@ const ListIndex = observer(class ListIndex extends React.Component<Props, {}> {
 				targetId = item.id;
 			};
 
-			const { _empty_, layout, iconEmoji, iconImage, snippet } = object;
-			const type = dbStore.getObjectType(object.type);
-			const cn = [ 'item' ];
+			let { _empty_, layout, name, iconEmoji, iconImage, snippet } = object;
+			let type = dbStore.getObjectType(object.type);
+			let cn = [ 'item' ];
 			
-			let name: any = object.name || DataUtil.defaultName('page');
-			if (!object.name && (layout == I.ObjectLayout.Note)) {
-				name = <div className="empty">Empty</div>;
-			};
-
 			if (_empty_) {
 				return (
 					<div className="item isLoading" data-target-id={targetId}>
@@ -87,7 +82,7 @@ const ListIndex = observer(class ListIndex extends React.Component<Props, {}> {
 				>
 					{icon}
 
-					<div className="name">{name}</div>
+					<ObjectName object={object} />
 					<div className="type">{type ? type.name : ''}</div>
 
 					<Icon id={'button-' + item.id + '-more'} tooltip="Actions" className="more" onClick={(e: any) => { onMore(e, item); }} />
@@ -109,7 +104,7 @@ const ListIndex = observer(class ListIndex extends React.Component<Props, {}> {
 		});
 
 		return (
-			<div>
+			<div className="list">
 				<List 
 					axis="xy" 
 					transitionDuration={150}

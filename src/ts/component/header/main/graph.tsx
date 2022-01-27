@@ -44,21 +44,13 @@ const HeaderMainGraph = observer(class HeaderMainEdit extends React.Component<Pr
 
 		return (
 			<div id="header" className={cn.join(' ')}>
-				{isPopup ? (
-					<div className="side left">
-						<Icon className="expand big" tooltip="Open as object" onClick={this.onOpen} />
-						<Icon className={[ 'back', 'big', (!historyPopup.checkBack() ? 'disabled' : '') ].join(' ')} tooltip="Back" onClick={this.onBack} />
-						<Icon className={[ 'forward', 'big', (!historyPopup.checkForward() ? 'disabled' : '') ].join(' ')} tooltip="Forward" onClick={this.onForward} />
-						<Icon className="nav big" tooltip="Navigation" onClick={(e: any) => { this.onNavigation(e); }} />
-					</div>
-				) : (
-					<div className="side left">
-						<Icon className="home big" tooltip="Home" onClick={this.onHome} />
-						<Icon className="back big" tooltip="Back" onClick={this.onBack} />
-						<Icon className="forward big" tooltip="Forward" onClick={this.onForward} />
-						<Icon className="nav big" tooltip="Navigation" onClick={(e: any) => { this.onNavigation(e); }} />
-					</div>
-				)}
+				<div className="side left">
+					<Icon className="expand big" tooltip="Open as object" onClick={this.onOpen} />
+					<Icon className="home big" tooltip="Home" onClick={this.onHome} />
+					<Icon className={[ 'back', 'big', (!keyboard.checkBack() ? 'disabled' : '') ].join(' ')} tooltip="Back" onClick={this.onBack} />
+					<Icon className={[ 'forward', 'big', (!keyboard.checkForward() ? 'disabled' : '') ].join(' ')} tooltip="Forward" onClick={this.onForward} />
+					<Icon className="nav big" tooltip="Navigation" onClick={this.onNavigation} />
+				</div>
 
 				<div className="side center">
 					<div className="path" onMouseDown={(e: any) => { this.onSearch(e); }} onMouseOver={this.onPathOver} onMouseOut={this.onPathOut}>
@@ -90,10 +82,12 @@ const HeaderMainGraph = observer(class HeaderMainEdit extends React.Component<Pr
 
 		window.clearTimeout(this.timeout);
 		this.timeout = window.setTimeout(() => { node.removeClass('show'); }, Constant.delay.header);
+
+		this.resize();
 	};
 
 	onHome (e: any) {
-		this.props.history.push('/main/index');
+		Util.route('/main/index');
 	};
 	
 	onBack (e: any) {
@@ -106,7 +100,10 @@ const HeaderMainGraph = observer(class HeaderMainEdit extends React.Component<Pr
 
 	onOpen () {
 		const { rootId } = this.props;
-		this.props.history.push('/main/graph/' + rootId);
+
+		popupStore.closeAll(null, () => {
+			DataUtil.objectOpen({ id: rootId, layout: I.ObjectLayout.Graph });
+		});
 	};
 
 	onNavigation (e: any) {
@@ -121,10 +118,7 @@ const HeaderMainGraph = observer(class HeaderMainEdit extends React.Component<Pr
 
 		popupStore.open('search', {
 			preventResize: true, 
-			data: {
-				rootId: rootId,
-				type: I.NavigationType.Go, 
-			},
+			data: { rootId },
 		});
 	};
 
@@ -147,6 +141,16 @@ const HeaderMainGraph = observer(class HeaderMainEdit extends React.Component<Pr
 	getContainer () {
 		const { isPopup } = this.props;
 		return (isPopup ? '.popup' : '') + ' .header';
+	};
+
+	resize () {
+		const { isPopup } = this.props;
+		const { sidebar } = commonStore;
+		const { width } = sidebar;
+
+		if (!isPopup) {
+			Util.resizeHeaderFooter(width);
+		};
 	};
 	
 });

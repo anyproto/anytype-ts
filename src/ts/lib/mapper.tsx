@@ -6,6 +6,26 @@ const Rpc = Commands.Rpc;
 
 const Mapper = {
 
+	BlockType: (v: number): I.BlockType => {
+		let t = I.BlockType.Empty;
+		let V = Model.Block.ContentCase;
+
+		if (v == V.SMARTBLOCK)			 t = I.BlockType.Page;
+		if (v == V.TEXT)				 t = I.BlockType.Text;
+		if (v == V.FILE)				 t = I.BlockType.File;
+		if (v == V.LAYOUT)				 t = I.BlockType.Layout;
+		if (v == V.DIV)					 t = I.BlockType.Div;
+		if (v == V.BOOKMARK)			 t = I.BlockType.Bookmark;
+		if (v == V.LINK)				 t = I.BlockType.Link;
+		if (v == V.DATAVIEW)			 t = I.BlockType.Dataview;
+		if (v == V.RELATION)			 t = I.BlockType.Relation;
+		if (v == V.FEATUREDRELATIONS)	 t = I.BlockType.Featured;
+		if (v == V.LATEX)				 t = I.BlockType.Latex;
+		if (v == V.TABLE)				 t = I.BlockType.Table;
+		if (v == V.TABLEOFCONTENTS)		 t = I.BlockType.TableOfContents;
+		return t;
+	},
+
 	From: {
 
 		Account: (obj: any): I.Account => {
@@ -59,25 +79,6 @@ const Mapper = {
             };
         },
 
-		BlockType: (v: number): I.BlockType => {
-			let t = I.BlockType.Empty;
-			let V = Model.Block.ContentCase;
-
-			if (v == V.SMARTBLOCK)			 t = I.BlockType.Page;
-			if (v == V.TEXT)				 t = I.BlockType.Text;
-			if (v == V.FILE)				 t = I.BlockType.File;
-			if (v == V.LAYOUT)				 t = I.BlockType.Layout;
-			if (v == V.DIV)					 t = I.BlockType.Div;
-			if (v == V.BOOKMARK)			 t = I.BlockType.Bookmark;
-			if (v == V.LINK)				 t = I.BlockType.Link;
-			if (v == V.DATAVIEW)			 t = I.BlockType.Dataview;
-			if (v == V.RELATION)			 t = I.BlockType.Relation;
-			if (v == V.FEATUREDRELATIONS)	 t = I.BlockType.Featured;
-			if (v == V.LATEX)				 t = I.BlockType.Latex;
-			if (v == V.TABLE)				 t = I.BlockType.Table;
-			return t;
-		},
-
 		Details: (obj: any): any => {
 			return {
 				id: obj.getId(),
@@ -86,7 +87,7 @@ const Mapper = {
 		},
 	
 		Block: (obj: any): I.Block => {
-			let type = Mapper.From.BlockType(obj.getContentCase());
+			let type = Mapper.BlockType(obj.getContentCase());
 			let fn = 'get' + Util.ucFirst(type);
 			let content = obj[fn] ? obj[fn]() : {};
 	
@@ -146,6 +147,7 @@ const Mapper = {
 					hash: content.getHash(),
 					name: content.getName(),
 					type: content.getType(),
+					style: content.getStyle(),
 					mime: content.getMime(),
 					size: content.getSize(),
 					addedAt: content.getAddedat(),
@@ -155,7 +157,7 @@ const Mapper = {
 	
 			if (type == I.BlockType.Dataview) {
 				item.content = {
-					//sources: content.getSourceList(),
+					sources: content.getSourceList(),
 					views: (content.getViewsList() || []).map(Mapper.From.View),
 					relations: (content.getRelationsList() || []).map(Mapper.From.Relation),
 				};
@@ -371,6 +373,7 @@ const Mapper = {
 				description: obj.getDescription(),
 				iconImage: obj.getIconimage(),
 				iconEmoji: obj.getIconemoji(),
+				isHidden: obj.getHidden(),
             };
         },
 
@@ -381,10 +384,11 @@ const Mapper = {
 				name: obj.getName(),
 				layout: obj.getLayout(),
 				description: obj.getDescription(),
+				snippet: obj.getSnippet(),
 				iconImage: obj.getIconimage(),
 				iconEmoji: obj.getIconemoji(),
-				//done: obj.getDone(),
-				//relationFormat: obj.getRelationformat(),
+				done: obj.getDone(),
+				relationFormat: obj.getRelationformat(),
             };
         },
 
@@ -533,10 +537,23 @@ const Mapper = {
 
 				block.setTable(content);
 			};
+			
+			if (obj.type == I.BlockType.Dataview) {
+				content = new Model.Block.Content.Dataview();
+	
+				content.setViewsList(obj.content.views.map(Mapper.To.View));
+	
+				block.setDataview(content);
+			};
+
+			if (obj.type == I.BlockType.TableOfContents) {
+				content = new Model.Block.Content.TableOfContents();
+	
+				block.setTableofcontents(content);
+			};
 
 			return block;
 		},
-
 
 		TableRow: (obj: any) => {
 			const item = new Model.Block.Content.Table.Row();

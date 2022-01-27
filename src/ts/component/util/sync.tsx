@@ -29,16 +29,18 @@ const Sync = observer(class Sync extends React.Component<Props, {}> {
 	render () {
 		const { id, className, rootId, onClick } = this.props;
 		const thread = authStore.threadGet(rootId);
-		const { summary } = thread;
-
-		if (!summary) {
+		
+		if (!thread.summary) {
 			return null;
 		};
 
+		const summary = thread.summary || {};
+		const status = summary.status || I.ThreadStatus.Unknown;
+
 		return (
 			<div id={id} className={[ 'sync', className ].join(' ')} onClick={onClick} onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave}>
-				<div className={[ 'bullet', DataUtil.threadColor(summary.status) ].join(' ')} />
-				{translate('syncStatus' + summary.status)}
+				<div className={[ 'bullet', DataUtil.threadColor(status) ].join(' ')} />
+				{translate('syncStatus' + status)}
 			</div>
 		);
 	};

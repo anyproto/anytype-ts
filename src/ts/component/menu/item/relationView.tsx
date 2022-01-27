@@ -1,16 +1,18 @@
 import * as React from 'react';
 import { Cell, Icon } from 'ts/component';
-import { I, Util, DataUtil } from 'ts/lib';
-import { detailStore, blockStore } from 'ts/store';
+import { I, Util, DataUtil, Relation } from 'ts/lib';
+import { detailStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Relation {
+	dataset?: any;
 	rootId: string;
 	block: I.Block;
-	isFeatured: boolean;
+	isFeatured?: boolean;
 	classNameWrap?: string;
 	readonly?: boolean;
 	canEdit?: boolean;
+	canDrag?: boolean;
 	canFav?: boolean;
 	onEdit(e: any, relationKey: string): void;
 	onRef(id: string, ref: any): void;
@@ -22,15 +24,39 @@ interface Props extends I.Relation {
 
 const PREFIX = 'menuBlockRelationView';
 
-class MenuItemRelationView extends React.Component<Props, {}> {
+const MenuItemRelationView = observer(class MenuItemRelationView extends React.Component<Props, {}> {
+
+	_isMounted: boolean = false;
+
+	public static defaultProps = {
+		readonly: true,
+		canEdit: false,
+		canFav: false,
+		isFeatured: false,
+		classNameWrap: '',
+		onEdit: () => {},
+		onRef: () => {},
+		onFav: () => {},
+		onCellClick: () => {},
+		onCellChange: () => {},
+		optionCommand: () => {},
+	};
+
+	constructor (props: any) {
+		super(props);
+
+		this.onDragStart = this.onDragStart.bind(this);
+	};
 
 	render () {
-		const { rootId, block, relationKey, canEdit, canFav, readonly, format, name, isHidden, isFeatured, classNameWrap, onEdit, onRef, onFav, onCellClick, onCellChange, optionCommand } = this.props;
+		const { rootId, block, relationKey, canEdit, canDrag, canFav, readonly, format, name, isHidden, isFeatured, classNameWrap, onEdit, onRef, onFav, onCellClick, onCellChange, optionCommand } = this.props;
 
-		const id = DataUtil.cellId(PREFIX, relationKey, '0');
+		const id = Relation.cellId(PREFIX, relationKey, '0');
 		const fcn = [ 'fav' ];
 		const tooltip = isFeatured ? 'Remove from featured relations' : 'Add to featured relations';
 		const cn = [ 'item', 'sides' ];
+		const object = detailStore.get(rootId, rootId, [ relationKey ]);
+		const value = object[relationKey];
 
 		if (isHidden) {
 			cn.push('isHidden');
@@ -49,6 +75,7 @@ class MenuItemRelationView extends React.Component<Props, {}> {
 					className={[ 'info', (canEdit ? 'canEdit' : '') ].join(' ')} 
 					onClick={(e: any) => { onEdit(e, relationKey); }}
 				>
+					{canDrag ? <Icon className="dnd" draggable={true} onDragStart={this.onDragStart} /> : ''}
 					{readonly ? <Icon className="lock" /> : ''}
 					{name}
 				</div>
@@ -59,16 +86,17 @@ class MenuItemRelationView extends React.Component<Props, {}> {
 					<Cell 
 						ref={(ref: any) => { onRef(id, ref); }} 
 						rootId={rootId}
+						subId={rootId}
 						storeId={rootId}
 						block={block}
 						relationKey={relationKey}
-						getRecord={() => { return detailStore.get(rootId, rootId, [ relationKey ]); }}
+						getRecord={() => { return object; }}
 						viewType={I.ViewType.Grid}
 						index={0}
 						idPrefix={PREFIX}
 						menuClassName="fromBlock"
 						menuClassNameWrap={classNameWrap}
-						scrollContainer={Util.getScrollContainer('menuBlockRelationView')}
+						bodyContainer={Util.getBodyContainer('menuBlockRelationView')}
 						pageContainer={Util.getPageContainer('menuBlockRelationView')}
 						readonly={readonly}
 						onClick={(e: any) => { onCellClick(e, relationKey, 0); }}
@@ -83,6 +111,34 @@ class MenuItemRelationView extends React.Component<Props, {}> {
 		);
     };
 
-};
+	componentDidMount () {
+		this._isMounted = true;
+	};
+
+	componentWillUnmount () {
+		this._isMounted = false;
+	};
+
+	onDragStart (e: any) {
+		e.stopPropagation();
+
+		if (!this._isMounted) {
+			return;
+		};
+		
+		const { dataset, relationKey } = this.props;
+		const { selection, onDragStart } = dataset || {};
+
+		if (!selection || !onDragStart) {
+			return;
+		};
+		
+		selection.preventSelect(true);
+		selection.clear();
+
+		onDragStart(e, I.DragType.Relation, [ relationKey ], this);
+	};
+
+});
 
 export default MenuItemRelationView;

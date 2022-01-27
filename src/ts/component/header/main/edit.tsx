@@ -47,30 +47,18 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<Pro
 		const object = detailStore.get(breadcrumbs, rootId, [ 'templateIsBundled' ]);
 		const canSync = !object.templateIsBundled && !root.isObjectFileKind();
 		const cn = [ 'header', 'headerMainEdit' ];
-
-		if (popupStore.isOpenList([ 'search' ]) || menuStore.isOpen('blockRelationView')) {
-			cn.push('active');
-		};
+		const isLocked = root.isLocked();
 
 		return (
 			<div id="header" className={cn.join(' ')}>
-				{isPopup ? (
-					<div className="side left">
-						<Icon className="expand big" tooltip="Open as object" onClick={this.onOpen} />
-						<Icon className={[ 'back', 'big', (!historyPopup.checkBack() ? 'disabled' : '') ].join(' ')} tooltip="Back" onClick={this.onBack} />
-						<Icon className={[ 'forward', 'big', (!historyPopup.checkForward() ? 'disabled' : '') ].join(' ')} tooltip="Forward" onClick={this.onForward} />
-						<Icon className="nav big" tooltip="Navigation" onClick={(e: any) => { this.onNavigation(e); }} />
-						<Icon className="graph big nm" tooltip="Open as graph" onClick={this.onGraph} />
-					</div>
-				) : (
-					<div className="side left">
-						<Icon className="home big" tooltip="Home" onClick={this.onHome} />
-						<Icon className="back big" tooltip="Back" onClick={this.onBack} />
-						<Icon className="forward big" tooltip="Forward" onClick={this.onForward} />
-						<Icon className="nav big" tooltip="Navigation" onClick={(e: any) => { this.onNavigation(e); }} />
-						<Icon className="graph big nm" tooltip="Open as graph" onClick={this.onGraph} />
-					</div>
-				)}
+				<div className="side left">
+					<Icon className="expand big" tooltip="Open as object" onClick={this.onOpen} />
+					<Icon className="home big" tooltip="Home" onClick={this.onHome} />
+					<Icon className={[ 'back', 'big', (!keyboard.checkBack() ? 'disabled' : '') ].join(' ')} tooltip="Back" onClick={this.onBack} />
+					<Icon className={[ 'forward', 'big', (!keyboard.checkForward() ? 'disabled' : '') ].join(' ')} tooltip="Forward" onClick={this.onForward} />
+					<Icon className="nav big" tooltip="Navigation" onClick={this.onNavigation} />
+					<Icon className="graph big nm" tooltip="Open as graph" onClick={this.onGraph} />
+				</div>
 
 				<div className="side center">
 					<div className="path" onMouseDown={(e: any) => { this.onSearch(e); }} onMouseOver={this.onPathOver} onMouseOut={this.onPathOut}>
@@ -78,6 +66,7 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<Pro
 							<div className="flex">
 								<IconObject object={object} size={18} />
 								<div className="name">{object.name}</div>
+								{isLocked ? <Icon className="lock" /> : ''}
 							</div>
 						</div>
 					</div>
@@ -105,10 +94,12 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<Pro
 
 		window.clearTimeout(this.timeout);
 		this.timeout = window.setTimeout(() => { node.removeClass('show'); }, Constant.delay.header);
+
+		this.resize();
 	};
 
 	onHome (e: any) {
-		this.props.history.push('/main/index');
+		Util.route('/main/index');
 	};
 	
 	onBack (e: any) {
@@ -123,7 +114,8 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<Pro
 		const { rootId } = this.props;
 		const object = detailStore.get(rootId, rootId, []);
 
-		DataUtil.objectOpen(object);
+		keyboard.disableClose(true);
+		popupStore.closeAll(null, () => { DataUtil.objectOpen(object); });
 	};
 	
 	onMore (e: any) {
@@ -152,8 +144,7 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<Pro
 			const element = $(elementId);
 
 			param.fixedY = element.offset().top + element.height() + 4 - st;
-			param.className = 'fixed';
-			param.classNameWrap = 'fromHeader';
+			param.classNameWrap = 'fixed fromHeader';
 		} else {
 			param.offsetY = 4;
 		};
@@ -181,8 +172,7 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<Pro
 		if (!isPopup) {
 			const element = $(elementId);
 			param.fixedY = element.offset().top + element.height() + 4 - st;
-			param.className = 'fixed';
-			param.classNameWrap = 'fromHeader';
+			param.classNameWrap = 'fixed fromHeader';
 		} else {
 			param.offsetY = 4;
 		};
@@ -193,6 +183,7 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<Pro
 	onNavigation (e: any) {
 		DataUtil.objectOpenPopup({ id: this.props.rootId, layout: I.ObjectLayout.Navigation });
 	};
+	
 	onGraph (e: any) {
 		DataUtil.objectOpenPopup({ id: this.props.rootId, layout: I.ObjectLayout.Graph });
 	};
@@ -201,14 +192,11 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<Pro
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { isPopup, rootId } = this.props;
+		const { rootId } = this.props;
 
 		popupStore.open('search', {
 			preventResize: true, 
-			data: {
-				rootId: rootId,
-				type: I.NavigationType.Go, 
-			},
+			data: { rootId },
 		});
 	};
 
@@ -231,6 +219,16 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<Pro
 	getContainer () {
 		const { isPopup } = this.props;
 		return (isPopup ? '.popup' : '') + ' .header';
+	};
+
+	resize () {
+		const { isPopup } = this.props;
+		const { sidebar } = commonStore;
+		const { width } = sidebar;
+
+		if (!isPopup) {
+			Util.resizeHeaderFooter(width);
+		};
 	};
 	
 });

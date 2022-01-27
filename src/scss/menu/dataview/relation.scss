@@ -4,17 +4,18 @@
 	.menu.menuDataviewRelationList { width: 360px; }
 	.menu.menuDataviewRelationList {
 		.content { overflow: visible; max-height: unset; padding: 0px; }
-		.scrollWrap { padding: 8px 0px; overflow-x: hidden; overflow-y: overlay; max-height: 350px; }
+		.wrap { height: 100%; display: flex; flex-direction: column; padding: 0px 0px 8px 0px; }
 
+		.items { flex-grow: 1; }
 		.item { padding: 4px 10px; }
 		.item {
 			.icon.plus { margin-right: 4px; background-image: url('~img/icon/plus/menu0.svg'); }
 			.switch { position: absolute; right: 16px; top: 50%; margin-top: -8px; }
 			.name { @include text-overflow-nw; width: calc(100% - 90px); }
 		}
-		.item:hover::before { background: rgba(172, 169, 150, 0.1); }
+		.item:hover::before { background: $colorHover; }
 
-		.bottom { padding: 0px 0px 8px 0px; }
+		.bottom { flex-shrink: 0; }
 		.bottom {
 			.line { margin-top: 0px; }
 		}
@@ -26,9 +27,15 @@
 		.button { width: 100%; margin-top: 8px; }
 		.button.grey { cursor: default; }
 
-		.item:hover::before { background: rgba(172, 169, 150, 0.1); }
+		.item:hover::before { background: $colorHover; }
 		.item.disabled { cursor: default; opacity: 1 !important; }
 		.item.disabled:hover::before { opacity: 0; }
+
+		.item.withCaption {
+			.caption { 
+				@include text-common; line-height: 20px; width: 40px; padding-right: 16px; overflow: visible;
+			}
+		}
 
 		.icon.lock { margin-right: 6px; }
 		

@@ -1,7 +1,7 @@
 @import "~scss/_vars";
 
 .pageMainType {
-	.wrapper { width: 704px; margin: 0px auto; padding: 144px 0px 80px 0px; user-select: none; }
+	.wrapper { width: 704px; margin: 0px auto; padding: 126px 0px 80px 0px; user-select: none; }
 	.wrapper {
 
 		.block {
@@ -48,7 +48,7 @@
 				.icon.plus { background-image: url('~img/icon/plus/template1.svg'); }
 			}
 
-			.listTemplate {
+			.listPreviewObject {
 				.icon.arrow.left { left: -32px; }
 				.icon.arrow.right { right: -32px; }
 			}
@@ -66,7 +66,7 @@
 			}
 			.item.canEdit, .item.add {
 				.clickable { cursor: pointer; }
-				.clickable:hover { background: rgba(172,169,150,0.1); }
+				.clickable:hover { background: $colorHover; }
 			}
 
 			.item.add { line-height: 20px; }
@@ -106,6 +106,10 @@
 			tbody { border-top: 1px solid $colorLightGrey; }
 
 			.cellContent { width: 100%; overflow: hidden; height: 20px; line-height: 20px; }
+
+			.cellContent {
+				.empty { display: block; }
+			}
 
 			.cellContent.c-object {
 				.wrap { white-space: nowrap; }

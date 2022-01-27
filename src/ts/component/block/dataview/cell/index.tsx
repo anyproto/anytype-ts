@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, DataUtil, Util } from 'ts/lib';
+import { I, DataUtil, Util, keyboard, Relation } from 'ts/lib';
 import { commonStore, menuStore, dbStore } from 'ts/store';
 import { observable } from 'mobx';
 
@@ -19,6 +19,7 @@ interface Props extends I.Cell {
 	showTooltip?: boolean;
 	tooltipX?: I.MenuDirection;
 	tooltipY?: I.MenuDirection;
+	maxWidth?: number;
 	optionCommand?: (code: string, rootId: string, blockId: string, relationKey: string, recordId: string, option: I.SelectOption, callBack?: (message: any) => void) => void;
 };
 
@@ -56,9 +57,10 @@ class Cell extends React.Component<Props, {}> {
 			return null;
 		};
 
+		const id = Relation.cellId(idPrefix, relation.relationKey, index);
 		const canEdit = this.canEdit();
 
-		let check = DataUtil.checkRelationValue(relation, record[relation.relationKey]);
+		let check = Relation.checkRelationValue(relation, record[relation.relationKey]);
 		if (relation.relationKey == Constant.relationKey.name) {
 			check = true;
 		};
@@ -72,7 +74,7 @@ class Cell extends React.Component<Props, {}> {
 			(!check ? 'isEmpty' :  ''),
 		];
 
-		let CellComponent: React.ReactType<Props>;
+		let CellComponent: any = null;
 		switch (relation.format) {
 			default:
 			case I.RelationType.ShortText:
@@ -106,10 +108,14 @@ class Cell extends React.Component<Props, {}> {
 				break;
 		};
 		
-		const id = DataUtil.cellId(idPrefix, relation.relationKey, index);
-
 		return (
-			<div id={elementId} className={cn.join(' ')} onClick={onClick} onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave}>
+			<div 
+				id={elementId} 
+				className={cn.join(' ')} 
+				onClick={onClick} 
+				onMouseEnter={this.onMouseEnter} 
+				onMouseLeave={this.onMouseLeave}
+			>
 				<CellComponent 
 					ref={(ref: any) => { this.ref = ref; }} 
 					{...this.props} 
@@ -145,47 +151,54 @@ class Cell extends React.Component<Props, {}> {
 	onClick (e: any) {
 		e.stopPropagation();
 
-		const { rootId, block, index, getRecord, menuClassName, menuClassNameWrap, idPrefix, pageContainer, scrollContainer, optionCommand, cellPosition, placeholder } = this.props;
+		const { rootId, subId, block, index, getRecord, maxWidth, menuClassName, menuClassNameWrap, idPrefix, pageContainer, bodyContainer, optionCommand, cellPosition, placeholder } = this.props;
 		const relation = this.getRelation();
 		const record = getRecord(index);
 		const { config } = commonStore;
-		const cellId = DataUtil.cellId(idPrefix, relation.relationKey, index);
+		const cellId = Relation.cellId(idPrefix, relation.relationKey, index);
 
 		if (!this.canEdit()) {
 			return;
 		};
 
 		const win = $(window);
-		const cell = $(`#${cellId}`).addClass('isEditing');
-		const width = Math.max(cell.outerWidth(), Constant.size.dataview.cell.edit);
+		const cell = $(`#${cellId}`);
 		const value = record[relation.relationKey] || '';
-		const height = cell.outerHeight();
 
-		if (cellPosition) {
-			cellPosition(cellId);
+		let width = cell.outerWidth();
+		if (undefined !== maxWidth) {
+			width = Math.max(cell.outerWidth(), maxWidth);
 		};
 
+		let closeIfOpen = true;
 		let menuId = '';
 		let setOn = () => {
-			if (!this.ref) {
-				return;
+			cell.addClass('isEditing');
+
+			if (cellPosition) {
+				cellPosition(cellId);
 			};
-			if (this.ref.setEditing) {
-				this.ref.setEditing(true);
-			};
-			if (this.ref.onClick) {
-				this.ref.onClick();
-			};
+
 			if (menuId) {
-				$(scrollContainer).addClass('overMenu');
+				keyboard.disableBlur(true);
+				$(bodyContainer).addClass('overMenu');
+			};
+
+			if (this.ref) {
+				if (this.ref.setEditing) {
+					this.ref.setEditing(true);
+				};
+
+				if (this.ref.onClick) {
+					this.ref.onClick();
+				};
 			};
 
 			win.trigger('resize');
 		};
 
 		let setOff = () => {
-			commonStore.cellId = '';
-			cell.removeClass('isEditing');
+			keyboard.disableBlur(false);
 
 			if (this.ref) {
 				if (this.ref.onBlur) {
@@ -195,11 +208,16 @@ class Cell extends React.Component<Props, {}> {
 					this.ref.setEditing(false);
 				};
 			};
+
+			$(`#${cellId}`).removeClass('isEditing');
+			commonStore.cellId = '';
+
 			if (menuId) {
-				$(scrollContainer).removeClass('overMenu');
+				window.setTimeout(() => { $(bodyContainer).removeClass('overMenu'); }, Constant.delay.menu);
 			};
 		};
 
+		let ret = false;
 		let param: I.MenuParam = { 
 			element: `#${cellId} .cellContent`,
 			horizontal: I.MenuDirection.Center,
@@ -212,17 +230,18 @@ class Cell extends React.Component<Props, {}> {
 			onClose: setOff,
 			data: { 
 				rootId: rootId,
+				subId: subId,
 				blockId: block.id,
 				value: value, 
 				relation: observable.box(relation),
 				record: record,
 				optionCommand: optionCommand,
 				placeholder: placeholder,
-				onChange: (value: any) => {
+				onChange: (value: any, callBack?: (message: any) => void) => {
 					if (this.ref && this.ref.onChange) {
 						this.ref.onChange(value);
 					};
-					this.onChange(value);
+					this.onChange(value, callBack);
 				},
 			},
 		};
@@ -235,6 +254,7 @@ class Cell extends React.Component<Props, {}> {
 				});
 					
 				menuId = 'dataviewCalendar';
+				closeIfOpen = false;
 				break;
 
 			case I.RelationType.File:
@@ -279,6 +299,10 @@ class Cell extends React.Component<Props, {}> {
 				break;
 
 			case I.RelationType.LongText:
+				const wh = win.height();
+				const hh = Util.sizeHeader();
+				const height = Math.min(wh - hh - 20, cell.outerHeight());
+
 				param = Object.assign(param, {
 					noFlipX: true,
 					noFlipY: true,
@@ -290,6 +314,7 @@ class Cell extends React.Component<Props, {}> {
 				});
 
 				menuId = 'dataviewText';
+				closeIfOpen = false;
 				break;
 
 			case I.RelationType.Url:
@@ -308,6 +333,14 @@ class Cell extends React.Component<Props, {}> {
 					name = 'Call to';
 				};
 
+				if (e.shiftKey && value) {
+					const scheme = Relation.getUrlScheme(relation.format, value);
+					ipcRenderer.send('urlOpen', scheme + value);
+
+					ret = true;
+					break;
+				};
+
 				param.data = Object.assign(param.data, {
 					disabled: !value, 
 					options: [
@@ -321,7 +354,7 @@ class Cell extends React.Component<Props, {}> {
 							value = this.ref.ref.getValue();
 						};
 
-						const scheme = DataUtil.getRelationUrlScheme(relation.format, value);
+						const scheme = Relation.getUrlScheme(relation.format, value);
 						
 						if (item.id == 'go') {
 							ipcRenderer.send('urlOpen', scheme + value);
@@ -334,28 +367,44 @@ class Cell extends React.Component<Props, {}> {
 				});
 
 				menuId = 'button';
+				closeIfOpen = false;
 				break;
 					
 			case I.RelationType.Checkbox:
-				cell.removeClass('isEditing');
+				if (this.ref.onClick) {
+					this.ref.onClick();
+				};
+				ret = true;
 				break; 
 		};
 
-		if (menuId) {
-			menuStore.closeAll(Constant.menuIds.cell);
-			window.clearTimeout(this.timeout);
+		if (ret) {
+			cell.removeClass('isEditing');
+			return;
+		};
 
+		if (menuId) {
 			if (commonStore.cellId != cellId) {
 				commonStore.cellId = cellId;
 
 				this.timeout = window.setTimeout(() => {
 					menuStore.open(menuId, param);
 
-					$(pageContainer).unbind('mousedown.cell').on('mousedown.cell', () => { menuStore.closeAll(Constant.menuIds.cell); });
+					$(pageContainer).unbind('mousedown.cell').on('mousedown.cell', (e: any) => { 
+						if (!$(e.target).parents(`#${cellId}`).length) {
+							menuStore.closeAll(Constant.menuIds.cell); 
+						};
+					});
+
 					if (!config.debug.ui) {
 						win.unbind('blur.cell').on('blur.cell', () => { menuStore.closeAll(Constant.menuIds.cell); });
 					};
 				}, Constant.delay.menu);
+			} else 
+			if (closeIfOpen) {
+				setOff();
+				menuStore.closeAll(Constant.menuIds.cell);
+				window.clearTimeout(this.timeout);
 			};
 		} else {
 			setOn();
@@ -365,20 +414,22 @@ class Cell extends React.Component<Props, {}> {
 	onChange (value: any, callBack?: (message: any) => void) {
 		const { onCellChange, index, getRecord } = this.props;
 		const relation = this.getRelation();
-		if (!relation) {
+		const record = getRecord(index);
+
+		if (!relation || !record) {
 			return null;
 		};
 
-		const record = getRecord(index);
-		if (record && onCellChange) {
-			onCellChange(record.id, relation.relationKey, DataUtil.formatRelationValue(relation, value, true), callBack);
+		value = Relation.formatValue(relation, value, true);
+		if (onCellChange) {
+			onCellChange(record.id, relation.relationKey, value, callBack);
 		};
 	};
 
 	onMouseEnter (e: any) {
 		const { onMouseEnter, showTooltip, tooltipX, tooltipY, idPrefix, index } = this.props;
 		const relation = this.getRelation();
-		const cell = $(`#${DataUtil.cellId(idPrefix, relation.relationKey, index)}`);
+		const cell = $(`#${Relation.cellId(idPrefix, relation.relationKey, index)}`);
 
 		if (onMouseEnter) {
 			onMouseEnter(e);
@@ -409,7 +460,7 @@ class Cell extends React.Component<Props, {}> {
 		const relation = this.getRelation();
 		const record = getRecord(index);
 
-		if (!relation || readonly || relation.isReadonlyValue || record.isReadonly) {
+		if (!relation || !record || readonly || relation.isReadonlyValue || record.isReadonly) {
 			return false;
 		};
 		if (relation.format == I.RelationType.Checkbox) {

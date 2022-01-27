@@ -11,7 +11,7 @@
 	}
 	.loaderWrapper {
 		.loader { 
-			left: auto; top: 16px; right: 16px; margin: 0px; border-color: #fff; border-left: 2px solid $colorBlack; 
+			left: auto; top: 16px; right: 16px; margin: 0px; border-color: $colorWhite; border-left: 2px solid $colorBlack; 
 		}
 	}
 	
@@ -31,10 +31,10 @@
 	img.cover { background-color: transparent; height: auto; }
 
 	.elements { width: 704px; height: 100%; position: absolute; left: 50%; margin-left: -352px; bottom: 0px; z-index: 1; opacity: 0; }
-	.elements:hover, .elements.hover { opacity: 1; }
+	.elements:hover, .elements.hover, .elements.active { opacity: 1; }
 	
 	.elements {
-		.controlButtons { position: absolute; left: 0px; bottom: 18px; width: 100%; transition: opacity 0.2s ease-in-out; }
+		.controlButtons { position: absolute; left: 0px; bottom: 18px; width: 100%; }
 		
 		.dragWrap { width: 160px; position: absolute; left: 50%; top: 8px; margin-left: -80px; display: flex; z-index: 1; }
 		.dragWrap {
@@ -44,17 +44,17 @@
 	
 		.btn { 
 			font-weight: 500; font-size: 14px; height: 28px; line-height: 28px; cursor: pointer; display: inline-block;
-			padding: 0px 8px 0px 6px; border-radius: 6px; margin-right: 8px; white-space: nowrap; transition: background 0.2s ease-in-out;
+			padding: 0px 8px; border-radius: 6px; margin-right: 8px; white-space: nowrap; transition: background 0.2s ease-in-out;
 		}
 		.btn:last-child { margin: 0px; }
 
 		.btn.white { background: rgba(255,255,255,0.7); }
 		.btn.white:hover, .btn.white.hover { background: rgba(255,255,255,0.9); }
 		
-		.btn.black { color: #fff; background: rgba(0,0,0,0.5); line-height: 22px; }
+		.btn.black { color: $colorWhite; background: rgba(0,0,0,0.5); line-height: 22px; }
 		.btn.black:hover, .btn.black.active { background: rgba(0,0,0,0.7); }
 
-		.btn.withIcon { line-height: 26px; }
+		.btn.withIcon { padding: 0px 8px 0px 6px; line-height: 26px; }
 
 		.btn {
 			.icon { width: 20px; height: 20px; margin: 0px 4px 0px 0px; vertical-align: middle; }

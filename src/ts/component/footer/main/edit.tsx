@@ -1,15 +1,16 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Icon } from 'ts/component';
-import { I, DataUtil, focus } from 'ts/lib';
-import { menuStore, blockStore } from 'ts/store';
+import { I, DataUtil, focus, Util } from 'ts/lib';
+import { menuStore, blockStore, commonStore } from 'ts/store';
+import { observer } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any>  {
 	rootId: string;
 	isPopup?: boolean;
 };
 
-class FooterMainEdit extends React.Component<Props, {}> {
+const FooterMainEdit = observer(class FooterMainEdit extends React.Component<Props, {}> {
 	
 	constructor (props: any) {
 		super(props);
@@ -19,35 +20,54 @@ class FooterMainEdit extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { rootId, isPopup } = this.props;
+		const { rootId } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
 
 		if (!root) {
 			return null;
 		};
 
-		const allowed = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Block ]);
-		const canAdd = allowed && !root.isObjectRelation() && !root.isObjectType() && !root.isObjectSet() && !root.isObjectFileKind();
+		const canAdd = this.canAdd();
 
 		return (
-			<div className="footer footerMainEdit">
+			<div id="footer" className="footer footerMainEdit">
 				{canAdd ? <Icon id="button-add" className="big add" tooltip="Create new object" tooltipY={I.MenuDirection.Top} onClick={this.onAdd} /> : ''}
 				<Icon id="button-help" className="big help" tooltip="Help" tooltipY={I.MenuDirection.Top} onClick={this.onHelp} />
 			</div>
 		);
 	};
 
+	componentDidMount () {
+		this.resize();
+	};
+
+	componentDidUpdate () {
+		this.resize();
+	};
+
+	canAdd () {
+		const { rootId } = this.props;
+		const root = blockStore.getLeaf(rootId, rootId);
+
+		if (!root) {
+			return false;
+		};
+
+		const allowed = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Block ]);
+		return allowed && !root.isLocked() && !root.isObjectRelation() && !root.isObjectType() && !root.isObjectSet() && !root.isObjectFileKind();
+	};
+
 	onAdd (e: any) {
 		const { rootId } = this.props;
 		const { focused } = focus.state;
 		const root = blockStore.getLeaf(rootId, rootId);
-		const fb = blockStore.getLeaf(rootId, focused);
-		const allowed = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Block ]);
+		const canAdd = this.canAdd();
 
-		if (!root || !allowed) {
+		if (!root || !canAdd) {
 			return;
 		};
 		
+		let fb = blockStore.getLeaf(rootId, focused);
 		let targetId = '';
 		let position = I.BlockPosition.Bottom;
 		
@@ -77,7 +97,17 @@ class FooterMainEdit extends React.Component<Props, {}> {
 			horizontal: I.MenuDirection.Right,
 		});
 	};
+
+	resize () {
+		const { isPopup } = this.props;
+		const { sidebar } = commonStore;
+		const { width } = sidebar;
+
+		if (!isPopup) {
+			Util.resizeHeaderFooter(width);
+		};
+	};
 	
-};
+});
 
 export default FooterMainEdit;

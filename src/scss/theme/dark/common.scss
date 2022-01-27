@@ -1,0 +1,298 @@
+@import "~scss/_vars";
+@import "~scss/theme/dark/_vars";
+
+/*@media (prefers-color-scheme: dark) {*/
+html.themeDark {
+
+    /* Common */
+    /* ---------------------------------------------------------------- */
+
+    body { background: $colorBlack; color: $colorPrimary; }
+
+    a { color: $colorPrimary; }
+    a:hover { color: $colorOrange; }
+
+    #root > .loaderWrapper { background: $colorBlack; }
+    #root > .loaderWrapper {
+        .logo { background-image: url('#{$themePath}/logo/color.svg'); }
+    }
+
+    ::selection { color: $colorBlack; }
+	
+    .cover::after {
+        content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: rgba(0,0,0,0.2);
+        border-radius: inherit;
+    }
+    .cover.type2.black { background-color: #000 !important; }
+
+    .empty, .emptyText { color: $colorTertiary; }
+    .placeholder { color: $colorTertiary; }
+    ::-webkit-input-placeholder { color: $colorTertiary !important; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.5); }
+
+    .textColor-default { color: $colorPrimary; }
+
+    .bgColor-grey { background: rgba(140, 158, 165, 0.25) !important; }
+    .bgColor-yellow { background: rgba(236, 217, 27, 0.25) !important; }
+    .bgColor-orange { background: rgba(255, 181, 34, 0.25) !important; }
+    .bgColor-red { background: rgba(245, 85, 34, 0.25) !important; }
+    .bgColor-pink { background: rgba(229, 28, 160, 0.25) !important; }
+    .bgColor-purple { background: rgba(171, 80, 204, 0.25) !important; }
+    .bgColor-blue { background: rgba(62, 88, 235, 0.25) !important; }
+    .bgColor-ice { background: rgba(42, 167, 238, 0.25) !important; }
+    .bgColor-teal { background: rgba(15, 200, 186, 0.25) !important; }
+    .bgColor-lime { background: rgba(93, 212, 0, 0.25) !important; }
+
+    .isTag.tagColor-default { color: $colorPrimary !important; background: $colorBlack !important; box-shadow: 0px 0px 0px 1px $colorLinePrimary inset; }
+    .isTag.tagColor-grey { color: #8C9EA5 !important; background: rgba(140, 158, 165, 0.25) !important; }
+    .isTag.tagColor-yellow { color: $colorYellow !important; background: rgba(236, 217, 27, 0.25) !important; }
+    .isTag.tagColor-orange { color: $colorOrange !important; background: rgba(255, 181, 34, 0.25) !important; }
+    .isTag.tagColor-red { color: $colorRed !important; background: rgba(245, 85, 34, 0.25) !important; }
+    .isTag.tagColor-pink { color: $colorPink !important; background: rgba(229, 28, 160, 0.25) !important; }
+    .isTag.tagColor-purple { color: $colorPurple !important; background: rgba(171, 80, 204, 0.25) !important; }
+    .isTag.tagColor-blue { color: $colorBlue !important; background: rgba(62, 88, 235, 0.25) !important; }
+    .isTag.tagColor-ice { color: $colorIce !important; background: rgba(42, 167, 238, 0.25) !important; }
+    .isTag.tagColor-teal { color: $colorTeal !important; background: rgba(15, 200, 186, 0.25) !important; }
+    .isTag.tagColor-lime { color: $colorLime !important; background: rgba(93, 212, 0, 0.25) !important; }
+
+    .isStatus.tagColor-default { color: $colorPrimary !important; }
+
+    /* Components */
+    /* ---------------------------------------------------------------- */
+
+    .loaderWrapper {
+        .loader { border-color: $colorLinePrimary; border-left-color: $colorOrange; }
+    }
+
+    /* Button */
+
+    .button.grey { color: $colorPrimary; box-shadow: 0px 0px 0px 1px $colorLineSecondary inset; background: $colorHover; }
+    .button.grey:hover { box-shadow: 0px 0px 0px 1px $colorLinePrimary inset; }
+
+    .button.blank { border-color: $colorLineSecondary; }
+    .button.blank:hover { border-color: $colorLinePrimary; }
+
+    .filter {
+        .line { background: $colorLineSecondary; }
+    }
+
+    .frame { background: $colorBlack; }
+
+    .textarea { background: $colorHover; }
+
+    .switch { background: $colorBgInactive; }
+
+    .sync { background: $colorBgIcon; }
+
+    .select { border-color: $colorLinePrimary; }
+    .select:hover, .select.active { background: $colorHover; }
+    .select {
+        .icon.arrow { background-image: url('#{$themePath}/arrow/select/dark.svg') !important; }
+    }
+
+    .inputWithFile { background: $colorHover; color: $colorSecondary; border-color: transparent; }
+    .inputWithFile {
+        .input::placeholder { color: $colorSecondary; }
+        .fileWrap:hover .border { color: $colorPrimary; }
+
+        #url { color: $colorPrimary; }
+    }
+
+    .listPreviewObject {
+        .item.add { border-color: $colorLinePrimary; }
+        .item:before { background: $colorHover; }
+
+        .icon.arrow { background-image: url('#{$themePath}/arrow/template0.svg'); }
+        .icon.arrow:hover { background-image: url('#{$themePath}/arrow/template1.svg'); }
+        .icon.arrow.disabled:hover { background-image: url('#{$themePath}/arrow/template0.svg'); }
+    }
+
+    /* PreviewObject */
+
+    .previewObject {
+        .border { border-color: $colorLinePrimary; }
+        .loaderWrapper { border-color: $colorLinePrimary; }
+        .icon.logo { background-image: url('#{$themePath}/icon/type/logo.svg'); }
+        .heading {
+            .iconObject { background-color: $colorBgIcon; box-shadow: 0px 0px 0px 1px $colorBlack inset; }
+            .featured { color: $colorSecondary; }
+            .bullet { background: $colorSecondary; }
+        }
+
+        .blocks {
+            .element {
+                .line { background: $colorSecondary; }
+
+                .inner {
+                    .bookmark {
+                        .side.left { border-color: $colorLinePrimary; }
+                    }
+                }
+            }
+        }
+    }
+
+    /* Preview */
+
+    .preview {
+        .content { background: $colorBgLight; }
+        .head { border-color: $colorLineSecondary; color: $colorSecondary; }
+        .head {
+            .item:hover { color: $colorPrimary; }
+        }
+
+        .previewLink {
+            .name { color: $colorPrimary; }
+            .descr { color: $colorSecondary; }
+            .link { color: $colorSecondary; }
+            .img { border-color: $colorLineSecondary; }
+        }
+    }
+
+    /* Pager */
+
+    .pager {
+        .pageItem:hover { color: $colorPrimary; }
+        .pageItem.active { color: $colorOrange; }
+        .pageItem.list:hover { color: $colorPrimary; }
+
+        .icon.arrow { background-image: url('#{$themePath}/arrow/pager0.svg'); }
+        .icon.arrow:hover { background-image: url('#{$themePath}/arrow/pager1.svg'); }
+        .icon.arrow.disabled:hover { background-image: url('#{$themePath}/arrow/pager0.svg'); }
+
+        .icon.arrow.end { background-image: url('#{$themePath}/arrow/pagerEnd0.svg'); cursor: pointer; }
+        .icon.arrow.end:hover { background-image: url('#{$themePath}/arrow/pagerEnd1.svg'); }
+        .icon.arrow.end.disabled:hover { background-image: url('#{$themePath}/arrow/pagerEnd0.svg'); }
+    }
+
+    /* Progress */
+
+    .progress {
+        .inner { background: $colorBgLight; }
+        .inner {
+            .label { color: $colorPrimary; }
+            .bar { background: $colorHover; }
+        }
+    }
+
+    .tooltip { background: $colorBgIcon; color: $colorPrimary; }
+
+    /* Icon */
+
+    .icon.ghost { background-image: url('#{$themePath}/icon/ghost.svg'); }
+
+    /* IconObject */
+
+    .iconObject.c40.isRelation, 
+    .iconObject.c48.isRelation,
+    .iconObject.c56, 
+    .iconObject.c64, 
+    .iconObject.c96,
+    .iconObject.c112,
+    .iconObject.c128,
+    .iconObject.withLetter
+    { background-color: $colorBgIcon; }
+
+    /* EditorControls */
+
+    .editorControls {
+        .btn { background: $colorBgIcon; color: $colorSecondary; }
+        .btn:hover { color: $colorPrimary; }
+
+        .btn {
+            .icon.icon { background-image: url('#{$themePath}/icon/add/icon0.svg'); }
+            .icon.addCover { background-image: url('#{$themePath}/icon/add/cover0.svg'); }
+            .icon.layout { background-image: url('#{$themePath}/icon/add/layout0.svg'); }
+            .icon.relation { background-image: url('#{$themePath}/icon/add/relation0.svg');  }
+        }
+        .btn:hover, .btn.hover {
+            .icon.icon { background-image: url('#{$themePath}/icon/add/icon1.svg'); }
+            .icon.addCover { background-image: url('#{$themePath}/icon/add/cover1.svg'); }
+            .icon.layout { background-image: url('#{$themePath}/icon/add/layout1.svg'); }
+            .icon.relation { background-image: url('#{$themePath}/icon/add/relation1.svg');  }
+        }
+    }
+
+    /* Editor */
+
+    .editorWrapper {
+        .focusable.isFocused { background: $colorHover; }
+    }
+
+    /* Header */
+    /* ---------------------------------------------------------------- */
+
+    .header.headerMainEdit { background: $colorBlack; }
+    .header.headerMainEdit {
+        .path { border: 0px; line-height: 28px; }
+        .path {
+            .item:hover { color: $colorPrimary; }
+        }
+        .icon.big:hover, .icon.big.hover { background-color: $colorHover; }
+    }
+
+    .header.headerMainIndex {
+        .side.center { border: 0px; color: $colorSecondary; background: $colorBlack30; }
+    }
+
+    .header.headerMainHistory { background: $colorBlack; }
+    .header.headerMainHistory {
+        .side {
+            .item { color: $colorSecondary; }
+            .item {
+                .icon.arrow { background-image: url('#{$themePath}/arrow/history0.svg'); margin: 0px; }
+            }
+        }
+        
+		.item.grey:hover { color: $colorPrimary; }
+
+		.item:hover {
+			.icon.arrow { background-image: url('#{$themePath}/arrow/history1.svg'); }
+		}
+    }
+
+    /* Footer */
+    /* ---------------------------------------------------------------- */
+
+    .footer {
+        .icon.big { background-color: $colorBgIcon; }
+    }
+
+    /* Sidebar */
+    /* ---------------------------------------------------------------- */
+
+    .sidebar { 
+        background-color: $colorBlack; color: $colorPrimary; border-color: $colorLinePrimary !important; 
+        box-shadow: 0px 4px 16px rgb(0 0 0 / 20%), 0px 0px 0px 1px #393933 inset;
+    }
+    .sidebar.fixed { box-shadow: 0px 0px; }
+    .sidebar {
+        .head { border-color: $colorLinePrimary; }
+        .body {
+            .icon.arrow { 
+                background-image: url('~img/arrow/select/light.svg');
+            }
+            
+            .item {
+                .flex:hover::before { background: $colorHover; }
+            }
+            .item.hover > .flex::before { background: $colorHover; }
+        }
+    }
+
+    @import "./menu.scss";
+    @import "./popup.scss";
+    @import "./page.scss";
+    @import "./block.scss";
+
+    /* Cells */
+    /* ---------------------------------------------------------------- */
+
+    .cellContent {
+        .more { background-color: $colorBgIcon; color: $colorSecondary; }
+    }
+
+    .cell.isEditing {
+        .cellContent { background: $colorBlack; }
+    }
+}

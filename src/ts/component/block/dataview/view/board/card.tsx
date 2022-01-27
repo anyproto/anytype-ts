@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Draggable } from 'react-beautiful-dnd';
-import { I, DataUtil } from 'ts/lib';
+import { I, Relation } from 'ts/lib';
+import { dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import Cell from 'ts/component/block/dataview/cell';
 
@@ -12,7 +13,7 @@ interface Props extends I.ViewComponent {
 
 const getItemStyle = (snapshot: any, style: any) => {
 	if (snapshot.isDragging) {
-		style.background = '#f3f2ef';
+		style.background = '$colorVeryLightGrey';
 	};
 	return style;
 };
@@ -20,10 +21,11 @@ const getItemStyle = (snapshot: any, style: any) => {
 const Card = observer(class Card extends React.Component<Props, {}> {
 
 	render () {
-		const { columnId, idx, index, getView, onCellClick, onRef } = this.props;
+		const { rootId, block, columnId, idx, index, getView, onCellClick, onRef } = this.props;
 		const view = getView();
 		const relations = view.relations.filter((it: any) => { return it.isVisible; });
 		const idPrefix = 'dataviewCell';
+		const subId = dbStore.getSubId(rootId, block.id);
 
 		return (
 			<Draggable draggableId={[ columnId, index ].join(' ')} index={idx} type="row">
@@ -36,11 +38,12 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 						style={getItemStyle(snapshot, provided.draggableProps.style)}
 					>
 						{relations.map((relation: any, i: number) => {
-							const id = DataUtil.cellId(idPrefix, relation.relationKey, index);
+							const id = Relation.cellId(idPrefix, relation.relationKey, index);
 							return (
 								<Cell 
 									key={'board-cell-' + view.id + relation.relationKey} 
 									{...this.props}
+									subId={subId}
 									ref={(ref: any) => { onRef(ref, id); }} 
 									index={index}
 									viewType={view.type}

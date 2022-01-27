@@ -3,13 +3,8 @@
 .blocks {
 	.block.blockDataview { @include text-common; }
 	.block.blockDataview {
-		.wrapContent { width: 100%; }
-
 		.icon.plus { width: 20px; height: 20px; background-image: url('~img/icon/plus/menu0.svg'); cursor: pointer; }
 		.icon.plus:hover { background-image: url('~img/icon/plus/menu1.svg'); }
-		
-		.icon.checkbox { width: 20px; height: 20px; background-image: url('~img/icon/dataview/checkbox0.svg'); transition: none; }
-		.icon.checkbox.active { background-image: url('~img/icon/dataview/checkbox1.svg'); }
 		
 		.icon.edit { 
 			display: none; flex-shrink: 0; width: 20px; height: 20px; background-image: url('~img/icon/dataview/button/edit0.svg'); cursor: pointer; 
@@ -23,8 +18,8 @@
 
 			.sides { display: flex; }
 			.side { padding: 26px 0px; height: 72px; white-space: nowrap; }
-			.side.left { padding-left: 14px; width: calc(100% - 80px); }
-			.side.right { text-align: right; width: 80px; }
+			.side.left { padding-left: 14px; width: calc(100% - 120px); }
+			.side.right { text-align: right; width: 120px; }
 
 			.views { white-space: nowrap; display: inline-block; line-height: 20px; }
 			.viewItem { 
@@ -52,17 +47,10 @@
 
 			.icon.search { background-image: url('~img/icon/dataview/button/search0.svg'); }
 			.icon.manager { background-image: url('~img/icon/dataview/button/manager0.svg'); }
-			.icon.more { background-image: url('~img/icon/dataview/button/more0.svg'); }
-
-			.icon.relation { background-image: url('~img/icon/dataview/button/relation0.svg'); }
-			.icon.filter { background-image: url('~img/icon/dataview/button/filter0.svg'); }
-			.icon.sort { background-image: url('~img/icon/dataview/button/sort0.svg'); }
-
 			.icon.plus { background-image: url('~img/icon/dataview/button/plus0.svg'); }
 
 			.icon.search:hover, .icon.search.active { background-image: url('~img/icon/dataview/button/search1.svg'); }
 			.icon.manager:hover, .icon.manager.active { background-image: url('~img/icon/dataview/button/manager1.svg'); }
-			.icon.more:hover, .icon.more.active { background-image: url('~img/icon/dataview/button/more1.svg'); }
 			.icon.plus:hover, .icon.plus.active { background-image: url('~img/icon/dataview/button/plus1.svg'); }
 
 			.icon.on {

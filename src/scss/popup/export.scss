@@ -1,0 +1,19 @@
+@import "~scss/_vars";
+
+.popups {
+	.popup.popupExport {
+		.innerWrap { width: 672px; padding: 48px 48px 32px 48px; }
+		.title { @include text-header1; margin-bottom: 20px; }
+
+		.row { 
+			display: flex; flex-direction: row; align-items: center; padding: 20px 0px;
+			border-bottom: 1px solid $colorBorderLight; justify-content: space-between;
+		}
+
+		.buttons { margin-top: 30px; }
+		.buttons {
+			.button { margin-right: 16px; }
+			.button:last-child { margin: 0px; }
+		}
+	}	
+}

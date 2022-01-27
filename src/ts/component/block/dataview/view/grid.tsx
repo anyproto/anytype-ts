@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Icon, Pager } from 'ts/component';
-import { I, C, Util, DataUtil, translate, keyboard } from 'ts/lib';
+import { Icon } from 'ts/component';
+import { I, C, Util, translate, keyboard, Relation } from 'ts/lib';
 import { dbStore, menuStore, blockStore } from 'ts/store';
 import { AutoSizer, WindowScroller, List } from 'react-virtualized';
 import { observer } from 'mobx-react';
@@ -10,7 +10,7 @@ import arrayMove from 'array-move';
 import HeadRow from './grid/head/row';
 import BodyRow from './grid/body/row';
 
-interface Props extends I.ViewComponent {}
+interface Props extends I.ViewComponent {};
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
@@ -25,24 +25,31 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 		this.cellPosition = this.cellPosition.bind(this);
 		this.onCellAdd = this.onCellAdd.bind(this);
 		this.onResizeStart = this.onResizeStart.bind(this);
+		this.onSortStart = this.onSortStart.bind(this);
 		this.onSortEnd = this.onSortEnd.bind(this);
 	};
 
 	render () {
-		const { rootId, block, getData, getView, readonly, onRowAdd, isPopup } = this.props;
+		const { rootId, block, getView, readonly, onRowAdd, isPopup } = this.props;
 		const view = getView();
 		const relations = view.relations.filter((it: any) => { return it.isVisible; });
-		const data = dbStore.getData(rootId, block.id);
-		const { offset, total } = dbStore.getMeta(rootId, block.id);
+		const subId = dbStore.getSubId(rootId, block.id);
+		const records = dbStore.getRecords(subId, '');
 		const allowed = blockStore.isAllowed(rootId, block.id, [ I.RestrictionDataview.Object ]);
-		const length = data.length;
+		const length = records.length;
 
 		return (
 			<div className="wrap">
 				<div className="scroll">
 					<div className="scrollWrap">
 						<div className="viewItem viewGrid">
-							<HeadRow {...this.props} onCellAdd={this.onCellAdd} onSortEnd={this.onSortEnd} onResizeStart={this.onResizeStart} />
+							<HeadRow 
+								{...this.props} 
+								onCellAdd={this.onCellAdd} 
+								onSortStart={this.onSortStart} 
+								onSortEnd={this.onSortEnd} 
+								onResizeStart={this.onResizeStart}
+							/>
 
 							<WindowScroller scrollElement={isPopup ? $('#popupPage #innerWrap').get(0) : window}>
 								{({ height, isScrolling, registerChild, scrollTop }) => {
@@ -56,7 +63,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 															height={Number(height) || 0}
 															width={Number(width) || 0}
 															isScrolling={isScrolling}
-															rowCount={data.length}
+															rowCount={length}
 															rowHeight={HEIGHT}
 															rowRenderer={({ key, index, style }) => (
 																<BodyRow 
@@ -138,16 +145,17 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 	};
 
 	resize () {
-		const { rootId, block, getView, scrollContainer } = this.props;
+		const { rootId, block, getView, isPopup } = this.props;
 		const view = getView();
 		const node = $(ReactDOM.findDOMNode(this));
 		const scroll = node.find('.scroll');
 		const wrap = node.find('.scrollWrap');
 		const grid = node.find('.ReactVirtualized__Grid__innerScrollContainer');
-		const ww = $(scrollContainer).width();
+		const ww = $('#page').width();
 		const mw = ww - PADDING * 2;
-		const data = dbStore.getData(rootId, block.id);
-		const length = data.length;
+		const subId = dbStore.getSubId(rootId, block.id);
+		const records = dbStore.getRecords(subId, '');
+		const length = records.length;
 
 		let vw = 0;
 		let margin = 0;
@@ -181,13 +189,15 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 			return;
 		};
 
+		const { isPopup } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
 		const scroll = node.find('.scroll');
 		const content = cell.find('.cellContent');
 		const x = cell.position().left;
 		const width = content.outerWidth();
 		const sx = scroll.scrollLeft();
-		const ww = $(window).width();
+		const container = $(Util.getBodyContainer(isPopup ? 'popup' : 'page'));
+		const ww = container.width();
 
 		content.css({ left: 0, right: 'auto' });
 
@@ -237,7 +247,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 		const { getView } = this.props;
 		const view = getView();
 		const node = $(ReactDOM.findDOMNode(this));
-		const el = node.find(`#${DataUtil.cellId('head', relationKey, '')}`);
+		const el = node.find(`#${Relation.cellId('head', relationKey, '')}`);
 		const offset = el.offset();
 		const idx = view.relations.findIndex((it: I.ViewRelation) => { return it.relationKey == relationKey; });
 		const size = Constant.size.dataview.cell;
@@ -268,7 +278,6 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 
 	onCellAdd (e: any) {
 		const { rootId, block, readonly, getData, getView } = this.props;
-		const view = getView();
 
 		menuStore.open('dataviewRelationList', { 
 			element: `#cell-add`,
@@ -285,8 +294,16 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 		});
 	};
 
+	onSortStart () {
+		const { dataset } = this.props;
+		const { selection } = dataset;
+
+		selection.preventSelect(true);
+	};
+
 	onSortEnd (result: any) {
-		const { rootId, block, getView } = this.props;
+		const { rootId, block, getView, dataset } = this.props;
+		const { selection } = dataset;
 		const { oldIndex, newIndex } = result;
 		const view = getView();
 		const filtered = view.relations.filter((it: any) => { return it.isVisible; });
@@ -295,6 +312,8 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 		
 		view.relations = arrayMove(view.relations, oldIdx, newIdx);
 		C.BlockDataviewViewUpdate(rootId, block.id, view.id, view);
+
+		selection.preventSelect(false);
 	};
 	
 });

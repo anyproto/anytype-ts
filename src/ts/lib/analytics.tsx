@@ -1,6 +1,6 @@
 import * as amplitude from 'amplitude-js';
-import { I, M, Mapper, Util, translate } from 'ts/lib';
-import { commonStore, dbStore } from 'ts/store';
+import { I, C, Util, Storage } from 'ts/lib';
+import { authStore, commonStore } from 'ts/store';
 
 const Constant = require('json/constant.json');
 const { app } = window.require('@electron/remote');
@@ -9,11 +9,12 @@ const version = app.getVersion();
 const os = window.require('os');
 
 const KEYS = [ 
-	'cmd', 'id', 'action', 'style', 'code', 
-	'type', 'objectType', 'layout', 'template', 
-	'tab', 'document', 'page', 'count'
+	'method', 'id', 'action', 'style', 'code', 'route', 'format', 'color',
+	'type', 'objectType', 'relationKey', 'layout', 'align', 'template', 'index', 'condition',
+	'tab', 'document', 'page', 'count', 'context', 'originalId', 'length'
 ];
-const SKIP_IDS = [ 'BlockOpenBreadcrumbs', 'BlockSetBreadcrumbs' ];
+const KEY_CONTEXT = 'analyticsContext';
+const KEY_ORIGINAL_ID = 'analyticsOriginalId';
 
 class Analytics {
 	
@@ -26,9 +27,13 @@ class Analytics {
 	};
 	
 	init () {
-		if (!isProduction && !this.debug()) {
+		if (this.isInit) {
 			return;
 		};
+
+		const platform = Util.getPlatform();
+
+		C.MetricsSetParameters(platform);
 
 		this.instance = amplitude.getInstance();
 		this.instance.init(Constant.amplitude, null, {
@@ -36,118 +41,193 @@ class Analytics {
 			saveEvents: true,
 			includeUtm: true,
 			includeReferrer: true,
-			platform: Util.getPlatform(),
+			platform: platform,
 		});
 
 		this.instance.setVersionName(version);
-		this.instance.setGlobalUserProperties({ 
-			deviceType: 'Desktop', 
+		this.instance.setUserProperties({ 
+			deviceType: 'Desktop',
 			platform: Util.getPlatform(),
 			osVersion: os.release(),
 		});
 
+		console.log('[Analytics.init]', this.instance);
+
 		this.isInit = true;
-
-		if (this.debug()) {
-			console.log('[Analytics.init]', this.instance);
-		};
 	};
 	
-	profile (profile: any) {
-		if (!this.instance) {
-			return;
-		};
-
-		if (!isProduction && !this.debug()) {
+	profile (account: I.Account) {
+		if (!this.instance || (!isProduction && !this.debug()) || !account) {
 			return;
 		};
 		if (this.debug()) {
-			console.log('[Analytics.profile]', profile.id);
+			console.log('[Analytics.profile]', account.id);
 		};
-		this.instance.setUserId(profile.id);
+		this.instance.setUserId(account.id);
 	};
-	
+
+	device (id: string) {
+		if (!this.instance || (!isProduction && !this.debug())) {
+			return;
+		};
+
+		this.instance.setUserProperties({ middlewareDeviceId: id });
+
+		if (this.debug()) {
+			console.log('[Analytics.device]', id);
+		};
+	};
+
+	setContext (context: string, id: string) {
+		Storage.set(KEY_CONTEXT, context);
+		Storage.set(KEY_ORIGINAL_ID, id);
+
+		if (this.debug()) {
+			console.log('[Analytics.setContext]', context, id);
+		};
+	};
+
 	event (code: string, data?: any) {
-		if (!this.instance) {
-			return;
-		};
-
-		if ((!isProduction && !this.debug()) || !code) {
-			return;
-		};
-
-		if (SKIP_IDS.indexOf(code) >= 0) {
-			return;
-		};
-		
 		data = data || {};
 
-		let param: any = { 
-			middleTime: Number(data.middleTime) || 0, 
-			renderTime: Number(data.renderTime) || 0,
+		if (!this.instance || (!isProduction && !this.debug()) || !code) {
+			return;
 		};
 
-		const converted: any = {};
-		
+		let converted: any = {};
+		let param: any = {};
+
+		// Code mappers for common events
+		switch (code) {
+			case 'page':
+				code = this.pageMapper(data.params);
+				break;
+
+			case 'popup':
+				code = this.popupMapper(data.params);
+				break;
+
+			case 'menu':
+				code = this.menuMapper(data.params);
+				break;
+
+			case 'settings':
+				code = this.settingsMapper(data.params);
+				break;
+		};
+
+		if (!code) {
+			return;
+		};
+
+		switch (code) {
+			case 'ScreenType':
+				data.objectType = data.params.id;
+				break;
+
+			case 'ScreenRelation':
+				data.relationKey = data.params.id;
+				break;
+
+			case 'CreateBlock':
+			case 'ChangeBlockStyle':
+				data.style = Number(data.style) || 0;
+
+				if (data.type == I.BlockType.Text) {
+					data.style = I.TextStyle[data.style];
+				} else
+				if (data.type == I.BlockType.Div) {
+					data.style = I.DivStyle[data.style];
+				} else
+				if (data.type == I.BlockType.File) {
+					if (undefined !== data.params?.fileType) {
+						data.fileType = Number(data.params.fileType) || 0;
+						data.type = I.FileType[data.fileType];
+					};
+					if (data.style == I.FileStyle.Auto) {
+						data.style = I.FileStyle.Embed;
+					};
+
+					data.style = I.FileStyle[data.style];
+				} else {
+					delete(data.style);
+				};
+				break;
+
+			case 'SetCover':
+			case 'SettingsWallpaperSet':
+				data.type = Number(data.type) || 0;
+				data.type = I.CoverType[data.type];
+				data.id = String(data.id || '').replace(/^c([\d]+)/, '$1');
+
+				if (data.type == I.CoverType.Upload) {
+					delete(param.id);
+				};
+				break;
+
+			case 'AddView':
+			case 'SwitchView':
+				data.type = Number(data.type) || 0;
+				data.type = I.ViewType[data.type];
+				break;
+
+			case 'AddFilter':
+			case 'ChangeFilterValue':
+				data.condition = Number(data.condition) || 0;
+				data.condition = I.FilterCondition[data.condition];
+				break;
+
+			case 'AddSort':
+			case 'ChangeSortValue':
+				data.type = Number(data.type) || 0;
+				data.type = I.SortType[data.type];
+				break;
+
+			case 'ChangeTextStyle':
+				data.type = Number(data.type) || 0;
+				data.type = I.MarkType[data.type];
+				break;
+
+			case 'UploadMedia':
+			case 'DownloadMedia':
+				data.type = Number(data.type) || 0;
+				data.type = I.FileType[data.type];
+				break;
+
+			case 'CreateRelation':
+			case 'AddExistingRelation':
+				data.format = Number(data.format) || 0;
+				data.format = I.RelationType[data.format];
+				break;
+		};
+
+		param.middleTime = Number(data.middleTime) || 0;
+		param.context = String(Storage.get(KEY_CONTEXT) || '');
+		param.originalId = String(Storage.get(KEY_ORIGINAL_ID) || '');
+
 		for (let k of KEYS) {
 			if (undefined !== data[k]) {
 				converted[k] = data[k];
 			};
 		};
 
-		if (converted.objectType) {
-			const type = dbStore.getObjectType(converted.objectType);
-			if (!type.id.match(/^_/)) {
-				converted.objectType = 'custom';
-			};
+		if (converted.objectType && !converted.objectType.match(/^_/)) {
+			converted.objectType = 'custom';
 		};
 
-		switch (code) {
-			default:
-				param = Object.assign(param, converted);
-				break;
-
-			case 'BlockCreate':
-				let block = new M.Block(Mapper.From.Block(data.getBlock()));
-				
-				param.type = block.type;
-				if (block.isText() || block.isDiv()) {
-					param.style = this.getDictionary(block.type, block.content.style);
-				};
-				if (block.isFile()) {
-					param.style = this.getDictionary(block.type, block.content.type);
-				};
-				break;
-
-			case 'MenuBlockStyleAction':	
-			case 'BlockListTurnInto':
-			case 'BlockListSetTextStyle':
-			case 'BlockListTurnInto':
-				param.style = this.getDictionary(I.BlockType.Text, converted.style);
-				break;
-
-			case 'BlockDataviewViewCreate':
-			case 'BlockDataviewViewUpdate':
-				param.type = translate('viewName' + data.getView().getType());
-				break;
-
-			case 'BlockDataviewViewSet':
-				param.type = translate('viewName' + data.type);
-				break;
-
-			case 'PopupHelp':
-				param.document = data.document;
-				break;
-
-			case 'PopupPage':
-				param.page = data.matchPopup.params.page;
-				param.action = data.matchPopup.params.action;
-				break;
-
-			case 'ObjectListDelete':
-				param.count = data.getObjectidsList().length;
-				break;
+		if (converted.relationKey && !converted.relationKey.match(/^_/)) {
+			converted.relationKey = 'custom';
 		};
+
+		if (undefined !== converted.layout) {
+			converted.layout = I.ObjectLayout[converted.layout];
+		};
+
+		if (undefined !== converted.align) {
+			converted.align = I.BlockAlign[converted.align];
+		};
+
+		param = Object.assign(param, converted);
 
 		if (this.debug()) {
 			console.log('[Analytics.event]', code, param);
@@ -156,36 +236,69 @@ class Analytics {
 		this.instance.logEvent(code, param);
 	};
 	
-	getDictionary (type: string, style: number) {
-		let data: any = {
-			text: {},
-			file: {},
-			div: {},
-		};
-		
-		data.text[I.TextStyle.Paragraph]	 = 'Paragraph';
-		data.text[I.TextStyle.Header1]		 = 'Header1';
-		data.text[I.TextStyle.Header2]		 = 'Header2';
-		data.text[I.TextStyle.Header3]		 = 'Header3';
-		data.text[I.TextStyle.Quote]		 = 'Quote';
-		data.text[I.TextStyle.Code]			 = 'Code';
-		data.text[I.TextStyle.Bulleted]		 = 'Bulleted';
-		data.text[I.TextStyle.Numbered]		 = 'Numbered';
-		data.text[I.TextStyle.Toggle]		 = 'Toggle';
-		data.text[I.TextStyle.Checkbox]		 = 'Checkbox';
-		
-		data.file[I.FileType.None]			 = 'None';
-		data.file[I.FileType.File]			 = 'File';
-		data.file[I.FileType.Image]			 = 'Image';
-		data.file[I.FileType.Video]			 = 'Video';
-		data.file[I.FileType.Audio]			 = 'Audio';
-		
-		data.div[I.DivStyle.Line]			 = 'Line';
-		data.div[I.DivStyle.Dot]			 = 'Dot';
+	pageMapper (params: any): string {
+		const { page, action } = params;
+		const key = [ page, action ].join('/');
+		const map = {
+			'index/index':		 'ScreenIndex',
 
-		return data[type][style];
+			'auth/notice':		 'ScreenDisclaimer',
+			'auth/login':		 'ScreenLogin',
+			'auth/register':	 'ScreenAuthRegistration',
+			'auth/invite':		 'ScreenAuthInvitation',
+
+			'main/index':		 'ScreenHome',
+			'main/graph':		 'ScreenGraph',
+			'main/navigation':	 'ScreenNavigation',
+			'main/type':		 'ScreenType',
+			'main/relation':	 'ScreenRelation',
+			'main/set':			 'ScreenSet',
+			'main/edit':		 'ScreenObject',
+			'main/space':		 'ScreenSpace',
+			'main/media':		 'ScreenMedia',
+			'main/history':		 'ScreenHistory',
+		};
+
+		return map[key] || '';
 	};
-	
+
+	popupMapper (params: any): string {
+		const { id } = params;
+		const map = {
+			settings: 'ScreenSettings',
+			search: 'ScreenSearch',
+		};
+
+		return map[id] || '';
+	};
+
+	menuMapper (params: any): string {
+		const { id } = params;
+		const map = {
+			help:				 'MenuHelp',
+			blockRelationView:	 'ScreenObjectRelation',
+		};
+
+		return map[id] || '';
+	};
+
+	settingsMapper (params: any): string {
+		const { id } = params;
+		const prefix = 'ScreenSettings';
+
+		const map = {
+			index: '',
+			phrase: '',
+			pinIndex: 'PinCode',
+			importIndex: 'Import',
+			importNotion: 'ImportNotion',
+			exportMarkdown: 'Export',
+		};
+
+		const code = (undefined !== map[id]) ? map[id] : id;
+		return code ? Util.toUpperCamelCase([ prefix, code ].join('-')) : '';
+	};
+
 };
 
 export let analytics: Analytics = new Analytics();

@@ -9,23 +9,24 @@ export interface PageInfo {
 };
 
 export enum BlockType {
-	Empty		 = '',
-	Page		 = 'page',
-	Dataview	 = 'dataview',
-	Layout		 = 'layout',
-	Text		 = 'text',
-	File		 = 'file',
-	Bookmark	 = 'bookmark',
-	IconPage	 = 'iconPage',
-	IconUser	 = 'iconUser',
-	Div			 = 'div',
-	Link		 = 'link',
-	Cover		 = 'cover',
-	Relation	 = 'relation',
-	Featured	 = 'featured',
-	Type		 = 'type',
-	Latex		 = 'latex',
-	Table		 = 'table',
+	Empty				 = '',
+	Page				 = 'page',
+	Dataview			 = 'dataview',
+	Layout				 = 'layout',
+	Text				 = 'text',
+	File				 = 'file',
+	Bookmark			 = 'bookmark',
+	IconPage			 = 'iconPage',
+	IconUser			 = 'iconUser',
+	Div					 = 'div',
+	Link				 = 'link',
+	Cover				 = 'cover',
+	Relation			 = 'relation',
+	Featured			 = 'featured',
+	Type				 = 'type',
+	Latex				 = 'latex',
+	Table				 = 'table',
+	TableOfContents		 = 'tableOfContents',
 };
 
 export enum BlockPosition {
@@ -54,6 +55,7 @@ export enum BlockAlign {
 export interface BlockComponent {
 	dataset?: any;
 	rootId: string;
+	traceId?: string;
 	block: I.Block;
 	readonly?: boolean;
 	isPopup?: boolean;
@@ -83,6 +85,7 @@ export interface Block {
 	
 	getLength?(): number;
 	isSystem?(): boolean;
+	isLocked?(): boolean;
 
 	canHaveChildren?(): boolean;
 	canHaveAlign?(): boolean;
@@ -132,7 +135,6 @@ export interface Block {
 	isTable?(): boolean;
 
 	isLink?(): boolean;
-	isLinkPage?(): boolean;
 
 	isIcon?(): boolean;
 	isIconPage?(): boolean;
@@ -147,6 +149,9 @@ export interface Block {
 	isFileImage?(): boolean;
 	isFileVideo?(): boolean;
 	isFileAudio?(): boolean;
+	isFilePdf?(): boolean;
+	isFileStyleLink?(): boolean;
+	isFileStyleEmbed?(): boolean;
 
 	isLatex?(): boolean;
 

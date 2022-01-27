@@ -1,10 +1,27 @@
-importScripts('d3/d3-quadtree.min.js');
-importScripts('d3/d3-zoom.min.js');
-importScripts('d3/d3-drag.min.js');
-importScripts('d3/d3-dispatch.min.js');
-importScripts('d3/d3-timer.min.js');
-importScripts('d3/d3-selection.min.js');
-importScripts('d3/d3-force.min.js');
+importScripts('./d3/d3-quadtree.min.js');
+importScripts('./d3/d3-zoom.min.js');
+importScripts('./d3/d3-drag.min.js');
+importScripts('./d3/d3-dispatch.min.js');
+importScripts('./d3/d3-timer.min.js');
+importScripts('./d3/d3-selection.min.js');
+importScripts('./d3/d3-force.min.js');
+
+// CONSTANTS
+
+const fontFamily = 'Helvetica';
+const font = `3px ${fontFamily}`;
+const fontBig = `20px ${fontFamily}`;
+const fontItalic = `italic ${font}`;
+
+const ObjectLayout = {
+	Human:	 1,
+	Task:	 2,
+};
+
+const EdgeType = {
+	Link:		 0,
+	Relation:	 1,
+};
 
 let offscreen = null;
 let canvas = null;
@@ -19,22 +36,10 @@ let edges = [];
 let forceProps = {};
 let images = {};
 let simulation = null;
-let Color = {
-	bg: '#fff',
-	text: '#2c2b27',
-	link: {
-		0: '#dfddd0',
-		1: '#8c9ea5',
-		over: '#ffd15b',
-	},
-	node: {
-		common: '#f3f2ec',
-		filter: '#e3f7d0',
-		focused: '#fef3c5',
-		over: '#d6f5f3',
-	},
-};
+let theme = '';
+let Color = {};
 let LineWidth = 0.25;
+let frame = 0;
 
 addEventListener('message', ({ data }) => { 
 	if (this[data.id]) {
@@ -48,10 +53,14 @@ init = (data) => {
 	forceProps = data.forceProps;
 	nodes = data.nodes;
 	edges = data.edges;
+	theme = data.theme;
 
 	offscreen = new OffscreenCanvas(250, 40);
 	octx = offscreen.getContext('2d');
 
+	ctx.lineCap = 'round';
+
+	initColor();
 	resize(data);
 
 	transform = d3.zoomIdentity.translate(-width, -height).scale(3);
@@ -61,12 +70,12 @@ init = (data) => {
 		if (d.isRoot) {
 			d.fx = width / 2;
 			d.fy = height / 2;
-			d.radius = 6;
+			d.radius = 10;
 		};
 
 		octx.save();
 		octx.clearRect(0, 0, 250, 40);
-		octx.font = '20px Helvetica';
+		octx.font = fontBig;
 		octx.fillStyle = Color.text;
 		octx.textAlign = 'center';
 		octx.fillText(d.shortName, 125, 20);
@@ -80,6 +89,48 @@ init = (data) => {
 	simulation.on('tick', () => { redraw(); });
 	simulation.on('end', () => { simulation.alphaTarget(1); });
 	simulation.tick(200);
+};
+
+initColor = () => {
+	switch (theme) {
+		default:
+			Color = {
+				bg: '#fff',
+				text: '#2c2b27',
+				iconText: '#aca996',
+				link: {
+					0: '#dfddd0',
+					1: '#8c9ea5',
+					over: '#ffd15b',
+				},
+				node: {
+					common: '#f3f2ec',
+					filter: '#e3f7d0',
+					focused: '#fef3c5',
+					over: '#d6f5f3',
+				},
+			}; 
+			break;
+
+		case 'dark':
+			Color = {
+				bg: '#2c2b27',
+				text: '#dfddd3',
+				iconText: '#dfddd3',
+				link: {
+					0: '#525148',
+					1: '#8c9ea5',
+					over: '#ffd15b',
+				},
+				node: {
+					common: '#484843',
+					filter: '#e3f7d0',
+					focused: '#fef3c5',
+					over: '#d6f5f3',
+				},
+			};
+			break;
+	};
 };
 
 image = ({ src, bitmap }) => {
@@ -106,34 +157,47 @@ initForces = () => {
 };
 
 updateForces = () => {
+	const center = forceProps.center;
+	const charge = forceProps.charge;
+	const collide = forceProps.collide;
+	const link = forceProps.link;
+	const forceX = forceProps.forceX;
+	const forceY = forceProps.forceY;
+
 	simulation.force('center')
-	.x(width * forceProps.center.x)
-	.y(height * forceProps.center.y);
+	.x(width * center.x)
+	.y(height * center.y);
 
 	simulation.force('charge')
-	.strength(forceProps.charge.strength * forceProps.charge.enabled)
-	.distanceMin(forceProps.charge.distanceMin)
-	.distanceMax(forceProps.charge.distanceMax);
+	.strength(charge.strength * charge.enabled)
+	.distanceMin(charge.distanceMin)
+	.distanceMax(charge.distanceMax);
 
 	simulation.force('collide')
-	.strength(forceProps.collide.strength * forceProps.collide.enabled)
-	.radius(10 * forceProps.collide.radius)
-	.iterations(forceProps.collide.iterations);
+	.strength(collide.strength * collide.enabled)
+	.radius(10 * collide.radius)
+	.iterations(collide.iterations);
 
 	simulation.force('link')
 	.id(d => d.id)
-	.distance(forceProps.link.distance)
-	.strength(forceProps.link.strength * forceProps.link.enabled)
-	.iterations(forceProps.link.iterations)
-	.links(forceProps.link.enabled ? edges : []);
+	.distance(link.distance)
+	.strength(link.strength * link.enabled)
+	.iterations(link.iterations)
+	.links(link.enabled ? edges : []);
 
 	simulation.force('forceX')
-	.strength(forceProps.forceX.strength * forceProps.forceX.enabled)
-	.x(width * forceProps.forceX.x);
+	.strength((d) => {
+		const hasLinks = (d.sourceCnt + d.targetCnt) > 0;
+		return hasLinks ? 0 : forceX.strength * forceX.enabled;
+	})
+	.x(width * forceX.x);
 
 	simulation.force('forceY')
-	.strength(forceProps.forceY.strength * forceProps.forceY.enabled)
-	.y(height * forceProps.forceY.y);
+	.strength((d) => {
+		const hasLinks = (d.sourceCnt + d.targetCnt) > 0;
+		return hasLinks ? 0 : forceY.strength * forceY.enabled;
+	})
+	.y(height * forceY.y);
 
 	simulation.alpha(1).restart();
 };
@@ -146,10 +210,10 @@ draw = () => {
 	ctx.scale(transform.k, transform.k);
 
 	edges.forEach(d => {
-		if (!forceProps.links && (d.type == 0)) {
+		if (!forceProps.links && (d.type == EdgeType.Link)) {
 			return;
 		};
-		if (!forceProps.relations && (d.type == 1)) {
+		if (!forceProps.relations && (d.type == EdgeType.Relation)) {
 			return;
 		};
 
@@ -168,11 +232,11 @@ draw = () => {
 };
 
 redraw = () => {
-	requestAnimationFrame(draw);
+	cancelAnimationFrame(frame);
+	frame = requestAnimationFrame(draw);
 };
 
 drawLine = (d, aWidth, aLength, arrowStart, arrowEnd) => {
-	let source = nodes.find(it => it.id == d.source.id);
 	let x1 = d.source.x;
 	let y1 = d.source.y;
 	let r1 = d.source.radius + 3;
@@ -186,7 +250,7 @@ drawLine = (d, aWidth, aLength, arrowStart, arrowEnd) => {
 		ctx.globalAlpha = 0.2;
 	};
 
-	if (source.isOver) {
+	if (d.source.isOver) {
 		bg = Color.link.over;
 	};
 
@@ -200,7 +264,6 @@ drawLine = (d, aWidth, aLength, arrowStart, arrowEnd) => {
 	let mx = (x1 + x2) / 2;  
     let my = (y1 + y2) / 2;
 
-	ctx.lineCap = 'round';
 	ctx.lineWidth = LineWidth;
 	ctx.strokeStyle = bg;
 	ctx.beginPath();
@@ -236,7 +299,7 @@ drawLine = (d, aWidth, aLength, arrowStart, arrowEnd) => {
 	if (d.name && forceProps.labels && (transform.k > 1.5)) {
 		ctx.save();
 		ctx.translate(mx, my);
-		ctx.font = 'italic 3px Helvetica';
+		ctx.font = fontItalic;
 
 		const metrics = ctx.measureText(d.name);
 		const left = metrics.actualBoundingBoxLeft * -1;
@@ -285,7 +348,7 @@ drawNode = (d) => {
 		ctx.globalAlpha = 0.4;
 	};
 
-	if ([ 1, 2 ].indexOf(d.layout) >= 0) {
+	if (isIconCircle(d)) {
 		ctx.beginPath();
 		ctx.arc(d.x, d.y, d.radius, 0, 2 * Math.PI, true);
 		ctx.closePath();
@@ -318,7 +381,7 @@ drawNode = (d) => {
 			x = d.x - d.radius;
 			y = d.y - d.radius;
 	
-			if ([ 1, 2 ].indexOf(d.layout) >= 0) {
+			if (isIconCircle(d)) {
 				ctx.beginPath();
 				ctx.arc(d.x, d.y, d.radius, 0, 2 * Math.PI, true);
 				ctx.closePath();
@@ -342,6 +405,9 @@ drawNode = (d) => {
 		};
 	
 		ctx.drawImage(img, 0, 0, img.width, img.height, x, y, w, h);
+	} else 
+	if (isLayoutHuman(d)) {
+		nameCircleIcon(d);
 	};
 
 	ctx.restore();
@@ -419,7 +485,7 @@ onMouseMove = ({ x, y }) => {
 	};
 
 	redraw();
-	this.postMessage({ id: 'onMouseMove', node: d, x: x, y: y });
+	this.postMessage({ id: 'onMouseMove', node: (d ? d.id : ''), x: x, y: y });
 };
 
 resize = (data) => {
@@ -430,10 +496,34 @@ resize = (data) => {
 	ctx.canvas.width = width * density;
 	ctx.canvas.height = height * density;
 	ctx.scale(density, density);
-	ctx.font = '3px Helvetica';
+	ctx.font = font;
 };
 
 onResize = (data) => {
 	resize(data);
 	redraw();
+};
+
+// Utils
+
+const isLayoutHuman = (d) => {
+	return d.layout === ObjectLayout.Human;
+};
+
+const isLayoutTask = (d) => {
+	return d.layout === ObjectLayout.Task;
+};
+
+const isIconCircle = (d) => {
+	return isLayoutHuman(d) || isLayoutTask(d);
+};
+
+const nameCircleIcon = (d) => {
+	ctx.save();
+	ctx.font = d.font;  
+	ctx.fillStyle = Color.iconText;
+	ctx.textAlign = 'center';
+	ctx.textBaseline = 'middle';
+	ctx.fillText(d.letter, d.x, d.y);
+	ctx.restore();
 };

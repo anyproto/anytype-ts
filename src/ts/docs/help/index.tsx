@@ -1,7 +1,7 @@
 import WhatsNew from './whatsNew';
-import Intro from './intro';
+import Onboarding from './onboarding';
 
 export {
 	WhatsNew,
-	Intro,
+	Onboarding,
 };

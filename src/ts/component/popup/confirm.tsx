@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { Title, Icon, Label, Button } from 'ts/component';
-import { I, keyboard } from 'ts/lib';
+import { I, keyboard, translate } from 'ts/lib';
 import { observer } from 'mobx-react';
 
-interface Props extends I.Popup {}
+interface Props extends I.Popup {};
 
 const PopupConfirm = observer(class PopupConfirm extends React.Component<Props, {}> {
 
@@ -21,8 +21,8 @@ const PopupConfirm = observer(class PopupConfirm extends React.Component<Props, 
 		
 		const canConfirm = undefined === data.canConfirm ? true : data.canConfirm;
 		const canCancel = undefined === data.canCancel ? true : data.canCancel;
-		const textConfirm = data.textConfirm || 'Ok';
-		const textCancel = data.textCancel || 'Cancel';
+		const textConfirm = data.textConfirm || translate('commonOk');
+		const textCancel = data.textCancel || translate('commonCancel');
 		
 		return (
 			<React.Fragment>

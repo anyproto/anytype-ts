@@ -1,10 +1,10 @@
 @import "~scss/_vars";
 
 .blocks {
-	.block.blockFile { padding: 6px 0px; }
+	.block.blockFile { padding: 6px 0px; white-space: nowrap; }
 	.block.blockFile.withFile { padding: 0px; }
 	.block.blockFile {
-		.loaderWrapper { border-radius: 4px; border: solid 1px #d2d0c2; height: 48px; width: 100%; }
+		.loaderWrapper { border-radius: 4px; border: solid 1px $colorBorderDark; height: 48px; width: 100%; }
 		.error { margin: 0px; font-size: 12px; line-height: 24px; height: 24px; }
 		
 		.name {
@@ -15,11 +15,6 @@
 			@include text-common; max-width: 100px; height: 24px; line-height: 24px; color: $colorMediumGrey; margin: 0px 8px;
 			display: inline-block; vertical-align: top;
 		}
-		.download {
-			@include text-common; width: 80px; height: 24px; line-height: 24px; color: #2aa7ee; transition: $transitionFast; 
-			opacity: 0; display: inline-block; cursor: pointer; vertical-align: top;
-		}
-		.download:hover { color: #1092d9; }
 
 		.iconObject { margin-right: 4px; }
 	}
@@ -28,6 +23,6 @@
 	}
 	
 	.block.blockFile > .wrapContent > .selectable > .dropTarget { @include text-overflow-nw;  }
-	.block.blockFile > .wrapContent > .selectable.isSelected .download { display: none; }
+	.block.blockFile > .wrapContent > .selectable.isSelectionSelected .download { display: none; }
 	.block.blockFile.withFile > .wrapContent > .selectable > .dropTarget { padding: 3px 0px; }
 }

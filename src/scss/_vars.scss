@@ -1,7 +1,9 @@
+$colorVeryLightGrey: #f3f2ec;
 $colorLightGrey: #eae9e0;
 $colorMediumGrey: #aca996;
 $colorDarkGrey: #929082;
 $colorVeryDarkGrey: #6c6a5f;
+$colorWhite: #fff;
 $colorBlack: #2c2b27;
 $colorYellow: #ecd91b;
 $colorOrange: #ffb522;
@@ -13,6 +15,13 @@ $colorIce: #2aa7ee;
 $colorTeal: #0fc8ba;
 $colorLime: #5dd400;
 $colorGreen: #57c600;
+
+$colorBorderLight: #eae9e0;
+$colorBorderDark: #dfddd0;
+
+$colorSecondary: #cbc9bd;
+
+$colorHover: rgba(134, 125, 66, 0.08);
 
 $transitionFast: all 0.2s ease-in-out;
 
@@ -31,3 +40,8 @@ $transitionFast: all 0.2s ease-in-out;
 @mixin text-quote { font-size: 18px; line-height: 26px; letter-spacing: -0.16px; }
 
 @mixin pos-abs-mid { position: absolute; left: 50%; top: 50%; }
+
+@mixin clamp { -webkit-box-orient: vertical; display: -webkit-box; overflow: hidden; }
+@mixin clamp2 { @include clamp; -webkit-line-clamp: 2;  } 
+@mixin clamp3 { @include clamp; -webkit-line-clamp: 3; } 
+@mixin clamp4 { @include clamp; -webkit-line-clamp: 4; } 

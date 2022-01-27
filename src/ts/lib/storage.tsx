@@ -51,9 +51,13 @@ class Storage {
 		return obj;
 	};
 
-	checkToggle (rootId: string, id: string): boolean {
+	getToggle (rootId: string) {
 		const map = this.get('toggle') || {};
-		return (map[rootId] || []).indexOf(id) >= 0;
+		return map[rootId] || [];
+	};
+
+	checkToggle (rootId: string, id: string): boolean {
+		return this.getToggle(rootId).indexOf(id) >= 0;
 	};
 
 	setScroll (key: string, rootId: string, scroll: number) {
@@ -69,6 +73,21 @@ class Storage {
 		return Number((obj[key] || {})[rootId]) || 0;
 	};
 
+	setOnboarding (key: string) {
+		const keys = this.get('onboarding') || [];
+		
+		if (!this.getOnboarding(key)) {
+			keys.push(key);
+		};
+
+		this.set('onboarding', keys, true);
+		return keys;
+	};
+
+	getOnboarding (key: string) {
+		return (this.get('onboarding') || []).includes(key);
+	};
+
 	logout () {
 		const keys = [ 
 			'accountId', 
@@ -79,6 +98,9 @@ class Storage {
 			'tabStore', 
 			'linkSettings', 
 			'graph',
+			'blockCnt',
+			'gateway',
+			'dataPath',
 		];
 
 		for (let key of keys) {

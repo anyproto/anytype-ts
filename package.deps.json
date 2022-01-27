@@ -7,6 +7,7 @@
 	"electron/about.css",
 	"electron/about.html",
 	"electron/about.js",
+	"electron/common.js",
 	"build",
 	"!dist/*",
 	"dist/index.html",

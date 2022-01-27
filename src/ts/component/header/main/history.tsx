@@ -1,15 +1,24 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { observer } from 'mobx-react';
 import { Icon } from 'ts/component';
-import { C, Util, DataUtil, I, translate } from 'ts/lib';
-import { detailStore } from 'ts/store';
+import { C, Util, DataUtil, I, translate, analytics } from 'ts/lib';
+import { detailStore, commonStore } from 'ts/store';
+import { observer } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any> {
-	version: I.HistoryVersion;
-}
+	rootId: string;
+	isPopup?: boolean;
+};
 
-const HeaderMainHistory = observer(class HeaderMainHistory extends React.Component<Props, {}> {
+interface State {
+	version: I.HistoryVersion;
+};
+
+const HeaderMainHistory = observer(class HeaderMainHistory extends React.Component<Props, State> {
+
+	state = {
+		version: null,
+	};
 
 	constructor (props: any) {
 		super(props);
@@ -19,7 +28,7 @@ const HeaderMainHistory = observer(class HeaderMainHistory extends React.Compone
 	};
 
 	render () {
-		const { version } = this.props;
+		const { version } = this.state;
 
 		return (
 			<div id="header" className="header headerMainHistory">
@@ -30,7 +39,7 @@ const HeaderMainHistory = observer(class HeaderMainHistory extends React.Compone
 				</div>
 
 				<div className="side center">
-					<div className="item">{Util.date('d F Y H:i:s', version.time)}</div>
+					{version ? <div className="item">{Util.date('d F Y H:i:s', version.time)}</div> : ''}
 				</div>
 
 				<div className="side right" onClick={this.onRestore}>
@@ -40,22 +49,51 @@ const HeaderMainHistory = observer(class HeaderMainHistory extends React.Compone
 		);
 	};
 
+	componentDidMount () {
+		this.resize();
+	};
+
+	componentDidUpdate () {
+		this.resize();
+	};
+
 	onBack (e: any) {
-		const { match } = this.props;
-		const rootId = match.params.id;
+		const { rootId } = this.props;
 		const object = detailStore.get(rootId, rootId, []);
 
-		DataUtil.objectOpen(object);
+		DataUtil.objectOpenEvent(e, object);
 	};
 
 	onRestore (e: any) {
-		const { match, version } = this.props;
-		const rootId = match.params.id;
+		e.persist();
+
+		const { rootId } = this.props;
+		const { version } = this.state;
 		const object = detailStore.get(rootId, rootId, []);
 
+		if (!version) {
+			return;
+		};
+
 		C.HistorySetVersion(rootId, version.id, (message: any) => {
-			DataUtil.objectOpen(object);
+			DataUtil.objectOpenEvent(e, object);
+
+			analytics.event('RestoreFromHistory');
 		});
+	};
+
+	setVersion (version: I.HistoryVersion) {
+		this.setState({ version });
+	};
+
+	resize () {
+		const { isPopup } = this.props;
+		const { sidebar } = commonStore;
+		const { width } = sidebar;
+
+		if (!isPopup) {
+			Util.resizeHeaderFooter(width);
+		};
 	};
 
 });
