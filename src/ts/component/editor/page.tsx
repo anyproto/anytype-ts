@@ -337,7 +337,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			return;
 		};
 
-		$('.footer').css({ opacity: 0 });
+		const obj = this.getContainer();
+
+		obj.find('#footer').css({ opacity: 0 });
 		
 		this.uiHidden = true;
 		
@@ -352,7 +354,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			return;
 		};
 
-		$('.footer').css({ opacity: 1 });
+		const obj = this.getContainer();
+		
+		obj.find('#footer').css({ opacity: 1 });
 		
 		this.uiHidden = false;
 		$(window).unbind('mousemove.ui');
@@ -1777,7 +1781,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const last = node.find('.blockLast');
 		const size = node.find('#editorSize');
 		const cover = node.find('.block.blockCover');
-		const obj = $(isPopup ? '#popupPage #innerWrap' : '.page.isFull');
+		const obj = this.getContainer();
 		const header = obj.find('#header');
 		const root = blockStore.getLeaf(rootId, rootId);
 		const container = Util.getScrollContainer(isPopup);
@@ -1802,6 +1806,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		};
 
 		this.onResize(root?.fields?.width);
+	};
+
+	getContainer () {
+		return $(this.props.isPopup ? '#popupPage #innerWrap' : '.page.isFull');
 	};
 	
 	focus (id: string, from: number, to: number, scroll: boolean) {

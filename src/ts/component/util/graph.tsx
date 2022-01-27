@@ -150,8 +150,6 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 			return d;
 		});
 
-		console.log('Graph init');
-
 		this.canvas = d3.select(elementId).append('canvas')
 		.attr('width', (this.width * density) + 'px')
 		.attr('height', (this.height * density) + 'px')

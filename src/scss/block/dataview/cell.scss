@@ -113,7 +113,17 @@
 .cellContent.canEdit.c-checkbox,
 .cellContent.canEdit.c-select { cursor: pointer; }
 
-.cellContent.c-url, .cellContent.c-email, .cellContent.c-phone {
-	a { text-decoration: none; border-bottom: 1px solid $colorBorderDark; transition: $transitionFast; cursor: pointer; }
-	a:hover { border-color: $colorBlack; }
+.cellContent.c-url, 
+.cellContent.c-email, 
+.cellContent.c-phone 
+{
+	.name { text-decoration: none; border-bottom: 1px solid $colorBorderDark; transition: $transitionFast; cursor: pointer; width: auto; }
+	.name:hover { border-color: $colorBlack; }
+}
+
+.cellContent.canEdit.c-url, 
+.cellContent.canEdit.c-email, 
+.cellContent.canEdit.c-phone 
+{
+	.name { border: 0px; width: 100%; }
 }

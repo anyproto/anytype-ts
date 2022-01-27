@@ -373,7 +373,7 @@ const UnsplashSearch = (response: any) => {
 
 const UnsplashDownload = (response: any) => {
 	return {
-		image: Mapper.From.BlockFile(response.getImage()),
+		hash: response.getHash(),
 	};
 };
 

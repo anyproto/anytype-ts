@@ -132,6 +132,12 @@
 
             .cellContent.isName { color: $colorPrimary; }
         }
+
+        .viewItem.viewBoard {
+            .card { background: $colorBlack; border-color: $colorLinePrimary; }
+
+            .cellContent.isName { color: $colorPrimary; }
+        }
     }
 
     /* BlockType */

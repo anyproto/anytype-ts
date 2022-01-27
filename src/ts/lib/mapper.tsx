@@ -85,6 +85,14 @@ const Mapper = {
 			};
 		},
 
+		BlockPage: (obj: any) => {
+			return {};
+		},
+
+		BlockFeatured: (obj: any) => {
+			return {};
+		},
+
 		BlockLayout: (obj: any) => {
 			return {
 				style: obj.getStyle(),
@@ -173,41 +181,12 @@ const Mapper = {
 				align: obj.getAlign(),
 				bgColor: obj.getBackgroundcolor(),
 			};
-	
-			if (type == I.BlockType.Layout) {
-				item.content = Mapper.From.BlockLayout(content);
-			};
-	
-			if (type == I.BlockType.Link) {
-				item.content = Mapper.From.BlockLink(content);
-			};
-	
-			if (type == I.BlockType.Div) {
-				item.content = Mapper.From.BlockDiv(content);
-			};
-	
-			if (type == I.BlockType.Bookmark) {
-				item.content = Mapper.From.BlockBookmark(content);
-			};
-	
-			if (type == I.BlockType.Text) {
-				item.content = Mapper.From.BlockText(content);
-			};
-	
-			if (type == I.BlockType.File) {
-				item.content = Mapper.From.BlockFile(content);
-			};
-	
-			if (type == I.BlockType.Dataview) {
-				item.content = Mapper.From.BlockDataview(content);
-			};
 
-			if (type == I.BlockType.Relation) {
-				item.content = Mapper.From.BlockRelation(content);
-			};
-
-			if (type == I.BlockType.Latex) {
-				item.content = Mapper.From.BlockLatex(content);
+			const fm = Util.toUpperCamelCase('block-' + type);
+			if (Mapper.From[fm]) {
+				item.content = Mapper.From[fm](content);
+			} else {
+				console.log('Mapper.From does not exist: ', fm);
 			};
 	
 			return item;
@@ -536,6 +515,12 @@ const Mapper = {
 			return content;
 		},
 
+		BlockTableOfContents: (obj: any) => {
+			const content = new Model.Block.Content.TableOfContents();
+	
+			return content;
+		},
+
 		Block: (obj: any) => {
 			obj.content = Util.objectCopy(obj.content || {});
 	
@@ -554,46 +539,13 @@ const Mapper = {
 				block.setFields(Encode.encodeStruct(obj.fields || {}));
 			};
 
-			if (obj.type == I.BlockType.Layout) {
-                block.setLayout(Mapper.To.BlockLayout(obj.content));
-            };
-	
-			if (obj.type == I.BlockType.Text) {
-				block.setText(Mapper.To.BlockText(obj.content));
-			};
-	
-			if (obj.type == I.BlockType.File) {
-				block.setFile(Mapper.To.BlockFile(obj.content));
-			};
-	
-			if (obj.type == I.BlockType.Bookmark) {
-				block.setBookmark(Mapper.To.BlockBookmark(obj.content));
-			};
+			const fb = Util.toCamelCase('set-' + obj.type.toLowerCase());
+			const fm = Util.toUpperCamelCase('block-' + obj.type);
 
-			if (obj.type == I.BlockType.Link) {
-				block.setLink(Mapper.To.BlockLink(obj.content));
-			};
-
-			if (obj.type == I.BlockType.Div) {
-				block.setDiv(Mapper.To.BlockDiv(obj.content));
-			};
-
-			if (obj.type == I.BlockType.Relation) {
-				block.setRelation(Mapper.To.BlockRelation(obj.content));
-			};
-
-			if (obj.type == I.BlockType.Latex) {
-				block.setLatex(Mapper.To.BlockLatex(obj.content));
-			};
-
-			if (obj.type == I.BlockType.Dataview) {
-				block.setDataview(Mapper.To.BlockDataview(obj.content));
-			};
-
-			if (obj.type == I.BlockType.TableOfContents) {
-				content = new Model.Block.Content.TableOfContents();
-	
-				block.setTableofcontents(content);
+			if (block[fb] && Mapper.To[fm]) {
+				block[fb](Mapper.To[fm](obj.content));
+			} else {
+				console.log('Block method or Mapper.To method do not exist: ', fb, fm);
 			};
 
 			return block;

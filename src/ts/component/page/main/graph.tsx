@@ -1,12 +1,11 @@
 import * as React from 'react';
-import { I, C, crumbs, Util } from 'ts/lib';
+import { I, C, crumbs, Util, analytics } from 'ts/lib';
 import { RouteComponentProps } from 'react-router';
 import { HeaderMainGraph as Header, Graph, Icon, Loader } from 'ts/component';
-import { blockStore } from 'ts/store';
+import { blockStore, commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 import Panel from './graph/panel';
-import { analytics } from '../../../lib';
 
 interface Props extends RouteComponentProps<any> {
 	rootId: string;
@@ -82,7 +81,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 					</div>
 				</div>
 
-				<div className="footer">
+				<div id="footer" className="footer">
 					<Icon className="manager" onClick={() => { this.togglePanel(true); }} />
 				</div>
 			</div>
@@ -115,8 +114,6 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 	};
 
 	load () {
-		console.log('GRAPH load');
-
 		const filters: any[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.Equal, value: false },
 			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
@@ -161,11 +158,11 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 
 	resize () {
 		const { isPopup } = this.props;
+		const { sidebar } = commonStore;
+		const { width } = sidebar;
 		const win = $(window);
 		const obj = $(isPopup ? '#popupPage #innerWrap' : '.page.isFull');
 		const wrapper = obj.find('.wrapper');
-		const header = obj.find('#header');
-		const hh = header.height();
 		const height = isPopup && !obj.hasClass('full') ? obj.height() : win.height();
 
 		wrapper.css({ height: height })
@@ -182,6 +179,11 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 		if (this.refPanel) {
 			this.refPanel.resize();
 		};
+
+		if (!isPopup) {
+			Util.resizeHeaderFooter(width);
+		};
+
 	};
 
 	togglePanel (v: boolean) {
