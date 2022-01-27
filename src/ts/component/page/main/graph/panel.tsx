@@ -7,6 +7,7 @@ import { RouteComponentProps } from 'react-router';
 
 import Controls from './controls';
 import Preview from './preview';
+import Filters from './filters';
 
 interface Props extends RouteComponentProps<any> {
     isPopup?: boolean;
@@ -24,7 +25,7 @@ interface State {
 const $ = require('jquery');
 const Tabs = [
     { id: I.GraphView.Controls, name: 'View' },
-    { id: I.GraphView.Filter, name: 'Filters' },
+    //{ id: I.GraphView.Filter, name: 'Filters' },
 ];
 
 const GraphPanel = observer(class Graph extends React.Component<Props, State> {
@@ -74,6 +75,7 @@ const GraphPanel = observer(class Graph extends React.Component<Props, State> {
                 break;
             
             case I.GraphView.Filter:
+                content = <Filters ref={(ref: any) => { this.ref = ref; }} {...this.props} />;
                 break;
         };
 
