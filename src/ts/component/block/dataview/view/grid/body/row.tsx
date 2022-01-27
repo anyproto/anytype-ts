@@ -7,18 +7,15 @@ import Cell from './cell';
 
 interface Props extends I.ViewComponent {
 	index: number;
-	readonly: boolean;
 	style?: any;
 	cellPosition?: (cellId: string) => void;
-	getRecord(index: number): any;
 	onRef?(ref: any, id: string): void;
-	onCellClick?(e: any, key: string, index: number): void;
 };
 
 const BodyRow = observer(class BodyRow extends React.Component<Props, {}> {
 
 	render () {
-		const { rootId, block, index, getView, getRecord, style } = this.props;
+		const { rootId, block, index, getView, getRecord, style, onContext } = this.props;
 		const view = getView();
 		const relations = view.relations.filter((it: any) => { 
 			return it.isVisible && dbStore.getRelation(rootId, block.id, it.relationKey); 
@@ -37,7 +34,12 @@ const BodyRow = observer(class BodyRow extends React.Component<Props, {}> {
 		};
 		
 		return (
-			<div id={'row-' + index} className={cn.join(' ')} style={style}>
+			<div 
+				id={'row-' + index} 
+				className={cn.join(' ')} 
+				style={style} 
+				onContextMenu={(e: any) => { onContext(e, record.id); }}
+			>
 				{relations.map((relation: any, i: number) => (
 					<Cell 
 						key={'grid-cell-' + relation.relationKey + record.id} 
