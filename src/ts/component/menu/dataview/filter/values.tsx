@@ -119,7 +119,11 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 				Item = (element: any) => {	
 					const type = dbStore.getObjectType(element.type);
 					return (
-						<div className="item withCaption">
+						<div 
+							id={'item-' + element.id} 
+							className="item withCaption"
+							onMouseEnter={() => { this.props.setHover({ id: element.id }); }}
+						>
 							<div className="clickable" onClick={(e: any) => { this.onObject(e, item); }}>
 								<IconObject object={element} />
 								<div className="name">{element.name}</div>
@@ -389,6 +393,8 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 				};
 			};
 
+			console.log('view.setFilter', JSON.stringify(item, null, 3));
+
 			view.setFilter(itemId, item);
 
 			analytics.event('ChangeFilterValue', { condition: item.condition });
@@ -527,11 +533,15 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 					rebind: this.rebind,
 					rootId: rootId,
 					blockId: blockId,
-					value: item.value || [], 
+					value: item.value, 
 					types: relation.objectTypes,
 					relation: observable.box(relation),
-					onChange: (value: any) => {
+					onChange: (value: any, callBack?: () => void) => {
 						this.onChange('value', value);
+
+						if (callBack) {
+							callBack();
+						};
 					},
 				},
 			});
