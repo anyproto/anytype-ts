@@ -1,15 +1,27 @@
 import * as React from 'react';
 import { I, C, DataUtil, translate, analytics } from 'ts/lib';
-import { Cover } from 'ts/component';
+import { Cover, Filter } from 'ts/component';
 import { detailStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
-interface Props extends I.Menu {}
+interface Props extends I.Menu {};
+
+interface State {
+	filter: string;
+};
 
 const { dialog } = window.require('@electron/remote');
 const Constant = require('json/constant.json');
 
-const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Props, {}> {
+const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Props, State> {
+
+	state = {
+		filter: '',
+	};
+	items: any[] = [];
+	filter: string = '';
+	refFilter: any = null;
+	timeout: number = 0;
 
 	constructor (props: any) {
 		super(props);
@@ -18,16 +30,18 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 		this.onEdit = this.onEdit.bind(this);
 		this.onRemove = this.onRemove.bind(this);
 		this.onSelect = this.onSelect.bind(this);
+		this.onFilterChange = this.onFilterChange.bind(this);
 	};
 
 	render () {
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId } = data;
+		const { filter } = this.state;
 		const sections = this.getSections();
 		const object = detailStore.get(rootId, rootId, [ 'coverType' ], true);
 		const { coverType } = object;
-		const canEdit = coverType && [ I.CoverType.Upload, I.CoverType.Image ].indexOf(coverType) >= 0;
+		const canEdit = DataUtil.coverIsImage(coverType);
 
 		const Section = (item: any) => (
 			<div className="section">
@@ -42,7 +56,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 		);
 
 		return (
-			<div>
+			<div className="wrap">
 				<div className="head">
 					<div className="btn" onClick={this.onUpload}>{translate('menuBlockCoverUpload')}</div>
 					{canEdit ? (
@@ -50,6 +64,13 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 					) : ''}
 					<div className="btn" onClick={this.onRemove}>{translate('menuBlockCoverRemove')}</div>
 				</div>
+
+				<Filter 
+					ref={(ref: any) => { this.refFilter = ref; }}
+					value={filter}
+					onChange={this.onFilterChange} 
+				/>
+
 				<div className="sections">
 					{sections.map((section: any, i: number) => {
 						return <Section key={i} {...section} />;
@@ -59,10 +80,44 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 		);
 	};
 
+	componentDidMount () {
+		this.load();
+	};
+
+	componentDidUpdate () {
+		const { filter } = this.state;
+		
+		if (this.filter != filter) {
+			this.filter = filter;
+			this.load();
+		};
+	};
+
+	load () {
+		const { filter } = this.state;
+
+		this.items = [];
+		C.UnsplashSearch(filter, 24, (message: any) => {
+			if (message.error.code) {
+				return;
+			};
+
+			message.pictures.forEach((item: any) => {
+				this.items.push({
+					id: item.id,
+					type: I.CoverType.Source,
+					src: item.url,
+				});
+			});
+
+			this.forceUpdate();
+		});
+	};
+
 	onUpload (e: any) {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, onUpload, onUploadStart } = data;
+		const { onUpload, onUploadStart } = data;
 		const options: any = {
 			properties: [ 'openFile' ],
 			filters: [ { name: '', extensions: Constant.extension.cover } ]
@@ -86,7 +141,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 				};
 
 				if (onUpload) {
-					onUpload(message.hash);
+					onUpload(I.CoverType.Upload, message.hash);
 				};
 
 				analytics.event('SetCover', { type: I.CoverType.Upload });
@@ -120,13 +175,26 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 	onSelect (e: any, item: any) {
 		const { param, close } = this.props;
 		const { data } = param;
-		const { rootId, onSelect } = data;
+		const { rootId, onSelect, onUpload, onUploadStart } = data;
 		const object = detailStore.get(rootId, rootId, Constant.coverRelationKeys, true);
 
 		if (!object.coverId) {
 			close();
 		};
 
+		if (item.type == I.CoverType.Source) {
+			if (onUploadStart) {
+				onUploadStart();
+			};
+
+			C.UnsplashDownload(item.id, (message: any) => {
+				if (!message.error.code) {
+					onUpload(item.type, message.hash);
+				};
+			});
+
+			close();
+		} else
 		if (onSelect) {
 			onSelect(item);
 		};
@@ -134,20 +202,20 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 		analytics.event('SetCover', { type: item.type, id: item.id });
 	};
 
+	onFilterChange (v: string) {
+		window.clearTimeout(this.timeout);
+		this.timeout = window.setTimeout(() => { this.setState({ filter: v }); }, 500);
+	};
+
 	getSections () {
+		let { filter } = this.state;
 		let sections: any[] = [
 			{ name: 'Solid colors', children: DataUtil.coverColors() },
-			{ name: 'Gradients', children: [
-				{ type: I.CoverType.Gradient, id: 'yellow' },
-				{ type: I.CoverType.Gradient, id: 'red' },
-				{ type: I.CoverType.Gradient, id: 'blue' },
-				{ type: I.CoverType.Gradient, id: 'teal' },
-				{ type: I.CoverType.Gradient, id: 'pinkOrange' },
-				{ type: I.CoverType.Gradient, id: 'bluePink' },
-				{ type: I.CoverType.Gradient, id: 'greenOrange' },
-				{ type: I.CoverType.Gradient, id: 'sky' },
-			] as any[] },
+			{ name: 'Gradients', children: DataUtil.coverGradients() },
 		];
+		sections = DataUtil.menuSectionsFilter(sections, filter);
+		sections.push({ name: 'Unsplash', children: this.items });
+
 		return sections;
 	};
 });

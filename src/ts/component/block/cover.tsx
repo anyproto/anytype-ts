@@ -15,6 +15,7 @@ interface State {
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
+const Url = require('json/url.json');
 const { dialog } = window.require('@electron/remote');
 
 const BlockCover = observer(class BlockCover extends React.Component<Props, State> {
@@ -69,14 +70,33 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 		const { rootId, readonly } = this.props;
 		const object = detailStore.get(rootId, rootId, [ 'iconImage', 'iconEmoji' ].concat(Constant.coverRelationKeys), true);
 		const { coverType, coverId } = object;
-		const isImage = [ I.CoverType.Upload, I.CoverType.Image ].indexOf(coverType) >= 0;
+		const isImage = DataUtil.coverIsImage(coverType);
 		const root = blockStore.getLeaf(rootId, rootId);
 
 		if (!root) {
 			return null;
 		};
 
+		let image = null;
+		let author = null;
 		let elements = null;
+		let content = null;
+
+		if (coverType == I.CoverType.Source) {
+			image = detailStore.get(rootId, coverId, [ 'mediaArtistName', 'mediaArtistURL' ], true);
+			author = (
+				<div className="author">
+					Photo by <a href={image.mediaArtistURL + Url.unsplash.utm}>{image.mediaArtistName}</a> on <a href={Url.unsplash.site + Url.unsplash.utm}>Unsplash</a>
+				</div>
+			);
+		};
+
+		if (isImage) { 
+			content = <img id="cover" src="" className={[ 'cover', 'type' + coverType, coverId ].join(' ')} />;
+		} else {
+			content = <Cover id={coverId} image={coverId} type={coverType} className={coverId} />;
+		};
+
 		if (isEditing) {
 			elements = (
 				<React.Fragment>
@@ -129,14 +149,9 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 				onDrop={this.onDrop}
 			>
 				{loading ? <Loader /> : ''}
-
-				{isImage ? (
-					<img id="cover" src="" className={[ 'cover', 'type' + coverType, coverId ].join(' ')} />
-				) : (
-					<Cover id={coverId} image={coverId} type={coverType} className={coverId} />
-				)}
-
+				{content}
 				{elements}
+				{author}
 			</div>
 		);
 	};
@@ -145,12 +160,14 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 		this._isMounted = true;
 		this.resize();
 
-		const win = $(window);
-		win.unbind('resize.cover').on('resize.cover', () => { this.resize(); });
+		Util.renderLink($(ReactDOM.findDOMNode(this)));
+		$(window).unbind('resize.cover').on('resize.cover', () => { this.resize(); });
 	};
 	
 	componentDidUpdate () {
 		this.resize();
+
+		Util.renderLink($(ReactDOM.findDOMNode(this)));
 	};
 	
 	componentWillUnmount () {
@@ -303,6 +320,13 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 	};
 	
 	onEdit (e: any) {
+		const { rootId } = this.props;
+		const object = detailStore.get(rootId, rootId, Constant.coverRelationKeys, true);
+
+		this.coords.x = object.coverX;
+		this.coords.y = object.coverY;
+		this.scale = object.coverScale;
+
 		this.setState({ isEditing: true });
 	};
 	
@@ -310,15 +334,18 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 		this.setState({ loading: true });
 	};
 	
-	onUpload (hash: string) {
+	onUpload (type: I.CoverType, hash: string) {
 		const { rootId } = this.props;
 
 		this.old = detailStore.get(rootId, rootId, Constant.coverRelationKeys, true);
+		this.coords.x = 0;
+		this.coords.y = -0.25;
+		this.scale = 0;
 
-		DataUtil.pageSetCover(rootId, I.CoverType.Upload, hash, 0, -0.5);
-
-		this.loaded = false;
-		this.setState({ loading: false, isEditing: true, justUploaded: true });
+		DataUtil.pageSetCover(rootId, type, hash, this.coords.x, this.coords.y, this.scale, () => {
+			this.loaded = false;
+			this.setState({ loading: false, isEditing: true, justUploaded: true });
+		});
 	};
 	
 	onSave (e: any) {
@@ -358,7 +385,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 		const object = detailStore.get(rootId, rootId, Constant.coverRelationKeys, true);
 		const { coverId, coverType } = object;
 		const node = $(ReactDOM.findDOMNode(this));
-		const isImage = [ I.CoverType.Upload, I.CoverType.Image ].indexOf(coverType) >= 0;
+		const isImage = DataUtil.coverIsImage(coverType);
 		
 		if (!isImage || !node.hasClass('wrap')) {
 			return;
@@ -391,8 +418,8 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 			this.cover.css({ opacity: 0 });
 			el.onload = cb;
 		};
-		
-		if (coverType == I.CoverType.Upload) {
+
+		if ([ I.CoverType.Upload, I.CoverType.Source ].includes(coverType)) {
 			el.src = commonStore.imageUrl(coverId, Constant.size.cover);
 		};
 
@@ -495,7 +522,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 
 		this.rect.cw = rect.width;
 		this.rect.ch = rect.height;
-		
+
 		this.x = coverX * this.rect.cw;
 		this.y = coverY * this.rect.ch;
 

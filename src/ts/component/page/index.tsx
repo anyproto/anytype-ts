@@ -32,6 +32,7 @@ import PageMainNavigation from './main/navigation';
 
 const { ipcRenderer } = window.require('electron');
 const Constant = require('json/constant.json');
+const Url = require('json/url.json');
 const $ = require('jquery');
 const raf = require('raf');
 const Components: any = {
@@ -241,7 +242,13 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 				if (account && askSurvey && !popupStore.isOpen() && !lastSurveyCanceled && (lastSurveyTime <= Util.time() - 86400 * days)) {
 					analytics.event('SurveyShow');
 
+					const onClose = () => {
+						Storage.set('lastSurveyCanceled', 1);
+						Storage.set('lastSurveyTime', Util.time());
+					};
+
 					popupStore.open('confirm', {
+						onClose: onClose,
 						data: {
 							title: 'We need your opinion',
 							text: 'Please, tell us what you think about Anytype. Participate in 1 min survey',
@@ -249,15 +256,12 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 							textCancel: 'Skip',
 							canCancel: true,
 							onConfirm: () => {
-								ipcRenderer.send('urlOpen', Util.sprintf(Constant.survey, account.id));
+								ipcRenderer.send('urlOpen', Util.sprintf(Url.survey, account.id));
 								Storage.set('lastSurveyTime', Util.time());
 
 								analytics.event('SurveyOpen');
 							},
-							onCancel: () => {
-								Storage.set('lastSurveyCanceled', 1);
-								Storage.set('lastSurveyTime', Util.time());
-							},
+							onCancel: onClose,
 						},
 					});
 				};

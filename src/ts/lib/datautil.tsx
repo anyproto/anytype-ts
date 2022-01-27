@@ -228,7 +228,26 @@ class DataUtil {
 			{ type: I.CoverType.Color, id: 'lightgrey' },
 			{ type: I.CoverType.Color, id: 'darkgrey' },
 			{ type: I.CoverType.Color, id: 'black' },
-		];
+		].map((it: any) => {
+			it.name = translate('textColor-' + it.id);
+			return it;
+		});
+	};
+
+	coverGradients () {
+		return [
+			{ type: I.CoverType.Gradient, id: 'yellow' },
+			{ type: I.CoverType.Gradient, id: 'red' },
+			{ type: I.CoverType.Gradient, id: 'blue' },
+			{ type: I.CoverType.Gradient, id: 'teal' },
+			{ type: I.CoverType.Gradient, id: 'pinkOrange' },
+			{ type: I.CoverType.Gradient, id: 'bluePink' },
+			{ type: I.CoverType.Gradient, id: 'greenOrange' },
+			{ type: I.CoverType.Gradient, id: 'sky' },
+		].map((it: any) => {
+			it.name = translate('gradientColor-' + it.id);
+			return it;
+		});
 	};
 
 	threadColor (s: I.ThreadStatus) {
@@ -1183,6 +1202,11 @@ class DataUtil {
 		dbStore.metaSet(subId, '', meta);
 		C.ObjectSearchSubscribe(subId, view.filters, view.sorts, keys, block.content.sources, offset, limit, true, '', '');
 	};
+
+	coverIsImage (type: I.CoverType) {
+		return [ I.CoverType.Upload, I.CoverType.Image, I.CoverType.Source ].includes(type);
+	};
+
 };
 
 export default new DataUtil();

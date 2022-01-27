@@ -365,6 +365,18 @@ const WorkspaceCreate = (response: any) => {
 	};
 };
 
+const UnsplashSearch = (response: any) => {
+	return {
+		pictures: (response.getPicturesList() || []).map(Mapper.From.UnsplashPicture),
+	};
+};
+
+const UnsplashDownload = (response: any) => {
+	return {
+		hash: response.getHash(),
+	};
+};
+
 export {
 	DebugSync,
 
@@ -441,4 +453,7 @@ export {
 	CloneTemplate,
 
 	WorkspaceCreate,
+
+	UnsplashSearch,
+	UnsplashDownload,
 };
