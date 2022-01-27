@@ -434,7 +434,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		this.timeout = window.setTimeout(() => {
 			const node = $(ReactDOM.findDOMNode(this));
 			node.removeClass('active');
-		}, 300);
+		}, 1000);
 	};
 
 	onResizeStart (e: any, dir: I.MenuType) {
