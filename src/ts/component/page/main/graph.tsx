@@ -115,6 +115,8 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 	};
 
 	load () {
+		console.log('GRAPH load');
+
 		const filters: any[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.Equal, value: false },
 			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },

@@ -44,6 +44,7 @@ import 'scss/component/pager.scss';
 import 'scss/component/pin.scss';
 import 'scss/component/sync.scss';
 import 'scss/component/filter.scss';
+import 'scss/component/sidebar.scss';
 import 'scss/component/list/previewObject.scss';
 
 import 'scss/component/preview/common.scss';
@@ -326,7 +327,7 @@ class App extends React.Component<Props, State> {
 		Storage.delete('lastSurveyCanceled');
 
 		const storageKeys = [
-			'theme', 'pinTime', 'defaultType',
+			'theme', 'pinTime', 'defaultType', 'sidebar'
 		];
 
 		const cover = Storage.get('cover');

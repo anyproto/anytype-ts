@@ -1,7 +1,8 @@
 @import "~scss/_vars";
 
+.footer { position: fixed; right: 0px; bottom: 0px; width: 100%; z-index: 20; }
 .footer {
-	.copy { width: 120px; position: fixed; left: 50%; bottom: 12px; z-index: 10; text-align: center; margin-left: -60px; color: $colorWhite; }
+	.copy { width: 120px; position: absolute; left: 50%; bottom: 12px; z-index: 10; text-align: center; margin-left: -60px; color: $colorWhite; }
 
 	.icon { cursor: pointer; z-index: 10; }
 	.icon.big { 
@@ -9,8 +10,8 @@
 		background-size: 20px 20px;
 	}
 	
-	#button-add { position: fixed; left: 14px; bottom: 14px; }
-	#button-help { position: fixed; right: 14px; bottom: 14px; }
+	#button-add { position: absolute; left: 14px; bottom: 14px; }
+	#button-help { position: absolute; right: 14px; bottom: 14px; }
 }
 
 .footer.footerMainEdit {

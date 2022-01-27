@@ -18,7 +18,7 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 	_isMounted: boolean = false;
 
 	render () {
-		const { rootId, block, index, getView, getRecord, onRef, style } = this.props;
+		const { rootId, block, index, getView, getRecord, onRef, style, onContext } = this.props;
 		const view = getView();
 		const { cardSize, coverFit, hideIcon } = view;
 		const relations = view.relations.filter((it: any) => { 
@@ -66,7 +66,11 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 		};
 
 		return (
-			<div className={cn.join(' ')} style={style} onMouseDown={(e: any) => { DataUtil.objectOpenPopup(record); }}>
+			<div 
+				className={cn.join(' ')} 
+				style={style} 
+				onMouseDown={(e: any) => { this.onClick(e); }}
+			>
 				{cover}
 				<div className="inner">
 					{relations.map((relation: any, i: number) => {
@@ -118,6 +122,19 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 		if (last.length) {
 			last.addClass('last');
 		};
+	};
+
+	onClick (e: any) {
+		e.preventDefault();
+
+		const { index, getRecord, onContext } = this.props;
+		const record = getRecord(index);
+		const cb = {
+			0: () => { DataUtil.objectOpenPopup(record); },
+			2: () => { onContext(e, record.id); }
+		};
+
+		cb[e.button]();
 	};
 
 	getPicture (): string {

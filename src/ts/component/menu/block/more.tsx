@@ -1,15 +1,13 @@
 import * as React from 'react';
 import { MenuItemVertical } from 'ts/component';
-import { I, C, keyboard, Key, analytics, DataUtil, Util, focus, crumbs } from 'ts/lib';
+import { I, C, keyboard, analytics, DataUtil, Util, focus, crumbs } from 'ts/lib';
 import { blockStore, detailStore, commonStore, dbStore, menuStore, popupStore } from 'ts/store';
-import { Action } from '../../../lib';
 
 interface Props extends I.Menu {
 	history?: any;
 };
 
 const $ = require('jquery');
-const { ipcRenderer } = window.require('electron');
 const Constant = require('json/constant.json');
 
 class MenuBlockMore extends React.Component<Props, {}> {
@@ -162,10 +160,10 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			highlight = { id: 'highlight', name: 'Highlight' };
 		};
 
-		if (block.fields.isLocked) {
-			pageLock = { id: 'pageUnlock', icon: 'pageUnlock', name: 'Unlock page' };
+		if (block.isLocked()) {
+			pageLock = { id: 'pageUnlock', icon: 'pageUnlock', name: 'Unlock page', caption: `Ctrl+Shift+L` };
 		} else {
-			pageLock = { id: 'pageLock', icon: 'pageLock', name: 'Lock page' };
+			pageLock = { id: 'pageLock', icon: 'pageLock', name: 'Lock page', caption: `Ctrl+Shift+L` };
 		};
 
 		// Restrictions
@@ -257,7 +255,6 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const { param, getId, getSize, close } = this.props;
 		const { data } = param;
 		const { rootId, blockId, onMenuSelect } = data;
-		const object = detailStore.get(rootId, rootId, [ 'isHightlighted' ]);
 		const block = blockStore.getLeaf(rootId, blockId);
 
 		if (!block) {

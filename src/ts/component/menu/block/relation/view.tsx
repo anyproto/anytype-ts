@@ -45,7 +45,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		let allowedRelation = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Relation ]);
 		let allowedValue = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
 
-		if (root.fields.isLocked) {
+		if (root.isLocked()) {
 			allowedBlock = false;
 			allowedRelation = false;
 			allowedValue = false;

@@ -64,6 +64,10 @@ class Block implements I.Block {
 		return self;
 	};
 
+	isLocked (): boolean {
+		return this.fields.isLocked;
+	};
+
 	canHaveChildren (): boolean {
 		return !this.isSystem() && (this.isTextParagraph() || this.isTextList());
 	};
