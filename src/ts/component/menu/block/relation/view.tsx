@@ -1,12 +1,11 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, C, DataUtil, Util, Relation } from 'ts/lib';
+import { I, C, DataUtil, Util, Relation, analytics } from 'ts/lib';
 import { commonStore, blockStore, detailStore, dbStore, menuStore } from 'ts/store';
 import { Icon } from 'ts/component';
 import { observer } from 'mobx-react';
 
 import Item from 'ts/component/menu/item/relationView';
-import { analytics } from '../../../../lib';
 
 interface Props extends I.Menu {};
 
