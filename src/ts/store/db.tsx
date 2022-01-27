@@ -260,10 +260,6 @@ class DbStore {
 		this.dataMap.set(this.getId(rootId, blockId), records);
 	};
 
-    getId (rootId: string, blockId: string) {
-		return [ rootId, blockId ].join(':');
-	};
-
     getObjectType (id: string): I.ObjectType {
 		return this.objectTypeList.find((it: I.ObjectType) => { return it.id == id; });
 	};
@@ -305,8 +301,12 @@ class DbStore {
 		return records.find((it: any) => { return it.id == id; });
 	};
 
+	getId (rootId: string, blockId: string) {
+		return [ rootId, blockId ].join(':');
+	};
+
 	getSubId (rootId: string, blockId: string) {
-		return [ rootId, blockId ].join('-');
+		return this.getId(rootId, blockId);
 	};
 };
 
