@@ -295,4 +295,12 @@ html.themeDark {
     .cell.isEditing {
         .cellContent { background: $colorBlack; }
     }
+
+    .cellContent.c-url, 
+    .cellContent.c-email, 
+    .cellContent.c-phone 
+    {
+        .name { border-color: $colorSecondary; }
+        .name:hover { border-color: $colorPrimary; }
+    }
 }

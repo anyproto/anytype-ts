@@ -156,14 +156,26 @@ class Cell extends React.Component<Props, {}> {
 		const record = getRecord(index);
 		const { config } = commonStore;
 		const cellId = Relation.cellId(idPrefix, relation.relationKey, index);
+		const value = record[relation.relationKey] || '';
 
 		if (!this.canEdit()) {
+
+			switch (relation.format) {
+				case I.RelationType.Url:
+				case I.RelationType.Email:
+				case I.RelationType.Phone:
+					if (value) {
+						const scheme = Relation.getUrlScheme(relation.format, value);
+						ipcRenderer.send('urlOpen', scheme + value);
+						break;
+					};
+			};
+
 			return;
 		};
 
 		const win = $(window);
 		const cell = $(`#${cellId}`);
-		const value = record[relation.relationKey] || '';
 
 		let width = cell.outerWidth();
 		if (undefined !== maxWidth) {
