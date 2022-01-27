@@ -94,6 +94,8 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<Pro
 
 		window.clearTimeout(this.timeout);
 		this.timeout = window.setTimeout(() => { node.removeClass('show'); }, Constant.delay.header);
+
+		this.resize();
 	};
 
 	onHome (e: any) {
@@ -181,6 +183,7 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<Pro
 	onNavigation (e: any) {
 		DataUtil.objectOpenPopup({ id: this.props.rootId, layout: I.ObjectLayout.Navigation });
 	};
+	
 	onGraph (e: any) {
 		DataUtil.objectOpenPopup({ id: this.props.rootId, layout: I.ObjectLayout.Graph });
 	};
@@ -216,6 +219,16 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<Pro
 	getContainer () {
 		const { isPopup } = this.props;
 		return (isPopup ? '.popup' : '') + ' .header';
+	};
+
+	resize () {
+		const { isPopup } = this.props;
+		const { sidebar } = commonStore;
+		const { width } = sidebar;
+
+		if (!isPopup) {
+			Util.resizeHeaderFooter(width);
+		};
 	};
 	
 });

@@ -145,13 +145,13 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 	};
 
 	resize () {
-		const { rootId, block, getView, bodyContainer } = this.props;
+		const { rootId, block, getView, isPopup } = this.props;
 		const view = getView();
 		const node = $(ReactDOM.findDOMNode(this));
 		const scroll = node.find('.scroll');
 		const wrap = node.find('.scrollWrap');
 		const grid = node.find('.ReactVirtualized__Grid__innerScrollContainer');
-		const ww = $(bodyContainer).width();
+		const ww = $('#page').width();
 		const mw = ww - PADDING * 2;
 		const subId = dbStore.getSubId(rootId, block.id);
 		const records = dbStore.getRecords(subId, '');

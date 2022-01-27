@@ -1,11 +1,10 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Icon, IconObject, Sync } from 'ts/component';
-import { I, Util, DataUtil, crumbs, history as historyPopup, keyboard } from 'ts/lib';
+import { Icon, IconObject } from 'ts/component';
+import { I, Util, DataUtil, keyboard } from 'ts/lib';
 import { commonStore, blockStore, detailStore, menuStore, popupStore } from 'ts/store';
 import { observer } from 'mobx-react';
-import { ObjectRelationOptionDelete } from '../../../lib/command';
 
 interface Props extends RouteComponentProps<any> {
 	rootId: string;
@@ -83,6 +82,8 @@ const HeaderMainNavigation = observer(class HeaderMainNavigation extends React.C
 
 		window.clearTimeout(this.timeout);
 		this.timeout = window.setTimeout(() => { node.removeClass('show'); }, Constant.delay.header);
+
+		this.resize();
 	};
 
 	onHome (e: any) {
@@ -140,6 +141,16 @@ const HeaderMainNavigation = observer(class HeaderMainNavigation extends React.C
 	getContainer () {
 		const { isPopup } = this.props;
 		return (isPopup ? '.popup' : '') + ' .header';
+	};
+
+	resize () {
+		const { isPopup } = this.props;
+		const { sidebar } = commonStore;
+		const { width } = sidebar;
+
+		if (!isPopup) {
+			Util.resizeHeaderFooter(width);
+		};
 	};
 	
 });

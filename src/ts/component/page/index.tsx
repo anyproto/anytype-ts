@@ -1,7 +1,9 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { I, Onboarding, Util, Storage, analytics, keyboard } from 'ts/lib';
+import { ListPopup, Sidebar } from 'ts/component';
 import { authStore, commonStore, menuStore, popupStore, blockStore } from 'ts/store';
+import { observer } from 'mobx-react';
 
 import PageAuthInvite from './auth/invite';
 import PageAuthNotice from './auth/notice';
@@ -67,15 +69,20 @@ interface Props extends RouteComponentProps<any> {
 	rootId?: string;
 };
 
-class Page extends React.Component<Props, {}> {
+const Page = observer(class Page extends React.Component<Props, {}> {
 
 	_isMounted: boolean = false;
 	refChild: any;
 
 	render () {
+		const { isPopup } = this.props;
+		const { config, sidebar } = commonStore;
+		const { snap, fixed } = sidebar;
 		const match = this.getMatch();
-		const path = [ match.params.page, match.params.action ].join('/');
+		const { page, action } = match.params || {};
+		const path = [ page, action ].join('/');
 		const showNotice = !Boolean(Storage.get('firstRun'));
+		const showSidebar = config.experimental && (page == 'main') && (action != 'index');
 
 		if (showNotice) {
 			Components['/'] = PageAuthNotice;
@@ -86,11 +93,47 @@ class Page extends React.Component<Props, {}> {
 			return <div>Page component "{path}" not found</div>;
 		};
 
-		return (
-			<div className={'page ' + this.getClass('page')}>
+		const wrap = (
+			<div id="page" className={'page ' + this.getClass('page')}>
 				<Component ref={(ref: any) => this.refChild = ref} {...this.props} />
 			</div>
 		);
+
+		let sb = <Sidebar {...this.props} />;
+		let content = null;
+
+		if (isPopup || !showSidebar) {
+			content = wrap;
+		} else {
+			if (fixed) {
+				if (snap == I.MenuDirection.Right) {
+					content = (
+						<div className="pageFlex">
+							{sb}
+							{wrap}
+							<div id="sidebarDummy" />
+						</div>
+					);
+				} else {
+					content = (
+						<div className="pageFlex">
+							{sb}
+							<div id="sidebarDummy" />
+							{wrap}
+						</div>
+					);
+				};
+			} else {
+				content = (
+					<React.Fragment>
+						{sb}
+						{wrap}
+					</React.Fragment>
+				);
+			};
+		};
+		
+		return content;
 	};
 	
 	componentDidMount () {
@@ -316,10 +359,10 @@ class Page extends React.Component<Props, {}> {
 
 			if (this.refChild && this.refChild.resize) {
 				this.refChild.resize();			
-			};			
+			};
 		});
 	};
-
-};
+	
+});
 
 export default Page;

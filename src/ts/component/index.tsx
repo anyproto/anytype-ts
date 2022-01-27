@@ -60,6 +60,8 @@ import Filter from './util/filter';
 import Icon from './util/icon';
 import IconObject from './util/iconObject';
 
+import Sidebar from './util/sidebar';
+
 import Preview from './util/preview';
 import PreviewLink from './util/preview/link';
 import PreviewObject from './util/preview/object';
@@ -131,6 +133,7 @@ export {
 	PreviewObject,
 	Graph,
 	Cell,
+	Sidebar,
 	ObjectName,
 	ObjectDescription,
 	ControlButtons,

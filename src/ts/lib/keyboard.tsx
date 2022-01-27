@@ -590,9 +590,24 @@ class Keyboard {
 	};
 	
 	setCoords (e: any) {
+		const { sidebar } = commonStore;
+		const { snap, width } = sidebar;
+
 		this.mouse = {
 			page: { x: e.pageX, y: e.pageY },
 			client: { x: e.clientX, y: e.clientY },
+		};
+
+		if (!this.isDragging && !this.isResizing) {
+			const el = $('#sidebar');
+			const win = $(window);
+
+			if ((snap == I.MenuDirection.Left) && (this.mouse.page.x <= 20)) {
+				el.addClass('active');
+			};
+			if ((snap == I.MenuDirection.Right) && (this.mouse.page.x >= win.width() - 20)) {
+				el.addClass('active');
+			};
 		};
 	};
 	

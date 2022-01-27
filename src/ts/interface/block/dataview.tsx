@@ -89,6 +89,7 @@ export interface ViewComponent {
 	getView?(): View;
 	onRowAdd?: (e: any, dir: number) => void;
 	onCellClick?(e: any, key: string, index: number): void;
+	onContext?(e: any, id: string): void;
 	onCellChange?: (id: string, key: string, value: any, callBack?: (message: any) => void) => void;
 	optionCommand?: (code: string, rootId: string, blockId: string, relationKey: string, recordId: string, option: I.SelectOption, callBack?: (message: any) => void) => void;
 };

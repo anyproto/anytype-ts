@@ -169,7 +169,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 	onIconPage () {
 		const { rootId, block } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
-		const elements = node.find('.elements');
+		const elements = node.find('#elements');
 		
 		menuStore.open('smile', { 
 			element: `#block-${block.id} #button-icon`,
@@ -216,7 +216,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 	onLayout (e: any) {
 		const { rootId, block } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
-		const elements = node.find('.elements');
+		const elements = node.find('#elements');
 		const object = detailStore.get(rootId, rootId, []);
 		
 		menuStore.open('blockLayout', { 
@@ -238,7 +238,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 	onRelation () {
 		const { isPopup, rootId } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
-		const elements = node.find('.elements');
+		const elements = node.find('#elements');
 		const container = $(isPopup ? '#popupPage #innerWrap' : window);
 		const rect = { x: container.width() / 2 , y: Util.sizeHeader(), width: 0, height: 0 };
 		const cnw = [ 'fixed' ];
@@ -277,7 +277,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 	onCover (e: any) {
 		const { rootId, block } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
-		const elements = node.find('.elements');
+		const elements = node.find('#elements');
 		
 		focus.clear(true);
 		menuStore.open('blockCover', {
