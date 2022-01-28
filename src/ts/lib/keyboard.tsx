@@ -1,8 +1,6 @@
 import { I, C, Util, DataUtil, crumbs, Storage, focus, history as historyPopup, analytics, Docs } from 'ts/lib';
 import { commonStore, authStore, blockStore, detailStore, menuStore, popupStore } from 'ts/store';
 
-const { ipcRenderer } = window.require('electron');
-
 const $ = require('jquery');
 const KeyCode = require('json/key.json');
 const Constant = require('json/constant.json');
@@ -33,14 +31,16 @@ class Keyboard {
 	init () {
 		this.unbind();
 		
-		const win = $(window); 
+		const renderer = Util.getRenderer();
+		const win = $(window);
+
 		win.on('keydown.common', (e: any) => { this.onKeyDown(e); });
 		win.on('keyup.common', (e: any) => { this.onKeyUp(e); });
 		win.on('mousedown.common', (e: any) => { this.onMouseDown(e); });
 		win.on('scroll.common', (e: any) => { this.onScroll(e); });
 
-		ipcRenderer.removeAllListeners('commandGlobal');
-		ipcRenderer.on('commandGlobal', (e: any, cmd: string, arg: any) => { this.onCommand(cmd, arg); });
+		renderer.removeAllListeners('commandGlobal');
+		renderer.on('commandGlobal', (e: any, cmd: string, arg: any) => { this.onCommand(cmd, arg); });
 	};
 	
 	unbind () {
@@ -429,9 +429,10 @@ class Keyboard {
 	onSaveAsHTML () {
 		const rootId = this.getRootId();
 		const object = detailStore.get(rootId, rootId);
+		const renderer = Util.getRenderer();
 
 		this.printApply('save', false);
-		ipcRenderer.send('winCommand', 'saveAsHTML', { name: object.name });
+		renderer.send('winCommand', 'saveAsHTML', { name: object.name });
 	};
 
 	onSearch () {

@@ -30,7 +30,6 @@ import PageMainStore from './main/store';
 import PageMainGraph from './main/graph';
 import PageMainNavigation from './main/navigation';
 
-const { ipcRenderer } = window.require('electron');
 const Constant = require('json/constant.json');
 const Url = require('json/url.json');
 const $ = require('jquery');
@@ -189,6 +188,7 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 		const win = $(window);
 		const path = [ match.params.page, match.params.action ].join('/');
 		const Component = Components[path];
+		const renderer = Util.getRenderer();
 
 		Util.tooltipHide(true);
 		Util.previewHide(true);
@@ -256,7 +256,7 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 							textCancel: 'Skip',
 							canCancel: true,
 							onConfirm: () => {
-								ipcRenderer.send('urlOpen', Util.sprintf(Url.survey, account.id));
+								renderer.send('urlOpen', Util.sprintf(Url.survey, account.id));
 								Storage.set('lastSurveyTime', Util.time());
 
 								analytics.event('SurveyOpen');

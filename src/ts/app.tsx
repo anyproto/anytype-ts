@@ -156,9 +156,9 @@ const path = require('path');
 const { app, dialog, process } = window.require('@electron/remote');
 const version = app.getVersion();
 const userPath = app.getPath('userData');
-const { ipcRenderer } = window.require('electron');
 const fs = window.require('fs');
-const memoryHistory = require('history').createMemoryHistory;
+const hs = require('history');
+const memoryHistory = hs.createMemoryHistory;
 const history = memoryHistory();
 const Constant =  require('json/constant.json');
 
@@ -215,6 +215,10 @@ declare global {
 		Go: any;
 		Graph: any;
 		$: any;
+
+		isWebVersion: boolean;
+		Config: any;
+		Renderer: any;
 	}
 };
 
@@ -372,18 +376,19 @@ class App extends React.Component<Props, State> {
 		const node = $(ReactDOM.findDOMNode(this));
 		const logo = node.find('#logo');
 		const logsDir = path.join(userPath, 'logs');
+		const renderer = Util.getRenderer();
 
 		try { fs.mkdirSync(logsDir); } catch (err) {};
 
-		ipcRenderer.send('appLoaded', true);
+		renderer.send('appLoaded', true);
 
 		if (accountId) {
-			ipcRenderer.send('keytarGet', accountId);
-			ipcRenderer.on('keytarGet', (e: any, key: string, value: string) => {
+			renderer.send('keytarGet', accountId);
+			renderer.on('keytarGet', (e: any, key: string, value: string) => {
 				if (accountId && (key == accountId)) {
 					if (phrase) {
 						value = phrase;
-						ipcRenderer.send('keytarSet', accountId, phrase);
+						renderer.send('keytarSet', accountId, phrase);
 						Storage.delete('phrase');
 					};
 
@@ -397,7 +402,7 @@ class App extends React.Component<Props, State> {
 			});
 		};
 
-		ipcRenderer.on('dataPath', (e: any, dataPath: string) => {
+		renderer.on('dataPath', (e: any, dataPath: string) => {
 			authStore.pathSet(dataPath);
 
 			window.setTimeout(() => {
@@ -406,11 +411,11 @@ class App extends React.Component<Props, State> {
 			}, 2000);
 		});
 		
-		ipcRenderer.on('route', (e: any, route: string) => {
+		renderer.on('route', (e: any, route: string) => {
 			Util.route(route);
 		});
 
-		ipcRenderer.on('popup', (e: any, id: string, param: any, close?: boolean) => {
+		renderer.on('popup', (e: any, id: string, param: any, close?: boolean) => {
 			param = param || {};
 			param.data = param.data || {};
 			param.data.rootId = keyboard.getRootId();
@@ -422,7 +427,7 @@ class App extends React.Component<Props, State> {
 			window.setTimeout(() => { popupStore.open(id, param); }, Constant.delay.popup);
 		});
 
-		ipcRenderer.on('checking-for-update', (e: any, auto: boolean) => {
+		renderer.on('checking-for-update', (e: any, auto: boolean) => {
 			if (!auto) {
 				commonStore.progressSet({ 
 					status: 'Checking for update...', 
@@ -433,7 +438,7 @@ class App extends React.Component<Props, State> {
 			};
 		});
 
-		ipcRenderer.on('update-available', (e: any, auto: boolean) => {
+		renderer.on('update-available', (e: any, auto: boolean) => {
 			commonStore.progressClear(); 
 
 			if (!auto) {
@@ -444,17 +449,17 @@ class App extends React.Component<Props, State> {
 						textConfirm: 'Update',
 						textCancel: 'Later',
 						onConfirm: () => {
-							ipcRenderer.send('updateDownload');
+							renderer.send('updateDownload');
 						},
 						onCancel: () => {
-							ipcRenderer.send('updateCancel');
+							renderer.send('updateCancel');
 						}, 
 					},
 				});
 			};
 		});
 
-		ipcRenderer.on('update-confirm', (e: any, auto: boolean) => {
+		renderer.on('update-confirm', (e: any, auto: boolean) => {
 			commonStore.progressClear(); 
 
 			if (!auto) {
@@ -465,18 +470,18 @@ class App extends React.Component<Props, State> {
 						textConfirm: 'Restart and update',
 						textCancel: 'Later',
 						onConfirm: () => {
-							ipcRenderer.send('updateConfirm');
+							renderer.send('updateConfirm');
 							Storage.delete('popupNewBlock');
 						},
 						onCancel: () => {
-							ipcRenderer.send('updateCancel');
+							renderer.send('updateCancel');
 						}, 
 					},
 				});
 			};
 		});
 
-		ipcRenderer.on('update-not-available', (e: any, auto: boolean) => {
+		renderer.on('update-not-available', (e: any, auto: boolean) => {
 			commonStore.progressClear(); 
 
 			if (!auto) {
@@ -491,13 +496,13 @@ class App extends React.Component<Props, State> {
 			};
 		});
 
-		ipcRenderer.on('download-progress', this.onProgress);
+		renderer.on('download-progress', this.onProgress);
 
-		ipcRenderer.on('update-downloaded', (e: any, text: string) => {
+		renderer.on('update-downloaded', (e: any, text: string) => {
 			commonStore.progressClear(); 
 		});
 
-		ipcRenderer.on('update-error', (e: any, err: string, auto: boolean) => {
+		renderer.on('update-error', (e: any, err: string, auto: boolean) => {
 			console.error(err);
 			commonStore.progressClear();
 
@@ -509,34 +514,34 @@ class App extends React.Component<Props, State> {
 						textConfirm: 'Retry',
 						textCancel: 'Later',
 						onConfirm: () => {
-							ipcRenderer.send('updateDownload');
+							renderer.send('updateDownload');
 						},
 						onCancel: () => {
-							ipcRenderer.send('updateCancel');
+							renderer.send('updateCancel');
 						}, 
 					},
 				});
 			};
 		});
 
-		ipcRenderer.on('import', this.onImport);
-		ipcRenderer.on('export', this.onExport);
-		ipcRenderer.on('command', this.onCommand);
+		renderer.on('import', this.onImport);
+		renderer.on('export', this.onExport);
+		renderer.on('command', this.onCommand);
 
-		ipcRenderer.on('config', (e: any, config: any) => { 
+		renderer.on('config', (e: any, config: any) => { 
 			commonStore.configSet(config, true);
 			this.initTheme(config.theme);
 		});
 
-		ipcRenderer.on('enter-full-screen', () => {
+		renderer.on('enter-full-screen', () => {
 			body.addClass('fullScreen')
 		});
 
-		ipcRenderer.on('leave-full-screen', () => {
+		renderer.on('leave-full-screen', () => {
 			body.removeClass('fullScreen');
 		});
 
-		ipcRenderer.on('debugSync', (e: any) => {
+		renderer.on('debugSync', (e: any) => {
 			C.DebugSync(100, (message: any) => {
 				if (!message.error.code) {
 					this.logToFile('sync', message);
@@ -544,37 +549,39 @@ class App extends React.Component<Props, State> {
 			});
 		});
 
-		ipcRenderer.on('debugTree', (e: any) => {
+		renderer.on('debugTree', (e: any) => {
 			const rootId = keyboard.getRootId();
 
 			C.DebugTree(rootId, logsDir, (message: any) => {
 				if (!message.error.code) {
-					ipcRenderer.send('pathOpen', logsDir);
+					renderer.send('pathOpen', logsDir);
 				};
 			});
 		});
 
-		ipcRenderer.on('shutdownStart', (e, relaunch) => {
+		renderer.on('shutdownStart', (e, relaunch) => {
 			this.setState({ loading: true });
 		});
 
-		ipcRenderer.on('shutdown', (e, relaunch) => {
+		renderer.on('shutdown', (e, relaunch) => {
 			C.Shutdown(() => {
-				ipcRenderer.send('shutdown', relaunch);
+				renderer.send('shutdown', relaunch);
 			});
 		});
 	};
 
 	logToFile (name: string, message: any) {
-		let logsDir = path.join(userPath, 'logs');
-		let log = path.join(logsDir, name + '_' + FileUtil.date() + '.json');
+		const logsDir = path.join(userPath, 'logs');
+		const log = path.join(logsDir, name + '_' + FileUtil.date() + '.json');
+		const renderer = Util.getRenderer();
+
 		try {
 			fs.writeFileSync(log, JSON.stringify(message, null, 5), 'utf-8');
 		} catch(e) {
 			console.log('[DebugSync] Failed to save a file');
 		};
 
-		ipcRenderer.send('pathOpen', logsDir);
+		renderer.send('pathOpen', logsDir);
 	};
 
 	setWindowEvents () {
@@ -596,6 +603,7 @@ class App extends React.Component<Props, State> {
 
 	onCommand (e: any, key: string) {
 		const rootId = keyboard.getRootId();
+		const renderer = Util.getRenderer();
 
 		let options: any = {};
 
@@ -640,7 +648,7 @@ class App extends React.Component<Props, State> {
 							return;
 						};
 
-						ipcRenderer.send('pathOpen', files[0]);
+						renderer.send('pathOpen', files[0]);
 					});
 				});
 				break;
@@ -661,7 +669,7 @@ class App extends React.Component<Props, State> {
 							return;
 						};
 
-						ipcRenderer.send('pathOpen', files[0]);
+						renderer.send('pathOpen', files[0]);
 					});
 				});
 				break;
@@ -690,19 +698,23 @@ class App extends React.Component<Props, State> {
 	};
 
 	onMenu (e: any) {
-		ipcRenderer.send('winCommand', 'menu');
+		const renderer = Util.getRenderer();
+		renderer.send('winCommand', 'menu');
 	};
 
 	onMin (e: any) {
-		ipcRenderer.send('winCommand', 'minimize');
+		const renderer = Util.getRenderer();
+		renderer.send('winCommand', 'minimize');
 	};
 
 	onMax (e: any) {
-		ipcRenderer.send('winCommand', 'maximize');
+		const renderer = Util.getRenderer();
+		renderer.send('winCommand', 'maximize');
 	};
 
 	onClose (e: any) {
-		ipcRenderer.send('winCommand', 'close');
+		const renderer = Util.getRenderer();
+		renderer.send('winCommand', 'close');
 	};
 
 };

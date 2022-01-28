@@ -2,8 +2,6 @@ import { observable, action, computed, set, makeObservable } from 'mobx';
 import { I, Storage, Util } from 'ts/lib';
 import { analytics } from 'ts/lib';
 
-const Constant = require('json/constant.json');
-
 interface Preview {
 	type: I.MarkType,
 	param: string;
@@ -35,8 +33,8 @@ interface Sidebar {
 	snap: I.MenuDirection;
 };
 
+const Constant = require('json/constant.json');
 const $ = require('jquery');
-const { ipcRenderer } = window.require('electron');
 
 class CommonStore {
 
@@ -89,7 +87,7 @@ class CommonStore {
     };
 
     get config(): any {
-		return { ...this.configObj, debug: this.configObj.debug || {} };
+		return window.Config || { ...this.configObj, debug: this.configObj.debug || {} };
 	};
 
     get progress(): I.Progress {
@@ -205,11 +203,13 @@ class CommonStore {
 	};
 
 	themeSet (v: string) {
+		const renderer = Util.getRenderer();
+
 		this.themeId = v;
 		Storage.set('theme', v);
 		Util.addBodyClass('theme', v);
 
-		ipcRenderer.send('configSet', { theme: v });
+		renderer.send('configSet', { theme: v });
 		analytics.event('ThemeSet', { id: v });
 	};
 

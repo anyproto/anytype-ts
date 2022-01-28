@@ -16,7 +16,6 @@ interface State {
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
-const { ipcRenderer } = window.require('electron');
 const Errors = require('json/error.json');
 const Icons: number[] = [
 	12, 1230, 1, 130, 2, 230, 3, 330, 4, 430, 5, 530, 6, 630, 7, 730, 8, 830, 9, 930, 10, 1030, 11, 1130
@@ -156,6 +155,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<Props
 	add () {
 		const { match } = this.props;
 		const { name, icon, code, phrase } = authStore;
+		const renderer = Util.getRenderer();
 
 		commonStore.defaultTypeSet(Constant.typeId.note);
 		
@@ -175,7 +175,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<Props
 				authStore.previewSet('');
 
 				Storage.set('popupNewBlock', 1);
-				ipcRenderer.send('keytarSet', accountId, phrase);
+				renderer.send('keytarSet', accountId, phrase);
 				analytics.event('CreateAccount');
 				
 				if (match.params.id == 'register') {

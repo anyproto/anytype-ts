@@ -869,7 +869,19 @@ function exit (relaunch) {
 function savePage (name) {
 	name = String(name || 'untitled').replace(/[^a-z0-9]/gi, '-').toLowerCase();
 
-	win.webContents.savePage(path.join(exportPath, name + '.html'), 'HTMLComplete').then(() => {
+	let p = path.join(exportPath, name + '_files');
+	let fp = path.join(exportPath, name + '.html');
+	
+	win.webContents.savePage(fp, 'HTMLComplete').then(() => {
+		let f = fs.readFileSync(fp, 'utf8');
+
+		f = f.replace(`<script src="./${name}_files/run.js" type="text/javascript"></script>`, '');
+		f = f.replace(`<script src="./${name}_files/main.js" type="text/javascript"></script>`, '');
+		
+		fs.writeFileSync(fp, f);
+		fs.unlinkSync(path.join(p, 'main.js'));
+		fs.unlinkSync(path.join(p, 'run.js'));
+
 		shell.openPath(exportPath);
 		send('command', 'saveAsHTMLSuccess');
 	}).catch(err => { 

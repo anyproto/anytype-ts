@@ -4,7 +4,6 @@ import { v4 as uuidv4 } from 'uuid';
 import { translate } from '.';
 import { menuStore } from '../store';
 
-const { ipcRenderer } = window.require('electron');
 const raf = require('raf');
 const $ = require('jquery');
 const fs = window.require('fs');
@@ -708,9 +707,11 @@ class Util {
 	};
 	
 	renderLink (obj: any) {
+		const renderer = this.getRenderer();
+
 		obj.find('a').unbind('click').on('click', function (e: any) {
 			e.preventDefault();
-			ipcRenderer.send('urlOpen', $(this).attr('href'));
+			renderer.send('urlOpen', $(this).attr('href'));
 		});
 	};
 
@@ -730,11 +731,15 @@ class Util {
 	};
 	
 	onUrl (url: string) {
-		ipcRenderer.send('urlOpen', url);
+		const renderer = this.getRenderer();
+
+		renderer.send('urlOpen', url);
 	};
 
 	onPath (path: string) {
-		ipcRenderer.send('pathOpen', path);
+		const renderer = this.getRenderer();
+
+		renderer.send('pathOpen', path);
 	};
 	
 	emailCheck (v: string) {
@@ -801,10 +806,12 @@ class Util {
 			return;
 		};
 
+		const renderer = this.getRenderer();
+
 		// App is already working
 		if (code == Errors.Code.ANOTHER_ANYTYPE_PROCESS_IS_RUNNING) {
 			alert('You have another instance of anytype running on this machine. Closing...');
-			ipcRenderer.send('exit', false);
+			renderer.send('exit', false);
 		};
 
 		// App needs update
@@ -814,6 +821,8 @@ class Util {
 	};
 
 	onErrorUpdate (onConfirm?: () => void) {
+		const renderer = this.getRenderer();
+
 		popupStore.open('confirm', {
 			data: {
 				icon: 'update',
@@ -822,7 +831,7 @@ class Util {
 				textConfirm: translate('confirmUpdateConfirm'),
 				canCancel: false,
 				onConfirm: () => {
-					ipcRenderer.send('update');
+					renderer.send('update');
 					if (onConfirm) {
 						onConfirm();
 					};
@@ -940,6 +949,11 @@ class Util {
 		});
 	};
 
+	getRenderer () {
+		const electron: any = window.require('electron') || {};
+		return electron.ipcRenderer || window.Renderer;
+	};
+	
 	resizeHeaderFooter (width: number) {
 		const { sidebar } = commonStore;
 		const { fixed, snap } = sidebar;

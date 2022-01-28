@@ -14,7 +14,6 @@ interface State {
 }
 
 const { dialog } = window.require('@electron/remote');
-const { ipcRenderer } = window.require('electron');
 const $ = require('jquery');
 const Constant: any = require('json/constant.json');
 const sha1 = require('sha1');
@@ -653,6 +652,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 
 	onExport (format: I.ExportFormat) {
 		const { close } = this.props;
+		const renderer = Util.getRenderer();
 
 		let options: any = {};
 
@@ -684,7 +684,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 							});
 							return;
 						};
-						ipcRenderer.send('pathOpen', files[0]);
+						renderer.send('pathOpen', files[0]);
 
 						analytics.event('ExportMarkdown', { middleTime: message.middleTime });
 					});

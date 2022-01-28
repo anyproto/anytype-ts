@@ -21,7 +21,6 @@ interface State {
 	isDeleted: boolean;
 };
 
-const { ipcRenderer } = window.require('electron');
 const { app } = window.require('@electron/remote');
 const Constant = require('json/constant.json');
 const Errors = require('json/error.json');
@@ -146,6 +145,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		const win = $(window);
 		const namespace = isPopup ? '.popup' : '';
+		const renderer = Util.getRenderer();
 
 		let ids: string[] = [];
 		if (selection) {
@@ -174,8 +174,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		Storage.set('askSurvey', 1);
 
-		ipcRenderer.removeAllListeners('commandEditor');
-		ipcRenderer.on('commandEditor', (e: any, cmd: string, arg: any) => { this.onCommand(cmd, arg); });
+		renderer.removeAllListeners('commandEditor');
+		renderer.on('commandEditor', (e: any, cmd: string, arg: any) => { this.onCommand(cmd, arg); });
 	};
 
 	componentDidUpdate () {
@@ -196,6 +196,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	};
 	
 	componentWillUnmount () {
+		const renderer = Util.getRenderer();
+
 		this._isMounted = false;
 		this.uiHidden = false;
 		this.unbind();
@@ -203,7 +205,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		focus.clear(false);
 		window.clearInterval(this.timeoutScreen);
-		ipcRenderer.removeAllListeners('commandEditor');
+		renderer.removeAllListeners('commandEditor');
 	};
 
 	getWrapper () {

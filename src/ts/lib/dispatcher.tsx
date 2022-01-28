@@ -258,6 +258,9 @@ class Dispatcher {
 					let blockIds = data.getBlockidsList() || [];
 					for (let blockId of blockIds) {
 						const block = blockStore.getLeaf(rootId, blockId);
+						if (!block) {
+							continue;
+						};
 
 						if (block.type == I.BlockType.Dataview) {
 							dbStore.relationsClear(rootId, blockId);
