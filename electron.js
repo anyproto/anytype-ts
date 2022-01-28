@@ -869,7 +869,7 @@ function exit (relaunch) {
 function savePage (name) {
 	name = String(name || 'untitled').replace(/[^a-z0-9]/gi, '-').toLowerCase();
 
-	win.webContents.savePage(path.join(exportPath, name + '.mhtml'), 'MHTML').then(() => {
+	win.webContents.savePage(path.join(exportPath, name + '.html'), 'HTMLComplete').then(() => {
 		shell.openPath(exportPath);
 		send('command', 'saveAsHTMLSuccess');
 	}).catch(err => { 
