@@ -896,6 +896,17 @@ function savePage (name) {
 		};
 
 		content = content.replace(/<script[^>]+><\/script>/g, '');
+
+		try {
+			Util.log('info', app.getAppPath());
+			fs.copyFileSync(app.getAppPath() + '/dist/js/export.js', path.join(filesPath, 'export.js'));
+
+			content = content.replace('<!-- %REPLACE% -->', `
+				<script src="./${fn}/export.js" type="text/javascript"></script>
+			`);
+		} catch (e) {
+			Util.log('info', e);
+		};
 		
 		fs.writeFileSync(exportName, content);
 
