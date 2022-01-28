@@ -251,6 +251,8 @@ function createWindow () {
 	});
 
 	win.on('close', (e) => {
+		Util.log('info', 'close: ' + app.isQuiting);
+
 		if (app.isQuiting) {
 			return;
 		};
@@ -810,7 +812,7 @@ app.on('before-quit', (e) => {
 	Util.log('info', 'before-quit');
 
 	if (app.isQuiting) {
-		exit(0);
+		app.exit(0);
 	} else {
 		e.preventDefault();
 		exit(false);
@@ -835,16 +837,14 @@ function send () {
 function shutdown (relaunch) {
 	Util.log('info', 'Shutdown, relaunch: ' + relaunch);
 
-	setTimeout(() => {
-		if (relaunch) {
-			Util.log('info', 'Relaunch');
-			app.isQuiting = true;
-			app.relaunch();
-			app.exit(0);
-		} else {
-			app.exit(0);
-		};
-	}, 3000);
+	if (relaunch) {
+		Util.log('info', 'Relaunch');
+		app.isQuiting = true;
+		app.relaunch();
+		app.exit(0);
+	} else {
+		app.exit(0);
+	};
 };
 
 function exit (relaunch) {
