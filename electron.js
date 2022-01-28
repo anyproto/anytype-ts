@@ -835,7 +835,8 @@ function shutdown (relaunch) {
 		if (relaunch) {
 			Util.log('info', 'Relaunch');
 			app.isQuiting = true;
-			autoUpdater.quitAndInstall();
+			app.relaunch();
+			app.exit(0);
 		} else {
 			app.exit(0);
 		};
