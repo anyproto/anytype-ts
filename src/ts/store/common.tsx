@@ -2,8 +2,6 @@ import { observable, action, computed, set, makeObservable } from 'mobx';
 import { I, Storage, Util } from 'ts/lib';
 import { analytics } from 'ts/lib';
 
-const Constant = require('json/constant.json');
-
 interface Preview {
 	type: I.MarkType,
 	param: string;
@@ -35,6 +33,7 @@ interface Sidebar {
 	snap: I.MenuDirection;
 };
 
+const Constant = require('json/constant.json');
 const $ = require('jquery');
 
 class CommonStore {
