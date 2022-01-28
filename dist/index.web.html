@@ -8,14 +8,14 @@
 			window.isWebVersion = true;
 			window.serverAddr = 'http://127.0.0.1:50397'
 
-			let onload = function () {
+			document.body.onload = function () {
 				RendererEvents.dataPath(null, '/');
 			};
 		</script>
 
 		<script src="./polyfill.js" type="text/javascript"></script>
 	</head>
-	<body onload="onload();">
+	<body>
 		<div id="root"></div>
 		<script src="./run.js" type="text/javascript"></script>
 	</body>
