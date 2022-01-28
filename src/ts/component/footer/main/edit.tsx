@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Icon } from 'ts/component';
-import { I, DataUtil, focus } from 'ts/lib';
-import { menuStore, blockStore } from 'ts/store';
+import { I, DataUtil, focus, Util } from 'ts/lib';
+import { menuStore, blockStore, commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any>  {
@@ -37,6 +37,14 @@ const FooterMainEdit = observer(class FooterMainEdit extends React.Component<Pro
 		);
 	};
 
+	componentDidMount () {
+		this.resize();
+	};
+
+	componentDidUpdate () {
+		this.resize();
+	};
+
 	canAdd () {
 		const { rootId } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
@@ -46,7 +54,7 @@ const FooterMainEdit = observer(class FooterMainEdit extends React.Component<Pro
 		};
 
 		const allowed = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Block ]);
-		return allowed && !root.fields.isLocked && !root.isObjectRelation() && !root.isObjectType() && !root.isObjectSet() && !root.isObjectFileKind();
+		return allowed && !root.isLocked() && !root.isObjectRelation() && !root.isObjectType() && !root.isObjectSet() && !root.isObjectFileKind();
 	};
 
 	onAdd (e: any) {
@@ -88,6 +96,16 @@ const FooterMainEdit = observer(class FooterMainEdit extends React.Component<Pro
 			vertical: I.MenuDirection.Top,
 			horizontal: I.MenuDirection.Right,
 		});
+	};
+
+	resize () {
+		const { isPopup } = this.props;
+		const { sidebar } = commonStore;
+		const { width } = sidebar;
+
+		if (!isPopup) {
+			Util.resizeHeaderFooter(width);
+		};
 	};
 	
 });

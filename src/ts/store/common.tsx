@@ -1,7 +1,6 @@
 import { observable, action, computed, set, makeObservable } from 'mobx';
 import { I, Storage, Util } from 'ts/lib';
 import { analytics } from 'ts/lib';
-import { blockStore, detailStore } from 'ts/store';
 
 const Constant = require('json/constant.json');
 
@@ -27,6 +26,15 @@ interface Cover {
 	type: I.CoverType;
 };
 
+interface Sidebar {
+	x: number;
+	y: number;
+	width: number;
+	height: number;
+	fixed: boolean;
+	snap: I.MenuDirection;
+};
+
 const $ = require('jquery');
 
 class CommonStore {
@@ -42,10 +50,12 @@ class CommonStore {
 	public themeId: string = '';
 	public typeId: string = '';
 	public pinTimeId: number = 0;
+	public sidebarObj: Sidebar = { width: 0, height: 0, x: 0, y: 0, fixed: false, snap: I.MenuDirection.Left };
 
     constructor() {
         makeObservable(this, {
             coverObj: observable,
+			sidebarObj: observable,
             coverImg: observable,
             progressObj: observable,
             filterObj: observable,
@@ -62,6 +72,7 @@ class CommonStore {
             coverImage: computed,
             gateway: computed,
 			theme: computed,
+			sidebar: computed,
             coverSet: action,
             coverSetUploadedImage: action,
             gatewaySet: action,
@@ -72,6 +83,7 @@ class CommonStore {
             filterSet: action,
             previewSet: action,
 			themeSet: action,
+			sidebarSet: action,
         });
     };
 
@@ -113,6 +125,10 @@ class CommonStore {
 
 	get theme(): string {
 		return String(this.themeId || '');
+	};
+
+	get sidebar(): Sidebar {
+		return this.sidebarObj;
 	};
 
     coverSet (id: string, image: string, type: I.CoverType) {
@@ -196,6 +212,23 @@ class CommonStore {
 
 		renderer.send('configSet', { theme: v });
 		analytics.event('ThemeSet', { id: v });
+	};
+
+	sidebarSet (v: any) {
+		const win = $(window);
+		const size = Constant.size.sidebar;
+
+		v = Object.assign(this.sidebarObj, v);
+		v.fixed = Boolean(v.fixed);
+		
+		v.width = Number(v.width) || 0;
+		v.width = Math.max(size.width.min, Math.min(size.width.max, v.width));
+		
+		v.height = Number(v.height) || 0;
+		v.height = Math.max(size.height.min, Math.min(win.height() - Util.sizeHeader(), v.height));
+
+		set(this.sidebarObj, v);
+		Storage.set('sidebar', v);
 	};
 
 	configSet (config: any, force: boolean) {

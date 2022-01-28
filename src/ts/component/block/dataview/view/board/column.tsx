@@ -25,10 +25,10 @@ const Column = observer(class Column extends React.Component<Props, {}> {
 	render () {
 		const { rootId, block, groupId, getView, onAdd, list, columnId, value } = this.props;
 		const view = getView();
-		const group = view.getRelation(groupId);
-		const records = dbStore.getRecords(rootId, block.id);
-		const { offset, total } = dbStore.getMeta(rootId, block.id);
 		const subId = dbStore.getSubId(rootId, block.id);
+		const group = view.getRelation(groupId);
+		const records = dbStore.getRecords(subId, '');
+		const { offset, total } = dbStore.getMeta(subId, '');
 
 		const Add = (item: any) => (
 			<Draggable draggableId={columnId + '-add'} index={item.index}>

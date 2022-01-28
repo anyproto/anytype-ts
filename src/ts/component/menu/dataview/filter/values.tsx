@@ -119,7 +119,11 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 				Item = (element: any) => {	
 					const type = dbStore.getObjectType(element.type);
 					return (
-						<div className="item withCaption">
+						<div 
+							id={'item-' + element.id} 
+							className="item withCaption"
+							onMouseEnter={() => { this.props.setHover({ id: element.id }); }}
+						>
 							<div className="clickable" onClick={(e: any) => { this.onObject(e, item); }}>
 								<IconObject object={element} />
 								<div className="name">{element.name}</div>
@@ -376,16 +380,16 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 				const conditions = Relation.filterConditionsByType(relation.format);
 
 				item.condition = conditions.length ? conditions[0].id : I.FilterCondition.None;
-				item.value = Relation.formatRelationValue(relation, null, false);
+				item.value = Relation.formatValue(relation, null, false);
 			};
 
 			if (k == 'value') {
-				item[k] = Relation.formatRelationValue(relation, item[k], false);
+				item[k] = Relation.formatValue(relation, item[k], false);
 			};
 	
 			if (k == 'condition') {
 				if ([ I.FilterCondition.None, I.FilterCondition.Empty, I.FilterCondition.NotEmpty ].indexOf(v) >= 0) {
-					item.value = Relation.formatRelationValue(relation, null, false);
+					item.value = Relation.formatValue(relation, null, false);
 				};
 			};
 
@@ -527,11 +531,15 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 					rebind: this.rebind,
 					rootId: rootId,
 					blockId: blockId,
-					value: item.value || [], 
+					value: item.value, 
 					types: relation.objectTypes,
 					relation: observable.box(relation),
-					onChange: (value: any) => {
+					onChange: (value: any, callBack?: () => void) => {
 						this.onChange('value', value);
+
+						if (callBack) {
+							callBack();
+						};
 					},
 				},
 			});

@@ -393,6 +393,15 @@
 	"textColor-teal": { "en": "Teal" },
 	"textColor-lime": { "en": "Green" },
 
+	"gradientColor-yellow": { "en": "Yellow" },
+	"gradientColor-red": { "en": "Red" },
+	"gradientColor-blue": { "en": "Blue" },
+	"gradientColor-teal": { "en": "Teal" },
+	"gradientColor-pinkOrange": { "en": "Pink - Orange" },
+	"gradientColor-bluePink": { "en": "Blue - Pink" },
+	"gradientColor-greenOrange": { "en": "Green - Orange" },
+	"gradientColor-sky": { "en": "Sky" },
+
 	"layout0": { "en": "Basic" },
 	"layout1": { "en": "Profile" },
 	"layout2": { "en": "Action" },

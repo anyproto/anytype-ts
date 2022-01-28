@@ -6,7 +6,7 @@ import { Provider } from 'mobx-react';
 import { enableLogging } from 'mobx-logger';
 import { Page, SelectionProvider, DragProvider, Progress, Tooltip, Preview, Icon, ListPopup, ListMenu } from './component';
 import { commonStore, authStore, blockStore, detailStore, dbStore, menuStore, popupStore } from './store';
-import { I, C, Util, DataUtil, keyboard, Storage, analytics, dispatcher, translate } from 'ts/lib';
+import { I, C, Util, FileUtil, keyboard, Storage, analytics, dispatcher, translate } from 'ts/lib';
 import { throttle } from 'lodash';
 import * as Sentry from '@sentry/browser';
 import { configure } from 'mobx';
@@ -44,6 +44,7 @@ import 'scss/component/pager.scss';
 import 'scss/component/pin.scss';
 import 'scss/component/sync.scss';
 import 'scss/component/filter.scss';
+import 'scss/component/sidebar.scss';
 import 'scss/component/list/previewObject.scss';
 
 import 'scss/component/preview/common.scss';
@@ -330,7 +331,7 @@ class App extends React.Component<Props, State> {
 		Storage.delete('lastSurveyCanceled');
 
 		const storageKeys = [
-			'theme', 'pinTime', 'defaultType',
+			'theme', 'pinTime', 'defaultType', 'sidebar'
 		];
 
 		const cover = Storage.get('cover');
@@ -571,7 +572,7 @@ class App extends React.Component<Props, State> {
 
 	logToFile (name: string, message: any) {
 		const logsDir = path.join(userPath, 'logs');
-		const log = path.join(logsDir, name + '_' + Util.dateForFile() + '.json');
+		const log = path.join(logsDir, name + '_' + FileUtil.date() + '.json');
 		const renderer = Util.getRenderer();
 
 		try {
@@ -677,7 +678,7 @@ class App extends React.Component<Props, State> {
 
 	onProgress (e: any, progress: any) {
 		commonStore.progressSet({ 
-			status: Util.sprintf('Downloading update... %s/%s', Util.fileSize(progress.transferred), Util.fileSize(progress.total)), 
+			status: Util.sprintf('Downloading update... %s/%s', FileUtil.size(progress.transferred), FileUtil.size(progress.total)), 
 			current: progress.transferred, 
 			total: progress.total,
 			isUnlocked: true,

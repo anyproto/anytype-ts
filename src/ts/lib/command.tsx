@@ -951,7 +951,7 @@ const OnSubscribe = (subId: string, keys: string[], message: any) => {
 	};
 
 	if (message.counters) {
-		dbStore.metaSet(subId, '', { total: message.counters.total });
+		dbStore.metaSet(subId, '', { total: message.counters.total, keys: keys });
 	};
 
 	let details = [];
@@ -964,7 +964,7 @@ const OnSubscribe = (subId: string, keys: string[], message: any) => {
 	dbStore.recordsSet(subId, '', message.records.map((it: any) => { return { id: it.id }; }));
 };
 
-const ObjectSearchSubscribe = (subId: string, filters: I.Filter[], sorts: I.Sort[], keys: string[], sources: string[], fullText: string, offset: number, limit: number, ignoreWorkspace: boolean, afterId: string, beforeId: string, callBack?: (message: any) => void) => {
+const ObjectSearchSubscribe = (subId: string, filters: I.Filter[], sorts: I.Sort[], keys: string[], sources: string[], offset: number, limit: number, ignoreWorkspace: boolean, afterId: string, beforeId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.SearchSubscribe.Request();
 
 	filters = filters.concat([
@@ -974,7 +974,6 @@ const ObjectSearchSubscribe = (subId: string, filters: I.Filter[], sorts: I.Sort
 	request.setSubid(subId);
 	request.setFiltersList(filters.map(Mapper.To.Filter));
 	request.setSortsList(sorts.map(Mapper.To.Sort));
-	request.setFulltext(fullText);
 	request.setOffset(offset);
 	request.setLimit(limit);
 	request.setKeysList(keys);
@@ -1151,6 +1150,14 @@ const ObjectToSet = (contextId: string, sources: string[], callBack?: (message: 
 	dispatcher.request('objectToSet', request, callBack);
 };
 
+const ObjectDuplicate = (id: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.ToSet.Request();
+	
+	request.setContextid(id);
+
+	dispatcher.request('objectDuplicate', request, callBack);
+};
+
 const ObjectListDelete = (ids: string[], callBack?: (message: any) => void) => {
 	const request = new Rpc.ObjectList.Delete.Request();
 	
@@ -1252,9 +1259,10 @@ const WorkspaceSetIsHighlighted = (objectId: string, isHightlighted: boolean, ca
 	dispatcher.request('workspaceSetIsHighlighted', request, callBack);
 };
 
-const UnsplashSearch = (limit: number, callBack?: (message: any) => void) => {
+const UnsplashSearch = (query: string, limit: number, callBack?: (message: any) => void) => {
 	const request = new Rpc.UnsplashSearch.Request();
 	
+	request.setQuery(query);
 	request.setLimit(limit);
 
 	dispatcher.request('unsplashSearch', request, callBack);
@@ -1382,6 +1390,7 @@ export {
 	ObjectTypeRelationRemove,
 
 	SetCreate,
+
 	ObjectRelationOptionAdd,
     ObjectRelationOptionUpdate,
     ObjectRelationOptionDelete,
@@ -1403,6 +1412,7 @@ export {
 	ObjectSearchSubscribe,
 	ObjectIdsSubscribe,
 	ObjectSearchUnsubscribe,
+	ObjectDuplicate,
 	
 	ObjectListDelete,
 	ObjectListSetIsArchived,

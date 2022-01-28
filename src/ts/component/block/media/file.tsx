@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { InputWithFile, Loader, IconObject, Error } from 'ts/component';
-import { I, DataUtil, Util, focus, translate, Action } from 'ts/lib';
+import { I, Util, DataUtil, FileUtil, focus, translate, Action } from 'ts/lib';
 import { detailStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -67,7 +67,7 @@ const BlockFile = observer(class BlockFile extends React.Component<Props, {}> {
 						<span className="cp" onMouseDown={this.onOpen}>
 							<IconObject object={{ ...object, layout: I.ObjectLayout.File }} size={24} />
 							<span className="name">{name}</span>
-							<span className="size">{Util.fileSize(sizeInBytes)}</span>
+							<span className="size">{FileUtil.size(sizeInBytes)}</span>
 						</span>
 					</React.Fragment>
 				);

@@ -1,4 +1,4 @@
-import { I, DataUtil, Util, translate } from 'ts/lib';
+import { I, DataUtil, Util, FileUtil, translate } from 'ts/lib';
 import { dbStore } from 'ts/store';
 
 const Constant = require('json/constant.json');
@@ -6,7 +6,11 @@ const Constant = require('json/constant.json');
 class Relation {
 
 	cellId (prefix: string, relationKey: string, id: any) {
-		return [ prefix, relationKey, id.toString() ].join('-');
+		return [ 
+			String(prefix || ''), 
+			String(relationKey || ''), 
+			String(id || ''),
+		].join('-');
 	};
 
 	width (width: number, format: I.RelationType): number {
@@ -85,7 +89,7 @@ class Relation {
 		return ret;
 	};
 
-	formatRelationValue (relation: any, value: any, maxCount: boolean) {
+	formatValue (relation: any, value: any, maxCount: boolean) {
 		switch (relation.format) {
 			default:
 				value = String(value || '');
@@ -135,7 +139,7 @@ class Relation {
 	};
 
 	checkRelationValue (relation: any, value: any): boolean {
-		value = this.formatRelationValue(relation, value, false);
+		value = this.formatValue(relation, value, false);
 
 		let ret = false;
 		switch (relation.format) {
@@ -154,10 +158,10 @@ class Relation {
 		return ret;
 	};
 
-	mapRelationValue (relation: any, value: any) {
+	mapValue (relation: any, value: any) {
 		switch (relation.relationKey) {
 			case 'sizeInBytes':
-				return Util.fileSize(value);
+				return FileUtil.size(value);
 
 			case 'widthInPixels':
 			case 'heightInPixels':

@@ -30,7 +30,7 @@ const BlockIconUser = observer(class BlockIconUser extends React.Component<Props
 		const { rootId, readonly } = this.props;
 		
 		return (
-			<React.Fragment>
+			<div className="wrap">
 				{loading ? <Loader/ > : ''}
 				<IconObject 
 					getObject={() => { return detailStore.get(rootId, rootId, []); }} 
@@ -38,7 +38,7 @@ const BlockIconUser = observer(class BlockIconUser extends React.Component<Props
 					onClick={this.onClick} 
 					size={128} 
 				/>
-			</React.Fragment>
+			</div>
 		);
 	};
 	

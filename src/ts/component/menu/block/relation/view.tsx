@@ -1,12 +1,11 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, C, DataUtil, Util, Relation } from 'ts/lib';
+import { I, C, DataUtil, Util, Relation, analytics } from 'ts/lib';
 import { commonStore, blockStore, detailStore, dbStore, menuStore } from 'ts/store';
 import { Icon } from 'ts/component';
 import { observer } from 'mobx-react';
 
 import Item from 'ts/component/menu/item/relationView';
-import { analytics } from '../../../../lib';
 
 interface Props extends I.Menu {};
 
@@ -45,7 +44,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		let allowedRelation = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Relation ]);
 		let allowedValue = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
 
-		if (root.fields.isLocked) {
+		if (root.isLocked()) {
 			allowedBlock = false;
 			allowedRelation = false;
 			allowedValue = false;
@@ -336,7 +335,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const { rootId } = data;
 		const relation = dbStore.getRelation(rootId, rootId, relationKey);
 		const details = [ 
-			{ key: relationKey, value: Relation.formatRelationValue(relation, value, true) },
+			{ key: relationKey, value: Relation.formatValue(relation, value, true) },
 		];
 		C.BlockSetDetails(rootId, details, callBack);
 

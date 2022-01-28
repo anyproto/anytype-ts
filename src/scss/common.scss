@@ -12,7 +12,10 @@ body {
 	overscroll-behavior: none;
 }
 body.colResize { cursor: col-resize !important; }
-body.colResize * { cursor: col-resize !important; }
+body.colResize * { cursor: col-resize !important; user-select: none !important; }
+body.rowResize { cursor: row-resize !important; }
+body.rowResize * { cursor: row-resize !important; user-select: none !important; }
+
 body.grab { cursor: grab !important; }
 body.fullScreen {
 	#drag { display: none; }
@@ -115,7 +118,7 @@ html.platformWindows {
 	overflow: hidden; white-space: nowrap;
 }
 ::-webkit-input-placeholder { color: $colorSecondary !important; }
-.isBlurred { filter: blur(3px); }
+.isBlurred { filter: blur(7px); }
 
 .fileWrap { position: relative; overflow: hidden; cursor: pointer; }
 .fileWrap { 

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Icon, Drag, Cover, Loader } from 'ts/component';
+import { Icon, Drag, Cover, Loader, ControlButtons } from 'ts/component';
 import { I, C, Util, DataUtil, focus, translate } from 'ts/lib';
 import { commonStore, blockStore, detailStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -77,21 +77,16 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 			return null;
 		};
 
-		const allowedDetails = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
-		const allowedIcon = !readonly && !object.iconEmoji && !object.iconImage && !root.isObjectTask();
-		const allowedCover = !readonly;
-		const allowedLayout = !readonly && !root.isObjectSet() && (allowedDetails || blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Layout ]));
-
 		let image = null;
 		let author = null;
 		let elements = null;
 		let content = null;
 
 		if (coverType == I.CoverType.Source) {
-			image = detailStore.get(rootId, coverId, [ 'artistUrl', 'artistPhoto' ], true);
+			image = detailStore.get(rootId, coverId, [ 'mediaArtistName', 'mediaArtistURL' ], true);
 			author = (
 				<div className="author">
-					Photo by <a href={image.artistUrl + Url.unsplash.utm}>{image.artistPhoto}</a> on <a href={Url.unsplash.site + Url.unsplash.utm}>Unsplash</a>
+					Photo by <a href={image.mediaArtistURL + Url.unsplash.utm}>{image.mediaArtistName}</a> on <a href={Url.unsplash.site + Url.unsplash.utm}>Unsplash</a>
 				</div>
 			);
 		};
@@ -128,35 +123,14 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 			);
 		} else {
 			elements = (
-				<React.Fragment>
-					<div className="controlButtons">
-						{allowedIcon ? (
-							<div id="button-icon" className="btn white withIcon" onClick={this.onIcon}>
-								<Icon className="icon" />
-								<div className="txt">{translate('editorControlIcon')}</div>
-							</div>
-						) : ''}
-
-						{allowedCover ? (
-							<div id="button-cover" className="btn white withIcon" onClick={this.onCover}>
-								<Icon className="addCover" />
-								<div className="txt">{translate('editorControlCover')}</div>
-							</div>
-						) : ''}
-
-						{allowedLayout ? (
-							<div id="button-layout" className="btn white withIcon" onClick={this.onLayout}>
-								<Icon className="layout" />
-								<div className="txt">{translate('editorControlLayout')}</div>
-							</div>
-						) : ''}
-
-						<div id="button-relation" className="btn white withIcon" onClick={this.onRelation}>
-							<Icon className="relation" />
-							<div className="txt">{translate('editorControlRelation')}</div>
-						</div>
-					</div>
-				</React.Fragment>
+				<ControlButtons 
+					rootId={rootId} 
+					readonly={readonly}
+					onIcon={this.onIcon} 
+					onCover={this.onCover}
+					onLayout={this.onLayout}
+					onRelation={this.onRelation}
+				/>
 			);
 		};
 
@@ -212,7 +186,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 	onIconPage () {
 		const { rootId, block } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
-		const elements = node.find('.elements');
+		const elements = node.find('#elements');
 		
 		menuStore.open('smile', { 
 			element: `#block-${block.id} #button-icon`,
@@ -259,7 +233,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 	onLayout (e: any) {
 		const { rootId, block } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
-		const elements = node.find('.elements');
+		const elements = node.find('#elements');
 		const object = detailStore.get(rootId, rootId, []);
 		
 		menuStore.open('blockLayout', { 
@@ -281,7 +255,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 	onRelation () {
 		const { isPopup, rootId } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
-		const elements = node.find('.elements');
+		const elements = node.find('#elements');
 		const container = $(isPopup ? '#popupPage #innerWrap' : window);
 		const rect = { x: container.width() / 2 , y: Util.sizeHeader(), width: 0, height: 0 };
 		const cnw = [ 'fixed' ];
@@ -320,7 +294,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 	onCover (e: any) {
 		const { rootId, block } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
-		const elements = node.find('.elements');
+		const elements = node.find('#elements');
 		
 		focus.clear(true);
 		menuStore.open('blockCover', {

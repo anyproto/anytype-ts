@@ -9,10 +9,13 @@ import arrayMove from 'array-move';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCache } from 'react-virtualized';
 import 'react-virtualized/styles.css';
 
-interface Props extends I.Menu {}
+import Item from 'ts/component/menu/item/filter';
+
+interface Props extends I.Menu {};
 
 const Constant = require('json/constant.json');
 const $ = require('jquery');
+
 const HEIGHT = 48;
 const LIMIT = 20;
 
@@ -53,120 +56,6 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<Pro
 			const { relationKey, condition, value } = filter;
 		};
 
-		const Handle = SortableHandle(() => (
-			<Icon className="dnd" />
-		));
-		
-		const Item = SortableElement((item: any) => {
-			const relation = item.relation;
-			const conditionOptions = Relation.filterConditionsByType(relation.format);
-			const condition: any = conditionOptions.find((it: any) => { return it.id == item.condition; }) || {};
-
-			let value = null;
-			let list = [];
-			let Item = null;
-
-			switch (relation.format) {
-
-				default:
-					value = `“${item.value}”`
-					break;
-
-				case I.RelationType.Number:
-					value = Number(item.value) || 0;
-					break;
-
-				case I.RelationType.Date:
-					value = item.value !== null ? Util.date('d.m.Y', item.value) : 'empty';
-					break;
-
-				case I.RelationType.Checkbox:
-					value = item.value ? 'checked' : 'unchecked';
-					break;
-
-				case I.RelationType.Tag:
-				case I.RelationType.Status:
-					list = (item.value || []).map((id: string, i: number) => { 
-						return (relation.selectDict || []).find((it: any) => { return it.id == id; });
-					});
-					list = list.filter((it: any) => { return it && it.id; });
-
-					if (list.length) {
-						value = (
-							<React.Fragment>
-								{list.map((item: any, i: number) => {
-									return <Tag {...item} key={item.id} className={DataUtil.tagClass(relation.format)} />;
-								})}
-							</React.Fragment>
-						);
-					} else {
-						value = 'empty';
-					};
-					break;
-
-				case I.RelationType.Object:
-					Item = (item: any) => {
-						return (
-							<div className="element">
-								<div className="flex">
-									<IconObject object={item} />
-									<div className="name">{item.name}</div>
-								</div>
-							</div>
-						);
-					};
-
-					list = Relation.getArrayValue(item.value).map((it: string) => { return detailStore.get(subId, it, []); });
-					list = list.filter((it: any) => { return !it._empty_; });
-
-					value = (
-						<React.Fragment>
-							{list.map((item: any, i: number) => {
-								return <Item key={i} {...item} />;
-							})}
-						</React.Fragment>
-					);
-					break;
-			};
-
-			if ([ I.FilterCondition.None, I.FilterCondition.Empty, I.FilterCondition.NotEmpty ].indexOf(item.condition) >= 0) {
-				value = null;
-			};
-
-			return (
-				<form 
-					id={'item-' + item.id}
-					className={[ 'item', (!allowedView ? 'isReadonly' : '') ].join(' ')} 
-					onMouseEnter={(e: any) => { this.onOver(e, item); }}
-					style={item.style}
-				>
-					{allowedView ? <Handle /> : ''}
-					<IconObject size={40} object={{ relationFormat: relation.format, layout: I.ObjectLayout.Relation }} />
-
-					<div className="txt" onClick={(e: any) => { this.onClick(e, item); }}>
-						<div className="name">{relation.name}</div>
-						<div className="flex">
-							<div className="condition grey">
-								{condition.name}
-							</div>
-							{value !== null ? (
-								<div className="value grey">
-									{value}
-								</div>
-							) : ''}
-						</div>
-					</div>
-
-					{allowedView ? (
-						<div className="buttons">
-							<Icon className="more" onClick={(e: any) => { this.onClick(e, item); }} />
-							<Icon className="delete" onClick={(e: any) => { this.onRemove(e, item); }} />
-						</div>
-					) : ''}
-				</form>
-			);
-		});
-		
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
 			return (
@@ -178,7 +67,17 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<Pro
 					rowIndex={param.index}
 					hasFixedWidth={() => {}}
 				>
-					<Item key={item.id} {...item} index={param.index} style={param.style} />
+					<Item 
+						key={item.id} 
+						{...item} 
+						subId={subId}
+						index={param.index} 
+						style={param.style} 
+						readonly={!allowedView}
+						onOver={(e: any) => { this.onOver(e, item); }}
+						onClick={(e: any) => { this.onClick(e, item); }}
+						onRemove={(e: any) => { this.onRemove(e, item); }}
+					/>
 				</CellMeasurer>
 			);
 		};
@@ -316,7 +215,7 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<Pro
 			relationKey: first.id, 
 			operator: I.FilterOperator.And, 
 			condition: condition as I.FilterCondition,
-			value: Relation.formatRelationValue(first, null, false),
+			value: Relation.formatValue(first, null, false),
 		};
 
 		view.filters.push(newItem);

@@ -1,11 +1,13 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Icon } from 'ts/component';
-import { I } from 'ts/lib';
+import { Util } from 'ts/lib';
 import { blockStore, popupStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
-interface Props extends RouteComponentProps<any>  {}
+interface Props extends RouteComponentProps<any> {
+	isPopup?: boolean;
+};
 
 const HeaderMainIndex = observer(class HeaderMainIndex extends React.Component<Props, {}> {
 	
@@ -28,6 +30,14 @@ const HeaderMainIndex = observer(class HeaderMainIndex extends React.Component<P
 		);
 	};
 
+	componentDidMount () {
+		this.resize();
+	};
+
+	componentDidUpdate () {
+		this.resize();
+	};
+
 	onSearch (e: any) {
 		const { root } = blockStore;
 
@@ -41,6 +51,13 @@ const HeaderMainIndex = observer(class HeaderMainIndex extends React.Component<P
 
 	onSettings (e: any) {
 		popupStore.open('settings', {});
+	};
+
+	resize () {
+		const { isPopup } = this.props;
+		if (!isPopup) {
+			Util.resizeHeaderFooter(0);
+		};
 	};
 
 });

@@ -335,6 +335,12 @@ const ObjectShareByLink = (response: any) => {
 	};
 };
 
+const ObjectDuplicate = (response: any) => {
+	return {
+		id: response.getId(),
+	};
+};
+
 const MakeTemplate = (response: any) => {
 	return {
 		id: response.getId(),
@@ -367,7 +373,7 @@ const UnsplashSearch = (response: any) => {
 
 const UnsplashDownload = (response: any) => {
 	return {
-		image: Mapper.From.BlockFile(response.getImage()),
+		hash: response.getHash(),
 	};
 };
 
@@ -440,6 +446,7 @@ export {
 	ObjectRelationOptionAdd,
 	ObjectToSet,
 	ObjectShareByLink,
+	ObjectDuplicate,
 
 	MakeTemplate,
 	MakeTemplateByObjectType,

@@ -228,7 +228,26 @@ class DataUtil {
 			{ type: I.CoverType.Color, id: 'lightgrey' },
 			{ type: I.CoverType.Color, id: 'darkgrey' },
 			{ type: I.CoverType.Color, id: 'black' },
-		];
+		].map((it: any) => {
+			it.name = translate('textColor-' + it.id);
+			return it;
+		});
+	};
+
+	coverGradients () {
+		return [
+			{ type: I.CoverType.Gradient, id: 'yellow' },
+			{ type: I.CoverType.Gradient, id: 'red' },
+			{ type: I.CoverType.Gradient, id: 'blue' },
+			{ type: I.CoverType.Gradient, id: 'teal' },
+			{ type: I.CoverType.Gradient, id: 'pinkOrange' },
+			{ type: I.CoverType.Gradient, id: 'bluePink' },
+			{ type: I.CoverType.Gradient, id: 'greenOrange' },
+			{ type: I.CoverType.Gradient, id: 'sky' },
+		].map((it: any) => {
+			it.name = translate('gradientColor-' + it.id);
+			return it;
+		});
 	};
 
 	threadColor (s: I.ThreadStatus) {
@@ -532,7 +551,8 @@ class DataUtil {
 	};
 
 	menuGetBlockMedia () {
-		let ret: any[] = [
+		const { config } = commonStore;
+		const ret: any[] = [
 			{ type: I.BlockType.File, id: I.FileType.File, icon: 'file', lang: 'File' },
 			{ type: I.BlockType.File, id: I.FileType.Image, icon: 'image', lang: 'Image' },
 			{ type: I.BlockType.File, id: I.FileType.Video, icon: 'video', lang: 'Video' },
@@ -541,8 +561,11 @@ class DataUtil {
 			{ type: I.BlockType.Bookmark, id: 'bookmark', icon: 'bookmark', lang: 'Bookmark' },
 			{ type: I.BlockType.Text, id: I.TextStyle.Code, icon: 'code', lang: 'Code' },
 			{ type: I.BlockType.Latex, id: I.BlockType.Latex, icon: 'latex', lang: 'Latex' },
-			{ type: I.BlockType.TableOfContents, id: I.BlockType.TableOfContents, icon: 'latex', lang: 'TableOfContents' }
 		];
+
+		if (config.experimental) {
+			ret.push({ type: I.BlockType.TableOfContents, id: I.BlockType.TableOfContents, icon: 'latex', lang: 'TableOfContents' });
+		};
 		return ret.map(this.menuMapperBlock);
 	};
 
@@ -1177,7 +1200,7 @@ class DataUtil {
 		};
 
 		dbStore.metaSet(subId, '', meta);
-		C.ObjectSearchSubscribe(subId, view.filters, view.sorts, keys, block.content.sources, '', offset, limit, true, '', '');
+		C.ObjectSearchSubscribe(subId, view.filters, view.sorts, keys, block.content.sources, offset, limit, true, '', '');
 	};
 
 	coverIsImage (type: I.CoverType) {

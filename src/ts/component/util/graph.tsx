@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, Util, DataUtil, SmileUtil, translate } from 'ts/lib';
+import { I, Util, DataUtil, SmileUtil, FileUtil, translate } from 'ts/lib';
 import { commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import * as d3 from 'd3';
@@ -307,14 +307,14 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 				break;
 
 			case I.ObjectLayout.File:
-				src = `img/icon/file/${Util.fileIcon(d)}.svg`;
+				src = `img/icon/file/${FileUtil.icon(d)}.svg`;
 				break;
 
 			case I.ObjectLayout.Image:
 				if (d.id) {
 					src = commonStore.imageUrl(d.id, 160);
 				} else {
-					src = `img/icon/file/${Util.fileIcon(d)}.svg`;
+					src = `img/icon/file/${FileUtil.icon(d)}.svg`;
 				};
 				break;
 				

@@ -478,7 +478,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		if (relation.format == I.RelationType.Checkbox) {
 			const object = detailStore.get(rootId, rootId, [ relationKey ]);
 			const details = [ 
-				{ key: relationKey, value: Relation.formatRelationValue(relation, !object[relationKey], true) },
+				{ key: relationKey, value: Relation.formatValue(relation, !object[relationKey], true) },
 			];
 			C.BlockSetDetails(rootId, details);
 			return;

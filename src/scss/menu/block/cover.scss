@@ -3,16 +3,26 @@
 .menus {
 	.menu.menuBlockCover { width: 410px; }
 	.menu.menuBlockCover {
-		.content { padding: 0px; overflow: visible; max-height: 366px; }
-		.sections { overflow: auto; height: 325px; }
+		.content { padding: 0px; overflow: visible; max-height: unset; }
 
-		.head { border-bottom: 1px solid $colorLightGrey; padding: 11px 16px; font-weight: 500; color: $colorMediumGrey; }
+		.wrap { display: flex; flex-direction: column; }
+
+		.head { 
+			border-bottom: 1px solid $colorLightGrey; padding: 11px 16px; font-weight: 500; color: $colorMediumGrey; 
+			flex-shrink: 0;
+		}
 		.head {
 			.btn { display: inline-block; margin-right: 16px; transition: $transitionFast; cursor: pointer; }
 			.btn:hover { color: $colorBlack }
 			.btn:last-child { margin: 0px; }
 		}
 		
+		.filter { padding-top: 8px; flex-shrink: 0; }
+		.filter {
+			.inner { height: 35px; }
+		}
+
+		.sections { overflow: auto; flex-grow: 1; height: 300px; }
 		.section > .name { margin-bottom: 8px; }
 		.section:first-child { padding-top: 8px; }
 		.section:last-child { padding-bottom: 8px; }

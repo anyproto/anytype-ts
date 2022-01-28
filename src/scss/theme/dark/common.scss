@@ -258,6 +258,28 @@ html.themeDark {
         .icon.big { background-color: $colorBgIcon; }
     }
 
+    /* Sidebar */
+    /* ---------------------------------------------------------------- */
+
+    .sidebar { 
+        background-color: $colorBlack; color: $colorPrimary; border-color: $colorLinePrimary !important; 
+        box-shadow: 0px 4px 16px rgb(0 0 0 / 20%), 0px 0px 0px 1px #393933 inset;
+    }
+    .sidebar.fixed { box-shadow: 0px 0px; }
+    .sidebar {
+        .head { border-color: $colorLinePrimary; }
+        .body {
+            .icon.arrow { 
+                background-image: url('~img/arrow/select/light.svg');
+            }
+            
+            .item {
+                .flex:hover::before { background: $colorHover; }
+            }
+            .item.hover > .flex::before { background: $colorHover; }
+        }
+    }
+
     @import "./menu.scss";
     @import "./popup.scss";
     @import "./page.scss";
@@ -272,5 +294,13 @@ html.themeDark {
 
     .cell.isEditing {
         .cellContent { background: $colorBlack; }
+    }
+
+    .cellContent.c-url, 
+    .cellContent.c-email, 
+    .cellContent.c-phone 
+    {
+        .name { border-color: $colorSecondary; }
+        .name:hover { border-color: $colorPrimary; }
     }
 }

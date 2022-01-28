@@ -141,7 +141,7 @@ const BlockRelation = observer(class BlockRelation extends React.Component<Props
 		const { rootId } = this.props;
 		const relation = dbStore.getRelation(rootId, rootId, relationKey);
 		const details = [ 
-			{ key: relationKey, value: Relation.formatRelationValue(relation, value, true) },
+			{ key: relationKey, value: Relation.formatValue(relation, value, true) },
 		];
 		C.BlockSetDetails(rootId, details, callBack);
 
@@ -150,11 +150,7 @@ const BlockRelation = observer(class BlockRelation extends React.Component<Props
 	};
 
 	onCellClick (e: any) {
-		const { block, readonly } = this.props;
-
-		if (readonly) {
-			return;
-		};
+		const { block } = this.props;
 
 		if (this.refCell) {
 			this.refCell.onClick(e);

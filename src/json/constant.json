@@ -10,6 +10,8 @@
 		"linux":	"Linux"
 	},
 
+	"coverCnt": 13,
+
 	"default": {
 		"lang": "en",
 		"cover": 12,
@@ -185,6 +187,10 @@
 		"header": 38,
 		"lastBlock": 100,
 		"cover": 1920,
+		"sidebar": { 
+			"height": { "min": 400 },
+			"width": { "min": 160, "max": 500 }
+		},
 
 		"dataview": {
 			"gallery": {
