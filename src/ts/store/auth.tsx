@@ -133,6 +133,7 @@ class AuthStore {
 
 	logout () {
 		analytics.event('LogOut');
+		analytics.profile({ id: '' });
 
 		Storage.logout();
 
