@@ -5,6 +5,7 @@ html.printMedia {
 	body { margin: 0px; -webkit-print-color-adjust: exact; }
 
 	#selection * { user-select: text; }
+	#sidebar { display: none; }
 
 	#drag, #previewLink, .menu, 
 	.editorControls, .controlButtons, 

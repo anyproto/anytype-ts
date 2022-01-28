@@ -870,23 +870,48 @@ function exit (relaunch) {
 function savePage (name) {
 	name = String(name || 'untitled').replace(/[^a-z0-9]/gi, '-').toLowerCase();
 
-	let p = path.join(exportPath, name + '_files');
-	let fp = path.join(exportPath, name + '.html');
-	
-	win.webContents.savePage(fp, 'HTMLComplete').then(() => {
-		let f = fs.readFileSync(fp, 'utf8');
+	let fn = `${name}_files`;
+	let filesPath = path.join(exportPath, fn);
+	let exportName = path.join(exportPath, name + '.html');
 
-		f = f.replace(`<script src="./${name}_files/run.js" type="text/javascript"></script>`, '');
-		f = f.replace(`<script src="./${name}_files/main.js" type="text/javascript"></script>`, '');
+	win.webContents.savePage(exportName, 'HTMLComplete').then(() => {
+		let content = fs.readFileSync(exportName, 'utf8');
+
+		// Replace files loaded by url and copy them in page folder
+		try {
+			content = content.replace(/"(file:\/\/[^"]+)"/g, function (s, p, o) {
+				let a = p.split('app.asar/dist/');
+				let name = a[1].split('/');
+
+				name = name[name.length - 1];
+
+				let src = p.replace('file://', '').replace(/\?.*/, '');
+				let dst = path.join(filesPath, name).replace(/\?.*/, '');
+
+				fs.copyFileSync(src, dst);
+				return `./${fn}/${name}`;
+			});
+		} catch (e) {
+			Util.log('info', e);
+		};
+
+		content = content.replace(/<script[^>]+><\/script>/g, '');
 		
-		fs.writeFileSync(fp, f);
-		fs.unlinkSync(path.join(p, 'main.js'));
-		fs.unlinkSync(path.join(p, 'run.js'));
+		fs.writeFileSync(exportName, content);
 
-		shell.openPath(exportPath);
+		try {
+			fs.unlinkSync(path.join(filesPath, 'main.js'));
+			fs.unlinkSync(path.join(filesPath, 'run.js'));
+		} catch (e) {
+			Util.log('info', e);
+		};
+
+		shell.openPath(exportPath).catch(err => { 
+			Util.log('info', err);
+		});
 		send('command', 'saveAsHTMLSuccess');
 	}).catch(err => { 
 		send('command', 'saveAsHTMLSuccess');
-		console.log(err); 
+		Util.log('info', err); 
 	});
 };
