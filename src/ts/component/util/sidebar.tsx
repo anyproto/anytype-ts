@@ -387,7 +387,15 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		e.stopPropagation();
 
 		const { sidebar } = commonStore;
-		commonStore.sidebarSet({ fixed: !sidebar.fixed });
+		const fixed = !sidebar.fixed;
+		const update: any = { fixed };
+
+		if (fixed) {
+			update.x = 0;
+			update.y = 0;
+		};
+
+		commonStore.sidebarSet(update);
 	};
 
 	onClick (e: any, item: any) {
