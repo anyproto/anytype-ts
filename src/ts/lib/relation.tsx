@@ -6,7 +6,11 @@ const Constant = require('json/constant.json');
 class Relation {
 
 	cellId (prefix: string, relationKey: string, id: any) {
-		return [ prefix, relationKey, id.toString() ].join('-');
+		return [ 
+			String(prefix || ''), 
+			String(relationKey || ''), 
+			String(id || ''),
+		].join('-');
 	};
 
 	width (width: number, format: I.RelationType): number {
