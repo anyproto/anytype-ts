@@ -652,6 +652,10 @@ function menuInit () {
 					label: 'Save page as HTML',
 					click: () => { send('command', 'saveAsHTML');	}
 				},
+				{
+					label: 'Relaunch',
+					click: () => { exit(true); }
+				},
 			]
 		});
 	};
