@@ -903,10 +903,15 @@ function savePage (name) {
 		content = content.replace(/<script[^>]+><\/script>/g, '');
 
 		try {
-			Util.log('info', app.getAppPath());
-			fs.copyFileSync(app.getAppPath() + '/dist/js/export.js', path.join(filesPath, 'export.js'));
+			const js = [ 'export', 'jquery' ];
+			const ap = app.getAppPath();
+
+			js.forEach((it) => {
+				fs.copyFileSync(`${ap}/dist/js/${it}.js`, path.join(filesPath, it + '.js'));
+			});
 
 			content = content.replace('<!-- %REPLACE% -->', `
+				<script src="./${fn}/jquery.js" type="text/javascript"></script>
 				<script src="./${fn}/export.js" type="text/javascript"></script>
 			`);
 		} catch (e) {
