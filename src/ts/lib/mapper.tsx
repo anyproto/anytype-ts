@@ -166,6 +166,10 @@ const Mapper = {
 				text: obj.getText(),
 			};
 		},
+
+		BlockTableOfContents: (obj: any) => {
+			return {};
+		},
 	
 		Block: (obj: any): I.Block => {
 			let type = Mapper.BlockType(obj.getContentCase());

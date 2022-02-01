@@ -107,6 +107,8 @@ html.themeDark {
         .icon.arrow.disabled:hover { background-image: url('#{$themePath}/arrow/template0.svg'); }
     }
 
+    .deleteWrapper { background: $colorBlack; }
+
     /* PreviewObject */
 
     .previewObject {
