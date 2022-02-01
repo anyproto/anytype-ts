@@ -114,10 +114,10 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 				cn.push('isSection');
 
 				content = (
-					<React.Fragment>
+					<div className="clickable" onClick={(e: any) => { this.onToggle(e, id); }}>
 						<div className="name">{item.details.name}</div>
 						<div className="cnt">{length || ''}</div>
-					</React.Fragment>
+					</div>
 				);
 			} else {
 				content = (
@@ -308,9 +308,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		e.preventDefault();
 		e.stopPropagation();
 
-		const check = Storage.checkToggle('sidebar', id);
-		Storage.setToggle('sidebar', id, !check);
-
+		Storage.setToggle('sidebar', id, !Storage.checkToggle('sidebar', id));
 		this.forceUpdate();
 	};
 
