@@ -53,10 +53,9 @@
 			.info .name { color: $colorDarkGrey; }
 		}
 
-		.buttons { margin: 16px 0px 40px 0px; }
+		.buttons { margin: 16px 0px 40px 0px; display: flex; flex-direction: row; gap: 0px 16px; }
 		.buttons {
-			.button { @include text-paragraph; height: 36px; line-height: 30px;  margin-right: 16px; }
-			.button:last-child { margin: 0px; }
+			.button { @include text-paragraph; height: 36px; line-height: 30px; }
 		}
 	}
 }
