@@ -271,10 +271,6 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 
 	load () {
 		const { root, profile } = blockStore;
-		if (!root || !profile) {
-			return;
-		};
-
 		const filters: any[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.Equal, value: false },
 			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
@@ -284,7 +280,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 					'_anytype_profile',
 					profile,
 					root,
-				] 
+				]
 			},
 		];
 
