@@ -17,6 +17,18 @@ interface State {
 const $ = require('jquery');
 const Constant = require('json/constant.json');
 
+const MAX_DEPTH = 5;
+const SKIP_TYPES = [
+	Constant.typeId.type,
+	Constant.typeId.relation,
+	Constant.typeId.space,
+
+	Constant.typeId.file, 
+	Constant.typeId.image, 
+	Constant.typeId.audio, 
+	Constant.typeId.video,
+];
+
 const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 
 	_isMounted: boolean = false;
@@ -360,23 +372,31 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		return 0;
 	};
 
-    getTree () {
-		let subId = dbStore.getSubId('sidebar', '');
-		let data = dbStore.getRecords(subId, '');
+	filterMapper (it: any) {
+		if (SKIP_TYPES.includes(it.type)) {
+			return false;
+		};
+		return !it.isDeleted && !it.isHidden;
+	};
 
-		data = data.map((it: any) => {
-			let item = detailStore.get(subId, it.id, [ 'links' ]);
-			let children = (item.links || []).map((id: string) => {
-				return detailStore.get(subId, id, [ 'links' ]);
-			});
+	getLinks (ids: string[], depth: number) {
+		if (!ids || !ids.length || (depth > MAX_DEPTH)) {
+			return [];
+		};
 
-			children = children.filter((it: any) => {
-				return !it.isDeleted;
-			});
-
-			return { ...item, children: children || [] };
+		const subId = dbStore.getSubId('sidebar', '');
+		const children = (ids || []).map((id: string) => {
+			const item = detailStore.get(subId, id, [ 'links' ]);
+			return { ...item, children: this.getLinks(item.links, depth + 1) };
 		});
-        return data;
+		return children.filter(it => this.filterMapper(it));
+	};
+
+    getTree () {
+		const subId = dbStore.getSubId('sidebar', '');
+		const ids = dbStore.getRecords(subId, '').map(it => it.id);
+
+        return this.getLinks(ids, 0);
     };
 
 	onExpand (e: any) {
@@ -429,9 +449,9 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		};
 
 		const { sidebar } = commonStore;
-		const { x, snap } = sidebar;
+		const { snap, fixed } = sidebar;
 
-		if (!snap) {
+		if (fixed || (snap === null)) {
 			return;
 		};
 
