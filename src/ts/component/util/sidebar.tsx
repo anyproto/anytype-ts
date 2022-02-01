@@ -462,9 +462,9 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		e.stopPropagation();
 
 		this.id = this.getId(item);
-
-		DataUtil.objectOpenEvent(e, item);
 		this.setActive();
+
+		DataUtil.objectOpenEvent(e, item.details);
 	};
 
 	setActive () {
