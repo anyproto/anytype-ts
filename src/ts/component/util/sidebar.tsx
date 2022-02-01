@@ -19,6 +19,7 @@ const Constant = require('json/constant.json');
 
 const MAX_DEPTH = 5;
 const SKIP_TYPES = [
+	/*
 	Constant.typeId.type,
 	Constant.typeId.relation,
 	Constant.typeId.space,
@@ -27,6 +28,7 @@ const SKIP_TYPES = [
 	Constant.typeId.image, 
 	Constant.typeId.audio, 
 	Constant.typeId.video,
+	*/
 ];
 
 const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
