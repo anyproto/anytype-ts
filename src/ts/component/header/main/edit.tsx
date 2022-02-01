@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Icon, IconObject, Sync } from 'ts/component';
-import { I, Util, DataUtil, crumbs, history as historyPopup, keyboard } from 'ts/lib';
+import { Icon, IconObject, Sync, ObjectName } from 'ts/component';
+import { I, Util, DataUtil, keyboard } from 'ts/lib';
 import { commonStore, blockStore, detailStore, menuStore, popupStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -10,7 +10,7 @@ interface Props extends RouteComponentProps<any> {
 	rootId: string;
 	isPopup?: boolean;
 	dataset?: any;
-}
+};
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
@@ -65,7 +65,7 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<Pro
 						<div className="item">
 							<div className="flex">
 								<IconObject object={object} size={18} />
-								<div className="name">{object.name}</div>
+								<ObjectName object={object} />
 								{isLocked ? <Icon className="lock" /> : ''}
 							</div>
 						</div>

@@ -1207,6 +1207,15 @@ class DataUtil {
 		return [ I.CoverType.Upload, I.CoverType.Image, I.CoverType.Source ].includes(type);
 	};
 
+	isFileType (type: string) {
+		return [ 
+			Constant.typeId.file, 
+			Constant.typeId.image, 
+			Constant.typeId.audio, 
+			Constant.typeId.video,
+		].includes(type);
+	};
+
 };
 
 export default new DataUtil();

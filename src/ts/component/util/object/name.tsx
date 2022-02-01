@@ -7,6 +7,8 @@ interface Props {
 	className?: string;
 };
 
+const Constant = require('json/constant.json');
+
 class Name extends React.Component<Props, {}> {
 
 	public static defaultProps = {
@@ -15,9 +17,12 @@ class Name extends React.Component<Props, {}> {
 
 	render () {
 		const { object, className } = this.props;
-		const { layout, snippet } = object;
+		const { layout, snippet, type } = object;
 
 		let name = '';
+		if (DataUtil.isFileType(type)) {
+			name = DataUtil.fileName(object);
+		} else
 		if (layout == I.ObjectLayout.Note) {
 			name = snippet || <span className="empty">{translate('commonEmpty')}</span>;
 		} else {
