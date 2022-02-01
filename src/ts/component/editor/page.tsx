@@ -489,18 +489,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			this.onSelectAll();
 		});
 
-		// Copy
-		keyboard.shortcut(`${cmd}+c`, e, (pressed: string) => {
-			this.onCopy(e, false);
-		});
-
-		// Cut
-		keyboard.shortcut(`${cmd}+x`, e, (pressed: string) => {
-			if (readonly) {
-				return;
-			};
-
-			this.onCopy(e, true);
+		// Copy/Cut
+		keyboard.shortcut(`${cmd}+c, ${cmd}+x`, e, (pressed: string) => {
+			this.onCopy(e, pressed.match('x') ? true : false);
 		});
 
 		// Undo
@@ -529,53 +520,26 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			this.onHistory(e);
 		});
 
-		keyboard.shortcut('escape', e, (pressed: string) => {
-			if (ids.length && !menuStore.isOpen()) {
-				selection.clear();
-			};
-		});
-
-		// Mark-up
 		if (ids.length) {
+
+			keyboard.shortcut('escape', e, (pressed: string) => {
+				if (!menuOpen) {
+					selection.clear();
+				};
+			});
+
+			// Mark-up
+
 			let type = null;
 			let param = '';
+			let markParam = this.getMarkParam();
 
-			// Bold
-			keyboard.shortcut(`${cmd}+b`, e, (pressed: string) => {
-				type = I.MarkType.Bold;
-			});
-
-			// Italic
-			keyboard.shortcut(`${cmd}+i`, e, (pressed: string) => {
-				type = I.MarkType.Italic;
-			});
-
-			// Strike
-			keyboard.shortcut(`${cmd}+shift+s`, e, (pressed: string) => {
-				type = I.MarkType.Strike;
-			});
-
-			// Code
-			keyboard.shortcut(`${cmd}+l`, e, (pressed: string) => {
-				type = I.MarkType.Code;
-			});
-
-			// Link
-			keyboard.shortcut(`${cmd}+k`, e, (pressed: string) => {
-				type = I.MarkType.Link;
-			});
-
-			// BgColor
-			keyboard.shortcut(`${cmd}+shift+h`, e, (pressed: string) => {
-				param = Storage.get('bgColor');
-				type = I.MarkType.BgColor;
-			});
-
-			// Color
-			keyboard.shortcut(`${cmd}+shift+c`, e, (pressed: string) => {
-				param = Storage.get('color');
-				type = I.MarkType.Color;
-			});
+			for (let item of markParam) {
+				keyboard.shortcut(item.key, e, (pressed: string) => {
+					type = item.type;
+					param = item.param;
+				});
+			};
 
 			if (!readonly && (type !== null)) {
 				e.preventDefault();
@@ -643,41 +607,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		// Indent block
 		keyboard.shortcut('tab, shift+tab', e, (pressed: string) => {
-			e.preventDefault();
-			
-			if (!ids.length || readonly) {
-				return;
-			};
-
-			const shift = pressed.match('shift');
-			const first = blockStore.getLeaf(rootId, ids[0]);
-			if (!first) {
-				return;
-			};
-
-			const element = blockStore.getMapElement(rootId, first.id);
-			const parent = blockStore.getLeaf(rootId, element.parentId);
-			const parentElement = blockStore.getMapElement(rootId, parent.id);
-
-			if (!element || !parentElement) {
-				return;
-			};
-
-			const idx = parentElement.childrenIds.indexOf(first.id);
-			const nextId = parentElement.childrenIds[idx - 1];
-			const next = nextId ? blockStore.getLeaf(rootId, nextId) : blockStore.getNextBlock(rootId, first.id, -1);
-			const obj = shift ? parent : next;
-			const canTab = obj && !first.isTextTitle() && !first.isTextDescription() && obj.canHaveChildren() && first.isIndentable();
-			
-			if (canTab) {
-				C.BlockListMove(rootId, rootId, ids, obj.id, (shift ? I.BlockPosition.Bottom : I.BlockPosition.Inner), () => {
-					if (next && next.isTextToggle()) {
-						blockStore.toggle(rootId, next.id, true);
-					};
-
-					analytics.event('ReorderBlock', { count: ids.length });
-				});
-			};
+			this.onTabEditor(e, ids, pressed);
 		});
 
 		// Restore focus
@@ -811,15 +741,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		if (block.canHaveMarks() && range.to && (range.from != range.to)) {
 			let type = null;
 			let param = '';
-			let markParam = [
-				{ key: `${cmd}+b`,		 type: I.MarkType.Bold,		 param: '' },
-				{ key: `${cmd}+i`,		 type: I.MarkType.Italic,	 param: '' },
-				{ key: `${cmd}+shift+s`, type: I.MarkType.Strike,	 param: '' },
-				{ key: `${cmd}+k`,		 type: I.MarkType.Link,		 param: '' },
-				{ key: `${cmd}+l`,		 type: I.MarkType.Code,		 param: '' },
-				{ key: `${cmd}+shift+h`, type: I.MarkType.BgColor,	 param: Storage.get('bgColor') },
-				{ key: `${cmd}+shift+c`, type: I.MarkType.Color,	 param: Storage.get('color') },
-			];
+			let markParam = this.getMarkParam();
 
 			for (let item of markParam) {
 				keyboard.shortcut(item.key, e, (pressed: string) => {
@@ -888,8 +810,63 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			});
 		};
 	};
+
+	getMarkParam () {
+		const cmd = keyboard.ctrlKey();
+		return [
+			{ key: `${cmd}+b`,		 type: I.MarkType.Bold,		 param: '' },
+			{ key: `${cmd}+i`,		 type: I.MarkType.Italic,	 param: '' },
+			{ key: `${cmd}+shift+s`, type: I.MarkType.Strike,	 param: '' },
+			{ key: `${cmd}+k`,		 type: I.MarkType.Link,		 param: '' },
+			{ key: `${cmd}+l`,		 type: I.MarkType.Code,		 param: '' },
+			{ key: `${cmd}+shift+h`, type: I.MarkType.BgColor,	 param: Storage.get('bgColor') },
+			{ key: `${cmd}+shift+c`, type: I.MarkType.Color,	 param: Storage.get('color') },
+		];
+	};
 	
 	onKeyUpBlock (e: any, text: string, marks: I.Mark[], range: I.TextRange) {
+	};
+
+	// Indentation
+	onTabEditor (e: any, ids: string[], pressed: string) {
+		e.preventDefault();
+			
+		const { rootId } = this.props;
+		const readonly = this.isReadonly();
+
+		if (!ids.length || readonly) {
+			return;
+		};
+
+		const shift = pressed.match('shift');
+		const first = blockStore.getLeaf(rootId, ids[0]);
+		if (!first) {
+			return;
+		};
+
+		const element = blockStore.getMapElement(rootId, first.id);
+		const parent = blockStore.getLeaf(rootId, element.parentId);
+		const parentElement = blockStore.getMapElement(rootId, parent.id);
+
+		if (!element || !parentElement) {
+			return;
+		};
+
+		const idx = parentElement.childrenIds.indexOf(first.id);
+		const nextId = parentElement.childrenIds[idx - 1];
+		const next = nextId ? blockStore.getLeaf(rootId, nextId) : blockStore.getNextBlock(rootId, first.id, -1);
+		const obj = shift ? parent : next;
+		const canTab = obj && !first.isTextTitle() && !first.isTextDescription() && obj.canHaveChildren() && first.isIndentable();
+		
+		if (canTab) {
+			C.BlockListMove(rootId, rootId, ids, obj.id, (shift ? I.BlockPosition.Bottom : I.BlockPosition.Inner), () => {
+				if (next && next.isTextToggle()) {
+					blockStore.toggle(rootId, next.id, true);
+				};
+
+				analytics.event('ReorderBlock', { count: ids.length });
+			});
+		};
 	};
 
 	// Move blocks with arrows
@@ -1303,6 +1280,11 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		const { dataset, rootId } = this.props;
 		const { selection } = dataset || {};
+		const readonly = this.isReadonly();
+
+		if (readonly && cut) {
+			return;
+		};
 
 		let { focused, range } = focus.state;
 		let ids = selection.get(true);
