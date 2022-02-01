@@ -214,7 +214,6 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 	componentDidUpdate () {
 		const items = this.getItems();
 
-		this.init();
 		this.resize();
 		this.restore();
 
