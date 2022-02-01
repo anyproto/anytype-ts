@@ -229,6 +229,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		this.unbind();
 
 		window.clearTimeout(this.timeout);
+		C.ObjectSearchUnsubscribe([ this.subId ]);
 	};
 
 	rebind () {
