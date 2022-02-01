@@ -35,7 +35,7 @@ const SKIP_TYPES = [
 ];
 
 const KEYS = [ 
-	'id', 'name', 'snippet', 'layout', 'type', 'iconEmoji', 'iconImage', 'isHidden', 'done', 
+	'id', 'name', 'snippet', 'layout', 'type', 'iconEmoji', 'iconImage', 'isHidden', 'isDeleted', 'done', 
 	'relationFormat', 'fileExt', 'fileMimeType', 'links', 
 ];
 
@@ -340,20 +340,18 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 					children = blockStore.getChildren(blockStore.root, blockStore.root, (it: I.Block) => { return it.isLink(); });
 					ids = children.map((it: I.Block) => { return it.content.targetBlockId; });
 
-					s.children = recordIds.filter((id: string) => { return ids.includes(id); });
-					s.children = s.children.map((id: string) => { return detailStore.get(this.subId, id, KEYS, true); });
+					s.children = this.idsMap(recordIds.filter((id: string) => { return ids.includes(id); }));
 					break;
 
 				case I.TabIndex.Recent:
 					children = blockStore.getChildren(blockStore.recent, blockStore.recent, (it: I.Block) => { return it.isLink(); });
 					ids = children.map((it: I.Block) => { return it.content.targetBlockId; }).reverse().slice(0, 20);
 
-					s.children = recordIds.filter((id: string) => { return ids.includes(id); });
-					s.children = s.children.map((id: string) => { return detailStore.get(this.subId, id, KEYS, true); });
+					s.children = this.idsMap(recordIds.filter((id: string) => { return ids.includes(id); }));
 					break;
 
 				case I.TabIndex.Set:
-					const records = recordIds.map((id: string) => { return detailStore.get(this.subId, id, [ 'type' ], true); });
+					const records = this.idsMap(recordIds);
 
 					s.children = records.filter((c: any) => { return c.type == Constant.typeId.set; });
 					s.children = s.children.slice(0, 20);
@@ -373,34 +371,38 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 			return list;
 		};
 
-		for (let id of ids) {
-			const child = detailStore.get(this.subId, id, KEYS, true);
-			const length = (child.links || []).length;
-			const item = {
-				details: child,
-				id,
+		const items = this.idsMap(ids);
+		for (let item of items) {
+			const children = this.idsMap(item.links);
+			const length = children.length;
+			const newItem = {
+				details: item,
+				id: item.id,
 				depth,
 				length,
 				parentId,
 				sectionId,
 			};
-			list.push(item);
+			list.push(newItem);
 
 			if (length) {
-				const check = Storage.checkToggle('sidebar', this.getId({ ...item, sectionId }));
+				const check = Storage.checkToggle('sidebar', this.getId({ ...newItem, sectionId }));
 				if (check) {
-					list = this.unwrap(sectionId, list, child.id, child.links, depth + 1);
+					list = this.unwrap(sectionId, list, item.id, children.map(it => it.id), depth + 1);
 				};
 			};
 		};
 		return list;
 	};
 
+	idsMap (ids: string[]) {
+		return (ids || []).map((id: string) => { return detailStore.get(this.subId, id, KEYS, true); }).filter(it => this.filterMapper(it));
+	};
+
 	getItems () {
 		const sections = this.getSections();
 
 		let items: any[] = [];
-
 		sections.forEach((section: any) => {
 			const length = section.children.length;
 			const item = {
@@ -421,7 +423,6 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 				};
 			};
 		});
-
 		return items;
 	};
 
