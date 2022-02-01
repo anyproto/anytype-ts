@@ -22,6 +22,8 @@ const MAX_DEPTH = 10;
 const LIMIT = 20;
 const HEIGHT = 24;
 const SKIP_TYPES = [
+	Constant.typeId.space,
+	/*
 	Constant.typeId.type,
 	Constant.typeId.relation,
 	Constant.typeId.space,
@@ -30,6 +32,7 @@ const SKIP_TYPES = [
 	Constant.typeId.image, 
 	Constant.typeId.audio, 
 	Constant.typeId.video,
+	*/
 ];
 
 const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
@@ -266,11 +269,20 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 			return;
 		};
 
+/*
+14: "fileExt"
+15: "fileMimeType"
+16: "links"
+*/
+
+		const keys = [ 
+			'id', 'name', 'snippet', 'layout', 'type', 'iconEmoji', 'iconImage', 'isHidden', 'done', 
+			'relationFormat', 'fileExt', 'fileMimeType', 'links'
+		];
 		const subId = dbStore.getSubId('sidebar', '');
 		const filters: any[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.Equal, value: false },
 			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
-			{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
 			{ 
 				operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, 
 				value: [
@@ -281,9 +293,12 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 			},
 		];
 
-		this.setState({ loading: true });
+		if (SKIP_TYPES && SKIP_TYPES.length) {
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: SKIP_TYPES });
+		};
 
-		C.ObjectSearchSubscribe(subId, filters, [], Constant.defaultRelationKeys.concat([ 'links' ]), [], 0, 0, true, '', '', () => {
+		this.setState({ loading: true });
+		C.ObjectSearchSubscribe(subId, filters, [], keys, [], 0, 0, true, '', '', () => {
 			this.loaded = true;
 			this.setState({ loading: false });
 		});
