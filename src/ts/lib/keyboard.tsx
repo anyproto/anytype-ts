@@ -616,7 +616,7 @@ class Keyboard {
 	
 	setCoords (e: any) {
 		const { sidebar } = commonStore;
-		const { snap, width } = sidebar;
+		const { snap } = sidebar;
 
 		this.mouse = {
 			page: { x: e.pageX, y: e.pageY },

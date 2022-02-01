@@ -190,6 +190,8 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 	componentWillUnmount () {
 		this._isMounted = false;
 		this.unbind();
+
+		window.clearTimeout(this.timeout);
 	};
 
 	rebind () {

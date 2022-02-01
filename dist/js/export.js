@@ -4,10 +4,12 @@ document.body.onload = function () {
         var a = $('a');
     
         link.unbind('click').on('click', function (e) {
+            e.preventDefault();
             window.open($(this).attr('href'));
         });
     
         a.unbind('click').on('click', function (e) {
+            e.preventDefault();
             window.open($(this).attr('href'));
         });
     
