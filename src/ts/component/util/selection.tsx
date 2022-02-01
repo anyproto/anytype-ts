@@ -245,7 +245,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		this.unbindMouse();
 
 		win.on(`mousemove.selection`, throttle((e: any) => { this.onMouseMove(e); }, THROTTLE));
-		win.on(`mouseup.selection`, (e: any) => { this.onMouseUp(e); });
+		win.on(`blur.selection mouseup.selection`, (e: any) => { this.onMouseUp(e); });
 	};
 	
 	onMouseMove (e: any) {

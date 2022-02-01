@@ -57,11 +57,10 @@ html.printMedia {
 			.value { -webkit-user-modify: unset !important; }
 		}
 		
+		.block.blockBookmark { break-inside: avoid-page; }
 		.block.blockBookmark {
 			.side.left { width: 100% !important; }
 			.side.right { display: none; }
-			
-			.inner.vertical { padding: 0px; }
 		}
 
 		.block.blockText.code > .wrapContent > .selectable > .dropTarget > .flex .value { white-space: pre; }
