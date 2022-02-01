@@ -13,6 +13,9 @@ import { configure } from 'mobx';
 
 configure({ enforceActions: 'never' });
 
+import 'react-virtualized/styles.css';
+import 'katex/dist/katex.min.css';
+
 import 'scss/font.scss';
 import 'scss/common.scss';
 import 'scss/debug.scss';

@@ -3,10 +3,9 @@ import { Icon, Tag, Filter } from 'ts/component';
 import { I, Util, DataUtil, keyboard, Relation } from 'ts/lib';
 import { menuStore } from 'ts/store';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import 'react-virtualized/styles.css';
 import { observer } from 'mobx-react';
 
-interface Props extends I.Menu {}
+interface Props extends I.Menu {};
 
 const $ = require('jquery');
 const MENU_ID = 'dataviewOptionValues';

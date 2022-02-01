@@ -3,6 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { I, C, DataUtil, Util, keyboard, Storage } from 'ts/lib';
 import { IconObject, Icon, ObjectName, Loader } from 'ts/component';
 import { authStore, blockStore, commonStore, dbStore, detailStore } from 'ts/store';
+import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { observer } from 'mobx-react';
 
 interface Props {
@@ -17,9 +18,10 @@ interface State {
 const $ = require('jquery');
 const Constant = require('json/constant.json');
 
-const MAX_DEPTH = 5;
+const MAX_DEPTH = 10;
+const LIMIT = 20;
+const HEIGHT = 24;
 const SKIP_TYPES = [
-	/*
 	Constant.typeId.type,
 	Constant.typeId.relation,
 	Constant.typeId.space,
@@ -28,7 +30,6 @@ const SKIP_TYPES = [
 	Constant.typeId.image, 
 	Constant.typeId.audio, 
 	Constant.typeId.video,
-	*/
 ];
 
 const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
@@ -36,10 +37,6 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 	_isMounted: boolean = false;
 	state = {
 		loading: false,
-	};
-	data: any = {
-		nodes: [],
-		edges: [],
 	};
 	loaded: boolean = false;
 	top: number = 0;
@@ -49,6 +46,8 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 	width: number = 0;
 	height: number = 0;
 	timeout: number = 0;
+	refList: any = null;
+	cache: any = {};
 
 	constructor (props: any) {
 		super(props);
@@ -58,15 +57,15 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		this.onDragStart = this.onDragStart.bind(this);
 		this.onMouseEnter = this.onMouseEnter.bind(this);
 		this.onMouseLeave = this.onMouseLeave.bind(this);
+		this.onScroll = this.onScroll.bind(this);
 	};
 
 	render () {
 		const { account } = authStore;
 		const { sidebar } = commonStore;
-		const { root, profile } = blockStore;
 		const { width, height, x, y, fixed, snap } = sidebar;
 		const { loading } = this.state;
-		const sections = this.getSections();
+		const items = this.getItems();
 		const css: any = { width };
 		const cn = [ 'sidebar' ];
 
@@ -87,75 +86,54 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 			css.height = height;
 		};
 
-        let depth = 0;
-
-		const Section = (section: any) => {
-			const length = section.children.length;
-			const id = [ 'section', section.id ].join('-');
-
-			return (
-				<div id={`item-${id}`} className="section">
-					<div 
-						className="sectionHead" 
-						onMouseDown={(e: any) => { 
-							if (length) {
-								this.onToggle(e, id); 
-							};
-						}}
-					>
-						{length ? <Icon className="arrow" /> : ''}
-						<div className="name">{section.name}</div>
-						<div className="cnt">{section.children.length || ''}</div>
-					</div>
-
-					<div id={`children-${id}`} className="children">
-						{section.children.map((child: any, i: number) => (
-							<Item 
-								key={child.id + '-' + depth} 
-								{...child} 
-								sectionId={section.id} 
-								parentId="" 
-								depth={depth} 
-							/>
-						))}
-					</div>
-				</div>
-			);
-		};
-
-        const Item = (item: any) => {
-			const children = item.children || [];
-			const css: any = { paddingLeft: 6 + item.depth * 4 };
-			const length = children.length;
+		const rowRenderer = (param: any) => {
+			const item: any = items[param.index];
+			const length = item.length;
+			const cn = [ 'item' ];
+			const paddingLeft = 6 + item.depth * 24;
+			const style = { ...param.style, paddingLeft };
 			const id = this.getId(item);
-			const cn = [ 'item', 'depth' + item.depth ];
+			const check = Storage.checkToggle('sidebar', id);
 
-			if ((item.depth > 0) && !length) {
-				css.paddingLeft += 20;
+			if (check) {
+				cn.push('active');
 			};
 
-            return (
-                <div id={`item-${id}`} className={cn.join(' ')}>
-                    <div className="flex" style={css} onMouseDown={(e: any) => { this.onClick(e, item); }}>
-						{length ? <Icon className="arrow" onMouseDown={(e: any) => { this.onToggle(e, id); }} /> : ''}
-                        <IconObject object={...item} size={20} forceLetter={true} />
-						<ObjectName object={item} />
-                    </div>
+			let content = null;
+			if (item.isSection) {
+				cn.push('isSection');
 
-					<div id={`children-${id}`} className="children">
-						{children.map((child: any, i: number) => (
-							<Item 
-								key={child.id + '-' + item.depth} 
-								{...child} 
-								sectionId={item.sectionId} 
-								parentId={item.id} 
-								depth={item.depth + 1} 
-							/>
-						))}
+				content = (
+					<React.Fragment>
+						<div className="name">{item.details.name}</div>
+						<div className="cnt">{length || ''}</div>
+					</React.Fragment>
+				);
+			} else {
+				content = (
+					<div className="clickable" onClick={(e: any) => { this.onClick(e, item); }}>
+						<IconObject object={item.details} size={20} forceLetter={true} />
+						<ObjectName object={item.details} />
 					</div>
-                </div>
-            );
-        };
+				);
+			};
+
+			return (
+				<CellMeasurer
+					key={param.key}
+					parent={param.parent}
+					cache={this.cache}
+					columnIndex={0}
+					rowIndex={param.index}
+					hasFixedWidth={() => {}}
+				>
+					<div id={'item-' + id} className={cn.join(' ')} style={style}>
+						{length ? <Icon className="arrow" onMouseDown={(e: any) => { this.onToggle(e, id); }} /> : ''}
+						{content}
+					</div>
+				</CellMeasurer>
+			);
+		};
 
 		return (
             <div 
@@ -174,11 +152,31 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 					{loading ? (
 						<Loader />
 					) : (
-						<React.Fragment>
-							{sections.map((section: any, i: number) => (
-								<Section key={i} {...section} />
-							))}
-						</React.Fragment>
+						<InfiniteLoader
+							rowCount={items.length}
+							loadMoreRows={() => {}}
+							isRowLoaded={() => { return true; }}
+							threshold={LIMIT}
+						>
+							{({ onRowsRendered, registerChild }) => (
+								<AutoSizer className="scrollArea">
+									{({ width, height }) => (
+										<List
+											ref={(ref: any) => { this.refList = ref; }}
+											width={width}
+											height={height}
+											deferredMeasurmentCache={this.cache}
+											rowCount={items.length}
+											rowHeight={HEIGHT}
+											rowRenderer={rowRenderer}
+											onRowsRendered={onRowsRendered}
+											overscanRowCount={LIMIT}
+											onScroll={this.onScroll}
+										/>
+									)}
+								</AutoSizer>
+							)}
+						</InfiniteLoader>
 					)}
 				</div>
 
@@ -197,9 +195,17 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 	};
 
 	componentDidUpdate () {
+		const items = this.getItems();
+
 		this.init();
 		this.resize();
 		this.restore();
+
+		this.cache = new CellMeasurerCache({
+			fixedWidth: true,
+			defaultHeight: HEIGHT,
+			keyMapper: (i: number) => { return (items[i] || {}).id; },
+		});
 	};
 
 	componentWillUnmount () {
@@ -210,13 +216,8 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 	};
 
 	rebind () {
-		const node = $(ReactDOM.findDOMNode(this));
-		const body = node.find('.body');
-
 		this.unbind();
-
 		$(window).on('resize.sidebar', (e: any) => { this.resize(); });
-		body.on('scroll', (e: any) => { this.onScroll(); });
 	};
 
 	unbind () {
@@ -238,13 +239,11 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		const { x, y, snap } = sidebar;
 		const node = $(ReactDOM.findDOMNode(this));
 		const body = node.find('.body');
-		const toggle = Storage.getToggle('sidebar');
 		const dummy = $('#sidebarDummy');
 
 		this.width = node.width();
 		this.height = node.height();
 
-		toggle.forEach((it: string) => { this.childrenShow(it); });
 		body.scrollTop(this.top);
 
 		this.setActive();
@@ -282,11 +281,10 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		});
 	};
 
-	onScroll () {
-		const node = $(ReactDOM.findDOMNode(this));
-		const body = node.find('.body');
-
-		this.top = body.scrollTop();
+	onScroll ({ clientHeight, scrollHeight, scrollTop }) {
+		if (scrollTop) {
+			this.top = scrollTop;
+		};
 	};
 
 	onToggle (e: any, id: string) {
@@ -297,30 +295,12 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		e.preventDefault();
 		e.stopPropagation();
 
-		const node = $(ReactDOM.findDOMNode(this));
-		const el = node.find(`#item-${id}`);
+		console.log('onToggle', id);
 
-		el.hasClass('active') ? this.childrenHide(id) : this.childrenShow(id);
-	};
+		const check = Storage.checkToggle('sidebar', id);
+		Storage.setToggle('sidebar', id, !check);
 
-	childrenShow (id: string) {
-		const node = $(ReactDOM.findDOMNode(this));
-		const el = node.find(`#item-${id}`);
-		const children = el.find(`#children-${id}`);
-
-		el.addClass('active');
-		children.css({ overflow: 'visible', height: 'auto' });
-		Storage.setToggle('sidebar', id, true);
-	};
-
-	childrenHide (id: string) {
-		const node = $(ReactDOM.findDOMNode(this));
-		const el = node.find(`#item-${id}`);
-		const children = el.find(`#children-${id}`);
-
-		el.removeClass('active');
-		children.css({ overflow: 'hidden', height: 0 });
-		Storage.setToggle('sidebar', id, false);
+		this.forceUpdate();
 	};
 
 	getSections () {
@@ -335,7 +315,9 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		let ids: string[] = [];
 
 		sections = sections.map((s: any) => {
+			s.details = s;
 			s.children = [];
+			s.isSection = true;
 
 			switch (s.id) {
 				case I.TabIndex.Favorite:
@@ -355,7 +337,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 					break;
 
 				case I.TabIndex.Set:
-					s.children = tree.filter((c: any) => { return c.type == Constant.typeId.set; });
+					s.children = tree.filter((c: any) => { return c.details.type == Constant.typeId.set; });
 					s.children = s.children.slice(0, 20);
 					break;
 
@@ -364,6 +346,37 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		});
 
 		return sections;
+	};
+
+	unwrap (sectionId: string, list: any[], id: string, children: any[], depth: number) {
+		for (let child of children) {
+			const length = child.children.length;
+			const item = {
+				id: child.id,
+				parentId: id,
+				sectionId: sectionId,
+				details: child.details,
+				depth: depth,
+				length: length,
+				isSection: child.isSection,
+			};
+			list.push(item);
+
+			if (length) {
+				const check = Storage.checkToggle('sidebar', this.getId({ ...item, sectionId }));
+				if (check) {
+					list = this.unwrap(sectionId, list, child.id, child.children, depth + 1);
+				};
+			};
+		};
+		return list;
+	};
+
+	getItems () {
+		const sections = this.getSections();
+
+		const items: any[] = [];
+		return this.unwrap('', items, '', sections, 0);
 	};
 
 	sortByIds (ids: string[], c1: any, c2: any) {
@@ -375,21 +388,25 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 	};
 
 	filterMapper (it: any) {
-		if (SKIP_TYPES.includes(it.type)) {
+		if (SKIP_TYPES.includes(it.details.type)) {
 			return false;
 		};
-		return !it.isDeleted && !it.isHidden;
+		return !it.details._empty_ && !it.details.isDeleted && !it.details.isHidden;
 	};
 
 	getLinks (ids: string[], depth: number) {
-		if (!ids || !ids.length || (depth > MAX_DEPTH)) {
+		if (!ids || !ids.length || (depth >= MAX_DEPTH)) {
 			return [];
 		};
 
 		const subId = dbStore.getSubId('sidebar', '');
 		const children = (ids || []).map((id: string) => {
 			const item = detailStore.get(subId, id, [ 'links' ]);
-			return { ...item, children: this.getLinks(item.links, depth + 1) };
+			return { 
+				id: item.id,
+				details: item, 
+				children: this.getLinks(item.links, depth + 1),
+			};
 		});
 		return children.filter(it => this.filterMapper(it));
 	};
@@ -397,8 +414,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
     getTree () {
 		const subId = dbStore.getSubId('sidebar', '');
 		const ids = dbStore.getRecords(subId, '').map(it => it.id);
-
-        return this.getLinks(ids, 0);
+		return this.getLinks(ids, 1);
     };
 
 	onExpand (e: any) {
@@ -437,7 +453,8 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		};
 	};
 
-	getId ({ sectionId, parentId, id, depth }) {
+	getId (item: any) {
+		const { sectionId, parentId, id, depth } = item;
 		return [ sectionId, parentId, id, depth ].join('-');
 	};
 

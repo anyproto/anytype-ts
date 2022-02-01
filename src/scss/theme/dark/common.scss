@@ -275,10 +275,7 @@ html.themeDark {
                 background-image: url('~img/arrow/select/light.svg');
             }
             
-            .item {
-                .flex:hover::before { background: $colorHover; }
-            }
-            .item.hover > .flex::before { background: $colorHover; }
+            .item:hover::before, .item.hover::before { background: $colorHover; }
         }
     }
 

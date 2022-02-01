@@ -3,7 +3,6 @@ import { Filter, MenuItemVertical } from 'ts/component';
 import { I, Util, Key, keyboard } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import 'react-virtualized/styles.css';
 
 interface Props extends I.Menu {}
 

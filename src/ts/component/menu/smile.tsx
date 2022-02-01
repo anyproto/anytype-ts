@@ -1,11 +1,9 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Filter, IconEmoji } from 'ts/component';
-import { I, C, Util, SmileUtil, keyboard, Storage, translate } from 'ts/lib';
+import { I, C, Util, SmileUtil, keyboard, Storage, translate, analytics } from 'ts/lib';
 import { menuStore } from 'ts/store';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import 'react-virtualized/styles.css';
-import { analytics } from '../../lib';
 
 interface Props extends I.Menu {};
 interface State {
