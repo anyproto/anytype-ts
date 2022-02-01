@@ -18,7 +18,7 @@ interface State {
 const $ = require('jquery');
 const Constant = require('json/constant.json');
 
-const MAX_DEPTH = 10;
+const MAX_DEPTH = 50;
 const LIMIT = 20;
 const HEIGHT = 24;
 const SKIP_TYPES = [
@@ -26,13 +26,17 @@ const SKIP_TYPES = [
 	/*
 	Constant.typeId.type,
 	Constant.typeId.relation,
-	Constant.typeId.space,
 
 	Constant.typeId.file, 
 	Constant.typeId.image, 
 	Constant.typeId.audio, 
 	Constant.typeId.video,
 	*/
+];
+
+const KEYS = [ 
+	'id', 'name', 'snippet', 'layout', 'type', 'iconEmoji', 'iconImage', 'isHidden', 'done', 
+	'relationFormat', 'fileExt', 'fileMimeType', 'links', 
 ];
 
 const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
@@ -51,6 +55,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 	timeout: number = 0;
 	refList: any = null;
 	cache: any = {};
+	subId: string = '';
 
 	constructor (props: any) {
 		super(props);
@@ -199,6 +204,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 
 	componentDidMount () {
 		this._isMounted = true;
+		this.subId = dbStore.getSubId('sidebar', '');
 		this.init();
 		this.resize();
 		this.rebind();
@@ -269,17 +275,6 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 			return;
 		};
 
-/*
-14: "fileExt"
-15: "fileMimeType"
-16: "links"
-*/
-
-		const keys = [ 
-			'id', 'name', 'snippet', 'layout', 'type', 'iconEmoji', 'iconImage', 'isHidden', 'done', 
-			'relationFormat', 'fileExt', 'fileMimeType', 'links'
-		];
-		const subId = dbStore.getSubId('sidebar', '');
 		const filters: any[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.Equal, value: false },
 			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
@@ -298,7 +293,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		};
 
 		this.setState({ loading: true });
-		C.ObjectSearchSubscribe(subId, filters, [], keys, [], 0, 0, true, '', '', () => {
+		C.ObjectSearchSubscribe(this.subId, filters, [], KEYS, [], 0, 0, true, '', '', () => {
 			this.loaded = true;
 			this.setState({ loading: false });
 		});
@@ -325,7 +320,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 	};
 
 	getSections () {
-		const tree = this.getTree();
+		const recordIds = dbStore.getRecords(this.subId, '').map(it => it.id);
 
 		let sections: any[] = [
 			{ id: I.TabIndex.Favorite, name: 'Favorites' },
@@ -345,48 +340,56 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 					children = blockStore.getChildren(blockStore.root, blockStore.root, (it: I.Block) => { return it.isLink(); });
 					ids = children.map((it: I.Block) => { return it.content.targetBlockId; });
 
-					s.children = tree.filter((c: any) => { return ids.includes(c.id); });
-					s.children.sort((c1: any, c2: any) => { return this.sortByIds(ids, c1, c2); });
+					s.children = recordIds.filter((id: string) => { return ids.includes(id); });
+					s.children = s.children.map((id: string) => { return detailStore.get(this.subId, id, KEYS, true); });
 					break;
 
 				case I.TabIndex.Recent:
 					children = blockStore.getChildren(blockStore.recent, blockStore.recent, (it: I.Block) => { return it.isLink(); });
 					ids = children.map((it: I.Block) => { return it.content.targetBlockId; }).reverse().slice(0, 20);
 
-					s.children = tree.filter((c: any) => { return ids.includes(c.id); });
-					s.children.sort((c1: any, c2: any) => { return this.sortByIds(ids, c1, c2); });
+					s.children = recordIds.filter((id: string) => { return ids.includes(id); });
+					s.children = s.children.map((id: string) => { return detailStore.get(this.subId, id, KEYS, true); });
 					break;
 
 				case I.TabIndex.Set:
-					s.children = tree.filter((c: any) => { return c.details.type == Constant.typeId.set; });
+					const records = recordIds.map((id: string) => { return detailStore.get(this.subId, id, [ 'type' ], true); });
+
+					s.children = records.filter((c: any) => { return c.type == Constant.typeId.set; });
 					s.children = s.children.slice(0, 20);
 					break;
 
 			};
+
+			s.children = s.children.filter(it => this.filterMapper(it));
 			return s;
 		});
 
 		return sections;
 	};
 
-	unwrap (sectionId: string, list: any[], id: string, children: any[], depth: number) {
-		for (let child of children) {
-			const length = child.children.length;
+	unwrap (sectionId: string, list: any[], parentId: string, ids: string[], depth: number) {
+		if (depth >= MAX_DEPTH) {
+			return list;
+		};
+
+		for (let id of ids) {
+			const child = detailStore.get(this.subId, id, KEYS, true);
+			const length = (child.links || []).length;
 			const item = {
-				id: child.id,
-				parentId: id,
-				sectionId: sectionId,
-				details: child.details,
-				depth: depth,
-				length: length,
-				isSection: child.isSection,
+				details: child,
+				id,
+				depth,
+				length,
+				parentId,
+				sectionId,
 			};
 			list.push(item);
 
 			if (length) {
 				const check = Storage.checkToggle('sidebar', this.getId({ ...item, sectionId }));
 				if (check) {
-					list = this.unwrap(sectionId, list, child.id, child.children, depth + 1);
+					list = this.unwrap(sectionId, list, child.id, child.links, depth + 1);
 				};
 			};
 		};
@@ -396,8 +399,30 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 	getItems () {
 		const sections = this.getSections();
 
-		const items: any[] = [];
-		return this.unwrap('', items, '', sections, 0);
+		let items: any[] = [];
+
+		sections.forEach((section: any) => {
+			const length = section.children.length;
+			const item = {
+				...section,
+				details: section,
+				length,
+				depth: 0,
+				parentId: '',
+				sectionId: '',
+				isSection: true,
+			};
+			items.push(item);
+
+			if (length) {
+				const check = Storage.checkToggle('sidebar', this.getId(item));
+				if (check) {
+					items = this.unwrap(section.id, items, section.id, section.children.map(it => it.id), 1);
+				};
+			};
+		});
+
+		return items;
 	};
 
 	sortByIds (ids: string[], c1: any, c2: any) {
@@ -409,34 +434,11 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 	};
 
 	filterMapper (it: any) {
-		if (SKIP_TYPES.includes(it.details.type)) {
+		if (SKIP_TYPES.includes(it.type)) {
 			return false;
 		};
-		return !it.details._empty_ && !it.details.isDeleted && !it.details.isHidden;
+		return !it._empty_ && !it.isDeleted && !it.isHidden;
 	};
-
-	getLinks (ids: string[], depth: number) {
-		if (!ids || !ids.length || (depth >= MAX_DEPTH)) {
-			return [];
-		};
-
-		const subId = dbStore.getSubId('sidebar', '');
-		const children = (ids || []).map((id: string) => {
-			const item = detailStore.get(subId, id, [ 'links' ]);
-			return { 
-				id: item.id,
-				details: item, 
-				children: this.getLinks(item.links, depth + 1),
-			};
-		});
-		return children.filter(it => this.filterMapper(it));
-	};
-
-    getTree () {
-		const subId = dbStore.getSubId('sidebar', '');
-		const ids = dbStore.getRecords(subId, '').map(it => it.id);
-		return this.getLinks(ids, 1);
-    };
 
 	onExpand (e: any) {
 		e.preventDefault();
