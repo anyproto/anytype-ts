@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { I, C, DataUtil, Util, keyboard, Storage } from 'ts/lib';
 import { IconObject, Icon, ObjectName, Loader } from 'ts/component';
-import { authStore, blockStore, commonStore } from 'ts/store';
+import { authStore, blockStore, commonStore, dbStore, detailStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props {
@@ -110,12 +110,13 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		};
 
         const Item = (item: any) => {
+			const children = item.children || [];
 			const css: any = { paddingLeft: 6 + item.depth * 4 };
-			const length = item.children.length;
+			const length = children.length;
 			const id = this.getId(item);
 			const cn = [ 'item', 'depth' + item.depth ];
 
-			if ((item.depth > 0) && !item.children.length) {
+			if ((item.depth > 0) && !length) {
 				css.paddingLeft += 20;
 			};
 
@@ -128,7 +129,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
                     </div>
 
 					<div id={`children-${id}`} className="children">
-						{item.children.map((child: any, i: number) => (
+						{children.map((child: any, i: number) => (
 							<Item 
 								key={child.id + '-' + item.depth} 
 								{...child} 
@@ -244,9 +245,11 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 			return;
 		};
 
+		const subId = dbStore.getSubId('sidebar', '');
 		const filters: any[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.Equal, value: false },
 			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
+			{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
 			{ 
 				operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, 
 				value: [
@@ -259,15 +262,8 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 
 		this.setState({ loading: true });
 
-		C.ObjectGraph(filters, 0, [], (message: any) => {
-			if (message.error.code) {
-				return;
-			};
-
+		C.ObjectSearchSubscribe(subId, filters, [], Constant.defaultRelationKeys.concat([ 'links' ]), [], 0, 0, true, '', '', () => {
 			this.loaded = true;
-			this.data.edges = message.edges.filter(d => { return d.source !== d.target; });
-			this.data.nodes = message.nodes;
-
 			this.setState({ loading: false });
 		});
 	};
@@ -365,23 +361,22 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 	};
 
     getTree () {
-		const data = Util.objectCopy(this.data);
+		let subId = dbStore.getSubId('sidebar', '');
+		let data = dbStore.getRecords(subId, '');
 
-        let edges = data.edges.map((edge: any) => {
-            edge.target = data.nodes.find((node: any) => { return node.id == edge.target; });
-            return edge;
-        });
-		edges = edges.filter((edge: any) => { return edge.type == I.EdgeType.Link; });
+		data = data.map((it: any) => {
+			let item = detailStore.get(subId, it.id, [ 'links' ]);
+			let children = (item.links || []).map((id: string) => {
+				return detailStore.get(subId, id, [ 'links' ]);
+			});
 
-        let nodes = data.nodes.map((node: any) => {
-            node.children = edges.filter((edge: any) => {
-                return edge.source == node.id;
-            }).map((edge: any) => { 
-                return edge.target;
-            });
-            return node;
-        });
-        return nodes;
+			children = children.filter((it: any) => {
+				return !it.isDeleted;
+			});
+
+			return { ...item, children: children || [] };
+		});
+        return data;
     };
 
 	onExpand (e: any) {
