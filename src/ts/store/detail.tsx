@@ -111,15 +111,14 @@ class DetailStore {
 			return { id, _empty_: true };
 		};
 		
-		let object: any = {};
-
 		if (keys) {
 			if (!forceKeys) {
 				keys = keys.concat(Constant.defaultRelationKeys);
 			};
-			list = list.filter((it: Detail) => { return keys.indexOf(it.relationKey) >= 0; });
+			list = list.filter((it: Detail) => { return keys.includes(it.relationKey); });
 		};
 
+		let object: any = {};
 		for (let item of list) {
 			object[item.relationKey] = item.value;
 		};

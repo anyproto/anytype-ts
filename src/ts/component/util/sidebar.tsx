@@ -294,27 +294,11 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		});
 	};
 
-	onScroll ({ clientHeight, scrollHeight, scrollTop }) {
-		if (scrollTop) {
-			this.top = scrollTop;
-		};
-	};
-
-	onToggle (e: any, id: string) {
-		if (!this._isMounted) {
-			return;
-		};
-
-		e.preventDefault();
-		e.stopPropagation();
-
-		Storage.setToggle('sidebar', id, !Storage.checkToggle('sidebar', id));
-		this.forceUpdate();
+	idsMap (ids: string[]) {
+		return (ids || []).map((id: string) => { return detailStore.get(this.subId, id, KEYS, true); }).filter(it => this.filterMapper(it));
 	};
 
 	getSections () {
-		const recordIds = dbStore.getRecords(this.subId, '').map(it => it.id);
-
 		let sections: any[] = [
 			{ id: I.TabIndex.Favorite, name: 'Favorites' },
 			{ id: I.TabIndex.Recent, name: 'Recent' },
@@ -322,9 +306,9 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		];
 		let children: I.Block[] = [];
 		let ids: string[] = [];
+		let records: any[] = [];
 
 		sections = sections.map((s: any) => {
-			s.details = s;
 			s.children = [];
 			s.isSection = true;
 
@@ -333,26 +317,25 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 					children = blockStore.getChildren(blockStore.root, blockStore.root, (it: I.Block) => { return it.isLink(); });
 					ids = children.map((it: I.Block) => { return it.content.targetBlockId; });
 
-					s.children = this.idsMap(recordIds.filter((id: string) => { return ids.includes(id); }));
+					s.children = this.idsMap(ids);
 					break;
 
 				case I.TabIndex.Recent:
 					children = blockStore.getChildren(blockStore.recent, blockStore.recent, (it: I.Block) => { return it.isLink(); });
-					ids = children.map((it: I.Block) => { return it.content.targetBlockId; }).reverse().slice(0, 20);
+					ids = children.map((it: I.Block) => { return it.content.targetBlockId; }).reverse();
 
-					s.children = this.idsMap(recordIds.filter((id: string) => { return ids.includes(id); }));
+					s.children = this.idsMap(ids).filter(it => this.filterMapper(it)).slice(0, LIMIT);
 					break;
 
 				case I.TabIndex.Set:
-					const records = this.idsMap(recordIds);
+					records = this.idsMap(dbStore.getRecords(this.subId, '').map(it => it.id));
 
 					s.children = records.filter((c: any) => { return c.type == Constant.typeId.set; });
-					s.children = s.children.slice(0, 20);
+					s.children = s.children.filter(it => this.filterMapper(it)).slice(0, LIMIT);
 					break;
 
 			};
 
-			s.children = s.children.filter(it => this.filterMapper(it));
 			return s;
 		});
 
@@ -388,10 +371,6 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		return list;
 	};
 
-	idsMap (ids: string[]) {
-		return (ids || []).map((id: string) => { return detailStore.get(this.subId, id, KEYS, true); }).filter(it => this.filterMapper(it));
-	};
-
 	getItems () {
 		const sections = this.getSections();
 
@@ -399,10 +378,13 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		sections.forEach((section: any) => {
 			const length = section.children.length;
 			const item = {
-				...section,
-				details: section,
+				details: {
+					id: section.id,
+					name: section.name,
+				},
 				length,
 				depth: 0,
+				id: section.id,
 				parentId: '',
 				sectionId: '',
 				isSection: true,
@@ -416,12 +398,13 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 				};
 			};
 		});
+
 		return items;
 	};
 
 	sortByIds (ids: string[], c1: any, c2: any) {
-		const i1 = ids.indexOf(c1.id);
-		const i2 = ids.indexOf(c2.id);
+		const i1 = ids.indexOf(c1);
+		const i2 = ids.indexOf(c2);
 		if (i1 > i2) return 1; 
 		if (i1 < i2) return -1;
 		return 0;
@@ -432,6 +415,24 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 			return false;
 		};
 		return !it._empty_ && !it.isDeleted && !it.isHidden;
+	};
+
+	onScroll ({ clientHeight, scrollHeight, scrollTop }) {
+		if (scrollTop) {
+			this.top = scrollTop;
+		};
+	};
+
+	onToggle (e: any, id: string) {
+		if (!this._isMounted) {
+			return;
+		};
+
+		e.preventDefault();
+		e.stopPropagation();
+
+		Storage.setToggle('sidebar', id, !Storage.checkToggle('sidebar', id));
+		this.forceUpdate();
 	};
 
 	onExpand (e: any) {
