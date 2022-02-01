@@ -100,6 +100,8 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 			};
 
 			let content = null;
+			let arrow = null;
+
 			if (item.isSection) {
 				cn.push('isSection');
 
@@ -118,6 +120,12 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 				);
 			};
 
+			if (length) {
+				arrow = <Icon className="arrow" onMouseDown={(e: any) => { this.onToggle(e, id); }} />;
+			} else {
+				arrow = <Icon className="blank" />
+			};
+
 			return (
 				<CellMeasurer
 					key={param.key}
@@ -128,7 +136,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 					hasFixedWidth={() => {}}
 				>
 					<div id={'item-' + id} className={cn.join(' ')} style={style}>
-						{length ? <Icon className="arrow" onMouseDown={(e: any) => { this.onToggle(e, id); }} /> : ''}
+						{arrow}
 						{content}
 					</div>
 				</CellMeasurer>
@@ -294,8 +302,6 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 
 		e.preventDefault();
 		e.stopPropagation();
-
-		console.log('onToggle', id);
 
 		const check = Storage.checkToggle('sidebar', id);
 		Storage.setToggle('sidebar', id, !check);
