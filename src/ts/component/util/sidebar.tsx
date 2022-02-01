@@ -18,7 +18,7 @@ interface State {
 const $ = require('jquery');
 const Constant = require('json/constant.json');
 
-const MAX_DEPTH = 50;
+const MAX_DEPTH = 100;
 const LIMIT = 20;
 const HEIGHT = 24;
 const SKIP_TYPES = [
@@ -343,12 +343,11 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		return sections;
 	};
 
-	unwrap (sectionId: string, list: any[], parentId: string, ids: string[], depth: number) {
+	unwrap (sectionId: string, list: any[], parentId: string, items: any[], depth: number) {
 		if (depth >= MAX_DEPTH) {
 			return list;
 		};
 
-		const items = this.idsMap(ids);
 		for (let item of items) {
 			const children = this.idsMap(item.links);
 			const length = children.length;
@@ -365,7 +364,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 			if (length) {
 				const check = Storage.checkToggle('sidebar', this.getId({ ...newItem, sectionId }));
 				if (check) {
-					list = this.unwrap(sectionId, list, item.id, children.map(it => it.id), depth + 1);
+					list = this.unwrap(sectionId, list, item.id, children, depth + 1);
 				};
 			};
 		};
@@ -395,7 +394,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 			if (length) {
 				const check = Storage.checkToggle('sidebar', this.getId(item));
 				if (check) {
-					items = this.unwrap(section.id, items, section.id, section.children.map(it => it.id), 1);
+					items = this.unwrap(section.id, items, section.id, section.children, 1);
 				};
 			};
 		});
