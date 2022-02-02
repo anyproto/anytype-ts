@@ -6,6 +6,7 @@
 
 		.title { @include text-header2; margin: 0px 0px 10px 0px; }
 
+		.item > .children { padding-left: 24px; }
 		.item.blockLayout > .children { padding: 0px; }
 
 		.item > .text { cursor: pointer; display: inline-block; vertical-align: top; color: $colorDarkGrey; }
@@ -20,9 +21,5 @@
 		.item.blockText.header1 > .text, .item.blockText.header2 > .text, .item.blockText.header3 > .text { 
 			@include text-common;
 		}
-
-		.item.blockText.header2 { padding-left: 24px; }
-		.item.blockText.header3 { padding-left: 48px; }
-		
 	}
 }
