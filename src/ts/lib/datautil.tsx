@@ -822,11 +822,11 @@ class DataUtil {
 	
 	menuSectionsFilter (sections: any[], filter: string) {
 		const f = Util.filterFix(filter);
-		const regS = new RegExp('/^' + f + '/', 'gi');
+		const regS = new RegExp('^' + f, 'gi');
 		const regC = new RegExp(f, 'gi');
 		const getWeight = (s: string) => {
 			let w = 0;
-			if (s == f) {
+			if (s.toLowerCase() == f.toLowerCase()) {
 				w = 10000;
 			} else
 			if (s.match(regS)) {
