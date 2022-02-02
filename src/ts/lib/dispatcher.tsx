@@ -579,7 +579,6 @@ class Dispatcher {
 					detailStore.update(rootId, { id: id, details: details }, false);
 
 					// Subscriptions
-
 					uniqueSubIds = [];
 					subIds.forEach((it: string) => {
 						const [ subId, dep ] = it.split('/');
@@ -595,7 +594,7 @@ class Dispatcher {
 					});
 
 					Util.arrayUnique(uniqueSubIds).forEach((subId: string) => {
-						detailStore.update(subId, { id: id, details: details }, true);
+						detailStore.update(subId, { id: id, details: details }, false);
 					});
 
 					if ((id == rootId) && block) {
@@ -612,8 +611,9 @@ class Dispatcher {
 					subIds = data.getSubidsList() || [];
 					keys = data.getKeysList() || [];
 
-					// Subscriptions
+					detailStore.delete(rootId, id, keys);
 
+					// Subscriptions
 					uniqueSubIds = [];
 					subIds.forEach((it: string) => {
 						const [ subId, dep ] = it.split('/');
@@ -621,10 +621,9 @@ class Dispatcher {
 					});
 
 					Util.arrayUnique(uniqueSubIds).forEach((subId: string) => {
-						detailStore.update(subId, { id: id, details: details }, true);
+						detailStore.delete(subId, id, keys);
 					});
 					
-					detailStore.delete(rootId, id, keys);
 					blockStore.checkDraft(rootId);
 					break;
 
