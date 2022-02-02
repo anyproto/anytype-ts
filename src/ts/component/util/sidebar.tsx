@@ -21,14 +21,16 @@ const Constant = require('json/constant.json');
 const MAX_DEPTH = 100;
 const LIMIT = 20;
 const HEIGHT = 24;
+
 const SKIP_TYPES_LOAD = [
 	Constant.typeId.space,
 ];
+
 const SKIP_TYPES_LIST = [
 	Constant.typeId.space,
 	Constant.typeId.type,
 	Constant.typeId.relation,
-	
+
 	/*
 	Constant.typeId.file, 
 	Constant.typeId.image, 
