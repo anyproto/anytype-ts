@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { I, focus, DataUtil } from 'ts/lib';
-import { Title } from 'ts/component';
+import { I, focus, DataUtil, Util } from 'ts/lib';
 import { blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -30,9 +29,12 @@ const BlockTableOfContents = observer(class BlockTableOfContents extends React.C
 			const { style, text } = block.content;
 		};
 
+		let n = 0;
+
 		const Item = (item: any) => {
 			const block = blockStore.getLeaf(rootId, item.id);
 			const childrenIds = blockStore.getChildrenIds(rootId, item.id);
+			const cni = [ 'item', DataUtil.blockClass(block) ];
 
 			if (!block) {
 				return null;
@@ -42,11 +44,14 @@ const BlockTableOfContents = observer(class BlockTableOfContents extends React.C
 			if (block.isTextHeader()) {
 				const text = block.content.text;
 				if (text) {
+					cni.push(n % 2 ? 'even' : 'odd');
+
 					content = (
 						<div className="text" onClick={(e: any) => { this.onClick(e, block.id); }}>
-							{text}
+							<span>{text}</span>
 						</div>
 					);
+					n++;
 				};
 			};
 
@@ -55,7 +60,7 @@ const BlockTableOfContents = observer(class BlockTableOfContents extends React.C
 			};
 
 			return (
-				<div className={[ 'item', DataUtil.blockClass(block) ].join(' ')}>
+				<div className={cni.join(' ')}>
 					{content}
 
 					<div className="children">
@@ -71,7 +76,6 @@ const BlockTableOfContents = observer(class BlockTableOfContents extends React.C
 
 		return (
 			<div className={cn.join(' ')} tabIndex={0} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp} onFocus={this.onFocus}>
-				<Title text="Table of Contents" />
 				{childrenIds.map((id: string, i: number) => {
 					return (
 						<Item key={i} id={id} depth={0} />
@@ -112,8 +116,19 @@ const BlockTableOfContents = observer(class BlockTableOfContents extends React.C
 
 	onClick (e: any, id: string) {
 		const { isPopup } = this.props;
+		const node = $('.focusable.c' + id);
 
-		focus.scroll(isPopup, id);
+		if (!node.length) {
+			return;
+		};
+
+		const container = Util.getScrollContainer(isPopup);
+		const no = node.offset().top;
+		const st = container.scrollTop();
+		const hh = Util.sizeHeader();
+		const y = Math.max(hh + 20, (isPopup ? (no - container.offset().top + st) : no) - hh - 20);
+
+		container.scrollTop(y);
 	};
 	
 });

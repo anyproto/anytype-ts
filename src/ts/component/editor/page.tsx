@@ -1565,11 +1565,18 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				callBack(message.blockId);
 			};
 
-			analytics.event('CreateBlock', { 
+			const event: any =  { 
 				middleTime: message.middleTime, 
 				type: param.type, 
 				style: param.content?.style,
-			});
+				params: {},
+			};
+
+			if (param.type == I.BlockType.File) {
+				event.params.fileType = param.content.type;
+			};
+
+			analytics.event('CreateBlock', event);
 		});
 	};
 	
