@@ -211,9 +211,9 @@
     /* BlockTableOfContenst */
 
 	.block.blockTableOfContents { 
-		.item > .text { color: $colorSecondary; }
-		.item > .text > span { border-bottom: 1px solid rgba(146, 144, 130, 0.5); transition: $transitionFast; }
+		.item { color: $colorSecondary; }
+		.item span { border-bottom: 1px solid rgba(146, 144, 130, 0.5); }
 
-		.item:hover > .text > span { border-color: $colorDarkGrey; }
+		.item:hover span { border-color: $colorDarkGrey; }
 	}
 }

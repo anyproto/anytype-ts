@@ -3,20 +3,12 @@
 .blocks {
 	.block.blockTableOfContents { padding: 15px 0px; }
 	.block.blockTableOfContents { 
-
-		.title { @include text-header2; margin: 0px 0px 10px 0px; }
-
-		.item > .children { padding-left: 24px; }
-		.item.blockLayout > .children { padding: 0px; }
-
-		.item > .text { cursor: pointer; display: inline-block; vertical-align: top; color: $colorDarkGrey; }
-		.item > .text > span { border-bottom: 1px solid rgba(146, 144, 130, 0.5); transition: $transitionFast; }
-
-		.item:hover > .text > span { border-color: $colorDarkGrey; }
-
-		.item.blockText.header1, .item.blockText.header2, .item.blockText.header3 { padding: 4px 0px; }
-		.item.blockText.header1 > .text, .item.blockText.header2 > .text, .item.blockText.header3 > .text { 
-			@include text-common;
+		.item { cursor: pointer; color: $colorDarkGrey; padding: 4px 0px; @include text-common; }
+		.item {
+			span { border-bottom: 1px solid rgba(146, 144, 130, 0.5); transition: $transitionFast; }
+		}
+		.item:hover {
+			span { border-color: $colorDarkGrey; }
 		}
 	}
 }
