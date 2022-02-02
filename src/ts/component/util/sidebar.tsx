@@ -143,7 +143,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 					rowIndex={param.index}
 					hasFixedWidth={() => {}}
 				>
-					<div id={'item-' + id} className={cn.join(' ')} style={style} onContextMenu={(e: any) => { this.onContext(e, item.id); }}>
+					<div id={'item-' + id} className={cn.join(' ')} style={style} onContextMenu={(e: any) => { this.onContext(e, item); }}>
 						{arrow}
 						{content}
 					</div>
@@ -263,7 +263,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 
 		body.scrollTop(this.top);
 
-		this.setActive();
+		this.setActive(this.id);
 		this.setStyle(x, y, snap);
 
 		dummy.css({ width: this.width });
@@ -448,13 +448,13 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		commonStore.sidebarSet(update);
 	};
 
-	setActive () {
+	setActive (id: string) {
 		const node = $(ReactDOM.findDOMNode(this));
 
 		node.find('.item.hover').removeClass('hover');
 
-		if (this.id) {
-			node.find(`#item-${this.id}`).addClass('hover');
+		if (id) {
+			node.find(`#item-${id}`).addClass('hover');
 		};
 	};
 
@@ -468,23 +468,28 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		e.stopPropagation();
 
 		this.id = this.getId(item);
-		this.setActive();
+		this.setActive(this.id);
 
 		DataUtil.objectOpenEvent(e, item.details);
 	};
 
-	onContext (e: any, id: string): void {
+	onContext (e: any, item: any): void {
 		e.preventDefault();
 		e.stopPropagation();
 
 		const { x, y } = keyboard.mouse.page;
 
+		this.setActive(this.getId(item));
+
 		menuStore.open('dataviewContext', {
 			rect: { width: 0, height: 0, x: x + 20, y: y },
 			vertical: I.MenuDirection.Center,
 			classNameWrap: 'fromPopup',
+			onClose: () => {
+				this.setActive(this.id);
+			},
 			data: {
-				objectId: id,
+				objectId: item.id,
 				subId: this.subId,
 			}
 		});
