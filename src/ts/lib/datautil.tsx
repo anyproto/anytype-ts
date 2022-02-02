@@ -550,8 +550,7 @@ class DataUtil {
 	};
 
 	menuGetBlockMedia () {
-		const { config } = commonStore;
-		const ret: any[] = [
+		return [
 			{ type: I.BlockType.File, id: I.FileType.File, icon: 'file', lang: 'File' },
 			{ type: I.BlockType.File, id: I.FileType.Image, icon: 'image', lang: 'Image' },
 			{ type: I.BlockType.File, id: I.FileType.Video, icon: 'video', lang: 'Video' },
@@ -560,12 +559,7 @@ class DataUtil {
 			{ type: I.BlockType.Bookmark, id: 'bookmark', icon: 'bookmark', lang: 'Bookmark' },
 			{ type: I.BlockType.Text, id: I.TextStyle.Code, icon: 'code', lang: 'Code' },
 			{ type: I.BlockType.Latex, id: I.BlockType.Latex, icon: 'latex', lang: 'Latex' },
-		];
-
-		if (config.experimental) {
-			ret.push({ type: I.BlockType.TableOfContents, id: I.BlockType.TableOfContents, icon: 'tableOfContents', lang: 'TableOfContents' });
-		};
-		return ret.map(this.menuMapperBlock);
+		].map(this.menuMapperBlock);
 	};
 
 	getObjectTypesForNewObject (withSet: boolean) {
@@ -632,10 +626,17 @@ class DataUtil {
 	};
 
 	menuGetBlockOther () {
-		return [
+		const { config } = commonStore;
+		const ret: any = [
 			{ type: I.BlockType.Div, id: I.DivStyle.Line, icon: 'div-line', lang: 'Line' },
 			{ type: I.BlockType.Div, id: I.DivStyle.Dot, icon: 'dot', lang: 'Dot' },
-		].map(this.menuMapperBlock);
+		];
+
+		if (config.experimental) {
+			ret.push({ type: I.BlockType.TableOfContents, id: I.BlockType.TableOfContents, icon: 'tableOfContents', lang: 'TableOfContents' });
+		};
+		
+		return ret.map(this.menuMapperBlock);
 	};
 
 	menuGetBlockDataview () {
@@ -692,7 +693,6 @@ class DataUtil {
 
 	// Action menu
 	menuGetActions (hasFile: boolean, hasLink: boolean) {
-		let { config } = commonStore;
 		let cmd = keyboard.ctrlSymbol();
 		let items: any[] = [
 			{ id: 'move', icon: 'move', name: 'Move to', arrow: true },
