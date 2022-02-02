@@ -1,13 +1,12 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
-import { Icon, IconObject, Tag } from 'ts/component';
-import { detailStore, dbStore, menuStore, blockStore } from 'ts/store';
-import { I, C, DataUtil, translate, Util, keyboard, analytics, Relation } from 'ts/lib';
+import { SortableContainer } from 'react-sortable-hoc';
+import { Icon } from 'ts/component';
+import { dbStore, menuStore, blockStore } from 'ts/store';
+import { I, C, Util, keyboard, analytics, Relation } from 'ts/lib';
 import { observer } from 'mobx-react';
 import arrayMove from 'array-move';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCache } from 'react-virtualized';
-import 'react-virtualized/styles.css';
 
 import Item from 'ts/component/menu/item/filter';
 

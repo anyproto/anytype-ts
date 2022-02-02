@@ -1,8 +1,7 @@
 import { I, keyboard } from 'ts/lib';
-import { commonStore, popupStore } from 'ts/store';
+import { commonStore, popupStore, menuStore } from 'ts/store';
 import { v4 as uuidv4 } from 'uuid';
 import { translate } from '.';
-import { menuStore } from '../store';
 
 const raf = require('raf');
 const $ = require('jquery');
@@ -961,24 +960,20 @@ class Util {
 		const footer = $('#page #footer');
 		const css: any = {};
 		
-		header.css({ width: '' });
-
 		css.width = '';
+		header.css(css).removeClass('withSidebar snapLeft snapRight');
+
 		if (fixed) {
+			header.addClass('withSidebar');
+
 			css.width = header.outerWidth() - width;
-		};
 
-		header.removeClass('withSidebar');
-
-		if (snap == I.MenuDirection.Right) {
-			css.left = 0;
-			css.right = '';
-		} else {
-			css.right = 0;
-			css.left = '';
-
-			if (fixed) {
-				header.addClass('withSidebar');
+			if (snap !== null) {
+				if (snap == I.MenuDirection.Right) {
+					header.addClass('snapRight');
+				} else {
+					header.addClass('snapLeft');
+				};
 			};
 		};
 

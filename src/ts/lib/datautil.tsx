@@ -1,6 +1,5 @@
 import { I, C, M, keyboard, crumbs, translate, Util, history as historyPopup, Storage, analytics, Relation } from 'ts/lib';
-import { commonStore, blockStore, detailStore, dbStore, popupStore } from 'ts/store';
-import { authStore } from '../store';
+import { commonStore, blockStore, detailStore, dbStore, popupStore, authStore } from 'ts/store';
 
 const Constant = require('json/constant.json');
 const Errors = require('json/error.json');
@@ -1205,6 +1204,15 @@ class DataUtil {
 
 	coverIsImage (type: I.CoverType) {
 		return [ I.CoverType.Upload, I.CoverType.Image, I.CoverType.Source ].includes(type);
+	};
+
+	isFileType (type: string) {
+		return [ 
+			Constant.typeId.file, 
+			Constant.typeId.image, 
+			Constant.typeId.audio, 
+			Constant.typeId.video,
+		].includes(type);
 	};
 
 };

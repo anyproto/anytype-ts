@@ -2,14 +2,9 @@ import * as React from 'react';
 import { I, keyboard, DataUtil, Util } from 'ts/lib';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { observer } from 'mobx-react';
-import { commonStore } from 'ts/store';
+import { commonStore, menuStore } from 'ts/store';
 
-import 'katex/dist/katex.min.css';
-import 'react-virtualized/styles.css';
-import { menuStore } from '../../../store';
-import { C } from '../../../lib';
-
-interface Props extends I.Menu {}
+interface Props extends I.Menu {};
 
 const Sections = require('json/latex.json');
 const $ = require('jquery');

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Icon } from 'ts/component';
 import { C, Util, DataUtil, I, translate, analytics } from 'ts/lib';
@@ -89,7 +90,8 @@ const HeaderMainHistory = observer(class HeaderMainHistory extends React.Compone
 	resize () {
 		const { isPopup } = this.props;
 		const { sidebar } = commonStore;
-		const { width } = sidebar;
+		const { fixed, width } = sidebar;
+		const node = $(ReactDOM.findDOMNode(this));
 
 		if (!isPopup) {
 			Util.resizeHeaderFooter(width);

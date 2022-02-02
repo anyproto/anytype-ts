@@ -6,7 +6,6 @@ import { I, C, DataUtil, crumbs, keyboard, Key, focus, translate } from 'ts/lib'
 import { blockStore, popupStore, commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import 'react-virtualized/styles.css';
 
 interface Props extends RouteComponentProps<any> {
 	rootId: string;

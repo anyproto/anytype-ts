@@ -82,7 +82,7 @@ class FileUtil {
 				icon = 'video';
 			};
 				
-			if ([ 'csv', 'json', 'txt', 'doc', 'docx', 'md' ].indexOf(e) >= 0) {
+			if ([ 'csv', 'json', 'txt', 'doc', 'docx', 'md', 'tsx', 'scss' ].indexOf(e) >= 0) {
 				icon = 'text';
 			};
 				

@@ -18,69 +18,36 @@ const BlockTableOfContents = observer(class BlockTableOfContents extends React.C
 	};
 
 	render () {
-		const { rootId, block } = this.props;
-		const childrenIds = blockStore.getChildrenIds(rootId, rootId);
-		const blocks = blockStore.getBlocks(rootId);
+		const { block } = this.props;
 		const cn = [ 'wrap', 'focusable', 'c' + block.id ];
-
-		// Subscriptions
-		for (let block of blocks) {
-			const childrenIds = blockStore.getChildrenIds(rootId, block.id);
-			const { style, text } = block.content;
-		};
-
-		let n = 0;
+		const tree = this.getTree();
 
 		const Item = (item: any) => {
-			const block = blockStore.getLeaf(rootId, item.id);
-			const childrenIds = blockStore.getChildrenIds(rootId, item.id);
-			const cni = [ 'item', DataUtil.blockClass(block) ];
-
-			if (!block) {
-				return null;
-			};
-
-			let content = null;
-			if (block.isTextHeader()) {
-				const text = block.content.text;
-				if (text) {
-					cni.push(n % 2 ? 'even' : 'odd');
-
-					content = (
-						<div className="text" onClick={(e: any) => { this.onClick(e, block.id); }}>
-							<span>{text}</span>
-						</div>
-					);
-					n++;
-				};
-			};
-
-			if (!content && !childrenIds.length) {
-				return null;
-			};
+			const block = item.block;
+			const css = { paddingLeft: item.depth * 24 };
 
 			return (
-				<div className={cni.join(' ')}>
-					{content}
-
-					<div className="children">
-						{childrenIds.map((id: string, i: number) => {
-							return (
-								<Item key={i} id={id} depth={item.depth + 1} />
-							);
-						})}
-					</div>
+				<div 
+					className={[ 'item', DataUtil.blockClass(block) ].join(' ')} 
+					onClick={(e: any) => { this.onClick(e, block.id); }}
+					style={css}
+				>
+					<span>{block.content.text}</span>
 				</div>
 			);
 		};
 
 		return (
 			<div className={cn.join(' ')} tabIndex={0} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp} onFocus={this.onFocus}>
-				{childrenIds.map((id: string, i: number) => {
-					return (
-						<Item key={i} id={id} depth={0} />
-					);
-				})}
+				{!tree.length ? (
+					<div className="empty">Add headings to create a table of contents</div>
+				) : (
+					<React.Fragment>
+						{tree.map((item: any, i: number) => (
+							<Item key={i} {...item} />
+						))}
+					</React.Fragment>
+				)}
 			</div>
 		);
 	};
@@ -112,6 +79,36 @@ const BlockTableOfContents = observer(class BlockTableOfContents extends React.C
 	onFocus () {
 		const { block } = this.props;
 		focus.set(block.id, { from: 0, to: 0 });
+	};
+
+	getTree () {
+		const { rootId } = this.props;
+		const blocks = blockStore.unwrapTree([ blockStore.wrapTree(rootId, rootId) ]).filter((it: I.Block) => { return it.isTextHeader(); });
+		const list: any[] = [];
+
+		let depth = 0;
+
+		for (let i = 0; i < blocks.length; i++) {
+			let block = blocks[i];
+			let next = blocks[i + 1];
+
+			if (block.isTextHeader1()) {
+				depth = 0;
+			};
+
+			list.push({ depth, block });
+
+			if (next) {
+				if (block.isTextHeader1() && (next.isTextHeader2() || next.isTextHeader3())) {
+					depth++;
+				};
+				if (block.isTextHeader2() && (next.isTextHeader3())) {
+					depth++;
+				};
+			};
+		};
+
+		return list;
 	};
 
 	onClick (e: any, id: string) {

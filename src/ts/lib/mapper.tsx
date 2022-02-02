@@ -166,6 +166,10 @@ const Mapper = {
 				text: obj.getText(),
 			};
 		},
+
+		BlockTableOfContents: (obj: any) => {
+			return {};
+		},
 	
 		Block: (obj: any): I.Block => {
 			let type = Mapper.BlockType(obj.getContentCase());
@@ -186,7 +190,7 @@ const Mapper = {
 			if (Mapper.From[fm]) {
 				item.content = Mapper.From[fm](content);
 			} else {
-				console.log('Mapper.From does not exist: ', fm);
+				console.log('[Mapper] From does not exist: ', fm);
 			};
 	
 			return item;
@@ -545,7 +549,7 @@ const Mapper = {
 			if (block[fb] && Mapper.To[fm]) {
 				block[fb](Mapper.To[fm](obj.content));
 			} else {
-				console.log('Block method or Mapper.To method do not exist: ', fb, fm);
+				console.log('[Mapper] Block method or To method do not exist: ', fb, fm);
 			};
 
 			return block;

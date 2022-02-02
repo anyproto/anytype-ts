@@ -107,6 +107,8 @@ html.themeDark {
         .icon.arrow.disabled:hover { background-image: url('#{$themePath}/arrow/template0.svg'); }
     }
 
+    .deleteWrapper { background: $colorBlack; }
+
     /* PreviewObject */
 
     .previewObject {
@@ -273,10 +275,7 @@ html.themeDark {
                 background-image: url('~img/arrow/select/light.svg');
             }
             
-            .item {
-                .flex:hover::before { background: $colorHover; }
-            }
-            .item.hover > .flex::before { background: $colorHover; }
+            .item:hover::before, .item.hover::before { background: $colorHover; }
         }
     }
 

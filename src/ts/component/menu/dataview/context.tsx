@@ -79,7 +79,6 @@ class MenuContext extends React.Component<Props, {}> {
 		
 		let archive = null;
 		let fav = null;
-
 		let pageCopy = { id: 'pageCopy', icon: 'copy', name: 'Duplicate' };
 
 		if (object.isFavorite) {

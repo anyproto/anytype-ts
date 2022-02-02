@@ -21,7 +21,7 @@ const ListObject = observer(class ListObject extends React.Component<Props, {}> 
 		const subId = this.getSubId();
 		const items = this.getItems();
 		const { offset, total } = dbStore.getMeta(subId, '');
-		const isFileType = [ Constant.typeId.file, Constant.typeId.image, Constant.typeId.audio, Constant.typeId.video ].indexOf(rootId) >= 0;
+		const isFileType = DataUtil.isFileType(rootId);
 
 		let pager = null;
 		if (total && items.length) {

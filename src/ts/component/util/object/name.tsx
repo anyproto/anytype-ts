@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { I, DataUtil } from 'ts/lib';
-import { translate } from '../../../lib';
+import { I, DataUtil, translate } from 'ts/lib';
 
 interface Props {
 	object: any;
@@ -15,9 +14,12 @@ class Name extends React.Component<Props, {}> {
 
 	render () {
 		const { object, className } = this.props;
-		const { layout, snippet } = object;
+		const { layout, snippet, type } = object;
 
 		let name = '';
+		if (DataUtil.isFileType(type)) {
+			name = DataUtil.fileName(object);
+		} else
 		if (layout == I.ObjectLayout.Note) {
 			name = snippet || <span className="empty">{translate('commonEmpty')}</span>;
 		} else {

@@ -111,19 +111,14 @@ class DetailStore {
 			return { id, _empty_: true };
 		};
 		
-		let object: any = {};
-
 		if (keys) {
 			if (!forceKeys) {
 				keys = keys.concat(Constant.defaultRelationKeys);
 			};
-			list = list.filter((it: Detail) => { return keys.indexOf(it.relationKey) >= 0; });
+			list = list.filter((it: Detail) => { return keys.includes(it.relationKey); });
 		};
 
-		for (let item of list) {
-			object[item.relationKey] = item.value;
-		};
-
+		let object: any = Object.fromEntries(list.map(it => [ it.relationKey, it.value ]));
 		let layout = Number(object.layout) || I.ObjectLayout.Page;
 		let name = String(object.name || DataUtil.defaultName('page'));
 		let snippet = String(object.snippet || '').replace(/\n/g, ' ');

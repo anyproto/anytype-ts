@@ -65,8 +65,6 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 		const { selection } = dataset || {};
 
 		selection.preventSelect(true);
-
-		console.log('onDragStart');
 	};
 
 	onDragEnd () {
@@ -74,7 +72,6 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 		const { selection } = dataset || {};
 
 		selection.preventSelect(false);
-		console.log('onDragEnd');
 	};
 
 	resize () {
@@ -121,8 +118,6 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 
 			column.list.push({ id: object.id, index: i });
 		});
-
-		console.log(columns);
 
 		return columns;
 	};
