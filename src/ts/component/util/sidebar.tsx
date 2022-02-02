@@ -21,12 +21,15 @@ const Constant = require('json/constant.json');
 const MAX_DEPTH = 100;
 const LIMIT = 20;
 const HEIGHT = 24;
-const SKIP_TYPES = [
+const SKIP_TYPES_LOAD = [
 	Constant.typeId.space,
-	/*
+];
+const SKIP_TYPES_LIST = [
+	Constant.typeId.space,
 	Constant.typeId.type,
 	Constant.typeId.relation,
-
+	
+	/*
 	Constant.typeId.file, 
 	Constant.typeId.image, 
 	Constant.typeId.audio, 
@@ -282,11 +285,8 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 					root,
 				]
 			},
+			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: SKIP_TYPES_LOAD },
 		];
-
-		if (SKIP_TYPES && SKIP_TYPES.length) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: SKIP_TYPES });
-		};
 
 		this.setState({ loading: true });
 		C.ObjectSearchSubscribe(this.subId, filters, [], KEYS, [], 0, 0, true, '', '', () => {
@@ -411,7 +411,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 	};
 
 	filterMapper (it: any) {
-		if (SKIP_TYPES.includes(it.type)) {
+		if (SKIP_TYPES_LIST.includes(it.type)) {
 			return false;
 		};
 		return !it._empty_ && !it.isDeleted && !it.isHidden;

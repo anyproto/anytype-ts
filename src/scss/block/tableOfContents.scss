@@ -14,9 +14,6 @@
 
 		.item:hover > .text > span { border-color: $colorDarkGrey; }
 
-		.item.odd { background: rgba(134, 125, 66, 0.12); }
-		.item.even { background: rgba(134, 125, 66, 0.08); }
-
 		.item.blockText.header1, .item.blockText.header2, .item.blockText.header3 { padding: 4px 0px; }
 		.item.blockText.header1 > .text, .item.blockText.header2 > .text, .item.blockText.header3 > .text { 
 			@include text-common;
