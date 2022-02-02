@@ -116,6 +116,7 @@
 
     .menu.menuBlockRelationEdit {
         .input { border-color: $colorLinePrimary; }
+        .item:hover::before { background: $colorHover; }
     }
 
      /* MenuDataviewRelationEdit */
