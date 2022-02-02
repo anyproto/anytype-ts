@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { I, C, DataUtil, Util, keyboard, Storage } from 'ts/lib';
 import { IconObject, Icon, ObjectName, Loader } from 'ts/component';
-import { authStore, blockStore, commonStore, dbStore, detailStore } from 'ts/store';
+import { blockStore, commonStore, dbStore, detailStore, menuStore } from 'ts/store';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { observer } from 'mobx-react';
 
@@ -40,7 +40,7 @@ const SKIP_TYPES_LIST = [
 ];
 
 const KEYS = [ 
-	'id', 'name', 'snippet', 'layout', 'type', 'iconEmoji', 'iconImage', 'isHidden', 'isDeleted', 'done', 
+	'id', 'name', 'snippet', 'layout', 'type', 'iconEmoji', 'iconImage', 'isHidden', 'isDeleted', 'isArchived', 'isFavorite', 'done', 
 	'relationFormat', 'fileExt', 'fileMimeType', 'links', 
 ];
 
@@ -74,7 +74,6 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { account } = authStore;
 		const { sidebar } = commonStore;
 		const { width, height, x, y, fixed, snap } = sidebar;
 		const { loading } = this.state;
@@ -87,10 +86,6 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		};
 		if (snap == I.MenuDirection.Right) {
 			cn.push('right');
-		};
-
-		if (!account) {
-			return null;
 		};
 
 		if (fixed) {
@@ -148,7 +143,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 					rowIndex={param.index}
 					hasFixedWidth={() => {}}
 				>
-					<div id={'item-' + id} className={cn.join(' ')} style={style}>
+					<div id={'item-' + id} className={cn.join(' ')} style={style} onContextMenu={(e: any) => { this.onContext(e, item.id); }}>
 						{arrow}
 						{content}
 					</div>
@@ -453,16 +448,6 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		commonStore.sidebarSet(update);
 	};
 
-	onClick (e: any, item: any) {
-		e.preventDefault();
-		e.stopPropagation();
-
-		this.id = this.getId(item);
-		this.setActive();
-
-		DataUtil.objectOpenEvent(e, item.details);
-	};
-
 	setActive () {
 		const node = $(ReactDOM.findDOMNode(this));
 
@@ -476,6 +461,33 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 	getId (item: any) {
 		const { sectionId, parentId, id, depth } = item;
 		return [ sectionId, parentId, id, depth ].join('-');
+	};
+
+	onClick (e: any, item: any) {
+		e.preventDefault();
+		e.stopPropagation();
+
+		this.id = this.getId(item);
+		this.setActive();
+
+		DataUtil.objectOpenEvent(e, item.details);
+	};
+
+	onContext (e: any, id: string): void {
+		e.preventDefault();
+		e.stopPropagation();
+
+		const { x, y } = keyboard.mouse.page;
+
+		menuStore.open('dataviewContext', {
+			rect: { width: 0, height: 0, x: x + 20, y: y },
+			vertical: I.MenuDirection.Center,
+			classNameWrap: 'fromPopup',
+			data: {
+				objectId: id,
+				subId: this.subId,
+			}
+		});
 	};
 
 	onMouseEnter (e: any) {
