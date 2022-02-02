@@ -1,8 +1,7 @@
 import { I, keyboard } from 'ts/lib';
-import { commonStore, popupStore } from 'ts/store';
+import { commonStore, popupStore, menuStore } from 'ts/store';
 import { v4 as uuidv4 } from 'uuid';
 import { translate } from '.';
-import { menuStore } from '../store';
 
 const raf = require('raf');
 const $ = require('jquery');

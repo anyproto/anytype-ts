@@ -1,13 +1,10 @@
 import * as React from 'react';
-import { I, DataUtil } from 'ts/lib';
-import { translate } from '../../../lib';
+import { I, DataUtil, translate } from 'ts/lib';
 
 interface Props {
 	object: any;
 	className?: string;
 };
-
-const Constant = require('json/constant.json');
 
 class Name extends React.Component<Props, {}> {
 

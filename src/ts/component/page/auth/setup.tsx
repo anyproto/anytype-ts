@@ -1,18 +1,17 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Frame, Cover, Title, Label, Error, Button, IconObject, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
-import { Storage, translate, C, DataUtil, Util } from 'ts/lib';
+import { Frame, Cover, Title, Error, Button, IconObject, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
+import { Storage, translate, C, DataUtil, Util, analytics } from 'ts/lib';
 import { commonStore, authStore } from 'ts/store';
 import { observer } from 'mobx-react';
-import { analytics } from '../../../lib';
 
-interface Props extends RouteComponentProps<any> {}
+interface Props extends RouteComponentProps<any> {};
 interface State {
 	icon: string;
 	index: number;
 	error: string;
-}
+};
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');

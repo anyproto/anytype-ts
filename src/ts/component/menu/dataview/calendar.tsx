@@ -1,16 +1,16 @@
 import * as React from 'react';
-import { I, Util, translate, keyboard } from 'ts/lib';
+import { I, Util, translate } from 'ts/lib';
 import { Select } from 'ts/component';
 import { observer } from 'mobx-react';
-import { menuStore } from '../../../store';
+import { menuStore } from 'ts/store';
 
 const Constant = require('json/constant.json');
 
-interface Props extends I.Menu {}
+interface Props extends I.Menu {};
 
 interface State {
 	value: number;
-}
+};
 
 const MenuCalendar = observer(class MenuCalendar extends React.Component<Props, State> {
 	
