@@ -126,7 +126,7 @@ const BlockTableOfContents = observer(class BlockTableOfContents extends React.C
 		const no = node.offset().top;
 		const st = container.scrollTop();
 		const hh = Util.sizeHeader();
-		const y = (isPopup ? (no - container.offset().top + st) : no) - hh;
+		const y = Math.max(hh + 20, (isPopup ? (no - container.offset().top + st) : no) - hh - 20);
 
 		container.scrollTop(y);
 	};
