@@ -564,7 +564,7 @@ class DataUtil {
 		];
 
 		if (config.experimental) {
-			ret.push({ type: I.BlockType.TableOfContents, id: I.BlockType.TableOfContents, icon: 'latex', lang: 'TableOfContents' });
+			ret.push({ type: I.BlockType.TableOfContents, id: I.BlockType.TableOfContents, icon: 'tableOfContents', lang: 'TableOfContents' });
 		};
 		return ret.map(this.menuMapperBlock);
 	};
