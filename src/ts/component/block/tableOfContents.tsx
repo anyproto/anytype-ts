@@ -23,16 +23,13 @@ const BlockTableOfContents = observer(class BlockTableOfContents extends React.C
 		const tree = this.getTree();
 
 		const Item = (item: any) => {
-			const block = item.block;
-			const css = { paddingLeft: item.depth * 24 };
-
 			return (
 				<div 
-					className={[ 'item', DataUtil.blockClass(block) ].join(' ')} 
-					onClick={(e: any) => { this.onClick(e, block.id); }}
-					style={css}
+					className="item" 
+					onClick={(e: any) => { this.onClick(e, item.id); }}
+					style={{ paddingLeft: item.depth * 24 }}
 				>
-					<span>{block.content.text}</span>
+					<span>{item.text}</span>
 				</div>
 			);
 		};
@@ -96,7 +93,11 @@ const BlockTableOfContents = observer(class BlockTableOfContents extends React.C
 				depth = 0;
 			};
 
-			list.push({ depth, block });
+			list.push({ 
+				depth, 
+				id: block.id,
+				text: String(block.content.text || DataUtil.defaultName('page')),
+			});
 
 			if (next) {
 				if (block.isTextHeader1() && (next.isTextHeader2() || next.isTextHeader3())) {
