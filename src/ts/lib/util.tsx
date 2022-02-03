@@ -956,6 +956,7 @@ class Util {
 	resizeSidebar (width: number, isPopup: boolean) {
 		const { sidebar } = commonStore;
 		const { fixed, snap } = sidebar;
+		const obj = $('#sidebar');
 		const page = $('#page.isFull');
 		const header = page.find('#header');
 		const footer = page.find('#footer');
@@ -966,7 +967,7 @@ class Util {
 		header.css(css).removeClass('withSidebar snapLeft snapRight');
 		footer.css(css);
 
-		if (isPopup || !fixed) {
+		if (isPopup || !fixed || !obj.length) {
 			return;
 		};
 
