@@ -958,22 +958,24 @@ class Util {
 		const { fixed, snap } = sidebar;
 		const header = $('#page.isFull #header');
 		const footer = $('#page.isFull #footer');
-		const css: any = {};
-		
-		css.width = '';
+		const css: any = { width: '' };
+
 		header.css(css).removeClass('withSidebar snapLeft snapRight');
+		footer.css(css);
 
-		if (!isPopup && fixed) {
-			header.addClass('withSidebar');
+		if (isPopup || !fixed) {
+			return;
+		};
 
-			css.width = header.outerWidth() - width;
+		header.addClass('withSidebar');
 
-			if (snap !== null) {
-				if (snap == I.MenuDirection.Right) {
-					header.addClass('snapRight');
-				} else {
-					header.addClass('snapLeft');
-				};
+		css.width = header.outerWidth() - width;
+		
+		if (snap !== null) {
+			if (snap == I.MenuDirection.Right) {
+				header.addClass('snapRight');
+			} else {
+				header.addClass('snapLeft');
 			};
 		};
 

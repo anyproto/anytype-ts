@@ -558,20 +558,11 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
 
-		let d = 0;
-
 		if (dir == I.MenuType.Horizontal) {
-			if (snap == I.MenuDirection.Right) {
-				d = this.ox - e.pageX + width;
-			} else {
-				d = e.pageX - this.ox;
-			};
-
-			this.width = this.getWidth(d);
+			const d = (snap == I.MenuDirection.Right) ? (this.ox - e.pageX + width) : e.pageX - this.ox;
 	
+			this.width = this.getWidth(d);
 			this.resizeHeaderFooter(this.width);
-			node.css({ width: this.width });
-			$('#sidebarDummy').css({ width: this.width });
 
 			if (fixed) {
 				win.trigger('resize.editor');
@@ -721,6 +712,12 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 	};
 
 	resizeHeaderFooter (width: number) {
+		const node = $(ReactDOM.findDOMNode(this));
+		const dummy = $('#sidebarDummy');
+		
+		node.css({ width });
+		dummy.css({ width });
+
 		Util.resizeHeaderFooter(width, this.props.isPopup);
 	};
 
