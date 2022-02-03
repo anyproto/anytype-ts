@@ -153,6 +153,7 @@
 	}
 	.block.blockText.callout > .wrapContent > .dropTarget.targetBot { display: block; height: 16px; }
 	.block.blockText.callout > .wrapContent > .dropTarget.targetBot.isOver.bottom { box-shadow: 0px -2px 0px $colorOrange inset; }
+	.block.blockText.callout.last > .wrapContent { margin-bottom: 0px; }
 
 	.block.blockText.code { padding: 6px 0px; }
 	.block.blockText.code > .wrapContent > .selectable > .dropTarget { padding: 41px 16px 16px 16px; background: rgba(247,245,240,0.5); }
