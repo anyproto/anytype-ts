@@ -399,11 +399,18 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 				this.position = I.BlockPosition.None;
 			};
 
-			// You can only drop into Paragraphs and Lists
+			// You can only drop into Paragraphs, Lists and Callout
 			if (
 				(this.position == I.BlockPosition.Inner) &&
 				isText &&
-				([ I.TextStyle.Paragraph, I.TextStyle.Toggle, I.TextStyle.Checkbox, I.TextStyle.Numbered, I.TextStyle.Bulleted ].indexOf(style) < 0)
+				([ 
+					I.TextStyle.Paragraph, 
+					I.TextStyle.Toggle, 
+					I.TextStyle.Checkbox, 
+					I.TextStyle.Numbered, 
+					I.TextStyle.Bulleted, 
+					I.TextStyle.Callout,
+				].indexOf(style) < 0)
 			) {
 				recalcPosition();
 			};

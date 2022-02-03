@@ -140,6 +140,16 @@
 	.block.blockText.quote.align2 > .wrapContent > .selectable > .dropTarget > .flex > .line { left: auto; right: 11px; }
 	.block.blockText.quote.align2 > .wrapContent > .selectable > .dropTarget > .flex > .wrap > .placeholder { left: auto; right: 28px; }
 	
+	.block.blockText.callout { padding: 6px 0px; }
+	.block.blockText.callout > .wrapContent { background: $colorVeryLightGrey; border-radius: 6px; padding: 16px; }
+	.block.blockText.callout > .wrapContent > .children { margin-left: -14px; }
+	.block.blockText.callout > .wrapContent > .selectable > .dropTarget > .flex {
+		.additional { margin-right: 14px; }	
+		.additional {
+			.iconObject { margin-top: 2px; }
+		}
+	}
+
 	.block.blockText.code { padding: 6px 0px; }
 	.block.blockText.code > .wrapContent > .selectable > .dropTarget { padding: 41px 16px 16px 16px; background: rgba(247,245,240,0.5); }
 	.block.blockText.code > .wrapContent > .selectable > .dropTarget > .flex { position: static; } 

@@ -341,6 +341,14 @@ class Dispatcher {
 						block.content.color = data.getColor().getValue();
 					};
 
+					if (data.hasIconemoji()) {
+						block.content.iconEmoji = data.getIconemoji().getValue();
+					};
+
+					if (data.hasIconimage()) {
+						block.content.iconImage = data.getIconimage().getValue();
+					};
+
 					blockStore.update(rootId, block);
 					break;
 

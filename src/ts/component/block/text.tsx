@@ -63,6 +63,8 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		this.onPaste = this.onPaste.bind(this);
 		this.onInput = this.onInput.bind(this);
 		this.onToggleWrap = this.onToggleWrap.bind(this);
+		this.onSelectIcon = this.onSelectIcon.bind(this);
+		this.onUploadIcon = this.onUploadIcon.bind(this);
 
 		this.onCompositionStart = this.onCompositionStart.bind(this);
 		this.onCompositionEnd = this.onCompositionEnd.bind(this);
@@ -71,7 +73,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 	render () {
 		const { rootId, block, readonly, index } = this.props;
 		const { id, fields, content } = block;
-		const { text, marks, style, checked, color } = content;
+		const { text, marks, style, checked, color, iconEmoji, iconImage } = content;
 		const root = blockStore.getLeaf(rootId, rootId);
 		const footer = blockStore.getMapElement(rootId, Constant.blockId.footer);
 
@@ -90,7 +92,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 				const object = detailStore.get(rootId, mark.param, []);
 			};
 		};
-		
+
 		switch (style) {
 			case I.TextStyle.Title:
 				placeholder = DataUtil.defaultName('page');
@@ -107,6 +109,19 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			case I.TextStyle.Quote:
 				additional = (
 					<div className="line" />
+				);
+				break;
+
+			case I.TextStyle.Callout:
+				additional = (
+					<IconObject 
+						id={`block-${id}-icon`}
+						object={{ iconEmoji: (iconImage ? '' : (iconEmoji || ':bulb:')), iconImage }} 
+						canEdit={!readonly} 
+						onSelect={this.onSelectIcon} 
+						onUpload={this.onUploadIcon}
+						noRemove={true}
+					/>
 				);
 				break;
 				
@@ -1211,6 +1226,18 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		window.clearTimeout(this.timeoutClick);
 		this.timeoutClick = window.setTimeout(() => { this.clicks = 0; }, 300);
 	};
+
+	onSelectIcon (icon: string) {
+		const { rootId, block } = this.props;
+		
+		C.BlockSetTextIcon(rootId, block.id, icon, '');
+	};
+
+	onUploadIcon (hash: string) {
+		const { rootId, block } = this.props;
+
+		C.BlockSetTextIcon(rootId, block.id, '', hash);
+	};
 	
 	placeholderCheck () {
 		this.getValue() ? this.placeholderHide() : this.placeholderShow();			
@@ -1253,7 +1280,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 
 		return range ? { from: range.start, to: range.end } : null;
 	};
-	
+
 });
 
 export default BlockText;

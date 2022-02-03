@@ -131,6 +131,8 @@ const Mapper = {
 				checked: obj.getChecked(),
 				color: obj.getColor(),
 				marks: (obj.getMarks().getMarksList() || []).map(Mapper.From.Mark),
+				iconEmoji: obj.getIconemoji(),
+				iconImage: obj.getIconimage(),
 			};
 		},
 
@@ -447,6 +449,8 @@ const Mapper = {
 			content.setChecked(obj.checked);
 			content.setColor(obj.color);
 			content.setMarks(new Model.Block.Content.Text.Marks().setMarksList(marks));
+			content.setIconemoji(obj.iconEmoji);
+			content.setIconimage(obj.iconImage);
 
 			return content;
 		},

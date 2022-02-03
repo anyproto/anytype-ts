@@ -359,6 +359,17 @@ const BlockSetTextChecked = (contextId: string, blockId: string, checked: boolea
 	dispatcher.request('blockSetTextChecked', request, callBack);
 };
 
+const BlockSetTextIcon = (contextId: string, blockId: string, iconEmoji: string, iconImage: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Block.Set.Text.Icon.Request();
+	
+	request.setContextid(contextId);
+	request.setBlockid(blockId);
+	request.setIconemoji(iconEmoji);
+	request.setIconimage(iconImage);
+
+	dispatcher.request('blockSetTextIcon', request, callBack);
+};
+
 const BlockSetLatexText = (contextId: string, blockId: string, text: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.Set.Latex.Text.Request();
 	
@@ -1335,6 +1346,8 @@ export {
 
 	BlockSetTextText,
 	BlockSetTextChecked,
+	BlockSetTextIcon,
+
 	BlockSetFields,
 	BlockSetDetails,
 	BlockSetLatexText,

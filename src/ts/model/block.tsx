@@ -69,7 +69,7 @@ class Block implements I.Block {
 	};
 
 	canHaveChildren (): boolean {
-		return !this.isSystem() && (this.isTextParagraph() || this.isTextList());
+		return !this.isSystem() && (this.isTextParagraph() || this.isTextList() || this.isTextCallout());
 	};
 
 	canHaveAlign (): boolean {
@@ -358,6 +358,10 @@ class Block implements I.Block {
 	
 	isTextQuote (): boolean {
 		return this.isText() && (this.content.style == I.TextStyle.Quote);
+	};
+
+	isTextCallout (): boolean {
+		return this.isText() && (this.content.style == I.TextStyle.Callout);
 	};
 
 	getLength (): number {

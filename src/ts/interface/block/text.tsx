@@ -14,6 +14,7 @@ export enum TextStyle {
 	Numbered	 = 10,
 	Toggle		 = 11,
 	Description	 = 12,
+	Callout		 = 13,
 };
 
 export enum MarkType {
@@ -47,6 +48,8 @@ export interface ContentText {
 	marks: Mark[];
 	checked: boolean;
 	color: string;
+	iconEmoji: string;
+	iconImage: string;
 };
 
 export interface BlockText extends I.Block {

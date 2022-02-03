@@ -31,6 +31,8 @@ class BlockContentText implements I.ContentText {
 	style: I.TextStyle = I.TextStyle.Paragraph;
 	checked: boolean = false;
 	color: string = '';
+	iconEmoji: string = '';
+	iconImage: string = '';
 	marks: I.Mark[] = [];
 
 	constructor (props: I.ContentText) {
@@ -40,6 +42,8 @@ class BlockContentText implements I.ContentText {
 		self.style = Number(props.style) || I.TextStyle.Paragraph;
 		self.checked = Boolean(props.checked);
 		self.color = String(props.color || '');
+		self.iconEmoji = String(props.iconEmoji || '');
+		self.iconImage = String(props.iconImage || '');
 		self.marks = (props.marks || []).map((it: I.Mark) => { return new Mark(it); });
 
 		makeObservable(self, {
@@ -47,6 +51,8 @@ class BlockContentText implements I.ContentText {
 			style: observable,
 			checked: observable,
 			color: observable,
+			iconEmoji: observable,
+			iconImage: observable,
 			marks: observable,
 		});
 
