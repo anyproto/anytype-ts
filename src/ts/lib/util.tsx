@@ -960,6 +960,7 @@ class Util {
 		const header = page.find('#header');
 		const footer = page.find('#footer');
 		const dummy = $('#sidebarDummy');
+		const win = $(window);
 		const css: any = { width: '' };
 
 		header.css(css).removeClass('withSidebar snapLeft snapRight');
@@ -970,7 +971,6 @@ class Util {
 		};
 
 		header.addClass('withSidebar');
-
 		css.width = header.outerWidth() - width;
 		
 		if (snap !== null) {
@@ -982,7 +982,7 @@ class Util {
 		};
 
 		dummy.css({ width });
-		page.css(css);
+		page.css({ width: win.width() - width });
 		header.css(css);
 		footer.css(css);
 	};

@@ -28,15 +28,6 @@ const SKIP_TYPES_LOAD = [
 
 const SKIP_TYPES_LIST = [
 	Constant.typeId.space,
-	Constant.typeId.type,
-	Constant.typeId.relation,
-
-	/*
-	Constant.typeId.file, 
-	Constant.typeId.image, 
-	Constant.typeId.audio, 
-	Constant.typeId.video,
-	*/
 ];
 
 const KEYS = [ 
