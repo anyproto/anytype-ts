@@ -448,6 +448,14 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 					this.position = I.BlockPosition.None;
 				};
 			};
+
+			if (obj.hasClass('targetTop') && (this.position != I.BlockPosition.None)) {
+				this.position = I.BlockPosition.Top;
+			};
+
+			if (obj.hasClass('targetBot') && (this.position != I.BlockPosition.None)) {
+				this.position = I.BlockPosition.Bottom;
+			};
 		};
 
 		window.clearTimeout(this.timeoutHover);
