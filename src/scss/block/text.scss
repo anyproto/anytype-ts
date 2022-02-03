@@ -136,9 +136,6 @@
 	.block.blockText.quote > .wrapContent > .selectable > .dropTarget > .flex > .wrap { padding-left: 28px; }
 	.block.blockText.quote > .wrapContent > .selectable > .dropTarget > .flex > .wrap > .placeholder { left: 28px; }
 
-	.block.blockText.quote > .wrapContent > .dropTarget.targetBot { display: block; height: 2px; }
-	.block.blockText.quote > .wrapContent > .dropTarget.targetBot.isOver.bottom { box-shadow: 0px -2px 0px $colorOrange inset; }
-
 	.block.blockText.quote.align2 > .wrapContent > .selectable > .dropTarget > .flex > .wrap { padding-left: inherit; padding-right: 28px; }
 	.block.blockText.quote.align2 > .wrapContent > .selectable > .dropTarget > .flex > .line { left: auto; right: 11px; }
 	.block.blockText.quote.align2 > .wrapContent > .selectable > .dropTarget > .flex > .wrap > .placeholder { left: auto; right: 28px; }
@@ -199,6 +196,22 @@
 	.block.blockText.latex > .wrapContent > .selectable > .dropTarget {
 		.katex-display { margin: 0px; }
 	}
+
+	.block.blockText.paragraph > .wrapContent > .dropTarget.targetBot,
+	.block.blockText.quote > .wrapContent > .dropTarget.targetBot,
+	.block.blockText.bulleted > .wrapContent > .dropTarget.targetBot,
+	.block.blockText.numbered > .wrapContent > .dropTarget.targetBot,
+	.block.blockText.checkbox > .wrapContent > .dropTarget.targetBot,
+	.block.blockText.toggle > .wrapContent > .dropTarget.targetBot
+	{ height: 2px; display: block; margin-bottom: -2px; }
+
+	.block.blockText.paragraph > .wrapContent > .dropTarget.targetBot.isOver.bottom,
+	.block.blockText.quote > .wrapContent > .dropTarget.targetBot.isOver.bottom,
+	.block.blockText.bulleted > .wrapContent > .dropTarget.targetBot.isOver.bottom,
+	.block.blockText.numbered > .wrapContent > .dropTarget.targetBot.isOver.bottom,
+	.block.blockText.checkbox > .wrapContent > .dropTarget.targetBot.isOver.bottom,
+	.block.blockText.toggle > .wrapContent > .dropTarget.targetBot.isOver.bottom
+	{ box-shadow: 0px -2px 0px $colorOrange inset; }
 
 	.block.blockText.paragraph > .wrapContent.bgColor > .selectable > .dropTarget, 
 	.block.blockText.header1 > .wrapContent.bgColor > .selectable > .dropTarget,

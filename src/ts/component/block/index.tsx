@@ -230,6 +230,10 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 			targetTop = <div className="dropTarget targetTop" />;
 			targetBot = <div className="dropTarget targetBot" />;
 		};
+
+		if (!block.isLayoutRow()) {
+			targetTop = null;
+		};
 		
 		if (canSelect) {
 			object = (
@@ -247,15 +251,6 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 			);
 		};
 
-		let rowDropTargets = null;
-		if (block.isLayoutRow()) {
-			rowDropTargets = (
-				<React.Fragment>
-					{targetTop}
-				</React.Fragment>
-			);
-		};
-
 		return (
 			<div id={'block-' + id} data-id={id} className={cn.join(' ')} style={css}>
 				<div className="wrapMenu">
@@ -263,8 +258,9 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 				</div>
 				
 				<div className={cd.join(' ')}>
+					{targetTop}
+
 					{object}
-					{rowDropTargets}
 					{empty}
 					{additional ? <div className="addContent">{additional}</div> : ''}
 
