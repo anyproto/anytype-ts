@@ -201,6 +201,8 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 		};
 
 		let object = null;
+		let targetTop = null;
+		let targetBot = null;
 
 		if (canDrop) {
 			object = (
@@ -208,12 +210,18 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 					{blockComponent}
 				</DropTarget>
 			);
+
+			targetTop = <DropTarget {...this.props} className="targetTop" rootId={rootId} id={id} style={style} type={type} dropType={I.DragType.Block} />;
+			targetBot = <DropTarget {...this.props} className="targetBot" rootId={rootId} id={id} style={style} type={type} dropType={I.DragType.Block} />;
 		} else {
 			object = (
 				<div className="dropTarget">
 					{blockComponent}
 				</div>
 			);
+
+			targetTop = <div className="dropTarget targetTop" />;
+			targetBot = <div className="dropTarget targetBot" />;
 		};
 		
 		if (canSelect) {
@@ -234,21 +242,11 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 
 		let rowDropTargets = null;
 		if (block.isLayoutRow()) {
-			if (readonly) {
-				rowDropTargets = (
-					<React.Fragment>
-						<div className="dropTarget targetTop" />
-						<div className="dropTarget targetBot" />
-					</React.Fragment>
-				);
-			} else {
-				rowDropTargets = (
-					<React.Fragment>
-						<DropTarget {...this.props} className="targetTop" rootId={rootId} id={id} style={style} type={type} dropType={I.DragType.Block} />
-						<DropTarget {...this.props} className="targetBot" rootId={rootId} id={id} style={style} type={type} dropType={I.DragType.Block} />
-					</React.Fragment>
-				);
-			};
+			rowDropTargets = (
+				<React.Fragment>
+					{targetTop}
+				</React.Fragment>
+			);
 		};
 
 		return (
@@ -269,6 +267,8 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 						onMouseLeave={this.onMouseLeave} 
 						onResizeStart={this.onResizeStart} 
 					/>
+
+					{targetBot}
 					
 					{block.isLayoutColumn() ? (
 						<div className="columnEmpty" onClick={this.onEmptyColumn} />
