@@ -140,7 +140,7 @@
 	.block.blockText.quote.align2 > .wrapContent > .selectable > .dropTarget > .flex > .line { left: auto; right: 11px; }
 	.block.blockText.quote.align2 > .wrapContent > .selectable > .dropTarget > .flex > .wrap > .placeholder { left: auto; right: 28px; }
 	
-	.block.blockText.callout { padding: 6px 0px; }
+	.block.blockText.callout { margin: 6px 0px; }
 	.block.blockText.callout > .wrapContent { background: $colorVeryLightGrey; border-radius: 6px; padding: 16px; }
 	.block.blockText.callout > .wrapContent > .children { margin-left: -14px; }
 	.block.blockText.callout > .wrapContent > .selectable > .dropTarget > .flex {
