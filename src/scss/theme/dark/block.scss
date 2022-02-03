@@ -155,6 +155,7 @@
         kbd { background: $colorHover; color: $colorOrange; }
     }
 
+    .block.blockText.callout > .wrapContent { background: $colorHover; }
     .block.blockText.code > .wrapContent > .selectable > .dropTarget { background: $colorHover; }
 
     /* BlockLink */

@@ -125,6 +125,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 		};
 
 		const dt = (e.dataTransfer || e.originalEvent.dataTransfer);
+		const isFileDrop = dt.files && dt.files.length;
 		const last = blockStore.getFirstBlock(rootId, -1, (it: I.Block) => {
 			return !it.isSystem() && !it.isLayoutFooter();
 		});
@@ -137,7 +138,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 		if (this.hoverData && (this.position != I.BlockPosition.None)) {
 			data = this.hoverData;
 		} else 
-		if (last) {
+		if (last && isFileDrop) {
 			data = this.objectData.get(last.id);
 			position = I.BlockPosition.Bottom;
 		};
@@ -147,7 +148,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 			target = blockStore.getLeaf(rootId, targetId);
 		};
 		
-		if (dt.files && dt.files.length) {
+		if (isFileDrop) {
 			let paths: string[] = [];
 			for (let file of dt.files) {
 				paths.push(file.path);
@@ -399,11 +400,19 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 				this.position = I.BlockPosition.None;
 			};
 
-			// You can only drop into Paragraphs and Lists
+			// You can only drop into Paragraphs, Lists and Callout
 			if (
 				(this.position == I.BlockPosition.Inner) &&
 				isText &&
-				([ I.TextStyle.Paragraph, I.TextStyle.Toggle, I.TextStyle.Checkbox, I.TextStyle.Numbered, I.TextStyle.Bulleted ].indexOf(style) < 0)
+				([ 
+					I.TextStyle.Paragraph, 
+					I.TextStyle.Toggle, 
+					I.TextStyle.Checkbox, 
+					I.TextStyle.Numbered, 
+					I.TextStyle.Bulleted, 
+					I.TextStyle.Callout,
+					I.TextStyle.Quote,
+				].indexOf(style) < 0)
 			) {
 				recalcPosition();
 			};

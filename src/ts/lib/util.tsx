@@ -953,30 +953,36 @@ class Util {
 		return electron.ipcRenderer || window.Renderer;
 	};
 	
-	resizeHeaderFooter (width: number) {
+	resizeSidebar (width: number, isPopup: boolean) {
 		const { sidebar } = commonStore;
 		const { fixed, snap } = sidebar;
-		const header = $('#page #header');
-		const footer = $('#page #footer');
-		const css: any = {};
-		
-		css.width = '';
+		const page = $('#page.isFull');
+		const header = page.find('#header');
+		const footer = page.find('#footer');
+		const dummy = $('#sidebarDummy');
+		const win = $(window);
+		const css: any = { width: '' };
+
 		header.css(css).removeClass('withSidebar snapLeft snapRight');
+		footer.css(css);
 
-		if (fixed) {
-			header.addClass('withSidebar');
+		if (isPopup || !fixed) {
+			return;
+		};
 
-			css.width = header.outerWidth() - width;
-
-			if (snap !== null) {
-				if (snap == I.MenuDirection.Right) {
-					header.addClass('snapRight');
-				} else {
-					header.addClass('snapLeft');
-				};
+		header.addClass('withSidebar');
+		css.width = header.outerWidth() - width;
+		
+		if (snap !== null) {
+			if (snap == I.MenuDirection.Right) {
+				header.addClass('snapRight');
+			} else {
+				header.addClass('snapLeft');
 			};
 		};
 
+		dummy.css({ width });
+		page.css({ width: win.width() - width });
 		header.css(css);
 		footer.css(css);
 	};

@@ -24,6 +24,7 @@ interface Props {
 	color?: string;
 	getObject?(): any;
 	forceLetter?: boolean;
+	noRemove?: boolean;
 	onSelect?(id: string): void;
 	onUpload?(hash: string): void;
 	onClick?(e: any): void;
@@ -321,7 +322,7 @@ const IconObject = observer(class IconObject extends React.Component<Props, {}> 
 	onEmoji (e: any) {
 		e.stopPropagation();
 
-		const { id, offsetX, offsetY, onSelect, onUpload } = this.props;
+		const { id, offsetX, offsetY, onSelect, onUpload, noRemove } = this.props;
 		const object = this.getObject();
 		const { iconEmoji, iconImage } = object;
 		const layout = Number(object.layout) || I.ObjectLayout.Page;
@@ -333,7 +334,7 @@ const IconObject = observer(class IconObject extends React.Component<Props, {}> 
 			offsetY: offsetY,
 			data: {
 				noUpload: noUpload,
-				noRemove: !(iconEmoji || iconImage),
+				noRemove: noRemove || !(iconEmoji || iconImage),
 				onSelect: (icon: string) => {
 					if (onSelect) {
 						onSelect(icon);

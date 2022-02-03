@@ -167,4 +167,5 @@ export interface Block {
 	isTextCheckbox?(): boolean;
 	isTextCode?(): boolean;
 	isTextQuote?(): boolean;
+	isTextCallout?(): boolean;
 };

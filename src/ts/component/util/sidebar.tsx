@@ -28,15 +28,6 @@ const SKIP_TYPES_LOAD = [
 
 const SKIP_TYPES_LIST = [
 	Constant.typeId.space,
-	Constant.typeId.type,
-	Constant.typeId.relation,
-
-	/*
-	Constant.typeId.file, 
-	Constant.typeId.image, 
-	Constant.typeId.audio, 
-	Constant.typeId.video,
-	*/
 ];
 
 const KEYS = [ 
@@ -256,7 +247,6 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		const { x, y, snap } = sidebar;
 		const node = $(ReactDOM.findDOMNode(this));
 		const body = node.find('.body');
-		const dummy = $('#sidebarDummy');
 
 		this.width = node.width();
 		this.height = node.height();
@@ -265,8 +255,6 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 
 		this.setActive(this.id);
 		this.setStyle(x, y, snap);
-
-		dummy.css({ width: this.width });
 	};
 
 	load () {
@@ -558,20 +546,11 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
 
-		let d = 0;
-
 		if (dir == I.MenuType.Horizontal) {
-			if (snap == I.MenuDirection.Right) {
-				d = this.ox - e.pageX + width;
-			} else {
-				d = e.pageX - this.ox;
-			};
-
-			this.width = this.getWidth(d);
+			const d = (snap == I.MenuDirection.Right) ? (this.ox - e.pageX + width) : e.pageX - this.ox;
 	
-			this.resizeHeaderFooter(this.width);
-			node.css({ width: this.width });
-			$('#sidebarDummy').css({ width: this.width });
+			this.width = this.getWidth(d);
+			this.setWidth(this.width);
 
 			if (fixed) {
 				win.trigger('resize.editor');
@@ -717,13 +696,14 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		const { sidebar } = commonStore;
 		const { width } = sidebar;
 
-		this.resizeHeaderFooter(width);
+		this.setWidth(width);
 	};
 
-	resizeHeaderFooter (width: number) {
-		if (!this.props.isPopup) {
-			Util.resizeHeaderFooter(width);
-		};
+	setWidth (width: number) {
+		const node = $(ReactDOM.findDOMNode(this));
+		
+		node.css({ width });
+		Util.resizeSidebar(width, this.props.isPopup);
 	};
 
 });

@@ -85,6 +85,7 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 		let blockComponent = null;
 		let empty = null;
 		let setRef = (ref: any) => { this.ref = ref; };
+		let additional = null;
 		
 		if (className) {
 			cn.push(className);
@@ -104,6 +105,12 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 			case I.BlockType.Text:
 				if (block.isTextCheckbox() && checked) {
 					cn.push('isChecked');
+				};
+
+				if (block.isTextQuote()) {
+					additional = (
+						<div className="line" />
+					);
 				};
 
 				blockComponent = <BlockText ref={setRef} {...this.props} onToggle={this.onToggle} />;
@@ -259,6 +266,7 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 					{object}
 					{rowDropTargets}
 					{empty}
+					{additional ? <div className="addContent">{additional}</div> : ''}
 
 					<ListChildren 
 						key={'block-children-' + id} 
