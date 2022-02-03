@@ -449,6 +449,20 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 				};
 			};
 
+			if (!obj.hasClass('targetBot') && 
+			[
+				I.TextStyle.Paragraph, 
+				I.TextStyle.Toggle, 
+				I.TextStyle.Checkbox, 
+				I.TextStyle.Numbered, 
+				I.TextStyle.Bulleted, 
+				I.TextStyle.Callout,
+				I.TextStyle.Quote,
+			].includes(style) && 
+			(this.position == I.BlockPosition.Bottom)) {
+				this.position = I.BlockPosition.None;
+			};
+
 			if (obj.hasClass('targetTop') && (this.position != I.BlockPosition.None)) {
 				this.position = I.BlockPosition.Top;
 			};
