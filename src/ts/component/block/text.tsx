@@ -106,12 +106,6 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 				placeholder = 'Add a description';
 				break;
 
-			case I.TextStyle.Quote:
-				additional = (
-					<div className="line" />
-				);
-				break;
-
 			case I.TextStyle.Callout:
 				additional = (
 					<IconObject 

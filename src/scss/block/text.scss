@@ -130,7 +130,7 @@
 	.block.blockText.quote { padding: 6px 0px 6px 0px; }
 	.block.blockText.quote > .wrapContent > .selectable > .dropTarget { @include text-quote; padding: 2px 0px 3px 0px; }
 	.block.blockText.quote > .wrapContent > .selectable > .dropTarget mention .space { width: 5px; height: 26px; }
-	.block.blockText.quote > .wrapContent > .selectable > .dropTarget > .flex > .additional > .line { 
+	.block.blockText.quote > .wrapContent > .addContent > .line { 
 		width: 0px; height: calc(100% + 5px); position: absolute; left: 11px; top: -2px; border-left: 2px solid $colorOrange; 
 	}
 	.block.blockText.quote > .wrapContent > .selectable > .dropTarget > .flex > .wrap { padding-left: 28px; }

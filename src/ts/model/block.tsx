@@ -69,7 +69,7 @@ class Block implements I.Block {
 	};
 
 	canHaveChildren (): boolean {
-		return !this.isSystem() && (this.isTextParagraph() || this.isTextList() || this.isTextCallout());
+		return !this.isSystem() && (this.isTextParagraph() || this.isTextList() || this.isTextCallout() || this.isTextQuote());
 	};
 
 	canHaveAlign (): boolean {

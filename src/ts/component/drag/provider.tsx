@@ -410,6 +410,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 					I.TextStyle.Numbered, 
 					I.TextStyle.Bulleted, 
 					I.TextStyle.Callout,
+					I.TextStyle.Quote,
 				].indexOf(style) < 0)
 			) {
 				recalcPosition();
