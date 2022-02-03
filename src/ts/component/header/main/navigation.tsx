@@ -148,9 +148,7 @@ const HeaderMainNavigation = observer(class HeaderMainNavigation extends React.C
 		const { sidebar } = commonStore;
 		const { width } = sidebar;
 
-		if (!isPopup) {
-			Util.resizeHeaderFooter(width);
-		};
+		Util.resizeHeaderFooter(width, isPopup);
 	};
 	
 });

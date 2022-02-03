@@ -180,10 +180,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 			this.refPanel.resize();
 		};
 
-		if (!isPopup) {
-			Util.resizeHeaderFooter(width);
-		};
-
+		Util.resizeHeaderFooter(width, isPopup);
 	};
 
 	togglePanel (v: boolean) {

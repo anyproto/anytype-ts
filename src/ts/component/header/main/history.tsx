@@ -90,12 +90,9 @@ const HeaderMainHistory = observer(class HeaderMainHistory extends React.Compone
 	resize () {
 		const { isPopup } = this.props;
 		const { sidebar } = commonStore;
-		const { fixed, width } = sidebar;
-		const node = $(ReactDOM.findDOMNode(this));
+		const { width } = sidebar;
 
-		if (!isPopup) {
-			Util.resizeHeaderFooter(width);
-		};
+		Util.resizeHeaderFooter(width, isPopup);
 	};
 
 });

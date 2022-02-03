@@ -226,9 +226,7 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<Pro
 		const { sidebar } = commonStore;
 		const { width } = sidebar;
 
-		if (!isPopup) {
-			Util.resizeHeaderFooter(width);
-		};
+		Util.resizeHeaderFooter(width, isPopup);
 	};
 	
 });

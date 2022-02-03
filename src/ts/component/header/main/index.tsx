@@ -55,9 +55,8 @@ const HeaderMainIndex = observer(class HeaderMainIndex extends React.Component<P
 
 	resize () {
 		const { isPopup } = this.props;
-		if (!isPopup) {
-			Util.resizeHeaderFooter(0);
-		};
+		
+		Util.resizeHeaderFooter(0, isPopup);
 	};
 
 });

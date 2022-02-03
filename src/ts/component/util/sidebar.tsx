@@ -721,9 +721,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 	};
 
 	resizeHeaderFooter (width: number) {
-		if (!this.props.isPopup) {
-			Util.resizeHeaderFooter(width);
-		};
+		Util.resizeHeaderFooter(width, this.props.isPopup);
 	};
 
 });

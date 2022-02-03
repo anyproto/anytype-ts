@@ -953,17 +953,17 @@ class Util {
 		return electron.ipcRenderer || window.Renderer;
 	};
 	
-	resizeHeaderFooter (width: number) {
+	resizeHeaderFooter (width: number, isPopup: boolean) {
 		const { sidebar } = commonStore;
 		const { fixed, snap } = sidebar;
-		const header = $('#page #header');
-		const footer = $('#page #footer');
+		const header = $('#page.isFull #header');
+		const footer = $('#page.isFull #footer');
 		const css: any = {};
 		
 		css.width = '';
 		header.css(css).removeClass('withSidebar snapLeft snapRight');
 
-		if (fixed) {
+		if (!isPopup && fixed) {
 			header.addClass('withSidebar');
 
 			css.width = header.outerWidth() - width;
