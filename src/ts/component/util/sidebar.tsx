@@ -554,7 +554,8 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 
 	onResizeMove (e: any, dir: I.MenuType) {
 		const { sidebar } = commonStore;
-		const { snap, width } = sidebar;
+		const { snap, width, fixed } = sidebar;
+		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
 
 		let d = 0;
@@ -571,6 +572,10 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 			this.resizeHeaderFooter(this.width);
 			node.css({ width: this.width });
 			$('#sidebarDummy').css({ width: this.width });
+
+			if (fixed) {
+				win.trigger('resize.editor');
+			};
 		};
 
 		if (dir == I.MenuType.Vertical) {
