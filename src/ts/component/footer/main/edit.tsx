@@ -103,7 +103,7 @@ const FooterMainEdit = observer(class FooterMainEdit extends React.Component<Pro
 		const { sidebar } = commonStore;
 		const { width } = sidebar;
 
-		Util.resizeHeaderFooter(width, isPopup);
+		Util.resizeSidebar(width, isPopup);
 	};
 	
 });

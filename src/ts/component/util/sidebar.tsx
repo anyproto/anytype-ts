@@ -256,7 +256,6 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		const { x, y, snap } = sidebar;
 		const node = $(ReactDOM.findDOMNode(this));
 		const body = node.find('.body');
-		const dummy = $('#sidebarDummy');
 
 		this.width = node.width();
 		this.height = node.height();
@@ -265,8 +264,6 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 
 		this.setActive(this.id);
 		this.setStyle(x, y, snap);
-
-		dummy.css({ width: this.width });
 	};
 
 	load () {
@@ -562,7 +559,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 			const d = (snap == I.MenuDirection.Right) ? (this.ox - e.pageX + width) : e.pageX - this.ox;
 	
 			this.width = this.getWidth(d);
-			this.resizeHeaderFooter(this.width);
+			this.setWidth(this.width);
 
 			if (fixed) {
 				win.trigger('resize.editor');
@@ -708,17 +705,14 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		const { sidebar } = commonStore;
 		const { width } = sidebar;
 
-		this.resizeHeaderFooter(width);
+		this.setWidth(width);
 	};
 
-	resizeHeaderFooter (width: number) {
+	setWidth (width: number) {
 		const node = $(ReactDOM.findDOMNode(this));
-		const dummy = $('#sidebarDummy');
 		
 		node.css({ width });
-		dummy.css({ width });
-
-		Util.resizeHeaderFooter(width, this.props.isPopup);
+		Util.resizeSidebar(width, this.props.isPopup);
 	};
 
 });

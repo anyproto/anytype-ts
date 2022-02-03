@@ -92,7 +92,7 @@ const HeaderMainHistory = observer(class HeaderMainHistory extends React.Compone
 		const { sidebar } = commonStore;
 		const { width } = sidebar;
 
-		Util.resizeHeaderFooter(width, isPopup);
+		Util.resizeSidebar(width, isPopup);
 	};
 
 });

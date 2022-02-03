@@ -148,7 +148,7 @@ const HeaderMainGraph = observer(class HeaderMainEdit extends React.Component<Pr
 		const { sidebar } = commonStore;
 		const { width } = sidebar;
 
-		Util.resizeHeaderFooter(width, isPopup);
+		Util.resizeSidebar(width, isPopup);
 	};
 	
 });
