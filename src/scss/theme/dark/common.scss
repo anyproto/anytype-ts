@@ -12,8 +12,8 @@ html.themeDark {
     a { color: $colorPrimary; }
     a:hover { color: $colorOrange; }
 
-    #root > .loaderWrapper { background: $colorBlack; }
-    #root > .loaderWrapper {
+    #root > #loader { background: $colorBlack; }
+    #root > #loader {
         .logo { background-image: url('#{$themePath}/logo/color.svg'); }
     }
 

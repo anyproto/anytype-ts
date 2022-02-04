@@ -33,7 +33,7 @@
 
 		.pageMainEdit {
 			#bodyWrapper { padding: 0px; }
-			#bodyWrapper > .loaderWrapper { position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; }
+			#bodyWrapper > #loader { position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; }
 			
 			.content { height: 100%; padding-top: 38px; }
 			.content > .wrap { height: 100%; }

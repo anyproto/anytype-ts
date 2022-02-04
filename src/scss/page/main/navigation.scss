@@ -1,7 +1,7 @@
 @import "~scss/_vars";
 
 .pageMainNavigation {
-	.wrapper > .loaderWrapper { position: fixed; left: 0px; top: 0px; width: 100%; height: 100%; background: rgba(255,255,255,0.5); }
+	.wrapper > #loader { position: fixed; top: 0px; width: 100%; height: 100%; background: rgba(255,255,255,0.5); }
 
 	.items {
 		.item { 
