@@ -496,7 +496,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		const { sidebar } = commonStore;
 		const { snap, fixed } = sidebar;
 
-		if (fixed || (snap === null)) {
+		if (fixed || (snap === null) || menuStore.isOpen()) {
 			return;
 		};
 
