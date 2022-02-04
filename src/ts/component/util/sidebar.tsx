@@ -21,6 +21,7 @@ const Constant = require('json/constant.json');
 const MAX_DEPTH = 100;
 const LIMIT = 20;
 const HEIGHT = 24;
+const SNAP_THRESHOLD = 30;
 
 const SKIP_TYPES_LOAD = [
 	Constant.typeId.space,
@@ -616,10 +617,16 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 
 	onDragMove (e: any) {
 		const win = $(window);
-		const x = e.pageX - this.ox - win.scrollLeft();
-		const y = e.pageY - this.oy - win.scrollTop();
+		
+		let x = e.pageX - this.ox - win.scrollLeft();
+		let y = e.pageY - this.oy - win.scrollTop();
+		let snap = this.checkSnap(x);
 
-		this.setStyle(x, y, null);
+		if (snap !== null) {
+			x = 0;
+		};
+
+		this.setStyle(x, y, snap);
 	};
 
 	onDragEnd (e: any) {
@@ -629,14 +636,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		
 		let x = e.pageX - this.ox - win.scrollLeft();
 		let y = e.pageY - this.oy - win.scrollTop();
-		let snap = null;
-
-		if (x <= 0) {
-			snap = I.MenuDirection.Left;
-		};
-		if (x + this.width >= win.width()) {
-			snap = I.MenuDirection.Right;
-		};
+		let snap = this.checkSnap(x);
 
 		if (snap !== null) {
 			x = 0;
@@ -645,12 +645,25 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		commonStore.sidebarSet({ x, y, snap });
 		this.setStyle(x, y, snap);
 
-		$(window).unbind('mousemove.sidebar mouseup.sidebar');
-
+		win.unbind('mousemove.sidebar mouseup.sidebar');
 		keyboard.setDrag(false);
+
 		if (selection) {
 			selection.preventSelect(false);
 		};
+	};
+
+	checkSnap (x: number) {
+		let win = $(window);
+		let snap = null;
+
+		if (x <= SNAP_THRESHOLD) {
+			snap = I.MenuDirection.Left;
+		};
+		if (x + this.width >= win.width() - SNAP_THRESHOLD) {
+			snap = I.MenuDirection.Right;
+		};
+		return snap;
 	};
 
 	getWidth (w: number) {
@@ -681,6 +694,15 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 	setStyle (x: number, y: number, snap: I.MenuDirection) {
 		const node = $(ReactDOM.findDOMNode(this));
 		const coords = this.checkCoords(x, y);
+
+		node.removeClass('left right');
+
+		if (snap == I.MenuDirection.Left) {
+			node.addClass('left');
+		};
+		if (snap == I.MenuDirection.Right) {
+			node.addClass('right');
+		};
 
 		node.css({ 
 			top: coords.y,
