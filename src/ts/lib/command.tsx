@@ -975,7 +975,7 @@ const OnSubscribe = (subId: string, keys: string[], message: any) => {
 	dbStore.recordsSet(subId, '', message.records.map((it: any) => { return { id: it.id }; }));
 };
 
-const ObjectSearchSubscribe = (subId: string, filters: I.Filter[], sorts: I.Sort[], keys: string[], sources: string[], offset: number, limit: number, ignoreWorkspace: boolean, afterId: string, beforeId: string, callBack?: (message: any) => void) => {
+const ObjectSearchSubscribe = (subId: string, filters: I.Filter[], sorts: I.Sort[], keys: string[], sources: string[], offset: number, limit: number, ignoreWorkspace: boolean, afterId: string, beforeId: string, noDeps: boolean, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.SearchSubscribe.Request();
 
 	filters = filters.concat([
@@ -992,6 +992,7 @@ const ObjectSearchSubscribe = (subId: string, filters: I.Filter[], sorts: I.Sort
 	request.setIgnoreworkspace(ignoreWorkspace);
 	request.setAfterid(afterId);
 	request.setBeforeid(beforeId);
+	request.setNodepsubscription(noDeps);
 
 	const cb = (message: any) => {
 		OnSubscribe(subId, keys, message);

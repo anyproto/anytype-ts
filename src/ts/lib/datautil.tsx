@@ -1184,7 +1184,7 @@ class DataUtil {
 		};
 
 		dbStore.metaSet(subId, '', meta);
-		C.ObjectSearchSubscribe(subId, view.filters, view.sorts, keys, block.content.sources, offset, limit, true, '', '');
+		C.ObjectSearchSubscribe(subId, view.filters, view.sorts, keys, block.content.sources, offset, limit, true, '', '', false);
 	};
 
 	coverIsImage (type: I.CoverType) {
