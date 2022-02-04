@@ -148,7 +148,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 				return;
 			};
 
-			this.data.edges = message.edges.filter(d => { return !d.isHidden && (d.source !== d.target); });
+			this.data.edges = message.edges.filter(d => { return (d.source !== d.target); });
 			this.data.nodes = message.nodes;
 			this.refGraph.init();
 
