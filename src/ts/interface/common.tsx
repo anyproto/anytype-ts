@@ -70,6 +70,8 @@ export enum ExportFormat {
 	Dot		 = 3,
 	Svg		 = 4,
 	GraphJson = 5,
+
+	Html	 = 100,
 };
 
 export enum Source {
