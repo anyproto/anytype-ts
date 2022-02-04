@@ -956,13 +956,18 @@ class Util {
 	resizeSidebar (width: number, isPopup: boolean) {
 		const { sidebar } = commonStore;
 		const { fixed, snap } = sidebar;
+
+		const win = $(window);
 		const obj = $('#sidebar');
 		const page = $('#page.isFull');
 		const header = page.find('#header');
 		const footer = page.find('#footer');
+		const loader = page.find('#loader');
 		const dummy = $('#sidebarDummy');
-		const win = $(window);
+
+		const pw = win.width() - width;
 		const css: any = { width: '' };
+		const cssLoader: any = { width: pw, left: '', right: '' };
 
 		header.css(css).removeClass('withSidebar snapLeft snapRight');
 		footer.css(css);
@@ -977,13 +982,20 @@ class Util {
 		if (snap !== null) {
 			if (snap == I.MenuDirection.Right) {
 				header.addClass('snapRight');
+
+				cssLoader.left = 0;
+				cssLoader.right = '';
 			} else {
 				header.addClass('snapLeft');
+
+				cssLoader.left = '';
+				cssLoader.right = 0;
 			};
 		};
 
 		dummy.css({ width });
-		page.css({ width: win.width() - width });
+		page.css({ width: pw });
+		loader.css(cssLoader);
 		header.css(css);
 		footer.css(css);
 	};
