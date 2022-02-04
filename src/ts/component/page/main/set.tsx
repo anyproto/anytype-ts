@@ -384,7 +384,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, St
 		const { isPopup } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
 		const cover = node.find('.block.blockCover');
-		const obj = $(isPopup ? '#popupPage #innerWrap' : '.page.isFull');
+		const obj = $(isPopup ? '#popupPage #innerWrap' : '#page.isFull');
 		const header = obj.find('#header');
 		const hh = header.height();
 

@@ -150,6 +150,7 @@
     }
 }
 
+.pageMainGraph > .body { overflow: hidden; }
 .pageMainGraph > .body > #loader { 
-    position: fixed; left: 0px; top: 0px; width: 100%; height: 100%; background: $colorWhite; z-index: 11; 
+    position: fixed; top: 0px; width: 100%; height: 100%; background: $colorWhite; z-index: 11; 
 }

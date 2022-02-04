@@ -157,16 +157,19 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 	};
 
 	resize () {
-		const { isPopup } = this.props;
 		const { sidebar } = commonStore;
 		const { width } = sidebar;
 		const win = $(window);
-		const obj = $(isPopup ? '#popupPage #innerWrap' : '.page.isFull');
+		const obj = $(this.props.isPopup ? '#popupPage #innerWrap' : '#page.isFull');
 		const wrapper = obj.find('.wrapper');
-		const height = isPopup && !obj.hasClass('full') ? obj.height() : win.height();
+		const hh = Util.sizeHeader();
+		const isPopup = this.props.isPopup && !obj.hasClass('full');
+		
+		let wh = isPopup ? obj.height() - hh : win.height();
+		let sh = isPopup ? obj.height() : win.height();
 
-		wrapper.css({ height: height })
-		wrapper.find('.side').css({ height: height });
+		wrapper.css({ height: wh });
+		wrapper.find('.side').css({ height: sh });
 		
 		if (isPopup) {
 			const element = $('#popupPage .content');
@@ -185,7 +188,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 
 	togglePanel (v: boolean) {
 		const { isPopup } = this.props;
-		const obj = $(isPopup ? '#popupPage #innerWrap' : '.page.isFull');
+		const obj = $(isPopup ? '#popupPage #innerWrap' : '#page.isFull');
 		const wrapper = obj.find('.wrapper');
 
 		v ? wrapper.addClass('withPanel') : wrapper.removeClass('withPanel');

@@ -1800,7 +1800,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	};
 
 	getContainer () {
-		return $(this.props.isPopup ? '#popupPage #innerWrap' : '.page.isFull');
+		return $(this.props.isPopup ? '#popupPage #innerWrap' : '#page.isFull');
 	};
 	
 	focus (id: string, from: number, to: number, scroll: boolean) {

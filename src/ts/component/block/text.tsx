@@ -1158,7 +1158,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		menuStore.closeAll([ 'blockAdd', 'blockMention' ]);
 
 		this.timeoutContext = window.setTimeout(() => {
-			const pageContainer = $(isPopup ? '#popupPage #innerWrap' : '.page.isFull');
+			const pageContainer = $(isPopup ? '#popupPage #innerWrap' : '#page.isFull');
 
 			pageContainer.unbind('click.context').on('click.context', () => { 
 				pageContainer.unbind('click.context');
