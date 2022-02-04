@@ -62,6 +62,7 @@
 
         .section {
             .item { background: $colorBlack; }
+            .item:hover::before { background: $colorHover; }
         }
     }
 
