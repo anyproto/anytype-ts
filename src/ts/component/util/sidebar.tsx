@@ -26,6 +26,7 @@ const SNAP_THRESHOLD = 30;
 const SKIP_TYPES_LOAD = [
 	Constant.typeId.space,
 ];
+const SUB_KEY = 'sidebar';
 const KEYS = [ 
 	'id', 'name', 'snippet', 'layout', 'type', 'iconEmoji', 'iconImage', 'isHidden', 'isDeleted', 'isArchived', 'isFavorite', 'done', 
 	'relationFormat', 'fileExt', 'fileMimeType', 'links', 
@@ -89,7 +90,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 			const paddingLeft = 6 + item.depth * 12;
 			const style = { ...param.style, paddingLeft };
 			const id = this.getId(item);
-			const check = Storage.checkToggle('sidebar', id);
+			const check = Storage.checkToggle(SUB_KEY, id);
 
 			if (check) {
 				cn.push('active');
@@ -214,7 +215,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		this.unbind();
 
 		window.clearTimeout(this.timeout);
-		C.ObjectSearchUnsubscribe(Object.keys(this.subscriptionIds));
+		C.ObjectSearchUnsubscribe(Object.keys(this.subscriptionIds).map(id => dbStore.getSubId(SUB_KEY, id)));
 	};
 
 	rebind () {
@@ -284,7 +285,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		this.setState({ loading: true });
 
 		sections.forEach((section: any) => {
-			const subId = dbStore.getSubId('sidebar', section.id);
+			const subId = dbStore.getSubId(SUB_KEY, section.id);
 
 			switch (section.id) {
 				case I.TabIndex.Favorite:
@@ -319,7 +320,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 
 	loadItem (item: any) {
 		const hash = sha1(item.links.join(''));
-		const subId = dbStore.getSubId('sidebar', item.id);
+		const subId = dbStore.getSubId(SUB_KEY, item.id);
 
 		if (this.subscriptionIds[item.id] && (this.subscriptionIds[item.id] == hash)) {
 			return;
@@ -357,11 +358,11 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 
 			if (length) {
 				const id = this.getId({ ...newItem, sectionId });
-				const check = Storage.checkToggle('sidebar', id);
+				const check = Storage.checkToggle(SUB_KEY, id);
 
 				if (check) {
 					this.loadItem(item);
-					list = this.unwrap(sectionId, list, item.id, this.getRecords(dbStore.getSubId('sidebar', item.id)), depth + 1);
+					list = this.unwrap(sectionId, list, item.id, this.getRecords(dbStore.getSubId(SUB_KEY, item.id)), depth + 1);
 				};
 			};
 		};
@@ -373,7 +374,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		let items: any[] = [];
 
 		sections.forEach((section: any) => {
-			const subId = dbStore.getSubId('sidebar', section.id);
+			const subId = dbStore.getSubId(SUB_KEY, section.id);
 			const children = this.getRecords(subId);
 			const length = children.length;
 			const item = {
@@ -391,7 +392,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 			items.push(item);
 
 			if (length) {
-				const check = Storage.checkToggle('sidebar', this.getId(item));
+				const check = Storage.checkToggle(SUB_KEY, this.getId(item));
 				if (check) {
 					items = this.unwrap(section.id, items, section.id, children, 1);
 				};
@@ -425,7 +426,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 
 		const id = this.getId(item);
 
-		Storage.setToggle('sidebar', id, !Storage.checkToggle('sidebar', id));
+		Storage.setToggle(SUB_KEY, id, !Storage.checkToggle(SUB_KEY, id));
 		this.forceUpdate();
 	};
 
@@ -487,7 +488,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 			},
 			data: {
 				objectId: item.id,
-				subId: dbStore.getSubId('sidebar', item.parentId),
+				subId: dbStore.getSubId(SUB_KEY, item.parentId),
 			}
 		});
 	};
