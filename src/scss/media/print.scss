@@ -13,6 +13,11 @@ html.printMedia {
 	html.withPopup .page.isFull, 
 	.header, .footer { display: none !important; }
 
+	#page.isFull { width: 100% !important; }
+
+	.focusable.isFocused { background: none !important; }
+	.focusable.isFocused::before { display: none; }
+
 	.overPopup, .overMenu { overflow: visible !important; }
 
 	.popups {
@@ -59,10 +64,6 @@ html.printMedia {
 		}
 		
 		.block.blockBookmark { break-inside: avoid-page; }
-		.block.blockBookmark {
-			.side.left { width: 100% !important; }
-			.side.right { display: none; }
-		}
 
 		.block.blockText.code > .wrapContent > .selectable > .dropTarget > .flex .value { white-space: pre; }
 	}
@@ -70,7 +71,11 @@ html.printMedia {
 
 html.printMedia.print {
 	#editorWrapper { width: 100% !important; }
-}
 
-html.printMedia.save {
+	.blocks {
+		.block.blockBookmark {
+			.side.left { width: 100% !important; }
+			.side.right { display: none; }
+		}
+	}
 }
