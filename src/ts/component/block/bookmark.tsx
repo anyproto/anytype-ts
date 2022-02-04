@@ -30,12 +30,9 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<Props
 
 		let element = null;
 		if (url) {
-			let style: any = {};
 			let cn = [ 'inner', 'resizable' ];
-
 			if (imageHash) {
 				cn.push('withImage');
-				style.backgroundImage = 'url("' + commonStore.imageUrl(imageHash, 500) + '")';
 			};
 			
 			element = (
@@ -44,12 +41,12 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<Props
 						{title ? <div className="name">{title}</div> : ''}
 						{description ? <div className="descr">{description}</div> : ''}
 						<div className="link">
-							{faviconHash ? <Icon className="fav" icon={commonStore.imageUrl(faviconHash, 16)} /> : ''}
+							{faviconHash ? <img src={commonStore.imageUrl(faviconHash, 16)} className="fav" /> : ''}
 							{url}
 						</div>
 					</div>
 					<div className="side right">
-						<div className="img" style={style} />
+						<img src={commonStore.imageUrl(imageHash, 500)} className="img" />
 					</div>
 				</div>
 			);

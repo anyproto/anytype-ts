@@ -38,9 +38,12 @@
 
 		.name { @include text-common; height: 22px; color: $colorBlack; @include text-overflow-nw; }
 		.descr { @include text-small; height: 36px; color: $colorVeryDarkGrey; margin: 5px 0px 6px 0px; @include text-overflow; }
-		.link { @include text-small; height: 18px; color: $colorBlack; @include text-overflow-nw; }
-		.img { width: 100%; height: 100%; background-repeat: no-repeat; background-size: cover; background-position: center center; }
-		.icon.fav { width: 16px; height: 16px; margin: -2px 4px 0px 0px; }
+		.link { 
+			@include text-small; height: 18px; color: $colorBlack; @include text-overflow-nw; display: flex; gap: 0px 4px; 
+			align-items: center; 
+		}
+		.img { width: 100%; height: 108px; object-fit: cover; display: block; }
+		.fav { width: 16px; height: 16px; object-fit: cover; display: inline-block; }
 	}
 	
 	.block.blockBookmark > .wrapContent { border-radius: 6px; }
