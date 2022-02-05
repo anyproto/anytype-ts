@@ -66,7 +66,7 @@
 
         .item { 
             display: flex; flex-direction: row; gap: 0px 4px; align-items: center; justify-content: space-between; cursor: pointer; 
-            border-radius: 4px; padding: 2px 6px;
+            border-radius: 4px; padding: 2px 6px; position: relative;
         }
         .item {
             .iconObject { flex-shrink: 0; flex-basis: 20px; }

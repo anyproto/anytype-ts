@@ -6,6 +6,8 @@ import { blockStore, commonStore, dbStore, detailStore, menuStore } from 'ts/sto
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { observer } from 'mobx-react';
 
+import Item from './sidebar/item';
+
 interface Props {
 	isPopup?: boolean;
 	dataset?: any;
@@ -21,15 +23,10 @@ const sha1 = require('sha1');
 
 const MAX_DEPTH = 100;
 const LIMIT = 20;
-const HEIGHT = 24;
+const HEIGHT = 28;
 const SNAP_THRESHOLD = 30;
 const SKIP_TYPES_LOAD = [
 	Constant.typeId.space,
-];
-const SUB_KEY = 'sidebar';
-const KEYS = [ 
-	'id', 'name', 'snippet', 'layout', 'type', 'iconEmoji', 'iconImage', 'isHidden', 'isDeleted', 'isArchived', 'isFavorite', 'done', 
-	'relationFormat', 'fileExt', 'fileMimeType', 'links', 
 ];
 
 const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
@@ -60,6 +57,9 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		this.onMouseEnter = this.onMouseEnter.bind(this);
 		this.onMouseLeave = this.onMouseLeave.bind(this);
 		this.onScroll = this.onScroll.bind(this);
+		this.onClick = this.onClick.bind(this);
+		this.onToggle = this.onToggle.bind(this);
+		this.onContext = this.onContext.bind(this);
 	};
 
 	render () {
@@ -85,44 +85,6 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
-			const length = item.length;
-			const cn = [ 'item' ];
-			const paddingLeft = 6 + item.depth * 12;
-			const style = { ...param.style, paddingLeft };
-			const id = this.getId(item);
-			const check = Storage.checkToggle(SUB_KEY, id);
-
-			if (check) {
-				cn.push('active');
-			};
-
-			let content = null;
-			let arrow = null;
-
-			if (item.isSection) {
-				cn.push('isSection');
-
-				content = (
-					<div className="clickable" onClick={(e: any) => { this.onToggle(e, item); }}>
-						<div className="name">{item.details.name}</div>
-						<div className="cnt">{length || ''}</div>
-					</div>
-				);
-			} else {
-				content = (
-					<div className="clickable" onClick={(e: any) => { this.onClick(e, item); }}>
-						<IconObject object={item.details} size={20} forceLetter={true} />
-						<ObjectName object={item.details} />
-					</div>
-				);
-			};
-
-			if (length) {
-				arrow = <Icon className="arrow" onMouseDown={(e: any) => { this.onToggle(e, item); }} />;
-			} else {
-				arrow = <Icon className="blank" />
-			};
-
 			return (
 				<CellMeasurer
 					key={param.key}
@@ -132,10 +94,13 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 					rowIndex={param.index}
 					hasFixedWidth={() => {}}
 				>
-					<div id={'item-' + id} className={cn.join(' ')} style={style} onContextMenu={(e: any) => { this.onContext(e, item); }}>
-						{arrow}
-						{content}
-					</div>
+					<Item 
+						{...item}
+						elementId={this.getId(item)}
+						onClick={this.onClick} 
+						onToggle={this.onToggle} 
+						onContext={this.onContext}
+					/>
 				</CellMeasurer>
 			);
 		};
@@ -215,7 +180,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		this.unbind();
 
 		window.clearTimeout(this.timeout);
-		C.ObjectSearchUnsubscribe(Object.keys(this.subscriptionIds).map(id => dbStore.getSubId(SUB_KEY, id)));
+		C.ObjectSearchUnsubscribe(Object.keys(this.subscriptionIds).map(id => dbStore.getSubId(Constant.subIds.sidebar, id)));
 	};
 
 	rebind () {
@@ -282,7 +247,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		this.setState({ loading: true });
 
 		sections.forEach((section: any) => {
-			const subId = dbStore.getSubId(SUB_KEY, section.id);
+			const subId = dbStore.getSubId(Constant.subIds.sidebar, section.id);
 
 			switch (section.id) {
 				case I.TabIndex.Favorite:
@@ -313,7 +278,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 
 			};
 			
-			C.ObjectSearchSubscribe(subId, filters.concat(sectionFilters), sorts, KEYS, [], 0, limit, true, '', '', true, cb);
+			C.ObjectSearchSubscribe(subId, filters.concat(sectionFilters), sorts, Constant.sidebarRelationKeys, [], 0, limit, true, '', '', true, cb);
 		});
 	};
 
@@ -323,21 +288,21 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 
 	loadItem (id: string, links: string[]) {
 		const hash = sha1(links.join(''));
-		const subId = dbStore.getSubId(SUB_KEY, id);
+		const subId = dbStore.getSubId(Constant.subIds.sidebar, id);
 
 		if (this.subscriptionIds[id] && (this.subscriptionIds[id] == hash)) {
 			return;
 		};
 
 		this.subscriptionIds[id] = hash;
-		C.ObjectIdsSubscribe(subId, links, KEYS, true);
+		C.ObjectIdsSubscribe(subId, links, Constant.sidebarRelationKeys, true);
 	};
 
 	getRecords (subId: string) {
 		let records: any[] = dbStore.getRecordsIds(subId, '');
 
 		records = records.map((id: string) => { 
-			let item = detailStore.get(subId, id, KEYS, true);
+			let item = detailStore.get(subId, id, [ 'id', 'type', 'links' ], true);
 			let links = [];
 			if (item.type != Constant.typeId.set) {
 				links = Relation.getArrayValue(item.links);
@@ -368,11 +333,11 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 
 			if (length) {
 				const id = this.getId({ ...newItem, sectionId });
-				const check = Storage.checkToggle(SUB_KEY, id);
+				const check = Storage.checkToggle(Constant.subIds.sidebar, id);
 
 				if (check) {
 					this.loadItem(item.id, links);
-					list = this.unwrap(sectionId, list, item.id, this.getRecords(dbStore.getSubId(SUB_KEY, item.id)), depth + 1);
+					list = this.unwrap(sectionId, list, item.id, this.getRecords(dbStore.getSubId(Constant.subIds.sidebar, item.id)), depth + 1);
 				};
 			};
 		};
@@ -384,7 +349,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		let items: any[] = [];
 
 		sections.forEach((section: any) => {
-			const subId = dbStore.getSubId(SUB_KEY, section.id);
+			const subId = dbStore.getSubId(Constant.subIds.sidebar, section.id);
 			const children = this.getRecords(subId);
 			const length = children.length;
 			const item = {
@@ -402,7 +367,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 			items.push(item);
 
 			if (length) {
-				const check = Storage.checkToggle(SUB_KEY, this.getId(item));
+				const check = Storage.checkToggle(Constant.subIds.sidebar, this.getId(item));
 				if (check) {
 					items = this.unwrap(section.id, items, section.id, children, 1);
 				};
@@ -436,7 +401,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 
 		const id = this.getId(item);
 
-		Storage.setToggle(SUB_KEY, id, !Storage.checkToggle(SUB_KEY, id));
+		Storage.setToggle(Constant.subIds.sidebar, id, !Storage.checkToggle(Constant.subIds.sidebar, id));
 		this.forceUpdate();
 	};
 
@@ -486,7 +451,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		e.stopPropagation();
 
 		const { x, y } = keyboard.mouse.page;
-		const subId = dbStore.getSubId(SUB_KEY, item.parentId);
+		const subId = dbStore.getSubId(Constant.subIds.sidebar, item.parentId);
 
 		this.setActive(this.getId(item));
 

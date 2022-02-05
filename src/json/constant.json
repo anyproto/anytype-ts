@@ -52,7 +52,8 @@
 		"index": "index",
 		"search": "search",
 		"profile": "profile",
-		"deleted": "deleted"
+		"deleted": "deleted",
+		"sidebar": "sidebar"
 	},
 
 	"menuIds": {
@@ -143,6 +144,11 @@
 		"featuredRelations",
 		"isHidden",
 		"isArchived"
+	],
+
+	"sidebarRelationKeys": [
+		"id", "name", "snippet", "layout", "type", "iconEmoji", "iconImage", "isHidden", "isDeleted", "isArchived", "isFavorite", "done", 
+		"relationFormat", "fileExt", "fileMimeType", "links"
 	],
 
 	"relationKey": {
