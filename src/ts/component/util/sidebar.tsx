@@ -290,6 +290,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 						{ operator: I.FilterOperator.And, relationKey: 'isFavorite', condition: I.FilterCondition.Equal, value: true }
 					];
 					sorts = [];
+					limit = 0;
 					break;
 
 				case I.TabIndex.Recent:
@@ -307,6 +308,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 					sorts = [
 						{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
 					];
+					limit = LIMIT;
 					break;
 
 			};
