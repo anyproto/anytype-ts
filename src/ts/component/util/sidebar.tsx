@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, C, DataUtil, Util, keyboard, Storage } from 'ts/lib';
+import { I, C, DataUtil, Util, keyboard, Storage, Relation } from 'ts/lib';
 import { IconObject, Icon, ObjectName, Loader } from 'ts/component';
 import { blockStore, commonStore, dbStore, detailStore, menuStore } from 'ts/store';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
@@ -340,7 +340,13 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		let records: any[] = dbStore.getRecords(subId, '');
 
 		records = records.map(it => it.id);
-		records = records.map((id: string) => { return detailStore.get(subId, id, KEYS, true); })
+		records = records.map((id: string) => { 
+			const item = detailStore.get(subId, id, KEYS, true);
+
+			item.links = Relation.getArrayValue(item.links);
+
+			return item;
+		});
 
 		return records;
 	};
