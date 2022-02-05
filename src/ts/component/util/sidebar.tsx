@@ -307,9 +307,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 					break;
 
 			};
-
-			console.log(filters, sorts);
-
+			
 			C.ObjectSearchSubscribe(subId, filters.concat(sectionFilters), sorts, KEYS, [], 0, limit, true, '', '', true, cb);
 		});
 	};
