@@ -964,6 +964,7 @@ class Util {
 		const footer = page.find('#footer');
 		const loader = page.find('#loader');
 		const dummy = $('#sidebarDummy');
+		const deleted = page.find('#deleteWrapper');
 
 		const pw = win.width() - width;
 		const css: any = { width: '' };
@@ -996,6 +997,7 @@ class Util {
 		dummy.css({ width });
 		page.css({ width: pw });
 		loader.css(cssLoader);
+		deleted.css(cssLoader);
 		header.css(css);
 		footer.css(css);
 	};

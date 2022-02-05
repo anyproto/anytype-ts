@@ -2,8 +2,8 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
-import { HeaderMainEdit as Header, FooterMainEdit as Footer, Loader, Block, Button, IconObject, Deleted } from 'ts/component';
-import { I, M, C, DataUtil, Util, crumbs, Action, keyboard } from 'ts/lib';
+import { HeaderMainEdit as Header, FooterMainEdit as Footer, Loader, Block, Button, IconObject, Deleted, ObjectName } from 'ts/component';
+import { I, M, C, Util, crumbs, Action } from 'ts/lib';
 import { commonStore, blockStore, detailStore } from 'ts/store';
 
 interface Props extends RouteComponentProps<any> {
@@ -43,14 +43,14 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<Props
 
 	render () {
 		const { isDeleted } = this.state;
-
-		if (isDeleted) {
-			return <Deleted {...this.props} />;
-		};
-
 		const { isPopup } = this.props;
 		const rootId = this.getRootId();
 		const object = Util.objectCopy(detailStore.get(rootId, rootId, [ 'heightInPixels' ]));
+
+		if (isDeleted || object.isDeleted) {
+			return <Deleted {...this.props} />;
+		};
+
 		const featured: any = new M.Block({ id: rootId + '-featured', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
 		const blocks = blockStore.getBlocks(rootId);
 		const file = blocks.find((it: I.Block) => { return it.isFile(); });
@@ -113,7 +113,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<Props
 
 							<div className="side right">
 								<div className="head">
-									<div className="title">{DataUtil.fileName(object)}</div>
+									<ObjectName className="title" object={object} />
 									<div className="descr">{object.description}</div>
 
 									<Block {...this.props} key={featured.id} rootId={rootId} iconSize={20} block={featured} />
