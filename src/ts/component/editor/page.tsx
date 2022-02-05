@@ -17,10 +17,6 @@ interface Props extends RouteComponentProps<any> {
 	onOpen?(): void;
 };
 
-interface State {
-	isDeleted: boolean;
-};
-
 const { app } = window.require('@electron/remote');
 const Constant = require('json/constant.json');
 const Errors = require('json/error.json');
@@ -32,7 +28,7 @@ const userPath = app.getPath('userData');
 const THROTTLE = 20;
 const BUTTON_OFFSET = 10;
 
-const EditorPage = observer(class EditorPage extends React.Component<Props, State> {
+const EditorPage = observer(class EditorPage extends React.Component<Props, {}> {
 	
 	_isMounted: boolean = false;
 	id: string = '';
@@ -44,12 +40,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	scrollTop: number = 0;
 	uiHidden: boolean = false;
 	loading: boolean = false;
+	isDeleted: boolean = false;
 	width: number = 0;
 	refHeader: any = null;
-
-	state = {
-		isDeleted: false,
-	};
 
 	constructor (props: any) {
 		super(props);
@@ -68,7 +61,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	};
 
 	render () {
-		if (this.state.isDeleted) {
+		if (this.isDeleted) {
 			return <Deleted {...this.props} />;
 		};
 
@@ -224,6 +217,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		};
 
 		this.loading = true;
+		this.isDeleted = false;
 		this.forceUpdate();
 		
 		this.id = rootId;
@@ -234,7 +228,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 					Util.onErrorUpdate(() => { Util.route('/main/index'); });
 				} else 
 				if (message.error.code == Errors.Code.NOT_FOUND) {
-					this.setState({ isDeleted: true });
+					this.isDeleted = true;
+					this.forceUpdate();
 				} else {
 					Util.route('/main/index');
 				};
@@ -1766,6 +1761,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		};
 		
 		const { rootId, isPopup } = this.props;
+		const { sidebar } = commonStore;
+		const { width } = sidebar;
 		const node = $(ReactDOM.findDOMNode(this));
 		const note = node.find('#note');
 		const blocks = node.find('.blocks');
@@ -1797,6 +1794,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		};
 
 		this.onResize(root?.fields?.width);
+		Util.resizeSidebar(width, isPopup);
 	};
 
 	getContainer () {

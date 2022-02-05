@@ -16,6 +16,7 @@ interface State {
 };
 
 const $ = require('jquery');
+const raf = require('raf');
 const { app } = window.require('@electron/remote')
 const path = window.require('path');
 const userPath = app.getPath('userData');
@@ -45,7 +46,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<Props
 		const { isDeleted } = this.state;
 		const { isPopup } = this.props;
 		const rootId = this.getRootId();
-		const object = Util.objectCopy(detailStore.get(rootId, rootId, [ 'heightInPixels' ]));
+		const object = detailStore.get(rootId, rootId, [ 'heightInPixels' ]);
 
 		if (isDeleted || object.isDeleted) {
 			return <Deleted {...this.props} />;
@@ -268,6 +269,8 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<Props
 
 	resize () {
 		const { isPopup } = this.props;
+		const { sidebar } = commonStore;
+		const { width } = sidebar;
 		const node = $(ReactDOM.findDOMNode(this));
 		const blocks = node.find('#blocks');
 		const empty = node.find('#empty');
@@ -281,6 +284,8 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<Props
 		if (empty.length) {
 			empty.css({ lineHeight: (wh - 60) + 'px' });
 		};
+
+		Util.resizeSidebar(width, isPopup);
 	};
 
 });

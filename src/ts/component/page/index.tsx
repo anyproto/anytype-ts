@@ -93,6 +93,8 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 			return <div>Page component "{path}" not found</div>;
 		};
 
+		console.log(path);
+
 		const wrap = (
 			<div id="page" className={'page ' + this.getClass('page')}>
 				<Component ref={(ref: any) => this.refChild = ref} {...this.props} />
