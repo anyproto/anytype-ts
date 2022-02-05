@@ -1014,6 +1014,14 @@ const ObjectIdsSubscribe = (subId: string, ids: string[], keys: string[], ignore
 	request.setIgnoreworkspace(ignoreWorkspace);
 
 	const cb = (message: any) => {
+		message.records.sort((c1: any, c2: any) => {
+			const i1 = ids.indexOf(c1.id);
+			const i2 = ids.indexOf(c2.id);
+			if (i1 > i2) return 1; 
+			if (i1 < i2) return -1;
+			return 0;
+		});
+
 		OnSubscribe(subId, keys, message);
 
 		if (callBack) {
