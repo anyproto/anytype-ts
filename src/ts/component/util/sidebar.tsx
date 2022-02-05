@@ -268,11 +268,10 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: SKIP_TYPES_LOAD },
 		];
 
+		let n = 0;
 		let limit = 0;
 		let sorts: I.Sort[] = [];
 		let sectionFilters: I.Filter[] = [];
-		let childrenIds: string[] = [];
-		let n = 0;
 		let cb = () => {
 			n++;
 			if (n == sections.length - 1) {
@@ -290,6 +289,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 					sectionFilters = [
 						{ operator: I.FilterOperator.And, relationKey: 'isFavorite', condition: I.FilterCondition.Equal, value: true }
 					];
+					sorts = [];
 					break;
 
 				case I.TabIndex.Recent:
@@ -303,6 +303,9 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 				case I.TabIndex.Set:
 					sectionFilters = [
 						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.set }
+					];
+					sorts = [
+						{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
 					];
 					break;
 
