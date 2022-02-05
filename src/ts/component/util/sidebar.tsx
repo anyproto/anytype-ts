@@ -97,6 +97,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 					<Item 
 						{...item}
 						elementId={this.getId(item)}
+						style={param.style}
 						onClick={this.onClick} 
 						onToggle={this.onToggle} 
 						onContext={this.onContext}
