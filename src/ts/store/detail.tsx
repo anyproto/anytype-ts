@@ -75,13 +75,13 @@ class DetailStore {
 			} else {
 				el = { relationKey: k, value: item.details[k] };
 				makeObservable(el, { value: observable });
-
-				intercept(el as any, (change: any) => { 
-					return (change.newValue === el[change.name] ? null : change); 
-				});
-
 				list.push(el);
 			};
+
+			intercept(el as any, (change: any) => { 
+				return (change.newValue === el[change.name] ? null : change); 
+			});
+
 			if (createList) {
 				map.set(item.id, list);
 			};
