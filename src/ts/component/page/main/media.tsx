@@ -269,8 +269,6 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<Props
 
 	resize () {
 		const { isPopup } = this.props;
-		const { sidebar } = commonStore;
-		const { width } = sidebar;
 		const node = $(ReactDOM.findDOMNode(this));
 		const blocks = node.find('#blocks');
 		const empty = node.find('#empty');
@@ -285,7 +283,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<Props
 			empty.css({ lineHeight: (wh - 60) + 'px' });
 		};
 
-		Util.resizeSidebar(width, isPopup);
+		Util.resizeSidebar(isPopup);
 	};
 
 });

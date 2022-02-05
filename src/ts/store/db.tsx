@@ -296,6 +296,10 @@ class DbStore {
 		return this.dataMap.get(this.getId(rootId, blockId)) || [];
 	};
 
+	getRecordsIds (rootId: string, blockId: string) {
+		return this.getRecords(rootId, blockId).map(it => it.id);
+	};
+
 	getRecord (rootId: string, blockId: string, id: string) {
 		const records = this.getRecords(rootId, blockId);
 		return records.find((it: any) => { return it.id == id; });

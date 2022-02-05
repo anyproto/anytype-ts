@@ -224,11 +224,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 	};
 
 	unbind () {
-		const node = $(ReactDOM.findDOMNode(this));
-		const body = node.find('.body');
-
 		$(window).unbind('resize.sidebar');
-		body.unbind('.scroll');
 	};
 
 	restore () {
@@ -255,8 +251,8 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 	};
 
 	loadSections () {
+		const { root, profile, recent } = blockStore;
 		const sections = this.getSections();
-		const { root, profile } = blockStore;
 		const filters: any[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.Equal, value: false },
 			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
@@ -273,8 +269,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		];
 		
 		let sectionFilters: any[] = [];
-		let children: I.Block[] = [];
-		let ids: string[] = [];
+		let childrenIds: string[] = [];
 		let n = 0;
 		let cb = () => {
 			n++;
@@ -290,20 +285,18 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 
 			switch (section.id) {
 				case I.TabIndex.Favorite:
-					children = blockStore.getChildren(blockStore.root, blockStore.root, (it: I.Block) => { return it.isLink(); });
-					ids = children.map((it: I.Block) => { return it.content.targetBlockId; });
+					childrenIds = blockStore.getChildren(root, root, (it: I.Block) => { return it.isLink(); }).map(it => it.content.targetBlockId);
 
 					sectionFilters = [
-						{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: ids }
+						{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: childrenIds }
 					];
 					break;
 
 				case I.TabIndex.Recent:
-					children = blockStore.getChildren(blockStore.recent, blockStore.recent, (it: I.Block) => { return it.isLink(); });
-					ids = children.map((it: I.Block) => { return it.content.targetBlockId; }).reverse();
+					childrenIds = blockStore.getChildren(recent, recent, (it: I.Block) => { return it.isLink(); }).map(it => it.content.targetBlockId).reverse();
 
 					sectionFilters = [
-						{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: ids }
+						{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: childrenIds }
 					];
 					break;
 
@@ -320,8 +313,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 	};
 
 	checkLinks (ids: string[]) {
-		const deleted = dbStore.getRecords(Constant.subIds.deleted, '').map(it => it.id);
-		return ids.filter(id => !deleted.includes(id));
+		return ids.filter(id => !dbStore.getRecordsIds(Constant.subIds.deleted, '').includes(id));
 	};
 
 	loadItem (id: string, links: string[]) {
@@ -337,15 +329,15 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 	};
 
 	getRecords (subId: string) {
-		let records: any[] = dbStore.getRecords(subId, '');
+		let records: any[] = dbStore.getRecordsIds(subId, '');
 
-		records = records.map(it => it.id);
 		records = records.map((id: string) => { 
-			const item = detailStore.get(subId, id, KEYS, true);
-
-			item.links = Relation.getArrayValue(item.links);
-
-			return item;
+			let item = detailStore.get(subId, id, KEYS, true);
+			let links = [];
+			if (item.type != Constant.typeId.set) {
+				links = Relation.getArrayValue(item.links);
+			};
+			return { ...item, links };
 		});
 
 		return records;
@@ -357,9 +349,9 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		};
 
 		for (let item of items) {
-			const links = this.checkLinks(item.links);
-			const length = links.length;
-			const newItem = {
+			let links = this.checkLinks(item.links);
+			let length = links.length;
+			let newItem = {
 				details: item,
 				id: item.id,
 				depth,
@@ -489,6 +481,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		e.stopPropagation();
 
 		const { x, y } = keyboard.mouse.page;
+		const subId = dbStore.getSubId(SUB_KEY, item.parentId);
 
 		this.setActive(this.getId(item));
 
@@ -501,7 +494,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 			},
 			data: {
 				objectId: item.id,
-				subId: dbStore.getSubId(SUB_KEY, item.parentId),
+				subId,
 			}
 		});
 	};
@@ -745,9 +738,8 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 
 	setWidth (width: number) {
 		const node = $(ReactDOM.findDOMNode(this));
-		
 		node.css({ width });
-		Util.resizeSidebar(width, this.props.isPopup);
+		Util.resizeSidebar(this.props.isPopup);
 	};
 
 });

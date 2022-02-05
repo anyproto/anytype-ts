@@ -238,7 +238,7 @@ class BlockStore {
 		return element ? (element.childrenIds || []) : [];
 	};
 
-    getChildren (rootId: string, blockId: string, filter?: (it: any) => boolean) {
+    getChildren (rootId: string, blockId: string, filter?: (it: any) => boolean): I.Block[] {
 		let blocks = this.getBlocks(rootId);
 		let childrenIds = this.getChildrenIds(rootId, blockId);
 		

@@ -222,11 +222,7 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<Pro
 	};
 
 	resize () {
-		const { isPopup } = this.props;
-		const { sidebar } = commonStore;
-		const { width } = sidebar;
-
-		Util.resizeSidebar(width, isPopup);
+		Util.resizeSidebar(this.props.isPopup);
 	};
 	
 });

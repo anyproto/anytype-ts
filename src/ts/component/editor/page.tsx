@@ -1761,8 +1761,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		};
 		
 		const { rootId, isPopup } = this.props;
-		const { sidebar } = commonStore;
-		const { width } = sidebar;
 		const node = $(ReactDOM.findDOMNode(this));
 		const note = node.find('#note');
 		const blocks = node.find('.blocks');
@@ -1794,7 +1792,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		};
 
 		this.onResize(root?.fields?.width);
-		Util.resizeSidebar(width, isPopup);
+		Util.resizeSidebar(isPopup);
 	};
 
 	getContainer () {

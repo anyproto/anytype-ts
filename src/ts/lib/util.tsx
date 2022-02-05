@@ -953,7 +953,7 @@ class Util {
 		return electron.ipcRenderer || window.Renderer;
 	};
 	
-	resizeSidebar (width: number, isPopup: boolean) {
+	resizeSidebar (isPopup: boolean) {
 		const { sidebar } = commonStore;
 		const { fixed, snap } = sidebar;
 
@@ -964,7 +964,8 @@ class Util {
 		const footer = page.find('#footer');
 		const loader = page.find('#loader');
 		const dummy = $('#sidebarDummy');
-
+		
+		const width = obj.width();
 		const pw = win.width() - width;
 		const css: any = { width: '' };
 		const cssLoader: any = { width: pw, left: '', right: '' };

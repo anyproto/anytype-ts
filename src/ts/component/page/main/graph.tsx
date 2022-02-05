@@ -157,8 +157,6 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 	};
 
 	resize () {
-		const { sidebar } = commonStore;
-		const { width } = sidebar;
 		const win = $(window);
 		const obj = $(this.props.isPopup ? '#popupPage #innerWrap' : '#page.isFull');
 		const wrapper = obj.find('.wrapper');
@@ -183,7 +181,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 			this.refPanel.resize();
 		};
 
-		Util.resizeSidebar(width, isPopup);
+		Util.resizeSidebar(isPopup);
 	};
 
 	togglePanel (v: boolean) {
