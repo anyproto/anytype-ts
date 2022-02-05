@@ -975,12 +975,12 @@ const OnSubscribe = (subId: string, keys: string[], message: any) => {
 	dbStore.recordsSet(subId, '', message.records.map((it: any) => { return { id: it.id }; }));
 };
 
-const ObjectSearchSubscribe = (subId: string, filters: I.Filter[], sorts: I.Sort[], keys: string[], sources: string[], offset: number, limit: number, ignoreWorkspace: boolean, afterId: string, beforeId: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Object.SearchSubscribe.Request();
+const ObjectSearchSubscribe = (subId: string, filters: I.Filter[], sorts: I.Sort[], keys: string[], sources: string[], offset: number, limit: number, ignoreWorkspace: boolean, afterId: string, beforeId: string, noDeps: boolean, callBack?: (message: any) => void) => {
+	if (!subId) {
+		console.error('[ObjectSearchSubscribe] subId is empty');
+	};
 
-	filters = filters.concat([
-		{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
-	]);
+	const request = new Rpc.Object.SearchSubscribe.Request();
 
 	request.setSubid(subId);
 	request.setFiltersList(filters.map(Mapper.To.Filter));
@@ -992,6 +992,7 @@ const ObjectSearchSubscribe = (subId: string, filters: I.Filter[], sorts: I.Sort
 	request.setIgnoreworkspace(ignoreWorkspace);
 	request.setAfterid(afterId);
 	request.setBeforeid(beforeId);
+	request.setNodepsubscription(noDeps);
 
 	const cb = (message: any) => {
 		OnSubscribe(subId, keys, message);
@@ -1005,6 +1006,10 @@ const ObjectSearchSubscribe = (subId: string, filters: I.Filter[], sorts: I.Sort
 };
 
 const ObjectIdsSubscribe = (subId: string, ids: string[], keys: string[], ignoreWorkspace: boolean, callBack?: (message: any) => void) => {
+	if (!subId) {
+		console.error('[ObjectIdsSubscribe] subId is empty');
+	};
+
 	const request = new Rpc.Object.IdsSubscribe.Request();
 
 	request.setSubid(subId);
@@ -1013,6 +1018,14 @@ const ObjectIdsSubscribe = (subId: string, ids: string[], keys: string[], ignore
 	request.setIgnoreworkspace(ignoreWorkspace);
 
 	const cb = (message: any) => {
+		message.records.sort((c1: any, c2: any) => {
+			const i1 = ids.indexOf(c1.id);
+			const i2 = ids.indexOf(c2.id);
+			if (i1 > i2) return 1; 
+			if (i1 < i2) return -1;
+			return 0;
+		});
+
 		OnSubscribe(subId, keys, message);
 
 		if (callBack) {

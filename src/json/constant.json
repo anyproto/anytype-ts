@@ -51,7 +51,8 @@
 	"subIds": {
 		"index": "index",
 		"search": "search",
-		"profile": "profile"
+		"profile": "profile",
+		"deleted": "deleted"
 	},
 
 	"menuIds": {

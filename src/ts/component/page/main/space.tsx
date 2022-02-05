@@ -233,7 +233,11 @@ const PageMainSpace = observer(class PageMainSpace extends React.Component<Props
 
 		if (views.length) {
 			const view = views[0];
-			C.ObjectSearchSubscribe(this.getSubIdHighlighted(), view.filters, view.sorts, [ 'id' ], block.content.sources, 0, 0, true, '', '');
+			const filters = view.filters.concat([
+				{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
+			]);
+
+			C.ObjectSearchSubscribe(this.getSubIdHighlighted(), filters, view.sorts, [ 'id' ], block.content.sources, 0, 0, true, '', '', false);
 		};
 	};
 

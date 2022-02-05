@@ -14,10 +14,10 @@ class Name extends React.Component<Props, {}> {
 
 	render () {
 		const { object, className } = this.props;
-		const { layout, snippet, type } = object;
+		const { layout, snippet, type, isDeleted } = object;
 
 		let name = '';
-		if (DataUtil.isFileType(type)) {
+		if (!isDeleted && DataUtil.isFileType(type)) {
 			name = DataUtil.fileName(object);
 		} else
 		if (layout == I.ObjectLayout.Note) {
