@@ -260,6 +260,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		const filters: any[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.Equal, value: false },
 			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
+			{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
 			{ 
 				operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, 
 				value: [
@@ -318,16 +319,21 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		});
 	};
 
-	loadItem (item: any) {
-		const hash = sha1(item.links.join(''));
-		const subId = dbStore.getSubId(SUB_KEY, item.id);
+	checkLinks (ids: string[]) {
+		const deleted = dbStore.getRecords(Constant.subIds.deleted, '').map(it => it.id);
+		return ids.filter(id => !deleted.includes(id));
+	};
 
-		if (this.subscriptionIds[item.id] && (this.subscriptionIds[item.id] == hash)) {
+	loadItem (id: string, links: string[]) {
+		const hash = sha1(links.join(''));
+		const subId = dbStore.getSubId(SUB_KEY, id);
+
+		if (this.subscriptionIds[id] && (this.subscriptionIds[id] == hash)) {
 			return;
 		};
 
-		this.subscriptionIds[item.id] = hash;
-		C.ObjectIdsSubscribe(subId, item.links, KEYS, true);
+		this.subscriptionIds[id] = hash;
+		C.ObjectIdsSubscribe(subId, links, KEYS, true);
 	};
 
 	getRecords (subId: string) {
@@ -345,7 +351,8 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		};
 
 		for (let item of items) {
-			const length = item.links.length;
+			const links = this.checkLinks(item.links);
+			const length = links.length;
 			const newItem = {
 				details: item,
 				id: item.id,
@@ -361,7 +368,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 				const check = Storage.checkToggle(SUB_KEY, id);
 
 				if (check) {
-					this.loadItem(item);
+					this.loadItem(item.id, links);
 					list = this.unwrap(sectionId, list, item.id, this.getRecords(dbStore.getSubId(SUB_KEY, item.id)), depth + 1);
 				};
 			};

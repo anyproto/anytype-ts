@@ -295,6 +295,10 @@ class DataUtil {
 			C.ObjectTypeList((message: any) => {
 				dbStore.objectTypesSet(message.objectTypes);
 			});
+
+			C.ObjectSearchSubscribe(Constant.subIds.deleted, [
+				{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: true }
+			], [], [ 'id', 'isDeleted' ], [], 0, 0, true, '', '', true);
 			
 			if (profile) {
 				C.ObjectIdsSubscribe(Constant.subIds.profile, [ profile ], Constant.defaultRelationKeys, true, (message: any) => {
@@ -1175,6 +1179,9 @@ class DataUtil {
 		const viewChange = id != viewId;
 		const meta: any = { offset: offset };
 		const block = blockStore.getLeaf(rootId, blockId);
+		const filters = view.filters.concat([
+			{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
+		]);
 
 		if (viewChange) {
 			meta.viewId = id;
@@ -1184,7 +1191,7 @@ class DataUtil {
 		};
 
 		dbStore.metaSet(subId, '', meta);
-		C.ObjectSearchSubscribe(subId, view.filters, view.sorts, keys, block.content.sources, offset, limit, true, '', '', false);
+		C.ObjectSearchSubscribe(subId, filters, view.sorts, keys, block.content.sources, offset, limit, true, '', '', false);
 	};
 
 	coverIsImage (type: I.CoverType) {
