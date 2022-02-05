@@ -549,29 +549,31 @@ class Dispatcher {
 					block = blockStore.getLeaf(rootId, id);
 					details = Decode.decodeStruct(data.getDetails());
 					
-					detailStore.update(rootId, { id: id, details: details }, true);
-
 					// Subscriptions
-					uniqueSubIds = [];
-					subIds.forEach((it: string) => {
-						const [ subId, dep ] = it.split('/');
-
-						if (!dep) {
-							const record = dbStore.getRecord(subId, '', id);
-							if (!record) {
-								dbStore.recordAdd(subId, '', { id: id }, -1);
+					if (subIds.length) {
+						uniqueSubIds = [];
+						subIds.forEach((it: string) => {
+							const [ subId, dep ] = it.split('/');
+	
+							if (!dep) {
+								const record = dbStore.getRecord(subId, '', id);
+								if (!record) {
+									dbStore.recordAdd(subId, '', { id: id }, -1);
+								};
 							};
+							
+							uniqueSubIds.push(subId);
+						});
+	
+						Util.arrayUnique(uniqueSubIds).forEach((subId: string) => {
+							detailStore.update(subId, { id: id, details: details }, true);
+						});
+					} else {
+						detailStore.update(rootId, { id: id, details: details }, true);
+
+						if ((id == rootId) && block && (undefined !== details.layout) && (block.layout != details.layout)) {
+							blockStore.update(rootId, { id: rootId, layout: details.layout });
 						};
-						
-						uniqueSubIds.push(subId);
-					});
-
-					Util.arrayUnique(uniqueSubIds).forEach((subId: string) => {
-						detailStore.update(subId, { id: id, details: details }, true);
-					});
-
-					if ((id == rootId) && block && (undefined !== details.layout) && (block.layout != details.layout)) {
-						blockStore.update(rootId, { id: rootId, layout: details.layout });
 					};
 					break;
 
@@ -584,33 +586,37 @@ class Dispatcher {
 					for (let item of (data.getDetailsList() || [])) {
 						details[item.getKey()] = Decode.decodeValue(item.getValue());
 					};
-					detailStore.update(rootId, { id: id, details: details }, false);
 
 					// Subscriptions
-					uniqueSubIds = [];
-					subIds.forEach((it: string) => {
-						const [ subId, dep ] = it.split('/');
-						
-						if (!dep) {
-							const record = dbStore.getRecord(subId, '', id);
-							if (!record) {
-								dbStore.recordAdd(subId, '', { id: id }, -1);
+
+					if (subIds.length) {
+						uniqueSubIds = [];
+						subIds.forEach((it: string) => {
+							const [ subId, dep ] = it.split('/');
+							
+							if (!dep) {
+								const record = dbStore.getRecord(subId, '', id);
+								if (!record) {
+									dbStore.recordAdd(subId, '', { id: id }, -1);
+								};
 							};
+
+							uniqueSubIds.push(subId);
+						});
+
+						Util.arrayUnique(uniqueSubIds).forEach((subId: string) => {
+							detailStore.update(subId, { id: id, details: details }, false);
+						});
+					} else {
+						detailStore.update(rootId, { id: id, details: details }, false);
+
+						if ((id == rootId) && block) {
+							if ((undefined !== details.layout) && (block.layout != details.layout)) {
+								blockStore.update(rootId, { id: rootId, layout: details.layout });
+							};
+	
+							blockStore.checkDraft(rootId);
 						};
-
-						uniqueSubIds.push(subId);
-					});
-
-					Util.arrayUnique(uniqueSubIds).forEach((subId: string) => {
-						detailStore.update(subId, { id: id, details: details }, false);
-					});
-
-					if ((id == rootId) && block) {
-						if ((undefined !== details.layout) && (block.layout != details.layout)) {
-							blockStore.update(rootId, { id: rootId, layout: details.layout });
-						};
-
-						blockStore.checkDraft(rootId);
 					};
 					break;
 
@@ -619,20 +625,22 @@ class Dispatcher {
 					subIds = data.getSubidsList() || [];
 					keys = data.getKeysList() || [];
 
-					detailStore.delete(rootId, id, keys);
-
 					// Subscriptions
-					uniqueSubIds = [];
-					subIds.forEach((it: string) => {
-						const [ subId, dep ] = it.split('/');
-						uniqueSubIds.push(subId);
-					});
 
-					Util.arrayUnique(uniqueSubIds).forEach((subId: string) => {
-						detailStore.delete(subId, id, keys);
-					});
-					
-					blockStore.checkDraft(rootId);
+					if (subIds.length) {
+						uniqueSubIds = [];
+						subIds.forEach((it: string) => {
+							const [ subId, dep ] = it.split('/');
+							uniqueSubIds.push(subId);
+						});
+	
+						Util.arrayUnique(uniqueSubIds).forEach((subId: string) => {
+							detailStore.delete(subId, id, keys);
+						});
+					} else {
+						detailStore.delete(rootId, id, keys);
+						blockStore.checkDraft(rootId);
+					};
 					break;
 
 				case 'objectRelationsSet':
