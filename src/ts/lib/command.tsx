@@ -976,6 +976,10 @@ const OnSubscribe = (subId: string, keys: string[], message: any) => {
 };
 
 const ObjectSearchSubscribe = (subId: string, filters: I.Filter[], sorts: I.Sort[], keys: string[], sources: string[], offset: number, limit: number, ignoreWorkspace: boolean, afterId: string, beforeId: string, noDeps: boolean, callBack?: (message: any) => void) => {
+	if (!subId) {
+		console.error('[ObjectSearchSubscribe] subId is empty');
+	};
+
 	const request = new Rpc.Object.SearchSubscribe.Request();
 
 	request.setSubid(subId);
@@ -1002,6 +1006,10 @@ const ObjectSearchSubscribe = (subId: string, filters: I.Filter[], sorts: I.Sort
 };
 
 const ObjectIdsSubscribe = (subId: string, ids: string[], keys: string[], ignoreWorkspace: boolean, callBack?: (message: any) => void) => {
+	if (!subId) {
+		console.error('[ObjectIdsSubscribe] subId is empty');
+	};
+
 	const request = new Rpc.Object.IdsSubscribe.Request();
 
 	request.setSubid(subId);
