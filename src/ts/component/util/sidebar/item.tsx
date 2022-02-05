@@ -40,14 +40,14 @@ const Item = observer(class Item extends React.Component<Props, {}> {
 			cn.push('isSection');
 
 			content = (
-				<div className="clickable" onClick={(e: any) => { onToggle(e, this.props); }}>
+				<div className="clickable" onClick={(e: any) => { onToggle(e, { ...this.props, details: object }); }}>
 					<div className="name">{details.name}</div>
 					<div className="cnt">{length || ''}</div>
 				</div>
 			);
 		} else {
 			content = (
-				<div className="clickable" onClick={(e: any) => { onClick(e, this.props); }}>
+				<div className="clickable" onClick={(e: any) => { onClick(e, { ...this.props, details: object }); }}>
 					<IconObject object={object} size={20} forceLetter={true} />
 					<ObjectName object={object} />
 				</div>
@@ -55,13 +55,18 @@ const Item = observer(class Item extends React.Component<Props, {}> {
 		};
 
 		if (length) {
-			arrow = <Icon className="arrow" onMouseDown={(e: any) => { onToggle(e, this.props); }} />;
+			arrow = <Icon className="arrow" onMouseDown={(e: any) => { onToggle(e, { ...this.props, details: object }); }} />;
 		} else {
 			arrow = <Icon className="blank" />
 		};
 
 		return (
-			<div id={'item-' + elementId} className={cn.join(' ')} style={style} onContextMenu={(e: any) => { onContext(e, this.props); }}>
+			<div 
+				id={'item-' + elementId} 
+				className={cn.join(' ')} 
+				style={style} 
+				onContextMenu={(e: any) => { onContext(e, { ...this.props, details: object }); }}
+			>
 				{arrow}
 				{content}
 			</div>
