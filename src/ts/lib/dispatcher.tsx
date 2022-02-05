@@ -672,34 +672,16 @@ class Dispatcher {
 					afterId = data.getAfterid();
 					subId = data.getSubid();
 
-					(() => {
-						const [ sid, dep ] = subId.split('/');
-
-						if (dep) {
-							return;
-						};
-
-						records = dbStore.getRecords(sid, '');
-						oldIndex = records.findIndex((it: any) => { return it.id == id; });
-						newIndex = 0;
-	
-						if (afterId) {
-							newIndex = records.findIndex((it: any) => { return it.id == afterId; });
-						};
-	
-						dbStore.recordsSet(sid, '', arrayMove(records, oldIndex, newIndex));
-					})();
+					this.subscriptionPosition(subId, id, afterId);
 					break;
 
 				case 'subscriptionRemove':
 					id = data.getId();
-					subId = data.getSubid();
 
 					(() => {
-						const [ sid, dep ] = subId.split('/');
-
+						const [ subId, dep ] = data.getSubid().split('/');
 						if (!dep) {
-							dbStore.recordDelete(sid, '', id);
+							dbStore.recordDelete(subId, '', id);
 						};
 					})();
 					break;
@@ -709,38 +691,16 @@ class Dispatcher {
 					afterId = data.getAfterid();
 					subId = data.getSubid();
 
-					(() => {
-						const [ sid, dep ] = subId.split('/');
-
-						if (!dep) {
-							dbStore.recordDelete(sid, '', id);
-						};
-
-						records = dbStore.getRecords(sid, '');
-						oldIndex = records.findIndex((it: any) => { return it.id == id; });
-						newIndex = 0;
-
-						if (afterId) {
-							newIndex = records.findIndex((it: any) => { return it.id == afterId; });
-						};
-
-						if (oldIndex != newIndex) {
-							dbStore.recordsSet(sid, '', arrayMove(records, oldIndex, newIndex));
-						};
-					})();
+					this.subscriptionPosition(subId, id, afterId);
 					break;
 
 				case 'subscriptionCounters':
 					const total = data.getTotal();
-					const nextCount = data.getNextcount();
-					const prevCount = data.getPrevcount();
-					subId = data.getSubid();
 
 					(() => {
-						const [ sid, dep ] = subId.split('/');
-
-						if (dep) {
-							dbStore.metaSet(sid, '', { total: total });
+						const [ subId, dep ] = data.getSubid().split('/');
+						if (!dep) {
+							dbStore.metaSet(subId, '', { total: total });
 						};
 					})();
 					break;
@@ -783,6 +743,26 @@ class Dispatcher {
 			blockStore.updateNumbers(rootId); 
 			blockStore.updateMarkup(rootId);
 		}, 10);
+	};
+
+	subscriptionPosition (subId: string, id: string, afterId: string) {
+		const [ sid, dep ] = subId.split('/');
+
+		if (dep) {
+			return;
+		};
+
+		let records = dbStore.getRecords(sid, '');
+		let oldIndex = records.findIndex((it: any) => { return it.id == id; });
+		let newIndex = 0;
+
+		if (afterId) {
+			newIndex = records.findIndex((it: any) => { return it.id == afterId; });
+		};
+
+		if (oldIndex !== newIndex) {
+			dbStore.recordsSet(sid, '', arrayMove(records, oldIndex, newIndex));
+		};
 	};
 
 	sort (c1: any, c2: any) {

@@ -253,7 +253,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 	loadSections () {
 		const { root, profile, recent } = blockStore;
 		const sections = this.getSections();
-		const filters: any[] = [
+		const filters: I.Filter[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.Equal, value: false },
 			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
 			{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
@@ -267,8 +267,10 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 			},
 			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: SKIP_TYPES_LOAD },
 		];
-		
-		let sectionFilters: any[] = [];
+
+		let limit = 0;
+		let sorts: I.Sort[] = [];
+		let sectionFilters: I.Filter[] = [];
 		let childrenIds: string[] = [];
 		let n = 0;
 		let cb = () => {
@@ -285,19 +287,17 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 
 			switch (section.id) {
 				case I.TabIndex.Favorite:
-					childrenIds = blockStore.getChildren(root, root, (it: I.Block) => { return it.isLink(); }).map(it => it.content.targetBlockId);
-
 					sectionFilters = [
-						{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: childrenIds }
+						{ operator: I.FilterOperator.And, relationKey: 'isFavorite', condition: I.FilterCondition.Equal, value: true }
 					];
 					break;
 
 				case I.TabIndex.Recent:
-					childrenIds = blockStore.getChildren(recent, recent, (it: I.Block) => { return it.isLink(); }).map(it => it.content.targetBlockId).reverse();
-
-					sectionFilters = [
-						{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: childrenIds }
+					sectionFilters = [];
+					sorts = [
+						{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
 					];
+					limit = LIMIT;
 					break;
 
 				case I.TabIndex.Set:
@@ -308,7 +308,9 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 
 			};
 
-			C.ObjectSearchSubscribe(subId, filters.concat(sectionFilters), [], KEYS, [], 0, 0, true, '', '', true, cb);
+			console.log(filters, sorts);
+
+			C.ObjectSearchSubscribe(subId, filters.concat(sectionFilters), sorts, KEYS, [], 0, limit, true, '', '', true, cb);
 		});
 	};
 
