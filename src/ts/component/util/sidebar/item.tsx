@@ -31,12 +31,11 @@ const Item = observer(class Item extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { id, parentId, elementId, depth, length, details, isSection, withPadding, onClick, onToggle, onContext } = this.props;
+		const { id, parentId, elementId, depth, style, length, details, isSection, withPadding, onClick, onContext } = this.props;
 		const subId = dbStore.getSubId(Constant.subIds.sidebar, parentId);
 		const check = Storage.checkToggle(Constant.subIds.sidebar, elementId);
 		const object = detailStore.get(subId, id, Constant.sidebarRelationKeys, true);
-		const style = { ...this.props.style, paddingLeft: (10 + depth * 12) };
-		const cn = [ 'item', (check ? 'active' : '') ];
+		const cn = [ 'item', 'c' + id, (check ? 'active' : '') ];
 
 		let content = null;
 		if (isSection) {
@@ -73,12 +72,12 @@ const Item = observer(class Item extends React.Component<Props, {}> {
 
 		return (
 			<div 
-				id={'item-' + elementId} 
+				id={'item-' + id} 
 				className={cn.join(' ')} 
 				style={style} 
 				onContextMenu={(e: any) => { onContext(e, { ...this.props, details: object }); }}
 			>
-				<div className="inner">
+				<div className="inner" style={{ paddingLeft: (10 + depth * 12) }}>
 					{content}
 				</div>
 			</div>

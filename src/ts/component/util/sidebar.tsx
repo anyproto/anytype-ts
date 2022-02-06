@@ -422,7 +422,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		node.find('.item.hover').removeClass('hover');
 
 		if (id) {
-			node.find(`#item-${id}`).addClass('hover');
+			node.find(`.item.c${id}`).addClass('hover');
 		};
 	};
 
@@ -435,7 +435,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		e.preventDefault();
 		e.stopPropagation();
 
-		this.id = this.getId(item);
+		this.id = item.id;
 		this.setActive(this.id);
 
 		DataUtil.objectOpenEvent(e, item.details);
@@ -448,7 +448,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		const { x, y } = keyboard.mouse.page;
 		const subId = dbStore.getSubId(Constant.subIds.sidebar, item.parentId);
 
-		this.setActive(this.getId(item));
+		this.setActive(item.id);
 
 		menuStore.open('dataviewContext', {
 			rect: { width: 0, height: 0, x: x + 20, y: y },
