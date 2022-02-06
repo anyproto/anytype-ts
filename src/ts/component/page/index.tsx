@@ -72,7 +72,8 @@ interface Props extends RouteComponentProps<any> {
 const Page = observer(class Page extends React.Component<Props, {}> {
 
 	_isMounted: boolean = false;
-	refChild: any;
+	refChild: any = null;
+	refSidebar: any = null;
 
 	render () {
 		const { isPopup } = this.props;
@@ -93,13 +94,22 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 			return <div>Page component "{path}" not found</div>;
 		};
 
-		const wrap = (
+		let sb = (
+			<Sidebar 
+				ref={(ref: any) => { 
+					if (!this.refSidebar) {
+						this.refSidebar = ref; 
+						this.forceUpdate(); 
+					};
+				}} 
+				{...this.props} 
+			/>
+		);
+		let wrap = (
 			<div id="page" className={'page ' + this.getClass('page')}>
-				<Component ref={(ref: any) => this.refChild = ref} {...this.props} />
+				<Component ref={(ref: any) => this.refChild = ref} refSidebar={this.refSidebar} {...this.props} />
 			</div>
 		);
-
-		let sb = <Sidebar {...this.props} />;
 		let content = null;
 
 		if (isPopup || !showSidebar) {

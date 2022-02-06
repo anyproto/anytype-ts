@@ -279,7 +279,8 @@ html.themeDark {
                 .icon.arrow { background-image: url('#{$themePath}/arrow/sidebar.svg'); }
             }
 
-            .item .inner:hover::before, .item .inner.hover::before { background: $colorHover; }
+            .item .inner:hover::before { background: $colorHover; }
+            .item.hover .inner::before { background: $colorHover; }
         }
     }
 

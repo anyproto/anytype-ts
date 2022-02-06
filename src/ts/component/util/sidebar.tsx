@@ -7,6 +7,7 @@ import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from
 import { observer } from 'mobx-react';
 
 import Item from './sidebar/item';
+import Footer from './sidebar/footer';
 
 interface Props {
 	isPopup?: boolean;
@@ -44,6 +45,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 	height: number = 0;
 	timeout: number = 0;
 	refList: any = null;
+	refFooter: any = null;
 	cache: any = {};
 	subId: string = '';
 	subscriptionIds: any = {};
@@ -51,7 +53,6 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 	constructor (props: any) {
 		super(props);
 
-		this.onExpand = this.onExpand.bind(this);
 		this.onResizeStart = this.onResizeStart.bind(this);
 		this.onDragStart = this.onDragStart.bind(this);
 		this.onMouseEnter = this.onMouseEnter.bind(this);
@@ -60,10 +61,6 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		this.onClick = this.onClick.bind(this);
 		this.onToggle = this.onToggle.bind(this);
 		this.onContext = this.onContext.bind(this);
-		this.onProfile = this.onProfile.bind(this);
-		this.onStore = this.onStore.bind(this);
-		this.onSettings = this.onSettings.bind(this);
-		this.onAdd = this.onAdd.bind(this);
 
 		this.getRowHeight = this.getRowHeight.bind(this)
 	};
@@ -75,7 +72,6 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		const items = this.getItems();
 		const css: any = { width };
 		const cn = [ 'sidebar' ];
-		const profile = detailStore.get(Constant.subIds.profile, blockStore.profile);
 
 		if (snap == I.MenuDirection.Left) {
 			cn.push('left');
@@ -119,10 +115,11 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 				id="sidebar" 
 				className={cn.join(' ')} 
 				style={css} 
+				onMouseDown={this.onDragStart}
 				onMouseEnter={this.onMouseEnter} 
 				onMouseLeave={this.onMouseLeave}
 			>
-				<div className="head" onMouseDown={this.onDragStart}></div>
+				<div className="head" />
 				
 				<div className="body">
 					{loading ? (
@@ -156,27 +153,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 					)}
 				</div>
 
-				<div className="foot">
-					<div className="item" onClick={this.onProfile}>
-						<IconObject object={profile} size={26} tooltip="Your profile" tooltipY={I.MenuDirection.Top} />
-					</div>
-					<div className="item" onClick={this.onStore}>
-						<Icon className="store" tooltip="Library" tooltipY={I.MenuDirection.Top} />
-					</div>
-					{this.canAdd() ? (
-						<div className="item" onClick={this.onAdd}>
-							<Icon className="add" tooltip="Create new object" tooltipY={I.MenuDirection.Top} />
-						</div>
-					) : ''}
-					<div className="item" onClick={this.onSettings}>
-						<Icon className="settings" tooltip="Settings" tooltipY={I.MenuDirection.Top} />
-					</div>
-					{fixed ? (
-						<div className="item" onClick={this.onExpand}>
-							<Icon className="collapse" tooltip="Collapse sidebar" tooltipY={I.MenuDirection.Top} />
-						</div>
-					) : ''}
-				</div>
+				<Footer ref={(ref: any) => { this.refFooter = ref; }} />
 
 				<div className="resize-h" onMouseDown={(e: any) => { this.onResizeStart(e, I.MenuType.Horizontal); }} />
 				<div className="resize-v" onMouseDown={(e: any) => { this.onResizeStart(e, I.MenuType.Vertical); }} />
@@ -439,22 +416,6 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		this.forceUpdate();
 	};
 
-	onExpand (e: any) {
-		e.preventDefault();
-		e.stopPropagation();
-
-		const { sidebar } = commonStore;
-		const fixed = !sidebar.fixed;
-		const update: any = { fixed };
-
-		if (fixed) {
-			update.x = 0;
-			update.y = 0;
-		};
-
-		commonStore.sidebarSet(update);
-	};
-
 	setActive (id: string) {
 		const node = $(ReactDOM.findDOMNode(this));
 
@@ -606,6 +567,9 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 	};
 
 	onDragStart (e: any) {
+		e.preventDefault();
+		e.stopPropagation();
+
 		const { dataset } = this.props;
 		const { selection } = dataset || {};
 		const { sidebar } = commonStore;
@@ -670,63 +634,6 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		if (selection) {
 			selection.preventSelect(false);
 		};
-	};
-
-	onProfile (e: any) {
-		const object = detailStore.get(Constant.subIds.profile, blockStore.profile);
-		DataUtil.objectOpenEvent(e, object);
-	};
-
-	onStore (e: any) {
-		DataUtil.objectOpenPopup({ layout: I.ObjectLayout.Store });
-	};
-
-	onSettings (e: any) {
-		popupStore.open('settings', {});
-	};
-
-	onAdd (e: any) {
-		const rootId = keyboard.getRootId();
-		const { focused } = focus.state;
-		const root = blockStore.getLeaf(rootId, rootId);
-		const canAdd = this.canAdd();
-
-		if (!root || !canAdd) {
-			return;
-		};
-		
-		let fb = blockStore.getLeaf(rootId, focused);
-		let targetId = '';
-		let position = I.BlockPosition.Bottom;
-		
-		if (fb) {
-			if (fb.isTextTitle()) {
-				const first = blockStore.getFirstBlock(rootId, 1, (it: I.Block) => { return it.isFocusable() && !it.isTextTitle(); });
-				if (first) {
-					targetId = first.id;
-					position = I.BlockPosition.Top;
-				};
-			} else 
-			if (fb.isFocusable()) {
-				targetId = fb.id;
-			};
-		};
-		
-		DataUtil.pageCreate(rootId, targetId, {}, position, '', {}, (message: any) => {
-			DataUtil.objectOpen({ id: message.targetId });
-		});
-	};
-
-	canAdd () {
-		const rootId = keyboard.getRootId();
-		const root = blockStore.getLeaf(rootId, rootId);
-
-		if (!root) {
-			return false;
-		};
-
-		const allowed = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Block ]);
-		return allowed && !root.isLocked() && !root.isObjectRelation() && !root.isObjectType() && !root.isObjectSet() && !root.isObjectFileKind();
 	};
 
 	checkSnap (x: number) {
