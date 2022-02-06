@@ -187,6 +187,8 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 
 		window.clearTimeout(this.timeout);
 		C.ObjectSearchUnsubscribe(Object.keys(this.subscriptionIds).map(id => dbStore.getSubId(Constant.subIds.sidebar, id)));
+
+		Util.tooltipHide(true);
 	};
 
 	rebind () {

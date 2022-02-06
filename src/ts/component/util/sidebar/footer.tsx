@@ -28,7 +28,9 @@ const Footer = observer(class Item extends React.Component<Props, {}> {
 		return (
 			<div className="foot">
                 <div className="item" onClick={this.onProfile}>
-                    <IconObject object={profile} size={26} tooltip="Your profile" tooltipY={I.MenuDirection.Top} />
+					<div className="icon">
+                    	<IconObject object={profile} size={26} tooltip="Your profile" tooltipY={I.MenuDirection.Top} />
+					</div>
                 </div>
                 <div className="item" onClick={this.onStore}>
                     <Icon className="store" tooltip="Library" tooltipY={I.MenuDirection.Top} />
