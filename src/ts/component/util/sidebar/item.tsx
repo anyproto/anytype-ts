@@ -30,7 +30,7 @@ const Item = observer(class Item extends React.Component<Props, {}> {
 		const subId = dbStore.getSubId(Constant.subIds.sidebar, parentId);
 		const check = Storage.checkToggle(Constant.subIds.sidebar, elementId);
 		const object = detailStore.get(subId, id, Constant.sidebarRelationKeys, true);
-		const style = { ...this.props.style, paddingLeft: (6 + depth * 12) };
+		const style = { ...this.props.style, paddingLeft: (10 + depth * 12) };
 		const cn = [ 'item', (check ? 'active' : '') ];
 
 		let content = null;
@@ -56,6 +56,9 @@ const Item = observer(class Item extends React.Component<Props, {}> {
 
 		if (length) {
 			arrow = <Icon className="arrow" onMouseDown={(e: any) => { onToggle(e, { ...this.props, details: object }); }} />;
+		} else 
+		if (object.type == Constant.typeId.set) {
+			arrow = <Icon className="set" />
 		} else {
 			arrow = <Icon className="blank" />
 		};

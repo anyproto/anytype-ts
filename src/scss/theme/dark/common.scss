@@ -271,10 +271,9 @@ html.themeDark {
     .sidebar {
         .head { border-color: $colorLinePrimary; }
         .body {
-            .icon.arrow { 
-                background-image: url('~img/arrow/select/light.svg');
-            }
-            
+            .icon.set { background-image: url('#{$themePath}/icon/sidebar/set.svg'); }
+            .icon.blank { background-image: url('#{$themePath}/icon/sidebar/blank.svg'); }
+            .icon.arrow { background-image: url('~img/arrow/select/light.svg'); }
             .item:hover::before, .item.hover::before { background: $colorHover; }
         }
     }

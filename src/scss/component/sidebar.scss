@@ -53,25 +53,24 @@
     
     .body { overflow-x: hidden; overflow-y: overlay; height: 100%; position: relative; flex-grow: 1; }
     .body {
-        .ReactVirtualized__Grid { padding: 0px 6px; }
-        .ReactVirtualized__Grid__innerScrollContainer { margin: 16px 0px; }
+        .ReactVirtualized__Grid__innerScrollContainer { margin: 20px 0px; }
 
+        .icon { width: 20px; height: 20px; flex-shrink: 0; flex-basis: 20px; transition: none; }
+
+        .icon.set { background-image: url('~img/icon/sidebar/set.svg'); }
+        .icon.blank { background-image: url('~img/icon/sidebar/blank.svg'); }
         .icon.arrow { 
-            width: 20px; height: 20px; background-image: url('~img/arrow/select/dark.svg'); flex-shrink: 0; 
-            transform: rotate(-90deg); transition: none; cursor: pointer; flex-basis: 20px;
-        }
-        .icon.blank {
-            width: 20px; height: 20px; flex-shrink: 0; flex-basis: 20px;
+            background-image: url('~img/arrow/select/dark.svg'); transform: rotate(-90deg); cursor: pointer;
         }
 
         .item { 
-            display: flex; flex-direction: row; gap: 0px 4px; align-items: center; justify-content: space-between; cursor: pointer; 
+            display: flex; flex-direction: row; gap: 0px 2px; align-items: center; justify-content: space-between; cursor: pointer; 
             border-radius: 4px; padding: 2px 6px; position: relative;
         }
         .item {
             .iconObject { flex-shrink: 0; flex-basis: 20px; }
             .clickable { 
-                flex-grow: 1; display: flex; flex-direction: row; gap: 0px 4px; width: calc(100% - 24px); align-items: center; 
+                flex-grow: 1; display: flex; flex-direction: row; gap: 0px 6px; width: calc(100% - 24px); align-items: center; 
                 justify-content: space-between; cursor: pointer;
             }
             .name { flex-grow: 1; @include text-overflow-nw; }
