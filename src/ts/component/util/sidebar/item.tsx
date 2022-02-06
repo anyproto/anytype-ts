@@ -72,7 +72,6 @@ const Item = observer(class Item extends React.Component<Props, {}> {
 
 		return (
 			<div 
-				id={'item-' + id} 
 				className={cn.join(' ')} 
 				style={style} 
 				onContextMenu={(e: any) => { onContext(e, { ...this.props, details: object }); }}

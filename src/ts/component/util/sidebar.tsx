@@ -163,6 +163,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 
 	componentDidMount () {
 		this._isMounted = true;
+
 		this.loadSections();
 		this.rebind();
 	};
@@ -203,13 +204,13 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		const node = $(ReactDOM.findDOMNode(this));
 		const body = node.find('.body');
 
+		this.id = keyboard.getRootId();
 		this.width = node.width();
 		this.height = node.height();
-
-		body.scrollTop(this.top);
-
 		this.setActive(this.id);
 		this.setStyle(x, y, snap);
+		
+		body.scrollTop(this.top);
 	};
 
 	getSections () {

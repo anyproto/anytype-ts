@@ -50,10 +50,6 @@ const Footer = observer(class Item extends React.Component<Props, {}> {
 		);
 	};
 
-	componentDidUpdate () {
-		console.log('UPDATE FOOTER');
-	};
-
     onExpand (e: any) {
 		e.preventDefault();
 		e.stopPropagation();
