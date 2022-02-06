@@ -206,11 +206,12 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		const node = $(ReactDOM.findDOMNode(this));
 		const body = node.find('.body');
 
-		this.id = keyboard.getRootId();
 		this.width = node.width();
 		this.height = node.height();
-		this.setActive(this.id);
 		this.setStyle(x, y, snap);
+
+		this.id = keyboard.getRootId();
+		this.setActive(this.id);
 		
 		body.scrollTop(this.top);
 	};

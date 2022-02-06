@@ -52,6 +52,8 @@ class PageMainEdit extends React.Component<Props, {}> {
 			this.refFooter.forceUpdate();
 		};
 		if (refSidebar) {
+			refSidebar.id = rootId;
+			refSidebar.setActive(rootId);
 			refSidebar.refFooter.forceUpdate();
 		};
 
