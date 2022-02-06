@@ -36,7 +36,7 @@
 
     .loaderWrapper { position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; }
 
-    .head { padding: 16px; border-bottom: 1px solid $colorLightGrey; position: relative; height: 96px; flex-shrink: 0; }
+    .head { position: relative; flex-shrink: 0; }
     .head {
         .icon.expand { 
             width: 44px; height: 32px; background-size: 20px 20px; background-image: url('~img/icon/header/expand.svg');
@@ -49,6 +49,20 @@
             background-image: url('~img/icon/graph/close.svg'); background-size: 20px 20px; border-radius: 6px;
         }
         .icon.close:hover { background-color: $colorVeryLightGrey; }
+    }
+
+    .foot { padding: 10px 14px; display: flex; flex-direction: row; align-items: center; }
+    .foot {
+        .item { flex-grow: 1; text-align: center; cursor: pointer; }
+        .item:hover {
+            .icon { background-color: $colorHover; }
+        }
+
+        .icon { width: 32px; height: 32px; background-size: 20px; border-radius: 4px; }
+        .icon.store { background-image: url('~img/icon/sidebar/store.svg'); }
+        .icon.add { background-image: url('~img/icon/sidebar/add.svg'); }
+        .icon.settings { background-image: url('~img/icon/sidebar/settings.svg'); }
+        .icon.collapse { background-image: url('~img/icon/sidebar/collapse.svg'); }
     }
     
     .body { overflow-x: hidden; overflow-y: overlay; height: 100%; position: relative; flex-grow: 1; }
@@ -63,11 +77,17 @@
             background-image: url('~img/arrow/select/dark.svg'); transform: rotate(-90deg); cursor: pointer;
         }
 
-        .item { 
-            display: flex; flex-direction: row; gap: 0px 2px; align-items: center; justify-content: space-between; cursor: pointer; 
-            border-radius: 4px; padding: 2px 6px; position: relative;
-        }
+        .item { padding: 2px 6px; position: relative; }
         .item {
+            .inner { 
+                display: flex; flex-direction: row; gap: 0px 2px; align-items: center; justify-content: space-between; 
+                cursor: pointer; position: relative;
+            }
+            .inner::before {
+                content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: rgba(172, 169, 150, 0); z-index: 1;
+                pointer-events: none; border-radius: inherit;
+            }
+
             .iconObject { flex-shrink: 0; flex-basis: 20px; }
             .clickable { 
                 flex-grow: 1; display: flex; flex-direction: row; gap: 0px 6px; width: calc(100% - 24px); align-items: center; 
@@ -75,15 +95,14 @@
             }
             .name { flex-grow: 1; @include text-overflow-nw; }
         }
-        .item::before {
-            content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: rgba(172, 169, 150, 0); z-index: 1;
-            pointer-events: none; border-radius: inherit;
-        }
-        .item:hover::before { background: $colorHover; }
+        .item .inner:hover::before { background: $colorHover; }
         
         .item.active .icon.arrow { transform: rotate(0deg); }
 
+        .item.isSection { padding-bottom: 4px; }
+        .item.isSection.withPadding { padding-top: 12px; }
         .item.isSection {
+            .icon.arrow { background-image: url('~img/arrow/sidebar.svg'); }
             .name { @include text-paragraph; @include text-overflow-nw; font-weight: 600; flex-grow: 1; }
             .cnt { flex-shrink: 0; text-align: right; @include text-small; flex-basis: 20px; }
         }

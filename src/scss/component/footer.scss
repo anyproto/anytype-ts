@@ -10,11 +10,11 @@
 		background-size: 20px 20px;
 	}
 	
-	#button-add { position: absolute; left: 14px; bottom: 14px; }
+	#button-expand { position: absolute; left: 14px; bottom: 14px; }
 	#button-help { position: absolute; right: 14px; bottom: 14px; }
 }
 
 .footer.footerMainEdit {
-	#button-add { background-image: url('~img/icon/footer/add.svg'); }
+	#button-expand { background-image: url('~img/icon/footer/expand.svg'); }
 	#button-help { background-image: url('~img/icon/footer/help.svg'); }
 }

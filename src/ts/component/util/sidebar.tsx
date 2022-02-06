@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, C, DataUtil, Util, keyboard, Storage, Relation } from 'ts/lib';
-import { IconObject, Icon, ObjectName, Loader } from 'ts/component';
-import { blockStore, commonStore, dbStore, detailStore, menuStore } from 'ts/store';
+import { I, C, DataUtil, Util, keyboard, Storage, Relation, focus } from 'ts/lib';
+import { IconObject, Icon, Loader } from 'ts/component';
+import { blockStore, commonStore, dbStore, detailStore, menuStore, popupStore } from 'ts/store';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { observer } from 'mobx-react';
 
@@ -60,6 +60,12 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		this.onClick = this.onClick.bind(this);
 		this.onToggle = this.onToggle.bind(this);
 		this.onContext = this.onContext.bind(this);
+		this.onProfile = this.onProfile.bind(this);
+		this.onStore = this.onStore.bind(this);
+		this.onSettings = this.onSettings.bind(this);
+		this.onAdd = this.onAdd.bind(this);
+
+		this.getRowHeight = this.getRowHeight.bind(this)
 	};
 
 	render () {
@@ -69,6 +75,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		const items = this.getItems();
 		const css: any = { width };
 		const cn = [ 'sidebar' ];
+		const profile = detailStore.get(Constant.subIds.profile, blockStore.profile);
 
 		if (snap == I.MenuDirection.Left) {
 			cn.push('left');
@@ -96,6 +103,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 				>
 					<Item 
 						{...item}
+						index={param.index}
 						elementId={this.getId(item)}
 						style={param.style}
 						onClick={this.onClick} 
@@ -114,10 +122,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 				onMouseEnter={this.onMouseEnter} 
 				onMouseLeave={this.onMouseLeave}
 			>
-
-				<div className="head" onMouseDown={this.onDragStart}>
-					<Icon className={fixed ? 'close' : 'expand'} onMouseDown={this.onExpand} />
-				</div>
+				<div className="head" onMouseDown={this.onDragStart}></div>
 				
 				<div className="body">
 					{loading ? (
@@ -138,7 +143,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 											height={height}
 											deferredMeasurmentCache={this.cache}
 											rowCount={items.length}
-											rowHeight={HEIGHT}
+											rowHeight={({ index }) => this.getRowHeight(items[index])}
 											rowRenderer={rowRenderer}
 											onRowsRendered={onRowsRendered}
 											overscanRowCount={LIMIT}
@@ -149,6 +154,28 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 							)}
 						</InfiniteLoader>
 					)}
+				</div>
+
+				<div className="foot">
+					<div className="item" onClick={this.onProfile}>
+						<IconObject object={profile} size={26} tooltip="Your profile" tooltipY={I.MenuDirection.Top} />
+					</div>
+					<div className="item" onClick={this.onStore}>
+						<Icon className="store" tooltip="Library" tooltipY={I.MenuDirection.Top} />
+					</div>
+					{this.canAdd() ? (
+						<div className="item" onClick={this.onAdd}>
+							<Icon className="add" tooltip="Create new object" tooltipY={I.MenuDirection.Top} />
+						</div>
+					) : ''}
+					<div className="item" onClick={this.onSettings}>
+						<Icon className="settings" tooltip="Settings" tooltipY={I.MenuDirection.Top} />
+					</div>
+					{fixed ? (
+						<div className="item" onClick={this.onExpand}>
+							<Icon className="collapse" tooltip="Collapse sidebar" tooltipY={I.MenuDirection.Top} />
+						</div>
+					) : ''}
 				</div>
 
 				<div className="resize-h" onMouseDown={(e: any) => { this.onResizeStart(e, I.MenuType.Horizontal); }} />
@@ -315,7 +342,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 	};
 
 	unwrap (sectionId: string, list: any[], parentId: string, items: any[], depth: number) {
-		if (depth >= MAX_DEPTH) {
+		if (!items.length || (depth >= MAX_DEPTH)) {
 			return list;
 		};
 
@@ -350,30 +377,36 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		let items: any[] = [];
 
 		sections.forEach((section: any) => {
-			const subId = dbStore.getSubId(Constant.subIds.sidebar, section.id);
-			const children = this.getRecords(subId);
-			const length = children.length;
-			const item = {
+			const children = this.getRecords(dbStore.getSubId(Constant.subIds.sidebar, section.id));
+			const item: any = {
 				details: {
 					id: section.id,
 					name: section.name,
 				},
-				length,
+				length: children.length,
 				depth: 0,
 				id: section.id,
 				parentId: '',
 				sectionId: '',
 				isSection: true,
 			};
+			item.isOpen = Storage.checkToggle(Constant.subIds.sidebar, this.getId(item));
 			items.push(item);
 
-			if (length) {
-				const check = Storage.checkToggle(Constant.subIds.sidebar, this.getId(item));
-				if (check) {
-					items = this.unwrap(section.id, items, section.id, children, 1);
-				};
+			if (item.isOpen) {
+				items = this.unwrap(section.id, items, section.id, children, 1);
 			};
 		});
+
+		const filtered = items.filter(it => it.isSection);
+		for (let i = 0; i < filtered.length; ++i) {
+			const item = filtered[i];
+			const next = filtered[i + 1];
+
+			if (next && item.isOpen) {
+				next.withPadding = true;
+			};
+		};
 
 		return items;
 	};
@@ -639,6 +672,63 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		};
 	};
 
+	onProfile (e: any) {
+		const object = detailStore.get(Constant.subIds.profile, blockStore.profile);
+		DataUtil.objectOpenEvent(e, object);
+	};
+
+	onStore (e: any) {
+		DataUtil.objectOpenPopup({ layout: I.ObjectLayout.Store });
+	};
+
+	onSettings (e: any) {
+		popupStore.open('settings', {});
+	};
+
+	onAdd (e: any) {
+		const rootId = keyboard.getRootId();
+		const { focused } = focus.state;
+		const root = blockStore.getLeaf(rootId, rootId);
+		const canAdd = this.canAdd();
+
+		if (!root || !canAdd) {
+			return;
+		};
+		
+		let fb = blockStore.getLeaf(rootId, focused);
+		let targetId = '';
+		let position = I.BlockPosition.Bottom;
+		
+		if (fb) {
+			if (fb.isTextTitle()) {
+				const first = blockStore.getFirstBlock(rootId, 1, (it: I.Block) => { return it.isFocusable() && !it.isTextTitle(); });
+				if (first) {
+					targetId = first.id;
+					position = I.BlockPosition.Top;
+				};
+			} else 
+			if (fb.isFocusable()) {
+				targetId = fb.id;
+			};
+		};
+		
+		DataUtil.pageCreate(rootId, targetId, {}, position, '', {}, (message: any) => {
+			DataUtil.objectOpen({ id: message.targetId });
+		});
+	};
+
+	canAdd () {
+		const rootId = keyboard.getRootId();
+		const root = blockStore.getLeaf(rootId, rootId);
+
+		if (!root) {
+			return false;
+		};
+
+		const allowed = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Block ]);
+		return allowed && !root.isLocked() && !root.isObjectRelation() && !root.isObjectType() && !root.isObjectSet() && !root.isObjectFileKind();
+	};
+
 	checkSnap (x: number) {
 		let win = $(window);
 		let snap = null;
@@ -702,9 +792,20 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		};
 
 		const { sidebar } = commonStore;
-		const { width } = sidebar;
+		const { width, fixed } = sidebar;
+		const node = $(ReactDOM.findDOMNode(this));
+		const head = node.find('.head');
 
+		head.css({ height: fixed ? Util.sizeHeader() - 20 : 0 });
 		this.setWidth(width);
+	};
+
+	getRowHeight (item: any) {
+		let height = HEIGHT;
+		if (item.isSection) {
+			height = item.withPadding ? 38 : 30;
+		};
+		return height;
 	};
 
 	setWidth (width: number) {

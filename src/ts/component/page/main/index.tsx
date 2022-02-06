@@ -60,7 +60,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 	
 	render () {
 		const { cover, config } = commonStore;
-		const { root, profile, recent } = blockStore;
+		const { root, recent } = blockStore;
 		const element = blockStore.getLeaf(root, root);
 		const { filter, loading } = this.state;
 		const tabs = this.getTabs();
@@ -72,8 +72,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 			return null;
 		};
 
-		const object = detailStore.get(Constant.subIds.profile, profile);
-		const { name } = object;
+		const profile = detailStore.get(Constant.subIds.profile, blockStore.profile);
 		const list = this.getList();
 		const length = list.length;
 
@@ -145,14 +144,19 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 				<div id="body" className="wrapper">
 					<div id="title" className="title">
 						<div className="side left">
-							<span>{name ? Util.sprintf(translate('indexHi'), Util.shorten(name, 24)) : ''}</span>
+							<span>{profile.name ? Util.sprintf(translate('indexHi'), Util.shorten(profile.name, 24)) : ''}</span>
 						</div>
 						
 						<div className="side right">
 							<Icon id="button-account" className="account" tooltip="Accounts" onClick={this.onAccount} />
 							<Icon id="button-add" className="add" tooltip="Add new object" onClick={this.onAdd} />
 							<Icon id="button-store" className="store" tooltip="Library" onClick={this.onStore} />
-							<IconObject getObject={() => { return { ...object, layout: I.ObjectLayout.Human } }} size={56} tooltip="Your profile" onClick={this.onProfile} />
+							<IconObject 
+								object={profile} 
+								size={56} 
+								tooltip="Your profile" 
+								onClick={this.onProfile} 
+							/>
 						</div>
 					</div>
 					
@@ -441,9 +445,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 	};
 	
 	onProfile (e: any) {
-		const { profile } = blockStore;
-		const object = detailStore.get(Constant.subIds.profile, profile);
-
+		const object = detailStore.get(Constant.subIds.profile, blockStore.profile);
 		DataUtil.objectOpenEvent(e, object);
 	};
 	

@@ -274,7 +274,12 @@ html.themeDark {
             .icon.set { background-image: url('#{$themePath}/icon/sidebar/set.svg'); }
             .icon.blank { background-image: url('#{$themePath}/icon/sidebar/blank.svg'); }
             .icon.arrow { background-image: url('~img/arrow/select/light.svg'); }
-            .item:hover::before, .item.hover::before { background: $colorHover; }
+
+            .item.isSection {
+                .icon.arrow { background-image: url('#{$themePath}/arrow/sidebar.svg'); }
+            }
+
+            .item .inner:hover::before, .item .inner.hover::before { background: $colorHover; }
         }
     }
 
