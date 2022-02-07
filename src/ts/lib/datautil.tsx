@@ -511,14 +511,20 @@ class DataUtil {
 	};
 	
 	menuGetBlockText () {
-		return [
+		const { config } = commonStore;
+		const ret: any[] = [
 			{ id: I.TextStyle.Paragraph, lang: 'Paragraph' },
 			{ id: I.TextStyle.Header1, lang: 'Header1', aliases: [ 'h1', 'head1' ] },
 			{ id: I.TextStyle.Header2, lang: 'Header2', aliases: [ 'h2', 'head2' ] },
 			{ id: I.TextStyle.Header3, lang: 'Header3', aliases: [ 'h3', 'head3' ] },
 			{ id: I.TextStyle.Quote, lang: 'Quote' },
-			{ id: I.TextStyle.Callout, lang: 'Callout' },
-		].map((it: any) => {
+		];
+		
+		if (config.experimental) {
+			ret.push({ id: I.TextStyle.Callout, lang: 'Callout' });
+		};
+		
+		return ret.map((it: any) => {
 			it.type = I.BlockType.Text;
 			it.icon = this.textClass(it.id);
 			return this.menuMapperBlock(it);

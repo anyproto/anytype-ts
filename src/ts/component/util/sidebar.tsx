@@ -421,6 +421,10 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 	};
 
 	setActive (id: string) {
+		if (!this._isMounted) {
+			return;
+		};
+
 		const node = $(ReactDOM.findDOMNode(this));
 
 		node.find('.item.hover').removeClass('hover');
@@ -492,6 +496,9 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 	};
 
 	onResizeStart (e: any, dir: I.MenuType) {
+		e.preventDefault();
+		e.stopPropagation();
+
 		if (!this._isMounted) {
 			return;
 		};
