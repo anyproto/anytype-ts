@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Icon } from 'ts/component';
-import { I, DataUtil, translate } from 'ts/lib';
+import { I, DataUtil, translate, analytics } from 'ts/lib';
 import { blockStore, menuStore, detailStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -145,6 +145,8 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 						case 'remove':
 							DataUtil.pageSetCover(rootId, I.CoverType.None, '');
 							menuContext.close();
+
+							analytics.event('RemoveCover');
 							break;
 					};
 				}
