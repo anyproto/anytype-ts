@@ -26,7 +26,8 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 		super(props);
 		
 		this.onIcon = this.onIcon.bind(this);
-		this.onCover = this.onCover.bind(this);
+		this.onCoverOpen = this.onCoverOpen.bind(this);
+		this.onCoverClose = this.onCoverClose.bind(this);
 		this.onLayout = this.onLayout.bind(this);
 		this.onRelation = this.onRelation.bind(this);
 		
@@ -54,9 +55,13 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 					rootId={rootId} 
 					readonly={readonly}
 					onIcon={this.onIcon} 
-					onCover={this.onCover}
+					onCoverOpen={this.onCoverOpen}
+					onCoverClose={this.onCoverClose}
 					onLayout={this.onLayout}
 					onRelation={this.onRelation}
+					onEdit={() => {}}
+					onUploadStart={() => {}}
+					onUpload={() => {}}
 				/>
 			</div>
 		);
@@ -128,15 +133,22 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 		});
 	};
 	
-	onCover (e: any) {
-		const { rootId } = this.props;
-		const colors = DataUtil.coverColors();
-		const color = colors[Util.rand(0, colors.length - 1)];
+	onCoverOpen () {
+		if (!this._isMounted) {
+			return;
+		};
 
-		focus.clear(true);
-		DataUtil.pageSetCover(rootId, I.CoverType.Color, color.id, 0, 0, 0);
+		const node = $(ReactDOM.findDOMNode(this));
+		node.addClass('hover');
+	};
 
-		analytics.event('SetCover', { type: I.CoverType.Color, id: color.id });
+	onCoverClose () {
+		if (!this._isMounted) {
+			return;
+		};
+		
+		const node = $(ReactDOM.findDOMNode(this));
+		node.removeClass('hover');
 	};
 
 	onLayout (e: any) {
