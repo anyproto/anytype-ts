@@ -1,6 +1,7 @@
 import * as React from 'react';
-import { I, C, DataUtil, translate, analytics } from 'ts/lib';
-import { Cover, Filter } from 'ts/component';
+import * as ReactDOM from 'react-dom';
+import { I, C, DataUtil, analytics } from 'ts/lib';
+import { Cover, Filter, Icon, Label } from 'ts/component';
 import { detailStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -15,16 +16,20 @@ enum Tab {
 interface State {
 	filter: string;
 	tab: Tab;
+	loading: boolean;
 };
 
 const { dialog } = window.require('@electron/remote');
 const Constant = require('json/constant.json');
+const $ = require('jquery');
 
 const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Props, State> {
 
+	_isMounted: boolean = false;
 	state = {
 		filter: '',
 		tab: Tab.Gallery,
+		loading: false,
 	};
 	items: any[] = [];
 	filter: string = '';
@@ -37,6 +42,9 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 		this.onUpload = this.onUpload.bind(this);
 		this.onSelect = this.onSelect.bind(this);
 		this.onFilterChange = this.onFilterChange.bind(this);
+		this.onDragOver = this.onDragOver.bind(this);
+		this.onDragLeave = this.onDragLeave.bind(this);
+		this.onDrop = this.onDrop.bind(this);
 	};
 
 	render () {
@@ -103,6 +111,18 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 				break;
 
 			case Tab.Upload:
+				content = (
+					<div 
+						className="dropzone" 
+						onDragOver={this.onDragOver} 
+						onDragLeave={this.onDragLeave} 
+						onDrop={this.onDrop}
+						onClick={this.onUpload}
+					>
+						<Icon className="coverUpload" />
+						<Label text="Choose Image or <span>Drag it here</span>" />
+					</div>
+				);
 				break;
 		};
 
@@ -119,12 +139,16 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 						</div>
 					))}
 				</div>
-				{content}
+
+				<div className={[ 'body', Tab[tab].toLowerCase() ].join(' ')}>
+					{content}
+				</div>
 			</div>
 		);
 	};
 
 	componentDidMount () {
+		this._isMounted = true;
 		this.load();
 	};
 
@@ -135,6 +159,10 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 			this.filter = filter;
 			this.load();
 		};
+	};
+
+	componentWillUnmount () {
+		this._isMounted = false;
 	};
 
 	load () {
@@ -235,6 +263,62 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 			{ name: 'Gradients', children: DataUtil.coverGradients() },
 		];
 	};
+
+	onDragOver (e: any) {
+		if (!this._isMounted || !e.dataTransfer.files || !e.dataTransfer.files.length) {
+			return;
+		};
+		
+		const node = $(ReactDOM.findDOMNode(this));
+		const zone = node.find('.dropzone');
+
+		console.log(zone);
+
+		zone.addClass('isDraggingOver');
+	};
+	
+	onDragLeave (e: any) {
+		if (!this._isMounted || !e.dataTransfer.files || !e.dataTransfer.files.length) {
+			return;
+		};
+		
+		const node = $(ReactDOM.findDOMNode(this));
+		const zone = node.find('.dropzone');
+
+		console.log(zone);
+
+		zone.removeClass('isDraggingOver');
+	};
+	
+	onDrop (e: any) {
+		if (!this._isMounted || !e.dataTransfer.files || !e.dataTransfer.files.length) {
+			return;
+		};
+		
+		const { dataset, param, close } = this.props;
+		const { data } = param;
+		const { rootId } = data;
+		const { preventCommonDrop } = dataset || {};
+		const file = e.dataTransfer.files[0].path;
+		const node = $(ReactDOM.findDOMNode(this));
+		const zone = node.find('.dropzone');
+		
+		zone.removeClass('isDraggingOver');
+		preventCommonDrop(true);
+		this.setState({ loading: true });
+		
+		C.UploadFile('', file, I.FileType.Image, (message: any) => {
+			this.setState({ loading: false });
+			preventCommonDrop(false);
+			
+			if (!message.error.code) {
+				DataUtil.pageSetCover(rootId, I.CoverType.Upload, message.hash);
+			};
+		
+			close();
+		});
+	};
+
 });
 
 export default MenuBlockCover;

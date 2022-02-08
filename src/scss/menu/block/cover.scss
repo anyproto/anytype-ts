@@ -48,6 +48,24 @@
 				.cover { height: 72px; }
 			}
 		}
+
+		.body.upload { padding: 16px; }
+
+		.dropzone { 
+			height: 330px; display: flex; align-items: center; border-radius: 2px; background: rgba(134, 125, 66, 0.08); 
+			justify-content: center; flex-direction: column; gap: 6px 0px; cursor: pointer;
+		}
+		.dropzone.isDraggingOver { background: rgba(255,187,44,0.3); }
+
+		.dropzone {
+			.icon.coverUpload { 
+				width: 28px; height: 28px; background-image: url('~img/icon/cover/upload.svg');
+				display: block; 
+			}
+			.label {
+				span { color: $colorDarkGrey; }
+			}
+		}
 	}
 }
 

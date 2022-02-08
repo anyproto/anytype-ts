@@ -46,9 +46,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 	};
 
 	render () {
-		const rootId = keyboard.getRootId();
 		const children = this.injectProps(this.props.children);
-
 		return (
 			<div id="dragProvider" className="dragProvider" onDragOver={this.onDragOver} onDrop={this.onDropCommon}>
 				<DragLayer {...this.props} ref={(ref: any) => { this.refLayer = ref; }} />
@@ -115,6 +113,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 
 	onDropCommon (e: any) {
 		if (this.commonDropPrevented) {
+			this.clear();
 			return;
 		};
 
