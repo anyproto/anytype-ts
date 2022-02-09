@@ -537,11 +537,11 @@ class App extends React.Component<Props, State> {
 		});
 
 		renderer.on('enter-full-screen', () => {
-			body.addClass('fullScreen')
+			body.addClass('isFullScreen')
 		});
 
 		renderer.on('leave-full-screen', () => {
-			body.removeClass('fullScreen');
+			body.removeClass('isFullScreen');
 		});
 
 		renderer.on('debugSync', (e: any) => {
