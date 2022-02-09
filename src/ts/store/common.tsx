@@ -50,6 +50,7 @@ class CommonStore {
 	public typeId: string = '';
 	public pinTimeId: number = 0;
 	public sidebarObj: Sidebar = { width: 0, height: 0, x: 0, y: 0, fixed: false, snap: I.MenuDirection.Left };
+	public isFullScreen: boolean = false;
 
     constructor() {
         makeObservable(this, {
@@ -63,6 +64,7 @@ class CommonStore {
             configObj: observable,
 			themeId: observable,
 			typeId: observable,
+			isFullScreen: observable,
             config: computed,
             progress: computed,
             preview: computed,
@@ -116,6 +118,10 @@ class CommonStore {
 
 	get type(): string {
 		return String(this.typeId || Constant.typeId.page);
+	};
+
+	get fullscreen(): boolean {
+		return this.isFullScreen;
 	};
 
 	get pinTime(): number {
@@ -200,6 +206,13 @@ class CommonStore {
 	pinTimeSet (v: string) {
 		this.pinTimeId = Number(v) || Constant.default.pinTime;
 		Storage.set('pinTime', v);
+	};
+
+	fullscreenSet (v: boolean) {
+		const body = $('body');
+		
+		this.isFullScreen = v;
+		v ? body.addClass('isFullScreen') : body.removeClass('isFullScreen');
 	};
 
 	themeSet (v: string) {

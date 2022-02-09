@@ -1,9 +1,12 @@
-import { I, C, Util, DataUtil, crumbs, Storage, focus, history as historyPopup, analytics, Docs } from 'ts/lib';
+import { I, C, Util, DataUtil, crumbs, Storage, focus, history as historyPopup, analytics } from 'ts/lib';
 import { commonStore, authStore, blockStore, detailStore, menuStore, popupStore } from 'ts/store';
+import { throttle } from 'lodash';
 
 const $ = require('jquery');
 const KeyCode = require('json/key.json');
 const Constant = require('json/constant.json');
+
+const THROTTLE = 20;
 
 class Keyboard {
 	
@@ -39,12 +42,25 @@ class Keyboard {
 		win.on('mousedown.common', (e: any) => { this.onMouseDown(e); });
 		win.on('scroll.common', (e: any) => { this.onScroll(e); });
 
+		win.unbind('mousemove.common beforeunload.common blur.common');
+		
+		win.on('mousemove.common', throttle((e: any) => {
+			this.initPinCheck();
+			this.disableMouse(false);
+			this.onMouseMove(e);
+		}, THROTTLE));
+		
+		win.on('blur.common', () => {
+			Util.tooltipHide(true);
+			Util.previewHide(true);
+		});
+
 		renderer.removeAllListeners('commandGlobal');
 		renderer.on('commandGlobal', (e: any, cmd: string, arg: any) => { this.onCommand(cmd, arg); });
 	};
 	
 	unbind () {
-		$(window).unbind('keyup.common keydown.common mousedown.common scroll.common');
+		$(window).unbind('keyup.common keydown.common mousedown.common scroll.common mousemove.common blur.common');
 	};
 
 	onScroll (e: any) {
@@ -616,7 +632,7 @@ class Keyboard {
 		this.isCloseDisabled = v;
 	};
 	
-	setCoords (e: any) {
+	onMouseMove (e: any) {
 		const { sidebar } = commonStore;
 		const { snap } = sidebar;
 
@@ -625,16 +641,18 @@ class Keyboard {
 			client: { x: e.clientX, y: e.clientY },
 		};
 
-		if (!this.isDragging && !this.isResizing) {
-			const el = $('#sidebar');
-			const win = $(window);
+		if (this.isDragging || this.isResizing) {
+			return;
+		};
 
-			if ((snap == I.MenuDirection.Left) && (this.mouse.page.x <= 20)) {
-				el.addClass('active');
-			};
-			if ((snap == I.MenuDirection.Right) && (this.mouse.page.x >= win.width() - 20)) {
-				el.addClass('active');
-			};
+		const el = $('#sidebar');
+		const win = $(window);
+
+		if ((snap == I.MenuDirection.Left) && (this.mouse.page.x <= 20)) {
+			el.addClass('active');
+		};
+		if ((snap == I.MenuDirection.Right) && (this.mouse.page.x >= win.width() - 20)) {
+			el.addClass('active');
 		};
 	};
 	

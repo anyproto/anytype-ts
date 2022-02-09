@@ -7,7 +7,6 @@ import { enableLogging } from 'mobx-logger';
 import { Page, SelectionProvider, DragProvider, Progress, Tooltip, Preview, Icon, ListPopup, ListMenu } from './component';
 import { commonStore, authStore, blockStore, detailStore, dbStore, menuStore, popupStore } from './store';
 import { I, C, Util, FileUtil, keyboard, Storage, analytics, dispatcher, translate } from 'ts/lib';
-import { throttle } from 'lodash';
 import * as Sentry from '@sentry/browser';
 import { configure } from 'mobx';
 
@@ -165,7 +164,6 @@ const memoryHistory = hs.createMemoryHistory;
 const history = memoryHistory();
 const Constant =  require('json/constant.json');
 
-const THROTTLE = 20;
 const Routes: RouteElement[] = require('json/route.json');
 const rootStore = {
 	commonStore,
@@ -357,7 +355,6 @@ class App extends React.Component<Props, State> {
 		});
 		
 		this.setIpcEvents();
-		this.setWindowEvents();
 	};
 
 	initTheme (theme: string) {
@@ -374,7 +371,6 @@ class App extends React.Component<Props, State> {
 
 	setIpcEvents () {
 		const accountId = Storage.get('accountId');
-		const body = $('body');
 		const phrase = Storage.get('phrase');
 		const node = $(ReactDOM.findDOMNode(this));
 		const logo = node.find('#logo');
@@ -537,11 +533,11 @@ class App extends React.Component<Props, State> {
 		});
 
 		renderer.on('enter-full-screen', () => {
-			body.addClass('isFullScreen')
+			commonStore.fullscreenSet(true);
 		});
 
 		renderer.on('leave-full-screen', () => {
-			body.removeClass('isFullScreen');
+			commonStore.fullscreenSet(false);
 		});
 
 		renderer.on('debugSync', (e: any) => {
@@ -585,23 +581,6 @@ class App extends React.Component<Props, State> {
 		};
 
 		renderer.send('pathOpen', logsDir);
-	};
-
-	setWindowEvents () {
-		const win = $(window);
-
-		win.unbind('mousemove.common beforeunload.common blur.common');
-		
-		win.on('mousemove.common', throttle((e: any) => {
-			keyboard.initPinCheck();
-			keyboard.disableMouse(false);
-			keyboard.setCoords(e);
-		}, THROTTLE));
-		
-		win.on('blur.common', () => {
-			Util.tooltipHide(true);
-			Util.previewHide(true);
-		});
 	};
 
 	onCommand (e: any, key: string) {
