@@ -13,7 +13,7 @@
 		}
 		.head {
 			.btn { display: inline-block; margin-right: 16px; transition: $transitionFast; cursor: pointer; }
-			.btn:hover { color: $colorBlack }
+			.btn:hover, .btn.active { color: $colorBlack }
 			.btn:last-child { margin: 0px; }
 		}
 		
@@ -27,13 +27,45 @@
 		.section:first-child { padding-top: 8px; }
 		.section:last-child { padding-bottom: 8px; }
 		
-		.items { padding: 0px 16px; }
-	
-		.cover { 
-			width: 88px; height: 48px; border-radius: 2px; margin: 0px 8px 8px 0px; display: inline-block; 
-			vertical-align: top; position: relative; cursor: pointer;
+		.items { 
+			padding: 0px 16px; display: grid; grid-template-columns: repeat(4, 88px); grid-column-gap: 8px;
+			grid-row-gap: 8px;
 		}
-		.cover:nth-child(4n+4) { margin-right: 0px; }
+		.items {
+			.item { padding: 0px; width: 100%; cursor: pointer; position: relative; }
+			.item {
+				.cover { height: 48px; position: relative; border-radius: 2px; }
+				.name { @include text-small; @include text-overflow-nw; max-width: 100%; margin-top: 2px; color: $colorDarkGrey; }
+			}
+			.item:hover {
+				.name { text-decoration: underline; }
+			}
+		}
+	
+		.section.unsplash {
+			.items { grid-template-columns: repeat(3, 120px); }
+			.item {
+				.cover { height: 72px; }
+			}
+		}
+
+		.body.upload { padding: 16px; }
+
+		.dropzone { 
+			height: 330px; display: flex; align-items: center; border-radius: 2px; background: rgba(134, 125, 66, 0.08); 
+			justify-content: center; flex-direction: column; gap: 6px 0px; cursor: pointer;
+		}
+		.dropzone.isDraggingOver { background: rgba(255,187,44,0.3); }
+
+		.dropzone {
+			.icon.coverUpload { 
+				width: 28px; height: 28px; background-image: url('~img/icon/cover/upload.svg');
+				display: block; 
+			}
+			.label {
+				span { color: $colorDarkGrey; }
+			}
+		}
 	}
 }
 

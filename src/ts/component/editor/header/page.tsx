@@ -33,12 +33,11 @@ const EditorHeaderPage = observer(class EditorHeaderPage extends React.Component
 		this.onScaleMove = this.onScaleMove.bind(this);
 		this.onScaleEnd = this.onScaleEnd.bind(this);
 		this.onClone = this.onClone.bind(this);
-	}
+	};
 
 	render (): any {
 		const { rootId, onKeyDown, onKeyUp, onMenuAdd, onPaste, readonly } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
-		const { config } = commonStore;
 
 		if (!root) {
 			return null;

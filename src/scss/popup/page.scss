@@ -5,6 +5,7 @@
 		.innerWrap { width: 960px; height: calc(100% - 128px); padding: 0px; }
 		.innerWrap.full { width: 100% !important; height: 100% !important; border-radius: 0px; margin: 0px !important; left: 0px; top: 0px; }
 		.innerWrap.full {
+			.header { position: fixed; top: 30px !important; }
 			.header {
 				.side.left {
 					.icon.expand { display: none; }
@@ -68,6 +69,16 @@ html.platformMac {
 				.content { padding-top: 52px; }
 				.block.blockCover { top: 52px; }
 			}	
+		}
+	}
+}
+
+html.platformWindows {
+	.popups {
+		.popup.popupPage {
+			.innerWrap.full {
+				.page { padding-top: 30px; }
+			}
 		}
 	}
 }

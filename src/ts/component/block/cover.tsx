@@ -42,7 +42,8 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 		super(props);
 		
 		this.onIcon = this.onIcon.bind(this);
-		this.onCover = this.onCover.bind(this);
+		this.onCoverOpen = this.onCoverOpen.bind(this);
+		this.onCoverClose = this.onCoverClose.bind(this);
 		this.onLayout = this.onLayout.bind(this);
 		this.onRelation = this.onRelation.bind(this);
 
@@ -127,9 +128,13 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 					rootId={rootId} 
 					readonly={readonly}
 					onIcon={this.onIcon} 
-					onCover={this.onCover}
+					onCoverOpen={this.onCoverOpen}
+					onCoverClose={this.onCoverClose}
 					onLayout={this.onLayout}
 					onRelation={this.onRelation}
+					onEdit={this.onEdit}
+					onUploadStart={this.onUploadStart}
+					onUpload={this.onUpload}
 				/>
 			);
 		};
@@ -291,32 +296,24 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 		menuStore.closeAll(null, () => { menuStore.open('blockRelationView', param); });
 	};
 	
-	onCover (e: any) {
-		const { rootId, block } = this.props;
+	onCoverOpen () {
+		if (!this._isMounted) {
+			return;
+		};
+
 		const node = $(ReactDOM.findDOMNode(this));
-		const elements = node.find('#elements');
+		node.find('#elements').addClass('hover');
 		
 		focus.clear(true);
-		menuStore.open('blockCover', {
-			element: `#block-${block.id} #button-cover`,
-			horizontal: I.MenuDirection.Center,
-			onOpen: () => {
-				elements.addClass('hover');
-			},
-			onClose: () => {
-				elements.removeClass('hover');
-			},
-			data: {
-				rootId: rootId,
-				onEdit: this.onEdit,
-				onUploadStart: this.onUploadStart,
-				onUpload: this.onUpload,
-				onSelect: (item: any) => {
-					this.loaded = false;
-					DataUtil.pageSetCover(rootId, item.type, item.id, item.coverX, item.coverY, item.coverScale);
-				}
-			},
-		});
+	};
+
+	onCoverClose () {
+		if (!this._isMounted) {
+			return;
+		};
+		
+		const node = $(ReactDOM.findDOMNode(this));
+		node.find('#elements').removeClass('hover');
 	};
 	
 	onEdit (e: any) {
