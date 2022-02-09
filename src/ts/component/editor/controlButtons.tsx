@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Icon } from 'ts/component';
-import { I, DataUtil, translate, analytics } from 'ts/lib';
+import { I, DataUtil, translate, analytics, focus } from 'ts/lib';
 import { blockStore, menuStore, detailStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -24,11 +24,14 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 	constructor (props: any) {
 		super(props);
 
+		this.onIcon = this.onIcon.bind(this);
 		this.onCover = this.onCover.bind(this);
+		this.onLayout = this.onLayout.bind(this);
+		this.onRelation = this.onRelation.bind(this);
 	};
 
 	render (): any {
-		const { rootId, readonly, onIcon, onLayout, onRelation } = this.props;
+		const { rootId, readonly } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
 
 		if (!root) {
@@ -58,7 +61,7 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 		return (
 			<div className="controlButtons">
 				{allowedIcon ? (
-					<div id="button-icon" className="btn white withIcon" onClick={onIcon}>
+					<div id="button-icon" className="btn white withIcon" onClick={this.onIcon}>
 						<Icon className="icon" />
 						<div className="txt">{translate('editorControlIcon')}</div>
 					</div>
@@ -72,14 +75,14 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 				) : ''}
 
 				{allowedLayout ? (
-					<div id="button-layout" className="btn white withIcon" onClick={onLayout}>
+					<div id="button-layout" className="btn white withIcon" onClick={this.onLayout}>
 						<Icon className="layout" />
 						<div className="txt">{translate('editorControlLayout')}</div>
 					</div>
 				) : ''}
 
 				{allowedRelation ? (
-					<div id="button-relation" className="btn white withIcon" onClick={onRelation}>
+					<div id="button-relation" className="btn white withIcon" onClick={this.onRelation}>
 						<Icon className="relation" />
 						<div className="txt">{translate('editorControlRelation')}</div>
 					</div>
@@ -88,7 +91,34 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 		);
 	};
 
+	onIcon (e: any) {
+		e.preventDefault();
+		e.stopPropagation();
+
+		focus.clear(true);
+		this.props.onIcon(e);
+	};
+
+	onLayout (e: any) {
+		e.preventDefault();
+		e.stopPropagation();
+
+		focus.clear(true);
+		this.props.onLayout(e);
+	};
+
+	onRelation (e: any) {
+		e.preventDefault();
+		e.stopPropagation();
+
+		focus.clear(true);
+		this.props.onRelation(e);
+	};
+
 	onCover (e: any) {
+		e.preventDefault();
+		e.stopPropagation();
+
 		const { rootId, onCoverOpen, onCoverClose, onEdit, onUploadStart, onUpload } = this.props;
 		const object = detailStore.get(rootId, rootId, Constant.coverRelationKeys, true);
 		const element = $(e.currentTarget);

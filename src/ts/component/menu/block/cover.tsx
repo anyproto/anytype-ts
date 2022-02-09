@@ -272,8 +272,6 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 		const node = $(ReactDOM.findDOMNode(this));
 		const zone = node.find('.dropzone');
 
-		console.log(zone);
-
 		zone.addClass('isDraggingOver');
 	};
 	
@@ -284,8 +282,6 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 		
 		const node = $(ReactDOM.findDOMNode(this));
 		const zone = node.find('.dropzone');
-
-		console.log(zone);
 
 		zone.removeClass('isDraggingOver');
 	};

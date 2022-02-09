@@ -831,7 +831,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		};
 
 		// Open add menu
-		if (canOpenMenuAdd) {
+		if (canOpenMenuAdd) { 
 			DataUtil.blockSetText(rootId, block, value, this.marks, true, () => {
 				onMenuAdd(id, Util.stringCut(value, range.from - 1, range.from), range);
 			});
