@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Frame, Icon, Cover, Error, Title, IconObject, HeaderAuth as Header, FooterAuth as Footer, Loader } from 'ts/component';
+import { Frame, Icon, Cover, Error, Title, IconObject, HeaderAuth as Header, FooterAuth as Footer, Loader, Button } from 'ts/component';
 import { commonStore, authStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { I, C, Util, translate } from 'ts/lib';
@@ -60,6 +60,8 @@ const PageAccountSelect = observer(class PageAccountSelect extends React.Compone
 									<div className="name">{translate('authAccountSelectAdd')}</div>
 								</div>
 							</div>
+
+							{error ? <Button text={translate('authSetupBack')} onClick={() => { Util.route('/'); }} /> : ''}
 						</React.Fragment>
 					)}
 				</Frame>
