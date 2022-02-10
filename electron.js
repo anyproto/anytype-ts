@@ -20,7 +20,6 @@ const envPath = path.join(__dirname, 'electron', 'env.json');
 const systemVersion = process.getSystemVersion();
 const protocol = 'anytype';
 const remote = require('@electron/remote/main');
-const isDev = require('electron-is-dev');
 
 const TIMEOUT_UPDATE = 600 * 1000;
 const MIN_WIDTH = 752;
@@ -28,23 +27,20 @@ const MIN_HEIGHT = 480;
 const KEYTAR_SERVICE = 'Anytype';
 const CONFIG_NAME = 'devconfig';
 
-let env = {};
-let deeplinkingUrl;
-
-if (isDev && is.windows) {
-	if (!app.isDefaultProtocolClient(protocol)) {
-		app.setAsDefaultProtocolClient(protocol, process.execPath, [ process.argv[1] ]);
-	};
+app.removeAsDefaultProtocolClient(protocol);
+if (is.development && is.windows) {
+	app.setAsDefaultProtocolClient(protocol, process.execPath, [ path.resolve(process.argv[1]) ]);
+	console.log('[setAsDefaultProtocolClient]', protocol, process.execPath, [ path.resolve(process.argv[1]) ]);
 } else {
-	if (!app.isDefaultProtocolClient(protocol)) {
-		app.setAsDefaultProtocolClient(protocol);
-	};
+	app.setAsDefaultProtocolClient(protocol);
 };
+
 try { env = JSON.parse(fs.readFileSync(envPath)); } catch (e) {};
 
-app.setAsDefaultProtocolClient(protocol);
 remote.initialize();
 
+let env = {};
+let deeplinkingUrl = '';
 let isUpdating = false;
 let userPath = app.getPath('userData');
 let tmpPath = path.join(userPath, 'tmp');
@@ -77,7 +73,7 @@ if (is.development && !port) {
 	return;
 };
 
-if (app.isPackaged && !app.requestSingleInstanceLock()) {
+if (!app.requestSingleInstanceLock() && app.isPackaged) {
 	exit(false);
 	return;
 };
@@ -220,14 +216,14 @@ function createWindow () {
 		},
 	};
 
-	if (process.platform == 'linux') {
+	if (is.linux) {
 		param.icon = image;
 	} else {
 		param.frame = false;
 		param.titleBarStyle = 'hidden';
 	};
 
-	if (process.platform == 'darwin') {
+	if (is.macos) {
 		app.dock.setIcon(image);
 		param.icon = path.join(__dirname, '/electron/icon.icns');
 		param.trafficLightPosition = { x: 20, y: 18 };
@@ -258,7 +254,7 @@ function createWindow () {
 		};
 		
 		e.preventDefault();
-		if (process.platform != 'linux') {
+		if (!is.linux) {
 			if (win.isFullScreen()) {
 				win.setFullScreen(false);
 				win.once('leave-full-screen', () => { win.hide(); });
@@ -786,8 +782,10 @@ app.on('ready', () => {
 app.on('second-instance', (event, argv, cwd) => {
 	Util.log('info', 'second-instance');
 
-	if (process.platform !== 'darwin') {
+	if (!is.macos) {
 		deeplinkingUrl = argv.find((arg) => arg.startsWith(`${protocol}://`));
+		send('route', deeplinkingUrl.replace(`${protocol}://`, '/'));
+		console.log(deeplinkingUrl);
 	};
 
 	if (win) {
@@ -802,7 +800,7 @@ app.on('second-instance', (event, argv, cwd) => {
 app.on('window-all-closed', (e) => {
 	Util.log('info', 'window-all-closed');
 
-	if (process.platform == 'linux') {
+	if (is.linux) {
 		e.preventDefault();
 		exit(false);
 	};

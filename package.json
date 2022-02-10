@@ -17,7 +17,7 @@
 		"build": "webpack --mode=production --env.NODE_ENV=production  -p --config webpack.config.js",
 		"build:deps": "webpack --config webpack.node.config.js --display-modules --display-cached | grep \"node_modules\" | sed 's/.*\\(node_modules\\/[^\\/]*\\).*/\\1/' | uniq | node save-node-deps.js",
 		"dist:mac": "webpack --mode=production --env.NODE_ENV=production -p && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` electron-builder --macos --arm64 --x64",
-		"dist:win": "webpack --mode=production --env.NODE_ENV=production -p && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` electron-builder --windows",
+		"dist:win": "webpack --mode=production --env.NODE_ENV=production -p && electron-builder --windows",
 		"dist:linux": "webpack --mode=production --env.NODE_ENV=production -p && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` electron-builder --linux",
 		"publish:mac": "webpack --mode=production --env.NODE_ENV=production -p && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` BUILD_NUMBER=`git rev-parse --short HEAD` electron-builder --macos --publish  always",
 		"publish:linux": "webpack --mode=production --env.NODE_ENV=production -p && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` BUILD_NUMBER=`git rev-parse --short HEAD` electron-builder --linux --publish  always",
@@ -539,7 +539,7 @@
 		},
 		"win": {
 			"target": "nsis",
-			"icon": "electron/icon.ico",
+			"icon": "electron/icon64x64.png",
 			"publish": [
 				{
 					"provider": "spaces",
