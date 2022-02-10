@@ -49,14 +49,19 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 		const { rootId, readonly } = this.props;
 		const { loading } = this.state;
 		const object = detailStore.get(rootId, rootId, Constant.coverRelationKeys);
+		const cn = [ 'editorControls', 'editorControlElements' ];
 		
 		if ((object.coverType != I.CoverType.None) && object.coverId) {
 			return null;
 		};
 
+		if (loading) {
+			cn.push('active');
+		};
+
 		return (
 			<div 
-				className="editorControls editorControlElements"
+				className={cn.join(' ')}
 				onDragOver={this.onDragOver} 
 				onDragLeave={this.onDragLeave} 
 				onDrop={this.onDrop}

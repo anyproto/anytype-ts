@@ -23,6 +23,8 @@ const { dialog } = window.require('@electron/remote');
 const Constant = require('json/constant.json');
 const $ = require('jquery');
 
+const LIMIT = 36;
+
 const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Props, State> {
 
 	_isMounted: boolean = false;
@@ -169,7 +171,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 		const { filter } = this.state;
 
 		this.items = [];
-		C.UnsplashSearch(filter, 24, (message: any) => {
+		C.UnsplashSearch(filter, LIMIT, (message: any) => {
 			if (message.error.code) {
 				return;
 			};
