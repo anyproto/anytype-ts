@@ -399,7 +399,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<P
 		const header = obj.find('#header');
 		const wrapper = $('.pageMainHistory .wrapper');
 		const height = win.height();
-		const hh = header.outerHeight();
+		const hh = isPopup ? header.height() : Util.sizeHeader();
 
 		sideLeft.css({ height: height });
 		sideRight.css({ height: height });

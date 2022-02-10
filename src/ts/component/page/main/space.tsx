@@ -426,7 +426,7 @@ const PageMainSpace = observer(class PageMainSpace extends React.Component<Props
 		const cover = node.find('.block.blockCover');
 		const obj = $(isPopup ? '#popupPage #innerWrap' : '#page.isFull');
 		const header = obj.find('#header');
-		const hh = header.height();
+		const hh = isPopup ? header.height() : Util.sizeHeader();
 
 		if (cover.length) {
 			cover.css({ top: hh });

@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { ControlButtons } from 'ts/component';
-import { I, C, focus, DataUtil, Util, translate, analytics } from 'ts/lib';
+import { ControlButtons, Loader } from 'ts/component';
+import { I, C, focus, DataUtil, Util } from 'ts/lib';
 import { menuStore, blockStore, detailStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -14,13 +14,20 @@ interface Props extends RouteComponentProps<any> {
 	resize?: () => void;
 };
 
+interface State {
+	loading: boolean;
+};
+
 const { dialog } = window.require('@electron/remote');
 const Constant = require('json/constant.json');
 const $ = require('jquery');
 
-const Controls = observer(class Controls extends React.Component<Props, {}> {
+const Controls = observer(class Controls extends React.Component<Props, State> {
 	
 	_isMounted: boolean = false;
+	state = {
+		loading: false,
+	};
 
 	constructor (props: any) {
 		super(props);
@@ -34,10 +41,13 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 		this.onDragOver = this.onDragOver.bind(this);
 		this.onDragLeave = this.onDragLeave.bind(this);
 		this.onDrop = this.onDrop.bind(this);
+		this.onUploadStart = this.onUploadStart.bind(this);
+		this.onUpload = this.onUpload.bind(this);
 	};
 
 	render (): any {
 		const { rootId, readonly } = this.props;
+		const { loading } = this.state;
 		const object = detailStore.get(rootId, rootId, Constant.coverRelationKeys);
 		
 		if ((object.coverType != I.CoverType.None) && object.coverId) {
@@ -51,6 +61,7 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 				onDragLeave={this.onDragLeave} 
 				onDrop={this.onDrop}
 			>
+				{loading ? <Loader /> : ''}
 				<ControlButtons 
 					rootId={rootId} 
 					readonly={readonly}
@@ -60,8 +71,8 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 					onLayout={this.onLayout}
 					onRelation={this.onRelation}
 					onEdit={() => {}}
-					onUploadStart={() => {}}
-					onUpload={() => {}}
+					onUploadStart={this.onUploadStart}
+					onUpload={this.onUpload}
 				/>
 			</div>
 		);
@@ -241,19 +252,30 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 		
 		node.removeClass('isDraggingOver');
 		preventCommonDrop(true);
-		this.setState({ loading: true });
+		this.onUploadStart();
 		
 		C.UploadFile('', file, I.FileType.Image, (message: any) => {
 			this.setState({ loading: false });
 			preventCommonDrop(false);
 			
-			if (message.error.code) {
-				return;
+			if (!message.error.code) {
+				this.onUpload(I.CoverType.Upload, message.hash);
 			};
-			
-			DataUtil.pageSetCover(rootId, I.CoverType.Upload, message.hash);
 		});
 	};
+
+	onUploadStart () {
+		this.setState({ loading: true });
+	};
+	
+	onUpload (type: I.CoverType, hash: string) {
+		const { rootId } = this.props;
+
+		DataUtil.pageSetCover(rootId, type, hash, 0, -0.25, 0, () => {
+			this.setState({ loading: false });
+		});
+	};
+
 
 });
 

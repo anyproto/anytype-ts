@@ -133,6 +133,8 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 			options.push({ id: 'remove', icon: 'remove', name: 'Remove' });
 		};
 
+		console.log(onUploadStart, onUpload);
+
 		let menuContext = null;
 		menuStore.open('select', {
 			element,
