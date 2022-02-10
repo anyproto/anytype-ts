@@ -83,18 +83,10 @@ html.platformWindows {
 		}
 	}
 
-	::-webkit-scrollbar { width: 12px; }
-	::-webkit-scrollbar-thumb { 
-		width: 6px; background: rgba(0,0,0,0.5); border: 3px solid rgba(0, 0, 0, 0); border-radius: 6px; background-clip: padding-box; 
-	}
+	::-webkit-scrollbar { width: 6px; height: 6px; }
+	::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.5); border-radius: 6px; }
 	::-webkit-scrollbar-corner { background-color: transparent; }
 	::-webkit-scrollbar-button { display: none; }
-
-	.blocks {
-		.block.blockDataview {
-			.content .scroll::-webkit-scrollbar-thumb { border-width: 5px; border-radius: 10px; }
-		}
-	}
 }
 
 .dn { display: none !important; }
