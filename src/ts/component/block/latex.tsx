@@ -365,9 +365,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 						
 						this.setValue(Util.stringInsert(this.getValue(), text, from, to));
 						this.save();
-
-						const length = this.getValue().length;
-						this.setRange({ start: length, end: length });
+						this.setRange({ start: to, end: to });
 						this.focus();
 					},
 				},
