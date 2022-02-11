@@ -84,7 +84,7 @@ jobs:
       - name: Cleanup artifacts
         if: matrix.os != 'windows-latest'
         run: |
-          mv dist/*.{zip,dmg,deb,AppImage,exe} artifacts || true
+          mv dist/*.{zip,dmg,deb,AppImage,exe,snap,rpm} artifacts || true
 
       - name: Cleanup artifacts Win
         if: matrix.os == 'windows-latest'
