@@ -445,9 +445,6 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		e.preventDefault();
 		e.stopPropagation();
 
-		this.id = item.id;
-		this.setActive(this.id);
-
 		DataUtil.objectOpenEvent(e, item.details);
 	};
 
