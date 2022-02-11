@@ -16,7 +16,7 @@
 		smile {
 			img { position: static !important; left: auto !important; top: auto !important; margin: 0px !important; vertical-align: middle; }
 		}
-		smile * { display: inline; }
+		smile * { display: inline; vertical-align: middle; }
 		smile .loaderWrapper { display: inline-block; }
 
 		emoji { display: inline; user-select: all; }
