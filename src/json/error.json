@@ -1,6 +1,9 @@
 {
 	"AccountCreate": {
-		"900": "Invite code is invalid"
+		"900": "Invite code is invalid",
+		"901": "Network error",
+		"902": "Connection refused",
+		"903": "Network offline"
 	},
 
 	"Code": {
