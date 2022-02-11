@@ -225,7 +225,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 	};
 
 	loadSections () {
-		const { root, profile, recent } = blockStore;
+		const { root, profile } = blockStore;
 		const sections = this.getSections();
 		const filters: I.Filter[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.Equal, value: false },
@@ -268,7 +268,9 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 					break;
 
 				case I.TabIndex.Recent:
-					sectionFilters = [];
+					sectionFilters = [
+						{ operator: I.FilterOperator.And, relationKey: 'lastOpenedDate', condition: I.FilterCondition.Greater, value: 0 }
+					];
 					sorts = [
 						{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
 					];
