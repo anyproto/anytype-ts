@@ -28,9 +28,11 @@ const KEYTAR_SERVICE = 'Anytype';
 const CONFIG_NAME = 'devconfig';
 
 app.removeAsDefaultProtocolClient(protocol);
-if (is.development && is.windows) {
-	app.setAsDefaultProtocolClient(protocol, process.execPath, [ path.resolve(process.argv[1]) ]);
-	console.log('[setAsDefaultProtocolClient]', protocol, process.execPath, [ path.resolve(process.argv[1]) ]);
+
+if (process.defaultApp) {
+	if (process.argv.length >= 2) {
+		app.setAsDefaultProtocolClient(protocol, process.execPath, [ path.resolve(process.argv[1]) ]);
+	};
 } else {
 	app.setAsDefaultProtocolClient(protocol);
 };
@@ -784,8 +786,10 @@ app.on('second-instance', (event, argv, cwd) => {
 
 	if (!is.macos) {
 		deeplinkingUrl = argv.find((arg) => arg.startsWith(`${protocol}://`));
-		send('route', deeplinkingUrl.replace(`${protocol}://`, '/'));
-		console.log(deeplinkingUrl);
+		if (deeplinkingUrl) {
+			const route = deeplinkingUrl.replace(`${protocol}://`, '/');
+			send('route', route);
+		};
 	};
 
 	if (win) {

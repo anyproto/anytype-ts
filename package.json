@@ -539,7 +539,7 @@
 		},
 		"win": {
 			"target": "nsis",
-			"icon": "electron/icon64x64.png",
+			"icon": "electron/icon256x256.png",
 			"publish": [
 				{
 					"provider": "spaces",
