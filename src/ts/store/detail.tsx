@@ -150,6 +150,7 @@ class DetailStore {
 			coverX: Number(object.coverX) || 0,
 			coverY: Number(object.coverY) || 0,
 			coverScale: Number(object.coverScale) || 0,
+			coverType: Number(object.coverType) || I.CoverType.None,
 		};
 	};
 

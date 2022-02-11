@@ -119,68 +119,80 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { rootId, onCoverOpen, onCoverClose, onEdit, onUploadStart, onUpload } = this.props;
+		const { rootId, onCoverOpen, onCoverClose, onEdit } = this.props;
 		const object = detailStore.get(rootId, rootId, Constant.coverRelationKeys, true);
 		const element = $(e.currentTarget);
-		const options: any[] = [
-			{ id: 'change', icon: 'coverChange', name: 'Change cover' },
-		];
+		const hasCover = object.coverType != I.CoverType.None;
+		
+		if (!hasCover) {
+			this.onChange(element, onCoverOpen, onCoverClose);
+		} else {
+			const options: any[] = [
+				{ id: 'change', icon: 'coverChange', name: 'Change cover' },
+			];
+			if (DataUtil.coverIsImage(object.coverType)) {
+				options.push({ id: 'position', icon: 'coverPosition', name: 'Reposition' });
+			};
+			if (hasCover) {
+				options.push({ id: 'remove', icon: 'remove', name: 'Remove' });
+			};
 
-		if (DataUtil.coverIsImage(object.coverType)) {
-			options.push({ id: 'position', icon: 'coverPosition', name: 'Reposition' });
+			let menuContext = null;
+			menuStore.open('select', {
+				element,
+				horizontal: I.MenuDirection.Center,
+				onOpen: (context: any) => {
+					menuContext = context;
+					onCoverOpen();
+				},
+				onClose: onCoverClose,
+				subIds: [ 'blockCover' ],
+				data: {
+					noClose: true,
+					options: options,
+					onSelect: (e: any, item: any) => {
+						switch (item.id) {
+							case 'change':
+								this.onChange(`#menuSelect #item-${item.id}`, null, () => {
+									menuContext.close();
+								});
+								break;
+							
+							case 'position':
+								onEdit(e);
+								menuContext.close();
+								break;
+	
+							case 'remove':
+								DataUtil.pageSetCover(rootId, I.CoverType.None, '');
+								menuContext.close();
+	
+								analytics.event('RemoveCover');
+								break;
+						};
+					}
+				}
+			});
 		};
-		if (object.coverType != I.CoverType.None) {
-			options.push({ id: 'remove', icon: 'remove', name: 'Remove' });
-		};
+	};
 
-		let menuContext = null;
-		menuStore.open('select', {
+	onChange (element: any, onOpen: (context: any) => void, onClose: () => void) {
+		const { rootId, onEdit, onUploadStart, onUpload } = this.props;
+
+		menuStore.open('blockCover', {
 			element,
 			horizontal: I.MenuDirection.Center,
-			onOpen: (context: any) => {
-				menuContext = context;
-				onCoverOpen();
-			},
-			onClose: onCoverClose,
-			subIds: [ 'blockCover' ],
+			onOpen,
+			onClose,
 			data: {
-				noClose: true,
-				options: options,
-				onSelect: (e: any, item: any) => {
-					switch (item.id) {
-						case 'change':
-							menuStore.open('blockCover', {
-								element: `#menuSelect #item-${item.id}`,
-								horizontal: I.MenuDirection.Center,
-								onClose: () => {
-									menuStore.close('select');
-								},
-								data: {
-									rootId: rootId,
-									onEdit: onEdit,
-									onUploadStart: onUploadStart,
-									onUpload: onUpload,
-									onSelect: (item: any) => {
-										DataUtil.pageSetCover(rootId, item.type, item.id, item.coverX, item.coverY, item.coverScale);
-									}
-								},
-							});
-							break;
-						
-						case 'position':
-							onEdit(e);
-							menuContext.close();
-							break;
-
-						case 'remove':
-							DataUtil.pageSetCover(rootId, I.CoverType.None, '');
-							menuContext.close();
-
-							analytics.event('RemoveCover');
-							break;
-					};
+				rootId,
+				onEdit,
+				onUploadStart,
+				onUpload,
+				onSelect: (item: any) => {
+					DataUtil.pageSetCover(rootId, item.type, item.id, item.coverX, item.coverY, item.coverScale);
 				}
-			}
+			},
 		});
 	};
 	

@@ -341,7 +341,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 
 		DataUtil.pageSetCover(rootId, type, hash, this.coords.x, this.coords.y, this.scale, () => {
 			this.loaded = false;
-			this.setState({ loading: false, isEditing: true, justUploaded: true });
+			this.setState({ loading: false, justUploaded: true });
 		});
 	};
 	
