@@ -712,8 +712,14 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		const { width, fixed } = sidebar;
 		const node = $(ReactDOM.findDOMNode(this));
 		const head = node.find('.head');
+		const platform = Util.getPlatform();
 
-		head.css({ height: fixed ? Util.sizeHeader() - 20 : 0 });
+		let h = 0;
+		if (fixed) {
+			h = platform == I.Platform.Windows ? 30 : Util.sizeHeader() - 20;
+		};
+
+		head.css({ height: h });
 		this.setWidth(width);
 	};
 
