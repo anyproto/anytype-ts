@@ -196,7 +196,7 @@
 		"cover": 1920,
 		"sidebar": { 
 			"height": { "min": 400 },
-			"width": { "min": 160, "max": 500 }
+			"width": { "min": 200, "max": 500 }
 		},
 
 		"dataview": {
