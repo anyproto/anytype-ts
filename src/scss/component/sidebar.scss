@@ -114,3 +114,11 @@
 
     }
 }
+
+html.platformMac {
+    body.isFullScreen {
+        .sidebar {
+            .head { height: 0px !important; }
+        }
+    }
+}
