@@ -972,26 +972,29 @@ class Util {
 		let dummy = $('.sidebarDummy');
 
 		header.css(css).removeClass('withSidebar snapLeft snapRight');
+		footer.css(css).removeClass('withSidebar snapLeft snapRight');
 		dummy.css(css);
-		footer.css(css);
 
 		if (isPopup || !obj.length) {
 			return;
 		};
 
 		header.addClass('withSidebar');
+		footer.addClass('withSidebar');
 		css.width = header.outerWidth() - width - 1;
 		
 		if (snap !== null) {
 			if (snap == I.MenuDirection.Right) {
 				dummy = $('.sidebarDummy.right');
 				header.addClass('snapRight');
+				footer.addClass('snapRight');
 
 				cssLoader.left = 0;
 				cssLoader.right = '';
 			} else {
 				dummy = $('.sidebarDummy.left');
 				header.addClass('snapLeft');
+				footer.addClass('snapLeft');
 
 				cssLoader.left = '';
 				cssLoader.right = 0;
