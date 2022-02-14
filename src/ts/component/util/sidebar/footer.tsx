@@ -82,34 +82,8 @@ const Footer = observer(class Item extends React.Component<Props, {}> {
 	};
 
 	onAdd (e: any) {
-		const rootId = keyboard.getRootId();
-		const { focused } = focus.state;
-		const root = blockStore.getLeaf(rootId, rootId);
-		const canAdd = this.canAdd();
-
-		if (!root || !canAdd) {
-			return;
-		};
-		
-		let fb = blockStore.getLeaf(rootId, focused);
-		let targetId = '';
-		let position = I.BlockPosition.Bottom;
-		
-		if (fb) {
-			if (fb.isTextTitle()) {
-				const first = blockStore.getFirstBlock(rootId, 1, (it: I.Block) => { return it.isFocusable() && !it.isTextTitle(); });
-				if (first) {
-					targetId = first.id;
-					position = I.BlockPosition.Top;
-				};
-			} else 
-			if (fb.isFocusable()) {
-				targetId = fb.id;
-			};
-		};
-		
-		DataUtil.pageCreate(rootId, targetId, {}, position, '', {}, (message: any) => {
-			DataUtil.objectOpen({ id: message.targetId });
+		DataUtil.pageCreate('', '', { isDraft: true }, I.BlockPosition.Bottom, '', {}, (message: any) => {
+			DataUtil.objectOpenPopup({ id: message.targetId });
 		});
 	};
 

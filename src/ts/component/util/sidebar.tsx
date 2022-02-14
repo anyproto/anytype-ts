@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, C, DataUtil, Util, keyboard, Storage, Relation } from 'ts/lib';
+import { I, C, DataUtil, Util, keyboard, Storage, Relation, analytics } from 'ts/lib';
 import { Loader } from 'ts/component';
 import { blockStore, commonStore, dbStore, detailStore, menuStore } from 'ts/store';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
@@ -226,6 +226,10 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		];
 	};
 
+	getSection (id: I.TabIndex): any {
+		return this.getSections().find(it => it.id == id) || {};
+	};
+
 	loadSections () {
 		const { root, profile } = blockStore;
 		const sections = this.getSections();
@@ -419,8 +423,21 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		e.stopPropagation();
 
 		const id = this.getId(item);
+		const check = Storage.checkToggle(Constant.subIds.sidebar, id);
 
-		Storage.setToggle(Constant.subIds.sidebar, id, !Storage.checkToggle(Constant.subIds.sidebar, id));
+		Storage.setToggle(Constant.subIds.sidebar, id, !check);
+
+		let eventId = '';
+		let group = '';
+		if (item.isSection) {
+			eventId = !check ? 'OpenSidebarGroupToggle' : 'CloseSidebarGroupToggle';
+			group = this.getSection(item.id).name;
+		} else {
+			eventId = !check ? 'OpenSidebarObjectToggle' : 'CloseSidebarObjectToggle';
+			group = this.getSection(item.sectionId).name;
+		};
+
+		analytics.event(eventId, { group });
 		this.forceUpdate();
 	};
 
@@ -448,6 +465,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		e.stopPropagation();
 
 		DataUtil.objectOpenEvent(e, item.details);
+		analytics.event('OpenSidebarObject', { group: this.getSection(item.sectionId).name });
 	};
 
 	onContext (e: any, item: any): void {

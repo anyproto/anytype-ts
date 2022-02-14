@@ -11,7 +11,7 @@ const os = window.require('os');
 const KEYS = [ 
 	'method', 'id', 'action', 'style', 'code', 'route', 'format', 'color',
 	'type', 'objectType', 'relationKey', 'layout', 'align', 'template', 'index', 'condition',
-	'tab', 'document', 'page', 'count', 'context', 'originalId', 'length'
+	'tab', 'document', 'page', 'count', 'context', 'originalId', 'length', 'group'
 ];
 const KEY_CONTEXT = 'analyticsContext';
 const KEY_ORIGINAL_ID = 'analyticsOriginalId';
