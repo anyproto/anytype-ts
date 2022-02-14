@@ -978,7 +978,7 @@ class Util {
 		};
 
 		header.addClass('withSidebar');
-		css.width = header.outerWidth() - width;
+		css.width = header.outerWidth() - width - 1;
 		
 		if (snap !== null) {
 			if (snap == I.MenuDirection.Right) {

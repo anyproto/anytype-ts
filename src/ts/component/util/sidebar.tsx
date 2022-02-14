@@ -206,6 +206,8 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		const node = $(ReactDOM.findDOMNode(this));
 		const body = node.find('.body');
 
+		console.log(sidebar);
+
 		this.width = node.width();
 		this.height = node.height();
 		this.setStyle(x, y, snap);
@@ -460,7 +462,6 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		menuStore.open('dataviewContext', {
 			rect: { width: 0, height: 0, x: x + 20, y: y },
 			vertical: I.MenuDirection.Center,
-			classNameWrap: 'fromPopup',
 			onClose: () => {
 				this.setActive(this.id);
 			},

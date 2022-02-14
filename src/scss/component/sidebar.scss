@@ -7,7 +7,7 @@
 }
 
 .sidebar { 
-    position: fixed; background-color: #fff;  z-index: 22; border-radius: 12px; 
+    position: fixed; background-color: #fff; z-index: 18; border-radius: 12px; 
     box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2); display: flex; flex-direction: column;
     transition: transform 0.2s ease-in-out; user-select: none;
 }
@@ -16,8 +16,8 @@
     right: 0px; transform: translate3d(100%,0px,0px); 
 }
 .sidebar.fixed { 
-    height: 100%; top: 0px; transform: translate3d(0px,0px,0px); border-radius: 0px; box-shadow: 0px 0px; 
-    border-right: 1px solid $colorLightGrey;
+    height: 100%; top: 0px; transform: translate3d(0px,0px,0px); border-radius: 0px; 
+    box-shadow: 0px 0px; border-right: 1px solid $colorLightGrey;
 }
 .sidebar.active { transform: translate3d(0px,0px,0px); }
 

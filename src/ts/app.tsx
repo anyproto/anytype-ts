@@ -328,6 +328,7 @@ class App extends React.Component<Props, State> {
 		Util.init(history);
 		keyboard.init();
 		analytics.init();
+		commonStore.sidebarInit();
 		
 		Storage.delete('lastSurveyCanceled');
 

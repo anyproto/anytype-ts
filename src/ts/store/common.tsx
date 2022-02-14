@@ -226,6 +226,26 @@ class CommonStore {
 		analytics.event('ThemeSet', { id: v });
 	};
 
+	sidebarInit () {
+		const stored = Storage.get('sidebar');
+		if (stored) {
+			return;
+		};
+
+		const platform = Util.getPlatform();
+		const isWindows = platform == I.Platform.Windows;
+		const offset = isWindows ? 30 : 0;
+		const win = $(window);
+		const wh = win.height() - offset;
+		const height = wh * 0.8;
+		const y = wh / 2 - height / 2 + offset;
+
+		this.sidebarSet({
+			height,
+			y,
+		});
+	};
+
 	sidebarSet (v: any) {
 		const win = $(window);
 		const size = Constant.size.sidebar;
