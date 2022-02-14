@@ -156,7 +156,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 			console.log('[dragProvider.onDrop] paths', paths);
 
 			C.ExternalDropFiles(rootId, targetId, position, paths, () => {
-				if (target && target.isTextToggle() && (position == I.BlockPosition.Inner)) {
+				if (target && target.isTextToggle() && (position == I.BlockPosition.InnerFirst)) {
 					blockStore.toggle(rootId, targetId, true);
 				};
 			});
@@ -273,7 +273,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 		let targetContextId = rootId;
 		let contextId = rootId;
 
-		if (target.isLink() && (position == I.BlockPosition.Inner)) {
+		if (target.isLink() && (position == I.BlockPosition.InnerFirst)) {
 			contextId = keyboard.getRootId();
 			targetContextId = target.content.targetBlockId;
 			targetId = '';
@@ -294,7 +294,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 		switch (this.type) {
 			default:
 				C.BlockListMove(contextId, targetContextId, this.ids || [], targetId, position, () => {
-					if (target.isTextToggle() && (position == I.BlockPosition.Inner)) {
+					if (target.isTextToggle() && (position == I.BlockPosition.InnerFirst)) {
 						blockStore.toggle(rootId, targetId, true);
 					};
 
@@ -373,7 +373,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 				if (ey >= y + height * 0.85) {
 					this.position = I.BlockPosition.Bottom;
 				} else {
-					this.position = I.BlockPosition.Inner;
+					this.position = I.BlockPosition.InnerFirst;
 				};
 			} else
 			if (ex > col2) {
@@ -401,7 +401,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 
 			// You can only drop into Paragraphs, Lists and Callout
 			if (
-				(this.position == I.BlockPosition.Inner) &&
+				(this.position == I.BlockPosition.InnerFirst) &&
 				isText &&
 				([ 
 					I.TextStyle.Paragraph, 
@@ -418,7 +418,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 
 			// You can only drop into text blocks and links
 			if (
-				(this.position == I.BlockPosition.Inner) &&
+				(this.position == I.BlockPosition.InnerFirst) &&
 				([ I.BlockType.Text, I.BlockType.Link ].indexOf(type) < 0)
 			) {
 				recalcPosition();
@@ -441,7 +441,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 
 			// You can only drop inside of menu items
 			if ((this.hoverData.dropType == I.DragType.Menu) && (this.position != I.BlockPosition.None)) {
-				this.position = I.BlockPosition.Inner;
+				this.position = I.BlockPosition.InnerFirst;
 
 				if (rootId == this.hoverData.targetContextId) {
 					this.position = I.BlockPosition.None;
@@ -514,7 +514,8 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 			case I.BlockPosition.Bottom: c = 'bottom'; break;
 			case I.BlockPosition.Left:	 c = 'left'; break;
 			case I.BlockPosition.Right:	 c = 'right'; break;
-			case I.BlockPosition.Inner:	 c = 'middle'; break;
+			case I.BlockPosition.Inner:
+			case I.BlockPosition.InnerFirst: c = 'middle'; break;
 		};
 		return c;
 	};
