@@ -117,7 +117,10 @@
 .cellContent.c-email, 
 .cellContent.c-phone 
 {
-	.name { text-decoration: none; border-bottom: 1px solid $colorBorderDark; transition: $transitionFast; cursor: pointer; width: auto; }
+	.name { 
+		text-decoration: none; border-bottom: 1px solid $colorBorderDark; transition: $transitionFast; cursor: pointer; width: auto; 
+		@include text-overflow-nw; width: 100%;
+	}
 	.name:hover { border-color: $colorBlack; }
 }
 
