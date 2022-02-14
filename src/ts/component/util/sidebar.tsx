@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, C, DataUtil, Util, keyboard, Storage, Relation, focus } from 'ts/lib';
-import { IconObject, Icon, Loader } from 'ts/component';
-import { blockStore, commonStore, dbStore, detailStore, menuStore, popupStore } from 'ts/store';
+import { I, C, DataUtil, Util, keyboard, Storage, Relation } from 'ts/lib';
+import { Loader } from 'ts/component';
+import { blockStore, commonStore, dbStore, detailStore, menuStore } from 'ts/store';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { observer } from 'mobx-react';
 
@@ -26,6 +26,8 @@ const MAX_DEPTH = 100;
 const LIMIT = 20;
 const HEIGHT = 28;
 const SNAP_THRESHOLD = 30;
+const TIMEOUT = 100;
+
 const SKIP_TYPES_LOAD = [
 	Constant.typeId.space,
 ];
@@ -377,7 +379,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 			items.push(item);
 
 			if (item.isOpen) {
-				items = this.unwrap(section.id, items, section.id, children, 1);
+				items = this.unwrap(section.id, items, section.id, children, 0);
 			};
 		});
 
@@ -490,7 +492,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		this.timeout = window.setTimeout(() => {
 			const node = $(ReactDOM.findDOMNode(this));
 			node.removeClass('active');
-		}, 1000);
+		}, TIMEOUT);
 	};
 
 	onResizeStart (e: any, dir: I.MenuType) {

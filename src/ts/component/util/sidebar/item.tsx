@@ -38,8 +38,12 @@ const Item = observer(class Item extends React.Component<Props, {}> {
 		const cn = [ 'item', 'c' + id, (check ? 'active' : '') ];
 
 		let content = null;
+		let paddingLeft = 10 + depth * 12;
+
 		if (isSection) {
+			paddingLeft += 6;
 			cn.push('isSection');
+			
 			if (withPadding) {
 				cn.push('withPadding');
 			};
@@ -76,7 +80,7 @@ const Item = observer(class Item extends React.Component<Props, {}> {
 				style={style} 
 				onContextMenu={(e: any) => { onContext(e, { ...this.props, details: object }); }}
 			>
-				<div className="inner" style={{ paddingLeft: (10 + depth * 12) }}>
+				<div className="inner" style={{ paddingLeft }}>
 					{content}
 				</div>
 			</div>

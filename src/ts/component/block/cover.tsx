@@ -73,6 +73,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 		const { coverType, coverId } = object;
 		const isImage = DataUtil.coverIsImage(coverType);
 		const root = blockStore.getLeaf(rootId, rootId);
+		const cn = [ 'elements', 'editorControlElements' ];
 
 		if (!root) {
 			return null;
@@ -99,6 +100,8 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 		};
 
 		if (isEditing) {
+			cn.push('active');
+
 			elements = (
 				<React.Fragment>
 					<div key="btn-drag" className="btn black drag withIcon">
@@ -140,7 +143,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 		};
 
 		elements = (
-			<div id="elements" className="elements editorControlElements">
+			<div id="elements" className={cn.join(' ')}>
 				{elements}
 			</div>
 		);
