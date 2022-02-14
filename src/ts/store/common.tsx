@@ -240,9 +240,16 @@ class CommonStore {
 		const height = wh * 0.8;
 		const y = wh / 2 - height / 2 + offset;
 
+		Storage.setToggle(Constant.subIds.sidebar, 'favorite', true);
+		Storage.setToggle(Constant.subIds.sidebar, 'recent', true);
+		Storage.setToggle(Constant.subIds.sidebar, 'set', true);
+
 		this.sidebarSet({
 			height,
 			y,
+			x: 0,
+			fixed: true,
+			snap: I.MenuDirection.Left,
 		});
 	};
 

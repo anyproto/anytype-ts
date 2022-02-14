@@ -206,8 +206,6 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		const node = $(ReactDOM.findDOMNode(this));
 		const body = node.find('.body');
 
-		console.log(sidebar);
-
 		this.width = node.width();
 		this.height = node.height();
 		this.setStyle(x, y, snap);
@@ -439,8 +437,8 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 	};
 
 	getId (item: any) {
-		const { sectionId, parentId, id, depth } = item;
-		return [ sectionId, parentId, id, depth ].join('-');
+		const { sectionId, parentId, id, depth, isSection } = item;
+		return isSection ? id : [ sectionId, parentId, id, depth ].join('-');
 	};
 
 	onClick (e: any, item: any) {

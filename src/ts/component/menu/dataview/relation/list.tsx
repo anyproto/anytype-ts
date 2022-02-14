@@ -322,8 +322,6 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 		const { getView } = data;
 		const relation = getView().getRelation(item.relationKey);
 
-		console.log(relation);
-
 		if (relation) {
 			relation.isVisible = v;
 			this.save();
