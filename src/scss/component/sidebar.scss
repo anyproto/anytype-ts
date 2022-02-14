@@ -69,7 +69,7 @@
         .icon.collapse { background-image: url('~img/icon/sidebar/collapse.svg'); }
     }
     
-    .body { overflow-x: hidden; overflow-y: overlay; height: 100%; position: relative; flex-grow: 1; }
+    .body { overflow: hidden; height: 100%; position: relative; flex-grow: 1; }
     .body {
         .ReactVirtualized__Grid__innerScrollContainer { margin: 20px 0px 10px 0px; }
 
