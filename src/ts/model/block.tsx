@@ -73,7 +73,7 @@ class Block implements I.Block {
 	};
 
 	canHaveAlign (): boolean {
-		return !this.isSystem() && (this.isLink() || this.isTextParagraph() || this.isTextQuote() || this.isTextHeader() || this.isFileImage() || this.isFileVideo() || this.isLatex());
+		return (this.isLink() || this.isTextParagraph() || this.isTextQuote() || this.isTextHeader() || this.isFileImage() || this.isFileVideo() || this.isLatex());
 	};
 
 	canHaveColor (): boolean {
@@ -81,7 +81,7 @@ class Block implements I.Block {
 	};
 
 	canHaveBackground (): boolean {
-		return !this.isSystem() && !this.isFilePdf();
+		return !this.isFilePdf();
 	};
 
 	canHaveMarks () {
