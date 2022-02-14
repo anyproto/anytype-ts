@@ -1129,6 +1129,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		e.preventDefault();
 		e.stopPropagation();
 
+		let length = block.getLength();
 		let replace = !range.to && block.isTextList() && !length;
 		if (replace) {
 			C.BlockListSetTextStyle(rootId, [ block.id ], I.TextStyle.Paragraph);
