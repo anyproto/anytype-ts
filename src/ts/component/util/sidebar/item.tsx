@@ -3,6 +3,7 @@ import { Icon, IconObject, ObjectName } from 'ts/component';
 import { I, Storage } from 'ts/lib';
 import { commonStore, dbStore, detailStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
+import { windowObject } from 'is';
 
 interface Props {
 	id: string;
@@ -23,6 +24,8 @@ interface Props {
 const Constant = require('json/constant.json');
 
 const Item = observer(class Item extends React.Component<Props, {}> {
+
+	timeout: number = 0;
 
 	constructor (props: any) {
 		super(props);
@@ -93,6 +96,8 @@ const Item = observer(class Item extends React.Component<Props, {}> {
 	};
 
 	onMouseEnter (e: any) {
+		return;
+
 		const { elementId, id, isSection } = this.props;
 		const { sidebar } = commonStore;
 		const { width } = sidebar;
@@ -101,18 +106,24 @@ const Item = observer(class Item extends React.Component<Props, {}> {
 			return;
 		};
 
-		menuStore.open('previewObject', {
-			element: `#sidebar #${elementId}`,
-			offsetX: width,
-			isSub: true,
-			classNameWrap: 'fromPopup fixed',
-			vertical: I.MenuDirection.Center,
-			data: { rootId: id }
+		window.clearTimeout(this.timeout);
+		this.timeout = window.setTimeout(() => {
+			menuStore.open('previewObject', {
+				element: `#sidebar #${elementId}`,
+				offsetX: width,
+				isSub: true,
+				classNameWrap: 'fromPopup fixed',
+				vertical: I.MenuDirection.Center,
+				data: { rootId: id }
+			});
 		});
 	};
 
 	onMouseLeave (e: any) {
+		return;
+
 		menuStore.close('previewObject');
+		window.clearTimeout(this.timeout);
 	};
 
 	onToggle (e: any) {
