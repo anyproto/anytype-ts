@@ -368,6 +368,14 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 
 		sections.forEach((section: any) => {
 			const children = this.getRecords(dbStore.getSubId(Constant.subIds.sidebar, section.id));
+
+			if (section.id == I.TabIndex.Favorite) {
+				let { root } = blockStore;
+				let childrenIds = blockStore.getChildren(root, root, it => it.isLink()).map(it => it.content.targetBlockId);
+
+				children.sort((c1: any, c2: any) => { return this.sortByIds(childrenIds, c1.id, c2.id); });
+			};
+
 			const item: any = {
 				details: {
 					id: section.id,
@@ -401,9 +409,9 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		return items;
 	};
 
-	sortByIds (ids: string[], c1: any, c2: any) {
-		const i1 = ids.indexOf(c1);
-		const i2 = ids.indexOf(c2);
+	sortByIds (ids: string[], id1: string, id2: string) {
+		const i1 = ids.indexOf(id1);
+		const i2 = ids.indexOf(id2);
 		if (i1 > i2) return 1; 
 		if (i1 < i2) return -1;
 		return 0;
@@ -503,7 +511,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		const { sidebar } = commonStore;
 		const { snap, fixed } = sidebar;
 
-		if (fixed || (snap === null) || menuStore.isOpen()) {
+		if (fixed || (snap === null) || menuStore.isOpen('dataviewContext')) {
 			return;
 		};
 
