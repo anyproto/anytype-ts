@@ -26,6 +26,7 @@ const MAX_DEPTH = 100;
 const LIMIT = 20;
 const HEIGHT = 28;
 const SNAP_THRESHOLD = 30;
+const UNFIX_THRESHOLD = 992;
 const TIMEOUT = 100;
 
 const SKIP_TYPES_LOAD = [
@@ -774,10 +775,10 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		const win = $(window);
 		const ww = win.width();
 
-		if (fixed && (ww <= 760)) {
+		if (fixed && (ww <= UNFIX_THRESHOLD)) {
 			commonStore.sidebarSet({ fixed: false });
 		};
-		if (!fixed && (ww > 760)) {
+		if (!fixed && (ww > UNFIX_THRESHOLD)) {
 			commonStore.sidebarSet({ fixed: commonStore.sidebarOldObj.fixed });
 		};
 	};
