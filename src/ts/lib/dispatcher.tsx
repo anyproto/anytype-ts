@@ -548,20 +548,7 @@ class Dispatcher {
 					
 					// Subscriptions
 					if (subIds.length) {
-						uniqueSubIds = [];
-						subIds.forEach((it: string) => {
-							const [ subId, dep ] = it.split('/');
-	
-							if (!dep) {
-								const record = dbStore.getRecord(subId, '', id);
-								if (!record) {
-									dbStore.recordAdd(subId, '', { id: id }, -1);
-								};
-							};
-							
-							uniqueSubIds.push(subId);
-						});
-	
+						uniqueSubIds = subIds.map((it: string) => { return it.split('/')[0]; });
 						Util.arrayUnique(uniqueSubIds).forEach((subId: string) => {
 							detailStore.update(subId, { id: id, details: details }, true);
 						});
