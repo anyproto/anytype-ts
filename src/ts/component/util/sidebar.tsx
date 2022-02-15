@@ -63,7 +63,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		this.onClick = this.onClick.bind(this);
 		this.onToggle = this.onToggle.bind(this);
 		this.onContext = this.onContext.bind(this);
-
+		
 		this.getRowHeight = this.getRowHeight.bind(this)
 	};
 

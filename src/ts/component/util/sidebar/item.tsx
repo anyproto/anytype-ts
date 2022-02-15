@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Icon, IconObject, ObjectName } from 'ts/component';
-import { Storage } from 'ts/lib';
-import { dbStore, detailStore } from 'ts/store';
+import { I, Storage } from 'ts/lib';
+import { commonStore, dbStore, detailStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props {
@@ -27,6 +27,8 @@ const Item = observer(class Item extends React.Component<Props, {}> {
 	constructor (props: any) {
 		super(props);
 
+		this.onMouseEnter = this.onMouseEnter.bind(this);
+		this.onMouseLeave = this.onMouseLeave.bind(this);
 		this.onToggle = this.onToggle.bind(this);
 	};
 
@@ -76,8 +78,11 @@ const Item = observer(class Item extends React.Component<Props, {}> {
 
 		return (
 			<div 
+				id={elementId}
 				className={cn.join(' ')} 
 				style={style} 
+				onMouseEnter={this.onMouseEnter}
+				onMouseLeave={this.onMouseLeave}
 				onContextMenu={(e: any) => { onContext(e, { ...this.props, details: object }); }}
 			>
 				<div className="inner" style={{ paddingLeft }}>
@@ -85,6 +90,29 @@ const Item = observer(class Item extends React.Component<Props, {}> {
 				</div>
 			</div>
 		);
+	};
+
+	onMouseEnter (e: any) {
+		const { elementId, id, isSection } = this.props;
+		const { sidebar } = commonStore;
+		const { width } = sidebar;
+
+		if (isSection) {
+			return;
+		};
+
+		menuStore.open('previewObject', {
+			element: `#sidebar #${elementId}`,
+			offsetX: width,
+			isSub: true,
+			classNameWrap: 'fromPopup fixed',
+			vertical: I.MenuDirection.Center,
+			data: { rootId: id }
+		});
+	};
+
+	onMouseLeave (e: any) {
+		menuStore.close('previewObject');
 	};
 
 	onToggle (e: any) {
