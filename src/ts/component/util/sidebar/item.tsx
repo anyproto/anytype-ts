@@ -1,9 +1,8 @@
 import * as React from 'react';
 import { Icon, IconObject, ObjectName } from 'ts/component';
-import { I, Storage } from 'ts/lib';
-import { commonStore, dbStore, detailStore, menuStore } from 'ts/store';
+import { Storage } from 'ts/lib';
+import { dbStore, detailStore } from 'ts/store';
 import { observer } from 'mobx-react';
-import { windowObject } from 'is';
 
 interface Props {
 	id: string;
@@ -19,6 +18,8 @@ interface Props {
 	onClick?(e: any, item: any): void;
 	onToggle?(e: any, item: any): void;
 	onContext?(e: any, item: any): void;
+	onMouseEnter?(e: any, item: any): void;
+	onMouseLeave?(e: any, item: any): void;
 };
 
 const Constant = require('json/constant.json');
@@ -30,13 +31,11 @@ const Item = observer(class Item extends React.Component<Props, {}> {
 	constructor (props: any) {
 		super(props);
 
-		this.onMouseEnter = this.onMouseEnter.bind(this);
-		this.onMouseLeave = this.onMouseLeave.bind(this);
 		this.onToggle = this.onToggle.bind(this);
 	};
 
 	render () {
-		const { id, parentId, elementId, depth, style, length, details, isSection, withPadding, onClick, onContext } = this.props;
+		const { id, parentId, elementId, depth, style, length, details, isSection, withPadding, onClick, onContext, onMouseEnter, onMouseLeave } = this.props;
 		const subId = dbStore.getSubId(Constant.subIds.sidebar, parentId);
 		const check = Storage.checkToggle(Constant.subIds.sidebar, elementId);
 		const object = detailStore.get(subId, id, Constant.sidebarRelationKeys, true);
@@ -84,8 +83,8 @@ const Item = observer(class Item extends React.Component<Props, {}> {
 				id={elementId}
 				className={cn.join(' ')} 
 				style={style} 
-				onMouseEnter={this.onMouseEnter}
-				onMouseLeave={this.onMouseLeave}
+				onMouseEnter={(e: any) => { onMouseEnter(e, this.props); }}
+				onMouseLeave={(e: any) => { onMouseLeave(e, this.props); }}
 				onContextMenu={(e: any) => { onContext(e, { ...this.props, details: object }); }}
 			>
 				<div className="inner" style={{ paddingLeft }}>
@@ -93,37 +92,6 @@ const Item = observer(class Item extends React.Component<Props, {}> {
 				</div>
 			</div>
 		);
-	};
-
-	onMouseEnter (e: any) {
-		return;
-
-		const { elementId, id, isSection } = this.props;
-		const { sidebar } = commonStore;
-		const { width } = sidebar;
-
-		if (isSection) {
-			return;
-		};
-
-		window.clearTimeout(this.timeout);
-		this.timeout = window.setTimeout(() => {
-			menuStore.open('previewObject', {
-				element: `#sidebar #${elementId}`,
-				offsetX: width,
-				isSub: true,
-				classNameWrap: 'fromPopup fixed',
-				vertical: I.MenuDirection.Center,
-				data: { rootId: id }
-			});
-		});
-	};
-
-	onMouseLeave (e: any) {
-		return;
-
-		menuStore.close('previewObject');
-		window.clearTimeout(this.timeout);
 	};
 
 	onToggle (e: any) {

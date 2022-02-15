@@ -45,7 +45,8 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 	oy: number = 0;
 	width: number = 0;
 	height: number = 0;
-	timeout: number = 0;
+	timeoutHide: number = 0;
+	timeoutItem: number = 0;
 	refList: any = null;
 	refFooter: any = null;
 	cache: any = {};
@@ -63,6 +64,8 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		this.onClick = this.onClick.bind(this);
 		this.onToggle = this.onToggle.bind(this);
 		this.onContext = this.onContext.bind(this);
+		this.onMouseEnterItem = this.onMouseEnterItem.bind(this);
+		this.onMouseLeaveItem = this.onMouseLeaveItem.bind(this);
 		
 		this.getRowHeight = this.getRowHeight.bind(this)
 	};
@@ -105,6 +108,8 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 						onClick={this.onClick} 
 						onToggle={this.onToggle} 
 						onContext={this.onContext}
+						onMouseEnter={this.onMouseEnterItem}
+						onMouseLeave={this.onMouseLeaveItem}
 					/>
 				</CellMeasurer>
 			);
@@ -185,7 +190,9 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		this._isMounted = false;
 		this.unbind();
 
-		window.clearTimeout(this.timeout);
+		window.clearTimeout(this.timeoutHide);
+		window.clearTimeout(this.timeoutItem);
+
 		C.ObjectSearchUnsubscribe(Object.keys(this.subscriptionIds).map(id => dbStore.getSubId(Constant.subIds.sidebar, id)));
 
 		Util.tooltipHide(true);
@@ -485,7 +492,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 	};
 
 	onMouseEnter (e: any) {
-		window.clearTimeout(this.timeout);
+		window.clearTimeout(this.timeoutHide);
 	};
 
 	onMouseLeave (e: any) {
@@ -500,11 +507,35 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 			return;
 		};
 
-		window.clearTimeout(this.timeout);
-		this.timeout = window.setTimeout(() => {
+		window.clearTimeout(this.timeoutHide);
+		this.timeoutHide = window.setTimeout(() => {
 			const node = $(ReactDOM.findDOMNode(this));
 			node.removeClass('active');
 		}, TIMEOUT);
+	};
+
+	onMouseEnterItem (e: any, item: any) {
+		window.clearTimeout(this.timeoutItem);
+
+		if (item.isSection) {
+			return;
+		};
+
+		this.timeoutItem = window.setTimeout(() => {
+			menuStore.open('previewObject', {
+				element: `#sidebar #${this.getId(item)}`,
+				offsetX: this.width,
+				isSub: true,
+				classNameWrap: 'fromPopup fixed',
+				vertical: I.MenuDirection.Center,
+				data: { rootId: item.id }
+			});
+		}, 100);
+	};
+
+	onMouseLeaveItem (e: any, item: any) {
+		window.clearTimeout(this.timeoutItem);
+		menuStore.close('previewObject');
 	};
 
 	onResizeStart (e: any, dir: I.MenuType) {
