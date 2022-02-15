@@ -16,14 +16,6 @@ class MenuPreviewObject extends React.Component<Props, {}> {
 		);
 	};
 
-	componentWillUnmount () {
-		const { param } = this.props;
-		const { data } = param;
-		const { rootId } = data;
-
-		Action.pageClose(rootId, false);
-	};
-
 };
 
 export default MenuPreviewObject;
