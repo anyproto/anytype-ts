@@ -23,7 +23,6 @@ const Constant = require('json/constant.json');
 const sha1 = require('sha1');
 
 const MAX_DEPTH = 100;
-const LIMIT = 20;
 const HEIGHT = 28;
 const SNAP_THRESHOLD = 30;
 const TIMEOUT = 100;
@@ -220,9 +219,9 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 
 	getSections () {
 		return [
-			{ id: I.TabIndex.Favorite, name: 'Favorites' },
-			{ id: I.TabIndex.Recent, name: 'Recent' },
-			{ id: I.TabIndex.Set, name: 'Sets' },
+			{ id: I.TabIndex.Favorite, name: 'Favorites', limit: 0, },
+			{ id: I.TabIndex.Recent, name: 'Recent', limit: 10, },
+			{ id: I.TabIndex.Set, name: 'Sets', limit: 20, },
 		];
 	};
 
@@ -249,7 +248,6 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		];
 
 		let n = 0;
-		let limit = 0;
 		let sorts: I.Sort[] = [];
 		let sectionFilters: I.Filter[] = [];
 		let cb = () => {
@@ -270,7 +268,6 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 						{ operator: I.FilterOperator.And, relationKey: 'isFavorite', condition: I.FilterCondition.Equal, value: true }
 					];
 					sorts = [];
-					limit = 0;
 					break;
 
 				case I.TabIndex.Recent:
@@ -280,7 +277,6 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 					sorts = [
 						{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
 					];
-					limit = LIMIT;
 					break;
 
 				case I.TabIndex.Set:
@@ -290,12 +286,11 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 					sorts = [
 						{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
 					];
-					limit = LIMIT;
 					break;
 
 			};
 			
-			C.ObjectSearchSubscribe(subId, filters.concat(sectionFilters), sorts, Constant.sidebarRelationKeys, [], 0, limit, true, '', '', true, cb);
+			C.ObjectSearchSubscribe(subId, filters.concat(sectionFilters), sorts, Constant.sidebarRelationKeys, [], 0, section.limit, true, '', '', true, cb);
 		});
 	};
 
