@@ -17,7 +17,7 @@ const Footer = observer(class Item extends React.Component<Props, {}> {
         this.onStore = this.onStore.bind(this);
         this.onAdd = this.onAdd.bind(this);
         this.onSettings = this.onSettings.bind(this);
-        this.onExpand = this.onExpand.bind(this);
+        this.onCollapse = this.onCollapse.bind(this);
 	};
 
 	render () {
@@ -44,7 +44,7 @@ const Footer = observer(class Item extends React.Component<Props, {}> {
                     <Icon className="settings" tooltip="Settings" tooltipY={I.MenuDirection.Top} />
                 </div>
                 {fixed ? (
-                    <div className="item" onClick={this.onExpand}>
+                    <div className="item" onClick={this.onCollapse}>
                         <Icon className="collapse" tooltip="Collapse sidebar" tooltipY={I.MenuDirection.Top} />
                     </div>
                 ) : ''}
@@ -52,20 +52,11 @@ const Footer = observer(class Item extends React.Component<Props, {}> {
 		);
 	};
 
-    onExpand (e: any) {
+    onCollapse (e: any) {
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { sidebar } = commonStore;
-		const fixed = !sidebar.fixed;
-		const update: any = { fixed };
-
-		if (fixed) {
-			update.x = 0;
-			update.y = 0;
-		};
-
-		commonStore.sidebarSet(update);
+		commonStore.sidebarSet({ fixed: false });
 	};
 
     onProfile (e: any) {

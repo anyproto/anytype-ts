@@ -200,7 +200,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 
 	rebind () {
 		this.unbind();
-		$(window).on('resize.sidebar', (e: any) => { this.resize(); });
+		$(window).on('resize.sidebar', (e: any) => { this.onWindowResize(); });
 	};
 
 	unbind () {
@@ -750,25 +750,36 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 
 		const { sidebar } = commonStore;
 		const { width, height, fixed } = sidebar;
-		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
 		const head = node.find('.head');
 		const platform = Util.getPlatform();
-		const ww = win.width();
 
 		let h = 0;
 		if (fixed) {
 			h = platform == I.Platform.Windows ? 30 : Util.sizeHeader() - 20;
 		};
-
 		head.css({ height: h });
+
+		this.setWidth(width);
+		this.setHeight(height);
+	};
+
+	onWindowResize () {
+		if (!this._isMounted) {
+			return;
+		};
+
+		const { sidebar } = commonStore;
+		const { fixed } = sidebar;
+		const win = $(window);
+		const ww = win.width();
 
 		if (fixed && (ww <= 760)) {
 			commonStore.sidebarSet({ fixed: false });
 		};
-
-		this.setWidth(width);
-		this.setHeight(height);
+		if (!fixed && (ww > 760)) {
+			commonStore.sidebarSet({ fixed: commonStore.sidebarOldObj.fixed });
+		};
 	};
 
 	getRowHeight (item: any) {
