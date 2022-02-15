@@ -84,8 +84,6 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 
 		if (fixed) {
 			cn.push('fixed');
-		} else {
-			css.height = height;
 		};
 
 		const rowRenderer = (param: any) => {
@@ -550,7 +548,6 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		const { sidebar } = commonStore;
 		const { snap, width, fixed } = sidebar;
 		const win = $(window);
-		const node = $(ReactDOM.findDOMNode(this));
 
 		if (dir == I.MenuType.Horizontal) {
 			const d = (snap == I.MenuDirection.Right) ? (this.ox - e.pageX + width) : e.pageX - this.ox;
@@ -565,7 +562,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 
 		if (dir == I.MenuType.Vertical) {
 			this.height = this.getHeight(e.pageY - this.oy);
-			node.css({ height: this.height });
+			this.setHeight(this.height);
 		};
 	};
 
@@ -674,17 +671,6 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		return snap;
 	};
 
-	getWidth (w: number) {
-		const size = Constant.size.sidebar.width;
-		return Math.max(size.min, Math.min(size.max, w));
-	};
-
-	getHeight (h: number) {
-		const win = $(window);
-		const size = Constant.size.sidebar.height;
-		return Math.max(size.min, Math.min(win.height() - Util.sizeHeader(), h));
-	};
-
 	checkCoords (x: number, y: number): { x: number, y: number } {
 		const win = $(window);
 
@@ -724,7 +710,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		};
 
 		const { sidebar } = commonStore;
-		const { width, fixed } = sidebar;
+		const { width, height, fixed } = sidebar;
 		const node = $(ReactDOM.findDOMNode(this));
 		const head = node.find('.head');
 		const platform = Util.getPlatform();
@@ -735,7 +721,9 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		};
 
 		head.css({ height: h });
+
 		this.setWidth(width);
+		this.setHeight(height);
 	};
 
 	getRowHeight (item: any) {
@@ -746,10 +734,27 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		return height;
 	};
 
+	getWidth (width: number) {
+		const size = Constant.size.sidebar.width;
+		return Math.max(size.min, Math.min(size.max, width));
+	};
+
 	setWidth (width: number) {
 		const node = $(ReactDOM.findDOMNode(this));
 		node.css({ width });
 		Util.resizeSidebar(this.props.isPopup);
+	};
+
+	getHeight (height: number) {
+		return Math.max(Constant.size.sidebar.height.min, Math.min(commonStore.sidebarMaxHeight(), height));
+	};
+
+	setHeight (height: number) {
+		const { sidebar } = commonStore;
+		const { fixed } = sidebar;
+		const node = $(ReactDOM.findDOMNode(this));
+
+		node.css({ height: (fixed ? '' : this.getHeight(height)) });
 	};
 
 });

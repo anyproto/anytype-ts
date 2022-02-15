@@ -237,7 +237,7 @@ class CommonStore {
 		const offset = isWindows ? 30 : 0;
 		const win = $(window);
 		const wh = win.height() - offset;
-		const height = wh * 0.8;
+		const height = this.sidebarMaxHeight();
 		const y = wh / 2 - height / 2 + offset;
 
 		Storage.setToggle(Constant.subIds.sidebar, 'favorite', true);
@@ -254,7 +254,6 @@ class CommonStore {
 	};
 
 	sidebarSet (v: any) {
-		const win = $(window);
 		const size = Constant.size.sidebar;
 
 		v = Object.assign(this.sidebarObj, v);
@@ -264,10 +263,16 @@ class CommonStore {
 		v.width = Math.max(size.width.min, Math.min(size.width.max, v.width));
 		
 		v.height = Number(v.height) || 0;
-		v.height = Math.max(size.height.min, Math.min(win.height() - Util.sizeHeader(), v.height));
+		v.height = Math.max(size.height.min, Math.min(this.sidebarMaxHeight(), v.height));
 
 		set(this.sidebarObj, v);
 		Storage.set('sidebar', v);
+	};
+
+	sidebarMaxHeight () {
+		const win = $(window);
+		const wh = win.height() - Util.sizeHeader();
+		return wh * 0.8;
 	};
 
 	configSet (config: any, force: boolean) {
