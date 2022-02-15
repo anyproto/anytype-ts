@@ -750,9 +750,11 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 
 		const { sidebar } = commonStore;
 		const { width, height, fixed } = sidebar;
+		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
 		const head = node.find('.head');
 		const platform = Util.getPlatform();
+		const ww = win.width();
 
 		let h = 0;
 		if (fixed) {
@@ -760,6 +762,10 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		};
 
 		head.css({ height: h });
+
+		if (fixed && (ww <= 760)) {
+			commonStore.sidebarSet({ fixed: false });
+		};
 
 		this.setWidth(width);
 		this.setHeight(height);

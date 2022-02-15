@@ -17,7 +17,7 @@
 }
 .sidebar.fixed { 
     height: 100%; top: 0px; transform: translate3d(0px,0px,0px); border-radius: 0px; 
-    box-shadow: 0px 0px; border-right: 1px solid $colorLightGrey;
+    box-shadow: 0px 0px; border-right: 1px solid $colorLightGrey; transition: none;
 }
 .sidebar.active { transform: translate3d(0px,0px,0px); }
 
