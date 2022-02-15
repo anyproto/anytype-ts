@@ -232,7 +232,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		const { param } = this.props;
 		const { data } = param;
 		const { type, dataMapper, dataSort, skipIds } = data;
-		const filter = Util.filterFix(this.state.filter);
+		const { filter } = this.state;
 		const { config } = commonStore;
 		
 		const filters: any[] = [
