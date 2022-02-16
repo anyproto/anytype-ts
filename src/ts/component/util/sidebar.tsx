@@ -524,9 +524,11 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 	};
 
 	onMouseEnterItem (e: any, item: any) {
+		const { config } = commonStore;
+
 		window.clearTimeout(this.timeoutItem);
 
-		if (item.isSection) {
+		if (item.isSection || !config.experimental) {
 			return;
 		};
 
@@ -543,7 +545,14 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 	};
 
 	onMouseLeaveItem (e: any, item: any) {
+		const { config } = commonStore;
+
 		window.clearTimeout(this.timeoutItem);
+
+		if (!config.experimental) {
+			return;
+		};
+
 		menuStore.close('previewObject');
 	};
 
