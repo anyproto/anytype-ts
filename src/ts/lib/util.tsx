@@ -979,8 +979,10 @@ class Util {
 			return;
 		};
 
-		header.addClass('withSidebar');
-		footer.addClass('withSidebar');
+		if (fixed) {
+			header.addClass('withSidebar');
+			footer.addClass('withSidebar');
+		};
 		css.width = header.outerWidth() - width - 1;
 		
 		if (snap !== null) {
