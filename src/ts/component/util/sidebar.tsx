@@ -783,12 +783,13 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		const { fixed } = sidebar;
 		const win = $(window);
 		const ww = win.width();
+		const old = commonStore.sidebarOldObj;
 
 		if (fixed && (ww <= UNFIX_THRESHOLD)) {
 			commonStore.sidebarSet({ fixed: false });
 		};
-		if (!fixed && (ww > UNFIX_THRESHOLD)) {
-			commonStore.sidebarSet({ fixed: commonStore.sidebarOldObj.fixed });
+		if (!fixed && old.fixed && (ww > UNFIX_THRESHOLD)) {
+			commonStore.sidebarSet({ fixed: true });
 		};
 	};
 
