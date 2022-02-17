@@ -101,11 +101,10 @@ class Storage {
 			'blockCnt',
 			'gateway',
 			'dataPath',
+			'sidebar',
 		];
 
-		for (let key of keys) {
-			this.delete(key);
-		};
+		keys.forEach(key => this.delete(key));
 	};
 	
 };
