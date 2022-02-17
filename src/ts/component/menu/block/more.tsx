@@ -178,7 +178,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const allowedTemplate = (object.type != Constant.typeId.note) && (object.id != profile);
 		const allowedFav = !object.isArchived;
 		const allowedExport = config.experimental;
-		const allowedLock = config.experimental;
+		const allowedLock = !object.isReadonly;
 
 		if (!allowedArchive)	 archive = null;
 		if (!allowedDelete)		 pageRemove = null;
