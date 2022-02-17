@@ -1120,7 +1120,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		};
 
 		const menus = menuStore.list;
-		const menuCheck = (menus.length > 1) || ((menus.length == 1) && (menus[0].id != 'blockContext'));
+		const exclude = [ 'blockContext', 'onboarding' ];
+		const menuCheck = (menus.length > 1) || ((menus.length == 1) && (!exclude.includes(menus[0].id)));
 		
 		if (menuCheck) {
 			return;
