@@ -1,9 +1,8 @@
 import * as React from 'react';
 import { Icon } from 'ts/component';
 
-const Constant = require('json/constant.json');
-
 interface Props {
+	id?: string;
 	text?: string;
 	className?: string;
 	color?: string;
@@ -14,7 +13,7 @@ interface Props {
 class Tag extends React.Component<Props, {}> {
 
 	render () {
-		let { text, color, className, canEdit, onRemove } = this.props;
+		let { id, text, color, className, canEdit, onRemove } = this.props;
 		let cn = [ 'tagItem', 'tagColor', 'tagColor-' + (color || 'default') ];
 		
 		if (className) {
@@ -25,7 +24,7 @@ class Tag extends React.Component<Props, {}> {
 		};
 		
 		return (
-			<span contentEditable={false} className={cn.join(' ')}>
+			<span data-id={id} contentEditable={false} className={cn.join(' ')}>
 				<span className="inner">{text}</span>
 				{canEdit ? <Icon className="remove" onMouseDown={(e: any) => { onRemove(e, text); }} /> : ''}
 			</span>

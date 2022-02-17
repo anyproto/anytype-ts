@@ -102,6 +102,10 @@
 	.cellContent { cursor: text !important; }
 }
 
+.cellContent.canEdit.c-select {
+	#entry { -webkit-user-modify: read-write-plaintext-only; }
+}
+
 .cellContent.canEdit.c-shortText, 
 .cellContent.canEdit.c-longText, 
 .cellContent.canEdit.c-number, 
