@@ -50,6 +50,14 @@ const HeaderMainHistory = observer(class HeaderMainHistory extends React.Compone
 		);
 	};
 
+	componentDidMount () {
+		Util.resizeSidebar();
+	};
+
+	componentDidUpdate () {
+		Util.resizeSidebar();	
+	};
+
 	onBack (e: any) {
 		const { rootId } = this.props;
 		const object = detailStore.get(rootId, rootId, []);

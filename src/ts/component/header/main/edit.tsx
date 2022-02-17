@@ -94,6 +94,8 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<Pro
 
 		window.clearTimeout(this.timeout);
 		this.timeout = window.setTimeout(() => { node.removeClass('show'); }, Constant.delay.header);
+		
+		Util.resizeSidebar();
 	};
 
 	onHome (e: any) {

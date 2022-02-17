@@ -30,6 +30,14 @@ const HeaderMainIndex = observer(class HeaderMainIndex extends React.Component<P
 		);
 	};
 
+	componentDidMount () {
+		Util.resizeSidebar();
+	};
+
+	componentDidUpdate () {
+		Util.resizeSidebar();	
+	};
+
 	onSearch (e: any) {
 		const { root } = blockStore;
 

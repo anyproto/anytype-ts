@@ -69,19 +69,11 @@ const HeaderMainNavigation = observer(class HeaderMainNavigation extends React.C
 	};
 
 	componentDidMount () {
-		this.init();
+		Util.resizeSidebar();
 	};
 
 	componentDidUpdate () {
-		this.init();
-	};
-
-	init () {
-		const node = $(ReactDOM.findDOMNode(this));
-		node.addClass('show');
-
-		window.clearTimeout(this.timeout);
-		this.timeout = window.setTimeout(() => { node.removeClass('show'); }, Constant.delay.header);
+		Util.resizeSidebar();	
 	};
 
 	onHome (e: any) {

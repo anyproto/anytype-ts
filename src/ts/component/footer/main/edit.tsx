@@ -40,6 +40,14 @@ const FooterMainEdit = observer(class FooterMainEdit extends React.Component<Pro
 		);
 	};
 
+	componentDidMount () {
+		Util.resizeSidebar();
+	};
+
+	componentDidUpdate () {
+		Util.resizeSidebar();	
+	};
+
 	onSidebarExpand () {
 		const { sidebar } = commonStore;
 		const { fixed } = sidebar;

@@ -192,7 +192,7 @@
 		"blockMenu": 48,
 		"image": 2048,
 		"header": 38,
-		"lastBlock": 100,
+		"lastBlock": 60,
 		"cover": 1920,
 		"sidebar": { 
 			"height": { "min": 400 },
