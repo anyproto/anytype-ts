@@ -1794,7 +1794,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		};
 
 		this.onResize(root?.fields?.width);
-		Util.resizeSidebar();
 	};
 
 	getContainer () {

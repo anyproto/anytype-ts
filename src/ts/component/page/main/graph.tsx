@@ -90,7 +90,6 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 
 	componentDidMount () {
 		this.resize();
-		this.rebind();
 		this.load();
 
 		crumbs.addPage(this.getRootId());
@@ -98,19 +97,6 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 
 	componentDidUpdate () {
 		this.resize();
-	};
-
-	componentWillUnmount () {
-		this.unbind();
-	};
-
-	rebind () {
-		this.unbind();
-		$(window).on('resize.graph', () => { this.resize(); });
-	};
-
-	unbind () {
-		$(window).unbind('resize.graph');
 	};
 
 	load () {
@@ -161,10 +147,15 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 		const obj = $(this.props.isPopup ? '#popupPage #innerWrap' : '#page.isFull');
 		const wrapper = obj.find('.wrapper');
 		const hh = Util.sizeHeader();
+		const platform = Util.getPlatform();
 		const isPopup = this.props.isPopup && !obj.hasClass('full');
 		
-		let wh = isPopup ? obj.height() - hh : win.height();
+		let wh = isPopup ? obj.height() - hh : win.height() - hh;
 		let sh = isPopup ? obj.height() : win.height();
+
+		if (platform == I.Platform.Windows) {
+			wh += 30;
+		};
 
 		wrapper.css({ height: wh });
 		wrapper.find('.side').css({ height: sh });
@@ -180,8 +171,6 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 		if (this.refPanel) {
 			this.refPanel.resize();
 		};
-
-		Util.resizeSidebar();
 	};
 
 	togglePanel (v: boolean) {

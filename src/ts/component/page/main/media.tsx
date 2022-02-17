@@ -282,8 +282,6 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<Props
 		if (empty.length) {
 			empty.css({ lineHeight: (wh - 60) + 'px' });
 		};
-
-		Util.resizeSidebar();
 	};
 
 });

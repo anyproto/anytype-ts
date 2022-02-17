@@ -30,14 +30,6 @@ const HeaderMainIndex = observer(class HeaderMainIndex extends React.Component<P
 		);
 	};
 
-	componentDidMount () {
-		this.resize();
-	};
-
-	componentDidUpdate () {
-		this.resize();
-	};
-
 	onSearch (e: any) {
 		const { root } = blockStore;
 
@@ -51,10 +43,6 @@ const HeaderMainIndex = observer(class HeaderMainIndex extends React.Component<P
 
 	onSettings (e: any) {
 		popupStore.open('settings', {});
-	};
-
-	resize () {
-		Util.resizeSidebar();
 	};
 
 });

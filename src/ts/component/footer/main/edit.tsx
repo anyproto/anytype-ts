@@ -16,7 +16,6 @@ const FooterMainEdit = observer(class FooterMainEdit extends React.Component<Pro
 		super(props);
 		
 		this.onHelp = this.onHelp.bind(this);
-		this.onSidebarShow = this.onSidebarShow.bind(this);
 		this.onSidebarExpand = this.onSidebarExpand.bind(this);
 	};
 
@@ -33,25 +32,12 @@ const FooterMainEdit = observer(class FooterMainEdit extends React.Component<Pro
 		return (
 			<div id="footer" className="footer footerMainEdit">
 				{!fixed ? (
-					<React.Fragment>
-						<Icon id="button-expand" className="big expand" tooltip="Show sidebar" tooltipY={I.MenuDirection.Top} onClick={this.onSidebarExpand} />
-					</React.Fragment>
+					<Icon id="button-expand" className="big expand" tooltip="Show sidebar" tooltipY={I.MenuDirection.Top} onClick={this.onSidebarExpand} />
 				) : ''}
 
 				<Icon id="button-help" className="big help" tooltip="Help" tooltipY={I.MenuDirection.Top} onClick={this.onHelp} />
 			</div>
 		);
-	};
-
-	componentDidMount () {
-		this.resize();
-	};
-
-	componentDidUpdate () {
-		this.resize();
-	};
-
-	onSidebarShow () {
 	};
 
 	onSidebarExpand () {
@@ -68,10 +54,6 @@ const FooterMainEdit = observer(class FooterMainEdit extends React.Component<Pro
 			vertical: I.MenuDirection.Top,
 			horizontal: I.MenuDirection.Right,
 		});
-	};
-
-	resize () {
-		Util.resizeSidebar();
 	};
 	
 });

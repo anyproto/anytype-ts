@@ -82,8 +82,6 @@ const HeaderMainGraph = observer(class HeaderMainEdit extends React.Component<Pr
 
 		window.clearTimeout(this.timeout);
 		this.timeout = window.setTimeout(() => { node.removeClass('show'); }, Constant.delay.header);
-
-		this.resize();
 	};
 
 	onHome (e: any) {
@@ -141,10 +139,6 @@ const HeaderMainGraph = observer(class HeaderMainEdit extends React.Component<Pr
 	getContainer () {
 		const { isPopup } = this.props;
 		return (isPopup ? '.popup' : '') + ' .header';
-	};
-
-	resize () {
-		Util.resizeSidebar();
 	};
 	
 });
