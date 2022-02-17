@@ -26,6 +26,7 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 
 	render () {
 		const { rootId, block, relation, getRecord, index, placeholder, elementMapper, arrayLimit } = this.props;
+		const { isEditing } = this.state;
 		const record = getRecord(index);
 		const canClear = relation.format == I.RelationType.Status;
 		const cn = [ 'wrap' ];
@@ -49,21 +50,37 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 			value = value.slice(0, arrayLimit);
 		};
 
-		return (
-			<div className={cn.join(' ')}>
-				{value.length ? (
+		let content = null;
+		if (isEditing) {
+			content = (
+				<div
+					id="value"
+					contentEditable={true}
+					suppressContentEditableWarning={true}
+					onDragStart={(e: any) => { e.preventDefault(); }}
+				/>
+			);
+		} else {
+			if (!value.length) {
+				content = <div className="empty">{placeholder || translate(`placeholderCell${relation.format}`)}</div>;
+			} else {
+				content = (
 					<React.Fragment>
 						<span className="over">
-							{value.map((item: any, i: number) => {
-								return <Tag {...item} key={item.id} className={DataUtil.tagClass(relation.format)} />;
-							})}
+							{value.map((item: any, i: number) => (
+								<Tag {...item} key={item.id} className={DataUtil.tagClass(relation.format)} />
+							))}
 						</span>
 						{arrayLimit && (length > arrayLimit) ? <div className="more">+{length - arrayLimit}</div> : ''}
 						{canClear ? <Icon className="clear" onMouseDown={this.onClear} /> : ''}
 					</React.Fragment>
-				) : (
-					<div className="empty">{placeholder || translate(`placeholderCell${relation.format}`)}</div>
-				)}
+				);
+			};
+		};
+
+		return (
+			<div className={cn.join(' ')}>
+				{content}
 			</div>
 		);
 	};
@@ -79,10 +96,12 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 	componentDidUpdate () {
 		const { isEditing } = this.state;
 		const { id } = this.props;
-		const cell = $('#' + id);
+		const cell = $(`#${id}`);
+		const value = cell.find('#value');
 
 		if (isEditing) {
 			cell.addClass('isEditing');
+			value.focus();
 		} else {
 			cell.removeClass('isEditing');
 		};
