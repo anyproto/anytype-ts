@@ -69,7 +69,7 @@
 				.name { overflow: hidden; @include clamp2; }
 			}
 			.cellContent.c-object, .cellContent.c-file {
-				.element { max-width: 40%; }
+				.columns { column-count: 3; }
 			}
 		}
 	}
