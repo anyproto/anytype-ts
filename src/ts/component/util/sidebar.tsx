@@ -787,12 +787,18 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		const win = $(window);
 		const ww = win.width();
 		const old = commonStore.sidebarOldObj;
+		const btn = $('#footer #button-expand');
 
-		if (fixed && (ww <= UNFIX_THRESHOLD)) {
-			commonStore.sidebarSet({ fixed: false });
-		};
-		if (!fixed && old.fixed && (ww > UNFIX_THRESHOLD)) {
-			commonStore.sidebarSet({ fixed: true });
+		if (ww > UNFIX_THRESHOLD) {
+			if (!fixed && old.fixed) {
+				commonStore.sidebarSet({ fixed: true });
+			};
+			btn.show();
+		} else {
+			if (fixed) {
+				commonStore.sidebarSet({ fixed: false });
+			};
+			btn.hide();
 		};
 	};
 
