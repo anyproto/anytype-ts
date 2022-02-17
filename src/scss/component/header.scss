@@ -7,7 +7,7 @@
 	
 	.icon.logo {
 		width: 60px !important; height: 13px !important; position: absolute; left: 50%; margin-left: -30px; top: 13px; background: url('~img/logo/white.svg') no-repeat;
-		background-position: center center; background-size: 100% 100% !important;
+		background-position: center center; background-size: 100% 100% !important; transition: none;
 	}
 
 	.path { white-space: nowrap; }
