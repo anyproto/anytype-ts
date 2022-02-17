@@ -152,9 +152,11 @@ const BlockLink = observer(class BlockLink extends React.Component<Props, {}> {
 		const object = detailStore.get(rootId, targetBlockId, []);
 		const { _empty_ , isArchived } = object;
 
-		if (!_empty_ && !isArchived && (targetBlockId != rootId)) {
-			DataUtil.objectOpenEvent(e, object);
+		if (e.shiftKey || e.ctrlKey || e.metaKey || _empty_ || isArchived || (targetBlockId == rootId)) {
+			return;
 		};
+
+		DataUtil.objectOpenPopup(object);
 	};
 	
 	onSelect (icon: string) {

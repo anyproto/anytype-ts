@@ -340,12 +340,10 @@ class DataUtil {
 	};
 
 	objectOpenEvent (e: any, object: any, popupParam?: any) {
-		const { root } = blockStore;
-
 		e.preventDefault();
 		e.stopPropagation();
 
-		if ((e.shiftKey || e.ctrlKey || e.metaKey || popupStore.isOpen('page'))) {
+		if ((e.shiftKey || popupStore.isOpen('page'))) {
 			this.objectOpenPopup(object, popupParam);
 		} else {
 			this.objectOpen(object);
