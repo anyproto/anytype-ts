@@ -355,6 +355,8 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 			if (this.refChild && this.refChild.resize) {
 				this.refChild.resize();			
 			};
+
+			Util.resizeSidebar();
 		});
 	};
 	
