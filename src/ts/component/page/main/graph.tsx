@@ -181,7 +181,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 			this.refPanel.resize();
 		};
 
-		Util.resizeSidebar(isPopup);
+		Util.resizeSidebar();
 	};
 
 	togglePanel (v: boolean) {

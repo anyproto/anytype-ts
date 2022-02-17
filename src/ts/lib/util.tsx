@@ -953,7 +953,7 @@ class Util {
 		return electron.ipcRenderer || window.Renderer;
 	};
 	
-	resizeSidebar (isPopup: boolean) {
+	resizeSidebar () {
 		const { sidebar } = commonStore;
 		const { fixed, snap } = sidebar;
 
@@ -975,7 +975,7 @@ class Util {
 		footer.css(css).removeClass('withSidebar snapLeft snapRight');
 		dummy.css(css);
 
-		if (isPopup || !obj.length) {
+		if (!obj.length) {
 			return;
 		};
 

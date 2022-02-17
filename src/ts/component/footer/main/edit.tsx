@@ -71,7 +71,7 @@ const FooterMainEdit = observer(class FooterMainEdit extends React.Component<Pro
 	};
 
 	resize () {
-		Util.resizeSidebar(this.props.isPopup);
+		Util.resizeSidebar();
 	};
 	
 });

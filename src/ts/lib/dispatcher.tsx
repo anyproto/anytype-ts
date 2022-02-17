@@ -726,6 +726,10 @@ class Dispatcher {
 			newIndex = records.findIndex((it: any) => { return it.id == afterId; });
 		};
 
+		if (oldIndex < 0) {
+			records.push({ id });
+		};
+
 		if (oldIndex !== newIndex) {
 			dbStore.recordsSet(sid, '', arrayMove(records, oldIndex, newIndex));
 		};

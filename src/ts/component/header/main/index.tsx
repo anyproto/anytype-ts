@@ -54,7 +54,7 @@ const HeaderMainIndex = observer(class HeaderMainIndex extends React.Component<P
 	};
 
 	resize () {
-		Util.resizeSidebar(this.props.isPopup);
+		Util.resizeSidebar();
 	};
 
 });

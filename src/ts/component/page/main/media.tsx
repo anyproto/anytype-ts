@@ -283,7 +283,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<Props
 			empty.css({ lineHeight: (wh - 60) + 'px' });
 		};
 
-		Util.resizeSidebar(isPopup);
+		Util.resizeSidebar();
 	};
 
 });

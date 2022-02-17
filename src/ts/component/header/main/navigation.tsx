@@ -144,7 +144,7 @@ const HeaderMainNavigation = observer(class HeaderMainNavigation extends React.C
 	};
 
 	resize () {
-		Util.resizeSidebar(this.props.isPopup);
+		Util.resizeSidebar();
 	};
 	
 });

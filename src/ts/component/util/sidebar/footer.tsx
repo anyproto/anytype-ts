@@ -32,17 +32,19 @@ const Footer = observer(class Item extends React.Component<Props, {}> {
                     	<IconObject object={profile} size={26} tooltip="Your profile" tooltipY={I.MenuDirection.Top} />
 					</div>
                 </div>
+				
                 <div className="item" onClick={this.onStore}>
                     <Icon className="store" tooltip="Library" tooltipY={I.MenuDirection.Top} />
                 </div>
-                {this.canAdd() ? (
-                    <div className="item" onClick={this.onAdd}>
-                        <Icon className="add" tooltip="Create new object" tooltipY={I.MenuDirection.Top} />
-                    </div>
-                ) : ''}
+                
+            	<div className="item" onClick={this.onAdd}>
+                    <Icon className="add" tooltip="Create new object" tooltipY={I.MenuDirection.Top} />
+			    </div>
+                
                 <div className="item" onClick={this.onSettings}>
                     <Icon className="settings" tooltip="Settings" tooltipY={I.MenuDirection.Top} />
                 </div>
+
                 {fixed ? (
                     <div className="item" onClick={this.onCollapse}>
                         <Icon className="collapse" tooltip="Collapse sidebar" tooltipY={I.MenuDirection.Top} />
@@ -76,18 +78,6 @@ const Footer = observer(class Item extends React.Component<Props, {}> {
 		DataUtil.pageCreate('', '', { isDraft: true }, I.BlockPosition.Bottom, '', {}, (message: any) => {
 			DataUtil.objectOpenPopup({ id: message.targetId });
 		});
-	};
-
-	canAdd () {
-		const rootId = keyboard.getRootId();
-		const root = blockStore.getLeaf(rootId, rootId);
-
-		if (!root) {
-			return false;
-		};
-
-		const allowed = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Block ]);
-		return allowed && !root.isLocked() && !root.isObjectRelation() && !root.isObjectType() && !root.isObjectSet() && !root.isObjectFileKind();
 	};
 	
 });
