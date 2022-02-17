@@ -722,14 +722,17 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 
 	checkCoords (x: number, y: number): { x: number, y: number } {
 		const win = $(window);
+		const wh = win.height();
+		const ww = win.width();
+		const hh = Util.sizeHeader();
 
 		x = Number(x);
 		x = Math.max(0, x);
-		x = Math.min(win.width() - this.width, x);
+		x = Math.min(ww - this.width, x);
 
 		y = Number(y);
-		y = Math.max(Util.sizeHeader(), y);
-		y = Math.min(win.height() - this.height, y);
+		y = Math.max((wh - hh) * 0.1, y);
+		y = Math.min(hh + (wh - hh) * 0.9 - this.height, y);
 
 		return { x, y };
 	};
@@ -813,7 +816,8 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 	};
 
 	getHeight (height: number) {
-		return Math.max(Constant.size.sidebar.height.min, Math.min(commonStore.sidebarMaxHeight(), height));
+		const size = Constant.size.sidebar.height;
+		return Math.max(size.min, Math.min(commonStore.sidebarMaxHeight(), height));
 	};
 
 	setHeight (height: number) {
