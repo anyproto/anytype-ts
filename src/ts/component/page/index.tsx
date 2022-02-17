@@ -82,7 +82,7 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 		const { page, action } = match.params || {};
 		const path = [ page, action ].join('/');
 		const showNotice = !Boolean(Storage.get('firstRun'));
-		const showSidebar = config.experimental && (page == 'main') && (action != 'index');
+		const showSidebar = (page == 'main') && (action != 'index');
 
 		if (showNotice) {
 			Components['/'] = PageAuthNotice;
