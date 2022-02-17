@@ -20,7 +20,7 @@ class MenuStore {
             close: action,
             closeAll: action
         });
-    }
+    };
 
     get list(): I.Menu[] {
 		return this.menuList;

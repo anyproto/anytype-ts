@@ -3,11 +3,12 @@ import { Tag, Icon } from 'ts/component';
 import { I, Relation, DataUtil, translate } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { menuStore } from 'ts/store';
+import { getRange, setRange } from 'selection-ranges';
 
-interface Props extends I.Cell {}
+interface Props extends I.Cell {};
 interface State { 
 	isEditing: boolean; 
-}
+};
 
 const $ = require('jquery');
 
@@ -58,7 +59,12 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 					contentEditable={true}
 					suppressContentEditableWarning={true}
 					onDragStart={(e: any) => { e.preventDefault(); }}
-				/>
+				>
+					{value.map((item: any, i: number) => (
+						<Tag {...item} key={item.id} className={DataUtil.tagClass(relation.format)} />
+					))}
+					<span id="entry"></span>
+				</div>
 			);
 		} else {
 			if (!value.length) {
@@ -97,11 +103,15 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 		const { isEditing } = this.state;
 		const { id } = this.props;
 		const cell = $(`#${id}`);
-		const value = cell.find('#value');
 
 		if (isEditing) {
 			cell.addClass('isEditing');
+
+			const value = cell.find('#value');
+			const entry = value.find('#entry');
+
 			value.focus();
+			setRange(entry.get(0), { start: 0, end: 0 });
 		} else {
 			cell.removeClass('isEditing');
 		};
@@ -128,6 +138,13 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 				menuStore.updateData('dataviewOptionList', { value: [] });
 			});
 		};
+	};
+
+	getValue () {
+		const { id } = this.props;
+		const cell = $(`#${id}`);
+		const value = cell.find('#value');
+		return value.get(0).innerText;
 	};
 
 });
