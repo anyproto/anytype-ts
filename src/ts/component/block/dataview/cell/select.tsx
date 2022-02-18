@@ -4,6 +4,7 @@ import { I, Relation, DataUtil, translate, keyboard, Util } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { menuStore } from 'ts/store';
 import { getRange, setRange } from 'selection-ranges';
+import arrayMove from 'array-move';
 
 interface Props extends I.Cell {
 	optionCommand?: (code: string, rootId: string, blockId: string, relationKey: string, recordId: string, option: any, callBack?: (message: any) => void) => void;
@@ -20,6 +21,11 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 	state = {
 		isEditing: false,
 	};
+	ox: number = 0;
+	oy: number = 0;
+	cache: any = {};
+	insertIdx: number = 0;
+	insertId: string = '';
 
 	constructor (props: any) {
 		super(props);
@@ -58,13 +64,22 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 				<div id="value" onClick={this.onFocus}>
 					<span id="list">
 						{value.map((item: any, i: number) => (
-							<Tag 
-								key={item.id}
-								{...item} 
-								canEdit={true} 
-								className={DataUtil.tagClass(relation.format)}
-								onRemove={(e: any, id: string) => { this.onValueRemove(id); }}
-							/>
+							<span 
+								key={i}
+								id={`item-${item.id}`}
+								data-id={item.id}
+								className="tagWrap"
+								onDragStart={(e: any) => { this.onDragStart(e, item); }}
+								draggable={true}
+							>
+								<Tag 
+									key={item.id}
+									{...item} 
+									canEdit={true} 
+									className={DataUtil.tagClass(relation.format)}
+									onRemove={(e: any, id: string) => { this.onValueRemove(id); }}
+								/>
+							</span>
 						))}
 					</span>
 					
@@ -224,6 +239,117 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 		e.stopPropagation();
 
 		this.setValue([]);
+	};
+
+	onDragStart (e: any, item: any) {
+		e.preventDefault();
+		e.stopPropagation();
+
+		const { id } = this.props;
+		const win = $(window);
+		const cell = $(`#${id}`);
+		const list = cell.find('#list');
+		const items = list.find('.tagWrap');
+		const element = list.find(`#item-${item.id}`);
+		const clone = element.clone();
+		const offset = list.offset();
+
+		items.each((i: number, el: any) => {
+			el = $(el);
+			if (el.hasClass('isClone')) {
+				return;
+			};
+
+			const p = el.position();
+
+			this.cache[el.data('id')] = {
+				x: p.left,
+				y: p.top,
+				width: el.width(),
+				height: el.height(),
+			};
+		});
+
+		this.ox = offset.left;
+		this.oy = offset.top;
+
+		list.append(clone);
+		clone.addClass('isClone');
+		element.addClass('isDragging');
+
+		win.off('mousemove.dragTag mouseup.dragTag');
+		win.on('mousemove.dragTag', (e: any) => { this.onDragMove(e, item); });
+		win.on('mouseup.dragTag', (e: any) => { this.onDragEnd(e, item); });
+	};
+
+	onDragMove (e: any, item: any) {
+		const { id } = this.props;
+		const cell = $(`#${id}`);
+		const list = cell.find('#list');
+		const items = list.find('.tagWrap');
+		const clone = list.find('.tagWrap.isClone');
+
+		let width = clone.width();
+		let height = clone.height();
+		let x = e.pageX - this.ox - width / 2;
+		let y = e.pageY - this.oy - height / 2;
+
+		list.find('.tagWrap.isOver').removeClass('isOver');
+
+		this.insertId = '';
+		this.insertIdx = 0;
+
+		for (let i = 0; i < items.length; ++i) {
+			const el = $(items.get(i));
+			const id = el.data('id');
+			const rect = this.cache[id];
+
+			if (!rect) {
+				continue;
+			};
+
+			if (Util.rectsCollide({ x: x + width / 2, y, width: 2, height }, rect)) {
+				this.insertId = id;
+
+				let c = [ 'isOver' ];
+				if (x + width / 2 <= rect.x + rect.width / 2) {
+					c.push('left');
+					this.insertIdx = i;
+				} else {
+					c.push('right');
+					this.insertIdx = i + 1;
+				};
+
+				el.addClass(c.join(' '));
+				break;
+			};
+		};
+
+		clone.css({ transform: `translate3d(${x}px,${y}px,0px)` });
+	};
+
+	onDragEnd (e: any, item: any) {
+		const { id } = this.props;
+		const cell = $(`#${id}`);
+		const list = cell.find('#list');
+
+		if (this.insertId) {
+			let value = this.getItems().map((it: any) => { return it.id });
+			let oldIndex = value.findIndex(it => it == this.insertId);
+			
+			value = arrayMove(value, oldIndex, this.insertIdx);
+			this.setValue(value);
+		};
+
+		this.cache = {};
+		this.insertId = '';
+		this.insertIdx = 0;
+
+		list.find('.tagWrap.isClone').remove();
+		list.find('.tagWrap.isDragging').removeClass('isDragging');
+		list.find('.tagWrap.isOver').removeClass('isOver');
+
+		$(window).off('mousemove.dragTag mouseup.dragTag');
 	};
 
 	getItems (): any[] {
