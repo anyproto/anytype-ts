@@ -79,7 +79,9 @@
 				}
 			}
 			.cell.isEditing.c-select { 
-				.cellContent { padding-bottom: 8px; }
+				.cellContent { padding-bottom: 8px; height: auto !important; }
+				.tagItem { margin-bottom: 6px; }
+				.wrap { overflow: visible; white-space: normal; }
 			}
 			.cell.isEditing.c-object { 
 				.cellContent { padding-bottom: 12px; }

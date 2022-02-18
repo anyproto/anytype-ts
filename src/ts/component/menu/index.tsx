@@ -258,10 +258,9 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 		this.setClass();
 		this.position();
 		this.animate();
-		this.unbind();
+		this.rebind();
 		this.setActive();
 		
-		const win = $(window);
 		const obj = $(`#${this.getId()}`);
 		const el = this.getElement();
 
@@ -272,8 +271,6 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 		if (param.height) {
 			obj.css({ height: param.height });
 		};
-
-		win.on('resize.' + this.getId(), () => { this.position(); });
 
 		if (onOpen) {
 			onOpen(this);
@@ -345,6 +342,11 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 
 		node.attr({ class: cn.join(' ') });
 	};
+
+	rebind () {
+		this.unbind();
+		$(window).on('resize.' + this.getId(), () => { this.position(); });
+	};
 	
 	unbind () {
 		$(window).unbind('resize.' + this.getId());
@@ -381,7 +383,6 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 	position () {
 		const { id, param } = this.props;
 		const { element, recalcRect, type, vertical, horizontal, fixedX, fixedY, isSub, noFlipX, noFlipY, withArrow } = param;
-		const platform = Util.getPlatform();
 
 		raf(() => {
 			if (!this._isMounted) {

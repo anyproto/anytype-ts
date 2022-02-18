@@ -6,11 +6,12 @@
 }
 .tagItem {
 	.inner { display: inline-block; width: 100%; @include text-overflow-nw;  vertical-align: top; }
-	.icon.remove { 
-		width: 10px; height: 10px; position: absolute; right: 4px; top: 4px; background-image: url('~img/icon/dataview/tagRemove0.svg') !important; 
-		cursor: pointer;
+	.icon.remove { width: 18px; height: 18px; position: absolute; right: 0px; top: 0px; cursor: pointer; }
+	.icon.remove:hover { opacity: 0.8; }
+
+	.icon.remove {
+		img { width: 10px; height: 10px; position: absolute; top: 50%; left: 50%; margin: -5px 0px 0px -5px; }
 	}
-	.icon.remove:hover { background-image: url('~img/icon/dataview/tagRemove1.svg') !important; }
 }
 .tagItem.canEdit { padding-right: 18px; }
 .tagItem.isStatus { padding: 0px; @include text-common; line-height: 20px; box-shadow: 0px 0px !important; }

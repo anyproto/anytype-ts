@@ -26,6 +26,7 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 
 		this.onClear = this.onClear.bind(this);
 		this.onKeyDown = this.onKeyDown.bind(this);
+		this.onKeyUp = this.onKeyUp.bind(this);
 	};
 
 	render () {
@@ -58,6 +59,7 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 					contentEditable={true}
 					suppressContentEditableWarning={true}
 					onKeyDown={this.onKeyDown}
+					onKeyUp={this.onKeyUp}
 					onDragStart={(e: any) => { e.preventDefault(); }}
 				>
 					{value.map((item: any, i: number) => (
@@ -65,7 +67,8 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 							{...item} 
 							key={item.id} 
 							canEdit={true} 
-							className={DataUtil.tagClass(relation.format)} 
+							className={DataUtil.tagClass(relation.format)}
+							onRemove={(e: any, id: string) => { this.onValueRemove(id); }}
 						/>
 					))}
 					
@@ -115,12 +118,19 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 		const { isEditing } = this.state;
 		const { id } = this.props;
 		const cell = $(`#${id}`);
+		const win = $(window);
 
 		if (isEditing) {
 			cell.addClass('isEditing');
 
 			const entry = cell.find('#entry');
 			setRange(entry.get(0), { start: 0, end: 0 });
+
+			window.setTimeout(() => {
+				win.trigger('resize.menuDataviewOptionValues');
+				win.trigger('resize.menuDataviewOptionList');
+			}, 50);
+
 		} else {
 			cell.removeClass('isEditing');
 		};
@@ -139,6 +149,7 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 		const { id } = this.props;
 		const cell = $(`#${id}`);
 		const entry = cell.find('#entry');
+		const range = getRange(entry.get(0));
 
 		keyboard.shortcut('enter', e, (pressed: string) => {
 			e.preventDefault();
@@ -150,7 +161,27 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 			} else {
 				this.setValue(value.existing);
 			};
-		});
+
+			entry.text(' ');
+		});	
+		
+		if (!range.start && !range.end) {
+			keyboard.shortcut('backspace', e, (pressed: string) => {
+				e.preventDefault();
+				e.stopPropagation();
+
+				const value = this.getValue();
+				value.existing.pop();
+				this.setValue(value.existing);
+			});
+		};
+	};
+
+	onKeyUp (e: any) {
+		const win = $(window);
+
+		win.trigger('resize.menuDataviewOptionValues');
+		win.trigger('resize.menuDataviewOptionList');
 	};
 
 	onValueAdd (id: string) {
@@ -159,31 +190,32 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 		this.setValue(value);
 	};
 
+	onValueRemove (id: string) {
+		let value = this.getItems().map((it: any) => { return it.id });
+		value = value.filter((it: string) => { return it != id; });
+		this.setValue(value);
+	};
+
 	onOptionAdd (text: string) {
 		if (!text) {
 			return;
 		};
 
-		const { id, rootId, block, relation, getRecord, index, optionCommand } = this.props;
+		const { rootId, block, relation, getRecord, index, optionCommand } = this.props;
 		const record = getRecord(index);
-		const items = this.getItems();
 		const colors = DataUtil.menuGetBgColors();
 		const option = { text, color: colors[Util.rand(1, colors.length - 1)].value };
-		const match = items.some((it: any) => { return it.text == option.text; });
-		const cell = $(`#${id}`);
-		const entry = cell.find('#entry');
+		const match = (relation.selectDict || []).find((it: any) => { return it.text == text; });
 
 		if (match) {
-			return;
+			this.onValueAdd(match.id);
+		} else {
+			optionCommand('add', rootId, block.id, relation.relationKey, record.id, option, (message: any) => {
+				if (!message.error.code) {
+					this.onValueAdd(message.option.id);
+				};
+			});
 		};
-
-		optionCommand('add', rootId, block.id, relation.relationKey, record.id, option, (message: any) => {
-			if (!message.error.code) {
-				this.onValueAdd(message.option.id);
-			};
-
-			entry.text(' ');
-		});
 	};
 
 	onClear (e: any) {
