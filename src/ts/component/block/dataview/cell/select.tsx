@@ -309,7 +309,7 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 			};
 
 			if (Util.rectsCollide({ x: x + width / 2, y, width: 2, height }, rect)) {
-				this.insertId = id;
+				this.insertId = item.id;
 
 				let c = [ 'isOver' ];
 				if (x + width / 2 <= rect.x + rect.width / 2) {
@@ -336,7 +336,7 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 		if (this.insertId) {
 			let value = this.getItems().map((it: any) => { return it.id });
 			let oldIndex = value.findIndex(it => it == this.insertId);
-			
+
 			value = arrayMove(value, oldIndex, this.insertIdx);
 			this.setValue(value);
 		};
@@ -347,7 +347,7 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 
 		list.find('.tagWrap.isClone').remove();
 		list.find('.tagWrap.isDragging').removeClass('isDragging');
-		list.find('.tagWrap.isOver').removeClass('isOver');
+		list.find('.tagWrap.isOver').removeClass('isOver left right');
 
 		$(window).off('mousemove.dragTag mouseup.dragTag');
 	};
