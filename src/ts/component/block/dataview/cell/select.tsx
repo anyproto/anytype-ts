@@ -27,10 +27,11 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 		this.onClear = this.onClear.bind(this);
 		this.onKeyDown = this.onKeyDown.bind(this);
 		this.onKeyUp = this.onKeyUp.bind(this);
+		this.onFocus = this.onFocus.bind(this);
 	};
 
 	render () {
-		const { rootId, block, relation, getRecord, index, placeholder, elementMapper, arrayLimit } = this.props;
+		const { id, rootId, block, relation, getRecord, index, placeholder, elementMapper, arrayLimit } = this.props;
 		const { isEditing } = this.state;
 		const record = getRecord(index);
 		const canClear = relation.format == I.RelationType.Status;
@@ -54,28 +55,25 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 		let content = null;
 		if (isEditing) {
 			content = (
-				<div
-					id="value"
-					contentEditable={true}
-					suppressContentEditableWarning={true}
-					onKeyDown={this.onKeyDown}
-					onKeyUp={this.onKeyUp}
-					onDragStart={(e: any) => { e.preventDefault(); }}
-				>
-					{value.map((item: any, i: number) => (
-						<Tag 
-							{...item} 
-							key={item.id} 
-							canEdit={true} 
-							className={DataUtil.tagClass(relation.format)}
-							onRemove={(e: any, id: string) => { this.onValueRemove(id); }}
-						/>
-					))}
+				<div id="value" onClick={this.onFocus}>
+					<span id="list">
+						{value.map((item: any, i: number) => (
+							<Tag 
+								key={item.id}
+								{...item} 
+								canEdit={true} 
+								className={DataUtil.tagClass(relation.format)}
+								onRemove={(e: any, id: string) => { this.onValueRemove(id); }}
+							/>
+						))}
+					</span>
 					
 					<span 
 						id="entry" 
 						contentEditable={true}
 						suppressContentEditableWarning={true} 
+						onKeyDown={this.onKeyDown}
+						onKeyUp={this.onKeyUp}
 					>
 						{' '}
 					</span>
@@ -122,15 +120,10 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 
 		if (isEditing) {
 			cell.addClass('isEditing');
-
-			const entry = cell.find('#entry');
-			setRange(entry.get(0), { start: 0, end: 0 });
-
-			window.setTimeout(() => {
-				win.trigger('resize.menuDataviewOptionValues');
-				win.trigger('resize.menuDataviewOptionList');
-			}, 50);
-
+			
+			this.onFocus();
+			win.trigger('resize.menuDataviewOptionValues');
+			win.trigger('resize.menuDataviewOptionList');
 		} else {
 			cell.removeClass('isEditing');
 		};
@@ -218,6 +211,14 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 		};
 	};
 
+	onFocus () {
+		const { id } = this.props;
+		const cell = $(`#${id}`);
+		const entry = cell.find('#entry');
+		
+		setRange(entry.get(0), { start: 0, end: 0 });
+	};
+
 	onClear (e: any) {
 		e.preventDefault();
 		e.stopPropagation();
@@ -244,12 +245,11 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 	getValue () {
 		const { id } = this.props;
 		const cell = $(`#${id}`);
-		const value = cell.find('#value');
+		const list = cell.find('#list');
 		const entry = cell.find('#entry');
-		const html = $(`<div>${value.html()}</div>`);
 		const ret = [];
 
-		html.find('.tagItem').each((i: number, item: any) => {
+		$(`<div>${list.html()}</div>`).find('.tagItem').each((i: number, item: any) => {
 			item = $(item);
 			ret.push(item.data('id'));
 		});

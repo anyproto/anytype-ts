@@ -300,6 +300,10 @@ html.themeDark {
         .cellContent { background: $colorBlack; }
     }
 
+    .cell.isEditing.c-select {
+        #entry { color: $colorPrimary; }
+    }
+
     .cellContent.c-url, 
     .cellContent.c-email, 
     .cellContent.c-phone 

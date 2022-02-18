@@ -102,8 +102,9 @@
 	.cellContent { cursor: text !important; }
 }
 
-.cellContent.canEdit.c-select {
-	#entry { -webkit-user-modify: read-write-plaintext-only; }
+.cell.isEditing.c-select {
+	#list { margin-right: 6px; }
+	#entry { -webkit-user-modify: read-write-plaintext-only; color: $colorBlack; }
 }
 
 .cellContent.canEdit.c-shortText, 
