@@ -49,10 +49,8 @@ const FooterMainEdit = observer(class FooterMainEdit extends React.Component<Pro
 	};
 
 	onSidebarExpand () {
-		const { sidebar } = commonStore;
-		const { fixed } = sidebar;
-
-		commonStore.sidebarSet({ fixed: !fixed });
+		commonStore.sidebarSet({ fixed: true });
+		commonStore.sidebarOldFixed = true;
 	};
 
 	onHelp () {

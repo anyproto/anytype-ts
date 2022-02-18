@@ -50,7 +50,7 @@ class CommonStore {
 	public typeId: string = '';
 	public pinTimeId: number = 0;
 	public sidebarObj: Sidebar = { width: 0, height: 0, x: 0, y: 0, fixed: false, snap: I.MenuDirection.Left };
-	public sidebarOldObj: Sidebar = { width: 0, height: 0, x: 0, y: 0, fixed: false, snap: I.MenuDirection.Left };
+	public sidebarOldFixed: boolean = false;
 	public isFullScreen: boolean = false;
 
     constructor() {
@@ -255,8 +255,6 @@ class CommonStore {
 	};
 
 	sidebarSet (v: any) {
-		this.sidebarOldObj = Util.objectCopy(this.sidebarObj);
-
 		const size = Constant.size.sidebar;
 
 		v = Object.assign(this.sidebarObj, v);

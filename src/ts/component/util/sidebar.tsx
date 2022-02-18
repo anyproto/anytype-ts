@@ -786,11 +786,13 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		const { fixed } = sidebar;
 		const win = $(window);
 		const ww = win.width();
-		const old = commonStore.sidebarOldObj;
+		const old = commonStore.sidebarOldFixed;
 		const btn = $('#footer #button-expand');
 
+		console.log('OLD', old);
+
 		if (ww > UNFIX_THRESHOLD) {
-			if (!fixed && old.fixed) {
+			if (!fixed && old) {
 				commonStore.sidebarSet({ fixed: true });
 			};
 			btn.show();
