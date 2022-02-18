@@ -49,7 +49,6 @@ const MenuOptionValues = observer(class MenuOptionValues extends React.Component
 				onMouseEnter={(e: any) => { this.onOver(e, item); }}
 				style={item.style}
 			>
-				<Handle />
 				<div className="clickable" onClick={(e: any) => { this.onClick(e, item); }}>
 					<Tag {...item} className={DataUtil.tagClass(relation.format)} />
 				</div>
@@ -194,6 +193,7 @@ const MenuOptionValues = observer(class MenuOptionValues extends React.Component
 	getItems () {
 		const { param } = this.props;
 		const { data } = param;
+		const { filter } = data;
 		const relation = data.relation.get();
 
 		let value: any[] = Relation.getArrayValue(data.value);
@@ -201,7 +201,10 @@ const MenuOptionValues = observer(class MenuOptionValues extends React.Component
 			return (relation.selectDict || []).find((it: any) => { return it.id == id; });
 		});
 
-		value.unshift({ id: 'add', name: 'Add options' });
+		if (filter) {
+			value.unshift({ id: 'add', name: `Create option "${data.filter}"` });
+		};
+
 		value.unshift({ id: 'label', name: 'Select an option or add one' });
 		value = value.filter((it: any) => { return it && it.id; });
 		return value;
@@ -216,25 +219,29 @@ const MenuOptionValues = observer(class MenuOptionValues extends React.Component
 	onAdd (e: any) {
 		e.stopPropagation();
 
-		const { param, getId, getSize } = this.props;
-		const { data, classNameWrap } = param;
+		const { param } = this.props;
+		const { data } = param;
+		const { rootId, blockId, cellId, filter, record, optionCommand } = data;
+		const relation = data.relation.get();
+		const colors = DataUtil.menuGetBgColors();
+		const option = { text: filter, color: colors[Util.rand(1, colors.length - 1)].value };
+		const match = (relation.selectDict || []).find((it: any) => { return it.text == filter; });
+		const cell = $(`#${cellId}`);
+		const entry = cell.find('#entry');
 
-		menuStore.closeAll([ 'dataviewOptionList', 'dataviewOptionEdit' ], () => {
-			menuStore.open('dataviewOptionList', {
-				element: `#${getId()} #item-add`,
-				width: 0,
-				offsetX: getSize().width,
-				offsetY: -64,
-				passThrough: true,
-				noFlipY: true,
-				noAnimation: true,
-				classNameWrap: classNameWrap,
-				data: {
-					...data,
-					rebind: this.rebind,
-				},
+		if (match) {
+			this.onValueAdd(match.id);
+		} else {
+			optionCommand('add', rootId, blockId, relation.relationKey, record.id, option, (message: any) => {
+				if (!message.error.code) {
+					this.onValueAdd(message.option.id);
+				};
 			});
-		});
+		};
+
+		if (entry.length) {
+			entry.text(' ');
+		};
 	};
 
 	onEdit (e: any, item: any) {
@@ -263,6 +270,21 @@ const MenuOptionValues = observer(class MenuOptionValues extends React.Component
 
 	onClick (e: any, item: any) {
 		item.id == 'add' ? this.onAdd(e) : this.onEdit(e, item);
+	};
+
+	onValueAdd (id: string) {
+		const { param } = this.props;
+		const { data } = param;
+		const { onChange } = data;
+		
+		let value = Relation.getArrayValue(data.value);
+		value.push(id);
+		value = Util.arrayUnique(value);
+
+		menuStore.updateData(this.props.id, { value });
+		menuStore.updateData('dataviewOptionList', { value });
+
+		onChange(value);
 	};
 
 	onRemove (e: any, item: any) {

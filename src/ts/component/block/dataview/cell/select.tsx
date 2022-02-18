@@ -59,7 +59,7 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 		};
 
 		let content = null;
-		if (isEditing) {
+		if (isEditing && (relation.format == I.RelationType.Tag)) {
 			content = (
 				<div id="value" onClick={this.onFocus}>
 					<span id="list">
@@ -187,9 +187,12 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 
 	onKeyUp (e: any) {
 		const win = $(window);
+		const value = this.getValue();
 
 		win.trigger('resize.menuDataviewOptionValues');
 		win.trigger('resize.menuDataviewOptionList');
+
+		menuStore.updateData('dataviewOptionValues', { filter: value.new });
 	};
 
 	onValueAdd (id: string) {
@@ -231,7 +234,9 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 		const cell = $(`#${id}`);
 		const entry = cell.find('#entry');
 		
-		setRange(entry.get(0), { start: 0, end: 0 });
+		if (entry.length) {
+			setRange(entry.get(0), { start: 0, end: 0 });
+		};
 	};
 
 	onClear (e: any) {
@@ -373,16 +378,16 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 		const cell = $(`#${id}`);
 		const list = cell.find('#list');
 		const entry = cell.find('#entry');
-		const ret = [];
+		const existing = [];
 
 		$(`<div>${list.html()}</div>`).find('.tagItem').each((i: number, item: any) => {
 			item = $(item);
-			ret.push(item.data('id'));
+			existing.push(item.data('id'));
 		});
 
 		return {
-			existing: ret,
-			new: String(entry.text() || '').trim(),
+			existing,
+			new: (entry.length ? String(entry.text() || '').trim() : ''),
 		};
 	};
 

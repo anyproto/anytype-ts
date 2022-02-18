@@ -241,14 +241,15 @@ class Cell extends React.Component<Props, {}> {
 			onOpen: setOn,
 			onClose: setOff,
 			data: { 
-				rootId: rootId,
-				subId: subId,
+				cellId,
+				rootId,
+				subId,
 				blockId: block.id,
-				value: value, 
+				value, 
 				relation: observable.box(relation),
-				record: record,
-				optionCommand: optionCommand,
-				placeholder: placeholder,
+				record,
+				optionCommand,
+				placeholder,
 				onChange: (value: any, callBack?: (message: any) => void) => {
 					if (this.ref && this.ref.onChange) {
 						this.ref.onChange(value);
