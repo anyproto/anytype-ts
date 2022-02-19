@@ -16,6 +16,8 @@ interface State {
 
 const $ = require('jquery');
 
+const MAX_LENGTH = 32;
+
 const CellSelect = observer(class CellSelect extends React.Component<Props, State> {
 
 	_isMounted: boolean = false;
@@ -32,6 +34,7 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 		super(props);
 
 		this.onClear = this.onClear.bind(this);
+		this.onKeyPress = this.onKeyPress.bind(this);
 		this.onKeyDown = this.onKeyDown.bind(this);
 		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onFocus = this.onFocus.bind(this);
@@ -91,6 +94,7 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 						id="entry" 
 						contentEditable={true}
 						suppressContentEditableWarning={true} 
+						onKeyPress={this.onKeyPress}
 						onKeyDown={this.onKeyDown}
 						onKeyUp={this.onKeyUp}
 					>
@@ -159,6 +163,19 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 		if (canEdit && (v != isEditing)) {
 			this.setState({ isEditing: v });
 		};
+	}; 
+
+	onKeyPress (e: any) {
+		if (!this._isMounted) {
+			return;
+		};
+
+		const node = $(ReactDOM.findDOMNode(this));
+		const entry = node.find('#entry');
+
+		if (entry.length && (entry.text().length >= MAX_LENGTH)) {
+			e.preventDefault();
+		};
 	};
 
 	onKeyDown (e: any) {
@@ -182,7 +199,7 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 			};
 
 			entry.text(' ');
-		});	
+		});
 		
 		if (!range.start && !range.end) {
 			keyboard.shortcut('backspace', e, (pressed: string) => {
