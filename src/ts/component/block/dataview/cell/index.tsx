@@ -402,20 +402,25 @@ class Cell extends React.Component<Props, {}> {
 		if (menuId) {
 			if (commonStore.cellId != cellId) {
 				commonStore.cellId = cellId;
+				
+				const isOpen = menuStore.isOpen(menuId);
 
-				this.timeout = window.setTimeout(() => {
-					menuStore.open(menuId, param);
+				menuStore.open(menuId, param);
 
-					$(pageContainer).unbind('mousedown.cell').on('mousedown.cell', (e: any) => { 
-						if (!$(e.target).parents(`#${cellId}`).length) {
-							menuStore.closeAll(Constant.menuIds.cell); 
-						};
-					});
+				// If menu was already open OnOpen callback won't be called
+				if (isOpen) {
+					setOn();
+				};
 
-					if (!config.debug.ui) {
-						win.unbind('blur.cell').on('blur.cell', () => { menuStore.closeAll(Constant.menuIds.cell); });
+				$(pageContainer).unbind('mousedown.cell').on('mousedown.cell', (e: any) => { 
+					if (!$(e.target).parents(`#${cellId}`).length) {
+						menuStore.closeAll(Constant.menuIds.cell); 
 					};
-				}, Constant.delay.menu);
+				});
+
+				if (!config.debug.ui) {
+					win.unbind('blur.cell').on('blur.cell', () => { menuStore.closeAll(Constant.menuIds.cell); });
+				};
 			} else 
 			if (closeIfOpen) {
 				setOff();

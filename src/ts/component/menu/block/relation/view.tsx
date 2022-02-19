@@ -124,9 +124,15 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 
 	componentDidUpdate () {
 		this.resize();
-		
-		if (commonStore.cellId) {
-			$(`#${commonStore.cellId}`).addClass('isEditing');
+
+		const id = commonStore.cellId;		
+		if (id) {
+			commonStore.cellId = '';
+			
+			const ref = this.cellRefs.get(id);
+			if (ref) {
+				ref.onClick($.Event('click'));
+			};
 		};
 	};
 

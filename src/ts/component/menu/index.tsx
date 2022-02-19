@@ -292,7 +292,6 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 		};
 
 		menu.addClass('show').css({ transform: 'none' });
-
 		this.position();
 	};
 
