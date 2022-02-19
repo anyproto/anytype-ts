@@ -34,7 +34,7 @@ class Tag extends React.Component<Props, {}> {
 		let icon = null;
 		if (canEdit) {
 			icon = (
-				<div className="icon remove" onMouseDown={this.onRemove}>
+				<div className="tagRemove" onMouseDown={this.onRemove}>
 					<img id="remove" />
 				</div>
 			);

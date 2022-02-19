@@ -111,9 +111,9 @@
 
 	.tagWrap { 
 		height: 18px; line-height: 18px; margin: 0px 6px 4px 0px; cursor: grab; position: relative; 
-		display: inline-block;
+		display: inline-block; vertical-align: top;
 	}
-	.tagWrap:last-child { margin-right: 0px; }
+	.tagWrap:last-child { margin-right: 0px !important; }
 	.tagWrap.isClone { opacity: 0.75; position: absolute; left: 0px; top: 0px; }
 	.tagWrap.isDragging { opacity: 0.5; }
 	.tagWrap.isOver::after {
@@ -122,8 +122,9 @@
 	}
 	.tagWrap.isOver.left::after { left: -4px; }
 	.tagWrap.isOver.right::after { right: -4px; }
-
-	.tagItem { margin: 0px; }
+	.tagWrap {
+		.tagItem { margin: 0px !important; }
+	}
 }
 
 .cellContent.canEdit.c-shortText, 
