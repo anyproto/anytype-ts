@@ -285,6 +285,7 @@ class Cell extends React.Component<Props, {}> {
 			case I.RelationType.Tag:
 				param = Object.assign(param, {
 					width: width,
+					commonFilter: true,
 				});
 				param.data = Object.assign(param.data, {
 					canAdd: true,

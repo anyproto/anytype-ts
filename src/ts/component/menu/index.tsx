@@ -609,7 +609,7 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 		keyboard.disableMouse(true);
 
 		const { param } = this.props;
-		const { commonFilter } = param;
+		const { commonFilter, isSub } = param;
 		const refInput = this.ref.refFilter || this.ref.refName;
 
 		let ret = false;

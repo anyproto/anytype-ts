@@ -37,7 +37,7 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 	};
 
 	render () {
-		const { id, rootId, block, relation, getRecord, index, placeholder, elementMapper, arrayLimit } = this.props;
+		const { id, rootId, block, relation, getRecord, index, elementMapper, arrayLimit } = this.props;
 		const { isEditing } = this.state;
 		const record = getRecord(index);
 		const canClear = relation.format == I.RelationType.Status;
@@ -47,6 +47,7 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 			return null;
 		};
 
+		let placeholder = this.props.placeholder || translate(`placeholderCell${relation.format}`);
 		let value = this.getItems();
 		let length = value.length;
 
@@ -62,6 +63,8 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 		if (isEditing && (relation.format == I.RelationType.Tag)) {
 			content = (
 				<div id="value" onClick={this.onFocus}>
+					<div id="placeholder" className="placeholder">{placeholder}</div>
+
 					<span id="list">
 						{value.map((item: any, i: number) => (
 							<span 
@@ -96,7 +99,7 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 			);
 		} else {
 			if (!value.length) {
-				content = <div className="empty">{placeholder || translate(`placeholderCell${relation.format}`)}</div>;
+				content = <div className="empty">{placeholder}</div>;
 			} else {
 				content = (
 					<React.Fragment>
@@ -125,6 +128,8 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 
 	componentWillUnmount () {
 		this._isMounted = false;
+
+		this.placeholderCheck();
 	};
 
 	componentDidUpdate () {
@@ -137,6 +142,8 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 			cell.addClass('isEditing');
 			
 			this.onFocus();
+			this.placeholderCheck();
+
 			win.trigger('resize.menuDataviewOptionValues');
 			win.trigger('resize.menuDataviewOptionList');
 		} else {
@@ -193,6 +200,21 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 		win.trigger('resize.menuDataviewOptionList');
 
 		menuStore.updateData('dataviewOptionValues', { filter: value.new });
+
+		this.placeholderCheck();
+	};
+
+	placeholderCheck () {
+		const { id } = this.props;
+		const cell = $(`#${id}`);
+		const value = this.getValue();
+		const placeholder = cell.find('#placeholder');
+
+		if (value.new.length || value.existing.length) {
+			placeholder.hide();
+		} else {
+			placeholder.show();
+		};
 	};
 
 	onValueAdd (id: string) {

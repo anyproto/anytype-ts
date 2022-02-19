@@ -104,7 +104,10 @@
 
 .cell.isEditing.c-select {
 	#list { margin-right: 6px; position: relative; }
+	#list:empty { margin: 0px; }
 	#entry { -webkit-user-modify: read-write-plaintext-only; color: $colorBlack; }
+
+	.placeholder { padding: 14px; position: absolute; left: 0px; top: 0px; height: 100%; }
 
 	.tagWrap { 
 		height: 18px; line-height: 18px; margin: 0px 6px 4px 0px; cursor: grab; position: relative; 
