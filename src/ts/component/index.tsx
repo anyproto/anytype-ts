@@ -5,6 +5,7 @@ import Block from './block';
 
 import DragLayer from './drag/layer';
 import DragProvider from './drag/provider';
+import DragBox from './drag/box';
 import DropTarget from './drag/target';
 
 import ListPopup from './list/popup';
@@ -81,6 +82,7 @@ export {
 	Block,
 	DragLayer,
 	DragProvider,
+	DragBox,
 	DropTarget,
 	ListPopup,
 	ListMenu,

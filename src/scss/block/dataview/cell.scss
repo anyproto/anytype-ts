@@ -110,20 +110,25 @@
 	.placeholder { padding: 14px; position: absolute; left: 0px; top: 0px; height: 100%; }
 
 	.tagWrap { 
-		height: 18px; line-height: 18px; margin: 0px 6px 4px 0px; cursor: grab; position: relative; 
+		height: 18px; line-height: 18px; margin: 0px 6px 6px 0px; cursor: grab; position: relative; 
 		display: inline-block; vertical-align: top;
 	}
 	.tagWrap:last-child { margin-right: 0px !important; }
-	.tagWrap.isClone { opacity: 0.75; position: absolute; left: 0px; top: 0px; }
-	.tagWrap.isDragging { opacity: 0.5; }
-	.tagWrap.isOver::after {
-		content: ""; position: absolute; top: 0px; width: 2px; height: 100%;
-		display: block; background: $colorOrange;
-	}
-	.tagWrap.isOver.left::after { left: -4px; }
-	.tagWrap.isOver.right::after { right: -4px; }
 	.tagWrap {
 		.tagItem { margin: 0px !important; }
+	}
+}
+
+.cell.isEditing {
+	.dragbox {
+		.isDraggable.isClone { opacity: 0.75; position: absolute; left: 0px; top: 0px; }
+		.isDraggable.isDragging { opacity: 0.5; }
+		.isDraggable.isOver::after {
+			content: ""; position: absolute; top: 0px; width: 2px; height: 100%;
+			display: block; background: $colorOrange;
+		}
+		.isDraggable.isOver.left::after { left: -4px; }
+		.isDraggable.isOver.right::after { right: -4px; }
 	}
 }
 
