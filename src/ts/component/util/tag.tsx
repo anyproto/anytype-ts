@@ -21,7 +21,7 @@ class Tag extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { id, text, color, className, canEdit } = this.props;
+		const { text, color, className, canEdit } = this.props;
 		const cn = [ 'tagItem', 'tagColor', 'tagColor-' + (color || 'default') ];
 		
 		if (className) {
@@ -41,7 +41,7 @@ class Tag extends React.Component<Props, {}> {
 		};
 		
 		return (
-			<span data-id={id} contentEditable={false} className={cn.join(' ')}>
+			<span contentEditable={false} className={cn.join(' ')}>
 				<span className="inner">{text}</span>
 				{icon}
 			</span>
@@ -74,12 +74,9 @@ class Tag extends React.Component<Props, {}> {
 		e.stopPropagation();
 
 		const { id, canEdit, onRemove } = this.props;
-
-		if (!canEdit || !onRemove) {
-			return;
+		if (canEdit && onRemove) {
+			onRemove(e, id);
 		};
-
-		onRemove(e, id);
 	};
 	
 };

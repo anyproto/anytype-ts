@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import { Tag, Icon } from 'ts/component';
 import { I, Relation, DataUtil, translate, keyboard, Util } from 'ts/lib';
 import { observer } from 'mobx-react';
@@ -161,9 +162,12 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 	};
 
 	onKeyDown (e: any) {
-		const { id } = this.props;
-		const cell = $(`#${id}`);
-		const entry = cell.find('#entry');
+		if (!this._isMounted) {
+			return;
+		};
+
+		const node = $(ReactDOM.findDOMNode(this));
+		const entry = node.find('#entry');
 		const range = getRange(entry.get(0));
 
 		keyboard.shortcut('enter', e, (pressed: string) => {
@@ -205,10 +209,13 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 	};
 
 	placeholderCheck () {
-		const { id } = this.props;
-		const cell = $(`#${id}`);
+		if (!this._isMounted) {
+			return;
+		};
+
+		const node = $(ReactDOM.findDOMNode(this));
 		const value = this.getValue();
-		const placeholder = cell.find('#placeholder');
+		const placeholder = node.find('#placeholder');
 
 		if (value.new.length || value.existing.length) {
 			placeholder.hide();
@@ -252,9 +259,12 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 	};
 
 	onFocus () {
-		const { id } = this.props;
-		const cell = $(`#${id}`);
-		const entry = cell.find('#entry');
+		if (!this._isMounted) {
+			return;
+		};
+
+		const node = $(ReactDOM.findDOMNode(this));
+		const entry = node.find('#entry');
 		
 		if (entry.length) {
 			setRange(entry.get(0), { start: 0, end: 0 });
@@ -272,10 +282,13 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { id } = this.props;
+		if (!this._isMounted) {
+			return;
+		};
+
 		const win = $(window);
-		const cell = $(`#${id}`);
-		const list = cell.find('#list');
+		const node = $(ReactDOM.findDOMNode(this));
+		const list = node.find('#list');
 		const items = list.find('.tagWrap');
 		const element = list.find(`#item-${item.id}`);
 		const clone = element.clone();
@@ -306,13 +319,16 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 
 		win.off('mousemove.dragTag mouseup.dragTag');
 		win.on('mousemove.dragTag', (e: any) => { this.onDragMove(e, item); });
-		win.on('mouseup.dragTag', (e: any) => { this.onDragEnd(e, item); });
+		win.on('mouseup.dragTag', (e: any) => { this.onDragEnd(e); });
 	};
 
 	onDragMove (e: any, item: any) {
-		const { id } = this.props;
-		const cell = $(`#${id}`);
-		const list = cell.find('#list');
+		if (!this._isMounted) {
+			return;
+		};
+
+		const node = $(ReactDOM.findDOMNode(this));
+		const list = node.find('#list');
 		const items = list.find('.tagWrap');
 		const clone = list.find('.tagWrap.isClone');
 
@@ -355,10 +371,13 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 		clone.css({ transform: `translate3d(${x}px,${y}px,0px)` });
 	};
 
-	onDragEnd (e: any, item: any) {
-		const { id } = this.props;
-		const cell = $(`#${id}`);
-		const list = cell.find('#list');
+	onDragEnd (e: any) {
+		if (!this._isMounted) {
+			return;
+		};
+
+		const node = $(ReactDOM.findDOMNode(this));
+		const list = node.find('#list');
 
 		if (this.insertId) {
 			let value = this.getItems().map((it: any) => { return it.id });
@@ -396,13 +415,17 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 	};
 
 	getValue () {
-		const { id } = this.props;
-		const cell = $(`#${id}`);
-		const list = cell.find('#list');
-		const entry = cell.find('#entry');
+		if (!this._isMounted) {
+			return;
+		};
+
+		const node = $(ReactDOM.findDOMNode(this));
+		const list = node.find('#list');
+		const items = list.find('.tagWrap');
+		const entry = node.find('#entry');
 		const existing = [];
 
-		$(`<div>${list.html()}</div>`).find('.tagItem').each((i: number, item: any) => {
+		items.each((i: number, item: any) => {
 			item = $(item);
 			existing.push(item.data('id'));
 		});
