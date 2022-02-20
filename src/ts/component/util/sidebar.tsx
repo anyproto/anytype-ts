@@ -27,7 +27,7 @@ const LIMIT = 20;
 const HEIGHT = 28;
 const SNAP_THRESHOLD = 30;
 const UNFIX_THRESHOLD = 992;
-const TIMEOUT = 100;
+const TIMEOUT = 300;
 
 const SKIP_TYPES_LOAD = [
 	Constant.typeId.space,
@@ -511,8 +511,9 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 
 		const { sidebar } = commonStore;
 		const { snap, fixed } = sidebar;
+		const menuOpen = menuStore.isOpenList([ 'dataviewContext', 'preview' ]);
 
-		if (fixed || (snap === null) || menuStore.isOpen('dataviewContext')) {
+		if (fixed || (snap === null) || menuOpen) {
 			return;
 		};
 
