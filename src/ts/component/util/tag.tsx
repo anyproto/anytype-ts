@@ -49,15 +49,24 @@ class Tag extends React.Component<Props, {}> {
 	};
 
 	componentDidMount () {
+		this.setColor();
+	};
+
+	componentDidUpdate () {
+		this.setColor();
+	};
+
+	setColor () {
 		const { canEdit } = this.props;
-		const node = $(ReactDOM.findDOMNode(this));
-
-		if (canEdit) {
-			const color = node.css('color');
-			const remove = node.find('#remove');
-
-			remove.attr({ src: this.removeSvg(color) });
+		if (!canEdit) {
+			return;
 		};
+
+		const node = $(ReactDOM.findDOMNode(this));
+		const remove = node.find('#remove');
+		const color = node.css('color');
+
+		remove.attr({ src: this.removeSvg(color) });
 	};
 
 	removeSvg (color: any) {
