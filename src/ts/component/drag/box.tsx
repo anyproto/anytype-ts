@@ -100,7 +100,7 @@ class DragBox extends React.Component<Props, {}> {
 
 		this.newIndex = -1;
 
-		node.find('.isDraggable.isOver').removeClass('isOver');
+		node.find('.isDraggable.isOver').removeClass('isOver left right');
 		clone.css({ transform: `translate3d(${x}px,${y}px,0px)` });
 
 		for (let i = 0; i < items.length; ++i) {
@@ -109,7 +109,7 @@ class DragBox extends React.Component<Props, {}> {
 
 			if (rect && Util.rectsCollide({ x: center, y, width: 2, height }, rect)) {
 				const isLeft = center <= rect.x + rect.width / 2;
-				this.newIndex = i + (!isLeft ? 1 : 0);
+				this.newIndex = i;
 				el.addClass('isOver ' + (isLeft ? 'left' : 'right'));
 				break;
 			};

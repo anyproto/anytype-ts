@@ -251,21 +251,15 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 	};
 
 	onValueAdd (id: string) {
-		let value = this.getItems().map((it: any) => { return it.id });
-		value.push(id);
-		this.setValue(value);
+		this.setValue(this.getItemIds().concat[ id ]);
 	};
 
 	onValueRemove (id: string) {
-		let value = this.getItems().map((it: any) => { return it.id });
-		value = value.filter((it: string) => { return it != id; });
-		this.setValue(value);
+		this.setValue(this.getItemIds().filter(it => it != id));
 	};
 
 	onDragEnd (oldIndex: number, newIndex: number) {
-		let value = this.getItems().map((it: any) => { return it.id });
-		value = arrayMove(value, oldIndex, newIndex);
-		this.setValue(value);
+		this.setValue(arrayMove(this.getItemIds(), oldIndex, newIndex));
 	};
 
 	onOptionAdd (text: string) {
@@ -337,6 +331,10 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 		});
 		value = value.filter((it: any) => { return it && it.id; });
 		return value;
+	};
+
+	getItemIds (): string[] {
+		return this.getItems().map(it => it.id);
 	};
 
 	getValue () {
