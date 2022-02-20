@@ -193,20 +193,17 @@ const MenuOptionValues = observer(class MenuOptionValues extends React.Component
 	getItems () {
 		const { param } = this.props;
 		const { data } = param;
-		const { filter } = data;
-		const relation = data.relation.get();
-
-		let value: any[] = Relation.getArrayValue(data.value);
-		value = value.map((id: string) => { 
-			return (relation.selectDict || []).find((it: any) => { return it.id == id; });
-		});
-
+		const { filter, cellRef } = data;
+		
+		let value: any[] = [
+			{ id: 'label', name: 'Select an option or add one' }
+		];
 		if (filter) {
-			value.unshift({ id: 'add', name: `Create option "${data.filter}"` });
+			value.push({ id: 'add', name: `Create option "${data.filter}"` });
 		};
-
-		value.unshift({ id: 'label', name: 'Select an option or add one' });
-		value = value.filter((it: any) => { return it && it.id; });
+		if (cellRef) {
+			value = value.concat(cellRef.getItems());
+		};
 		return value;
 	};
 
@@ -258,18 +255,13 @@ const MenuOptionValues = observer(class MenuOptionValues extends React.Component
 	};
 
 	onRemove (e: any, item: any) {
-		const { param, id } = this.props;
+		const { param } = this.props;
 		const { data } = param;
-		const { onChange } = data;
-		
-		let value = Relation.getArrayValue(data.value);
-		value = value.filter((it: any) => { return it != item.id; });
-		value = Util.arrayUnique(value);
+		const { cellRef } = data;
 
-		menuStore.updateData(id, { value });
-		menuStore.updateData('dataviewOptionList', { value });
-
-		onChange(value);
+		if (cellRef) {
+			cellRef.onValueRemove(item.id);
+		};
 	};
 
 	onSortStart () {
@@ -281,18 +273,15 @@ const MenuOptionValues = observer(class MenuOptionValues extends React.Component
 	
 	onSortEnd (result: any) {
 		const { oldIndex, newIndex } = result;
-		const { param, dataset, id } = this.props;
+		const { param, dataset } = this.props;
 		const { selection } = dataset;
 		const { data } = param;
-		const { onChange, filter } = data;
+		const { filter, cellRef } = data;
 		const offset = filter ? 2 : 1;
 
-		let value = Relation.getArrayValue(data.value);
-		value = arrayMove(value, oldIndex - offset, newIndex - offset);
-		value = Util.arrayUnique(value);
-
-		menuStore.updateData(id, { value });
-		onChange(value);
+		if (cellRef) {
+			cellRef.onDragEnd(oldIndex - offset, newIndex - offset);
+		};
 
 		selection.preventSelect(false);
 	};
