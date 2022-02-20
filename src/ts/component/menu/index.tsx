@@ -794,7 +794,7 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 
 		const node = $(ReactDOM.findDOMNode(this));
 		const menu = node.find('.menu');
-
+		
 		menu.find('.item.hover').removeClass('hover');
 
 		if (!item) {

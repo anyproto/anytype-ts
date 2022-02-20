@@ -144,7 +144,6 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 		if (isEditing) {
 			cell.addClass('isEditing');
 			
-			this.onFocus();
 			this.placeholderCheck();
 
 			win.trigger('resize.menuDataviewOptionValues');
@@ -160,6 +159,10 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 
 		if (canEdit && (v != isEditing)) {
 			this.setState({ isEditing: v });
+			
+			if (v) {
+				window.setTimeout(() => { this.onFocus(); }, 15);
+			};
 		};
 	}; 
 
@@ -196,7 +199,7 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 				this.setValue(value.existing);
 			};
 
-			entry.text(' ');
+			this.clear();
 		});
 		
 		if (!range.start && !range.end) {
@@ -221,6 +224,7 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 		menuStore.updateData('dataviewOptionValues', { filter: value.new });
 
 		this.placeholderCheck();
+		this.scrollToBottom();
 	};
 
 	placeholderCheck () {
@@ -237,6 +241,18 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 		} else {
 			placeholder.show();
 		};
+	};
+
+	clear () {
+		if (!this._isMounted) {
+			return;
+		};
+
+		const node = $(ReactDOM.findDOMNode(this));
+		node.find('#entry').text(' ');
+
+		menuStore.updateData('dataviewOptionValues', { filter: '' });
+		this.onFocus();
 	};
 
 	onValueAdd (id: string) {
@@ -282,8 +298,21 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 		const entry = node.find('#entry');
 		
 		if (entry.length) {
-			setRange(entry.get(0), { start: 0, end: 0 });
+			window.setTimeout(() => {
+				entry.focus();
+				setRange(entry.get(0), { start: 0, end: 0 });
+
+				this.scrollToBottom();
+			});
 		};
+	};
+
+	scrollToBottom () {
+		const { id } = this.props;
+		const cell = $(`#${id}`);
+		const content = cell.hasClass('.cellContent') ? cell : cell.find('.cellContent');
+
+		content.scrollTop(content.get(0).scrollHeight + parseInt(content.css('paddingBottom')));
 	};
 
 	onClear (e: any) {

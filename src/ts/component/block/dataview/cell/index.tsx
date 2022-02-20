@@ -242,6 +242,7 @@ class Cell extends React.Component<Props, {}> {
 			onClose: setOff,
 			data: { 
 				cellId,
+				cellRef: this.ref,
 				rootId,
 				subId,
 				blockId: block.id,

@@ -166,7 +166,7 @@ const MenuOptionValues = observer(class MenuOptionValues extends React.Component
 			this.refList.scrollToPosition(this.top);
 		};
 
-		this.props.setActive(null, true);
+		window.setTimeout(() => { this.props.setActive(); });
 	};
 
 	componentWillUnmount () {
@@ -221,26 +221,11 @@ const MenuOptionValues = observer(class MenuOptionValues extends React.Component
 
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, cellId, filter, record, optionCommand } = data;
-		const relation = data.relation.get();
-		const colors = DataUtil.menuGetBgColors();
-		const option = { text: filter, color: colors[Util.rand(1, colors.length - 1)].value };
-		const match = (relation.selectDict || []).find((it: any) => { return it.text == filter; });
-		const cell = $(`#${cellId}`);
-		const entry = cell.find('#entry');
-
-		if (match) {
-			this.onValueAdd(match.id);
-		} else {
-			optionCommand('add', rootId, blockId, relation.relationKey, record.id, option, (message: any) => {
-				if (!message.error.code) {
-					this.onValueAdd(message.option.id);
-				};
-			});
-		};
-
-		if (entry.length) {
-			entry.text(' ');
+		const { cellRef, filter } = data;
+		
+		if (cellRef) {
+			cellRef.onOptionAdd(filter);
+			cellRef.clear();
 		};
 	};
 
@@ -270,21 +255,6 @@ const MenuOptionValues = observer(class MenuOptionValues extends React.Component
 
 	onClick (e: any, item: any) {
 		item.id == 'add' ? this.onAdd(e) : this.onEdit(e, item);
-	};
-
-	onValueAdd (id: string) {
-		const { param } = this.props;
-		const { data } = param;
-		const { onChange } = data;
-		
-		let value = Relation.getArrayValue(data.value);
-		value.push(id);
-		value = Util.arrayUnique(value);
-
-		menuStore.updateData(this.props.id, { value });
-		menuStore.updateData('dataviewOptionList', { value });
-
-		onChange(value);
 	};
 
 	onRemove (e: any, item: any) {

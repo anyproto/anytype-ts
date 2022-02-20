@@ -6,7 +6,6 @@
 		.content { overflow: visible; padding: 0px; }
 		.items { height: 100%; }
 
-
 		.item.add {
 			.name { @include text-overflow-nw; width: calc(100% - 24px); }
 		}
@@ -17,7 +16,8 @@
 			.clickable { line-height: 18px; }
 			.buttons { display: none; position: absolute; right: 8px; top: 4px; }
 		}
-		.item:hover {
+		
+		.item:hover, .item.hover {
 			.clickable { margin-right: 6px; }
 			.buttons { display: block; }
 		}
