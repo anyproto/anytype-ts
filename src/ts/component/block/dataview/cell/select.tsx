@@ -129,12 +129,6 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 		this._isMounted = true;
 	};
 
-	componentWillUnmount () {
-		this._isMounted = false;
-
-		this.placeholderCheck();
-	};
-
 	componentDidUpdate () {
 		const { isEditing } = this.state;
 		const { id } = this.props;
@@ -151,6 +145,10 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 		} else {
 			cell.removeClass('isEditing');
 		};
+	};
+
+	componentWillUnmount () {
+		this._isMounted = false;
 	};
 
 	setEditing (v: boolean) {
@@ -185,8 +183,6 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 		};
 
 		const node = $(ReactDOM.findDOMNode(this));
-		const entry = node.find('#entry');
-		const range = getRange(entry.get(0));
 
 		keyboard.shortcut('enter', e, (pressed: string) => {
 			e.preventDefault();
@@ -195,23 +191,22 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 			const value = this.getValue();
 			if (value.new) {
 				this.onOptionAdd(value.new);
-			} else {
-				this.setValue(value.existing);
 			};
-
-			this.clear();
 		});
 		
-		if (!range.start && !range.end) {
-			keyboard.shortcut('backspace', e, (pressed: string) => {
-				e.preventDefault();
-				e.stopPropagation();
+		keyboard.shortcut('backspace', e, (pressed: string) => {
+			const range = getRange(node.find('#entry').get(0));
+			if (range.start || range.end) {
+				return;
+			};
 
-				const value = this.getValue();
-				value.existing.pop();
-				this.setValue(value.existing);
-			});
-		};
+			e.preventDefault();
+			e.stopPropagation();
+			
+			const value = this.getValue();
+			value.existing.pop();
+			this.setValue(value.existing);
+		});
 	};
 
 	onKeyUp (e: any) {
@@ -237,16 +232,16 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 		const list = node.find('#list');
 		const placeholder = node.find('#placeholder');
 
-		if (value.new.length || value.existing.length) {
-			placeholder.hide();
-		} else {
-			placeholder.show();
-		};
-
 		if (value.existing.length) {
 			list.show();
 		} else {
 			list.hide();
+		};
+
+		if (value.new || value.existing.length) {
+			placeholder.hide();
+		} else {
+			placeholder.show();
 		};
 	};
 
@@ -271,6 +266,12 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 	onValueRemove (id: string) {
 		let value = this.getItems().map((it: any) => { return it.id });
 		value = value.filter((it: string) => { return it != id; });
+		this.setValue(value);
+	};
+
+	onDragEnd (oldIndex: number, newIndex: number) {
+		let value = this.getItems().map((it: any) => { return it.id });
+		value = arrayMove(value, oldIndex, newIndex);
 		this.setValue(value);
 	};
 
@@ -329,12 +330,6 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 		this.setValue([]);
 	};
 
-	onDragEnd (oldIndex: number, newIndex: number) {
-		let value = this.getItems().map((it: any) => { return it.id });
-		value = arrayMove(value, oldIndex, newIndex);
-		this.setValue(value);
-	};
-
 	getItems (): any[] {
 		const { relation, getRecord, index } = this.props;
 		const record = getRecord(index);
@@ -385,6 +380,8 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 
 		if (onChange) {
 			onChange(value, () => {
+				this.clear();
+
 				menuStore.updateData('dataviewOptionValues', { value });
 				menuStore.updateData('dataviewOptionList', { value });
 			});
