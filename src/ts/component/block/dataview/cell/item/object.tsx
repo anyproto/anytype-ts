@@ -14,8 +14,15 @@ interface Props {
 
 const ItemObject = observer(class ItemObject extends React.Component<Props, {}> {
 
+	constructor (props: any) {
+		super(props);
+
+		this.onClick = this.onClick.bind(this);
+		this.onRemove = this.onRemove.bind(this);
+	};
+
 	render () {
-		let { object, iconSize, relation, elementMapper, onClick, canEdit, onRemove } = this.props;
+		let { object, iconSize, relation, elementMapper, canEdit } = this.props;
 		let cn = [ 'element' ];
 		let icon = null;
 		
@@ -27,14 +34,11 @@ const ItemObject = observer(class ItemObject extends React.Component<Props, {}> 
 		};
 		if (canEdit) {
 			cn.push('canEdit');
-			icon = <Icon className="objectRemove" onClick={(e: any) => { onRemove(e, object.id); }} />;
+			icon = <Icon className="objectRemove" onMouseDown={this.onRemove} />;
 		};
 
 		return (
-			<div 
-				className={cn.join(' ')} 
-				onClick={(e: any) => { onClick(e, object); }}
-			>
+			<div className={cn.join(' ')} onClick={this.onClick}>
 				<div className="flex">
 					<IconObject object={object} size={iconSize} />
 					<ObjectName object={object} />
@@ -42,6 +46,28 @@ const ItemObject = observer(class ItemObject extends React.Component<Props, {}> 
 				</div>
 			</div>
 		);
+	};
+
+	onClick (e: any) {
+		let { object, relation, elementMapper, onClick, canEdit } = this.props;
+
+		if (elementMapper) {
+			object = elementMapper(relation, object);
+		};
+
+		if (!canEdit && onClick) {
+			onClick(e, object);
+		};
+	};
+
+	onRemove (e: any) {
+		e.stopPropagation();
+
+		const { object, canEdit, onRemove } = this.props;
+
+		if (canEdit && onRemove) {
+			onRemove(e, object.id);
+		};
 	};
 
 });
