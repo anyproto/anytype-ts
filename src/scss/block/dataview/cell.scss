@@ -124,13 +124,18 @@
 }
 
 .cell.isEditing.c-object {
-	.itemWrap { 
-		margin: 0px 8px 2px 0px;
-	}
+	.itemWrap { margin: 0px 8px 2px 0px; }
 	.itemWrap:empty { margin: 0px; }
 	.itemWrap:last-child { margin-right: 0px !important; }
 	.itemWrap {
 		.element { margin: 0px !important; }
+		.element {
+			.icon.objectRemove { 
+				width: 12px; height: 20px; cursor: pointer; margin: 0px 0px 0px 2px; flex-shrink: 0;
+				background-image: url('~img/icon/objectRemove.svg'); background-size: 8px;
+			}
+			.icon.objectRemove:hover { opacity: 0.8; }
+		}
 	}
 }
 

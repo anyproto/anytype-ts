@@ -54,7 +54,7 @@ const MenuOptionValues = observer(class MenuOptionValues extends React.Component
 				</div>
 				<div className="buttons">
 					<Icon className="more" onClick={(e: any) => { this.onEdit(e, item); }} />
-					<Icon className="delete" onClick={(e: any) => { this.onRemove(e, item); }} />
+					{/*<Icon className="delete" onClick={(e: any) => { this.onRemove(e, item); }} />*/}
 				</div>
 			</div>
 		));

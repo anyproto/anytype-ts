@@ -81,7 +81,9 @@ const CellObject = observer(class CellObject extends React.Component<Props, Stat
 										iconSize={iconSize} 
 										onClick={this.onClick} 
 										relation={relation} 
-										elementMapper={elementMapper} 
+										elementMapper={elementMapper}
+										canEdit={true}
+										onRemove={(e: any, id: string) => { this.onValueRemove(id); }}
 									/>
 								</span>
 							))}
