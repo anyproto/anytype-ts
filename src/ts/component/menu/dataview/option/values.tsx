@@ -284,10 +284,11 @@ const MenuOptionValues = observer(class MenuOptionValues extends React.Component
 		const { param, dataset, id } = this.props;
 		const { selection } = dataset;
 		const { data } = param;
-		const { onChange } = data;
+		const { onChange, filter } = data;
+		const offset = filter ? 2 : 1;
 
 		let value = Relation.getArrayValue(data.value);
-		value = arrayMove(value, oldIndex - 2, newIndex - 2);
+		value = arrayMove(value, oldIndex - offset, newIndex - offset);
 		value = Util.arrayUnique(value);
 
 		menuStore.updateData(id, { value });

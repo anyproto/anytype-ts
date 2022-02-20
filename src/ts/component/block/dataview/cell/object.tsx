@@ -101,11 +101,6 @@ const CellObject = observer(class CellObject extends React.Component<Props, Stat
 		};
 	};
 
-	onSort (value: any[]) {
-		const { onChange } = this.props;
-		onChange(value.map((it: any) => { return it.id; }));
-	};
-
 });
 
 export default CellObject;
