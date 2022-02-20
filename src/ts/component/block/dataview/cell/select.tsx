@@ -234,12 +234,19 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 
 		const node = $(ReactDOM.findDOMNode(this));
 		const value = this.getValue();
+		const list = node.find('#list');
 		const placeholder = node.find('#placeholder');
 
 		if (value.new.length || value.existing.length) {
 			placeholder.hide();
 		} else {
 			placeholder.show();
+		};
+
+		if (value.existing.length) {
+			list.show();
+		} else {
+			list.hide();
 		};
 	};
 
