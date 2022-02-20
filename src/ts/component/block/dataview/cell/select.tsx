@@ -73,7 +73,7 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 									id={`item-${item.id}`}
 									data-id={item.id}
 									data-index={i}
-									className="tagWrap isDraggable"
+									className="itemWrap isDraggable"
 									draggable={true}
 								>
 									<Tag 
@@ -139,9 +139,7 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 			cell.addClass('isEditing');
 			
 			this.placeholderCheck();
-
-			win.trigger('resize.menuDataviewOptionValues');
-			win.trigger('resize.menuDataviewOptionList');
+			this.resize();
 		} else {
 			cell.removeClass('isEditing');
 		};
@@ -210,15 +208,10 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 	};
 
 	onKeyUp (e: any) {
-		const win = $(window);
-		const value = this.getValue();
-
-		win.trigger('resize.menuDataviewOptionValues');
-		win.trigger('resize.menuDataviewOptionList');
-
-		menuStore.updateData('dataviewOptionValues', { filter: value.new });
+		menuStore.updateData('dataviewOptionValues', { filter: this.getValue().new });
 
 		this.placeholderCheck();
+		this.resize();
 		this.scrollToBottom();
 	};
 
@@ -353,7 +346,7 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 
 		const node = $(ReactDOM.findDOMNode(this));
 		const list = node.find('#list');
-		const items = list.find('.tagWrap');
+		const items = list.find('.itemWrap');
 		const entry = node.find('#entry');
 		const existing = [];
 
@@ -386,6 +379,12 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 				menuStore.updateData('dataviewOptionList', { value });
 			});
 		};
+	};
+
+	resize () {
+		const win = $(window);
+		win.trigger('resize.menuDataviewOptionValues');
+		win.trigger('resize.menuDataviewOptionList');
 	};
 
 });

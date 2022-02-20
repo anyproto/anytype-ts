@@ -1,13 +1,9 @@
 import * as React from 'react';
-import { detailStore, dbStore } from 'ts/store';
-import { I } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { IconObject, ObjectName } from 'ts/component';
 
 interface Props {
-	rootId: string;
-	subId: string;
-	id: string;
+	object: any;
 	iconSize: number;
 	relation?: any;
 	elementMapper?: (relation: any, item: any) => any;
@@ -17,13 +13,7 @@ interface Props {
 const ItemObject = observer(class ItemObject extends React.Component<Props, {}> {
 
 	render () {
-		const { subId, id, iconSize, relation, elementMapper, onClick } = this.props;
-		
-		let object = detailStore.get(subId, id, []);
-		if (object._empty_) {
-			return null;
-		};
-
+		let { object, iconSize, relation, elementMapper, onClick } = this.props;
 		if (elementMapper) {
 			object = elementMapper(relation, object);
 		};

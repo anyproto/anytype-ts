@@ -313,6 +313,7 @@ class Cell extends React.Component<Props, {}> {
 				});
 
 				menuId = (relation.maxCount == 1 ? 'dataviewObjectList' : 'dataviewObjectValues');
+				closeIfOpen = false;
 				break;
 
 			case I.RelationType.LongText:

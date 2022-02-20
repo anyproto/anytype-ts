@@ -29,6 +29,7 @@
 		.item { padding: 4px 16px 4px 10px; }
 		.item {
 			.name { @include text-overflow-nw; }
+			.clickable { width: calc(100% - 24px) !important; }
 
 			.icon.delete { 
 				width: 24px; height: 24px; background-size: 20px; right: 10px; margin-top: -12px; border-radius: 4px; 
@@ -37,7 +38,7 @@
 			.icon.delete:hover { background-color: $colorHover; }
 		}
 		.item.hover, .item:hover {
-			.caption { opacity: 0; }
+			.clickable { width: calc(100% - 44px) !important; }
 			.icon.delete { opacity: 1; }
 		}
 

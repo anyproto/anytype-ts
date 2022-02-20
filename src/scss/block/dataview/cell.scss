@@ -102,23 +102,35 @@
 	.cellContent { cursor: text !important; }
 }
 
-.cell.isEditing.c-select {
+.cell.isEditing.c-select, .cell.isEditing.c-object {
 	.cellContent { 
 		overflow-x: hidden !important; overflow-y: overlay !important; max-height: 200px; 
 	}
 
-	#list { margin-right: 6px; position: relative; }
-	#entry { -webkit-user-modify: read-write-plaintext-only; color: $colorBlack; }
-
 	.placeholder { padding: 14px; position: absolute; left: 0px; top: 0px; height: 100%; }
+	#entry { -webkit-user-modify: read-write-plaintext-only; color: $colorBlack; }
+	#list { margin-right: 6px; position: relative; }
+}
 
-	.tagWrap { 
+.cell.isEditing.c-select {
+	.itemWrap { 
 		height: 18px; line-height: 18px; margin: 0px 6px 6px 0px; cursor: grab; position: relative; 
 		display: inline-block; vertical-align: top;
 	}
-	.tagWrap:last-child { margin-right: 0px !important; }
-	.tagWrap {
+	.itemWrap:last-child { margin-right: 0px !important; }
+	.itemWrap {
 		.tagItem { margin: 0px !important; }
+	}
+}
+
+.cell.isEditing.c-object {
+	.itemWrap { 
+		margin: 0px 8px 2px 0px;
+	}
+	.itemWrap:empty { margin: 0px; }
+	.itemWrap:last-child { margin-right: 0px !important; }
+	.itemWrap {
+		.element { margin: 0px !important; }
 	}
 }
 
