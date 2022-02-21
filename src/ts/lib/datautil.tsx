@@ -628,7 +628,7 @@ class DataUtil {
 		];
 
 		if (config.experimental) {
-			ret.push({ type: I.BlockType.TableOfContents, id: I.BlockType.TableOfContents, icon: 'tableOfContents', lang: 'TableOfContents' });
+			ret.push({ type: I.BlockType.TableOfContents, id: I.BlockType.TableOfContents, icon: 'tableOfContents', lang: 'TableOfContents', aliases: [ 'tc', 'toc' ] });
 		};
 		
 		return ret.map(this.menuMapperBlock);
