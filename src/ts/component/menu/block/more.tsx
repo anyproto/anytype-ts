@@ -480,6 +480,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 					DataUtil.objectOpen({ id: message.targetId });
 
 					analytics.event('CreateObject', {
+						route: 'MenuObject',
 						objectType: object.targetObjectType,
 						layout: object.layout,
 						template: (object.templateIsBundled ? object.id : 'custom'),

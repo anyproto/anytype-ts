@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { DragBox } from 'ts/component';
-import { I, Relation, DataUtil, translate, Util, keyboard } from 'ts/lib';
+import { I, Relation, DataUtil, translate, Util, keyboard, analytics } from 'ts/lib';
 import { menuStore, detailStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { getRange, setRange } from 'selection-ranges';
@@ -375,6 +375,12 @@ const CellObject = observer(class CellObject extends React.Component<Props, Stat
 				if (!message.error.code) {
 					this.onValueAdd(message.targetId);
 				};
+
+				analytics.event('CreateObject', {
+					objectType: details.type,
+					layout: details.layout,
+					template: '',
+				});
 			});
 		};
 	};

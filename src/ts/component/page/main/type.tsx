@@ -422,6 +422,7 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 				DataUtil.objectOpenPopup({ ...details, id: message.targetId });
 
 				analytics.event('CreateObject', {
+					route: 'ObjectType',
 					objectType: rootId,
 					layout: template?.layout,
 					template: (template && template.templateIsBundled ? template.id : 'custom'),
