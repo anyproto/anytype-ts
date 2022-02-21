@@ -205,18 +205,18 @@ class CommonStore {
 	};
 
 	defaultTypeSet (v: string) {
-		this.typeId = v;
-		Storage.set('defaultType', v);
+		this.typeId = String(v || '');
+		Storage.set('defaultType', this.typeId);
 	};
 
 	pinTimeSet (v: string) {
 		this.pinTimeId = Number(v) || Constant.default.pinTime;
-		Storage.set('pinTime', v);
+		Storage.set('pinTime', this.pinTimeId);
 	};
 
 	autoSidebarSet (v: boolean) {
 		this.autoSidebarValue = Boolean(v);
-		Storage.set('autoSidebar', v);
+		Storage.set('autoSidebar', this.autoSidebarValue);
 	};
 
 	fullscreenSet (v: boolean) {
