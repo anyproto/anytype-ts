@@ -227,7 +227,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 	getSections () {
 		return [
 			{ id: I.TabIndex.Favorite, name: 'Favorites', limit: 0, },
-			{ id: I.TabIndex.Recent, name: 'Recent', limit: 10, },
+			{ id: I.TabIndex.Recent, name: 'History', limit: 10, },
 			{ id: I.TabIndex.Set, name: 'Sets', limit: 20, },
 		];
 	};
