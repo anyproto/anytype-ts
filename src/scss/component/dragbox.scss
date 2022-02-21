@@ -6,8 +6,7 @@
     .isDraggable.isClone { opacity: 0.75; position: absolute; left: 0px; top: 0px; }
     .isDraggable.isDragging { opacity: 0.5; }
     .isDraggable.isOver::after {
-        content: ""; position: absolute; top: 0px; width: 2px; height: 100%;
-        display: block; background: $colorOrange;
+        content: ""; position: absolute; top: 0px; width: 2px; height: 100%; display: block; background: $colorOrange;
     }
     .isDraggable.isOver.left::after { left: -4px; }
     .isDraggable.isOver.right::after { right: -4px; }

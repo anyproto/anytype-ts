@@ -337,7 +337,7 @@ const CellObject = observer(class CellObject extends React.Component<Props, Stat
 	};
 
 	onValueAdd (id: string) {
-		this.setValue(this.getItemIds().concat[ id ]);
+		this.setValue(this.getItemIds().concat([ id ]));
 	};
 
 	onValueRemove (id: string) {
@@ -359,11 +359,9 @@ const CellObject = observer(class CellObject extends React.Component<Props, Stat
 		if (match) {
 			this.onValueAdd(match.id);
 		} else {
-			const details: any = {
-				name: text,
-			};
-
+			const details: any = { name: text };
 			const typeId = relation.objectTypes.length ? relation.objectTypes[0] : '';
+
 			if (typeId) {
 				const type = dbStore.getObjectType(typeId);
 				if (type) {

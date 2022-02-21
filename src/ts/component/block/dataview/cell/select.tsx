@@ -251,7 +251,7 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 	};
 
 	onValueAdd (id: string) {
-		this.setValue(this.getItemIds().concat[ id ]);
+		this.setValue(this.getItemIds().concat([ id ]));
 	};
 
 	onValueRemove (id: string) {
