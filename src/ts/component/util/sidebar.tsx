@@ -488,7 +488,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		this.setActive(item.id);
 
 		menuStore.open('dataviewContext', {
-			rect: { width: 0, height: 0, x: x + 20, y: y },
+			rect: { width: 0, height: 0, x: x + 4, y: y },
 			onClose: () => {
 				this.setActive(this.id);
 			},
