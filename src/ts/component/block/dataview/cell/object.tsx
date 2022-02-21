@@ -51,10 +51,6 @@ const CellObject = observer(class CellObject extends React.Component<Props, Stat
 		let value = this.getItems();
 		let length = value.length;
 
-		if (length >= 3) {
-			cn.push('columns'); 
-		};
-
 		if (arrayLimit) {
 			value = value.slice(0, arrayLimit);
 		};
@@ -104,6 +100,10 @@ const CellObject = observer(class CellObject extends React.Component<Props, Stat
 				</div>
 			);
 		} else {
+			if (length >= 3) {
+				cn.push('columns'); 
+			};
+
 			if (!value.length) {
 				content = <div className="empty">{placeholder}</div>;
 			} else {
@@ -141,7 +141,7 @@ const CellObject = observer(class CellObject extends React.Component<Props, Stat
 	componentDidUpdate () {
 		const { isEditing } = this.state;
 		const { id } = this.props;
-		const cell = $('#' + id);
+		const cell = $(`#${id}`);
 
 		if (isEditing) {
 			cell.addClass('isEditing');
@@ -155,6 +155,7 @@ const CellObject = observer(class CellObject extends React.Component<Props, Stat
 
 	componentWillUnmount () {
 		this._isMounted = false;
+		window.clearTimeout(this.timeoutFilter);
 	};
 
 	setEditing (v: boolean) {
