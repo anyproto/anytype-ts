@@ -150,8 +150,6 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		const { data } = param;
 		const { filter } = data;
 
-		console.log(filter);
-
 		if (filter != this.filter) {
 			this.offset = 0;
 			this.filter = filter;
