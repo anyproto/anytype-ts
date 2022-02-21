@@ -452,7 +452,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		menuStore.open('dataviewContext', {
 			rect: { width: 0, height: 0, x: x + 20, y: y },
-			vertical: I.MenuDirection.Center,
 			data: {
 				objectId: id,
 				subId,
