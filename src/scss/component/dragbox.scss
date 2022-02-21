@@ -1,6 +1,6 @@
 @import "~scss/_vars";
 
-.dragbox { display: inline-block; position: relative; }
+.dragbox { display: inline; position: relative; }
 .dragbox {
     .isDraggable { position: relative; }
     .isDraggable.isClone { opacity: 0.75; position: absolute; left: 0px; top: 0px; }

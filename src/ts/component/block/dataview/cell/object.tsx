@@ -24,6 +24,7 @@ const CellObject = observer(class CellObject extends React.Component<Props, Stat
 	state = {
 		isEditing: false,
 	};
+	timeoutFilter: number = 0;
 
 	constructor (props: any) {
 		super(props);
@@ -325,7 +326,10 @@ const CellObject = observer(class CellObject extends React.Component<Props, Stat
 	};
 
 	onKeyUp (e: any) {
-		menuStore.updateData('dataviewOptionValues', { filter: this.getValue().new });
+		window.clearTimeout(this.timeoutFilter);
+		this.timeoutFilter = window.setTimeout(() => {
+			menuStore.updateData('dataviewObjectList', { filter: this.getValue().new });
+		}, 500);
 
 		this.placeholderCheck();
 		this.resize();
@@ -384,7 +388,7 @@ const CellObject = observer(class CellObject extends React.Component<Props, Stat
 		const node = $(ReactDOM.findDOMNode(this));
 		node.find('#entry').text(' ');
 
-		menuStore.updateData('dataviewObjectValues', { filter: '' });
+		menuStore.updateData('dataviewObjectList', { filter: '' });
 		this.onFocus();
 	};
 
@@ -398,7 +402,6 @@ const CellObject = observer(class CellObject extends React.Component<Props, Stat
 
 	resize () {
 		const win = $(window);
-		win.trigger('resize.menuDataviewObjectValues');
 		win.trigger('resize.menuDataviewObjectList');
 	};
 

@@ -46,7 +46,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		const { param } = this.props;
 		const { loading } = this.state;
 		const { data } = param;
-		const { filter } = data;
+		const { filter, noFilter } = data;
 		const items = this.getItems();
 		const placeholderFocus = data.placeholderFocus || 'Filter objects...';
 
@@ -93,13 +93,15 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		};
 
 		return (
-			<div className="wrap">
-				<Filter 
-					ref={(ref: any) => { this.refFilter = ref; }} 
-					placeholderFocus={placeholderFocus} 
-					value={filter}
-					onChange={this.onFilterChange} 
-				/>
+			<div className={[ 'wrap', (noFilter ? 'noFilter' : '') ].join(' ')}>
+				{!noFilter ? (
+					<Filter 
+						ref={(ref: any) => { this.refFilter = ref; }} 
+						placeholderFocus={placeholderFocus} 
+						value={filter}
+						onChange={this.onFilterChange} 
+					/>
+				) : ''}
 
 				{loading ? <Loader /> : (
 					<div className="items">
@@ -147,6 +149,8 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		const { param, setActive } = this.props;
 		const { data } = param;
 		const { filter } = data;
+
+		console.log(filter);
 
 		if (filter != this.filter) {
 			this.offset = 0;
@@ -329,10 +333,13 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 	};
 
 	resize () {
-		const { getId, position } = this.props;
+		const { getId, position, param } = this.props;
+		const { data } = param;
+		const { noFilter } = data;
 		const items = this.getItems();
-		const obj = $('#' + getId() + ' .content');
-		const height = Math.max(HEIGHT * 2, Math.min(280, items.length * HEIGHT + 58));
+		const obj = $(`#${getId()} .content`);
+		const offset = noFilter ? 16 : 58;
+		const height = Math.max(HEIGHT * 2, Math.min(280, items.length * HEIGHT + offset));
 
 		obj.css({ height: height });
 		position();
