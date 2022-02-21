@@ -156,7 +156,7 @@ const BlockLink = observer(class BlockLink extends React.Component<Props, {}> {
 			return;
 		};
 
-		DataUtil.objectOpenPopup(object);
+		DataUtil.objectOpen(object);
 	};
 	
 	onSelect (icon: string) {
