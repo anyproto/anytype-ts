@@ -52,6 +52,7 @@ class CommonStore {
 	public sidebarObj: Sidebar = { width: 0, height: 0, x: 0, y: 0, fixed: false, snap: I.MenuDirection.Left };
 	public sidebarOldFixed: boolean = false;
 	public isFullScreen: boolean = false;
+	public autoSidebarValue: boolean = false;
 
     constructor() {
         makeObservable(this, {
@@ -127,6 +128,10 @@ class CommonStore {
 
 	get pinTime(): number {
 		return (Number(this.pinTimeId) || Constant.default.pinTime) * 1000;
+	};
+
+	get autoSidebar(): boolean {
+		return Boolean(this.autoSidebarValue);
 	};
 
 	get theme(): string {
@@ -209,6 +214,11 @@ class CommonStore {
 		Storage.set('pinTime', v);
 	};
 
+	autoSidebarSet (v: boolean) {
+		this.autoSidebarValue = Boolean(v);
+		Storage.set('autoSidebar', v);
+	};
+
 	fullscreenSet (v: boolean) {
 		const body = $('body');
 		
@@ -252,6 +262,8 @@ class CommonStore {
 			fixed: true,
 			snap: I.MenuDirection.Left,
 		});
+
+		this.autoSidebarSet(true);
 	};
 
 	sidebarSet (v: any) {

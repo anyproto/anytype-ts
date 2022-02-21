@@ -89,6 +89,30 @@ class Keyboard {
 			$('.focusable.c' + focused).removeClass('isFocused');
 		};
 	};
+
+	onMouseMove (e: any) {
+		const { sidebar, autoSidebar } = commonStore;
+		const { snap } = sidebar;
+
+		this.mouse = {
+			page: { x: e.pageX, y: e.pageY },
+			client: { x: e.clientX, y: e.clientY },
+		};
+
+		if (this.isDragging || this.isResizing || !autoSidebar) {
+			return;
+		};
+
+		const el = $('#sidebar');
+		const win = $(window);
+
+		if ((snap == I.MenuDirection.Left) && (this.mouse.page.x <= 20)) {
+			el.addClass('active');
+		};
+		if ((snap == I.MenuDirection.Right) && (this.mouse.page.x >= win.width() - 20)) {
+			el.addClass('active');
+		};
+	};
 	
 	onKeyDown (e: any) {
 		const rootId = this.getRootId();
@@ -630,30 +654,6 @@ class Keyboard {
 	// Flag to prevent document from sending close, to prevent deletion of drafts
 	disableClose (v: boolean) {
 		this.isCloseDisabled = v;
-	};
-	
-	onMouseMove (e: any) {
-		const { sidebar } = commonStore;
-		const { snap } = sidebar;
-
-		this.mouse = {
-			page: { x: e.pageX, y: e.pageY },
-			client: { x: e.clientX, y: e.clientY },
-		};
-
-		if (this.isDragging || this.isResizing) {
-			return;
-		};
-
-		const el = $('#sidebar');
-		const win = $(window);
-
-		if ((snap == I.MenuDirection.Left) && (this.mouse.page.x <= 20)) {
-			el.addClass('active');
-		};
-		if ((snap == I.MenuDirection.Right) && (this.mouse.page.x >= win.width() - 20)) {
-			el.addClass('active');
-		};
 	};
 	
 	isArrow (k: string): boolean {

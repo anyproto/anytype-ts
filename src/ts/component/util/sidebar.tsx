@@ -796,6 +796,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		} else {
 			if (fixed) {
 				commonStore.sidebarSet({ fixed: false });
+				commonStore.sidebarOldFixed = true;
 			};
 			btn.hide();
 		};
