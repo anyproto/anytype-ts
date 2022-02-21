@@ -247,9 +247,9 @@ class CommonStore {
 		const isWindows = platform == I.Platform.Windows;
 		const offset = isWindows ? 30 : 0;
 		const win = $(window);
-		const wh = win.height() - offset;
+		const wh = win.height();
 		const height = this.sidebarMaxHeight();
-		const y = wh / 2 - height / 2 + offset;
+		const y = (wh - offset) / 2 - height / 2 + offset;
 
 		Storage.setToggle(Constant.subIds.sidebar, 'favorite', true);
 		Storage.setToggle(Constant.subIds.sidebar, 'recent', true);
@@ -263,6 +263,7 @@ class CommonStore {
 			snap: I.MenuDirection.Left,
 		});
 
+		this.sidebarOldFixed = false;
 		this.autoSidebarSet(true);
 	};
 
