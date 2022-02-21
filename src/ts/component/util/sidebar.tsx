@@ -227,7 +227,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 	getSections () {
 		return [
 			{ id: I.TabIndex.Favorite, name: 'Favorites', limit: 0, },
-			{ id: I.TabIndex.Recent, name: 'Recent', limit: 10, },
+			{ id: I.TabIndex.Recent, name: 'History', limit: 10, },
 			{ id: I.TabIndex.Set, name: 'Sets', limit: 20, },
 		];
 	};
@@ -787,11 +787,13 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		const { fixed } = sidebar;
 		const win = $(window);
 		const ww = win.width();
-		const old = commonStore.sidebarOldObj;
+		const old = commonStore.sidebarOldFixed;
 		const btn = $('#footer #button-expand');
 
+		console.log('OLD', old);
+
 		if (ww > UNFIX_THRESHOLD) {
-			if (!fixed && old.fixed) {
+			if (!fixed && old) {
 				commonStore.sidebarSet({ fixed: true });
 			};
 			btn.show();
