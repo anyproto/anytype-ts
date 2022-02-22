@@ -107,10 +107,10 @@ class Keyboard {
 		const win = $(window);
 
 		if ((snap == I.MenuDirection.Left) && (this.mouse.page.x <= 20)) {
-			el.addClass('active');
+			el.addClass('anim active');
 		};
 		if ((snap == I.MenuDirection.Right) && (this.mouse.page.x >= win.width() - 20)) {
-			el.addClass('active');
+			el.addClass('anim active');
 		};
 	};
 	

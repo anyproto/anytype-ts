@@ -17,6 +17,7 @@
     height: 100%; top: 0px !important; transform: translate3d(0px,0px,0px); border-radius: 0px; 
     box-shadow: 0px 0px; border-right: 1px solid $colorLightGrey; transition: none;
 }
+.sidebar.anim { transition: transform 0.2s ease-in-out; }
 .sidebar.active { transform: translate3d(0px,0px,0px); }
 
 .sidebar.right {
