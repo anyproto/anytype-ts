@@ -50,6 +50,7 @@ const FooterMainEdit = observer(class FooterMainEdit extends React.Component<Pro
 
 	onSidebarExpand () {
 		commonStore.sidebarSet({ fixed: true });
+		menuStore.close('previewObject');
 	};
 
 	onHelp () {

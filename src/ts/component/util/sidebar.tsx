@@ -184,6 +184,8 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 			defaultHeight: HEIGHT,
 			keyMapper: (i: number) => { return (items[i] || {}).id; },
 		});
+
+		window.clearTimeout(this.timeoutItem);
 	};
 
 	componentWillUnmount () {
