@@ -240,6 +240,7 @@ class CommonStore {
 	sidebarInit () {
 		const stored = Storage.get('sidebar');
 		if (stored) {
+			this.sidebarSet(stored);
 			return;
 		};
 

@@ -26,7 +26,6 @@ const MAX_DEPTH = 100;
 const LIMIT = 20;
 const HEIGHT = 28;
 const SNAP_THRESHOLD = 30;
-const UNFIX_THRESHOLD = 992;
 const TIMEOUT = 100;
 
 const SKIP_TYPES_LOAD = [
@@ -197,6 +196,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		C.ObjectSearchUnsubscribe(Object.keys(this.subscriptionIds).map(id => dbStore.getSubId(Constant.subIds.sidebar, id)));
 
 		Util.tooltipHide(true);
+		menuStore.close('previewObject');
 	};
 
 	rebind () {
@@ -520,13 +520,15 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 			const node = $(ReactDOM.findDOMNode(this));
 			node.removeClass('active');
 		}, TIMEOUT);
+
+		menuStore.close('previewObject');
 	};
 
 	onMouseEnterItem (e: any, item: any) {
-		const { config } = commonStore;
-
 		window.clearTimeout(this.timeoutItem);
+		menuStore.close('previewObject');
 
+		const { config } = commonStore;
 		if (item.isSection || !config.experimental) {
 			return;
 		};
@@ -544,15 +546,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 	};
 
 	onMouseLeaveItem (e: any, item: any) {
-		const { config } = commonStore;
-
 		window.clearTimeout(this.timeoutItem);
-
-		if (!config.experimental) {
-			return;
-		};
-
-		menuStore.close('previewObject');
 	};
 
 	onResizeStart (e: any, dir: I.MenuType) {
