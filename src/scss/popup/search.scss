@@ -6,7 +6,7 @@
 
 		.content { height: 432px; overflow: visible; transition: none; transform: translate3d(0px,0px,0px); }
 		.wrap { height: 100%; }
-		.innerWrap { top: 52px; width: 40%; margin-left: -20%; transform: scale3d(1,1,1); transition: none; overflow: visible; border-radius: 6px; }
+		.innerWrap { top: 52px; margin: 0px; transform: scale3d(1,1,1); transition: none; overflow: visible; border-radius: 6px; }
 		.dimmer { transition: none; }
 
 		.head { 
