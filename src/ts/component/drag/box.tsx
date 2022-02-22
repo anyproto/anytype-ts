@@ -92,13 +92,18 @@ class DragBox extends React.Component<Props, {}> {
 		const node = $(ReactDOM.findDOMNode(this));
 		const items = node.find('.isDraggable');
 		const clone = node.find('.isDraggable.isClone');
-		const width = clone.width();
-		const height = clone.height();
+		const width = clone.outerWidth();
+		const height = clone.outerHeight();
 		const x = e.pageX - this.ox - width / 2;
 		const y = e.pageY - this.oy - height / 2;
 		const center = x + width / 2;
 
 		this.newIndex = -1;
+
+		console.log('ox', this.ox, 'oy', this.oy);
+		console.log('ex', e.pageX, 'ey', e.pageY);
+		console.log('w', width, 'h', height);
+		console.log('x', x, 'y', y);
 
 		node.find('.isDraggable.isOver').removeClass('isOver left right');
 		clone.css({ transform: `translate3d(${x}px,${y}px,0px)` });

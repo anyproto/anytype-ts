@@ -133,7 +133,6 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 		const { isEditing } = this.state;
 		const { id } = this.props;
 		const cell = $(`#${id}`);
-		const win = $(window);
 
 		if (isEditing) {
 			cell.addClass('isEditing');
