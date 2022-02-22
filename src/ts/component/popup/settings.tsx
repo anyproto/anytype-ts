@@ -459,7 +459,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 
 						<div className="row">
 							<div className="side left">
-								<Label text="Show/Hide sidebar automatically" />
+								<Label text="Automatically hide and show Sidebar" />
 							</div>
 							<div className="side right">
 								<Switch value={autoSidebar} onChange={(v: boolean) => { commonStore.autoSidebarSet(v); }}/>
