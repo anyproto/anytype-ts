@@ -373,7 +373,7 @@ function createWindow () {
 				break;
 
 			case 'maximize':
-				win.maximize();
+				win.isMaximized() ? win.unmaximize() : win.maximize();
 				break;
 
 			case 'close':
