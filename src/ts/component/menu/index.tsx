@@ -381,7 +381,6 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 	position () {
 		const { id, param } = this.props;
 		const { element, recalcRect, type, vertical, horizontal, fixedX, fixedY, isSub, noFlipX, noFlipY, withArrow } = param;
-		const platform = Util.getPlatform();
 
 		raf(() => {
 			if (!this._isMounted) {
@@ -482,6 +481,7 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 			};
 
 			if (isFixed) {
+				oy -= scrollTop;
 				y -= scrollTop;
 			};
 
