@@ -511,28 +511,31 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		const { sidebar } = commonStore;
 		const { snap, fixed } = sidebar;
 
-		if (fixed || (snap === null) || menuStore.isOpen('dataviewContext')) {
-			return;
-		};
-
 		window.clearTimeout(this.timeoutHide);
-		this.timeoutHide = window.setTimeout(() => {
-			const node = $(ReactDOM.findDOMNode(this));
-			node.removeClass('active');
-		}, TIMEOUT);
-
-		menuStore.close('previewObject');
-	};
-
-	onMouseEnterItem (e: any, item: any) {
 		window.clearTimeout(this.timeoutItem);
 		menuStore.close('previewObject');
 
+		if (!fixed && (snap !== null) && !menuStore.isOpen('dataviewContext')) {
+			this.timeoutHide = window.setTimeout(() => {
+				const node = $(ReactDOM.findDOMNode(this));
+				node.removeClass('active');
+			}, TIMEOUT);
+		};
+	};
+
+	onMouseEnterItem (e: any, item: any) {
 		const { config } = commonStore;
-		if (item.isSection || !config.experimental) {
+		if (!config.experimental) {
 			return;
 		};
 
+		if (item.isSection) {
+			menuStore.close('previewObject');
+			window.clearTimeout(this.timeoutItem);
+			return;
+		};
+
+		window.clearTimeout(this.timeoutItem);
 		this.timeoutItem = window.setTimeout(() => {
 			menuStore.open('previewObject', {
 				element: `#sidebar #${this.getId(item)}`,
