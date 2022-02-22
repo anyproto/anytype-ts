@@ -552,6 +552,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 
 	onMouseLeaveItem (e: any, item: any) {
 		window.clearTimeout(this.timeoutItem);
+		menuStore.close('previewObject');
 	};
 
 	onResizeStart (e: any, dir: I.MenuType) {
