@@ -817,7 +817,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 
 	setWidth (width: number) {
 		const node = $(ReactDOM.findDOMNode(this));
-		node.css({ width });
+		node.css({ width: this.getWidth(width) });
 		Util.resizeSidebar();
 	};
 
