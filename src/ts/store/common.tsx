@@ -287,7 +287,7 @@ class CommonStore {
 	sidebarMaxHeight () {
 		const win = $(window);
 		const wh = win.height() - Util.sizeHeader();
-		return wh * 0.8;
+		return wh - 144;
 	};
 
 	configSet (config: any, force: boolean) {

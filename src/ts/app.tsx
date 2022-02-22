@@ -333,7 +333,7 @@ class App extends React.Component<Props, State> {
 		Storage.delete('lastSurveyCanceled');
 
 		const storageKeys = [
-			'theme', 'pinTime', 'defaultType',
+			'theme', 'pinTime', 'defaultType', 'autoSidebar',
 		];
 
 		const cover = Storage.get('cover');

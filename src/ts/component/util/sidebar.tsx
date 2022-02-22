@@ -161,7 +161,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 				<Footer ref={(ref: any) => { this.refFooter = ref; }} />
 
 				<div className="resize-h" onMouseDown={(e: any) => { this.onResizeStart(e, I.MenuType.Horizontal); }} />
-				<div className="resize-v" onMouseDown={(e: any) => { this.onResizeStart(e, I.MenuType.Vertical); }} />
+				{/*<div className="resize-v" onMouseDown={(e: any) => { this.onResizeStart(e, I.MenuType.Vertical); }} />*/}
             </div>
 		);
 	};
@@ -522,6 +522,10 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 			this.timeoutHide = window.setTimeout(() => {
 				const node = $(ReactDOM.findDOMNode(this));
 				node.removeClass('active');
+
+				window.setTimeout(() => {
+					node.removeClass('anim');
+				}, 200);
 			}, TIMEOUT);
 		};
 	};
@@ -553,6 +557,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 
 	onMouseLeaveItem (e: any, item: any) {
 		window.clearTimeout(this.timeoutItem);
+		menuStore.close('previewObject');
 	};
 
 	onResizeStart (e: any, dir: I.MenuType) {

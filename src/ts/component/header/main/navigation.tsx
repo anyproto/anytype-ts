@@ -104,11 +104,14 @@ const HeaderMainNavigation = observer(class HeaderMainNavigation extends React.C
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { rootId } = this.props;
+		const { rootId, isPopup } = this.props;
 
 		popupStore.open('search', {
 			preventResize: true, 
-			data: { rootId },
+			data: { 
+				rootId,
+				isPopup,
+			},
 		});
 	};
 

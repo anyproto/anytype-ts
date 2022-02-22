@@ -227,6 +227,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 		
 		const win = $(window);
 		win.on('keydown.search', (e: any) => { this.onKeyDown(e); });
+		win.on('resize.search', (e: any) => { this.resize(); });
 	};
 
 	unbind () {
@@ -442,12 +443,22 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 			return;
 		};
 
-		const { getId } = this.props;
+		const { getId, param } = this.props;
+		const { data } = param;
+		const { isPopup } = data;
 		const items = this.getItems();
-		const obj = $(`#${getId()} .content`);
+		const obj = $(`#${getId()} #innerWrap`);
+		const content = obj.find('.content');
 		const height = Math.max(110, Math.min(HEIGHT * LIMIT, items.length * HEIGHT + 16));
+		const header = $(isPopup ? '#popupPage #innerWrap #header' : '#page.isFull #header');
+		const element = header.find('.side.center');
 
-		obj.css({ height: height });
+		if (element.length) {
+			const offset = element.offset();
+			obj.css({ width: element.width(), left: offset.left, top: offset.top + 40 });
+		};
+
+		content.css({ height });
 	};
 
 });
