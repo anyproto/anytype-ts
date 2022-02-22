@@ -120,6 +120,7 @@ class Keyboard {
 		const key = e.key.toLowerCase();
 		const cmd = this.ctrlKey();
 		const isMain = this.isMain();
+		const isPopup = this.isPopup();
 
 		this.pressed.push(key);
 
@@ -194,6 +195,7 @@ class Keyboard {
 					preventResize: true,
 					data: { 
 						rootId,
+						isPopup,
 					}, 
 				});
 			});

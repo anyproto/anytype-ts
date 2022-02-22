@@ -454,7 +454,8 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 		const element = header.find('.side.center');
 
 		if (element.length) {
-			obj.css({ width: element.width(), left: element.offset().left });
+			const offset = element.offset();
+			obj.css({ width: element.width(), left: offset.left, top: offset.top + 40 });
 		};
 
 		content.css({ height });

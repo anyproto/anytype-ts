@@ -39,13 +39,16 @@ const HeaderMainIndex = observer(class HeaderMainIndex extends React.Component<P
 	};
 
 	onSearch (e: any) {
-		const { root } = blockStore;
+		e.preventDefault();
+		e.stopPropagation();
 
-		popupStore.open('search', { 
-			preventResize: true,
+		const { isPopup } = this.props;
+
+		popupStore.open('search', {
+			preventResize: true, 
 			data: { 
-				rootId: root,
-			}, 
+				isPopup,
+			},
 		});
 	};
 
