@@ -52,6 +52,7 @@ class CommonStore {
 	public sidebarObj: Sidebar = { width: 0, height: 0, x: 0, y: 0, fixed: false, snap: I.MenuDirection.Left };
 	public sidebarOldFixed: boolean = false;
 	public isFullScreen: boolean = false;
+	public autoSidebarValue: boolean = false;
 
     constructor() {
         makeObservable(this, {
@@ -129,6 +130,10 @@ class CommonStore {
 		return (Number(this.pinTimeId) || Constant.default.pinTime) * 1000;
 	};
 
+	get autoSidebar(): boolean {
+		return Boolean(this.autoSidebarValue);
+	};
+
 	get theme(): string {
 		return String(this.themeId || '');
 	};
@@ -200,13 +205,18 @@ class CommonStore {
 	};
 
 	defaultTypeSet (v: string) {
-		this.typeId = v;
-		Storage.set('defaultType', v);
+		this.typeId = String(v || '');
+		Storage.set('defaultType', this.typeId);
 	};
 
 	pinTimeSet (v: string) {
 		this.pinTimeId = Number(v) || Constant.default.pinTime;
-		Storage.set('pinTime', v);
+		Storage.set('pinTime', this.pinTimeId);
+	};
+
+	autoSidebarSet (v: boolean) {
+		this.autoSidebarValue = Boolean(v);
+		Storage.set('autoSidebar', this.autoSidebarValue);
 	};
 
 	fullscreenSet (v: boolean) {
@@ -230,6 +240,7 @@ class CommonStore {
 	sidebarInit () {
 		const stored = Storage.get('sidebar');
 		if (stored) {
+			this.sidebarSet(stored);
 			return;
 		};
 
@@ -237,9 +248,9 @@ class CommonStore {
 		const isWindows = platform == I.Platform.Windows;
 		const offset = isWindows ? 30 : 0;
 		const win = $(window);
-		const wh = win.height() - offset;
+		const wh = win.height();
 		const height = this.sidebarMaxHeight();
-		const y = wh / 2 - height / 2 + offset;
+		const y = (wh - offset) / 2 - height / 2 + offset;
 
 		Storage.setToggle(Constant.subIds.sidebar, 'favorite', true);
 		Storage.setToggle(Constant.subIds.sidebar, 'recent', true);
@@ -252,6 +263,9 @@ class CommonStore {
 			fixed: true,
 			snap: I.MenuDirection.Left,
 		});
+
+		this.sidebarOldFixed = false;
+		this.autoSidebarSet(true);
 	};
 
 	sidebarSet (v: any) {

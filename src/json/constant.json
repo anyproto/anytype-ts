@@ -194,7 +194,8 @@
 		"header": 38,
 		"lastBlock": 60,
 		"cover": 1920,
-		"sidebar": { 
+		"sidebar": {
+			"unfix": 992,
 			"height": { "min": 400 },
 			"width": { "min": 240, "max": 500 }
 		},

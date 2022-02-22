@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Icon, IconObject } from 'ts/component';
-import { I, DataUtil, focus, keyboard } from 'ts/lib';
-import { blockStore, detailStore, commonStore, popupStore } from 'ts/store';
+import { I, DataUtil } from 'ts/lib';
+import { blockStore, detailStore, commonStore, popupStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props {};
@@ -59,6 +59,7 @@ const Footer = observer(class Item extends React.Component<Props, {}> {
 		e.stopPropagation();
 
 		commonStore.sidebarSet({ fixed: false });
+		menuStore.close('previewObject');
 	};
 
     onProfile (e: any) {

@@ -153,7 +153,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			};
 		});
 		win.on('focus.editor' + namespace, (e: any) => {
-			if (!ids.length) {
+			if (!ids.length && !menuStore.isOpen()) {
 				focus.restore();
 				focus.apply(); 
 			};

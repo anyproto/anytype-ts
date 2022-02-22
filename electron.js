@@ -373,7 +373,7 @@ function createWindow () {
 				break;
 
 			case 'maximize':
-				win.setFullScreen(!win.isFullScreen());
+				win.isMaximized() ? win.unmaximize() : win.maximize();
 				break;
 
 			case 'close':
@@ -545,6 +545,14 @@ function menuInit () {
 		},
 		{
 			role: 'windowMenu',
+			submenu: [
+				{ role: 'minimize' },
+      			{ role: 'zoom' },
+				{
+					label: 'Fullscreen', type: 'checkbox', checked: win.isFullScreen(),
+					click: () => { win.setFullScreen(!win.isFullScreen()); }
+				},
+			]
 		},
 		{
 			label: 'Help',

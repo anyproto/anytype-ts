@@ -482,6 +482,7 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 			};
 
 			if (isFixed) {
+				oy -= scrollTop;
 				y -= scrollTop;
 			};
 

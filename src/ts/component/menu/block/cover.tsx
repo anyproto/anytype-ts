@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { I, C, DataUtil, analytics } from 'ts/lib';
 import { Cover, Filter, Icon, Label } from 'ts/component';
-import { detailStore } from 'ts/store';
+import { detailStore, commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {};
@@ -51,11 +51,12 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 
 	render () {
 		const { filter, tab } = this.state;
+		const { config } = commonStore;
 		const tabs: any[] = [
 			{ id: Tab.Gallery, name: 'Gallery' },
-			{ id: Tab.Unsplash, name: 'Unsplash' },
+			(config.experimental ? { id: Tab.Unsplash, name: 'Unsplash' } : null),
 			{ id: Tab.Upload, name: 'Upload' },
-		];
+		].filter(it => it);
 
 		const Item = (item: any) => (
 			<div className="item" onClick={(e: any) => { this.onSelect(e, item); }}>

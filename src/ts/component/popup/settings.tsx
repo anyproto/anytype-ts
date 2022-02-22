@@ -60,7 +60,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 		const { data } = param;
 		const { page } = data;
 		const { account, phrase } = authStore;
-		const { cover, coverImage, theme, config } = commonStore;
+		const { cover, coverImage, theme, config, autoSidebar } = commonStore;
 		const { loading, error, entropy } = this.state;
 		const pin = Storage.get('pin');
 
@@ -454,6 +454,15 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 							</div>
 							<div className="side right">
 								<Select id="theme" options={themes} value={theme} onChange={(id: string) => { commonStore.themeSet(id); }}/>
+							</div>
+						</div>
+
+						<div className="row">
+							<div className="side left">
+								<Label text="Show/Hide sidebar automatically" />
+							</div>
+							<div className="side right">
+								<Switch value={autoSidebar} onChange={(v: boolean) => { commonStore.autoSidebarSet(v); }}/>
 							</div>
 						</div>
 

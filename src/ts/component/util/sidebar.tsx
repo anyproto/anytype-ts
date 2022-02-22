@@ -26,8 +26,7 @@ const MAX_DEPTH = 100;
 const LIMIT = 20;
 const HEIGHT = 28;
 const SNAP_THRESHOLD = 30;
-const UNFIX_THRESHOLD = 992;
-const TIMEOUT = 300;
+const TIMEOUT = 100;
 
 const SKIP_TYPES_LOAD = [
 	Constant.typeId.space,
@@ -185,6 +184,8 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 			defaultHeight: HEIGHT,
 			keyMapper: (i: number) => { return (items[i] || {}).id; },
 		});
+
+		window.clearTimeout(this.timeoutItem);
 	};
 
 	componentWillUnmount () {
@@ -197,6 +198,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		C.ObjectSearchUnsubscribe(Object.keys(this.subscriptionIds).map(id => dbStore.getSubId(Constant.subIds.sidebar, id)));
 
 		Util.tooltipHide(true);
+		menuStore.close('previewObject');
 	};
 
 	rebind () {
@@ -488,8 +490,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		this.setActive(item.id);
 
 		menuStore.open('dataviewContext', {
-			rect: { width: 0, height: 0, x: x + 20, y: y },
-			vertical: I.MenuDirection.Center,
+			rect: { width: 0, height: 0, x: x + 4, y: y },
 			onClose: () => {
 				this.setActive(this.id);
 			},
@@ -513,26 +514,31 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		const { snap, fixed } = sidebar;
 		const menuOpen = menuStore.isOpenList([ 'dataviewContext', 'preview' ]);
 
-		if (fixed || (snap === null) || menuOpen) {
-			return;
-		};
-
 		window.clearTimeout(this.timeoutHide);
-		this.timeoutHide = window.setTimeout(() => {
-			const node = $(ReactDOM.findDOMNode(this));
-			node.removeClass('active');
-		}, TIMEOUT);
+		window.clearTimeout(this.timeoutItem);
+		menuStore.close('previewObject');
+
+		if (!fixed && (snap !== null) && !menuOpen) {
+			this.timeoutHide = window.setTimeout(() => {
+				const node = $(ReactDOM.findDOMNode(this));
+				node.removeClass('active');
+			}, TIMEOUT);
+		};
 	};
 
 	onMouseEnterItem (e: any, item: any) {
 		const { config } = commonStore;
-
-		window.clearTimeout(this.timeoutItem);
-
-		if (item.isSection || !config.experimental) {
+		if (!config.experimental) {
 			return;
 		};
 
+		if (item.isSection) {
+			menuStore.close('previewObject');
+			window.clearTimeout(this.timeoutItem);
+			return;
+		};
+
+		window.clearTimeout(this.timeoutItem);
 		this.timeoutItem = window.setTimeout(() => {
 			menuStore.open('previewObject', {
 				element: `#sidebar #${this.getId(item)}`,
@@ -546,15 +552,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 	};
 
 	onMouseLeaveItem (e: any, item: any) {
-		const { config } = commonStore;
-
 		window.clearTimeout(this.timeoutItem);
-
-		if (!config.experimental) {
-			return;
-		};
-
-		menuStore.close('previewObject');
 	};
 
 	onResizeStart (e: any, dir: I.MenuType) {
@@ -790,7 +788,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		const old = commonStore.sidebarOldFixed;
 		const btn = $('#footer #button-expand');
 
-		if (ww > UNFIX_THRESHOLD) {
+		if (ww > Constant.size.sidebar.unfix) {
 			if (!fixed && old) {
 				commonStore.sidebarSet({ fixed: true });
 			};
@@ -798,6 +796,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		} else {
 			if (fixed) {
 				commonStore.sidebarSet({ fixed: false });
+				commonStore.sidebarOldFixed = true;
 			};
 			btn.hide();
 		};
@@ -818,7 +817,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 
 	setWidth (width: number) {
 		const node = $(ReactDOM.findDOMNode(this));
-		node.css({ width });
+		node.css({ width: this.getWidth(width) });
 		Util.resizeSidebar();
 	};
 
