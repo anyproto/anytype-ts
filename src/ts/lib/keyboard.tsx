@@ -99,8 +99,6 @@ class Keyboard {
 			client: { x: e.clientX, y: e.clientY },
 		};
 
-		console.log(this.mouse);
-
 		if (this.isDragging || this.isResizing || !autoSidebar) {
 			return;
 		};
