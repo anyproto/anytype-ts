@@ -111,7 +111,7 @@ class Cell extends React.Component<Props, {}> {
 			<div 
 				id={elementId} 
 				className={cn.join(' ')} 
-				onClick={onClick} 
+				onMouseDown={onClick} 
 				onMouseEnter={this.onMouseEnter} 
 				onMouseLeave={this.onMouseLeave}
 			>
