@@ -22,7 +22,7 @@ const ViewList = observer(class ViewList extends React.Component<Props, {}> {
 		const view = getView();
 		const subId = dbStore.getSubId(rootId, block.id);
 		const records = dbStore.getRecords(subId, '');
-		const allowed = blockStore.isAllowed(rootId, block.id, [ I.RestrictionDataview.Object ]);
+		const allowed = blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.Object ]);
 		const length = records.length;
 
 		return (

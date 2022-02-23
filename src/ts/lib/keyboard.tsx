@@ -44,11 +44,11 @@ class Keyboard {
 
 		win.unbind('mousemove.common beforeunload.common blur.common');
 		
-		win.on('mousemove.common', throttle((e: any) => {
+		win.on('mousemove.common', (e: any) => {
 			this.initPinCheck();
 			this.disableMouse(false);
 			this.onMouseMove(e);
-		}, THROTTLE));
+		});
 		
 		win.on('blur.common', () => {
 			Util.tooltipHide(true);
@@ -98,6 +98,8 @@ class Keyboard {
 			page: { x: e.pageX, y: e.pageY },
 			client: { x: e.clientX, y: e.clientY },
 		};
+
+		console.log(this.mouse);
 
 		if (this.isDragging || this.isResizing || !autoSidebar) {
 			return;

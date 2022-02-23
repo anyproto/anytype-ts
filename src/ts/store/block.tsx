@@ -420,12 +420,14 @@ class BlockStore {
 		return map.get(blockId) || [];
 	};
 
-    isAllowed (rootId: string, blockId: string, flags: any[]): boolean {
+	checkFlags (rootId: string, blockId: string, flags: any[]): boolean {
 		if (!rootId || !blockId) {
 			return false;
 		};
+		return this.isAllowed(this.getRestrictions(rootId, blockId), flags);
+	};
 
-		const restrictions = this.getRestrictions(rootId, blockId);
+    isAllowed (restrictions: any[], flags: any[]): boolean {
 		for (let flag of flags) {
 			if (restrictions.indexOf(flag) >= 0) {
 				return false;

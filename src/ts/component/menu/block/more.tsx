@@ -168,8 +168,8 @@ class MenuBlockMore extends React.Component<Props, {}> {
 
 		// Restrictions
 
-		const allowedBlock = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Block ]);
-		const allowedArchive = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Delete ]) && !object.isReadonly;
+		const allowedBlock = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Block ]);
+		const allowedArchive = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Delete ]);
 		const allowedDelete = allowedArchive && object.isArchived;
 		const allowedShare = block.isObjectSpace() && config.allowSpaces;
 		const allowedSearch = !block.isObjectSet() && !block.isObjectSpace();
@@ -178,7 +178,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const allowedTemplate = (object.type != Constant.typeId.note) && (object.id != profile);
 		const allowedFav = !object.isArchived;
 		const allowedExport = config.experimental;
-		const allowedLock = !object.isReadonly;
+		const allowedLock = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 
 		if (!allowedArchive)	 archive = null;
 		if (!allowedDelete)		 pageRemove = null;

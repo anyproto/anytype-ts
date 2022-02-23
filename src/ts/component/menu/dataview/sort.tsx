@@ -44,7 +44,7 @@ const MenuSort = observer(class MenuSort extends React.Component<Props, {}> {
 
 		const items = this.getItems();
 		const sortCnt = items.length;
-		const allowedView = blockStore.isAllowed(rootId, blockId, [ I.RestrictionDataview.View ]);
+		const allowedView = blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
 		
 		const typeOptions = [
 			{ id: String(I.SortType.Asc), name: 'Ascending' },

@@ -40,7 +40,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		const viewRelation = this.getViewRelation();
 		const isDate = this.format == I.RelationType.Date;
 		const isObject = this.format == I.RelationType.Object;
-		const allowed = blockStore.isAllowed(rootId, blockId, [ I.RestrictionDataview.Relation ]);
+		const allowed = blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.Relation ]);
 		const canDelete = allowed && relation && Constant.systemRelationKeys.indexOf(relation.relationKey) < 0;
 		const isReadonly = this.isReadonly();
 
@@ -403,7 +403,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		const { data } = param;
 		const { readonly, rootId, blockId } = data;
 		const relation = this.getRelation();
-		const allowed = blockStore.isAllowed(rootId, blockId, [ I.RestrictionDataview.Relation ]);
+		const allowed = blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.Relation ]);
 
 		return readonly || !allowed || (relation && relation.isReadonlyRelation);
 	};

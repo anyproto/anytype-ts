@@ -35,7 +35,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 		const relations = view.relations.filter((it: any) => { return it.isVisible; });
 		const subId = dbStore.getSubId(rootId, block.id);
 		const records = dbStore.getRecords(subId, '');
-		const allowed = blockStore.isAllowed(rootId, block.id, [ I.RestrictionDataview.Object ]);
+		const allowed = blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.Object ]);
 		const length = records.length;
 
 		return (

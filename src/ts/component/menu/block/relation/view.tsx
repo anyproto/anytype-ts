@@ -40,9 +40,9 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 			return null;
 		};
 
-		let allowedBlock = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Block ]);
-		let allowedRelation = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Relation ]);
-		let allowedValue = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
+		let allowedBlock = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Block ]);
+		let allowedRelation = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
+		let allowedValue = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 
 		if (root.isLocked()) {
 			allowedBlock = false;
@@ -266,7 +266,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const { param, getId } = this.props;
 		const { data, classNameWrap } = param;
 		const { rootId } = data;
-		const allowed = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Relation ]);
+		const allowed = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
 
 		if (!allowed) {
 			return;

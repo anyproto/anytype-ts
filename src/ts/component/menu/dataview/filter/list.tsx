@@ -41,7 +41,7 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<Pro
 		const { data } = param;
 		const { rootId, blockId, getView } = data;
 		const view = getView();
-		const allowedView = blockStore.isAllowed(rootId, blockId, [ I.RestrictionDataview.View ]);
+		const allowedView = blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
 		const subId = dbStore.getSubId(rootId, blockId);
 
 		if (!view) {

@@ -65,7 +65,7 @@ const PageMainSpace = observer(class PageMainSpace extends React.Component<Props
 		};
 
 		const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, align: object.layoutAlign, childrenIds: [], fields: {}, content: {} });
-		const allowedDetails = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
+		const allowedDetails = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const highlighted = dbStore.getRecords(this.getSubIdHighlighted(), '');
 
 		if (object.name == DataUtil.defaultName('page')) {
