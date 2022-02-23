@@ -81,8 +81,8 @@
 				.icon.help { background-image: url('~img/icon/help.svg'); }
 				.icon.nav { background-image: url('~img/icon/header/nav.svg'); }
 
-				.full { width: 100%; margin: 16px 0px; }
-				.half { width: 50%; margin: 16px 0px; }
+				.full { width: 100%; margin: 16px 0px; border-radius: 8px; }
+				.half { width: 50%; margin: 16px 0px; border-radius: 8px; }
 
 				img.mention { margin-left: -18px; }
 			}
