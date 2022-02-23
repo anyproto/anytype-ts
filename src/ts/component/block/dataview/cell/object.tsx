@@ -355,34 +355,28 @@ const CellObject = observer(class CellObject extends React.Component<Props, Stat
 		};
 
 		const { relation } = this.props;
-		const match = this.getItems().find((it: any) => { return it.name == text; });
+		const typeId = relation.objectTypes.length ? relation.objectTypes[0] : '';
+		const details: any = { name: text };
 
-		if (match) {
-			this.onValueAdd(match.id);
-		} else {
-			const details: any = { name: text };
-			const typeId = relation.objectTypes.length ? relation.objectTypes[0] : '';
+		if (typeId) {
+			const type = dbStore.getObjectType(typeId);
+			if (type) {
+				details.type = type.id;
+				details.layout = type.layout;
+			};
+		};
 
-			if (typeId) {
-				const type = dbStore.getObjectType(typeId);
-				if (type) {
-					details.type = type.id;
-					details.layout = type.layout;
-				};
+		DataUtil.pageCreate('', '', details, I.BlockPosition.Bottom, '', {}, (message: any) => {
+			if (!message.error.code) {
+				this.onValueAdd(message.targetId);
 			};
 
-			DataUtil.pageCreate('', '', details, I.BlockPosition.Bottom, '', {}, (message: any) => {
-				if (!message.error.code) {
-					this.onValueAdd(message.targetId);
-				};
-
-				analytics.event('CreateObject', {
-					objectType: details.type,
-					layout: details.layout,
-					template: '',
-				});
+			analytics.event('CreateObject', {
+				objectType: details.type,
+				layout: details.layout,
+				template: '',
 			});
-		};
+		});
 	};
 
 	clear () {
@@ -395,6 +389,15 @@ const CellObject = observer(class CellObject extends React.Component<Props, Stat
 
 		menuStore.updateData('dataviewObjectList', { filter: '' });
 		this.onFocus();
+	};
+
+	blur () {
+			if (!this._isMounted) {
+			return;
+		};
+
+		const node = $(ReactDOM.findDOMNode(this));
+		node.find('#entry').blur();
 	};
 
 	scrollToBottom () {

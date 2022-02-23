@@ -187,12 +187,26 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 
 	rebind () {
 		this.unbind();
-		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
+		$(window).on('keydown.menu', (e: any) => { this.onKeyDown(e); });
 		window.setTimeout(() => { this.props.setActive(); }, 15);
 	};
 	
 	unbind () {
 		$(window).unbind('keydown.menu');
+	};
+
+	onKeyDown (e: any) {
+		const { param } = this.props;
+		const { data } = param;
+		const { cellRef } = data;
+
+		keyboard.shortcut('arrowdown', e, () => {
+			if (cellRef) {
+				cellRef.blur();
+			};
+		});
+
+		this.props.onKeyDown(e);
 	};
 
 	onScroll ({ clientHeight, scrollHeight, scrollTop }) {
@@ -276,7 +290,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 	onClick (e: any, item: any) {
 		const { param, close, position } = this.props;
 		const { data } = param;
-		const { onChange, maxCount, filter } = data;
+		const { onChange, maxCount, filter, cellRef } = data;
 		const relation = data.relation.get();
 
 		e.preventDefault();
@@ -285,6 +299,10 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		if (!item) {
 			close();
 			return;
+		};
+
+		if (cellRef) {
+			cellRef.clear();
 		};
 
 		const cb = (id: string) => {
