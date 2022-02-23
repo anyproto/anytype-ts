@@ -535,7 +535,8 @@
 					"name": "at9412003",
 					"region": "fra1"
 				}
-			]
+			],
+			"signIgnore": [".*\\.pak$", ".*\\.png$", ".*\\.jpg$", ".*\\.gif$", ".*\\.mp4$", ".*\\.icns$"]
 		},
 		"win": {
 			"target": "nsis",
