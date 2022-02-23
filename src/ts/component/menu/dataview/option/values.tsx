@@ -49,13 +49,12 @@ const MenuOptionValues = observer(class MenuOptionValues extends React.Component
 				onMouseEnter={(e: any) => { this.onOver(e, item); }}
 				style={item.style}
 			>
-				<Handle />
 				<div className="clickable" onClick={(e: any) => { this.onClick(e, item); }}>
 					<Tag {...item} className={DataUtil.tagClass(relation.format)} />
 				</div>
 				<div className="buttons">
 					<Icon className="more" onClick={(e: any) => { this.onEdit(e, item); }} />
-					<Icon className="delete" onClick={(e: any) => { this.onRemove(e, item); }} />
+					{/*<Icon className="delete" onClick={(e: any) => { this.onRemove(e, item); }} />*/}
 				</div>
 			</div>
 		));
@@ -167,7 +166,7 @@ const MenuOptionValues = observer(class MenuOptionValues extends React.Component
 			this.refList.scrollToPosition(this.top);
 		};
 
-		this.props.setActive(null, true);
+		window.setTimeout(() => { this.props.setActive(); });
 	};
 
 	componentWillUnmount () {
@@ -194,16 +193,17 @@ const MenuOptionValues = observer(class MenuOptionValues extends React.Component
 	getItems () {
 		const { param } = this.props;
 		const { data } = param;
-		const relation = data.relation.get();
-
-		let value: any[] = Relation.getArrayValue(data.value);
-		value = value.map((id: string) => { 
-			return (relation.selectDict || []).find((it: any) => { return it.id == id; });
-		});
-
-		value.unshift({ id: 'add', name: 'Add options' });
-		value.unshift({ id: 'label', name: 'Select an option or add one' });
-		value = value.filter((it: any) => { return it && it.id; });
+		const { filter, cellRef } = data;
+		
+		let value: any[] = [
+			{ id: 'label', name: 'Select an option or add one' }
+		];
+		if (filter) {
+			value.push({ id: 'add', name: `Create option "${data.filter}"` });
+		};
+		if (cellRef) {
+			value = value.concat(cellRef.getItems());
+		};
 		return value;
 	};
 
@@ -216,25 +216,14 @@ const MenuOptionValues = observer(class MenuOptionValues extends React.Component
 	onAdd (e: any) {
 		e.stopPropagation();
 
-		const { param, getId, getSize } = this.props;
-		const { data, classNameWrap } = param;
-
-		menuStore.closeAll([ 'dataviewOptionList', 'dataviewOptionEdit' ], () => {
-			menuStore.open('dataviewOptionList', {
-				element: `#${getId()} #item-add`,
-				width: 0,
-				offsetX: getSize().width,
-				offsetY: -64,
-				passThrough: true,
-				noFlipY: true,
-				noAnimation: true,
-				classNameWrap: classNameWrap,
-				data: {
-					...data,
-					rebind: this.rebind,
-				},
-			});
-		});
+		const { param } = this.props;
+		const { data } = param;
+		const { cellRef, filter } = data;
+		
+		if (cellRef) {
+			cellRef.onOptionAdd(filter);
+			cellRef.clear();
+		};
 	};
 
 	onEdit (e: any, item: any) {
@@ -266,18 +255,13 @@ const MenuOptionValues = observer(class MenuOptionValues extends React.Component
 	};
 
 	onRemove (e: any, item: any) {
-		const { param, id } = this.props;
+		const { param } = this.props;
 		const { data } = param;
-		const { onChange } = data;
-		
-		let value = Relation.getArrayValue(data.value);
-		value = value.filter((it: any) => { return it != item.id; });
-		value = Util.arrayUnique(value);
+		const { cellRef } = data;
 
-		menuStore.updateData(id, { value });
-		menuStore.updateData('dataviewOptionList', { value });
-
-		onChange(value);
+		if (cellRef) {
+			cellRef.onValueRemove(item.id);
+		};
 	};
 
 	onSortStart () {
@@ -289,17 +273,15 @@ const MenuOptionValues = observer(class MenuOptionValues extends React.Component
 	
 	onSortEnd (result: any) {
 		const { oldIndex, newIndex } = result;
-		const { param, dataset, id } = this.props;
+		const { param, dataset } = this.props;
 		const { selection } = dataset;
 		const { data } = param;
-		const { onChange } = data;
+		const { filter, cellRef } = data;
+		const offset = filter ? 2 : 1;
 
-		let value = Relation.getArrayValue(data.value);
-		value = arrayMove(value, oldIndex - 2, newIndex - 2);
-		value = Util.arrayUnique(value);
-
-		menuStore.updateData(id, { value });
-		onChange(value);
+		if (cellRef) {
+			cellRef.onDragEnd(oldIndex - offset, newIndex - offset);
+		};
 
 		selection.preventSelect(false);
 	};

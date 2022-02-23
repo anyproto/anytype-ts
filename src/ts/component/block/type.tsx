@@ -273,6 +273,7 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 			};
 
 			analytics.event('CreateObject', {
+				route: 'SelectType',
 				objectType: item.id,
 				layout: template?.layout,
 				template: (template && template.isBundledTemplate ? template.id : 'custom'),
@@ -296,6 +297,7 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 				DataUtil.objectOpenEvent(e, { id: message.id, layout: I.ObjectLayout.Set });
 
 				analytics.event('CreateObject', {
+					route: 'SelectType',
 					objectType: Constant.typeId.set,
 					layout: I.ObjectLayout.Set,
 				});

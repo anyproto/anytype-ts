@@ -38,7 +38,7 @@
         .line { background: $colorLineSecondary; }
         .section::after { background: $colorLineSecondary; }
 
-        .item { background: $colorBgLight; }
+        .item { background: none; }
         .item.hover::before { background: $colorHover; }
         .item {
             .icon.delete:hover, .icon.more:hover { background-color: $colorHover; }

@@ -1146,7 +1146,11 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 		if (blockStore.checkBlockType(rootId)) {
 			const object = detailStore.get(rootId, rootId, []);
-			analytics.event('CreateObject', { objectType: object.type, layout: object.layout });
+			analytics.event('CreateObject', { 
+				route: 'Editor',
+				objectType: object.type, 
+				layout: object.layout,
+			});
 		};
 	};
 

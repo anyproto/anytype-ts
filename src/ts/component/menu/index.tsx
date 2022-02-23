@@ -258,10 +258,9 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 		this.setClass();
 		this.position();
 		this.animate();
-		this.unbind();
+		this.rebind();
 		this.setActive();
 		
-		const win = $(window);
 		const obj = $(`#${this.getId()}`);
 		const el = this.getElement();
 
@@ -272,8 +271,6 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 		if (param.height) {
 			obj.css({ height: param.height });
 		};
-
-		win.on('resize.' + this.getId(), () => { this.position(); });
 
 		if (onOpen) {
 			onOpen(this);
@@ -295,7 +292,6 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 		};
 
 		menu.addClass('show').css({ transform: 'none' });
-
 		this.position();
 	};
 
@@ -344,6 +340,11 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 		};
 
 		node.attr({ class: cn.join(' ') });
+	};
+
+	rebind () {
+		this.unbind();
+		$(window).on('resize.' + this.getId(), () => { this.position(); });
 	};
 	
 	unbind () {
@@ -608,7 +609,7 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 		keyboard.disableMouse(true);
 
 		const { param } = this.props;
-		const { commonFilter } = param;
+		const { commonFilter, isSub } = param;
 		const refInput = this.ref.refFilter || this.ref.refName;
 
 		let ret = false;
@@ -794,7 +795,7 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 
 		const node = $(ReactDOM.findDOMNode(this));
 		const menu = node.find('.menu');
-
+		
 		menu.find('.item.hover').removeClass('hover');
 
 		if (!item) {

@@ -299,6 +299,10 @@ html.themeDark {
         .cellContent { background: $colorBlack; }
     }
 
+    .cell.isEditing.c-select, .cell.isEditing.c-object {
+        #entry { color: $colorPrimary; }
+    }
+
     .cellContent.c-url, 
     .cellContent.c-email, 
     .cellContent.c-phone 

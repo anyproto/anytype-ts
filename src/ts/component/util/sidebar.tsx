@@ -512,12 +512,13 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 
 		const { sidebar } = commonStore;
 		const { snap, fixed } = sidebar;
+		const menuOpen = menuStore.isOpenList([ 'dataviewContext', 'preview' ]);
 
 		window.clearTimeout(this.timeoutHide);
 		window.clearTimeout(this.timeoutItem);
 		menuStore.close('previewObject');
 
-		if (!fixed && (snap !== null) && !menuStore.isOpen('dataviewContext')) {
+		if (!fixed && (snap !== null) && !menuOpen) {
 			this.timeoutHide = window.setTimeout(() => {
 				const node = $(ReactDOM.findDOMNode(this));
 				node.removeClass('active');

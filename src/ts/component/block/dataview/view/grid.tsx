@@ -252,7 +252,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 		const idx = view.relations.findIndex((it: I.ViewRelation) => { return it.relationKey == relationKey; });
 		const size = Constant.size.dataview.cell;
 
-		let width = e.pageX - offset.left;
+		let width = Math.floor(e.pageX - offset.left);
 		width = Math.max(size.min, width); 
 		width = Math.min(size.max, width);
 

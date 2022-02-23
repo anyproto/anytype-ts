@@ -1010,6 +1010,14 @@ class Util {
 		footer.css(css);
 	};
 
+	rectsCollide (rect1: any, rect2: any) {
+		return this.coordsCollide(rect1.x, rect1.y, rect1.width, rect1.height, rect2.x, rect2.y, rect2.width, rect2.height);
+	};
+	
+	coordsCollide (x1: number, y1: number, w1: number, h1: number, x2: number, y2: number, w2: number, h2: number) {
+		return !((y1 + h1 < y2) || (y1 > y2 + h2) || (x1 + w1 < x2) || (x1 > x2 + w2));
+	};
+
 };
 
 export default new Util();

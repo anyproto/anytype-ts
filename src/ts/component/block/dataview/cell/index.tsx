@@ -241,14 +241,16 @@ class Cell extends React.Component<Props, {}> {
 			onOpen: setOn,
 			onClose: setOff,
 			data: { 
-				rootId: rootId,
-				subId: subId,
+				cellId,
+				cellRef: this.ref,
+				rootId,
+				subId,
 				blockId: block.id,
-				value: value, 
+				value, 
 				relation: observable.box(relation),
-				record: record,
-				optionCommand: optionCommand,
-				placeholder: placeholder,
+				record,
+				optionCommand,
+				placeholder,
 				onChange: (value: any, callBack?: (message: any) => void) => {
 					if (this.ref && this.ref.onChange) {
 						this.ref.onChange(value);
@@ -284,6 +286,7 @@ class Cell extends React.Component<Props, {}> {
 			case I.RelationType.Tag:
 				param = Object.assign(param, {
 					width: width,
+					commonFilter: true,
 				});
 				param.data = Object.assign(param.data, {
 					canAdd: true,
@@ -293,6 +296,8 @@ class Cell extends React.Component<Props, {}> {
 				});
 
 				menuId = (relation.maxCount == 1 ? 'dataviewOptionList' : 'dataviewOptionValues');
+
+				closeIfOpen = false;
 				break;
 					
 			case I.RelationType.Object:
@@ -305,9 +310,12 @@ class Cell extends React.Component<Props, {}> {
 					value: value || [],
 					types: relation.objectTypes,
 					maxCount: relation.maxCount,
+					noFilter: true,
 				});
 
-				menuId = (relation.maxCount == 1 ? 'dataviewObjectList' : 'dataviewObjectValues');
+				menuId = 'dataviewObjectList';
+				
+				closeIfOpen = false;
 				break;
 
 			case I.RelationType.LongText:
@@ -398,20 +406,25 @@ class Cell extends React.Component<Props, {}> {
 		if (menuId) {
 			if (commonStore.cellId != cellId) {
 				commonStore.cellId = cellId;
+				
+				const isOpen = menuStore.isOpen(menuId);
 
-				this.timeout = window.setTimeout(() => {
-					menuStore.open(menuId, param);
+				menuStore.open(menuId, param);
 
-					$(pageContainer).unbind('mousedown.cell').on('mousedown.cell', (e: any) => { 
-						if (!$(e.target).parents(`#${cellId}`).length) {
-							menuStore.closeAll(Constant.menuIds.cell); 
-						};
-					});
+				// If menu was already open OnOpen callback won't be called
+				if (isOpen) {
+					setOn();
+				};
 
-					if (!config.debug.ui) {
-						win.unbind('blur.cell').on('blur.cell', () => { menuStore.closeAll(Constant.menuIds.cell); });
+				$(pageContainer).unbind('mousedown.cell').on('mousedown.cell', (e: any) => { 
+					if (!$(e.target).parents(`#${cellId}`).length) {
+						menuStore.closeAll(Constant.menuIds.cell); 
 					};
-				}, Constant.delay.menu);
+				});
+
+				if (!config.debug.ui) {
+					win.unbind('blur.cell').on('blur.cell', () => { menuStore.closeAll(Constant.menuIds.cell); });
+				};
 			} else 
 			if (closeIfOpen) {
 				setOff();
