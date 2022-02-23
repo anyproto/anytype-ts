@@ -6,7 +6,7 @@ export default [
 	{ type: I.BlockType.Cover, param: { type: I.CoverType.Image, id: 'c4', y: -0.2, withScale: true } },
 	{ type: I.BlockType.IconPage, icon: '👋' },
 
-	{ style: I.TextStyle.Title, text: `21 February 2022 Desktop` },
+	{ style: I.TextStyle.Title, text: `23 February 2022 Desktop` },
 	{ style: I.TextStyle.Header2, text: `Sidebar, finally` },
 	{ text: `Our #1 feature request since the beginning of the alpha program is here. ` },
 	{ text: `<img src="./img/help/sidebar.png" class="full">` },
