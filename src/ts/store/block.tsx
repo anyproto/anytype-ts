@@ -428,6 +428,9 @@ class BlockStore {
 	};
 
     isAllowed (restrictions: any[], flags: any[]): boolean {
+		restrictions = restrictions || [];
+		flags = flags || [];
+
 		for (let flag of flags) {
 			if (restrictions.indexOf(flag) >= 0) {
 				return false;
