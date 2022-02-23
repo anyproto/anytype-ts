@@ -9,14 +9,16 @@ export default [
 	{ style: I.TextStyle.Title, text: `21 February 2022 Desktop` },
 	{ style: I.TextStyle.Header2, text: `Sidebar, finally` },
 	{ text: `Our #1 feature request since the beginning of the alpha program is here. ` },
-	{ text: `The tree-view sidebar shows outbound links and relations for each object, complementing the bi-directional navigation pane. It includes new icons to help you distinguish between Sets and regular objects, with toggles when deeper navigation is available. It can be fixed to the side or automatically hidden for distraction-free writing.` },
-	{ text: `The sidebar has the same sections (Sets, Favourites, Drafts etc.) as Home and will support upcoming features.` },
+	{ text: `<img src="./img/help/sidebar.png" class="full">` },
+	{ text: `The tree-view sidebar shows outbound links and relations for each object, complementing the bi-directional navigation pane. It includes new icons to help you distinguish between Sets and regular objects, with toggles when deeper navigation is available. It can be fixed to the side or automatically hidden for distraction-free writing. The sidebar has the same sections (Sets, Favourites, Drafts etc.) as Home.` },
 	{ text: `Here are some handy features that you might like:` },
 
 	{ style: I.TextStyle.Bulleted, text: `You can resize the width of the sidebar.` },
 	{ style: I.TextStyle.Bulleted, text: `Right-click on an object will trigger the action menu: favourite, duplicate, move to the bin.` },
 	{ style: I.TextStyle.Bulleted, text: `You can move your sidebar to the right side of your screen by clicking and dragging it across.` },
 	{ style: I.TextStyle.Bulleted, text: `You can disable auto-hide and show mode for sidebar in <span class="highlight">Settings</span> → <span class="highlight">Other</span>` },
+
+	{ text: `This is our very first sidebar, and we’re eager to hear your thoughts. Please let us know how we can improve!` },
 
 	{ style: I.TextStyle.Header2, text: `Search` },
 	{ text: `The first rule of search is showing relevant results, and it's becoming an essential feature for many of you who have hundreds of objects inside. We've implemented many changes and updates, which we hope will radically improve your search experience.` },
@@ -59,7 +61,7 @@ export default [
 	{ style: I.TextStyle.Bulleted, text: `When hitting <span class="highlight">Ctrl+Alt+O</span> to open Graph view on Windows with a UK keyboard, with a textbox selected, Anytype typed a ó key. Thanks, <a href="https://community.anytype.io/t/opening-graph-view-types-o/4627">QuantumJump</a>` },
 	{ style: I.TextStyle.Bulleted, text: `Sometimes two blocks weren't separated. Thanks, <a href="https://community.anytype.io/t/blocks-merge-together-bug">XxxBalCion</a>` },
 	{ style: I.TextStyle.Bulleted, text: `<span class="highlight">${cmd}+Click</span> on the empty part of the Link to object block open it instead of selecting.` },
-	
+
 	{ type: I.BlockType.Div, style: I.DivStyle.Dot },
 
 	{ style: I.TextStyle.Header1, text: `Updates for 19 January, 2022` },
