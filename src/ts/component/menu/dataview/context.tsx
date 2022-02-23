@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { MenuItemVertical } from 'ts/component';
 import { I, C, keyboard, analytics, DataUtil, focus } from 'ts/lib';
-import { detailStore, menuStore } from 'ts/store';
+import { detailStore, menuStore, blockStore } from 'ts/store';
 
 interface Props extends I.Menu {
 	history?: any;
@@ -94,8 +94,8 @@ class MenuContext extends React.Component<Props, {}> {
 		};
 
 		// Restrictions
-		const allowedArchive = !object.isReadonly;
-		const allowedFav = !object.isReadonly && !object.isArchived;
+		const allowedArchive = blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Delete ]);
+		const allowedFav = blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Details ]) && !object.isArchived;
 
 		if (!allowedArchive)	 archive = null;
 		if (!allowedFav)		 fav = null;

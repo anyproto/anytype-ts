@@ -694,7 +694,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 			archive = { id: 'archive', icon: 'remove', name: 'Move to bin' };
 		};
 
-		if (object.isReadonly || object.templateIsBundled || (object.id == profile) || ([ Constant.typeId.relation ].indexOf(object.type) >= 0)) {
+		if (!blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Delete ])) {
 			archive = null;
 		};
 

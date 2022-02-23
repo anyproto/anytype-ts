@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Icon, Loader } from 'ts/component';
 import { I, DataUtil, translate } from 'ts/lib';
-import { detailStore } from 'ts/store';
+import { detailStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { focus } from 'ts/lib';
 
@@ -36,7 +36,7 @@ const BlockLink = observer(class BlockLink extends React.Component<Props, {}> {
 		const { _empty_, isArchived, isDeleted, done, layout } = object;
 		const cn = [ 'focusable', 'c' + id, 'resizable' ];
 		const fields = DataUtil.checkLinkSettings(block.fields, layout);
-		const readonly = this.props.readonly || object.isReadonly || object.templateIsBundled;
+		const readonly = this.props.readonly || !blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Details ]);
 
 		if ((layout == I.ObjectLayout.Task) && done) {
 			cn.push('isDone');

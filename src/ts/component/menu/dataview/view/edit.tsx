@@ -32,7 +32,7 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 		const view = data.view.get();
 		const { cardSize, coverFit, hideIcon } = view;
 		const sections = this.getSections();
-		const allowedView = blockStore.isAllowed(rootId, blockId, [ I.RestrictionDataview.View ]);
+		const allowedView = blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
 
 		const Section = (item: any) => (
 			<div id={'section-' + item.id} className="section">
@@ -201,7 +201,7 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 		const { data } = param;
 		const { rootId, blockId, onSave, getData } = data;
 		const view = data.view.get();
-		const allowedView = blockStore.isAllowed(rootId, blockId, [ I.RestrictionDataview.View ]);
+		const allowedView = blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
 
 		if (!allowedView) {
 			return;
@@ -236,7 +236,7 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 		const views = dbStore.getViews(rootId, blockId);
 		const fileOption = this.getFileOptions().find((it: any) => { return it.id == view.coverRelationKey; });
 		const sizeOption = this.getSizeOptions().find((it: any) => { return it.id == view.cardSize; });
-		const allowedView = blockStore.isAllowed(rootId, blockId, [ I.RestrictionDataview.View ]);
+		const allowedView = blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
 
 		const types = DataUtil.menuGetViews().map((it: any) => {
 			it.sectionId = 'type';
@@ -319,7 +319,7 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 		const { data } = param;
 		const { rootId, blockId } = data;
 		const view = data.view.get();
-		const allowedView = blockStore.isAllowed(rootId, blockId, [ I.RestrictionDataview.View ]);
+		const allowedView = blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
 
 		menuStore.closeAll(Constant.menuIds.viewEdit);
 

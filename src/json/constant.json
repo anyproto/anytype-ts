@@ -118,7 +118,8 @@
 		"isDeleted",
 		"done", 
 		"fileExt", 
-		"fileMimeType" 
+		"fileMimeType",
+		"restrictions"
 	],
 
 	"systemRelationKeys": [ 
@@ -148,7 +149,7 @@
 
 	"sidebarRelationKeys": [
 		"id", "name", "snippet", "layout", "type", "iconEmoji", "iconImage", "isHidden", "isDeleted", "isArchived", "isFavorite", "done", 
-		"relationFormat", "fileExt", "fileMimeType", "links"
+		"relationFormat", "fileExt", "fileMimeType", "links", "restrictions"
 	],
 
 	"relationKey": {

@@ -38,7 +38,7 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 		const { data } = param;
 		const { readonly, rootId, blockId } = data;
 		const items = this.getItems();
-		const allowedView = blockStore.isAllowed(rootId, blockId, [ I.RestrictionDataview.View ]);
+		const allowedView = blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
 
 		items.map((it: any) => {
 			const { format, name } = it.relation;
