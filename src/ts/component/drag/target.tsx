@@ -11,6 +11,7 @@ interface Props {
 	type?: I.BlockType;
 	dropType: I.DragType;
 	className?: string;
+	canDropMiddle?: boolean;
 	onClick?(e: any): void;
 };
 
@@ -23,7 +24,7 @@ class DropTarget extends React.Component<Props, {}> {
 	};
 	
 	render () {
-		const { id, rootId, targetContextId, dropType, type, style, children, className } = this.props;
+		const { id, rootId, targetContextId, dropType, type, style, children, className, canDropMiddle } = this.props;
 		
 		let cn = [ 'dropTarget', 'root-' + rootId ];
 		if (className) {
@@ -40,7 +41,8 @@ class DropTarget extends React.Component<Props, {}> {
 				data-drop-type={dropType} 
 				data-type={type} 
 				data-style={style} 
-				data-target-context-id={targetContextId} 
+				data-target-context-id={targetContextId}
+				data-drop-middle={Number(canDropMiddle) || 0}
 			>
 				{children}
 			</div>

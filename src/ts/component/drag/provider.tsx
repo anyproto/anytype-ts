@@ -357,6 +357,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 			const obj = $(this.hoverData.obj);
 			const type = obj.attr('data-type');
 			const style = Number(obj.attr('data-style')) || 0;
+			const canDropMiddle = Number(obj.attr('data-drop-middle')) || 0;
 			const col1 = x - Constant.size.blockMenu / 4;
 			const col2 = x + width;
 			const isText = type == I.BlockType.Text;
@@ -387,6 +388,11 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 				if (ey >= y + height * 0.5) {
 					this.position = I.BlockPosition.Bottom;
 				};
+			};
+
+			// canDropMiddle flag for restricted objects
+			if ((this.position == I.BlockPosition.InnerFirst) && !canDropMiddle) {
+				recalcPosition();
 			};
 
 			// You can't drop on Icon

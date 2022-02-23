@@ -158,5 +158,6 @@
     }
 
     .block.blockLink > .wrapContent > .selectable > .dropTarget { padding: 3px 0px; }
+	.block.blockLink > .wrapContent > .dropTarget.targetBot { height: 2px; display: block; margin-bottom: -2px; }
     
 }

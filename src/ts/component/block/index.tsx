@@ -80,6 +80,7 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 
 		let canSelect = true;
 		let canDrop = !readonly;
+		let canDropMiddle = canDrop;
 		let cn: string[] = [ 'block', 'align' + align, DataUtil.blockClass(block, isDragging), 'index-' + index ];
 		let cd: string[] = [ 'wrapContent' ];
 		let blockComponent = null;
@@ -179,7 +180,7 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 			case I.BlockType.Link:
 				const object = detailStore.get(rootId, content.targetBlockId, [ 'restrictions' ]);
 				if (!blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Block ])) {
-					canDrop = false;
+					canDropMiddle = false;
 				};
 
 				blockComponent = <BlockLink ref={setRef} {...this.props} />;
@@ -218,13 +219,13 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 
 		if (canDrop) {
 			object = (
-				<DropTarget {...this.props} rootId={rootId} id={id} style={style} type={type} dropType={I.DragType.Block}>
+				<DropTarget {...this.props} rootId={rootId} id={id} style={style} type={type} dropType={I.DragType.Block} canDropMiddle={canDropMiddle}>
 					{blockComponent}
 				</DropTarget>
 			);
 
-			targetTop = <DropTarget {...this.props} className="targetTop" rootId={rootId} id={id} style={style} type={type} dropType={I.DragType.Block} />;
-			targetBot = <DropTarget {...this.props} className="targetBot" rootId={rootId} id={id} style={style} type={type} dropType={I.DragType.Block} />;
+			targetTop = <DropTarget {...this.props} className="targetTop" rootId={rootId} id={id} style={style} type={type} dropType={I.DragType.Block} canDropMiddle={canDropMiddle} />;
+			targetBot = <DropTarget {...this.props} className="targetBot" rootId={rootId} id={id} style={style} type={type} dropType={I.DragType.Block} canDropMiddle={canDropMiddle} />;
 		} else {
 			object = (
 				<div className="dropTarget">
