@@ -1,12 +1,9 @@
 import { I, C, Util, DataUtil, crumbs, Storage, focus, history as historyPopup, analytics } from 'ts/lib';
 import { commonStore, authStore, blockStore, detailStore, menuStore, popupStore } from 'ts/store';
-import { throttle } from 'lodash';
 
 const $ = require('jquery');
 const KeyCode = require('json/key.json');
 const Constant = require('json/constant.json');
-
-const THROTTLE = 20;
 
 class Keyboard {
 	

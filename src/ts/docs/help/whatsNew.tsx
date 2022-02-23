@@ -6,7 +6,7 @@ export default [
 	{ type: I.BlockType.Cover, param: { type: I.CoverType.Image, id: 'c4', y: -0.2, withScale: true } },
 	{ type: I.BlockType.IconPage, icon: '👋' },
 
-	{ style: I.TextStyle.Title, text: `21 February 2022 Desktop` },
+	{ style: I.TextStyle.Title, text: `23 February 2022 Desktop` },
 	{ style: I.TextStyle.Header2, text: `Sidebar, finally` },
 	{ text: `Our #1 feature request since the beginning of the alpha program is here. ` },
 	{ text: `The tree-view sidebar shows outbound links and relations for each object, complementing the bi-directional navigation pane. It includes new icons to help you distinguish between Sets and regular objects, with toggles when deeper navigation is available. It can be fixed to the side or automatically hidden for distraction-free writing.` },
