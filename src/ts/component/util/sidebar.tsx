@@ -536,13 +536,13 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 			return;
 		};
 
+		window.clearTimeout(this.timeoutItem);
+
 		if (item.isSection) {
 			menuStore.close('previewObject');
-			window.clearTimeout(this.timeoutItem);
 			return;
 		};
 
-		window.clearTimeout(this.timeoutItem);
 		this.timeoutItem = window.setTimeout(() => {
 			menuStore.open('previewObject', {
 				element: `#sidebar #${this.getId(item)}`,
@@ -557,7 +557,9 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 
 	onMouseLeaveItem (e: any, item: any) {
 		window.clearTimeout(this.timeoutItem);
-		menuStore.close('previewObject');
+		this.timeoutItem = window.setTimeout(() => {
+			menuStore.close('previewObject');
+		}, 30);
 	};
 
 	onResizeStart (e: any, dir: I.MenuType) {
