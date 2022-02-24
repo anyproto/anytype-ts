@@ -1034,6 +1034,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 		const isDelete = pressed == 'delete';
 		const ids = selection.get(true);
+		const length = block.getLength();
 
 		if (block.isText()) {
 			if (!isDelete && !range.to) {
