@@ -1837,7 +1837,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		const { isPopup, rootId } = this.props;
 		const { sidebar } = commonStore;
 		const { fixed } = sidebar;
-		const container = Util.getScrollContainer(isPopup);
+		const container = $(isPopup ? '#popupPage #innerWrap' : '#page.isFull');
 		const mw = container.width() - 120;
 		const root = blockStore.getLeaf(rootId, rootId);
 		const sb = $('#sidebar');
@@ -1852,7 +1852,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		};
 
 		w = Number(w) || 0;
-		w = (mw - Constant.size.editor - sw) * w;
+		w = (mw - Constant.size.editor) * w;
 
 		this.width = w = Math.max(Constant.size.editor, Math.min(mw, Constant.size.editor + w));
 		return w;
