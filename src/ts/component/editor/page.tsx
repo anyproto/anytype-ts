@@ -945,6 +945,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		const st = win.scrollTop();
 		const element = $(`#block-${block.id}`);
 		const value = element.find('#value');
+		const length = block.getLength();
 
 		let sRect = Util.selectionRect();
 		let vRect: any = {};
@@ -1133,6 +1134,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 		let length = block.getLength();
 		let replace = !range.to && block.isTextList() && !length;
+
 		if (replace) {
 			C.BlockListSetTextStyle(rootId, [ block.id ], I.TextStyle.Paragraph);
 		} else 
@@ -1496,20 +1498,17 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			if (message.blockIds && message.blockIds.length) {
 				const lastId = message.blockIds[message.blockIds.length - 1];
 				const block = blockStore.getLeaf(rootId, lastId);
+				
 				if (!block) {
 					return;
 				};
 				
-				const length = block.getLength();
-				
 				id = block.id;
-				from = length;
-				to = length;
+				from = to = block.getLength();
 			} else 
 			if (message.caretPosition >= 0) {
 				id = focused;
-				from = message.caretPosition;
-				to = message.caretPosition;
+				from = to = message.caretPosition;
 			};
 			
 			this.focus(id, from, to, true);

@@ -365,7 +365,18 @@ class Block implements I.Block {
 	};
 
 	getLength (): number {
-		return this.isText() ? String(this.content.text || '').length : 0;
+		let l = 0;
+		if (this.isText()) {
+			let t = String(this.content.text || '');
+			l = t.length;
+
+			// Last line break doesn't expand range.to
+			if (l && (t[l - 1] == '\n')) {
+				l--;
+			};
+		};
+
+		return l;
 	};
 };
 
