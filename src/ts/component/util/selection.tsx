@@ -189,7 +189,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	};
 	
 	onMouseDown (e: any) {
-		if (e.button || !this._isMounted) {
+		if (e.button || !this._isMounted || menuStore.isOpen()) {
 			return
 		};
 		
