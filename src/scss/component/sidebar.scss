@@ -89,7 +89,7 @@
             }
             .inner::before {
                 content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: rgba(172, 169, 150, 0); z-index: 1;
-                pointer-events: none; border-radius: inherit;
+                pointer-events: none; border-radius: inherit; transition: $transitionFast;
             }
             .inner:hover::before, .inner.hover::before { background: $colorHover; }
 
