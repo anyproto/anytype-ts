@@ -26,7 +26,6 @@ const MAX_DEPTH = 100;
 const LIMIT = 20;
 const HEIGHT = 28;
 const SNAP_THRESHOLD = 30;
-const TIMEOUT = 100;
 
 const SKIP_TYPES_LOAD = [
 	Constant.typeId.space,
@@ -45,7 +44,6 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 	oy: number = 0;
 	width: number = 0;
 	height: number = 0;
-	timeoutItem: number = 0;
 	refList: any = null;
 	refFooter: any = null;
 	cache: any = {};
@@ -57,13 +55,10 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 
 		this.onResizeStart = this.onResizeStart.bind(this);
 		this.onDragStart = this.onDragStart.bind(this);
-		this.onMouseLeave = this.onMouseLeave.bind(this);
 		this.onScroll = this.onScroll.bind(this);
 		this.onClick = this.onClick.bind(this);
 		this.onToggle = this.onToggle.bind(this);
 		this.onContext = this.onContext.bind(this);
-		this.onMouseEnterItem = this.onMouseEnterItem.bind(this);
-		this.onMouseLeaveItem = this.onMouseLeaveItem.bind(this);
 		
 		this.getRowHeight = this.getRowHeight.bind(this)
 	};
@@ -106,8 +101,6 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 						onClick={this.onClick} 
 						onToggle={this.onToggle} 
 						onContext={this.onContext}
-						onMouseEnter={this.onMouseEnterItem}
-						onMouseLeave={this.onMouseLeaveItem}
 					/>
 				</CellMeasurer>
 			);
@@ -119,7 +112,6 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 				className={cn.join(' ')} 
 				style={css} 
 				onMouseDown={this.onDragStart}
-				onMouseLeave={this.onMouseLeave}
 			>
 				<div className="head" />
 				
@@ -181,20 +173,15 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 			defaultHeight: HEIGHT,
 			keyMapper: (i: number) => { return (items[i] || {}).id; },
 		});
-
-		window.clearTimeout(this.timeoutItem);
 	};
 
 	componentWillUnmount () {
 		this._isMounted = false;
 		this.unbind();
 
-		window.clearTimeout(this.timeoutItem);
-
 		C.ObjectSearchUnsubscribe(Object.keys(this.subscriptionIds).map(id => dbStore.getSubId(Constant.subIds.sidebar, id)));
 
 		Util.tooltipHide(true);
-		menuStore.close('previewObject');
 	};
 
 	rebind () {
@@ -497,47 +484,6 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 				subId,
 			}
 		});
-	};
-
-	onMouseLeave (e: any) {
-		if (!this._isMounted || keyboard.isResizing || keyboard.isDragging) {
-			return;
-		};
-
-		window.clearTimeout(this.timeoutItem);
-		menuStore.close('previewObject');
-	};
-
-	onMouseEnterItem (e: any, item: any) {
-		const { config } = commonStore;
-		if (!config.experimental) {
-			return;
-		};
-
-		window.clearTimeout(this.timeoutItem);
-
-		if (item.isSection) {
-			menuStore.close('previewObject');
-			return;
-		};
-
-		this.timeoutItem = window.setTimeout(() => {
-			menuStore.open('previewObject', {
-				element: `#sidebar #${this.getId(item)}`,
-				offsetX: this.width,
-				isSub: true,
-				classNameWrap: 'fromPopup fixed',
-				vertical: I.MenuDirection.Center,
-				data: { rootId: item.id }
-			});
-		}, 100);
-	};
-
-	onMouseLeaveItem (e: any, item: any) {
-		window.clearTimeout(this.timeoutItem);
-		this.timeoutItem = window.setTimeout(() => {
-			menuStore.close('previewObject');
-		}, 30);
 	};
 
 	onResizeStart (e: any, dir: I.MenuType) {
