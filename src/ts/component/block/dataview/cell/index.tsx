@@ -293,9 +293,10 @@ class Cell extends React.Component<Props, {}> {
 					filter: '',
 					value: value || [],
 					maxCount: relation.maxCount,
+					noFilter: true,
 				});
 
-				menuId = (relation.maxCount == 1 ? 'dataviewOptionList' : 'dataviewOptionValues');
+				menuId = 'dataviewOptionList';
 
 				closeIfOpen = false;
 				break;

@@ -207,7 +207,7 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 	};
 
 	onKeyUp (e: any) {
-		menuStore.updateData('dataviewOptionValues', { filter: this.getValue().new });
+		menuStore.updateData('dataviewOptionList', { filter: this.getValue().new });
 
 		this.placeholderCheck();
 		this.resize();
@@ -329,6 +329,7 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 			return (relation.selectDict || []).find((it: any) => { return it.id == id; });
 		});
 		value = value.filter((it: any) => { return it && it.id; });
+
 		return value;
 	};
 

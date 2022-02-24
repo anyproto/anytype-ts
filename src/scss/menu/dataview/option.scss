@@ -41,6 +41,9 @@
 		}
 
 		.items { height: calc(100% - 34px); }
+		.wrap.noFilter {
+			.items { height: 100%; }
+		}
 
 		.item { display: flex; height: 28px; }
 		.item {

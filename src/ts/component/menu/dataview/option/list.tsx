@@ -30,7 +30,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { filter } = data;
+		const { filter, noFilter} = data;
 		const relation = data.relation.get();
 		const value = data.value || [];
 		const items = this.getItems(true);
@@ -83,13 +83,15 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 		};
 
 		return (
-			<div className="wrap">
-				<Filter 
-					ref={(ref: any) => { this.refFilter = ref; }} 
-					placeholderFocus="Filter or create options..." 
-					value={filter}
-					onChange={this.onFilterChange} 
-				/>
+			<div className={[ 'wrap', (noFilter ? 'noFilter' : '') ].join(' ')}>
+				{!noFilter ? (
+					<Filter 
+						ref={(ref: any) => { this.refFilter = ref; }} 
+						placeholderFocus="Filter or create options..." 
+						value={filter}
+						onChange={this.onFilterChange} 
+					/>
+				) : ''}
 
 				<div className="items">
 					{items.length ? (
@@ -350,10 +352,12 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 	};
 
 	resize () {
-		const { getId, position } = this.props;
+		const { getId, position, param } = this.props;
+		const { data } = param;
+		const { noFilter } = data;
 		const items = this.getItems(true);
 		const obj = $(`#${getId()} .content`);
-		const offset = 58;
+		const offset = noFilter ? 16 : 58;
 		const height = Math.max(HEIGHT + offset, Math.min(280, items.length * HEIGHT + offset));
 
 		obj.css({ height: height });
