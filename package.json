@@ -17,6 +17,8 @@
 		"build": "webpack --mode=production --env.NODE_ENV=production  -p --config webpack.config.js",
 		"build:deps": "webpack --config webpack.node.config.js --display-modules --display-cached | grep \"node_modules\" | sed 's/.*\\(node_modules\\/[^\\/]*\\).*/\\1/' | uniq | node save-node-deps.js",
 		"dist:mac": "webpack --mode=production --env.NODE_ENV=production -p && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` electron-builder --macos --arm64 --x64",
+		"dist:macarm": "webpack --mode=production --env.NODE_ENV=production -p && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` electron-builder --macos --arm64",
+		"dist:macamd": "webpack --mode=production --env.NODE_ENV=production -p && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` electron-builder --macos --x64",
 		"dist:win": "webpack --mode=production --env.NODE_ENV=production -p && electron-builder --windows",
 		"dist:linux": "webpack --mode=production --env.NODE_ENV=production -p && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` electron-builder --linux",
 		"publish:mac": "webpack --mode=production --env.NODE_ENV=production -p && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` BUILD_NUMBER=`git rev-parse --short HEAD` electron-builder --macos --publish  always",
@@ -57,7 +59,7 @@
 		"babel-loader": "^8.2.1",
 		"babel-preset-env": "^1.7.0",
 		"electron": "^16.0.4",
-		"electron-builder": "^22.14.5",
+		"electron-builder": "^22.14.13",
 		"electron-notarize": "^0.2.1",
 		"git-revision-webpack-plugin": "^3.0.6",
 		"ifdef-loader": "^2.1.5",
@@ -535,7 +537,8 @@
 					"name": "at9412003",
 					"region": "fra1"
 				}
-			]
+			],
+			"signIgnore": [".*\\.pak$", ".*\\.png$", ".*\\.jpg$", ".*\\.gif$", ".*\\.mp4$", ".*\\.icns$"]
 		},
 		"win": {
 			"target": "nsis",
