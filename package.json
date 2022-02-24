@@ -1,6 +1,6 @@
 {
 	"name": "anytype2",
-	"version": "0.24.2-alpha",
+	"version": "0.24.3-alpha",
 	"description": "Anytype",
 	"main": "electron.js",
 	"scripts": {
@@ -538,7 +538,14 @@
 					"region": "fra1"
 				}
 			],
-			"signIgnore": [".*\\.pak$", ".*\\.png$", ".*\\.jpg$", ".*\\.gif$", ".*\\.mp4$", ".*\\.icns$"]
+			"signIgnore": [
+				".*\\.pak$",
+				".*\\.png$",
+				".*\\.jpg$",
+				".*\\.gif$",
+				".*\\.mp4$",
+				".*\\.icns$"
+			]
 		},
 		"win": {
 			"target": "nsis",
