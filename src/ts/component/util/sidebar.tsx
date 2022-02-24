@@ -322,7 +322,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 			let item = detailStore.get(subId, id, [ 'id', 'type', 'links' ], true);
 			let links = [];
 			if (item.type != Constant.typeId.set) {
-				links = Relation.getArrayValue(item.links);
+				links = this.checkLinks(Relation.getArrayValue(item.links));
 			};
 			return { ...item, links };
 		});
@@ -336,7 +336,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		};
 
 		for (let item of items) {
-			let links = this.checkLinks(item.links);
+			let links = this.checkLinks(Relation.getArrayValue(item.links));
 			let length = links.length;
 			let newItem = {
 				details: item,
@@ -348,14 +348,16 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 			};
 			list.push(newItem);
 
-			if (length) {
-				const id = this.getId({ ...newItem, sectionId });
-				const check = Storage.checkToggle(Constant.subIds.sidebar, id);
+			if (!length) {
+				continue;
+			};
 
-				if (check) {
-					this.loadItem(item.id, links);
-					list = this.unwrap(sectionId, list, item.id, this.getRecords(dbStore.getSubId(Constant.subIds.sidebar, item.id)), depth + 1);
-				};
+			const id = this.getId({ ...newItem, sectionId });
+			const check = Storage.checkToggle(Constant.subIds.sidebar, id);
+
+			if (check) {
+				this.loadItem(item.id, links);
+				list = this.unwrap(sectionId, list, item.id, this.getRecords(dbStore.getSubId(Constant.subIds.sidebar, item.id)), depth + 1);
 			};
 		};
 		return list;
@@ -751,7 +753,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 
 		let h = 0;
 		if (fixed) {
-			h = platform == I.Platform.Windows ? 30 : Util.sizeHeader() - 20;
+			h = platform == I.Platform.Windows ? 30 : Util.sizeHeader() - 10;
 		};
 		head.css({ height: h });
 
