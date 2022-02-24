@@ -132,7 +132,10 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 
 				{!items.length && !loading ? (
 					<div id="empty" key="empty" className="emptySearch">
-						<Label text={Util.sprintf(translate('popupSearchEmptyFilter'), filter)} />
+						<div className="label">
+							<b>There are no objects named <span>"{filter}"</span></b>
+							Try creating a new one or search for something else.
+						</div>
 					</div>
 				) : ''}
 				

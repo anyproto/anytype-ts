@@ -311,7 +311,6 @@
 	"popupNavigationEmptyFrom": { "en": "No links to other pages" },
 
 	"popupSearchPlaceholder": { "en": "Search for an object..." },
-	"popupSearchEmptyFilter": { "en": "<b>There are no objects named <span>\"%s\"</span></b>Try creating a new one or search for something else." },
 	"popupSearchEmpty": { "en": "No objects found" },
 
 	"popupConfirmUpdateTitle": { "en": "Oops!" },

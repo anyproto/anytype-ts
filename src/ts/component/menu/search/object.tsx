@@ -126,7 +126,14 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 
 				{!items.length && !loading ? (
 					<div id="empty" key="empty" className="emptySearch">
-						<Label text={filter ? Util.sprintf(translate('popupSearchEmptyFilter'), filter) : translate('popupSearchEmpty')} />
+						<div className="label">
+							{filter ? (
+								<React.Fragment>
+									<b>There are no objects named <span>"{filter}"</span></b>
+									Try creating a new one or search for something else.
+								</React.Fragment>
+							) : translate('popupSearchEmpty')}
+						</div>
 					</div>
 				) : ''}
 
