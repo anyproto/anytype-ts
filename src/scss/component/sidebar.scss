@@ -11,8 +11,8 @@
     box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2); display: flex; flex-direction: column;
     user-select: none;
 }
-.sidebar.left { left: 0px; transform: translate3d(-100%,0px,0px); }
-.sidebar.right { right: 0px; transform: translate3d(100%,0px,0px); }
+.sidebar.left { left: 0px; transform: translate3d(-110%,0px,0px); }
+.sidebar.right { right: 0px; transform: translate3d(110%,0px,0px); }
 .sidebar.fixed { 
     height: 100%; top: 0px !important; transform: translate3d(0px,0px,0px); border-radius: 0px; 
     box-shadow: 0px 0px; border-right: 1px solid $colorLightGrey; transition: none;
