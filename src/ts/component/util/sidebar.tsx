@@ -45,7 +45,6 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 	oy: number = 0;
 	width: number = 0;
 	height: number = 0;
-	timeoutHide: number = 0;
 	timeoutItem: number = 0;
 	refList: any = null;
 	refFooter: any = null;
@@ -58,7 +57,6 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 
 		this.onResizeStart = this.onResizeStart.bind(this);
 		this.onDragStart = this.onDragStart.bind(this);
-		this.onMouseEnter = this.onMouseEnter.bind(this);
 		this.onMouseLeave = this.onMouseLeave.bind(this);
 		this.onScroll = this.onScroll.bind(this);
 		this.onClick = this.onClick.bind(this);
@@ -121,7 +119,6 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 				className={cn.join(' ')} 
 				style={css} 
 				onMouseDown={this.onDragStart}
-				onMouseEnter={this.onMouseEnter} 
 				onMouseLeave={this.onMouseLeave}
 			>
 				<div className="head" />
@@ -192,7 +189,6 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		this._isMounted = false;
 		this.unbind();
 
-		window.clearTimeout(this.timeoutHide);
 		window.clearTimeout(this.timeoutItem);
 
 		C.ObjectSearchUnsubscribe(Object.keys(this.subscriptionIds).map(id => dbStore.getSubId(Constant.subIds.sidebar, id)));
@@ -501,33 +497,13 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		});
 	};
 
-	onMouseEnter (e: any) {
-		window.clearTimeout(this.timeoutHide);
-	};
-
 	onMouseLeave (e: any) {
 		if (!this._isMounted || keyboard.isResizing || keyboard.isDragging) {
 			return;
 		};
 
-		const { sidebar } = commonStore;
-		const { snap, fixed } = sidebar;
-		const menuOpen = menuStore.isOpenList([ 'dataviewContext', 'preview' ]);
-
-		window.clearTimeout(this.timeoutHide);
 		window.clearTimeout(this.timeoutItem);
 		menuStore.close('previewObject');
-
-		if (!fixed && (snap !== null) && !menuOpen) {
-			this.timeoutHide = window.setTimeout(() => {
-				const node = $(ReactDOM.findDOMNode(this));
-				node.removeClass('active');
-
-				window.setTimeout(() => {
-					node.removeClass('anim');
-				}, 200);
-			}, TIMEOUT);
-		};
 	};
 
 	onMouseEnterItem (e: any, item: any) {

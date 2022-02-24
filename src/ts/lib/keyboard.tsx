@@ -12,6 +12,8 @@ class Keyboard {
 		client: { x: 0, y: 0 },
 	};
 	timeoutPin: number = 0;
+	timeoutSidebarHide: number = 0;
+	timeoutSidebarAnim: number = 0;
 	pressed: string[] = [];
 	match: any = {};
 	matchPopup: any = {};
@@ -89,25 +91,59 @@ class Keyboard {
 
 	onMouseMove (e: any) {
 		const { sidebar, autoSidebar } = commonStore;
-		const { snap } = sidebar;
+		const { snap, fixed, width } = sidebar;
 
 		this.mouse = {
 			page: { x: e.pageX, y: e.pageY },
 			client: { x: e.clientX, y: e.clientY },
 		};
 
-		if (this.isDragging || this.isResizing || !autoSidebar) {
+		window.clearTimeout(this.timeoutSidebarHide);
+		window.clearTimeout(this.timeoutSidebarAnim);
+
+		if (this.isDragging || this.isResizing || !autoSidebar || fixed) {
 			return;
 		};
 
 		const el = $('#sidebar');
 		const win = $(window);
+		const ww = win.width();
+		const menuOpen = menuStore.isOpenList([ 'dataviewContext', 'preview' ]);
 
-		if ((snap == I.MenuDirection.Left) && (this.mouse.page.x <= 20)) {
+		let add = false;
+		let remove = false;
+
+		if (snap == I.MenuDirection.Left) {
+			if (this.mouse.page.x <= 20) {
+				add = true;
+			};
+			if (this.mouse.page.x > width + 10) {
+				remove = true;
+			};
+		};
+
+		if (snap == I.MenuDirection.Right) {
+			if (this.mouse.page.x >= ww - 20) {
+				add = true;
+			};
+			if (this.mouse.page.x > ww - width - 10) {
+				remove = true;
+			};
+		};
+
+		if (menuOpen) {
+			remove = false;
+		};
+
+		if (add) {
 			el.addClass('anim active');
 		};
-		if ((snap == I.MenuDirection.Right) && (this.mouse.page.x >= win.width() - 20)) {
-			el.addClass('anim active');
+
+		if (remove) {
+			this.timeoutSidebarHide = window.setTimeout(() => {
+				el.removeClass('active');
+				this.timeoutSidebarAnim = window.setTimeout(() => { el.removeClass('anim'); }, 200);
+			}, 200);
 		};
 	};
 	
