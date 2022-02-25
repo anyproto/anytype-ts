@@ -469,6 +469,10 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		e.preventDefault();
 		e.stopPropagation();
 
+		if (item.isSection) {
+			return;
+		};
+
 		const { x, y } = keyboard.mouse.page;
 		const subId = dbStore.getSubId(Constant.subIds.sidebar, item.parentId);
 
