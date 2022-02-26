@@ -68,9 +68,6 @@
 			.cellContent.c-longText {
 				.name { overflow: hidden; @include clamp2; }
 			}
-			.cellContent.c-object, .cellContent.c-file {
-				.columns { column-count: 3; }
-			}
 		}
 	}
 }
