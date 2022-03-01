@@ -309,7 +309,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 		let sections: any = {};
 		let ret = [];
 
-		sections[I.OptionScope.Local] = { id: I.OptionScope.Local, name: 'In this object', children: [] };
+		sections[I.OptionScope.Local] = { id: I.OptionScope.Local, name: 'Select option', children: [] };
 		sections[I.OptionScope.Relation] = { id: I.OptionScope.Relation, name: 'Everywhere', children: [] };
 
 		if (filterMapper) {
