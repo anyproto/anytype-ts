@@ -50,7 +50,8 @@
 		.tabOther .row,
 		.tabAccount .row,
 		.tabAppearance .row,
-		.tabPersonal .row { border-color: $colorLineSecondary; }
+		.tabPersonal .row,
+		.tabPinIndex .row { border-color: $colorLineSecondary; }
         
         .tabWallpaper .item.active { border-color: $colorLinePrimary; }
         .tabWallpaper .item .cover.upload { background-color: $colorBlack !important; border-color: $colorLinePrimary; }

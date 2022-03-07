@@ -7,6 +7,7 @@
 
 		.icon { transition: none; }
 		.title { font-size: 28px; line-height: 32px; letter-spacing: -0.36px; font-weight: 600; margin-bottom: 20px; text-align: center; }
+		.description { margin-bottom: 26px; }
 		.inputs { margin-bottom: 32px; }
 		
 		.head { 
@@ -26,12 +27,14 @@
 		.tab { padding: 70px 48px 48px 48px; }
 
 		.tabIndex { padding: 45px 48px 48px 48px; }
-		.tabIndex, .tabAccount, .tabAppearance, .tabPersonal {
+		.tabIndex, .tabAccount, .tabAppearance, .tabPersonal, .tabPinIndex {
 			.row { 
 				padding: 18px 0px 17px 0px; border-bottom: 1px solid $colorLightGrey; cursor: pointer; position: relative; 
 				@include text-paragraph; line-height: 28px;
 			}
 			.row.flex { display: flex; }
+			.row.red { color: $colorRed; }
+
 			.row {
 				.icon { width: 28px; height: 28px; margin: 0px 12px 0px 0px; vertical-align: top; }
 				.icon.account { background-image: url('~img/icon/popup/settings/account.svg'); }
@@ -122,11 +125,7 @@
 			.buttons { margin-top: 32px; }
 		}
 		
-		.tabPinIndex {
-			.label { margin-bottom: 25px; }
-		}
-		
-		.tabPinIndex, .tabPinSelect, .tabPinConfirm {
+		.tabPinSelect, .tabPinConfirm {
 			.label { margin-bottom: 23px; }
 			.input { 
 				width: 40px; height: 40px; margin-right: 8px; padding: 0px; text-align: center; vertical-align: top; font-size: 18px;

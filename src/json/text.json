@@ -256,7 +256,7 @@
 	"popupSettingsPinText": { "en": "The pin code will protect your keychain phrase. As we do not store your keychain phrase or pin code and do not ask for your e-mail or phone number, it is impossible to recover your data without this information. So, please, remember or write it down somewhere in a safe place" },
 	"popupSettingsPinOn": { "en": "Turn pin code on" },
 	"popupSettingsPinOff": { "en": "Turn pin code off" },
-	"popupSettingsPinChange": { "en": "Change pin code" },
+	"popupSettingsPinChange": { "en": "Update pin code" },
 	"popupSettingsPinVerify": { "en": "To continue, first verify that it’s you. Enter current pin code" },
 	"popupSettingsPinError": { "en": "Incorrect pin" },
 	"popupSettingsImportTitle": { "en": "Import" },

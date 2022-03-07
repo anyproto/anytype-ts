@@ -312,50 +312,76 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 				break;
 
 			case 'pinIndex':
+				const pinTime = commonStore.pinTime / 1000;
+
+				const times: any[] = [
+					{ id: 60 },
+					{ id: 300 },
+					{ id: 600 },
+					{ id: 3600 },
+				].map((it: any) => {
+					it.name = Util.duration(it.id);
+					return it;
+				});
+
 				content = (
 					<div>
 						<Head id="account" name={translate('popupSettingsAccountTitle')} />
 
 						<Title text={translate('popupSettingsPinTitle')} />
-						<Label text={translate('popupSettingsPinText')} />
+						<Label className="description" text={translate('popupSettingsPinText')} />
 
-						{pin ? (
-							<div className="buttons">
-								<Button 
-									text={translate('popupSettingsPinOff')} 
-									className="blank" 
-									onClick={() => {
-										this.onConfirmPin = this.onTurnOffPin;
-										this.onPage('pinConfirm');
+						<div className="rows">
+							{pin ? (
+								<React.Fragment>
+									<div 
+										className="row red" 
+										onClick={() => {
+											this.onConfirmPin = this.onTurnOffPin;
+											this.onPage('pinConfirm');
 
-										analytics.event('PinCodeOff');
-									}} 
-								/>
+											analytics.event('PinCodeOff');
+										}}
+									>
+										<Label text={translate('popupSettingsPinOff')} />
+									</div>
 
-								<Button 
-									text={translate('popupSettingsPinChange')} 
-									className="blank" 
-									onClick={() => {
-										this.onConfirmPin = () => { this.onPage('pinSelect'); };
-										this.onPage('pinConfirm');
+									<div className="row flex">
+										<div className="side left">
+											<Label text="PIN code check time-out" />
+										</div>
+										<div className="side right">
+											<Select id="pinTime" options={times} value={String(pinTime || '')} onChange={(id: string) => { commonStore.pinTimeSet(id); }}/>
+										</div>
+									</div>
 
-										analytics.event('PinCodeChange');
-									}} 
-								/>
-							</div>
-						): (
-							<div className="buttons">
-								<Button 
-									text={translate('popupSettingsPinOn')} 
-									className="blank" 
-									onClick={() => {
-										this.onPage('pinSelect');
+									<div 
+										className="row" 
+										onClick={() => {
+											this.onConfirmPin = () => { this.onPage('pinSelect'); };
+											this.onPage('pinConfirm');
 
-										analytics.event('PinCodeOn');
-									}} 
-								/>
-							</div>
-						)}
+											analytics.event('PinCodeChange');
+										}}
+									>
+										<Label text={translate('popupSettingsPinChange')} />
+									</div>
+								</React.Fragment>
+							): (
+								<React.Fragment>
+									<div 
+										className="row" 
+										onClick={() => {
+											this.onPage('pinSelect');
+
+											analytics.event('PinCodeOn');
+										}}
+									>
+										<Label text={translate('popupSettingsPinOn')} />
+									</div>
+								</React.Fragment>
+							)}
+						</div>
 
 					</div>
 				);
@@ -472,18 +498,6 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 				break;
 
 			case 'other':
-				const pinTime = commonStore.pinTime / 1000;
-
-				const times: any[] = [
-					{ id: 60 },
-					{ id: 300 },
-					{ id: 600 },
-					{ id: 3600 },
-				].map((it: any) => {
-					it.name = Util.duration(it.id);
-					return it;
-				});
-
 				const themes: any[] = [
 					{ id: '', name: 'Default' },
 					{ id: 'dark', name: 'Dark' },
@@ -493,15 +507,6 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 					<div>
 						<Head id="index" name={translate('popupSettingsTitle')} />
 						<Title text={translate('popupSettingsOtherTitle')} />
-
-						<div className="row">
-							<div className="side left">
-								<Label text="PIN code check time-out" />
-							</div>
-							<div className="side right">
-								<Select id="pinTime" options={times} value={String(pinTime || '')} onChange={(id: string) => { commonStore.pinTimeSet(id); }}/>
-							</div>
-						</div>
 
 						<div className="row">
 							<div className="side left">
