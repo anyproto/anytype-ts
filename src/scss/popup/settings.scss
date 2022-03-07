@@ -25,8 +25,8 @@
 		
 		.tab { padding: 70px 48px 48px 48px; }
 
-		.tabIndex { padding: 45px 48px 28px 48px; }
-		.tabIndex, .tabAccount, .tabAppearance {
+		.tabIndex { padding: 45px 48px 48px 48px; }
+		.tabIndex, .tabAccount, .tabAppearance, .tabPersonal {
 			.row { 
 				padding: 18px 0px 17px 0px; border-bottom: 1px solid $colorLightGrey; cursor: pointer; position: relative; 
 				@include text-paragraph; line-height: 28px;
@@ -50,8 +50,11 @@
 					top: 50%; margin: -12px 0px 0px 0px; 
 				}
 				
-				.side { width: 50%; }
-				
+				.side { width: 50%; line-height: 28px; }
+				.side.right { text-align: right; }
+
+				.select { transition: none; border: 0px; }
+
 				.status { position: absolute; text-align: right; right: 24px; top: 50%; margin-top: -14px; height: 28px; color: $colorMediumGrey; }
 			}
 			
@@ -194,8 +197,6 @@
 				width: 100%; display: flex; padding: 18px 0px 17px 0px; border-bottom: 1px solid $colorLightGrey; 
 				@include text-paragraph; line-height: 28px;
 			}
-
-			.select { transition: none; }
 
 			.side { width: 50%; line-height: 28px; }
 			.side.right { text-align: right; }

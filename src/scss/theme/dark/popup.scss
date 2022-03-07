@@ -49,7 +49,8 @@
         .tabIndex .row, 
 		.tabOther .row,
 		.tabAccount .row,
-		.tabAppearance .row { border-color: $colorLineSecondary; }
+		.tabAppearance .row,
+		.tabPersonal .row { border-color: $colorLineSecondary; }
         
         .tabWallpaper .item.active { border-color: $colorLinePrimary; }
         .tabWallpaper .item .cover.upload { background-color: $colorBlack !important; border-color: $colorLinePrimary; }

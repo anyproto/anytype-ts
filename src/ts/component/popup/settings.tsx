@@ -60,7 +60,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 		const { data } = param;
 		const { page } = data;
 		const { account, phrase } = authStore;
-		const { cover, coverImage, theme, config, autoSidebar } = commonStore;
+		const { cover, coverImage, theme, config, autoSidebar, type } = commonStore;
 		const { loading, error, entropy } = this.state;
 		const pin = Storage.get('pin');
 
@@ -91,7 +91,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 								<Icon className="arrow" />
 							</div>
 
-							<div className="row" onClick={() => { this.onPage('wallpaper'); }}>
+							<div className="row" onClick={() => { this.onPage('personal'); }}>
 								<Icon className="personal" />
 								<Label text={translate('popupSettingsPersonalTitle')} />
 								<Icon className="arrow" />
@@ -128,6 +128,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 			case 'account': 
 				content = (
 					<div>
+						<Head id="index" name={translate('popupSettingsTitle')} />
 						<Title text={translate('popupSettingsAccountTitle')} />
 
 						<div className="rows">
@@ -160,9 +161,39 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 				);
 				break;
 
+			case 'personal': 
+
+				const types = DataUtil.getObjectTypesForNewObject(false).map((it: any) => {
+					return { 
+						...it, 
+						layout: I.ObjectLayout.Type, 
+						object: it 
+					};
+				});
+
+				content = (
+					<div>
+						<Head id="index" name={translate('popupSettingsTitle')} />
+						<Title text={translate('popupSettingsPersonalTitle')} />
+
+						<div className="rows">
+							<div className="row flex">
+								<div className="side left">
+									<Label text="Default Object type" />
+								</div>
+								<div className="side right">
+									<Select id="defaultType" options={types} value={type} onChange={(id: string) => { this.onTypeChange(id); }}/>
+								</div>
+							</div>
+						</div>
+					</div>
+				);
+				break;
+
 			case 'appearance':
 				content = (
 					<div>
+						<Head id="index" name={translate('popupSettingsTitle')} />
 						<Title text={translate('popupSettingsAppearanceTitle')} />
 
 						<div className="rows">
@@ -205,7 +236,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 
 				content = (
 					<div>
-						<Head id="appearance" name={translate('popupSettingsTitle')} />
+						<Head id="appearance" name={translate('popupSettingsAppearanceTitle')} />
 						<Title text={translate('popupSettingsWallpaperTitle')} />
 
 						<div className="row first">
@@ -236,7 +267,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 
 				content = (
 					<div>
-						<Head id="account" name={translate('popupSettingsTitle')} />
+						<Head id="account" name={translate('popupSettingsAccountTitle')} />
 						
 						<Title text={translate('popupSettingsPhraseTitle')} />
 						<Label text={translate('popupSettingsPhraseText')} />
@@ -283,7 +314,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 			case 'pinIndex':
 				content = (
 					<div>
-						<Head id="account" name={translate('popupSettingsTitle')} />
+						<Head id="account" name={translate('popupSettingsAccountTitle')} />
 
 						<Title text={translate('popupSettingsPinTitle')} />
 						<Label text={translate('popupSettingsPinText')} />
@@ -441,13 +472,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 				break;
 
 			case 'other':
-				const { type } = commonStore;
 				const pinTime = commonStore.pinTime / 1000;
-
-				const types = DataUtil.getObjectTypesForNewObject(false).map((it: any) => {
-					it.layout = I.ObjectLayout.Type;
-					return { ...it, object: it };
-				});
 
 				const times: any[] = [
 					{ id: 60 },
@@ -467,17 +492,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 				content = (
 					<div>
 						<Head id="index" name={translate('popupSettingsTitle')} />
-
 						<Title text={translate('popupSettingsOtherTitle')} />
-
-						<div className="row">
-							<div className="side left">
-								<Label text="Default Object type" />
-							</div>
-							<div className="side right">
-								<Select id="defaultType" options={types} value={type} onChange={(id: string) => { this.onTypeChange(id); }}/>
-							</div>
-						</div>
 
 						<div className="row">
 							<div className="side left">
