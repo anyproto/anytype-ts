@@ -26,6 +26,9 @@
 		
 		.tab { padding: 70px 48px 48px 48px; }
 
+		.sectionName { @include text-small; padding: 30px 0px 4px 0px; color: $colorDarkGrey; }
+		.sectionName.center { text-align: center; }
+
 		.tabIndex { padding: 45px 48px 48px 48px; }
 		.tabIndex, .tabAccount, .tabAppearance, .tabPersonal, .tabPinIndex {
 			.row { 
@@ -64,9 +67,27 @@
 			.logout { color: $colorMediumGrey; cursor: pointer; text-align: center; @include text-paragraph; line-height: 28px; padding: 18px 0px; }
 			.logout:hover { color: $colorBlack; }
 		}
+
+		.tabAppearance {
+			.buttons { display: flex; justify-content: space-evenly; }
+
+			.btn { text-align: center; @include text-small; cursor: pointer; }
+			.btn {
+				.icon { width: 128px; height: 68px; margin-bottom: 4px; border-radius: 14px; padding: 4px; }
+				.icon {
+					.inner { width: 120px; height: 60px; border-radius: 12px; background-size: cover; background-position: center; background-repeat: no-repeat; }
+				}
+
+				.icon.light .inner { background-image: url('~img/icon/popup/settings/theme/light.svg'); }
+				.icon.dark .inner { background-image: url('~img/icon/popup/settings/theme/dark.svg'); }
+			}
+
+			.btn.active {
+				.icon { box-shadow: 0px 0px 0px 2px #ffee94 inset; }
+			}
+		}
 		
 		.tabWallpaper { overflow-y: overlay; height: 520px; }
-		
 		.tabWallpaper {
 			.title { text-align: left; }
 			.covers { margin-left: -2px; width: 596px; }

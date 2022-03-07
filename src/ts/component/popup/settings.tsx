@@ -114,12 +114,6 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 								<Label text={translate('popupSettingsExportTitle')} />
 								<Icon className="arrow" />
 							</div>
-
-							<div className="row" onClick={() => { this.onPage('other'); }}>
-								<Icon className="other" />
-								<Label text={translate('popupSettingsOtherTitle')} />
-								<Icon className="arrow" />
-							</div>
 						</div>
 					</div>
 				);
@@ -153,6 +147,14 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 								<Icon className="arrow" />
 							</div>
 
+							<Label className="sectionName" text="Data" />
+
+							<div className="row" onClick={this.onFileOffload}>
+								<Label text="Clear file cache" />
+							</div>
+
+							<Label className="sectionName" text="Account" />
+
 							<div className="row" onClick={this.onLogout}>
 								<Label text={translate('popupSettingsLogout')} />
 							</div>
@@ -163,13 +165,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 
 			case 'personal': 
 
-				const types = DataUtil.getObjectTypesForNewObject(false).map((it: any) => {
-					return { 
-						...it, 
-						layout: I.ObjectLayout.Type, 
-						object: it 
-					};
-				});
+				const types = DataUtil.getObjectTypesForNewObject(false);
 
 				content = (
 					<div>
@@ -185,12 +181,28 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 									<Select id="defaultType" options={types} value={type} onChange={(id: string) => { this.onTypeChange(id); }}/>
 								</div>
 							</div>
+
+							<div className="row flex">
+								<div className="side left">
+									<Label text="Automatically hide and show Sidebar" />
+								</div>
+								<div className="side right">
+									<Switch value={autoSidebar} className="big" onChange={(e: any, v: boolean) => { commonStore.autoSidebarSet(v); }}/>
+								</div>
+							</div>
 						</div>
 					</div>
 				);
 				break;
 
 			case 'appearance':
+				const themes: any[] = [
+					{ id: '', class: 'light', name: 'Light' },
+					{ id: 'dark', class: 'dark', name: 'Dark' },
+				];
+
+				const inner = <div className="inner"></div>;
+
 				content = (
 					<div>
 						<Head id="index" name={translate('popupSettingsTitle')} />
@@ -201,6 +213,21 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 								<Icon className="wallpaper" />
 								<Label text={translate('popupSettingsWallpaperTitle')} />
 								<Icon className="arrow" />
+							</div>
+
+							<Label className="sectionName center" text="Mode" />
+
+							<div className="buttons">
+								{themes.map((item: any, i: number) => (
+									<div 
+										key={i} 
+										className={[ 'btn', (theme == item.id ? 'active' : '') ].join(' ')} 
+										onClick={() => { commonStore.themeSet(item.id); }}
+									>
+										<Icon className={item.class} inner={inner} />
+										<Label text={item.name} />
+									</div>
+								))}
 							</div>
 						</div>
 					</div>
@@ -497,44 +524,6 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 				);
 				break;
 
-			case 'other':
-				const themes: any[] = [
-					{ id: '', name: 'Default' },
-					{ id: 'dark', name: 'Dark' },
-				];
-
-				content = (
-					<div>
-						<Head id="index" name={translate('popupSettingsTitle')} />
-						<Title text={translate('popupSettingsOtherTitle')} />
-
-						<div className="row">
-							<div className="side left">
-								<Label text="Theme" />
-							</div>
-							<div className="side right">
-								<Select id="theme" options={themes} value={theme} onChange={(id: string) => { commonStore.themeSet(id); }}/>
-							</div>
-						</div>
-
-						<div className="row">
-							<div className="side left">
-								<Label text="Automatically hide and show Sidebar" />
-							</div>
-							<div className="side right">
-								<Switch value={autoSidebar} onChange={(e: any, v: boolean) => { commonStore.autoSidebarSet(v); }}/>
-							</div>
-						</div>
-
-						<div className="row cp textColor textColor-red" onClick={this.onFileOffload}>
-							<div className="side left">
-								<Label text="Clear file cache" />
-							</div>
-							<div className="side right" />
-						</div>
-					</div>
-				);
-				break;
 		};
 
 		return (
