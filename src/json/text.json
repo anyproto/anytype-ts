@@ -239,6 +239,9 @@
 	"blockFileError": { "en": "There was an error uploading the file" },
 
 	"popupSettingsTitle": { "en": "Settings" },
+	"popupSettingsAccountTitle": { "en": "Account & data" },
+	"popupSettingsPersonalTitle": { "en": "Personalization" },
+	"popupSettingsAppearanceTitle": { "en": "Appearance" },
 	"popupSettingsWallpaperTitle": { "en": "Wallpaper" },
 	"popupSettingsWallpaperText": { "en": "Choose or upload the wallpaper. For best results upload high resolution images." },
 	"popupSettingsPicture": { "en": "Pictures" },

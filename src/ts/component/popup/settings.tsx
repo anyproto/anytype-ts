@@ -5,13 +5,13 @@ import { I, C, Storage, translate, Util, DataUtil, analytics } from 'ts/lib';
 import { authStore, blockStore, commonStore, popupStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
-interface Props extends I.Popup, RouteComponentProps<any> {}
+interface Props extends I.Popup, RouteComponentProps<any> {};
 
 interface State {
 	loading: boolean;
 	error: string;
 	entropy: string;
-}
+};
 
 const { dialog } = window.require('@electron/remote');
 const $ = require('jquery');
@@ -85,30 +85,21 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 						<Title text={translate('popupSettingsTitle')} />
 
 						<div className="rows">
+							<div className="row" onClick={() => { this.onPage('account'); }}>
+								<Icon className="account" />
+								<Label text={translate('popupSettingsAccountTitle')} />
+								<Icon className="arrow" />
+							</div>
+
 							<div className="row" onClick={() => { this.onPage('wallpaper'); }}>
-								<Icon className="wallpaper" />
-								<Label text={translate('popupSettingsWallpaperTitle')} />
+								<Icon className="personal" />
+								<Label text={translate('popupSettingsPersonalTitle')} />
 								<Icon className="arrow" />
 							</div>
 
-							<div 
-								className="row" 
-								onClick={() => { 
-									this.onConfirmPhrase = null; 
-									this.onPage('phrase'); 
-								}}
-							>
-								<Icon className="phrase" />
-								<Label text={translate('popupSettingsPhraseTitle')} />
-								<Icon className="arrow" />
-							</div>
-
-							<div className="row" onClick={() => { this.onPage('pinIndex'); }}>
-								<Icon className="pin" />
-								<Label text={translate('popupSettingsPinTitle')} />
-								<div className="status">
-									{pin ? 'On' : 'Off'}
-								</div>
+							<div className="row" onClick={() => { this.onPage('appearance'); }}>
+								<Icon className="appearance" />
+								<Label text={translate('popupSettingsAppearanceTitle')} />
 								<Icon className="arrow" />
 							</div>
 
@@ -130,8 +121,57 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 								<Icon className="arrow" />
 							</div>
 						</div>
+					</div>
+				);
+				break;
 
-						<div className="logout" onClick={this.onLogout}>{translate('popupSettingsLogout')}</div>
+			case 'account': 
+				content = (
+					<div>
+						<Title text={translate('popupSettingsAccountTitle')} />
+
+						<div className="rows">
+							<div 
+								className="row" 
+								onClick={() => { 
+									this.onConfirmPhrase = null; 
+									this.onPage('phrase'); 
+								}}
+							>
+								<Icon className="phrase" />
+								<Label text={translate('popupSettingsPhraseTitle')} />
+								<Icon className="arrow" />
+							</div>
+
+							<div className="row" onClick={() => { this.onPage('pinIndex'); }}>
+								<Icon className="pin" />
+								<Label text={translate('popupSettingsPinTitle')} />
+								<div className="status">
+									{pin ? 'On' : 'Off'}
+								</div>
+								<Icon className="arrow" />
+							</div>
+
+							<div className="row" onClick={this.onLogout}>
+								<Label text={translate('popupSettingsLogout')} />
+							</div>
+						</div>
+					</div>
+				);
+				break;
+
+			case 'appearance':
+				content = (
+					<div>
+						<Title text={translate('popupSettingsAppearanceTitle')} />
+
+						<div className="rows">
+							<div className="row" onClick={() => { this.onPage('wallpaper'); }}>
+								<Icon className="wallpaper" />
+								<Label text={translate('popupSettingsWallpaperTitle')} />
+								<Icon className="arrow" />
+							</div>
+						</div>
 					</div>
 				);
 				break;
@@ -165,7 +205,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 
 				content = (
 					<div>
-						<Head id="index" name={translate('popupSettingsTitle')} />
+						<Head id="appearance" name={translate('popupSettingsTitle')} />
 						<Title text={translate('popupSettingsWallpaperTitle')} />
 
 						<div className="row first">
@@ -196,7 +236,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 
 				content = (
 					<div>
-						<Head id="index" name={translate('popupSettingsTitle')} />
+						<Head id="account" name={translate('popupSettingsTitle')} />
 						
 						<Title text={translate('popupSettingsPhraseTitle')} />
 						<Label text={translate('popupSettingsPhraseText')} />
@@ -243,7 +283,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 			case 'pinIndex':
 				content = (
 					<div>
-						<Head id="index" name={translate('popupSettingsTitle')} />
+						<Head id="account" name={translate('popupSettingsTitle')} />
 
 						<Title text={translate('popupSettingsPinTitle')} />
 						<Label text={translate('popupSettingsPinText')} />

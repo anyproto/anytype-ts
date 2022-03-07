@@ -46,7 +46,10 @@
             .logout:hover { color: $colorOrange; }
         }
 
-        .tabIndex .row, .tabOther .row { border-color: $colorLineSecondary; }
+        .tabIndex .row, 
+		.tabOther .row,
+		.tabAccount .row,
+		.tabAppearance .row { border-color: $colorLineSecondary; }
         
         .tabWallpaper .item.active { border-color: $colorLinePrimary; }
         .tabWallpaper .item .cover.upload { background-color: $colorBlack !important; border-color: $colorLinePrimary; }
