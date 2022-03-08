@@ -169,8 +169,12 @@
 
 		.tabImportIndex {
 			.label { margin-bottom: 26px; }
+
+			.items { 
+				display: grid; grid-template-columns: repeat(4, 132px); grid-column-gap: 16px; grid-row-gap: 16px;
+			}
 			.item { 
-				width: 132px; height: 84px; margin: 0px 16px 16px 0px; border: 1px solid $colorLightGrey; border-radius: 8px; 
+				width: 132px; height: 84px; border: 1px solid $colorLightGrey; border-radius: 8px; 
 				text-align: center; transition: $transitionFast; line-height: 82px;	display: inline-block; cursor: pointer;
 				vertical-align: top; position: relative;
 			}
