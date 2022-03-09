@@ -7,7 +7,13 @@ import { keyboard } from 'ts/lib';
 class AuthStore {
 	
 	public dataPath: string = '';
-	public accountItem: I.Account = null;
+	public accountItem: I.Account = { 
+		id: '', 
+		status: { 
+			type: I.AccountStatusType.Active, 
+			date: 0,
+		},
+	};
 	public accountList: I.Account[] = [];
 	public pin: string = '';
 	public icon: string = '';
@@ -96,8 +102,8 @@ class AuthStore {
 		this.accountList = [];
     };
 
-	accountSet (account: I.Account) {
-		this.accountItem = account as I.Account;
+	accountSet (account: any) {
+		set(this.accountItem, account);
 
 		Storage.set('accountId', account.id);
 		Sentry.setUser({ id: account.id });

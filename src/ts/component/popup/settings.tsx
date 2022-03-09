@@ -126,16 +126,19 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 				break;
 
 			case 'account':
+				const canDelete = account.status.type == I.AccountStatusType.Active;
+				const isDeleted = [ I.AccountStatusType.StartedDeletion, I.AccountStatusType.Deleted ].includes(account.status.type);
+
 				if (account.status.type == I.AccountStatusType.PendingDeletion) {
 					message = (
 						<div className="flex">	
-							<Label text="This account is planned for deletion in 5 days..." />
+							<Label text={`This account is planned for deletion in ${Util.duration(Math.max(0, account.status.date - Util.time()))}...`} />
 							<Button text="Cancel" onClick={this.onDeleteCancel} />
 						</div>
 					);
 				};
 
-				if (account.status.type == I.AccountStatusType.Deleted) {
+				if (isDeleted) {
 					message = (
 						<React.Fragment>	
 							<b>Account data is deleted from backup nodes.</b>
@@ -185,9 +188,11 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 								<Label text={translate('popupSettingsLogout')} />
 							</div>
 
-							<div className="row red" onClick={() => { this.onPage('delete'); }}>
-								<Label text={translate('popupSettingsAccountDeleteTitle')} />
-							</div>
+							{canDelete ? (
+								<div className="row red" onClick={() => { this.onPage('delete'); }}>
+									<Label text={translate('popupSettingsAccountDeleteTitle')} />
+								</div>
+							) : ''}
 						</div>
 					</div>
 				);
@@ -743,7 +748,10 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 			return;
 		};
 
-		C.AccountDelete(false);
+		C.AccountDelete(false, (message: any) => {
+			authStore.accountSet({ status: message.status });			
+			this.onPage('account');
+		});
 	};
 
 	onDeleteCancel (e: any) {
