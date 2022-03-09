@@ -125,10 +125,19 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 			case 'account':
 				//if (account.status.type == I.AccountStatusType.PendingDeletion) {
 					message = (
-						<div className="message">	
+						<div className="flex">	
 							<Label text="This account is planned for deletion in 5 days..." />
 							<Button text="Cancel" onClick={this.onDeleteCancel} />
 						</div>
+					);
+				//};
+
+				//if (account.status.type == I.AccountStatusType.Deleted) {
+					message = (
+						<React.Fragment>	
+							<b>Account data is deleted from backup nodes.</b>
+							You can continue working on this device locally. You won't be able to sign in on new devices anymore with the same recovery phrase.
+						</React.Fragment>
 					);
 				//};
 
@@ -137,7 +146,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 						<Head id="index" name={translate('popupSettingsTitle')} />
 						<Title text={translate('popupSettingsAccountTitle')} />
 
-						{message}
+						{message ? <div className="message">{message}</div> : ''}
 
 						<div className="rows">
 							<div 
