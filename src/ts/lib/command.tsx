@@ -182,6 +182,14 @@ const AccountStop = (removeData: boolean, callBack?: (message: any) => void) => 
 	dispatcher.request('accountStop', request, callBack);
 };
 
+const AccountDelete = (revert: boolean, callBack?: (message: any) => void) => {
+	const request = new Rpc.Account.Delete.Request();
+	
+	request.setRevert(revert);
+
+	dispatcher.request('accountDelete', request, callBack);
+};
+
 const ExternalDropFiles = (contextId: string, targetId: string, position: I.BlockPosition, paths: string[], callBack?: (message: any) => void) => {
 	const request = new Rpc.ExternalDrop.Files.Request();
 	
@@ -1325,6 +1333,7 @@ export {
 	AccountRecover,
 	AccountSelect,
 	AccountStop,
+	AccountDelete,
 
 	PageCreate,
 

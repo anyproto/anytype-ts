@@ -74,6 +74,13 @@ const AccountSelect = (response: any) => {
 	};
 };
 
+const AccountDelete = (response: any) => {
+	return {
+		status: response.getStatustype(),
+		date: response.getDeletiondate(),
+	};
+};
+
 const PageCreate = (response: any) => {
 	return {
 		pageId: response.getPageid(),
@@ -392,6 +399,7 @@ export {
 
 	AccountCreate,
 	AccountSelect,
+	AccountDelete,
 
 	PageCreate,
 	SetCreate,

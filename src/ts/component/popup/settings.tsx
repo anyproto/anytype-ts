@@ -53,6 +53,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 		this.onFileClick = this.onFileClick.bind(this);
 		this.elementBlur = this.elementBlur.bind(this);
 		this.onFileOffload = this.onFileOffload.bind(this);
+		this.onDelete = this.onDelete.bind(this);
 	};
 
 	render () {
@@ -157,6 +158,10 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 
 							<div className="row" onClick={this.onLogout}>
 								<Label text={translate('popupSettingsLogout')} />
+							</div>
+
+							<div className="row red" onClick={this.onDelete}>
+								<Label text="Delete account" />
 							</div>
 						</div>
 					</div>
@@ -678,6 +683,22 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 		};
 
 		this.onPage('phrase');
+	};
+
+	onDelete (e: any) {
+		popupStore.open('confirm', {
+			data: {
+				title: 'Are you sure?',
+				text: '...',
+				textConfirm: 'Delete',
+				textCancel: 'Cancel',
+				onConfirm: () => {
+					C.AccountDelete(false);
+				},
+				onCancel: () => {
+				}, 
+			},
+		});
 	};
 
 	onImport (format: string) {
