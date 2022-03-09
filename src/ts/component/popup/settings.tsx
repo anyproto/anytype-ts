@@ -54,6 +54,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 		this.elementBlur = this.elementBlur.bind(this);
 		this.onFileOffload = this.onFileOffload.bind(this);
 		this.onDelete = this.onDelete.bind(this);
+		this.onDeleteCancel = this.onDeleteCancel.bind(this);
 	};
 
 	render () {
@@ -67,6 +68,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 
 		let content = null;
 		let Item = null;
+		let message = null;
 
 		let Head = (item: any) => (
 			<div className="head">
@@ -120,11 +122,22 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 				);
 				break;
 
-			case 'account': 
+			case 'account':
+				//if (account.status.type == I.AccountStatusType.PendingDeletion) {
+					message = (
+						<div className="message">	
+							<Label text="This account is planned for deletion in 5 days..." />
+							<Button text="Cancel" onClick={this.onDeleteCancel} />
+						</div>
+					);
+				//};
+
 				content = (
 					<div>
 						<Head id="index" name={translate('popupSettingsTitle')} />
 						<Title text={translate('popupSettingsAccountTitle')} />
+
+						{message}
 
 						<div className="rows">
 							<div 
@@ -699,6 +712,10 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 				}, 
 			},
 		});
+	};
+
+	onDeleteCancel (e: any) {
+		C.AccountDelete(true);
 	};
 
 	onImport (format: string) {

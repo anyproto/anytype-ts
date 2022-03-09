@@ -23,6 +23,15 @@
 				.icon.back { background-image: url('~img/icon/popup/settings/back1.svg'); } 
 			}
 		}
+
+		.message {
+			padding: 16px; background: #ffebe5; border-radius: 8px; color: $colorBlack; display: flex; gap: 0px 16px; align-items: center; 
+			justify-content: space-between;
+		}
+		.message {
+			.button { flex-shrink: 0; background: none; padding: 0px; height: auto; @include text-common; color: #ee420b; }
+			.label { font-weight: 600; }
+		}
 		
 		.tab { padding: 44px 48px 48px 48px; }
 
