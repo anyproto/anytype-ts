@@ -137,8 +137,8 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<Props
 						this.setError(message.error.description);
 					} else
 					if (message.account) {
-						if (message.config) {
-							commonStore.configSet(message.config, false);
+						if (message.account.config) {
+							commonStore.configSet(message.account.config, false);
 						};
 
 						authStore.accountSet(message.account);
@@ -197,8 +197,8 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<Props
 				this.setError(message.error.description);
 			} else
 			if (message.account) {
-				if (message.config) {
-					commonStore.configSet(message.config, false);
+				if (message.account.config) {
+					commonStore.configSet(message.account.config, false);
 				};
 
 				authStore.accountSet(message.account);

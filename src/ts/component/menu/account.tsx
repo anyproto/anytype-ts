@@ -81,8 +81,8 @@ const MenuAccount = observer(class MenuAccount extends React.Component<Props, St
 				Util.checkError(message.error.code);
 			} else
 			if (message.account) {
-				if (message.config) {
-					commonStore.configSet(message.config, false);
+				if (message.account.config) {
+					commonStore.configSet(message.account.config, false);
 				};
 
 				authStore.accountSet(message.account);

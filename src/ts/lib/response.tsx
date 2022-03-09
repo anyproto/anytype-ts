@@ -70,7 +70,6 @@ const AccountCreate = (response: any) => {
 const AccountSelect = (response: any) => {
 	return {
 		account: Mapper.From.Account(response.getAccount()),
-		config: response.hasConfig() ? Mapper.From.AccountConfig(response.getConfig()) : null,
 	};
 };
 

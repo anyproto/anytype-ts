@@ -30,6 +30,7 @@ const Mapper = {
 		Account: (obj: any): I.Account => {
 			return {
 				id: obj.getId(),
+				config: obj.hasConfig() ? Mapper.From.AccountConfig(obj.getConfig()) : null
 			};
 		},
 

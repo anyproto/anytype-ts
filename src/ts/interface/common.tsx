@@ -1,8 +1,10 @@
 export interface Account {
 	id: string;
+	config?: AccountConfig;
 };
 
 export interface AccountConfig {
+	allowSpaces: boolean;
 };
 
 export enum Platform {
