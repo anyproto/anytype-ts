@@ -1,7 +1,8 @@
 export enum AccountStatusType {
 	Active			 = 0,
     PendingDeletion	 = 1,
-	Deleted			 = 2,
+	StartedDeletion	 = 2,
+    Deleted			 = 3,
 };
 
 export interface Account {

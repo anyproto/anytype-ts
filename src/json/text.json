@@ -5,6 +5,7 @@
 	"commonCreate": { "en": "Create" },
 	"commonSave": { "en": "Save" },
 	"commonCancel": { "en": "Cancel" },
+	"commonDelete": { "en": "Delete" },
 	"commonSoon": { "en": "Soon" },
 	"commonTitle": { "en": "anytype" },
 	"commonSearch": { "en": "Search..." },
@@ -240,6 +241,7 @@
 
 	"popupSettingsTitle": { "en": "Settings" },
 	"popupSettingsAccountTitle": { "en": "Account & data" },
+	"popupSettingsAccountDeleteTitle": { "en": "Delete account" },
 	"popupSettingsPersonalTitle": { "en": "Personalization" },
 	"popupSettingsAppearanceTitle": { "en": "Appearance" },
 	"popupSettingsWallpaperTitle": { "en": "Wallpaper" },

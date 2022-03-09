@@ -1,6 +1,7 @@
 import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Icon, Button, Title, Label, Cover, Textarea, Loader, IconObject, Error, Pin, Select, Switch } from 'ts/component';
+import { Icon, Button, Title, Label, Cover, Textarea, Loader, IconObject, Error, Pin, Select, Switch, Checkbox } from 'ts/component';
 import { I, C, Storage, translate, Util, DataUtil, analytics } from 'ts/lib';
 import { authStore, blockStore, commonStore, popupStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -37,6 +38,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 	onConfirmPin: () => void = null;
 	onConfirmPhrase: any = null;
 	format: string = '';
+	refCheckbox: any = null;
 
 	constructor (props: any) {
 		super(props);
@@ -55,6 +57,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 		this.onFileOffload = this.onFileOffload.bind(this);
 		this.onDelete = this.onDelete.bind(this);
 		this.onDeleteCancel = this.onDeleteCancel.bind(this);
+		this.onCheck = this.onCheck.bind(this);
 	};
 
 	render () {
@@ -123,23 +126,23 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 				break;
 
 			case 'account':
-				//if (account.status.type == I.AccountStatusType.PendingDeletion) {
+				if (account.status.type == I.AccountStatusType.PendingDeletion) {
 					message = (
 						<div className="flex">	
 							<Label text="This account is planned for deletion in 5 days..." />
 							<Button text="Cancel" onClick={this.onDeleteCancel} />
 						</div>
 					);
-				//};
+				};
 
-				//if (account.status.type == I.AccountStatusType.Deleted) {
+				if (account.status.type == I.AccountStatusType.Deleted) {
 					message = (
 						<React.Fragment>	
 							<b>Account data is deleted from backup nodes.</b>
 							You can continue working on this device locally. You won't be able to sign in on new devices anymore with the same recovery phrase.
 						</React.Fragment>
 					);
-				//};
+				};
 
 				content = (
 					<div>
@@ -182,8 +185,35 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 								<Label text={translate('popupSettingsLogout')} />
 							</div>
 
-							<div className="row red" onClick={this.onDelete}>
-								<Label text="Delete account" />
+							<div className="row red" onClick={() => { this.onPage('delete'); }}>
+								<Label text={translate('popupSettingsAccountDeleteTitle')} />
+							</div>
+						</div>
+					</div>
+				);
+				break;
+
+			case 'delete':
+				content = (
+					<div>
+						<Head id="account" name={translate('commonCancel')} />
+						<Title text={translate('popupSettingsAccountDeleteTitle')} />
+
+						<div className="text">
+							<b>1. You have 30 days to cancel account deletion.</b>
+							<p>All of your account data will be deleted from backup nodes within 30 days. You have the option to cancel it during this time.</p>
+
+							<b>2. Even after deleting your account, you can continue to work as usual.</b>
+							<p>After this period your logged-in devices will still have all the data locally. You won't be able to sign in on new devices anymore with the same recovery phrase.</p>
+
+							<div className="check" onClick={this.onCheck}>
+								<Checkbox ref={(ref: any) => { this.refCheckbox = ref; }} /> I have read it and want to delete my account
+							</div>
+						</div>
+
+						<div className="rows">
+							<div id="row-delete" className="row disabled" onClick={this.onDelete}>
+								<Label text={translate('commonDelete')} />
 							</div>
 						</div>
 					</div>
@@ -708,23 +738,27 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 	};
 
 	onDelete (e: any) {
-		popupStore.open('confirm', {
-			data: {
-				title: 'Are you sure?',
-				text: '...',
-				textConfirm: 'Delete',
-				textCancel: 'Cancel',
-				onConfirm: () => {
-					C.AccountDelete(false);
-				},
-				onCancel: () => {
-				}, 
-			},
-		});
+		const check = this.refCheckbox.getValue();
+		if (!check) {
+			return;
+		};
+
+		C.AccountDelete(false);
 	};
 
 	onDeleteCancel (e: any) {
 		C.AccountDelete(true);
+	};
+
+	onCheck () {
+		const node = $(ReactDOM.findDOMNode(this));
+		const row = node.find('#row-delete');
+		const value = this.refCheckbox.getValue();
+
+		row.removeClass('red disabled');
+
+		this.refCheckbox.setValue(!value);
+		!value ? row.addClass('red') : row.addClass('disabled');
 	};
 
 	onImport (format: string) {
