@@ -215,11 +215,8 @@ class Dispatcher {
 					break;
 
 				case 'accountUpdate':
-					const config = Mapper.From.AccountConfig(data.getConfig());
-					const status = Mapper.From.AccountStatus(data.getStatus());
-
-					authStore.accountSet({ status });
-					commonStore.configSet(config, true);
+					authStore.accountSet({ status: Mapper.From.AccountStatus(data.getStatus()) });
+					commonStore.configSet(Mapper.From.AccountConfig(data.getConfig()), true);
 					break;
 
 				case 'accountConfigUpdate':
