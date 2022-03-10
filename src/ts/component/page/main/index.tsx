@@ -59,7 +59,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 	};
 	
 	render () {
-		const { cover, config } = commonStore;
+		const { cover, config, account } = commonStore;
 		const { root, recent } = blockStore;
 		const element = blockStore.getLeaf(root, root);
 		const { filter, loading } = this.state;
@@ -75,6 +75,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		const profile = detailStore.get(Constant.subIds.profile, blockStore.profile);
 		const list = this.getList();
 		const length = list.length;
+		const isDeleted = [ I.AccountStatusType.StartedDeletion, I.AccountStatusType.Deleted ].includes(account.status.type);
 
 		// Subscriptions
 		list.forEach((it: any) => {
@@ -111,6 +112,8 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		);
 
 		let content = null;
+		let deleted = null;
+
 		if (!loading) {
 			if (!list.length) {
 				content = (
@@ -133,6 +136,14 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 					/>
 				);
 			};
+		};
+
+		if (isDeleted) {
+			deleted = (
+				<div className="deleted">
+					<Icon /> Account is deleted
+				</div>
+			);
 		};
 
 		return (
@@ -158,6 +169,8 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 								onClick={this.onProfile} 
 							/>
 						</div>
+
+						{deleted}
 					</div>
 					
 					<div id="documents" className={Util.toCamelCase('tab-' + tab.id)}> 
