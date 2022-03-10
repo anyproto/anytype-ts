@@ -103,6 +103,7 @@
 			.cell.isEditing.c-select {
 				.empty { display: inline-block; }
 				.cellContent { padding: 5px 8px; }
+				.placeholder { padding: 5px 8px; }
 			}
 			.cell.isEditing.c-select.isStatus {
 				.over { width: calc(100% - 26px); }
@@ -117,6 +118,7 @@
 			.cell.isEditing.c-object
 			{
 				.cellContent { padding: 5px 8px !important; }
+				.placeholder { padding: 5px 8px; }
 			}
 
 			.cell.c-object {
