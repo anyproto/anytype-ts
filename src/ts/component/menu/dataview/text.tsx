@@ -59,8 +59,10 @@ const MenuText = observer(class MenuText extends React.Component<Props, {}> {
 		const input = node.find('#input').get(0);
 		const length = value.length;
 
-		input.focus({ preventScroll: true });
-		setRange(input, { start: length, end: length });
+		window.setTimeout(() => {
+			input.focus({ preventScroll: true });
+			setRange(input, { start: length, end: length });
+		});
 
 		this.resize();
 		this.placeholderCheck();
@@ -82,7 +84,6 @@ const MenuText = observer(class MenuText extends React.Component<Props, {}> {
 
 	onBlur (e: any) {
 		this.save();
-		this.props.close();
 	};
 
 	save () {
@@ -133,18 +134,17 @@ const MenuText = observer(class MenuText extends React.Component<Props, {}> {
 		};
 
 		const { position, getId } = this.props;
+		const win = $(window);
+		const obj = $(`#${getId()}`);
+		const input = obj.find('#input');
+		const wh = win.height();
+		const hh = Util.sizeHeader();
+		const o = obj.offset();
+
+		obj.css({ height: 'auto' });
+		input.css({ height: 'auto' });
 
 		raf(() => {
-			const obj = $(`#${getId()}`);
-			const input = obj.find('#input');
-			const win = $(window);
-			const wh = win.height();
-			const hh = Util.sizeHeader();
-			const o = obj.offset();
-	
-			obj.css({ height: 'auto' });
-			input.css({ height: 'auto' });
-	
 			const sh = input.get(0).scrollHeight;
 			input.css({ height: Math.min(wh - hh - o.top - 20, sh) });
 			input.scrollTop(sh);

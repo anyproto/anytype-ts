@@ -100,10 +100,6 @@ const CellObject = observer(class CellObject extends React.Component<Props, Stat
 				</div>
 			);
 		} else {
-			if (length >= 3) {
-				cn.push('columns'); 
-			};
-
 			if (!value.length) {
 				content = <div className="empty">{placeholder}</div>;
 			} else {

@@ -134,7 +134,9 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 			2: () => { onContext(e, record.id); }
 		};
 
-		cb[e.button]();
+		if (cb[e.button]) {
+			cb[e.button]();
+		};
 	};
 
 	getPicture (): string {

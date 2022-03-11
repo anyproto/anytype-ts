@@ -107,7 +107,7 @@
 		overflow-x: hidden !important; overflow-y: overlay !important; max-height: 200px; 
 	}
 
-	.placeholder { padding: 14px; position: absolute; left: 0px; top: 0px; height: 100%; }
+	.placeholder { position: absolute; left: 0px; top: 0px; height: 100%; }
 	#entry { -webkit-user-modify: read-write-plaintext-only; color: $colorBlack; }
 	#list { margin-right: 6px; position: relative; }
 }
