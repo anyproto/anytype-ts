@@ -98,7 +98,6 @@ class Storage {
 			'tabStore', 
 			'linkSettings', 
 			'graph',
-			'blockCnt',
 			'gateway',
 			'dataPath',
 			'sidebar',
