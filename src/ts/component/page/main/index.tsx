@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Icon, IconObject, ListIndex, Cover, HeaderMainIndex as Header, FooterMainIndex as Footer, Filter } from 'ts/component';
-import { commonStore, blockStore, detailStore, menuStore, dbStore, popupStore } from 'ts/store';
+import { commonStore, blockStore, detailStore, menuStore, dbStore, popupStore, authStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { I, C, Util, DataUtil, translate, crumbs, Storage, analytics, keyboard, Action } from 'ts/lib';
 import arrayMove from 'array-move';
@@ -59,7 +59,8 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 	};
 	
 	render () {
-		const { cover, config, account } = commonStore;
+		const { cover, config } = commonStore;
+		const { account } = authStore;
 		const { root, recent } = blockStore;
 		const element = blockStore.getLeaf(root, root);
 		const { filter, loading } = this.state;
