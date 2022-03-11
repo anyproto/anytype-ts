@@ -102,6 +102,7 @@ class Storage {
 			'gateway',
 			'dataPath',
 			'sidebar',
+			'writing',
 		];
 
 		keys.forEach(key => this.delete(key));
