@@ -15,6 +15,8 @@ configure({ enforceActions: 'never' });
 import 'react-virtualized/styles.css';
 import 'katex/dist/katex.min.css';
 
+import 'prismjs/themes/prism.css';
+
 import 'scss/font.scss';
 import 'scss/common.scss';
 import 'scss/debug.scss';
