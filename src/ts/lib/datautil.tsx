@@ -237,6 +237,7 @@ class DataUtil {
 		let c = '';
 		switch (s) {
 			case I.ThreadStatus.Failed:
+			case I.ThreadStatus.Disabled:
 			case I.ThreadStatus.Offline: c = 'red'; break;
 			case I.ThreadStatus.Syncing: c = 'orange'; break;
 			case I.ThreadStatus.Synced: c = 'green'; break;

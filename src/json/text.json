@@ -382,6 +382,7 @@
 	"syncStatus2": { "en": "Syncing..." },
 	"syncStatus3": { "en": "Synced" },
 	"syncStatus4": { "en": "Not syncing" },
+	"syncStatus5": { "en": "Backup disabled" },
 
 	"tooltip0": { "en": "Initializing sync" },
 	"tooltip1": { "en": "Anytype node is not connected" },
