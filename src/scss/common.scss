@@ -56,7 +56,7 @@ html.platformWindows {
 		.side.left { padding-left: 16px; gap: 0px 16px; }
 		.side.right { justify-content: flex-end; gap: 0px 20px; padding-right: 16px; }
 		.side.right {
-			.icon { width: 20px; height: 20px; }
+			.icon { width: 20px; height: 20px; transition: none; }
 		}
 
 		.name { color: $colorWhite; display: inline-block; vertical-align: middle; line-height: 1; margin-top: -2px; }
