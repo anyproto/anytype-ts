@@ -63,6 +63,10 @@
 					width: 24px; height: 24px; background-image: url('~img/icon/popup/settings/arrow.svg'); position: absolute; right: 0px;
 					top: 50%; margin: -12px 0px 0px 0px; 
 				}
+				.icon.dot { 
+					width: 12px; height: 12px; border-radius: 100%; background: #ee420b; position: absolute; right: 24px;
+					top: 50%; margin: -6px 0px 0px 0px; 
+				}
 				
 				.side { width: 50%; line-height: 28px; }
 				.side.right { text-align: right; }

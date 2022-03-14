@@ -94,6 +94,10 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 							<div className="row" onClick={() => { this.onPage('account'); }}>
 								<Icon className="account" />
 								<Label text={translate('popupSettingsAccountTitle')} />
+
+								{account.status.type != I.AccountStatusType.Active ? (
+									<Icon className="dot" />
+								) : ''}
 								<Icon className="arrow" />
 							</div>
 
@@ -141,8 +145,9 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 				if (isDeleted) {
 					message = (
 						<React.Fragment>	
-							<b>Account data is deleted from backup nodes.</b>
-							You can continue working on this device locally. You won't be able to sign in on new devices anymore with the same recovery phrase.
+							<b>Account data removed from the backup node</b>
+							You can continue to work as normal.<br/>
+							All logged-in devices will continue to store data locally. However, you won't be able to sign into Anytype on new devices using your keychain recovery phrase. 
 						</React.Fragment>
 					);
 				};
@@ -205,11 +210,11 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 						<Title text={translate('popupSettingsAccountDeleteTitle')} />
 
 						<div className="text">
-							<b>1. You have 30 days to cancel account deletion.</b>
-							<p>All of your account data will be deleted from backup nodes within 30 days. You have the option to cancel it during this time.</p>
+							<b>1. We're sorry to see you go. Once you request your account to be deleted, you have 30 days to cancel this request.</b>
+							<p>After 30 days, your objects are permanently removed from the Anytype backup node.</p>
 
-							<b>2. Even after deleting your account, you can continue to work as usual.</b>
-							<p>After this period your logged-in devices will still have all the data locally. You won't be able to sign in on new devices anymore with the same recovery phrase.</p>
+							<b>2. You can continue to work as normal.</b>
+							<p>All logged-in devices will continue to store data locally. However, you won't be able to sign into Anytype on new devices using your keychain recovery phrase. </p>
 
 							<div className="check" onClick={this.onCheck}>
 								<Checkbox ref={(ref: any) => { this.refCheckbox = ref; }} /> I have read it and want to delete my account
