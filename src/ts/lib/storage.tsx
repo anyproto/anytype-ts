@@ -1,19 +1,38 @@
+import { Util } from 'ts/lib';
+
+const storage = require('electron-json-storage');
+const path = require('path');
+
 class Storage {
 	
 	storage: any = null;
+	path: string = '';
+	cache: Map<string, any> = new Map();
 	
 	constructor () {
-		this.storage = localStorage;
+		this.storage = storage;
+	};
+
+	init (p: string) {
+		this.path = path.join(p, 'localstorage');
+		this.storage.setDataPath(this.path);
+
+		console.log('[Storage].init', this.path);
 	};
 	
 	get (key: string): any {
-		let o = String(this.storage[key] || '');
-		if (!o) {
-			return;
+		const cached = this.cache.get(key);
+		if (cached) {
+			console.log('[Storage].cached', key, cached);
+			return cached;
 		};
-		let ret = ''
-		try { ret = JSON.parse(o); } catch (e) {};
-		return ret;
+
+		if (!this.path) {
+			return '';
+		};
+
+		let value = this.storage.getSync(key);
+		return Util.objectLength(value || {}) ? value : '';
 	};
 	
 	set (key: string, obj: any, del?: boolean): void {
@@ -29,11 +48,13 @@ class Storage {
 		} else {
 			o = obj;
 		};
-		this.storage[key] = JSON.stringify(o);
+		this.storage.set(key, o);
+		this.cache.set(key, o);
 	};
 	
 	delete (key: string) {
-		delete(this.storage[key]);
+		this.storage.remove(key);
+		this.cache.delete(key)
 	};
 
 	setToggle (rootId: string, id: string, value: boolean) {
