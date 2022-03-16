@@ -7,8 +7,6 @@ interface Props {
 	onClick?(e: any, id: string): void;
 };
 
-const CLICK_THRESHOLD = 10;
-
 class DragBox extends React.Component<Props, {}> {
 	
 	_isMounted: boolean = false;
