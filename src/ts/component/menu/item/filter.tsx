@@ -59,7 +59,7 @@ const MenuItemFilter = observer(class MenuItemFilter extends React.Component<Pro
 
 			case I.RelationType.Tag:
 			case I.RelationType.Status:
-				list = (value || []).map((id: string) => { 
+				list = Relation.getArrayValue(value).map((id: string) => { 
 					return (relation.selectDict || []).find((it: any) => { return it.id == id; });
 				});
 				list = list.filter((it: any) => { return it && it.id; });
@@ -67,9 +67,9 @@ const MenuItemFilter = observer(class MenuItemFilter extends React.Component<Pro
 				if (list.length) {
 					v = (
 						<React.Fragment>
-							{list.map((item: any) => {
-								return <Tag {...item} key={item.id} className={DataUtil.tagClass(relation.format)} />;
-							})}
+							{list.map((item: any) => (
+								<Tag {...item} key={item.id} className={DataUtil.tagClass(relation.format)} />
+							))}
 						</React.Fragment>
 					);
 				} else {

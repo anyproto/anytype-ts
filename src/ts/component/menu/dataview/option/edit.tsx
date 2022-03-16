@@ -101,8 +101,10 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<Pro
 	};
 
 	getSections () {
+		const colors = DataUtil.menuGetBgColors().filter((it: any) => { return it.id != 'bgColor-default'; });
+
 		return [
-			{ children: DataUtil.menuGetBgColors() },
+			{ children: colors },
 			{ 
 				children: [
 					{ id: 'remove', icon: 'remove', name: translate('menuDataviewOptionEditDelete') }
