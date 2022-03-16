@@ -219,8 +219,6 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 			let popupNewBlock = Storage.get('popupNewBlock');
 			let onboarding = Storage.get('onboarding');
 
-			console.log('popupNewBlock', popupNewBlock, 'onboarding', onboarding);
-
 			if (isMain && account) {
 				if (!onboarding) {
 					popupNewBlock = true;
