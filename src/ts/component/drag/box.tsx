@@ -17,9 +17,6 @@ class DragBox extends React.Component<Props, {}> {
 	oy: number = 0;
 	oldIndex: number = -1;
 	newIndex: number = -1;
-	click: boolean = false;
-	x1: number = 0;
-	y1: number = 0;
 	
 	constructor (props: any) {
 		super(props);
@@ -88,13 +85,8 @@ class DragBox extends React.Component<Props, {}> {
 			};
 		});
 
-		console.log('onDragStart');
-
-		this.click = true;
 		this.ox = offset.left;
 		this.oy = offset.top;
-		this.x1 = e.pageX;
-		this.y1 = e.pageY;
 		this.oldIndex = element.data('index');
 
 		node.append(clone);
@@ -119,13 +111,6 @@ class DragBox extends React.Component<Props, {}> {
 		const x = e.pageX - this.ox - width / 2;
 		const y = e.pageY - this.oy - height / 2;
 		const center = x + width / 2;
-
-		console.log(Math.abs(e.pageX - this.x1), Math.abs(e.pageY - this.y1));
-
-		if ((Math.abs(e.pageX - this.x1) > CLICK_THRESHOLD) || (Math.abs(e.pageY - this.y1) > CLICK_THRESHOLD)) {
-			this.click = false;
-			console.log('UNCLICK');
-		};
 
 		this.newIndex = -1;
 
@@ -158,13 +143,6 @@ class DragBox extends React.Component<Props, {}> {
 		node.find('.isDraggable.isOver').removeClass('isOver left right');
 
 		$(window).off('mousemove.dragbox mouseup.dragbox');
-
-		if (this.click) {
-			console.log('CLICK');
-			if (onClick) {
-			};
-			return;
-		};
 
 		if (this.newIndex >= 0) {
 			onDragEnd(this.oldIndex, this.newIndex);
