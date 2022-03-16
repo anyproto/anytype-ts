@@ -163,9 +163,8 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 
 	init () {
 		const { account } = authStore;
-		const { isPopup, history, dataset } = this.props;
+		const { isPopup, history } = this.props;
 		const match = this.getMatch();
-		const popupNewBlock = Storage.get('popupNewBlock');
 		const isIndex = !match.params.page;
 		const isAuth = match.params.page == 'auth';
 		const isMain = match.params.page == 'main';
@@ -217,14 +216,18 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 		};
 		
 		window.setTimeout(() => {
-			if (isMain && account) {
-				if (!Storage.get('onboarding')) {
-					Storage.set('popupNewBlock', 1);
-				};
+			let popupNewBlock = Storage.get('popupNewBlock');
+			let onboarding = Storage.get('onboarding');
 
-				if (!popupNewBlock && Storage.get('onboarding')) {
+			console.log('popupNewBlock', popupNewBlock, 'onboarding', onboarding);
+
+			if (isMain && account) {
+				if (!onboarding) {
+					popupNewBlock = true;
+				};
+				if (!popupNewBlock && onboarding) {
 					popupStore.open('help', { data: { document: 'whatsNew' } });
-					Storage.set('popupNewBlock', 1);
+					Storage.set('popupNewBlock', true);
 				};
 				Storage.set('redirect', history.location.pathname);
 			};

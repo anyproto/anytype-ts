@@ -21,18 +21,22 @@ class Storage {
 	};
 	
 	get (key: string): any {
+		if (!this.path) {
+			return;
+		};
+
 		const cached = this.cache.get(key);
 		if (cached) {
-			console.log('[Storage].cached', key, cached);
 			return cached;
 		};
 
-		if (!this.path) {
-			return '';
+		let value = this.storage.getSync(key);
+		if ('object' == typeof(value)) {
+			value = Util.objectLength(value || {}) ? value : '';
 		};
 
-		let value = this.storage.getSync(key);
-		return Util.objectLength(value || {}) ? value : '';
+		this.cache.set(key, value);
+		return value;
 	};
 	
 	set (key: string, obj: any, del?: boolean): void {
