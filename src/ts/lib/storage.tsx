@@ -26,7 +26,7 @@ class Storage {
 		};
 
 		const cached = this.cache.get(key);
-		if (cached) {
+		if (cached !== undefined) {
 			return cached;
 		};
 
