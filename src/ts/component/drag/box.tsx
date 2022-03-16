@@ -4,7 +4,10 @@ import { Util } from 'ts/lib';
 
 interface Props {
 	onDragEnd(oldIndex: number, newIndex: number): void;
+	onClick?(e: any, id: string): void;
 };
+
+const CLICK_THRESHOLD = 10;
 
 class DragBox extends React.Component<Props, {}> {
 	
@@ -14,16 +17,23 @@ class DragBox extends React.Component<Props, {}> {
 	oy: number = 0;
 	oldIndex: number = -1;
 	newIndex: number = -1;
+	click: boolean = false;
+	x1: number = 0;
+	y1: number = 0;
 	
 	constructor (props: any) {
 		super(props);
 
 		this.onDragStart = this.onDragStart.bind(this);
+		this.onClick = this.onClick.bind(this);
 	};
 	
 	render () {
 		const children = React.Children.map(this.props.children, (child: any) => {
-			return React.cloneElement(child, { onDragStart: this.onDragStart });
+			return React.cloneElement(child, { 
+				onClick: this.onClick,
+				onDragStart: this.onDragStart 
+			});
 		});
 
 		return (
@@ -39,6 +49,13 @@ class DragBox extends React.Component<Props, {}> {
 	
 	componentWillUnmount () {
 		this._isMounted = false;
+	};
+
+	onClick (e: any) {
+		e.preventDefault();
+		e.stopPropagation();
+
+		this.props.onClick(e, $(e.currentTarget).data('id'));
 	};
 
 	onDragStart (e: any) {
@@ -71,8 +88,13 @@ class DragBox extends React.Component<Props, {}> {
 			};
 		});
 
+		console.log('onDragStart');
+
+		this.click = true;
 		this.ox = offset.left;
 		this.oy = offset.top;
+		this.x1 = e.pageX;
+		this.y1 = e.pageY;
 		this.oldIndex = element.data('index');
 
 		node.append(clone);
@@ -98,6 +120,13 @@ class DragBox extends React.Component<Props, {}> {
 		const y = e.pageY - this.oy - height / 2;
 		const center = x + width / 2;
 
+		console.log(Math.abs(e.pageX - this.x1), Math.abs(e.pageY - this.y1));
+
+		if ((Math.abs(e.pageX - this.x1) > CLICK_THRESHOLD) || (Math.abs(e.pageY - this.y1) > CLICK_THRESHOLD)) {
+			this.click = false;
+			console.log('UNCLICK');
+		};
+
 		this.newIndex = -1;
 
 		node.find('.isDraggable.isOver').removeClass('isOver left right');
@@ -122,7 +151,20 @@ class DragBox extends React.Component<Props, {}> {
 		};
 
 		const node = $(ReactDOM.findDOMNode(this));
-		const { onDragEnd } = this.props;
+		const { onDragEnd, onClick } = this.props;
+
+		node.find('.isDraggable.isClone').remove();
+		node.find('.isDraggable.isDragging').removeClass('isDragging');
+		node.find('.isDraggable.isOver').removeClass('isOver left right');
+
+		$(window).off('mousemove.dragbox mouseup.dragbox');
+
+		if (this.click) {
+			console.log('CLICK');
+			if (onClick) {
+			};
+			return;
+		};
 
 		if (this.newIndex >= 0) {
 			onDragEnd(this.oldIndex, this.newIndex);
@@ -131,12 +173,6 @@ class DragBox extends React.Component<Props, {}> {
 		this.cache = {};
 		this.oldIndex = -1;
 		this.newIndex = -1;
-
-		node.find('.isDraggable.isClone').remove();
-		node.find('.isDraggable.isDragging').removeClass('isDragging');
-		node.find('.isDraggable.isOver').removeClass('isOver left right');
-
-		$(window).off('mousemove.dragbox mouseup.dragbox');
 	};
 	
 };
