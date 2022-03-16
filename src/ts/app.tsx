@@ -321,7 +321,6 @@ class App extends React.Component<Props, State> {
 
 	componentDidMount () {
 		this.init();
-		this.initTheme(commonStore.theme);
 	};
 
 	componentDidUpdate () {
@@ -333,58 +332,21 @@ class App extends React.Component<Props, State> {
 		keyboard.init();
 		analytics.init();
 		
-		Storage.delete('lastSurveyCanceled');
-
-		const storageKeys = [
-			'theme', 'pinTime', 'defaultType', 'autoSidebar',
-		];
-
-		const cover = Storage.get('cover');
-		const lastSurveyTime = Number(Storage.get('lastSurveyTime')) || 0;
-		const redirect = Storage.get('redirect');
-
-		if (!lastSurveyTime) {
-			Storage.set('lastSurveyTime', Util.time());
-		};
-
-		if (redirect) {
-			Storage.set('redirectTo', redirect);
-			Storage.delete('redirect');
-		};
-
-		cover ? commonStore.coverSet(cover.id, cover.image, cover.type) : commonStore.coverSetDefault();
-
-		storageKeys.forEach((it: string) => {
-			commonStore[Util.toCamelCase(it + '-Set')](Storage.get(it));
-		});
-		
 		this.setIpcEvents();
 	};
 
-	initTheme (theme: string) {
-		const head = $('head');
-
-		head.find('#link-prism').remove();
-
-		if (theme) {
-			head.append(`<link id="link-prism" rel="stylesheet" href="./css/theme/${theme}/prism.css" />`);
-		};
-
-		Util.addBodyClass('theme', theme);
-	};
-
-	setIpcEvents () {
+	initStorage () {
+		const cover = Storage.get('cover');
+		const lastSurveyTime = Number(Storage.get('lastSurveyTime')) || 0;
+		const redirect = Storage.get('redirect');
 		const accountId = Storage.get('accountId');
 		const phrase = Storage.get('phrase');
-		const node = $(ReactDOM.findDOMNode(this));
-		const logo = node.find('#logo');
-		const logsDir = path.join(userPath, 'logs');
 		const renderer = Util.getRenderer();
+		const restoreKeys = [
+			'theme', 'pinTime', 'defaultType', 'autoSidebar',
+		];
 
-		try { fs.mkdirSync(logsDir); } catch (err) {};
-
-		renderer.send('appLoaded', true);
-
+		// Check auth phrase with keytar
 		if (accountId) {
 			renderer.send('keytarGet', accountId);
 			renderer.on('keytarGet', (e: any, key: string, value: string) => {
@@ -405,8 +367,52 @@ class App extends React.Component<Props, State> {
 			});
 		};
 
+		if (!lastSurveyTime) {
+			Storage.set('lastSurveyTime', Util.time());
+		};
+
+		if (redirect) {
+			Storage.set('redirectTo', redirect);
+			Storage.delete('redirect');
+		};
+
+		Storage.delete('lastSurveyCanceled');
+
+		cover ? commonStore.coverSet(cover.id, cover.image, cover.type) : commonStore.coverSetDefault();
+
+		restoreKeys.forEach((it: string) => {
+			commonStore[Util.toCamelCase(it + '-Set')](Storage.get(it));
+		});
+	};
+
+	initTheme (theme: string) {
+		const head = $('head');
+
+		head.find('#link-prism').remove();
+
+		if (theme) {
+			head.append(`<link id="link-prism" rel="stylesheet" href="./css/theme/${theme}/prism.css" />`);
+		};
+
+		Util.addBodyClass('theme', theme);
+	};
+
+	setIpcEvents () {
+		const node = $(ReactDOM.findDOMNode(this));
+		const logo = node.find('#logo');
+		const logsDir = path.join(userPath, 'logs');
+		const renderer = Util.getRenderer();
+
+		try { fs.mkdirSync(logsDir); } catch (err) {};
+
+		renderer.send('appLoaded', true);
+
 		renderer.on('dataPath', (e: any, dataPath: string) => {
 			authStore.pathSet(dataPath);
+			Storage.init(dataPath);
+
+			this.initStorage();
+			this.initTheme(commonStore.theme);
 
 			window.setTimeout(() => {
 				logo.css({ opacity: 0 });

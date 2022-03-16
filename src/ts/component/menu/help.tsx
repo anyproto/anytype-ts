@@ -44,9 +44,7 @@ class MenuHelp extends React.Component<Props, {}> {
 
 		switch (item.id) {
 			case 'whatsNew':
-				popupStore.open('help', {
-					data: { document: item.document },
-				});
+				popupStore.open('help', { data: { document: item.document } });
 				break;
 
 			case 'shortcut':
