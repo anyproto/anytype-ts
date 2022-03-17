@@ -50,18 +50,16 @@
         .icon.close:hover { background-color: $colorVeryLightGrey; }
     }
 
-    .foot { padding: 10px 14px; display: flex; flex-direction: row; align-items: center; }
+    .foot { display: flex; flex-direction: row; align-items: center;  }
     .foot {
-        .item { flex-grow: 1; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-direction: row; }
+        .item { 
+			height: 52px; flex-basis: 20%; flex-grow: 1; display: flex; align-items: center; justify-content: center; cursor: pointer; 
+			flex-direction: row; 
+		}
         .item * { cursor: pointer; }
-        .item:hover {
-            .icon { background-color: $colorHover; }
-        }
+        .item:hover { background-color: $colorHover; }
 
-        .icon { 
-            width: 32px; height: 32px; background-size: 20px; border-radius: 4px; display: flex; align-items: center;
-            justify-content: center; flex-direction: row;
-        }
+        .icon { width: 20px; height: 20px; }
         .icon.store { background-image: url('~img/icon/sidebar/store.svg'); }
         .icon.add { background-image: url('~img/icon/sidebar/add.svg'); }
         .icon.settings { background-image: url('~img/icon/sidebar/settings.svg'); }

@@ -25,9 +25,10 @@ import Onboarding from './onboarding';
 
 const Constant = require('json/constant.json');
 const Text = require('json/text.json');
-const lang = Storage.get('lang') || Constant.default.lang;
 
 const translate = (key: string): string => {
+	const lang = Storage.get('lang') || Constant.default.lang;
+
 	if (undefined === Text[key]) {
 		return `*No key: ${key}*`;
 	};
