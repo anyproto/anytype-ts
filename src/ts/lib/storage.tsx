@@ -25,6 +25,18 @@ class Storage {
 			return;
 		};
 
+		// Old storage migration
+
+		const old = localStorage[key];
+		if (old !== undefined) {
+			delete(localStorage[key]);
+			try {
+				this.set(key, JSON.parse(old), true);
+			} catch (e) {
+				console.log(`[Storage].get: ${key} is not JSON`);
+			};
+		};
+
 		const cached = this.cache.get(key);
 		if (cached !== undefined) {
 			return cached;
