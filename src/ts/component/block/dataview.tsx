@@ -2,7 +2,7 @@ import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { I, C, Util, DataUtil, analytics, translate, keyboard, Onboarding, Relation } from 'ts/lib';
 import { observer } from 'mobx-react';
-import { blockStore, menuStore, dbStore, detailStore, popupStore } from 'ts/store';
+import { blockStore, menuStore, dbStore, detailStore, popupStore, commonStore } from 'ts/store';
 import { throttle } from 'lodash';
 import arrayMove from 'array-move';
 
@@ -45,6 +45,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	render () {
+		const { sidebar } = commonStore;
+		const { fixed } = sidebar;
 		const { rootId, block, isPopup } = this.props;
 		const views = dbStore.getViews(rootId, block.id);
 

@@ -6,11 +6,12 @@
 		.content { height: 100%; }
 
 		.icon { transition: none; }
-		.title { font-size: 28px; line-height: 32px; letter-spacing: -0.36px; font-weight: 600; margin-bottom: 18px; }
+		.title { font-size: 28px; line-height: 32px; letter-spacing: -0.36px; font-weight: 600; padding: 20px 0px; text-align: center; }
+		.description { margin-bottom: 26px; }
 		.inputs { margin-bottom: 32px; }
 		
 		.head { 
-			position: absolute; left: 0px; top: 0px; width: 100%; height: 40px; padding: 10px 12px; background: $colorWhite; z-index: 1;
+			position: absolute; left: 0px; top: 0px; width: 100%; height: 40px; padding: 11px 12px; background: $colorWhite; z-index: 1;
 			border-radius: 12px 12px 0px 0px; 
 		}
 		.head {
@@ -23,17 +24,25 @@
 			}
 		}
 		
-		.tab { padding: 70px 48px 48px 48px; }
+		.tab { padding: 44px 48px 48px 48px; }
 
-		.tabIndex { padding: 45px 48px 28px 48px; }
-		.tabIndex {
+		.sectionName { @include text-small; padding: 30px 0px 4px 0px; color: $colorDarkGrey; }
+		.sectionName.center { text-align: center; }
+
+		.tabIndex { padding: 24px 48px 48px 48px; }
+		.tabIndex, .tabAccount, .tabAppearance, .tabPersonal, .tabPinIndex {
 			.row { 
 				padding: 18px 0px 17px 0px; border-bottom: 1px solid $colorLightGrey; cursor: pointer; position: relative; 
 				@include text-paragraph; line-height: 28px;
 			}
 			.row.flex { display: flex; }
+			.row.red { color: $colorRed; }
+
 			.row {
 				.icon { width: 28px; height: 28px; margin: 0px 12px 0px 0px; vertical-align: top; }
+				.icon.account { background-image: url('~img/icon/popup/settings/account.svg'); }
+				.icon.personal { background-image: url('~img/icon/popup/settings/personal.svg'); }
+				.icon.appearance { background-image: url('~img/icon/popup/settings/appearance.svg'); }
 				.icon.wallpaper { background-image: url('~img/icon/popup/settings/wallpaper.svg'); }
 				.icon.phrase { background-image: url('~img/icon/popup/settings/phrase.svg'); }
 				.icon.pin { background-image: url('~img/icon/popup/settings/pin.svg'); }
@@ -47,18 +56,40 @@
 					top: 50%; margin: -12px 0px 0px 0px; 
 				}
 				
-				.side { width: 50%; }
-				
+				.side { width: 50%; line-height: 28px; }
+				.side.right { text-align: right; }
+
+				.select { transition: none; border: 0px; }
+
 				.status { position: absolute; text-align: right; right: 24px; top: 50%; margin-top: -14px; height: 28px; color: $colorMediumGrey; }
 			}
 			
 			.logout { color: $colorMediumGrey; cursor: pointer; text-align: center; @include text-paragraph; line-height: 28px; padding: 18px 0px; }
 			.logout:hover { color: $colorBlack; }
 		}
+
+		.tabAppearance {
+			.buttons { display: flex; justify-content: space-evenly; }
+
+			.btn { text-align: center; @include text-small; cursor: pointer; }
+			.btn {
+				.icon { width: 128px; height: 68px; margin-bottom: 4px; border-radius: 14px; padding: 4px; }
+				.icon {
+					.inner { width: 120px; height: 60px; border-radius: 12px; background-size: cover; background-position: center; background-repeat: no-repeat; }
+				}
+
+				.icon.light .inner { background-image: url('~img/icon/popup/settings/theme/light.svg'); }
+				.icon.dark .inner { background-image: url('~img/icon/popup/settings/theme/dark.svg'); }
+			}
+
+			.btn.active {
+				.icon { box-shadow: 0px 0px 0px 2px #ffee94 inset; }
+			}
+		}
 		
 		.tabWallpaper { overflow-y: overlay; height: 520px; }
-		
 		.tabWallpaper {
+			.title { text-align: left; }
 			.covers { margin-left: -2px; width: 596px; }
 			
 			.row { margin-bottom: 8px; }
@@ -115,11 +146,7 @@
 			.buttons { margin-top: 32px; }
 		}
 		
-		.tabPinIndex {
-			.label { margin-bottom: 25px; }
-		}
-		
-		.tabPinIndex, .tabPinSelect, .tabPinConfirm {
+		.tabPinSelect, .tabPinConfirm {
 			.label { margin-bottom: 23px; }
 			.input { 
 				width: 40px; height: 40px; margin-right: 8px; padding: 0px; text-align: center; vertical-align: top; font-size: 18px;
@@ -142,8 +169,12 @@
 
 		.tabImportIndex {
 			.label { margin-bottom: 26px; }
+
+			.items { 
+				display: grid; grid-template-columns: repeat(4, 132px); grid-column-gap: 16px; grid-row-gap: 16px;
+			}
 			.item { 
-				width: 132px; height: 84px; margin: 0px 16px 16px 0px; border: 1px solid $colorLightGrey; border-radius: 8px; 
+				width: 132px; height: 84px; border: 1px solid $colorLightGrey; border-radius: 8px; 
 				text-align: center; transition: $transitionFast; line-height: 82px;	display: inline-block; cursor: pointer;
 				vertical-align: top; position: relative;
 			}
@@ -190,8 +221,6 @@
 				width: 100%; display: flex; padding: 18px 0px 17px 0px; border-bottom: 1px solid $colorLightGrey; 
 				@include text-paragraph; line-height: 28px;
 			}
-
-			.select { transition: none; }
 
 			.side { width: 50%; line-height: 28px; }
 			.side.right { text-align: right; }

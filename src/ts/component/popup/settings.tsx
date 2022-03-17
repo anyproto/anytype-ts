@@ -5,13 +5,13 @@ import { I, C, Storage, translate, Util, DataUtil, analytics } from 'ts/lib';
 import { authStore, blockStore, commonStore, popupStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
-interface Props extends I.Popup, RouteComponentProps<any> {}
+interface Props extends I.Popup, RouteComponentProps<any> {};
 
 interface State {
 	loading: boolean;
 	error: string;
 	entropy: string;
-}
+};
 
 const { dialog } = window.require('@electron/remote');
 const $ = require('jquery');
@@ -60,7 +60,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 		const { data } = param;
 		const { page } = data;
 		const { account, phrase } = authStore;
-		const { cover, coverImage, theme, config, autoSidebar } = commonStore;
+		const { cover, coverImage, theme, config, autoSidebar, type } = commonStore;
 		const { loading, error, entropy } = this.state;
 		const pin = Storage.get('pin');
 
@@ -85,12 +85,47 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 						<Title text={translate('popupSettingsTitle')} />
 
 						<div className="rows">
-							<div className="row" onClick={() => { this.onPage('wallpaper'); }}>
-								<Icon className="wallpaper" />
-								<Label text={translate('popupSettingsWallpaperTitle')} />
+							<div className="row" onClick={() => { this.onPage('account'); }}>
+								<Icon className="account" />
+								<Label text={translate('popupSettingsAccountTitle')} />
 								<Icon className="arrow" />
 							</div>
 
+							<div className="row" onClick={() => { this.onPage('personal'); }}>
+								<Icon className="personal" />
+								<Label text={translate('popupSettingsPersonalTitle')} />
+								<Icon className="arrow" />
+							</div>
+
+							<div className="row" onClick={() => { this.onPage('appearance'); }}>
+								<Icon className="appearance" />
+								<Label text={translate('popupSettingsAppearanceTitle')} />
+								<Icon className="arrow" />
+							</div>
+
+							<div className="row" onClick={() => { this.onPage('importIndex'); }}>
+								<Icon className="import" />
+								<Label text={translate('popupSettingsImportTitle')} />
+								<Icon className="arrow" />
+							</div>
+
+							<div className="row" onClick={() => { this.onPage('exportMarkdown'); }}>
+								<Icon className="export" />
+								<Label text={translate('popupSettingsExportTitle')} />
+								<Icon className="arrow" />
+							</div>
+						</div>
+					</div>
+				);
+				break;
+
+			case 'account': 
+				content = (
+					<div>
+						<Head id="index" name={translate('popupSettingsTitle')} />
+						<Title text={translate('popupSettingsAccountTitle')} />
+
+						<div className="rows">
 							<div 
 								className="row" 
 								onClick={() => { 
@@ -112,26 +147,89 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 								<Icon className="arrow" />
 							</div>
 
-							<div className="row" onClick={() => { this.onPage('importIndex'); }}>
-								<Icon className="import" />
-								<Label text={translate('popupSettingsImportTitle')} />
-								<Icon className="arrow" />
+							<Label className="sectionName" text="Data" />
+
+							<div className="row" onClick={this.onFileOffload}>
+								<Label text="Clear file cache" />
 							</div>
 
-							<div className="row" onClick={() => { this.onPage('exportMarkdown'); }}>
-								<Icon className="export" />
-								<Label text={translate('popupSettingsExportTitle')} />
-								<Icon className="arrow" />
-							</div>
+							<Label className="sectionName" text="Account" />
 
-							<div className="row" onClick={() => { this.onPage('other'); }}>
-								<Icon className="other" />
-								<Label text={translate('popupSettingsOtherTitle')} />
-								<Icon className="arrow" />
+							<div className="row" onClick={this.onLogout}>
+								<Label text={translate('popupSettingsLogout')} />
 							</div>
 						</div>
+					</div>
+				);
+				break;
 
-						<div className="logout" onClick={this.onLogout}>{translate('popupSettingsLogout')}</div>
+			case 'personal': 
+
+				const types = DataUtil.getObjectTypesForNewObject(false);
+
+				content = (
+					<div>
+						<Head id="index" name={translate('popupSettingsTitle')} />
+						<Title text={translate('popupSettingsPersonalTitle')} />
+
+						<div className="rows">
+							<div className="row flex">
+								<div className="side left">
+									<Label text="Default Object type" />
+								</div>
+								<div className="side right">
+									<Select id="defaultType" options={types} value={type} onChange={(id: string) => { this.onTypeChange(id); }}/>
+								</div>
+							</div>
+
+							<div className="row flex">
+								<div className="side left">
+									<Label text="Automatically hide and show Sidebar" />
+								</div>
+								<div className="side right">
+									<Switch value={autoSidebar} className="big" onChange={(e: any, v: boolean) => { commonStore.autoSidebarSet(v); }}/>
+								</div>
+							</div>
+						</div>
+					</div>
+				);
+				break;
+
+			case 'appearance':
+				const themes: any[] = [
+					{ id: '', class: 'light', name: 'Light' },
+					{ id: 'dark', class: 'dark', name: 'Dark' },
+				];
+
+				const inner = <div className="inner"></div>;
+
+				content = (
+					<div>
+						<Head id="index" name={translate('popupSettingsTitle')} />
+						<Title text={translate('popupSettingsAppearanceTitle')} />
+
+						<div className="rows">
+							<div className="row" onClick={() => { this.onPage('wallpaper'); }}>
+								<Icon className="wallpaper" />
+								<Label text={translate('popupSettingsWallpaperTitle')} />
+								<Icon className="arrow" />
+							</div>
+
+							<Label className="sectionName center" text="Mode" />
+
+							<div className="buttons">
+								{themes.map((item: any, i: number) => (
+									<div 
+										key={i} 
+										className={[ 'btn', (theme == item.id ? 'active' : '') ].join(' ')} 
+										onClick={() => { commonStore.themeSet(item.id); }}
+									>
+										<Icon className={item.class} inner={inner} />
+										<Label text={item.name} />
+									</div>
+								))}
+							</div>
+						</div>
 					</div>
 				);
 				break;
@@ -165,7 +263,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 
 				content = (
 					<div>
-						<Head id="index" name={translate('popupSettingsTitle')} />
+						<Head id="appearance" name={translate('popupSettingsAppearanceTitle')} />
 						<Title text={translate('popupSettingsWallpaperTitle')} />
 
 						<div className="row first">
@@ -196,7 +294,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 
 				content = (
 					<div>
-						<Head id="index" name={translate('popupSettingsTitle')} />
+						<Head id="account" name={translate('popupSettingsAccountTitle')} />
 						
 						<Title text={translate('popupSettingsPhraseTitle')} />
 						<Label text={translate('popupSettingsPhraseText')} />
@@ -241,50 +339,76 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 				break;
 
 			case 'pinIndex':
+				const pinTime = commonStore.pinTime / 1000;
+
+				const times: any[] = [
+					{ id: 60 },
+					{ id: 300 },
+					{ id: 600 },
+					{ id: 3600 },
+				].map((it: any) => {
+					it.name = Util.duration(it.id);
+					return it;
+				});
+
 				content = (
 					<div>
-						<Head id="index" name={translate('popupSettingsTitle')} />
+						<Head id="account" name={translate('popupSettingsAccountTitle')} />
 
 						<Title text={translate('popupSettingsPinTitle')} />
-						<Label text={translate('popupSettingsPinText')} />
+						<Label className="description" text={translate('popupSettingsPinText')} />
 
-						{pin ? (
-							<div className="buttons">
-								<Button 
-									text={translate('popupSettingsPinOff')} 
-									className="blank" 
-									onClick={() => {
-										this.onConfirmPin = this.onTurnOffPin;
-										this.onPage('pinConfirm');
+						<div className="rows">
+							{pin ? (
+								<React.Fragment>
+									<div 
+										className="row red" 
+										onClick={() => {
+											this.onConfirmPin = this.onTurnOffPin;
+											this.onPage('pinConfirm');
 
-										analytics.event('PinCodeOff');
-									}} 
-								/>
+											analytics.event('PinCodeOff');
+										}}
+									>
+										<Label text={translate('popupSettingsPinOff')} />
+									</div>
 
-								<Button 
-									text={translate('popupSettingsPinChange')} 
-									className="blank" 
-									onClick={() => {
-										this.onConfirmPin = () => { this.onPage('pinSelect'); };
-										this.onPage('pinConfirm');
+									<div className="row flex">
+										<div className="side left">
+											<Label text="PIN code check time-out" />
+										</div>
+										<div className="side right">
+											<Select id="pinTime" options={times} value={String(pinTime || '')} onChange={(id: string) => { commonStore.pinTimeSet(id); }}/>
+										</div>
+									</div>
 
-										analytics.event('PinCodeChange');
-									}} 
-								/>
-							</div>
-						): (
-							<div className="buttons">
-								<Button 
-									text={translate('popupSettingsPinOn')} 
-									className="blank" 
-									onClick={() => {
-										this.onPage('pinSelect');
+									<div 
+										className="row" 
+										onClick={() => {
+											this.onConfirmPin = () => { this.onPage('pinSelect'); };
+											this.onPage('pinConfirm');
 
-										analytics.event('PinCodeOn');
-									}} 
-								/>
-							</div>
-						)}
+											analytics.event('PinCodeChange');
+										}}
+									>
+										<Label text={translate('popupSettingsPinChange')} />
+									</div>
+								</React.Fragment>
+							): (
+								<React.Fragment>
+									<div 
+										className="row" 
+										onClick={() => {
+											this.onPage('pinSelect');
+
+											analytics.event('PinCodeOn');
+										}}
+									>
+										<Label text={translate('popupSettingsPinOn')} />
+									</div>
+								</React.Fragment>
+							)}
+						</div>
 
 					</div>
 				);
@@ -400,81 +524,6 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 				);
 				break;
 
-			case 'other':
-				const { type } = commonStore;
-				const pinTime = commonStore.pinTime / 1000;
-
-				const types = DataUtil.getObjectTypesForNewObject(false).map((it: any) => {
-					it.layout = I.ObjectLayout.Type;
-					return { ...it, object: it };
-				});
-
-				const times: any[] = [
-					{ id: 60 },
-					{ id: 300 },
-					{ id: 600 },
-					{ id: 3600 },
-				].map((it: any) => {
-					it.name = Util.duration(it.id);
-					return it;
-				});
-
-				const themes: any[] = [
-					{ id: '', name: 'Default' },
-					{ id: 'dark', name: 'Dark' },
-				];
-
-				content = (
-					<div>
-						<Head id="index" name={translate('popupSettingsTitle')} />
-
-						<Title text={translate('popupSettingsOtherTitle')} />
-
-						<div className="row">
-							<div className="side left">
-								<Label text="Default Object type" />
-							</div>
-							<div className="side right">
-								<Select id="defaultType" options={types} value={type} onChange={(id: string) => { this.onTypeChange(id); }}/>
-							</div>
-						</div>
-
-						<div className="row">
-							<div className="side left">
-								<Label text="PIN code check time-out" />
-							</div>
-							<div className="side right">
-								<Select id="pinTime" options={times} value={String(pinTime || '')} onChange={(id: string) => { commonStore.pinTimeSet(id); }}/>
-							</div>
-						</div>
-
-						<div className="row">
-							<div className="side left">
-								<Label text="Theme" />
-							</div>
-							<div className="side right">
-								<Select id="theme" options={themes} value={theme} onChange={(id: string) => { commonStore.themeSet(id); }}/>
-							</div>
-						</div>
-
-						<div className="row">
-							<div className="side left">
-								<Label text="Automatically hide and show Sidebar" />
-							</div>
-							<div className="side right">
-								<Switch value={autoSidebar} onChange={(e: any, v: boolean) => { commonStore.autoSidebarSet(v); }}/>
-							</div>
-						</div>
-
-						<div className="row cp textColor textColor-red" onClick={this.onFileOffload}>
-							<div className="side left">
-								<Label text="Clear file cache" />
-							</div>
-							<div className="side right" />
-						</div>
-					</div>
-				);
-				break;
 		};
 
 		return (
