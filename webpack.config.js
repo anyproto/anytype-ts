@@ -45,11 +45,6 @@ module.exports = (env) => {
 					path.resolve(__dirname, 'dist'),
 					path.resolve(__dirname, 'node_modules')
 				],
-				resolve: {
-					fallback: {
-						fs: false,
-					},
-				},
 			},
 		},
 	
