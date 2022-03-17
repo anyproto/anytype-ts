@@ -49,9 +49,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const { fixed } = sidebar;
 		const { rootId, block, isPopup } = this.props;
 		const views = dbStore.getViews(rootId, block.id);
-		const root = blockStore.getLeaf(rootId, rootId);
-
-		console.log(root);
 
 		if (!views.length) {
 			return null;
