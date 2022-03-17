@@ -40,23 +40,16 @@ const BodyRow = observer(class BodyRow extends React.Component<Props, {}> {
 				style={style} 
 				onContextMenu={(e: any) => { onContext(e, record.id); }}
 			>
-				<div 
-					id={'selectable-' + record.id} 
-					className="selectable"
-					data-id={record.id}
-					data-type={I.SelectType.Record}
-				>
-					{relations.map((relation: any, i: number) => (
-						<Cell 
-							key={'grid-cell-' + relation.relationKey + record.id} 
-							{...this.props}
-							width={relation.width}
-							index={index} 
-							relationKey={relation.relationKey} 
-						/>
-					))}
-					<div className="cell last" />
-				</div>
+				{relations.map((relation: any, i: number) => (
+					<Cell 
+						key={'grid-cell-' + relation.relationKey + record.id} 
+						{...this.props}
+						width={relation.width}
+						index={index} 
+						relationKey={relation.relationKey} 
+					/>
+				))}
+				<div className="cell last" />
 			</div>
 		);
 	};
