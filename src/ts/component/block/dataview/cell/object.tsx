@@ -62,7 +62,7 @@ const CellObject = observer(class CellObject extends React.Component<Props, Stat
 					<div id="placeholder" className="placeholder">{placeholder}</div>
 
 					<span id="list">
-						<DragBox onDragEnd={this.onDragEnd}>
+						<DragBox onDragEnd={this.onDragEnd} onClick={this.onClick}>
 							{value.map((item: any, i: number) => (
 								<span 
 									key={i}
@@ -76,7 +76,6 @@ const CellObject = observer(class CellObject extends React.Component<Props, Stat
 										key={item.id} 
 										object={item} 
 										iconSize={iconSize} 
-										onClick={this.onClick} 
 										relation={relation} 
 										elementMapper={elementMapper}
 										canEdit={true}
@@ -100,10 +99,6 @@ const CellObject = observer(class CellObject extends React.Component<Props, Stat
 				</div>
 			);
 		} else {
-			if (length >= 3) {
-				cn.push('columns'); 
-			};
-
 			if (!value.length) {
 				content = <div className="empty">{placeholder}</div>;
 			} else {
@@ -115,7 +110,7 @@ const CellObject = observer(class CellObject extends React.Component<Props, Stat
 									key={item.id} 
 									object={item} 
 									iconSize={iconSize} 
-									onClick={this.onClick} 
+									onClick={(e: any) => { this.onClick(e, item.id); }} 
 									relation={relation} 
 									elementMapper={elementMapper} 
 								/>
@@ -171,10 +166,11 @@ const CellObject = observer(class CellObject extends React.Component<Props, Stat
 		};
 	};
 
-	onClick (e: any, item: any) {
+	onClick (e: any, id: string) {
 		const { canEdit, canOpen } = this.props;
+		const item = this.getItems().find(item => item.id == id);
 
-		if (canOpen && !canEdit) {
+		if (canOpen && item) {
 			e.stopPropagation();
 			DataUtil.objectOpenPopup(item);
 		};

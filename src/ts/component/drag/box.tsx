@@ -4,6 +4,7 @@ import { Util } from 'ts/lib';
 
 interface Props {
 	onDragEnd(oldIndex: number, newIndex: number): void;
+	onClick?(e: any, id: string): void;
 };
 
 class DragBox extends React.Component<Props, {}> {
@@ -19,11 +20,15 @@ class DragBox extends React.Component<Props, {}> {
 		super(props);
 
 		this.onDragStart = this.onDragStart.bind(this);
+		this.onClick = this.onClick.bind(this);
 	};
 	
 	render () {
 		const children = React.Children.map(this.props.children, (child: any) => {
-			return React.cloneElement(child, { onDragStart: this.onDragStart });
+			return React.cloneElement(child, { 
+				onClick: this.onClick,
+				onDragStart: this.onDragStart 
+			});
 		});
 
 		return (
@@ -39,6 +44,13 @@ class DragBox extends React.Component<Props, {}> {
 	
 	componentWillUnmount () {
 		this._isMounted = false;
+	};
+
+	onClick (e: any) {
+		e.preventDefault();
+		e.stopPropagation();
+
+		this.props.onClick(e, $(e.currentTarget).data('id'));
 	};
 
 	onDragStart (e: any) {
@@ -100,11 +112,6 @@ class DragBox extends React.Component<Props, {}> {
 
 		this.newIndex = -1;
 
-		console.log('ox', this.ox, 'oy', this.oy);
-		console.log('ex', e.pageX, 'ey', e.pageY);
-		console.log('w', width, 'h', height);
-		console.log('x', x, 'y', y);
-
 		node.find('.isDraggable.isOver').removeClass('isOver left right');
 		clone.css({ transform: `translate3d(${x}px,${y}px,0px)` });
 
@@ -127,7 +134,13 @@ class DragBox extends React.Component<Props, {}> {
 		};
 
 		const node = $(ReactDOM.findDOMNode(this));
-		const { onDragEnd } = this.props;
+		const { onDragEnd, onClick } = this.props;
+
+		node.find('.isDraggable.isClone').remove();
+		node.find('.isDraggable.isDragging').removeClass('isDragging');
+		node.find('.isDraggable.isOver').removeClass('isOver left right');
+
+		$(window).off('mousemove.dragbox mouseup.dragbox');
 
 		if (this.newIndex >= 0) {
 			onDragEnd(this.oldIndex, this.newIndex);
@@ -136,12 +149,6 @@ class DragBox extends React.Component<Props, {}> {
 		this.cache = {};
 		this.oldIndex = -1;
 		this.newIndex = -1;
-
-		node.find('.isDraggable.isClone').remove();
-		node.find('.isDraggable.isDragging').removeClass('isDragging');
-		node.find('.isDraggable.isOver').removeClass('isOver left right');
-
-		$(window).off('mousemove.dragbox mouseup.dragbox');
 	};
 	
 };

@@ -87,6 +87,11 @@
 				.cellContent { padding-bottom: 12px; height: auto !important; }
 				.wrap { overflow: visible; white-space: normal; }
 			}
+
+			.cell.isEditing.c-select, .cell.isEditing.c-object {
+				.placeholder { padding: 14px; }
+			}
+
 			.cell.isEditing.c-longText { 
 				.cellContent { display: none; }
 			}

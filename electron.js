@@ -72,12 +72,10 @@ let autoUpdate = false;
 if (is.development && !port) {
 	console.error('ERROR: Please define SERVER_PORT env var');
 	exit(false);
-	return;
 };
 
 if (!app.requestSingleInstanceLock() && app.isPackaged) {
 	exit(false);
-	return;
 };
 
 storage.setDataPath(userPath);

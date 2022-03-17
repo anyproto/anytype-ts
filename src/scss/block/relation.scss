@@ -46,6 +46,7 @@
 
 		.cell.isEditing.c-select {
 			.cellContent { padding: 4px 8px; }
+			.placeholder { padding: 4px 8px; }
 		}
 		.cell.isEditing.c-select.isStatus {
 			.over { width: calc(100% - 26px); }
@@ -64,15 +65,12 @@
 			.cellContent { padding: 5px 8px 4px 8px !important; }
 		}
 
-		.cell.c-object, .cell.c-file {
-			.columns { column-count: 3; }
-		}
-
 		.cell.c-object {
 			.element { margin-top: 1px; margin-bottom: 1px; background: none !important; }
 		}
 		.cell.isEditing.c-object {
 			.cellContent { padding: 5px 8px 3px 8px !important; }
+			.placeholder { padding: 5px 8px 3px 8px; }
 		}
 
 		.cell.isEditing.c-longText {
