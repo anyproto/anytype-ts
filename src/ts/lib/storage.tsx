@@ -14,7 +14,7 @@ class Storage {
 		if (!o) {
 			return;
 		};
-		let ret = ''
+		let ret = '';
 		try { ret = JSON.parse(o); } catch (e) {};
 		return ret;
 	};
