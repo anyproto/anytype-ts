@@ -50,7 +50,11 @@ class DragBox extends React.Component<Props, {}> {
 		e.preventDefault();
 		e.stopPropagation();
 
-		this.props.onClick(e, $(e.currentTarget).data('id'));
+		const { onClick } = this.props;
+
+		if (onClick) {
+			onClick(e, $(e.currentTarget).data('id'));
+		};
 	};
 
 	onDragStart (e: any) {
