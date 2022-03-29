@@ -1646,6 +1646,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		const { content } = focused;
 		const isTitle = focused.isTextTitle();
 		const isToggle = focused.isTextToggle();
+		const isCallout = focused.isTextCallout();
 		const isList = focused.isTextList();
 		const isCode = focused.isTextCode();
 		const isOpen = Storage.checkToggle(rootId, focused.id);
@@ -1669,6 +1670,11 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 		if (!isToggle && !isOpen && (childrenIds.length > 0)) {
 			mode = I.BlockSplitMode.Top;
+		};
+
+		if (isCallout) {
+			mode = I.BlockSplitMode.Inner;
+			style = I.TextStyle.Paragraph;
 		};
 
 		range = Util.rangeFixOut(content.text, range);
