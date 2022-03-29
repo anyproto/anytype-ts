@@ -79,11 +79,24 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 		const items = node.find('.card');
 		const win = $(window);
 
+		$(document).off('dragover').on('dragover', (e: any) => { e.preventDefault(); });
+
+		target.addClass('isDragging');
+		clone.addClass('isClone').css({ zIndex: 10000, position: 'fixed', left: -10000, top: -10000 });
+		viewItem.append(clone);
+
+		e.dataTransfer.setDragImage(clone.get(0), 0, 0);
+		this.ox = offset.left;
+		this.oy = offset.top;
+
+		selection.preventSelect(true);
+		preventCommonDrop(true);
+
 		items.each((i: number, item: any) => {
 			item = $(item);
 
 			const id = item.data('id');
-			if (!id) {
+			if (!id || item.hasClass('isClone')) {
 				return;
 			};
 
@@ -96,18 +109,6 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 			};
 		});
 
-		$(document).on('dragover', (e: any) => { e.preventDefault(); });
-
-		target.addClass('isDragging');
-		clone.addClass('isClone').css({ zIndex: 10000, position: 'fixed', left: -10000, top: -10000 });
-		viewItem.append(clone);
-
-		e.dataTransfer.setDragImage(clone.get(0), 0, 0);
-		this.ox = offset.left;
-		this.oy = offset.top;
-
-		selection.preventSelect(true);
-		preventCommonDrop(true);
 
 		this.unbind();
 		win.on('drag.board', (e: any) => { this.onDragMove(e, columnId, record); });
@@ -128,13 +129,14 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 
 		for (let i = 0; i < items.length; ++i) {
 			const item = $(items.get(i));
-			const rect = this.cache[item.data('id')];
-			
-			if (item.hasClass('isDragging') || item.hasClass('isClone')) {
+			const id = item.data('id');
+			const rect = this.cache[id];
+
+			if (id == record.id) {
 				continue;
 			};
-
-			if (rect && Util.rectsCollide({ x, y, width, height }, rect)) {
+			
+			if (rect && this.cache[record.id] && Util.rectsCollide({ x, y, width, height }, rect)) {
 				const isTop = y <= rect.y + rect.height / 2;
 				const cn = isTop ? 'top' : 'bottom';
 
