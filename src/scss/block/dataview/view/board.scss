@@ -31,6 +31,10 @@
 			.cellContent {
 				.name:empty { display: none; }
 			}
+
+			.card.isTask {
+				.cellContent.c-name { display: flex; }
+			}
         }
     }
 }

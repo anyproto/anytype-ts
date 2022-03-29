@@ -31,20 +31,12 @@ const Column = observer(class Column extends React.Component<Props, {}> {
 		const { offset, total } = dbStore.getMeta(subId, '');
 
 		const Add = (item: any) => (
-			<Draggable draggableId={columnId + '-add'} index={item.index}>
-				{(provided: any, snapshot: any) => (
-					<div 
-						className="card add"
-						ref={provided.innerRef}
-						{...provided.draggableProps}
-						{...provided.dragHandleProps}
-						style={getItemStyle(snapshot, provided.draggableProps.style)}
-						onClick={() => { onAdd(item.column); }}
-					>
-						<Icon className="plus" />
-					</div>
-				)}
-			</Draggable>
+			<div 
+				className="card add"
+				onClick={() => { onAdd(item.column); }}
+			>
+				<Icon className="plus" />
+			</div>
 		);
 
 		const Head = (item: any) => {
@@ -68,30 +60,15 @@ const Column = observer(class Column extends React.Component<Props, {}> {
 		};
 
 		return (
-			<Draggable draggableId={'column-' + columnId} index={columnId} type="column">
-				{(provided: any, snapshot: any) => (
-					<div 
-						className="column"
-						ref={provided.innerRef}
-						{...provided.draggableProps}
-						{...provided.dragHandleProps}
-						style={getItemStyle(snapshot, provided.draggableProps.style)}
-					>
-						<Head index={columnId} />
-						<Droppable droppableId={'column-' + columnId} direction="vertical" type="row">
-							{(provided: any) => (
-								<div className="list" {...provided.droppableProps} ref={provided.innerRef}>
-									{list.map((child: any, i: number) => (
-										<Card key={'board-card-' +  view.id + i} {...this.props} index={child.index} columnId={columnId} idx={i} />
-									))}
-									<Add column={columnId} index={list.length} />
-									{provided.placeholder}
-								</div>
-							)}
-						</Droppable>
-					</div>
-				)}
-			</Draggable>
+			<div className="column" >
+				<Head index={columnId} />
+				<div className="list">
+					{list.map((child: any, i: number) => (
+						<Card key={'board-card-' +  view.id + i} {...this.props} index={child.index} columnId={columnId} idx={i} />
+					))}
+					<Add column={columnId} index={list.length} />
+				</div>
+			</div>
 		);
 	};
 

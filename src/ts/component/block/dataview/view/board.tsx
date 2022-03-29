@@ -30,18 +30,11 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 			<div className="wrap">
 				<div className="scroll">
 					<div className="viewItem viewBoard">
-						<DragDropContext onDragStart={this.onDragStart} onDragEnd={this.onDragEnd}>
-							<Droppable droppableId="columns" direction="horizontal" type="column">
-								{(provided: any) => (
-									<div className="columns" {...provided.droppableProps} ref={provided.innerRef}>
-										{columns.map((item: any, i: number) => (
-											<Column key={i} {...this.props} {...item} columnId={i} groupId={GROUP} onAdd={this.onAdd} />
-										))}
-										{provided.placeholder}
-									</div>
-								)}
-							</Droppable>
-						</DragDropContext>
+						<div className="columns">
+							{columns.map((item: any, i: number) => (
+								<Column key={i} {...this.props} {...item} columnId={i} groupId={GROUP} onAdd={this.onAdd} />
+							))}
+						</div>
 					</div>
 				</div>
 			</div>
@@ -95,7 +88,6 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 			margin = (ww - mw) / 2; 
 		};
 
-		//columns.css({  });
 		scroll.css({ width: ww, marginLeft: -margin, paddingLeft: margin });
 		viewItem.css({ width: vw });
 	};
