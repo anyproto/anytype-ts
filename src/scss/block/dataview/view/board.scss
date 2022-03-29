@@ -10,11 +10,13 @@
                 .head { padding: 10px 4px; width: 100%; }
             }
 
-            .card { width: 240px; }
+            .card { width: 240px; display: flex; flex-direction: column; gap: 8px 0px; margin-bottom: 8px; }
 			.card {
-				.ghost { display: none; }
-				.cardContent { border: 1px solid $colorBorderDark; border-radius: 12px; padding: 16px; margin-bottom: 8px; background: $colorWhite; }
+				.ghost { display: none; border: 1px dotted $colorOrange; border-radius: 12px; }
+				.cardContent { border: 1px solid $colorBorderDark; border-radius: 12px; padding: 16px; background: $colorWhite; }
 			}
+
+			.card.isDragging { opacity: 0.5; }
 
 			.card.isOver.top {
 				.ghost.top { display: block; }
