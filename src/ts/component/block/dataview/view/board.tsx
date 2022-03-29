@@ -7,7 +7,9 @@ import { dbStore, detailStore } from 'ts/store';
 
 import Column from './board/column';
 
-interface Props extends I.ViewComponent {};
+interface Props extends I.ViewComponent {
+	dataset?: any;
+};
 
 const GROUP = 'done';
 const Constant = require('json/constant.json');
@@ -32,7 +34,15 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 					<div className="viewItem viewBoard">
 						<div className="columns">
 							{columns.map((item: any, i: number) => (
-								<Column key={i} {...this.props} {...item} columnId={i} groupId={GROUP} onAdd={this.onAdd} />
+								<Column 
+									key={i} 
+									{...this.props} 
+									{...item} 
+									columnId={i} 
+									groupId={GROUP} 
+									onAdd={this.onAdd} 
+									onDragStart={this.onDragStart}
+								/>
 							))}
 						</div>
 					</div>
@@ -53,18 +63,22 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 	onAdd (column: number) {
 	};
 
-	onDragStart () {
+	onDragStart (e: any, columnId: any, record: any) {
 		const { dataset } = this.props;
-		const { selection } = dataset || {};
+		const { selection, preventCommonDrop } = dataset || {};
 
 		selection.preventSelect(true);
+		preventCommonDrop(true);
+
+		console.log('onDragStart.board', columnId, record);
 	};
 
 	onDragEnd () {
 		const { dataset } = this.props;
-		const { selection } = dataset || {};
+		const { selection, preventCommonDrop } = dataset || {};
 
 		selection.preventSelect(false);
+		preventCommonDrop(false);
 	};
 
 	resize () {

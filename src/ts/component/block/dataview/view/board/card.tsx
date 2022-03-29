@@ -8,12 +8,13 @@ interface Props extends I.ViewComponent {
 	columnId: number;
 	index: number;
 	idx: number;
+	onDragStart?: (e: any, columnId: any, record: any) => void;
 };
 
 const Card = observer(class Card extends React.Component<Props, {}> {
 
 	render () {
-		const { rootId, block, columnId, idx, index, getView, getRecord, onCellClick, onRef } = this.props;
+		const { rootId, block, columnId, idx, index, getView, getRecord, onCellClick, onRef, onDragStart } = this.props;
 		const view = getView();
 		const relations = view.relations.filter((it: any) => { return it.isVisible; });
 		const idPrefix = 'dataviewCell';
@@ -22,7 +23,11 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 		const cn = [ 'card', DataUtil.layoutClass(record.id, record.layout) ];
 
 		return (
-			<div className={cn.join(' ')}>
+			<div 
+				className={cn.join(' ')} 
+				draggable={true}
+				onDragStart={(e: any) => { onDragStart(e, columnId, record); }}
+			>
 				{relations.map((relation: any, i: number) => {
 					const id = Relation.cellId(idPrefix, relation.relationKey, index);
 					return (

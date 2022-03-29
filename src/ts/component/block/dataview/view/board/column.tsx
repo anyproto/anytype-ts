@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Droppable, Draggable } from 'react-beautiful-dnd';
 import { Icon } from 'ts/component';
 import { I } from 'ts/lib';
 import { observer } from 'mobx-react';
@@ -14,11 +13,8 @@ interface Props extends I.ViewComponent {
 	columnId: number;
 	list: any[];
 	onAdd (column: number): void;
+	onDragStart?: (e: any, columnId: any, record: any) => void;
 }
-
-const getItemStyle = (snapshot: any, style: any) => {
-	return style;
-};
 
 const Column = observer(class Column extends React.Component<Props, {}> {
 
