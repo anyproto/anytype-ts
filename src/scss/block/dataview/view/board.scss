@@ -10,13 +10,23 @@
                 .head { padding: 10px 4px; width: 100%; }
             }
 
-            .card { 
-                width: 240px; margin-bottom: 8px; background: $colorWhite; border: 1px solid $colorBorderDark; 
-                border-radius: 12px; padding: 16px;
-            }
-			.card.isOver { background: $colorOrange !important; }
+            .card { width: 240px; }
+			.card {
+				.ghost { display: none; }
+				.cardContent { border: 1px solid $colorBorderDark; border-radius: 12px; padding: 16px; margin-bottom: 8px; background: $colorWhite; }
+			}
+
+			.card.isOver.top {
+				.ghost.top { display: block; }
+			}
+			.card.isOver.bottom {
+				.ghost.bottom { display: block; }
+			}
             
-            .card.add { min-height: unset; text-align: center; padding: 10px 0px; margin: 0px; line-height: 1; transition: $transitionFast; cursor: pointer; }
+            .card.add { 
+				min-height: unset; text-align: center; padding: 10px 0px; margin: 0px; line-height: 1; transition: $transitionFast; cursor: pointer; 
+				border: 1px solid $colorBorderDark; border-radius: 12px;
+			}
             .card.add {
                 .icon { vertical-align: top; }
             }

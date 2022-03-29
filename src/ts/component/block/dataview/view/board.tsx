@@ -96,6 +96,9 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 			};
 		});
 
+		$(document).on('dragover', (e: any) => { e.preventDefault(); });
+
+		target.addClass('isDragging');
 		clone.addClass('isClone').css({ zIndex: 10000, position: 'fixed', left: -10000, top: -10000 });
 		viewItem.append(clone);
 
@@ -107,11 +110,11 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 		preventCommonDrop(true);
 
 		this.unbind();
-		win.on('drag.board', (e: any) => { this.onDragMove(e); });
+		win.on('drag.board', (e: any) => { this.onDragMove(e, columnId, record); });
 		win.on('dragend.board', (e: any) => { this.onDragEnd(e); });
 	};
 
-	onDragMove (e: any) {
+	onDragMove (e: any, columnId: any, record: any) {
 		const node = $(ReactDOM.findDOMNode(this));
 		const viewItem = node.find('.viewItem');
 		const items = viewItem.find('.card');
@@ -121,27 +124,38 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 		const x = e.pageX;
 		const y = e.pageY;
 
-		viewItem.find('.card.isOver').removeClass('isOver');
+		viewItem.find('.card.isOver').removeClass('isOver top bottom');
 
 		for (let i = 0; i < items.length; ++i) {
 			const item = $(items.get(i));
 			const rect = this.cache[item.data('id')];
+			
+			if (item.hasClass('isDragging') || item.hasClass('isClone')) {
+				continue;
+			};
 
 			if (rect && Util.rectsCollide({ x, y, width, height }, rect)) {
-				item.addClass('isOver');
+				const isTop = y <= rect.y + rect.height / 2;
+				const cn = isTop ? 'top' : 'bottom';
+
+				item.addClass('isOver ' + cn);
+				item.find('.ghost.' + cn).css({ height: this.cache[record.id].height });
 				break;
 			};
 		};
 	};
 
 	onDragEnd (e: any) {
+		e.preventDefault();
+
 		const { dataset } = this.props;
 		const { selection, preventCommonDrop } = dataset || {};
 		const node = $(ReactDOM.findDOMNode(this));
 		const viewItem = node.find('.viewItem');
 
 		viewItem.find('.isClone').remove();
-		viewItem.find('.isOver').removeClass('isOver');
+		viewItem.find('.isOver').removeClass('isOver top bottom');
+		viewItem.find('.isDragging').removeClass('isDragging');
 
 		selection.preventSelect(false);
 		preventCommonDrop(false);

@@ -29,25 +29,29 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 				draggable={true}
 				onDragStart={(e: any) => { onDragStart(e, columnId, record); }}
 			>
-				{relations.map((relation: any, i: number) => {
-					const id = Relation.cellId(idPrefix, relation.relationKey, index);
-					return (
-						<Cell 
-							key={'board-cell-' + view.id + relation.relationKey} 
-							{...this.props}
-							subId={subId}
-							ref={(ref: any) => { onRef(ref, id); }} 
-							relationKey={relation.relationKey}
-							index={index}
-							viewType={view.type}
-							idPrefix={idPrefix}
-							arrayLimit={2}
-							onClick={(e: any) => { onCellClick(e, relation.relationKey, index); }}
-							showTooltip={true}
-							tooltipX={I.MenuDirection.Left}
-						/>
-					);
-				})}
+				<div className="ghost top" />
+				<div className="cardContent">
+					{relations.map((relation: any, i: number) => {
+						const id = Relation.cellId(idPrefix, relation.relationKey, index);
+						return (
+							<Cell 
+								key={'board-cell-' + view.id + relation.relationKey} 
+								{...this.props}
+								subId={subId}
+								ref={(ref: any) => { onRef(ref, id); }} 
+								relationKey={relation.relationKey}
+								index={index}
+								viewType={view.type}
+								idPrefix={idPrefix}
+								arrayLimit={2}
+								onClick={(e: any) => { onCellClick(e, relation.relationKey, index); }}
+								showTooltip={true}
+								tooltipX={I.MenuDirection.Left}
+							/>
+						);
+					})}
+				</div>
+				<div className="ghost bottom" />
 			</div>
 		);
 	};
