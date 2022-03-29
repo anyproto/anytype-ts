@@ -205,8 +205,8 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 		keyboard.setDrag(true);
 		Util.previewHide(false);
 
-		win.on('dragend.drag', (e: any) => { this.onDragEnd(e); });
 		win.on('drag.drag', (e: any) => { this.onDragMove(e); });
+		win.on('dragend.drag', (e: any) => { this.onDragEnd(e); });
 
 		$('.colResize.active').removeClass('active');
 		scrollOnMove.onMouseDown(e, isPopup);

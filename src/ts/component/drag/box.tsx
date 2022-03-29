@@ -72,18 +72,20 @@ class DragBox extends React.Component<Props, {}> {
 		const clone = element.clone();
 		const offset = node.offset();
 
-		items.each((i: number, el: any) => {
-			el = $(el);
-			if (el.hasClass('isClone')) {
+		items.each((i: number, item: any) => {
+			item = $(item);
+
+			const id = item.data('id');
+			if (!id || item.hasClass('isClone')) {
 				return;
 			};
 
-			const p = el.position();
-			this.cache[el.data('id')] = {
+			const p = item.position();
+			this.cache[id] = {
 				x: p.left,
 				y: p.top,
-				width: el.width(),
-				height: el.height(),
+				width: item.outerWidth(),
+				height: item.outerHeight(),
 			};
 		});
 

@@ -1,7 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { DragDropContext, Droppable } from 'react-beautiful-dnd';
-import { I } from 'ts/lib';
+import { I, Util } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { dbStore, detailStore } from 'ts/store';
 
@@ -16,6 +15,10 @@ const Constant = require('json/constant.json');
 const $ = require('jquery');
 
 const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
+
+	cache: any = {};
+	ox: number = 0;
+	oy: number = 0;
 
 	constructor (props: any) {
 		super(props);
@@ -64,21 +67,89 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 	};
 
 	onDragStart (e: any, columnId: any, record: any) {
+		e.stopPropagation();
+
 		const { dataset } = this.props;
 		const { selection, preventCommonDrop } = dataset || {};
+		const target = $(e.currentTarget);
+		const clone = target.clone();
+		const node = $(ReactDOM.findDOMNode(this));
+		const offset = target.offset();
+		const viewItem = node.find('.viewItem');
+		const items = node.find('.card');
+		const win = $(window);
+
+		items.each((i: number, item: any) => {
+			item = $(item);
+
+			const id = item.data('id');
+			if (!id) {
+				return;
+			};
+
+			const p = item.offset();
+			this.cache[id] = {
+				x: p.left,
+				y: p.top,
+				width: item.outerWidth(),
+				height: item.outerHeight(),
+			};
+		});
+
+		clone.addClass('isClone').css({ zIndex: 10000, position: 'fixed', left: -10000, top: -10000 });
+		viewItem.append(clone);
+
+		e.dataTransfer.setDragImage(clone.get(0), 0, 0);
+		this.ox = offset.left;
+		this.oy = offset.top;
 
 		selection.preventSelect(true);
 		preventCommonDrop(true);
 
-		console.log('onDragStart.board', columnId, record);
+		this.unbind();
+		win.on('drag.board', (e: any) => { this.onDragMove(e); });
+		win.on('dragend.board', (e: any) => { this.onDragEnd(e); });
 	};
 
-	onDragEnd () {
+	onDragMove (e: any) {
+		const node = $(ReactDOM.findDOMNode(this));
+		const viewItem = node.find('.viewItem');
+		const items = viewItem.find('.card');
+		const clone = viewItem.find('.isClone');
+		const width = clone.outerWidth();
+		const height = clone.outerHeight();
+		const x = e.pageX;
+		const y = e.pageY;
+
+		viewItem.find('.card.isOver').removeClass('isOver');
+
+		for (let i = 0; i < items.length; ++i) {
+			const item = $(items.get(i));
+			const rect = this.cache[item.data('id')];
+
+			if (rect && Util.rectsCollide({ x, y, width, height }, rect)) {
+				item.addClass('isOver');
+				break;
+			};
+		};
+	};
+
+	onDragEnd (e: any) {
 		const { dataset } = this.props;
 		const { selection, preventCommonDrop } = dataset || {};
+		const node = $(ReactDOM.findDOMNode(this));
+		const viewItem = node.find('.viewItem');
+
+		viewItem.find('.isClone').remove();
+		viewItem.find('.isOver').removeClass('isOver');
 
 		selection.preventSelect(false);
 		preventCommonDrop(false);
+		this.unbind();		
+	};
+
+	unbind () {
+		$(window).off('dragend.board drag.board');
 	};
 
 	resize () {

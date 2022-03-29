@@ -25,6 +25,7 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 		return (
 			<div 
 				className={cn.join(' ')} 
+				data-id={record.id}
 				draggable={true}
 				onDragStart={(e: any) => { onDragStart(e, columnId, record); }}
 			>
