@@ -61,14 +61,20 @@ const Column = observer(class Column extends React.Component<Props, {}> {
 		};
 
 		return (
-			<div id={'column-' + columnId} className="column" >
+			<div 
+				id={'column-' + columnId} 
+				className="column" 
+				data-id={columnId}
+			>
 				<div className="ghost left" />
-				<Head index={columnId} />
-				<div className="list">
-					{list.map((child: any, i: number) => (
-						<Card key={'board-card-' +  view.id + i} {...this.props} index={child.index} columnId={columnId} idx={i} />
-					))}
-					<Add column={columnId} index={list.length} />
+				<div className="body">
+					<Head index={columnId} />
+					<div className="list">
+						{list.map((child: any, i: number) => (
+							<Card key={'board-card-' +  view.id + i} {...this.props} index={child.index} columnId={columnId} idx={i} />
+						))}
+						<Add column={columnId} index={list.length} />
+					</div>
 				</div>
 				<div className="ghost right" />
 			</div>

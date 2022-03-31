@@ -4,19 +4,28 @@
 	.block.blockDataview {
 
         .viewItem.viewBoard {
-            .columns { white-space: nowrap; }
-            .column { width: 240px; margin-right: 24px; display: inline-block; vertical-align: top; overflow-x: visible; overflow-y: overlay; }
+            .columns { display: flex; gap: 0px 24px; flex-direction: row; }
+            .column { display: flex; flex-direction: row; gap: 0px 24px; }
             .column {
-                .head { padding: 10px 4px; width: 100%; }
+				.body { width: 240px; display: flex; flex-direction: column; }
+                .head { padding: 10px 4px; width: 100%; margin: 0px; }
+				.ghost { display: none; border: 1px dotted $colorOrange; border-radius: 12px; }
             }
+
+			.card.isDragging, .column.isDragging { opacity: 0.5; }
+
+			.column.isOver.left {
+				.ghost.left { display: block; }
+			}
+			.column.isOver.right {
+				.ghost.right { display: block; }
+			}
 
             .card { width: 240px; display: flex; flex-direction: column; gap: 8px 0px; margin-bottom: 8px; }
 			.card {
 				.ghost { display: none; border: 1px dotted $colorOrange; border-radius: 12px; }
 				.cardContent { border: 1px solid $colorBorderDark; border-radius: 12px; padding: 16px; background: $colorWhite; }
 			}
-
-			.card.isDragging { opacity: 0.5; }
 
 			.card.isOver.top {
 				.ghost.top { display: block; }

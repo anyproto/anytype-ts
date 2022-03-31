@@ -42,7 +42,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 									key={i} 
 									{...this.props} 
 									{...item} 
-									columnId={i} 
+									columnId={(i + 1)} 
 									groupId={GROUP} 
 									onAdd={this.onAdd} 
 									onDragStartColumn={this.onDragStartColumn}
@@ -130,7 +130,32 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 	};
 
 	onDragMoveColumn (e: any, columnId: any) {
+		const node = $(ReactDOM.findDOMNode(this));
+		const items = node.find('.column');
+		const clone = node.find('.isClone');
+		const width = clone.outerWidth();
+		const height = clone.outerHeight();
 
+		this.clear();
+
+		for (let i = 0; i < items.length; ++i) {
+			const item = $(items.get(i));
+			const id = item.data('id');
+			const rect = this.cache[id];
+
+			if (id == columnId) {
+				continue;
+			};
+			
+			if (rect && this.cache[columnId] && Util.rectsCollide({ x: e.pageX, y: e.pageY, width, height }, rect)) {
+				const isLeft = e.pageX <= rect.x + rect.width / 2;
+				const cn = isLeft ? 'left' : 'right';
+
+				item.addClass('isOver ' + cn);
+				item.find('.ghost.' + cn).css({ width: this.cache[columnId].width });
+				break;
+			};
+		};
 	};
 
 	onDragStartCard (e: any, columnId: any, record: any) {
@@ -145,13 +170,12 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 
 	onDragMoveCard (e: any, columnId: any, record: any) {
 		const node = $(ReactDOM.findDOMNode(this));
-		const viewItem = node.find('.viewItem');
-		const items = viewItem.find('.card');
-		const clone = viewItem.find('.isClone');
+		const items = node.find('.card');
+		const clone = node.find('.isClone');
 		const width = clone.outerWidth();
 		const height = clone.outerHeight();
 
-		viewItem.find('.isOver').removeClass('isOver top bottom left right');
+		this.clear();
 
 		for (let i = 0; i < items.length; ++i) {
 			const item = $(items.get(i));
@@ -183,13 +207,18 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 
 		$('body').removeClass('grab');
 		viewItem.find('.isClone').remove();
-		viewItem.find('.isOver').removeClass('isOver top bottom left right');
 		viewItem.find('.isDragging').removeClass('isDragging');
 
 		selection.preventSelect(false);
 		preventCommonDrop(false);
 
+		this.clear();
 		this.unbind();
+	};
+
+	clear () {
+		const node = $(ReactDOM.findDOMNode(this));
+		node.find('.isOver').removeClass('isOver top bottom left right');
 	};
 
 	unbind () {
