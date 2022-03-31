@@ -140,6 +140,10 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 			const id = item.data('id');
 			const rect = this.cache[id];
 
+			if (id == columnId) {
+				continue;
+			};
+
 			if (rect && this.cache[columnId] && Util.rectsCollide({ x: e.pageX, y: e.pageY, width: this.width, height: this.height }, rect)) {
 				const isLeft = e.pageX <= rect.x + rect.width / 2;
 
@@ -169,6 +173,10 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 			const item = $(items.get(i));
 			const id = item.data('id');
 			const rect = this.cache[id];
+
+			if (id == record.id) {
+				continue;
+			};
 
 			if (rect && this.cache[record.id] && Util.rectsCollide({ x: e.pageX, y: e.pageY, width: this.width, height: this.height }, rect)) {
 				const isTop = e.pageY <= rect.y + rect.height / 2;
