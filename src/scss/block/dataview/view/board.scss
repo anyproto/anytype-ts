@@ -4,16 +4,19 @@
 	.block.blockDataview {
 
         .viewItem.viewBoard {
+
+			.ghost { display: none; border: 1px dotted $colorOrange; border-radius: 12px; }
+			.card.isDragging, .column.isDragging { opacity: 0.5; }
+
             .columns { display: flex; gap: 0px 24px; flex-direction: row; }
             .column { display: flex; flex-direction: row; gap: 0px 24px; }
             .column {
 				.body { width: 240px; display: flex; flex-direction: column; }
                 .head { padding: 10px 4px; width: 100%; margin: 0px; }
-				.ghost { display: none; border: 1px dotted $colorOrange; border-radius: 12px; }
             }
 
-			.card.isDragging, .column.isDragging { opacity: 0.5; }
-
+			.column > .ghost { margin-top: 42px; }
+			
 			.column.isOver.left {
 				.ghost.left { display: block; }
 			}
@@ -23,7 +26,6 @@
 
             .card { width: 240px; display: flex; flex-direction: column; gap: 8px 0px; margin-bottom: 8px; }
 			.card {
-				.ghost { display: none; border: 1px dotted $colorOrange; border-radius: 12px; }
 				.cardContent { border: 1px solid $colorBorderDark; border-radius: 12px; padding: 16px; background: $colorWhite; }
 			}
 
