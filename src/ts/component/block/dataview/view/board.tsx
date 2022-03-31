@@ -178,7 +178,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 				continue;
 			};
 
-			if (rect && this.cache[record.id] && Util.rectsCollide({ x: e.pageX, y: e.pageY, width: this.width, height: this.height }, rect)) {
+			if (rect && this.cache[record.id] && Util.rectsCollide({ x: e.pageX, y: e.pageY, width: this.width, height: this.height + 8 }, rect)) {
 				const isTop = e.pageY <= rect.y + rect.height / 2;
 				const cn = isTop ? 'top' : 'bottom';
 
