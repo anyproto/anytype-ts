@@ -13,13 +13,14 @@ interface Props extends I.ViewComponent {
 	columnId: number;
 	list: any[];
 	onAdd (column: number): void;
-	onDragStart?: (e: any, columnId: any, record: any) => void;
-}
+	onDragStartColumn?: (e: any, columnId: any) => void;
+	onDragStartCard?: (e: any, columnId: any, record: any) => void;
+};
 
 const Column = observer(class Column extends React.Component<Props, {}> {
 
 	render () {
-		const { rootId, block, groupId, getView, onAdd, list, columnId, value } = this.props;
+		const { rootId, block, groupId, getView, onAdd, list, columnId, value, onDragStartColumn } = this.props;
 		const view = getView();
 		const subId = dbStore.getSubId(rootId, block.id);
 		const group = view.getRelation(groupId);
@@ -40,7 +41,11 @@ const Column = observer(class Column extends React.Component<Props, {}> {
 			head[groupId] = value;
 
 			return (
-				<div className="head">
+				<div 
+					className="head" 
+					draggable={true}
+					onDragStart={(e: any) => { onDragStartColumn(e, columnId); }}
+				>
 					<Cell 
 						id={'board-head-' + item.index} 
 						rootId={rootId}
@@ -56,7 +61,8 @@ const Column = observer(class Column extends React.Component<Props, {}> {
 		};
 
 		return (
-			<div className="column" >
+			<div id={'column-' + columnId} className="column" >
+				<div className="ghost left" />
 				<Head index={columnId} />
 				<div className="list">
 					{list.map((child: any, i: number) => (
@@ -64,6 +70,7 @@ const Column = observer(class Column extends React.Component<Props, {}> {
 					))}
 					<Add column={columnId} index={list.length} />
 				</div>
+				<div className="ghost right" />
 			</div>
 		);
 	};

@@ -27,7 +27,7 @@
             
             .card.add { 
 				min-height: unset; text-align: center; padding: 10px 0px; margin: 0px; line-height: 1; transition: $transitionFast; cursor: pointer; 
-				border: 1px solid $colorBorderDark; border-radius: 12px;
+				border: 1px solid $colorBorderDark; border-radius: 12px; flex-direction: row; justify-content: center;
 			}
             .card.add {
                 .icon { vertical-align: top; }
