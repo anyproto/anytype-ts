@@ -3,6 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { I, Util } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { dbStore, detailStore } from 'ts/store';
+import { throttle } from 'lodash';
 
 import Column from './board/column';
 
@@ -13,12 +14,13 @@ interface Props extends I.ViewComponent {
 const GROUP = 'done';
 const Constant = require('json/constant.json');
 const $ = require('jquery');
+const THROTTLE = 20;
 
 const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 
 	cache: any = {};
-	ox: number = 0;
-	oy: number = 0;
+	width: number = 0;
+	height: number = 0;
 
 	constructor (props: any) {
 		super(props);
@@ -78,7 +80,9 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 		const node = $(ReactDOM.findDOMNode(this));
 		const viewItem = node.find('.viewItem');
 		const clone = target.clone();
-		const offset = target.offset();
+
+		this.width = clone.outerWidth();
+		this.height = clone.outerHeight();
 
 		$('body').addClass('grab');
 		target.addClass('isDragging');
@@ -88,14 +92,10 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 		$(document).off('dragover').on('dragover', (e: any) => { e.preventDefault(); });
 		e.dataTransfer.setDragImage(clone.get(0), 0, 0);
 
-		this.ox = offset.left;
-		this.oy = offset.top;
-
 		selection.preventSelect(true);
 		preventCommonDrop(true);
 		
 		this.unbind();
-
 		win.on('dragend.board', (e: any) => { this.onDragEnd(e); });
 	};
 
@@ -126,15 +126,12 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 		this.onDragStartCommon(e, node.find('#column-' + columnId));
 		this.initCache(node.find('.column'));
 
-		win.on('drag.board', (e: any) => { this.onDragMoveColumn(e, columnId); });
+		win.on('drag.board', throttle((e: any) => { this.onDragMoveColumn(e, columnId); }, THROTTLE));
 	};
 
 	onDragMoveColumn (e: any, columnId: any) {
 		const node = $(ReactDOM.findDOMNode(this));
 		const items = node.find('.column');
-		const clone = node.find('.isClone');
-		const width = clone.outerWidth();
-		const height = clone.outerHeight();
 
 		this.clear();
 
@@ -143,16 +140,10 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 			const id = item.data('id');
 			const rect = this.cache[id];
 
-			if (id == columnId) {
-				continue;
-			};
-			
-			if (rect && this.cache[columnId] && Util.rectsCollide({ x: e.pageX, y: e.pageY, width, height }, rect)) {
+			if (rect && this.cache[columnId] && Util.rectsCollide({ x: e.pageX, y: e.pageY, width: this.width, height: this.height }, rect)) {
 				const isLeft = e.pageX <= rect.x + rect.width / 2;
-				const cn = isLeft ? 'left' : 'right';
 
-				item.addClass('isOver ' + cn);
-				item.find('.ghost.' + cn).css({ width: this.cache[columnId].width });
+				item.addClass('isOver ' + (isLeft ? 'left' : 'right'));
 				break;
 			};
 		};
@@ -165,15 +156,12 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 		this.onDragStartCommon(e, $(e.currentTarget));
 		this.initCache(node.find('.card'));
 
-		win.on('drag.board', (e: any) => { this.onDragMoveCard(e, columnId, record); });
+		win.on('drag.board', throttle((e: any) => { this.onDragMoveCard(e, columnId, record); }, THROTTLE));
 	};
 
 	onDragMoveCard (e: any, columnId: any, record: any) {
 		const node = $(ReactDOM.findDOMNode(this));
 		const items = node.find('.card');
-		const clone = node.find('.isClone');
-		const width = clone.outerWidth();
-		const height = clone.outerHeight();
 
 		this.clear();
 
@@ -182,11 +170,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 			const id = item.data('id');
 			const rect = this.cache[id];
 
-			if (id == record.id) {
-				continue;
-			};
-			
-			if (rect && this.cache[record.id] && Util.rectsCollide({ x: e.pageX, y: e.pageY, width, height }, rect)) {
+			if (rect && this.cache[record.id] && Util.rectsCollide({ x: e.pageX, y: e.pageY, width: this.width, height: this.height }, rect)) {
 				const isTop = e.pageY <= rect.y + rect.height / 2;
 				const cn = isTop ? 'top' : 'bottom';
 
@@ -203,15 +187,15 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 		const { dataset } = this.props;
 		const { selection, preventCommonDrop } = dataset || {};
 		const node = $(ReactDOM.findDOMNode(this));
-		const viewItem = node.find('.viewItem');
 
 		$('body').removeClass('grab');
-		viewItem.find('.isClone').remove();
-		viewItem.find('.isDragging').removeClass('isDragging');
+		node.find('.isClone').remove();
+		node.find('.isDragging').removeClass('isDragging');
 
 		selection.preventSelect(false);
 		preventCommonDrop(false);
 
+		this.cache = {};
 		this.clear();
 		this.unbind();
 	};

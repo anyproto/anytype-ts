@@ -6,7 +6,19 @@
         .viewItem.viewBoard {
 
 			.ghost { display: none; border: 1px dotted $colorOrange; border-radius: 12px; }
-			.card.isDragging, .column.isDragging { opacity: 0.5; }
+			
+			.isOver.left {
+				.ghost.left { display: block; }
+			}
+			.isOver.right {
+				.ghost.right { display: block; }
+			}
+			.isOver.top {
+				.ghost.top { display: block; }
+			}
+			.isOver.bottom {
+				.ghost.bottom { display: block; }
+			}
 
             .columns { display: flex; gap: 0px 24px; flex-direction: row; }
             .column { display: flex; flex-direction: row; gap: 0px 24px; }
@@ -14,28 +26,21 @@
 				.body { width: 240px; display: flex; flex-direction: column; }
                 .head { padding: 10px 4px; width: 100%; margin: 0px; }
             }
+			.column.isDragging {
+				.body { opacity: 0.3; }
+			}
 
-			.column > .ghost { margin-top: 42px; }
+			.column > .ghost { margin-top: 42px; width: 240px; flex-shrink: 0; }
 			
-			.column.isOver.left {
-				.ghost.left { display: block; }
-			}
-			.column.isOver.right {
-				.ghost.right { display: block; }
-			}
-
             .card { width: 240px; display: flex; flex-direction: column; gap: 8px 0px; margin-bottom: 8px; }
 			.card {
 				.cardContent { border: 1px solid $colorBorderDark; border-radius: 12px; padding: 16px; background: $colorWhite; }
 			}
 
-			.card.isOver.top {
-				.ghost.top { display: block; }
+			.card.isDragging {
+				.cardContent { opacity: 0.3; }
 			}
-			.card.isOver.bottom {
-				.ghost.bottom { display: block; }
-			}
-            
+
             .card.add { 
 				min-height: unset; text-align: center; padding: 10px 0px; margin: 0px; line-height: 1; transition: $transitionFast; cursor: pointer; 
 				border: 1px solid $colorBorderDark; border-radius: 12px; flex-direction: row; justify-content: center;
