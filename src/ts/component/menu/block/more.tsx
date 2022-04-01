@@ -177,12 +177,10 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const allowedHistory = block.canHaveHistory() && !object.templateIsBundled;
 		const allowedTemplate = (object.type != Constant.typeId.note) && (object.id != profile);
 		const allowedFav = !object.isArchived;
-		const allowedExport = config.experimental;
 		const allowedLock = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 
 		if (!allowedArchive)	 archive = null;
 		if (!allowedDelete)		 pageRemove = null;
-		if (!allowedExport)		 pageExport = null;
 		if (!allowedLock)		 pageLock = null;
 		if (!allowedShare)		 share = null;
 		if (!allowedHighlight)	 highlight = null;
