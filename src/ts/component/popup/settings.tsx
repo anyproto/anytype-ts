@@ -618,12 +618,12 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 
 	onSelectPin (pin: string) {
 		Storage.set('pin', sha1(pin));
-		this.onPage('index');
+		this.onPage('pinIndex');
 	};
 
 	onTurnOffPin () {
 		Storage.delete('pin');
-		this.onPage('index');
+		this.onPage('pinIndex');
 	};
 
 	onClose () {

@@ -59,7 +59,7 @@
 				.side { width: 50%; line-height: 28px; }
 				.side.right { text-align: right; }
 
-				.select { transition: none; border: 0px; }
+				.select { transition: none; border: 0px; color: $colorMediumGrey; }
 
 				.status { position: absolute; text-align: right; right: 24px; top: 50%; margin-top: -14px; height: 28px; color: $colorMediumGrey; }
 			}
