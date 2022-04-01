@@ -121,11 +121,13 @@ class ScrollOnMove {
 			(nextScrollX !== currentScrollX) ||
 			(nextScrollY !== currentScrollY)
 		) {
-			raf(() => {
+			//raf(() => {
 				if (container) {
+					console.log('adjustWindowScroll', nextScrollX, nextScrollY);
+					console.trace();
 					container.scrollTo(nextScrollX, nextScrollY);
 				};
-			});
+			//});
 			return true;
 		} else {
 			return false;
@@ -142,6 +144,8 @@ class ScrollOnMove {
 		let isInRightEdge = x > edgeRight;
 		let isInTopEdge = y < edgeTop;
 		let isInBottomEdge = y > edgeBottom;
+
+		console.log('onMouseMove', x, y);
 	
 		if (!(isInLeftEdge || isInRightEdge || isInTopEdge || isInBottomEdge)) {
 			this.clear();
