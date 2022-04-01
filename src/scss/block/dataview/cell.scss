@@ -68,7 +68,7 @@
 
 .cellContent.c-select {
 	.over { display: inline-block; vertical-align: top; }
-	.tagItem { margin: 0px 6px 6px 0px; vertical-align: top; }
+	.tagItem { margin: 0px 8px 8px 0px; vertical-align: top; }
 	.tagItem:last-child { margin-right: 0px; }
 }
 
@@ -114,7 +114,7 @@
 
 .cell.isEditing.c-select {
 	.itemWrap { 
-		height: 18px; line-height: 18px; margin: 0px 6px 6px 0px; cursor: grab; position: relative; 
+		height: 18px; line-height: 18px; margin: 0px 8px 8px 0px; cursor: grab; position: relative; 
 		display: inline-block; vertical-align: top;
 	}
 	.itemWrap:last-child { margin-right: 0px !important; }

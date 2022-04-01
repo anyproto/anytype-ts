@@ -134,8 +134,8 @@
         }
 
         .viewItem.viewBoard {
-            .card { background: $colorBlack; border-color: $colorLinePrimary; }
-
+            .cardContent { background: $colorBlack; border-color: $colorLinePrimary; }
+			.card.add { border-color: $colorLinePrimary; }
             .cellContent.isName { color: $colorPrimary; }
         }
     }
