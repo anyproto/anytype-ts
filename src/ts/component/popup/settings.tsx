@@ -178,7 +178,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 									<Label text="Default Object type" />
 								</div>
 								<div className="side right">
-									<Select id="defaultType" options={types} value={type} onChange={(id: string) => { this.onTypeChange(id); }}/>
+									<Select id="defaultType" arrowClassName="light" options={types} value={type} onChange={(id: string) => { this.onTypeChange(id); }}/>
 								</div>
 							</div>
 
@@ -378,7 +378,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 											<Label text="PIN code check time-out" />
 										</div>
 										<div className="side right">
-											<Select id="pinTime" options={times} value={String(pinTime || '')} onChange={(id: string) => { commonStore.pinTimeSet(id); }}/>
+											<Select id="pinTime" arrowClassName="light" options={times} value={String(pinTime || '')} onChange={(id: string) => { commonStore.pinTimeSet(id); }}/>
 										</div>
 									</div>
 
@@ -618,12 +618,12 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 
 	onSelectPin (pin: string) {
 		Storage.set('pin', sha1(pin));
-		this.onPage('index');
+		this.onPage('pinIndex');
 	};
 
 	onTurnOffPin () {
 		Storage.delete('pin');
-		this.onPage('index');
+		this.onPage('pinIndex');
 	};
 
 	onClose () {

@@ -790,6 +790,7 @@ class DataUtil {
 
 	menuGetRelationTypes () {
 		return [
+			{ id: I.RelationType.Object },
 			{ id: I.RelationType.LongText },
 			{ id: I.RelationType.Number },
 			{ id: I.RelationType.Status },
@@ -800,7 +801,6 @@ class DataUtil {
 			{ id: I.RelationType.Url },
 			{ id: I.RelationType.Email },
 			{ id: I.RelationType.Phone },
-			{ id: I.RelationType.Object },
 		].map((it: any) => {
 			it.name = translate('relationName' + it.id);
 			it.icon = 'relation ' + this.relationClass(it.id);

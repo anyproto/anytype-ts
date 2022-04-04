@@ -627,22 +627,17 @@ class Keyboard {
 	initPinCheck () {
 		const { account } = authStore;
 		const { pinTime } = commonStore;
-		const pin = Storage.get('pin');
 
-		if (!pin) {
-			this.setPinChecked(true);
-		};
-		
-		if (!pin || !account) {
+		if (!account) {
 			return;
 		};
 		
 		window.clearTimeout(this.timeoutPin);
 		this.timeoutPin = window.setTimeout(() => {
 			const pin = Storage.get('pin');
+
+			this.setPinChecked(pin ? false : true);
 			if (pin) {
-				this.setPinChecked(false);
-				
 				popupStore.closeAll(null, () => {
 					Util.route('/auth/pin-check');
 				});

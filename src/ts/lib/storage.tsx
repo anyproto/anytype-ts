@@ -5,13 +5,16 @@ class Storage {
 	constructor () {
 		this.storage = localStorage;
 	};
+
+	init (dataPath: string) {
+	};
 	
 	get (key: string): any {
 		let o = String(this.storage[key] || '');
 		if (!o) {
 			return;
 		};
-		let ret = ''
+		let ret = '';
 		try { ret = JSON.parse(o); } catch (e) {};
 		return ret;
 	};

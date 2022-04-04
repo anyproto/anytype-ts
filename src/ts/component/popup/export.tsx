@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { I, Action, keyboard } from 'ts/lib';
 import { Title, Select, Button, Switch } from 'ts/component';
+import { commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Popup {};
@@ -20,9 +21,10 @@ const PopupExport = observer(class PopupExport extends React.Component<Props, {}
 	};
 
 	render() {
+		const { config } = commonStore;
 		const formats = [
 			{ id: I.ExportFormat.Markdown, name: 'Markdown' },
-			{ id: I.ExportFormat.Html, name: 'HTML' },
+			(config.experimental ? { id: I.ExportFormat.Html, name: 'HTML' } : null),
 		];
 
 		let options = null;
@@ -32,19 +34,19 @@ const PopupExport = observer(class PopupExport extends React.Component<Props, {}
 					<div className="row">
 						<div className="name">Zip archive</div>
 						<div className="value">
-							<Switch value={this.zip} onChange={(e: any, v: boolean) => { this.zip = v; }} />
+							<Switch className="big" value={this.zip} onChange={(e: any, v: boolean) => { this.zip = v; }} />
 						</div>
 					</div>
 					<div className="row">
 						<div className="name">Include subpages</div>
 						<div className="value">
-							<Switch value={this.nested} onChange={(e: any, v: boolean) => { this.nested = v; }} />
+							<Switch className="big" value={this.nested} onChange={(e: any, v: boolean) => { this.nested = v; }} />
 						</div>
 					</div>
 					<div className="row">
 						<div className="name">Include files</div>
 						<div className="value">
-							<Switch value={this.files} onChange={(e: any, v: boolean) => { this.files = v; }} />
+							<Switch className="big" value={this.files} onChange={(e: any, v: boolean) => { this.files = v; }} />
 						</div>
 					</div>
 				</React.Fragment>
