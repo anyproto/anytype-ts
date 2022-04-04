@@ -279,6 +279,10 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 	onEdit (e: any, item: any) {
 		e.stopPropagation();
 
+		if (!item) {
+			return;
+		};
+
 		const { param, getId, getSize } = this.props;
 		const { data, classNameWrap } = param;
 

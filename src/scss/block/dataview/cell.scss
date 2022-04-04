@@ -109,13 +109,13 @@
 
 	.placeholder { position: absolute; left: 0px; top: 0px; height: 100%; }
 	#entry { -webkit-user-modify: read-write-plaintext-only; color: $colorBlack; }
-	#list { margin-right: 6px; position: relative; }
+	#list { margin-right: 6px; position: relative; word-wrap: break-word; }
 }
 
 .cell.isEditing.c-select {
 	.itemWrap { 
 		height: 18px; line-height: 18px; margin: 0px 8px 8px 0px; cursor: grab; position: relative; 
-		display: inline-block; vertical-align: top;
+		display: inline-block; vertical-align: top; max-width: 100%;
 	}
 	.itemWrap:last-child { margin-right: 0px !important; }
 	.itemWrap {
@@ -124,7 +124,7 @@
 }
 
 .cell.isEditing.c-object {
-	.itemWrap { margin: 0px 8px 2px 0px; }
+	.itemWrap { margin: 0px 8px 2px 0px; max-width: 100%; }
 	.itemWrap:empty { margin: 0px; }
 	.itemWrap:last-child { margin-right: 0px !important; }
 	.itemWrap {
