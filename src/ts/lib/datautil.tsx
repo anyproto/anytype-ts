@@ -263,11 +263,11 @@ class DataUtil {
 			return [];
 		};
 		
-		let ids: string[] = selection.get(withChildren);
+		let ids: string[] = selection.get(I.SelectType.Block, withChildren);
 		if (id && ids.indexOf(id) < 0) {
 			selection.clear(true);
-			selection.set([ id ]);
-			ids = selection.get(withChildren);
+			selection.set(I.SelectType.Block, [ id ]);
+			ids = selection.get(I.SelectType.Block, withChildren);
 		};
 		return ids;
 	};

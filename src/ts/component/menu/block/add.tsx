@@ -683,7 +683,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 		
 		let ids = [];
 		if (selection) {
-			ids = selection.get();
+			ids = selection.get(I.SelectType.Block);
 		};
 		if (!ids.length) {
 			ids = [ blockId ];

@@ -1210,7 +1210,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			e.stopPropagation();
 			
 			this.clicks = 0;
-			selection.set([ id ]);
+			selection.set(I.SelectType.Block, [ id ]);
 			menuStore.close('blockContext');
 			window.clearTimeout(this.timeoutContext);
 		};

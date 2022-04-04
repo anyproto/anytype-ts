@@ -167,15 +167,20 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	onKeyDown (e: any) {
-		const { rootId } = this.props;
+		const { rootId, dataset } = this.props;
+		const { selection } = dataset || {};
 		const root = blockStore.getLeaf(rootId, rootId);
 		const cmd = keyboard.ctrlKey();
 
-		if (root && root.isObjectSet() && !this.creating) {
-			keyboard.shortcut(`${cmd}+n`, e, (pressed: string) => {
-				this.onRowAdd(e, -1, true);
-			});
+		if (!root || !root.isObjectSet()) {
+			return;
 		};
+
+		if (!this.creating) {
+			keyboard.shortcut(`${cmd}+n`, e, (pressed: string) => { this.onRowAdd(e, -1, true); });
+		};
+
+		console.log(selection.get(I.SelectType.Record));
 	};
 
 	getKeys (id: string) {

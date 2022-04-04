@@ -19,7 +19,6 @@ export enum DragType {
 };
 
 export enum SelectType {
-	None	 = '',
 	Block	 = 'block',
 	Record	 = 'record',
 };

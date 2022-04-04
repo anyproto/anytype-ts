@@ -241,7 +241,12 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 		
 		if (canSelect) {
 			object = (
-				<div id={'selectable-' + id} className="selectable" data-id={id} data-type={I.SelectType.Block}>
+				<div 
+					id={'selectable-' + id} 
+					className={[ 'selectable', 'type-' + I.SelectType.Block ].join(' ')} 
+					data-id={id} 
+					data-type={I.SelectType.Block}
+				>
 					{object}
 					<div className="menuOver" />
 				</div>
