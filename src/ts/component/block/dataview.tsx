@@ -171,6 +171,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const { selection } = dataset || {};
 		const root = blockStore.getLeaf(rootId, rootId);
 		const cmd = keyboard.ctrlKey();
+		const ids = selection.get(I.SelectType.Record);
+		const length = ids.length;
 
 		if (!root || !root.isObjectSet()) {
 			return;
@@ -180,7 +182,23 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			keyboard.shortcut(`${cmd}+n`, e, (pressed: string) => { this.onRowAdd(e, -1, true); });
 		};
 
-		console.log(selection.get(I.SelectType.Record));
+		if (length) {
+			keyboard.shortcut('backspace, delete', e, (pressed: string) => {
+				analytics.event('ShowDeletionWarning');
+				popupStore.open('confirm', {
+					data: {
+						title: `Are you sure you want to delete ${length} ${Util.cntWord(length, 'object', 'objects')}?`,
+						text: 'These objects will be deleted irrevocably. You can’t undo this action.',
+						textConfirm: 'Delete',
+						onConfirm: () => { 
+							C.ObjectListDelete(ids); 
+
+							analytics.event('RemoveCompletely', { count: length });
+						}
+					},
+				});
+			});
+		};
 	};
 
 	getKeys (id: string) {
