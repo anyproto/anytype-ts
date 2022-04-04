@@ -377,7 +377,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			ids.push(id);
 		};
 
-		this.set(type, ids);
+		this.ids.set(type, Util.arrayUnique(ids));
 	};
 	
 	checkNodes (e: any) {
@@ -469,15 +469,14 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	};
 	
 	set (type: any, ids: string[]) {
-		this.ids.set(type, Util.arrayUnique(ids));
+		this.ids.set(type, Util.arrayUnique(ids || []));
+		this.renderSelection();
 	};
 	
 	get (type: any, withChildren?: boolean): any {
 		const ids = this.ids.get(type) || [];
 		if (withChildren && (type == I.SelectType.Block)) {
-			for (let id of ids) {
-				this.getChildrenIds(id, ids);
-			};
+			ids.forEach(id => this.getChildrenIds(id, ids));
 		};
 		return ids;
 	};
