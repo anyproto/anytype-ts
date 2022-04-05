@@ -48,6 +48,12 @@
         .loaderWrapper { border: 0px; }
     }
 
+	/* BlockRelation */
+
+	.block.blockRelation {
+        .cell.canEdit:hover { background: $colorHover; }
+    }
+
     /* BlockMedia */
 
     .block.blockMedia {
