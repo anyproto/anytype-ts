@@ -1,18 +1,24 @@
 document.body.onload = function () {
     $(function () {
-        var link = $('lnk');
-        var a = $('a');
+        var link = $('lnk, a');
 		var block = $('.block');
-    
-        link.off('click').on('click', function (e) {
+		var bookmark = $('.block.blockBookmark .inner');
+
+		var onUrl = function (e) {
             e.preventDefault();
-            window.open($(this).attr('href'));
-        });
+
+			const el = $(this);
+			const data = el.data();
+			const url = data.href || el.attr('href');
+
+            if (url) {
+				window.open(url);
+			};
+        };
     
-        a.off('click').on('click', function (e) {
-            e.preventDefault();
-            window.open($(this).attr('href'));
-        });
+        //a.off('click').on('click', onUrl);
+		link.off('click').on('click', onUrl);
+		bookmark.off('click').on('click', onUrl);
 
 		block.each(function (i, item) {
 			item = $(item);
