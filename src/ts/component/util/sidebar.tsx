@@ -482,7 +482,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 			rect: { width: 0, height: 0, x: x + 4, y: y },
 			onClose: () => { this.setActive(this.id); },
 			data: {
-				objectId: [ item.id ],
+				objectIds: [ item.id ],
 				subId,
 			}
 		});

@@ -191,8 +191,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 						text: 'These objects will be deleted irrevocably. You can’t undo this action.',
 						textConfirm: 'Delete',
 						onConfirm: () => { 
-							C.ObjectListDelete(ids); 
-
+							C.ObjectListDelete(ids);
+							
+							selection.clear();
 							analytics.event('RemoveCompletely', { count: length });
 						}
 					},

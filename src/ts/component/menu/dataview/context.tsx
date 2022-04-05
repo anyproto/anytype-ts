@@ -147,7 +147,7 @@ class MenuContext extends React.Component<Props, {}> {
 	onClick (e: any, item: any) {
 		const { param, close } = this.props;
 		const { data } = param;
-		const { objectIds } = data;
+		const { subId, objectIds } = data;
 		const length = objectIds.length;
 
 		focus.clear(false);
@@ -155,13 +155,12 @@ class MenuContext extends React.Component<Props, {}> {
 		switch (item.id) {
 
 			case 'copy':
-				/*
-				C.ObjectDuplicate(objectId, (message: any) => {
-					if (!message.error.code) {
+				C.ObjectListDuplicate(objectIds, (message: any) => {
+					if (!message.error.code && (length == 1)) {
+						const object = detailStore.get(subId, objectIds[0]);
 						DataUtil.objectOpenPopup({ id: message.id, layout: object.layout });
 					};
 				});
-				*/
 				break;
 
 			case 'archive':
