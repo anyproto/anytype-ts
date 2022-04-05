@@ -278,7 +278,6 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		this.hide();
 
 		this.cache.clear();
-		this.lastIds = [];
 		this.focused = '';
 		this.range = null;
 		this.isSelecting = false;

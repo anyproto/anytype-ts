@@ -472,14 +472,23 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { rootId, block } = this.props;
+		const { rootId, block, dataset } = this.props;
+		const { selection } = dataset || {};
 		const { x, y } = keyboard.mouse.page;
 		const subId = dbStore.getSubId(rootId, block.id);
+		
+		let ids = selection.get(I.SelectType.Record);
+		if (!ids.length) {
+			ids = [ id ];
+		};
 
 		menuStore.open('dataviewContext', {
 			rect: { width: 0, height: 0, x: x + 4, y: y },
+			onClose: () => {
+				selection.set(I.SelectType.Record, []);
+			},
 			data: {
-				objectId: id,
+				objectIds: ids,
 				subId,
 			}
 		});
