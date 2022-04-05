@@ -41,10 +41,35 @@ const PopupConfirm = observer(class PopupConfirm extends React.Component<Props, 
 
 	componentDidMount() {
 		keyboard.setFocus(true);
+
+		this.rebind();
 	};
 
 	componentWillUnmount() {
 		keyboard.setFocus(false);
+
+		this.unbind();
+	};
+
+	rebind () {
+		this.unbind();
+		$(window).on('keydown.confirm', (e: any) => { this.onKeyDown(e); });
+	};
+
+	unbind () {
+		$(window).off('keydown.confirm');
+	};
+
+	onKeyDown (e: any) {
+		keyboard.shortcut('enter, space', e, (pressed: string) => {
+			e.stopPropagation();
+			this.onConfirm(e);
+		});
+
+		keyboard.shortcut('escape', e, (pressed: string) => {
+			e.stopPropagation();
+			this.onCancel(e);
+		});
 	};
 	
 	onConfirm (e: any) {
