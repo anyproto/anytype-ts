@@ -19,7 +19,6 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	x: number = 0;
 	y: number = 0;
 	dir: number = 0;
-	lastIds: string[] = [];
 	moved: boolean = false;
 	focused: string = '';
 	range: any = null;
@@ -163,10 +162,10 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		this.x = e.pageX;
 		this.y = e.pageY;
 		this.moved = false;
-		this.lastIds = [];
 		this.focused = focused;
 		this.isSelecting = true;
 		this.top = Util.getScrollContainer(isPopup).scrollTop();
+		this.cache.clear();
 
 		if (isPopup) {
 			const popupContainer = $('#popupPage #innerWrap');
@@ -271,6 +270,12 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		
 		scrollOnMove.onMouseUp(e);
 		this.clearState();
+	};
+
+	initIds () {
+		for (let i in I.SelectType) {
+			this.ids.set(I.SelectType[i], []);
+		};
 	};
 
 	clearState () {
@@ -388,7 +393,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		const rect = this.getRect(e.pageX, e.pageY);
 
 		if (!e.shiftKey && !e.altKey && !(e.ctrlKey || e.metaKey)) {
-			this.clear();
+			this.initIds();
 		};
 		
 		this.nodes.each((i: number, item: any) => { 
@@ -460,10 +465,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			this.preventClear(false);
 		};
 
-		for (let i in I.SelectType) {
-			this.ids.set(I.SelectType[i], []);
-		};
-
+		this.initIds();
 		this.renderSelection();
 	};
 	

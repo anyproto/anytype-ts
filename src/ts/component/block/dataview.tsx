@@ -484,9 +484,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		menuStore.open('dataviewContext', {
 			rect: { width: 0, height: 0, x: x + 4, y: y },
-			onClose: () => {
-				selection.set(I.SelectType.Record, []);
-			},
+			onClose: () => { selection.clear(true); },
 			data: {
 				objectIds: ids,
 				subId,
