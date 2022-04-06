@@ -6,12 +6,12 @@
 		.isArchived {
 			.cardName { color: $colorMediumGrey; }
             .cardName span::before { display: none; }
-			.archive { display: inline-block !important; }
+			.archive { display: block !important; }
 		}
 
 		.archive { 
 			padding: 0px 4px; @include text-common; line-height: 18px; border-radius: 3px; white-space: nowrap; position: absolute; height: 18px; 
-			right: 16px; top: 21px; z-index: 1; background: $colorLightGrey; @include text-small;
+			right: 16px; top: 21px; z-index: 1; background: $colorLightGrey; @include text-small; display: none;
 		}
 
 		.focusable { border-radius: 12px; }
@@ -31,7 +31,7 @@
 
 		.linkCard { display: inline-block; vertical-align: top; width: 100%; }
         .linkCard {
-            .sides { display: flex; flex-direction: row; }
+            .sides { display: flex; flex-direction: row; border-radius: 12px; }
 			.side.left { width: 100%; padding: 21px 16px; border: 1px solid $colorBorderDark; border-radius: 12px; }
 			.side.right { display: none; border-radius: 0px 12px 12px 0px; overflow: hidden; }
 
