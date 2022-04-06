@@ -20,7 +20,7 @@ interface Props extends I.BlockComponent, RouteComponentProps<any> {
 };
 
 const Size: any = {};
-Size[I.LinkIconSize.Small] = 24;
+Size[I.LinkIconSize.Small] = 18;
 Size[I.LinkIconSize.Medium] = 64;
 Size[I.LinkIconSize.Large] = 96;
 
@@ -33,7 +33,7 @@ const LinkCard = observer(class LinkCard extends React.Component<Props, {}> {
         const { bgColor } = block;
         const cn = [ 'linkCard', DataUtil.layoutClass(id, layout), 'c' + Size[iconSize] ];
         const cns = [ 'sides' ];
-        const featured: any = new M.Block({ id: rootId + '-featured', type: I.BlockType.Featured, align: align, childrenIds: [], fields: {}, content: {} });
+        const featured: any = new M.Block({ id: rootId + '-featured', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
         const withCover = this.props.withCover && coverId && coverType;
 
         if (className) {
@@ -50,63 +50,46 @@ const LinkCard = observer(class LinkCard extends React.Component<Props, {}> {
             cns.push('hidden');
         };
 
-        let sideLeft = null;
-
-        if (withIcon) {
-            sideLeft = (
-                <div key="sideLeft" className="side left">
-                    <IconObject 
-                        id={`block-${block.id}-icon`}
-                        size={Size[iconSize]} 
-                        object={object} 
-                        canEdit={canEdit} 
-                        onSelect={onSelect} 
-                        onUpload={onUpload} 
-                        onCheckbox={onCheckbox} 
-                    />
-                </div>
-            );
-        };
-
-        let sideRight = (
-            <div key="sideRight" className="side right">
-                <div className="txt">
-                    {withName ? <ObjectName className="cardName" object={object} /> : ''}
-                    {withDescription ? <ObjectDescription className="cardDescription" object={object} /> : ''}
-                    <div className="archive">{translate('blockLinkArchived')}</div>
-
-                    {/*<Block {...this.props} rootId={block.content.targetBlockId} iconSize={18} block={featured} readonly={true} className="noPlus" />*/}
-                </div>
-            </div>
-        );
-
-        let content = (
-            <div id="sides" className={cns.join(' ')}>
-				{sideLeft}
-				{sideRight}
-            </div>
-        );
-
 		return (
 			<div className={cn.join(' ')} onMouseDown={onClick}>
-                {withCover ? (
-                    <Cover 
-                        type={coverType} 
-                        id={coverId} 
-                        image={coverId} 
-                        className={coverId} 
-                        x={coverX} 
-                        y={coverY} 
-                        scale={coverScale} 
-                        withScale={true}
-                    >
-                        {content}
-                    </Cover>
-                ) : (
-                    <React.Fragment>
-                        {content}
-                    </React.Fragment>
-                )}
+				<div id="sides" className={cns.join(' ')}>
+					<div key="sideLeft" className="side left">
+						<div className="txt">
+							<div className="cardName">
+								{withIcon ? (
+									<IconObject 
+										id={`block-${block.id}-icon`}
+										size={Size[iconSize]} 
+										object={object} 
+										canEdit={canEdit} 
+										onSelect={onSelect} 
+										onUpload={onUpload} 
+										onCheckbox={onCheckbox} 
+									/>
+								) : ''}
+								{withName ? <ObjectName object={object} /> : ''}
+							</div>
+							{withDescription ? <ObjectDescription className="cardDescription" object={object} /> : ''}
+							<div className="archive">{translate('blockLinkArchived')}</div>
+
+							{/*<Block {...this.props} rootId={block.content.targetBlockId} iconSize={18} block={featured} readonly={true} className="noPlus" />*/}
+						</div>
+					</div>
+					{withCover ? (
+						<div className="side right">
+							<Cover 
+								type={coverType} 
+								id={coverId} 
+								image={coverId} 
+								className={coverId} 
+								x={coverX} 
+								y={coverY} 
+								scale={coverScale} 
+								withScale={true}
+							/>
+						</div>
+					) : ''}
+				</div>
 			</div>
 		);
 	};
