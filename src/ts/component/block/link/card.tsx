@@ -30,8 +30,8 @@ const LinkCard = observer(class LinkCard extends React.Component<Props, {}> {
 	render () {
         const { rootId, block, withName, withIcon, withDescription, iconSize, object, className, canEdit, onClick, onSelect, onUpload, onCheckbox } = this.props;
         const { id, layout, coverType, coverId, coverX, coverY, coverScale, snippet } = object;
-        const { align, bgColor } = block;
-        const cn = [ 'linkCard', 'align' + align, DataUtil.layoutClass(id, layout), 'c' + Size[iconSize] ];
+        const { bgColor } = block;
+        const cn = [ 'linkCard', DataUtil.layoutClass(id, layout), 'c' + Size[iconSize] ];
         const cns = [ 'sides' ];
         const featured: any = new M.Block({ id: rootId + '-featured', type: I.BlockType.Featured, align: align, childrenIds: [], fields: {}, content: {} });
         const withCover = this.props.withCover && coverId && coverType;
@@ -82,17 +82,8 @@ const LinkCard = observer(class LinkCard extends React.Component<Props, {}> {
 
         let content = (
             <div id="sides" className={cns.join(' ')}>
-                {align == I.BlockAlign.Right ? (
-                    <React.Fragment>
-                        {sideRight}
-                        {sideLeft}
-                    </React.Fragment>
-                ) : (
-                    <React.Fragment>
-                        {sideLeft}
-                        {sideRight}
-                    </React.Fragment>
-                )}
+				{sideLeft}
+				{sideRight}
             </div>
         );
 
