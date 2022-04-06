@@ -1,6 +1,7 @@
 @import "~scss/_vars";
 
 .blocks {
+	.block.blockLink { padding: 6px 0px; }
 	.block.blockLink {
 		.isArchived {
 			.cardName { color: $colorMediumGrey; }
@@ -31,19 +32,27 @@
 		.linkCard { display: inline-block; vertical-align: top; width: 100%; }
         .linkCard {
             .sides { display: flex; flex-direction: row; }
-			.side.left { width: 100%; padding: 21px 16px; border: 1px solid $colorBorderDark; border-radius: 12px 0px 0px 12px; }
+			.side.left { width: 100%; padding: 21px 16px; border: 1px solid $colorBorderDark; border-radius: 12px; }
 			.side.right { display: none; border-radius: 0px 12px 12px 0px; overflow: hidden; }
 
 			.cover { position: relative; min-height: 116px; }
 			.cardName { 
-				@include text-common; display: flex; flex-direction: row; gap: 0px 6px; align-items: center; line-height: 18px; margin-bottom: 4px; 
+				@include text-common; display: flex; flex-direction: row; gap: 0px 6px; align-items: center; line-height: 18px;
 			}
 			.cardName .name { @include clamp2; }
-			.cardDescription { @include text-small; line-height: 16px; @include clamp2; }
+			.cardDescription { @include text-small; line-height: 16px; @include clamp2; margin: 4px 0px; }
+			.cardDescription:empty { margin: 0px; }
         }
 
+		.linkCard.c48.withIcon {
+			.sides { min-height: 80px; }
+			.side.left { padding: 16px 16px 16px 78px; line-height: 48px; }
+
+			.iconObject { position: absolute; left: 16px; top: 16px; background-color: $colorVeryLightGrey; border-radius: 10px; }
+		}
+
 		.linkCard.withCover {
-			.side.left { width: calc(100% - 236px); }
+			.side.left { width: calc(100% - 236px); border-radius: 12px 0px 0px 12px; }
 			.side.right { width: 236px; display: block; }
 		}
 

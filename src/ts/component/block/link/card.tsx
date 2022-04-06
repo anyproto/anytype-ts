@@ -21,9 +21,7 @@ interface Props extends I.BlockComponent, RouteComponentProps<any> {
 
 const Size: any = {};
 Size[I.LinkIconSize.Small] = 18;
-Size[I.LinkIconSize.Medium] = 64;
-Size[I.LinkIconSize.Large] = 96;
-
+Size[I.LinkIconSize.Medium] = 48;
 
 const LinkCard = observer(class LinkCard extends React.Component<Props, {}> {
 
@@ -59,7 +57,7 @@ const LinkCard = observer(class LinkCard extends React.Component<Props, {}> {
 								{withIcon ? (
 									<IconObject 
 										id={`block-${block.id}-icon`}
-										size={Size[iconSize]} 
+										size={Size[iconSize] || Size[I.LinkIconSize.Small]} 
 										object={object} 
 										canEdit={canEdit} 
 										onSelect={onSelect} 
