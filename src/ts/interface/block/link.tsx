@@ -10,7 +10,13 @@ export enum LinkIconSize {
 	Small		 = 1,
 	Medium		 = 2,
 	Large		 = 3,
-}
+};
+
+export enum LinkDescription {
+	None		 = 0,
+	Added		 = 1,
+	Content		 = 2,
+};
 
 export interface ContentLink {
 	targetBlockId: string;

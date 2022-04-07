@@ -6,7 +6,7 @@
 		.item {
 			.name { @include text-overflow-nw; width: calc(100% - 58px); }
 			.switch { position: absolute; right: 14px; top: 50%; margin-top: -8px; }
-			.icon.arrow { transform: rotateZ(90deg); }
+			.icon.arrow { background-image: url('~img/arrow/select/medium.svg'); }
 
 			.icon.style-text { width: 32px; height: 32px; background-image: url('~img/icon/menu/linkSettings/text0.svg'); }
 			.icon.style-card { width: 44px; height: 32px; background-image: url('~img/icon/menu/linkSettings/card0.svg'); }
@@ -15,7 +15,7 @@
 		}
 
 		.item.withCaption {
-			.caption { @include text-common; line-height: 20px; width: 150px; padding-right: 16px; }
+			.caption { @include text-common; line-height: 20px; width: 80px; padding-right: 14px; }
 		}
 
 		.section.card {
