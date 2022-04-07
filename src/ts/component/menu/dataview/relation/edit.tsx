@@ -133,10 +133,10 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 					<div className="name">Relation type</div>
 					<MenuItemVertical 
 						id="relation-type" 
-						icon={'relation ' + DataUtil.relationClass(this.format)} 
-						name={translate('relationName' + this.format)} 
-						readonly={isReadonly}
+						icon={this.format === null ? undefined : 'relation ' + DataUtil.relationClass(this.format)} 
+						name={this.format === null ? 'Select relation type' : translate('relationName' + this.format)} 
 						onMouseEnter={this.onRelationType} 
+						readonly={isReadonly}
 						arrow={!relation}
 					/>
 				</div>
