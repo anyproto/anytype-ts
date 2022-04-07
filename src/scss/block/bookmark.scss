@@ -7,7 +7,7 @@
 
 		.inner { 
 			display: flex; border-radius: inherit; border: 1px solid $colorLightGrey; transition: border-color 0.2s ease-in-out; 
-			cursor: pointer; position: relative; border-radius: 12px;
+			cursor: pointer; position: relative; border-radius: 12px; overflow: hidden;
 		}
 		.inner:hover { border-color: $colorMediumGrey; }
 		
@@ -20,7 +20,7 @@
 		.inner.vertical {
 			.side.left { width: 100%; border-radius: 0px; }
 			.side.right { 
-				position: absolute; top: 0px; left: 0px; height: 112px; width: 100%; border-radius: 12px 12px 0px 0px;
+				position: absolute; top: 0px; left: 0px; height: 116px; width: 100%; border-radius: 0px;
 				border-bottom: 1px solid $colorLightGrey; 
 			}
 		}
@@ -30,7 +30,7 @@
 			.side.right { width: 236px; display: block; }
 		}
 
-		.inner.withImage.vertical { padding-top: 112px; }
+		.inner.withImage.vertical { padding-top: 116px; }
 		.inner.withImage.vertical {
 			.side.left { width: 100%; }
 			.side.right { width: 100%; }

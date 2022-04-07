@@ -56,6 +56,20 @@
 			.side.right { width: 236px; display: block; }
 		}
 
+		.linkCard.vertical { display: block; }
+		.linkCard.vertical {
+			.side.left { width: 100%; }
+			.side.right { 
+				position: absolute; top: 0px; left: 0px; height: 116px; width: 100%; border-radius: 12px 12px 0px 0px;
+				border: 1px solid $colorBorderDark; border-bottom: 0px;
+			}
+		}
+
+		.linkCard.withCover.vertical { padding-top: 116px; }
+		.linkCard.withCover.vertical {
+			.side.left { border-radius: 0px 0px 12px 12px }
+		}
+
 	}
 
 }
