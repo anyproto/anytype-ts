@@ -40,13 +40,13 @@
 				@include text-common; display: flex; flex-direction: row; gap: 0px 6px; align-items: center; line-height: 18px;
 			}
 			.cardName .name { @include clamp2; }
-			.cardDescription { @include text-small; line-height: 16px; @include clamp2; margin: 4px 0px; }
+			.cardDescription { @include text-small; line-height: 16px; @include clamp2; margin: 4px 0px 0px 0px; }
 			.cardDescription:empty { margin: 0px; }
         }
 
 		.linkCard.c48.withIcon {
 			.sides { min-height: 80px; }
-			.side.left { padding: 16px 16px 16px 78px; line-height: 48px; }
+			.side.left { padding: 16px 16px 16px 78px; line-height: 44px; }
 
 			.iconObject { position: absolute; left: 16px; top: 16px; background-color: $colorVeryLightGrey; border-radius: 10px; }
 		}
