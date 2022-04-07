@@ -29,26 +29,22 @@ const PopupExport = observer(class PopupExport extends React.Component<Props, {}
 
 		let options = null;
 		if (this.format == I.ExportFormat.Markdown) {
+			const items = [
+				{ id: 'zip', name: 'Zip archive' },
+				{ id: 'nested', name: 'Include linked objects' },
+				{ id: 'files', name: 'Include files' },
+			];
+
 			options = (
 				<React.Fragment>
-					<div className="row">
-						<div className="name">Zip archive</div>
-						<div className="value">
-							<Switch className="big" value={this.zip} onChange={(e: any, v: boolean) => { this.zip = v; }} />
+					{items.map((item: any, i: number) => (
+						<div key={i} className="row">
+							<div className="name">{item.name}</div>
+							<div className="value">
+								<Switch className="big" value={this[item.id]} onChange={(e: any, v: boolean) => { this[item.id] = v; }} />
+							</div>
 						</div>
-					</div>
-					<div className="row">
-						<div className="name">Include subpages</div>
-						<div className="value">
-							<Switch className="big" value={this.nested} onChange={(e: any, v: boolean) => { this.nested = v; }} />
-						</div>
-					</div>
-					<div className="row">
-						<div className="name">Include files</div>
-						<div className="value">
-							<Switch className="big" value={this.files} onChange={(e: any, v: boolean) => { this.files = v; }} />
-						</div>
-					</div>
+					))}
 				</React.Fragment>
 			);
 		};

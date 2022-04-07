@@ -36,7 +36,7 @@ class DataUtil {
 	};
 
 	textClass (v: I.TextStyle): string {
-		return String(I.TextStyle[v] || '').toLowerCase();
+		return String(I.TextStyle[v] || 'paragraph').toLowerCase();
 	};
 	
 	styleIcon (type: I.BlockType, v: number): string {
