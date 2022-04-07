@@ -50,6 +50,7 @@ class MenuItemVertical extends React.Component<Props, {}> {
 			};
 		} else 
 		if (icon) {
+			cn.push('withIcon');
 			iconElement = <Icon className={icon} inner={inner} />;
 		};
 
@@ -118,9 +119,13 @@ class MenuItemVertical extends React.Component<Props, {}> {
 
 	resize () {
 		const node = $(ReactDOM.findDOMNode(this));
-		const icon = node.find('.iconObject');
+		
+		if (node.hasClass('withIcon')) {
+			return;
+		};
 
-		icon.length ? node.addClass('withIcon') : node.removeClass('withIcon');
+		const icon = node.find('.iconObject');
+		icon.length ? node.addClass('withIconObject') : node.removeClass('withIconObject');
 	};
 
 };

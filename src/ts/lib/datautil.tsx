@@ -1161,7 +1161,7 @@ class DataUtil {
 		if (layout == I.ObjectLayout.Note) {
 			fields.withIcon = false;
 			fields.withCover = false;
-			fields.withDescription = false;
+			fields.description = I.LinkDescription.None;
 			fields.iconSize = I.LinkIconSize.Small;
 		};
 

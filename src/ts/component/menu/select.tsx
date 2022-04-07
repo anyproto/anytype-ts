@@ -10,6 +10,7 @@ const $ = require('jquery');
 const Constant = require('json/constant.json');
 
 const HEIGHT = 28;
+const HEIGHT_DESCRIPTION = 56;
 const LIMIT = 10;
 
 const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> {
@@ -96,7 +97,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 										height={height}
 										deferredMeasurmentCache={this.cache}
 										rowCount={items.length}
-										rowHeight={HEIGHT}
+										rowHeight={({ index }) => { return this.rowHeight(items[index]); }}
 										rowRenderer={rowRenderer}
 										onRowsRendered={onRowsRendered}
 										overscanRowCount={10}
@@ -238,19 +239,22 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 		const obj = $(`#${getId()}`);
 		const content = obj.find('.content');
 		const withFilter = !noFilter && (options.length > LIMIT);
+		const offset = (withFilter ? 44 : 0) + (items.length <= LIMIT ? 16 : 0);
 
-		let offset = withFilter ? 44 : 0;
-
-		if (items.length <= LIMIT) {
-			offset += 16;
+		let height = offset;
+		for (let i = 0; i < items.length; ++i) {
+			height += this.rowHeight(items[i]);
 		};
+		height = Math.max(44, Math.min(360, height));
 
-		const height = Math.max(44, Math.min(HEIGHT * LIMIT + offset, Math.max(items.length, 1) * HEIGHT + offset));
-
-		content.css({ height: height });
+		content.css({ height });
 		withFilter ? obj.addClass('withFilter') : obj.removeClass('withFilter');
 
 		position();
+	};
+
+	rowHeight (item: any) {
+		return item.withDescription ? HEIGHT_DESCRIPTION : HEIGHT;
 	};
 
 });

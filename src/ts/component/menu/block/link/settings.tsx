@@ -1,16 +1,18 @@
 import * as React from 'react';
-import { Icon, Button, MenuItemVertical } from 'ts/component';
+import { MenuItemVertical } from 'ts/component';
 import { I, C, DataUtil, Storage, keyboard } from 'ts/lib';
-import { blockStore, detailStore } from 'ts/store';
+import { blockStore, detailStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {};
 
 const $ = require('jquery');
+const Constant = require('json/constant.json');
 
 const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React.Component<Props, {}> {
 	
 	n: number = 0;
+	timeout: number = 0;
 
 	constructor (props: any) {
 		super(props);
@@ -52,6 +54,11 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 		this.props.setActive();
 	};
 
+	componentWillUnmount () {
+		this.unbind();
+		window.clearTimeout(this.timeout);
+	};
+
 	rebind () {
 		this.unbind();
 		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
@@ -66,32 +73,78 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 		if (!keyboard.isMouseDisabled) {
 			this.props.setActive(item, false);
 		};
+
+		if (!item.arrow) {
+			menuStore.close('select');
+			return;
+		};
+
+		const { getId, getSize } = this.props;
+		const fields = this.getFields();
+
+		const menuParam: any = {
+			element: `#${getId()} #item-${item.id}`,
+			offsetX: getSize().width,
+			vertical: I.MenuDirection.Center,
+			isSub: true,
+			data: {
+				value: fields[item.itemId],
+				options: [],
+				onSelect: (e: any, el: any) => {
+					this.setField(item.itemId, el.id);
+				},
+			},
+		};
+
+		let options: any[] = [];
+
+		switch (item.itemId) {
+			case 'iconSize':
+				options = this.getIcons();
+				break;
+
+			case 'style':
+				options = this.getStyles();
+				menuParam.width = 320;
+				break;
+
+			case 'cover': 
+				options = this.getCovers();
+				break;
+
+			case 'description':
+				options = this.getDescriptions();
+				menuParam.width = 320;
+				break;
+		};
+
+		menuParam.data = Object.assign(menuParam.data, { options });
+
+		menuStore.close('select', () => {
+			window.clearTimeout(this.timeout);
+			this.timeout = window.setTimeout(() => { menuStore.open('select', menuParam); }, Constant.delay.menu);
+		});
 	};
 
-    setField (id: string, v: any) {
-        const { param } = this.props;
+	getFields () {
+		const { param } = this.props;
         const { data } = param;
-        const { rootId, blockId, blockIds } = data;
+        const { rootId, blockId } = data;
         const block = blockStore.getLeaf(rootId, blockId);
-        const { content } = block;
-        const object = detailStore.get(rootId, content.targetBlockId);
-        const { layout } = object;
-        
-        let fields = block.fields || {};
-        fields[id] = v;
-        fields = DataUtil.checkLinkSettings(fields, layout);
+        const object = detailStore.get(rootId, block.content.targetBlockId);
 
-        Storage.set('linkSettings', fields);
-        C.BlockListSetFields(rootId, blockIds.map((it: string) => {
-            return { blockId: it, fields: fields };
-        }));
-    };
+        return DataUtil.checkLinkSettings(block.fields, object.layout);
+	};
 
 	getStyles () {
 		return [
-            { id: I.LinkCardStyle.Text, name: 'Text', icon: 'style-text' },
-            { id: I.LinkCardStyle.Card, name: 'Card', icon: 'style-card' },
-        ];
+            { id: I.LinkCardStyle.Text, name: 'Text', icon: 'style-text', description: 'An inline link matching other text' },
+            { id: I.LinkCardStyle.Card, name: 'Card', icon: 'style-card', description: 'Object with icon & featured relations' },
+        ].map((it: any) => {
+			it.withDescription = true;
+			it.icon = 'linkStyle' + it.id;
+			return it;
+		});
 	};
 
 	getIcons () {
@@ -101,12 +154,19 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 		];
 	};
 
+	getCovers () {
+		return [];
+	};
+
 	getDescriptions () {
 		return [
 			{ id: I.LinkDescription.None, name: 'None', description: 'Don’t show description' },
 			{ id: I.LinkDescription.Added, name: 'Only added', description: 'Show only added description' },
 			{ id: I.LinkDescription.Content, name: 'Added & content', description: 'If there is no description, show the contents of the object' },
-		];
+		].map((it: any) => {
+			it.withDescription = true;
+			return it;
+		});
 	};
 
 	switchField (param: any, fields: any) {
@@ -122,7 +182,7 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
         const { rootId, blockId } = data;
         const block = blockStore.getLeaf(rootId, blockId);
         const object = detailStore.get(rootId, block.content.targetBlockId);
-        const fields = DataUtil.checkLinkSettings(block.fields, object.layout);
+        const fields = this.getFields();
 
         const canIcon = ![ I.ObjectLayout.Task, I.ObjectLayout.Note ].includes(object.layout);
         const canCover = ![ I.ObjectLayout.Note ].includes(object.layout) && (fields.style == I.LinkCardStyle.Card);
@@ -142,7 +202,7 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 
         if (canIcon) {
 			icons = this.getIcons();
-			icon = icons.find(it => it.id == fields.icon) || icons[0];
+			icon = icons.find(it => it.id == fields.iconSize) || icons[0];
         };
 
 		if (canDescription) {
@@ -154,7 +214,7 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 			{ 
 				children: [
 					{ id: 'style', name: 'Preview layout', caption: style.name, withCaption: true, arrow: true },
-					canIcon ? { id: 'icon', name: 'Icon', caption: icon.name, withCaption: true, arrow: true }: null,
+					canIcon ? { id: 'iconSize', name: 'Icon', caption: icon.name, withCaption: true, arrow: true }: null,
 					canCover ? { id: 'cover', name: 'Cover', caption: cover.name, withCaption: true, arrow: true }: null,
 				],
 			},
@@ -176,6 +236,7 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 			s.children = s.children.filter(it => it);
 			return s;
 		});
+		sections = DataUtil.menuSectionsMap(sections);
 
 		return sections;
 	};
@@ -190,6 +251,25 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 		
 		return items;
 	};
+
+	setField (id: string, v: any) {
+        const { param } = this.props;
+        const { data } = param;
+        const { rootId, blockId, blockIds } = data;
+        const block = blockStore.getLeaf(rootId, blockId);
+        const { content } = block;
+        const object = detailStore.get(rootId, content.targetBlockId);
+        const { layout } = object;
+        
+        let fields = block.fields || {};
+        fields[id] = v;
+        fields = DataUtil.checkLinkSettings(fields, layout);
+
+        Storage.set('linkSettings', fields);
+        C.BlockListSetFields(rootId, blockIds.map((it: string) => {
+            return { blockId: it, fields: fields };
+        }));
+    };
 
 });
 

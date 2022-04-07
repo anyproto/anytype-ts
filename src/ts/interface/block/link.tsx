@@ -3,6 +3,7 @@ import { I } from 'ts/lib';
 export enum LinkCardStyle {
 	Text		 = 0,
 	Card		 = 1,
+	Inline		 = 2,
 };
 
 export enum LinkIconSize {
