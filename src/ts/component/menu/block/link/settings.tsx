@@ -182,13 +182,6 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 		});
 	};
 
-	switchField (param: any, fields: any) {
-		return { 
-			id: param.id, name: param.name, icon: param.icon, withSwitch: true, switchValue: fields[param.id], 
-			onSwitch: () => {}
-		};
-	};
-
 	getSections () {
 		const { param } = this.props;
         const { data } = param;
@@ -234,13 +227,13 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 			{
 				name: 'Featured relations',
 				children: [
-					this.switchField({ id: 'withName', name: 'Name', icon: 'relation ' + DataUtil.relationClass(I.RelationType.ShortText) }, fields),
+					{ id: 'withName', name: 'Name', icon: 'relation ' + DataUtil.relationClass(I.RelationType.ShortText), withSwitch: true, switchValue: fields.withName },
 					canDescription ? { 
 						id: 'description', name: 'Description', icon: 'relation ' + DataUtil.relationClass(I.RelationType.LongText), 
 						caption: description.name, withCaption: true, arrow: true
 					} : null,
-					this.switchField({ id: 'withTags', name: 'Tags', icon: 'relation ' + DataUtil.relationClass(I.RelationType.Tag) }, fields),
-					this.switchField({ id: 'withType', name: 'Object type', icon: 'relation ' + DataUtil.relationClass(I.RelationType.Object) }, fields),
+					{ id: 'withTags', name: 'Tags', icon: 'relation ' + DataUtil.relationClass(I.RelationType.Tag), withSwitch: true, switchValue: fields.withTags },
+					{ id: 'withType', name: 'Object type', icon: 'relation ' + DataUtil.relationClass(I.RelationType.Object), withSwitch: true, switchValue: fields.withType },
 				],
 			}
 		];
@@ -250,6 +243,16 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 			return s;
 		});
 		sections = DataUtil.menuSectionsMap(sections);
+
+		sections = sections.map((s: any) => {
+			s.children = s.children.map((it: any) => {
+				if (it.withSwitch) {
+					it.onSwitch = (e: any, v: boolean) => { this.setField(it.itemId, !fields[it.itemId]); };
+				};
+				return it;
+			});
+			return s;
+		});
 
 		return sections;
 	};
@@ -261,7 +264,7 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 		for (let section of sections) {
 			items = items.concat(section.children);
 		};
-		
+
 		return items;
 	};
 

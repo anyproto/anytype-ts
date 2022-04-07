@@ -78,7 +78,11 @@ class MenuItemVertical extends React.Component<Props, {}> {
 						<Switch 
 							value={switchValue} 
 							readonly={readonly}
-							onChange={(e: any, v: boolean) => { onSwitch(e, v); }} 
+							onChange={(e: any, v: boolean) => { 
+								if (onSwitch) {
+									onSwitch(e, v); 
+								};
+							}} 
 						/>
 					</React.Fragment>
 				);
