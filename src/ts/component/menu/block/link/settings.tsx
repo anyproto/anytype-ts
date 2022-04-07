@@ -19,18 +19,17 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
         const { data } = param;
         const { rootId, blockId } = data;
         const block = blockStore.getLeaf(rootId, blockId);
-        const { content } = block;
-        const object = detailStore.get(rootId, content.targetBlockId);
-        const { layout } = object;
-        const fields = DataUtil.checkLinkSettings(block.fields, layout);
-        const canIcon = ![ I.ObjectLayout.Task, I.ObjectLayout.Note ].includes(layout);
-        const canCover = ![ I.ObjectLayout.Note ].includes(layout) && (fields.style == I.LinkCardStyle.Card);
-        const canDescription = ![ I.ObjectLayout.Note ].includes(layout);
+        const object = detailStore.get(rootId, block.content.targetBlockId);
+        const fields = DataUtil.checkLinkSettings(block.fields, object.layout);
+        const canIcon = ![ I.ObjectLayout.Task, I.ObjectLayout.Note ].includes(object.layout);
+        const canCover = ![ I.ObjectLayout.Note ].includes(object.layout) && (fields.style == I.LinkCardStyle.Card);
+        const canDescription = ![ I.ObjectLayout.Note ].includes(object.layout);
 
         const styles: any[] = [
             { id: I.LinkCardStyle.Text, name: 'Text', icon: 'style-text' },
             { id: I.LinkCardStyle.Card, name: 'Card', icon: 'style-card' },
         ];
+		const style = styles.find(it => it.id == fields.style);
 
         let buttons: any[] = [
             { id: I.LinkIconSize.Small, name: 'S' },
@@ -59,6 +58,17 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 
         return (
             <div>
+				<div className="section">
+					<MenuItemVertical 
+						id="style"
+						name="Preview layout"
+						caption={style.name}
+						withCaption={true}
+						arrow={true}
+					/>
+				</div>
+
+
                 <div className="section card">
                     <div className="name">Choose layout preview</div>
                     <div className="items">
