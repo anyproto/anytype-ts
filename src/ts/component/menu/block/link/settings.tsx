@@ -17,6 +17,7 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 	constructor (props: any) {
 		super(props);
 
+		this.rebind = this.rebind.bind(this);
 	};
 
 	render () {
@@ -30,6 +31,7 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 						<MenuItemVertical 
 							key={i}
 							{...action}
+							onClick={(e: any) => { this.onClick(e, action); }}
 							onMouseEnter={(e: any) => { this.onOver(e, action); }} 
 						/>
 					))}
@@ -55,7 +57,6 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 	};
 
 	componentWillUnmount () {
-		this.unbind();
 		window.clearTimeout(this.timeout);
 	};
 
@@ -67,6 +68,17 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 	
 	unbind () {
 		$(window).unbind('keydown.menu');
+	};
+
+	onClick (e: any, item: any) {
+		const fields = this.getFields();
+
+		if (item.withSwitch) {
+			this.setField(item.itemId, !fields[item.itemId]);
+		} else 
+		if (item.arrow) {
+			this.onOver(e, item);
+		};
 	};
 
 	onOver (e: any, item: any) {
@@ -88,6 +100,7 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 			vertical: I.MenuDirection.Center,
 			isSub: true,
 			data: {
+				rebind: this.rebind,
 				value: fields[item.itemId],
 				options: [],
 				onSelect: (e: any, el: any) => {
@@ -172,7 +185,7 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 	switchField (param: any, fields: any) {
 		return { 
 			id: param.id, name: param.name, icon: param.icon, withSwitch: true, switchValue: fields[param.id], 
-			onSwitch: () => {}, onClick: (e: any) => { this.setField(param.id, !fields[param.id]); }
+			onSwitch: () => {}
 		};
 	};
 
