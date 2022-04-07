@@ -221,7 +221,7 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 				children: [
 					{ id: 'style', name: 'Preview layout', caption: style.name, withCaption: true, arrow: true },
 					canIcon ? { id: 'iconSize', name: 'Icon', caption: icon.name, withCaption: true, arrow: true }: null,
-					canCover ? { id: 'cover', name: 'Cover', caption: cover.name, withCaption: true, arrow: true }: null,
+					canCover ? { id: 'withCover', name: 'Cover', withSwitch: true, switchValue: fields.withCover} : null,
 				],
 			},
 			{
