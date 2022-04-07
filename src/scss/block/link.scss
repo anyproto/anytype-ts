@@ -35,7 +35,7 @@
 			.side.left { width: 100%; padding: 21px 16px; border: 1px solid $colorBorderDark; border-radius: 12px; }
 			.side.right { display: none; border-radius: 0px 12px 12px 0px; overflow: hidden; }
 
-			.cover { position: relative; min-height: 116px; }
+			.cover { position: relative; min-height: 116px; background-color: unset; }
 			.cardName { 
 				@include text-common; display: flex; flex-direction: row; gap: 0px 6px; align-items: center; line-height: 18px;
 			}
