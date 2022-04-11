@@ -11,7 +11,7 @@ const PopupExport = observer(class PopupExport extends React.Component<Props, {}
 	format: I.ExportFormat = I.ExportFormat.Markdown;
 	zip: boolean = false;
 	nested: boolean = false;
-	files: boolean = false;
+	files: boolean = true;
 
 	constructor(props: any) {
 		super(props);
