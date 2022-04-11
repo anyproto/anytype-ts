@@ -77,6 +77,7 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 
 		const { style, checked } = content;
 		const index = Number(this.props.index) || 0;
+		const root = blockStore.getLeaf(rootId, rootId);
 
 		let canSelect = true;
 		let canDrop = !readonly;
@@ -132,15 +133,11 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 				break;
 				
 			case I.BlockType.File:
-				// Processing File style Link.
-				// Making Embed as a default one
-
 				if (isDragging || (style == I.FileStyle.Link)) {
 					blockComponent = <BlockFile ref={setRef} {...this.props} />;
 					break;
 				};
 
-				// Process Embed File
 				switch (content.type) {
 					default: 
 						blockComponent = <BlockFile ref={setRef} {...this.props} />;
@@ -170,6 +167,7 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 				break;
 			
 			case I.BlockType.Dataview:
+				canSelect = !root.isObjectSet();
 				blockComponent = <BlockDataview ref={setRef} {...this.props} />;
 				break;
 				
@@ -243,9 +241,8 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 		
 		if (canSelect) {
 			object = (
-				<div id={'selectable-' + id} className="selectable" data-id={id}>
+				<div id={'selectable-' + id} className="selectable" data-id={id} data-type={I.SelectType.Block}>
 					{object}
-					<div className="selectionOver" />
 					<div className="menuOver" />
 				</div>
 			);

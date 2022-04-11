@@ -281,6 +281,9 @@ html.themeDark {
             .item .inner:hover::before { background: $colorHover; }
             .item.hover .inner::before { background: $colorHover; }
         }
+		.foot {
+			.item:hover { background-color: $colorHover; }
+		}
     }
 
     @import "./menu.scss";

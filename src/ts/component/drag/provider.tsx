@@ -4,7 +4,6 @@ import { DragLayer } from 'ts/component';
 import { I, C, focus, keyboard, Util, scrollOnMove, analytics } from 'ts/lib';
 import { blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
-import { throttle } from 'lodash';
 
 interface Props {
 	dataset?: any;
@@ -14,7 +13,6 @@ const $ = require('jquery');
 const Constant = require('json/constant.json');
 
 const OFFSET = 100;
-const THROTTLE = 20;
 
 const DragProvider = observer(class DragProvider extends React.Component<Props, {}> {
 
@@ -169,11 +167,21 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 	};
 
 	onDragOver (e: any) {
+		if (this.commonDropPrevented) {
+			return;
+		};
+
 		e.preventDefault();
    		e.stopPropagation();
 
+		const isPopup = keyboard.isPopup();
+		const dt = (e.dataTransfer || e.originalEvent.dataTransfer);
+		const isFileDrag = dt.types.indexOf('Files') >= 0;
+		const top = Util.getScrollContainer(isPopup).scrollTop();
+		const diff = isPopup ? Math.abs(top - this.top) * (top > this.top ? 1 : -1) : 0;
+
 		this.initData();
-		this.onDragMove(e);
+		this.checkNodes(e.pageX, e.pageY + diff, isFileDrag);
 	};
 
 	onDragStart (e: any, type: I.DragType, ids: string[], component: any) {
@@ -203,8 +211,8 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 		keyboard.setDrag(true);
 		Util.previewHide(false);
 
+		win.on('drag.drag', (e: any) => { this.onDragMove(e); });
 		win.on('dragend.drag', (e: any) => { this.onDragEnd(e); });
-		win.on('drag.drag', throttle((e: any) => { this.onDragMove(e); }, THROTTLE));
 
 		$('.colResize.active').removeClass('active');
 		scrollOnMove.onMouseDown(e, isPopup);
@@ -223,8 +231,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 		const dt = (e.dataTransfer || e.originalEvent.dataTransfer);
 		const isFileDrag = dt.types.indexOf('Files') >= 0;
 		const top = Util.getScrollContainer(isPopup).scrollTop();
-		const d = top > this.top ? 1 : -1;
-		const diff = isPopup ? Math.abs(top - this.top) * d : 0;
+		const diff = isPopup ? Math.abs(top - this.top) * (top > this.top ? 1 : -1) : 0;
 
 		this.checkNodes(e.pageX, e.pageY + diff, isFileDrag);
 		scrollOnMove.onMouseMove(e.clientX, e.clientY);

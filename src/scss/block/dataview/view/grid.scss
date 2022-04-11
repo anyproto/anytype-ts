@@ -79,8 +79,7 @@
 				}
 			}
 			.cell.isEditing.c-select { 
-				.cellContent { padding-bottom: 8px; height: auto !important; }
-				.tagItem { margin-bottom: 6px; }
+				.cellContent { padding-bottom: 6px; height: auto !important; }
 				.wrap { overflow: visible; white-space: normal; }
 			}
 			.cell.isEditing.c-object { 
@@ -97,10 +96,6 @@
 			}
 			.cell.isEditing.c-checkbox { 
 				.cellContent { min-width: unset; }
-			}
-
-			.cellContent.c-select {
-				.tagItem { margin-bottom: 0px; }
 			}
 		}
     }

@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Icon, Button, Title, Label, Cover, Textarea, Loader, IconObject, Error, Pin, Select, Switch, Checkbox } from 'ts/component';
 import { I, C, Storage, translate, Util, DataUtil, analytics } from 'ts/lib';
-import { authStore, blockStore, commonStore, popupStore } from 'ts/store';
+import { authStore, blockStore, commonStore, popupStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Popup, RouteComponentProps<any> {};
@@ -58,6 +58,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 		this.onDelete = this.onDelete.bind(this);
 		this.onDeleteCancel = this.onDeleteCancel.bind(this);
 		this.onCheck = this.onCheck.bind(this);
+		this.onType = this.onType.bind(this);
 	};
 
 	render () {
@@ -231,8 +232,8 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 				break;
 
 			case 'personal': 
-
 				const types = DataUtil.getObjectTypesForNewObject(false);
+				const ot = types.find(it => it.id == type);
 
 				content = (
 					<div>
@@ -245,7 +246,12 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 									<Label text="Default Object type" />
 								</div>
 								<div className="side right">
-									<Select id="defaultType" options={types} value={type} onChange={(id: string) => { this.onTypeChange(id); }}/>
+									<div id="defaultType" className="select" onClick={this.onType}>
+										<div className="item">
+											<div className="name">{ot?.name || DataUtil.defaultName('page')}</div>
+										</div>
+										<Icon className="arrow light" />
+									</div>
 								</div>
 							</div>
 
@@ -445,7 +451,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 											<Label text="PIN code check time-out" />
 										</div>
 										<div className="side right">
-											<Select id="pinTime" options={times} value={String(pinTime || '')} onChange={(id: string) => { commonStore.pinTimeSet(id); }}/>
+											<Select id="pinTime" arrowClassName="light" options={times} value={String(pinTime || '')} onChange={(id: string) => { commonStore.pinTimeSet(id); }}/>
 										</div>
 									</div>
 
@@ -685,12 +691,12 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 
 	onSelectPin (pin: string) {
 		Storage.set('pin', sha1(pin));
-		this.onPage('index');
+		this.onPage('pinIndex');
 	};
 
 	onTurnOffPin () {
 		Storage.delete('pin');
-		this.onPage('index');
+		this.onPage('pinIndex');
 	};
 
 	onClose () {
@@ -877,6 +883,36 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 				},
 				onCancel: () => {
 				}, 
+			}
+		});
+	};
+
+	onType (e: any) {
+		const { getId } = this.props;
+		const types = DataUtil.getObjectTypesForNewObject(false).map(it => it.id);
+
+		menuStore.open('searchObject', {
+			element: `#${getId()} #defaultType`,
+			className: 'big single',
+			data: {
+				isBig: true,
+				placeholder: 'Change object type',
+				placeholderFocus: 'Change object type',
+				value: commonStore.type,
+				filters: [
+					{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: types }
+				],
+				onSelect: (item: any) => {
+					this.onTypeChange(item.id);
+				},
+				dataSort: (c1: any, c2: any) => {
+					let i1 = types.indexOf(c1.id);
+					let i2 = types.indexOf(c2.id);
+
+					if (i1 > i2) return 1;
+					if (i1 < i2) return -1;
+					return 0;
+				}
 			}
 		});
 	};

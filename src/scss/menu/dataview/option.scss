@@ -17,7 +17,7 @@
 			.buttons { display: none; position: absolute; right: 8px; top: 4px; }
 		}
 		
-		.item:hover, .item.hover {
+		.item.hover {
 			.clickable { margin-right: 6px; }
 			.buttons { display: block; }
 		}

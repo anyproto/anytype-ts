@@ -345,7 +345,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		};
 
 		const object = detailStore.get(rootId, rootId, [ Constant.relationKey.setOf ]);
-		const types = DataUtil.getObjectTypesForNewObject(false).map((it: any) => { return it.id; });
+		const types = DataUtil.getObjectTypesForNewObject(false).map(it => it.id);
 
 		let menuId = '';
 		let menuParam = {
@@ -403,10 +403,14 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				});
 		};
 
-		if (menuId) {
-			menuStore.closeAll(Constant.menuIds.featuredType, () => {
-				menuStore.open(menuId, menuParam);
-			});
+		if (menuId && !menuStore.isOpen(menuId)) {
+			if (menuStore.isOpen(menuId)) {
+				menuStore.open(menuId, param);
+			} else {
+				menuStore.closeAll(Constant.menuIds.featuredType, () => {
+					menuStore.open(menuId, menuParam);
+				});
+			};
 		};
 	};
 

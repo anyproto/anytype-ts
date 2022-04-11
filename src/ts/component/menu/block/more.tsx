@@ -133,7 +133,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		let share = { id: 'pageShare', icon: 'share', name: 'Share' };
 		let pageRemove = { id: 'pageRemove', icon: 'remove', name: 'Delete' };
 		let pageExport = { id: 'pageExport', icon: 'export', name: 'Export' };
-		let pageCopy = { id: 'pageCopy', icon: 'copy', name: 'Duplicate' };
+		let pageCopy = { id: 'pageCopy', icon: 'copy', name: 'Duplicate object' };
 		let blockRemove = { id: 'blockRemove', icon: 'remove', name: 'Delete' };
 
 		if (object.isFavorite) {
@@ -177,12 +177,10 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const allowedHistory = block.canHaveHistory() && !object.templateIsBundled;
 		const allowedTemplate = (object.type != Constant.typeId.note) && (object.id != profile);
 		const allowedFav = !object.isArchived;
-		const allowedExport = config.experimental;
 		const allowedLock = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 
 		if (!allowedArchive)	 archive = null;
 		if (!allowedDelete)		 pageRemove = null;
-		if (!allowedExport)		 pageExport = null;
 		if (!allowedLock)		 pageLock = null;
 		if (!allowedShare)		 share = null;
 		if (!allowedHighlight)	 highlight = null;

@@ -5,6 +5,7 @@ import {
 	AccountStatusType,
 	Platform, 
 	DragType, 
+	SelectType,
 	CoverType, 
 	CrumbsType, 
 	NavigationType, 
@@ -62,6 +63,7 @@ export {
 
 	Platform,
 	DragType,
+	SelectType,
 	CoverType,
 	CrumbsType,
 	NavigationType,

@@ -142,7 +142,7 @@ class ScrollOnMove {
 		let isInRightEdge = x > edgeRight;
 		let isInTopEdge = y < edgeTop;
 		let isInBottomEdge = y > edgeBottom;
-	
+
 		if (!(isInLeftEdge || isInRightEdge || isInTopEdge || isInBottomEdge)) {
 			this.clear();
 			return;

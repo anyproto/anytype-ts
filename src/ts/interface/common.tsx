@@ -33,6 +33,12 @@ export enum DragType {
 	Relation = 'relation',
 };
 
+export enum SelectType {
+	None	 = '',
+	Block	 = 'block',
+	Record	 = 'record',
+};
+
 export enum CoverType {
 	None	 = 0,
 	Upload	 = 1,

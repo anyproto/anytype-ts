@@ -8,6 +8,7 @@
         "jsx": "react",
         "experimentalDecorators": false,
         "allowSyntheticDefaultImports": true,
-        "allowJs": true
+        "allowJs": true,
+        "baseUrl": "./src"
     }
 }

@@ -8,7 +8,7 @@ import { throttle } from 'lodash';
 
 interface Props {
 	className?: string;
-}
+};
 
 const $ = require('jquery');
 
