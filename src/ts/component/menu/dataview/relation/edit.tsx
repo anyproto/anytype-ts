@@ -15,7 +15,7 @@ const $ = require('jquery');
 
 const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component<Props, {}> {
 
-	format: I.RelationType = I.RelationType.Object;
+	format: I.RelationType = null;
 	objectTypes: string[] = [];
 	ref: any = null;
 	
