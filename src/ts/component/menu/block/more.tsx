@@ -133,7 +133,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		let share = { id: 'pageShare', icon: 'share', name: 'Share' };
 		let pageRemove = { id: 'pageRemove', icon: 'remove', name: 'Delete' };
 		let pageExport = { id: 'pageExport', icon: 'export', name: 'Export' };
-		let pageCopy = { id: 'pageCopy', icon: 'copy', name: 'Duplicate' };
+		let pageCopy = { id: 'pageCopy', icon: 'copy', name: 'Duplicate object' };
 		let blockRemove = { id: 'blockRemove', icon: 'remove', name: 'Delete' };
 
 		if (object.isFavorite) {

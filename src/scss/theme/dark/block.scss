@@ -24,6 +24,9 @@
 
     .block {
         .icon.dnd { border-color: rgba(217, 212, 184, 0.14); }
+
+		.emptyToggle { color: $colorSecondary; }
+		.emptyToggle:hover { color: $colorPrimary; }
     }
     .block:hover > .wrapMenu > .icon.dnd { background-image: url('#{$themePath}/icon/block/menu1.svg'); }
 
@@ -43,6 +46,12 @@
 
     .block.blockFile {
         .loaderWrapper { border: 0px; }
+    }
+
+	/* BlockRelation */
+
+	.block.blockRelation {
+        .cell.canEdit:hover { background: $colorHover; }
     }
 
     /* BlockMedia */

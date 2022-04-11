@@ -1852,11 +1852,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			return container.width() - 192;
 		};
 
-		let sw = 0;
-		if (!isPopup && fixed && sb.length) {
-			sw = sb.width();
-		};
-
 		w = Number(w) || 0;
 		w = (mw - Constant.size.editor) * w;
 

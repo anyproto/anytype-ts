@@ -1,5 +1,5 @@
 const electron = require('electron');
-const { app, BrowserWindow, ipcMain, shell, Menu, session, Tray, nativeImage, nativeTheme } = require('electron');
+const { app, BrowserWindow, ipcMain, shell, Menu, session, Tray, nativeImage, nativeTheme, dialog } = require('electron');
 const { is, fixPathForAsarUnpack } = require('electron-util');
 const { autoUpdater } = require('electron-updater');
 const { download } = require('electron-dl');
@@ -46,7 +46,6 @@ let deeplinkingUrl = '';
 let isUpdating = false;
 let userPath = app.getPath('userData');
 let tmpPath = path.join(userPath, 'tmp');
-let exportPath = path.join(userPath, 'export');
 let waitLibraryPromise;
 let useGRPC = !process.env.ANYTYPE_USE_ADDON && (env.USE_GRPC || process.env.ANYTYPE_USE_GRPC || is.windows || is.development);
 let defaultChannel = version.match('alpha') ? 'alpha' : 'latest';
@@ -93,7 +92,6 @@ if (process.env.DATA_PATH) {
 };
 
 try { fs.mkdirSync(tmpPath); } catch (e) {};
-try { fs.mkdirSync(exportPath); } catch (e) {};
 
 if (useGRPC) {
 	server = require('./electron/server.js');
@@ -379,7 +377,17 @@ function createWindow () {
 				break;
 
 			case 'saveAsHTML':
-				savePage(param.name);
+				dialog.showOpenDialog({ 
+					properties: [ 'openDirectory' ],
+				}).then((result) => {
+					const files = result.filePaths;
+					if ((files == undefined) || !files.length) {
+						send('command', 'saveAsHTMLSuccess');
+						return;
+					};
+
+					savePage(files[0], param.name);
+				});
 				break;
 		};
 	});
@@ -880,8 +888,8 @@ function exit (relaunch) {
 	};
 };
 
-function savePage (name) {
-	name = String(name || 'untitled').replace(/[^a-z0-9]/gi, '-').toLowerCase();
+function savePage (exportPath, name) {
+	name = String(name || 'untitled').replace(/[^\w -\._]/gi, '-').toLowerCase();
 
 	let fn = `${name}_files`;
 	let filesPath = path.join(exportPath, fn);

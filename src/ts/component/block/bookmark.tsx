@@ -36,7 +36,7 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<Props
 			};
 			
 			element = (
-				<div className={cn.join(' ')} onClick={this.onClick}>
+				<div className={cn.join(' ')} data-href={url} onClick={this.onClick}>
 					<div className="side left">
 						{title ? <div className="name">{title}</div> : ''}
 						{description ? <div className="descr">{description}</div> : ''}
