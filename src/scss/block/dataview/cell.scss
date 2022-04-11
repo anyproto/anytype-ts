@@ -103,9 +103,8 @@
 }
 
 .cell.isEditing.c-select, .cell.isEditing.c-object {
-	.cellContent { 
-		overflow-x: hidden !important; overflow-y: overlay !important; max-height: 200px; 
-	}
+	.cellContent { overflow-x: hidden !important; overflow-y: overlay !important; max-height: 200px; }
+	.itemWrap { display: inline-block; }
 
 	.placeholder { position: absolute; left: 0px; top: 0px; height: 100%; }
 	#entry { -webkit-user-modify: read-write-plaintext-only; color: $colorBlack; }
@@ -113,10 +112,7 @@
 }
 
 .cell.isEditing.c-select {
-	.itemWrap { 
-		height: 18px; line-height: 18px; margin: 0px 8px 8px 0px; cursor: grab; position: relative; 
-		display: inline-block; vertical-align: top; max-width: 100%;
-	}
+	.itemWrap { height: 18px; line-height: 18px; margin: 0px 8px 8px 0px; cursor: grab; position: relative; vertical-align: top; max-width: 100%; }
 	.itemWrap:last-child { margin-right: 0px !important; }
 	.itemWrap {
 		.tagItem { margin: 0px !important; }

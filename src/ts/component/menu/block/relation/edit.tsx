@@ -13,7 +13,7 @@ const $ = require('jquery');
 
 const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React.Component<Props, {}> {
 
-	format: I.RelationType = I.RelationType.Object;
+	format: I.RelationType = null;
 	objectTypes: string[] = [];
 	ref: any = null;
 	
@@ -130,10 +130,10 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 					<div className="name">Relation type</div>
 					<MenuItemVertical 
 						id="relation-type" 
-						icon={'relation ' + DataUtil.relationClass(this.format)} 
-						readonly={isReadonly}
-						name={translate('relationName' + this.format)} 
+						icon={this.format === null ? undefined : 'relation ' + DataUtil.relationClass(this.format)} 
+						name={this.format === null ? 'Select relation type' : translate('relationName' + this.format)} 
 						onMouseEnter={this.onRelationType} 
+						readonly={isReadonly}
 						arrow={!relation}
 					/>
 				</div>

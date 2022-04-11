@@ -192,13 +192,14 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 		});
 		
 		keyboard.shortcut('backspace', e, (pressed: string) => {
+			e.stopPropagation();
+
 			const range = getRange(node.find('#entry').get(0));
 			if (range.start || range.end) {
 				return;
 			};
 
 			e.preventDefault();
-			e.stopPropagation();
 			
 			const value = this.getValue();
 			value.existing.pop();
