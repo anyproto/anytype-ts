@@ -171,6 +171,8 @@
 
     .block.blockLink {
         .loading, .deleted { color: $colorSecondary; }
+
+		.side { border-color: $colorLinePrimary !important; }
     }
 
     .block.blockLink:hover {

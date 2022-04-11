@@ -42,6 +42,20 @@
 			.cardName .name { @include clamp2; }
 			.cardDescription { @include text-small; line-height: 16px; @include clamp2; margin: 4px 0px 0px 0px; }
 			.cardDescription:empty { margin: 0px; }
+
+			.cardFeatured { @include text-small; line-height: 16px; margin: 4px 0px 0px 0px; }
+			.cardFeatured:empty { margin: 0px; }
+
+			.cardFeatured {
+				.item { position: relative; display: inline-block; vertical-align: top; margin: 0px 10px 0px 0px; }
+				.item::after { 
+					content: ""; display: block; position: absolute; right: -6px; top: 50%; width: 2px; height: 2px; background: $colorDarkGrey; 
+					margin: -1px 0px 0px 0px;
+				}
+
+				.item:last-child { margin: 0px; }
+				.item:last-child::after { display: none; }
+			}
         }
 
 		.linkCard.c48.withIcon {

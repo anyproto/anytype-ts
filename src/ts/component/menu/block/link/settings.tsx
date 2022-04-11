@@ -232,7 +232,7 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 						id: 'description', name: 'Description', icon: 'relation ' + DataUtil.relationClass(I.RelationType.LongText), 
 						caption: description.name, withCaption: true, arrow: true
 					} : null,
-					{ id: 'withTags', name: 'Tags', icon: 'relation ' + DataUtil.relationClass(I.RelationType.Tag), withSwitch: true, switchValue: fields.withTags },
+					//{ id: 'withTags', name: 'Tags', icon: 'relation ' + DataUtil.relationClass(I.RelationType.Tag), withSwitch: true, switchValue: fields.withTags },
 					{ id: 'withType', name: 'Object type', icon: 'relation ' + DataUtil.relationClass(I.RelationType.Object), withSwitch: true, switchValue: fields.withType },
 				],
 			}

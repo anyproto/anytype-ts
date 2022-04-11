@@ -1,13 +1,16 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { IconObject, Cover, ObjectName, ObjectDescription } from 'ts/component';
-import { I, M, DataUtil, translate } from 'ts/lib';
+import { IconObject, Cover, ObjectName } from 'ts/component';
+import { dbStore } from 'ts/store';
+import { I, DataUtil, translate, Relation } from 'ts/lib';
 import { observer } from 'mobx-react';
 
 interface Props extends I.BlockComponent, RouteComponentProps<any> {
     withName?: boolean;
     withIcon?: boolean;
     withCover?: boolean;
+	withTags?: boolean;
+	withType?: boolean;
     description?: number;
     iconSize: number;
     object: any;
@@ -26,14 +29,14 @@ Size[I.LinkIconSize.Medium] = 48;
 const LinkCard = observer(class LinkCard extends React.Component<Props, {}> {
 
 	render () {
-        const { rootId, block, withName, withIcon, description, iconSize, object, className, canEdit, onClick, onSelect, onUpload, onCheckbox } = this.props;
+        const { rootId, block, withName, withIcon, withType, withTags, description, iconSize, object, className, canEdit, onClick, onSelect, onUpload, onCheckbox } = this.props;
         const { id, layout, coverType, coverId, coverX, coverY, coverScale, snippet } = object;
-        const { bgColor } = block;
         const cn = [ 'linkCard', DataUtil.layoutClass(id, layout), 'c' + Size[iconSize] ];
         const cns = [ 'sides' ];
         const withCover = this.props.withCover && coverId && coverType;
 		const canDescription = ![ I.ObjectLayout.Note ].includes(object.layout);
-
+		const type = dbStore.getObjectType(object.type);
+		
         if (className) {
             cn.push(className);
         };
@@ -41,8 +44,8 @@ const LinkCard = observer(class LinkCard extends React.Component<Props, {}> {
             cn.push('withCover');
         };
 
-        if (bgColor) {
-			cns.push('bgColor bgColor-' + bgColor);
+        if (block.bgColor) {
+			cns.push('bgColor bgColor-' + block.bgColor);
 		};
         if (!withIcon && !withName && (description == I.LinkDescription.None)) {
             cns.push('hidden');
@@ -76,6 +79,20 @@ const LinkCard = observer(class LinkCard extends React.Component<Props, {}> {
 								{withName ? <ObjectName object={object} /> : ''}
 							</div>
 							{descr ? <div className="cardDescription">{descr}</div> : ''}
+
+							<div className="cardFeatured">
+								{withType && type ? (
+									<div className="item">
+										{type.name}
+									</div>
+								) : ''}
+
+								{/*withTags ? (
+									<div className="item">
+									</div>
+								) : ''*/}
+							</div>
+
 							<div className="archive">{translate('blockLinkArchived')}</div>
 						</div>
 					</div>
