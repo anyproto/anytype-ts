@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Icon, Button, Title, Label, Cover, Textarea, Loader, IconObject, Error, Pin, Select, Switch, Checkbox } from 'ts/component';
-import { I, C, Storage, translate, Util, DataUtil, analytics } from 'ts/lib';
+import { I, C, Storage, translate, Util, DataUtil, analytics, Action } from 'ts/lib';
 import { authStore, blockStore, commonStore, popupStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -809,43 +809,10 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 	};
 
 	onExport (format: I.ExportFormat) {
-		const { close } = this.props;
-		const renderer = Util.getRenderer();
-
-		let options: any = {};
-
 		switch (format) {
 			case I.ExportFormat.Markdown:
-				options = { 
-					properties: [ 'openDirectory' ],
-				};
-
-				dialog.showOpenDialog(options).then((result: any) => {
-					const files = result.filePaths;
-					if ((files == undefined) || !files.length) {
-						return;
-					};
-
-					close();
-
-					C.Export(files[0], [], format, true, true, true, (message: any) => {	
-						if (message.error.code) {
-							popupStore.open('confirm', {
-								data: {
-									title: 'Ooops!',
-									text: 'Something went wrong. <br/>If you think it’s our fault, please write us a feedback.',
-									textConfirm: 'Try one more time',
-									canCancel: false,
-									onConfirm: () => {
-									},
-								},
-							});
-							return;
-						};
-						renderer.send('pathOpen', files[0]);
-
-						analytics.event('ExportMarkdown', { middleTime: message.middleTime });
-					});
+				Action.export([], format, true, true, true, () => { this.props.close(); }, (message: any) => {
+					analytics.event('ExportMarkdown', { middleTime: message.middleTime });
 				});
 				break;
 		};

@@ -108,24 +108,32 @@ class Action {
 		focus.apply();
 	};
 
-	export (ids: string[], format: I.ExportFormat, zip: boolean, nested: boolean, files: boolean) {
+	export (ids: string[], format: I.ExportFormat, zip: boolean, nested: boolean, files: boolean, onSelectPath?: () => void, callBack?: (message: any) => void): void {
 		const renderer = Util.getRenderer();
 		const options = { 
 			properties: [ 'openDirectory' ],
 		};
 
 		dialog.showOpenDialog(options).then((result: any) => {
-			const files = result.filePaths;
-			if ((files == undefined) || !files.length) {
+			const paths = result.filePaths;
+			if ((paths == undefined) || !paths.length) {
 				return;
 			};
 
-			C.Export(files[0], ids, format, zip, nested, files, (message: any) => {
+			if (onSelectPath) {
+				onSelectPath();
+			};
+
+			C.Export(paths[0], ids, format, zip, nested, files, (message: any) => {
 				if (message.error.code) {
 					return;
 				};
 
-				renderer.send('pathOpen', files[0]);
+				renderer.send('pathOpen', paths[0]);
+
+				if (callBack) {
+					callBack(message);
+				};
 			});
 		});
 	};

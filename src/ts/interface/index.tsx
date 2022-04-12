@@ -1,8 +1,5 @@
+import { Account, AccountConfig, AccountStatus, AccountStatusType } from './account';
 import { 
-	Account, 
-	AccountConfig,
-	AccountStatus,
-	AccountStatusType,
 	Platform, 
 	DragType, 
 	SelectType,
