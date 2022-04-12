@@ -30,10 +30,11 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { filter, noFilter} = data;
+		const { filter, canAdd, noFilter } = data;
 		const relation = data.relation.get();
 		const value = data.value || [];
 		const items = this.getItems(true);
+		const placeholder = canAdd ? 'Filter or create options...' : 'Filter options...';
 
 		if (!this.cache) {
 			return null;
@@ -87,7 +88,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 				{!noFilter ? (
 					<Filter 
 						ref={(ref: any) => { this.refFilter = ref; }} 
-						placeholderFocus="Filter or create options..." 
+						placeholderFocus={placeholder} 
 						value={filter}
 						onChange={this.onFilterChange} 
 					/>
