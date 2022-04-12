@@ -10,6 +10,8 @@ interface State {
 	error: string;
 };
 
+const Errors = require('json/error.json');
+
 const MenuAccount = observer(class MenuAccount extends React.Component<Props, State> {
 	
 	state = {
@@ -64,8 +66,12 @@ const MenuAccount = observer(class MenuAccount extends React.Component<Props, St
 			
 			C.WalletRecover(path, phrase, (message: any) => {
 				C.AccountRecover((message: any) => {
-					Util.checkError(message.error.code);
-					this.setState({ error: message.error.description });
+					if (message.error.code) {
+						Util.checkError(message.error.code);
+
+						const error = Errors.AccountCreate[message.error.code] || message.error.description;
+						this.setState({ error });
+					};
 				});
 			});			
 		};

@@ -6,6 +6,18 @@
 		"903": "Network offline"
 	},
 
+	"AccountRecover": {
+		"101": "No accounts have been found",
+		"102": "You'll have to convert your wallet first",
+		"103": "Failed to create local repo",
+		"104": "Local repo exists but is corrupted",
+		"105": "Failed to run node",
+		"106": "Wallet recover has not been performed",
+		"107": "Failed to stop running node",
+		"108": "Another process is running",
+		"109": "Account has been deleted"
+	},
+
 	"Code": {
 		"ANYTYPE_NEEDS_UPGRADE": 10,
 		"ANOTHER_ANYTYPE_PROCESS_IS_RUNNING": 108,

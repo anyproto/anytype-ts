@@ -2,7 +2,7 @@ import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Frame, Cover, Title, Label, Error, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
 import { I, Util, C, Action, analytics } from 'ts/lib';
-import { commonStore, authStore } from 'ts/store';
+import { commonStore, authStore, popupStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { PieChart } from 'react-minimal-pie-chart';
 
@@ -96,6 +96,18 @@ const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<P
 	};
 
 	onReset (e: any) {
+		popupStore.open('confirm', {
+			data: {
+				title: `Are you sure you want to delete your local account data?`,
+				text: 'These objects will be deleted irrevocably. You can’t undo this action.',
+				textConfirm: 'Delete',
+				onConfirm: () => { 
+					C.AccountStop(false);
+					authStore.logout();
+					Util.route('/');
+				},
+			},
+		});
 	};
 
 	onExport (e: any) {
