@@ -70,7 +70,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 			};
 
 			opts = (
-				<div className="section noLine">
+				<div className="section">
 					<div className="name">Limit object Types</div>
 					<MenuItemVertical
 						id="object-type"
@@ -88,7 +88,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 
 		if (isDate && relation) {
 			opts = (
-				<div className="section noLine">
+				<div className="section">
 					<MenuItemVertical 
 						id="includeTime" 
 						icon="clock" 
