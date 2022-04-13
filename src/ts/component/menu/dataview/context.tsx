@@ -158,7 +158,7 @@ class MenuContext extends React.Component<Props, {}> {
 				C.ObjectListDuplicate(objectIds, (message: any) => {
 					if (!message.error.code && (length == 1)) {
 						const object = detailStore.get(subId, objectIds[0]);
-						DataUtil.objectOpenPopup({ id: message.id, layout: object.layout });
+						DataUtil.objectOpenPopup({ id: object.id, layout: object.layout });
 					};
 				});
 				break;
