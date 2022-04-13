@@ -116,6 +116,7 @@
 		"isArchived", 
 		"isReadonly", 
 		"isDeleted",
+		"isFavorite",
 		"done", 
 		"fileExt", 
 		"fileMimeType",
