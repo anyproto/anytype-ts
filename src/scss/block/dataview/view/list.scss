@@ -6,7 +6,7 @@
 		.viewItem.viewList {
 			.ReactVirtualized__Grid__innerScrollContainer { overflow-x: auto !important; overflow-y: hidden !important; }
 
-		    .row { height: 24px; width: 100%; display: block; white-space: nowrap; }
+		    .row { height: 24px; width: 100%; display: block; white-space: nowrap; position: relative; }
 			.row:last-child { margin: 0px; }
 
 			.cellContent { 

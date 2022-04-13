@@ -42,9 +42,8 @@ const ViewList = observer(class ViewList extends React.Component<Props, {}> {
 											rowCount={records.length}
 											rowHeight={HEIGHT}
 											rowRenderer={({ key, index, style }) => (
-												<div className="listItem" key={key} style={style}>
+												<div className="listItem" key={'grid-row-' + view.id + index} style={style}>
 													<Row 
-														key={'grid-row-' + view.id + index} 
 														{...this.props}
 														index={index}
 													/>

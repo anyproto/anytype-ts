@@ -184,11 +184,12 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 
 		if (e.shiftKey) {
 			let target = $(e.target.closest('.selectable'));
-			let data = target.data();
-			let ids = this.get(data.type);
+			let type = target.attr('data-type');
+			let id = target.attr('data-id');
+			let ids = this.get(type);
 
-			if (!ids.length && (data.id != focused)) {
-				this.set(data.type, ids.concat([ focused ]));
+			if (!ids.length && (id != focused)) {
+				this.set(type, ids.concat([ focused ]));
 			};
 		};
 		
@@ -244,13 +245,14 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 				this.checkNodes(e);
 				
 				let target = $(e.target.closest('.selectable'));
-				let data = target.data();
+				let id = target.attr('data-id');
+				let type = target.attr('data-type');
 				
-				if (target.length && e.shiftKey && ids.length && (data.type == I.SelectType.Block)) {
+				if (target.length && e.shiftKey && ids.length && (type == I.SelectType.Block)) {
 					const tree = blockStore.getTree(rootId, blockStore.getBlocks(rootId));
 					const list = blockStore.unwrapTree(tree);
 					const idxStart = list.findIndex((it: I.Block) => { return it.id == first; });
-					const idxEnd = list.findIndex((it: I.Block) => { return it.id == data.id; });
+					const idxEnd = list.findIndex((it: I.Block) => { return it.id == id; });
 					const start = idxStart < idxEnd ? idxStart : idxEnd;
 					const end = idxStart < idxEnd ? idxEnd : idxStart;
 
@@ -259,7 +261,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 						filter((it: I.Block) => { return it.isSelectable(); }).
 						map((it: I.Block) => { return it.id; });
 
-					this.set(data.type, ids.concat(slice));
+					this.set(type, ids.concat(slice));
 				};
 			};
 		};
@@ -324,7 +326,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	};
 	
 	cacheRect (obj: any) {
-		const id = String(obj.data('id') || '');
+		const id = String(obj.attr('data-id') || '');
 		if (!id) {
 			return null;
 		};
@@ -354,10 +356,9 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	};
 	
 	checkEachNode (e: any, rect: any, item: any) {
-		const data = item.data();
-		const id = String(data.id || '');
-		const type = String(data.type || '');
-		
+		const id = String(item.attr('data-id') || '');
+		const type = String(item.attr('data-type') || '');
+
 		if (!id || !type) {
 			return;
 		};
@@ -396,7 +397,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		if (!e.shiftKey && !e.altKey && !(e.ctrlKey || e.metaKey)) {
 			this.initIds();
 		};
-		
+
 		this.nodes.each((i: number, item: any) => { 
 			this.checkEachNode(e, Util.objectCopy(rect), $(item)); 
 		});
@@ -420,7 +421,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			const range = getRange(el); 
 			
 			if (!this.range) {
-				this.focused = selected.data('id');
+				this.focused = selected.attr('data-id');
 				this.range = range;
 			};
 

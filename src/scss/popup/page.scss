@@ -41,7 +41,7 @@
 			#bodyWrapper { padding: 0px; }
 			#bodyWrapper > #loader { position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; }
 			
-			.content { height: 100%; padding-top: 38px; }
+			.content { height: 100%; }
 			.content > .wrap { height: 100%; }
 
 			.block.blockCover { top: 38px; }
@@ -71,7 +71,6 @@ html.platformMac {
 				}
 			}
 			.pageMainEdit {
-				.content { padding-top: 52px; }
 				.block.blockCover { top: 52px; }
 			}	
 		}
