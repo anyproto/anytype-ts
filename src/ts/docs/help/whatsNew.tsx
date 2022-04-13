@@ -6,7 +6,7 @@ export default [
 	{ type: I.BlockType.Cover, param: { type: I.CoverType.Image, id: 'c4', y: -0.2, withScale: true } },
 	{ type: I.BlockType.IconPage, icon: '👋' },
 
-	{ style: I.TextStyle.Title, text: `07 April 2022 Desktop` },
+	{ style: I.TextStyle.Title, text: `13 April 2022 Desktop` },
 	{ style: I.TextStyle.Header1, text: `An (un)splash of colour` },
 	{ text: `Spring has sprung for the Anyteam, and it's only natural to want a fresh coat of paint on our objects. This update comes packed with fixes for many bugs first reported by our intrepid alpha testers. ` },
 	{ text: `We've also added some serious quality-of-life updates, allowing you to further customize your objects with the whole Unsplash library, faster ways to work with tags, and share individual objects as markdown files.` },
