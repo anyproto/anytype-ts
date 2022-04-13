@@ -30,6 +30,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		this.onCopy = this.onCopy.bind(this);
 		this.onRemove = this.onRemove.bind(this);
 		this.onChange = this.onChange.bind(this);
+		this.onClick = this.onClick.bind(this);
 	};
 
 	render () {
@@ -43,6 +44,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		const allowed = blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.Relation ]);
 		const canDelete = allowed && relation && Constant.systemRelationKeys.indexOf(relation.relationKey) < 0;
 		const isReadonly = this.isReadonly();
+		const sections = this.getSections();
 
 		let opts = null;
 		let typeProps: any = { name: 'Select object type' };
@@ -150,14 +152,19 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 						</div>
 					</div>
 				) : ''}
-				
-				{relation && (allowed || !isReadonly) ? (
-					<div className="section">
-						{/*<MenuItemVertical icon="expand" name="Open to edit" onClick={this.onOpen} onMouseEnter={this.menuClose} />*/}
-						{allowed ? <MenuItemVertical icon="copy" name="Duplicate" onClick={this.onCopy} onMouseEnter={this.menuClose} /> : ''}
-						{canDelete ? <MenuItemVertical icon="remove" name="Delete" onClick={this.onRemove} onMouseEnter={this.menuClose} /> : ''}
+
+				{sections.map((section: any, i: number) => (
+					<div key={i} className="section">
+						{section.children.map((action: any, c: number) => (
+							<MenuItemVertical 
+								key={c}
+								{...action}
+								onClick={(e: any) => { this.onClick(e, action); }} 
+								onMouseEnter={this.menuClose} 
+							/>
+						))}
 					</div>
-				) : ''}
+				))}
 			</form>
 		);
 	};
@@ -214,6 +221,59 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 				this.ref.focus();
 			};
 		}, 15);
+	};
+
+	getSections () {
+		const { param } = this.props;
+		const { data } = param;
+		const { rootId, blockId } = data;
+		const relation = this.getRelation();
+		const allowed = relation && blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.Relation ]);
+		const canDelete = allowed && Constant.systemRelationKeys.indexOf(relation.relationKey) < 0;
+
+		let sections: any[] = [
+			{
+				children: [
+					// { id: 'open', icon: 'expand', name: 'Open relation' },
+					allowed ? { id: 'copy', icon: 'copy', name: 'Duplicate' } : null,
+					canDelete ? { id: 'remove', icon: 'remove', name: 'Delete' } : null,
+				]
+			}
+		];
+
+		sections = sections.filter((s: any) => {
+			s.children = s.children.filter(c => c);
+			return s.children.length > 0;
+		});
+
+		return sections;
+	};
+
+	getItems () {
+		const sections = this.getSections();
+
+		let items: any[] = [];
+		for (let section of sections) {
+			items = items.concat(section.children);
+		};
+
+		return items;
+	};
+
+	onClick (e: any, item: any) {
+		switch (item.id) {
+			case 'open':
+				this.onOpen(e);
+				break;
+
+			case 'copy':
+				this.onCopy(e);
+				break;
+
+			case 'remove':
+				this.onRemove(e);
+				break;
+		};
 	};
 	
 	onRelationType (e: any) {
@@ -322,7 +382,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 	};
 
 	menuClose () {
-		 menuStore.closeAll(Constant.menuIds.relationEdit);
+		menuStore.closeAll(Constant.menuIds.relationEdit);
 	};
 
 	onChangeTime (v: boolean) {

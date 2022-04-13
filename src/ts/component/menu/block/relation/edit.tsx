@@ -148,7 +148,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 					</div>
 				) : ''}
 
-				{relation && (allowed || !isReadonly) ? (
+				{relation && (allowed || canDelete) ? (
 					<div className="section">
 						{/*<MenuItemVertical icon="expand" name="Open as object" onClick={this.onOpen} onMouseEnter={this.menuClose} />*/}
 						{allowed ? <MenuItemVertical icon="copy" name="Duplicate" onClick={this.onCopy} onMouseEnter={this.menuClose} /> : ''}
