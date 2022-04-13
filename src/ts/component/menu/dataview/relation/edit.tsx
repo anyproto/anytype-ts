@@ -226,7 +226,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 	getSections () {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId } = data;
+		const { rootId, blockId, extendedOptions } = data;
 		const relation = this.getRelation();
 		const allowed = relation && blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.Relation ]);
 		const canDelete = allowed && Constant.systemRelationKeys.indexOf(relation.relationKey) < 0;
@@ -240,6 +240,19 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 				]
 			}
 		];
+
+		if (extendedOptions) {
+			sections.push({
+				children: [
+					{ id: 'filter', icon: 'filter', name: 'Add filter' },
+					{ id: 'sort', icon: 'sort0', name: 'Sort ascending', type: I.SortType.Asc },
+					{ id: 'sort', icon: 'sort1', name: 'Sort descending', type: I.SortType.Desc },
+					{ id: 'insert', icon: 'insert-left', name: 'Insert left', dir: -1 },
+					{ id: 'insert', icon: 'insert-right', name: 'Insert right', dir: 1 },
+					{ id: 'hide', icon: 'hide', name: 'Hide relation' },
+				]
+			});
+		};
 
 		sections = sections.filter((s: any) => {
 			s.children = s.children.filter(c => c);
@@ -272,6 +285,18 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 
 			case 'remove':
 				this.onRemove(e);
+				break;
+
+			case 'filter':
+				break;
+
+			case 'sort':
+				break;
+
+			case 'insert':
+				break;
+
+			case 'hide':
 				break;
 		};
 	};
