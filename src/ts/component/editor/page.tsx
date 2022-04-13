@@ -519,7 +519,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 			keyboard.shortcut('escape', e, (pressed: string) => {
 				if (!menuOpen) {
-					selection.clear();
+					selection.clear(false);
 				};
 			});
 
@@ -611,7 +611,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 				return;
 			};
 
-			selection.clear();
+			selection.clear(false);
 			focus.restore();
 			focus.apply();
 		});
@@ -622,7 +622,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 				return;
 			};
 
-			selection.clear();
+			selection.clear(false);
 			focus.restore();
 
 			const focused = focus.state.focused || Constant.blockId.title;

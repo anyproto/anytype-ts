@@ -193,7 +193,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 						onConfirm: () => { 
 							C.ObjectListDelete(ids);
 							
-							selection.clear();
+							selection.clear(false);
 							analytics.event('RemoveCompletely', { count: length });
 						}
 					},

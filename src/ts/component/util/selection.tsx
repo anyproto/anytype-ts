@@ -238,7 +238,8 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 
 		if (!this.moved) {
 			if (!e.shiftKey && !e.altKey && !(e.ctrlKey || e.metaKey)) {
-				this.clear();
+				this.initIds();
+				this.renderSelection();
 			} else {
 				this.checkNodes(e);
 				
@@ -425,7 +426,8 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 
 			if (this.range) {
 				if (this.range.end) {
-					this.clear();
+					this.initIds();
+					this.renderSelection();
 				};
 				
 				if (!range) {
@@ -456,7 +458,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		this.unbindMouse();
 	};
 	
-	clear (force?: false) {
+	clear (force: false) {
 		if (!this._isMounted || (this.isClearPrevented && !force)) {
 			return;
 		};
@@ -467,6 +469,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 
 		this.initIds();
 		this.renderSelection();
+		this.clearState();
 	};
 	
 	set (type: any, ids: string[]) {
