@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, C, M, DataUtil, Util, translate } from 'ts/lib';
+import { I, C, DataUtil, Relation, translate } from 'ts/lib';
 import { Icon, Input, MenuItemVertical, Button } from 'ts/component';
 import { blockStore, dbStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -271,7 +271,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 	};
 
 	onClick (e: any, item: any) {
-		const { param } = this.props;
+		const { param, getId, getSize } = this.props;
 		const { data } = param;
 		const { rootId, blockId, relationKey, getView, getData } = data;
 		const relation = this.getRelation();
@@ -284,6 +284,14 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		let close = true;
 		let viewUpdate = false;
 		let updateData = false;
+
+		let save = () => {
+			C.BlockDataviewViewUpdate(rootId, blockId, view.id, view, (message: any) => {
+				if (updateData) {
+					getData(view.id, 0);
+				};
+			});
+		};
 
 		switch (item.id) {
 			case 'open':
@@ -299,10 +307,37 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 				break;
 
 			case 'filter':
+				const conditions = Relation.filterConditionsByType(relation.format);
+				const condition = conditions.length ? conditions[0].id : I.FilterCondition.None;
+
+				view.filters.push({
+					operator: I.FilterOperator.And, 
+					relationKey: relation.relationKey,
+					condition: condition as I.FilterCondition,
+					value: Relation.formatValue(relation, null, false),
+				});
+
+				close = false;
+
+				menuStore.open('dataviewFilterValues', {
+					element: `#${getId()} #item-${item.id}`,
+					offsetX: getSize().width,
+					vertical: I.MenuDirection.Center,
+					onClose: () => {
+						updateData = true;
+						save();
+					},
+					data: {
+						...data,
+						save,
+						itemId: view.filters.length - 1,
+					}
+				});
 				break;
 
 			case 'sort':
 				view.sorts = [ { relationKey: relation.relationKey, type: item.type } ];
+
 				viewUpdate = true;
 				updateData = true;
 				break;
@@ -314,17 +349,14 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 				const idx = view.relations.findIndex((it: I.ViewRelation) => { return it.relationKey == relationKey; });
 
 				view.relations[idx].isVisible = false;
+
 				viewUpdate = true;
 				updateData = false;
 				break;
 		};
 
 		if (viewUpdate) {
-			C.BlockDataviewViewUpdate(rootId, blockId, view.id, view, (message: any) => {
-				if (updateData) {
-					getData(view.id, 0);
-				};
-			});
+			save();
 		};
 
 		if (close) {
