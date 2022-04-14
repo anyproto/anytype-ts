@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { I, C, DataUtil, keyboard, focus, Storage } from 'ts/lib';
+import { I, C, DataUtil, keyboard, focus, Storage, Util } from 'ts/lib';
 import { DropTarget, ListChildren, Icon } from 'ts/component';
 import { observer } from 'mobx-react';
 import { menuStore, blockStore, detailStore } from 'ts/store';
@@ -369,6 +369,7 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 		};
 
 		focus.clear(true);
+		Util.previewHide(true);
 	};
 	
 	onMenuClick (e: any) {
