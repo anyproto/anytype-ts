@@ -6,7 +6,47 @@ export default [
 	{ type: I.BlockType.Cover, param: { type: I.CoverType.Image, id: 'c4', y: -0.2, withScale: true } },
 	{ type: I.BlockType.IconPage, icon: '👋' },
 
-	{ style: I.TextStyle.Title, text: `23 February 2022 Desktop` },
+	{ style: I.TextStyle.Title, text: `13 April 2022 Desktop` },
+	{ style: I.TextStyle.Header1, text: `An (un)splash of colour` },
+	{ text: `Spring has sprung for the Anyteam, and it's only natural to want a fresh coat of paint on our objects. This update comes packed with fixes for many bugs first reported by our intrepid alpha testers. ` },
+	{ text: `We've also added some serious quality-of-life updates, allowing you to further customize your objects with the whole Unsplash library, faster ways to work with tags, and share individual objects as markdown files.` },
+	{ text: `Thanks for your continued support and feedback. We could not build Anytype without you.` },
+
+	{ style: I.TextStyle.Header2, text: `New features` },
+
+	{ style: I.TextStyle.Header3, text: `Unsplash` },
+	{ text: `A huge Unsplash library is now available for setting into cover images. You can take popular or search particular just inside Anytype. Thank you, wemiprog for the <a href="https://community.anytype.io/t/image-cover-normal-support-for-online-library-like-unsplash/990">suggestion</a>.` },
+
+	{ style: I.TextStyle.Header3, text: `Rework of tag and object relation interfaces` },
+	{ text: `You can now create and search values inside the cell. It's much faster than the previously used filter. Thanks, flip, it works as you <a href="https://community.anytype.io/t/improve-process-of-adding-editing-removing-tags/1578">proposed</a>.` },
+
+	{ style: I.TextStyle.Header3, text: `Single object export` },
+	{ text: `Certain objects' export is now available. For objects with many links, you can check <span class="highlight">include linked objects</span> and get them all into a Zip archive. This feature is accessible in the object's menu. All .md files have readable names, export respects list indentations, and has LaTeX links. Thank you, Dr_Clairvoyant for <a href="https://community.anytype.io/t/export-one-single-file-to-different-formats/4041">your proposal</a>, roncz, and hilawi for the <a href="https://community.anytype.io/t/readable-file-names-when-exporting/1378/4!">reports</a>.` },
+
+	{ style: I.TextStyle.Header3, text: `Other notable improvements and fixes` },
+	{ style: I.TextStyle.Bulleted, text: `Major restructuring of the Settings menu. It now has panels for your account and data, personalization, and appearance. You can also set on / off to a new option <span class="highlight">automatically hide and show sidebar</span>.` },
+	{ style: I.TextStyle.Bulleted, text: `<span class="highlight">Object</span> relation type is now the first option in <span class="highlight">create from scratch</span> menu.` },
+
+	{ style: I.TextStyle.Header2, text: `Bugs` },
+	{ style: I.TextStyle.Bulleted, text: `App did not allow some users to create new objects. Thanks for your help, alzibaba.` },
+	{ style: I.TextStyle.Bulleted, text: `Search pop-up location glitch. The search pop-up lost its position after moving and scrolling on the page. Thanks, <a href="https://community.anytype.io/t/search-popup-location-glitch/4976">kEbZeCK</a>.` },
+	{ style: I.TextStyle.Bulleted, text: `HTML tags were activating in search results. Thank you, <a href="https://community.anytype.io/t/html-tags-are-supported-in-search/4986">Evan</a>.` },
+	{ style: I.TextStyle.Bulleted, text: `The sidebar resizing indicator appeared even when the Sidebar is hidden. Thanks, <a href="https://community.anytype.io/t/sidebar-resizing-indicator-appears-when-the-sidebar-is-collapsed/4983">Ayne Hancer</a>.` },
+	{ style: I.TextStyle.Bulleted, text: `Sidebar shadow remained visible when collapsed. Other thanks go to <a href="https://community.anytype.io/t/sidebar-shadow-remains-visible-when-collapsed/5003">Ayne Hancer</a>.` },
+	{ style: I.TextStyle.Bulleted, text: `Selecting some words in the emoji icon filter also selected the object title. Thank you, <a href="https://community.anytype.io/t/icon-search-selection-selects-the-object-title/5007">floseq</a>.` },
+	{ style: I.TextStyle.Bulleted, text: `Pressing the Delete key in the first position of a block just "combined" blocks. It should delete the first char of the block. Thanks, <a href="https://community.anytype.io/t/pressing-del-key-in-first-position-of-block-is-combining-blocks/5019">kEbZeCK</a>.` },
+	{ style: I.TextStyle.Bulleted, text: `Sometimes, automatically, <span class="highlight">hide and show</span> sidebar logic would get stuck on showing. It now works with more reliable logic.` },
+	{ style: I.TextStyle.Bulleted, text: `Sidebar with 100% width content. When the object content has 100% width and using the sidebar, the content is temporarily set to another width after closing the sidebar. Thanks, <a href="https://community.anytype.io/t/sidebar-with-100-width-content/4980">kEbZeCK</a>.` },
+	{ style: I.TextStyle.Bulleted, text: `I would appreciate it if the sidebar’s hover animations could be consistent with similar animations throughout Anytype. We also think so! Thank you, <a href="https://community.anytype.io/t/sidebar-consistent-hover-animations/5023">Sahilstudio</a>.` },
+	{ style: I.TextStyle.Bulleted, text: `App will show more concrete errors if something goes wrong during adding the invite code.` },
+	{ style: I.TextStyle.Bulleted, text: `Applying background colour to existing text results in duplicated letters. When you use a backslash command to change the background colour of a line of text containing an object reference, the first letter of the object's name is duplicated. Thank you, <a href="https://community.anytype.io/t/applying-background-color-to-existing-text-results-in-duplicated-letters/5047">dddmggg</a>.` },
+	{ style: I.TextStyle.Bulleted, text: `Cannot access menu when creating relation. On the relations page, when adding a new relation and the page is long, the menu runs off the screen, and I am unable to select "create". Thank you, <a href="https://community.anytype.io/t/cannot-access-menu-when-creating-relation/4852">dddmggg</a>.` },
+	{ style: I.TextStyle.Bulleted, text: `Files dragged over Anytype result in endless scroll. When a file is dragged over Anytype (specifically one of the program's edges) but not let go, Anytype begins scrolling. Thanks, <a href="https://community.anytype.io/t/files-dragged-over-anytype-result-in-endless-scroll">sahilstudio</a>.` },
+	{ style: I.TextStyle.Bulleted, text: `Clipboard. The insertion of blocks with style (checkbox, number, etc) did not work properly if one block was already selected.` },
+
+	{ type: I.BlockType.Div, style: I.DivStyle.Dot },
+
+	{ style: I.TextStyle.Header1, text: `23 February 2022 Desktop` },
 	{ style: I.TextStyle.Header2, text: `Sidebar, finally` },
 	{ text: `Our #1 feature request since the beginning of the alpha program is here. ` },
 	{ text: `The tree-view sidebar shows outbound links and relations for each object, complementing the bi-directional navigation pane. It includes new icons to help you distinguish between Sets and regular objects, with toggles when deeper navigation is available. It can be fixed to the side or automatically hidden for distraction-free writing. The sidebar has the same sections (Sets, Favourites, Drafts etc.) as Home.` },

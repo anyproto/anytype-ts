@@ -941,7 +941,7 @@ class DataUtil {
 		return Util.arrayUniqueObjects(ret, 'relationKey');
 	};
 
-	dataviewRelationAdd (rootId: string, blockId: string, relation: any, view?: I.View, callBack?: (message: any) => void) {
+	dataviewRelationAdd (rootId: string, blockId: string, relation: any, index: number, view?: I.View, callBack?: (message: any) => void) {
 		relation = new M.Relation(relation);
 
 		C.BlockDataviewRelationAdd(rootId, blockId, relation, (message: any) => {
@@ -957,7 +957,11 @@ class DataUtil {
 				relation.isVisible = true;
 				relation.width = Relation.width(0, relation.format);
 
-				view.relations.push(relation);
+				if (index >= 0) {
+					view.relations.splice(index, 0, relation);
+				} else {
+					view.relations.push(relation);
+				};
 			};
 
 			if (callBack) {

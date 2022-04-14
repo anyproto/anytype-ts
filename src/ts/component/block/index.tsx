@@ -269,7 +269,7 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 
 					{object}
 					{empty}
-					{additional ? <div className="addContent">{additional}</div> : ''}
+					{additional ? <div className="additional">{additional}</div> : ''}
 
 					<ListChildren 
 						key={'block-children-' + id} 

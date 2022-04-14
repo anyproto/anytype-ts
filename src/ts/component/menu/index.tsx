@@ -251,7 +251,7 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 	
 	componentDidMount () {
 		const { id, param } = this.props;
-		const { onOpen } = param;
+		const { initialTab, onOpen } = param;
 
 		this._isMounted = true;
 
@@ -270,6 +270,10 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 
 		if (param.height) {
 			obj.css({ height: param.height });
+		};
+
+		if (initialTab) {
+			this.onTab(initialTab);
 		};
 
 		if (onOpen) {
@@ -826,8 +830,8 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 		};
 	};
 
-	onTab (id: string) {
-		this.setState({ tab: id });
+	onTab (tab: string) {
+		this.setState({ tab });
 	};
 
 	getId (): string {

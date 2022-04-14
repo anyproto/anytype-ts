@@ -251,7 +251,7 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 				skipIds: relations.map((it: I.ViewRelation) => { return it.relationKey; }),
 				onAdd: onAdd,
 				addCommand: (rootId: string, blockId: string, relation: any, onChange?: (relation: any) => void) => {
-					DataUtil.dataviewRelationAdd(rootId, blockId, relation, getView(), () => {
+					DataUtil.dataviewRelationAdd(rootId, blockId, relation, -1, getView(), () => {
 						onAdd();
 
 						if (onChange) {

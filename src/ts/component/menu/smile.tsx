@@ -18,6 +18,7 @@ const { dialog } = window.require('@electron/remote');
 
 const LIMIT_RECENT = 18;
 const LIMIT_ROW = 9;
+const LIMIT_SEARCH = 12;
 const HEIGHT_SECTION = 40;
 const HEIGHT_ITEM = 40;
 
@@ -228,17 +229,22 @@ class MenuSmile extends React.Component<Props, State> {
 	};
 	
 	getItems () {
-		const sections = this.getSections();
-
+		let sections = this.getSections();
 		let items: any[] = [];
 		let ret: any[] = [];
+		let length = sections.reduce((res: number, section: any) => { return res + section.children.length; }, 0);
+
+		if (length <= LIMIT_SEARCH) {
+			sections = [
+				{ 
+					id: 'search', name: 'Search results', isSection: true,
+					children: sections.reduce((res: any[], section: any) => { return res.concat(section.children); }, [])
+				}
+			];
+		};
 
 		for (let section of sections) {
-			items.push({
-				id: section.id,
-				name: section.name,
-				isSection: true,
-			});
+			items.push({ id: section.id, name: section.name, isSection: true });
 			items = items.concat(section.children);
 		};
 
@@ -281,10 +287,7 @@ class MenuSmile extends React.Component<Props, State> {
 	onKeyUp (e: any, force: boolean) {
 		window.clearTimeout(this.timeoutFilter);
 		this.timeoutFilter = window.setTimeout(() => {
-			this.setState({ 
-				page: 0, 
-				filter: Util.filterFix(this.ref.getValue()),
-			});
+			this.setState({ page: 0, filter: Util.filterFix(this.ref.getValue()) });
 		}, force ? 0 : 50);
 	};
 	
@@ -330,7 +333,6 @@ class MenuSmile extends React.Component<Props, State> {
 		this.skin = Number(skin) || 1;
 		Storage.set('skin', this.skin);
 		this.setLastIds(id, this.skin);
-		close();
 
 		if (onSelect) {
 			onSelect(SmileUtil.nativeById(id, this.skin));
@@ -348,6 +350,7 @@ class MenuSmile extends React.Component<Props, State> {
 	};
 	
 	onMouseDown (n: number, id: string, skin: number) {
+		const { close } = this.props;
 		const win = $(window);
 		const item = EmojiData.emojis[id];
 
@@ -367,7 +370,7 @@ class MenuSmile extends React.Component<Props, State> {
 						smileId: id,
 						onSelect: (skin: number) => {
 							this.onSelect(id, skin);
-							this.forceUpdate();
+							close();
 						}
 					},
 					onClose: () => {
@@ -383,6 +386,7 @@ class MenuSmile extends React.Component<Props, State> {
 			};
 			if (this.id) {
 				this.onSelect(id, skin);
+				close();
 			};
 			window.clearTimeout(this.timeoutMenu);
 			win.unbind('mouseup.smile')
@@ -419,6 +423,7 @@ class MenuSmile extends React.Component<Props, State> {
 	
 	onRemove () {
 		this.onSelect('', 1);
+		this.props.close();
 	};
 	
 };
