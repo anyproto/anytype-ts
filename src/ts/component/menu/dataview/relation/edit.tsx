@@ -319,22 +319,22 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 					value: Relation.formatValue(relation, null, false),
 				});
 
-				menuStore.open('dataviewFilterValues', {
-					element: `#${getId()} #item-${item.id}`,
-					offsetX: getSize().width,
-					vertical: I.MenuDirection.Center,
-					onClose: () => {
-						updateData = true;
-						save();
-					},
+				menuStore.open('dataviewRelationList', { 
+					element: `#button-manager`,
+					horizontal: I.MenuDirection.Center,
+					offsetY: 10,
+					tabs: [
+						{ id: 'relation', name: 'Relations', component: 'dataviewRelationList' },
+						{ id: 'filter', name: 'Filters', component: 'dataviewFilterList' },
+						{ id: 'sort', name: 'Sorts', component: 'dataviewSort' },
+						{ id: 'view', name: 'View', component: 'dataviewViewEdit' },
+					],
+					initialTab: 'filter',
 					data: {
 						...data,
-						save,
-						itemId: view.filters.length - 1,
-					}
+						view: observable.box(view),
+					},
 				});
-
-				close = false;
 				break;
 
 			case 'sort':
