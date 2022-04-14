@@ -276,7 +276,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.set }
 					];
 					sorts = [
-						{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
+						{ relationKey: 'name', type: I.SortType.Asc },
 					];
 					break;
 
