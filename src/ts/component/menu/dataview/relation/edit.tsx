@@ -241,7 +241,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		if (extendedOptions) {
 			sections.push({
 				children: [
-					{ id: 'filter', icon: 'filter', name: 'Add filter' },
+					{ id: 'filter', icon: 'relation-filter', name: 'Add filter' },
 					{ id: 'sort', icon: 'sort0', name: 'Sort ascending', type: I.SortType.Asc },
 					{ id: 'sort', icon: 'sort1', name: 'Sort descending', type: I.SortType.Desc },
 					{ id: 'insert', icon: 'insert-left', name: 'Insert left', dir: -1 },
@@ -283,6 +283,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 
 		let close = true;
 		let viewUpdate = false;
+		let updateData = false;
 
 		switch (item.id) {
 			case 'open':
@@ -303,18 +304,26 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 			case 'sort':
 				view.sorts = [ { relationKey: relation.relationKey, type: item.type } ];
 				viewUpdate = true;
+				updateData = true;
 				break;
 
 			case 'insert':
 				break;
 
 			case 'hide':
+				const idx = view.relations.findIndex((it: I.ViewRelation) => { return it.relationKey == relationKey; });
+
+				view.relations[idx].isVisible = false;
+				viewUpdate = true;
+				updateData = false;
 				break;
 		};
 
 		if (viewUpdate) {
 			C.BlockDataviewViewUpdate(rootId, blockId, view.id, view, (message: any) => {
-				getData(view.id, 0);
+				if (updateData) {
+					getData(view.id, 0);
+				};
 			});
 		};
 
