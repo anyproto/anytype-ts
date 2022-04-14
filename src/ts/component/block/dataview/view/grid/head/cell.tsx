@@ -71,7 +71,7 @@ const HeadCell = observer(class HeadCell extends React.Component<Props, {}> {
 				readonly: readonly,
 				extendedOptions: true,
 				addCommand: (rootId: string, blockId: string, relation: any, onChange?: (relation: any) => void) => {
-					DataUtil.dataviewRelationAdd(rootId, blockId, relation, getView(), () => {
+					DataUtil.dataviewRelationAdd(rootId, blockId, relation, -1, getView(), () => {
 						if (onChange) {
 							onChange(relation);
 						};

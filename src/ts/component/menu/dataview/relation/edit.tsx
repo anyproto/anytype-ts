@@ -274,8 +274,10 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		const { param, getId, getSize } = this.props;
 		const { data } = param;
 		const { rootId, blockId, relationKey, getView, getData } = data;
-		const relation = this.getRelation();
 		const view = getView();
+		const relation = this.getRelation();
+		const relations = DataUtil.viewGetRelations(rootId, blockId, view);
+		const idx = view.relations.findIndex((it: I.ViewRelation) => { return it.relationKey == relationKey; });
 
 		if (!relation) {
 			return;
@@ -317,8 +319,6 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 					value: Relation.formatValue(relation, null, false),
 				});
 
-				close = false;
-
 				menuStore.open('dataviewFilterValues', {
 					element: `#${getId()} #item-${item.id}`,
 					offsetX: getSize().width,
@@ -333,6 +333,8 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 						itemId: view.filters.length - 1,
 					}
 				});
+
+				close = false;
 				break;
 
 			case 'sort':
@@ -343,11 +345,34 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 				break;
 
 			case 'insert':
+				menuStore.open('relationSuggest', { 
+					element: `#${getId()} #item-${item.id}`,
+					offsetX: getSize().width,
+					vertical: I.MenuDirection.Center,
+					noAnimation: true,
+					data: {
+						rootId,
+						blockId,
+						menuIdEdit: 'blockRelationEdit',
+						filter: '',
+						ref: 'dataview',
+						skipIds: relations.map((it: I.ViewRelation) => { return it.relationKey; }),
+						addCommand: (rootId: string, blockId: string, newRelation: any, onChange?: (relation: any) => void) => {
+							DataUtil.dataviewRelationAdd(rootId, blockId, newRelation, Math.max(0, idx + item.dir), view, () => {
+								menuStore.closeAll([ this.props.id, 'relationSuggest' ]);
+								getData(view.id, 0);
+							});
+						},
+						listCommand: (rootId: string, blockId: string, callBack?: (message: any) => void) => {
+							C.BlockDataviewRelationListAvailable(rootId, blockId, callBack);
+						},
+					}
+				});
+
+				close = false;
 				break;
 
 			case 'hide':
-				const idx = view.relations.findIndex((it: I.ViewRelation) => { return it.relationKey == relationKey; });
-
 				view.relations[idx].isVisible = false;
 
 				viewUpdate = true;
