@@ -22,6 +22,7 @@ export interface MenuParam {
 	width?: number;
 	height?: number;
 	tabs?: MenuTab[];
+	initialTab?: string;
 	data?: any;
 	isSub?: boolean;
 	subIds?: string[];

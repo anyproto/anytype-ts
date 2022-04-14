@@ -78,6 +78,15 @@
 		.icon.align.center { background-image: url('~img/icon/menu/align/center.svg'); }
 		.icon.align.right { background-image: url('~img/icon/menu/align/right.svg'); }
 
+		.icon.relation-filter { background-image: url('~img/icon/menu/relation/filter.svg'); }
+		.icon.hide { background-image: url('~img/icon/menu/relation/hide.svg'); }
+
+		.icon.sort0 { background-image: url('~img/icon/menu/relation/sort.svg'); }
+		.icon.sort1 { background-image: url('~img/icon/menu/relation/sort.svg'); transform: rotateZ(180deg); }
+
+		.icon.insert-left { background-image: url('~img/icon/menu/relation/insert.svg'); }
+		.icon.insert-right { background-image: url('~img/icon/menu/relation/insert.svg'); transform: rotateZ(180deg); }
+
 		.icon.lock { width: 8px !important; height: 20px !important; background-image: url('~img/icon/lock.svg'); }
 
 		.icon.color {
