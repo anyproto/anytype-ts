@@ -26,9 +26,6 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		this.onObjectType = this.onObjectType.bind(this);
 		this.onDateSettings = this.onDateSettings.bind(this);
 		this.onSubmit = this.onSubmit.bind(this);
-		this.onOpen = this.onOpen.bind(this);
-		this.onCopy = this.onCopy.bind(this);
-		this.onRemove = this.onRemove.bind(this);
 		this.onChange = this.onChange.bind(this);
 		this.onClick = this.onClick.bind(this);
 	};
@@ -274,23 +271,38 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 	};
 
 	onClick (e: any, item: any) {
+		const { param } = this.props;
+		const { data } = param;
+		const { rootId, blockId, relationKey, getView, getData } = data;
+		const relation = this.getRelation();
+		const view = getView();
+
+		if (!relation) {
+			return;
+		};
+
+		let close = true;
+		let viewUpdate = false;
+
 		switch (item.id) {
 			case 'open':
-				this.onOpen(e);
+				DataUtil.objectOpenPopup({ id: relation.objectId, layout: I.ObjectLayout.Relation });
 				break;
 
 			case 'copy':
-				this.onCopy(e);
+				this.add({ name: relation.name, format: relation.format });
 				break;
 
 			case 'remove':
-				this.onRemove(e);
+				DataUtil.dataviewRelationDelete(rootId, blockId, relationKey, view);		
 				break;
 
 			case 'filter':
 				break;
 
 			case 'sort':
+				view.sorts = [ { relationKey: relation.relationKey, type: item.type } ];
+				viewUpdate = true;
 				break;
 
 			case 'insert':
@@ -299,8 +311,19 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 			case 'hide':
 				break;
 		};
+
+		if (viewUpdate) {
+			C.BlockDataviewViewUpdate(rootId, blockId, view.id, view, (message: any) => {
+				getData(view.id, 0);
+			});
+		};
+
+		if (close) {
+			this.props.close();
+		};
+
 	};
-	
+
 	onRelationType (e: any) {
 		const { param, getId } = this.props;
 		const { data } = param;
@@ -421,34 +444,6 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		relation.includeTime = v;
 		view.relations[idx] = relation;
 		C.BlockDataviewViewUpdate(rootId, blockId, view.id, view);
-	};
-
-	onOpen (e: any) {
-		const relation = this.getRelation();
-
-		DataUtil.objectOpenPopup({ id: relation.objectId, layout: I.ObjectLayout.Relation });
-	};
-
-	onCopy (e: any) {
-		const { close } = this.props;
-		const relation = this.getRelation();
-
-		if (!relation) {
-			return;
-		};
-
-		this.add({ name: relation.name, format: relation.format });
-		close();
-	};
-
-	onRemove (e: any) {
-		const { param, close } = this.props;
-		const { data } = param;
-		const { rootId, blockId, relationKey, getView } = data;
-		const view = getView();
-
-		DataUtil.dataviewRelationDelete(rootId, blockId, relationKey, view);
-		close();
 	};
 
 	onSubmit (e: any) {
