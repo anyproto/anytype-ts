@@ -358,16 +358,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 	};
 
 	onClick (e: any, item: any) {
-		const { isPopup } = this.props;
-
-		if (isPopup) {
-			const popup = popupStore.get('page');
-
-			DataUtil.objectOpen(item);
-			keyboard.setSource({ type: I.Source.Popup, data: popup });
-		} else {
-			DataUtil.objectOpenEvent(e, item);
-		};
+		DataUtil.objectOpenPopup(item);
 	};
 
 	onCreateType (e: any) {
