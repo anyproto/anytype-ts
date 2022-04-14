@@ -415,6 +415,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 					if (!message.error.code) {
 						DataUtil.objectOpenPopup({ id: message.id, layout: object.layout });
 					};
+					analytics.event('DuplicateObject', { count: 1 });
 				});
 				break;
 

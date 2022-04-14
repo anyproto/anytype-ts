@@ -156,27 +156,18 @@ class MenuContext extends React.Component<Props, {}> {
 
 			case 'copy':
 				C.ObjectListDuplicate(objectIds, (message: any) => {
-					if (!message.error.code && (length == 1)) {
-						const object = detailStore.get(subId, objectIds[0]);
-						DataUtil.objectOpenPopup({ id: object.id, layout: object.layout });
-					};
+					analytics.event('DuplicateObject', { count: length });
 				});
 				break;
 
 			case 'archive':
 				C.ObjectListSetIsArchived(objectIds, true, (message: any) => {
-					if (message.error.code) {
-						return;
-					};
 					analytics.event('MoveToBin', { count: length });
 				});
 				break;
 
 			case 'unarchive':
 				C.ObjectListSetIsArchived(objectIds, false, (message: any) => {
-					if (message.error.code) {
-						return;
-					};
 					analytics.event('RestoreFromBin', { count: length });
 				});
 				break;
