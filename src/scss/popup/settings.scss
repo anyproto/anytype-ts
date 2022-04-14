@@ -23,6 +23,14 @@
 				.icon.back { background-image: url('~img/icon/popup/settings/back1.svg'); } 
 			}
 		}
+
+		.message { padding: 16px; background: #ffebe5; border-radius: 8px; color: $colorBlack; }
+		.message {
+			.button { flex-shrink: 0; background: none; padding: 0px; height: auto; @include text-common; color: #ee420b; }
+			.label { font-weight: 600; }
+			.flex { gap: 0px 16px; align-items: center; justify-content: space-between; }
+			b { display: block; }
+		}
 		
 		.tab { padding: 44px 48px 48px 48px; }
 
@@ -30,7 +38,7 @@
 		.sectionName.center { text-align: center; }
 
 		.tabIndex { padding: 24px 48px 48px 48px; }
-		.tabIndex, .tabAccount, .tabAppearance, .tabPersonal, .tabPinIndex {
+		.tabIndex, .tabAccount, .tabAppearance, .tabPersonal, .tabPinIndex, .tabDelete {
 			.row { 
 				padding: 18px 0px 17px 0px; border-bottom: 1px solid $colorLightGrey; cursor: pointer; position: relative; 
 				@include text-paragraph; line-height: 28px;
@@ -55,6 +63,10 @@
 					width: 24px; height: 24px; background-image: url('~img/icon/popup/settings/arrow.svg'); position: absolute; right: 0px;
 					top: 50%; margin: -12px 0px 0px 0px; 
 				}
+				.icon.dot { 
+					width: 12px; height: 12px; border-radius: 100%; background: #ee420b; position: absolute; right: 24px;
+					top: 50%; margin: -6px 0px 0px 0px; 
+				}
 				
 				.side { width: 50%; line-height: 28px; }
 				.side.right { text-align: right; }
@@ -63,9 +75,18 @@
 
 				.status { position: absolute; text-align: right; right: 24px; top: 50%; margin-top: -14px; height: 28px; color: $colorMediumGrey; }
 			}
-			
+
 			.logout { color: $colorMediumGrey; cursor: pointer; text-align: center; @include text-paragraph; line-height: 28px; padding: 18px 0px; }
 			.logout:hover { color: $colorBlack; }
+		}
+
+		.tabDelete {
+			.text { margin-bottom: 10px; }
+			.text {
+				b { display: block; margin-bottom: 10px; }
+				p { margin-bottom: 10px; }
+				.check { display: flex; align-items: center; gap: 0px 6px; cursor: pointer; }
+			}
 		}
 
 		.tabAppearance {
@@ -210,16 +231,6 @@
 		.tabExportMarkdown {
 			.label.last { margin: 0px; }
 			.button { margin-top: 25px; }
-		}
-
-		.tabOther {
-			.row { 
-				width: 100%; display: flex; padding: 18px 0px 17px 0px; border-bottom: 1px solid $colorLightGrey; 
-				@include text-paragraph; line-height: 28px;
-			}
-
-			.side { width: 50%; line-height: 28px; }
-			.side.right { text-align: right; }
 		}
 
 	}

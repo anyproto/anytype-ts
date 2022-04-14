@@ -17,6 +17,7 @@ import PageAuthAccountSelect from './auth/account/select';
 import PageAuthRegister from './auth/register';
 import PageAuthSuccess from './auth/success';
 import PageAuthShare from './auth/share';
+import PageAuthDeleted from './auth/deleted';
 
 import PageMainIndex from './main/index';
 import PageMainEdit from './main/edit';
@@ -34,6 +35,7 @@ const Constant = require('json/constant.json');
 const Url = require('json/url.json');
 const $ = require('jquery');
 const raf = require('raf');
+
 const Components: any = {
 	'/':					 PageAuthSelect,
 	'auth/invite':			 PageAuthInvite,
@@ -47,6 +49,8 @@ const Components: any = {
 	'auth/account-select':	 PageAuthAccountSelect,
 	'auth/success':			 PageAuthSuccess,
 	'auth/share':			 PageAuthShare,
+	'auth/deleted':			 PageAuthDeleted,
+
 	'object/share':			 PageAuthShare,
 			
 	'main/index':			 PageMainIndex,
@@ -78,6 +82,7 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 	render () {
 		const { isPopup } = this.props;
 		const { config } = commonStore;
+		const { account } = authStore;
 		const match = this.getMatch();
 		const { page, action } = match.params || {};
 		const path = [ page, action ].join('/');
@@ -179,6 +184,11 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 		const path = [ match.params.page, match.params.action ].join('/');
 		const Component = Components[path];
 		const renderer = Util.getRenderer();
+		const isDeleted = account && account.status && ([ 
+			I.AccountStatusType.Deleted, 
+			I.AccountStatusType.PendingDeletion, 
+			I.AccountStatusType.StartedDeletion,
+		].includes(account.status.type));
 
 		Util.tooltipHide(true);
 		Util.previewHide(true);
@@ -195,6 +205,11 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 
 		if (pin && !keyboard.isPinChecked && !isPinCheck && !isAuth && !isIndex) {
 			Util.route('/auth/pin-check');
+			return;
+		};
+
+		if (isMain && account && isDeleted) {
+			Util.route('/auth/deleted');
 			return;
 		};
 

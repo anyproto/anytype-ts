@@ -56,7 +56,7 @@ class Analytics {
 		this.isInit = true;
 	};
 	
-	profile (account: I.Account) {
+	profile (account: any) {
 		if (!this.instance || (!isProduction && !this.debug()) || !account) {
 			return;
 		};

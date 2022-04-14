@@ -12,6 +12,11 @@
     .iconObject { background-image: url('#{$themePath}/icon/picture.svg'); }
 }
 
+.pageAuthDeleted {
+	.row { border-color: $colorLineSecondary; }
+	.pie .inner { border-color: $colorLineSecondary; }
+}
+
 /* PageMainIndex */
 
 .pageMainIndex {

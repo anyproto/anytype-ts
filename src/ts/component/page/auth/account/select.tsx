@@ -12,6 +12,8 @@ interface State {
 	loading: boolean;
 };
 
+const Errors = require('json/error.json');
+
 const PageAccountSelect = observer(class PageAccountSelect extends React.Component<Props, State> {
 
 	state = {
@@ -82,7 +84,7 @@ const PageAccountSelect = observer(class PageAccountSelect extends React.Compone
 
 				if (message.error.code) {
 					Util.checkError(message.error.code);
-					state.error = message.error.description;
+					state.error = Errors.AccountCreate[message.error.code] || message.error.description;
 				};
 
 				this.setState(state);

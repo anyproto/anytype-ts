@@ -105,7 +105,9 @@ class Dispatcher {
 
 		if (v == V.ACCOUNTSHOW)					 t = 'accountShow';
 		if (v == V.ACCOUNTDETAILS)				 t = 'accountDetails';
+		if (v == V.ACCOUNTUPDATE)				 t = 'accountUpdate';
 		if (v == V.ACCOUNTCONFIGUPDATE)			 t = 'accountConfigUpdate';
+
 		if (v == V.THREADSTATUS)				 t = 'threadStatus';
 		if (v == V.BLOCKADD)					 t = 'blockAdd';
 		if (v == V.BLOCKDELETE)					 t = 'blockDelete';
@@ -189,9 +191,6 @@ class Dispatcher {
 		let uniqueSubIds: string[] = [];
 		let subId: string = '';
 		let afterId: string = '';
-		let records: any[] = [];
-		let oldIndex: number = 0;
-		let newIndex: number = 0;
 
 		messages.sort((c1: any, c2: any) => { return self.sort(c1, c2); });
 
@@ -213,6 +212,11 @@ class Dispatcher {
 					break;
 
 				case 'accountDetails':
+					break;
+
+				case 'accountUpdate':
+					authStore.accountSet({ status: Mapper.From.AccountStatus(data.getStatus()) });
+					commonStore.configSet(Mapper.From.AccountConfig(data.getConfig()), true);
 					break;
 
 				case 'accountConfigUpdate':

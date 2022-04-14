@@ -7,7 +7,13 @@ import { keyboard } from 'ts/lib';
 class AuthStore {
 	
 	public dataPath: string = '';
-	public accountItem: I.Account = null;
+	public accountItem: I.Account = { 
+		id: '', 
+		status: { 
+			type: I.AccountStatusType.Active, 
+			date: 0,
+		},
+	};
 	public accountList: I.Account[] = [];
 	public pin: string = '';
 	public icon: string = '';
@@ -96,8 +102,8 @@ class AuthStore {
 		this.accountList = [];
     };
 
-	accountSet (account: I.Account) {
-		this.accountItem = account as I.Account;
+	accountSet (account: any) {
+		set(this.accountItem, account);
 
 		Storage.set('accountId', account.id);
 		Sentry.setUser({ id: account.id });
@@ -121,21 +127,26 @@ class AuthStore {
     };
 
 	clearAll () {
-		this.accountItem = null;
-		this.accountList = [];
-		this.icon = '';
-		this.preview = '';
-		this.name = '';
-		this.phrase = '';
-		this.code = '';
 		this.threadMap = new Map();
+		this.accountItem = { 
+			id: '', 
+			status: { 
+				type: I.AccountStatusType.Active, 
+				date: 0,
+			},
+		};
+
+		this.accountClear();
+		this.iconSet('');
+		this.previewSet('');
+		this.nameSet('');
+		this.phraseSet('');
+		this.codeSet('');
 	};
 
 	logout () {
 		analytics.event('LogOut');
 		analytics.profile({ id: '' });
-
-		Storage.logout();
 
 		keyboard.setPinChecked(false);
 		commonStore.coverSetDefault();
@@ -143,12 +154,9 @@ class AuthStore {
 		blockStore.clearAll();
 		detailStore.clearAll();
 		dbStore.clearAll();
-		this.clearAll();
 
-		this.accountItem = null;
-		this.nameSet('');
-		this.previewSet('');
-		this.phraseSet('');
+		Storage.logout();
+		this.clearAll();
     };
 
 };

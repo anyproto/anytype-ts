@@ -28,15 +28,11 @@ const Sync = observer(class Sync extends React.Component<Props, {}> {
 
 	render () {
 		const { id, className, rootId, onClick } = this.props;
+		const { account } = authStore;
 		const thread = authStore.threadGet(rootId);
+		const disabled = account.status.type != I.AccountStatusType.Active;
+		const status = disabled ? I.ThreadStatus.Disabled : ((thread.summary || {}).status || I.ThreadStatus.Unknown);
 		
-		if (!thread.summary) {
-			return null;
-		};
-
-		const summary = thread.summary || {};
-		const status = summary.status || I.ThreadStatus.Unknown;
-
 		return (
 			<div id={id} className={[ 'sync', className ].join(' ')} onClick={onClick} onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave}>
 				<div className={[ 'bullet', DataUtil.threadColor(status) ].join(' ')} />

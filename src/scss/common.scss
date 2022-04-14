@@ -56,7 +56,7 @@ html.platformWindows {
 		.side.left { padding-left: 16px; gap: 0px 16px; }
 		.side.right { justify-content: flex-end; gap: 0px 20px; padding-right: 16px; }
 		.side.right {
-			.icon { width: 20px; height: 20px; background-size: 16px 16px; }
+			.icon { width: 20px; height: 20px; transition: none; }
 		}
 
 		.name { color: $colorWhite; display: inline-block; vertical-align: middle; line-height: 1; margin-top: -2px; }
@@ -65,11 +65,13 @@ html.platformWindows {
 		.icon.menu { width: 20px; height: 20px; background-image: url('~img/icon/header/windows/menu0.svg'); }
 		.icon.min { background-image: url('~img/icon/header/windows/min0.svg'); }
 		.icon.max { background-image: url('~img/icon/header/windows/max0.svg'); }
+		.icon.window { background-image: url('~img/icon/header/windows/window0.svg'); }
 		.icon.close { background-image: url('~img/icon/header/windows/close0.svg'); }
 
 		.icon.menu:hover { background-image: url('~img/icon/header/windows/menu1.svg'); }
 		.icon.min:hover { background-image: url('~img/icon/header/windows/min1.svg'); }
 		.icon.max:hover { background-image: url('~img/icon/header/windows/max1.svg'); }
+		.icon.window:hover { background-image: url('~img/icon/header/windows/window1.svg'); }
 		.icon.close:hover { background-image: url('~img/icon/header/windows/close1.svg'); }
 	}
 

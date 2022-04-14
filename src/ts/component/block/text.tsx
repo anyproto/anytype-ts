@@ -6,8 +6,8 @@ import { I, C, keyboard, Key, Util, DataUtil, Mark, focus, Storage, translate, a
 import { observer } from 'mobx-react';
 import { getRange } from 'selection-ranges';
 import { commonStore, blockStore, detailStore, menuStore } from 'ts/store';
+import { throttle } from 'lodash';
 import * as Prism from 'prismjs';
-import 'prismjs/themes/prism.css';
 
 interface Props extends I.BlockComponent, RouteComponentProps<any> {
 	index?: any;
@@ -1008,6 +1008,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		const { rootId, block } = this.props;
 		const { content } = block;
 		const value = this.getValue();
+		const check = Storage.get('writing');
 
 		if (content.style == I.TextStyle.Code) {
 			marks = [];
@@ -1027,7 +1028,10 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 				callBack();
 			};
 
-			analytics.event('Writing');
+			if (!check) {
+				analytics.event('Writing');
+				Storage.set('writing', 1);
+			};
 		});
 	};
 	

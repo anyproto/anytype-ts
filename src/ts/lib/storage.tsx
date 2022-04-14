@@ -101,10 +101,10 @@ class Storage {
 			'tabStore', 
 			'linkSettings', 
 			'graph',
-			'blockCnt',
 			'gateway',
 			'dataPath',
 			'sidebar',
+			'writing',
 		];
 
 		keys.forEach(key => this.delete(key));

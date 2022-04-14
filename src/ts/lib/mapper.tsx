@@ -30,12 +30,21 @@ const Mapper = {
 		Account: (obj: any): I.Account => {
 			return {
 				id: obj.getId(),
+				config: obj.hasConfig() ? Mapper.From.AccountConfig(obj.getConfig()) : null,
+				status: obj.hasStatus() ? Mapper.From.AccountStatus(obj.getStatus()) : null,
 			};
 		},
 
 		AccountConfig: (obj: any): I.AccountConfig => {
 			return {
 				allowSpaces: obj.getEnablespaces(),
+			};
+		},
+
+		AccountStatus: (obj: any): I.AccountStatus => {
+			return {
+				type: obj.getStatustype(),
+				date: obj.getDeletiondate(),
 			};
 		},
 		

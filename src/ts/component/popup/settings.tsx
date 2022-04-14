@@ -1,7 +1,8 @@
 import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Icon, Button, Title, Label, Cover, Textarea, Loader, IconObject, Error, Pin, Select, Switch } from 'ts/component';
-import { I, C, Storage, translate, Util, DataUtil, analytics } from 'ts/lib';
+import { Icon, Button, Title, Label, Cover, Textarea, Loader, IconObject, Error, Pin, Select, Switch, Checkbox } from 'ts/component';
+import { I, C, Storage, translate, Util, DataUtil, analytics, Action } from 'ts/lib';
 import { authStore, blockStore, commonStore, popupStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -37,6 +38,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 	onConfirmPin: () => void = null;
 	onConfirmPhrase: any = null;
 	format: string = '';
+	refCheckbox: any = null;
 
 	constructor (props: any) {
 		super(props);
@@ -53,6 +55,9 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 		this.onFileClick = this.onFileClick.bind(this);
 		this.elementBlur = this.elementBlur.bind(this);
 		this.onFileOffload = this.onFileOffload.bind(this);
+		this.onDelete = this.onDelete.bind(this);
+		this.onDeleteCancel = this.onDeleteCancel.bind(this);
+		this.onCheck = this.onCheck.bind(this);
 		this.onType = this.onType.bind(this);
 	};
 
@@ -67,6 +72,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 
 		let content = null;
 		let Item = null;
+		let message = null;
 
 		let Head = (item: any) => (
 			<div className="head">
@@ -89,6 +95,10 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 							<div className="row" onClick={() => { this.onPage('account'); }}>
 								<Icon className="account" />
 								<Label text={translate('popupSettingsAccountTitle')} />
+
+								{account.status.type != I.AccountStatusType.Active ? (
+									<Icon className="dot" />
+								) : ''}
 								<Icon className="arrow" />
 							</div>
 
@@ -120,11 +130,35 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 				);
 				break;
 
-			case 'account': 
+			case 'account':
+				const canDelete = account.status.type == I.AccountStatusType.Active;
+				const isDeleted = [ I.AccountStatusType.StartedDeletion, I.AccountStatusType.Deleted ].includes(account.status.type);
+
+				if (account.status.type == I.AccountStatusType.PendingDeletion) {
+					message = (
+						<div className="flex">	
+							<Label text={`This account is planned for deletion in ${Util.duration(Math.max(0, account.status.date - Util.time()))}...`} />
+							<Button text="Cancel" onClick={this.onDeleteCancel} />
+						</div>
+					);
+				};
+
+				if (isDeleted) {
+					message = (
+						<React.Fragment>	
+							<b>Account data removed from the backup node</b>
+							You can continue to work as normal.<br/>
+							All logged-in devices will continue to store data locally. However, you won't be able to sign into Anytype on new devices using your keychain recovery phrase. 
+						</React.Fragment>
+					);
+				};
+
 				content = (
 					<div>
 						<Head id="index" name={translate('popupSettingsTitle')} />
 						<Title text={translate('popupSettingsAccountTitle')} />
+
+						{message ? <div className="message">{message}</div> : ''}
 
 						<div className="rows">
 							<div 
@@ -158,6 +192,39 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 
 							<div className="row" onClick={this.onLogout}>
 								<Label text={translate('popupSettingsLogout')} />
+							</div>
+
+							{canDelete ? (
+								<div className="row red" onClick={() => { this.onPage('delete'); }}>
+									<Label text={translate('popupSettingsAccountDeleteTitle')} />
+								</div>
+							) : ''}
+						</div>
+					</div>
+				);
+				break;
+
+			case 'delete':
+				content = (
+					<div>
+						<Head id="account" name={translate('commonCancel')} />
+						<Title text={translate('popupSettingsAccountDeleteTitle')} />
+
+						<div className="text">
+							<b>1. We're sorry to see you go. Once you request your account to be deleted, you have 30 days to cancel this request.</b>
+							<p>After 30 days, your objects are permanently removed from the Anytype backup node.</p>
+
+							<b>2. You can continue to work as normal.</b>
+							<p>All logged-in devices will continue to store data locally. However, you won't be able to sign into Anytype on new devices using your keychain recovery phrase. </p>
+
+							<div className="check" onClick={this.onCheck}>
+								<Checkbox ref={(ref: any) => { this.refCheckbox = ref; }} /> I have read it and want to delete my account
+							</div>
+						</div>
+
+						<div className="rows">
+							<div id="row-delete" className="row disabled" onClick={this.onDelete}>
+								<Label text={translate('commonDelete')} />
 							</div>
 						</div>
 					</div>
@@ -686,6 +753,33 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 		this.onPage('phrase');
 	};
 
+	onDelete (e: any) {
+		const check = this.refCheckbox.getValue();
+		if (!check) {
+			return;
+		};
+
+		C.AccountDelete(false, (message: any) => {
+			authStore.accountSet({ status: message.status });			
+			this.onPage('account');
+		});
+	};
+
+	onDeleteCancel (e: any) {
+		C.AccountDelete(true);
+	};
+
+	onCheck () {
+		const node = $(ReactDOM.findDOMNode(this));
+		const row = node.find('#row-delete');
+		const value = this.refCheckbox.getValue();
+
+		row.removeClass('red disabled');
+
+		this.refCheckbox.setValue(!value);
+		!value ? row.addClass('red') : row.addClass('disabled');
+	};
+
 	onImport (format: string) {
 		const platform = Util.getPlatform();
 		const { close } = this.props;
@@ -715,43 +809,10 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 	};
 
 	onExport (format: I.ExportFormat) {
-		const { close } = this.props;
-		const renderer = Util.getRenderer();
-
-		let options: any = {};
-
 		switch (format) {
 			case I.ExportFormat.Markdown:
-				options = { 
-					properties: [ 'openDirectory' ],
-				};
-
-				dialog.showOpenDialog(options).then((result: any) => {
-					const files = result.filePaths;
-					if ((files == undefined) || !files.length) {
-						return;
-					};
-
-					close();
-
-					C.Export(files[0], [], format, true, true, true, (message: any) => {	
-						if (message.error.code) {
-							popupStore.open('confirm', {
-								data: {
-									title: 'Ooops!',
-									text: 'Something went wrong. <br/>If you think it’s our fault, please write us a feedback.',
-									textConfirm: 'Try one more time',
-									canCancel: false,
-									onConfirm: () => {
-									},
-								},
-							});
-							return;
-						};
-						renderer.send('pathOpen', files[0]);
-
-						analytics.event('ExportMarkdown', { middleTime: message.middleTime });
-					});
+				Action.export([], format, true, true, true, () => { this.props.close(); }, (message: any) => {
+					analytics.event('ExportMarkdown', { middleTime: message.middleTime });
 				});
 				break;
 		};

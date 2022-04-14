@@ -15,6 +15,8 @@ configure({ enforceActions: 'never' });
 import 'react-virtualized/styles.css';
 import 'katex/dist/katex.min.css';
 
+import 'prismjs/themes/prism.css';
+
 import 'scss/font.scss';
 import 'scss/common.scss';
 import 'scss/debug.scss';
@@ -156,7 +158,7 @@ interface State {
 
 const $ = require('jquery');
 const path = require('path');
-const { app, dialog, process } = window.require('@electron/remote');
+const { app, dialog, process, BrowserWindow } = window.require('@electron/remote');
 const version = app.getVersion();
 const userPath = app.getPath('userData');
 const fs = window.require('fs');
@@ -272,6 +274,7 @@ class App extends React.Component<Props, State> {
 	
 	render () {
 		const { loading } = this.state;
+		const isMaximized = BrowserWindow.getFocusedWindow()?.isMaximized();
 		
 		if (loading) {
 			return (
@@ -280,7 +283,7 @@ class App extends React.Component<Props, State> {
 				</div>
 			);
 		};
-		
+
 		return (
 			<Router history={history}>
 				<Provider {...rootStore}>
@@ -298,7 +301,7 @@ class App extends React.Component<Props, State> {
 
 								<div className="side right">
 									<Icon className="min" onClick={this.onMin} />
-									<Icon className="max" onClick={this.onMax} />
+									<Icon id="minmax" className={isMaximized ? 'window' : 'max'} onClick={this.onMax} />
 									<Icon className="close" onClick={this.onClose} />
 								</div>
 							</div>
@@ -697,7 +700,13 @@ class App extends React.Component<Props, State> {
 	};
 
 	onMax (e: any) {
+		const node = $(ReactDOM.findDOMNode(this));
+		const icon = node.find('#minmax');
 		const renderer = Util.getRenderer();
+		const isMaximized = BrowserWindow.getFocusedWindow().isMaximized();
+
+		icon.removeClass('max window');
+		!isMaximized ? icon.addClass('max') : icon.addClass('window');
 		renderer.send('winCommand', 'maximize');
 	};
 

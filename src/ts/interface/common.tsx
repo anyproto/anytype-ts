@@ -1,10 +1,3 @@
-export interface Account {
-	id: string;
-};
-
-export interface AccountConfig {
-};
-
 export enum Platform {
 	Windows = 'Windows',
 	Mac = 'Mac',

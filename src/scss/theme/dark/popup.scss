@@ -46,11 +46,11 @@
 		.select { color: $colorSecondary; }
 
         .tabIndex .row, 
-		.tabOther .row,
 		.tabAccount .row,
 		.tabAppearance .row,
 		.tabPersonal .row,
-		.tabPinIndex .row { border-color: $colorLineSecondary; }
+		.tabPinIndex .row,
+		.tabDelete .row { border-color: $colorLineSecondary; }
         
         .tabWallpaper .item.active { border-color: $colorLinePrimary; }
         .tabWallpaper .item .cover.upload { background-color: $colorBlack !important; border-color: $colorLinePrimary; }

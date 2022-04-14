@@ -1,6 +1,5 @@
+import { Account, AccountConfig, AccountStatus, AccountStatusType } from './account';
 import { 
-	Account, 
-	AccountConfig, 
 	Platform, 
 	DragType, 
 	SelectType,
@@ -56,6 +55,9 @@ import { ContentLatex, BlockLatex } from './block/latex';
 export {
 	Account,
 	AccountConfig,
+	AccountStatus,
+	AccountStatusType,
+
 	Platform,
 	DragType,
 	SelectType,
