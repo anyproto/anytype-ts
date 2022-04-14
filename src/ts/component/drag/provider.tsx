@@ -219,7 +219,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 
 		if (selection) {
 			if (type == I.DragType.Block) {
-				selection.set(this.ids);
+				selection.set(I.SelectType.Block, this.ids);
 			};
 			selection.hide();
 			selection.preventSelect(true);

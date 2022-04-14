@@ -74,28 +74,43 @@ class MenuContext extends React.Component<Props, {}> {
 	getSections () {
 		const { param } = this.props;
 		const { data } = param;
-		const { subId, objectId } = data;
-		const object = detailStore.get(subId, objectId);
-		
-		let archive = null;
-		let fav = null;
-		let pageCopy = { id: 'pageCopy', icon: 'copy', name: 'Duplicate' };
+		const { subId, objectIds } = data;
+		const length = objectIds.length;
 
-		if (object.isFavorite) {
+		let pageCopy = { id: 'copy', icon: 'copy', name: 'Duplicate' };
+		let archive = null;
+		let archiveCnt = 0;
+		let fav = null;
+		let favCnt = 0;
+
+		let allowedArchive = true;
+		let allowedFav = true;
+
+		objectIds.forEach((it: string) => {
+			const object = detailStore.get(subId, it);
+
+			if (object.isFavorite) favCnt++;
+			if (object.isArchived) archiveCnt++;
+
+			if (!blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Delete ])) {
+				allowedArchive = false;
+			};
+			if (!blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Details ]) || object.isArchived) {
+				allowedFav = false;
+			};
+		});
+
+		if (favCnt == length) {
 			fav = { id: 'unfav', name: 'Remove from Favorites' };
 		} else {
 			fav = { id: 'fav', name: 'Add to Favorites' };
 		};
 
-		if (object.isArchived) {
-			archive = { id: 'pageUnarchive', icon: 'restore', name: 'Restore from bin' };
+		if (archiveCnt == length) {
+			archive = { id: 'unarchive', icon: 'restore', name: 'Restore from bin' };
 		} else {
-			archive = { id: 'pageArchive', icon: 'remove', name: 'Move to bin' };
+			archive = { id: 'archive', icon: 'remove', name: 'Move to bin' };
 		};
-
-		// Restrictions
-		const allowedArchive = blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Delete ]);
-		const allowedFav = blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Details ]) && !object.isArchived;
 
 		if (!allowedArchive)	 archive = null;
 		if (!allowedFav)		 fav = null;
@@ -105,7 +120,7 @@ class MenuContext extends React.Component<Props, {}> {
 		];
 
 		sections = sections.filter((section: any) => {
-			section.children = section.children.filter((child: any) => { return child; });
+			section.children = section.children.filter(it => it);
 			return section.children.length > 0;
 		});
 
@@ -132,48 +147,49 @@ class MenuContext extends React.Component<Props, {}> {
 	onClick (e: any, item: any) {
 		const { param, close } = this.props;
 		const { data } = param;
-		const { subId, objectId } = data;
-		const object = detailStore.get(subId, objectId);
+		const { subId, objectIds } = data;
+		const length = objectIds.length;
 
 		focus.clear(false);
 		
 		switch (item.id) {
 
-			case 'pageCopy':
-				C.ObjectDuplicate(objectId, (message: any) => {
-					if (!message.error.code) {
-						DataUtil.objectOpenPopup({ id: message.id, layout: object.layout });
+			case 'copy':
+				C.ObjectListDuplicate(objectIds, (message: any) => {
+					if (!message.error.code && (length == 1)) {
+						const object = detailStore.get(subId, objectIds[0]);
+						DataUtil.objectOpenPopup({ id: object.id, layout: object.layout });
 					};
 				});
 				break;
 
-			case 'pageArchive':
-				C.ObjectSetIsArchived(objectId, true, (message: any) => {
+			case 'archive':
+				C.ObjectListSetIsArchived(objectIds, true, (message: any) => {
 					if (message.error.code) {
 						return;
 					};
-					analytics.event('MoveToBin', { count: 1 });
+					analytics.event('MoveToBin', { count: length });
 				});
 				break;
 
-			case 'pageUnarchive':
-				C.ObjectSetIsArchived(objectId, false, (message: any) => {
+			case 'unarchive':
+				C.ObjectListSetIsArchived(objectIds, false, (message: any) => {
 					if (message.error.code) {
 						return;
 					};
-					analytics.event('RestoreFromBin', { count: 1 });
+					analytics.event('RestoreFromBin', { count: length });
 				});
 				break;
 
 			case 'fav':
-				C.ObjectSetIsFavorite(objectId, true, () => {
-					analytics.event('AddToFavorites', { count: 1 });
+				C.ObjectListSetIsFavorite(objectIds, true, () => {
+					analytics.event('AddToFavorites', { count: length });
 				});
 				break;
 
 			case 'unfav':
-				C.ObjectSetIsFavorite(objectId, false, () => {
-					analytics.event('RemoveFromFavorites', { count: 1 });
+				C.ObjectListSetIsFavorite(objectIds, false, () => {
+					analytics.event('RemoveFromFavorites', { count: length });
 				});
 				break;
 		};

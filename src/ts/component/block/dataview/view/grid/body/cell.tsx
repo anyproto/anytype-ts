@@ -44,7 +44,7 @@ const BodyCell = observer(class BodyCell extends React.Component<Props, {}> {
 				key={id} 
 				id={id} 
 				className={cn.join(' ')} 
-				onMouseDown={(e: any) => { onCellClick(e, relation.relationKey, index); }} 
+				onClick={(e: any) => { onCellClick(e, relation.relationKey, index); }} 
 				style={{ width: width }}
 			>
 				<Cell 

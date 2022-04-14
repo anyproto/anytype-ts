@@ -1175,11 +1175,19 @@ const ObjectToSet = (contextId: string, sources: string[], callBack?: (message: 
 };
 
 const ObjectDuplicate = (id: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Object.ToSet.Request();
+	const request = new Rpc.Object.Duplicate.Request();
 	
 	request.setContextid(id);
 
 	dispatcher.request('objectDuplicate', request, callBack);
+};
+
+const ObjectListDuplicate = (ids: string[], callBack?: (message: any) => void) => {
+	const request = new Rpc.ObjectList.Duplicate.Request();
+	
+	request.setObjectidsList(ids);
+
+	dispatcher.request('objectListDuplicate', request, callBack);
 };
 
 const ObjectListDelete = (ids: string[], callBack?: (message: any) => void) => {
@@ -1440,6 +1448,7 @@ export {
 	ObjectSearchUnsubscribe,
 	ObjectDuplicate,
 	
+	ObjectListDuplicate,
 	ObjectListDelete,
 	ObjectListSetIsArchived,
 	ObjectListSetIsFavorite,

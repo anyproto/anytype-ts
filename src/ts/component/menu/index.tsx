@@ -724,14 +724,9 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 		};
 
 		if (this.ref && this.ref.onSortEnd) {
-			keyboard.shortcut('shift+arrowup', e, (pressed: string) => {
+			keyboard.shortcut('shift+arrowup, shift+arrowdown', e, (pressed: string) => {
 				e.preventDefault();
-				this.onSortMove(-1);
-			});
-
-			keyboard.shortcut('shift+arrowdown', e, (pressed: string) => {
-				e.preventDefault();
-				this.onSortMove(1);
+				this.onSortMove(pressed.match('arrowup') ? -1 : 1);
 			});
 		};
 

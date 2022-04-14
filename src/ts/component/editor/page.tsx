@@ -142,7 +142,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 		let ids: string[] = [];
 		if (selection) {
-			ids = selection.get(true);
+			ids = selection.get(I.SelectType.Block, true);
 		};
 		
 		win.on('mousemove.editor' + namespace, throttle((e: any) => { this.onMouseMove(e); }, THROTTLE));
@@ -470,7 +470,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		};
 		
 		const block = blockStore.getLeaf(rootId, focused);
-		const ids = selection.get();
+		const ids = selection.get(I.SelectType.Block);
 		const cmd = keyboard.ctrlKey();
 		const readonly = this.isReadonly();
 
@@ -519,7 +519,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 			keyboard.shortcut('escape', e, (pressed: string) => {
 				if (!menuOpen) {
-					selection.clear();
+					selection.clear(false);
 				};
 			});
 
@@ -611,7 +611,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 				return;
 			};
 
-			selection.clear();
+			selection.clear(false);
 			focus.restore();
 			focus.apply();
 		});
@@ -622,7 +622,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 				return;
 			};
 
-			selection.clear();
+			selection.clear(false);
 			focus.restore();
 
 			const focused = focus.state.focused || Constant.blockId.title;
@@ -937,7 +937,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		const { focused } = focus.state;
 		const block = blockStore.getLeaf(rootId, focused);
 
-		if (!block || selection.get(true).length) {
+		if (!block || selection.get(I.SelectType.Block, true).length) {
 			return;
 		};
 
@@ -969,7 +969,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			e.preventDefault();
 
 			focus.clear(true);
-			selection.set([ block.id ]);
+			selection.set(I.SelectType.Block, [ block.id ]);
 
 			menuStore.closeAll([ 'blockContext', 'blockAction' ]);
 		};
@@ -1034,7 +1034,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		};
 
 		const isDelete = pressed == 'delete';
-		const ids = selection.get(true);
+		const ids = selection.get(I.SelectType.Block, true);
 		const length = block.getLength();
 
 		if (block.isText()) {
@@ -1210,7 +1210,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		const { selection } = dataset || {};
 		const ids = blockStore.getBlocks(rootId, (it: any) => { return it.isSelectable(); }).map((it: any) => { return it.id; }); 
 		
-		selection.set(ids);
+		selection.set(I.SelectType.Block, ids);
 		menuStore.close('blockContext');
 	};
 	
@@ -1291,7 +1291,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		};
 
 		let { focused, range } = focus.state;
-		let ids = selection.get(true);
+		let ids = selection.get(I.SelectType.Block, true);
 		if (!ids.length) {
 			ids = [ focused ];
 		};
@@ -1487,7 +1487,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		let from = 0;
 		let to = 0;
 
-		C.BlockPaste(rootId, focused, range, selection.get(true), data.anytype.range.to > 0, { text: data.text, html: data.html, anytype: data.anytype.blocks, files: data.files }, (message: any) => {
+		C.BlockPaste(rootId, focused, range, selection.get(I.SelectType.Block, true), data.anytype.range.to > 0, { text: data.text, html: data.html, anytype: data.anytype.blocks, files: data.files }, (message: any) => {
 			if (message.error.code) {
 				return;
 			};
@@ -1703,7 +1703,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		popupStore.closeAll([ 'preview' ]);
 
 		let next: any = null;
-		let ids = selection.get();
+		let ids = selection.get(I.SelectType.Block);
 		let blockIds = [];
 		
 		if (ids.length) {

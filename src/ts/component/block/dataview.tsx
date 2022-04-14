@@ -49,7 +49,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const { fixed } = sidebar;
 		const { rootId, block, isPopup } = this.props;
 		const views = dbStore.getViews(rootId, block.id);
-		const root = blockStore.getLeaf(rootId, rootId);
 
 		if (!views.length) {
 			return null;
@@ -168,13 +167,37 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	onKeyDown (e: any) {
-		const { rootId } = this.props;
+		const { rootId, dataset } = this.props;
+		const { selection } = dataset || {};
 		const root = blockStore.getLeaf(rootId, rootId);
 		const cmd = keyboard.ctrlKey();
+		const ids = selection.get(I.SelectType.Record);
+		const length = ids.length;
 
-		if (root && root.isObjectSet() && !this.creating) {
-			keyboard.shortcut(`${cmd}+n`, e, (pressed: string) => {
-				this.onRowAdd(e, -1, true);
+		if (!root || !root.isObjectSet()) {
+			return;
+		};
+
+		if (!this.creating) {
+			keyboard.shortcut(`${cmd}+n`, e, (pressed: string) => { this.onRowAdd(e, -1, true); });
+		};
+
+		if (length) {
+			keyboard.shortcut('backspace, delete', e, (pressed: string) => {
+				analytics.event('ShowDeletionWarning');
+				popupStore.open('confirm', {
+					data: {
+						title: `Are you sure you want to delete ${length} ${Util.cntWord(length, 'object', 'objects')}?`,
+						text: 'These objects will be deleted irrevocably. You can’t undo this action.',
+						textConfirm: 'Delete',
+						onConfirm: () => { 
+							C.ObjectListDelete(ids);
+							
+							selection.clear(false);
+							analytics.event('RemoveCompletely', { count: length });
+						}
+					},
+				});
 			});
 		};
 	};
@@ -450,14 +473,21 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { rootId, block } = this.props;
+		const { rootId, block, dataset } = this.props;
+		const { selection } = dataset || {};
 		const { x, y } = keyboard.mouse.page;
 		const subId = dbStore.getSubId(rootId, block.id);
+		
+		let ids = selection.get(I.SelectType.Record);
+		if (!ids.length) {
+			ids = [ id ];
+		};
 
 		menuStore.open('dataviewContext', {
 			rect: { width: 0, height: 0, x: x + 4, y: y },
+			onClose: () => { selection.clear(true); },
 			data: {
-				objectId: id,
+				objectIds: ids,
 				subId,
 			}
 		});

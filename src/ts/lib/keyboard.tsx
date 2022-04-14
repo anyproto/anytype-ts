@@ -188,7 +188,7 @@ class Keyboard {
 					canClose = false;
 				} else
 				if (this.selection) {
-					const ids = this.selection.get();
+					const ids = this.selection.get(I.SelectType.Block);
 					if (ids.length) {
 						canClose = false;
 					};
