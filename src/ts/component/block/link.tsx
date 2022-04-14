@@ -185,11 +185,17 @@ const BlockLink = observer(class BlockLink extends React.Component<Props, {}> {
 	};
 
 	resize () {
+		const { getWrapperWidth } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
 		const card = node.find('.linkCard');
 		const icon = node.find('.iconObject');
+		const rect = node.get(0).getBoundingClientRect() as DOMRect;
+
+		const width = rect.width;
+		const mw = getWrapperWidth();
 
 		icon.length ? card.addClass('withIcon') : card.removeClass('withIcon');
+		width <= mw / 2 ? card.addClass('vertical') : card.removeClass('vertical');
 	};
 	
 });

@@ -517,6 +517,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 
 			case 'linkSettings':
 				menuId = 'blockLinkSettings';
+				menuParam.subIds = [ 'select' ];
 				break;
 		};
 

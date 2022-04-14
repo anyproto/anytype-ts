@@ -170,19 +170,9 @@
     /* BlockLink */
 
     .block.blockLink {
-        .sides { border-color: $colorLinePrimary !important; }
-        .cardName span::before { background: $colorSecondary !important; }
-
-        .linkCard.card {
-            .sides { background: rgba(0,0,0,0.5); }
-            .cover { color: $colorPrimary; }
-
-            .side.right {
-                .cardDescription { color: $colorPrimary; }
-            }
-        }
-
         .loading, .deleted { color: $colorSecondary; }
+
+		.side { border-color: $colorLinePrimary !important; }
     }
 
     .block.blockLink:hover {

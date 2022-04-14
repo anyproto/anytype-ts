@@ -82,7 +82,7 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 		let canSelect = true;
 		let canDrop = !readonly;
 		let canDropMiddle = canDrop;
-		let cn: string[] = [ 'block', 'align' + align, DataUtil.blockClass(block, isDragging), 'index-' + index ];
+		let cn: string[] = [ 'block', DataUtil.blockClass(block, isDragging), 'index-' + index ];
 		let cd: string[] = [ 'wrapContent' ];
 		let blockComponent = null;
 		let empty = null;
@@ -101,6 +101,10 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 
 		if (bgColor && !block.isLink()) {
 			cd.push('bgColor bgColor-' + bgColor);
+		};
+
+		if (block.canHaveAlign()) {
+			cn.push('align' + align);
 		};
 		
 		switch (type) {

@@ -6,44 +6,11 @@
 		.item {
 			.name { @include text-overflow-nw; width: calc(100% - 58px); }
 			.switch { position: absolute; right: 14px; top: 50%; margin-top: -8px; }
-
-			.icon.style-text { width: 32px; height: 32px; background-image: url('~img/icon/menu/linkSettings/text0.svg'); }
-			.icon.style-card { width: 44px; height: 32px; background-image: url('~img/icon/menu/linkSettings/card0.svg'); }
-			.icon.item-icon { background-image: url('~img/icon/menu/linkSettings/icon.svg'); }
-			.icon.item-cover { background-image: url('~img/icon/menu/linkSettings/cover.svg'); }
+			.icon.arrow { background-image: url('~img/arrow/select/medium.svg'); }
 		}
 
-		.section.card {
-			.items { display: flex; padding: 10px 16px 7px 16px; }
-			.item { 
-				display: inline-block; width: 50%; height: 94px; line-height: 94px; border-radius: 12px; color: $colorBorderDark;
-				text-align: center; padding: 0px; box-shadow: 0px 0px; transition: $transitionFast; margin-right: 24px;
-			}
-			.item:last-child { margin: 0px; }
-			.item {
-				.icon { margin: 0px 0px 14px 0px; transition: $transitionFast; }
-				.name { width: auto; display: block; }
-			}
-
-			.item:hover { color: $colorBlack; box-shadow: 0px 0px 0px 1px $colorBorderDark inset; }
-			.item:hover {
-				.icon.style-text { background-image: url('~img/icon/menu/linkSettings/text1.svg'); }		
-				.icon.style-card { background-image: url('~img/icon/menu/linkSettings/card1.svg'); }
-			}
-
-			.item.active { color: $colorBlack; background: $colorHover; }
-			.item.active {
-				.icon.style-text { background-image: url('~img/icon/menu/linkSettings/text2.svg'); }		
-				.icon.style-card { background-image: url('~img/icon/menu/linkSettings/card2.svg'); }
-			}
-		}
-
-		.buttons { padding: 0px 14px; margin: 12px 0px; display: flex; justify-content: flex-start; flex-basis: auto; }
-		.buttons {
-			.button { flex-grow: 1; margin-right: 4px; height: 28px; line-height: 26px; border-radius: 4px; }
-			.button.grey { box-shadow: 0px 0px 0px 1px $colorBorderDark inset; color: $colorSecondary; }
-			.button.grey:hover { box-shadow: 0px 0px 0px 1px $colorMediumGrey inset; color: $colorDarkGrey; }
-			.button:last-child { margin: 0px; }
+		.item.withCaption {
+			.caption { @include text-common; line-height: 20px; width: 80px; padding-right: 14px; }
 		}
 	}
 }

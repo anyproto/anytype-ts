@@ -3,6 +3,7 @@ import { I } from 'ts/lib';
 export enum LinkCardStyle {
 	Text		 = 0,
 	Card		 = 1,
+	Inline		 = 2,
 };
 
 export enum LinkIconSize {
@@ -10,7 +11,13 @@ export enum LinkIconSize {
 	Small		 = 1,
 	Medium		 = 2,
 	Large		 = 3,
-}
+};
+
+export enum LinkDescription {
+	None		 = 0,
+	Added		 = 1,
+	Content		 = 2,
+};
 
 export interface ContentLink {
 	targetBlockId: string;

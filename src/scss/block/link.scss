@@ -1,12 +1,20 @@
 @import "~scss/_vars";
 
 .blocks {
+	.block.blockLink { padding: 6px 0px; }
 	.block.blockLink {
 		.isArchived {
 			.cardName { color: $colorMediumGrey; }
             .cardName span::before { display: none; }
-			.archive { display: inline-block !important; }
+			.archive { display: block !important; }
 		}
+
+		.archive { 
+			padding: 0px 4px; @include text-common; line-height: 18px; border-radius: 3px; white-space: nowrap; position: absolute; height: 18px; 
+			right: 16px; top: 21px; z-index: 1; background: $colorLightGrey; @include text-small; display: none;
+		}
+
+		.focusable { border-radius: 12px; }
 
         .loading, .deleted { color: $colorMediumGrey; }
         .loading, .deleted {
@@ -23,141 +31,59 @@
 
 		.linkCard { display: inline-block; vertical-align: top; width: 100%; }
         .linkCard {
-            .sides { display: flex; overflow: hidden; transition: border-color 0.2s ease-in-out; z-index: 1; position: relative; }
+            .sides { display: flex; flex-direction: row; border-radius: 12px; }
+			.side.left { width: 100%; padding: 21px 16px; border: 1px solid $colorBorderDark; border-radius: 12px; }
+			.side.right { display: none; border-radius: 0px 12px 12px 0px; overflow: hidden; }
 
-            .side.left { flex-shrink: 0; margin: 0px 16px 0px 0px; }
-            .side.left:empty { display: none; }
-            .side.right { width: 100%; position: relative; }
+			.cover { position: relative; min-height: 116px; background-color: unset; }
+			.cardName { 
+				@include text-common; display: flex; flex-direction: row; gap: 0px 6px; align-items: center; line-height: 18px;
+			}
+			.cardName .name { @include clamp2; }
+			.cardDescription { @include text-small; line-height: 16px; @include clamp2; margin: 4px 0px 0px 0px; }
+			.cardDescription:empty { margin: 0px; }
 
-            .iconObject { margin: 0px; }
-            .cover { position: relative; padding: 68px 12px 12px 12px; border-radius: 6px; color: $colorBlack; }
+			.cardFeatured { @include text-small; line-height: 16px; margin: 4px 0px 0px 0px; }
+			.cardFeatured:empty { margin: 0px; }
 
-            .side.right {
-                .txt { width: 100%; }
+			.cardFeatured {
+				.item { position: relative; display: inline-block; vertical-align: top; margin: 0px 10px 0px 0px; }
+				.item::after { 
+					content: ""; display: block; position: absolute; right: -6px; top: 50%; width: 2px; height: 2px; background: $colorDarkGrey; 
+					margin: -1px 0px 0px 0px;
+				}
 
-                .cardName { 
-                    @include text-paragraph; @include text-overflow-nw; max-width: 100%; overflow: hidden; 
-                    display: inline-block; vertical-align: middle; 
-                }
-                .cardName span { position: relative; }
-                .cardName span::before {
-                    content: ""; width: 100%; height: 1px; transition: $transitionFast; position: absolute; bottom: 0px; left: 0px; z-index: 1;
-                }
-
-                .cardDescription { 
-                    @include text-common; @include clamp2; color: $colorVeryDarkGrey; overflow: hidden;
-                    margin: 2px 0px 0px 0px;
-                }
-                .cardDescription:empty { display: none; }
-
-                .archive {
-                    border-radius: 3px; background-color: $colorVeryLightGrey; @include text-small; color: $colorMediumGrey; 
-                    padding: 0px 6px; display: none; position: absolute; right: 0px; top: 0px; vertical-align: middle;
-                }
-            }
-
-            .block.blockFeatured { @include text-small; margin: 0px; padding: 0px; }
-            .block.blockFeatured {
-                .wrapMenu { display: none; }
-                .wrapContent { width: 100%; }
-
-                .cellContent { padding: 1.5px 4px; }
-                .cellContent {
-                    .iconObject { display: none; }
-                }
-                .cellContent.type { margin-left: -4px; }
-                .cellContent.c-file { font-size: 18px; line-height: 18px; padding: 1.5px 2px; }
-                .cellContent.c-file {
-                    .iconObject { display: inline-block; margin-top: -3px; }
-                }
-            }
+				.item:last-child { margin: 0px; }
+				.item:last-child::after { display: none; }
+			}
         }
 
-        .linkCard.c24.text {
-            .cardName span::before { background: $colorMediumGrey; }
-            .sides.bgColor .side { padding: 2px; }
-        }
+		.linkCard.c48.withIcon {
+			.sides { min-height: 80px; }
+			.side.left { padding: 16px 16px 16px 78px; line-height: 44px; }
 
-        .linkCard.c24 {
-            .cardName { font-weight: 400 !important; }
-            .side.left { margin-right: 6px; }
-            .side.right {
-                .txt { vertical-align: top; }
-                .archive { position: static; margin: 0px 0px 0px 8px; }
-            }
-        }
-        .linkCard.c24.withIcon {
-            .side.right { width: calc(100% - 30px); }
-        }
+			.iconObject { position: absolute; left: 16px; top: 16px; background-color: $colorVeryLightGrey; border-radius: 10px; }
+		}
 
-        .linkCard.c64 {
-            .side.right { line-height: 64px; }
-            .sides.bgColor .side.right { line-height: 56px; padding: 4px; }
-        }
-        .linkCard.c64.withIcon {
-            .side.right { width: calc(100% - 80px); }
-        }
+		.linkCard.withCover {
+			.side.left { width: calc(100% - 236px); border-radius: 12px 0px 0px 12px; }
+			.side.right { width: 236px; display: block; }
+		}
 
-        .linkCard.c96 {
-            .side.right { line-height: 96px; }
-            .sides.bgColor .side.right { line-height: 88px; padding: 4px; }
-        }
-        .linkCard.c96.withIcon {
-            .side.right { width: calc(100% - 116px); }
-        }
+		.linkCard.vertical { display: block; }
+		.linkCard.vertical {
+			.side.left { width: 100%; }
+			.side.right { 
+				position: absolute; top: 0px; left: 0px; height: 116px; width: 100%; border-radius: 12px 12px 0px 0px;
+				border: 1px solid $colorBorderDark; border-bottom: 0px;
+			}
+		}
 
-        .linkCard.card { margin: 3px 0px; }
-        .linkCard.card {
-            .sides { border: 1px solid $colorBorderDark; }
-            .sides.hidden { visibility: hidden; }
-            .cardName span::before { display: none; }
-        }
-        .linkCard.withCover {
-            .sides { border: 0px; }
-        }
-        .linkCard.card, .linkCard.withCover {
-            .sides { padding: 16px; background: $colorWhite; border-radius: 6px; }
-        }
+		.linkCard.withCover.vertical { padding-top: 116px; }
+		.linkCard.withCover.vertical {
+			.side.left { border-radius: 0px 0px 12px 12px }
+		}
 
-        .linkCard.align1 { text-align: center; }
-        .linkCard.align1 {
-            .sides { display: block; }
-            .side.left { margin: 0px 0px 8px 0px; }
-            .side.right { width: 100% !important; line-height: unset !important; }
-            .iconObject { display: inline-block; }
-        }
-
-        .linkCard.align2 { text-align: right; }
-        .linkCard.align2 {
-            .side.left { margin: 0px 0px 0px 16px; }
-            .iconObject { display: inline-block; }
-            .block.blockFeatured {
-                .cell.last .cellContent { margin-right: -4px; }
-            }
-        }
-
-        .linkCard.isTask {
-            .iconObject { width: 24px; height: 24px; }
-            .side.left { margin: 0px 6px 0px 0px; }
-        }
-        .linkCard.isTask.align1 {
-            .side { display: inline-block; }
-        }
-        .linkCard.isTask.align2 {
-            .side.left { margin: 0px 0px 0px 6px; }
-        }
-
-        .linkCard.isHuman {
-            .cardName { font-weight: 600; }
-        }
 	}
 
-    .block.blockLink:hover {
-        .sides { border-color: $colorBlack !important; }
-        .cardName span::before { background: $colorBlack !important; }
-    }
-
-    .block.blockLink > .wrapContent > .selectable > .dropTarget { padding: 3px 0px; }
-	.block.blockLink > .wrapContent > .dropTarget.targetBot { height: 2px; display: block; margin-bottom: -2px; }
-    
 }
