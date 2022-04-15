@@ -35,7 +35,7 @@ const LinkPreview = (response: any) => {
 	};
 };
 
-const UploadFile = (response: any) => {
+const FileUpload = (response: any) => {
 	return {
 		hash: response.getHash(),
 	};
@@ -358,7 +358,7 @@ const MakeTemplateByObjectType = (response: any) => {
 	};
 };
 
-const CloneTemplate = (response: any) => {
+const TemplateClone = (response: any) => {
 	return {
 		id: response.getId(),
 	};
@@ -387,7 +387,7 @@ export {
 
 	ConfigGet,
 	Export,
-	UploadFile,
+	FileUpload,
 	DownloadFile,
 	LinkPreview,
 	FileListOffload,
@@ -456,7 +456,7 @@ export {
 
 	MakeTemplate,
 	MakeTemplateByObjectType,
-	CloneTemplate,
+	TemplateClone,
 
 	WorkspaceCreate,
 

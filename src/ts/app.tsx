@@ -573,7 +573,7 @@ class App extends React.Component<Props, State> {
 		});
 
 		renderer.on('shutdown', (e, relaunch) => {
-			C.Shutdown(() => {
+			C.AppShutdown(() => {
 				renderer.send('shutdown', relaunch);
 			});
 		});

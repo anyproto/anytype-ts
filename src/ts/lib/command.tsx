@@ -40,7 +40,7 @@ const ConfigGet = (callBack?: (message: any) => void) => {
 	dispatcher.request('configGet', request, callBack);
 };
 
-const Shutdown = (callBack?: (message: any) => void) => {
+const AppShutdown = (callBack?: (message: any) => void) => {
 	const request = new Commands.Empty();
 	dispatcher.request('shutdown', request, callBack);
 };
@@ -92,12 +92,12 @@ const ExportLocalstore = (path: string, ids: string[], callBack?: (message: any)
 	dispatcher.request('exportLocalstore', request, callBack);
 };
 
-const UploadFile = (url: string, path: string, type: I.FileType, callBack?: (message: any) => void) => {
+const FileUpload = (url: string, path: string, type: I.FileType, callBack?: (message: any) => void) => {
 	if (!url && !path) {
 		return;
 	};
 
-	const request = new Rpc.UploadFile.Request();
+	const request = new Rpc.File.Upload.Request();
 	
 	request.setUrl(url);
 	request.setLocalpath(path);
@@ -1190,6 +1190,15 @@ const ObjectDuplicate = (id: string, callBack?: (message: any) => void) => {
 	dispatcher.request('objectDuplicate', request, callBack);
 };
 
+const ObjectApplyTemplate = (contextId: string, templateId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.ApplyTemplate.Request();
+	
+	request.setContextid(contextId);
+	request.setTemplateid(templateId);
+
+	dispatcher.request('objectApplyTemplate', request, callBack);
+};
+
 const ObjectListDuplicate = (ids: string[], callBack?: (message: any) => void) => {
 	const request = new Rpc.ObjectList.Duplicate.Request();
 	
@@ -1257,21 +1266,12 @@ const MakeTemplateByObjectType = (objectTypeUrl: string, callBack?: (message: an
 	dispatcher.request('makeTemplateByObjectType', request, callBack);
 };
 
-const ApplyTemplate = (contextId: string, templateId: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.ApplyTemplate.Request();
-	
-	request.setContextid(contextId);
-	request.setTemplateid(templateId);
-
-	dispatcher.request('applyTemplate', request, callBack);
-};
-
-const CloneTemplate = (contextId: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.ApplyTemplate.Request();
+const TemplateClone = (contextId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Template.Clone.Request();
 	
 	request.setContextid(contextId);
 
-	dispatcher.request('cloneTemplate', request, callBack);
+	dispatcher.request('templateClone', request, callBack);
 };
 
 const WorkspaceCreate = (name: string, callBack?: (message: any) => void) => {
@@ -1300,7 +1300,7 @@ const WorkspaceSetIsHighlighted = (objectId: string, isHightlighted: boolean, ca
 };
 
 const UnsplashSearch = (query: string, limit: number, callBack?: (message: any) => void) => {
-	const request = new Rpc.UnsplashSearch.Request();
+	const request = new Rpc.Unsplash.Search.Request();
 	
 	request.setQuery(query);
 	request.setLimit(limit);
@@ -1309,7 +1309,7 @@ const UnsplashSearch = (query: string, limit: number, callBack?: (message: any) 
 };
 
 const UnsplashDownload = (id: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.UnsplashDownload.Request();
+	const request = new Rpc.Unsplash.Download.Request();
 	
 	request.setPictureid(id);
 
@@ -1323,9 +1323,9 @@ export {
 	MetricsSetParameters,
 
 	ConfigGet,
-	Shutdown,
+	AppShutdown,
 	LinkPreview,
-	UploadFile,
+	FileUpload,
 	DownloadFile,
 	ProcessCancel,
 	Export,
@@ -1464,8 +1464,8 @@ export {
 
 	MakeTemplate,
 	MakeTemplateByObjectType,
-	ApplyTemplate,
-	CloneTemplate,
+	ObjectApplyTemplate,
+	TemplateClone,
 
 	WorkspaceCreate,
 	WorkspaceSelect,

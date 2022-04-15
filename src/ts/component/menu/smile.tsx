@@ -313,7 +313,7 @@ class MenuSmile extends React.Component<Props, State> {
 				return;
 			};
 
-			C.UploadFile('', files[0], I.FileType.Image, (message: any) => {
+			C.FileUpload('', files[0], I.FileType.Image, (message: any) => {
 				if (message.error.code) {
 					return;
 				};

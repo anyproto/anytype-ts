@@ -851,7 +851,7 @@ function send () {
 };
 
 function shutdown (relaunch) {
-	Util.log('info', 'Shutdown, relaunch: ' + relaunch);
+	Util.log('info', 'AppShutdown, relaunch: ' + relaunch);
 
 	if (relaunch) {
 		Util.log('info', 'Relaunch');
