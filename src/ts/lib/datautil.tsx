@@ -313,25 +313,27 @@ class DataUtil {
 		});
 	};
 
-	onAuth (account: I.Account) {
+	onAuth (info: any) {
 		const redirectTo = Storage.get('redirectTo');
 
 		Storage.delete('redirect');
 		Storage.delete('redirectTo');
 
-		if (account) {
-			if (account.config) {
-				commonStore.configSet(account.config, false);
+		console.log('INFO');
+
+		if (info) {
+			if (info.info) {
+				commonStore.infoSet(info.info);
 			};
 
-			if (account.info) {
-				commonStore.infoSet(account.info);
-			};
+			if (info.account) {
+				authStore.accountSet(info.account);
 
-			authStore.accountSet(account);
+				if (info.account.config) {
+					commonStore.configSet(info.account.config, false);
+				};
+			};
 		};
-
-		console.log('ACCOUNT', account);
 
 		this.pageInit(() => {
 			keyboard.initPinCheck();

@@ -30,7 +30,7 @@ const Mapper = {
 		Account: (obj: any): I.Account => {
 			return {
 				id: obj.getId(),
-				info: obj.hasInfo && obj.hasInfo() ? Mapper.From.AccountInfo(obj.getInfo()) : null,
+				//info: obj.hasInfo && obj.hasInfo() ? Mapper.From.AccountInfo(obj.getInfo()) : null,
 				config: obj.hasConfig && obj.hasConfig() ? Mapper.From.AccountConfig(obj.getConfig()) : null,
 				status: obj.hasStatus && obj.hasStatus() ? Mapper.From.AccountStatus(obj.getStatus()) : null,
 			};

@@ -51,12 +51,14 @@ const WalletConvert = (response: any) => {
 const AccountCreate = (response: any) => {
 	return {
 		account: Mapper.From.Account(response.getAccount()),
+		info: response.hasInfo() ? Mapper.From.AccountInfo(response.getInfo()) : null,
 	};
 };
 
 const AccountSelect = (response: any) => {
 	return {
 		account: Mapper.From.Account(response.getAccount()),
+		info: response.hasInfo() ? Mapper.From.AccountInfo(response.getInfo()) : null,
 	};
 };
 
