@@ -30,8 +30,21 @@ const Mapper = {
 		Account: (obj: any): I.Account => {
 			return {
 				id: obj.getId(),
-				config: obj.hasConfig() ? Mapper.From.AccountConfig(obj.getConfig()) : null,
-				status: obj.hasStatus() ? Mapper.From.AccountStatus(obj.getStatus()) : null,
+				info: obj.hasInfo && obj.hasInfo() ? Mapper.From.AccountInfo(obj.getInfo()) : null,
+				config: obj.hasConfig && obj.hasConfig() ? Mapper.From.AccountConfig(obj.getConfig()) : null,
+				status: obj.hasStatus && obj.hasStatus() ? Mapper.From.AccountStatus(obj.getStatus()) : null,
+			};
+		},
+
+		AccountInfo: (obj: any): I.AccountInfo => {
+			return {
+				homeBlockId: obj.getHomeblockid(),
+				profileBlockId: obj.getProfileblockid(),
+				gatewayUrl: obj.getGatewayurl(),
+				marketplaceTypeId: obj.getMarketplacetypeid(),
+				marketplaceTemplateId: obj.getMarketplacetemplateid(),
+				marketplaceRelationId: obj.getMarketplacerelationid(),
+				deviceId: obj.getMarketplacerelationid(),
 			};
 		},
 

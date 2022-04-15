@@ -635,7 +635,7 @@ class App extends React.Component<Props, State> {
 						return;
 					};
 
-					C.ExportTemplates(files[0], (message: any) => {
+					C.TemplateExportAll(files[0], (message: any) => {
 						if (message.error.code) {
 							return;
 						};

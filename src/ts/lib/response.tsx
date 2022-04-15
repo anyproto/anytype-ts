@@ -4,18 +4,6 @@ const DebugSync = (response: any) => {
 	return response.toObject();
 };
 
-const ConfigGet = (response: any) => {
-	return {
-		homeBlockId: response.getHomeblockid(),
-		profileBlockId: response.getProfileblockid(),
-		gatewayUrl: response.getGatewayurl(),
-		marketplaceTypeId: response.getMarketplacetypeid(),
-		marketplaceTemplateId: response.getMarketplacetemplateid(),
-		marketplaceRelationId: response.getMarketplacerelationid(),
-		deviceId: response.getMarketplacerelationid(),
-	};
-};
-
 const Export = (response: any) => {
 	return {
 		path: response.getPath(),
@@ -41,7 +29,7 @@ const FileUpload = (response: any) => {
 	};
 };
 
-const DownloadFile = (response: any) => {
+const FileDownload = (response: any) => {
 	return {
 		path: response.getLocalpath(),
 	};
@@ -117,7 +105,7 @@ const ObjectShow = (response: any) => {
 	};
 };
 
-const BlockOpenBreadcrumbs = (response: any) => {
+const ObjectOpenBreadcrumbs = (response: any) => {
 	return {
 		blockId: response.getBlockid(),
 	};
@@ -239,13 +227,13 @@ const BlockDataviewRecordRelationOptionAdd = (response: any) => {
 	};
 };
 
-const HistoryVersions = (response: any) => {
+const HistoryGetVersions = (response: any) => {
 	return {
 		versions: (response.getVersionsList() || []).map(Mapper.From.HistoryVersion),
 	};
 };
 
-const HistoryShow = (response: any) => {
+const HistoryShowVersion = (response: any) => {
 	const version = response.getVersion();
 	return {
 		version: version ? Mapper.From.HistoryVersion(response.getVersion()) : null,
@@ -271,7 +259,7 @@ const ObjectTypeRelationAdd = (response: any) => {
 	};
 };
 
-const SetCreate = (response: any) => {
+const ObjectCreateSetateSet = (response: any) => {
 	return {
 		id: response.getId(),
 	};
@@ -296,7 +284,7 @@ const ObjectSearchSubscribe = (response: any) => {
 	};
 };
 
-const ObjectIdsSubscribe = (response: any) => {
+const ObjectSubscribeIds = (response: any) => {
 	return {
 		records: (response.getRecordsList() || []).map(Decode.decodeStruct),
 		dependencies: (response.getDependenciesList() || []).map(Decode.decodeStruct),
@@ -346,13 +334,13 @@ const ObjectDuplicate = (response: any) => {
 	};
 };
 
-const MakeTemplate = (response: any) => {
+const TemplateCreateFromObject = (response: any) => {
 	return {
 		id: response.getId(),
 	};
 };
 
-const MakeTemplateByObjectType = (response: any) => {
+const TemplateCreateFromObjectType = (response: any) => {
 	return {
 		id: response.getId(),
 	};
@@ -385,10 +373,9 @@ const UnsplashDownload = (response: any) => {
 export {
 	DebugSync,
 
-	ConfigGet,
 	Export,
 	FileUpload,
-	DownloadFile,
+	FileDownload,
 	LinkPreview,
 	FileListOffload,
 
@@ -400,13 +387,13 @@ export {
 	AccountDelete,
 
 	PageCreate,
-	SetCreate,
+	ObjectCreateSetateSet,
 
 	NavigationGetObjectInfoWithLinks,
 
 	BlockGetPublicWebURL,
 
-	BlockOpenBreadcrumbs,
+	ObjectOpenBreadcrumbs,
 	
 	BlockSplit,
 	BlockCopy,
@@ -434,8 +421,8 @@ export {
 	BlockListDuplicate,
 	BlockListConvertChildrenToPages,
 
-	HistoryVersions,
-	HistoryShow,
+	HistoryGetVersions,
+	HistoryShowVersion,
 
 	ObjectShow,
 
@@ -445,7 +432,7 @@ export {
 
 	ObjectSearch,
 	ObjectSearchSubscribe,
-	ObjectIdsSubscribe,
+	ObjectSubscribeIds,
 	ObjectGraph,
 	ObjectRelationAdd,
 	ObjectRelationListAvailable,
@@ -454,8 +441,8 @@ export {
 	ObjectShareByLink,
 	ObjectDuplicate,
 
-	MakeTemplate,
-	MakeTemplateByObjectType,
+	TemplateCreateFromObject,
+	TemplateCreateFromObjectType,
 	TemplateClone,
 
 	WorkspaceCreate,

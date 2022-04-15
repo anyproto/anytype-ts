@@ -1,6 +1,7 @@
 import { observable, action, computed, set, makeObservable } from 'mobx';
 import { I, Storage, Util } from 'ts/lib';
 import { analytics } from 'ts/lib';
+import { blockStore } from 'ts/store';
 
 interface Preview {
 	type: I.MarkType,
@@ -288,6 +289,21 @@ class CommonStore {
 		const win = $(window);
 		const wh = win.height() - Util.sizeHeader();
 		return wh - 144;
+	};
+
+	infoSet (info: I.AccountInfo) {
+		console.log('INFO', info);
+
+		blockStore.rootSet(info.homeBlockId);
+		blockStore.profileSet(info.profileBlockId);
+
+		blockStore.storeSetType(info.marketplaceTypeId);
+		blockStore.storeSetTemplate(info.marketplaceTemplateId);
+		blockStore.storeSetRelation(info.marketplaceRelationId);
+
+		commonStore.gatewaySet(info.gatewayUrl);
+
+		analytics.device(info.deviceId);
 	};
 
 	configSet (config: any, force: boolean) {

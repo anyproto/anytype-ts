@@ -172,7 +172,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<Props
 		this.loading = true;
 		this.forceUpdate();
 
-		C.BlockOpen(rootId, '', (message: any) => {
+		C.ObjectOpen(rootId, '', (message: any) => {
 			if (message.error.code) {
 				if (message.error.code == Errors.Code.NOT_FOUND) {
 					this.setState({ isDeleted: true });
@@ -245,7 +245,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<Props
 		const { content } = block;
 		const renderer = Util.getRenderer();
 
-		C.DownloadFile(content.hash, path.join(userPath, 'tmp'), (message: any) => {
+		C.FileDownload(content.hash, path.join(userPath, 'tmp'), (message: any) => {
 			if (message.path) {
 				renderer.send('pathOpen', message.path);
 			};

@@ -543,7 +543,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				break;
 
 			case 'templateCreate':
-				C.MakeTemplate(rootId, (message: any) => {
+				C.TemplateCreateFromObject(rootId, (message: any) => {
 					DataUtil.objectOpenPopup({ id: message.id, layout: object.layout });
 
 					analytics.event('CreateTemplate', { objectType: object.type });

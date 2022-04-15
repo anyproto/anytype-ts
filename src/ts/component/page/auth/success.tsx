@@ -62,7 +62,7 @@ const PageAuthSuccess = observer(class PageAuthSuccess extends React.Component<P
 	};
 
 	onSubmit (e: any) {
-		DataUtil.onAuth();
+		DataUtil.onAuth(null);
 	};
 
 	onFocusPhrase (e: any) {

@@ -226,11 +226,11 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const idx = featured.findIndex((it: string) => { return it == relationKey; });
 
 		if (idx < 0) {
-			C.ObjectFeaturedRelationAdd(rootId, [ relationKey ], () => {
+			C.ObjectRelationAddFeatured(rootId, [ relationKey ], () => {
 				analytics.event('FeatureRelation');
 			});
 		} else {
-			C.ObjectFeaturedRelationRemove(rootId, [ relationKey ], () => {
+			C.ObjectRelationRemoveFeatured(rootId, [ relationKey ], () => {
 				analytics.event('UnfeatureRelation');
 			});
 		};

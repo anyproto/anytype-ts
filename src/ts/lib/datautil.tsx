@@ -274,67 +274,64 @@ class DataUtil {
 	};
 	
 	pageInit (callBack?: () => void) {
-		C.ConfigGet((message: any) => {
-			const root = message.homeBlockId;
-			const profile = message.profileBlockId;
-			
-			if (!root) {
-				console.error('[pageInit] No root defined');
+		const { root, profile } = blockStore;
+		const { account } = authStore;
+
+		crumbs.init();
+		commonStore.sidebarInit();
+
+		analytics.profile(account);
+		analytics.event('OpenAccount');
+		
+		C.ObjectTypeList((message: any) => {
+			dbStore.objectTypesSet(message.objectTypes);
+		});
+
+		C.ObjectSearchSubscribe(Constant.subIds.deleted, [
+			{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: true }
+		], [], [ 'id', 'isDeleted' ], [], 0, 0, true, '', '', true);
+		
+		if (profile) {
+			C.ObjectSubscribeIds(Constant.subIds.profile, [ profile ], Constant.defaultRelationKeys, true);
+		};
+
+		C.ObjectOpen(root, '', (message: any) => {
+			if (message.error.code == Errors.Code.ANYTYPE_NEEDS_UPGRADE) {
+				Util.onErrorUpdate();
 				return;
 			};
 
-			commonStore.gatewaySet(message.gatewayUrl);
-			commonStore.sidebarInit();
+			const object = detailStore.get(root, root, Constant.coverRelationKeys);
 
-			analytics.device(message.deviceId);
-			analytics.profile(authStore.account);
-			analytics.event('OpenAccount');
-			
-			blockStore.rootSet(root);
-			blockStore.storeSetType(message.marketplaceTypeId);
-			blockStore.storeSetTemplate(message.marketplaceTemplateId);
-			blockStore.storeSetRelation(message.marketplaceRelationId);
-
-			C.ObjectTypeList((message: any) => {
-				dbStore.objectTypesSet(message.objectTypes);
-			});
-
-			C.ObjectSearchSubscribe(Constant.subIds.deleted, [
-				{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: true }
-			], [], [ 'id', 'isDeleted' ], [], 0, 0, true, '', '', true);
-			
-			if (profile) {
-				C.ObjectIdsSubscribe(Constant.subIds.profile, [ profile ], Constant.defaultRelationKeys, true, (message: any) => {
-					blockStore.profileSet(profile);
-				});
+			if (!object._empty_ && object.coverId && (object.coverType != I.CoverType.None)) {
+				commonStore.coverSet(object.coverId, object.coverId, object.coverType);
 			};
 
-			crumbs.init();
-
-			C.BlockOpen(root, '', (message: any) => {
-				if (message.error.code == Errors.Code.ANYTYPE_NEEDS_UPGRADE) {
-					Util.onErrorUpdate();
-					return;
-				};
-
-				const object = detailStore.get(root, root, Constant.coverRelationKeys);
-
-				if (!object._empty_ && object.coverId && (object.coverType != I.CoverType.None)) {
-					commonStore.coverSet(object.coverId, object.coverId, object.coverType);
-				};
-
-				if (callBack) {
-					callBack();
-				};
-			});
+			if (callBack) {
+				callBack();
+			};
 		});
 	};
 
-	onAuth () {
+	onAuth (account: I.Account) {
 		const redirectTo = Storage.get('redirectTo');
 
 		Storage.delete('redirect');
 		Storage.delete('redirectTo');
+
+		if (account) {
+			if (account.config) {
+				commonStore.configSet(account.config, false);
+			};
+
+			if (account.info) {
+				commonStore.infoSet(account.info);
+			};
+
+			authStore.accountSet(account);
+		};
+
+		console.log('ACCOUNT', account);
 
 		this.pageInit(() => {
 			keyboard.initPinCheck();

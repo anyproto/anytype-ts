@@ -7,8 +7,19 @@ export enum AccountStatusType {
 
 export interface Account {
 	id: string;
+	info?: AccountInfo;
 	config?: AccountConfig;
 	status?: AccountStatus;
+};
+
+export interface AccountInfo {
+	homeBlockId: string;
+	profileBlockId: string;
+	gatewayUrl: string;
+	marketplaceTypeId: string;
+	marketplaceTemplateId: string;
+	marketplaceRelationId: string;
+	deviceId: string;
 };
 
 export interface AccountConfig {

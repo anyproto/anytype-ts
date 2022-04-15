@@ -153,7 +153,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 
 			console.log('[dragProvider.onDrop] paths', paths);
 
-			C.ExternalDropFiles(rootId, targetId, position, paths, () => {
+			C.FileDrop(rootId, targetId, position, paths, () => {
 				if (target && target.isTextToggle() && (position == I.BlockPosition.InnerFirst)) {
 					blockStore.toggle(rootId, targetId, true);
 				};

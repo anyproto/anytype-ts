@@ -178,7 +178,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, St
 		this.loading = true;
 		this.forceUpdate();
 
-		C.BlockOpen(rootId, '', (message: any) => {
+		C.ObjectOpen(rootId, '', (message: any) => {
 			if (message.error.code) {
 				if (message.error.code == Errors.Code.NOT_FOUND) {
 					this.setState({ isDeleted: true });

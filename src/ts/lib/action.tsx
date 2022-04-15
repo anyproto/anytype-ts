@@ -29,7 +29,7 @@ class Action {
 		};
 
 		if (close) {
-			C.BlockClose(rootId, onClose);
+			C.ObjectClose(rootId, onClose);
 		} else {
 			onClose();
 		};

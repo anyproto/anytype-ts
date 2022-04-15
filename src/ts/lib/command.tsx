@@ -35,10 +35,6 @@ const MetricsSetParameters = (platform: I.Platform, callBack?: (message: any) =>
 	dispatcher.request('metricsSetParameters', request, callBack);
 };
 
-const ConfigGet = (callBack?: (message: any) => void) => {
-	const request = new Commands.Empty();
-	dispatcher.request('configGet', request, callBack);
-};
 
 const AppShutdown = (callBack?: (message: any) => void) => {
 	const request = new Commands.Empty();
@@ -46,7 +42,7 @@ const AppShutdown = (callBack?: (message: any) => void) => {
 };
 
 const FileListOffload = (ids: string[], notPinned: boolean, callBack?: (message: any) => void) => {
-	const request = new Rpc.FileList.Offload.Request();
+	const request = new Rpc.File.ListOffload.Request();
 
 	request.setOnlyidsList(ids);
 	request.setIncludenotpinned(notPinned);
@@ -75,12 +71,12 @@ const Export = (path: string, ids: string[], format: I.ExportFormat, zip: boolea
 	dispatcher.request('export', request, callBack);
 };
 
-const ExportTemplates = (path: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.ExportTemplates.Request();
+const TemplateExportAll = (path: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Template.ExportAll.Request();
 
 	request.setPath(path);
 
-	dispatcher.request('exportTemplates', request, callBack);
+	dispatcher.request('templateExportAll', request, callBack);
 };
 
 const ExportLocalstore = (path: string, ids: string[], callBack?: (message: any) => void) => {
@@ -106,13 +102,13 @@ const FileUpload = (url: string, path: string, type: I.FileType, callBack?: (mes
 	dispatcher.request('uploadFile', request, callBack);
 };
 
-const DownloadFile = (hash: string, path: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.DownloadFile.Request();
+const FileDownload = (hash: string, path: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.File.Download.Request();
 	
 	request.setHash(hash);
 	request.setPath(path);
 
-	dispatcher.request('downloadFile', request, callBack);
+	dispatcher.request('fileDownload', request, callBack);
 };
 
 const ProcessCancel = (id: string, callBack?: (message: any) => void) => {
@@ -190,15 +186,15 @@ const AccountDelete = (revert: boolean, callBack?: (message: any) => void) => {
 	dispatcher.request('accountDelete', request, callBack);
 };
 
-const ExternalDropFiles = (contextId: string, targetId: string, position: I.BlockPosition, paths: string[], callBack?: (message: any) => void) => {
-	const request = new Rpc.ExternalDrop.Files.Request();
+const FileDrop = (contextId: string, targetId: string, position: I.BlockPosition, paths: string[], callBack?: (message: any) => void) => {
+	const request = new Rpc.File.Drop.Request();
 	
 	request.setContextid(contextId);
 	request.setDroptargetid(targetId);
 	request.setPosition(position);
 	request.setLocalfilepathsList(paths);
 
-	dispatcher.request('externalDropFiles', request, callBack);
+	dispatcher.request('fileDrop', request, callBack);
 };
 
 const PageCreate = (details: any, callBack?: (message: any) => void) => {
@@ -225,40 +221,40 @@ const BlockGetPublicWebURL = (contextId: string, callBack?: (message: any) => vo
 	dispatcher.request('blockGetPublicWebURL', request, callBack);
 };
 
-const BlockOpen = (blockId: string, traceId: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Block.Open.Request();
+const ObjectOpen = (blockId: string, traceId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.Open.Request();
 	
 	request.setBlockid(blockId);
 	request.setTraceid(traceId);
 
-	dispatcher.request('blockOpen', request, callBack);
+	dispatcher.request('objectOpen', request, callBack);
 };
 
-const BlockShow = (blockId: string, traceId: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Block.Open.Request();
+const ObjectShow = (blockId: string, traceId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.Show.Request();
 	
 	request.setBlockid(blockId);
 	request.setTraceid(traceId);
 
-	dispatcher.request('blockShow', request, callBack);
+	dispatcher.request('objectShow', request, callBack);
 };
 
-const BlockOpenBreadcrumbs = (callBack?: (message: any) => void) => {
-	const request = new Rpc.Block.OpenBreadcrumbs.Request();
-	dispatcher.request('blockOpenBreadcrumbs', request, callBack);
+const ObjectOpenBreadcrumbs = (callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.OpenBreadcrumbs.Request();
+	dispatcher.request('objectOpenBreadcrumbs', request, callBack);
 };
 
-const BlockSetBreadcrumbs = (contextId: string, pageIds: string[], callBack?: (message: any) => void) => {
-	const request = new Rpc.Block.SetBreadcrumbs.Request();
+const ObjectSetBreadcrumbs = (contextId: string, pageIds: string[], callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.SetBreadcrumbs.Request();
 	
 	request.setBreadcrumbsid(contextId);
 	request.setIdsList(pageIds);
 
-	dispatcher.request('blockSetBreadcrumbs', request, callBack);
+	dispatcher.request('objectSetBreadcrumbs', request, callBack);
 };
 
-const BlockClose = (blockId: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Block.Close.Request();
+const ObjectClose = (blockId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.Close.Request();
 	
 	request.setBlockid(blockId);
 
@@ -432,7 +428,7 @@ const BlockSplit = (contextId: string, blockId: string, range: I.TextRange, styl
 };
 
 const BlockBookmarkFetch = (contextId: string, blockId: string, url: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Block.Bookmark.Fetch.Request();
+	const request = new Rpc.BlockBookmark.Fetch.Request();
 	
 	request.setContextid(contextId);
 	request.setBlockid(blockId);
@@ -442,7 +438,7 @@ const BlockBookmarkFetch = (contextId: string, blockId: string, url: string, cal
 };
 
 const BlockBookmarkCreateAndFetch = (contextId: string, targetId: string, position: I.BlockPosition, url: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Block.Bookmark.CreateAndFetch.Request();
+	const request = new Rpc.BlockBookmark.CreateAndFetch.Request();
 	
 	request.setContextid(contextId);
 	request.setTargetid(targetId);
@@ -773,16 +769,6 @@ const BlockRelationUpdate = (contextId: string, relation: any, callBack?: (messa
 	dispatcher.request('blockRelationUpdate', request, callBack);
 };
 
-const HistoryVersions = (pageId: string, lastVersionId: string, limit: number, callBack?: (message: any) => void) => {
-	const request = new Rpc.History.Versions.Request();
-	
-	request.setPageid(pageId);
-	request.setLastversionid(lastVersionId);
-	request.setLimit(limit);
-
-	dispatcher.request('historyVersions', request, callBack);
-};
-
 const BlockDataviewRelationAdd = (contextId: string, blockId: string, relation: any, callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.Dataview.RelationAdd.Request();
 	
@@ -869,13 +855,15 @@ const BlockObjectTypeSet = (contextId: string, url: string, callBack?: (message:
 	dispatcher.request('blockObjectTypeSet', request, callBack);
 };
 
-const HistoryShow = (pageId: string, versionId: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.History.Show.Request();
+// ---------------------- HISTORY ---------------------- //
+
+const HistoryShowVersion = (pageId: string, versionId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.History.ShowVersion.Request();
 	
 	request.setPageid(pageId);
 	request.setVersionid(versionId);
 
-	dispatcher.request('historyShow', request, callBack);
+	dispatcher.request('historyShowVersion', request, callBack);
 };
 
 const HistorySetVersion = (pageId: string, versionId: string, callBack?: (message: any) => void) => {
@@ -886,6 +874,18 @@ const HistorySetVersion = (pageId: string, versionId: string, callBack?: (messag
 
 	dispatcher.request('historySetVersion', request, callBack);
 };
+
+const HistoryGetVersions = (pageId: string, lastVersionId: string, limit: number, callBack?: (message: any) => void) => {
+	const request = new Rpc.History.GetVersions.Request();
+	
+	request.setPageid(pageId);
+	request.setLastversionid(lastVersionId);
+	request.setLimit(limit);
+
+	dispatcher.request('historyGetVersions', request, callBack);
+};
+
+// ---------------------- OBJECT TYPE ---------------------- //
 
 const ObjectTypeList = (callBack?: (message: any) => void) => {
 	const request = new Rpc.ObjectType.List.Request();
@@ -937,8 +937,8 @@ const ObjectTypeRelationRemove = (objectTypeId: string, relationKey: string, cal
 	dispatcher.request('objectTypeRelationRemove', request, callBack);
 };
 
-const SetCreate = (sources: string[], details: any, templateId: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Set.Create.Request();
+const ObjectCreateSet = (sources: string[], details: any, templateId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.CreateSet.Request();
 	
 	request.setSourceList(sources);
 	request.setDetails(Encode.encodeStruct(details));
@@ -1013,12 +1013,12 @@ const ObjectSearchSubscribe = (subId: string, filters: I.Filter[], sorts: I.Sort
 	dispatcher.request('objectSearchSubscribe', request, cb);
 };
 
-const ObjectIdsSubscribe = (subId: string, ids: string[], keys: string[], ignoreWorkspace: boolean, callBack?: (message: any) => void) => {
+const ObjectSubscribeIds = (subId: string, ids: string[], keys: string[], ignoreWorkspace: boolean, callBack?: (message: any) => void) => {
 	if (!subId) {
-		console.error('[ObjectIdsSubscribe] subId is empty');
+		console.error('[ObjectSubscribeIds] subId is empty');
 	};
 
-	const request = new Rpc.Object.IdsSubscribe.Request();
+	const request = new Rpc.Object.SubscribeIds.Request();
 
 	request.setSubid(subId);
 	request.setIdsList(ids);
@@ -1041,7 +1041,7 @@ const ObjectIdsSubscribe = (subId: string, ids: string[], keys: string[], ignore
 		};
 	};
 
-	dispatcher.request('objectIdsSubscribe', request, cb);
+	dispatcher.request('objectSubscribeIds', request, cb);
 };
 
 const ObjectSearchUnsubscribe = (subIds: string[], callBack?: (message: any) => void) => {
@@ -1053,7 +1053,7 @@ const ObjectSearchUnsubscribe = (subIds: string[], callBack?: (message: any) => 
 };
 
 const ObjectRelationOptionAdd = (contextId: string, relationKey: string, option: any, callBack?: (message: any) => void) => {
-	const request = new Rpc.Object.RelationOptionAdd.Request();
+	const request = new Rpc.ObjectRelationOption.Add.Request();
 	
 	request.setContextid(contextId);
 	request.setRelationkey(relationKey);
@@ -1063,7 +1063,7 @@ const ObjectRelationOptionAdd = (contextId: string, relationKey: string, option:
 };
 
 const ObjectRelationOptionUpdate = (contextId: string, relationKey: string, option: I.SelectOption, callBack?: (message: any) => void) => {
-	const request = new Rpc.Object.RelationOptionUpdate.Request();
+	const request = new Rpc.ObjectRelationOption.Update.Request();
 	
 	request.setContextid(contextId);
 	request.setRelationkey(relationKey);
@@ -1073,7 +1073,7 @@ const ObjectRelationOptionUpdate = (contextId: string, relationKey: string, opti
 };
 
 const ObjectRelationOptionDelete = (contextId: string, relationKey: string, optionId: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Object.RelationOptionDelete.Request();
+	const request = new Rpc.ObjectRelationOption.Delete.Request();
 	
 	request.setContextid(contextId);
 	request.setRelationkey(relationKey);
@@ -1083,7 +1083,7 @@ const ObjectRelationOptionDelete = (contextId: string, relationKey: string, opti
 };
 
 const ObjectRelationAdd = (contextId: string, relation: any, callBack?: (message: any) => void) => {
-	const request = new Rpc.Object.RelationAdd.Request();
+	const request = new Rpc.ObjectRelation.Add.Request();
 	
 	request.setContextid(contextId);
 	request.setRelation(Mapper.To.Relation(relation));
@@ -1092,7 +1092,7 @@ const ObjectRelationAdd = (contextId: string, relation: any, callBack?: (message
 };
 
 const ObjectRelationUpdate = (contextId: string, relation: any, callBack?: (message: any) => void) => {
-	const request = new Rpc.Object.RelationUpdate.Request();
+	const request = new Rpc.ObjectRelation.Update.Request();
 	
 	request.setContextid(contextId);
 	request.setRelationkey(relation.relationKey);
@@ -1102,7 +1102,7 @@ const ObjectRelationUpdate = (contextId: string, relation: any, callBack?: (mess
 };
 
 const ObjectRelationDelete = (contextId: string, relationKey: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Object.RelationDelete.Request();
+	const request = new Rpc.ObjectRelation.Delete.Request();
 	
 	request.setContextid(contextId);
 	request.setRelationkey(relationKey);
@@ -1111,29 +1111,29 @@ const ObjectRelationDelete = (contextId: string, relationKey: string, callBack?:
 };
 
 const ObjectRelationListAvailable = (contextId: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Object.RelationListAvailable.Request();
+	const request = new Rpc.ObjectRelation.ListAvailable.Request();
 	
 	request.setContextid(contextId);
 
 	dispatcher.request('objectRelationListAvailable', request, callBack);
 };
 
-const ObjectFeaturedRelationAdd = (contextId: string, keys: string[], callBack?: (message: any) => void) => {
-	const request = new Rpc.Object.FeaturedRelation.Add.Request();
+const ObjectRelationAddFeatured = (contextId: string, keys: string[], callBack?: (message: any) => void) => {
+	const request = new Rpc.ObjectRelation.AddFeatured.Request();
 	
 	request.setContextid(contextId);
 	request.setRelationsList(keys);
 
-	dispatcher.request('objectFeaturedRelationAdd', request, callBack);
+	dispatcher.request('objectRelationAddFeatured', request, callBack);
 };
 
-const ObjectFeaturedRelationRemove = (contextId: string, keys: string[], callBack?: (message: any) => void) => {
-	const request = new Rpc.Object.FeaturedRelation.Remove.Request();
+const ObjectRelationRemoveFeatured = (contextId: string, keys: string[], callBack?: (message: any) => void) => {
+	const request = new Rpc.ObjectRelation.RemoveFeatured.Request();
 	
 	request.setContextid(contextId);
 	request.setRelationsList(keys);
 
-	dispatcher.request('objectFeaturedRelationRemove', request, callBack);
+	dispatcher.request('ojectRelationRemoveFeatured', request, callBack);
 };
 
 const ObjectSetLayout = (contextId: string, layout: I.ObjectLayout, callBack?: (message: any) => void) => {
@@ -1208,7 +1208,7 @@ const ObjectListDuplicate = (ids: string[], callBack?: (message: any) => void) =
 };
 
 const ObjectListDelete = (ids: string[], callBack?: (message: any) => void) => {
-	const request = new Rpc.ObjectList.Delete.Request();
+	const request = new Rpc.Object.ListDelete.Request();
 	
 	request.setObjectidsList(ids);
 
@@ -1216,7 +1216,7 @@ const ObjectListDelete = (ids: string[], callBack?: (message: any) => void) => {
 };
 
 const ObjectListSetIsArchived = (ids: string[], isArchived: boolean, callBack?: (message: any) => void) => {
-	const request = new Rpc.ObjectList.Set.IsArchived.Request();
+	const request = new Rpc.Object.ListSetIsArchived.Request();
 	
 	request.setObjectidsList(ids);
 	request.setIsarchived(isArchived);
@@ -1225,7 +1225,7 @@ const ObjectListSetIsArchived = (ids: string[], isArchived: boolean, callBack?: 
 };
 
 const ObjectListSetIsFavorite = (ids: string[], isFavorite: boolean, callBack?: (message: any) => void) => {
-	const request = new Rpc.ObjectList.Set.IsFavorite.Request();
+	const request = new Rpc.Object.ListSetIsFavorite.Request();
 	
 	request.setObjectidsList(ids);
 	request.setIsfavorite(isFavorite);
@@ -1250,20 +1250,20 @@ const ObjectShareByLink = (objectId: string, callBack?: (message: any) => void) 
 	dispatcher.request('objectShareByLink', request, callBack);
 };
 
-const MakeTemplate = (contextId: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.MakeTemplate.Request();
+const TemplateCreateFromObject = (contextId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Template.CreateFromObject.Request();
 	
 	request.setContextid(contextId);
 
-	dispatcher.request('makeTemplate', request, callBack);
+	dispatcher.request('templateCreateFromObject', request, callBack);
 };
 
-const MakeTemplateByObjectType = (objectTypeUrl: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.MakeTemplateByObjectType.Request();
+const TemplateCreateFromObjectType = (objectTypeUrl: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Template.CreateFromObjectType.Request();
 	
 	request.setObjecttype(objectTypeUrl);
 
-	dispatcher.request('makeTemplateByObjectType', request, callBack);
+	dispatcher.request('templateCreateFromObjectType', request, callBack);
 };
 
 const TemplateClone = (contextId: string, callBack?: (message: any) => void) => {
@@ -1318,20 +1318,22 @@ const UnsplashDownload = (id: string, callBack?: (message: any) => void) => {
 
 export {
 	VersionGet,
-	DebugSync,
-	DebugTree,
 	MetricsSetParameters,
-
-	ConfigGet,
 	AppShutdown,
 	LinkPreview,
-	FileUpload,
-	DownloadFile,
 	ProcessCancel,
-	Export,
-	ExportTemplates,
-	ExportLocalstore,
+
+	DebugSync,
+	DebugTree,
+
+	FileUpload,
+	FileDownload,
+	FileDrop,
 	FileListOffload,
+
+	Export,
+	TemplateExportAll,
+	ExportLocalstore,
 
 	WalletCreate,
 	WalletRecover,
@@ -1345,16 +1347,9 @@ export {
 
 	PageCreate,
 
-	ExternalDropFiles,
-
 	NavigationGetObjectInfoWithLinks,
 
 	BlockGetPublicWebURL,
-	BlockOpen,
-	BlockShow,
-	BlockOpenBreadcrumbs,
-	BlockSetBreadcrumbs,
-	BlockClose,
 	BlockUndo,
 	BlockRedo,
 	BlockUnlink,
@@ -1421,8 +1416,8 @@ export {
 
 	BlockObjectTypeSet,
 
-	HistoryVersions,	
-	HistoryShow,
+	HistoryGetVersions,	
+	HistoryShowVersion,
 	HistorySetVersion,
 
 	ObjectTypeList,
@@ -1432,39 +1427,45 @@ export {
 	ObjectTypeRelationUpdate,
 	ObjectTypeRelationRemove,
 
-	SetCreate,
-
 	ObjectRelationOptionAdd,
     ObjectRelationOptionUpdate,
     ObjectRelationOptionDelete,
+
 	ObjectRelationAdd,
 	ObjectRelationUpdate,
 	ObjectRelationDelete,
 	ObjectRelationListAvailable,
+
+	ObjectOpen,
+	ObjectShow,
+	ObjectOpenBreadcrumbs,
+	ObjectSetBreadcrumbs,
+	ObjectClose,
 	ObjectSetLayout,
 	ObjectSetIsFavorite,
 	ObjectSetIsArchived,
 	ObjectGraph,
-	ObjectFeaturedRelationAdd,
-	ObjectFeaturedRelationRemove,
+	ObjectRelationAddFeatured,
+	ObjectRelationRemoveFeatured,
 	ObjectToSet,
 	ObjectAddWithObjectId,
 	ObjectShareByLink,
-
 	ObjectSearch,
 	ObjectSearchSubscribe,
-	ObjectIdsSubscribe,
+	ObjectSubscribeIds,
 	ObjectSearchUnsubscribe,
 	ObjectDuplicate,
+	ObjectApplyTemplate,
+
+	ObjectCreateSet,
 	
 	ObjectListDuplicate,
 	ObjectListDelete,
 	ObjectListSetIsArchived,
 	ObjectListSetIsFavorite,
 
-	MakeTemplate,
-	MakeTemplateByObjectType,
-	ObjectApplyTemplate,
+	TemplateCreateFromObject,
+	TemplateCreateFromObjectType,
 	TemplateClone,
 
 	WorkspaceCreate,

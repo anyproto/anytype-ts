@@ -137,12 +137,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<Props
 						this.setError(message.error.description);
 					} else
 					if (message.account) {
-						if (message.account.config) {
-							commonStore.configSet(message.account.config, false);
-						};
-
-						authStore.accountSet(message.account);
-						DataUtil.onAuth();
+						DataUtil.onAuth(message);
 					};
 				});
 			} else {
@@ -197,15 +192,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<Props
 				this.setError(message.error.description);
 			} else
 			if (message.account) {
-				if (message.account.config) {
-					commonStore.configSet(message.account.config, false);
-				};
-
-				authStore.accountSet(message.account);
-				
-				DataUtil.pageInit(() => {
-					Util.route('/main/index');
-				});
+				DataUtil.onAuth(message);
 			};
 		}); 
 	};
