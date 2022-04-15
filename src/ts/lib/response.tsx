@@ -90,12 +90,6 @@ const NavigationGetObjectInfoWithLinks = (response: any) => {
 	};
 };
 
-const BlockGetPublicWebURL = (response: any) => {
-	return {
-		url: response.getUrl(),
-	};
-};
-
 const ObjectShow = (response: any) => {
 	return {
 		rootId: response.getRootid(),
@@ -175,7 +169,7 @@ const BlockPaste = (response: any) => {
 	};
 };
 
-const BlockImportMarkdown = (response: any) => {
+const ObjectImportMarkdown = (response: any) => {
 	return {
 		rootLinkIds: response.getRootlinkidsList(),
 	};
@@ -393,8 +387,6 @@ export {
 
 	NavigationGetObjectInfoWithLinks,
 
-	BlockGetPublicWebURL,
-
 	ObjectOpenBreadcrumbs,
 	
 	BlockSplit,
@@ -405,7 +397,7 @@ export {
 	BlockFileCreateAndUpload,
 	BlockBookmarkCreateAndFetch,
 	
-	BlockImportMarkdown,
+	ObjectImportMarkdown,
 
 	BlockCreate,
 	BlockCreatePage,

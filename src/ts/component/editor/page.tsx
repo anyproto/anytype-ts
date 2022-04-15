@@ -546,14 +546,14 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 						data: {
 							filter: '',
 							onChange: (newType: I.MarkType, param: string) => {
-								C.BlockListSetTextMark(rootId, ids, { type: newType, param: param, range: { from: 0, to: 0 } }, (message: any) => {
+								C.BlockTextListSetMark(rootId, ids, { type: newType, param: param, range: { from: 0, to: 0 } }, (message: any) => {
 									analytics.event('ChangeTextStyle', { type: newType, count: ids.length });
 								});
 							}
 						}
 					});
 				} else {
-					C.BlockListSetTextMark(rootId, ids, { type: type, param: param, range: { from: 0, to: 0 } }, (message: any) => {
+					C.BlockTextListSetMark(rootId, ids, { type: type, param: param, range: { from: 0, to: 0 } }, (message: any) => {
 						analytics.event('ChangeTextStyle', { type, count: ids.length });
 					});
 				};
@@ -1040,7 +1040,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		if (block.isText()) {
 			if (!isDelete && !range.to) {
 				if (block.isTextList()) {
-					C.BlockListSetTextStyle(rootId, [ block.id ], I.TextStyle.Paragraph);
+					C.BlockTextListSetStyle(rootId, [ block.id ], I.TextStyle.Paragraph);
 				} else {
 					ids.length ? this.blockRemove(block) : this.blockMerge(block, -1);
 				};
@@ -1136,7 +1136,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		let replace = !range.to && block.isTextList() && !length;
 
 		if (replace) {
-			C.BlockListSetTextStyle(rootId, [ block.id ], I.TextStyle.Paragraph);
+			C.BlockTextListSetStyle(rootId, [ block.id ], I.TextStyle.Paragraph);
 		} else 
 		if (!block.isText()) {  
 			this.blockCreate(block.id, I.BlockPosition.Bottom, {

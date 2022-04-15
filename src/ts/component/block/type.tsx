@@ -269,7 +269,7 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 			if (template) {
 				C.ObjectApplyTemplate(rootId, template.id, onTemplate);
 			} else {
-				C.BlockObjectTypeSet(rootId, item.id, onTemplate);
+				C.ObjectSetObjectType(rootId, item.id, onTemplate);
 			};
 
 			analytics.event('CreateObject', {

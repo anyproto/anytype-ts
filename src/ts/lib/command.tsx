@@ -10,6 +10,8 @@ const VersionGet = (callBack?: (message: any) => void) => {
 	dispatcher.request('versionGet', request, callBack);
 };
 
+// ---------------------- DEBUG ---------------------- //
+
 const DebugSync = (limit: number, callBack?: (message: any) => void) => {
 	const request = new Rpc.Debug.Sync.Request();
 
@@ -27,6 +29,15 @@ const DebugTree = (blockId: string, path: string, callBack?: (message: any) => v
 	dispatcher.request('debugTree', request, callBack);
 };
 
+const DebugExportLocalstore = (path: string, ids: string[], callBack?: (message: any) => void) => {
+	const request = new Rpc.Debug.ExportLocalstore.Request();
+
+	request.setPath(path);
+	request.setDocidsList(ids);
+
+	dispatcher.request('debugExportLocalstore', request, callBack);
+};
+
 const MetricsSetParameters = (platform: I.Platform, callBack?: (message: any) => void) => {
 	const request = new Rpc.Metrics.SetParameters.Request();
 
@@ -34,7 +45,6 @@ const MetricsSetParameters = (platform: I.Platform, callBack?: (message: any) =>
 
 	dispatcher.request('metricsSetParameters', request, callBack);
 };
-
 
 const AppShutdown = (callBack?: (message: any) => void) => {
 	const request = new Commands.Empty();
@@ -77,15 +87,6 @@ const TemplateExportAll = (path: string, callBack?: (message: any) => void) => {
 	request.setPath(path);
 
 	dispatcher.request('templateExportAll', request, callBack);
-};
-
-const DebugExportLocalstore = (path: string, ids: string[], callBack?: (message: any) => void) => {
-	const request = new Rpc.Debug.ExportLocalstore.Request();
-
-	request.setPath(path);
-	request.setDocidsList(ids);
-
-	dispatcher.request('debugExportLocalstore', request, callBack);
 };
 
 const FileUpload = (url: string, path: string, type: I.FileType, callBack?: (message: any) => void) => {
@@ -213,14 +214,6 @@ const NavigationGetObjectInfoWithLinks = (pageId: string, callBack?: (message: a
 	dispatcher.request('navigationGetObjectInfoWithLinks', request, callBack);
 };
 
-const BlockGetPublicWebURL = (contextId: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Block.GetPublicWebURL.Request();
-	
-	request.setBlockid(contextId);
-
-	dispatcher.request('blockGetPublicWebURL', request, callBack);
-};
-
 const BlockCreate = (block: any, contextId: string, targetId: string, position: I.BlockPosition, callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.Create.Request();
 	
@@ -287,14 +280,14 @@ const BlockTextSetText = (contextId: string, blockId: string, text: string, mark
 	dispatcher.request('blockTextSetText', request, callBack);
 };
 
-const BlockSetTextChecked = (contextId: string, blockId: string, checked: boolean, callBack?: (message: any) => void) => {
-	const request = new Rpc.Block.Set.Text.Checked.Request();
+const BlockTextSetChecked = (contextId: string, blockId: string, checked: boolean, callBack?: (message: any) => void) => {
+	const request = new Rpc.BlockText.SetChecked.Request();
 	
 	request.setContextid(contextId);
 	request.setBlockid(blockId);
 	request.setChecked(checked);
 
-	dispatcher.request('blockSetTextChecked', request, callBack);
+	dispatcher.request('blockTextSetChecked', request, callBack);
 };
 
 const BlockSetTextIcon = (contextId: string, blockId: string, iconEmoji: string, iconImage: string, callBack?: (message: any) => void) => {
@@ -308,6 +301,16 @@ const BlockSetTextIcon = (contextId: string, blockId: string, iconEmoji: string,
 	dispatcher.request('blockSetTextIcon', request, callBack);
 };
 
+const BlockTextListSetStyle = (contextId: string, blockIds: string[], style: I.TextStyle, callBack?: (message: any) => void) => {
+	const request = new Rpc.BlockText.ListSetStyle.Request();
+	
+	request.setContextid(contextId);
+    request.setBlockidsList(blockIds);
+    request.setStyle(style);
+
+	dispatcher.request('blockTextListSetStyle', request, callBack);
+};
+
 const BlockLatexSetText = (contextId: string, blockId: string, text: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockLatex.SetText.Request();
 	
@@ -319,7 +322,7 @@ const BlockLatexSetText = (contextId: string, blockId: string, text: string, cal
 };
 
 const BlockSetFields = (contextId: string, blockId: string, fields: any, callBack?: (message: any) => void) => {
-	const request = new Rpc.Block.Set.Fields.Request();
+	const request = new Rpc.Block.SetFields.Request();
 	
 	request.setContextid(contextId);
 	request.setBlockid(blockId);
@@ -394,7 +397,7 @@ const BlockUpload = (contextId: string, blockId: string, url: string, path: stri
 };
 
 const BlockFileCreateAndUpload = (contextId: string, targetId: string, position: I.BlockPosition, url: string, path: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Block.File.CreateAndUpload.Request();
+	const request = new Rpc.BlockfFile.CreateAndUpload.Request();
 	
 	request.setContextid(contextId);
 	request.setTargetid(targetId);
@@ -447,15 +450,6 @@ const BlockPaste = (contextId: string, focusedId: string, range: I.TextRange, bl
 	dispatcher.request('blockPaste', request, callBack);
 };
 
-const BlockImportMarkdown = (contextId: string, path: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Block.ImportMarkdown.Request();
-	
-	request.setContextid(contextId);
-    request.setImportpath(path);
-
-	dispatcher.request('blockImportMarkdown', request, callBack);
-};
-
 const BlockListMove = (contextId: string, targetContextId: string, blockIds: string[], targetId: string, position: I.BlockPosition, callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockList.Move.Request();
 	
@@ -469,7 +463,7 @@ const BlockListMove = (contextId: string, targetContextId: string, blockIds: str
 };
 
 const BlockListMoveToNewPage = (contextId: string, blockIds: string[], details: any, targetId: string, position: I.BlockPosition, callBack?: (message: any) => void) => {
-	const request = new Rpc.BlockList.MoveToNewPage.Request();
+	const request = new Rpc.Block.ListMoveToNewPage.Request();
 	
 	request.setContextid(contextId);
     request.setBlockidsList(blockIds);
@@ -481,7 +475,7 @@ const BlockListMoveToNewPage = (contextId: string, blockIds: string[], details: 
 };
 
 const BlockListConvertChildrenToPages = (contextId: string, blockIds: string[], type: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.BlockList.ConvertChildrenToPages.Request();
+	const request = new Rpc.Block.ListConvertChildrenToPages.Request();
 	
 	request.setContextid(contextId);
     request.setBlockidsList(blockIds);
@@ -491,7 +485,7 @@ const BlockListConvertChildrenToPages = (contextId: string, blockIds: string[], 
 };
 
 const BlockListDuplicate = (contextId: string, blockIds: string[], targetId: string, position: I.BlockPosition, callBack?: (message: any) => void) => {
-	const request = new Rpc.BlockList.Duplicate.Request();
+	const request = new Rpc.Block.ListDuplicate.Request();
 	
 	request.setContextid(contextId);
     request.setBlockidsList(blockIds);
@@ -501,18 +495,8 @@ const BlockListDuplicate = (contextId: string, blockIds: string[], targetId: str
 	dispatcher.request('blockListDuplicate', request, callBack);
 };
 
-const BlockListSetTextStyle = (contextId: string, blockIds: string[], style: I.TextStyle, callBack?: (message: any) => void) => {
-	const request = new Rpc.BlockList.Set.Text.Style.Request();
-	
-	request.setContextid(contextId);
-    request.setBlockidsList(blockIds);
-    request.setStyle(style);
-
-	dispatcher.request('blockListSetTextStyle', request, callBack);
-};
-
 const BlockListTurnInto = (contextId: string, blockIds: string[], style: I.TextStyle, callBack?: (message: any) => void) => {
-	const request = new Rpc.BlockList.TurnInto.Request();
+	const request = new Rpc.Block.ListTurnInto.Request();
 	
 	request.setContextid(contextId);
     request.setBlockidsList(blockIds);
@@ -521,50 +505,50 @@ const BlockListTurnInto = (contextId: string, blockIds: string[], style: I.TextS
 	dispatcher.request('blockListTurnInto', request, callBack);
 };
 
-const BlockListSetDivStyle = (contextId: string, blockIds: string[], style: I.TextStyle, callBack?: (message: any) => void) => {
-	const request = new Rpc.BlockList.Set.Div.Style.Request();
+const BlockDivListSetStyle = (contextId: string, blockIds: string[], style: I.TextStyle, callBack?: (message: any) => void) => {
+	const request = new Rpc.BlockDiv.ListSetStyle.Request();
 	
 	request.setContextid(contextId);
     request.setBlockidsList(blockIds);
     request.setStyle(style);
 
-	dispatcher.request('blockListSetDivStyle', request, callBack);
+	dispatcher.request('blockDivListSetStyle', request, callBack);
 };
 
-const BlockListSetFileStyle = (contextId: string, blockIds: string[], style: I.FileStyle, callBack?: (message: any) => void) => {
-	const request = new Rpc.BlockList.Set.File.Style.Request();
+const BlockFileListSetStyle = (contextId: string, blockIds: string[], style: I.FileStyle, callBack?: (message: any) => void) => {
+	const request = new Rpc.BlockFile.ListSetStyle.Request();
 
 	request.setContextid(contextId);
     request.setBlockidsList(blockIds);
     request.setStyle(style);
 
-	dispatcher.request('blockListSetFileStyle', request, callBack);
+	dispatcher.request('blockFileListSetStyle', request, callBack);
 };
 
-const BlockListSetTextColor = (contextId: string, blockIds: string[], color: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.BlockList.Set.Text.Color.Request();
+const BlockTextListSetColor = (contextId: string, blockIds: string[], color: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.BlockText.ListSetColor.Request();
 	
 	request.setContextid(contextId);
     request.setBlockidsList(blockIds);
     request.setColor(color);
 
-	dispatcher.request('blockListSetTextColor', request, callBack);
+	dispatcher.request('blockTextListSetColor', request, callBack);
 };
 
-const BlockListSetTextMark = (contextId: string, blockIds: string[], mark: I.Mark, callBack?: (message: any) => void) => {
-	const request = new Rpc.BlockList.Set.Text.Mark.Request();
+const BlockTextListSetMark = (contextId: string, blockIds: string[], mark: I.Mark, callBack?: (message: any) => void) => {
+	const request = new Rpc.BlockText.ListSetMark.Request();
 	
 	request.setContextid(contextId);
     request.setBlockidsList(blockIds);
     request.setMark(Mapper.To.Mark(mark));
 
-	dispatcher.request('blockListSetTextMark', request, callBack);
+	dispatcher.request('blockTextListSetMark', request, callBack);
 };
 
 const BlockListSetFields = (contextId: string, fields: any, callBack?: (message: any) => void) => {
 	fields = fields.map(Mapper.To.Fields);
 
-	const request = new Rpc.BlockList.Set.Fields.Request();
+	const request = new Rpc.Block.ListSetFields.Request();
 
 	request.setContextid(contextId);
     request.setBlockfieldsList(fields);
@@ -573,7 +557,7 @@ const BlockListSetFields = (contextId: string, fields: any, callBack?: (message:
 };
 
 const BlockListSetBackgroundColor = (contextId: string, blockIds: string[], color: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.BlockList.Set.BackgroundColor.Request();
+	const request = new Rpc.Block.ListSetBackgroundColor.Request();
 	
 	request.setContextid(contextId);
     request.setBlockidsList(blockIds);
@@ -583,7 +567,7 @@ const BlockListSetBackgroundColor = (contextId: string, blockIds: string[], colo
 };
 
 const BlockListSetAlign = (contextId: string, blockIds: string[], align: I.BlockAlign, callBack?: (message: any) => void) => {
-	const request = new Rpc.BlockList.Set.Align.Request();
+	const request = new Rpc.Block.ListSetAlign.Request();
 	
 	request.setContextid(contextId);
     request.setBlockidsList(blockIds);
@@ -779,15 +763,6 @@ const BlockDataviewSetSource = (contextId: string, blockId: string, sources: str
 	dispatcher.request('blockDataviewSetSource', request, callBack);
 };
 
-const BlockObjectTypeSet = (contextId: string, url: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Block.ObjectType.Set.Request();
-	
-	request.setContextid(contextId);
-	request.setObjecttypeurl(url);
-
-	dispatcher.request('blockObjectTypeSet', request, callBack);
-};
-
 // ---------------------- HISTORY ---------------------- //
 
 const HistoryShowVersion = (pageId: string, versionId: string, callBack?: (message: any) => void) => {
@@ -953,6 +928,24 @@ const ObjectSearch = (filters: I.Filter[], sorts: I.Sort[], keys: string[], full
 	request.setKeysList(keys);
 
 	dispatcher.request('objectSearch', request, callBack);
+};
+
+const ObjectSetObjectType = (contextId: string, url: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.SetObjectType.Request();
+	
+	request.setContextid(contextId);
+	request.setObjecttypeurl(url);
+
+	dispatcher.request('objectSetObjectType', request, callBack);
+};
+
+const ObjectImportMarkdown = (contextId: string, path: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.ImportMarkdown.Request();
+	
+	request.setContextid(contextId);
+    request.setImportpath(path);
+
+	dispatcher.request('objectImportMarkdown', request, callBack);
 };
 
 const OnSubscribe = (subId: string, keys: string[], message: any) => {
@@ -1339,7 +1332,6 @@ export {
 
 	NavigationGetObjectInfoWithLinks,
 
-	BlockGetPublicWebURL,
 	BlockUnlink,
 	BlockMerge,
 	BlockSplit,
@@ -1350,32 +1342,34 @@ export {
 	BlockCopy,
 	BlockCut,
 	BlockPaste,
-	BlockImportMarkdown,
-
-	BlockCreate,
-	BlockCreatePage,
-	BlockCreateSet,
-
-	BlockTextSetText,
-	BlockSetTextChecked,
-	BlockSetTextIcon,
-
-	BlockSetFields,
-	BlockLatexSetText,
 
 	BlockListMove,
 	BlockListMoveToNewPage,
 	BlockListConvertChildrenToPages,
 	BlockListDuplicate,
 	BlockListSetBackgroundColor,
-	BlockListSetTextColor,
-	BlockListSetTextStyle,
 	BlockListTurnInto,
-	BlockListSetTextMark,
-	BlockListSetDivStyle,
-	BlockListSetFileStyle,
 	BlockListSetFields,
 	BlockListSetAlign,
+
+	BlockCreate,
+	BlockCreatePage,
+	BlockCreateSet,
+
+	BlockSetFields,
+
+	BlockTextSetText,
+	BlockTextSetChecked,
+	BlockSetTextIcon, // TODO: Rename
+	BlockTextListSetStyle,
+	BlockTextListSetMark,
+	BlockTextListSetColor,
+
+	BlockFileListSetStyle,
+
+	BlockDivListSetStyle,
+
+	BlockLatexSetText,
 
 	BlockDataviewViewCreate,
 	BlockDataviewViewUpdate,
@@ -1399,8 +1393,6 @@ export {
 	BlockRelationList,
 	BlockRelationUpdate,
 	BlockRelationRemove,
-
-	BlockObjectTypeSet,
 
 	HistoryGetVersions,	
 	HistoryShowVersion,
@@ -1429,9 +1421,6 @@ export {
 	ObjectClose,
 	ObjectUndo,
 	ObjectRedo,
-	ObjectSetLayout,
-	ObjectSetIsFavorite,
-	ObjectSetIsArchived,
 	ObjectGraph,
 	ObjectRelationAddFeatured,
 	ObjectRelationRemoveFeatured,
@@ -1444,7 +1433,13 @@ export {
 	ObjectSearchUnsubscribe,
 	ObjectDuplicate,
 	ObjectApplyTemplate,
+	ObjectImportMarkdown,
+
 	ObjectSetDetails,
+	ObjectSetObjectType,
+	ObjectSetLayout,
+	ObjectSetIsFavorite,
+	ObjectSetIsArchived,
 
 	ObjectCreateSet,
 	

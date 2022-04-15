@@ -392,16 +392,6 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				keyboard.onPrint();
 				break;
 
-			case 'exportWeb':
-				/*
-				C.BlockGetPublicWebURL(rootId, (message: any) => {
-					if (message.url) {
-						renderer.send('urlOpen', message.url);
-					};
-				});
-				*/
-				break;
-				
 			case 'history':
 				DataUtil.objectOpenEvent(e, { layout: I.ObjectLayout.History, id: object.id });
 				break;

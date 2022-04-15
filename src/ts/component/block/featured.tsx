@@ -373,7 +373,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 						{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: types }
 					],
 					onSelect: (item: any) => {
-						C.BlockObjectTypeSet(rootId, item.id);
+						C.ObjectSetObjectType(rootId, item.id);
 						this.menuContext.close();
 
 						analytics.event('ChangeObjectType', { objectType: item.id });

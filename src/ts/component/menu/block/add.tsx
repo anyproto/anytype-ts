@@ -517,7 +517,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 			text = Util.stringCut(text, filter.from - 1, filter.from + filter.text.length);
 
 			if (item.isTextColor) {
-				C.BlockListSetTextColor(rootId, [ blockId ], item.value, onCommand);
+				C.BlockTextListSetColor(rootId, [ blockId ], item.value, onCommand);
 			};
 
 			if (item.isBgColor) {

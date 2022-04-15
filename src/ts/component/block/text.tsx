@@ -1104,7 +1104,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		
 		focus.clear(true);
 		DataUtil.blockSetText(rootId, block, this.getValue(), this.marks, true, () => {
-			C.BlockSetTextChecked(rootId, id, !checked);
+			C.BlockTextSetChecked(rootId, id, !checked);
 		});
 	};
 	
