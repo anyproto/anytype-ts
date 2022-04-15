@@ -79,13 +79,13 @@ const TemplateExportAll = (path: string, callBack?: (message: any) => void) => {
 	dispatcher.request('templateExportAll', request, callBack);
 };
 
-const ExportLocalstore = (path: string, ids: string[], callBack?: (message: any) => void) => {
-	const request = new Rpc.ExportLocalstore.Request();
+const DebugExportLocalstore = (path: string, ids: string[], callBack?: (message: any) => void) => {
+	const request = new Rpc.Debug.ExportLocalstore.Request();
 
 	request.setPath(path);
 	request.setDocidsList(ids);
 
-	dispatcher.request('exportLocalstore', request, callBack);
+	dispatcher.request('debugExportLocalstore', request, callBack);
 };
 
 const FileUpload = (url: string, path: string, type: I.FileType, callBack?: (message: any) => void) => {
@@ -221,62 +221,6 @@ const BlockGetPublicWebURL = (contextId: string, callBack?: (message: any) => vo
 	dispatcher.request('blockGetPublicWebURL', request, callBack);
 };
 
-const ObjectOpen = (blockId: string, traceId: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Object.Open.Request();
-	
-	request.setBlockid(blockId);
-	request.setTraceid(traceId);
-
-	dispatcher.request('objectOpen', request, callBack);
-};
-
-const ObjectShow = (blockId: string, traceId: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Object.Show.Request();
-	
-	request.setBlockid(blockId);
-	request.setTraceid(traceId);
-
-	dispatcher.request('objectShow', request, callBack);
-};
-
-const ObjectOpenBreadcrumbs = (callBack?: (message: any) => void) => {
-	const request = new Rpc.Object.OpenBreadcrumbs.Request();
-	dispatcher.request('objectOpenBreadcrumbs', request, callBack);
-};
-
-const ObjectSetBreadcrumbs = (contextId: string, pageIds: string[], callBack?: (message: any) => void) => {
-	const request = new Rpc.Object.SetBreadcrumbs.Request();
-	
-	request.setBreadcrumbsid(contextId);
-	request.setIdsList(pageIds);
-
-	dispatcher.request('objectSetBreadcrumbs', request, callBack);
-};
-
-const ObjectClose = (blockId: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Object.Close.Request();
-	
-	request.setBlockid(blockId);
-
-	dispatcher.request('blockClose', request, callBack);
-};
-
-const BlockUndo = (contextId: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Block.Undo.Request();
-	
-	request.setContextid(contextId);
-
-	dispatcher.request('blockUndo', request, callBack);
-};
-
-const BlockRedo = (contextId: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Block.Redo.Request();
-	
-	request.setContextid(contextId);
-
-	dispatcher.request('blockRedo', request, callBack);
-};
-
 const BlockCreate = (block: any, contextId: string, targetId: string, position: I.BlockPosition, callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.Create.Request();
 	
@@ -286,16 +230,6 @@ const BlockCreate = (block: any, contextId: string, targetId: string, position: 
 	request.setPosition(position);
 
 	dispatcher.request('blockCreate', request, callBack);
-};
-
-const BlockUpdateContent = (block: any, contextId: string, blockId: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Block.UpdateContent.Request();
-	
-	request.setBlock(Mapper.To.Block(block));
-	request.setContextid(contextId);
-	request.setBlockid(blockId);
-
-	dispatcher.request('blockUpdateContent', request, callBack);
 };
 
 const BlockCreatePage = (contextId: string, targetId: string, details: any, position: I.BlockPosition, templateId: string, fields: any, callBack?: (message: any) => void) => {
@@ -336,21 +270,21 @@ const BlockUnlink = (contextId: string, blockIds: any[], callBack?: (message: an
 	dispatcher.request('blockUnlink', request, callBack);
 };
 
-const BlockSetTextText = (contextId: string, blockId: string, text: string, marks: I.Mark[], callBack?: (message: any) => void) => {
+const BlockTextSetText = (contextId: string, blockId: string, text: string, marks: I.Mark[], callBack?: (message: any) => void) => {
 	text = text.replace(/&lt;/g, '<');
 	text = text.replace(/&gt;/g, '>');
 
 	marks = Util.objectCopy(marks);
 	marks = Mark.checkRanges(text, marks).map(Mapper.To.Mark);
 
-	const request = new Rpc.Block.Set.Text.Text.Request();
+	const request = new Rpc.BlockText.SetText.Request();
 	
 	request.setContextid(contextId);
 	request.setBlockid(blockId);
 	request.setText(text);
 	request.setMarks(new Model.Block.Content.Text.Marks().setMarksList(marks));
 
-	dispatcher.request('blockSetTextText', request, callBack);
+	dispatcher.request('blockTextSetText', request, callBack);
 };
 
 const BlockSetTextChecked = (contextId: string, blockId: string, checked: boolean, callBack?: (message: any) => void) => {
@@ -937,6 +871,64 @@ const ObjectTypeRelationRemove = (objectTypeId: string, relationKey: string, cal
 	dispatcher.request('objectTypeRelationRemove', request, callBack);
 };
 
+// ---------------------- OBJECT ---------------------- //
+
+const ObjectOpen = (blockId: string, traceId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.Open.Request();
+	
+	request.setBlockid(blockId);
+	request.setTraceid(traceId);
+
+	dispatcher.request('objectOpen', request, callBack);
+};
+
+const ObjectShow = (blockId: string, traceId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.Show.Request();
+	
+	request.setBlockid(blockId);
+	request.setTraceid(traceId);
+
+	dispatcher.request('objectShow', request, callBack);
+};
+
+const ObjectOpenBreadcrumbs = (callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.OpenBreadcrumbs.Request();
+	dispatcher.request('objectOpenBreadcrumbs', request, callBack);
+};
+
+const ObjectSetBreadcrumbs = (contextId: string, pageIds: string[], callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.SetBreadcrumbs.Request();
+	
+	request.setBreadcrumbsid(contextId);
+	request.setIdsList(pageIds);
+
+	dispatcher.request('objectSetBreadcrumbs', request, callBack);
+};
+
+const ObjectClose = (blockId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.Close.Request();
+	
+	request.setBlockid(blockId);
+
+	dispatcher.request('objectClose', request, callBack);
+};
+
+const ObjectUndo = (contextId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.Undo.Request();
+	
+	request.setContextid(contextId);
+
+	dispatcher.request('objectUndo', request, callBack);
+};
+
+const ObjectRedo = (contextId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.Redo.Request();
+	
+	request.setContextid(contextId);
+
+	dispatcher.request('objectRedo', request, callBack);
+};
+
 const ObjectCreateSet = (sources: string[], details: any, templateId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.CreateSet.Request();
 	
@@ -1325,6 +1317,7 @@ export {
 
 	DebugSync,
 	DebugTree,
+	DebugExportLocalstore,
 
 	FileUpload,
 	FileDownload,
@@ -1332,8 +1325,6 @@ export {
 	FileListOffload,
 
 	Export,
-	TemplateExportAll,
-	ExportLocalstore,
 
 	WalletCreate,
 	WalletRecover,
@@ -1350,8 +1341,6 @@ export {
 	NavigationGetObjectInfoWithLinks,
 
 	BlockGetPublicWebURL,
-	BlockUndo,
-	BlockRedo,
 	BlockUnlink,
 	BlockMerge,
 	BlockSplit,
@@ -1367,9 +1356,8 @@ export {
 	BlockCreate,
 	BlockCreatePage,
 	BlockCreateSet,
-	BlockUpdateContent,
 
-	BlockSetTextText,
+	BlockTextSetText,
 	BlockSetTextChecked,
 	BlockSetTextIcon,
 
@@ -1441,6 +1429,8 @@ export {
 	ObjectOpenBreadcrumbs,
 	ObjectSetBreadcrumbs,
 	ObjectClose,
+	ObjectUndo,
+	ObjectRedo,
 	ObjectSetLayout,
 	ObjectSetIsFavorite,
 	ObjectSetIsArchived,
@@ -1467,6 +1457,7 @@ export {
 	TemplateCreateFromObject,
 	TemplateCreateFromObjectType,
 	TemplateClone,
+	TemplateExportAll,
 
 	WorkspaceCreate,
 	WorkspaceSelect,

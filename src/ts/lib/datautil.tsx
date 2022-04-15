@@ -319,8 +319,6 @@ class DataUtil {
 		Storage.delete('redirect');
 		Storage.delete('redirectTo');
 
-		console.log('INFO');
-
 		if (info) {
 			if (info.info) {
 				commonStore.infoSet(info.info);
@@ -496,7 +494,7 @@ class DataUtil {
 			blockStore.updateContent(rootId, block.id, { text, marks });
 		};
 
-		C.BlockSetTextText(rootId, block.id, text, marks, (message: any) => {
+		C.BlockTextSetText(rootId, block.id, text, marks, (message: any) => {
 			if (callBack) {
 				callBack(message);
 			};

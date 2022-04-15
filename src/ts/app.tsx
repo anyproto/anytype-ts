@@ -656,7 +656,7 @@ class App extends React.Component<Props, State> {
 						return;
 					};
 
-					C.ExportLocalstore(files[0], [], (message: any) => {
+					C.DebugExportLocalstore(files[0], [], (message: any) => {
 						if (message.error.code) {
 							return;
 						};
