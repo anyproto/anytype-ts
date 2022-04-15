@@ -81,14 +81,6 @@ const Export = (path: string, ids: string[], format: I.ExportFormat, zip: boolea
 	dispatcher.request('export', request, callBack);
 };
 
-const TemplateExportAll = (path: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Template.ExportAll.Request();
-
-	request.setPath(path);
-
-	dispatcher.request('templateExportAll', request, callBack);
-};
-
 const FileUpload = (url: string, path: string, type: I.FileType, callBack?: (message: any) => void) => {
 	if (!url && !path) {
 		return;
@@ -1183,6 +1175,25 @@ const ObjectApplyTemplate = (contextId: string, templateId: string, callBack?: (
 	dispatcher.request('objectApplyTemplate', request, callBack);
 };
 
+const ObjectAddWithObjectId = (objectId: string, payload: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.AddWithObjectId.Request();
+
+	request.setObjectid(objectId);
+	request.setPayload(payload);
+
+	dispatcher.request('objectAddWithObjectId', request, callBack);
+};
+
+const ObjectShareByLink = (objectId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.ShareByLink.Request();
+
+	request.setObjectid(objectId);
+
+	dispatcher.request('objectShareByLink', request, callBack);
+};
+
+// ---------------------- OBJECT LIST ---------------------- //
+
 const ObjectListDuplicate = (ids: string[], callBack?: (message: any) => void) => {
 	const request = new Rpc.ObjectList.Duplicate.Request();
 	
@@ -1217,22 +1228,7 @@ const ObjectListSetIsFavorite = (ids: string[], isFavorite: boolean, callBack?: 
 	dispatcher.request('objectListSetIsFavorite', request, callBack);
 };
 
-const ObjectAddWithObjectId = (objectId: string, payload: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Object.AddWithObjectId.Request();
-
-	request.setObjectid(objectId);
-	request.setPayload(payload);
-
-	dispatcher.request('objectAddWithObjectId', request, callBack);
-};
-
-const ObjectShareByLink = (objectId: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Object.ShareByLink.Request();
-
-	request.setObjectid(objectId);
-
-	dispatcher.request('objectShareByLink', request, callBack);
-};
+// ---------------------- TEMPLATE ---------------------- //
 
 const TemplateCreateFromObject = (contextId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Template.CreateFromObject.Request();
@@ -1258,6 +1254,16 @@ const TemplateClone = (contextId: string, callBack?: (message: any) => void) => 
 	dispatcher.request('templateClone', request, callBack);
 };
 
+const TemplateExportAll = (path: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Template.ExportAll.Request();
+
+	request.setPath(path);
+
+	dispatcher.request('templateExportAll', request, callBack);
+};
+
+// ---------------------- WORKSPACE ---------------------- //
+
 const WorkspaceCreate = (name: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Workspace.Create.Request();
 
@@ -1282,6 +1288,8 @@ const WorkspaceSetIsHighlighted = (objectId: string, isHightlighted: boolean, ca
 
 	dispatcher.request('workspaceSetIsHighlighted', request, callBack);
 };
+
+// ---------------------- UNSPLASH ---------------------- //
 
 const UnsplashSearch = (query: string, limit: number, callBack?: (message: any) => void) => {
 	const request = new Rpc.Unsplash.Search.Request();
