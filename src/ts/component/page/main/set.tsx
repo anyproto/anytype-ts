@@ -323,7 +323,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, St
 			object[id] = value;
 		};
 
-		C.BlockSetDetails(rootId, details);
+		C.ObjectSetDetails(rootId, details);
 	};
 
 	getRange (id: string) {

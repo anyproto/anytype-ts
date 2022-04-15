@@ -292,7 +292,7 @@ class CommonStore {
 	};
 
 	infoSet (info: I.AccountInfo) {
-		console.log('INFO', info);
+		console.log('[commonStore.infoSet]', info);
 
 		blockStore.rootSet(info.homeBlockId);
 		blockStore.profileSet(info.profileBlockId);

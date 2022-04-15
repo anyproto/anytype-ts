@@ -439,14 +439,14 @@ class DataUtil {
 			{ key: 'iconEmoji', value: emoji },
 			{ key: 'iconImage', value: image },
 		];
-		C.BlockSetDetails(rootId, details, callBack);
+		C.ObjectSetDetails(rootId, details, callBack);
 	};
 	
 	pageSetName (rootId: string, name: string, callBack?: (message: any) => void) {
 		const details = [ 
 			{ key: 'name', value: name },
 		];
-		C.BlockSetDetails(rootId, details, callBack);
+		C.ObjectSetDetails(rootId, details, callBack);
 	};
 	
 	pageSetCover (rootId: string, type: I.CoverType, id: string, x?: number, y?: number, scale?: number, callBack?: (message: any) => void) {
@@ -461,7 +461,7 @@ class DataUtil {
 			{ key: 'coverY', value: y },
 			{ key: 'coverScale', value: scale },
 		];
-		C.BlockSetDetails(rootId, details, callBack);
+		C.ObjectSetDetails(rootId, details, callBack);
 	};
 
 	pageSetDone (rootId: string, done: boolean, callBack?: (message: any) => void) {
@@ -470,7 +470,7 @@ class DataUtil {
 		const details = [ 
 			{ key: Constant.relationKey.done, value: done },
 		];
-		C.BlockSetDetails(rootId, details, callBack);
+		C.ObjectSetDetails(rootId, details, callBack);
 	};
 
 	pageSetLayout (rootId: string, layout: I.ObjectLayout, callBack?: (message: any) => void) {

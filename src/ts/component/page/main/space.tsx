@@ -363,7 +363,7 @@ const PageMainSpace = observer(class PageMainSpace extends React.Component<Props
 			object[id] = value;
 		};
 
-		C.BlockSetDetails(rootId, details);
+		C.ObjectSetDetails(rootId, details);
 	};
 
 	getRange (id: string) {

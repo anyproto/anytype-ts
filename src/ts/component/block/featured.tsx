@@ -484,7 +484,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			const details = [ 
 				{ key: relationKey, value: Relation.formatValue(relation, !object[relationKey], true) },
 			];
-			C.BlockSetDetails(rootId, details);
+			C.ObjectSetDetails(rootId, details);
 			return;
 		};
 

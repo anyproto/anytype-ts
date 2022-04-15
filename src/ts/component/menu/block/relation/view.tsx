@@ -343,7 +343,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const details = [ 
 			{ key: relationKey, value: Relation.formatValue(relation, value, true) },
 		];
-		C.BlockSetDetails(rootId, details, callBack);
+		C.ObjectSetDetails(rootId, details, callBack);
 
 		const key = Relation.checkRelationValue(relation, value) ? 'ChangeRelationValue' : 'DeleteRelationValue';	
 		analytics.event(key, { type: 'menu' });

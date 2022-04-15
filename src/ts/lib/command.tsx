@@ -308,14 +308,14 @@ const BlockSetTextIcon = (contextId: string, blockId: string, iconEmoji: string,
 	dispatcher.request('blockSetTextIcon', request, callBack);
 };
 
-const BlockSetLatexText = (contextId: string, blockId: string, text: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Block.Set.Latex.Text.Request();
+const BlockLatexSetText = (contextId: string, blockId: string, text: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.BlockLatex.SetText.Request();
 	
 	request.setContextid(contextId);
 	request.setBlockid(blockId);
 	request.setText(text);
 
-	dispatcher.request('blockSetLatexText', request, callBack);
+	dispatcher.request('blockLatexSetText', request, callBack);
 };
 
 const BlockSetFields = (contextId: string, blockId: string, fields: any, callBack?: (message: any) => void) => {
@@ -328,15 +328,15 @@ const BlockSetFields = (contextId: string, blockId: string, fields: any, callBac
 	dispatcher.request('blockSetFields', request, callBack);
 };
 
-const BlockSetDetails = (contextId: string, details: any[], callBack?: (message: any) => void) => {
+const ObjectSetDetails = (contextId: string, details: any[], callBack?: (message: any) => void) => {
 	details = details.map(Mapper.To.Details);
 
-	const request = new Rpc.Block.Set.Details.Request();
+	const request = new Rpc.Object.SetDetails.Request();
 
 	request.setContextid(contextId);
 	request.setDetailsList(details);
 
-	dispatcher.request('blockSetDetails', request, callBack);
+	dispatcher.request('objectSetDetails', request, callBack);
 };
 
 const BlockMerge = (contextId: string, blockId1: string, blockId2: string, callBack?: (message: any) => void) => {
@@ -675,7 +675,7 @@ const BlockRelationList = (contextId: string, callBack?: (message: any) => void)
 };
 
 const BlockRelationSetKey = (contextId: string, blockId: string, relationKey: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Block.Relation.SetKey.Request();
+	const request = new Rpc.BlockRelation.SetKey.Request();
 	
 	request.setContextid(contextId);
 	request.setBlockid(blockId);
@@ -683,7 +683,6 @@ const BlockRelationSetKey = (contextId: string, blockId: string, relationKey: st
 
 	dispatcher.request('blockRelationSetKey', request, callBack);
 };
-
 
 const BlockRelationRemove = (contextId: string, relationKey: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.Relation.Remove.Request();
@@ -1362,8 +1361,7 @@ export {
 	BlockSetTextIcon,
 
 	BlockSetFields,
-	BlockSetDetails,
-	BlockSetLatexText,
+	BlockLatexSetText,
 
 	BlockListMove,
 	BlockListMoveToNewPage,
@@ -1446,6 +1444,7 @@ export {
 	ObjectSearchUnsubscribe,
 	ObjectDuplicate,
 	ObjectApplyTemplate,
+	ObjectSetDetails,
 
 	ObjectCreateSet,
 	

@@ -521,7 +521,7 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 		const rootId = this.getRootId();
 
 		dbStore.objectTypeUpdate({ id: rootId, recommendedLayout: layout });
-		C.BlockSetDetails(rootId, [ { key: 'recommendedLayout', value: layout } ]);
+		C.ObjectSetDetails(rootId, [ { key: 'recommendedLayout', value: layout } ]);
 
 		analytics.event('ChangeRecommendedLayout', { objectType: rootId, layout: layout });
 	};
@@ -585,7 +585,7 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 
 		if (details.length) {
 			dbStore.objectTypeUpdate(type);
-			C.BlockSetDetails(rootId, details);
+			C.ObjectSetDetails(rootId, details);
 		};
 	};
 
