@@ -51,7 +51,7 @@ class MenuItemVertical extends React.Component<Props, {}> {
 		} else 
 		if (icon) {
 			cn.push('withIcon');
-			iconElement = <Icon className={icon} inner={inner} />;
+			iconElement = <Icon className={[ icon, 'iconMain' ].join(' ')} inner={inner} />;
 		};
 
 		let content = null;
