@@ -113,7 +113,7 @@ const BlockCreate = (response: any) => {
 	};
 };
 
-const BlockCreatePage = (response: any) => {
+const BlockLinkCreateToTheNewObject = (response: any) => {
 	return {
 		blockId: response.getBlockid(),
 		targetId: response.getTargetid(),
@@ -396,19 +396,17 @@ export {
 
 	BlockFileCreateAndUpload,
 	BlockBookmarkCreateAndFetch,
+	BlockLinkCreateToTheNewObject,
 	
 	ObjectImportMarkdown,
 
 	BlockCreate,
-	BlockCreatePage,
 	BlockDataviewViewCreate,
 	BlockCreateSet,
 
 	BlockDataviewRecordCreate,
-
 	BlockDataviewRelationAdd,
 	BlockDataviewRelationListAvailable,
-
 	BlockDataviewRecordRelationOptionAdd,
 
 	BlockListMoveToNewPage,

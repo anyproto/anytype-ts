@@ -217,21 +217,6 @@ const BlockCreate = (block: any, contextId: string, targetId: string, position: 
 	dispatcher.request('blockCreate', request, callBack);
 };
 
-const BlockCreatePage = (contextId: string, targetId: string, details: any, position: I.BlockPosition, templateId: string, fields: any, callBack?: (message: any) => void) => {
-	details = details || {};
-
-	const request = new Rpc.Block.CreatePage.Request();
-
-	request.setContextid(contextId);
-	request.setTargetid(targetId);
-	request.setPosition(position);
-	request.setDetails(Encode.encodeStruct(details));
-	request.setTemplateid(templateId);
-	request.setFields(Encode.encodeStruct(fields || {}));
-
-	dispatcher.request('blockCreatePage', request, callBack);
-};
-
 const BlockCreateSet = (contextId: string, targetId: string, sources: string[], details: any, position: I.BlockPosition, callBack?: (message: any) => void) => {
 	details = details || {};
 
@@ -323,15 +308,19 @@ const BlockSetFields = (contextId: string, blockId: string, fields: any, callBac
 	dispatcher.request('blockSetFields', request, callBack);
 };
 
-const ObjectSetDetails = (contextId: string, details: any[], callBack?: (message: any) => void) => {
-	details = details.map(Mapper.To.Details);
+const BlockLinkCreateToTheNewObject = (contextId: string, targetId: string, details: any, position: I.BlockPosition, templateId: string, fields: any, callBack?: (message: any) => void) => {
+	details = details || {};
 
-	const request = new Rpc.Object.SetDetails.Request();
+	const request = new Rpc.BlockLink.CreateToTheNewObject.Request();
 
 	request.setContextid(contextId);
-	request.setDetailsList(details);
+	request.setTargetid(targetId);
+	request.setPosition(position);
+	request.setDetails(Encode.encodeStruct(details));
+	request.setTemplateid(templateId);
+	request.setFields(Encode.encodeStruct(fields || {}));
 
-	dispatcher.request('objectSetDetails', request, callBack);
+	dispatcher.request('blockLinkCreateToTheNewObject', request, callBack);
 };
 
 const BlockMerge = (contextId: string, blockId1: string, blockId2: string, callBack?: (message: any) => void) => {
@@ -623,7 +612,7 @@ const BlockDataviewViewSetActive = (contextId: string, blockId: string, viewId: 
 };
 
 const BlockDataviewRecordCreate = (contextId: string, blockId: string, record: any, templateId: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Block.Dataview.RecordCreate.Request();
+	const request = new Rpc.BlockDataviewRecord.Create.Request();
 	
 	request.setContextid(contextId);
 	request.setBlockid(blockId);
@@ -746,7 +735,7 @@ const BlockDataviewRecordRelationOptionDelete = (contextId: string, blockId: str
 };
 
 const BlockDataviewSetSource = (contextId: string, blockId: string, sources: string[], callBack?: (message: any) => void) => {
-	const request = new Rpc.Block.Dataview.SetSource.Request();
+	const request = new Rpc.BlockDataview.SetSource.Request();
 	
 	request.setContextid(contextId);
 	request.setBlockid(blockId);
@@ -938,6 +927,17 @@ const ObjectImportMarkdown = (contextId: string, path: string, callBack?: (messa
     request.setImportpath(path);
 
 	dispatcher.request('objectImportMarkdown', request, callBack);
+};
+
+const ObjectSetDetails = (contextId: string, details: any[], callBack?: (message: any) => void) => {
+	details = details.map(Mapper.To.Details);
+
+	const request = new Rpc.Object.SetDetails.Request();
+
+	request.setContextid(contextId);
+	request.setDetailsList(details);
+
+	dispatcher.request('objectSetDetails', request, callBack);
 };
 
 const OnSubscribe = (subId: string, keys: string[], message: any) => {
@@ -1311,9 +1311,10 @@ const UnsplashDownload = (id: string, callBack?: (message: any) => void) => {
 export {
 	VersionGet,
 	MetricsSetParameters,
-	AppShutdown,
 	LinkPreview,
 	ProcessCancel,
+
+	AppShutdown,
 
 	DebugSync,
 	DebugTree,
@@ -1361,7 +1362,6 @@ export {
 	BlockListSetAlign,
 
 	BlockCreate,
-	BlockCreatePage,
 	BlockCreateSet,
 
 	BlockSetFields,
@@ -1374,6 +1374,8 @@ export {
 	BlockTextListSetColor,
 
 	BlockFileListSetStyle,
+
+	BlockLinkCreateToTheNewObject,
 
 	BlockDivListSetStyle,
 

@@ -423,7 +423,7 @@ class DataUtil {
 			details.type = details.type || commonStore.type;
 		};
 		
-		C.BlockCreatePage(rootId, targetId, details, position, templateId, fields, (message: any) => {
+		C.BlockLinkCreateToTheNewObject(rootId, targetId, details, position, templateId, fields, (message: any) => {
 			if (message.error.code) {
 				return;
 			};
