@@ -38,13 +38,13 @@ const Mapper = {
 
 		AccountInfo: (obj: any): I.AccountInfo => {
 			return {
-				homeBlockId: obj.getHomeblockid(),
-				profileBlockId: obj.getProfileblockid(),
+				homeObjectId: obj.getHomeobjectid(),
+				profileObjectId: obj.getProfileobjectid(),
 				gatewayUrl: obj.getGatewayurl(),
-				marketplaceTypeId: obj.getMarketplacetypeid(),
-				marketplaceTemplateId: obj.getMarketplacetemplateid(),
-				marketplaceRelationId: obj.getMarketplacerelationid(),
-				deviceId: obj.getMarketplacerelationid(),
+				marketplaceTypeObjectId: obj.getMarketplacetypeobjectid(),
+				marketplaceTemplateObjectId: obj.getMarketplacetemplateobjectid(),
+				marketplaceRelationObjectId: obj.getMarketplacerelationobjectid(),
+				deviceId: obj.getMarketplacerelationobjectid(),
 			};
 		},
 

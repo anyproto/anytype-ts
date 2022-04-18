@@ -13,12 +13,12 @@ export interface Account {
 };
 
 export interface AccountInfo {
-	homeBlockId: string;
-	profileBlockId: string;
+	homeObjectId: string;
+	profileObjectId: string;
 	gatewayUrl: string;
-	marketplaceTypeId: string;
-	marketplaceTemplateId: string;
-	marketplaceRelationId: string;
+	marketplaceTypeObjectId: string;
+	marketplaceTemplateObjectId: string;
+	marketplaceRelationObjectId: string;
 	deviceId: string;
 };
 

@@ -20,10 +20,10 @@ const DebugSync = (limit: number, callBack?: (message: any) => void) => {
 	dispatcher.request('debugSync', request, callBack);
 };
 
-const DebugTree = (blockId: string, path: string, callBack?: (message: any) => void) => {
+const DebugTree = (objectId: string, path: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Debug.Tree.Request();
 
-	request.setBlockid(blockId);
+	request.setObjectid(objectId);
 	request.setPath(path);
 
 	dispatcher.request('debugTree', request, callBack);
@@ -839,10 +839,10 @@ const ObjectTypeRelationRemove = (objectTypeId: string, relationKey: string, cal
 
 // ---------------------- OBJECT ---------------------- //
 
-const ObjectOpen = (blockId: string, traceId: string, callBack?: (message: any) => void) => {
+const ObjectOpen = (objectId: string, traceId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.Open.Request();
 	
-	request.setBlockid(blockId);
+	request.setObjectid(objectId);
 	request.setTraceid(traceId);
 
 	dispatcher.request('objectOpen', request, callBack);
@@ -871,10 +871,10 @@ const ObjectSetBreadcrumbs = (contextId: string, pageIds: string[], callBack?: (
 	dispatcher.request('objectSetBreadcrumbs', request, callBack);
 };
 
-const ObjectClose = (blockId: string, callBack?: (message: any) => void) => {
+const ObjectClose = (objectId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.Close.Request();
 	
-	request.setBlockid(blockId);
+	request.setObjectid(objectId);
 
 	dispatcher.request('objectClose', request, callBack);
 };

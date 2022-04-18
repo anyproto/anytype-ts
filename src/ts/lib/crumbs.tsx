@@ -16,13 +16,13 @@ class Crumbs {
 
 		if (!breadcrumbs) {
 			C.ObjectOpenBreadcrumbs((message: any) => {
-				blockStore.breadcrumbsSet(message.blockId);
+				blockStore.breadcrumbsSet(message.objectId);
 			});
 		};
 
 		if (!recent) {
 			C.ObjectOpenBreadcrumbs((message: any) => {
-				blockStore.recentSet(message.blockId);
+				blockStore.recentSet(message.objectId);
 				this.save(I.CrumbsType.Recent, this.get(I.CrumbsType.Recent));
 			});
 		};

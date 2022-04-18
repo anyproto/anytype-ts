@@ -103,7 +103,7 @@ const ObjectShow = (response: any) => {
 
 const ObjectOpenBreadcrumbs = (response: any) => {
 	return {
-		blockId: response.getBlockid(),
+		objectId: response.getObjectid(),
 	};
 };
 

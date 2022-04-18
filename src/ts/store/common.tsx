@@ -294,12 +294,12 @@ class CommonStore {
 	infoSet (info: I.AccountInfo) {
 		console.log('[commonStore.infoSet]', info);
 
-		blockStore.rootSet(info.homeBlockId);
-		blockStore.profileSet(info.profileBlockId);
+		blockStore.rootSet(info.homeObjectId);
+		blockStore.profileSet(info.profileObjectId);
 
-		blockStore.storeSetType(info.marketplaceTypeId);
-		blockStore.storeSetTemplate(info.marketplaceTemplateId);
-		blockStore.storeSetRelation(info.marketplaceRelationId);
+		blockStore.storeSetType(info.marketplaceTypeObjectId);
+		blockStore.storeSetTemplate(info.marketplaceTemplateObjectId);
+		blockStore.storeSetRelation(info.marketplaceRelationObjectId);
 
 		commonStore.gatewaySet(info.gatewayUrl);
 
