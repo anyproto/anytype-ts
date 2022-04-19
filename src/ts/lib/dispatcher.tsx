@@ -815,8 +815,9 @@ class Dispatcher {
 	};
 
 	public request (type: string, data: any, callBack?: (message: any) => void) {
+		type = Util.toCamelCase(type);
+
 		const { config } = commonStore;
-		const upper = Util.toUpperCamelCase(type);
 		const debug = config.debug.mw;
 
 		if (!this.service[type]) {
@@ -853,8 +854,8 @@ class Dispatcher {
 				let code = err ? err.getCode() : 0;
 				let description = err ? err.getDescription() : '';
 
-				if (!code && Response[upper]) {
-					message = Response[upper](response);
+				if (!code && Response[type]) {
+					message = Response[type](response);
 				};
 
 				message.event = response.getEvent ? response.getEvent() : null;
