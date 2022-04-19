@@ -32,7 +32,7 @@
 		.linkCard { display: inline-block; vertical-align: top; width: 100%; }
         .linkCard {
             .sides { display: flex; flex-direction: row; border-radius: 12px; }
-			.side.left { width: 100%; padding: 21px 16px; border: 1px solid $colorBorderDark; border-radius: 12px; }
+			.side.left { width: 100%; padding: 21px 16px; border: 1px solid $colorBorderDark; border-right-width: 0px; border-radius: 12px; position: relative; }
 			.side.right { display: none; border-radius: 0px 12px 12px 0px; overflow: hidden; }
 
 			.cover { position: relative; min-height: 116px; background-color: unset; }
@@ -72,7 +72,7 @@
 
 		.linkCard.vertical { display: block; }
 		.linkCard.vertical {
-			.side.left { width: 100%; }
+			.side.left { width: 100%; border-right-width: 1px; }
 			.side.right { 
 				position: absolute; top: 0px; left: 0px; height: 116px; width: 100%; border-radius: 12px 12px 0px 0px;
 				border: 1px solid $colorBorderDark; border-bottom: 0px;

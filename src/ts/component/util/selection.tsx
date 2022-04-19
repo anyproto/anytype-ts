@@ -269,6 +269,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		ids = this.get(I.SelectType.Block, true);
 		if (ids.length > 0) {
 			menuStore.close('blockContext');
+			focus.clear(true);
 		};
 		
 		scrollOnMove.onMouseUp(e);
