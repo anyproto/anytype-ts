@@ -116,13 +116,13 @@
 
 		.item.withDescription { padding: 8px 14px; height: 56px; }
 		.item.withDescription {
-			.icon, .iconObject { width: 40px; height: 40px; border-radius: 6px; position: absolute; left: 14px; top: 8px; }
+			.iconMain, .iconObject { width: 40px; height: 40px; border-radius: 6px; position: absolute; left: 14px; top: 8px; }
+			
 			.descr { @include text-small; @include text-overflow-nw; line-height: 20px; height: 20px; color: $colorVeryDarkGrey; }
 			.descr:empty { display: none; }
-			.info { line-height: 40px; width: 100%; }
-			.txt { width: 100%; }
 
-			.icon.chk { display: none; }
+			.info { line-height: 40px; width: calc(100% - 16px); }
+			.txt { width: 100%; }
 		}
 
 		.item.withDescription.withIcon, 

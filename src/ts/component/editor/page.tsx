@@ -465,6 +465,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		const popupOpen = popupStore.isOpenList([ 'search' ]);
 		const root = blockStore.getLeaf(rootId, rootId);
 
+		console.log(e, keyboard.isFocused);
+
 		if (keyboard.isFocused || !selection || !root) {
 			return;
 		};
@@ -1705,6 +1707,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		let next: any = null;
 		let ids = selection.get(I.SelectType.Block);
 		let blockIds = [];
+
+		console.log(ids);
 		
 		if (ids.length) {
 			next = blockStore.getNextBlock(rootId, ids[0], -1, (it: any) => { return it.isFocusable(); });
