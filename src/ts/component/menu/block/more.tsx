@@ -292,7 +292,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 					label: 'Your object type library',
 					filters: filters,
 					onSelect: (item: any) => {
-						C.BlockListConvertChildrenToPages(rootId, [ blockId ], item.id);
+						C.BlockListConvertToObjects(rootId, [ blockId ], item.id);
 						close();
 
 						if (onMenuSelect) {

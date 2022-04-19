@@ -224,20 +224,6 @@ const BlockCreate = (block: any, contextId: string, targetId: string, position: 
 	dispatcher.request('blockCreate', request, callBack);
 };
 
-const BlockCreateSet = (contextId: string, targetId: string, sources: string[], details: any, position: I.BlockPosition, callBack?: (message: any) => void) => {
-	details = details || {};
-
-	const request = new Rpc.Block.CreateSet.Request();
-
-	request.setContextid(contextId);
-	request.setTargetid(targetId);
-	request.setSourceList(sources);
-	request.setPosition(position);
-	request.setDetails(Encode.encodeStruct(details));
-
-	dispatcher.request('blockCreateSet', request, callBack);
-};
-
 const BlockUnlink = (contextId: string, blockIds: any[], callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.Unlink.Request();
 	
@@ -403,7 +389,7 @@ const BlockPaste = (contextId: string, focusedId: string, range: I.TextRange, bl
 	dispatcher.request('blockPaste', request, callBack);
 };
 
-const BlockListMove = (contextId: string, targetContextId: string, blockIds: string[], targetId: string, position: I.BlockPosition, callBack?: (message: any) => void) => {
+const BlockListMoveToExistingObject = (contextId: string, targetContextId: string, blockIds: string[], targetId: string, position: I.BlockPosition, callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockList.Move.Request();
 	
 	request.setContextid(contextId);
@@ -412,10 +398,10 @@ const BlockListMove = (contextId: string, targetContextId: string, blockIds: str
     request.setDroptargetid(targetId);
     request.setPosition(position);
 
-	dispatcher.request('blockListMove', request, callBack);
+	dispatcher.request('blockListMoveToExistingObject', request, callBack);
 };
 
-const BlockListMoveToNewPage = (contextId: string, blockIds: string[], details: any, targetId: string, position: I.BlockPosition, callBack?: (message: any) => void) => {
+const BlockListMoveToNewObject = (contextId: string, blockIds: string[], details: any, targetId: string, position: I.BlockPosition, callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.ListMoveToNewPage.Request();
 	
 	request.setContextid(contextId);
@@ -427,7 +413,7 @@ const BlockListMoveToNewPage = (contextId: string, blockIds: string[], details: 
 	dispatcher.request('blockListMoveToNewPage', request, callBack);
 };
 
-const BlockListConvertChildrenToPages = (contextId: string, blockIds: string[], type: string, callBack?: (message: any) => void) => {
+const BlockListConvertToObjects = (contextId: string, blockIds: string[], type: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.ListConvertChildrenToPages.Request();
 	
 	request.setContextid(contextId);
@@ -1333,8 +1319,6 @@ export {
 	FileDrop,
 	FileListOffload,
 
-	ObjectCreate,
-
 	NavigationGetObjectInfoWithLinks,
 
 	BlockUnlink,
@@ -1344,20 +1328,16 @@ export {
 	BlockCopy,
 	BlockCut,
 	BlockPaste,
+	BlockCreate,
+	BlockSetFields,
 
-	BlockListMove,
-	BlockListMoveToNewPage,
-	BlockListConvertChildrenToPages,
+	BlockListMoveToExistingObject,
+	BlockListConvertToObjects,
 	BlockListDuplicate,
 	BlockListSetBackgroundColor,
 	BlockListTurnInto,
 	BlockListSetFields,
 	BlockListSetAlign,
-
-	BlockCreate,
-	BlockCreateSet,
-
-	BlockSetFields,
 
 	BlockTextSetText,
 	BlockTextSetChecked,
@@ -1423,6 +1403,7 @@ export {
 	ObjectOpenBreadcrumbs,
 	ObjectSetBreadcrumbs,
 	ObjectClose,
+	ObjectCreate,
 	ObjectUndo,
 	ObjectRedo,
 	ObjectGraph,

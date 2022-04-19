@@ -856,7 +856,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		const canTab = obj && !first.isTextTitle() && !first.isTextDescription() && obj.canHaveChildren() && first.isIndentable();
 		
 		if (canTab) {
-			C.BlockListMove(rootId, rootId, ids, obj.id, (shift ? I.BlockPosition.Bottom : I.BlockPosition.Inner), () => {
+			C.BlockListMoveToExistingObject(rootId, rootId, ids, obj.id, (shift ? I.BlockPosition.Bottom : I.BlockPosition.Inner), () => {
 				if (next && next.isTextToggle()) {
 					blockStore.toggle(rootId, next.id, true);
 				};
@@ -909,7 +909,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			position = isFirst ? I.BlockPosition.Top : I.BlockPosition.Bottom;
 		};
 
-		C.BlockListMove(rootId, rootId, [ block.id ], next.id, position, (message: any) => {
+		C.BlockListMoveToExistingObject(rootId, rootId, [ block.id ], next.id, position, (message: any) => {
 			focus.apply();
 
 			analytics.event('ReorderBlock', { count: 1 });
@@ -1092,7 +1092,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			return;
 		};
 
-		C.BlockListMove(rootId, rootId, [ block.id ], obj.id, (isShift ? I.BlockPosition.Bottom : I.BlockPosition.Inner), (message: any) => {
+		C.BlockListMoveToExistingObject(rootId, rootId, [ block.id ], obj.id, (isShift ? I.BlockPosition.Bottom : I.BlockPosition.Inner), (message: any) => {
 			window.setTimeout(() => { focus.apply(); });
 
 			if (next && next.isTextToggle()) {

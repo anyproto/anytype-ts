@@ -120,13 +120,6 @@ const BlockLinkCreateToTheNewObject = (response: any) => {
 	};
 };
 
-const BlockCreateSet = (response: any) => {
-	return {
-		blockId: response.getBlockid(),
-		targetId: response.getTargetid(),
-	};
-};
-
 const BlockSplit = (response: any) => {
 	return {
 		blockId: response.getBlockid(),
@@ -175,19 +168,13 @@ const ObjectImportMarkdown = (response: any) => {
 	};
 };
 
-const BlockListMoveToNewPage = (response: any) => {
-	return {
-		linkId: response.getLinkid(),
-	};
-};
-
 const BlockListDuplicate = (response: any) => {
 	return {
 		blockIds: response.getBlockidsList(),
 	};
 };
 
-const BlockListConvertChildrenToPages = (response: any) => {
+const BlockListConvertToObjects = (response: any) => {
 	return {
 		linkIds: response.getLinkidsList(),
 	};
@@ -255,7 +242,7 @@ const ObjectTypeRelationAdd = (response: any) => {
 	};
 };
 
-const ObjectCreateSetateSet = (response: any) => {
+const ObjectCreateSet = (response: any) => {
 	return {
 		id: response.getId(),
 	};
@@ -383,7 +370,7 @@ export {
 	AccountDelete,
 
 	ObjectCreate,
-	ObjectCreateSetateSet,
+	ObjectCreateSet,
 
 	NavigationGetObjectInfoWithLinks,
 
@@ -402,16 +389,14 @@ export {
 
 	BlockCreate,
 	BlockDataviewViewCreate,
-	BlockCreateSet,
 
 	BlockDataviewRecordCreate,
 	BlockDataviewRelationAdd,
 	BlockDataviewRelationListAvailable,
 	BlockDataviewRecordRelationOptionAdd,
 
-	BlockListMoveToNewPage,
 	BlockListDuplicate,
-	BlockListConvertChildrenToPages,
+	BlockListConvertToObjects,
 
 	HistoryGetVersions,
 	HistoryShowVersion,

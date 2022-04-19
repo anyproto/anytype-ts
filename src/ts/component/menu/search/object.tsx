@@ -341,7 +341,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 				break;
 
 			case I.NavigationType.Move:
-				C.BlockListMove(rootId, item.id, blockIds, '', I.BlockPosition.Bottom);
+				C.BlockListMoveToExistingObject(rootId, item.id, blockIds, '', I.BlockPosition.Bottom);
 				break;
 
 			case I.NavigationType.Link:

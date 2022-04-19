@@ -620,7 +620,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 			ids = [ blockId ];
 		};
 
-		C.BlockListConvertChildrenToPages(rootId, ids, type);
+		C.BlockListConvertToObjects(rootId, ids, type);
 	};
 
 	setFocus (id: string) {

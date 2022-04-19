@@ -838,7 +838,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		const nidx = element.childrenIds.indexOf(target.id);
 
 		blockStore.updateStructure(root, root, arrayMove(element.childrenIds, oidx, nidx));
-		C.BlockListMove(root, root, [ current.id ], target.id, position);
+		C.BlockListMoveToExistingObject(root, root, [ current.id ], target.id, position);
 
 		analytics.event('ReorderObjects', { route: 'ScreenHome' });
 	};

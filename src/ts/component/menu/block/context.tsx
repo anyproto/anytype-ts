@@ -168,7 +168,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 						};
 						
 						if (item.type == I.BlockType.Page) {
-							C.BlockListConvertChildrenToPages(rootId, blockIds, '');
+							C.BlockListConvertToObjects(rootId, blockIds, '');
 						};
 						
 						close();
