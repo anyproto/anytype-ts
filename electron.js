@@ -457,7 +457,7 @@ function menuInit () {
 				{ type: 'separator' },
 				{ role: 'services' },
 				{ type: 'separator' },
-				{ role: 'hide' },
+				{ role: 'hide', label: 'Hide Anytype' },
 				{ role: 'hideothers' },
 				{ role: 'unhide' },
 				{ type: 'separator' },

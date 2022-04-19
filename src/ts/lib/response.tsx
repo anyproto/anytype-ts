@@ -68,7 +68,7 @@ const AccountDelete = (response: any) => {
 	};
 };
 
-const PageCreate = (response: any) => {
+const ObjectCreate = (response: any) => {
 	return {
 		pageId: response.getPageid(),
 	};
@@ -382,7 +382,7 @@ export {
 	AccountSelect,
 	AccountDelete,
 
-	PageCreate,
+	ObjectCreate,
 	ObjectCreateSetateSet,
 
 	NavigationGetObjectInfoWithLinks,

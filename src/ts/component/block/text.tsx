@@ -1228,13 +1228,13 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 	onSelectIcon (icon: string) {
 		const { rootId, block } = this.props;
 		
-		C.BlockSetTextIcon(rootId, block.id, icon, '');
+		C.BlockTextSetIcon(rootId, block.id, icon, '');
 	};
 
 	onUploadIcon (hash: string) {
 		const { rootId, block } = this.props;
 
-		C.BlockSetTextIcon(rootId, block.id, '', hash);
+		C.BlockTextSetIcon(rootId, block.id, '', hash);
 	};
 	
 	placeholderCheck () {

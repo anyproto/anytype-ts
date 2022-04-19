@@ -124,7 +124,7 @@ class Action {
 				onSelectPath();
 			};
 
-			C.Export(paths[0], ids, format, zip, nested, files, (message: any) => {
+			C.ObjectListExport(paths[0], ids, format, zip, nested, files, (message: any) => {
 				if (message.error.code) {
 					return;
 				};
