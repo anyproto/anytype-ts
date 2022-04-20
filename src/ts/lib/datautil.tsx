@@ -313,23 +313,21 @@ class DataUtil {
 		});
 	};
 
-	onAuth (info: any) {
+	onAuth (account: I.Account) {
 		const redirectTo = Storage.get('redirectTo');
 
 		Storage.delete('redirect');
 		Storage.delete('redirectTo');
 
-		if (info) {
-			if (info.info) {
-				commonStore.infoSet(info.info);
+		if (account) {
+			authStore.accountSet(account);
+
+			if (account.config) {
+				commonStore.configSet(account.config, false);
 			};
 
-			if (info.account) {
-				authStore.accountSet(info.account);
-
-				if (info.account.config) {
-					commonStore.configSet(info.account.config, false);
-				};
+			if (account.info) {
+				commonStore.infoSet(account.info);
 			};
 		};
 

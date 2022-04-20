@@ -521,7 +521,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				break;
 
 			case 'blockRemove':
-				C.BlockUnlink(rootId, [ blockId ], (message: any) => {
+				C.BlockListDelete(rootId, [ blockId ], (message: any) => {
 					if (!isPopup) {
 						if (block.isPage()) {
 							Util.route('/main/index');

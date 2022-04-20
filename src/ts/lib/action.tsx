@@ -88,7 +88,7 @@ class Action {
 			return it.type == I.BlockType.Text;
 		});
 		
-		C.BlockUnlink(rootId, blockIds, (message: any) => {
+		C.BlockListDelete(rootId, blockIds, (message: any) => {
 			if (next) {
 				this.focusToEnd(rootId, next.id);
 			};

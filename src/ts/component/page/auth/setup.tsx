@@ -137,7 +137,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<Props
 						this.setError(message.error.description);
 					} else
 					if (message.account) {
-						DataUtil.onAuth(message);
+						DataUtil.onAuth(message.account);
 					};
 				});
 			} else {
@@ -192,7 +192,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<Props
 				this.setError(message.error.description);
 			} else
 			if (message.account) {
-				DataUtil.onAuth(message);
+				DataUtil.onAuth(message.account);
 			};
 		}); 
 	};

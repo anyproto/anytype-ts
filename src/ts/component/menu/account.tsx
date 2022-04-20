@@ -87,7 +87,7 @@ const MenuAccount = observer(class MenuAccount extends React.Component<Props, St
 				Util.checkError(message.error.code);
 			} else
 			if (message.account) {
-				DataUtil.onAuth(message);
+				DataUtil.onAuth(message.account);
 			};
 		});
 	};

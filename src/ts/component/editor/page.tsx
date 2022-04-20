@@ -1625,9 +1625,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		} else 
 		if (!length) {
 			focus.clear(true);
-			C.BlockUnlink(rootId, [ focused.id ], cb);
+			C.BlockListDelete(rootId, [ focused.id ], cb);
 		} else {
-			C.BlockUnlink(rootId, [ next.id ], (message: any) => {
+			C.BlockListDelete(rootId, [ next.id ], (message: any) => {
 				if (message.error.code) {
 					return;
 				};
@@ -1725,7 +1725,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		});
 
 		focus.clear(true);
-		C.BlockUnlink(rootId, blockIds, (message: any) => {
+		C.BlockListDelete(rootId, blockIds, (message: any) => {
 			if (message.error.code) {
 				return;
 			};
