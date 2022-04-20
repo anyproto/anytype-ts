@@ -235,15 +235,17 @@ class CommonStore {
 	};
 
 	themeSet (v: string) {
-		console.log('[themeSet]', this.nativeThemeIsDark, v);
-
 		this.themeId = v;
 		Storage.set('theme', v);
+		
+		this.themeClass();
+	};
 
+	themeClass () {
 		if (this.themeId == 'system') {
 			Util.addBodyClass('theme', this.nativeThemeIsDark ? 'dark' : '');
 		} else {
-			Util.addBodyClass('theme', v);
+			Util.addBodyClass('theme', this.themeId);
 		};
 	};
 

@@ -218,8 +218,6 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 		this.event();
 		this.unbind();
 
-		commonStore.themeSet(commonStore.theme);
-
 		win.on('resize.page' + (isPopup ? 'Popup' : ''), () => { this.resize(); });
 
 		if (!isPopup) {
@@ -365,6 +363,8 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 		};
 
 		obj.attr({ class: cn.join(' ') });
+
+		commonStore.themeClass();
 	};
 	
 	resize () {
