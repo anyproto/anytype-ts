@@ -272,6 +272,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 				const themes: any[] = [
 					{ id: '', class: 'light', name: 'Light' },
 					{ id: 'dark', class: 'dark', name: 'Dark' },
+					{ id: 'system', class: 'system', name: 'System' },
 				];
 
 				const inner = <div className="inner"></div>;
@@ -295,7 +296,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 									<div 
 										key={i} 
 										className={[ 'btn', (theme == item.id ? 'active' : '') ].join(' ')} 
-										onClick={() => { commonStore.themeSet(item.id); }}
+										onClick={() => { this.onTheme(item.id); }}
 									>
 										<Icon className={item.class} inner={inner} />
 										<Label text={item.name} />
@@ -882,6 +883,14 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 				}
 			}
 		});
+	};
+
+	onTheme (id: string) {
+		const renderer = Util.getRenderer();
+
+		commonStore.themeSet(id);
+		renderer.send('configSet', { theme: id });
+		analytics.event('ThemeSet', { id });
 	};
 
 	onTypeChange (id: string) {

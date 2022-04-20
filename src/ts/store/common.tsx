@@ -47,6 +47,7 @@ class CommonStore {
     public configObj: any = {};
     public cellId: string = '';
 	public themeId: string = '';
+	public nativeThemeIsDark: boolean = false;
 	public typeId: string = '';
 	public pinTimeId: number = 0;
 	public sidebarObj: Sidebar = { width: 0, height: 0, x: 0, y: 0, fixed: false, snap: I.MenuDirection.Left };
@@ -65,6 +66,7 @@ class CommonStore {
             previewObj: observable,
             configObj: observable,
 			themeId: observable,
+			nativeThemeIsDark: observable,
 			typeId: observable,
 			isFullScreen: observable,
             config: computed,
@@ -75,6 +77,7 @@ class CommonStore {
             coverImage: computed,
             gateway: computed,
 			theme: computed,
+			nativeTheme: computed,
 			sidebar: computed,
             coverSet: action,
             coverSetUploadedImage: action,
@@ -86,6 +89,7 @@ class CommonStore {
             filterSet: action,
             previewSet: action,
 			themeSet: action,
+			nativeThemeSet: action,
 			sidebarSet: action,
         });
     };
@@ -136,6 +140,10 @@ class CommonStore {
 
 	get theme(): string {
 		return String(this.themeId || '');
+	};
+
+	get nativeTheme(): string {
+		return this.nativeThemeIsDark ? 'dark' : '';
 	};
 
 	get sidebar(): Sidebar {
@@ -227,14 +235,21 @@ class CommonStore {
 	};
 
 	themeSet (v: string) {
-		const renderer = Util.getRenderer();
+		console.log('[themeSet]', this.nativeThemeIsDark, v);
 
 		this.themeId = v;
 		Storage.set('theme', v);
-		Util.addBodyClass('theme', v);
 
-		renderer.send('configSet', { theme: v });
-		analytics.event('ThemeSet', { id: v });
+		if (this.themeId == 'system') {
+			Util.addBodyClass('theme', this.nativeThemeIsDark ? 'dark' : '');
+		} else {
+			Util.addBodyClass('theme', v);
+		};
+	};
+
+	nativeThemeSet (isDark: boolean) {
+		console.log('[nativeThemeSet]', isDark);
+		this.nativeThemeIsDark = isDark;
 	};
 
 	sidebarInit () {
