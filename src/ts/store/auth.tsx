@@ -105,8 +105,10 @@ class AuthStore {
 	accountSet (account: any) {
 		set(this.accountItem, account);
 
-		Storage.set('accountId', account.id);
-		Sentry.setUser({ id: account.id });
+		if (account.id) {
+			Storage.set('accountId', account.id);
+			Sentry.setUser({ id: account.id });
+		};
     };
 
 	threadSet (rootId: string, obj: any) {

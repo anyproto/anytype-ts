@@ -6,7 +6,7 @@ import { Provider } from 'mobx-react';
 import { enableLogging } from 'mobx-logger';
 import { Page, SelectionProvider, DragProvider, Progress, Tooltip, Preview, Icon, ListPopup, ListMenu } from './component';
 import { commonStore, authStore, blockStore, detailStore, dbStore, menuStore, popupStore } from './store';
-import { I, C, Util, FileUtil, keyboard, Storage, analytics, dispatcher, translate } from 'ts/lib';
+import { I, C, Util, FileUtil, keyboard, Storage, analytics, dispatcher, translate, Action } from 'ts/lib';
 import * as Sentry from '@sentry/browser';
 import { configure } from 'mobx';
 
@@ -104,6 +104,7 @@ import 'scss/popup/confirm.scss';
 import 'scss/popup/page.scss';
 import 'scss/popup/template.scss';
 import 'scss/popup/export.scss';
+import 'scss/popup/video.scss';
 
 import 'emoji-mart/css/emoji-mart.css';
 import 'scss/menu/common.scss';
@@ -147,7 +148,6 @@ import 'scss/menu/dataview/source.scss';
 import 'scss/media/print.scss';
 
 import 'scss/theme/dark/common.scss';
-import { Action } from './lib';
 
 interface RouteElement { path: string; };
 interface Props {};

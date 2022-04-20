@@ -232,15 +232,21 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 		
 		window.setTimeout(() => {
 			let popupNewBlock = Storage.get('popupNewBlock');
+			let popupVideo = Storage.get('popupVideo');
+
 			let onboarding = Storage.get('onboarding');
 
 			if (isMain && account) {
-				if (!onboarding) {
+				if (!onboarding || popupVideo) {
 					popupNewBlock = true;
 				};
 				if (!popupNewBlock && onboarding) {
 					popupStore.open('help', { data: { document: 'whatsNew' } });
 					Storage.set('popupNewBlock', true);
+				};
+				if (popupVideo) {
+					popupStore.open('video', { data: { type: 'onboarding' } });
+					Storage.delete('popupVideo');
 				};
 				Storage.set('redirect', history.location.pathname);
 			};

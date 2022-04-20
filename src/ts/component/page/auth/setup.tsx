@@ -174,6 +174,8 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<Props
 				authStore.previewSet('');
 
 				Storage.set('popupNewBlock', true);
+				Storage.set('popupVideo', true);
+
 				renderer.send('keytarSet', accountId, phrase);
 				analytics.event('CreateAccount');
 				
