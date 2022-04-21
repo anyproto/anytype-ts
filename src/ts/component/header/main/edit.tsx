@@ -46,7 +46,7 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<Pro
 
 		const object = detailStore.get(breadcrumbs, rootId, [ 'templateIsBundled' ]);
 		const canSync = !object.templateIsBundled && !root.isObjectFileKind();
-		const cn = [ 'header', 'headerMainEdit' ];
+		const cn = [ 'header', 'headerMainEdit', DataUtil.layoutClass(object.id, object.layout) ];
 		const isLocked = root.isLocked();
 
 		return (

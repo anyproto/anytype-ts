@@ -131,6 +131,11 @@
 
 }
 
+.header.headerMainEdit.isObjectType, 
+.header.headerMainEdit.isRelation {
+	.icon.big.nav, .icon.big.graph { display: none; }
+}
+
 .popup {
 	.header.headerMainEdit {
 		.side.left { opacity: 1; left: 14px; }
