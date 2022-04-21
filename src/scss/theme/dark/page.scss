@@ -86,14 +86,6 @@
 /* PageMainStore */
 
 .pageMainStore {
-    .head { background: $colorBlack; }
-    .head {
-        .tabs { background: $colorBgIcon; color: $colorSecondary; }
-        .tabs {
-            .item.active { background: $colorHover; color: $colorPrimary; }
-        }
-    }
-
     .body {
         .items {
             .item {

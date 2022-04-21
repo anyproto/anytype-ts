@@ -30,6 +30,17 @@
 		.item:hover { color: $colorBlack; }
 	}
 
+	.tabs { white-space: nowrap; background: $colorLightGrey; display: inline-block; height: 28px; padding: 2px; border-radius: 6px; }
+	.tabs {
+		.tab { 
+			display: inline-block; margin-right: 4px; width: 124px; border-radius: 4px; height: 24px; line-height: 24px;
+			font-weight: 500; cursor: pointer; color: $colorMediumGrey; transition: $transitionFast; text-align: center;
+			vertical-align: top;
+		}
+		.tab.active { background: $colorWhite; }
+		.tab:last-child { margin: 0px; }
+	}
+
 	.menu { position: absolute; top: 9px; right: 10px; }
 	.menu {
 		.icon:last-child { margin: 0px; }
@@ -55,7 +66,7 @@
 
 	.side.left { left: 6px; z-index: 1; }
 
-	.side.center { width: 40%; height: 28px; left: 50%; margin-left: -20%; white-space: nowrap; }
+	.side.center { width: 40%; height: 28px; left: 50%; margin-left: -20%; white-space: nowrap; text-align: center; }
 
 	.side.right { right: 10px; z-index: 1; display: flex; align-items: center; gap: 0px 16px; }
 	.side.right {
