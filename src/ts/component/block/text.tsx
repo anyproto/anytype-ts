@@ -736,6 +736,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		};
 		
 		focus.set(id, range);
+
 		if (!keyboard.isSpecial(k)) {
 			this.placeholderHide();
 		};
