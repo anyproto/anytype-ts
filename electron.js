@@ -124,16 +124,23 @@ function trayIcon () {
 	if (is.windows) {
 		return path.join(__dirname, '/electron/icon64x64.png');
 	} else {
-		const dark = nativeTheme.shouldUseDarkColors || nativeTheme.shouldUseHighContrastColors || nativeTheme.shouldUseInvertedColorScheme;
-		return path.join(__dirname, '/electron/icon-tray-' + (dark ? 'white' : 'black') + '.png');
+		return path.join(__dirname, '/electron/icon-tray-' + (isDarkTheme() ? 'white' : 'black') + '.png');
 	};
 };
 
-nativeTheme.on('updated', () => {
+nativeTheme.on('updated', () => { initTheme(); });
+
+function isDarkTheme () {
+	return nativeTheme.shouldUseDarkColors || nativeTheme.shouldUseHighContrastColors || nativeTheme.shouldUseInvertedColorScheme;
+};
+
+function initTheme () {
 	if (tray) {
 		tray.setImage(trayIcon());
 	};
-});
+
+	send('native-theme', isDarkTheme());
+};
 
 function initTray () {
 	tray = new Tray (trayIcon());
@@ -287,8 +294,7 @@ function createWindow () {
 	};
 
 	ipcMain.on('appLoaded', () => {
-		send('dataPath', dataPath.join('/'));
-		send('config', config);
+		send('init', dataPath.join('/'), config, isDarkTheme());
 	});
 
 	ipcMain.on('keytarSet', (e, key, value) => {
@@ -398,14 +404,23 @@ function createWindow () {
 
 function getBgColor () {
 	let { theme } = config;
-	let bg = '#fff';
+	let light = '#fff';
+	let dark = '#2c2b27';
+	let bg = '';
 
 	switch (theme) {
+		default:
+			bg = light;
+			break;
+
 		case 'dark':
-			bg = '#2c2b27';
+			bg = dark;
+			break;
+
+		case 'system':
+			bg = isDarkTheme() ? dark : light;
 			break;
 	};
-
 	return bg;
 };
 

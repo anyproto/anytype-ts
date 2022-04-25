@@ -939,6 +939,7 @@ class Util {
 		if (v) {
 			c.push(this.toCamelCase(`${prefix}-${v}`));
 		};
+
 		obj.attr({ class: c.join(' ') });
 	};
 

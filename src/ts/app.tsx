@@ -343,7 +343,7 @@ class App extends React.Component<Props, State> {
 		const phrase = Storage.get('phrase');
 		const renderer = Util.getRenderer();
 		const restoreKeys = [
-			'theme', 'pinTime', 'defaultType', 'autoSidebar',
+			'pinTime', 'defaultType', 'autoSidebar',
 		];
 
 		// Check auth phrase with keytar
@@ -390,6 +390,10 @@ class App extends React.Component<Props, State> {
 
 		head.find('#link-prism').remove();
 
+		if (theme == 'system') {
+			theme = commonStore.nativeTheme;
+		};
+
 		if (theme) {
 			head.append(`<link id="link-prism" rel="stylesheet" href="./css/theme/${theme}/prism.css" />`);
 		};
@@ -407,12 +411,17 @@ class App extends React.Component<Props, State> {
 
 		renderer.send('appLoaded', true);
 
-		renderer.on('dataPath', (e: any, dataPath: string) => {
+		renderer.on('init', (e: any, dataPath: string, config: any, isDark: boolean) => {
 			authStore.pathSet(dataPath);
 			Storage.init(dataPath);
 
 			this.initStorage();
-			this.initTheme(commonStore.theme);
+
+			commonStore.nativeThemeSet(isDark);
+			commonStore.configSet(config, true);
+			commonStore.themeSet(config.theme);
+
+			this.initTheme(config.theme);
 
 			window.setTimeout(() => {
 				logo.css({ opacity: 0 });
@@ -549,6 +558,11 @@ class App extends React.Component<Props, State> {
 		renderer.on('leave-full-screen', () => {
 			commonStore.fullscreenSet(false);
 		});
+
+		renderer.on('native-theme', (e: any, isDark: boolean) => {
+			commonStore.nativeThemeSet(isDark);
+			commonStore.themeSet(commonStore.theme);
+  		});
 
 		renderer.on('debugSync', (e: any) => {
 			C.DebugSync(100, (message: any) => {
