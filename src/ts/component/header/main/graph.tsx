@@ -13,9 +13,8 @@ interface Props extends RouteComponentProps<any> {
 }
 
 const $ = require('jquery');
-const Constant = require('json/constant.json');
 
-const HeaderMainGraph = observer(class HeaderMainEdit extends React.Component<Props, {}> {
+const HeaderMainGraph = observer(class HeaderMainGraph extends React.Component<Props, {}> {
 
 	timeout: number = 0;
 
@@ -131,11 +130,6 @@ const HeaderMainGraph = observer(class HeaderMainEdit extends React.Component<Pr
 		Util.tooltipHide(false);
 	};
 
-	getContainer () {
-		const { isPopup } = this.props;
-		return (isPopup ? '.popup' : '') + ' .header';
-	};
-	
 });
 
 export default HeaderMainGraph;

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { MenuItemVertical, Icon, Cell } from 'ts/component';
-import { I, keyboard, Key, C, focus, Action, Util, DataUtil, Storage, translate, analytics, Relation } from 'ts/lib';
+import { I, keyboard, Mark, C, focus, Action, Util, DataUtil, Storage, translate, analytics, Relation } from 'ts/lib';
 import { blockStore, commonStore, dbStore, menuStore, detailStore, popupStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
@@ -504,6 +504,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 		keyboard.setFocus(false);
 
 		let text = String(data.text || '');
+		let marks = data.marks || [];
 
 		const details: any = {};
 		const length = text.length;
@@ -514,8 +515,6 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 		};
 
 		const cb = () => {
-			text = Util.stringCut(text, filter.from - 1, filter.from + filter.text.length);
-
 			if (item.isTextColor) {
 				C.BlockListSetTextColor(rootId, [ blockId ], item.value, onCommand);
 			};
@@ -650,9 +649,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 
 						// Auto-open BlockRelation suggest menu
 						if ((param.type == I.BlockType.Relation) && !param.content.key) {
-							window.setTimeout(() => {  
-								$(`#block-${blockId} .info`).trigger('click');
-							}, Constant.delay.menu);
+							window.setTimeout(() => { $(`#block-${blockId} .info`).trigger('click'); }, Constant.delay.menu);
 						};
 					});
 				};
@@ -665,11 +662,14 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 			onSelect(e, item);
 		};
 
+		text = Util.stringCut(text, filter.from - 1, filter.from + filter.text.length);
+		marks = Mark.adjust(marks, filter.from - 1, -1);
+
 		// Clear filter in block text
 		if (block) {
 			// Hack to prevent onBlur save
 			$(`#block-${blockId} #value`).first().text(text);
-			DataUtil.blockSetText(rootId, block, text, block.content.marks, true, cb);
+			DataUtil.blockSetText(rootId, block, text, marks, true, cb);
 		} else {
 			cb();
 		};

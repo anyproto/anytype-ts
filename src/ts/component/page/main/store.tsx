@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Title, Label, Button, IconObject, Loader, Cover } from 'ts/component';
+import { Title, Label, Button, IconObject, Loader, Cover, HeaderMainStore as Header } from 'ts/component';
 import { I, C, DataUtil, Util, Storage, keyboard, Action, Onboarding, analytics } from 'ts/lib';
 import { dbStore, blockStore, detailStore, popupStore, } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -67,6 +67,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 
 		this.loadMoreRows = this.loadMoreRows.bind(this);
 		this.getRowHeight = this.getRowHeight.bind(this);
+		this.onTab = this.onTab.bind(this);
 	};
 	
 	render () {
@@ -223,15 +224,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 
 		return (
 			<div className={[ 'wrapper', tab ].join(' ')}>
-				<div className="head">
-					<div className="tabs">
-						{Tabs.map((item: any, i: number) => (
-							<div key={item.id} className={[ 'item', (item.id == tab ? 'active' : '') ].join(' ')} onClick={(e: any) => { this.onTab(item.id); }}>
-								{item.name}
-							</div>
-						))}
-					</div>
-				</div>
+				<Header {...this.props} rootId={rootId} tabs={Tabs} tab={tab} onTab={this.onTab} />
 
 				<div className="body">
 					{tabs}
@@ -272,6 +265,8 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 	
 	componentDidMount () {
 		this._isMounted = true;
+
+		this.resize();
 		this.onTab(Storage.get('tabStore') || Tabs[0].id);
 	};
 
@@ -286,6 +281,8 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 		});
 
 		Onboarding.start(Util.toCamelCase('store-' + tab), this.props.isPopup);
+
+		this.resize();
 	};
 
 	componentWillUnmount () {
@@ -435,6 +432,28 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 
 		ret = ret.filter((it: any) => { return it.children.length > 0; });
 		return ret;
+	};
+
+	resize () {
+		const win = $(window);
+		const obj = $(this.props.isPopup ? '#popupPage #innerWrap' : '#page.isFull');
+		const wrapper = obj.find('.wrapper');
+		const hh = Util.sizeHeader();
+		const platform = Util.getPlatform();
+		const isPopup = this.props.isPopup && !obj.hasClass('full');
+		
+		let wh = isPopup ? obj.height() - hh : win.height();
+
+		if (platform == I.Platform.Windows) {
+			wh += 30;
+		};
+
+		wrapper.css({ height: wh });
+		
+		if (isPopup) {
+			const element = $('#popupPage .content');
+			element.css({ minHeight: 'unset', height: '100%' });
+		};
 	};
 
 });

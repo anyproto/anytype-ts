@@ -48,6 +48,7 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<Pro
 		const canSync = !object.templateIsBundled && !root.isObjectFileKind();
 		const cn = [ 'header', 'headerMainEdit' ];
 		const isLocked = root.isLocked();
+		const showNav = !(root.isObjectType() || root.isObjectRelation());
 
 		return (
 			<div id="header" className={cn.join(' ')}>
@@ -56,8 +57,12 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<Pro
 					<Icon className="home big" tooltip="Home" onClick={this.onHome} />
 					<Icon className={[ 'back', 'big', (!keyboard.checkBack() ? 'disabled' : '') ].join(' ')} tooltip="Back" onClick={this.onBack} />
 					<Icon className={[ 'forward', 'big', (!keyboard.checkForward() ? 'disabled' : '') ].join(' ')} tooltip="Forward" onClick={this.onForward} />
-					<Icon className="nav big" tooltip="Navigation" onClick={this.onNavigation} />
-					<Icon className="graph big nm" tooltip="Open as graph" onClick={this.onGraph} />
+					{showNav ? (
+						<React.Fragment>
+							<Icon className="nav big" tooltip="Navigation" onClick={this.onNavigation} />
+							<Icon className="graph big nm" tooltip="Open as graph" onClick={this.onGraph} />
+						</React.Fragment>
+					) : ''}
 				</div>
 
 				<div className="side center">

@@ -48,10 +48,6 @@ class ScrollOnMove {
 		};
 	};
 
-	getContainer () {
-		return this.isPopup ? $('#popupPage #innerWrap').get(0) : window;
-	};
-
 	checkForWindowScroll (param: any) {
 		this.clear();
 
