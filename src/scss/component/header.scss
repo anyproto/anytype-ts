@@ -37,7 +37,7 @@
 			font-weight: 500; cursor: pointer; color: $colorMediumGrey; transition: $transitionFast; text-align: center;
 			vertical-align: top;
 		}
-		.tab.active { background: $colorWhite; }
+		.tab.active { background: $colorWhite; color: $colorBlack; }
 		.tab:last-child { margin: 0px; }
 	}
 
