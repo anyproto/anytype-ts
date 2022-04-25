@@ -190,6 +190,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 	componentDidUpdate () {
 		this.focus();
 		this.checkButton();
+		this.props.position();
 	};
 
 	componentWillUnmount () {
