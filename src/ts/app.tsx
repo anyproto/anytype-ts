@@ -6,7 +6,7 @@ import { Provider } from 'mobx-react';
 import { enableLogging } from 'mobx-logger';
 import { Page, SelectionProvider, DragProvider, Progress, Tooltip, Preview, Icon, ListPopup, ListMenu } from './component';
 import { commonStore, authStore, blockStore, detailStore, dbStore, menuStore, popupStore } from './store';
-import { I, C, Util, FileUtil, keyboard, Storage, analytics, dispatcher, translate } from 'ts/lib';
+import { I, C, Util, FileUtil, keyboard, Storage, analytics, dispatcher, translate, Action } from 'ts/lib';
 import * as Sentry from '@sentry/browser';
 import { configure } from 'mobx';
 
@@ -104,6 +104,7 @@ import 'scss/popup/confirm.scss';
 import 'scss/popup/page.scss';
 import 'scss/popup/template.scss';
 import 'scss/popup/export.scss';
+import 'scss/popup/video.scss';
 
 import 'emoji-mart/css/emoji-mart.css';
 import 'scss/menu/common.scss';
@@ -147,7 +148,6 @@ import 'scss/menu/dataview/source.scss';
 import 'scss/media/print.scss';
 
 import 'scss/theme/dark/common.scss';
-import { Action } from './lib';
 
 interface RouteElement { path: string; };
 interface Props {};
@@ -343,7 +343,7 @@ class App extends React.Component<Props, State> {
 		const phrase = Storage.get('phrase');
 		const renderer = Util.getRenderer();
 		const restoreKeys = [
-			'theme', 'pinTime', 'defaultType', 'autoSidebar',
+			'pinTime', 'defaultType', 'autoSidebar',
 		];
 
 		// Check auth phrase with keytar
@@ -390,6 +390,10 @@ class App extends React.Component<Props, State> {
 
 		head.find('#link-prism').remove();
 
+		if (theme == 'system') {
+			theme = commonStore.nativeTheme;
+		};
+
 		if (theme) {
 			head.append(`<link id="link-prism" rel="stylesheet" href="./css/theme/${theme}/prism.css" />`);
 		};
@@ -407,12 +411,17 @@ class App extends React.Component<Props, State> {
 
 		renderer.send('appLoaded', true);
 
-		renderer.on('dataPath', (e: any, dataPath: string) => {
+		renderer.on('init', (e: any, dataPath: string, config: any, isDark: boolean) => {
 			authStore.pathSet(dataPath);
 			Storage.init(dataPath);
 
 			this.initStorage();
-			this.initTheme(commonStore.theme);
+
+			commonStore.nativeThemeSet(isDark);
+			commonStore.configSet(config, true);
+			commonStore.themeSet(config.theme);
+
+			this.initTheme(config.theme);
 
 			window.setTimeout(() => {
 				logo.css({ opacity: 0 });
@@ -549,6 +558,11 @@ class App extends React.Component<Props, State> {
 		renderer.on('leave-full-screen', () => {
 			commonStore.fullscreenSet(false);
 		});
+
+		renderer.on('native-theme', (e: any, isDark: boolean) => {
+			commonStore.nativeThemeSet(isDark);
+			commonStore.themeSet(commonStore.theme);
+  		});
 
 		renderer.on('debugSync', (e: any) => {
 			C.DebugSync(100, (message: any) => {

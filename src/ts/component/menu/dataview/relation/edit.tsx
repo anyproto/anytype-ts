@@ -190,6 +190,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 	componentDidUpdate () {
 		this.focus();
 		this.checkButton();
+		this.props.position();
 	};
 
 	componentWillUnmount () {
@@ -225,8 +226,12 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		const { data } = param;
 		const { rootId, blockId, extendedOptions } = data;
 		const relation = this.getRelation();
+		const isFile = relation && (relation.format != I.RelationType.File);
 		const allowed = relation && blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.Relation ]);
 		const canDelete = allowed && Constant.systemRelationKeys.indexOf(relation.relationKey) < 0;
+		const canFilter = !isFile;
+		const canSort = !isFile;
+		const canHide = relation && (relation.relationKey != Constant.relationKey.name);
 
 		let sections: any[] = [
 			{
@@ -241,12 +246,12 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		if (extendedOptions) {
 			sections.push({
 				children: [
-					{ id: 'filter', icon: 'relation-filter', name: 'Add filter' },
-					{ id: 'sort', icon: 'sort0', name: 'Sort ascending', type: I.SortType.Asc },
-					{ id: 'sort', icon: 'sort1', name: 'Sort descending', type: I.SortType.Desc },
-					{ id: 'insert', icon: 'insert-left', name: 'Insert left', dir: -1 },
-					{ id: 'insert', icon: 'insert-right', name: 'Insert right', dir: 1 },
-					{ id: 'hide', icon: 'hide', name: 'Hide relation' },
+					canFilter ? { id: 'filter', icon: 'relation-filter', name: 'Add filter' } : null,
+					canSort ? { id: 'sort0', icon: 'sort0', name: 'Sort ascending', type: I.SortType.Asc } : null,
+					canSort ? { id: 'sort1', icon: 'sort1', name: 'Sort descending', type: I.SortType.Desc } : null,
+					{ id: 'insert-left', icon: 'insert-left', name: 'Insert left', dir: -1 },
+					{ id: 'insert-right', icon: 'insert-right', name: 'Insert right', dir: 1 },
+					canHide ? { id: 'hide', icon: 'hide', name: 'Hide relation' } : null,
 				]
 			});
 		};
@@ -337,14 +342,16 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 				});
 				break;
 
-			case 'sort':
+			case 'sort0':
+			case 'sort1':
 				view.sorts = [ { relationKey: relation.relationKey, type: item.type } ];
 
 				viewUpdate = true;
 				updateData = true;
 				break;
 
-			case 'insert':
+			case 'insert-left':
+			case 'insert-right':
 				menuStore.open('relationSuggest', { 
 					element: `#${getId()} #item-${item.id}`,
 					offsetX: getSize().width,

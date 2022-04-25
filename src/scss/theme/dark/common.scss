@@ -231,6 +231,11 @@ html.themeDark {
             .item:hover { color: $colorPrimary; }
         }
         .icon.big:hover, .icon.big.hover { background-color: $colorHover; }
+
+        .tabs { background: $colorBgIcon; color: $colorSecondary; }
+        .tabs {
+            .tab.active { background: $colorHover; color: $colorPrimary; }
+        }
     }
 
     .header.headerMainIndex {

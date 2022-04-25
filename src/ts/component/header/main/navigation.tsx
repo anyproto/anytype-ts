@@ -131,11 +131,6 @@ const HeaderMainNavigation = observer(class HeaderMainNavigation extends React.C
 		Util.tooltipHide(false);
 	};
 
-	getContainer () {
-		const { isPopup } = this.props;
-		return (isPopup ? '.popup' : '') + ' .header';
-	};
-	
 });
 
 export default HeaderMainNavigation;

@@ -272,7 +272,6 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 
 		if (selection) {
 			selection.preventClear(false);
-			selection.clearState();
 		};
 
 		console.log('[dragProvider.onDrop]', type, targetId, this.type, this.ids, position);
@@ -303,6 +302,10 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 				C.BlockListMoveToExistingObject(contextId, targetContextId, this.ids || [], targetId, position, () => {
 					if (target.isTextToggle() && (position == I.BlockPosition.InnerFirst)) {
 						blockStore.toggle(rootId, targetId, true);
+					};
+
+					if (selection) {
+						selection.renderSelection();
 					};
 
 					analytics.event('ReorderBlock', { count: this.ids.length });

@@ -736,6 +736,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		};
 		
 		focus.set(id, range);
+
 		if (!keyboard.isSpecial(k)) {
 			this.placeholderHide();
 		};
@@ -833,7 +834,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		// Open add menu
 		if (canOpenMenuAdd) { 
 			DataUtil.blockSetText(rootId, block, value, this.marks, true, () => {
-				onMenuAdd(id, Util.stringCut(value, range.from - 1, range.from), range);
+				onMenuAdd(id, Util.stringCut(value, range.from - 1, range.from), range, this.marks);
 			});
 			return;
 		};

@@ -465,8 +465,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		const popupOpen = popupStore.isOpenList([ 'search' ]);
 		const root = blockStore.getLeaf(rootId, rootId);
 
-		console.log(e, keyboard.isFocused);
-
 		if (keyboard.isFocused || !selection || !root) {
 			return;
 		};
@@ -1233,11 +1231,11 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 		this.blockCreate(block.id, this.hoverPosition, { type: I.BlockType.Text }, (blockId: string) => {
 			$('.placeholder.c' + blockId).text(translate('placeholderFilter'));
-			this.onMenuAdd(blockId, '', { from: 0, to: 0 });
+			this.onMenuAdd(blockId, '', { from: 0, to: 0 }, []);
 		});
 	};
 	
-	onMenuAdd (blockId: string, text: string, range: I.TextRange) {
+	onMenuAdd (blockId: string, text: string, range: I.TextRange, marks: I.Mark[]) {
 		const { rootId } = this.props;
 		const block = blockStore.getLeaf(rootId, blockId);
 
@@ -1260,9 +1258,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 				$(`.placeholder.c${blockId}`).text(translate('placeholderBlock'));
 			},
 			data: {
-				blockId: blockId,
-				rootId: rootId,
-				text: text,
+				blockId,
+				rootId,
+				text,
+				marks,
 				blockCreate: this.blockCreate,
 			},
 		});
@@ -1708,8 +1707,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		let ids = selection.get(I.SelectType.Block);
 		let blockIds = [];
 
-		console.log(ids);
-		
 		if (ids.length) {
 			next = blockStore.getNextBlock(rootId, ids[0], -1, (it: any) => { return it.isFocusable(); });
 			blockIds = ids;

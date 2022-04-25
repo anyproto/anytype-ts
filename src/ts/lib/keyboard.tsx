@@ -692,7 +692,7 @@ class Keyboard {
 	};
 	
 	isSpecial (k: string): boolean {
-		const keys: string[] = [ Key.escape, Key.backspace, Key.tab, Key.enter ];
+		const keys: string[] = [ Key.escape, Key.backspace, Key.tab, Key.enter, Key.shift, Key.ctrl, Key.alt, Key.meta ];
 		return this.isArrow(k) || keys.indexOf(k) >= 0;
 	};
 
@@ -762,6 +762,9 @@ export enum Key {
 	tab			 = 'tab',
 	enter		 = 'enter',
 	shift		 = 'shift',
+	alt			 = 'alt',
+	ctrl		 = 'control',
+	meta		 = 'meta',
 	escape		 = 'escape',
 	space		 = 'space',
 	left		 = 'arrowleft',

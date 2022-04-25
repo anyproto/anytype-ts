@@ -81,7 +81,7 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 
 	render () {
 		const { isPopup } = this.props;
-		const { config } = commonStore;
+		const { config, theme } = commonStore;
 		const { account } = authStore;
 		const match = this.getMatch();
 		const { page, action } = match.params || {};
@@ -232,15 +232,21 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 		
 		window.setTimeout(() => {
 			let popupNewBlock = Storage.get('popupNewBlock');
+			let popupVideo = Storage.get('popupVideo');
+
 			let onboarding = Storage.get('onboarding');
 
 			if (isMain && account) {
-				if (!onboarding) {
+				if (!onboarding || popupVideo) {
 					popupNewBlock = true;
 				};
 				if (!popupNewBlock && onboarding) {
 					popupStore.open('help', { data: { document: 'whatsNew' } });
 					Storage.set('popupNewBlock', true);
+				};
+				if (popupVideo) {
+					popupStore.open('video', { data: { type: 'onboarding' } });
+					Storage.delete('popupVideo');
 				};
 				Storage.set('redirect', history.location.pathname);
 			};
@@ -344,7 +350,7 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 	};
 	
 	setBodyClass () {
-		const { config, theme } = commonStore;
+		const { config } = commonStore;
 		const platform = Util.getPlatform();
 		const cn = [ 
 			this.getClass('body'), 
@@ -352,14 +358,13 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 		];
 		const obj = $('html');
 
-		if (theme) {
-			cn.push(Util.toCamelCase(`theme-${theme}`));
-		};
-
 		if (config.debug.ui) {
 			cn.push('debug');
 		};
+
 		obj.attr({ class: cn.join(' ') });
+
+		commonStore.themeClass();
 	};
 	
 	resize () {

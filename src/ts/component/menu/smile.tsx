@@ -21,6 +21,7 @@ const LIMIT_ROW = 9;
 const LIMIT_SEARCH = 12;
 const HEIGHT_SECTION = 40;
 const HEIGHT_ITEM = 40;
+const ID_RECENT = 'recent';
 
 class MenuSmile extends React.Component<Props, State> {
 
@@ -218,11 +219,7 @@ class MenuSmile extends React.Component<Props, State> {
 		};
 		
 		if (lastIds && lastIds.length) {
-			sections.unshift({
-				id: 'recent',
-				name: 'Recently used',
-				children: lastIds,
-			});
+			sections.unshift({ id: ID_RECENT, name: 'Recently used', children: lastIds });
 		};
 		
 		return sections;
@@ -232,13 +229,23 @@ class MenuSmile extends React.Component<Props, State> {
 		let sections = this.getSections();
 		let items: any[] = [];
 		let ret: any[] = [];
-		let length = sections.reduce((res: number, section: any) => { return res + section.children.length; }, 0);
+		let length = sections.reduce((res: number, section: any) => { 
+			if (section.id == ID_RECENT) {
+				return res;
+			};
+			return res + section.children.length; 
+		}, 0);
 
 		if (length <= LIMIT_SEARCH) {
 			sections = [
 				{ 
 					id: 'search', name: 'Search results', isSection: true,
-					children: sections.reduce((res: any[], section: any) => { return res.concat(section.children); }, [])
+					children: sections.reduce((res: any[], section: any) => {
+						if (section.id == ID_RECENT) {
+							return res;
+						};
+						return res.concat(section.children); 
+					}, [])
 				}
 			];
 		};
