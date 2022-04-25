@@ -159,7 +159,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		);
 	};
 
-	componentDidMount() {
+	componentDidMount () {
 		const { param } = this.props;
 		const { data } = param;
 		const { filter } = data;
@@ -183,6 +183,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 	componentDidUpdate () {
 		this.checkButton();
 		this.focus();
+		this.props.position();
 	};
 
 	componentWillUnmount () {
