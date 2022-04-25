@@ -131,7 +131,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 				break;
 
 			case 'account':
-				const canDelete = account.status.type == I.AccountStatusType.Active;
+				const canDelete = config.experimental && (account.status.type == I.AccountStatusType.Active);
 				const isDeleted = [ I.AccountStatusType.StartedDeletion, I.AccountStatusType.Deleted ].includes(account.status.type);
 
 				if (account.status.type == I.AccountStatusType.PendingDeletion) {
