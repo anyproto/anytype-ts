@@ -951,6 +951,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 					rootId: rootId,
 					blockId: block.id,
 					marks: this.marks,
+					skipIds: [ rootId ],
 					onChange: (text: string, marks: I.Mark[], from: number, to: number) => {
 						value = Util.stringInsert(value, text, from, from);
 						this.marks = Mark.checkRanges(value, marks);

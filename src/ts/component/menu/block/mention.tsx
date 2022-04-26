@@ -153,6 +153,10 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 	
 	load (clear: boolean, callBack?: (message: any) => void) {
 		const { config } = commonStore;
+		const { param } = this.props;
+		const { data } = param;
+		const { skipIds } = data;
+
 		const filters: any[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
 		];
@@ -163,6 +167,10 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 
 		if (!config.debug.ho) {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true });
+		};
+
+		if (skipIds && skipIds.length) {
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: skipIds });
 		};
 
 		this.setState({ loading: true });
