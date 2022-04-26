@@ -308,11 +308,13 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 		const { data } = param;
 		const { canAdd, filterMapper } = data;
 		const relation = data.relation.get();
+		const isStatus = relation.format == I.RelationType.Status;
 		const value = Relation.getArrayValue(data.value);
 
 		let items = Util.objectCopy(relation.selectDict || []);
 		let sections: any = {};
 		let ret = [];
+		let check = [];
 
 		sections[I.OptionScope.Local] = { id: I.OptionScope.Local, name: 'Select option', children: [] };
 		sections[I.OptionScope.Relation] = { id: I.OptionScope.Relation, name: 'Everywhere', children: [] };
@@ -323,12 +325,11 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 
 		if (data.filter) {
 			const filter = new RegExp(Util.filterFix(data.filter), 'gi');
-			const check = items.filter((it: I.SelectOption) => { return it.text.toLowerCase() == data.filter.toLowerCase(); });
-
+			check = items.filter((it: I.SelectOption) => { return it.text.toLowerCase() == data.filter.toLowerCase(); });
 			items = items.filter((it: I.SelectOption) => { return it.text.match(filter); });
 
 			if (canAdd && !check.length) {
-				const name = (relation.format == I.RelationType.Status) ? `Set status "${data.filter}"` : `Create option "${data.filter}"`;
+				const name = isStatus ? `Set status "${data.filter}"` : `Create option "${data.filter}"`;
 				ret.unshift({ id: 'add', name: name });
 			};
 		};

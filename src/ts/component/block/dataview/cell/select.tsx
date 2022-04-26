@@ -60,7 +60,7 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 		};
 
 		let content = null;
-		if (isEditing && (relation.format == I.RelationType.Tag)) {
+		if (isEditing) {
 			content = (
 				<div id="value" onClick={this.onFocus}>
 					<div id="placeholder" className="placeholder">{placeholder}</div>
