@@ -1153,6 +1153,8 @@ class DataUtil {
 		fields.style = Number(fields.style) || I.LinkCardStyle.Text;
 		fields.withIcon = Boolean(undefined === fields.withIcon ? true : fields.withIcon);
 		fields.withName = Boolean(undefined === fields.withName ? true : fields.withName);
+		fields.withType = Boolean(fields.withType);
+		//fields.withTags = Boolean(fields.withTags);
 
 		if (fields.style == I.LinkCardStyle.Text) {
             fields.withCover = false;
