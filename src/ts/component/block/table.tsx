@@ -77,28 +77,24 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				onCompositionEnd={() => {}}
 				onDragStart={(e: any) => { e.preventDefault(); }}
 			>
-				{item.value}
+				{item.value || ' '}
 			</div>
 		);
 
 		const HandleColumn = SortableHandle((item: any) => (
 			<div 
-				className={[ 'handleColumn', (item.id == 0 ? 'isFirst' : '') ].join(' ')}
+				className={[ 'icon', 'handleColumn', (item.id == 0 ? 'isFirst' : '') ].join(' ')}
 				onClick={(e: any) => { this.onOptions(e, Key.Column, 0, item.id); }}
 				onContextMenu={(e: any) => { this.onOptions(e, Key.Column, 0, item.id); }}
-			>
-				<span className="txt">{item.id + 1}</span>
-			</div>
+			/>
 		));
 
 		const HandleRow = SortableHandle((item: any) => (
 			<div 
-				className={[ 'cell', 'handleRow', (item.id == 0 ? 'isFirst' : '') ].join(' ')}
+				className={[ 'icon', 'handleRow', (item.id == 0 ? 'isFirst' : '') ].join(' ')}
 				onClick={(e: any) => { this.onOptions(e, Key.Row, item.id, 0); }}
 				onContextMenu={(e: any) => { this.onOptions(e, Key.Row, item.id, 0); }}
-			>
-				<span className="txt">{item.id + 1}</span>
-			</div>
+			/>
 		));
 
 		const Cell = (item: any) => {

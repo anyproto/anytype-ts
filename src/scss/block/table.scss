@@ -3,11 +3,11 @@
 .blocks {
 	.block.blockTable { padding: 6px 0px; }
 	.block.blockTable { 
-		.scrollWrap { overflow-x: overlay; width: 100%; padding-bottom: 10px; }
+		.scrollWrap { width: 100%; padding-bottom: 10px; }
 
 		.table { display: inline-block; height: 100%; border-collapse: collapse; font-family: 'Inter'; }
 		
-		.row { display: flex; position: relative; padding-left: 19px; }
+		.row { display: flex; position: relative; }
 		.row.isDragging { 
 			border-top: 1px solid $colorMediumGrey; box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2); background: #fff; width: auto;
 		}
@@ -18,36 +18,27 @@
 		}
 
 		.handleRow, .handleColumn { 
-			cursor: grab !important; background: $colorLightGrey; transition: $transitionFast; @include text-very-small;
-			color: $colorBlack; text-align: center; display: flex; align-items: center; font-weight: 400;
+			cursor: grab !important; transition: $transitionFast; z-index: 10; border: 2px solid #fff; border-radius: 3px;
+			background-color: $colorOrange; position: absolute;
 		}
-		.handleRow:hover, .handleColumn:hover { background: #d9d8ce; }
-
-		.handleRow, .handleColumn {
-			.txt { width: 100%; }
-		}
-
 		.handleColumn { 
-			height: 20px; width: 100%; border-bottom: 1px solid $colorMediumGrey; border-top: 1px solid $colorMediumGrey;; 
+			height: 10px; width: 22px; background-image: url('~img/icon/table/handle/column.svg'); background-size: 16px 8px;
+			left: 50%; top: -5px; margin-left: -11px;
 		}
-		.handleColumn.isFirst { border-left: 1px solid $colorMediumGrey; }
-
-		.cell.handleRow { 
-			width: 20px; height: 100%; position: absolute; left: 0px; top: 0px; border-left: 1px solid $colorMediumGrey; z-index: 1;
-			@include text-very-small; color: $colorBlack;
+		.handleRow {
+			height: 22px; width: 10px; background-image: url('~img/icon/table/handle/row.svg'); background-size: 8px 16px; 
+			top: 50%; left: -5px; margin-top: -11px;
 		}
-		.cell.handleRow.isFirst { border-top: 1px solid $colorMediumGrey; height: calc(100% - 19px); top: 19px; }
 
 		.cell { 
-			border-right: 1px solid $colorMediumGrey; border-bottom: 1px solid $colorMediumGrey; 
-			@include text-common; line-height: 20px; vertical-align: top; position: relative; cursor: text; flex-shrink: 0;
+			border-right: 1px solid $colorBorderDark; border-bottom: 1px solid $colorBorderDark; 
+			@include text-common; vertical-align: top; position: relative; cursor: text; flex-shrink: 0;
 		}
 		.cell.isHead { font-weight: bold; white-space: nowrap; height: 100%; vertical-align: inherit; }
 		.cell.isHead {
 			.value { @include text-overflow-nw; }
 		}
-		.cell.isDragging { border-left: 1px solid $colorMediumGrey; border-top: 1px solid $colorMediumGrey; background: #fff; }
-		.cell.isDragging .handleColumn { background: #d9d8ce; }
+		.cell.isDragging { border-left: 1px solid $colorBorderDark; border-top: 1px solid $colorBorderDark; background: #fff; }
 		.cell.isDragging.isHead { border-top: 0px; }
 
 		.cell.align-h0 .value { text-align: left; }
@@ -62,9 +53,10 @@
 			.resize { width: 6px; height: 100%; position: absolute; right: -3px; top: 0px; cursor: col-resize; z-index: 1; }
 			.click { width: 100%; height: 100%; }
 
-			.value { padding: 6px 8px; min-height: 32px; width: 100%; display: inline-block; vertical-align: inherit; }
-			.value.isEditing { 
-				-webkit-user-modify: read-write-plaintext-only; box-shadow: 0px 0px 0px 2px $colorBlack; z-index: 1; border-radius: 2px;
+			.value { padding: 10px; min-height: 42px; width: 100%; display: inline-block; vertical-align: inherit; }
+			.value.isEditing {
+				-webkit-user-modify: read-write-plaintext-only; z-index: 1; border-radius: 2px;
+				box-shadow: 0px 0px 0px 1px $colorOrange inset, 0px 0px 0px 1px $colorOrange; 
 			}
 
 			.icon.arrow { 

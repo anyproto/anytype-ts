@@ -299,7 +299,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 			};
 
 			if (hasTable) {
-				sections[0].children.push({ id: 'csvImport', icon: '', name: 'CSV import' });
+				section1.children.push({ id: 'csvImport', icon: '', name: 'CSV import' });
 			};
 
 			if (hasTitle) {
