@@ -547,8 +547,7 @@ class DataUtil {
 	};
 
 	menuGetBlockMedia () {
-		const { config } = commonStore;
-		const ret = [
+		const ret: any[] = [
 			{ type: I.BlockType.File, id: I.FileType.File, icon: 'file', lang: 'File' },
 			{ type: I.BlockType.File, id: I.FileType.Image, icon: 'image', lang: 'Image' },
 			{ type: I.BlockType.File, id: I.FileType.Video, icon: 'video', lang: 'Video' },
@@ -558,11 +557,6 @@ class DataUtil {
 			{ type: I.BlockType.Text, id: I.TextStyle.Code, icon: 'code', lang: 'Code' },
 			{ type: I.BlockType.Latex, id: I.BlockType.Latex, icon: 'latex', lang: 'Latex' },
 		];
-
-		if (config.experimental) {
-			ret.push({ type: I.BlockType.Table, id: I.BlockType.Table, icon: 'table', lang: 'SimpleTable' });
-		};
-
 		return ret.map(this.menuMapperBlock);
 	};
 
@@ -630,11 +624,18 @@ class DataUtil {
 	};
 
 	menuGetBlockOther () {
-		return [
+		const { config } = commonStore;
+		const ret: any[] = [
 			{ type: I.BlockType.Div, id: I.DivStyle.Line, icon: 'div-line', lang: 'Line' },
 			{ type: I.BlockType.Div, id: I.DivStyle.Dot, icon: 'dot', lang: 'Dot' },
 			{ type: I.BlockType.TableOfContents, id: I.BlockType.TableOfContents, icon: 'tableOfContents', lang: 'TableOfContents', aliases: [ 'tc', 'toc' ] }
-		].map(this.menuMapperBlock);
+		];
+
+		if (config.experimental) {
+			ret.push({ type: I.BlockType.Table, id: I.BlockType.Table, icon: 'table', lang: 'SimpleTable' });
+		};
+
+		return ret.map(this.menuMapperBlock);
 	};
 
 	menuGetBlockDataview () {
@@ -870,11 +871,11 @@ class DataUtil {
 				s._sortWeight_ += c._sortWeight_;
 				return ret; 
 			});
-			s.children.sort((c1: any, c2: any) => this.sortByWeight(c1, c2));
+			s.children = s.children.sort((c1: any, c2: any) => this.sortByWeight(c1, c2));
 			return s.children.length > 0;
 		});
 
-		sections.sort((c1: any, c2: any) => this.sortByWeight(c1, c2));
+		sections = sections.sort((c1: any, c2: any) => this.sortByWeight(c1, c2));
 		return sections;
 	};
 	

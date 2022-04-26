@@ -562,10 +562,10 @@ const Mapper = {
 		BlockTable: (obj: any) => {
 			const content = new Model.Block.Content.Table();
 
-			content.setColumncount(obj.content.columnCount);
-			content.setSortindex(obj.content.sortIndex);
-			content.setSorttype(obj.content.sortType);
-			content.setRowsList(obj.content.rows.map(Mapper.To.TableRow));
+			content.setColumncount(obj.columnCount);
+			content.setSortindex(obj.sortIndex);
+			content.setSorttype(obj.sortType);
+			content.setRowsList(obj.rows.map(Mapper.To.TableRow));
 
 			return content;
 		},
