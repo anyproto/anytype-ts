@@ -15,3 +15,6 @@
 }
 .tagItem.canEdit { padding-right: 18px; }
 .tagItem.isStatus { padding: 0px; @include text-common; line-height: 20px; box-shadow: 0px 0px !important; }
+.tagItem.isStatus {
+	.tagRemove { display: none; }
+}

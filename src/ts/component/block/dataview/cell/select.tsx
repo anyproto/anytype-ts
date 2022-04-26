@@ -98,6 +98,8 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 					>
 						{' '}
 					</span>
+
+					{canClear ? <Icon className="clear" onMouseDown={this.onClear} /> : ''}
 				</div>
 			);
 		} else {
@@ -112,7 +114,6 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 							))}
 						</span>
 						{arrayLimit && (length > arrayLimit) ? <div className="more">+{length - arrayLimit}</div> : ''}
-						{canClear ? <Icon className="clear" onMouseDown={this.onClear} /> : ''}
 					</React.Fragment>
 				);
 			};
