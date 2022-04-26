@@ -4,9 +4,8 @@ import { I, C, Util, keyboard, DataUtil, Relation } from 'ts/lib';
 import { commonStore, dbStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import 'react-virtualized/styles.css';
 
-interface Props extends I.Menu {}
+interface Props extends I.Menu {};
 
 interface State {
 	loading: boolean;
@@ -47,7 +46,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		const { param } = this.props;
 		const { loading } = this.state;
 		const { data } = param;
-		const { filter } = data;
+		const { filter, noFilter } = data;
 		const items = this.getItems();
 		const placeholderFocus = data.placeholderFocus || 'Filter objects...';
 
@@ -94,13 +93,15 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		};
 
 		return (
-			<div className="wrap">
-				<Filter 
-					ref={(ref: any) => { this.refFilter = ref; }} 
-					placeholderFocus={placeholderFocus} 
-					value={filter}
-					onChange={this.onFilterChange} 
-				/>
+			<div className={[ 'wrap', (noFilter ? 'noFilter' : '') ].join(' ')}>
+				{!noFilter ? (
+					<Filter 
+						ref={(ref: any) => { this.refFilter = ref; }} 
+						placeholderFocus={placeholderFocus} 
+						value={filter}
+						onChange={this.onFilterChange} 
+					/>
+				) : ''}
 
 				{loading ? <Loader /> : (
 					<div className="items">
@@ -186,12 +187,26 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 
 	rebind () {
 		this.unbind();
-		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
+		$(window).on('keydown.menu', (e: any) => { this.onKeyDown(e); });
 		window.setTimeout(() => { this.props.setActive(); }, 15);
 	};
 	
 	unbind () {
 		$(window).unbind('keydown.menu');
+	};
+
+	onKeyDown (e: any) {
+		const { param } = this.props;
+		const { data } = param;
+		const { cellRef } = data;
+
+		keyboard.shortcut('arrowdown', e, () => {
+			if (cellRef) {
+				cellRef.blur();
+			};
+		});
+
+		this.props.onKeyDown(e);
 	};
 
 	onScroll ({ clientHeight, scrollHeight, scrollTop }) {
@@ -275,7 +290,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 	onClick (e: any, item: any) {
 		const { param, close, position } = this.props;
 		const { data } = param;
-		const { onChange, maxCount, filter } = data;
+		const { onChange, maxCount, filter, cellRef } = data;
 		const relation = data.relation.get();
 
 		e.preventDefault();
@@ -284,6 +299,10 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		if (!item) {
 			close();
 			return;
+		};
+
+		if (cellRef) {
+			cellRef.clear();
 		};
 
 		const cb = (id: string) => {
@@ -330,10 +349,13 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 	};
 
 	resize () {
-		const { getId, position } = this.props;
+		const { getId, position, param } = this.props;
+		const { data } = param;
+		const { noFilter } = data;
 		const items = this.getItems();
-		const obj = $('#' + getId() + ' .content');
-		const height = Math.max(HEIGHT * 2, Math.min(280, items.length * HEIGHT + 58));
+		const obj = $(`#${getId()} .content`);
+		const offset = noFilter ? 16 : 58;
+		const height = Math.max(HEIGHT * 2, Math.min(280, items.length * HEIGHT + offset));
 
 		obj.css({ height: height });
 		position();

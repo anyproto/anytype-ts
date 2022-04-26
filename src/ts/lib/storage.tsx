@@ -5,13 +5,16 @@ class Storage {
 	constructor () {
 		this.storage = localStorage;
 	};
+
+	init (dataPath: string) {
+	};
 	
 	get (key: string): any {
 		let o = String(this.storage[key] || '');
 		if (!o) {
 			return;
 		};
-		let ret = ''
+		let ret = '';
 		try { ret = JSON.parse(o); } catch (e) {};
 		return ret;
 	};
@@ -98,14 +101,13 @@ class Storage {
 			'tabStore', 
 			'linkSettings', 
 			'graph',
-			'blockCnt',
 			'gateway',
 			'dataPath',
+			'sidebar',
+			'writing',
 		];
 
-		for (let key of keys) {
-			this.delete(key);
-		};
+		keys.forEach(key => this.delete(key));
 	};
 	
 };

@@ -64,7 +64,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, St
 
 		const children = blockStore.getChildren(rootId, rootId, (it: any) => { return it.isDataview(); });
 		const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, align: object.layoutAlign, childrenIds: [], fields: {}, content: {} });
-		const allowedDetails = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
+		const allowedDetails = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 
 		if (object.name == DataUtil.defaultName('page')) {
 			object.name = '';
@@ -384,9 +384,9 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, St
 		const { isPopup } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
 		const cover = node.find('.block.blockCover');
-		const obj = $(isPopup ? '#popupPage #innerWrap' : '.page.isFull');
+		const obj = $(isPopup ? '#popupPage #innerWrap' : '#page.isFull');
 		const header = obj.find('#header');
-		const hh = header.height();
+		const hh = isPopup ? header.height() : Util.sizeHeader();
 
 		if (cover.length) {
 			cover.css({ top: hh });

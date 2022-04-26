@@ -71,11 +71,11 @@ class Block implements I.Block {
 	};
 
 	canHaveChildren (): boolean {
-		return !this.isSystem() && (this.isTextParagraph() || this.isTextList());
+		return !this.isSystem() && (this.isTextParagraph() || this.isTextList() || this.isTextCallout() || this.isTextQuote());
 	};
 
 	canHaveAlign (): boolean {
-		return !this.isSystem() && (this.isLink() || this.isTextParagraph() || this.isTextQuote() || this.isTextHeader() || this.isFileImage() || this.isFileVideo() || this.isLatex());
+		return (this.isTextParagraph() || this.isTextQuote() || this.isTextHeader() || this.isFileImage() || this.isFileVideo() || this.isLatex());
 	};
 
 	canHaveColor (): boolean {
@@ -83,7 +83,7 @@ class Block implements I.Block {
 	};
 
 	canHaveBackground (): boolean {
-		return !this.isSystem() && !this.isFilePdf();
+		return !this.isFilePdf();
 	};
 
 	canHaveMarks () {
@@ -366,8 +366,23 @@ class Block implements I.Block {
 		return this.isText() && (this.content.style == I.TextStyle.Quote);
 	};
 
+	isTextCallout (): boolean {
+		return this.isText() && (this.content.style == I.TextStyle.Callout);
+	};
+
 	getLength (): number {
-		return this.isText() ? String(this.content.text || '').length : 0;
+		let l = 0;
+		if (this.isText()) {
+			let t = String(this.content.text || '');
+			l = t.length;
+
+			// Last line break doesn't expand range.to
+			if (l && (t[l - 1] == '\n')) {
+				l--;
+			};
+		};
+
+		return l;
 	};
 };
 

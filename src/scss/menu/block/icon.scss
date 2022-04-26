@@ -9,6 +9,7 @@
 		.icon.header2 { background-image: url('~img/icon/menu/action/block/header20.svg'); }
 		.icon.header3 { background-image: url('~img/icon/menu/action/block/header30.svg'); }
 		.icon.quote { background-image: url('~img/icon/menu/action/block/quote0.svg'); }
+		.icon.callout { background-image: url('~img/icon/menu/action/block/callout0.svg'); }
 		
 		.icon.bulleted { background-image: url('~img/icon/menu/action/block/bulleted0.svg'); }
 		.icon.checkbox { background-image: url('~img/icon/menu/action/block/checkbox0.svg'); }
@@ -70,9 +71,25 @@
 		.icon.pageLock { background-image: url('~img/icon/menu/action/pageLock0.svg'); }
 		.icon.pageUnlock { background-image: url('~img/icon/menu/action/pageUnlock0.svg'); }
 
+		.icon.coverChange { background-image: url('~img/icon/cover/change.svg'); }
+		.icon.coverPosition { background-image: url('~img/icon/cover/position.svg'); }
+
 		.icon.align.left { background-image: url('~img/icon/menu/align/left.svg'); }
 		.icon.align.center { background-image: url('~img/icon/menu/align/center.svg'); }
 		.icon.align.right { background-image: url('~img/icon/menu/align/right.svg'); }
+
+		.icon.linkStyle0 { background-image: url('~img/icon/menu/linkSettings/style0.svg'); }
+		.icon.linkStyle1 { background-image: url('~img/icon/menu/linkSettings/style1.svg'); }
+		.icon.linkStyle2 { background-image: url('~img/icon/menu/linkSettings/style2.svg'); }
+
+		.icon.relation-filter { background-image: url('~img/icon/menu/relation/filter.svg'); }
+		.icon.hide { background-image: url('~img/icon/menu/relation/hide.svg'); }
+
+		.icon.sort0 { background-image: url('~img/icon/menu/relation/sort.svg'); }
+		.icon.sort1 { background-image: url('~img/icon/menu/relation/sort.svg'); transform: rotateZ(180deg); }
+
+		.icon.insert-left { background-image: url('~img/icon/menu/relation/insert.svg'); }
+		.icon.insert-right { background-image: url('~img/icon/menu/relation/insert.svg'); transform: rotateZ(180deg); }
 
 		.icon.lock { width: 8px !important; height: 20px !important; background-image: url('~img/icon/lock.svg'); }
 

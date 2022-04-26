@@ -6,7 +6,7 @@
 		.viewItem.viewList {
 			.ReactVirtualized__Grid__innerScrollContainer { overflow-x: auto !important; overflow-y: hidden !important; }
 
-		    .row { height: 24px; width: 100%; display: block; white-space: nowrap; }
+		    .row { height: 24px; width: 100%; display: block; white-space: nowrap; position: relative; }
 			.row:last-child { margin: 0px; }
 
 			.cellContent { 
@@ -42,7 +42,7 @@
 				.wrap { display: inline-block; line-height: 24px; vertical-align: top; }
 				.over { display: inline-block; line-height: 24px; vertical-align: top; overflow: visible; }
 				.tagItem, .element { margin: 0px 6px 0px 0px; max-width: 100px; vertical-align: top; @include text-small; }
-				.more { margin-top: 3px; }
+				.more { margin-top: 3px; vertical-align: top; }
 				.element { margin-top: 2px; }
 				.tagItem { margin-top: 3px; }
 				.tagItem:last-child, .element:last-child { margin-right: 0px; }

@@ -34,7 +34,7 @@
         .side.right { display: block; }
     }
 
-    .footer { display: block !important; }
+    .footer { display: block !important; position: absolute; }
     .footer {
         .icon { 
             width: 44px; height: 44px; background-color: $colorWhite; box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.2); border-radius: 12px; 
@@ -150,6 +150,13 @@
     }
 }
 
+.pageMainGraph > .body { overflow: hidden; }
 .pageMainGraph > .body > #loader { 
-    position: fixed; left: 0px; top: 0px; width: 100%; height: 100%; background: $colorWhite; z-index: 11; 
+    position: fixed; top: 0px; width: 100%; height: 100%; background: $colorWhite; z-index: 11; 
+}
+
+html.platformWindows {
+    .pageMainGraph {
+        #panel { padding-top: 30px; }
+    }
 }

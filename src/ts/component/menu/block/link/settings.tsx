@@ -1,128 +1,63 @@
 import * as React from 'react';
-import { Icon, Button, MenuItemVertical } from 'ts/component';
-import { I, C, DataUtil, Storage } from 'ts/lib';
-import { blockStore, detailStore } from 'ts/store';
+import { MenuItemVertical } from 'ts/component';
+import { I, C, DataUtil, Storage, keyboard } from 'ts/lib';
+import { blockStore, detailStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {};
 
 const $ = require('jquery');
+const Constant = require('json/constant.json');
 
 const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React.Component<Props, {}> {
 	
+	n: number = 0;
+	timeout: number = 0;
+
 	constructor (props: any) {
 		super(props);
+
+		this.rebind = this.rebind.bind(this);
 	};
 
 	render () {
-        const { param } = this.props;
-        const { data } = param;
-        const { rootId, blockId } = data;
-        const block = blockStore.getLeaf(rootId, blockId);
-        const { content } = block;
-        const object = detailStore.get(rootId, content.targetBlockId);
-        const { layout } = object;
-        const fields = DataUtil.checkLinkSettings(block.fields, layout);
-        const canIcon = ![ I.ObjectLayout.Task, I.ObjectLayout.Note ].includes(layout);
-        const canCover = ![ I.ObjectLayout.Note ].includes(layout) && (fields.style == I.LinkCardStyle.Card);
-        const canDescription = ![ I.ObjectLayout.Note ].includes(layout);
+		const sections = this.getSections();
 
-        const styles: any[] = [
-            { id: I.LinkCardStyle.Text, name: 'Text', icon: 'style-text' },
-            { id: I.LinkCardStyle.Card, name: 'Card', icon: 'style-card' },
-        ];
-
-        let buttons: any[] = [
-            { id: I.LinkIconSize.Small, name: 'S' },
-            { id: I.LinkIconSize.Medium, name: 'M' },
-            { id: I.LinkIconSize.Large, name: 'L' },
-        ];
-        if (!canIcon) {
-            buttons = [];
-        };
-
-        let items1: any[] = [];
-        let items2: any[] = [
-            { id: 'withName', icon: 'relation ' + DataUtil.relationClass(I.RelationType.ShortText), name: 'Name' },
-        ];
-
-        if (canIcon) {
-            items1.push({ id: 'withIcon', icon: 'item-icon', name: 'Icon' });
-        };
-
-        if (canCover) {
-            items1.push({ id: 'withCover', icon: 'item-cover', name: 'Cover' });
-        };
-
-        if (canDescription) {
-            items2.push({ id: 'withDescription', icon: 'relation ' + DataUtil.relationClass(I.RelationType.LongText), name: 'Description' });
-        };
+		const Section = (item: any) => (
+			<div className="section">
+				<div className="name">{item.name}</div>
+				<div className="items">
+					{item.children.map((action: any, i: number) => (
+						<MenuItemVertical 
+							key={i}
+							{...action}
+							onClick={(e: any) => { this.onClick(e, action); }}
+							onMouseEnter={(e: any) => { this.onOver(e, action); }} 
+						/>
+					))}
+				</div>
+			</div>
+		);
 
         return (
             <div>
-                <div className="section card">
-                    <div className="name">Choose layout preview</div>
-                    <div className="items">
-                        {styles.map((item: any, i: number) => (
-                            <div 
-                                key={i} 
-                                className={[ 'item', (item.id == fields.style ? 'active' : '') ].join(' ')} 
-                                onClick={() => { this.setField('style', item.id); }}
-                            >
-                                <div className="txt">
-                                    <Icon className={item.icon} />
-                                    <div className="name">{item.name}</div>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-                <div className="section settings">
-                    <div className="name">Show / Hide on preview</div>
-                    
-                    <div className="items">
-                        {items1.map((item: any, i: number) => (
-                            <MenuItemVertical 
-                                key={i}
-                                {...item} 
-                                withSwitch={true}
-                                switchValue={fields[item.id]}
-                                onSwitch={(e: any, v: boolean) => { this.setField(item.id, v); }} 
-                            />
-                        ))}
-                    </div>
-
-                    {buttons.length ? (
-                        <div className="buttons">
-                            {buttons.map((item: any, i: number) => (
-                                <Button 
-                                    key={i} 
-                                    text={item.name} 
-                                    color={item.id == fields.iconSize ? 'orange' : 'grey'}
-                                    onClick={() => { this.setField('iconSize', item.id); }} 
-                                />
-                            ))}
-                        </div>
-                    ) : ''}
-
-                    <div className="items">
-                        {items2.map((item: any, i: number) => (
-                            <MenuItemVertical 
-                                key={i}
-                                {...item} 
-                                withSwitch={true}
-                                switchValue={fields[item.id]}
-                                onSwitch={(e: any, v: boolean) => { this.setField(item.id, v); }} 
-                            />
-                        ))}
-                    </div>
-                </div>
+				{sections.map((section: any, i: number) => (
+					<Section key={i} {...section} />
+				))}
             </div>
         );
 	};
 	
 	componentDidMount () {
 		this.rebind();
+	};
+
+	componentDidUpdate () {
+		this.props.setActive();
+	};
+
+	componentWillUnmount () {
+		window.clearTimeout(this.timeout);
 	};
 
 	rebind () {
@@ -135,7 +70,205 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 		$(window).unbind('keydown.menu');
 	};
 
-    setField (id: string, v: any) {
+	onClick (e: any, item: any) {
+		const fields = this.getFields();
+
+		if (item.withSwitch) {
+			this.setField(item.itemId, !fields[item.itemId]);
+		} else 
+		if (item.arrow) {
+			this.onOver(e, item);
+		};
+	};
+
+	onOver (e: any, item: any) {
+		if (!keyboard.isMouseDisabled) {
+			this.props.setActive(item, false);
+		};
+
+		if (!item.arrow) {
+			menuStore.close('select');
+			return;
+		};
+
+		const { getId, getSize } = this.props;
+		const fields = this.getFields();
+
+		const menuParam: any = {
+			element: `#${getId()} #item-${item.id}`,
+			offsetX: getSize().width,
+			vertical: I.MenuDirection.Center,
+			isSub: true,
+			data: {
+				rebind: this.rebind,
+				value: fields[item.itemId],
+				options: [],
+				onSelect: (e: any, el: any) => {
+					this.setField(item.itemId, el.id);
+				},
+			},
+		};
+
+		let options: any[] = [];
+
+		switch (item.itemId) {
+			case 'iconSize':
+				options = this.getIcons();
+				break;
+
+			case 'style':
+				options = this.getStyles();
+				menuParam.width = 320;
+				break;
+
+			case 'cover': 
+				options = this.getCovers();
+				break;
+
+			case 'description':
+				options = this.getDescriptions();
+				menuParam.width = 320;
+				break;
+		};
+
+		menuParam.data = Object.assign(menuParam.data, { options });
+
+		menuStore.close('select', () => {
+			window.clearTimeout(this.timeout);
+			this.timeout = window.setTimeout(() => { menuStore.open('select', menuParam); }, Constant.delay.menu);
+		});
+	};
+
+	getFields () {
+		const { param } = this.props;
+        const { data } = param;
+        const { rootId, blockId } = data;
+        const block = blockStore.getLeaf(rootId, blockId);
+        const object = detailStore.get(rootId, block.content.targetBlockId);
+
+        return DataUtil.checkLinkSettings(block.fields, object.layout);
+	};
+
+	getStyles () {
+		return [
+            { id: I.LinkCardStyle.Text, name: 'Text', icon: 'style-text', description: 'An inline link matching other text' },
+            { id: I.LinkCardStyle.Card, name: 'Card', icon: 'style-card', description: 'Object with icon & featured relations' },
+        ].map((it: any) => {
+			it.withDescription = true;
+			it.icon = 'linkStyle' + it.id;
+			return it;
+		});
+	};
+
+	getIcons () {
+		return [
+			{ id: I.LinkIconSize.Small, name: 'Small' },
+			{ id: I.LinkIconSize.Medium, name: 'Medium' },
+		];
+	};
+
+	getCovers () {
+		return [];
+	};
+
+	getDescriptions () {
+		return [
+			{ id: I.LinkDescription.None, name: 'None', description: 'Don\'t show description' },
+			{ id: I.LinkDescription.Added, name: 'Only added', description: 'Show only added description' },
+			{ id: I.LinkDescription.Content, name: 'Added & content', description: 'If there is no description, show the contents of the object' },
+		].map((it: any) => {
+			it.withDescription = true;
+			return it;
+		});
+	};
+
+	getSections () {
+		const { param } = this.props;
+        const { data } = param;
+        const { rootId, blockId } = data;
+        const block = blockStore.getLeaf(rootId, blockId);
+        const object = detailStore.get(rootId, block.content.targetBlockId);
+        const fields = this.getFields();
+
+        const canIcon = ![ I.ObjectLayout.Task, I.ObjectLayout.Note ].includes(object.layout);
+        const canCover = ![ I.ObjectLayout.Note ].includes(object.layout) && (fields.style == I.LinkCardStyle.Card);
+        const canDescription = ![ I.ObjectLayout.Note ].includes(object.layout);
+
+        const styles = this.getStyles();
+		const style = styles.find(it => it.id == fields.style) || styles[0];
+
+		let icon: any = {};
+        let icons: any[] = [];
+
+		let cover: any = {};
+		let covers: any[] = [];
+
+		let description: any = {};
+		let descriptions: any[] = [];
+
+        if (canIcon) {
+			icons = this.getIcons();
+			icon = icons.find(it => it.id == fields.iconSize) || icons[0];
+        };
+
+		if (canDescription) {
+			descriptions = this.getDescriptions();
+			description = descriptions.find(it => it.id == fields.description) || descriptions[0];
+		};
+
+		let sections = [
+			{ 
+				children: [
+					{ id: 'style', name: 'Preview layout', caption: style.name, withCaption: true, arrow: true },
+					canIcon ? { id: 'iconSize', name: 'Icon', caption: icon.name, withCaption: true, arrow: true }: null,
+					canCover ? { id: 'withCover', name: 'Cover', withSwitch: true, switchValue: fields.withCover} : null,
+				],
+			},
+			{
+				name: 'Featured relations',
+				children: [
+					{ id: 'withName', name: 'Name', icon: 'relation ' + DataUtil.relationClass(I.RelationType.ShortText), withSwitch: true, switchValue: fields.withName },
+					canDescription ? { 
+						id: 'description', name: 'Description', icon: 'relation ' + DataUtil.relationClass(I.RelationType.LongText), 
+						caption: description.name, withCaption: true, arrow: true
+					} : null,
+					//{ id: 'withTags', name: 'Tags', icon: 'relation ' + DataUtil.relationClass(I.RelationType.Tag), withSwitch: true, switchValue: fields.withTags },
+					{ id: 'withType', name: 'Object type', icon: 'relation ' + DataUtil.relationClass(I.RelationType.Object), withSwitch: true, switchValue: fields.withType },
+				],
+			}
+		];
+
+		sections = sections.map((s: any) => {
+			s.children = s.children.filter(it => it);
+			return s;
+		});
+		sections = DataUtil.menuSectionsMap(sections);
+
+		sections = sections.map((s: any) => {
+			s.children = s.children.map((it: any) => {
+				if (it.withSwitch) {
+					it.onSwitch = (e: any, v: boolean) => { this.setField(it.itemId, !fields[it.itemId]); };
+				};
+				return it;
+			});
+			return s;
+		});
+
+		return sections;
+	};
+
+	getItems () {
+		const sections = this.getSections();
+		
+		let items: any[] = [];
+		for (let section of sections) {
+			items = items.concat(section.children);
+		};
+
+		return items;
+	};
+
+	setField (id: string, v: any) {
         const { param } = this.props;
         const { data } = param;
         const { rootId, blockId, blockIds } = data;

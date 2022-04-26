@@ -42,8 +42,8 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 			return dbStore.getRelation(rootId, block.id, it.relationKey);
 		});
 		const filterCnt = filters.length;
-		const allowedObject = blockStore.isAllowed(rootId, block.id, [ I.RestrictionDataview.Object ]);
-		const allowedView = blockStore.isAllowed(rootId, block.id, [ I.RestrictionDataview.View ]);
+		const allowedObject = blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.Object ]);
+		const allowedView = blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.View ]);
 		const cn = [ 'dataviewControls', (className ? className : '') ];
 
 		const buttons: any[] = [
@@ -228,7 +228,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 		e.stopPropagation();
 
 		const { rootId, block, getView, getData } = this.props;
-		const allowed = blockStore.isAllowed(rootId, block.id, [ I.RestrictionDataview.View ]);
+		const allowed = blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.View ]);
 
 		menuStore.open('dataviewViewEdit', { 
 			element: element,

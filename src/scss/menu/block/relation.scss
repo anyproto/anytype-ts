@@ -88,7 +88,7 @@
 
 			.cell.c-select { padding: 5px 8px; }
 			.cell.c-select {
-				.tagItem { margin: 2px 6px 3px 0px; } 
+				.tagItem, .itemWrap { margin: 2px 6px 3px 0px; } 
 				.over { overflow: visible !important; width: 100%; }
 			}
 
@@ -103,6 +103,7 @@
 			.cell.isEditing.c-select {
 				.empty { display: inline-block; }
 				.cellContent { padding: 5px 8px; }
+				.placeholder { padding: 5px 8px; }
 			}
 			.cell.isEditing.c-select.isStatus {
 				.over { width: calc(100% - 26px); }
@@ -117,6 +118,7 @@
 			.cell.isEditing.c-object
 			{
 				.cellContent { padding: 5px 8px !important; }
+				.placeholder { padding: 5px 8px; }
 			}
 
 			.cell.c-object {

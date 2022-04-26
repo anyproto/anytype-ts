@@ -2,8 +2,6 @@ import { observable, action, computed, set, makeObservable } from 'mobx';
 import { I, Storage, Util } from 'ts/lib';
 import { analytics } from 'ts/lib';
 
-const Constant = require('json/constant.json');
-
 interface Preview {
 	type: I.MarkType,
 	param: string;
@@ -35,8 +33,8 @@ interface Sidebar {
 	snap: I.MenuDirection;
 };
 
+const Constant = require('json/constant.json');
 const $ = require('jquery');
-const { ipcRenderer } = window.require('electron');
 
 class CommonStore {
 
@@ -49,9 +47,13 @@ class CommonStore {
     public configObj: any = {};
     public cellId: string = '';
 	public themeId: string = '';
+	public nativeThemeIsDark: boolean = false;
 	public typeId: string = '';
 	public pinTimeId: number = 0;
 	public sidebarObj: Sidebar = { width: 0, height: 0, x: 0, y: 0, fixed: false, snap: I.MenuDirection.Left };
+	public sidebarOldFixed: boolean = false;
+	public isFullScreen: boolean = false;
+	public autoSidebarValue: boolean = false;
 
     constructor() {
         makeObservable(this, {
@@ -64,7 +66,9 @@ class CommonStore {
             previewObj: observable,
             configObj: observable,
 			themeId: observable,
+			nativeThemeIsDark: observable,
 			typeId: observable,
+			isFullScreen: observable,
             config: computed,
             progress: computed,
             preview: computed,
@@ -73,6 +77,7 @@ class CommonStore {
             coverImage: computed,
             gateway: computed,
 			theme: computed,
+			nativeTheme: computed,
 			sidebar: computed,
             coverSet: action,
             coverSetUploadedImage: action,
@@ -84,12 +89,13 @@ class CommonStore {
             filterSet: action,
             previewSet: action,
 			themeSet: action,
+			nativeThemeSet: action,
 			sidebarSet: action,
         });
     };
 
     get config(): any {
-		return { ...this.configObj, debug: this.configObj.debug || {} };
+		return window.Config || { ...this.configObj, debug: this.configObj.debug || {} };
 	};
 
     get progress(): I.Progress {
@@ -120,12 +126,24 @@ class CommonStore {
 		return String(this.typeId || Constant.typeId.page);
 	};
 
+	get fullscreen(): boolean {
+		return this.isFullScreen;
+	};
+
 	get pinTime(): number {
 		return (Number(this.pinTimeId) || Constant.default.pinTime) * 1000;
 	};
 
+	get autoSidebar(): boolean {
+		return Boolean(this.autoSidebarValue);
+	};
+
 	get theme(): string {
 		return String(this.themeId || '');
+	};
+
+	get nativeTheme(): string {
+		return this.nativeThemeIsDark ? 'dark' : '';
 	};
 
 	get sidebar(): Sidebar {
@@ -195,26 +213,79 @@ class CommonStore {
 	};
 
 	defaultTypeSet (v: string) {
-		this.typeId = v;
-		Storage.set('defaultType', v);
+		this.typeId = String(v || '');
+		Storage.set('defaultType', this.typeId);
 	};
 
 	pinTimeSet (v: string) {
 		this.pinTimeId = Number(v) || Constant.default.pinTime;
-		Storage.set('pinTime', v);
+		Storage.set('pinTime', this.pinTimeId);
+	};
+
+	autoSidebarSet (v: boolean) {
+		this.autoSidebarValue = Boolean(v);
+		Storage.set('autoSidebar', this.autoSidebarValue);
+	};
+
+	fullscreenSet (v: boolean) {
+		const body = $('body');
+		
+		this.isFullScreen = v;
+		v ? body.addClass('isFullScreen') : body.removeClass('isFullScreen');
 	};
 
 	themeSet (v: string) {
 		this.themeId = v;
 		Storage.set('theme', v);
-		Util.addBodyClass('theme', v);
+		
+		this.themeClass();
+	};
 
-		ipcRenderer.send('configSet', { theme: v });
-		analytics.event('ThemeSet', { id: v });
+	themeClass () {
+		if (this.themeId == 'system') {
+			Util.addBodyClass('theme', this.nativeThemeIsDark ? 'dark' : '');
+		} else {
+			Util.addBodyClass('theme', this.themeId);
+		};
+	};
+
+	nativeThemeSet (isDark: boolean) {
+		console.log('[nativeThemeSet]', isDark);
+		this.nativeThemeIsDark = isDark;
+	};
+
+	sidebarInit () {
+		const stored = Storage.get('sidebar');
+		if (stored) {
+			this.sidebarSet(stored);
+			return;
+		};
+
+		const platform = Util.getPlatform();
+		const isWindows = platform == I.Platform.Windows;
+		const offset = isWindows ? 30 : 0;
+		const win = $(window);
+		const wh = win.height();
+		const height = this.sidebarMaxHeight();
+		const y = (wh - offset) / 2 - height / 2 + offset;
+
+		Storage.setToggle(Constant.subIds.sidebar, 'favorite', true);
+		Storage.setToggle(Constant.subIds.sidebar, 'recent', true);
+		Storage.setToggle(Constant.subIds.sidebar, 'set', true);
+
+		this.sidebarSet({
+			height,
+			y,
+			x: 0,
+			fixed: true,
+			snap: I.MenuDirection.Left,
+		});
+
+		this.sidebarOldFixed = false;
+		this.autoSidebarSet(true);
 	};
 
 	sidebarSet (v: any) {
-		const win = $(window);
 		const size = Constant.size.sidebar;
 
 		v = Object.assign(this.sidebarObj, v);
@@ -224,10 +295,16 @@ class CommonStore {
 		v.width = Math.max(size.width.min, Math.min(size.width.max, v.width));
 		
 		v.height = Number(v.height) || 0;
-		v.height = Math.max(size.height.min, Math.min(win.height() - Util.sizeHeader(), v.height));
+		v.height = Math.max(size.height.min, Math.min(this.sidebarMaxHeight(), v.height));
 
 		set(this.sidebarObj, v);
 		Storage.set('sidebar', v);
+	};
+
+	sidebarMaxHeight () {
+		const win = $(window);
+		const wh = win.height() - Util.sizeHeader();
+		return wh - 144;
 	};
 
 	configSet (config: any, force: boolean) {

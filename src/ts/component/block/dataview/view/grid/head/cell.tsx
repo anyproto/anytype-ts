@@ -27,11 +27,11 @@ const HeadCell = observer(class HeadCell extends React.Component<Props, {}> {
 		const { rootId, block, relationKey, index, onResizeStart } = this.props;
 		const relation: any = dbStore.getRelation(rootId, block.id, relationKey) || {};
 		const { format, name } = relation;
-		const width = Relation.width(this.props.width, relation.format);
+		const width = Relation.width(this.props.width, format);
 		const size = Constant.size.dataview.cell;
 
 		const Cell = SortableElement((item: any) => {
-			const cn = [ 'cellHead', DataUtil.relationClass(relation.format) ];
+			const cn = [ 'cellHead', DataUtil.relationClass(format) ];
 			
 			if (width <= size.icon) {
 				cn.push('small');
@@ -69,8 +69,9 @@ const HeadCell = observer(class HeadCell extends React.Component<Props, {}> {
 				blockId: block.id,
 				relationKey: relationKey,
 				readonly: readonly,
+				extendedOptions: true,
 				addCommand: (rootId: string, blockId: string, relation: any, onChange?: (relation: any) => void) => {
-					DataUtil.dataviewRelationAdd(rootId, blockId, relation, getView(), () => {
+					DataUtil.dataviewRelationAdd(rootId, blockId, relation, -1, getView(), () => {
 						if (onChange) {
 							onChange(relation);
 						};

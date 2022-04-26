@@ -1,10 +1,3 @@
-export interface Account {
-	id: string;
-};
-
-export interface AccountConfig {
-};
-
 export enum Platform {
 	Windows = 'Windows',
 	Mac = 'Mac',
@@ -18,12 +11,18 @@ export enum DragType {
 	Relation = 'relation',
 };
 
+export enum SelectType {
+	Block	 = 'block',
+	Record	 = 'record',
+};
+
 export enum CoverType {
 	None	 = 0,
 	Upload	 = 1,
 	Color	 = 2,
 	Gradient = 3,
 	Image	 = 4, 
+	Source	 = 5,
 };
 
 export enum CrumbsType {
@@ -69,6 +68,8 @@ export enum ExportFormat {
 	Dot		 = 3,
 	Svg		 = 4,
 	GraphJson = 5,
+
+	Html	 = 100,
 };
 
 export enum Source {

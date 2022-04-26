@@ -7,6 +7,7 @@ import { Onboarding } from 'ts/lib';
 interface Props extends RouteComponentProps<any> {
 	rootId: string;
 	isPopup?: boolean;
+	refSidebar?: any;
 };
 
 const Constant = require('json/constant.json');
@@ -40,7 +41,7 @@ class PageMainEdit extends React.Component<Props, {}> {
 	};
 
 	onOpen () {
-		const { isPopup } = this.props;
+		const { isPopup, refSidebar } = this.props;
 		const rootId = this.getRootId();
 		const object = detailStore.get(rootId, rootId);
 
@@ -49,6 +50,10 @@ class PageMainEdit extends React.Component<Props, {}> {
 		};
 		if (this.refFooter) {
 			this.refFooter.forceUpdate();
+		};
+		if (refSidebar) {
+			refSidebar.id = rootId;
+			refSidebar.setActive(rootId);
 		};
 
 		let key = '';

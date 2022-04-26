@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Frame, Icon, Cover, Error, Title, IconObject, HeaderAuth as Header, FooterAuth as Footer, Loader } from 'ts/component';
+import { Frame, Icon, Cover, Error, Title, IconObject, HeaderAuth as Header, FooterAuth as Footer, Loader, Button } from 'ts/component';
 import { commonStore, authStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { I, C, Util, translate } from 'ts/lib';
@@ -12,7 +12,7 @@ interface State {
 	loading: boolean;
 };
 
-const { ipcRenderer } = window.require('electron');
+const Errors = require('json/error.json');
 
 const PageAccountSelect = observer(class PageAccountSelect extends React.Component<Props, State> {
 
@@ -62,6 +62,8 @@ const PageAccountSelect = observer(class PageAccountSelect extends React.Compone
 									<div className="name">{translate('authAccountSelectAdd')}</div>
 								</div>
 							</div>
+
+							{error ? <Button text={translate('authSetupBack')} onClick={() => { Util.route('/'); }} /> : ''}
 						</React.Fragment>
 					)}
 				</Frame>
@@ -82,7 +84,7 @@ const PageAccountSelect = observer(class PageAccountSelect extends React.Compone
 
 				if (message.error.code) {
 					Util.checkError(message.error.code);
-					state.error = message.error.description;
+					state.error = Errors.AccountCreate[message.error.code] || message.error.description;
 				};
 
 				this.setState(state);
@@ -100,9 +102,10 @@ const PageAccountSelect = observer(class PageAccountSelect extends React.Compone
 
 	onSelect (account: I.Account) {
 		const { phrase } = authStore;
+		const renderer = Util.getRenderer();
 		
 		authStore.accountSet(account);
-		ipcRenderer.send('keytarSet', account.id, phrase);
+		renderer.send('keytarSet', account.id, phrase);
 		Util.route('/auth/setup/select');
 	};
 	

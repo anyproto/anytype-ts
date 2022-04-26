@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { IconEmoji } from 'ts/component';
-import { I, Util, SmileUtil, DataUtil } from 'ts/lib';
+import { I, Util, SmileUtil, DataUtil, FileUtil } from 'ts/lib';
 import { commonStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -24,13 +24,14 @@ interface Props {
 	color?: string;
 	getObject?(): any;
 	forceLetter?: boolean;
+	noRemove?: boolean;
 	onSelect?(id: string): void;
 	onUpload?(hash: string): void;
 	onClick?(e: any): void;
 	onCheckbox?(e: any): void;
 	onMouseEnter?(e: any): void;
 	onMouseLeave?(e: any): void;
-}
+};
 
 const IDS40 = [ 
 	I.ObjectLayout.Page, 
@@ -253,13 +254,13 @@ const IconObject = observer(class IconObject extends React.Component<Props, {}> 
 					icon = <img src={commonStore.imageUrl(id, iconSize * 2)} className={icn.join(' ')} />;
 				} else {
 					icn = icn.concat([ 'iconFile', 'c' + iconSize ]);
-					icon = <img src={File[Util.fileIcon(object)]} className={icn.join(' ')} />;
+					icon = <img src={File[FileUtil.icon(object)]} className={icn.join(' ')} />;
 				};
 				break;
 
 			case I.ObjectLayout.File:
 				icn = icn.concat([ 'iconFile', 'c' + iconSize ]);
-				icon = <img src={File[Util.fileIcon(object)]} className={icn.join(' ')} />;
+				icon = <img src={File[FileUtil.icon(object)]} className={icn.join(' ')} />;
 				break;
 
 			case I.ObjectLayout.Dashboard:
@@ -281,6 +282,7 @@ const IconObject = observer(class IconObject extends React.Component<Props, {}> 
 			<div 
 				id={this.props.id} 
 				className={cn.join(' ')} 
+				onClick={(e: any) => { e.stopPropagation(); }}
 				onMouseDown={this.onClick} 
 				onMouseEnter={this.onMouseEnter} 
 				onMouseLeave={this.onMouseLeave}
@@ -321,7 +323,7 @@ const IconObject = observer(class IconObject extends React.Component<Props, {}> 
 	onEmoji (e: any) {
 		e.stopPropagation();
 
-		const { id, offsetX, offsetY, onSelect, onUpload } = this.props;
+		const { id, offsetX, offsetY, onSelect, onUpload, noRemove } = this.props;
 		const object = this.getObject();
 		const { iconEmoji, iconImage } = object;
 		const layout = Number(object.layout) || I.ObjectLayout.Page;
@@ -333,7 +335,7 @@ const IconObject = observer(class IconObject extends React.Component<Props, {}> 
 			offsetY: offsetY,
 			data: {
 				noUpload: noUpload,
-				noRemove: !(iconEmoji || iconImage),
+				noRemove: noRemove || !(iconEmoji || iconImage),
 				onSelect: (icon: string) => {
 					if (onSelect) {
 						onSelect(icon);

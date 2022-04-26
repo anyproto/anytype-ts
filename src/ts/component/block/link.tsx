@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Icon, Loader } from 'ts/component';
 import { I, DataUtil, translate } from 'ts/lib';
-import { detailStore } from 'ts/store';
+import { detailStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { focus } from 'ts/lib';
 
@@ -36,7 +36,7 @@ const BlockLink = observer(class BlockLink extends React.Component<Props, {}> {
 		const { _empty_, isArchived, isDeleted, done, layout } = object;
 		const cn = [ 'focusable', 'c' + id, 'resizable' ];
 		const fields = DataUtil.checkLinkSettings(block.fields, layout);
-		const readonly = this.props.readonly || object.isReadonly || object.templateIsBundled;
+		const readonly = this.props.readonly || !blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Details ]);
 
 		if ((layout == I.ObjectLayout.Task) && done) {
 			cn.push('isDone');
@@ -152,9 +152,11 @@ const BlockLink = observer(class BlockLink extends React.Component<Props, {}> {
 		const object = detailStore.get(rootId, targetBlockId, []);
 		const { _empty_ , isArchived } = object;
 
-		if (!_empty_ && !isArchived && (targetBlockId != rootId)) {
-			DataUtil.objectOpenEvent(e, object);
+		if (e.shiftKey || e.ctrlKey || e.metaKey || _empty_ || isArchived || (targetBlockId == rootId)) {
+			return;
 		};
+
+		DataUtil.objectOpen(object);
 	};
 	
 	onSelect (icon: string) {
@@ -183,11 +185,17 @@ const BlockLink = observer(class BlockLink extends React.Component<Props, {}> {
 	};
 
 	resize () {
+		const { getWrapperWidth } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
 		const card = node.find('.linkCard');
 		const icon = node.find('.iconObject');
+		const rect = node.get(0).getBoundingClientRect() as DOMRect;
+
+		const width = rect.width;
+		const mw = getWrapperWidth();
 
 		icon.length ? card.addClass('withIcon') : card.removeClass('withIcon');
+		width <= mw / 2 ? card.addClass('vertical') : card.removeClass('vertical');
 	};
 	
 });

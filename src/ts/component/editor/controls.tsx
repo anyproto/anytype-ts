@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { ControlButtons } from 'ts/component';
-import { I, C, focus, DataUtil, Util, translate, analytics } from 'ts/lib';
+import { ControlButtons, Loader } from 'ts/component';
+import { I, C, focus, DataUtil, Util } from 'ts/lib';
 import { menuStore, blockStore, detailStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -14,49 +14,70 @@ interface Props extends RouteComponentProps<any> {
 	resize?: () => void;
 };
 
+interface State {
+	loading: boolean;
+};
+
 const { dialog } = window.require('@electron/remote');
 const Constant = require('json/constant.json');
 const $ = require('jquery');
 
-const Controls = observer(class Controls extends React.Component<Props, {}> {
+const Controls = observer(class Controls extends React.Component<Props, State> {
 	
 	_isMounted: boolean = false;
+	state = {
+		loading: false,
+	};
 
 	constructor (props: any) {
 		super(props);
 		
 		this.onIcon = this.onIcon.bind(this);
-		this.onCover = this.onCover.bind(this);
+		this.onCoverOpen = this.onCoverOpen.bind(this);
+		this.onCoverClose = this.onCoverClose.bind(this);
 		this.onLayout = this.onLayout.bind(this);
 		this.onRelation = this.onRelation.bind(this);
 		
 		this.onDragOver = this.onDragOver.bind(this);
 		this.onDragLeave = this.onDragLeave.bind(this);
 		this.onDrop = this.onDrop.bind(this);
+		this.onUploadStart = this.onUploadStart.bind(this);
+		this.onUpload = this.onUpload.bind(this);
 	};
 
 	render (): any {
 		const { rootId, readonly } = this.props;
+		const { loading } = this.state;
 		const object = detailStore.get(rootId, rootId, Constant.coverRelationKeys);
+		const cn = [ 'editorControls', 'editorControlElements' ];
 		
 		if ((object.coverType != I.CoverType.None) && object.coverId) {
 			return null;
 		};
 
+		if (loading) {
+			cn.push('active');
+		};
+
 		return (
 			<div 
-				className="editorControls editorControlElements"
+				className={cn.join(' ')}
 				onDragOver={this.onDragOver} 
 				onDragLeave={this.onDragLeave} 
 				onDrop={this.onDrop}
 			>
+				{loading ? <Loader /> : ''}
 				<ControlButtons 
 					rootId={rootId} 
 					readonly={readonly}
 					onIcon={this.onIcon} 
-					onCover={this.onCover}
+					onCoverOpen={this.onCoverOpen}
+					onCoverClose={this.onCoverClose}
 					onLayout={this.onLayout}
 					onRelation={this.onRelation}
+					onEdit={() => {}}
+					onUploadStart={this.onUploadStart}
+					onUpload={this.onUpload}
 				/>
 			</div>
 		);
@@ -128,15 +149,22 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 		});
 	};
 	
-	onCover (e: any) {
-		const { rootId } = this.props;
-		const colors = DataUtil.coverColors();
-		const color = colors[Util.rand(0, colors.length - 1)];
+	onCoverOpen () {
+		if (!this._isMounted) {
+			return;
+		};
 
-		focus.clear(true);
-		DataUtil.pageSetCover(rootId, I.CoverType.Color, color.id, 0, 0, 0);
+		const node = $(ReactDOM.findDOMNode(this));
+		node.addClass('hover');
+	};
 
-		analytics.event('SetCover', { type: I.CoverType.Color, id: color.id });
+	onCoverClose () {
+		if (!this._isMounted) {
+			return;
+		};
+		
+		const node = $(ReactDOM.findDOMNode(this));
+		node.removeClass('hover');
 	};
 
 	onLayout (e: any) {
@@ -229,19 +257,30 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 		
 		node.removeClass('isDraggingOver');
 		preventCommonDrop(true);
-		this.setState({ loading: true });
+		this.onUploadStart();
 		
 		C.UploadFile('', file, I.FileType.Image, (message: any) => {
 			this.setState({ loading: false });
 			preventCommonDrop(false);
 			
-			if (message.error.code) {
-				return;
+			if (!message.error.code) {
+				this.onUpload(I.CoverType.Upload, message.hash);
 			};
-			
-			DataUtil.pageSetCover(rootId, I.CoverType.Upload, message.hash);
 		});
 	};
+
+	onUploadStart () {
+		this.setState({ loading: true });
+	};
+	
+	onUpload (type: I.CoverType, hash: string) {
+		const { rootId } = this.props;
+
+		DataUtil.pageSetCover(rootId, type, hash, 0, -0.25, 0, () => {
+			this.setState({ loading: false });
+		});
+	};
+
 
 });
 

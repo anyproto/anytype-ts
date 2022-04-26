@@ -2,23 +2,22 @@
 
 .pageFlex { display: flex; flex-direction: row; justify-content: space-between; }
 .pageFlex {
-	#sidebarDummy { flex-shrink: 0; }
+	.sidebarDummy { flex-shrink: 0; }
     #page { width: 100%; position: relative; }
 }
 
 .sidebar { 
-    position: fixed; background-color: #fff;  z-index: 21; border-radius: 12px; 
+    position: fixed; background-color: #fff; z-index: 18; border-radius: 12px; 
     box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2); display: flex; flex-direction: column;
-    transition: transform 0.2s ease-in-out; 
+    user-select: none;
 }
-.sidebar.left { left: 0px; transform: translate3d(-100%,0px,0px); }
-.sidebar.right { 
-    right: 0px; transform: translate3d(100%,0px,0px); 
-}
+.sidebar.left { left: 0px; transform: translate3d(-110%,0px,0px); }
+.sidebar.right { right: 0px; transform: translate3d(110%,0px,0px); }
 .sidebar.fixed { 
-    height: 100%; top: 0px; transform: translate3d(0px,0px,0px); border-radius: 0px; box-shadow: 0px 0px; 
-    border-right: 1px solid $colorLightGrey;
+    height: 100%; top: 0px !important; transform: translate3d(0px,0px,0px); border-radius: 0px; 
+    box-shadow: 0px 0px; border-right: 1px solid $colorLightGrey; transition: none;
 }
+.sidebar.anim { transition: transform 0.2s ease-in-out; }
 .sidebar.active { transform: translate3d(0px,0px,0px); }
 
 .sidebar.right {
@@ -36,7 +35,7 @@
 
     .loaderWrapper { position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; }
 
-    .head { padding: 16px; border-bottom: 1px solid $colorLightGrey; position: relative; height: 96px; flex-shrink: 0; }
+    .head { position: relative; flex-shrink: 0; }
     .head {
         .icon.expand { 
             width: 44px; height: 32px; background-size: 20px 20px; background-image: url('~img/icon/header/expand.svg');
@@ -50,48 +49,74 @@
         }
         .icon.close:hover { background-color: $colorVeryLightGrey; }
     }
-    
-    .body { 
-        overflow-x: hidden; overflow-y: overlay; padding: 16px 12px 16px 6px; height: 100%; position: relative; 
-        flex-grow: 1;
+
+    .foot { display: flex; flex-direction: row; align-items: center;  }
+    .foot {
+        .item { 
+			height: 52px; flex-basis: 20%; flex-grow: 1; display: flex; align-items: center; justify-content: center; cursor: pointer; 
+			flex-direction: row; 
+		}
+        .item * { cursor: pointer; }
+        .item:hover { background-color: $colorHover; }
+
+        .icon { width: 20px; height: 20px; }
+        .icon.store { background-image: url('~img/icon/sidebar/store.svg'); }
+        .icon.add { background-image: url('~img/icon/sidebar/add.svg'); }
+        .icon.settings { background-image: url('~img/icon/sidebar/settings.svg'); }
+        .icon.collapse { background-image: url('~img/icon/sidebar/collapse.svg'); }
     }
-    .body {
-        .icon.arrow { 
-            width: 20px; height: 20px; background-image: url('~img/arrow/select/dark.svg'); flex-shrink: 0; 
-            transform: rotate(-90deg); transition: none; cursor: pointer;
-        }
-        .children { overflow: hidden; height: 0px; }
-
-        .section { margin-bottom: 12px; }
-        .section:last-child { margin: 0px; }
-        .section { 
-            .sectionHead { display: flex; flex-direction: row; align-items: center; gap: 0px 6px; cursor: pointer; }
-            .sectionHead {
-                .name { @include text-paragraph; @include text-overflow-nw; font-weight: 600; flex-grow: 1; }
-                .cnt { flex-shrink: 0; text-align: right; @include text-small; flex-basis: 20px; }
-            }
-        }
-        .section.active > .sectionHead > .icon.arrow { transform: rotate(0deg); }
-        .section.active > .sectionHead { margin-bottom: 8px; }
-
-        .item { cursor: pointer; border-radius: 4px; margin-bottom: 4px; }
-        .item {
-            .flex { 
-                position: relative; padding: 2px 6px; border-radius: inherit; line-height: 20px; 
-                flex-direction: row; gap: 0px 4px;
-            }
-            .flex::before {
-                content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: rgba(172, 169, 150, 0); z-index: 1;
-                pointer-events: none; border-radius: inherit;
-            }
-            .flex:hover::before { background: $colorHover; }
     
-            .iconObject { flex-shrink: 0; }
-            .name { @include text-overflow-nw; display: inline-block; width: 100%; line-height: 20px; }
+    .body { overflow: hidden; height: 100%; position: relative; flex-grow: 1; }
+    .body {
+        .ReactVirtualized__List { overflow: overlay !important; }
+        .ReactVirtualized__Grid__innerScrollContainer { margin: 12px 0px 10px 0px; }
+
+        .icon { width: 20px; height: 20px; flex-shrink: 0; flex-basis: 20px; transition: none; }
+
+        .icon.set { background-image: url('~img/icon/sidebar/set.svg'); }
+        .icon.blank { background-image: url('~img/icon/sidebar/blank.svg'); }
+        .icon.arrow { 
+            background-image: url('~img/arrow/select/dark.svg'); transform: rotate(-90deg); cursor: pointer;
         }
-        .item:last-child { margin: 0px; }
-        .item.active > .flex > .icon.arrow { transform: rotate(0deg); }
-        .item.active > .flex { margin-bottom: 4px; }
-        .item.hover > .flex::before { background: $colorHover; }
+
+        .item { position: relative; }
+        .item {
+            .inner { 
+                display: flex; flex-direction: row; gap: 0px 2px; align-items: center; justify-content: space-between; 
+                cursor: pointer; position: relative; padding: 2px 14px 2px 10px;
+            }
+            .inner::before {
+                content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: rgba(172, 169, 150, 0); z-index: 1;
+                pointer-events: none; border-radius: inherit; transition: $transitionFast;
+            }
+            .inner:hover::before, .inner.hover::before { background: $colorHover; }
+
+            .iconObject { flex-shrink: 0; flex-basis: 20px; }
+            .clickable { 
+                flex-grow: 1; display: flex; flex-direction: row; gap: 0px 6px; width: calc(100% - 24px); align-items: center; 
+                justify-content: space-between; cursor: pointer;
+            }
+            .name { flex-grow: 1; @include text-overflow-nw; }
+        }
+        .item.hover .inner::before { background: $colorHover; }
+        
+        .item.active .icon.arrow { transform: rotate(0deg); }
+
+        .item.isSection { padding-bottom: 2px; }
+        .item.isSection.withPadding { padding-top: 8px; }
+        .item.isSection {
+            .icon.arrow { background-image: url('~img/arrow/sidebar.svg'); }
+            .name { @include text-paragraph; @include text-overflow-nw; font-weight: 600; flex-grow: 1; }
+            .cnt { flex-shrink: 0; text-align: right; @include text-small; flex-basis: 20px; }
+        }
+
+    }
+}
+
+html.platformMac {
+    body.isFullScreen {
+        .sidebar {
+            .head { height: 0px !important; }
+        }
     }
 }

@@ -23,6 +23,17 @@
 		.icon.account { background-image: url('~img/icon/account.svg'); display: none; }
 		.icon.add { background-image: url('~img/icon/plus/object.svg'); }
 		.icon.store { background-image: url('~img/icon/store.svg'); }
+
+		.deleted { 
+			position: absolute; left: 0px; bottom: -30px; background: rgba(0,0,0,0.5); border-radius: 8px; @include text-common; 
+			padding: 3px 8px; font-weight: 400; display: flex; align-items: center;
+		}
+		.deleted {
+			.icon { 
+				width: 14px; height: 14px; background-image: url('~img/icon/index/deleted.svg'); margin-right: 4px; 
+				border-radius: 0px; background-size: 100%; cursor: default;
+			}
+		}
 	}
 
 	@keyframes shimmer {

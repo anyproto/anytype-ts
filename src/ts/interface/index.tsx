@@ -1,8 +1,8 @@
+import { Account, AccountConfig, AccountStatus, AccountStatusType } from './account';
 import { 
-	Account, 
-	AccountConfig, 
 	Platform, 
 	DragType, 
+	SelectType,
 	CoverType, 
 	CrumbsType, 
 	NavigationType, 
@@ -44,7 +44,7 @@ import {
 import { BlockPage } from './block/page';
 import { LayoutStyle, ContentLayout, BlockLayout } from './block/layout';
 import { ContentIcon, BlockIcon } from './block/icon';
-import { LinkIconSize, LinkCardStyle, ContentLink, BlockLink } from './block/link';
+import { LinkIconSize, LinkCardStyle, LinkDescription, ContentLink, BlockLink } from './block/link';
 import { TextStyle, MarkType, TextRange, Mark, ContentText, BlockText } from './block/text';
 import { FileType, FileState, FileStyle, ContentFile, BlockFile } from './block/file';
 import { ContentBookmark, BlockBookmark } from './block/bookmark';
@@ -56,8 +56,12 @@ import { TableAlign, TableRow, TableCell, ContentTable, BlockTable } from './blo
 export {
 	Account,
 	AccountConfig,
+	AccountStatus,
+	AccountStatusType,
+
 	Platform,
 	DragType,
+	SelectType,
 	CoverType,
 	CrumbsType,
 	NavigationType,
@@ -140,6 +144,7 @@ export {
 
 	LinkIconSize,
 	LinkCardStyle,
+	LinkDescription,
 	ContentLink,
 	BlockLink,
 

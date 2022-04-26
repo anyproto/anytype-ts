@@ -19,9 +19,6 @@ const SORT_IDS = [
 	'objectDetailsSet', 
 	'objectDetailsAmend', 
 	'objectDetailsUnset', 
-	'subscriptionAdd', 
-	'subscriptionRemove', 
-	'subscriptionPosition', 
 	'subscriptionCounters',
 	'blockDataviewSourceSet',
 	'blockDataviewViewSet',
@@ -108,7 +105,9 @@ class Dispatcher {
 
 		if (v == V.ACCOUNTSHOW)					 t = 'accountShow';
 		if (v == V.ACCOUNTDETAILS)				 t = 'accountDetails';
+		if (v == V.ACCOUNTUPDATE)				 t = 'accountUpdate';
 		if (v == V.ACCOUNTCONFIGUPDATE)			 t = 'accountConfigUpdate';
+
 		if (v == V.THREADSTATUS)				 t = 'threadStatus';
 		if (v == V.BLOCKADD)					 t = 'blockAdd';
 		if (v == V.BLOCKDELETE)					 t = 'blockDelete';
@@ -189,11 +188,9 @@ class Dispatcher {
 		let keys: string[] = [];
 		let ids: string[] = [];
 		let subIds: string[] = [];
+		let uniqueSubIds: string[] = [];
 		let subId: string = '';
 		let afterId: string = '';
-		let records: any[] = [];
-		let oldIndex: number = 0;
-		let newIndex: number = 0;
 
 		messages.sort((c1: any, c2: any) => { return self.sort(c1, c2); });
 
@@ -215,6 +212,11 @@ class Dispatcher {
 					break;
 
 				case 'accountDetails':
+					break;
+
+				case 'accountUpdate':
+					authStore.accountSet({ status: Mapper.From.AccountStatus(data.getStatus()) });
+					commonStore.configSet(Mapper.From.AccountConfig(data.getConfig()), true);
 					break;
 
 				case 'accountConfigUpdate':
@@ -258,6 +260,9 @@ class Dispatcher {
 					let blockIds = data.getBlockidsList() || [];
 					for (let blockId of blockIds) {
 						const block = blockStore.getLeaf(rootId, blockId);
+						if (!block) {
+							continue;
+						};
 
 						if (block.type == I.BlockType.Dataview) {
 							dbStore.relationsClear(rootId, blockId);
@@ -335,6 +340,14 @@ class Dispatcher {
 
 					if (data.hasColor()) {
 						block.content.color = data.getColor().getValue();
+					};
+
+					if (data.hasIconemoji()) {
+						block.content.iconEmoji = data.getIconemoji().getValue();
+					};
+
+					if (data.hasIconimage()) {
+						block.content.iconImage = data.getIconimage().getValue();
 					};
 
 					blockStore.update(rootId, block);
@@ -537,24 +550,18 @@ class Dispatcher {
 					block = blockStore.getLeaf(rootId, id);
 					details = Decode.decodeStruct(data.getDetails());
 					
-					detailStore.update(rootId, { id: id, details: details }, true);
-
 					// Subscriptions
-					subIds.forEach((it: string) => {
-						const [ subId, dep ] = it.split('/');
+					if (subIds.length) {
+						uniqueSubIds = subIds.map((it: string) => { return it.split('/')[0]; });
+						Util.arrayUnique(uniqueSubIds).forEach((subId: string) => {
+							detailStore.update(subId, { id: id, details: details }, true);
+						});
+					} else {
+						detailStore.update(rootId, { id: id, details: details }, true);
 
-						if (!dep) {
-							const record = dbStore.getRecord(subId, '', id);
-							if (!record) {
-								dbStore.recordAdd(subId, '', { id: id }, -1);
-							};
+						if ((id == rootId) && block && (undefined !== details.layout) && (block.layout != details.layout)) {
+							blockStore.update(rootId, { id: rootId, layout: details.layout });
 						};
-						
-						detailStore.update(subId, { id: id, details: details }, true);
-					});
-
-					if ((id == rootId) && block && (undefined !== details.layout) && (block.layout != details.layout)) {
-						blockStore.update(rootId, { id: rootId, layout: details.layout });
 					};
 					break;
 
@@ -567,26 +574,24 @@ class Dispatcher {
 					for (let item of (data.getDetailsList() || [])) {
 						details[item.getKey()] = Decode.decodeValue(item.getValue());
 					};
-					detailStore.update(rootId, { id: id, details: details }, false);
 
 					// Subscriptions
-					subIds.forEach((it: string) => {
-						const [ subId, dep ] = it.split('/');
-						if (!dep) {
-							const record = dbStore.getRecord(subId, '', id);
-							if (!record) {
-								dbStore.recordAdd(subId, '', { id: id }, -1);
+
+					if (subIds.length) {
+						uniqueSubIds = subIds.map((it: string) => { return it.split('/')[0]; });
+						Util.arrayUnique(uniqueSubIds).forEach((subId: string) => {
+							detailStore.update(subId, { id: id, details: details }, false);
+						});
+					} else {
+						detailStore.update(rootId, { id: id, details: details }, false);
+
+						if ((id == rootId) && block) {
+							if ((undefined !== details.layout) && (block.layout != details.layout)) {
+								blockStore.update(rootId, { id: rootId, layout: details.layout });
 							};
+	
+							blockStore.checkDraft(rootId);
 						};
-						detailStore.update(subId, { id: id, details: details }, false);
-					});
-
-					if ((id == rootId) && block) {
-						if ((undefined !== details.layout) && (block.layout != details.layout)) {
-							blockStore.update(rootId, { id: rootId, layout: details.layout });
-						};
-
-						blockStore.checkDraft(rootId);
 					};
 					break;
 
@@ -596,13 +601,16 @@ class Dispatcher {
 					keys = data.getKeysList() || [];
 
 					// Subscriptions
-					subIds.forEach((it: string) => {
-						const [ subId, dep ] = it.split('/');
-						detailStore.delete(subId, '', keys);
-					});
-					
-					detailStore.delete(rootId, id, keys);
-					blockStore.checkDraft(rootId);
+
+					if (subIds.length) {
+						uniqueSubIds = subIds.map((it: string) => { return it.split('/')[0]; });
+						Util.arrayUnique(uniqueSubIds).forEach((subId: string) => {
+							detailStore.delete(subId, id, keys);
+						});
+					} else {
+						detailStore.delete(rootId, id, keys);
+						blockStore.checkDraft(rootId);
+					};
 					break;
 
 				case 'objectRelationsSet':
@@ -630,64 +638,41 @@ class Dispatcher {
 					break;
 
 				case 'subscriptionAdd':
-					if (rootId.match('/dep')) {
-						break;
-					};
-
 					id = data.getId();
 					afterId = data.getAfterid();
+					subId = data.getSubid();
 
-					records = dbStore.getRecords(rootId, '');
-					oldIndex = records.findIndex((it: any) => { return it.id == id; });
-					newIndex = 0;
-
-					if (afterId) {
-						newIndex = records.findIndex((it: any) => { return it.id == afterId; });
-					};
-
-					dbStore.recordsSet(rootId, '', arrayMove(records, oldIndex, newIndex));
+					this.subscriptionPosition(subId, id, afterId);
 					break;
 
 				case 'subscriptionRemove':
-					if (rootId.match('/dep')) {
-						break;
-					};
-
 					id = data.getId();
-					dbStore.recordDelete(rootId, '', id);
+
+					(() => {
+						const [ subId, dep ] = data.getSubid().split('/');
+						if (!dep) {
+							dbStore.recordDelete(subId, '', id);
+						};
+					})();
 					break;
 
 				case 'subscriptionPosition':
-					if (rootId.match('/dep')) {
-						break;
-					};
-
 					id = data.getId();
 					afterId = data.getAfterid();
+					subId = data.getSubid();
 
-					records = dbStore.getRecords(rootId, '');
-					oldIndex = records.findIndex((it: any) => { return it.id == id; });
-					newIndex = 0;
-
-					if (afterId) {
-						newIndex = records.findIndex((it: any) => { return it.id == afterId; });
-					};
-
-					if (oldIndex != newIndex) {
-						dbStore.recordsSet(rootId, '', arrayMove(records, oldIndex, newIndex));
-					};
+					this.subscriptionPosition(subId, id, afterId);
 					break;
 
 				case 'subscriptionCounters':
-					if (rootId.match('/dep')) {
-						break;
-					};
-
 					const total = data.getTotal();
-					const nextCount = data.getNextcount();
-					const prevCount = data.getPrevcount();
 
-					dbStore.metaSet(rootId, '', { total: total });
+					(() => {
+						const [ subId, dep ] = data.getSubid().split('/');
+						if (!dep) {
+							dbStore.metaSet(subId, '', { total: total });
+						};
+					})();
 					break;
 
 				case 'processNew':
@@ -728,6 +713,30 @@ class Dispatcher {
 			blockStore.updateNumbers(rootId); 
 			blockStore.updateMarkup(rootId);
 		}, 10);
+	};
+
+	subscriptionPosition (subId: string, id: string, afterId: string) {
+		const [ sid, dep ] = subId.split('/');
+
+		if (dep) {
+			return;
+		};
+
+		let records = dbStore.getRecords(sid, '');
+		let oldIndex = records.findIndex((it: any) => { return it.id == id; });
+		let newIndex = 0;
+
+		if (afterId) {
+			newIndex = records.findIndex((it: any) => { return it.id == afterId; });
+		};
+
+		if (oldIndex < 0) {
+			records.push({ id });
+		};
+
+		if (oldIndex !== newIndex) {
+			dbStore.recordsSet(sid, '', arrayMove(records, oldIndex, newIndex));
+		};
 	};
 
 	sort (c1: any, c2: any) {

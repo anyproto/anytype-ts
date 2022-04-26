@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { InputWithFile, Loader, Error, Pager } from 'ts/component';
-import { I, C, translate, focus, Action, Util, DataUtil } from 'ts/lib';
+import { I, C, translate, focus, Action, Util, DataUtil, FileUtil } from 'ts/lib';
 import { commonStore, detailStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { Document, Page } from 'react-pdf';
@@ -9,9 +9,8 @@ import { pdfjs } from 'react-pdf';
 
 pdfjs.GlobalWorkerOptions.workerSrc = 'workers/pdf.min.js';
 
-interface Props extends I.BlockComponent {}
+interface Props extends I.BlockComponent {};
 
-const { ipcRenderer } = window.require('electron');
 const { app } = window.require('@electron/remote');
 const userPath = app.getPath('userData');
 const path = window.require('path');
@@ -115,7 +114,7 @@ const BlockPdf = observer(class BlockPdf extends React.Component<Props, State> {
 					<div className={[ 'wrap', 'pdfWrapper', (pager ? 'withPager' : '') ].join(' ')} style={css}>
 						<div className="info" onMouseDown={this.onOpen}>
 							<span className="name">{name}</span>
-							<span className="size">{Util.fileSize(sizeInBytes)}</span>
+							<span className="size">{FileUtil.size(sizeInBytes)}</span>
 						</div>
 
 						<Document
@@ -184,10 +183,11 @@ const BlockPdf = observer(class BlockPdf extends React.Component<Props, State> {
 		const { block } = this.props;
 		const { content } = block;
 		const { hash } = content;
+		const renderer = Util.getRenderer();
 		
 		C.DownloadFile(hash, path.join(userPath, 'tmp'), (message: any) => {
 			if (message.path) {
-				ipcRenderer.send('pathOpen', message.path);
+				renderer.send('pathOpen', message.path);
 			};
 		});
 	};

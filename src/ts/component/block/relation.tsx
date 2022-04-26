@@ -32,7 +32,7 @@ const BlockRelation = observer(class BlockRelation extends React.Component<Props
 		const relation = dbStore.getRelation(rootId, rootId, key);
 		const idPrefix = 'blockRelationCell' + block.id;
 		const id = Relation.cellId(idPrefix, key, '0');
-		const allowedValue = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]) && relation && !relation.isReadonlyValue;
+		const allowedValue = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]) && relation && !relation.isReadonlyValue;
 
 		return (
 			<div className={[ 'wrap', 'focusable', 'c' + block.id ].join(' ')} tabIndex={0} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp} onFocus={this.onFocus}>
@@ -150,11 +150,7 @@ const BlockRelation = observer(class BlockRelation extends React.Component<Props
 	};
 
 	onCellClick (e: any) {
-		const { block, readonly } = this.props;
-
-		if (readonly) {
-			return;
-		};
+		const { block } = this.props;
 
 		if (this.refCell) {
 			this.refCell.onClick(e);

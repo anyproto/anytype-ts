@@ -1,10 +1,10 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { I, C, DataUtil, keyboard, focus, Storage, translate } from 'ts/lib';
+import { I, C, DataUtil, keyboard, focus, Storage, Util } from 'ts/lib';
 import { DropTarget, ListChildren, Icon } from 'ts/component';
 import { observer } from 'mobx-react';
-import { menuStore, blockStore } from 'ts/store';
+import { menuStore, blockStore, detailStore } from 'ts/store';
 
 import BlockDataview from './dataview';
 import BlockText from './text';
@@ -78,14 +78,17 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 
 		const { style, checked } = content;
 		const index = Number(this.props.index) || 0;
+		const root = blockStore.getLeaf(rootId, rootId);
 
 		let canSelect = true;
 		let canDrop = !readonly;
-		let cn: string[] = [ 'block', 'align' + align, DataUtil.blockClass(block, isDragging), 'index-' + index ];
+		let canDropMiddle = canDrop;
+		let cn: string[] = [ 'block', DataUtil.blockClass(block, isDragging), 'index-' + index ];
 		let cd: string[] = [ 'wrapContent' ];
 		let blockComponent = null;
 		let empty = null;
 		let setRef = (ref: any) => { this.ref = ref; };
+		let additional = null;
 		
 		if (className) {
 			cn.push(className);
@@ -100,11 +103,21 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 		if (bgColor && !block.isLink()) {
 			cd.push('bgColor bgColor-' + bgColor);
 		};
+
+		if (block.canHaveAlign()) {
+			cn.push('align' + align);
+		};
 		
 		switch (type) {
 			case I.BlockType.Text:
 				if (block.isTextCheckbox() && checked) {
 					cn.push('isChecked');
+				};
+
+				if (block.isTextQuote()) {
+					additional = (
+						<div className="line" />
+					);
 				};
 
 				blockComponent = <BlockText ref={setRef} {...this.props} onToggle={this.onToggle} />;
@@ -125,15 +138,11 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 				break;
 				
 			case I.BlockType.File:
-				// Processing File style Link.
-				// Making Embed as a default one
-
 				if (isDragging || (style == I.FileStyle.Link)) {
 					blockComponent = <BlockFile ref={setRef} {...this.props} />;
 					break;
 				};
 
-				// Process Embed File
 				switch (content.type) {
 					default: 
 						blockComponent = <BlockFile ref={setRef} {...this.props} />;
@@ -163,6 +172,7 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 				break;
 			
 			case I.BlockType.Dataview:
+				canSelect = !root.isObjectSet();
 				blockComponent = <BlockDataview ref={setRef} {...this.props} />;
 				break;
 				
@@ -171,6 +181,11 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 				break;
 				
 			case I.BlockType.Link:
+				const object = detailStore.get(rootId, content.targetBlockId, [ 'restrictions' ]);
+				if (!blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Block ])) {
+					canDropMiddle = false;
+				};
+
 				blockComponent = <BlockLink ref={setRef} {...this.props} />;
 				break;
 				
@@ -206,26 +221,42 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 		};
 
 		let object = null;
+		let targetTop = null;
+		let targetBot = null;
 
 		if (canDrop) {
 			object = (
-				<DropTarget {...this.props} rootId={rootId} id={id} style={style} type={type} dropType={I.DragType.Block}>
+				<DropTarget {...this.props} rootId={rootId} id={id} style={style} type={type} dropType={I.DragType.Block} canDropMiddle={canDropMiddle}>
 					{blockComponent}
 				</DropTarget>
 			);
+
+			targetTop = <DropTarget {...this.props} className="targetTop" rootId={rootId} id={id} style={style} type={type} dropType={I.DragType.Block} canDropMiddle={canDropMiddle} />;
+			targetBot = <DropTarget {...this.props} className="targetBot" rootId={rootId} id={id} style={style} type={type} dropType={I.DragType.Block} canDropMiddle={canDropMiddle} />;
 		} else {
 			object = (
 				<div className="dropTarget">
 					{blockComponent}
 				</div>
 			);
+
+			targetTop = <div className="dropTarget targetTop" />;
+			targetBot = <div className="dropTarget targetBot" />;
+		};
+
+		if (!block.isLayoutRow()) {
+			targetTop = null;
 		};
 		
 		if (canSelect) {
 			object = (
-				<div id={'selectable-' + id} className="selectable" data-id={id}>
+				<div 
+					id={'selectable-' + id} 
+					className={[ 'selectable', 'type-' + I.SelectType.Block ].join(' ')} 
+					data-id={id} 
+					data-type={I.SelectType.Block}
+				>
 					{object}
-					<div className="selectionOver" />
 					<div className="menuOver" />
 				</div>
 			);
@@ -237,25 +268,6 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 			);
 		};
 
-		let rowDropTargets = null;
-		if (block.isLayoutRow()) {
-			if (readonly) {
-				rowDropTargets = (
-					<React.Fragment>
-						<div className="dropTarget targetTop" />
-						<div className="dropTarget targetBot" />
-					</React.Fragment>
-				);
-			} else {
-				rowDropTargets = (
-					<React.Fragment>
-						<DropTarget {...this.props} className="targetTop" rootId={rootId} id={id} style={style} type={type} dropType={I.DragType.Block} />
-						<DropTarget {...this.props} className="targetBot" rootId={rootId} id={id} style={style} type={type} dropType={I.DragType.Block} />
-					</React.Fragment>
-				);
-			};
-		};
-
 		return (
 			<div id={'block-' + id} data-id={id} className={cn.join(' ')} style={css}>
 				<div className="wrapMenu">
@@ -263,9 +275,11 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 				</div>
 				
 				<div className={cd.join(' ')}>
+					{targetTop}
+
 					{object}
-					{rowDropTargets}
 					{empty}
+					{additional ? <div className="additional">{additional}</div> : ''}
 
 					<ListChildren 
 						key={'block-children-' + id} 
@@ -274,6 +288,8 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 						onMouseLeave={this.onMouseLeave} 
 						onResizeStart={this.onResizeStart} 
 					/>
+
+					{targetBot}
 					
 					{block.isLayoutColumn() ? (
 						<div className="columnEmpty" onClick={this.onEmptyColumn} />
@@ -358,6 +374,7 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 		};
 
 		focus.clear(true);
+		Util.previewHide(true);
 	};
 	
 	onMenuClick (e: any) {

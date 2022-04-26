@@ -42,11 +42,15 @@
 			}
         }
 
-        .tabIndex {
-            .logout:hover { color: $colorOrange; }
-        }
+		.sectionName { color: $colorSecondary; }
+		.select { color: $colorSecondary; }
 
-        .tabIndex .row, .tabOther .row { border-color: $colorLineSecondary; }
+        .tabIndex .row, 
+		.tabAccount .row,
+		.tabAppearance .row,
+		.tabPersonal .row,
+		.tabPinIndex .row,
+		.tabDelete .row { border-color: $colorLineSecondary; }
         
         .tabWallpaper .item.active { border-color: $colorLinePrimary; }
         .tabWallpaper .item .cover.upload { background-color: $colorBlack !important; border-color: $colorLinePrimary; }

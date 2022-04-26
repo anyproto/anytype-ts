@@ -79,20 +79,23 @@
 				}
 			}
 			.cell.isEditing.c-select { 
-				.cellContent { padding-bottom: 8px; }
+				.cellContent { padding-bottom: 6px; height: auto !important; }
+				.wrap { overflow: visible; white-space: normal; }
 			}
 			.cell.isEditing.c-object { 
-				.cellContent { padding-bottom: 12px; }
+				.cellContent { padding-bottom: 12px; height: auto !important; }
+				.wrap { overflow: visible; white-space: normal; }
 			}
+
+			.cell.isEditing.c-select, .cell.isEditing.c-object {
+				.placeholder { padding: 14px; }
+			}
+
 			.cell.isEditing.c-longText { 
 				.cellContent { display: none; }
 			}
 			.cell.isEditing.c-checkbox { 
 				.cellContent { min-width: unset; }
-			}
-
-			.cellContent.c-select {
-				.tagItem { margin-bottom: 0px; }
 			}
 		}
     }

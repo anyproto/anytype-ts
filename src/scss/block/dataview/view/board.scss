@@ -4,15 +4,47 @@
 	.block.blockDataview {
 
         .viewItem.viewBoard {
-            .columns { white-space: nowrap; }
-            .column { width: 240px; margin-right: 24px; display: inline-block; vertical-align: top; overflow-x: visible; overflow-y: overlay; }
-            .column {
-                .head { padding: 10px 4px; width: 100%; }
-            }
 
-            .card { width: 100%; margin-bottom: 8px; background: $colorWhite; }
-            
-            .card.add { min-height: unset; text-align: center; padding: 10px 0px; margin: 0px; line-height: 1; transition: $transitionFast; cursor: pointer; }
+			.ghost { display: none; border: 1px dotted $colorOrange; border-radius: 12px; }
+			
+			.isOver.left {
+				.ghost.left { display: block; }
+			}
+			.isOver.right {
+				.ghost.right { display: block; }
+			}
+			.isOver.top {
+				.ghost.top { display: block; }
+			}
+			.isOver.bottom {
+				.ghost.bottom { display: block; }
+			}
+
+            .columns { display: flex; gap: 0px 24px; flex-direction: row; }
+            .column { display: flex; flex-direction: row; gap: 0px 24px; }
+            .column {
+				.body { width: 240px; display: flex; flex-direction: column; }
+                .head { padding: 10px 4px; width: 100%; margin: 0px; }
+            }
+			.column.isDragging {
+				.body { opacity: 0.3; }
+			}
+
+			.column > .ghost { margin-top: 42px; width: 240px; flex-shrink: 0; }
+			
+            .card { width: 240px; display: flex; flex-direction: column; gap: 8px 0px; margin-bottom: 8px; }
+			.card {
+				.cardContent { border: 1px solid $colorBorderDark; border-radius: 12px; padding: 16px; background: $colorWhite; }
+			}
+
+			.card.isDragging {
+				.cardContent { opacity: 0.3; }
+			}
+
+            .card.add { 
+				min-height: unset; text-align: center; padding: 10px 0px; margin: 0px; line-height: 1; transition: $transitionFast; cursor: pointer; 
+				border: 1px solid $colorBorderDark; border-radius: 12px; flex-direction: row; justify-content: center;
+			}
             .card.add {
                 .icon { vertical-align: top; }
             }
@@ -27,6 +59,10 @@
 
 			.cellContent {
 				.name:empty { display: none; }
+			}
+
+			.card.isTask {
+				.cellContent.c-name { display: flex; }
 			}
         }
     }

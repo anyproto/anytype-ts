@@ -259,17 +259,16 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 	
 	componentDidMount () {
 		const { id, param } = this.props;
-		const { onOpen } = param;
+		const { initialTab, onOpen } = param;
 
 		this._isMounted = true;
 
 		this.setClass();
 		this.position();
 		this.animate();
-		this.unbind();
+		this.rebind();
 		this.setActive();
 		
-		const win = $(window);
 		const obj = $(`#${this.getId()}`);
 		const el = this.getElement();
 
@@ -281,7 +280,9 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 			obj.css({ height: param.height });
 		};
 
-		win.on('resize.' + this.getId(), () => { this.position(); });
+		if (initialTab) {
+			this.onTab(initialTab);
+		};
 
 		if (onOpen) {
 			onOpen(this);
@@ -303,7 +304,6 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 		};
 
 		menu.addClass('show').css({ transform: 'none' });
-
 		this.position();
 	};
 
@@ -353,6 +353,11 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 
 		node.attr({ class: cn.join(' ') });
 	};
+
+	rebind () {
+		this.unbind();
+		$(window).on('resize.' + this.getId(), () => { this.position(); });
+	};
 	
 	unbind () {
 		$(window).unbind('resize.' + this.getId());
@@ -389,7 +394,6 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 	position () {
 		const { id, param } = this.props;
 		const { element, recalcRect, type, vertical, horizontal, fixedX, fixedY, isSub, noFlipX, noFlipY, withArrow } = param;
-		const platform = Util.getPlatform();
 
 		raf(() => {
 			if (!this._isMounted) {
@@ -415,10 +419,6 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 			let ox = 0;
 			let oy = 0;
 			let minY = Util.sizeHeader();
-
-			if (platform == I.Platform.Windows) {
-				minY += 30;
-			};
 
 			if (rect) {
 				ew = Number(rect.width) || 0;
@@ -494,6 +494,7 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 			};
 
 			if (isFixed) {
+				oy -= scrollTop;
 				y -= scrollTop;
 			};
 
@@ -537,10 +538,7 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 				});
 
 				window.clearTimeout(this.timeoutPoly);
-				this.timeoutPoly = window.setTimeout(() => { 
-					win.trigger('mousemove');
-					poly.hide(); 
-				}, 500);
+				this.timeoutPoly = window.setTimeout(() => { poly.hide(); }, 500);
 			};
 
 			// Arrow positioning
@@ -620,7 +618,7 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 		keyboard.disableMouse(true);
 
 		const { param } = this.props;
-		const { commonFilter } = param;
+		const { commonFilter, isSub } = param;
 		const refInput = this.ref.refFilter || this.ref.refName;
 
 		let ret = false;
@@ -734,14 +732,9 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 		};
 
 		if (this.ref && this.ref.onSortEnd) {
-			keyboard.shortcut('shift+arrowup', e, (pressed: string) => {
+			keyboard.shortcut('shift+arrowup, shift+arrowdown', e, (pressed: string) => {
 				e.preventDefault();
-				this.onSortMove(-1);
-			});
-
-			keyboard.shortcut('shift+arrowdown', e, (pressed: string) => {
-				e.preventDefault();
-				this.onSortMove(1);
+				this.onSortMove(pressed.match('arrowup') ? -1 : 1);
 			});
 		};
 
@@ -806,7 +799,7 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 
 		const node = $(ReactDOM.findDOMNode(this));
 		const menu = node.find('.menu');
-
+		
 		menu.find('.item.hover').removeClass('hover');
 
 		if (!item) {
@@ -840,8 +833,8 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 		};
 	};
 
-	onTab (id: string) {
-		this.setState({ tab: id });
+	onTab (tab: string) {
+		this.setState({ tab });
 	};
 
 	getId (): string {

@@ -8,7 +8,6 @@ import { observer } from 'mobx-react';
 import { observable } from 'mobx';
 import arrayMove from 'array-move';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCache } from 'react-virtualized';
-import 'react-virtualized/styles.css';
 
 interface Props extends I.Menu {};
 
@@ -40,7 +39,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<Props> 
 		const { data } = param;
 		const { getData, rootId, blockId } = data;
 		const items = this.getItems();
-		const allowed = blockStore.isAllowed(rootId, blockId, [ I.RestrictionDataview.View ]);
+		const allowed = blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
 
 		const Handle = SortableHandle(() => (
 			<Icon className="dnd" />
@@ -272,7 +271,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<Props> 
 		const { param, getId } = this.props;
 		const { data } = param;
 		const { rootId, blockId } = data;
-		const allowed = blockStore.isAllowed(rootId, blockId, [ I.RestrictionDataview.View ]);
+		const allowed = blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
 
 		menuStore.open('dataviewViewEdit', { 
 			element: `#${getId()} #item-${item.id}`,

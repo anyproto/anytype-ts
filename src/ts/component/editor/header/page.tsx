@@ -12,7 +12,7 @@ interface Props extends RouteComponentProps<any> {
 	readonly: boolean;
 	onKeyDown?(e: any, text: string, marks: I.Mark[], range: I.TextRange): void;
 	onKeyUp?(e: any, text: string, marks: I.Mark[], range: I.TextRange): void;
-	onMenuAdd? (id: string, text: string, range: I.TextRange): void;
+	onMenuAdd? (id: string, text: string, range: I.TextRange, marks: I.Mark[]): void;
 	onPaste?(e: any): void;
 	onResize?(v: number): void;
 	getWrapper?(): any;
@@ -33,12 +33,11 @@ const EditorHeaderPage = observer(class EditorHeaderPage extends React.Component
 		this.onScaleMove = this.onScaleMove.bind(this);
 		this.onScaleEnd = this.onScaleEnd.bind(this);
 		this.onClone = this.onClone.bind(this);
-	}
+	};
 
 	render (): any {
 		const { rootId, onKeyDown, onKeyUp, onMenuAdd, onPaste, readonly } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
-		const { config } = commonStore;
 
 		if (!root) {
 			return null;

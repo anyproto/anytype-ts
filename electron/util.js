@@ -9,6 +9,7 @@ class Util {
             method = 'info';
         };
         log[method](text);
+        console.log(text);
     };
 
 };

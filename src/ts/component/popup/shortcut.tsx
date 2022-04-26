@@ -104,12 +104,6 @@ class PopupShortcut extends React.Component<Props, State> {
 				{
 					name: 'Basics', children: [
 						{ mac: '&#8984; + N',			 com: 'Ctrl + N',			 name: 'Create a new page on the dashboard' },
-						{ mac: '&#8984; + O',			 com: 'Ctrl + O',			 name: 'Open the navigation pane' },
-						{ mac: '&#8984; + Option + O',	 com: 'Ctrl + Alt + O',		 name: 'Open the graph pane' },
-						{ mac: '&#8984; + S',			 com: 'Ctrl + S',			 name: 'Open the search pane' },
-						{ mac: '&#8984; + Enter',		 com: 'Alt + H',			 name: 'Return to the home screen' },
-						{ mac: '&#8984; + [',			 com: 'Alt + ←',			 name: 'Show the previous page from history' },
-						{ mac: '&#8984; + ]',			 com: 'Alt + →',			 name: 'Show the next page from history' },
 						{ mac: '&#8984; + Z',			 com: 'Ctrl + Z',			 name: 'Undo' },
 						{ mac: '&#8984; + Shift + Z',	 com: 'Ctrl + Shift + Z',	 name: 'Redo' },
 						{ mac: '&#8984; + P',			 com: 'Ctrl + P',			 name: 'Print' },
@@ -169,6 +163,17 @@ class PopupShortcut extends React.Component<Props, State> {
 			],
 
 			navigation: [
+				{
+					name: 'Basics', children: [
+						{ mac: '&#8984; + O',			 com: 'Ctrl + O',			 name: 'Open the navigation pane' },
+						{ mac: '&#8984; + Option + O',	 com: 'Ctrl + Alt + O',		 name: 'Open the graph pane' },
+						{ mac: '&#8984; + S',			 com: 'Ctrl + S',			 name: 'Open the search pane' },
+						{ mac: '&#8984; + Enter',		 com: 'Alt + H',			 name: 'Return to the home screen' },
+						{ mac: '&#8984; + [',			 com: 'Alt + ←',			 name: 'Show the previous page from history' },
+						{ mac: '&#8984; + ]',			 com: 'Alt + →',			 name: 'Show the next page from history' },
+					]
+				},
+
 				{
 					name: 'Menu, search and navigation pane', children: [
 						{ com: '↓ or Tab',			 name: 'Go the next option' },

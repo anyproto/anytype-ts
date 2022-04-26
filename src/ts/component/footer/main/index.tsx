@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Icon } from 'ts/component';
-import { I } from 'ts/lib';
+import { I, Util } from 'ts/lib';
 import { menuStore } from 'ts/store';
 
 interface Props extends RouteComponentProps<any>  {};
@@ -20,6 +20,14 @@ class FooterMainIndex extends React.Component<Props, {}> {
 				<Icon id="button-help" className="help" tooltip="Help" tooltipY={I.MenuDirection.Top} onClick={this.onHelp} />
 			</div>
 		);
+	};
+
+	componentDidMount () {
+		Util.resizeSidebar();
+	};
+
+	componentDidUpdate () {
+		Util.resizeSidebar();	
 	};
 
 	onHelp () {

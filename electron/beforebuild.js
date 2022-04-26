@@ -10,5 +10,10 @@ exports.default = async function(context){
 	};
 
     const folder = arch == 'arm64' ? 'darwin-arm' : 'darwin-amd';
-    fs.renameSync('./' + folder, './build', function (err) {});
+	if (fs.existsSync('./' + folder)) {
+		fs.renameSync('./' + folder, './build', function (err) {
+		});
+	} else {
+		console.log('arch-specific folder not found');
+	}
 };

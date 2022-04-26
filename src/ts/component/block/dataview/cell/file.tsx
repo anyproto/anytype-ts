@@ -42,10 +42,6 @@ const CellFile = observer(class CellFile extends React.Component<Props, State> {
 		const cn = [ 'wrap' ];
 		const length = value.length;
 
-		if (length >= 3) {
-			cn.push('columns'); 
-		};
-
 		if (arrayLimit) {
 			value = value.slice(0, arrayLimit);
 		};

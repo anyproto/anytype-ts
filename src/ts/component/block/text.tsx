@@ -6,15 +6,14 @@ import { I, C, keyboard, Key, Util, DataUtil, Mark, focus, Storage, translate, a
 import { observer } from 'mobx-react';
 import { getRange } from 'selection-ranges';
 import { commonStore, blockStore, detailStore, menuStore } from 'ts/store';
+import { throttle } from 'lodash';
 import * as Prism from 'prismjs';
-import 'prismjs/themes/prism.css';
 
 interface Props extends I.BlockComponent, RouteComponentProps<any> {
 	index?: any;
 	onToggle?(e: any): void;
 };
 
-const { ipcRenderer } = window.require('electron');
 const Constant = require('json/constant.json');
 const $ = require('jquery');
 const raf = require('raf');
@@ -64,6 +63,8 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		this.onPaste = this.onPaste.bind(this);
 		this.onInput = this.onInput.bind(this);
 		this.onToggleWrap = this.onToggleWrap.bind(this);
+		this.onSelectIcon = this.onSelectIcon.bind(this);
+		this.onUploadIcon = this.onUploadIcon.bind(this);
 
 		this.onCompositionStart = this.onCompositionStart.bind(this);
 		this.onCompositionEnd = this.onCompositionEnd.bind(this);
@@ -72,7 +73,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 	render () {
 		const { rootId, block, readonly, index } = this.props;
 		const { id, fields, content } = block;
-		const { text, marks, style, checked, color } = content;
+		const { text, marks, style, checked, color, iconEmoji, iconImage } = content;
 		const root = blockStore.getLeaf(rootId, rootId);
 		const footer = blockStore.getMapElement(rootId, Constant.blockId.footer);
 
@@ -91,7 +92,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 				const object = detailStore.get(rootId, mark.param, []);
 			};
 		};
-		
+
 		switch (style) {
 			case I.TextStyle.Title:
 				placeholder = DataUtil.defaultName('page');
@@ -105,9 +106,16 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 				placeholder = 'Add a description';
 				break;
 
-			case I.TextStyle.Quote:
+			case I.TextStyle.Callout:
 				additional = (
-					<div className="line" />
+					<IconObject 
+						id={`block-${id}-icon`}
+						object={{ iconEmoji: (iconImage ? '' : (iconEmoji || ':bulb:')), iconImage }} 
+						canEdit={!readonly} 
+						onSelect={this.onSelectIcon} 
+						onUpload={this.onUploadIcon}
+						noRemove={true}
+					/>
 				);
 				break;
 				
@@ -297,6 +305,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		const value = node.find('#value');
 		const items = value.find('lnk');
 		const self = this;
+		const renderer = Util.getRenderer();
 
 		if (!items.length) {
 			return;
@@ -311,7 +320,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 
 			el.unbind('click.link').on('click.link', function (e: any) {
 				e.preventDefault();
-				ipcRenderer.send('urlOpen', $(this).attr('href'));
+				renderer.send('urlOpen', $(this).attr('href'));
 			});
 			
 			Util.previewShow($(this), {
@@ -727,6 +736,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		};
 		
 		focus.set(id, range);
+
 		if (!keyboard.isSpecial(k)) {
 			this.placeholderHide();
 		};
@@ -822,9 +832,9 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		};
 
 		// Open add menu
-		if (canOpenMenuAdd) {
+		if (canOpenMenuAdd) { 
 			DataUtil.blockSetText(rootId, block, value, this.marks, true, () => {
-				onMenuAdd(id, Util.stringCut(value, range.from - 1, range.from), range);
+				onMenuAdd(id, Util.stringCut(value, range.from - 1, range.from), range, this.marks);
 			});
 			return;
 		};
@@ -999,6 +1009,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		const { rootId, block } = this.props;
 		const { content } = block;
 		const value = this.getValue();
+		const check = Storage.get('writing');
 
 		if (content.style == I.TextStyle.Code) {
 			marks = [];
@@ -1018,7 +1029,10 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 				callBack();
 			};
 
-			analytics.event('Writing');
+			if (!check) {
+				analytics.event('Writing');
+				Storage.set('writing', 1);
+			};
 		});
 	};
 	
@@ -1149,7 +1163,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		menuStore.closeAll([ 'blockAdd', 'blockMention' ]);
 
 		this.timeoutContext = window.setTimeout(() => {
-			const pageContainer = $(isPopup ? '#popupPage #innerWrap' : '.page.isFull');
+			const pageContainer = $(isPopup ? '#popupPage #innerWrap' : '#page.isFull');
 
 			pageContainer.unbind('click.context').on('click.context', () => { 
 				pageContainer.unbind('click.context');
@@ -1201,7 +1215,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			e.stopPropagation();
 			
 			this.clicks = 0;
-			selection.set([ id ]);
+			selection.set(I.SelectType.Block, [ id ]);
 			menuStore.close('blockContext');
 			window.clearTimeout(this.timeoutContext);
 		};
@@ -1210,6 +1224,18 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 	onMouseUp (e: any) {
 		window.clearTimeout(this.timeoutClick);
 		this.timeoutClick = window.setTimeout(() => { this.clicks = 0; }, 300);
+	};
+
+	onSelectIcon (icon: string) {
+		const { rootId, block } = this.props;
+		
+		C.BlockSetTextIcon(rootId, block.id, icon, '');
+	};
+
+	onUploadIcon (hash: string) {
+		const { rootId, block } = this.props;
+
+		C.BlockSetTextIcon(rootId, block.id, '', hash);
 	};
 	
 	placeholderCheck () {
@@ -1253,7 +1279,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 
 		return range ? { from: range.start, to: range.end } : null;
 	};
-	
+
 });
 
 export default BlockText;

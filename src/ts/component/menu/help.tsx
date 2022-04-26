@@ -5,7 +5,6 @@ import { popupStore, blockStore, detailStore } from 'ts/store';
 
 interface Props extends I.Menu {};
 
-const { ipcRenderer } = window.require('electron');
 const Url = require('json/url.json');
 const Constant = require('json/constant.json');
 
@@ -38,15 +37,14 @@ class MenuHelp extends React.Component<Props, {}> {
 
 	onClick (e: any, item: any) {
 		const { getId, close } = this.props;
+		const renderer = Util.getRenderer();
 
 		close();
 		analytics.event(Util.toUpperCamelCase([ getId(), item.id ].join('-')));
 
 		switch (item.id) {
 			case 'whatsNew':
-				popupStore.open('help', {
-					data: { document: item.document },
-				});
+				popupStore.open('help', { data: { document: item.document } });
 				break;
 
 			case 'shortcut':
@@ -54,15 +52,15 @@ class MenuHelp extends React.Component<Props, {}> {
 				break;
 
 			case 'feedback':
-				ipcRenderer.send('urlOpen', Url.feedback);
+				renderer.send('urlOpen', Url.feedback);
 				break;
 
 			case 'community':
-				ipcRenderer.send('urlOpen', Url.community);
+				renderer.send('urlOpen', Url.community);
 				break;
 
 			case 'tutorial':
-				ipcRenderer.send('urlOpen', Url.docs);
+				renderer.send('urlOpen', Url.docs);
 				break;
 
 			case 'hints':

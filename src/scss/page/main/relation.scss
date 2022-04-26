@@ -14,7 +14,7 @@
 				.button:last-child { margin: 0px; }
 			}
 
-			.title { @include text-header1; }
+			.title { @include text-header1; word-break: break-word; }
 			.descr { @include text-paragraph; margin: 7px 0px; }
 			.descr:empty { display: none; }
 		}
@@ -80,4 +80,4 @@
 	}
 }
 
-.pageMainRelation > .loaderWrapper { position: fixed; left: 0px; top: 0px; width: 100%; height: 100%; }
+.pageMainRelation > #loader { position: fixed; top: 0px; width: 100%; height: 100%; }

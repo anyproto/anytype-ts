@@ -1,6 +1,5 @@
 import { I, C, M, keyboard, crumbs, translate, Util, history as historyPopup, Storage, analytics, Relation } from 'ts/lib';
-import { commonStore, blockStore, detailStore, dbStore, popupStore } from 'ts/store';
-import { authStore } from '../store';
+import { commonStore, blockStore, detailStore, dbStore, popupStore, authStore } from 'ts/store';
 
 const Constant = require('json/constant.json');
 const Errors = require('json/error.json');
@@ -37,23 +36,7 @@ class DataUtil {
 	};
 
 	textClass (v: I.TextStyle): string {
-		let c = '';
-		switch (v) {
-			default:
-			case I.TextStyle.Paragraph:		 c = 'paragraph'; break;
-			case I.TextStyle.Header1:		 c = 'header1'; break;
-			case I.TextStyle.Header2:		 c = 'header2'; break;
-			case I.TextStyle.Header3:		 c = 'header3'; break;
-			case I.TextStyle.Quote:			 c = 'quote'; break;
-			case I.TextStyle.Code:			 c = 'code'; break;
-			case I.TextStyle.Bulleted:		 c = 'bulleted'; break;
-			case I.TextStyle.Numbered:		 c = 'numbered'; break;
-			case I.TextStyle.Toggle:		 c = 'toggle'; break;
-			case I.TextStyle.Checkbox:		 c = 'checkbox'; break;
-			case I.TextStyle.Title:			 c = 'title'; break;
-			case I.TextStyle.Description:	 c = 'description'; break;
-		};
-		return c;
+		return String(I.TextStyle[v] || 'paragraph').toLowerCase();
 	};
 	
 	styleIcon (type: I.BlockType, v: number): string {
@@ -229,13 +212,33 @@ class DataUtil {
 			{ type: I.CoverType.Color, id: 'lightgrey' },
 			{ type: I.CoverType.Color, id: 'darkgrey' },
 			{ type: I.CoverType.Color, id: 'black' },
-		];
+		].map((it: any) => {
+			it.name = translate('textColor-' + it.id);
+			return it;
+		});
+	};
+
+	coverGradients () {
+		return [
+			{ type: I.CoverType.Gradient, id: 'yellow' },
+			{ type: I.CoverType.Gradient, id: 'red' },
+			{ type: I.CoverType.Gradient, id: 'blue' },
+			{ type: I.CoverType.Gradient, id: 'teal' },
+			{ type: I.CoverType.Gradient, id: 'pinkOrange' },
+			{ type: I.CoverType.Gradient, id: 'bluePink' },
+			{ type: I.CoverType.Gradient, id: 'greenOrange' },
+			{ type: I.CoverType.Gradient, id: 'sky' },
+		].map((it: any) => {
+			it.name = translate('gradientColor-' + it.id);
+			return it;
+		});
 	};
 
 	threadColor (s: I.ThreadStatus) {
 		let c = '';
 		switch (s) {
 			case I.ThreadStatus.Failed:
+			case I.ThreadStatus.Disabled:
 			case I.ThreadStatus.Offline: c = 'red'; break;
 			case I.ThreadStatus.Syncing: c = 'orange'; break;
 			case I.ThreadStatus.Synced: c = 'green'; break;
@@ -262,11 +265,11 @@ class DataUtil {
 			return [];
 		};
 		
-		let ids: string[] = selection.get(withChildren);
+		let ids: string[] = selection.get(I.SelectType.Block, withChildren);
 		if (id && ids.indexOf(id) < 0) {
 			selection.clear(true);
-			selection.set([ id ]);
-			ids = selection.get(withChildren);
+			selection.set(I.SelectType.Block, [ id ]);
+			ids = selection.get(I.SelectType.Block, withChildren);
 		};
 		return ids;
 	};
@@ -282,6 +285,8 @@ class DataUtil {
 			};
 
 			commonStore.gatewaySet(message.gatewayUrl);
+			commonStore.sidebarInit();
+
 			analytics.device(message.deviceId);
 			analytics.profile(authStore.account);
 			analytics.event('OpenAccount');
@@ -294,6 +299,10 @@ class DataUtil {
 			C.ObjectTypeList((message: any) => {
 				dbStore.objectTypesSet(message.objectTypes);
 			});
+
+			C.ObjectSearchSubscribe(Constant.subIds.deleted, [
+				{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: true }
+			], [], [ 'id', 'isDeleted' ], [], 0, 0, true, '', '', true);
 			
 			if (profile) {
 				C.ObjectIdsSubscribe(Constant.subIds.profile, [ profile ], Constant.defaultRelationKeys, true, (message: any) => {
@@ -335,12 +344,10 @@ class DataUtil {
 	};
 
 	objectOpenEvent (e: any, object: any, popupParam?: any) {
-		const { root } = blockStore;
-
 		e.preventDefault();
 		e.stopPropagation();
 
-		if ((e.shiftKey || e.ctrlKey || e.metaKey || popupStore.isOpen('page'))) {
+		if ((e.shiftKey || popupStore.isOpen('page'))) {
 			this.objectOpenPopup(object, popupParam);
 		} else {
 			this.objectOpen(object);
@@ -506,13 +513,20 @@ class DataUtil {
 	};
 	
 	menuGetBlockText () {
-		return [
+		const { config } = commonStore;
+		const ret: any[] = [
 			{ id: I.TextStyle.Paragraph, lang: 'Paragraph' },
 			{ id: I.TextStyle.Header1, lang: 'Header1', aliases: [ 'h1', 'head1' ] },
 			{ id: I.TextStyle.Header2, lang: 'Header2', aliases: [ 'h2', 'head2' ] },
 			{ id: I.TextStyle.Header3, lang: 'Header3', aliases: [ 'h3', 'head3' ] },
 			{ id: I.TextStyle.Quote, lang: 'Quote' },
-		].map((it: any) => {
+		];
+		
+		if (config.experimental) {
+			ret.push({ id: I.TextStyle.Callout, lang: 'Callout' });
+		};
+		
+		return ret.map((it: any) => {
 			it.type = I.BlockType.Text;
 			it.icon = this.textClass(it.id);
 			return this.menuMapperBlock(it);
@@ -534,7 +548,7 @@ class DataUtil {
 
 	menuGetBlockMedia () {
 		const { config } = commonStore;
-		const ret: any[] = [
+		const ret = [
 			{ type: I.BlockType.File, id: I.FileType.File, icon: 'file', lang: 'File' },
 			{ type: I.BlockType.File, id: I.FileType.Image, icon: 'image', lang: 'Image' },
 			{ type: I.BlockType.File, id: I.FileType.Video, icon: 'video', lang: 'Video' },
@@ -547,8 +561,8 @@ class DataUtil {
 
 		if (config.experimental) {
 			ret.push({ type: I.BlockType.Table, id: I.BlockType.Table, icon: 'table', lang: 'SimpleTable' });
-			ret.push({ type: I.BlockType.TableOfContents, id: I.BlockType.TableOfContents, icon: 'latex', lang: 'TableOfContents' });
 		};
+
 		return ret.map(this.menuMapperBlock);
 	};
 
@@ -619,6 +633,7 @@ class DataUtil {
 		return [
 			{ type: I.BlockType.Div, id: I.DivStyle.Line, icon: 'div-line', lang: 'Line' },
 			{ type: I.BlockType.Div, id: I.DivStyle.Dot, icon: 'dot', lang: 'Dot' },
+			{ type: I.BlockType.TableOfContents, id: I.BlockType.TableOfContents, icon: 'tableOfContents', lang: 'TableOfContents', aliases: [ 'tc', 'toc' ] }
 		].map(this.menuMapperBlock);
 	};
 
@@ -676,7 +691,6 @@ class DataUtil {
 
 	// Action menu
 	menuGetActions (hasFile: boolean, hasLink: boolean, hasTable: boolean) {
-		let { config } = commonStore;
 		let cmd = keyboard.ctrlSymbol();
 		let items: any[] = [
 			{ id: 'move', icon: 'move', name: 'Move to', arrow: true },
@@ -789,6 +803,7 @@ class DataUtil {
 
 	menuGetRelationTypes () {
 		return [
+			{ id: I.RelationType.Object },
 			{ id: I.RelationType.LongText },
 			{ id: I.RelationType.Number },
 			{ id: I.RelationType.Status },
@@ -799,7 +814,6 @@ class DataUtil {
 			{ id: I.RelationType.Url },
 			{ id: I.RelationType.Email },
 			{ id: I.RelationType.Phone },
-			{ id: I.RelationType.Object },
 		].map((it: any) => {
 			it.name = translate('relationName' + it.id);
 			it.icon = 'relation ' + this.relationClass(it.id);
@@ -809,11 +823,11 @@ class DataUtil {
 	
 	menuSectionsFilter (sections: any[], filter: string) {
 		const f = Util.filterFix(filter);
-		const regS = new RegExp('/^' + f + '/', 'gi');
+		const regS = new RegExp('^' + f, 'gi');
 		const regC = new RegExp(f, 'gi');
 		const getWeight = (s: string) => {
 			let w = 0;
-			if (s == f) {
+			if (s.toLowerCase() == f.toLowerCase()) {
 				w = 10000;
 			} else
 			if (s.match(regS)) {
@@ -940,7 +954,7 @@ class DataUtil {
 		return Util.arrayUniqueObjects(ret, 'relationKey');
 	};
 
-	dataviewRelationAdd (rootId: string, blockId: string, relation: any, view?: I.View, callBack?: (message: any) => void) {
+	dataviewRelationAdd (rootId: string, blockId: string, relation: any, index: number, view?: I.View, callBack?: (message: any) => void) {
 		relation = new M.Relation(relation);
 
 		C.BlockDataviewRelationAdd(rootId, blockId, relation, (message: any) => {
@@ -956,7 +970,11 @@ class DataUtil {
 				relation.isVisible = true;
 				relation.width = Relation.width(0, relation.format);
 
-				view.relations.push(relation);
+				if (index >= 0) {
+					view.relations.splice(index, 0, relation);
+				} else {
+					view.relations.push(relation);
+				};
 			};
 
 			if (callBack) {
@@ -1160,7 +1178,7 @@ class DataUtil {
 		if (layout == I.ObjectLayout.Note) {
 			fields.withIcon = false;
 			fields.withCover = false;
-			fields.withDescription = false;
+			fields.description = I.LinkDescription.None;
 			fields.iconSize = I.LinkIconSize.Small;
 		};
 
@@ -1178,6 +1196,9 @@ class DataUtil {
 		const viewChange = id != viewId;
 		const meta: any = { offset: offset };
 		const block = blockStore.getLeaf(rootId, blockId);
+		const filters = view.filters.concat([
+			{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
+		]);
 
 		if (viewChange) {
 			meta.viewId = id;
@@ -1187,8 +1208,22 @@ class DataUtil {
 		};
 
 		dbStore.metaSet(subId, '', meta);
-		C.ObjectSearchSubscribe(subId, view.filters, view.sorts, keys, block.content.sources, '', offset, limit, true, '', '');
+		C.ObjectSearchSubscribe(subId, filters, view.sorts, keys, block.content.sources, offset, limit, true, '', '', false);
 	};
+
+	coverIsImage (type: I.CoverType) {
+		return [ I.CoverType.Upload, I.CoverType.Image, I.CoverType.Source ].includes(type);
+	};
+
+	isFileType (type: string) {
+		return [ 
+			Constant.typeId.file, 
+			Constant.typeId.image, 
+			Constant.typeId.audio, 
+			Constant.typeId.video,
+		].includes(type);
+	};
+
 };
 
 export default new DataUtil();

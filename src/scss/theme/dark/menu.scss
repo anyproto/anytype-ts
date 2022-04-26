@@ -38,7 +38,7 @@
         .line { background: $colorLineSecondary; }
         .section::after { background: $colorLineSecondary; }
 
-        .item { background: $colorBgLight; }
+        .item { background: none; }
         .item.hover::before { background: $colorHover; }
         .item {
             .icon.delete:hover, .icon.more:hover { background-color: $colorHover; }
@@ -116,6 +116,7 @@
 
     .menu.menuBlockRelationEdit {
         .input { border-color: $colorLinePrimary; }
+        .item:hover::before { background: $colorHover; }
     }
 
      /* MenuDataviewRelationEdit */
@@ -181,6 +182,10 @@
     .menu.menuThreadList {
         .item { border-color: $colorLineSecondary; }
         .item:hover::before { background: $colorHover; }
+
+        .item {
+            .icon.cafe { background-image: url('#{$themePath}/icon/cafe.svg'); }
+        }
     }
 
     /* MenuBlockMore */

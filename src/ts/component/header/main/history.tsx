@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Icon } from 'ts/component';
 import { C, Util, DataUtil, I, translate, analytics } from 'ts/lib';
@@ -50,11 +51,11 @@ const HeaderMainHistory = observer(class HeaderMainHistory extends React.Compone
 	};
 
 	componentDidMount () {
-		this.resize();
+		Util.resizeSidebar();
 	};
 
 	componentDidUpdate () {
-		this.resize();
+		Util.resizeSidebar();	
 	};
 
 	onBack (e: any) {
@@ -84,16 +85,6 @@ const HeaderMainHistory = observer(class HeaderMainHistory extends React.Compone
 
 	setVersion (version: I.HistoryVersion) {
 		this.setState({ version });
-	};
-
-	resize () {
-		const { isPopup } = this.props;
-		const { sidebar } = commonStore;
-		const { width } = sidebar;
-
-		if (!isPopup) {
-			Util.resizeHeaderFooter(width);
-		};
 	};
 
 });

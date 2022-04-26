@@ -3,7 +3,7 @@
 .blocks {
 	.block.blockText { font-size: 16px; line-height: 24px; letter-spacing: 0.08px; font-weight: 400; word-wrap: break-word; }
 	.block.blockText {
-		.value { -webkit-user-modify: read-write-plaintext-only; width: 100%; overflow: hidden; }
+		.value { -webkit-user-modify: read-write-plaintext-only; width: 100%; overflow: hidden; position: relative; z-index: 1; }
 
 		.placeholder { display: none; }
 
@@ -16,7 +16,7 @@
 		smile {
 			img { position: static !important; left: auto !important; top: auto !important; margin: 0px !important; vertical-align: middle; }
 		}
-		smile * { display: inline; }
+		smile * { display: inline; vertical-align: middle; }
 		smile .loaderWrapper { display: inline-block; }
 
 		emoji { display: inline; user-select: all; }
@@ -32,6 +32,10 @@
 		lnk::after {
 			content: ""; display: inline-block; background-image: url('~img/icon/link.svg'); background-repeat: no-repeat;
 			width: 14px; height: 14px; vertical-align: middle; margin: 0px 0px 4px 4px;
+		}
+
+		lnk, obj {
+			underline { text-decoration: none; }
 		}
 
 		mention { cursor: pointer; white-space: nowrap; display: inline; user-select: all; }
@@ -84,6 +88,8 @@
 		}
 	}
 
+	.block.blockText > .wrapContent > .selectable.isSelectionSelected::after { z-index: 0; }
+
 	.block.blockText > .wrapContent > .selectable > .dropTarget > .flex > .wrap { flex: auto; position: relative; padding: 0px; width: 100%; }	
 
 	.block.blockText > .wrapContent > .selectable > .dropTarget .value.isFocused { background: none; }
@@ -126,8 +132,8 @@
 	.block.blockText.quote { padding: 6px 0px 6px 0px; }
 	.block.blockText.quote > .wrapContent > .selectable > .dropTarget { @include text-quote; padding: 2px 0px 3px 0px; }
 	.block.blockText.quote > .wrapContent > .selectable > .dropTarget mention .space { width: 5px; height: 26px; }
-	.block.blockText.quote > .wrapContent > .selectable > .dropTarget > .flex > .additional > .line { 
-		width: 0px; height: calc(100% + 5px); position: absolute; left: 11px; top: -2px; border-left: 2px solid $colorOrange; 
+	.block.blockText.quote > .wrapContent > .additional > .line { 
+		width: 0px; height: 100%; position: absolute; left: 11px; top: 0px; border-left: 2px solid $colorOrange; 
 	}
 	.block.blockText.quote > .wrapContent > .selectable > .dropTarget > .flex > .wrap { padding-left: 28px; }
 	.block.blockText.quote > .wrapContent > .selectable > .dropTarget > .flex > .wrap > .placeholder { left: 28px; }
@@ -136,6 +142,18 @@
 	.block.blockText.quote.align2 > .wrapContent > .selectable > .dropTarget > .flex > .line { left: auto; right: 11px; }
 	.block.blockText.quote.align2 > .wrapContent > .selectable > .dropTarget > .flex > .wrap > .placeholder { left: auto; right: 28px; }
 	
+	.block.blockText.callout > .wrapContent { background: $colorVeryLightGrey; border-radius: 6px; padding: 16px 16px 0px 16px; margin: 6px 0px; }
+	.block.blockText.callout > .wrapContent > .children { margin-left: -14px; }
+	.block.blockText.callout > .wrapContent > .selectable > .dropTarget > .flex {
+		.additional { margin-right: 14px; }	
+		.additional {
+			.iconObject { margin-top: 2px; }
+		}
+	}
+	.block.blockText.callout > .wrapContent > .dropTarget.targetBot { display: block; height: 16px; }
+	.block.blockText.callout > .wrapContent > .dropTarget.targetBot.isOver.bottom { box-shadow: 0px -2px 0px $colorOrange inset; }
+	.block.blockText.callout.last > .wrapContent { margin-bottom: 0px; }
+
 	.block.blockText.code { padding: 6px 0px; }
 	.block.blockText.code > .wrapContent > .selectable > .dropTarget { padding: 41px 16px 16px 16px; background: rgba(247,245,240,0.5); }
 	.block.blockText.code > .wrapContent > .selectable > .dropTarget > .flex { position: static; } 
@@ -180,6 +198,22 @@
 	.block.blockText.latex > .wrapContent > .selectable > .dropTarget {
 		.katex-display { margin: 0px; }
 	}
+
+	.block.blockText.paragraph > .wrapContent > .dropTarget.targetBot,
+	.block.blockText.quote > .wrapContent > .dropTarget.targetBot,
+	.block.blockText.bulleted > .wrapContent > .dropTarget.targetBot,
+	.block.blockText.numbered > .wrapContent > .dropTarget.targetBot,
+	.block.blockText.checkbox > .wrapContent > .dropTarget.targetBot,
+	.block.blockText.toggle > .wrapContent > .dropTarget.targetBot
+	{ height: 2px; display: block; margin-bottom: -2px; }
+
+	.block.blockText.paragraph > .wrapContent > .dropTarget.targetBot.isOver.bottom,
+	.block.blockText.quote > .wrapContent > .dropTarget.targetBot.isOver.bottom,
+	.block.blockText.bulleted > .wrapContent > .dropTarget.targetBot.isOver.bottom,
+	.block.blockText.numbered > .wrapContent > .dropTarget.targetBot.isOver.bottom,
+	.block.blockText.checkbox > .wrapContent > .dropTarget.targetBot.isOver.bottom,
+	.block.blockText.toggle > .wrapContent > .dropTarget.targetBot.isOver.bottom
+	{ box-shadow: 0px -2px 0px $colorOrange inset; }
 
 	.block.blockText.paragraph > .wrapContent.bgColor > .selectable > .dropTarget, 
 	.block.blockText.header1 > .wrapContent.bgColor > .selectable > .dropTarget,

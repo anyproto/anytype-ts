@@ -24,6 +24,14 @@ class FooterAuth extends React.Component<Props, {}> {
 		);
 	};
 
+	componentDidMount () {
+		Util.resizeSidebar();
+	};
+
+	componentDidUpdate () {
+		Util.resizeSidebar();	
+	};
+
 	onHelp () {
 		menuStore.open('help', {
 			element: '#button-help',

@@ -13,7 +13,7 @@ const $ = require('jquery');
 
 const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React.Component<Props, {}> {
 
-	format: I.RelationType = I.RelationType.LongText;
+	format: I.RelationType = null;
 	objectTypes: string[] = [];
 	ref: any = null;
 	
@@ -40,7 +40,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		const isObject = this.format == I.RelationType.Object;
 		const type = this.objectTypes.length ? this.objectTypes[0] : '';
 		const objectType = dbStore.getObjectType(type);
-		const allowed = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Relation ]);
+		const allowed = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
 		const canDelete = allowed && relation && Constant.systemRelationKeys.indexOf(relation.relationKey) < 0;
 		const isReadonly = this.isReadonly();
 
@@ -130,10 +130,10 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 					<div className="name">Relation type</div>
 					<MenuItemVertical 
 						id="relation-type" 
-						icon={'relation ' + DataUtil.relationClass(this.format)} 
-						readonly={isReadonly}
-						name={translate('relationName' + this.format)} 
+						icon={this.format === null ? undefined : 'relation ' + DataUtil.relationClass(this.format)} 
+						name={this.format === null ? 'Select relation type' : translate('relationName' + this.format)} 
 						onMouseEnter={this.onRelationType} 
+						readonly={isReadonly}
 						arrow={!relation}
 					/>
 				</div>
@@ -148,7 +148,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 					</div>
 				) : ''}
 
-				{relation && (allowed || !isReadonly) ? (
+				{relation && (allowed || canDelete) ? (
 					<div className="section">
 						{/*<MenuItemVertical icon="expand" name="Open as object" onClick={this.onOpen} onMouseEnter={this.menuClose} />*/}
 						{allowed ? <MenuItemVertical icon="copy" name="Duplicate" onClick={this.onCopy} onMouseEnter={this.menuClose} /> : ''}
@@ -159,7 +159,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		);
 	};
 
-	componentDidMount() {
+	componentDidMount () {
 		const { param } = this.props;
 		const { data } = param;
 		const { filter } = data;
@@ -183,6 +183,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 	componentDidUpdate () {
 		this.checkButton();
 		this.focus();
+		this.props.position();
 	};
 
 	componentWillUnmount () {
@@ -234,7 +235,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		const { data } = param;
 		const { rootId, readonly } = data;
 		const relation = this.getRelation();
-		const allowed = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Relation ]);
+		const allowed = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
 
 		return readonly || !allowed || (relation && relation.isReadonlyRelation);
 	};

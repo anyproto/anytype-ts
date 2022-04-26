@@ -182,6 +182,14 @@ const AccountStop = (removeData: boolean, callBack?: (message: any) => void) => 
 	dispatcher.request('accountStop', request, callBack);
 };
 
+const AccountDelete = (revert: boolean, callBack?: (message: any) => void) => {
+	const request = new Rpc.Account.Delete.Request();
+	
+	request.setRevert(revert);
+
+	dispatcher.request('accountDelete', request, callBack);
+};
+
 const ExternalDropFiles = (contextId: string, targetId: string, position: I.BlockPosition, paths: string[], callBack?: (message: any) => void) => {
 	const request = new Rpc.ExternalDrop.Files.Request();
 	
@@ -357,6 +365,17 @@ const BlockSetTextChecked = (contextId: string, blockId: string, checked: boolea
 	request.setChecked(checked);
 
 	dispatcher.request('blockSetTextChecked', request, callBack);
+};
+
+const BlockSetTextIcon = (contextId: string, blockId: string, iconEmoji: string, iconImage: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Block.Set.Text.Icon.Request();
+	
+	request.setContextid(contextId);
+	request.setBlockid(blockId);
+	request.setIconemoji(iconEmoji);
+	request.setIconimage(iconImage);
+
+	dispatcher.request('blockSetTextIcon', request, callBack);
 };
 
 const BlockSetLatexText = (contextId: string, blockId: string, text: string, callBack?: (message: any) => void) => {
@@ -964,17 +983,16 @@ const OnSubscribe = (subId: string, keys: string[], message: any) => {
 	dbStore.recordsSet(subId, '', message.records.map((it: any) => { return { id: it.id }; }));
 };
 
-const ObjectSearchSubscribe = (subId: string, filters: I.Filter[], sorts: I.Sort[], keys: string[], sources: string[], fullText: string, offset: number, limit: number, ignoreWorkspace: boolean, afterId: string, beforeId: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Object.SearchSubscribe.Request();
+const ObjectSearchSubscribe = (subId: string, filters: I.Filter[], sorts: I.Sort[], keys: string[], sources: string[], offset: number, limit: number, ignoreWorkspace: boolean, afterId: string, beforeId: string, noDeps: boolean, callBack?: (message: any) => void) => {
+	if (!subId) {
+		console.error('[ObjectSearchSubscribe] subId is empty');
+	};
 
-	filters = filters.concat([
-		{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
-	]);
+	const request = new Rpc.Object.SearchSubscribe.Request();
 
 	request.setSubid(subId);
 	request.setFiltersList(filters.map(Mapper.To.Filter));
 	request.setSortsList(sorts.map(Mapper.To.Sort));
-	request.setFulltext(fullText);
 	request.setOffset(offset);
 	request.setLimit(limit);
 	request.setKeysList(keys);
@@ -982,6 +1000,7 @@ const ObjectSearchSubscribe = (subId: string, filters: I.Filter[], sorts: I.Sort
 	request.setIgnoreworkspace(ignoreWorkspace);
 	request.setAfterid(afterId);
 	request.setBeforeid(beforeId);
+	request.setNodepsubscription(noDeps);
 
 	const cb = (message: any) => {
 		OnSubscribe(subId, keys, message);
@@ -995,6 +1014,10 @@ const ObjectSearchSubscribe = (subId: string, filters: I.Filter[], sorts: I.Sort
 };
 
 const ObjectIdsSubscribe = (subId: string, ids: string[], keys: string[], ignoreWorkspace: boolean, callBack?: (message: any) => void) => {
+	if (!subId) {
+		console.error('[ObjectIdsSubscribe] subId is empty');
+	};
+
 	const request = new Rpc.Object.IdsSubscribe.Request();
 
 	request.setSubid(subId);
@@ -1003,6 +1026,14 @@ const ObjectIdsSubscribe = (subId: string, ids: string[], keys: string[], ignore
 	request.setIgnoreworkspace(ignoreWorkspace);
 
 	const cb = (message: any) => {
+		message.records.sort((c1: any, c2: any) => {
+			const i1 = ids.indexOf(c1.id);
+			const i2 = ids.indexOf(c2.id);
+			if (i1 > i2) return 1; 
+			if (i1 < i2) return -1;
+			return 0;
+		});
+
 		OnSubscribe(subId, keys, message);
 
 		if (callBack) {
@@ -1152,11 +1183,19 @@ const ObjectToSet = (contextId: string, sources: string[], callBack?: (message: 
 };
 
 const ObjectDuplicate = (id: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Object.ToSet.Request();
+	const request = new Rpc.Object.Duplicate.Request();
 	
 	request.setContextid(id);
 
 	dispatcher.request('objectDuplicate', request, callBack);
+};
+
+const ObjectListDuplicate = (ids: string[], callBack?: (message: any) => void) => {
+	const request = new Rpc.ObjectList.Duplicate.Request();
+	
+	request.setObjectidsList(ids);
+
+	dispatcher.request('objectListDuplicate', request, callBack);
 };
 
 const ObjectListDelete = (ids: string[], callBack?: (message: any) => void) => {
@@ -1260,6 +1299,23 @@ const WorkspaceSetIsHighlighted = (objectId: string, isHightlighted: boolean, ca
 	dispatcher.request('workspaceSetIsHighlighted', request, callBack);
 };
 
+const UnsplashSearch = (query: string, limit: number, callBack?: (message: any) => void) => {
+	const request = new Rpc.UnsplashSearch.Request();
+	
+	request.setQuery(query);
+	request.setLimit(limit);
+
+	dispatcher.request('unsplashSearch', request, callBack);
+};
+
+const UnsplashDownload = (id: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.UnsplashDownload.Request();
+	
+	request.setPictureid(id);
+
+	dispatcher.request('unsplashDownload', request, callBack);
+};
+
 export {
 	VersionGet,
 	DebugSync,
@@ -1285,6 +1341,7 @@ export {
 	AccountRecover,
 	AccountSelect,
 	AccountStop,
+	AccountDelete,
 
 	PageCreate,
 
@@ -1319,6 +1376,8 @@ export {
 
 	BlockSetTextText,
 	BlockSetTextChecked,
+	BlockSetTextIcon,
+
 	BlockSetFields,
 	BlockSetDetails,
 	BlockSetLatexText,
@@ -1398,6 +1457,7 @@ export {
 	ObjectSearchUnsubscribe,
 	ObjectDuplicate,
 	
+	ObjectListDuplicate,
 	ObjectListDelete,
 	ObjectListSetIsArchived,
 	ObjectListSetIsFavorite,
@@ -1410,4 +1470,7 @@ export {
 	WorkspaceCreate,
 	WorkspaceSelect,
 	WorkspaceSetIsHighlighted,
+
+	UnsplashSearch,
+	UnsplashDownload,
 };

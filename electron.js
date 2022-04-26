@@ -1,5 +1,5 @@
 const electron = require('electron');
-const { app, BrowserWindow, ipcMain, shell, Menu, session, Tray, nativeImage, nativeTheme } = require('electron');
+const { app, BrowserWindow, ipcMain, shell, Menu, session, Tray, nativeImage, nativeTheme, dialog } = require('electron');
 const { is, fixPathForAsarUnpack } = require('electron-util');
 const { autoUpdater } = require('electron-updater');
 const { download } = require('electron-dl');
@@ -20,7 +20,6 @@ const envPath = path.join(__dirname, 'electron', 'env.json');
 const systemVersion = process.getSystemVersion();
 const protocol = 'anytype';
 const remote = require('@electron/remote/main');
-const isDev = require('electron-is-dev');
 
 const TIMEOUT_UPDATE = 600 * 1000;
 const MIN_WIDTH = 752;
@@ -28,23 +27,22 @@ const MIN_HEIGHT = 480;
 const KEYTAR_SERVICE = 'Anytype';
 const CONFIG_NAME = 'devconfig';
 
-let env = {};
-let deeplinkingUrl;
+app.removeAsDefaultProtocolClient(protocol);
 
-if (isDev && is.windows) {
-	if (!app.isDefaultProtocolClient(protocol)) {
-		app.setAsDefaultProtocolClient(protocol, process.execPath, [ process.argv[1] ]);
+if (process.defaultApp) {
+	if (process.argv.length >= 2) {
+		app.setAsDefaultProtocolClient(protocol, process.execPath, [ path.resolve(process.argv[1]) ]);
 	};
 } else {
-	if (!app.isDefaultProtocolClient(protocol)) {
-		app.setAsDefaultProtocolClient(protocol);
-	};
+	app.setAsDefaultProtocolClient(protocol);
 };
+
 try { env = JSON.parse(fs.readFileSync(envPath)); } catch (e) {};
 
-app.setAsDefaultProtocolClient(protocol);
 remote.initialize();
 
+let env = {};
+let deeplinkingUrl = '';
 let isUpdating = false;
 let userPath = app.getPath('userData');
 let tmpPath = path.join(userPath, 'tmp');
@@ -64,8 +62,8 @@ let csp = [
 	"media-src 'self' http://*:* https://*:* data: blob: file://*",
 	"style-src 'unsafe-inline' http://localhost:* file://*",
 	"font-src data: file://*",
-	"connect-src http://localhost:* http://127.0.0.1:* ws://localhost:* https://sentry.anytype.io https://anytype.io https://api.amplitude.com/ devtools://devtools data:",
-	"script-src-elem file: http://localhost:* https://sentry.io devtools://devtools 'unsafe-inline'",
+	"connect-src http://localhost:* http://127.0.0.1:* ws://localhost:* https://sentry.anytype.io https://anytype.io https://api.amplitude.com/ devtools://devtools data: https://*.wistia.com https://*.wistia.net https://embedwistia-a.akamaihd.net",
+	"script-src-elem file: http://localhost:* https://sentry.io devtools://devtools 'unsafe-inline' https://*.wistia.com https://*.wistia.net",
 	"frame-src chrome-extension://react-developer-tools"
 ];
 let autoUpdate = false;
@@ -73,12 +71,10 @@ let autoUpdate = false;
 if (is.development && !port) {
 	console.error('ERROR: Please define SERVER_PORT env var');
 	exit(false);
-	return;
 };
 
-if (app.isPackaged && !app.requestSingleInstanceLock()) {
+if (!app.requestSingleInstanceLock() && app.isPackaged) {
 	exit(false);
-	return;
 };
 
 storage.setDataPath(userPath);
@@ -128,16 +124,23 @@ function trayIcon () {
 	if (is.windows) {
 		return path.join(__dirname, '/electron/icon64x64.png');
 	} else {
-		const dark = nativeTheme.shouldUseDarkColors || nativeTheme.shouldUseHighContrastColors || nativeTheme.shouldUseInvertedColorScheme;
-		return path.join(__dirname, '/electron/icon-tray-' + (dark ? 'white' : 'black') + '.png');
+		return path.join(__dirname, '/electron/icon-tray-' + (isDarkTheme() ? 'white' : 'black') + '.png');
 	};
 };
 
-nativeTheme.on('updated', () => {
+nativeTheme.on('updated', () => { initTheme(); });
+
+function isDarkTheme () {
+	return nativeTheme.shouldUseDarkColors || nativeTheme.shouldUseHighContrastColors || nativeTheme.shouldUseInvertedColorScheme;
+};
+
+function initTheme () {
 	if (tray) {
 		tray.setImage(trayIcon());
 	};
-});
+
+	send('native-theme', isDarkTheme());
+};
 
 function initTray () {
 	tray = new Tray (trayIcon());
@@ -218,14 +221,14 @@ function createWindow () {
 		},
 	};
 
-	if (process.platform == 'linux') {
+	if (is.linux) {
 		param.icon = image;
 	} else {
 		param.frame = false;
 		param.titleBarStyle = 'hidden';
 	};
 
-	if (process.platform == 'darwin') {
+	if (is.macos) {
 		app.dock.setIcon(image);
 		param.icon = path.join(__dirname, '/electron/icon.icns');
 		param.trafficLightPosition = { x: 20, y: 18 };
@@ -249,12 +252,14 @@ function createWindow () {
 	});
 
 	win.on('close', (e) => {
+		Util.log('info', 'close: ' + app.isQuiting);
+
 		if (app.isQuiting) {
 			return;
 		};
 		
 		e.preventDefault();
-		if (process.platform != 'linux') {
+		if (!is.linux) {
 			if (win.isFullScreen()) {
 				win.setFullScreen(false);
 				win.once('leave-full-screen', () => { win.hide(); });
@@ -289,8 +294,7 @@ function createWindow () {
 	};
 
 	ipcMain.on('appLoaded', () => {
-		send('dataPath', dataPath.join('/'));
-		send('config', config);
+		send('init', dataPath.join('/'), config, isDarkTheme());
 	});
 
 	ipcMain.on('keytarSet', (e, key, value) => {
@@ -358,7 +362,9 @@ function createWindow () {
 		send.apply(this, args);
 	});
 
-	ipcMain.on('winCommand', (e, cmd) => {
+	ipcMain.on('winCommand', (e, cmd, param) => {
+		param = param || {};
+
 		switch (cmd) {
 			case 'menu':
 				menu.popup({ x: 16, y: 38 });
@@ -369,11 +375,25 @@ function createWindow () {
 				break;
 
 			case 'maximize':
-				win.setFullScreen(!win.isFullScreen());
+				win.isMaximized() ? win.unmaximize() : win.maximize();
 				break;
 
 			case 'close':
 				win.hide();
+				break;
+
+			case 'saveAsHTML':
+				dialog.showOpenDialog({ 
+					properties: [ 'openDirectory' ],
+				}).then((result) => {
+					const files = result.filePaths;
+					if ((files == undefined) || !files.length) {
+						send('command', 'saveAsHTMLSuccess');
+						return;
+					};
+
+					savePage(files[0], param.name);
+				});
 				break;
 		};
 	});
@@ -384,14 +404,23 @@ function createWindow () {
 
 function getBgColor () {
 	let { theme } = config;
-	let bg = '#fff';
+	let light = '#fff';
+	let dark = '#2c2b27';
+	let bg = '';
 
 	switch (theme) {
+		default:
+			bg = light;
+			break;
+
 		case 'dark':
-			bg = '#2c2b27';
+			bg = dark;
+			break;
+
+		case 'system':
+			bg = isDarkTheme() ? dark : light;
 			break;
 	};
-
 	return bg;
 };
 
@@ -537,6 +566,14 @@ function menuInit () {
 		},
 		{
 			role: 'windowMenu',
+			submenu: [
+				{ role: 'minimize' },
+      			{ role: 'zoom' },
+				{
+					label: 'Fullscreen', type: 'checkbox', checked: win.isFullScreen(),
+					click: () => { win.setFullScreen(!win.isFullScreen()); }
+				},
+			]
 		},
 		{
 			label: 'Help',
@@ -639,6 +676,14 @@ function menuInit () {
 				{
 					label: 'Create workspace',
 					click: () => { send('commandGlobal', 'workspace');	}
+				},
+				{
+					label: 'Save page as HTML',
+					click: () => { send('command', 'saveAsHTML');	}
+				},
+				{
+					label: 'Relaunch',
+					click: () => { exit(true); }
 				},
 			]
 		});
@@ -768,8 +813,12 @@ app.on('ready', () => {
 app.on('second-instance', (event, argv, cwd) => {
 	Util.log('info', 'second-instance');
 
-	if (process.platform !== 'darwin') {
+	if (!is.macos) {
 		deeplinkingUrl = argv.find((arg) => arg.startsWith(`${protocol}://`));
+		if (deeplinkingUrl) {
+			const route = deeplinkingUrl.replace(`${protocol}://`, '/');
+			send('route', route);
+		};
 	};
 
 	if (win) {
@@ -784,7 +833,7 @@ app.on('second-instance', (event, argv, cwd) => {
 app.on('window-all-closed', (e) => {
 	Util.log('info', 'window-all-closed');
 
-	if (process.platform == 'linux') {
+	if (is.linux) {
 		e.preventDefault();
 		exit(false);
 	};
@@ -794,7 +843,7 @@ app.on('before-quit', (e) => {
 	Util.log('info', 'before-quit');
 
 	if (app.isQuiting) {
-		exit(0);
+		app.exit(0);
 	} else {
 		e.preventDefault();
 		exit(false);
@@ -819,15 +868,15 @@ function send () {
 function shutdown (relaunch) {
 	Util.log('info', 'Shutdown, relaunch: ' + relaunch);
 
-	setTimeout(() => {
-		if (relaunch) {
-			Util.log('info', 'Relaunch');
-			app.isQuiting = true;
-			autoUpdater.quitAndInstall();
-		} else {
-			app.exit(0);
-		};
-	}, 3000);
+	if (relaunch) {
+		Util.log('info', 'Relaunch');
+		app.isQuiting = true;
+		autoUpdater.quitAndInstall();
+		//app.relaunch();
+		//app.exit(0);
+	} else {
+		app.exit(0);
+	};
 };
 
 function exit (relaunch) {
@@ -852,4 +901,69 @@ function exit (relaunch) {
 	} else {
 		send('shutdown', relaunch);
 	};
+};
+
+function savePage (exportPath, name) {
+	name = String(name || 'untitled').replace(/[^\w -\._]/gi, '-').toLowerCase();
+
+	let fn = `${name}_files`;
+	let filesPath = path.join(exportPath, fn);
+	let exportName = path.join(exportPath, name + '.html');
+
+	win.webContents.savePage(exportName, 'HTMLComplete').then(() => {
+		let content = fs.readFileSync(exportName, 'utf8');
+
+		// Replace files loaded by url and copy them in page folder
+		try {
+			content = content.replace(/"(file:\/\/[^"]+)"/g, function (s, p, o) {
+				let a = p.split('app.asar/dist/');
+				let name = a[1].split('/');
+
+				name = name[name.length - 1];
+
+				let src = p.replace('file://', '').replace(/\?.*/, '');
+				let dst = path.join(filesPath, name).replace(/\?.*/, '');
+
+				fs.copyFileSync(src, dst);
+				return `./${fn}/${name}`;
+			});
+		} catch (e) {
+			Util.log('info', e);
+		};
+
+		content = content.replace(/<script[^>]+><\/script>/g, '');
+
+		try {
+			const js = [ 'export', 'jquery' ];
+			const ap = app.getAppPath();
+
+			js.forEach((it) => {
+				fs.copyFileSync(`${ap}/dist/js/${it}.js`, path.join(filesPath, it + '.js'));
+			});
+
+			content = content.replace('<!-- %REPLACE% -->', `
+				<script src="./${fn}/jquery.js" type="text/javascript"></script>
+				<script src="./${fn}/export.js" type="text/javascript"></script>
+			`);
+		} catch (e) {
+			Util.log('info', e);
+		};
+		
+		fs.writeFileSync(exportName, content);
+
+		try {
+			fs.unlinkSync(path.join(filesPath, 'main.js'));
+			fs.unlinkSync(path.join(filesPath, 'run.js'));
+		} catch (e) {
+			Util.log('info', e);
+		};
+
+		shell.openPath(exportPath).catch(err => { 
+			Util.log('info', err);
+		});
+		send('command', 'saveAsHTMLSuccess');
+	}).catch(err => { 
+		send('command', 'saveAsHTMLSuccess');
+		Util.log('info', err); 
+	});
 };

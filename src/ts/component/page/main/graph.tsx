@@ -1,12 +1,11 @@
 import * as React from 'react';
-import { I, C, crumbs, Util } from 'ts/lib';
+import { I, C, crumbs, Util, analytics } from 'ts/lib';
 import { RouteComponentProps } from 'react-router';
 import { HeaderMainGraph as Header, Graph, Icon, Loader } from 'ts/component';
-import { blockStore } from 'ts/store';
+import { blockStore, commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 import Panel from './graph/panel';
-import { analytics } from '../../../lib';
 
 interface Props extends RouteComponentProps<any> {
 	rootId: string;
@@ -82,7 +81,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 					</div>
 				</div>
 
-				<div className="footer">
+				<div id="footer" className="footer">
 					<Icon className="manager" onClick={() => { this.togglePanel(true); }} />
 				</div>
 			</div>
@@ -91,7 +90,6 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 
 	componentDidMount () {
 		this.resize();
-		this.rebind();
 		this.load();
 
 		crumbs.addPage(this.getRootId());
@@ -101,22 +99,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 		this.resize();
 	};
 
-	componentWillUnmount () {
-		this.unbind();
-	};
-
-	rebind () {
-		this.unbind();
-		$(window).on('resize.graph', () => { this.resize(); });
-	};
-
-	unbind () {
-		$(window).unbind('resize.graph');
-	};
-
 	load () {
-		console.log('GRAPH load');
-
 		const filters: any[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.Equal, value: false },
 			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
@@ -151,7 +134,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 				return;
 			};
 
-			this.data.edges = message.edges.filter(d => { return !d.isHidden && (d.source !== d.target); });
+			this.data.edges = message.edges.filter(d => { return (d.source !== d.target); });
 			this.data.nodes = message.nodes;
 			this.refGraph.init();
 
@@ -160,16 +143,22 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 	};
 
 	resize () {
-		const { isPopup } = this.props;
 		const win = $(window);
-		const obj = $(isPopup ? '#popupPage #innerWrap' : '.page.isFull');
+		const obj = $(this.props.isPopup ? '#popupPage #innerWrap' : '#page.isFull');
 		const wrapper = obj.find('.wrapper');
-		const header = obj.find('#header');
-		const hh = header.height();
-		const height = isPopup && !obj.hasClass('full') ? obj.height() : win.height();
+		const hh = Util.sizeHeader();
+		const platform = Util.getPlatform();
+		const isPopup = this.props.isPopup && !obj.hasClass('full');
+		
+		let wh = isPopup ? obj.height() - hh : win.height() - hh;
+		let sh = isPopup ? obj.height() : win.height();
 
-		wrapper.css({ height: height })
-		wrapper.find('.side').css({ height: height });
+		if (platform == I.Platform.Windows) {
+			wh += 30;
+		};
+
+		wrapper.css({ height: wh });
+		wrapper.find('.side').css({ height: sh });
 		
 		if (isPopup) {
 			const element = $('#popupPage .content');
@@ -186,7 +175,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 
 	togglePanel (v: boolean) {
 		const { isPopup } = this.props;
-		const obj = $(isPopup ? '#popupPage #innerWrap' : '.page.isFull');
+		const obj = $(isPopup ? '#popupPage #innerWrap' : '#page.isFull');
 		const wrapper = obj.find('.wrapper');
 
 		v ? wrapper.addClass('withPanel') : wrapper.removeClass('withPanel');

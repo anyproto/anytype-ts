@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Icon, IconObject, Sync } from 'ts/component';
-import { I, Util, DataUtil, crumbs, history as historyPopup, keyboard } from 'ts/lib';
+import { Icon, IconObject, Sync, ObjectName } from 'ts/component';
+import { I, Util, DataUtil, keyboard } from 'ts/lib';
 import { commonStore, blockStore, detailStore, menuStore, popupStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -10,7 +10,7 @@ interface Props extends RouteComponentProps<any> {
 	rootId: string;
 	isPopup?: boolean;
 	dataset?: any;
-}
+};
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
@@ -48,6 +48,7 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<Pro
 		const canSync = !object.templateIsBundled && !root.isObjectFileKind();
 		const cn = [ 'header', 'headerMainEdit' ];
 		const isLocked = root.isLocked();
+		const showNav = !(root.isObjectType() || root.isObjectRelation());
 
 		return (
 			<div id="header" className={cn.join(' ')}>
@@ -56,8 +57,12 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<Pro
 					<Icon className="home big" tooltip="Home" onClick={this.onHome} />
 					<Icon className={[ 'back', 'big', (!keyboard.checkBack() ? 'disabled' : '') ].join(' ')} tooltip="Back" onClick={this.onBack} />
 					<Icon className={[ 'forward', 'big', (!keyboard.checkForward() ? 'disabled' : '') ].join(' ')} tooltip="Forward" onClick={this.onForward} />
-					<Icon className="nav big" tooltip="Navigation" onClick={this.onNavigation} />
-					<Icon className="graph big nm" tooltip="Open as graph" onClick={this.onGraph} />
+					{showNav ? (
+						<React.Fragment>
+							<Icon className="nav big" tooltip="Navigation" onClick={this.onNavigation} />
+							<Icon className="graph big nm" tooltip="Open as graph" onClick={this.onGraph} />
+						</React.Fragment>
+					) : ''}
 				</div>
 
 				<div className="side center">
@@ -65,7 +70,7 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<Pro
 						<div className="item">
 							<div className="flex">
 								<IconObject object={object} size={18} />
-								<div className="name">{object.name}</div>
+								<ObjectName object={object} />
 								{isLocked ? <Icon className="lock" /> : ''}
 							</div>
 						</div>
@@ -94,8 +99,8 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<Pro
 
 		window.clearTimeout(this.timeout);
 		this.timeout = window.setTimeout(() => { node.removeClass('show'); }, Constant.delay.header);
-
-		this.resize();
+		
+		Util.resizeSidebar();
 	};
 
 	onHome (e: any) {
@@ -192,11 +197,14 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<Pro
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { rootId } = this.props;
+		const { rootId, isPopup } = this.props;
 
 		popupStore.open('search', {
 			preventResize: true, 
-			data: { rootId },
+			data: { 
+				rootId,
+				isPopup,
+			},
 		});
 	};
 
@@ -219,16 +227,6 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<Pro
 	getContainer () {
 		const { isPopup } = this.props;
 		return (isPopup ? '.popup' : '') + ' .header';
-	};
-
-	resize () {
-		const { isPopup } = this.props;
-		const { sidebar } = commonStore;
-		const { width } = sidebar;
-
-		if (!isPopup) {
-			Util.resizeHeaderFooter(width);
-		};
 	};
 	
 });

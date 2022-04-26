@@ -1,19 +1,14 @@
 @import "~scss/_vars";
 
 .blocks {
-	.block.blockTableOfContents { padding: 6px 0px; }
+	.block.blockTableOfContents { padding: 15px 0px; }
 	.block.blockTableOfContents { 
-
-		.title { @include text-header2; margin: 0px 0px 10px 0px; }
-
-		.item > .children { padding-left: 20px; }
-		.item.blockLayout > .children { padding: 0px; }
-
-		.item > .text { cursor: pointer; }
-		.item > .text:hover { text-decoration: underline; }
-		.item.blockText.header1 > .text { @include text-header3; }
-		.item.blockText.header2 > .text { @include text-paragraph; }
-		.item.blockText.header3 > .text { @include text-common; }
-		
+		.item { cursor: pointer; color: $colorDarkGrey; padding: 4px 0px; @include text-common; }
+		.item {
+			span { border-bottom: 1px solid rgba(146, 144, 130, 0.5); transition: $transitionFast; }
+		}
+		.item:hover {
+			span { border-color: $colorDarkGrey; }
+		}
 	}
 }

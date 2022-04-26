@@ -12,6 +12,11 @@
     .iconObject { background-image: url('#{$themePath}/icon/picture.svg'); }
 }
 
+.pageAuthDeleted {
+	.row { border-color: $colorLineSecondary; }
+	.pie .inner { border-color: $colorLineSecondary; }
+}
+
 /* PageMainIndex */
 
 .pageMainIndex {
@@ -62,6 +67,7 @@
 
         .section {
             .item { background: $colorBlack; }
+            .item:hover::before { background: $colorHover; }
         }
     }
 
@@ -80,14 +86,6 @@
 /* PageMainStore */
 
 .pageMainStore {
-    .head { background: $colorBlack; }
-    .head {
-        .tabs { background: $colorBgIcon; color: $colorSecondary; }
-        .tabs {
-            .item.active { background: $colorHover; color: $colorPrimary; }
-        }
-    }
-
     .body {
         .items {
             .item {

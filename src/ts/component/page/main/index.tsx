@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Icon, IconObject, ListIndex, Cover, HeaderMainIndex as Header, FooterMainIndex as Footer, Filter } from 'ts/component';
-import { commonStore, blockStore, detailStore, menuStore, dbStore, popupStore } from 'ts/store';
+import { commonStore, blockStore, detailStore, menuStore, dbStore, popupStore, authStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { I, C, Util, DataUtil, translate, crumbs, Storage, analytics, keyboard, Action } from 'ts/lib';
 import arrayMove from 'array-move';
@@ -60,7 +60,8 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 	
 	render () {
 		const { cover, config } = commonStore;
-		const { root, profile, recent } = blockStore;
+		const { account } = authStore;
+		const { root, recent } = blockStore;
 		const element = blockStore.getLeaf(root, root);
 		const { filter, loading } = this.state;
 		const tabs = this.getTabs();
@@ -72,10 +73,10 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 			return null;
 		};
 
-		const object = detailStore.get(Constant.subIds.profile, profile);
-		const { name } = object;
+		const profile = detailStore.get(Constant.subIds.profile, blockStore.profile);
 		const list = this.getList();
 		const length = list.length;
+		const isDeleted = [ I.AccountStatusType.StartedDeletion, I.AccountStatusType.Deleted ].includes(account.status.type);
 
 		// Subscriptions
 		list.forEach((it: any) => {
@@ -112,6 +113,8 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		);
 
 		let content = null;
+		let deleted = null;
+
 		if (!loading) {
 			if (!list.length) {
 				content = (
@@ -136,6 +139,14 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 			};
 		};
 
+		if (isDeleted) {
+			deleted = (
+				<div className="deleted">
+					<Icon /> Account is deleted
+				</div>
+			);
+		};
+
 		return (
 			<div>
 				<Cover {...cover} className="main" />
@@ -145,15 +156,22 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 				<div id="body" className="wrapper">
 					<div id="title" className="title">
 						<div className="side left">
-							<span>{name ? Util.sprintf(translate('indexHi'), Util.shorten(name, 24)) : ''}</span>
+							<span>{profile.name ? Util.sprintf(translate('indexHi'), Util.shorten(profile.name, 24)) : ''}</span>
 						</div>
 						
 						<div className="side right">
 							<Icon id="button-account" className="account" tooltip="Accounts" onClick={this.onAccount} />
 							<Icon id="button-add" className="add" tooltip="Add new object" onClick={this.onAdd} />
 							<Icon id="button-store" className="store" tooltip="Library" onClick={this.onStore} />
-							<IconObject getObject={() => { return { ...object, layout: I.ObjectLayout.Human } }} size={56} tooltip="Your profile" onClick={this.onProfile} />
+							<IconObject 
+								object={profile} 
+								size={56} 
+								tooltip="Your profile" 
+								onClick={this.onProfile} 
+							/>
 						</div>
+
+						{deleted}
 					</div>
 					
 					<div id="documents" className={Util.toCamelCase('tab-' + tab.id)}> 
@@ -349,6 +367,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 		const filters: any[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: tab.id == I.TabIndex.Archive },
+			{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
 		];
 		const sorts = [
 			{ relationKey: 'lastModifiedDate', type: I.SortType.Desc }
@@ -378,7 +397,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 		this.setState({ loading: true });
 
-		C.ObjectSearchSubscribe(Constant.subIds.index, filters, sorts, Constant.defaultRelationKeys, [], '', 0, 100, true, '', '', (message: any) => {
+		C.ObjectSearchSubscribe(Constant.subIds.index, filters, sorts, Constant.defaultRelationKeys, [], 0, 100, true, '', '', false, (message: any) => {
 			if (!this._isMounted || message.error.code) {
 				return;
 			};
@@ -440,9 +459,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 	};
 	
 	onProfile (e: any) {
-		const { profile } = blockStore;
-		const object = detailStore.get(Constant.subIds.profile, profile);
-
+		const object = detailStore.get(Constant.subIds.profile, blockStore.profile);
 		DataUtil.objectOpenEvent(e, object);
 	};
 	
@@ -691,7 +708,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 			archive = { id: 'archive', icon: 'remove', name: 'Move to bin' };
 		};
 
-		if (object.isReadonly || object.templateIsBundled || (object.id == profile) || ([ Constant.typeId.relation ].indexOf(object.type) >= 0)) {
+		if (!blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Delete ])) {
 			archive = null;
 		};
 

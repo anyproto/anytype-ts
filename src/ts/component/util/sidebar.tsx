@@ -1,9 +1,13 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, C, DataUtil, Util, keyboard, Storage } from 'ts/lib';
-import { IconObject, Icon, ObjectName, Loader } from 'ts/component';
-import { authStore, blockStore, commonStore } from 'ts/store';
+import { I, C, DataUtil, Util, keyboard, Storage, Relation, analytics } from 'ts/lib';
+import { Loader } from 'ts/component';
+import { blockStore, commonStore, dbStore, detailStore, menuStore } from 'ts/store';
+import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { observer } from 'mobx-react';
+
+import Item from './sidebar/item';
+import Footer from './sidebar/footer';
 
 interface Props {
 	isPopup?: boolean;
@@ -16,16 +20,22 @@ interface State {
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
+const sha1 = require('sha1');
+
+const MAX_DEPTH = 100;
+const LIMIT = 20;
+const HEIGHT = 28;
+const SNAP_THRESHOLD = 30;
+
+const SKIP_TYPES_LOAD = [
+	Constant.typeId.space,
+];
 
 const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 
 	_isMounted: boolean = false;
 	state = {
 		loading: false,
-	};
-	data: any = {
-		nodes: [],
-		edges: [],
 	};
 	loaded: boolean = false;
 	top: number = 0;
@@ -34,25 +44,30 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 	oy: number = 0;
 	width: number = 0;
 	height: number = 0;
-	timeout: number = 0;
+	refList: any = null;
+	refFooter: any = null;
+	cache: any = {};
+	subId: string = '';
+	subscriptionIds: any = {};
 
 	constructor (props: any) {
 		super(props);
 
-		this.onExpand = this.onExpand.bind(this);
 		this.onResizeStart = this.onResizeStart.bind(this);
 		this.onDragStart = this.onDragStart.bind(this);
-		this.onMouseEnter = this.onMouseEnter.bind(this);
-		this.onMouseLeave = this.onMouseLeave.bind(this);
+		this.onScroll = this.onScroll.bind(this);
+		this.onClick = this.onClick.bind(this);
+		this.onToggle = this.onToggle.bind(this);
+		this.onContext = this.onContext.bind(this);
+		
+		this.getRowHeight = this.getRowHeight.bind(this)
 	};
 
 	render () {
-		const { account } = authStore;
 		const { sidebar } = commonStore;
-		const { root, profile } = blockStore;
 		const { width, height, x, y, fixed, snap } = sidebar;
 		const { loading } = this.state;
-		const sections = this.getSections();
+		const items = this.getItems();
 		const css: any = { width };
 		const cn = [ 'sidebar' ];
 
@@ -63,157 +78,119 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 			cn.push('right');
 		};
 
-		if (!account) {
-			return null;
-		};
-
 		if (fixed) {
 			cn.push('fixed');
-		} else {
-			css.height = height;
 		};
 
-        let depth = 0;
-
-		const Section = (section: any) => {
-			const length = section.children.length;
-			const id = [ 'section', section.id ].join('-');
-
+		const rowRenderer = (param: any) => {
+			const item: any = items[param.index];
 			return (
-				<div id={`item-${id}`} className="section">
-					<div 
-						className="sectionHead" 
-						onMouseDown={(e: any) => { 
-							if (length) {
-								this.onToggle(e, id); 
-							};
-						}}
-					>
-						{length ? <Icon className="arrow" /> : ''}
-						<div className="name">{section.name}</div>
-						<div className="cnt">{section.children.length || ''}</div>
-					</div>
-
-					<div id={`children-${id}`} className="children">
-						{section.children.map((child: any, i: number) => (
-							<Item 
-								key={child.id + '-' + depth} 
-								{...child} 
-								sectionId={section.id} 
-								parentId="" 
-								depth={depth} 
-							/>
-						))}
-					</div>
-				</div>
+				<CellMeasurer
+					key={param.key}
+					parent={param.parent}
+					cache={this.cache}
+					columnIndex={0}
+					rowIndex={param.index}
+					hasFixedWidth={() => {}}
+				>
+					<Item 
+						{...item}
+						index={param.index}
+						elementId={this.getId(item)}
+						style={param.style}
+						onClick={this.onClick} 
+						onToggle={this.onToggle} 
+						onContext={this.onContext}
+					/>
+				</CellMeasurer>
 			);
 		};
-
-        const Item = (item: any) => {
-			const css: any = { paddingLeft: 6 + item.depth * 4 };
-			const length = item.children.length;
-			const id = this.getId(item);
-			const cn = [ 'item', 'depth' + item.depth ];
-
-			if ((item.depth > 0) && !item.children.length) {
-				css.paddingLeft += 20;
-			};
-
-            return (
-                <div id={`item-${id}`} className={cn.join(' ')}>
-                    <div className="flex" style={css} onMouseDown={(e: any) => { this.onClick(e, item); }}>
-						{length ? <Icon className="arrow" onMouseDown={(e: any) => { this.onToggle(e, id); }} /> : ''}
-                        <IconObject object={...item} size={20} forceLetter={true} />
-						<ObjectName object={item} />
-                    </div>
-
-					<div id={`children-${id}`} className="children">
-						{item.children.map((child: any, i: number) => (
-							<Item 
-								key={child.id + '-' + item.depth} 
-								{...child} 
-								sectionId={item.sectionId} 
-								parentId={item.id} 
-								depth={item.depth + 1} 
-							/>
-						))}
-					</div>
-                </div>
-            );
-        };
 
 		return (
             <div 
 				id="sidebar" 
 				className={cn.join(' ')} 
 				style={css} 
-				onMouseEnter={this.onMouseEnter} 
-				onMouseLeave={this.onMouseLeave}
+				onMouseDown={this.onDragStart}
 			>
-
-				<div className="head" onMouseDown={this.onDragStart}>
-					<Icon className={fixed ? 'close' : 'expand'} onMouseDown={this.onExpand} />
-				</div>
+				<div className="head" />
 				
 				<div className="body">
 					{loading ? (
 						<Loader />
 					) : (
-						<React.Fragment>
-							{sections.map((section: any, i: number) => (
-								<Section key={i} {...section} />
-							))}
-						</React.Fragment>
+						<InfiniteLoader
+							rowCount={items.length}
+							loadMoreRows={() => {}}
+							isRowLoaded={() => { return true; }}
+							threshold={LIMIT}
+						>
+							{({ onRowsRendered, registerChild }) => (
+								<AutoSizer className="scrollArea">
+									{({ width, height }) => (
+										<List
+											ref={(ref: any) => { this.refList = ref; }}
+											width={width}
+											height={height}
+											deferredMeasurmentCache={this.cache}
+											rowCount={items.length}
+											rowHeight={({ index }) => this.getRowHeight(items[index])}
+											rowRenderer={rowRenderer}
+											onRowsRendered={onRowsRendered}
+											overscanRowCount={LIMIT}
+											onScroll={this.onScroll}
+										/>
+									)}
+								</AutoSizer>
+							)}
+						</InfiniteLoader>
 					)}
 				</div>
 
+				<Footer ref={(ref: any) => { this.refFooter = ref; }} />
+
 				<div className="resize-h" onMouseDown={(e: any) => { this.onResizeStart(e, I.MenuType.Horizontal); }} />
-				<div className="resize-v" onMouseDown={(e: any) => { this.onResizeStart(e, I.MenuType.Vertical); }} />
+				{/*<div className="resize-v" onMouseDown={(e: any) => { this.onResizeStart(e, I.MenuType.Vertical); }} />*/}
             </div>
 		);
 	};
 
 	componentDidMount () {
 		this._isMounted = true;
-		this.init();
-		this.resize();
+
+		this.loadSections();
 		this.rebind();
-		this.restore();
 	};
 
 	componentDidUpdate () {
-		this.init();
+		const items = this.getItems();
+
 		this.resize();
 		this.restore();
+
+		this.cache = new CellMeasurerCache({
+			fixedWidth: true,
+			defaultHeight: HEIGHT,
+			keyMapper: (i: number) => { return (items[i] || {}).id; },
+		});
 	};
 
 	componentWillUnmount () {
 		this._isMounted = false;
 		this.unbind();
+
+		C.ObjectSearchUnsubscribe(Object.keys(this.subscriptionIds).map(id => dbStore.getSubId(Constant.subIds.sidebar, id)));
+
+		Util.tooltipHide(true);
 	};
 
 	rebind () {
-		const node = $(ReactDOM.findDOMNode(this));
-		const body = node.find('.body');
-
 		this.unbind();
-
-		$(window).on('resize.sidebar', (e: any) => { this.resize(); });
-		body.on('scroll', (e: any) => { this.onScroll(); });
+		$(window).on('resize.sidebar', (e: any) => { this.onWindowResize(); });
 	};
 
 	unbind () {
-		const node = $(ReactDOM.findDOMNode(this));
-		const body = node.find('.body');
-
 		$(window).unbind('resize.sidebar');
-		body.unbind('.scroll');
-	};
-
-	init () {
-		if (!this.loaded && !this.state.loading) {
-			this.load();
-		};
 	};
 
 	restore () {
@@ -221,63 +198,220 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		const { x, y, snap } = sidebar;
 		const node = $(ReactDOM.findDOMNode(this));
 		const body = node.find('.body');
-		const toggle = Storage.getToggle('sidebar');
-		const dummy = $('#sidebarDummy');
 
 		this.width = node.width();
 		this.height = node.height();
-
-		toggle.forEach((it: string) => { this.childrenShow(it); });
-		body.scrollTop(this.top);
-
-		this.setActive();
 		this.setStyle(x, y, snap);
 
-		dummy.css({ width: this.width });
+		this.id = keyboard.getRootId();
+		this.setActive(this.id);
+		
+		body.scrollTop(this.top);
 	};
 
-	load () {
-		const { root, profile } = blockStore;
-		if (!root || !profile) {
-			return;
-		};
+	getSections () {
+		return [
+			{ id: I.TabIndex.Favorite, name: 'Favorites', limit: 0, },
+			{ id: I.TabIndex.Recent, name: 'History', limit: 10, },
+			{ id: I.TabIndex.Set, name: 'Sets', limit: 20, },
+		];
+	};
 
-		const filters: any[] = [
+	getSection (id: I.TabIndex): any {
+		return this.getSections().find(it => it.id == id) || {};
+	};
+
+	loadSections () {
+		const { root, profile } = blockStore;
+		const sections = this.getSections();
+		const filters: I.Filter[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.Equal, value: false },
 			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
+			{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
 			{ 
 				operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, 
 				value: [
 					'_anytype_profile',
 					profile,
 					root,
-				] 
+				]
 			},
+			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: SKIP_TYPES_LOAD },
 		];
+
+		let n = 0;
+		let sorts: I.Sort[] = [];
+		let sectionFilters: I.Filter[] = [];
+		let cb = () => {
+			n++;
+			if (n == sections.length - 1) {
+				this.setState({ loading: false });
+			};
+		};
 
 		this.setState({ loading: true });
 
-		C.ObjectGraph(filters, 0, [], (message: any) => {
-			if (message.error.code) {
-				return;
+		sections.forEach((section: any) => {
+			const subId = dbStore.getSubId(Constant.subIds.sidebar, section.id);
+
+			switch (section.id) {
+				case I.TabIndex.Favorite:
+					sectionFilters = [
+						{ operator: I.FilterOperator.And, relationKey: 'isFavorite', condition: I.FilterCondition.Equal, value: true }
+					];
+					sorts = [];
+					break;
+
+				case I.TabIndex.Recent:
+					sectionFilters = [
+						{ operator: I.FilterOperator.And, relationKey: 'lastOpenedDate', condition: I.FilterCondition.Greater, value: 0 }
+					];
+					sorts = [
+						{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
+					];
+					break;
+
+				case I.TabIndex.Set:
+					sectionFilters = [
+						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.set }
+					];
+					sorts = [
+						{ relationKey: 'name', type: I.SortType.Asc },
+					];
+					break;
+
 			};
-
-			this.loaded = true;
-			this.data.edges = message.edges.filter(d => { return d.source !== d.target; });
-			this.data.nodes = message.nodes;
-
-			this.setState({ loading: false });
+			
+			C.ObjectSearchSubscribe(subId, filters.concat(sectionFilters), sorts, Constant.sidebarRelationKeys, [], 0, section.limit, true, '', '', true, cb);
 		});
 	};
 
-	onScroll () {
-		const node = $(ReactDOM.findDOMNode(this));
-		const body = node.find('.body');
-
-		this.top = body.scrollTop();
+	checkLinks (ids: string[]) {
+		return ids.filter(id => !dbStore.getRecordsIds(Constant.subIds.deleted, '').includes(id));
 	};
 
-	onToggle (e: any, id: string) {
+	loadItem (id: string, links: string[]) {
+		const hash = sha1(links.join(''));
+		const subId = dbStore.getSubId(Constant.subIds.sidebar, id);
+
+		if (this.subscriptionIds[id] && (this.subscriptionIds[id] == hash)) {
+			return;
+		};
+
+		this.subscriptionIds[id] = hash;
+		C.ObjectIdsSubscribe(subId, links, Constant.sidebarRelationKeys, true);
+	};
+
+	getRecords (subId: string) {
+		let records: any[] = dbStore.getRecordsIds(subId, '');
+
+		records = records.map((id: string) => { 
+			let item = detailStore.get(subId, id, [ 'id', 'type', 'links' ], true);
+			let links = [];
+			if (item.type != Constant.typeId.set) {
+				links = this.checkLinks(Relation.getArrayValue(item.links));
+			};
+			return { ...item, links };
+		});
+
+		return records;
+	};
+
+	unwrap (sectionId: string, list: any[], parentId: string, items: any[], depth: number) {
+		if (!items.length || (depth >= MAX_DEPTH)) {
+			return list;
+		};
+
+		for (let item of items) {
+			let links = this.checkLinks(Relation.getArrayValue(item.links));
+			let length = links.length;
+			let newItem = {
+				details: item,
+				id: item.id,
+				depth,
+				length,
+				parentId,
+				sectionId,
+			};
+			list.push(newItem);
+
+			if (!length) {
+				continue;
+			};
+
+			const id = this.getId({ ...newItem, sectionId });
+			const check = Storage.checkToggle(Constant.subIds.sidebar, id);
+
+			if (check) {
+				this.loadItem(item.id, links);
+				list = this.unwrap(sectionId, list, item.id, this.getRecords(dbStore.getSubId(Constant.subIds.sidebar, item.id)), depth + 1);
+			};
+		};
+		return list;
+	};
+
+	getItems () {
+		let sections = this.getSections();
+		let items: any[] = [];
+
+		sections.forEach((section: any) => {
+			const children = this.getRecords(dbStore.getSubId(Constant.subIds.sidebar, section.id));
+
+			if (section.id == I.TabIndex.Favorite) {
+				let { root } = blockStore;
+				let childrenIds = blockStore.getChildren(root, root, it => it.isLink()).map(it => it.content.targetBlockId);
+
+				children.sort((c1: any, c2: any) => { return this.sortByIds(childrenIds, c1.id, c2.id); });
+			};
+
+			const item: any = {
+				details: {
+					id: section.id,
+					name: section.name,
+				},
+				length: children.length,
+				depth: 0,
+				id: section.id,
+				parentId: '',
+				sectionId: '',
+				isSection: true,
+			};
+			item.isOpen = Storage.checkToggle(Constant.subIds.sidebar, this.getId(item));
+			items.push(item);
+
+			if (item.isOpen) {
+				items = this.unwrap(section.id, items, section.id, children, 0);
+			};
+		});
+
+		const filtered = items.filter(it => it.isSection);
+		for (let i = 0; i < filtered.length; ++i) {
+			const item = filtered[i];
+			const next = filtered[i + 1];
+
+			if (next && item.isOpen) {
+				next.withPadding = true;
+			};
+		};
+
+		return items;
+	};
+
+	sortByIds (ids: string[], id1: string, id2: string) {
+		const i1 = ids.indexOf(id1);
+		const i2 = ids.indexOf(id2);
+		if (i1 > i2) return 1; 
+		if (i1 < i2) return -1;
+		return 0;
+	};
+
+	onScroll ({ clientHeight, scrollHeight, scrollTop }) {
+		if (scrollTop) {
+			this.top = scrollTop;
+		};
+	};
+
+	onToggle (e: any, item: any) {
 		if (!this._isMounted) {
 			return;
 		};
@@ -285,159 +419,79 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		e.preventDefault();
 		e.stopPropagation();
 
+		const id = this.getId(item);
+		const check = Storage.checkToggle(Constant.subIds.sidebar, id);
+
+		Storage.setToggle(Constant.subIds.sidebar, id, !check);
+
+		let eventId = '';
+		let group = '';
+		if (item.isSection) {
+			eventId = !check ? 'OpenSidebarGroupToggle' : 'CloseSidebarGroupToggle';
+			group = this.getSection(item.id).name;
+		} else {
+			eventId = !check ? 'OpenSidebarObjectToggle' : 'CloseSidebarObjectToggle';
+			group = this.getSection(item.sectionId).name;
+		};
+
+		analytics.event(eventId, { group });
+		this.forceUpdate();
+	};
+
+	setActive (id: string) {
+		if (!this._isMounted) {
+			return;
+		};
+
 		const node = $(ReactDOM.findDOMNode(this));
-		const el = node.find(`#item-${id}`);
 
-		el.hasClass('active') ? this.childrenHide(id) : this.childrenShow(id);
+		node.find('.item.hover').removeClass('hover');
+
+		if (id) {
+			node.find(`.item.c${id}`).addClass('hover');
+		};
 	};
 
-	childrenShow (id: string) {
-		const node = $(ReactDOM.findDOMNode(this));
-		const el = node.find(`#item-${id}`);
-		const children = el.find(`#children-${id}`);
-
-		el.addClass('active');
-		children.css({ overflow: 'visible', height: 'auto' });
-		Storage.setToggle('sidebar', id, true);
-	};
-
-	childrenHide (id: string) {
-		const node = $(ReactDOM.findDOMNode(this));
-		const el = node.find(`#item-${id}`);
-		const children = el.find(`#children-${id}`);
-
-		el.removeClass('active');
-		children.css({ overflow: 'hidden', height: 0 });
-		Storage.setToggle('sidebar', id, false);
-	};
-
-	getSections () {
-		const tree = this.getTree();
-
-		let sections: any[] = [
-			{ id: I.TabIndex.Favorite, name: 'Favorites' },
-			{ id: I.TabIndex.Recent, name: 'Recent' },
-			{ id: I.TabIndex.Set, name: 'Sets' },
-		];
-		let children: I.Block[] = [];
-		let ids: string[] = [];
-
-		sections = sections.map((s: any) => {
-			s.children = [];
-
-			switch (s.id) {
-				case I.TabIndex.Favorite:
-					children = blockStore.getChildren(blockStore.root, blockStore.root, (it: I.Block) => { return it.isLink(); });
-					ids = children.map((it: I.Block) => { return it.content.targetBlockId; });
-
-					s.children = tree.filter((c: any) => { return ids.includes(c.id); });
-					s.children.sort((c1: any, c2: any) => { return this.sortByIds(ids, c1, c2); });
-					break;
-
-				case I.TabIndex.Recent:
-					children = blockStore.getChildren(blockStore.recent, blockStore.recent, (it: I.Block) => { return it.isLink(); });
-					ids = children.map((it: I.Block) => { return it.content.targetBlockId; }).reverse().slice(0, 20);
-
-					s.children = tree.filter((c: any) => { return ids.includes(c.id); });
-					s.children.sort((c1: any, c2: any) => { return this.sortByIds(ids, c1, c2); });
-					break;
-
-				case I.TabIndex.Set:
-					s.children = tree.filter((c: any) => { return c.type == Constant.typeId.set; });
-					s.children = s.children.slice(0, 20);
-					break;
-
-			};
-			return s;
-		});
-
-		return sections;
-	};
-
-	sortByIds (ids: string[], c1: any, c2: any) {
-		const i1 = ids.indexOf(c1.id);
-		const i2 = ids.indexOf(c2.id);
-		if (i1 > i2) return 1; 
-		if (i1 < i2) return -1;
-		return 0;
-	};
-
-    getTree () {
-		const data = Util.objectCopy(this.data);
-
-        let edges = data.edges.map((edge: any) => {
-            edge.target = data.nodes.find((node: any) => { return node.id == edge.target; });
-            return edge;
-        });
-		edges = edges.filter((edge: any) => { return edge.type == I.EdgeType.Link; });
-
-        let nodes = data.nodes.map((node: any) => {
-            node.children = edges.filter((edge: any) => {
-                return edge.source == node.id;
-            }).map((edge: any) => { 
-                return edge.target;
-            });
-            return node;
-        });
-        return nodes;
-    };
-
-	onExpand (e: any) {
-		e.preventDefault();
-		e.stopPropagation();
-
-		const { sidebar } = commonStore;
-		commonStore.sidebarSet({ fixed: !sidebar.fixed });
+	getId (item: any) {
+		const { sectionId, parentId, id, depth, isSection } = item;
+		return isSection ? id : [ sectionId, parentId, id, depth ].join('-');
 	};
 
 	onClick (e: any, item: any) {
 		e.preventDefault();
 		e.stopPropagation();
 
-		this.id = this.getId(item);
-
-		DataUtil.objectOpenEvent(e, item);
-		this.setActive();
+		DataUtil.objectOpenEvent(e, item.details);
+		analytics.event('OpenSidebarObject', { group: this.getSection(item.sectionId).name });
 	};
 
-	setActive () {
-		const node = $(ReactDOM.findDOMNode(this));
+	onContext (e: any, item: any): void {
+		e.preventDefault();
+		e.stopPropagation();
 
-		node.find('.item.hover').removeClass('hover');
-
-		if (this.id) {
-			node.find(`#item-${this.id}`).addClass('hover');
-		};
-	};
-
-	getId ({ sectionId, parentId, id, depth }) {
-		return [ sectionId, parentId, id, depth ].join('-');
-	};
-
-	onMouseEnter (e: any) {
-		window.clearTimeout(this.timeout);
-	};
-
-	onMouseLeave (e: any) {
-		if (!this._isMounted || keyboard.isResizing || keyboard.isDragging) {
+		if (item.isSection) {
 			return;
 		};
 
-		const { sidebar } = commonStore;
-		const { x, snap } = sidebar;
+		const { x, y } = keyboard.mouse.page;
+		const subId = dbStore.getSubId(Constant.subIds.sidebar, item.parentId);
 
-		if (!snap) {
-			return;
-		};
+		this.setActive(item.id);
 
-		window.clearTimeout(this.timeout);
-		this.timeout = window.setTimeout(() => {
-			const node = $(ReactDOM.findDOMNode(this));
-			node.removeClass('active');
-		}, 300);
+		menuStore.open('dataviewContext', {
+			rect: { width: 0, height: 0, x: x + 4, y: y },
+			onClose: () => { this.setActive(this.id); },
+			data: {
+				objectIds: [ item.id ],
+				subId,
+			}
+		});
 	};
 
 	onResizeStart (e: any, dir: I.MenuType) {
+		e.preventDefault();
+		e.stopPropagation();
+
 		if (!this._isMounted) {
 			return;
 		};
@@ -473,28 +527,23 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 
 	onResizeMove (e: any, dir: I.MenuType) {
 		const { sidebar } = commonStore;
-		const { snap, width } = sidebar;
-		const node = $(ReactDOM.findDOMNode(this));
-
-		let d = 0;
+		const { snap, width, fixed } = sidebar;
+		const win = $(window);
 
 		if (dir == I.MenuType.Horizontal) {
-			if (snap == I.MenuDirection.Right) {
-				d = this.ox - e.pageX + width;
-			} else {
-				d = e.pageX - this.ox;
-			};
-
-			this.width = this.getWidth(d);
+			const d = (snap == I.MenuDirection.Right) ? (this.ox - e.pageX + width) : e.pageX - this.ox;
 	
-			this.resizeHeaderFooter(this.width);
-			node.css({ width: this.width });
-			$('#sidebarDummy').css({ width: this.width });
+			this.width = this.getWidth(d);
+			this.setWidth(this.width);
+
+			if (fixed) {
+				win.trigger('resize.editor');
+			};
 		};
 
 		if (dir == I.MenuType.Vertical) {
 			this.height = this.getHeight(e.pageY - this.oy);
-			node.css({ height: this.height });
+			this.setHeight(this.height);
 		};
 	};
 
@@ -521,6 +570,9 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 	};
 
 	onDragStart (e: any) {
+		e.preventDefault();
+		e.stopPropagation();
+
 		const { dataset } = this.props;
 		const { selection } = dataset || {};
 		const { sidebar } = commonStore;
@@ -551,10 +603,16 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 
 	onDragMove (e: any) {
 		const win = $(window);
-		const x = e.pageX - this.ox - win.scrollLeft();
-		const y = e.pageY - this.oy - win.scrollTop();
+		
+		let x = e.pageX - this.ox - win.scrollLeft();
+		let y = e.pageY - this.oy - win.scrollTop();
+		let snap = this.checkSnap(x);
 
-		this.setStyle(x, y, null);
+		if (snap !== null) {
+			x = 0;
+		};
+
+		this.setStyle(x, y, snap);
 	};
 
 	onDragEnd (e: any) {
@@ -564,14 +622,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		
 		let x = e.pageX - this.ox - win.scrollLeft();
 		let y = e.pageY - this.oy - win.scrollTop();
-		let snap = null;
-
-		if (x <= 0) {
-			snap = I.MenuDirection.Left;
-		};
-		if (x + this.width >= win.width()) {
-			snap = I.MenuDirection.Right;
-		};
+		let snap = this.checkSnap(x);
 
 		if (snap !== null) {
 			x = 0;
@@ -580,35 +631,40 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		commonStore.sidebarSet({ x, y, snap });
 		this.setStyle(x, y, snap);
 
-		$(window).unbind('mousemove.sidebar mouseup.sidebar');
-
+		win.unbind('mousemove.sidebar mouseup.sidebar');
 		keyboard.setDrag(false);
+
 		if (selection) {
 			selection.preventSelect(false);
 		};
 	};
 
-	getWidth (w: number) {
-		const size = Constant.size.sidebar.width;
-		return Math.max(size.min, Math.min(size.max, w));
-	};
+	checkSnap (x: number) {
+		let win = $(window);
+		let snap = null;
 
-	getHeight (h: number) {
-		const win = $(window);
-		const size = Constant.size.sidebar.height;
-		return Math.max(size.min, Math.min(win.height() - Util.sizeHeader(), h));
+		if (x <= SNAP_THRESHOLD) {
+			snap = I.MenuDirection.Left;
+		};
+		if (x + this.width >= win.width() - SNAP_THRESHOLD) {
+			snap = I.MenuDirection.Right;
+		};
+		return snap;
 	};
 
 	checkCoords (x: number, y: number): { x: number, y: number } {
 		const win = $(window);
+		const wh = win.height();
+		const ww = win.width();
+		const hh = Util.sizeHeader();
 
 		x = Number(x);
 		x = Math.max(0, x);
-		x = Math.min(win.width() - this.width, x);
+		x = Math.min(ww - this.width, x);
 
 		y = Number(y);
-		y = Math.max(Util.sizeHeader(), y);
-		y = Math.min(win.height() - this.height, y);
+		y = Math.max((wh - hh) * 0.1, y);
+		y = Math.min(hh + (wh - hh) * 0.9 - this.height, y);
 
 		return { x, y };
 	};
@@ -616,6 +672,15 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 	setStyle (x: number, y: number, snap: I.MenuDirection) {
 		const node = $(ReactDOM.findDOMNode(this));
 		const coords = this.checkCoords(x, y);
+
+		node.removeClass('left right');
+
+		if (snap == I.MenuDirection.Left) {
+			node.addClass('left');
+		};
+		if (snap == I.MenuDirection.Right) {
+			node.addClass('right');
+		};
 
 		node.css({ 
 			top: coords.y,
@@ -629,15 +694,77 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		};
 
 		const { sidebar } = commonStore;
-		const { width } = sidebar;
+		const { width, height, fixed } = sidebar;
+		const node = $(ReactDOM.findDOMNode(this));
+		const head = node.find('.head');
+		const platform = Util.getPlatform();
 
-		this.resizeHeaderFooter(width);
+		let h = 0;
+		if (fixed) {
+			h = platform == I.Platform.Windows ? 30 : Util.sizeHeader() - 10;
+		};
+		head.css({ height: h });
+
+		this.setWidth(width);
+		this.setHeight(height);
 	};
 
-	resizeHeaderFooter (width: number) {
-		if (!this.props.isPopup) {
-			Util.resizeHeaderFooter(width);
+	onWindowResize () {
+		if (!this._isMounted) {
+			return;
 		};
+
+		const { sidebar } = commonStore;
+		const { fixed } = sidebar;
+		const win = $(window);
+		const ww = win.width();
+		const old = commonStore.sidebarOldFixed;
+		const btn = $('#footer #button-expand');
+
+		if (ww > Constant.size.sidebar.unfix) {
+			if (!fixed && old) {
+				commonStore.sidebarSet({ fixed: true });
+			};
+			btn.show();
+		} else {
+			if (fixed) {
+				commonStore.sidebarSet({ fixed: false });
+				commonStore.sidebarOldFixed = true;
+			};
+			btn.hide();
+		};
+	};
+
+	getRowHeight (item: any) {
+		let height = HEIGHT;
+		if (item.isSection) {
+			height = item.withPadding ? 38 : 30;
+		};
+		return height;
+	};
+
+	getWidth (width: number) {
+		const size = Constant.size.sidebar.width;
+		return Math.max(size.min, Math.min(size.max, width));
+	};
+
+	setWidth (width: number) {
+		const node = $(ReactDOM.findDOMNode(this));
+		node.css({ width: this.getWidth(width) });
+		Util.resizeSidebar();
+	};
+
+	getHeight (height: number) {
+		const size = Constant.size.sidebar.height;
+		return Math.max(size.min, Math.min(commonStore.sidebarMaxHeight(), height));
+	};
+
+	setHeight (height: number) {
+		const { sidebar } = commonStore;
+		const { fixed } = sidebar;
+		const node = $(ReactDOM.findDOMNode(this));
+
+		node.css({ height: (fixed ? '' : this.getHeight(height)) });
 	};
 
 });

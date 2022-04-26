@@ -5,11 +5,23 @@
 		.innerWrap { width: 960px; height: calc(100% - 128px); padding: 0px; }
 		.innerWrap.full { width: 100% !important; height: 100% !important; border-radius: 0px; margin: 0px !important; left: 0px; top: 0px; }
 		.innerWrap.full {
+			.header { position: fixed; }
 			.header {
 				.side.left {
 					.icon.expand { display: none; }
 					.icon.home { display: inline-block; }
 				}
+			}
+
+			.pageMainStore {
+				.ReactVirtualized__List { padding-top: 48px; }
+			}
+
+			#bodyWrapper { padding-top: 30px; }
+
+			.footer { display: block; }
+			.footer {
+				#button-expand { display: none !important; }
 			}
 		}
 
@@ -31,9 +43,9 @@
 
 		.pageMainEdit {
 			#bodyWrapper { padding: 0px; }
-			#bodyWrapper > .loaderWrapper { position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; }
+			#bodyWrapper > #loader { position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; }
 			
-			.content { height: 100%; padding-top: 38px; }
+			.content { height: 100%; }
 			.content > .wrap { height: 100%; }
 
 			.block.blockCover { top: 38px; }
@@ -51,6 +63,10 @@
 			.wrapper { padding-top: 74px; }
 		}
 
+		.pageMainStore {
+			.ReactVirtualized__List { padding-top: 0px; }
+		}
+
 	}	
 }
 
@@ -63,9 +79,18 @@ html.platformMac {
 				}
 			}
 			.pageMainEdit {
-				.content { padding-top: 52px; }
 				.block.blockCover { top: 52px; }
 			}	
+		}
+	}
+}
+
+html.platformWindows {
+	.popups {
+		.popup.popupPage {
+			.innerWrap.full {
+				.page { padding-top: 30px; }
+			}
 		}
 	}
 }

@@ -7,7 +7,6 @@ import arrayMove from 'array-move';
 import { menuStore, dbStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCache } from 'react-virtualized';
-import 'react-virtualized/styles.css';
 
 interface Props extends I.Menu {};
 
@@ -45,7 +44,7 @@ const MenuSort = observer(class MenuSort extends React.Component<Props, {}> {
 
 		const items = this.getItems();
 		const sortCnt = items.length;
-		const allowedView = blockStore.isAllowed(rootId, blockId, [ I.RestrictionDataview.View ]);
+		const allowedView = blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
 		
 		const typeOptions = [
 			{ id: String(I.SortType.Asc), name: 'Ascending' },

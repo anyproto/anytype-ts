@@ -1,12 +1,10 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon, Input, Loader, IconObject, Label, ObjectName, ObjectDescription } from 'ts/component';
-import { I, C, Util, DataUtil, crumbs, keyboard, Key, focus, translate } from 'ts/lib';
-import { commonStore, blockStore, detailStore, dbStore } from 'ts/store';
+import { I, C, Util, DataUtil, crumbs, keyboard, Key, focus, translate, analytics } from 'ts/lib';
+import { commonStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import 'react-virtualized/styles.css';
-import { analytics } from '../../lib';
 
 interface Props extends I.Popup {};
 
@@ -134,7 +132,10 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 
 				{!items.length && !loading ? (
 					<div id="empty" key="empty" className="emptySearch">
-						<Label text={Util.sprintf(translate('popupSearchEmptyFilter'), filter)} />
+						<div className="label">
+							<b>There are no objects named <span>"{filter}"</span></b>
+							Try creating a new one or search for something else.
+						</div>
 					</div>
 				) : ''}
 				
@@ -229,6 +230,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 		
 		const win = $(window);
 		win.on('keydown.search', (e: any) => { this.onKeyDown(e); });
+		win.on('resize.search', (e: any) => { this.resize(); });
 	};
 
 	unbind () {
@@ -341,7 +343,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 	onKeyUpSearch (e: any, force: boolean) {
 		window.clearTimeout(this.timeout);
 		this.timeout = window.setTimeout(() => {
-			const value = Util.filterFix(this.refFilter.getValue());
+			const value = this.refFilter.getValue();
 			
 			this.setState({ filter: value });
 			analytics.event('SearchQuery', { route: 'ScreenSearch', length: value.length });
@@ -444,12 +446,23 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 			return;
 		};
 
-		const { getId } = this.props;
+		const { getId, param } = this.props;
+		const { data } = param;
+		const { isPopup } = data;
 		const items = this.getItems();
-		const obj = $(`#${getId()} .content`);
+		const win = $(window);
+		const obj = $(`#${getId()} #innerWrap`);
+		const content = obj.find('.content');
 		const height = Math.max(110, Math.min(HEIGHT * LIMIT, items.length * HEIGHT + 16));
+		const header = $(isPopup ? '#popupPage #innerWrap #header' : '#page.isFull #header');
+		const element = header.find('.side.center');
 
-		obj.css({ height: height });
+		if (element.length) {
+			const offset = element.offset();
+			obj.css({ width: element.width(), left: offset.left, top: offset.top - win.scrollTop() + 40 });
+		};
+
+		content.css({ height });
 	};
 
 });

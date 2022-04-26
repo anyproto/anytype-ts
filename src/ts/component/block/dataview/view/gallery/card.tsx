@@ -69,29 +69,37 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 			<div 
 				className={cn.join(' ')} 
 				style={style} 
-				onMouseDown={(e: any) => { this.onClick(e); }}
+				onClick={(e: any) => { this.onClick(e); }}
+				onContextMenu={(e: any) => { onContext(e, record.id); }}
 			>
-				{cover}
-				<div className="inner">
-					{relations.map((relation: any, i: number) => {
-						const id = Relation.cellId(idPrefix, relation.relationKey, index);
-						return (
-							<Cell 
-								elementId={id}
-								key={'list-cell-' + view.id + relation.relationKey} 
-								{...this.props}
-								subId={subId}
-								ref={(ref: any) => { onRef(ref, id); }} 
-								relationKey={relation.relationKey}
-								viewType={view.type}
-								idPrefix={idPrefix}
-								index={index}
-								arrayLimit={2}
-								showTooltip={true}
-								tooltipX={I.MenuDirection.Left}
-							/>
-						);
-					})}
+				<div 
+					id={'selectable-' + record.id} 
+					className={[ 'selectable', 'type-' + I.SelectType.Record ].join(' ')} 
+					data-id={record.id}
+					data-type={I.SelectType.Record}
+				>
+					{cover}
+					<div className="inner">
+						{relations.map((relation: any, i: number) => {
+							const id = Relation.cellId(idPrefix, relation.relationKey, index);
+							return (
+								<Cell 
+									elementId={id}
+									key={'list-cell-' + view.id + relation.relationKey} 
+									{...this.props}
+									subId={subId}
+									ref={(ref: any) => { onRef(ref, id); }} 
+									relationKey={relation.relationKey}
+									viewType={view.type}
+									idPrefix={idPrefix}
+									index={index}
+									arrayLimit={2}
+									showTooltip={true}
+									tooltipX={I.MenuDirection.Left}
+								/>
+							);
+						})}
+					</div>
 				</div>
 			</div>
 		);
@@ -134,7 +142,9 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 			2: () => { onContext(e, record.id); }
 		};
 
-		cb[e.button]();
+		if (cb[e.button]) {
+			cb[e.button]();
+		};
 	};
 
 	getPicture (): string {

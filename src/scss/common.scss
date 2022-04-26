@@ -17,7 +17,7 @@ body.rowResize { cursor: row-resize !important; }
 body.rowResize * { cursor: row-resize !important; user-select: none !important; }
 
 body.grab { cursor: grab !important; }
-body.fullScreen {
+body.isFullScreen {
 	#drag { display: none; }
 }
 
@@ -40,8 +40,8 @@ input, textarea, select { font-family: 'Inter'; }
 #drag {
 	.sides { display: none; }
 }
-#root > .loaderWrapper { position: fixed; width: 100%; height: 100%; left: 0px; top: 0px; }
-#root > .loaderWrapper {
+#root > #loader { position: fixed; width: 100%; height: 100%; left: 0px; top: 0px; }
+#root > #loader {
 	.logo { 
 		width: 120px; height: 24px; background: url('~img/logo/color.svg') no-repeat; background-size: 100% 100%; 
 		position: absolute; left: 50%; top: 50%; margin: -12px 0px 0px -60px; transition: opacity 0.5s ease-in-out;
@@ -49,28 +49,29 @@ input, textarea, select { font-family: 'Inter'; }
 }
 
 html.platformWindows {
-	#drag { height: 30px; background: $colorBlack; z-index: 1000; display: block; }
+	#drag { height: 30px; z-index: 1000; display: block; }
 	#drag {
-		.sides { display: flex; height: 100%; line-height: 30px; }
-		.side { width: 50%; }
-		.side.left { padding-left: 16px; }
-		.side.right { text-align: right; }
+		.sides { display: flex; align-items: center; height: 100%; line-height: 30px; height: 30px; background: $colorBlack; }
+		.side { width: 50%; display: flex; align-items: center; }
+		.side.left { padding-left: 16px; gap: 0px 16px; }
+		.side.right { justify-content: flex-end; gap: 0px 20px; padding-right: 16px; }
 		.side.right {
-			.icon { width: 20px; height: 20px; margin-right: 20px; background-size: 16px 16px; }
-			.icon:last-child { margin-right: 16px; }
+			.icon { width: 20px; height: 20px; transition: none; }
 		}
 
 		.name { color: $colorWhite; display: inline-block; vertical-align: middle; line-height: 1; margin-top: -2px; }
 
 		.icon { cursor: pointer; -webkit-app-region: none; }
-		.icon.menu { width: 20px; height: 20px; margin: -2px 16px 0px 0px; background-image: url('~img/icon/header/windows/menu0.svg'); }
+		.icon.menu { width: 20px; height: 20px; background-image: url('~img/icon/header/windows/menu0.svg'); }
 		.icon.min { background-image: url('~img/icon/header/windows/min0.svg'); }
 		.icon.max { background-image: url('~img/icon/header/windows/max0.svg'); }
+		.icon.window { background-image: url('~img/icon/header/windows/window0.svg'); }
 		.icon.close { background-image: url('~img/icon/header/windows/close0.svg'); }
 
 		.icon.menu:hover { background-image: url('~img/icon/header/windows/menu1.svg'); }
 		.icon.min:hover { background-image: url('~img/icon/header/windows/min1.svg'); }
 		.icon.max:hover { background-image: url('~img/icon/header/windows/max1.svg'); }
+		.icon.window:hover { background-image: url('~img/icon/header/windows/window1.svg'); }
 		.icon.close:hover { background-image: url('~img/icon/header/windows/close1.svg'); }
 	}
 
@@ -84,18 +85,10 @@ html.platformWindows {
 		}
 	}
 
-	::-webkit-scrollbar { width: 12px; }
-	::-webkit-scrollbar-thumb { 
-		width: 6px; background: rgba(0,0,0,0.5); border: 3px solid rgba(0, 0, 0, 0); border-radius: 6px; background-clip: padding-box; 
-	}
+	::-webkit-scrollbar { width: 6px; height: 6px; }
+	::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.5); border-radius: 6px; }
 	::-webkit-scrollbar-corner { background-color: transparent; }
 	::-webkit-scrollbar-button { display: none; }
-
-	.blocks {
-		.block.blockDataview {
-			.content .scroll::-webkit-scrollbar-thumb { border-width: 5px; border-radius: 10px; }
-		}
-	}
 }
 
 .dn { display: none !important; }
@@ -138,6 +131,11 @@ search.active { background: orange !important; }
 /* DropTarget for Layout.Row */
 .dropTarget.targetTop.isOver.top { box-shadow: 0px -2px 0px $colorOrange inset; }
 .dropTarget.targetBot.isOver.bottom { box-shadow: 0px 2px 0px $colorOrange inset; }
+
+.selectable.isSelectionSelected::after { 
+	display: block; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: Highlight; opacity: 0.35;
+	pointer-events: none; z-index: 10; content: "";
+}
 
 .textColor-default { color: $colorBlack !important; }
 .textColor-black { color: $colorBlack !important; }

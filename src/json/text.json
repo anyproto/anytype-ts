@@ -5,6 +5,7 @@
 	"commonCreate": { "en": "Create" },
 	"commonSave": { "en": "Save" },
 	"commonCancel": { "en": "Cancel" },
+	"commonDelete": { "en": "Delete" },
 	"commonSoon": { "en": "Soon" },
 	"commonTitle": { "en": "anytype" },
 	"commonSearch": { "en": "Search..." },
@@ -149,6 +150,9 @@
 	"blockNameQuote": { "en": "Highlighted" },
 	"blockTextQuote": { "en": "Spotlight, that needs special attention" },
 
+	"blockNameCallout": { "en": "Callout" },
+	"blockTextCallout": { "en": "..." },
+
 	"blockNameCheckbox": { "en": "Checkbox" },
 	"blockTextCheckbox": { "en": "Create and track task with to-do list" },
 
@@ -239,6 +243,10 @@
 	"blockFileError": { "en": "There was an error uploading the file" },
 
 	"popupSettingsTitle": { "en": "Settings" },
+	"popupSettingsAccountTitle": { "en": "Account & data" },
+	"popupSettingsAccountDeleteTitle": { "en": "Delete account" },
+	"popupSettingsPersonalTitle": { "en": "Personalization" },
+	"popupSettingsAppearanceTitle": { "en": "Appearance" },
 	"popupSettingsWallpaperTitle": { "en": "Wallpaper" },
 	"popupSettingsWallpaperText": { "en": "Choose or upload the wallpaper. For best results upload high resolution images." },
 	"popupSettingsPicture": { "en": "Pictures" },
@@ -253,7 +261,7 @@
 	"popupSettingsPinText": { "en": "The pin code will protect your keychain phrase. As we do not store your keychain phrase or pin code and do not ask for your e-mail or phone number, it is impossible to recover your data without this information. So, please, remember or write it down somewhere in a safe place" },
 	"popupSettingsPinOn": { "en": "Turn pin code on" },
 	"popupSettingsPinOff": { "en": "Turn pin code off" },
-	"popupSettingsPinChange": { "en": "Change pin code" },
+	"popupSettingsPinChange": { "en": "Update pin code" },
 	"popupSettingsPinVerify": { "en": "To continue, first verify that it’s you. Enter current pin code" },
 	"popupSettingsPinError": { "en": "Incorrect pin" },
 	"popupSettingsImportTitle": { "en": "Import" },
@@ -311,7 +319,6 @@
 	"popupNavigationEmptyFrom": { "en": "No links to other pages" },
 
 	"popupSearchPlaceholder": { "en": "Search for an object..." },
-	"popupSearchEmptyFilter": { "en": "<b>There are no objects named <span>\"%s\"</span></b>Try creating a new one or search for something else." },
 	"popupSearchEmpty": { "en": "No objects found" },
 
 	"popupConfirmUpdateTitle": { "en": "Oops!" },
@@ -378,6 +385,7 @@
 	"syncStatus2": { "en": "Syncing..." },
 	"syncStatus3": { "en": "Synced" },
 	"syncStatus4": { "en": "Not syncing" },
+	"syncStatus5": { "en": "Backup disabled" },
 
 	"tooltip0": { "en": "Initializing sync" },
 	"tooltip1": { "en": "Anytype node is not connected" },
@@ -395,6 +403,15 @@
 	"textColor-ice": { "en": "Sky" },
 	"textColor-teal": { "en": "Teal" },
 	"textColor-lime": { "en": "Green" },
+
+	"gradientColor-yellow": { "en": "Yellow" },
+	"gradientColor-red": { "en": "Red" },
+	"gradientColor-blue": { "en": "Blue" },
+	"gradientColor-teal": { "en": "Teal" },
+	"gradientColor-pinkOrange": { "en": "Pink - Orange" },
+	"gradientColor-bluePink": { "en": "Blue - Pink" },
+	"gradientColor-greenOrange": { "en": "Green - Orange" },
+	"gradientColor-sky": { "en": "Sky" },
 
 	"layout0": { "en": "Basic" },
 	"layout1": { "en": "Profile" },

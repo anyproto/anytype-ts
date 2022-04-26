@@ -2,7 +2,7 @@ import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { I, C, Util, DataUtil, analytics, translate, keyboard, Onboarding, Relation } from 'ts/lib';
 import { observer } from 'mobx-react';
-import { blockStore, menuStore, dbStore, detailStore, popupStore } from 'ts/store';
+import { blockStore, menuStore, dbStore, detailStore, popupStore, commonStore } from 'ts/store';
 import { throttle } from 'lodash';
 import arrayMove from 'array-move';
 
@@ -20,7 +20,6 @@ interface State {
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
-const { ipcRenderer } = window.require('electron');
 
 const BlockDataview = observer(class BlockDataview extends React.Component<Props, State> {
 
@@ -46,6 +45,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	render () {
+		const { sidebar } = commonStore;
+		const { fixed } = sidebar;
 		const { rootId, block, isPopup } = this.props;
 		const views = dbStore.getViews(rootId, block.id);
 
@@ -166,13 +167,37 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	onKeyDown (e: any) {
-		const { rootId } = this.props;
+		const { rootId, dataset } = this.props;
+		const { selection } = dataset || {};
 		const root = blockStore.getLeaf(rootId, rootId);
 		const cmd = keyboard.ctrlKey();
+		const ids = selection.get(I.SelectType.Record);
+		const length = ids.length;
 
-		if (root && root.isObjectSet() && !this.creating) {
-			keyboard.shortcut(`${cmd}+n`, e, (pressed: string) => {
-				this.onRowAdd(e, -1, true);
+		if (!root || !root.isObjectSet()) {
+			return;
+		};
+
+		if (!this.creating) {
+			keyboard.shortcut(`${cmd}+n`, e, (pressed: string) => { this.onRowAdd(e, -1, true); });
+		};
+
+		if (length) {
+			keyboard.shortcut('backspace, delete', e, (pressed: string) => {
+				analytics.event('ShowDeletionWarning');
+				popupStore.open('confirm', {
+					data: {
+						title: `Are you sure you want to delete ${length} ${Util.cntWord(length, 'object', 'objects')}?`,
+						text: 'These objects will be deleted irrevocably. You can’t undo this action.',
+						textConfirm: 'Delete',
+						onConfirm: () => { 
+							C.ObjectListDelete(ids);
+							
+							selection.clear(false);
+							analytics.event('RemoveCompletely', { count: length });
+						}
+					},
+				});
 			});
 		};
 	};
@@ -321,6 +346,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				};
 
 				analytics.event('CreateObject', {
+					route: 'Set',
 					objectType: newRecord.type,
 					layout: newRecord.layout,
 					template: template ? (template.templateIsBundled ? template.id : 'custom') : '',
@@ -402,6 +428,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const ref = this.cellRefs.get(id);
 		const record = this.getRecord(index);
 		const view = this.getView();
+		const renderer = Util.getRenderer();
 
 		if (!relation || !ref || !record) {
 			return;
@@ -409,7 +436,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		if ((view.type == I.ViewType.List) && ([ I.RelationType.Url, I.RelationType.Email, I.RelationType.Phone ].indexOf(relation.format) >= 0)) {
 			const scheme = Relation.getUrlScheme(relation.format, record[relationKey]);
-			ipcRenderer.send('urlOpen', scheme + record[relationKey]);
+			renderer.send('urlOpen', scheme + record[relationKey]);
 			return;
 		};
 
@@ -446,15 +473,21 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { rootId, block } = this.props;
+		const { rootId, block, dataset } = this.props;
+		const { selection } = dataset || {};
 		const { x, y } = keyboard.mouse.page;
 		const subId = dbStore.getSubId(rootId, block.id);
+		
+		let ids = selection.get(I.SelectType.Record);
+		if (!ids.length) {
+			ids = [ id ];
+		};
 
 		menuStore.open('dataviewContext', {
-			rect: { width: 0, height: 0, x: x + 20, y: y },
-			vertical: I.MenuDirection.Center,
+			rect: { width: 0, height: 0, x: x + 4, y: y },
+			onClose: () => { selection.clear(true); },
 			data: {
-				objectId: id,
+				objectIds: ids,
 				subId,
 			}
 		});

@@ -238,7 +238,7 @@ class BlockStore {
 		return element ? (element.childrenIds || []) : [];
 	};
 
-    getChildren (rootId: string, blockId: string, filter?: (it: any) => boolean) {
+    getChildren (rootId: string, blockId: string, filter?: (it: any) => boolean): I.Block[] {
 		let blocks = this.getBlocks(rootId);
 		let childrenIds = this.getChildrenIds(rootId, blockId);
 		
@@ -420,12 +420,17 @@ class BlockStore {
 		return map.get(blockId) || [];
 	};
 
-    isAllowed (rootId: string, blockId: string, flags: any[]): boolean {
+	checkFlags (rootId: string, blockId: string, flags: any[]): boolean {
 		if (!rootId || !blockId) {
 			return false;
 		};
+		return this.isAllowed(this.getRestrictions(rootId, blockId), flags);
+	};
 
-		const restrictions = this.getRestrictions(rootId, blockId);
+    isAllowed (restrictions: any[], flags: any[]): boolean {
+		restrictions = restrictions || [];
+		flags = flags || [];
+
 		for (let flag of flags) {
 			if (restrictions.indexOf(flag) >= 0) {
 				return false;

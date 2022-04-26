@@ -2,7 +2,7 @@ import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Icon } from 'ts/component';
 import { Util } from 'ts/lib';
-import { blockStore, popupStore } from 'ts/store';
+import { popupStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any> {
@@ -31,36 +31,29 @@ const HeaderMainIndex = observer(class HeaderMainIndex extends React.Component<P
 	};
 
 	componentDidMount () {
-		this.resize();
+		Util.resizeSidebar();
 	};
 
 	componentDidUpdate () {
-		this.resize();
+		Util.resizeSidebar();	
 	};
 
 	onSearch (e: any) {
-		const { root } = blockStore;
+		e.preventDefault();
+		e.stopPropagation();
 
-		popupStore.open('search', { 
-			preventResize: true,
+		const { isPopup } = this.props;
+
+		popupStore.open('search', {
+			preventResize: true, 
 			data: { 
-				rootId: root,
-			}, 
+				isPopup,
+			},
 		});
 	};
 
 	onSettings (e: any) {
 		popupStore.open('settings', {});
-	};
-
-	resize () {
-		const { isPopup } = this.props;
-
-		console.log('RESIZE');
-
-		if (!isPopup) {
-			Util.resizeHeaderFooter(0);
-		};
 	};
 
 });

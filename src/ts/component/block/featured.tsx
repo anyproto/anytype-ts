@@ -54,7 +54,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		const items = this.getItems();
 		const type: any = dbStore.getObjectType(object.type);
 		const bullet = <div className="bullet" />;
-		const allowedValue = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
+		const allowedValue = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const setOf = Relation.getArrayValue(object[Constant.relationKey.setOf]);
 	
 		let types = [];
@@ -291,7 +291,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		const { rootId, block, readonly } = this.props;
 		const object = detailStore.get(rootId, rootId, [ Constant.relationKey.setOf ]);
 		const type = detailStore.get(rootId, object.type, []);
-		const allowed = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Type ]);
+		const allowed = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Type ]);
 		const options: any[] = [];
 		
 		if (!type.isArchived && !type.isDeleted) {
@@ -345,7 +345,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		};
 
 		const object = detailStore.get(rootId, rootId, [ Constant.relationKey.setOf ]);
-		const types = DataUtil.getObjectTypesForNewObject(false).map((it: any) => { return it.id; });
+		const types = DataUtil.getObjectTypesForNewObject(false).map(it => it.id);
 
 		let menuId = '';
 		let menuParam = {
@@ -403,10 +403,14 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				});
 		};
 
-		if (menuId) {
-			menuStore.closeAll(Constant.menuIds.featuredType, () => {
-				menuStore.open(menuId, menuParam);
-			});
+		if (menuId && !menuStore.isOpen(menuId)) {
+			if (menuStore.isOpen(menuId)) {
+				menuStore.open(menuId, param);
+			} else {
+				menuStore.closeAll(Constant.menuIds.featuredType, () => {
+					menuStore.open(menuId, menuParam);
+				});
+			};
 		};
 	};
 

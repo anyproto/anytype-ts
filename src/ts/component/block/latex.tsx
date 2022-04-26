@@ -20,7 +20,6 @@ const raf = require('raf');
 const $ = require('jquery');
 const katex = require('katex');
 const Constant = require('json/constant.json');
-const { ipcRenderer } = window.require('electron');
 
 require(`prismjs/components/prism-latex.js`);
 require('katex/dist/contrib/mhchem.min.js');
@@ -366,9 +365,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 						
 						this.setValue(Util.stringInsert(this.getValue(), text, from, to));
 						this.save();
-
-						const length = this.getValue().length;
-						this.setRange({ start: length, end: length });
+						this.setRange({ start: to, end: to });
 						this.focus();
 					},
 				},
@@ -407,6 +404,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 
 		const node = $(ReactDOM.findDOMNode(this));
 		const val = node.find('#value');
+		const renderer = Util.getRenderer();
 
 		value = String(value || '');
 		this.text = value;
@@ -425,7 +423,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 
 			item.unbind('click').click((e: any) => {
 				e.preventDefault();
-				ipcRenderer.send('urlOpen', item.attr('href'));
+				renderer.send('urlOpen', item.attr('href'));
 			});
 		});
 

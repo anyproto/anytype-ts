@@ -75,13 +75,13 @@ class DetailStore {
 			} else {
 				el = { relationKey: k, value: item.details[k] };
 				makeObservable(el, { value: observable });
-
-				intercept(el as any, (change: any) => { 
-					return (change.newValue === el[change.name] ? null : change); 
-				});
-
 				list.push(el);
 			};
+
+			intercept(el as any, (change: any) => { 
+				return (change.newValue === el[change.name] ? null : change); 
+			});
+
 			if (createList) {
 				map.set(item.id, list);
 			};
@@ -111,19 +111,14 @@ class DetailStore {
 			return { id, _empty_: true };
 		};
 		
-		let object: any = {};
-
 		if (keys) {
 			if (!forceKeys) {
 				keys = keys.concat(Constant.defaultRelationKeys);
 			};
-			list = list.filter((it: Detail) => { return keys.indexOf(it.relationKey) >= 0; });
+			list = list.filter((it: Detail) => { return keys.includes(it.relationKey); });
 		};
 
-		for (let item of list) {
-			object[item.relationKey] = item.value;
-		};
-
+		let object: any = Object.fromEntries(list.map(it => [ it.relationKey, it.value ]));
 		let layout = Number(object.layout) || I.ObjectLayout.Page;
 		let name = String(object.name || DataUtil.defaultName('page'));
 		let snippet = String(object.snippet || '').replace(/\n/g, ' ');
@@ -155,6 +150,7 @@ class DetailStore {
 			coverX: Number(object.coverX) || 0,
 			coverY: Number(object.coverY) || 0,
 			coverScale: Number(object.coverScale) || 0,
+			coverType: Number(object.coverType) || I.CoverType.None,
 		};
 	};
 

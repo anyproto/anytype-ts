@@ -395,11 +395,11 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<P
 		const sideLeft = node.find('#sideLeft');
 		const sideRight = node.find('#sideRight');
 		const cover = node.find('.block.blockCover');
-		const obj = $(isPopup ? '#popupPage #innerWrap' : '.page.isFull');
+		const obj = $(isPopup ? '#popupPage #innerWrap' : '#page.isFull');
 		const header = obj.find('#header');
 		const wrapper = $('.pageMainHistory .wrapper');
 		const height = win.height();
-		const hh = header.outerHeight();
+		const hh = isPopup ? header.height() : Util.sizeHeader();
 
 		sideLeft.css({ height: height });
 		sideRight.css({ height: height });

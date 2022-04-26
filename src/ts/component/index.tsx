@@ -5,6 +5,7 @@ import Block from './block';
 
 import DragLayer from './drag/layer';
 import DragProvider from './drag/provider';
+import DragBox from './drag/box';
 import DropTarget from './drag/target';
 
 import ListPopup from './list/popup';
@@ -20,6 +21,7 @@ import HeaderMainEdit from './header/main/edit';
 import HeaderMainHistory from './header/main/history';
 import HeaderMainGraph from './header/main/graph';
 import HeaderMainNavigation from './header/main/navigation';
+import HeaderMainStore from './header/main/store';
 
 import FooterAuth from './footer/auth';
 import FooterMainIndex from './footer/main/index';
@@ -81,6 +83,7 @@ export {
 	Block,
 	DragLayer,
 	DragProvider,
+	DragBox,
 	DropTarget,
 	ListPopup,
 	ListMenu,
@@ -94,6 +97,7 @@ export {
 	HeaderMainHistory,
 	HeaderMainGraph,
 	HeaderMainNavigation,
+	HeaderMainStore,
 	FooterAuth,
 	FooterMainIndex,
 	FooterMainEdit,

@@ -1,22 +1,20 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Frame, Cover, Title, Label, Error, Button, IconObject, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
-import { Storage, translate, C, DataUtil, Util } from 'ts/lib';
+import { Frame, Cover, Title, Error, Button, IconObject, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
+import { Storage, translate, C, DataUtil, Util, analytics } from 'ts/lib';
 import { commonStore, authStore } from 'ts/store';
 import { observer } from 'mobx-react';
-import { analytics } from '../../../lib';
 
-interface Props extends RouteComponentProps<any> {}
+interface Props extends RouteComponentProps<any> {};
 interface State {
 	icon: string;
 	index: number;
 	error: string;
-}
+};
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
-const { ipcRenderer } = window.require('electron');
 const Errors = require('json/error.json');
 const Icons: number[] = [
 	12, 1230, 1, 130, 2, 230, 3, 330, 4, 430, 5, 530, 6, 630, 7, 730, 8, 830, 9, 930, 10, 1030, 11, 1130
@@ -139,8 +137,8 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<Props
 						this.setError(message.error.description);
 					} else
 					if (message.account) {
-						if (message.config) {
-							commonStore.configSet(message.config, false);
+						if (message.account.config) {
+							commonStore.configSet(message.account.config, false);
 						};
 
 						authStore.accountSet(message.account);
@@ -156,6 +154,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<Props
 	add () {
 		const { match } = this.props;
 		const { name, icon, code, phrase } = authStore;
+		const renderer = Util.getRenderer();
 
 		commonStore.defaultTypeSet(Constant.typeId.note);
 		
@@ -174,8 +173,10 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<Props
 				authStore.accountSet(message.account);
 				authStore.previewSet('');
 
-				Storage.set('popupNewBlock', 1);
-				ipcRenderer.send('keytarSet', accountId, phrase);
+				Storage.set('popupNewBlock', true);
+				Storage.set('popupVideo', true);
+
+				renderer.send('keytarSet', accountId, phrase);
 				analytics.event('CreateAccount');
 				
 				if (match.params.id == 'register') {
@@ -198,8 +199,8 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<Props
 				this.setError(message.error.description);
 			} else
 			if (message.account) {
-				if (message.config) {
-					commonStore.configSet(message.config, false);
+				if (message.account.config) {
+					commonStore.configSet(message.account.config, false);
 				};
 
 				authStore.accountSet(message.account);

@@ -7,6 +7,7 @@ import { RouteComponentProps } from 'react-router';
 
 import Controls from './controls';
 import Preview from './preview';
+import Filters from './filters';
 
 interface Props extends RouteComponentProps<any> {
     isPopup?: boolean;
@@ -74,6 +75,7 @@ const GraphPanel = observer(class Graph extends React.Component<Props, State> {
                 break;
             
             case I.GraphView.Filter:
+                content = <Filters ref={(ref: any) => { this.ref = ref; }} {...this.props} />;
                 break;
         };
 
@@ -109,7 +111,7 @@ const GraphPanel = observer(class Graph extends React.Component<Props, State> {
     resize () {
         const { isPopup } = this.props;
         const node = $(ReactDOM.findDOMNode(this));
-		const obj = $(isPopup ? '#popupPage #innerWrap' : '.page.isFull');
+		const obj = $(isPopup ? '#popupPage #innerWrap' : '#page.isFull');
 		const header = obj.find('#header');
 		const tabs = node.find('.tabs');
 		const hh = header.height();

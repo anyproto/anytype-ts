@@ -1,14 +1,13 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon, InputWithFile } from 'ts/component';
-import { I, C, focus } from 'ts/lib';
+import { I, C, focus, Util } from 'ts/lib';
 import { commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
-interface Props extends I.BlockComponent {}
+interface Props extends I.BlockComponent {};
 
 const $ = require('jquery');
-const { ipcRenderer } = window.require('electron');
 
 const BlockBookmark = observer(class BlockBookmark extends React.Component<Props, {}> {
 
@@ -31,26 +30,23 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<Props
 
 		let element = null;
 		if (url) {
-			let style: any = {};
 			let cn = [ 'inner', 'resizable' ];
-
 			if (imageHash) {
 				cn.push('withImage');
-				style.backgroundImage = 'url("' + commonStore.imageUrl(imageHash, 500) + '")';
 			};
 			
 			element = (
-				<div className={cn.join(' ')} onClick={this.onClick}>
+				<div className={cn.join(' ')} data-href={url} onClick={this.onClick}>
 					<div className="side left">
 						{title ? <div className="name">{title}</div> : ''}
 						{description ? <div className="descr">{description}</div> : ''}
 						<div className="link">
-							{faviconHash ? <Icon className="fav" icon={commonStore.imageUrl(faviconHash, 16)} /> : ''}
+							{faviconHash ? <img src={commonStore.imageUrl(faviconHash, 16)} className="fav" /> : ''}
 							{url}
 						</div>
 					</div>
 					<div className="side right">
-						<div className="img" style={style} />
+						<img src={commonStore.imageUrl(imageHash, 500)} className="img" />
 					</div>
 				</div>
 			);
@@ -110,10 +106,9 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<Props
 		};
 		
 		const { block } = this.props;
-		const { content } = block;
-		const { url } = content;
-		
-		ipcRenderer.send('urlOpen', url);
+		const renderer = Util.getRenderer();
+	
+		renderer.send('urlOpen', block.content.url);
 	};
 	
 	onChangeUrl (e: any, url: string) {

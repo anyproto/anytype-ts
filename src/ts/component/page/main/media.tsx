@@ -2,8 +2,8 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
-import { HeaderMainEdit as Header, FooterMainEdit as Footer, Loader, Block, Button, IconObject, Deleted } from 'ts/component';
-import { I, M, C, DataUtil, Util, crumbs, Action, keyboard } from 'ts/lib';
+import { HeaderMainEdit as Header, FooterMainEdit as Footer, Loader, Block, Button, IconObject, Deleted, ObjectName } from 'ts/component';
+import { I, M, C, Util, crumbs, Action } from 'ts/lib';
 import { commonStore, blockStore, detailStore } from 'ts/store';
 
 interface Props extends RouteComponentProps<any> {
@@ -16,7 +16,7 @@ interface State {
 };
 
 const $ = require('jquery');
-const { ipcRenderer } = window.require('electron');
+const raf = require('raf');
 const { app } = window.require('@electron/remote')
 const path = window.require('path');
 const userPath = app.getPath('userData');
@@ -44,14 +44,14 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<Props
 
 	render () {
 		const { isDeleted } = this.state;
+		const { isPopup } = this.props;
+		const rootId = this.getRootId();
+		const object = detailStore.get(rootId, rootId, [ 'heightInPixels' ]);
 
-		if (isDeleted) {
+		if (isDeleted || object.isDeleted) {
 			return <Deleted {...this.props} />;
 		};
 
-		const { isPopup } = this.props;
-		const rootId = this.getRootId();
-		const object = Util.objectCopy(detailStore.get(rootId, rootId, [ 'heightInPixels' ]));
 		const featured: any = new M.Block({ id: rootId + '-featured', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
 		const blocks = blockStore.getBlocks(rootId);
 		const file = blocks.find((it: I.Block) => { return it.isFile(); });
@@ -114,7 +114,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<Props
 
 							<div className="side right">
 								<div className="head">
-									<div className="title">{DataUtil.fileName(object)}</div>
+									<ObjectName className="title" object={object} />
 									<div className="descr">{object.description}</div>
 
 									<Block {...this.props} key={featured.id} rootId={rootId} iconSize={20} block={featured} />
@@ -243,10 +243,11 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<Props
 		const blocks = blockStore.getBlocks(rootId);
 		const block = blocks.find((it: I.Block) => { return it.isFile(); });
 		const { content } = block;
+		const renderer = Util.getRenderer();
 
 		C.DownloadFile(content.hash, path.join(userPath, 'tmp'), (message: any) => {
 			if (message.path) {
-				ipcRenderer.send('pathOpen', message.path);
+				renderer.send('pathOpen', message.path);
 			};
 		});
 	};
@@ -256,8 +257,9 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<Props
 		const blocks = blockStore.getBlocks(rootId);
 		const block = blocks.find((it: I.Block) => { return it.isFile(); });
 		const { content } = block;
+		const renderer = Util.getRenderer();
 		
-		ipcRenderer.send('download', commonStore.fileUrl(content.hash));
+		renderer.send('download', commonStore.fileUrl(content.hash));
 	};
 
 	getRootId () {

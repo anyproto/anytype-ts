@@ -1,16 +1,11 @@
 import { I, keyboard } from 'ts/lib';
-import { commonStore, popupStore } from 'ts/store';
+import { commonStore, popupStore, menuStore } from 'ts/store';
 import { v4 as uuidv4 } from 'uuid';
 import { translate } from '.';
-import { menuStore } from '../store';
 
-const { ipcRenderer } = window.require('electron');
 const raf = require('raf');
 const $ = require('jquery');
-const loadImage = require('blueimp-load-image');
 const fs = window.require('fs');
-const readChunk = window.require('read-chunk');
-const fileType = window.require('file-type');
 const Constant = require('json/constant.json');
 const Errors = require('json/error.json');
 const os = window.require('os');
@@ -305,15 +300,6 @@ class Util {
 		document.execCommand('copy');
 	};
 	
-	makeFileFromPath (path: string) {
-		let fn = path.split('/');
-		let stat = fs.statSync(path);
-		let buffer = readChunk.sync(path, 0, stat.size);
-		let type = fileType(buffer);
-		let file = new File([ new Blob([ buffer ]) ], fn[fn.length - 1], { type: type.mime });
-		return file;
-	};
-
 	cacheImages (images: string[], callBack?: () => void) {
 		let loaded = 0;
 		let cb = () => {
@@ -329,56 +315,6 @@ class Util {
 			img.src = image;
 			img.onload = cb;
 			img.onerror = cb;
-		});
-	};
-	
-	loadPreviewCanvas (file: any, param: any, success?: (canvas: any) => void) {
-		if (!file) {
-			return;
-		};
-		
-		param = Object.assign({
-			maxWidth: 256,
-			type: 'image/png',
-			quality: 0.95,
-			canvas: true,
-			contain: true
-		}, param);
-		
-		loadImage.parseMetaData(file, (data: any) => {
-			if (data.exif) {
-				param = Object.assign(param, { orientation: data.exif.get('Orientation') });
-			};
-			
-			loadImage(file, success, param);
-		});
-	};
-	
-	loadPreviewBlob (file: any, param: any, success?: (image: any, param: any) => void, error?: (error: string) => void) {
-		this.loadPreviewCanvas(file, param, (canvas: any) => {
-			canvas.toBlob((blob: any) => {
-				if (blob && success) {
-					success(blob, { width: canvas.width, height: canvas.height });
-				};
-				
-				if (!blob && error) {
-					error('Failed to get canvas.toBlob()');
-				};
-			}, param.type, param.quality);
-		});
-	};
-	
-	loadPreviewBase64 (file: any, param: any, success?: (image: string, param: any) => void, error?: (error: string) => void) {
-		this.loadPreviewCanvas(file, param, (canvas: any) => {
-			let image = canvas.toDataURL(param.type, param.quality);
-			
-			if (image && success) {
-				success(image, { width: canvas.width, height: canvas.height });
-			};
-			
-			if (!image && error) {
-				error('Failed to get canvas.toDataURL()');
-			};
 		});
 	};
 	
@@ -619,97 +555,6 @@ class Util {
 		return ret;
 	};
 	
-	fileSize (v: number) {
-		v = Number(v) || 0;
-		let unit = 1024;
-		let g = v / (unit * unit * unit);
-		let m = v / (unit * unit);
-		let k = v / unit;
-		if (g > 1) {
-			v = this.sprintf('%0.2fGB', this.round(g, 2));
-		} else if (m > 1) {
-			v = this.sprintf('%0.2fMB', this.round(m, 2));
-		} else if (k > 1) {
-			v = this.sprintf('%0.2fKB', this.round(k, 2));
-		} else {
-			v = this.sprintf('%dB', this.round(v, 0));
-		};
-		return v;
-	};
-
-	fileIcon (obj: any): string {
-		const n = obj.name.split('.');
-		const mime = String(obj.mime || obj.mimeType || obj.fileMimeType || '').toLowerCase();
-		const e = String(obj.fileExt || n[n.length - 1] || '').toLowerCase();
-
-		let t: string[] = [];
-		let icon = '';
-
-		if (mime) {
-			let a: string[] = mime.split(';');
-			if (a.length) {
-				t = a[0].split('/');
-			};
-		};
-
-		// Detect by mime type
-
-		if (t.length) {
-			if ([ 'image', 'video', 'text', 'audio' ].indexOf(t[0]) >= 0) {
-				icon = t[0];
-			};
-			
-			if ([ 'pdf' ].indexOf(t[1]) >= 0) {
-				icon = t[1];
-			};
-			
-			if ([ 'zip', 'gzip', 'tar', 'gz', 'rar' ].indexOf(t[1]) >= 0) {
-				icon = 'archive';
-			};
-			
-			if ([ 'vnd.ms-powerpoint' ].indexOf(t[1]) >= 0) {
-				icon = 'presentation';
-			};
-			
-			if ([ 'vnd.openxmlformats-officedocument.spreadsheetml.sheet' ].indexOf(t[1]) >= 0) {
-				icon = 'table';
-			};
-		};
-
-		// Detect by extension
-		
-		if (!icon) {
-			if ([ 'm4v' ].indexOf(e) >= 0) {
-				icon = 'video';
-			};
-				
-			if ([ 'csv', 'json', 'txt', 'doc', 'docx', 'md' ].indexOf(e) >= 0) {
-				icon = 'text';
-			};
-				
-			if ([ 'zip', 'gzip', 'tar', 'gz', 'rar' ].indexOf(e) >= 0) {
-				icon = 'archive';
-			};
-	
-			if ([ 'xls', 'xlsx', 'sqlite' ].indexOf(e) >= 0) {
-				icon = 'table';
-			};
-	
-			if ([ 'ppt', 'pptx' ].indexOf(e) >= 0) {
-				icon = 'presentation';
-			};
-	
-			for (let k in Constant.extension) {
-				if (Constant.extension[k].indexOf(e) >= 0) {
-					icon = k;
-					break;
-				};
-			};
-		};
-
-		return String(icon || 'other');
-	};
-	
 	tooltipShow (text: string, node: any, typeX: I.MenuDirection, typeY: I.MenuDirection) {
 		if (!node.length || keyboard.isResizing) {
 			return;
@@ -861,9 +706,11 @@ class Util {
 	};
 	
 	renderLink (obj: any) {
+		const renderer = this.getRenderer();
+
 		obj.find('a').unbind('click').on('click', function (e: any) {
 			e.preventDefault();
-			ipcRenderer.send('urlOpen', $(this).attr('href'));
+			renderer.send('urlOpen', $(this).attr('href'));
 		});
 	};
 
@@ -883,11 +730,15 @@ class Util {
 	};
 	
 	onUrl (url: string) {
-		ipcRenderer.send('urlOpen', url);
+		const renderer = this.getRenderer();
+
+		renderer.send('urlOpen', url);
 	};
 
 	onPath (path: string) {
-		ipcRenderer.send('pathOpen', path);
+		const renderer = this.getRenderer();
+
+		renderer.send('pathOpen', path);
 	};
 	
 	emailCheck (v: string) {
@@ -954,10 +805,12 @@ class Util {
 			return;
 		};
 
+		const renderer = this.getRenderer();
+
 		// App is already working
 		if (code == Errors.Code.ANOTHER_ANYTYPE_PROCESS_IS_RUNNING) {
 			alert('You have another instance of anytype running on this machine. Closing...');
-			ipcRenderer.send('exit', false);
+			renderer.send('exit', false);
 		};
 
 		// App needs update
@@ -967,6 +820,8 @@ class Util {
 	};
 
 	onErrorUpdate (onConfirm?: () => void) {
+		const renderer = this.getRenderer();
+
 		popupStore.open('confirm', {
 			data: {
 				icon: 'update',
@@ -975,7 +830,7 @@ class Util {
 				textConfirm: translate('confirmUpdateConfirm'),
 				canCancel: false,
 				onConfirm: () => {
-					ipcRenderer.send('update');
+					renderer.send('update');
 					if (onConfirm) {
 						onConfirm();
 					};
@@ -1033,7 +888,7 @@ class Util {
 		switch (type) {
 			default:
 			case 'page':
-				return '.page.isFull';
+				return '#page.isFull';
 
 			case 'popup':
 				return '#popupPage';
@@ -1042,10 +897,6 @@ class Util {
 			case 'menuBlockRelationView':
 				return '#' + type;
 		};
-	};
-
-	dateForFile () {
-		return new Date().toISOString().replace(/:/g, '_').replace(/\..+/, '');
 	};
 
 	sizeHeader (): number {
@@ -1088,6 +939,7 @@ class Util {
 		if (v) {
 			c.push(this.toCamelCase(`${prefix}-${v}`));
 		};
+
 		obj.attr({ class: c.join(' ') });
 	};
 
@@ -1097,36 +949,74 @@ class Util {
 		});
 	};
 
-	resizeHeaderFooter (width: number) {
+	getRenderer () {
+		const electron: any = window.require('electron') || {};
+		return electron.ipcRenderer || window.Renderer;
+	};
+	
+	resizeSidebar () {
 		const { sidebar } = commonStore;
 		const { fixed, snap } = sidebar;
-		const header = $('#page #header');
-		const footer = $('#page #footer');
-		const css: any = {};
-		
-		header.css({ width: '' });
 
-		css.width = '';
-		if (fixed) {
-			css.width = header.outerWidth() - width;
+		const win = $(window);
+		const obj = $('#sidebar');
+		const page = $('#page.isFull');
+		const header = page.find('#header');
+		const footer = page.find('#footer');
+		const loader = page.find('#loader');
+		
+		const width = fixed ? obj.width() : 0;
+		const pw = win.width() - width - 1;
+		const css: any = { width: '' };
+		const cssLoader: any = { width: pw, left: '', right: '' };
+
+		let dummy = $('.sidebarDummy');
+
+		header.css(css).removeClass('withSidebar snapLeft snapRight');
+		footer.css(css).removeClass('withSidebar snapLeft snapRight');
+		dummy.css(css);
+
+		if (!obj.length) {
+			return;
 		};
 
-		header.removeClass('withSidebar');
+		if (fixed) {
+			header.addClass('withSidebar');
+			footer.addClass('withSidebar');
+		};
+		css.width = header.outerWidth() - width - 1;
+		
+		if (snap !== null) {
+			if (snap == I.MenuDirection.Right) {
+				dummy = $('.sidebarDummy.right');
+				header.addClass('snapRight');
+				footer.addClass('snapRight');
 
-		if (snap == I.MenuDirection.Right) {
-			css.left = 0;
-			css.right = '';
-		} else {
-			css.right = 0;
-			css.left = '';
+				cssLoader.left = 0;
+				cssLoader.right = '';
+			} else {
+				dummy = $('.sidebarDummy.left');
+				header.addClass('snapLeft');
+				footer.addClass('snapLeft');
 
-			if (fixed) {
-				header.addClass('withSidebar');
+				cssLoader.left = '';
+				cssLoader.right = 0;
 			};
 		};
 
+		dummy.css({ width });
+		page.css({ width: pw });
+		loader.css(cssLoader);
 		header.css(css);
 		footer.css(css);
+	};
+
+	rectsCollide (rect1: any, rect2: any) {
+		return this.coordsCollide(rect1.x, rect1.y, rect1.width, rect1.height, rect2.x, rect2.y, rect2.width, rect2.height);
+	};
+	
+	coordsCollide (x1: number, y1: number, w1: number, h1: number, x2: number, y2: number, w2: number, h2: number) {
+		return !((y1 + h1 < y2) || (y1 > y2 + h2) || (x1 + w1 < x2) || (x1 > x2 + w2));
 	};
 
 };

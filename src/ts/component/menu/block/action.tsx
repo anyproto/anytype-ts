@@ -163,15 +163,15 @@ class MenuBlockAction extends React.Component<Props, State> {
 		let sections: any[] = [];
 		
 		if (filter) {
-			const turnText = { id: 'turnText', icon: '', name: 'Text style', color: '', children: DataUtil.menuGetBlockText() };
-			const turnList = { id: 'turnList', icon: '', name: 'List style', color: '', children: DataUtil.menuGetBlockList() };
-			const turnPage = { id: 'turnPage', icon: '', name: 'Turn into object', color: '', children: DataUtil.menuGetTurnPage() };
-			const turnDiv = { id: 'turnDiv', icon: '', name: 'Divider style', color: '', children: DataUtil.menuGetTurnDiv() };
-			const turnFile = { id: 'turnFile', icon: '', name: 'File style', color: '', children: DataUtil.menuGetTurnFile() };
-			const action = { id: 'action', icon: '', name: 'Actions', color: '', children: [] };
-			const align = { id: 'align', icon: '', name: 'Align', color: '', children: [] };
-			const bgColor = { id: 'bgColor', icon: '', name: 'Background', color: '', children: DataUtil.menuGetBgColors() };
-			const color = { id: 'color', icon: 'color', name: 'Color', color: '', children: DataUtil.menuGetTextColors() };
+			const turnText = { id: 'turnText', icon: '', name: 'Text style', children: DataUtil.menuGetBlockText() };
+			const turnList = { id: 'turnList', icon: '', name: 'List style', children: DataUtil.menuGetBlockList() };
+			const turnPage = { id: 'turnPage', icon: '', name: 'Turn into object', children: DataUtil.menuGetTurnPage() };
+			const turnDiv = { id: 'turnDiv', icon: '', name: 'Divider style', children: DataUtil.menuGetTurnDiv() };
+			const turnFile = { id: 'turnFile', icon: '', name: 'File style', children: DataUtil.menuGetTurnFile() };
+			const action = { id: 'action', icon: '', name: 'Actions', children: [] };
+			const align = { id: 'align', icon: '', name: 'Align', children: [] };
+			const bgColor = { id: 'bgColor', icon: '', name: 'Background', children: DataUtil.menuGetBgColors() };
+			const color = { id: 'color', icon: 'color', name: 'Color', arrow: true, children: DataUtil.menuGetTextColors() };
 
 			let hasTurnText = true;
 			let hasTurnPage = true;
@@ -396,7 +396,6 @@ class MenuBlockAction extends React.Component<Props, State> {
 
 		switch (item.itemId) {
 			case 'turnStyle':
-				ids = DataUtil.selectionGet(blockId, true, this.props);
 				menuId = 'blockStyle';
 
 				if (item.isDiv || item.isFile) {
@@ -407,19 +406,19 @@ class MenuBlockAction extends React.Component<Props, State> {
 				menuParam.data = Object.assign(menuParam.data, {
 					onSelect: (item: any) => {
 						if (item.type == I.BlockType.Text) {
-							C.BlockListTurnInto(rootId, ids, item.itemId, (message: any) => {
+							C.BlockListTurnInto(rootId, blockIds, item.itemId, (message: any) => {
 								this.setFocus(blockIds[0]);
 							});
 						};
 
 						if (item.type == I.BlockType.Div) {
-							C.BlockListSetDivStyle(rootId, ids, item.itemId, (message: any) => {
+							C.BlockListSetDivStyle(rootId, blockIds, item.itemId, (message: any) => {
 								this.setFocus(blockIds[0]);
 							});
 						};
 
 						if (item.type == I.BlockType.File) {
-							C.BlockListSetFileStyle(rootId, ids, item.itemId, (message: any) => {
+							C.BlockListSetFileStyle(rootId, blockIds, item.itemId, (message: any) => {
 								this.setFocus(blockIds[0]);
 							});
 						};
@@ -488,12 +487,13 @@ class MenuBlockAction extends React.Component<Props, State> {
 				break;
 				
 			case 'background':
+				ids = DataUtil.selectionGet(blockId, false, this.props);
 				menuId = 'blockBackground';
 
 				menuParam.data = Object.assign(menuParam.data, {
 					value: bgColor,
 					onChange: (color: string) => {
-						C.BlockListSetBackgroundColor(rootId, blockIds, color, (message: any) => {
+						C.BlockListSetBackgroundColor(rootId, ids, color, (message: any) => {
 							this.setFocus(blockIds[0]);
 
 							analytics.event('ChangeBlockBackground', { color: color, count: blockIds.length });
@@ -525,6 +525,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 
 			case 'linkSettings':
 				menuId = 'blockLinkSettings';
+				menuParam.subIds = [ 'select' ];
 				break;
 		};
 
@@ -624,7 +625,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 		
 		let ids = [];
 		if (selection) {
-			ids = selection.get();
+			ids = selection.get(I.SelectType.Block);
 		};
 		if (!ids.length) {
 			ids = [ blockId ];

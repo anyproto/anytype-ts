@@ -11,7 +11,6 @@ interface State {
 
 const $ = require('jquery');
 const raf = require('raf');
-const { ipcRenderer } = window.require('electron');
 
 const OFFSET_Y = 8;
 const BORDER = 12;
@@ -88,10 +87,11 @@ const Preview = observer(class Preview extends React.Component<Props, State> {
 	onClick (e: any) {
 		const { preview } = commonStore;
 		const { type, param, object } = preview;
+		const renderer = Util.getRenderer();
 
 		switch (type) {
 			case I.MarkType.Link:
-				ipcRenderer.send('urlOpen', param);	
+				renderer.send('urlOpen', param);	
 				break;
 
 			case I.MarkType.Object:

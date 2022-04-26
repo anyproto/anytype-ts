@@ -63,14 +63,18 @@ const WalletConvert = (response: any) => {
 const AccountCreate = (response: any) => {
 	return {
 		account: Mapper.From.Account(response.getAccount()),
-		config: response.hasConfig() ? Mapper.From.AccountConfig(response.getConfig()) : null,
 	};
 };
 
 const AccountSelect = (response: any) => {
 	return {
 		account: Mapper.From.Account(response.getAccount()),
-		config: response.hasConfig() ? Mapper.From.AccountConfig(response.getConfig()) : null,
+	};
+};
+
+const AccountDelete = (response: any) => {
+	return {
+		status: response.hasStatus() ? Mapper.From.AccountStatus(response.getStatus()) : null,
 	};
 };
 
@@ -83,6 +87,7 @@ const PageCreate = (response: any) => {
 const NavigationGetObjectInfoWithLinks = (response: any) => {
 	const object = response.getObject();
 	const links = object.getLinks();
+
 	return {
 		object: {
 			id: object.getId(),
@@ -365,6 +370,18 @@ const WorkspaceCreate = (response: any) => {
 	};
 };
 
+const UnsplashSearch = (response: any) => {
+	return {
+		pictures: (response.getPicturesList() || []).map(Mapper.From.UnsplashPicture),
+	};
+};
+
+const UnsplashDownload = (response: any) => {
+	return {
+		hash: response.getHash(),
+	};
+};
+
 export {
 	DebugSync,
 
@@ -380,6 +397,7 @@ export {
 
 	AccountCreate,
 	AccountSelect,
+	AccountDelete,
 
 	PageCreate,
 	SetCreate,
@@ -441,4 +459,7 @@ export {
 	CloneTemplate,
 
 	WorkspaceCreate,
+
+	UnsplashSearch,
+	UnsplashDownload,
 };

@@ -55,7 +55,7 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 		const Block = (item: any) => {
 			const { content, fields } = item;
 			const { text, style, checked } = content;
-			const childBlocks = blockStore.getChildren(rootId, item.id);
+			const childBlocks = blockStore.getChildren(contextId, item.id);
 			const length = childBlocks.length;
 
 			let bullet = null;

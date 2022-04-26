@@ -50,7 +50,8 @@ class MenuItemVertical extends React.Component<Props, {}> {
 			};
 		} else 
 		if (icon) {
-			iconElement = <Icon className={icon} inner={inner} />;
+			cn.push('withIcon');
+			iconElement = <Icon className={[ icon, 'iconMain' ].join(' ')} inner={inner} />;
 		};
 
 		let content = null;
@@ -77,7 +78,11 @@ class MenuItemVertical extends React.Component<Props, {}> {
 						<Switch 
 							value={switchValue} 
 							readonly={readonly}
-							onChange={(e: any, v: boolean) => { onSwitch(e, v); }} 
+							onChange={(e: any, v: boolean) => { 
+								if (onSwitch) {
+									onSwitch(e, v); 
+								};
+							}} 
 						/>
 					</React.Fragment>
 				);
@@ -118,9 +123,13 @@ class MenuItemVertical extends React.Component<Props, {}> {
 
 	resize () {
 		const node = $(ReactDOM.findDOMNode(this));
-		const icon = node.find('.iconObject');
+		
+		if (node.hasClass('withIcon')) {
+			return;
+		};
 
-		icon.length ? node.addClass('withIcon') : node.removeClass('withIcon');
+		const icon = node.find('.iconObject');
+		icon.length ? node.addClass('withIconObject') : node.removeClass('withIconObject');
 	};
 
 };

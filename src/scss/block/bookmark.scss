@@ -7,40 +7,44 @@
 
 		.inner { 
 			display: flex; border-radius: inherit; border: 1px solid $colorLightGrey; transition: border-color 0.2s ease-in-out; 
-			cursor: pointer; position: relative; border-radius: 6px;
+			cursor: pointer; position: relative; border-radius: 12px; overflow: hidden;
 		}
 		.inner:hover { border-color: $colorMediumGrey; }
 		
 		.inner {
-			.side.left { width: 100%; padding: 11px 16px 10px 16px; }
-			.side.right { border-radius: 0px 4px 4px 0px; overflow: hidden; display: none; }
+			.side.left { width: 100%; padding: 21px 16px; }
+			.side.right { border-radius: 0px 12px 12px 0px; overflow: hidden; display: none; }
 		}
 		
 		.inner.vertical { display: block; }
 		.inner.vertical {
 			.side.left { width: 100%; border-radius: 0px; }
 			.side.right { 
-				position: absolute; top: 0px; left: 0px; height: 112px; width: 100%; border-radius: 6px 6px 0px 0px;
+				position: absolute; top: 0px; left: 0px; height: 116px; width: 100%; border-radius: 0px;
 				border-bottom: 1px solid $colorLightGrey; 
 			}
 		}
 
 		.inner.withImage {
-			.side.left { width: calc(100% - 250px); }
-			.side.right { width: 250px; display: block; }
+			.side.left { width: calc(100% - 236px); }
+			.side.right { width: 236px; display: block; }
 		}
 
-		.inner.withImage.vertical { padding-top: 112px; }
+		.inner.withImage.vertical { padding-top: 116px; }
 		.inner.withImage.vertical {
 			.side.left { width: 100%; }
 			.side.right { width: 100%; }
 		}
 
-		.name { @include text-common; height: 22px; color: $colorBlack; @include text-overflow-nw; }
-		.descr { @include text-small; height: 36px; color: $colorVeryDarkGrey; margin: 5px 0px 6px 0px; @include text-overflow; }
-		.link { @include text-small; height: 18px; color: $colorBlack; @include text-overflow-nw; }
-		.img { width: 100%; height: 100%; background-repeat: no-repeat; background-size: cover; background-position: center center; }
-		.icon.fav { width: 16px; height: 16px; margin: -2px 4px 0px 0px; }
+		.name { @include text-common; line-height: 18px; height: 18px; color: $colorBlack; @include clamp2; margin-bottom: 4px; }
+		.descr { @include text-small; line-height: 16px; color: $colorVeryDarkGrey; margin-bottom: 6px; @include clamp2; }
+
+		.link { 
+			@include text-small; height: 18px; color: $colorDarkGrey; @include text-overflow-nw; display: flex; gap: 0px 6px; 
+			align-items: center; 
+		}
+		.img { width: 100%; height: 116px; object-fit: cover; display: block; }
+		.fav { width: 16px; height: 16px; object-fit: cover; }
 	}
 	
 	.block.blockBookmark > .wrapContent { border-radius: 6px; }

@@ -13,9 +13,8 @@ interface Props extends RouteComponentProps<any> {
 }
 
 const $ = require('jquery');
-const Constant = require('json/constant.json');
 
-const HeaderMainGraph = observer(class HeaderMainEdit extends React.Component<Props, {}> {
+const HeaderMainGraph = observer(class HeaderMainGraph extends React.Component<Props, {}> {
 
 	timeout: number = 0;
 
@@ -69,21 +68,11 @@ const HeaderMainGraph = observer(class HeaderMainEdit extends React.Component<Pr
 	};
 
 	componentDidMount () {
-		this.init();
+		Util.resizeSidebar();
 	};
 
 	componentDidUpdate () {
-		this.init();
-	};
-
-	init () {
-		const node = $(ReactDOM.findDOMNode(this));
-		node.addClass('show');
-
-		window.clearTimeout(this.timeout);
-		this.timeout = window.setTimeout(() => { node.removeClass('show'); }, Constant.delay.header);
-
-		this.resize();
+		Util.resizeSidebar();	
 	};
 
 	onHome (e: any) {
@@ -114,11 +103,14 @@ const HeaderMainGraph = observer(class HeaderMainEdit extends React.Component<Pr
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { rootId } = this.props;
+		const { rootId, isPopup } = this.props;
 
 		popupStore.open('search', {
 			preventResize: true, 
-			data: { rootId },
+			data: { 
+				rootId,
+				isPopup,
+			},
 		});
 	};
 
@@ -138,21 +130,6 @@ const HeaderMainGraph = observer(class HeaderMainEdit extends React.Component<Pr
 		Util.tooltipHide(false);
 	};
 
-	getContainer () {
-		const { isPopup } = this.props;
-		return (isPopup ? '.popup' : '') + ' .header';
-	};
-
-	resize () {
-		const { isPopup } = this.props;
-		const { sidebar } = commonStore;
-		const { width } = sidebar;
-
-		if (!isPopup) {
-			Util.resizeHeaderFooter(width);
-		};
-	};
-	
 });
 
 export default HeaderMainGraph;

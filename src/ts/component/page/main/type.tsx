@@ -85,8 +85,8 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 		const layout: any = DataUtil.menuGetLayouts().find((it: any) => { return it.id == object.recommendedLayout; }) || {};
 
 		const allowedObject = (type.types || []).indexOf(I.SmartBlockType.Page) >= 0;
-		const allowedDetails = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
-		const allowedRelation = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Relation ]);
+		const allowedDetails = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
+		const allowedRelation = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
 		const allowedTemplate = allowedObject;
 		const allowCreate = [ Constant.typeId.set ].indexOf(rootId) < 0;
 		const showTemplates = NO_TEMPLATES.indexOf(rootId) < 0;
@@ -324,7 +324,11 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 
 		if (views.length) {
 			const view = views[0];
-			C.ObjectSearchSubscribe(this.getSubIdTemplate(), view.filters, view.sorts, [ 'id' ], block.content.sources, '', 0, 0, true, '', '');
+			const filters = view.filters.concat([
+				{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
+			]);
+
+			C.ObjectSearchSubscribe(this.getSubIdTemplate(), filters, view.sorts, [ 'id' ], block.content.sources, 0, 0, true, '', '', false);
 		};
 	};
 
@@ -418,6 +422,7 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 				DataUtil.objectOpenPopup({ ...details, id: message.targetId });
 
 				analytics.event('CreateObject', {
+					route: 'ObjectType',
 					objectType: rootId,
 					layout: template?.layout,
 					template: (template && template.templateIsBundled ? template.id : 'custom'),
@@ -486,7 +491,7 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 
 	onRelationEdit (e: any, relationKey: string) {
 		const rootId = this.getRootId();
-		const allowed = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Relation ]);
+		const allowed = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
 		
 		menuStore.open('blockRelationEdit', { 
 			element: $(e.currentTarget),

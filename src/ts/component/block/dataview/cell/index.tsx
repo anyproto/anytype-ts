@@ -25,7 +25,6 @@ interface Props extends I.Cell {
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
-const { ipcRenderer } = window.require('electron');
 
 class Cell extends React.Component<Props, {}> {
 
@@ -156,14 +155,27 @@ class Cell extends React.Component<Props, {}> {
 		const record = getRecord(index);
 		const { config } = commonStore;
 		const cellId = Relation.cellId(idPrefix, relation.relationKey, index);
+		const renderer = Util.getRenderer();
+		const value = record[relation.relationKey] || '';
 
 		if (!this.canEdit()) {
+
+			switch (relation.format) {
+				case I.RelationType.Url:
+				case I.RelationType.Email:
+				case I.RelationType.Phone:
+					if (value) {
+						const scheme = Relation.getUrlScheme(relation.format, value);
+						renderer.send('urlOpen', scheme + value);
+						break;
+					};
+			};
+
 			return;
 		};
 
 		const win = $(window);
 		const cell = $(`#${cellId}`);
-		const value = record[relation.relationKey] || '';
 
 		let width = cell.outerWidth();
 		if (undefined !== maxWidth) {
@@ -229,14 +241,16 @@ class Cell extends React.Component<Props, {}> {
 			onOpen: setOn,
 			onClose: setOff,
 			data: { 
-				rootId: rootId,
-				subId: subId,
+				cellId,
+				cellRef: this.ref,
+				rootId,
+				subId,
 				blockId: block.id,
-				value: value, 
+				value, 
 				relation: observable.box(relation),
-				record: record,
-				optionCommand: optionCommand,
-				placeholder: placeholder,
+				record,
+				optionCommand,
+				placeholder,
 				onChange: (value: any, callBack?: (message: any) => void) => {
 					if (this.ref && this.ref.onChange) {
 						this.ref.onChange(value);
@@ -272,20 +286,25 @@ class Cell extends React.Component<Props, {}> {
 			case I.RelationType.Tag:
 				param = Object.assign(param, {
 					width: width,
+					commonFilter: true,
 				});
 				param.data = Object.assign(param.data, {
 					canAdd: true,
 					filter: '',
 					value: value || [],
 					maxCount: relation.maxCount,
+					noFilter: true,
 				});
 
-				menuId = (relation.maxCount == 1 ? 'dataviewOptionList' : 'dataviewOptionValues');
+				menuId = 'dataviewOptionList';
+
+				closeIfOpen = false;
 				break;
 					
 			case I.RelationType.Object:
 				param = Object.assign(param, {
 					width: width,
+					commonFilter: true,
 				});
 				param.data = Object.assign(param.data, {
 					canAdd: true,
@@ -293,9 +312,12 @@ class Cell extends React.Component<Props, {}> {
 					value: value || [],
 					types: relation.objectTypes,
 					maxCount: relation.maxCount,
+					noFilter: true,
 				});
 
-				menuId = (relation.maxCount == 1 ? 'dataviewObjectList' : 'dataviewObjectValues');
+				menuId = 'dataviewObjectList';
+				
+				closeIfOpen = false;
 				break;
 
 			case I.RelationType.LongText:
@@ -335,7 +357,7 @@ class Cell extends React.Component<Props, {}> {
 
 				if (e.shiftKey && value) {
 					const scheme = Relation.getUrlScheme(relation.format, value);
-					ipcRenderer.send('urlOpen', scheme + value);
+					renderer.send('urlOpen', scheme + value);
 
 					ret = true;
 					break;
@@ -357,7 +379,7 @@ class Cell extends React.Component<Props, {}> {
 						const scheme = Relation.getUrlScheme(relation.format, value);
 						
 						if (item.id == 'go') {
-							ipcRenderer.send('urlOpen', scheme + value);
+							renderer.send('urlOpen', scheme + value);
 						};
 
 						if (item.id == 'copy') {
@@ -386,20 +408,25 @@ class Cell extends React.Component<Props, {}> {
 		if (menuId) {
 			if (commonStore.cellId != cellId) {
 				commonStore.cellId = cellId;
+				
+				const isOpen = menuStore.isOpen(menuId);
 
-				this.timeout = window.setTimeout(() => {
-					menuStore.open(menuId, param);
+				menuStore.open(menuId, param);
 
-					$(pageContainer).unbind('mousedown.cell').on('mousedown.cell', (e: any) => { 
-						if (!$(e.target).parents(`#${cellId}`).length) {
-							menuStore.closeAll(Constant.menuIds.cell); 
-						};
-					});
+				// If menu was already open OnOpen callback won't be called
+				if (isOpen) {
+					setOn();
+				};
 
-					if (!config.debug.ui) {
-						win.unbind('blur.cell').on('blur.cell', () => { menuStore.closeAll(Constant.menuIds.cell); });
+				$(pageContainer).unbind('mousedown.cell').on('mousedown.cell', (e: any) => { 
+					if (!$(e.target).parents(`#${cellId}`).length) {
+						menuStore.closeAll(Constant.menuIds.cell); 
 					};
-				}, Constant.delay.menu);
+				});
+
+				if (!config.debug.ui) {
+					win.unbind('blur.cell').on('blur.cell', () => { menuStore.closeAll(Constant.menuIds.cell); });
+				};
 			} else 
 			if (closeIfOpen) {
 				setOff();

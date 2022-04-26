@@ -11,7 +11,6 @@ interface Props extends I.Menu {}
 
 const $ = require('jquery');
 const { dialog } = window.require('@electron/remote');
-const { ipcRenderer } = window.require('electron');
 const Constant = require('json/constant.json');
 const MENU_ID = 'dataviewFileList';
 
@@ -225,6 +224,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 		const { data, classNameWrap } = param;
 		const { onChange } = data;
 		const element = $(`#${getId()} #item-${item.id}`);
+		const renderer = Util.getRenderer();
 
 		element.addClass('active');
 
@@ -256,7 +256,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 									break;
 							};
 							if (url) {
-								ipcRenderer.send('download', url);
+								renderer.send('download', url);
 							};
 							break;
 

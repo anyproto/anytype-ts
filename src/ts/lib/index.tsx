@@ -12,6 +12,7 @@ import DataUtil from './datautil';
 import SmileUtil from './smileutil';
 import Mark from './mark';
 import Relation from './relation';
+import FileUtil from './fileutil';
 import { focus } from './focus';
 import { Encode, Decode } from './struct';
 import { scrollOnMove } from './scrollOnMove';
@@ -24,9 +25,10 @@ import Onboarding from './onboarding';
 
 const Constant = require('json/constant.json');
 const Text = require('json/text.json');
-const lang = Storage.get('lang') || Constant.default.lang;
 
 const translate = (key: string): string => {
+	const lang = Storage.get('lang') || Constant.default.lang;
+
 	if (undefined === Text[key]) {
 		return `*No key: ${key}*`;
 	};
@@ -47,6 +49,7 @@ export {
 	SmileUtil,
 	Mark,
 	Relation,
+	FileUtil,
 	I,
 	C,
 	Response,

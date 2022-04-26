@@ -35,7 +35,7 @@
 					}
 				}
 			}
-			.card > .inner { padding: 16px; }
+			.card > .selectable > .inner { padding: 16px; }
 			.card:hover {
 				.cover {
 					.inner { color: $colorBlack; }
@@ -67,9 +67,6 @@
 			}
 			.cellContent.c-longText {
 				.name { overflow: hidden; @include clamp2; }
-			}
-			.cellContent.c-object, .cellContent.c-file {
-				.element { max-width: 40%; }
 			}
 		}
 	}

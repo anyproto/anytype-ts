@@ -1,8 +1,7 @@
-import { I, C, focus, analytics } from 'ts/lib';
+import { I, C, focus, analytics, Util } from 'ts/lib';
 import { commonStore, authStore, blockStore, detailStore, dbStore } from 'ts/store';
 
 const Constant = require('json/constant.json');
-const { ipcRenderer } = window.require('electron');
 const { dialog } = window.require('@electron/remote');
 
 class Action {
@@ -59,13 +58,14 @@ class Action {
 	download (block: I.Block) {
 		const { content } = block;
 		const { type, hash } = content;
+		const renderer = Util.getRenderer();
 
 		if (!hash) {
 			return;
 		};
 		
 		const url = block.isFileImage() ? commonStore.imageUrl(hash, Constant.size.image) : commonStore.fileUrl(hash);
-		ipcRenderer.send('download', url);
+		renderer.send('download', url);
 
 		analytics.event('DownloadMedia', { type });
 	};
@@ -108,23 +108,32 @@ class Action {
 		focus.apply();
 	};
 
-	export (ids: string[], format: I.ExportFormat, zip: boolean, nested: boolean, files: boolean) {
+	export (ids: string[], format: I.ExportFormat, zip: boolean, nested: boolean, files: boolean, onSelectPath?: () => void, callBack?: (message: any) => void): void {
+		const renderer = Util.getRenderer();
 		const options = { 
 			properties: [ 'openDirectory' ],
 		};
 
 		dialog.showOpenDialog(options).then((result: any) => {
-			const files = result.filePaths;
-			if ((files == undefined) || !files.length) {
+			const paths = result.filePaths;
+			if ((paths == undefined) || !paths.length) {
 				return;
 			};
 
-			C.Export(files[0], ids, format, zip, nested, files, (message: any) => {
+			if (onSelectPath) {
+				onSelectPath();
+			};
+
+			C.Export(paths[0], ids, format, zip, nested, files, (message: any) => {
 				if (message.error.code) {
 					return;
 				};
 
-				ipcRenderer.send('pathOpen', files[0]);
+				renderer.send('pathOpen', paths[0]);
+
+				if (callBack) {
+					callBack(message);
+				};
 			});
 		});
 	};

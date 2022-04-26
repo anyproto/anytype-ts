@@ -1,13 +1,13 @@
 @import "~scss/_vars";
 
-.header { position: fixed; top: 0px; right: 0px; width: 100%; z-index: 20; user-select: none; }
+.header { position: fixed; top: 0px; width: 100%; z-index: 20; user-select: none; }
 .header {
 	.icon { width: 20px; height: 20px; cursor: pointer; vertical-align: top; -webkit-app-region: no-drag; }
 	.icon.back { margin-right: 8px; }
 	
 	.icon.logo {
 		width: 60px !important; height: 13px !important; position: absolute; left: 50%; margin-left: -30px; top: 13px; background: url('~img/logo/white.svg') no-repeat;
-		background-position: center center; background-size: 100% 100% !important;
+		background-position: center center; background-size: 100% 100% !important; transition: none;
 	}
 
 	.path { white-space: nowrap; }
@@ -28,6 +28,17 @@
 			.name { margin: 0px; }
 		}
 		.item:hover { color: $colorBlack; }
+	}
+
+	.tabs { white-space: nowrap; background: $colorLightGrey; display: inline-block; height: 28px; padding: 2px; border-radius: 6px; }
+	.tabs {
+		.tab { 
+			display: inline-block; margin-right: 4px; width: 124px; border-radius: 4px; height: 24px; line-height: 24px;
+			font-weight: 500; cursor: pointer; color: $colorMediumGrey; transition: $transitionFast; text-align: center;
+			vertical-align: top;
+		}
+		.tab.active { background: $colorWhite; color: $colorBlack; }
+		.tab:last-child { margin: 0px; }
 	}
 
 	.menu { position: absolute; top: 9px; right: 10px; }
@@ -55,13 +66,16 @@
 
 	.side.left { left: 6px; z-index: 1; }
 
-	.side.center { width: 40%; height: 28px; left: 50%; margin-left: -20%; white-space: nowrap; }
+	.side.center { width: 40%; height: 28px; left: 50%; margin-left: -20%; white-space: nowrap; text-align: center; }
 
 	.side.right { right: 10px; z-index: 1; display: flex; align-items: center; gap: 0px 16px; }
 	.side.right {
 		.sync { cursor: pointer; vertical-align: top; }
 	}
 }
+
+.header.snapRight { left: 0px; }
+.header.snapLeft { right: 0px; }
 
 .header.headerMainIndex { height: 38px; background: rgba(0,0,0,0.3); }
 .header.headerMainIndex {
@@ -152,6 +166,7 @@
 		}
 	}
 }
+.header.headerMainHistory.snapLeft { right: 254px; }
 
 html.platformMac {
 	.header { height: 52px !important; line-height: 28px; }
@@ -168,9 +183,12 @@ html.platformMac {
 	.header.headerMainHistory {
 		.side { top: 0px; line-height: 52px; }
 	}
+	.header.headerMainHistory.snapRight {
+		.side.left { left: 80px; }
+	}
 }
 
-body.fullScreen {
+body.isFullScreen {
 	.header {
 		.side.left { left: 6px; }
 	}

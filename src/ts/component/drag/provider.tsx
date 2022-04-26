@@ -4,7 +4,6 @@ import { DragLayer } from 'ts/component';
 import { I, C, focus, keyboard, Util, scrollOnMove, analytics } from 'ts/lib';
 import { blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
-import { throttle } from 'lodash';
 
 interface Props {
 	dataset?: any;
@@ -14,7 +13,6 @@ const $ = require('jquery');
 const Constant = require('json/constant.json');
 
 const OFFSET = 100;
-const THROTTLE = 20;
 
 const DragProvider = observer(class DragProvider extends React.Component<Props, {}> {
 
@@ -46,9 +44,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 	};
 
 	render () {
-		const rootId = keyboard.getRootId();
 		const children = this.injectProps(this.props.children);
-
 		return (
 			<div id="dragProvider" className="dragProvider" onDragOver={this.onDragOver} onDrop={this.onDropCommon}>
 				<DragLayer {...this.props} ref={(ref: any) => { this.refLayer = ref; }} />
@@ -115,6 +111,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 
 	onDropCommon (e: any) {
 		if (this.commonDropPrevented) {
+			this.clear();
 			return;
 		};
 
@@ -125,6 +122,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 		};
 
 		const dt = (e.dataTransfer || e.originalEvent.dataTransfer);
+		const isFileDrop = dt.files && dt.files.length;
 		const last = blockStore.getFirstBlock(rootId, -1, (it: I.Block) => {
 			return !it.isSystem() && !it.isLayoutFooter();
 		});
@@ -137,7 +135,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 		if (this.hoverData && (this.position != I.BlockPosition.None)) {
 			data = this.hoverData;
 		} else 
-		if (last) {
+		if (last && isFileDrop) {
 			data = this.objectData.get(last.id);
 			position = I.BlockPosition.Bottom;
 		};
@@ -147,7 +145,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 			target = blockStore.getLeaf(rootId, targetId);
 		};
 		
-		if (dt.files && dt.files.length) {
+		if (isFileDrop) {
 			let paths: string[] = [];
 			for (let file of dt.files) {
 				paths.push(file.path);
@@ -156,7 +154,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 			console.log('[dragProvider.onDrop] paths', paths);
 
 			C.ExternalDropFiles(rootId, targetId, position, paths, () => {
-				if (target && target.isTextToggle() && (position == I.BlockPosition.Inner)) {
+				if (target && target.isTextToggle() && (position == I.BlockPosition.InnerFirst)) {
 					blockStore.toggle(rootId, targetId, true);
 				};
 			});
@@ -169,11 +167,21 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 	};
 
 	onDragOver (e: any) {
+		if (this.commonDropPrevented) {
+			return;
+		};
+
 		e.preventDefault();
    		e.stopPropagation();
 
+		const isPopup = keyboard.isPopup();
+		const dt = (e.dataTransfer || e.originalEvent.dataTransfer);
+		const isFileDrag = dt.types.indexOf('Files') >= 0;
+		const top = Util.getScrollContainer(isPopup).scrollTop();
+		const diff = isPopup ? Math.abs(top - this.top) * (top > this.top ? 1 : -1) : 0;
+
 		this.initData();
-		this.onDragMove(e);
+		this.checkNodes(e.pageX, e.pageY + diff, isFileDrag);
 	};
 
 	onDragStart (e: any, type: I.DragType, ids: string[], component: any) {
@@ -203,15 +211,15 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 		keyboard.setDrag(true);
 		Util.previewHide(false);
 
+		win.on('drag.drag', (e: any) => { this.onDragMove(e); });
 		win.on('dragend.drag', (e: any) => { this.onDragEnd(e); });
-		win.on('drag.drag', throttle((e: any) => { this.onDragMove(e); }, THROTTLE));
 
 		$('.colResize.active').removeClass('active');
 		scrollOnMove.onMouseDown(e, isPopup);
 
 		if (selection) {
 			if (type == I.DragType.Block) {
-				selection.set(this.ids);
+				selection.set(I.SelectType.Block, this.ids);
 			};
 			selection.hide();
 			selection.preventSelect(true);
@@ -223,8 +231,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 		const dt = (e.dataTransfer || e.originalEvent.dataTransfer);
 		const isFileDrag = dt.types.indexOf('Files') >= 0;
 		const top = Util.getScrollContainer(isPopup).scrollTop();
-		const d = top > this.top ? 1 : -1;
-		const diff = isPopup ? Math.abs(top - this.top) * d : 0;
+		const diff = isPopup ? Math.abs(top - this.top) * (top > this.top ? 1 : -1) : 0;
 
 		this.checkNodes(e.pageX, e.pageY + diff, isFileDrag);
 		scrollOnMove.onMouseMove(e.clientX, e.clientY);
@@ -265,7 +272,6 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 
 		if (selection) {
 			selection.preventClear(false);
-			selection.clearState();
 		};
 
 		console.log('[dragProvider.onDrop]', type, targetId, this.type, this.ids, position);
@@ -273,7 +279,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 		let targetContextId = rootId;
 		let contextId = rootId;
 
-		if (target.isLink() && (position == I.BlockPosition.Inner)) {
+		if (target.isLink() && (position == I.BlockPosition.InnerFirst)) {
 			contextId = keyboard.getRootId();
 			targetContextId = target.content.targetBlockId;
 			targetId = '';
@@ -294,8 +300,12 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 		switch (this.type) {
 			default:
 				C.BlockListMove(contextId, targetContextId, this.ids || [], targetId, position, () => {
-					if (target.isTextToggle() && (position == I.BlockPosition.Inner)) {
+					if (target.isTextToggle() && (position == I.BlockPosition.InnerFirst)) {
 						blockStore.toggle(rootId, targetId, true);
+					};
+
+					if (selection) {
+						selection.renderSelection();
 					};
 
 					analytics.event('ReorderBlock', { count: this.ids.length });
@@ -357,6 +367,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 			const obj = $(this.hoverData.obj);
 			const type = obj.attr('data-type');
 			const style = Number(obj.attr('data-style')) || 0;
+			const canDropMiddle = Number(obj.attr('data-drop-middle')) || 0;
 			const col1 = x - Constant.size.blockMenu / 4;
 			const col2 = x + width;
 			const isText = type == I.BlockType.Text;
@@ -373,7 +384,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 				if (ey >= y + height * 0.85) {
 					this.position = I.BlockPosition.Bottom;
 				} else {
-					this.position = I.BlockPosition.Inner;
+					this.position = I.BlockPosition.InnerFirst;
 				};
 			} else
 			if (ex > col2) {
@@ -389,6 +400,11 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 				};
 			};
 
+			// canDropMiddle flag for restricted objects
+			if ((this.position == I.BlockPosition.InnerFirst) && !canDropMiddle) {
+				recalcPosition();
+			};
+
 			// You can't drop on Icon
 			if ([ I.BlockType.IconPage, I.BlockType.IconUser ].indexOf(type) >= 0) {
 				this.position = I.BlockPosition.None;
@@ -399,18 +415,26 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 				this.position = I.BlockPosition.None;
 			};
 
-			// You can only drop into Paragraphs and Lists
+			// You can only drop into Paragraphs, Lists and Callout
 			if (
-				(this.position == I.BlockPosition.Inner) &&
+				(this.position == I.BlockPosition.InnerFirst) &&
 				isText &&
-				([ I.TextStyle.Paragraph, I.TextStyle.Toggle, I.TextStyle.Checkbox, I.TextStyle.Numbered, I.TextStyle.Bulleted ].indexOf(style) < 0)
+				([ 
+					I.TextStyle.Paragraph, 
+					I.TextStyle.Toggle, 
+					I.TextStyle.Checkbox, 
+					I.TextStyle.Numbered, 
+					I.TextStyle.Bulleted, 
+					I.TextStyle.Callout,
+					I.TextStyle.Quote,
+				].indexOf(style) < 0)
 			) {
 				recalcPosition();
 			};
 
 			// You can only drop into text blocks and links
 			if (
-				(this.position == I.BlockPosition.Inner) &&
+				(this.position == I.BlockPosition.InnerFirst) &&
 				([ I.BlockType.Text, I.BlockType.Link ].indexOf(type) < 0)
 			) {
 				recalcPosition();
@@ -433,11 +457,33 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 
 			// You can only drop inside of menu items
 			if ((this.hoverData.dropType == I.DragType.Menu) && (this.position != I.BlockPosition.None)) {
-				this.position = I.BlockPosition.Inner;
+				this.position = I.BlockPosition.InnerFirst;
 
 				if (rootId == this.hoverData.targetContextId) {
 					this.position = I.BlockPosition.None;
 				};
+			};
+
+			if (!obj.hasClass('targetBot') && 
+			[
+				I.TextStyle.Paragraph, 
+				I.TextStyle.Toggle, 
+				I.TextStyle.Checkbox, 
+				I.TextStyle.Numbered, 
+				I.TextStyle.Bulleted, 
+				I.TextStyle.Callout,
+				I.TextStyle.Quote,
+			].includes(style) && 
+			(this.position == I.BlockPosition.Bottom)) {
+				this.position = I.BlockPosition.None;
+			};
+
+			if (obj.hasClass('targetTop') && (this.position != I.BlockPosition.None)) {
+				this.position = I.BlockPosition.Top;
+			};
+
+			if (obj.hasClass('targetBot') && (this.position != I.BlockPosition.None)) {
+				this.position = I.BlockPosition.Bottom;
 			};
 		};
 
@@ -484,7 +530,8 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 			case I.BlockPosition.Bottom: c = 'bottom'; break;
 			case I.BlockPosition.Left:	 c = 'left'; break;
 			case I.BlockPosition.Right:	 c = 'right'; break;
-			case I.BlockPosition.Inner:	 c = 'middle'; break;
+			case I.BlockPosition.Inner:
+			case I.BlockPosition.InnerFirst: c = 'middle'; break;
 		};
 		return c;
 	};

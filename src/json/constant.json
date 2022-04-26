@@ -3,14 +3,14 @@
 	"pinSize": 6,
 	"sentry": "https://44e6df81644c4e36b21b1dbea62b8a1a@sentry.anytype.io/3",
 	"amplitude": "1ba981d1a9afb8af8c81847ef3383a20",
-	"smile": "https://unpkg.com/emoji-datasource-apple@4.0.4/img/apple/sheets-256/64.png",
-	"survey": "https://anytype.typeform.com/to/kpqcOT47#anytypeid=%s",
 
 	"platforms": {
 		"win32": 	"Windows",
 		"darwin":	"Mac",
 		"linux":	"Linux"
 	},
+
+	"coverCnt": 13,
 
 	"default": {
 		"lang": "en",
@@ -51,7 +51,9 @@
 	"subIds": {
 		"index": "index",
 		"search": "search",
-		"profile": "profile"
+		"profile": "profile",
+		"deleted": "deleted",
+		"sidebar": "sidebar"
 	},
 
 	"menuIds": {
@@ -114,9 +116,11 @@
 		"isArchived", 
 		"isReadonly", 
 		"isDeleted",
+		"isFavorite",
 		"done", 
 		"fileExt", 
-		"fileMimeType" 
+		"fileMimeType",
+		"restrictions"
 	],
 
 	"systemRelationKeys": [ 
@@ -142,6 +146,11 @@
 		"featuredRelations",
 		"isHidden",
 		"isArchived"
+	],
+
+	"sidebarRelationKeys": [
+		"id", "name", "snippet", "layout", "type", "iconEmoji", "iconImage", "isHidden", "isDeleted", "isArchived", "isFavorite", "done", 
+		"relationFormat", "fileExt", "fileMimeType", "links", "restrictions"
 	],
 
 	"relationKey": {
@@ -185,9 +194,10 @@
 		"blockMenu": 48,
 		"image": 2048,
 		"header": 38,
-		"lastBlock": 100,
+		"lastBlock": 60,
 		"cover": 1920,
-		"sidebar": { 
+		"sidebar": {
+			"unfix": 992,
 			"height": { "min": 400 },
 			"width": { "min": 240, "max": 500 }
 		},

@@ -133,7 +133,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		let share = { id: 'pageShare', icon: 'share', name: 'Share' };
 		let pageRemove = { id: 'pageRemove', icon: 'remove', name: 'Delete' };
 		let pageExport = { id: 'pageExport', icon: 'export', name: 'Export' };
-		let pageCopy = { id: 'pageCopy', icon: 'copy', name: 'Duplicate' };
+		let pageCopy = { id: 'pageCopy', icon: 'copy', name: 'Duplicate object' };
 		let blockRemove = { id: 'blockRemove', icon: 'remove', name: 'Delete' };
 
 		if (object.isFavorite) {
@@ -168,8 +168,8 @@ class MenuBlockMore extends React.Component<Props, {}> {
 
 		// Restrictions
 
-		const allowedBlock = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Block ]);
-		const allowedArchive = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Delete ]) && !object.isReadonly;
+		const allowedBlock = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Block ]);
+		const allowedArchive = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Delete ]);
 		const allowedDelete = allowedArchive && object.isArchived;
 		const allowedShare = block.isObjectSpace() && config.allowSpaces;
 		const allowedSearch = !block.isObjectSet() && !block.isObjectSpace();
@@ -177,12 +177,10 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const allowedHistory = block.canHaveHistory() && !object.templateIsBundled;
 		const allowedTemplate = (object.type != Constant.typeId.note) && (object.id != profile);
 		const allowedFav = !object.isArchived;
-		const allowedExport = config.experimental;
-		const allowedLock = config.experimental;
+		const allowedLock = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 
 		if (!allowedArchive)	 archive = null;
 		if (!allowedDelete)		 pageRemove = null;
-		if (!allowedExport)		 pageExport = null;
 		if (!allowedLock)		 pageLock = null;
 		if (!allowedShare)		 share = null;
 		if (!allowedHighlight)	 highlight = null;
@@ -360,6 +358,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const { blockId, rootId, onSelect, isPopup } = data;
 		const { root, breadcrumbs } = blockStore;
 		const block = blockStore.getLeaf(rootId, blockId);
+		const renderer = Util.getRenderer();
 		
 		if (!block || item.arrow) {
 			return;
@@ -397,7 +396,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				/*
 				C.BlockGetPublicWebURL(rootId, (message: any) => {
 					if (message.url) {
-						ipcRenderer.send('urlOpen', message.url);
+						renderer.send('urlOpen', message.url);
 					};
 				});
 				*/
@@ -416,6 +415,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 					if (!message.error.code) {
 						DataUtil.objectOpenPopup({ id: message.id, layout: object.layout });
 					};
+					analytics.event('DuplicateObject', { count: 1 });
 				});
 				break;
 
@@ -479,6 +479,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 					DataUtil.objectOpen({ id: message.targetId });
 
 					analytics.event('CreateObject', {
+						route: 'MenuObject',
 						objectType: object.targetObjectType,
 						layout: object.layout,
 						template: (object.templateIsBundled ? object.id : 'custom'),

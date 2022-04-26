@@ -6,12 +6,16 @@ import { Provider } from 'mobx-react';
 import { enableLogging } from 'mobx-logger';
 import { Page, SelectionProvider, DragProvider, Progress, Tooltip, Preview, Icon, ListPopup, ListMenu } from './component';
 import { commonStore, authStore, blockStore, detailStore, dbStore, menuStore, popupStore } from './store';
-import { I, C, Util, DataUtil, keyboard, Storage, analytics, dispatcher, translate } from 'ts/lib';
-import { throttle } from 'lodash';
+import { I, C, Util, FileUtil, keyboard, Storage, analytics, dispatcher, translate, Action } from 'ts/lib';
 import * as Sentry from '@sentry/browser';
 import { configure } from 'mobx';
 
 configure({ enforceActions: 'never' });
+
+import 'react-virtualized/styles.css';
+import 'katex/dist/katex.min.css';
+
+import 'prismjs/themes/prism.css';
 
 import 'scss/font.scss';
 import 'scss/common.scss';
@@ -33,6 +37,7 @@ import 'scss/component/title.scss';
 import 'scss/component/select.scss';
 import 'scss/component/tag.scss';
 import 'scss/component/dragLayer.scss';
+import 'scss/component/dragbox.scss';
 import 'scss/component/selection.scss';
 import 'scss/component/loader.scss';
 import 'scss/component/deleted.scss';
@@ -100,6 +105,7 @@ import 'scss/popup/confirm.scss';
 import 'scss/popup/page.scss';
 import 'scss/popup/template.scss';
 import 'scss/popup/export.scss';
+import 'scss/popup/video.scss';
 
 import 'emoji-mart/css/emoji-mart.css';
 import 'scss/menu/common.scss';
@@ -143,7 +149,6 @@ import 'scss/menu/dataview/source.scss';
 import 'scss/media/print.scss';
 
 import 'scss/theme/dark/common.scss';
-import { Action } from './lib';
 
 interface RouteElement { path: string; };
 interface Props {};
@@ -154,16 +159,15 @@ interface State {
 
 const $ = require('jquery');
 const path = require('path');
-const { app, dialog, process } = window.require('@electron/remote');
+const { app, dialog, process, BrowserWindow } = window.require('@electron/remote');
 const version = app.getVersion();
 const userPath = app.getPath('userData');
-const { ipcRenderer } = window.require('electron');
 const fs = window.require('fs');
-const memoryHistory = require('history').createMemoryHistory;
+const hs = require('history');
+const memoryHistory = hs.createMemoryHistory;
 const history = memoryHistory();
 const Constant =  require('json/constant.json');
 
-const THROTTLE = 20;
 const Routes: RouteElement[] = require('json/route.json');
 const rootStore = {
 	commonStore,
@@ -216,6 +220,10 @@ declare global {
 		Go: any;
 		Graph: any;
 		$: any;
+
+		isWebVersion: boolean;
+		Config: any;
+		Renderer: any;
 	}
 };
 
@@ -267,6 +275,7 @@ class App extends React.Component<Props, State> {
 	
 	render () {
 		const { loading } = this.state;
+		const isMaximized = BrowserWindow.getFocusedWindow()?.isMaximized();
 		
 		if (loading) {
 			return (
@@ -275,7 +284,7 @@ class App extends React.Component<Props, State> {
 				</div>
 			);
 		};
-		
+
 		return (
 			<Router history={history}>
 				<Provider {...rootStore}>
@@ -293,7 +302,7 @@ class App extends React.Component<Props, State> {
 
 								<div className="side right">
 									<Icon className="min" onClick={this.onMin} />
-									<Icon className="max" onClick={this.onMax} />
+									<Icon id="minmax" className={isMaximized ? 'window' : 'max'} onClick={this.onMax} />
 									<Icon className="close" onClick={this.onClose} />
 								</div>
 							</div>
@@ -313,7 +322,6 @@ class App extends React.Component<Props, State> {
 
 	componentDidMount () {
 		this.init();
-		this.initTheme(commonStore.theme);
 	};
 
 	componentDidUpdate () {
@@ -325,66 +333,28 @@ class App extends React.Component<Props, State> {
 		keyboard.init();
 		analytics.init();
 		
-		Storage.delete('lastSurveyCanceled');
+		this.setIpcEvents();
+	};
 
-		const storageKeys = [
-			'theme', 'pinTime', 'defaultType', 'sidebar'
-		];
-
+	initStorage () {
 		const cover = Storage.get('cover');
 		const lastSurveyTime = Number(Storage.get('lastSurveyTime')) || 0;
 		const redirect = Storage.get('redirect');
-
-		if (!lastSurveyTime) {
-			Storage.set('lastSurveyTime', Util.time());
-		};
-
-		if (redirect) {
-			Storage.set('redirectTo', redirect);
-			Storage.delete('redirect');
-		};
-
-		cover ? commonStore.coverSet(cover.id, cover.image, cover.type) : commonStore.coverSetDefault();
-
-		storageKeys.forEach((it: string) => {
-			commonStore[Util.toCamelCase(it + '-Set')](Storage.get(it));
-		});
-		
-		this.setIpcEvents();
-		this.setWindowEvents();
-	};
-
-	initTheme (theme: string) {
-		const head = $('head');
-
-		head.find('#link-prism').remove();
-
-		if (theme) {
-			head.append(`<link id="link-prism" rel="stylesheet" href="./css/theme/${theme}/prism.css" />`);
-		};
-
-		Util.addBodyClass('theme', theme);
-	};
-
-	setIpcEvents () {
 		const accountId = Storage.get('accountId');
-		const body = $('body');
 		const phrase = Storage.get('phrase');
-		const node = $(ReactDOM.findDOMNode(this));
-		const logo = node.find('#logo');
-		const logsDir = path.join(userPath, 'logs');
+		const renderer = Util.getRenderer();
+		const restoreKeys = [
+			'pinTime', 'defaultType', 'autoSidebar',
+		];
 
-		try { fs.mkdirSync(logsDir); } catch (err) {};
-
-		ipcRenderer.send('appLoaded', true);
-
+		// Check auth phrase with keytar
 		if (accountId) {
-			ipcRenderer.send('keytarGet', accountId);
-			ipcRenderer.on('keytarGet', (e: any, key: string, value: string) => {
+			renderer.send('keytarGet', accountId);
+			renderer.on('keytarGet', (e: any, key: string, value: string) => {
 				if (accountId && (key == accountId)) {
 					if (phrase) {
 						value = phrase;
-						ipcRenderer.send('keytarSet', accountId, phrase);
+						renderer.send('keytarSet', accountId, phrase);
 						Storage.delete('phrase');
 					};
 
@@ -398,8 +368,61 @@ class App extends React.Component<Props, State> {
 			});
 		};
 
-		ipcRenderer.on('dataPath', (e: any, dataPath: string) => {
+		if (!lastSurveyTime) {
+			Storage.set('lastSurveyTime', Util.time());
+		};
+
+		if (redirect) {
+			Storage.set('redirectTo', redirect);
+			Storage.delete('redirect');
+		};
+
+		Storage.delete('lastSurveyCanceled');
+
+		cover ? commonStore.coverSet(cover.id, cover.image, cover.type) : commonStore.coverSetDefault();
+
+		restoreKeys.forEach((it: string) => {
+			commonStore[Util.toCamelCase(it + '-Set')](Storage.get(it));
+		});
+	};
+
+	initTheme (theme: string) {
+		const head = $('head');
+
+		head.find('#link-prism').remove();
+
+		if (theme == 'system') {
+			theme = commonStore.nativeTheme;
+		};
+
+		if (theme) {
+			head.append(`<link id="link-prism" rel="stylesheet" href="./css/theme/${theme}/prism.css" />`);
+		};
+
+		Util.addBodyClass('theme', theme);
+	};
+
+	setIpcEvents () {
+		const node = $(ReactDOM.findDOMNode(this));
+		const logo = node.find('#logo');
+		const logsDir = path.join(userPath, 'logs');
+		const renderer = Util.getRenderer();
+
+		try { fs.mkdirSync(logsDir); } catch (err) {};
+
+		renderer.send('appLoaded', true);
+
+		renderer.on('init', (e: any, dataPath: string, config: any, isDark: boolean) => {
 			authStore.pathSet(dataPath);
+			Storage.init(dataPath);
+
+			this.initStorage();
+
+			commonStore.nativeThemeSet(isDark);
+			commonStore.configSet(config, true);
+			commonStore.themeSet(config.theme);
+
+			this.initTheme(config.theme);
 
 			window.setTimeout(() => {
 				logo.css({ opacity: 0 });
@@ -407,11 +430,11 @@ class App extends React.Component<Props, State> {
 			}, 2000);
 		});
 		
-		ipcRenderer.on('route', (e: any, route: string) => {
+		renderer.on('route', (e: any, route: string) => {
 			Util.route(route);
 		});
 
-		ipcRenderer.on('popup', (e: any, id: string, param: any, close?: boolean) => {
+		renderer.on('popup', (e: any, id: string, param: any, close?: boolean) => {
 			param = param || {};
 			param.data = param.data || {};
 			param.data.rootId = keyboard.getRootId();
@@ -423,7 +446,7 @@ class App extends React.Component<Props, State> {
 			window.setTimeout(() => { popupStore.open(id, param); }, Constant.delay.popup);
 		});
 
-		ipcRenderer.on('checking-for-update', (e: any, auto: boolean) => {
+		renderer.on('checking-for-update', (e: any, auto: boolean) => {
 			if (!auto) {
 				commonStore.progressSet({ 
 					status: 'Checking for update...', 
@@ -434,7 +457,7 @@ class App extends React.Component<Props, State> {
 			};
 		});
 
-		ipcRenderer.on('update-available', (e: any, auto: boolean) => {
+		renderer.on('update-available', (e: any, auto: boolean) => {
 			commonStore.progressClear(); 
 
 			if (!auto) {
@@ -445,17 +468,17 @@ class App extends React.Component<Props, State> {
 						textConfirm: 'Update',
 						textCancel: 'Later',
 						onConfirm: () => {
-							ipcRenderer.send('updateDownload');
+							renderer.send('updateDownload');
 						},
 						onCancel: () => {
-							ipcRenderer.send('updateCancel');
+							renderer.send('updateCancel');
 						}, 
 					},
 				});
 			};
 		});
 
-		ipcRenderer.on('update-confirm', (e: any, auto: boolean) => {
+		renderer.on('update-confirm', (e: any, auto: boolean) => {
 			commonStore.progressClear(); 
 
 			if (!auto) {
@@ -466,18 +489,18 @@ class App extends React.Component<Props, State> {
 						textConfirm: 'Restart and update',
 						textCancel: 'Later',
 						onConfirm: () => {
-							ipcRenderer.send('updateConfirm');
+							renderer.send('updateConfirm');
 							Storage.delete('popupNewBlock');
 						},
 						onCancel: () => {
-							ipcRenderer.send('updateCancel');
+							renderer.send('updateCancel');
 						}, 
 					},
 				});
 			};
 		});
 
-		ipcRenderer.on('update-not-available', (e: any, auto: boolean) => {
+		renderer.on('update-not-available', (e: any, auto: boolean) => {
 			commonStore.progressClear(); 
 
 			if (!auto) {
@@ -492,13 +515,13 @@ class App extends React.Component<Props, State> {
 			};
 		});
 
-		ipcRenderer.on('download-progress', this.onProgress);
+		renderer.on('download-progress', this.onProgress);
 
-		ipcRenderer.on('update-downloaded', (e: any, text: string) => {
+		renderer.on('update-downloaded', (e: any, text: string) => {
 			commonStore.progressClear(); 
 		});
 
-		ipcRenderer.on('update-error', (e: any, err: string, auto: boolean) => {
+		renderer.on('update-error', (e: any, err: string, auto: boolean) => {
 			console.error(err);
 			commonStore.progressClear();
 
@@ -510,34 +533,39 @@ class App extends React.Component<Props, State> {
 						textConfirm: 'Retry',
 						textCancel: 'Later',
 						onConfirm: () => {
-							ipcRenderer.send('updateDownload');
+							renderer.send('updateDownload');
 						},
 						onCancel: () => {
-							ipcRenderer.send('updateCancel');
+							renderer.send('updateCancel');
 						}, 
 					},
 				});
 			};
 		});
 
-		ipcRenderer.on('import', this.onImport);
-		ipcRenderer.on('export', this.onExport);
-		ipcRenderer.on('command', this.onCommand);
+		renderer.on('import', this.onImport);
+		renderer.on('export', this.onExport);
+		renderer.on('command', this.onCommand);
 
-		ipcRenderer.on('config', (e: any, config: any) => { 
+		renderer.on('config', (e: any, config: any) => { 
 			commonStore.configSet(config, true);
 			this.initTheme(config.theme);
 		});
 
-		ipcRenderer.on('enter-full-screen', () => {
-			body.addClass('fullScreen')
+		renderer.on('enter-full-screen', () => {
+			commonStore.fullscreenSet(true);
 		});
 
-		ipcRenderer.on('leave-full-screen', () => {
-			body.removeClass('fullScreen');
+		renderer.on('leave-full-screen', () => {
+			commonStore.fullscreenSet(false);
 		});
 
-		ipcRenderer.on('debugSync', (e: any) => {
+		renderer.on('native-theme', (e: any, isDark: boolean) => {
+			commonStore.nativeThemeSet(isDark);
+			commonStore.themeSet(commonStore.theme);
+  		});
+
+		renderer.on('debugSync', (e: any) => {
 			C.DebugSync(100, (message: any) => {
 				if (!message.error.code) {
 					this.logToFile('sync', message);
@@ -545,58 +573,44 @@ class App extends React.Component<Props, State> {
 			});
 		});
 
-		ipcRenderer.on('debugTree', (e: any) => {
+		renderer.on('debugTree', (e: any) => {
 			const rootId = keyboard.getRootId();
 
 			C.DebugTree(rootId, logsDir, (message: any) => {
 				if (!message.error.code) {
-					ipcRenderer.send('pathOpen', logsDir);
+					renderer.send('pathOpen', logsDir);
 				};
 			});
 		});
 
-		ipcRenderer.on('shutdownStart', (e, relaunch) => {
+		renderer.on('shutdownStart', (e, relaunch) => {
 			this.setState({ loading: true });
 		});
 
-		ipcRenderer.on('shutdown', (e, relaunch) => {
+		renderer.on('shutdown', (e, relaunch) => {
 			C.Shutdown(() => {
-				ipcRenderer.send('shutdown', relaunch);
+				renderer.send('shutdown', relaunch);
 			});
 		});
 	};
 
 	logToFile (name: string, message: any) {
-		let logsDir = path.join(userPath, 'logs');
-		let log = path.join(logsDir, name + '_' + Util.dateForFile() + '.json');
+		const logsDir = path.join(userPath, 'logs');
+		const log = path.join(logsDir, name + '_' + FileUtil.date() + '.json');
+		const renderer = Util.getRenderer();
+
 		try {
 			fs.writeFileSync(log, JSON.stringify(message, null, 5), 'utf-8');
 		} catch(e) {
 			console.log('[DebugSync] Failed to save a file');
 		};
 
-		ipcRenderer.send('pathOpen', logsDir);
-	};
-
-	setWindowEvents () {
-		const win = $(window);
-
-		win.unbind('mousemove.common beforeunload.common blur.common');
-		
-		win.on('mousemove.common', throttle((e: any) => {
-			keyboard.initPinCheck();
-			keyboard.disableMouse(false);
-			keyboard.setCoords(e);
-		}, THROTTLE));
-		
-		win.on('blur.common', () => {
-			Util.tooltipHide(true);
-			Util.previewHide(true);
-		});
+		renderer.send('pathOpen', logsDir);
 	};
 
 	onCommand (e: any, key: string) {
 		const rootId = keyboard.getRootId();
+		const renderer = Util.getRenderer();
 
 		let options: any = {};
 
@@ -611,6 +625,14 @@ class App extends React.Component<Props, State> {
 
 			case 'create':
 				keyboard.pageCreate();
+				break;
+
+			case 'saveAsHTML':
+				keyboard.onSaveAsHTML();
+				break;
+
+			case 'saveAsHTMLSuccess':
+				keyboard.printRemove();
 				break;
 
 			case 'save':
@@ -633,7 +655,7 @@ class App extends React.Component<Props, State> {
 							return;
 						};
 
-						ipcRenderer.send('pathOpen', files[0]);
+						renderer.send('pathOpen', files[0]);
 					});
 				});
 				break;
@@ -654,7 +676,7 @@ class App extends React.Component<Props, State> {
 							return;
 						};
 
-						ipcRenderer.send('pathOpen', files[0]);
+						renderer.send('pathOpen', files[0]);
 					});
 				});
 				break;
@@ -663,7 +685,7 @@ class App extends React.Component<Props, State> {
 
 	onProgress (e: any, progress: any) {
 		commonStore.progressSet({ 
-			status: Util.sprintf('Downloading update... %s/%s', Util.fileSize(progress.transferred), Util.fileSize(progress.total)), 
+			status: Util.sprintf('Downloading update... %s/%s', FileUtil.size(progress.transferred), FileUtil.size(progress.total)), 
 			current: progress.transferred, 
 			total: progress.total,
 			isUnlocked: true,
@@ -683,19 +705,29 @@ class App extends React.Component<Props, State> {
 	};
 
 	onMenu (e: any) {
-		ipcRenderer.send('winCommand', 'menu');
+		const renderer = Util.getRenderer();
+		renderer.send('winCommand', 'menu');
 	};
 
 	onMin (e: any) {
-		ipcRenderer.send('winCommand', 'minimize');
+		const renderer = Util.getRenderer();
+		renderer.send('winCommand', 'minimize');
 	};
 
 	onMax (e: any) {
-		ipcRenderer.send('winCommand', 'maximize');
+		const node = $(ReactDOM.findDOMNode(this));
+		const icon = node.find('#minmax');
+		const renderer = Util.getRenderer();
+		const isMaximized = BrowserWindow.getFocusedWindow().isMaximized();
+
+		icon.removeClass('max window');
+		!isMaximized ? icon.addClass('max') : icon.addClass('window');
+		renderer.send('winCommand', 'maximize');
 	};
 
 	onClose (e: any) {
-		ipcRenderer.send('winCommand', 'close');
+		const renderer = Util.getRenderer();
+		renderer.send('winCommand', 'close');
 	};
 
 };

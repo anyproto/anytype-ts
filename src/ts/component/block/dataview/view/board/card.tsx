@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { Draggable } from 'react-beautiful-dnd';
-import { I, Relation } from 'ts/lib';
+import { I, DataUtil, Relation } from 'ts/lib';
 import { dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import Cell from 'ts/component/block/dataview/cell';
@@ -9,53 +8,51 @@ interface Props extends I.ViewComponent {
 	columnId: number;
 	index: number;
 	idx: number;
-}
-
-const getItemStyle = (snapshot: any, style: any) => {
-	if (snapshot.isDragging) {
-		style.background = '$colorVeryLightGrey';
-	};
-	return style;
+	onDragStartCard?: (e: any, columnId: any, record: any) => void;
 };
 
 const Card = observer(class Card extends React.Component<Props, {}> {
 
 	render () {
-		const { rootId, block, columnId, idx, index, getView, onCellClick, onRef } = this.props;
+		const { rootId, block, columnId, idx, index, getView, getRecord, onCellClick, onRef, onDragStartCard } = this.props;
 		const view = getView();
 		const relations = view.relations.filter((it: any) => { return it.isVisible; });
 		const idPrefix = 'dataviewCell';
 		const subId = dbStore.getSubId(rootId, block.id);
+		const record = getRecord(index);
+		const cn = [ 'card', DataUtil.layoutClass(record.id, record.layout) ];
 
 		return (
-			<Draggable draggableId={[ columnId, index ].join(' ')} index={idx} type="row">
-				{(provided: any, snapshot: any) => (
-					<div 
-						className="card"
-						ref={provided.innerRef}
-						{...provided.draggableProps}
-						{...provided.dragHandleProps}
-						style={getItemStyle(snapshot, provided.draggableProps.style)}
-					>
-						{relations.map((relation: any, i: number) => {
-							const id = Relation.cellId(idPrefix, relation.relationKey, index);
-							return (
-								<Cell 
-									key={'board-cell-' + view.id + relation.relationKey} 
-									{...this.props}
-									subId={subId}
-									ref={(ref: any) => { onRef(ref, id); }} 
-									index={index}
-									viewType={view.type}
-									idPrefix={idPrefix}
-									onClick={(e: any) => { onCellClick(e, relation.relationKey, index); }}
-									relationKey={relation.relationKey}
-								/>
-							);
-						})}
-					</div>
-				)}
-			</Draggable>
+			<div 
+				className={cn.join(' ')} 
+				data-id={record.id}
+				draggable={true}
+				onDragStart={(e: any) => { onDragStartCard(e, columnId, record); }}
+			>
+				<div className="ghost top" />
+				<div className="cardContent">
+					{relations.map((relation: any, i: number) => {
+						const id = Relation.cellId(idPrefix, relation.relationKey, index);
+						return (
+							<Cell 
+								key={'board-cell-' + view.id + relation.relationKey} 
+								{...this.props}
+								subId={subId}
+								ref={(ref: any) => { onRef(ref, id); }} 
+								relationKey={relation.relationKey}
+								index={index}
+								viewType={view.type}
+								idPrefix={idPrefix}
+								arrayLimit={2}
+								onClick={(e: any) => { onCellClick(e, relation.relationKey, index); }}
+								showTooltip={true}
+								tooltipX={I.MenuDirection.Left}
+							/>
+						);
+					})}
+				</div>
+				<div className="ghost bottom" />
+			</div>
 		);
 	};
 

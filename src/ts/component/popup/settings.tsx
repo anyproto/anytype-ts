@@ -1,20 +1,20 @@
 import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Icon, Button, Title, Label, Cover, Textarea, Loader, IconObject, Error, Pin, Select, Switch } from 'ts/component';
-import { I, C, Storage, translate, Util, DataUtil, analytics } from 'ts/lib';
-import { authStore, blockStore, commonStore, popupStore } from 'ts/store';
+import { Icon, Button, Title, Label, Cover, Textarea, Loader, IconObject, Error, Pin, Select, Switch, Checkbox } from 'ts/component';
+import { I, C, Storage, translate, Util, DataUtil, analytics, Action } from 'ts/lib';
+import { authStore, blockStore, commonStore, popupStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
-interface Props extends I.Popup, RouteComponentProps<any> {}
+interface Props extends I.Popup, RouteComponentProps<any> {};
 
 interface State {
 	loading: boolean;
 	error: string;
 	entropy: string;
-}
+};
 
 const { dialog } = window.require('@electron/remote');
-const { ipcRenderer } = window.require('electron');
 const $ = require('jquery');
 const Constant: any = require('json/constant.json');
 const sha1 = require('sha1');
@@ -38,6 +38,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 	onConfirmPin: () => void = null;
 	onConfirmPhrase: any = null;
 	format: string = '';
+	refCheckbox: any = null;
 
 	constructor (props: any) {
 		super(props);
@@ -54,6 +55,10 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 		this.onFileClick = this.onFileClick.bind(this);
 		this.elementBlur = this.elementBlur.bind(this);
 		this.onFileOffload = this.onFileOffload.bind(this);
+		this.onDelete = this.onDelete.bind(this);
+		this.onDeleteCancel = this.onDeleteCancel.bind(this);
+		this.onCheck = this.onCheck.bind(this);
+		this.onType = this.onType.bind(this);
 	};
 
 	render () {
@@ -61,12 +66,13 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 		const { data } = param;
 		const { page } = data;
 		const { account, phrase } = authStore;
-		const { cover, coverImage, theme, config } = commonStore;
+		const { cover, coverImage, theme, config, autoSidebar, type } = commonStore;
 		const { loading, error, entropy } = this.state;
 		const pin = Storage.get('pin');
 
 		let content = null;
 		let Item = null;
+		let message = null;
 
 		let Head = (item: any) => (
 			<div className="head">
@@ -86,12 +92,75 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 						<Title text={translate('popupSettingsTitle')} />
 
 						<div className="rows">
-							<div className="row" onClick={() => { this.onPage('wallpaper'); }}>
-								<Icon className="wallpaper" />
-								<Label text={translate('popupSettingsWallpaperTitle')} />
+							<div className="row" onClick={() => { this.onPage('account'); }}>
+								<Icon className="account" />
+								<Label text={translate('popupSettingsAccountTitle')} />
+
+								{account.status.type != I.AccountStatusType.Active ? (
+									<Icon className="dot" />
+								) : ''}
 								<Icon className="arrow" />
 							</div>
 
+							<div className="row" onClick={() => { this.onPage('personal'); }}>
+								<Icon className="personal" />
+								<Label text={translate('popupSettingsPersonalTitle')} />
+								<Icon className="arrow" />
+							</div>
+
+							<div className="row" onClick={() => { this.onPage('appearance'); }}>
+								<Icon className="appearance" />
+								<Label text={translate('popupSettingsAppearanceTitle')} />
+								<Icon className="arrow" />
+							</div>
+
+							<div className="row" onClick={() => { this.onPage('importIndex'); }}>
+								<Icon className="import" />
+								<Label text={translate('popupSettingsImportTitle')} />
+								<Icon className="arrow" />
+							</div>
+
+							<div className="row" onClick={() => { this.onPage('exportMarkdown'); }}>
+								<Icon className="export" />
+								<Label text={translate('popupSettingsExportTitle')} />
+								<Icon className="arrow" />
+							</div>
+						</div>
+					</div>
+				);
+				break;
+
+			case 'account':
+				const canDelete = config.experimental && (account.status.type == I.AccountStatusType.Active);
+				const isDeleted = [ I.AccountStatusType.StartedDeletion, I.AccountStatusType.Deleted ].includes(account.status.type);
+
+				if (account.status.type == I.AccountStatusType.PendingDeletion) {
+					message = (
+						<div className="flex">	
+							<Label text={`This account is planned for deletion in ${Util.duration(Math.max(0, account.status.date - Util.time()))}...`} />
+							<Button text="Cancel" onClick={this.onDeleteCancel} />
+						</div>
+					);
+				};
+
+				if (isDeleted) {
+					message = (
+						<React.Fragment>	
+							<b>Account data removed from the backup node</b>
+							You can continue to work as normal.<br/>
+							All logged-in devices will continue to store data locally. However, you won't be able to sign into Anytype on new devices using your keychain recovery phrase. 
+						</React.Fragment>
+					);
+				};
+
+				content = (
+					<div>
+						<Head id="index" name={translate('popupSettingsTitle')} />
+						<Title text={translate('popupSettingsAccountTitle')} />
+
+						{message ? <div className="message">{message}</div> : ''}
+
+						<div className="rows">
 							<div 
 								className="row" 
 								onClick={() => { 
@@ -113,48 +182,151 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 								<Icon className="arrow" />
 							</div>
 
-							<div className="row" onClick={() => { this.onPage('importIndex'); }}>
-								<Icon className="import" />
-								<Label text={translate('popupSettingsImportTitle')} />
-								<Icon className="arrow" />
+							<Label className="sectionName" text="Data" />
+
+							<div className="row" onClick={this.onFileOffload}>
+								<Label text="Clear file cache" />
 							</div>
 
-							<div className="row" onClick={() => { this.onPage('exportMarkdown'); }}>
-								<Icon className="export" />
-								<Label text={translate('popupSettingsExportTitle')} />
-								<Icon className="arrow" />
+							<Label className="sectionName" text="Account" />
+
+							<div className="row" onClick={this.onLogout}>
+								<Label text={translate('popupSettingsLogout')} />
 							</div>
 
-							<div className="row" onClick={() => { this.onPage('other'); }}>
-								<Icon className="other" />
-								<Label text={translate('popupSettingsOtherTitle')} />
-								<Icon className="arrow" />
+							{canDelete ? (
+								<div className="row red" onClick={() => { this.onPage('delete'); }}>
+									<Label text={translate('popupSettingsAccountDeleteTitle')} />
+								</div>
+							) : ''}
+						</div>
+					</div>
+				);
+				break;
+
+			case 'delete':
+				content = (
+					<div>
+						<Head id="account" name={translate('commonCancel')} />
+						<Title text={translate('popupSettingsAccountDeleteTitle')} />
+
+						<div className="text">
+							<b>1. We're sorry to see you go. Once you request your account to be deleted, you have 30 days to cancel this request.</b>
+							<p>After 30 days, your objects are permanently removed from the Anytype backup node.</p>
+
+							<b>2. You can continue to work as normal.</b>
+							<p>All logged-in devices will continue to store data locally. However, you won't be able to sign into Anytype on new devices using your keychain recovery phrase. </p>
+
+							<div className="check" onClick={this.onCheck}>
+								<Checkbox ref={(ref: any) => { this.refCheckbox = ref; }} /> I have read it and want to delete my account
 							</div>
 						</div>
 
-						<div className="logout" onClick={this.onLogout}>{translate('popupSettingsLogout')}</div>
+						<div className="rows">
+							<div id="row-delete" className="row disabled" onClick={this.onDelete}>
+								<Label text={translate('commonDelete')} />
+							</div>
+						</div>
+					</div>
+				);
+				break;
+
+			case 'personal': 
+				const types = DataUtil.getObjectTypesForNewObject(false);
+				const ot = types.find(it => it.id == type);
+
+				content = (
+					<div>
+						<Head id="index" name={translate('popupSettingsTitle')} />
+						<Title text={translate('popupSettingsPersonalTitle')} />
+
+						<div className="rows">
+							<div className="row flex">
+								<div className="side left">
+									<Label text="Default Object type" />
+								</div>
+								<div className="side right">
+									<div id="defaultType" className="select" onClick={this.onType}>
+										<div className="item">
+											<div className="name">{ot?.name || DataUtil.defaultName('page')}</div>
+										</div>
+										<Icon className="arrow light" />
+									</div>
+								</div>
+							</div>
+
+							<div className="row flex">
+								<div className="side left">
+									<Label text="Automatically hide and show Sidebar" />
+								</div>
+								<div className="side right">
+									<Switch value={autoSidebar} className="big" onChange={(e: any, v: boolean) => { commonStore.autoSidebarSet(v); }}/>
+								</div>
+							</div>
+						</div>
+					</div>
+				);
+				break;
+
+			case 'appearance':
+				const themes: any[] = [
+					{ id: '', class: 'light', name: 'Light' },
+					{ id: 'dark', class: 'dark', name: 'Dark' },
+					{ id: 'system', class: 'system', name: 'System' },
+				];
+
+				const inner = <div className="inner"></div>;
+
+				content = (
+					<div>
+						<Head id="index" name={translate('popupSettingsTitle')} />
+						<Title text={translate('popupSettingsAppearanceTitle')} />
+
+						<div className="rows">
+							<div className="row" onClick={() => { this.onPage('wallpaper'); }}>
+								<Icon className="wallpaper" />
+								<Label text={translate('popupSettingsWallpaperTitle')} />
+								<Icon className="arrow" />
+							</div>
+
+							<Label className="sectionName center" text="Mode" />
+
+							<div className="buttons">
+								{themes.map((item: any, i: number) => (
+									<div 
+										key={i} 
+										className={[ 'btn', (theme == item.id ? 'active' : '') ].join(' ')} 
+										onClick={() => { this.onTheme(item.id); }}
+									>
+										<Icon className={item.class} inner={inner} />
+										<Label text={item.name} />
+									</div>
+								))}
+							</div>
+						</div>
 					</div>
 				);
 				break;
 
 			case 'wallpaper':
-				let colors = [ 'yellow', 'orange', 'pink', 'red', 'purple', 'navy', 'blue', 'ice', 'teal', 'green' ];
-				let gradients = [ 'yellow', 'red', 'blue', 'teal', 'pinkOrange', 'bluePink', 'greenOrange', 'sky' ];
 				let covers1 = [];
-				let covers2 = colors.map((it: string) => { return { id: it, image: '', type: I.CoverType.Color }; });
-				let covers3 = gradients.map((it: string) => { return { id: it, image: '', type: I.CoverType.Gradient }; });
-
 				if (coverImage) {
 					covers1.push({ id: coverImage, image: coverImage, type: I.CoverType.Upload });
 				};
-				for (let i = 1; i <= 13; ++i) {
+				for (let i = 1; i <= Constant.coverCnt; ++i) {
 					covers1.push({ id: 'c' + i, image: '', type: I.CoverType.Image });
 				};
 
 				let sections = [
 					{ name: translate('popupSettingsPicture'), children: covers1 },
-					{ name: translate('popupSettingsColor'), children: covers2 },
-					{ name: translate('popupSettingsGradient'), children: covers3 },
+					{ 
+						name: translate('popupSettingsColor'), 
+						children: DataUtil.coverColors().map((it: any) => { return { ...it, image: '' }; }),
+					},
+					{ 
+						name: translate('popupSettingsGradient'), 
+						children: DataUtil.coverGradients().map((it: any) => { return { ...it, image: '' }; }), 
+					},
 				];
 
 				Item = (item: any) => (
@@ -165,7 +337,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 
 				content = (
 					<div>
-						<Head id="index" name={translate('popupSettingsTitle')} />
+						<Head id="appearance" name={translate('popupSettingsAppearanceTitle')} />
 						<Title text={translate('popupSettingsWallpaperTitle')} />
 
 						<div className="row first">
@@ -196,7 +368,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 
 				content = (
 					<div>
-						<Head id="index" name={translate('popupSettingsTitle')} />
+						<Head id="account" name={translate('popupSettingsAccountTitle')} />
 						
 						<Title text={translate('popupSettingsPhraseTitle')} />
 						<Label text={translate('popupSettingsPhraseText')} />
@@ -241,50 +413,76 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 				break;
 
 			case 'pinIndex':
+				const pinTime = commonStore.pinTime / 1000;
+
+				const times: any[] = [
+					{ id: 60 },
+					{ id: 300 },
+					{ id: 600 },
+					{ id: 3600 },
+				].map((it: any) => {
+					it.name = Util.duration(it.id);
+					return it;
+				});
+
 				content = (
 					<div>
-						<Head id="index" name={translate('popupSettingsTitle')} />
+						<Head id="account" name={translate('popupSettingsAccountTitle')} />
 
 						<Title text={translate('popupSettingsPinTitle')} />
-						<Label text={translate('popupSettingsPinText')} />
+						<Label className="description" text={translate('popupSettingsPinText')} />
 
-						{pin ? (
-							<div className="buttons">
-								<Button 
-									text={translate('popupSettingsPinOff')} 
-									className="blank" 
-									onClick={() => {
-										this.onConfirmPin = this.onTurnOffPin;
-										this.onPage('pinConfirm');
+						<div className="rows">
+							{pin ? (
+								<React.Fragment>
+									<div 
+										className="row red" 
+										onClick={() => {
+											this.onConfirmPin = this.onTurnOffPin;
+											this.onPage('pinConfirm');
 
-										analytics.event('PinCodeOff');
-									}} 
-								/>
+											analytics.event('PinCodeOff');
+										}}
+									>
+										<Label text={translate('popupSettingsPinOff')} />
+									</div>
 
-								<Button 
-									text={translate('popupSettingsPinChange')} 
-									className="blank" 
-									onClick={() => {
-										this.onConfirmPin = () => { this.onPage('pinSelect'); };
-										this.onPage('pinConfirm');
+									<div className="row flex">
+										<div className="side left">
+											<Label text="PIN code check time-out" />
+										</div>
+										<div className="side right">
+											<Select id="pinTime" arrowClassName="light" options={times} value={String(pinTime || '')} onChange={(id: string) => { commonStore.pinTimeSet(id); }}/>
+										</div>
+									</div>
 
-										analytics.event('PinCodeChange');
-									}} 
-								/>
-							</div>
-						): (
-							<div className="buttons">
-								<Button 
-									text={translate('popupSettingsPinOn')} 
-									className="blank" 
-									onClick={() => {
-										this.onPage('pinSelect');
+									<div 
+										className="row" 
+										onClick={() => {
+											this.onConfirmPin = () => { this.onPage('pinSelect'); };
+											this.onPage('pinConfirm');
 
-										analytics.event('PinCodeOn');
-									}} 
-								/>
-							</div>
-						)}
+											analytics.event('PinCodeChange');
+										}}
+									>
+										<Label text={translate('popupSettingsPinChange')} />
+									</div>
+								</React.Fragment>
+							): (
+								<React.Fragment>
+									<div 
+										className="row" 
+										onClick={() => {
+											this.onPage('pinSelect');
+
+											analytics.event('PinCodeOn');
+										}}
+									>
+										<Label text={translate('popupSettingsPinOn')} />
+									</div>
+								</React.Fragment>
+							)}
+						</div>
 
 					</div>
 				);
@@ -400,72 +598,6 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 				);
 				break;
 
-			case 'other':
-				const { type } = commonStore;
-				const pinTime = commonStore.pinTime / 1000;
-
-				const types = DataUtil.getObjectTypesForNewObject(false).map((it: any) => {
-					it.layout = I.ObjectLayout.Type;
-					return { ...it, object: it };
-				});
-
-				const times: any[] = [
-					{ id: 60 },
-					{ id: 300 },
-					{ id: 600 },
-					{ id: 3600 },
-				].map((it: any) => {
-					it.name = Util.duration(it.id);
-					return it;
-				});
-
-				const themes: any[] = [
-					{ id: '', name: 'Default' },
-					{ id: 'dark', name: 'Dark' },
-				];
-
-				content = (
-					<div>
-						<Head id="index" name={translate('popupSettingsTitle')} />
-
-						<Title text={translate('popupSettingsOtherTitle')} />
-
-						<div className="row">
-							<div className="side left">
-								<Label text="Default Object type" />
-							</div>
-							<div className="side right">
-								<Select id="defaultType" options={types} value={type} onChange={(id: string) => { this.onTypeChange(id); }}/>
-							</div>
-						</div>
-
-						<div className="row">
-							<div className="side left">
-								<Label text="PIN code check time-out" />
-							</div>
-							<div className="side right">
-								<Select id="pinTime" options={times} value={String(pinTime || '')} onChange={(id: string) => { commonStore.pinTimeSet(id); }}/>
-							</div>
-						</div>
-
-						<div className="row">
-							<div className="side left">
-								<Label text="Theme" />
-							</div>
-							<div className="side right">
-								<Select id="theme" options={themes} value={theme} onChange={(id: string) => { commonStore.themeSet(id); }}/>
-							</div>
-						</div>
-
-						<div className="row cp textColor textColor-red" onClick={this.onFileOffload}>
-							<div className="side left">
-								<Label text="Clear file cache" />
-							</div>
-							<div className="side right" />
-						</div>
-					</div>
-				);
-				break;
 		};
 
 		return (
@@ -560,12 +692,12 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 
 	onSelectPin (pin: string) {
 		Storage.set('pin', sha1(pin));
-		this.onPage('index');
+		this.onPage('pinIndex');
 	};
 
 	onTurnOffPin () {
 		Storage.delete('pin');
-		this.onPage('index');
+		this.onPage('pinIndex');
 	};
 
 	onClose () {
@@ -622,6 +754,33 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 		this.onPage('phrase');
 	};
 
+	onDelete (e: any) {
+		const check = this.refCheckbox.getValue();
+		if (!check) {
+			return;
+		};
+
+		C.AccountDelete(false, (message: any) => {
+			authStore.accountSet({ status: message.status });			
+			this.onPage('account');
+		});
+	};
+
+	onDeleteCancel (e: any) {
+		C.AccountDelete(true);
+	};
+
+	onCheck () {
+		const node = $(ReactDOM.findDOMNode(this));
+		const row = node.find('#row-delete');
+		const value = this.refCheckbox.getValue();
+
+		row.removeClass('red disabled');
+
+		this.refCheckbox.setValue(!value);
+		!value ? row.addClass('red') : row.addClass('disabled');
+	};
+
 	onImport (format: string) {
 		const platform = Util.getPlatform();
 		const { close } = this.props;
@@ -651,42 +810,10 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 	};
 
 	onExport (format: I.ExportFormat) {
-		const { close } = this.props;
-
-		let options: any = {};
-
 		switch (format) {
 			case I.ExportFormat.Markdown:
-				options = { 
-					properties: [ 'openDirectory' ],
-				};
-
-				dialog.showOpenDialog(options).then((result: any) => {
-					const files = result.filePaths;
-					if ((files == undefined) || !files.length) {
-						return;
-					};
-
-					close();
-
-					C.Export(files[0], [], format, true, true, true, (message: any) => {	
-						if (message.error.code) {
-							popupStore.open('confirm', {
-								data: {
-									title: 'Ooops!',
-									text: 'Something went wrong. <br/>If you think it’s our fault, please write us a feedback.',
-									textConfirm: 'Try one more time',
-									canCancel: false,
-									onConfirm: () => {
-									},
-								},
-							});
-							return;
-						};
-						ipcRenderer.send('pathOpen', files[0]);
-
-						analytics.event('ExportMarkdown', { middleTime: message.middleTime });
-					});
+				Action.export([], format, true, true, true, () => { this.props.close(); }, (message: any) => {
+					analytics.event('ExportMarkdown', { middleTime: message.middleTime });
 				});
 				break;
 		};
@@ -713,7 +840,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 						popupStore.open('confirm',{
 							data: {
 								title: 'Files offloaded',
-								//text: Util.sprintf('Files: %s, Size: %s', message.files, Util.fileSize(message.bytes)),
+								//text: Util.sprintf('Files: %s, Size: %s', message.files, FileUtil.size(message.bytes)),
 								textConfirm: 'Ok',
 								canCancel: false,
 							}
@@ -726,6 +853,44 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 				}, 
 			}
 		});
+	};
+
+	onType (e: any) {
+		const { getId } = this.props;
+		const types = DataUtil.getObjectTypesForNewObject(false).map(it => it.id);
+
+		menuStore.open('searchObject', {
+			element: `#${getId()} #defaultType`,
+			className: 'big single',
+			data: {
+				isBig: true,
+				placeholder: 'Change object type',
+				placeholderFocus: 'Change object type',
+				value: commonStore.type,
+				filters: [
+					{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: types }
+				],
+				onSelect: (item: any) => {
+					this.onTypeChange(item.id);
+				},
+				dataSort: (c1: any, c2: any) => {
+					let i1 = types.indexOf(c1.id);
+					let i2 = types.indexOf(c2.id);
+
+					if (i1 > i2) return 1;
+					if (i1 < i2) return -1;
+					return 0;
+				}
+			}
+		});
+	};
+
+	onTheme (id: string) {
+		const renderer = Util.getRenderer();
+
+		commonStore.themeSet(id);
+		renderer.send('configSet', { theme: id });
+		analytics.event('ThemeSet', { id });
 	};
 
 	onTypeChange (id: string) {

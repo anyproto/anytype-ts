@@ -3,10 +3,9 @@ import { Icon, Tag, Filter } from 'ts/component';
 import { I, Util, DataUtil, keyboard, Relation } from 'ts/lib';
 import { menuStore } from 'ts/store';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import 'react-virtualized/styles.css';
 import { observer } from 'mobx-react';
 
-interface Props extends I.Menu {}
+interface Props extends I.Menu {};
 
 const $ = require('jquery');
 const MENU_ID = 'dataviewOptionValues';
@@ -31,10 +30,11 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { filter } = data;
+		const { filter, canAdd, noFilter } = data;
 		const relation = data.relation.get();
 		const value = data.value || [];
 		const items = this.getItems(true);
+		const placeholder = canAdd ? 'Filter or create options...' : 'Filter options...';
 
 		if (!this.cache) {
 			return null;
@@ -84,13 +84,15 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 		};
 
 		return (
-			<div className="wrap">
-				<Filter 
-					ref={(ref: any) => { this.refFilter = ref; }} 
-					placeholderFocus="Filter or create options..." 
-					value={filter}
-					onChange={this.onFilterChange} 
-				/>
+			<div className={[ 'wrap', (noFilter ? 'noFilter' : '') ].join(' ')}>
+				{!noFilter ? (
+					<Filter 
+						ref={(ref: any) => { this.refFilter = ref; }} 
+						placeholderFocus={placeholder} 
+						value={filter}
+						onChange={this.onFilterChange} 
+					/>
+				) : ''}
 
 				<div className="items">
 					{items.length ? (
@@ -278,6 +280,10 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 	onEdit (e: any, item: any) {
 		e.stopPropagation();
 
+		if (!item) {
+			return;
+		};
+
 		const { param, getId, getSize } = this.props;
 		const { data, classNameWrap } = param;
 
@@ -308,7 +314,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 		let sections: any = {};
 		let ret = [];
 
-		sections[I.OptionScope.Local] = { id: I.OptionScope.Local, name: 'In this object', children: [] };
+		sections[I.OptionScope.Local] = { id: I.OptionScope.Local, name: 'Select option', children: [] };
 		sections[I.OptionScope.Relation] = { id: I.OptionScope.Relation, name: 'Everywhere', children: [] };
 
 		if (filterMapper) {
@@ -351,10 +357,12 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 	};
 
 	resize () {
-		const { getId, position } = this.props;
+		const { getId, position, param } = this.props;
+		const { data } = param;
+		const { noFilter } = data;
 		const items = this.getItems(true);
 		const obj = $(`#${getId()} .content`);
-		const offset = 58;
+		const offset = noFilter ? 16 : 58;
 		const height = Math.max(HEIGHT + offset, Math.min(280, items.length * HEIGHT + offset));
 
 		obj.css({ height: height });

@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { I, focus, DataUtil } from 'ts/lib';
-import { Title } from 'ts/component';
+import { I, focus, DataUtil, Util } from 'ts/lib';
 import { blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -19,64 +18,33 @@ const BlockTableOfContents = observer(class BlockTableOfContents extends React.C
 	};
 
 	render () {
-		const { rootId, block } = this.props;
-		const childrenIds = blockStore.getChildrenIds(rootId, rootId);
-		const blocks = blockStore.getBlocks(rootId);
+		const { block } = this.props;
 		const cn = [ 'wrap', 'focusable', 'c' + block.id ];
-
-		// Subscriptions
-		for (let block of blocks) {
-			const childrenIds = blockStore.getChildrenIds(rootId, block.id);
-			const { style, text } = block.content;
-		};
+		const tree = this.getTree();
 
 		const Item = (item: any) => {
-			const block = blockStore.getLeaf(rootId, item.id);
-			const childrenIds = blockStore.getChildrenIds(rootId, item.id);
-
-			if (!block) {
-				return null;
-			};
-
-			let content = null;
-			if (block.isTextHeader()) {
-				const text = block.content.text;
-				if (text) {
-					content = (
-						<div className="text" onClick={(e: any) => { this.onClick(e, block.id); }}>
-							{text}
-						</div>
-					);
-				};
-			};
-
-			if (!content && !childrenIds.length) {
-				return null;
-			};
-
 			return (
-				<div className={[ 'item', DataUtil.blockClass(block) ].join(' ')}>
-					{content}
-
-					<div className="children">
-						{childrenIds.map((id: string, i: number) => {
-							return (
-								<Item key={i} id={id} depth={item.depth + 1} />
-							);
-						})}
-					</div>
+				<div 
+					className="item" 
+					onClick={(e: any) => { this.onClick(e, item.id); }}
+					style={{ paddingLeft: item.depth * 24 }}
+				>
+					<span>{item.text}</span>
 				</div>
 			);
 		};
 
 		return (
 			<div className={cn.join(' ')} tabIndex={0} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp} onFocus={this.onFocus}>
-				<Title text="Table of Contents" />
-				{childrenIds.map((id: string, i: number) => {
-					return (
-						<Item key={i} id={id} depth={0} />
-					);
-				})}
+				{!tree.length ? (
+					<div className="empty">Add headings to create a table of contents</div>
+				) : (
+					<React.Fragment>
+						{tree.map((item: any, i: number) => (
+							<Item key={i} {...item} />
+						))}
+					</React.Fragment>
+				)}
 			</div>
 		);
 	};
@@ -110,10 +78,55 @@ const BlockTableOfContents = observer(class BlockTableOfContents extends React.C
 		focus.set(block.id, { from: 0, to: 0 });
 	};
 
+	getTree () {
+		const { rootId } = this.props;
+		const blocks = blockStore.unwrapTree([ blockStore.wrapTree(rootId, rootId) ]).filter((it: I.Block) => { return it.isTextHeader(); });
+		const list: any[] = [];
+
+		let depth = 0;
+
+		for (let i = 0; i < blocks.length; i++) {
+			let block = blocks[i];
+			let next = blocks[i + 1];
+
+			if (block.isTextHeader1()) {
+				depth = 0;
+			};
+
+			list.push({ 
+				depth, 
+				id: block.id,
+				text: String(block.content.text || DataUtil.defaultName('page')),
+			});
+
+			if (next) {
+				if (block.isTextHeader1() && (next.isTextHeader2() || next.isTextHeader3())) {
+					depth++;
+				};
+				if (block.isTextHeader2() && (next.isTextHeader3())) {
+					depth++;
+				};
+			};
+		};
+
+		return list;
+	};
+
 	onClick (e: any, id: string) {
 		const { isPopup } = this.props;
+		const node = $('.focusable.c' + id);
 
-		focus.scroll(isPopup, id);
+		if (!node.length) {
+			return;
+		};
+
+		const container = Util.getScrollContainer(isPopup);
+		const no = node.offset().top;
+		const st = container.scrollTop();
+		const hh = Util.sizeHeader();
+		const y = Math.max(hh + 20, (isPopup ? (no - container.offset().top + st) : no) - hh - 20);
+
+		container.scrollTop(y);
 	};
 	
 });

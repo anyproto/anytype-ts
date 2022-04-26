@@ -1,15 +1,22 @@
-@media print {
-	@page { size: A4; margin: 1.5cm; }
+html.printMedia {
+	@page { size: A4; margin: 0px 1.5cm; }
 	@page:first { margin-top: 0px; }
 
-	* { overflow: visible !important; }
-
 	body { margin: 0px; -webkit-print-color-adjust: exact; }
-	
+
+	#selection * { user-select: text; }
+	#sidebar { display: none; }
+	.sidebarDummy { display: none; }
+
 	#drag, #previewLink, .menu, 
 	.editorControls, .controlButtons, 
 	html.withPopup .page.isFull, 
 	.header, .footer { display: none !important; }
+
+	#page.isFull { width: 100% !important; }
+
+	.focusable.isFocused { background: none !important; }
+	.focusable.isFocused::before { display: none; }
 
 	.overPopup, .overMenu { overflow: visible !important; }
 
@@ -18,10 +25,12 @@
 		.dimmer { display: none !important; }
 	}
 	
-	#editorWrapper { width: 100% !important; }
+	.editorWrapper.withIcon .blocks { margin-top: 2cm; }
 	.editorWrapper #editorSize { display: none !important; }
 
+	.pageMainEdit #bodyWrapper { padding: 0px !important; }
 	.pageMainType, .pageMainRelation {
+		.wrapper { padding: 2cm 0px; }
 		.wrapper {
 			.head {
 				.side.center { margin: 0px; }
@@ -37,9 +46,9 @@
 		}
 	}
 
-	.block.blockCover { left: 0px; top: 0px; width: 100%; }
+	.block.blockCover { left: 0px !important; top: 0px !important; width: 100%; border-radius: 0px; }
 
-	.blocks { margin: 0px !important; }
+	.blocks { padding: 0px 0.5cm; }
 	.blocks {
 		.wrapMenu .icon.dnd { display: none; }
 		#button-block-add { display: none; }
@@ -51,13 +60,22 @@
 		
 		.block.blockText {
 			.placeholder { display: none !important; }
+			.value { -webkit-user-modify: unset !important; }
 		}
 		
+		.block.blockBookmark { break-inside: avoid-page; }
+
+		.block.blockText.code > .wrapContent > .selectable > .dropTarget > .flex .value { white-space: pre; }
+	}
+}
+
+html.printMedia.print {
+	#editorWrapper { width: 100% !important; }
+
+	.blocks {
 		.block.blockBookmark {
 			.side.left { width: 100% !important; }
 			.side.right { display: none; }
-			
-			.inner.vertical { padding: 0px; }
 		}
 	}
 }

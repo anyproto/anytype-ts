@@ -1,7 +1,5 @@
-import { I, C, Util, DataUtil, crumbs, Storage, focus, history as historyPopup, analytics, Docs } from 'ts/lib';
-import { commonStore, authStore, blockStore, menuStore, popupStore } from 'ts/store';
-
-const { ipcRenderer } = window.require('electron');
+import { I, C, Util, DataUtil, crumbs, Storage, focus, history as historyPopup, analytics } from 'ts/lib';
+import { commonStore, authStore, blockStore, detailStore, menuStore, popupStore } from 'ts/store';
 
 const $ = require('jquery');
 const KeyCode = require('json/key.json');
@@ -14,6 +12,8 @@ class Keyboard {
 		client: { x: 0, y: 0 },
 	};
 	timeoutPin: number = 0;
+	timeoutSidebarHide: number = 0;
+	timeoutSidebarAnim: number = 0;
 	pressed: string[] = [];
 	match: any = {};
 	matchPopup: any = {};
@@ -33,18 +33,33 @@ class Keyboard {
 	init () {
 		this.unbind();
 		
-		const win = $(window); 
+		const renderer = Util.getRenderer();
+		const win = $(window);
+
 		win.on('keydown.common', (e: any) => { this.onKeyDown(e); });
 		win.on('keyup.common', (e: any) => { this.onKeyUp(e); });
 		win.on('mousedown.common', (e: any) => { this.onMouseDown(e); });
 		win.on('scroll.common', (e: any) => { this.onScroll(e); });
 
-		ipcRenderer.removeAllListeners('commandGlobal');
-		ipcRenderer.on('commandGlobal', (e: any, cmd: string, arg: any) => { this.onCommand(cmd, arg); });
+		win.unbind('mousemove.common beforeunload.common blur.common');
+		
+		win.on('mousemove.common', (e: any) => {
+			this.initPinCheck();
+			this.disableMouse(false);
+			this.onMouseMove(e);
+		});
+		
+		win.on('blur.common', () => {
+			Util.tooltipHide(true);
+			Util.previewHide(true);
+		});
+
+		renderer.removeAllListeners('commandGlobal');
+		renderer.on('commandGlobal', (e: any, cmd: string, arg: any) => { this.onCommand(cmd, arg); });
 	};
 	
 	unbind () {
-		$(window).unbind('keyup.common keydown.common mousedown.common scroll.common');
+		$(window).unbind('keyup.common keydown.common mousedown.common scroll.common mousemove.common blur.common');
 	};
 
 	onScroll (e: any) {
@@ -73,6 +88,64 @@ class Keyboard {
 			$('.focusable.c' + focused).removeClass('isFocused');
 		};
 	};
+
+	onMouseMove (e: any) {
+		const { sidebar, autoSidebar } = commonStore;
+		const { snap, fixed, width } = sidebar;
+
+		this.mouse = {
+			page: { x: e.pageX, y: e.pageY },
+			client: { x: e.clientX, y: e.clientY },
+		};
+
+		window.clearTimeout(this.timeoutSidebarHide);
+		window.clearTimeout(this.timeoutSidebarAnim);
+
+		if (this.isDragging || this.isResizing || !autoSidebar || fixed) {
+			return;
+		};
+
+		const el = $('#sidebar');
+		const win = $(window);
+		const ww = win.width();
+		const menuOpen = menuStore.isOpenList([ 'dataviewContext', 'preview' ]);
+
+		let add = false;
+		let remove = false;
+
+		if (snap == I.MenuDirection.Left) {
+			if (this.mouse.page.x <= 20) {
+				add = true;
+			};
+			if (this.mouse.page.x > width + 10) {
+				remove = true;
+			};
+		};
+
+		if (snap == I.MenuDirection.Right) {
+			if (this.mouse.page.x >= ww - 20) {
+				add = true;
+			};
+			if (this.mouse.page.x > ww - width - 10) {
+				remove = true;
+			};
+		};
+
+		if (menuOpen) {
+			remove = false;
+		};
+
+		if (add) {
+			el.addClass('anim active');
+		};
+
+		if (remove) {
+			this.timeoutSidebarHide = window.setTimeout(() => {
+				el.removeClass('active');
+				this.timeoutSidebarAnim = window.setTimeout(() => { el.removeClass('anim'); }, 200);
+			}, 200);
+		};
+	};
 	
 	onKeyDown (e: any) {
 		const rootId = this.getRootId();
@@ -80,6 +153,7 @@ class Keyboard {
 		const key = e.key.toLowerCase();
 		const cmd = this.ctrlKey();
 		const isMain = this.isMain();
+		const isPopup = this.isPopup();
 
 		this.pressed.push(key);
 
@@ -114,7 +188,7 @@ class Keyboard {
 					canClose = false;
 				} else
 				if (this.selection) {
-					const ids = this.selection.get();
+					const ids = this.selection.get(I.SelectType.Block);
 					if (ids.length) {
 						canClose = false;
 					};
@@ -154,6 +228,7 @@ class Keyboard {
 					preventResize: true,
 					data: { 
 						rootId,
+						isPopup,
 					}, 
 				});
 			});
@@ -165,11 +240,13 @@ class Keyboard {
 
 			// Navigation links
 			this.shortcut(`${cmd}+o`, e, (pressed: string) => {
+				e.preventDefault();
 				DataUtil.objectOpenPopup({ id: this.getRootId(), layout: I.ObjectLayout.Navigation });
 			});
 
 			// Graph
 			this.shortcut(`${cmd}+alt+o`, e, (pressed: string) => {
+				e.preventDefault();
 				DataUtil.objectOpenPopup({ id: this.getRootId(), layout: I.ObjectLayout.Graph });
 			});
 
@@ -390,24 +467,49 @@ class Keyboard {
 		analytics.event('Redo');
 	};
 
-	onPrint () {
-		const { theme } = commonStore;
+	printApply (className: string, clearTheme: boolean) {
 		const isPopup = this.isPopup();
 		const html = $('html');
 
+		html.addClass('printMedia');
+		
 		if (isPopup) {
 			html.addClass('withPopup');
 		};
 
-		Util.addBodyClass('theme', '');
+		if (className) {
+			html.addClass(className);
+		};
 
+		if (clearTheme) {
+			Util.addBodyClass('theme', '');
+		};
 		focus.clearRange(true);
+	};
+
+	printRemove () {
+		const { theme } = commonStore;
+
+		$('html').removeClass('withPopup printMedia print save');
+		Util.addBodyClass('theme', theme);
+	};
+
+	onPrint () {
+		this.printApply('print', true);
+
 		window.print();
 
-		html.removeClass('withPopup');
-		Util.addBodyClass('theme', theme);
-
+		this.printRemove();
 		analytics.event('Print');
+	};
+
+	onSaveAsHTML () {
+		const rootId = this.getRootId();
+		const object = detailStore.get(rootId, rootId);
+		const renderer = Util.getRenderer();
+
+		this.printApply('save', false);
+		renderer.send('winCommand', 'saveAsHTML', { name: object.name });
 	};
 
 	onSearch () {
@@ -525,22 +627,17 @@ class Keyboard {
 	initPinCheck () {
 		const { account } = authStore;
 		const { pinTime } = commonStore;
-		const pin = Storage.get('pin');
 
-		if (!pin) {
-			this.setPinChecked(true);
-		};
-		
-		if (!pin || !account) {
+		if (!account) {
 			return;
 		};
 		
 		window.clearTimeout(this.timeoutPin);
 		this.timeoutPin = window.setTimeout(() => {
 			const pin = Storage.get('pin');
+
+			this.setPinChecked(pin ? false : true);
 			if (pin) {
-				this.setPinChecked(false);
-				
 				popupStore.closeAll(null, () => {
 					Util.route('/auth/pin-check');
 				});
@@ -589,35 +686,13 @@ class Keyboard {
 		this.isCloseDisabled = v;
 	};
 	
-	setCoords (e: any) {
-		const { sidebar } = commonStore;
-		const { snap, width } = sidebar;
-
-		this.mouse = {
-			page: { x: e.pageX, y: e.pageY },
-			client: { x: e.clientX, y: e.clientY },
-		};
-
-		if (!this.isDragging && !this.isResizing) {
-			const el = $('#sidebar');
-			const win = $(window);
-
-			if ((snap == I.MenuDirection.Left) && (this.mouse.page.x <= 20)) {
-				el.addClass('active');
-			};
-			if ((snap == I.MenuDirection.Right) && (this.mouse.page.x >= win.width() - 20)) {
-				el.addClass('active');
-			};
-		};
-	};
-	
 	isArrow (k: string): boolean {
 		const keys: string[] = [ Key.up, Key.down, Key.left, Key.right ];
 		return keys.indexOf(k) >= 0;
 	};
 	
 	isSpecial (k: string): boolean {
-		const keys: string[] = [ Key.escape, Key.backspace, Key.tab, Key.enter ];
+		const keys: string[] = [ Key.escape, Key.backspace, Key.tab, Key.enter, Key.shift, Key.ctrl, Key.alt, Key.meta ];
 		return this.isArrow(k) || keys.indexOf(k) >= 0;
 	};
 
@@ -687,6 +762,9 @@ export enum Key {
 	tab			 = 'tab',
 	enter		 = 'enter',
 	shift		 = 'shift',
+	alt			 = 'alt',
+	ctrl		 = 'control',
+	meta		 = 'meta',
 	escape		 = 'escape',
 	space		 = 'space',
 	left		 = 'arrowleft',

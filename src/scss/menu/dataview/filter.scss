@@ -24,7 +24,7 @@
 				.icon.arrow { display: none; }
 			}
 
-			.tagItem { margin: 2px 4px 0px 0px; vertical-align: top; }
+			.tagItem { margin: 0px 4px 0px 0px; vertical-align: top; }
 
 			.element { display: inline-block; vertical-align: top; margin-right: 4px; line-height: 22px; }
 			.element {
@@ -61,7 +61,6 @@
 	.menu.menuDataviewFilterValues { width: 288px; }
 	.menu.menuDataviewFilterValues {
 		.content { max-height: 300px; }
-		.item { display: flex; }
 
 		.select { border: 0px; padding: 0px; display: block; width: 100%; }
 		.select:hover, .select.active { background: none; }
@@ -69,9 +68,11 @@
 			.icon.arrow { background-image: url('~img/arrow/filter.svg') !important; }
 		}
 
+		.item { display: flex; }
+		.item.withCaption { align-items: center; justify-content: space-between; }
 		.item {
 			.clickable { width: 100%; height: 20px; display: flex; }
-			.buttons { position: absolute; right: 8px; top: 4px; }
+			.buttons { margin: 0px; position: absolute; right: 10px; top: 2px; }
 
 			.icon.delete { transition: none; }
 			.name { @include text-overflow-nw; width: calc(100% - 40px); }
@@ -85,14 +86,12 @@
 			.icon.clear:hover { background-image: url('~img/icon/clear1.svg'); }
 			.icon.clear.active { opacity: 1; }
 		}
-		.item.withCaption {
-			.clickable { width: calc(100% - 46px); }
-		}
 		.item.empty { padding: 13px 16px; }
 
 		.item:hover, .item.hover {
-			.clickable { margin-right: 6px; width: calc(100% - 30px); }
+			.clickable { margin-right: 6px; }
 			.caption { display: none; }
+			.buttons { display: block; }
 		}
 
 		.tagItem { vertical-align: top; margin-top: 1px; }

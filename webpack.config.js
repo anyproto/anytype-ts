@@ -13,6 +13,8 @@ module.exports = (env) => {
 	
 		//devtool: 'source-map',
 
+		target: 'electron-renderer',
+
 		optimization: {
 			minimize: false,
 			removeAvailableModules: false,
@@ -42,8 +44,8 @@ module.exports = (env) => {
 				ignored: [
 					path.resolve(__dirname, 'dist'),
 					path.resolve(__dirname, 'node_modules')
-				]
-			}
+				],
+			},
 		},
 	
 		module: {

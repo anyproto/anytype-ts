@@ -4,14 +4,13 @@ import { I, C, keyboard, Util, crumbs, DataUtil, translate, analytics } from 'ts
 import { commonStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import 'react-virtualized/styles.css';
 
-interface Props extends I.Menu {}
+interface Props extends I.Menu {};
 
 interface State {
 	loading: boolean;
 	filter: string;
-}
+};
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
@@ -127,7 +126,14 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 
 				{!items.length && !loading ? (
 					<div id="empty" key="empty" className="emptySearch">
-						<Label text={filter ? Util.sprintf(translate('popupSearchEmptyFilter'), filter) : translate('popupSearchEmpty')} />
+						<div className="label">
+							{filter ? (
+								<React.Fragment>
+									<b>There are no objects named <span>"{filter}"</span></b>
+									Try creating a new one or search for something else.
+								</React.Fragment>
+							) : translate('popupSearchEmpty')}
+						</div>
 					</div>
 				) : ''}
 
@@ -233,7 +239,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		const { param } = this.props;
 		const { data } = param;
 		const { type, dataMapper, dataSort, skipIds } = data;
-		const filter = Util.filterFix(this.state.filter);
+		const { filter } = this.state;
 		const { config } = commonStore;
 		
 		const filters: any[] = [

@@ -1,12 +1,11 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, C, DataUtil, Util, Relation } from 'ts/lib';
+import { I, C, DataUtil, Util, Relation, analytics } from 'ts/lib';
 import { commonStore, blockStore, detailStore, dbStore, menuStore } from 'ts/store';
 import { Icon } from 'ts/component';
 import { observer } from 'mobx-react';
 
 import Item from 'ts/component/menu/item/relationView';
-import { analytics } from '../../../../lib';
 
 interface Props extends I.Menu {};
 
@@ -41,9 +40,9 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 			return null;
 		};
 
-		let allowedBlock = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Block ]);
-		let allowedRelation = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Relation ]);
-		let allowedValue = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
+		let allowedBlock = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Block ]);
+		let allowedRelation = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
+		let allowedValue = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 
 		if (root.isLocked()) {
 			allowedBlock = false;
@@ -125,9 +124,15 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 
 	componentDidUpdate () {
 		this.resize();
-		
-		if (commonStore.cellId) {
-			$(`#${commonStore.cellId}`).addClass('isEditing');
+
+		const id = commonStore.cellId;		
+		if (id) {
+			commonStore.cellId = '';
+			
+			const ref = this.cellRefs.get(id);
+			if (ref) {
+				ref.onClick($.Event('click'));
+			};
 		};
 	};
 
@@ -267,7 +272,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const { param, getId } = this.props;
 		const { data, classNameWrap } = param;
 		const { rootId } = data;
-		const allowed = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Relation ]);
+		const allowed = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
 
 		if (!allowed) {
 			return;

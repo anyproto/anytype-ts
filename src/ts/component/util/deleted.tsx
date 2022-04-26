@@ -16,7 +16,7 @@ class Deleted extends React.Component<Props, {}> {
 		const { className } = this.props;
 
 		return (
-			<div className={[ 'deleteWrapper', className ].join(' ')}>
+			<div id="deleteWrapper" className={[ 'deleteWrapper', className ].join(' ')}>
 				<div className="mid">
 					<Icon className="ghost" />
 					<Label text="This object doesn't exist" />

@@ -4,9 +4,8 @@ import { I, C, keyboard, Util, DataUtil, Mark, analytics } from 'ts/lib';
 import { commonStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import 'react-virtualized/styles.css';
 
-interface Props extends I.Menu {}
+interface Props extends I.Menu {};
 
 interface State {
 	loading: boolean;
@@ -222,12 +221,21 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		};
 
 		if (item.id == 'add') {
-			C.PageCreate({ type: commonStore.type, name: filter.text.replace(/\\/g, '') }, (message: any) => {
+			const type = dbStore.getObjectType(commonStore.type);
+
+			C.PageCreate({ type: type.id, name: filter.text.replace(/\\/g, '') }, (message: any) => {
 				if (message.error.code) {
 					return;
 				};
 
 				cb(message.pageId, filter.text);
+
+				analytics.event('CreateObject', {
+					route: 'Mention',
+					objectType: type.id,
+					layout: type.layout,
+					template: '',
+				});
 			});
 		} else {
 			cb(item.id, item.name);

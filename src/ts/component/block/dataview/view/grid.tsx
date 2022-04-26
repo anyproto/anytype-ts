@@ -32,10 +32,10 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 	render () {
 		const { rootId, block, getView, readonly, onRowAdd, isPopup } = this.props;
 		const view = getView();
-		const relations = view.relations.filter((it: any) => { return it.isVisible; });
+		const relations = view.relations.filter((it: any) => { return it && it.isVisible; });
 		const subId = dbStore.getSubId(rootId, block.id);
 		const records = dbStore.getRecords(subId, '');
-		const allowed = blockStore.isAllowed(rootId, block.id, [ I.RestrictionDataview.Object ]);
+		const allowed = blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.Object ]);
 		const length = records.length;
 
 		return (
@@ -252,7 +252,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 		const idx = view.relations.findIndex((it: I.ViewRelation) => { return it.relationKey == relationKey; });
 		const size = Constant.size.dataview.cell;
 
-		let width = e.pageX - offset.left;
+		let width = Math.floor(e.pageX - offset.left);
 		width = Math.max(size.min, width); 
 		width = Math.min(size.max, width);
 

@@ -12,8 +12,8 @@ html.themeDark {
     a { color: $colorPrimary; }
     a:hover { color: $colorOrange; }
 
-    #root > .loaderWrapper { background: $colorBlack; }
-    #root > .loaderWrapper {
+    #root > #loader { background: $colorBlack; }
+    #root > #loader {
         .logo { background-image: url('#{$themePath}/logo/color.svg'); }
     }
 
@@ -106,6 +106,8 @@ html.themeDark {
         .icon.arrow:hover { background-image: url('#{$themePath}/arrow/template1.svg'); }
         .icon.arrow.disabled:hover { background-image: url('#{$themePath}/arrow/template0.svg'); }
     }
+
+    .deleteWrapper { background: $colorBlack; }
 
     /* PreviewObject */
 
@@ -229,6 +231,11 @@ html.themeDark {
             .item:hover { color: $colorPrimary; }
         }
         .icon.big:hover, .icon.big.hover { background-color: $colorHover; }
+
+        .tabs { background: $colorBgIcon; color: $colorSecondary; }
+        .tabs {
+            .tab.active { background: $colorHover; color: $colorPrimary; }
+        }
     }
 
     .header.headerMainIndex {
@@ -262,22 +269,26 @@ html.themeDark {
     /* ---------------------------------------------------------------- */
 
     .sidebar { 
-        background-color: $colorBlack; color: $colorPrimary; border-color: $colorLinePrimary !important; 
+        background-color: $colorBlack; color: $colorPrimary; border-color: $colorLineSecondary !important; 
         box-shadow: 0px 4px 16px rgb(0 0 0 / 20%), 0px 0px 0px 1px #393933 inset;
     }
     .sidebar.fixed { box-shadow: 0px 0px; }
     .sidebar {
-        .head { border-color: $colorLinePrimary; }
         .body {
-            .icon.arrow { 
-                background-image: url('~img/arrow/select/light.svg');
+            .icon.set { background-image: url('#{$themePath}/icon/sidebar/set.svg'); }
+            .icon.blank { background-image: url('#{$themePath}/icon/sidebar/blank.svg'); }
+            .icon.arrow { background-image: url('~img/arrow/select/light.svg'); }
+
+            .item.isSection {
+                .icon.arrow { background-image: url('#{$themePath}/arrow/sidebar.svg'); }
             }
-            
-            .item {
-                .flex:hover::before { background: $colorHover; }
-            }
-            .item.hover > .flex::before { background: $colorHover; }
+
+            .item .inner:hover::before { background: $colorHover; }
+            .item.hover .inner::before { background: $colorHover; }
         }
+		.foot {
+			.item:hover { background-color: $colorHover; }
+		}
     }
 
     @import "./menu.scss";
@@ -294,5 +305,17 @@ html.themeDark {
 
     .cell.isEditing {
         .cellContent { background: $colorBlack; }
+    }
+
+    .cell.isEditing.c-select, .cell.isEditing.c-object {
+        #entry { color: $colorPrimary; }
+    }
+
+    .cellContent.c-url, 
+    .cellContent.c-email, 
+    .cellContent.c-phone 
+    {
+        .name { border-color: $colorSecondary; }
+        .name:hover { border-color: $colorPrimary; }
     }
 }

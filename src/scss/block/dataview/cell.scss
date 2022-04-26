@@ -68,7 +68,7 @@
 
 .cellContent.c-select {
 	.over { display: inline-block; vertical-align: top; }
-	.tagItem { margin: 0px 6px 6px 0px; vertical-align: top; }
+	.tagItem { margin: 0px 8px 8px 0px; vertical-align: top; }
 	.tagItem:last-child { margin-right: 0px; }
 }
 
@@ -102,6 +102,39 @@
 	.cellContent { cursor: text !important; }
 }
 
+.cell.isEditing.c-select, .cell.isEditing.c-object {
+	.cellContent { overflow-x: hidden !important; overflow-y: overlay !important; max-height: 200px; }
+	.itemWrap { display: inline-block; }
+
+	.placeholder { position: absolute; left: 0px; top: 0px; height: 100%; }
+	#entry { -webkit-user-modify: read-write-plaintext-only; color: $colorBlack; }
+	#list { margin-right: 6px; position: relative; word-wrap: break-word; }
+}
+
+.cell.isEditing.c-select {
+	.itemWrap { height: 18px; line-height: 18px; margin: 0px 8px 8px 0px; cursor: grab; position: relative; vertical-align: top; max-width: 100%; }
+	.itemWrap:last-child { margin-right: 0px !important; }
+	.itemWrap {
+		.tagItem { margin: 0px !important; }
+	}
+}
+
+.cell.isEditing.c-object {
+	.itemWrap { margin: 0px 8px 2px 0px; max-width: 100%; }
+	.itemWrap:empty { margin: 0px; }
+	.itemWrap:last-child { margin-right: 0px !important; }
+	.itemWrap {
+		.element { margin: 0px !important; }
+		.element {
+			.icon.objectRemove { 
+				width: 12px; height: 20px; cursor: pointer; margin: 0px 0px 0px 2px; flex-shrink: 0;
+				background-image: url('~img/icon/objectRemove.svg'); background-size: 8px;
+			}
+			.icon.objectRemove:hover { opacity: 0.8; }
+		}
+	}
+}
+
 .cellContent.canEdit.c-shortText, 
 .cellContent.canEdit.c-longText, 
 .cellContent.canEdit.c-number, 
@@ -113,7 +146,20 @@
 .cellContent.canEdit.c-checkbox,
 .cellContent.canEdit.c-select { cursor: pointer; }
 
-.cellContent.c-url, .cellContent.c-email, .cellContent.c-phone {
-	a { text-decoration: none; border-bottom: 1px solid $colorBorderDark; transition: $transitionFast; cursor: pointer; }
-	a:hover { border-color: $colorBlack; }
+.cellContent.c-url, 
+.cellContent.c-email, 
+.cellContent.c-phone 
+{
+	.name { 
+		text-decoration: none; border-bottom: 1px solid $colorBorderDark; transition: $transitionFast; cursor: pointer; width: auto; 
+		@include text-overflow-nw; width: 100%;
+	}
+	.name:hover { border-color: $colorBlack; }
+}
+
+.cellContent.canEdit.c-url, 
+.cellContent.canEdit.c-email, 
+.cellContent.canEdit.c-phone 
+{
+	.name { border: 0px; width: 100%; }
 }

@@ -17,6 +17,7 @@ import PageAuthAccountSelect from './auth/account/select';
 import PageAuthRegister from './auth/register';
 import PageAuthSuccess from './auth/success';
 import PageAuthShare from './auth/share';
+import PageAuthDeleted from './auth/deleted';
 
 import PageMainIndex from './main/index';
 import PageMainEdit from './main/edit';
@@ -30,10 +31,11 @@ import PageMainStore from './main/store';
 import PageMainGraph from './main/graph';
 import PageMainNavigation from './main/navigation';
 
-const { ipcRenderer } = window.require('electron');
 const Constant = require('json/constant.json');
+const Url = require('json/url.json');
 const $ = require('jquery');
 const raf = require('raf');
+
 const Components: any = {
 	'/':					 PageAuthSelect,
 	'auth/invite':			 PageAuthInvite,
@@ -47,6 +49,8 @@ const Components: any = {
 	'auth/account-select':	 PageAuthAccountSelect,
 	'auth/success':			 PageAuthSuccess,
 	'auth/share':			 PageAuthShare,
+	'auth/deleted':			 PageAuthDeleted,
+
 	'object/share':			 PageAuthShare,
 			
 	'main/index':			 PageMainIndex,
@@ -72,17 +76,18 @@ interface Props extends RouteComponentProps<any> {
 const Page = observer(class Page extends React.Component<Props, {}> {
 
 	_isMounted: boolean = false;
-	refChild: any;
+	refChild: any = null;
+	refSidebar: any = null;
 
 	render () {
 		const { isPopup } = this.props;
-		const { config, sidebar } = commonStore;
-		const { snap, fixed } = sidebar;
+		const { config, theme } = commonStore;
+		const { account } = authStore;
 		const match = this.getMatch();
 		const { page, action } = match.params || {};
 		const path = [ page, action ].join('/');
 		const showNotice = !Boolean(Storage.get('firstRun'));
-		const showSidebar = config.experimental && (page == 'main') && (action != 'index');
+		const showSidebar = (page == 'main') && (action != 'index');
 
 		if (showNotice) {
 			Components['/'] = PageAuthNotice;
@@ -93,44 +98,35 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 			return <div>Page component "{path}" not found</div>;
 		};
 
-		const wrap = (
+		let sb = (
+			<Sidebar 
+				ref={(ref: any) => { 
+					if (!this.refSidebar) {
+						this.refSidebar = ref; 
+						this.forceUpdate(); 
+					};
+				}} 
+				{...this.props} 
+			/>
+		);
+		let wrap = (
 			<div id="page" className={'page ' + this.getClass('page')}>
-				<Component ref={(ref: any) => this.refChild = ref} {...this.props} />
+				<Component ref={(ref: any) => this.refChild = ref} refSidebar={this.refSidebar} {...this.props} />
 			</div>
 		);
-
-		let sb = <Sidebar {...this.props} />;
 		let content = null;
 
 		if (isPopup || !showSidebar) {
 			content = wrap;
 		} else {
-			if (fixed) {
-				if (snap == I.MenuDirection.Right) {
-					content = (
-						<div className="pageFlex">
-							{sb}
-							{wrap}
-							<div id="sidebarDummy" />
-						</div>
-					);
-				} else {
-					content = (
-						<div className="pageFlex">
-							{sb}
-							<div id="sidebarDummy" />
-							{wrap}
-						</div>
-					);
-				};
-			} else {
-				content = (
-					<React.Fragment>
-						{sb}
-						{wrap}
-					</React.Fragment>
-				);
-			};
+			content = (
+				<div className="pageFlex">
+					{sb}
+					<div className="sidebarDummy left" />
+					{wrap}
+					<div className="sidebarDummy right" />
+				</div>
+			);
 		};
 		
 		return content;
@@ -172,9 +168,8 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 
 	init () {
 		const { account } = authStore;
-		const { isPopup, history, dataset } = this.props;
+		const { isPopup, history } = this.props;
 		const match = this.getMatch();
-		const popupNewBlock = Storage.get('popupNewBlock');
 		const isIndex = !match.params.page;
 		const isAuth = match.params.page == 'auth';
 		const isMain = match.params.page == 'main';
@@ -188,6 +183,12 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 		const win = $(window);
 		const path = [ match.params.page, match.params.action ].join('/');
 		const Component = Components[path];
+		const renderer = Util.getRenderer();
+		const isDeleted = account && account.status && ([ 
+			I.AccountStatusType.Deleted, 
+			I.AccountStatusType.PendingDeletion, 
+			I.AccountStatusType.StartedDeletion,
+		].includes(account.status.type));
 
 		Util.tooltipHide(true);
 		Util.previewHide(true);
@@ -204,6 +205,11 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 
 		if (pin && !keyboard.isPinChecked && !isPinCheck && !isAuth && !isIndex) {
 			Util.route('/auth/pin-check');
+			return;
+		};
+
+		if (isMain && account && isDeleted) {
+			Util.route('/auth/deleted');
 			return;
 		};
 
@@ -225,14 +231,22 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 		};
 		
 		window.setTimeout(() => {
-			if (isMain && account) {
-				if (!Storage.get('onboarding')) {
-					Storage.set('popupNewBlock', 1);
-				};
+			let popupNewBlock = Storage.get('popupNewBlock');
+			let popupVideo = Storage.get('popupVideo');
 
-				if (!popupNewBlock && Storage.get('onboarding')) {
+			let onboarding = Storage.get('onboarding');
+
+			if (isMain && account) {
+				if (!onboarding || popupVideo) {
+					popupNewBlock = true;
+				};
+				if (!popupNewBlock && onboarding) {
 					popupStore.open('help', { data: { document: 'whatsNew' } });
-					Storage.set('popupNewBlock', 1);
+					Storage.set('popupNewBlock', true);
+				};
+				if (popupVideo) {
+					popupStore.open('video', { data: { type: 'onboarding' } });
+					Storage.delete('popupVideo');
 				};
 				Storage.set('redirect', history.location.pathname);
 			};
@@ -241,7 +255,13 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 				if (account && askSurvey && !popupStore.isOpen() && !lastSurveyCanceled && (lastSurveyTime <= Util.time() - 86400 * days)) {
 					analytics.event('SurveyShow');
 
+					const onClose = () => {
+						Storage.set('lastSurveyCanceled', 1);
+						Storage.set('lastSurveyTime', Util.time());
+					};
+
 					popupStore.open('confirm', {
+						onClose: onClose,
 						data: {
 							title: 'We need your opinion',
 							text: 'Please, tell us what you think about Anytype. Participate in 1 min survey',
@@ -249,15 +269,12 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 							textCancel: 'Skip',
 							canCancel: true,
 							onConfirm: () => {
-								ipcRenderer.send('urlOpen', Util.sprintf(Constant.survey, account.id));
+								renderer.send('urlOpen', Util.sprintf(Url.survey, account.id));
 								Storage.set('lastSurveyTime', Util.time());
 
 								analytics.event('SurveyOpen');
 							},
-							onCancel: () => {
-								Storage.set('lastSurveyCanceled', 1);
-								Storage.set('lastSurveyTime', Util.time());
-							},
+							onCancel: onClose,
 						},
 					});
 				};
@@ -333,7 +350,7 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 	};
 	
 	setBodyClass () {
-		const { config, theme } = commonStore;
+		const { config } = commonStore;
 		const platform = Util.getPlatform();
 		const cn = [ 
 			this.getClass('body'), 
@@ -341,14 +358,13 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 		];
 		const obj = $('html');
 
-		if (theme) {
-			cn.push(Util.toCamelCase(`theme-${theme}`));
-		};
-
 		if (config.debug.ui) {
 			cn.push('debug');
 		};
+
 		obj.attr({ class: cn.join(' ') });
+
+		commonStore.themeClass();
 	};
 	
 	resize () {
@@ -360,6 +376,8 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 			if (this.refChild && this.refChild.resize) {
 				this.refChild.resize();			
 			};
+
+			Util.resizeSidebar();
 		});
 	};
 	

@@ -3,7 +3,6 @@ import { Filter, MenuItemVertical } from 'ts/component';
 import { I, Util, Key, keyboard } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import 'react-virtualized/styles.css';
 
 interface Props extends I.Menu {}
 
@@ -12,6 +11,7 @@ const Constant = require('json/constant.json');
 
 const HEIGHT_ITEM = 28;
 const HEIGHT_SECTION = 28;
+const HEIGHT_DESCRIPTION = 56;
 const HEIGHT_DIV = 16;
 const LIMIT = 10;
 
@@ -272,6 +272,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 	getRowHeight (item: any) {
 		if (item.isDiv) return HEIGHT_DIV;
 		if (item.isSection) return HEIGHT_SECTION;
+		if (item.withDescription) return HEIGHT_DESCRIPTION;
 		return HEIGHT_ITEM;
 	};
 
@@ -284,23 +285,15 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 		const obj = $(`#${getId()}`);
 		const content = obj.find('.content');
 		const withFilter = !noFilter && (options.length > LIMIT);
+		const offset = (withFilter ? 44 : 0) + (items.length <= LIMIT ? 16 : 0);
 
-		let offset = withFilter ? 44 : 0;
-		if (items.length <= LIMIT) {
-			offset += 16;
-		};
-
-		let height = offset;
-		if (!items.length) {
-			height += HEIGHT_ITEM;
-		};
-		items.forEach((item: any) => {
-			height += this.getRowHeight(item);
-		});
+		let height = items.reduce((res: number, item: any) => {
+			return res + this.getRowHeight(item);
+		}, offset);
 
 		height = Math.max(44, Math.min(HEIGHT_ITEM * LIMIT + offset, height));
 
-		content.css({ height: height });
+		content.css({ height });
 		withFilter ? obj.addClass('withFilter') : obj.removeClass('withFilter');
 
 		position();

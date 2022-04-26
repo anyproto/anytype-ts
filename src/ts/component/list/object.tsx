@@ -21,7 +21,7 @@ const ListObject = observer(class ListObject extends React.Component<Props, {}> 
 		const subId = this.getSubId();
 		const items = this.getItems();
 		const { offset, total } = dbStore.getMeta(subId, '');
-		const isFileType = [ Constant.typeId.file, Constant.typeId.image, Constant.typeId.audio, Constant.typeId.video ].indexOf(rootId) >= 0;
+		const isFileType = DataUtil.isFileType(rootId);
 
 		let pager = null;
 		if (total && items.length) {
@@ -165,9 +165,12 @@ const ListObject = observer(class ListObject extends React.Component<Props, {}> 
 		const offset = (page - 1) * limit;
 		const block = blockStore.getLeaf(rootId, blockId);
 		const subId = this.getSubId();
+		const filters = view.filters.concat([
+			{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
+		]);
 
 		dbStore.metaSet(subId, '', { offset: offset });
-		C.ObjectSearchSubscribe(subId, view.filters, view.sorts, this.getKeys(), block.content.sources, '', offset, limit, true, '', '', callBack);
+		C.ObjectSearchSubscribe(subId, filters, view.sorts, this.getKeys(), block.content.sources, offset, limit, true, '', '', false, callBack);
 	};
 
 });

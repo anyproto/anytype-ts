@@ -15,13 +15,18 @@
 			.icon.relation { background-image: url('#{$themePath}/icon/add/relation1.svg'); }
 		}
     }
+
+    .author a:hover { color: $colorOrange; }
 }
 
 .blocks {
     /* Common */
 
     .block {
-        .icon.dnd { border-color: $colorLinePrimary; }
+        .icon.dnd { border-color: rgba(217, 212, 184, 0.14); }
+
+		.emptyToggle { color: $colorSecondary; }
+		.emptyToggle:hover { color: $colorPrimary; }
     }
     .block:hover > .wrapMenu > .icon.dnd { background-image: url('#{$themePath}/icon/block/menu1.svg'); }
 
@@ -41,6 +46,12 @@
 
     .block.blockFile {
         .loaderWrapper { border: 0px; }
+    }
+
+	/* BlockRelation */
+
+	.block.blockRelation {
+        .cell.canEdit:hover { background: $colorHover; }
     }
 
     /* BlockMedia */
@@ -130,6 +141,12 @@
 
             .cellContent.isName { color: $colorPrimary; }
         }
+
+        .viewItem.viewBoard {
+            .cardContent { background: $colorBlack; border-color: $colorLinePrimary; }
+			.card.add { border-color: $colorLinePrimary; }
+            .cellContent.isName { color: $colorPrimary; }
+        }
     }
 
     /* BlockType */
@@ -147,24 +164,15 @@
         kbd { background: $colorHover; color: $colorOrange; }
     }
 
+    .block.blockText.callout > .wrapContent { background: $colorHover; }
     .block.blockText.code > .wrapContent > .selectable > .dropTarget { background: $colorHover; }
 
     /* BlockLink */
 
     .block.blockLink {
-        .sides { border-color: $colorLinePrimary !important; }
-        .cardName span::before { background: $colorSecondary !important; }
-
-        .linkCard.card {
-            .sides { background: rgba(0,0,0,0.5); }
-            .cover { color: $colorPrimary; }
-
-            .side.right {
-                .cardDescription { color: $colorPrimary; }
-            }
-        }
-
         .loading, .deleted { color: $colorSecondary; }
+
+		.side { border-color: $colorLinePrimary !important; }
     }
 
     .block.blockLink:hover {
@@ -199,4 +207,13 @@
         .descr { color: $colorSecondary; }
         .link { color: $colorSecondary; }
     }
+
+    /* BlockTableOfContenst */
+
+	.block.blockTableOfContents { 
+		.item { color: $colorSecondary; }
+		.item span { border-bottom: 1px solid rgba(146, 144, 130, 0.5); }
+
+		.item:hover span { border-color: $colorDarkGrey; }
+	}
 }

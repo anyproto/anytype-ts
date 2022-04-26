@@ -48,10 +48,6 @@ class ScrollOnMove {
 		};
 	};
 
-	getContainer () {
-		return this.isPopup ? $('#popupPage #innerWrap').get(0) : window;
-	};
-
 	checkForWindowScroll (param: any) {
 		this.clear();
 
@@ -142,7 +138,7 @@ class ScrollOnMove {
 		let isInRightEdge = x > edgeRight;
 		let isInTopEdge = y < edgeTop;
 		let isInBottomEdge = y > edgeBottom;
-	
+
 		if (!(isInLeftEdge || isInRightEdge || isInTopEdge || isInBottomEdge)) {
 			this.clear();
 			return;

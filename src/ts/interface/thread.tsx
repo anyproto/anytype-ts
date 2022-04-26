@@ -4,6 +4,7 @@ export enum ThreadStatus {
 	Syncing	 = 2,
 	Synced	 = 3,
 	Failed	 = 4,
+	Disabled = 5,
 };
 
 export interface FilesStatus {

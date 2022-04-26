@@ -7,9 +7,8 @@ import { menuStore, dbStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import arrayMove from 'array-move';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCache } from 'react-virtualized';
-import 'react-virtualized/styles.css';
 
-interface Props extends I.Menu {}
+interface Props extends I.Menu {};
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
@@ -39,7 +38,7 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 		const { data } = param;
 		const { readonly, rootId, blockId } = data;
 		const items = this.getItems();
-		const allowedView = blockStore.isAllowed(rootId, blockId, [ I.RestrictionDataview.View ]);
+		const allowedView = blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
 
 		items.map((it: any) => {
 			const { format, name } = it.relation;
@@ -252,7 +251,7 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 				skipIds: relations.map((it: I.ViewRelation) => { return it.relationKey; }),
 				onAdd: onAdd,
 				addCommand: (rootId: string, blockId: string, relation: any, onChange?: (relation: any) => void) => {
-					DataUtil.dataviewRelationAdd(rootId, blockId, relation, getView(), () => {
+					DataUtil.dataviewRelationAdd(rootId, blockId, relation, -1, getView(), () => {
 						onAdd();
 
 						if (onChange) {
