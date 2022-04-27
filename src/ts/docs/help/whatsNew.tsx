@@ -3,7 +3,7 @@ import { I, keyboard } from 'ts/lib';
 const cmd = keyboard.ctrlSymbol();
 
 export default [
-	{ type: I.BlockType.Cover, param: { type: I.CoverType.Image, id: 'c4', y: -0.2, withScale: true } },
+	{ type: I.BlockType.Cover, param: { type: I.CoverType.Gradient, id: 'pinkOrange' } },
 	{ type: I.BlockType.IconPage, icon: '👋' },
 
 	{ style: I.TextStyle.Title, text: `13 April 2022 Desktop` },
