@@ -130,8 +130,9 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 				withScale = false;
 				
 				if (!coverId && !coverType) {
-					coverId = 'c' + Constant.default.cover;
-					coverType = I.CoverType.Image;
+					const cover = commonStore.coverGetDefault();
+					coverId = cover.id;
+					coverType = cover.type;
 				};
 			} else {
 				icon = <IconObject object={item} forceLetter={true} size={48} />;

@@ -14,7 +14,7 @@
 
 	"default": {
 		"lang": "en",
-		"cover": 12,
+		"cover": "sky",
 		"codeLang": "javascript",
 		"pinTime": 600
 	},
