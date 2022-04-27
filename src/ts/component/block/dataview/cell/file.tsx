@@ -58,14 +58,12 @@ const CellFile = observer(class CellFile extends React.Component<Props, State> {
 		return (
 			<div className={cn.join(' ')}>
 				{value.length ? (
-					<React.Fragment>
-						<span className="over">
-							{value.map((item: any, i: number) => (
-								<Item key={i} {...item} />
-							))}
-						</span>
+					<span className="over">
+						{value.map((item: any, i: number) => (
+							<Item key={i} {...item} />
+						))}
 						{arrayLimit && (length > arrayLimit) ? <div className="more">+{length - arrayLimit}</div> : ''}
-					</React.Fragment>
+					</span>
 				) : (
 					<div className="empty">{placeholder || translate(`placeholderCell${relation.format}`)}</div>
 				)}

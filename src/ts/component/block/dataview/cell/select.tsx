@@ -107,14 +107,12 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 				content = <div className="empty">{placeholder}</div>;
 			} else {
 				content = (
-					<React.Fragment>
-						<span className="over">
-							{value.map((item: any, i: number) => (
-								<Tag {...item} key={item.id} className={DataUtil.tagClass(relation.format)} />
-							))}
-						</span>
+					<span className="over">
+						{value.map((item: any, i: number) => (
+							<Tag {...item} key={item.id} className={DataUtil.tagClass(relation.format)} />
+						))}
 						{arrayLimit && (length > arrayLimit) ? <div className="more">+{length - arrayLimit}</div> : ''}
-					</React.Fragment>
+					</span>
 				);
 			};
 		};

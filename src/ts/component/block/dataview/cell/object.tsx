@@ -103,21 +103,19 @@ const CellObject = observer(class CellObject extends React.Component<Props, Stat
 				content = <div className="empty">{placeholder}</div>;
 			} else {
 				content = (
-					<React.Fragment>
-						<span className="over">
-							{value.map((item: any, i: number) => (
-								<ItemObject 
-									key={item.id} 
-									object={item} 
-									iconSize={iconSize} 
-									onClick={(e: any) => { this.onClick(e, item.id); }} 
-									relation={relation} 
-									elementMapper={elementMapper} 
-								/>
-							))}
-						</span>
+					<span className="over">
+						{value.map((item: any, i: number) => (
+							<ItemObject 
+								key={item.id} 
+								object={item} 
+								iconSize={iconSize} 
+								onClick={(e: any) => { this.onClick(e, item.id); }} 
+								relation={relation} 
+								elementMapper={elementMapper} 
+							/>
+						))}
 						{arrayLimit && (length > arrayLimit) ? <div className="more">+{length - arrayLimit}</div> : ''}
-					</React.Fragment>
+					</span>
 				);
 			};
 		};
