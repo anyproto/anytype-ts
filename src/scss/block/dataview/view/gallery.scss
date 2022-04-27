@@ -60,10 +60,10 @@
 			}
 
 			.cellContent {
-				.more { margin-top: 1px; }
+				.more { margin-top: 0px; vertical-align: top; margin-left: 8px; }
 			}
-			.cellContent.c-select {
-				.more { margin-top: 0px; }
+			.cellContent.c-object, .cellContent.c-file {
+				.element { max-width: 40%; }
 			}
 			.cellContent.c-longText {
 				.name { overflow: hidden; @include clamp2; }
