@@ -1271,9 +1271,11 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		const { rootId, isPopup } = this.props;
 		const top = Util.getScrollContainer(isPopup).scrollTop();
 
+		/*
 		if (Math.abs(top - this.scrollTop) >= 10) {
 			this.uiHide();
 		};
+		*/
 
 		this.scrollTop = top;
 		Storage.setScroll('editor' + (isPopup ? 'Popup' : ''), rootId, top);

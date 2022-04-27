@@ -54,6 +54,7 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 
 	componentDidUpdate () {
 		this.props.setActive();
+		this.props.position();
 	};
 
 	componentWillUnmount () {
@@ -216,27 +217,28 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 			description = descriptions.find(it => it.id == fields.description) || descriptions[0];
 		};
 
-		let sections = [
-			{ 
-				children: [
-					{ id: 'style', name: 'Preview layout', caption: style.name, withCaption: true, arrow: true },
-					canIcon ? { id: 'iconSize', name: 'Icon', caption: icon.name, withCaption: true, arrow: true }: null,
-					canCover ? { id: 'withCover', name: 'Cover', withSwitch: true, switchValue: fields.withCover} : null,
-				],
-			},
-			{
-				name: 'Featured relations',
-				children: [
-					{ id: 'withName', name: 'Name', icon: 'relation ' + DataUtil.relationClass(I.RelationType.ShortText), withSwitch: true, switchValue: fields.withName },
-					canDescription ? { 
-						id: 'description', name: 'Description', icon: 'relation ' + DataUtil.relationClass(I.RelationType.LongText), 
-						caption: description.name, withCaption: true, arrow: true
-					} : null,
-					//{ id: 'withTags', name: 'Tags', icon: 'relation ' + DataUtil.relationClass(I.RelationType.Tag), withSwitch: true, switchValue: fields.withTags },
-					{ id: 'withType', name: 'Object type', icon: 'relation ' + DataUtil.relationClass(I.RelationType.Object), withSwitch: true, switchValue: fields.withType },
-				],
-			}
-		];
+		const itemStyle = { id: 'style', name: 'Preview layout', caption: style.name, withCaption: true, arrow: true };
+		const itemSize = canIcon ? { id: 'iconSize', name: 'Icon', caption: icon.name, withCaption: true, arrow: true } : null;
+		const itemCover = canCover ? { id: 'withCover', name: 'Cover', withSwitch: true, switchValue: fields.withCover} : null;
+		const itemName = { id: 'withName', name: 'Name', icon: 'relation ' + DataUtil.relationClass(I.RelationType.ShortText), withSwitch: true, switchValue: fields.withName };
+		const itemDescription = canDescription ? { 
+			id: 'description', name: 'Description', icon: 'relation ' + DataUtil.relationClass(I.RelationType.LongText), 
+			caption: description.name, withCaption: true, arrow: true
+		} : null;
+		const itemTags = { id: 'withTags', name: 'Tags', icon: 'relation ' + DataUtil.relationClass(I.RelationType.Tag), withSwitch: true, switchValue: fields.withTags };
+		const itemType = { id: 'withType', name: 'Object type', icon: 'relation ' + DataUtil.relationClass(I.RelationType.Object), withSwitch: true, switchValue: fields.withType };
+
+		let sections: any[] = [];
+		if (style.id == I.LinkCardStyle.Text) {
+			sections = [
+				{ children: [ itemStyle ] }
+			];
+		} else {
+			sections = [
+				{ children: [ itemStyle, itemSize, itemCover ] },
+				{ name: 'Featured relations', children: [ itemName, itemDescription, itemType ] },
+			];
+		};
 
 		sections = sections.map((s: any) => {
 			s.children = s.children.filter(it => it);

@@ -31,15 +31,12 @@
 
 		.linkCard { display: inline-block; vertical-align: top; width: 100%; }
         .linkCard {
-            .sides { display: flex; flex-direction: row; border-radius: 12px; }
-			.side.left { width: 100%; padding: 21px 16px; border: 1px solid $colorBorderDark; border-radius: 12px; position: relative; }
-			.side.right { display: none; border-radius: 0px 12px 12px 0px; overflow: hidden; }
+            .sides { display: flex; flex-direction: row; }
+			.side.left { width: 100%; position: relative; }
+			.side.right { display: none; overflow: hidden; }
 
 			.cover { position: relative; min-height: 116px; background-color: unset; }
-			.cardName { 
-				@include text-common; display: flex; flex-direction: row; gap: 0px 6px; align-items: center; line-height: 18px;
-			}
-			.cardName .name { @include clamp2; }
+			.cardName { display: flex; flex-direction: row; gap: 0px 6px; align-items: center; }
 			.cardDescription { @include text-small; line-height: 16px; @include clamp2; margin: 4px 0px 0px 0px; }
 			.cardDescription:empty { margin: 0px; }
 
@@ -57,6 +54,21 @@
 				.item:last-child::after { display: none; }
 			}
         }
+
+		.linkCard.text {
+			.side.left {
+				.txt { line-height: 24px; vertical-align: top; }
+			}
+		}
+
+		.linkCard.card {
+			.sides { border-radius: 12px; }
+			.side.left { padding: 21px 16px; border: 1px solid $colorBorderDark; border-radius: 12px; }
+			.side.right { border-radius: 0px 12px 12px 0px; }
+
+			.cardName { @include text-common; line-height: 18px; }
+			.cardName .name { @include clamp2; }
+		}
 
 		.linkCard.c48.withIcon {
 			.sides { min-height: 80px; }
