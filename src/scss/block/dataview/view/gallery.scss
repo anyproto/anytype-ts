@@ -59,6 +59,10 @@
 				.cover { height: 288px; }
 			}
 
+			.card.isTask {
+				.cellContent.c-name { display: flex; }
+			}
+
 			.cellContent.c-longText {
 				.name { overflow: hidden; @include clamp2; }
 			}
