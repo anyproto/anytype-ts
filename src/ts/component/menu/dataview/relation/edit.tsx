@@ -226,7 +226,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		const { data } = param;
 		const { rootId, blockId, extendedOptions } = data;
 		const relation = this.getRelation();
-		const isFile = relation && (relation.format != I.RelationType.File);
+		const isFile = relation && (relation.format == I.RelationType.File);
 		const allowed = relation && blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.Relation ]);
 		const canDelete = allowed && Constant.systemRelationKeys.indexOf(relation.relationKey) < 0;
 		const canFilter = !isFile;
