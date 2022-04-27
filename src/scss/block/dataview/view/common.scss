@@ -41,11 +41,11 @@
 
 				.cellContent.c-select { line-height: 18px; }
 				.cellContent.c-select {
-					.tagItem { max-width: 33%; margin-bottom: 0px; @include text-small; }
+					.tagItem { margin-bottom: 0px; @include text-small; }
 				}
 
 				.cellContent.c-object, .cellContent.c-file {
-					.element { max-width: 33%; margin: 0px 6px 0px 0px; }
+					.element { margin: 0px 6px 0px 0px; }
 					.element:last-child { margin-right: 0px; }
 				}
 
