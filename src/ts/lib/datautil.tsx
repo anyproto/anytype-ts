@@ -1154,6 +1154,7 @@ class DataUtil {
 		fields.withIcon = Boolean(undefined === fields.withIcon ? true : fields.withIcon);
 		fields.withName = Boolean(undefined === fields.withName ? true : fields.withName);
 		fields.withType = Boolean(fields.withType);
+		fields.withCover = Boolean(fields.withCover);
 		//fields.withTags = Boolean(fields.withTags);
 
 		if (fields.style == I.LinkCardStyle.Text) {
