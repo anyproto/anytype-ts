@@ -53,6 +53,9 @@ const CellObject = observer(class CellObject extends React.Component<Props, Stat
 
 		if (arrayLimit) {
 			value = value.slice(0, arrayLimit);
+			if (length > arrayLimit) {
+				cn.push('overLimit');
+			};
 		};
 
 		let content = null;

@@ -41,7 +41,7 @@
 
 				.cellContent.c-select { line-height: 18px; }
 				.cellContent.c-select {
-					.tagItem { margin-bottom: 0px; @include text-small; }
+					.tagItem { max-width: 140px; margin-bottom: 0px; @include text-small; }
 				}
 
 				.cellContent.c-object, .cellContent.c-file {
@@ -50,7 +50,11 @@
 				}
 
 				.cellContent.c-select, .cellContent.c-object, .cellContent.c-file {
-					.over { display: block; }
+					.over { display: flex; height: 20px; }
+
+					.wrap.overLimit {
+						.tagItem, .element { max-width: 40%; }
+					}
 				}
 			}
 		}

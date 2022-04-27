@@ -44,6 +44,9 @@ const CellFile = observer(class CellFile extends React.Component<Props, State> {
 
 		if (arrayLimit) {
 			value = value.slice(0, arrayLimit);
+			if (length > arrayLimit) {
+				cn.push('overLimit');
+			};
 		};
 
 		const Item = (item: any) => (
