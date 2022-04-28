@@ -1182,14 +1182,6 @@ const ObjectToSet = (contextId: string, sources: string[], callBack?: (message: 
 	dispatcher.request('objectToSet', request, callBack);
 };
 
-const ObjectDuplicate = (id: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Object.Duplicate.Request();
-	
-	request.setContextid(id);
-
-	dispatcher.request('objectDuplicate', request, callBack);
-};
-
 const ObjectListDuplicate = (ids: string[], callBack?: (message: any) => void) => {
 	const request = new Rpc.ObjectList.Duplicate.Request();
 	
@@ -1455,7 +1447,6 @@ export {
 	ObjectSearchSubscribe,
 	ObjectIdsSubscribe,
 	ObjectSearchUnsubscribe,
-	ObjectDuplicate,
 	
 	ObjectListDuplicate,
 	ObjectListDelete,
