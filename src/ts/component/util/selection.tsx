@@ -229,7 +229,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	
 	onMouseUp (e: any) {
 		if (!this._isMounted) {
-			return
+			return;
 		};
 		
 		if (!this.moved) {
@@ -241,14 +241,14 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			} else {
 				this.checkNodes(e);
 				
-				let rootId = keyboard.getRootId();
-				let ids = this.get(I.SelectType.Block, true);
-				let first = ids.length ? ids[0] : this.focused;
-				let target = $(e.target.closest('.selectable'));
-				let id = target.attr('data-id');
-				let type = target.attr('data-type');
+				const ids = this.get(I.SelectType.Block, true);
+				const target = $(e.target.closest('.selectable'));
+				const id = target.attr('data-id');
+				const type = target.attr('data-type');
 				
 				if (target.length && e.shiftKey && ids.length && (type == I.SelectType.Block)) {
+					const rootId = keyboard.getRootId();
+					const first = ids.length ? ids[0] : this.focused;
 					const tree = blockStore.getTree(rootId, blockStore.getBlocks(rootId));
 					const list = blockStore.unwrapTree(tree);
 					const idxStart = list.findIndex((it: I.Block) => { return it.id == first; });
