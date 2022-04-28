@@ -6,8 +6,41 @@ export default [
 	{ type: I.BlockType.Cover, param: { type: I.CoverType.Gradient, id: 'pinkOrange' } },
 	{ type: I.BlockType.IconPage, icon: '👋' },
 
-	{ style: I.TextStyle.Title, text: `13 April 2022 Desktop` },
-	{ style: I.TextStyle.Header1, text: `An (un)splash of colour` },
+	{ style: I.TextStyle.Title, text: `27 April 2022 Desktop` },
+	{ text: `Hello everyone! After a short Easter break, we're back with some exciting updates.` },
+	{ text: `This version of Anytype doubles-down on productivity, making it easier for you to work with multiple objects at once. 🔑 Key to this update is the ability to now delete several objects from a Set. You can learn more about how this works below. 👇` },
+
+	{ style: I.TextStyle.Header2, text: `Multi-select in Sets` },
+	{ text: `We've brought multi-object selection to Sets! You can now perform bulk actions such as <span class="highlight">Duplicate</span>, <span class="highlight">Add to Favorites</span>, or <span class="highlight">Move to Bin</span>. Previously, it was challenging to work with several objects within a Set; now, you can manage them all with a single click.` },
+	{ text: `It also works with the keyboard. Selecting with Shift and then pressing Delete will move them all to the Bin.` },
+
+	{ style: I.TextStyle.Header2, text: `Ludicrous-mode for Relations` },
+	{ text: `Organizing, filtering, and focusing on certain objects just became faster with our new Relations menu.` },
+	{ text: `By clicking the column name in Grid View, you can now directly sort and filter your objects according to the chosen relation. Moreover, with the new menu you can create and insert relations anywhere within a Set, allowing for greater flexibility.` },
+	{ text: `<video src="./img/help/relation-menu.mp4" controls autoplay loop class="full">` },
+	{ text: `We hope these improvements unlock many new and novel use-cases for Anytype, and help our power-users all the more powerful. 🦸` },
+
+	{ style: I.TextStyle.Header2, text: `Other notable improvements` },
+	{ style: I.TextStyle.Bulleted, text: `Anytype's dark and light mode can now sync with your OS. Check it out by navigating to Settings → Appearance → System.` },
+	{ style: I.TextStyle.Bulleted, text: `New link appearance. Links have been re-designed with more balance between text content and images.` },
+	{ style: I.TextStyle.Bulleted, text: `Sort your Sets by A - Z in the sidebar. Thanks, <a href="https://community.anytype.io/t/sidebar-sort-options/4999">hysci</a>` },
+	{ style: I.TextStyle.Bulleted, text: `We've added an onboarding video for first-time users, check it out in our <a href="https://doc.anytype.io/d/">docs</a>.` },
+	{ style: I.TextStyle.Bulleted, text: `Library now works in modal view. You can write a poem and change the template simultaneously.` },
+	{ style: I.TextStyle.Bulleted, text: `Blocks will now be highlighted after drag'n'drop, allowing you to keep better track of content that's been moved.` },
+	{ style: I.TextStyle.Bulleted, text: `We restructured our keyboard shortcuts pane for clarity.` },
+
+	{ style: I.TextStyle.Header2, text: `Bugs` },
+	{ style: I.TextStyle.Bulleted, text: `App failed to add new options to status relation. Thanks, <a href="https://community.anytype.io/t/cant-define-options-for-status-type-relations/5857">Ragnen and Cernel1337</a>` },
+	{ style: I.TextStyle.Bulleted, text: `Applying background colour to existing text resulted in duplicated letters. Thank you, <a href="https://community.anytype.io/t/applying-background-color-to-existing-text-results-in-duplicated-letters/5047">dddmggg</a>` },
+	{ style: I.TextStyle.Bulleted, text: `Selected blocks had blurred text and icons` },
+	{ style: I.TextStyle.Bulleted, text: `Choosing a random emoji closed the menu instantly` },
+	{ style: I.TextStyle.Bulleted, text: `Long relation names broke the layout of Relation page` },
+
+	{ type: I.BlockType.Div, style: I.DivStyle.Dot },
+	// --------------------------------------------//
+
+	{ style: I.TextStyle.Header1, text: `13 April 2022 Desktop` },
+	{ style: I.TextStyle.Header2, text: `An (un)splash of colour` },
 	{ text: `Spring has sprung for the Anyteam, and it's only natural to want a fresh coat of paint on our objects. This update comes packed with fixes for many bugs first reported by our intrepid alpha testers. ` },
 	{ text: `We've also added some serious quality-of-life updates, allowing you to further customize your objects with the whole Unsplash library, faster ways to work with tags, and share individual objects as markdown files.` },
 	{ text: `Thanks for your continued support and feedback. We could not build Anytype without you.` },
@@ -45,6 +78,7 @@ export default [
 	{ style: I.TextStyle.Bulleted, text: `Clipboard. The insertion of blocks with style (checkbox, number, etc) did not work properly if one block was already selected.` },
 
 	{ type: I.BlockType.Div, style: I.DivStyle.Dot },
+	// --------------------------------------------//
 
 	{ style: I.TextStyle.Header1, text: `23 February 2022 Desktop` },
 	{ style: I.TextStyle.Header2, text: `Sidebar, finally` },
@@ -102,6 +136,7 @@ export default [
 	{ style: I.TextStyle.Bulleted, text: `<span class="highlight">${cmd}+Click</span> on the empty part of the Link to object block open it instead of selecting.` },
 
 	{ type: I.BlockType.Div, style: I.DivStyle.Dot },
+	// --------------------------------------------//
 
 	{ style: I.TextStyle.Header1, text: `Updates for 19 January, 2022` },
 	{ style: I.TextStyle.Header2, text: `Enhancements` },
@@ -123,6 +158,7 @@ export default [
 	{ style: I.TextStyle.Bulleted, text: `Ctrl+A in the search bar resulted in selecting all in the background. Thanks, <a href="https://community.anytype.io/t/ctrl-a-in-search-bar-results-in-select-all-in-background">kEbZeCK</a>` },
 
 	{ type: I.BlockType.Div, style: I.DivStyle.Dot },
+	// --------------------------------------------//
 
 	{ style: I.TextStyle.Header1, text: `Updates for 13 January, 2021` },
 	{ style: I.TextStyle.Header2, text: `Happy New Year` },
@@ -151,6 +187,7 @@ export default [
 	{ style: I.TextStyle.Bulleted, text: `If there is no navigation history inside the modal view, you can close it by pressing "back"` },
 
 	{ type: I.BlockType.Div, style: I.DivStyle.Dot },
+	// --------------------------------------------//
 
 	{ style: I.TextStyle.Header1, text: `Updates for 15 December, 2021` },
 	{ text: `Happy holidays to everyone in our alpha program` },
@@ -227,6 +264,7 @@ export default [
 	{ style: I.TextStyle.Bulleted, text: `Sorting of Object relation prevented relation from further editing` },
 
 	{ type: I.BlockType.Div, style: I.DivStyle.Dot },
+	// --------------------------------------------//
 
 	{ style: I.TextStyle.Header1, text: `Deletion. Note type. Darkmode` },
 
@@ -308,6 +346,7 @@ export default [
 	{ style: I.TextStyle.Bulleted, text: `Objects created from Set weren't focusing the text cursor on their name. Thanks, <a href="https://community.anytype.io/d/955-objects-created-form-set-should-focus-the-text-cursor-on-their-name/1">Kite</a>` },
 
 	{ type: I.BlockType.Div, style: I.DivStyle.Dot },
+	// --------------------------------------------//
 
 	{ style: I.TextStyle.Header1, text: `Updates for 09 October, 2021` },
 	{ style: I.TextStyle.Header2, text: `Graph Mode` },
@@ -347,6 +386,7 @@ export default [
 	{ style: I.TextStyle.Bulleted, text: `<a href="https://community.anytype.io/d/1009-align-option-for-cards-does-not-use-the-full-layout-width/1">The text alignment option, when applied to a card, does not consider the entire layout’s width until the view is refreshed</a>` },
 
 	{ type: I.BlockType.Div, style: I.DivStyle.Dot },
+	// --------------------------------------------//
 
 	{ style: I.TextStyle.Header1, text: `Updates for 16 September, 2021` },
 
@@ -395,6 +435,7 @@ export default [
 	{ style: I.TextStyle.Bulleted, text: `An issue with dashes in the page title when creating a new page using <span class="highlight">@</span>. Thanks, <a href="https://community.anytype.io/d/324-issue-with-dash-in-page-name-when-new-page-created-using-at/1">bskinner</a>` },
 
 	{ type: I.BlockType.Div, style: I.DivStyle.Dot },
+	// --------------------------------------------//
 
 	{ style: I.TextStyle.Header1, text: `Updates for 31 August, 2021` },
 	{ style: I.TextStyle.Header2, text: `Enhancements` },
@@ -422,6 +463,7 @@ export default [
 	{ style: I.TextStyle.Bulleted, text: `Unexpected behavior may happen when clicking at the right side of object’s name in Set. Thanks, <a href="https://community.anytype.io/d/655-unexpected-behavior-when-clicking-input-fields/1">nizos</a>.` },
 
 	{ type: I.BlockType.Div, style: I.DivStyle.Dot },
+	// --------------------------------------------//
 
 	{ style: I.TextStyle.Header1, text: `Updates for 10 August, 2021` },
 	{ text: `Some features are being tested by a smaller group while we verify their stability, and so may not be available to everyone. If you want to try Types before they were released for everyone: <a href="https://community.anytype.io/d/604-onboarding-for-the-new-anytype/2">click here for more info</a>.` },
@@ -432,12 +474,14 @@ export default [
 	{ style: I.TextStyle.Bulleted, text: `Object titles & descriptions could be truncated. Thanks, <a href="https://community.anytype.io/d/428-object-titles-descriptions-truncated">irdinamaztura, Kite, quietwalker, Inkqb, Tanzeel098, roncz, lynxlove, trellick</a>.` },
 
 	{ type: I.BlockType.Div, style: I.DivStyle.Dot },
+	// --------------------------------------------//
 
 	{ style: I.TextStyle.Header1, text: `Updates for 27 June, 2021` },
 
 	{ text: `Several small bugfixes` },
 
 	{ type: I.BlockType.Div, style: I.DivStyle.Dot },
+	// --------------------------------------------//
 
 	{ style: I.TextStyle.Header1, text: `Updates for 22 July, 2021` },
 	{ text: `You can expect longer sign in up to several minutes. It is related to data structure optimisations that app needs to migrate on.` },
@@ -465,6 +509,7 @@ export default [
 	{ style: I.TextStyle.Bulleted, text: `Replacing an inline code block injects the rendered HTML into your page text. Thanks, <a href="https://community.anytype.io/d/454-replacing-an-inline-code-block-injects-the-rendered-html-into-your-page-text/1">triangles</a>.` },
 
 	{ type: I.BlockType.Div, style: I.DivStyle.Dot },
+	// --------------------------------------------//
 
 	{ style: I.TextStyle.Header1, text: `Updates for 21 June, 2021` },
 	{ text: `The big style train keeps on rolling! This latest version features our redesigned dashboard with tabs and inline object filtering.` },
@@ -492,6 +537,7 @@ export default [
 	{ style: I.TextStyle.Bulleted, text: `We have removed the link to the closed Telegram group from the app. Please sign up using the links in your email. ` },
 
 	{ type: I.BlockType.Div, style: I.DivStyle.Dot },
+	// --------------------------------------------//
 
 	{ style: I.TextStyle.Header1, text: `Updates for 08 June, 2021` },
 
@@ -521,6 +567,7 @@ export default [
 	{ style: I.TextStyle.Bulleted, text: `When I try to create a linked page by typing in <span class="highlight">/link</span>, the text <span class="highlight">/link</span> remains on that line while the linked page I selected is made available in the next line. Thanks, <a href="https://community.anytype.io/d/325-shortcut-text-link-remains-after-creating-linked-page">Mathew</a>` },
 
 	{ type: I.BlockType.Div, style: I.DivStyle.Dot },
+	// --------------------------------------------//
 
 	{ style: I.TextStyle.Header1, text: `Updates for 19 April, 2021` },
 
@@ -533,6 +580,7 @@ export default [
 	{ style: I.TextStyle.Bulleted, text: `After trying to drag a bookmark, the application window became inoperational` },
 
 	{ type: I.BlockType.Div, style: I.DivStyle.Dot },
+	// --------------------------------------------//
 
 	{ style: I.TextStyle.Header1, text: `Updates for 16 April, 2021` },
 
@@ -559,6 +607,7 @@ export default [
 	{ style: I.TextStyle.Bulleted, text: `Sometimes, when you typed title text, an errant letter may chase after the carriage. Not anymore. Thread: <a href="https://community.anytype.io/d/157-cursor-occasionally-jumps-back-when-typing">https://community.anytype.io/d/157-cursor-occasionally-jumps-back-when-typing</a>` },
 
 	{ type: I.BlockType.Div, style: I.DivStyle.Dot },
+	// --------------------------------------------//
 
 	{ style: I.TextStyle.Header1, text: `Updates for 18 March, 2021` },
 	{ style: I.TextStyle.Header2, text:  `Sync enhancements` },
@@ -575,6 +624,7 @@ export default [
 	{ text: `I’m sure it feels like we’ve been saying this forever, but we really are very close to our databases update. It will feature a refreshed design, rapid semantic search, move-to & linking optimisations, and much more.` },
 
 	{ type: I.BlockType.Div, style: I.DivStyle.Dot },
+	// --------------------------------------------//
 
 	{ style: I.TextStyle.Header1, text: `Updates for 26 January, 2021` },
 	{ style: I.TextStyle.Header2, text:  `No connection → Synced` },
@@ -582,6 +632,7 @@ export default [
 	{ text: `We release fewer features as we're going to release a big update in February, so stay tuned!` },
 
 	{ type: I.BlockType.Div, style: I.DivStyle.Dot },
+	// --------------------------------------------//
 
 	{ style: I.TextStyle.Header1, text: `Updates for 8 December, 2020` },
 
@@ -606,18 +657,19 @@ export default [
 	{ style: I.TextStyle.Bulleted, text: `We fixed a bug that prevented some users from mentioning their pages. Thanks, Mukanzi!` },
 	{ style: I.TextStyle.Bulleted, text: `We’ve fixed the Anytype icon and hover state on Windows. Thanks, Ichimga!` },
 	{ style: I.TextStyle.Bulleted, text: `Page top-rights icons clips over rendered above the scroll bar in modal views in narrow resolutions. Thanks, BGray!` },
-  { style: I.TextStyle.Bulleted, text: `The <span class="highlight"><</span> or <span class="highlight">></span> symbols don't disappear anymore. Thanks, George!` },
-  { style: I.TextStyle.Bulleted, text: `The URL doesn't paste in the URL dialog window if you try to create a link in a text by <span class="highlight">Cmd + K</span> and <span class="highlight">Cmd + V</span> combination. Thanks, Hayk!` },
+	{ style: I.TextStyle.Bulleted, text: `The <span class="highlight"><</span> or <span class="highlight">></span> symbols don't disappear anymore. Thanks, George!` },
+	{ style: I.TextStyle.Bulleted, text: `The URL doesn't paste in the URL dialog window if you try to create a link in a text by <span class="highlight">Cmd + K</span> and <span class="highlight">Cmd + V</span> combination. Thanks, Hayk!` },
 	{ style: I.TextStyle.Bulleted, text: `Holding left click and scrolling at the same time was laggy. Thanks again, Hayk!` },
 	{ style: I.TextStyle.Bulleted, text: `After pasting the URL link the menu could drop the carriage to the beginning of the block and paste it there.` },
 	{ style: I.TextStyle.Bulleted, text: `Carriage drops to the beginning of the line after setting the markup color.` },
 	{ style: I.TextStyle.Bulleted, text: `Dividers have lost the “turn into” option.` },
 
 	{ type: I.BlockType.Div, style: I.DivStyle.Dot },
+	// --------------------------------------------//
 
 	{ style: I.TextStyle.Header1, text: `Updates for 20 November, 2020` },
 
-  { text: `New encryption. We now using AES with stream encryption with CFB mode. Old encryption could increase the RAM consumption to 13,46 GB with 4GB file and could even crash Anytype. Now it takes less than 100 megabytes with any size of the file. For the best performance, you need to be up-to-date in each Desktop app and use the latest Android version. It starts to work with the new files added to Anytype, so, please, re-upload big files.` },
+	{ text: `New encryption. We now using AES with stream encryption with CFB mode. Old encryption could increase the RAM consumption to 13,46 GB with 4GB file and could even crash Anytype. Now it takes less than 100 megabytes with any size of the file. For the best performance, you need to be up-to-date in each Desktop app and use the latest Android version. It starts to work with the new files added to Anytype, so, please, re-upload big files.` },
 
 	{ style: I.TextStyle.Header3, text:  `Enhancements:` },
 	{ style: I.TextStyle.Bulleted, text: `Turn into now can turn page links into mentions with other text styles.` },
@@ -638,6 +690,7 @@ export default [
 	{ style: I.TextStyle.Bulleted, text: `You cannot open the page from the dashboard if you click in the icon zone.` },
 
 	{ type: I.BlockType.Div, style: I.DivStyle.Dot },
+	// --------------------------------------------//
 
 	{ style: I.TextStyle.Header1, text: `Updates for 30 October, 2020` },
 	{ text: `This is a technical minor release with bug fixes and minor enchancements.` },
@@ -657,6 +710,7 @@ export default [
 	{ style: I.TextStyle.Bulleted, text: `In-page search had no possibility to find special characters.` },
 
 	{ type: I.BlockType.Div, style: I.DivStyle.Dot },
+	// --------------------------------------------//
 
 	{ style: I.TextStyle.Header1, text: `Updates for 08 October, 2020` },
 	{ text: `We’re taking another step towards our beta today, with the launch of our <a href="https://community.anytype.io/">community forum</a>. It will be a valuable resource for features, feedback and support. We hope it will also a place for you to do what you do best: discuss the future of the web and building your very own digital brain. Your invite code should wait you in mailbox, if nothing there please write us <a href="mailto:hello@anytype.io">hello@anytype.io</a>.` },
@@ -673,7 +727,7 @@ export default [
 	{ style: I.TextStyle.Bulleted, text: `Links without URL schema can't be opened in some cases.` },
 
 	{ type: I.BlockType.Div, style: I.DivStyle.Dot },
-
+	// --------------------------------------------//
 
 	{ style: I.TextStyle.Header1, text: `Updates for 05 October, 2020` },
 	{ text: `This is one for the history books. With Anytype 0.16, users can now travel through time to recover previous versions of their pages. Use <span class="highlight">History</span> on the page's menu in the top-right corner.` },
@@ -694,6 +748,7 @@ export default [
 	{ style: I.TextStyle.Bulleted, text: `Users with email addresses on newer TLDs reported issues when trying to submit feedback. We’ve updated our email address validation.` },
 
 	{ type: I.BlockType.Div, style: I.DivStyle.Dot },
+	// --------------------------------------------//
 
 	{ style: I.TextStyle.Header1, text: `Updates for 23 September, 2020` },
 
@@ -727,6 +782,7 @@ export default [
 	{ style: I.TextStyle.Bulleted, text: `When using <span class="highlight">CMD/CTRL + L</span> for links, the dialog will now open below each time it was used.` },
 
 	{ type: I.BlockType.Div, style: I.DivStyle.Dot },
+	// --------------------------------------------//
 
 	{ style: I.TextStyle.Header1, text: `Updates for 28 August, 2020` },
 
@@ -752,6 +808,7 @@ export default [
 	{ style: I.TextStyle.Bulleted, text: `When setting the cursor from the last block to the top the page could scroll down.` },
 
 	{ type: I.BlockType.Div, style: I.DivStyle.Dot },
+	// --------------------------------------------//
 
 	{ style: I.TextStyle.Header1, text: `Updates for 14 August, 2020` },
 
@@ -784,6 +841,7 @@ export default [
 	{ text: `Anytype releases wouldn’t be possible without a multitude of people, and our thanks go out to all of our brilliant alpha users and bug reporters.` },
 
 	{ type: I.BlockType.Div, style: I.DivStyle.Dot },
+	// --------------------------------------------//
 
 	{ style: I.TextStyle.Header1, text: `Updates for 24 July, 2020` },
 	{ text: `Fixed syncing between devices. You finally can transfer data to another computer with the same mnemonic phrase. It's a simple implementation, so it can still lead to modification loss in case of concurrent changes in the same document.` },
@@ -799,7 +857,7 @@ export default [
 	{ style: I.TextStyle.Header3, text: `Sneaky bugs were fixed:` },
 	{ style: I.TextStyle.Bulleted, text: `Redo <span class="highlight">CMD + Shift + Z</span> is working properly now.`  },
 	{ style: I.TextStyle.Bulleted, text: `Fixed shortcut for turn-into menu. It was launching with <span class="highlight">?</span>, <span class="highlight">,</span> in some keyboards.` },
-  { style: I.TextStyle.Bulleted, text: 'Splitting and merging blocks could lead to an unwanted state with disappearing symbols when typing fast. This problem was solved. ' },
+	{ style: I.TextStyle.Bulleted, text: 'Splitting and merging blocks could lead to an unwanted state with disappearing symbols when typing fast. This problem was solved. ' },
 	{ style: I.TextStyle.Bulleted, text: `Menu. Filtering. When using search the first element gets selected by default now.` },
 	{ style: I.TextStyle.Bulleted, text: `The carriage could be moved to the new block after it was positioned it the title without a glitch.` },
 	{ style: I.TextStyle.Bulleted, text: `Pincode input saving all the symbols when typing fast.` },
@@ -807,6 +865,7 @@ export default [
 	{ style: I.TextStyle.Bulleted, text: `Creating a new block (pressing <span class="highlight">Enter</span>) lead to page jump when the page has been scrolled down. Now it's ok!` },
 
 	{ type: I.BlockType.Div, style: I.DivStyle.Dot },
+	// --------------------------------------------//
 
 	{ style: I.TextStyle.Header1, text: `Updates for 15 July, 2020` },
 	{ style: I.TextStyle.Header3, text: `Windows support is now (finally) available!` },
@@ -828,7 +887,9 @@ export default [
 	{ style: I.TextStyle.Bulleted, text: `Turn Into, Align, and Color now works on multiple levels of indentation.` },
 	{ style: I.TextStyle.Bulleted, text: `macOS app closing into the Dock by default.` },
 	{ text: `... and many other small improvements! ` },
+
 	{ type: I.BlockType.Div, style: I.DivStyle.Dot },
+	// --------------------------------------------//
 
 	{ style: I.TextStyle.Header1, text: `Updates for 10 June, 2020` },
 	{ text: `We value your time and develop a great timesaver for you — now you can transfer data from other sources into Anytype!` },
@@ -836,7 +897,9 @@ export default [
 	{ text: `<img src="./img/help/import.png" class="full">` },
 	{ text: `A friendly reminder. Without any imports, you can save note from another app or an article from Wikipedia, and store it forever on your computer. Just copy it there and paste into Anytype. <i>Voila!<i>` },
 	{ text: `Please, write us what you think and what source you want to import in&nbsp;Anytype!` },
+
 	{ type: I.BlockType.Div, style: I.DivStyle.Dot },
+	// --------------------------------------------//
 
 	{ style: I.TextStyle.Header1, text: `Updates for 29 May, 2020` },
 	{ style: I.TextStyle.Header3, text: `Mention` },
@@ -844,7 +907,9 @@ export default [
 	{ text: `Simply insert the <span class="highlight">@</span> sign and start typing the name of a page you want to refer to.` },
 	{ text: `You can mention any page anywhere and it will build a relationship between pages. All&nbsp;mentions will be shown in the navigation panel. It’s just a more convenient way to connect any pages inside Anytype. Hope you enjoy it and we look forward to your suggestions on how we could make it better.` },
 	{ text: `<img src="./img/help/mention.gif" class="full mention">` },
+
 	{ type: I.BlockType.Div, style: I.DivStyle.Dot },
+	// --------------------------------------------//
 
 	{ style: I.TextStyle.Header1, text: `Updates for 6 May, 2020` },
 	{ style: I.TextStyle.Header3, text: `Meet the new navigation` },
@@ -854,9 +919,11 @@ export default [
 	{ text: `You can press <span class="highlight">CMD + S</span> and search the right page by name or information in the&nbsp;first&nbsp;paragrapgh.` },
 	{},
 	{ text: `<b>Now you can stop segmenting and limiting the way you connect your thoughts — just link the pages and flesh everything out more naturally.</b>` },
-	{ type: I.BlockType.Div, style: I.DivStyle.Dot },
 
-  { style: I.TextStyle.Header1, text: `Updates for 03 March, 2020` },
+	{ type: I.BlockType.Div, style: I.DivStyle.Dot },
+	// --------------------------------------------//
+
+	{ style: I.TextStyle.Header1, text: `Updates for 03 March, 2020` },
 	{ style: I.TextStyle.Header3, text: `Introducing Anytype` },
 	{ text: `We upgraded the design and backed it up with cutting edge technologies to make your experience safe, secure, and convenient.` },
 	{ text: `<span class="highlight">This version of Anytype is suitable for personal usage only</span>. In the next versions we’ll add collaborative functionality.` },
@@ -871,5 +938,5 @@ export default [
 	{ text: `<b>Create a new home for your information — private and free</b>.` },
 	{},
 	{ text: `Thank you for building a new web together, writing us a review, reporting a bug, or making a feature request, moving all of us forward. 🙏` },
-	{ text: `Don’t forget to <span class="textColor textColor-red">save your seed phrase</span>  to save access to all your private data. All&nbsp;the&nbsp;new features will appear in automatic updates.` }
+	{ text: `Don't forget to <span class="textColor textColor-red">save your seed phrase</span>  to save access to all your private data. All&nbsp;the&nbsp;new features will appear in automatic updates.` }
 ];
