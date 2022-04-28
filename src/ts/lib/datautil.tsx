@@ -320,15 +320,15 @@ class DataUtil {
 		Storage.delete('redirectTo');
 
 		if (account) {
-			authStore.accountSet(account);
+			if (account.info) {
+				commonStore.infoSet(account.info);
+			};
 
 			if (account.config) {
 				commonStore.configSet(account.config, false);
 			};
 
-			if (account.info) {
-				commonStore.infoSet(account.info);
-			};
+			authStore.accountSet(account);
 		};
 
 		this.pageInit(() => {
@@ -1148,9 +1148,16 @@ class DataUtil {
 		fields.style = Number(fields.style) || I.LinkCardStyle.Text;
 		fields.withIcon = Boolean(undefined === fields.withIcon ? true : fields.withIcon);
 		fields.withName = Boolean(undefined === fields.withName ? true : fields.withName);
+		fields.withType = Boolean(fields.withType);
+		fields.withCover = Boolean(fields.withCover);
+		//fields.withTags = Boolean(fields.withTags);
 
 		if (fields.style == I.LinkCardStyle.Text) {
-            fields.withCover = false;
+			fields.iconSize = I.LinkIconSize.Small;
+			fields.description = I.LinkDescription.None;
+			fields.withType = false;
+			fields.withCover = false;
+			fields.withName = true;
         };
 
 		if (layout == I.ObjectLayout.Task) {

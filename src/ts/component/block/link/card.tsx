@@ -13,6 +13,7 @@ interface Props extends I.BlockComponent, RouteComponentProps<any> {
 	withType?: boolean;
     description?: number;
     iconSize: number;
+	style: number;
     object: any;
     className?: string;
     canEdit?: boolean;
@@ -22,16 +23,13 @@ interface Props extends I.BlockComponent, RouteComponentProps<any> {
     onClick?(e: any): void;
 };
 
-const Size: any = {};
-Size[I.LinkIconSize.Small] = 18;
-Size[I.LinkIconSize.Medium] = 48;
-
 const LinkCard = observer(class LinkCard extends React.Component<Props, {}> {
 
 	render () {
-        const { rootId, block, withName, withIcon, withType, withTags, description, iconSize, object, className, canEdit, onClick, onSelect, onUpload, onCheckbox } = this.props;
+        const { rootId, block, withName, withIcon, withType, withTags, description, style, object, className, canEdit, onClick, onSelect, onUpload, onCheckbox } = this.props;
         const { id, layout, coverType, coverId, coverX, coverY, coverScale, snippet } = object;
-        const cn = [ 'linkCard', DataUtil.layoutClass(id, layout), 'c' + Size[iconSize] ];
+		const iconSize = this.getIconSize();
+        const cn = [ 'linkCard', DataUtil.layoutClass(id, layout), 'c' + iconSize, DataUtil.linkCardClass(style) ];
         const cns = [ 'sides' ];
         const withCover = this.props.withCover && coverId && coverType;
 		const canDescription = ![ I.ObjectLayout.Note ].includes(object.layout);
@@ -68,7 +66,7 @@ const LinkCard = observer(class LinkCard extends React.Component<Props, {}> {
 								{withIcon ? (
 									<IconObject 
 										id={`block-${block.id}-icon`}
-										size={Size[iconSize] || Size[I.LinkIconSize.Small]} 
+										size={iconSize} 
 										object={object} 
 										canEdit={canEdit} 
 										onSelect={onSelect} 
@@ -113,6 +111,20 @@ const LinkCard = observer(class LinkCard extends React.Component<Props, {}> {
 				</div>
 			</div>
 		);
+	};
+
+	getIconSize () {
+		const { style, iconSize } = this.props;
+
+		if (style == I.LinkCardStyle.Text) {
+			return 24;
+		} else {
+			const Size: any = {};
+			Size[I.LinkIconSize.Small] = 18;
+			Size[I.LinkIconSize.Medium] = 48;
+
+			return Size[iconSize] || Size[I.LinkIconSize.Small];
+		};
 	};
 
 });

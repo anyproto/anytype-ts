@@ -47,7 +47,7 @@
 
 	.more { 
 		background: $colorVeryLightGrey; border-radius: 3px; display: inline-block; vertical-align: middle; padding: 0px 4px; 
-		@include text-small; color: $colorDarkGrey; margin-left: 6px;
+		@include text-small; color: $colorDarkGrey;
 	}
 }
 

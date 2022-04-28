@@ -184,20 +184,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		if (length) {
 			keyboard.shortcut('backspace, delete', e, (pressed: string) => {
-				analytics.event('ShowDeletionWarning');
-				popupStore.open('confirm', {
-					data: {
-						title: `Are you sure you want to delete ${length} ${Util.cntWord(length, 'object', 'objects')}?`,
-						text: 'These objects will be deleted irrevocably. You can’t undo this action.',
-						textConfirm: 'Delete',
-						onConfirm: () => { 
-							C.ObjectListDelete(ids);
-							
-							selection.clear(false);
-							analytics.event('RemoveCompletely', { count: length });
-						}
-					},
-				});
+				C.ObjectListSetIsArchived(ids, true);
+				
+				selection.clear(false);
+				analytics.event('MoveToBin', { count: length });
 			});
 		};
 	};
@@ -418,7 +408,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	onCellClick (e: any, relationKey: string, index: number) {
-		if (e.button) {
+		if (e.button || e.shiftKey || e.ctrlKey || e.metaKey) {
 			return;
 		};
 

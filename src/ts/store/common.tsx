@@ -166,7 +166,12 @@ class CommonStore {
 	};
 
     coverSetDefault () {
-		this.coverSet('c' + Constant.default.cover, '', I.CoverType.Image);
+		const cover = this.coverGetDefault();
+		this.coverSet(cover.id, '', cover.type);
+	};
+
+	coverGetDefault () {
+		return { id: Constant.default.cover, type: I.CoverType.Gradient };
 	};
 
     gatewaySet (v: string) {

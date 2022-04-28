@@ -57,10 +57,13 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 
 		if (arrayLimit) {
 			value = value.slice(0, arrayLimit);
+			if (length > arrayLimit) {
+				cn.push('overLimit');
+			};
 		};
 
 		let content = null;
-		if (isEditing && (relation.format == I.RelationType.Tag)) {
+		if (isEditing) {
 			content = (
 				<div id="value" onClick={this.onFocus}>
 					<div id="placeholder" className="placeholder">{placeholder}</div>
@@ -98,6 +101,8 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 					>
 						{' '}
 					</span>
+
+					{canClear ? <Icon className="clear" onMouseDown={this.onClear} /> : ''}
 				</div>
 			);
 		} else {
@@ -105,15 +110,12 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 				content = <div className="empty">{placeholder}</div>;
 			} else {
 				content = (
-					<React.Fragment>
-						<span className="over">
-							{value.map((item: any, i: number) => (
-								<Tag {...item} key={item.id} className={DataUtil.tagClass(relation.format)} />
-							))}
-						</span>
+					<span className="over">
+						{value.map((item: any, i: number) => (
+							<Tag {...item} key={item.id} className={DataUtil.tagClass(relation.format)} />
+						))}
 						{arrayLimit && (length > arrayLimit) ? <div className="more">+{length - arrayLimit}</div> : ''}
-						{canClear ? <Icon className="clear" onMouseDown={this.onClear} /> : ''}
-					</React.Fragment>
+					</span>
 				);
 			};
 		};

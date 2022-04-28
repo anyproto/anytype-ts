@@ -815,12 +815,11 @@ class Dispatcher {
 	};
 
 	public request (type: string, data: any, callBack?: (message: any) => void) {
-		type = Util.toCamelCase(type);
-
 		const { config } = commonStore;
 		const debug = config.debug.mw;
+		const ct = Util.toCamelCase(type);
 
-		if (!this.service[type]) {
+		if (!this.service[ct]) {
 			console.error('[Dispatcher.request] Service not found: ', type);
 			return;
 		};
@@ -837,7 +836,7 @@ class Dispatcher {
 		};
 
 		try {
-			this.service[type](data, null, (error: any, response: any) => {
+			this.service[ct](data, null, (error: any, response: any) => {
 				if (!response) {
 					return;
 				};

@@ -59,12 +59,10 @@
 				.cover { height: 288px; }
 			}
 
-			.cellContent {
-				.more { margin-top: 1px; }
+			.card.isTask {
+				.cellContent.c-name { display: flex; }
 			}
-			.cellContent.c-select {
-				.more { margin-top: 0px; }
-			}
+
 			.cellContent.c-longText {
 				.name { overflow: hidden; @include clamp2; }
 			}

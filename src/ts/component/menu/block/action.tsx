@@ -518,6 +518,8 @@ class MenuBlockAction extends React.Component<Props, State> {
 			case 'linkSettings':
 				menuId = 'blockLinkSettings';
 				menuParam.subIds = [ 'select' ];
+				menuParam.offsetY = 0;
+				menuParam.vertical = I.MenuDirection.Center;
 				break;
 		};
 

@@ -25,6 +25,9 @@
 				.cellContent { cursor: pointer; margin-bottom: 6px; @include text-small; color: $colorDarkGrey; }
 				.cellContent:empty, .cellContent.isEmpty { display: none; }
 				.cellContent.last { margin: 0px; }
+				.cellContent {
+					.more { margin-top: 0px; vertical-align: top; }
+				}
 
 				.cellContent.isName { @include text-paragraph; color: $colorBlack; }
 				.cellContent.isName {
@@ -44,6 +47,14 @@
 				.cellContent.c-object, .cellContent.c-file {
 					.element { margin: 0px 6px 0px 0px; }
 					.element:last-child { margin-right: 0px; }
+				}
+
+				.cellContent.c-select, .cellContent.c-object, .cellContent.c-file {
+					.over { display: flex; height: 20px; }
+
+					.wrap.overLimit {
+						.tagItem, .element { max-width: 40%; }
+					}
 				}
 			}
 		}

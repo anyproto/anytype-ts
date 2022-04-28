@@ -645,7 +645,7 @@ const BlockDataviewRelationDelete = (contextId: string, blockId: string, relatio
 };
 
 const BlockDataviewRecordRelationOptionAdd = (contextId: string, blockId: string, relationKey: string, recordId: string, option: any, callBack?: (message: any) => void) => {
-	const request = new Rpc.BlockDataviewRecord.RelationOptionAdd.Request();
+	const request = new Rpc.BlockDataviewRecord.RelationOption.Add.Request();
 	
 	request.setContextid(contextId);
 	request.setBlockid(blockId);
@@ -657,7 +657,7 @@ const BlockDataviewRecordRelationOptionAdd = (contextId: string, blockId: string
 };
 
 const BlockDataviewRecordRelationOptionUpdate = (contextId: string, blockId: string, relationKey: string, recordId: string, option: I.SelectOption, callBack?: (message: any) => void) => {
-	const request = new Rpc.BlockDataviewRecord.RelationOptionUpdate.Request();
+	const request = new Rpc.BlockDataviewRecord.RelationOption.Update.Request();
 	
 	request.setContextid(contextId);
 	request.setBlockid(blockId);
@@ -669,7 +669,7 @@ const BlockDataviewRecordRelationOptionUpdate = (contextId: string, blockId: str
 };
 
 const BlockDataviewRecordRelationOptionDelete = (contextId: string, blockId: string, relationKey: string, recordId: string, optionId: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.BlockDataviewRecord.RelationOptionDelete.Request();
+	const request = new Rpc.BlockDataviewRecord.RelationOption.Delete.Request();
 	
 	request.setContextid(contextId);
 	request.setBlockid(blockId);

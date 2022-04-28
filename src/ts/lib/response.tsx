@@ -309,9 +309,9 @@ const ObjectShareByLink = (response: any) => {
 	};
 };
 
-const ObjectDuplicate = (response: any) => {
+const ObjectListDuplicate = (response: any) => {
 	return {
-		id: response.getId(),
+		ids: response.getIdsList(),
 	};
 };
 
@@ -414,7 +414,8 @@ export {
 	ObjectRelationOptionAdd,
 	ObjectToSet,
 	ObjectShareByLink,
-	ObjectDuplicate,
+
+	ObjectListDuplicate,
 
 	TemplateCreateFromObject,
 	TemplateCreateFromObjectType,
