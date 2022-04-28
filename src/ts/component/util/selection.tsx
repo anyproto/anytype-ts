@@ -232,11 +232,6 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			return
 		};
 		
-		const rootId = keyboard.getRootId();
-		
-		let ids = this.get(I.SelectType.Block, true);
-		let first = ids.length ? ids[0] : this.focused;
-
 		if (!this.moved) {
 			if (!e.shiftKey && !e.altKey && !(e.ctrlKey || e.metaKey)) {
 				if (!this.isClearPrevented) {
@@ -246,6 +241,9 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			} else {
 				this.checkNodes(e);
 				
+				let rootId = keyboard.getRootId();
+				let ids = this.get(I.SelectType.Block, true);
+				let first = ids.length ? ids[0] : this.focused;
 				let target = $(e.target.closest('.selectable'));
 				let id = target.attr('data-id');
 				let type = target.attr('data-type');
@@ -268,7 +266,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			};
 		};
 		
-		ids = this.get(I.SelectType.Block, true);
+		let ids = this.get(I.SelectType.Block, true);
 		if (ids.length > 0) {
 			menuStore.close('blockContext');
 			focus.clear(true);
@@ -482,7 +480,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	};
 	
 	get (type: any, withChildren?: boolean): any {
-		const ids = this.ids.get(type) || [];
+		const ids = Util.objectCopy(this.ids.get(type) || []);
 		if (withChildren && (type == I.SelectType.Block)) {
 			ids.forEach(id => this.getChildrenIds(id, ids));
 		};
@@ -514,7 +512,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 
 		for (let i in I.SelectType) {
 			const type = I.SelectType[i];
-			const ids = this.ids.get(type);
+			const ids = this.get(type);
 
 			for (let id of ids) {
 				node.find(`#selectable-${id}`).addClass('isSelectionSelected');
