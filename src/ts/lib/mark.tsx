@@ -544,23 +544,20 @@ class Mark {
 		
 		switch (type) {
 			case I.MarkType.Link:
-				attr = 'href="' + param + '"';
+				attr = `href="${param}"`;
 				break;
 
 			case I.MarkType.Mention:
-				attr = 'contenteditable="false"';
-				break;
-
 			case I.MarkType.Emoji:
 				attr = 'contenteditable="false"';
 				break;
 				
 			case I.MarkType.Color:
-				attr = 'class="textColor textColor-' + param + '"';
+				attr = `class="textColor textColor-${param}"`;
 				break;
 				
 			case I.MarkType.BgColor:
-				attr = 'class="bgColor bgColor-' + param + '"';
+				attr = `class="bgColor bgColor-${param}"`;
 				break;
 		};
 		
