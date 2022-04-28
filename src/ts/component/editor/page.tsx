@@ -468,6 +468,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		if (keyboard.isFocused || !selection || !root) {
 			return;
 		};
+
+		Util.previewHide(true);
 		
 		const block = blockStore.getLeaf(rootId, focused);
 		const ids = selection.get(I.SelectType.Block);
@@ -644,7 +646,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		if (!block) {
 			return;
 		};
-		
+
 		const platform = Util.getPlatform();
 		const menuOpen = menuStore.isOpen();
 		const cmd = keyboard.ctrlKey();
@@ -655,6 +657,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			length--;
 		};
 
+		Util.previewHide(true);
 		this.uiHide();
 		
 		if (platform == I.Platform.Mac) {
