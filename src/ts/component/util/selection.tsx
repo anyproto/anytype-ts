@@ -239,7 +239,9 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 
 		if (!this.moved) {
 			if (!e.shiftKey && !e.altKey && !(e.ctrlKey || e.metaKey)) {
-				this.initIds();
+				if (!this.isClearPrevented) {
+					this.initIds();
+				};
 				this.renderSelection();
 			} else {
 				this.checkNodes(e);
