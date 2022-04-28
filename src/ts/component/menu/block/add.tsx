@@ -497,6 +497,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 		const { rootId, blockId, onSelect, blockCreate } = data;
 		const { filter } = commonStore;
 		const block = blockStore.getLeaf(rootId, blockId);
+
 		if (!block) {
 			return;
 		};
@@ -662,17 +663,12 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 			onSelect(e, item);
 		};
 
-		text = Util.stringCut(text, filter.from - 1, filter.from + filter.text.length);
 		marks = Mark.adjust(marks, filter.from - 1, -1);
+		
+		// Hack to prevent onBlur save
+		$(`#block-${blockId} #value`).first().text(text);
 
-		// Clear filter in block text
-		if (block) {
-			// Hack to prevent onBlur save
-			$(`#block-${blockId} #value`).first().text(text);
-			DataUtil.blockSetText(rootId, block, text, marks, true, cb);
-		} else {
-			cb();
-		};
+		DataUtil.blockSetText(rootId, block, text, marks, true, cb);
 	};
 
 	moveToPage (type: string) {
