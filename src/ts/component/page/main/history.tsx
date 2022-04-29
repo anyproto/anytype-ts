@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { HeaderMainHistory as Header, Block, Loader, Icon, Deleted } from 'ts/component';
+import { Header, Block, Loader, Icon, Deleted } from 'ts/component';
 import { blockStore } from 'ts/store';
 import { I, M, C, Util, DataUtil, dispatcher } from 'ts/lib';
 import { observer } from 'mobx-react';
@@ -109,7 +109,8 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<P
 		
 		return (
 			<div>
-				<Header ref={(ref: any) => { this.refHeader = ref; }} {...this.props} rootId={rootId} />
+				<Header component="mainHistory" ref={(ref: any) => { this.refHeader = ref; }} {...this.props} rootId={rootId} />
+
 				<div id="body" className="flex">
 					<div id="sideLeft" className="wrapper">
 						<div className={cn.join(' ')}>
@@ -325,7 +326,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<P
 			this.forceUpdate();
 
 			if (this.refHeader) {
-				this.refHeader.setVersion(this.version);
+				this.refHeader.refChild.setVersion(this.version);
 			};
 		});
 	};
