@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
-import { IconObject, HeaderMainEdit as Header, FooterMainEdit as Footer, Loader, Block, ListObjectPreview, Deleted } from 'ts/component';
+import { IconObject, Header, FooterMainEdit as Footer, Loader, Block, ListObjectPreview, Deleted } from 'ts/component';
 import { I, M, C, DataUtil, Util, keyboard, focus, crumbs, Action } from 'ts/lib';
 import { blockStore, detailStore, dbStore, menuStore } from 'ts/store';
 import { getRange } from 'selection-ranges';
@@ -104,7 +104,7 @@ const PageMainSpace = observer(class PageMainSpace extends React.Component<Props
 
 		return (
 			<div className={[ 'setWrapper', check.className ].join(' ')}>
-				<Header ref={(ref: any) => { this.refHeader = ref; }} {...this.props} rootId={rootId} isPopup={isPopup} />
+				<Header component="mainEdit" ref={(ref: any) => { this.refHeader = ref; }} {...this.props} rootId={rootId} />
 
 				{check.withCover ? <Block {...this.props} key={cover.id} rootId={rootId} block={cover} /> : ''}
 

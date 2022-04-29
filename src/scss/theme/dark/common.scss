@@ -224,8 +224,19 @@ html.themeDark {
     /* Header */
     /* ---------------------------------------------------------------- */
 
-    .header.headerMainEdit { background: $colorBlack; }
-    .header.headerMainEdit {
+    .header.mainEdit, 
+	.header.mainNavigation,
+	.header.mainGraph, 
+	.header.mainStore,
+	.header.mainHistory 
+	{ background: $colorBlack; }
+
+    .header.mainEdit, 
+	.header.mainNavigation,
+	.header.mainGraph, 
+	.header.mainStore,
+	.header.mainHistory 
+	{
         .path { border: 0px; line-height: 28px; }
         .path {
             .item:hover { color: $colorPrimary; }
@@ -238,12 +249,12 @@ html.themeDark {
         }
     }
 
-    .header.headerMainIndex {
-        .side.center { border: 0px; color: $colorSecondary; background: $colorBlack30; }
+    .header.mainIndex {
+        .path { border: 0px; color: $colorSecondary; background: $colorBlack30; }
     }
 
-    .header.headerMainHistory { background: $colorBlack; }
-    .header.headerMainHistory {
+    .header.mainHistory { background: $colorBlack; }
+    .header.mainHistory {
         .side {
             .item { color: $colorSecondary; }
             .item {

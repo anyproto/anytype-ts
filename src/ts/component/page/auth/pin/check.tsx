@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Frame, Cover, Title, Error, Pin, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
+import { Frame, Cover, Title, Error, Pin, Header, FooterAuth as Footer } from 'ts/component';
 import { Util, Storage, translate, keyboard } from 'ts/lib';
 import { authStore, commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -30,7 +30,7 @@ const PageAuthPinCheck = observer(class PageAuthPinCheck extends React.Component
 		return (
 			<div>
 				<Cover {...cover} className="main" />
-				<Header />
+				<Header {...this.props} component="authIndex" />
 				<Footer />
 				
 				<Frame>

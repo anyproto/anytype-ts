@@ -15,13 +15,7 @@ import ListChildren from './list/children';
 import ListObjectPreview from './list/previewObject';
 import ListObject from './list/object';
 
-import HeaderAuth from './header/auth';
-import HeaderMainIndex from './header/main/index';
-import HeaderMainEdit from './header/main/edit';
-import HeaderMainHistory from './header/main/history';
-import HeaderMainGraph from './header/main/graph';
-import HeaderMainNavigation from './header/main/navigation';
-import HeaderMainStore from './header/main/store';
+import Header from './header';
 
 import FooterAuth from './footer/auth';
 import FooterMainIndex from './footer/main/index';
@@ -91,13 +85,7 @@ export {
 	ListChildren,
 	ListObjectPreview,
 	ListObject,
-	HeaderAuth,
-	HeaderMainIndex,
-	HeaderMainEdit,
-	HeaderMainHistory,
-	HeaderMainGraph,
-	HeaderMainNavigation,
-	HeaderMainStore,
+	Header,
 	FooterAuth,
 	FooterMainIndex,
 	FooterMainEdit,

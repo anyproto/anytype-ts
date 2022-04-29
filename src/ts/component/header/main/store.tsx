@@ -5,14 +5,7 @@ import { I, Util, DataUtil, keyboard } from 'ts/lib';
 import { popupStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
-interface Props extends RouteComponentProps<any> {
-	rootId: string;
-	isPopup?: boolean;
-	dataset?: any;
-	tabs: any[];
-	tab: string;
-	onTab: (id: string) => void;
-}
+interface Props extends RouteComponentProps<any>, I.HeaderComponent {};
 
 const HeaderMainStore = observer(class HeaderMainStore extends React.Component<Props, {}> {
 
@@ -21,22 +14,19 @@ const HeaderMainStore = observer(class HeaderMainStore extends React.Component<P
 	constructor (props: any) {
 		super(props);
 		
-		this.onHome = this.onHome.bind(this);
-		this.onBack = this.onBack.bind(this);
-		this.onForward = this.onForward.bind(this);
 		this.onOpen = this.onOpen.bind(this);
 	};
 
 	render () {
-		const { tabs, tab, onTab } = this.props;
+		const { tabs, tab, onTab, onHome, onForward, onBack } = this.props;
 		
 		return (
-			<div id="header" className="header headerMainEdit">
+			<React.Fragment>
 				<div className="side left">
 					<Icon className="expand big" tooltip="Open as object" onClick={this.onOpen} />
-					<Icon className="home big" tooltip="Home" onClick={this.onHome} />
-					<Icon className={[ 'back', 'big', (!keyboard.checkBack() ? 'disabled' : '') ].join(' ')} tooltip="Back" onClick={this.onBack} />
-					<Icon className={[ 'forward', 'big', (!keyboard.checkForward() ? 'disabled' : '') ].join(' ')} tooltip="Forward" onClick={this.onForward} />
+					<Icon className="home big" tooltip="Home" onClick={onHome} />
+					<Icon className={[ 'back', 'big', (!keyboard.checkBack() ? 'disabled' : '') ].join(' ')} tooltip="Back" onClick={onBack} />
+					<Icon className={[ 'forward', 'big', (!keyboard.checkForward() ? 'disabled' : '') ].join(' ')} tooltip="Forward" onClick={onForward} />
 				</div>
 
 				<div className="side center">
@@ -50,28 +40,8 @@ const HeaderMainStore = observer(class HeaderMainStore extends React.Component<P
 				</div>
 
 				<div className="side right" />
-			</div>
+			</React.Fragment>
 		);
-	};
-
-	componentDidMount () {
-		Util.resizeSidebar();
-	};
-
-	componentDidUpdate () {
-		Util.resizeSidebar();	
-	};
-
-	onHome (e: any) {
-		Util.route('/main/index');
-	};
-	
-	onBack (e: any) {
-		keyboard.back();
-	};
-	
-	onForward (e: any) {
-		keyboard.forward();
 	};
 
 	onOpen () {

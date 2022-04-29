@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
-import { IconObject, HeaderMainEdit as Header, FooterMainEdit as Footer, Loader, Block, ListObject, Button, Deleted } from 'ts/component';
-import { I, M, C, crumbs, Action, Util, DataUtil, keyboard } from 'ts/lib';
+import { IconObject, Header, FooterMainEdit as Footer, Loader, Block, ListObject, Button, Deleted } from 'ts/component';
+import { I, M, C, crumbs, Action, Util, DataUtil } from 'ts/lib';
 import { detailStore, dbStore, commonStore } from 'ts/store';
 
 interface Props extends RouteComponentProps<any> {
@@ -52,7 +52,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 
 		return (
 			<div>
-				<Header ref={(ref: any) => { this.refHeader = ref; }} {...this.props} rootId={rootId} isPopup={isPopup} />
+				<Header component="mainEdit" ref={(ref: any) => { this.refHeader = ref; }} {...this.props} rootId={rootId} />
 
 				<div className="blocks wrapper">
 					<div className="head">

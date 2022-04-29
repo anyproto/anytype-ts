@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { I, C, crumbs, Util, analytics } from 'ts/lib';
 import { RouteComponentProps } from 'react-router';
-import { HeaderMainGraph as Header, Graph, Icon, Loader } from 'ts/component';
+import { Header, Graph, Icon, Loader } from 'ts/component';
 import { blockStore, commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -50,7 +50,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 
 		return (
 			<div className="body">
-				<Header ref={(ref: any) => { this.refHeader = ref; }} {...this.props} rootId={rootId} isPopup={isPopup} />
+				<Header component="mainGraph" ref={(ref: any) => { this.refHeader = ref; }} {...this.props} rootId={rootId} />
 
 				{loading ? <Loader id="loader" /> : ''}
 

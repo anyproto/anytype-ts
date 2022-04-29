@@ -96,3 +96,18 @@ export enum TabIndex {
 	Shared		 = 'shared',
 	Archive		 = 'archive',
 };
+
+export interface HeaderComponent {
+	rootId?: string;
+	isPopup?: boolean;
+	dataset?: any;
+	tabs?: any[];
+	tab?: string;
+	onTab?: (id: string) => void;
+	onHome?: (e: any) => void;
+	onForward?: (e: any) => void;
+	onBack?: (e: any) => void;
+	onSearch?: (e: any) => void;
+	onNavigation?: (e: any) => void;
+	onGraph?: (e: any) => void;
+};

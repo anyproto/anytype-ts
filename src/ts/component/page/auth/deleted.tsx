@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Frame, Cover, Title, Label, Error, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
+import { Frame, Cover, Title, Label, Error, Header, FooterAuth as Footer } from 'ts/component';
 import { I, Util, C, Action, analytics } from 'ts/lib';
 import { commonStore, authStore, popupStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -63,7 +63,7 @@ const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<P
         return (
 			<div>
 				<Cover {...cover} className="main" />
-				<Header />
+				<Header {...this.props} component="authIndex" />
 				<Footer />
 				
 				<Frame>

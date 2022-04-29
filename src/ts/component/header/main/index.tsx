@@ -1,13 +1,11 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
+import { I } from 'ts/lib';
 import { Icon } from 'ts/component';
-import { Util, keyboard } from 'ts/lib';
 import { popupStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
-interface Props extends RouteComponentProps<any> {
-	isPopup?: boolean;
-};
+interface Props extends RouteComponentProps<any>, I.HeaderComponent {};
 
 const HeaderMainIndex = observer(class HeaderMainIndex extends React.Component<Props, {}> {
 	
@@ -15,38 +13,24 @@ const HeaderMainIndex = observer(class HeaderMainIndex extends React.Component<P
 		super(props);
 		
 		this.onSettings = this.onSettings.bind(this);
-		this.onSearch = this.onSearch.bind(this);
 	};
 
 	render () {
+		const { onSearch } = this.props;
+
 		return (
-			<div id="header" className="header headerMainIndex">
+			<React.Fragment>
 				<div className="side left" />
 
-				<div className="side center" onClick={this.onSearch}>
+				<div className="side center" onClick={onSearch}>
 					<div id="path" className="path">Search for an object</div>
 				</div>
 
 				<div className="side right">
-					<Icon tooltip="Settings" className={[ 'settings', (popupStore.isOpen('settings') ? 'active' : '') ].join(' ')} onClick={this.onSettings} />
+					<Icon tooltip="Settings" className="settings" onClick={this.onSettings} />
 				</div>
-			</div>
+			</React.Fragment>
 		);
-	};
-
-	componentDidMount () {
-		Util.resizeSidebar();
-	};
-
-	componentDidUpdate () {
-		Util.resizeSidebar();	
-	};
-
-	onSearch (e: any) {
-		e.preventDefault();
-		e.stopPropagation();
-
-		keyboard.onSearchPopup();
 	};
 
 	onSettings (e: any) {

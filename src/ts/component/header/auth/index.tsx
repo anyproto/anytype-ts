@@ -1,19 +1,19 @@
 import * as React from 'react';
 
-class HeaderAuth extends React.Component<{}, {}> {
+class HeaderAuthIndex extends React.Component<{}, {}> {
 	
 	render () {
 		return (
-			<div id="header" className="header headerAuth">
+			<React.Fragment>
 				<div className="side left" />
 				<div className="side center">
 					<div className="logo" />
 				</div>
 				<div className="side right" />
-			</div>
+			</React.Fragment>
 		);
 	};
 	
 };
 
-export default HeaderAuth;
+export default HeaderAuthIndex;
