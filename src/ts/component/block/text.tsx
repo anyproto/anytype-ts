@@ -468,7 +468,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			if (icon) {
 				ReactDOM.render(icon, smile.get(0), () => {
 					if (smile.html()) {
-						item.addClass('withImage');
+						item.addClass('withImage c' + size);
 					};
 				});
 			};

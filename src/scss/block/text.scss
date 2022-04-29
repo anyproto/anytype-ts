@@ -23,7 +23,6 @@
 		emoji * { user-select: all; }
 		emoji {
 			smile img { vertical-align: top; }
-			name { display: none; }
 		}
 
 		lnk { position: relative; }
@@ -38,8 +37,8 @@
 			underline { text-decoration: none; }
 		}
 
-		mention { cursor: pointer; white-space: nowrap; display: inline; user-select: all; }
-		mention * { user-select: text; }
+		mention { cursor: pointer; display: inline; user-select: all !important; position: relative; }
+		mention * { user-select: text !important; }
 		mention {
 			smile { display: none; position: relative; z-index: 1; }
 			.space { width: 4px; height: 20px; margin-top: -4px; vertical-align: middle; display: none; }
@@ -49,7 +48,6 @@
 		mention.disabled {
 			name { border-width: 0px; }
 		}
-
 		mention.withImage {
 			smile { display: inline; }
 			.space { display: inline; }
