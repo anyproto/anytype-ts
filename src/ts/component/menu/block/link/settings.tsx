@@ -73,8 +73,7 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 
 	onClick (e: any, item: any) {
 		if (item.withSwitch) {
-			//const fields = this.getFields();
-			//this.setField(item.itemId, !fields[item.itemId]);
+			item.onSwitch(e, !this.hasRelationKey(item.itemId));
 		} else 
 		if (item.arrow) {
 			this.onOver(e, item);
@@ -104,7 +103,7 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 				value: content[item.itemId],
 				options: [],
 				onSelect: (e: any, el: any) => {
-					this.setField(item.itemId, el.id);
+					this.save(item.itemId, el.id);
 				},
 			},
 		};
@@ -217,7 +216,8 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 		};
 
 		const itemStyle = { id: 'cardStyle', name: 'Preview layout', caption: style.name, withCaption: true, arrow: true };
-		const itemSize = canIcon ? { id: 'iconSize', name: 'Icon', caption: icon.name, withCaption: true, arrow: true } : null;
+		const itemSize = canIcon ? { id: 'iconSize', name: 'Icon size', caption: icon.name, withCaption: true, arrow: true } : null;
+		const itemIcon = canIcon ? { id: 'icon', name: 'Icon', withSwitch: true, switchValue: this.hasRelationKey('icon') } : null;
 		const itemCover = canCover ? { id: 'cover', name: 'Cover', withSwitch: true, switchValue: this.hasRelationKey('cover') } : null;
 		const itemName = { id: 'name', name: 'Name', icon: 'relation ' + DataUtil.relationClass(I.RelationType.ShortText), withSwitch: true, switchValue: this.hasRelationKey('name') };
 		const itemDescription = canDescription ? { 
@@ -234,7 +234,7 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 			];
 		} else {
 			sections = [
-				{ children: [ itemStyle, itemSize, itemCover ] },
+				{ children: [ itemStyle, itemSize, itemIcon, itemCover ] },
 				{ name: 'Featured relations', children: [ itemName, itemDescription, itemType ] },
 			];
 		};
@@ -247,17 +247,15 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 
 		sections = sections.map((s: any) => {
 			s.children = s.children.map((child: any) => {
-				if (!child.withSwitch) {
-					return child;
-				};
-
-				child.onSwitch = (e: any, v: boolean) => { 
-					if (v) {
-						content.relations.push(child.itemId);
-					} else {
-						content.relations = content.relations.filter(it => it == child.itemId);
+				if (child.withSwitch) {
+					child.onSwitch = (e: any, v: boolean) => {
+						if (v) {
+							content.relations.push(child.itemId);
+						} else {
+							content.relations = content.relations.filter(it => it != child.itemId);
+						};
+						this.save('relations', content.relations);
 					};
-					this.setField('relations', content.relations); 
 				};
 				return child;
 			});
@@ -278,7 +276,7 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 		return items;
 	};
 
-	setField (id: string, v: any) {
+	save (id: string, v: any) {
         const { param } = this.props;
         const { data } = param;
         const { rootId, blockId, blockIds } = data;
@@ -287,7 +285,7 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
         
         let content = block.content || {};
         content[id] = v;
-        content = DataUtil.checkLinkSettings({ ...block.content }, object.layout);
+        content = DataUtil.checkLinkSettings(content, object.layout);
 
 		C.BlockUpdateContent(rootId, blockId, { ...block, content });
 
