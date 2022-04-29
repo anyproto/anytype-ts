@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Icon, IconObject, Sync, ObjectName } from 'ts/component';
 import { I, Util, DataUtil, keyboard } from 'ts/lib';
-import { commonStore, blockStore, detailStore, menuStore, popupStore } from 'ts/store';
+import { blockStore, detailStore, menuStore, popupStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any> {
@@ -197,15 +197,7 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<Pro
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { rootId, isPopup } = this.props;
-
-		popupStore.open('search', {
-			preventResize: true, 
-			data: { 
-				rootId,
-				isPopup,
-			},
-		});
+		keyboard.onSearchPopup();
 	};
 
 	onPathOver () {

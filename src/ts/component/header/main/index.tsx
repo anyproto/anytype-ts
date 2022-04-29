@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Icon } from 'ts/component';
-import { Util } from 'ts/lib';
+import { Util, keyboard } from 'ts/lib';
 import { popupStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -42,14 +42,7 @@ const HeaderMainIndex = observer(class HeaderMainIndex extends React.Component<P
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { isPopup } = this.props;
-
-		popupStore.open('search', {
-			preventResize: true, 
-			data: { 
-				isPopup,
-			},
-		});
+		keyboard.onSearchPopup();
 	};
 
 	onSettings (e: any) {

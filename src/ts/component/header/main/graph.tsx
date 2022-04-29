@@ -1,16 +1,16 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Icon, IconObject, Sync } from 'ts/component';
-import { I, Util, DataUtil, crumbs, history as historyPopup, keyboard } from 'ts/lib';
-import { commonStore, blockStore, detailStore, menuStore, popupStore } from 'ts/store';
+import { Icon, IconObject } from 'ts/component';
+import { I, Util, DataUtil, keyboard } from 'ts/lib';
+import { blockStore, detailStore, menuStore, popupStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any> {
 	rootId: string;
 	isPopup?: boolean;
 	dataset?: any;
-}
+};
 
 const $ = require('jquery');
 
@@ -103,15 +103,7 @@ const HeaderMainGraph = observer(class HeaderMainGraph extends React.Component<P
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { rootId, isPopup } = this.props;
-
-		popupStore.open('search', {
-			preventResize: true, 
-			data: { 
-				rootId,
-				isPopup,
-			},
-		});
+		keyboard.onSearchPopup();
 	};
 
 	onPathOver () {

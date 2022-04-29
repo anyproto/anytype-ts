@@ -397,16 +397,13 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 
 		const { param } = this.props;
 		const { data } = param;
-		const { skipId, rootId } = data;
+		const { skipId } = data;
 		const { config } = commonStore;
 		
 		if (it.isArchived) {
 			return false;
 		};
 		if (skipId && (it.id == skipId)) {
-			return false;
-		};
-		if (it.id == rootId) {
 			return false;
 		};
 		if (it.layout == I.ObjectLayout.Dashboard) {

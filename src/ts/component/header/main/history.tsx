@@ -1,9 +1,8 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Icon } from 'ts/component';
 import { C, Util, DataUtil, I, translate, analytics } from 'ts/lib';
-import { detailStore, commonStore } from 'ts/store';
+import { detailStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any> {
