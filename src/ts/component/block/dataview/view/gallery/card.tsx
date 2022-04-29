@@ -135,7 +135,7 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 	onClick (e: any) {
 		e.preventDefault();
 
-		if (e.shiftKey || e.ctrlKey || e.metaKey) {
+		if (e.shiftKey || e.ctrlKey || e.metaKey || e.altKey) {
 			return;
 		};
 

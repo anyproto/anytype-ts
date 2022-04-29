@@ -203,9 +203,9 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		if (block.isPage()) {
 			sections = [
 				{ children: [ undo, redo, history, archive, pageRemove ] },
-				{ children: [ fav, template, pageLock ] },
+				{ children: [ fav, pageCopy, template, pageLock ] },
 				{ children: [ search ] },
-				{ children: [ print, pageExport, pageCopy ] },
+				{ children: [ print, pageExport ] },
 				{ children: [ highlight ] },
 			];
 			sections = sections.map((it: any, i: number) => { return { ...it, id: 'page' + i }; });
@@ -411,9 +411,9 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				break;
 
 			case 'pageCopy':
-				C.ObjectDuplicate(rootId, (message: any) => {
-					if (!message.error.code) {
-						DataUtil.objectOpenPopup({ id: message.id, layout: object.layout });
+				C.ObjectListDuplicate([ rootId ], (message: any) => {
+					if (!message.error.code && message.ids.length) {
+						DataUtil.objectOpenPopup({ id: message.ids[0], layout: object.layout });
 					};
 					analytics.event('DuplicateObject', { count: 1 });
 				});

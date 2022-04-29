@@ -36,7 +36,7 @@ const PageAuthSuccess = observer(class PageAuthSuccess extends React.Component<P
 				<Frame>
 					<IconObject size={64} object={{ iconEmoji: '🎉' }} />
 
-					<Title text="Save your keychain phrase" />
+					<Title text="Save your recovery phrase" />
 					<Label text="This phrase is needed to log in on another device and recover data. Please, keep it safe. You can find it anytime in settings." />
 						
 					<Textarea 

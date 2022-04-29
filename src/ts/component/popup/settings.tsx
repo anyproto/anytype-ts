@@ -148,7 +148,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 						<React.Fragment>	
 							<b>Account data removed from the backup node</b>
 							You can continue to work as normal.<br/>
-							All logged-in devices will continue to store data locally. However, you won't be able to sign into Anytype on new devices using your keychain recovery phrase. 
+							All logged-in devices will continue to store data locally. However, you won't be able to sign into Anytype on new devices using your recovery recovery phrase. 
 						</React.Fragment>
 					);
 				};
@@ -215,7 +215,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 							<p>After 30 days, your objects are permanently removed from the Anytype backup node.</p>
 
 							<b>2. You can continue to work as normal.</b>
-							<p>All logged-in devices will continue to store data locally. However, you won't be able to sign into Anytype on new devices using your keychain recovery phrase. </p>
+							<p>All logged-in devices will continue to store data locally. However, you won't be able to sign into Anytype on new devices using your recovery phrase. </p>
 
 							<div className="check" onClick={this.onCheck}>
 								<Checkbox ref={(ref: any) => { this.refCheckbox = ref; }} /> I have read it and want to delete my account
