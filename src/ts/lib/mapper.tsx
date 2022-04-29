@@ -116,9 +116,11 @@ const Mapper = {
 
 		BlockLink: (obj: any) => {
 			return {
-				style: obj.getStyle(),
 				targetBlockId: obj.getTargetblockid(),
-				fields: Decode.decodeStruct(obj.getFields()),
+				iconSize: obj.getIconSize(),
+				cardStyle: obj.getCardStyle(),
+				description: obj.getDescription(),
+				relations: obj.getRelationsList() || [],
 			};
 		},
 
