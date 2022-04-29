@@ -1,15 +1,11 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Icon } from 'ts/component';
 import { C, Util, DataUtil, I, translate, analytics } from 'ts/lib';
-import { detailStore, commonStore } from 'ts/store';
+import { detailStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
-interface Props extends RouteComponentProps<any> {
-	rootId: string;
-	isPopup?: boolean;
-};
+interface Props extends RouteComponentProps<any>, I.HeaderComponent {};
 
 interface State {
 	version: I.HistoryVersion;
@@ -32,7 +28,7 @@ const HeaderMainHistory = observer(class HeaderMainHistory extends React.Compone
 		const { version } = this.state;
 
 		return (
-			<div id="header" className="header headerMainHistory">
+			<React.Fragment>
 				<div className="side left">
 					<div className="item grey" onClick={this.onBack}>
 						<Icon className="arrow" />{translate('headerHistoryCurrent')}
@@ -40,22 +36,14 @@ const HeaderMainHistory = observer(class HeaderMainHistory extends React.Compone
 				</div>
 
 				<div className="side center">
-					{version ? <div className="item">{Util.date('d F Y H:i:s', version.time)}</div> : ''}
+					{version ? Util.date('d F Y H:i:s', version.time) : ''}
 				</div>
 
 				<div className="side right" onClick={this.onRestore}>
 					<div className="item orange">{translate('headerHistoryRestore')}</div>
 				</div>
-			</div>
+			</React.Fragment>
 		);
-	};
-
-	componentDidMount () {
-		Util.resizeSidebar();
-	};
-
-	componentDidUpdate () {
-		Util.resizeSidebar();	
 	};
 
 	onBack (e: any) {

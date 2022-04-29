@@ -3,14 +3,10 @@ import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Icon, IconObject, Sync, ObjectName } from 'ts/component';
 import { I, Util, DataUtil, keyboard } from 'ts/lib';
-import { commonStore, blockStore, detailStore, menuStore, popupStore } from 'ts/store';
+import { blockStore, detailStore, menuStore, popupStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
-interface Props extends RouteComponentProps<any> {
-	rootId: string;
-	isPopup?: boolean;
-	dataset?: any;
-};
+interface Props extends RouteComponentProps<any>, I.HeaderComponent {};
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
@@ -22,12 +18,7 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<Pro
 	constructor (props: any) {
 		super(props);
 		
-		this.onHome = this.onHome.bind(this);
-		this.onBack = this.onBack.bind(this);
-		this.onForward = this.onForward.bind(this);
 		this.onMore = this.onMore.bind(this);
-		this.onNavigation = this.onNavigation.bind(this);
-		this.onGraph = this.onGraph.bind(this);
 		this.onSync = this.onSync.bind(this);
 		this.onOpen = this.onOpen.bind(this);
 
@@ -36,7 +27,7 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<Pro
 	};
 
 	render () {
-		const { match, isPopup, rootId } = this.props;
+		const { rootId, onHome, onForward, onBack, onNavigation, onGraph, onSearch } = this.props;
 		const { breadcrumbs } = blockStore;
 		const root = blockStore.getLeaf(rootId, rootId);
 
@@ -46,33 +37,31 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<Pro
 
 		const object = detailStore.get(breadcrumbs, rootId, [ 'templateIsBundled' ]);
 		const canSync = !object.templateIsBundled && !root.isObjectFileKind();
-		const cn = [ 'header', 'headerMainEdit' ];
 		const isLocked = root.isLocked();
 		const showNav = !(root.isObjectType() || root.isObjectRelation());
 
 		return (
-			<div id="header" className={cn.join(' ')}>
+			<React.Fragment>
 				<div className="side left">
 					<Icon className="expand big" tooltip="Open as object" onClick={this.onOpen} />
-					<Icon className="home big" tooltip="Home" onClick={this.onHome} />
-					<Icon className={[ 'back', 'big', (!keyboard.checkBack() ? 'disabled' : '') ].join(' ')} tooltip="Back" onClick={this.onBack} />
-					<Icon className={[ 'forward', 'big', (!keyboard.checkForward() ? 'disabled' : '') ].join(' ')} tooltip="Forward" onClick={this.onForward} />
+					<Icon className="home big" tooltip="Home" onClick={onHome} />
+					<Icon className={[ 'back', 'big', (!keyboard.checkBack() ? 'disabled' : '') ].join(' ')} tooltip="Back" onClick={onBack} />
+					<Icon className={[ 'forward', 'big', (!keyboard.checkForward() ? 'disabled' : '') ].join(' ')} tooltip="Forward" onClick={onForward} />
+					
 					{showNav ? (
 						<React.Fragment>
-							<Icon className="nav big" tooltip="Navigation" onClick={this.onNavigation} />
-							<Icon className="graph big nm" tooltip="Open as graph" onClick={this.onGraph} />
+							<Icon className="nav big" tooltip="Navigation" onClick={onNavigation} />
+							<Icon className="graph big nm" tooltip="Open as graph" onClick={onGraph} />
 						</React.Fragment>
 					) : ''}
 				</div>
 
 				<div className="side center">
-					<div className="path" onMouseDown={(e: any) => { this.onSearch(e); }} onMouseOver={this.onPathOver} onMouseOut={this.onPathOut}>
-						<div className="item">
-							<div className="flex">
-								<IconObject object={object} size={18} />
-								<ObjectName object={object} />
-								{isLocked ? <Icon className="lock" /> : ''}
-							</div>
+					<div id="path" className="path" onMouseDown={onSearch} onMouseOver={this.onPathOver} onMouseOut={this.onPathOut}>	
+						<div className="inner">
+							<IconObject object={object} size={18} />
+							<ObjectName object={object} />
+							{isLocked ? <Icon className="lock" /> : ''}
 						</div>
 					</div>
 				</div>
@@ -81,38 +70,8 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<Pro
 					{canSync ? <Sync id="button-header-sync" rootId={rootId} onClick={this.onSync} /> : ''}
 					<Icon id="button-header-more" tooltip="Menu" className="more big" onClick={this.onMore} />
 				</div>
-			</div>
+			</React.Fragment>
 		);
-	};
-
-	componentDidMount () {
-		this.init();
-	};
-
-	componentDidUpdate () {
-		this.init();
-	};
-
-	init () {
-		const node = $(ReactDOM.findDOMNode(this));
-		node.addClass('show');
-
-		window.clearTimeout(this.timeout);
-		this.timeout = window.setTimeout(() => { node.removeClass('show'); }, Constant.delay.header);
-		
-		Util.resizeSidebar();
-	};
-
-	onHome (e: any) {
-		Util.route('/main/index');
-	};
-	
-	onBack (e: any) {
-		keyboard.back();
-	};
-	
-	onForward (e: any) {
-		keyboard.forward();
 	};
 
 	onOpen () {
@@ -185,39 +144,8 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<Pro
 		menuStore.closeAll(null, () => { menuStore.open('threadList', param); });
 	};
 
-	onNavigation (e: any) {
-		DataUtil.objectOpenPopup({ id: this.props.rootId, layout: I.ObjectLayout.Navigation });
-	};
-	
-	onGraph (e: any) {
-		DataUtil.objectOpenPopup({ id: this.props.rootId, layout: I.ObjectLayout.Graph });
-	};
-
-	onSearch (e: any) {
-		e.preventDefault();
-		e.stopPropagation();
-
-		const { rootId, isPopup } = this.props;
-
-		popupStore.open('search', {
-			preventResize: true, 
-			data: { 
-				rootId,
-				isPopup,
-			},
-		});
-	};
-
-	onPathOver () {
-		const { isPopup } = this.props;
-		if (isPopup) {
-			return;
-		};
-
-		const node = $(ReactDOM.findDOMNode(this));
-		const path = node.find('.path');
-
-		Util.tooltipShow('Click to search', path, I.MenuDirection.Center, I.MenuDirection.Bottom);
+	onPathOver (e: any) {
+		Util.tooltipShow('Click to search', $(e.currentTarget), I.MenuDirection.Center, I.MenuDirection.Bottom);
 	};
 
 	onPathOut () {

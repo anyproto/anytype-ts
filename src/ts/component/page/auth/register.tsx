@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Frame, Cover, Title, Error, Input, Button, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
+import { Frame, Cover, Title, Error, Input, Button, Header, FooterAuth as Footer } from 'ts/component';
 import { commonStore, authStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { FileUtil, Util, translate } from 'ts/lib';
@@ -37,7 +37,7 @@ const PageAuthRegister = observer(class PageAuthRegister extends React.Component
 		return (
 			<div>
 				<Cover {...cover} className="main" />
-				<Header />
+				<Header {...this.props} component="authIndex" />
 				<Footer />
 				
 				<Frame>

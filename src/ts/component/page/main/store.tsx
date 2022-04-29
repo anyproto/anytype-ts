@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Title, Label, Button, IconObject, Loader, Cover, HeaderMainStore as Header } from 'ts/component';
-import { I, C, DataUtil, Util, Storage, keyboard, Action, Onboarding, analytics } from 'ts/lib';
-import { dbStore, blockStore, detailStore, popupStore, } from 'ts/store';
+import { Title, Label, Button, IconObject, Loader, Cover, Header } from 'ts/component';
+import { I, C, DataUtil, Util, Storage, Action, Onboarding, analytics } from 'ts/lib';
+import { dbStore, blockStore, detailStore, } from 'ts/store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
@@ -224,7 +224,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 
 		return (
 			<div className={[ 'wrapper', tab ].join(' ')}>
-				<Header {...this.props} rootId={rootId} tabs={Tabs} tab={tab} onTab={this.onTab} />
+				<Header component="mainStore" {...this.props} rootId={rootId} tabs={Tabs} tab={tab} onTab={this.onTab} />
 
 				<div className="body">
 					{tabs}

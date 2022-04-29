@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Frame, Cover, Title, Error, Button, IconObject, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
+import { Frame, Cover, Title, Error, Button, IconObject, Header, FooterAuth as Footer } from 'ts/component';
 import { Storage, translate, C, DataUtil, Util, analytics } from 'ts/lib';
 import { commonStore, authStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -58,7 +58,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<Props
 		return (
 			<div>
 				<Cover {...cover} className="main" />
-				<Header />
+				<Header {...this.props} component="authIndex" />
 				<Footer />
 				
 				<Frame>

@@ -29,16 +29,6 @@
 		#wrap { height: 100%; }
 
 		.page { padding: 0px; height: 100%; }
-
-		.header { position: sticky; padding: 0px; border-radius: 12px 12px 0px 0px; top: 0px !important; }
-		.header {
-			.menu { right: 0px; top: 0px; }
-			.side.left { left: 16px !important; }
-			.side.left {
-				.icon.home { display: none; }
-				.icon.expand { display: inline-block; }
-			}
-		}
 		.footer { display: none; }
 
 		.pageMainEdit {
