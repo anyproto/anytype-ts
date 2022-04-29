@@ -854,7 +854,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		};
 		
 		if (newBlock.type) {
-			C.BlockCreate(newBlock, rootId, id, I.BlockPosition.Replace, cb);
+			C.BlockCreate(rootId, id, I.BlockPosition.Replace, newBlock, cb);
 		};
 
 		if (block.canHaveMarks()) {
@@ -886,7 +886,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 						newBlock.content.marks = [];
 					};
 
-					C.BlockCreate(newBlock, rootId, id, I.BlockPosition.Replace, cb);
+					C.BlockCreate(rootId, id, I.BlockPosition.Replace, newBlock, cb);
 					cmdParsed = true;
 					break;
 				};

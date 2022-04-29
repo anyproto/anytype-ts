@@ -348,21 +348,22 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 				newBlock = {
 					type: I.BlockType.Link,
 					content: {
+						...DataUtil.defaultLinkSettings(),
 						targetBlockId: String(item.id || ''),
 					},
-					fields: DataUtil.defaultLinkSettings(),
 				};
-				C.BlockCreate(newBlock, rootId, blockId, position);
+				C.BlockCreate(rootId, blockId, position, newBlock);
 				break;
 
 			case I.NavigationType.LinkTo:
 				newBlock = {
 					type: I.BlockType.Link,
 					content: {
+						...DataUtil.defaultLinkSettings(),
 						targetBlockId: blockId,
 					}
 				};
-				C.BlockCreate(newBlock, item.id, '', position);
+				C.BlockCreate(item.id, '', position, newBlock);
 				break;
 		};
 	};

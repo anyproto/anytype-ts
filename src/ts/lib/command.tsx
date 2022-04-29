@@ -281,23 +281,23 @@ const BlockRedo = (contextId: string, callBack?: (message: any) => void) => {
 	dispatcher.request('blockRedo', request, callBack);
 };
 
-const BlockCreate = (block: any, contextId: string, targetId: string, position: I.BlockPosition, callBack?: (message: any) => void) => {
+const BlockCreate = (contextId: string, targetId: string, position: I.BlockPosition, block: any, callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.Create.Request();
 	
-	request.setBlock(Mapper.To.Block(block));
 	request.setContextid(contextId);
 	request.setTargetid(targetId);
 	request.setPosition(position);
+	request.setBlock(Mapper.To.Block(block));
 
 	dispatcher.request('blockCreate', request, callBack);
 };
 
-const BlockUpdateContent = (block: any, contextId: string, blockId: string, callBack?: (message: any) => void) => {
+const BlockUpdateContent = (contextId: string, blockId: string, block: any, callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.UpdateContent.Request();
 	
-	request.setBlock(Mapper.To.Block(block));
 	request.setContextid(contextId);
 	request.setBlockid(blockId);
+	request.setBlock(Mapper.To.Block(block));
 
 	dispatcher.request('blockUpdateContent', request, callBack);
 };

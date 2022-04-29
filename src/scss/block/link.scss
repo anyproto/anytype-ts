@@ -59,6 +59,8 @@
 			.side.left {
 				.txt { line-height: 24px; vertical-align: top; }
 			}
+
+			.cardName .name { @include clamp1; }
 		}
 
 		.linkCard.card {

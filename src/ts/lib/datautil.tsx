@@ -1138,46 +1138,42 @@ class DataUtil {
 
 	defaultLinkSettings () {
 		return Object.assign({
-			withName: true,
-			withIcon: true,
-			withCover: false,
-			withDescription: false,
 			iconSize: I.LinkIconSize.Small,
-			style: I.LinkCardStyle.Text,
-		}, Storage.get('linkSettings') || {});
+			cardStyle: I.LinkCardStyle.Text,
+			description: I.LinkDescription.None,
+			relations: [ 'name', 'icon' ],
+		}, Storage.get('link') || {});
 	};
 
-	checkLinkSettings (fields: any, layout: I.ObjectLayout) {
-		fields = Util.objectCopy(fields || {});
-		fields.iconSize = Number(fields.iconSize) || I.LinkIconSize.Small;
-		fields.style = Number(fields.style) || I.LinkCardStyle.Text;
-		fields.withIcon = Boolean(undefined === fields.withIcon ? true : fields.withIcon);
-		fields.withName = Boolean(undefined === fields.withName ? true : fields.withName);
-		fields.withType = Boolean(fields.withType);
-		fields.withCover = Boolean(fields.withCover);
-		//fields.withTags = Boolean(fields.withTags);
+	checkLinkSettings (content: I.ContentLink, layout: I.ObjectLayout) {
+		const relationKeys = [ 'icon', 'name', 'type', 'cover', 'tag' ];
 
-		if (fields.style == I.LinkCardStyle.Text) {
-			fields.iconSize = I.LinkIconSize.Small;
-			fields.description = I.LinkDescription.None;
-			fields.withType = false;
-			fields.withCover = false;
-			fields.withName = true;
+		content = Util.objectCopy(content);
+		content.iconSize = Number(content.iconSize) || I.LinkIconSize.Small;
+		content.cardStyle = Number(content.cardStyle) || I.LinkCardStyle.Text;
+		content.relations = content.relations.filter(it => relationKeys.includes(it));
+
+		if (content.cardStyle == I.LinkCardStyle.Text) {
+			content.iconSize = I.LinkIconSize.Small;
+			content.description = I.LinkDescription.None;
+			content.relations = content.relations.concat([ 'icon', 'name' ]);
         };
 
 		if (layout == I.ObjectLayout.Task) {
-			fields.withIcon = true;
-			fields.iconSize = I.LinkIconSize.Small;
+			content.iconSize = I.LinkIconSize.Small;
+			content.relations = content.relations.concat([ 'icon' ]);
 		};
 
 		if (layout == I.ObjectLayout.Note) {
-			fields.withIcon = false;
-			fields.withCover = false;
-			fields.description = I.LinkDescription.None;
-			fields.iconSize = I.LinkIconSize.Small;
+			const filter = [ 'icon', 'cover' ];
+
+			content.description = I.LinkDescription.None;
+			content.iconSize = I.LinkIconSize.Small;
+			content.relations = content.relations.filter(it => filter.includes(it)); 
 		};
 
-		return fields;
+		content.relations = Util.arrayUnique(content.relations);
+		return content;
 	};
 
 	getDataviewData (rootId: string, blockId: string, id: string, keys: string[], offset: number, limit: number, clear: boolean, callBack?: (message: any) => void) {

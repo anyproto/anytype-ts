@@ -19,7 +19,10 @@ export enum LinkDescription {
 
 export interface ContentLink {
 	targetBlockId: string;
-	fields: any;
+	iconSize: LinkIconSize,
+	cardStyle: LinkCardStyle,
+	description: LinkDescription,
+	relations: string[];
 };
 
 export interface BlockLink extends I.Block {
