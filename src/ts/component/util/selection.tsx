@@ -369,17 +369,17 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			return;
 		};
 
-		const ids = this.get(type, false);
+		let ids = this.get(type, false);
 
-		if ((e.ctrlKey || e.metaKey)) {
+		if (e.ctrlKey || e.metaKey) {
 			if (ids.includes(id)) {
-				ids.filter(it => it != id);
+				ids = ids.filter(it => it != id);
 			} else {
 				ids.push(id);
 			};
 		} else
 		if (e.altKey) {
-			ids.filter(it => it != id);
+			ids = ids.filter(it => it != id);
 		} else {
 			ids.push(id);
 		};
