@@ -70,7 +70,7 @@ export default [
 	{ style: I.TextStyle.Bulleted, text: `Pressing the Delete key in the first position of a block just "combined" blocks. It should delete the first char of the block. Thanks, <a href="https://community.anytype.io/t/pressing-del-key-in-first-position-of-block-is-combining-blocks/5019">kEbZeCK</a>.` },
 	{ style: I.TextStyle.Bulleted, text: `Sometimes, automatically, <span class="highlight">hide and show</span> sidebar logic would get stuck on showing. It now works with more reliable logic.` },
 	{ style: I.TextStyle.Bulleted, text: `Sidebar with 100% width content. When the object content has 100% width and using the sidebar, the content is temporarily set to another width after closing the sidebar. Thanks, <a href="https://community.anytype.io/t/sidebar-with-100-width-content/4980">kEbZeCK</a>.` },
-	{ style: I.TextStyle.Bulleted, text: `I would appreciate it if the sidebar’s hover animations could be consistent with similar animations throughout Anytype. We also think so! Thank you, <a href="https://community.anytype.io/t/sidebar-consistent-hover-animations/5023">Sahilstudio</a>.` },
+	{ style: I.TextStyle.Bulleted, text: `I would appreciate it if the sidebar's hover animations could be consistent with similar animations throughout Anytype. We also think so! Thank you, <a href="https://community.anytype.io/t/sidebar-consistent-hover-animations/5023">Sahilstudio</a>.` },
 	{ style: I.TextStyle.Bulleted, text: `App will show more concrete errors if something goes wrong during adding the invite code.` },
 	{ style: I.TextStyle.Bulleted, text: `Applying background colour to existing text results in duplicated letters. When you use a backslash command to change the background colour of a line of text containing an object reference, the first letter of the object's name is duplicated. Thank you, <a href="https://community.anytype.io/t/applying-background-color-to-existing-text-results-in-duplicated-letters/5047">dddmggg</a>.` },
 	{ style: I.TextStyle.Bulleted, text: `Cannot access menu when creating relation. On the relations page, when adding a new relation and the page is long, the menu runs off the screen, and I am unable to select "create". Thank you, <a href="https://community.anytype.io/t/cannot-access-menu-when-creating-relation/4852">dddmggg</a>.` },
@@ -91,7 +91,7 @@ export default [
 	{ style: I.TextStyle.Bulleted, text: `You can move your sidebar to the right side of your screen by clicking and dragging it across.` },
 	{ style: I.TextStyle.Bulleted, text: `You can disable auto-hide and show mode for sidebar in <span class="highlight">Settings</span> → <span class="highlight">Other</span>` },
 
-	{ text: `This is our very first sidebar, but there’s more to come! We are going to release new improved Sidebar versions soon!` },
+	{ text: `This is our very first sidebar, but there's more to come! We are going to release new improved Sidebar versions soon!` },
 
 	{ style: I.TextStyle.Header2, text: `Search` },
 	{ text: `The first rule of search is showing relevant results, and it's becoming an essential feature for many of you who have hundreds of objects inside. We've implemented many changes and updates, which we hope will radically improve your search experience.` },
@@ -204,7 +204,7 @@ export default [
 	{ style: I.TextStyle.Bulleted, text: `Optimisations to reduce the wait from starting Anytype to reaching the home screen.  <a href="https://community.anytype.io/t/anytype-taking-2-5-minutes-to-get-past-the-logging-in-screen/2859">Thanks, lynxlove, Srinath</a>` },
 
 	{ style: I.TextStyle.Header2, text: `Enhancements` },
-	{ style: I.TextStyle.Bulleted, text: `New users will be shown their keychain phrase during their first session. ⚠️⚠️⚠️ Please write it down. Please keep it safe.` },
+	{ style: I.TextStyle.Bulleted, text: `New users will be shown their recovery phrase during their first session. ⚠️⚠️⚠️ Please write it down. Please keep it safe.` },
 	{ style: I.TextStyle.Bulleted, text: `Change the view to non-popup when the window's width is smaller than the width of the pop-up. <a herf="https://community.anytype.io/d/969-default-to-non-popup-view-when-windows-width-is-popuppages-width/1">Thanks, triangles</a>` },
 	{ style: I.TextStyle.Bulleted, text: `The <span class="highlight">Done</span> relation will be added to new Sets views by default. ` },
 	{ style: I.TextStyle.Bulleted, text: `<span class="highlight">СTRL / CMD + N</span> now creates a new object inside a Set.` },
@@ -247,7 +247,7 @@ export default [
 	{ style: I.TextStyle.Bulleted, text: `A newly created template and relations belonging to a type could no longer be opened and edited. Thanks, Sharky` },
 	{ style: I.TextStyle.Bulleted, text: `Object state might stop updating after re-opening from graph view. Thanks, WhereisJ9` },
 	{ style: I.TextStyle.Bulleted, text: `Dark mode — Discoloured three dots menu background for file relation values. Thanks, sahilstudio` },
-	{ style: I.TextStyle.Bulleted, text: `<span class="highlight">Shift + Enter</span> to create a line break doesn’t work. Thanks, Tim-Luca` },
+	{ style: I.TextStyle.Bulleted, text: `<span class="highlight">Shift + Enter</span> to create a line break doesn't work. Thanks, Tim-Luca` },
 	{ style: I.TextStyle.Bulleted, text: `Clear Search in Graph View on sidepanel close. Thanks, lynxlove` },
 	{ style: I.TextStyle.Bulleted, text: `Sometimes PDF may not be rendered in the preview` },
 	{ style: I.TextStyle.Bulleted, text: `App crashes when sync status is clicked in pages showing the status as Preparing. Thanks, lynxlove` },
@@ -286,18 +286,18 @@ export default [
 	{ text: `<img src="./img/help/dark-mode.png" class="full">` },
 
 	{ style: I.TextStyle.Header2, text: `Fresh docs` },
-	{ text: `We’ve launched a brand <a href="https://doc.anytype.io/d/">new hub</a> for Anytype docs. You can find it in the <span class="highlight">+</span> menu and in the <span class="highlight">?</span> icon at the bottom-right of your screen. This is our first draft, and we look forward to your feedback!` },
+	{ text: `We've launched a brand <a href="https://doc.anytype.io/d/">new hub</a> for Anytype docs. You can find it in the <span class="highlight">+</span> menu and in the <span class="highlight">?</span> icon at the bottom-right of your screen. This is our first draft, and we look forward to your feedback!` },
 
 	{ style: I.TextStyle.Header2, text: `Text with link to an object` },
 	{ text: `There was a way to add an arbitrary URL link to a text selection. But now you can make a link to any Anytype object this way. Just select the part of the text, click link icon and choose! Thank you, Oshyan, <a href="https://community.anytype.io/t/link-to-object-from-text-selection/1051">for your proposal</a>!` },
 
 	{ style: I.TextStyle.Header2, text: `Enhancements` },
-	{ style: I.TextStyle.Bulleted, text: `PDF now renders in Anytype. if you open this file type as an object. Use block’s menu in the editor and just click on a file in sets. Thanks, Gabi and Florencia for your feedback!` },
+	{ style: I.TextStyle.Bulleted, text: `PDF now renders in Anytype. if you open this file type as an object. Use block's menu in the editor and just click on a file in sets. Thanks, Gabi and Florencia for your feedback!` },
 	{ style: I.TextStyle.Bulleted, text: `You can now also open and create a set through the type in featured relations` },
 	{ style: I.TextStyle.Bulleted, text: `You will have Page, Note, Set, and Task at the top of the type selection. They are the most used types, so they will become more accessible.` },
 	{ style: I.TextStyle.Bulleted, text: `You can change views position in sets (finally!)` },
-	{ style: I.TextStyle.Bulleted, text: `Anytype now shows object’s preview when hovering the link and mention` },
-	{ style: I.TextStyle.Bulleted, text: `We’ve added brand new gradient wallpapers, that look very solid! ` },
+	{ style: I.TextStyle.Bulleted, text: `Anytype now shows object's preview when hovering the link and mention` },
+	{ style: I.TextStyle.Bulleted, text: `We've added brand new gradient wallpapers, that look very solid! ` },
 	{ style: I.TextStyle.Bulleted, text: `Full-text search now works for pre-build objects` },
 	{ style: I.TextStyle.Bulleted, text: `You can now open URL by clicking with Shift being held. Thanks, <a href="https://community.anytype.io/d/1059-option-to-make-url-relations-easier-to-click-through-to/1">qualquertipo</a>` },
 	{ style: I.TextStyle.Bulleted, text: `Search box height is now adaptive fitting results with no extra space below` },
@@ -360,30 +360,30 @@ export default [
 	{ text: `<img src="./img/help/graph.png" class="full">` },
 
 	{ style: I.TextStyle.Header2, text: `LaTeX block` },
-	{ text: `LaTeX is here! Have you been frustrated trying to work with LaTeX functions in other tools? With Anytype, you don’t have to worry about errors ever again thanks to a real-time preview and example functions in the editor. You can write code and view the formula output at the same time. Now fully enjoy your studies using Anytype for your Math and Chemistry class notes!` },
+	{ text: `LaTeX is here! Have you been frustrated trying to work with LaTeX functions in other tools? With Anytype, you don't have to worry about errors ever again thanks to a real-time preview and example functions in the editor. You can write code and view the formula output at the same time. Now fully enjoy your studies using Anytype for your Math and Chemistry class notes!` },
 	{ text: `<img src="./img/help/latex.png" class="full">` },
 
 	{ style: I.TextStyle.Header2, text: `List & Gallery views` },
 	{ text: `Meet the new and highly-requested Views for Sets! To create a new view, click the <img src="./img/icon/plus.svg" class="icon" /> icon at the top-left of your Set (next to "All"), give it a name in the field at the top of the pop-up, then select the type of view you want (currently Grid, Gallery, or List, with more coming soon). After you create it, you can change options for the View by using the Customize View icon at the top-right of your set.` },
-	{ text: `For Gallery views, the card image can be shown from the Attachment Relation or the object’s cover image. You can set this in Customize View, and the selected image source will appear at the top of each gallery card. ` },
+	{ text: `For Gallery views, the card image can be shown from the Attachment Relation or the object's cover image. You can set this in Customize View, and the selected image source will appear at the top of each gallery card. ` },
 	{ text: `You can also «right mouse» click on the view name to open options faster. ` },
 	{ text: `<img src="./img/help/gallery.png" class="full">` },
 
 	{ style: I.TextStyle.Header2, text: `Enhancements` },
 	{ style: I.TextStyle.Bulleted, text: `Tabs: We did some research and rearranged the tabs in Home in order of popularity. The Inbox tab was removed and will come back reimagined later. Recent tab is now called History and no longer contains archived objects.` },
 	{ style: I.TextStyle.Bulleted, text: `Export to Print now separates blocks between pages without cropping them in the middle. Thanks, <a href="https://community.anytype.io/d/627-print-a-page-not-in-full-screen-create-buggy-pdfs/1">quietwalker</a>` },
-	{ style: I.TextStyle.Bulleted, text: `Update System: The update progress bar will only be shown if you manually request an update. At the same time, the progress bar no longer blocks the application functions. Automatic updates now happen in the background. If a new version is available, you will be prompted to apply it. So Anytype won’t restart automatically at an inconvenient moment.` },
+	{ style: I.TextStyle.Bulleted, text: `Update System: The update progress bar will only be shown if you manually request an update. At the same time, the progress bar no longer blocks the application functions. Automatic updates now happen in the background. If a new version is available, you will be prompted to apply it. So Anytype won't restart automatically at an inconvenient moment.` },
 
 	{ style: I.TextStyle.Header2, text: `Bug fixes` },
 	{ style: I.TextStyle.Bulleted, text: `Application may crash after re-login` },
 	{ style: I.TextStyle.Bulleted, text: `Audio block content upload may show an infinite loading spinner` },
-	{ style: I.TextStyle.Bulleted, text: `Search on the page doesn’t work in a modal view` },
-	{ style: I.TextStyle.Bulleted, text: `After changing the size of the image block it becomes selected and can’t be un-selected` },
+	{ style: I.TextStyle.Bulleted, text: `Search on the page doesn't work in a modal view` },
+	{ style: I.TextStyle.Bulleted, text: `After changing the size of the image block it becomes selected and can't be un-selected` },
 	{ style: I.TextStyle.Bulleted, text: `Code snippet: Pressing Shift + Enter creates a new code line instead of the new text block.` },
 	{ style: I.TextStyle.Bulleted, text: `The value at the width scale may not reset after using undo-redo` },
 	{ style: I.TextStyle.Bulleted, text: `Pressing ESC with an open full-screen image closes the modal in which it was opened` },
 	{ style: I.TextStyle.Bulleted, text: `<a href="https://community.anytype.io/d/961-linked-page-title-gets-removed-on-appearance-change/1">Linked Page Title gets removed on appearance change</a>` },
-	{ style: I.TextStyle.Bulleted, text: `<a href="https://community.anytype.io/d/1009-align-option-for-cards-does-not-use-the-full-layout-width/1">The text alignment option, when applied to a card, does not consider the entire layout’s width until the view is refreshed</a>` },
+	{ style: I.TextStyle.Bulleted, text: `<a href="https://community.anytype.io/d/1009-align-option-for-cards-does-not-use-the-full-layout-width/1">The text alignment option, when applied to a card, does not consider the entire layout's width until the view is refreshed</a>` },
 
 	{ type: I.BlockType.Div, style: I.DivStyle.Dot },
 	// --------------------------------------------//
@@ -409,13 +409,13 @@ export default [
 	{ text: `<img src="./img/help/link-object.png" class="full">` },
 
 	{ style: I.TextStyle.Header3, text: `Open attached files in Anytype` },
-	{ text: `You can now open the attached files directly in Anytype instead of having to download them. So now you don’t need to download files and then find them in the file system. They open just from Anytype! Thanks, <a href="https://community.anytype.io/d/51-open-attached-files-directly-instead-of-downloading-them">bzimor, reuseman</a>` },
+	{ text: `You can now open the attached files directly in Anytype instead of having to download them. So now you don't need to download files and then find them in the file system. They open just from Anytype! Thanks, <a href="https://community.anytype.io/d/51-open-attached-files-directly-instead-of-downloading-them">bzimor, reuseman</a>` },
 
 	{ style: I.TextStyle.Header3, text: `@Today is the day!` },
 	{ text: `Enhance your Daily notes with handy date shortcuts! Anytype will create an object with a relative date automatically. Write it the way you like: <span class="highlight">@now</span>, <span class="highlight">@today</span>, <span class="highlight">@yesterday</span>, <span class="highlight">@three days ago</span>, <span class="highlight">@last month</span>, <span class="highlight">@one year from now</span>, <span class="highlight">@sunday</span>, <span class="highlight">@next January</span>, <span class="highlight">@last February</span>, <span class="highlight">@December 25th</span>, <span class="highlight">@01.10.21</span>, <span class="highlight">@2016-05-12</span>. So handy with backlinks! Thanks, <a href="https://community.anytype.io/d/770-timedate-shortcuts-eg-now-today-date-etc">levifig</a>` },
 
 	{ style: I.TextStyle.Header2, text: `Fixes` },
-	{ style: I.TextStyle.Bulleted, text: `The keychain phrase is visible without any password authentication. Thanks, shizoxlife` },
+	{ style: I.TextStyle.Bulleted, text: `The recovery phrase is visible without any password authentication. Thanks, shizoxlife` },
 	{ style: I.TextStyle.Bulleted, text: `Navigating back and forth between objects is unreliable. Thanks, <a href="https://community.anytype.io/d/643-forward-and-back-buttons-stop-working">​​irdinamaztura & abheek</a>` },
 	{ style: I.TextStyle.Bulleted, text: `Carriage returns to the top of the screen whenever I select something in the quick editor. Thanks, <a href="https://community.anytype.io/d/851-selection-jumps-to-top-in-popup-mode/1">bluatruli</a>` },
 	{ style: I.TextStyle.Bulleted, text: `Anytype (Human) version history breaks app login, triggers an infinite loop. Thanks, <a href="https://community.anytype.io/d/805-version-history-of-anytype-page-breaks-the-app/1">selimsandal</a>` },
@@ -429,7 +429,7 @@ export default [
 	{ style: I.TextStyle.Header2, text: `Enhancements` },
 	{ style: I.TextStyle.Bulleted, text: `New shortcut for Shortcuts - <span class="highlight">Ctrl + Space</span>. Thanks, <a href="https://community.anytype.io/d/602-shortcut-for-shortcuts/1">lynxlove</a>` },
 	{ style: I.TextStyle.Bulleted, text: `Changing text color: remember last used color or background and add shortcut - <span class="highlight">${cmd} + Shift + C</span> or <span class="highlight">${cmd} + Shift + H</span>. Thanks, <a href="https://community.anytype.io/d/546-changing-text-color-remember-last-used-color-and-adding-shortcut/1">abstractgeek</a>` },
-	{ style: I.TextStyle.Bulleted, text: `Favorite & unfavorite. You can’t add an object to favorites multiple times anymore. Thanks, <a href="https://community.anytype.io/d/568-possible-to-mark-an-object-as-favorite-multiple-times/1">Isak</a>` },
+	{ style: I.TextStyle.Bulleted, text: `Favorite & unfavorite. You can't add an object to favorites multiple times anymore. Thanks, <a href="https://community.anytype.io/d/568-possible-to-mark-an-object-as-favorite-multiple-times/1">Isak</a>` },
 	{ style: I.TextStyle.Bulleted, text: `Ability to clear the "Recent" list on the dashboard. Thanks, <a href="https://community.anytype.io/d/646-ability-to-clear-the-recent-list/1">ste</a>` },
 	{ style: I.TextStyle.Bulleted, text: `Link to object — first result not highlighted visually. Thanks, <a href="https://community.anytype.io/d/696-link-to-object-first-result-not-visually-chosen/1">kEbZeCK</a>` },
 	{ style: I.TextStyle.Bulleted, text: `An issue with dashes in the page title when creating a new page using <span class="highlight">@</span>. Thanks, <a href="https://community.anytype.io/d/324-issue-with-dash-in-page-name-when-new-page-created-using-at/1">bskinner</a>` },
@@ -460,7 +460,7 @@ export default [
 	{ style: I.TextStyle.Bulleted, text: `When you delete a relation from Set you might still have empty column in other views.` },
 	{ style: I.TextStyle.Bulleted, text: `Adding date from next month drops the value to December of 2020. Thanks, <a href="https://community.anytype.io/d/629-date-picker-defaulting-to-dec-2020-when-picking-certain-dates/1">Corsecharter</a>.` },
 	{ style: I.TextStyle.Bulleted, text: `The year in the date was changed incorrectly if there was already a value been set.` },
-	{ style: I.TextStyle.Bulleted, text: `Unexpected behavior may happen when clicking at the right side of object’s name in Set. Thanks, <a href="https://community.anytype.io/d/655-unexpected-behavior-when-clicking-input-fields/1">nizos</a>.` },
+	{ style: I.TextStyle.Bulleted, text: `Unexpected behavior may happen when clicking at the right side of object's name in Set. Thanks, <a href="https://community.anytype.io/d/655-unexpected-behavior-when-clicking-input-fields/1">nizos</a>.` },
 
 	{ type: I.BlockType.Div, style: I.DivStyle.Dot },
 	// --------------------------------------------//
@@ -495,7 +495,7 @@ export default [
 	{ style: I.TextStyle.Bulleted, text: `Hyperlink pop up window persisted across pages. Thanks, <a href="https://community.anytype.io/d/341-hyperlink-pop-up-window-persists-across-pages/1">jmsinnz</a>.` },
 	{ style: I.TextStyle.Bulleted, text: `New Checkbox was created pre-checked if the one above was checked. Thanks, <a href="https://community.anytype.io/d/311-new-checkbox-pre-checked/1">bskinner</a>.` },
 	{ style: I.TextStyle.Bulleted, text: `When you dragged pictures into a toggle, it resized to the width of the toggle. Thanks, <a href="https://community.anytype.io/d/461-when-you-drag-pictures-into-a-toggle-it-resizes-to-the-width-of-the-toggle/1">Inkqb</a>.` },
-	{ style: I.TextStyle.Bulleted, text: `When first setting up Anytype using a keychain phrase to log in, pressing <span class="highlight">Enter</span> didn't submit the input. Thanks, <a href="https://community.anytype.io/d/498-enter-key-should-submit-seed-phrase/1">gil</a>.` },
+	{ style: I.TextStyle.Bulleted, text: `When first setting up Anytype using a recovery phrase to log in, pressing <span class="highlight">Enter</span> didn't submit the input. Thanks, <a href="https://community.anytype.io/d/498-enter-key-should-submit-seed-phrase/1">gil</a>.` },
 	{ style: I.TextStyle.Bulleted, text: `Numeration could start from 1 in different circumstances. Thanks, <a href="https://community.anytype.io/d/450-changing-long-text-into-nummerous-list-bug/1">XxxBalCion</a>.` },
 	{ style: I.TextStyle.Bulleted, text: `"Type text or / for commands" was visible on desktop overlapping the newly added text from Android. Thanks, <a href="https://community.anytype.io/d/420-help-text-overlap-bug/1">abiak</a>.` },
 	{ style: I.TextStyle.Bulleted, text: `Background color wasn't exporting when printing. Thanks, <a href="https://community.anytype.io/d/368-background-colour-not-exported-when-printing/1">firmicutes</a>.` },
@@ -515,8 +515,8 @@ export default [
 	{ text: `The big style train keeps on rolling! This latest version features our redesigned dashboard with tabs and inline object filtering.` },
 	{ text: `It also includes features for better keyboard support and fixes for issues relating to sync and page editing. Thanks to our alpha testers for all your bug reports & feature requests. We hope you enjoy this latest build of Anytype and we look forward to your feedback on the new dashboard.` },
 	{ style: I.TextStyle.Header2, text: `New features & enhancements` },
-	{ text: `We’ve polished writing ​experience to make it smooth around the edges.` },
-	{ style: I.TextStyle.Bulleted, text: `Support for <span class="highlight">Inline</span> code and formatting when typing with the keyboard. Also we’ve add, <span class="highlight">** or __</span> - bold, <span class="highlight">* or _</span> - italic <span class="highlight">~~</span> - strike. Thanks, <a href="https://community.anytype.io/d/273-support-for-inline-code/1">Michael</a>!` },
+	{ text: `We've polished writing ​experience to make it smooth around the edges.` },
+	{ style: I.TextStyle.Bulleted, text: `Support for <span class="highlight">Inline</span> code and formatting when typing with the keyboard. Also we've add, <span class="highlight">** or __</span> - bold, <span class="highlight">* or _</span> - italic <span class="highlight">~~</span> - strike. Thanks, <a href="https://community.anytype.io/d/273-support-for-inline-code/1">Michael</a>!` },
 	{ style: I.TextStyle.Bulleted, text: `You can use shortcuts to create arrows <span class="highlight">-></span> = <span class="highlight">→</span>, <span class="highlight"><-</span> = <span class="highlight">←</span>, <span class="highlight">--></span> = <span class="highlight">⟶</span>, <span class="highlight"><--</span> = <span class="highlight">⟵</span>, <span class="highlight"><--></span> = <span class="highlight">⟷</span>.` },
 	{ style: I.TextStyle.Bulleted, text: `Sometimes you could end up without a cursor on the page, e.g. after removing a block, and break the keyboard flow. Now you can just press <span class="highlight">Enter</span> or press up and arrow keys and continue no matter what happened.` },
 	{ style: I.TextStyle.Bulleted, text: `You can now manage toggle with the keyboard. Pressing → at the end of the block will open it. When pressing <span class="highlight">Tab</span> to create a sub-block of a toggle, the toggle block will now expand to show the new block. The same will happen after dropping content into a closed toggle. Thanks, Rai, <a href="https://community.anytype.io/d/390-automatically-open-toggle-block-after-another-toggle-is-indented-inside">Kite</a>!` },
@@ -544,16 +544,16 @@ export default [
 	{ text: `Say hello to the new slash menu!` },
 	{ style: I.TextStyle.Header2, text: `New features & enhancements` },
 	{ style: I.TextStyle.Bulleted, text: `New slash: a boost for content creation. You can now write <span class="highlight">/</span> anywhere to change style, make action or create a new block. Simply enter some text to filter your results. The new Style section works with text styles in the current block. The Turn-into action creates objects from the blocks and no longer works with styles.` },
-	{ style: I.TextStyle.Bulleted, text: `Every new divider or media block gets selected after creation, so you can continue using the keyboard by pressing enter, up and arrow. Thanks to all who mentioned keyboard experience before in feedback and for writing posts like <a href="https://community.anytype.io/d/308-creating-dividers-removes-cursor">Ben’s</a>.` },
+	{ style: I.TextStyle.Bulleted, text: `Every new divider or media block gets selected after creation, so you can continue using the keyboard by pressing enter, up and arrow. Thanks to all who mentioned keyboard experience before in feedback and for writing posts like <a href="https://community.anytype.io/d/308-creating-dividers-removes-cursor">Ben's</a>.` },
 	{ style: I.TextStyle.Bulleted, text: `Give feedback now works through the new form with ability to add media.` },
-	{ style: I.TextStyle.Bulleted, text: `New <span class="highlight">Description</span> block. Anytype’s first relation. Description is a simple block that contains a short description, and can be used in databases for context extension, filtering, sorting and many more in the future. Please <a href="https://community.anytype.io/d/343-description-block-what-you-think-about-it">tell us</a> what you think!` },
+	{ style: I.TextStyle.Bulleted, text: `New <span class="highlight">Description</span> block. Anytype's first relation. Description is a simple block that contains a short description, and can be used in databases for context extension, filtering, sorting and many more in the future. Please <a href="https://community.anytype.io/d/343-description-block-what-you-think-about-it">tell us</a> what you think!` },
 	{ style: I.TextStyle.Bulleted, text: `Entering pin code now open the last opened page, not dashboard.` },
 	{ style: I.TextStyle.Header2, text: `Design & UX` },
 	{ style: I.TextStyle.Bulleted, text: `Tray icons now have fast options to create <span class="highlight">New Object</span>, <span class="highlight">Search Object</span>, <span class="highlight">Import</span>, <span class="highlight">Export</span>, <span class="highlight">Quit</span> and more.` },
 	{ style: I.TextStyle.Bulleted, text: `Optimised application bar. It shows navigation options constantly. And also refreshed style for macOS Mojave` },
 	{ style: I.TextStyle.Header2, text: `Network` },
 	{ style: I.TextStyle.Bulleted, text: `Sync now works under restricted networks through special circuit relay logic <a href="https://docs.libp2p.io/concepts/circuit-relay/ ">This new concept</a>  helps to connect devices between VPN, cellular, WiFi with NAT, and many more. This means fast syncing in more cases. We will continue to improve sync across all network topologies, including LANs.` },
-	{ style: I.TextStyle.Bulleted, text: `Our core library (libp2p) was updated on the backup server. Now if two devices open a TCP connection to each other at the same time using the same set of ports, they'll end up with a single TCP connection. Previously, libp2p would treat this as an error and disconnect. The server update itself doesn’t fix this, so you need to install the latest version on your device and bring the syncing consistency back! Thanks to Chris, Martin, Samuel, 3000, Sinesh, Danijel, Alex, Nodoby, Volodymyr, Sven and Oshyan for  <a href="https://community.anytype.io/d/231-desktop-app-is-not-syncing/20">conversation</a> and sharing diagnostics files.` },
+	{ style: I.TextStyle.Bulleted, text: `Our core library (libp2p) was updated on the backup server. Now if two devices open a TCP connection to each other at the same time using the same set of ports, they'll end up with a single TCP connection. Previously, libp2p would treat this as an error and disconnect. The server update itself doesn't fix this, so you need to install the latest version on your device and bring the syncing consistency back! Thanks to Chris, Martin, Samuel, 3000, Sinesh, Danijel, Alex, Nodoby, Volodymyr, Sven and Oshyan for  <a href="https://community.anytype.io/d/231-desktop-app-is-not-syncing/20">conversation</a> and sharing diagnostics files.` },
 	{ style: I.TextStyle.Bulleted, text: `Pages could disappear on the dashboard. We fixed the bug with the syncing mechanism logic. Thanks, <a href="https://community.anytype.io/d/333-pages-going-missing-after-archiving-and-sync-between-desktop-and-android/1">Martin</a>, Vincer` },
 	{ style: I.TextStyle.Header2, text: `Fixes & tech` },
 	{ style: I.TextStyle.Bulleted, text: `Possibility to dive into a search result by pressing the enter key. Thanks, Björn, <a href="https://community.anytype.io/d/322-desktop-linux-being-able-to-enter-page-from-search-using-enter-keyy">Erwin</a>` },
@@ -585,17 +585,17 @@ export default [
 	{ style: I.TextStyle.Header1, text: `Updates for 16 April, 2021` },
 
 	{ text: `Hold onto your desks, this is a big one!` },
-	{ text: `Previous updates focused on the unseen: bugs, sync, speed, and reliability. Those were difficult and necessary updates. It’s important Anytype’s foundation supports multiple object types and rich data views. With this release, however, you’ll begin to see some of the visual changes we’re putting in place for our next major release. We want Anytype to be a delightful experience for its users, and we hope you enjoy this sneak peek at what’s coming.` },
+	{ text: `Previous updates focused on the unseen: bugs, sync, speed, and reliability. Those were difficult and necessary updates. It's important Anytype's foundation supports multiple object types and rich data views. With this release, however, you'll begin to see some of the visual changes we're putting in place for our next major release. We want Anytype to be a delightful experience for its users, and we hope you enjoy this sneak peek at what's coming.` },
 
 	{ style: I.TextStyle.Header2, text: `New Features` },
-	{ style: I.TextStyle.Bulleted, text: `We’ve spruced up Anytype with a refreshed design. We hope you’ll enjoy larger icons and more object descriptions.` },
+	{ style: I.TextStyle.Bulleted, text: `We've spruced up Anytype with a refreshed design. We hope you'll enjoy larger icons and more object descriptions.` },
 	{ style: I.TextStyle.Bulleted, text: `A new search pane, featuring full-text search that can find matches inside your objects & pages.` },
 	{ style: I.TextStyle.Bulleted, text: `Markdown <b>export</b> Located in Settings, you can now export your Anytype pages into markdown.` },
 	{ style: I.TextStyle.Bulleted, text: `Greater page customisation options. Users can now change page alignment, and make changes to overall page size. This can be found in the menu while editing a page on the top-right of Anytype.` },
 	{ style: I.TextStyle.Bulleted, text: `You can now add/remove pages to/from the dashboard. Simply click the menu from any page.` },
-	{ style: I.TextStyle.Bulleted, text: `It can be tough to login to the mobile app with a mnemonic phrase, so you can do that with a QR code. Your unique QR code is found under Settings > Keychain phrase.` },
+	{ style: I.TextStyle.Bulleted, text: `It can be tough to login to the mobile app with a mnemonic phrase, so you can do that with a QR code. Your unique QR code is found under Settings > Recovery phrase.` },
 	{ text: ``},
-	{ text: `<span class="highlight">Please don’t share your keychain phrase or your QR code with anyone.</span>` },
+	{ text: `<span class="highlight">Please don't share your recovery phrase or your QR code with anyone.</span>` },
 
 	{ style: I.TextStyle.Header2, text: `Enhancements` },
 	{ style: I.TextStyle.Bulleted, text: `Men-oeuvres. Menus will now flip vertically/horizontally when they run out of space.` },
@@ -614,14 +614,14 @@ export default [
 	{ text: `This release is all about reliability and sync speed.` },
 	{ text: `Readers beware, these are some hardcore technical release notes:` },
 	{ style: I.TextStyle.Bulleted, text: `Multi-stream simultaneous connections should be fixed, as a result of our updating to the latest <span class="highlight">libp2p</span> libraries.` },
-	{ style: I.TextStyle.Bulleted, text: `We’ve updated the request rate for adaptive changes. They are now based on persistent sync statuses, and this has reduced the polling rate of inactive devices. This helps us keep any further complexities that may arise from polling at bay.` },
-	{ style: I.TextStyle.Bulleted, text: `Anytype is now efficient at checking an object’s information is in sync between any two nodes, by using heads/address edges. This feature also helps reduce communication overhead between synced and inactive peers.` },
-	{ style: I.TextStyle.Bulleted, text: `Address edge computation implemented. This includes a deterministic digest of all peer addresses involved in the object’s creation and changes.` },
+	{ style: I.TextStyle.Bulleted, text: `We've updated the request rate for adaptive changes. They are now based on persistent sync statuses, and this has reduced the polling rate of inactive devices. This helps us keep any further complexities that may arise from polling at bay.` },
+	{ style: I.TextStyle.Bulleted, text: `Anytype is now efficient at checking an object's information is in sync between any two nodes, by using heads/address edges. This feature also helps reduce communication overhead between synced and inactive peers.` },
+	{ style: I.TextStyle.Bulleted, text: `Address edge computation implemented. This includes a deterministic digest of all peer addresses involved in the object's creation and changes.` },
 	{ style: I.TextStyle.Bulleted, text: `<span class="highlight">Object diagnostics</span> are now in the system menu. This tool will help us diagnose sync issues. It generates a file, which you can share with the team using the feedback tool. The result is confidential.` },
 	{ style: I.TextStyle.Bulleted, text: `Many minor fixes and improvements. Thank you so much for the data on Telegram and the <a href="https://community.anytype.io/d/231-desktop-app-is-not-syncing">Desktop app is not syncing</a> thread.` },
 	{ text: ``},
 	{ text: ``},
-	{ text: `I’m sure it feels like we’ve been saying this forever, but we really are very close to our databases update. It will feature a refreshed design, rapid semantic search, move-to & linking optimisations, and much more.` },
+	{ text: `I'm sure it feels like we've been saying this forever, but we really are very close to our databases update. It will feature a refreshed design, rapid semantic search, move-to & linking optimisations, and much more.` },
 
 	{ type: I.BlockType.Div, style: I.DivStyle.Dot },
 	// --------------------------------------------//
@@ -638,7 +638,7 @@ export default [
 
 	{ text: `Happy holidays from the Anytypers!` },
 	{ text: `As we near the end of 2020, we want to say thanks for all your support this year.` },
-	{ text: `There are many reasons to be optimistic about 2021. For us, we’re looking forward to databases, templates, and a discussion about how objects work together.` },
+	{ text: `There are many reasons to be optimistic about 2021. For us, we're looking forward to databases, templates, and a discussion about how objects work together.` },
 	{ text: `This is a major Anytype update with sync status, security improvements, and bug fixes. Overall, we think this release should provide you a much-improved experience.` },
 
 	{ style: I.TextStyle.Header3, text:  `Sync statuses: ` },
@@ -649,13 +649,13 @@ export default [
 	{ text: `<span class="highlight">Updates requested</span> status calculation starts to work from this release.` },
 
 	{ style: I.TextStyle.Header3, text:  `Further Enhancements:` },
-	{ style: I.TextStyle.Bulleted, text: `Your mnemonic passphrase is now stored in your system’s keychain.` },
+	{ style: I.TextStyle.Bulleted, text: `Your mnemonic passphrase is now stored in your system's keychain.` },
 	{ style: I.TextStyle.Bulleted, text: `We disabled the noise security protocol and enabled the latest TLS, rewrote initial sync logic, and now we have more successful connections between devices. This means new objects will sync faster. ` },
-	{ text: `We’re currently working on another major update which should increase the sync success rate even more.` },
+	{ text: `We're currently working on another major update which should increase the sync success rate even more.` },
 
 	{ style: I.TextStyle.Header3, text:  `Bug fixes:` },
 	{ style: I.TextStyle.Bulleted, text: `We fixed a bug that prevented some users from mentioning their pages. Thanks, Mukanzi!` },
-	{ style: I.TextStyle.Bulleted, text: `We’ve fixed the Anytype icon and hover state on Windows. Thanks, Ichimga!` },
+	{ style: I.TextStyle.Bulleted, text: `We've fixed the Anytype icon and hover state on Windows. Thanks, Ichimga!` },
 	{ style: I.TextStyle.Bulleted, text: `Page top-rights icons clips over rendered above the scroll bar in modal views in narrow resolutions. Thanks, BGray!` },
 	{ style: I.TextStyle.Bulleted, text: `The <span class="highlight"><</span> or <span class="highlight">></span> symbols don't disappear anymore. Thanks, George!` },
 	{ style: I.TextStyle.Bulleted, text: `The URL doesn't paste in the URL dialog window if you try to create a link in a text by <span class="highlight">Cmd + K</span> and <span class="highlight">Cmd + V</span> combination. Thanks, Hayk!` },
@@ -676,7 +676,7 @@ export default [
 	{ style: I.TextStyle.Bulleted, text: `We now show the loading object state for pages that downloading from the remote node.` },
 
 	{ style: I.TextStyle.Header3, text:  `Bug fixes:` },
-	{ style: I.TextStyle.Bulleted, text: `<span class="highlight">Shift + Enter</span> doesn’t create a new line within a block. Thanks, Poochy!` },
+	{ style: I.TextStyle.Bulleted, text: `<span class="highlight">Shift + Enter</span> doesn't create a new line within a block. Thanks, Poochy!` },
 	{ style: I.TextStyle.Bulleted, text: `Markup menu remains open when click outside the editor container. Thanks, BGray!` },
 	{ style: I.TextStyle.Bulleted, text: `The text disappears if you type and press the system button back after typing and open the page again. Thanks, BGray!` },
 	{ style: I.TextStyle.Bulleted, text: `Markup menu remains open when click outside the editor container. Thanks, BGray!` },
@@ -704,7 +704,7 @@ export default [
 	{ style: I.TextStyle.Bulleted, text: `App usage survey pop-up was tuned not to show for new users.` },
 
 	{ style: I.TextStyle.Header3, text:  `Bug fixes:` },
-	{ style: I.TextStyle.Bulleted, text: `Functions like move to, duplicate, delete, and align didn't work in block’s turn into menu.` },
+	{ style: I.TextStyle.Bulleted, text: `Functions like move to, duplicate, delete, and align didn't work in block's turn into menu.` },
 	{ style: I.TextStyle.Bulleted, text: `The search on the page did not highlight the found data in the text where the styles were added.` },
 	{ style: I.TextStyle.Bulleted, text: `In-page search position is now fixed to the top.` },
 	{ style: I.TextStyle.Bulleted, text: `In-page search had no possibility to find special characters.` },
@@ -713,7 +713,7 @@ export default [
 	// --------------------------------------------//
 
 	{ style: I.TextStyle.Header1, text: `Updates for 08 October, 2020` },
-	{ text: `We’re taking another step towards our beta today, with the launch of our <a href="https://community.anytype.io/">community forum</a>. It will be a valuable resource for features, feedback and support. We hope it will also a place for you to do what you do best: discuss the future of the web and building your very own digital brain. Your invite code should wait you in mailbox, if nothing there please write us <a href="mailto:hello@anytype.io">hello@anytype.io</a>.` },
+	{ text: `We're taking another step towards our beta today, with the launch of our <a href="https://community.anytype.io/">community forum</a>. It will be a valuable resource for features, feedback and support. We hope it will also a place for you to do what you do best: discuss the future of the web and building your very own digital brain. Your invite code should wait you in mailbox, if nothing there please write us <a href="mailto:hello@anytype.io">hello@anytype.io</a>.` },
 
 	{ style: I.TextStyle.Header3, text:  `Enhancements:` },
 	{ style: I.TextStyle.Bulleted, text: `The title can be aligned, has color and background now.` },
@@ -739,20 +739,20 @@ export default [
 	{ style: I.TextStyle.Bulleted, text: `We've made the main logo clickable and display search as it works on other pages.` },
 	{ style: I.TextStyle.Bulleted, text: `We've changed header icons set a bit.` },
 	{ style: I.TextStyle.Bulleted, text: `The document building algorithm was improved.` },
-	{ style: I.TextStyle.Bulleted, text: `Pressing <span class="highlight">CMD/CTRL + S</span> will now focus on the search bar, making it even easier for you to find what you’re looking for.` },
+	{ style: I.TextStyle.Bulleted, text: `Pressing <span class="highlight">CMD/CTRL + S</span> will now focus on the search bar, making it even easier for you to find what you're looking for.` },
 
 	{ style: I.TextStyle.Header3, text:  `Bug fixes:` },
-	{ style: I.TextStyle.Bulleted, text: `Sometimes speedy typists would type so quickly, Anytype wouldn’t delete their text. That bug has been fixed with this build, so you can take it back to 88.` },
+	{ style: I.TextStyle.Bulleted, text: `Sometimes speedy typists would type so quickly, Anytype wouldn't delete their text. That bug has been fixed with this build, so you can take it back to 88.` },
 	{ style: I.TextStyle.Bulleted, text: `Changing the text colour in-block will no longer return the carriage to the beginning of the text string.` },
 	{ style: I.TextStyle.Bulleted, text: `When selecting a block with nested blocks, those nested blocks will now also be selected.` },
-	{ style: I.TextStyle.Bulleted, text: `Users with email addresses on newer TLDs reported issues when trying to submit feedback. We’ve updated our email address validation.` },
+	{ style: I.TextStyle.Bulleted, text: `Users with email addresses on newer TLDs reported issues when trying to submit feedback. We've updated our email address validation.` },
 
 	{ type: I.BlockType.Div, style: I.DivStyle.Dot },
 	// --------------------------------------------//
 
 	{ style: I.TextStyle.Header1, text: `Updates for 23 September, 2020` },
 
-	{ text: `Thank you to our incredible alpha testers for helping us build Anytype. In this latest build, we’ve introduced a short — 1 minute — survey. Your feedback is appreciated, and helps make our product better! ` },
+	{ text: `Thank you to our incredible alpha testers for helping us build Anytype. In this latest build, we've introduced a short — 1 minute — survey. Your feedback is appreciated, and helps make our product better! ` },
 
 	{ style: I.TextStyle.Header3, text:  `Enhancements:` },
 	{ style: I.TextStyle.Bulleted, text: `Enhanced syncing time and page retriving speed up to 100%.` },
@@ -762,7 +762,7 @@ export default [
 	{ style: I.TextStyle.Bulleted, text: `Our updater has been… <i>sigh</i> updated. Download checks will take place in the background, and you will have the option to update now or later.` },
 	{ style: I.TextStyle.Bulleted, text: `☑️Typing <span class="highlight">/todo</span> will now create a to-do list!` },
 	{ style: I.TextStyle.Bulleted, text: `Windows: Close, Restore and Minimise buttons are now more responsive. ` },
-	{ style: I.TextStyle.Bulleted, text: `Search results can now be selected using the keyboard’s up/down arrows and the tab key.` },
+	{ style: I.TextStyle.Bulleted, text: `Search results can now be selected using the keyboard's up/down arrows and the tab key.` },
 	{ style: I.TextStyle.Bulleted, text: `The Highlighted block can have right align now.` },
 
 	{ style: I.TextStyle.Header3, text:  `Bug fixes:` },
@@ -815,14 +815,14 @@ export default [
 	{ text: `This release brings several improvements to cross-device syncing and reduces the amount of disk space needed. This version comes with a new data format for your pages, and is a huge step towards further collaboration features in the future.<br>` },
 	{ text: `Right now, however, it means your page history will use <b>much</b> less space, changes that you made in one device will come to another <b>online without having to refresh</b>.` },
 
-	{ style: I.TextStyle.Header3, text: `🔔What’s changed?` },
+	{ style: I.TextStyle.Header3, text: `🔔What's changed?` },
 	{ style: I.TextStyle.Bulleted, text: `You can now paste images from the clipboard into Anytype blocks.` },
-	{ style: I.TextStyle.Bulleted, text: `We’ve added a progress bar for users who import from Notion. <br>So now you can track the progress` },
+	{ style: I.TextStyle.Bulleted, text: `We've added a progress bar for users who import from Notion. <br>So now you can track the progress` },
 	{ style: I.TextStyle.Bulleted, text: `Copying lists with nested items now pastes in the correct structure. ` },
 	{ style: I.TextStyle.Bulleted, text: `Fixed ability to copy and paste the whole block. ` },
 	{ style: I.TextStyle.Bulleted, text: `A bug that allowed users to bypass the PIN screen through the Help button <br> has been fixed.` },
 	{ style: I.TextStyle.Bulleted, text: `When using markup — bold, italics, etc — made with multiple blocks selected, it now can be reversed by using the same shortcut.` },
-	{ style: I.TextStyle.Bulleted, text: `We’ve fixed a bug that changed the markup of text after a mention is inserted.` },
+	{ style: I.TextStyle.Bulleted, text: `We've fixed a bug that changed the markup of text after a mention is inserted.` },
 	{ style: I.TextStyle.Bulleted, text: `One user noticed an issue with the feedback submission process, <br>which we have now fixed. ` },
 	{ style: I.TextStyle.Bulleted, text: `Drag-and-drop with nested blocks has been improved. Users should no longer encounter disappearing blocks.` },
 	{ style: I.TextStyle.Bulleted, text: `Finally, for any users wondering why the carriage was disappearing in an empty block, it has been found and safely returned!` },
@@ -833,12 +833,12 @@ export default [
 	{ text: `You can use the navigation pane with keyboard keys:` },
 	{ style: I.TextStyle.Bulleted, text: `Easily switch pages with the arrow keys.` },
 	{ style: I.TextStyle.Bulleted, text: `<span class="highlight">←</span> and <span class="highlight">→</span> arrow transfers the selection to links, <span class="highlight">↑</span> and <span class="highlight">↓</span> arrows transitions between the same level, and <span class="highlight">Enter</span> is confirmation.` },
-	{ style: I.TextStyle.Bulleted, text: `<span class="highlight">Tab</span> & <span class="highlight">Shift</span> + <span class="highlight">Tab</span> can also be used to select objects. This is similar to the browser’s selection of elements.` },
+	{ style: I.TextStyle.Bulleted, text: `<span class="highlight">Tab</span> & <span class="highlight">Shift</span> + <span class="highlight">Tab</span> can also be used to select objects. This is similar to the browser's selection of elements.` },
 	{ style: I.TextStyle.Bulleted, text: `<span class="highlight">↑</span> and <span class="highlight">↓</span> arrows, <span class="highlight">Tab</span> & <span class="highlight">Shift</span> + <span class="highlight">Tab</span> nnow transition your selection between options in the search menu without needing any additional filtration.` },
 
 	{ style: I.TextStyle.Header3, text: `🙏🏻Acknowledgements` },
 
-	{ text: `Anytype releases wouldn’t be possible without a multitude of people, and our thanks go out to all of our brilliant alpha users and bug reporters.` },
+	{ text: `Anytype releases wouldn't be possible without a multitude of people, and our thanks go out to all of our brilliant alpha users and bug reporters.` },
 
 	{ type: I.BlockType.Div, style: I.DivStyle.Dot },
 	// --------------------------------------------//
@@ -905,7 +905,7 @@ export default [
 	{ style: I.TextStyle.Header3, text: `Mention` },
 	{ text: `Now Anytype allows you to refer to any page right in your content.` },
 	{ text: `Simply insert the <span class="highlight">@</span> sign and start typing the name of a page you want to refer to.` },
-	{ text: `You can mention any page anywhere and it will build a relationship between pages. All&nbsp;mentions will be shown in the navigation panel. It’s just a more convenient way to connect any pages inside Anytype. Hope you enjoy it and we look forward to your suggestions on how we could make it better.` },
+	{ text: `You can mention any page anywhere and it will build a relationship between pages. All&nbsp;mentions will be shown in the navigation panel. It's just a more convenient way to connect any pages inside Anytype. Hope you enjoy it and we look forward to your suggestions on how we could make it better.` },
 	{ text: `<img src="./img/help/mention.gif" class="full mention">` },
 
 	{ type: I.BlockType.Div, style: I.DivStyle.Dot },
@@ -913,7 +913,7 @@ export default [
 
 	{ style: I.TextStyle.Header1, text: `Updates for 6 May, 2020` },
 	{ style: I.TextStyle.Header3, text: `Meet the new navigation` },
-	{ text: `All the knowledge we have in our brains organized associatively, not hierarchically. Our&nbsp;brain, in a way, is interconnected wiki. We have multiple connections between ideas or thoughts in our brains - it’s the way we navigate through our memories.` },
+	{ text: `All the knowledge we have in our brains organized associatively, not hierarchically. Our&nbsp;brain, in a way, is interconnected wiki. We have multiple connections between ideas or thoughts in our brains - it's the way we navigate through our memories.` },
 	{ text: `We introduce bi-directional links that allow you to connect ideas freely; you can reuse objects and create any information structure you desire.</br>` },
 	{ text: `Now you can use a three-line icon <span class="icon nav"></span> on the top left of the application or press <span class="highlight">CMD + O</span> to see bi-directional links between pages and navigate through them.` },
 	{ text: `You can press <span class="highlight">CMD + S</span> and search the right page by name or information in the&nbsp;first&nbsp;paragrapgh.` },
@@ -926,7 +926,7 @@ export default [
 	{ style: I.TextStyle.Header1, text: `Updates for 03 March, 2020` },
 	{ style: I.TextStyle.Header3, text: `Introducing Anytype` },
 	{ text: `We upgraded the design and backed it up with cutting edge technologies to make your experience safe, secure, and convenient.` },
-	{ text: `<span class="highlight">This version of Anytype is suitable for personal usage only</span>. In the next versions we’ll add collaborative functionality.` },
+	{ text: `<span class="highlight">This version of Anytype is suitable for personal usage only</span>. In the next versions we'll add collaborative functionality.` },
 
 	{ style: I.TextStyle.Header3, text: `Available features` },
 	{ style: I.TextStyle.Bulleted, text: `Editor with different kinds of blocks you need to work with notes, ideas, collections, knowledge bases, receipts, diaries, to-do lists, travel plans;` },
