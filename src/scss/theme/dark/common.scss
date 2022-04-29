@@ -224,19 +224,8 @@ html.themeDark {
     /* Header */
     /* ---------------------------------------------------------------- */
 
-    .header.mainEdit, 
-	.header.mainNavigation,
-	.header.mainGraph, 
-	.header.mainStore,
-	.header.mainHistory 
-	{ background: $colorBlack; }
-
-    .header.mainEdit, 
-	.header.mainNavigation,
-	.header.mainGraph, 
-	.header.mainStore,
-	.header.mainHistory 
-	{
+    .header.isCommon { background: $colorBlack; }
+    .header.isCommon {
         .path { border: 0px; line-height: 28px; }
         .path {
             .item:hover { color: $colorPrimary; }
@@ -268,6 +257,10 @@ html.themeDark {
 			.icon.arrow { background-image: url('#{$themePath}/arrow/history1.svg'); }
 		}
     }
+
+	.header.isCommon:hover, .header.isCommon.active {
+		.path { background-color: $colorHover; }
+	}
 
     /* Footer */
     /* ---------------------------------------------------------------- */

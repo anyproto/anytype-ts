@@ -14,7 +14,9 @@
 	.side.center { flex-basis: 60%; flex-grow: 1; justify-content: center; }
 	.side.right { padding: 0px 10px; flex-basis: 20%; flex-shrink: 0; justify-content: end; gap: 0px 16px; }
 
-	.path { width: 66%; display: inline-block; border-radius: 6px; height: 28px; line-height: 26px; cursor: pointer; }
+	.path { 
+		width: 66%; display: inline-block; border-radius: 6px; height: 28px; line-height: 26px; cursor: pointer; transition: $transitionFast;
+	}
 
 	.tabs { white-space: nowrap; background: $colorLightGrey; display: inline-block; height: 28px; padding: 2px; border-radius: 6px; }
 	.tabs {
@@ -88,20 +90,9 @@
 }
 .header.mainHistory.snapLeft { right: 254px; }
 
-.header.mainEdit, 
-.header.mainNavigation,
-.header.mainGraph, 
-.header.mainStore,
-.header.mainHistory 
-{ background: $colorWhite; height: 38px; }
-
-.header.mainEdit, 
-.header.mainNavigation,
-.header.mainGraph, 
-.header.mainStore,
-.header.mainHistory 
-{
-	.path { border: 1px solid $colorLightGrey; padding: 0px 10px; }
+.header.isCommon { background: $colorWhite; height: 38px; }
+.header.isCommon {
+	.path { border: 1px solid rgba(0,0,0,0); padding: 0px 10px; }
 	.path {
 		.inner { display: flex; flex-direction: row; justify-content: center; align-items: center; gap: 0px 4px; }
 		.name { @include text-overflow-nw; }
@@ -134,4 +125,8 @@ body.isFullScreen {
 	.header {
 		.side.left { padding-left: 6px; }
 	}
+}
+
+.header.isCommon:hover, .header.isCommon.active {
+	.path { border-color: $colorLightGrey; }
 }

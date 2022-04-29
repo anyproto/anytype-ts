@@ -42,9 +42,14 @@ class Header extends React.Component<Props, {}> {
 	render () {
 		const { component } = this.props;
 		const Component = Components[component] || null;
+		const cn = [ 'header', component ];
+
+		if ([ 'mainEdit', 'mainNavigation', 'mainGraph', 'mainStore', 'mainHistory' ].includes(component)) {
+			cn.push('isCommon');
+		};
 
 		return (
-			<div id="header" className={[ 'header', component ].join(' ')}>
+			<div id="header" className={cn.join(' ')}>
 				<Component 
 					ref={(ref: any) => this.refChild = ref} 
 					{...this.props} 
