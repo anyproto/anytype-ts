@@ -452,7 +452,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 		const content = obj.find('.content');
 		const height = Math.max(110, Math.min(HEIGHT * LIMIT, items.length * HEIGHT + 16));
 		const header = $(isPopup ? '#popupPage #innerWrap #header' : '#page.isFull #header');
-		const element = header.find('.side.center');
+		const element = header.find('#path');
 
 		if (element.length) {
 			const offset = element.offset();

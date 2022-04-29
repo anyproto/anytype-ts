@@ -29,10 +29,9 @@ const HeaderMainStore = observer(class HeaderMainStore extends React.Component<P
 
 	render () {
 		const { tabs, tab, onTab } = this.props;
-		const cn = [ 'header', 'headerMainEdit' ];
-
+		
 		return (
-			<div id="header" className={cn.join(' ')}>
+			<div id="header" className="header headerMainEdit">
 				<div className="side left">
 					<Icon className="expand big" tooltip="Open as object" onClick={this.onOpen} />
 					<Icon className="home big" tooltip="Home" onClick={this.onHome} />

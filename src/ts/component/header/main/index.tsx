@@ -21,7 +21,11 @@ const HeaderMainIndex = observer(class HeaderMainIndex extends React.Component<P
 	render () {
 		return (
 			<div id="header" className="header headerMainIndex">
-				<div className="side center" onClick={this.onSearch}>Search for an object</div>
+				<div className="side left" />
+
+				<div className="side center" onClick={this.onSearch}>
+					<div id="path" className="path">Search for an object</div>
+				</div>
 
 				<div className="side right">
 					<Icon tooltip="Settings" className={[ 'settings', (popupStore.isOpen('settings') ? 'active' : '') ].join(' ')} onClick={this.onSettings} />

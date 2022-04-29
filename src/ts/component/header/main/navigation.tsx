@@ -36,14 +36,9 @@ const HeaderMainNavigation = observer(class HeaderMainNavigation extends React.C
 		const { match, isPopup, rootId } = this.props;
 		const { breadcrumbs } = blockStore;
 		const object = detailStore.get(breadcrumbs, rootId, [ 'templateIsBundled' ]);
-		const cn = [ 'header', 'headerMainEdit' ];
-
-		if (popupStore.isOpenList([ 'search' ]) || menuStore.isOpen('blockRelationView')) {
-			cn.push('active');
-		};
 
 		return (
-			<div id="header" className={cn.join(' ')}>
+			<div id="header" className="header headerMainEdit">
 				<div className="side left">
 					<Icon className="expand big" tooltip="Open as object" onClick={this.onOpen} />
 					<Icon className="home big" tooltip="Home" onClick={this.onHome} />

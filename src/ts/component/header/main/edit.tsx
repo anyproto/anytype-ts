@@ -46,12 +46,11 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<Pro
 
 		const object = detailStore.get(breadcrumbs, rootId, [ 'templateIsBundled' ]);
 		const canSync = !object.templateIsBundled && !root.isObjectFileKind();
-		const cn = [ 'header', 'headerMainEdit' ];
 		const isLocked = root.isLocked();
 		const showNav = !(root.isObjectType() || root.isObjectRelation());
 
 		return (
-			<div id="header" className={cn.join(' ')}>
+			<div id="header" className="header headerMainEdit">
 				<div className="side left">
 					<Icon className="expand big" tooltip="Open as object" onClick={this.onOpen} />
 					<Icon className="home big" tooltip="Home" onClick={this.onHome} />
@@ -66,13 +65,11 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<Pro
 				</div>
 
 				<div className="side center">
-					<div className="path" onMouseDown={(e: any) => { this.onSearch(e); }} onMouseOver={this.onPathOver} onMouseOut={this.onPathOut}>
-						<div className="item">
-							<div className="flex">
-								<IconObject object={object} size={18} />
-								<ObjectName object={object} />
-								{isLocked ? <Icon className="lock" /> : ''}
-							</div>
+					<div id="path" className="path" onMouseDown={(e: any) => { this.onSearch(e); }} onMouseOver={this.onPathOver} onMouseOut={this.onPathOut}>	
+						<div className="inner">
+							<IconObject object={object} size={18} />
+							<ObjectName object={object} />
+							{isLocked ? <Icon className="lock" /> : ''}
 						</div>
 					</div>
 				</div>
