@@ -290,7 +290,7 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 		C.BlockUpdateContent(rootId, blockId, { ...block, content });
 
 		delete(content.targetBlockId);
-		Storage.set('link', content);
+		Storage.set('link', content, true);
     };
 
 	hasRelationKey (key: string) {
