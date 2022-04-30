@@ -227,9 +227,8 @@ html.themeDark {
     .header.isCommon { background: $colorBlack; }
     .header.isCommon {
         .path { border: 0px; line-height: 28px; }
-        .path {
-            .item:hover { color: $colorPrimary; }
-        }
+		.path:hover { background-color: $colorHover; color: $colorPrimary; }
+
         .icon.big:hover, .icon.big.hover { background-color: $colorHover; }
 
         .tabs { background: $colorBgIcon; color: $colorSecondary; }
@@ -237,6 +236,9 @@ html.themeDark {
             .tab.active { background: $colorHover; color: $colorPrimary; }
         }
     }
+	.header.isCommon.active {
+		.path { background-color: $colorHover; color: $colorPrimary; }
+	}
 
     .header.mainIndex {
         .path { border: 0px; color: $colorSecondary; background: $colorBlack30; }
@@ -257,10 +259,6 @@ html.themeDark {
 			.icon.arrow { background-image: url('#{$themePath}/arrow/history1.svg'); }
 		}
     }
-
-	.header.isCommon:hover, .header.isCommon.active {
-		.path { background-color: $colorHover; }
-	}
 
     /* Footer */
     /* ---------------------------------------------------------------- */

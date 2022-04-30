@@ -97,6 +97,10 @@
 		.inner { display: flex; flex-direction: row; justify-content: center; align-items: center; gap: 0px 4px; }
 		.name { @include text-overflow-nw; }
 	}
+	.path:hover { border-color: $colorLightGrey; }
+}
+.header.isCommon.active {
+	.path { border-color: $colorLightGrey; }
 }
 
 .popup {
@@ -125,8 +129,4 @@ body.isFullScreen {
 	.header {
 		.side.left { padding-left: 6px; }
 	}
-}
-
-.header.isCommon:hover, .header.isCommon.active {
-	.path { border-color: $colorLightGrey; }
 }
