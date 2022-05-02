@@ -112,7 +112,7 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 				<Header component="mainEdit" ref={(ref: any) => { this.refHeader = ref; }} {...this.props} rootId={rootId} />
 
 				<div className="blocks wrapper">
-					<HeadSimple ref={(ref: any) => { this.refHead = ref;}} type="set" rootId={rootId} />
+					<HeadSimple ref={(ref: any) => { this.refHead = ref;}} type="set" rootId={rootId} onCreate={this.onCreate} />
 
 					{showTemplates ? (
 						<div className="section template">
