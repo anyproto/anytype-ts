@@ -37,7 +37,7 @@
 
 			.cover { position: relative; min-height: 116px; background-color: unset; }
 			.cardName { display: flex; flex-direction: row; gap: 0px 6px; align-items: center; }
-			.cardName .name  { transition: $transitionFast; }
+			.cardName .name  { transition: color 0.2s ease-in-out, border-color 0.2s ease-in-out; }
 			.cardDescription { @include text-small; line-height: 16px; @include clamp2; margin: 4px 0px 0px 0px; }
 			.cardDescription:empty { margin: 0px; }
 

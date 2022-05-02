@@ -177,6 +177,10 @@
 		.linkCard.text {
 			.cardName .name { border-color: $colorLinePrimary; }
 		}
+
+		.linkCard.c48.withIcon {
+			.iconObject { background-color: $colorBgIcon; }
+		}
     }
 
 	.block.blockLink:hover {

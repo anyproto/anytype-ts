@@ -28,8 +28,8 @@ const LinkCard = observer(class LinkCard extends React.Component<Props, {}> {
 	render () {
         const { rootId, block, withName, withIcon, withType, withTags, description, style, object, className, canEdit, onClick, onSelect, onUpload, onCheckbox } = this.props;
         const { id, layout, coverType, coverId, coverX, coverY, coverScale, snippet } = object;
-		const iconSize = this.getIconSize();
-        const cn = [ 'linkCard', DataUtil.layoutClass(id, layout), 'c' + iconSize, DataUtil.linkCardClass(style) ];
+		const { size, iconSize } = this.getIconSize();
+        const cn = [ 'linkCard', DataUtil.layoutClass(id, layout), 'c' + size, DataUtil.linkCardClass(style) ];
         const cns = [ 'sides' ];
         const withCover = this.props.withCover && coverId && coverType;
 		const canDescription = ![ I.ObjectLayout.Note ].includes(object.layout);
@@ -66,7 +66,8 @@ const LinkCard = observer(class LinkCard extends React.Component<Props, {}> {
 								{withIcon ? (
 									<IconObject 
 										id={`block-${block.id}-icon`}
-										size={iconSize} 
+										size={size}
+										iconSize={iconSize}
 										object={object} 
 										canEdit={canEdit} 
 										onSelect={onSelect} 
@@ -114,17 +115,30 @@ const LinkCard = observer(class LinkCard extends React.Component<Props, {}> {
 	};
 
 	getIconSize () {
-		const { style, iconSize } = this.props;
+		const { style } = this.props;
+
+		let size = 0;
+		let iconSize = 0;
 
 		if (style == I.LinkCardStyle.Text) {
-			return 24;
+			size = 24;
 		} else {
 			const Size: any = {};
 			Size[I.LinkIconSize.Small] = 18;
 			Size[I.LinkIconSize.Medium] = 48;
+			switch (this.props.iconSize) {
+				default:
+					size = 18;
+					break;
 
-			return Size[iconSize] || Size[I.LinkIconSize.Small];
+				case I.LinkIconSize.Medium:
+					size = 48;
+					iconSize = 24;
+					break;
+			};
 		};
+
+		return { size, iconSize };
 	};
 
 });
