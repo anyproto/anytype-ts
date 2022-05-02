@@ -10,9 +10,9 @@
 
 .header {
 	.side {	line-height: 28px; display: flex; align-items: center; flex-direction: row; }
-	.side.left { padding: 0px 6px; flex-basis: 20%; flex-shrink: 0; }
-	.side.center { flex-basis: 60%; flex-grow: 1; justify-content: center; }
-	.side.right { padding: 0px 10px; flex-basis: 20%; flex-shrink: 0; justify-content: end; gap: 0px 16px; }
+	.side.left { padding: 0px 6px; width: 20%; flex-shrink: 0; }
+	.side.center { width: 60%; flex-grow: 1; justify-content: center; }
+	.side.right { padding: 0px 10px; width: 20%; flex-shrink: 0; justify-content: end; gap: 0px 16px; }
 
 	.path { 
 		width: 66%; display: inline-block; border-radius: 6px; height: 28px; line-height: 26px; cursor: pointer; transition: $transitionFast;
