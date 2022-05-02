@@ -1014,14 +1014,14 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 						type: mark ? mark.type : null,
 						onChange: (newType: I.MarkType, param: string) => {
 							marks = Mark.toggleLink({ type: newType, param: param, range: range }, marks);
-							DataUtil.blockSetText(rootId, block, text, marks, true, () => { focus.apply(); });
+							DataUtil.blockSetText(rootId, block.id, text, marks, true, () => { focus.apply(); });
 						}
 					}
 				});
 			});
 		} else {
 			marks = Mark.toggle(marks, { type: type, param: mark ? '' : param, range: range });
-			DataUtil.blockSetText(rootId, block, text, marks, true, () => { focus.apply(); });
+			DataUtil.blockSetText(rootId, block.id, text, marks, true, () => { focus.apply(); });
 		};
 	};
 
@@ -1469,7 +1469,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 								param: url,
 							});
 
-							DataUtil.blockSetText(rootId, block, value, marks, true, () => {
+							DataUtil.blockSetText(rootId, block.id, value, marks, true, () => {
 								focus.set(block.id, { from: to + 1, to: to + 1 });
 								focus.apply();
 							});

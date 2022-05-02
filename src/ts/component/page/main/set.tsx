@@ -21,7 +21,7 @@ interface State {
 const $ = require('jquery');
 const Errors = require('json/error.json');
 
-const EDITOR_IDS = [ 'name', 'description' ];
+const EDITOR_IDS = [ 'title', 'description' ];
 
 const PageMainSet = observer(class PageMainSet extends React.Component<Props, State> {
 
@@ -54,28 +54,22 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, St
 
 		const rootId = this.getRootId();
 		const check = DataUtil.checkDetails(rootId);
-		const object = Util.objectCopy(detailStore.get(rootId, rootId, []));
+		const object = Util.objectCopy(detailStore.get(rootId, rootId, [ 'iconImage' ]));
 		const featured: any = new M.Block({ id: rootId + '-featured', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
 		const placeholder = {
-			name: DataUtil.defaultName('set'),
+			title: DataUtil.defaultName('set'),
 			description: 'Add a description',
 		};
 
 		const children = blockStore.getChildren(rootId, rootId, (it: any) => { return it.isDataview(); });
-		const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, align: object.layoutAlign, childrenIds: [], fields: {}, content: {} });
+		const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, childrenIds: [], fields: {}, content: {} });
 		const allowedDetails = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
-
-		if (object.name == DataUtil.defaultName('page')) {
-			object.name = '';
-		};
 
 		const Editor = (item: any) => {
 			return (
 				<div className={[ 'wrap', item.className ].join(' ')}>
 					{!allowedDetails ? (
-						<div id={'editor-' + item.id} className={[ 'editor', 'focusable', 'c' + item.id, 'isReadonly' ].join(' ')}>
-							{object[item.id]}
-						</div>
+						<div id={'editor-' + item.id} className={[ 'editor', 'focusable', 'c' + item.id, 'isReadonly' ].join(' ')} />
 					) : (
 						<React.Fragment>
 							<div 
@@ -89,9 +83,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, St
 								onKeyUp={(e: any) => { this.onKeyUp(e, item); }}
 								onInput={(e: any) => { this.onInput(e, item); }}
 								onSelect={(e: any) => { this.onSelectText(e, item); }}
-							>
-								{object[item.id]}
-							</div>
+							/>
 							<div className={[ 'placeholder', 'c' + item.id ].join(' ')}>{placeholder[item.id]}</div>
 						</React.Fragment>
 					)}
@@ -116,7 +108,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, St
 						) : ''}
 						<div className={[ 'side', 'right', (object.iconImage ? 'big' : '') ].join(' ')}>
 							<div className="txt">
-								<Editor className="title" id="name" />
+								<Editor className="title" id="title" />
 								<Editor className="descr" id="description" />
 
 								<Block {...this.props} key={featured.id} rootId={rootId} iconSize={20} block={featured} className="small" />
@@ -145,6 +137,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, St
 		const object = detailStore.get(rootId, rootId, []);
 
 		this.open();
+		this.setValue();
 
 		for (let id of EDITOR_IDS) {
 			this.placeholderCheck(id);
@@ -312,17 +305,9 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, St
 
 	save () {
 		const rootId = this.getRootId();
-		const details = [];
-		const object: any = { id: rootId };
-
 		for (let id of EDITOR_IDS) {
-			const value = this.getValue(id);
-
-			details.push({ key: id, value: value });
-			object[id] = value;
+			DataUtil.blockSetText(rootId, id, this.getValue(id), [], true);
 		};
-
-		C.BlockSetDetails(rootId, details);
 	};
 
 	getRange (id: string) {
@@ -333,6 +318,24 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, St
 		const node = $(ReactDOM.findDOMNode(this));
 		const range = getRange(node.find('#editor-' + id).get(0) as Element);
 		return range ? { from: range.start, to: range.end } : null;
+	};
+
+	setValue () {
+		const node = $(ReactDOM.findDOMNode(this));
+		const rootId = this.getRootId();
+
+		for (let id of EDITOR_IDS) {
+			const item = node.find(`#editor-${id}`);
+			const block = blockStore.getLeaf(rootId, id);
+
+			if (block) {
+				let text = block.content.text;
+				if (text == DataUtil.defaultName('page')) {
+					text = '';
+				};
+				item.text(text);
+			};
+		};
 	};
 
 	getValue (id: string): string {
