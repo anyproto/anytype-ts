@@ -243,15 +243,19 @@ class CommonStore {
 		this.themeId = v;
 		Storage.set('theme', v);
 		
-		this.themeClass();
+		this.setThemeClass();
 	};
 
-	themeClass () {
+	getThemeClass () {
 		if (this.themeId == 'system') {
-			Util.addBodyClass('theme', this.nativeThemeIsDark ? 'dark' : '');
+			return this.nativeThemeIsDark ? 'dark' : '';
 		} else {
-			Util.addBodyClass('theme', this.themeId);
+			return this.themeId;
 		};
+	};
+
+	setThemeClass() {
+		Util.addBodyClass('theme', this.getThemeClass());
 	};
 
 	nativeThemeSet (isDark: boolean) {
