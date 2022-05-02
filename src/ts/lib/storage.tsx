@@ -20,6 +20,11 @@ class Storage {
 	};
 	
 	set (key: string, obj: any, del?: boolean): void {
+		if (!key) {
+			console.log('[Storage].set: key not specified');
+			return;
+		};
+
 		if (del) {
 			this.delete(key);
 		};
