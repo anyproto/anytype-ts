@@ -54,16 +54,17 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, St
 
 		const rootId = this.getRootId();
 		const check = DataUtil.checkDetails(rootId);
-		const object = Util.objectCopy(detailStore.get(rootId, rootId, [ 'iconImage' ]));
-		const featured: any = new M.Block({ id: rootId + '-featured', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
+		const object = check.object;
 		const placeholder = {
 			title: DataUtil.defaultName('set'),
 			description: 'Add a description',
 		};
 
 		const children = blockStore.getChildren(rootId, rootId, (it: any) => { return it.isDataview(); });
-		const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, childrenIds: [], fields: {}, content: {} });
 		const allowedDetails = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
+
+		const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, childrenIds: [], fields: {}, content: {} });
+		const featured: any = new M.Block({ id: rootId + '-featured', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
 
 		const Editor = (item: any) => {
 			return (
