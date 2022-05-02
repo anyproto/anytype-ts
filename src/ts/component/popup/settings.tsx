@@ -761,8 +761,9 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 		};
 
 		C.AccountDelete(false, (message: any) => {
-			authStore.accountSet({ status: message.status });			
-			this.onPage('account');
+			authStore.accountSet({ status: message.status });		
+			this.props.close();
+			Util.route('/auth/deleted');
 		});
 	};
 

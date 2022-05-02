@@ -118,6 +118,7 @@ const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<P
 
 	onCancel (e: any) {
 		C.AccountDelete(true, (message: any) => {
+			authStore.accountSet({ status: message.status });
 			Util.route('/main/index');
 		});
 	};
