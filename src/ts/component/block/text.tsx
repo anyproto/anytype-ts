@@ -643,7 +643,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 				e.preventDefault();
 			};
 			
-			DataUtil.blockSetText(rootId, block, value, this.marks, true, () => {
+			DataUtil.blockSetText(rootId, block.id, value, this.marks, true, () => {
 				onKeyDown(e, value, this.marks, range);
 			});
 
@@ -656,7 +656,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 
 		keyboard.shortcut(saveKeys.join(', '), e, (pressed: string) => {
 			e.preventDefault();
-			DataUtil.blockSetText(rootId, block, value, this.marks, true, () => {
+			DataUtil.blockSetText(rootId, block.id, value, this.marks, true, () => {
 				onKeyDown(e, value, this.marks, range);
 			});
 			ret = true;
@@ -672,7 +672,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			if (block.isTextCode()) {
 				value = Util.stringInsert(value, '\t', range.from, range.from);
 
-				DataUtil.blockSetText(rootId, block, value, this.marks, true, () => {
+				DataUtil.blockSetText(rootId, block.id, value, this.marks, true, () => {
 					focus.set(block.id, { from: range.from + 1, to: range.from + 1 });
 					focus.apply();
 				});
@@ -698,7 +698,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 				};
 
 				this.marks = Mark.checkRanges(value, this.marks);
-				DataUtil.blockSetText(rootId, block, value, this.marks, true, () => {
+				DataUtil.blockSetText(rootId, block.id, value, this.marks, true, () => {
 					onKeyDown(e, value, this.marks, range);
 				});
 				ret = true;
@@ -833,7 +833,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 
 		// Open add menu
 		if (canOpenMenuAdd) { 
-			DataUtil.blockSetText(rootId, block, value, this.marks, true, () => {
+			DataUtil.blockSetText(rootId, block.id, value, this.marks, true, () => {
 				onMenuAdd(id, Util.stringCut(value, range.from - 1, range.from), range, this.marks);
 			});
 			return;
@@ -841,7 +841,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 
 		// Open mention menu
 		if (canOpenMentionMenu) {
-			DataUtil.blockSetText(rootId, block, value, this.marks, true, () => {
+			DataUtil.blockSetText(rootId, block.id, value, this.marks, true, () => {
 				this.onMention();
 			});
 			return;
@@ -956,7 +956,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 						value = Util.stringInsert(value, text, from, from);
 						this.marks = Mark.checkRanges(value, marks);
 
-						DataUtil.blockSetText(rootId, block, value, this.marks, true, () => {
+						DataUtil.blockSetText(rootId, block.id, value, this.marks, true, () => {
 							focus.set(block.id, { from: to, to: to });
 							focus.apply();
 
@@ -997,7 +997,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 					});
 					value = Util.stringInsert(value, ' ', range.from, range.from);
 
-					DataUtil.blockSetText(rootId, block, value, this.marks, true, () => {
+					DataUtil.blockSetText(rootId, block.id, value, this.marks, true, () => {
 						focus.set(block.id, { from: range.from + 1, to: range.from + 1 });
 						focus.apply();
 					});
@@ -1025,7 +1025,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 
 		this.text = value;
 
-		DataUtil.blockSetText(rootId, block, value, marks, update, (message: any) => {
+		DataUtil.blockSetText(rootId, block.id, value, marks, update, (message: any) => {
 			if (callBack) {
 				callBack();
 			};
@@ -1045,7 +1045,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			marks = [];
 		};
 
-		DataUtil.blockSetText(rootId, block, value, marks, true);
+		DataUtil.blockSetText(rootId, block.id, value, marks, true);
 	};
 	
 	onFocus (e: any) {
@@ -1105,7 +1105,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		};
 		
 		focus.clear(true);
-		DataUtil.blockSetText(rootId, block, this.getValue(), this.marks, true, () => {
+		DataUtil.blockSetText(rootId, block.id, this.getValue(), this.marks, true, () => {
 			C.BlockSetTextChecked(rootId, id, !checked);
 		});
 	};

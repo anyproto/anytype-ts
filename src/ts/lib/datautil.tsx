@@ -485,19 +485,15 @@ class DataUtil {
 		C.BlockListSetAlign(rootId, [], align, callBack);
 	};
 
-	blockSetText (rootId: string, block: I.Block, text: string, marks: I.Mark[], update: boolean, callBack?: (message: any) => void) {
-		if (!block) {
-			return;
-		};
-
+	blockSetText (rootId: string, blockId: string, text: string, marks: I.Mark[], update: boolean, callBack?: (message: any) => void) {
 		text = String(text || '');
 		marks = marks || [];
 
 		if (update) {
-			blockStore.updateContent(rootId, block.id, { text, marks });
+			blockStore.updateContent(rootId, blockId, { text, marks });
 		};
 
-		C.BlockSetTextText(rootId, block.id, text, marks, (message: any) => {
+		C.BlockSetTextText(rootId, blockId, text, marks, (message: any) => {
 			if (callBack) {
 				callBack(message);
 			};
