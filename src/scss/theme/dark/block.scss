@@ -173,12 +173,17 @@
         .loading, .deleted { color: $colorSecondary; }
 
 		.side { border-color: $colorLinePrimary !important; }
+
+		.linkCard.text {
+			.cardName .name { border-color: $colorLinePrimary; }
+		}
     }
 
-    .block.blockLink:hover {
-        .sides { border-color: $colorPrimary !important; }
-        .cardName span::before { background: $colorPrimary !important; }
-    }
+	.block.blockLink:hover {
+		.linkCard.text {
+			.cardName .name { border-color: $colorPrimary; }
+		}
+	}
 
     /* BlockDiv */
 

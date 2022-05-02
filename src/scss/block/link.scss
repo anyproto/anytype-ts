@@ -37,6 +37,7 @@
 
 			.cover { position: relative; min-height: 116px; background-color: unset; }
 			.cardName { display: flex; flex-direction: row; gap: 0px 6px; align-items: center; }
+			.cardName .name  { transition: $transitionFast; }
 			.cardDescription { @include text-small; line-height: 16px; @include clamp2; margin: 4px 0px 0px 0px; }
 			.cardDescription:empty { margin: 0px; }
 
@@ -59,6 +60,8 @@
 			.side.left {
 				.txt { line-height: 24px; vertical-align: top; }
 			}
+
+			.cardName .name { border-bottom: 1px solid $colorMediumGrey; }
 		}
 
 		.linkCard.card {
@@ -96,6 +99,12 @@
 			.side.left { border-radius: 0px 0px 12px 12px }
 		}
 
+	}
+
+	.block.blockLink:hover {
+		.linkCard.text {
+			.cardName .name { border-color: $colorBlack; }
+		}
 	}
 
 }
