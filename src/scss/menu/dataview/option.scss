@@ -1,8 +1,7 @@
 @import "~scss/_vars";
 
 .menus {
-	.menu.menuDataviewOptionList,
-	.menu.menuDataviewOptionValues {
+	.menu.menuDataviewOptionList {
 		.content { overflow: visible; padding: 0px; }
 		.items { height: 100%; }
 
@@ -23,15 +22,6 @@
 		}
 	}
 
-	.menu.menuDataviewOptionValues {
-		.content { max-height: 280px; }
-		.item {
-			.clickable { width: calc(100% - 22px); }
-		}
-		.item:hover {
-			.clickable { width: calc(100% - 66px); }
-		}
-	}
 
 	.menu.menuDataviewOptionList { width: 288px; }
 	.menu.menuDataviewOptionList {
@@ -61,11 +51,6 @@
 		.item.active::before { z-index: 1; }
 	}
 
-	.menu.menuDataviewOptionValues.fromFilter {
-		.item {
-			.icon.dnd { display: none; }
-		}
-	}
 	.menu.menuDataviewOptionList.fromFilter {
 		.item {
 			.icon.more { display: none; }

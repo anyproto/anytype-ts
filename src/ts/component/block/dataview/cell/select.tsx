@@ -248,7 +248,6 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 		const node = $(ReactDOM.findDOMNode(this));
 		node.find('#entry').text(' ');
 
-		menuStore.updateData('dataviewOptionValues', { filter: '' });
 		this.onFocus();
 	};
 
@@ -376,7 +375,6 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 			onChange(value, () => {
 				this.clear();
 
-				menuStore.updateData('dataviewOptionValues', { value });
 				menuStore.updateData('dataviewOptionList', { value });
 			});
 		};
@@ -384,7 +382,6 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 
 	resize () {
 		const win = $(window);
-		win.trigger('resize.menuDataviewOptionValues');
 		win.trigger('resize.menuDataviewOptionList');
 	};
 
