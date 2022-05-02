@@ -7,8 +7,8 @@ import { I, C, Key, Util, DataUtil, Mark, focus, keyboard, crumbs, Storage, Mapp
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 
-import Controls from './controls';
-import EditorHeaderPage from './header/page';
+import Controls from 'ts/component/page/head/controls';
+import PageHeadEdit from 'ts/component/page/head/edit';
 
 interface Props extends RouteComponentProps<any> {
 	dataset?: any;
@@ -90,7 +90,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 					<div className="blocks">
 						<Icon id="button-block-add" className="buttonAdd" onClick={this.onAdd} />
 
-						<EditorHeaderPage 
+						<PageHeadEdit 
 							{...this.props} 
 							ref={(ref: any) => { this.refHeader = ref; }}
 							onKeyDown={this.onKeyDownBlock}

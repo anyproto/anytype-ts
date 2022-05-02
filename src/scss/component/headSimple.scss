@@ -1,0 +1,29 @@
+@import "~scss/_vars";
+
+.headSimple { width: 704px; margin: 0px auto 40px auto; display: flex; }
+.headSimple {
+	.side.left { flex-shrink: 0; margin-right: 32px; }
+	
+	.side.center { width: 100%; line-height: 96px; flex-grow: 1; }
+	.side.center.big { line-height: 112px; }
+
+	.side.center {
+		.txt { width: 100%; }
+		.editor { -webkit-user-modify: read-write-plaintext-only; z-index: 1; position: relative;  word-break: break-word; cursor: text; }
+		.wrap { position: relative; }
+
+		.title { @include text-header1; }
+		.descr { @include text-paragraph; margin: 7px 0px; }
+	}
+
+	.side.right { flex-shrink: 0; margin-left: 32px; text-align: right; }
+	.side.right {
+		.button { height: 36px; line-height: 34px; white-space: nowrap; margin-right: 10px; }
+		.button:last-child { margin: 0px; }
+	}
+}
+
+.headSimple.withIcon {
+	.side.left { width: 96px; }
+	.side.center { width: calc(100% - 128px); }
+}
