@@ -402,30 +402,28 @@ function createWindow () {
 	menuInit();
 };
 
-function getBgColor () {
+function getTheme () {
 	let { theme } = config;
-	let light = '#fff';
-	let dark = '#2c2b27';
-	let bg = '';
 
 	switch (theme) {
 		default:
-			bg = light;
-			break;
-
-		case 'dark':
-			bg = dark;
-			break;
+			return theme;
 
 		case 'system':
-			bg = isDarkTheme() ? dark : light;
-			break;
+			return isDarkTheme() ? 'dark' : '';
 	};
-	return bg;
+};
+
+function getBgColor () {
+	let theme = getTheme();
+	let bg = {
+		'': '#fff',
+		dark: '#2c2b27',
+	};
+	return bg[theme];
 };
 
 function openAboutWindow () {
-	let { theme } = config;
     let window = new BrowserWindow({
 		backgroundColor: getBgColor(),
         width: 400,
@@ -439,7 +437,7 @@ function openAboutWindow () {
 		},
     });
 
-    window.loadURL('file://' + path.join(__dirname, 'electron', `about.html?version=${version}&theme=${theme}`));
+    window.loadURL('file://' + path.join(__dirname, 'electron', `about.html?version=${version}&theme=${getTheme()}`));
 
 	window.once('closed', () => {
         window = null;
