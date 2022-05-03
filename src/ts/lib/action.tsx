@@ -72,6 +72,10 @@ class Action {
 
 	duplicate (rootId: string, blockId: string, blockIds: string[], callBack?: (message: any) => void) {
 		C.BlockListDuplicate(rootId, blockIds, blockId, I.BlockPosition.Bottom, (message: any) => {
+			if (message.error.code) {
+				return;
+			};
+
 			const lastId = message.blockIds && message.blockIds.length ? message.blockIds[message.blockIds.length - 1] : '';
 			this.focusToEnd(rootId, lastId);
 
@@ -89,6 +93,10 @@ class Action {
 		});
 		
 		C.BlockUnlink(rootId, blockIds, (message: any) => {
+			if (message.error.code) {
+				return;
+			};
+
 			if (next) {
 				this.focusToEnd(rootId, next.id);
 			};
