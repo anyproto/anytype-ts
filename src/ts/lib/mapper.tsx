@@ -129,9 +129,11 @@ const Mapper = {
 
 		BlockLink: (obj: any) => {
 			return {
-				style: obj.getStyle(),
 				targetBlockId: obj.getTargetblockid(),
-				fields: Decode.decodeStruct(obj.getFields()),
+				iconSize: obj.getIconsize(),
+				cardStyle: obj.getCardstyle(),
+				description: obj.getDescription(),
+				relations: obj.getRelationsList() || [],
 			};
 		},
 
@@ -507,8 +509,11 @@ const Mapper = {
 		BlockLink: (obj: any) => {
 			const content = new Model.Block.Content.Link();
 	
-			content.setStyle(obj.style);
 			content.setTargetblockid(obj.targetBlockId);
+			content.setIconsize(obj.iconSize);
+			content.setCardstyle(obj.cardStyle);
+			content.setDescription(obj.description);
+			content.setRelationsList(obj.relations);
 
 			return content;
 		},

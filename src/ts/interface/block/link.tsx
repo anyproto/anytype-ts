@@ -7,9 +7,8 @@ export enum LinkCardStyle {
 };
 
 export enum LinkIconSize {
-	VerySmall	 = 0,
-	Small		 = 1,
-	Medium		 = 2,
+	Small		 = 0,
+	Medium		 = 1,
 };
 
 export enum LinkDescription {
@@ -20,7 +19,10 @@ export enum LinkDescription {
 
 export interface ContentLink {
 	targetBlockId: string;
-	fields: any;
+	iconSize: LinkIconSize,
+	cardStyle: LinkCardStyle,
+	description: LinkDescription,
+	relations: string[];
 };
 
 export interface BlockLink extends I.Block {

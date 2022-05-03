@@ -98,7 +98,7 @@ const ListChildren = observer(class ListChildren extends React.Component<Props, 
 	onEmptyToggle (e: any) {
 		const { rootId, block } = this.props;
 
-		C.BlockCreate({ type: I.BlockType.Text }, rootId, block.id, I.BlockPosition.Inner, (message: any) => {
+		C.BlockCreate(rootId, block.id, I.BlockPosition.Inner, { type: I.BlockType.Text }, (message: any) => {
 			focus.set(message.blockId, { from: 0, to: 0 });
 			focus.apply();
 		});

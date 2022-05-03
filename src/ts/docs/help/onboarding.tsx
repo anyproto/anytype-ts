@@ -24,7 +24,7 @@ export default {
         },
         {
             name: 'Settings',
-            description: 'See your keychain phrase, switch to dark mode, import/export, and much more...',
+            description: 'See your recovery phrase, switch to dark mode, import/export, and much more...',
             param: {
                 element: '#header .icon.settings',
                 classNameWrap: 'fixed fromHeader',

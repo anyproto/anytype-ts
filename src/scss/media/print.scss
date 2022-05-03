@@ -10,8 +10,8 @@ html.printMedia {
 
 	#drag, #previewLink, .menu, 
 	.editorControls, .controlButtons, 
-	html.withPopup .page.isFull, 
-	.header, .footer { display: none !important; }
+	.header, .footer 
+	{ display: none !important; }
 
 	#page.isFull { width: 100% !important; }
 
@@ -79,3 +79,5 @@ html.printMedia.print {
 		}
 	}
 }
+
+html.printMedia.withPopup .page.isFull { display: none !important; }

@@ -192,13 +192,13 @@ const NavigationGetObjectInfoWithLinks = (pageId: string, callBack?: (message: a
 	dispatcher.request(NavigationGetObjectInfoWithLinks.name, request, callBack);
 };
 
-const BlockCreate = (block: any, contextId: string, targetId: string, position: I.BlockPosition, callBack?: (message: any) => void) => {
+const BlockCreate = (contextId: string, targetId: string, position: I.BlockPosition, block: any, callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.Create.Request();
 	
-	request.setBlock(Mapper.To.Block(block));
 	request.setContextid(contextId);
 	request.setTargetid(targetId);
 	request.setPosition(position);
+	request.setBlock(Mapper.To.Block(block));
 
 	dispatcher.request(BlockCreate.name, request, callBack);
 };

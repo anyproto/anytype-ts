@@ -1562,7 +1562,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 	blockCreate (blockId: string, position: I.BlockPosition, param: any, callBack?: (blockId: string) => void) {
 		const { rootId } = this.props;
 
-		C.BlockCreate(param, rootId, blockId, position, (message: any) => {
+		C.BlockCreate(rootId, blockId, position, param, (message: any) => {
 			this.focus(message.blockId, 0, 0, false);
 
 			if (callBack) {
