@@ -397,16 +397,13 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 
 		const { param } = this.props;
 		const { data } = param;
-		const { skipId, rootId } = data;
+		const { skipId } = data;
 		const { config } = commonStore;
 		
 		if (it.isArchived) {
 			return false;
 		};
 		if (skipId && (it.id == skipId)) {
-			return false;
-		};
-		if (it.id == rootId) {
 			return false;
 		};
 		if (it.layout == I.ObjectLayout.Dashboard) {
@@ -455,11 +452,11 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 		const content = obj.find('.content');
 		const height = Math.max(110, Math.min(HEIGHT * LIMIT, items.length * HEIGHT + 16));
 		const header = $(isPopup ? '#popupPage #innerWrap #header' : '#page.isFull #header');
-		const element = header.find('.side.center');
+		const element = header.find('#path');
 
 		if (element.length) {
 			const offset = element.offset();
-			obj.css({ width: element.width(), left: offset.left, top: offset.top - win.scrollTop() + 40 });
+			obj.css({ width: element.outerWidth(), left: offset.left, top: offset.top - win.scrollTop() + 40 });
 		};
 
 		content.css({ height });

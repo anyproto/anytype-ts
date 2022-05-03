@@ -480,10 +480,23 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	};
 	
 	get (type: any, withChildren?: boolean): any {
-		const ids = Util.objectCopy(this.ids.get(type) || []);
-		if (withChildren && (type == I.SelectType.Block)) {
-			ids.forEach(id => this.getChildrenIds(id, ids));
+		let ids = Util.objectCopy(this.ids.get(type) || []);
+
+		if (type == I.SelectType.Block) {
+			if (withChildren) {
+				ids.forEach(id => this.getChildrenIds(id, ids));
+			} else {
+				let rootId = keyboard.getRootId();
+				let childrenIds = [];				
+
+				for (let id of ids) {
+					childrenIds = childrenIds.concat(blockStore.getChildrenIds(rootId, id));
+				};
+
+				ids = ids.filter(it => !childrenIds.includes(it));
+			};
 		};
+
 		return ids;
 	};
 

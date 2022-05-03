@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { I } from 'ts/lib';
 import { commonStore } from 'ts/store';
+import { observer } from 'mobx-react';
 
 interface Props {
 	id: string;
@@ -40,7 +41,7 @@ const Theme = {
 	},
 };
 
-class Marker extends React.Component<Props, {}> {
+const Marker = observer(class Marker extends React.Component<Props, {}> {
 
 	public static defaultProps = {
 		color: 'default',
@@ -48,6 +49,7 @@ class Marker extends React.Component<Props, {}> {
 
 	render () {
 		const { id, type, color, className, active, onClick } = this.props;
+		const { theme } = commonStore;
 		
 		let cn = [ 'marker' ];
 		let ci = [ 'markerInner', 'c' + type ];
@@ -94,20 +96,20 @@ class Marker extends React.Component<Props, {}> {
 	};
 
 	getBullet () {
-		const { theme } = commonStore;
-		const t = Theme[theme];
+		const cn = commonStore.getThemeClass();
+		const t = Theme[cn];
 		const color = this.props.color || 'default';
 
 		return (t && t.bullets[color]) ? t.bullets[color] : Icons.bullets[color];
 	};
 
 	getToggle () {
-		const { theme } = commonStore;
-		const t = Theme[theme];
+		const cn = commonStore.getThemeClass();
+		const t = Theme[cn];
 
 		return (t && t.toggle) ? t.toggle : Icons.toggle;
 	};
 	
-};
+});
 
 export default Marker;

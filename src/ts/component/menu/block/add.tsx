@@ -428,7 +428,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 				onSelect: () => {
 					$(`#block-${blockId} .value`).text(text);
 
-					DataUtil.blockSetText(rootId, block, text, block.content.marks, true, () => {
+					DataUtil.blockSetText(rootId, block.id, text, block.content.marks, true, () => {
 						focus.set(blockId, { from: length, to: length });
 						focus.apply();
 					});
@@ -664,7 +664,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 		// Hack to prevent onBlur save
 		$(`#block-${blockId} #value`).first().text(text);
 
-		DataUtil.blockSetText(rootId, block, text, marks, true, cb);
+		DataUtil.blockSetText(rootId, block.id, text, marks, true, cb);
 	};
 
 	moveToPage (type: string) {

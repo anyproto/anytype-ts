@@ -493,7 +493,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		const item = getView().getFilter(itemId);
 		const relation = dbStore.getRelation(rootId, blockId, item.relationKey);
 
-		menuStore.closeAll([ 'dataviewOptionValues', 'dataviewOptionList', 'select' ], () => {
+		menuStore.closeAll([ 'dataviewOptionList', 'select' ], () => {
 			menuStore.open('dataviewOptionList', { 
 				element: `#${getId()} #value`,
 				className: 'fromFilter',

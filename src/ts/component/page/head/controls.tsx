@@ -1,10 +1,12 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { ControlButtons, Loader } from 'ts/component';
+import { Loader } from 'ts/component';
 import { I, C, focus, DataUtil, Util } from 'ts/lib';
 import { menuStore, blockStore, detailStore } from 'ts/store';
 import { observer } from 'mobx-react';
+
+import ControlButtons  from './controlButtons';
 
 interface Props extends RouteComponentProps<any> {
 	rootId: string;

@@ -364,7 +364,7 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 
 		obj.attr({ class: cn.join(' ') });
 
-		commonStore.themeClass();
+		commonStore.setThemeClass();
 	};
 	
 	resize () {

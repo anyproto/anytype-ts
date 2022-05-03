@@ -21,7 +21,7 @@ interface Props extends RouteComponentProps<any> {
 
 const $ = require('jquery');
 
-const EditorHeaderPage = observer(class EditorHeaderPage extends React.Component<Props, {}> {
+const PageHeadEdit = observer(class PageHeadEdit extends React.Component<Props, {}> {
 	
 	refDrag: any = null;
 
@@ -174,4 +174,4 @@ const EditorHeaderPage = observer(class EditorHeaderPage extends React.Component
 
 });
 
-export default EditorHeaderPage;
+export default PageHeadEdit;

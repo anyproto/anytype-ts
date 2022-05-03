@@ -148,20 +148,20 @@ class Keyboard {
 	};
 	
 	onKeyDown (e: any) {
-		const rootId = this.getRootId();
 		const platform = Util.getPlatform();
 		const key = e.key.toLowerCase();
 		const cmd = this.ctrlKey();
 		const isMain = this.isMain();
-		const isPopup = this.isPopup();
 
 		this.pressed.push(key);
 
 		// Go back
 		this.shortcut('backspace', e, (pressed: string) => {
-			if (!isMain || (isMain && !this.isMainIndex()) || this.isFocused) {
+			const ids = this.selection.get(I.SelectType.Block);
+			if (!isMain || (isMain && !this.isMainIndex()) || this.isFocused || ids.length) {
 				return;
 			};
+
 			this.back();
 		});
 
@@ -221,16 +221,11 @@ class Keyboard {
 
 			// Navigation search
 			this.shortcut(`${cmd}+s`, e, (pressed: string) => {
+				console.log(this.isPinChecked, popupStore.isOpen('search'));
 				if (popupStore.isOpen('search') || !this.isPinChecked) {
 					return;
 				};
-				popupStore.open('search', { 
-					preventResize: true,
-					data: { 
-						rootId,
-						isPopup,
-					}, 
-				});
+				keyboard.onSearchPopup();
 			});
 
 			// Text search
@@ -535,6 +530,13 @@ class Keyboard {
 		}, Constant.delay.menu);
 	};
 
+	onSearchPopup () {
+		popupStore.open('search', {
+			preventResize: true, 
+			data: { isPopup: this.isPopup() },
+		});
+	};
+
 	onLock (rootId: string, v: boolean) {
 		const block = blockStore.getLeaf(rootId, rootId);
 		if (!block) {
@@ -631,17 +633,17 @@ class Keyboard {
 		if (!account) {
 			return;
 		};
+
+		const pin = Storage.get('pin');
+		if (!pin) {
+			this.setPinChecked(true);
+			return;
+		};
 		
 		window.clearTimeout(this.timeoutPin);
 		this.timeoutPin = window.setTimeout(() => {
-			const pin = Storage.get('pin');
-
-			this.setPinChecked(pin ? false : true);
-			if (pin) {
-				popupStore.closeAll(null, () => {
-					Util.route('/auth/pin-check');
-				});
-			};
+			this.setPinChecked(false);
+			popupStore.closeAll(null, () => { Util.route('/auth/pin-check'); });
 		}, pinTime);
 	};
 

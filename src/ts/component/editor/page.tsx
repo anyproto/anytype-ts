@@ -7,8 +7,8 @@ import { I, C, Key, Util, DataUtil, Mark, focus, keyboard, crumbs, Storage, Mapp
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 
-import Controls from './controls';
-import EditorHeaderPage from './header/page';
+import Controls from 'ts/component/page/head/controls';
+import PageHeadEdit from 'ts/component/page/head/edit';
 
 interface Props extends RouteComponentProps<any> {
 	dataset?: any;
@@ -90,7 +90,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 					<div className="blocks">
 						<Icon id="button-block-add" className="buttonAdd" onClick={this.onAdd} />
 
-						<EditorHeaderPage 
+						<PageHeadEdit 
 							{...this.props} 
 							ref={(ref: any) => { this.refHeader = ref; }}
 							onKeyDown={this.onKeyDownBlock}
@@ -468,6 +468,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		if (keyboard.isFocused || !selection || !root) {
 			return;
 		};
+
+		Util.previewHide(true);
 		
 		const block = blockStore.getLeaf(rootId, focused);
 		const ids = selection.get(I.SelectType.Block);
@@ -644,7 +646,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		if (!block) {
 			return;
 		};
-		
+
 		const platform = Util.getPlatform();
 		const menuOpen = menuStore.isOpen();
 		const cmd = keyboard.ctrlKey();
@@ -655,6 +657,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			length--;
 		};
 
+		Util.previewHide(true);
 		this.uiHide();
 		
 		if (platform == I.Platform.Mac) {
@@ -1011,14 +1014,14 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 						type: mark ? mark.type : null,
 						onChange: (newType: I.MarkType, param: string) => {
 							marks = Mark.toggleLink({ type: newType, param: param, range: range }, marks);
-							DataUtil.blockSetText(rootId, block, text, marks, true, () => { focus.apply(); });
+							DataUtil.blockSetText(rootId, block.id, text, marks, true, () => { focus.apply(); });
 						}
 					}
 				});
 			});
 		} else {
 			marks = Mark.toggle(marks, { type: type, param: mark ? '' : param, range: range });
-			DataUtil.blockSetText(rootId, block, text, marks, true, () => { focus.apply(); });
+			DataUtil.blockSetText(rootId, block.id, text, marks, true, () => { focus.apply(); });
 		};
 	};
 
@@ -1466,7 +1469,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 								param: url,
 							});
 
-							DataUtil.blockSetText(rootId, block, value, marks, true, () => {
+							DataUtil.blockSetText(rootId, block.id, value, marks, true, () => {
 								focus.set(block.id, { from: to + 1, to: to + 1 });
 								focus.apply();
 							});

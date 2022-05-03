@@ -307,15 +307,14 @@ class Mark {
 
 			let prefix = '';
 			let suffix = '';
-			let space = '';
 
 			if (mark.type == I.MarkType.Mention) {
-				space = '<img src="./img/space.svg" class="space" />';
+				prefix = '<smile></smile><img src="./img/space.svg" class="space" /><name>';
+				suffix = '</name';
 			};
 
-			if ((mark.type == I.MarkType.Mention) || (mark.type == I.MarkType.Emoji)) {
-				prefix = `<smile></smile>${space}<name>`;
-				suffix = '</name>';
+			if (mark.type == I.MarkType.Emoji) {
+				prefix = '<smile></smile>';
 			};
 
 			if (r[mark.range.from] && r[mark.range.to - 1]) {
@@ -544,23 +543,20 @@ class Mark {
 		
 		switch (type) {
 			case I.MarkType.Link:
-				attr = 'href="' + param + '"';
+				attr = `href="${param}"`;
 				break;
 
 			case I.MarkType.Mention:
-				attr = 'contenteditable="false"';
-				break;
-
 			case I.MarkType.Emoji:
 				attr = 'contenteditable="false"';
 				break;
 				
 			case I.MarkType.Color:
-				attr = 'class="textColor textColor-' + param + '"';
+				attr = `class="textColor textColor-${param}"`;
 				break;
 				
 			case I.MarkType.BgColor:
-				attr = 'class="bgColor bgColor-' + param + '"';
+				attr = `class="bgColor bgColor-${param}"`;
 				break;
 		};
 		

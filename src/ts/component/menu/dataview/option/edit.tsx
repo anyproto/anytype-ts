@@ -172,14 +172,11 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<Pro
 		relation.selectDict = relation.selectDict.filter((it: any) => { return it.id != option.id; });
 		optionCommand('delete', rootId, blockId, relation.relationKey, record.id, option);
 
-		const nd = { 
+		menuStore.updateData(id, { value });
+		menuStore.updateData('dataviewOptionList', { 
 			value: value, 
 			relation: observable.box(relation),
-		};
-
-		menuStore.updateData(id, { value });
-		menuStore.updateData('dataviewOptionList', nd);
-		menuStore.updateData('dataviewOptionValues', nd);
+		});
 		
 		onChange(value);
 		close();
@@ -203,11 +200,8 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<Pro
 		relation.selectDict[idx] = option;
 		optionCommand('update', rootId, blockId, relation.relationKey, record.id, relation.selectDict[idx]);
 
-		const nd = { relation: observable.box(relation) };
 		this.props.param.data.option = option;
-
-		menuStore.updateData('dataviewOptionList', nd);
-		menuStore.updateData('dataviewOptionValues', nd);
+		menuStore.updateData('dataviewOptionList', { relation: observable.box(relation) });
 	};
 	
 });

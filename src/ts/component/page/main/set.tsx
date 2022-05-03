@@ -2,12 +2,12 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
-import { IconObject, HeaderMainEdit as Header, FooterMainEdit as Footer, Loader, Block, Deleted } from 'ts/component';
-import { I, M, C, DataUtil, Util, keyboard, focus, crumbs, Action } from 'ts/lib';
-import { blockStore, detailStore, dbStore, menuStore } from 'ts/store';
-import { getRange } from 'selection-ranges';
+import { Header, FooterMainEdit as Footer, Loader, Block, Deleted } from 'ts/component';
+import { I, M, C, DataUtil, Util, crumbs, Action } from 'ts/lib';
+import { blockStore, dbStore, menuStore } from 'ts/store';
 
-import Controls from 'ts/component/editor/controls';
+import Controls from 'ts/component/page/head/controls';
+import HeadSimple from 'ts/component/page/head/simple';
 
 interface Props extends RouteComponentProps<any> {
 	rootId: string;
@@ -21,14 +21,14 @@ interface State {
 const $ = require('jquery');
 const Errors = require('json/error.json');
 
-const EDITOR_IDS = [ 'name', 'description' ];
-
 const PageMainSet = observer(class PageMainSet extends React.Component<Props, State> {
 
 	_isMounted: boolean = false;
 	id: string = '';
 	refHeader: any = null;
+	refHead: any = null;
 	loading: boolean = false;
+	composition: boolean = false;
 	timeout: number = 0;
 
 	state = {
@@ -38,8 +38,6 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, St
 	constructor (props: any) {
 		super(props);
 		
-		this.onSelect = this.onSelect.bind(this);
-		this.onUpload = this.onUpload.bind(this);
 		this.resize = this.resize.bind(this);
 	};
 
@@ -52,79 +50,23 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, St
 			return <Loader id="loader" />;
 		};
 
-		const { isPopup } = this.props;
 		const rootId = this.getRootId();
 		const check = DataUtil.checkDetails(rootId);
-		const object = Util.objectCopy(detailStore.get(rootId, rootId, []));
-		const featured: any = new M.Block({ id: rootId + '-featured', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
-		const placeholder = {
-			name: DataUtil.defaultName('set'),
-			description: 'Add a description',
-		};
 
 		const children = blockStore.getChildren(rootId, rootId, (it: any) => { return it.isDataview(); });
-		const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, align: object.layoutAlign, childrenIds: [], fields: {}, content: {} });
-		const allowedDetails = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
-
-		if (object.name == DataUtil.defaultName('page')) {
-			object.name = '';
-		};
-
-		const Editor = (item: any) => {
-			return (
-				<div className={[ 'wrap', item.className ].join(' ')}>
-					{!allowedDetails ? (
-						<div id={'editor-' + item.id} className={[ 'editor', 'focusable', 'c' + item.id, 'isReadonly' ].join(' ')}>
-							{object[item.id]}
-						</div>
-					) : (
-						<React.Fragment>
-							<div 
-								id={'editor-' + item.id}
-								className={[ 'editor', 'focusable', 'c' + item.id ].join(' ')}
-								contentEditable={true}
-								suppressContentEditableWarning={true}
-								onFocus={(e: any) => { this.onFocus(e, item); }}
-								onBlur={(e: any) => { this.onBlur(e, item); }}
-								onKeyDown={(e: any) => { this.onKeyDown(e, item); }}
-								onKeyUp={(e: any) => { this.onKeyUp(e, item); }}
-								onInput={(e: any) => { this.onInput(e, item); }}
-								onSelect={(e: any) => { this.onSelectText(e, item); }}
-							>
-								{object[item.id]}
-							</div>
-							<div className={[ 'placeholder', 'c' + item.id ].join(' ')}>{placeholder[item.id]}</div>
-						</React.Fragment>
-					)}
-				</div>
-			);
-		};
+		const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, childrenIds: [], fields: {}, content: {} });
 
 		return (
 			<div className={[ 'setWrapper', check.className ].join(' ')}>
-				<Header ref={(ref: any) => { this.refHeader = ref; }} {...this.props} rootId={rootId} isPopup={isPopup} />
+				<Header component="mainEdit" ref={(ref: any) => { this.refHeader = ref; }} {...this.props} rootId={rootId} />
 
 				{check.withCover ? <Block {...this.props} key={cover.id} rootId={rootId} block={cover} /> : ''}
 
 				<div className="blocks wrapper">
 					<Controls key="editorControls" {...this.props} rootId={rootId} resize={this.resize} />
 
-					<div className="head">
-						{check.withIcon ? (
-							<div className="side left">
-								<IconObject id={'icon-' + rootId} size={object.iconImage ? 112 : 96} object={object} canEdit={allowedDetails} onSelect={this.onSelect} onUpload={this.onUpload} />
-							</div>
-						) : ''}
-						<div className={[ 'side', 'right', (object.iconImage ? 'big' : '') ].join(' ')}>
-							<div className="txt">
-								<Editor className="title" id="name" />
-								<Editor className="descr" id="description" />
+					<HeadSimple ref={(ref: any) => { this.refHead = ref;}} type="set" rootId={rootId} />
 
-								<Block {...this.props} key={featured.id} rootId={rootId} iconSize={20} block={featured} className="small" />
-							</div>
-						</div>
-					</div>
-					
 					{children.map((block: I.Block, i: number) => (
 						<Block {...this.props} key={block.id} rootId={rootId} iconSize={20} block={block} />
 					))}
@@ -141,30 +83,13 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, St
 	};
 
 	componentDidUpdate () {
-		const { focused } = focus.state;
-		const rootId = this.getRootId();
-		const object = detailStore.get(rootId, rootId, []);
-
 		this.open();
-
-		for (let id of EDITOR_IDS) {
-			this.placeholderCheck(id);
-		};
-
-		if (!focused && !object._empty_ && (object.name == DataUtil.defaultName('set'))) {
-			focus.set('name', { from: 0, to: 0 });
-		};
-
-		window.setTimeout(() => { focus.apply(); }, 10);
 		this.resize();
 	};
 
 	componentWillUnmount () {
 		this._isMounted = false;
 		this.close();
-
-		focus.clear(true);
-		window.clearTimeout(this.timeout);
 	};
 
 	open () {
@@ -198,6 +123,10 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, St
 				this.refHeader.forceUpdate();
 			};
 
+			if (this.refHead) {
+				this.refHead.forceUpdate();
+			};
+
 			this.resize();
 		});
 	};
@@ -213,16 +142,6 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, St
 		if (close) {
 			Action.pageClose(rootId, true);
 		};
-	};
-
-	onSelect (icon: string) {
-		const rootId = this.getRootId();
-		DataUtil.pageSetIcon(rootId, icon, '');
-	};
-
-	onUpload (hash: string) {
-		const rootId = this.getRootId();
-		DataUtil.pageSetIcon(rootId, '', hash);
 	};
 
 	onAdd (e: any) {
@@ -272,102 +191,6 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, St
 				},
 			}
 		});
-	};
-
-	onFocus (e: any, item: any) {
-		keyboard.setFocus(true);
-
-		this.placeholderCheck(item.id);
-	};
-
-	onBlur (e: any, item: any) {
-		keyboard.setFocus(false);
-		window.clearTimeout(this.timeout);
-		this.save();
-	};
-
-	onInput (e: any, item: any) {
-		this.placeholderCheck(item.id);
-	};
-
-	onKeyDown (e: any, item: any) {
-		this.placeholderCheck(item.id);
-
-		if (item.id == 'name') {
-			keyboard.shortcut('enter', e, (pressed: string) => {
-				e.preventDefault();
-			});
-		};
-	};
-
-	onKeyUp (e: any, item: any) {
-		this.placeholderCheck(item.id);
-
-		window.clearTimeout(this.timeout);
-		this.timeout = window.setTimeout(() => { this.save(); }, 500);
-	};
-
-	onSelectText (e: any, item: any) {
-		focus.set(item.id, this.getRange(item.id));
-	};
-
-	save () {
-		const rootId = this.getRootId();
-		const details = [];
-		const object: any = { id: rootId };
-
-		for (let id of EDITOR_IDS) {
-			const value = this.getValue(id);
-
-			details.push({ key: id, value: value });
-			object[id] = value;
-		};
-
-		C.ObjectSetDetails(rootId, details);
-	};
-
-	getRange (id: string) {
-		if (!this._isMounted) {
-			return;
-		};
-
-		const node = $(ReactDOM.findDOMNode(this));
-		const range = getRange(node.find('#editor-' + id).get(0) as Element);
-		return range ? { from: range.start, to: range.end } : null;
-	};
-
-	getValue (id: string): string {
-		if (!this._isMounted) {
-			return '';
-		};
-
-		const node = $(ReactDOM.findDOMNode(this));
-		const value = node.find('#editor-' + id);
-
-		return value.length ? String(value.get(0).innerText || '') : '';
-	};
-
-	placeholderCheck (id: string) {
-		const value = this.getValue(id);
-		value.length ? this.placeholderHide(id) : this.placeholderShow(id);			
-	};
-
-	placeholderHide (id: string) {
-		if (!this._isMounted) {
-			return;
-		};
-
-		const node = $(ReactDOM.findDOMNode(this));
-		node.find('.placeholder.c' + id).hide();
-	};
-	
-	placeholderShow (id: string) {
-		if (!this._isMounted) {
-			return;
-		};
-
-		const node = $(ReactDOM.findDOMNode(this));
-		node.find('.placeholder.c' + id).show();
 	};
 
 	getRootId () {

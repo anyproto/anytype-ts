@@ -1,9 +1,11 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
-import { IconObject, HeaderMainEdit as Header, FooterMainEdit as Footer, Loader, Block, ListObject, Button, Deleted } from 'ts/component';
-import { I, M, C, crumbs, Action, Util, DataUtil, keyboard } from 'ts/lib';
+import { IconObject, Header, FooterMainEdit as Footer, Loader, Block, ListObject, Button, Deleted } from 'ts/component';
+import { I, M, C, crumbs, Action, Util, DataUtil } from 'ts/lib';
 import { detailStore, dbStore, commonStore } from 'ts/store';
+
+import HeadSimple from 'ts/component/page/head/simple';
 
 interface Props extends RouteComponentProps<any> {
 	rootId?: string;
@@ -15,13 +17,13 @@ interface State {
 };
 
 const Errors = require('json/error.json');
-
 const BLOCK_ID_OBJECT = 'dataview';
 
 const PageMainRelation = observer(class PageMainRelation extends React.Component<Props, State> {
 
 	id: string = '';
 	refHeader: any = null;
+	refHead: any = null;
 	loading: boolean = false;
 
 	state = {
@@ -43,36 +45,15 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 			return <Loader id="loader" />;
 		};
 
-		const { config } = commonStore;
-		const { isPopup } = this.props;
 		const rootId = this.getRootId();
-		const object = detailStore.get(rootId, rootId, [ 'relationFormat' ]);
-		const featured: any = new M.Block({ id: rootId + '-featured', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
 		const { total } = dbStore.getMeta(dbStore.getSubId(rootId, BLOCK_ID_OBJECT), '');
 
 		return (
 			<div>
-				<Header ref={(ref: any) => { this.refHeader = ref; }} {...this.props} rootId={rootId} isPopup={isPopup} />
+				<Header component="mainEdit" ref={(ref: any) => { this.refHeader = ref; }} {...this.props} rootId={rootId} />
 
 				<div className="blocks wrapper">
-					<div className="head">
-						<div className="side left">
-							<IconObject size={96} object={object} />
-						</div>
-						<div className="side center">
-							<div className="txt">
-								<div className="title">{object.name}</div>
-								<div className="descr">{object.description}</div>
-
-								<Block {...this.props} key={featured.id} rootId={rootId} iconSize={20} block={featured} readonly={true} />
-							</div>
-						</div>
-						{config.experimental ? (
-							<div className="side right">
-								<Button id="button-create" text="Create set" onClick={this.onCreate} />
-							</div>
-						) : ''}
-					</div>
+					<HeadSimple ref={(ref: any) => { this.refHead = ref;}} type="relation" rootId={rootId} onCreate={this.onCreate} />
 
 					<div className="section set">
 						<div className="title">{total} {Util.cntWord(total, 'object', 'objects')}</div>
@@ -128,6 +109,9 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 
 			if (this.refHeader) {
 				this.refHeader.forceUpdate();
+			};
+			if (this.refHead) {
+				this.refHead.forceUpdate();
 			};
 		});
 	};

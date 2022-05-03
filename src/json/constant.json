@@ -58,7 +58,7 @@
 
 	"menuIds": {
 		"cell": [ 
-			"select", "button", "dataviewText", "dataviewRelationEdit", "dataviewObjectList", "dataviewObjectValues", "dataviewOptionValues", 
+			"select", "button", "dataviewText", "dataviewRelationEdit", "dataviewObjectList", "dataviewObjectValues", 
 			"dataviewOptionList", "dataviewOptionEdit", "dataviewFileList", "dataviewFileValues", "dataviewCalendar", "relationSuggest"
 		],
 		"cellAdd": [ "dataviewRelationEdit", "dataviewRelationSuggest", "dataviewRelationList" ],

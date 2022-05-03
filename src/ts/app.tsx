@@ -22,6 +22,7 @@ import 'scss/common.scss';
 import 'scss/debug.scss';
 
 import 'scss/component/header.scss';
+import 'scss/component/headSimple.scss';
 import 'scss/component/footer.scss';
 import 'scss/component/cover.scss';
 import 'scss/component/input.scss';

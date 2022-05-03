@@ -8,7 +8,6 @@ import { observer } from 'mobx-react';
 interface Props extends I.Menu {};
 
 const $ = require('jquery');
-const MENU_ID = 'dataviewOptionValues';
 const HEIGHT = 28;
 const LIMIT = 40;
 
@@ -237,7 +236,6 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 		};
 
 		menuStore.updateData(this.props.id, { value });
-		menuStore.updateData(MENU_ID, { value });
 
 		onChange(value);
 	};
