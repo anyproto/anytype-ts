@@ -287,7 +287,7 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
         content[id] = v;
         content = DataUtil.checkLinkSettings(content, object.layout);
 
-		C.BlockUpdateContent(rootId, blockId, { ...block, content });
+		C.BlockLinkListSetAppearance(rootId, blockId, { ...block, content });
 
 		delete(content.targetBlockId);
 		Storage.set('link', content, true);
