@@ -29,7 +29,7 @@
 		.tab:last-child { margin: 0px; }
 	}
 
-	.icon { -webkit-app-region: no-drag; }
+	.icon { -webkit-app-region: no-drag; flex-shrink: 0; }
 
 	.icon.big { width: 28px; height: 28px; background-size: 20px 20px; border-radius: 6px; }
 	.icon.big.home, .icon.big.expand { width: 32px; margin-right: 10px; }
