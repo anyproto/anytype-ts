@@ -148,20 +148,20 @@ class Keyboard {
 	};
 	
 	onKeyDown (e: any) {
-		const rootId = this.getRootId();
 		const platform = Util.getPlatform();
 		const key = e.key.toLowerCase();
 		const cmd = this.ctrlKey();
 		const isMain = this.isMain();
-		const isPopup = this.isPopup();
 
 		this.pressed.push(key);
 
 		// Go back
 		this.shortcut('backspace', e, (pressed: string) => {
-			if (!isMain || (isMain && !this.isMainIndex()) || this.isFocused) {
+			const ids = this.selection.get(I.SelectType.Block);
+			if (!isMain || (isMain && !this.isMainIndex()) || this.isFocused || ids.length) {
 				return;
 			};
+
 			this.back();
 		});
 
