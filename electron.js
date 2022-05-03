@@ -146,7 +146,6 @@ function initTray () {
 	tray = new Tray (trayIcon());
 	
 	tray.setToolTip('Anytype');
-	tray.on('click', () => { win.show(); });
 
 	tray.setContextMenu(Menu.buildFromTemplate([
 		{ label: 'Open Anytype', click: () => { win.show(); } },
