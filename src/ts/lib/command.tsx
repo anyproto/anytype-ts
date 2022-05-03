@@ -452,6 +452,15 @@ const BlockLinkCreateToTheNewObject = (contextId: string, targetId: string, deta
 	dispatcher.request(BlockLinkCreateToTheNewObject.name, request, callBack);
 };
 
+const BlockLinkListSetAppearance = (contextId: string, blockIds: any[], callBack?: (message: any) => void) => {
+	const request = new Rpc.BlockLink.ListSetAppearance.Request();
+	
+	request.setContextid(contextId);
+	request.setBlockidsList(blockIds);
+
+	dispatcher.request(BlockLinkListSetAppearance.name, request, callBack);
+};
+
 // ---------------------- BLOCK FILE ---------------------- //
 
 const BlockFileCreateAndUpload = (contextId: string, targetId: string, position: I.BlockPosition, url: string, path: string, callBack?: (message: any) => void) => {
@@ -1341,6 +1350,7 @@ export {
 	BlockFileListSetStyle,
 
 	BlockLinkCreateToTheNewObject,
+	BlockLinkListSetAppearance,
 
 	BlockDivListSetStyle,
 
