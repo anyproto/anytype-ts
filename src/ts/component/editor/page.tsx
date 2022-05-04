@@ -1043,7 +1043,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		if (block.isText()) {
 			if (!isDelete && !range.to) {
 				if (block.isTextList() || block.isTextQuote() || block.isTextCallout()) {
-					C.BlockListSetTextStyle(rootId, [ block.id ], I.TextStyle.Paragraph);
+					C.BlockListTurnInto(rootId, [ block.id ], I.TextStyle.Paragraph);
 				} else {
 					ids.length ? this.blockRemove(block) : this.blockMerge(block, -1);
 				};
@@ -1139,7 +1139,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		let replace = !range.to && block.isTextList() && !length;
 
 		if (replace) {
-			C.BlockListSetTextStyle(rootId, [ block.id ], I.TextStyle.Paragraph);
+			C.BlockListTurnInto(rootId, [ block.id ], I.TextStyle.Paragraph);
 		} else 
 		if (!block.isText()) {  
 			this.blockCreate(block.id, I.BlockPosition.Bottom, {
