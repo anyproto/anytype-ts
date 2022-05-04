@@ -25,7 +25,7 @@ class MenuSmileSkin extends React.Component<Props, {}> {
 		const skins = [ 1, 2, 3, 4, 5, 6 ];
 		
 		const Item = (item: any) => (
-			<div className="item" onClick={(e: any) => { this.onClick(item.skin); }}>
+			<div className="item" onMouseDown={(e: any) => { this.onClick(e, item.skin); }}>
 				<IconObject size={32} object={{ iconEmoji: SmileUtil.nativeById(smileId, item.skin) }} />
 			</div>
 		);
@@ -39,13 +39,16 @@ class MenuSmileSkin extends React.Component<Props, {}> {
 		);
 	};
 	
-	onClick (id: number) {
-		const { param } = this.props;
+	onClick (e: any, id: number) {
+		e.preventDefault();
+		e.stopPropagation();
+
+		const { param, close } = this.props;
 		const { data } = param;
 		const { onSelect } = data;
-		
+
 		onSelect(id);
-		this.props.close();
+		close();
 	};
 	
 };
