@@ -92,9 +92,11 @@ class Keyboard {
 	onMouseMove (e: any) {
 		const { sidebar, autoSidebar } = commonStore;
 		const { snap, fixed, width } = sidebar;
+		const x = e.pageX;
+		const y = e.pageY;
 
 		this.mouse = {
-			page: { x: e.pageX, y: e.pageY },
+			page: { x, y },
 			client: { x: e.clientX, y: e.clientY },
 		};
 
@@ -114,19 +116,19 @@ class Keyboard {
 		let remove = false;
 
 		if (snap == I.MenuDirection.Left) {
-			if (this.mouse.page.x <= 20) {
+			if (x <= 20) {
 				add = true;
 			};
-			if (this.mouse.page.x > width + 10) {
+			if (x > width + 10) {
 				remove = true;
 			};
 		};
 
 		if (snap == I.MenuDirection.Right) {
-			if (this.mouse.page.x >= ww - 20) {
+			if (x >= ww - 20) {
 				add = true;
 			};
-			if (this.mouse.page.x > ww - width - 10) {
+			if (x < ww - width - 10) {
 				remove = true;
 			};
 		};
