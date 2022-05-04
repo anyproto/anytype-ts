@@ -1163,12 +1163,13 @@ const ObjectSetIsArchived = (contextId: string, isArchived: boolean, callBack?: 
 	dispatcher.request('objectSetIsArchived', request, callBack);
 };
 
-const ObjectGraph = (filters: any[], limit: number, types: string[], callBack?: (message: any) => void) => {
+const ObjectGraph = (filters: any[], limit: number, types: string[], keys: string[], callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.Graph.Request();
 	
 	request.setFiltersList(filters.map(Mapper.To.Filter));
     request.setLimit(limit);
 	request.setObjecttypefilterList(types);
+	request.setKeysList(keys);
 
 	dispatcher.request('objectGraph', request, callBack);
 };

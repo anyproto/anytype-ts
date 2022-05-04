@@ -129,7 +129,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 
 		this.setState({ loading: true });
 
-		C.ObjectGraph(filters, 0, [], (message: any) => {
+		C.ObjectGraph(filters, 0, [], Constant.defaultRelationKeys, (message: any) => {
 			if (message.error.code) {
 				return;
 			};
