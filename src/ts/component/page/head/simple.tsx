@@ -108,7 +108,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props, {}> {
 
 	componentDidUpdate () {
 		const { focused } = focus.state;
-		const { rootId, type } = this.props;
+		const { rootId } = this.props;
 		const object = detailStore.get(rootId, rootId, []);
 
 		this.setValue();
@@ -117,7 +117,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props, {}> {
 			this.placeholderCheck(id);
 		};
 
-		if (!focused && !object._empty_ && (object.name == DataUtil.defaultName(type))) {
+		if (!focused && !object._empty_ && (object.name == DataUtil.defaultName('page'))) {
 			focus.set('title', { from: 0, to: 0 });
 		};
 
