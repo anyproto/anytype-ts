@@ -4,12 +4,12 @@ const path = require('path');
 const process = require('process');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
-module.exports = () => {
-	const useGRPC = !process.env.ANYTYPE_USE_ADDON && (process.env.ANYTYPE_USE_GRPC || (process.platform == 'win32') || (process.env.NODE_ENV == 'development'));
+module.exports = (env) => {
+	const useGRPC = !process.env.ANYTYPE_USE_ADDON && (process.env.ANYTYPE_USE_GRPC || (process.platform == 'win32') || (env.NODE_ENV == 'development'));
 	const port = process.env.SERVER_PORT;
 
 	return {
-		mode: process.env.NODE_ENV,
+		mode: env.NODE_ENV,
 	
 		//devtool: 'source-map',
 
@@ -95,7 +95,7 @@ module.exports = () => {
 		plugins: [
 			//new BundleAnalyzerPlugin(),
 			new webpack.DefinePlugin({
-				'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
+				'process.env.NODE_ENV': JSON.stringify(env.NODE_ENV),
 			}),
 
 			function () {
