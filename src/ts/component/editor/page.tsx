@@ -43,6 +43,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 	isDeleted: boolean = false;
 	width: number = 0;
 	refHeader: any = null;
+	dir: number = 0;
 
 	constructor (props: any) {
 		super(props);
@@ -517,6 +518,11 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			this.onHistory(e);
 		});
 
+		// Expand selection
+		keyboard.shortcut('shift+arrowup, shift+arrowdown', e, (pressed: string) => {
+			this.onShiftArrowEditor(e, pressed);
+		});
+
 		if (ids.length) {
 
 			keyboard.shortcut('escape', e, (pressed: string) => {
@@ -934,13 +940,44 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 	};
 
 	// Expand selection up/down
+	onShiftArrowEditor (e: any, pressed: string) {
+		const { dataset, rootId } = this.props;
+		const { selection } = dataset || {};
+		const dir = pressed.match(Key.up) ? -1 : 1;
+		const ids = selection.get(I.SelectType.Block, false);
+		const idsWithChildren = selection.get(I.SelectType.Block, true);
+
+		if (ids.length == 1) {
+			this.dir = dir;
+		};
+
+		let method = '';
+		if (this.dir && (dir != this.dir)) {
+			method = dir < 0 ? 'pop' : 'shift';
+			ids[method]();
+		} else {
+			const idx = (dir < 0) ? 0 : idsWithChildren.length - 1;
+			const next = blockStore.getNextBlock(rootId, idsWithChildren[idx], dir, (it: any) => { return !it.isSystem(); });
+
+			method = dir < 0 ? 'unshift' : 'push';
+			if (next) {
+				ids[method](next.id);
+				selection.scrollToElement(next.id, dir);
+			};
+		};
+
+		selection.set(I.SelectType.Block, ids);
+	};
+
+	// Expand selection up/down
 	onShiftArrowBlock (e: any, range: I.TextRange, pressed: string) {
 		const { dataset, rootId } = this.props;
 		const { selection } = dataset || {};
 		const { focused } = focus.state;
+		const dir = pressed.match(Key.up) ? -1 : 1;
 		const block = blockStore.getLeaf(rootId, focused);
 
-		if (!block || selection.get(I.SelectType.Block, true).length) {
+		if (!block) {
 			return;
 		};
 
@@ -963,7 +1000,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			sRect = vRect;
 		};
 
-		const dir = pressed.match(Key.up) ? -1 : 1;
 		const lh = parseInt(value.css('line-height'));
 		const sy = sRect.y + st;
 		const vy = vRect.y + st;
