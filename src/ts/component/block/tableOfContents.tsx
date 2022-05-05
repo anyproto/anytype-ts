@@ -106,6 +106,9 @@ const BlockTableOfContents = observer(class BlockTableOfContents extends React.C
 				if (block.isTextHeader2() && (next.isTextHeader3())) {
 					depth++;
 				};
+				if (block.isTextHeader3()) {
+					depth = 0;
+				};
 			};
 		};
 
