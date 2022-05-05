@@ -185,7 +185,7 @@ class CommonStore {
     imageUrl (hash: string, width: number) {
 		hash = String(hash || '');
 		width = Number(width) || 0;
-		return this.gateway + '/image/' + hash + '?width=' + width;
+		return `${this.gateway}/image/${hash}?width=${width}`;
 	};
 
     progressSet (v: I.Progress) {
