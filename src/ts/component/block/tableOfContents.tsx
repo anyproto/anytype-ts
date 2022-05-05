@@ -83,14 +83,26 @@ const BlockTableOfContents = observer(class BlockTableOfContents extends React.C
 		const blocks = blockStore.unwrapTree([ blockStore.wrapTree(rootId, rootId) ]).filter((it: I.Block) => { return it.isTextHeader(); });
 		const list: any[] = [];
 
-		let depth = 0;
+		let hasH1 = false;
+		let hasH2 = false;
 
-		for (let i = 0; i < blocks.length; i++) {
-			let block = blocks[i];
-			let next = blocks[i + 1];
+		blocks.forEach((block: I.Block) => {
+			let depth = 0;
 
 			if (block.isTextHeader1()) {
 				depth = 0;
+				hasH1 = true;
+				hasH2 = false;
+			};
+
+			if (block.isTextHeader2()) {
+				hasH2 = true;
+				if (hasH1) depth++;
+			};
+
+			if (block.isTextHeader3()) {
+				if (hasH1) depth++;
+				if (hasH2) depth++;
 			};
 
 			list.push({ 
@@ -98,20 +110,7 @@ const BlockTableOfContents = observer(class BlockTableOfContents extends React.C
 				id: block.id,
 				text: String(block.content.text || DataUtil.defaultName('page')),
 			});
-
-			if (next) {
-				if (block.isTextHeader1() && (next.isTextHeader2() || next.isTextHeader3())) {
-					depth++;
-				};
-				if (block.isTextHeader2() && (next.isTextHeader3())) {
-					depth++;
-				};
-				if (block.isTextHeader3()) {
-					depth = 0;
-				};
-			};
-		};
-
+		});
 		return list;
 	};
 
