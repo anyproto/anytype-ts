@@ -2,7 +2,7 @@ import * as React from 'react';
 import { I, C, crumbs, Util, analytics } from 'ts/lib';
 import { RouteComponentProps } from 'react-router';
 import { Header, Graph, Icon, Loader } from 'ts/component';
-import { blockStore, commonStore } from 'ts/store';
+import { blockStore, detailStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 import Panel from './graph/panel';
@@ -129,13 +129,13 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 
 		this.setState({ loading: true });
 
-		C.ObjectGraph(filters, 0, [], (message: any) => {
+		C.ObjectGraph(filters, 0, [], Constant.defaultRelationKeys, (message: any) => {
 			if (message.error.code) {
 				return;
 			};
 
 			this.data.edges = message.edges.filter(d => { return (d.source !== d.target); });
-			this.data.nodes = message.nodes;
+			this.data.nodes = message.nodes.map(it => detailStore.check(it));
 			this.refGraph.init();
 
 			window.setTimeout(() => { this.setState({ loading: false }); }, 250);

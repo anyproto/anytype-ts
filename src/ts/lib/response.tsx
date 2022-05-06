@@ -306,7 +306,7 @@ const ObjectIdsSubscribe = (response: any) => {
 const ObjectGraph = (response: any) => {
 	return {
 		edges: (response.getEdgesList() || []).map(Mapper.From.GraphEdge),
-		nodes: (response.getNodesList() || []).map(Mapper.From.GraphNode),
+		nodes: (response.getNodesList() || []).map(Decode.decodeStruct),
 	};
 };
 
