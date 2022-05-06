@@ -11,4 +11,6 @@
 			span { border-color: $colorDarkGrey; }
 		}
 	}
+
+	.block.blockTableOfContents > .wrapContent > .dropTarget.targetBot { display: block; height: 2px; }
 }
