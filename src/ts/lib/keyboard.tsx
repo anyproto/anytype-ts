@@ -223,7 +223,6 @@ class Keyboard {
 
 			// Navigation search
 			this.shortcut(`${cmd}+s`, e, (pressed: string) => {
-				console.log(this.isPinChecked, popupStore.isOpen('search'));
 				if (popupStore.isOpen('search') || !this.isPinChecked) {
 					return;
 				};

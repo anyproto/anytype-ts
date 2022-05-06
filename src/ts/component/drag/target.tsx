@@ -6,10 +6,11 @@ import { throttle } from 'lodash';
 interface Props {
 	id: string;
 	rootId: string;
+	cacheKey?: string;
 	targetContextId?: string;
 	style?: number;
 	type?: I.BlockType;
-	dropType: I.DragType;
+	dropType: I.DropType;
 	className?: string;
 	canDropMiddle?: boolean;
 	onClick?(e: any): void;
@@ -24,7 +25,7 @@ class DropTarget extends React.Component<Props, {}> {
 	};
 	
 	render () {
-		const { id, rootId, targetContextId, dropType, type, style, children, className, canDropMiddle } = this.props;
+		const { id, rootId, cacheKey, targetContextId, dropType, type, style, children, className, canDropMiddle } = this.props;
 		
 		let cn = [ 'dropTarget', 'root-' + rootId ];
 		if (className) {
@@ -38,6 +39,7 @@ class DropTarget extends React.Component<Props, {}> {
 				onClick={this.onClick} 
 				data-id={id} 
 				data-root-id={rootId} 
+				data-cache-key={cacheKey}
 				data-drop-type={dropType} 
 				data-type={type} 
 				data-style={style} 
