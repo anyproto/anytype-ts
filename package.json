@@ -58,7 +58,7 @@
 		"@types/react-router-dom": "^4.3.5",
 		"babel-loader": "^8.2.1",
 		"babel-preset-env": "^1.7.0",
-		"electron": "^16.0.4",
+		"electron": "^18.2.0",
 		"electron-builder": "^22.14.13",
 		"electron-notarize": "^0.2.1",
 		"git-revision-webpack-plugin": "^3.0.6",

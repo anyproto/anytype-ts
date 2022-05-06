@@ -133,22 +133,25 @@ const MenuText = observer(class MenuText extends React.Component<Props, {}> {
 			return;
 		};
 
-		const { position, getId } = this.props;
+		const { position, getId, param } = this.props;
+		const { data } = param;
+		const { cellId } = data;
 		const win = $(window);
 		const obj = $(`#${getId()}`);
 		const input = obj.find('#input');
 		const wh = win.height();
 		const hh = Util.sizeHeader();
 		const o = obj.offset();
+		const cell = $(`#${cellId}`);
 
 		obj.css({ height: 'auto' });
 		input.css({ height: 'auto' });
 
 		raf(() => {
 			const sh = input.get(0).scrollHeight;
-			input.css({ height: Math.min(wh - hh - o.top - 20, sh) });
-			input.scrollTop(sh);
+			const height = Math.max(cell.outerHeight(), Math.min(wh - hh - o.top - 20, sh));
 
+			input.css({ height }).scrollTop(sh);
 			position();
 		});
 	};

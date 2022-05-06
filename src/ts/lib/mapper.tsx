@@ -395,21 +395,6 @@ const Mapper = {
             };
         },
 
-		GraphNode: (obj: any) => {
-            return {
-                id: obj.getId(),
-				type: obj.getType(),
-				name: obj.getName(),
-				layout: obj.getLayout(),
-				description: obj.getDescription(),
-				snippet: obj.getSnippet(),
-				iconImage: obj.getIconimage(),
-				iconEmoji: obj.getIconemoji(),
-				done: obj.getDone(),
-				relationFormat: obj.getRelationformat(),
-            };
-        },
-
 		UnsplashPicture: (obj: any) => {
 			return {
                 id: obj.getId(),

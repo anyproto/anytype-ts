@@ -136,7 +136,7 @@ const MenuItemRelationView = observer(class MenuItemRelationView extends React.C
 		selection.preventSelect(true);
 		selection.clear(false);
 
-		onDragStart(e, I.DragType.Relation, [ relationKey ], this);
+		onDragStart(e, I.DropType.Relation, [ relationKey ], this);
 	};
 
 });

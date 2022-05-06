@@ -1,7 +1,7 @@
 import { Account, AccountInfo, AccountConfig, AccountStatus, AccountStatusType } from './account';
 import { 
 	Platform, 
-	DragType, 
+	DropType, 
 	SelectType,
 	CoverType, 
 	CrumbsType, 
@@ -61,7 +61,7 @@ export {
 	AccountStatusType,
 
 	Platform,
-	DragType,
+	DropType,
 	SelectType,
 	CoverType,
 	CrumbsType,

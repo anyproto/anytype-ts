@@ -190,15 +190,15 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 
 							<Label className="sectionName" text="Account" />
 
-							<div className="row" onClick={this.onLogout}>
-								<Label text={translate('popupSettingsLogout')} />
-							</div>
-
 							{canDelete ? (
-								<div className="row red" onClick={() => { this.onPage('delete'); }}>
+								<div className="row" onClick={() => { this.onPage('delete'); }}>
 									<Label text={translate('popupSettingsAccountDeleteTitle')} />
 								</div>
 							) : ''}
+
+							<div className="row red" onClick={this.onLogout}>
+								<Label text={translate('popupSettingsLogout')} />
+							</div>
 						</div>
 					</div>
 				);

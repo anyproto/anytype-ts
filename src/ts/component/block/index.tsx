@@ -221,13 +221,13 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 
 		if (canDrop) {
 			object = (
-				<DropTarget {...this.props} rootId={rootId} id={id} style={style} type={type} dropType={I.DragType.Block} canDropMiddle={canDropMiddle}>
+				<DropTarget {...this.props} rootId={rootId} id={id} style={style} type={type} dropType={I.DropType.Block} canDropMiddle={canDropMiddle}>
 					{blockComponent}
 				</DropTarget>
 			);
 
-			targetTop = <DropTarget {...this.props} className="targetTop" rootId={rootId} id={id} style={style} type={type} dropType={I.DragType.Block} canDropMiddle={canDropMiddle} />;
-			targetBot = <DropTarget {...this.props} className="targetBot" rootId={rootId} id={id} style={style} type={type} dropType={I.DragType.Block} canDropMiddle={canDropMiddle} />;
+			targetTop = <DropTarget {...this.props} className="targetTop" rootId={rootId} id={id} style={style} type={type} dropType={I.DropType.Block} canDropMiddle={canDropMiddle} />;
+			targetBot = <DropTarget {...this.props} className="targetBot" rootId={rootId} id={id} style={style} type={type} dropType={I.DropType.Block} canDropMiddle={canDropMiddle} />;
 		} else {
 			object = (
 				<div className="dropTarget">
@@ -357,7 +357,7 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 		selection.preventClear(true);
 
 		const ids: string[] = DataUtil.selectionGet(block.id, false, this.props);
-		onDragStart(e, I.DragType.Block, ids, this);
+		onDragStart(e, I.DropType.Block, ids, this);
 	};
 	
 	onMenuDown (e: any) {

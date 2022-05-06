@@ -349,27 +349,33 @@ class DataUtil {
 	};
 	
 	objectOpen (object: any) {
-		const { root } = blockStore;
-
 		keyboard.setSource(null);
 
+		const route = this.objectRoute(object);
+		if (route) {
+			Util.route('/' + route);
+		};
+	};
+
+	objectRoute (object: any): string {
 		let action = this.actionByLayout(object.layout);
 		let id = object.id;
 
-		if ((action == 'edit') && (object.id == root)) {
+		if ((action == 'edit') && (object.id == blockStore.root)) {
 			action = 'index';
 			id = '';
 		};
 
 		if (!action) {
-			return;
+			return '';
 		};
 
-		let route = [ '', 'main', action ];
+		const route = [ 'main', action ];
 		if (id) {
 			route.push(id);
 		};
-		Util.route(route.join('/'));
+
+		return route.join('/');
 	};
 
 	objectOpenPopup (object: any, popupParam?: any) {

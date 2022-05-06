@@ -30,7 +30,7 @@ const HeaderMainStore = observer(class HeaderMainStore extends React.Component<P
 				</div>
 
 				<div className="side center">
-					<div className="tabs">
+					<div id="tabs" className="tabs">
 						{tabs.map((item: any, i: number) => (
 							<div key={item.id} className={[ 'tab', (item.id == tab ? 'active' : '') ].join(' ')} onClick={(e: any) => { onTab(item.id); }}>
 								{item.name}

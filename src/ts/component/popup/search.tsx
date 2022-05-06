@@ -452,13 +452,22 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 		const content = obj.find('.content');
 		const height = Math.max(110, Math.min(HEIGHT * LIMIT, items.length * HEIGHT + 16));
 		const header = $(isPopup ? '#popupPage #innerWrap #header' : '#page.isFull #header');
+		const ww = win.width();
 		const element = header.find('#path');
 
+		let width = ww * 0.4;
+		let x = ww / 2 - width / 2;
+		let y = Util.sizeHeader();
+
 		if (element.length) {
-			const offset = element.offset();
-			obj.css({ width: element.outerWidth(), left: offset.left, top: offset.top - win.scrollTop() + 40 });
+			const { left, top } = element.offset();
+
+			width = element.outerWidth();
+			x = left;
+			y = top - win.scrollTop() + 40;
 		};
 
+		obj.css({ width, left: x, top: y });
 		content.css({ height });
 	};
 
