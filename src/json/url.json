@@ -8,5 +8,6 @@
 	"unsplash": {
 		"site": "https://unsplash.com/",
 		"utm": "?utm_source=Anytype&utm_medium=referral"
-	}
+	},
+	"protocol": "anytype://"
 }

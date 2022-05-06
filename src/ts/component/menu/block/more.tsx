@@ -9,6 +9,7 @@ interface Props extends I.Menu {
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
+const Url = require('json/url.json');
 
 class MenuBlockMore extends React.Component<Props, {}> {
 	
@@ -134,6 +135,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		let pageRemove = { id: 'pageRemove', icon: 'remove', name: 'Delete' };
 		let pageExport = { id: 'pageExport', icon: 'export', name: 'Export' };
 		let pageCopy = { id: 'pageCopy', icon: 'copy', name: 'Duplicate object' };
+		let pageLink = { id: 'pageLink', icon: 'link', name: 'Copy link' };
 		let blockRemove = { id: 'blockRemove', icon: 'remove', name: 'Delete' };
 
 		if (object.isFavorite) {
@@ -178,10 +180,12 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const allowedTemplate = (object.type != Constant.typeId.note) && (object.id != profile);
 		const allowedFav = !object.isArchived;
 		const allowedLock = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
+		const allowedLink = config.experimental;
 
 		if (!allowedArchive)	 archive = null;
 		if (!allowedDelete)		 pageRemove = null;
 		if (!allowedLock)		 pageLock = null;
+		if (!allowedLink)		 pageLink = null;
 		if (!allowedShare)		 share = null;
 		if (!allowedHighlight)	 highlight = null;
 		if (!allowedSearch)		 search = null;
@@ -194,7 +198,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		if (block.isObjectType() || block.isObjectRelation() || block.isObjectFileKind() || block.isObjectSet() || block.isObjectSpace()) {
 			sections = [
 				{ children: [ archive, pageRemove ] },
-				{ children: [ fav, highlight ] },
+				{ children: [ fav, highlight, pageLink ] },
 				{ children: [ search ] },
 				{ children: [ print ] },
 				{ children: [ share, highlight ] },
@@ -203,7 +207,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		if (block.isPage()) {
 			sections = [
 				{ children: [ undo, redo, history, archive, pageRemove ] },
-				{ children: [ fav, pageCopy, template, pageLock ] },
+				{ children: [ fav, pageCopy, template, pageLock, pageLink ] },
 				{ children: [ search ] },
 				{ children: [ print, pageExport ] },
 				{ children: [ highlight ] },
@@ -516,6 +520,10 @@ class MenuBlockMore extends React.Component<Props, {}> {
 						}
 					});
 				});
+				break;
+
+			case 'pageLink':
+				Util.clipboardCopy({ text: Url.protocol + DataUtil.objectRoute(object) });
 				break;
 
 			case 'fav':
