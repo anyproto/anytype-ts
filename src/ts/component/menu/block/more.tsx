@@ -198,7 +198,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		if (block.isObjectType() || block.isObjectRelation() || block.isObjectFileKind() || block.isObjectSet() || block.isObjectSpace()) {
 			sections = [
 				{ children: [ archive, pageRemove ] },
-				{ children: [ fav, highlight, pageLink ] },
+				{ children: [ fav, pageLink, highlight ] },
 				{ children: [ search ] },
 				{ children: [ print ] },
 				{ children: [ share, highlight ] },
@@ -207,7 +207,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		if (block.isPage()) {
 			sections = [
 				{ children: [ undo, redo, history, archive, pageRemove ] },
-				{ children: [ fav, pageCopy, template, pageLock, pageLink ] },
+				{ children: [ fav, pageLink, pageCopy, template, pageLock ] },
 				{ children: [ search ] },
 				{ children: [ print, pageExport ] },
 				{ children: [ highlight ] },
