@@ -92,8 +92,6 @@ const Item = observer(class Item extends React.Component<Props, {}> {
 					rootId={rootId}
 					targetContextId={object.id}
 					dropType={I.DropType.Menu}
-					type={object.type}
-					style={0}
 					canDropMiddle={true}
 				>
 					{inner}

@@ -78,10 +78,10 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 			let h = rect.height;
 			let isTargetTop = item.hasClass('targetTop');
 			let isTargetBot = item.hasClass('targetBot');
-			let key = data.cacheKey || data.id;
+			let key = [ data.dropType, (data.cacheKey || data.id) ];
 
-			if (isTargetTop) key += '-top';
-			if (isTargetBot) key += '-bot';
+			if (isTargetTop) key.push('top');
+			if (isTargetBot) key.push('bot');
 
 			// Add block's paddings to height
 			if ((data.dropType == I.DropType.Block) && (data.type != I.BlockType.Layout)) {
@@ -95,7 +95,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 				};
 			};
 
-			this.objectData.set(key, {
+			this.objectData.set(key.join('-'), {
 				...data,
 				obj: item,
 				index: i,
@@ -136,7 +136,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 			data = this.hoverData;
 		} else 
 		if (last && isFileDrop) {
-			data = this.objectData.get(last.id);
+			data = this.objectData.get([ I.DropType.Block, last.id ].join('-'));
 			position = I.BlockPosition.Bottom;
 		};
 		
