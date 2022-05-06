@@ -1042,13 +1042,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 		if (block.isText()) {
 			if (!isDelete && !range.to) {
-<<<<<<< HEAD
-				if (block.isTextList()) {
-					C.BlockTextListSetStyle(rootId, [ block.id ], I.TextStyle.Paragraph);
-=======
 				if (block.isTextList() || block.isTextQuote() || block.isTextCallout()) {
 					C.BlockListTurnInto(rootId, [ block.id ], I.TextStyle.Paragraph);
->>>>>>> 93f42c086bcecc43dafd54e8adec49ef0f328ab9
 				} else {
 					ids.length ? this.blockRemove(block) : this.blockMerge(block, -1);
 				};
