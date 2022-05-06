@@ -150,7 +150,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 		const platform = Util.getPlatform();
 		const isPopup = this.props.isPopup && !obj.hasClass('full');
 		
-		let wh = isPopup ? obj.height() - hh : win.height() - hh;
+		let wh = isPopup ? obj.height() - hh : win.height();
 		let sh = isPopup ? obj.height() : win.height();
 
 		if (platform == I.Platform.Windows) {
@@ -162,7 +162,9 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 		
 		if (isPopup) {
 			const element = $('#popupPage .content');
-			element.css({ minHeight: 'unset', height: '100%' });
+			if (element.length) {
+				element.css({ minHeight: 'unset', height: '100%' });
+			};
 		};
 
 		if (this.refGraph) {
