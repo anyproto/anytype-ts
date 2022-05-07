@@ -553,12 +553,11 @@ class Keyboard {
 
 	onToggleLock () {
 		const rootId = this.getRootId();
-		const block = blockStore.getLeaf(rootId, rootId);
-		if (!block) {
-			return;
+		const root = blockStore.getLeaf(rootId, rootId);
+		
+		if (root) {
+			this.onLock(rootId, !root.isLocked());
 		};
-
-		this.onLock(rootId, !block.fields.isLocked);		
 	};
 
 	getPopupMatch () {

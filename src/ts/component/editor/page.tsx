@@ -1408,6 +1408,11 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		const currentFrom = range.from;
 		const currentTo = range.to;
 
+		if (this.isReadonly()) {
+			console.log('onPaste read-only');
+			return;
+		};
+
 		if (!data) {
 			const cb = e.clipboardData || e.originalEvent.clipboardData;
 			const items = cb.items;
@@ -1905,7 +1910,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		const { rootId } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
 		const allowed = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Block ]);
-		return root?.fields.isLocked || !allowed;
+		return root?.isLocked() || !allowed;
 	};
 
 });
