@@ -494,22 +494,18 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 		// Undo
 		keyboard.shortcut(`${cmd}+z`, e, (pressed: string) => {
-			if (readonly) {
-				return;
+			if (!readonly) {
+				e.preventDefault();
+				keyboard.onUndo(rootId, (message: any) => { focus.clear(true); });
 			};
-
-			e.preventDefault();
-			keyboard.onUndo(rootId, (message: any) => { focus.clear(true); });
 		});
 
 		// Redo
 		keyboard.shortcut(`${cmd}+shift+z`, e, (pressed: string) => {
 			if (readonly) {
-				return;
+				e.preventDefault();
+				keyboard.onRedo(rootId, (message: any) => { focus.clear(true); });
 			};
-			
-			e.preventDefault();
-			keyboard.onRedo(rootId, (message: any) => { focus.clear(true); });
 		});
 
 		// History
