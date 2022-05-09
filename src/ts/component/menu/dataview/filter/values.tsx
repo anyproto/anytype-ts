@@ -425,8 +425,9 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 			};
 
 			if (k == 'condition') {
-				if ([ I.FilterCondition.None, I.FilterCondition.Empty, I.FilterCondition.NotEmpty ].indexOf(v) >= 0) {
+				if ([ I.FilterCondition.None, I.FilterCondition.Empty, I.FilterCondition.NotEmpty ].includes(v)) {
 					item.value = Relation.formatValue(relation, null, false);
+					item.quickOption = I.FilterQuickOption.None;
 				};
 			};
 
