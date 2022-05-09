@@ -3,7 +3,8 @@
 .blocks {
 	.block.blockText { font-size: 16px; line-height: 24px; letter-spacing: 0.08px; font-weight: 400; word-wrap: break-word; }
 	.block.blockText {
-		.value { -webkit-user-modify: read-write-plaintext-only; width: 100%; overflow: hidden; position: relative; z-index: 1; }
+		#value { -webkit-user-modify: read-write-plaintext-only; width: 100%; overflow: hidden; position: relative; z-index: 1; }
+		#value * { user-select: text; }
 
 		.placeholder { display: none; }
 
@@ -14,7 +15,7 @@
 		.disabled { color: $colorMediumGrey; opacity: 1 !important; }
 
 		smile {
-			img { position: static !important; left: auto !important; top: auto !important; margin: 0px !important; vertical-align: middle; }
+			img { position: static !important; left: auto !important; top: auto !important; margin: 0px !important; vertical-align: top; }
 		}
 		smile * { display: inline; vertical-align: middle; }
 		smile .loaderWrapper { display: inline-block; }

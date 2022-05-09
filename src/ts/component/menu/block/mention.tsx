@@ -14,7 +14,8 @@ interface State {
 const $ = require('jquery');
 const Constant = require('json/constant.json');
 const HEIGHT = 28;
-const LIMIT = 10;
+const LIMIT_LOAD = 100;
+const LIMIT_HEIGHT = 10;
 
 const MenuBlockMention = observer(class MenuBlockMention extends React.Component<Props, State> {
 
@@ -29,11 +30,13 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 	items: any = [];
 	n: number = -1;
 	refList: any = null;
+	offset: number = 0;
 
 	constructor (props: any) {
 		super(props);
 		
 		this.onClick = this.onClick.bind(this);
+		this.loadMoreRows = this.loadMoreRows.bind(this);
 	};
 	
 	render () {
@@ -76,9 +79,9 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 				{loading ? <Loader /> : (
 					<InfiniteLoader
 						rowCount={items.length}
-						loadMoreRows={() => {}}
-						isRowLoaded={({ index }) => index < items.length}
-						threshold={LIMIT}
+						loadMoreRows={this.loadMoreRows}
+						isRowLoaded={({ index }) => !!this.items[index]}
+						threshold={LIMIT_HEIGHT}
 					>
 						{({ onRowsRendered, registerChild }) => (
 							<AutoSizer className="scrollArea">
@@ -107,7 +110,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		this._isMounted = true;
 		this.rebind();
 		this.resize();
-		this.load(false);
+		this.load(true);
 	};
 
 	componentDidUpdate () {
@@ -151,7 +154,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		].concat(this.items);
 	};
 	
-	load (clear: boolean, callBack?: (message: any) => void) {
+	load (clear: boolean, callBack?: (value: any) => void) {
 		const { config } = commonStore;
 		const { param } = this.props;
 		const { data } = param;
@@ -173,10 +176,13 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: skipIds });
 		};
 
-		this.setState({ loading: true });
-		C.ObjectSearch(filters, sorts, Constant.defaultRelationKeys, filter, 0, 0, (message: any) => {
+		if (clear) {
+			this.setState({ loading: true });
+		};
+
+		C.ObjectSearch(filters, sorts, Constant.defaultRelationKeys, filter, this.offset, LIMIT_LOAD, (message: any) => {
 			if (callBack) {
-				callBack(message);
+				callBack(null);
 			};
 
 			if (clear) {
@@ -184,9 +190,20 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 			};
 
 			this.items = this.items.concat(message.records);
-			this.setState({ loading: false });
 
-			analytics.event('SearchQuery', { route: 'MenuMention', length: filter.length });
+			if (clear) {
+				this.setState({ loading: false });
+				analytics.event('SearchQuery', { route: 'MenuMention', length: filter.length });
+			} else {
+				this.forceUpdate();
+			};
+		});
+	};
+
+	loadMoreRows ({ startIndex, stopIndex }) {
+        return new Promise((resolve, reject) => {
+			this.offset += LIMIT_LOAD;
+			this.load(false, resolve);
 		});
 	};
 
@@ -257,7 +274,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		const items = this.getItems();
 		const obj = $(`#${getId()} .content`);
 		const offset = 16;
-		const height = Math.max(HEIGHT * 1 + offset, Math.min(HEIGHT * LIMIT, items.length * HEIGHT + offset));
+		const height = Math.max(HEIGHT * 1 + offset, Math.min(HEIGHT * LIMIT_HEIGHT, items.length * HEIGHT + offset));
 
 		obj.css({ height: height });
 		position();
