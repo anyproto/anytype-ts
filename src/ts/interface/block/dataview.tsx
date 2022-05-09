@@ -54,6 +54,20 @@ export enum FilterCondition {
 	NotAllIn		 = 14,
 };
 
+export enum FilterQuickOption {
+	None			 = 0,
+	Today			 = 1,
+	Tomorrow		 = 2,
+	Yesterday		 = 3,
+	OneWeekAgo		 = 4,
+	OneWeekFromNow	 = 5,
+	OneMonthAgo		 = 6,
+	OneMonthFromNow	 = 7,
+	NumberOfDaysAgo	 = 8,
+	NumberOfDaysNow	 = 9,
+	ExactDate		 = 10,
+};
+
 export interface Sort {
 	relationKey: string;
 	type: SortType;
@@ -63,6 +77,7 @@ export interface Filter {
 	relationKey: string;
 	operator: FilterOperator;
 	condition: FilterCondition;
+	quickOption?: FilterQuickOption;
 	value: any;
 };
 

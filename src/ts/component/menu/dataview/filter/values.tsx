@@ -167,20 +167,38 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 				break;
 
 			case I.RelationType.Date:
-				value = (
-					<div className="item">
-						<Input 
-							ref={(ref: any) => { this.refValue = ref; }} 
-							value={item.value !== null ? Util.date('d.m.Y H:i:s', item.value) : ''} 
-							placeholder="dd.mm.yyyy hh:mm:ss"
-							maskOptions={{ mask: '99.99.9999 99:99:99' }}
-							onFocus={(e: any) => { this.onFocusDate(e); }}
-							onSelect={(e: any) => { this.onSelect(e); }}
-						/>
-						<Icon className="clear" onClick={this.onClear} />
-					</div>
-				);
-				onSubmit = (e: any) => { this.onSubmitDate(e); };
+				if ([ I.FilterQuickOption.NumberOfDaysAgo, I.FilterQuickOption.NumberOfDaysNow ].includes(item.quickOption)) {
+					value = (
+						<div className="item">
+							<Input 
+								ref={(ref: any) => { this.refValue = ref; }} 
+								value={item.value} 
+								placeholder={translate('commonValue')} 
+								onFocus={this.onFocusText}
+								onKeyUp={(e: any, v: string) => { this.onChange('value', v, true); }} 
+								onSelect={(e: any) => { this.onSelect(e); }}
+							/>
+							<Icon className="clear" onClick={this.onClear} />
+						</div>
+					);
+				};
+
+				if ([ I.FilterQuickOption.ExactDate ].includes(item.quickOption)) {
+					value = (
+						<div className="item">
+							<Input 
+								ref={(ref: any) => { this.refValue = ref; }} 
+								value={item.value !== null ? Util.date('d.m.Y H:i:s', item.value) : ''} 
+								placeholder="dd.mm.yyyy hh:mm:ss"
+								maskOptions={{ mask: '99.99.9999 99:99:99' }}
+								onFocus={(e: any) => { this.onFocusDate(e); }}
+								onSelect={(e: any) => { this.onSelect(e); }}
+							/>
+							<Icon className="clear" onClick={this.onClear} />
+						</div>
+					);
+					onSubmit = (e: any) => { this.onSubmitDate(e); };
+				};
 				break;
 
 			default:
@@ -248,7 +266,13 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		if (relation && this.refValue) {
 			if (this.refValue.setValue) {
 				if (relation.format == I.RelationType.Date) {
-					this.refValue.setValue(item.value === null ? '' : Util.date('d.m.Y H:i:s', item.value));
+					if (this.refValue) {
+						if (item.quickOption == I.FilterQuickOption.ExactDate) {
+							this.refValue.setValue(item.value === null ? '' : Util.date('d.m.Y H:i:s', item.value));
+						} else {
+							this.refValue.setValue(item.value);
+						};
+					};
 				} else {
 					this.refValue.setValue(item.value);
 				};
@@ -298,14 +322,24 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		const item = getView().getFilter(itemId);
 		const relation: any = dbStore.getRelation(rootId, blockId, item.relationKey) || {};
 		const relationOptions = this.getRelationOptions();
+		const relationOption: any = relationOptions.find(it => it.id == item.relationKey) || {};
+		
 		const conditionOptions = Relation.filterConditionsByType(relation.format);
-		const relationOption: any = relationOptions.find((it: any) => { return it.id == item.relationKey; }) || {};
-		const conditionOption: any = conditionOptions.find((it: any) => { return it.id == item.condition; }) || {};
+		const conditionOption: any = conditionOptions.find(it => it.id == item.condition) || {};
+		
+		const filterQuickOptions = Relation.filterQuickOptions(relation.format, item.condition);
+		const filterOption: any = filterQuickOptions.find(it => it.id == item.quickOption) || {};
 
-		return [
+		const ret: any[] = [
 			{ id: 'relation', icon: relationOption.icon, name: relationOption.name, arrow: true },
-			{ id: 'condition', icon: conditionOption.icon, name: conditionOption.name, format: relation.format, arrow: true, }
+			{ id: 'condition', icon: '', name: conditionOption.name, format: relation.format, arrow: true },
 		];
+
+		if (filterQuickOptions.length) {
+			ret.push({ id: 'quickOption', icon: '', name: filterOption.name, format: relation.format, condition: conditionOption.id, arrow: true });
+		};
+
+		return ret;
 	};
 
 	onOver (e: any, item: any) {
@@ -316,7 +350,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		const { getId, getSize } = this.props;
 
 		let options = [];
-		let key = '';
+		let key = item.id;
 
 		switch (item.id) {
 			case 'relation':
@@ -326,7 +360,10 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 
 			case 'condition':
 				options = Relation.filterConditionsByType(item.format);	
-				key = 'condition';
+				break;
+
+			case 'quickOption':
+				options = Relation.filterQuickOptions(item.format, item.condition);	
 				break;
 		};
 
@@ -386,11 +423,15 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 			if (k == 'value') {
 				item[k] = Relation.formatValue(relation, item[k], false);
 			};
-	
+
 			if (k == 'condition') {
 				if ([ I.FilterCondition.None, I.FilterCondition.Empty, I.FilterCondition.NotEmpty ].indexOf(v) >= 0) {
 					item.value = Relation.formatValue(relation, null, false);
 				};
+			};
+
+			if (k == 'quickOption') {
+				item.value = Relation.formatValue(relation, null, false);
 			};
 
 			view.setFilter(itemId, item);

@@ -88,6 +88,35 @@ class Relation {
 		return ret;
 	};
 
+	filterQuickOptions (type: I.RelationType, condition: I.FilterCondition) {
+		let ret: any[] = [
+			{ id: I.FilterQuickOption.None, name: 'None' },
+		];
+
+		switch (type) {
+			case I.RelationType.Date:
+				switch (condition) {
+					case I.FilterCondition.Equal:
+					case I.FilterCondition.NotEqual:
+						ret = ret.concat([
+							{ id: I.FilterQuickOption.Today, name: 'Today' },
+							{ id: I.FilterQuickOption.Tomorrow, name: 'Tomorrow' },
+							{ id: I.FilterQuickOption.Yesterday, name: 'Yesterday' },
+						]);
+						break;
+				};
+				break;
+		};
+
+		ret = ret.concat([
+			{ id: I.FilterQuickOption.NumberOfDaysAgo, name: 'Number of days ago' },
+			{ id: I.FilterQuickOption.NumberOfDaysNow, name: 'Number of days from now' },
+			{ id: I.FilterQuickOption.ExactDate, name: 'Exact date' },
+		]);
+
+		return ret;
+	};
+
 	formatValue (relation: any, value: any, maxCount: boolean) {
 		switch (relation.format) {
 			default:
