@@ -427,7 +427,7 @@ class DataUtil {
 			details.type = details.type || commonStore.type;
 		};
 		
-		C.BlockLinkCreateToTheNewObject(rootId, targetId, details, position, templateId, fields, (message: any) => {
+		C.BlockLinkCreateWithObject(rootId, targetId, details, position, templateId, fields, (message: any) => {
 			if (message.error.code) {
 				return;
 			};

@@ -111,7 +111,7 @@ const BlockCreate = (response: any) => {
 	};
 };
 
-const BlockLinkCreateToTheNewObject = (response: any) => {
+const BlockLinkCreateWithObject = (response: any) => {
 	return {
 		blockId: response.getBlockid(),
 		targetId: response.getTargetid(),
@@ -381,7 +381,7 @@ export {
 
 	BlockFileCreateAndUpload,
 	BlockBookmarkCreateAndFetch,
-	BlockLinkCreateToTheNewObject,
+	BlockLinkCreateWithObject,
 	
 	ObjectImportMarkdown,
 

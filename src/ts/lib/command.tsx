@@ -437,7 +437,7 @@ const BlockLatexSetText = (contextId: string, blockId: string, text: string, cal
 
 // ---------------------- BLOCK LINK ---------------------- //
 
-const BlockLinkCreateToTheNewObject = (contextId: string, targetId: string, details: any, position: I.BlockPosition, templateId: string, fields: any, callBack?: (message: any) => void) => {
+const BlockLinkCreateWithObject = (contextId: string, targetId: string, details: any, position: I.BlockPosition, templateId: string, fields: any, callBack?: (message: any) => void) => {
 	details = details || {};
 
 	const request = new Rpc.BlockLink.CreateToTheNewObject.Request();
@@ -449,7 +449,7 @@ const BlockLinkCreateToTheNewObject = (contextId: string, targetId: string, deta
 	request.setTemplateid(templateId);
 	request.setFields(Encode.encodeStruct(fields || {}));
 
-	dispatcher.request(BlockLinkCreateToTheNewObject.name, request, callBack);
+	dispatcher.request(BlockLinkCreateWithObject.name, request, callBack);
 };
 
 const BlockLinkListSetAppearance = (contextId: string, blockIds: any[], callBack?: (message: any) => void) => {
@@ -1350,7 +1350,7 @@ export {
 	BlockFileCreateAndUpload,
 	BlockFileListSetStyle,
 
-	BlockLinkCreateToTheNewObject,
+	BlockLinkCreateWithObject,
 	BlockLinkListSetAppearance,
 
 	BlockDivListSetStyle,
