@@ -31,7 +31,7 @@ const MenuItemFilter = observer(class MenuItemFilter extends React.Component<Pro
 		const conditionOptions = Relation.filterConditionsByType(relation.format);
 		const conditionOption: any = conditionOptions.find(it => it.id == condition) || {};
 		const filterOptions = Relation.filterQuickOptions(relation.format, conditionOption.id);
-		const filterOption: any = filterOptions.find(it => it.id == quickOption) || { name: '' };
+		const filterOption: any = filterOptions.find(it => it.id == quickOption) || {};
 
 		let v: any = null;
 		let list = [];
@@ -54,15 +54,17 @@ const MenuItemFilter = observer(class MenuItemFilter extends React.Component<Pro
 			case I.RelationType.Date:
 				v = [];
 
+				const name = String(filterOption.name || '').toLowerCase();
+
 				if (quickOption == I.FilterQuickOption.ExactDate) {
 					v.push(value !== null ? Util.date('d.m.Y', value) : 'empty');
 				} else
 				if ([ I.FilterQuickOption.NumberOfDaysAgo, I.FilterQuickOption.NumberOfDaysNow ].includes(quickOption)) {
-					v.push(filterOption.name.toLowerCase());
+					v.push(name);
 					v.push(value !== null ? Number(value) : 'empty');
 				} else 
 				if (filterOption) {
-					v.push(filterOption.name.toLowerCase());
+					v.push(name);
 				};
 
 				v = v.join(' ');
