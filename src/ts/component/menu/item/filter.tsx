@@ -52,13 +52,16 @@ const MenuItemFilter = observer(class MenuItemFilter extends React.Component<Pro
 				break;
 
 			case I.RelationType.Date:
-				v = [ filterOption.name.toLowerCase() ];
+				v = [];
 
 				if (quickOption == I.FilterQuickOption.ExactDate) {
 					v.push(value !== null ? Util.date('d.m.Y', value) : 'empty');
-				};
+				} else
 				if ([ I.FilterQuickOption.NumberOfDaysAgo, I.FilterQuickOption.NumberOfDaysNow ].includes(quickOption)) {
+					v.push(filterOption.name.toLowerCase());
 					v.push(value !== null ? Number(value) : 'empty');
+				} else {
+					v.push(filterOption.name.toLowerCase());
 				};
 
 				v = v.join(' ');
