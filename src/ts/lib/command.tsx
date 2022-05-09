@@ -360,7 +360,7 @@ const BlockPaste = (contextId: string, focusedId: string, range: I.TextRange, bl
 };
 
 const BlockListMoveToExistingObject = (contextId: string, targetContextId: string, blockIds: string[], targetId: string, position: I.BlockPosition, callBack?: (message: any) => void) => {
-	const request = new Rpc.BlockList.Move.Request();
+	const request = new Rpc.Block.ListMoveToExistingObject.Request();
 	
 	request.setContextid(contextId);
     request.setTargetcontextid(targetContextId);
