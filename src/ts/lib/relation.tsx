@@ -89,6 +89,10 @@ class Relation {
 	};
 
 	filterQuickOptions (type: I.RelationType, condition: I.FilterCondition) {
+		if ([ I.FilterCondition.Empty, I.FilterCondition.NotEmpty ].includes(condition)) {
+			return [];
+		};
+
 		let ret: any[] = [
 			{ id: I.FilterQuickOption.None, name: 'None' },
 		];
