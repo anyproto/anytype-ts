@@ -48,7 +48,7 @@ let userPath = app.getPath('userData');
 let tmpPath = path.join(userPath, 'tmp');
 let waitLibraryPromise;
 let useGRPC = !process.env.ANYTYPE_USE_ADDON && (env.USE_GRPC || process.env.ANYTYPE_USE_GRPC || is.windows || is.development);
-let defaultChannel = version.match('alpha') ? 'alpha' : 'latest';
+let defaultChannel = 'latest';
 let timeoutUpdate = 0;
 let server;
 let dataPath = [];
@@ -67,6 +67,13 @@ let csp = [
 	"frame-src chrome-extension://react-developer-tools"
 ];
 let autoUpdate = false;
+
+if (version.match('alpha')) {
+	defaultChannel = 'alpha';
+};
+if (version.match('beta')) {
+	defaultChannel = 'beta';
+};
 
 if (is.development && !port) {
 	console.error('ERROR: Please define SERVER_PORT env var');
@@ -634,56 +641,59 @@ function menuInit () {
 		});
 	};
 
+	let channelSettings = [
+		{ id: 'alpha', name: 'Alpha' },
+		{ id: 'beta', name: 'Pre-release' },
+		{ id: 'latest', name: 'Public' },
+	];
+
+	let channels = channelSettings.map((it) => {
+		return { label: it.name, type: 'radio', checked: (config.channel == it.id), click: () => { setChannel(it.id); } }
+	});
+	if (!config.sudo) {
+		channels = channels.filter(it => it.id != 'alpha');
+	};
+
+	const menuSudo = { 
+		label: 'Sudo',
+		submenu: [
+			{ label: 'Version', submenu: channels },
+			{
+				label: 'Experimental', type: 'checkbox', checked: config.experimental,
+				click: () => { 
+					setConfig({ experimental: !config.experimental });
+					win.reload();
+				}
+			},
+			{
+				label: 'Export templates',
+				click: () => { send('command', 'exportTemplates'); }
+			},
+			{
+				label: 'Export objects',
+				click: () => { send('command', 'exportObjects'); }
+			},
+			{
+				label: 'Export localstore',
+				click: () => { send('command', 'exportLocalstore'); }
+			},
+			{
+				label: 'Create workspace',
+				click: () => { send('commandGlobal', 'workspace');	}
+			},
+			{
+				label: 'Save page as HTML',
+				click: () => { send('command', 'saveAsHTML');	}
+			},
+			{
+				label: 'Relaunch',
+				click: () => { exit(true); }
+			},
+		]
+	};
+
 	if (config.sudo) {
-		menuParam.push({
-			label: 'Sudo',
-			submenu: [
-				{
-					label: 'Version',
-					submenu: [
-						{
-							label: 'Alpha', type: 'radio', checked: (config.channel == 'alpha'),
-							click: () => { setChannel('alpha'); }
-						},
-						{
-							label: 'Public', type: 'radio', checked: (config.channel == 'latest'),
-							click: () => { setChannel('latest'); }
-						},
-					]
-				},
-				{
-					label: 'Experimental', type: 'checkbox', checked: config.experimental,
-					click: () => { 
-						setConfig({ experimental: !config.experimental });
-						win.reload();
-					}
-				},
-				{
-					label: 'Export templates',
-					click: () => { send('command', 'exportTemplates'); }
-				},
-				{
-					label: 'Export objects',
-					click: () => { send('command', 'exportObjects'); }
-				},
-				{
-					label: 'Export localstore',
-					click: () => { send('command', 'exportLocalstore'); }
-				},
-				{
-					label: 'Create workspace',
-					click: () => { send('commandGlobal', 'workspace');	}
-				},
-				{
-					label: 'Save page as HTML',
-					click: () => { send('command', 'saveAsHTML');	}
-				},
-				{
-					label: 'Relaunch',
-					click: () => { exit(true); }
-				},
-			]
-		});
+		menuParam.push(menuSudo);
 	};
 
 	menu = Menu.buildFromTemplate(menuParam);
