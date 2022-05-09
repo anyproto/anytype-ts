@@ -84,4 +84,6 @@
 			.cellContent { box-shadow: 0px 0px; border: 0px; padding: 5px 8px; }
 		}
 	}
+
+	.block.blockRelation > .wrapContent > .dropTarget.targetBot { display: block; height: 2px; }
 }
