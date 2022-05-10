@@ -261,8 +261,8 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 
 	getSections () {
 		return [
-			{ name: 'Solid colors', children: DataUtil.coverColors() },
 			{ name: 'Gradients', children: DataUtil.coverGradients() },
+			{ name: 'Solid colors', children: DataUtil.coverColors() },
 		];
 	};
 
