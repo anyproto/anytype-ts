@@ -1409,6 +1409,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			return;
 		};
 
+		menuStore.closeAll([ 'blockAdd' ]);
+
 		if (!data) {
 			const cb = e.clipboardData || e.originalEvent.clipboardData;
 			const items = cb.items;
