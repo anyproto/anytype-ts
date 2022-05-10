@@ -320,12 +320,12 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 				let sections = [
 					{ name: translate('popupSettingsPicture'), children: covers1 },
 					{ 
-						name: translate('popupSettingsColor'), 
-						children: DataUtil.coverColors().map((it: any) => { return { ...it, image: '' }; }),
-					},
-					{ 
 						name: translate('popupSettingsGradient'), 
 						children: DataUtil.coverGradients().map((it: any) => { return { ...it, image: '' }; }), 
+					},
+					{ 
+						name: translate('popupSettingsColor'), 
+						children: DataUtil.coverColors().map((it: any) => { return { ...it, image: '' }; }),
 					},
 				];
 

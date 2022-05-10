@@ -167,6 +167,7 @@ const hs = require('history');
 const memoryHistory = hs.createMemoryHistory;
 const history = memoryHistory();
 const Constant =  require('json/constant.json');
+const Error = require('json/error.json');
 
 const Routes: RouteElement[] = require('json/route.json');
 const rootStore = {
@@ -528,8 +529,8 @@ class App extends React.Component<Props, State> {
 			if (!auto) {
 				popupStore.open('confirm', {
 					data: {
-						title: translate('popupConfirmUpdateTitle'),
-						text: Util.sprintf(translate('popupConfirmUpdateText'), err),
+						title: translate('popupConfirmUpdateErrorTitle'),
+						text: Util.sprintf(translate('popupConfirmUpdateErrorText'), Error[err] || err),
 						textConfirm: 'Retry',
 						textCancel: 'Later',
 						onConfirm: () => {

@@ -617,13 +617,15 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		const menuOpenAdd = menuStore.isOpen('blockAdd');
 		const menuOpenMention = menuStore.isOpen('blockMention');
 		const menuOpenSmile = menuStore.isOpen('smile');
-		const saveKeys: string[] = [
-			`${cmd}+shift+arrowup`, 
-			`${cmd}+shift+arrowdown`, 
-			`${cmd}+c`, 
-			`${cmd}+x`, 
-			`${cmd}+d`, 
-			`${cmd}+a`,
+		const saveKeys: any[] = [
+			{ key: `${cmd}+shift+arrowup`, preventDefault: true },
+			{ key: `${cmd}+shift+arrowdown`, preventDefault: true },
+			{ key: `${cmd}+c`, preventDefault: true },
+			{ key: `${cmd}+x`, preventDefault: true },
+			{ key: `${cmd}+d`, preventDefault: true },
+			{ key: `${cmd}+a`, preventDefault: true },
+			{ key: `${cmd}+[`, preventDefault: false },
+			{ key: `${cmd}+]`, preventDefault: false },
 		];
 
 		keyboard.shortcut('enter, shift+enter', e, (pressed: string) => {
@@ -654,12 +656,17 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			keyboard.disableContext(false);
 		});
 
-		keyboard.shortcut(saveKeys.join(', '), e, (pressed: string) => {
-			e.preventDefault();
-			DataUtil.blockSetText(rootId, block.id, value, this.marks, true, () => {
-				onKeyDown(e, value, this.marks, range);
+		saveKeys.forEach((item: any) => {
+			keyboard.shortcut(item.key, e, (pressed: string) => {
+				if (item.preventDefault) {
+					e.preventDefault();
+				};
+
+				DataUtil.blockSetText(rootId, block.id, value, this.marks, true, () => { 
+					onKeyDown(e, value, this.marks, range);
+				});
+				ret = true;
 			});
-			ret = true;
 		});
 
 		keyboard.shortcut('tab', e, (pressed: string) => {

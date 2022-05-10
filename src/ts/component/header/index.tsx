@@ -32,8 +32,6 @@ class Header extends React.Component<Props, {}> {
 		super(props);
 
 		this.onHome = this.onHome.bind(this);
-		this.onForward = this.onForward.bind(this);
-		this.onBack = this.onBack.bind(this);
 		this.onSearch = this.onSearch.bind(this);
 		this.onNavigation = this.onNavigation.bind(this);
 		this.onGraph = this.onGraph.bind(this);
@@ -54,8 +52,8 @@ class Header extends React.Component<Props, {}> {
 					ref={(ref: any) => this.refChild = ref} 
 					{...this.props} 
 					onHome={this.onHome}
-					onForward={this.onForward}
-					onBack={this.onBack}
+					onBack={() => { keyboard.onBack(); }}
+					onForward={() => { keyboard.onForward(); }}
 					onSearch={this.onSearch}
 					onNavigation={this.onNavigation}
 					onGraph={this.onGraph}
@@ -77,14 +75,6 @@ class Header extends React.Component<Props, {}> {
 		Util.route('/main/index');
 	};
 	
-	onBack (e: any) {
-		keyboard.back();
-	};
-	
-	onForward (e: any) {
-		keyboard.forward();
-	};
-
 	onSearch (e: any) {
 		e.preventDefault();
 		e.stopPropagation();

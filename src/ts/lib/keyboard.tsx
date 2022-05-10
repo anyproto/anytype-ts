@@ -74,13 +74,13 @@ class Keyboard {
 		// Mouse back
 		if (e.buttons & 8) {
 			e.preventDefault();
-			this.back();
+			this.onBack();
 		};
 
 		// Mouse forward
 		if (e.buttons & 16) {
 			e.preventDefault();
-			this.forward();
+			this.onForward();
 		};
 
 		// Remove isFocusable from focused block
@@ -164,15 +164,15 @@ class Keyboard {
 				return;
 			};
 
-			this.back();
+			this.onBack();
 		});
 
 		if (platform == I.Platform.Mac) {
-			this.shortcut('cmd+[', e, (pressed: string) => { this.back(); });
-			this.shortcut('cmd+]', e, (pressed: string) => { this.forward(); });
+			this.shortcut('cmd+[', e, (pressed: string) => { this.onBack(); });
+			this.shortcut('cmd+]', e, (pressed: string) => { this.onForward(); });
 		} else {
-			this.shortcut('alt+arrowleft', e, (pressed: string) => { this.back(); });
-			this.shortcut('alt+arrowright', e, (pressed: string) => { this.forward(); });
+			this.shortcut('alt+arrowleft', e, (pressed: string) => { this.onBack(); });
+			this.shortcut('alt+arrowright', e, (pressed: string) => { this.onForward(); });
 		};
 
 		// Close popups and menus
@@ -327,7 +327,7 @@ class Keyboard {
 		this.pressed = this.pressed.filter((it: string) => { return it != key; });
 	};
 
-	back () {
+	onBack () {
 		const { account } = authStore;
 		const isPopup = this.isPopup();
 
@@ -351,9 +351,12 @@ class Keyboard {
 				if ((route.page == 'main') && !account) {
 					return;
 				};
-			};
 
-			Util.history.goBack();
+				Util.history.goBack();
+			} else 
+			if (account) {
+				Util.route('/main/index');
+			};
 		};
 
 		menuStore.closeAll();
@@ -362,7 +365,7 @@ class Keyboard {
 		analytics.event('HistoryBack');
 	};
 
-	forward () {
+	onForward () {
 		const isPopup = this.isPopup();
 
 		crumbs.restore(I.CrumbsType.Page);
