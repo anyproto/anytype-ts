@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { MenuItemVertical } from 'ts/component';
-import { I, C, DataUtil, Storage, keyboard } from 'ts/lib';
+import { I, C, Util, DataUtil, Storage, keyboard } from 'ts/lib';
 import { blockStore, detailStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -281,13 +281,11 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
         const { data } = param;
         const { rootId, blockId, blockIds } = data;
         const block = blockStore.getLeaf(rootId, blockId);
-        const object = detailStore.get(rootId, block.content.targetBlockId);
         
-        let content = block.content || {};
+        let content = Util.objectCopy(block.content || {});
         content[id] = v;
-        content = DataUtil.checkLinkSettings(content, object.layout);
 
-		C.BlockLinkListSetAppearance(rootId, blockId, { ...block, content });
+		C.BlockLinkListSetAppearance(rootId, blockIds, content.iconSize, content.cardStyle, content.description, content.relations);
 
 		delete(content.targetBlockId);
 		Storage.set('link', content, true);

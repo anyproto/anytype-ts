@@ -452,11 +452,15 @@ const BlockLinkCreateWithObject = (contextId: string, targetId: string, details:
 	dispatcher.request(BlockLinkCreateWithObject.name, request, callBack);
 };
 
-const BlockLinkListSetAppearance = (contextId: string, blockIds: any[], callBack?: (message: any) => void) => {
+const BlockLinkListSetAppearance = (contextId: string, blockIds: any[], iconSize: I.LinkIconSize, cardStyle: I.LinkCardStyle, description: I.LinkDescription, relations: string[], callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockLink.ListSetAppearance.Request();
 	
 	request.setContextid(contextId);
 	request.setBlockidsList(blockIds);
+	request.setIconsize(iconSize);
+	request.setCardstyle(cardStyle);
+	request.setDescription(description);
+	request.setRelationsList(relations);
 
 	dispatcher.request(BlockLinkListSetAppearance.name, request, callBack);
 };

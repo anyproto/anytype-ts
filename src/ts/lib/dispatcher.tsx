@@ -308,6 +308,22 @@ class Dispatcher {
 						break;
 					};
 
+					if (data.hasCardstyle()) {
+						block.content.cardStyle = data.getCardstyle().getValue();
+					};
+
+					if (data.hasIconsize()) {
+						block.content.iconSize = data.getIconsize().getValue();
+					};
+
+					if (data.hasDescription()) {
+						block.content.description = data.getDescription().getValue();
+					};
+
+					if (data.hasRelations()) {
+						block.content.relations = data.getRelations().getValueList() || [];
+					};
+
 					if (data.hasFields()) {
 						block.content.fields = Decode.decodeStruct(data.getFields());
 					};

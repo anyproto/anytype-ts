@@ -1148,7 +1148,7 @@ class DataUtil {
 		content = Util.objectCopy(content);
 		content.iconSize = Number(content.iconSize) || I.LinkIconSize.Small;
 		content.cardStyle = Number(content.cardStyle) || I.LinkCardStyle.Text;
-		content.relations = content.relations.filter(it => relationKeys.includes(it));
+		content.relations = (content.relations || []).filter(it => relationKeys.includes(it));
 
 		if (content.cardStyle == I.LinkCardStyle.Text) {
 			content.iconSize = I.LinkIconSize.Small;
