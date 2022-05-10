@@ -318,8 +318,8 @@
 	"popupSearchPlaceholder": { "en": "Search for an object..." },
 	"popupSearchEmpty": { "en": "No objects found" },
 
-	"popupConfirmUpdateTitle": { "en": "Oops!" },
-	"popupConfirmUpdateText": { "en": "Can’t check available updates, please try again later.<br/><span class=\"error\">%s</span>" },
+	"popupConfirmUpdateErrorTitle": { "en": "Oops!" },
+	"popupConfirmUpdateErrorText": { "en": "Can't check available updates, please try again later.<br/><span class=\"error\">%s</span>" },
 
 	"menuAccountAdd": { "en": "Add profile" },
 	"menuAccountPeer": { "en": "%d/%d peers" },
