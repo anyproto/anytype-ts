@@ -11,6 +11,8 @@ interface State {
 	error: string;
 };
 
+const DAYS = 30;
+
 const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<Props, State> {
 
 	state = {
@@ -30,22 +32,26 @@ const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<P
 		const { cover } = commonStore;
 		const { error } = this.state;
 		const duration = Math.max(0, account.status.date - Util.time());
+		const dt = Util.duration(duration);
 
 		let title = '';
 		let description = '';
 		let showPie = false;
+		let pieValue = 0;
 		let rows: any[] = [];
 		
 		switch (account.status.type) {
 			case I.AccountStatusType.PendingDeletion:
-				title = `This account is planned for deletion in ${Util.duration(duration)}...`;
-				description = `We're sorry to see you go. Once you request your account to be deleted, you have 30 days to cancel this request. After 30 days, your encrypted account data is permanently removed from the backup node, you won't be able to sign into Anytype on new devices.`;
+				title = `This account is planned for deletion in ${dt}...`;
+				description = `We're sorry to see you go. You have ${dt} to cancel this request. After ${dt}, your encrypted account data is permanently removed from the backup node.`;
 
 				rows = rows.concat([
 					{ name: 'Cancel deletion', className: 'red', onClick: this.onCancel },
+					{ name: 'Logout and clear data', className: 'red', onClick: this.onReset },
 				]);
 
 				showPie = true;
+				pieValue = Math.min(DAYS - 1, Math.max(1, DAYS - Math.ceil(duration / 86400)));
 				break;
 
 			case I.AccountStatusType.StartedDeletion:
@@ -54,7 +60,7 @@ const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<P
 				description = `This device stores your data locally. You can export it, however, you are not able to use this account anymore.`;
 
 				rows = rows.concat([
-					{ name: 'Reset account data from this device', className: 'red', onClick: this.onReset },
+					{ name: 'Logout and clear data', className: 'red', onClick: this.onReset },
 					{ name: 'Export data to markdown', className: '', onClick: this.onExport },
 				]);
 				break;
@@ -71,9 +77,9 @@ const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<P
 						<div className="pie">
 							<div className="inner">
 								<PieChart
-									totalValue={30}
+									totalValue={DAYS}
 									startAngle={270}
-									data={[ { title: '', value: Math.ceil(duration / 86400), color: '#f55522' } ]}
+									data={[ { title: '', value: pieValue, color: '#f55522' } ]}
 								/>
 							</div>
 						</div>
