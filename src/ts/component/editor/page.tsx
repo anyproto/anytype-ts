@@ -86,7 +86,12 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 		return (
 			<div id="editorWrapper">
-				<Controls key="editorControls" {...this.props} resize={this.resize} focusTitle={this.focusTitle} />
+				<Controls 
+					key="editorControls" 
+					{...this.props} 
+					resize={this.resize} 
+					onLayoutSelect={(layout: I.ObjectLayout) => { this.focusTitle(); }} 
+				/>
 				
 				<div id={'editor-' + rootId} className="editor">
 					<div className="blocks">

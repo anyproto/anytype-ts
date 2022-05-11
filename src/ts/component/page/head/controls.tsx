@@ -14,7 +14,7 @@ interface Props extends RouteComponentProps<any> {
 	readonly?: boolean;
 	dataset?: any;
 	resize?: () => void;
-	focusTitle?: () => void;
+	onLayoutSelect?: (layout: I.ObjectLayout) => void;
 };
 
 interface State {
@@ -171,7 +171,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 	};
 
 	onLayout (e: any) {
-		const { rootId, focusTitle } = this.props;
+		const { rootId, onLayoutSelect } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
 		const object = detailStore.get(rootId, rootId, []);
 		
@@ -185,11 +185,9 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 			},
 			subIds: Constant.menuIds.layout,
 			data: {
-				rootId: rootId,
+				rootId,
 				value: object.layout,
-				onLayoutSelect: (id: I.ObjectLayout) => {
-					focusTitle();
-				},
+				onLayoutSelect,
 			}
 		});
 	};
