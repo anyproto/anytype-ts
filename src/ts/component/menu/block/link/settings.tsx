@@ -286,9 +286,6 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
         content[id] = v;
 
 		C.BlockLinkListSetAppearance(rootId, blockIds, content.iconSize, content.cardStyle, content.description, content.relations);
-
-		delete(content.targetBlockId);
-		Storage.set('link', content, true);
     };
 
 	hasRelationKey (key: string) {

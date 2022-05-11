@@ -1134,12 +1134,12 @@ class DataUtil {
 	};
 
 	defaultLinkSettings () {
-		return Object.assign({
+		return {
 			iconSize: I.LinkIconSize.Small,
 			cardStyle: I.LinkCardStyle.Text,
 			description: I.LinkDescription.None,
 			relations: [ 'name', 'icon' ],
-		}, Storage.get('link') || {});
+		};
 	};
 
 	checkLinkSettings (content: I.ContentLink, layout: I.ObjectLayout) {
