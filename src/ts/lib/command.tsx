@@ -440,7 +440,7 @@ const BlockLatexSetText = (contextId: string, blockId: string, text: string, cal
 const BlockLinkCreateWithObject = (contextId: string, targetId: string, details: any, position: I.BlockPosition, templateId: string, fields: any, callBack?: (message: any) => void) => {
 	details = details || {};
 
-	const request = new Rpc.BlockLink.CreateToTheNewObject.Request();
+	const request = new Rpc.BlockLink.CreateWithObject.Request();
 
 	request.setContextid(contextId);
 	request.setTargetid(targetId);
@@ -1163,7 +1163,7 @@ const ObjectShareByLink = (objectId: string, callBack?: (message: any) => void) 
 // ---------------------- OBJECT LIST ---------------------- //
 
 const ObjectListDuplicate = (ids: string[], callBack?: (message: any) => void) => {
-	const request = new Rpc.ObjectList.Duplicate.Request();
+	const request = new Rpc.Object.ListDuplicate.Request();
 	
 	request.setObjectidsList(ids);
 
