@@ -176,7 +176,7 @@ class MenuBlockLayout extends React.Component<Props, {}> {
 	onClick (e: any, item: any) {
 		const { param, close } = this.props;
 		const { data } = param;
-		const { rootId } = data;
+		const { rootId, onLayoutSelect } = data;
 		const object = detailStore.get(rootId, rootId, []);
 
 		if (item.arrow) {
@@ -190,7 +190,11 @@ class MenuBlockLayout extends React.Component<Props, {}> {
 
 			analytics.event('SetLayoutWidth');
 		} else {
-			DataUtil.pageSetLayout(rootId, item.id);
+			DataUtil.pageSetLayout(rootId, item.id, (message: any) => {
+				if (onLayoutSelect) {
+					onLayoutSelect(item.id);
+				};
+			});
 
 			analytics.event('ChangeLayout', { objectType: object.type, layout: item.id });
 		};
