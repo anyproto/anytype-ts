@@ -171,6 +171,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 					value = (
 						<div className="item">
 							<Input 
+								key="filter-value-date-days"
 								ref={(ref: any) => { this.refValue = ref; }} 
 								value={item.value} 
 								placeholder={translate('commonValue')} 
@@ -187,6 +188,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 					value = (
 						<div className="item">
 							<Input 
+								key="filter-value-date-exact"
 								ref={(ref: any) => { this.refValue = ref; }} 
 								value={item.value !== null ? Util.date('d.m.Y H:i:s', item.value) : ''} 
 								placeholder="dd.mm.yyyy hh:mm:ss"
@@ -264,21 +266,21 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		const relation = dbStore.getRelation(rootId, blockId, item.relationKey);
 
 		if (relation && this.refValue) {
+			const isDate = relation.format == I.RelationType.Date;
+
 			if (this.refValue.setValue) {
-				if (relation.format == I.RelationType.Date) {
-					if (this.refValue) {
-						if (item.quickOption == I.FilterQuickOption.ExactDate) {
-							this.refValue.setValue(item.value === null ? '' : Util.date('d.m.Y H:i:s', item.value));
-						} else {
-							this.refValue.setValue(item.value);
-						};
+				if (isDate) {
+					if (item.quickOption == I.FilterQuickOption.ExactDate) {
+						this.refValue.setValue(item.value === null ? '' : Util.date('d.m.Y H:i:s', item.value));
+					} else {
+						this.refValue.setValue(item.value);
 					};
 				} else {
 					this.refValue.setValue(item.value);
 				};
 			};
 
-			if (this.range && this.refValue.setRange) {
+			if (this.range && this.refValue.setRange && !isDate) {
 				this.refValue.setRange(this.range);
 			};
 		};
@@ -374,6 +376,8 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 			isSub: true,
 			noFlipY: true,
 			data: {
+				noFilter: true,
+				noScroll: true,
 				rebind: this.rebind,
 				value: item[key],
 				options: options,
@@ -436,7 +440,6 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 			};
 
 			view.setFilter(itemId, item);
-
 			analytics.event('ChangeFilterValue', { condition: item.condition });
 
 			save();
@@ -515,9 +518,6 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		menuStore.open('dataviewCalendar', {
 			element: `#${getId()} #value`,
 			horizontal: I.MenuDirection.Center,
-			onOpen: () => {
-				window.setTimeout(() => { this.refValue.focus(); }, 200);
-			},
 			data: { 
 				rebind: this.rebind,
 				value: value, 

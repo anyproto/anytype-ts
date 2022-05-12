@@ -29,6 +29,8 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<Props, 
 		const d = Number(Util.date('d', value));
 		const m = Number(Util.date('n', value));
 		const y = Number(Util.date('Y', value));
+		const today = Util.timestamp(y, m, d);
+		const tomorrow = today + 86400;
 
 		const days = [];
 		const months = [];
@@ -108,8 +110,8 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<Props, 
 				</div>
 				<div className="line" />
 				<div className="foot">
-					<div className="btn" onClick={() => { this.setValue(Util.time(), true, true); }}>{translate('menuCalendarToday')}</div>
-					<div className="btn" onClick={() => { this.setValue(Util.time() + 86400, true, true); }}>{translate('menuCalendarTomorrow')}</div>
+					<div className="btn" onClick={() => { this.setValue(today, true, true); }}>{translate('menuCalendarToday')}</div>
+					<div className="btn" onClick={() => { this.setValue(tomorrow, true, true); }}>{translate('menuCalendarTomorrow')}</div>
 				</div>
 			</div>
 		);
@@ -139,6 +141,7 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<Props, 
 		if (save) {
 			onChange(value);
 		};
+
 		if (close) {
 			this.props.close();
 		};
