@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { I, analytics, Util } from 'ts/lib';
+import { Loader } from 'ts/component';
 
 interface Props extends I.Popup {};
 
@@ -15,6 +16,7 @@ class PopupVideo extends React.Component<Props, {}> {
 		let content = null;
 
 		switch (type) {
+			default:
 			case 'onboarding':
 				let src = `
 					<style>
@@ -40,6 +42,7 @@ class PopupVideo extends React.Component<Props, {}> {
 		return (
 			<div className="wrapper">
 				{content}
+				<Loader />
 			</div>
 		);
 	};
