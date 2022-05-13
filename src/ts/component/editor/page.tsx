@@ -1491,35 +1491,45 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 				data: {
 					value: '',
 					options: [
+						{ id: 'link', name: 'Create link' },
 						{ id: 'bookmark', name: 'Create bookmark' },
-						{ id: 'cancel', name: 'Dismiss' },
+						{ id: 'cancel', name: 'Cancel' },
 						//{ id: 'embed', name: 'Create embed' },
 					],
 					onSelect: (event: any, item: any) => {
-						if (item.id == 'cancel') {
-							const to = range.from + url.length;
-							const value = Util.stringInsert(block.content.text, url + ' ', range.from, range.from);
-							const marks = Util.objectCopy(block.content.marks || []);
+						let value = block.content.text;
+						let to = range.from + url.length;
+						let marks = Util.objectCopy(block.content.marks || []);
 
-							marks.push({
-								type: I.MarkType.Link,
-								range: { from: range.from, to: to },
-								param: url,
-							});
-
-							DataUtil.blockSetText(rootId, block.id, value, marks, true, () => {
-								focus.set(block.id, { from: to + 1, to: to + 1 });
-								focus.apply();
-							});
-						};
-
-						if (item.id == 'bookmark') {
-							C.BlockBookmarkCreateAndFetch(rootId, focused, length ? I.BlockPosition.Bottom : I.BlockPosition.Replace, url, (message: any) => {
-								analytics.event('CreateBlock', { 
-									middleTime: message.middleTime, 
-									type: I.BlockType.Bookmark, 
+						switch (item.id) {
+							case 'link':
+								value = Util.stringInsert(value, url + ' ', range.from, range.from);
+								marks.push({
+									type: I.MarkType.Link,
+									range: { from: range.from, to: to },
+									param: url,
 								});
-							});
+
+								DataUtil.blockSetText(rootId, block.id, value, marks, true, () => {
+									focus.set(block.id, { from: to + 1, to: to + 1 });
+									focus.apply();
+								});
+								break;
+
+							case 'bookmark':
+								C.BlockBookmarkCreateAndFetch(rootId, focused, length ? I.BlockPosition.Bottom : I.BlockPosition.Replace, url, (message: any) => {
+									analytics.event('CreateBlock', { middleTime: message.middleTime, type: I.BlockType.Bookmark });
+								});
+								break;
+
+							case 'cancel':
+								value = Util.stringInsert(block.content.text, url + ' ', range.from, range.from);
+
+								DataUtil.blockSetText(rootId, block.id, value, marks, true, () => {
+									focus.set(block.id, { from: to + 1, to: to + 1 });
+									focus.apply();
+								});
+								break;
 						};
 					},
 				}
