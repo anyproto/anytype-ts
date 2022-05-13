@@ -26,6 +26,8 @@ const HeadSimple = observer(class Controls extends React.Component<Props, {}> {
 
 		this.onSelect = this.onSelect.bind(this);
 		this.onUpload = this.onUpload.bind(this);
+		this.onCompositionStart = this.onCompositionStart.bind(this);
+		this.onCompositionEnd = this.onCompositionEnd.bind(this);
 	};
 
 	render (): any {
