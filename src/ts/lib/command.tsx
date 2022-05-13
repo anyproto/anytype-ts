@@ -804,10 +804,10 @@ const ObjectOpen = (objectId: string, traceId: string, callBack?: (message: any)
 	dispatcher.request(ObjectOpen.name, request, callBack);
 };
 
-const ObjectShow = (blockId: string, traceId: string, callBack?: (message: any) => void) => {
+const ObjectShow = (objectId: string, traceId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.Show.Request();
 	
-	request.setBlockid(blockId);
+	request.setObjectid(objectId);
 	request.setTraceid(traceId);
 
 	dispatcher.request(ObjectShow.name, request, callBack);

@@ -232,7 +232,7 @@ class Dispatcher {
 					break;
 
 				case 'objectShow':
-					this.onObjectShow(rootId, Response.ObjectShow(data));
+					this.onObjectShow(rootId, Response.onObjectShow(data));
 					break;
 
 				case 'objectRemove':

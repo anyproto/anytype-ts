@@ -88,17 +88,6 @@ const NavigationGetObjectInfoWithLinks = (response: any) => {
 	};
 };
 
-const ObjectShow = (response: any) => {
-	return {
-		rootId: response.getRootid(),
-		blocks: (response.getBlocksList() || []).map(Mapper.From.Block),
-		details: (response.getDetailsList() || []).map(Mapper.From.Details),
-		objectTypes: (response.getObjecttypesList() || []).map(Mapper.From.ObjectType),
-		relations: (response.getRelationsList() || []).map(Mapper.From.Relation),
-		restrictions: Mapper.From.Restrictions(response.getRestrictions()),
-	};
-};
-
 const ObjectOpenBreadcrumbs = (response: any) => {
 	return {
 		objectId: response.getObjectid(),
@@ -218,7 +207,7 @@ const HistoryShowVersion = (response: any) => {
 	const version = response.getVersion();
 	return {
 		version: version ? Mapper.From.HistoryVersion(response.getVersion()) : null,
-		objectShow: ObjectShow(response.getObjectshow()),
+		objectShow: onObjectShow(response.getObjectshow()),
 	};
 };
 
@@ -351,6 +340,17 @@ const UnsplashDownload = (response: any) => {
 	};
 };
 
+const onObjectShow = (response: any) => {
+	return {
+		rootId: response.getRootid(),
+		blocks: (response.getBlocksList() || []).map(Mapper.From.Block),
+		details: (response.getDetailsList() || []).map(Mapper.From.Details),
+		objectTypes: (response.getObjecttypesList() || []).map(Mapper.From.ObjectType),
+		relations: (response.getRelationsList() || []).map(Mapper.From.Relation),
+		restrictions: Mapper.From.Restrictions(response.getRestrictions()),
+	};
+};
+
 export {
 	DebugSync,
 
@@ -399,8 +399,6 @@ export {
 	HistoryGetVersions,
 	HistoryShowVersion,
 
-	ObjectShow,
-
 	ObjectTypeList,
 	ObjectTypeCreate,
 	ObjectTypeRelationAdd,
@@ -425,4 +423,6 @@ export {
 
 	UnsplashSearch,
 	UnsplashDownload,
+
+	onObjectShow,
 };
