@@ -273,9 +273,32 @@ class DataUtil {
 		return ids;
 	};
 	
-	pageInit (callBack?: () => void) {
+	onAuth (account: I.Account) {
+		if (!account) {
+			console.error('[onAuth] No account defined');
+			return;
+		};
+
+		const redirectTo = Storage.get('redirectTo');
+
+		Storage.delete('redirect');
+		Storage.delete('redirectTo');
+
+		commonStore.infoSet(account.info);
+		commonStore.configSet(account.config, false);
+		authStore.accountSet(account);
+
 		const { root, profile } = blockStore;
-		const { account } = authStore;
+
+		if (!root) {
+			console.error('[onAuth] No root defined');
+			return;
+		};
+
+		if (!profile) {
+			console.error('[onAuth] No profile defined');
+			return;
+		};
 
 		crumbs.init();
 		commonStore.sidebarInit();
@@ -307,31 +330,6 @@ class DataUtil {
 				commonStore.coverSet(object.coverId, object.coverId, object.coverType);
 			};
 
-			if (callBack) {
-				callBack();
-			};
-		});
-	};
-
-	onAuth (account: I.Account) {
-		const redirectTo = Storage.get('redirectTo');
-
-		Storage.delete('redirect');
-		Storage.delete('redirectTo');
-
-		if (account) {
-			if (account.info) {
-				commonStore.infoSet(account.info);
-			};
-
-			if (account.config) {
-				commonStore.configSet(account.config, false);
-			};
-
-			authStore.accountSet(account);
-		};
-
-		this.pageInit(() => {
 			keyboard.initPinCheck();
 			Util.route(redirectTo ? redirectTo : '/main/index', true);
 		});

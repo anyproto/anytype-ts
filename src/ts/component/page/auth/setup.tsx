@@ -148,39 +148,47 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<Props
 	
 	add () {
 		const { match } = this.props;
-		const { name, icon, code, phrase } = authStore;
+		const { path, name, icon, code, phrase } = authStore;
 		const renderer = Util.getRenderer();
 
 		commonStore.defaultTypeSet(Constant.typeId.note);
-		
-		C.AccountCreate(name, icon, code, (message: any) => {
+
+		C.WalletCreate(path, (message: any) => {
 			if (message.error.code) {
-				const error = Errors.AccountCreate[message.error.code] || message.error.description;
-				this.setError(error);
-			} else
-			if (message.account) {
-				if (message.config) {
-					commonStore.configSet(message.config, false);
-				};
+				this.setState({ error: message.error.description });
+			} else {
+				authStore.phraseSet(message.mnemonic);
 
-				const accountId = message.account.id;
+				C.AccountCreate(name, icon, code, (message: any) => {
+					if (message.error.code) {
+						const error = Errors.AccountCreate[message.error.code] || message.error.description;
+						this.setError(error);
+					} else
+					if (message.account) {
+						if (message.config) {
+							commonStore.configSet(message.config, false);
+						};
 
-				authStore.accountSet(message.account);
-				authStore.previewSet('');
+						const accountId = message.account.id;
 
-				Storage.set('popupNewBlock', true);
-				Storage.set('popupVideo', true);
+						authStore.accountSet(message.account);
+						authStore.previewSet('');
 
-				renderer.send('keytarSet', accountId, phrase);
-				analytics.event('CreateAccount');
-				
-				if (match.params.id == 'register') {
-					Util.route('/auth/success');
-				};
-					
-				if (match.params.id == 'add') {
-					Util.route('/auth/pin-select/add');
-				};
+						Storage.set('popupNewBlock', true);
+						Storage.set('popupVideo', true);
+
+						renderer.send('keytarSet', accountId, phrase);
+						analytics.event('CreateAccount');
+						
+						if (match.params.id == 'register') {
+							Util.route('/auth/success');
+						};
+							
+						if (match.params.id == 'add') {
+							Util.route('/auth/pin-select/add');
+						};
+					};
+				});
 			};
 		});
 	};
