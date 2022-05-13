@@ -1405,7 +1405,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		const currentTo = range.to;
 
 		if (this.isReadonly()) {
-			console.log('onPaste read-only');
 			return;
 		};
 
