@@ -310,7 +310,7 @@ class Mark {
 
 			if (mark.type == I.MarkType.Mention) {
 				prefix = '<smile></smile><img src="./img/space.svg" class="space" /><name>';
-				suffix = '</name';
+				suffix = '</name>';
 			};
 
 			if (mark.type == I.MarkType.Emoji) {

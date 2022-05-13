@@ -232,17 +232,17 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 			name = Util.shorten(name, 30);
 
 			let from = filter.from;
-			let to = from + name.length + 1;
+			let to = from + name.length;
 			let marks = Util.objectCopy(data.marks || []);
 
 			marks = Mark.adjust(marks, from, name.length);
 			marks = Mark.toggle(marks, { 
 				type: I.MarkType.Mention, 
 				param: id, 
-				range: { from: from, to: from + name.length },
+				range: { from, to },
 			});
-	
-			onChange(name + ' ', marks, from, to);
+
+			onChange(name + ' ', marks, from, to + 1);
 		};
 
 		if (item.id == 'add') {

@@ -279,7 +279,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			html = Mark.toHtml(html, this.marks);
 			html = html.replace(/\n/g, '<br/>');
 		};
-		
+
 		value.get(0).innerHTML = html;
 
 		if (!block.isTextCode() && (html != text) && this.marks.length) {
@@ -955,7 +955,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 					this.preventSaveOnBlur = false;
 				},
 				data: {
-					rootId: rootId,
+					rootId,
 					blockId: block.id,
 					marks: this.marks,
 					skipIds: [ rootId ],

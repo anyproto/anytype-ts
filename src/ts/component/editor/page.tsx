@@ -59,6 +59,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		this.getWrapper = this.getWrapper.bind(this);
 		this.getWrapperWidth = this.getWrapperWidth.bind(this);
 		this.resize = this.resize.bind(this);
+		this.focusTitle = this.focusTitle.bind(this);
 	};
 
 	render () {
@@ -85,7 +86,12 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 		return (
 			<div id="editorWrapper">
-				<Controls key="editorControls" {...this.props} resize={this.resize} />
+				<Controls 
+					key="editorControls" 
+					{...this.props} 
+					resize={this.resize} 
+					onLayoutSelect={(layout: I.ObjectLayout) => { this.focusTitle(); }} 
+				/>
 				
 				<div id={'editor-' + rootId} className="editor">
 					<div className="blocks">
@@ -286,14 +292,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 	
 	focusTitle () {
 		const { rootId } = this.props;
-		const object = detailStore.get(rootId, rootId, []);
-
-		let block = null;
-		if (object.layout == I.ObjectLayout.Note) {
-			block = blockStore.getFirstBlock(rootId, 1, (it: any) => { return it.isText(); });
-		} else {
-			block = blockStore.getLeaf(rootId, Constant.blockId.title);
-		};
+		const block = blockStore.getFirstBlock(rootId, 1, it => it.isText())
+		
 		if (!block) {
 			return;
 		};
