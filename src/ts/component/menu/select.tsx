@@ -18,14 +18,17 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 	_isMounted: boolean = false;	
 	n: number = 0;
 	cache: any = null;
+	filter: string = '';
 	refFilter: any = null;
 	refList: any = null;
+	top: number = 0;
 	
 	constructor (props: any) {
 		super(props);
 		
 		this.rebind = this.rebind.bind(this);
 		this.onFilterChange = this.onFilterChange.bind(this);
+		this.onScroll = this.onScroll.bind(this);
 	};
 	
 	render () {
@@ -100,6 +103,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 										rowHeight={({ index }) => { return this.rowHeight(items[index]); }}
 										rowRenderer={rowRenderer}
 										onRowsRendered={onRowsRendered}
+										onScroll={this.onScroll}
 										overscanRowCount={10}
 									/>
 								)}
@@ -134,7 +138,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 		};
 
 		if (active && !active.isInitial) {
-			window.setTimeout(() => { setActive(active, true); }, Constant.delay.menu);
+			window.setTimeout(() => { setActive(active, true); }, 15);
 		};
 
 		this.focus();
@@ -142,6 +146,20 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 	};
 
 	componentDidUpdate () {
+		const { param } = this.props;
+		const { data } = param;
+		const { filter } = data;
+
+		if (this.filter != filter) {
+			this.filter = filter;
+			this.n = -1;
+			this.top = 0;
+		};
+
+		if (this.refList) {
+			this.refList.scrollToPosition(this.top);
+		};
+
 		this.focus();
 		this.resize();
 	};
@@ -228,6 +246,12 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 
 	onFilterChange (v: string) {
 		this.props.param.data.filter = v;
+	};
+
+	onScroll ({ clientHeight, scrollHeight, scrollTop }) {
+		if (scrollTop) {
+			this.top = scrollTop;
+		};
 	};
 
 	resize () {
