@@ -456,13 +456,11 @@ class Keyboard {
 
 	onUndo (rootId: string, callBack?: (message: any) => void) {
 		C.ObjectUndo(rootId, callBack);
-
 		analytics.event('Undo');
 	};
 
 	onRedo (rootId: string, callBack?: (message: any) => void) {
 		C.ObjectRedo(rootId, callBack);
-
 		analytics.event('Redo');
 	};
 
