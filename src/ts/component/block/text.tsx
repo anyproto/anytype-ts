@@ -700,7 +700,9 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			};
 
 			if (!menuOpenAdd && !menuOpenMention && !range.to) {
-				this.marks = Mark.checkRanges(value, this.marks);
+				const parsed = this.getMarksFromHtml();
+
+				this.marks = Mark.checkRanges(value, parsed.marks);
 				DataUtil.blockSetText(rootId, block.id, value, this.marks, true, () => {
 					onKeyDown(e, value, this.marks, range);
 				});
