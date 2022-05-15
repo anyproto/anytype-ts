@@ -182,21 +182,12 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 		};
 
 		const node = $(ReactDOM.findDOMNode(this));
+		const entry = node.find('#entry');
 
-		keyboard.shortcut('enter', e, (pressed: string) => {
-			e.preventDefault();
-			e.stopPropagation();
-
-			const value = this.getValue();
-			if (value.new) {
-				this.onOptionAdd(value.new);
-			};
-		});
-		
 		keyboard.shortcut('backspace', e, (pressed: string) => {
 			e.stopPropagation();
 
-			const range = getRange(node.find('#entry').get(0));
+			const range = getRange(entry.get(0));
 			if (range.start || range.end) {
 				return;
 			};
@@ -251,38 +242,12 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 		this.onFocus();
 	};
 
-	onValueAdd (id: string) {
-		this.setValue(this.getItemIds().concat([ id ]));
-	};
-
 	onValueRemove (id: string) {
 		this.setValue(this.getItemIds().filter(it => it != id));
 	};
 
 	onDragEnd (oldIndex: number, newIndex: number) {
 		this.setValue(arrayMove(this.getItemIds(), oldIndex, newIndex));
-	};
-
-	onOptionAdd (text: string) {
-		if (!text) {
-			return;
-		};
-
-		const { rootId, block, relation, getRecord, index, optionCommand } = this.props;
-		const record = getRecord(index);
-		const colors = DataUtil.menuGetBgColors();
-		const option = { text, color: colors[Util.rand(1, colors.length - 1)].value };
-		const match = (relation.selectDict || []).find((it: any) => { return it.text == text; });
-
-		if (match) {
-			this.onValueAdd(match.id);
-		} else {
-			optionCommand('add', rootId, block.id, relation.relationKey, record.id, option, (message: any) => {
-				if (!message.error.code) {
-					this.onValueAdd(message.option.id);
-				};
-			});
-		};
 	};
 
 	onFocus () {

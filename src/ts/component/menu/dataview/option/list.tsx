@@ -17,7 +17,8 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 	refFilter: any = null;
 	refList: any = null;
 	cache: any = {};
-	n: number = -1;
+	n: number = 0;
+	filter: string = '';
 	
 	constructor (props: any) {
 		super(props);
@@ -147,6 +148,15 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 	};
 
 	componentDidUpdate () {
+		const { param } = this.props;
+		const { data } = param;
+		const { filter } = data;
+
+		if (this.filter != filter) {
+			this.n = 0;
+		};
+
+
 		this.props.setActive();
 		this.props.position();
 		this.resize();
@@ -184,13 +194,6 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 		let item = this.getItems(false)[this.n];
 		let ret = false;
 
-		if (this.n == -1) {
-			keyboard.shortcut('enter', e, (pressed: string) => {
-				this.onOptionAdd();
-				ret = true;
-			});
-		};
-
 		keyboard.shortcut('arrowright', e, (pressed: string) => {
 			this.onEdit(e, item);
 			ret = true;
@@ -215,6 +218,15 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 
 	onClick (e: any, item: any) {
 		e.stopPropagation();
+
+		const { param } = this.props;
+		const { data } = param;
+		const { cellRef } = data;
+
+		if (cellRef) {
+			cellRef.clear();
+		};
+
 		item.id == 'add' ? this.onOptionAdd() : this.onValueAdd(item.id);
 	};
 
@@ -236,7 +248,6 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 		};
 
 		menuStore.updateData(this.props.id, { value });
-
 		onChange(value);
 	};
 
