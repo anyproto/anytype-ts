@@ -66,7 +66,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 		const { data } = param;
 		const { page } = data;
 		const { account, phrase } = authStore;
-		const { cover, coverImage, theme, config, autoSidebar, type } = commonStore;
+		const { cover, coverImage, theme, config, autoSidebar, type, timezone } = commonStore;
 		const { loading, error, entropy } = this.state;
 		const pin = Storage.get('pin');
 
@@ -234,6 +234,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 			case 'personal': 
 				const types = DataUtil.getObjectTypesForNewObject(false);
 				const ot = types.find(it => it.id == type);
+				const timezones = DataUtil.timezones();
 
 				content = (
 					<div>
@@ -252,6 +253,15 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 										</div>
 										<Icon className="arrow light" />
 									</div>
+								</div>
+							</div>
+
+							<div className="row flex">
+								<div className="side left c25">
+									<Label text="Timezone" />
+								</div>
+								<div className="side right c75">
+									<Select id="timezone" arrowClassName="light" menuWidth={360} options={timezones} value={String(timezone || '')} onChange={(id: string) => { commonStore.timezoneSet(id); }}/>
 								</div>
 							</div>
 

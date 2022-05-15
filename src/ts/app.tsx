@@ -345,7 +345,7 @@ class App extends React.Component<Props, State> {
 		const phrase = Storage.get('phrase');
 		const renderer = Util.getRenderer();
 		const restoreKeys = [
-			'pinTime', 'defaultType', 'autoSidebar',
+			'pinTime', 'defaultType', 'autoSidebar', 'timezone',
 		];
 
 		// Check auth phrase with keytar
