@@ -699,11 +699,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 				return;
 			};
 
-			if (!menuOpenAdd && !menuOpenMention) {
-				if (!range) {
-					return;
-				};
-
+			if (!menuOpenAdd && !menuOpenMention && !range.to) {
 				this.marks = Mark.checkRanges(value, this.marks);
 				DataUtil.blockSetText(rootId, block.id, value, this.marks, true, () => {
 					onKeyDown(e, value, this.marks, range);
