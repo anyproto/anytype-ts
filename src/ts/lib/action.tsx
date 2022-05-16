@@ -138,6 +138,7 @@ class Action {
 				};
 
 				renderer.send('pathOpen', paths[0]);
+				analytics.event('Export' + I.ExportFormat[format], { middleTime: message.middleTime });
 
 				if (callBack) {
 					callBack(message);

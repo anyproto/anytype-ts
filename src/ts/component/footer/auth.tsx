@@ -14,11 +14,9 @@ class FooterAuth extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const date = (new Date()).getTime() / 1000;
-		
 		return (
 			<div id="footer" className="footer">
-				<div className="copy">{Util.date('Y', date)}, Anytype</div>
+				<div className="copy">{Util.date('Y', Util.time())}, Anytype</div>
 				<Icon id="button-help" className="help light" tooltip="Help" tooltipY={I.MenuDirection.Top} onClick={this.onHelp} />
 			</div>
 		);
