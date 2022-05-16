@@ -191,13 +191,9 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 	};
 
 	onExport (format: I.ExportFormat) {
-		switch (format) {
-			case I.ExportFormat.Markdown:
-				Action.export([], format, true, true, true, () => { this.props.close(); }, (message: any) => {
-					analytics.event('ExportMarkdown', { middleTime: message.middleTime });
-				});
-				break;
-		};
+		Action.export([], format, true, true, true, () => { this.props.close(); }, (message: any) => {
+			analytics.event('Export' + I.ExportFormat[format], { middleTime: message.middleTime });
+		});
 	};
 
 	init () {
