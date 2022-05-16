@@ -786,7 +786,8 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		let ret = false;
 		let value = this.getValue();
 		let cmdParsed = false;
-		let newBlock: any = {};
+		let newBlock: any = { content: {} };
+
 		let cb = (message: any) => {
 			keyboard.setFocus(false);
 			focus.set(message.blockId, { from: 0, to: 0 });
@@ -807,7 +808,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 
 		this.preventMenu = false;
 		this.marks = parsed.marks;
-		
+
 		if (menuOpenAdd) {
 			if (k == Key.space) {
 				commonStore.filterSet(0, '');
@@ -855,6 +856,13 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		// Make div
 		if (value == '---') {
 			newBlock.type = I.BlockType.Div;
+			newBlock.content.style = I.DivStyle.Line;
+			cmdParsed = true;
+		};
+
+		if (value == '***') {
+			newBlock.type = I.BlockType.Div;
+			newBlock.content.style = I.DivStyle.Dot;
 			cmdParsed = true;
 		};
 		

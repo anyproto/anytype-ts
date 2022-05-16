@@ -505,11 +505,11 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 		keyboard.setFocus(false);
 
 		let text = String(data.text || '');
+		let length = text.length;
 		let marks = data.marks || [];
+		let position = length ? I.BlockPosition.Bottom : I.BlockPosition.Replace; 
 
 		const details: any = {};
-		const length = text.length;
-		const position = length ? I.BlockPosition.Bottom : I.BlockPosition.Replace; 
 		const onCommand = (message: any) => {
 			focus.set(message.blockId || blockId, { from: length, to: length });
 			focus.apply();
@@ -573,6 +573,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 				};
 
 				if (item.type == I.BlockType.Div) {
+					position = I.BlockPosition.Top;
 					param.content.style = item.itemId;
 				};
 
@@ -646,11 +647,13 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 				} else {
 					keyboard.setFocus(false);
 
-					blockCreate(blockId, position, param, (blockId: string) => {
+					blockCreate(blockId, position, param, (newBlockId: string) => {
+						focus.set(blockId, { from: length, to: length });
+						focus.apply();
 
 						// Auto-open BlockRelation suggest menu
 						if ((param.type == I.BlockType.Relation) && !param.content.key) {
-							window.setTimeout(() => { $(`#block-${blockId} .info`).trigger('click'); }, Constant.delay.menu);
+							window.setTimeout(() => { $(`#block-${newBlockId} .info`).trigger('click'); }, Constant.delay.menu);
 						};
 					});
 				};
