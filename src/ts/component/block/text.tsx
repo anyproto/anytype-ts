@@ -853,21 +853,30 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			return;
 		};
 
+		let position = I.BlockPosition.Replace;
+
 		// Make div
 		if (value == '---') {
 			newBlock.type = I.BlockType.Div;
 			newBlock.content.style = I.DivStyle.Line;
+			position = I.BlockPosition.Top;
 			cmdParsed = true;
 		};
 
 		if (value == '***') {
 			newBlock.type = I.BlockType.Div;
 			newBlock.content.style = I.DivStyle.Dot;
+			position = I.BlockPosition.Top;
 			cmdParsed = true;
 		};
 		
 		if (newBlock.type) {
-			C.BlockCreate(newBlock, rootId, id, I.BlockPosition.Replace, cb);
+			C.BlockCreate(newBlock, rootId, id, position, () => {
+				this.setValue('');
+				
+				focus.set(block.id, { from: 0, to: 0 });
+				focus.apply();
+			});
 		};
 
 		if (block.canHaveMarks()) {
@@ -899,7 +908,17 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 						newBlock.content.marks = [];
 					};
 
-					C.BlockCreate(newBlock, rootId, id, I.BlockPosition.Replace, cb);
+					C.BlockCreate(newBlock, rootId, id, I.BlockPosition.Replace, (message: any) => {
+						keyboard.setFocus(false);
+						focus.set(message.blockId, { from: 0, to: 0 });
+						focus.apply();
+
+						analytics.event('CreateBlock', { 
+							middleTime: message.middleTime, 
+							type: newBlock.type, 
+							style: newBlock.content?.style,
+						});
+					});
 					cmdParsed = true;
 					break;
 				};
