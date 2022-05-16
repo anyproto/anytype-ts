@@ -65,6 +65,8 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 		super(props);
 
 		this.onPage = this.onPage.bind(this);
+		this.onExport = this.onExport.bind(this);
+		this.onImport = this.onImport.bind(this);
 		this.setConfirmPhrase = this.setConfirmPhrase.bind(this);
 		this.setConfirmPin = this.setConfirmPin.bind(this);
 		this.setPinConfirmed = this.setPinConfirmed.bind(this);
@@ -191,9 +193,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 	};
 
 	onExport (format: I.ExportFormat) {
-		Action.export([], format, true, true, true, () => { this.props.close(); }, (message: any) => {
-			analytics.event('Export' + I.ExportFormat[format], { middleTime: message.middleTime });
-		});
+		Action.export([], format, true, true, true, () => { this.props.close(); });
 	};
 
 	init () {

@@ -117,9 +117,7 @@ const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<P
 	};
 
 	onExport (e: any) {
-		Action.export([], I.ExportFormat.Markdown, true, true, true, () => {}, (message: any) => {
-			analytics.event('ExportMarkdown', { middleTime: message.middleTime });
-		});
+		Action.export([], I.ExportFormat.Markdown, true, true, true, () => {});
 	};
 
 	onCancel (e: any) {
