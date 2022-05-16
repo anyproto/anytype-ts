@@ -6,6 +6,10 @@ import { I, C, Storage, translate, Util, DataUtil, analytics, Action } from 'ts/
 import { authStore, blockStore, commonStore, popupStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
+import PageIndex from './page/settings/index';
+import PageAccount from './page/settings/account';
+import PageDelete from './page/settings/delete';
+
 interface Props extends I.Popup, RouteComponentProps<any> {};
 
 interface State {
@@ -18,11 +22,17 @@ const { dialog } = window.require('@electron/remote');
 const $ = require('jquery');
 const Constant: any = require('json/constant.json');
 const sha1 = require('sha1');
-const QRCode = require('qrcode.react');
 
+const QRCode = require('qrcode.react');
 const QRColor = {
 	'': '#fff',
 	dark: '#aca996'
+};
+
+const Components: any = {
+	index:		 PageIndex,
+	account:	 PageAccount,
+	delete:		 PageDelete,
 };
 
 const PopupSettings = observer(class PopupSettings extends React.Component<Props, State> {
@@ -38,7 +48,6 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 	onConfirmPin: () => void = null;
 	onConfirmPhrase: any = null;
 	format: string = '';
-	refCheckbox: any = null;
 
 	constructor (props: any) {
 		super(props);
@@ -55,9 +64,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 		this.onFileClick = this.onFileClick.bind(this);
 		this.elementBlur = this.elementBlur.bind(this);
 		this.onFileOffload = this.onFileOffload.bind(this);
-		this.onDelete = this.onDelete.bind(this);
 		this.onDeleteCancel = this.onDeleteCancel.bind(this);
-		this.onCheck = this.onCheck.bind(this);
 		this.onType = this.onType.bind(this);
 	};
 
@@ -72,7 +79,6 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 
 		let content = null;
 		let Item = null;
-		let message = null;
 
 		let Head = (item: any) => (
 			<div className="head">
@@ -84,153 +90,6 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 		);
 
 		switch (page) {
-
-			default:
-			case 'index':
-				content = (
-					<div>
-						<Title text={translate('popupSettingsTitle')} />
-
-						<div className="rows">
-							<div className="row" onClick={() => { this.onPage('account'); }}>
-								<Icon className="account" />
-								<Label text={translate('popupSettingsAccountTitle')} />
-
-								{account.status.type != I.AccountStatusType.Active ? (
-									<Icon className="dot" />
-								) : ''}
-								<Icon className="arrow" />
-							</div>
-
-							<div className="row" onClick={() => { this.onPage('personal'); }}>
-								<Icon className="personal" />
-								<Label text={translate('popupSettingsPersonalTitle')} />
-								<Icon className="arrow" />
-							</div>
-
-							<div className="row" onClick={() => { this.onPage('appearance'); }}>
-								<Icon className="appearance" />
-								<Label text={translate('popupSettingsAppearanceTitle')} />
-								<Icon className="arrow" />
-							</div>
-
-							<div className="row" onClick={() => { this.onPage('importIndex'); }}>
-								<Icon className="import" />
-								<Label text={translate('popupSettingsImportTitle')} />
-								<Icon className="arrow" />
-							</div>
-
-							<div className="row" onClick={() => { this.onPage('exportMarkdown'); }}>
-								<Icon className="export" />
-								<Label text={translate('popupSettingsExportTitle')} />
-								<Icon className="arrow" />
-							</div>
-						</div>
-					</div>
-				);
-				break;
-
-			case 'account':
-				const canDelete = config.experimental && (account.status.type == I.AccountStatusType.Active);
-				const isDeleted = [ I.AccountStatusType.StartedDeletion, I.AccountStatusType.Deleted ].includes(account.status.type);
-
-				if (account.status.type == I.AccountStatusType.PendingDeletion) {
-					message = (
-						<div className="flex">	
-							<Label text={`This account is planned for deletion in ${Util.duration(Math.max(0, account.status.date - Util.time()))}...`} />
-							<Button text="Cancel" onClick={this.onDeleteCancel} />
-						</div>
-					);
-				};
-
-				if (isDeleted) {
-					message = (
-						<React.Fragment>	
-							<b>Account data removed from the backup node</b>
-							You can continue to work as normal.<br/>
-							All logged-in devices will continue to store data locally. However, you won't be able to sign into Anytype on new devices using your recovery recovery phrase. 
-						</React.Fragment>
-					);
-				};
-
-				content = (
-					<div>
-						<Head id="index" name={translate('popupSettingsTitle')} />
-						<Title text={translate('popupSettingsAccountTitle')} />
-
-						{message ? <div className="message">{message}</div> : ''}
-
-						<div className="rows">
-							<div 
-								className="row" 
-								onClick={() => { 
-									this.onConfirmPhrase = null; 
-									this.onPage('phrase'); 
-								}}
-							>
-								<Icon className="phrase" />
-								<Label text={translate('popupSettingsPhraseTitle')} />
-								<Icon className="arrow" />
-							</div>
-
-							<div className="row" onClick={() => { this.onPage('pinIndex'); }}>
-								<Icon className="pin" />
-								<Label text={translate('popupSettingsPinTitle')} />
-								<div className="status">
-									{pin ? 'On' : 'Off'}
-								</div>
-								<Icon className="arrow" />
-							</div>
-
-							<Label className="sectionName" text="Data" />
-
-							<div className="row" onClick={this.onFileOffload}>
-								<Label text="Clear file cache" />
-							</div>
-
-							<Label className="sectionName" text="Account" />
-
-							{canDelete ? (
-								<div className="row" onClick={() => { this.onPage('delete'); }}>
-									<Label text={translate('popupSettingsAccountDeleteTitle')} />
-								</div>
-							) : ''}
-
-							<div className="row red" onClick={this.onLogout}>
-								<Label text={translate('popupSettingsLogout')} />
-							</div>
-						</div>
-					</div>
-				);
-				break;
-
-			case 'delete':
-				content = (
-					<div>
-						<Head id="account" name={translate('commonCancel')} />
-						<Title text={translate('popupSettingsAccountDeleteTitle')} />
-
-						<div className="text">
-							<b>1. We're sorry to see you go. Once you request your account to be deleted, you have 30 days to cancel this request.</b>
-							<p>After 30 days, your objects are permanently removed from the Anytype backup node.</p>
-
-							<b>2. You can continue to work as normal.</b>
-							<p>All logged-in devices will continue to store data locally. However, you won't be able to sign into Anytype on new devices using your recovery phrase. </p>
-
-							<div className="check" onClick={this.onCheck}>
-								<Checkbox ref={(ref: any) => { this.refCheckbox = ref; }} /> I have read it and want to delete my account
-							</div>
-						</div>
-
-						<div className="rows">
-							<div id="row-delete" className="row disabled" onClick={this.onDelete}>
-								<Label text={translate('commonDelete')} />
-							</div>
-						</div>
-					</div>
-				);
-				break;
-
 			case 'personal': 
 				const types = DataUtil.getObjectTypesForNewObject(false);
 				const ot = types.find(it => it.id == type);
@@ -610,6 +469,11 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 
 		};
 
+		if (Components[page]) {
+			const Component = Components[page];
+			content = <Component {...this.props} onPage={this.onPage} />;
+		};
+
 		return (
 			<div className={[ 'tab', Util.toCamelCase('tab-' + page) ].join(' ')}>
 				{loading ? <Loader id="loader" /> : ''}
@@ -764,32 +628,8 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 		this.onPage('phrase');
 	};
 
-	onDelete (e: any) {
-		const check = this.refCheckbox.getValue();
-		if (!check) {
-			return;
-		};
-
-		C.AccountDelete(false, (message: any) => {
-			authStore.accountSet({ status: message.status });		
-			this.props.close();
-			Util.route('/auth/deleted');
-		});
-	};
-
 	onDeleteCancel (e: any) {
 		C.AccountDelete(true);
-	};
-
-	onCheck () {
-		const node = $(ReactDOM.findDOMNode(this));
-		const row = node.find('#row-delete');
-		const value = this.refCheckbox.getValue();
-
-		row.removeClass('red disabled');
-
-		this.refCheckbox.setValue(!value);
-		!value ? row.addClass('red') : row.addClass('disabled');
 	};
 
 	onImport (format: string) {
