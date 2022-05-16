@@ -10,29 +10,15 @@ import Head from './head';
 interface Props extends I.Popup, RouteComponentProps<any> {
 	prevPage: string;
 	onPage: (id: string) => void;
-	setConfirmPin: (v: () => void) => void;
 	setConfirmPhrase: (v: () => void) => void;
 	setPinConfirmed: (v: boolean) => void;
-	onConfirmPin: () => void;
-	onConfirmPhrase: () => void;
-};
-
-interface State {
-	loading: boolean;
-	error: string;
-	entropy: string;
 };
 
 const Constant: any = require('json/constant.json');
 
-const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends React.Component<Props, State> {
+const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends React.Component<Props, {}> {
 
 	refPhrase: any = null;
-	state = {
-		loading: false,
-		error: '',
-		entropy: '',
-	};
 	pinConfirmed: boolean = false;
 	format: string = '';
 	refCheckbox: any = null;

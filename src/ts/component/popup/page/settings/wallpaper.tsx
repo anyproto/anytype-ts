@@ -10,6 +10,7 @@ import Head from './head';
 interface Props extends I.Popup, RouteComponentProps<any> {
 	prevPage: string;
 	onPage: (id: string) => void;
+	setLoading: (v: boolean) => void;
 };
 
 const { dialog } = window.require('@electron/remote');
@@ -81,6 +82,7 @@ const PopupSettingsPageWallpaper = observer(class PopupSettingsPageWallpaper ext
 
 	onFileClick (e: any) {
 		const { root } = blockStore;
+		const { setLoading } = this.props;
 		const options: any = {
 			properties: [ 'openFile' ],
 			filters: [ { name: '', extensions: Constant.extension.cover } ]
@@ -92,14 +94,14 @@ const PopupSettingsPageWallpaper = observer(class PopupSettingsPageWallpaper ext
 				return;
 			};
 
-			this.setState({ loading: true });
+			setLoading(true);
 
 			C.UploadFile('', files[0], I.FileType.Image, (message: any) => {
 				if (message.error.code) {
 					return;
 				};
 
-				this.setState({ loading: false });
+				setLoading(false);
 
 				commonStore.coverSet('', message.hash, I.CoverType.Upload);
 				DataUtil.pageSetCover(root, I.CoverType.Upload, message.hash);
