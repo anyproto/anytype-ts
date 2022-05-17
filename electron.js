@@ -863,7 +863,11 @@ app.on('activate', () => {
 
 app.on('open-url', (e, url) => {
 	e.preventDefault();
-	send('route', url.replace(`${protocol}://`, '/'));
+
+	if (win) {
+		send('route', url.replace(`${protocol}://`, '/'));
+		win.show();
+	};
 });
 
 function send () {

@@ -1474,7 +1474,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 		const block = blockStore.getLeaf(rootId, focused);
 		const length = block ? block.getLength() : 0;
-		const reg = new RegExp(/^((?:https?:(?:\/\/)?)|\/\/)([^\s\/\?#]+)([^\s\?#]+)(?:\?([^#\s]*))?(?:#([^\s]*))?$/gi);
+		const reg = new RegExp(/^((?:[a-z]+:(?:\/\/)?)|\/\/)([^\s\/\?#]+)([^\s\?#]+)(?:\?([^#\s]*))?(?:#([^\s]*))?$/gi);
 		const match = data.text.match(reg);
 		const url = match && match[0];
 		
