@@ -313,11 +313,6 @@ class Mark {
 				suffix = '</name>';
 			};
 
-			if (mark.type == I.MarkType.Link) {
-				prefix = '<name contenteditable="true">';
-				suffix = '</name><img src="./img/icon/link.svg" class="icon" />';
-			};
-
 			if (mark.type == I.MarkType.Emoji) {
 				prefix = '<smile></smile>';
 			};
@@ -358,11 +353,6 @@ class Mark {
 		let obj = $(`<div>${html}</div>`);
 		
 		obj.find('mention').removeAttr('class').each((i: number, item: any) => {
-			item = $(item);
-			item.html(item.find('name').html());
-		});
-
-		obj.find('lnk').removeAttr('class').each((i: number, item: any) => {
 			item = $(item);
 			item.html(item.find('name').html());
 		});
