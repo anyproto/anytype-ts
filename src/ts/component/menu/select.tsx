@@ -257,19 +257,28 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 	resize () {
 		const { position, getId, param } = this.props;
 		const { data } = param;
-		const { noFilter } = data;
+		const { noFilter, noScroll } = data;
 		const options = this.getItemsWithoutFilter();
 		const items = this.getItems();
 		const obj = $(`#${getId()}`);
 		const content = obj.find('.content');
 		const withFilter = !noFilter && (options.length > LIMIT);
-		const offset = (withFilter ? 44 : 0) + (items.length <= LIMIT ? 16 : 0);
+		
+		let height = 0;
+		if (withFilter) {
+			height += 44;
+		};
+		if (items.length <= LIMIT || noScroll) {
+			height += 16;
+		};
 
-		let height = offset;
 		for (let i = 0; i < items.length; ++i) {
 			height += this.rowHeight(items[i]);
 		};
-		height = Math.max(44, Math.min(360, height));
+		if (!noScroll) {
+			height = Math.min(360, height);
+		};
+		height = Math.max(44, height);
 
 		content.css({ height });
 		withFilter ? obj.addClass('withFilter') : obj.removeClass('withFilter');
