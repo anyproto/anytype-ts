@@ -15,6 +15,7 @@ interface Props extends I.Popup, RouteComponentProps<any> {
 };
 
 const Constant: any = require('json/constant.json');
+const { dialog } = window.require('@electron/remote');
 
 const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends React.Component<Props, {}> {
 
@@ -30,6 +31,7 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 		this.onFileOffload = this.onFileOffload.bind(this);
 		this.onDelete = this.onDelete.bind(this);
 		this.onDeleteCancel = this.onDeleteCancel.bind(this);
+		this.onMove = this.onMove.bind(this);
 	};
 
 	render () {
@@ -38,6 +40,7 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 		const { config } = commonStore;
 		const pin = Storage.get('pin');
 		const canDelete = config.experimental && (account.status.type == I.AccountStatusType.Active);
+		const canMove = config.experimental;
 		const isDeleted = [ I.AccountStatusType.StartedDeletion, I.AccountStatusType.Deleted ].includes(account.status.type);
 		const isPending = [ I.AccountStatusType.PendingDeletion ].includes(account.status.type);
 
@@ -98,6 +101,12 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 					</div>
 
 					<Label className="sectionName" text="Account" />
+
+					{canDelete ? (
+						<div className="row" onClick={this.onMove}>
+							<Label text={translate('popupSettingsAccountMoveTitle')} />
+						</div>
+					) : ''}
 
 					{canDelete ? (
 						<div className="row" onClick={() => { onPage('delete'); }}>
@@ -180,6 +189,21 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 					});
 				},
 			}
+		});
+	};
+
+	onMove (e: any) {
+		const options = { 
+			properties: [ 'openDirectory' ],
+		};
+
+		dialog.showOpenDialog(options).then((result: any) => {
+			const files = result.filePaths;
+			if ((files == undefined) || !files.length) {
+				return;
+			};
+
+			C.AccountMove(files[0]);
 		});
 	};
 

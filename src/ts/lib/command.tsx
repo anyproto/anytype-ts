@@ -139,6 +139,14 @@ const AccountDelete = (revert: boolean, callBack?: (message: any) => void) => {
 	dispatcher.request(AccountDelete.name, request, callBack);
 };
 
+const AccountMove = (path: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Account.Move.Request();
+	
+	request.setNewpath(path);
+
+	dispatcher.request(AccountMove.name, request, callBack);
+};
+
 // ---------------------- FILE ---------------------- //
 
 const FileDrop = (contextId: string, targetId: string, position: I.BlockPosition, paths: string[], callBack?: (message: any) => void) => {
@@ -1311,6 +1319,7 @@ export {
 	AccountSelect,
 	AccountStop,
 	AccountDelete,
+	AccountMove,
 
 	DebugSync,
 	DebugTree,
