@@ -543,7 +543,7 @@ class Mark {
 		
 		switch (type) {
 			case I.MarkType.Link:
-				attr = `href="${param}"`;
+				attr = `href="${param}" contenteditable="false"`;
 				break;
 
 			case I.MarkType.Mention:

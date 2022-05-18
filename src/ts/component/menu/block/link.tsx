@@ -15,7 +15,8 @@ const $ = require('jquery');
 const Constant = require('json/constant.json');
 const HEIGHT_SECTION = 28;
 const HEIGHT_ITEM = 56;
-const LIMIT = 6;
+const LIMIT_RENDER = 6;
+const LIMIT_LOAD = 100;
 
 const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props, State> {
 
@@ -118,7 +119,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 							rowCount={items.length}
 							loadMoreRows={() => {}}
 							isRowLoaded={({ index }) => index < items.length}
-							threshold={LIMIT}
+							threshold={LIMIT_RENDER}
 						>
 							{({ onRowsRendered, registerChild }) => (
 								<AutoSizer className="scrollArea">
@@ -264,17 +265,16 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 	};
 	
 	load () {
-		const { filter } = commonStore;
 		const { config } = commonStore;
 		const { param } = this.props;
 		const { data } = param;
-		const { skipIds } = data;
+		const { skipIds, filter } = data;
 
 		const filters: any[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
 		];
 		const sorts = [
-			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
+			{ relationKey: 'lastModifiedDate', type: I.SortType.Desc },
 		];
 
 		if (skipIds && skipIds.length) {
@@ -286,7 +286,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 
 		this.setState({ loading: true });
 
-		C.ObjectSearch(filters, sorts, Constant.defaultRelationKeys, filter.text.replace(/\\/g, ''), 0, 0, (message: any) => {
+		C.ObjectSearch(filters, sorts, Constant.defaultRelationKeys, filter.replace(/\\/g, ''), 0, LIMIT_LOAD, (message: any) => {
 			this.items = message.records;
 			this.setState({ loading: false });
 		});
@@ -340,7 +340,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 		const items = this.getItems(true);
 		const obj = $(`#${getId()} .content`);
 		const offset = 6;
-		const height = Math.max(HEIGHT_ITEM * 3 + offset, Math.min(HEIGHT_ITEM * LIMIT, items.length * HEIGHT_ITEM + offset));
+		const height = Math.max(HEIGHT_ITEM * 3 + offset, Math.min(HEIGHT_ITEM * LIMIT_RENDER, items.length * HEIGHT_ITEM + offset));
 
 		obj.css({ height: height });
 		position();

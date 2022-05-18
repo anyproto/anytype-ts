@@ -345,15 +345,18 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 
 	checkNodes (ex: number, ey: number, isFileDrag: boolean) {
 		const rootId = keyboard.getRootId();
+		const clear = () => {
+			$('.dropTarget.isOver').removeClass('isOver top bottom left right middle');
+		};
 
-		this.hoverData = null;
+		this.setHoverData(null);
 		this.position = I.BlockPosition.None;
 
 		if (this.emptyObj) {
 			this.emptyObj.remove();
 		};
 
-		this.objectData.forEach((value: any) => {
+		for (let [ key, value ] of this.objectData) {
 			let { x, y, width, height, dropType } = value;
 
 			if (dropType == I.DropType.Block) {
@@ -362,9 +365,10 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 			};
 
 			if ((ex >= x) && (ex <= x + width) && (ey >= y) && (ey <= y + height)) {
-				this.hoverData = value;
+				this.setHoverData(value);
+				break;
 			};
-		});
+		};
 
 		this.canDrop = true;
 
@@ -511,13 +515,11 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 		};
 
 		window.clearTimeout(this.timeoutHover);
-		if ((this.position != I.BlockPosition.None) && this.canDrop) {
-			$('.dropTarget.isOver').removeClass('isOver top bottom left right middle');
+		if ((this.position != I.BlockPosition.None) && this.canDrop && this.hoverData) {
+			clear();
 			this.hoverData.obj.addClass('isOver ' + this.getDirectionClass(this.position));
 		} else {
-			this.timeoutHover = window.setTimeout(() => {
-				$('.dropTarget.isOver').removeClass('isOver top bottom left right middle');
-			}, 10);
+			this.timeoutHover = window.setTimeout(clear, 10);
 		};
 	}; 
 
@@ -594,13 +596,17 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 
 		if (this.hoverData) {
 			this.hoverData.obj.removeClass('isOver top bottom left right middle');
-			this.hoverData = null;
+			this.setHoverData(null);
 		};
 
 		this.init = false;
 		this.position = I.BlockPosition.None;
 		this.objects = null;
 		this.objectData.clear();
+	};
+
+	setHoverData (v: any) {
+		this.hoverData = v;
 	};
 
 });
