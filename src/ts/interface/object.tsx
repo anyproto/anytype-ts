@@ -36,6 +36,7 @@ export enum ObjectLayout {
 	Image		 = 8,
 	Note		 = 9,
 	Space		 = 10,
+	Bookmark	 = 11,
 	
 	Database	 = 20,
 

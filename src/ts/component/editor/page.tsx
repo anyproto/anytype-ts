@@ -1474,7 +1474,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 		const block = blockStore.getLeaf(rootId, focused);
 		const length = block ? block.getLength() : 0;
-		const reg = new RegExp(/^((?:https?:(?:\/\/)?)|\/\/)([^\s\/\?#]+)([^\s\?#]+)(?:\?([^#\s]*))?(?:#([^\s]*))?$/gi);
+		const reg = new RegExp(/^((?:[a-z]+:(?:\/\/)?)|\/\/)([^\s\/\?#]+)([^\s\?#]+)(?:\?([^#\s]*))?(?:#([^\s]*))?$/gi);
 		const match = data.text.match(reg);
 		const url = match && match[0];
 		
@@ -1758,18 +1758,20 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		menuStore.closeAll();
 		popupStore.closeAll([ 'preview' ]);
 
-		let next: any = null;
+		let nextId = '';
 		let ids = selection.get(I.SelectType.Block);
 		let blockIds = [];
 
 		if (ids.length) {
-			next = blockStore.getNextBlock(rootId, ids[0], -1, (it: any) => { return it.isFocusable(); });
+			nextId = ids[0];
 			blockIds = ids;
 		} else 
 		if (focused) {
-			next = blockStore.getNextBlock(rootId, focused.id, -1, (it: any) => { return it.isFocusable(); });
+			nextId = focused.id;
 			blockIds = [ focused.id ];
 		};
+
+		const next = blockStore.getNextBlock(rootId, ids[0], -1, it => it.isFocusable());
 
 		blockIds = blockIds.filter((it: string) => {  
 			let block = blockStore.getLeaf(rootId, it);
@@ -1782,7 +1784,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 				return;
 			};
 			
-			if (next && next.isFocusable()) {
+			if (next) {
 				let length = next.getLength();
 				this.focus(next.id, length, length, false);
 			};

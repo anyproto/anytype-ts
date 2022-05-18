@@ -388,6 +388,11 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 			const canDropMiddle = Number(obj.attr('data-drop-middle')) || 0;
 			const col1 = x - Constant.size.blockMenu / 4;
 			const col2 = x + width;
+
+			const isTargetTop = obj.hasClass('targetTop');
+			const isTargetBot = obj.hasClass('targetBot');
+			const isTargetCol = obj.hasClass('targetCol');
+
 			const isText = type == I.BlockType.Text;
 			const isFeatured = type == I.BlockType.Featured;
 			const isType = type == I.BlockType.Type;
@@ -482,7 +487,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 				};
 			};
 
-			if (!obj.hasClass('targetBot') && 
+			if (!isTargetBot && 
 			[
 				I.TextStyle.Paragraph, 
 				I.TextStyle.Toggle, 
@@ -496,11 +501,11 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 				this.position = I.BlockPosition.None;
 			};
 
-			if (obj.hasClass('targetTop') && (this.position != I.BlockPosition.None)) {
+			if (isTargetTop && (this.position != I.BlockPosition.None)) {
 				this.position = I.BlockPosition.Top;
 			};
 
-			if (obj.hasClass('targetBot') && (this.position != I.BlockPosition.None)) {
+			if ((isTargetBot || isTargetCol) && (this.position != I.BlockPosition.None)) {
 				this.position = I.BlockPosition.Bottom;
 			};
 		};

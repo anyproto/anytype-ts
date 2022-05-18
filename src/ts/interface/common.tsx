@@ -61,6 +61,10 @@ export interface PreviewLink {
 	imageUrl: string;
 };
 
+export enum ImportFormat {
+	Notion = 0,
+};
+
 export enum ExportFormat {
 	Markdown = 0,
 	Protobuf = 1,

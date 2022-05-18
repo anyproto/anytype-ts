@@ -1,5 +1,5 @@
 import { observable, action, computed, set, makeObservable } from 'mobx';
-import { I, Storage, Util } from 'ts/lib';
+import { I, Storage, Util, DataUtil } from 'ts/lib';
 import { analytics } from 'ts/lib';
 import { blockStore } from 'ts/store';
 
@@ -55,6 +55,7 @@ class CommonStore {
 	public sidebarOldFixed: boolean = false;
 	public isFullScreen: boolean = false;
 	public autoSidebarValue: boolean = false;
+	public timezoneValue: string = 'gmt';
 
     constructor() {
         makeObservable(this, {
@@ -70,6 +71,7 @@ class CommonStore {
 			nativeThemeIsDark: observable,
 			typeId: observable,
 			isFullScreen: observable,
+			timezoneValue: observable,
             config: computed,
             progress: computed,
             preview: computed,
@@ -80,6 +82,7 @@ class CommonStore {
 			theme: computed,
 			nativeTheme: computed,
 			sidebar: computed,
+			timezone: computed,
             coverSet: action,
             coverSetUploadedImage: action,
             gatewaySet: action,
@@ -149,6 +152,19 @@ class CommonStore {
 
 	get sidebar(): Sidebar {
 		return this.sidebarObj;
+	};
+
+	get timezone(): string {
+		return String(this.timezoneValue || 'gmt');
+	};
+
+	timezoneSet (v: string) {
+		this.timezoneValue = String(v || '');
+		Storage.set('timezone', this.timezoneValue);
+	};
+
+	timezoneGet () {
+		return DataUtil.timezones().find(it => it.id == this.timezone);
 	};
 
     coverSet (id: string, image: string, type: I.CoverType) {

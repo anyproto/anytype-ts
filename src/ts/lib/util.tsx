@@ -366,10 +366,11 @@ class Util {
 		return this.timestamp(y, m, d, h, i, s);
 	};
 
-	date (format: string, timestamp: number, local?: boolean) {
+	date (format: string, timestamp: number) {
 		timestamp = Number(timestamp) || 0;
-		const d = new Date(timestamp ? timestamp * 1000 : null);
-		const fn = local ? '' : 'UTC';
+
+		const timezone = commonStore.timezoneGet();
+		const d = new Date((timestamp + timezone.offset) * 1000);
 
 		const pad = (n: number, c: number) => {
 			let s = String(n);
@@ -392,7 +393,7 @@ class Util {
 				return t.substr(0,3);
 			},
 			j: () => {
-				return d[`get${fn}Date`]();
+				return d.getUTCDate();
 			},
 			// Month
 			F: () => {
@@ -405,39 +406,39 @@ class Util {
 				return f.F().substr(0, 3);
 			},
 			n: () => {
-				return d[`get${fn}Month`]() + 1;
+				return d.getUTCMonth() + 1;
 			},
 			// Year
 			Y: () => {
-				return d[`get${fn}FullYear`]();
+				return d.getUTCFullYear();
 			},
 			y: () => {
-				return (d[`get${fn}FullYear`]() + '').slice(2);
+				return (d.getUTCFullYear() + '').slice(2);
 			},
 			// Time
 			a: () => {
-				return d[`get${fn}Hours`]() > 11 ? 'pm' : 'am';
+				return d.getUTCHours() > 11 ? 'pm' : 'am';
 			},
 			A: () => {
-				return d[`get${fn}Hours`]() > 11 ? 'PM' : 'AM';
+				return d.getUTCHours() > 11 ? 'PM' : 'AM';
 			},
 			g: () => {
-				return d[`get${fn}Hours`]() % 12 || 12;
+				return d.getUTCHours() % 12 || 12;
 			},
 			h: () => {
 				return pad(f.g(), 2);
 			},
 			H: () => {
-				return pad(d[`get${fn}Hours`](), 2);
+				return pad(d.getUTCHours(), 2);
 			},
 			i: () => {
-				return pad(d[`get${fn}Minutes`](), 2);
+				return pad(d.getUTCMinutes(), 2);
 			},
 			s: () => {
-				return pad(d[`get${fn}Seconds`](), 2);
+				return pad(d.getUTCSeconds(), 2);
 			},
 			w: () => {
-				return d[`get${fn}Day`]();
+				return d.getUTCDay();
 			},
 		};
 		return format.replace(/[\\]?([a-zA-Z])/g, (t: string, s: string) => {

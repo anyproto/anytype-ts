@@ -699,12 +699,10 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 				return;
 			};
 
-			if (!menuOpenAdd && !menuOpenMention) {
-				if (!range) {
-					return;
-				};
+			if (!menuOpenAdd && !menuOpenMention && !range.to) {
+				const parsed = this.getMarksFromHtml();
 
-				this.marks = Mark.checkRanges(value, this.marks);
+				this.marks = Mark.checkRanges(value, parsed.marks);
 				DataUtil.blockSetText(rootId, block.id, value, this.marks, true, () => {
 					onKeyDown(e, value, this.marks, range);
 				});
@@ -788,7 +786,8 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		let ret = false;
 		let value = this.getValue();
 		let cmdParsed = false;
-		let newBlock: any = {};
+		let newBlock: any = { content: {} };
+
 		let cb = (message: any) => {
 			keyboard.setFocus(false);
 			focus.set(message.blockId, { from: 0, to: 0 });
@@ -809,7 +808,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 
 		this.preventMenu = false;
 		this.marks = parsed.marks;
-		
+
 		if (menuOpenAdd) {
 			if (k == Key.space) {
 				commonStore.filterSet(0, '');
@@ -854,14 +853,30 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			return;
 		};
 
+		let position = I.BlockPosition.Replace;
+
 		// Make div
 		if (value == '---') {
 			newBlock.type = I.BlockType.Div;
+			newBlock.content.style = I.DivStyle.Line;
+			position = I.BlockPosition.Top;
+			cmdParsed = true;
+		};
+
+		if (value == '***') {
+			newBlock.type = I.BlockType.Div;
+			newBlock.content.style = I.DivStyle.Dot;
+			position = I.BlockPosition.Top;
 			cmdParsed = true;
 		};
 		
 		if (newBlock.type) {
-			C.BlockCreate(rootId, id, I.BlockPosition.Replace, newBlock, cb);
+			C.BlockCreate(rootId, id, position, newBlock, () => {
+				this.setValue('');
+				
+				focus.set(block.id, { from: 0, to: 0 });
+				focus.apply();
+			});
 		};
 
 		if (block.canHaveMarks()) {
@@ -893,7 +908,18 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 						newBlock.content.marks = [];
 					};
 
-					C.BlockCreate(rootId, id, I.BlockPosition.Replace, newBlock, cb);
+					C.BlockCreate(rootId, id, I.BlockPosition.Replace, newBlock, (message: any) => {
+						keyboard.setFocus(false);
+						focus.set(message.blockId, { from: 0, to: 0 });
+						focus.apply();
+
+						analytics.event('CreateBlock', { 
+							middleTime: message.middleTime, 
+							type: newBlock.type, 
+							style: newBlock.content?.style,
+						});
+					});
+
 					cmdParsed = true;
 					break;
 				};
