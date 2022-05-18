@@ -434,7 +434,7 @@ const Mapper = {
 		},
 
 		Fields: (obj: any) => {
-			const item = new Rpc.BlockList.Set.Fields.Request.BlockField();
+			const item = new Rpc.Block.ListSetFields.Request.BlockField();
 
 			item.setBlockid(obj.blockId);
 			item.setFields(Encode.encodeStruct(obj.fields || {}));
