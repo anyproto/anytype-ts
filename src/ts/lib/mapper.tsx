@@ -300,7 +300,7 @@ const Mapper = {
 				relationKey: obj.getRelationkey(),
 				operator: obj.getOperator(),
 				condition: obj.getCondition(),
-				quickOption: obj.getQuickoption(),
+				//quickOption: obj.getQuickoption(),
 				value: obj.hasValue() ? Decode.decodeValue(obj.getValue()) : null,
 			};
 		},
