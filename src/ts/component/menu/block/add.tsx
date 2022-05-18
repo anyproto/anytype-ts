@@ -517,7 +517,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 
 		const cb = () => {
 			if (item.isTextColor) {
-				C.BlockListSetTextColor(rootId, [ blockId ], item.value, onCommand);
+				C.BlockTextListSetColor(rootId, [ blockId ], item.value, onCommand);
 			};
 
 			if (item.isBgColor) {
@@ -616,11 +616,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 							});
 						};
 
-						if (type && (type.id == Constant.typeId.set)) {
-							C.BlockCreateSet(rootId, blockId, [], {}, position, cb);
-						} else {
-							DataUtil.pageCreate(rootId, blockId, details, position, template?.id, DataUtil.defaultLinkSettings(), cb);
-						};
+						DataUtil.pageCreate(rootId, blockId, details, position, template?.id, DataUtil.defaultLinkSettings(), cb);
 					};
 
 					const showMenu = () => {
@@ -688,7 +684,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 			ids = [ blockId ];
 		};
 
-		C.BlockListConvertChildrenToPages(rootId, ids, type);
+		C.BlockListConvertToObjects(rootId, ids, type);
 	};
 
 	resize () {

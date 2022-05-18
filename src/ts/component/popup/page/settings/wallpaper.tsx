@@ -96,7 +96,7 @@ const PopupSettingsPageWallpaper = observer(class PopupSettingsPageWallpaper ext
 
 			setLoading(true);
 
-			C.UploadFile('', files[0], I.FileType.Image, (message: any) => {
+			C.FileUpload('', files[0], I.FileType.Image, (message: any) => {
 				if (message.error.code) {
 					return;
 				};

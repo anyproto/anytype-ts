@@ -26,10 +26,12 @@ const MenuItemFilter = observer(class MenuItemFilter extends React.Component<Pro
 	};
 
 	render () {
-		const { id, index, relation, condition, value, subId, readonly, style, onOver, onClick, onRemove } = this.props;
+		const { id, index, relation, condition, quickOption, value, subId, readonly, style, onOver, onClick, onRemove } = this.props;
 
 		const conditionOptions = Relation.filterConditionsByType(relation.format);
-		const cond: any = conditionOptions.find((it: any) => { return it.id == condition; }) || {};
+		const conditionOption: any = conditionOptions.find(it => it.id == condition) || {};
+		const filterOptions = Relation.filterQuickOptions(relation.format, conditionOption.id);
+		const filterOption: any = filterOptions.find(it => it.id == quickOption) || {};
 
 		let v: any = null;
 		let list = [];
@@ -50,7 +52,22 @@ const MenuItemFilter = observer(class MenuItemFilter extends React.Component<Pro
 				break;
 
 			case I.RelationType.Date:
-				v = value !== null ? Util.date('d.m.Y', value) : 'empty';
+				v = [];
+
+				const name = String(filterOption.name || '').toLowerCase();
+
+				if (quickOption == I.FilterQuickOption.ExactDate) {
+					v.push(value !== null ? Util.date('d.m.Y', value) : 'empty');
+				} else
+				if ([ I.FilterQuickOption.NumberOfDaysAgo, I.FilterQuickOption.NumberOfDaysNow ].includes(quickOption)) {
+					v.push(name);
+					v.push(value !== null ? Number(value) : 'empty');
+				} else 
+				if (filterOption) {
+					v.push(name);
+				};
+
+				v = v.join(' ');
 				break;
 
 			case I.RelationType.Checkbox:
@@ -120,7 +137,7 @@ const MenuItemFilter = observer(class MenuItemFilter extends React.Component<Pro
 					<div className="name">{relation.name}</div>
 					<div className="flex">
 						<div className="condition grey">
-							{cond.name}
+							{conditionOption.name}
 						</div>
 						{v !== null ? (
 							<div className="value grey">{v}</div>

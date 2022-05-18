@@ -459,7 +459,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 		const value = this.getValue();
 
 		blockStore.updateContent(rootId, block.id, { text: value });
-		C.BlockSetLatexText(rootId, block.id, value, callBack);
+		C.BlockLatexSetText(rootId, block.id, value, callBack);
 	};
 
 	setRange (range: any) {

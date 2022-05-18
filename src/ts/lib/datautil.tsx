@@ -273,70 +273,63 @@ class DataUtil {
 		return ids;
 	};
 	
-	pageInit (callBack?: () => void) {
-		C.ConfigGet((message: any) => {
-			const root = message.homeBlockId;
-			const profile = message.profileBlockId;
-			
-			if (!root) {
-				console.error('[pageInit] No root defined');
-				return;
-			};
+	onAuth (account: I.Account) {
+		if (!account) {
+			console.error('[onAuth] No account defined');
+			return;
+		};
 
-			commonStore.gatewaySet(message.gatewayUrl);
-			commonStore.sidebarInit();
-
-			analytics.device(message.deviceId);
-			analytics.profile(authStore.account);
-			analytics.event('OpenAccount');
-			
-			blockStore.rootSet(root);
-			blockStore.storeSetType(message.marketplaceTypeId);
-			blockStore.storeSetTemplate(message.marketplaceTemplateId);
-			blockStore.storeSetRelation(message.marketplaceRelationId);
-
-			C.ObjectTypeList((message: any) => {
-				dbStore.objectTypesSet(message.objectTypes);
-			});
-
-			C.ObjectSearchSubscribe(Constant.subIds.deleted, [
-				{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: true }
-			], [], [ 'id', 'isDeleted' ], [], 0, 0, true, '', '', true);
-			
-			if (profile) {
-				C.ObjectIdsSubscribe(Constant.subIds.profile, [ profile ], Constant.defaultRelationKeys, true, (message: any) => {
-					blockStore.profileSet(profile);
-				});
-			};
-
-			crumbs.init();
-
-			C.BlockOpen(root, '', (message: any) => {
-				if (message.error.code == Errors.Code.ANYTYPE_NEEDS_UPGRADE) {
-					Util.onErrorUpdate();
-					return;
-				};
-
-				const object = detailStore.get(root, root, Constant.coverRelationKeys);
-
-				if (!object._empty_ && object.coverId && (object.coverType != I.CoverType.None)) {
-					commonStore.coverSet(object.coverId, object.coverId, object.coverType);
-				};
-
-				if (callBack) {
-					callBack();
-				};
-			});
-		});
-	};
-
-	onAuth () {
 		const redirectTo = Storage.get('redirectTo');
 
 		Storage.delete('redirect');
 		Storage.delete('redirectTo');
 
-		this.pageInit(() => {
+		commonStore.infoSet(account.info);
+		commonStore.configSet(account.config, false);
+		authStore.accountSet(account);
+
+		const { root, profile } = blockStore;
+
+		if (!root) {
+			console.error('[onAuth] No root defined');
+			return;
+		};
+
+		if (!profile) {
+			console.error('[onAuth] No profile defined');
+			return;
+		};
+
+		crumbs.init();
+		commonStore.sidebarInit();
+
+		analytics.profile(account);
+		analytics.event('OpenAccount');
+		
+		C.ObjectTypeList((message: any) => {
+			dbStore.objectTypesSet(message.objectTypes);
+		});
+
+		C.ObjectSearchSubscribe(Constant.subIds.deleted, [
+			{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: true }
+		], [], [ 'id', 'isDeleted' ], [], 0, 0, true, '', '', true);
+		
+		if (profile) {
+			C.ObjectSubscribeIds(Constant.subIds.profile, [ profile ], Constant.defaultRelationKeys, true);
+		};
+
+		C.ObjectOpen(root, '', (message: any) => {
+			if (message.error.code == Errors.Code.ANYTYPE_NEEDS_UPGRADE) {
+				Util.onErrorUpdate();
+				return;
+			};
+
+			const object = detailStore.get(root, root, Constant.coverRelationKeys);
+
+			if (!object._empty_ && object.coverId && (object.coverType != I.CoverType.None)) {
+				commonStore.coverSet(object.coverId, object.coverId, object.coverType);
+			};
+
 			keyboard.initPinCheck();
 			Util.route(redirectTo ? redirectTo : '/main/index', true);
 		});
@@ -432,7 +425,7 @@ class DataUtil {
 			details.type = details.type || commonStore.type;
 		};
 		
-		C.BlockCreatePage(rootId, targetId, details, position, templateId, fields, (message: any) => {
+		C.BlockLinkCreateWithObject(rootId, targetId, details, position, templateId, fields, (message: any) => {
 			if (message.error.code) {
 				return;
 			};
@@ -448,14 +441,14 @@ class DataUtil {
 			{ key: 'iconEmoji', value: emoji },
 			{ key: 'iconImage', value: image },
 		];
-		C.BlockSetDetails(rootId, details, callBack);
+		C.ObjectSetDetails(rootId, details, callBack);
 	};
 	
 	pageSetName (rootId: string, name: string, callBack?: (message: any) => void) {
 		const details = [ 
 			{ key: 'name', value: name },
 		];
-		C.BlockSetDetails(rootId, details, callBack);
+		C.ObjectSetDetails(rootId, details, callBack);
 	};
 	
 	pageSetCover (rootId: string, type: I.CoverType, id: string, x?: number, y?: number, scale?: number, callBack?: (message: any) => void) {
@@ -470,7 +463,7 @@ class DataUtil {
 			{ key: 'coverY', value: y },
 			{ key: 'coverScale', value: scale },
 		];
-		C.BlockSetDetails(rootId, details, callBack);
+		C.ObjectSetDetails(rootId, details, callBack);
 	};
 
 	pageSetDone (rootId: string, done: boolean, callBack?: (message: any) => void) {
@@ -479,7 +472,7 @@ class DataUtil {
 		const details = [ 
 			{ key: Constant.relationKey.done, value: done },
 		];
-		C.BlockSetDetails(rootId, details, callBack);
+		C.ObjectSetDetails(rootId, details, callBack);
 	};
 
 	pageSetLayout (rootId: string, layout: I.ObjectLayout, callBack?: (message: any) => void) {
@@ -499,7 +492,7 @@ class DataUtil {
 			blockStore.updateContent(rootId, blockId, { text, marks });
 		};
 
-		C.BlockSetTextText(rootId, blockId, text, marks, (message: any) => {
+		C.BlockTextSetText(rootId, blockId, text, marks, (message: any) => {
 			if (callBack) {
 				callBack(message);
 			};
@@ -1139,47 +1132,43 @@ class DataUtil {
 	};
 
 	defaultLinkSettings () {
-		return Object.assign({
-			withName: true,
-			withIcon: true,
-			withCover: false,
-			withDescription: false,
+		return {
 			iconSize: I.LinkIconSize.Small,
-			style: I.LinkCardStyle.Text,
-		}, Storage.get('linkSettings') || {});
+			cardStyle: I.LinkCardStyle.Text,
+			description: I.LinkDescription.None,
+			relations: [ 'name', 'icon' ],
+		};
 	};
 
-	checkLinkSettings (fields: any, layout: I.ObjectLayout) {
-		fields = Util.objectCopy(fields || {});
-		fields.iconSize = Number(fields.iconSize) || I.LinkIconSize.Small;
-		fields.style = Number(fields.style) || I.LinkCardStyle.Text;
-		fields.withIcon = Boolean(undefined === fields.withIcon ? true : fields.withIcon);
-		fields.withName = Boolean(undefined === fields.withName ? true : fields.withName);
-		fields.withType = Boolean(fields.withType);
-		fields.withCover = Boolean(fields.withCover);
-		//fields.withTags = Boolean(fields.withTags);
+	checkLinkSettings (content: I.ContentLink, layout: I.ObjectLayout) {
+		const relationKeys = [ 'icon', 'name', 'type', 'cover', 'tag' ];
 
-		if (fields.style == I.LinkCardStyle.Text) {
-			fields.iconSize = I.LinkIconSize.Small;
-			fields.description = I.LinkDescription.None;
-			fields.withType = false;
-			fields.withCover = false;
-			fields.withName = true;
+		content = Util.objectCopy(content);
+		content.iconSize = Number(content.iconSize) || I.LinkIconSize.Small;
+		content.cardStyle = Number(content.cardStyle) || I.LinkCardStyle.Text;
+		content.relations = (content.relations || []).filter(it => relationKeys.includes(it));
+
+		if (content.cardStyle == I.LinkCardStyle.Text) {
+			content.iconSize = I.LinkIconSize.Small;
+			content.description = I.LinkDescription.None;
+			content.relations = content.relations.concat([ 'icon', 'name' ]);
         };
 
 		if (layout == I.ObjectLayout.Task) {
-			fields.withIcon = true;
-			fields.iconSize = I.LinkIconSize.Small;
+			content.iconSize = I.LinkIconSize.Small;
+			content.relations = content.relations.concat([ 'icon' ]);
 		};
 
 		if (layout == I.ObjectLayout.Note) {
-			fields.withIcon = false;
-			fields.withCover = false;
-			fields.description = I.LinkDescription.None;
-			fields.iconSize = I.LinkIconSize.Small;
+			const filter = [ 'icon', 'cover' ];
+
+			content.description = I.LinkDescription.None;
+			content.iconSize = I.LinkIconSize.Small;
+			content.relations = content.relations.filter(it => filter.includes(it)); 
 		};
 
-		return fields;
+		content.relations = Util.arrayUnique(content.relations);
+		return content;
 	};
 
 	getDataviewData (rootId: string, blockId: string, id: string, keys: string[], offset: number, limit: number, clear: boolean, callBack?: (message: any) => void) {

@@ -1,5 +1,7 @@
 import { observable, action, computed, set, makeObservable } from 'mobx';
 import { I, Storage, Util, DataUtil } from 'ts/lib';
+import { analytics } from 'ts/lib';
+import { blockStore } from 'ts/store';
 
 interface Preview {
 	type: I.MarkType,
@@ -329,6 +331,21 @@ class CommonStore {
 		const win = $(window);
 		const wh = win.height() - Util.sizeHeader();
 		return wh - 144;
+	};
+
+	infoSet (info: I.AccountInfo) {
+		console.log('[commonStore.infoSet]', info);
+
+		blockStore.rootSet(info.homeObjectId);
+		blockStore.profileSet(info.profileObjectId);
+
+		blockStore.storeSetType(info.marketplaceTypeObjectId);
+		blockStore.storeSetTemplate(info.marketplaceTemplateObjectId);
+		blockStore.storeSetRelation(info.marketplaceRelationObjectId);
+
+		commonStore.gatewaySet(info.gatewayUrl);
+
+		analytics.device(info.deviceId);
 	};
 
 	configSet (config: any, force: boolean) {

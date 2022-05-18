@@ -612,7 +612,7 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 			style: I.TextStyle.Paragraph,
 		};
 		
-		C.BlockCreate(param, rootId, childrenIds[childrenIds.length - 1], I.BlockPosition.Bottom, (message: any) => {
+		C.BlockCreate(rootId, childrenIds[childrenIds.length - 1], I.BlockPosition.Bottom, param, (message: any) => {
 			focus.set(message.blockId, { from: 0, to: 0 });
 			focus.apply();
 		});

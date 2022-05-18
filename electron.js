@@ -476,7 +476,7 @@ function menuInit () {
 				{ type: 'separator' },
 				{ role: 'services' },
 				{ type: 'separator' },
-				{ role: 'hide' },
+				{ role: 'hide', label: 'Hide Anytype' },
 				{ role: 'hideothers' },
 				{ role: 'unhide' },
 				{ type: 'separator' },
@@ -877,7 +877,7 @@ function send () {
 };
 
 function shutdown (relaunch) {
-	Util.log('info', 'Shutdown, relaunch: ' + relaunch);
+	Util.log('info', 'AppShutdown, relaunch: ' + relaunch);
 
 	if (relaunch) {
 		Util.log('info', 'Relaunch');

@@ -29,7 +29,7 @@ class Action {
 		};
 
 		if (close) {
-			C.BlockClose(rootId, onClose);
+			C.ObjectClose(rootId, onClose);
 		} else {
 			onClose();
 		};
@@ -92,7 +92,7 @@ class Action {
 			return it.type == I.BlockType.Text;
 		});
 		
-		C.BlockUnlink(rootId, blockIds, (message: any) => {
+		C.BlockListDelete(rootId, blockIds, (message: any) => {
 			if (message.error.code) {
 				return;
 			};
@@ -132,7 +132,7 @@ class Action {
 				onSelectPath();
 			};
 
-			C.Export(paths[0], ids, format, zip, nested, files, (message: any) => {
+			C.ObjectListExport(paths[0], ids, format, zip, nested, files, (message: any) => {
 				if (message.error.code) {
 					return;
 				};

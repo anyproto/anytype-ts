@@ -290,7 +290,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<P
 		this.setState({ loading: true });
 		this.lastId = lastId;
 
-		C.HistoryVersions(rootId, lastId, LIMIT, (message: any) => {
+		C.HistoryGetVersions(rootId, lastId, LIMIT, (message: any) => {
 			this.setState({ loading: false });
 
 			if (message.error.code) {
@@ -310,7 +310,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<P
 	loadVersion (id: string) {
 		const rootId = this.getRootId();
 
-		C.HistoryShow(rootId, id, (message: any) => {
+		C.HistoryShowVersion(rootId, id, (message: any) => {
 			if (message.error.code) {
 				if (message.error.code == Errors.Code.NOT_FOUND) {
 					this.setState({ isDeleted: true });

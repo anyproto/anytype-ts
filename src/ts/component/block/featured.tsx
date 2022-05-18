@@ -373,7 +373,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 						{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: types }
 					],
 					onSelect: (item: any) => {
-						C.BlockObjectTypeSet(rootId, item.id);
+						C.ObjectSetObjectType(rootId, item.id);
 						this.menuContext.close();
 
 						analytics.event('ChangeObjectType', { objectType: item.id });
@@ -435,7 +435,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				break;
 
 			case 'setCreate':
-				C.SetCreate([ object.type ], { name: type.name + ' set', iconEmoji: type.iconEmoji }, '', (message: any) => {
+				C.ObjectCreateSet([ object.type ], { name: type.name + ' set', iconEmoji: type.iconEmoji }, '', (message: any) => {
 					if (!message.error.code) {
 						DataUtil.objectOpenPopup({ id: message.id, layout: I.ObjectLayout.Set });
 					};
@@ -484,7 +484,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			const details = [ 
 				{ key: relationKey, value: Relation.formatValue(relation, !object[relationKey], true) },
 			];
-			C.BlockSetDetails(rootId, details);
+			C.ObjectSetDetails(rootId, details);
 			return;
 		};
 

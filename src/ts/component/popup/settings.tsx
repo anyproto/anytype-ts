@@ -124,6 +124,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 		$(window).unbind('resize.settings');
 	};
 
+
 	setConfirmPin (v: () => void) {
 		this.onConfirmPin = v;
 		this.forceUpdate();
@@ -186,7 +187,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 			};
 
 			close();
-			C.BlockImportMarkdown(root, files[0], (message: any) => {
+			C.ObjectImportMarkdown(root, files[0], (message: any) => {
 				analytics.event('ImportFromNotion', { middleTime: message.middleTime });
 			});
 		});

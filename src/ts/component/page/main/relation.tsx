@@ -91,7 +91,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 		this.loading = true;
 		this.forceUpdate();
 		
-		C.BlockOpen(rootId, '', (message: any) => {
+		C.ObjectOpen(rootId, '', (message: any) => {
 			if (message.error.code) {
 				if (message.error.code == Errors.Code.NOT_FOUND) {
 					this.setState({ isDeleted: true });
@@ -138,7 +138,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 		const rootId = this.getRootId();
 		const object = detailStore.get(rootId, rootId);
 
-		C.SetCreate([ rootId ], { name: object.name + ' set' }, '', (message: any) => {
+		C.ObjectCreateSet([ rootId ], { name: object.name + ' set' }, '', (message: any) => {
 			if (!message.error.code) {
 				DataUtil.objectOpenPopup({ id: message.id, layout: I.ObjectLayout.Set });
 			};

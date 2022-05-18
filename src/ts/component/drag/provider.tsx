@@ -153,7 +153,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 
 			console.log('[dragProvider.onDrop] paths', paths);
 
-			C.ExternalDropFiles(rootId, targetId, position, paths, () => {
+			C.FileDrop(rootId, targetId, position, paths, () => {
 				if (target && target.isTextToggle() && (position == I.BlockPosition.InnerFirst)) {
 					blockStore.toggle(rootId, targetId, true);
 				};
@@ -318,7 +318,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 		// Source type
 		switch (this.dropType) {
 			case I.DropType.Block:
-				C.BlockListMove(contextId, targetContextId, this.ids || [], targetId, position, () => {
+				C.BlockListMoveToExistingObject(contextId, targetContextId, this.ids || [], targetId, position, () => {
 					if (isToggle && (position == I.BlockPosition.InnerFirst)) {
 						blockStore.toggle(rootId, targetId, true);
 					};
@@ -337,8 +337,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 						type: I.BlockType.Relation,
 						content: { key }
 					};
-
-					C.BlockCreate(param, targetContextId, targetId, position,);
+					C.BlockCreate(targetContextId, targetId, position, param);
 				});
 				break;
 		};

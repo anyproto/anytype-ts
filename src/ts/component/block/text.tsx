@@ -871,7 +871,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		};
 		
 		if (newBlock.type) {
-			C.BlockCreate(newBlock, rootId, id, position, () => {
+			C.BlockCreate(rootId, id, position, newBlock, () => {
 				this.setValue('');
 				
 				focus.set(block.id, { from: 0, to: 0 });
@@ -908,7 +908,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 						newBlock.content.marks = [];
 					};
 
-					C.BlockCreate(newBlock, rootId, id, I.BlockPosition.Replace, (message: any) => {
+					C.BlockCreate(rootId, id, I.BlockPosition.Replace, newBlock, (message: any) => {
 						keyboard.setFocus(false);
 						focus.set(message.blockId, { from: 0, to: 0 });
 						focus.apply();
@@ -919,6 +919,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 							style: newBlock.content?.style,
 						});
 					});
+
 					cmdParsed = true;
 					break;
 				};
@@ -1138,7 +1139,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		
 		focus.clear(true);
 		DataUtil.blockSetText(rootId, block.id, this.getValue(), this.marks, true, () => {
-			C.BlockSetTextChecked(rootId, id, !checked);
+			C.BlockTextSetChecked(rootId, id, !checked);
 		});
 	};
 	
@@ -1263,13 +1264,13 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 	onSelectIcon (icon: string) {
 		const { rootId, block } = this.props;
 		
-		C.BlockSetTextIcon(rootId, block.id, icon, '');
+		C.BlockTextSetIcon(rootId, block.id, icon, '');
 	};
 
 	onUploadIcon (hash: string) {
 		const { rootId, block } = this.props;
 
-		C.BlockSetTextIcon(rootId, block.id, '', hash);
+		C.BlockTextSetIcon(rootId, block.id, '', hash);
 	};
 	
 	placeholderCheck () {

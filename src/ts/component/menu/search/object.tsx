@@ -341,28 +341,29 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 				break;
 
 			case I.NavigationType.Move:
-				C.BlockListMove(rootId, item.id, blockIds, '', I.BlockPosition.Bottom);
+				C.BlockListMoveToExistingObject(rootId, item.id, blockIds, '', I.BlockPosition.Bottom);
 				break;
 
 			case I.NavigationType.Link:
 				newBlock = {
 					type: I.BlockType.Link,
 					content: {
+						...DataUtil.defaultLinkSettings(),
 						targetBlockId: String(item.id || ''),
 					},
-					fields: DataUtil.defaultLinkSettings(),
 				};
-				C.BlockCreate(newBlock, rootId, blockId, position);
+				C.BlockCreate(rootId, blockId, position, newBlock);
 				break;
 
 			case I.NavigationType.LinkTo:
 				newBlock = {
 					type: I.BlockType.Link,
 					content: {
+						...DataUtil.defaultLinkSettings(),
 						targetBlockId: blockId,
 					}
 				};
-				C.BlockCreate(newBlock, item.id, '', position);
+				C.BlockCreate(item.id, '', position, newBlock);
 				break;
 		};
 	};

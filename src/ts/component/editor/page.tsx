@@ -229,7 +229,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		
 		this.id = rootId;
 
-		C.BlockOpen(this.id, '', (message: any) => {
+		C.ObjectOpen(this.id, '', (message: any) => {
 			if (message.error.code) {
 				if (message.error.code == Errors.Code.ANYTYPE_NEEDS_UPGRADE) {
 					Util.onErrorUpdate(() => { Util.route('/main/index'); });
@@ -550,14 +550,14 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 						data: {
 							filter: '',
 							onChange: (newType: I.MarkType, param: string) => {
-								C.BlockListSetTextMark(rootId, ids, { type: newType, param: param, range: { from: 0, to: 0 } }, (message: any) => {
+								C.BlockTextListSetMark(rootId, ids, { type: newType, param: param, range: { from: 0, to: 0 } }, (message: any) => {
 									analytics.event('ChangeTextStyle', { type: newType, count: ids.length });
 								});
 							}
 						}
 					});
 				} else {
-					C.BlockListSetTextMark(rootId, ids, { type: type, param: param, range: { from: 0, to: 0 } }, (message: any) => {
+					C.BlockTextListSetMark(rootId, ids, { type: type, param: param, range: { from: 0, to: 0 } }, (message: any) => {
 						analytics.event('ChangeTextStyle', { type, count: ids.length });
 					});
 				};
@@ -861,7 +861,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		const canTab = obj && !first.isTextTitle() && !first.isTextDescription() && obj.canHaveChildren() && first.isIndentable();
 		
 		if (canTab) {
-			C.BlockListMove(rootId, rootId, ids, obj.id, (shift ? I.BlockPosition.Bottom : I.BlockPosition.Inner), () => {
+			C.BlockListMoveToExistingObject(rootId, rootId, ids, obj.id, (shift ? I.BlockPosition.Bottom : I.BlockPosition.Inner), () => {
 				if (next && next.isTextToggle()) {
 					blockStore.toggle(rootId, next.id, true);
 				};
@@ -914,7 +914,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			position = isFirst ? I.BlockPosition.Top : I.BlockPosition.Bottom;
 		};
 
-		C.BlockListMove(rootId, rootId, [ block.id ], next.id, position, (message: any) => {
+		C.BlockListMoveToExistingObject(rootId, rootId, [ block.id ], next.id, position, (message: any) => {
 			focus.apply();
 
 			analytics.event('ReorderBlock', { count: 1 });
@@ -1127,7 +1127,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			return;
 		};
 
-		C.BlockListMove(rootId, rootId, [ block.id ], obj.id, (isShift ? I.BlockPosition.Bottom : I.BlockPosition.Inner), (message: any) => {
+		C.BlockListMoveToExistingObject(rootId, rootId, [ block.id ], obj.id, (isShift ? I.BlockPosition.Bottom : I.BlockPosition.Inner), (message: any) => {
 			window.setTimeout(() => { focus.apply(); });
 
 			if (next && next.isTextToggle()) {
@@ -1615,7 +1615,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 	blockCreate (blockId: string, position: I.BlockPosition, param: any, callBack?: (blockId: string) => void) {
 		const { rootId } = this.props;
 
-		C.BlockCreate(param, rootId, blockId, position, (message: any) => {
+		C.BlockCreate(rootId, blockId, position, param, (message: any) => {
 			this.focus(message.blockId, 0, 0, false);
 
 			if (callBack) {
@@ -1679,9 +1679,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		} else 
 		if (!length) {
 			focus.clear(true);
-			C.BlockUnlink(rootId, [ focused.id ], cb);
+			C.BlockListDelete(rootId, [ focused.id ], cb);
 		} else {
-			C.BlockUnlink(rootId, [ next.id ], (message: any) => {
+			C.BlockListDelete(rootId, [ next.id ], (message: any) => {
 				if (message.error.code) {
 					return;
 				};
@@ -1779,7 +1779,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		});
 
 		focus.clear(true);
-		C.BlockUnlink(rootId, blockIds, (message: any) => {
+		C.BlockListDelete(rootId, blockIds, (message: any) => {
 			if (message.error.code) {
 				return;
 			};

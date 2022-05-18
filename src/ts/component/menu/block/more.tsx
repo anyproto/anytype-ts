@@ -296,7 +296,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 					label: 'Your object type library',
 					filters: filters,
 					onSelect: (item: any) => {
-						C.BlockListConvertChildrenToPages(rootId, [ blockId ], item.id);
+						C.BlockListConvertToObjects(rootId, [ blockId ], item.id);
 						close();
 
 						if (onMenuSelect) {
@@ -396,16 +396,6 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				keyboard.onPrint();
 				break;
 
-			case 'exportWeb':
-				/*
-				C.BlockGetPublicWebURL(rootId, (message: any) => {
-					if (message.url) {
-						renderer.send('urlOpen', message.url);
-					};
-				});
-				*/
-				break;
-				
 			case 'history':
 				DataUtil.objectOpenEvent(e, { layout: I.ObjectLayout.History, id: object.id });
 				break;
@@ -539,7 +529,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				break;
 
 			case 'blockRemove':
-				C.BlockUnlink(rootId, [ blockId ], (message: any) => {
+				C.BlockListDelete(rootId, [ blockId ], (message: any) => {
 					if (!isPopup) {
 						if (block.isPage()) {
 							Util.route('/main/index');
@@ -551,7 +541,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				break;
 
 			case 'templateCreate':
-				C.MakeTemplate(rootId, (message: any) => {
+				C.TemplateCreateFromObject(rootId, (message: any) => {
 					DataUtil.objectOpenPopup({ id: message.id, layout: object.layout });
 
 					analytics.event('CreateTemplate', { objectType: object.type });

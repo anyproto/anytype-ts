@@ -226,11 +226,11 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const idx = featured.findIndex((it: string) => { return it == relationKey; });
 
 		if (idx < 0) {
-			C.ObjectFeaturedRelationAdd(rootId, [ relationKey ], () => {
+			C.ObjectRelationAddFeatured(rootId, [ relationKey ], () => {
 				analytics.event('FeatureRelation');
 			});
 		} else {
-			C.ObjectFeaturedRelationRemove(rootId, [ relationKey ], () => {
+			C.ObjectRelationRemoveFeatured(rootId, [ relationKey ], () => {
 				analytics.event('UnfeatureRelation');
 			});
 		};
@@ -343,7 +343,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const details = [ 
 			{ key: relationKey, value: Relation.formatValue(relation, value, true) },
 		];
-		C.BlockSetDetails(rootId, details, callBack);
+		C.ObjectSetDetails(rootId, details, callBack);
 
 		const key = Relation.checkRelationValue(relation, value) ? 'ChangeRelationValue' : 'DeleteRelationValue';	
 		analytics.event(key, { type: 'menu' });

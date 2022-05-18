@@ -15,14 +15,14 @@ class Crumbs {
 		const { breadcrumbs, recent } = blockStore;
 
 		if (!breadcrumbs) {
-			C.BlockOpenBreadcrumbs((message: any) => {
-				blockStore.breadcrumbsSet(message.blockId);
+			C.ObjectOpenBreadcrumbs((message: any) => {
+				blockStore.breadcrumbsSet(message.objectId);
 			});
 		};
 
 		if (!recent) {
-			C.BlockOpenBreadcrumbs((message: any) => {
-				blockStore.recentSet(message.blockId);
+			C.ObjectOpenBreadcrumbs((message: any) => {
+				blockStore.recentSet(message.objectId);
 				this.save(I.CrumbsType.Recent, this.get(I.CrumbsType.Recent));
 			});
 		};
@@ -106,7 +106,7 @@ class Crumbs {
 			return;
 		};
 
-		C.BlockSetBreadcrumbs(blockId, item.ids, (message: any) => {
+		C.ObjectSetBreadcrumbs(blockId, item.ids, (message: any) => {
 			if (message.error.code) {
 				this.delete(key);
 			};

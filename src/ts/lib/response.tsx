@@ -4,18 +4,6 @@ const DebugSync = (response: any) => {
 	return response.toObject();
 };
 
-const ConfigGet = (response: any) => {
-	return {
-		homeBlockId: response.getHomeblockid(),
-		profileBlockId: response.getProfileblockid(),
-		gatewayUrl: response.getGatewayurl(),
-		marketplaceTypeId: response.getMarketplacetypeid(),
-		marketplaceTemplateId: response.getMarketplacetemplateid(),
-		marketplaceRelationId: response.getMarketplacerelationid(),
-		deviceId: response.getMarketplacerelationid(),
-	};
-};
-
 const Export = (response: any) => {
 	return {
 		path: response.getPath(),
@@ -35,13 +23,13 @@ const LinkPreview = (response: any) => {
 	};
 };
 
-const UploadFile = (response: any) => {
+const FileUpload = (response: any) => {
 	return {
 		hash: response.getHash(),
 	};
 };
 
-const DownloadFile = (response: any) => {
+const FileDownload = (response: any) => {
 	return {
 		path: response.getLocalpath(),
 	};
@@ -78,7 +66,7 @@ const AccountDelete = (response: any) => {
 	};
 };
 
-const PageCreate = (response: any) => {
+const ObjectCreate = (response: any) => {
 	return {
 		pageId: response.getPageid(),
 	};
@@ -100,26 +88,9 @@ const NavigationGetObjectInfoWithLinks = (response: any) => {
 	};
 };
 
-const BlockGetPublicWebURL = (response: any) => {
+const ObjectOpenBreadcrumbs = (response: any) => {
 	return {
-		url: response.getUrl(),
-	};
-};
-
-const ObjectShow = (response: any) => {
-	return {
-		rootId: response.getRootid(),
-		blocks: (response.getBlocksList() || []).map(Mapper.From.Block),
-		details: (response.getDetailsList() || []).map(Mapper.From.Details),
-		objectTypes: (response.getObjecttypesList() || []).map(Mapper.From.ObjectType),
-		relations: (response.getRelationsList() || []).map(Mapper.From.Relation),
-		restrictions: Mapper.From.Restrictions(response.getRestrictions()),
-	};
-};
-
-const BlockOpenBreadcrumbs = (response: any) => {
-	return {
-		blockId: response.getBlockid(),
+		objectId: response.getObjectid(),
 	};
 };
 
@@ -129,14 +100,7 @@ const BlockCreate = (response: any) => {
 	};
 };
 
-const BlockCreatePage = (response: any) => {
-	return {
-		blockId: response.getBlockid(),
-		targetId: response.getTargetid(),
-	};
-};
-
-const BlockCreateSet = (response: any) => {
+const BlockLinkCreateWithObject = (response: any) => {
 	return {
 		blockId: response.getBlockid(),
 		targetId: response.getTargetid(),
@@ -185,15 +149,9 @@ const BlockPaste = (response: any) => {
 	};
 };
 
-const BlockImportMarkdown = (response: any) => {
+const ObjectImportMarkdown = (response: any) => {
 	return {
 		rootLinkIds: response.getRootlinkidsList(),
-	};
-};
-
-const BlockListMoveToNewPage = (response: any) => {
-	return {
-		linkId: response.getLinkid(),
 	};
 };
 
@@ -203,7 +161,7 @@ const BlockListDuplicate = (response: any) => {
 	};
 };
 
-const BlockListConvertChildrenToPages = (response: any) => {
+const BlockListConvertToObjects = (response: any) => {
 	return {
 		linkIds: response.getLinkidsList(),
 	};
@@ -239,17 +197,17 @@ const BlockDataviewRecordRelationOptionAdd = (response: any) => {
 	};
 };
 
-const HistoryVersions = (response: any) => {
+const HistoryGetVersions = (response: any) => {
 	return {
 		versions: (response.getVersionsList() || []).map(Mapper.From.HistoryVersion),
 	};
 };
 
-const HistoryShow = (response: any) => {
+const HistoryShowVersion = (response: any) => {
 	const version = response.getVersion();
 	return {
 		version: version ? Mapper.From.HistoryVersion(response.getVersion()) : null,
-		objectShow: ObjectShow(response.getObjectshow()),
+		objectShow: onObjectShow(response.getObjectshow()),
 	};
 };
 
@@ -271,7 +229,7 @@ const ObjectTypeRelationAdd = (response: any) => {
 	};
 };
 
-const SetCreate = (response: any) => {
+const ObjectCreateSet = (response: any) => {
 	return {
 		id: response.getId(),
 	};
@@ -296,7 +254,7 @@ const ObjectSearchSubscribe = (response: any) => {
 	};
 };
 
-const ObjectIdsSubscribe = (response: any) => {
+const ObjectSubscribeIds = (response: any) => {
 	return {
 		records: (response.getRecordsList() || []).map(Decode.decodeStruct),
 		dependencies: (response.getDependenciesList() || []).map(Decode.decodeStruct),
@@ -346,19 +304,19 @@ const ObjectListDuplicate = (response: any) => {
 	};
 };
 
-const MakeTemplate = (response: any) => {
+const TemplateCreateFromObject = (response: any) => {
 	return {
 		id: response.getId(),
 	};
 };
 
-const MakeTemplateByObjectType = (response: any) => {
+const TemplateCreateFromObjectType = (response: any) => {
 	return {
 		id: response.getId(),
 	};
 };
 
-const CloneTemplate = (response: any) => {
+const TemplateClone = (response: any) => {
 	return {
 		id: response.getId(),
 	};
@@ -382,13 +340,23 @@ const UnsplashDownload = (response: any) => {
 	};
 };
 
+const onObjectShow = (response: any) => {
+	return {
+		rootId: response.getRootid(),
+		blocks: (response.getBlocksList() || []).map(Mapper.From.Block),
+		details: (response.getDetailsList() || []).map(Mapper.From.Details),
+		objectTypes: (response.getObjecttypesList() || []).map(Mapper.From.ObjectType),
+		relations: (response.getRelationsList() || []).map(Mapper.From.Relation),
+		restrictions: Mapper.From.Restrictions(response.getRestrictions()),
+	};
+};
+
 export {
 	DebugSync,
 
-	ConfigGet,
 	Export,
-	UploadFile,
-	DownloadFile,
+	FileUpload,
+	FileDownload,
 	LinkPreview,
 	FileListOffload,
 
@@ -399,14 +367,12 @@ export {
 	AccountSelect,
 	AccountDelete,
 
-	PageCreate,
-	SetCreate,
+	ObjectCreate,
+	ObjectCreateSet,
 
 	NavigationGetObjectInfoWithLinks,
 
-	BlockGetPublicWebURL,
-
-	BlockOpenBreadcrumbs,
+	ObjectOpenBreadcrumbs,
 	
 	BlockSplit,
 	BlockCopy,
@@ -415,29 +381,23 @@ export {
 
 	BlockFileCreateAndUpload,
 	BlockBookmarkCreateAndFetch,
+	BlockLinkCreateWithObject,
 	
-	BlockImportMarkdown,
+	ObjectImportMarkdown,
 
 	BlockCreate,
-	BlockCreatePage,
 	BlockDataviewViewCreate,
-	BlockCreateSet,
 
 	BlockDataviewRecordCreate,
-
 	BlockDataviewRelationAdd,
 	BlockDataviewRelationListAvailable,
-
 	BlockDataviewRecordRelationOptionAdd,
 
-	BlockListMoveToNewPage,
 	BlockListDuplicate,
-	BlockListConvertChildrenToPages,
+	BlockListConvertToObjects,
 
-	HistoryVersions,
-	HistoryShow,
-
-	ObjectShow,
+	HistoryGetVersions,
+	HistoryShowVersion,
 
 	ObjectTypeList,
 	ObjectTypeCreate,
@@ -445,7 +405,7 @@ export {
 
 	ObjectSearch,
 	ObjectSearchSubscribe,
-	ObjectIdsSubscribe,
+	ObjectSubscribeIds,
 	ObjectGraph,
 	ObjectRelationAdd,
 	ObjectRelationListAvailable,
@@ -455,12 +415,14 @@ export {
 
 	ObjectListDuplicate,
 
-	MakeTemplate,
-	MakeTemplateByObjectType,
-	CloneTemplate,
+	TemplateCreateFromObject,
+	TemplateCreateFromObjectType,
+	TemplateClone,
 
 	WorkspaceCreate,
 
 	UnsplashSearch,
 	UnsplashDownload,
+
+	onObjectShow,
 };

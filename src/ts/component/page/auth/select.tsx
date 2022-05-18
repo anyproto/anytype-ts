@@ -52,16 +52,7 @@ const PageAuthSelect = observer(class PageAuthSelect extends React.Component<Pro
 	};
 	
 	onRegister (e: any) {
-		const { path } = authStore;
-
-		C.WalletCreate(path, (message: any) => {
-			if (message.error.code) {
-				this.setState({ error: message.error.description });
-			} else {
-				authStore.phraseSet(message.mnemonic);
-				Util.route('/auth/register/register');
-			};
-		});
+		Util.route('/auth/register/register');
 	};
 	
 });

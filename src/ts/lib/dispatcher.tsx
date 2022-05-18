@@ -232,7 +232,7 @@ class Dispatcher {
 					break;
 
 				case 'objectShow':
-					this.onObjectShow(rootId, Response.ObjectShow(data));
+					this.onObjectShow(rootId, Response.onObjectShow(data));
 					break;
 
 				case 'objectRemove':
@@ -306,6 +306,22 @@ class Dispatcher {
 					block = blockStore.getLeaf(rootId, id);
 					if (!block) {
 						break;
+					};
+
+					if (data.hasCardstyle()) {
+						block.content.cardStyle = data.getCardstyle().getValue();
+					};
+
+					if (data.hasIconsize()) {
+						block.content.iconSize = data.getIconsize().getValue();
+					};
+
+					if (data.hasDescription()) {
+						block.content.description = data.getDescription().getValue();
+					};
+
+					if (data.hasRelations()) {
+						block.content.relations = data.getRelations().getValueList() || [];
 					};
 
 					if (data.hasFields()) {
@@ -816,10 +832,10 @@ class Dispatcher {
 
 	public request (type: string, data: any, callBack?: (message: any) => void) {
 		const { config } = commonStore;
-		const upper = Util.toUpperCamelCase(type);
 		const debug = config.debug.mw;
+		const ct = Util.toCamelCase(type);
 
-		if (!this.service[type]) {
+		if (!this.service[ct]) {
 			console.error('[Dispatcher.request] Service not found: ', type);
 			return;
 		};
@@ -836,7 +852,7 @@ class Dispatcher {
 		};
 
 		try {
-			this.service[type](data, null, (error: any, response: any) => {
+			this.service[ct](data, null, (error: any, response: any) => {
 				if (!response) {
 					return;
 				};
@@ -853,8 +869,8 @@ class Dispatcher {
 				let code = err ? err.getCode() : 0;
 				let description = err ? err.getDescription() : '';
 
-				if (!code && Response[upper]) {
-					message = Response[upper](response);
+				if (!code && Response[type]) {
+					message = Response[type](response);
 				};
 
 				message.event = response.getEvent ? response.getEvent() : null;

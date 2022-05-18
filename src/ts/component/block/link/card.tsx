@@ -6,14 +6,10 @@ import { I, DataUtil, translate, Relation } from 'ts/lib';
 import { observer } from 'mobx-react';
 
 interface Props extends I.BlockComponent, RouteComponentProps<any> {
-    withName?: boolean;
-    withIcon?: boolean;
-    withCover?: boolean;
-	withTags?: boolean;
-	withType?: boolean;
     description?: number;
     iconSize: number;
-	style: number;
+	cardStyle: number;
+	relations: string[];
     object: any;
     className?: string;
     canEdit?: boolean;
@@ -26,12 +22,15 @@ interface Props extends I.BlockComponent, RouteComponentProps<any> {
 const LinkCard = observer(class LinkCard extends React.Component<Props, {}> {
 
 	render () {
-        const { rootId, block, withName, withIcon, withType, withTags, description, style, object, className, canEdit, onClick, onSelect, onUpload, onCheckbox } = this.props;
+        const { rootId, block, description, cardStyle, object, className, canEdit, onClick, onSelect, onUpload, onCheckbox } = this.props;
         const { id, layout, coverType, coverId, coverX, coverY, coverScale, snippet } = object;
 		const { size, iconSize } = this.getIconSize();
-        const cn = [ 'linkCard', DataUtil.layoutClass(id, layout), 'c' + size, DataUtil.linkCardClass(style) ];
+        const cn = [ 'linkCard', DataUtil.layoutClass(id, layout), 'c' + size, DataUtil.linkCardClass(cardStyle) ];
         const cns = [ 'sides' ];
-        const withCover = this.props.withCover && coverId && coverType;
+		const withName = this.hasRelationKey('name');
+		const withIcon = this.hasRelationKey('icon');
+		const withType = this.hasRelationKey('type');
+        const withCover = this.hasRelationKey('cover') && coverId && coverType;
 		const canDescription = ![ I.ObjectLayout.Note ].includes(object.layout);
 		const type = dbStore.getObjectType(object.type);
 		
@@ -115,17 +114,12 @@ const LinkCard = observer(class LinkCard extends React.Component<Props, {}> {
 	};
 
 	getIconSize () {
-		const { style } = this.props;
+		const { cardStyle } = this.props;
 
-		let size = 0;
+		let size = 24;
 		let iconSize = 0;
 
-		if (style == I.LinkCardStyle.Text) {
-			size = 24;
-		} else {
-			const Size: any = {};
-			Size[I.LinkIconSize.Small] = 18;
-			Size[I.LinkIconSize.Medium] = 48;
+		if (cardStyle != I.LinkCardStyle.Text) {
 			switch (this.props.iconSize) {
 				default:
 					size = 18;
@@ -139,6 +133,10 @@ const LinkCard = observer(class LinkCard extends React.Component<Props, {}> {
 		};
 
 		return { size, iconSize };
+	};
+
+	hasRelationKey (key: string) {
+		return this.props.relations.includes(key);
 	};
 
 });

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { MenuItemVertical } from 'ts/component';
-import { I, C, DataUtil, Storage, keyboard } from 'ts/lib';
+import { I, C, Util, DataUtil, Storage, keyboard } from 'ts/lib';
 import { blockStore, detailStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -72,10 +72,8 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 	};
 
 	onClick (e: any, item: any) {
-		const fields = this.getFields();
-
 		if (item.withSwitch) {
-			this.setField(item.itemId, !fields[item.itemId]);
+			item.onSwitch(e, !this.hasRelationKey(item.itemId));
 		} else 
 		if (item.arrow) {
 			this.onOver(e, item);
@@ -93,7 +91,7 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 		};
 
 		const { getId, getSize } = this.props;
-		const fields = this.getFields();
+		const content = this.getContent();
 
 		const menuParam: any = {
 			element: `#${getId()} #item-${item.id}`,
@@ -102,10 +100,10 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 			isSub: true,
 			data: {
 				rebind: this.rebind,
-				value: fields[item.itemId],
+				value: content[item.itemId],
 				options: [],
 				onSelect: (e: any, el: any) => {
-					this.setField(item.itemId, el.id);
+					this.save(item.itemId, el.id);
 				},
 			},
 		};
@@ -117,7 +115,7 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 				options = this.getIcons();
 				break;
 
-			case 'style':
+			case 'cardStyle':
 				options = this.getStyles();
 				menuParam.width = 320;
 				break;
@@ -140,14 +138,14 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 		});
 	};
 
-	getFields () {
+	getContent () {
 		const { param } = this.props;
         const { data } = param;
         const { rootId, blockId } = data;
         const block = blockStore.getLeaf(rootId, blockId);
         const object = detailStore.get(rootId, block.content.targetBlockId);
 
-        return DataUtil.checkLinkSettings(block.fields, object.layout);
+        return DataUtil.checkLinkSettings(block.content, object.layout);
 	};
 
 	getStyles () {
@@ -189,14 +187,14 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
         const { rootId, blockId } = data;
         const block = blockStore.getLeaf(rootId, blockId);
         const object = detailStore.get(rootId, block.content.targetBlockId);
-        const fields = this.getFields();
+        const content = this.getContent();
 
         const canIcon = ![ I.ObjectLayout.Task, I.ObjectLayout.Note ].includes(object.layout);
-        const canCover = ![ I.ObjectLayout.Note ].includes(object.layout) && (fields.style == I.LinkCardStyle.Card);
+        const canCover = ![ I.ObjectLayout.Note ].includes(object.layout) && (content.cardStyle == I.LinkCardStyle.Card);
         const canDescription = ![ I.ObjectLayout.Note ].includes(object.layout);
 
         const styles = this.getStyles();
-		const style = styles.find(it => it.id == fields.style) || styles[0];
+		const style = styles.find(it => it.id == content.cardStyle) || styles[0];
 
 		let icon: any = {};
         let icons: any[] = [];
@@ -209,24 +207,25 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 
         if (canIcon) {
 			icons = this.getIcons();
-			icon = icons.find(it => it.id == fields.iconSize) || icons[0];
+			icon = icons.find(it => it.id == content.iconSize) || icons[0];
         };
 
 		if (canDescription) {
 			descriptions = this.getDescriptions();
-			description = descriptions.find(it => it.id == fields.description) || descriptions[0];
+			description = descriptions.find(it => it.id == content.description) || descriptions[0];
 		};
 
-		const itemStyle = { id: 'style', name: 'Preview layout', caption: style.name, withCaption: true, arrow: true };
-		const itemSize = canIcon ? { id: 'iconSize', name: 'Icon', caption: icon.name, withCaption: true, arrow: true } : null;
-		const itemCover = canCover ? { id: 'withCover', name: 'Cover', withSwitch: true, switchValue: fields.withCover} : null;
-		const itemName = { id: 'withName', name: 'Name', icon: 'relation ' + DataUtil.relationClass(I.RelationType.ShortText), withSwitch: true, switchValue: fields.withName };
+		const itemStyle = { id: 'cardStyle', name: 'Preview layout', caption: style.name, withCaption: true, arrow: true };
+		const itemSize = canIcon ? { id: 'iconSize', name: 'Icon size', caption: icon.name, withCaption: true, arrow: true } : null;
+		const itemIcon = canIcon ? { id: 'icon', name: 'Icon', withSwitch: true, switchValue: this.hasRelationKey('icon') } : null;
+		const itemCover = canCover ? { id: 'cover', name: 'Cover', withSwitch: true, switchValue: this.hasRelationKey('cover') } : null;
+		const itemName = { id: 'name', name: 'Name', icon: 'relation ' + DataUtil.relationClass(I.RelationType.ShortText), withSwitch: true, switchValue: this.hasRelationKey('name') };
 		const itemDescription = canDescription ? { 
 			id: 'description', name: 'Description', icon: 'relation ' + DataUtil.relationClass(I.RelationType.LongText), 
 			caption: description.name, withCaption: true, arrow: true
 		} : null;
-		const itemTags = { id: 'withTags', name: 'Tags', icon: 'relation ' + DataUtil.relationClass(I.RelationType.Tag), withSwitch: true, switchValue: fields.withTags };
-		const itemType = { id: 'withType', name: 'Object type', icon: 'relation ' + DataUtil.relationClass(I.RelationType.Object), withSwitch: true, switchValue: fields.withType };
+		const itemTags = { id: 'tag', name: 'Tags', icon: 'relation ' + DataUtil.relationClass(I.RelationType.Tag), withSwitch: true, switchValue: this.hasRelationKey('tag') };
+		const itemType = { id: 'type', name: 'Object type', icon: 'relation ' + DataUtil.relationClass(I.RelationType.Object), withSwitch: true, switchValue: this.hasRelationKey('type') };
 
 		let sections: any[] = [];
 		if (style.id == I.LinkCardStyle.Text) {
@@ -235,7 +234,7 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 			];
 		} else {
 			sections = [
-				{ children: [ itemStyle, itemSize, itemCover ] },
+				{ children: [ itemStyle, itemSize, itemIcon, itemCover ] },
 				{ name: 'Featured relations', children: [ itemName, itemDescription, itemType ] },
 			];
 		};
@@ -247,11 +246,18 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 		sections = DataUtil.menuSectionsMap(sections);
 
 		sections = sections.map((s: any) => {
-			s.children = s.children.map((it: any) => {
-				if (it.withSwitch) {
-					it.onSwitch = (e: any, v: boolean) => { this.setField(it.itemId, !fields[it.itemId]); };
+			s.children = s.children.map((child: any) => {
+				if (child.withSwitch) {
+					child.onSwitch = (e: any, v: boolean) => {
+						if (v) {
+							content.relations.push(child.itemId);
+						} else {
+							content.relations = content.relations.filter(it => it != child.itemId);
+						};
+						this.save('relations', content.relations);
+					};
 				};
-				return it;
+				return child;
 			});
 			return s;
 		});
@@ -270,24 +276,22 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 		return items;
 	};
 
-	setField (id: string, v: any) {
+	save (id: string, v: any) {
         const { param } = this.props;
         const { data } = param;
         const { rootId, blockId, blockIds } = data;
         const block = blockStore.getLeaf(rootId, blockId);
-        const { content } = block;
-        const object = detailStore.get(rootId, content.targetBlockId);
-        const { layout } = object;
         
-        let fields = block.fields || {};
-        fields[id] = v;
-        fields = DataUtil.checkLinkSettings(fields, layout);
+        let content = Util.objectCopy(block.content || {});
+        content[id] = v;
 
-        Storage.set('linkSettings', fields);
-        C.BlockListSetFields(rootId, blockIds.map((it: string) => {
-            return { blockId: it, fields: fields };
-        }));
+		C.BlockLinkListSetAppearance(rootId, blockIds, content.iconSize, content.cardStyle, content.description, content.relations);
     };
+
+	hasRelationKey (key: string) {
+		const content = this.getContent();
+		return content.relations.includes(key);
+	};
 
 });
 

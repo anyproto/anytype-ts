@@ -260,16 +260,16 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 			const onTemplate = () => {
 				first = blockStore.getFirstBlock(rootId, 1, (it: any) => { return it.isText(); });
 				if (!first) {
-					C.BlockCreate(param, rootId, '', I.BlockPosition.Bottom, (message: any) => { onBlock(message.blockId); });
+					C.BlockCreate(rootId, '', I.BlockPosition.Bottom, param, (message: any) => { onBlock(message.blockId); });
 				} else {
 					onBlock(first.id);
 				};
 			};
 
 			if (template) {
-				C.ApplyTemplate(rootId, template.id, onTemplate);
+				C.ObjectApplyTemplate(rootId, template.id, onTemplate);
 			} else {
-				C.BlockObjectTypeSet(rootId, item.id, onTemplate);
+				C.ObjectSetObjectType(rootId, item.id, onTemplate);
 			};
 
 			analytics.event('CreateObject', {
