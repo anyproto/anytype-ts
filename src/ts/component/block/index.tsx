@@ -218,6 +218,7 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 		let object = null;
 		let targetTop = null;
 		let targetBot = null;
+		let targetColumn = null;
 
 		if (canDrop) {
 			object = (
@@ -241,6 +242,17 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 
 		if (!block.isLayoutRow()) {
 			targetTop = null;
+		};
+
+		if (block.isLayoutColumn()) {
+			const childrenIds = blockStore.getChildrenIds(rootId, block.id);
+			const lastId = childrenIds.length ? childrenIds[childrenIds.length - 1] : '';
+
+			if (lastId) {
+				targetColumn = (
+					<DropTarget {...this.props} className="targetCol" rootId={rootId} id={lastId} style={style} type={type} dropType={I.DropType.Block} canDropMiddle={canDropMiddle} onClick={this.onEmptyColumn} />
+				);
+			};
 		};
 		
 		if (canSelect) {
@@ -285,10 +297,7 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 					/>
 
 					{targetBot}
-					
-					{block.isLayoutColumn() ? (
-						<div className="columnEmpty" onClick={this.onEmptyColumn} />
-					) : ''}
+					{targetColumn}
 				</div>
 			</div>
 		);
