@@ -591,7 +591,7 @@ const Mapper = {
 			item.setRelationkey(obj.relationKey);
 			item.setOperator(obj.operator);
 			item.setCondition(obj.condition);
-			item.setQuickoption(obj.quickOption);
+			//item.setQuickoption(obj.quickOption);
 			item.setValue(Encode.encodeValue(obj.value));
 
 			return item;
