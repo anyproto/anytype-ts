@@ -1,7 +1,5 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { I } from 'ts/lib';
-import { throttle } from 'lodash';
 
 interface Props {
 	id: string;
