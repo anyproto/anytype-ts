@@ -49,7 +49,15 @@
 					.element:last-child { margin-right: 0px; }
 				}
 
-				.cellContent.c-select, .cellContent.c-object, .cellContent.c-file {
+				.cellContent.c-url, 
+				.cellContent.c-phone, 
+				.cellContent.c-email {
+					.name { width: auto; }
+				}
+
+				.cellContent.c-select, 
+				.cellContent.c-object, 
+				.cellContent.c-file {
 					.over { display: flex; height: 20px; }
 
 					.wrap.overLimit {

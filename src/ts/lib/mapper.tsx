@@ -427,7 +427,7 @@ const Mapper = {
 		},
 
 		Details: (obj: any) => {
-			const item = new Rpc.Block.Set.Details.Detail();
+			const item = new Rpc.Object.SetDetails.Detail();
 			item.setKey(obj.key);
 			item.setValue(Encode.encodeValue(obj.value));
 			return item;
