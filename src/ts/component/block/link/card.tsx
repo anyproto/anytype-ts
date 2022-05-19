@@ -25,14 +25,15 @@ const LinkCard = observer(class LinkCard extends React.Component<Props, {}> {
         const { rootId, block, description, cardStyle, object, className, canEdit, onClick, onSelect, onUpload, onCheckbox } = this.props;
         const { id, layout, coverType, coverId, coverX, coverY, coverScale, snippet } = object;
 		const { size, iconSize } = this.getIconSize();
-        const cn = [ 'linkCard', DataUtil.layoutClass(id, layout), 'c' + size, DataUtil.linkCardClass(cardStyle) ];
-        const cns = [ 'sides' ];
+		const canDescription = ![ I.ObjectLayout.Note ].includes(object.layout);
+		const type = dbStore.getObjectType(object.type);
 		const withName = this.hasRelationKey('name');
 		const withIcon = this.hasRelationKey('icon');
 		const withType = this.hasRelationKey('type');
         const withCover = this.hasRelationKey('cover') && coverId && coverType;
-		const canDescription = ![ I.ObjectLayout.Note ].includes(object.layout);
-		const type = dbStore.getObjectType(object.type);
+		const cn = [ 'linkCard', DataUtil.layoutClass(id, layout), 'c' + size, DataUtil.linkCardClass(cardStyle) ];
+        const cns = [ 'sides' ];
+		const cnl = [ 'side', 'left' ];
 		
         if (className) {
             cn.push(className);
@@ -41,12 +42,14 @@ const LinkCard = observer(class LinkCard extends React.Component<Props, {}> {
             cn.push('withCover');
         };
 
-        if (block.bgColor) {
-			cns.push('bgColor bgColor-' + block.bgColor);
-		};
         if (!withIcon && !withName && (description == I.LinkDescription.None)) {
             cns.push('hidden');
         };
+
+		if (block.bgColor) {
+			cns.push('withBgColor');
+			cnl.push('bgColor bgColor-' + block.bgColor);
+		};
 
 		let descr = '';
 		if (description == I.LinkDescription.Added) {
@@ -59,7 +62,7 @@ const LinkCard = observer(class LinkCard extends React.Component<Props, {}> {
 		return (
 			<div className={cn.join(' ')} onMouseDown={onClick}>
 				<div id="sides" className={cns.join(' ')}>
-					<div key="sideLeft" className="side left">
+					<div key="sideLeft" className={cnl.join(' ')}>
 						<div className="txt">
 							<div className="cardName">
 								{withIcon ? (
