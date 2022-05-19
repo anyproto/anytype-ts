@@ -14,6 +14,7 @@ interface State {
 const $ = require('jquery');
 const Constant = require('json/constant.json');
 const HEIGHT = 28;
+
 const LIMIT_LOAD = 100;
 const LIMIT_HEIGHT = 10;
 
@@ -29,8 +30,8 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 	cache: any = {};
 	items: any = [];
 	n: number = -1;
-	refList: any = null;
 	offset: number = 0;
+	refList: any = null;
 
 	constructor (props: any) {
 		super(props);
@@ -41,9 +42,9 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 	
 	render () {
 		const { loading } = this.state;
-		const items = this.getItems();
 		const { filter } = commonStore;
 		const { text } = filter;
+		const items = this.getItems();
 
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
@@ -118,9 +119,9 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		const items = this.getItems();
 
 		if (this.filter != filter.text) {
-			this.load(true);
 			this.filter = filter.text;
 			this.n = -1;
+			this.load(true);
 			return;
 		};
 

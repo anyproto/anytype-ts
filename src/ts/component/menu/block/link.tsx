@@ -15,7 +15,7 @@ const $ = require('jquery');
 const Constant = require('json/constant.json');
 const HEIGHT_SECTION = 28;
 const HEIGHT_ITEM = 56;
-const LIMIT_RENDER = 6;
+const LIMIT_HEIGHT = 6;
 const LIMIT_LOAD = 100;
 
 const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props, State> {
@@ -30,9 +30,10 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 	cache: any = {};
 	items: any = [];
 	n: number = -1;
+	top: number = 0;
+	offset: number = 0;
 	refList: any = null;
 	refFilter: any = null;
-	top: number = 0;
 
 	constructor (props: any) {
 		super(props);
@@ -41,6 +42,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 		this.onFilterChange = this.onFilterChange.bind(this);
 		this.onFilterClear = this.onFilterClear.bind(this);
 		this.onScroll = this.onScroll.bind(this);
+		this.loadMoreRows = this.loadMoreRows.bind(this);
 	};
 	
 	render () {
@@ -49,6 +51,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 		const { data } = param;
 		const { filter } = data;
 		const items = this.getItems(true);
+		const itemsWithoutSections = this.getItems(false);
 
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
@@ -64,7 +67,6 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 			if (item.isHidden) {
 				cn.push('isHidden');
 			};
-
 
 			let content = null;
 
@@ -117,9 +119,9 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 					{loading ? <Loader /> : (
 						<InfiniteLoader
 							rowCount={items.length}
-							loadMoreRows={() => {}}
-							isRowLoaded={({ index }) => index < items.length}
-							threshold={LIMIT_RENDER}
+							loadMoreRows={this.loadMoreRows}
+							isRowLoaded={({ index }) => !!this.items[index]}
+							threshold={LIMIT_HEIGHT}
 						>
 							{({ onRowsRendered, registerChild }) => (
 								<AutoSizer className="scrollArea">
@@ -153,7 +155,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 		this._isMounted = true;
 		this.rebind();
 		this.resize();
-		this.load();
+		this.load(true);
 	};
 
 	componentDidUpdate () {
@@ -163,10 +165,11 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 		const items = this.getItems(false);
 
 		if (this.filter != filter) {
-			this.load();
 			this.filter = filter;
 			this.top = 0;
 			this.n = -1;
+			this.offset = 0;
+			this.load(true);
 			return;
 		};
 
@@ -217,7 +220,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 		const reg = new RegExp(Util.filterFix(filter), 'gi');
 
 		let text = 'Create new object';
-		let items = this.items;
+		let items = [].concat(this.items);
 
 		if (filter) {
 			text = `Create object “${filter}”`;
@@ -232,6 +235,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 				return ret;
 			});
 		};
+
 		items.unshift({ id: 'add', name: text, icon: 'plus' });
 		
 		let sections: any[] = [
@@ -264,7 +268,14 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 		return items;
 	};
 	
-	load () {
+	loadMoreRows ({ startIndex, stopIndex }) {
+        return new Promise((resolve, reject) => {
+			this.offset += LIMIT_LOAD;
+			this.load(false, resolve);
+		});
+	};
+
+	load (clear: boolean, callBack?: (message: any) => void) {
 		const { config } = commonStore;
 		const { param } = this.props;
 		const { data } = param;
@@ -284,11 +295,26 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true });
 		};
 
-		this.setState({ loading: true });
+		if (clear) {
+			this.setState({ loading: true });
+		};
 
-		C.ObjectSearch(filters, sorts, Constant.defaultRelationKeys, filter.replace(/\\/g, ''), 0, LIMIT_LOAD, (message: any) => {
-			this.items = message.records;
-			this.setState({ loading: false });
+		C.ObjectSearch(filters, sorts, Constant.defaultRelationKeys, filter.replace(/\\/g, ''), this.offset, LIMIT_LOAD, (message: any) => {
+			if (callBack) {
+				callBack(null);
+			};
+
+			if (clear) {
+				this.items = [];
+			};
+
+			this.items = this.items.concat(message.records);
+
+			if (clear) {
+				this.setState({ loading: false });
+			} else {
+				this.forceUpdate();
+			};;
 		});
 	};
 
@@ -340,7 +366,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 		const items = this.getItems(true);
 		const obj = $(`#${getId()} .content`);
 		const offset = 6;
-		const height = Math.max(HEIGHT_ITEM * 3 + offset, Math.min(HEIGHT_ITEM * LIMIT_RENDER, items.length * HEIGHT_ITEM + offset));
+		const height = Math.max(HEIGHT_ITEM * 3 + offset, Math.min(HEIGHT_ITEM * LIMIT_HEIGHT, items.length * HEIGHT_ITEM + offset));
 
 		obj.css({ height: height });
 		position();
