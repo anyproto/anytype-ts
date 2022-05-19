@@ -109,7 +109,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 	onIconPage () {
 		const { rootId } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
-		
+
 		menuStore.open('smile', { 
 			element: '.editorControls #button-icon',
 			onOpen: () => {
@@ -120,7 +120,9 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 			},
 			data: {
 				onSelect: (icon: string) => {
-					DataUtil.pageSetIcon(rootId, icon, '');
+					DataUtil.pageSetIcon(rootId, icon, '', () => {
+						menuStore.update('smile', { element: `#block-icon-${rootId}` });
+					});
 				},
 				onUpload (hash: string) {
 					DataUtil.pageSetIcon(rootId, '', hash);
