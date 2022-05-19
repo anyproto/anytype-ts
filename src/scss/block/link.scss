@@ -65,9 +65,11 @@
 		}
 
 		.linkCard.card {
-			.sides { border-radius: 12px; }
 			.side.left { padding: 21px 16px; border: 1px solid $colorBorderDark; border-radius: 12px; }
 			.side.right { border-radius: 0px 12px 12px 0px; }
+			.sides.withBgColor {
+				.side { border: 0px; }
+			} 
 
 			.cardName { @include text-common; line-height: 18px; }
 			.cardName .name { @include clamp2; }
@@ -91,7 +93,7 @@
 			.side.right { 
 				position: absolute; top: 0px; left: 0px; height: 116px; width: 100%; border-radius: 12px 12px 0px 0px;
 				border: 1px solid $colorBorderDark; border-bottom: 0px;
-			}
+			}	
 		}
 
 		.linkCard.withCover.vertical { padding-top: 116px; }

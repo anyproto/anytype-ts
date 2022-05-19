@@ -214,6 +214,7 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 							canEdit={!record.isReadonly} 
 							offsetY={4} 
 							object={record} 
+							noClick={true}
 						/>
 					) : ''}
 					<Name name={value} />

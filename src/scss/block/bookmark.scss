@@ -10,9 +10,10 @@
 			cursor: pointer; position: relative; border-radius: 12px; overflow: hidden;
 		}
 		.inner:hover { border-color: $colorMediumGrey; }
+		.inner.bgColor { border: 0px; }
 		
 		.inner {
-			.side.left { width: 100%; padding: 21px 16px; }
+			.side.left { width: 100%; padding: 16px; }
 			.side.right { border-radius: 0px 12px 12px 0px; overflow: hidden; display: none; }
 		}
 		

@@ -131,6 +131,7 @@ export interface Block {
 	isLayoutHeader?(): boolean;
 	isLayoutFooter?(): boolean;
 
+	isBookmark?(): boolean;
 	isLink?(): boolean;
 
 	isIcon?(): boolean;
