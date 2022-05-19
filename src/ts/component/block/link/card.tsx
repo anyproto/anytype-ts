@@ -52,11 +52,13 @@ const LinkCard = observer(class LinkCard extends React.Component<Props, {}> {
 		};
 
 		let descr = '';
-		if (description == I.LinkDescription.Added) {
-			descr = canDescription ? object.description : '';
-		};
-		if (description == I.LinkDescription.Content) {
-			descr = canDescription ? (object.description || object.snippet) : '';
+		if (canDescription) {
+			if (description == I.LinkDescription.Added) {
+				descr = object.description;
+			};
+			if (description == I.LinkDescription.Content) {
+				descr = object.snippet;
+			};
 		};
 
 		return (
