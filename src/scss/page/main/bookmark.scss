@@ -1,0 +1,38 @@
+@import "~scss/_vars";
+
+.pageMainBookmark {
+
+	.wrapper { width: 704px; margin: 0px auto; padding: 126px 0px 80px 0px; }
+	.wrapper {
+		.block { display: block; margin: 0px; }
+		.block {
+			.wrapMenu { display: none; }
+			.wrapContent { width: 100%; }
+		}
+
+		.headSimple { margin-bottom: 20px; }
+
+		.title { @include text-header1; word-wrap: break-word; margin-bottom: 10px; }
+		.descr { @include text-paragraph; word-wrap: break-word; margin-bottom: 10px; }
+		.descr:empty { display: none; }
+
+		.block.blockMedia { padding: 0px; border-radius: 6px; background: $colorHover; }
+		.block.blockMedia {
+			.wrap { position: static; overflow: visible; }
+		}
+
+		.block.blockFeatured { padding: 0px; margin: 0px; line-height: 28px; }
+
+		.block.blockRelation {
+			.icon.relation { display: none; }
+			.info .name { color: $colorDarkGrey; }
+		}
+
+		.buttons { margin: 16px 0px 40px 0px; display: flex; flex-direction: row; gap: 0px 16px; }
+		.buttons {
+			.button { @include text-paragraph; height: 36px; line-height: 30px; }
+		}
+	}
+}
+
+.pageMainBookmark > #loader { position: fixed; top: 0px; width: 100%; height: 100%; }

@@ -416,6 +416,7 @@ class DataUtil {
 			case I.ObjectLayout.Graph:		 r = 'graph'; break;
 			case I.ObjectLayout.Store:		 r = 'store'; break;
 			case I.ObjectLayout.History:	 r = 'history'; break;
+			case I.ObjectLayout.Bookmark:	 r = 'bookmark'; break;
 		};
 		return r;
 	};
@@ -1020,6 +1021,7 @@ class DataUtil {
 				ret.withIcon = true;
 				break;
 
+			case I.ObjectLayout.Bookmark:
 			case I.ObjectLayout.Task:
 				break;
 
