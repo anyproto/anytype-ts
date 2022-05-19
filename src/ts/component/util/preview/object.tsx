@@ -45,7 +45,7 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 		const { name, description, coverType, coverId, coverX, coverY, coverScale } = object;
 		const author = detailStore.get(contextId, object.creator, []);
 		const type: any = dbStore.getObjectType(object.type) || {};
-		const childBlocks = blockStore.getChildren(contextId, rootId, (it: I.Block) => { return !it.isLayoutHeader(); }).slice(0, 10);
+		const childBlocks = blockStore.getChildren(contextId, rootId, it => !it.isLayoutHeader()).slice(0, 10);
 		const isTask = object.layout == I.ObjectLayout.Task;
 		const cn = [ 'previewObject' , check.className, className ];
 

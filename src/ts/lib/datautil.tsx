@@ -128,6 +128,7 @@ class DataUtil {
 			case I.ObjectLayout.Image:		 c = (id ? 'isImage' : 'isFile'); break;
 			case I.ObjectLayout.File:		 c = 'isFile'; break;
 			case I.ObjectLayout.Note:		 c = 'isNote'; break;
+			case I.ObjectLayout.Bookmark:	 c = 'isBookmark'; break;
 		};
 		return c;
 	};

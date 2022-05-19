@@ -29,9 +29,9 @@
 					.more { margin-top: 0px; vertical-align: top; }
 				}
 
-				.cellContent.isName { @include text-paragraph; color: $colorBlack; }
+				.cellContent.isName { @include text-paragraph; color: $colorBlack; display: flex; gap: 0px 6px; }
 				.cellContent.isName {
-					.iconObject { margin-right: 6px; }
+					.iconObject { margin: 0px; }
 					.name { line-height: 24px; vertical-align: top; }
 				}
 
