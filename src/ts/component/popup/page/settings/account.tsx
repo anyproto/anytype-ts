@@ -203,7 +203,9 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 				return;
 			};
 
-			C.AccountMove(files[0]);
+			C.AccountMove(files[0], () => {
+				Util.route('/auth/setup/init');
+			});
 		});
 	};
 
