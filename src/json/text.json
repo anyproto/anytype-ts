@@ -151,7 +151,7 @@
 	"blockTextQuote": { "en": "Spotlight, that needs special attention" },
 
 	"blockNameCallout": { "en": "Callout" },
-	"blockTextCallout": { "en": "..." },
+	"blockTextCallout": { "en": "Bordered text with icon" },
 
 	"blockNameCheckbox": { "en": "Checkbox" },
 	"blockTextCheckbox": { "en": "Create and track task with to-do list" },
