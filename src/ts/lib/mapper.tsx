@@ -145,6 +145,7 @@ const Mapper = {
 				imageHash: obj.getImagehash(),
 				faviconHash: obj.getFaviconhash(),
 				type: obj.getType(),
+				targetObjectId: obj.getTargetobjectid(),
 			};
 		},
 
@@ -488,6 +489,7 @@ const Mapper = {
 			content.setImagehash(obj.imageHash);
 			content.setFaviconhash(obj.faviconHash);
 			content.setType(obj.type);
+			content.setTargetobjectid(obj.targetObjectId);
 
 			return content;
 		},

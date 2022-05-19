@@ -451,6 +451,11 @@ class Dispatcher {
 					if (data.hasType()) {
 						block.content.type = data.getType().getValue();
 					};
+
+					if (data.hasTargetobjectid()) {
+						block.content.targetObjectId = data.getTargetobjectid().getValue();
+					};
+
 					break;
 
 				case 'blockSetBackgroundColor':
