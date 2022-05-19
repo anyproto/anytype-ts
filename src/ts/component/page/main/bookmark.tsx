@@ -39,7 +39,7 @@ const PageMainBookmark = observer(class PageMainBookmark extends React.Component
 	render () {
 		const { isDeleted } = this.state;
 		const rootId = this.getRootId();
-		const object = detailStore.get(rootId, rootId, [ 'heightInPixels' ]);
+		const object = detailStore.get(rootId, rootId, []);
 
 		if (isDeleted || object.isDeleted) {
 			return <Deleted {...this.props} />;
@@ -140,6 +140,11 @@ const PageMainBookmark = observer(class PageMainBookmark extends React.Component
 	};
 
 	onOpen (e: any) {
+		const rootId = this.getRootId();
+		const object = detailStore.get(rootId, rootId, [ 'url' ]);
+		const renderer = Util.getRenderer();
+	
+		renderer.send('urlOpen', object.url);
 	};
 
 	getRootId () {
