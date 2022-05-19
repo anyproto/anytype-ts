@@ -138,6 +138,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		const { selection } = dataset || {};
 
 		this._isMounted = true;
+
+		this.resize();
 		this.unbind();
 		this.open();
 
@@ -1904,17 +1906,17 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		const container = $(isPopup ? '#popupPage #innerWrap' : '#page.isFull');
 		const mw = container.width() - 120;
 		const root = blockStore.getLeaf(rootId, rootId);
-		const sb = $('#sidebar');
+		//const sb = $('#sidebar');
 		
 		if (root && root.isObjectSet()) {
-			return container.width() - 192;
+			this.width = container.width() - 192;
+		} else {
+			w = Number(w) || 0;
+			w = (mw - Constant.size.editor) * w;
+
+			this.width = Math.max(Constant.size.editor, Math.min(mw, Constant.size.editor + w));
 		};
-
-		w = Number(w) || 0;
-		w = (mw - Constant.size.editor) * w;
-
-		this.width = w = Math.max(Constant.size.editor, Math.min(mw, Constant.size.editor + w));
-		return w;
+		return this.width;
 	};
 
 	isReadonly () {

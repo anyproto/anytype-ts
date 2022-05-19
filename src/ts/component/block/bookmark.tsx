@@ -153,7 +153,7 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<Props
 		const rect = node.get(0).getBoundingClientRect() as DOMRect;
 		const width = rect.width;
 		const mw = getWrapperWidth();
-		
+
 		width <= mw / 2 ? inner.addClass('vertical') : inner.removeClass('vertical');
 	};
 	
