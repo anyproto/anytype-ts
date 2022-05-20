@@ -32,7 +32,8 @@ const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<P
 		const { cover } = commonStore;
 		const { error } = this.state;
 		const duration = Math.max(0, account.status.date - Util.time());
-		const dt = Util.duration(duration);
+		const days = Math.ceil(duration / 86400);
+		const dt = `${days} ${Util.cntWord(days, 'day', 'days')}`;
 
 		let title = '';
 		let description = '';
@@ -51,7 +52,7 @@ const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<P
 				]);
 
 				showPie = true;
-				pieValue = Math.min(DAYS - 1, Math.max(1, DAYS - Math.ceil(duration / 86400)));
+				pieValue = Math.min(DAYS - 1, Math.max(1, DAYS - days));
 				break;
 
 			case I.AccountStatusType.StartedDeletion:
