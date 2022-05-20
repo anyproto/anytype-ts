@@ -285,4 +285,23 @@
 			.icon.arrow.disabled:hover { background-image: url('~img/arrow/onboarding0.svg'); }
         }
 	}
+
+	/* MenuSearchText */
+
+	.menu.menuSearchText {
+		.buttons {
+			.btn { color: $colorSecondary; }
+			.btn:hover { color: $colorPrimary; }
+		}
+	}
+
+	/* MenuDataviewCreateBookmark */
+
+	.menu.menuDataviewCreateBookmark {
+		.loaderWrapper { background: rgba(39, 39, 35, 0.9); }
+		.buttons {
+			.button { color: $colorSecondary; }
+			.button:hover { color: $colorPrimary; }
+		}
+	}
 }

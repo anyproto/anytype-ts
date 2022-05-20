@@ -72,13 +72,6 @@ import 'scss/page/main/graph.scss';
 import 'scss/page/main/navigation.scss';
 
 import 'scss/block/common.scss';
-import 'scss/block/dataview.scss';
-import 'scss/block/dataview/cell.scss';
-import 'scss/block/dataview/view/common.scss';
-import 'scss/block/dataview/view/grid.scss';
-import 'scss/block/dataview/view/board.scss';
-import 'scss/block/dataview/view/list.scss';
-import 'scss/block/dataview/view/gallery.scss';
 import 'scss/block/text.scss';
 import 'scss/block/media.scss';
 import 'scss/block/file.scss';
@@ -94,6 +87,13 @@ import 'scss/block/featured.scss';
 import 'scss/block/type.scss';
 import 'scss/block/latex.scss';
 import 'scss/block/tableOfContents.scss';
+import 'scss/block/dataview.scss';
+import 'scss/block/dataview/cell.scss';
+import 'scss/block/dataview/view/common.scss';
+import 'scss/block/dataview/view/grid.scss';
+import 'scss/block/dataview/view/board.scss';
+import 'scss/block/dataview/view/list.scss';
+import 'scss/block/dataview/view/gallery.scss';
 
 import 'scss/popup/common.scss';
 import 'scss/popup/settings.scss';
@@ -146,6 +146,7 @@ import 'scss/menu/dataview/file.scss';
 import 'scss/menu/dataview/text.scss';
 import 'scss/menu/dataview/view.scss';
 import 'scss/menu/dataview/source.scss';
+import 'scss/menu/dataview/create/bookmark.scss';
 
 import 'scss/media/print.scss';
 

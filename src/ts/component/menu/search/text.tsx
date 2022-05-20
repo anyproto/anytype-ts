@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Input } from 'ts/component';
+import { Input, Button } from 'ts/component';
 import { I, Util, keyboard, translate, analytics } from 'ts/lib';
 
 interface Props extends I.Menu {};
@@ -35,7 +35,7 @@ class MenuSearchText extends React.Component<Props, {}> {
 			<div className="flex">
 				<Input ref={(ref: any) => { this.ref = ref; }} value={value} placeholder={translate('commonSearch')} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp} />
 				<div className="buttons">
-					<div className="btn" onClick={this.onSearch}>{translate('commonSearchButton')}</div>
+					<Button onClick={this.onSearch} text={translate('commonSearchButton')} />
 				</div>
 			</div>
 		);

@@ -795,6 +795,24 @@ const ObjectCreate = (details: any, callBack?: (message: any) => void) => {
 	dispatcher.request(ObjectCreate.name, request, callBack);
 };
 
+const ObjectCreateSet = (sources: string[], details: any, templateId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.CreateSet.Request();
+	
+	request.setSourceList(sources);
+	request.setDetails(Encode.encodeStruct(details));
+	request.setTemplateid(templateId);
+
+	dispatcher.request(ObjectCreateSet.name, request, callBack);
+};
+
+const ObjectCreateBookmark = (url: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.CreateBookmark.Request();
+	
+	request.setUrl(url);
+
+	dispatcher.request(ObjectCreateBookmark.name, request, callBack);
+};
+
 const ObjectOpen = (objectId: string, traceId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.Open.Request();
 	
@@ -849,16 +867,6 @@ const ObjectRedo = (contextId: string, callBack?: (message: any) => void) => {
 	request.setContextid(contextId);
 
 	dispatcher.request(ObjectRedo.name, request, callBack);
-};
-
-const ObjectCreateSet = (sources: string[], details: any, templateId: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Object.CreateSet.Request();
-	
-	request.setSourceList(sources);
-	request.setDetails(Encode.encodeStruct(details));
-	request.setTemplateid(templateId);
-
-	dispatcher.request(ObjectCreateSet.name, request, callBack);
 };
 
 const ObjectSearch = (filters: I.Filter[], sorts: I.Sort[], keys: string[], fullText: string, offset: number, limit: number, callBack?: (message: any) => void) => {
@@ -1406,7 +1414,6 @@ export {
 	ObjectOpenBreadcrumbs,
 	ObjectSetBreadcrumbs,
 	ObjectClose,
-	ObjectCreate,
 	ObjectUndo,
 	ObjectRedo,
 	ObjectGraph,
@@ -1423,14 +1430,16 @@ export {
 	ObjectApplyTemplate,
 	ObjectImportMarkdown,
 
+	ObjectCreate,
+	ObjectCreateSet,
+	ObjectCreateBookmark,
+
 	ObjectSetDetails,
 	ObjectSetObjectType,
 	ObjectSetLayout,
 	ObjectSetIsFavorite,
 	ObjectSetIsArchived,
 
-	ObjectCreateSet,
-	
 	ObjectListDuplicate,
 	ObjectListDelete,
 	ObjectListSetIsArchived,
