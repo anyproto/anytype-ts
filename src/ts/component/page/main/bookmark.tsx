@@ -1,9 +1,10 @@
 import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
-import { Header, FooterMainEdit as Footer, Loader, Block, Button, Deleted, ObjectName } from 'ts/component';
-import { I, M, C, Util, crumbs, Action } from 'ts/lib';
-import { blockStore, detailStore } from 'ts/store';
+import { Header, FooterMainEdit as Footer, Loader, Block, Button, Deleted, Icon } from 'ts/component';
+import { I, C, Util, crumbs, Action, analytics } from 'ts/lib';
+import { blockStore, detailStore, menuStore, dbStore } from 'ts/store';
 
 import HeadSimple from 'ts/component/page/head/simple';
 
@@ -34,6 +35,7 @@ const PageMainBookmark = observer(class PageMainBookmark extends React.Component
 		super(props);
 		
 		this.onOpen = this.onOpen.bind(this);
+		this.onRelationAdd = this.onRelationAdd.bind(this);
 	};
 
 	render () {
@@ -49,6 +51,15 @@ const PageMainBookmark = observer(class PageMainBookmark extends React.Component
 		};
 		
 		const blocks = blockStore.getBlocks(rootId, it => it.isRelation());
+		const childrenIds = blockStore.getChildrenIds(rootId, rootId);
+		const allowedRelation = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
+
+		const ItemAdd = (item: any) => (
+			<div id="item-add" className="item add" onClick={this.onRelationAdd}>
+				<Icon className="plus" />
+				<div className="name">Add relation</div>
+			</div>
+		);
 
 		return (
 			<div>
@@ -63,8 +74,10 @@ const PageMainBookmark = observer(class PageMainBookmark extends React.Component
 
 					<div className="section">
 						{blocks.map((item: any) => (
-							<Block {...this.props} key={item.id} rootId={rootId} block={item} readonly={true} />
+							<Block {...this.props} key={item.id} rootId={rootId} block={item} />
 						))}
+
+						{allowedRelation ? <ItemAdd /> : ''}
 					</div>
 				</div>
 
@@ -153,6 +166,58 @@ const PageMainBookmark = observer(class PageMainBookmark extends React.Component
 	};
 
 	resize () {
+		if (this.loading || !this._isMounted) {
+			return;
+		};
+		
+		const { isPopup } = this.props;
+		const node = $(ReactDOM.findDOMNode(this));
+		const cover = node.find('.block.blockCover');
+		const obj = $(isPopup ? '#popupPage #innerWrap' : '#page.isFull');
+		const header = obj.find('#header');
+		const hh = isPopup ? header.height() : Util.sizeHeader();
+
+		if (cover.length) {
+			cover.css({ top: hh });
+		};
+
+		node.css({ paddingTop: isPopup ? 0 : hh });
+	};
+
+	onRelationAdd (e: any) {
+		const rootId = this.getRootId();
+		const relations = dbStore.getRelations(rootId, rootId);
+
+		menuStore.open('relationSuggest', { 
+			element: $(e.currentTarget),
+			offsetX: 0,
+			data: {
+				filter: '',
+				rootId: rootId,
+				ref: 'type',
+				menuIdEdit: 'blockRelationEdit',
+				skipIds: relations.map((it: I.Relation) => { return it.relationKey; }),
+				listCommand: (rootId: string, blockId: string, callBack?: (message: any) => void) => {
+					C.ObjectRelationListAvailable(rootId, callBack);
+				},
+				addCommand: (rootId: string, blockId: string, relation: any, onChange?: (relation: any) => void) => {
+					const param = {
+						type: I.BlockType.Relation,
+						content: { key: relation.relationKey }
+					};
+
+					C.BlockCreate(rootId, '', I.BlockPosition.Bottom, param, (message: any) => {
+						C.BlockRelationSetKey(rootId, message.blockId, relation.relationKey, (message: any) => {
+							if (onChange) {
+								onChange(relation);
+							};
+
+							analytics.event('CreateBlock', { middleTime: message.middleTime, type: param.type });
+						});
+					});
+				},
+			}
+		});
 	};
 
 });

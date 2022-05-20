@@ -2,7 +2,7 @@
 
 .pageMainBookmark {
 
-	.wrapper { width: 704px; margin: 0px auto; padding: 126px 0px 80px 0px; }
+	.wrapper { width: 704px; margin: 0px auto; padding: 0px 0px 80px 0px; }
 	.wrapper {
 		.block { display: block; margin: 0px; }
 		.block {
@@ -32,6 +32,17 @@
 		.buttons {
 			.button { @include text-paragraph; height: 36px; line-height: 30px; }
 		}
+
+		.item.add { 
+			width: 228px; padding: 4px; line-height: 20px; display: flex; gap: 0px 8px; transition: $transitionFast; border-radius: 4px; 
+			cursor: pointer;
+		}
+		.item.add {
+			.icon.plus { flex-shrink: 0; width: 20px; height: 20px; background-image: url('~img/icon/plus/menu0.svg'); }
+			.name { color: $colorDarkGrey; }
+		}
+
+		.item.add:hover { background: $colorHover; }
 	}
 }
 

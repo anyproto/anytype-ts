@@ -51,6 +51,7 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 		
 		this.onTemplateAdd = this.onTemplateAdd.bind(this);
 		this.onObjectAdd = this.onObjectAdd.bind(this);
+		this.onRelationAdd = this.onRelationAdd.bind(this);
 		this.onSetAdd = this.onSetAdd.bind(this);
 		this.onCreate = this.onCreate.bind(this);
 		this.onLayout = this.onLayout.bind(this);
@@ -98,7 +99,7 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 		);
 
 		const ItemAdd = (item: any) => (
-			<div id="item-add" className="item add" onClick={(e: any) => { this.onRelationAdd(e); }}>
+			<div id="item-add" className="item add" onClick={this.onRelationAdd}>
 				<div className="clickable">
 					<Icon className="plus" />
 					<div className="name">New</div>
