@@ -32,7 +32,7 @@ const BodyRow = observer(class BodyRow extends React.Component<Props, {}> {
 		if (record.isDeleted) {
 			cn.push('isDeleted');
 		};
-		
+
 		return (
 			<div 
 				id={'row-' + index} 
