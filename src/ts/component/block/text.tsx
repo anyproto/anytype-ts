@@ -786,7 +786,10 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		let ret = false;
 		let value = this.getValue();
 		let cmdParsed = false;
-		let newBlock: any = { content: {} };
+		let newBlock: any = { 
+			bgColor: block.bgColor,
+			content: {},
+		};
 
 		let cb = (message: any) => {
 			keyboard.setFocus(false);
