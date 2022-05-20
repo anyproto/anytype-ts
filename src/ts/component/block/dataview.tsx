@@ -427,14 +427,15 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const ref = this.cellRefs.get(id);
 		const record = this.getRecord(index);
 		const view = this.getView();
-		const renderer = Util.getRenderer();
 
 		if (!relation || !ref || !record) {
 			return;
 		};
 
-		if ((view.type == I.ViewType.List) && ([ I.RelationType.Url, I.RelationType.Email, I.RelationType.Phone ].indexOf(relation.format) >= 0)) {
+		if ([ I.ViewType.List, I.ViewType.Gallery ].includes(view.type) && ([ I.RelationType.Url, I.RelationType.Email, I.RelationType.Phone ].indexOf(relation.format) >= 0)) {
 			const scheme = Relation.getUrlScheme(relation.format, record[relationKey]);
+			const renderer = Util.getRenderer();
+
 			renderer.send('urlOpen', scheme + record[relationKey]);
 			return;
 		};
