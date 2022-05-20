@@ -52,7 +52,7 @@
 				.cellContent.c-url, 
 				.cellContent.c-phone, 
 				.cellContent.c-email {
-					.name { width: auto; }
+					.name { width: auto; max-width: 100%; }
 				}
 
 				.cellContent.c-select, 
