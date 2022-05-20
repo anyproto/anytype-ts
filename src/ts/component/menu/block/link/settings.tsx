@@ -219,7 +219,7 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 		const itemSize = canIcon ? { id: 'iconSize', name: 'Icon size', caption: icon.name, withCaption: true, arrow: true } : null;
 		const itemIcon = canIcon ? { id: 'icon', name: 'Icon', withSwitch: true, switchValue: this.hasRelationKey('icon') } : null;
 		const itemCover = canCover ? { id: 'cover', name: 'Cover', withSwitch: true, switchValue: this.hasRelationKey('cover') } : null;
-		const itemName = { id: 'name', name: 'Name', icon: 'relation ' + DataUtil.relationClass(I.RelationType.ShortText), withSwitch: true, switchValue: this.hasRelationKey('name') };
+		const itemName = { id: 'name', name: 'Name', icon: 'relation ' + DataUtil.relationClass(I.RelationType.ShortText) };
 		const itemDescription = canDescription ? { 
 			id: 'description', name: 'Description', icon: 'relation ' + DataUtil.relationClass(I.RelationType.LongText), 
 			caption: description.name, withCaption: true, arrow: true

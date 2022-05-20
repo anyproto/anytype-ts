@@ -1136,12 +1136,12 @@ class DataUtil {
 			iconSize: I.LinkIconSize.Small,
 			cardStyle: I.LinkCardStyle.Text,
 			description: I.LinkDescription.None,
-			relations: [ 'name', 'icon' ],
+			relations: [ 'icon' ],
 		};
 	};
 
 	checkLinkSettings (content: I.ContentLink, layout: I.ObjectLayout) {
-		const relationKeys = [ 'icon', 'name', 'type', 'cover', 'tag' ];
+		const relationKeys = [ 'icon', 'type', 'cover', 'tag' ];
 
 		content = Util.objectCopy(content);
 		content.iconSize = Number(content.iconSize) || I.LinkIconSize.Small;
@@ -1151,7 +1151,7 @@ class DataUtil {
 		if (content.cardStyle == I.LinkCardStyle.Text) {
 			content.iconSize = I.LinkIconSize.Small;
 			content.description = I.LinkDescription.None;
-			content.relations = content.relations.concat([ 'icon', 'name' ]);
+			content.relations = content.relations.concat([ 'icon' ]);
         };
 
 		if (layout == I.ObjectLayout.Task) {
