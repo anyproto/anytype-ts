@@ -141,16 +141,8 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 
 		const { index, getRecord, onContext } = this.props;
 		const record = getRecord(index);
-		const open = () => {
-			if (record.type == Constant.typeId.bookmark) {
-				const renderer = Util.getRenderer();
-				renderer.send('urlOpen', record.url);
-			} else {
-				DataUtil.objectOpenPopup(record);
-			};
-		};
 		const cb = {
-			0: open,
+			0: () => { DataUtil.objectOpenPopup(record); },
 			2: () => { onContext(e, record.id); }
 		};
 
