@@ -93,9 +93,7 @@ class Relation {
 			return [];
 		};
 
-		let ret: any[] = [
-			{ id: I.FilterQuickOption.None, name: 'None' },
-		];
+		let ret: any[] = [];
 
 		switch (type) {
 			case I.RelationType.Date:

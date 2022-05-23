@@ -421,23 +421,23 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 				const conditions = Relation.filterConditionsByType(relation.format);
 
 				item.condition = conditions.length ? conditions[0].id : I.FilterCondition.None;
-				item.quickOption = I.FilterQuickOption.None;
+				item.quickOption = I.FilterQuickOption.ExactDate;
 				item.value = Relation.formatValue(relation, null, false);
-			};
-
-			if (k == 'value') {
-				item[k] = Relation.formatValue(relation, item[k], false);
 			};
 
 			if (k == 'condition') {
 				if ([ I.FilterCondition.None, I.FilterCondition.Empty, I.FilterCondition.NotEmpty ].includes(v)) {
 					item.value = Relation.formatValue(relation, null, false);
-					item.quickOption = I.FilterQuickOption.None;
+					item.quickOption = I.FilterQuickOption.ExactDate;
 				};
 			};
 
 			if (k == 'quickOption') {
 				item.value = Relation.formatValue(relation, null, false);
+			};
+
+			if (k == 'value') {
+				item[k] = Relation.formatValue(relation, item[k], false);
 			};
 
 			view.setFilter(itemId, item);

@@ -55,7 +55,7 @@ export enum FilterCondition {
 };
 
 export enum FilterQuickOption {
-	None			 = 0,
+	ExactDate		 = 0,
 	Yesterday		 = 1,
 	Today			 = 2,
 	Tomorrow		 = 3,
@@ -67,7 +67,6 @@ export enum FilterQuickOption {
 	NextMonth		 = 9,
 	NumberOfDaysAgo	 = 10,
 	NumberOfDaysNow	 = 11,
-	ExactDate		 = 12,
 };
 
 export interface Sort {
