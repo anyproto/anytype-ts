@@ -45,6 +45,7 @@ const Mapper = {
 				marketplaceTemplateObjectId: obj.getMarketplacetemplateobjectid(),
 				marketplaceRelationObjectId: obj.getMarketplacerelationobjectid(),
 				deviceId: obj.getMarketplacerelationobjectid(),
+				localStoragePath: obj.getLocalstoragepath(),
 			};
 		},
 

@@ -6,7 +6,9 @@ import { keyboard } from 'ts/lib';
 
 class AuthStore {
 	
-	public dataPath: string = '';
+	public walletPathValue: string = '';
+	public accountPathValue: string = '';
+
 	public accountItem: I.Account = { 
 		id: '', 
 		status: { 
@@ -25,7 +27,8 @@ class AuthStore {
 
 	constructor () {
 		makeObservable(this, {
-			dataPath: observable,
+			walletPathValue: observable,
+			accountPathValue: observable,
 			accountItem: observable,
 			accountList: observable,
 			pin: observable,
@@ -35,10 +38,12 @@ class AuthStore {
 			phrase: observable,
 			code: observable,
 			threadMap: observable,
+			walletPath: computed,
+			accountPath: computed,
 			accounts: computed,
 			account: computed,
-			path: computed,
-			pathSet: action,
+			walletPathSet: action,
+			accountPathSet: action,
 			pinSet: action,
 			phraseSet: action,
 			codeSet: action,
@@ -62,12 +67,20 @@ class AuthStore {
 		return this.accountItem;
     };
 
-	get path (): string {
-		return String(this.dataPath || '');
+	get walletPath (): string {
+		return String(this.walletPathValue || '');
     };
 
-	pathSet (v: string) {
-		this.dataPath = v;
+	get accountPath (): string {
+		return String(this.accountPathValue || '');
+    };
+
+	walletPathSet (v: string) {
+		this.walletPathValue = v;
+    };
+
+	accountPathSet (v: string) {
+		this.accountPathValue = v;
     };
 
 	pinSet (v: string) {

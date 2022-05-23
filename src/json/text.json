@@ -242,7 +242,7 @@
 	"popupSettingsTitle": { "en": "Settings" },
 	"popupSettingsAccountTitle": { "en": "Account & data" },
 	"popupSettingsAccountDeleteTitle": { "en": "Delete account" },
-	"popupSettingsAccountMoveTitle": { "en": "Move account data to different location" },
+	"popupSettingsAccountMoveTitle": { "en": "Account data location" },
 	"popupSettingsPersonalTitle": { "en": "Personalization" },
 	"popupSettingsAppearanceTitle": { "en": "Appearance" },
 	"popupSettingsWallpaperTitle": { "en": "Wallpaper" },

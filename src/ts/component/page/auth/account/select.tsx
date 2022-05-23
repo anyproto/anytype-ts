@@ -72,13 +72,13 @@ const PageAccountSelect = observer(class PageAccountSelect extends React.Compone
 	};
 
 	componentDidMount () {
-		const { path, phrase } = authStore;
+		const { walletPath, phrase } = authStore;
 		
 		authStore.accountClear();
 
 		this.setState({ loading: true });
 		
-		C.WalletRecover(path, phrase, (message: any) => {
+		C.WalletRecover(walletPath, phrase, (message: any) => {
 			C.AccountRecover((message: any) => {
 				const state: any = { loading: false };
 

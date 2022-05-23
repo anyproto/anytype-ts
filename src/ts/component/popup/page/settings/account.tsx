@@ -31,7 +31,9 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 		this.onFileOffload = this.onFileOffload.bind(this);
 		this.onDelete = this.onDelete.bind(this);
 		this.onDeleteCancel = this.onDeleteCancel.bind(this);
-		this.onMove = this.onMove.bind(this);
+		this.onLocationMove = this.onLocationMove.bind(this);
+		this.onLocationEnter = this.onLocationEnter.bind(this);
+		this.onLocationLeave = this.onLocationLeave.bind(this);
 	};
 
 	render () {
@@ -102,9 +104,14 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 
 					<Label className="sectionName" text="Account" />
 
-					{canDelete ? (
-						<div className="row" onClick={this.onMove}>
-							<Label text={translate('popupSettingsAccountMoveTitle')} />
+					{canMove ? (
+						<div id="row-location" className="row flex location" onClick={this.onLocationMove}>
+							<div className="side left">
+								<Label text={translate('popupSettingsAccountMoveTitle')} />
+							</div>
+							<div className="side right" onMouseEnter={this.onLocationEnter} onMouseLeave={this.onLocationLeave}>
+								<Label text={account.info.localStoragePath} />
+							</div>
 						</div>
 					) : ''}
 
@@ -192,7 +199,7 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 		});
 	};
 
-	onMove (e: any) {
+	onLocationMove (e: any) {
 		const options = { 
 			properties: [ 'openDirectory' ],
 		};
@@ -203,8 +210,22 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 				return;
 			};
 
-			C.AccountMove(files[0], () => { Util.route('/auth/setup/init'); });
+			C.AccountMove(files[0], (message: any) => {
+				if (!message.error.code) {
+					Util.route('/auth/setup/init'); 
+				};
+			});
 		});
+	};
+
+	onLocationEnter (e: any) {
+		const { account } = authStore;
+
+		Util.tooltipShow(account.info.localStoragePath, $(e.currentTarget), I.MenuDirection.Center, I.MenuDirection.Bottom);
+	};
+
+	onLocationLeave (e: any) {
+		Util.tooltipHide(false);
 	};
 
 });

@@ -90,6 +90,8 @@ html.themeDark {
         .icon.arrow { background-image: url('#{$themePath}/arrow/select/dark.svg') !important; }
     }
 
+	.input.isReadonly { background: rgba(255,255,255,0.1); }
+
     .inputWithFile { background: $colorHover; color: $colorSecondary; border-color: transparent; }
     .inputWithFile {
         .input::placeholder { color: $colorSecondary; }
