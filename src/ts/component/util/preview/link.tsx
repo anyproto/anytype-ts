@@ -76,6 +76,11 @@ const PreviewLink = observer(class PreviewLink extends React.Component<Props, St
 		
 		this.url = url;
 		this.setState({ loading: true });
+
+		const scheme = this.getScheme();
+		if (scheme && ![ 'http', 'https' ].includes(scheme)) {
+			return;
+		};
 		
 		C.LinkPreview(url, (message: any) => {
 			if (message.error.code) {
@@ -83,15 +88,17 @@ const PreviewLink = observer(class PreviewLink extends React.Component<Props, St
 				return;
 			};
 
-			this.setState({
-				...message.previewLink,
-				loading: false,
-			});
+			this.setState({ ...message.previewLink, loading: false });
 
 			if (this.props.position) {
 				this.props.position();
 			};
 		});
+	};
+
+	getScheme () {
+		const a = String(this.props.url || '').split('://');
+		return String(a[0] || '');
 	};
 	
 });
