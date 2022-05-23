@@ -840,14 +840,20 @@ class Util {
 		});
 	};
 
-	getRoute (path: string) {
+	getScheme (url: string): string {
+		const a = String(url || '').split('://');
+		return String(a[0] || '');
+	};
+
+	getRoute (path: string): { page: string, action: string, id: string } {
 		let route = path.split('/');
 		route.shift();
 
-		let page = route[0] ? route[0] : 'index';
-		let action = route[1] ? route[1] : 'index';
+		const page = String(route[0] || 'index');
+		const action = String(route[1] || 'index');
+		const id = String(route[2] || '');
 
-		return { page, action };
+		return { page, action, id };
 	};
 
 	route (route: string, replace?: boolean) {
