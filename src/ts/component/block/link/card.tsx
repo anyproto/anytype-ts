@@ -27,7 +27,6 @@ const LinkCard = observer(class LinkCard extends React.Component<Props, {}> {
 		const { size, iconSize } = this.getIconSize();
 		const canDescription = ![ I.ObjectLayout.Note ].includes(object.layout);
 		const type = dbStore.getObjectType(object.type);
-		const withName = this.hasRelationKey('name');
 		const withIcon = this.hasRelationKey('icon');
 		const withType = this.hasRelationKey('type');
         const withCover = this.hasRelationKey('cover') && coverId && coverType;
@@ -40,10 +39,6 @@ const LinkCard = observer(class LinkCard extends React.Component<Props, {}> {
         };
         if (withCover) {
             cn.push('withCover');
-        };
-
-        if (!withIcon && !withName && (description == I.LinkDescription.None)) {
-            cns.push('hidden');
         };
 
 		if (block.bgColor) {
@@ -79,7 +74,7 @@ const LinkCard = observer(class LinkCard extends React.Component<Props, {}> {
 										onCheckbox={onCheckbox} 
 									/>
 								) : ''}
-								{withName ? <ObjectName object={object} /> : ''}
+								<ObjectName object={object} />
 							</div>
 							{descr ? <div className="cardDescription">{descr}</div> : ''}
 

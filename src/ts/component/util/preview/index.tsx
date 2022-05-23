@@ -7,6 +7,7 @@ import { commonStore, menuStore } from 'ts/store';
 interface Props {}
 interface State {
 	loading: boolean;
+	object: any;
 };
 
 const $ = require('jquery');
@@ -19,6 +20,7 @@ const Preview = observer(class Preview extends React.Component<Props, State> {
 	
 	state = {
 		loading: false,
+		object: null,
 	};
 	ref: any = null;
 	
@@ -30,6 +32,7 @@ const Preview = observer(class Preview extends React.Component<Props, State> {
 		this.onEdit = this.onEdit.bind(this);
 		this.onUnlink = this.onUnlink.bind(this);
 		this.position = this.position.bind(this);
+		this.setObject = this.setObject.bind(this);
 	};
 	
 	render () {
@@ -62,7 +65,7 @@ const Preview = observer(class Preview extends React.Component<Props, State> {
 					);
 				};
 
-				content = <PreviewObject ref={(ref: any) => { this.ref = ref; }} rootId={param} position={this.position} />;
+				content = <PreviewObject ref={(ref: any) => { this.ref = ref; }} rootId={param} setObject={this.setObject} position={this.position} />;
 				break;
 		};
 
@@ -86,7 +89,8 @@ const Preview = observer(class Preview extends React.Component<Props, State> {
 	
 	onClick (e: any) {
 		const { preview } = commonStore;
-		const { type, param, object } = preview;
+		const { type, param } = preview;
+		const { object } = this.state;
 		const renderer = Util.getRenderer();
 
 		switch (type) {
@@ -137,6 +141,10 @@ const Preview = observer(class Preview extends React.Component<Props, State> {
 		
 		onChange(Mark.toggleLink({ type: type, param: '', range: range }, preview.marks));
 		Util.previewHide(true);
+	};
+
+	setObject (object: any) {
+		this.setState({ object });
 	};
 
 	position () {

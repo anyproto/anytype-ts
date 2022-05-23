@@ -372,7 +372,7 @@ const BlockListMoveToExistingObject = (contextId: string, targetContextId: strin
 };
 
 const BlockListConvertToObjects = (contextId: string, blockIds: string[], type: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Block.ListConvertChildrenToPages.Request();
+	const request = new Rpc.Block.ListConvertToObjects.Request();
 	
 	request.setContextid(contextId);
     request.setBlockidsList(blockIds);

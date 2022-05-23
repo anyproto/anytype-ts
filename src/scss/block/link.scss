@@ -35,6 +35,10 @@
 			.side.left { width: 100%; position: relative; }
 			.side.right { display: none; overflow: hidden; }
 
+			.side.left {
+				.txt { width: 100%; }
+			}
+
 			.cover { position: relative; min-height: 116px; background-color: unset; }
 			.cardName { display: flex; flex-direction: row; gap: 0px 6px; align-items: center; }
 			.cardName .name  { transition: color 0.2s ease-in-out, border-color 0.2s ease-in-out; }

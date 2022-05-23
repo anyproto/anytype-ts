@@ -72,16 +72,14 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 			const offset = item.offset();
 			const rect = el.getBoundingClientRect() as DOMRect;
 
+			const isTargetTop = item.hasClass('targetTop');
+			const isTargetBot = item.hasClass('targetBot');
+			const isTargetCol = item.hasClass('targetCol');
+
 			let x = offset.left;
 			let y = offset.top;
 			let w = rect.width;
 			let h = rect.height;
-			let isTargetTop = item.hasClass('targetTop');
-			let isTargetBot = item.hasClass('targetBot');
-			let key = [ data.dropType, (data.cacheKey || data.id) ];
-
-			if (isTargetTop) key.push('top');
-			if (isTargetBot) key.push('bot');
 
 			// Add block's paddings to height
 			if ((data.dropType == I.DropType.Block) && (data.type != I.BlockType.Layout)) {
@@ -95,16 +93,17 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 				};
 			};
 
-			this.objectData.set(key.join('-'), {
+			this.objectData.set(data.cacheKey, {
 				...data,
 				obj: item,
 				index: i,
 				width: w,
 				height: h,
-				x: x,
-				y: y,
-				isTargetTop: isTargetTop,
-				isTargetBot: isTargetBot,
+				x,
+				y,
+				isTargetTop,
+				isTargetBot,
+				isTargetCol,
 			});
 		});
 	};
@@ -385,30 +384,57 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 				};
 			};
 
-			const { x, y, width, height } = this.hoverData;
-			const obj = $(this.hoverData.obj);
-			const type = obj.attr('data-type');
-			const style = Number(obj.attr('data-style')) || 0;
-			const canDropMiddle = Number(obj.attr('data-drop-middle')) || 0;
-			const col1 = x - Constant.size.blockMenu / 4;
-			const col2 = x + width;
+			let x = 0;
+			let y = 0;
+			let width = 0;
+			let height = 0;
+			let isTargetTop = false;
+			let isTargetBot = false;
+			let isTargetCol = false;
+			let obj = null;
+			let type: any = '';
+			let style = 0;
+			let canDropMiddle = 0;
 
-			const isTargetTop = obj.hasClass('targetTop');
-			const isTargetBot = obj.hasClass('targetBot');
-			const isTargetCol = obj.hasClass('targetCol');
+			let col1 = 0; 
+			let col2 = 0;
 
-			const isText = type == I.BlockType.Text;
-			const isFeatured = type == I.BlockType.Featured;
-			const isType = type == I.BlockType.Type;
+			let isText = false;
+			let isFeatured = false;
+			let isType = false;
+
+			const initVars = () => {
+				x = this.hoverData.x;
+				y = this.hoverData.y;
+				width = this.hoverData.width;
+				height = this.hoverData.height;
+				isTargetTop = this.hoverData.isTargetTop;
+				isTargetBot = this.hoverData.isTargetBot;
+				isTargetCol = this.hoverData.isTargetCol;
+
+				obj = $(this.hoverData.obj);
+				type = obj.attr('data-type');
+				style = Number(obj.attr('data-style')) || 0;
+				canDropMiddle = Number(obj.attr('data-drop-middle')) || 0;
+
+				col1 = x - Constant.size.blockMenu / 4;
+				col2 = x + width;
+
+				isText = type == I.BlockType.Text;
+				isFeatured = type == I.BlockType.Featured;
+				isType = type == I.BlockType.Type;
+			};
+
+			initVars();
 
 			if (ex <= col1) {
 				this.position = I.BlockPosition.Left;
 			} else
 			if ((ex > col1) && (ex <= col2)) {
-				if (ey <= y + height * 0.15) {
+				if (ey <= y + height * 0.3) {
 					this.position = I.BlockPosition.Top;
 				} else
-				if (ey >= y + height * 0.85) {
+				if (ey >= y + height * 0.7) {
 					this.position = I.BlockPosition.Bottom;
 				} else {
 					this.position = I.BlockPosition.InnerFirst;
@@ -424,6 +450,14 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 				} else
 				if (ey >= y + height * 0.5) {
 					this.position = I.BlockPosition.Bottom;
+				};
+			};
+
+			if (this.position == I.BlockPosition.Bottom) {
+				const targetBot = this.objectData.get(this.hoverData.cacheKey + '-bot');
+				if (targetBot) {
+					this.setHoverData(targetBot);
+					initVars();
 				};
 			};
 
@@ -474,10 +508,10 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 
 			// You can drop vertically on Layout.Row
 			if ((type == I.BlockType.Layout) && (style == I.LayoutStyle.Row)) {
-				if (this.hoverData.isTargetTop) {
+				if (isTargetTop) {
 					this.position = I.BlockPosition.Top;
 				};
-				if (this.hoverData.isTargetBot) {
+				if (isTargetBot) {
 					this.position = I.BlockPosition.Bottom;
 				};
 			};

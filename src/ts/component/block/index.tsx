@@ -227,8 +227,8 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 				</DropTarget>
 			);
 
-			targetTop = <DropTarget {...this.props} className="targetTop" rootId={rootId} id={id} style={style} type={type} dropType={I.DropType.Block} canDropMiddle={canDropMiddle} />;
-			targetBot = <DropTarget {...this.props} className="targetBot" rootId={rootId} id={id} style={style} type={type} dropType={I.DropType.Block} canDropMiddle={canDropMiddle} />;
+			targetTop = <DropTarget {...this.props} isTargetTop={true} rootId={rootId} id={id} style={style} type={type} dropType={I.DropType.Block} canDropMiddle={canDropMiddle} />;
+			targetBot = <DropTarget {...this.props} isTargetBottom={true} rootId={rootId} id={id} style={style} type={type} dropType={I.DropType.Block} canDropMiddle={canDropMiddle} />;
 		} else {
 			object = (
 				<div className="dropTarget">
@@ -250,7 +250,7 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 
 			if (lastId) {
 				targetColumn = (
-					<DropTarget {...this.props} className="targetCol" rootId={rootId} id={lastId} style={style} type={type} dropType={I.DropType.Block} canDropMiddle={canDropMiddle} onClick={this.onEmptyColumn} />
+					<DropTarget {...this.props} isTargetColumn={true} rootId={rootId} id={lastId} style={style} type={type} dropType={I.DropType.Block} canDropMiddle={canDropMiddle} onClick={this.onEmptyColumn} />
 				);
 			};
 		};
