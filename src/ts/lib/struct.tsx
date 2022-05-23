@@ -1,6 +1,6 @@
 const Struct = require('google-protobuf/google/protobuf/struct_pb.js');
 
-class StructEncode {
+export class Encode {
 
 	static encodeStruct (obj: any) {
 		return Struct.Struct.fromJavaScript(obj);
@@ -12,7 +12,7 @@ class StructEncode {
 	
 };
 
-class StructDecode {
+export class Decode {
 
 	static decodeValue (value: any) {
 		return value.toJavaScript();
@@ -23,6 +23,3 @@ class StructDecode {
 	};
 
 };
-
-export let Encode = StructEncode;
-export let Decode = StructDecode;
