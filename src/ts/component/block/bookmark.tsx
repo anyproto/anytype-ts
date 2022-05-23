@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Icon, InputWithFile } from 'ts/component';
+import { InputWithFile, ObjectName, ObjectDescription } from 'ts/component';
 import { I, C, focus, Util } from 'ts/lib';
-import { commonStore } from 'ts/store';
+import { commonStore, detailStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.BlockComponent {};
@@ -25,15 +25,15 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<Props
 
 	render () {
 		const { rootId, block, readonly } = this.props;
-		const { id, content } = block;
-		const { url, title, description, imageHash, faviconHash } = content;
+		const object = detailStore.get(rootId, block.content.targetObjectId);
+		const { iconImage, picture, url } = object;
 
 		let element = null;
 		if (url) {
 			let cn = [ 'inner', 'resizable' ];
 			let cnl = [ 'side', 'left' ];
 				
-			if (imageHash) {
+			if (picture) {
 				cn.push('withImage');
 			};
 
@@ -44,15 +44,15 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<Props
 			element = (
 				<div className={cn.join(' ')} data-href={url} onClick={this.onClick}>
 					<div className={cnl.join(' ')}>
-						{title ? <div className="name">{title}</div> : ''}
-						{description ? <div className="descr">{description}</div> : ''}
+						<ObjectName object={object} />
+						<ObjectDescription object={object} />
 						<div className="link">
-							{faviconHash ? <img src={commonStore.imageUrl(faviconHash, 16)} className="fav" /> : ''}
+							{iconImage ? <img src={commonStore.imageUrl(iconImage, 16)} className="fav" /> : ''}
 							{url}
 						</div>
 					</div>
 					<div className="side right">
-						<img src={commonStore.imageUrl(imageHash, 500)} className="img" />
+						{picture ? <img src={commonStore.imageUrl(picture, 500)} className="img" /> : ''}
 					</div>
 				</div>
 			);
@@ -63,7 +63,7 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<Props
 		};
 		
 		return (
-			<div className={[ 'focusable', 'c' + id ].join(' ')} tabIndex={0} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp} onFocus={this.onFocus}>
+			<div className={[ 'focusable', 'c' + block.id ].join(' ')} tabIndex={0} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp} onFocus={this.onFocus}>
 				{element}
 			</div>
 		);

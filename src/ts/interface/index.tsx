@@ -50,7 +50,7 @@ import { ContentIcon, BlockIcon } from './block/icon';
 import { LinkIconSize, LinkCardStyle, LinkDescription, ContentLink, BlockLink } from './block/link';
 import { TextStyle, MarkType, TextRange, Mark, ContentText, BlockText } from './block/text';
 import { FileType, FileState, FileStyle, ContentFile, BlockFile } from './block/file';
-import { BookmarkType, ContentBookmark, BlockBookmark } from './block/bookmark';
+import { ContentBookmark, BlockBookmark } from './block/bookmark';
 import { DivStyle, ContentDiv, BlockDiv } from './block/div';
 import { ContentRelation, BlockRelation } from './block/relation';
 import { ContentLatex, BlockLatex } from './block/latex';
@@ -171,7 +171,6 @@ export {
 	ContentFile,
 	BlockFile,
 
-	BookmarkType,
 	ContentBookmark,
 	BlockBookmark,
 
