@@ -132,7 +132,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 				{this.cache && items.length && !loading ? (
 					<div key="items" className="items left">
 						<InfiniteLoader
-							rowCount={this.items.length + LIMIT_HEIGHT}
+							rowCount={this.items.length + 1}
 							loadMoreRows={this.loadMoreRows}
 							isRowLoaded={({ index }) => { return !!items[index]; }}
 							threshold={LIMIT_HEIGHT}
