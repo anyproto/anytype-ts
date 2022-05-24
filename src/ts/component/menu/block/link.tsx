@@ -51,7 +51,6 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 		const { data } = param;
 		const { filter } = data;
 		const items = this.getItems(true);
-		const itemsWithoutSections = this.getItems(false);
 
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
@@ -132,10 +131,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 											height={height}
 											deferredMeasurmentCache={this.cache}
 											rowCount={items.length}
-											rowHeight={({ index }) => {
-												const item = items[index];
-												return item.isSection ? HEIGHT_SECTION : HEIGHT_ITEM;
-											}}
+											rowHeight={({ index }) => this.getRowHeight(items[index])}
 											rowRenderer={rowRenderer}
 											onRowsRendered={onRowsRendered}
 											overscanRowCount={10}
@@ -359,6 +355,10 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 		if (scrollTop) {
 			this.top = scrollTop;
 		};
+	};
+
+	getRowHeight (item: any) {
+		return item.isSection ? HEIGHT_SECTION : HEIGHT_ITEM;
 	};
 
 	resize () {

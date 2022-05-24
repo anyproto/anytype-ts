@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon, Loader } from 'ts/component';
+import { C, Util } from 'ts/lib';
 import { observer } from 'mobx-react';
-import { C } from 'ts/lib';
 
 interface Props {
 	url: string;
@@ -19,6 +19,7 @@ interface State {
 };
 
 const $ = require('jquery');
+const ALLOWED_SCHEME = [ 'http', 'https' ];
 
 const PreviewLink = observer(class PreviewLink extends React.Component<Props, State> {
 	
@@ -76,6 +77,11 @@ const PreviewLink = observer(class PreviewLink extends React.Component<Props, St
 		
 		this.url = url;
 		this.setState({ loading: true });
+
+		const scheme = Util.getScheme(url);
+		if (scheme && !ALLOWED_SCHEME.includes(scheme)) {
+			return;
+		};
 		
 		C.LinkPreview(url, (message: any) => {
 			if (message.error.code) {
@@ -93,7 +99,7 @@ const PreviewLink = observer(class PreviewLink extends React.Component<Props, St
 			};
 		});
 	};
-	
+
 });
 
 export default PreviewLink;

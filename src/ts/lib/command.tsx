@@ -608,7 +608,7 @@ const BlockDataviewRecordCreate = (contextId: string, blockId: string, record: a
 };
 
 const BlockDataviewRelationListAvailable = (contextId: string, blockId: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.BlockDataview.RelationListAvailable.Request();
+	const request = new Rpc.BlockDataview.Relation.ListAvailable.Request();
 	
 	request.setContextid(contextId);
 	request.setBlockid(blockId);
