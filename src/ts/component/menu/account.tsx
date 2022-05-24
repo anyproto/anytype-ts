@@ -62,7 +62,7 @@ const MenuAccount = observer(class MenuAccount extends React.Component<Props, St
 		const phrase = Storage.get('phrase');
 		
 		if (!accounts.length) {
-			authStore.accountClear();
+			authStore.accountListClear();
 			
 			C.WalletRecover(walletPath, phrase, (message: any) => {
 				C.AccountRecover((message: any) => {

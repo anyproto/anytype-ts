@@ -1,5 +1,5 @@
 import { observable, action, computed, set, makeObservable } from 'mobx';
-import { I, Storage, analytics } from 'ts/lib';
+import { I, M, Storage, analytics } from 'ts/lib';
 import { blockStore, detailStore, commonStore, dbStore } from 'ts/store';
 import * as Sentry from '@sentry/browser';
 import { keyboard } from 'ts/lib';
@@ -8,14 +8,7 @@ class AuthStore {
 	
 	public walletPathValue: string = '';
 	public accountPathValue: string = '';
-
-	public accountItem: I.Account = { 
-		id: '', 
-		status: { 
-			type: I.AccountStatusType.Active, 
-			date: 0,
-		},
-	};
+	public accountItem: I.Account = null;
 	public accountList: I.Account[] = [];
 	public pin: string = '';
 	public icon: string = '';
@@ -108,15 +101,19 @@ class AuthStore {
     };
 
 	accountAdd (account: I.Account) {
-		this.accountList.push(account);
+		this.accountList.push(new M.Account(account));
     };
 
-	accountClear () {
+	accountListClear () {
 		this.accountList = [];
     };
 
 	accountSet (account: any) {
-		set(this.accountItem, account);
+		if (!this.accountItem) {
+			this.accountItem = new M.Account(account);
+		} else {
+			set(this.accountItem, account);
+		};
 
 		if (account.id) {
 			Storage.set('accountId', account.id);
@@ -143,15 +140,9 @@ class AuthStore {
 
 	clearAll () {
 		this.threadMap = new Map();
-		this.accountItem = { 
-			id: '', 
-			status: { 
-				type: I.AccountStatusType.Active, 
-				date: 0,
-			},
-		};
+		this.accountItem = null;
 
-		this.accountClear();
+		this.accountListClear();
 		this.iconSet('');
 		this.previewSet('');
 		this.nameSet('');

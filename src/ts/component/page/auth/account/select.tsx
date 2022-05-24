@@ -74,7 +74,7 @@ const PageAccountSelect = observer(class PageAccountSelect extends React.Compone
 	componentDidMount () {
 		const { walletPath, phrase } = authStore;
 		
-		authStore.accountClear();
+		authStore.accountListClear();
 
 		this.setState({ loading: true });
 		
