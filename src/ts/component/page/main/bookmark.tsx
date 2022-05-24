@@ -35,13 +35,14 @@ const PageMainBookmark = observer(class PageMainBookmark extends React.Component
 		super(props);
 		
 		this.onOpen = this.onOpen.bind(this);
+		this.onReload = this.onReload.bind(this);
 		this.onRelationAdd = this.onRelationAdd.bind(this);
 	};
 
 	render () {
 		const { isDeleted } = this.state;
 		const rootId = this.getRootId();
-		const object = detailStore.get(rootId, rootId, []);
+		const object = detailStore.get(rootId, rootId);
 
 		if (isDeleted || object.isDeleted) {
 			return <Deleted {...this.props} />;
@@ -70,6 +71,7 @@ const PageMainBookmark = observer(class PageMainBookmark extends React.Component
 
 					<div className="buttons">
 						<Button text="Open link" color="blank" onClick={this.onOpen} />
+						{object.url ? <Button text="Reload data" color="blank" onClick={this.onReload} /> : ''}
 					</div>
 
 					<div className="section">
@@ -158,6 +160,13 @@ const PageMainBookmark = observer(class PageMainBookmark extends React.Component
 		const renderer = Util.getRenderer();
 	
 		renderer.send('urlOpen', object.url);
+	};
+
+	onReload () {
+		const rootId = this.getRootId();
+		const object = detailStore.get(rootId, rootId, [ 'url' ]);
+
+		C.ObjectBookmarkFetch(rootId, object.url);
 	};
 
 	getRootId () {

@@ -319,7 +319,11 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 				onSelect: (e: any, item: any) => {
 					switch (item.id) {
 						case 'object':
-							this.onObjectAdd();
+							if (rootId == Constant.typeId.bookmark) {
+								this.onBookmarkAdd();
+							} else {
+								this.onObjectAdd();
+							};
 							break;
 
 						case 'set':
@@ -365,6 +369,19 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 			} else {
 				create(message.records.length ? message.records[0] : '');
 			};
+		});
+	};
+
+	onBookmarkAdd () {
+		menuStore.open('dataviewCreateBookmark', {
+			type: I.MenuType.Horizontal,
+			element: `#button-create`,
+			horizontal: I.MenuDirection.Right,
+			data: {
+				command: (url: string, callBack: (message: any) => void) => {
+					C.ObjectCreateBookmark(url, callBack);
+				}
+			},
 		});
 	};
 

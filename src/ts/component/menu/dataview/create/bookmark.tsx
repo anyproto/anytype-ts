@@ -31,7 +31,9 @@ class MenuDataviewCreateBookmark extends React.Component<Props, State> {
 		return (
 			<form onSubmit={this.onSubmit} className="flex">
 				{loading ? <Loader /> : ''}
+
 				<Input ref={(ref: any) => { this.ref = ref; }} value={value} placeholder={translate('defaultNameBookmark')} />
+
 				<div className="buttons">
 					<Button type="input" text="Create" onClick={this.onSubmit} />
 				</div>
@@ -54,7 +56,7 @@ class MenuDataviewCreateBookmark extends React.Component<Props, State> {
 
 		const { param, close } = this.props;
 		const { data } = param;
-		const { onCreate } = data;
+		const { command, onCreate } = data;
 		const value = this.ref.getValue();
 
 		if (!value) {
@@ -63,11 +65,7 @@ class MenuDataviewCreateBookmark extends React.Component<Props, State> {
 
 		this.setState({ loading: true });
 
-		C.ObjectCreateBookmark(value, (message: any) => {
-			if (onCreate) {
-				onCreate(message);
-			};
-
+		command(value, (message: any) => {
 			this.setState({ loading: false });
 			close();
 		});

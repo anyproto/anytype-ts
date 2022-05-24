@@ -813,6 +813,15 @@ const ObjectCreateBookmark = (url: string, callBack?: (message: any) => void) =>
 	dispatcher.request(ObjectCreateBookmark.name, request, callBack);
 };
 
+const ObjectBookmarkFetch = (contextId: string, url: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.BookmarkFetch.Request();
+	
+	request.setContextid(contextId);
+	request.setUrl(url);
+
+	dispatcher.request(ObjectBookmarkFetch.name, request, callBack);
+};
+
 const ObjectOpen = (objectId: string, traceId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.Open.Request();
 	
@@ -1429,6 +1438,7 @@ export {
 	ObjectDuplicate,
 	ObjectApplyTemplate,
 	ObjectImportMarkdown,
+	ObjectBookmarkFetch,
 
 	ObjectCreate,
 	ObjectCreateSet,
