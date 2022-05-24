@@ -31,13 +31,19 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<Props
 		let element = null;
 		if (url) {
 			let cn = [ 'inner', 'resizable' ];
+			let cnl = [ 'side', 'left' ];
+				
 			if (imageHash) {
 				cn.push('withImage');
+			};
+
+			if (block.bgColor) {
+				cnl.push('bgColor bgColor-' + block.bgColor);
 			};
 			
 			element = (
 				<div className={cn.join(' ')} data-href={url} onClick={this.onClick}>
-					<div className="side left">
+					<div className={cnl.join(' ')}>
 						{title ? <div className="name">{title}</div> : ''}
 						{description ? <div className="descr">{description}</div> : ''}
 						<div className="link">
@@ -147,7 +153,7 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<Props
 		const rect = node.get(0).getBoundingClientRect() as DOMRect;
 		const width = rect.width;
 		const mw = getWrapperWidth();
-		
+
 		width <= mw / 2 ? inner.addClass('vertical') : inner.removeClass('vertical');
 	};
 	

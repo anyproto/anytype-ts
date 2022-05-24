@@ -235,6 +235,14 @@
 		.icon.active.strike { background-image: url('#{$themePath}/icon/menu/action/mark/strike1.svg'); }
     }
 
+	/* MenuBlockLink */
+
+	.menu.menuBlockLink {
+		.item {
+			.iconObject { background-color: $colorBgIcon; }
+		}
+	}
+
     /* MenuBlockLinkSettings */
 
     .menu.menuBlockLinkSettings {

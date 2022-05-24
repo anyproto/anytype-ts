@@ -555,6 +555,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 			if (item.isBlock) {
 				let param: any = {
 					type: item.type,
+					bgColor: block.bgColor,
 					content: {},
 				};
 					

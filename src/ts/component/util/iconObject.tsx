@@ -25,6 +25,7 @@ interface Props {
 	getObject?(): any;
 	forceLetter?: boolean;
 	noRemove?: boolean;
+	noClick?: boolean;
 	onSelect?(id: string): void;
 	onUpload?(hash: string): void;
 	onClick?(e: any): void;
@@ -157,6 +158,7 @@ const IconObject = observer(class IconObject extends React.Component<Props, {}> 
 		super(props);
 
 		this.onClick = this.onClick.bind(this);
+		this.onMouseDown = this.onMouseDown.bind(this);
 		this.onMouseEnter = this.onMouseEnter.bind(this);
 		this.onMouseLeave = this.onMouseLeave.bind(this);
 	};
@@ -236,7 +238,7 @@ const IconObject = observer(class IconObject extends React.Component<Props, {}> 
 					cn.push('withLetter');
 					icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
 					icon = <img src={this.commonSvg()} className={icn.join(' ')} />;
-				};;
+				};
 				break;
 
 			case I.ObjectLayout.Relation:
@@ -282,8 +284,8 @@ const IconObject = observer(class IconObject extends React.Component<Props, {}> 
 			<div 
 				id={this.props.id} 
 				className={cn.join(' ')} 
-				onClick={(e: any) => { e.stopPropagation(); }}
-				onMouseDown={this.onClick} 
+				onClick={this.onClick}
+				onMouseDown={this.onMouseDown} 
 				onMouseEnter={this.onMouseEnter} 
 				onMouseLeave={this.onMouseLeave}
 			>
@@ -298,6 +300,12 @@ const IconObject = observer(class IconObject extends React.Component<Props, {}> 
 	};
 
 	onClick (e: any) {
+		if (this.props.noClick) {
+			e.stopPropagation();
+		};
+	};
+
+	onMouseDown (e: any) {
 		const { canEdit, onClick, onCheckbox } = this.props;
 		const object = this.getObject();
 		const layout = Number(object.layout) || I.ObjectLayout.Page;
@@ -307,16 +315,18 @@ const IconObject = observer(class IconObject extends React.Component<Props, {}> 
 			onClick(e);
 		};
 
-		if (canEdit) {
-			if (layout == I.ObjectLayout.Task) {
-				e.stopPropagation();
-				onCheckbox(e);
-			};
+		if (!canEdit) {
+			return;
+		};
 
-			if (layoutsEmoji.indexOf(layout) >= 0) {
-				e.stopPropagation();
-				this.onEmoji(e);
-			};
+		if (layout == I.ObjectLayout.Task) {
+			e.stopPropagation();
+			onCheckbox(e);
+		};
+
+		if (layoutsEmoji.indexOf(layout) >= 0) {
+			e.stopPropagation();
+			this.onEmoji(e);
 		};
 	};
 

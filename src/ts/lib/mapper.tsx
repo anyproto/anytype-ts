@@ -1,4 +1,4 @@
-import { I, M, Decode, DataUtil, Util, Encode } from 'ts/lib';
+import { I, M, Decode, Util, Encode } from 'ts/lib';
 
 const Commands = require('lib/pb/protos/commands_pb');
 const Model = require('lib/pkg/lib/pb/model/protos/models_pb.js');
@@ -428,7 +428,7 @@ const Mapper = {
 		},
 
 		Details: (obj: any) => {
-			const item = new Rpc.Block.Set.Details.Detail();
+			const item = new Rpc.Object.SetDetails.Detail();
 			item.setKey(obj.key);
 			item.setValue(Encode.encodeValue(obj.value));
 			return item;

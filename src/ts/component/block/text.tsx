@@ -301,6 +301,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			return;
 		};
 
+		const { rootId } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
 		const value = node.find('#value');
 		const items = value.find('lnk');
@@ -316,16 +317,12 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		items.on('mouseenter.link', function (e: any) {
 			const el = $(this);
 			const range = el.data('range').split('-');
-			const url = el.attr('href');
-
-			el.unbind('click.link').on('click.link', function (e: any) {
-				e.preventDefault();
-				renderer.send('urlOpen', $(this).attr('href'));
-			});
+			const url = String(el.attr('href') || '');
+			const scheme = Util.getScheme(url);
+			const isInside  = scheme == Constant.protocol;
 			
-			Util.previewShow($(this), {
-				param: url,
-				type: I.MarkType.Link,
+			let route = '';
+			let param: any = {
 				range: { 
 					from: Number(range[0]) || 0,
 					to: Number(range[1]) || 0, 
@@ -333,8 +330,36 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 				marks: self.marks,
 				onChange: (marks: I.Mark[]) => {
 					self.setMarks(marks);
-				}
+				},
+			};
+
+			if (isInside) {
+				route = '/' + url.split('://')[1];
+
+				const routeParam = Util.getRoute(route);
+				const object = detailStore.get(rootId, routeParam.id, []);
+
+				param = Object.assign(param, {
+					param: object.id,
+					type: I.MarkType.Object,
+				});
+			} else {
+				param = Object.assign(param, {
+					param: url,
+					type: I.MarkType.Link,
+				});
+			};
+
+			el.unbind('click.link').on('click.link', function (e: any) {
+				e.preventDefault();
+				if (isInside) {
+					Util.route(route);
+				} else {
+					renderer.send('urlOpen', $(this).attr('href'));
+				};
 			});
+
+			Util.previewShow($(this), param);
 		});
 	};
 
@@ -403,7 +428,6 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 
 			Util.previewShow($(this), {
 				param: object.id,
-				object: object,
 				type: I.MarkType.Object,
 				range: { 
 					from: Number(range[0]) || 0,
@@ -786,18 +810,9 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		let ret = false;
 		let value = this.getValue();
 		let cmdParsed = false;
-		let newBlock: any = { content: {} };
-
-		let cb = (message: any) => {
-			keyboard.setFocus(false);
-			focus.set(message.blockId, { from: 0, to: 0 });
-			focus.apply();
-
-			analytics.event('CreateBlock', { 
-				middleTime: message.middleTime, 
-				type: newBlock.type, 
-				style: newBlock.content?.style,
-			});
+		let newBlock: any = { 
+			bgColor: block.bgColor,
+			content: {},
 		};
 
 		const symbolBefore = range ? value[range.from - 1] : '';

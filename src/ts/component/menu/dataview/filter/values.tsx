@@ -421,6 +421,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 				const conditions = Relation.filterConditionsByType(relation.format);
 
 				item.condition = conditions.length ? conditions[0].id : I.FilterCondition.None;
+				item.quickOption = I.FilterQuickOption.None;
 				item.value = Relation.formatValue(relation, null, false);
 			};
 
