@@ -1521,8 +1521,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 	};
 
 	onPasteUrl (url: string) {
-		const { dataset, rootId } = this.props;
-		const { selection } = dataset || {};
+		const { rootId } = this.props;
 		const { focused, range } = focus.state;
 		const currentFrom = range.from;
 		const currentTo = range.to;
@@ -1532,7 +1531,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			return;
 		};
 
-		const isEmpty = blockStore.checkRootEmpty(rootId);
+		const first = blockStore.getFirstBlock(rootId, -1, (it) => it.isText() && !it.isTextTitle() && !it.isTextDescription());
+		const isEmpty = (focused == first.id) && !first.getLength();
 
 		const options: any[] = [
 			{ id: 'link', name: 'Create link' },
