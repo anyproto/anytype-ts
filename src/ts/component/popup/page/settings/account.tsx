@@ -38,7 +38,7 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 
 	render () {
 		const { onPage, setConfirmPhrase } = this.props;
-		const { account } = authStore;
+		const { account, accountPath } = authStore;
 		const { config } = commonStore;
 		const pin = Storage.get('pin');
 		const canDelete = config.experimental && (account.status.type == I.AccountStatusType.Active);
@@ -110,7 +110,7 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 								<Label text={translate('popupSettingsAccountMoveTitle')} />
 							</div>
 							<div className="side right" onMouseEnter={this.onLocationEnter} onMouseLeave={this.onLocationLeave}>
-								<Label text={account.info.localStoragePath} />
+								<Label text={accountPath} />
 							</div>
 						</div>
 					) : ''}
@@ -219,9 +219,9 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 	};
 
 	onLocationEnter (e: any) {
-		const { account } = authStore;
+		const { accountPath } = authStore;
 
-		Util.tooltipShow(account.info.localStoragePath, $(e.currentTarget), I.MenuDirection.Center, I.MenuDirection.Bottom);
+		Util.tooltipShow(accountPath, $(e.currentTarget), I.MenuDirection.Center, I.MenuDirection.Bottom);
 	};
 
 	onLocationLeave (e: any) {
