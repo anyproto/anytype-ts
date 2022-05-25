@@ -40,8 +40,13 @@ const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<P
 		let showPie = false;
 		let pieValue = 0;
 		let rows: any[] = [];
+		let status: I.AccountStatusType = account.status.type;
+
+		if ((status == I.AccountStatusType.PendingDeletion) && !duration) {
+			status = I.AccountStatusType.Deleted;
+		};
 		
-		switch (account.status.type) {
+		switch (status) {
 			case I.AccountStatusType.PendingDeletion:
 				title = `This account is planned for deletion in ${dt}...`;
 				description = `We're sorry to see you go. You have ${dt} to cancel this request. After ${dt}, your encrypted account data is permanently removed from the backup node.`;
