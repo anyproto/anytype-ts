@@ -13,8 +13,8 @@
 		.buttons { flex-shrink: 0; color: $colorMediumGrey; font-weight: 500; user-select: none; display: flex; gap: 0px 16px; height: 100%; }
 		.buttons {
 			.button { 
-				display: inline-block; vertical-align: top; cursor: pointer; transition: $transitionFast; 
-				background: none; border: 0px; padding: 0px; height: 100%; padding: 0px 16px;
+				display: inline-block; vertical-align: top; cursor: pointer; transition: $transitionFast; color: $colorMediumGrey;
+				background: none; border: 0px; padding: 0px; height: 100%; padding: 0px 16px; line-height: 44px;
 			}
 			.button:hover { color: $colorBlack; }
 		}

@@ -35,7 +35,7 @@ class MenuDataviewCreateBookmark extends React.Component<Props, State> {
 				<Input ref={(ref: any) => { this.ref = ref; }} value={value} placeholder={translate('defaultNameBookmark')} />
 
 				<div className="buttons">
-					<Button type="input" text="Create" onClick={this.onSubmit} />
+					<Button type="input" color="blank" text="Create" onClick={this.onSubmit} />
 				</div>
 			</form>
 		);
