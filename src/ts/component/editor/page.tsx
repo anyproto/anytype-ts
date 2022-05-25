@@ -1532,13 +1532,15 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			return;
 		};
 
+		const isEmpty = blockStore.checkRootEmpty(rootId);
+
 		const options: any[] = [
 			{ id: 'link', name: 'Create link' },
-			{ id: 'object', name: 'Create bookmark object' },
+			isEmpty ? { id: 'object', name: 'Create bookmark object' } : null,
 			{ id: 'block', name: 'Create bookmark block' },
 			{ id: 'cancel', name: 'Cancel' },
 			//{ id: 'embed', name: 'Create embed' },
-		];
+		].filter(it => it);
 
 		menuStore.open('select', { 
 			element: `#block-${focused}`,

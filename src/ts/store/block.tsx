@@ -508,17 +508,13 @@ class BlockStore {
 	};
 
 	checkDraft (rootId: string) {
-		const object = detailStore.get(rootId, rootId, []);
-		const root = this.getLeaf(rootId, rootId);
-		const rootElement = this.getMapElement(rootId, rootId);
-
 		const footer = this.getMapElement(rootId, Constant.blockId.footer);
 		if (!footer) {
 			return;
 		};
 
-		const cnt = object.layout == I.ObjectLayout.Note ? 3 : 2;
-		const checkBlocks = rootElement.childrenIds.length <= cnt;
+		const object = detailStore.get(rootId, rootId, [ 'type' ], true);
+		const checkBlocks = this.checkRootEmpty(rootId);
 		const checkType = object.type == commonStore.type;
 
 		let change = false;
@@ -535,6 +531,14 @@ class BlockStore {
 		if (change) {
 			this.updateStructure(rootId, Constant.blockId.footer, footer.childrenIds);
 		};
+	};
+
+	checkRootEmpty (rootId: string) {
+		const root = this.getLeaf(rootId, rootId);
+		const rootElement = this.getMapElement(rootId, rootId);
+		const cnt = root.isObjectNote() ? 3 : 2;
+
+		return rootElement.childrenIds.length <= cnt;
 	};
 
 	checkBlockType (rootId: string): boolean {
