@@ -298,6 +298,12 @@ const ObjectToSet = (response: any) => {
 	};
 };
 
+const ObjectToBookmark = (response: any) => {
+	return {
+		objectId: response.getObjectid(),
+	};
+};
+
 const ObjectShareByLink = (response: any) => {
 	return {
 		link: response.getLink(),
@@ -417,8 +423,10 @@ export {
 	ObjectRelationAdd,
 	ObjectRelationListAvailable,
 	ObjectRelationOptionAdd,
-	ObjectToSet,
 	ObjectShareByLink,
+
+	ObjectToSet,
+	ObjectToBookmark,
 
 	ObjectListDuplicate,
 

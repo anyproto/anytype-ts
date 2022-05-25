@@ -1143,6 +1143,15 @@ const ObjectToSet = (contextId: string, sources: string[], callBack?: (message: 
 	dispatcher.request(ObjectToSet.name, request, callBack);
 };
 
+const ObjectToBookmark = (contextId: string, url: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.ToBookmark.Request();
+	
+	request.setContextid(contextId);
+	request.setUrl(url);
+
+	dispatcher.request(ObjectToBookmark.name, request, callBack);
+};
+
 const ObjectDuplicate = (id: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.Duplicate.Request();
 	
@@ -1428,7 +1437,6 @@ export {
 	ObjectGraph,
 	ObjectRelationAddFeatured,
 	ObjectRelationRemoveFeatured,
-	ObjectToSet,
 	ObjectAddWithObjectId,
 	ObjectShareByLink,
 	ObjectSearch,
@@ -1443,6 +1451,9 @@ export {
 	ObjectCreate,
 	ObjectCreateSet,
 	ObjectCreateBookmark,
+
+	ObjectToSet,
+	ObjectToBookmark,
 
 	ObjectSetDetails,
 	ObjectSetObjectType,
