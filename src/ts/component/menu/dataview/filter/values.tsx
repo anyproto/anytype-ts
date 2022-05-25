@@ -428,7 +428,13 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 			if (k == 'condition') {
 				if ([ I.FilterCondition.None, I.FilterCondition.Empty, I.FilterCondition.NotEmpty ].includes(v)) {
 					item.value = Relation.formatValue(relation, null, false);
-					item.quickOption = I.FilterQuickOption.ExactDate;
+				};
+
+				const quickOptions = Relation.filterQuickOptions(relation.format, item.condition);
+				const filterOption = quickOptions.find(it => it.id == item.quickOption);
+
+				if (!filterOption) {
+					item.quickOption = quickOptions.length ? quickOptions[0].id : I.FilterQuickOption.ExactDate;
 				};
 			};
 
