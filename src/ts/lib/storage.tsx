@@ -113,8 +113,6 @@ class Storage {
 		];
 
 		keys.forEach(key => this.delete(key));
-
-		console.trace();
 	};
 	
 };
