@@ -171,7 +171,6 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 		this.resize();
 
 		focus.clear(true);
-
 		$('#header').addClass('active');
 	};
 	
@@ -187,11 +186,8 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 			return;
 		};
 
+		this.resize();
 		this.setActive();
-
-		if (this.refFilter && (this.n == -1)) {
-			this.refFilter.focus();
-		};
 
 		this.cache = new CellMeasurerCache({
 			fixedWidth: true,
@@ -199,11 +195,12 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 			keyMapper: (i: number) => { return (items[i] || {}).id; },
 		});
 
+		if (this.refFilter && (this.n == -1)) {
+			this.refFilter.focus();
+		};
 		if (this.refList && this.top) {
 			this.refList.scrollToPosition(this.top);
 		};
-
-		this.resize();
 	};
 	
 	componentWillUnmount () {
@@ -285,6 +282,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 			};
 
 			this.setActive();
+			this.refList.scrollToRow(Math.max(0, this.n));
 		});
 
 		keyboard.shortcut('enter, space', e, (pressed: string) => {
@@ -314,8 +312,6 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 		
 		const node = $(ReactDOM.findDOMNode(this));
 		node.find(`#item-${item.id}`).addClass('active');
-
-		this.refList.scrollToRow(Math.max(0, this.n));
 	};
 
 	unsetActive () {
@@ -325,7 +321,9 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 
 	onKeyUpSearch (e: any, force: boolean) {
 		window.clearTimeout(this.timeout);
-		this.timeout = window.setTimeout(() => { this.setState({ filter: this.refFilter.getValue() }); }, force ? 0 : 50);
+		this.timeout = window.setTimeout(() => { 
+			this.setState({ filter: this.refFilter.getValue() }); 
+		}, force ? 0 : 50);
 	};
 
 	loadMoreRows ({ startIndex, stopIndex }) {
