@@ -486,13 +486,8 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			if (withChildren) {
 				ids.forEach(id => this.getChildrenIds(id, ids));
 			} else {
-				let rootId = keyboard.getRootId();
 				let childrenIds = [];				
-
-				for (let id of ids) {
-					childrenIds = childrenIds.concat(blockStore.getChildrenIds(rootId, id));
-				};
-
+				ids.forEach(id => this.getChildrenIds(id, childrenIds));
 				ids = ids.filter(it => !childrenIds.includes(it));
 			};
 		};
