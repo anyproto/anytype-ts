@@ -859,11 +859,13 @@ class Util {
 	route (route: string, replace?: boolean) {
 		const method = replace ? 'replace' : 'push';
 
-		this.tooltipHide(true);
-		this.previewHide(true);
-
 		menuStore.closeAll();
-		popupStore.closeAll(null, () => { this.history[method](route); });
+		popupStore.closeAll(null, () => { 
+			this.tooltipHide(true);
+			this.previewHide(true);
+
+			this.history[method](route); 
+		});
 	};
 
 	intercept (obj: any, change: any) {

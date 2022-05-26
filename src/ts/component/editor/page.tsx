@@ -1531,7 +1531,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			return;
 		};
 
-		const first = blockStore.getFirstBlock(rootId, -1, (it) => it.isText() && !it.isTextTitle() && !it.isTextDescription());
+		const first = blockStore.getFirstBlock(rootId, 1, (it) => it.isText() && !it.isTextTitle() && !it.isTextDescription());
 		const isEmpty = (focused == first.id) && !first.getLength();
 
 		const options: any[] = [
