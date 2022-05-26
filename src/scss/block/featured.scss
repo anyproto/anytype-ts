@@ -36,14 +36,13 @@
 			}
 		}
 
-		.cellContent.c-file { padding: 2px 3px; font-size: 20px; line-height: 20px; }
 		.cellContent.c-file {
 			.element { margin-right: 2px; }
 			.element:last-child { margin-right: 0px; }
 			.iconObject { display: inline; margin: 0px; }
 			.iconObject * { position: static; vertical-align: middle; margin: 0px; }
 			.name { display: none; }
-			.empty { @include text-common; padding: 0px 4px; }
+			.empty { padding: 0px 4px; }
 		}
 		.cellContent.c-checkbox { padding: 5px 3px; }
 	}
