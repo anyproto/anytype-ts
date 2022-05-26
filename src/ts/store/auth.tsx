@@ -110,6 +110,10 @@ class AuthStore {
 
 	accountSet (account: any) {
 		if (!this.accountItem) {
+			account.info = account.info || {};
+			account.status = account.status || {};
+			account.config = account.config || {};
+
 			this.accountItem = new M.Account(account);
 		} else {
 			set(this.accountItem, account);

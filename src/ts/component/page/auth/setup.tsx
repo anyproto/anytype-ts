@@ -148,7 +148,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<Props
 	
 	add () {
 		const { match } = this.props;
-		const { walletPath, accountPath, name, icon, code, phrase } = authStore;
+		const { walletPath, accountPath, name, icon, code } = authStore;
 		const renderer = Util.getRenderer();
 
 		commonStore.defaultTypeSet(Constant.typeId.note);
@@ -177,7 +177,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<Props
 						Storage.set('popupNewBlock', true);
 						Storage.set('popupVideo', true);
 
-						renderer.send('keytarSet', accountId, phrase);
+						renderer.send('keytarSet', accountId, authStore.phrase);
 						analytics.event('CreateAccount');
 						
 						if (match.params.id == 'register') {
