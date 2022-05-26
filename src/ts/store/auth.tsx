@@ -100,7 +100,11 @@ class AuthStore {
 		this.name = v;
     };
 
-	accountAdd (account: I.Account) {
+	accountAdd (account: any) {
+		account.info = account.info || {};
+		account.status = account.status || {};
+		account.config = account.config || {};
+
 		this.accountList.push(new M.Account(account));
     };
 
