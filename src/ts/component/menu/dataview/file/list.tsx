@@ -14,8 +14,10 @@ interface State {
 const $ = require('jquery');
 const Constant = require('json/constant.json');
 const HEIGHT = 28;
-const LIMIT = 20;
 const MENU_ID = 'dataviewFileValues';
+
+const LIMIT_HEIGHT = 20;
+const LIMIT_LOAD = 100;
 
 const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.Component<Props, State> {
 
@@ -102,10 +104,10 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 				{loading ? <Loader /> : (
 					<div className="items">
 						<InfiniteLoader
-							rowCount={items.length}
-							loadMoreRows={() => {}}
-							isRowLoaded={() => { return true; }}
-							threshold={LIMIT}
+							rowCount={items.length + 1}
+							loadMoreRows={this.loadMoreRows}
+							isRowLoaded={({ index }) => !!this.items[index]}
+							threshold={LIMIT_HEIGHT}
 						>
 							{({ onRowsRendered, registerChild }) => (
 								<AutoSizer className="scrollArea">
@@ -119,7 +121,7 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 											rowHeight={HEIGHT}
 											rowRenderer={rowRenderer}
 											onRowsRendered={onRowsRendered}
-											overscanRowCount={LIMIT}
+											overscanRowCount={LIMIT_HEIGHT}
 											onScroll={this.onScroll}
 										/>
 									)}
@@ -137,7 +139,7 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 		this.rebind();
 		this.resize();
 		this.focus();
-		this.load(false);
+		this.load(true);
 	};
 
 	componentDidUpdate () {
@@ -223,9 +225,11 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true });
 		};
 
-		this.setState({ loading: true });
+		if (clear) {
+			this.setState({ loading: true });
+		};
 
-		C.ObjectSearch(filters, sorts, Constant.defaultRelationKeys, filter, this.offset, 0, (message: any) => {
+		C.ObjectSearch(filters, sorts, Constant.defaultRelationKeys, filter, this.offset, LIMIT_LOAD, (message: any) => {
 			if (callBack) {
 				callBack(message);
 			};
@@ -239,13 +243,17 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 				return it;
 			}));
 
-			this.setState({ loading: false });
+			if (clear) {
+				this.setState({ loading: false });
+			} else {
+				this.forceUpdate();
+			};
 		});
 	};
 
 	loadMoreRows ({ startIndex, stopIndex }) {
         return new Promise((resolve, reject) => {
-			this.offset += LIMIT;
+			this.offset += LIMIT_LOAD;
 			this.load(false, resolve);
 		});
 	};
