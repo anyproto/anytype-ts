@@ -310,7 +310,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 				this.setState({ loading: false });
 			} else {
 				this.forceUpdate();
-			};;
+			};
 		});
 	};
 
