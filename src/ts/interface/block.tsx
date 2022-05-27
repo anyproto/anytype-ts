@@ -26,6 +26,9 @@ export enum BlockType {
 	Type				 = 'type',
 	Latex				 = 'latex',
 	Table				 = 'table',
+	TableColumn			 = 'tableColumn',
+	TableRow			 = 'tableRow',
+	TableCell			 = 'tableCell',
 	TableOfContents		 = 'tableOfContents',
 };
 
@@ -133,7 +136,7 @@ export interface Block {
 	isLayoutFooter?(): boolean;
 
 	isTable?(): boolean;
-
+	isBookmark?(): boolean;
 	isLink?(): boolean;
 
 	isIcon?(): boolean;

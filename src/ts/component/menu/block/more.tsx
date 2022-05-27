@@ -9,6 +9,7 @@ interface Props extends I.Menu {
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
+const Url = require('json/url.json');
 
 class MenuBlockMore extends React.Component<Props, {}> {
 	
@@ -134,6 +135,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		let pageRemove = { id: 'pageRemove', icon: 'remove', name: 'Delete' };
 		let pageExport = { id: 'pageExport', icon: 'export', name: 'Export' };
 		let pageCopy = { id: 'pageCopy', icon: 'copy', name: 'Duplicate object' };
+		let pageLink = { id: 'pageLink', icon: 'link', name: 'Copy link' };
 		let blockRemove = { id: 'blockRemove', icon: 'remove', name: 'Delete' };
 
 		if (object.isFavorite) {
@@ -178,10 +180,12 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const allowedTemplate = (object.type != Constant.typeId.note) && (object.id != profile);
 		const allowedFav = !object.isArchived;
 		const allowedLock = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
+		const allowedLink = config.experimental;
 
 		if (!allowedArchive)	 archive = null;
 		if (!allowedDelete)		 pageRemove = null;
 		if (!allowedLock)		 pageLock = null;
+		if (!allowedLink)		 pageLink = null;
 		if (!allowedShare)		 share = null;
 		if (!allowedHighlight)	 highlight = null;
 		if (!allowedSearch)		 search = null;
@@ -194,7 +198,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		if (block.isObjectType() || block.isObjectRelation() || block.isObjectFileKind() || block.isObjectSet() || block.isObjectSpace()) {
 			sections = [
 				{ children: [ archive, pageRemove ] },
-				{ children: [ fav, highlight ] },
+				{ children: [ fav, pageLink, highlight ] },
 				{ children: [ search ] },
 				{ children: [ print ] },
 				{ children: [ share, highlight ] },
@@ -203,9 +207,9 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		if (block.isPage()) {
 			sections = [
 				{ children: [ undo, redo, history, archive, pageRemove ] },
-				{ children: [ fav, template, pageLock ] },
+				{ children: [ fav, pageLink, pageCopy, template, pageLock ] },
 				{ children: [ search ] },
-				{ children: [ print, pageExport, pageCopy ] },
+				{ children: [ print, pageExport ] },
 				{ children: [ highlight ] },
 			];
 			sections = sections.map((it: any, i: number) => { return { ...it, id: 'page' + i }; });
@@ -292,7 +296,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 					label: 'Your object type library',
 					filters: filters,
 					onSelect: (item: any) => {
-						C.BlockListConvertChildrenToPages(rootId, [ blockId ], item.id);
+						C.BlockListConvertToObjects(rootId, [ blockId ], item.id);
 						close();
 
 						if (onMenuSelect) {
@@ -392,16 +396,6 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				keyboard.onPrint();
 				break;
 
-			case 'exportWeb':
-				/*
-				C.BlockGetPublicWebURL(rootId, (message: any) => {
-					if (message.url) {
-						renderer.send('urlOpen', message.url);
-					};
-				});
-				*/
-				break;
-				
 			case 'history':
 				DataUtil.objectOpenEvent(e, { layout: I.ObjectLayout.History, id: object.id });
 				break;
@@ -411,9 +405,9 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				break;
 
 			case 'pageCopy':
-				C.ObjectDuplicate(rootId, (message: any) => {
-					if (!message.error.code) {
-						DataUtil.objectOpenPopup({ id: message.id, layout: object.layout });
+				C.ObjectListDuplicate([ rootId ], (message: any) => {
+					if (!message.error.code && message.ids.length) {
+						DataUtil.objectOpenPopup({ id: message.ids[0], layout: object.layout });
 					};
 					analytics.event('DuplicateObject', { count: 1 });
 				});
@@ -518,6 +512,10 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				});
 				break;
 
+			case 'pageLink':
+				Util.clipboardCopy({ text: Url.protocol + DataUtil.objectRoute(object) });
+				break;
+
 			case 'fav':
 				C.ObjectSetIsFavorite(rootId, true, () => {
 					analytics.event('AddToFavorites', { count: 1 });
@@ -531,7 +529,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				break;
 
 			case 'blockRemove':
-				C.BlockUnlink(rootId, [ blockId ], (message: any) => {
+				C.BlockListDelete(rootId, [ blockId ], (message: any) => {
 					if (!isPopup) {
 						if (block.isPage()) {
 							Util.route('/main/index');
@@ -543,7 +541,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				break;
 
 			case 'templateCreate':
-				C.MakeTemplate(rootId, (message: any) => {
+				C.TemplateCreateFromObject(rootId, (message: any) => {
 					DataUtil.objectOpenPopup({ id: message.id, layout: object.layout });
 
 					analytics.event('CreateTemplate', { objectType: object.type });

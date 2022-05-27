@@ -31,11 +31,10 @@ const BlockLink = observer(class BlockLink extends React.Component<Props, {}> {
 
 	render() {
 		const { rootId, block } = this.props;
-		const { id, content, align } = block;
-		const object = detailStore.get(rootId, content.targetBlockId);
+		const object = detailStore.get(rootId, block.content.targetBlockId);
 		const { _empty_, isArchived, isDeleted, done, layout } = object;
-		const cn = [ 'focusable', 'c' + id, 'resizable' ];
-		const fields = DataUtil.checkLinkSettings(block.fields, layout);
+		const cn = [ 'focusable', 'c' + block.id, 'resizable' ];
+		const content = DataUtil.checkLinkSettings(block.content, layout);
 		const readonly = this.props.readonly || !blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Details ]);
 
 		if ((layout == I.ObjectLayout.Task) && done) {
@@ -49,7 +48,7 @@ const BlockLink = observer(class BlockLink extends React.Component<Props, {}> {
 		let element = null;
 		if (_empty_) {
 			element = (
-				<div className="loading" data-target-block-id={content.targetBlockId}>
+				<div className="loading" data-target-block-id={object.id}>
 					<Loader />
 					<div className="name">{translate('blockLinkSyncing')}</div>
 				</div>
@@ -70,8 +69,7 @@ const BlockLink = observer(class BlockLink extends React.Component<Props, {}> {
 			element = (
 				<LinkCard 
 					{...this.props} 
-					{...fields}
-					className={DataUtil.linkCardClass(fields.style)}
+					{...content}
 					object={object} 
 					canEdit={!readonly && !isArchived} 
 					onClick={this.onClick}

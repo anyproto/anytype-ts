@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Frame, Cover, Title, Error, Button, IconObject, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
+import { Frame, Cover, Title, Error, Button, IconObject, Header, FooterAuth as Footer } from 'ts/component';
 import { Storage, translate, C, DataUtil, Util, analytics } from 'ts/lib';
 import { commonStore, authStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -58,7 +58,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<Props
 		return (
 			<div>
 				<Cover {...cover} className="main" />
-				<Header />
+				<Header {...this.props} component="authIndex" />
 				<Footer />
 				
 				<Frame>
@@ -137,12 +137,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<Props
 						this.setError(message.error.description);
 					} else
 					if (message.account) {
-						if (message.account.config) {
-							commonStore.configSet(message.account.config, false);
-						};
-
-						authStore.accountSet(message.account);
-						DataUtil.onAuth();
+						DataUtil.onAuth(message.account);
 					};
 				});
 			} else {
@@ -153,39 +148,47 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<Props
 	
 	add () {
 		const { match } = this.props;
-		const { name, icon, code, phrase } = authStore;
+		const { path, name, icon, code, phrase } = authStore;
 		const renderer = Util.getRenderer();
 
 		commonStore.defaultTypeSet(Constant.typeId.note);
-		
-		C.AccountCreate(name, icon, code, (message: any) => {
+
+		C.WalletCreate(path, (message: any) => {
 			if (message.error.code) {
-				const error = Errors.AccountCreate[message.error.code] || message.error.description;
-				this.setError(error);
-			} else
-			if (message.account) {
-				if (message.config) {
-					commonStore.configSet(message.config, false);
-				};
+				this.setState({ error: message.error.description });
+			} else {
+				authStore.phraseSet(message.mnemonic);
 
-				const accountId = message.account.id;
+				C.AccountCreate(name, icon, code, (message: any) => {
+					if (message.error.code) {
+						const error = Errors.AccountCreate[message.error.code] || message.error.description;
+						this.setError(error);
+					} else
+					if (message.account) {
+						if (message.config) {
+							commonStore.configSet(message.config, false);
+						};
 
-				authStore.accountSet(message.account);
-				authStore.previewSet('');
+						const accountId = message.account.id;
 
-				Storage.set('popupNewBlock', true);
-				Storage.set('popupVideo', true);
+						authStore.accountSet(message.account);
+						authStore.previewSet('');
 
-				renderer.send('keytarSet', accountId, phrase);
-				analytics.event('CreateAccount');
-				
-				if (match.params.id == 'register') {
-					Util.route('/auth/success');
-				};
-					
-				if (match.params.id == 'add') {
-					Util.route('/auth/pin-select/add');
-				};
+						Storage.set('popupNewBlock', true);
+						Storage.set('popupVideo', true);
+
+						renderer.send('keytarSet', accountId, phrase);
+						analytics.event('CreateAccount');
+						
+						if (match.params.id == 'register') {
+							Util.route('/auth/success');
+						};
+							
+						if (match.params.id == 'add') {
+							Util.route('/auth/pin-select/add');
+						};
+					};
+				});
 			};
 		});
 	};
@@ -199,15 +202,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<Props
 				this.setError(message.error.description);
 			} else
 			if (message.account) {
-				if (message.account.config) {
-					commonStore.configSet(message.account.config, false);
-				};
-
-				authStore.accountSet(message.account);
-				
-				DataUtil.pageInit(() => {
-					Util.route('/main/index');
-				});
+				DataUtil.onAuth(message.account);
 			};
 		}); 
 	};

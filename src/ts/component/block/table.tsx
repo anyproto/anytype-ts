@@ -465,11 +465,13 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		const { rootId, block } = this.props;
 
 		blockStore.update(rootId, { ...block });
+		/*
 		C.BlockUpdateContent({ ...block }, rootId, block.id, () => { 
 			if (update) {
 				this.forceUpdate(); 
 			};
 		});
+		*/
 	};
 
 	getValue (obj: any): string {

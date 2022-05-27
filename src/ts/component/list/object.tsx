@@ -62,15 +62,13 @@ const ListObject = observer(class ListObject extends React.Component<Props, {}> 
 							</div>
 						</div>
 					</td>
-					{!isFileType ? (
-						<td className="cell">
-							{item.lastModifiedDate ? (
-								<div className="cellContent">
-									{Util.date(DataUtil.dateFormat(I.DateFormat.MonthAbbrBeforeDay), item.lastModifiedDate)}
-								</div>
-							) : ''}
-						</td>
-					) : null}
+					<td className="cell">
+						{item.lastModifiedDate ? (
+							<div className="cellContent">
+								{Util.date(DataUtil.dateFormat(I.DateFormat.MonthAbbrBeforeDay), item.lastModifiedDate)}
+							</div>
+						) : ''}
+					</td>
 					{!isFileType ? (
 						<td className="cell">
 							{!author._empty_ ? (
@@ -93,11 +91,9 @@ const ListObject = observer(class ListObject extends React.Component<Props, {}> 
 							<th className="cellHead">
 								<div className="name">Name</div>
 							</th>
-							{!isFileType ? (
-								<th className="cellHead">
-									<div className="name">Updated</div>
-								</th>
-							) : null}
+							<th className="cellHead">
+								<div className="name">Updated</div>
+							</th>
 							{!isFileType ? (
 								<th className="cellHead">
 									<div className="name">Owner</div>
@@ -151,7 +147,7 @@ const ListObject = observer(class ListObject extends React.Component<Props, {}> 
 	};
 
 	getKeys () {
-		return Constant.defaultRelationKeys.concat([ 'creator', 'lastModifiedDate' ]);
+		return Constant.defaultRelationKeys.concat([ 'creator', 'lastModifiedDate', 'createdDate' ]);
 	};
 
 	getData (page: number, callBack?: (message: any) => void) {

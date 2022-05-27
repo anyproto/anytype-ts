@@ -161,14 +161,14 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 						};
 						
 						if (item.type == I.BlockType.Div) {
-							C.BlockListSetDivStyle(rootId, blockIds, item.itemId, (message: any) => {
+							C.BlockDivListSetStyle(rootId, blockIds, item.itemId, (message: any) => {
 								focus.set(message.blockId, { from: 0, to: 0 });
 								focus.apply();
 							});
 						};
 						
 						if (item.type == I.BlockType.Page) {
-							C.BlockListConvertChildrenToPages(rootId, blockIds, '');
+							C.BlockListConvertToObjects(rootId, blockIds, '');
 						};
 						
 						close();

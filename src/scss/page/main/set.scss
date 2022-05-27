@@ -11,32 +11,15 @@
 		
 		.editorControls { width: 704px; }
 
-		.head { width: 704px; margin: 0px auto 40px auto; display: flex; }
-		.head {
-			.side.left { flex-shrink: 0; margin-right: 32px; }
-			.side.right { width: 100%; line-height: 96px; }
-			.side.right.big { line-height: 112px; }
-
-			.side.right {
-				.txt { width: 100%; }
-				.editor { -webkit-user-modify: read-write-plaintext-only; z-index: 1; position: relative;  word-break: break-word; }
-				.wrap { position: relative; }
-
-				.title { @include text-header1; }
-				.descr { @include text-paragraph; margin: 7px 0px; }
-			}
-		}
-
-		.head.withIcon {
-			.side.left { width: 96px; }
-			.side.right { width: calc(100% - 128px); }
+		.headSimple {
+			.side.right { display: none; }
 		}
 	}
 
 	.setWrapper.withIcon, .setWrapper.withIconAndCover {
-		.head {
+		.headSimple {
 			.side.left { width: 96px; }
-			.side.right { width: calc(100% - 128px); }
+			.side.center { width: calc(100% - 128px); }
 		}
 	}
 

@@ -8,7 +8,6 @@ import { observer } from 'mobx-react';
 interface Props extends I.Menu {};
 
 const $ = require('jquery');
-const MENU_ID = 'dataviewOptionValues';
 const HEIGHT = 28;
 const LIMIT = 40;
 
@@ -18,7 +17,8 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 	refFilter: any = null;
 	refList: any = null;
 	cache: any = {};
-	n: number = -1;
+	n: number = 0;
+	filter: string = '';
 	
 	constructor (props: any) {
 		super(props);
@@ -148,6 +148,15 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 	};
 
 	componentDidUpdate () {
+		const { param } = this.props;
+		const { data } = param;
+		const { filter } = data;
+
+		if (this.filter != filter) {
+			this.n = 0;
+		};
+
+
 		this.props.setActive();
 		this.props.position();
 		this.resize();
@@ -185,13 +194,6 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 		let item = this.getItems(false)[this.n];
 		let ret = false;
 
-		if (this.n == -1) {
-			keyboard.shortcut('enter', e, (pressed: string) => {
-				this.onOptionAdd();
-				ret = true;
-			});
-		};
-
 		keyboard.shortcut('arrowright', e, (pressed: string) => {
 			this.onEdit(e, item);
 			ret = true;
@@ -216,6 +218,15 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 
 	onClick (e: any, item: any) {
 		e.stopPropagation();
+
+		const { param } = this.props;
+		const { data } = param;
+		const { cellRef } = data;
+
+		if (cellRef) {
+			cellRef.clear();
+		};
+
 		item.id == 'add' ? this.onOptionAdd() : this.onValueAdd(item.id);
 	};
 
@@ -237,8 +248,6 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 		};
 
 		menuStore.updateData(this.props.id, { value });
-		menuStore.updateData(MENU_ID, { value });
-
 		onChange(value);
 	};
 
@@ -308,11 +317,13 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 		const { data } = param;
 		const { canAdd, filterMapper } = data;
 		const relation = data.relation.get();
+		const isStatus = relation.format == I.RelationType.Status;
 		const value = Relation.getArrayValue(data.value);
 
 		let items = Util.objectCopy(relation.selectDict || []);
 		let sections: any = {};
 		let ret = [];
+		let check = [];
 
 		sections[I.OptionScope.Local] = { id: I.OptionScope.Local, name: 'Select option', children: [] };
 		sections[I.OptionScope.Relation] = { id: I.OptionScope.Relation, name: 'Everywhere', children: [] };
@@ -323,12 +334,11 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 
 		if (data.filter) {
 			const filter = new RegExp(Util.filterFix(data.filter), 'gi');
-			const check = items.filter((it: I.SelectOption) => { return it.text.toLowerCase() == data.filter.toLowerCase(); });
-
+			check = items.filter((it: I.SelectOption) => { return it.text.toLowerCase() == data.filter.toLowerCase(); });
 			items = items.filter((it: I.SelectOption) => { return it.text.match(filter); });
 
 			if (canAdd && !check.length) {
-				const name = (relation.format == I.RelationType.Status) ? `Set status "${data.filter}"` : `Create option "${data.filter}"`;
+				const name = isStatus ? `Set status "${data.filter}"` : `Create option "${data.filter}"`;
 				ret.unshift({ id: 'add', name: name });
 			};
 		};

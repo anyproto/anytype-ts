@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { Icon, IconObject, ObjectName } from 'ts/component';
-import { Storage } from 'ts/lib';
-import { dbStore, detailStore } from 'ts/store';
+import { Icon, IconObject, ObjectName, DropTarget } from 'ts/component';
+import { I, Storage, keyboard } from 'ts/lib';
+import { dbStore, detailStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props {
@@ -38,6 +38,8 @@ const Item = observer(class Item extends React.Component<Props, {}> {
 		const check = Storage.checkToggle(Constant.subIds.sidebar, elementId);
 		const object = detailStore.get(subId, id, Constant.sidebarRelationKeys, true);
 		const cn = [ 'item', 'c' + id, (check ? 'active' : '') ];
+		const rootId = keyboard.getRootId();
+		const canDrop = !isSection && blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Block ]);
 
 		let content = null;
 		let paddingLeft = 10 + depth * 12;
@@ -70,9 +72,30 @@ const Item = observer(class Item extends React.Component<Props, {}> {
 			content = (
 				<div className="clickable" onClick={(e: any) => { onClick(e, { ...this.props, details: object }); }}>
 					{arrow}
-					<IconObject object={object} size={20} forceLetter={true} />
+					<IconObject object={object} size={20} />
 					<ObjectName object={object} />
 				</div>
+			);
+		};
+
+		let inner = (
+			<div className="inner" style={{ paddingLeft }}>
+				{content}
+			</div>
+		);
+
+		if (canDrop) {
+			inner = (
+				<DropTarget 
+					cacheKey={elementId}
+					id={object.id}
+					rootId={rootId}
+					targetContextId={object.id}
+					dropType={I.DropType.Menu}
+					canDropMiddle={true}
+				>
+					{inner}
+				</DropTarget>
 			);
 		};
 
@@ -83,9 +106,7 @@ const Item = observer(class Item extends React.Component<Props, {}> {
 				style={style} 
 				onContextMenu={(e: any) => { onContext(e, { ...this.props, details: object }); }}
 			>
-				<div className="inner" style={{ paddingLeft }}>
-					{content}
-				</div>
+				{inner}
 			</div>
 		);
 	};

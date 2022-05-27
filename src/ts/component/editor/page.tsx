@@ -7,8 +7,8 @@ import { I, C, Key, Util, DataUtil, Mark, focus, keyboard, crumbs, Storage, Mapp
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 
-import Controls from './controls';
-import EditorHeaderPage from './header/page';
+import Controls from 'ts/component/page/head/controls';
+import PageHeadEdit from 'ts/component/page/head/edit';
 
 interface Props extends RouteComponentProps<any> {
 	dataset?: any;
@@ -43,6 +43,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 	isDeleted: boolean = false;
 	width: number = 0;
 	refHeader: any = null;
+	dir: number = 0;
 
 	constructor (props: any) {
 		super(props);
@@ -58,6 +59,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		this.getWrapper = this.getWrapper.bind(this);
 		this.getWrapperWidth = this.getWrapperWidth.bind(this);
 		this.resize = this.resize.bind(this);
+		this.focusTitle = this.focusTitle.bind(this);
 	};
 
 	render () {
@@ -84,13 +86,18 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 		return (
 			<div id="editorWrapper">
-				<Controls key="editorControls" {...this.props} resize={this.resize} />
+				<Controls 
+					key="editorControls" 
+					{...this.props} 
+					resize={this.resize} 
+					onLayoutSelect={(layout: I.ObjectLayout) => { this.focusTitle(); }} 
+				/>
 				
 				<div id={'editor-' + rootId} className="editor">
 					<div className="blocks">
 						<Icon id="button-block-add" className="buttonAdd" onClick={this.onAdd} />
 
-						<EditorHeaderPage 
+						<PageHeadEdit 
 							{...this.props} 
 							ref={(ref: any) => { this.refHeader = ref; }}
 							onKeyDown={this.onKeyDownBlock}
@@ -131,6 +138,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		const { selection } = dataset || {};
 
 		this._isMounted = true;
+
+		this.resize();
 		this.unbind();
 		this.open();
 
@@ -222,7 +231,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		
 		this.id = rootId;
 
-		C.BlockOpen(this.id, '', (message: any) => {
+		C.ObjectOpen(this.id, '', (message: any) => {
 			if (message.error.code) {
 				if (message.error.code == Errors.Code.ANYTYPE_NEEDS_UPGRADE) {
 					Util.onErrorUpdate(() => { Util.route('/main/index'); });
@@ -285,14 +294,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 	
 	focusTitle () {
 		const { rootId } = this.props;
-		const object = detailStore.get(rootId, rootId, []);
-
-		let block = null;
-		if (object.layout == I.ObjectLayout.Note) {
-			block = blockStore.getFirstBlock(rootId, 1, (it: any) => { return it.isText(); });
-		} else {
-			block = blockStore.getLeaf(rootId, Constant.blockId.title);
-		};
+		const block = blockStore.getFirstBlock(rootId, 1, it => it.isText())
+		
 		if (!block) {
 			return;
 		};
@@ -468,6 +471,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		if (keyboard.isFocused || !selection || !root) {
 			return;
 		};
+
+		Util.previewHide(true);
 		
 		const block = blockStore.getLeaf(rootId, focused);
 		const ids = selection.get(I.SelectType.Block);
@@ -491,28 +496,29 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 		// Undo
 		keyboard.shortcut(`${cmd}+z`, e, (pressed: string) => {
-			if (readonly) {
-				return;
+			if (!readonly) {
+				e.preventDefault();
+				keyboard.onUndo(rootId, (message: any) => { focus.clear(true); });
 			};
-
-			e.preventDefault();
-			keyboard.onUndo(rootId, (message: any) => { focus.clear(true); });
 		});
 
 		// Redo
 		keyboard.shortcut(`${cmd}+shift+z`, e, (pressed: string) => {
 			if (readonly) {
-				return;
+				e.preventDefault();
+				keyboard.onRedo(rootId, (message: any) => { focus.clear(true); });
 			};
-			
-			e.preventDefault();
-			keyboard.onRedo(rootId, (message: any) => { focus.clear(true); });
 		});
 
 		// History
 		keyboard.shortcut('ctrl+h, cmd+y', e, (pressed: string) => {
 			e.preventDefault();
 			this.onHistory(e);
+		});
+
+		// Expand selection
+		keyboard.shortcut('shift+arrowup, shift+arrowdown', e, (pressed: string) => {
+			this.onShiftArrowEditor(e, pressed);
 		});
 
 		if (ids.length) {
@@ -546,14 +552,14 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 						data: {
 							filter: '',
 							onChange: (newType: I.MarkType, param: string) => {
-								C.BlockListSetTextMark(rootId, ids, { type: newType, param: param, range: { from: 0, to: 0 } }, (message: any) => {
+								C.BlockTextListSetMark(rootId, ids, { type: newType, param: param, range: { from: 0, to: 0 } }, (message: any) => {
 									analytics.event('ChangeTextStyle', { type: newType, count: ids.length });
 								});
 							}
 						}
 					});
 				} else {
-					C.BlockListSetTextMark(rootId, ids, { type: type, param: param, range: { from: 0, to: 0 } }, (message: any) => {
+					C.BlockTextListSetMark(rootId, ids, { type: type, param: param, range: { from: 0, to: 0 } }, (message: any) => {
 						analytics.event('ChangeTextStyle', { type, count: ids.length });
 					});
 				};
@@ -644,7 +650,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		if (!block) {
 			return;
 		};
-		
+
 		const platform = Util.getPlatform();
 		const menuOpen = menuStore.isOpen();
 		const cmd = keyboard.ctrlKey();
@@ -655,6 +661,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			length--;
 		};
 
+		Util.previewHide(true);
 		this.uiHide();
 		
 		if (platform == I.Platform.Mac) {
@@ -669,8 +676,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			});
 		};
 
-		// Select all
 		if (block.isText()) {
+
+			// Select all
 			keyboard.shortcut(`${cmd}+a`, e, (pressed: string) => {
 				if ((range.from == 0) && (range.to == length)) {
 					e.preventDefault();
@@ -680,24 +688,25 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 					focus.apply();
 				};
 			});
+
+			// Copy/Cut
+			keyboard.shortcut(`${cmd}+c, ${cmd}+x`, e, (pressed: string) => {
+				this.onCopy(e, pressed.match('x') ? true : false);
+			});
+
+			// Undo
+			keyboard.shortcut(`${cmd}+z`, e, (pressed: string) => {
+				e.preventDefault();
+				keyboard.onUndo(rootId, (message: any) => { focus.clear(true); });
+			});
+
+			// Redo
+			keyboard.shortcut(`${cmd}+shift+z`, e, (pressed: string) => {
+				e.preventDefault();
+				keyboard.onRedo(rootId, (message: any) => { focus.clear(true); });
+			});
+
 		};
-
-		// Copy/Cut
-		keyboard.shortcut(`${cmd}+c, ${cmd}+x`, e, (pressed: string) => {
-			this.onCopy(e, pressed.match('x') ? true : false);
-		});
-
-		// Undo
-		keyboard.shortcut(`${cmd}+z`, e, (pressed: string) => {
-			e.preventDefault();
-			keyboard.onUndo(rootId, (message: any) => { focus.clear(true); });
-		});
-
-		// Redo
-		keyboard.shortcut(`${cmd}+shift+z`, e, (pressed: string) => {
-			e.preventDefault();
-			keyboard.onRedo(rootId, (message: any) => { focus.clear(true); });
-		});
 
 		// History
 		keyboard.shortcut('ctrl+h, cmd+y', e, (pressed: string) => {
@@ -854,7 +863,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		const canTab = obj && !first.isTextTitle() && !first.isTextDescription() && obj.canHaveChildren() && first.isIndentable();
 		
 		if (canTab) {
-			C.BlockListMove(rootId, rootId, ids, obj.id, (shift ? I.BlockPosition.Bottom : I.BlockPosition.Inner), () => {
+			C.BlockListMoveToExistingObject(rootId, rootId, ids, obj.id, (shift ? I.BlockPosition.Bottom : I.BlockPosition.Inner), () => {
 				if (next && next.isTextToggle()) {
 					blockStore.toggle(rootId, next.id, true);
 				};
@@ -907,7 +916,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			position = isFirst ? I.BlockPosition.Top : I.BlockPosition.Bottom;
 		};
 
-		C.BlockListMove(rootId, rootId, [ block.id ], next.id, position, (message: any) => {
+		C.BlockListMoveToExistingObject(rootId, rootId, [ block.id ], next.id, position, (message: any) => {
 			focus.apply();
 
 			analytics.event('ReorderBlock', { count: 1 });
@@ -931,13 +940,44 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 	};
 
 	// Expand selection up/down
+	onShiftArrowEditor (e: any, pressed: string) {
+		const { dataset, rootId } = this.props;
+		const { selection } = dataset || {};
+		const dir = pressed.match(Key.up) ? -1 : 1;
+		const ids = selection.get(I.SelectType.Block, false);
+		const idsWithChildren = selection.get(I.SelectType.Block, true);
+
+		if (ids.length == 1) {
+			this.dir = dir;
+		};
+
+		let method = '';
+		if (this.dir && (dir != this.dir)) {
+			method = dir < 0 ? 'pop' : 'shift';
+			ids[method]();
+		} else {
+			const idx = (dir < 0) ? 0 : idsWithChildren.length - 1;
+			const next = blockStore.getNextBlock(rootId, idsWithChildren[idx], dir, (it: any) => { return !it.isSystem(); });
+
+			method = dir < 0 ? 'unshift' : 'push';
+			if (next) {
+				ids[method](next.id);
+				selection.scrollToElement(next.id, dir);
+			};
+		};
+
+		selection.set(I.SelectType.Block, ids);
+	};
+
+	// Expand selection up/down
 	onShiftArrowBlock (e: any, range: I.TextRange, pressed: string) {
 		const { dataset, rootId } = this.props;
 		const { selection } = dataset || {};
 		const { focused } = focus.state;
+		const dir = pressed.match(Key.up) ? -1 : 1;
 		const block = blockStore.getLeaf(rootId, focused);
 
-		if (!block || selection.get(I.SelectType.Block, true).length) {
+		if (!block) {
 			return;
 		};
 
@@ -960,7 +1000,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			sRect = vRect;
 		};
 
-		const dir = pressed.match(Key.up) ? -1 : 1;
 		const lh = parseInt(value.css('line-height'));
 		const sy = sRect.y + st;
 		const vy = vRect.y + st;
@@ -1011,14 +1050,14 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 						type: mark ? mark.type : null,
 						onChange: (newType: I.MarkType, param: string) => {
 							marks = Mark.toggleLink({ type: newType, param: param, range: range }, marks);
-							DataUtil.blockSetText(rootId, block, text, marks, true, () => { focus.apply(); });
+							DataUtil.blockSetText(rootId, block.id, text, marks, true, () => { focus.apply(); });
 						}
 					}
 				});
 			});
 		} else {
 			marks = Mark.toggle(marks, { type: type, param: mark ? '' : param, range: range });
-			DataUtil.blockSetText(rootId, block, text, marks, true, () => { focus.apply(); });
+			DataUtil.blockSetText(rootId, block.id, text, marks, true, () => { focus.apply(); });
 		};
 	};
 
@@ -1039,8 +1078,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 		if (block.isText()) {
 			if (!isDelete && !range.to) {
-				if (block.isTextList()) {
-					C.BlockListSetTextStyle(rootId, [ block.id ], I.TextStyle.Paragraph);
+				if (block.isTextList() || block.isTextQuote() || block.isTextCallout()) {
+					C.BlockListTurnInto(rootId, [ block.id ], I.TextStyle.Paragraph);
 				} else {
 					ids.length ? this.blockRemove(block) : this.blockMerge(block, -1);
 				};
@@ -1090,7 +1129,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			return;
 		};
 
-		C.BlockListMove(rootId, rootId, [ block.id ], obj.id, (isShift ? I.BlockPosition.Bottom : I.BlockPosition.Inner), (message: any) => {
+		C.BlockListMoveToExistingObject(rootId, rootId, [ block.id ], obj.id, (isShift ? I.BlockPosition.Bottom : I.BlockPosition.Inner), (message: any) => {
 			window.setTimeout(() => { focus.apply(); });
 
 			if (next && next.isTextToggle()) {
@@ -1136,7 +1175,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		let replace = !range.to && block.isTextList() && !length;
 
 		if (replace) {
-			C.BlockListSetTextStyle(rootId, [ block.id ], I.TextStyle.Paragraph);
+			C.BlockListTurnInto(rootId, [ block.id ], I.TextStyle.Paragraph);
 		} else 
 		if (!block.isText()) {  
 			this.blockCreate(block.id, I.BlockPosition.Bottom, {
@@ -1271,9 +1310,11 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		const { rootId, isPopup } = this.props;
 		const top = Util.getScrollContainer(isPopup).scrollTop();
 
+		/*
 		if (Math.abs(top - this.scrollTop) >= 10) {
 			this.uiHide();
 		};
+		*/
 
 		this.scrollTop = top;
 		Storage.setScroll('editor' + (isPopup ? 'Popup' : ''), rootId, top);
@@ -1367,6 +1408,12 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		const currentFrom = range.from;
 		const currentTo = range.to;
 
+		if (this.isReadonly()) {
+			return;
+		};
+
+		menuStore.closeAll([ 'blockAdd' ]);
+
 		if (!data) {
 			const cb = e.clipboardData || e.originalEvent.clipboardData;
 			const items = cb.items;
@@ -1429,7 +1476,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 		const block = blockStore.getLeaf(rootId, focused);
 		const length = block ? block.getLength() : 0;
-		const reg = new RegExp(/^((?:https?:(?:\/\/)?)|\/\/)([^\s\/\?#]+)([^\s\?#]+)(?:\?([^#\s]*))?(?:#([^\s]*))?$/gi);
+		const reg = new RegExp(/^((?:[a-z]+:(?:\/\/)?)|\/\/)([^\s\/\?#]+)([^\s\?#]+)(?:\?([^#\s]*))?(?:#([^\s]*))?$/gi);
 		const match = data.text.match(reg);
 		const url = match && match[0];
 		
@@ -1448,35 +1495,45 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 				data: {
 					value: '',
 					options: [
+						{ id: 'link', name: 'Create link' },
 						{ id: 'bookmark', name: 'Create bookmark' },
-						{ id: 'cancel', name: 'Dismiss' },
+						{ id: 'cancel', name: 'Cancel' },
 						//{ id: 'embed', name: 'Create embed' },
 					],
 					onSelect: (event: any, item: any) => {
-						if (item.id == 'cancel') {
-							const to = range.from + url.length;
-							const value = Util.stringInsert(block.content.text, url + ' ', range.from, range.from);
-							const marks = Util.objectCopy(block.content.marks || []);
+						let value = block.content.text;
+						let to = range.from + url.length;
+						let marks = Util.objectCopy(block.content.marks || []);
 
-							marks.push({
-								type: I.MarkType.Link,
-								range: { from: range.from, to: to },
-								param: url,
-							});
-
-							DataUtil.blockSetText(rootId, block, value, marks, true, () => {
-								focus.set(block.id, { from: to + 1, to: to + 1 });
-								focus.apply();
-							});
-						};
-
-						if (item.id == 'bookmark') {
-							C.BlockBookmarkCreateAndFetch(rootId, focused, length ? I.BlockPosition.Bottom : I.BlockPosition.Replace, url, (message: any) => {
-								analytics.event('CreateBlock', { 
-									middleTime: message.middleTime, 
-									type: I.BlockType.Bookmark, 
+						switch (item.id) {
+							case 'link':
+								value = Util.stringInsert(value, url + ' ', range.from, range.from);
+								marks.push({
+									type: I.MarkType.Link,
+									range: { from: range.from, to: to },
+									param: url,
 								});
-							});
+
+								DataUtil.blockSetText(rootId, block.id, value, marks, true, () => {
+									focus.set(block.id, { from: to + 1, to: to + 1 });
+									focus.apply();
+								});
+								break;
+
+							case 'bookmark':
+								C.BlockBookmarkCreateAndFetch(rootId, focused, length ? I.BlockPosition.Bottom : I.BlockPosition.Replace, url, (message: any) => {
+									analytics.event('CreateBlock', { middleTime: message.middleTime, type: I.BlockType.Bookmark });
+								});
+								break;
+
+							case 'cancel':
+								value = Util.stringInsert(block.content.text, url + ' ', range.from, range.from);
+
+								DataUtil.blockSetText(rootId, block.id, value, marks, true, () => {
+									focus.set(block.id, { from: to + 1, to: to + 1 });
+									focus.apply();
+								});
+								break;
 						};
 					},
 				}
@@ -1560,7 +1617,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 	blockCreate (blockId: string, position: I.BlockPosition, param: any, callBack?: (blockId: string) => void) {
 		const { rootId } = this.props;
 
-		C.BlockCreate(param, rootId, blockId, position, (message: any) => {
+		C.BlockCreate(rootId, blockId, position, param, (message: any) => {
 			this.focus(message.blockId, 0, 0, false);
 
 			if (callBack) {
@@ -1624,9 +1681,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		} else 
 		if (!length) {
 			focus.clear(true);
-			C.BlockUnlink(rootId, [ focused.id ], cb);
+			C.BlockListDelete(rootId, [ focused.id ], cb);
 		} else {
-			C.BlockUnlink(rootId, [ next.id ], (message: any) => {
+			C.BlockListDelete(rootId, [ next.id ], (message: any) => {
 				if (message.error.code) {
 					return;
 				};
@@ -1703,18 +1760,20 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		menuStore.closeAll();
 		popupStore.closeAll([ 'preview' ]);
 
-		let next: any = null;
+		let nextId = '';
 		let ids = selection.get(I.SelectType.Block);
 		let blockIds = [];
 
 		if (ids.length) {
-			next = blockStore.getNextBlock(rootId, ids[0], -1, (it: any) => { return it.isFocusable(); });
+			nextId = ids[0];
 			blockIds = ids;
 		} else 
 		if (focused) {
-			next = blockStore.getNextBlock(rootId, focused.id, -1, (it: any) => { return it.isFocusable(); });
+			nextId = focused.id;
 			blockIds = [ focused.id ];
 		};
+
+		const next = blockStore.getNextBlock(rootId, ids[0], -1, it => it.isFocusable());
 
 		blockIds = blockIds.filter((it: string) => {  
 			let block = blockStore.getLeaf(rootId, it);
@@ -1722,12 +1781,12 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		});
 
 		focus.clear(true);
-		C.BlockUnlink(rootId, blockIds, (message: any) => {
+		C.BlockListDelete(rootId, blockIds, (message: any) => {
 			if (message.error.code) {
 				return;
 			};
 			
-			if (next && next.isFocusable()) {
+			if (next) {
 				let length = next.getLength();
 				this.focus(next.id, length, length, false);
 			};
@@ -1847,24 +1906,24 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		const container = $(isPopup ? '#popupPage #innerWrap' : '#page.isFull');
 		const mw = container.width() - 120;
 		const root = blockStore.getLeaf(rootId, rootId);
-		const sb = $('#sidebar');
+		//const sb = $('#sidebar');
 		
 		if (root && root.isObjectSet()) {
-			return container.width() - 192;
+			this.width = container.width() - 192;
+		} else {
+			w = Number(w) || 0;
+			w = (mw - Constant.size.editor) * w;
+
+			this.width = Math.max(Constant.size.editor, Math.min(mw, Constant.size.editor + w));
 		};
-
-		w = Number(w) || 0;
-		w = (mw - Constant.size.editor) * w;
-
-		this.width = w = Math.max(Constant.size.editor, Math.min(mw, Constant.size.editor + w));
-		return w;
+		return this.width;
 	};
 
 	isReadonly () {
 		const { rootId } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
 		const allowed = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Block ]);
-		return root?.fields.isLocked || !allowed;
+		return root?.isLocked() || !allowed;
 	};
 
 });

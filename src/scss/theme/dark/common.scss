@@ -224,12 +224,11 @@ html.themeDark {
     /* Header */
     /* ---------------------------------------------------------------- */
 
-    .header.headerMainEdit { background: $colorBlack; }
-    .header.headerMainEdit {
+    .header.isCommon { background: $colorBlack; }
+    .header.isCommon {
         .path { border: 0px; line-height: 28px; }
-        .path {
-            .item:hover { color: $colorPrimary; }
-        }
+		.path:hover { background-color: $colorHover; color: $colorPrimary; }
+
         .icon.big:hover, .icon.big.hover { background-color: $colorHover; }
 
         .tabs { background: $colorBgIcon; color: $colorSecondary; }
@@ -237,13 +236,16 @@ html.themeDark {
             .tab.active { background: $colorHover; color: $colorPrimary; }
         }
     }
+	.header.isCommon.active {
+		.path { background-color: $colorHover; color: $colorPrimary; }
+	}
 
-    .header.headerMainIndex {
-        .side.center { border: 0px; color: $colorSecondary; background: $colorBlack30; }
+    .header.mainIndex {
+        .path { border: 0px; color: $colorSecondary; background: $colorBlack30; }
     }
 
-    .header.headerMainHistory { background: $colorBlack; }
-    .header.headerMainHistory {
+    .header.mainHistory { background: $colorBlack; }
+    .header.mainHistory {
         .side {
             .item { color: $colorSecondary; }
             .item {

@@ -117,8 +117,10 @@ class DetailStore {
 			};
 			list = list.filter((it: Detail) => { return keys.includes(it.relationKey); });
 		};
+		return this.check(Object.fromEntries(list.map(it => [ it.relationKey, it.value ])));
+	};
 
-		let object: any = Object.fromEntries(list.map(it => [ it.relationKey, it.value ]));
+	check (object: any) {
 		let layout = Number(object.layout) || I.ObjectLayout.Page;
 		let name = String(object.name || DataUtil.defaultName('page'));
 		let snippet = String(object.snippet || '').replace(/\n/g, ' ');
@@ -138,7 +140,6 @@ class DetailStore {
 
 		return {
 			...object,
-			id,
 			name,
 			layout,
 			snippet,

@@ -19,7 +19,11 @@
 	/* Column */
 	.block.blockLayout.c1 { padding: 0px; margin: 0px; }
 	.block.blockLayout.c1 {
-		.columnEmpty { flex-grow: 1; }
+		.targetCol { flex-grow: 1; position: relative; }
+		.targetCol.isOver.bottom { box-shadow: 0px 0px; }
+		.targetCol.isOver.bottom::after { 
+			content: ""; width: calc(100% - 48px); height: 2px; background: $colorOrange; position: absolute; left: 48px; top: 0px; 
+		}
 	}
 	.block.blockLayout.c1 > .wrapMenu { display: none; }
 	.block.blockLayout.c1 > .wrapContent { width: 100%; display: flex; flex-flow: column; }

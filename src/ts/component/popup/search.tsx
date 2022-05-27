@@ -17,7 +17,8 @@ const $ = require('jquery');
 const Constant = require('json/constant.json');
 
 const HEIGHT = 32;
-const LIMIT = 14;
+const LIMIT_HEIGHT = 14;
+const LIMIT_LOAD = 100;
 
 const PopupSearch = observer(class PopupSearch extends React.Component<Props, State> {
 	
@@ -29,12 +30,11 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 	refFilter: any = null;
 	refList: any = null;
 	timeout: number = 0;
-	focused: boolean = false;
-	cache: any = null;
-	focus: boolean = false;
-	records: any[] = [];
+	cache: any = {};
+	items: any[] = [];
 	n: number = -1;
 	top: number = 0;
+	offset: number = 0;
 	
 	constructor (props: any) {
 		super (props);
@@ -42,11 +42,10 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 		this.onKeyUpSearch = this.onKeyUpSearch.bind(this);
 		this.onSubmit = this.onSubmit.bind(this);
 		this.onClick = this.onClick.bind(this);
-		this.onFocus = this.onFocus.bind(this);
-		this.onBlur = this.onBlur.bind(this);
 		this.onOver = this.onOver.bind(this);
 		this.onScroll = this.onScroll.bind(this);
 		this.filterMapper = this.filterMapper.bind(this);
+		this.loadMoreRows = this.loadMoreRows.bind(this);
 	};
 	
 	render () {
@@ -71,7 +70,6 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 					onClick={(e: any) => { this.onClick(e, item); }}
 				>
 					<IconObject object={item} size={18} />
-					
 					<ObjectName object={item} />
 
 					{type ? (
@@ -102,15 +100,9 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 					rowIndex={index}
 					hasFixedWidth={() => {}}
 				>
-					{item.isSection ? (
-						<div className="section" style={style}>
-							<div className="name">{item.name}</div>
-						</div>
-					) : (
-						<div className="row" style={style}>
-							<Item {...item} index={index} />
-						</div>
-					)}
+					<div className="row" style={style}>
+						<Item {...item} index={index} />
+					</div>
 				</CellMeasurer>
 			);
 		};
@@ -125,8 +117,6 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 						ref={(ref: any) => { this.refFilter = ref; }} 
 						placeholder={translate('popupSearchPlaceholder')} 
 						onKeyUp={(e: any) => { this.onKeyUpSearch(e, false); }} 
-						onFocus={this.onFocus}
-						onBlur={this.onBlur}
 					/>
 				</form>
 
@@ -142,9 +132,10 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 				{this.cache && items.length && !loading ? (
 					<div key="items" className="items left">
 						<InfiniteLoader
-							rowCount={items.length}
-							loadMoreRows={() => {}}
-							isRowLoaded={({ index }) => index < items.length}
+							rowCount={this.items.length + 1}
+							loadMoreRows={this.loadMoreRows}
+							isRowLoaded={({ index }) => { return !!items[index]; }}
+							threshold={LIMIT_HEIGHT}
 						>
 							{({ onRowsRendered, registerChild }) => (
 								<AutoSizer className="scrollArea">
@@ -174,43 +165,42 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 	componentDidMount () {
 		this._isMounted = true;
 		this.n = -1;
-		this.focus = true;
 
-		this.load();
+		this.load(true);
 		this.rebind();
 		this.resize();
 
 		focus.clear(true);
-
 		$('#header').addClass('active');
 	};
 	
 	componentDidUpdate (prevProps: any, prevState: any) {
 		const { filter } = this.state;
+		const items = this.getItems();
 
 		if (filter != prevState.filter) {
-			this.load();
+			this.n = -1;
+			this.offset = 0;
+			this.top = 0;
+			this.load(true);
 			return;
 		};
 
+		this.resize();
 		this.setActive();
 
-		if (this.refFilter && this.focus) {
-			this.refFilter.focus();
-		};
-
-		const items = this.getItems();
 		this.cache = new CellMeasurerCache({
 			fixedWidth: true,
 			defaultHeight: HEIGHT,
 			keyMapper: (i: number) => { return (items[i] || {}).id; },
 		});
 
+		if (this.refFilter && (this.n == -1)) {
+			this.refFilter.focus();
+		};
 		if (this.refList && this.top) {
 			this.refList.scrollToPosition(this.top);
 		};
-
-		this.resize();
 	};
 	
 	componentWillUnmount () {
@@ -242,14 +232,6 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 		this.onKeyUpSearch(e, true);
 	};
 
-	onFocus () {
-		this.focused = true;
-	};
-
-	onBlur () {
-		this.focused = false;
-	};
-
 	onScroll ({ clientHeight, scrollHeight, scrollTop }) {
 		if (scrollTop) {
 			this.top = scrollTop;
@@ -260,9 +242,9 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 		const items = this.getItems();
 		const l = items.length;
 
-		let k = e.key.toLowerCase();
-
 		keyboard.disableMouse(true);
+
+		let k = e.key.toLowerCase();
 
 		if (k == Key.tab) {
 			k = e.shiftKey ? Key.up : Key.down;
@@ -270,7 +252,6 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 
 		if ((k == Key.down) && (this.n == -1)) {
 			this.refFilter.blur();
-			this.focus = false;
 		};
 
 		if ((k == Key.up) && (this.n == 0)) {
@@ -280,7 +261,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 			return;
 		};
 
-		if ((k != Key.down) && this.focused) {
+		if ((k != Key.down) && (this.n == -1)) {
 			return;
 		};
 
@@ -301,6 +282,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 			};
 
 			this.setActive();
+			this.refList.scrollToRow(Math.max(0, this.n));
 		});
 
 		keyboard.shortcut('enter, space', e, (pressed: string) => {
@@ -325,14 +307,11 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 			return;
 		};
 
-		this.n = items.findIndex((it: any) => { return it.id == item.id; });
-
+		this.n = items.findIndex(it => it.id == item.id);
 		this.unsetActive();
 		
 		const node = $(ReactDOM.findDOMNode(this));
 		node.find(`#item-${item.id}`).addClass('active');
-
-		this.refList.scrollToRow(Math.max(0, this.n));
 	};
 
 	unsetActive () {
@@ -342,15 +321,19 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 
 	onKeyUpSearch (e: any, force: boolean) {
 		window.clearTimeout(this.timeout);
-		this.timeout = window.setTimeout(() => {
-			const value = this.refFilter.getValue();
-			
-			this.setState({ filter: value });
-			analytics.event('SearchQuery', { route: 'ScreenSearch', length: value.length });
+		this.timeout = window.setTimeout(() => { 
+			this.setState({ filter: this.refFilter.getValue() }); 
 		}, force ? 0 : 50);
 	};
 
-	load () {
+	loadMoreRows ({ startIndex, stopIndex }) {
+        return new Promise((resolve, reject) => {
+			this.offset += LIMIT_LOAD;
+			this.load(false, resolve);
+		});
+	};
+
+	load (clear: boolean, callBack?: (value: any) => void) {
 		const { config } = commonStore;
 		const { filter } = this.state;
 		const skipTypes = [
@@ -372,22 +355,37 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.Equal, value: false });
 		};
 
-		this.n = -1;
-		this.setState({ loading: true });
+		if (clear) {
+			this.setState({ loading: true });
+		};
 
-		C.ObjectSearch(filters, sorts, Constant.defaultRelationKeys, filter, 0, 0, (message: any) => {
+		C.ObjectSearch(filters, sorts, Constant.defaultRelationKeys, filter, this.offset, LIMIT_LOAD, (message: any) => {
 			if (message.error.code) {
 				this.setState({ loading: false });
 				return;
 			};
 
-			this.records = message.records;
-			this.setState({ loading: false });
+			if (callBack) {
+				callBack(null);
+			};
+
+			if (clear) {
+				this.items = [];
+			};
+
+			this.items = this.items.concat(message.records);
+
+			if (clear) {
+				this.setState({ loading: false });
+				analytics.event('SearchQuery', { route: 'ScreenSearch', length: filter.length });
+			} else {
+				this.forceUpdate();
+			};
 		});
 	};
 
 	getItems () {
-		return this.records;
+		return this.items.filter(this.filterMapper);
 	};
 
 	filterMapper (it: any) {
@@ -395,23 +393,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 			return true;
 		};
 
-		const { param } = this.props;
-		const { data } = param;
-		const { skipId, rootId } = data;
 		const { config } = commonStore;
-		
-		if (it.isArchived) {
-			return false;
-		};
-		if (skipId && (it.id == skipId)) {
-			return false;
-		};
-		if (it.id == rootId) {
-			return false;
-		};
-		if (it.layout == I.ObjectLayout.Dashboard) {
-			return false;
-		};
 		if (!config.debug.ho && it.isHidden) {
 			return false;
 		};
@@ -453,15 +435,24 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 		const win = $(window);
 		const obj = $(`#${getId()} #innerWrap`);
 		const content = obj.find('.content');
-		const height = Math.max(110, Math.min(HEIGHT * LIMIT, items.length * HEIGHT + 16));
+		const height = Math.max(110, Math.min(HEIGHT * LIMIT_HEIGHT, items.length * HEIGHT + 16));
 		const header = $(isPopup ? '#popupPage #innerWrap #header' : '#page.isFull #header');
-		const element = header.find('.side.center');
+		const ww = win.width();
+		const element = header.find('#path');
+
+		let width = ww * 0.4;
+		let x = ww / 2 - width / 2;
+		let y = Util.sizeHeader();
 
 		if (element.length) {
-			const offset = element.offset();
-			obj.css({ width: element.width(), left: offset.left, top: offset.top - win.scrollTop() + 40 });
+			const { left, top } = element.offset();
+
+			width = element.outerWidth();
+			x = left;
+			y = top - win.scrollTop() + 40;
 		};
 
+		obj.css({ width, left: x, top: y });
 		content.css({ height });
 	};
 

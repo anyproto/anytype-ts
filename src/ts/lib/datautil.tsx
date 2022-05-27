@@ -220,14 +220,14 @@ class DataUtil {
 
 	coverGradients () {
 		return [
-			{ type: I.CoverType.Gradient, id: 'yellow' },
-			{ type: I.CoverType.Gradient, id: 'red' },
-			{ type: I.CoverType.Gradient, id: 'blue' },
-			{ type: I.CoverType.Gradient, id: 'teal' },
 			{ type: I.CoverType.Gradient, id: 'pinkOrange' },
 			{ type: I.CoverType.Gradient, id: 'bluePink' },
 			{ type: I.CoverType.Gradient, id: 'greenOrange' },
 			{ type: I.CoverType.Gradient, id: 'sky' },
+			{ type: I.CoverType.Gradient, id: 'yellow' },
+			{ type: I.CoverType.Gradient, id: 'red' },
+			{ type: I.CoverType.Gradient, id: 'blue' },
+			{ type: I.CoverType.Gradient, id: 'teal' },
 		].map((it: any) => {
 			it.name = translate('gradientColor-' + it.id);
 			return it;
@@ -274,70 +274,63 @@ class DataUtil {
 		return ids;
 	};
 	
-	pageInit (callBack?: () => void) {
-		C.ConfigGet((message: any) => {
-			const root = message.homeBlockId;
-			const profile = message.profileBlockId;
-			
-			if (!root) {
-				console.error('[pageInit] No root defined');
-				return;
-			};
+	onAuth (account: I.Account) {
+		if (!account) {
+			console.error('[onAuth] No account defined');
+			return;
+		};
 
-			commonStore.gatewaySet(message.gatewayUrl);
-			commonStore.sidebarInit();
-
-			analytics.device(message.deviceId);
-			analytics.profile(authStore.account);
-			analytics.event('OpenAccount');
-			
-			blockStore.rootSet(root);
-			blockStore.storeSetType(message.marketplaceTypeId);
-			blockStore.storeSetTemplate(message.marketplaceTemplateId);
-			blockStore.storeSetRelation(message.marketplaceRelationId);
-
-			C.ObjectTypeList((message: any) => {
-				dbStore.objectTypesSet(message.objectTypes);
-			});
-
-			C.ObjectSearchSubscribe(Constant.subIds.deleted, [
-				{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: true }
-			], [], [ 'id', 'isDeleted' ], [], 0, 0, true, '', '', true);
-			
-			if (profile) {
-				C.ObjectIdsSubscribe(Constant.subIds.profile, [ profile ], Constant.defaultRelationKeys, true, (message: any) => {
-					blockStore.profileSet(profile);
-				});
-			};
-
-			crumbs.init();
-
-			C.BlockOpen(root, '', (message: any) => {
-				if (message.error.code == Errors.Code.ANYTYPE_NEEDS_UPGRADE) {
-					Util.onErrorUpdate();
-					return;
-				};
-
-				const object = detailStore.get(root, root, Constant.coverRelationKeys);
-
-				if (!object._empty_ && object.coverId && (object.coverType != I.CoverType.None)) {
-					commonStore.coverSet(object.coverId, object.coverId, object.coverType);
-				};
-
-				if (callBack) {
-					callBack();
-				};
-			});
-		});
-	};
-
-	onAuth () {
 		const redirectTo = Storage.get('redirectTo');
 
 		Storage.delete('redirect');
 		Storage.delete('redirectTo');
 
-		this.pageInit(() => {
+		commonStore.infoSet(account.info);
+		commonStore.configSet(account.config, false);
+		authStore.accountSet(account);
+
+		const { root, profile } = blockStore;
+
+		if (!root) {
+			console.error('[onAuth] No root defined');
+			return;
+		};
+
+		if (!profile) {
+			console.error('[onAuth] No profile defined');
+			return;
+		};
+
+		crumbs.init();
+		commonStore.sidebarInit();
+
+		analytics.profile(account);
+		analytics.event('OpenAccount');
+		
+		C.ObjectTypeList((message: any) => {
+			dbStore.objectTypesSet(message.objectTypes);
+		});
+
+		C.ObjectSearchSubscribe(Constant.subIds.deleted, [
+			{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: true }
+		], [], [ 'id', 'isDeleted' ], [], 0, 0, true, '', '', true);
+		
+		if (profile) {
+			C.ObjectSubscribeIds(Constant.subIds.profile, [ profile ], Constant.defaultRelationKeys, true);
+		};
+
+		C.ObjectOpen(root, '', (message: any) => {
+			if (message.error.code == Errors.Code.ANYTYPE_NEEDS_UPGRADE) {
+				Util.onErrorUpdate();
+				return;
+			};
+
+			const object = detailStore.get(root, root, Constant.coverRelationKeys);
+
+			if (!object._empty_ && object.coverId && (object.coverType != I.CoverType.None)) {
+				commonStore.coverSet(object.coverId, object.coverId, object.coverType);
+			};
+
 			keyboard.initPinCheck();
 			Util.route(redirectTo ? redirectTo : '/main/index', true);
 		});
@@ -355,27 +348,33 @@ class DataUtil {
 	};
 	
 	objectOpen (object: any) {
-		const { root } = blockStore;
-
 		keyboard.setSource(null);
 
+		const route = this.objectRoute(object);
+		if (route) {
+			Util.route('/' + route);
+		};
+	};
+
+	objectRoute (object: any): string {
 		let action = this.actionByLayout(object.layout);
 		let id = object.id;
 
-		if ((action == 'edit') && (object.id == root)) {
+		if ((action == 'edit') && (object.id == blockStore.root)) {
 			action = 'index';
 			id = '';
 		};
 
 		if (!action) {
-			return;
+			return '';
 		};
 
-		let route = [ '', 'main', action ];
+		const route = [ 'main', action ];
 		if (id) {
 			route.push(id);
 		};
-		Util.route(route.join('/'));
+
+		return route.join('/');
 	};
 
 	objectOpenPopup (object: any, popupParam?: any) {
@@ -427,7 +426,7 @@ class DataUtil {
 			details.type = details.type || commonStore.type;
 		};
 		
-		C.BlockCreatePage(rootId, targetId, details, position, templateId, fields, (message: any) => {
+		C.BlockLinkCreateWithObject(rootId, targetId, details, position, templateId, fields, (message: any) => {
 			if (message.error.code) {
 				return;
 			};
@@ -443,14 +442,14 @@ class DataUtil {
 			{ key: 'iconEmoji', value: emoji },
 			{ key: 'iconImage', value: image },
 		];
-		C.BlockSetDetails(rootId, details, callBack);
+		C.ObjectSetDetails(rootId, details, callBack);
 	};
 	
 	pageSetName (rootId: string, name: string, callBack?: (message: any) => void) {
 		const details = [ 
 			{ key: 'name', value: name },
 		];
-		C.BlockSetDetails(rootId, details, callBack);
+		C.ObjectSetDetails(rootId, details, callBack);
 	};
 	
 	pageSetCover (rootId: string, type: I.CoverType, id: string, x?: number, y?: number, scale?: number, callBack?: (message: any) => void) {
@@ -465,7 +464,7 @@ class DataUtil {
 			{ key: 'coverY', value: y },
 			{ key: 'coverScale', value: scale },
 		];
-		C.BlockSetDetails(rootId, details, callBack);
+		C.ObjectSetDetails(rootId, details, callBack);
 	};
 
 	pageSetDone (rootId: string, done: boolean, callBack?: (message: any) => void) {
@@ -474,7 +473,7 @@ class DataUtil {
 		const details = [ 
 			{ key: Constant.relationKey.done, value: done },
 		];
-		C.BlockSetDetails(rootId, details, callBack);
+		C.ObjectSetDetails(rootId, details, callBack);
 	};
 
 	pageSetLayout (rootId: string, layout: I.ObjectLayout, callBack?: (message: any) => void) {
@@ -486,19 +485,15 @@ class DataUtil {
 		C.BlockListSetAlign(rootId, [], align, callBack);
 	};
 
-	blockSetText (rootId: string, block: I.Block, text: string, marks: I.Mark[], update: boolean, callBack?: (message: any) => void) {
-		if (!block) {
-			return;
-		};
-
+	blockSetText (rootId: string, blockId: string, text: string, marks: I.Mark[], update: boolean, callBack?: (message: any) => void) {
 		text = String(text || '');
 		marks = marks || [];
 
 		if (update) {
-			blockStore.updateContent(rootId, block.id, { text, marks });
+			blockStore.updateContent(rootId, blockId, { text, marks });
 		};
 
-		C.BlockSetTextText(rootId, block.id, text, marks, (message: any) => {
+		C.BlockTextSetText(rootId, blockId, text, marks, (message: any) => {
 			if (callBack) {
 				callBack(message);
 			};
@@ -1150,40 +1145,43 @@ class DataUtil {
 	};
 
 	defaultLinkSettings () {
-		return Object.assign({
-			withName: true,
-			withIcon: true,
-			withCover: false,
-			withDescription: false,
+		return {
 			iconSize: I.LinkIconSize.Small,
-			style: I.LinkCardStyle.Text,
-		}, Storage.get('linkSettings') || {});
+			cardStyle: I.LinkCardStyle.Text,
+			description: I.LinkDescription.None,
+			relations: [ 'icon' ],
+		};
 	};
 
-	checkLinkSettings (fields: any, layout: I.ObjectLayout) {
-		fields = Util.objectCopy(fields || {});
-		fields.iconSize = Number(fields.iconSize) || I.LinkIconSize.Small;
-		fields.style = Number(fields.style) || I.LinkCardStyle.Text;
-		fields.withIcon = Boolean(undefined === fields.withIcon ? true : fields.withIcon);
-		fields.withName = Boolean(undefined === fields.withName ? true : fields.withName);
+	checkLinkSettings (content: I.ContentLink, layout: I.ObjectLayout) {
+		const relationKeys = [ 'icon', 'type', 'cover', 'tag' ];
 
-		if (fields.style == I.LinkCardStyle.Text) {
-            fields.withCover = false;
+		content = Util.objectCopy(content);
+		content.iconSize = Number(content.iconSize) || I.LinkIconSize.Small;
+		content.cardStyle = Number(content.cardStyle) || I.LinkCardStyle.Text;
+		content.relations = (content.relations || []).filter(it => relationKeys.includes(it));
+
+		if (content.cardStyle == I.LinkCardStyle.Text) {
+			content.iconSize = I.LinkIconSize.Small;
+			content.description = I.LinkDescription.None;
+			content.relations = content.relations.concat([ 'icon' ]);
         };
 
 		if (layout == I.ObjectLayout.Task) {
-			fields.withIcon = true;
-			fields.iconSize = I.LinkIconSize.Small;
+			content.iconSize = I.LinkIconSize.Small;
+			content.relations = content.relations.concat([ 'icon' ]);
 		};
 
 		if (layout == I.ObjectLayout.Note) {
-			fields.withIcon = false;
-			fields.withCover = false;
-			fields.description = I.LinkDescription.None;
-			fields.iconSize = I.LinkIconSize.Small;
+			const filter = [ 'icon', 'cover' ];
+
+			content.description = I.LinkDescription.None;
+			content.iconSize = I.LinkIconSize.Small;
+			content.relations = content.relations.filter(it => filter.includes(it)); 
 		};
 
-		return fields;
+		content.relations = Util.arrayUnique(content.relations);
+		return content;
 	};
 
 	getDataviewData (rootId: string, blockId: string, id: string, keys: string[], offset: number, limit: number, clear: boolean, callBack?: (message: any) => void) {
@@ -1223,6 +1221,42 @@ class DataUtil {
 			Constant.typeId.audio, 
 			Constant.typeId.video,
 		].includes(type);
+	};
+
+	timezones () {
+		return [
+			{ id: 'gmt', name: 'Greenwich Mean Time', offset: 0 },
+			{ id: 'ect', name: 'European Central Time (GMT +1:00)', offset: 1 },
+			{ id: 'eet', name: 'Eastern European Time (GMT +2:00)', offset: 2 },
+			{ id: 'eat', name: 'Eastern African Time (GMT +3:00)', offset: 3 },
+			{ id: 'met', name: 'Middle East Time (GMT +3:30)', offset: 3.5 },
+			{ id: 'net', name: 'Near East Time (GMT +4:00)', offset: 4 },
+			{ id: 'plt', name: 'Pakistan Lahore Time (GMT +5:00)', offset: 5 },
+			{ id: 'ist', name: 'India Standard Time (GMT +5:30)', offset: 5.5 },
+			{ id: 'bst', name: 'Bangladesh Standard Time (GMT +6:00)', offset: 6 },
+			{ id: 'vst', name: 'Vietnam Standard Time (GMT +7:00)', offset: 7 },
+			{ id: 'ctt', name: 'China Taiwan Time (GMT +8:00)', offset: 8 },
+			{ id: 'jst', name: 'Japan Standard Time (GMT +9:00)', offset: 9 },
+			{ id: 'act', name: 'Australia Central Time (GMT +9:30)', offset: 9.5 },
+			{ id: 'aet', name: 'Australia Eastern Time (GMT +10:00)', offset: 10 },
+			{ id: 'sst', name: 'Solomon Standard Time (GMT +11:00)', offset: 11 },
+			{ id: 'nst', name: 'New Zealand Standard Time (GMT +12:00)', offset: 12 },
+			{ id: 'mit', name: 'Midway Islands Time (GMT -11:00)', offset: -11 },
+			{ id: 'hst', name: 'Hawaii Standard Time (GMT -10:00)', offset: -10 },
+			{ id: 'ast', name: 'Alaska Standard Time (GMT -9:00)', offset: -9 },
+			{ id: 'pst', name: 'Pacific Standard Time (GMT -8:00)', offset: -8 },
+			{ id: 'mst', name: 'Mountain Standard Time (GMT -7:00)', offset: -7 },
+			{ id: 'cst', name: 'Central Standard Time (GMT -6:00)', offset: -6 },
+			{ id: 'iet', name: 'Indiana Eastern Standard Time (GMT -5:00)', offset: -5 },
+			{ id: 'prt', name: 'Puerto Rico and US Virgin Islands Time (GMT -4:00)', offset: -4 },
+			{ id: 'cnt', name: 'Canada Newfoundland Time (GMT -3:30)', offset: -3.5 },
+			{ id: 'bet', name: 'Brazil Eastern Time	(GMT -3:00)', offset: -3 },
+			{ id: 'bst', name: 'Brazil Summer Time (GMT -2:00)', offset: -2 },
+			{ id: 'cat', name: 'Central African Time (GMT -1:00)', offset: -1 },
+		].map((it: any) => {
+			it.offset = it.offset * 3600;
+			return it;
+		});
 	};
 
 };

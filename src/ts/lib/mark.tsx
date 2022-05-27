@@ -258,7 +258,14 @@ class Mark {
 		let parts: I.Mark[] = [];
 		let borders: any[] = [];
 		let ranges: any[] = [];
-		let hasParam = [ I.MarkType.Link, I.MarkType.Object, I.MarkType.Color, I.MarkType.BgColor, I.MarkType.Mention, I.MarkType.Emoji ];
+		let hasParam = [ 
+			I.MarkType.Link, 
+			I.MarkType.Object, 
+			I.MarkType.Color, 
+			I.MarkType.BgColor, 
+			I.MarkType.Mention, 
+			I.MarkType.Emoji,
+		];
 		
 		for (let mark of marks) {
 			borders.push(Number(mark.range.from));
@@ -307,15 +314,14 @@ class Mark {
 
 			let prefix = '';
 			let suffix = '';
-			let space = '';
 
 			if (mark.type == I.MarkType.Mention) {
-				space = '<img src="./img/space.svg" class="space" />';
+				prefix = '<smile></smile><img src="./img/space.svg" class="space" /><name>';
+				suffix = '</name>';
 			};
 
-			if ((mark.type == I.MarkType.Mention) || (mark.type == I.MarkType.Emoji)) {
-				prefix = `<smile></smile>${space}<name>`;
-				suffix = '</name>';
+			if (mark.type == I.MarkType.Emoji) {
+				prefix = '<smile></smile>';
 			};
 
 			if (r[mark.range.from] && r[mark.range.to - 1]) {
@@ -544,23 +550,20 @@ class Mark {
 		
 		switch (type) {
 			case I.MarkType.Link:
-				attr = 'href="' + param + '"';
+				attr = `href="${param}"`;
 				break;
 
 			case I.MarkType.Mention:
-				attr = 'contenteditable="false"';
-				break;
-
 			case I.MarkType.Emoji:
 				attr = 'contenteditable="false"';
 				break;
 				
 			case I.MarkType.Color:
-				attr = 'class="textColor textColor-' + param + '"';
+				attr = `class="textColor textColor-${param}"`;
 				break;
 				
 			case I.MarkType.BgColor:
-				attr = 'class="bgColor bgColor-' + param + '"';
+				attr = `class="bgColor bgColor-${param}"`;
 				break;
 		};
 		
@@ -570,7 +573,10 @@ class Mark {
 	toggleLink (newMark: I.Mark, marks: I.Mark[]) {
 		for (let i = 0; i < marks.length; ++i) {
 			let mark = marks[i];
-			if ([ I.MarkType.Link, I.MarkType.Object ].includes(mark.type) && (mark.range.from >= newMark.range.from) && (mark.range.to <= newMark.range.to)) {
+			if ([ I.MarkType.Link, I.MarkType.Object ].includes(mark.type) && 
+				(mark.range.from >= newMark.range.from) && 
+				(mark.range.to <= newMark.range.to)
+			) {
 				marks.splice(i, 1);
 				i--;
 			};

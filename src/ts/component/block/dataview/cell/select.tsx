@@ -57,10 +57,13 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 
 		if (arrayLimit) {
 			value = value.slice(0, arrayLimit);
+			if (length > arrayLimit) {
+				cn.push('overLimit');
+			};
 		};
 
 		let content = null;
-		if (isEditing && (relation.format == I.RelationType.Tag)) {
+		if (isEditing) {
 			content = (
 				<div id="value" onClick={this.onFocus}>
 					<div id="placeholder" className="placeholder">{placeholder}</div>
@@ -98,6 +101,8 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 					>
 						{' '}
 					</span>
+
+					{canClear ? <Icon className="clear" onMouseDown={this.onClear} /> : ''}
 				</div>
 			);
 		} else {
@@ -105,15 +110,12 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 				content = <div className="empty">{placeholder}</div>;
 			} else {
 				content = (
-					<React.Fragment>
-						<span className="over">
-							{value.map((item: any, i: number) => (
-								<Tag {...item} key={item.id} className={DataUtil.tagClass(relation.format)} />
-							))}
-						</span>
+					<span className="over">
+						{value.map((item: any, i: number) => (
+							<Tag {...item} key={item.id} className={DataUtil.tagClass(relation.format)} />
+						))}
 						{arrayLimit && (length > arrayLimit) ? <div className="more">+{length - arrayLimit}</div> : ''}
-						{canClear ? <Icon className="clear" onMouseDown={this.onClear} /> : ''}
-					</React.Fragment>
+					</span>
 				);
 			};
 		};
@@ -180,21 +182,12 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 		};
 
 		const node = $(ReactDOM.findDOMNode(this));
+		const entry = node.find('#entry');
 
-		keyboard.shortcut('enter', e, (pressed: string) => {
-			e.preventDefault();
-			e.stopPropagation();
-
-			const value = this.getValue();
-			if (value.new) {
-				this.onOptionAdd(value.new);
-			};
-		});
-		
 		keyboard.shortcut('backspace', e, (pressed: string) => {
 			e.stopPropagation();
 
-			const range = getRange(node.find('#entry').get(0));
+			const range = getRange(entry.get(0));
 			if (range.start || range.end) {
 				return;
 			};
@@ -246,12 +239,7 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 		const node = $(ReactDOM.findDOMNode(this));
 		node.find('#entry').text(' ');
 
-		menuStore.updateData('dataviewOptionValues', { filter: '' });
 		this.onFocus();
-	};
-
-	onValueAdd (id: string) {
-		this.setValue(this.getItemIds().concat([ id ]));
 	};
 
 	onValueRemove (id: string) {
@@ -260,28 +248,6 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 
 	onDragEnd (oldIndex: number, newIndex: number) {
 		this.setValue(arrayMove(this.getItemIds(), oldIndex, newIndex));
-	};
-
-	onOptionAdd (text: string) {
-		if (!text) {
-			return;
-		};
-
-		const { rootId, block, relation, getRecord, index, optionCommand } = this.props;
-		const record = getRecord(index);
-		const colors = DataUtil.menuGetBgColors();
-		const option = { text, color: colors[Util.rand(1, colors.length - 1)].value };
-		const match = (relation.selectDict || []).find((it: any) => { return it.text == text; });
-
-		if (match) {
-			this.onValueAdd(match.id);
-		} else {
-			optionCommand('add', rootId, block.id, relation.relationKey, record.id, option, (message: any) => {
-				if (!message.error.code) {
-					this.onValueAdd(message.option.id);
-				};
-			});
-		};
 	};
 
 	onFocus () {
@@ -374,7 +340,6 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 			onChange(value, () => {
 				this.clear();
 
-				menuStore.updateData('dataviewOptionValues', { value });
 				menuStore.updateData('dataviewOptionList', { value });
 			});
 		};
@@ -382,7 +347,6 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 
 	resize () {
 		const win = $(window);
-		win.trigger('resize.menuDataviewOptionValues');
 		win.trigger('resize.menuDataviewOptionList');
 	};
 

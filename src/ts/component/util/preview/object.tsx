@@ -9,6 +9,7 @@ interface Props {
 	className?: string;
 	onClick? (e: any): void;
 	position?: () => void;
+	setObject?: (object: any) => void;
 };
 
 interface State {
@@ -333,7 +334,8 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 
 	open () {
 		const { loading } = this.state;
-		const { rootId } = this.props;
+		const { rootId, position, setObject } = this.props;
+		const contextId = this.getRootId();
 
 		if (!this._isMounted || loading || (this.id == rootId)) {
 			return;
@@ -342,15 +344,18 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 		this.id = rootId;
 		this.setState({ loading: true });
 
-		C.BlockShow(rootId, 'preview', (message: any) => {
+		C.ObjectShow(rootId, 'preview', (message: any) => {
 			if (!this._isMounted) {
 				return;
 			};
 
 			this.setState({ loading: false });
 
-			if (this.props.position) {
-				this.props.position();
+			if (setObject) {
+				setObject(detailStore.get(contextId, rootId, []));
+			};
+			if (position) {
+				position();
 			};
 		});
 	};

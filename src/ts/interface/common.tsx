@@ -4,7 +4,7 @@ export enum Platform {
 	Linux = 'Linux',
 };
 
-export enum DragType {
+export enum DropType {
 	None	 = '',
 	Block	 = 'block',
 	Menu	 = 'menu',
@@ -61,6 +61,10 @@ export interface PreviewLink {
 	imageUrl: string;
 };
 
+export enum ImportFormat {
+	Notion = 0,
+};
+
 export enum ExportFormat {
 	Markdown = 0,
 	Protobuf = 1,
@@ -95,4 +99,19 @@ export enum TabIndex {
 	Space		 = 'space',
 	Shared		 = 'shared',
 	Archive		 = 'archive',
+};
+
+export interface HeaderComponent {
+	rootId?: string;
+	isPopup?: boolean;
+	dataset?: any;
+	tabs?: any[];
+	tab?: string;
+	onTab?: (id: string) => void;
+	onHome?: (e: any) => void;
+	onForward?: (e: any) => void;
+	onBack?: (e: any) => void;
+	onSearch?: (e: any) => void;
+	onNavigation?: (e: any) => void;
+	onGraph?: (e: any) => void;
 };

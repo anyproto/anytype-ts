@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { HeaderMainHistory as Header, Block, Loader, Icon, Deleted } from 'ts/component';
+import { Header, Block, Loader, Icon, Deleted } from 'ts/component';
 import { blockStore } from 'ts/store';
 import { I, M, C, Util, DataUtil, dispatcher } from 'ts/lib';
 import { observer } from 'mobx-react';
@@ -92,7 +92,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<P
 				<React.Fragment>
 					<div id={'item-' + item.id} className={[ 'item', (withChildren ? 'withChildren' : '') ].join(' ')} onClick={(e: any) => { this.loadVersion(item.id); }}>
 						{withChildren ? <Icon className="arrow" onClick={(e: any) => { this.toggleChildren(e, item.id); }} /> : ''}
-						<div className="date">{Util.date('d F, H:i', item.time, true)}</div>
+						<div className="date">{Util.date('d F, H:i', item.time)}</div>
 						{item.authorName ? <div className="name">{item.authorName}</div> : ''}
 					</div>
 
@@ -109,7 +109,8 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<P
 		
 		return (
 			<div>
-				<Header ref={(ref: any) => { this.refHeader = ref; }} {...this.props} rootId={rootId} />
+				<Header component="mainHistory" ref={(ref: any) => { this.refHeader = ref; }} {...this.props} rootId={rootId} />
+
 				<div id="body" className="flex">
 					<div id="sideLeft" className="wrapper">
 						<div className={cn.join(' ')}>
@@ -289,7 +290,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<P
 		this.setState({ loading: true });
 		this.lastId = lastId;
 
-		C.HistoryVersions(rootId, lastId, LIMIT, (message: any) => {
+		C.HistoryGetVersions(rootId, lastId, LIMIT, (message: any) => {
 			this.setState({ loading: false });
 
 			if (message.error.code) {
@@ -309,7 +310,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<P
 	loadVersion (id: string) {
 		const rootId = this.getRootId();
 
-		C.HistoryShow(rootId, id, (message: any) => {
+		C.HistoryShowVersion(rootId, id, (message: any) => {
 			if (message.error.code) {
 				if (message.error.code == Errors.Code.NOT_FOUND) {
 					this.setState({ isDeleted: true });
@@ -325,7 +326,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<P
 			this.forceUpdate();
 
 			if (this.refHeader) {
-				this.refHeader.setVersion(this.version);
+				this.refHeader.refChild.setVersion(this.version);
 			};
 		});
 	};

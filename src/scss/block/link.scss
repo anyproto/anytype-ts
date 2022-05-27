@@ -31,15 +31,17 @@
 
 		.linkCard { display: inline-block; vertical-align: top; width: 100%; }
         .linkCard {
-            .sides { display: flex; flex-direction: row; border-radius: 12px; }
-			.side.left { width: 100%; padding: 21px 16px; border: 1px solid $colorBorderDark; border-right-width: 0px; border-radius: 12px; position: relative; }
-			.side.right { display: none; border-radius: 0px 12px 12px 0px; overflow: hidden; }
+            .sides { display: flex; flex-direction: row; }
+			.side.left { width: 100%; position: relative; }
+			.side.right { display: none; overflow: hidden; }
+
+			.side.left {
+				.txt { width: 100%; }
+			}
 
 			.cover { position: relative; min-height: 116px; background-color: unset; }
-			.cardName { 
-				@include text-common; display: flex; flex-direction: row; gap: 0px 6px; align-items: center; line-height: 18px;
-			}
-			.cardName .name { @include clamp2; }
+			.cardName { display: flex; flex-direction: row; gap: 0px 6px; align-items: center; }
+			.cardName .name  { transition: color 0.2s ease-in-out, border-color 0.2s ease-in-out; }
 			.cardDescription { @include text-small; line-height: 16px; @include clamp2; margin: 4px 0px 0px 0px; }
 			.cardDescription:empty { margin: 0px; }
 
@@ -58,6 +60,25 @@
 			}
         }
 
+		.linkCard.text {
+			.side.left {
+				.txt { line-height: 24px; vertical-align: top; }
+			}
+
+			.cardName .name { @include clamp1; border-bottom: 1px solid $colorMediumGrey; }
+		}
+
+		.linkCard.card {
+			.side.left { padding: 21px 16px; border: 1px solid $colorBorderDark; border-radius: 12px; }
+			.side.right { border-radius: 0px 12px 12px 0px; }
+			.sides.withBgColor {
+				.side { border: 0px; }
+			} 
+
+			.cardName { @include text-common; line-height: 18px; }
+			.cardName .name { @include clamp2; }
+		}
+
 		.linkCard.c48.withIcon {
 			.sides { min-height: 80px; }
 			.side.left { padding: 16px 16px 16px 78px; line-height: 44px; }
@@ -66,7 +87,7 @@
 		}
 
 		.linkCard.withCover {
-			.side.left { width: calc(100% - 236px); border-radius: 12px 0px 0px 12px; }
+			.side.left { width: calc(100% - 236px); border-radius: 12px 0px 0px 12px; border-right-width: 0px; }
 			.side.right { width: 236px; display: block; }
 		}
 
@@ -76,7 +97,7 @@
 			.side.right { 
 				position: absolute; top: 0px; left: 0px; height: 116px; width: 100%; border-radius: 12px 12px 0px 0px;
 				border: 1px solid $colorBorderDark; border-bottom: 0px;
-			}
+			}	
 		}
 
 		.linkCard.withCover.vertical { padding-top: 116px; }
@@ -85,5 +106,17 @@
 		}
 
 	}
+
+	.block.blockLink:hover {
+		.linkCard.text {
+			.cardName .name { border-color: $colorBlack; }
+		}
+	}
+
+	.block.blockLink > .wrapContent > .selectable > .dropTarget.isOver.middle {
+		.side.left { background: none !important; }
+	}
+
+	.block.blockLink > .wrapContent > .dropTarget.targetBot { display: block; height: 2px; }
 
 }

@@ -358,6 +358,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 		const { data } = param;
 		const { blockId, blockIds, rootId } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
+
 		if (!block) {
 			return;
 		};
@@ -412,13 +413,13 @@ class MenuBlockAction extends React.Component<Props, State> {
 						};
 
 						if (item.type == I.BlockType.Div) {
-							C.BlockListSetDivStyle(rootId, blockIds, item.itemId, (message: any) => {
+							C.BlockDivListSetStyle(rootId, blockIds, item.itemId, (message: any) => {
 								this.setFocus(blockIds[0]);
 							});
 						};
 
 						if (item.type == I.BlockType.File) {
-							C.BlockListSetFileStyle(rootId, blockIds, item.itemId, (message: any) => {
+							C.BlockFileListSetStyle(rootId, blockIds, item.itemId, (message: any) => {
 								this.setFocus(blockIds[0]);
 							});
 						};
@@ -477,7 +478,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 				menuParam.data = Object.assign(menuParam.data, {
 					value: color,
 					onChange: (color: string) => {
-						C.BlockListSetTextColor(rootId, blockIds, color, (message: any) => {
+						C.BlockTextListSetColor(rootId, blockIds, color, (message: any) => {
 							this.setFocus(blockIds[0]);
 						});
 
@@ -526,6 +527,8 @@ class MenuBlockAction extends React.Component<Props, State> {
 			case 'linkSettings':
 				menuId = 'blockLinkSettings';
 				menuParam.subIds = [ 'select' ];
+				menuParam.offsetY = 0;
+				menuParam.vertical = I.MenuDirection.Center;
 				break;
 		};
 
@@ -576,7 +579,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 			default:
 				// Text colors
 				if (item.isTextColor) {
-					C.BlockListSetTextColor(rootId, blockIds, item.value);
+					C.BlockTextListSetColor(rootId, blockIds, item.value);
 				} else 
 					
 				// Background colors
@@ -596,10 +599,10 @@ class MenuBlockAction extends React.Component<Props, State> {
 				// Blocks
 				if (item.isBlock) {
 					if (item.type == I.BlockType.Div) {
-						C.BlockListSetDivStyle(rootId, blockIds, item.itemId);
+						C.BlockDivListSetStyle(rootId, blockIds, item.itemId);
 					} else 
 					if (item.type == I.BlockType.File) {
-						C.BlockListSetFileStyle(rootId, blockIds, item.itemId);
+						C.BlockFileListSetStyle(rootId, blockIds, item.itemId);
 					} else {
 						C.BlockListTurnInto(rootId, blockIds, item.itemId, () => {
 							this.setFocus(blockIds[0]);
@@ -631,7 +634,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 			ids = [ blockId ];
 		};
 
-		C.BlockListConvertChildrenToPages(rootId, ids, type);
+		C.BlockListConvertToObjects(rootId, ids, type);
 	};
 
 	setFocus (id: string) {

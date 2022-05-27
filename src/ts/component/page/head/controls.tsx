@@ -1,10 +1,12 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { ControlButtons, Loader } from 'ts/component';
+import { Loader } from 'ts/component';
 import { I, C, focus, DataUtil, Util } from 'ts/lib';
 import { menuStore, blockStore, detailStore } from 'ts/store';
 import { observer } from 'mobx-react';
+
+import ControlButtons  from './controlButtons';
 
 interface Props extends RouteComponentProps<any> {
 	rootId: string;
@@ -12,6 +14,7 @@ interface Props extends RouteComponentProps<any> {
 	readonly?: boolean;
 	dataset?: any;
 	resize?: () => void;
+	onLayoutSelect?: (layout: I.ObjectLayout) => void;
 };
 
 interface State {
@@ -139,7 +142,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 				return;
 			};
 			
-			C.UploadFile('', files[0], I.FileType.Image, (message: any) => {
+			C.FileUpload('', files[0], I.FileType.Image, (message: any) => {
 				if (message.error.code) {
 					return;
 				};
@@ -168,7 +171,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 	};
 
 	onLayout (e: any) {
-		const { rootId } = this.props;
+		const { rootId, onLayoutSelect } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
 		const object = detailStore.get(rootId, rootId, []);
 		
@@ -182,8 +185,9 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 			},
 			subIds: Constant.menuIds.layout,
 			data: {
-				rootId: rootId,
+				rootId,
 				value: object.layout,
+				onLayoutSelect,
 			}
 		});
 	};
@@ -259,7 +263,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 		preventCommonDrop(true);
 		this.onUploadStart();
 		
-		C.UploadFile('', file, I.FileType.Image, (message: any) => {
+		C.FileUpload('', file, I.FileType.Image, (message: any) => {
 			this.setState({ loading: false });
 			preventCommonDrop(false);
 			

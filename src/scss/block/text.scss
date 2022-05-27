@@ -3,7 +3,8 @@
 .blocks {
 	.block.blockText { font-size: 16px; line-height: 24px; letter-spacing: 0.08px; font-weight: 400; word-wrap: break-word; }
 	.block.blockText {
-		.value { -webkit-user-modify: read-write-plaintext-only; width: 100%; overflow: hidden; position: relative; z-index: 1; }
+		#value { -webkit-user-modify: read-write-plaintext-only; width: 100%; overflow: hidden; position: relative; z-index: 1; }
+		#value * { user-select: text; }
 
 		.placeholder { display: none; }
 
@@ -14,7 +15,7 @@
 		.disabled { color: $colorMediumGrey; opacity: 1 !important; }
 
 		smile {
-			img { position: static !important; left: auto !important; top: auto !important; margin: 0px !important; vertical-align: middle; }
+			img { position: static !important; left: auto !important; top: auto !important; margin: 0px !important; vertical-align: top; }
 		}
 		smile * { display: inline; vertical-align: middle; }
 		smile .loaderWrapper { display: inline-block; }
@@ -23,11 +24,10 @@
 		emoji * { user-select: all; }
 		emoji {
 			smile img { vertical-align: top; }
-			name { display: none; }
 		}
 
 		lnk { position: relative; }
-		lnk, obj { cursor: pointer; color: inherit; border-bottom: 1px solid $colorMediumGrey; text-decoration: none; }
+		lnk, obj { cursor: pointer; color: inherit;  text-decoration: none; border-bottom: 1px solid $colorMediumGrey; }
 		lnk.disabled, obj.disabled { border-width: 0px; }
 		lnk::after {
 			content: ""; display: inline-block; background-image: url('~img/icon/link.svg'); background-repeat: no-repeat;
@@ -38,8 +38,8 @@
 			underline { text-decoration: none; }
 		}
 
-		mention { cursor: pointer; white-space: nowrap; display: inline; user-select: all; }
-		mention * { user-select: text; }
+		mention { cursor: pointer; display: inline; user-select: all !important; position: relative; }
+		mention * { user-select: text !important; }
 		mention {
 			smile { display: none; position: relative; z-index: 1; }
 			.space { width: 4px; height: 20px; margin-top: -4px; vertical-align: middle; display: none; }
@@ -49,7 +49,6 @@
 		mention.disabled {
 			name { border-width: 0px; }
 		}
-
 		mention.withImage {
 			smile { display: inline; }
 			.space { display: inline; }
@@ -138,7 +137,7 @@
 	.block.blockText.quote > .wrapContent > .selectable > .dropTarget > .flex > .wrap { padding-left: 28px; }
 	.block.blockText.quote > .wrapContent > .selectable > .dropTarget > .flex > .wrap > .placeholder { left: 28px; }
 
-	.block.blockText.quote.align2 > .wrapContent > .selectable > .dropTarget > .flex > .wrap { padding-left: inherit; padding-right: 28px; }
+	.block.blockText.quote.align2 > .wrapContent > .selectable > .dropTarget > .flex > .wrap { padding-left: 28px; }
 	.block.blockText.quote.align2 > .wrapContent > .selectable > .dropTarget > .flex > .line { left: auto; right: 11px; }
 	.block.blockText.quote.align2 > .wrapContent > .selectable > .dropTarget > .flex > .wrap > .placeholder { left: auto; right: 28px; }
 	

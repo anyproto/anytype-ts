@@ -47,7 +47,7 @@
 
 	.more { 
 		background: $colorVeryLightGrey; border-radius: 3px; display: inline-block; vertical-align: middle; padding: 0px 4px; 
-		@include text-small; color: $colorDarkGrey; margin-left: 6px;
+		@include text-small; color: $colorDarkGrey;
 	}
 }
 
@@ -67,9 +67,10 @@
 }
 
 .cellContent.c-select {
-	.over { display: inline-block; vertical-align: top; }
+	.over { display: inline-block; vertical-align: top; width: 100%; }
 	.tagItem { margin: 0px 8px 8px 0px; vertical-align: top; }
 	.tagItem:last-child { margin-right: 0px; }
+	.more { height: 18px; }
 }
 
 .cellContent.c-object {

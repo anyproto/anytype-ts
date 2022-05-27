@@ -83,7 +83,7 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 		let canSelect = true;
 		let canDrop = !readonly;
 		let canDropMiddle = canDrop;
-		let cn: string[] = [ 'block', DataUtil.blockClass(block, isDragging), 'index-' + index ];
+		let cn: string[] = [ 'block', 'align' + align, DataUtil.blockClass(block, isDragging), 'index-' + index ];
 		let cd: string[] = [ 'wrapContent' ];
 		let blockComponent = null;
 		let empty = null;
@@ -100,7 +100,7 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 			cn.push('isReadonly');
 		};
 
-		if (bgColor && !block.isLink()) {
+		if (bgColor && !block.isLink() && !block.isBookmark()) {
 			cd.push('bgColor bgColor-' + bgColor);
 		};
 
@@ -223,16 +223,17 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 		let object = null;
 		let targetTop = null;
 		let targetBot = null;
+		let targetColumn = null;
 
 		if (canDrop) {
 			object = (
-				<DropTarget {...this.props} rootId={rootId} id={id} style={style} type={type} dropType={I.DragType.Block} canDropMiddle={canDropMiddle}>
+				<DropTarget {...this.props} rootId={rootId} id={id} style={style} type={type} dropType={I.DropType.Block} canDropMiddle={canDropMiddle}>
 					{blockComponent}
 				</DropTarget>
 			);
 
-			targetTop = <DropTarget {...this.props} className="targetTop" rootId={rootId} id={id} style={style} type={type} dropType={I.DragType.Block} canDropMiddle={canDropMiddle} />;
-			targetBot = <DropTarget {...this.props} className="targetBot" rootId={rootId} id={id} style={style} type={type} dropType={I.DragType.Block} canDropMiddle={canDropMiddle} />;
+			targetTop = <DropTarget {...this.props} isTargetTop={true} rootId={rootId} id={id} style={style} type={type} dropType={I.DropType.Block} canDropMiddle={canDropMiddle} />;
+			targetBot = <DropTarget {...this.props} isTargetBottom={true} rootId={rootId} id={id} style={style} type={type} dropType={I.DropType.Block} canDropMiddle={canDropMiddle} />;
 		} else {
 			object = (
 				<div className="dropTarget">
@@ -246,6 +247,17 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 
 		if (!block.isLayoutRow()) {
 			targetTop = null;
+		};
+
+		if (block.isLayoutColumn()) {
+			const childrenIds = blockStore.getChildrenIds(rootId, block.id);
+			const lastId = childrenIds.length ? childrenIds[childrenIds.length - 1] : '';
+
+			if (lastId) {
+				targetColumn = (
+					<DropTarget {...this.props} isTargetColumn={true} rootId={rootId} id={lastId} style={style} type={type} dropType={I.DropType.Block} canDropMiddle={canDropMiddle} onClick={this.onEmptyColumn} />
+				);
+			};
 		};
 		
 		if (canSelect) {
@@ -290,10 +302,7 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 					/>
 
 					{targetBot}
-					
-					{block.isLayoutColumn() ? (
-						<div className="columnEmpty" onClick={this.onEmptyColumn} />
-					) : ''}
+					{targetColumn}
 				</div>
 			</div>
 		);
@@ -362,7 +371,7 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 		selection.preventClear(true);
 
 		const ids: string[] = DataUtil.selectionGet(block.id, false, this.props);
-		onDragStart(e, I.DragType.Block, ids, this);
+		onDragStart(e, I.DropType.Block, ids, this);
 	};
 	
 	onMenuDown (e: any) {
@@ -608,7 +617,7 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 			style: I.TextStyle.Paragraph,
 		};
 		
-		C.BlockCreate(param, rootId, childrenIds[childrenIds.length - 1], I.BlockPosition.Bottom, (message: any) => {
+		C.BlockCreate(rootId, childrenIds[childrenIds.length - 1], I.BlockPosition.Bottom, param, (message: any) => {
 			focus.set(message.blockId, { from: 0, to: 0 });
 			focus.apply();
 		});

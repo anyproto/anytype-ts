@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
-import { HeaderMainEdit as Header, FooterMainEdit as Footer, Loader, Block, Button, IconObject, Deleted, ObjectName } from 'ts/component';
+import { Header, FooterMainEdit as Footer, Loader, Block, Button, IconObject, Deleted, ObjectName } from 'ts/component';
 import { I, M, C, Util, crumbs, Action } from 'ts/lib';
 import { commonStore, blockStore, detailStore } from 'ts/store';
 
@@ -103,7 +103,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<Props
 
 		return (
 			<div>
-				<Header ref={(ref: any) => { this.refHeader = ref; }} {...this.props} rootId={rootId} isPopup={isPopup} />
+				<Header component="mainEdit" ref={(ref: any) => { this.refHeader = ref; }} {...this.props} rootId={rootId} />
 
 				<div id="blocks" className={cn.join(' ')}>
 					{file ? (
@@ -172,7 +172,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<Props
 		this.loading = true;
 		this.forceUpdate();
 
-		C.BlockOpen(rootId, '', (message: any) => {
+		C.ObjectOpen(rootId, '', (message: any) => {
 			if (message.error.code) {
 				if (message.error.code == Errors.Code.NOT_FOUND) {
 					this.setState({ isDeleted: true });
@@ -245,7 +245,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<Props
 		const { content } = block;
 		const renderer = Util.getRenderer();
 
-		C.DownloadFile(content.hash, path.join(userPath, 'tmp'), (message: any) => {
+		C.FileDownload(content.hash, path.join(userPath, 'tmp'), (message: any) => {
 			if (message.path) {
 				renderer.send('pathOpen', message.path);
 			};

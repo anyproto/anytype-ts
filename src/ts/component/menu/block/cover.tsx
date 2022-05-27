@@ -210,7 +210,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 				onUploadStart();
 			};
 
-			C.UploadFile('', files[0], I.FileType.Image, (message: any) => {
+			C.FileUpload('', files[0], I.FileType.Image, (message: any) => {
 				if (message.error.code) {
 					return;
 				};
@@ -261,8 +261,8 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 
 	getSections () {
 		return [
-			{ name: 'Solid colors', children: DataUtil.coverColors() },
 			{ name: 'Gradients', children: DataUtil.coverGradients() },
+			{ name: 'Solid colors', children: DataUtil.coverColors() },
 		];
 	};
 
@@ -305,7 +305,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 		preventCommonDrop(true);
 		this.setState({ loading: true });
 		
-		C.UploadFile('', file, I.FileType.Image, (message: any) => {
+		C.FileUpload('', file, I.FileType.Image, (message: any) => {
 			this.setState({ loading: false });
 			preventCommonDrop(false);
 			

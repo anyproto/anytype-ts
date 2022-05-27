@@ -185,7 +185,7 @@ const BlockPdf = observer(class BlockPdf extends React.Component<Props, State> {
 		const { hash } = content;
 		const renderer = Util.getRenderer();
 		
-		C.DownloadFile(hash, path.join(userPath, 'tmp'), (message: any) => {
+		C.FileDownload(hash, path.join(userPath, 'tmp'), (message: any) => {
 			if (message.path) {
 				renderer.send('pathOpen', message.path);
 			};

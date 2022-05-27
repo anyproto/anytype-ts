@@ -42,6 +42,7 @@ $transitionFast: all 0.2s ease-in-out;
 @mixin pos-abs-mid { position: absolute; left: 50%; top: 50%; }
 
 @mixin clamp { -webkit-box-orient: vertical; display: -webkit-box; overflow: hidden; }
-@mixin clamp2 { @include clamp; -webkit-line-clamp: 2;  } 
+@mixin clamp1 { @include clamp; -webkit-line-clamp: 1;  } 
+@mixin clamp2 { @include clamp; -webkit-line-clamp: 2; } 
 @mixin clamp3 { @include clamp; -webkit-line-clamp: 3; } 
 @mixin clamp4 { @include clamp; -webkit-line-clamp: 4; } 

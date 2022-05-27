@@ -337,7 +337,11 @@ class Util {
 		h = Number(h) || 0;
 		i = Number(i) || 0;
 		s = Number(s) || 0;
-		return Math.floor(Date.UTC(y, m - 1, d, h, i, s, 0) / 1000);
+
+		let timestamp = Math.floor(Date.UTC(y, m - 1, d, h, i, s, 0) / 1000);
+		let timezone = commonStore.timezoneGet();
+
+		return timestamp - timezone.offset;
 	};
 
 	parseDate (value: string, format?: I.DateFormat): number {
@@ -366,10 +370,11 @@ class Util {
 		return this.timestamp(y, m, d, h, i, s);
 	};
 
-	date (format: string, timestamp: number, local?: boolean) {
+	date (format: string, timestamp: number) {
 		timestamp = Number(timestamp) || 0;
-		const d = new Date(timestamp ? timestamp * 1000 : null);
-		const fn = local ? '' : 'UTC';
+
+		const timezone = commonStore.timezoneGet();
+		const d = new Date((timestamp + timezone.offset) * 1000);
 
 		const pad = (n: number, c: number) => {
 			let s = String(n);
@@ -392,7 +397,7 @@ class Util {
 				return t.substr(0,3);
 			},
 			j: () => {
-				return d[`get${fn}Date`]();
+				return d.getUTCDate();
 			},
 			// Month
 			F: () => {
@@ -405,39 +410,39 @@ class Util {
 				return f.F().substr(0, 3);
 			},
 			n: () => {
-				return d[`get${fn}Month`]() + 1;
+				return d.getUTCMonth() + 1;
 			},
 			// Year
 			Y: () => {
-				return d[`get${fn}FullYear`]();
+				return d.getUTCFullYear();
 			},
 			y: () => {
-				return (d[`get${fn}FullYear`]() + '').slice(2);
+				return (d.getUTCFullYear() + '').slice(2);
 			},
 			// Time
 			a: () => {
-				return d[`get${fn}Hours`]() > 11 ? 'pm' : 'am';
+				return d.getUTCHours() > 11 ? 'pm' : 'am';
 			},
 			A: () => {
-				return d[`get${fn}Hours`]() > 11 ? 'PM' : 'AM';
+				return d.getUTCHours() > 11 ? 'PM' : 'AM';
 			},
 			g: () => {
-				return d[`get${fn}Hours`]() % 12 || 12;
+				return d.getUTCHours() % 12 || 12;
 			},
 			h: () => {
 				return pad(f.g(), 2);
 			},
 			H: () => {
-				return pad(d[`get${fn}Hours`](), 2);
+				return pad(d.getUTCHours(), 2);
 			},
 			i: () => {
-				return pad(d[`get${fn}Minutes`](), 2);
+				return pad(d.getUTCMinutes(), 2);
 			},
 			s: () => {
-				return pad(d[`get${fn}Seconds`](), 2);
+				return pad(d.getUTCSeconds(), 2);
 			},
 			w: () => {
-				return d[`get${fn}Day`]();
+				return d.getUTCDay();
 			},
 		};
 		return format.replace(/[\\]?([a-zA-Z])/g, (t: string, s: string) => {
@@ -839,14 +844,20 @@ class Util {
 		});
 	};
 
-	getRoute (path: string) {
+	getScheme (url: string): string {
+		const a = String(url || '').split('://');
+		return String(a[0] || '');
+	};
+
+	getRoute (path: string): { page: string, action: string, id: string } {
 		let route = path.split('/');
 		route.shift();
 
-		let page = route[0] ? route[0] : 'index';
-		let action = route[1] ? route[1] : 'index';
+		const page = String(route[0] || 'index');
+		const action = String(route[1] || 'index');
+		const id = String(route[2] || '');
 
-		return { page, action };
+		return { page, action, id };
 	};
 
 	route (route: string, replace?: boolean) {

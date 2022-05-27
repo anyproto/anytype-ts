@@ -20,14 +20,17 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 	_isMounted: boolean = false;	
 	n: number = 0;
 	cache: any = null;
+	filter: string = '';
 	refFilter: any = null;
 	refList: any = null;
+	top: number = 0;
 	
 	constructor (props: any) {
 		super(props);
 		
 		this.rebind = this.rebind.bind(this);
 		this.onFilterChange = this.onFilterChange.bind(this);
+		this.onScroll = this.onScroll.bind(this);
 	};
 	
 	render () {
@@ -119,6 +122,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 										rowHeight={({ index }) => { return this.getRowHeight(items[index]); }}
 										rowRenderer={rowRenderer}
 										onRowsRendered={onRowsRendered}
+										onScroll={this.onScroll}
 										overscanRowCount={10}
 									/>
 								)}
@@ -153,7 +157,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 		};
 
 		if (active && !active.isInitial) {
-			window.setTimeout(() => { setActive(active, true); }, Constant.delay.menu);
+			window.setTimeout(() => { setActive(active, true); }, 15);
 		};
 
 		this.focus();
@@ -161,6 +165,20 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 	};
 
 	componentDidUpdate () {
+		const { param } = this.props;
+		const { data } = param;
+		const { filter } = data;
+
+		if (this.filter != filter) {
+			this.filter = filter;
+			this.n = -1;
+			this.top = 0;
+		};
+
+		if (this.refList) {
+			this.refList.scrollToPosition(this.top);
+		};
+
 		this.focus();
 		this.resize();
 	};
@@ -276,22 +294,37 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 		return HEIGHT_ITEM;
 	};
 
+	onScroll ({ clientHeight, scrollHeight, scrollTop }) {
+		if (scrollTop) {
+			this.top = scrollTop;
+		};
+	};
+
 	resize () {
 		const { position, getId, param } = this.props;
 		const { data } = param;
-		const { noFilter } = data;
+		const { noFilter, noScroll } = data;
 		const options = this.getItemsWithoutFilter();
 		const items = this.getItems(true);
 		const obj = $(`#${getId()}`);
 		const content = obj.find('.content');
 		const withFilter = !noFilter && (options.length > LIMIT);
-		const offset = (withFilter ? 44 : 0) + (items.length <= LIMIT ? 16 : 0);
+		
+		let height = 0;
+		if (withFilter) {
+			height += 44;
+		};
+		if (items.length <= LIMIT || noScroll) {
+			height += 16;
+		};
 
-		let height = items.reduce((res: number, item: any) => {
-			return res + this.getRowHeight(item);
-		}, offset);
-
-		height = Math.max(44, Math.min(HEIGHT_ITEM * LIMIT + offset, height));
+		for (let i = 0; i < items.length; ++i) {
+			height += this.getRowHeight(items[i]);
+		};
+		if (!noScroll) {
+			height = Math.min(360, height);
+		};
+		height = Math.max(44, height);
 
 		content.css({ height });
 		withFilter ? obj.addClass('withFilter') : obj.removeClass('withFilter');

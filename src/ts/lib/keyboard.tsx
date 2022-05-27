@@ -74,13 +74,13 @@ class Keyboard {
 		// Mouse back
 		if (e.buttons & 8) {
 			e.preventDefault();
-			this.back();
+			this.onBack();
 		};
 
 		// Mouse forward
 		if (e.buttons & 16) {
 			e.preventDefault();
-			this.forward();
+			this.onForward();
 		};
 
 		// Remove isFocusable from focused block
@@ -92,9 +92,11 @@ class Keyboard {
 	onMouseMove (e: any) {
 		const { sidebar, autoSidebar } = commonStore;
 		const { snap, fixed, width } = sidebar;
+		const x = e.pageX;
+		const y = e.pageY;
 
 		this.mouse = {
-			page: { x: e.pageX, y: e.pageY },
+			page: { x, y },
 			client: { x: e.clientX, y: e.clientY },
 		};
 
@@ -114,19 +116,19 @@ class Keyboard {
 		let remove = false;
 
 		if (snap == I.MenuDirection.Left) {
-			if (this.mouse.page.x <= 20) {
+			if (x <= 20) {
 				add = true;
 			};
-			if (this.mouse.page.x > width + 10) {
+			if (x > width + 10) {
 				remove = true;
 			};
 		};
 
 		if (snap == I.MenuDirection.Right) {
-			if (this.mouse.page.x >= ww - 20) {
+			if (x >= ww - 20) {
 				add = true;
 			};
-			if (this.mouse.page.x > ww - width - 10) {
+			if (x < ww - width - 10) {
 				remove = true;
 			};
 		};
@@ -148,29 +150,29 @@ class Keyboard {
 	};
 	
 	onKeyDown (e: any) {
-		const rootId = this.getRootId();
 		const platform = Util.getPlatform();
 		const key = e.key.toLowerCase();
 		const cmd = this.ctrlKey();
 		const isMain = this.isMain();
-		const isPopup = this.isPopup();
 
 		this.pressed.push(key);
 
 		// Go back
 		this.shortcut('backspace', e, (pressed: string) => {
-			if (!isMain || (isMain && !this.isMainIndex()) || this.isFocused) {
+			const ids = this.selection.get(I.SelectType.Block);
+			if (!isMain || (isMain && !this.isMainIndex()) || this.isFocused || ids.length) {
 				return;
 			};
-			this.back();
+
+			this.onBack();
 		});
 
 		if (platform == I.Platform.Mac) {
-			this.shortcut('cmd+[', e, (pressed: string) => { this.back(); });
-			this.shortcut('cmd+]', e, (pressed: string) => { this.forward(); });
+			this.shortcut('cmd+[', e, (pressed: string) => { this.onBack(); });
+			this.shortcut('cmd+]', e, (pressed: string) => { this.onForward(); });
 		} else {
-			this.shortcut('alt+arrowleft', e, (pressed: string) => { this.back(); });
-			this.shortcut('alt+arrowright', e, (pressed: string) => { this.forward(); });
+			this.shortcut('alt+arrowleft', e, (pressed: string) => { this.onBack(); });
+			this.shortcut('alt+arrowright', e, (pressed: string) => { this.onForward(); });
 		};
 
 		// Close popups and menus
@@ -224,13 +226,7 @@ class Keyboard {
 				if (popupStore.isOpen('search') || !this.isPinChecked) {
 					return;
 				};
-				popupStore.open('search', { 
-					preventResize: true,
-					data: { 
-						rootId,
-						isPopup,
-					}, 
-				});
+				keyboard.onSearchPopup();
 			});
 
 			// Text search
@@ -331,7 +327,7 @@ class Keyboard {
 		this.pressed = this.pressed.filter((it: string) => { return it != key; });
 	};
 
-	back () {
+	onBack () {
 		const { account } = authStore;
 		const isPopup = this.isPopup();
 
@@ -355,9 +351,12 @@ class Keyboard {
 				if ((route.page == 'main') && !account) {
 					return;
 				};
-			};
 
-			Util.history.goBack();
+				Util.history.goBack();
+			} else 
+			if (account) {
+				Util.route('/main/index');
+			};
 		};
 
 		menuStore.closeAll();
@@ -366,7 +365,7 @@ class Keyboard {
 		analytics.event('HistoryBack');
 	};
 
-	forward () {
+	onForward () {
 		const isPopup = this.isPopup();
 
 		crumbs.restore(I.CrumbsType.Page);
@@ -456,14 +455,12 @@ class Keyboard {
 	};
 
 	onUndo (rootId: string, callBack?: (message: any) => void) {
-		C.BlockUndo(rootId, callBack);
-
+		C.ObjectUndo(rootId, callBack);
 		analytics.event('Undo');
 	};
 
 	onRedo (rootId: string, callBack?: (message: any) => void) {
-		C.BlockRedo(rootId, callBack);
-
+		C.ObjectRedo(rootId, callBack);
 		analytics.event('Redo');
 	};
 
@@ -535,6 +532,13 @@ class Keyboard {
 		}, Constant.delay.menu);
 	};
 
+	onSearchPopup () {
+		popupStore.open('search', {
+			preventResize: true, 
+			data: { isPopup: this.isPopup() },
+		});
+	};
+
 	onLock (rootId: string, v: boolean) {
 		const block = blockStore.getLeaf(rootId, rootId);
 		if (!block) {
@@ -550,12 +554,11 @@ class Keyboard {
 
 	onToggleLock () {
 		const rootId = this.getRootId();
-		const block = blockStore.getLeaf(rootId, rootId);
-		if (!block) {
-			return;
+		const root = blockStore.getLeaf(rootId, rootId);
+		
+		if (root) {
+			this.onLock(rootId, !root.isLocked());
 		};
-
-		this.onLock(rootId, !block.fields.isLocked);		
 	};
 
 	getPopupMatch () {
@@ -631,17 +634,17 @@ class Keyboard {
 		if (!account) {
 			return;
 		};
+
+		const pin = Storage.get('pin');
+		if (!pin) {
+			this.setPinChecked(true);
+			return;
+		};
 		
 		window.clearTimeout(this.timeoutPin);
 		this.timeoutPin = window.setTimeout(() => {
-			const pin = Storage.get('pin');
-
-			this.setPinChecked(pin ? false : true);
-			if (pin) {
-				popupStore.closeAll(null, () => {
-					Util.route('/auth/pin-check');
-				});
-			};
+			this.setPinChecked(false);
+			popupStore.closeAll(null, () => { Util.route('/auth/pin-check'); });
 		}, pinTime);
 	};
 

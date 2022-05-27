@@ -155,6 +155,8 @@ class SmileUtil {
 	};
 
 	data (icon: string) {
+		icon = icon.trim();
+
 		if (!icon) {
 			return {};
 		};
@@ -168,19 +170,18 @@ class SmileUtil {
 			cp.push(icon.charCodeAt(i));
 		};
 
-		if (!cp.includes(DIV) && (cp[cp.length - 1] == CAP)) {
+		if (cp.length && !cp.includes(DIV) && (cp[cp.length - 1] == CAP)) {
 			cp.pop();
 			cp.push(DIV);
 			cp.push(CAP);
 
-			icon = cp.map((it: number) => { return String.fromCharCode(it); }).join('');
+			icon = cp.map(it => String.fromCharCode(it)).join('');
 		};
 
 		let data: any = null;
-
 		try {
 			data = getEmojiDataFromNative(icon, 'apple', EmojiData);
-			
+
 			// Try to get emoji with divider byte
 			if (!data) {
 				data = getEmojiDataFromNative(icon + String.fromCharCode(DIV), 'apple', EmojiData);

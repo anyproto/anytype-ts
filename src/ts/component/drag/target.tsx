@@ -1,17 +1,19 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { I } from 'ts/lib';
-import { throttle } from 'lodash';
 
 interface Props {
 	id: string;
 	rootId: string;
+	cacheKey?: string;
 	targetContextId?: string;
 	style?: number;
 	type?: I.BlockType;
-	dropType: I.DragType;
+	dropType: I.DropType;
 	className?: string;
 	canDropMiddle?: boolean;
+	isTargetTop?: boolean;
+	isTargetBottom?: boolean;
+	isTargetColumn?: boolean;
 	onClick?(e: any): void;
 };
 
@@ -24,11 +26,24 @@ class DropTarget extends React.Component<Props, {}> {
 	};
 	
 	render () {
-		const { id, rootId, targetContextId, dropType, type, style, children, className, canDropMiddle } = this.props;
-		
-		let cn = [ 'dropTarget', 'root-' + rootId ];
+		const { id, rootId, cacheKey, targetContextId, dropType, type, style, children, className, canDropMiddle, isTargetTop, isTargetBottom, isTargetColumn } = this.props;
+		const key = [ dropType, cacheKey || id ];
+		const cn = [ 'dropTarget', 'root-' + rootId ];
+
 		if (className) {
 			cn.push(className);
+		};
+		if (isTargetTop) {
+			cn.push('targetTop');
+			key.push('top');
+		};
+		if (isTargetBottom) {
+			cn.push('targetBot');
+			key.push('bot');
+		};
+		if (isTargetColumn) {
+			cn.push('targetCol');
+			key.push('col');
 		};
 
 		return (
@@ -38,6 +53,7 @@ class DropTarget extends React.Component<Props, {}> {
 				onClick={this.onClick} 
 				data-id={id} 
 				data-root-id={rootId} 
+				data-cache-key={key.join('-')}
 				data-drop-type={dropType} 
 				data-type={type} 
 				data-style={style} 

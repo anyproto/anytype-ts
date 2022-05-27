@@ -1,6 +1,6 @@
 {
 	"name": "anytype2",
-	"version": "0.25.3-alpha",
+	"version": "0.25.6-alpha",
 	"description": "Anytype",
 	"main": "electron.js",
 	"scripts": {
@@ -58,7 +58,7 @@
 		"@types/react-router-dom": "^4.3.5",
 		"babel-loader": "^8.2.1",
 		"babel-preset-env": "^1.7.0",
-		"electron": "^16.0.4",
+		"electron": "^18.2.0",
 		"electron-builder": "^22.14.13",
 		"electron-notarize": "^0.2.1",
 		"git-revision-webpack-plugin": "^3.0.6",
@@ -135,7 +135,7 @@
 		"mobx-logger": "^0.7.1",
 		"mobx-react": "^6.3.1",
 		"mobx-state-tree": "^3.17.2",
-		"node-gyp": "^8.4.1",
+		"node-gyp": "^9.0.0",
 		"node-loader": "^1.0.2",
 		"npm": "^7.19.1",
 		"npm-run-all": "^4.1.5",

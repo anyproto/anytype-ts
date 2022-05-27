@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Frame, Cover, Title, Label, Error, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
+import { Frame, Cover, Title, Label, Error, Header, FooterAuth as Footer } from 'ts/component';
 import { I, Util, C, Action, analytics } from 'ts/lib';
 import { commonStore, authStore, popupStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -10,6 +10,8 @@ interface Props extends RouteComponentProps<any> {}
 interface State {
 	error: string;
 };
+
+const DAYS = 30;
 
 const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<Props, State> {
 
@@ -30,22 +32,32 @@ const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<P
 		const { cover } = commonStore;
 		const { error } = this.state;
 		const duration = Math.max(0, account.status.date - Util.time());
+		const days = Math.min(DAYS - 1, Math.max(1, Math.ceil(duration / 86400)));
+		const dt = `${days} ${Util.cntWord(days, 'day', 'days')}`;
 
 		let title = '';
 		let description = '';
 		let showPie = false;
+		let pieValue = 0;
 		let rows: any[] = [];
+		let status: I.AccountStatusType = account.status.type;
+
+		if ((status == I.AccountStatusType.PendingDeletion) && !duration) {
+			status = I.AccountStatusType.Deleted;
+		};
 		
-		switch (account.status.type) {
+		switch (status) {
 			case I.AccountStatusType.PendingDeletion:
-				title = `This account is planned for deletion in ${Util.duration(duration)}...`;
-				description = `We're sorry to see you go. Once you request your account to be deleted, you have 30 days to cancel this request. After 30 days, your encrypted account data is permanently removed from the backup node, you won't be able to sign into Anytype on new devices.`;
+				title = `This account is planned for deletion in ${dt}...`;
+				description = `We're sorry to see you go. You have ${dt} to cancel this request. After ${dt}, your encrypted account data is permanently removed from the backup node.`;
 
 				rows = rows.concat([
 					{ name: 'Cancel deletion', className: 'red', onClick: this.onCancel },
+					{ name: 'Logout and clear data', className: 'red', onClick: this.onReset },
 				]);
 
 				showPie = true;
+				pieValue = DAYS - days;
 				break;
 
 			case I.AccountStatusType.StartedDeletion:
@@ -54,7 +66,7 @@ const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<P
 				description = `This device stores your data locally. You can export it, however, you are not able to use this account anymore.`;
 
 				rows = rows.concat([
-					{ name: 'Reset account data from this device', className: 'red', onClick: this.onReset },
+					{ name: 'Logout and clear data', className: 'red', onClick: this.onReset },
 					{ name: 'Export data to markdown', className: '', onClick: this.onExport },
 				]);
 				break;
@@ -63,7 +75,7 @@ const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<P
         return (
 			<div>
 				<Cover {...cover} className="main" />
-				<Header />
+				<Header {...this.props} component="authIndex" />
 				<Footer />
 				
 				<Frame>
@@ -71,9 +83,9 @@ const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<P
 						<div className="pie">
 							<div className="inner">
 								<PieChart
-									totalValue={30}
+									totalValue={DAYS}
 									startAngle={270}
-									data={[ { title: '', value: Math.ceil(duration / 86400), color: '#f55522' } ]}
+									data={[ { title: '', value: pieValue, color: '#f55522' } ]}
 								/>
 							</div>
 						</div>
@@ -111,13 +123,12 @@ const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<P
 	};
 
 	onExport (e: any) {
-		Action.export([], I.ExportFormat.Markdown, true, true, true, () => {}, (message: any) => {
-			analytics.event('ExportMarkdown', { middleTime: message.middleTime });
-		});
+		Action.export([], I.ExportFormat.Markdown, true, true, true, () => {});
 	};
 
 	onCancel (e: any) {
 		C.AccountDelete(true, (message: any) => {
+			authStore.accountSet({ status: message.status });
 			Util.route('/main/index');
 		});
 	};

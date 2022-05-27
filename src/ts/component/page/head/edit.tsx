@@ -21,7 +21,7 @@ interface Props extends RouteComponentProps<any> {
 
 const $ = require('jquery');
 
-const EditorHeaderPage = observer(class EditorHeaderPage extends React.Component<Props, {}> {
+const PageHeadEdit = observer(class PageHeadEdit extends React.Component<Props, {}> {
 	
 	refDrag: any = null;
 
@@ -163,7 +163,7 @@ const EditorHeaderPage = observer(class EditorHeaderPage extends React.Component
 		const { rootId } = this.props;
 		const object = detailStore.get(rootId, rootId);
 
-		C.CloneTemplate(rootId, (message: any) => {
+		C.TemplateClone(rootId, (message: any) => {
 			if (message.id) {
 				DataUtil.objectOpen({ id: message.id });
 			};
@@ -174,4 +174,4 @@ const EditorHeaderPage = observer(class EditorHeaderPage extends React.Component
 
 });
 
-export default EditorHeaderPage;
+export default PageHeadEdit;

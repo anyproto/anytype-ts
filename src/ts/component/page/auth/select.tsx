@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Frame, Cover, Title, Label, Error, Button, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
+import { Frame, Cover, Title, Label, Error, Button, Header, FooterAuth as Footer } from 'ts/component';
 import { Util, translate, C } from 'ts/lib';
 import { commonStore, authStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -30,7 +30,7 @@ const PageAuthSelect = observer(class PageAuthSelect extends React.Component<Pro
         return (
 			<div>
 				<Cover {...cover} className="main" />
-				<Header />
+				<Header {...this.props} component="authIndex" />
 				<Footer />
 				
 				<Frame>
@@ -52,16 +52,7 @@ const PageAuthSelect = observer(class PageAuthSelect extends React.Component<Pro
 	};
 	
 	onRegister (e: any) {
-		const { path } = authStore;
-
-		C.WalletCreate(path, (message: any) => {
-			if (message.error.code) {
-				this.setState({ error: message.error.description });
-			} else {
-				authStore.phraseSet(message.mnemonic);
-				Util.route('/auth/register/register');
-			};
-		});
+		Util.route('/auth/register/register');
 	};
 	
 });

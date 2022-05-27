@@ -299,7 +299,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		};
 
 		this.subscriptionIds[id] = hash;
-		C.ObjectIdsSubscribe(subId, links, Constant.sidebarRelationKeys, true);
+		C.ObjectSubscribeIds(subId, links, Constant.sidebarRelationKeys, true);
 	};
 
 	getRecords (subId: string) {

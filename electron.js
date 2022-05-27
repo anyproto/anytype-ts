@@ -48,7 +48,7 @@ let userPath = app.getPath('userData');
 let tmpPath = path.join(userPath, 'tmp');
 let waitLibraryPromise;
 let useGRPC = !process.env.ANYTYPE_USE_ADDON && (env.USE_GRPC || process.env.ANYTYPE_USE_GRPC || is.windows || is.development);
-let defaultChannel = version.match('alpha') ? 'alpha' : 'latest';
+let defaultChannel = 'latest';
 let timeoutUpdate = 0;
 let server;
 let dataPath = [];
@@ -68,12 +68,19 @@ let csp = [
 ];
 let autoUpdate = false;
 
+if (version.match('alpha')) {
+	defaultChannel = 'alpha';
+};
+if (version.match('beta')) {
+	defaultChannel = 'beta';
+};
+
 if (is.development && !port) {
 	console.error('ERROR: Please define SERVER_PORT env var');
 	exit(false);
 };
 
-if (!app.requestSingleInstanceLock() && app.isPackaged) {
+if (app.isPackaged && !app.requestSingleInstanceLock()) {
 	exit(false);
 };
 
@@ -146,7 +153,6 @@ function initTray () {
 	tray = new Tray (trayIcon());
 	
 	tray.setToolTip('Anytype');
-	tray.on('click', () => { win.show(); });
 
 	tray.setContextMenu(Menu.buildFromTemplate([
 		{ label: 'Open Anytype', click: () => { win.show(); } },
@@ -402,30 +408,28 @@ function createWindow () {
 	menuInit();
 };
 
-function getBgColor () {
+function getTheme () {
 	let { theme } = config;
-	let light = '#fff';
-	let dark = '#2c2b27';
-	let bg = '';
 
 	switch (theme) {
 		default:
-			bg = light;
-			break;
-
-		case 'dark':
-			bg = dark;
-			break;
+			return theme;
 
 		case 'system':
-			bg = isDarkTheme() ? dark : light;
-			break;
+			return isDarkTheme() ? 'dark' : '';
 	};
-	return bg;
+};
+
+function getBgColor () {
+	let theme = getTheme();
+	let bg = {
+		'': '#fff',
+		dark: '#2c2b27',
+	};
+	return bg[theme];
 };
 
 function openAboutWindow () {
-	let { theme } = config;
     let window = new BrowserWindow({
 		backgroundColor: getBgColor(),
         width: 400,
@@ -439,7 +443,7 @@ function openAboutWindow () {
 		},
     });
 
-    window.loadURL('file://' + path.join(__dirname, 'electron', `about.html?version=${version}&theme=${theme}`));
+    window.loadURL('file://' + path.join(__dirname, 'electron', `about.html?version=${version}&theme=${getTheme()}`));
 
 	window.once('closed', () => {
         window = null;
@@ -472,7 +476,7 @@ function menuInit () {
 				{ type: 'separator' },
 				{ role: 'services' },
 				{ type: 'separator' },
-				{ role: 'hide' },
+				{ role: 'hide', label: 'Hide Anytype' },
 				{ role: 'hideothers' },
 				{ role: 'unhide' },
 				{ type: 'separator' },
@@ -637,56 +641,59 @@ function menuInit () {
 		});
 	};
 
+	let channelSettings = [
+		{ id: 'alpha', name: 'Alpha' },
+		{ id: 'beta', name: 'Pre-release' },
+		{ id: 'latest', name: 'Public' },
+	];
+
+	let channels = channelSettings.map((it) => {
+		return { label: it.name, type: 'radio', checked: (config.channel == it.id), click: () => { setChannel(it.id); } }
+	});
+	if (!config.sudo) {
+		channels = channels.filter(it => it.id != 'alpha');
+	};
+
+	const menuSudo = { 
+		label: 'Sudo',
+		submenu: [
+			{ label: 'Version', submenu: channels },
+			{
+				label: 'Experimental', type: 'checkbox', checked: config.experimental,
+				click: () => { 
+					setConfig({ experimental: !config.experimental });
+					win.reload();
+				}
+			},
+			{
+				label: 'Export templates',
+				click: () => { send('command', 'exportTemplates'); }
+			},
+			{
+				label: 'Export objects',
+				click: () => { send('command', 'exportObjects'); }
+			},
+			{
+				label: 'Export localstore',
+				click: () => { send('command', 'exportLocalstore'); }
+			},
+			{
+				label: 'Create workspace',
+				click: () => { send('commandGlobal', 'workspace');	}
+			},
+			{
+				label: 'Save page as HTML',
+				click: () => { send('command', 'saveAsHTML');	}
+			},
+			{
+				label: 'Relaunch',
+				click: () => { exit(true); }
+			},
+		]
+	};
+
 	if (config.sudo) {
-		menuParam.push({
-			label: 'Sudo',
-			submenu: [
-				{
-					label: 'Version',
-					submenu: [
-						{
-							label: 'Alpha', type: 'radio', checked: (config.channel == 'alpha'),
-							click: () => { setChannel('alpha'); }
-						},
-						{
-							label: 'Public', type: 'radio', checked: (config.channel == 'latest'),
-							click: () => { setChannel('latest'); }
-						},
-					]
-				},
-				{
-					label: 'Experimental', type: 'checkbox', checked: config.experimental,
-					click: () => { 
-						setConfig({ experimental: !config.experimental });
-						win.reload();
-					}
-				},
-				{
-					label: 'Export templates',
-					click: () => { send('command', 'exportTemplates'); }
-				},
-				{
-					label: 'Export objects',
-					click: () => { send('command', 'exportObjects'); }
-				},
-				{
-					label: 'Export localstore',
-					click: () => { send('command', 'exportLocalstore'); }
-				},
-				{
-					label: 'Create workspace',
-					click: () => { send('commandGlobal', 'workspace');	}
-				},
-				{
-					label: 'Save page as HTML',
-					click: () => { send('command', 'saveAsHTML');	}
-				},
-				{
-					label: 'Relaunch',
-					click: () => { exit(true); }
-				},
-			]
-		});
+		menuParam.push(menuSudo);
 	};
 
 	menu = Menu.buildFromTemplate(menuParam);
@@ -856,7 +863,11 @@ app.on('activate', () => {
 
 app.on('open-url', (e, url) => {
 	e.preventDefault();
-	send('route', url.replace(`${protocol}://`, '/'));
+
+	if (win) {
+		send('route', url.replace(`${protocol}://`, '/'));
+		win.show();
+	};
 });
 
 function send () {
@@ -866,7 +877,7 @@ function send () {
 };
 
 function shutdown (relaunch) {
-	Util.log('info', 'Shutdown, relaunch: ' + relaunch);
+	Util.log('info', 'AppShutdown, relaunch: ' + relaunch);
 
 	if (relaunch) {
 		Util.log('info', 'Relaunch');

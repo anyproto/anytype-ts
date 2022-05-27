@@ -29,7 +29,7 @@ class Action {
 		};
 
 		if (close) {
-			C.BlockClose(rootId, onClose);
+			C.ObjectClose(rootId, onClose);
 		} else {
 			onClose();
 		};
@@ -72,6 +72,10 @@ class Action {
 
 	duplicate (rootId: string, blockId: string, blockIds: string[], callBack?: (message: any) => void) {
 		C.BlockListDuplicate(rootId, blockIds, blockId, I.BlockPosition.Bottom, (message: any) => {
+			if (message.error.code) {
+				return;
+			};
+
 			const lastId = message.blockIds && message.blockIds.length ? message.blockIds[message.blockIds.length - 1] : '';
 			this.focusToEnd(rootId, lastId);
 
@@ -88,7 +92,11 @@ class Action {
 			return it.type == I.BlockType.Text;
 		});
 		
-		C.BlockUnlink(rootId, blockIds, (message: any) => {
+		C.BlockListDelete(rootId, blockIds, (message: any) => {
+			if (message.error.code) {
+				return;
+			};
+
 			if (next) {
 				this.focusToEnd(rootId, next.id);
 			};
@@ -124,12 +132,13 @@ class Action {
 				onSelectPath();
 			};
 
-			C.Export(paths[0], ids, format, zip, nested, files, (message: any) => {
+			C.ObjectListExport(paths[0], ids, format, zip, nested, files, (message: any) => {
 				if (message.error.code) {
 					return;
 				};
 
 				renderer.send('pathOpen', paths[0]);
+				analytics.event('Export' + I.ExportFormat[format], { middleTime: message.middleTime });
 
 				if (callBack) {
 					callBack(message);

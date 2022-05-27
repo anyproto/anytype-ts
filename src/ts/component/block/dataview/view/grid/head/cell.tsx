@@ -62,6 +62,7 @@ const HeadCell = observer(class HeadCell extends React.Component<Props, {}> {
 		menuStore.open('dataviewRelationEdit', { 
 			element: '#' + Relation.cellId('head', relationKey, ''),
 			horizontal: I.MenuDirection.Center,
+			noFlipY: true,
 			data: {
 				getData: getData,
 				getView: getView,

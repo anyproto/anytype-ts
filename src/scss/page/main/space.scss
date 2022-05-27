@@ -15,20 +15,8 @@
 
 		.editorControls { width: 100%; }
 
-		.head { width: 704px; margin: 0px auto 40px auto; display: flex; }
-		.head {
-			.side.left { flex-shrink: 0; margin-right: 32px; }
-			.side.right { width: 100%; line-height: 96px; }
-			.side.right.big { line-height: 112px; }
-
-			.side.right {
-				.txt { width: 100%; }
-				.editor { -webkit-user-modify: read-write-plaintext-only; z-index: 1; position: relative;  word-break: break-word; }
-				.wrap { position: relative; }
-
-				.title { @include text-header1; }
-				.descr { @include text-paragraph; margin: 7px 0px; }
-			}
+		.headSimple {
+			.side.right { display: none; }
 		}
 
 		.head.withIcon {

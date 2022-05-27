@@ -194,30 +194,26 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		const { param } = this.props;
 		const { data } = param;
 		const skipIds = (data.skipIds || []).concat(Constant.systemRelationKeys);
+		const name = data.filter ? `Create relation "${data.filter}"` : 'Create from scratch';
 
-		let ret: any[] = [];
-		let name = 'Create from scratch';
+		let ret: any[] = [ { relationKey: 'add', name: name } ];
 
 		ret = ret.concat(this.items);
+		ret = ret.filter((it: any) => { return skipIds.indexOf(it.relationKey) < 0; });
 
 		if (data.filter) {
 			const filter = new RegExp(Util.filterFix(data.filter), 'gi');
-			ret = ret.filter((it: any) => { return it.name.match(filter); });
-			name = `Create relation "${data.filter}"`;
+			ret = ret.filter(it => it.name.match(filter));
 		};
 
-		ret = ret.filter((it: any) => { return skipIds.indexOf(it.relationKey) < 0; });
-
 		if (!config.debug.ho) {
-			ret = ret.filter((it: I.Relation) => { return !it.isHidden; });
+			ret = ret.filter(it => !it.isHidden);
 		};
 
 		ret = ret.map((it: any) => {
 			it.id = it.relationKey;
 			return it;
 		});
-
-		ret.unshift({ id: 'add', name: name });
 
 		return ret;
 	};

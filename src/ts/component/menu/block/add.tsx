@@ -441,7 +441,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 				onSelect: () => {
 					$(`#block-${blockId} .value`).text(text);
 
-					DataUtil.blockSetText(rootId, block, text, block.content.marks, true, () => {
+					DataUtil.blockSetText(rootId, block.id, text, block.content.marks, true, () => {
 						focus.set(blockId, { from: length, to: length });
 						focus.apply();
 					});
@@ -510,6 +510,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 		const { rootId, blockId, onSelect, blockCreate } = data;
 		const { filter } = commonStore;
 		const block = blockStore.getLeaf(rootId, blockId);
+
 		if (!block) {
 			return;
 		};
@@ -517,11 +518,11 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 		keyboard.setFocus(false);
 
 		let text = String(data.text || '');
+		let length = text.length;
 		let marks = data.marks || [];
+		let position = length ? I.BlockPosition.Bottom : I.BlockPosition.Replace; 
 
 		const details: any = {};
-		const length = text.length;
-		const position = length ? I.BlockPosition.Bottom : I.BlockPosition.Replace; 
 		const onCommand = (message: any) => {
 			focus.set(message.blockId || blockId, { from: length, to: length });
 			focus.apply();
@@ -529,7 +530,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 
 		const cb = () => {
 			if (item.isTextColor) {
-				C.BlockListSetTextColor(rootId, [ blockId ], item.value, onCommand);
+				C.BlockTextListSetColor(rootId, [ blockId ], item.value, onCommand);
 			};
 
 			if (item.isBgColor) {
@@ -567,6 +568,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 			if (item.isBlock) {
 				let param: any = {
 					type: item.type,
+					bgColor: block.bgColor,
 					content: {},
 				};
 					
@@ -585,6 +587,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 				};
 
 				if (item.type == I.BlockType.Div) {
+					position = I.BlockPosition.Top;
 					param.content.style = item.itemId;
 				};
 
@@ -610,6 +613,11 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 					];
 				};
 
+				if (item.type == I.BlockType.Table) {
+					C.BlockTableCreate(rootId, blockId, position, 3, 3, (message: any) => {
+						
+					});
+				} else
 				if ((item.type == I.BlockType.Text) && (item.itemId != I.TextStyle.Code)) {
 					C.BlockListTurnInto(rootId, [ blockId ], item.itemId, onCommand);
 				} else 
@@ -636,11 +644,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 							});
 						};
 
-						if (type && (type.id == Constant.typeId.set)) {
-							C.BlockCreateSet(rootId, blockId, [], {}, position, cb);
-						} else {
-							DataUtil.pageCreate(rootId, blockId, details, position, template?.id, DataUtil.defaultLinkSettings(), cb);
-						};
+						DataUtil.pageCreate(rootId, blockId, details, position, template?.id, DataUtil.defaultLinkSettings(), cb);
 					};
 
 					const showMenu = () => {
@@ -667,11 +671,13 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 				} else {
 					keyboard.setFocus(false);
 
-					blockCreate(blockId, position, param, (blockId: string) => {
+					blockCreate(blockId, position, param, (newBlockId: string) => {
+						focus.set(blockId, { from: length, to: length });
+						focus.apply();
 
 						// Auto-open BlockRelation suggest menu
 						if ((param.type == I.BlockType.Relation) && !param.content.key) {
-							window.setTimeout(() => { $(`#block-${blockId} .info`).trigger('click'); }, Constant.delay.menu);
+							window.setTimeout(() => { $(`#block-${newBlockId} .info`).trigger('click'); }, Constant.delay.menu);
 						};
 					});
 				};
@@ -684,17 +690,12 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 			onSelect(e, item);
 		};
 
-		text = Util.stringCut(text, filter.from - 1, filter.from + filter.text.length);
 		marks = Mark.adjust(marks, filter.from - 1, -1);
+		
+		// Hack to prevent onBlur save
+		$(`#block-${blockId} #value`).first().text(text);
 
-		// Clear filter in block text
-		if (block) {
-			// Hack to prevent onBlur save
-			$(`#block-${blockId} #value`).first().text(text);
-			DataUtil.blockSetText(rootId, block, text, marks, true, cb);
-		} else {
-			cb();
-		};
+		DataUtil.blockSetText(rootId, block.id, text, marks, true, cb);
 	};
 
 	moveToPage (type: string) {
@@ -711,7 +712,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 			ids = [ blockId ];
 		};
 
-		C.BlockListConvertChildrenToPages(rootId, ids, type);
+		C.BlockListConvertToObjects(rootId, ids, type);
 	};
 
 	resize () {

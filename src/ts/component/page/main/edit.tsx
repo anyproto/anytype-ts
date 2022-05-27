@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { HeaderMainEdit as Header, FooterMainEdit as Footer, EditorPage } from 'ts/component';
+import { Header, FooterMainEdit as Footer, EditorPage } from 'ts/component';
 import { detailStore, blockStore } from 'ts/store';
 import { Onboarding } from 'ts/lib';
 
@@ -29,7 +29,12 @@ class PageMainEdit extends React.Component<Props, {}> {
 
 		return (
 			<React.Fragment>
-				<Header ref={(ref: any) => { this.refHeader = ref; }} {...this.props} rootId={rootId} isPopup={isPopup} />
+				<Header 
+					component="mainEdit" 
+					ref={(ref: any) => { this.refHeader = ref; }} 
+					rootId={rootId}
+					{...this.props} 
+				/>
 
 				<div id="bodyWrapper" className="wrapper">
 					<EditorPage key="editorPage" {...this.props} isPopup={isPopup} rootId={rootId} onOpen={this.onOpen} />

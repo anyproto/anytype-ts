@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Icon, Button, Cover, Loader, IconObject, HeaderMainNavigation as Header, ObjectName, ObjectDescription } from 'ts/component';
+import { Icon, Button, Cover, Loader, IconObject, Header, ObjectName, ObjectDescription } from 'ts/component';
 import { I, C, DataUtil, crumbs, keyboard, Key, focus, translate } from 'ts/lib';
 import { blockStore, popupStore, commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -130,8 +130,9 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 				withScale = false;
 				
 				if (!coverId && !coverType) {
-					coverId = 'c' + Constant.default.cover;
-					coverType = I.CoverType.Image;
+					const cover = commonStore.coverGetDefault();
+					coverId = cover.id;
+					coverType = cover.type;
 				};
 			} else {
 				icon = <IconObject object={item} forceLetter={true} size={48} />;
@@ -157,7 +158,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 
 		return (
 			<div className="wrapper">
-				<Header ref={(ref: any) => { this.refHeader = ref; }} {...this.props} rootId={rootId} isPopup={isPopup} />
+				<Header component="mainNavigation" ref={(ref: any) => { this.refHeader = ref; }} {...this.props} rootId={rootId} />
 
 				{loading ? <Loader id="loader" /> : ''}
 				<div key="sides" className="sides">

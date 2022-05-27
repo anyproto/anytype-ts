@@ -22,6 +22,7 @@ import 'scss/common.scss';
 import 'scss/debug.scss';
 
 import 'scss/component/header.scss';
+import 'scss/component/headSimple.scss';
 import 'scss/component/footer.scss';
 import 'scss/component/cover.scss';
 import 'scss/component/input.scss';
@@ -167,6 +168,7 @@ const hs = require('history');
 const memoryHistory = hs.createMemoryHistory;
 const history = memoryHistory();
 const Constant =  require('json/constant.json');
+const Error = require('json/error.json');
 
 const Routes: RouteElement[] = require('json/route.json');
 const rootStore = {
@@ -344,7 +346,7 @@ class App extends React.Component<Props, State> {
 		const phrase = Storage.get('phrase');
 		const renderer = Util.getRenderer();
 		const restoreKeys = [
-			'pinTime', 'defaultType', 'autoSidebar',
+			'pinTime', 'defaultType', 'autoSidebar', 'timezone',
 		];
 
 		// Check auth phrase with keytar
@@ -528,8 +530,8 @@ class App extends React.Component<Props, State> {
 			if (!auto) {
 				popupStore.open('confirm', {
 					data: {
-						title: translate('popupConfirmUpdateTitle'),
-						text: Util.sprintf(translate('popupConfirmUpdateText'), err),
+						title: translate('popupConfirmUpdateErrorTitle'),
+						text: Util.sprintf(translate('popupConfirmUpdateErrorText'), Error[err] || err),
 						textConfirm: 'Retry',
 						textCancel: 'Later',
 						onConfirm: () => {
@@ -588,7 +590,7 @@ class App extends React.Component<Props, State> {
 		});
 
 		renderer.on('shutdown', (e, relaunch) => {
-			C.Shutdown(() => {
+			C.AppShutdown(() => {
 				renderer.send('shutdown', relaunch);
 			});
 		});
@@ -650,7 +652,7 @@ class App extends React.Component<Props, State> {
 						return;
 					};
 
-					C.ExportTemplates(files[0], (message: any) => {
+					C.TemplateExportAll(files[0], (message: any) => {
 						if (message.error.code) {
 							return;
 						};
@@ -671,7 +673,7 @@ class App extends React.Component<Props, State> {
 						return;
 					};
 
-					C.ExportLocalstore(files[0], [], (message: any) => {
+					C.DebugExportLocalstore(files[0], [], (message: any) => {
 						if (message.error.code) {
 							return;
 						};

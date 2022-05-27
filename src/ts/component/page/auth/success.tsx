@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Frame, Cover, Title, Label, Button, IconObject, HeaderAuth as Header, FooterAuth as Footer, Textarea } from 'ts/component';
+import { Frame, Cover, Title, Label, Button, IconObject, Header, FooterAuth as Footer, Textarea } from 'ts/component';
 import { translate, DataUtil, analytics } from 'ts/lib';
 import { commonStore, authStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -30,13 +30,13 @@ const PageAuthSuccess = observer(class PageAuthSuccess extends React.Component<P
 		return (
 			<div>
 				<Cover {...cover} />
-				<Header />
+				<Header {...this.props} component="authIndex" />
 				<Footer />
 				
 				<Frame>
 					<IconObject size={64} object={{ iconEmoji: '🎉' }} />
 
-					<Title text="Save your keychain phrase" />
+					<Title text="Save your recovery phrase" />
 					<Label text="This phrase is needed to log in on another device and recover data. Please, keep it safe. You can find it anytime in settings." />
 						
 					<Textarea 
@@ -62,7 +62,7 @@ const PageAuthSuccess = observer(class PageAuthSuccess extends React.Component<P
 	};
 
 	onSubmit (e: any) {
-		DataUtil.onAuth();
+		DataUtil.onAuth(authStore.account);
 	};
 
 	onFocusPhrase (e: any) {

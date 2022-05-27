@@ -1,7 +1,7 @@
-import { Account, AccountConfig, AccountStatus, AccountStatusType } from './account';
+import { Account, AccountInfo, AccountConfig, AccountStatus, AccountStatusType } from './account';
 import { 
 	Platform, 
-	DragType, 
+	DropType, 
 	SelectType,
 	CoverType, 
 	CrumbsType, 
@@ -9,11 +9,13 @@ import {
 	Option, 
 	HistoryVersion, 
 	PreviewLink, 
+	ImportFormat,
 	ExportFormat, 
 	Source, 
 	EdgeType, 
 	GraphView, 
-	TabIndex 
+	TabIndex,
+	HeaderComponent,
 } from './common';
 import { ThreadStatus, ThreadSummary, ThreadDevice, ThreadAccount, ThreadCafe, FilesStatus } from './thread';
 import { Progress, ProgressType, ProgressState } from './progress';
@@ -35,6 +37,7 @@ import {
 	Sort,
 	FilterOperator,
 	FilterCondition,
+	FilterQuickOption,
 	Filter,
 	Cell,
 	ContentDataview,
@@ -55,12 +58,13 @@ import { TableAlign, TableRow, TableCell, ContentTable, BlockTable } from './blo
 
 export {
 	Account,
+	AccountInfo,
 	AccountConfig,
 	AccountStatus,
 	AccountStatusType,
 
 	Platform,
-	DragType,
+	DropType,
 	SelectType,
 	CoverType,
 	CrumbsType,
@@ -68,11 +72,13 @@ export {
 	Option,
 	HistoryVersion,
 	PreviewLink,
+	ImportFormat,
 	ExportFormat,
 	Source,
 	EdgeType,
 	GraphView,
 	TabIndex,
+	HeaderComponent,
 	
 	ThreadStatus,
 	ThreadSummary,
@@ -128,6 +134,7 @@ export {
 	Sort,
 	FilterOperator,
 	FilterCondition,
+	FilterQuickOption,
 	Filter,
 	Cell,
 	ContentDataview,

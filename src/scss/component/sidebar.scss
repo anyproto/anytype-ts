@@ -22,6 +22,10 @@
 
 .sidebar.right {
     .resize-h { right: auto; left: -5px; }
+
+	.foot {
+		.icon.collapse { transform: rotateZ(180deg); }
+	}
 }
 
 .sidebar.fixed.right { border-left: 1px solid $colorLightGrey; border-right: 0px; }

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Icon, IconObject, ListIndex, Cover, HeaderMainIndex as Header, FooterMainIndex as Footer, Filter } from 'ts/component';
+import { Icon, IconObject, ListIndex, Cover, Header, FooterMainIndex as Footer, Filter } from 'ts/component';
 import { commonStore, blockStore, detailStore, menuStore, dbStore, popupStore, authStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { I, C, Util, DataUtil, translate, crumbs, Storage, analytics, keyboard, Action } from 'ts/lib';
@@ -150,7 +150,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		return (
 			<div>
 				<Cover {...cover} className="main" />
-				<Header {...this.props} />
+				<Header {...this.props} component="mainIndex" />
 				<Footer {...this.props} />
 				
 				<div id="body" className="wrapper">
@@ -631,6 +631,8 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		this.selectionRender();
 
 		C.ObjectListSetIsArchived(ids, v, () => {
+			analytics.event(v ? 'MoveToBin' : 'RestoreFromBin', { count: items.length });
+
 			items.forEach((it: any) => {
 				const object = this.getObject(it);
 				if (object.type == Constant.typeId.type) {
@@ -838,7 +840,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		const nidx = element.childrenIds.indexOf(target.id);
 
 		blockStore.updateStructure(root, root, arrayMove(element.childrenIds, oidx, nidx));
-		C.BlockListMove(root, root, [ current.id ], target.id, position);
+		C.BlockListMoveToExistingObject(root, root, [ current.id ], target.id, position);
 
 		analytics.event('ReorderObjects', { route: 'ScreenHome' });
 	};

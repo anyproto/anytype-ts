@@ -1,4 +1,4 @@
-import { I, M, Decode, DataUtil, Util, Encode } from 'ts/lib';
+import { I, M, Decode, Util, Encode } from 'ts/lib';
 
 const Commands = require('lib/pb/protos/commands_pb');
 const Model = require('lib/pkg/lib/pb/model/protos/models_pb.js');
@@ -31,8 +31,21 @@ const Mapper = {
 		Account: (obj: any): I.Account => {
 			return {
 				id: obj.getId(),
+				info: obj.hasInfo() ? Mapper.From.AccountInfo(obj.getInfo()) : null,
 				config: obj.hasConfig() ? Mapper.From.AccountConfig(obj.getConfig()) : null,
 				status: obj.hasStatus() ? Mapper.From.AccountStatus(obj.getStatus()) : null,
+			};
+		},
+
+		AccountInfo: (obj: any): I.AccountInfo => {
+			return {
+				homeObjectId: obj.getHomeobjectid(),
+				profileObjectId: obj.getProfileobjectid(),
+				gatewayUrl: obj.getGatewayurl(),
+				marketplaceTypeObjectId: obj.getMarketplacetypeobjectid(),
+				marketplaceTemplateObjectId: obj.getMarketplacetemplateobjectid(),
+				marketplaceRelationObjectId: obj.getMarketplacerelationobjectid(),
+				deviceId: obj.getMarketplacerelationobjectid(),
 			};
 		},
 
@@ -117,9 +130,11 @@ const Mapper = {
 
 		BlockLink: (obj: any) => {
 			return {
-				style: obj.getStyle(),
 				targetBlockId: obj.getTargetblockid(),
-				fields: Decode.decodeStruct(obj.getFields()),
+				iconSize: obj.getIconsize(),
+				cardStyle: obj.getCardstyle(),
+				description: obj.getDescription(),
+				relations: obj.getRelationsList() || [],
 			};
 		},
 
@@ -182,10 +197,15 @@ const Mapper = {
 		BlockTableOfContents: (obj: any) => {
 			return {};
 		},
+
+		BlockTable: (obj: any) => {
+			return {};
+		},
 	
 		Block: (obj: any): I.Block => {
 			let type = Mapper.BlockType(obj.getContentCase());
 			let fn = 'get' + Util.ucFirst(type);
+			let fm = Util.toUpperCamelCase('block-' + type);
 			let content = obj[fn] ? obj[fn]() : {};
 	
 			let item: I.Block = {
@@ -198,22 +218,11 @@ const Mapper = {
 				bgColor: obj.getBackgroundcolor(),
 			};
 
-			const fm = Util.toUpperCamelCase('block-' + type);
 			if (Mapper.From[fm]) {
 				item.content = Mapper.From[fm](content);
 			} else {
 				console.log('[Mapper] From does not exist: ', fm);
 			};
-
-			if (type == I.BlockType.Table) {
-				item.content = new M.BlockContentTable({
-					columnCount: content.getColumncount(),
-					sortIndex: content.getSortindex(),
-					sortType: content.getSorttype(),
-					rows: (content.getRowsList() || []).map(Mapper.From.TableRow),
-				});
-			};
-	
 			return item;
 		},
 
@@ -312,6 +321,7 @@ const Mapper = {
 				relationKey: obj.getRelationkey(),
 				operator: obj.getOperator(),
 				condition: obj.getCondition(),
+				//quickOption: obj.getQuickoption(),
 				value: obj.hasValue() ? Decode.decodeValue(obj.getValue()) : null,
 			};
 		},
@@ -407,21 +417,6 @@ const Mapper = {
             };
         },
 
-		GraphNode: (obj: any) => {
-            return {
-                id: obj.getId(),
-				type: obj.getType(),
-				name: obj.getName(),
-				layout: obj.getLayout(),
-				description: obj.getDescription(),
-				snippet: obj.getSnippet(),
-				iconImage: obj.getIconimage(),
-				iconEmoji: obj.getIconemoji(),
-				done: obj.getDone(),
-				relationFormat: obj.getRelationformat(),
-            };
-        },
-
 		UnsplashPicture: (obj: any) => {
 			return {
                 id: obj.getId(),
@@ -453,14 +448,14 @@ const Mapper = {
 		},
 
 		Details: (obj: any) => {
-			const item = new Rpc.Block.Set.Details.Detail();
+			const item = new Rpc.Object.SetDetails.Detail();
 			item.setKey(obj.key);
 			item.setValue(Encode.encodeValue(obj.value));
 			return item;
 		},
 
 		Fields: (obj: any) => {
-			const item = new Rpc.BlockList.Set.Fields.Request.BlockField();
+			const item = new Rpc.Block.ListSetFields.Request.BlockField();
 
 			item.setBlockid(obj.blockId);
 			item.setFields(Encode.encodeStruct(obj.fields || {}));
@@ -521,8 +516,11 @@ const Mapper = {
 		BlockLink: (obj: any) => {
 			const content = new Model.Block.Content.Link();
 	
-			content.setStyle(obj.style);
 			content.setTargetblockid(obj.targetBlockId);
+			content.setIconsize(obj.iconSize);
+			content.setCardstyle(obj.cardStyle);
+			content.setDescription(obj.description);
+			content.setRelationsList(obj.relations);
 
 			return content;
 		},
@@ -646,6 +644,7 @@ const Mapper = {
 			item.setRelationkey(obj.relationKey);
 			item.setOperator(obj.operator);
 			item.setCondition(obj.condition);
+			//item.setQuickoption(obj.quickOption);
 			item.setValue(Encode.encodeValue(obj.value));
 
 			return item;

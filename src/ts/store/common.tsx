@@ -1,11 +1,11 @@
 import { observable, action, computed, set, makeObservable } from 'mobx';
-import { I, Storage, Util } from 'ts/lib';
+import { I, Storage, Util, DataUtil } from 'ts/lib';
 import { analytics } from 'ts/lib';
+import { blockStore } from 'ts/store';
 
 interface Preview {
 	type: I.MarkType,
 	param: string;
-	object: any;
 	element: any;
 	range: I.TextRange;
 	marks: I.Mark[];
@@ -43,7 +43,7 @@ class CommonStore {
     public progressObj: I.Progress = null;
     public filterObj: Filter = { from: 0, text: '' };
     public gatewayUrl: string = '';
-    public previewObj: Preview = { type: 0, param: '', object: null, element: null, range: { from: 0, to: 0 }, marks: [] };
+    public previewObj: Preview = { type: 0, param: '', element: null, range: { from: 0, to: 0 }, marks: [] };
     public configObj: any = {};
     public cellId: string = '';
 	public themeId: string = '';
@@ -54,6 +54,7 @@ class CommonStore {
 	public sidebarOldFixed: boolean = false;
 	public isFullScreen: boolean = false;
 	public autoSidebarValue: boolean = false;
+	public timezoneValue: string = 'gmt';
 
     constructor() {
         makeObservable(this, {
@@ -69,6 +70,7 @@ class CommonStore {
 			nativeThemeIsDark: observable,
 			typeId: observable,
 			isFullScreen: observable,
+			timezoneValue: observable,
             config: computed,
             progress: computed,
             preview: computed,
@@ -79,6 +81,7 @@ class CommonStore {
 			theme: computed,
 			nativeTheme: computed,
 			sidebar: computed,
+			timezone: computed,
             coverSet: action,
             coverSetUploadedImage: action,
             gatewaySet: action,
@@ -150,6 +153,19 @@ class CommonStore {
 		return this.sidebarObj;
 	};
 
+	get timezone(): string {
+		return String(this.timezoneValue || 'gmt');
+	};
+
+	timezoneSet (v: string) {
+		this.timezoneValue = String(v || '');
+		Storage.set('timezone', this.timezoneValue);
+	};
+
+	timezoneGet () {
+		return DataUtil.timezones().find(it => it.id == this.timezone);
+	};
+
     coverSet (id: string, image: string, type: I.CoverType) {
 		this.coverObj = { id, image, type };
 		Storage.set('cover', this.coverObj);
@@ -165,7 +181,12 @@ class CommonStore {
 	};
 
     coverSetDefault () {
-		this.coverSet('c' + Constant.default.cover, '', I.CoverType.Image);
+		const cover = this.coverGetDefault();
+		this.coverSet(cover.id, '', cover.type);
+	};
+
+	coverGetDefault () {
+		return { id: Constant.default.cover, type: I.CoverType.Gradient };
 	};
 
     gatewaySet (v: string) {
@@ -180,7 +201,7 @@ class CommonStore {
     imageUrl (hash: string, width: number) {
 		hash = String(hash || '');
 		width = Number(width) || 0;
-		return this.gateway + '/image/' + hash + '?width=' + width;
+		return `${this.gateway}/image/${hash}?width=${width}`;
 	};
 
     progressSet (v: I.Progress) {
@@ -209,7 +230,7 @@ class CommonStore {
 	};
 
 	previewClear () {
-		this.previewObj = { type: 0, param: '', object: null, element: null, range: { from: 0, to: 0 }, marks: [] };
+		this.previewObj = { type: 0, param: '', element: null, range: { from: 0, to: 0 }, marks: [] };
 	};
 
 	defaultTypeSet (v: string) {
@@ -238,15 +259,19 @@ class CommonStore {
 		this.themeId = v;
 		Storage.set('theme', v);
 		
-		this.themeClass();
+		this.setThemeClass();
 	};
 
-	themeClass () {
+	getThemeClass () {
 		if (this.themeId == 'system') {
-			Util.addBodyClass('theme', this.nativeThemeIsDark ? 'dark' : '');
+			return this.nativeThemeIsDark ? 'dark' : '';
 		} else {
-			Util.addBodyClass('theme', this.themeId);
+			return this.themeId;
 		};
+	};
+
+	setThemeClass() {
+		Util.addBodyClass('theme', this.getThemeClass());
 	};
 
 	nativeThemeSet (isDark: boolean) {
@@ -305,6 +330,21 @@ class CommonStore {
 		const win = $(window);
 		const wh = win.height() - Util.sizeHeader();
 		return wh - 144;
+	};
+
+	infoSet (info: I.AccountInfo) {
+		console.log('[commonStore.infoSet]', info);
+
+		blockStore.rootSet(info.homeObjectId);
+		blockStore.profileSet(info.profileObjectId);
+
+		blockStore.storeSetType(info.marketplaceTypeObjectId);
+		blockStore.storeSetTemplate(info.marketplaceTemplateObjectId);
+		blockStore.storeSetRelation(info.marketplaceRelationObjectId);
+
+		commonStore.gatewaySet(info.gatewayUrl);
+
+		analytics.device(info.deviceId);
 	};
 
 	configSet (config: any, force: boolean) {
