@@ -136,8 +136,6 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<Props, 
 		const { data } = param;
 		const { onChange } = data;
 
-		console.log('SET VALUE', value);
-
 		menuStore.updateData(id, { value });
 
 		if (save) {

@@ -288,18 +288,19 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 				
 				<div className={cd.join(' ')}>
 					{targetTop}
-
 					{object}
 					{empty}
 					{additional ? <div className="additional">{additional}</div> : ''}
 
-					<ListChildren 
-						key={'block-children-' + id} 
-						{...this.props} 
-						onMouseMove={this.onMouseMove} 
-						onMouseLeave={this.onMouseLeave} 
-						onResizeStart={this.onResizeStart} 
-					/>
+					{block.canHaveChildren() ? (
+						<ListChildren 
+							key={'block-children-' + id} 
+							{...this.props} 
+							onMouseMove={this.onMouseMove} 
+							onMouseLeave={this.onMouseLeave} 
+							onResizeStart={this.onResizeStart} 
+						/>
+					) : ''}
 
 					{targetBot}
 					{targetColumn}

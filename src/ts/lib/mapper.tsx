@@ -22,6 +22,9 @@ const Mapper = {
 		if (v == V.FEATUREDRELATIONS)	 t = I.BlockType.Featured;
 		if (v == V.LATEX)				 t = I.BlockType.Latex;
 		if (v == V.TABLE)				 t = I.BlockType.Table;
+		if (v == V.TABLECOLUMN)			 t = I.BlockType.TableColumn;
+		if (v == V.TABLEROW)			 t = I.BlockType.TableRow;
+		if (v == V.TABLECELL)			 t = I.BlockType.TableCell;
 		if (v == V.TABLEOFCONTENTS)		 t = I.BlockType.TableOfContents;
 		return t;
 	},
@@ -202,6 +205,18 @@ const Mapper = {
 			return {};
 		},
 	
+		BlockTableColumn: (obj: any) => {
+			return {};
+		},
+
+		BlockTableRow: (obj: any) => {
+			return {};
+		},
+
+		BlockTableCell: (obj: any) => {
+			return {};
+		},
+
 		Block: (obj: any): I.Block => {
 			let type = Mapper.BlockType(obj.getContentCase());
 			let fn = 'get' + Util.ucFirst(type);
@@ -224,23 +239,6 @@ const Mapper = {
 				console.log('[Mapper] From does not exist: ', fm);
 			};
 			return item;
-		},
-
-		TableRow: (obj: any): any => {
-			return new M.TableRow({
-				cells: (obj.getCellsList() || []).map(Mapper.From.TableCell),
-			});
-		},
-
-		TableCell: (obj: any): any => {
-			return new M.TableCell({
-				value: obj.getValue(),
-				horizontal: obj.getHorizontal(),
-				vertical: obj.getVertical(),
-				color: obj.getColor(),
-				background: obj.getBackground(),
-				width: obj.getWidth(),
-			});
 		},
 
 		Restrictions: (obj: any): any => {
@@ -560,11 +558,6 @@ const Mapper = {
 		BlockTable: (obj: any) => {
 			const content = new Model.Block.Content.Table();
 
-			content.setColumncount(obj.columnCount);
-			content.setSortindex(obj.sortIndex);
-			content.setSorttype(obj.sortType);
-			content.setRowsList(obj.rows.map(Mapper.To.TableRow));
-
 			return content;
 		},
 
@@ -602,27 +595,6 @@ const Mapper = {
 			};
 
 			return block;
-		},
-
-		TableRow: (obj: any) => {
-			const item = new Model.Block.Content.Table.Row();
-
-			item.setCellsList(obj.cells.map(Mapper.To.TableCell));
-
-			return item;
-		},
-
-		TableCell: (obj: any) => {
-			const item = new Model.Block.Content.Table.Cell();
-
-			item.setValue(obj.value);
-			item.setHorizontal(obj.horizontal);
-			item.setVertical(obj.vertical);
-			item.setColor(obj.color);
-			item.setBackground(obj.background);
-			item.setWidth(obj.width);
-
-			return item;
 		},
 
 		ViewRelation: (obj: any) => {

@@ -134,8 +134,14 @@ export interface Block {
 	isLayoutDiv?(): boolean;
 	isLayoutHeader?(): boolean;
 	isLayoutFooter?(): boolean;
+	isLayoutTableRows?(): boolean;
+	isLayoutTableColumns?(): boolean;
 
 	isTable?(): boolean;
+	isTableColumn?(): boolean;
+	isTableRow?(): boolean;
+	isTableCell?(): boolean;
+
 	isBookmark?(): boolean;
 	isLink?(): boolean;
 

@@ -595,15 +595,6 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 					param.content.key = item.relationKey;
 				};
 
-				if (item.type == I.BlockType.Table) {
-					param.content.columnCount = 3;
-					param.content.rows = [ 
-						new M.TableRow({ cells: [] }).fill(3),
-						new M.TableRow({ cells: [] }).fill(3),
-						new M.TableRow({ cells: [] }).fill(3),
-					];
-				};
-				
 				if (item.type == I.BlockType.Dataview) {
 					param.content.views = [
 						{ 

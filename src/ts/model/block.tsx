@@ -10,7 +10,7 @@ import BlockContentBookmark from './content/bookmark';
 import BlockContentText from './content/text';
 import BlockContentFile from './content/file';
 import BlockContentDataview from './content/dataview';
-import { BlockContentTable } from './content/table';
+import BlockContentTable from './content/table';
 
 const ContentModel = {
 	layout:		 BlockContentLayout,
@@ -233,12 +233,32 @@ class Block implements I.Block {
 	isLayoutFooter (): boolean {
 		return this.isLayout() && (this.content.style == I.LayoutStyle.Footer);
 	};
+
+	isLayoutTableRows (): boolean {
+		return this.isLayout() && (this.content.style == I.LayoutStyle.TableRows);
+	};
+	
+	isLayoutTableColumns (): boolean {
+		return this.isLayout() && (this.content.style == I.LayoutStyle.TableColumns);
+	};
 	
 	isLink (): boolean {
 		return this.type == I.BlockType.Link;
 	};
 
 	isTable (): boolean {
+		return this.type == I.BlockType.Table;
+	};
+
+	isTableColumn (): boolean {
+		return this.type == I.BlockType.TableColumn;
+	};
+
+	isTableRow (): boolean {
+		return this.type == I.BlockType.TableRow;
+	};
+
+	isTableCell (): boolean {
 		return this.type == I.BlockType.Table;
 	};
 	

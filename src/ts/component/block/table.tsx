@@ -37,6 +37,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 	constructor (props: any) {
 		super(props);
 
+		/*
 		this.onFocus = this.onFocus.bind(this);
 		this.onBlur = this.onBlur.bind(this);
 		this.onKeyDown = this.onKeyDown.bind(this);
@@ -45,18 +46,47 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		this.onSortStart = this.onSortStart.bind(this);
 		this.onSortEndColumn = this.onSortEndColumn.bind(this);
 		this.onSortEndRow = this.onSortEndRow.bind(this);
+		*/
 	};
 
 	render () {
-		const { readonly, block } = this.props;
-		const { columnCount, sortIndex, sortType, rows } = block.content;
+		const { rootId, block, readonly } = this.props;
+		//const { columnCount, sortIndex, sortType, rows } = block.content;
 		const cn = [ 'wrap', 'focusable', 'c' + block.id ];
+		/*
 		const columns = [];
 		const cr = rows.length;
+		*/
+		const childrenIds = blockStore.getChildrenIds(rootId, block.id);
+		const children = blockStore.getChildren(rootId, block.id);
 
-		for (let i = 0; i < columnCount; ++i) {
-			columns.push(i);
-		};
+		const columnContainer = children.find(it => it.isLayoutTableColumns());
+		const columns = blockStore.getChildren(rootId, columnContainer.id, it => it.isTableColumn());
+
+		const rowContainer = children.find(it => it.isLayoutTableRows());
+		const rows = blockStore.getChildren(rootId, rowContainer.id, it => it.isTableRow());
+
+
+		console.log(JSON.stringify(childrenIds, null, 3));
+		console.log(JSON.stringify(children, null, 3));
+		console.log(JSON.stringify(columns, null, 3));
+		console.log(JSON.stringify(rows, null, 3));
+
+		const HandleColumn = SortableHandle((item: any) => (
+			<div 
+				className={[ 'icon', 'handleColumn', (item.id == 0 ? 'isFirst' : '') ].join(' ')}
+				//onClick={(e: any) => { this.onOptions(e, Key.Column, 0, item.id); }}
+				//onContextMenu={(e: any) => { this.onOptions(e, Key.Column, 0, item.id); }}
+			/>
+		));
+
+		const HandleRow = SortableHandle((item: any) => (
+			<div 
+				className={[ 'icon', 'handleRow', (item.id == 0 ? 'isFirst' : '') ].join(' ')}
+				//onClick={(e: any) => { this.onOptions(e, Key.Row, item.id, 0); }}
+				//onContextMenu={(e: any) => { this.onOptions(e, Key.Row, item.id, 0); }}
+			/>
+		));
 
 		const Editor = (item: any) => (
 			<div
@@ -64,11 +94,11 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				className="value isEditing"
 				contentEditable={!readonly}
 				suppressContentEditableWarning={true}
-				onKeyDown={this.onKeyDown}
-				onKeyUp={this.onKeyUp}
-				onFocus={this.onFocus}
-				onBlur={this.onBlur}
-				onSelect={this.onSelect}
+				//onKeyDown={this.onKeyDown}
+				//onKeyUp={this.onKeyUp}
+				//onFocus={this.onFocus}
+				//onBlur={this.onBlur}
+				//onSelect={this.onSelect}
 				onPaste={() => {}}
 				onMouseDown={() => {}}
 				onMouseUp={() => {}}
@@ -81,32 +111,16 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			</div>
 		);
 
-		const HandleColumn = SortableHandle((item: any) => (
-			<div 
-				className={[ 'icon', 'handleColumn', (item.id == 0 ? 'isFirst' : '') ].join(' ')}
-				onClick={(e: any) => { this.onOptions(e, Key.Column, 0, item.id); }}
-				onContextMenu={(e: any) => { this.onOptions(e, Key.Column, 0, item.id); }}
-			/>
-		));
-
-		const HandleRow = SortableHandle((item: any) => (
-			<div 
-				className={[ 'icon', 'handleRow', (item.id == 0 ? 'isFirst' : '') ].join(' ')}
-				onClick={(e: any) => { this.onOptions(e, Key.Row, item.id, 0); }}
-				onContextMenu={(e: any) => { this.onOptions(e, Key.Row, item.id, 0); }}
-			/>
-		));
-
-		const Cell = (item: any) => {
-			const cell = (item.row.cells || [])[item.id] || {};
-			const cn = [ 'cell', 'column' + item.id, 'align-v' + cell.vertical, 'align-h' + cell.horizontal ];
+		const Cell = (cell: any) => {
+			const cn = [ 'cell', 'column' + cell.id, 'align-v' + cell.vertical, 'align-h' + cell.horizontal ];
 			const css: any = {};
-			const isHead = item.row.id == 0;
-			const isEditing = this.isEditing && (item.row.id == this.focusObj.row) && (item.id == this.focusObj.column);
+			const isHead = false;
+			const isEditing = false;
 			
 			let nextSort: I.SortType = I.SortType.Asc;
 			let acn = [ 'arrow'];
 
+			/*
 			if (sortIndex == item.id) {
 				acn.push('c' + sortType);
 				acn.push('show');
@@ -114,6 +128,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			} else {
 				acn.push('c' + I.SortType.Asc);
 			};
+			*/
 
 			if (isEditing) {
 				cn.push('isEditing');
@@ -134,7 +149,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			const arrow = (
 				<Icon 
 					className={acn.join(' ')} 
-					onClick={(e: any) => { this.onSort(e, item.id, nextSort); }}
+					//onClick={(e: any) => { this.onSort(e, item.id, nextSort); }}
 				/>
 			);
 
@@ -142,27 +157,22 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				<div
 					className={cn.join(' ')}
 					style={css}
-					onClick={() => { this.setEditing(item.row.id, item.id, null); }}
-					onContextMenu={(e: any) => { this.onOptions(e, Key.Cell, item.row.id, item.id); }}
+					//onClick={() => { this.setEditing(item.row.id, item.id, null); }}
+					//onContextMenu={(e: any) => { this.onOptions(e, Key.Cell, item.row.id, item.id); }}
 				>
-					{isHead ? <HandleColumn {...item} /> : ''}
-					{isEditing && !readonly ? (
-						<Editor 
-							id={[ 'value', item.row.id, item.id ].join('-')} 
-							value={cell.value} 
-						/>
-					) : (
-						<div className="value">{this.renderCell(item.row.id, item.id)}</div>
-					)}
 
 					{isHead ? arrow : ''}
-					<div className="resize" onMouseDown={(e: any) => { this.onResizeStart(e, item.id); }} />
+					{/*<div className="resize" onMouseDown={(e: any) => { this.onResizeStart(e, item.id); }} />*/}
 				</div>
 			);
 		};
 
 		const Row = (row: any) => {
 			const isHead = row.id == 0;
+			const children = blockStore.getChildren(rootId, row.id);
+
+			console.log(children);
+
 			return (
 				<div className="row">
 					{isHead ? <div className="fillRect"/ > : ''}
@@ -171,9 +181,9 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 
 					{columns.map((column: any, i: number) => {
 						if (isHead) {
-							return <CellSortableElement key={i} row={row} id={i} index={i} />;
+							return <CellSortableElement key={i} {...children[i]} />;
 						} else {
-							return <Cell key={i} row={row} id={i} index={i} />	;
+							return <Cell key={i} {...children[i]} />	;
 						};
 					})}
 				</div>
@@ -206,8 +216,8 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 									transitionDuration={150}
 									distance={10}
 									useDragHandle={true}
-									onSortStart={this.onSortStart}
-									onSortEnd={this.onSortEndColumn}
+									//onSortStart={this.onSortStart}
+									//onSortEnd={this.onSortEndColumn}
 									helperClass="isDragging"
 									helperContainer={() => { return $(`#block-${block.id} .table`).get(0); }}
 									id={i}
@@ -235,8 +245,8 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 						transitionDuration={150}
 						distance={10}
 						useDragHandle={true}
-						onSortStart={this.onSortStart}
-						onSortEnd={this.onSortEndRow}
+						//onSortStart={this.onSortStart}
+						//onSortEnd={this.onSortEndRow}
 						helperClass="isDragging"
 						helperContainer={() => { return $(`#block-${block.id} .table`).get(0); }}
 					/>
@@ -250,13 +260,14 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 	};
 
 	componentDidUpdate () {
-		this.focusApply();
+		//this.focusApply();
 	};
 	
 	componentWillUnmount () {
 		this._isMounted = false;
 	};
 
+	/*
 	setEditing (row: number, column: number, range: any) {
 		const { readonly } = this.props;
 		const isEditing = this.isEditing && (row == this.focusObj.row) && (column == this.focusObj.column);
@@ -465,13 +476,11 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		const { rootId, block } = this.props;
 
 		blockStore.update(rootId, { ...block });
-		/*
 		C.BlockUpdateContent({ ...block }, rootId, block.id, () => { 
 			if (update) {
 				this.forceUpdate(); 
 			};
 		});
-		*/
 	};
 
 	getValue (obj: any): string {
@@ -818,6 +827,8 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			selection.preventSelect(v);
 		};
 	};
+
+*/
 
 });
 
