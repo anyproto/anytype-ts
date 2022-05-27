@@ -89,6 +89,7 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 		let empty = null;
 		let setRef = (ref: any) => { this.ref = ref; };
 		let additional = null;
+		let renderChildren = true;
 		
 		if (className) {
 			cn.push(className);
@@ -212,6 +213,7 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 				break;
 
 			case I.BlockType.Table:
+				renderChildren = false;
 				blockComponent = <BlockTable ref={setRef} {...this.props} />;
 				break;
 				
@@ -292,7 +294,7 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 					{empty}
 					{additional ? <div className="additional">{additional}</div> : ''}
 
-					{block.canHaveChildren() ? (
+					{renderChildren ? (
 						<ListChildren 
 							key={'block-children-' + id} 
 							{...this.props} 

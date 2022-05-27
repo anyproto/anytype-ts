@@ -5,7 +5,10 @@
 	.block.blockTable { 
 		.scrollWrap { width: 100%; padding-bottom: 10px; }
 
-		.table { display: inline-block; width: 100%; height: 100%; border-collapse: collapse; font-family: 'Inter'; }
+		.table { 
+			display: inline-block; width: 100%; height: 100%; border-collapse: collapse; font-family: 'Inter'; border-top: 1px solid $colorBorderDark;
+			border-left: 1px solid $colorBorderDark;
+		}
 		
 		.row { display: flex; position: relative; }
 		.row.isDragging { 
@@ -33,9 +36,6 @@
 		.cell { 
 			border-right: 1px solid $colorBorderDark; border-bottom: 1px solid $colorBorderDark; 
 			@include text-common; vertical-align: top; position: relative; cursor: text; flex-shrink: 0;
-		}
-		.cell.isHead { font-weight: bold; white-space: nowrap; height: 100%; vertical-align: inherit; }
-		.cell.isHead {
 		}
 		.cell.isDragging { border-left: 1px solid $colorBorderDark; border-top: 1px solid $colorBorderDark; background: #fff; }
 		.cell.isDragging.isHead { border-top: 0px; }

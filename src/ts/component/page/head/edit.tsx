@@ -54,6 +54,8 @@ const PageHeadEdit = observer(class PageHeadEdit extends React.Component<Props, 
 			icon.type = I.BlockType.IconUser;
 		};
 
+		console.log(header);
+
 		return (
 			<div>
 				<div id="editorSize" className="dragWrap">
