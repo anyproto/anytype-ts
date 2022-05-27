@@ -4,6 +4,7 @@ import { DragLayer } from 'ts/component';
 import { I, C, focus, keyboard, Util, scrollOnMove, analytics } from 'ts/lib';
 import { blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
+import { throttle } from 'lodash';
 
 interface Props {
 	dataset?: any;
@@ -186,6 +187,8 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 		const { selection } = dataset || {};
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
+		const container = Util.getScrollContainer(isPopup);
+		const sidebar = $('#sidebar');
 		const layer = $('#dragLayer');
 		const body = $('body');
 
@@ -194,7 +197,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 
 		console.log('[dragProvider.onDragStart]', type, ids);
 
-		this.top = Util.getScrollContainer(isPopup).scrollTop();
+		this.top = container.scrollTop();
 		this.refLayer.show(rootId, type, ids, component);
 		this.set(type, ids);
 		this.unbind();
@@ -208,6 +211,9 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 
 		win.on('drag.drag', (e: any) => { this.onDragMove(e); });
 		win.on('dragend.drag', (e: any) => { this.onDragEnd(e); });
+
+		container.off('scroll.drag').on('scroll.drag', throttle((e: any) => { this.onScroll(); }, 20));
+		sidebar.off('scroll.drag').on('scroll.drag', throttle((e: any) => { this.onScroll(); }, 20));
 
 		$('.colResize.active').removeClass('active');
 		scrollOnMove.onMouseDown(e, isPopup);
@@ -235,7 +241,10 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 	onDragEnd (e: any) {
 		const { dataset } = this.props;
 		const { selection } = dataset || {};
+		const isPopup = keyboard.isPopup();
 		const node = $(ReactDOM.findDOMNode(this));
+		const container = Util.getScrollContainer(isPopup);
+		const sidebar = $('#sidebar');
 		const body = $('body');
 
 		this.refLayer.hide();
@@ -245,6 +254,9 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 		keyboard.setDrag(false);
 		node.removeClass('isDragging');
 		body.removeClass('isDragging');
+
+		container.off('scroll.drag');
+		sidebar.off('scroll.drag');
 
 		if (selection) {
 			selection.preventSelect(false);
@@ -335,6 +347,17 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 					C.BlockCreate(targetContextId, targetId, position, param);
 				});
 				break;
+		};
+	};
+
+	onScroll () {
+		const isPopup = keyboard.isPopup();
+		const container = Util.getScrollContainer(isPopup);
+		const top = container.scrollTop();
+
+		for (let [ key, value ] of this.objectData) {
+			let rect = value.obj.get(0).getBoundingClientRect() as DOMRect;
+			this.objectData.set(key, { ...value, y: rect.y + top });
 		};
 	};
 
