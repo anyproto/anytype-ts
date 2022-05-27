@@ -991,6 +991,8 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 				element: el,
 				rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
 				offsetX: rect ? 0 : Constant.size.blockMenu,
+				noFlipX: false,
+				noFlipY: false,
 				onClose: () => {
 					this.preventSaveOnBlur = false;
 				},

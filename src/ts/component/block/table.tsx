@@ -1,20 +1,13 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, C, M, Util, keyboard } from 'ts/lib';
+import { I, C, keyboard } from 'ts/lib';
 import { Icon, Block } from 'ts/component';
 import { observer } from 'mobx-react';
-import { getRange, setRange } from 'selection-ranges';
 import { menuStore, blockStore } from 'ts/store';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import arrayMove from 'array-move';
 
 interface Props extends I.BlockComponent {};
-
-interface Focus {
-	row: number;
-	column: number;
-	range: I.TextRange;
-};
 
 const Constant = require('json/constant.json');
 const $ = require('jquery');
@@ -37,6 +30,15 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		const { rootId, block, readonly } = this.props;
 		const { rows, columns } = this.getData();
 		const cn = [ 'wrap', 'focusable', 'c' + block.id ];
+		const children = blockStore.getChildren(rootId, block.id);
+
+		// Subscriptions
+		rows.forEach(child => {
+			const { bgColor } = child;
+		});
+		columns.forEach(child => {
+			const { bgColor } = child;
+		});
 
 		const HandleColumn = SortableHandle((item: any) => (
 			<div 

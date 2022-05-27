@@ -401,6 +401,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		// Find hovered block by mouse coords
 		items.each((i: number, item: any) => {
 			let obj = $(item);
+			
 			if (obj.hasClass('noPlus')) {
 				return;
 			};

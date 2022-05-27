@@ -61,8 +61,8 @@
 				.wrapContent { width: 100%; }
 				.dropTarget { padding: 0px !important; }
 
-				#value { padding: 4px 10px; }
-				.placeholder { left: 10px; top: 4px; width: calc(100% - 20px); height: calc(100% - 8px) }
+				#value { padding: 4px 10px 2px 10px; }
+				.placeholder { left: 10px; top: 4px; width: calc(100% - 20px); height: calc(100% - 6px); }
 			}
 
 			.icon.arrow { 
