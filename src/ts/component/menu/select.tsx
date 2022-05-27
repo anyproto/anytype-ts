@@ -239,7 +239,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 		};
 
 		if (data.filter) {
-			items = items.filter((it: any) => { return it.name.match(filter); });
+			items = items.filter(it => String(it.name || '').match(filter));
 		};
 		return items || [];
 	};

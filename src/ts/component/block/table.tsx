@@ -1,6 +1,5 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { RouteComponentProps } from 'react-router';
 import { I, C, M, Util, keyboard } from 'ts/lib';
 import { Icon, Block } from 'ts/component';
 import { observer } from 'mobx-react';
@@ -20,13 +19,6 @@ interface Focus {
 const Constant = require('json/constant.json');
 const $ = require('jquery');
 
-enum Key {
-	None	 = '',
-	Column	 = 'columns',
-	Row		 = 'rows',
-	Cell	 = 'cell',
-};
-
 const BlockTable = observer(class BlockTable extends React.Component<Props, {}> {
 
 	_isMounted: boolean = false;
@@ -43,10 +35,11 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		this.onKeyDown = this.onKeyDown.bind(this);
 		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onSelect = this.onSelect.bind(this);
+		*/
+
 		this.onSortStart = this.onSortStart.bind(this);
 		this.onSortEndColumn = this.onSortEndColumn.bind(this);
 		this.onSortEndRow = this.onSortEndRow.bind(this);
-		*/
 	};
 
 	render () {
@@ -68,49 +61,30 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 
 		const HandleColumn = SortableHandle((item: any) => (
 			<div 
-				className={[ 'icon', 'handleColumn', (item.id == 0 ? 'isFirst' : '') ].join(' ')}
-				//onClick={(e: any) => { this.onOptions(e, Key.Column, 0, item.id); }}
-				//onContextMenu={(e: any) => { this.onOptions(e, Key.Column, 0, item.id); }}
+				className={[ 'icon', 'handleColumn' ].join(' ')}
+				onClick={(e: any) => { this.onOptions(e, item.id); }}
+				onContextMenu={(e: any) => { this.onOptions(e, item.id); }}
 			/>
 		));
 
 		const HandleRow = SortableHandle((item: any) => (
 			<div 
-				className={[ 'icon', 'handleRow', (item.id == 0 ? 'isFirst' : '') ].join(' ')}
-				//onClick={(e: any) => { this.onOptions(e, Key.Row, item.id, 0); }}
-				//onContextMenu={(e: any) => { this.onOptions(e, Key.Row, item.id, 0); }}
+				className={[ 'icon', 'handleRow' ].join(' ')}
+				onClick={(e: any) => { this.onOptions(e, item.id); }}
+				onContextMenu={(e: any) => { this.onOptions(e, item.id); }}
 			/>
 		));
 
-		const Editor = (item: any) => (
-			<div
-				id={item.id}
-				className="value isEditing"
-				contentEditable={!readonly}
-				suppressContentEditableWarning={true}
-				//onKeyDown={this.onKeyDown}
-				//onKeyUp={this.onKeyUp}
-				//onFocus={this.onFocus}
-				//onBlur={this.onBlur}
-				//onSelect={this.onSelect}
-				onPaste={() => {}}
-				onMouseDown={() => {}}
-				onMouseUp={() => {}}
-				onInput={() => {}}
-				onCompositionStart={() => {}}
-				onCompositionEnd={() => {}}
-				onDragStart={(e: any) => { e.preventDefault(); }}
-			>
-				{item.value || ' '}
-			</div>
-		);
-
 		const Cell = (cell: any) => {
-			const inner = blockStore.getChildren(rootId, cell.id)[0];
+			const row = rows[cell.rowIdx];
+			const column = columns[cell.columnIdx];
+			const childrenIds = blockStore.getChildrenIds(rootId, cell.id);
+			const inner = blockStore.getLeaf(rootId, childrenIds[0]);
 			const cn = [ 'cell', 'column' + cell.id, 'align-v' + cell.vertical, 'align-h' + cell.horizontal ];
 			const css: any = {};
-			const isHead = false;
 			const isEditing = false;
+			const length = childrenIds.length;
+			const bgColor = cell.bgColor || column.bgColor || row.bgColor;
 			
 			let nextSort: I.SortType = I.SortType.Asc;
 			let acn = [ 'arrow'];
@@ -125,21 +99,28 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			};
 			*/
 
+			console.log();
+
 			if (isEditing) {
 				cn.push('isEditing');
 			};
-			if (isHead) {
+			if (cell.isHead) {
 				cn.push('isHead');
 			};
 			if (cell.color) {
 				cn.push('textColor textColor-' + cell.color);
 			};
-			if (cell.background) {
-				cn.push('bgColor bgColor-' + cell.background);
+			if (bgColor) {
+				cn.push('bgColor bgColor-' + bgColor);
 			};
+
+			/*
 			if (cell.width) {
 				css.width = cell.width;
 			};
+			*/
+
+			css.width = (1 / columns.length) * 100 + '%';
 
 			const arrow = (
 				<Icon 
@@ -148,48 +129,44 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				/>
 			);
 
-			console.log(cell);
-			console.log(inner);
-
 			return (
 				<div
 					className={cn.join(' ')}
 					style={css}
 					//onClick={() => { this.setEditing(item.row.id, item.id, null); }}
-					//onContextMenu={(e: any) => { this.onOptions(e, Key.Cell, item.row.id, item.id); }}
+					onContextMenu={(e: any) => { this.onOptions(e, cell.id); }}
 				>
+					{cell.isHead ? <HandleColumn {...column} /> : ''}
+
 					<Block 
 						key={'table-' + inner.id} 
 						{...this.props} 
 						block={inner} 
 						rootId={rootId} 
 						index={0} 
-						readonly={true} 
+						readonly={readonly} 
 						isDragging={true}
 						getWrapperWidth={() => { return Constant.size.editor; }} 
 					/>
 
-					{isHead ? arrow : ''}
-					{/*<div className="resize" onMouseDown={(e: any) => { this.onResizeStart(e, item.id); }} />*/}
+					{cell.isHead ? arrow : ''}
+					<div className="resize" onMouseDown={(e: any) => { this.onResizeStart(e, cell.id); }} />
 				</div>
 			);
 		};
 
 		const Row = (row: any) => {
-			const isHead = row.id == 0;
 			const children = blockStore.getChildren(rootId, row.id);
 
 			return (
 				<div className="row">
-					{isHead ? <div className="fillRect"/ > : ''}
-
 					<HandleRow {...row} />
 
 					{columns.map((column: any, i: number) => {
-						if (isHead) {
-							return <CellSortableElement key={i} {...children[i]} />;
+						if (row.isHead) {
+							return <CellSortableElement key={i} {...children[i]} row={row} index={i} rowIdx={row.idx} columnIdx={i} />;
 						} else {
-							return <Cell key={i} {...children[i]} />	;
+							return <Cell key={i} {...children[i]} row={row} index={i} rowIdx={row.idx} columnIdx={i} />;
 						};
 					})}
 				</div>
@@ -197,7 +174,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		};
 
 		const CellSortableElement = SortableElement((item: any) => {
-			return <Cell {...item} />;
+			return <Cell {...item} isHead={true} />;
 		});
 
 		const RowSortableElement = SortableElement((item: any) => {
@@ -205,13 +182,15 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		});
 
 		const RowSortableContainer = SortableContainer((item: any) => {
-			return <Row {...item} />;
+			return <Row {...item} isHead={true} />;
 		});
 
 		const TableSortableContainer = SortableContainer((item: any) => {
 			return (
 				<div className="table">
 					{rows.map((row: any, i: number) => {
+						row.idx = i;
+
 						if (i == 0) {
 							return (
 								<RowSortableContainer 
@@ -222,8 +201,8 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 									transitionDuration={150}
 									distance={10}
 									useDragHandle={true}
-									//onSortStart={this.onSortStart}
-									//onSortEnd={this.onSortEndColumn}
+									onSortStart={this.onSortStart}
+									onSortEnd={this.onSortEndColumn}
 									helperClass="isDragging"
 									helperContainer={() => { return $(`#block-${block.id} .table`).get(0); }}
 									id={i}
@@ -251,8 +230,8 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 						transitionDuration={150}
 						distance={10}
 						useDragHandle={true}
-						//onSortStart={this.onSortStart}
-						//onSortEnd={this.onSortEndRow}
+						onSortStart={this.onSortStart}
+						onSortEnd={this.onSortEndRow}
 						helperClass="isDragging"
 						helperContainer={() => { return $(`#block-${block.id} .table`).get(0); }}
 					/>
@@ -273,253 +252,9 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		this._isMounted = false;
 	};
 
-	/*
-	setEditing (row: number, column: number, range: any) {
-		const { readonly } = this.props;
-		const isEditing = this.isEditing && (row == this.focusObj.row) && (column == this.focusObj.column);
-		const l = this.getLength(row, column);
-
-		if (readonly || isEditing) {
-			return;
-		};
-
-		this.preventSelect(true);
-		this.isEditing = true;
-		this.focusSet(row, column, range || { from: l, to: l });
-		this.forceUpdate();
-	};
-
-	renderCell (row: number, column: number) {
-		const { block } = this.props;
-		const value = block.content.getCellProperty(row, column, 'value');
-		
-		return block.content.calcCellValue(value);
-	};
-
-	getTarget (row: number, column: number) {
-		const node = $(ReactDOM.findDOMNode(this));
-		return node.find(`#${[ 'value', row, column ].join('-')}`);
-	};
-
-	getTargetIds (obj: any) {
-		const ids = obj.attr('id').split('-');
-		return { 
-			row: Number(ids[1]) || 0, 
-			column: Number(ids[2]) || 0,
-		};
-	};
-
-	getLength (row: number, column: number) {
-		return String(this.getProperty(row, column, 'value') || '').length;
-	};
-
-	focusApply () {
-		const { row, column, range } = this.focusObj;
-		const target = this.getTarget(row, column);
-
-		this.setRange(target, range);
-	};
-
-	focusSet (row: number, column: number, range: I.TextRange): void {
-		const { block } = this.props;
-		const { columnCount, rows } = block.content;
-
-		column = Math.max(0, Math.min(columnCount - 1, column));
-		row = Math.max(0, Math.min(rows.length - 1, row));
-
-		this.focusObj = { row, column, range };
-		this.focusApply();
-	};
-
-	onFocus (e: any) {
-		e.stopPropagation();
-		keyboard.setFocus(true);
-	};
-
-	onBlur (e: any) {
-		const target = $(e.currentTarget);
-		const { row, column } = this.getTargetIds(target);
-
-		window.clearTimeout(this.timeout);
-		keyboard.setFocus(false);
-
-		this.saveValue(row, column, this.getValue(target));
-	};
-
-	onSelect (e: any) {
-		const target = $(e.currentTarget);
-		const { row, column } = this.getTargetIds(target);
-
-		this.focusObj = { row, column, range: this.getRange(target) };
-	};
-
-	onKeyDown (e: any) {
-		const { block } = this.props;
-		const { columnCount } = block.content;
-		const { row, column, range } = this.focusObj;
-		const target = this.getTarget(row, column);
-		const value = this.getValue(target);
-
-		const isFirstCol = column == 0;
-		const isLastCol = column == columnCount - 1;
-
-		let r = row;
-		let c = column;
-
-		keyboard.shortcut('arrowup, arrowdown, arrowleft, arrowright, backspace', e, (pressed: string) => {
-			this.saveValue(row, column, value);
-		});
-
-		keyboard.shortcut('arrowup', e, (pressed: string) => {
-			e.preventDefault();
-			r--;
-			this.setEditing(r, c, range);
-		});
-
-		keyboard.shortcut('arrowdown', e, (pressed: string) => {
-			e.preventDefault();
-			r++;
-			this.setEditing(r, c, range);
-		});
-
-		keyboard.shortcut('arrowright', e, (pressed: string) => {
-			const length = this.getLength(row, column);
-			if (range.from != length) {
-				return;
-			};
-			if (!isLastCol) {
-				c++;
-			} else {
-				r++;
-				c = 0;
-			};
-
-			e.preventDefault();
-			this.setEditing(r, c, { from: 0, to: 0 });
-		});
-
-		keyboard.shortcut('arrowleft, backspace', e, (pressed: string) => {
-			if (range.to) {
-				return;
-			};
-
-			e.preventDefault();
-			if (!isFirstCol) {
-				c--;
-			} else {
-				r--;
-				c = columnCount - 1;
-			};
-
-			const l = this.getLength(r, c);
-			this.setEditing(r, c, { from: l, to: l });
-		});
-
-		keyboard.shortcut('enter', e, (pressed: string) => {
-			e.preventDefault();
-		
-			this.saveValue(row, column, value);
-			
-			this.preventSelect(false);
-			this.isEditing = false;
-			this.forceUpdate();
-		});
-	};
-
-	onKeyUp (e: any) {
-		const { row, column } = this.focusObj;
-		const target = this.getTarget(row, column);
-		const value = this.getValue(target);
-
-		let ret = false;
-
-		keyboard.shortcut('arrowup, arrowdown, arrowleft, arrowright, backspace, enter', e, (pressed: string) => {
-			ret = true;
-		});
-
-		window.clearTimeout(this.timeout);
-		if (!ret) {
-			this.timeout = window.setTimeout(() => { this.saveValue(row, column, value); }, 500);
-		};
-	};
-
-	columnAdd (index: number, dir: number) {
-		this.props.block.content.columnAdd(index, dir);
-		this.saveContent(true);
-	};
-
-	columnRemove (index: number) {
-		this.props.block.content.columnRemove(index);
-		this.saveContent(true);
-	};
-
-	rowAdd (index: number, dir: number) {
-		this.props.block.content.rowAdd(index, dir);
-		this.saveContent(true);
-	};
-
-	rowRemove (index: number) {
-		this.props.block.content.rowRemove(index);
-		this.saveContent(true);
-	};
-
-	fillRow (row: I.TableRow) {
-		const { block } = this.props;
-		const { columnCount } = block.content;
-
-		row = row || new M.TableRow({ cells: [] });
-		row = row.fill(columnCount);
-
-		return row;
-	};
-
-	saveValue (row: number, column: number, value: string) {
-		this.props.block.content.setCellProperty(row, column, 'value', value);
-		this.saveContent(false);
-	};
-
-	saveContent (update: boolean) {
-		const { rootId, block } = this.props;
-
-		blockStore.update(rootId, { ...block });
-		C.BlockUpdateContent({ ...block }, rootId, block.id, () => { 
-			if (update) {
-				this.forceUpdate(); 
-			};
-		});
-	};
-
-	getValue (obj: any): string {
-		if (!obj.length) {
-			return '';
-		};
-		return String(obj.get(0).innerText || '').trim();
-	};
-
-	getRange (obj: any) {
-		if (!obj.length) {
-			return null;
-		};
-
-		const range = getRange(obj.get(0) as Element);
-		return range ? { from: range.start, to: range.end } : null;
-	};
-
-	setRange (obj: any, range: I.TextRange) {
-		if (!obj.length) {
-			return;
-		};
-		const el = obj.get(0);
-
-		el.focus();
-		setRange(el, { start: range.from, end: range.to });
-	};
-
 	onResizeStart (e: any, index: number) {
 		e.preventDefault();
 		e.stopPropagation();
-
-		this.props.block.content.fill();
 
 		const win = $(window);
 
@@ -536,15 +271,10 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		e.stopPropagation();
 
 		const { block } = this.props;
-		const { rows } = block.content;
 		const node = $(ReactDOM.findDOMNode(this));
 		const el = node.find(`.column${index}`);
 		const offset = el.first().offset();
 		const width = Math.max(Constant.size.table.min, Math.min(500, e.pageX - offset.left));
-
-		rows.forEach((row: I.TableRow) => {
-			row.cells[index].width = width;
-		});
 
 		el.css({ width: width });
 	};
@@ -554,26 +284,48 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		$('body').removeClass('colResize');
 
 		keyboard.setResize(false);
-		this.saveContent(true);
 	};
 
-	onOptions (e: any, key: Key, row: number, column: number) {
+	alignIcon (v: I.TableAlign): string {
+		let icon = '';
+		switch (v) {
+			default:
+			case I.TableAlign.Left:		 icon = 'left'; break;
+			case I.TableAlign.Center:	 icon = 'center'; break;
+			case I.TableAlign.Right:	 icon = 'right'; break;
+			case I.TableAlign.Top:		 icon = 'top'; break;
+			case I.TableAlign.Bottom:	 icon = 'bottom'; break;
+		};
+		return icon;
+	};
+
+	onOptions (e: any, id: string) {
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { block } = this.props;
-		const { columnCount, rows } = block.content;
-		const subIds = [ 'select2', 'blockColor', 'blockBackground' ];
-		const color = this.getProperty(row, column, 'color');
-		const background = this.getProperty(row, column, 'background');
-		const ah = this.getProperty(row, column, 'horizontal');
-		const av = this.getProperty(row, column, 'vertical');
+		const { rootId, block } = this.props;
+		const current = blockStore.getLeaf(rootId, id);
 
-		const innerColor = <div className={[ 'inner', 'textColor textColor-' + (color || 'default') ].join(' ')} />;
-		const innerBackground = <div className={[ 'inner', 'bgColor bgColor-' + (background || 'default') ].join(' ')} />;
+		if (!current) {
+			return;
+		};
+
+		const children = blockStore.getChildren(rootId, block.id);
+		const columnContainer = children.find(it => it.isLayoutTableColumns());
+		const columns = blockStore.getChildren(rootId, columnContainer.id, it => it.isTableColumn());
+		const columnCnt = columns.length;
+		const rowContainer = children.find(it => it.isLayoutTableRows());
+		const rows = blockStore.getChildren(rootId, rowContainer.id, it => it.isTableRow());
+		const rowCnt = rows.length;
+
+		const subIds = [ 'select2', 'blockColor', 'blockBackground' ];
+		const innerColor = <div className={[ 'inner', 'textColor textColor-' + (current.color || 'default') ].join(' ')} />;
+		const innerBackground = <div className={[ 'inner', 'bgColor bgColor-' + (current.background || 'default') ].join(' ')} />;
+		const ah = I.TableAlign.Left;
+		const av = I.TableAlign.Top;
 
 		let menuContext: any = null;
-		
+
 		let options: any[] = [
 			{ id: 'horizontal', icon: 'align ' + this.alignIcon(ah), name: 'Horizontal align', arrow: true },
 			{ id: 'vertical', icon: 'align ' + this.alignIcon(av), name: 'Vertical align', arrow: true },
@@ -581,13 +333,13 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		let optionsColumn = [
 			{ id: 'columnBefore', name: 'Column before' },
 			{ id: 'columnAfter', name: 'Column after' },
-			columnCount > 1 ? { id: 'columnRemove', name: 'Remove column' } : null,
+			columnCnt > 1 ? { id: 'columnRemove', name: 'Remove column' } : null,
 			{ isDiv: true },
 		];
 		let optionsRow = [
 			{ id: 'rowBefore', name: 'Row before' },
 			{ id: 'rowAfter', name: 'Row after' },
-			rows.length > 1 ? { id: 'rowRemove', name: 'Remove row' } : null,
+			rowCnt ? { id: 'rowRemove', name: 'Remove row' } : null,
 			{ isDiv: true },
 		];
 		let optionsColor = [
@@ -614,18 +366,18 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			return it;
 		});
 
-		switch (key) {
-			case Key.Column:
-				options = optionsColumn.concat(options);
-				options = optionsColor.concat(options);
-				break;
-
-			case Key.Row:
+		switch (current.type) {
+			case I.BlockType.TableRow:
 				options = optionsRow.concat(options);
 				options = optionsColor.concat(options);
 				break;
 
-			case Key.Cell:
+			case I.BlockType.TableColumn:
+				options = optionsColumn.concat(options);
+				options = optionsColor.concat(options);
+				break;
+
+			case I.BlockType.TableCell:
 				options = optionsColumn.concat(options);
 				options = optionsRow.concat(options);
 				options = optionsColor.concat(options);
@@ -656,7 +408,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 						vertical: I.MenuDirection.Center,
 						isSub: true,
 						data: {
-							value: this.getProperty(row, column, item.id),
+							value: current[item.id],
 						}
 					};
 
@@ -667,7 +419,6 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 							menuParam.data = Object.assign(menuParam.data, {
 								options: optionsHorizontal,
 								onSelect: (e: any, el: any) => {
-									this.setProperty(key, row, column, item.id, el.id);
 									menuContext.close();
 								}
 							});
@@ -679,7 +430,6 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 							menuParam.data = Object.assign(menuParam.data, {
 								options: optionsVertical,
 								onSelect: (e: any, el: any) => {
-									this.setProperty(key, row, column, item.id, el.id);
 									menuContext.close();
 								}
 							});
@@ -689,7 +439,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 							menuId = 'blockColor';
 							menuParam.data = Object.assign(menuParam.data, {
 								onChange: (id: string) => {
-									this.setProperty(key, row, column, item.id, id);
+									C.BlockTextListSetColor(rootId, [ current.id ], id);
 									menuContext.close();
 								}
 							});
@@ -699,7 +449,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 							menuId = 'blockBackground';
 							menuParam.data = Object.assign(menuParam.data, {
 								onChange: (id: string) => {
-									this.setProperty(key, row, column, item.id, id);
+									C.BlockListSetBackgroundColor(rootId, [ current.id ], id);
 									menuContext.close();
 								}
 							});
@@ -717,76 +467,32 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 
 					switch (item.id) {
 						case 'columnBefore':
-							this.columnAdd(column, -1);
+							//this.columnAdd(column, -1);
 							break;
 
 						case 'columnAfter':
-							this.columnAdd(column, 1);
+							//this.columnAdd(column, 1);
 							break;
 
 						case 'columnRemove':
-							this.columnRemove(column);
+							//this.columnRemove(column);
 							break;
 
 						case 'rowBefore':
-							this.rowAdd(row, -1);
+							//this.rowAdd(row, -1);
 							break;
 
 						case 'rowAfter':
-							this.rowAdd(row, 1);
+							//this.rowAdd(row, 1);
 							break;
 
 						case 'rowRemove':
-							this.rowRemove(row);
+							//this.rowRemove(row);
 							break;
 					};
 				}
 			},
 		});
-	};
-
-	getProperty (row: number, column: number, k: string): any {
-		return this.props.block.content.getCellProperty(row, column, k);
-	};
-
-	setProperty (key: Key, row: number, column: number, k: string, v: any) {
-		const { block } = this.props;
-		const { rows } = block.content;
-
-		switch (key) {
-			case Key.Column:
-				block.content.fill();
-				rows.forEach((row: I.TableRow) => { 
-					row.cells[column][k] = v; 
-				});
-				break;
-
-			case Key.Row:
-				rows[row].cells.map((it: I.TableCell) => {
-					it[k] = v;
-					return it;
-				});
-				break;
-
-			case Key.Cell:
-				rows[row].cells[column][k] = v;
-				break;
-		};
-
-		this.saveContent(true);
-	};
-
-	alignIcon (v: I.TableAlign): string {
-		let icon = '';
-		switch (v) {
-			default:
-			case I.TableAlign.Left:		 icon = 'left'; break;
-			case I.TableAlign.Center:	 icon = 'center'; break;
-			case I.TableAlign.Right:	 icon = 'right'; break;
-			case I.TableAlign.Top:		 icon = 'top'; break;
-			case I.TableAlign.Bottom:	 icon = 'bottom'; break;
-		};
-		return icon;
 	};
 
 	onSortStart () {
@@ -795,26 +501,14 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 
 	onSortEndColumn (result: any) {
 		const { oldIndex, newIndex } = result;
-		const { block } = this.props;
-		const { rows } = block.content;
-
-		block.content.fill();
-		rows.forEach((row: I.TableRow) => {
-			row.cells = arrayMove(row.cells, oldIndex, newIndex);
-		});
 
 		this.preventSelect(false);
-		this.saveContent(true);
 	};
 
 	onSortEndRow (result: any) {
 		const { oldIndex, newIndex } = result;
-		const { block } = this.props;
-
-		block.content.rows = arrayMove(block.content.rows, oldIndex, newIndex);
 
 		this.preventSelect(false);
-		this.saveContent(true);
 	};
 
 	onSort (e: any, column: number, sort: I.SortType) {
@@ -822,7 +516,6 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		e.stopPropagation();
 
 		this.props.block.content.sort(column, sort);
-		this.saveContent(true);
 	};
 
 	preventSelect (v: boolean) {
@@ -833,8 +526,6 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			selection.preventSelect(v);
 		};
 	};
-
-*/
 
 });
 
