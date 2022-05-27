@@ -37,7 +37,8 @@
 			border-right: 1px solid $colorBorderDark; border-bottom: 1px solid $colorBorderDark; @include text-common; vertical-align: top; position: relative; 
 			cursor: text; flex-shrink: 0;
 		}
-		.cell.isEditing { border: 0px; box-shadow: 0px 0px 0px 1px #ffcf6f inset, 0px 0px 0px 1px #ffcf6f; }
+
+		.cell.isEditing { border-color: rgba(0,0,0,0); box-shadow: 0px 0px 0px 2px #ffcf6f; }
 		.cell.isEditing {
 			.handleRow, .handleColumn { display: block; }
 		}
