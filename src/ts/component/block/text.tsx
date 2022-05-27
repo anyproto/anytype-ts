@@ -6,7 +6,6 @@ import { I, C, keyboard, Key, Util, DataUtil, Mark, focus, Storage, translate, a
 import { observer } from 'mobx-react';
 import { getRange } from 'selection-ranges';
 import { commonStore, blockStore, detailStore, menuStore } from 'ts/store';
-import { throttle } from 'lodash';
 import * as Prism from 'prismjs';
 
 interface Props extends I.BlockComponent, RouteComponentProps<any> {
@@ -1097,14 +1096,20 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 	};
 	
 	onFocus (e: any) {
+		const { onFocus } = this.props;
+
 		e.persist();
 
 		this.placeholderCheck();
 		keyboard.setFocus(true);
+
+		if (onFocus) {
+			onFocus(e);
+		};
 	};
 	
 	onBlur (e: any) {
-		const { block } = this.props;
+		const { block, onBlur } = this.props;
 
 		if (!block.isTextTitle() && !block.isTextDescription()) {
 			this.placeholderHide();
@@ -1115,6 +1120,10 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 
 		if (!this.preventSaveOnBlur) {
 			this.setText(this.marks, true);
+		};
+
+		if (onBlur) {
+			onBlur(e);
 		};
 
 		let key = '';

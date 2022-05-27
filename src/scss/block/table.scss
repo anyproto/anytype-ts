@@ -34,9 +34,10 @@
 		}
 
 		.cell { 
-			border-right: 1px solid $colorBorderDark; border-bottom: 1px solid $colorBorderDark; padding: 4px 10px;
-			@include text-common; vertical-align: top; position: relative; cursor: text; flex-shrink: 0;
+			border-right: 1px solid $colorBorderDark; border-bottom: 1px solid $colorBorderDark; @include text-common; vertical-align: top; position: relative; 
+			cursor: text; flex-shrink: 0;
 		}
+		.cell.isEditing { border: 0px; box-shadow: 0px 0px 0px 1px #ffcf6f inset, 0px 0px 0px 1px #ffcf6f; }
 		.cell.isDragging { border-left: 1px solid $colorBorderDark; border-top: 1px solid $colorBorderDark; background: #fff; }
 		.cell.isDragging.isHead { border-top: 0px; }
 
@@ -54,10 +55,14 @@
 
 			.block { height: 100%; border: 0px !important; }
 			.block {
+				.wrapContent, .selectable, .wrap, .flex, .dropTarget, #value { height: 100%; }
+
 				.wrapMenu { display: none; }
 				.wrapContent { width: 100%; }
-
 				.dropTarget { padding: 0px !important; }
+
+				#value { padding: 4px 10px; }
+				.placeholder { left: 10px; top: 4px; width: calc(100% - 20px); height: calc(100% - 8px) }
 			}
 
 			.icon.arrow { 

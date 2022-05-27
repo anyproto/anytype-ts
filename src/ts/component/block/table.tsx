@@ -22,21 +22,12 @@ const $ = require('jquery');
 const BlockTable = observer(class BlockTable extends React.Component<Props, {}> {
 
 	_isMounted: boolean = false;
-	timeout: number = 0;
-	focusObj: Focus = { row: 0, column: 0, range: { from: 0, to: 0 } };
-	isEditing: boolean = false;
 
 	constructor (props: any) {
 		super(props);
 
-		/*
 		this.onFocus = this.onFocus.bind(this);
 		this.onBlur = this.onBlur.bind(this);
-		this.onKeyDown = this.onKeyDown.bind(this);
-		this.onKeyUp = this.onKeyUp.bind(this);
-		this.onSelect = this.onSelect.bind(this);
-		*/
-
 		this.onSortStart = this.onSortStart.bind(this);
 		this.onSortEndColumn = this.onSortEndColumn.bind(this);
 		this.onSortEndRow = this.onSortEndRow.bind(this);
@@ -44,20 +35,8 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 
 	render () {
 		const { rootId, block, readonly } = this.props;
+		const { rows, columns } = this.getData();
 		const cn = [ 'wrap', 'focusable', 'c' + block.id ];
-		const childrenIds = blockStore.getChildrenIds(rootId, block.id);
-		const children = blockStore.getChildren(rootId, block.id);
-
-		const columnContainer = children.find(it => it.isLayoutTableColumns());
-		const columns = blockStore.getChildren(rootId, columnContainer.id, it => it.isTableColumn());
-
-		const rowContainer = children.find(it => it.isLayoutTableRows());
-		const rows = blockStore.getChildren(rootId, rowContainer.id, it => it.isTableRow());
-
-		console.log(JSON.stringify(childrenIds, null, 3));
-		console.log(JSON.stringify(children, null, 3));
-		console.log(JSON.stringify(columns, null, 3));
-		console.log(JSON.stringify(rows, null, 3));
 
 		const HandleColumn = SortableHandle((item: any) => (
 			<div 
@@ -82,7 +61,6 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			const inner = blockStore.getLeaf(rootId, childrenIds[0]);
 			const cn = [ 'cell', 'column' + cell.id, 'align-v' + cell.vertical, 'align-h' + cell.horizontal ];
 			const css: any = {};
-			const isEditing = false;
 			const length = childrenIds.length;
 			const bgColor = cell.bgColor || column.bgColor || row.bgColor;
 			
@@ -99,11 +77,6 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			};
 			*/
 
-			console.log();
-
-			if (isEditing) {
-				cn.push('isEditing');
-			};
 			if (cell.isHead) {
 				cn.push('isHead');
 			};
@@ -131,9 +104,10 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 
 			return (
 				<div
+					id={`cell-${cell.id}`}
 					className={cn.join(' ')}
 					style={css}
-					//onClick={() => { this.setEditing(item.row.id, item.id, null); }}
+					onClick={() => { this.setEditing(cell.id); }}
 					onContextMenu={(e: any) => { this.onOptions(e, cell.id); }}
 				>
 					{cell.isHead ? <HandleColumn {...column} /> : ''}
@@ -145,8 +119,9 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 						rootId={rootId} 
 						index={0} 
 						readonly={readonly} 
-						isDragging={true}
 						className="noPlus"
+						onFocus={(e: any) => { this.onFocus(e, cell.id); }}
+						onBlur={(e: any) => { this.onBlur(e, cell.id); }}
 						getWrapperWidth={() => { return Constant.size.editor; }} 
 					/>
 
@@ -246,58 +221,22 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 	};
 
 	componentDidUpdate () {
-		//this.focusApply();
 	};
 	
 	componentWillUnmount () {
 		this._isMounted = false;
 	};
 
-	onResizeStart (e: any, index: number) {
-		e.preventDefault();
-		e.stopPropagation();
+	getData () {
+		const { rootId, block } = this.props;
+		const childrenIds = blockStore.getChildrenIds(rootId, block.id);
+		const children = blockStore.getChildren(rootId, block.id);
+		const columnContainer = children.find(it => it.isLayoutTableColumns());
+		const columns = blockStore.getChildren(rootId, columnContainer.id, it => it.isTableColumn());
+		const rowContainer = children.find(it => it.isLayoutTableRows());
+		const rows = blockStore.getChildren(rootId, rowContainer.id, it => it.isTableRow());
 
-		const win = $(window);
-
-		$('body').addClass('colResize');
-		win.unbind('mousemove.table mouseup.table');
-		win.on('mousemove.table', (e: any) => { this.onResizeMove(e, index); });
-		win.on('mouseup.table', (e: any) => { this.onResizeEnd(e, index); });
-
-		keyboard.setResize(true);
-	};
-
-	onResizeMove (e: any, index: number) {
-		e.preventDefault();
-		e.stopPropagation();
-
-		const { block } = this.props;
-		const node = $(ReactDOM.findDOMNode(this));
-		const el = node.find(`.column${index}`);
-		const offset = el.first().offset();
-		const width = Math.max(Constant.size.table.min, Math.min(500, e.pageX - offset.left));
-
-		el.css({ width: width });
-	};
-
-	onResizeEnd (e: any, index: number) {
-		$(window).unbind('mousemove.table mouseup.table');
-		$('body').removeClass('colResize');
-
-		keyboard.setResize(false);
-	};
-
-	alignIcon (v: I.TableAlign): string {
-		let icon = '';
-		switch (v) {
-			default:
-			case I.TableAlign.Left:		 icon = 'left'; break;
-			case I.TableAlign.Center:	 icon = 'center'; break;
-			case I.TableAlign.Right:	 icon = 'right'; break;
-			case I.TableAlign.Top:		 icon = 'top'; break;
-			case I.TableAlign.Bottom:	 icon = 'bottom'; break;
-		};
-		return icon;
+		return { columns, rows };
 	};
 
 	onOptions (e: any, id: string) {
@@ -311,12 +250,8 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			return;
 		};
 
-		const children = blockStore.getChildren(rootId, block.id);
-		const columnContainer = children.find(it => it.isLayoutTableColumns());
-		const columns = blockStore.getChildren(rootId, columnContainer.id, it => it.isTableColumn());
+		const { rows, columns } = this.getData();
 		const columnCnt = columns.length;
-		const rowContainer = children.find(it => it.isLayoutTableRows());
-		const rows = blockStore.getChildren(rootId, rowContainer.id, it => it.isTableRow());
 		const rowCnt = rows.length;
 
 		const subIds = [ 'select2', 'blockColor', 'blockBackground' ];
@@ -496,6 +431,70 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		});
 	};
 
+	onFocus (e: any, id: string) {
+		this.setEditing(id);
+	};
+
+	onBlur (e: any, id: string) {
+		this.setEditing('');
+	};
+
+	setEditing (id: string) {
+		const node = $(ReactDOM.findDOMNode(this));
+		
+		node.find('.cell.isEditing').removeClass('isEditing');
+		if (id) {
+			node.find(`#cell-${id}`).addClass('isEditing');
+		};
+	};
+
+	onResizeStart (e: any, index: number) {
+		e.preventDefault();
+		e.stopPropagation();
+
+		const win = $(window);
+
+		$('body').addClass('colResize');
+		win.unbind('mousemove.table mouseup.table');
+		win.on('mousemove.table', (e: any) => { this.onResizeMove(e, index); });
+		win.on('mouseup.table', (e: any) => { this.onResizeEnd(e, index); });
+
+		keyboard.setResize(true);
+	};
+
+	onResizeMove (e: any, index: number) {
+		e.preventDefault();
+		e.stopPropagation();
+
+		const { block } = this.props;
+		const node = $(ReactDOM.findDOMNode(this));
+		const el = node.find(`.column${index}`);
+		const offset = el.first().offset();
+		const width = Math.max(Constant.size.table.min, Math.min(500, e.pageX - offset.left));
+
+		el.css({ width: width });
+	};
+
+	onResizeEnd (e: any, index: number) {
+		$(window).unbind('mousemove.table mouseup.table');
+		$('body').removeClass('colResize');
+
+		keyboard.setResize(false);
+	};
+
+	alignIcon (v: I.TableAlign): string {
+		let icon = '';
+		switch (v) {
+			default:
+			case I.TableAlign.Left:		 icon = 'left'; break;
+			case I.TableAlign.Center:	 icon = 'center'; break;
+			case I.TableAlign.Right:	 icon = 'right'; break;
+			case I.TableAlign.Top:		 icon = 'top'; break;
+			case I.TableAlign.Bottom:	 icon = 'bottom'; break;
+		};
+		return icon;
+	};
+
 	onSortStart () {
 		this.preventSelect(true);
 	};
@@ -512,7 +511,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		this.preventSelect(false);
 	};
 
-	onSort (e: any, id: string) {
+	onSort (e: any, id: string, sort: I.SortType) {
 		e.preventDefault();
 		e.stopPropagation();
 
