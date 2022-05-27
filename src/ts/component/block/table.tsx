@@ -2,14 +2,14 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { I, C, M, Util, keyboard } from 'ts/lib';
-import { Icon } from 'ts/component';
+import { Icon, Block } from 'ts/component';
 import { observer } from 'mobx-react';
 import { getRange, setRange } from 'selection-ranges';
 import { menuStore, blockStore } from 'ts/store';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import arrayMove from 'array-move';
 
-interface Props extends I.BlockComponent, RouteComponentProps<any> {};
+interface Props extends I.BlockComponent {};
 
 interface Focus {
 	row: number;
@@ -51,12 +51,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 
 	render () {
 		const { rootId, block, readonly } = this.props;
-		//const { columnCount, sortIndex, sortType, rows } = block.content;
 		const cn = [ 'wrap', 'focusable', 'c' + block.id ];
-		/*
-		const columns = [];
-		const cr = rows.length;
-		*/
 		const childrenIds = blockStore.getChildrenIds(rootId, block.id);
 		const children = blockStore.getChildren(rootId, block.id);
 
@@ -65,7 +60,6 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 
 		const rowContainer = children.find(it => it.isLayoutTableRows());
 		const rows = blockStore.getChildren(rootId, rowContainer.id, it => it.isTableRow());
-
 
 		console.log(JSON.stringify(childrenIds, null, 3));
 		console.log(JSON.stringify(children, null, 3));
@@ -112,6 +106,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		);
 
 		const Cell = (cell: any) => {
+			const inner = blockStore.getChildren(rootId, cell.id)[0];
 			const cn = [ 'cell', 'column' + cell.id, 'align-v' + cell.vertical, 'align-h' + cell.horizontal ];
 			const css: any = {};
 			const isHead = false;
@@ -153,6 +148,9 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				/>
 			);
 
+			console.log(cell);
+			console.log(inner);
+
 			return (
 				<div
 					className={cn.join(' ')}
@@ -160,6 +158,16 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 					//onClick={() => { this.setEditing(item.row.id, item.id, null); }}
 					//onContextMenu={(e: any) => { this.onOptions(e, Key.Cell, item.row.id, item.id); }}
 				>
+					<Block 
+						key={'table-' + inner.id} 
+						{...this.props} 
+						block={inner} 
+						rootId={rootId} 
+						index={0} 
+						readonly={true} 
+						isDragging={true}
+						getWrapperWidth={() => { return Constant.size.editor; }} 
+					/>
 
 					{isHead ? arrow : ''}
 					{/*<div className="resize" onMouseDown={(e: any) => { this.onResizeStart(e, item.id); }} />*/}
@@ -170,8 +178,6 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		const Row = (row: any) => {
 			const isHead = row.id == 0;
 			const children = blockStore.getChildren(rootId, row.id);
-
-			console.log(children);
 
 			return (
 				<div className="row">
