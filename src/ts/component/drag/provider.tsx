@@ -78,8 +78,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 
 			let x = offset.left;
 			let y = offset.top;
-			let w = rect.width;
-			let h = rect.height;
+			let { width, height } = rect;
 
 			// Add block's paddings to height
 			if ((data.dropType == I.DropType.Block) && (data.type != I.BlockType.Layout)) {
@@ -89,7 +88,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 					const bot = parseInt(block.css('paddingBottom'));
 
 					y -= top + 2;
-					h += top + bot + 2;
+					height += top + bot + 2;
 				};
 			};
 
@@ -97,10 +96,10 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 				...data,
 				obj: item,
 				index: i,
-				width: w,
-				height: h,
 				x,
 				y,
+				width,
+				height,
 				isTargetTop,
 				isTargetBot,
 				isTargetCol,
@@ -371,6 +370,25 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 
 		this.canDrop = true;
 
+		let x = 0;
+		let y = 0;
+		let width = 0;
+		let height = 0;
+		let isTargetTop = false;
+		let isTargetBot = false;
+		let isTargetCol = false;
+		let obj = null;
+		let type: any = '';
+		let style = 0;
+		let canDropMiddle = 0;
+
+		let col1 = 0; 
+		let col2 = 0;
+
+		let isText = false;
+		let isFeatured = false;
+		let isType = false;
+
 		if (this.hoverData) {
 			if (!isFileDrag && (this.dropType == I.DropType.Block)) {
 				let parentIds: string[] = [];
@@ -383,25 +401,6 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 					};
 				};
 			};
-
-			let x = 0;
-			let y = 0;
-			let width = 0;
-			let height = 0;
-			let isTargetTop = false;
-			let isTargetBot = false;
-			let isTargetCol = false;
-			let obj = null;
-			let type: any = '';
-			let style = 0;
-			let canDropMiddle = 0;
-
-			let col1 = 0; 
-			let col2 = 0;
-
-			let isText = false;
-			let isFeatured = false;
-			let isType = false;
 
 			const initVars = () => {
 				x = this.hoverData.x;
@@ -551,7 +550,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 		window.clearTimeout(this.timeoutHover);
 		if ((this.position != I.BlockPosition.None) && this.canDrop && this.hoverData) {
 			clear();
-			this.hoverData.obj.addClass('isOver ' + this.getDirectionClass(this.position));
+			obj.addClass('isOver ' + this.getDirectionClass(this.position));
 		} else {
 			this.timeoutHover = window.setTimeout(clear, 10);
 		};
