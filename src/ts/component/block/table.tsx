@@ -113,6 +113,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 					onContextMenu={(e: any) => { this.onOptions(e, cell.id); }}
 				>
 					{cell.isHead ? <HandleColumn {...column} /> : ''}
+					{!cell.columnIdx ? <HandleRow {...row} /> : ''}
 
 					<Block 
 						key={'table-' + inner.id} 
@@ -138,8 +139,6 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 
 			return (
 				<div className="row">
-					<HandleRow {...row} />
-
 					{columns.map((column: any, i: number) => {
 						if (row.isHead) {
 							return <CellSortableElement key={i} {...children[i]} row={row} index={i} rowIdx={row.idx} columnIdx={i} />;
@@ -181,7 +180,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 									useDragHandle={true}
 									onSortStart={this.onSortStart}
 									onSortEnd={this.onSortEndColumn}
-									helperClass="isDragging"
+									helperClass="isDraggingColumn"
 									helperContainer={() => { return $(`#block-${block.id} .table`).get(0); }}
 									id={i}
 									{...row}
@@ -210,7 +209,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 						useDragHandle={true}
 						onSortStart={this.onSortStart}
 						onSortEnd={this.onSortEndRow}
-						helperClass="isDragging"
+						helperClass="isDraggingRow"
 						helperContainer={() => { return $(`#block-${block.id} .table`).get(0); }}
 					/>
 				</div>
