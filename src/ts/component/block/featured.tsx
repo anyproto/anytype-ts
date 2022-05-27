@@ -291,7 +291,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		const { rootId, block, readonly } = this.props;
 		const object = detailStore.get(rootId, rootId, [ Constant.relationKey.setOf ]);
 		const type = detailStore.get(rootId, object.type, []);
-		const allowed = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Type ]);
+		const allowed = ![ Constant.typeId.bookmark ].includes(object.type) && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Type ]);
 		const options: any[] = [];
 		
 		if (!type.isArchived && !type.isDeleted) {
