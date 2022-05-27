@@ -125,7 +125,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			const arrow = (
 				<Icon 
 					className={acn.join(' ')} 
-					//onClick={(e: any) => { this.onSort(e, item.id, nextSort); }}
+					onClick={(e: any) => { this.onSort(e, column.id, nextSort); }}
 				/>
 			);
 
@@ -146,6 +146,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 						index={0} 
 						readonly={readonly} 
 						isDragging={true}
+						className="noPlus"
 						getWrapperWidth={() => { return Constant.size.editor; }} 
 					/>
 
@@ -511,11 +512,10 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		this.preventSelect(false);
 	};
 
-	onSort (e: any, column: number, sort: I.SortType) {
+	onSort (e: any, id: string) {
 		e.preventDefault();
 		e.stopPropagation();
 
-		this.props.block.content.sort(column, sort);
 	};
 
 	preventSelect (v: boolean) {
