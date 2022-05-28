@@ -335,7 +335,9 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 							menuId = 'blockStyle';
 							menuParam.data = Object.assign(menuParam.data, {
 								blockIds: [ inner.id ],
+								blockId: inner.id,
 								isInsideTable: true,
+								value: inner.content.style,
 								onSelect: (item: any) => {
 									if (item.type == I.BlockType.Text) {
 										C.BlockListTurnInto(rootId, [ inner.id ], item.itemId);
