@@ -127,7 +127,7 @@ class Block implements I.Block {
 	};
 	
 	isFocusable (): boolean {
-		return !this.isSystem() && !this.isFeatured();
+		return !this.isSystem() && !this.isFeatured() && !this.isTable() && !this.isTableRow() && !this.isTableCell();
 	};
 	
 	isSelectable (): boolean {
@@ -259,7 +259,7 @@ class Block implements I.Block {
 	};
 
 	isTableCell (): boolean {
-		return this.type == I.BlockType.Table;
+		return this.type == I.BlockType.TableCell;
 	};
 	
 	isIcon (): boolean {

@@ -194,7 +194,7 @@ const BlockAudio = observer(class BlockAudio extends React.Component<Props, {}> 
 		};
 		
 		if (onKeyDown) {
-			onKeyDown(e, '', [], { from: 0, to: 0 });
+			onKeyDown(e, '', [], { from: 0, to: 0 }, this.props);
 		};
 	};
 	

@@ -59,10 +59,13 @@ export interface BlockComponent {
 	dataset?: any;
 	rootId: string;
 	traceId?: string;
-	block: I.Block;
+	block?: I.Block;
 	readonly?: boolean;
 	isPopup?: boolean;
-	onKeyDown?(e: any, text: string, marks: I.Mark[], range: I.TextRange): void;
+	isInsideTable?: boolean;
+	index?: any;
+	className?: string;
+	onKeyDown?(e: any, text: string, marks: I.Mark[], range: I.TextRange, props: any): void;
 	onKeyUp?(e: any, text: string, marks: I.Mark[], range: I.TextRange): void;
 	onMenuAdd? (id: string, text: string, range: I.TextRange, marks: I.Mark[]): void;
 	onPaste?(e: any): void;

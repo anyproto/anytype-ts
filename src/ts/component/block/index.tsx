@@ -28,9 +28,7 @@ import BlockAudio from './media/audio';
 import BlockPdf from './media/pdf'; 
 
 interface Props extends I.BlockComponent, RouteComponentProps<any> {
-	index?: any;
 	css?: any;
-	className?: string;
 	iconSize?: number;
 	isDragging?: boolean;
 };
@@ -69,7 +67,7 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { rootId, css, className, block, readonly, isDragging } = this.props;
+		const { rootId, css, className, block, readonly, isDragging, isInsideTable } = this.props;
 		const { id, type, fields, content, align, bgColor } = block;
 
 		if (!id) {
@@ -81,7 +79,7 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 		const root = blockStore.getLeaf(rootId, rootId);
 
 		let canSelect = true;
-		let canDrop = !readonly;
+		let canDrop = !readonly && !isInsideTable;
 		let canDropMiddle = canDrop;
 		let cn: string[] = [ 'block', 'align' + align, DataUtil.blockClass(block, isDragging), 'index-' + index ];
 		let cd: string[] = [ 'wrapContent' ];

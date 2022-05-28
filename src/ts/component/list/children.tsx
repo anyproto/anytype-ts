@@ -5,18 +5,11 @@ import { blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { I, C, focus, translate } from 'ts/lib';
 
-interface Props extends RouteComponentProps<any> {
-	rootId: string;
-	block: any;
-	index?: any;
-	readonly?: boolean;
-	className?: string;
+interface Props extends I.BlockComponent, RouteComponentProps<any> {
 	onMouseMove? (e: any): void;
 	onMouseLeave? (e: any): void;
 	onResizeStart? (e: any, index: number): void;
-	getWrapperWidth?(): number;
-	getWrapper?(): any;
-}
+};
 
 const ListChildren = observer(class ListChildren extends React.Component<Props, {}> {
 	

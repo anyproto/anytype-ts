@@ -140,7 +140,7 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 				this.unbind();
 
 				if (onKeyDown) {
-					onKeyDown(e, '', [], { from: 0, to: 0 });
+					onKeyDown(e, '', [], { from: 0, to: 0 }, this.props);
 				};
 			} else
 			if (this.n == -1) {

@@ -6,7 +6,7 @@ import { observer } from 'mobx-react';
 
 interface Props {
 	rootId: string;
-	block: I.Block;
+	block?: I.Block;
 	relationKey: string;
 	index: number;
 	readonly: boolean;

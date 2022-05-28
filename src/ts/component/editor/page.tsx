@@ -640,10 +640,11 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		});
 	};
 
-	onKeyDownBlock (e: any, text: string, marks: I.Mark[], range: any) {
+	onKeyDownBlock (e: any, text: string, marks: I.Mark[], range: any, props: any) {
 		range = range || {};
 
 		const { dataset, rootId } = this.props;
+		const { isInsideTable } = props;
 		const { focused } = focus.state;
 		const { selection } = dataset || {};
 		const block = blockStore.getLeaf(rootId, focused);
@@ -795,7 +796,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 		// Enter
 		keyboard.shortcut('enter, shift+enter', e, (pressed: string) => {
-			this.onEnterBlock(e, range, pressed);
+			this.onEnterBlock(e, range, pressed, props);
 		});
 
 		if (!menuOpen) {
@@ -1142,8 +1143,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 	};
 
 	// Split
-	onEnterBlock (e: any, range: I.TextRange, pressed: string) {
+	onEnterBlock (e: any, range: I.TextRange, pressed: string, props: any) {
 		const { rootId } = this.props;
+		const { isInsideTable } = props;
 		const { focused } = focus.state;
 		const block = blockStore.getLeaf(rootId, focused);
 
@@ -1158,6 +1160,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			return;
 		};
 		if (block.isText() && !block.isTextCode() && pressed.match('shift')) {
+			return;
+		};
+		if (isInsideTable && (pressed == 'enter')) {
 			return;
 		};
 
@@ -1223,6 +1228,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		} else {
 			next = blockStore.getNextBlock(rootId, focused, dir, (it: I.Block) => { return it.isFocusable(); });
 		};
+
+		console.log(next);
 
 		if (!next) {
 			return;

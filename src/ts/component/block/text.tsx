@@ -669,7 +669,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			};
 			
 			DataUtil.blockSetText(rootId, block.id, value, this.marks, true, () => {
-				onKeyDown(e, value, this.marks, range);
+				onKeyDown(e, value, this.marks, range, this.props);
 			});
 
 			ret = true;
@@ -686,7 +686,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 				};
 
 				DataUtil.blockSetText(rootId, block.id, value, this.marks, true, () => { 
-					onKeyDown(e, value, this.marks, range);
+					onKeyDown(e, value, this.marks, range, this.props);
 				});
 				ret = true;
 			});
@@ -709,7 +709,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			} else {
 				this.setText(this.marks, true, () => {
 					focus.apply();
-					onKeyDown(e, value, this.marks, range);
+					onKeyDown(e, value, this.marks, range, this.props);
 				});
 			};
 
@@ -727,7 +727,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 
 				this.marks = Mark.checkRanges(value, parsed.marks);
 				DataUtil.blockSetText(rootId, block.id, value, this.marks, true, () => {
-					onKeyDown(e, value, this.marks, range);
+					onKeyDown(e, value, this.marks, range, this.props);
 				});
 				ret = true;
 			};
@@ -769,13 +769,13 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			this.placeholderHide();
 		};
 		
-		onKeyDown(e, value, this.marks, range);
+		onKeyDown(e, value, this.marks, range, this.props);
 	};
 	
 	onKeyUp (e: any) {
 		e.persist();
 		
-		const { rootId, block, onMenuAdd } = this.props;
+		const { rootId, block, onMenuAdd, isInsideTable } = this.props;
 		const { filter } = commonStore;
 		const { id, content } = block;
 		const range = this.getRange();
@@ -852,7 +852,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		};
 
 		// Open add menu
-		if (canOpenMenuAdd) { 
+		if (canOpenMenuAdd && !isInsideTable) { 
 			DataUtil.blockSetText(rootId, block.id, value, this.marks, true, () => {
 				onMenuAdd(id, Util.stringCut(value, range.from - 1, range.from), range, this.marks);
 			});

@@ -8,7 +8,7 @@ import Handle from './handle';
 
 interface Props extends I.ViewComponent, I.ViewRelation {
 	rootId: string;
-	block: I.Block;
+	block?: I.Block;
 	index: number;
 	onResizeStart(e: any, key: string): void;
 }

@@ -61,7 +61,7 @@ const BlockTableOfContents = observer(class BlockTableOfContents extends React.C
 		const { onKeyDown } = this.props;
 
 		if (onKeyDown) {
-			onKeyDown(e, '', [], { from: 0, to: 0 });
+			onKeyDown(e, '', [], { from: 0, to: 0 }, this.props);
 		};
 	};
 	

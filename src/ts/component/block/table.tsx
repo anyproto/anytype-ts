@@ -35,6 +35,11 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		// Subscriptions
 		rows.forEach(child => {
 			const { bgColor } = child;
+			const cells = blockStore.getChildren(rootId, child.id);
+
+			cells.forEach(cell => {
+				const cids = blockStore.getChildrenIds(rootId, cell.id);
+			});
 		});
 		columns.forEach(child => {
 			const { bgColor } = child;
@@ -120,8 +125,8 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 						{...this.props} 
 						block={inner} 
 						rootId={rootId} 
-						index={0} 
 						readonly={readonly} 
+						isInsideTable={true}
 						className="noPlus"
 						onFocus={(e: any) => { this.onFocus(e, cell.id); }}
 						onBlur={(e: any) => { this.onBlur(e, cell.id); }}
