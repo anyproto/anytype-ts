@@ -109,7 +109,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 					id={`cell-${cell.id}`}
 					className={cn.join(' ')}
 					style={css}
-					onClick={() => { this.setEditing(cell.id); }}
+					onClick={(e: any) => { this.onClick(e, cell.id); }}
 					onContextMenu={(e: any) => { this.onOptions(e, cell.id); }}
 				>
 					{cell.isHead ? <HandleColumn {...column} /> : ''}
@@ -438,6 +438,10 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 
 	onBlur (e: any, id: string) {
 		this.setEditing('');
+	};
+
+	onClick (e: any, id: string) {
+		this.setEditing(id);
 	};
 
 	setEditing (id: string) {
