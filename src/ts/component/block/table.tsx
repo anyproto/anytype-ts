@@ -13,6 +13,8 @@ interface Props extends I.BlockComponent {};
 const $ = require('jquery');
 const Constant = require('json/constant.json');
 
+const PADDING = 46;
+
 const BlockTable = observer(class BlockTable extends React.Component<Props, {}> {
 
 	_isMounted: boolean = false;
@@ -48,7 +50,8 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			});
 		});
 		columns.forEach(child => {
-			const { bgColor } = child;
+			const { bgColor, fields } = child;
+			const { width } = fields;
 		});
 
 		const RowSortableContainer = SortableContainer((item: any) => {
@@ -126,10 +129,11 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 
 		return (
 			<div 
+				id="wrap"
 				tabIndex={0} 
 				className={cn.join(' ')}
 			>
-				<div className="scrollWrap">
+				<div id="scrollWrap" className="scrollWrap">
 					<TableSortableContainer 
 						axis="y" 
 						lockAxis="y"
@@ -150,13 +154,29 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 	componentDidMount () {
 		this._isMounted = true;
 		this.resize();
+		this.rebind();
 	};
 
 	componentDidUpdate () {
+		this.resize();
 	};
 	
 	componentWillUnmount () {
 		this._isMounted = false;
+		this.unbind();
+	};
+
+	unbind () {
+		const { block } = this.props;
+		$(window).off('resize.' + block.id);
+	};
+
+	rebind () {
+		const { block } = this.props;
+		const win = $(window);
+
+		this.unbind();
+		win.on('resize.' + block.id, () => { this.resize(); });
 	};
 
 	getData () {
@@ -514,13 +534,31 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 	};
 
 	resize () {
+		const { isPopup, block, getWrapperWidth } = this.props;
 		const { columns } = this.getData();
+		const obj = $(`#block-${block.id}`);
+		const container = $(isPopup ? '#popupPage #innerWrap' : '#page.isFull');
+		const ww = container.width();
+		const mw = ww - PADDING * 2;
+		const wrapperWidth = getWrapperWidth();
+		const offset = Constant.size.blockMenu;
+
+		let width = offset + 4;
 
 		columns.forEach((it: I.Block) => {
 			const node = $(ReactDOM.findDOMNode(this));
 			const el = node.find(`.column${it.id}`);
+			const w = this.checkWidth(it.fields.width || Constant.size.table.cell);
 
-			el.css({ width: this.checkWidth(it.fields.width || Constant.size.table.cell) });
+			width += w;
+			el.css({ width: w });
+		});
+
+		width = Math.min(mw, width);
+
+		obj.css({ 
+			width, 
+			marginLeft: Math.min(0, (wrapperWidth - width) / 2) + offset / 2,
 		});
 	};
 

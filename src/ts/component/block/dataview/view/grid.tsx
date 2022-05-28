@@ -157,10 +157,10 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 		const subId = dbStore.getSubId(rootId, block.id);
 		const records = dbStore.getRecords(subId, '');
 		const length = records.length;
+		const margin = (ww - mw) / 2;
 
+		let width = Constant.size.blockMenu;
 		let vw = 0;
-		let margin = 0;
-		let width = 48;
 		let pr = 0;
 
 		for (let relation of view.relations) {
@@ -170,7 +170,6 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 		};
 
 		vw = width <= mw ? mw : width;
-		margin = (ww - mw) / 2;
 
 		if (width > mw) {
 			pr = PADDING;
