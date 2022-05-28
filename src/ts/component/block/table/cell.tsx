@@ -34,7 +34,6 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 		};
 
 		const cn = [ 'cell', 'column' + block.id, /* 'align-v' + block.vertical, 'align-h' + block.horizontal */ ];
-		const acn = [ 'arrow' ];
 		const css: any = {};
 		const length = childrenIds.length;
 		const bgColor = block.bgColor || column.bgColor || row.bgColor;
@@ -54,25 +53,6 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 				onContextMenu={(e: any) => { onOptions(e, item.id); }}
 			/>
 		));
-
-		const arrow = (
-			<Icon 
-				className={acn.join(' ')} 
-				onClick={(e: any) => { onSort(e, column.id, nextSort); }}
-			/>
-		);
-
-		let nextSort: I.SortType = I.SortType.Asc;
-
-		/*
-		if (sortIndex == item.id) {
-			acn.push('c' + sortType);
-			acn.push('show');
-			nextSort = sortType == I.SortType.Asc ? I.SortType.Desc : I.SortType.Asc;
-		} else {
-			acn.push('c' + I.SortType.Asc);
-		};
-		*/
 
 		if (isHead) {
 			cn.push('isHead');
@@ -118,7 +98,6 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 					getWrapperWidth={() => { return Constant.size.editor; }} 
 				/>
 
-				{isHead ? arrow : ''}
 				<div className="resize" onMouseDown={(e: any) => { onResizeStart(e, block.id); }} />
 				<Icon className="menu" onClick={(e: any) => { onOptions(e, block.id); }} />
 			</div>

@@ -32,7 +32,7 @@
 
 		.cell { 
 			@include text-common; vertical-align: top; position: relative; cursor: text; flex-shrink: 0; padding: 9px; background: #fff;
-			box-shadow: 0px 1px inset $colorBorderDark, 1px 0px inset $colorBorderDark; overflow: hidden;
+			box-shadow: 0px 1px inset $colorBorderDark, 1px 0px inset $colorBorderDark;
 		}
 
 		.cell.isEditing { box-shadow: 0px 0px 0px 2px #ffcf6f; }
@@ -40,11 +40,7 @@
 			.handleRow, .handleColumn { display: block; }
 		}
 
-		.row.isDraggingRow .cell { border-top: 1px solid $colorBorderDark; }
-
-		.cell.isDraggingRow, .cell.isDraggingColumn { border-left: 1px solid $colorBorderDark; border-top: 1px solid $colorBorderDark; background: #fff; }
-		.cell.isDraggingRow.isHead, .cell.isDraggingColumn.isHead { border-top: 0px; }
-
+		.row.isDraggingRow { box-shadow: 0px 1px $colorBorderDark, 1px 0px $colorBorderDark; }
 		.row.isDraggingRow, .cell.isDraggingColumn {
 			.handleRow, .handleColumn { display: block; }
 		}
