@@ -389,10 +389,12 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 
 	onFocus (e: any, id: string) {
 		this.setEditing(id);
+		this.preventSelect(true);
 	};
 
 	onBlur (e: any, id: string) {
 		this.setEditing('');
+		this.preventSelect(false);
 	};
 
 	onClick (e: any, id: string) {
