@@ -1,15 +1,15 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { I, C, keyboard } from 'ts/lib';
-import { Icon, Block } from 'ts/component';
 import { observer } from 'mobx-react';
 import { menuStore, blockStore } from 'ts/store';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import arrayMove from 'array-move';
 
+import Cell from './table/cell';
+
 interface Props extends I.BlockComponent {};
 
-const Constant = require('json/constant.json');
 const $ = require('jquery');
 
 const BlockTable = observer(class BlockTable extends React.Component<Props, {}> {
@@ -21,9 +21,14 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 
 		this.onFocus = this.onFocus.bind(this);
 		this.onBlur = this.onBlur.bind(this);
+		this.onSort = this.onSort.bind(this);
 		this.onSortStart = this.onSortStart.bind(this);
 		this.onSortEndColumn = this.onSortEndColumn.bind(this);
 		this.onSortEndRow = this.onSortEndRow.bind(this);
+		this.onClick = this.onClick.bind(this);
+		this.onOptions = this.onOptions.bind(this);
+		this.onResizeStart = this.onResizeStart.bind(this);
+		this.getData = this.getData.bind(this);
 	};
 
 	render () {
@@ -45,105 +50,6 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			const { bgColor } = child;
 		});
 
-		const HandleColumn = SortableHandle((item: any) => (
-			<div 
-				className={[ 'icon', 'handleColumn' ].join(' ')}
-				onClick={(e: any) => { this.onOptions(e, item.id); }}
-				onContextMenu={(e: any) => { this.onOptions(e, item.id); }}
-			/>
-		));
-
-		const HandleRow = SortableHandle((item: any) => (
-			<div 
-				className={[ 'icon', 'handleRow' ].join(' ')}
-				onClick={(e: any) => { this.onOptions(e, item.id); }}
-				onContextMenu={(e: any) => { this.onOptions(e, item.id); }}
-			/>
-		));
-
-		const Cell = (cell: any) => {
-			const row = rows[cell.rowIdx];
-			const column = columns[cell.columnIdx];
-			const childrenIds = blockStore.getChildrenIds(rootId, cell.id);
-			const inner = blockStore.getLeaf(rootId, childrenIds[0]);
-
-			if (!inner) {
-				return null;
-			};
-
-			const cn = [ 'cell', 'column' + cell.id, 'align-v' + cell.vertical, 'align-h' + cell.horizontal ];
-			const css: any = {};
-			const length = childrenIds.length;
-			const bgColor = cell.bgColor || column.bgColor || row.bgColor;
-			
-			let nextSort: I.SortType = I.SortType.Asc;
-			let acn = [ 'arrow'];
-
-			/*
-			if (sortIndex == item.id) {
-				acn.push('c' + sortType);
-				acn.push('show');
-				nextSort = sortType == I.SortType.Asc ? I.SortType.Desc : I.SortType.Asc;
-			} else {
-				acn.push('c' + I.SortType.Asc);
-			};
-			*/
-
-			if (cell.isHead) {
-				cn.push('isHead');
-			};
-			if (cell.color) {
-				cn.push('textColor textColor-' + cell.color);
-			};
-			if (bgColor) {
-				cn.push('bgColor bgColor-' + bgColor);
-			};
-
-			/*
-			if (cell.width) {
-				css.width = cell.width;
-			};
-			*/
-
-			css.width = (1 / columns.length) * 100 + '%';
-
-			const arrow = (
-				<Icon 
-					className={acn.join(' ')} 
-					onClick={(e: any) => { this.onSort(e, column.id, nextSort); }}
-				/>
-			);
-
-			return (
-				<div
-					id={`cell-${cell.id}`}
-					className={cn.join(' ')}
-					style={css}
-					onClick={(e: any) => { this.onClick(e, cell.id); }}
-					onContextMenu={(e: any) => { this.onOptions(e, cell.id); }}
-				>
-					{cell.isHead ? <HandleColumn {...column} /> : ''}
-					{!cell.columnIdx ? <HandleRow {...row} /> : ''}
-
-					<Block 
-						key={'table-' + inner.id} 
-						{...this.props} 
-						block={inner} 
-						rootId={rootId} 
-						readonly={readonly} 
-						isInsideTable={true}
-						className="noPlus"
-						onFocus={(e: any) => { this.onFocus(e, cell.id); }}
-						onBlur={(e: any) => { this.onBlur(e, cell.id); }}
-						getWrapperWidth={() => { return Constant.size.editor; }} 
-					/>
-
-					{cell.isHead ? arrow : ''}
-					<div className="resize" onMouseDown={(e: any) => { this.onResizeStart(e, cell.id); }} />
-				</div>
-			);
-		};
-
 		const Row = (row: any) => {
 			const children = blockStore.getChildren(rootId, row.id);
 
@@ -151,9 +57,33 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				<div className="row">
 					{columns.map((column: any, i: number) => {
 						if (row.isHead) {
-							return <CellSortableElement key={i} {...children[i]} row={row} index={i} rowIdx={row.idx} columnIdx={i} />;
+							return (
+								<CellSortableElement 
+									key={i} 
+									block={children[i]} 
+									index={i} 
+									rowIdx={row.idx} 
+									columnIdx={i} 
+								/>
+							);
 						} else {
-							return <Cell key={i} {...children[i]} row={row} index={i} rowIdx={row.idx} columnIdx={i} />;
+							return (
+								<Cell 
+									key={i}
+									rootId={rootId}
+									block={children[i]} 
+									rowIdx={row.idx} 
+									columnIdx={i} 
+									isHead={false}
+									getData={this.getData}
+									onOptions={this.onOptions}
+									onClick={this.onClick}
+									onCellFocus={this.onFocus}
+									onCellBlur={this.onBlur}
+									onSort={this.onSort}
+									onResizeStart={this.onResizeStart}
+								/>
+							);
 						};
 					})}
 				</div>
@@ -161,7 +91,20 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		};
 
 		const CellSortableElement = SortableElement((item: any) => {
-			return <Cell {...item} isHead={true} />;
+			return (
+				<Cell 
+					rootId={rootId}
+					{...item}
+					isHead={true}
+					getData={this.getData}
+					onOptions={this.onOptions}
+					onClick={this.onClick}
+					onCellFocus={this.onFocus}
+					onCellBlur={this.onBlur}
+					onSort={this.onSort}
+					onResizeStart={this.onResizeStart}
+				/>
+			);
 		});
 
 		const RowSortableElement = SortableElement((item: any) => {
@@ -463,7 +406,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		};
 	};
 
-	onResizeStart (e: any, index: number) {
+	onResizeStart (e: any, id: string) {
 		e.preventDefault();
 		e.stopPropagation();
 
@@ -471,26 +414,28 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 
 		$('body').addClass('colResize');
 		win.unbind('mousemove.table mouseup.table');
-		win.on('mousemove.table', (e: any) => { this.onResizeMove(e, index); });
-		win.on('mouseup.table', (e: any) => { this.onResizeEnd(e, index); });
+		win.on('mousemove.table', (e: any) => { this.onResizeMove(e, id); });
+		win.on('mouseup.table', (e: any) => { this.onResizeEnd(e); });
 
 		keyboard.setResize(true);
 	};
 
-	onResizeMove (e: any, index: number) {
+	onResizeMove (e: any, id: string) {
 		e.preventDefault();
 		e.stopPropagation();
 
+		/*
 		const { block } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
-		const el = node.find(`.column${index}`);
+		const el = node.find(`.column${id}`);
 		const offset = el.first().offset();
 		const width = Math.max(Constant.size.table.min, Math.min(500, e.pageX - offset.left));
 
 		el.css({ width: width });
+		*/
 	};
 
-	onResizeEnd (e: any, index: number) {
+	onResizeEnd (e: any) {
 		$(window).unbind('mousemove.table mouseup.table');
 		$('body').removeClass('colResize');
 
