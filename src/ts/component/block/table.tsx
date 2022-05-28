@@ -168,7 +168,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		const rowContainer = children.find(it => it.isLayoutTableRows());
 		const rows = blockStore.getChildren(rootId, rowContainer.id, it => it.isTableRow());
 
-		return { columns, rows };
+		return { columnContainer, columns, rowContainer, rows };
 	};
 
 	onOptions (e: any, id: string) {
@@ -229,7 +229,6 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			it.icon = 'align ' + this.alignIcon(it.id);
 			return it;
 		});
-
 		let optionsVertical = [
 			{ id: I.TableAlign.Top, name: 'Top' },
 			{ id: I.TableAlign.Center, name: 'Center' },
@@ -264,7 +263,6 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			horizontal: I.MenuDirection.Center,
 			onOpen: (context: any) => {
 				menuContext = context;
-
 				$(`#block-${current.id}`).addClass('active');
 			},
 			onClose: () => {
@@ -473,18 +471,30 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 	};
 
 	onSortStart () {
+		$('body').addClass('grab');
 		this.preventSelect(true);
 	};
 
 	onSortEndColumn (result: any) {
 		const { oldIndex, newIndex } = result;
 
+		$('body').removeClass('grab');
 		this.preventSelect(false);
 	};
 
 	onSortEndRow (result: any) {
 		const { oldIndex, newIndex } = result;
+		const { rootId } = this.props;
+		const { rowContainer } = this.getData();
+		const childrenIds = blockStore.getChildrenIds(rootId, rowContainer.id);
+		const current = childrenIds[oldIndex];
+		const target = childrenIds[newIndex];
+		const position = newIndex < oldIndex ? I.BlockPosition.Top : I.BlockPosition.Bottom;
 
+		blockStore.updateStructure(rootId, rowContainer.id, arrayMove(childrenIds, oldIndex, newIndex));
+		C.BlockListMoveToExistingObject(rootId, rootId, [ current ], target, position);
+
+		$('body').removeClass('grab');
 		this.preventSelect(false);
 	};
 
