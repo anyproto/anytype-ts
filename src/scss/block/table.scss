@@ -43,6 +43,8 @@
 			.handleRow, .handleColumn { display: block; }
 		}
 
+		.row.isDraggingRow .cell { border-top: 1px solid $colorBorderDark; }
+
 		.cell.isDraggingRow, .cell.isDraggingColumn { border-left: 1px solid $colorBorderDark; border-top: 1px solid $colorBorderDark; background: #fff; }
 		.cell.isDraggingRow.isHead, .cell.isDraggingColumn.isHead { border-top: 0px; }
 

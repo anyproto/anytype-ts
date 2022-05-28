@@ -6,7 +6,7 @@ import { menuStore, blockStore } from 'ts/store';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import arrayMove from 'array-move';
 
-import Cell from './table/cell';
+import Row from './table/row';
 
 interface Props extends I.BlockComponent {};
 
@@ -35,7 +35,6 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		const { rootId, block, readonly } = this.props;
 		const { rows, columns } = this.getData();
 		const cn = [ 'wrap', 'focusable', 'c' + block.id ];
-		const children = blockStore.getChildren(rootId, block.id);
 
 		// Subscriptions
 		rows.forEach(child => {
@@ -50,52 +49,12 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			const { bgColor } = child;
 		});
 
-		const Row = (row: any) => {
-			const children = blockStore.getChildren(rootId, row.id);
-
+		const RowSortableElement = SortableElement((item: any) => {
 			return (
-				<div className="row">
-					{columns.map((column: any, i: number) => {
-						if (row.isHead) {
-							return (
-								<CellSortableElement 
-									key={i} 
-									block={children[i]} 
-									index={i} 
-									rowIdx={row.idx} 
-									columnIdx={i} 
-								/>
-							);
-						} else {
-							return (
-								<Cell 
-									key={i}
-									rootId={rootId}
-									block={children[i]} 
-									rowIdx={row.idx} 
-									columnIdx={i} 
-									isHead={false}
-									getData={this.getData}
-									onOptions={this.onOptions}
-									onClick={this.onClick}
-									onCellFocus={this.onFocus}
-									onCellBlur={this.onBlur}
-									onSort={this.onSort}
-									onResizeStart={this.onResizeStart}
-								/>
-							);
-						};
-					})}
-				</div>
-			);
-		};
-
-		const CellSortableElement = SortableElement((item: any) => {
-			return (
-				<Cell 
-					rootId={rootId}
-					{...item}
-					isHead={true}
+				<Row 
+					{...this.props}
+					{...item} 
+					isHead={false}
 					getData={this.getData}
 					onOptions={this.onOptions}
 					onClick={this.onClick}
@@ -107,12 +66,21 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			);
 		});
 
-		const RowSortableElement = SortableElement((item: any) => {
-			return <Row {...item} />;
-		});
-
 		const RowSortableContainer = SortableContainer((item: any) => {
-			return <Row {...item} isHead={true} />;
+			return (
+				<Row 
+					{...this.props} 
+					{...item} 
+					isHead={true} 
+					getData={this.getData}
+					onOptions={this.onOptions}
+					onClick={this.onClick}
+					onCellFocus={this.onFocus}
+					onCellBlur={this.onBlur}
+					onSort={this.onSort}
+					onResizeStart={this.onResizeStart}
+				/>
+			);
 		});
 
 		const TableSortableContainer = SortableContainer((item: any) => {
@@ -135,12 +103,17 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 									onSortEnd={this.onSortEndColumn}
 									helperClass="isDraggingColumn"
 									helperContainer={() => { return $(`#block-${block.id} .table`).get(0); }}
-									id={i}
-									{...row}
+									block={row}
 								/>
 							);
 						} else {
-							return <RowSortableElement key={i} id={i} index={i} {...row} />
+							return (
+								<RowSortableElement 
+									key={i} 
+									index={i} 
+									block={row} 
+								/>
+							);
 						};
 					})}
 				</div>

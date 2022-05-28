@@ -5,17 +5,9 @@ import { observer } from 'mobx-react';
 import { blockStore } from 'ts/store';
 import { SortableHandle } from 'react-sortable-hoc';
 
-interface Props extends I.BlockComponent {
+interface Props extends I.BlockComponentTable {
 	rowIdx: number;
 	columnIdx: number;
-	isHead: boolean;
-	getData: () => any;
-	onOptions: (e: any, id: string) => void;
-	onClick: (e: any, id: string) => void;
-	onCellFocus: (e: any, id: string) => void;
-	onCellBlur: (e: any, id: string) => void;
-	onSort: (e: any, id: string, sort: I.SortType) => void;
-	onResizeStart: (e: any, id: string) => void;
 };
 
 const Constant = require('json/constant.json');
@@ -35,7 +27,7 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 		const row = rows[rowIdx];
 		const column = columns[columnIdx];
 		const childrenIds = blockStore.getChildrenIds(rootId, block.id);
-		const inner = blockStore.getLeaf(rootId, block.id);
+		const inner = blockStore.getLeaf(rootId, childrenIds[0]);
 
 		if (!inner) {
 			return null;

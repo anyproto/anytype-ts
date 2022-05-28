@@ -54,7 +54,7 @@ import { ContentBookmark, BlockBookmark } from './block/bookmark';
 import { DivStyle, ContentDiv, BlockDiv } from './block/div';
 import { ContentRelation, BlockRelation } from './block/relation';
 import { ContentLatex, BlockLatex } from './block/latex';
-import { TableAlign, ContentTable, BlockTable } from './block/table';
+import { TableAlign, BlockComponentTable, ContentTable, BlockTable } from './block/table';
 
 export {
 	Account,
@@ -182,6 +182,7 @@ export {
 	BlockLatex,
 
 	TableAlign,
+	BlockComponentTable,
 	ContentTable, 
 	BlockTable,
 }
