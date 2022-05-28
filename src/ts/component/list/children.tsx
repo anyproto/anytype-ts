@@ -10,6 +10,7 @@ interface Props extends RouteComponentProps<any> {
 	block: any;
 	index?: any;
 	readonly?: boolean;
+	className?: string;
 	onMouseMove? (e: any): void;
 	onMouseLeave? (e: any): void;
 	onResizeStart? (e: any, index: number): void;
@@ -28,7 +29,7 @@ const ListChildren = observer(class ListChildren extends React.Component<Props, 
 	};
 	
 	render () {
-		const { onMouseMove, onMouseLeave, onResizeStart, rootId, block, index, readonly } = this.props;
+		const { onMouseMove, onMouseLeave, onResizeStart, rootId, block, index, readonly, className } = this.props;
 		const childrenIds = blockStore.getChildrenIds(rootId, block.id);
 		const children = blockStore.getChildren(rootId, block.id);
 		const length = childrenIds.length;
@@ -59,17 +60,20 @@ const ListChildren = observer(class ListChildren extends React.Component<Props, 
 				</div>
 			);
 		};
-		
+
 		return (
 			<div id={'block-children-' + block.id} className={cn.join(' ')} onMouseMove={onMouseMove} onMouseLeave={onMouseLeave}>
 				{children.map((item: any, i: number) => {
 					let css: any = {};
 					let cn = [];
-					
+
 					if (isRow) {
 						css.width = (item.fields.width || 1 / length ) * 100 + '%';
 					};
-					
+
+					if (className) {
+						cn.push(className);
+					};
 					if (i == 0) {
 						cn.push('first');
 					};

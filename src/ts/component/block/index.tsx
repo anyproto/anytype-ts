@@ -90,7 +90,7 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 		let setRef = (ref: any) => { this.ref = ref; };
 		let additional = null;
 		let renderChildren = true;
-		
+
 		if (className) {
 			cn.push(className);
 		};
@@ -214,9 +214,10 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 
 			case I.BlockType.Table:
 				renderChildren = false;
+				canDrop = false;
 				blockComponent = <BlockTable ref={setRef} {...this.props} />;
 				break;
-				
+
 			case I.BlockType.TableOfContents:
 				blockComponent = <BlockTableOfContents ref={setRef} {...this.props} />;
 				break;
@@ -271,7 +272,6 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 					data-type={I.SelectType.Block}
 				>
 					{object}
-					<div className="menuOver" />
 				</div>
 			);
 		} else {
