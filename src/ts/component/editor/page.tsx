@@ -464,7 +464,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 	onKeyDownEditor (e: any) {
 		const { dataset, rootId } = this.props;
 		const { selection } = dataset || {};
-		const { focused } = focus.state;
 		const menuOpen = menuStore.isOpen();
 		const popupOpen = popupStore.isOpenList([ 'search' ]);
 		const root = blockStore.getLeaf(rootId, rootId);
@@ -475,7 +474,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 		Util.previewHide(true);
 		
-		const block = blockStore.getLeaf(rootId, focused);
 		const ids = selection.get(I.SelectType.Block);
 		const cmd = keyboard.ctrlKey();
 		const readonly = this.isReadonly();
@@ -599,12 +597,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 		// Remove blocks
 		keyboard.shortcut('backspace, delete', e, (pressed: string) => {
-			if (readonly) {
-				return;
+			if (!readonly) {
+				e.preventDefault();
+				this.blockRemove();
 			};
-
-			e.preventDefault();
-			this.blockRemove(block);
 		});
 
 		// Indent block
@@ -791,7 +787,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 		// Backspace
 		keyboard.shortcut('backspace, delete', e, (pressed: string) => {
-			this.onBackspaceBlock(e, range, pressed);
+			this.onBackspaceBlock(e, range, pressed, props);
 		});
 
 		// Enter
@@ -1064,13 +1060,14 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 	};
 
 	// Backspace / Delete
-	onBackspaceBlock (e: any, range: I.TextRange, pressed: string) {
+	onBackspaceBlock (e: any, range: I.TextRange, pressed: string, props: any) {
 		const { dataset, rootId } = this.props;
+		const { isInsideTable } = props;
 		const { selection } = dataset || {};
 		const { focused } = focus.state;
 		const block = blockStore.getLeaf(rootId, focused);
 
-		if (!block) {
+		if (!block || isInsideTable) {
 			return;
 		};
 
@@ -1228,8 +1225,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		} else {
 			next = blockStore.getNextBlock(rootId, focused, dir, (it: I.Block) => { return it.isFocusable(); });
 		};
-
-		console.log(next);
 
 		if (!next) {
 			return;
@@ -1768,24 +1763,21 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		menuStore.closeAll();
 		popupStore.closeAll([ 'preview' ]);
 
-		let nextId = '';
 		let ids = selection.get(I.SelectType.Block);
 		let blockIds = [];
 
 		if (ids.length) {
-			nextId = ids[0];
-			blockIds = ids;
+			blockIds = [ ...ids ];
 		} else 
 		if (focused) {
-			nextId = focused.id;
 			blockIds = [ focused.id ];
 		};
 
-		const next = blockStore.getNextBlock(rootId, ids[0], -1, it => it.isFocusable());
+		const next = blockStore.getNextBlock(rootId, blockIds[0], -1, it => it.isFocusable());
 
 		blockIds = blockIds.filter((it: string) => {  
-			let block = blockStore.getLeaf(rootId, it);
-			return block && !block.isTextTitle();
+			const block = blockStore.getLeaf(rootId, it);
+			return block && !block.isTextTitle() && !block.isTextDescription();
 		});
 
 		focus.clear(true);

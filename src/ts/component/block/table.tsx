@@ -66,6 +66,11 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			const column = columns[cell.columnIdx];
 			const childrenIds = blockStore.getChildrenIds(rootId, cell.id);
 			const inner = blockStore.getLeaf(rootId, childrenIds[0]);
+
+			if (!inner) {
+				return null;
+			};
+
 			const cn = [ 'cell', 'column' + cell.id, 'align-v' + cell.vertical, 'align-h' + cell.horizontal ];
 			const css: any = {};
 			const length = childrenIds.length;
