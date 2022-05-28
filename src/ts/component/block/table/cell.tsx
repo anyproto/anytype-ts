@@ -29,7 +29,7 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 		const childrenIds = blockStore.getChildrenIds(rootId, block.id);
 		const inner = blockStore.getLeaf(rootId, childrenIds[0]);
 
-		if (!inner) {
+		if (!row || !column || !inner) {
 			return null;
 		};
 

@@ -49,12 +49,13 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			const { bgColor } = child;
 		});
 
-		const RowSortableElement = SortableElement((item: any) => {
+		const RowSortableContainer = SortableContainer((item: any) => {
 			return (
 				<Row 
-					{...this.props}
+					{...this.props} 
 					{...item} 
-					isHead={false}
+					index={item.block.idx}
+					isHead={true} 
 					getData={this.getData}
 					onOptions={this.onOptions}
 					onClick={this.onClick}
@@ -66,12 +67,13 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			);
 		});
 
-		const RowSortableContainer = SortableContainer((item: any) => {
+		const RowSortableElement = SortableElement((item: any) => {
 			return (
 				<Row 
-					{...this.props} 
+					{...this.props}
 					{...item} 
-					isHead={true} 
+					index={item.block.idx}
+					isHead={false}
 					getData={this.getData}
 					onOptions={this.onOptions}
 					onClick={this.onClick}
