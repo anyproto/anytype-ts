@@ -884,7 +884,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			cmdParsed = true;
 		};
 		
-		if (newBlock.type) {
+		if (!isInsideTable && newBlock.type) {
 			C.BlockCreate(rootId, id, position, newBlock, () => {
 				this.setValue('');
 				
