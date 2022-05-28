@@ -85,7 +85,7 @@ const MenuBlockStyle = observer(class MenuBlockStyle extends React.Component<Pro
 	getSections () {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockIds } = data;
+		const { rootId, blockIds, isInsideTable } = data;
 
 		const turnText = { id: 'turnText', icon: '', name: 'Turn into text', color: '', children: DataUtil.menuGetBlockText() };
 		const turnList = { id: 'turnList', icon: '', name: 'Turn into list', color: '', children: DataUtil.menuGetBlockList() };
@@ -97,6 +97,18 @@ const MenuBlockStyle = observer(class MenuBlockStyle extends React.Component<Pro
 		let hasTurnDiv = true;
 		let hasTurnFile = true;
 		let sections: any[] = [];
+
+		// Skip some features for BlockTable
+		if (isInsideTable) {
+			hasTurnDiv = false;
+			hasTurnFile = false;
+			turnText.children = turnText.children.filter((it: any) => {  
+				return ![ I.TextStyle.Callout ].includes(it.id);
+			});
+			turnList.children = turnList.children.filter((it: any) => {  
+				return ![ I.TextStyle.Toggle ].includes(it.id);
+			});
+		};
 
 		for (let id of blockIds) {
 			const block = blockStore.getLeaf(rootId, id);

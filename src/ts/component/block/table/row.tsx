@@ -33,7 +33,7 @@ const BlockTableRow = observer(class BlockTableRow extends React.Component<Props
 		});
 
 		return (
-			<div className="row">
+			<div id={`block-${block.id}`} className="row">
 				{columns.map((column: any, i: number) => {
 					if (isHead) {
 						return (

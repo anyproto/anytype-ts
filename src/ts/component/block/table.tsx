@@ -1,9 +1,9 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, C, keyboard } from 'ts/lib';
+import { I, C, keyboard, DataUtil } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { menuStore, blockStore } from 'ts/store';
-import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
+import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import arrayMove from 'array-move';
 
 import Row from './table/row';
@@ -183,13 +183,18 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		const columnCnt = columns.length;
 		const rowCnt = rows.length;
 
-		const subIds = [ 'select2', 'blockColor', 'blockBackground' ];
+		const subIds = [ 'select2', 'blockColor', 'blockBackground', 'blockStyle' ];
 		const innerColor = <div className={[ 'inner', 'textColor textColor-' + (current.color || 'default') ].join(' ')} />;
 		const innerBackground = <div className={[ 'inner', 'bgColor bgColor-' + (current.background || 'default') ].join(' ')} />;
 		const ah = I.TableAlign.Left;
 		const av = I.TableAlign.Top;
 
 		let menuContext: any = null;
+		let inner: any = null;
+
+		if (current.type == I.BlockType.TableCell) {
+			inner = blockStore.getLeaf(rootId, blockStore.getChildrenIds(rootId, current.id)[0]);
+		};
 
 		let options: any[] = [
 			{ id: 'horizontal', icon: 'align ' + this.alignIcon(ah), name: 'Horizontal align', arrow: true },
@@ -210,9 +215,9 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		let optionsColor = [
 			{ id: 'color', icon: 'color', name: 'Color', inner: innerColor, arrow: true },
 			{ id: 'background', icon: 'color', name: 'Background', inner: innerBackground, arrow: true },
+			inner && inner.isText() ? { id: 'style', icon: DataUtil.styleIcon(I.BlockType.Text, inner.content.style), name: 'Text style', arrow: true } : null,
 			{ isDiv: true },
 		];
-
 		let optionsHorizontal = [
 			{ id: I.TableAlign.Left, name: 'Left' },
 			{ id: I.TableAlign.Center, name: 'Center' },
@@ -256,6 +261,11 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			horizontal: I.MenuDirection.Center,
 			onOpen: (context: any) => {
 				menuContext = context;
+
+				$(`#block-${current.id}`).addClass('active');
+			},
+			onClose: () => {
+				$(`#block-${current.id}`).removeClass('active');
 			},
 			subIds: subIds,
 			data: {
@@ -273,6 +283,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 						vertical: I.MenuDirection.Center,
 						isSub: true,
 						data: {
+							rootId, 
 							value: current[item.id],
 						}
 					};
@@ -315,6 +326,20 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 							menuParam.data = Object.assign(menuParam.data, {
 								onChange: (id: string) => {
 									C.BlockListSetBackgroundColor(rootId, [ current.id ], id);
+									menuContext.close();
+								}
+							});
+							break;
+
+						case 'style':
+							menuId = 'blockStyle';
+							menuParam.data = Object.assign(menuParam.data, {
+								blockIds: [ inner.id ],
+								isInsideTable: true,
+								onSelect: (item: any) => {
+									if (item.type == I.BlockType.Text) {
+										C.BlockListTurnInto(rootId, [ inner.id ], item.itemId);
+									};
 									menuContext.close();
 								}
 							});
@@ -377,7 +402,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		
 		node.find('.cell.isEditing').removeClass('isEditing');
 		if (id) {
-			node.find(`#cell-${id}`).addClass('isEditing');
+			node.find(`#block-${id}`).addClass('isEditing');
 		};
 	};
 

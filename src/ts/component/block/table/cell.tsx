@@ -96,7 +96,7 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 
 		return (
 			<div
-				id={`cell-${block.id}`}
+				id={`block-${block.id}`}
 				className={cn.join(' ')}
 				style={css}
 				onClick={(e: any) => { onClick(e, block.id); }}
@@ -120,6 +120,7 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 
 				{isHead ? arrow : ''}
 				<div className="resize" onMouseDown={(e: any) => { onResizeStart(e, block.id); }} />
+				<Icon className="menu" onClick={(e: any) => { onOptions(e, block.id); }} />
 			</div>
 		);
 	};
