@@ -106,7 +106,7 @@ const MenuBlockStyle = observer(class MenuBlockStyle extends React.Component<Pro
 				return ![ I.TextStyle.Callout ].includes(it.id);
 			});
 			turnList.children = turnList.children.filter((it: any) => {  
-				return ![ I.TextStyle.Toggle ].includes(it.id);
+				return ![ I.TextStyle.Toggle, I.TextStyle.Numbered ].includes(it.id);
 			});
 		};
 

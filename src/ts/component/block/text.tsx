@@ -783,15 +783,18 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		const Markdown = {
 			'[\\*\\-\\+]':	 I.TextStyle.Bulleted,
 			'\\[\\]':		 I.TextStyle.Checkbox,
-			'1\\.':			 I.TextStyle.Numbered,
 			'#':			 I.TextStyle.Header1,
 			'##':			 I.TextStyle.Header2,
 			'###':			 I.TextStyle.Header3,
-			'\\>':			 I.TextStyle.Toggle,
 			'"':			 I.TextStyle.Quote,
 			'```':			 I.TextStyle.Code,
 		};
 		const Length: any = {};
+
+		if (!isInsideTable) {
+			Markdown['\\>'] = I.TextStyle.Toggle;
+			Markdown['1\\.'] = I.TextStyle.Numbered;
+		};
 
 		Length[I.TextStyle.Bulleted] = 1;
 		Length[I.TextStyle.Checkbox] = 2;
