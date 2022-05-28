@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, C, keyboard, DataUtil } from 'ts/lib';
+import { I, C, keyboard, DataUtil, focus } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { menuStore, blockStore } from 'ts/store';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
@@ -11,10 +11,12 @@ import Row from './table/row';
 interface Props extends I.BlockComponent {};
 
 const $ = require('jquery');
+const Constant = require('json/constant.json');
 
 const BlockTable = observer(class BlockTable extends React.Component<Props, {}> {
 
 	_isMounted: boolean = false;
+	offsetX: number = 0;
 
 	constructor (props: any) {
 		super(props);
@@ -147,6 +149,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 	
 	componentDidMount () {
 		this._isMounted = true;
+		this.resize();
 	};
 
 	componentDidUpdate () {
@@ -398,7 +401,9 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 	};
 
 	onClick (e: any, id: string) {
-		this.setEditing(id);
+		//this.setEditing(id);
+		focus.set(id, { from: 0, to: 0 });
+		focus.apply();
 	};
 
 	setEditing (id: string) {
@@ -415,11 +420,18 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		e.stopPropagation();
 
 		const win = $(window);
+		const body = $('body');
+		const node = $(ReactDOM.findDOMNode(this));
+		const el = node.find(`.column${id}`);
 
-		$('body').addClass('colResize');
+		if (el.length) {
+			this.offsetX = el.first().offset().left;
+		};
+
+		body.addClass('colResize');
 		win.unbind('mousemove.table mouseup.table');
 		win.on('mousemove.table', (e: any) => { this.onResizeMove(e, id); });
-		win.on('mouseup.table', (e: any) => { this.onResizeEnd(e); });
+		win.on('mouseup.table', (e: any) => { this.onResizeEnd(e, id); });
 
 		keyboard.setResize(true);
 	};
@@ -428,21 +440,22 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		e.preventDefault();
 		e.stopPropagation();
 
-		/*
-		const { block } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
 		const el = node.find(`.column${id}`);
-		const offset = el.first().offset();
-		const width = Math.max(Constant.size.table.min, Math.min(500, e.pageX - offset.left));
 
-		el.css({ width: width });
-		*/
+		el.css({ width: this.checkWidth(e.pageX - this.offsetX) });
 	};
 
-	onResizeEnd (e: any) {
+	onResizeEnd (e: any, id: string) {
+		const { rootId } = this.props;
+		const width = Math.max(Constant.size.table.min, Math.min(Constant.size.table.max, e.pageX - this.offsetX));
+
+		C.BlockListSetFields(rootId, [
+			{ blockId: id, fields: { width } },
+		]);
+
 		$(window).unbind('mousemove.table mouseup.table');
 		$('body').removeClass('colResize');
-
 		keyboard.setResize(false);
 	};
 
@@ -488,6 +501,22 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		if (selection) {
 			selection.preventSelect(v);
 		};
+	};
+
+	resize () {
+		const { columns } = this.getData();
+
+		columns.forEach((it: I.Block) => {
+			const node = $(ReactDOM.findDOMNode(this));
+			const el = node.find(`.column${it.id}`);
+
+			el.css({ width: this.checkWidth(it.fields.width || Constant.size.table.cell) });
+		});
+	};
+
+	checkWidth (w: number) {
+		const { min, max } = Constant.size.table;
+		return Math.max(min, Math.min(max, w));
 	};
 
 });

@@ -33,10 +33,12 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 			return null;
 		};
 
-		const cn = [ 'cell', 'column' + block.id, /* 'align-v' + block.vertical, 'align-h' + block.horizontal */ ];
-		const css: any = {};
+		const cn = [ 'cell', 'column' + column.id, /* 'align-v' + block.vertical, 'align-h' + block.horizontal */ ];
 		const length = childrenIds.length;
 		const bgColor = block.bgColor || column.bgColor || row.bgColor;
+		const css: any = {
+			width: column.fields.width || Constant.size.table.cell,
+		};
 
 		const HandleColumn = SortableHandle((item: any) => (
 			<div 
@@ -66,20 +68,12 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 			cn.push('bgColor bgColor-' + bgColor);
 		};
 
-		/*
-		if (cell.width) {
-			css.width = cell.width;
-		};
-		*/
-
-		css.width = (1 / columns.length) * 100 + '%';
-
 		return (
 			<div
 				id={`block-${block.id}`}
 				className={cn.join(' ')}
 				style={css}
-				onClick={(e: any) => { onClick(e, block.id); }}
+				onMouseDown={(e: any) => { onClick(e, inner.id); }}
 				onContextMenu={(e: any) => { onOptions(e, block.id); }}
 			>
 				{isHead ? <HandleColumn {...column} /> : ''}
@@ -98,7 +92,7 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 					getWrapperWidth={() => { return Constant.size.editor; }} 
 				/>
 
-				<div className="resize" onMouseDown={(e: any) => { onResizeStart(e, block.id); }} />
+				<div className="resize" onMouseDown={(e: any) => { onResizeStart(e, column.id); }} />
 				<Icon className="menu" onClick={(e: any) => { onOptions(e, block.id); }} />
 			</div>
 		);
