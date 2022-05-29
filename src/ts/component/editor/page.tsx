@@ -1802,10 +1802,18 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			return;
 		};
 
-		const last = blockStore.getFirstBlock(rootId, -1, (item: any) => { return item.canCreateBlock(); });
-
+		let last = blockStore.getFirstBlock(rootId, -1, (item: any) => { return item.canCreateBlock(); });
 		let create = false;
 		let length = 0;
+
+		if (last) {
+			let element = blockStore.getMapElement(rootId, last.id)
+			let parent = blockStore.getLeaf(rootId, element.parentId);
+
+			if (!parent.isLayoutDiv() && !parent.isPage()) {
+				last = null;
+			};
+		};
 		
 		if (!last) {
 			create = true;
