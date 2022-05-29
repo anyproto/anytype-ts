@@ -195,22 +195,18 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { rootId, block } = this.props;
+		const { rootId } = this.props;
 		const current = blockStore.getLeaf(rootId, id);
 
 		if (!current) {
 			return;
 		};
 
-		const { rows, columns } = this.getData();
-		const columnCnt = columns.length;
-		const rowCnt = rows.length;
-
 		const subIds = [ 'select2', 'blockColor', 'blockBackground', 'blockStyle' ];
-		const innerColor = <div className={[ 'inner', 'textColor textColor-' + (current.color || 'default') ].join(' ')} />;
-		const innerBackground = <div className={[ 'inner', 'bgColor bgColor-' + (current.background || 'default') ].join(' ')} />;
-		const ah = I.TableAlign.Left;
-		const av = I.TableAlign.Top;
+		const optionsAlign = this.optionsAlign();
+		const optionsColumn = this.optionsColumn();
+		const optionsRow = this.optionsRow();
+		const optionsColor = this.optionsColor(id);
 
 		let menuContext: any = null;
 		let inner: any = null;
@@ -219,62 +215,25 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			inner = blockStore.getLeaf(rootId, blockStore.getChildrenIds(rootId, current.id)[0]);
 		};
 
-		let options: any[] = [
-			{ id: 'horizontal', icon: 'align ' + this.alignIcon(ah), name: 'Horizontal align', arrow: true },
-			{ id: 'vertical', icon: 'align ' + this.alignIcon(av), name: 'Vertical align', arrow: true },
-		];
-		let optionsColumn = [
-			{ id: 'columnBefore', name: 'Column before' },
-			{ id: 'columnAfter', name: 'Column after' },
-			columnCnt > 1 ? { id: 'columnRemove', name: 'Remove column' } : null,
-			{ isDiv: true },
-		];
-		let optionsRow = [
-			{ id: 'rowBefore', name: 'Row before' },
-			{ id: 'rowAfter', name: 'Row after' },
-			rowCnt ? { id: 'rowRemove', name: 'Remove row' } : null,
-			{ isDiv: true },
-		];
-		let optionsColor = [
-			{ id: 'color', icon: 'color', name: 'Color', inner: innerColor, arrow: true },
-			{ id: 'background', icon: 'color', name: 'Background', inner: innerBackground, arrow: true },
-			inner && inner.isText() ? { id: 'style', icon: DataUtil.styleIcon(I.BlockType.Text, inner.content.style), name: 'Text style', arrow: true } : null,
-			{ isDiv: true },
-		];
-		let optionsHorizontal = [
-			{ id: I.TableAlign.Left, name: 'Left' },
-			{ id: I.TableAlign.Center, name: 'Center' },
-			{ id: I.TableAlign.Right, name: 'Right' },
-		].map((it: any) => {
-			it.icon = 'align ' + this.alignIcon(it.id);
-			return it;
-		});
-		let optionsVertical = [
-			{ id: I.TableAlign.Top, name: 'Top' },
-			{ id: I.TableAlign.Center, name: 'Center' },
-			{ id: I.TableAlign.Bottom, name: 'Bottom' },
-		].map((it: any) => {
-			it.icon = 'align ' + this.alignIcon(it.id);
-			return it;
-		});
-
+		let options: any[] = [];
 		switch (current.type) {
 			case I.BlockType.TableRow:
-				options = optionsRow.concat(options);
-				options = optionsColor.concat(options);
+				options = options.concat(optionsRow);
+				options = options.concat(optionsColor);
 				break;
 
 			case I.BlockType.TableColumn:
-				options = optionsColumn.concat(options);
-				options = optionsColor.concat(options);
+				options = options.concat(optionsColumn);
+				options = options.concat(optionsColor);
 				break;
 
 			case I.BlockType.TableCell:
-				options = optionsColumn.concat(options);
-				options = optionsRow.concat(options);
-				options = optionsColor.concat(options);
+				options = options.concat(optionsColumn);
+				options = options.concat(optionsRow);
+				options = options.concat(optionsColor);
 				break;
 		};
+		options = options.concat(optionsAlign);
 
 		menuStore.open('select1', {
 			component: 'select',
@@ -314,7 +273,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 							menuId = 'select2';
 							menuParam.component = 'select';
 							menuParam.data = Object.assign(menuParam.data, {
-								options: optionsHorizontal,
+								options: this.optionsHAlign(),
 								onSelect: (e: any, el: any) => {
 									menuContext.close();
 								}
@@ -325,7 +284,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 							menuId = 'select2';
 							menuParam.component = 'select';
 							menuParam.data = Object.assign(menuParam.data, {
-								options: optionsVertical,
+								options: this.optionsVAlign(),
 								onSelect: (e: any, el: any) => {
 									menuContext.close();
 								}
@@ -380,27 +339,21 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 
 					switch (item.id) {
 						case 'columnBefore':
-							//this.columnAdd(column, -1);
 							break;
 
 						case 'columnAfter':
-							//this.columnAdd(column, 1);
 							break;
 
 						case 'columnRemove':
-							//this.columnRemove(column);
 							break;
 
 						case 'rowBefore':
-							//this.rowAdd(row, -1);
 							break;
 
 						case 'rowAfter':
-							//this.rowAdd(row, 1);
 							break;
 
 						case 'rowRemove':
-							//this.rowRemove(row);
 							break;
 					};
 				}
@@ -543,7 +496,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		const wrapperWidth = getWrapperWidth();
 		const offset = Constant.size.blockMenu;
 
-		let width = offset + 4;
+		let width = offset + 12;
 
 		columns.forEach((it: I.Block) => {
 			const node = $(ReactDOM.findDOMNode(this));
@@ -565,6 +518,85 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 	checkWidth (w: number) {
 		const { min, max } = Constant.size.table;
 		return Math.max(min, Math.min(max, w));
+	};
+
+	optionsRow () {
+		const { rows } = this.getData();
+		return [
+			{ id: 'rowBefore', icon: 'table-insert-top', name: 'Row before' },
+			{ id: 'rowAfter', icon: 'table-insert-bottom', name: 'Row after' },
+			{ id: 'rowMoveTop', icon: 'table-move-top', name: 'Move row up' },
+			{ id: 'rowMoveBottom', icon: 'table-move-bottom', name: 'Move row down' },
+			rows.length > 1 ? { id: 'rowRemove', icon: 'remove', name: 'Delete row' } : null,
+			{ isDiv: true },
+		];
+	};
+
+	optionsColumn () {
+		const { columns } = this.getData();
+		return [
+			{ id: 'columnBefore', icon: 'table-insert-left', name: 'Column before' },
+			{ id: 'columnAfter', icon: 'table-insert-right', name: 'Column after' },
+			{ id: 'columnMoveLeft', icon: 'table-move-left', name: 'Move column left' },
+			{ id: 'columnMoveRight', icon: 'table-move-right', name: 'Move column right' },
+			columns.length > 1 ? { id: 'columnRemove', icon: 'remove', name: 'Delete column' } : null,
+			{ isDiv: true },
+		];
+	};
+
+	optionsColor (id: string) {
+		const { rootId } = this.props;
+		const current = blockStore.getLeaf(rootId, id);
+
+		if (!current) {
+			return;
+		};
+
+		let inner: any = null;
+		if (current.type == I.BlockType.TableCell) {
+			inner = blockStore.getLeaf(rootId, blockStore.getChildrenIds(rootId, current.id)[0]);
+		};
+
+		const innerColor = <div className={[ 'inner', 'textColor textColor-' + (current.color || 'default') ].join(' ')} />;
+		const innerBackground = <div className={[ 'inner', 'bgColor bgColor-' + (current.background || 'default') ].join(' ')} />;
+
+		return [
+			{ id: 'color', icon: 'color', name: 'Color', inner: innerColor, arrow: true },
+			{ id: 'background', icon: 'color', name: 'Background', inner: innerBackground, arrow: true },
+			inner && inner.isText() ? { id: 'style', icon: DataUtil.styleIcon(I.BlockType.Text, inner.content.style), name: 'Text style', arrow: true } : null,
+			{ isDiv: true },
+		];
+	};
+
+	optionsAlign () {
+		const ah = I.TableAlign.Left;
+		const av = I.TableAlign.Top;
+		return [
+			{ id: 'horizontal', icon: 'align ' + this.alignIcon(ah), name: 'Horizontal align', arrow: true },
+			{ id: 'vertical', icon: 'align ' + this.alignIcon(av), name: 'Vertical align', arrow: true },
+		];
+	};
+
+	optionsHAlign () {
+		return [
+			{ id: I.TableAlign.Left, name: 'Left' },
+			{ id: I.TableAlign.Center, name: 'Center' },
+			{ id: I.TableAlign.Right, name: 'Right' },
+		].map((it: any) => {
+			it.icon = 'align ' + this.alignIcon(it.id);
+			return it;
+		});
+	};
+
+	optionsVAlign () {
+		return [
+			{ id: I.TableAlign.Top, name: 'Top' },
+			{ id: I.TableAlign.Center, name: 'Center' },
+			{ id: I.TableAlign.Bottom, name: 'Bottom' },
+		].map((it: any) => {
+			it.icon = 'align ' + this.alignIcon(it.id);
+			return it;
+		});
 	};
 
 });

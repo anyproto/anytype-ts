@@ -91,6 +91,16 @@
 		.icon.insert-left { background-image: url('~img/icon/menu/relation/insert.svg'); }
 		.icon.insert-right { background-image: url('~img/icon/menu/relation/insert.svg'); transform: rotateZ(180deg); }
 
+		.icon.table-move-left { background-image: url('~img/icon/menu/table/move-h.svg'); }
+		.icon.table-move-right { background-image: url('~img/icon/menu/table/move-h.svg'); transform: rotateZ(180deg); }
+		.icon.table-move-top { background-image: url('~img/icon/menu/table/move-v.svg'); }
+		.icon.table-move-bottom { background-image: url('~img/icon/menu/table/move-v.svg'); transform: rotateZ(180deg); }
+
+		.icon.table-insert-left { background-image: url('~img/icon/menu/table/insert-h.svg'); }
+		.icon.table-insert-right { background-image: url('~img/icon/menu/table/insert-h.svg'); transform: rotateZ(180deg); }
+		.icon.table-insert-top { background-image: url('~img/icon/menu/table/insert-v.svg'); }
+		.icon.table-insert-bottom { background-image: url('~img/icon/menu/table/insert-v.svg'); transform: rotateZ(180deg); }
+
 		.icon.lock { width: 8px !important; height: 20px !important; background-image: url('~img/icon/lock.svg'); }
 
 		.icon.color {

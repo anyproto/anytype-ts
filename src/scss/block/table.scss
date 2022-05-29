@@ -3,9 +3,11 @@
 .blocks {
 	.block.blockTable { padding: 6px 0px; }
 	.block.blockTable {
-		.scrollWrap { width: 100%; padding: 10px 0px; overflow: overlay; }
+		.scrollWrap { width: 100%; padding: 10px 4px; overflow: overlay; }
 
-		.table { display: inline-block; height: 100%; border-collapse: collapse; box-shadow: 0px 1px $colorBorderDark, 1px 0px $colorBorderDark; }
+		.table { 
+			display: inline-block; height: 100%; border-collapse: collapse; box-shadow: 0px 1px $colorBorderDark, 1px 0px $colorBorderDark; 
+		}
 		
 		.row { display: flex; position: relative; flex-direction: row; }
 		.row.isDragging { box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2); background: #fff; width: auto; }
@@ -17,7 +19,7 @@
 
 		.handleRow, .handleColumn { 
 			cursor: grab !important; transition: $transitionFast; z-index: 10; border: 2px solid #fff; border-radius: 3px;
-			background-color: $colorOrange; position: absolute; display: none;
+			background-color: $colorOrange; position: absolute; 
 		}
 		.handleColumn { 
 			height: 10px; width: 22px; background-image: url('~img/icon/table/handle/column.svg'); background-size: 16px 8px;
