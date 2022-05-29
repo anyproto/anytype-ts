@@ -71,6 +71,7 @@
 			}
 
 			.block.blockText.quote > .wrapContent > .selectable > .dropTarget > .flex > .wrap { padding-left: 14px; }
+			.block.blockText.quote > .wrapContent > .additional > .line { height: calc(100% - 18px); top: 9px; }
 
 			.icon.menu { 
 				width: 8px; height: 20px; box-shadow: 0px 0px 0px 1px $colorBorderDark; border-radius: 10px; background-image: url('~img/icon/table/handle/cell.svg');
