@@ -372,9 +372,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 	};
 
 	onClick (e: any, id: string) {
-		//this.setEditing(id);
-		focus.set(id, { from: 0, to: 0 });
-		focus.apply();
+		this.setEditing(id);
 	};
 
 	setEditing (id: string) {

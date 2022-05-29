@@ -73,7 +73,7 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 				id={`block-${block.id}`}
 				className={cn.join(' ')}
 				style={css}
-				onMouseDown={(e: any) => { onClick(e, inner.id); }}
+				onMouseDown={(e: any) => { onClick(e, block.id); }}
 				onContextMenu={(e: any) => { onOptions(e, block.id); }}
 			>
 				{isHead ? <HandleColumn {...column} /> : ''}
