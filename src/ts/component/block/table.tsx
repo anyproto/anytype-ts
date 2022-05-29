@@ -489,12 +489,14 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 	resize () {
 		const { isPopup, block, getWrapperWidth } = this.props;
 		const { columns } = this.getData();
+		const node = $(ReactDOM.findDOMNode(this));
 		const obj = $(`#block-${block.id}`);
 		const container = $(isPopup ? '#popupPage #innerWrap' : '#page.isFull');
 		const ww = container.width();
 		const mw = ww - PADDING * 2;
 		const wrapperWidth = getWrapperWidth();
 		const offset = Constant.size.blockMenu;
+		const wrap = node.find('#scrollWrap');
 
 		let width = offset + 12;
 
@@ -506,6 +508,8 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			width += w;
 			el.css({ width: w });
 		});
+
+		wrap.css({ overflow: width > mw ? 'overlay': 'visible' });
 
 		width = Math.min(mw, width);
 
