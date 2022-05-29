@@ -70,6 +70,8 @@
 				#value, .placeholder  { padding: 9px 9px 9px 0px; }
 			}
 
+			.block.blockText.quote > .wrapContent > .selectable > .dropTarget > .flex > .wrap { padding-left: 14px; }
+
 			.icon.menu { 
 				width: 8px; height: 20px; box-shadow: 0px 0px 0px 1px $colorBorderDark; border-radius: 10px; background-image: url('~img/icon/table/handle/cell.svg');
 				background-size: 8px 16px; position: absolute; right: 9px; top: 50%; margin-top: -10px; z-index: 2; cursor: pointer; opacity: 0; pointer-events: none;
