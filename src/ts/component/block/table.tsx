@@ -5,6 +5,7 @@ import { observer } from 'mobx-react';
 import { menuStore, blockStore } from 'ts/store';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import arrayMove from 'array-move';
+import { throttle } from 'lodash';
 
 import Row from './table/row';
 
@@ -156,11 +157,13 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 	
 	componentDidMount () {
 		this._isMounted = true;
+		this.initSize();
 		this.resize();
 		this.rebind();
 	};
 
 	componentDidUpdate () {
+		this.initSize();
 		this.resize();
 	};
 	
@@ -511,7 +514,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 
 		body.addClass('colResize');
 		win.unbind('mousemove.table mouseup.table');
-		win.on('mousemove.table', (e: any) => { this.onResizeMove(e, id); });
+		win.on('mousemove.table', throttle((e: any) => { this.onResizeMove(e, id); }, 20));
 		win.on('mouseup.table', (e: any) => { this.onResizeEnd(e, id); });
 
 		keyboard.setResize(true);
@@ -525,6 +528,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		const el = node.find(`.column${id}`);
 
 		el.css({ width: this.checkWidth(e.pageX - this.offsetX) });
+		this.resize();
 	};
 
 	onResizeEnd (e: any, id: string) {
@@ -596,6 +600,16 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		};
 	};
 
+	initSize () {
+		const { columns } = this.getData();
+		const node = $(ReactDOM.findDOMNode(this));
+
+		columns.forEach((it: I.Block) => {
+			const el = node.find(`.column${it.id}`);
+			el.css({ width: this.checkWidth(it.fields.width || Constant.size.table.cell) });
+		});
+	};
+
 	resize () {
 		const { isPopup, block, getWrapperWidth } = this.props;
 		const { columns } = this.getData();
@@ -608,15 +622,13 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		const offset = Constant.size.blockMenu;
 		const wrap = node.find('#scrollWrap');
 
-		let width = offset + 20 + columns.length;
+		let width = offset;
 
 		columns.forEach((it: I.Block) => {
-			const node = $(ReactDOM.findDOMNode(this));
-			const el = node.find(`.column${it.id}`);
-			const w = this.checkWidth(it.fields.width || Constant.size.table.cell);
-
-			width += w;
-			el.css({ width: w });
+			const el = node.find(`.column${it.id}`).first();
+			if (el.length) {
+				width += el.outerWidth();
+			};
 		});
 
 		wrap.css({ overflow: width > mw ? 'overlay': 'visible' });
