@@ -31,17 +31,18 @@
 
 		.cell { 
 			@include text-common; vertical-align: top; position: relative; cursor: text; flex-shrink: 0; background: #fff;
-			box-shadow: 0px 1px inset $colorBorderDark, 1px 0px inset $colorBorderDark;
+			box-shadow: 0px 1px inset $colorBorderDark, 1px 0px inset $colorBorderDark; padding: 1px 0px 0px 1px;
 		}
 
-		.cell.isEditing { box-shadow: 0px 0px 0px 2px #ffcf6f; border-radius: 4px; }
+		.cell.isEditing { box-shadow: 0px 0px 0px 2px #ffcf6f; border-radius: 2px; padding: 0px; }
 
 		.cell.isHighlightedColumn {
 			box-shadow: 0px 1px inset $colorBorderDark, 2px 0px 0px #ffcf6f, -2px 0px 0px #ffcf6f; z-index: 2;
+			padding: 1px 0px 0px 0px;
 		}
 		.cell.isHighlightedColumn.isFirst {
 			box-shadow: 2px 0px 0px #ffcf6f, -2px 0px 0px #ffcf6f, 0px -2px 0px #ffcf6f;
-			border-radius: 2px 2px 0px 0px;
+			border-radius: 2px 2px 0px 0px; padding-top: 0px;
 		}
 		.cell.isHighlightedColumn.isLast {
 			box-shadow: 0px 1px inset $colorBorderDark, 2px 0px 0px #ffcf6f, -2px 0px 0px #ffcf6f, 0px 2px 0px #ffcf6f;
@@ -53,7 +54,7 @@
 
 		.row.isHighlightedRow {	box-shadow: 0px 0px 0px 2px #ffcf6f; border-radius: 2px; z-index: 2; }
 		.row.isHighlightedRow {
-			.cell { box-shadow: 1px 0px inset $colorBorderDark; }
+			.cell { box-shadow: 1px 0px inset $colorBorderDark; padding-top: 0px; }
 		}
 
 		.cell.isEditing {

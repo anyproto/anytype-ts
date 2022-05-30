@@ -28,18 +28,9 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 
 		const cn = [ 'cell', 'column' + column.id, /* 'align-v' + block.vertical, 'align-h' + block.horizontal */ ];
 		const length = childrenIds.length;
-		const bgColor = block.bgColor || column.bgColor || row.bgColor;
 
 		if (isHead) {
 			cn.push('isHead');
-		};
-		/*
-		if (cell.color) {
-			cn.push('textColor textColor-' + cell.color);
-		};
-		*/
-		if (bgColor) {
-			cn.push('bgColor bgColor-' + bgColor);
 		};
 
 		const HandleColumn = SortableHandle((item: any) => (

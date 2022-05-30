@@ -83,8 +83,8 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 					isHead={false}
 					getData={this.getData}
 					onOptions={this.onOptions}
+					onHandleClick={this.onHandleClick}
 					onCellClick={this.onCellClick}
-
 					onCellFocus={this.onFocus}
 					onCellBlur={this.onBlur}
 					onSort={this.onSort}
@@ -233,11 +233,18 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 
 		let options: any[] = [];
 		let element: any = null;
+		let blockIds: string[] = [];
+		let childrenIds: any[] = [];
 
 		switch (current.type) {
 			case I.BlockType.TableRow:
 				options = options.concat(optionsRow);
 				options = options.concat(optionsColor);
+
+				childrenIds = blockStore.getChildrenIds(rootId, current.id);
+				childrenIds.forEach((childId: string) => {
+					blockIds = blockIds.concat(blockStore.getChildrenIds(rootId, childId));
+				});
 
 				element = node.find(`#block-${id}`).first();
 				menuParam = Object.assign(menuParam, {
@@ -261,6 +268,8 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				options = options.concat(optionsColumn);
 				options = options.concat(optionsRow);
 				options = options.concat(optionsColor);
+
+				blockIds = [ inner.id ];
 
 				menuParam = Object.assign(menuParam, {
 					rect: { x: e.pageX, y: e.pageY, width: 1, height: 1 },
@@ -299,6 +308,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 							menuParam.data = Object.assign(menuParam.data, {
 								options: this.optionsHAlign(),
 								onSelect: (e: any, el: any) => {
+									C.BlockListSetAlign(rootId, blockIds, el.itemId);
 									menuContext.close();
 								}
 							});
@@ -319,7 +329,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 							menuId = 'blockColor';
 							menuParam.data = Object.assign(menuParam.data, {
 								onChange: (id: string) => {
-									C.BlockTextListSetColor(rootId, [ current.id ], id);
+									C.BlockTextListSetColor(rootId, blockIds, id);
 									menuContext.close();
 								}
 							});
@@ -329,7 +339,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 							menuId = 'blockBackground';
 							menuParam.data = Object.assign(menuParam.data, {
 								onChange: (id: string) => {
-									C.BlockListSetBackgroundColor(rootId, [ current.id ], id);
+									C.BlockListSetBackgroundColor(rootId, blockIds, id);
 									menuContext.close();
 								}
 							});
@@ -338,13 +348,13 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 						case 'style':
 							menuId = 'blockStyle';
 							menuParam.data = Object.assign(menuParam.data, {
-								blockIds: [ inner.id ],
+								blockIds: blockIds,
 								blockId: inner.id,
 								isInsideTable: true,
 								value: inner.content.style,
 								onSelect: (item: any) => {
 									if (item.type == I.BlockType.Text) {
-										C.BlockListTurnInto(rootId, [ inner.id ], item.itemId);
+										C.BlockListTurnInto(rootId, blockIds, item.itemId);
 									};
 									menuContext.close();
 								}
@@ -564,7 +574,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		const offset = Constant.size.blockMenu;
 		const wrap = node.find('#scrollWrap');
 
-		let width = offset + 12;
+		let width = offset + 20 + columns.length;
 
 		columns.forEach((it: I.Block) => {
 			const node = $(ReactDOM.findDOMNode(this));
@@ -576,7 +586,6 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		});
 
 		wrap.css({ overflow: width > mw ? 'overlay': 'visible' });
-
 		width = Math.min(mw, width);
 
 		obj.css({ 
