@@ -36,7 +36,7 @@
 
 		.cell.isEditing { box-shadow: 0px 0px 0px 2px #ffcf6f; border-radius: 2px; padding: 0px; }
 		.cell.isEditing {
-			.block .wrapContent { padding-top: 1px; }
+			.block .wrapContent { padding-left: 1px; padding-top: 1px; }
 		}
 
 		.cell.isHighlightedColumn {

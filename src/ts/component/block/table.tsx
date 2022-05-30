@@ -206,6 +206,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		};
 
 		const node = $(ReactDOM.findDOMNode(this));
+		const { rows, columns } = this.getData();
 		const subIds = [ 'select2', 'blockColor', 'blockBackground', 'blockStyle' ];
 		const optionsAlign = this.optionsAlign();
 		const optionsColumn = this.optionsColumn();
@@ -256,6 +257,14 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				options = options.concat(optionsColumn);
 				options = options.concat(optionsColor);
 
+				const idx = columns.findIndex(it => it.id == current.id);
+				if (idx >= 0) {
+					rows.forEach(row => {
+						const childrenIds = blockStore.getChildrenIds(rootId, row.id);
+						blockIds = blockIds.concat(blockStore.getChildrenIds(rootId, childrenIds[idx]));
+					});
+				};
+
 				element = node.find(`.column${id}`).first();
 				menuParam = Object.assign(menuParam, {
 					element,
@@ -297,7 +306,6 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 						isSub: true,
 						data: {
 							rootId, 
-							value: current[item.id],
 						}
 					};
 
@@ -349,9 +357,9 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 							menuId = 'blockStyle';
 							menuParam.data = Object.assign(menuParam.data, {
 								blockIds: blockIds,
-								blockId: inner.id,
+								blockId: blockIds[0],
 								isInsideTable: true,
-								value: inner.content.style,
+								value: inner?.content.style,
 								onSelect: (item: any) => {
 									if (item.type == I.BlockType.Text) {
 										C.BlockListTurnInto(rootId, blockIds, item.itemId);
@@ -393,6 +401,8 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				}
 			},
 		});
+
+		console.log(menuParam);
 
 		menuStore.open('select1', menuParam);
 	};
@@ -636,13 +646,13 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			inner = blockStore.getLeaf(rootId, blockStore.getChildrenIds(rootId, current.id)[0]);
 		};
 
-		const innerColor = <div className={[ 'inner', 'textColor textColor-' + (inner.content.color || 'default') ].join(' ')} />;
-		const innerBackground = <div className={[ 'inner', 'bgColor bgColor-' + (inner.bgColor || 'default') ].join(' ')} />;
+		const innerColor = <div className={[ 'inner', 'textColor textColor-' + (inner?.content.color || 'default') ].join(' ')} />;
+		const innerBackground = <div className={[ 'inner', 'bgColor bgColor-' + (inner?.bgColor || 'default') ].join(' ')} />;
 
 		return [
 			{ id: 'color', icon: 'color', name: 'Color', inner: innerColor, arrow: true },
 			{ id: 'background', icon: 'color', name: 'Background', inner: innerBackground, arrow: true },
-			inner && inner.isText() ? { id: 'style', icon: DataUtil.styleIcon(I.BlockType.Text, inner.content.style), name: 'Text style', arrow: true } : null,
+			{ id: 'style', icon: DataUtil.styleIcon(I.BlockType.Text, inner?.content.style), name: 'Text style', arrow: true },
 			{ isDiv: true },
 		];
 	};
