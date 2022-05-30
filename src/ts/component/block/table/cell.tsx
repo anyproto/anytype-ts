@@ -15,7 +15,7 @@ const Constant = require('json/constant.json');
 const BlockTableCell = observer(class BlockTableCell extends React.Component<Props, {}> {
 
 	render () {
-		const { rootId, block, readonly, isHead, rowIdx, columnIdx, getData, onOptions, onCellFocus, onCellBlur, onClick, onSort, onResizeStart } = this.props;
+		const { rootId, block, readonly, isHead, rowIdx, columnIdx, getData, onOptions, onHandleClick, onCellFocus, onCellBlur, onCellClick, onSort, onResizeStart } = this.props;
 		const { rows, columns } = getData();
 		const row = rows[rowIdx];
 		const column = columns[columnIdx];
@@ -45,16 +45,18 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 		const HandleColumn = SortableHandle((item: any) => (
 			<div 
 				className="icon handleColumn"
-				onClick={(e: any) => { onOptions(e, item.id); }}
-				onContextMenu={(e: any) => { onOptions(e, item.id); }}
+				onClick={(e: any) => { onHandleClick(e, item.id); }}
+				onMouseDown={(e: any) => { e.stopPropagation(); }}
+				onContextMenu={(e: any) => { onHandleClick(e, item.id); }}
 			/>
 		));
 
 		const HandleRow = SortableHandle((item: any) => (
 			<div 
 				className="icon handleRow"
-				onClick={(e: any) => { onOptions(e, item.id); }}
-				onContextMenu={(e: any) => { onOptions(e, item.id); }}
+				onClick={(e: any) => { onHandleClick(e, item.id); }}
+				onMouseDown={(e: any) => { e.stopPropagation(); }}
+				onContextMenu={(e: any) => { onHandleClick(e, item.id); }}
 			/>
 		));
 
@@ -62,7 +64,7 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 			<div
 				id={`block-${block.id}`}
 				className={cn.join(' ')}
-				onMouseDown={(e: any) => { onClick(e, block.id); }}
+				onMouseDown={(e: any) => { onCellClick(e, block.id); }}
 				onContextMenu={(e: any) => { onOptions(e, block.id); }}
 			>
 				{isHead ? <HandleColumn {...column} /> : ''}

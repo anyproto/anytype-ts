@@ -18,7 +18,7 @@
 
 		.handleRow, .handleColumn { 
 			cursor: grab !important; transition: $transitionFast; z-index: 10; border: 2px solid #fff; border-radius: 3px;
-			background-color: $colorOrange; position: absolute; 
+			background-color: $colorOrange; position: absolute; display: none;
 		}
 		.handleColumn { 
 			height: 10px; width: 22px; background-image: url('~img/icon/table/handle/column.svg'); background-size: 16px 8px;
@@ -34,8 +34,41 @@
 			box-shadow: 0px 1px inset $colorBorderDark, 1px 0px inset $colorBorderDark;
 		}
 
-		.cell.isEditing { box-shadow: 0px 0px 0px 2px #ffcf6f; }
+		.cell.isEditing { box-shadow: 0px 0px 0px 2px #ffcf6f; border-radius: 4px; }
+
+		.cell.isHighlightedColumn {
+			box-shadow: 0px 1px inset $colorBorderDark, 2px 0px 0px #ffcf6f, -2px 0px 0px #ffcf6f; z-index: 2;
+		}
+		.cell.isHighlightedColumn.isFirst {
+			box-shadow: 2px 0px 0px #ffcf6f, -2px 0px 0px #ffcf6f, 0px -2px 0px #ffcf6f;
+			border-radius: 2px 2px 0px 0px;
+		}
+		.cell.isHighlightedColumn.isLast {
+			box-shadow: 0px 1px inset $colorBorderDark, 2px 0px 0px #ffcf6f, -2px 0px 0px #ffcf6f, 0px 2px 0px #ffcf6f;
+			border-radius: 0px 0px 2px 2px;
+		}
+		.cell.isHighlightedColumn {
+			.handleColumn { display: block; }
+		}
+
+		.row.isHighlightedRow {	box-shadow: 0px 0px 0px 2px #ffcf6f; border-radius: 2px; z-index: 2; }
+		.row.isHighlightedRow {
+			.cell { box-shadow: 1px 0px inset $colorBorderDark; }
+		}
+
 		.cell.isEditing {
+			.handleRow, .handleColumn { display: block; }
+		}
+
+		.cell.isHighlightedCell, .cell:hover {
+			.icon.menu { opacity: 1; pointer-events: all; }
+		}
+
+		.cell.isHighlightedCell {
+			.icon.menu { border-color: #ffcf6f; box-shadow: 0px 0px 0px 2px #ffcf6f; }
+		}
+
+		.cell:hover {
 			.handleRow, .handleColumn { display: block; }
 		}
 
@@ -81,23 +114,8 @@
 			.icon.menu:hover { border-color: #ffcf6f; box-shadow: 0px 0px 0px 2px #ffcf6f; }
 
 			.block.blockText { @include text-common; }
-
-			.icon.arrow { 
-				width: 20px; height: 20px; position: absolute; right: 0px; top: 0px; background-image: url('~img/arrow/select/dark.svg');
-				cursor: pointer; z-index: 1; opacity: 0; transform: rotateZ(180deg);
-			}
-			.icon.arrow.c1 { transform: none; }
-			.icon.arrow.show { opacity: 1; }
 		}
 		.cell.isEditing { z-index: 2; }
-		
-		.cell.active, .cell:hover {
-			.icon.menu { opacity: 1; pointer-events: all; }
-		}
-
-		.cell:hover {
-			.icon.arrow { opacity: 1; }
-		}
 	}
 
 	.block.blockTable > .wrapContent > .selectable > .dropTarget { padding: 6px 0px; }
