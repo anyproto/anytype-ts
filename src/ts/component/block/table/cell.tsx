@@ -14,13 +14,6 @@ const Constant = require('json/constant.json');
 
 const BlockTableCell = observer(class BlockTableCell extends React.Component<Props, {}> {
 
-	_isMounted: boolean = false;
-
-	constructor (props: any) {
-		super(props);
-
-	};
-
 	render () {
 		const { rootId, block, readonly, isHead, rowIdx, columnIdx, getData, onOptions, onCellFocus, onCellBlur, onClick, onSort, onResizeStart } = this.props;
 		const { rows, columns } = getData();
@@ -40,22 +33,6 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 			width: column.fields.width || Constant.size.table.cell,
 		};
 
-		const HandleColumn = SortableHandle((item: any) => (
-			<div 
-				className={[ 'icon', 'handleColumn' ].join(' ')}
-				onClick={(e: any) => { onOptions(e, item.id); }}
-				onContextMenu={(e: any) => { onOptions(e, item.id); }}
-			/>
-		));
-
-		const HandleRow = SortableHandle((item: any) => (
-			<div 
-				className={[ 'icon', 'handleRow' ].join(' ')}
-				onClick={(e: any) => { onOptions(e, item.id); }}
-				onContextMenu={(e: any) => { onOptions(e, item.id); }}
-			/>
-		));
-
 		if (isHead) {
 			cn.push('isHead');
 		};
@@ -67,6 +44,22 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 		if (bgColor) {
 			cn.push('bgColor bgColor-' + bgColor);
 		};
+
+		const HandleColumn = SortableHandle((item: any) => (
+			<div 
+				className="icon handleColumn"
+				onClick={(e: any) => { onOptions(e, item.id); }}
+				onContextMenu={(e: any) => { onOptions(e, item.id); }}
+			/>
+		));
+
+		const HandleRow = SortableHandle((item: any) => (
+			<div 
+				className="icon handleRow"
+				onClick={(e: any) => { onOptions(e, item.id); }}
+				onContextMenu={(e: any) => { onOptions(e, item.id); }}
+			/>
+		));
 
 		return (
 			<div
@@ -98,17 +91,6 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 		);
 	};
 	
-	componentDidMount () {
-		this._isMounted = true;
-	};
-
-	componentDidUpdate () {
-	};
-	
-	componentWillUnmount () {
-		this._isMounted = false;
-	};
-
 });
 
 export default BlockTableCell;
