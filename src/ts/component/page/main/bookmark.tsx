@@ -69,10 +69,12 @@ const PageMainBookmark = observer(class PageMainBookmark extends React.Component
 				<div id="blocks" className="blocks wrapper">
 					<HeadSimple ref={(ref: any) => { this.refHead = ref;}} type="bookmark" rootId={rootId} />
 
-					<div className="buttons">
-						<Button text="Open link" color="blank" onClick={this.onOpen} />
-						{object.url ? <Button text="Reload data" color="blank" onClick={this.onReload} /> : ''}
-					</div>
+					{object.url ? (
+						<div className="buttons">
+							<Button text="Open link" color="blank" onClick={this.onOpen} />
+							<Button text="Reload data" color="blank" onClick={this.onReload} />
+						</div>
+					) : ''}
 
 					<div className="section">
 						{blocks.map((item: any) => (
