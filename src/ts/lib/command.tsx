@@ -479,6 +479,26 @@ const BlockTableCreate = (contextId: string, targetId: string, position: I.Block
 	dispatcher.request(BlockTableCreate.name, request, callBack);
 };
 
+const BlockTableCreateRow = (contextId: string, targetId: string, position: I.BlockPosition, callBack?: (message: any) => void) => {
+	const request = new Rpc.BlockTable.CreateRow.Request();
+	
+	request.setContextid(contextId);
+	request.setTargetrowid(targetId);
+	request.setPosition(position);
+
+	dispatcher.request(BlockTableCreateRow.name, request, callBack);
+};
+
+const BlockTableCreateColumn = (contextId: string, targetId: string, position: I.BlockPosition, callBack?: (message: any) => void) => {
+	const request = new Rpc.BlockTable.CreateColumn.Request();
+	
+	request.setContextid(contextId);
+	request.setTargetcolumnid(targetId);
+	request.setPosition(position);
+
+	dispatcher.request(BlockTableCreateColumn.name, request, callBack);
+};
+
 // ---------------------- BLOCK FILE ---------------------- //
 
 const BlockFileCreateAndUpload = (contextId: string, targetId: string, position: I.BlockPosition, url: string, path: string, callBack?: (message: any) => void) => {
@@ -1378,6 +1398,8 @@ export {
 	BlockRelationSetKey,
 
 	BlockTableCreate,
+	BlockTableCreateColumn,
+	BlockTableCreateRow,
 
 	BlockDataviewViewCreate,
 	BlockDataviewViewUpdate,

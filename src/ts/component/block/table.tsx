@@ -236,9 +236,13 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		let element: any = null;
 		let blockIds: string[] = [];
 		let childrenIds: any[] = [];
+		let targetRowId: string = '';
+		let targetColumnId: string = '';
 
 		switch (current.type) {
 			case I.BlockType.TableRow:
+				targetRowId = current.id;
+
 				options = options.concat(optionsRow);
 				options = options.concat(optionsColor);
 
@@ -254,6 +258,8 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				break;
 
 			case I.BlockType.TableColumn:
+				targetColumnId = current.id;
+
 				options = options.concat(optionsColumn);
 				options = options.concat(optionsColor);
 
@@ -381,18 +387,23 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 
 					switch (item.id) {
 						case 'columnBefore':
+							C.BlockTableCreateColumn(rootId, targetColumnId, I.BlockPosition.Left);
 							break;
 
 						case 'columnAfter':
+							C.BlockTableCreateColumn(rootId, targetColumnId, I.BlockPosition.Right);
 							break;
 
 						case 'columnRemove':
+
 							break;
 
 						case 'rowBefore':
+							C.BlockTableCreateRow(rootId, targetRowId, I.BlockPosition.Top);
 							break;
 
 						case 'rowAfter':
+							C.BlockTableCreateRow(rootId, targetRowId, I.BlockPosition.Bottom);
 							break;
 
 						case 'rowRemove':
@@ -401,8 +412,6 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				}
 			},
 		});
-
-		console.log(menuParam);
 
 		menuStore.open('select1', menuParam);
 	};
