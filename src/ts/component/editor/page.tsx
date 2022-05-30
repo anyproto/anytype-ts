@@ -665,12 +665,12 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		if (platform == I.Platform.Mac) {
 			// Print or prev string
 			keyboard.shortcut('ctrl+p', e, (pressed: string) => {
-				this.onArrow(e, Key.up, length);
+				this.onArrowVertical(e, Key.up, length, props);
 			});
 
 			// Next string
 			keyboard.shortcut('ctrl+n', e, (pressed: string) => {
-				this.onArrow(e, Key.down, length);
+				this.onArrowVertical(e, Key.down, length, props);
 			});
 		};
 
@@ -758,7 +758,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		};
 
 		keyboard.shortcut('arrowup, arrowdown', e, (pressed: string) => {
-			this.onArrow(e, pressed, length);
+			this.onArrowVertical(e, pressed, length, props);
 		});
 
 		keyboard.shortcut('arrowleft', e, (pressed: string) => {
@@ -1199,13 +1199,14 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		};
 	};
 
-	onArrow (e: any, pressed: string, length: number) {
+	onArrowVertical (e: any, pressed: string, length: number, props: any) {
 		if (menuStore.isOpen()) {
 			return;
 		};
 
 		const { focused, range } = focus.state;
 		const { rootId, isPopup } = this.props;
+		const { isInsideTable } = props;
 		const block = blockStore.getLeaf(rootId, focused);
 		const dir = pressed.match(Key.up) ? -1 : 1;
 
@@ -1219,11 +1220,28 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 		let next: I.Block = null;
 
-		// If block is closed toggle - find next block on the same level
-		if (block && block.isTextToggle() && !Storage.checkToggle(rootId, block.id)) {
-			next = blockStore.getNextBlock(rootId, focused, dir, (it: I.Block) => { return it.parentId != block.id && it.isFocusable(); });
-		} else {
-			next = blockStore.getNextBlock(rootId, focused, dir, (it: I.Block) => { return it.isFocusable(); });
+		if (isInsideTable) {
+			const element = blockStore.getMapElement(rootId, block.id);
+			const cellElement = blockStore.getMapElement(rootId, element.parentId);
+			const rowElement = blockStore.getMapElement(rootId, cellElement.parentId);
+			const idx = rowElement.childrenIds.indexOf(element.parentId);
+			const nextRow = blockStore.getNextBlock(rootId, cellElement.parentId, dir, it => it.isTableRow());
+
+			if (idx >= 0 && nextRow) {
+				const nextRowElement = blockStore.getMapElement(rootId, nextRow.id);
+				const nextCellElement = blockStore.getMapElement(rootId, nextRowElement?.childrenIds[idx]);
+
+				next = blockStore.getLeaf(rootId, nextCellElement.childrenIds[0]);
+			};
+		};
+
+		if (!next) {
+			// If block is closed toggle - find next block on the same level
+			if (block && block.isTextToggle() && !Storage.checkToggle(rootId, block.id)) {
+				next = blockStore.getNextBlock(rootId, focused, dir, it => (it.parentId != block.id) && it.isFocusable());
+			} else {
+				next = blockStore.getNextBlock(rootId, focused, dir, it => it.isFocusable());
+			};
 		};
 
 		if (!next) {
