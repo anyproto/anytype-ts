@@ -194,6 +194,16 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		return { columnContainer, columns, rowContainer, rows };
 	};
 
+	getRowColumn (cellId: string) {
+		const { rootId } = this.props;
+		const { columns } = this.getData();
+		const cellElement = blockStore.getMapElement(rootId, cellId);
+		const rowElement = blockStore.getMapElement(rootId, cellElement.parentId);
+		const idx = rowElement.childrenIds.indexOf(cellId);
+		
+		return { rowId: cellElement.parentId, columnId: columns[idx].id };
+	};
+
 	onOptions (e: any, id: string) {
 		e.preventDefault();
 		e.stopPropagation();
@@ -285,6 +295,11 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				options = options.concat(optionsColor);
 
 				blockIds = [ inner.id ];
+
+				const { rowId, columnId } = this.getRowColumn(current.id);
+
+				targetRowId = rowId;
+				targetColumnId = columnId;
 
 				menuParam = Object.assign(menuParam, {
 					rect: { x: e.pageX, y: e.pageY, width: 1, height: 1 },
