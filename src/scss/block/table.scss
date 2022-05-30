@@ -3,7 +3,8 @@
 .blocks {
 	.block.blockTable { padding: 6px 0px; }
 	.block.blockTable {
-		.scrollWrap { width: 100%; padding: 4px 4px 8px 4px; }
+		.scrollWrap { width: 100%; padding: 4px; line-height: 0px; }
+		.scrollWrap.withScroll { overflow: overlay; padding-bottom: 8px; }
 
 		.table { 
 			display: inline-block; height: 100%; border-collapse: collapse; box-shadow: 0px 1px $colorBorderDark, 1px 0px $colorBorderDark; 

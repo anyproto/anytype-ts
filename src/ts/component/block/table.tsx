@@ -632,7 +632,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			};
 		});
 
-		wrap.css({ overflow: width > mw ? 'overlay': 'visible' });
+		width > mw ? wrap.addClass('withScroll') : wrap.removeClass('withScroll');
 		width = Math.min(mw, width);
 
 		if (width >= wrapperWidth) {
