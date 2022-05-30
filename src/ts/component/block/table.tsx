@@ -514,7 +514,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 
 		body.addClass('colResize');
 		win.unbind('mousemove.table mouseup.table');
-		win.on('mousemove.table', throttle((e: any) => { this.onResizeMove(e, id); }, 20));
+		win.on('mousemove.table', throttle((e: any) => { this.onResizeMove(e, id); }, 40));
 		win.on('mouseup.table', (e: any) => { this.onResizeEnd(e, id); });
 
 		keyboard.setResize(true);
