@@ -29,9 +29,6 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 		const cn = [ 'cell', 'column' + column.id, /* 'align-v' + block.vertical, 'align-h' + block.horizontal */ ];
 		const length = childrenIds.length;
 		const bgColor = block.bgColor || column.bgColor || row.bgColor;
-		const css: any = {
-			width: column.fields.width || Constant.size.table.cell,
-		};
 
 		if (isHead) {
 			cn.push('isHead');
@@ -65,7 +62,6 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 			<div
 				id={`block-${block.id}`}
 				className={cn.join(' ')}
-				style={css}
 				onMouseDown={(e: any) => { onClick(e, block.id); }}
 				onContextMenu={(e: any) => { onOptions(e, block.id); }}
 			>
