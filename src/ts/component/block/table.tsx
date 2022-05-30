@@ -636,8 +636,8 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			inner = blockStore.getLeaf(rootId, blockStore.getChildrenIds(rootId, current.id)[0]);
 		};
 
-		const innerColor = <div className={[ 'inner', 'textColor textColor-' + (current.color || 'default') ].join(' ')} />;
-		const innerBackground = <div className={[ 'inner', 'bgColor bgColor-' + (current.background || 'default') ].join(' ')} />;
+		const innerColor = <div className={[ 'inner', 'textColor textColor-' + (inner.content.color || 'default') ].join(' ')} />;
+		const innerBackground = <div className={[ 'inner', 'bgColor bgColor-' + (inner.bgColor || 'default') ].join(' ')} />;
 
 		return [
 			{ id: 'color', icon: 'color', name: 'Color', inner: innerColor, arrow: true },
