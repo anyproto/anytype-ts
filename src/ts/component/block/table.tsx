@@ -413,7 +413,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 							break;
 
 						case 'columnRemove':
-
+							C.BlockTableDeleteColumn(rootId, targetColumnId);
 							break;
 
 						case 'rowBefore':
@@ -425,6 +425,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 							break;
 
 						case 'rowRemove':
+							C.BlockTableDeleteRow(rootId, targetRowId);
 							break;
 					};
 				}
@@ -622,7 +623,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		const offset = Constant.size.blockMenu;
 		const wrap = node.find('#scrollWrap');
 
-		let width = offset;
+		let width = offset + 10;
 
 		columns.forEach((it: I.Block) => {
 			const el = node.find(`.column${it.id}`).first();
@@ -634,10 +635,12 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		wrap.css({ overflow: width > mw ? 'overlay': 'visible' });
 		width = Math.min(mw, width);
 
-		obj.css({ 
-			width, 
-			marginLeft: Math.min(0, (wrapperWidth - width) / 2) + offset / 2,
-		});
+		if (width >= wrapperWidth) {
+			obj.css({ 
+				width: width,
+				marginLeft: Math.min(0, (wrapperWidth - width) / 2) + offset / 2,
+			});
+		};
 	};
 
 	checkWidth (w: number) {

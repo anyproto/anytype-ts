@@ -249,7 +249,6 @@ class MenuBlockAction extends React.Component<Props, State> {
 			let hasTurnDiv = true;
 			let hasFile = true;
 			let hasLink = true;
-			let hasTable = true;
 			let hasTitle = false;
 			let hasAlign = true;
 			let hasColor = true;
@@ -261,6 +260,8 @@ class MenuBlockAction extends React.Component<Props, State> {
 					continue;
 				};
 
+				console.log(block, block.type, block.canHaveAlign());
+
 				if (!block.canTurnText() || block.isDiv()) {
 					hasTurnText = false;
 				};
@@ -270,7 +271,6 @@ class MenuBlockAction extends React.Component<Props, State> {
 				if (!block.canTurnPage())		 hasTurnObject = false;
 				if (!block.isFile())			 hasFile = false;
 				if (!block.isLink())			 hasLink = false;
-				if (!block.isTable())			 hasTable = false;
 				if (!block.canHaveAlign())		 hasAlign = false;
 				if (!block.canHaveColor())		 hasColor = false;
 				if (!block.canHaveBackground())	 hasBg = false;
@@ -296,10 +296,6 @@ class MenuBlockAction extends React.Component<Props, State> {
 
 			if (hasLink) {
 				section1.children.push({ id: 'linkSettings', icon: 'customize', name: 'Appearance', arrow: true });
-			};
-
-			if (hasTable) {
-				section1.children.push({ id: 'csvImport', icon: '', name: 'CSV import' });
 			};
 
 			if (hasTitle) {

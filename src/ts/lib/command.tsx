@@ -489,6 +489,15 @@ const BlockTableCreateRow = (contextId: string, targetId: string, position: I.Bl
 	dispatcher.request(BlockTableCreateRow.name, request, callBack);
 };
 
+const BlockTableDeleteRow = (contextId: string, targetId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.BlockTable.DeleteRow.Request();
+	
+	request.setContextid(contextId);
+	request.setTargetrowid(targetId);
+
+	dispatcher.request(BlockTableDeleteRow.name, request, callBack);
+};
+
 const BlockTableCreateColumn = (contextId: string, targetId: string, position: I.BlockPosition, callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockTable.CreateColumn.Request();
 	
@@ -497,6 +506,15 @@ const BlockTableCreateColumn = (contextId: string, targetId: string, position: I
 	request.setPosition(position);
 
 	dispatcher.request(BlockTableCreateColumn.name, request, callBack);
+};
+
+const BlockTableDeleteColumn = (contextId: string, targetId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.BlockTable.DeleteColumn.Request();
+	
+	request.setContextid(contextId);
+	request.setTargetcolumnid(targetId);
+
+	dispatcher.request(BlockTableDeleteColumn.name, request, callBack);
 };
 
 // ---------------------- BLOCK FILE ---------------------- //
@@ -1399,7 +1417,9 @@ export {
 
 	BlockTableCreate,
 	BlockTableCreateColumn,
+	BlockTableDeleteColumn,
 	BlockTableCreateRow,
+	BlockTableDeleteRow,
 
 	BlockDataviewViewCreate,
 	BlockDataviewViewUpdate,

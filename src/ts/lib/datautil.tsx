@@ -707,7 +707,6 @@ class DataUtil {
 		};
 
 		if (hasTable) {
-			items.push({ id: 'csvImport', icon: '', name: 'CSV import' });
 		};
 		
 		items = items.map((it: any) => {
