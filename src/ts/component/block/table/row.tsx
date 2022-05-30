@@ -10,12 +10,6 @@ interface Props extends I.BlockComponentTable {};
 
 const BlockTableRow = observer(class BlockTableRow extends React.Component<Props, {}> {
 
-	_isMounted: boolean = false;
-
-	constructor (props: any) {
-		super(props);
-	};
-
 	render () {
 		const { rootId, block, index, isHead, getData } = this.props;
 		const { columns } = getData();
@@ -23,9 +17,9 @@ const BlockTableRow = observer(class BlockTableRow extends React.Component<Props
 		const children = blockStore.getChildren(rootId, block.id);
 		const length = childrenIds.length;
 
-		const CellSortableElement = SortableElement((item: any) => {
-			return <Cell {...this.props} {...item} />;
-		});
+		const CellSortableElement = SortableElement((item: any) => (
+			<Cell {...this.props} {...item} />
+		));
 
 		return (
 			<div id={`block-${block.id}`} className="row">
@@ -52,17 +46,6 @@ const BlockTableRow = observer(class BlockTableRow extends React.Component<Props
 		);
 	};
 	
-	componentDidMount () {
-		this._isMounted = true;
-	};
-
-	componentDidUpdate () {
-	};
-	
-	componentWillUnmount () {
-		this._isMounted = false;
-	};
-
 });
 
 export default BlockTableRow;
