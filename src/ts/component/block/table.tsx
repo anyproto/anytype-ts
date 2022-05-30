@@ -189,10 +189,10 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		const { rootId, block } = this.props;
 		const childrenIds = blockStore.getChildrenIds(rootId, block.id);
 		const children = blockStore.getChildren(rootId, block.id);
-		const columnContainer = children.find(it => it.isLayoutTableColumns());
-		const columns = blockStore.getChildren(rootId, columnContainer.id, it => it.isTableColumn());
 		const rowContainer = children.find(it => it.isLayoutTableRows());
-		const rows = blockStore.getChildren(rootId, rowContainer.id, it => it.isTableRow());
+		const columnContainer = children.find(it => it.isLayoutTableColumns());
+		const columns = columnContainer ? blockStore.getChildren(rootId, columnContainer.id, it => it.isTableColumn()) : [];
+		const rows = rowContainer ? blockStore.getChildren(rootId, rowContainer.id, it => it.isTableRow()) : [];
 
 		return { columnContainer, columns, rowContainer, rows };
 	};
