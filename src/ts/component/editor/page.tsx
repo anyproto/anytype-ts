@@ -762,15 +762,11 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		});
 
 		keyboard.shortcut('arrowleft', e, (pressed: string) => {
-			if (block.isTextToggle() && (range.to == 0)) {
-				blockStore.toggle(rootId, block.id, false);
-			};
+			this.onArrowHorizontal(e, pressed, range, length, props);
 		});
 
 		keyboard.shortcut('arrowright', e, (pressed: string) => {
-			if (block.isTextToggle() && (range.to == length)) {
-				blockStore.toggle(rootId, block.id, true);
-			};
+			this.onArrowHorizontal(e, pressed, range, length, props);
 		});
 
 		keyboard.shortcut('alt+arrowdown, alt+arrowup', e, (pressed: string) => {
@@ -1199,6 +1195,14 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		};
 	};
 
+	getNextTableRow (id: string, dir: number) {
+		const { rootId } = this.props;
+		const element = blockStore.getMapElement(rootId, id);
+		const cellElement = blockStore.getMapElement(rootId, element.parentId);
+
+		return blockStore.getNextBlock(rootId, cellElement.parentId, dir, it => it.isTableRow());
+	};
+
 	onArrowVertical (e: any, pressed: string, length: number, props: any) {
 		if (menuStore.isOpen()) {
 			return;
@@ -1225,7 +1229,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			const cellElement = blockStore.getMapElement(rootId, element.parentId);
 			const rowElement = blockStore.getMapElement(rootId, cellElement.parentId);
 			const idx = rowElement.childrenIds.indexOf(element.parentId);
-			const nextRow = blockStore.getNextBlock(rootId, cellElement.parentId, dir, it => it.isTableRow());
+			const nextRow = this.getNextTableRow(block.id, dir);
 
 			if (idx >= 0 && nextRow) {
 				const nextRowElement = blockStore.getMapElement(rootId, nextRow.id);
@@ -1263,6 +1267,61 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			focus.apply();
 			focus.scroll(isPopup);
 		});
+	};
+
+	onArrowHorizontal (e: any, pressed: string, range: I.TextRange, length: number, props: any) {
+		const { focused } = focus.state;
+		const { rootId, isPopup } = this.props;
+		const { isInsideTable } = props;
+		const block = blockStore.getLeaf(rootId, focused);
+		const dir = pressed.match(Key.left) ? -1 : 1;
+
+		console.log(dir);
+
+		if (!block) {
+			return;
+		};
+
+		if (block.isTextToggle()) {
+			if ((dir < 0) && (range.to == 0)) {
+				blockStore.toggle(rootId, block.id, false);
+			};
+			if ((dir > 0) && (range.to == length)) {
+				blockStore.toggle(rootId, block.id, true);
+			};
+		} else 
+		if (isInsideTable && ((dir < 0) && (range.to == 0) || (dir > 0) && (range.to == length))) {
+			const element = blockStore.getMapElement(rootId, block.id);
+			const cellElement = blockStore.getMapElement(rootId, element.parentId);
+			const rowElement = blockStore.getMapElement(rootId, cellElement.parentId);
+			const idx = rowElement.childrenIds.indexOf(element.parentId);
+
+			if (idx < 0) {
+				return;
+			};
+
+			let nextCellId = rowElement.childrenIds[idx + dir];
+			if (!nextCellId) {
+				const nextRow = this.getNextTableRow(block.id, dir);
+				const nextRowElement = blockStore.getMapElement(rootId, nextRow.id);
+
+				nextCellId = nextRowElement.childrenIds[dir > 0 ? 0 : nextRowElement.childrenIds.length - 1];
+			};
+
+			if (nextCellId) {
+				const nextCellElement = blockStore.getMapElement(rootId, nextCellId);
+				const next = blockStore.getLeaf(rootId, nextCellElement.childrenIds[0]);
+				
+				if (next) {
+					const l = next.getLength();
+					window.setTimeout(() => {
+						focus.set(next.id, (dir > 0 ? { from: 0, to: 0 } : { from: l, to: l }));
+						focus.apply();
+						focus.scroll(isPopup);
+					});
+				};
+			};
+		};
 	};
 
 	onSelectAll () {
