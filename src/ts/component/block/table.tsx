@@ -29,13 +29,13 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 	constructor (props: any) {
 		super(props);
 
-		this.onFocus = this.onFocus.bind(this);
-		this.onBlur = this.onBlur.bind(this);
 		this.onSortStart = this.onSortStart.bind(this);
 		this.onSortEndColumn = this.onSortEndColumn.bind(this);
 		this.onSortEndRow = this.onSortEndRow.bind(this);
 		this.onHandleClick = this.onHandleClick.bind(this);
 		this.onCellClick = this.onCellClick.bind(this);
+		this.onCellFocus = this.onCellFocus.bind(this);
+		this.onCellFocus = this.onCellFocus.bind(this);
 		this.onOptions = this.onOptions.bind(this);
 		this.onResizeStart = this.onResizeStart.bind(this);
 		this.onDragStartColumn = this.onDragStartColumn.bind(this);
@@ -61,8 +61,8 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				onOptions={this.onOptions}
 				onHandleClick={this.onHandleClick}
 				onCellClick={this.onCellClick}
-				onCellFocus={this.onFocus}
-				onCellBlur={this.onBlur}
+				onCellFocus={this.onCellFocus}
+				onCellBlur={this.onCellBlur}
 				onResizeStart={this.onResizeStart}
 				onDragStartColumn={this.onDragStartColumn}
 			/>
@@ -72,13 +72,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			<div id="table" className="table">
 				{rows.map((row: any, i: number) => {
 					row.idx = i;
-					return (
-						<RowSortableElement 
-							key={'row' + row.id} 
-							index={i} 
-							block={row} 
-						/>
-					);
+					return <RowSortableElement key={'row' + row.id} index={i} block={row} />;
 				})}
 			</div>
 		));
@@ -428,22 +422,22 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		node.find('.isHighlightedCell').removeClass('isHighlightedCell');
 	};
 
-	onFocus (e: any, id: string) {
-		this.setEditing(id);
-		this.preventSelect(true);
-	};
-
-	onBlur (e: any, id: string) {
-		this.setEditing('');
-		this.preventSelect(false);
-	};
-
 	onHandleClick (e: any, id: string) {
 		this.onOptions(e, id);
 	};
 
-	onCellClick (e: any, id: string) {
+	onCellFocus (e: any, id: string) {
 		this.setEditing(id);
+		this.preventSelect(true);
+	};
+
+	onCellBlur (e: any, id: string) {
+		this.setEditing('');
+		this.preventSelect(false);
+	};
+
+	onCellClick (e: any, id: string) {
+		this.onCellFocus(e, id);
 	};
 
 	setEditing (id: string) {
