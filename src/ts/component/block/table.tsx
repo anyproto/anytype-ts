@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, C, keyboard, DataUtil, focus } from 'ts/lib';
+import { I, C, keyboard, DataUtil, Util } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { menuStore, blockStore } from 'ts/store';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
@@ -20,13 +20,17 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 
 	_isMounted: boolean = false;
 	offsetX: number = 0;
+	cache: any = {};
+	width: number = 0;
+	height: number = 0;
+	oldIndex: number = -1;
+	newIndex: number = -1;
 
 	constructor (props: any) {
 		super(props);
 
 		this.onFocus = this.onFocus.bind(this);
 		this.onBlur = this.onBlur.bind(this);
-		this.onSort = this.onSort.bind(this);
 		this.onSortStart = this.onSortStart.bind(this);
 		this.onSortEndColumn = this.onSortEndColumn.bind(this);
 		this.onSortEndRow = this.onSortEndRow.bind(this);
@@ -34,6 +38,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		this.onCellClick = this.onCellClick.bind(this);
 		this.onOptions = this.onOptions.bind(this);
 		this.onResizeStart = this.onResizeStart.bind(this);
+		this.onDragStartColumn = this.onDragStartColumn.bind(this);
 		this.getData = this.getData.bind(this);
 	};
 
@@ -56,24 +61,6 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			const { width } = fields;
 		});
 
-		const RowSortableContainer = SortableContainer((item: any) => {
-			return (
-				<Row 
-					{...this.props} 
-					{...item} 
-					index={item.block.idx}
-					getData={this.getData}
-					onOptions={this.onOptions}
-					onHandleClick={this.onHandleClick}
-					onCellClick={this.onCellClick}
-					onCellFocus={this.onFocus}
-					onCellBlur={this.onBlur}
-					onSort={this.onSort}
-					onResizeStart={this.onResizeStart}
-				/>
-			);
-		});
-
 		const RowSortableElement = SortableElement((item: any) => {
 			return (
 				<Row 
@@ -86,44 +73,24 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 					onCellClick={this.onCellClick}
 					onCellFocus={this.onFocus}
 					onCellBlur={this.onBlur}
-					onSort={this.onSort}
 					onResizeStart={this.onResizeStart}
+					onDragStartColumn={this.onDragStartColumn}
 				/>
 			);
 		});
 
 		const TableSortableContainer = SortableContainer((item: any) => {
 			return (
-				<div className="table">
+				<div id="table" className="table">
 					{rows.map((row: any, i: number) => {
 						row.idx = i;
-
-						if (i == 0) {
-							return (
-								<RowSortableContainer 
-									key={i}
-									axis="x" 
-									lockAxis="x"
-									lockToContainerEdges={true}
-									transitionDuration={150}
-									distance={10}
-									useDragHandle={true}
-									onSortStart={this.onSortStart}
-									onSortEnd={this.onSortEndColumn}
-									helperClass="isDraggingColumn"
-									helperContainer={() => { return $(`#block-${block.id} .table`).get(0); }}
-									block={row}
-								/>
-							);
-						} else {
-							return (
-								<RowSortableElement 
-									key={i} 
-									index={i} 
-									block={row} 
-								/>
-							);
-						};
+						return (
+							<RowSortableElement 
+								key={i} 
+								index={i} 
+								block={row} 
+							/>
+						);
 					})}
 				</div>
 			);
@@ -282,7 +249,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 					});
 				};
 
-				element = node.find(`.column${id}`).first();
+				element = node.find(`.cell.column${id}`).first();
 				menuParam = Object.assign(menuParam, {
 					element,
 					offsetX: element.outerWidth() + 2,
@@ -442,12 +409,13 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		};
 
 		const node = $(ReactDOM.findDOMNode(this));
+		const table = node.find('#table');
 
 		this.onOptionsClose();
 
 		switch (current.type) {
 			case I.BlockType.TableColumn:
-				const cells = node.find(`.column${id}`);
+				const cells = table.find(`.cell.column${id}`);
 
 				cells.addClass('isHighlightedColumn');
 				cells.first().addClass('isFirst');
@@ -455,11 +423,11 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				break;
 
 			case I.BlockType.TableRow:
-				node.find(`#block-${id}`).addClass('isHighlightedRow');
+				table.find(`#block-${id}`).addClass('isHighlightedRow');
 				break;
 
 			case I.BlockType.TableCell:
-				node.find(`#block-${id}`).addClass('isHighlightedCell');
+				table.find(`#block-${id}`).addClass('isHighlightedCell');
 				break;
 		};
 	};
@@ -505,7 +473,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		const win = $(window);
 		const body = $('body');
 		const node = $(ReactDOM.findDOMNode(this));
-		const el = node.find(`.column${id}`);
+		const el = node.find(`.cell.column${id}`);
 
 		if (el.length) {
 			this.offsetX = el.first().offset().left;
@@ -524,7 +492,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		e.stopPropagation();
 
 		const node = $(ReactDOM.findDOMNode(this));
-		const el = node.find(`.column${id}`);
+		const el = node.find(`.cell.column${id}`);
 
 		el.css({ width: this.checkWidth(e.pageX - this.offsetX) });
 		this.resize();
@@ -541,6 +509,98 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		$(window).unbind('mousemove.table mouseup.table');
 		$('body').removeClass('colResize');
 		keyboard.setResize(false);
+	};
+
+	onDragStartColumn (e: any, id: string) {
+		e.stopPropagation();
+
+		const { rows } = this.getData();
+		const win = $(window);
+		const node = $(ReactDOM.findDOMNode(this));
+		const clone = $('<div />').addClass('table isClone');
+
+		rows.forEach((row: I.Block, i: number) => {
+			const rowElement = $('<div />').addClass('row');
+			const cell = $(node.find(`.cell.column${id}`).get(i)).clone();
+
+			rowElement.append(cell);
+			clone.append(rowElement);
+		});
+
+		clone.css({ zIndex: 10000, position: 'fixed', left: -10000, top: -10000 });
+		node.append(clone);
+
+		$(document).off('dragover').on('dragover', (e: any) => { e.preventDefault(); });
+		e.dataTransfer.setDragImage(clone.get(0), clone.outerWidth(), -3);
+
+		win.on('drag.board', throttle((e: any) => { this.onDragMoveColumn(e, id); }, 20));
+		win.on('dragend.board', (e: any) => { this.onDragEnd(e); });
+
+		this.initCache();
+		this.setEditing('');
+		this.onOptionsOpen(id);
+		this.preventSelect(true);
+	};
+
+	onDragMoveColumn (e: any, id: string) {
+		const node = $(ReactDOM.findDOMNode(this));
+		const { columns } = this.getData();
+
+		node.find('.cell.isOver').removeClass('isOver left right');
+		this.oldIndex = columns.findIndex(it => it.id == id);
+
+		for (let i = 0; i < columns.length; ++i) {
+			const column = columns[i];
+			const rect = this.cache[column.id];
+
+			if (id == column.id) {
+				continue;
+			};
+
+			if (rect && Util.rectsCollide({ x: e.pageX, y: 0, width: this.width, height: 1 }, rect)) {
+				const isLeft = e.pageX <= rect.x + rect.width / 2;
+
+				this.newIndex = isLeft ? rect.index : rect.index + 1;
+				node.find(`.cell.column${column.id}`).addClass('isOver ' + (isLeft ? 'left' : 'right'));
+				break;
+			};
+		};
+
+		this.newIndex = Math.max(0, this.newIndex);
+		this.newIndex = Math.min(columns.length - 1, this.newIndex);
+	};
+
+	onDragEnd (e: any) {
+		e.preventDefault();
+
+		const node = $(ReactDOM.findDOMNode(this));
+
+		this.cache = {};
+		this.onSortEndColumn();
+		this.preventSelect(false);
+
+		node.find('.table.isClone').remove();
+		node.find('.cell.isOver').removeClass('isOver left right');
+	};
+
+	initCache () {
+		this.cache = {};
+
+		const { columns } = this.getData();
+		const node = $(ReactDOM.findDOMNode(this));
+
+		columns.forEach((column: I.Block, i: number) => {
+			const cell = node.find(`.cell.column${column.id}`).first();
+			const p = cell.offset();
+
+			this.cache[column.id] = {
+				x: p.left,
+				y: 0,
+				height: 1,
+				width: cell.outerWidth(),
+				index: i,
+			};
+		});
 	};
 
 	alignIcon (v: I.TableAlign): string {
@@ -561,24 +621,17 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		this.preventSelect(true);
 	};
 
-	onSortEndColumn (result: any) {
-		const { oldIndex, newIndex } = result;
+	onSortEndColumn () {
 		const { rootId } = this.props;
 		const { rows, columns } = this.getData();
-		const oldColumn = columns[oldIndex];
-		const newColumn = columns[newIndex];
+		const oldColumn = columns[this.oldIndex];
+		const newColumn = columns[this.newIndex];
 
 		if (!oldColumn || !newColumn) {
 			return;
 		};
 
-		const position = newIndex < oldIndex ? I.BlockPosition.Left : I.BlockPosition.Right;
-
-		rows.forEach((row: I.Block) => {
-			const childrenIds = blockStore.getChildrenIds(rootId, row.id);
-			blockStore.updateStructure(rootId, row.id, arrayMove(childrenIds, oldIndex, newIndex));
-		});
-	
+		const position = this.newIndex < this.oldIndex ? I.BlockPosition.Left : I.BlockPosition.Right;
 		C.BlockTableColumnMove(rootId, oldColumn.id, newColumn.id, position);
 
 		$('body').removeClass('grab');
@@ -594,17 +647,15 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		const target = childrenIds[newIndex];
 		const position = newIndex < oldIndex ? I.BlockPosition.Top : I.BlockPosition.Bottom;
 
+		if (current == target) {
+			return;
+		};
+
 		blockStore.updateStructure(rootId, rowContainer.id, arrayMove(childrenIds, oldIndex, newIndex));
 		C.BlockListMoveToExistingObject(rootId, rootId, [ current ], target, position);
 
 		$('body').removeClass('grab');
 		this.preventSelect(false);
-	};
-
-	onSort (e: any, id: string, sort: I.SortType) {
-		e.preventDefault();
-		e.stopPropagation();
-
 	};
 
 	preventSelect (v: boolean) {
@@ -621,7 +672,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		const node = $(ReactDOM.findDOMNode(this));
 
 		columns.forEach((it: I.Block) => {
-			const el = node.find(`.column${it.id}`);
+			const el = node.find(`.cell.column${it.id}`);
 			el.css({ width: this.checkWidth(it.fields.width || Constant.size.table.cell) });
 		});
 	};
@@ -641,7 +692,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		let width = offset + 10;
 
 		columns.forEach((it: I.Block) => {
-			const el = node.find(`.column${it.id}`).first();
+			const el = node.find(`.cell.column${it.id}`).first();
 			if (el.length) {
 				width += el.outerWidth();
 			};

@@ -16,8 +16,8 @@ export interface BlockComponentTable extends I.BlockComponent {
 	onCellClick: (e: any, id: string) => void;
 	onCellFocus: (e: any, id: string) => void;
 	onCellBlur: (e: any, id: string) => void;
-	onSort: (e: any, id: string, sort: I.SortType) => void;
 	onResizeStart: (e: any, id: string) => void;
+	onDragStartColumn: (e: any, id: string) => void;
 };
 
 export interface ContentTable {

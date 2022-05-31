@@ -6,17 +6,6 @@
 		.scrollWrap { width: 100%; padding: 4px; line-height: 0px; }
 		.scrollWrap.withScroll { overflow: overlay; padding-bottom: 8px; }
 
-		.table { 
-			display: inline-block; height: 100%; border-collapse: collapse; box-shadow: 0px 1px $colorBorderDark, 1px 0px $colorBorderDark; 
-		}
-		
-		.row { display: flex; position: relative; flex-direction: row; }
-
-		.fillRect { 
-			width: 20px; height: 20px; position: absolute; left: 0px; top: 0px; background: $colorLightGrey;
-			border-top: 1px solid $colorMediumGrey; border-left: 1px solid $colorMediumGrey; 
-		}
-
 		.handleRow, .handleColumn { 
 			cursor: grab !important; transition: $transitionFast; z-index: 10; border: 2px solid #fff; border-radius: 3px;
 			background-color: $colorOrange; position: absolute; display: none;
@@ -29,6 +18,22 @@
 			height: 22px; width: 10px; background-image: url('~img/icon/table/handle/row.svg'); background-size: 8px 16px; 
 			top: 50%; left: -5px; margin-top: -11px;
 		}
+
+		.table { display: inline-block; border-collapse: collapse; box-shadow: 0px 1px $colorBorderDark, 1px 0px $colorBorderDark; }
+
+		.table.isClone { border-radius: 4px; border: 2px solid #ffcf6f; box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2); };
+		.table.isClone {
+			.handleColumn { display: block; }
+			.cell { box-shadow: 0px 1px inset $colorBorderDark, 1px 0px inset $colorBorderDark; }
+		}
+		
+		.row { display: flex; position: relative; flex-direction: row; }
+		.row.isHighlightedRow {	box-shadow: 0px 0px 0px 2px #ffcf6f; border-radius: 2px; z-index: 2; }
+		.row.isHighlightedRow {
+			.cell { box-shadow: 1px 0px inset $colorBorderDark; padding-top: 0px; }
+			.cell .block .wrapContent { padding-top: 1px; }
+		}
+		.row.isDraggingRow { box-shadow: 0px 1px $colorBorderDark, 1px 0px $colorBorderDark, 0px 4px 16px rgba(0, 0, 0, 0.2); background: #fff; }
 
 		.cell { 
 			@include text-common; vertical-align: top; position: relative; cursor: text; flex-shrink: 0; background: #fff;
@@ -56,11 +61,11 @@
 			.handleColumn { display: block; }
 		}
 
-		.row.isHighlightedRow {	box-shadow: 0px 0px 0px 2px #ffcf6f; border-radius: 2px; z-index: 2; }
-		.row.isHighlightedRow {
-			.cell { box-shadow: 1px 0px inset $colorBorderDark; padding-top: 0px; }
-			.cell .block .wrapContent { padding-top: 1px; }
+		.cell.isOver.left { box-shadow: 0px 1px inset $colorBorderDark, -2px 0px 0px #ffcf6f; padding-left: 0px; }
+		.cell.isOver.left {
+			.block .wrapContent { padding-left: 1px; }
 		}
+		.cell.isOver.right { box-shadow: 1px 0px inset $colorBorderDark, 0px 1px inset $colorBorderDark, 2px 0px 0px #ffcf6f; }
 
 		.cell.isEditing {
 			.handleRow, .handleColumn { display: block; }
@@ -78,7 +83,6 @@
 			.handleRow, .handleColumn { display: block; }
 		}
 
-		.row.isDraggingRow { box-shadow: 0px 1px $colorBorderDark, 1px 0px $colorBorderDark, 0px 4px 16px rgba(0, 0, 0, 0.2); background: #fff; }
 		.cell.isDraggingColumn { box-shadow: 0px 0px 0px 2px #ffcf6f; border-radius: 2px; padding: 0px; }
 		.cell.isDraggingColumn {
 			.block .wrapContent { padding-top: 1px; }
