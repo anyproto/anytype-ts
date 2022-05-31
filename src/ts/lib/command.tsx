@@ -522,7 +522,7 @@ const BlockTableMoveColumn = (contextId: string, targetId: string, dropTargetId:
 	
 	request.setContextid(contextId);
 	request.setTargetid(targetId);
-	request.setDroptargetid(targetId);
+	request.setDroptargetid(dropTargetId);
 	request.setPosition(position);
 
 	dispatcher.request(BlockTableMoveColumn.name, request, callBack);

@@ -566,12 +566,22 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 	onSortEndColumn (result: any) {
 		const { oldIndex, newIndex } = result;
 		const { rootId } = this.props;
-		const { columns } = this.getData();
-		const oldId = columns[oldIndex].id;
-		const newId = columns[newIndex].id;
+		const { rows, columns } = this.getData();
+		const oldColumn = columns[oldIndex];
+		const newColumn = columns[newIndex];
+
+		if (!oldColumn || !newColumn) {
+			return;
+		};
+
 		const position = newIndex < oldIndex ? I.BlockPosition.Left : I.BlockPosition.Right;
+
+		rows.forEach((row: I.Block) => {
+			const childrenIds = blockStore.getChildrenIds(rootId, row.id);
+			blockStore.updateStructure(rootId, row.id, arrayMove(childrenIds, oldIndex, newIndex));
+		});
 	
-		C.BlockTableMoveColumn(rootId, oldId, newId, position);
+		C.BlockTableMoveColumn(rootId, oldColumn.id, newColumn.id, position);
 
 		$('body').removeClass('grab');
 		this.preventSelect(false);
