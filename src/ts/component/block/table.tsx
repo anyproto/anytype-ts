@@ -22,9 +22,9 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 	offsetX: number = 0;
 	cache: any = {};
 	width: number = 0;
-	height: number = 0;
 	oldIndex: number = -1;
 	newIndex: number = -1;
+	timeout: number = 0;
 
 	constructor (props: any) {
 		super(props);
@@ -517,23 +517,26 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		const { rows } = this.getData();
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
-		const clone = $('<div />').addClass('table isClone');
+		const table = $('<div />').addClass('table isClone');
 
 		rows.forEach((row: I.Block, i: number) => {
 			const rowElement = $('<div />').addClass('row');
-			const cell = $(node.find(`.cell.column${id}`).get(i)).clone();
+			const cell = $(node.find(`.cell.column${id}`).get(i));
+			const clone = cell.clone();
 
-			rowElement.append(cell);
-			clone.append(rowElement);
+			clone.css({ height: cell.outerHeight() });
+
+			rowElement.append(clone);
+			table.append(rowElement);
 		});
 
-		clone.css({ zIndex: 10000, position: 'fixed', left: -10000, top: -10000 });
-		node.append(clone);
+		table.css({ zIndex: 10000, position: 'fixed', left: -10000, top: -10000 });
+		node.append(table);
 
 		$(document).off('dragover').on('dragover', (e: any) => { e.preventDefault(); });
-		e.dataTransfer.setDragImage(clone.get(0), clone.outerWidth(), -3);
+		e.dataTransfer.setDragImage(table.get(0), table.outerWidth(), -3);
 
-		win.on('drag.board', throttle((e: any) => { this.onDragMoveColumn(e, id); }, 20));
+		win.on('drag.board', throttle((e: any) => { this.onDragMoveColumn(e, id); }, 40));
 		win.on('dragend.board', (e: any) => { this.onDragEnd(e); });
 
 		this.initCache();
@@ -546,8 +549,10 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		const node = $(ReactDOM.findDOMNode(this));
 		const { columns } = this.getData();
 
-		node.find('.cell.isOver').removeClass('isOver left right');
 		this.oldIndex = columns.findIndex(it => it.id == id);
+
+		let hoverId = '';
+		let isLeft = false;
 
 		for (let i = 0; i < columns.length; ++i) {
 			const column = columns[i];
@@ -558,13 +563,22 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			};
 
 			if (rect && Util.rectsCollide({ x: e.pageX, y: 0, width: this.width, height: 1 }, rect)) {
-				const isLeft = e.pageX <= rect.x + rect.width / 2;
-
+				isLeft = e.pageX <= rect.x + rect.width / 2;
+				hoverId = column.id;
+				
 				this.newIndex = isLeft ? rect.index : rect.index + 1;
-				node.find(`.cell.column${column.id}`).addClass('isOver ' + (isLeft ? 'left' : 'right'));
 				break;
 			};
 		};
+
+		window.clearTimeout(this.timeout);
+		this.timeout = window.setTimeout(() => {
+			node.find('.cell.isOver').removeClass('isOver left right');
+
+			if (hoverId) {
+				node.find(`.cell.column${hoverId}`).addClass('isOver ' + (isLeft ? 'left' : 'right'));
+			};
+		}, 40);
 
 		this.newIndex = Math.max(0, this.newIndex);
 		this.newIndex = Math.min(columns.length - 1, this.newIndex);
