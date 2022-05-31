@@ -517,6 +517,17 @@ const BlockTableDeleteColumn = (contextId: string, targetId: string, callBack?: 
 	dispatcher.request(BlockTableDeleteColumn.name, request, callBack);
 };
 
+const BlockTableMoveColumn = (contextId: string, targetId: string, dropTargetId: string, position: I.BlockPosition, callBack?: (message: any) => void) => {
+	const request = new Rpc.BlockTable.MoveColumn.Request();
+	
+	request.setContextid(contextId);
+	request.setTargetid(targetId);
+	request.setDroptargetid(targetId);
+	request.setPosition(position);
+
+	dispatcher.request(BlockTableMoveColumn.name, request, callBack);
+};
+
 // ---------------------- BLOCK FILE ---------------------- //
 
 const BlockFileCreateAndUpload = (contextId: string, targetId: string, position: I.BlockPosition, url: string, path: string, callBack?: (message: any) => void) => {
@@ -1419,6 +1430,7 @@ export {
 	BlockTableCreateColumn,
 	BlockTableDeleteColumn,
 	BlockTableCreateRow,
+	BlockTableMoveColumn,
 	BlockTableDeleteRow,
 
 	BlockDataviewViewCreate,
