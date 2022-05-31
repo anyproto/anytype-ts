@@ -10,7 +10,6 @@ export enum TableAlign {
 };
 
 export interface BlockComponentTable extends I.BlockComponent {
-	isHead?: boolean;
 	getData: () => any;
 	onOptions: (e: any, id: string) => void;
 	onHandleClick: (e: any, id: string) => void;

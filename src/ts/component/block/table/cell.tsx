@@ -15,7 +15,7 @@ const Constant = require('json/constant.json');
 const BlockTableCell = observer(class BlockTableCell extends React.Component<Props, {}> {
 
 	render () {
-		const { rootId, block, readonly, isHead, rowIdx, columnIdx, getData, onOptions, onHandleClick, onCellFocus, onCellBlur, onCellClick, onSort, onResizeStart } = this.props;
+		const { rootId, block, readonly, rowIdx, columnIdx, getData, onOptions, onHandleClick, onCellFocus, onCellBlur, onCellClick, onSort, onResizeStart } = this.props;
 		const { rows, columns } = getData();
 		const row = rows[rowIdx];
 		const column = columns[columnIdx];
@@ -28,10 +28,6 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 
 		const cn = [ 'cell', 'column' + column.id, /* 'align-v' + block.vertical, 'align-h' + block.horizontal */ ];
 		const length = childrenIds.length;
-
-		if (isHead) {
-			cn.push('isHead');
-		};
 
 		const HandleColumn = SortableHandle((item: any) => (
 			<div 
@@ -58,7 +54,7 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 				onMouseDown={(e: any) => { onCellClick(e, block.id); }}
 				onContextMenu={(e: any) => { onOptions(e, block.id); }}
 			>
-				{isHead ? <HandleColumn {...column} /> : ''}
+				{!rowIdx ? <HandleColumn {...column} /> : ''}
 				{!columnIdx ? <HandleRow {...row} /> : ''}
 
 				<Block 

@@ -62,7 +62,6 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 					{...this.props} 
 					{...item} 
 					index={item.block.idx}
-					isHead={true} 
 					getData={this.getData}
 					onOptions={this.onOptions}
 					onHandleClick={this.onHandleClick}
@@ -81,7 +80,6 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 					{...this.props}
 					{...item} 
 					index={item.block.idx}
-					isHead={false}
 					getData={this.getData}
 					onOptions={this.onOptions}
 					onHandleClick={this.onHandleClick}
@@ -405,27 +403,27 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 
 					switch (item.id) {
 						case 'columnBefore':
-							C.BlockTableCreateColumn(rootId, targetColumnId, I.BlockPosition.Left);
+							C.BlockTableColumnCreate(rootId, targetColumnId, I.BlockPosition.Left);
 							break;
 
 						case 'columnAfter':
-							C.BlockTableCreateColumn(rootId, targetColumnId, I.BlockPosition.Right);
+							C.BlockTableColumnCreate(rootId, targetColumnId, I.BlockPosition.Right);
 							break;
 
 						case 'columnRemove':
-							C.BlockTableDeleteColumn(rootId, targetColumnId);
+							C.BlockTableColumnDelete(rootId, targetColumnId);
 							break;
 
 						case 'rowBefore':
-							C.BlockTableCreateRow(rootId, targetRowId, I.BlockPosition.Top);
+							C.BlockTableRowCreate(rootId, targetRowId, I.BlockPosition.Top);
 							break;
 
 						case 'rowAfter':
-							C.BlockTableCreateRow(rootId, targetRowId, I.BlockPosition.Bottom);
+							C.BlockTableRowCreate(rootId, targetRowId, I.BlockPosition.Bottom);
 							break;
 
 						case 'rowRemove':
-							C.BlockTableDeleteRow(rootId, targetRowId);
+							C.BlockTableRowDelete(rootId, targetRowId);
 							break;
 					};
 				}
@@ -581,7 +579,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			blockStore.updateStructure(rootId, row.id, arrayMove(childrenIds, oldIndex, newIndex));
 		});
 	
-		C.BlockTableMoveColumn(rootId, oldColumn.id, newColumn.id, position);
+		C.BlockTableColumnMove(rootId, oldColumn.id, newColumn.id, position);
 
 		$('body').removeClass('grab');
 		this.preventSelect(false);
