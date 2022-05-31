@@ -122,6 +122,8 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 	componentWillUnmount () {
 		this._isMounted = false;
 		this.unbind();
+
+		window.clearTimeout(this.timeout);
 	};
 
 	unbind () {
@@ -603,6 +605,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		this.onSortEndColumn();
 		this.preventSelect(false);
 
+		window.clearTimeout(this.timeout);
 		node.find('.table.isClone').remove();
 		node.find('.cell.isOver').removeClass('isOver left right');
 	};
