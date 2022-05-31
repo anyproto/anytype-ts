@@ -483,7 +483,7 @@ const BlockTableRowCreate = (contextId: string, targetId: string, position: I.Bl
 	const request = new Rpc.BlockTable.RowCreate.Request();
 	
 	request.setContextid(contextId);
-	request.setTargetrowid(targetId);
+	request.setTargetid(targetId);
 	request.setPosition(position);
 
 	dispatcher.request(BlockTableRowCreate.name, request, callBack);
@@ -493,7 +493,7 @@ const BlockTableRowDelete = (contextId: string, targetId: string, callBack?: (me
 	const request = new Rpc.BlockTable.RowDelete.Request();
 	
 	request.setContextid(contextId);
-	request.setTargetrowid(targetId);
+	request.setTargetid(targetId);
 
 	dispatcher.request(BlockTableRowDelete.name, request, callBack);
 };
@@ -502,7 +502,7 @@ const BlockTableColumnCreate = (contextId: string, targetId: string, position: I
 	const request = new Rpc.BlockTable.ColumnCreate.Request();
 	
 	request.setContextid(contextId);
-	request.setTargetcolumnid(targetId);
+	request.setTargetid(targetId);
 	request.setPosition(position);
 
 	dispatcher.request(BlockTableColumnCreate.name, request, callBack);
@@ -512,7 +512,7 @@ const BlockTableColumnDelete = (contextId: string, targetId: string, callBack?: 
 	const request = new Rpc.BlockTable.ColumnDelete.Request();
 	
 	request.setContextid(contextId);
-	request.setTargetcolumnid(targetId);
+	request.setTargetid(targetId);
 
 	dispatcher.request(BlockTableColumnDelete.name, request, callBack);
 };
