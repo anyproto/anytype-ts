@@ -7,7 +7,9 @@ import { SortableHandle } from 'react-sortable-hoc';
 
 interface Props extends I.BlockComponentTable {
 	rowIdx: number;
+	row: I.Block;
 	columnIdx: number;
+	column: I.Block;
 };
 
 const Constant = require('json/constant.json');
@@ -15,10 +17,7 @@ const Constant = require('json/constant.json');
 const BlockTableCell = observer(class BlockTableCell extends React.Component<Props, {}> {
 
 	render () {
-		const { rootId, block, readonly, rowIdx, columnIdx, getData, onOptions, onHandleClick, onCellFocus, onCellBlur, onCellClick, onResizeStart, onDragStartColumn } = this.props;
-		const { rows, columns } = getData();
-		const row = rows[rowIdx];
-		const column = columns[columnIdx];
+		const { rootId, block, readonly, rowIdx, columnIdx, row, column, onOptions, onHandleClick, onCellFocus, onCellBlur, onCellClick, onResizeStart, onDragStartColumn } = this.props;
 		const childrenIds = blockStore.getChildrenIds(rootId, block.id);
 		const inner = blockStore.getLeaf(rootId, childrenIds[0]);
 
@@ -60,7 +59,7 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 				{!columnIdx ? <HandleRow {...row} /> : ''}
 
 				<Block 
-					key={'table-' + inner.id} 
+					key={'block-' + inner.id} 
 					{...this.props} 
 					block={inner} 
 					rootId={rootId} 

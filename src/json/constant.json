@@ -204,9 +204,9 @@
 		},
 
 		"table": {
-			"min": 70,
+			"min": 50,
 			"max": 500,
-			"cell": 70
+			"cell": 50
 		},
 
 		"dataview": {

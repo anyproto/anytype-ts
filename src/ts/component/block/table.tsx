@@ -74,7 +74,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 					row.idx = i;
 					return (
 						<RowSortableElement 
-							key={i} 
+							key={'row' + row.id} 
 							index={i} 
 							block={row} 
 						/>
@@ -522,10 +522,12 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 	onDragStartColumn (e: any, id: string) {
 		e.stopPropagation();
 
-		const { rows } = this.getData();
+		const { rows, columns } = this.getData();
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
 		const table = $('<div />').addClass('table isClone');
+		const widths = this.getColumnWidths();
+		const idx = columns.findIndex(it => it.id == id);
 
 		rows.forEach((row: I.Block, i: number) => {
 			const rowElement = $('<div />').addClass('row');
@@ -538,7 +540,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			table.append(rowElement);
 		});
 
-		table.css({ zIndex: 10000, position: 'fixed', left: -10000, top: -10000 });
+		table.css({ width: widths[idx], zIndex: 10000, position: 'fixed', left: -10000, top: -10000 });
 		node.append(table);
 
 		$(document).off('dragover').on('dragover', (e: any) => { e.preventDefault(); });
@@ -713,10 +715,9 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		const offset = Constant.size.blockMenu + 10;
 		const wrap = node.find('#scrollWrap');
 		const row = node.find('.row').first();
-		const css: any = {};
 
 		let width = offset;
-		row.css('grid-template-columns').split(' ').forEach((it: string) => {
+		String(row.css('grid-template-columns') || '').split(' ').forEach((it: string) => {
 			width += parseInt(it);
 		});
 

@@ -260,8 +260,6 @@ class MenuBlockAction extends React.Component<Props, State> {
 					continue;
 				};
 
-				console.log(block, block.type, block.canHaveAlign());
-
 				if (!block.canTurnText() || block.isDiv()) {
 					hasTurnText = false;
 				};

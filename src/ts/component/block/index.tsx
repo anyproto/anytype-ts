@@ -87,7 +87,7 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 		let empty = null;
 		let setRef = (ref: any) => { this.ref = ref; };
 		let additional = null;
-		let renderChildren = true;
+		let renderChildren = !isInsideTable;
 
 		if (className) {
 			cn.push(className);
@@ -106,7 +106,7 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 		if (block.canHaveAlign()) {
 			cn.push('align' + align);
 		};
-		
+
 		switch (type) {
 			case I.BlockType.Text:
 				if (block.isTextCheckbox() && checked) {

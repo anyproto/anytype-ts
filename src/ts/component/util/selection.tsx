@@ -499,7 +499,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		const rootId = keyboard.getRootId();
 		const block = blockStore.getLeaf(rootId, id);
 		
-		if (block.isTable()) {
+		if (!block || block.isTable()) {
 			return;
 		};
 		
