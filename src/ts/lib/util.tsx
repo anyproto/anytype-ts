@@ -337,7 +337,11 @@ class Util {
 		h = Number(h) || 0;
 		i = Number(i) || 0;
 		s = Number(s) || 0;
-		return Math.floor(Date.UTC(y, m - 1, d, h, i, s, 0) / 1000);
+
+		let timestamp = Math.floor(Date.UTC(y, m - 1, d, h, i, s, 0) / 1000);
+		let timezone = commonStore.timezoneGet();
+
+		return timestamp - timezone.offset;
 	};
 
 	parseDate (value: string, format?: I.DateFormat): number {

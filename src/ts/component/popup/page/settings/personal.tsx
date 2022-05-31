@@ -21,7 +21,7 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 	};
 
 	render () {
-		const { timezone, autoSidebar } = commonStore;
+		const { timezone, autoSidebar, config } = commonStore;
 		const types = DataUtil.getObjectTypesForNewObject(false);
 		const type = types.find(it => it.id == commonStore.type);
 		const timezones = DataUtil.timezones();
@@ -46,14 +46,16 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 						</div>
 					</div>
 
-					<div className="row flex">
-						<div className="side left c25">
-							<Label text="Timezone" />
+					{config.experimental ? (
+						<div className="row flex">
+							<div className="side left c25">
+								<Label text="Timezone" />
+							</div>
+							<div className="side right c75">
+								<Select id="timezone" arrowClassName="light" menuWidth={360} options={timezones} value={String(timezone || '')} onChange={(id: string) => { commonStore.timezoneSet(id); }}/>
+							</div>
 						</div>
-						<div className="side right c75">
-							<Select id="timezone" arrowClassName="light" menuWidth={360} options={timezones} value={String(timezone || '')} onChange={(id: string) => { commonStore.timezoneSet(id); }}/>
-						</div>
-					</div>
+					) : ''}
 
 					<div className="row flex">
 						<div className="side left">

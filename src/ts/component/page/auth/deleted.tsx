@@ -32,7 +32,7 @@ const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<P
 		const { cover } = commonStore;
 		const { error } = this.state;
 		const duration = Math.max(0, account.status.date - Util.time());
-		const days = Math.ceil(duration / 86400);
+		const days = Math.min(DAYS - 1, Math.max(1, Math.ceil(duration / 86400)));
 		const dt = `${days} ${Util.cntWord(days, 'day', 'days')}`;
 
 		let title = '';
@@ -40,8 +40,13 @@ const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<P
 		let showPie = false;
 		let pieValue = 0;
 		let rows: any[] = [];
+		let status: I.AccountStatusType = account.status.type;
+
+		if ((status == I.AccountStatusType.PendingDeletion) && !duration) {
+			status = I.AccountStatusType.Deleted;
+		};
 		
-		switch (account.status.type) {
+		switch (status) {
 			case I.AccountStatusType.PendingDeletion:
 				title = `This account is planned for deletion in ${dt}...`;
 				description = `We're sorry to see you go. You have ${dt} to cancel this request. After ${dt}, your encrypted account data is permanently removed from the backup node.`;
@@ -52,7 +57,7 @@ const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<P
 				]);
 
 				showPie = true;
-				pieValue = Math.min(DAYS - 1, Math.max(1, DAYS - days));
+				pieValue = DAYS - days;
 				break;
 
 			case I.AccountStatusType.StartedDeletion:

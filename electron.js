@@ -80,7 +80,7 @@ if (is.development && !port) {
 	exit(false);
 };
 
-if (!app.requestSingleInstanceLock() && app.isPackaged) {
+if (app.isPackaged && !app.requestSingleInstanceLock()) {
 	exit(false);
 };
 

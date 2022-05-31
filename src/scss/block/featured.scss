@@ -15,11 +15,10 @@
 		.cellContent > .wrap { display: inline; }
 		.cellContent.isName .name { display: inline; }
 		.cellContent {
+			.over { display: inline; }
+
 			.element { margin: -1px 6px 0px 0px; vertical-align: top; line-height: inherit; background: none !important; display: inline; }
 			.element:last-child { margin-right: 0px; }
-
-			.tagItem { margin: 5px 6px 0px 0px; vertical-align: top; }
-			.tagItem:last-child { margin-right: 0px; }
 
 			.iconObject { display: none; }
 			.name { vertical-align: baseline; line-height: inherit; display: inline; word-break: break-word; white-space: normal; }
@@ -27,8 +26,14 @@
 			.empty { vertical-align: top; }
 			.flex { display: inline; }
 
-			.more { vertical-align: top; margin-top: 5px; }
+			.more { vertical-align: middle; }
 		}
+
+		.cellContent.c-select {
+			.tagItem { margin: 0px 6px 0px 0px; vertical-align: middle; }
+			.tagItem:last-child { margin-right: 0px; }
+			.more { margin: 0px; vertical-align: middle; }
+		} 
 
 		.cell.canEdit {
 			.cellContent {
@@ -36,14 +41,13 @@
 			}
 		}
 
-		.cellContent.c-file { padding: 2px 3px; font-size: 20px; line-height: 20px; }
 		.cellContent.c-file {
 			.element { margin-right: 2px; }
 			.element:last-child { margin-right: 0px; }
 			.iconObject { display: inline; margin: 0px; }
 			.iconObject * { position: static; vertical-align: middle; margin: 0px; }
 			.name { display: none; }
-			.empty { @include text-common; padding: 0px 4px; }
+			.empty { padding: 0px 4px; }
 		}
 		.cellContent.c-checkbox { padding: 5px 3px; }
 	}
