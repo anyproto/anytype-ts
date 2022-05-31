@@ -367,7 +367,7 @@
 	"filterConditionGreaterOrEqualDate": { "en": "Is on or after" },
 	"filterConditionLessOrEqual": { "en": "Is less or equal" },
 	"filterConditionLessOrEqualDate": { "en": "Is on or before" },
-	"filterConditionInDate": { "en": "Within" },
+	"filterConditionInDate": { "en": "Is within" },
 	"filterConditionLike": { "en": "Contains" },
 	"filterConditionNotLike": { "en": "Doesn't contain" },
 	"filterConditionEmpty": { "en": "Is empty" },

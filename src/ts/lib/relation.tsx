@@ -97,6 +97,12 @@ class Relation {
 
 		switch (type) {
 			case I.RelationType.Date:
+				let defaultOptions: any[] = [
+					{ id: I.FilterQuickOption.NumberOfDaysAgo, name: 'Number of days ago' },
+					{ id: I.FilterQuickOption.NumberOfDaysNow, name: 'Number of days from now' },
+					{ id: I.FilterQuickOption.ExactDate, name: 'Exact date' },
+				];
+
 				switch (condition) {
 					case I.FilterCondition.Equal:
 						ret = ret.concat([
@@ -104,6 +110,7 @@ class Relation {
 							{ id: I.FilterQuickOption.Tomorrow, name: 'Tomorrow' },
 							{ id: I.FilterQuickOption.Yesterday, name: 'Yesterday' },
 						]);
+						ret = ret.concat(defaultOptions);
 						break;
 
 					case I.FilterCondition.Greater:
@@ -123,15 +130,13 @@ class Relation {
 							{ id: I.FilterQuickOption.NextMonth,	 name: 'Next month' },
 						]);
 						break;
+
+					default: 
+						ret = ret.concat(defaultOptions);
+						break;
 				};
 				break;
 		};
-
-		ret = ret.concat([
-			{ id: I.FilterQuickOption.NumberOfDaysAgo, name: 'Number of days ago' },
-			{ id: I.FilterQuickOption.NumberOfDaysNow, name: 'Number of days from now' },
-			{ id: I.FilterQuickOption.ExactDate, name: 'Exact date' },
-		]);
 
 		return ret;
 	};
