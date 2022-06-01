@@ -28,7 +28,6 @@ export enum BlockType {
 	Table				 = 'table',
 	TableColumn			 = 'tableColumn',
 	TableRow			 = 'tableRow',
-	TableCell			 = 'tableCell',
 	TableOfContents		 = 'tableOfContents',
 };
 
@@ -49,10 +48,16 @@ export enum BlockSplitMode {
 	Inner = 2,
 };
 
-export enum BlockAlign {
+export enum BlockHAlign {
 	Left	 = 0,
 	Center	 = 1,
 	Right	 = 2,
+};
+
+export enum BlockVAlign {
+	Top		 = 0,
+	Center	 = 1,
+	Bottom	 = 2,
 };
 
 export interface BlockComponent {
@@ -86,7 +91,8 @@ export interface Block {
 	layout?: I.ObjectLayout;
 	parentId?: string;
 	fields: any;
-	align?: BlockAlign;
+	hAlign?: BlockHAlign;
+	vAlign?: BlockVAlign;
 	bgColor?: string;
 	content: any;
 	childrenIds: string[];
@@ -145,7 +151,6 @@ export interface Block {
 	isTable?(): boolean;
 	isTableColumn?(): boolean;
 	isTableRow?(): boolean;
-	isTableCell?(): boolean;
 
 	isBookmark?(): boolean;
 	isLink?(): boolean;

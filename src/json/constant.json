@@ -206,7 +206,7 @@
 		"table": {
 			"min": 50,
 			"max": 500,
-			"cell": 50
+			"default": 100
 		},
 
 		"dataview": {

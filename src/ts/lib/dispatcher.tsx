@@ -119,6 +119,7 @@ class Dispatcher {
 		if (v == V.BLOCKSETLINK)				 t = 'blockSetLink';
 		if (v == V.BLOCKSETBOOKMARK)			 t = 'blockSetBookmark';
 		if (v == V.BLOCKSETALIGN)				 t = 'blockSetAlign';
+		if (v == V.BLOCKSETVERTICALALIGN)		 t = 'blockSetVerticalAlign';
 		if (v == V.BLOCKSETDIV)					 t = 'blockSetDiv';
 		if (v == V.BLOCKSETRELATION)			 t = 'blockSetRelation';
 		if (v == V.BLOCKSETLATEX)				 t = 'blockSetLatex';
@@ -471,7 +472,18 @@ class Dispatcher {
 						break;
 					};
 
-					block.align = data.getAlign();
+					block.hAlign = data.getAlign();
+					blockStore.update(rootId, block);
+					break;
+
+				case 'blockSetVerticalAlign':
+					id = data.getId();
+					block = blockStore.getLeaf(rootId, id);
+					if (!block) {
+						break;
+					};
+
+					block.vAlign = data.getVerticalalign();
 					blockStore.update(rootId, block);
 					break;
 

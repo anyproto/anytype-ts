@@ -37,8 +37,8 @@ const PageHeadEdit = observer(class PageHeadEdit extends React.Component<Props, 
 		const check = DataUtil.checkDetails(rootId);
 		const object = check.object;
 		const header = blockStore.getLeaf(rootId, 'header') || {};
-		const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, align: object.layoutAlign, childrenIds: [], fields: {}, content: {} });
-		const icon: any = new M.Block({ id: rootId + '-icon', type: I.BlockType.IconPage, align: object.layoutAlign, childrenIds: [], fields: {}, content: {} });
+		const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, hAlign: object.layoutAlign, childrenIds: [], fields: {}, content: {} });
+		const icon: any = new M.Block({ id: rootId + '-icon', type: I.BlockType.IconPage, hAlign: object.layoutAlign, childrenIds: [], fields: {}, content: {} });
 		const templateIsBundled = object.templateIsBundled;
 
 		if (root.isObjectHuman()) {

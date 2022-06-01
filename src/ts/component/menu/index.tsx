@@ -31,7 +31,7 @@ import MenuBlockBackground from './block/background';
 import MenuBlockCover from './block/cover';
 import MenuBlockAction from './block/action';
 import MenuBlockMore from './block/more';
-import MenuBlockAlign from './block/align';
+import MenuBlockHAlign from './block/align';
 import MenuBlockLink from './block/link';
 import MenuBlockMention from './block/mention';
 import MenuBlockLayout from './block/layout';
@@ -104,7 +104,7 @@ const Components: any = {
 	blockColor:				 MenuBlockColor,
 	blockBackground:		 MenuBlockBackground,
 	blockMore:				 MenuBlockMore,
-	blockAlign:				 MenuBlockAlign,
+	blockAlign:				 MenuBlockHAlign,
 	blockLink:				 MenuBlockLink,
 	blockCover:				 MenuBlockCover,
 	blockMention:			 MenuBlockMention,

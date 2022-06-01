@@ -545,7 +545,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 				C.BlockListSetAlign(rootId, [ blockId ], item.itemId, (message: any) => {
 					onCommand(message);
 
-					analytics.event('ChangeBlockAlign', { align: item.itemId, count: 1 });
+					analytics.event('ChangeBlockHAlign', { align: item.itemId, count: 1 });
 				});
 			};
 

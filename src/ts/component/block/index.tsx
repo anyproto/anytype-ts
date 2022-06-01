@@ -42,7 +42,7 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 	ref: any = null;
 
 	public static defaultProps = {
-		align: I.BlockAlign.Left,
+		align: I.BlockHAlign.Left,
 		traceId: '',
 		history: null,
 		location: null,
@@ -68,7 +68,7 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 
 	render () {
 		const { rootId, css, className, block, readonly, isDragging, isInsideTable } = this.props;
-		const { id, type, fields, content, align, bgColor } = block;
+		const { id, type, fields, content, hAlign, bgColor } = block;
 
 		if (!id) {
 			return null;
@@ -81,7 +81,7 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 		let canSelect = true;
 		let canDrop = !readonly && !isInsideTable;
 		let canDropMiddle = canDrop;
-		let cn: string[] = [ 'block', 'align' + align, DataUtil.blockClass(block, isDragging), 'index-' + index ];
+		let cn: string[] = [ 'block', DataUtil.blockClass(block, isDragging), 'index-' + index ];
 		let cd: string[] = [ 'wrapContent' ];
 		let blockComponent = null;
 		let empty = null;
@@ -104,7 +104,7 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 		};
 
 		if (block.canHaveAlign()) {
-			cn.push('align' + align);
+			cn.push('align' + hAlign);
 		};
 
 		switch (type) {

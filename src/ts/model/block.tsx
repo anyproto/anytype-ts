@@ -32,7 +32,9 @@ class Block implements I.Block {
 	parentId: string = '';
 	type: I.BlockType = I.BlockType.Empty;
 	childrenIds: string[] = [];
-	align: I.BlockAlign = I.BlockAlign.Left;
+	hAlign: I.BlockHAlign = I.BlockHAlign.Left;
+	vAlign: I.BlockVAlign = I.BlockVAlign.Top;
+
 	bgColor: string = '';
 	fields: any = {};
 	content: any = {};
@@ -44,7 +46,8 @@ class Block implements I.Block {
 		self.parentId = String(props.parentId || '');
 		self.layout = Number(props.layout) || I.ObjectLayout.Page;
 		self.type = props.type;
-		self.align = Number(props.align) || I.BlockAlign.Left;
+		self.hAlign = Number(props.hAlign) || I.BlockHAlign.Left;
+		self.vAlign = Number(props.vAlign) || I.BlockVAlign.Top;
 		self.bgColor = String(props.bgColor || '');
 		self.fields = props.fields || {};
 		self.childrenIds = props.childrenIds || [];
@@ -56,7 +59,8 @@ class Block implements I.Block {
 
 		makeObservable(self, {
 			layout: observable,
-			align: observable,
+			hAlign: observable,
+			vAlign: observable,
 			bgColor: observable,
 			fields: observable,
 			content: observable,
@@ -127,7 +131,7 @@ class Block implements I.Block {
 	};
 	
 	isFocusable (): boolean {
-		return !this.isSystem() && !this.isFeatured() && !this.isTable() && !this.isTableRow() && !this.isTableCell();
+		return !this.isSystem() && !this.isFeatured() && !this.isTable() && !this.isTableRow() && !this.isTableColumn();
 	};
 	
 	isSelectable (): boolean {
@@ -258,10 +262,6 @@ class Block implements I.Block {
 		return this.type == I.BlockType.TableRow;
 	};
 
-	isTableCell (): boolean {
-		return this.type == I.BlockType.TableCell;
-	};
-	
 	isIcon (): boolean {
 		return this.isIconPage() || this.isIconUser();
 	};

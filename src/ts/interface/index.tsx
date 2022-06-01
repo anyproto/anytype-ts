@@ -24,7 +24,7 @@ import { MenuTab, MenuType, MenuDirection, MenuParam, Menu, MenuItem } from './m
 import { SmartBlockType, ObjectLayout, ObjectType, RelationType, RelationScope, Relation, OptionScope, SelectOption } from './object';
 import { RestrictionObject, RestrictionDataview } from './restriction';
 
-import { PageInfo, BlockType, BlockPosition, BlockSplitMode, BlockAlign, BlockComponent, Block, BlockStructure } from './block';
+import { PageInfo, BlockType, BlockPosition, BlockSplitMode, BlockHAlign, BlockVAlign, BlockComponent, Block, BlockStructure } from './block';
 import {
 	CardSize,
 	DateFormat,
@@ -54,7 +54,7 @@ import { ContentBookmark, BlockBookmark } from './block/bookmark';
 import { DivStyle, ContentDiv, BlockDiv } from './block/div';
 import { ContentRelation, BlockRelation } from './block/relation';
 import { ContentLatex, BlockLatex } from './block/latex';
-import { TableAlign, BlockComponentTable, ContentTable, BlockTable } from './block/table';
+import { BlockComponentTable, ContentTable, BlockTable } from './block/table';
 
 export {
 	Account,
@@ -118,7 +118,8 @@ export {
 	BlockType,
 	BlockPosition,
 	BlockSplitMode,
-	BlockAlign,
+	BlockHAlign,
+	BlockVAlign,
 	BlockComponent,
 	Block,
 	BlockStructure,
@@ -181,8 +182,7 @@ export {
 	ContentLatex,
 	BlockLatex,
 
-	TableAlign,
 	BlockComponentTable,
 	ContentTable, 
 	BlockTable,
-}
+};

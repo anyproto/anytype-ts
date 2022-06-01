@@ -595,7 +595,7 @@ const BlockListSetBackgroundColor = (contextId: string, blockIds: string[], colo
 	dispatcher.request(BlockListSetBackgroundColor.name, request, callBack);
 };
 
-const BlockListSetAlign = (contextId: string, blockIds: string[], align: I.BlockAlign, callBack?: (message: any) => void) => {
+const BlockListSetAlign = (contextId: string, blockIds: string[], align: I.BlockHAlign, callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.ListSetAlign.Request();
 	
 	request.setContextid(contextId);
@@ -603,6 +603,16 @@ const BlockListSetAlign = (contextId: string, blockIds: string[], align: I.Block
     request.setAlign(align);
 
 	dispatcher.request(BlockListSetAlign.name, request, callBack);
+};
+
+const BlockListSetVerticalAlign = (contextId: string, blockIds: string[], align: I.BlockVAlign, callBack?: (message: any) => void) => {
+	const request = new Rpc.Block.ListSetVerticalAlign.Request();
+	
+	request.setContextid(contextId);
+    request.setBlockidsList(blockIds);
+    request.setVerticalalign(align);
+
+	dispatcher.request(BlockListSetVerticalAlign.name, request, callBack);
 };
 
 const BlockDataviewViewCreate = (contextId: string, blockId: string, view: any, callBack?: (message: any) => void) => {
@@ -1403,6 +1413,7 @@ export {
 	BlockListTurnInto,
 	BlockListSetFields,
 	BlockListSetAlign,
+	BlockListSetVerticalAlign,
 
 	BlockTextSetText,
 	BlockTextSetChecked,

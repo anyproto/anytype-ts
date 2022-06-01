@@ -1,6 +1,6 @@
 import { I } from 'ts/lib';
 
-export enum TableAlign {
+export enum BlockHAlign {
 	None	 = 0,
 	Left	 = 1,
 	Center	 = 2,

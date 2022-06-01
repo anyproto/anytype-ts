@@ -19,13 +19,12 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 	render () {
 		const { rootId, block, readonly, rowIdx, columnIdx, row, column, onOptions, onHandleClick, onCellFocus, onCellBlur, onCellClick, onResizeStart, onDragStartColumn } = this.props;
 		const childrenIds = blockStore.getChildrenIds(rootId, block.id);
-		const inner = blockStore.getLeaf(rootId, childrenIds[0]);
 
-		if (!row || !column || !inner) {
+		if (!row || !column) {
 			return null;
 		};
 
-		const cn = [ 'cell', 'column' + column.id, /* 'align-v' + block.vertical */ ];
+		const cn = [ 'cell', 'column' + column.id, 'align-v' + block.vAlign ];
 		const length = childrenIds.length;
 
 		const HandleColumn = (item: any) => (
@@ -59,9 +58,9 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 				{!columnIdx ? <HandleRow {...row} /> : ''}
 
 				<Block 
-					key={'block-' + inner.id} 
+					key={'block-' + block.id} 
 					{...this.props} 
-					block={inner} 
+					block={block} 
 					rootId={rootId} 
 					readonly={readonly} 
 					isInsideTable={true}

@@ -333,9 +333,9 @@ class MenuBlockMore extends React.Component<Props, {}> {
 
 				menuParam.data = Object.assign(menuParam.data, {
 					value: block.align,
-					onSelect: (align: I.BlockAlign) => {
+					onSelect: (align: I.BlockHAlign) => {
 						C.BlockListSetAlign(rootId, [ blockId ], align, () => {
-							analytics.event('ChangeBlockAlign', { align, count: 1 });
+							analytics.event('ChangeBlockHAlign', { align, count: 1 });
 						});
 						
 						close();

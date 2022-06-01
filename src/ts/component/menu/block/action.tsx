@@ -506,11 +506,11 @@ class MenuBlockAction extends React.Component<Props, State> {
 
 				menuParam.data = Object.assign(menuParam.data, {
 					value: align,
-					onSelect: (align: I.BlockAlign) => {
+					onSelect: (align: I.BlockHAlign) => {
 						C.BlockListSetAlign(rootId, blockIds, align, (message: any) => {
 							this.setFocus(blockIds[0]);
 
-							analytics.event('ChangeBlockAlign', { align, count: blockIds.length });
+							analytics.event('ChangeBlockHAlign', { align, count: blockIds.length });
 						});
 
 						close();
@@ -586,7 +586,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 				// Align
 				if (item.isAlign) {
 					C.BlockListSetAlign(rootId, blockIds, item.itemId, () => {
-						analytics.event('ChangeBlockAlign', { align: item.itemId, count: blockIds.length });
+						analytics.event('ChangeBlockHAlign', { align: item.itemId, count: blockIds.length });
 					});
 				} else 
 					

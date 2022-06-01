@@ -24,7 +24,6 @@ const Mapper = {
 		if (v == V.TABLE)				 t = I.BlockType.Table;
 		if (v == V.TABLECOLUMN)			 t = I.BlockType.TableColumn;
 		if (v == V.TABLEROW)			 t = I.BlockType.TableRow;
-		if (v == V.TABLECELL)			 t = I.BlockType.TableCell;
 		if (v == V.TABLEOFCONTENTS)		 t = I.BlockType.TableOfContents;
 		return t;
 	},
@@ -213,24 +212,20 @@ const Mapper = {
 			return {};
 		},
 
-		BlockTableCell: (obj: any) => {
-			return {};
-		},
-
 		Block: (obj: any): I.Block => {
-			let type = Mapper.BlockType(obj.getContentCase());
-			let fn = 'get' + Util.ucFirst(type);
-			let fm = Util.toUpperCamelCase('block-' + type);
-			let content = obj[fn] ? obj[fn]() : {};
-	
-			let item: I.Block = {
+			const type = Mapper.BlockType(obj.getContentCase());
+			const fn = 'get' + Util.ucFirst(type);
+			const fm = Util.toUpperCamelCase('block-' + type);
+			const content = obj[fn] ? obj[fn]() : {};
+			const item: I.Block = {
 				id: obj.getId(),
 				type: type,
 				childrenIds: obj.getChildrenidsList() || [],
 				fields: Decode.decodeStruct(obj.getFields()),
-				content: {} as any,
-				align: obj.getAlign(),
+				hAlign: obj.getAlign(),
+				vAlign: obj.getVerticalalign(),
 				bgColor: obj.getBackgroundcolor(),
+				content: {} as any,
 			};
 
 			if (Mapper.From[fm]) {
@@ -242,16 +237,9 @@ const Mapper = {
 		},
 
 		Restrictions: (obj: any): any => {
-			if (!obj) {
-				return {
-					object: [],
-					dataview: [],
-				};
-			};
-
 			return {
-				object: obj.getObjectList() || [],
-				dataview: (obj.getDataviewList() || []).map(Mapper.From.RestrictionsDataview),
+				object: obj ? obj.getObjectList() || [] : [],
+				dataview: obj ? (obj.getDataviewList() || []).map(Mapper.From.RestrictionsDataview) : [],
 			};
 		},
 
@@ -574,7 +562,8 @@ const Mapper = {
 			let content: any = null;
 	
 			block.setId(obj.id);
-			block.setAlign(obj.align);
+			block.setAlign(obj.hAlign);
+			block.setVerticalalign(obj.vAlign);
 			block.setBackgroundcolor(obj.bgColor);
 	
 			if (obj.childrenIds) {

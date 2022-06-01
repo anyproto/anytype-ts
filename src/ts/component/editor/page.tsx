@@ -1233,9 +1233,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 			if (idx >= 0 && nextRow) {
 				const nextRowElement = blockStore.getMapElement(rootId, nextRow.id);
-				const nextCellElement = blockStore.getMapElement(rootId, nextRowElement?.childrenIds[idx]);
 
-				next = blockStore.getLeaf(rootId, nextCellElement.childrenIds[0]);
+				next = blockStore.getLeaf(rootId, nextRowElement?.childrenIds[idx]);
 			};
 		};
 
@@ -1309,9 +1308,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			};
 
 			if (nextCellId) {
-				const nextCellElement = blockStore.getMapElement(rootId, nextCellId);
-				const next = blockStore.getLeaf(rootId, nextCellElement.childrenIds[0]);
-				
+				const next = blockStore.getLeaf(rootId, nextCellId);
 				if (next) {
 					const l = next.getLength();
 					window.setTimeout(() => {

@@ -169,18 +169,12 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		const node = $(ReactDOM.findDOMNode(this));
 		const { rows, columns } = this.getData();
 		const subIds = [ 'select2', 'blockColor', 'blockBackground', 'blockStyle' ];
-		const optionsAlign = this.optionsAlign();
 		const optionsColumn = this.optionsColumn();
 		const optionsRow = this.optionsRow();
+		const optionsAlign = this.optionsAlign(id);
 		const optionsColor = this.optionsColor(id);
 
 		let menuContext: any = null;
-		let inner: any = null;
-
-		if (current.type == I.BlockType.TableCell) {
-			inner = blockStore.getLeaf(rootId, blockStore.getChildrenIds(rootId, current.id)[0]);
-		};
-
 		let menuParam: any = {
 			component: 'select',
 			onOpen: (context: any) => {
@@ -240,12 +234,12 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				});
 				break;
 
-			case I.BlockType.TableCell:
+			default:
 				options = options.concat(optionsColumn);
 				options = options.concat(optionsRow);
 				options = options.concat(optionsColor);
 
-				blockIds = [ inner.id ];
+				blockIds = [ current.id ];
 
 				const { rowId, columnId } = this.getRowColumn(current.id);
 
@@ -300,6 +294,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 							menuParam.data = Object.assign(menuParam.data, {
 								options: this.optionsVAlign(),
 								onSelect: (e: any, el: any) => {
+									C.BlockListSetVerticalAlign(rootId, blockIds, el.itemId);
 									menuContext.close();
 								}
 							});
@@ -329,9 +324,9 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 							menuId = 'blockStyle';
 							menuParam.data = Object.assign(menuParam.data, {
 								blockIds: blockIds,
-								blockId: blockIds[0],
+								blockId: current.id,
 								isInsideTable: true,
-								value: inner?.content.style,
+								value: current.content.style,
 								onSelect: (item: any) => {
 									if (item.type == I.BlockType.Text) {
 										C.BlockListTurnInto(rootId, blockIds, item.itemId);
@@ -409,7 +404,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				table.find(`#block-${id}`).addClass('isHighlightedRow');
 				break;
 
-			case I.BlockType.TableCell:
+			default:
 				table.find(`#block-${id}`).addClass('isHighlightedCell');
 				break;
 		};
@@ -502,7 +497,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		const ret = [];
 
 		columns.forEach((it: I.Block) => {
-			ret.push(this.checkWidth(it.fields.width || Constant.size.table.cell));
+			ret.push(this.checkWidth(it.fields.width || Constant.size.table.default));
 		});
 
 		return ret;
@@ -624,15 +619,24 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		});
 	};
 
-	alignIcon (v: I.TableAlign): string {
+	alignHIcon (v: I.BlockHAlign): string {
 		let icon = '';
 		switch (v) {
 			default:
-			case I.TableAlign.Left:		 icon = 'left'; break;
-			case I.TableAlign.Center:	 icon = 'center'; break;
-			case I.TableAlign.Right:	 icon = 'right'; break;
-			case I.TableAlign.Top:		 icon = 'top'; break;
-			case I.TableAlign.Bottom:	 icon = 'bottom'; break;
+			case I.BlockHAlign.Left:		 icon = 'left'; break;
+			case I.BlockHAlign.Center:	 icon = 'center'; break;
+			case I.BlockHAlign.Right:	 icon = 'right'; break;
+		};
+		return icon;
+	};
+
+	alignVIcon (v: I.BlockVAlign): string {
+		let icon = '';
+		switch (v) {
+			default:
+			case I.BlockVAlign.Top:		 icon = 'top'; break;
+			case I.BlockVAlign.Center:	 icon = 'center'; break;
+			case I.BlockVAlign.Bottom:	 icon = 'bottom'; break;
 		};
 		return icon;
 	};
@@ -695,7 +699,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		const sizes = [];
 
 		columns.forEach((it: I.Block) => {
-			sizes.push(this.checkWidth(it.fields.width || Constant.size.table.cell));
+			sizes.push(this.checkWidth(it.fields.width || Constant.size.table.default));
 		});
 
 		rows.css({ gridTemplateColumns: sizes.map(it => it + 'px').join(' ') });
@@ -764,49 +768,49 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			return;
 		};
 
-		let inner: any = null;
-		if (current.type == I.BlockType.TableCell) {
-			inner = blockStore.getLeaf(rootId, blockStore.getChildrenIds(rootId, current.id)[0]);
-		};
-
-		const innerColor = <div className={[ 'inner', 'textColor textColor-' + (inner?.content.color || 'default') ].join(' ')} />;
-		const innerBackground = <div className={[ 'inner', 'bgColor bgColor-' + (inner?.bgColor || 'default') ].join(' ')} />;
+		const innerColor = <div className={[ 'inner', 'textColor textColor-' + (current.content.color || 'default') ].join(' ')} />;
+		const innerBackground = <div className={[ 'inner', 'bgColor bgColor-' + (current.bgColor || 'default') ].join(' ')} />;
 
 		return [
 			{ id: 'color', icon: 'color', name: 'Color', inner: innerColor, arrow: true },
 			{ id: 'background', icon: 'color', name: 'Background', inner: innerBackground, arrow: true },
-			{ id: 'style', icon: DataUtil.styleIcon(I.BlockType.Text, inner?.content.style), name: 'Text style', arrow: true },
+			{ id: 'style', icon: DataUtil.styleIcon(I.BlockType.Text, current.content.style), name: 'Text style', arrow: true },
 			{ isDiv: true },
 		];
 	};
 
-	optionsAlign () {
-		const ah = I.TableAlign.Left;
-		const av = I.TableAlign.Top;
+	optionsAlign (id: string) {
+		const { rootId } = this.props;
+		const current = blockStore.getLeaf(rootId, id);
+
+		if (!current) {
+			return;
+		};
+
 		return [
-			{ id: 'horizontal', icon: 'align ' + this.alignIcon(ah), name: 'Horizontal align', arrow: true },
-			{ id: 'vertical', icon: 'align ' + this.alignIcon(av), name: 'Vertical align', arrow: true },
+			{ id: 'horizontal', icon: 'align ' + this.alignHIcon(current.hAlign), name: 'Horizontal align', arrow: true },
+			{ id: 'vertical', icon: 'align ' + this.alignVIcon(current.vAlign), name: 'Vertical align', arrow: true },
 		];
 	};
 
 	optionsHAlign () {
 		return [
-			{ id: I.TableAlign.Left, name: 'Left' },
-			{ id: I.TableAlign.Center, name: 'Center' },
-			{ id: I.TableAlign.Right, name: 'Right' },
+			{ id: I.BlockHAlign.Left, name: 'Left' },
+			{ id: I.BlockHAlign.Center, name: 'Center' },
+			{ id: I.BlockHAlign.Right, name: 'Right' },
 		].map((it: any) => {
-			it.icon = 'align ' + this.alignIcon(it.id);
+			it.icon = 'align ' + this.alignHIcon(it.id);
 			return it;
 		});
 	};
 
 	optionsVAlign () {
 		return [
-			{ id: I.TableAlign.Top, name: 'Top' },
-			{ id: I.TableAlign.Center, name: 'Center' },
-			{ id: I.TableAlign.Bottom, name: 'Bottom' },
+			{ id: I.BlockVAlign.Top, name: 'Top' },
+			{ id: I.BlockVAlign.Center, name: 'Center' },
+			{ id: I.BlockVAlign.Bottom, name: 'Bottom' },
 		].map((it: any) => {
-			it.icon = 'align ' + this.alignIcon(it.id);
+			it.icon = 'align ' + this.alignVIcon(it.id);
 			return it;
 		});
 	};

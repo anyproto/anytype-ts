@@ -246,13 +246,13 @@ class DataUtil {
 		return c;
 	};
 	
-	alignIcon (v: I.BlockAlign): string {
+	alignIcon (v: I.BlockHAlign): string {
 		let icon = '';
 		switch (v) {
 			default:
-			case I.BlockAlign.Left:		 icon = 'left'; break;
-			case I.BlockAlign.Center:	 icon = 'center'; break;
-			case I.BlockAlign.Right:	 icon = 'right'; break;
+			case I.BlockHAlign.Left:		 icon = 'left'; break;
+			case I.BlockHAlign.Center:	 icon = 'center'; break;
+			case I.BlockHAlign.Right:	 icon = 'right'; break;
 		};
 		return icon;
 	};
@@ -481,7 +481,7 @@ class DataUtil {
 		C.ObjectSetLayout(rootId, layout, callBack);
 	};
 
-	pageSetAlign (rootId: string, align: I.BlockAlign, callBack?: (message: any) => void) {
+	pageSetAlign (rootId: string, align: I.BlockHAlign, callBack?: (message: any) => void) {
 		C.BlockListSetAlign(rootId, [], align, callBack);
 	};
 
@@ -739,13 +739,13 @@ class DataUtil {
 	
 	menuGetAlign (hasQuote: boolean) {
 		let ret = [
-			{ id: I.BlockAlign.Left, icon: 'align left', name: 'Align left', isAlign: true },
-			{ id: I.BlockAlign.Center, icon: 'align center', name: 'Align center', isAlign: true },
-			{ id: I.BlockAlign.Right, icon: 'align right', name: 'Align right', isAlign: true },
+			{ id: I.BlockHAlign.Left, icon: 'align left', name: 'Align left', isAlign: true },
+			{ id: I.BlockHAlign.Center, icon: 'align center', name: 'Align center', isAlign: true },
+			{ id: I.BlockHAlign.Right, icon: 'align right', name: 'Align right', isAlign: true },
 		];
 
 		if (hasQuote) {
-			ret = ret.filter((it: any) => { return it.id != I.BlockAlign.Center; });
+			ret = ret.filter((it: any) => { return it.id != I.BlockHAlign.Center; });
 		};
 
 		return ret;
