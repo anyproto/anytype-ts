@@ -201,10 +201,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				options = options.concat(optionsRow);
 				options = options.concat(optionsColor);
 
-				childrenIds = blockStore.getChildrenIds(rootId, current.id);
-				childrenIds.forEach((childId: string) => {
-					blockIds = blockIds.concat(blockStore.getChildrenIds(rootId, childId));
-				});
+				blockIds = blockStore.getChildrenIds(rootId, current.id);
 
 				element = node.find(`#block-${id}`).first();
 				menuParam = Object.assign(menuParam, {
@@ -222,7 +219,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				if (idx >= 0) {
 					rows.forEach(row => {
 						const childrenIds = blockStore.getChildrenIds(rootId, row.id);
-						blockIds = blockIds.concat(blockStore.getChildrenIds(rootId, childrenIds[idx]));
+						blockIds = blockIds.concat([ childrenIds[idx] ]);
 					});
 				};
 
