@@ -212,7 +212,6 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 
 			case I.BlockType.Table:
 				renderChildren = false;
-				canDrop = false;
 				blockComponent = <BlockTable ref={setRef} {...this.props} />;
 				break;
 

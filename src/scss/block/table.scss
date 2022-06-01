@@ -142,4 +142,6 @@
 		}
 		.cell.isEditing { z-index: 2; }
 	}
+
+	.block.blockTable > .wrapContent > .dropTarget.targetBot { display: block; height: 2px; }
 }

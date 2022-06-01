@@ -62,8 +62,8 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 		const rootId = keyboard.getRootId();
 
 		this.init = true;
-		this.objects = node.find('.dropTarget.root-' + rootId);
-
+		this.objects = node.find('.dropTarget.isDroppable.root-' + rootId);
+		
 		this.objects.each((i: number, el: any) => {
 			const item = $(el);
 			const data = item.data();

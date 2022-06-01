@@ -605,7 +605,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 				};
 
 				if (item.type == I.BlockType.Table) {
-					C.BlockTableCreate(rootId, blockId, position, 10, 10);
+					C.BlockTableCreate(rootId, blockId, position, 3, 3);
 				} else
 				if ((item.type == I.BlockType.Text) && (item.itemId != I.TextStyle.Code)) {
 					C.BlockListTurnInto(rootId, [ blockId ], item.itemId, onCommand);
