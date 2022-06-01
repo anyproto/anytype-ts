@@ -400,6 +400,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 		let isText = false;
 		let isFeatured = false;
 		let isType = false;
+		let isTable = false;
 
 		if (this.hoverData) {
 			this.canDrop = true;
@@ -428,6 +429,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 				isText = type == I.BlockType.Text;
 				isFeatured = type == I.BlockType.Featured;
 				isType = type == I.BlockType.Type;
+				isTable = type == I.BlockType.Table;
 			};
 
 			initVars();
@@ -503,6 +505,10 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 				(this.position == I.BlockPosition.InnerFirst) &&
 				![ I.BlockType.Text, I.BlockType.Link ].includes(type)
 			) {
+				recalcPosition();
+			};
+
+			if (isTable && [ I.BlockPosition.Left, I.BlockPosition.Right ].includes(this.position)) {
 				recalcPosition();
 			};
 
