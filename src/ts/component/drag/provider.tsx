@@ -11,6 +11,7 @@ interface Props {
 };
 
 const $ = require('jquery');
+const raf = require('raf');
 const Constant = require('json/constant.json');
 
 const OFFSET = 100;
@@ -24,9 +25,9 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 	position: I.BlockPosition = I.BlockPosition.None;
 	hoverData: any = null;
 	canDrop: boolean = false;
-	timeoutHover: number = 0;
 	init: boolean = false;
 	top: number = 0;
+	frame: number = 0;
 
 	objects: any = null;
 	objectData: Map<string, any> = new Map();
@@ -552,13 +553,16 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 			};
 		};
 
-		window.clearTimeout(this.timeoutHover);
-		if ((this.position != I.BlockPosition.None) && this.canDrop && this.hoverData) {
-			this.clearStyle();
-			obj.addClass('isOver ' + this.getDirectionClass(this.position));
-		} else {
-			this.timeoutHover = window.setTimeout(() => { this.clearStyle(); }, 10);
+		if (this.frame) {
+			raf.cancel(this.frame);
 		};
+
+		this.frame = raf(() => {
+			this.clearStyle();
+			if ((this.position != I.BlockPosition.None) && this.canDrop && this.hoverData) {
+				obj.addClass('isOver ' + this.getDirectionClass(this.position));
+			};
+		});
 	};
 
 	unbind () {
