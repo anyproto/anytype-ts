@@ -25,6 +25,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 	oldIndex: number = -1;
 	newIndex: number = -1;
 	timeout: number = 0;
+	scrollX: number = 0;
 
 	constructor (props: any) {
 		super(props);
@@ -40,6 +41,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		this.onResizeStart = this.onResizeStart.bind(this);
 		this.onDragStartColumn = this.onDragStartColumn.bind(this);
 		this.getData = this.getData.bind(this);
+		this.onScroll = this.onScroll.bind(this);
 	};
 
 	render () {
@@ -83,7 +85,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				tabIndex={0} 
 				className={cn.join(' ')}
 			>
-				<div id="scrollWrap" className="scrollWrap">
+				<div id="scrollWrap" className="scrollWrap" onScroll={this.onScroll}>
 					<TableSortableContainer 
 						axis="y" 
 						lockAxis="y"
@@ -109,8 +111,13 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 	};
 
 	componentDidUpdate () {
+		const node = $(ReactDOM.findDOMNode(this));
+		const wrap = node.find('#scrollWrap');
+
 		this.initSize();
 		this.resize();
+
+		wrap.scrollLeft(this.scrollX);
 	};
 	
 	componentWillUnmount () {
@@ -167,10 +174,10 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		};
 
 		const node = $(ReactDOM.findDOMNode(this));
-		const { rows, columns } = this.getData();
+		const { rowContainer, rows, columnContainer, columns } = this.getData();
 		const subIds = [ 'select2', 'blockColor', 'blockBackground', 'blockStyle' ];
-		const optionsColumn = this.optionsColumn();
-		const optionsRow = this.optionsRow();
+		const optionsColumn = this.optionsColumn(id);
+		const optionsRow = this.optionsRow(id);
 		const optionsAlign = this.optionsAlign(id);
 		const optionsColor = this.optionsColor(id);
 
@@ -343,13 +350,23 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 						return;
 					};
 
+					let childrenIds: string[] = [];
+					let oldIndex = 0;
+					let newIndex = 0;
+
 					switch (item.id) {
 						case 'columnBefore':
-							C.BlockTableColumnCreate(rootId, targetColumnId, I.BlockPosition.Left);
+						case 'columnAfter':
+							C.BlockTableColumnCreate(rootId, targetColumnId, (item.id == 'columnBefore' ? I.BlockPosition.Left : I.BlockPosition.Right));
 							break;
 
-						case 'columnAfter':
-							C.BlockTableColumnCreate(rootId, targetColumnId, I.BlockPosition.Right);
+						case 'columnMoveLeft':
+						case 'columnMoveRight':
+							childrenIds = blockStore.getChildrenIds(rootId, columnContainer.id);
+							oldIndex = childrenIds.indexOf(current.id);
+							newIndex = item.id == 'columnMoveLeft' ? oldIndex - 1 : oldIndex + 1;
+
+							this.onSortEndColumn(oldIndex, newIndex);
 							break;
 
 						case 'columnRemove':
@@ -357,11 +374,17 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 							break;
 
 						case 'rowBefore':
-							C.BlockTableRowCreate(rootId, targetRowId, I.BlockPosition.Top);
+						case 'rowAfter':
+							C.BlockTableRowCreate(rootId, targetRowId, (item.id == 'rowBefore' ? I.BlockPosition.Top : I.BlockPosition.Bottom));
 							break;
 
-						case 'rowAfter':
-							C.BlockTableRowCreate(rootId, targetRowId, I.BlockPosition.Bottom);
+						case 'rowMoveTop':
+						case 'rowMoveBottom':
+							childrenIds = blockStore.getChildrenIds(rootId, rowContainer.id);
+							oldIndex = childrenIds.indexOf(current.id);
+							newIndex = item.id == 'rowMoveTop' ? oldIndex - 1 : oldIndex + 1;
+
+							this.onSortEndRow({ oldIndex, newIndex });
 							break;
 
 						case 'rowRemove':
@@ -588,12 +611,19 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		const node = $(ReactDOM.findDOMNode(this));
 
 		this.cache = {};
-		this.onSortEndColumn();
+		this.onSortEndColumn(this.oldIndex, this.newIndex);
 		this.preventSelect(false);
 
 		window.clearTimeout(this.timeout);
 		node.find('.table.isClone').remove();
 		node.find('.cell.isOver').removeClass('isOver left right');
+	};
+
+	onScroll (e: any) {
+		const node = $(ReactDOM.findDOMNode(this));
+		const wrap = node.find('#scrollWrap');
+
+		this.scrollX = wrap.scrollLeft();
 	};
 
 	initCache () {
@@ -643,17 +673,17 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		this.preventSelect(true);
 	};
 
-	onSortEndColumn () {
+	onSortEndColumn (oldIndex: number, newIndex: number): void {
 		const { rootId } = this.props;
-		const { rows, columns } = this.getData();
-		const oldColumn = columns[this.oldIndex];
-		const newColumn = columns[this.newIndex];
+		const { columns } = this.getData();
+		const oldColumn = columns[oldIndex];
+		const newColumn = columns[newIndex];
 
 		if (!oldColumn || !newColumn) {
 			return;
 		};
 
-		const position = this.newIndex < this.oldIndex ? I.BlockPosition.Left : I.BlockPosition.Right;
+		const position = newIndex < oldIndex ? I.BlockPosition.Left : I.BlockPosition.Right;
 		C.BlockTableColumnMove(rootId, oldColumn.id, newColumn.id, position);
 
 		$('body').removeClass('grab');
@@ -733,28 +763,51 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		return Math.max(min, Math.min(max, w));
 	};
 
-	optionsRow () {
+	optionsRow (id: string) {
+		const { rootId } = this.props;
 		const { rows } = this.getData();
-		return [
+		const idx = rows.findIndex(it => it.id == id);
+		const length = rows.length;
+		const options: any[] = [
 			{ id: 'rowBefore', icon: 'table-insert-top', name: 'Row before' },
 			{ id: 'rowAfter', icon: 'table-insert-bottom', name: 'Row after' },
-			{ id: 'rowMoveTop', icon: 'table-move-top', name: 'Move row up' },
-			{ id: 'rowMoveBottom', icon: 'table-move-bottom', name: 'Move row down' },
-			rows.length > 1 ? { id: 'rowRemove', icon: 'remove', name: 'Delete row' } : null,
-			{ isDiv: true },
 		];
+
+		if (idx > 0) {
+			options.push({ id: 'rowMoveTop', icon: 'table-move-top', name: 'Move row up' });
+		};
+		if (idx < length - 1) {
+			options.push({ id: 'rowMoveBottom', icon: 'table-move-bottom', name: 'Move row down' });
+		};
+		if (length > 1) {
+			options.push({ id: 'rowRemove', icon: 'remove', name: 'Delete row' });
+		};
+
+		options.push({ isDiv: true });
+		return options;
 	};
 
-	optionsColumn () {
+	optionsColumn (id: string) {
 		const { columns } = this.getData();
-		return [
+		const idx = columns.findIndex(it => it.id == id);
+		const length = columns.length;
+		const options: any[] = [
 			{ id: 'columnBefore', icon: 'table-insert-left', name: 'Column before' },
 			{ id: 'columnAfter', icon: 'table-insert-right', name: 'Column after' },
-			{ id: 'columnMoveLeft', icon: 'table-move-left', name: 'Move column left' },
-			{ id: 'columnMoveRight', icon: 'table-move-right', name: 'Move column right' },
-			columns.length > 1 ? { id: 'columnRemove', icon: 'remove', name: 'Delete column' } : null,
-			{ isDiv: true },
 		];
+
+		if (idx > 0) {
+			options.push({ id: 'columnMoveLeft', icon: 'table-move-left', name: 'Move column left' });
+		};
+		if (idx < length - 1) {
+			options.push({ id: 'columnMoveRight', icon: 'table-move-right', name: 'Move column right' });
+		};
+		if (length > 1) {
+			options.push({ id: 'rowRemove', icon: 'remove', name: 'Delete row' });
+		};
+
+		options.push({ isDiv: true });
+		return options;
 	};
 
 	optionsColor (id: string) {

@@ -75,7 +75,7 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 			</div>
 		);
 	};
-	
+
 });
 
 export default BlockTableCell;
