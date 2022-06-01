@@ -564,6 +564,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		this.setEditing('');
 		this.onOptionsOpen(id);
 		this.preventSelect(true);
+		this.preventDrop(true);
 	};
 
 	onDragMoveColumn (e: any, id: string) {
@@ -613,6 +614,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		this.cache = {};
 		this.onSortEndColumn(this.oldIndex, this.newIndex);
 		this.preventSelect(false);
+		this.preventDrop(false);
 
 		window.clearTimeout(this.timeout);
 		node.find('.table.isClone').remove();
@@ -717,6 +719,13 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		if (selection) {
 			selection.preventSelect(v);
 		};
+	};
+
+	preventDrop (v: boolean) {
+		const { dataset } = this.props;
+		const { preventCommonDrop } = dataset || {};
+
+		preventCommonDrop(v);
 	};
 
 	initSize () {
