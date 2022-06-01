@@ -282,7 +282,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 							menuParam.data = Object.assign(menuParam.data, {
 								options: this.optionsHAlign(),
 								onSelect: (e: any, el: any) => {
-									C.BlockListSetAlign(rootId, blockIds, el.itemId);
+									C.BlockListSetAlign(rootId, blockIds, el.id);
 									menuContext.close();
 								}
 							});
@@ -294,7 +294,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 							menuParam.data = Object.assign(menuParam.data, {
 								options: this.optionsVAlign(),
 								onSelect: (e: any, el: any) => {
-									C.BlockListSetVerticalAlign(rootId, blockIds, el.itemId);
+									C.BlockListSetVerticalAlign(rootId, blockIds, el.id);
 									menuContext.close();
 								}
 							});

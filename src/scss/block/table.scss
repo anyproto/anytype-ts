@@ -98,9 +98,15 @@
 		.cell.align-h1 .value { text-align: right; }
 		.cell.align-h2 .value { text-align: center; }
 
-		.cell.align-v0 { vertical-align: middle; }
-		.cell.align-v1 { vertical-align: top; }
-		.cell.align-v2 { vertical-align: bottom; }
+		.cell.align-v0 { 
+			.block #value { vertical-align: top; }
+		}
+		.cell.align-v1 { 
+			.block #value { vertical-align: middle; }
+		}
+		.cell.align-v2 { 
+			.block #value { vertical-align: bottom; }
+		}
 
 		.cell {
 			.resize { width: 6px; height: 100%; position: absolute; right: -3px; top: 0px; cursor: col-resize; z-index: 2; }
@@ -117,6 +123,8 @@
 				.dropTarget.targetBot { display: none; }
 
 				.markers { padding: 9px 0px 9px 9px; }
+				.wrap { display: table; }
+				#value { display: table-cell; }
 				#value, .placeholder  { padding: 9px 9px 9px 0px; }
 			}
 
