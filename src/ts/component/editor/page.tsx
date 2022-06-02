@@ -1198,9 +1198,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 	getNextTableRow (id: string, dir: number) {
 		const { rootId } = this.props;
 		const element = blockStore.getMapElement(rootId, id);
-		const cellElement = blockStore.getMapElement(rootId, element.parentId);
 
-		return blockStore.getNextBlock(rootId, cellElement.parentId, dir, it => it.isTableRow());
+		return blockStore.getNextBlock(rootId, element.parentId, dir, it => it.isTableRow());
 	};
 
 	onArrowVertical (e: any, pressed: string, length: number, props: any) {
@@ -1226,15 +1225,15 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 		if (isInsideTable) {
 			const element = blockStore.getMapElement(rootId, block.id);
-			const cellElement = blockStore.getMapElement(rootId, element.parentId);
-			const rowElement = blockStore.getMapElement(rootId, cellElement.parentId);
-			const idx = rowElement.childrenIds.indexOf(element.parentId);
+			const rowElement = blockStore.getMapElement(rootId, element.parentId);
+			const idx = rowElement.childrenIds.indexOf(block.id);
 			const nextRow = this.getNextTableRow(block.id, dir);
 
-			if (idx >= 0 && nextRow) {
+			if ((idx >= 0) && nextRow) {
 				const nextRowElement = blockStore.getMapElement(rootId, nextRow.id);
-
-				next = blockStore.getLeaf(rootId, nextRowElement?.childrenIds[idx]);
+				if (nextRowElement) {
+					next = blockStore.getLeaf(rootId, nextRowElement.childrenIds[idx]);
+				};
 			};
 		};
 
@@ -1275,8 +1274,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		const block = blockStore.getLeaf(rootId, focused);
 		const dir = pressed.match(Key.left) ? -1 : 1;
 
-		console.log(dir);
-
 		if (!block) {
 			return;
 		};
@@ -1291,15 +1288,17 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		} else 
 		if (isInsideTable && ((dir < 0) && (range.to == 0) || (dir > 0) && (range.to == length))) {
 			const element = blockStore.getMapElement(rootId, block.id);
-			const cellElement = blockStore.getMapElement(rootId, element.parentId);
-			const rowElement = blockStore.getMapElement(rootId, cellElement.parentId);
-			const idx = rowElement.childrenIds.indexOf(element.parentId);
+			const rowElement = blockStore.getMapElement(rootId, element.parentId);
+			const idx = rowElement.childrenIds.indexOf(block.id);
 
 			if (idx < 0) {
 				return;
 			};
 
-			let nextCellId = rowElement.childrenIds[idx + dir];
+			let nextCellId = '';
+			if ((idx + dir >= 0) && (idx + dir <= rowElement.childrenIds.length - 1)) {
+				nextCellId = rowElement.childrenIds[idx + dir];
+			};
 			if (!nextCellId) {
 				const nextRow = this.getNextTableRow(block.id, dir);
 				const nextRowElement = blockStore.getMapElement(rootId, nextRow.id);
@@ -1307,16 +1306,14 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 				nextCellId = nextRowElement.childrenIds[dir > 0 ? 0 : nextRowElement.childrenIds.length - 1];
 			};
 
-			if (nextCellId) {
-				const next = blockStore.getLeaf(rootId, nextCellId);
-				if (next) {
-					const l = next.getLength();
-					window.setTimeout(() => {
-						focus.set(next.id, (dir > 0 ? { from: 0, to: 0 } : { from: l, to: l }));
-						focus.apply();
-						focus.scroll(isPopup);
-					});
-				};
+			const next = blockStore.getLeaf(rootId, nextCellId);
+			if (next) {
+				const l = next.getLength();
+				window.setTimeout(() => {
+					focus.set(next.id, (dir > 0 ? { from: 0, to: 0 } : { from: l, to: l }));
+					focus.apply();
+					focus.scroll(isPopup);
+				});
 			};
 		};
 	};
