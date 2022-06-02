@@ -5,20 +5,13 @@ interface CrumbsObject {
 	ids: string[];
 };
 
-const LIMIT_PAGE = 10;
 const LIMIT_RECENT = 100;
 const ID = 'crumbs';
 
 class Crumbs {
 	
 	init (): void {
-		const { breadcrumbs, recent } = blockStore;
-
-		if (!breadcrumbs) {
-			C.ObjectOpenBreadcrumbs((message: any) => {
-				blockStore.breadcrumbsSet(message.objectId);
-			});
-		};
+		const { recent } = blockStore;
 
 		if (!recent) {
 			C.ObjectOpenBreadcrumbs((message: any) => {
@@ -95,9 +88,6 @@ class Crumbs {
 		Storage.set(ID, obj, true);
 
 		let blockId = '';
-		if (key == I.CrumbsType.Page) {
-			blockId = blockStore.breadcrumbs;
-		};
 		if (key == I.CrumbsType.Recent) {
 			blockId = blockStore.recent;
 		};
@@ -121,23 +111,6 @@ class Crumbs {
 		const obj = this.getObj();
 		delete(obj[this.getKey(key)]);
 		Storage.set(ID, obj, true);
-	};
-
-	addPage (id: string) {
-		let item = this.get(I.CrumbsType.Page);
-		let lastTargetId = '';
-		
-		if (item.ids.length) {
-			lastTargetId = item.ids[item.ids.length - 1];
-		};
-		if (!lastTargetId || (lastTargetId != id)) {
-			item = this.add(I.CrumbsType.Page, item, id);
-		};
-		if (item.ids.length > LIMIT_PAGE) {
-			item.ids = item.ids.slice(item.ids.length - LIMIT_PAGE, item.ids.length);
-		};
-
-		this.save(I.CrumbsType.Page, item);
 	};
 
 	addRecent (id: string) {

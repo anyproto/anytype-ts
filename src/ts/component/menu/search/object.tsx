@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { MenuItemVertical, Filter, Loader, Label, ObjectName } from 'ts/component';
-import { I, C, keyboard, Util, crumbs, DataUtil, translate, analytics } from 'ts/lib';
+import { MenuItemVertical, Filter, Loader, ObjectName } from 'ts/component';
+import { I, C, keyboard, Util, DataUtil, translate, analytics } from 'ts/lib';
 import { commonStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
@@ -348,9 +348,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 
 		switch (type) {
 			case I.NavigationType.Go:
-				crumbs.cut(I.CrumbsType.Page, 0, () => {
-					DataUtil.objectOpenEvent(e, item);
-				});
+				DataUtil.objectOpenEvent(e, item);
 				break;
 
 			case I.NavigationType.Move:

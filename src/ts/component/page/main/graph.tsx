@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { I, C, crumbs, Util, analytics } from 'ts/lib';
+import { I, C, Util, analytics } from 'ts/lib';
 import { RouteComponentProps } from 'react-router';
 import { Header, Graph, Icon, Loader } from 'ts/component';
 import { blockStore, detailStore } from 'ts/store';
@@ -91,8 +91,6 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 	componentDidMount () {
 		this.resize();
 		this.load();
-
-		crumbs.addPage(this.getRootId());
 	};
 
 	componentDidUpdate () {

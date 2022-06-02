@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { MenuItemVertical } from 'ts/component';
-import { I, C, keyboard, analytics, DataUtil, Util, focus, crumbs } from 'ts/lib';
+import { I, C, keyboard, analytics, DataUtil, Util, focus } from 'ts/lib';
 import { blockStore, detailStore, commonStore, dbStore, menuStore, popupStore } from 'ts/store';
 
 interface Props extends I.Menu {
@@ -357,19 +357,15 @@ class MenuBlockMore extends React.Component<Props, {}> {
 	};
 	
 	onClick (e: any, item: any) {
-		const { param, getId, history } = this.props;
+		const { param } = this.props;
 		const { data } = param;
 		const { blockId, rootId, onSelect, isPopup } = data;
-		const { root, breadcrumbs } = blockStore;
 		const block = blockStore.getLeaf(rootId, blockId);
-		const renderer = Util.getRenderer();
 		
 		if (!block || item.arrow) {
 			return;
 		};
 		
-		const children = blockStore.getChildren(breadcrumbs, breadcrumbs, (it: I.Block) => { return it.isLink(); });
-		const prev = children[children.length - 2];
 		const object = detailStore.get(rootId, rootId);
 
 		let close = true;
@@ -423,25 +419,11 @@ class MenuBlockMore extends React.Component<Props, {}> {
 						return;
 					};
 
-					crumbs.cut(I.CrumbsType.Page, (children.length > 0 ? children.length - 1 : 0));
-
 					if ((blockId == rootId) && (object.type == Constant.typeId.type)) {
 						dbStore.objectTypeUpdate({ id: object.id, isArchived: true });
 					};
-					
-					if (!isPopup) {
-						if (prev) {
-							history.entries = [];
-							history.index = -1;
 
-							DataUtil.objectOpen(detailStore.get(breadcrumbs, prev.content.targetBlockId, []));
-						} else {
-							Util.route('/main/index');
-						};
-					} else {
-						popupStore.close('page');
-					};
-
+					keyboard.onBack();
 					analytics.event('MoveToBin', { count: 1 });
 				});
 				break;

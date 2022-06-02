@@ -226,7 +226,6 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		this.selectionRender();
 		this.rebind();
 
-		crumbs.delete(I.CrumbsType.Page);
 		analytics.setContext('', '');
 	};
 	
@@ -473,9 +472,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		if (tab == I.TabIndex.Archive) {
 			this.onSelect(e, item);
 		} else {
-			crumbs.cut(I.CrumbsType.Page, 0, () => {
-				DataUtil.objectOpenEvent(e, object);
-			});
+			DataUtil.objectOpenEvent(e, object);
 		};
 	};
 
