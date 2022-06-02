@@ -322,7 +322,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 			height += this.getRowHeight(items[i]);
 		};
 		if (!noScroll) {
-			height = Math.min(360, height);
+			height = Math.min(370, height);
 		};
 		height = Math.max(44, height);
 
