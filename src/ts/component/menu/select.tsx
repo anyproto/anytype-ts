@@ -18,7 +18,7 @@ const LIMIT = 10;
 const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> {
 
 	_isMounted: boolean = false;	
-	n: number = 0;
+	n: number = -1;
 	cache: any = null;
 	filter: string = '';
 	refFilter: any = null;
@@ -36,10 +36,9 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { filter, value, noFilter } = data;
-		const options = this.getItemsWithoutFilter();
+		const { filter, value } = data;
 		const items = this.getItems(true);
-		const withFilter = !noFilter && (options.length > LIMIT);
+		const withFilter = this.isWithFilter();
 
 		const rowRenderer = (param: any) => {
 			const item = items[param.index];
@@ -138,6 +137,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 		const { data } = param;
 		const { value, noKeys } = data;
 		const items = this.getItems(true);
+		const withFilter = this.isWithFilter();
 		
 		this._isMounted = true;
 		if (!noKeys) {
@@ -151,9 +151,11 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 		});
 		
 		let active = value ? items.find(it => it.id == value) : null;
-		if (!active && items.length) {
+		if (!active && items.length && !withFilter) {
 			active = items[0];
 		};
+
+		console.log(JSON.stringify(active, null, 3), withFilter);
 
 		if (active && !active.isInitial) {
 			window.setTimeout(() => { setActive(active, true); }, 15);
@@ -167,8 +169,9 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 		const { param } = this.props;
 		const { data } = param;
 		const { filter } = data;
+		const withFilter = this.isWithFilter();
 
-		if (this.filter != filter) {
+		if (withFilter && (this.filter != filter)) {
 			this.filter = filter;
 			this.n = -1;
 			this.top = 0;
@@ -299,15 +302,23 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 		};
 	};
 
+	isWithFilter () {
+		const { param } = this.props;
+		const { data } = param;
+		const { noFilter } = data;
+		const options = this.getItemsWithoutFilter();
+
+		return !noFilter && (options.length > LIMIT);
+	};
+
 	resize () {
 		const { position, getId, param } = this.props;
 		const { data } = param;
-		const { noFilter, noScroll } = data;
-		const options = this.getItemsWithoutFilter();
+		const { noScroll } = data;
 		const items = this.getItems(true);
 		const obj = $(`#${getId()}`);
 		const content = obj.find('.content');
-		const withFilter = !noFilter && (options.length > LIMIT);
+		const withFilter = this.isWithFilter();
 		
 		let height = 0;
 		if (withFilter) {
