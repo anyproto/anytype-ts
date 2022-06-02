@@ -163,6 +163,10 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 	};
 
 	onOptions (e: any, id: string) {
+		if (!this._isMounted) {
+			return;
+		};
+
 		e.preventDefault();
 		e.stopPropagation();
 
@@ -399,6 +403,10 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 	};
 
 	onOptionsOpen (id: string) {
+		if (!this._isMounted) {
+			return;
+		};
+
 		const { rootId } = this.props;
 		const current = blockStore.getLeaf(rootId, id);
 
@@ -431,6 +439,10 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 	};
 
 	onOptionsClose () {
+		if (!this._isMounted) {
+			return;
+		};
+
 		const node = $(ReactDOM.findDOMNode(this));
 		node.find('.isHighlightedColumn').removeClass('isHighlightedColumn isFirst isLast');
 		node.find('.isHighlightedRow').removeClass('isHighlightedRow');
@@ -456,6 +468,10 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 	};
 
 	setEditing (id: string) {
+		if (!this._isMounted) {
+			return;
+		};
+
 		const node = $(ReactDOM.findDOMNode(this));
 		
 		node.find('.cell.isEditing').removeClass('isEditing');
@@ -465,6 +481,10 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 	};
 
 	onResizeStart (e: any, id: string) {
+		if (!this._isMounted) {
+			return;
+		};
+
 		e.preventDefault();
 		e.stopPropagation();
 
@@ -524,6 +544,10 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 	};
 
 	setColumnsWidths (widths: number[]) {
+		if (!this._isMounted) {
+			return;
+		};
+
 		const node = $(ReactDOM.findDOMNode(this));
 		const rows = node.find('.row');
 
@@ -568,6 +592,10 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 	};
 
 	onDragMoveColumn (e: any, id: string) {
+		if (!this._isMounted) {
+			return;
+		};
+
 		const node = $(ReactDOM.findDOMNode(this));
 		const { columns } = this.getData();
 
@@ -622,6 +650,10 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 	};
 
 	onScroll (e: any) {
+		if (!this._isMounted) {
+			return;
+		};
+
 		const node = $(ReactDOM.findDOMNode(this));
 		const wrap = node.find('#scrollWrap');
 
@@ -629,6 +661,10 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 	};
 
 	initCache () {
+		if (!this._isMounted) {
+			return;
+		};
+
 		this.cache = {};
 
 		const { columns } = this.getData();
@@ -729,6 +765,10 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 	};
 
 	initSize () {
+		if (!this._isMounted) {
+			return;
+		};
+
 		const { columns } = this.getData();
 		const node = $(ReactDOM.findDOMNode(this));
 		const rows = node.find('.row');
@@ -742,6 +782,10 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 	};
 
 	resize () {
+		if (!this._isMounted) {
+			return;
+		};
+
 		const { isPopup, block, getWrapperWidth } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
 		const obj = $(`#block-${block.id}`);
