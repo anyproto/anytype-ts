@@ -135,7 +135,6 @@ const PageMainSpace = observer(class PageMainSpace extends React.Component<Props
 				return;
 			};
 
-			crumbs.addPage(rootId);
 			crumbs.addRecent(rootId);
 
 			this.getDataviewData(BLOCK_ID_HIGHLIGHTED, 0);
