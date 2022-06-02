@@ -29,7 +29,7 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<Props, 
 		const d = Number(Util.date('d', value));
 		const m = Number(Util.date('n', value));
 		const y = Number(Util.date('Y', value));
-		const today = Util.timestamp(y, m, d);
+		const today = Util.time();
 		const tomorrow = today + 86400;
 
 		const days = [];
@@ -135,8 +135,6 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<Props, 
 		const { param, id } = this.props;
 		const { data } = param;
 		const { onChange } = data;
-
-		console.log('SET VALUE', value);
 
 		menuStore.updateData(id, { value });
 
