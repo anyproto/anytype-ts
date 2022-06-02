@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon } from 'ts/component';
-import { I, C, keyboard, DataUtil, Util, Mark } from 'ts/lib';
+import { I, C, keyboard, focus, Util, Mark } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { menuStore, blockStore } from 'ts/store';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
@@ -41,6 +41,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		this.onCellBlur = this.onCellBlur.bind(this);
 		this.onCellEnter = this.onCellEnter.bind(this);
 		this.onCellLeave = this.onCellLeave.bind(this);
+		this.onKeyDown = this.onKeyDown.bind(this);
 		this.onOptions = this.onOptions.bind(this);
 		this.onResizeStart = this.onResizeStart.bind(this);
 		this.onDragStartColumn = this.onDragStartColumn.bind(this);
@@ -73,6 +74,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				onCellBlur={this.onCellBlur}
 				onCellEnter={this.onCellEnter}
 				onCellLeave={this.onCellLeave}
+				onKeyDown={this.onKeyDown}
 				onResizeStart={this.onResizeStart}
 				onDragStartColumn={this.onDragStartColumn}
 			/>
@@ -197,10 +199,6 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		const node = $(ReactDOM.findDOMNode(this));
 		const { rowContainer, rows, columnContainer, columns } = this.getData();
 		const subIds = [ 'select2', 'blockColor', 'blockBackground' ];
-		const optionsColumn = this.optionsColumn(id);
-		const optionsRow = this.optionsRow(id);
-		const optionsAlign = this.optionsAlign(id);
-		const optionsColor = this.optionsColor(id);
 
 		let menuContext: any = null;
 		let menuParam: any = {
@@ -216,9 +214,10 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		};
 
 		let options: any[] = [];
+		let optionsAlign = this.optionsAlign(id);
+		let optionsColor = this.optionsColor(id);
 		let element: any = null;
 		let blockIds: string[] = [];
-		let childrenIds: any[] = [];
 		let targetRowId: string = '';
 		let targetColumnId: string = '';
 
@@ -226,12 +225,12 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			case I.BlockType.TableRow:
 				targetRowId = current.id;
 
-				options = options.concat(optionsRow);
+				options = options.concat(this.optionsRow(targetRowId));
 				options = options.concat(optionsColor);
 
 				blockIds = blockStore.getChildrenIds(rootId, current.id);
 
-				element = node.find(`#block-${id}`).first();
+				element = node.find(`#row-${id}`).first();
 				menuParam = Object.assign(menuParam, {
 					element,
 				});
@@ -240,7 +239,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			case I.BlockType.TableColumn:
 				targetColumnId = current.id;
 
-				options = options.concat(optionsColumn);
+				options = options.concat(this.optionsColumn(targetColumnId));
 				options = options.concat(optionsColor);
 
 				const idx = columns.findIndex(it => it.id == current.id);
@@ -260,20 +259,19 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				break;
 
 			default:
-				options = options.concat(optionsColumn);
-				options = options.concat(optionsRow);
-				options = options.concat(optionsColor);
-
-				blockIds = [ current.id ];
-
 				const { rowId, columnId } = this.getRowColumn(current.id);
 
+				blockIds = [ current.id ];
 				targetRowId = rowId;
 				targetColumnId = columnId;
 
+				options = options.concat(this.optionsColumn(columnId));
+				options = options.concat(this.optionsRow(rowId));
+				options = options.concat(optionsColor);
+
+				element = node.find(`#cell-${id}`);
 				menuParam = Object.assign(menuParam, {
-					rect: { x: e.pageX, y: e.pageY, width: 1, height: 1 },
-					offsetY: 10,
+					element,
 					horizontal: I.MenuDirection.Center,
 				});
 				break;
@@ -381,7 +379,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 						case 'columnMoveLeft':
 						case 'columnMoveRight':
 							childrenIds = blockStore.getChildrenIds(rootId, columnContainer.id);
-							oldIndex = childrenIds.indexOf(current.id);
+							oldIndex = childrenIds.indexOf(targetColumnId);
 							newIndex = item.id == 'columnMoveLeft' ? oldIndex - 1 : oldIndex + 1;
 
 							this.onSortEndColumn(oldIndex, newIndex);
@@ -451,11 +449,11 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				break;
 
 			case I.BlockType.TableRow:
-				table.find(`#block-${id}`).addClass('isHighlightedRow');
+				table.find(`#row-${id}`).addClass('isHighlightedRow');
 				break;
 
 			default:
-				table.find(`#block-${id}`).addClass('isHighlightedCell');
+				table.find(`#cell-${id}`).addClass('isHighlightedCell');
 				break;
 		};
 	};
@@ -542,8 +540,27 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		
 		node.find('.cell.isEditing').removeClass('isEditing');
 		if (id) {
-			node.find(`#block-${id}`).addClass('isEditing');
+			node.find(`#cell-${id}`).addClass('isEditing');
 		};
+	};
+
+	onKeyDown (e: any, text: string, marks: I.Mark[], range: I.TextRange, props: any) {
+		const { onKeyDown } = this.props;
+		const { focused } = focus.state;
+
+		let ret = false;
+		
+		keyboard.shortcut(`shift+space`, e, (pressed: string) => {
+			ret = true;
+
+			this.onOptions(e, focused);
+		});
+
+		if (ret) {
+			return;
+		};
+
+		onKeyDown(e, text, marks, range, props);
 	};
 
 	onResizeStart (e: any, id: string) {

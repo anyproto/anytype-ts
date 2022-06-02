@@ -48,7 +48,7 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 
 		return (
 			<div
-				id={`block-${block.id}`}
+				id={`cell-${block.id}`}
 				className={cn.join(' ')}
 				onMouseDown={(e: any) => { onCellClick(e, block.id); }}
 				onMouseEnter={(e: any) => { onCellEnter(e, rowIdx, columnIdx, block.id); }}

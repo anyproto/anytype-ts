@@ -17,7 +17,7 @@ const BlockTableRow = observer(class BlockTableRow extends React.Component<Props
 		const length = childrenIds.length;
 
 		return (
-			<div id={`block-${block.id}`} className="row">
+			<div id={`row-${block.id}`} className="row">
 				{columns.map((column: any, i: number) => {
 					const child = children[i];
 					return child ? (
