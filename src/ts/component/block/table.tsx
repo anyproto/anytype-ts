@@ -917,7 +917,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			options.push({ id: 'columnMoveRight', icon: 'table-move-right', name: 'Move column right' });
 		};
 		if (length > 1) {
-			options.push({ id: 'rowRemove', icon: 'remove', name: 'Delete row' });
+			options.push({ id: 'columnRemove', icon: 'remove', name: 'Delete column' });
 		};
 
 		options.push({ isDiv: true });
