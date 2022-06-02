@@ -19,18 +19,19 @@
 			top: 50%; left: -5px; margin-top: -11px;
 		}
 
-		.plusButton { 
-			position: absolute; z-index: 10; border-radius: 4px; 
-			
-		}
+		.plusButton { position: absolute; z-index: 10; }
 		.plusButton { 
 			.icon { 
 				background-color: #fef9cc; background-image: url('~img/icon/table/plus.svg'); background-size: 10px; cursor: pointer; opacity: 0; 
-				transition: $transitionFast; width: 100%; height: 100%;
+				transition: $transitionFast; width: 100%; height: 100%; border-radius: 4px;
 			}
 		}
 		.plusButton.vertical { width: 18px; height: 100%; right: -18px; top: 0px; padding-left: 4px; }
 		.plusButton.horizontal { height: 18px; width: 100%; left: 0px; bottom: -18px; padding-top: 4px; }
+		.plusButton.circle { height: 18px; width: 18px; right: -18px; bottom: -18px; padding-top: 4px; padding-left: 4px; opacity: 1; }
+		.plusButton.circle {
+			.icon { border-radius: 50%; }
+		}
 		
 		.plusButton:hover, .plusButton.active {
 			.icon { opacity: 1; }

@@ -47,6 +47,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		this.onDragStartColumn = this.onDragStartColumn.bind(this);
 		this.getData = this.getData.bind(this);
 		this.onScroll = this.onScroll.bind(this);
+		this.onPlus = this.onPlus.bind(this);
 		this.onPlusV = this.onPlusV.bind(this);
 		this.onPlusH = this.onPlusH.bind(this);
 	};
@@ -89,11 +90,14 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 					})}
 				</div>
 
-				<div className="plusButton vertical">
+				<div id="plus-v" className="plusButton vertical">
 					<Icon onClick={this.onPlusV} />
 				</div>
-				<div className="plusButton horizontal">
+				<div id="plus-h" className="plusButton horizontal">
 					<Icon onClick={this.onPlusH} />
+				</div>
+				<div id="plus-c" className="plusButton circle">
+					<Icon onClick={this.onPlus} />
 				</div>
 			</div>
 		));
@@ -469,6 +473,12 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		node.find('.isHighlightedCell').removeClass('isHighlightedCell');
 	};
 
+	onPlus (e: any) {
+		const { rootId, block } = this.props;
+
+		C.BlockTableExpand(rootId, block.id, 1, 1);
+	};
+
 	onPlusV (e: any) {
 		const { rootId } = this.props;
 		const { columns } = this.getData();
@@ -503,30 +513,50 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 
 	onCellEnter (e: any, rowIdx: number, columnIdx: number, id: string) {
 		const { rows, columns } = this.getData();
-		const node = $(ReactDOM.findDOMNode(this));
-		const plusV = node.find('.plusButton.vertical');
-		const plusH = node.find('.plusButton.horizontal');
+		const isLastRow = rowIdx == rows.length - 1;
+		const isLastColumn = columnIdx == columns.length - 1;
 
-		if (columnIdx == columns.length - 1) {
+		if (!isLastRow || !isLastColumn) {
+			return;
+		};
+
+		const node = $(ReactDOM.findDOMNode(this));
+		const plusC = node.find('#plus-c');
+		const plusV = node.find('#plus-v');
+		const plusH = node.find('#plus-h');
+
+		plusC.addClass('active');
+
+		if (isLastColumn) {
 			plusV.addClass('active');
 		};
 
-		if (rowIdx == rows.length - 1) {
+		if (isLastRow) {
 			plusH.addClass('active');
 		};
 	};
 
 	onCellLeave (e: any, rowIdx: number, columnIdx: number, id: string) {
 		const { rows, columns } = this.getData();
-		const node = $(ReactDOM.findDOMNode(this));
-		const plusV = node.find('.plusButton.vertical');
-		const plusH = node.find('.plusButton.horizontal');
+		const isLastRow = rowIdx == rows.length - 1;
+		const isLastColumn = columnIdx == columns.length - 1;
 
-		if (columnIdx == columns.length - 1) {
+		if (!isLastRow || !isLastColumn) {
+			return;
+		};
+
+		const node = $(ReactDOM.findDOMNode(this));
+		const plusC = node.find('#plus-c');
+		const plusV = node.find('#plus-v');
+		const plusH = node.find('#plus-h');
+
+		plusC.removeClass('active');
+
+		if (isLastColumn) {
 			plusV.removeClass('active');
 		};
 
-		if (rowIdx == rows.length - 1) {
+		if (isLastRow) {
 			plusH.removeClass('active');
 		};
 	};

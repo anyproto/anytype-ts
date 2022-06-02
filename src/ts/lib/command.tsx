@@ -479,6 +479,17 @@ const BlockTableCreate = (contextId: string, targetId: string, position: I.Block
 	dispatcher.request(BlockTableCreate.name, request, callBack);
 };
 
+const BlockTableExpand = (contextId: string, targetId: string, rows: number, columns: number, callBack?: (message: any) => void) => {
+	const request = new Rpc.BlockTable.Expand.Request();
+	
+	request.setContextid(contextId);
+	request.setTargetid(targetId);
+	request.setRows(rows);
+	request.setColumns(columns);
+
+	dispatcher.request(BlockTableExpand.name, request, callBack);
+};
+
 const BlockTableRowCreate = (contextId: string, targetId: string, position: I.BlockPosition, callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockTable.RowCreate.Request();
 	
@@ -1438,6 +1449,7 @@ export {
 	BlockRelationSetKey,
 
 	BlockTableCreate,
+	BlockTableExpand,
 	BlockTableColumnCreate,
 	BlockTableColumnDelete,
 	BlockTableColumnMove,
