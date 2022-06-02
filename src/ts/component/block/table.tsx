@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon } from 'ts/component';
-import { I, C, keyboard, DataUtil, Util } from 'ts/lib';
+import { I, C, keyboard, DataUtil, Util, Mark } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { menuStore, blockStore } from 'ts/store';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
@@ -196,7 +196,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 
 		const node = $(ReactDOM.findDOMNode(this));
 		const { rowContainer, rows, columnContainer, columns } = this.getData();
-		const subIds = [ 'select2', 'blockColor', 'blockBackground', 'blockStyle' ];
+		const subIds = [ 'select2', 'blockColor', 'blockBackground' ];
 		const optionsColumn = this.optionsColumn(id);
 		const optionsRow = this.optionsRow(id);
 		const optionsAlign = this.optionsAlign(id);
@@ -346,16 +346,12 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 							break;
 
 						case 'style':
-							menuId = 'blockStyle';
+							menuId = 'select2';
+							menuParam.component = 'select';
 							menuParam.data = Object.assign(menuParam.data, {
-								blockIds: blockIds,
-								blockId: current.id,
-								isInsideTable: true,
-								value: current.content.style,
-								onSelect: (item: any) => {
-									if (item.type == I.BlockType.Text) {
-										C.BlockListTurnInto(rootId, blockIds, item.itemId);
-									};
+								options: this.optionsStyle(id),
+								onSelect: (e: any, el: any) => {
+									C.BlockTextListSetMark(rootId, blockIds, { type: el.id, param: '', range: { from: 0, to: 0 } });
 									menuContext.close();
 								}
 							});
@@ -952,7 +948,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		return [
 			{ id: 'color', icon: 'color', name: 'Color', inner: innerColor, arrow: true },
 			{ id: 'background', icon: 'color', name: 'Background', inner: innerBackground, arrow: true },
-			{ id: 'style', icon: DataUtil.styleIcon(I.BlockType.Text, current.content.style), name: 'Text style', arrow: true },
+			{ id: 'style', icon: 'customize', name: 'Style', arrow: true },
 			{ isDiv: true },
 		];
 	};
@@ -989,6 +985,29 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			{ id: I.BlockVAlign.Bottom, name: 'Bottom' },
 		].map((it: any) => {
 			it.icon = 'align ' + this.alignVIcon(it.id);
+			return it;
+		});
+	};
+
+	optionsStyle (id: string) {
+		const { rootId } = this.props;
+		const current = blockStore.getLeaf(rootId, id);
+
+		if (!current) {
+			return;
+		};
+
+		const length = current.getLength();
+
+		const ret: any[] = [
+			{ id: I.MarkType.Bold, icon: 'bold', name: 'Bold' },
+			{ id: I.MarkType.Italic, icon: 'italic', name: 'Italic' },
+			{ id: I.MarkType.Strike, icon: 'strike', name: 'Strikethrough' },
+		];
+
+		return ret.map(it => {
+			const mark = Mark.getInRange(current.content.marks, it.id, { from: 0, to: length });
+			it.checkbox = !!mark;
 			return it;
 		});
 	};

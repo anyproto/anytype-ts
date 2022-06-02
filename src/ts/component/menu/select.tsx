@@ -67,8 +67,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 						{...item} 
 						icon={item.icon}
 						className={cn.join(' ')} 
-						isActive={item.id == value} 
-						checkbox={item.id == value} 
+						checkbox={item.checkbox || (item.id == value)} 
 						onClick={(e: any) => { this.onClick(e, item); }} 
 						onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }} 
 						style={param.style}
