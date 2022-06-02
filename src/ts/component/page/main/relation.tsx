@@ -101,7 +101,6 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 				return;
 			};
 
-			crumbs.addPage(rootId);
 			crumbs.addRecent(rootId);
 
 			this.loading = false;

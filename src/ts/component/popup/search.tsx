@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Icon, Input, Loader, IconObject, Label, ObjectName, ObjectDescription } from 'ts/component';
-import { I, C, Util, DataUtil, crumbs, keyboard, Key, focus, translate, analytics } from 'ts/lib';
+import { Icon, Input, Loader, IconObject, ObjectName, ObjectDescription } from 'ts/component';
+import { I, C, Util, DataUtil, keyboard, Key, focus, translate, analytics } from 'ts/lib';
 import { commonStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
@@ -418,9 +418,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 		const filter = Util.filterFix(this.refFilter.getValue());
 		analytics.event('SearchResult', { index: item.index + 1, length: filter.length });
 
-		crumbs.cut(I.CrumbsType.Page, 0, () => {
-			DataUtil.objectOpenEvent(e, { ...item, id: item.id });
-		});
+		DataUtil.objectOpenEvent(e, { ...item, id: item.id });
 	};
 
 	resize () {

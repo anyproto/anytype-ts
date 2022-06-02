@@ -9,7 +9,6 @@ class BlockStore {
 
     public rootId: string = '';
     public profileId: string = '';
-    public breadcrumbsId: string = '';
     public recentId: string = '';
     public storeIdType: string = '';
     public storeIdTemplate: string = '';
@@ -23,14 +22,12 @@ class BlockStore {
         makeObservable(this, {
             rootId: observable,
             profileId: observable,
-            breadcrumbsId: observable,
             recentId: observable,
             storeIdType: observable,
             storeIdTemplate: observable,
             storeIdRelation: observable,
             root: computed,
             profile: computed,
-            breadcrumbs: computed,
             recent: computed,
             storeType: computed,
             storeTemplate: computed,
@@ -40,7 +37,6 @@ class BlockStore {
             storeSetType: action,
             storeSetTemplate: action,
             storeSetRelation: action,
-            breadcrumbsSet: action,
             recentSet: action,
             set: action,
             clear: action,
@@ -59,10 +55,6 @@ class BlockStore {
 
     get profile (): string {
 		return this.profileId;
-	};
-
-    get breadcrumbs (): string {
-		return this.breadcrumbsId;
 	};
 
     get recent (): string {
@@ -99,10 +91,6 @@ class BlockStore {
 
     storeSetRelation (id: string) {
 		this.storeIdRelation = String(id || '');
-	};
-
-    breadcrumbsSet (id: string) {
-		this.breadcrumbsId = String(id || '');
 	};
 
     recentSet (id: string) {
@@ -143,7 +131,6 @@ class BlockStore {
 		this.storeSetType('');
 		this.storeSetTemplate('');
 		this.storeSetRelation('');
-		this.breadcrumbsSet('');
 		this.recentSet('');
 		this.rootSet('');
 
