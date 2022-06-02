@@ -552,15 +552,12 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		
 		keyboard.shortcut(`shift+space`, e, (pressed: string) => {
 			ret = true;
-
 			this.onOptions(e, focused);
 		});
 
-		if (ret) {
-			return;
+		if (!ret) {
+			onKeyDown(e, text, marks, range, props);
 		};
-
-		onKeyDown(e, text, marks, range, props);
 	};
 
 	onResizeStart (e: any, id: string) {
