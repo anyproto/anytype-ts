@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import { Icon } from 'ts/component';
 import { I, C, keyboard, DataUtil, Util } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { menuStore, blockStore } from 'ts/store';
@@ -12,6 +13,7 @@ import Row from './table/row';
 interface Props extends I.BlockComponent {};
 
 const $ = require('jquery');
+const raf = require('raf');
 const Constant = require('json/constant.json');
 
 const PADDING = 46;
@@ -37,11 +39,15 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		this.onCellClick = this.onCellClick.bind(this);
 		this.onCellFocus = this.onCellFocus.bind(this);
 		this.onCellBlur = this.onCellBlur.bind(this);
+		this.onCellEnter = this.onCellEnter.bind(this);
+		this.onCellLeave = this.onCellLeave.bind(this);
 		this.onOptions = this.onOptions.bind(this);
 		this.onResizeStart = this.onResizeStart.bind(this);
 		this.onDragStartColumn = this.onDragStartColumn.bind(this);
 		this.getData = this.getData.bind(this);
 		this.onScroll = this.onScroll.bind(this);
+		this.onPlusV = this.onPlusV.bind(this);
+		this.onPlusH = this.onPlusH.bind(this);
 	};
 
 	render () {
@@ -65,6 +71,8 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				onCellClick={this.onCellClick}
 				onCellFocus={this.onCellFocus}
 				onCellBlur={this.onCellBlur}
+				onCellEnter={this.onCellEnter}
+				onCellLeave={this.onCellLeave}
 				onResizeStart={this.onResizeStart}
 				onDragStartColumn={this.onDragStartColumn}
 			/>
@@ -72,10 +80,19 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 
 		const TableSortableContainer = SortableContainer((item: any) => (
 			<div id="table" className="table">
-				{rows.map((row: any, i: number) => {
-					row.idx = i;
-					return <RowSortableElement key={'row' + row.id} index={i} block={row} />;
-				})}
+				<div className="rows">
+					{rows.map((row: any, i: number) => {
+						row.idx = i;
+						return <RowSortableElement key={'row' + row.id} index={i} block={row} />;
+					})}
+				</div>
+
+				<div className="plusButton vertical">
+					<Icon onClick={this.onPlusV} />
+				</div>
+				<div className="plusButton horizontal">
+					<Icon onClick={this.onPlusH} />
+				</div>
 			</div>
 		));
 
@@ -449,6 +466,20 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		node.find('.isHighlightedCell').removeClass('isHighlightedCell');
 	};
 
+	onPlusV (e: any) {
+		const { rootId } = this.props;
+		const { columns } = this.getData();
+
+		C.BlockTableColumnCreate(rootId, columns[columns.length - 1].id, I.BlockPosition.Right);
+	};
+
+	onPlusH (e: any) {
+		const { rootId } = this.props;
+		const { rows } = this.getData();
+
+		C.BlockTableRowCreate(rootId, rows[rows.length - 1].id, I.BlockPosition.Bottom);
+	};
+
 	onHandleClick (e: any, id: string) {
 		this.onOptions(e, id);
 	};
@@ -465,6 +496,36 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 
 	onCellClick (e: any, id: string) {
 		this.onCellFocus(e, id);
+	};
+
+	onCellEnter (e: any, rowIdx: number, columnIdx: number, id: string) {
+		const { rows, columns } = this.getData();
+		const node = $(ReactDOM.findDOMNode(this));
+		const plusV = node.find('.plusButton.vertical');
+		const plusH = node.find('.plusButton.horizontal');
+
+		if (columnIdx == columns.length - 1) {
+			plusV.addClass('active');
+		};
+
+		if (rowIdx == rows.length - 1) {
+			plusH.addClass('active');
+		};
+	};
+
+	onCellLeave (e: any, rowIdx: number, columnIdx: number, id: string) {
+		const { rows, columns } = this.getData();
+		const node = $(ReactDOM.findDOMNode(this));
+		const plusV = node.find('.plusButton.vertical');
+		const plusH = node.find('.plusButton.horizontal');
+
+		if (columnIdx == columns.length - 1) {
+			plusV.removeClass('active');
+		};
+
+		if (rowIdx == rows.length - 1) {
+			plusH.removeClass('active');
+		};
 	};
 
 	setEditing (id: string) {

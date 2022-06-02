@@ -17,7 +17,7 @@ const Constant = require('json/constant.json');
 const BlockTableCell = observer(class BlockTableCell extends React.Component<Props, {}> {
 
 	render () {
-		const { rootId, block, readonly, rowIdx, columnIdx, row, column, onOptions, onHandleClick, onCellFocus, onCellBlur, onCellClick, onResizeStart, onDragStartColumn } = this.props;
+		const { rootId, block, readonly, rowIdx, columnIdx, row, column, onOptions, onHandleClick, onCellFocus, onCellBlur, onCellClick, onCellEnter, onCellLeave, onResizeStart, onDragStartColumn } = this.props;
 		const childrenIds = blockStore.getChildrenIds(rootId, block.id);
 
 		if (!row || !column) {
@@ -51,6 +51,8 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 				id={`block-${block.id}`}
 				className={cn.join(' ')}
 				onMouseDown={(e: any) => { onCellClick(e, block.id); }}
+				onMouseEnter={(e: any) => { onCellEnter(e, rowIdx, columnIdx, block.id); }}
+				onMouseLeave={(e: any) => { onCellLeave(e, rowIdx, columnIdx, block.id); }}
 				onContextMenu={(e: any) => { onOptions(e, block.id); }}
 				data-column-id={column.id}
 			>
