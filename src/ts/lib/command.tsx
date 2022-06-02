@@ -519,6 +519,15 @@ const BlockTableColumnMove = (contextId: string, targetId: string, dropTargetId:
 	dispatcher.request(BlockTableColumnMove.name, request, callBack);
 };
 
+const BlockTableColumnDuplicate = (contextId: string, blockId: string, targetId: string, position: I.BlockPosition, callBack?: (message: any) => void) => {
+	const request = new Rpc.BlockTable.ColumnDuplicate.Request();
+	
+	request.setContextid(contextId);
+	request.setTargetid(targetId);
+
+	dispatcher.request(BlockTableColumnDuplicate.name, request, callBack);
+};
+
 // ---------------------- BLOCK FILE ---------------------- //
 
 const BlockFileCreateAndUpload = (contextId: string, targetId: string, position: I.BlockPosition, url: string, path: string, callBack?: (message: any) => void) => {
@@ -1432,6 +1441,7 @@ export {
 	BlockTableColumnCreate,
 	BlockTableColumnDelete,
 	BlockTableColumnMove,
+	BlockTableColumnDuplicate,
 
 	BlockTableRowCreate,
 

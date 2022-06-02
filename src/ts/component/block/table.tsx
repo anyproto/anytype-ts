@@ -394,6 +394,10 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 							C.BlockTableColumnDelete(rootId, targetColumnId);
 							break;
 
+						case 'columnCopy':
+							C.BlockTableColumnDuplicate(rootId, targetColumnId, targetColumnId, I.BlockPosition.Bottom);
+							break;
+
 						case 'rowBefore':
 						case 'rowAfter':
 							C.BlockTableRowCreate(rootId, targetRowId, (item.id == 'rowBefore' ? I.BlockPosition.Top : I.BlockPosition.Bottom));
@@ -923,6 +927,9 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		if (idx < length - 1) {
 			options.push({ id: 'columnMoveRight', icon: 'table-move-right', name: 'Move column right' });
 		};
+
+		options.push({ id: 'columnCopy', icon: 'copy', name: 'Duplicate column' });
+
 		if (length > 1) {
 			options.push({ id: 'columnRemove', icon: 'remove', name: 'Delete column' });
 		};
