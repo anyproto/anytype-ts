@@ -1160,7 +1160,7 @@ class DataUtil {
 		};
 
 		if (layout == I.ObjectLayout.Note) {
-			const filter = [ 'icon', 'cover' ];
+			const filter = [ 'icon', 'cover', 'type' ];
 
 			content.description = I.LinkDescription.None;
 			content.iconSize = I.LinkIconSize.Small;
