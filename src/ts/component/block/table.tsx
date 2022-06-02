@@ -297,6 +297,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 						isSub: true,
 						data: {
 							rootId, 
+							rebind: menuContext.ref.rebind,
 						}
 					};
 

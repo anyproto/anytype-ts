@@ -150,8 +150,8 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 			keyMapper: (i: number) => { return (items[i] || {}).id; },
 		});
 		
-		let active = items.find((it: any) => { return it.id == value });
-		if (!active) {
+		let active = value ? items.find(it => it.id == value) : null;
+		if (!active && items.length) {
 			active = items[0];
 		};
 

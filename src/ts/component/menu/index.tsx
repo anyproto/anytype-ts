@@ -684,9 +684,30 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 		const l = items.length;
 		const item = items[this.ref.n];
 
-		keyboard.shortcut('arrowup', e, (pressed: string) => {
-			e.preventDefault();
-			
+		const onArrowDown = () => {
+			this.ref.n++;
+			if (this.ref.n > l - 1) {
+				this.ref.n = 0;
+			};
+
+			this.setActive(null, true);
+
+			let item = items[this.ref.n];
+			if (!item) {
+				return;
+			};
+
+			if (item.isDiv) {
+				onArrowDown();
+				return;
+			};
+
+			if (!item.arrow && this.ref.onOver) {
+				this.ref.onOver(e, item);
+			};
+		};
+
+		const onArrowUp = () => {
 			this.ref.n--;
 			if (this.ref.n < 0) {
 				if ((this.ref.n == -1) && refInput) {
@@ -700,24 +721,28 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 			this.setActive(null, true);
 
 			let item = items[this.ref.n];
-			if (item && !item.arrow && this.ref.onOver) {
+			if (!item) {
+				return;
+			};
+
+			if (item.isDiv) {
+				onArrowUp();
+				return;
+			};
+
+			if (!item.arrow && this.ref.onOver) {
 				this.ref.onOver(e, item);
 			};
+		};
+
+		keyboard.shortcut('arrowup', e, (pressed: string) => {
+			e.preventDefault();
+			onArrowUp();
 		});
 
 		keyboard.shortcut('arrowdown', e, (pressed: string) => {
 			e.preventDefault();
-			this.ref.n++;
-			if (this.ref.n > l - 1) {
-				this.ref.n = 0;
-			};
-
-			this.setActive(null, true);
-
-			let item = items[this.ref.n];
-			if (item && !item.arrow && this.ref.onOver) {
-				this.ref.onOver(e, item);
-			};
+			onArrowDown();
 		});
 
 		if (this.ref && this.ref.onClick) {	
