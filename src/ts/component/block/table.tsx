@@ -408,8 +408,12 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 							this.onSortEndRow({ oldIndex, newIndex });
 							break;
 
+						case 'rowCopy':
+							C.BlockListDuplicate(rootId, [ targetRowId ], targetRowId, I.BlockPosition.Bottom);
+							break;
+
 						case 'rowRemove':
-							C.BlockTableRowDelete(rootId, targetRowId);
+							C.BlockListDelete(rootId, [ targetRowId ]);
 							break;
 					};
 				}
@@ -893,6 +897,9 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		if (idx < length - 1) {
 			options.push({ id: 'rowMoveBottom', icon: 'table-move-bottom', name: 'Move row down' });
 		};
+
+		options.push({ id: 'rowCopy', icon: 'copy', name: 'Duplicate row' });
+
 		if (length > 1) {
 			options.push({ id: 'rowRemove', icon: 'remove', name: 'Delete row' });
 		};

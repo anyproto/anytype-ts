@@ -489,15 +489,6 @@ const BlockTableRowCreate = (contextId: string, targetId: string, position: I.Bl
 	dispatcher.request(BlockTableRowCreate.name, request, callBack);
 };
 
-const BlockTableRowDelete = (contextId: string, targetId: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.BlockTable.RowDelete.Request();
-	
-	request.setContextid(contextId);
-	request.setTargetid(targetId);
-
-	dispatcher.request(BlockTableRowDelete.name, request, callBack);
-};
-
 const BlockTableColumnCreate = (contextId: string, targetId: string, position: I.BlockPosition, callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockTable.ColumnCreate.Request();
 	
@@ -1440,9 +1431,9 @@ export {
 	BlockTableCreate,
 	BlockTableColumnCreate,
 	BlockTableColumnDelete,
-	BlockTableRowCreate,
 	BlockTableColumnMove,
-	BlockTableRowDelete,
+
+	BlockTableRowCreate,
 
 	BlockDataviewViewCreate,
 	BlockDataviewViewUpdate,
