@@ -88,7 +88,7 @@
 
 		.linkCard.withCover {
 			.side.left { width: calc(100% - 236px); border-radius: 12px 0px 0px 12px; border-right-width: 0px; }
-			.side.right { width: 236px; display: block; }
+			.side.right { width: 236px; display: block; border: 1px solid $colorBorderDark; }
 		}
 
 		.linkCard.vertical { display: block; }
@@ -97,7 +97,7 @@
 			.side.right { 
 				position: absolute; top: 0px; left: 0px; height: 116px; width: 100%; border-radius: 12px 12px 0px 0px;
 				border: 1px solid $colorBorderDark; border-bottom: 0px;
-			}	
+			}
 		}
 
 		.linkCard.withCover.vertical { padding-top: 116px; }
