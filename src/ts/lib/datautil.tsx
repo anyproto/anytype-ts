@@ -1144,7 +1144,7 @@ class DataUtil {
 		const relationKeys = [ 'type', 'cover', 'tag' ];
 
 		content = Util.objectCopy(content);
-		content.iconSize = Number(content.iconSize) || I.LinkIconSize.Small;
+		content.iconSize = Number(content.iconSize) || I.LinkIconSize.None;
 		content.cardStyle = Number(content.cardStyle) || I.LinkCardStyle.Text;
 		content.relations = (content.relations || []).filter(it => relationKeys.includes(it));
 
@@ -1159,10 +1159,10 @@ class DataUtil {
 		};
 
 		if (layout == I.ObjectLayout.Note) {
-			const filter = [ 'cover', 'type' ];
+			const filter = [ 'type' ];
 
 			content.description = I.LinkDescription.None;
-			content.iconSize = I.LinkIconSize.None
+			content.iconSize = I.LinkIconSize.None;
 			content.relations = content.relations.filter(it => filter.includes(it)); 
 		};
 
