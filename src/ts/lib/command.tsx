@@ -233,7 +233,7 @@ const BlockTextSetChecked = (contextId: string, blockId: string, checked: boolea
 };
 
 const BlockTextSetIcon = (contextId: string, blockId: string, iconEmoji: string, iconImage: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Block.Set.Text.Icon.Request();
+	const request = new Rpc.BlockText.SetIcon.Request();
 	
 	request.setContextid(contextId);
 	request.setBlockid(blockId);
