@@ -403,7 +403,7 @@ class Keyboard {
 	};
 
 	onCommand (cmd: string, arg: any) {
-		if (!this.isMain()) {
+		if (!this.isMain() && [ 'search', 'graph', 'print', 'workspace' ].includes(cmd)) {
 			return;
 		};
 

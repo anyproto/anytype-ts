@@ -35,8 +35,6 @@ const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<P
 		const days = Math.max(1, Math.ceil(duration / 86400));
 		const dt = `${days} ${Util.cntWord(days, 'day', 'days')}`;
 
-		console.log(duration);
-
 		let title = '';
 		let description = '';
 		let showPie = false;
@@ -47,7 +45,7 @@ const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<P
 		if ((status == I.AccountStatusType.PendingDeletion) && !duration) {
 			status = I.AccountStatusType.Deleted;
 		};
-		
+
 		switch (status) {
 			case I.AccountStatusType.PendingDeletion:
 				title = `This account is planned for deletion in ${dt}...`;
