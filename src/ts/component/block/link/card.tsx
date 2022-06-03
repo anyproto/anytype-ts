@@ -27,7 +27,7 @@ const LinkCard = observer(class LinkCard extends React.Component<Props, {}> {
 		const { size, iconSize } = this.getIconSize();
 		const canDescription = ![ I.ObjectLayout.Note ].includes(object.layout);
 		const type = dbStore.getObjectType(object.type);
-		const withIcon = this.hasRelationKey('icon');
+		const withIcon = this.props.iconSize != I.LinkIconSize.None;
 		const withType = this.hasRelationKey('type');
         const withCover = this.hasRelationKey('cover') && coverId && coverType;
 		const cn = [ 'linkCard', DataUtil.layoutClass(id, layout), 'c' + size, DataUtil.linkCardClass(cardStyle) ];

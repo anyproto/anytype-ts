@@ -4,7 +4,7 @@ import { observable, intercept, makeObservable } from 'mobx';
 class BlockContentLink implements I.ContentLink {
 	
 	targetBlockId: string = '';
-	iconSize: I.LinkIconSize = I.LinkIconSize.Small;
+	iconSize: I.LinkIconSize = I.LinkIconSize.None;
 	cardStyle: I.LinkCardStyle = I.LinkCardStyle.Text;
 	description: I.LinkDescription = I.LinkDescription.None;
 	relations: string[] = [];
@@ -13,7 +13,7 @@ class BlockContentLink implements I.ContentLink {
 		let self = this;
 		
 		self.targetBlockId = String(props.targetBlockId || '');
-		self.iconSize = Number(props.iconSize) || I.LinkIconSize.Small;
+		self.iconSize = Number(props.iconSize) || I.LinkIconSize.None;
 		self.cardStyle = Number(props.cardStyle) || I.LinkCardStyle.Text;
 		self.description = Number(props.description) || I.LinkDescription.None;
 		self.relations = props.relations || [];
