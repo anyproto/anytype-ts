@@ -25,5 +25,5 @@
 		"NOT_FOUND": 3
 	},
 
-	"net::ERR_TIMED_OUT": "Network time-out"
+	"Error: net::ERR_TIMED_OUT": "Network time-out"
 }
