@@ -162,6 +162,8 @@
 
     .block.blockText {
         kbd { background: $colorHover; color: $colorOrange; }
+		lnk, obj { border-color: $colorSecondary; }
+		lnk:hover, obj:hover { border-color: $colorPrimary; }
     }
 
     .block.blockText.callout > .wrapContent { background: $colorHover; }
