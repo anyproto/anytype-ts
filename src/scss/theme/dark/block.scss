@@ -181,7 +181,7 @@
 		}
 
 		.linkCard.card {
-			.side.left { border-color: $colorLinePrimary; }
+			.side.left, .side.right { border-color: $colorLinePrimary; }
 		}
     }
 

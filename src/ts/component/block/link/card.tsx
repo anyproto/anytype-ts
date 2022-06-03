@@ -127,7 +127,7 @@ const LinkCard = observer(class LinkCard extends React.Component<Props, {}> {
 
 				case I.LinkIconSize.Medium:
 					size = 48;
-					iconSize = 24;
+					iconSize = 28;
 					break;
 			};
 		};

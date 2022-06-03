@@ -1134,9 +1134,9 @@ class DataUtil {
 	defaultLinkSettings () {
 		return {
 			iconSize: I.LinkIconSize.Small,
-			cardStyle: I.LinkCardStyle.Text,
-			description: I.LinkDescription.None,
-			relations: [ 'icon' ],
+			cardStyle: I.LinkCardStyle.Card,
+			description: I.LinkDescription.Content,
+			relations: [ 'icon', 'cover' ],
 		};
 	};
 
