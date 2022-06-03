@@ -32,8 +32,10 @@ const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<P
 		const { cover } = commonStore;
 		const { error } = this.state;
 		const duration = Math.max(0, account.status.date - Util.time());
-		const days = Math.min(DAYS - 1, Math.max(1, Math.ceil(duration / 86400)));
+		const days = Math.max(1, Math.ceil(duration / 86400));
 		const dt = `${days} ${Util.cntWord(days, 'day', 'days')}`;
+
+		console.log(duration);
 
 		let title = '';
 		let description = '';
@@ -52,12 +54,12 @@ const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<P
 				description = `We're sorry to see you go. You have ${dt} to cancel this request. After ${dt}, your encrypted account data is permanently removed from the backup node.`;
 
 				rows = rows.concat([
-					{ name: 'Cancel deletion', className: 'red', onClick: this.onCancel },
+					{ name: 'Cancel deletion', onClick: this.onCancel },
 					{ name: 'Logout and clear data', className: 'red', onClick: this.onReset },
 				]);
 
 				showPie = true;
-				pieValue = DAYS - days;
+				pieValue = Math.min(DAYS - 1, Math.max(1, DAYS - days));
 				break;
 
 			case I.AccountStatusType.StartedDeletion:
