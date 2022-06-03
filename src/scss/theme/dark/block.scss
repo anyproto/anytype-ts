@@ -181,13 +181,16 @@
 		}
 
 		.linkCard.card {
-			.side.left, .side.right { border-color: $colorLinePrimary; }
+			.side.left, .side.right { border-color: $colorLineSecondary; }
 		}
     }
 
 	.block.blockLink:hover {
 		.linkCard.text {
 			.cardName .name { border-color: $colorPrimary; }
+		}
+		.linkCard.card {
+			.side.left, .side.right { border-color: $colorLinePrimary; }
 		}
 	}
 

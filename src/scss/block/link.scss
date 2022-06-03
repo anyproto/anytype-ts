@@ -32,6 +32,7 @@
 		.linkCard { display: inline-block; vertical-align: top; width: 100%; }
         .linkCard {
             .sides { display: flex; flex-direction: row; }
+			.side { transition: border-color 0.2s ease-in-out; }
 			.side.left { width: 100%; position: relative; }
 			.side.right { display: none; overflow: hidden; }
 
@@ -110,6 +111,9 @@
 	.block.blockLink:hover {
 		.linkCard.text {
 			.cardName .name { border-color: $colorBlack; }
+		}
+		.linkCard.card {
+			.side.left, .side.right { border-color: $colorBlack; }
 		}
 	}
 
