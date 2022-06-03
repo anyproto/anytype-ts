@@ -327,10 +327,13 @@ class Util {
 	};
 
 	time () {
-		return Math.floor((new Date()).getTime() / 1000);
+		let timestamp = Math.floor((new Date()).getTime() / 1000);
+		let timezone = commonStore.timezoneGet();
+
+		return timestamp + timezone.offset;
 	};
 
-	timestamp (y: number, m: number, d: number, h?: number, i?: number, s?: number): number {
+	timestamp (y?: number, m?: number, d?: number, h?: number, i?: number, s?: number): number {
 		y = Number(y) || 0;
 		m = Number(m) || 0;
 		d = Number(d) || 0;
