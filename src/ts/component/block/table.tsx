@@ -270,8 +270,13 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				targetRowId = rowId;
 				targetColumnId = columnId;
 
-				options = options.concat(this.optionsColumn(columnId));
-				options = options.concat(this.optionsRow(rowId));
+				//options = options.concat(this.optionsColumn(columnId));
+				//options = options.concat(this.optionsRow(rowId));
+				options = options.concat([
+					{ id: 'row', name: 'Row', arrow: true },
+					{ id: 'column', name: 'Column', arrow: true },
+					{ isDiv: true },
+				]);
 				options = options.concat(optionsColor);
 
 				element = node.find(`#cell-${id}`);
@@ -306,11 +311,34 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 					};
 
 					switch (item.id) {
+						case 'row':
+							menuId = 'select2';
+							menuParam.component = 'select';
+							menuParam.data = Object.assign(menuParam.data, {
+								options: this.optionsRow(targetRowId).filter(it => !it.isDiv),
+								onSelect: (e: any, item: any) => {
+									this.onSelect(e, item, targetRowId, targetColumnId, current.id, blockIds);
+								}
+							});
+							break;
+
+						case 'column':
+							menuId = 'select2';
+							menuParam.component = 'select';
+							menuParam.data = Object.assign(menuParam.data, {
+								options: this.optionsColumn(targetColumnId).filter(it => !it.isDiv),
+								onSelect: (e: any, item: any) => {
+									this.onSelect(e, item, targetRowId, targetColumnId, current.id, blockIds);
+								}
+							});
+							break;
+
 						case 'horizontal':
 							menuId = 'select2';
 							menuParam.component = 'select';
 							menuParam.data = Object.assign(menuParam.data, {
 								options: this.optionsHAlign(),
+								value: current.hAlign,
 								onSelect: (e: any, el: any) => {
 									C.BlockListSetAlign(rootId, blockIds, el.id);
 									menuContext.close();
@@ -323,6 +351,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 							menuParam.component = 'select';
 							menuParam.data = Object.assign(menuParam.data, {
 								options: this.optionsVAlign(),
+								value: current.vAlign,
 								onSelect: (e: any, el: any) => {
 									C.BlockListSetVerticalAlign(rootId, blockIds, el.id);
 									menuContext.close();
@@ -368,68 +397,75 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 					});
 				},
 				onSelect: (e: any, item: any) => {
-					if (item.arrow) {
-						return;
-					};
-
-					let childrenIds: string[] = [];
-					let oldIndex = 0;
-					let newIndex = 0;
-
-					switch (item.id) {
-						case 'columnBefore':
-						case 'columnAfter':
-							C.BlockTableColumnCreate(rootId, targetColumnId, (item.id == 'columnBefore' ? I.BlockPosition.Left : I.BlockPosition.Right));
-							break;
-
-						case 'columnMoveLeft':
-						case 'columnMoveRight':
-							childrenIds = blockStore.getChildrenIds(rootId, columnContainer.id);
-							oldIndex = childrenIds.indexOf(targetColumnId);
-							newIndex = item.id == 'columnMoveLeft' ? oldIndex - 1 : oldIndex + 1;
-
-							this.onSortEndColumn(oldIndex, newIndex);
-							break;
-
-						case 'columnRemove':
-							C.BlockTableColumnDelete(rootId, targetColumnId);
-							break;
-
-						case 'columnCopy':
-							C.BlockTableColumnDuplicate(rootId, targetColumnId, targetColumnId, I.BlockPosition.Bottom);
-							break;
-
-						case 'rowBefore':
-						case 'rowAfter':
-							C.BlockTableRowCreate(rootId, targetRowId, (item.id == 'rowBefore' ? I.BlockPosition.Top : I.BlockPosition.Bottom));
-							break;
-
-						case 'rowMoveTop':
-						case 'rowMoveBottom':
-							childrenIds = blockStore.getChildrenIds(rootId, rowContainer.id);
-							oldIndex = childrenIds.indexOf(current.id);
-							newIndex = item.id == 'rowMoveTop' ? oldIndex - 1 : oldIndex + 1;
-
-							this.onSortEndRow({ oldIndex, newIndex });
-							break;
-
-						case 'rowCopy':
-							C.BlockListDuplicate(rootId, [ targetRowId ], targetRowId, I.BlockPosition.Bottom);
-							break;
-
-						case 'rowRemove':
-							C.BlockListDelete(rootId, [ targetRowId ]);
-							break;
-
-						case 'clear':
-							C.BlockTextListClearStyle(rootId, blockIds);
-							break;
-					};
+					this.onSelect(e, item, targetRowId, targetColumnId, current.id, blockIds);
 				}
 			},
 		});
 
 		menuStore.open('select1', menuParam);
+	};
+
+	onSelect (e: any, item: any, targetRowId: string, targetColumnId: string, targetCellId: string, blockIds: string[]) {
+		if (item.arrow) {
+			return;
+		};
+
+		const { rootId } = this.props;
+		const { rowContainer, columnContainer } = this.getData();
+
+		let childrenIds: string[] = [];
+		let oldIndex = 0;
+		let newIndex = 0;
+
+		switch (item.id) {
+			case 'columnBefore':
+			case 'columnAfter':
+				C.BlockTableColumnCreate(rootId, targetColumnId, (item.id == 'columnBefore' ? I.BlockPosition.Left : I.BlockPosition.Right));
+				break;
+
+			case 'columnMoveLeft':
+			case 'columnMoveRight':
+				childrenIds = blockStore.getChildrenIds(rootId, columnContainer.id);
+				oldIndex = childrenIds.indexOf(targetColumnId);
+				newIndex = item.id == 'columnMoveLeft' ? oldIndex - 1 : oldIndex + 1;
+
+				this.onSortEndColumn(oldIndex, newIndex);
+				break;
+
+			case 'columnRemove':
+				C.BlockTableColumnDelete(rootId, targetColumnId);
+				break;
+
+			case 'columnCopy':
+				C.BlockTableColumnDuplicate(rootId, targetColumnId, targetColumnId, I.BlockPosition.Right);
+				break;
+
+			case 'rowBefore':
+			case 'rowAfter':
+				C.BlockTableRowCreate(rootId, targetRowId, (item.id == 'rowBefore' ? I.BlockPosition.Top : I.BlockPosition.Bottom));
+				break;
+
+			case 'rowMoveTop':
+			case 'rowMoveBottom':
+				childrenIds = blockStore.getChildrenIds(rootId, rowContainer.id);
+				oldIndex = childrenIds.indexOf(targetCellId);
+				newIndex = item.id == 'rowMoveTop' ? oldIndex - 1 : oldIndex + 1;
+
+				this.onSortEndRow({ oldIndex, newIndex });
+				break;
+
+			case 'rowCopy':
+				C.BlockListDuplicate(rootId, [ targetRowId ], targetRowId, I.BlockPosition.Bottom);
+				break;
+
+			case 'rowRemove':
+				C.BlockListDelete(rootId, [ targetRowId ]);
+				break;
+
+			case 'clear':
+				C.BlockTextListClearStyle(rootId, blockIds);
+				break;
+		};
 	};
 
 	onOptionsOpen (id: string) {
@@ -999,7 +1035,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		const current = blockStore.getLeaf(rootId, id);
 
 		if (!current) {
-			return;
+			return [];
 		};
 
 		return [

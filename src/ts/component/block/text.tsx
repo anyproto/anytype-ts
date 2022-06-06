@@ -1201,7 +1201,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 	};
 	
 	onSelect (e: any) {
-		const { rootId, dataset, block, isPopup } = this.props;
+		const { rootId, dataset, block, isPopup, isInsideTable } = this.props;
 		const ids = DataUtil.selectionGet('', false, this.props);
 
 		focus.set(block.id, this.getRange());
@@ -1251,6 +1251,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 					dataset: dataset,
 					range: { from: currentFrom, to: currentTo },
 					marks: Util.objectCopy(this.marks),
+					isInsideTable,
 					onChange: (marks: I.Mark[]) => {
 						this.marks = marks;
 						this.setMarks(marks);
