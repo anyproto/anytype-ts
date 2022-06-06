@@ -1,6 +1,5 @@
 import { I, keyboard } from 'ts/lib';
 import { commonStore, popupStore, menuStore } from 'ts/store';
-import { v4 as uuidv4 } from 'uuid';
 import { translate } from '.';
 
 const raf = require('raf');
@@ -800,10 +799,6 @@ class Util {
 		return cnt.substr(-1) == '1' ? w1 : w2;
 	};
 
-	uuid () {
-		return uuidv4(); 
-	};
-	
 	getPlatform () {
 		return Constant.platforms[os.platform()];
 	};
