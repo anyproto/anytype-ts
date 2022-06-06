@@ -568,7 +568,10 @@ class MenuBlockAction extends React.Component<Props, State> {
 				Action.remove(rootId, blockId, ids);
 				break;
 			
-			case 'csvImport':
+			case 'clear':
+				C.BlockTextListClearStyle(rootId, blockIds, () => {
+					analytics.event('ClearBlockStyle', { count: blockIds.length });
+				});
 				break;
 				
 			default:
