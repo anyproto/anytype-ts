@@ -71,7 +71,9 @@
 
 		.row.isHighlightedRow {	box-shadow: 0px 0px 0px 2px #ffcf6f; border-radius: 2px; z-index: 2; }
 		.row.isHighlightedRow {
+			.handleRow { display: block; }
 			.cell { box-shadow: 1px 0px inset $colorBorderDark; padding-top: 0px; }
+			.cell:first-child { box-shadow: 0px 0px; }
 			.cell .block .wrapContent { padding-top: 1px; }
 		}
 		.row.isDraggingRow { box-shadow: 0px 1px $colorBorderDark, 1px 0px $colorBorderDark, 0px 4px 16px rgba(0, 0, 0, 0.2); background: #fff; }
