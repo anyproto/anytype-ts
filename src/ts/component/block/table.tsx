@@ -89,16 +89,6 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 						return <RowSortableElement key={'row' + row.id} index={i} block={row} />;
 					})}
 				</div>
-
-				<div id="plus-v" className="plusButton vertical">
-					<Icon onClick={this.onPlusV} />
-				</div>
-				<div id="plus-h" className="plusButton horizontal">
-					<Icon onClick={this.onPlusH} />
-				</div>
-				<div id="plus-c" className="plusButton circle">
-					<Icon onClick={this.onPlus} />
-				</div>
 			</div>
 		));
 
@@ -109,18 +99,29 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				className={cn.join(' ')}
 			>
 				<div id="scrollWrap" className="scrollWrap" onScroll={this.onScroll}>
-					<TableSortableContainer 
-						axis="y" 
-						lockAxis="y"
-						lockToContainerEdges={true}
-						transitionDuration={150}
-						distance={10}
-						useDragHandle={true}
-						onSortStart={this.onSortStart}
-						onSortEnd={this.onSortEndRow}
-						helperClass="isDraggingRow"
-						helperContainer={() => { return $(`#block-${block.id} .table`).get(0); }}
-					/>
+					<div className="inner">
+						<TableSortableContainer 
+							axis="y" 
+							lockAxis="y"
+							lockToContainerEdges={true}
+							transitionDuration={150}
+							distance={10}
+							useDragHandle={true}
+							onSortStart={this.onSortStart}
+							onSortEnd={this.onSortEndRow}
+							helperClass="isDraggingRow"
+							helperContainer={() => { return $(`#block-${block.id} .table`).get(0); }}
+						/>
+						<div id="plus-v" className="plusButton vertical" onClick={this.onPlusV}>
+							<Icon />
+						</div>
+						<div id="plus-h" className="plusButton horizontal" onClick={this.onPlusH}>
+							<Icon />
+						</div>
+						<div id="plus-c" className="plusButton circle" onClick={this.onPlus}>
+							<Icon />
+						</div>
+					</div>
 				</div>
 			</div>
 		);
@@ -476,6 +477,8 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		node.find('.isHighlightedColumn').removeClass('isHighlightedColumn isFirst isLast');
 		node.find('.isHighlightedRow').removeClass('isHighlightedRow');
 		node.find('.isHighlightedCell').removeClass('isHighlightedCell');
+
+		this.setEditing('');
 	};
 
 	onPlus (e: any) {
@@ -899,6 +902,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		const row = node.find('.row').first();
 
 		let width = offset;
+
 		String(row.css('grid-template-columns') || '').split(' ').forEach((it: string) => {
 			width += parseInt(it);
 		});

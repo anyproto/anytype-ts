@@ -7,8 +7,9 @@ export enum LinkCardStyle {
 };
 
 export enum LinkIconSize {
-	Small		 = 0,
-	Medium		 = 1,
+	None		 = 0,
+	Small		 = 1,
+	Medium		 = 2,
 };
 
 export enum LinkDescription {

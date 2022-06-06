@@ -1,6 +1,6 @@
 {
 	"name": "anytype2",
-	"version": "0.25.6-alpha",
+	"version": "0.25.8-alpha",
 	"description": "Anytype",
 	"main": "electron.js",
 	"scripts": {
@@ -173,7 +173,6 @@
 		"source-map-loader": "^0.2.4",
 		"sprintf-kit": "^2.0.0",
 		"typescript": "^3.9.7",
-		"uuid": "^8.3.0",
 		"webpack-bundle-analyzer": "^3.9.0",
 		"xhr2": "^0.2.0",
 		"xmlhttprequest": "^1.8.0",

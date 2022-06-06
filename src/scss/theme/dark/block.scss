@@ -162,6 +162,8 @@
 
     .block.blockText {
         kbd { background: $colorHover; color: $colorOrange; }
+		lnk, obj { border-color: $colorSecondary; }
+		lnk:hover, obj:hover { border-color: $colorPrimary; }
     }
 
     .block.blockText.callout > .wrapContent { background: $colorHover; }
@@ -181,13 +183,16 @@
 		}
 
 		.linkCard.card {
-			.side.left { border-color: $colorLinePrimary; }
+			.side.left, .side.right { border-color: $colorLineSecondary; }
 		}
     }
 
 	.block.blockLink:hover {
 		.linkCard.text {
 			.cardName .name { border-color: $colorPrimary; }
+		}
+		.linkCard.card {
+			.side.left, .side.right { border-color: $colorLinePrimary; }
 		}
 	}
 

@@ -178,6 +178,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 			let hasTurnList = true;
 			let hasTurnDiv = true;
 			let hasTurnFile = true;
+			let hasText = true;
 			let hasFile = true;
 			let hasLink = true;
 			let hasQuote = false;
@@ -198,6 +199,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 				if (!block.canTurnList())		 hasTurnList = false;
 				if (!block.isDiv())				 hasTurnDiv = false;
 				if (!block.isFile())			 hasTurnFile = false;
+				if (!block.isText())			 hasText = false;
 				if (!block.canHaveAlign())		 hasAlign = false;
 				if (!block.canHaveColor())		 hasColor = false;
 				if (!block.canHaveBackground())	 hasBg = false;
@@ -225,19 +227,12 @@ class MenuBlockAction extends React.Component<Props, State> {
 			};
 			
 			if (hasAction) {
-				action.children = DataUtil.menuGetActions({ hasFile, hasLink });
+				action.children = DataUtil.menuGetActions({ hasText, hasFile, hasLink });
 				sections.push(action);
 			};
 
 			sections = DataUtil.menuSectionsFilter(sections, filter);
 		} else {
-			const section1: any = { 
-				children: [
-					{ id: 'remove', icon: 'remove', name: 'Delete', caption: 'Del' },
-					{ id: 'copy', icon: 'copy', name: 'Duplicate', caption: `${cmd} + D` },
-					{ id: 'move', icon: 'move', name: 'Move to', arrow: true },
-				] 
-			};
 			const section2: any = { 
 				children: [
 					//{ id: 'comment', icon: 'comment', name: 'Comment' },
@@ -247,6 +242,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 			let hasTurnText = true;
 			let hasTurnObject = true;
 			let hasTurnDiv = true;
+			let hasText = true;
 			let hasFile = true;
 			let hasLink = true;
 			let hasTitle = false;
@@ -267,6 +263,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 					hasTurnDiv = false;
 				};
 				if (!block.canTurnPage())		 hasTurnObject = false;
+				if (!block.isText())			 hasText = false;
 				if (!block.isFile())			 hasFile = false;
 				if (!block.isLink())			 hasLink = false;
 				if (!block.canHaveAlign())		 hasAlign = false;
@@ -276,6 +273,10 @@ class MenuBlockAction extends React.Component<Props, State> {
 				if (block.isTextTitle())		 hasTitle = true;
 				if (block.isTextDescription())	 hasTitle = true;
 				if (block.isFeatured())			 hasTitle = true;
+			};
+
+			const section1: any = { 
+				children: DataUtil.menuGetActions({ hasText, hasFile, hasLink })
 			};
 
 			if (hasTurnObject) {

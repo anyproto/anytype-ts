@@ -6,7 +6,7 @@ class Filter implements I.Filter {
 	relationKey: string = '';
 	operator: I.FilterOperator = I.FilterOperator.And;
 	condition: I.FilterCondition = I.FilterCondition.None;
-	quickOption: I.FilterQuickOption = I.FilterQuickOption.None;
+	quickOption: I.FilterQuickOption = I.FilterQuickOption.ExactDate;
 	value: any = {};
 
 	constructor (props: I.Filter) {
@@ -15,7 +15,7 @@ class Filter implements I.Filter {
 		self.relationKey = String(props.relationKey || '');
 		self.operator = Number(props.operator) || I.FilterOperator.And;
 		self.condition = Number(props.condition) || I.FilterCondition.None;
-		self.quickOption = Number(props.quickOption) || I.FilterQuickOption.None;
+		self.quickOption = Number(props.quickOption) || I.FilterQuickOption.ExactDate;
 		self.value = props.value;
 
 		makeObservable(self, {
