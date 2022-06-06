@@ -585,6 +585,15 @@ const BlockTextListSetMark = (contextId: string, blockIds: string[], mark: I.Mar
 	dispatcher.request(BlockTextListSetMark.name, request, callBack);
 };
 
+const BlockTextListClearStyle = (contextId: string, blockIds: string[], callBack?: (message: any) => void) => {
+	const request = new Rpc.BlockText.ListClearStyle.Request();
+	
+	request.setContextid(contextId);
+    request.setBlockidsList(blockIds);
+
+	dispatcher.request(BlockTextListClearStyle.name, request, callBack);
+};
+
 const BlockListSetFields = (contextId: string, fields: any, callBack?: (message: any) => void) => {
 	fields = fields.map(Mapper.To.Fields);
 
@@ -1429,9 +1438,11 @@ export {
 	BlockTextSetText,
 	BlockTextSetChecked,
 	BlockTextSetIcon,
+
 	BlockTextListSetStyle,
 	BlockTextListSetMark,
 	BlockTextListSetColor,
+	BlockTextListClearStyle,
 
 	BlockBookmarkFetch,
 	BlockBookmarkCreateAndFetch,

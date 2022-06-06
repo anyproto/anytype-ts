@@ -421,6 +421,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 							break;
 
 						case 'clear':
+							C.BlockTextListClearStyle(rootId, blockIds);
 							break;
 					};
 				}

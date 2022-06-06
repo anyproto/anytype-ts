@@ -225,7 +225,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 			};
 			
 			if (hasAction) {
-				action.children = DataUtil.menuGetActions(hasFile, hasLink, hasTable);
+				action.children = DataUtil.menuGetActions({ hasFile, hasLink });
 				sections.push(action);
 			};
 

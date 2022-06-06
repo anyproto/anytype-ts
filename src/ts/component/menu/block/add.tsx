@@ -355,7 +355,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 		]);
 		
 		if (filter && filter.text) {
-			const actions = DataUtil.menuGetActions(false, false, false);
+			const actions = DataUtil.menuGetActions({ hasFile: false, hasLink: false });
 
 			if (block.canTurnPage()) {
 				actions.push({ id: 'turnObject', icon: 'object', name: 'Turn into object', arrow: true });

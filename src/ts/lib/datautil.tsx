@@ -686,7 +686,8 @@ class DataUtil {
 	};
 
 	// Action menu
-	menuGetActions (hasFile: boolean, hasLink: boolean, hasTable: boolean) {
+	menuGetActions (param: any) {
+		let { hasFile, hasLink } = param;
 		let cmd = keyboard.ctrlSymbol();
 		let items: any[] = [
 			{ id: 'move', icon: 'move', name: 'Move to', arrow: true },
@@ -706,9 +707,6 @@ class DataUtil {
 			items.push({ id: 'linkSettings', icon: 'customize', name: 'Appearance', arrow: true });
 		};
 
-		if (hasTable) {
-		};
-		
 		items = items.map((it: any) => {
 			it.isAction = true;
 			return it;
