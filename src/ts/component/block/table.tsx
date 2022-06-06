@@ -1015,7 +1015,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 	};
 
 	optionsVAlign () {
-		const ret = [
+		return [
 			{ id: I.BlockVAlign.Top, name: 'Top' },
 			{ id: I.BlockVAlign.Middle, name: 'Middle' },
 			{ id: I.BlockVAlign.Bottom, name: 'Bottom' },
@@ -1023,8 +1023,6 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			it.icon = this.alignVIcon(it.id);
 			return it;
 		});
-		console.log(ret);
-		return ret;
 	};
 
 	optionsStyle (id: string) {
