@@ -803,7 +803,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 	};
 
 	alignVIcon (v: I.BlockVAlign): string {
-		return [ 'align', String(I.BlockVAlign[v]).toLowerCase() ].join(' ');
+		return [ 'valign', String(I.BlockVAlign[v]).toLowerCase() ].join(' ');
 	};
 
 	onSortStart () {
@@ -998,7 +998,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		};
 
 		return [
-			{ id: 'horizontal', icon: 'align ' + this.alignHIcon(current.hAlign), name: 'Horizontal align', arrow: true },
+			{ id: 'horizontal', icon: this.alignHIcon(current.hAlign), name: 'Horizontal align', arrow: true },
 			{ id: 'vertical', icon: this.alignVIcon(current.vAlign), name: 'Vertical align', arrow: true },
 		];
 	};
@@ -1009,20 +1009,22 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			{ id: I.BlockHAlign.Center, name: 'Center' },
 			{ id: I.BlockHAlign.Right, name: 'Right' },
 		].map((it: any) => {
-			it.icon = 'align ' + this.alignHIcon(it.id);
+			it.icon = this.alignHIcon(it.id);
 			return it;
 		});
 	};
 
 	optionsVAlign () {
-		return [
+		const ret = [
 			{ id: I.BlockVAlign.Top, name: 'Top' },
-			{ id: I.BlockVAlign.Center, name: 'Center' },
+			{ id: I.BlockVAlign.Middle, name: 'Middle' },
 			{ id: I.BlockVAlign.Bottom, name: 'Bottom' },
 		].map((it: any) => {
 			it.icon = this.alignVIcon(it.id);
 			return it;
 		});
+		console.log(ret);
+		return ret;
 	};
 
 	optionsStyle (id: string) {

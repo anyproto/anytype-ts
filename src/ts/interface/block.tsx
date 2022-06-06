@@ -56,7 +56,7 @@ export enum BlockHAlign {
 
 export enum BlockVAlign {
 	Top		 = 0,
-	Center	 = 1,
+	Middle	 = 1,
 	Bottom	 = 2,
 };
 

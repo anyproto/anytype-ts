@@ -155,8 +155,6 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 			active = items[0];
 		};
 
-		console.log(JSON.stringify(active, null, 3), withFilter);
-
 		if (active && !active.isInitial) {
 			window.setTimeout(() => { setActive(active, true); }, 15);
 		};

@@ -1,14 +1,5 @@
 import { I } from 'ts/lib';
 
-export enum BlockHAlign {
-	None	 = 0,
-	Left	 = 1,
-	Center	 = 2,
-	Right	 = 3,
-	Top		 = 4,
-	Bottom	 = 5,
-};
-
 export interface BlockComponentTable extends I.BlockComponent {
 	getData: () => any;
 	onOptions: (e: any, id: string) => void;
