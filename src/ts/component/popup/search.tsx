@@ -265,9 +265,6 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 			return;
 		};
 
-		e.preventDefault();
-		e.stopPropagation();
-
 		keyboard.shortcut('arrowup, arrowdown', e, (pressed: string) => {
 			const dir = pressed.match(Key.up) ? -1 : 1;
 
