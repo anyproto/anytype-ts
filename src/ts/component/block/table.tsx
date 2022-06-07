@@ -4,7 +4,6 @@ import { Icon } from 'ts/component';
 import { I, C, keyboard, focus, Util, Mark } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { menuStore, blockStore } from 'ts/store';
-import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import arrayMove from 'array-move';
 import { throttle } from 'lodash';
 
@@ -13,6 +12,7 @@ import Row from './table/row';
 interface Props extends I.BlockComponent {};
 
 const $ = require('jquery');
+const raf = require('raf');
 const Constant = require('json/constant.json');
 
 const PADDING = 46;
@@ -26,9 +26,8 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 	width: number = 0;
 	oldIndex: number = -1;
 	newIndex: number = -1;
-	timeout: number = 0;
 	scrollX: number = 0;
-
+	frame: number = 0;
 
 	constructor (props: any) {
 		super(props);
@@ -45,6 +44,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		this.onKeyDown = this.onKeyDown.bind(this);
 		this.onOptions = this.onOptions.bind(this);
 		this.onResizeStart = this.onResizeStart.bind(this);
+		this.onDragStartRow = this.onDragStartRow.bind(this);
 		this.onDragStartColumn = this.onDragStartColumn.bind(this);
 		this.getData = this.getData.bind(this);
 		this.onScroll = this.onScroll.bind(this);
@@ -63,36 +63,6 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			const { width } = column.fields || {};
 		});
 
-		const RowSortableElement = SortableElement((item: any) => (
-			<Row 
-				{...this.props}
-				{...item} 
-				index={item.block.idx}
-				getData={this.getData}
-				onOptions={this.onOptions}
-				onHandleClick={this.onHandleClick}
-				onCellClick={this.onCellClick}
-				onCellFocus={this.onCellFocus}
-				onCellBlur={this.onCellBlur}
-				onCellEnter={this.onCellEnter}
-				onCellLeave={this.onCellLeave}
-				onKeyDown={this.onKeyDown}
-				onResizeStart={this.onResizeStart}
-				onDragStartColumn={this.onDragStartColumn}
-			/>
-		));
-
-		const TableSortableContainer = SortableContainer((item: any) => (
-			<div id="table" className="table">
-				<div className="rows">
-					{rows.map((row: any, i: number) => {
-						row.idx = i;
-						return <RowSortableElement key={'row' + row.id} index={i} block={row} />;
-					})}
-				</div>
-			</div>
-		));
-
 		return (
 			<div 
 				id="wrap"
@@ -101,18 +71,32 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			>
 				<div id="scrollWrap" className="scrollWrap" onScroll={this.onScroll}>
 					<div className="inner">
-						<TableSortableContainer 
-							axis="y" 
-							lockAxis="y"
-							lockToContainerEdges={true}
-							transitionDuration={150}
-							distance={10}
-							useDragHandle={true}
-							onSortStart={this.onSortStart}
-							onSortEnd={this.onSortEndRow}
-							helperClass="isDraggingRow"
-							helperContainer={() => { return $(`#block-${block.id} .table`).get(0); }}
-						/>
+						<div id="table" className="table">
+							<div className="rows">
+								{rows.map((row: any, i: number) => {
+									return (
+										<Row 
+											key={`block-${block.id}-row-${row.id}`}
+											{...this.props}
+											block={row}
+											index={i}
+											getData={this.getData}
+											onOptions={this.onOptions}
+											onHandleClick={this.onHandleClick}
+											onCellClick={this.onCellClick}
+											onCellFocus={this.onCellFocus}
+											onCellBlur={this.onCellBlur}
+											onCellEnter={this.onCellEnter}
+											onCellLeave={this.onCellLeave}
+											onKeyDown={this.onKeyDown}
+											onResizeStart={this.onResizeStart}
+											onDragStartRow={this.onDragStartRow}
+											onDragStartColumn={this.onDragStartColumn}
+										/>
+									);
+								})}
+							</div>
+						</div>
 						<div id="plus-v" className="plusButton vertical" onClick={this.onPlusV}>
 							<Icon />
 						</div>
@@ -148,8 +132,6 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 	componentWillUnmount () {
 		this._isMounted = false;
 		this.unbind();
-
-		window.clearTimeout(this.timeout);
 	};
 
 	unbind () {
@@ -450,7 +432,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				oldIndex = childrenIds.indexOf(targetCellId);
 				newIndex = item.id == 'rowMoveTop' ? oldIndex - 1 : oldIndex + 1;
 
-				this.onSortEndRow({ oldIndex, newIndex });
+				this.onSortEndRow(oldIndex, newIndex);
 				break;
 
 			case 'rowCopy':
@@ -728,16 +710,18 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			table.append(rowElement);
 		});
 
+		this.width = widths[idx];
+
 		table.css({ width: widths[idx], zIndex: 10000, position: 'fixed', left: -10000, top: -10000 });
 		node.append(table);
 
 		$(document).off('dragover').on('dragover', (e: any) => { e.preventDefault(); });
 		e.dataTransfer.setDragImage(table.get(0), table.outerWidth(), -3);
 
-		win.on('drag.board', throttle((e: any) => { this.onDragMoveColumn(e, id); }, 40));
-		win.on('dragend.board', (e: any) => { this.onDragEnd(e); });
+		win.on('drag.tableColumn', throttle((e: any) => { this.onDragMoveColumn(e, id); }, 40));
+		win.on('dragend.tableColumn', (e: any) => { this.onDragEndColumn(e); });
 
-		this.initCache();
+		this.initCache(I.BlockType.TableColumn);
 		this.setEditing('');
 		this.onOptionsOpen(id);
 		this.preventSelect(true);
@@ -766,7 +750,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			};
 
 			if (rect && Util.rectsCollide({ x: e.pageX, y: 0, width: this.width, height: 1 }, rect)) {
-				isLeft = e.pageX <= rect.x + rect.width / 2;
+				isLeft = (i == 0) && (e.pageX <= rect.x + rect.width / 2);
 				hoverId = column.id;
 				
 				this.newIndex = isLeft ? rect.index : rect.index + 1;
@@ -774,32 +758,129 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			};
 		};
 
-		window.clearTimeout(this.timeout);
-		this.timeout = window.setTimeout(() => {
+		if (this.frame) {
+			raf.cancel(this.frame);
+		};
+
+		this.frame = raf(() => {
 			node.find('.cell.isOver').removeClass('isOver left right');
 
 			if (hoverId) {
 				node.find(`.cell.column${hoverId}`).addClass('isOver ' + (isLeft ? 'left' : 'right'));
 			};
-		}, 40);
+		});
 
 		this.newIndex = Math.max(0, this.newIndex);
 		this.newIndex = Math.min(columns.length - 1, this.newIndex);
 	};
 
-	onDragEnd (e: any) {
+	onDragEndColumn (e: any) {
 		e.preventDefault();
 
 		const node = $(ReactDOM.findDOMNode(this));
+		const win = $(window);
 
 		this.cache = {};
 		this.onSortEndColumn(this.oldIndex, this.newIndex);
 		this.preventSelect(false);
 		this.preventDrop(false);
+		this.onOptionsClose();
 
-		window.clearTimeout(this.timeout);
+		win.off('drag.tableColumn dragend.tableColumn');
 		node.find('.table.isClone').remove();
 		node.find('.cell.isOver').removeClass('isOver left right');
+	};
+
+	onDragStartRow (e: any, id: string) {
+		e.stopPropagation();
+
+		const win = $(window);
+		const node = $(ReactDOM.findDOMNode(this));
+		const table = $('<div />').addClass('table isClone');
+		const row = node.find(`#row-${id}`);
+		const clone = row.clone();
+
+		table.append(clone);
+		table.css({ zIndex: 10000, position: 'fixed', left: -10000, top: -10000 });
+
+		node.append(table);
+
+		this.width = table.width();
+
+		$(document).off('dragover').on('dragover', (e: any) => { e.preventDefault(); });
+		e.dataTransfer.setDragImage(table.get(0), -3, 0);
+
+		win.on('drag.tableRow', throttle((e: any) => { this.onDragMoveRow(e, id); }, 40));
+		win.on('dragend.tableRow', (e: any) => { this.onDragEndRow(e); });
+
+		this.initCache(I.BlockType.TableRow);
+		this.setEditing('');
+		this.onOptionsOpen(id);
+		this.preventSelect(true);
+		this.preventDrop(true);
+	};
+
+	onDragMoveRow (e: any, id: string) {
+		if (!this._isMounted) {
+			return;
+		};
+
+		const node = $(ReactDOM.findDOMNode(this));
+		const { rows } = this.getData();
+
+		this.oldIndex = rows.findIndex(it => it.id == id);
+
+		let hoverId = '';
+		let isTop = false;
+
+		for (let i = 0; i < rows.length; ++i) {
+			const row = rows[i];
+			const rect = this.cache[row.id];
+
+			if (id == row.id) {
+				continue;
+			};
+
+			if (rect && Util.rectsCollide({ x: e.pageX, y: e.pageY, width: this.width, height: 1 }, rect)) {
+				isTop = (i == 0) && (e.pageY <= rect.y + rect.height / 2);
+				hoverId = row.id;
+				
+				this.newIndex = isTop ? rect.index : rect.index + 1;
+				break;
+			};
+		};
+
+		if (this.frame) {
+			raf.cancel(this.frame);
+		};
+
+		this.frame = raf(() => {
+			node.find('.row.isOver').removeClass('isOver top bottom');
+
+			if (hoverId) {
+				node.find(`#row-${hoverId}`).addClass('isOver ' + (isTop ? 'top' : 'bottom'));
+			};
+		});
+
+		this.newIndex = Math.max(0, this.newIndex);
+		this.newIndex = Math.min(rows.length - 1, this.newIndex);
+	};
+
+	onDragEndRow (e: any) {
+		e.preventDefault();
+
+		const node = $(ReactDOM.findDOMNode(this));
+		const win = $(window);
+
+		this.cache = {};
+		this.onSortEndRow(this.oldIndex, this.newIndex);
+		this.preventSelect(false);
+		this.preventDrop(false);
+		this.onOptionsClose();
+
+		win.off('drag.tableRow dragend.tableRow');
+		node.find('.table.isClone').remove();
+		node.find('.row.isOver').removeClass('isOver top bottom');
 	};
 
 	onScroll (e: any) {
@@ -813,28 +894,49 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		this.scrollX = wrap.scrollLeft();
 	};
 
-	initCache () {
+	initCache (type: I.BlockType) {
 		if (!this._isMounted) {
 			return;
 		};
 
 		this.cache = {};
 
-		const { columns } = this.getData();
+		const { rows, columns } = this.getData();
 		const node = $(ReactDOM.findDOMNode(this));
 
-		columns.forEach((column: I.Block, i: number) => {
-			const cell = node.find(`.cell.column${column.id}`).first();
-			const p = cell.offset();
+		switch (type) {
+			case I.BlockType.TableColumn:
+				columns.forEach((column: I.Block, i: number) => {
+					const cell = node.find(`.cell.column${column.id}`).first();
+					const p = cell.offset();
 
-			this.cache[column.id] = {
-				x: p.left,
-				y: 0,
-				height: 1,
-				width: cell.outerWidth(),
-				index: i,
-			};
-		});
+					this.cache[column.id] = {
+						x: p.left,
+						y: 0,
+						height: 1,
+						width: cell.outerWidth(),
+						index: i,
+					};
+				});
+				break;
+
+			case I.BlockType.TableRow:
+				const width = node.width();
+
+				rows.forEach((row: I.Block, i: number) => {
+					const el = node.find(`#row-${row.id}`).first();
+					const p = el.offset();
+
+					this.cache[row.id] = {
+						x: p.left,
+						y: p.top,
+						height: el.height(),
+						width: width,
+						index: i,
+					};
+				});
+				break;
+		};
 	};
 
 	alignHIcon (v: I.BlockHAlign): string {
@@ -867,8 +969,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		this.preventSelect(false);
 	};
 
-	onSortEndRow (result: any) {
-		const { oldIndex, newIndex } = result;
+	onSortEndRow (oldIndex: number, newIndex: number) {
 		const { rootId } = this.props;
 		const { rowContainer } = this.getData();
 		const childrenIds = blockStore.getChildrenIds(rootId, rowContainer.id);
@@ -1083,7 +1184,6 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		};
 
 		const length = current.getLength();
-
 		const ret: any[] = [
 			{ id: I.MarkType.Bold, icon: 'bold', name: 'Bold' },
 			{ id: I.MarkType.Italic, icon: 'italic', name: 'Italic' },

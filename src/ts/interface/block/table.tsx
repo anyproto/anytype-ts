@@ -10,6 +10,7 @@ export interface BlockComponentTable extends I.BlockComponent {
 	onCellEnter: (e: any, rowIdx: number, columnIdx: number, id: string) => void;
 	onCellLeave: (e: any, rowIdx: number, columnIdx: number, id: string) => void;
 	onResizeStart: (e: any, id: string) => void;
+	onDragStartRow: (e: any, id: string) => void;
 	onDragStartColumn: (e: any, id: string) => void;
 };
 

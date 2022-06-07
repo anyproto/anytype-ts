@@ -3,7 +3,6 @@ import { I } from 'ts/lib';
 import { Icon, Block } from 'ts/component';
 import { observer } from 'mobx-react';
 import { blockStore } from 'ts/store';
-import { SortableHandle } from 'react-sortable-hoc';
 
 interface Props extends I.BlockComponentTable {
 	rowIdx: number;
@@ -17,7 +16,10 @@ const Constant = require('json/constant.json');
 const BlockTableCell = observer(class BlockTableCell extends React.Component<Props, {}> {
 
 	render () {
-		const { rootId, block, readonly, rowIdx, columnIdx, row, column, onOptions, onHandleClick, onCellFocus, onCellBlur, onCellClick, onCellEnter, onCellLeave, onResizeStart, onDragStartColumn } = this.props;
+		const { 
+			rootId, block, readonly, rowIdx, columnIdx, row, column, onOptions, onHandleClick, onCellFocus, onCellBlur, onCellClick, onCellEnter, 
+			onCellLeave, onResizeStart, onDragStartColumn, onDragStartRow 
+		} = this.props;
 		const childrenIds = blockStore.getChildrenIds(rootId, block.id);
 
 		if (!row || !column) {
@@ -37,14 +39,15 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 			/>
 		);
 
-		const HandleRow = SortableHandle((item: any) => (
+		const HandleRow = (item: any) => (
 			<div 
 				className="icon handleRow"
+				draggable={true}
 				onClick={(e: any) => { onHandleClick(e, item.id); }}
-				onMouseDown={(e: any) => { e.stopPropagation(); }}
+				onDragStart={(e: any) => { onDragStartRow(e, row.id); }}
 				onContextMenu={(e: any) => { onHandleClick(e, item.id); }}
 			/>
-		));
+		);
 
 		return (
 			<div
