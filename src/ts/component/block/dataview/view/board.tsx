@@ -73,6 +73,17 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 		$(window).trigger('resize.editor');
 	};
 
+	componentWillUnmount () {
+		const { rootId, block } = this.props;
+		const ids = [];
+
+		this.groups.forEach((it: any) => {
+			ids.push(dbStore.getSubId(rootId, [ block.id, it.id ].join(':')));
+		});
+
+		C.ObjectSearchUnsubscribe(ids);
+	};
+
 	loadGroupList () {
 		C.ObjectRelationSearchDistinct(GROUP, (message: any) => {
 			this.format = message.format;

@@ -2,7 +2,7 @@
 
 .blocks {
 	.block.blockDataview {
-
+		.viewItem.viewBoard { padding: 20px 0px 0px 0px; }
         .viewItem.viewBoard {
 
 			.ghost { display: none; border: 1px dotted $colorOrange; border-radius: 12px; }
