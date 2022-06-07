@@ -808,7 +808,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		this.width = table.width();
 
 		$(document).off('dragover').on('dragover', (e: any) => { e.preventDefault(); });
-		e.dataTransfer.setDragImage(table.get(0), -3, 0);
+		e.dataTransfer.setDragImage(table.get(0), 4, 4);
 
 		win.on('drag.tableRow', throttle((e: any) => { this.onDragMoveRow(e, id); }, 40));
 		win.on('dragend.tableRow', (e: any) => { this.onDragEndRow(e); });
