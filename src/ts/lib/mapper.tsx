@@ -25,6 +25,15 @@ const Mapper = {
 		return t;
 	},
 
+	BoardGroupType (v: number) {
+		let t = '';
+		let V = Rpc.Object.RelationSearchDistinct.Response.Group.SettingsCase;
+
+		if (v == V.LISTSETTINGS)			 t = 'listSettings';
+		if (v == V.DATESETTINGS)			 t = 'dateSettings';
+		return t;
+	},
+
 	From: {
 
 		Account: (obj: any): I.Account => {
@@ -404,6 +413,26 @@ const Mapper = {
 				artistUrl: obj.getArtisturl(),
             };
 		},
+
+		BoardGroup: (obj: any) => {
+			const type = Mapper.BoardGroupType(obj.getSettingsCase());
+			const settings: any = {};
+			const s = obj['get' + Util.ucFirst(type)]();
+
+			switch (type) {
+				case 'listSettings':
+					settings.color = s.getColor();
+					break;
+
+				case 'date':
+					break;
+			};
+
+			return {
+                name: obj.getName(),
+				settings,
+            };
+		}
 
     },
 

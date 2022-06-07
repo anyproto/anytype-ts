@@ -219,6 +219,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 		const view = this.getView(newViewId);
 		const keys = this.getKeys(view.id);
+
+		if (view.type == I.ViewType.Board) {
+			return;
+		};
 		
 		let limit = Constant.limit.dataview.records;
 		if ([ I.ViewType.Grid, I.ViewType.Gallery, I.ViewType.List ].indexOf(view.type) >= 0) {

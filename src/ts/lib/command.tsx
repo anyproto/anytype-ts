@@ -861,23 +861,6 @@ const ObjectCreateSet = (sources: string[], details: any, templateId: string, ca
 	dispatcher.request(ObjectCreateSet.name, request, callBack);
 };
 
-const ObjectSearch = (filters: I.Filter[], sorts: I.Sort[], keys: string[], fullText: string, offset: number, limit: number, callBack?: (message: any) => void) => {
-	const request = new Rpc.Object.Search.Request();
-
-	filters = filters.concat([
-		{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
-	]);
-	
-	request.setFiltersList(filters.map(Mapper.To.Filter));
-	request.setSortsList(sorts.map(Mapper.To.Sort));
-	request.setFulltext(fullText);
-	request.setOffset(offset);
-	request.setLimit(limit);
-	request.setKeysList(keys);
-
-	dispatcher.request(ObjectSearch.name, request, callBack);
-};
-
 const ObjectSetObjectType = (contextId: string, url: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.SetObjectType.Request();
 	
@@ -924,6 +907,31 @@ const OnSubscribe = (subId: string, keys: string[], message: any) => {
 	}));
 	detailStore.set(subId, details);
 	dbStore.recordsSet(subId, '', message.records.map((it: any) => { return { id: it.id }; }));
+};
+
+const ObjectSearch = (filters: I.Filter[], sorts: I.Sort[], keys: string[], fullText: string, offset: number, limit: number, callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.Search.Request();
+
+	filters = filters.concat([
+		{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
+	]);
+	
+	request.setFiltersList(filters.map(Mapper.To.Filter));
+	request.setSortsList(sorts.map(Mapper.To.Sort));
+	request.setFulltext(fullText);
+	request.setOffset(offset);
+	request.setLimit(limit);
+	request.setKeysList(keys);
+
+	dispatcher.request(ObjectSearch.name, request, callBack);
+};
+
+const ObjectRelationSearchDistinct = (relationKey: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.RelationSearchDistinct.Request();
+
+	request.setRelationkey(relationKey);
+
+	dispatcher.request(ObjectRelationSearchDistinct.name, request, callBack);
 };
 
 const ObjectSearchSubscribe = (subId: string, filters: I.Filter[], sorts: I.Sort[], keys: string[], sources: string[], offset: number, limit: number, ignoreWorkspace: boolean, afterId: string, beforeId: string, noDeps: boolean, callBack?: (message: any) => void) => {
@@ -1416,6 +1424,7 @@ export {
 	ObjectAddWithObjectId,
 	ObjectShareByLink,
 	ObjectSearch,
+	ObjectRelationSearchDistinct,
 	ObjectSearchSubscribe,
 	ObjectSubscribeIds,
 	ObjectSearchUnsubscribe,
