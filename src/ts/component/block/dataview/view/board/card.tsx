@@ -1,25 +1,24 @@
 import * as React from 'react';
 import { I, DataUtil, Relation } from 'ts/lib';
-import { dbStore } from 'ts/store';
+import { dbStore, detailStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import Cell from 'ts/component/block/dataview/cell';
 
 interface Props extends I.ViewComponent {
 	columnId: number;
-	index: number;
-	idx: number;
+	id: string;
 	onDragStartCard?: (e: any, columnId: any, record: any) => void;
 };
 
 const Card = observer(class Card extends React.Component<Props, {}> {
 
 	render () {
-		const { rootId, block, columnId, idx, index, getView, getRecord, onCellClick, onRef, onDragStartCard } = this.props;
+		const { rootId, block, columnId, id, getView, onContext, onRef, onDragStartCard } = this.props;
 		const view = getView();
 		const relations = view.relations.filter((it: any) => { return it.isVisible; });
 		const idPrefix = 'dataviewCell';
-		const subId = dbStore.getSubId(rootId, block.id);
-		const record = getRecord(index);
+		const subId = dbStore.getSubId(rootId, [ block.id, columnId ].join(':'));
+		const record = detailStore.get(subId, id);
 		const cn = [ 'card', DataUtil.layoutClass(record.id, record.layout) ];
 
 		return (
@@ -29,23 +28,25 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 				data-id={record.id}
 				draggable={true}
 				onDragStart={(e: any) => { onDragStartCard(e, columnId, record); }}
+				onClick={(e: any) => { this.onClick(e); }}
+				onContextMenu={(e: any) => { onContext(e, record.id); }}
 			>
 				<div className="ghost top" />
 				<div className="cardContent">
 					{relations.map((relation: any, i: number) => {
-						const id = Relation.cellId(idPrefix, relation.relationKey, index);
+						const id = Relation.cellId(idPrefix, relation.relationKey, 0);
 						return (
 							<Cell 
 								key={'board-cell-' + view.id + relation.relationKey} 
 								{...this.props}
+								getRecord={() => { return record; }}
 								subId={subId}
 								ref={(ref: any) => { onRef(ref, id); }} 
 								relationKey={relation.relationKey}
-								index={index}
+								index={0}
 								viewType={view.type}
 								idPrefix={idPrefix}
 								arrayLimit={2}
-								onClick={(e: any) => { onCellClick(e, relation.relationKey, index); }}
 								showTooltip={true}
 								tooltipX={I.MenuDirection.Left}
 							/>
@@ -55,6 +56,26 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 				<div className="ghost bottom" />
 			</div>
 		);
+	};
+
+	onClick (e: any) {
+		e.preventDefault();
+
+		if (e.shiftKey || e.ctrlKey || e.metaKey || e.altKey) {
+			return;
+		};
+
+		const { rootId, block, columnId, id, onContext } = this.props;
+		const subId = dbStore.getSubId(rootId, [ block.id, columnId ].join(':'));
+		const record = detailStore.get(subId, id);
+		const cb = {
+			0: () => { DataUtil.objectOpenPopup(record); },
+			2: () => { onContext(e, record.id); }
+		};
+
+		if (cb[e.button]) {
+			cb[e.button]();
+		};
 	};
 
 });

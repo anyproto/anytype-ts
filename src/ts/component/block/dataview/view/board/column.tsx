@@ -9,9 +9,8 @@ import Cell from 'ts/component/block/dataview/cell';
 
 interface Props extends I.ViewComponent {
 	groupId: string;
-	value: string;
+	values: any[];
 	columnId: number;
-	list: any[];
 	onAdd (column: number): void;
 	onDragStartColumn?: (e: any, columnId: any) => void;
 	onDragStartCard?: (e: any, columnId: any, record: any) => void;
@@ -20,10 +19,9 @@ interface Props extends I.ViewComponent {
 const Column = observer(class Column extends React.Component<Props, {}> {
 
 	render () {
-		const { rootId, block, groupId, getView, onAdd, list, columnId, value, onDragStartColumn } = this.props;
+		const { rootId, block, groupId, getView, onAdd, columnId, values, onDragStartColumn } = this.props;
 		const view = getView();
-		const subId = dbStore.getSubId(rootId, block.id);
-		const group = view.getRelation(groupId);
+		const subId = dbStore.getSubId(rootId, [ block.id, columnId ].join(':'));
 		const records = dbStore.getRecords(subId, '');
 		const { offset, total } = dbStore.getMeta(subId, '');
 
@@ -38,7 +36,7 @@ const Column = observer(class Column extends React.Component<Props, {}> {
 
 		const Head = (item: any) => {
 			const head = {};
-			head[groupId] = value;
+			head[groupId] = values;
 
 			return (
 				<div 
@@ -71,10 +69,10 @@ const Column = observer(class Column extends React.Component<Props, {}> {
 				<div className="body">
 					<Head index={columnId} />
 					<div className="list">
-						{list.map((child: any, i: number) => (
-							<Card key={'board-card-' +  view.id + i} {...this.props} index={child.index} columnId={columnId} idx={i} />
+						{records.map((record: any, i: number) => (
+							<Card key={'board-card-' +  view.id + i} {...this.props} id={record.id} columnId={columnId} />
 						))}
-						<Add column={columnId} index={list.length} />
+						<Add column={columnId} />
 					</div>
 				</div>
 				<div className="ghost right" />

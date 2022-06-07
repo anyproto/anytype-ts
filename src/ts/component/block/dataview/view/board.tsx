@@ -64,7 +64,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 	};
 
 	componentDidMount () {
-		this.loadGroups();
+		this.loadGroupList();
 		this.resize();
 	};
 
@@ -73,13 +73,47 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 		$(window).trigger('resize.editor');
 	};
 
-	loadGroups () {
+	loadGroupList () {
 		C.ObjectRelationSearchDistinct(GROUP, (message: any) => {
 			this.format = message.format;
-			this.groups = message.groups;
+			this.groups = message.groups.map((it: any, i: number) => {
+				it.id = i;
+				return it;
+			});
+
+			this.groups.forEach((it: any) => {
+				this.loadGroupData(it.id);
+			});
 
 			this.forceUpdate();
 		});
+	};
+
+	loadGroupData (id: number) {
+		const { rootId, block, getView, getKeys } = this.props;
+		const view = getView();
+		const group = this.groups.find(it => it.id == id);
+
+		if (!group) {
+			return;
+		};
+
+		let values: any[] = [];
+
+		switch (this.format) {
+			case I.RelationType.Status:
+				values = group.values[0];
+				break;
+		};
+
+		const filters: I.Filter[] = [
+			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
+			{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
+			{ operator: I.FilterOperator.And, relationKey: GROUP, condition: I.FilterCondition.Equal, value: values },
+		];
+		const subId = dbStore.getSubId(rootId, [ block.id, id ].join(':'));
+
+		C.ObjectSearchSubscribe(subId, filters, view.sorts, getKeys(view.id), block.content.sources, 0, 100, true, '', '', false);
 	};
 
 	onAdd (column: number) {
@@ -284,27 +318,9 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 	};
 	
 	getColumns (): any[] {
-		const { rootId, block } = this.props;
-		const subId = dbStore.getSubId(rootId, block.id);
-		const records = dbStore.getRecords(subId, '');
-		const columns: any[] = [];
-
-		records.forEach((it: any, i: number) => {
-			const object = detailStore.get(subId, it.id, [ GROUP ]);
-			const value = object[GROUP] || '';
-
-			let column = columns.find((col) => { return col.value == value; });
-			if (!column) {
-				column = { value: value, list: [] }
-				columns.push(column);
-			};
-
-			column.list.push({ id: object.id, index: i });
-		});
-
-		return columns;
+		return this.groups || [];
 	};
-	
+
 });
 
 export default ViewBoard;

@@ -37,6 +37,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		this.getData = this.getData.bind(this);
 		this.getRecord = this.getRecord.bind(this);
 		this.getView = this.getView.bind(this);
+		this.getKeys = this.getKeys.bind(this);
 		this.onRowAdd = this.onRowAdd.bind(this);
 		this.onCellClick = this.onCellClick.bind(this);
 		this.onCellChange = this.onCellChange.bind(this);
@@ -107,6 +108,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 						getData={this.getData} 
 						getRecord={this.getRecord}
 						getView={this.getView} 
+						getKeys={this.getKeys}
 						onRowAdd={this.onRowAdd}
 						onCellClick={this.onCellClick}
 						onCellChange={this.onCellChange}
@@ -192,7 +194,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 	};
 
-	getKeys (id: string) {
+	getKeys (id: string): string[] {
 		const view = this.getView(id);
 		const relationKeys = view.relations.map((it: any) => { return it.relationKey; });
 
@@ -218,7 +220,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			};
 		};
 		const view = this.getView(newViewId);
-		const keys = this.getKeys(view.id);
+		const keys = this.getKeys(newViewId);
 
 		let limit = Constant.limit.dataview.records;
 		if ([ I.ViewType.Grid, I.ViewType.Gallery, I.ViewType.List ].indexOf(view.type) >= 0) {
