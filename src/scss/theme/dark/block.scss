@@ -232,4 +232,15 @@
 
 		.item:hover span { border-color: $colorDarkGrey; }
 	}
+
+	/* BlockTable */
+
+	.block.blockTable { 
+		.handleRow, .handleColumn { border-color: $colorBlack; }
+		.table { color: $colorLinePrimary; }
+		.cell { background: $colorBlack; color: $colorLinePrimary; }
+		.cell {
+			.block { color: $colorPrimary; }
+		}
+	}
 }
