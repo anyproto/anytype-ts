@@ -243,15 +243,6 @@ const BlockTextSetIcon = (contextId: string, blockId: string, iconEmoji: string,
 	dispatcher.request(BlockTextSetIcon.name, request, callBack);
 };
 
-const BlockTextListSetStyle = (contextId: string, blockIds: string[], style: I.TextStyle, callBack?: (message: any) => void) => {
-	const request = new Rpc.BlockText.ListSetStyle.Request();
-	
-	request.setContextid(contextId);
-    request.setBlockidsList(blockIds);
-    request.setStyle(style);
-
-	dispatcher.request(BlockTextListSetStyle.name, request, callBack);
-};
 
 const BlockSetFields = (contextId: string, blockId: string, fields: any, callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.SetFields.Request();
@@ -585,6 +576,16 @@ const BlockTextListSetMark = (contextId: string, blockIds: string[], mark: I.Mar
 	dispatcher.request(BlockTextListSetMark.name, request, callBack);
 };
 
+const BlockTextListSetStyle = (contextId: string, blockIds: string[], style: I.TextStyle, callBack?: (message: any) => void) => {
+	const request = new Rpc.BlockText.ListSetStyle.Request();
+	
+	request.setContextid(contextId);
+	request.setBlockidsList(blockIds);
+	request.setStyle(style);
+
+	dispatcher.request(BlockTextListSetStyle.name, request, callBack);
+};
+
 const BlockTextListClearStyle = (contextId: string, blockIds: string[], callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockText.ListClearStyle.Request();
 	
@@ -592,6 +593,15 @@ const BlockTextListClearStyle = (contextId: string, blockIds: string[], callBack
     request.setBlockidsList(blockIds);
 
 	dispatcher.request(BlockTextListClearStyle.name, request, callBack);
+};
+
+const BlockTextListClearContent = (contextId: string, blockIds: string[], callBack?: (message: any) => void) => {
+	const request = new Rpc.BlockText.ListClearContent.Request();
+	
+	request.setContextid(contextId);
+    request.setBlockidsList(blockIds);
+
+	dispatcher.request(BlockTextListClearContent.name, request, callBack);
 };
 
 const BlockListSetFields = (contextId: string, fields: any, callBack?: (message: any) => void) => {
@@ -1443,6 +1453,7 @@ export {
 	BlockTextListSetMark,
 	BlockTextListSetColor,
 	BlockTextListClearStyle,
+	BlockTextListClearContent,
 
 	BlockBookmarkFetch,
 	BlockBookmarkCreateAndFetch,

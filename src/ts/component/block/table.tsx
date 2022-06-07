@@ -443,8 +443,12 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				C.BlockListDelete(rootId, [ targetRowId ]);
 				break;
 
-			case 'clear':
+			case 'clearStyle':
 				C.BlockTextListClearStyle(rootId, blockIds);
+				break;
+
+			case 'clearContent':
+				C.BlockTextListClearContent(rootId, blockIds);
 				break;
 		};
 	};
@@ -1134,7 +1138,8 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			{ id: 'color', icon: 'color', name: 'Color', inner: innerColor, arrow: true },
 			{ id: 'background', icon: 'color', name: 'Background', inner: innerBackground, arrow: true },
 			{ id: 'style', icon: 'customize', name: 'Style', arrow: true },
-			{ id: 'clear', icon: 'clear', name: 'Clear style' },
+			{ id: 'clearStyle', icon: 'clear', name: 'Clear style' },
+			{ id: 'clearContent', icon: 'clear', name: 'Clear content' },
 			{ isDiv: true },
 		];
 	};
