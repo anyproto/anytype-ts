@@ -800,19 +800,20 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
-		const table = $('<div />').addClass('table isClone');
+		const layer = $('<div />');
 		const row = node.find(`#row-${id}`);
 		const clone = row.clone();
+		const table = $('<div />').addClass('table isClone');
 
+		layer.css({ zIndex: 10000, position: 'fixed', left: -10000, top: -10000, paddingTop: 10, paddingLeft: 10 });
+		node.append(layer);
+		layer.append(table);
 		table.append(clone);
-		table.css({ zIndex: 10000, position: 'fixed', left: -10000, top: -10000 });
-
-		node.append(table);
-
+		
 		this.width = table.width();
 
 		$(document).off('dragover').on('dragover', (e: any) => { e.preventDefault(); });
-		e.dataTransfer.setDragImage(table.get(0), 4, 4);
+		e.dataTransfer.setDragImage(layer.get(0), 0, 0);
 
 		win.on('drag.tableRow', throttle((e: any) => { this.onDragMoveRow(e, id); }, 40));
 		win.on('dragend.tableRow', (e: any) => { this.onDragEndRow(e); });
@@ -835,7 +836,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		this.oldIndex = rows.findIndex(it => it.id == id);
 
 		let hoverId = '';
-		let isTop = false;
+		let isBottom = false;
 
 		for (let i = 0; i < rows.length; ++i) {
 			const row = rows[i];
@@ -846,10 +847,10 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			};
 
 			if (rect && Util.rectsCollide({ x: e.pageX, y: e.pageY, width: this.width, height: 1 }, rect)) {
-				isTop = (i == 0) && (e.pageY <= rect.y + rect.height / 2);
+				isBottom = (i == rows.length - 1) && (e.pageY > rect.y + rect.height / 2);
 				hoverId = row.id;
 				
-				this.newIndex = isTop ? rect.index : rect.index + 1;
+				this.newIndex = isBottom ? rect.index + 1 : rect.index;
 				break;
 			};
 		};
@@ -862,7 +863,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			node.find('.row.isOver').removeClass('isOver top bottom');
 
 			if (hoverId) {
-				node.find(`#row-${hoverId}`).addClass('isOver ' + (isTop ? 'top' : 'bottom'));
+				node.find(`#row-${hoverId}`).addClass('isOver ' + (isBottom ? 'bottom' : 'top'));
 			};
 		});
 
