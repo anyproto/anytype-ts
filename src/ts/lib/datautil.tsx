@@ -842,9 +842,21 @@ class DataUtil {
 			};
 			s._sortWeight_ = 0;
 			s.children = (s.children || []).filter((c: any) => { 
-				let ret = false;
-				c._sortWeight_ = 0;
 
+				let ret = false;
+
+				if (c.isBlock && (c.type == I.BlockType.Table)) {
+					const match = filter.match(/table([\d]+)[^\d]{1}([\d]+)/i);
+					if (match) {
+						c.columnCnt = Math.max(1, Math.min(25, Number(match[2]) || 0));
+						c.rowCnt = Math.max(1, Math.min(25, Number(match[2]) || 0));
+
+						c.name += ` ${c.columnCnt}x${c.rowCnt}`;
+						ret = true;
+					};
+				};
+
+				c._sortWeight_ = 0;
 				if (c.skipFilter) {
 					ret = true;
 				} else 
