@@ -13,10 +13,10 @@ import Row from './table/row';
 interface Props extends I.BlockComponent {};
 
 const $ = require('jquery');
-const raf = require('raf');
 const Constant = require('json/constant.json');
 
 const PADDING = 46;
+const SNAP = 10;
 
 const BlockTable = observer(class BlockTable extends React.Component<Props, {}> {
 
@@ -28,6 +28,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 	newIndex: number = -1;
 	timeout: number = 0;
 	scrollX: number = 0;
+
 
 	constructor (props: any) {
 		super(props);
@@ -270,8 +271,6 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				targetRowId = rowId;
 				targetColumnId = columnId;
 
-				//options = options.concat(this.optionsColumn(columnId));
-				//options = options.concat(this.optionsRow(rowId));
 				options = options.concat([
 					{ id: 'row', name: 'Row', arrow: true },
 					{ id: 'column', name: 'Column', arrow: true },
@@ -675,7 +674,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 
 	onResizeEnd (e: any, id: string) {
 		const { rootId } = this.props;
-		const width = Math.max(Constant.size.table.min, Math.min(Constant.size.table.max, e.pageX - this.offsetX));
+		const width = this.checkWidth(e.pageX - this.offsetX);
 
 		C.BlockListSetFields(rootId, [
 			{ blockId: id, fields: { width } },
@@ -954,7 +953,16 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 
 	checkWidth (w: number) {
 		const { min, max } = Constant.size.table;
-		return Math.max(min, Math.min(max, w));
+		const steps = 5;
+
+		let width = Math.max(min, Math.min(max, w));
+		for (let x = 1; x <= steps; ++x) {
+			let s = max / steps * x;
+			if ((width >= s - SNAP) && (width <= s + SNAP)) {
+				width = s;
+			};
+		};
+		return width;
 	};
 
 	optionsRow (id: string) {
