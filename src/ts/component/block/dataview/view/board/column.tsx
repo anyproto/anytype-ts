@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Icon } from 'ts/component';
-import { I } from 'ts/lib';
+import { I, translate } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { dbStore } from 'ts/store';
 
@@ -55,6 +55,7 @@ const Column = observer(class Column extends React.Component<Props, {}> {
 						viewType={I.ViewType.Board}
 						getRecord={() => { return head; }}
 						readonly={true} 
+						placeholder={translate('placeholderCellCommon')}
 					/>
 				</div>
 			);

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, Util } from 'ts/lib';
+import { I, C, Util } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { dbStore, detailStore } from 'ts/store';
 import { throttle } from 'lodash';
@@ -11,9 +11,11 @@ interface Props extends I.ViewComponent {
 	dataset?: any;
 };
 
-const GROUP = 'done';
-const Constant = require('json/constant.json');
 const $ = require('jquery');
+const raf = require('raf');
+const Constant = require('json/constant.json');
+
+const GROUP = 'status';
 const THROTTLE = 20;
 
 const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
@@ -21,6 +23,9 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 	cache: any = {};
 	width: number = 0;
 	height: number = 0;
+	frame: number = 0;
+	groups: any[] = [];
+	format: I.RelationType = null;
 
 	constructor (props: any) {
 		super(props);
@@ -59,12 +64,22 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 	};
 
 	componentDidMount () {
+		this.loadGroups();
 		this.resize();
 	};
 
 	componentDidUpdate () {
 		this.resize();
 		$(window).trigger('resize.editor');
+	};
+
+	loadGroups () {
+		C.ObjectRelationSearchDistinct(GROUP, (message: any) => {
+			this.format = message.format;
+			this.groups = message.groups;
+
+			this.forceUpdate();
+		});
 	};
 
 	onAdd (column: number) {
@@ -133,7 +148,8 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 		const node = $(ReactDOM.findDOMNode(this));
 		const items = node.find('.column');
 
-		this.clear();
+		let isLeft = false;
+		let hoverId = '';
 
 		for (let i = 0; i < items.length; ++i) {
 			const item = $(items.get(i));
@@ -145,12 +161,23 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 			};
 
 			if (rect && this.cache[columnId] && Util.rectsCollide({ x: e.pageX, y: e.pageY, width: this.width, height: this.height }, rect)) {
-				const isLeft = e.pageX <= rect.x + rect.width / 2;
-
-				item.addClass('isOver ' + (isLeft ? 'left' : 'right'));
+				isLeft = e.pageX <= rect.x + rect.width / 2;
+				hoverId = id;
 				break;
 			};
 		};
+
+		if (this.frame) {
+			raf.cancel(this.frame);
+		};
+
+		this.frame = raf(() => {
+			this.clear();
+
+			if (hoverId) {
+				node.find(`#column-${hoverId}`).addClass('isOver ' + (isLeft ? 'left' : 'right'));
+			};
+		});
 	};
 
 	onDragStartCard (e: any, columnId: any, record: any) {

@@ -24,7 +24,12 @@
             .column { display: flex; flex-direction: row; gap: 0px 24px; }
             .column {
 				.body { width: 240px; display: flex; flex-direction: column; }
-                .head { padding: 10px 4px; width: 100%; margin: 0px; }
+                .head { padding: 10px 4px; width: 100%; margin: 0px; cursor: grab; }
+				.head * { cursor: grab; }
+				.head {
+					.empty { display: block; }
+					.tagItem { margin: 0px; }
+				}
             }
 			.column.isDragging {
 				.body { opacity: 0.3; }
