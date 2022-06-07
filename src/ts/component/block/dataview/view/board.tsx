@@ -194,7 +194,8 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 		const node = $(ReactDOM.findDOMNode(this));
 		const items = node.find('.card');
 
-		this.clear();
+		let isTop = false;
+		let hoverId = '';
 
 		for (let i = 0; i < items.length; ++i) {
 			const item = $(items.get(i));
@@ -206,14 +207,27 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 			};
 
 			if (rect && this.cache[record.id] && Util.rectsCollide({ x: e.pageX, y: e.pageY, width: this.width, height: this.height + 8 }, rect)) {
-				const isTop = e.pageY <= rect.y + rect.height / 2;
-				const cn = isTop ? 'top' : 'bottom';
-
-				item.addClass('isOver ' + cn);
-				item.find('.ghost.' + cn).css({ height: this.cache[record.id].height });
+				isTop = e.pageY <= rect.y + rect.height / 2;
+				hoverId = id;
 				break;
 			};
 		};
+
+		if (this.frame) {
+			raf.cancel(this.frame);
+		};
+
+		this.frame = raf(() => {
+			this.clear();
+
+			if (hoverId) {
+				const card = node.find(`#card-${hoverId}`);
+				const cn = isTop ? 'top' : 'bottom';
+
+				card.addClass('isOver ' + cn);
+				card.find('.ghost.' + cn).css({ height: this.cache[hoverId].height });
+			};
+		});
 	};
 
 	onDragEnd (e: any) {

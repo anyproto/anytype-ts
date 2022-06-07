@@ -24,6 +24,7 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 
 		return (
 			<div 
+				id={`card-${record.id}`}
 				className={cn.join(' ')} 
 				data-id={record.id}
 				draggable={true}
