@@ -37,6 +37,7 @@
 
         .line { background: $colorLineSecondary; }
         .section::after { background: $colorLineSecondary; }
+		.separator .inner { background: $colorLineSecondary; }
 
         .item { background: none; }
         .item.hover::before { background: $colorHover; }
