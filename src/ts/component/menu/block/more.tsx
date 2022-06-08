@@ -181,11 +181,13 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const allowedFav = !object.isArchived;
 		const allowedLock = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const allowedLink = config.experimental;
+		const allowedCopy = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Duplicate ]);
 
 		if (!allowedArchive)	 archive = null;
 		if (!allowedDelete)		 pageRemove = null;
 		if (!allowedLock)		 pageLock = null;
 		if (!allowedLink)		 pageLink = null;
+		if (!allowedCopy)		 pageCopy = null;
 		if (!allowedShare)		 share = null;
 		if (!allowedHighlight)	 highlight = null;
 		if (!allowedSearch)		 search = null;
