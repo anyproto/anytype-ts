@@ -560,6 +560,7 @@ class DataUtil {
 			Constant.typeId.page, 
 			Constant.typeId.set, 
 			Constant.typeId.task,
+			Constant.typeId.bookmark,
 		];
 
 		let items = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).filter((it: any) => {
