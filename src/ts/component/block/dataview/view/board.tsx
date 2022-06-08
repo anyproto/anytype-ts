@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, C, Util, DataUtil } from 'ts/lib';
+import { I, C, Util, DataUtil, analytics } from 'ts/lib';
 import { observer } from 'mobx-react';
-import { dbStore } from 'ts/store';
+import { dbStore, detailStore, popupStore } from 'ts/store';
 import { throttle } from 'lodash';
 
 import Column from './board/column';
@@ -158,11 +158,49 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 		const { rootId, block, getView } = this.props;
 		const view = getView();
 		const group = this.groups.find(it => it.id == id);
+		const object = detailStore.get(rootId, rootId, [ 'setOf' ], true);
+		const setOf = object.setOf || [];
 		const details: any = {};
 
 		details[view.groupRelationKey] = group.values;
-		
-		C.BlockDataviewRecordCreate(rootId, block.id, details, '', (message: any) => {
+
+		const create = (template: any) => {
+			C.BlockDataviewRecordCreate(rootId, block.id, details, template?.id, (message: any) => {
+				if (message.error.code) {
+					return;
+				};
+
+				const newRecord = message.record;
+
+				analytics.event('CreateObject', {
+					route: 'Set',
+					objectType: newRecord.type,
+					layout: newRecord.layout,
+					template: template ? (template.templateIsBundled ? template.id : 'custom') : '',
+				});
+			});
+		};
+
+		if (!setOf.length) {
+			create(null);
+			return;
+		};
+
+		const showPopup = () => {
+			popupStore.open('template', {
+				data: {
+					typeId: setOf[0],
+					onSelect: create,
+				},
+			});
+		};
+
+		DataUtil.checkTemplateCnt(setOf, (message: any) => {
+			if (message.records.length > 1) {
+				showPopup();
+			} else {
+				create(message.records.length ? message.records[0] : '');
+			};
 		});
 	};
 

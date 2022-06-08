@@ -350,7 +350,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		if (!setOf.length) {
-			create('');
+			create(null);
 			return;
 		};
 
