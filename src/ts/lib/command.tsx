@@ -448,7 +448,7 @@ const BlockLinkCreateWithObject = (contextId: string, targetId: string, details:
 	request.setDetails(Encode.encodeStruct(details));
 	request.setTemplateid(templateId);
 	request.setFields(Encode.encodeStruct(fields || {}));
-	request.setInternalflagsList(flags);
+	request.setInternalflagsList(flags.map(Mapper.To.InternalFlag));
 
 	dispatcher.request(BlockLinkCreateWithObject.name, request, callBack);
 };
@@ -792,7 +792,7 @@ const ObjectCreate = (details: any, flags: I.ObjectFlag[], callBack?: (message: 
 	const request = new Rpc.Object.Create.Request();
 	
 	request.setDetails(Encode.encodeStruct(details));
-	request.setInternalflagsList(flags);
+	request.setInternalflagsList(flags.map(Mapper.To.InternalFlag));
 
 	dispatcher.request(ObjectCreate.name, request, callBack);
 };
@@ -859,7 +859,7 @@ const ObjectCreateSet = (sources: string[], details: any, templateId: string, fl
 	request.setSourceList(sources);
 	request.setDetails(Encode.encodeStruct(details));
 	request.setTemplateid(templateId);
-	request.setInternalflagsList(flags);
+	request.setInternalflagsList(flags.map(Mapper.To.InternalFlag));
 
 	dispatcher.request(ObjectCreateSet.name, request, callBack);
 };

@@ -668,7 +668,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 	};
 	
 	onAdd (e: any) {
-		DataUtil.pageCreate('', '', {}, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.DeleteEmpty ], (message: any) => {
+		DataUtil.pageCreate('', '', {}, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.DeleteEmpty, I.ObjectFlag.TypeSelect ], (message: any) => {
 			DataUtil.objectOpenPopup({ id: message.targetId });
 		});
 	};
