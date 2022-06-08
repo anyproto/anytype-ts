@@ -501,7 +501,7 @@ class BlockStore {
 		};
 
 		const object = detailStore.get(rootId, rootId, [ 'internalFlags' ]);
-		const check = (object.internalFlags || []).includes(I.ObjectFlag.TypeSelect);
+		const check = (object.internalFlags || []).includes(I.ObjectFlag.SelectType);
 
 		let change = false;
 		if (check) {

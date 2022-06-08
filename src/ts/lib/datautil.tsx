@@ -421,6 +421,7 @@ class DataUtil {
 	
 	pageCreate (rootId: string, targetId: string, details: any, position: I.BlockPosition, templateId: string, fields: any, flags: I.ObjectFlag[], callBack?: (message: any) => void) {
 		details = details || {};
+
 		if (!templateId) {
 			details.type = details.type || commonStore.type;
 		};

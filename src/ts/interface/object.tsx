@@ -81,8 +81,8 @@ export enum OptionScope {
 
 export enum ObjectFlag {
 	DeleteEmpty		 = 0,
-	TypeSelect		 = 1,
-    TemplateSelect	 = 2,
+	SelectType		 = 1,
+    SelectTemplate	 = 2,
 };
 
 export interface ObjectType {
