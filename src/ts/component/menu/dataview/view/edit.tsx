@@ -234,10 +234,7 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 		const { rootId, blockId, readonly } = data;
 		const view = data.view.get();
 		const views = dbStore.getViews(rootId, blockId);
-		const fileOption = this.getFileOptions().find((it: any) => { return it.id == view.coverRelationKey; });
-		const sizeOption = this.getSizeOptions().find((it: any) => { return it.id == view.cardSize; });
 		const allowedView = blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
-
 		const types = DataUtil.menuGetViews().map((it: any) => {
 			it.sectionId = 'type';
 			it.icon = 'view c' + it.id;
@@ -247,6 +244,9 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 		let settings: any[] = [];
 
 		if (view.type == I.ViewType.Gallery) {
+			const fileOption = this.getFileOptions().find(it => it.id == view.coverRelationKey);
+			const sizeOption = this.getSizeOptions().find(it => it.id == view.cardSize);
+
 			settings = settings.concat([
 				{ 
 					id: 'coverRelationKey', icon: 'item-cover', name: 'Cover', caption: fileOption ? fileOption.name : 'Select',
@@ -260,6 +260,17 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 					id: 'coverFit', icon: 'item-fit', name: 'Fit image', withSwitch: true, switchValue: view.coverFit,
 					onSwitch: (e: any, v: boolean) => { this.onSwitch(e, 'coverFit', v); }
 				}
+			]);
+		};
+
+		if (view.type == I.ViewType.Board) {
+			const groupOption = this.getGroupOptions().find(it => it.id == view.groupRelationKey);
+
+			settings = settings.concat([
+				{ 
+					id: 'groupRelationKey', icon: 'item-group', name: 'Group by', caption: groupOption ? groupOption.name : 'Select',
+					withCaption: true, arrow: true,
+				},
 			]);
 		};
 
@@ -466,6 +477,25 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 		return [
 			{ id: '', icon: '', name: 'None' },
 			{ id: 'pageCover', icon: 'image', name: 'Page cover' }
+		].concat(options);
+	};
+
+	getGroupOptions () {
+		const { param } = this.props;
+		const { data } = param;
+		const { rootId, blockId } = data;
+		const options: any[] = dbStore.getRelations(rootId, blockId).filter((it: I.Relation) => {
+			return !it.isHidden && [ I.RelationType.Status ].includes(it.format);
+		}).map((it: any) => {
+			return { 
+				id: it.relationKey, 
+				icon: 'relation ' + DataUtil.relationClass(it.format),
+				name: it.name, 
+			};
+		});
+
+		return [
+			{ id: '', icon: '', name: 'None' },
 		].concat(options);
 	};
 

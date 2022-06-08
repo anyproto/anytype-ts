@@ -7,6 +7,7 @@ class View implements I.View {
 	name: string = '';
 	type: I.ViewType = I.ViewType.Grid;
 	coverRelationKey: string = '';
+	groupRelationKey: string = '';
 	coverFit: boolean = false;
 	cardSize: I.CardSize = I.CardSize.Small;
 	hideIcon: boolean = false;
@@ -21,6 +22,7 @@ class View implements I.View {
 		self.name = String(props.name || DataUtil.defaultName('view'));
 		self.type = Number(props.type) || I.ViewType.Grid;
 		self.coverRelationKey = String(props.coverRelationKey || '');
+		self.groupRelationKey = String(props.groupRelationKey || '');
 		self.coverFit = Boolean(props.coverFit);
 		self.hideIcon = Boolean(props.hideIcon);
 		self.cardSize = Number(props.cardSize) || I.CardSize.Small;
@@ -34,6 +36,7 @@ class View implements I.View {
 			name: observable,
 			type: observable,
 			coverRelationKey: observable,
+			groupRelationKey: observable,
 			coverFit: observable,
 			cardSize: observable,
 			hideIcon: observable,

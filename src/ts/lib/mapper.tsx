@@ -327,6 +327,7 @@ const Mapper = {
 				type: obj.getType(),
 				name: obj.getName(),
 				coverRelationKey: obj.getCoverrelationkey(),
+				groupRelationKey: obj.getGrouprelationkey(),
 				coverFit: obj.getCoverfit(),
 				cardSize: obj.getCardsize(),
 				hideIcon: obj.getHideicon(),
@@ -428,7 +429,10 @@ const Mapper = {
 				};
 			});
 
-			return { values };
+			return { 
+				id: obj.getId(),
+				values,
+			};
 		},
 
     },
@@ -641,6 +645,7 @@ const Mapper = {
 			item.setName(obj.name);
 			item.setType(obj.type);
 			item.setCoverrelationkey(obj.coverRelationKey);
+			item.setGrouprelationkey(obj.groupRelationKey);
 			item.setCoverfit(obj.coverFit);
 			item.setCardsize(obj.cardSize);
 			item.setHideicon(obj.hideIcon);

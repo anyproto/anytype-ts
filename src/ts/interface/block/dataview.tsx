@@ -116,6 +116,7 @@ export interface View {
 	name: string;
 	type: ViewType;
 	coverRelationKey: string;
+	groupRelationKey: string;
 	coverFit: boolean;
 	cardSize: I.CardSize;
 	hideIcon: boolean;
