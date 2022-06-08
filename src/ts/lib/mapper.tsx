@@ -29,8 +29,8 @@ const Mapper = {
 		let t = '';
 		let V = Rpc.Object.RelationSearchDistinct.Response.Value.FieldCase;
 
-		if (v == V.RELATIONOPTION)			 t = 'relationOption';
-		if (v == V.DATESETTINGS)			 t = 'dateSettings';
+		if (v == V.RELATIONID)	 t = 'relationId';
+		if (v == V.DATESETTINGS) t = 'dateSettings';
 		return t;
 	},
 
@@ -420,13 +420,16 @@ const Mapper = {
 				const type = Mapper.BoardGroupType(it.getFieldCase());
 				const field = it['get' + Util.ucFirst(type)]();
 
+				/*
 				switch (type) {
-					case 'relationOption':
+					case 'relatioId':
 						return Mapper.From.SelectOption(field).id;
 
 					case 'dateSettings':
 						return {};
 				};
+				*/
+				return field;
 			});
 
 			return { 
