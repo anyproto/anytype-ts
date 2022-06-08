@@ -80,7 +80,7 @@ const BlockTableOfContents = observer(class BlockTableOfContents extends React.C
 
 	getTree () {
 		const { rootId } = this.props;
-		const blocks = blockStore.unwrapTree([ blockStore.wrapTree(rootId, rootId) ]).filter((it: I.Block) => { return it.isTextHeader(); });
+		const blocks = blockStore.unwrapTree([ blockStore.wrapTree(rootId, rootId) ]).filter(it => it.isTextHeader());
 		const list: any[] = [];
 
 		let hasH1 = false;

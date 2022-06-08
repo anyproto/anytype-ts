@@ -154,7 +154,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		const rowContainer = children.find(it => it.isLayoutTableRows());
 		const columnContainer = children.find(it => it.isLayoutTableColumns());
 		const columns = columnContainer ? blockStore.getChildren(rootId, columnContainer.id, it => it.isTableColumn()) : [];
-		const rows = rowContainer ? blockStore.getChildren(rootId, rowContainer.id, it => it.isTableRow()) : [];
+		const rows = rowContainer ? blockStore.unwrapTree([ blockStore.wrapTree(rootId, rowContainer.id) ]).filter(it => it.isTableRow()) : [];
 
 		return { columnContainer, columns, rowContainer, rows };
 	};
