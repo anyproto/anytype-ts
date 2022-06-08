@@ -243,8 +243,6 @@ const ObjectSearch = (response: any) => {
 
 const ObjectRelationSearchDistinct = (response: any) => {
 	return {
-		relationKey: response.getRelationkey(),
-		format: response.getRelationformat(),
 		groups: (response.getGroupsList() || []).map(Mapper.From.BoardGroup),
 	};
 };

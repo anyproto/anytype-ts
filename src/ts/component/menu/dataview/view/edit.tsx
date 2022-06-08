@@ -365,6 +365,13 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 				});
 				break;
 
+			case 'groupRelationKey':
+				menuId = 'select';
+				menuParam.data = Object.assign(menuParam.data, {
+					options: this.getGroupOptions(),
+				});
+				break;
+
 			case 'cardSize':
 				menuId = 'select';
 				menuParam.data = Object.assign(menuParam.data, {

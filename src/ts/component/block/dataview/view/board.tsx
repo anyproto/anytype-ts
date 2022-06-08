@@ -15,7 +15,6 @@ const $ = require('jquery');
 const raf = require('raf');
 const Constant = require('json/constant.json');
 
-const GROUP = 'status';
 const THROTTLE = 20;
 
 const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
@@ -25,7 +24,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 	height: number = 0;
 	frame: number = 0;
 	groups: any[] = [];
-	format: I.RelationType = null;
+	groupRelationKey: string = '';
 
 	constructor (props: any) {
 		super(props);
@@ -37,6 +36,9 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 	};
 
 	render () {
+		const { getView } = this.props;
+		const view = getView();
+		const { groupRelationKey } = view;
 		const columns = this.getColumns();
 		
 		return (
@@ -50,7 +52,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 									{...this.props} 
 									{...item} 
 									columnId={(i + 1)} 
-									groupId={GROUP} 
+									groupId={view.groupRelationKey} 
 									onAdd={this.onAdd} 
 									onDragStartColumn={this.onDragStartColumn}
 									onDragStartCard={this.onDragStartCard}
@@ -69,7 +71,9 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 	};
 
 	componentDidUpdate () {
+		this.loadGroupList();
 		this.resize();
+
 		$(window).trigger('resize.editor');
 	};
 
@@ -85,8 +89,20 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 	};
 
 	loadGroupList () {
-		C.ObjectRelationSearchDistinct(GROUP, (message: any) => {
-			this.format = message.format;
+		const { getView } = this.props;
+		const view = getView();
+
+		if (!view.groupRelationKey || (this.groupRelationKey == view.groupRelationKey)) {
+			return;
+		};
+
+		this.groupRelationKey = view.groupRelationKey;
+
+		C.ObjectRelationSearchDistinct(view.groupRelationKey, (message: any) => {
+			if (message.error.code) {
+				return;
+			};
+
 			this.groups = message.groups.map((it: any, i: number) => {
 				it.id = i;
 				return it;
@@ -104,6 +120,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 		const { rootId, block, getView, getKeys } = this.props;
 		const view = getView();
 		const group = this.groups.find(it => it.id == id);
+		const relation = dbStore.getRelation(rootId, block.id, view.groupRelationKey);
 
 		if (!group) {
 			return;
@@ -111,7 +128,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 
 		let values: any[] = [];
 
-		switch (this.format) {
+		switch (relation.format) {
 			case I.RelationType.Status:
 				values = group.values[0];
 				break;
@@ -120,7 +137,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 		const filters: I.Filter[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
 			{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
-			{ operator: I.FilterOperator.And, relationKey: GROUP, condition: I.FilterCondition.Equal, value: values },
+			{ operator: I.FilterOperator.And, relationKey: view.groupRelationKey, condition: I.FilterCondition.Equal, value: values },
 		];
 		const subId = dbStore.getSubId(rootId, [ block.id, id ].join(':'));
 
