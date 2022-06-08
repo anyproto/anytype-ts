@@ -39,20 +39,17 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 		const { getView } = this.props;
 		const view = getView();
 		const { groupRelationKey } = view;
-		const columns = this.getColumns();
 		
 		return (
 			<div className="wrap">
 				<div className="scroll">
 					<div className="viewItem viewBoard">
 						<div className="columns">
-							{columns.map((item: any, i: number) => (
+							{this.groups.map((group: any, i: number) => (
 								<Column 
 									key={i} 
 									{...this.props} 
-									{...item} 
-									columnId={(i + 1)} 
-									groupId={view.groupRelationKey} 
+									{...group} 
 									onAdd={this.onAdd} 
 									onDragStartColumn={this.onDragStartColumn}
 									onDragStartCard={this.onDragStartCard}
@@ -92,22 +89,26 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 		const { getView } = this.props;
 		const view = getView();
 
-		if (!view.groupRelationKey || (this.groupRelationKey == view.groupRelationKey)) {
+		console.log(this.groupRelationKey, view.groupRelationKey);
+		if (this.groupRelationKey == view.groupRelationKey) {
 			return;
 		};
 
 		this.groupRelationKey = view.groupRelationKey;
+
+		if (!view.groupRelationKey) {
+			this.clearGroupData();
+			return;
+		};
+
+		this.clearGroupData();
 
 		C.ObjectRelationSearchDistinct(view.groupRelationKey, (message: any) => {
 			if (message.error.code) {
 				return;
 			};
 
-			this.groups = message.groups.map((it: any, i: number) => {
-				it.id = i;
-				return it;
-			});
-
+			this.groups = message.groups;
 			this.groups.forEach((it: any) => {
 				this.loadGroupData(it.id);
 			});
@@ -116,7 +117,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 		});
 	};
 
-	loadGroupData (id: number) {
+	loadGroupData (id: string) {
 		const { rootId, block, getView, getKeys } = this.props;
 		const view = getView();
 		const group = this.groups.find(it => it.id == id);
@@ -142,6 +143,15 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 		const subId = dbStore.getSubId(rootId, [ block.id, id ].join(':'));
 
 		C.ObjectSearchSubscribe(subId, filters, view.sorts, getKeys(view.id), block.content.sources, 0, 100, true, '', '', false);
+	};
+
+	clearGroupData () {
+		const { rootId, block } = this.props;
+
+		this.groups.forEach((it: any) => {
+			const subId = dbStore.getSubId(rootId, [ block.id, it.id ].join(':'));
+			dbStore.recordsClear(subId, '');
+		});
 	};
 
 	onAdd (column: number) {
@@ -196,17 +206,17 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 		});
 	};
 
-	onDragStartColumn (e: any, columnId: any) {
+	onDragStartColumn (e: any, groupId: string) {
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
 
-		this.onDragStartCommon(e, node.find('#column-' + columnId));
+		this.onDragStartCommon(e, node.find(`#column-${groupId}`));
 		this.initCache(node.find('.column'));
 
-		win.on('drag.board', throttle((e: any) => { this.onDragMoveColumn(e, columnId); }, THROTTLE));
+		win.on('drag.board', throttle((e: any) => { this.onDragMoveColumn(e, groupId); }, THROTTLE));
 	};
 
-	onDragMoveColumn (e: any, columnId: any) {
+	onDragMoveColumn (e: any, groupId: string) {
 		const node = $(ReactDOM.findDOMNode(this));
 		const items = node.find('.column');
 
@@ -218,11 +228,11 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 			const id = item.data('id');
 			const rect = this.cache[id];
 
-			if (id == columnId) {
+			if (id == groupId) {
 				continue;
 			};
 
-			if (rect && this.cache[columnId] && Util.rectsCollide({ x: e.pageX, y: e.pageY, width: this.width, height: this.height }, rect)) {
+			if (rect && this.cache[groupId] && Util.rectsCollide({ x: e.pageX, y: e.pageY, width: this.width, height: this.height }, rect)) {
 				isLeft = e.pageX <= rect.x + rect.width / 2;
 				hoverId = id;
 				break;
@@ -242,17 +252,17 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 		});
 	};
 
-	onDragStartCard (e: any, columnId: any, record: any) {
+	onDragStartCard (e: any, groupId: any, record: any) {
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
 
 		this.onDragStartCommon(e, $(e.currentTarget));
 		this.initCache(node.find('.card'));
 
-		win.on('drag.board', throttle((e: any) => { this.onDragMoveCard(e, columnId, record); }, THROTTLE));
+		win.on('drag.board', throttle((e: any) => { this.onDragMoveCard(e, groupId, record); }, THROTTLE));
 	};
 
-	onDragMoveCard (e: any, columnId: any, record: any) {
+	onDragMoveCard (e: any, groupId: any, record: any) {
 		const node = $(ReactDOM.findDOMNode(this));
 		const items = node.find('.card');
 
@@ -345,10 +355,6 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 		viewItem.css({ width: vw });
 	};
 	
-	getColumns (): any[] {
-		return this.groups || [];
-	};
-
 });
 
 export default ViewBoard;

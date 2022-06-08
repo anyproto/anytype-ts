@@ -5,19 +5,19 @@ import { observer } from 'mobx-react';
 import Cell from 'ts/component/block/dataview/cell';
 
 interface Props extends I.ViewComponent {
-	columnId: number;
+	groupId: string;
 	id: string;
-	onDragStartCard?: (e: any, columnId: any, record: any) => void;
+	onDragStartCard?: (e: any, groupId: any, record: any) => void;
 };
 
 const Card = observer(class Card extends React.Component<Props, {}> {
 
 	render () {
-		const { rootId, block, columnId, id, getView, onContext, onRef, onDragStartCard } = this.props;
+		const { rootId, block, groupId, id, getView, onContext, onRef, onDragStartCard } = this.props;
 		const view = getView();
 		const relations = view.relations.filter((it: any) => { return it.isVisible; });
 		const idPrefix = 'dataviewCell';
-		const subId = dbStore.getSubId(rootId, [ block.id, columnId ].join(':'));
+		const subId = dbStore.getSubId(rootId, [ block.id, groupId ].join(':'));
 		const record = detailStore.get(subId, id);
 		const cn = [ 'card', DataUtil.layoutClass(record.id, record.layout) ];
 
@@ -27,7 +27,7 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 				className={cn.join(' ')} 
 				data-id={record.id}
 				draggable={true}
-				onDragStart={(e: any) => { onDragStartCard(e, columnId, record); }}
+				onDragStart={(e: any) => { onDragStartCard(e, groupId, record); }}
 				onClick={(e: any) => { this.onClick(e); }}
 				onContextMenu={(e: any) => { onContext(e, record.id); }}
 			>
@@ -65,8 +65,8 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 			return;
 		};
 
-		const { rootId, block, columnId, id, onContext } = this.props;
-		const subId = dbStore.getSubId(rootId, [ block.id, columnId ].join(':'));
+		const { rootId, block, groupId, id, onContext } = this.props;
+		const subId = dbStore.getSubId(rootId, [ block.id, groupId ].join(':'));
 		const record = detailStore.get(subId, id);
 		const cb = {
 			0: () => { DataUtil.objectOpenPopup(record); },

@@ -8,20 +8,19 @@ import Card from './card';
 import Cell from 'ts/component/block/dataview/cell';
 
 interface Props extends I.ViewComponent {
-	groupId: string;
+	id: string;
 	values: any[];
-	columnId: number;
 	onAdd (column: number): void;
-	onDragStartColumn?: (e: any, columnId: any) => void;
-	onDragStartCard?: (e: any, columnId: any, record: any) => void;
+	onDragStartColumn?: (e: any, groupId: any) => void;
+	onDragStartCard?: (e: any, groupId: any, record: any) => void;
 };
 
 const Column = observer(class Column extends React.Component<Props, {}> {
 
 	render () {
-		const { rootId, block, groupId, getView, onAdd, columnId, values, onDragStartColumn } = this.props;
+		const { rootId, block, id, getView, onAdd, values, onDragStartColumn } = this.props;
 		const view = getView();
-		const subId = dbStore.getSubId(rootId, [ block.id, columnId ].join(':'));
+		const subId = dbStore.getSubId(rootId, [ block.id, id ].join(':'));
 		const records = dbStore.getRecords(subId, '');
 		const { offset, total } = dbStore.getMeta(subId, '');
 
@@ -36,20 +35,20 @@ const Column = observer(class Column extends React.Component<Props, {}> {
 
 		const Head = (item: any) => {
 			const head = {};
-			head[groupId] = values;
+			head[view.groupRelationKey] = values;
 
 			return (
 				<div 
 					className="head" 
 					draggable={true}
-					onDragStart={(e: any) => { onDragStartColumn(e, columnId); }}
+					onDragStart={(e: any) => { onDragStartColumn(e, id); }}
 				>
 					<Cell 
 						id={'board-head-' + item.index} 
 						rootId={rootId}
 						subId={subId}
 						block={block}
-						relationKey={groupId} 
+						relationKey={id} 
 						viewType={I.ViewType.Board}
 						getRecord={() => { return head; }}
 						readonly={true} 
@@ -61,18 +60,18 @@ const Column = observer(class Column extends React.Component<Props, {}> {
 
 		return (
 			<div 
-				id={'column-' + columnId} 
+				id={'column-' + id} 
 				className="column" 
-				data-id={columnId}
+				data-id={id}
 			>
 				<div className="ghost left" />
 				<div className="body">
-					<Head index={columnId} />
+					<Head index={id} />
 					<div className="list">
 						{records.map((record: any, i: number) => (
-							<Card key={'board-card-' +  view.id + i} {...this.props} id={record.id} columnId={columnId} />
+							<Card key={'board-card-' +  view.id + i} {...this.props} id={record.id} groupId={id} />
 						))}
-						<Add column={columnId} />
+						<Add column={id} />
 					</div>
 				</div>
 				<div className="ghost right" />

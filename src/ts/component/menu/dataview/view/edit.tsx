@@ -42,7 +42,7 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 						<MenuItemVertical 
 							key={i} 
 							{...action} 
-							icon={action.icon || action.id}
+							icon={action.icon}
 							readonly={!allowedView}
 							checkbox={(view.type == action.id) && (item.id == 'type')}
 							onMouseEnter={(e: any) => { this.onMouseEnter(e, action); }}
@@ -248,16 +248,10 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 			const sizeOption = this.getSizeOptions().find(it => it.id == view.cardSize);
 
 			settings = settings.concat([
+				{ id: 'coverRelationKey', name: 'Cover', caption: (fileOption ? fileOption.name : 'Select'), withCaption: true, arrow: true },
+				{ id: 'cardSize', name: 'Card size', caption: (sizeOption ? sizeOption.name : 'Select'), withCaption: true, arrow: true },
 				{ 
-					id: 'coverRelationKey', icon: 'item-cover', name: 'Cover', caption: fileOption ? fileOption.name : 'Select',
-					withCaption: true, arrow: true,
-				},
-				{ 
-					id: 'cardSize', icon: 'item-size', name: 'Card size', caption: sizeOption ? sizeOption.name : 'Select',
-					withCaption: true, arrow: true,
-				},
-				{
-					id: 'coverFit', icon: 'item-fit', name: 'Fit image', withSwitch: true, switchValue: view.coverFit,
+					id: 'coverFit', name: 'Fit image', withSwitch: true, switchValue: view.coverFit, 
 					onSwitch: (e: any, v: boolean) => { this.onSwitch(e, 'coverFit', v); }
 				}
 			]);
@@ -267,15 +261,12 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 			const groupOption = this.getGroupOptions().find(it => it.id == view.groupRelationKey);
 
 			settings = settings.concat([
-				{ 
-					id: 'groupRelationKey', icon: 'item-group', name: 'Group by', caption: groupOption ? groupOption.name : 'Select',
-					withCaption: true, arrow: true,
-				},
+				{ id: 'groupRelationKey', name: 'Group by', caption: groupOption ? groupOption.name : 'Select', withCaption: true, arrow: true },
 			]);
 		};
 
 		settings.push({
-			id: 'hideIcon', icon: 'item-icon', name: 'Show icon', withSwitch: true, switchValue: !view.hideIcon,
+			id: 'hideIcon', name: 'Show icon', withSwitch: true, switchValue: !view.hideIcon,
 			onSwitch: (e: any, v: boolean) => { this.onSwitch(e, 'hideIcon', !v); }
 		});
 
@@ -294,7 +285,7 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 		};
 
 		sections = sections.map((s: any) => {
-			s.children = s.children.filter((it: any) => { return it; });
+			s.children = s.children.filter(it => it);
 			return s;
 		});
 
