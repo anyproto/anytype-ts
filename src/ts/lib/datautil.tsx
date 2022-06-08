@@ -846,12 +846,12 @@ class DataUtil {
 				let ret = false;
 
 				if (c.isBlock && (c.type == I.BlockType.Table)) {
-					const match = filter.match(/table([\d]+)[^\d]{1}([\d]+)/i);
+					const match = filter.match(/table([\d]+)(?:[^\d]{1}([\d]+))?/i);
 					if (match) {
-						c.columnCnt = Math.max(1, Math.min(25, Number(match[2]) || 0));
-						c.rowCnt = Math.max(1, Math.min(25, Number(match[2]) || 0));
+						c.rowCnt = Math.max(1, Math.min(25, Number(match[1]) || 3));
+						c.columnCnt = Math.max(1, Math.min(25, Number(match[2]) || 3));
 
-						c.name += ` ${c.columnCnt}x${c.rowCnt}`;
+						c.name += ` ${c.rowCnt}x${c.columnCnt}`;
 						ret = true;
 					};
 				};
