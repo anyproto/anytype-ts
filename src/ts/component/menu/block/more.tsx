@@ -177,7 +177,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const allowedSearch = !block.isObjectSet() && !block.isObjectSpace();
 		const allowedHighlight = !(!object.workspaceId || block.isObjectSpace() || !config.allowSpaces);
 		const allowedHistory = block.canHaveHistory() && !object.templateIsBundled;
-		const allowedTemplate = (object.type != Constant.typeId.note) && (object.id != profile);
+		const allowedTemplate = (object.type != Constant.typeId.note) && (object.id != profile) && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Template ]);
 		const allowedFav = !object.isArchived;
 		const allowedLock = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const allowedLink = config.experimental;
