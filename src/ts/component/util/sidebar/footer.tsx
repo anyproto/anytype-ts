@@ -74,7 +74,7 @@ const Footer = observer(class Item extends React.Component<Props, {}> {
 	};
 
 	onAdd (e: any) {
-		DataUtil.pageCreate('', '', { isDraft: true }, I.BlockPosition.Bottom, '', {}, (message: any) => {
+		DataUtil.pageCreate('', '', {}, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.DeleteEmpty ], (message: any) => {
 			DataUtil.objectOpenPopup({ id: message.targetId });
 		});
 	};

@@ -437,7 +437,7 @@ const BlockLatexSetText = (contextId: string, blockId: string, text: string, cal
 
 // ---------------------- BLOCK LINK ---------------------- //
 
-const BlockLinkCreateWithObject = (contextId: string, targetId: string, details: any, position: I.BlockPosition, templateId: string, fields: any, callBack?: (message: any) => void) => {
+const BlockLinkCreateWithObject = (contextId: string, targetId: string, details: any, position: I.BlockPosition, templateId: string, fields: any, flags: I.ObjectFlag[], callBack?: (message: any) => void) => {
 	details = details || {};
 
 	const request = new Rpc.BlockLink.CreateWithObject.Request();
@@ -448,6 +448,7 @@ const BlockLinkCreateWithObject = (contextId: string, targetId: string, details:
 	request.setDetails(Encode.encodeStruct(details));
 	request.setTemplateid(templateId);
 	request.setFields(Encode.encodeStruct(fields || {}));
+	request.setInternalflags(flags);
 
 	dispatcher.request(BlockLinkCreateWithObject.name, request, callBack);
 };
@@ -787,10 +788,11 @@ const ObjectTypeRelationRemove = (objectTypeId: string, relationKey: string, cal
 
 // ---------------------- OBJECT ---------------------- //
 
-const ObjectCreate = (details: any, callBack?: (message: any) => void) => {
+const ObjectCreate = (details: any, flags: I.ObjectFlag[], callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.Create.Request();
 	
 	request.setDetails(Encode.encodeStruct(details));
+	request.setInternalflags(flags);
 
 	dispatcher.request(ObjectCreate.name, request, callBack);
 };
@@ -851,12 +853,13 @@ const ObjectRedo = (contextId: string, callBack?: (message: any) => void) => {
 	dispatcher.request(ObjectRedo.name, request, callBack);
 };
 
-const ObjectCreateSet = (sources: string[], details: any, templateId: string, callBack?: (message: any) => void) => {
+const ObjectCreateSet = (sources: string[], details: any, templateId: string, flags: I.ObjectFlag[], callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.CreateSet.Request();
 	
 	request.setSourceList(sources);
 	request.setDetails(Encode.encodeStruct(details));
 	request.setTemplateid(templateId);
+	request.setInternalflags(flags);
 
 	dispatcher.request(ObjectCreateSet.name, request, callBack);
 };

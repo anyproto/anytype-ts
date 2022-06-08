@@ -364,7 +364,7 @@ const CellObject = observer(class CellObject extends React.Component<Props, Stat
 			};
 		};
 
-		DataUtil.pageCreate('', '', details, I.BlockPosition.Bottom, '', {}, (message: any) => {
+		DataUtil.pageCreate('', '', details, I.BlockPosition.Bottom, '', {}, [], (message: any) => {
 			if (!message.error.code) {
 				this.onValueAdd(message.targetId);
 			};

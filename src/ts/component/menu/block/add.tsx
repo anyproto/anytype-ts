@@ -617,7 +617,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 							});
 						};
 
-						DataUtil.pageCreate(rootId, blockId, details, position, template?.id, DataUtil.defaultLinkSettings(), cb);
+						DataUtil.pageCreate(rootId, blockId, details, position, template?.id, DataUtil.defaultLinkSettings(), [], cb);
 					};
 
 					const showMenu = () => {
@@ -638,7 +638,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 					});
 				} else 
 				if (item.type == I.BlockType.Page) {
-					DataUtil.pageCreate(rootId, blockId, details, position, '', DataUtil.defaultLinkSettings(), (message: any) => {
+					DataUtil.pageCreate(rootId, blockId, details, position, '', DataUtil.defaultLinkSettings(), [], (message: any) => {
 						DataUtil.objectOpenPopup({ ...details, id: message.targetId });
 					});
 				} else {

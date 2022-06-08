@@ -250,7 +250,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		if (item.id == 'add') {
 			const type = dbStore.getObjectType(commonStore.type);
 
-			C.ObjectCreate({ type: type.id, name: filter.text.replace(/\\/g, '') }, (message: any) => {
+			C.ObjectCreate({ type: type.id, name: filter.text.replace(/\\/g, '') }, [], (message: any) => {
 				if (message.error.code) {
 					return;
 				};

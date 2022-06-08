@@ -306,7 +306,7 @@ class Keyboard {
 			};
 		};
 		
-		DataUtil.pageCreate(rootId, targetId, details, position, '', {}, (message: any) => {
+		DataUtil.pageCreate(rootId, targetId, details, position, '', {}, [], (message: any) => {
 			DataUtil.objectOpenPopup({ id: message.targetId });
 		});
 	};

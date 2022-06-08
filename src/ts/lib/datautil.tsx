@@ -419,13 +419,13 @@ class DataUtil {
 		return r;
 	};
 	
-	pageCreate (rootId: string, targetId: string, details: any, position: I.BlockPosition, templateId: string, fields: any, callBack?: (message: any) => void) {
+	pageCreate (rootId: string, targetId: string, details: any, position: I.BlockPosition, templateId: string, fields: any, flags: I.ObjectFlag[], callBack?: (message: any) => void) {
 		details = details || {};
 		if (!templateId) {
 			details.type = details.type || commonStore.type;
 		};
 		
-		C.BlockLinkCreateWithObject(rootId, targetId, details, position, templateId, fields, (message: any) => {
+		C.BlockLinkCreateWithObject(rootId, targetId, details, position, templateId, fields, flags, (message: any) => {
 			if (message.error.code) {
 				return;
 			};
