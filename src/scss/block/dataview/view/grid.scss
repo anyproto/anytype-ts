@@ -3,6 +3,7 @@
 .blocks {
 	.block.blockDataview {
 		.rowHead { display: block; white-space: nowrap; width: calc(100% - 4px); margin-left: 2px; height: 48px; }
+		.scroll { padding-bottom: 20px; }
 
 		.cellHead { 
 			text-align: left; color: $colorDarkGrey; padding: 14px; font-weight: 400; line-height: 20px; position: relative; 

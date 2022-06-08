@@ -10,7 +10,7 @@ import Cell from 'ts/component/block/dataview/cell';
 interface Props extends I.ViewComponent {
 	id: string;
 	values: any[];
-	onAdd (column: number): void;
+	onAdd (groupId: string): void;
 	onDragStartColumn?: (e: any, groupId: any) => void;
 	onDragStartCard?: (e: any, groupId: any, record: any) => void;
 };
@@ -30,7 +30,7 @@ const Column = observer(class Column extends React.Component<Props, {}> {
 		const Add = (item: any) => (
 			<div 
 				className="card add"
-				onClick={() => { onAdd(item.column); }}
+				onClick={() => { onAdd(id); }}
 			>
 				<Icon className="plus" />
 			</div>
@@ -66,7 +66,7 @@ const Column = observer(class Column extends React.Component<Props, {}> {
 						{records.map((record: any, i: number) => (
 							<Card key={'board-card-' +  view.id + i} {...this.props} id={record.id} groupId={id} />
 						))}
-						<Add column={id} />
+						<Add />
 					</div>
 				</div>
 				<div className="ghost right" />

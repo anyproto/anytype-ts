@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, C, Util } from 'ts/lib';
+import { I, C, Util, DataUtil } from 'ts/lib';
 import { observer } from 'mobx-react';
-import { dbStore, detailStore } from 'ts/store';
+import { dbStore } from 'ts/store';
 import { throttle } from 'lodash';
 
 import Column from './board/column';
@@ -89,19 +89,17 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 		const { getView } = this.props;
 		const view = getView();
 
-		console.log(this.groupRelationKey, view.groupRelationKey);
 		if (this.groupRelationKey == view.groupRelationKey) {
 			return;
 		};
 
+		this.clearGroupData();
 		this.groupRelationKey = view.groupRelationKey;
 
 		if (!view.groupRelationKey) {
-			this.clearGroupData();
+			this.forceUpdate();
 			return;
 		};
-
-		this.clearGroupData();
 
 		C.ObjectRelationSearchDistinct(view.groupRelationKey, (message: any) => {
 			if (message.error.code) {
@@ -152,9 +150,20 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 			const subId = dbStore.getSubId(rootId, [ block.id, it.id ].join(':'));
 			dbStore.recordsClear(subId, '');
 		});
+
+		this.groups = [];
 	};
 
-	onAdd (column: number) {
+	onAdd (id: string) {
+		const { rootId, block, getView } = this.props;
+		const view = getView();
+		const group = this.groups.find(it => it.id == id);
+		const details: any = {};
+
+		details[view.groupRelationKey] = group.values;
+		
+		C.BlockDataviewRecordCreate(rootId, block.id, details, '', (message: any) => {
+		});
 	};
 
 	onDragStartCommon (e: any, target: any) {

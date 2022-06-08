@@ -5,8 +5,8 @@ import { observer } from 'mobx-react';
 import Cell from 'ts/component/block/dataview/cell';
 
 interface Props extends I.ViewComponent {
-	groupId: string;
 	id: string;
+	groupId: string;
 	onDragStartCard?: (e: any, groupId: any, record: any) => void;
 };
 
