@@ -120,25 +120,22 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 		const view = getView();
 		const group = this.groups.find(it => it.id == id);
 		const relation = dbStore.getRelation(rootId, block.id, view.groupRelationKey);
+		const subId = dbStore.getSubId(rootId, [ block.id, id ].join(':'));
 
-		if (!group) {
+		if (!group || !relation) {
 			return;
-		};
-
-		let values: any[] = [];
-
-		switch (relation.format) {
-			case I.RelationType.Status:
-				values = group.values[0];
-				break;
 		};
 
 		const filters: I.Filter[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
 			{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
-			{ operator: I.FilterOperator.And, relationKey: view.groupRelationKey, condition: I.FilterCondition.Equal, value: values },
 		];
-		const subId = dbStore.getSubId(rootId, [ block.id, id ].join(':'));
+
+		switch (relation.format) {
+			default:
+				filters.push({ operator: I.FilterOperator.And, relationKey: relation.relationKey, condition: I.FilterCondition.Equal, value: group.value });
+				break;
+		};
 
 		C.ObjectSearchSubscribe(subId, filters, view.sorts, getKeys(view.id), block.content.sources, 0, 100, true, '', '', false);
 	};
@@ -162,7 +159,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 		const setOf = object.setOf || [];
 		const details: any = {};
 
-		details[view.groupRelationKey] = group.values;
+		details[view.groupRelationKey] = group.value;
 
 		const create = (template: any) => {
 			C.BlockDataviewRecordCreate(rootId, block.id, details, template?.id, (message: any) => {

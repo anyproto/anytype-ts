@@ -9,7 +9,7 @@ import Cell from 'ts/component/block/dataview/cell';
 
 interface Props extends I.ViewComponent {
 	id: string;
-	values: any[];
+	value: any;
 	onAdd (groupId: string): void;
 	onDragStartColumn?: (e: any, groupId: any) => void;
 	onDragStartCard?: (e: any, groupId: any, record: any) => void;
@@ -18,14 +18,14 @@ interface Props extends I.ViewComponent {
 const Column = observer(class Column extends React.Component<Props, {}> {
 
 	render () {
-		const { rootId, block, id, getView, onAdd, values, onDragStartColumn } = this.props;
+		const { rootId, block, id, getView, onAdd, value, onDragStartColumn } = this.props;
 		const view = getView();
 		const subId = dbStore.getSubId(rootId, [ block.id, id ].join(':'));
 		const records = dbStore.getRecords(subId, '');
 		const { offset, total } = dbStore.getMeta(subId, '');
 		const head = {};
 
-		head[view.groupRelationKey] = values;
+		head[view.groupRelationKey] = value;
 
 		const Add = (item: any) => (
 			<div 

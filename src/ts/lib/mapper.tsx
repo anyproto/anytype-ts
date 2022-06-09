@@ -27,10 +27,10 @@ const Mapper = {
 
 	BoardGroupType (v: number) {
 		let t = '';
-		let V = Rpc.Object.RelationSearchDistinct.Response.Value.FieldCase;
+		let V = Rpc.Object.RelationSearchDistinct.Response.Group.ValueCase;
 
-		if (v == V.RELATIONID)	 t = 'relationId';
-		if (v == V.DATESETTINGS) t = 'dateSettings';
+		if (v == V.STATUS)	 t = 'status';
+		if (v == V.TAG)		 t = 'tag';
 		return t;
 	},
 
@@ -416,25 +416,23 @@ const Mapper = {
 		},
 
 		BoardGroup: (obj: any) => {
-			const values: any[] = (obj.getValueList() || []).map((it: any) => {
-				const type = Mapper.BoardGroupType(it.getFieldCase());
-				const field = it['get' + Util.ucFirst(type)]();
+			const type = Mapper.BoardGroupType(obj.getValueCase());
+			const field = obj['get' + Util.ucFirst(type)]();
 
-				/*
-				switch (type) {
-					case 'relatioId':
-						return Mapper.From.SelectOption(field).id;
+			let value: any = null;
+			switch (type) {
+				case 'status':
+					value = field.getId();
+					break;
 
-					case 'dateSettings':
-						return {};
-				};
-				*/
-				return field;
-			});
+				case 'tag':
+					value = field.getIdList();
+					break;
+			};
 
 			return { 
 				id: obj.getId(),
-				values,
+				value,
 			};
 		},
 
