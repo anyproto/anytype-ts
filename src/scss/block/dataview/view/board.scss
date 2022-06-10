@@ -20,16 +20,18 @@
 				.ghost.bottom { display: block; }
 			}
 
-            .columns { display: flex; gap: 0px 24px; flex-direction: row; }
+            .columns { display: flex; flex-direction: row; gap: 0px 6px; }
             .column { display: flex; flex-direction: row; gap: 0px 24px; }
             .column {
-				.body { width: 240px; display: flex; flex-direction: column; }
+				.body { width: 254px; display: flex; flex-direction: column; }
                 .head { padding: 10px 4px; width: 100%; margin: 0px; cursor: grab; }
 				.head * { cursor: grab; }
 				.head {
 					.empty { display: block; }
 					.tagItem { margin: 0px; }
 				}
+
+				.list { overflow-y: overlay; overflow-x: hidden; max-height: 600px; }
             }
 			.column.isDragging {
 				.body { opacity: 0.3; }

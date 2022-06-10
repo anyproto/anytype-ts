@@ -324,8 +324,8 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 		});
 		C.BlockDataviewGroupOrderUpdate(rootId, block.id, [ { viewId: view.id, groups: groups } ]);
 
-		this.resize();
 		this.onDragEndCommon(e);
+		this.resize();
 	};
 
 	onDragStartCard (e: any, groupId: any, record: any) {
@@ -392,18 +392,18 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 	};
 
 	resize () {
+		const { boardGroups } = dbStore;
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
 		const scroll = node.find('.scroll');
 		const viewItem = node.find('.viewItem');
-		const columns = node.find('.column');
 		const ww = win.width();
 		const mw = ww - 192;
 		const size = Constant.size.dataview.board;
 		
 		let vw = 0;
 		let margin = 0;
-		let width = columns.length * (size.card + size.margin);
+		let width = boardGroups.length * (size.card + size.margin);
 
 		if (width < mw) {
 			vw = mw;
