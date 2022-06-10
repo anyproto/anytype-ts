@@ -102,9 +102,6 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 			return;
 		};
 
-		console.log(JSON.stringify(block.content.groupOrder, null, 5));
-		console.log(view.id);
-
 		const groupOrder: any = {};
  		const el = block.content.groupOrder.find(it => it.viewId == view.id);
 
@@ -119,7 +116,6 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 				return;
 			};
 
-			console.log(JSON.stringify(groupOrder, null, 5));
 			message.groups.sort((c1: any, c2: any) => {
 				if (groupOrder[c1.id] > groupOrder[c2.id]) return 1;
 				if (groupOrder[c1.id] < groupOrder[c2.id]) return -1;
@@ -326,11 +322,9 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 		boardGroups.forEach((it: any, i: number) => {
 			groups.push({ groupId: it.id, index: i });
 		});
+		C.BlockDataviewGroupOrderUpdate(rootId, block.id, [ { viewId: view.id, groups: groups } ]);
 
-		C.BlockDataviewGroupOrderUpdate(rootId, block.id, [
-			{ viewId: view.id, groups: groups }
-		]);
-
+		this.resize();
 		this.onDragEndCommon(e);
 	};
 
