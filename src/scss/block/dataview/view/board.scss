@@ -6,7 +6,7 @@
         .viewItem.viewBoard {
 
 			.ghost { display: none; border: 1px dotted $colorOrange; border-radius: 12px; }
-			.ghost.isColumn { display: block; width: 240px; height: 100%; flex-shrink: 0; margin-right: 14px; }
+			.ghost.isColumn { display: block; width: 240px; height: 100%; flex-shrink: 0; margin: 42px 14px 0px 0px; }
 			
 			.isOver.left {
 				.ghost.left { display: block; }
