@@ -1314,9 +1314,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			};
 			if (!nextCellId) {
 				const nextRow = this.getNextTableRow(block.id, dir);
-				const nextRowElement = blockStore.getMapElement(rootId, nextRow.id);
-
-				nextCellId = nextRowElement.childrenIds[dir > 0 ? 0 : nextRowElement.childrenIds.length - 1];
+				if (nextRow) {
+					const nextRowElement = blockStore.getMapElement(rootId, nextRow.id);
+					nextCellId = nextRowElement.childrenIds[dir > 0 ? 0 : nextRowElement.childrenIds.length - 1];
+				};
 			};
 
 			const next = blockStore.getLeaf(rootId, nextCellId);
