@@ -1227,48 +1227,57 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 		let next: I.Block = null;
 
+		const cb = () => {
+			if (!next) {
+				// If block is closed toggle - find next block on the same level
+				if (block && block.isTextToggle() && !Storage.checkToggle(rootId, block.id)) {
+					next = blockStore.getNextBlock(rootId, focused, dir, it => (it.parentId != block.id) && it.isFocusable());
+				} else {
+					next = blockStore.getNextBlock(rootId, focused, dir, it => it.isFocusable());
+				};
+			};
+
+			if (!next) {
+				return;
+			};
+
+			e.preventDefault();
+
+			const parent = blockStore.getHighestParent(rootId, next.id);
+			const l = next.getLength();
+
+			// If highest parent is closed toggle, next is parent
+			if (parent && parent.isTextToggle() && !Storage.checkToggle(rootId, parent.id)) {
+				next = parent;
+			};
+
+			window.setTimeout(() => {
+				focus.set(next.id, (dir > 0 ? { from: 0, to: 0 } : { from: l, to: l }));
+				focus.apply();
+				focus.scroll(isPopup);
+			});
+		};
+
 		if (isInsideTable) {
 			const element = blockStore.getMapElement(rootId, block.id);
 			const rowElement = blockStore.getMapElement(rootId, element.parentId);
 			const idx = rowElement.childrenIds.indexOf(block.id);
 			const nextRow = this.getNextTableRow(block.id, dir);
 
-			if ((idx >= 0) && nextRow) {
-				const nextRowElement = blockStore.getMapElement(rootId, nextRow.id);
-				if (nextRowElement) {
-					next = blockStore.getLeaf(rootId, nextRowElement.childrenIds[idx]);
+			console.log(nextRow);
+			C.BlockTableRowListFill(rootId, [ nextRow.id ], () => {
+				if ((idx >= 0) && nextRow) {
+					const nextRowElement = blockStore.getMapElement(rootId, nextRow.id);
+					if (nextRowElement) {
+						next = blockStore.getLeaf(rootId, nextRowElement.childrenIds[idx]);
+					};
 				};
-			};
+
+				cb();
+			});
+		} else {
+			cb();
 		};
-
-		if (!next) {
-			// If block is closed toggle - find next block on the same level
-			if (block && block.isTextToggle() && !Storage.checkToggle(rootId, block.id)) {
-				next = blockStore.getNextBlock(rootId, focused, dir, it => (it.parentId != block.id) && it.isFocusable());
-			} else {
-				next = blockStore.getNextBlock(rootId, focused, dir, it => it.isFocusable());
-			};
-		};
-
-		if (!next) {
-			return;
-		};
-
-		e.preventDefault();
-
-		const parent = blockStore.getHighestParent(rootId, next.id);
-		const l = next.getLength();
-
-		// If highest parent is closed toggle, next is parent
-		if (parent && parent.isTextToggle() && !Storage.checkToggle(rootId, parent.id)) {
-			next = parent;
-		};
-
-		window.setTimeout(() => {
-			focus.set(next.id, (dir > 0 ? { from: 0, to: 0 } : { from: l, to: l }));
-			focus.apply();
-			focus.scroll(isPopup);
-		});
 	};
 
 	onArrowHorizontal (e: any, pressed: string, range: I.TextRange, length: number, props: any) {
