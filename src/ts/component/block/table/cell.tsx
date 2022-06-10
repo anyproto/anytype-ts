@@ -2,7 +2,6 @@ import * as React from 'react';
 import { I } from 'ts/lib';
 import { Icon, Block } from 'ts/component';
 import { observer } from 'mobx-react';
-import { blockStore } from 'ts/store';
 
 interface Props extends I.BlockComponentTable {
 	rowIdx: number;
@@ -52,14 +51,37 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 			/>
 		);
 
+		const EmptyBlock = () => (
+			<div className="block blockText noPlus">
+				<div className="wrapContent">
+					<div className="selectable">
+						<div className="dropTarget">
+							<div className="flex">
+								<div className="markers" />
+								<div
+									id="value"
+									className="value"
+									contentEditable={true}
+									suppressContentEditableWarning={true}
+									onFocus={(e: any) => { onCellFocus(e, row.id, column.id, cellId); }}
+									onBlur={(e: any) => { onCellBlur(e, row.id, column.id, cellId); }}
+									onDragStart={(e: any) => { e.preventDefault(); }}
+								/>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		);
+
 		return (
 			<div
 				id={`cell-${cellId}`}
 				className={cn.join(' ')}
-				onMouseDown={(e: any) => { onCellClick(e, cellId); }}
-				onMouseEnter={(e: any) => { onCellEnter(e, rowIdx, columnIdx, cellId); }}
-				onMouseLeave={(e: any) => { onCellLeave(e, rowIdx, columnIdx, cellId); }}
-				onContextMenu={(e: any) => { onOptions(e, cellId); }}
+				onMouseDown={(e: any) => { onCellClick(e, row.id, column.id, cellId); }}
+				onMouseEnter={(e: any) => { onCellEnter(e, row.id, column.id, cellId); }}
+				onMouseLeave={(e: any) => { onCellLeave(e, row.id, column.id, cellId); }}
+				onContextMenu={(e: any) => { onOptions(e, row.id, column.id, cellId); }}
 				data-column-id={column.id}
 			>
 				{!rowIdx ? <HandleColumn {...column} /> : ''}
@@ -74,26 +96,16 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 						readonly={readonly} 
 						isInsideTable={true}
 						className="noPlus"
-						onFocus={(e: any) => { onCellFocus(e, block.id); }}
-						onBlur={(e: any) => { onCellBlur(e, block.id); }}
+						onFocus={(e: any) => { onCellFocus(e, row.id, column.id, cellId); }}
+						onBlur={(e: any) => { onCellBlur(e, row.id, column.id, cellId); }}
 						getWrapperWidth={() => { return Constant.size.editor; }} 
 					/>
 				) : (
-					<div className="block noPlus">
-						<div
-							id="value"
-							className="value"
-							contentEditable={true}
-							suppressContentEditableWarning={true}
-							onFocus={(e: any) => { onCellFocus(e, cellId); }}
-							onBlur={(e: any) => { onCellBlur(e, cellId); }}
-							onDragStart={(e: any) => { e.preventDefault(); }}
-						/>
-					</div>
+					<EmptyBlock />
 				)}
 
 				<div className="resize" onMouseDown={(e: any) => { onResizeStart(e, column.id); }} />
-				<Icon className="menu" onClick={(e: any) => { onOptions(e, cellId); }} />
+				<Icon className="menu" onClick={(e: any) => { onOptions(e, row.id, column.id, cellId); }} />
 			</div>
 		);
 	};

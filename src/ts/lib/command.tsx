@@ -491,6 +491,15 @@ const BlockTableRowCreate = (contextId: string, targetId: string, position: I.Bl
 	dispatcher.request(BlockTableRowCreate.name, request, callBack);
 };
 
+const BlockTableRowListFill = (contextId: string, blockIds: string[], callBack?: (message: any) => void) => {
+	const request = new Rpc.BlockTable.RowListFill.Request();
+	
+	request.setContextid(contextId);
+	request.setBlockidsList(blockIds);
+
+	dispatcher.request(BlockTableRowListFill.name, request, callBack);
+};
+
 const BlockTableColumnCreate = (contextId: string, targetId: string, position: I.BlockPosition, callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockTable.ColumnCreate.Request();
 	
@@ -1478,6 +1487,7 @@ export {
 	BlockTableColumnDuplicate,
 
 	BlockTableRowCreate,
+	BlockTableRowListFill,
 
 	BlockDataviewViewCreate,
 	BlockDataviewViewUpdate,

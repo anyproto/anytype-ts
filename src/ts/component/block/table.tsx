@@ -169,7 +169,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		return { rowId: cellElement.parentId, columnId: columns[idx].id };
 	};
 
-	onOptions (e: any, id: string) {
+	onOptions (e: any, rowId: string, columnId: string, cellId: string) {
 		if (!this._isMounted) {
 			return;
 		};
@@ -178,7 +178,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		e.stopPropagation();
 
 		const { rootId } = this.props;
-		const current = blockStore.getLeaf(rootId, id);
+		const current = blockStore.getLeaf(rootId, cellId);
 
 		if (!current) {
 			return;
@@ -193,7 +193,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			component: 'select',
 			onOpen: (context: any) => {
 				menuContext = context;
-				this.onOptionsOpen(id);
+				this.onOptionsOpen(cellId);
 			},
 			onClose: () => {
 				this.onOptionsClose();
@@ -202,8 +202,8 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		};
 
 		let options: any[] = [];
-		let optionsAlign = this.optionsAlign(id);
-		let optionsColor = this.optionsColor(id);
+		let optionsAlign = this.optionsAlign(cellId);
+		let optionsColor = this.optionsColor(cellId);
 		let element: any = null;
 		let blockIds: string[] = [];
 		let targetRowId: string = '';
@@ -219,7 +219,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				blockIds = blockStore.getChildrenIds(rootId, current.id);
 
 				menuParam = Object.assign(menuParam, {
-					element: node.find(`#row-${id}`).first(),
+					element: node.find(`#row-${rowId}`).first(),
 					offsetY: 2,
 				});
 				break;
@@ -238,7 +238,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 					});
 				};
 
-				element = node.find(`.cell.column${id}`).first();
+				element = node.find(`.cell.column${cellId}`).first();
 				menuParam = Object.assign(menuParam, {
 					element,
 					offsetX: element.outerWidth() + 2,
@@ -247,7 +247,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				break;
 
 			default:
-				const { rowId, columnId } = this.getRowColumn(current.id);
+				//const { rowId, columnId } = this.getRowColumn(current.id);
 
 				blockIds = [ current.id ];
 				targetRowId = rowId;
@@ -260,7 +260,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				]);
 				options = options.concat(optionsColor);
 
-				element = node.find(`#cell-${id}`);
+				element = node.find(`#cell-${cellId}`);
 				menuParam = Object.assign(menuParam, {
 					element,
 					horizontal: I.MenuDirection.Center,
@@ -364,7 +364,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 							menuId = 'select2';
 							menuParam.component = 'select';
 							menuParam.data = Object.assign(menuParam.data, {
-								options: this.optionsStyle(id),
+								options: this.optionsStyle(cellId),
 								onSelect: (e: any, el: any) => {
 									C.BlockTextListSetMark(rootId, blockIds, { type: el.id, param: '', range: { from: 0, to: 0 } });
 									menuContext.close();
@@ -523,12 +523,16 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 	};
 
 	onHandleClick (e: any, id: string) {
-		this.onOptions(e, id);
+		//this.onOptions(e, id);
 	};
 
-	onCellFocus (e: any, id: string) {
-		this.setEditing(id);
-		this.preventSelect(true);
+	onCellFocus (e: any, rowId: string, columnId: string, cellId: string) {
+		const { rootId } = this.props;
+
+		C.BlockTableRowListFill(rootId, [ rowId ], () => {
+			this.setEditing(cellId);
+			this.preventSelect(true);
+		});
 	};
 
 	onCellBlur (e: any, id: string) {
@@ -536,12 +540,14 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		this.preventSelect(false);
 	};
 
-	onCellClick (e: any, id: string) {
-		this.onCellFocus(e, id);
+	onCellClick (e: any, rowId: string, columnId: string, cellId: string) {
+		this.onCellFocus(e, rowId, columnId, cellId);
 	};
 
-	onCellEnter (e: any, rowIdx: number, columnIdx: number, id: string) {
+	onCellEnter (e: any, rowId: string, columnId: string, id: string) {
 		const { rows, columns } = this.getData();
+		const rowIdx = rows.findIndex(it => it.id == rowId);
+		const columnIdx = columns.findIndex(it => it.id == columnId);
 		const isLastRow = rowIdx == rows.length - 1;
 		const isLastColumn = columnIdx == columns.length - 1;
 
@@ -565,8 +571,10 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		};
 	};
 
-	onCellLeave (e: any, rowIdx: number, columnIdx: number, id: string) {
+	onCellLeave (e: any, rowId: string, columnId: string, id: string) {
 		const { rows, columns } = this.getData();
+		const rowIdx = rows.findIndex(it => it.id == rowId);
+		const columnIdx = columns.findIndex(it => it.id == columnId);
 		const isLastRow = rowIdx == rows.length - 1;
 		const isLastColumn = columnIdx == columns.length - 1;
 
@@ -611,7 +619,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		
 		keyboard.shortcut(`shift+space`, e, (pressed: string) => {
 			ret = true;
-			this.onOptions(e, focused);
+			//this.onOptions(e, focused);
 		});
 
 		if (!ret) {

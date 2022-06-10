@@ -2,13 +2,13 @@ import { I } from 'ts/lib';
 
 export interface BlockComponentTable extends I.BlockComponent {
 	getData: () => any;
-	onOptions: (e: any, id: string) => void;
+	onOptions: (e: any, rowId: string, columnId: string, cellId: string) => void;
 	onHandleClick: (e: any, id: string) => void;
-	onCellClick: (e: any, id: string) => void;
-	onCellFocus: (e: any, id: string) => void;
-	onCellBlur: (e: any, id: string) => void;
-	onCellEnter: (e: any, rowIdx: number, columnIdx: number, id: string) => void;
-	onCellLeave: (e: any, rowIdx: number, columnIdx: number, id: string) => void;
+	onCellClick: (e: any, rowId: string, columnId: string, cellId: string) => void;
+	onCellFocus: (e: any, rowId: string, columnId: string, cellId: string) => void;
+	onCellBlur: (e: any, rowId: string, columnId: string, cellId: string) => void;
+	onCellEnter: (e: any, rowId: string, columnId: string, cellId: string) => void;
+	onCellLeave: (e: any, rowId: string, columnId: string, cellId: string) => void;
 	onResizeStart: (e: any, id: string) => void;
 	onDragStartRow: (e: any, id: string) => void;
 	onDragStartColumn: (e: any, id: string) => void;
