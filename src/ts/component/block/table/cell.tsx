@@ -20,14 +20,17 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 			rootId, block, readonly, rowIdx, columnIdx, row, column, onOptions, onHandleClick, onCellFocus, onCellBlur, onCellClick, onCellEnter, 
 			onCellLeave, onResizeStart, onDragStartColumn, onDragStartRow 
 		} = this.props;
-		const childrenIds = blockStore.getChildrenIds(rootId, block.id);
 
 		if (!row || !column) {
 			return null;
 		};
 
-		const cn = [ 'cell', 'column' + column.id, 'align-v' + block.vAlign ];
-		const length = childrenIds.length;
+		const cn = [ 'cell', 'column' + column.id ];
+		const cellId = [ row.id, column.id ].join('-');
+
+		if (block) {
+			cn.push('align-v' + block.vAlign);
+		};
 
 		const HandleColumn = (item: any) => (
 			<div 
@@ -51,32 +54,46 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 
 		return (
 			<div
-				id={`cell-${block.id}`}
+				id={`cell-${cellId}`}
 				className={cn.join(' ')}
-				onMouseDown={(e: any) => { onCellClick(e, block.id); }}
-				onMouseEnter={(e: any) => { onCellEnter(e, rowIdx, columnIdx, block.id); }}
-				onMouseLeave={(e: any) => { onCellLeave(e, rowIdx, columnIdx, block.id); }}
-				onContextMenu={(e: any) => { onOptions(e, block.id); }}
+				onMouseDown={(e: any) => { onCellClick(e, cellId); }}
+				onMouseEnter={(e: any) => { onCellEnter(e, rowIdx, columnIdx, cellId); }}
+				onMouseLeave={(e: any) => { onCellLeave(e, rowIdx, columnIdx, cellId); }}
+				onContextMenu={(e: any) => { onOptions(e, cellId); }}
 				data-column-id={column.id}
 			>
 				{!rowIdx ? <HandleColumn {...column} /> : ''}
 				{!columnIdx ? <HandleRow {...row} /> : ''}
 
-				<Block 
-					key={'block-' + block.id} 
-					{...this.props} 
-					block={block} 
-					rootId={rootId} 
-					readonly={readonly} 
-					isInsideTable={true}
-					className="noPlus"
-					onFocus={(e: any) => { onCellFocus(e, block.id); }}
-					onBlur={(e: any) => { onCellBlur(e, block.id); }}
-					getWrapperWidth={() => { return Constant.size.editor; }} 
-				/>
+				{block ? (
+					<Block 
+						key={`block-${cellId}`} 
+						{...this.props} 
+						block={block} 
+						rootId={rootId} 
+						readonly={readonly} 
+						isInsideTable={true}
+						className="noPlus"
+						onFocus={(e: any) => { onCellFocus(e, block.id); }}
+						onBlur={(e: any) => { onCellBlur(e, block.id); }}
+						getWrapperWidth={() => { return Constant.size.editor; }} 
+					/>
+				) : (
+					<div className="block noPlus">
+						<div
+							id="value"
+							className="value"
+							contentEditable={true}
+							suppressContentEditableWarning={true}
+							onFocus={(e: any) => { onCellFocus(e, cellId); }}
+							onBlur={(e: any) => { onCellBlur(e, cellId); }}
+							onDragStart={(e: any) => { e.preventDefault(); }}
+						/>
+					</div>
+				)}
 
 				<div className="resize" onMouseDown={(e: any) => { onResizeStart(e, column.id); }} />
-				<Icon className="menu" onClick={(e: any) => { onOptions(e, block.id); }} />
+				<Icon className="menu" onClick={(e: any) => { onOptions(e, cellId); }} />
 			</div>
 		);
 	};

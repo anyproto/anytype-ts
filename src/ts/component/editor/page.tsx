@@ -21,6 +21,7 @@ const { app } = window.require('@electron/remote');
 const Constant = require('json/constant.json');
 const Errors = require('json/error.json');
 const $ = require('jquery');
+const raf = require('raf');
 const fs = window.require('fs');
 const path = window.require('path');
 const userPath = app.getPath('userData');
@@ -32,7 +33,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 	
 	_isMounted: boolean = false;
 	id: string = '';
-	timeoutHover: number = 0;
 	timeoutMove: number = 0;
 	timeoutScreen: number = 0;
 	hoverId: string =  '';
@@ -44,6 +44,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 	width: number = 0;
 	refHeader: any = null;
 	dir: number = 0;
+	frame: number = 0;
 
 	constructor (props: any) {
 		super(props);
@@ -429,7 +430,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			items.removeClass('showMenu isAdding top bottom');
 		};
 		
-		window.clearTimeout(this.timeoutHover);
+		if (this.frame) {
+			raf.cancel(this.frame);
+		};
 
 		if (keyboard.isDragging) {
 			out();
@@ -439,25 +442,27 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			};
 			return;
 		};
-		
-		if (hovered && (pageX >= x) && (pageX <= x + Constant.size.blockMenu) && (pageY >= offset + BUTTON_OFFSET) && (pageY <= st + rectContainer.height + offset + BUTTON_OFFSET)) {
-			this.hoverPosition = pageY < (y + height / 2) ? I.BlockPosition.Top : I.BlockPosition.Bottom;
-			
-			let ax = hoveredRect.x - (rectContainer.x - Constant.size.blockMenu) + 2;
-			let ay = pageY - rectContainer.y - BUTTON_OFFSET - st;
-			
-			add.addClass('show').css({ transform: `translate3d(${ax}px,${ay}px,0px)` });
-			items.addClass('showMenu').removeClass('isAdding top bottom');
-			
-			if (pageX <= x + 20) {
-				const block = blockStore.getLeaf(rootId, this.hoverId);
-				if (block && block.canCreateBlock()) {
-					hovered.addClass('isAdding ' + (this.hoverPosition == I.BlockPosition.Top ? 'top' : 'bottom'));
+
+		this.frame = raf(() => {
+			if (hovered && (pageX >= x) && (pageX <= x + Constant.size.blockMenu) && (pageY >= offset + BUTTON_OFFSET) && (pageY <= st + rectContainer.height + offset + BUTTON_OFFSET)) {
+				this.hoverPosition = pageY < (y + height / 2) ? I.BlockPosition.Top : I.BlockPosition.Bottom;
+				
+				let ax = hoveredRect.x - (rectContainer.x - Constant.size.blockMenu) + 2;
+				let ay = pageY - rectContainer.y - BUTTON_OFFSET - st;
+				
+				add.addClass('show').css({ transform: `translate3d(${ax}px,${ay}px,0px)` });
+				items.addClass('showMenu').removeClass('isAdding top bottom');
+				
+				if (pageX <= x + 20) {
+					const block = blockStore.getLeaf(rootId, this.hoverId);
+					if (block && block.canCreateBlock()) {
+						hovered.addClass('isAdding ' + (this.hoverPosition == I.BlockPosition.Top ? 'top' : 'bottom'));
+					};
 				};
+			} else {
+				out();
 			};
-		} else {
-			this.timeoutHover = window.setTimeout(out, 10);
-		};
+		});
 	};
 	
 	onKeyDownEditor (e: any) {

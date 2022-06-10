@@ -20,9 +20,9 @@ const BlockTableRow = observer(class BlockTableRow extends React.Component<Props
 			<div id={`row-${block.id}`} className="row">
 				{columns.map((column: any, i: number) => {
 					const child = children[i];
-					return child ? (
+					return (
 						<Cell 
-							key={'cell' + child.id} 
+							key={`cell-${block.id}-${column.id}`} 
 							{...this.props}
 							block={child}
 							index={i}
@@ -31,7 +31,7 @@ const BlockTableRow = observer(class BlockTableRow extends React.Component<Props
 							columnIdx={i}
 							column={columns[i]}
 						/>
-					) : null;
+					);
 				})}
 			</div>
 		);
