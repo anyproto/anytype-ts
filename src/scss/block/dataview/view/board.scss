@@ -7,6 +7,7 @@
 
 			.ghost { border: 1px dotted $colorOrange; border-radius: 12px; flex-shrink: 0; }
 			.ghost.isColumn { width: 240px; height: 100%; margin: 42px 14px 0px 0px; }
+			.ghost.isCard { margin-bottom: 8px; }
 			
 			.isOver.left {
 				.ghost.left { display: block; }
@@ -30,8 +31,6 @@
 					.empty { display: block; }
 					.tagItem { margin: 0px; }
 				}
-
-				.body { overflow-y: overlay; overflow-x: hidden; max-height: 600px; display: flex; flex-direction: column; gap: 8px 0px; }
             }
 			.column.isDragging { opacity: 0.3; }
 			.column.isClone {
@@ -40,10 +39,11 @@
 
 			.column > .ghost { margin-top: 42px; width: 240px; flex-shrink: 0; }
 			
-            .card { width: 240px; display: flex; flex-direction: column; gap: 8px 0px; }
+            .card { width: 240px; display: flex; flex-direction: column; gap: 8px 0px; margin-bottom: 8px; }
 			.card {
 				.cardContent { border: 1px solid $colorBorderDark; border-radius: 12px; padding: 16px; background: $colorWhite; }
 			}
+			.card:last-child { margin: 0px; }
 
 			.card.isDragging {
 				.cardContent { opacity: 0.3; }
@@ -51,8 +51,9 @@
 
             .card.add { 
 				min-height: unset; text-align: center; padding: 10px 0px; margin: 0px; line-height: 1; transition: $transitionFast; cursor: pointer; 
-				border: 1px solid $colorBorderDark; border-radius: 12px; flex-direction: row; justify-content: center;
+				border: 1px solid $colorBorderDark; border-radius: 12px; flex-direction: row; justify-content: center; margin-top: 8px;
 			}
+			.card.add.first { margin: 0px; }
             .card.add {
                 .icon { vertical-align: top; }
             }

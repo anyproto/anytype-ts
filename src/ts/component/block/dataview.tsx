@@ -234,9 +234,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		dbStore.metaSet(subId, '', meta);
 
-		//if (![ I.ViewType.Board ].includes(view.type)) {
+		if (![ I.ViewType.Board ].includes(view.type)) {
 			DataUtil.getDataviewData(rootId, block.id, newViewId, keys, offset, limit, false, cb);
-		//};
+		};
 	};
 
 	getRecord (index: number) {

@@ -3,6 +3,7 @@ import { Icon } from 'ts/component';
 import { I, C, translate } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { dbStore } from 'ts/store';
+import { AutoSizer, WindowScroller, Masonry, CellMeasurer, CellMeasurerCache, createMasonryCellPositioner } from 'react-virtualized';
 
 import Card from './card';
 import Cell from 'ts/component/block/dataview/cell';
@@ -17,8 +18,27 @@ interface Props extends I.ViewComponent {
 
 const Column = observer(class Column extends React.Component<Props, {}> {
 
+	cache: any = {};
+	cellPositioner: any = null;
+	ref: any = null;
+	width: number = 0;
+	columnWidth: number = 0;
+	columnCount: number = 0;
+
+	constructor(props: Props) {
+		super(props);
+
+		this.cache = new CellMeasurerCache({
+			defaultHeight: 240,
+			defaultWidth: 240,
+			fixedWidth: true,
+		});
+
+		this.onResize = this.onResize.bind(this);
+	};
+
 	render () {
-		const { rootId, block, id, getView, onAdd, value, onDragStartColumn } = this.props;
+		const { rootId, block, id, getView, onAdd, value, onDragStartColumn, isPopup } = this.props;
 		const view = getView();
 		const subId = dbStore.getSubId(rootId, [ block.id, id ].join(':'));
 		const records = dbStore.getRecords(subId, '');
@@ -26,15 +46,6 @@ const Column = observer(class Column extends React.Component<Props, {}> {
 		const head = {};
 
 		head[view.groupRelationKey] = value;
-
-		const Add = (item: any) => (
-			<div 
-				className="card add"
-				onClick={() => { onAdd(id); }}
-			>
-				<Icon className="plus" />
-			</div>
-		);
 
 		return (
 			<div 
@@ -61,11 +72,55 @@ const Column = observer(class Column extends React.Component<Props, {}> {
 				</div>
 
 				<div className="body">
-					{records.map((record: any, i: number) => (
-						<Card key={'board-card-' +  view.id + i} {...this.props} id={record.id} groupId={id} />
-					))}
-					<Add />
+					<WindowScroller scrollElement={isPopup ? $('#popupPage #innerWrap').get(0) : window}>
+						{({ height, isScrolling, registerChild, scrollTop }) => {
+							return (
+								<AutoSizer 
+									disableHeight={true}
+									onResize={this.onResize} 
+									overscanByPixels={200}
+								>
+									{({ width }) => {
+										this.initPositioner();
+
+										return (
+											<div ref={registerChild}>
+												<Masonry
+													ref={(ref: any) => { this.ref = ref; }}
+													autoHeight={true}
+													height={Number(height) || 0}
+													width={Number(width) || 0}
+													isScrolling={isScrolling}
+													cellCount={records.length}
+													cellMeasurerCache={this.cache}
+													cellPositioner={this.cellPositioner}
+													cellRenderer={({ key, index, parent, style }) => {
+														return (
+															<CellMeasurer cache={this.cache} index={index} key={'gallery-card-measurer-' + view.id + index} parent={parent}>
+																<Card 
+																	key={'board-card-' +  view.id + index} 
+																	{...this.props} 
+																	id={records[index].id} 
+																	groupId={id} 
+																/>
+															</CellMeasurer>
+														);
+													}}
+													scrollTop={scrollTop}
+												/>
+
+												<div className={[ 'card', 'add', (!total ? 'first' : '') ].join(' ')} onClick={() => { onAdd(id); }}>
+													<Icon className="plus" />
+												</div>
+											</div>
+										);
+									}}
+								</AutoSizer>
+							);
+						}}
+					</WindowScroller>
 				</div>
+
 			</div>
 		);
 	};
@@ -107,6 +162,35 @@ const Column = observer(class Column extends React.Component<Props, {}> {
 		const subId = dbStore.getSubId(rootId, [ block.id, id ].join(':'));
 
 		dbStore.recordsClear(subId, '');
+	};
+
+	reset () {
+		this.cache.clearAll();
+		this.resetPositioner();
+		this.ref.clearCellPositions();
+	};
+
+	initPositioner () {
+		if (!this.cellPositioner) {
+			this.cellPositioner = createMasonryCellPositioner({
+				cellMeasurerCache: this.cache,
+				columnCount: 1,
+				columnWidth: 240,
+				spacer: 8,
+			});
+		};
+	};
+
+	resetPositioner () {
+		this.cellPositioner.reset({
+			columnCount: 1,
+			columnWidth: 240,
+			spacer: 8,
+    	});
+	};
+
+	onResize ({ width }) {
+		this.reset();
 	};
 
 });
