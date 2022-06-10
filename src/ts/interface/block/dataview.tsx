@@ -156,6 +156,11 @@ export interface Cell {
 	arrayLimit?: number;
 };
 
+export interface BoardGroup {
+	id: string;
+	value: any;
+};
+
 export interface ContentDataview {
 	sources: string[];
 	views: View[];

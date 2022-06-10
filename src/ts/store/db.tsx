@@ -8,10 +8,13 @@ class DbStore {
     public viewMap: Map<string, I.View[]> = observable.map(new Map());
     public dataMap: Map<string, any[]> = observable.map(new Map());
     public metaMap: Map<string, any> = observable.map(new Map());
+	public boardGroupsList: I.BoardGroup[] = [];
 
     constructor() {
         makeObservable(this, {
             objectTypes: computed,
+			boardGroups: computed,
+			boardGroupsList: observable,
 			clearAll: action,
             objectTypesSet: action,
             objectTypeAdd: action,
@@ -33,12 +36,17 @@ class DbStore {
             recordsClear: action,
             recordAdd: action,
             recordUpdate: action,
-            recordDelete: action
+            recordDelete: action,
+			boardGroupsSet: action,
         });
     }
 
     get objectTypes(): I.ObjectType[] {
 		return this.objectTypeList;
+	};
+
+	get boardGroups(): I.BoardGroup[] {
+		return this.boardGroupsList;
 	};
 
 	clearAll () {
@@ -254,10 +262,15 @@ class DbStore {
 	};
 
     recordDelete (rootId: string, blockId: string, id: string) {
-		let records = this.getRecords(rootId, blockId);
-		records = records.filter((it: any) => { return it.id != id; });
+		this.dataMap.set(this.getId(rootId, blockId), this.getRecords(rootId, blockId).filter(it => it.id != id));
+	};
 
-		this.dataMap.set(this.getId(rootId, blockId), records);
+	boardGroupsSet (groups: I.BoardGroup[]) {
+		this.boardGroupsList = groups; 
+	};
+
+	boardGroupsClear () {
+		this.boardGroupsSet([]);
 	};
 
     getObjectType (id: string): I.ObjectType {

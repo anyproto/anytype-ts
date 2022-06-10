@@ -15,15 +15,12 @@ const $ = require('jquery');
 const raf = require('raf');
 const Constant = require('json/constant.json');
 
-const THROTTLE = 20;
-
 const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 
 	cache: any = {};
 	width: number = 0;
 	height: number = 0;
 	frame: number = 0;
-	groups: any[] = [];
 	groupRelationKey: string = '';
 	oldIndex: number = -1;
 	newIndex: number = -1;
@@ -40,15 +37,16 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 		const { getView } = this.props;
 		const view = getView();
 		const { groupRelationKey } = view;
-		
+		const { boardGroups } = dbStore;
+
 		return (
 			<div className="wrap">
 				<div className="scroll">
 					<div className="viewItem viewBoard">
 						<div className="columns">
-							{this.groups.map((group: any, i: number) => (
+							{boardGroups.map((group: any, i: number) => (
 								<Column 
-									key={i} 
+									key={`board-column-${group.id}`} 
 									{...this.props} 
 									{...group} 
 									onAdd={this.onAdd} 
@@ -77,13 +75,15 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 
 	componentWillUnmount () {
 		const { rootId, block } = this.props;
+		const { boardGroups } = dbStore;
 		const ids = [];
 
-		this.groups.forEach((it: any) => {
+		boardGroups.forEach((it: any) => {
 			ids.push(dbStore.getSubId(rootId, [ block.id, it.id ].join(':')));
 		});
 
 		C.ObjectSearchUnsubscribe(ids);
+		this.clearGroupData();
 	};
 
 	loadGroupList () {
@@ -103,59 +103,29 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 		};
 
 		C.ObjectRelationSearchDistinct(view.groupRelationKey, (message: any) => {
-			if (message.error.code) {
-				return;
+			if (!message.error.code) {
+				dbStore.boardGroupsSet(message.groups);
 			};
-
-			this.groups = message.groups;
-			this.groups.forEach((it: any) => {
-				this.loadGroupData(it.id);
-			});
-
-			this.forceUpdate();
 		});
-	};
-
-	loadGroupData (id: string) {
-		const { rootId, block, getView, getKeys } = this.props;
-		const view = getView();
-		const group = this.groups.find(it => it.id == id);
-		const relation = dbStore.getRelation(rootId, block.id, view.groupRelationKey);
-		const subId = dbStore.getSubId(rootId, [ block.id, id ].join(':'));
-
-		if (!group || !relation) {
-			return;
-		};
-
-		const filters: I.Filter[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
-			{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
-		];
-
-		switch (relation.format) {
-			default:
-				filters.push({ operator: I.FilterOperator.And, relationKey: relation.relationKey, condition: I.FilterCondition.Equal, value: group.value });
-				break;
-		};
-
-		C.ObjectSearchSubscribe(subId, filters, view.sorts, getKeys(view.id), block.content.sources, 0, 100, true, '', '', false);
 	};
 
 	clearGroupData () {
 		const { rootId, block } = this.props;
+		const { boardGroups } = dbStore;
 
-		this.groups.forEach((it: any) => {
+		boardGroups.forEach((it: any) => {
 			const subId = dbStore.getSubId(rootId, [ block.id, it.id ].join(':'));
 			dbStore.recordsClear(subId, '');
 		});
 
-		this.groups = [];
+		dbStore.boardGroupsClear();
 	};
 
 	onAdd (id: string) {
 		const { rootId, block, getView } = this.props;
+		const { boardGroups } = dbStore;
 		const view = getView();
-		const group = this.groups.find(it => it.id == id);
+		const group = boardGroups.find(it => it.id == id);
 		const object = detailStore.get(rootId, rootId, [ 'setOf' ], true);
 		const setOf = object.setOf || [];
 		const details: any = {};
@@ -204,9 +174,10 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 
 	initCacheColumn () {
 		const node = $(ReactDOM.findDOMNode(this));
+		const { boardGroups } = dbStore;
 
 		this.cache = {};
-		this.groups.forEach((group: any, i: number) => {
+		boardGroups.forEach((group: any, i: number) => {
 			const item = node.find(`#column-${group.id}`);
 			const p = item.offset();
 
@@ -264,9 +235,11 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 		selection.preventSelect(false);
 		preventCommonDrop(false);
 
+		if (this.frame) {
+			raf.cancel(this.frame);
+		};
+
 		this.cache = {};
-		this.oldIndex = -1;
-		this.newIndex = -1;
 		this.clear();
 		this.unbind();
 	};
@@ -283,20 +256,19 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 	};
 
 	onDragMoveColumn (e: any, groupId: string) {
+		const { boardGroups } = dbStore;
 		const node = $(ReactDOM.findDOMNode(this));
 
-		this.oldIndex = this.groups.findIndex(it => it.id == groupId);
+		this.oldIndex = boardGroups.findIndex(it => it.id == groupId);
 
 		let isLeft = false;
 		let hoverId = '';
 
-		for (let group of this.groups) {
+		for (let group of boardGroups) {
 			const rect = this.cache[group.id];
 			if (!rect || (group.id == groupId)) {
 				continue;
 			};
-
-			console.log(e.pageX, this.width, rect.x, rect.width);
 
 			if (rect && this.cache[groupId] && Util.rectsCollide({ x: e.pageX, y: e.pageY, width: this.width, height: this.height }, rect)) {
 				isLeft = e.pageX <= rect.x + rect.width / 2;
@@ -324,29 +296,29 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 		const view = getView();
 		const groups: any[] = [];
 
-		console.log(this.oldIndex, this.newIndex);
-		
+		let { boardGroups } = dbStore;
 		if (this.oldIndex >= 0) {
-			const oldId = this.groups[this.oldIndex].id;
+			const oldId = boardGroups[this.oldIndex].id;
 			groups.push({ groupId: oldId, index: this.oldIndex });
 		};
 		if (this.newIndex >= 0) {
-			const newId = this.groups[this.newIndex].id;
+			const newId = boardGroups[this.newIndex].id;
 			groups.push({ groupId: newId, index: this.newIndex });
 		};
 
-		this.groups = arrayMove(this.groups, this.oldIndex, this.newIndex);
 		this.onDragEndCommon(e);
-		this.forceUpdate();
+		dbStore.boardGroupsSet(arrayMove(boardGroups, this.oldIndex, this.newIndex));
 
 		C.BlockDataviewGroupOrderUpdate(rootId, block.id, [
 			{ viewId: view.id, groups: groups }
 		]);
+
+		this.oldIndex = -1;
+		this.newIndex = -1;
 	};
 
 	onDragStartCard (e: any, groupId: any, record: any) {
 		const win = $(window);
-		const node = $(ReactDOM.findDOMNode(this));
 
 		this.onDragStartCommon(e, $(e.currentTarget));
 		this.initCacheCard();

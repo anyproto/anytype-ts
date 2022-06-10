@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Icon } from 'ts/component';
-import { I, translate } from 'ts/lib';
+import { I, C, translate } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { dbStore } from 'ts/store';
 
@@ -72,6 +72,45 @@ const Column = observer(class Column extends React.Component<Props, {}> {
 				<div className="ghost right" />
 			</div>
 		);
+	};
+
+	componentDidMount () {
+		this.load();
+	};
+
+	componentWillUnmount () {
+		this.clear();
+	};
+
+	load () {
+		const { rootId, block, getView, getKeys, value, id } = this.props;
+		const view = getView();
+		const relation = dbStore.getRelation(rootId, block.id, view.groupRelationKey);
+		const subId = dbStore.getSubId(rootId, [ block.id, id ].join(':'));
+
+		if (!relation) {
+			return;
+		};
+
+		const filters: I.Filter[] = [
+			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
+			{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
+		];
+
+		switch (relation.format) {
+			default:
+				filters.push({ operator: I.FilterOperator.And, relationKey: relation.relationKey, condition: I.FilterCondition.Equal, value: value });
+				break;
+		};
+
+		C.ObjectSearchSubscribe(subId, filters, view.sorts, getKeys(view.id), block.content.sources, 0, 100, true, '', '', false);
+	};
+
+	clear () {
+		const { rootId, block, id } = this.props;
+		const subId = dbStore.getSubId(rootId, [ block.id, id ].join(':'));
+
+		dbStore.recordsClear(subId, '');
 	};
 
 });
