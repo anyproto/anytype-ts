@@ -706,6 +706,22 @@ const Mapper = {
 			return item;
 		},
 
+		GroupOrder: (obj: any) => {
+			const item = new Model.Block.Content.Dataview.GroupOrder();
+
+			item.setViewid(obj.viewId);
+			item.setViewgroupList(obj.groups.map((it: any) => {
+				const el = new Model.Block.Content.Dataview.ViewGroup();
+
+				el.setGroupid(it.groupId);
+				el.setIndex(it.index);
+
+				return el;
+			}));
+
+			return item;
+		},
+
 	}
 
 };

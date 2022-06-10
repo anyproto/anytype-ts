@@ -596,6 +596,16 @@ const BlockDataviewViewSetActive = (contextId: string, blockId: string, viewId: 
 	dispatcher.request(BlockDataviewViewSetActive.name, request, callBack);
 };
 
+const BlockDataviewGroupOrderUpdate = (contextId: string, blockId: string, order: any[], callBack?: (message: any) => void) => {
+	const request = new Rpc.BlockDataview.GroupOrder.Update.Request();
+	
+	request.setContextid(contextId);
+	request.setBlockid(blockId);
+	request.setGrouporderList(order.map(Mapper.To.GroupOrder));
+
+	dispatcher.request(BlockDataviewGroupOrderUpdate.name, request, callBack);
+};
+
 const BlockDataviewRecordCreate = (contextId: string, blockId: string, record: any, templateId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockDataviewRecord.Create.Request();
 	
@@ -1376,6 +1386,8 @@ export {
 	BlockDataviewViewDelete,
 	BlockDataviewViewSetActive,
 	BlockDataviewViewSetPosition,
+
+	BlockDataviewGroupOrderUpdate,
 
 	BlockDataviewRelationAdd,
 	BlockDataviewRelationUpdate,
