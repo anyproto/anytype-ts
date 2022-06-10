@@ -528,11 +528,22 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 
 	onCellFocus (e: any, rowId: string, columnId: string, cellId: string) {
 		const { rootId } = this.props;
-
-		C.BlockTableRowListFill(rootId, [ rowId ], () => {
+		const cell = blockStore.getLeaf(rootId, cellId);
+		const cb = () => {
 			this.setEditing(cellId);
 			this.preventSelect(true);
-		});
+		};
+
+		if (!cell) {
+			C.BlockTableRowListFill(rootId, [ rowId ], () => {
+				cb();
+
+				focus.set(cellId, { from: 0, to: 0 });
+				focus.apply();
+			});
+		} else {
+			cb();
+		};
 	};
 
 	onCellBlur (e: any, id: string) {
