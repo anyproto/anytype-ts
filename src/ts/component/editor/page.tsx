@@ -1264,17 +1264,17 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			const idx = rowElement.childrenIds.indexOf(block.id);
 			const nextRow = this.getNextTableRow(block.id, dir);
 
-			console.log(nextRow);
-			C.BlockTableRowListFill(rootId, [ nextRow.id ], () => {
-				if ((idx >= 0) && nextRow) {
+			if ((idx >= 0) && nextRow) {
+				C.BlockTableRowListFill(rootId, [ nextRow.id ], () => {
 					const nextRowElement = blockStore.getMapElement(rootId, nextRow.id);
+					
 					if (nextRowElement) {
 						next = blockStore.getLeaf(rootId, nextRowElement.childrenIds[idx]);
 					};
-				};
 
-				cb();
-			});
+					cb();
+				});
+			};
 		} else {
 			cb();
 		};
