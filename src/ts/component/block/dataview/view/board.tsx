@@ -443,7 +443,6 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 		const ww = win.width();
 		const mw = ww - 192;
 		const size = Constant.size.dataview.board;
-		const column = node.find('.column');
 		
 		let vw = 0;
 		let margin = 0;
@@ -458,9 +457,6 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 
 		scroll.css({ width: ww, marginLeft: -margin, paddingLeft: margin });
 		viewItem.css({ width: vw });
-
-		//column.css({ maxHeight: 300 });
-
 	};
 	
 });
