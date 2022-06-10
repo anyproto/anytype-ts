@@ -3,7 +3,6 @@ import * as ReactDOM from 'react-dom';
 import { I, C, Util, DataUtil, analytics } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { dbStore, detailStore, popupStore } from 'ts/store';
-import { throttle } from 'lodash';
 import arrayMove from 'array-move';
 
 import Column from './board/column';
@@ -203,18 +202,15 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 		});
 	};
 
-	initCache (items: any) {
+	initCacheColumn () {
+		const node = $(ReactDOM.findDOMNode(this));
+
 		this.cache = {};
-		items.each((i: number, item: any) => {
-			item = $(item);
-
-			const id = item.data('id');
-			if (!id || item.hasClass('isClone')) {
-				return;
-			};
-
+		this.groups.forEach((group: any, i: number) => {
+			const item = node.find(`#column-${group.id}`);
 			const p = item.offset();
-			this.cache[id] = {
+
+			this.cache[group.id] = {
 				x: p.left,
 				y: p.top,
 				width: item.outerWidth(),
@@ -222,6 +218,9 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 				index: i,
 			};
 		});
+	};
+
+	initCacheCard () {
 	};
 
 	onDragStartCommon (e: any, target: any) {
@@ -239,7 +238,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 
 		$('body').addClass('grab');
 		target.addClass('isDragging');
-		clone.addClass('isClone').css({ zIndex: 10000, position: 'fixed', left: -10000, top: -10000 });
+		clone.attr({ id: '' }).addClass('isClone').css({ zIndex: 10000, position: 'fixed', left: -10000, top: -10000 });
 		viewItem.append(clone);
 
 		$(document).off('dragover').on('dragover', (e: any) => { e.preventDefault(); });
@@ -277,33 +276,31 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 		const node = $(ReactDOM.findDOMNode(this));
 
 		this.onDragStartCommon(e, node.find(`#column-${groupId}`));
-		this.initCache(node.find('.column'));
+		this.initCacheColumn();
 
-		win.on('drag.board', throttle((e: any) => { this.onDragMoveColumn(e, groupId); }, THROTTLE));
+		win.on('drag.board', (e: any) => { this.onDragMoveColumn(e, groupId); });
 		win.on('dragend.board', (e: any) => { this.onDragEndColumn(e); });
 	};
 
 	onDragMoveColumn (e: any, groupId: string) {
 		const node = $(ReactDOM.findDOMNode(this));
-		const items = node.find('.column');
 
 		this.oldIndex = this.groups.findIndex(it => it.id == groupId);
 
 		let isLeft = false;
 		let hoverId = '';
 
-		for (let i = 0; i < items.length; ++i) {
-			const item = $(items.get(i));
-			const id = item.data('id');
-			const rect = this.cache[id];
-
-			if (id == groupId) {
+		for (let group of this.groups) {
+			const rect = this.cache[group.id];
+			if (!rect || (group.id == groupId)) {
 				continue;
 			};
 
+			console.log(e.pageX, this.width, rect.x, rect.width);
+
 			if (rect && this.cache[groupId] && Util.rectsCollide({ x: e.pageX, y: e.pageY, width: this.width, height: this.height }, rect)) {
 				isLeft = e.pageX <= rect.x + rect.width / 2;
-				hoverId = id;
+				hoverId = group.id;
 				this.newIndex = isLeft ? rect.index : rect.index + 1;
 				break;
 			};
@@ -339,13 +336,12 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 		};
 
 		this.groups = arrayMove(this.groups, this.oldIndex, this.newIndex);
+		this.onDragEndCommon(e);
 		this.forceUpdate();
 
 		C.BlockDataviewGroupOrderUpdate(rootId, block.id, [
 			{ viewId: view.id, groups: groups }
 		]);
-
-		this.onDragEndCommon(e);
 	};
 
 	onDragStartCard (e: any, groupId: any, record: any) {
@@ -353,9 +349,9 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 		const node = $(ReactDOM.findDOMNode(this));
 
 		this.onDragStartCommon(e, $(e.currentTarget));
-		this.initCache(node.find('.card'));
+		this.initCacheCard();
 
-		win.on('drag.board', throttle((e: any) => { this.onDragMoveCard(e, groupId, record); }, THROTTLE));
+		win.on('drag.board', (e: any) => { this.onDragMoveCard(e, groupId, record); });
 		win.on('dragend.board', (e: any) => { this.onDragEndColumn(e); });
 	};
 
