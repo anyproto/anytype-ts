@@ -418,7 +418,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				break;
 
 			case 'columnCopy':
-				C.BlockTableColumnDuplicate(rootId, targetColumnId, targetColumnId, I.BlockPosition.Right);
+				C.BlockTableColumnDuplicate(rootId, targetColumnId, I.BlockPosition.Right);
 				break;
 
 			case 'rowBefore':
