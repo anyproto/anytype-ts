@@ -2,8 +2,7 @@ import { I } from 'ts/lib';
 
 export interface BlockComponentTable extends I.BlockComponent {
 	getData: () => any;
-	onOptions: (e: any, rowId: string, columnId: string, cellId: string) => void;
-	onHandleClick: (e: any, id: string) => void;
+	onOptions: (e: any, type: I.BlockType, rowId: string, columnId: string, cellId: string) => void;
 	onCellClick: (e: any, rowId: string, columnId: string, cellId: string) => void;
 	onCellFocus: (e: any, rowId: string, columnId: string, cellId: string) => void;
 	onCellBlur: (e: any, rowId: string, columnId: string, cellId: string) => void;

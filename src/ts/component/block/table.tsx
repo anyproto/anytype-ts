@@ -35,7 +35,6 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		this.onSortStart = this.onSortStart.bind(this);
 		this.onSortEndColumn = this.onSortEndColumn.bind(this);
 		this.onSortEndRow = this.onSortEndRow.bind(this);
-		this.onHandleClick = this.onHandleClick.bind(this);
 		this.onCellClick = this.onCellClick.bind(this);
 		this.onCellFocus = this.onCellFocus.bind(this);
 		this.onCellBlur = this.onCellBlur.bind(this);
@@ -82,7 +81,6 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 											index={i}
 											getData={this.getData}
 											onOptions={this.onOptions}
-											onHandleClick={this.onHandleClick}
 											onCellClick={this.onCellClick}
 											onCellFocus={this.onCellFocus}
 											onCellBlur={this.onCellBlur}
@@ -169,7 +167,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		return { rowId: cellElement.parentId, columnId: columns[idx].id };
 	};
 
-	onOptions (e: any, rowId: string, columnId: string, cellId: string) {
+	onOptions (e: any, type: I.BlockType, rowId: string, columnId: string, cellId: string) {
 		if (!this._isMounted) {
 			return;
 		};
@@ -185,7 +183,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		};
 
 		const node = $(ReactDOM.findDOMNode(this));
-		const { rowContainer, rows, columnContainer, columns } = this.getData();
+		const { rows, columns } = this.getData();
 		const subIds = [ 'select2', 'blockColor', 'blockBackground' ];
 
 		let menuContext: any = null;
@@ -193,7 +191,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			component: 'select',
 			onOpen: (context: any) => {
 				menuContext = context;
-				this.onOptionsOpen(cellId);
+				this.onOptionsOpen(type, rowId, columnId, cellId);
 			},
 			onClose: () => {
 				this.onOptionsClose();
@@ -206,17 +204,13 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		let optionsColor = this.optionsColor(cellId);
 		let element: any = null;
 		let blockIds: string[] = [];
-		let targetRowId: string = '';
-		let targetColumnId: string = '';
 
-		switch (current.type) {
+		switch (type) {
 			case I.BlockType.TableRow:
-				targetRowId = current.id;
-
-				options = options.concat(this.optionsRow(targetRowId));
+				options = options.concat(this.optionsRow(rowId));
 				options = options.concat(optionsColor);
 
-				blockIds = blockStore.getChildrenIds(rootId, current.id);
+				blockIds = blockStore.getChildrenIds(rootId, rowId);
 
 				menuParam = Object.assign(menuParam, {
 					element: node.find(`#row-${rowId}`).first(),
@@ -225,9 +219,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				break;
 
 			case I.BlockType.TableColumn:
-				targetColumnId = current.id;
-
-				options = options.concat(this.optionsColumn(targetColumnId));
+				options = options.concat(this.optionsColumn(columnId));
 				options = options.concat(optionsColor);
 
 				const idx = columns.findIndex(it => it.id == current.id);
@@ -238,7 +230,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 					});
 				};
 
-				element = node.find(`.cell.column${cellId}`).first();
+				element = node.find(`#cell-${cellId}`).first();
 				menuParam = Object.assign(menuParam, {
 					element,
 					offsetX: element.outerWidth() + 2,
@@ -247,12 +239,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				break;
 
 			default:
-				//const { rowId, columnId } = this.getRowColumn(current.id);
-
 				blockIds = [ current.id ];
-				targetRowId = rowId;
-				targetColumnId = columnId;
-
 				options = options.concat([
 					{ id: 'row', name: 'Row', arrow: true },
 					{ id: 'column', name: 'Column', arrow: true },
@@ -296,9 +283,9 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 							menuId = 'select2';
 							menuParam.component = 'select';
 							menuParam.data = Object.assign(menuParam.data, {
-								options: this.optionsRow(targetRowId).filter(it => !it.isDiv),
+								options: this.optionsRow(rowId).filter(it => !it.isDiv),
 								onSelect: (e: any, item: any) => {
-									this.onSelect(e, item, targetRowId, targetColumnId, current.id, blockIds);
+									this.onSelect(e, item, rowId, columnId, current.id, blockIds);
 								}
 							});
 							break;
@@ -307,9 +294,9 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 							menuId = 'select2';
 							menuParam.component = 'select';
 							menuParam.data = Object.assign(menuParam.data, {
-								options: this.optionsColumn(targetColumnId).filter(it => !it.isDiv),
+								options: this.optionsColumn(columnId).filter(it => !it.isDiv),
 								onSelect: (e: any, item: any) => {
-									this.onSelect(e, item, targetRowId, targetColumnId, current.id, blockIds);
+									this.onSelect(e, item, rowId, columnId, current.id, blockIds);
 								}
 							});
 							break;
@@ -378,7 +365,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 					});
 				},
 				onSelect: (e: any, item: any) => {
-					this.onSelect(e, item, targetRowId, targetColumnId, current.id, blockIds);
+					this.onSelect(e, item, rowId, columnId, current.id, blockIds);
 				}
 			},
 		});
@@ -386,7 +373,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		menuStore.open('select1', menuParam);
 	};
 
-	onSelect (e: any, item: any, targetRowId: string, targetColumnId: string, targetCellId: string, blockIds: string[]) {
+	onSelect (e: any, item: any, rowId: string, columnId: string, targetCellId: string, blockIds: string[]) {
 		if (item.arrow) {
 			return;
 		};
@@ -401,29 +388,29 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		switch (item.id) {
 			case 'columnBefore':
 			case 'columnAfter':
-				C.BlockTableColumnCreate(rootId, targetColumnId, (item.id == 'columnBefore' ? I.BlockPosition.Left : I.BlockPosition.Right));
+				C.BlockTableColumnCreate(rootId, columnId, (item.id == 'columnBefore' ? I.BlockPosition.Left : I.BlockPosition.Right));
 				break;
 
 			case 'columnMoveLeft':
 			case 'columnMoveRight':
 				childrenIds = blockStore.getChildrenIds(rootId, columnContainer.id);
-				oldIndex = childrenIds.indexOf(targetColumnId);
+				oldIndex = childrenIds.indexOf(columnId);
 				newIndex = item.id == 'columnMoveLeft' ? oldIndex - 1 : oldIndex + 1;
 
 				this.onSortEndColumn(oldIndex, newIndex);
 				break;
 
 			case 'columnRemove':
-				C.BlockTableColumnDelete(rootId, targetColumnId);
+				C.BlockTableColumnDelete(rootId, columnId);
 				break;
 
 			case 'columnCopy':
-				C.BlockTableColumnDuplicate(rootId, targetColumnId, I.BlockPosition.Right);
+				C.BlockTableColumnDuplicate(rootId, columnId, I.BlockPosition.Right);
 				break;
 
 			case 'rowBefore':
 			case 'rowAfter':
-				C.BlockTableRowCreate(rootId, targetRowId, (item.id == 'rowBefore' ? I.BlockPosition.Top : I.BlockPosition.Bottom));
+				C.BlockTableRowCreate(rootId, rowId, (item.id == 'rowBefore' ? I.BlockPosition.Top : I.BlockPosition.Bottom));
 				break;
 
 			case 'rowMoveTop':
@@ -436,11 +423,11 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				break;
 
 			case 'rowCopy':
-				C.BlockListDuplicate(rootId, [ targetRowId ], targetRowId, I.BlockPosition.Bottom);
+				C.BlockListDuplicate(rootId, [ rowId ], rowId, I.BlockPosition.Bottom);
 				break;
 
 			case 'rowRemove':
-				C.BlockListDelete(rootId, [ targetRowId ]);
+				C.BlockListDelete(rootId, [ rowId ]);
 				break;
 
 			case 'clearStyle':
@@ -453,15 +440,8 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		};
 	};
 
-	onOptionsOpen (id: string) {
+	onOptionsOpen (type: I.BlockType, rowId: string, columnId: string, cellId: string) {
 		if (!this._isMounted) {
-			return;
-		};
-
-		const { rootId } = this.props;
-		const current = blockStore.getLeaf(rootId, id);
-
-		if (!current) {
 			return;
 		};
 
@@ -470,9 +450,9 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 
 		this.onOptionsClose();
 
-		switch (current.type) {
+		switch (type) {
 			case I.BlockType.TableColumn:
-				const cells = table.find(`.cell.column${id}`);
+				const cells = table.find(`.cell.column${columnId}`);
 
 				cells.addClass('isHighlightedColumn');
 				cells.first().addClass('isFirst');
@@ -480,11 +460,11 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				break;
 
 			case I.BlockType.TableRow:
-				table.find(`#row-${id}`).addClass('isHighlightedRow');
+				table.find(`#row-${rowId}`).addClass('isHighlightedRow');
 				break;
 
 			default:
-				table.find(`#cell-${id}`).addClass('isHighlightedCell');
+				table.find(`#cell-${cellId}`).addClass('isHighlightedCell');
 				break;
 		};
 	};
@@ -520,10 +500,6 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		const { rows } = this.getData();
 
 		C.BlockTableRowCreate(rootId, rows[rows.length - 1].id, I.BlockPosition.Bottom);
-	};
-
-	onHandleClick (e: any, id: string) {
-		//this.onOptions(e, id);
 	};
 
 	onCellFocus (e: any, rowId: string, columnId: string, cellId: string) {
@@ -746,7 +722,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 
 		this.initCache(I.BlockType.TableColumn);
 		this.setEditing('');
-		this.onOptionsOpen(id);
+		this.onOptionsOpen(I.BlockType.TableColumn, '', id, '');
 		this.preventSelect(true);
 		this.preventDrop(true);
 	};
@@ -839,7 +815,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 
 		this.initCache(I.BlockType.TableRow);
 		this.setEditing('');
-		this.onOptionsOpen(id);
+		this.onOptionsOpen(I.BlockType.TableRow, id, '', '');
 		this.preventSelect(true);
 		this.preventDrop(true);
 	};

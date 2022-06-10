@@ -16,7 +16,7 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 
 	render () {
 		const { 
-			rootId, block, readonly, rowIdx, columnIdx, row, column, onOptions, onHandleClick, onCellFocus, onCellBlur, onCellClick, onCellEnter, 
+			rootId, block, readonly, rowIdx, columnIdx, row, column, onOptions, onCellFocus, onCellBlur, onCellClick, onCellEnter, 
 			onCellLeave, onResizeStart, onDragStartColumn, onDragStartRow 
 		} = this.props;
 
@@ -35,9 +35,9 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 			<div 
 				className="icon handleColumn"
 				draggable={true}
-				onClick={(e: any) => { onHandleClick(e, item.id); }}
+				onClick={(e: any) => { onOptions(e, I.BlockType.TableColumn, row.id, column.id, cellId); }}
 				onDragStart={(e: any) => { onDragStartColumn(e, column.id); }}
-				onContextMenu={(e: any) => { onHandleClick(e, item.id); }}
+				onContextMenu={(e: any) => { onOptions(e, I.BlockType.TableColumn, row.id, column.id, cellId); }}
 			/>
 		);
 
@@ -45,9 +45,9 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 			<div 
 				className="icon handleRow"
 				draggable={true}
-				onClick={(e: any) => { onHandleClick(e, item.id); }}
+				onClick={(e: any) => { onOptions(e, I.BlockType.TableRow, row.id, column.id, cellId); }}
 				onDragStart={(e: any) => { onDragStartRow(e, row.id); }}
-				onContextMenu={(e: any) => { onHandleClick(e, item.id); }}
+				onContextMenu={(e: any) => { onOptions(e, I.BlockType.TableRow, row.id, column.id, cellId); }}
 			/>
 		);
 
@@ -81,7 +81,7 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 				onMouseDown={(e: any) => { onCellClick(e, row.id, column.id, cellId); }}
 				onMouseEnter={(e: any) => { onCellEnter(e, row.id, column.id, cellId); }}
 				onMouseLeave={(e: any) => { onCellLeave(e, row.id, column.id, cellId); }}
-				onContextMenu={(e: any) => { onOptions(e, row.id, column.id, cellId); }}
+				onContextMenu={(e: any) => { onOptions(e, I.BlockType.Text, row.id, column.id, cellId); }}
 				data-column-id={column.id}
 			>
 				{!rowIdx ? <HandleColumn {...column} /> : ''}
@@ -105,7 +105,7 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 				)}
 
 				<div className="resize" onMouseDown={(e: any) => { onResizeStart(e, column.id); }} />
-				<Icon className="menu" onClick={(e: any) => { onOptions(e, row.id, column.id, cellId); }} />
+				<Icon className="menu" onClick={(e: any) => { onOptions(e, I.BlockType.Text, row.id, column.id, cellId); }} />
 			</div>
 		);
 	};
