@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import { I, DataUtil, Relation } from 'ts/lib';
 import { dbStore, detailStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -11,6 +12,8 @@ interface Props extends I.ViewComponent {
 };
 
 const Card = observer(class Card extends React.Component<Props, {}> {
+
+	_isMounted: boolean = false;
 
 	render () {
 		const { rootId, block, groupId, id, getView, onContext, onRef, onDragStartCard } = this.props;
@@ -58,6 +61,19 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 		);
 	};
 
+	componentDidMount () {
+		this._isMounted = true;
+		this.resize();
+	};
+
+	componentDidUpdate () {
+		this.resize();
+	};
+
+	componentWillUnmount () {
+		this._isMounted = false;
+	};
+
 	onClick (e: any) {
 		e.preventDefault();
 
@@ -75,6 +91,20 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 
 		if (cb[e.button]) {
 			cb[e.button]();
+		};
+	};
+
+	resize () {
+		if (!this._isMounted) {
+			return;
+		};
+
+		const node = $(ReactDOM.findDOMNode(this));
+		const last = node.find('.cellContent:not(.isEmpty)').last();
+
+		node.find('.cellContent').removeClass('last');
+		if (last.length) {
+			last.addClass('last');
 		};
 	};
 

@@ -187,6 +187,7 @@ const Mapper = {
 				sources: obj.getSourceList(),
 				views: (obj.getViewsList() || []).map(Mapper.From.View),
 				relations: (obj.getRelationsList() || []).map(Mapper.From.Relation),
+				groupOrder: (obj.getGrouporderList() || []).map(Mapper.From.GroupOrder),
 			};
 		},
 
@@ -415,7 +416,7 @@ const Mapper = {
             };
 		},
 
-		BoardGroup: (obj: any) => {
+		BoardGroup: (obj: any): I.BoardGroup => {
 			const type = Mapper.BoardGroupType(obj.getValueCase());
 			const field = obj['get' + Util.ucFirst(type)]();
 
@@ -433,6 +434,18 @@ const Mapper = {
 			return { 
 				id: obj.getId(),
 				value,
+			};
+		},
+
+		GroupOrder: (obj: any) => {
+			return {
+				viewId: obj.getViewid(),
+				groups: (obj.getViewgroupList() || []).map((it: any) => {
+					return {
+						groupId: it.getGroupid(),
+						index: it.getIndex(),
+					};
+				}),
 			};
 		},
 

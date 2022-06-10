@@ -87,7 +87,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 	};
 
 	loadGroupList () {
-		const { getView } = this.props;
+		const { block, getView } = this.props;
 		const view = getView();
 
 		if (this.groupRelationKey == view.groupRelationKey) {
@@ -102,10 +102,31 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 			return;
 		};
 
+		console.log(JSON.stringify(block.content.groupOrder, null, 5));
+		console.log(view.id);
+
+		const groupOrder: any = {};
+ 		const el = block.content.groupOrder.find(it => it.viewId == view.id);
+
+		if (el) {
+			el.groups.forEach((it: any) => {
+				groupOrder[it.groupId] = it.index;
+			});
+		};
+
 		C.ObjectRelationSearchDistinct(view.groupRelationKey, (message: any) => {
-			if (!message.error.code) {
-				dbStore.boardGroupsSet(message.groups);
+			if (message.error.code) {
+				return;
 			};
+
+			console.log(JSON.stringify(groupOrder, null, 5));
+			message.groups.sort((c1: any, c2: any) => {
+				if (groupOrder[c1.id] > groupOrder[c2.id]) return 1;
+				if (groupOrder[c1.id] < groupOrder[c2.id]) return -1;
+				return 0;
+			});
+
+			dbStore.boardGroupsSet(message.groups);
 		});
 	};
 
@@ -240,6 +261,8 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 		};
 
 		this.cache = {};
+		this.oldIndex = -1;
+		this.newIndex = -1;
 		this.clear();
 		this.unbind();
 	};
@@ -295,26 +318,20 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 		const { rootId, block, getView } = this.props;
 		const view = getView();
 		const groups: any[] = [];
-
+		
 		let { boardGroups } = dbStore;
-		if (this.oldIndex >= 0) {
-			const oldId = boardGroups[this.oldIndex].id;
-			groups.push({ groupId: oldId, index: this.oldIndex });
-		};
-		if (this.newIndex >= 0) {
-			const newId = boardGroups[this.newIndex].id;
-			groups.push({ groupId: newId, index: this.newIndex });
-		};
+		boardGroups = arrayMove(dbStore.boardGroups, this.oldIndex, this.newIndex);
+		dbStore.boardGroupsSet(boardGroups);
 
-		this.onDragEndCommon(e);
-		dbStore.boardGroupsSet(arrayMove(boardGroups, this.oldIndex, this.newIndex));
+		boardGroups.forEach((it: any, i: number) => {
+			groups.push({ groupId: it.id, index: i });
+		});
 
 		C.BlockDataviewGroupOrderUpdate(rootId, block.id, [
 			{ viewId: view.id, groups: groups }
 		]);
 
-		this.oldIndex = -1;
-		this.newIndex = -1;
+		this.onDragEndCommon(e);
 	};
 
 	onDragStartCard (e: any, groupId: any, record: any) {

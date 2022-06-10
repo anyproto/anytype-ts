@@ -164,6 +164,7 @@ export interface BoardGroup {
 export interface ContentDataview {
 	sources: string[];
 	views: View[];
+	groupOrder: any[];
 };
 
 export interface BlockDataview extends I.Block {
