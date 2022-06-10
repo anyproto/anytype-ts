@@ -33,8 +33,9 @@
 
 				.body { overflow-y: overlay; overflow-x: hidden; max-height: 600px; }
             }
-			.column.isDragging {
-				.body { opacity: 0.3; }
+			.column.isDragging { opacity: 0.3; }
+			.column.isClone {
+				.body { overflow: visible; max-height: unset; }
 			}
 
 			.column > .ghost { margin-top: 42px; width: 240px; flex-shrink: 0; }
