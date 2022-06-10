@@ -6,6 +6,7 @@
         .viewItem.viewBoard {
 
 			.ghost { display: none; border: 1px dotted $colorOrange; border-radius: 12px; }
+			.ghost.isColumn { display: block; width: 240px; height: 100%; flex-shrink: 0; margin-right: 14px; }
 			
 			.isOver.left {
 				.ghost.left { display: block; }
@@ -20,10 +21,9 @@
 				.ghost.bottom { display: block; }
 			}
 
-            .columns { display: flex; flex-direction: row; gap: 0px 6px; }
-            .column { display: flex; flex-direction: row; gap: 0px 24px; }
+            .columns { display: flex; flex-direction: row; gap: 0px 10px; }
+            .column { width: 254px; flex-shrink: 0; display: flex; flex-direction: column; }
             .column {
-				.body { width: 254px; display: flex; flex-direction: column; }
                 .head { padding: 10px 4px; width: 100%; margin: 0px; cursor: grab; }
 				.head * { cursor: grab; }
 				.head {
@@ -31,7 +31,7 @@
 					.tagItem { margin: 0px; }
 				}
 
-				.list { overflow-y: overlay; overflow-x: hidden; max-height: 600px; }
+				.body { overflow-y: overlay; overflow-x: hidden; max-height: 600px; }
             }
 			.column.isDragging {
 				.body { opacity: 0.3; }

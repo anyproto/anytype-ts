@@ -42,34 +42,30 @@ const Column = observer(class Column extends React.Component<Props, {}> {
 				className="column" 
 				data-id={id}
 			>
-				<div className="ghost left" />
-				<div className="body">
-					<div 
-						className="head" 
-						draggable={true}
-						onDragStart={(e: any) => { onDragStartColumn(e, id); }}
-					>
-						<Cell 
-							id={'board-head-' + id} 
-							rootId={rootId}
-							subId={subId}
-							block={block}
-							relationKey={view.groupRelationKey} 
-							viewType={I.ViewType.Board}
-							getRecord={() => { return head; }}
-							readonly={true} 
-							placeholder={translate('placeholderCellCommon')}
-						/>
-					</div>
-
-					<div className="list">
-						{records.map((record: any, i: number) => (
-							<Card key={'board-card-' +  view.id + i} {...this.props} id={record.id} groupId={id} />
-						))}
-						<Add />
-					</div>
+				<div 
+					className="head" 
+					draggable={true}
+					onDragStart={(e: any) => { onDragStartColumn(e, id); }}
+				>
+					<Cell 
+						id={'board-head-' + id} 
+						rootId={rootId}
+						subId={subId}
+						block={block}
+						relationKey={view.groupRelationKey} 
+						viewType={I.ViewType.Board}
+						getRecord={() => { return head; }}
+						readonly={true} 
+						placeholder={translate('placeholderCellCommon')}
+					/>
 				</div>
-				<div className="ghost right" />
+
+				<div className="body">
+					{records.map((record: any, i: number) => (
+						<Card key={'board-card-' +  view.id + i} {...this.props} id={record.id} groupId={id} />
+					))}
+					<Add />
+				</div>
 			</div>
 		);
 	};

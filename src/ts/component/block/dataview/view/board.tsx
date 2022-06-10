@@ -248,6 +248,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 		$('body').removeClass('grab');
 		node.find('.isClone').remove();
 		node.find('.isDragging').removeClass('isDragging');
+		node.find('.ghost.isColumn').remove();
 
 		selection.preventSelect(false);
 		preventCommonDrop(false);
@@ -277,6 +278,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 	onDragMoveColumn (e: any, groupId: string) {
 		const { boardGroups } = dbStore;
 		const node = $(ReactDOM.findDOMNode(this));
+		const ghost = $('<div />').addClass('ghost isColumn');
 
 		this.oldIndex = boardGroups.findIndex(it => it.id == groupId);
 
@@ -302,10 +304,13 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 		};
 
 		this.frame = raf(() => {
-			this.clear();
+			node.find('.ghost.isColumn').remove();
 
 			if (hoverId) {
-				node.find(`#column-${hoverId}`).addClass('isOver ' + (isLeft ? 'left' : 'right'));
+				const el = node.find(`#column-${hoverId}`);
+
+				isLeft ? el.before(ghost) : el.after(ghost);
+				ghost.css({ height: this.cache[hoverId].height });
 			};
 		});
 	};
