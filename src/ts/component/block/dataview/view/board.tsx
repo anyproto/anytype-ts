@@ -190,8 +190,8 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 	};
 
 	initCacheColumn () {
-		const node = $(ReactDOM.findDOMNode(this));
 		const { boardGroups } = dbStore;
+		const node = $(ReactDOM.findDOMNode(this));
 
 		this.cache = {};
 		boardGroups.forEach((group: any, i: number) => {
@@ -199,6 +199,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 			const p = item.offset();
 
 			this.cache[group.id] = {
+				id: group.id,
 				x: p.left,
 				y: p.top,
 				width: item.outerWidth(),
@@ -209,6 +210,29 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 	};
 
 	initCacheCard () {
+		const { rootId, block } = this.props;
+		const { boardGroups } = dbStore;
+		const node = $(ReactDOM.findDOMNode(this));
+
+		this.cache = {};
+		boardGroups.forEach((group: any, i: number) => {
+			const subId = dbStore.getSubId(rootId, [ block.id, group.id ].join(':'));
+			const records = dbStore.getRecords(subId, '');
+
+			records.forEach((record: any) => {
+				const item = node.find(`#card-${record.id}`);
+				const p = item.offset();
+
+				this.cache[record.id] = {
+					id: record.id,
+					x: p.left,
+					y: p.top,
+					width: item.outerWidth(),
+					height: item.outerHeight(),
+					index: i,
+				};
+			});
+		});
 	};
 
 	onDragStartCommon (e: any, target: any) {
@@ -248,7 +272,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 		$('body').removeClass('grab');
 		node.find('.isClone').remove();
 		node.find('.isDragging').removeClass('isDragging');
-		node.find('.ghost.isColumn').remove();
+		node.find(`.ghost`).remove();
 
 		selection.preventSelect(false);
 		preventCommonDrop(false);
@@ -339,13 +363,14 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 		this.onDragStartCommon(e, $(e.currentTarget));
 		this.initCacheCard();
 
-		win.on('drag.board', (e: any) => { this.onDragMoveCard(e, groupId, record); });
-		win.on('dragend.board', (e: any) => { this.onDragEndColumn(e); });
+		win.on('drag.board', (e: any) => { this.onDragMoveCard(e, record); });
+		win.on('dragend.board', (e: any) => { this.onDragEndCard(e); });
 	};
 
-	onDragMoveCard (e: any, groupId: any, record: any) {
+	onDragMoveCard (e: any, record: any) {
 		const node = $(ReactDOM.findDOMNode(this));
 		const items = node.find('.card');
+		const ghost = $('<div />').addClass('ghost isCard');
 
 		let isTop = false;
 		let hoverId = '';
@@ -366,19 +391,32 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 			};
 		};
 
+		for (let i in this.cache) {
+			const rect = this.cache[i];
+			if (!rect || (rect.id == record.id)) {
+				continue;
+			};
+
+			if (this.cache[record.id] && Util.rectsCollide({ x: e.pageX, y: e.pageY, width: this.width, height: this.height + 8 }, rect)) {
+				isTop = e.pageY <= rect.y + rect.height / 2;
+				hoverId = rect.id;
+				break;
+			};
+		};
+
 		if (this.frame) {
 			raf.cancel(this.frame);
 		};
 
 		this.frame = raf(() => {
-			this.clear();
+			node.find(`.ghost.isCard`).remove();
 
 			if (hoverId) {
 				const card = node.find(`#card-${hoverId}`);
-				const cn = isTop ? 'top' : 'bottom';
+				const rect = this.cache[hoverId];
 
-				card.addClass('isOver ' + cn);
-				card.find('.ghost.' + cn).css({ height: this.cache[hoverId].height });
+				ghost.css({ height: rect.height, width: rect.width });
+				isTop ? card.before(ghost) : card.after(ghost);
 			};
 		});
 	};

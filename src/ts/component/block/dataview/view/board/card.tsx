@@ -34,7 +34,6 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 				onClick={(e: any) => { this.onClick(e); }}
 				onContextMenu={(e: any) => { onContext(e, record.id); }}
 			>
-				<div className="ghost top" />
 				<div className="cardContent">
 					{relations.map((relation: any, i: number) => {
 						const id = Relation.cellId(idPrefix, relation.relationKey, 0);
@@ -56,7 +55,6 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 						);
 					})}
 				</div>
-				<div className="ghost bottom" />
 			</div>
 		);
 	};
