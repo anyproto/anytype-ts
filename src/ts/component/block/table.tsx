@@ -423,7 +423,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				break;
 
 			case 'rowCopy':
-				C.BlockListDuplicate(rootId, [ rowId ], rowId, I.BlockPosition.Bottom);
+				C.BlockTableRowDuplicate(rootId, rowId, rowId, I.BlockPosition.Bottom);
 				break;
 
 			case 'rowRemove':
