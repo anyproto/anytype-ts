@@ -37,9 +37,9 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 		const { account } = authStore;
 		const { config } = commonStore;
 		const pin = Storage.get('pin');
-		const canDelete = config.experimental && (account.status.type == I.AccountStatusType.Active);
-		const isDeleted = [ I.AccountStatusType.StartedDeletion, I.AccountStatusType.Deleted ].includes(account.status.type);
-		const isPending = [ I.AccountStatusType.PendingDeletion ].includes(account.status.type);
+		const canDelete = account.status.type == I.AccountStatusType.Active;
+		const isDeleted = authStore.accountIsDeleted();
+		const isPending = authStore.accountIsPending();
 
 		let message = null;
 
@@ -139,6 +139,10 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 		};
 
 		C.AccountDelete(false, (message: any) => {
+			if (message.error.code) {
+				return;
+			};
+
 			authStore.accountSet({ status: message.status });		
 			this.props.close();
 			Util.route('/auth/deleted');

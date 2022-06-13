@@ -331,6 +331,10 @@ class Keyboard {
 		const { account } = authStore;
 		const isPopup = this.isPopup();
 
+		if (authStore.accountIsDeleted()) {
+			return;
+		};
+
 		if (isPopup) {
 			if (!historyPopup.checkBack()) {
 				popupStore.close('page');
