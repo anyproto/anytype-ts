@@ -42,6 +42,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 	composition: boolean = false;
 	preventSaveOnBlur: boolean = false;
 	preventMenu: boolean = false;
+	frame: number = 0;
 
 	public static defaultProps = {
 		onKeyDown: (e: any, text: string, marks: I.Mark[], range: I.TextRange) => {},
@@ -283,7 +284,11 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		value.get(0).innerHTML = html;
 
 		if (!block.isTextCode() && (html != text) && this.marks.length) {
-			raf(() => {
+			if (this.frame) {
+				raf.cancel(this.frame);
+			};
+
+			this.frame = raf(() => {
 				this.renderLinks();
 				this.renderObjects();
 				this.renderMentions();
@@ -315,12 +320,11 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		items.unbind('mouseenter.link');
 			
 		items.on('mouseenter.link', function (e: any) {
-			const el = $(this);
-			const range = el.data('range').split('-');
-			const url = String(el.attr('href') || '');
-			const scheme = Util.getScheme(url);
-			const isInside  = scheme == Constant.protocol;
-			
+			let el = $(this);
+			let range = el.data('range').split('-');
+			let url = String(el.attr('href') || '');
+			let scheme = Util.getScheme(url);
+			let isInside = scheme == Constant.protocol;
 			let route = '';
 			let param: any = {
 				range: { 
@@ -328,9 +332,11 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 					to: Number(range[1]) || 0, 
 				},
 				marks: self.marks,
-				onChange: (marks: I.Mark[]) => {
-					self.setMarks(marks);
-				},
+				onChange: (marks: I.Mark[]) => { self.setMarks(marks); },
+			};
+
+			if (!scheme) {
+				url = 'http://' + url;
 			};
 
 			if (isInside) {
@@ -350,16 +356,16 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 				});
 			};
 
-			el.unbind('click.link').on('click.link', function (e: any) {
+			Util.previewShow(el, param);
+
+			el.unbind('click.link').on('click.link', (e: any) => {
 				e.preventDefault();
 				if (isInside) {
 					Util.route(route);
 				} else {
-					renderer.send('urlOpen', $(this).attr('href'));
+					renderer.send('urlOpen', url);
 				};
 			});
-
-			Util.previewShow($(this), param);
 		});
 	};
 

@@ -6,7 +6,33 @@ export default [
 	{ type: I.BlockType.Cover, param: { type: I.CoverType.Gradient, id: 'pinkOrange' } },
 	{ type: I.BlockType.IconPage, icon: '👋' },
 
-	{ style: I.TextStyle.Title, text: `27 April 2022 Desktop` },
+	{ style: I.TextStyle.Title, text: `13 June 2022 Desktop` },
+
+	{ style: I.TextStyle.Header2, text: `Highlights of this release include:` },
+	{ style: I.TextStyle.Bulleted, text: `Users can now permanently delete their Anytype account, including objects stored on the backup node 🗑️` },
+	{ style: I.TextStyle.Bulleted, text: `Relative values for date filters 📅` },
+	{ style: I.TextStyle.Bulleted, text: `A shiny new app icon! 💅🏻` },
+
+	{ style: I.TextStyle.Header2, text: `Features` },
+	{ style: I.TextStyle.Bulleted, text: `Permanently erase your Anytype account, recovery phrase, and objects stored on the backup node. This is irreversible, and we cannot help you recover your data. You will have 30 days to change your mind.` },
+	{ style: I.TextStyle.Bulleted, text: `Highlight block now changes style to paragraph when pressing backspace in empty block, like lists` },
+	{ style: I.TextStyle.Bulleted, text: `Objects in <span class="highlight">move to menu</span> are now being sorted by last edited date` },
+	{ style: I.TextStyle.Bulleted, text: `Ability to drag-and-drop blocks directly to the sidebar` },
+	{ style: I.TextStyle.Bulleted, text: `Date filters in Sets received support for relative values` },
+	{ style: I.TextStyle.Bulleted, text: `Show featured relation star by default in the relations panel` },
+	{ style: I.TextStyle.Bulleted, text: `An updated app icon` },
+
+	{ style: I.TextStyle.Header2, text: `Bugs` },
+	{ style: I.TextStyle.Bulleted, text: `Drop into columns was reworked and now works more consistently` },
+	{ style: I.TextStyle.Bulleted, text: `Sets sometimes were resizing incorrectly when making changes` },
+	{ style: I.TextStyle.Bulleted, text: `Chinese input methods when editing title or description in pages like Object Type or Set was fixed` },
+	{ style: I.TextStyle.Bulleted, text: `Incorrect search order of options when searching for some languages in code block` },
+	{ style: I.TextStyle.Bulleted, text: `Inability to delete selected blocks that have nested children` },
+
+	{ type: I.BlockType.Div, style: I.DivStyle.Dot },
+	// --------------------------------------------//
+
+	{ style: I.TextStyle.Header2, text: `27 April 2022 Desktop` },
 	{ text: `Hello everyone! After a short Easter break, we're back with some exciting updates.` },
 	{ text: `This version of Anytype doubles-down on productivity, making it easier for you to work with multiple objects at once. 🔑 Key to this update is the ability to now delete several objects from a Set. You can learn more about how this works below. 👇` },
 
