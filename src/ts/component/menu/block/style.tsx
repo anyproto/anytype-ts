@@ -98,20 +98,6 @@ const MenuBlockStyle = observer(class MenuBlockStyle extends React.Component<Pro
 		let hasTurnFile = true;
 		let sections: any[] = [];
 
-		/*
-		// Skip some features for BlockTable
-		if (isInsideTable) {
-			hasTurnDiv = false;
-			hasTurnFile = false;
-			turnText.children = turnText.children.filter((it: any) => {  
-				return ![ I.TextStyle.Callout ].includes(it.id);
-			});
-			turnList.children = turnList.children.filter((it: any) => {  
-				return ![ I.TextStyle.Toggle, I.TextStyle.Numbered ].includes(it.id);
-			});
-		};
-		*/
-
 		for (let id of blockIds) {
 			const block = blockStore.getLeaf(rootId, id);
 			if (!block) {
