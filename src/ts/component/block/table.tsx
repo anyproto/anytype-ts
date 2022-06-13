@@ -128,8 +128,13 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 	};
 	
 	componentWillUnmount () {
+		const { rootId } = this.props;
+		const { rows } = this.getData();
+
 		this._isMounted = false;
 		this.unbind();
+
+		C.BlockTableRowListClean(rootId, rows.map(it => it.id));
 	};
 
 	unbind () {
@@ -522,7 +527,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		};
 	};
 
-	onCellBlur (e: any, id: string) {
+	onCellBlur (e: any, rowId: string, columnId: string, cellId: string) {
 		this.setEditing('');
 		this.preventSelect(false);
 	};

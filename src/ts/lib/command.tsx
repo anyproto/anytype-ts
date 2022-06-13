@@ -501,7 +501,7 @@ const BlockTableRowListFill = (contextId: string, blockIds: string[], callBack?:
 };
 
 const BlockTableRowListClean = (contextId: string, blockIds: string[], callBack?: (message: any) => void) => {
-	const request = new Rpc.BlockTable.RowListCleanRequest();
+	const request = new Rpc.BlockTable.RowListClean.Request();
 	
 	request.setContextid(contextId);
 	request.setBlockidsList(blockIds);
