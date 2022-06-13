@@ -21,8 +21,9 @@
 	"Code": {
 		"ANYTYPE_NEEDS_UPGRADE": 10,
 		"ANOTHER_ANYTYPE_PROCESS_IS_RUNNING": 108,
+		"ACCOUNT_IS_DELETED": 109,
 		"NOT_FOUND": 3
 	},
 
-	"net::ERR_TIMED_OUT": "Network time-out"
+	"Error: net::ERR_TIMED_OUT": "Network time-out"
 }

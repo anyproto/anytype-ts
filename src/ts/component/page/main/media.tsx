@@ -179,7 +179,6 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<Props
 				return;
 			};
 
-			crumbs.addPage(rootId);
 			crumbs.addRecent(rootId);
 
 			this.loading = false;

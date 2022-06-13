@@ -27,14 +27,13 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<Pro
 
 	render () {
 		const { rootId, onHome, onForward, onBack, onNavigation, onGraph, onSearch } = this.props;
-		const { breadcrumbs } = blockStore;
 		const root = blockStore.getLeaf(rootId, rootId);
 
 		if (!root) {
 			return null;
 		};
 
-		const object = detailStore.get(breadcrumbs, rootId, [ 'templateIsBundled' ]);
+		const object = detailStore.get(rootId, rootId, [ 'templateIsBundled' ]);
 		const canSync = !object.templateIsBundled && !root.isObjectFileKind();
 		const isLocked = root.isLocked();
 		const showNav = !(root.isObjectType() || root.isObjectRelation());

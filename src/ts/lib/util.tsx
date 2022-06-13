@@ -1,6 +1,5 @@
 import { I, keyboard } from 'ts/lib';
 import { commonStore, popupStore, menuStore } from 'ts/store';
-import { v4 as uuidv4 } from 'uuid';
 import { translate } from '.';
 
 const raf = require('raf');
@@ -327,17 +326,24 @@ class Util {
 	};
 
 	time () {
-		return Math.floor((new Date()).getTime() / 1000);
+		let timestamp = Math.floor((new Date()).getTime() / 1000);
+		let timezone = commonStore.timezoneGet();
+
+		return timestamp + timezone.offset;
 	};
 
-	timestamp (y: number, m: number, d: number, h?: number, i?: number, s?: number): number {
+	timestamp (y?: number, m?: number, d?: number, h?: number, i?: number, s?: number): number {
 		y = Number(y) || 0;
 		m = Number(m) || 0;
 		d = Number(d) || 0;
 		h = Number(h) || 0;
 		i = Number(i) || 0;
 		s = Number(s) || 0;
-		return Math.floor(Date.UTC(y, m - 1, d, h, i, s, 0) / 1000);
+
+		let timestamp = Math.floor(Date.UTC(y, m - 1, d, h, i, s, 0) / 1000);
+		let timezone = commonStore.timezoneGet();
+
+		return timestamp - timezone.offset;
 	};
 
 	parseDate (value: string, format?: I.DateFormat): number {
@@ -793,10 +799,6 @@ class Util {
 		return cnt.substr(-1) == '1' ? w1 : w2;
 	};
 
-	uuid () {
-		return uuidv4(); 
-	};
-	
 	getPlatform () {
 		return Constant.platforms[os.platform()];
 	};
@@ -841,8 +843,8 @@ class Util {
 	};
 
 	getScheme (url: string): string {
-		const a = String(url || '').split('://');
-		return String(a[0] || '');
+		url = String(url || '');
+		return url.indexOf('://') >= 0 ? String(url.split('://')[0] || '') : '';
 	};
 
 	getRoute (path: string): { page: string, action: string, id: string } {

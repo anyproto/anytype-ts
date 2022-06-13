@@ -465,7 +465,6 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 		const filter = (it: I.PageInfo) => { return this.filterMapper(it); };
 
 		this.setState({ loading: true });
-		crumbs.addPage(id);
 
 		C.NavigationGetObjectInfoWithLinks(id, (message: any) => {
 			if (message.error.code) {
@@ -531,9 +530,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 			e.persist();
 		};
 
-		crumbs.cut(I.CrumbsType.Page, 0, () => {
-			DataUtil.objectOpenEvent(e, item);
-		});
+		DataUtil.objectOpenEvent(e, item);
 	};
 
 	getRootId () {

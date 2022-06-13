@@ -23,8 +23,7 @@ const HeaderMainGraph = observer(class HeaderMainGraph extends React.Component<P
 
 	render () {
 		const { rootId, onHome, onForward, onBack, onNavigation, onSearch } = this.props;
-		const { breadcrumbs } = blockStore;
-		const object = detailStore.get(breadcrumbs, rootId, [ 'templateIsBundled' ]);
+		const object = detailStore.get(rootId, rootId, []);
 
 		return (
 			<React.Fragment>

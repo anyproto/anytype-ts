@@ -112,7 +112,6 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, St
 				return;
 			};
 
-			crumbs.addPage(rootId);
 			crumbs.addRecent(rootId);
 
 			this.loading = false;

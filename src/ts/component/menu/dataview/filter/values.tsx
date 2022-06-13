@@ -169,9 +169,9 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 			case I.RelationType.Date:
 				if ([ I.FilterQuickOption.NumberOfDaysAgo, I.FilterQuickOption.NumberOfDaysNow ].includes(item.quickOption)) {
 					value = (
-						<div className="item">
+						<div key="filter-value-date-days" className="item">
 							<Input 
-								key="filter-value-date-days"
+								key="filter-value-date-days-input"
 								ref={(ref: any) => { this.refValue = ref; }} 
 								value={item.value} 
 								placeholder={translate('commonValue')} 
@@ -186,9 +186,9 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 
 				if ([ I.FilterQuickOption.ExactDate ].includes(item.quickOption)) {
 					value = (
-						<div className="item">
+						<div key="filter-value-date-exact" className="item">
 							<Input 
-								key="filter-value-date-exact"
+								key="filter-value-date-exact-input"
 								ref={(ref: any) => { this.refValue = ref; }} 
 								value={item.value !== null ? Util.date('d.m.Y H:i:s', item.value) : ''} 
 								placeholder="dd.mm.yyyy hh:mm:ss"
@@ -201,6 +201,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 					);
 					onSubmit = (e: any) => { this.onSubmitDate(e); };
 				};
+
 				break;
 
 			default:
@@ -337,7 +338,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 			{ id: 'condition', icon: '', name: conditionOption.name, format: relation.format, arrow: true },
 		];
 
-		if (filterQuickOptions.length) {
+		if ((relation.format == I.RelationType.Date) && filterQuickOptions.length) {
 			ret.push({ id: 'quickOption', icon: '', name: filterOption.name, format: relation.format, condition: conditionOption.id, arrow: true });
 		};
 
@@ -421,23 +422,29 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 				const conditions = Relation.filterConditionsByType(relation.format);
 
 				item.condition = conditions.length ? conditions[0].id : I.FilterCondition.None;
-				item.quickOption = I.FilterQuickOption.None;
+				item.quickOption = I.FilterQuickOption.ExactDate;
 				item.value = Relation.formatValue(relation, null, false);
-			};
-
-			if (k == 'value') {
-				item[k] = Relation.formatValue(relation, item[k], false);
 			};
 
 			if (k == 'condition') {
 				if ([ I.FilterCondition.None, I.FilterCondition.Empty, I.FilterCondition.NotEmpty ].includes(v)) {
 					item.value = Relation.formatValue(relation, null, false);
-					item.quickOption = I.FilterQuickOption.None;
+				};
+
+				const quickOptions = Relation.filterQuickOptions(relation.format, item.condition);
+				const filterOption = quickOptions.find(it => it.id == item.quickOption);
+
+				if (!filterOption) {
+					item.quickOption = quickOptions.length ? quickOptions[0].id : I.FilterQuickOption.ExactDate;
 				};
 			};
 
 			if (k == 'quickOption') {
 				item.value = Relation.formatValue(relation, null, false);
+			};
+
+			if (k == 'value') {
+				item[k] = Relation.formatValue(relation, item[k], false);
 			};
 
 			view.setFilter(itemId, item);

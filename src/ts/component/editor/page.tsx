@@ -245,7 +245,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 				return;
 			};
 
-			crumbs.addPage(rootId);
 			crumbs.addRecent(rootId);
 			
 			this.loading = false;

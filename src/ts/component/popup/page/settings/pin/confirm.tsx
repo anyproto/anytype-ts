@@ -19,6 +19,10 @@ interface State {
 
 const PopupSettingsPagePinConfirm = observer(class PopupSettingsPagePinConfirm extends React.Component<Props, State> {
 
+	state = {
+		error: '',
+	};
+
 	constructor (props: any) {
 		super(props);
 

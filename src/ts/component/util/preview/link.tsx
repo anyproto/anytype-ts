@@ -85,6 +85,7 @@ const PreviewLink = observer(class PreviewLink extends React.Component<Props, St
 		
 		C.LinkPreview(url, (message: any) => {
 			if (message.error.code) {
+				this.url = '';
 				this.setState({ loading: false });
 				return;
 			};

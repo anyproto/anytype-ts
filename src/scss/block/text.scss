@@ -27,12 +27,13 @@
 		}
 
 		lnk { position: relative; }
-		lnk, obj { cursor: pointer; color: inherit;  text-decoration: none; border-bottom: 1px solid $colorMediumGrey; }
+		lnk, obj { cursor: pointer; color: inherit;  text-decoration: none; border-bottom: 1px solid $colorMediumGrey; transition: border-color 0.2s ease-in-out; }
 		lnk.disabled, obj.disabled { border-width: 0px; }
 		lnk::after {
 			content: ""; display: inline-block; background-image: url('~img/icon/link.svg'); background-repeat: no-repeat;
 			width: 14px; height: 14px; vertical-align: middle; margin: 0px 0px 4px 4px;
 		}
+		lnk:hover, obj:hover { border-color: $colorBlack; }
 
 		lnk, obj {
 			underline { text-decoration: none; }
@@ -137,8 +138,8 @@
 	.block.blockText.quote > .wrapContent > .selectable > .dropTarget > .flex > .wrap { padding-left: 28px; }
 	.block.blockText.quote > .wrapContent > .selectable > .dropTarget > .flex > .wrap > .placeholder { left: 28px; }
 
-	.block.blockText.quote.align2 > .wrapContent > .selectable > .dropTarget > .flex > .wrap { padding-left: 28px; }
-	.block.blockText.quote.align2 > .wrapContent > .selectable > .dropTarget > .flex > .line { left: auto; right: 11px; }
+	.block.blockText.quote.align2 > .wrapContent > .selectable > .dropTarget > .flex > .wrap { padding-right: 28px; }
+	.block.blockText.quote.align2 > .wrapContent > .additional > .line { left: auto; right: 11px; }
 	.block.blockText.quote.align2 > .wrapContent > .selectable > .dropTarget > .flex > .wrap > .placeholder { left: auto; right: 28px; }
 	
 	.block.blockText.callout > .wrapContent { background: $colorVeryLightGrey; border-radius: 6px; padding: 16px 16px 0px 16px; margin: 6px 0px; }

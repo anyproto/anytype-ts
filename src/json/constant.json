@@ -204,6 +204,12 @@
 			"width": { "min": 240, "max": 500 }
 		},
 
+		"table": {
+			"min": 50,
+			"max": 500,
+			"default": 70
+		},
+
 		"dataview": {
 			"gallery": {
 				"card": 224,

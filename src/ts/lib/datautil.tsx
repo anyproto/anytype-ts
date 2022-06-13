@@ -1137,36 +1137,35 @@ class DataUtil {
 	defaultLinkSettings () {
 		return {
 			iconSize: I.LinkIconSize.Small,
-			cardStyle: I.LinkCardStyle.Text,
-			description: I.LinkDescription.None,
-			relations: [ 'icon' ],
+			cardStyle: I.LinkCardStyle.Card,
+			description: I.LinkDescription.Content,
+			relations: [ 'cover' ],
 		};
 	};
 
 	checkLinkSettings (content: I.ContentLink, layout: I.ObjectLayout) {
-		const relationKeys = [ 'icon', 'type', 'cover', 'tag' ];
+		const relationKeys = [ 'type', 'cover', 'tag' ];
 
 		content = Util.objectCopy(content);
-		content.iconSize = Number(content.iconSize) || I.LinkIconSize.Small;
+		content.iconSize = Number(content.iconSize) || I.LinkIconSize.None;
 		content.cardStyle = Number(content.cardStyle) || I.LinkCardStyle.Text;
 		content.relations = (content.relations || []).filter(it => relationKeys.includes(it));
 
 		if (content.cardStyle == I.LinkCardStyle.Text) {
 			content.iconSize = I.LinkIconSize.Small;
 			content.description = I.LinkDescription.None;
-			content.relations = content.relations.concat([ 'icon' ]);
+			content.relations = [];
         };
 
 		if (layout == I.ObjectLayout.Task) {
 			content.iconSize = I.LinkIconSize.Small;
-			content.relations = content.relations.concat([ 'icon' ]);
 		};
 
 		if (layout == I.ObjectLayout.Note) {
-			const filter = [ 'icon', 'cover' ];
+			const filter = [ 'type' ];
 
 			content.description = I.LinkDescription.None;
-			content.iconSize = I.LinkIconSize.Small;
+			content.iconSize = I.LinkIconSize.None;
 			content.relations = content.relations.filter(it => filter.includes(it)); 
 		};
 

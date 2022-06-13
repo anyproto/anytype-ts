@@ -161,6 +161,7 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 
 	getIcons () {
 		return [
+			{ id: I.LinkIconSize.None, name: 'None' },
 			{ id: I.LinkIconSize.Small, name: 'Small' },
 			{ id: I.LinkIconSize.Medium, name: 'Medium' },
 		];
@@ -217,7 +218,6 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 
 		const itemStyle = { id: 'cardStyle', name: 'Preview layout', caption: style.name, withCaption: true, arrow: true };
 		const itemSize = canIcon ? { id: 'iconSize', name: 'Icon size', caption: icon.name, withCaption: true, arrow: true } : null;
-		const itemIcon = canIcon ? { id: 'icon', name: 'Icon', withSwitch: true, switchValue: this.hasRelationKey('icon') } : null;
 		const itemCover = canCover ? { id: 'cover', name: 'Cover', withSwitch: true, switchValue: this.hasRelationKey('cover') } : null;
 		const itemName = { id: 'name', name: 'Name', icon: 'relation ' + DataUtil.relationClass(I.RelationType.ShortText) };
 		const itemDescription = canDescription ? { 
@@ -234,7 +234,7 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 			];
 		} else {
 			sections = [
-				{ children: [ itemStyle, itemSize, itemIcon, itemCover ] },
+				{ children: [ itemStyle, itemSize, itemCover ] },
 				{ name: 'Featured relations', children: [ itemName, itemDescription, itemType ] },
 			];
 		};

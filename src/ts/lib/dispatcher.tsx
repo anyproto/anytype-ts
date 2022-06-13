@@ -1,7 +1,6 @@
 import { authStore, commonStore, blockStore, detailStore, dbStore } from 'ts/store';
-import { Util, I, M, Decode, translate, analytics, Response, Mapper } from 'ts/lib';
+import { Util, I, M, Decode, translate, analytics, Response, Mapper, crumbs } from 'ts/lib';
 import * as Sentry from '@sentry/browser';
-import { crumbs } from '.';
 import arrayMove from 'array-move';
 
 const Service = require('lib/pb/protos/service/service_grpc_web_pb');
@@ -237,7 +236,6 @@ class Dispatcher {
 
 				case 'objectRemove':
 					ids = data.getIdsList();
-					crumbs.removeItems(I.CrumbsType.Page, ids);
 					crumbs.removeItems(I.CrumbsType.Recent, ids);
 					break;
 

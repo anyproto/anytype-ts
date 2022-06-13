@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { MenuItemVertical, Filter, Loader, Label, ObjectName } from 'ts/component';
-import { I, C, keyboard, Util, crumbs, DataUtil, translate, analytics } from 'ts/lib';
+import { MenuItemVertical, Filter, Loader, ObjectName } from 'ts/component';
+import { I, C, keyboard, Util, DataUtil, translate, analytics } from 'ts/lib';
 import { commonStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
@@ -14,7 +14,9 @@ interface State {
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
-const LIMIT = 10;
+
+const LIMIT_HEIGHT = 10;
+const LIMIT_LOAD = 100;
 
 const MenuSearchObject = observer(class MenuSearchObject extends React.Component<Props, State> {
 
@@ -32,11 +34,13 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 	refList: any = null;
 	n: number = -1;
 	timeoutFilter: number = 0;
+	offset: number = 0;
 
 	constructor (props: any) {
 		super(props);
 		
 		this.onClick = this.onClick.bind(this);
+		this.loadMoreRows = this.loadMoreRows.bind(this);
 	};
 	
 	render () {
@@ -143,10 +147,10 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 
 						<div className="items">
 							<InfiniteLoader
-								rowCount={items.length}
-								loadMoreRows={() => {}}
-								isRowLoaded={({ index }) => index < items.length}
-								threshold={LIMIT}
+								rowCount={items.length + 1}
+								loadMoreRows={this.loadMoreRows}
+								isRowLoaded={({ index }) => !!this.items[index]}
+								threshold={LIMIT_HEIGHT}
 							>
 								{({ onRowsRendered, registerChild }) => (
 									<AutoSizer className="scrollArea">
@@ -178,7 +182,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		this.rebind();
 		this.resize();
 		this.focus();
-		this.load(false);
+		this.load(true);
 	};
 
 	componentDidUpdate () {
@@ -187,9 +191,10 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		const rowHeight = this.getHeight();
 
 		if (this.filter != filter) {
-			this.load(true);
 			this.filter = filter;
 			this.n = -1;
+			this.offset = 0;
+			this.load(true);
 			return;
 		};
 
@@ -230,6 +235,13 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 	getItems () {
 		return this.items;
 	};
+
+	loadMoreRows ({ startIndex, stopIndex }) {
+        return new Promise((resolve, reject) => {
+			this.offset += LIMIT_LOAD;
+			this.load(false, resolve);
+		});
+	};
 	
 	load (clear: boolean, callBack?: (message: any) => void) {
 		if (!this._isMounted) {
@@ -260,9 +272,11 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'isReadonly', condition: I.FilterCondition.Equal, value: false });
 		};
 
-		this.setState({ loading: true });
+		if (clear) {
+			this.setState({ loading: true });
+		};
 
-		C.ObjectSearch(filters, sorts, Constant.defaultRelationKeys, Util.filterFix(filter), 0, 0, (message: any) => {
+		C.ObjectSearch(filters, sorts, Constant.defaultRelationKeys, Util.filterFix(filter), this.offset, LIMIT_LOAD, (message: any) => {
 			if (!this._isMounted) {
 				return;
 			};
@@ -275,12 +289,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 				this.items = [];
 			};
 
-			this.items = this.items.concat(message.records.map((it: any) => {
-				return {
-					...it, 
-					name: String(it.name || DataUtil.defaultName('page')),
-				};
-			}));
+			this.items = this.items.concat(message.records);
 
 			if (dataMapper) {
 				this.items = this.items.map(dataMapper);
@@ -290,8 +299,12 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 				this.items.sort(dataSort);
 			};
 
-			analytics.event('SearchQuery', { route: 'MenuSearch', length: filter.length });
-			this.setState({ loading: false });
+			if (clear) {
+				this.setState({ loading: false });
+				analytics.event('SearchQuery', { route: 'MenuSearch', length: filter.length });
+			} else {
+				this.forceUpdate();
+			};
 		});
 	};
 
@@ -335,9 +348,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 
 		switch (type) {
 			case I.NavigationType.Go:
-				crumbs.cut(I.CrumbsType.Page, 0, () => {
-					DataUtil.objectOpenEvent(e, item);
-				});
+				DataUtil.objectOpenEvent(e, item);
 				break;
 
 			case I.NavigationType.Move:
@@ -388,7 +399,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		const h = this.getHeight();
 		const min = noFilter ? 44 + 28 : 300;
 		const l = items.length + (label ? 1 : 0);
-		const height = Math.max(min, Math.min(h * LIMIT, l * h + 16));
+		const height = Math.max(min, Math.min(h * LIMIT_HEIGHT, l * h + 16));
 
 		obj.css({ height: height });
 		position();
