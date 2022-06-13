@@ -15,6 +15,7 @@ interface Props extends I.Popup, RouteComponentProps<any> {
 
 interface State {
 	entropy: string;
+	showCode: boolean;
 };
 
 const QRCode = require('qrcode.react');
@@ -28,6 +29,7 @@ const PopupSettingsPagePhrase = observer(class PopupSettingsPagePhrase extends R
 	refPhrase: any = null;
 	state = {
 		entropy: '',
+		showCode: false,
 	};
 
 	constructor (props: any) {
@@ -40,7 +42,7 @@ const PopupSettingsPagePhrase = observer(class PopupSettingsPagePhrase extends R
 
 	render () {
 		const { onConfirmPhrase } = this.props;
-		const { entropy } = this.state;
+		const { entropy, showCode } = this.state;
 		const { theme } = commonStore;
 		const { phrase } = authStore;
 
@@ -55,7 +57,7 @@ const PopupSettingsPagePhrase = observer(class PopupSettingsPagePhrase extends R
 					<Textarea 
 						ref={(ref: any) => this.refPhrase = ref} 
 						id="phrase" 
-						value={phrase} 
+						value={translate('popupSettingsPhraseStub')} 
 						className="isBlurred"
 						onFocus={this.onFocusPhrase} 
 						onBlur={this.onBlurPhrase} 
@@ -73,9 +75,9 @@ const PopupSettingsPagePhrase = observer(class PopupSettingsPagePhrase extends R
 							<b>{translate('popupSettingsMobileQRSubTitle')}</b>
 							<Label text={translate('popupSettingsMobileQRText')} />
 						</div>
-						<div className="side right isBlurred" onClick={this.elementUnblur}>
+						<div className={[ 'side', 'right', (!showCode ? 'isBlurred' : '') ].join(' ')} onClick={() => { this.setState({ showCode: !showCode }); }}>
 							<div className="qrWrap">
-								<QRCode value={entropy} bgColor={QRColor[theme]} size={100} />
+								<QRCode value={showCode ? entropy : translate('popupSettingsCodeStub')} bgColor={QRColor[theme]} size={100} />
 							</div>
 						</div>
 					</div>
@@ -101,11 +103,13 @@ const PopupSettingsPagePhrase = observer(class PopupSettingsPagePhrase extends R
 	};
 
 	onFocusPhrase (e: any) {
+		this.refPhrase.setValue(authStore.phrase);
 		this.refPhrase.select();
 		this.elementUnblur(e);
 	};
 
 	onBlurPhrase (e: any) {
+		this.refPhrase.setValue(translate('popupSettingsPhraseStub'));
 		this.elementBlur(e);
 		window.getSelection().removeAllRanges();
 	};

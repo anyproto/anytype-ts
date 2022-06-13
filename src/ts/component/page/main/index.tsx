@@ -76,7 +76,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		const profile = detailStore.get(Constant.subIds.profile, blockStore.profile);
 		const list = this.getList();
 		const length = list.length;
-		const isDeleted = [ I.AccountStatusType.StartedDeletion, I.AccountStatusType.Deleted ].includes(account.status.type);
+		const isDeleted = authStore.accountIsDeleted();
 
 		// Subscriptions
 		list.forEach((it: any) => {

@@ -35,39 +35,13 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 	render () {
 		const { onPage, setConfirmPhrase } = this.props;
 		const { account } = authStore;
-		const { config } = commonStore;
 		const pin = Storage.get('pin');
-		const canDelete = config.experimental && (account.status.type == I.AccountStatusType.Active);
-		const isDeleted = [ I.AccountStatusType.StartedDeletion, I.AccountStatusType.Deleted ].includes(account.status.type);
-		const isPending = [ I.AccountStatusType.PendingDeletion ].includes(account.status.type);
-
-		let message = null;
-
-		if (isPending) {
-			message = (
-				<div className="flex">	
-					<Label text={`This account is planned for deletion in ${Util.duration(Math.max(0, account.status.date - Util.time()))}...`} />
-					<Button text="Cancel" onClick={this.onDeleteCancel} />
-				</div>
-			);
-		};
-
-		if (isDeleted) {
-			message = (
-				<React.Fragment>	
-					<b>Account data removed from the backup node</b>
-					You can continue to work as normal.<br/>
-					All logged-in devices will continue to store data locally. However, you won't be able to sign into Anytype on new devices using your recovery recovery phrase. 
-				</React.Fragment>
-			);
-		};
+		const canDelete = account.status.type == I.AccountStatusType.Active;
 
 		return (
 			<div>
 				<Head {...this.props} id="index" name={translate('popupSettingsTitle')} />
 				<Title text={translate('popupSettingsAccountTitle')} />
-
-				{message ? <div className="message">{message}</div> : ''}
 
 				<div className="rows">
 					<div 
@@ -139,6 +113,10 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 		};
 
 		C.AccountDelete(false, (message: any) => {
+			if (message.error.code) {
+				return;
+			};
+
 			authStore.accountSet({ status: message.status });		
 			this.props.close();
 			Util.route('/auth/deleted');
