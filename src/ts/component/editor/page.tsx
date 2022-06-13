@@ -1265,15 +1265,19 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			const nextRow = this.getNextTableRow(block.id, dir);
 
 			if ((idx >= 0) && nextRow) {
-				C.BlockTableRowListFill(rootId, [ nextRow.id ], () => {
-					const nextRowElement = blockStore.getMapElement(rootId, nextRow.id);
-					
+				const nextRowElement = blockStore.getMapElement(rootId, nextRow.id);
+				const onFillRow = () => {
 					if (nextRowElement) {
 						next = blockStore.getLeaf(rootId, nextRowElement.childrenIds[idx]);
 					};
-
 					cb();
-				});
+				};
+
+				if (nextRowElement.childrenIds.length - 1 < idx) {
+					C.BlockTableRowListFill(rootId, [ nextRow.id ], onFillRow);
+				} else {
+					onFillRow();
+				};
 			};
 		} else {
 			cb();
@@ -1308,26 +1312,36 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 				return;
 			};
 
-			let nextCellId = '';
-			if ((idx + dir >= 0) && (idx + dir <= rowElement.childrenIds.length - 1)) {
-				nextCellId = rowElement.childrenIds[idx + dir];
-			};
-			if (!nextCellId) {
-				const nextRow = this.getNextTableRow(block.id, dir);
-				if (nextRow) {
-					const nextRowElement = blockStore.getMapElement(rootId, nextRow.id);
-					nextCellId = nextRowElement.childrenIds[dir > 0 ? 0 : nextRowElement.childrenIds.length - 1];
+			const cb = () => {
+				let nextCellId = '';
+
+				if ((idx + dir >= 0) && (idx + dir <= rowElement.childrenIds.length - 1)) {
+					nextCellId = rowElement.childrenIds[idx + dir];
+				};
+
+				if (!nextCellId) {
+					const nextRow = this.getNextTableRow(block.id, dir);
+					if (nextRow) {
+						const nextRowElement = blockStore.getMapElement(rootId, nextRow.id);
+						nextCellId = nextRowElement.childrenIds[dir > 0 ? 0 : nextRowElement.childrenIds.length - 1];
+					};
+				};
+
+				const next = blockStore.getLeaf(rootId, nextCellId);
+				if (next) {
+					const l = next.getLength();
+					window.setTimeout(() => {
+						focus.set(next.id, (dir > 0 ? { from: 0, to: 0 } : { from: l, to: l }));
+						focus.apply();
+						focus.scroll(isPopup);
+					});
 				};
 			};
 
-			const next = blockStore.getLeaf(rootId, nextCellId);
-			if (next) {
-				const l = next.getLength();
-				window.setTimeout(() => {
-					focus.set(next.id, (dir > 0 ? { from: 0, to: 0 } : { from: l, to: l }));
-					focus.apply();
-					focus.scroll(isPopup);
-				});
+			if (rowElement.childrenIds.length - 1 < idx) {
+				C.BlockTableRowListFill(rootId, [ element.parentId ], cb);
+			} else {
+				cb();
 			};
 		};
 	};

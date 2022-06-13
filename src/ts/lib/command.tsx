@@ -500,6 +500,15 @@ const BlockTableRowListFill = (contextId: string, blockIds: string[], callBack?:
 	dispatcher.request(BlockTableRowListFill.name, request, callBack);
 };
 
+const BlockTableRowListClean = (contextId: string, blockIds: string[], callBack?: (message: any) => void) => {
+	const request = new Rpc.BlockTable.RowListCleanRequest();
+	
+	request.setContextid(contextId);
+	request.setBlockidsList(blockIds);
+
+	dispatcher.request(BlockTableRowListClean.name, request, callBack);
+};
+
 const BlockTableColumnCreate = (contextId: string, targetId: string, position: I.BlockPosition, callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockTable.ColumnCreate.Request();
 	
@@ -1489,6 +1498,7 @@ export {
 
 	BlockTableRowCreate,
 	BlockTableRowListFill,
+	BlockTableRowListClean,
 
 	BlockDataviewViewCreate,
 	BlockDataviewViewUpdate,
