@@ -176,7 +176,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const ids = selection.get(I.SelectType.Record);
 		const length = ids.length;
 
-		if (!root || !root.isObjectSet()) {
+		if (!root || (!root.isObjectSet() && !root.isObjectSpace())) {
 			return;
 		};
 

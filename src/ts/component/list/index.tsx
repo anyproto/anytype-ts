@@ -19,6 +19,7 @@ interface Props {
 }
 
 const $ = require('jquery');
+const Constant = require('json/constant.json');
 
 const ListIndex = observer(class ListIndex extends React.Component<Props, {}> {
 	
@@ -33,6 +34,8 @@ const ListIndex = observer(class ListIndex extends React.Component<Props, {}> {
 			return null;
 		};
 
+		const { offset, total } = dbStore.getMeta(Constant.subIds.index, '');
+		const records = dbStore.getRecords(Constant.subIds.index, '');
 		const childrenIds = blockStore.getChildrenIds(root, root);
 		const length = childrenIds.length;
 		const children = getList();
