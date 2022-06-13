@@ -6,7 +6,7 @@ export default [
 	{ type: I.BlockType.Cover, param: { type: I.CoverType.Gradient, id: 'pinkOrange' } },
 	{ type: I.BlockType.IconPage, icon: '👋' },
 
-	{ style: I.TextStyle.Title, text: `9 June 2022 Desktop` },
+	{ style: I.TextStyle.Title, text: `13 June 2022 Desktop` },
 
 	{ style: I.TextStyle.Header2, text: `Highlights of this release include:` },
 	{ style: I.TextStyle.Bulleted, text: `Users can now permanently delete their Anytype account, including objects stored on the backup node 🗑️` },
