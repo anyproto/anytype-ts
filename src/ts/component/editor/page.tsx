@@ -36,7 +36,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 	timeoutMove: number = 0;
 	timeoutScreen: number = 0;
 	hoverId: string =  '';
-	hoverPosition: number = 0;
+	hoverPosition: I.BlockPosition = I.BlockPosition.None;
 	scrollTop: number = 0;
 	uiHidden: boolean = false;
 	loading: boolean = false;
@@ -383,7 +383,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
-		const items = node.find('.block');
+		const items = node.find('.block').not('.noPlus');
 		const rectContainer = (container.get(0) as Element).getBoundingClientRect() as DOMRect;
 		const featured = node.find(`#block-${Constant.blockId.featured}`);
 		const st = win.scrollTop();
@@ -400,12 +400,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 		// Find hovered block by mouse coords
 		items.each((i: number, item: any) => {
-			let obj = $(item);
-			
-			if (obj.hasClass('noPlus')) {
-				return;
-			};
-
 			let rect = item.getBoundingClientRect() as DOMRect;
 			rect.y += st;
 
@@ -443,24 +437,34 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			return;
 		};
 
+		this.hoverPosition = I.BlockPosition.None;
+		if (hovered && 
+			(pageX >= x) && 
+			(pageX <= x + Constant.size.blockMenu) && 
+			(pageY >= offset + BUTTON_OFFSET) && 
+			(pageY <= st + rectContainer.height + offset + BUTTON_OFFSET)
+		) {
+			this.hoverPosition = pageY < (y + height / 2) ? I.BlockPosition.Top : I.BlockPosition.Bottom;
+		};
+
+
 		this.frame = raf(() => {
-			if (hovered && (pageX >= x) && (pageX <= x + Constant.size.blockMenu) && (pageY >= offset + BUTTON_OFFSET) && (pageY <= st + rectContainer.height + offset + BUTTON_OFFSET)) {
-				this.hoverPosition = pageY < (y + height / 2) ? I.BlockPosition.Top : I.BlockPosition.Bottom;
-				
-				let ax = hoveredRect.x - (rectContainer.x - Constant.size.blockMenu) + 2;
-				let ay = pageY - rectContainer.y - BUTTON_OFFSET - st;
-				
-				add.addClass('show').css({ transform: `translate3d(${ax}px,${ay}px,0px)` });
-				items.addClass('showMenu').removeClass('isAdding top bottom');
-				
-				if (pageX <= x + 20) {
-					const block = blockStore.getLeaf(rootId, this.hoverId);
-					if (block && block.canCreateBlock()) {
-						hovered.addClass('isAdding ' + (this.hoverPosition == I.BlockPosition.Top ? 'top' : 'bottom'));
-					};
-				};
-			} else {
+			if (this.hoverPosition == I.BlockPosition.None) {
 				out();
+				return;
+			};
+
+			let ax = hoveredRect.x - (rectContainer.x - Constant.size.blockMenu) + 2;
+			let ay = pageY - rectContainer.y - BUTTON_OFFSET - st;
+			
+			add.addClass('show').css({ transform: `translate3d(${ax}px,${ay}px,0px)` });
+			items.addClass('showMenu').removeClass('isAdding top bottom');
+			
+			if (pageX <= x + 20) {
+				const block = blockStore.getLeaf(rootId, this.hoverId);
+				if (block && block.canCreateBlock()) {
+					hovered.addClass('isAdding ' + (this.hoverPosition == I.BlockPosition.Top ? 'top' : 'bottom'));
+				};
 			};
 		});
 	};
