@@ -98,7 +98,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		return (
 			<div className={[ 'wrap', 'focusable', 'c' + block.id ].join(' ')} tabIndex={0} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp}>
 				{type ? (
-					<span className="cell canEdit">
+					<span className="cell canEdit first">
 						<div 
 							id={Relation.cellId(PREFIX, Constant.relationKey.type, 0)} 
 							className="cellContent type"

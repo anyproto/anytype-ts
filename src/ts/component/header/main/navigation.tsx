@@ -23,8 +23,7 @@ const HeaderMainNavigation = observer(class HeaderMainNavigation extends React.C
 
 	render () {
 		const { rootId, onHome, onForward, onBack, onGraph, onSearch } = this.props;
-		const { breadcrumbs } = blockStore;
-		const object = detailStore.get(breadcrumbs, rootId, [ 'templateIsBundled' ]);
+		const object = detailStore.get(rootId, rootId, []);
 
 		return (
 			<React.Fragment>

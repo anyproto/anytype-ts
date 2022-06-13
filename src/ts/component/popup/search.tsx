@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Icon, Input, Loader, IconObject, Label, ObjectName, ObjectDescription } from 'ts/component';
-import { I, C, Util, DataUtil, crumbs, keyboard, Key, focus, translate, analytics } from 'ts/lib';
+import { Icon, Input, Loader, IconObject, ObjectName, ObjectDescription } from 'ts/component';
+import { I, C, Util, DataUtil, keyboard, Key, focus, translate, analytics } from 'ts/lib';
 import { commonStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
@@ -132,7 +132,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 				{this.cache && items.length && !loading ? (
 					<div key="items" className="items left">
 						<InfiniteLoader
-							rowCount={this.items.length + LIMIT_HEIGHT}
+							rowCount={this.items.length + 1}
 							loadMoreRows={this.loadMoreRows}
 							isRowLoaded={({ index }) => { return !!items[index]; }}
 							threshold={LIMIT_HEIGHT}
@@ -171,7 +171,6 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 		this.resize();
 
 		focus.clear(true);
-
 		$('#header').addClass('active');
 	};
 	
@@ -187,11 +186,8 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 			return;
 		};
 
+		this.resize();
 		this.setActive();
-
-		if (this.refFilter && (this.n == -1)) {
-			this.refFilter.focus();
-		};
 
 		this.cache = new CellMeasurerCache({
 			fixedWidth: true,
@@ -199,11 +195,12 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 			keyMapper: (i: number) => { return (items[i] || {}).id; },
 		});
 
+		if (this.refFilter && (this.n == -1)) {
+			this.refFilter.focus();
+		};
 		if (this.refList && this.top) {
 			this.refList.scrollToPosition(this.top);
 		};
-
-		this.resize();
 	};
 	
 	componentWillUnmount () {
@@ -268,9 +265,6 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 			return;
 		};
 
-		e.preventDefault();
-		e.stopPropagation();
-
 		keyboard.shortcut('arrowup, arrowdown', e, (pressed: string) => {
 			const dir = pressed.match(Key.up) ? -1 : 1;
 
@@ -285,6 +279,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 			};
 
 			this.setActive();
+			this.refList.scrollToRow(Math.max(0, this.n));
 		});
 
 		keyboard.shortcut('enter, space', e, (pressed: string) => {
@@ -314,8 +309,6 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 		
 		const node = $(ReactDOM.findDOMNode(this));
 		node.find(`#item-${item.id}`).addClass('active');
-
-		this.refList.scrollToRow(Math.max(0, this.n));
 	};
 
 	unsetActive () {
@@ -325,7 +318,9 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 
 	onKeyUpSearch (e: any, force: boolean) {
 		window.clearTimeout(this.timeout);
-		this.timeout = window.setTimeout(() => { this.setState({ filter: this.refFilter.getValue() }); }, force ? 0 : 50);
+		this.timeout = window.setTimeout(() => { 
+			this.setState({ filter: this.refFilter.getValue() }); 
+		}, force ? 0 : 50);
 	};
 
 	loadMoreRows ({ startIndex, stopIndex }) {
@@ -420,9 +415,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 		const filter = Util.filterFix(this.refFilter.getValue());
 		analytics.event('SearchResult', { index: item.index + 1, length: filter.length });
 
-		crumbs.cut(I.CrumbsType.Page, 0, () => {
-			DataUtil.objectOpenEvent(e, { ...item, id: item.id });
-		});
+		DataUtil.objectOpenEvent(e, { ...item, id: item.id });
 	};
 
 	resize () {

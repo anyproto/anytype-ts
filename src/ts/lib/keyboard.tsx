@@ -1,4 +1,4 @@
-import { I, C, Util, DataUtil, crumbs, Storage, focus, history as historyPopup, analytics } from 'ts/lib';
+import { I, C, Util, DataUtil, Storage, focus, history as historyPopup, analytics } from 'ts/lib';
 import { commonStore, authStore, blockStore, detailStore, menuStore, popupStore } from 'ts/store';
 
 const $ = require('jquery');
@@ -331,8 +331,10 @@ class Keyboard {
 		const { account } = authStore;
 		const isPopup = this.isPopup();
 
-		crumbs.restore(I.CrumbsType.Page);
-		
+		if (authStore.accountIsDeleted() || authStore.accountIsPending()) {
+			return;
+		};
+
 		if (isPopup) {
 			if (!historyPopup.checkBack()) {
 				popupStore.close('page');
@@ -367,8 +369,6 @@ class Keyboard {
 
 	onForward () {
 		const isPopup = this.isPopup();
-
-		crumbs.restore(I.CrumbsType.Page);
 
 		if (isPopup) {
 			historyPopup.goForward((match: any) => { 
@@ -407,7 +407,7 @@ class Keyboard {
 	};
 
 	onCommand (cmd: string, arg: any) {
-		if (!this.isMain()) {
+		if (!this.isMain() && [ 'search', 'graph', 'print', 'workspace' ].includes(cmd)) {
 			return;
 		};
 

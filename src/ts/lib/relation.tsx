@@ -93,12 +93,28 @@ class Relation {
 			return [];
 		};
 
-		let ret: any[] = [
-			{ id: I.FilterQuickOption.None, name: 'None' },
-		];
+		let ret: any[] = [];
 
 		switch (type) {
 			case I.RelationType.Date:
+				let defaultOptions: any[] = [
+					{ id: I.FilterQuickOption.NumberOfDaysAgo, name: 'Number of days ago' },
+					{ id: I.FilterQuickOption.NumberOfDaysNow, name: 'Number of days from now' },
+					{ id: I.FilterQuickOption.ExactDate, name: 'Exact date' },
+				];
+
+				let extendedOptions: any[] = [
+					{ id: I.FilterQuickOption.Today,		 name: 'Today' },
+					{ id: I.FilterQuickOption.Tomorrow,		 name: 'Tomorrow' },
+					{ id: I.FilterQuickOption.Yesterday,	 name: 'Yesterday' },
+					{ id: I.FilterQuickOption.LastWeek,		 name: 'Last week' },
+					{ id: I.FilterQuickOption.CurrentWeek,	 name: 'Current week' },
+					{ id: I.FilterQuickOption.NextWeek,		 name: 'Next week' },
+					{ id: I.FilterQuickOption.LastMonth,	 name: 'Last month' },
+					{ id: I.FilterQuickOption.CurrentMonth,	 name: 'Current month' },
+					{ id: I.FilterQuickOption.NextMonth,	 name: 'Next month' },
+				];
+
 				switch (condition) {
 					case I.FilterCondition.Equal:
 						ret = ret.concat([
@@ -106,34 +122,27 @@ class Relation {
 							{ id: I.FilterQuickOption.Tomorrow, name: 'Tomorrow' },
 							{ id: I.FilterQuickOption.Yesterday, name: 'Yesterday' },
 						]);
+						ret = ret.concat(defaultOptions);
 						break;
 
 					case I.FilterCondition.Greater:
 					case I.FilterCondition.Less:
 					case I.FilterCondition.GreaterOrEqual:
 					case I.FilterCondition.LessOrEqual:
+						ret = ret.concat(extendedOptions);
+						ret = ret.concat(defaultOptions);
+						break;
+
 					case I.FilterCondition.In:
-						ret = ret.concat([
-							{ id: I.FilterQuickOption.Today,		 name: 'Today' },
-							{ id: I.FilterQuickOption.Tomorrow,		 name: 'Tomorrow' },
-							{ id: I.FilterQuickOption.Yesterday,	 name: 'Yesterday' },
-							{ id: I.FilterQuickOption.LastWeek,		 name: 'Last week' },
-							{ id: I.FilterQuickOption.CurrentWeek,	 name: 'Current week' },
-							{ id: I.FilterQuickOption.NextWeek,		 name: 'Next week' },
-							{ id: I.FilterQuickOption.LastMonth,	 name: 'Last month' },
-							{ id: I.FilterQuickOption.CurrentMonth,	 name: 'Current month' },
-							{ id: I.FilterQuickOption.NextMonth,	 name: 'Next month' },
-						]);
+						ret = ret.concat(extendedOptions);
+						break;
+
+					default: 
+						ret = ret.concat(defaultOptions);
 						break;
 				};
 				break;
 		};
-
-		ret = ret.concat([
-			{ id: I.FilterQuickOption.NumberOfDaysAgo, name: 'Number of days ago' },
-			{ id: I.FilterQuickOption.NumberOfDaysNow, name: 'Number of days from now' },
-			{ id: I.FilterQuickOption.ExactDate, name: 'Exact date' },
-		]);
 
 		return ret;
 	};

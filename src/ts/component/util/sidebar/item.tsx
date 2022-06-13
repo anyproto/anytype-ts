@@ -39,7 +39,7 @@ const Item = observer(class Item extends React.Component<Props, {}> {
 		const object = detailStore.get(subId, id, Constant.sidebarRelationKeys, true);
 		const cn = [ 'item', 'c' + id, (check ? 'active' : '') ];
 		const rootId = keyboard.getRootId();
-		const canDrop = blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Block ]);
+		const canDrop = !isSection && blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Block ]);
 
 		let content = null;
 		let paddingLeft = 10 + depth * 12;

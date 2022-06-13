@@ -56,7 +56,7 @@
 
 			.icon.fav {
 				width: 32px; height: 32px; background-size: 20px; background-image: url('~img/icon/fav0.svg'); cursor: pointer; flex-shrink: 0; border-radius: 4px; 
-				margin: 0px; opacity: 0; position: absolute; right: -38px; top: 0px;
+				margin: 0px; position: absolute; right: -38px; top: 0px;
 			}
 			.icon.fav.active { background-image: url('~img/icon/fav1.svg'); }
 			.icon.fav:hover { background-color: $colorHover; }
@@ -144,10 +144,6 @@
 			.cell.isEditing.c-longText, .cell.isEditing.c-file { 
 				.cellContent { padding: 5px 8px; }
 			}
-		}
-
-		.item.canFav:hover {
-			.icon.fav { opacity: 1; }
 		}
 
 		.item.add { padding: 7px 32px 8px 32px; cursor: pointer; background: none; }

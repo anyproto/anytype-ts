@@ -242,7 +242,7 @@ const BlockTextSetChecked = (contextId: string, blockId: string, checked: boolea
 };
 
 const BlockTextSetIcon = (contextId: string, blockId: string, iconEmoji: string, iconImage: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Block.Set.Text.Icon.Request();
+	const request = new Rpc.BlockText.SetIcon.Request();
 	
 	request.setContextid(contextId);
 	request.setBlockid(blockId);
@@ -617,7 +617,7 @@ const BlockDataviewRecordCreate = (contextId: string, blockId: string, record: a
 };
 
 const BlockDataviewRelationListAvailable = (contextId: string, blockId: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.BlockDataview.RelationListAvailable.Request();
+	const request = new Rpc.BlockDataview.Relation.ListAvailable.Request();
 	
 	request.setContextid(contextId);
 	request.setBlockid(blockId);

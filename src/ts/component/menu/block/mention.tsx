@@ -121,6 +121,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		if (this.filter != filter.text) {
 			this.filter = filter.text;
 			this.n = -1;
+			this.offset = 0;
 			this.load(true);
 			return;
 		};

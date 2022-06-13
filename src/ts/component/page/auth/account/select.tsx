@@ -84,7 +84,7 @@ const PageAccountSelect = observer(class PageAccountSelect extends React.Compone
 
 				if (message.error.code) {
 					Util.checkError(message.error.code);
-					state.error = Errors.AccountCreate[message.error.code] || message.error.description;
+					state.error = Errors.AccountRecover[message.error.code] || message.error.description;
 				};
 
 				this.setState(state);

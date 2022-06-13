@@ -32,6 +32,7 @@
 		.linkCard { display: inline-block; vertical-align: top; width: 100%; }
         .linkCard {
             .sides { display: flex; flex-direction: row; }
+			.side { transition: border-color 0.2s ease-in-out; }
 			.side.left { width: 100%; position: relative; }
 			.side.right { display: none; overflow: hidden; }
 
@@ -88,7 +89,7 @@
 
 		.linkCard.withCover {
 			.side.left { width: calc(100% - 236px); border-radius: 12px 0px 0px 12px; border-right-width: 0px; }
-			.side.right { width: 236px; display: block; }
+			.side.right { width: 236px; display: block; border: 1px solid $colorBorderDark; }
 		}
 
 		.linkCard.vertical { display: block; }
@@ -97,7 +98,7 @@
 			.side.right { 
 				position: absolute; top: 0px; left: 0px; height: 116px; width: 100%; border-radius: 12px 12px 0px 0px;
 				border: 1px solid $colorBorderDark; border-bottom: 0px;
-			}	
+			}
 		}
 
 		.linkCard.withCover.vertical { padding-top: 116px; }
@@ -111,6 +112,13 @@
 		.linkCard.text {
 			.cardName .name { border-color: $colorBlack; }
 		}
+		.linkCard.card {
+			.side.left, .side.right { border-color: $colorBlack; }
+		}
+	}
+
+	.block.blockLink > .wrapContent > .selectable > .dropTarget.isOver.middle {
+		.side.left { background: none !important; }
 	}
 
 	.block.blockLink > .wrapContent > .dropTarget.targetBot { display: block; height: 2px; }

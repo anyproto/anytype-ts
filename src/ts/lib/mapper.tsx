@@ -301,7 +301,7 @@ const Mapper = {
 				relationKey: obj.getRelationkey(),
 				operator: obj.getOperator(),
 				condition: obj.getCondition(),
-				//quickOption: obj.getQuickoption(),
+				quickOption: obj.getQuickoption(),
 				value: obj.hasValue() ? Decode.decodeValue(obj.getValue()) : null,
 			};
 		},
@@ -592,7 +592,7 @@ const Mapper = {
 			item.setRelationkey(obj.relationKey);
 			item.setOperator(obj.operator);
 			item.setCondition(obj.condition);
-			//item.setQuickoption(obj.quickOption);
+			item.setQuickoption(obj.quickOption);
 			item.setValue(Encode.encodeValue(obj.value));
 
 			return item;

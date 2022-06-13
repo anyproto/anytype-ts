@@ -129,6 +129,19 @@ class AuthStore {
 		};
     };
 
+	accountIsDeleted (): boolean {
+		return this.accountItem && this.accountItem.status && [ 
+			I.AccountStatusType.StartedDeletion,
+			I.AccountStatusType.Deleted,
+		].includes(this.accountItem.status.type);
+	};
+
+	accountIsPending (): boolean {
+		return this.accountItem && this.accountItem.status && [ 
+			I.AccountStatusType.PendingDeletion,
+		].includes(this.accountItem.status.type);
+	};
+
 	threadSet (rootId: string, obj: any) {
 		const thread = this.threadMap.get(rootId);
 		if (thread) {
