@@ -331,7 +331,7 @@ class Keyboard {
 		const { account } = authStore;
 		const isPopup = this.isPopup();
 
-		if (authStore.accountIsDeleted()) {
+		if (authStore.accountIsDeleted() || authStore.accountIsPending()) {
 			return;
 		};
 

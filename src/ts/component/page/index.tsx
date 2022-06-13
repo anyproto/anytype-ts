@@ -184,7 +184,6 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 		const path = [ match.params.page, match.params.action ].join('/');
 		const Component = Components[path];
 		const renderer = Util.getRenderer();
-		const isDeleted = authStore.accountIsDeleted();
 
 		Util.tooltipHide(true);
 		Util.previewHide(true);
@@ -204,7 +203,7 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 			return;
 		};
 
-		if (isMain && account && isDeleted) {
+		if (isMain && (authStore.accountIsDeleted() || authStore.accountIsPending())) {
 			Util.route('/auth/deleted');
 			return;
 		};
