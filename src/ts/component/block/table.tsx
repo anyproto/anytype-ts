@@ -128,13 +128,8 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 	};
 	
 	componentWillUnmount () {
-		const { rootId } = this.props;
-		const { rows } = this.getData();
-
 		this._isMounted = false;
 		this.unbind();
-
-		C.BlockTableRowListClean(rootId, rows.map(it => it.id));
 	};
 
 	unbind () {
