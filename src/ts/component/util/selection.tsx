@@ -132,8 +132,14 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			return;
 		};
 
+		this.nodes = this.getPageContainer().find('.selectable');
+		this.nodes.each((i: number, item: any) => {
+			this.cacheRect($(item));
+		});
+
 		this.checkNodes({ ...e, pageX: x, pageY: y });
 		this.drawRect(rect);
+		this.renderSelection();
 
 		scrollOnMove.onMouseMove(keyboard.mouse.client.x, keyboard.mouse.client.y);
 		this.moved = true;
@@ -153,12 +159,10 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		const { focused } = focus.state;
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
-		const el = node.find('#selection-rect');
-		const pageContainer = $(Util.getPageContainer(isPopup ? 'popup' : 'page'));
 		
-		el.css({ transform: 'translate3d(0px, 0px, 0px)', width: 0, height: 0 }).show();
+		node.find('#selection-rect').css({ transform: 'translate3d(0px, 0px, 0px)', width: 0, height: 0 }).show();
 
-		this.nodes = pageContainer.find('.selectable');
+		this.nodes = this.getPageContainer().find('.selectable');
 		this.x = e.pageX;
 		this.y = e.pageY;
 		this.moved = false;
@@ -512,6 +516,10 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			ids.push(childId);
 			this.getChildrenIds(childId, ids);
 		};
+	};
+
+	getPageContainer () {
+		return $(Util.getPageContainer(keyboard.isPopup() ? 'popup' : 'page'));
 	};
 
 	renderSelection () {

@@ -843,8 +843,8 @@ class Util {
 	};
 
 	getScheme (url: string): string {
-		const a = String(url || '').split('://');
-		return String(a[0] || '');
+		url = String(url || '');
+		return url.indexOf('://') >= 0 ? String(url.split('://')[0] || '') : '';
 	};
 
 	getRoute (path: string): { page: string, action: string, id: string } {

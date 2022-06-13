@@ -138,8 +138,8 @@
 	.block.blockText.quote > .wrapContent > .selectable > .dropTarget > .flex > .wrap { padding-left: 28px; }
 	.block.blockText.quote > .wrapContent > .selectable > .dropTarget > .flex > .wrap > .placeholder { left: 28px; }
 
-	.block.blockText.quote.align2 > .wrapContent > .selectable > .dropTarget > .flex > .wrap { padding-left: 28px; }
-	.block.blockText.quote.align2 > .wrapContent > .selectable > .dropTarget > .flex > .line { left: auto; right: 11px; }
+	.block.blockText.quote.align2 > .wrapContent > .selectable > .dropTarget > .flex > .wrap { padding-right: 28px; }
+	.block.blockText.quote.align2 > .wrapContent > .additional > .line { left: auto; right: 11px; }
 	.block.blockText.quote.align2 > .wrapContent > .selectable > .dropTarget > .flex > .wrap > .placeholder { left: auto; right: 28px; }
 	
 	.block.blockText.callout > .wrapContent { background: $colorVeryLightGrey; border-radius: 6px; padding: 16px 16px 0px 16px; margin: 6px 0px; }

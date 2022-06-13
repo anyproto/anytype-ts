@@ -14,8 +14,6 @@ const PopupSettingsPageIndex = observer(class PopupSettingsPageIndex extends Rea
 
 	render () {
 		const { onPage } = this.props;
-		const { account } = authStore;
-		const isActive = account.status.type == I.AccountStatusType.Active
 
 		return (
 			<div>
@@ -25,8 +23,6 @@ const PopupSettingsPageIndex = observer(class PopupSettingsPageIndex extends Rea
 					<div className="row" onClick={() => { onPage('account'); }}>
 						<Icon className="account" />
 						<Label text={translate('popupSettingsAccountTitle')} />
-
-						{!isActive ? <Icon className="dot" /> : ''}
 						<Icon className="arrow" />
 					</div>
 
