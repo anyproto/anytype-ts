@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { MenuItemVertical, Loader, Filter, ObjectName } from 'ts/component';
-import { I, C, Util, keyboard, DataUtil } from 'ts/lib';
+import { I, C, Util, keyboard, DataUtil, analytics } from 'ts/lib';
 import { commonStore, dbStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
@@ -337,12 +337,21 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 			onChange(I.MarkType.Link, filter);
 		} else
 		if (item.itemId == 'add') {
-			C.ObjectCreate({ type: commonStore.type, name: filter }, (message: any) => {
+			const type: any = dbStore.getObjectType(commonStore.type) || {};
+
+			DataUtil.pageCreate('', '', { type: type.id, name: filter }, I.BlockPosition.Bottom, '', {}, (message: any) => {
 				if (message.error.code) {
 					return;
 				};
 
-				onChange(I.MarkType.Object, message.pageId);
+				onChange(I.MarkType.Object, message.targetId);
+
+				analytics.event('CreateObject', {
+					route: 'Mention',
+					objectType: type.id,
+					layout: type.layout,
+					template: '',
+				});
 			});
 		} else {
 			onChange(I.MarkType.Object, item.itemId);
