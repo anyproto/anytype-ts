@@ -11,7 +11,7 @@ const BlockTableRow = observer(class BlockTableRow extends React.Component<Props
 
 	render () {
 		const { rootId, block, index, getData } = this.props;
-		const { rows, columns } = getData();
+		const { columns } = getData();
 		const childrenIds = blockStore.getChildrenIds(rootId, block.id);
 		const children = blockStore.getChildren(rootId, block.id);
 		const length = childrenIds.length;
@@ -19,7 +19,7 @@ const BlockTableRow = observer(class BlockTableRow extends React.Component<Props
 		return (
 			<div id={`row-${block.id}`} className="row">
 				{columns.map((column: any, i: number) => {
-					const child = children[i];
+					const child = children.find(it => it.id == [ block.id, column.id ].join('-'));
 					return (
 						<Cell 
 							key={`cell-${block.id}-${column.id}`} 
@@ -27,7 +27,7 @@ const BlockTableRow = observer(class BlockTableRow extends React.Component<Props
 							block={child}
 							index={i}
 							rowIdx={index}
-							row={rows[index]}
+							row={block}
 							columnIdx={i}
 							column={columns[i]}
 						/>
