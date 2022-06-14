@@ -127,7 +127,6 @@ const PageMainBookmark = observer(class PageMainBookmark extends React.Component
 				return;
 			};
 
-			crumbs.addPage(rootId);
 			crumbs.addRecent(rootId);
 
 			this.loading = false;
