@@ -202,6 +202,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		let options: any[] = [];
 		let optionsAlign = this.optionsAlign(cellId);
 		let optionsColor = this.optionsColor(cellId);
+		let optionsSort = this.optionsSort();
 		let element: any = null;
 		let blockIds: string[] = [];
 
@@ -219,6 +220,10 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				break;
 
 			case I.BlockType.TableColumn:
+				options = options.concat([
+					{ id: 'sort', icon: 'sort', name: 'Sort', arrow: true },
+					{ isDiv: true },
+				]);
 				options = options.concat(this.optionsColumn(columnId));
 				options = options.concat(optionsColor);
 
@@ -279,6 +284,18 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 					};
 
 					switch (item.id) {
+						case 'sort':
+							menuId = 'select2';
+							menuParam.component = 'select';
+							menuParam.data = Object.assign(menuParam.data, {
+								options: this.optionsSort(),
+								onSelect: (e: any, item: any) => {
+									C.BlockTableSort(rootId, columnId, item.id);
+									menuContext.close();
+								}
+							});
+							break;
+
 						case 'row':
 							menuId = 'select2';
 							menuParam.component = 'select';
@@ -1196,6 +1213,13 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			it.checkbox = !!mark;
 			return it;
 		});
+	};
+
+	optionsSort () {
+		return [
+			{ id: I.SortType.Asc, name: 'Ascending' },
+			{ id: I.SortType.Desc, name: 'Descending' },
+		];
 	};
 
 });

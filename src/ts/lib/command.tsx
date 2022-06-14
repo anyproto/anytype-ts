@@ -481,6 +481,16 @@ const BlockTableExpand = (contextId: string, targetId: string, rows: number, col
 	dispatcher.request(BlockTableExpand.name, request, callBack);
 };
 
+const BlockTableSort = (contextId: string, columnId: string, type: I.SortType, callBack?: (message: any) => void) => {
+	const request = new Rpc.BlockTable.Sort.Request();
+	
+	request.setContextid(contextId);
+	request.setColumnid(columnId);
+	request.setType(type);
+
+	dispatcher.request(BlockTableSort.name, request, callBack);
+};
+
 const BlockTableRowCreate = (contextId: string, targetId: string, position: I.BlockPosition, callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockTable.RowCreate.Request();
 	
@@ -1502,6 +1512,8 @@ export {
 
 	BlockTableCreate,
 	BlockTableExpand,
+	BlockTableSort,
+
 	BlockTableColumnCreate,
 	BlockTableColumnDelete,
 	BlockTableColumnMove,

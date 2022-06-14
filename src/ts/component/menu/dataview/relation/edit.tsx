@@ -247,11 +247,11 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 			sections.push({
 				children: [
 					canFilter ? { id: 'filter', icon: 'relation-filter', name: 'Add filter' } : null,
-					canSort ? { id: 'sort0', icon: 'sort0', name: 'Sort ascending', type: I.SortType.Asc } : null,
-					canSort ? { id: 'sort1', icon: 'sort1', name: 'Sort descending', type: I.SortType.Desc } : null,
-					{ id: 'insert-left', icon: 'insert-left', name: 'Insert left', dir: -1 },
-					{ id: 'insert-right', icon: 'insert-right', name: 'Insert right', dir: 1 },
-					canHide ? { id: 'hide', icon: 'hide', name: 'Hide relation' } : null,
+					canSort ? { id: 'sort0', icon: 'relation-sort0', name: 'Sort ascending', type: I.SortType.Asc } : null,
+					canSort ? { id: 'sort1', icon: 'relation-sort1', name: 'Sort descending', type: I.SortType.Desc } : null,
+					{ id: 'insert-left', icon: 'relation-insert-left', name: 'Insert left', dir: -1 },
+					{ id: 'insert-right', icon: 'relation-insert-right', name: 'Insert right', dir: 1 },
+					canHide ? { id: 'hide', icon: 'relation-hide', name: 'Hide relation' } : null,
 				]
 			});
 		};

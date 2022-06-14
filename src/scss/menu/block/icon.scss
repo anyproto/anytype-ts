@@ -71,6 +71,7 @@
 		.icon.export { background-image: url('~img/icon/menu/action/export0.svg'); }
 		.icon.pageLock { background-image: url('~img/icon/menu/action/pageLock0.svg'); }
 		.icon.pageUnlock { background-image: url('~img/icon/menu/action/pageUnlock0.svg'); }
+		.icon.sort { background-image: url('~img/icon/menu/action/sort0.svg'); }
 
 		.icon.coverChange { background-image: url('~img/icon/cover/change.svg'); }
 		.icon.coverPosition { background-image: url('~img/icon/cover/position.svg'); }
@@ -88,13 +89,11 @@
 		.icon.linkStyle2 { background-image: url('~img/icon/menu/linkSettings/style2.svg'); }
 
 		.icon.relation-filter { background-image: url('~img/icon/menu/relation/filter.svg'); }
-		.icon.hide { background-image: url('~img/icon/menu/relation/hide.svg'); }
-
-		.icon.sort0 { background-image: url('~img/icon/menu/relation/sort.svg'); }
-		.icon.sort1 { background-image: url('~img/icon/menu/relation/sort.svg'); transform: rotateZ(180deg); }
-
-		.icon.insert-left { background-image: url('~img/icon/menu/relation/insert.svg'); }
-		.icon.insert-right { background-image: url('~img/icon/menu/relation/insert.svg'); transform: rotateZ(180deg); }
+		.icon.relation-sort0 { background-image: url('~img/icon/menu/relation/sort.svg'); }
+		.icon.relation-sort1 { background-image: url('~img/icon/menu/relation/sort.svg'); transform: rotateZ(180deg); }
+		.icon.relation-hide { background-image: url('~img/icon/menu/relation/hide.svg'); }
+		.icon.relation-insert-left { background-image: url('~img/icon/menu/relation/insert.svg'); }
+		.icon.relation-insert-right { background-image: url('~img/icon/menu/relation/insert.svg'); transform: rotateZ(180deg); }
 
 		.icon.table-move-left { background-image: url('~img/icon/menu/table/move-h.svg'); }
 		.icon.table-move-right { background-image: url('~img/icon/menu/table/move-h.svg'); transform: rotateZ(180deg); }
