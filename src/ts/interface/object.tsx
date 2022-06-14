@@ -79,6 +79,12 @@ export enum OptionScope {
 	Relation = 1,
 };
 
+export enum ObjectFlag {
+	DeleteEmpty		 = 0,
+	SelectType		 = 1,
+    SelectTemplate	 = 2,
+};
+
 export interface ObjectType {
 	id: string;
 	name: string;
