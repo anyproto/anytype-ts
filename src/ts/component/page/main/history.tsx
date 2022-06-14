@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Header, Block, Loader, Icon, Deleted } from 'ts/component';
-import { blockStore } from 'ts/store';
+import { blockStore, detailStore } from 'ts/store';
 import { I, M, C, Util, DataUtil, dispatcher } from 'ts/lib';
 import { observer } from 'mobx-react';
 
@@ -282,6 +282,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<P
 	loadList (lastId: string) { 
 		const { versions, loading } = this.state;
 		const rootId = this.getRootId();
+		const object = detailStore.get(rootId, rootId);
 		
 		if (loading || (this.lastId && (lastId == this.lastId))) {
 			return;
@@ -294,7 +295,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<P
 			this.setState({ loading: false });
 
 			if (message.error.code) {
-				Util.route('/main/edit/' + rootId);
+				DataUtil.objectOpen({ id: rootId, layout: object.layout });
 				return;
 			};
 

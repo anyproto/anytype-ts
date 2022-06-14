@@ -13,9 +13,6 @@ html.themeDark {
     a:hover { color: $colorOrange; }
 
     #root > #loader { background: $colorBlack; }
-    #root > #loader {
-        .logo { background-image: url('#{$themePath}/logo/color.svg'); }
-    }
 
     ::selection { color: $colorBlack; }
 	

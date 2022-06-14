@@ -85,6 +85,7 @@ class MenuContext extends React.Component<Props, {}> {
 
 		let allowedArchive = true;
 		let allowedFav = true;
+		let allowedCopy = true;
 
 		objectIds.forEach((it: string) => {
 			const object = detailStore.get(subId, it);
@@ -97,6 +98,9 @@ class MenuContext extends React.Component<Props, {}> {
 			};
 			if (!blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Details ]) || object.isArchived) {
 				allowedFav = false;
+			};
+			if (!blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Duplicate ])) {
+				allowedCopy = false;
 			};
 		});
 
@@ -114,6 +118,7 @@ class MenuContext extends React.Component<Props, {}> {
 
 		if (!allowedArchive)	 archive = null;
 		if (!allowedFav)		 fav = null;
+		if (!allowedCopy)		 pageCopy = null;
 
 		let sections = [
 			{ children: [ fav, pageCopy, archive ] },

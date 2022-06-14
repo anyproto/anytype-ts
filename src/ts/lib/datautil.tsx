@@ -402,6 +402,8 @@ class DataUtil {
 	};
 
 	actionByLayout (v: I.ObjectLayout): string {
+		v = v || I.ObjectLayout.Page;
+
 		let r = '';
 		switch (v) {
 			default:						 r = 'edit'; break;
