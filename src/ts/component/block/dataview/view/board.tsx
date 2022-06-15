@@ -1,8 +1,9 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { I, C, Util, DataUtil, analytics } from 'ts/lib';
-import { observer } from 'mobx-react';
+import { Loader } from 'ts/component';
 import { dbStore, detailStore, popupStore } from 'ts/store';
+import { observer } from 'mobx-react';
 import arrayMove from 'array-move';
 
 import Column from './board/column';
@@ -11,11 +12,15 @@ interface Props extends I.ViewComponent {
 	dataset?: any;
 };
 
+interface State {
+	loading: boolean;
+};
+
 const $ = require('jquery');
 const raf = require('raf');
 const Constant = require('json/constant.json');
 
-const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
+const ViewBoard = observer(class ViewBoard extends React.Component<Props, State> {
 
 	cache: any = {};
 	width: number = 0;
@@ -24,6 +29,9 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 	groupRelationKey: string = '';
 	oldIndex: number = -1;
 	newIndex: number = -1;
+	state = {
+		loading: false,
+	};
 
 	constructor (props: any) {
 		super(props);
@@ -35,6 +43,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 
 	render () {
 		const { rootId, block, getView } = this.props;
+		const { loading } = this.state;
 		const view = getView();
 		const { groupRelationKey } = view;
 		const groups = dbStore.getGroups(rootId, block.id);
@@ -43,18 +52,20 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 			<div className="wrap">
 				<div className="scroll">
 					<div className="viewItem viewBoard">
-						<div className="columns">
-							{groups.map((group: any, i: number) => (
-								<Column 
-									key={`board-column-${group.id}`} 
-									{...this.props} 
-									{...group} 
-									onAdd={this.onAdd} 
-									onDragStartColumn={this.onDragStartColumn}
-									onDragStartCard={this.onDragStartCard}
-								/>
-							))}
-						</div>
+						{loading ? <Loader /> : (
+							<div className="columns">
+								{groups.map((group: any, i: number) => (
+									<Column 
+										key={`board-column-${group.id}`} 
+										{...this.props} 
+										{...group} 
+										onAdd={this.onAdd} 
+										onDragStartColumn={this.onDragStartColumn}
+										onDragStartCard={this.onDragStartCard}
+									/>
+								))}
+							</div>
+						)}
 					</div>
 				</div>
 			</div>
@@ -111,6 +122,8 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 			});
 		};
 
+		this.setState({ loading: true });
+
 		C.ObjectRelationSearchDistinct(view.groupRelationKey, (message: any) => {
 			if (message.error.code) {
 				return;
@@ -123,6 +136,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 			});
 
 			dbStore.groupsSet(rootId, block.id, message.groups);
+			this.setState({ loading: false });
 		});
 	};
 

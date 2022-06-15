@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Icon } from 'ts/component';
+import { Icon, Loader } from 'ts/component';
 import { I, C, translate } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { dbStore } from 'ts/store';
@@ -16,7 +16,11 @@ interface Props extends I.ViewComponent {
 	onDragStartCard?: (e: any, groupId: any, record: any) => void;
 };
 
-const Column = observer(class Column extends React.Component<Props, {}> {
+interface State {
+	loading: boolean;
+};
+
+const Column = observer(class Column extends React.Component<Props, State> {
 
 	cache: any = {};
 	cellPositioner: any = null;
@@ -24,6 +28,9 @@ const Column = observer(class Column extends React.Component<Props, {}> {
 	width: number = 0;
 	columnWidth: number = 0;
 	columnCount: number = 0;
+	state = {
+		loading: false,
+	};
 
 	constructor(props: Props) {
 		super(props);
@@ -39,6 +46,7 @@ const Column = observer(class Column extends React.Component<Props, {}> {
 
 	render () {
 		const { rootId, block, id, getView, onAdd, value, onDragStartColumn, isPopup } = this.props;
+		const { loading } = this.state;
 		const view = getView();
 		const subId = dbStore.getSubId(rootId, [ block.id, id ].join(':'));
 		const records = dbStore.getRecords(subId, '');
@@ -72,53 +80,55 @@ const Column = observer(class Column extends React.Component<Props, {}> {
 				</div>
 
 				<div className="body">
-					<WindowScroller scrollElement={isPopup ? $('#popupPage #innerWrap').get(0) : window}>
-						{({ height, isScrolling, registerChild, scrollTop }) => {
-							return (
-								<AutoSizer 
-									disableHeight={true}
-									onResize={this.onResize} 
-									overscanByPixels={200}
-								>
-									{({ width }) => {
-										this.initPositioner();
+					{loading ? <Loader / > : (
+						<WindowScroller scrollElement={isPopup ? $('#popupPage #innerWrap').get(0) : window}>
+							{({ height, isScrolling, registerChild, scrollTop }) => {
+								return (
+									<AutoSizer 
+										disableHeight={true}
+										onResize={this.onResize} 
+										overscanByPixels={200}
+									>
+										{({ width }) => {
+											this.initPositioner();
 
-										return (
-											<div ref={registerChild}>
-												<Masonry
-													ref={(ref: any) => { this.ref = ref; }}
-													autoHeight={true}
-													height={Number(height) || 0}
-													width={Number(width) || 0}
-													isScrolling={isScrolling}
-													cellCount={records.length}
-													cellMeasurerCache={this.cache}
-													cellPositioner={this.cellPositioner}
-													cellRenderer={({ key, index, parent, style }) => {
-														return (
-															<CellMeasurer cache={this.cache} index={index} key={'gallery-card-measurer-' + view.id + index} parent={parent}>
-																<Card 
-																	key={'board-card-' +  view.id + index} 
-																	{...this.props} 
-																	id={records[index].id} 
-																	groupId={id} 
-																/>
-															</CellMeasurer>
-														);
-													}}
-													scrollTop={scrollTop}
-												/>
+											return (
+												<div ref={registerChild}>
+													<Masonry
+														ref={(ref: any) => { this.ref = ref; }}
+														autoHeight={true}
+														height={Number(height) || 0}
+														width={Number(width) || 0}
+														isScrolling={isScrolling}
+														cellCount={records.length}
+														cellMeasurerCache={this.cache}
+														cellPositioner={this.cellPositioner}
+														cellRenderer={({ key, index, parent, style }) => {
+															return (
+																<CellMeasurer cache={this.cache} index={index} key={'gallery-card-measurer-' + view.id + index} parent={parent}>
+																	<Card 
+																		key={'board-card-' +  view.id + index} 
+																		{...this.props} 
+																		id={records[index].id} 
+																		groupId={id} 
+																	/>
+																</CellMeasurer>
+															);
+														}}
+														scrollTop={scrollTop}
+													/>
 
-												<div className={[ 'card', 'add', (!total ? 'first' : '') ].join(' ')} onClick={() => { onAdd(id); }}>
-													<Icon className="plus" />
+													<div className={[ 'card', 'add', (!total ? 'first' : '') ].join(' ')} onClick={() => { onAdd(id); }}>
+														<Icon className="plus" />
+													</div>
 												</div>
-											</div>
-										);
-									}}
-								</AutoSizer>
-							);
-						}}
-					</WindowScroller>
+											);
+										}}
+									</AutoSizer>
+								);
+							}}
+						</WindowScroller>
+					)}
 				</div>
 
 			</div>
@@ -146,6 +156,7 @@ const Column = observer(class Column extends React.Component<Props, {}> {
 		const filters: I.Filter[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
 			{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
+			{ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.Equal, value: false },
 		];
 
 		switch (relation.format) {
@@ -154,7 +165,10 @@ const Column = observer(class Column extends React.Component<Props, {}> {
 				break;
 		};
 
-		C.ObjectSearchSubscribe(subId, filters, view.sorts, getKeys(view.id), block.content.sources, 0, 100, true, '', '', false);
+		this.setState({ loading: true });
+		C.ObjectSearchSubscribe(subId, filters, view.sorts, getKeys(view.id), block.content.sources, 0, 100, true, '', '', false, () => {
+			this.setState({ loading: false });
+		});
 	};
 
 	clear () {
