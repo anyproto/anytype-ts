@@ -34,17 +34,17 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { getView } = this.props;
+		const { rootId, block, getView } = this.props;
 		const view = getView();
 		const { groupRelationKey } = view;
-		const { boardGroups } = dbStore;
+		const groups = dbStore.getGroups(rootId, block.id);
 
 		return (
 			<div className="wrap">
 				<div className="scroll">
 					<div className="viewItem viewBoard">
 						<div className="columns">
-							{boardGroups.map((group: any, i: number) => (
+							{groups.map((group: any, i: number) => (
 								<Column 
 									key={`board-column-${group.id}`} 
 									{...this.props} 
@@ -75,26 +75,26 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 
 	componentWillUnmount () {
 		const { rootId, block } = this.props;
-		const { boardGroups } = dbStore;
+		const groups = dbStore.getGroups(rootId, block.id);
 		const ids = [];
 
-		boardGroups.forEach((it: any) => {
+		groups.forEach((it: any) => {
 			ids.push(dbStore.getSubId(rootId, [ block.id, it.id ].join(':')));
 		});
 
 		C.ObjectSearchUnsubscribe(ids);
-		this.clearGroupData();
+		dbStore.groupsClear(rootId, block.id);
 	};
 
 	loadGroupList () {
-		const { block, getView } = this.props;
+		const { rootId, block, getView } = this.props;
 		const view = getView();
 
 		if (this.groupRelationKey == view.groupRelationKey) {
 			return;
 		};
 
-		this.clearGroupData();
+		dbStore.groupsClear(rootId, block.id);
 		this.groupRelationKey = view.groupRelationKey;
 
 		if (!view.groupRelationKey) {
@@ -122,27 +122,15 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 				return 0;
 			});
 
-			dbStore.boardGroupsSet(message.groups);
+			dbStore.groupsSet(rootId, block.id, message.groups);
 		});
-	};
-
-	clearGroupData () {
-		const { rootId, block } = this.props;
-		const { boardGroups } = dbStore;
-
-		boardGroups.forEach((it: any) => {
-			const subId = dbStore.getSubId(rootId, [ block.id, it.id ].join(':'));
-			dbStore.recordsClear(subId, '');
-		});
-
-		dbStore.boardGroupsClear();
 	};
 
 	onAdd (id: string) {
 		const { rootId, block, getView } = this.props;
-		const { boardGroups } = dbStore;
+		const groups = dbStore.getGroups(rootId, block.id);
 		const view = getView();
-		const group = boardGroups.find(it => it.id == id);
+		const group = groups.find(it => it.id == id);
 		const object = detailStore.get(rootId, rootId, [ 'setOf' ], true);
 		const setOf = object.setOf || [];
 		const details: any = {};
@@ -190,11 +178,12 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 	};
 
 	initCacheColumn () {
-		const { boardGroups } = dbStore;
+		const { rootId, block } = this.props;
+		const groups = dbStore.getGroups(rootId, block.id);
 		const node = $(ReactDOM.findDOMNode(this));
 
 		this.cache = {};
-		boardGroups.forEach((group: any, i: number) => {
+		groups.forEach((group: any, i: number) => {
 			const item = node.find(`#column-${group.id}`);
 			const p = item.offset();
 
@@ -211,11 +200,11 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 
 	initCacheCard () {
 		const { rootId, block } = this.props;
-		const { boardGroups } = dbStore;
+		const groups = dbStore.getGroups(rootId, block.id);
 		const node = $(ReactDOM.findDOMNode(this));
 
 		this.cache = {};
-		boardGroups.forEach((group: any, i: number) => {
+		groups.forEach((group: any, i: number) => {
 			const subId = dbStore.getSubId(rootId, [ block.id, group.id ].join(':'));
 			const records = dbStore.getRecords(subId, '');
 
@@ -300,16 +289,17 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 	};
 
 	onDragMoveColumn (e: any, groupId: string) {
-		const { boardGroups } = dbStore;
+		const { rootId, block } = this.props;
+		const groups = dbStore.getGroups(rootId, block.id);
 		const node = $(ReactDOM.findDOMNode(this));
 		const ghost = $('<div />').addClass('ghost isColumn');
 
-		this.oldIndex = boardGroups.findIndex(it => it.id == groupId);
+		this.oldIndex = groups.findIndex(it => it.id == groupId);
 
 		let isLeft = false;
 		let hoverId = '';
 
-		for (let group of boardGroups) {
+		for (let group of groups) {
 			const rect = this.cache[group.id];
 			if (!rect || (group.id == groupId)) {
 				continue;
@@ -342,16 +332,17 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 	onDragEndColumn (e: any) {
 		const { rootId, block, getView } = this.props;
 		const view = getView();
-		const groups: any[] = [];
-		
-		let { boardGroups } = dbStore;
-		boardGroups = arrayMove(dbStore.boardGroups, this.oldIndex, this.newIndex);
-		dbStore.boardGroupsSet(boardGroups);
+		const update: any[] = [];
 
-		boardGroups.forEach((it: any, i: number) => {
-			groups.push({ groupId: it.id, index: i });
+		let groups = dbStore.getGroups(rootId, block.id);
+		groups = arrayMove(groups, this.oldIndex, this.newIndex);
+		dbStore.groupsSet(rootId, block.id, groups);
+
+		groups.forEach((it: any, i: number) => {
+			update.push({ groupId: it.id, index: i });
 		});
-		C.BlockDataviewGroupOrderUpdate(rootId, block.id, [ { viewId: view.id, groups: groups } ]);
+
+		C.BlockDataviewGroupOrderUpdate(rootId, block.id, [ { viewId: view.id, groups: update } ]);
 
 		this.onDragEndCommon(e);
 		this.resize();
@@ -435,7 +426,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 	};
 
 	resize () {
-		const { boardGroups } = dbStore;
+		const { rootId, block } = this.props;
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
 		const scroll = node.find('.scroll');
@@ -443,10 +434,11 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 		const ww = win.width();
 		const mw = ww - 192;
 		const size = Constant.size.dataview.board;
+		const groups = dbStore.getGroups(rootId, block.id);
 		
 		let vw = 0;
 		let margin = 0;
-		let width = boardGroups.length * (size.card + size.margin);
+		let width = groups.length * (size.card + size.margin);
 
 		if (width < mw) {
 			vw = mw;

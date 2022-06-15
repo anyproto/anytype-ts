@@ -8,13 +8,11 @@ class DbStore {
     public viewMap: Map<string, I.View[]> = observable.map(new Map());
     public dataMap: Map<string, any[]> = observable.map(new Map());
     public metaMap: Map<string, any> = observable.map(new Map());
-	public boardGroupsList: I.BoardGroup[] = [];
+	public groupMap: Map<string, any> = observable.map(new Map());
 
     constructor() {
         makeObservable(this, {
             objectTypes: computed,
-			boardGroups: computed,
-			boardGroupsList: observable,
 			clearAll: action,
             objectTypesSet: action,
             objectTypeAdd: action,
@@ -37,16 +35,12 @@ class DbStore {
             recordAdd: action,
             recordUpdate: action,
             recordDelete: action,
-			boardGroupsSet: action,
+			groupsSet: action,
         });
     }
 
     get objectTypes(): I.ObjectType[] {
 		return this.objectTypeList;
-	};
-
-	get boardGroups(): I.BoardGroup[] {
-		return this.boardGroupsList;
 	};
 
 	clearAll () {
@@ -265,12 +259,19 @@ class DbStore {
 		this.dataMap.set(this.getId(rootId, blockId), this.getRecords(rootId, blockId).filter(it => it.id != id));
 	};
 
-	boardGroupsSet (groups: I.BoardGroup[]) {
-		this.boardGroupsList = groups; 
+	groupsSet (rootId: string, blockId: string, groups: I.BoardGroup[]) {
+		this.groupMap.set(this.getId(rootId, blockId), groups);
 	};
 
-	boardGroupsClear () {
-		this.boardGroupsSet([]);
+	groupsClear (rootId: string, blockId: string) {
+		const groups = this.getGroups(rootId, blockId);
+
+		groups.forEach((it: any) => {
+			const subId = this.getSubId(rootId, [ blockId, it.id ].join(':'));
+			dbStore.recordsClear(subId, '');
+		});
+
+		this.groupsSet(rootId, blockId, []);
 	};
 
     getObjectType (id: string): I.ObjectType {
@@ -316,6 +317,10 @@ class DbStore {
 	getRecord (rootId: string, blockId: string, id: string) {
 		const records = this.getRecords(rootId, blockId);
 		return records.find((it: any) => { return it.id == id; });
+	};
+
+	getGroups (rootId: string, blockId: string) {
+		return this.groupMap.get(this.getId(rootId, blockId)) || [];
 	};
 
 	getId (rootId: string, blockId: string) {

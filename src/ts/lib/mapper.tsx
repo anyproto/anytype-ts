@@ -731,6 +731,8 @@ const Mapper = {
 
 				return el;
 			}));
+
+			return item;
 		},
 
 		InternalFlag: (value: I.ObjectFlag) => {
