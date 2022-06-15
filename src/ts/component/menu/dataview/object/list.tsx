@@ -334,20 +334,24 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		};
 
 		if (item.id == 'add') {
-			const details: any = {
-				name: filter,
-			};
-
-			const typeId = relation.objectTypes.length ? relation.objectTypes[0] : '';
+			let details: any = { name: filter };
+			let typeId = relation.objectTypes.length ? relation.objectTypes[0] : '';
+			let type: any = null;
+			let flags: I.ObjectFlag[] = [];
+			
 			if (typeId) {
-				const type = dbStore.getObjectType(typeId);
+				type = dbStore.getObjectType(typeId);
 				if (type) {
 					details.type = type.id;
 					details.layout = type.layout;
 				};
 			};
 
-			DataUtil.pageCreate('', '', details, I.BlockPosition.Bottom, '', {}, (message: any) => {
+			if (!type) {
+				flags.push(I.ObjectFlag.SelectType);
+			};
+
+			DataUtil.pageCreate('', '', details, I.BlockPosition.Bottom, '', {}, flags, (message: any) => {
 				cb(message.targetId);
 				close();
 			});

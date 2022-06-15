@@ -137,7 +137,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 		const rootId = this.getRootId();
 		const object = detailStore.get(rootId, rootId);
 
-		C.ObjectCreateSet([ rootId ], { name: object.name + ' set' }, '', (message: any) => {
+		C.ObjectCreateSet([ rootId ], { name: object.name + ' set' }, '', [], (message: any) => {
 			if (!message.error.code) {
 				DataUtil.objectOpenPopup({ id: message.id, layout: I.ObjectLayout.Set });
 			};

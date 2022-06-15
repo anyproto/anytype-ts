@@ -248,14 +248,15 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		};
 
 		if (item.id == 'add') {
-			const type = dbStore.getObjectType(commonStore.type);
+			const type: any = dbStore.getObjectType(commonStore.type) || {};
+			const name = filter.text.replace(/\\/g, '');
 
-			C.ObjectCreate({ type: type.id, name: filter.text.replace(/\\/g, '') }, (message: any) => {
+			DataUtil.pageCreate('', '', { name: name }, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.SelectType ], (message: any) => {
 				if (message.error.code) {
 					return;
 				};
 
-				cb(message.pageId, filter.text);
+				cb(message.targetId, name);
 
 				analytics.event('CreateObject', {
 					route: 'Mention',
