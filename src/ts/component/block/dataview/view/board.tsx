@@ -1,9 +1,10 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, C, Util, DataUtil, analytics } from 'ts/lib';
 import { Loader } from 'ts/component';
 import { dbStore, detailStore, popupStore } from 'ts/store';
+import { I, C, Util, DataUtil, analytics, keyboard } from 'ts/lib';
 import { observer } from 'mobx-react';
+import { throttle } from 'lodash';
 import arrayMove from 'array-move';
 
 import Column from './board/column';
@@ -75,6 +76,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 	componentDidMount () {
 		this.loadGroupList();
 		this.resize();
+		this.rebind();
 	};
 
 	componentDidUpdate () {
@@ -95,6 +97,22 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 
 		C.ObjectSearchUnsubscribe(ids);
 		dbStore.groupsClear(rootId, block.id);
+
+		this.unbind();
+	};
+
+	rebind () {
+		const node = $(ReactDOM.findDOMNode(this));
+		const scroll = node.find('.scroll');
+
+		scroll.off('scroll').on('scroll', throttle((e: any) => { this.onScroll(); }, 20));
+	};
+
+	unbind () {
+		const node = $(ReactDOM.findDOMNode(this));
+		const scroll = node.find('.scroll');
+
+		scroll.off('scroll');
 	};
 
 	loadGroupList () {
@@ -257,12 +275,13 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 		viewItem.append(clone);
 
 		$(document).off('dragover').on('dragover', (e: any) => { e.preventDefault(); });
+		$(window).off('dragend.board drag.board');
+
 		e.dataTransfer.setDragImage(clone.get(0), 0, 0);
 
+		keyboard.setDragging(true);
 		selection.preventSelect(true);
 		preventCommonDrop(true);
-		
-		this.unbind();
 	};
 
 	onDragEndCommon (e: any) {
@@ -273,12 +292,15 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 		const node = $(ReactDOM.findDOMNode(this));
 
 		$('body').removeClass('grab');
+		$(window).off('dragend.board drag.board');
+
 		node.find('.isClone').remove();
 		node.find('.isDragging').removeClass('isDragging');
 		node.find(`.ghost`).remove();
 
 		selection.preventSelect(false);
 		preventCommonDrop(false);
+		keyboard.setDragging(false);
 
 		if (this.frame) {
 			raf.cancel(this.frame);
@@ -288,7 +310,6 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 		this.oldIndex = -1;
 		this.newIndex = -1;
 		this.clear();
-		this.unbind();
 	};
 
 	onDragStartColumn (e: any, groupId: string) {
@@ -430,13 +451,27 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 		this.onDragEndCommon(e);
 	};
 
+	onScroll () {
+		if (!keyboard.isDragging) {
+			return;
+		};
+
+		const { rootId, block } = this.props;
+		const groups = dbStore.getGroups(rootId, block.id);
+		const node = $(ReactDOM.findDOMNode(this));
+
+		groups.forEach((group: any, i: number) => {
+			const item = node.find(`#column-${group.id}`);
+			const p = item.offset();
+
+			this.cache[group.id].x = p.left;
+			this.cache[group.id].y = p.top;
+		});
+	};
+
 	clear () {
 		const node = $(ReactDOM.findDOMNode(this));
 		node.find('.isOver').removeClass('isOver top bottom left right');
-	};
-
-	unbind () {
-		$(window).off('dragend.board drag.board');
 	};
 
 	resize () {

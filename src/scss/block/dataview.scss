@@ -62,7 +62,7 @@
 		}
 
 		.content {
-			.scroll { overflow-x: auto; overflow-y: visible; transform: translate3d(0px,0px,0px); }
+			.scroll { overflow-x: overlay; overflow-y: visible; transform: translate3d(0px,0px,0px); }
 			.view { border-top: 1px solid #e0ded2; }
 		}
 	}	

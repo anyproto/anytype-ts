@@ -406,8 +406,15 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 	};
 
 	onScroll ({ clientHeight, scrollHeight, scrollTop }) {
+		const { dataset } = this.props;
+		const { dragProvider } = dataset || {};
+
 		if (scrollTop) {
 			this.top = scrollTop;
+		};
+
+		if (dragProvider) {
+			dragProvider.onScroll();
 		};
 	};
 
@@ -591,7 +598,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		this.ox = e.pageX - offset.left;
 		this.oy = e.pageY - offset.top;
 
-		keyboard.setDrag(true);
+		keyboard.setDragging(true);
 		if (selection) {
 			selection.preventSelect(true);
 		};
@@ -632,7 +639,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		this.setStyle(x, y, snap);
 
 		win.unbind('mousemove.sidebar mouseup.sidebar');
-		keyboard.setDrag(false);
+		keyboard.setDragging(false);
 
 		if (selection) {
 			selection.preventSelect(false);

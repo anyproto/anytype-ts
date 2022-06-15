@@ -206,7 +206,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 		e.dataTransfer.setDragImage(layer.get(0), 0, 0);
 		node.addClass('isDragging');
 		body.addClass('isDragging');
-		keyboard.setDrag(true);
+		keyboard.setDragging(true);
 		Util.previewHide(false);
 
 		win.on('drag.drag', (e: any) => { this.onDragMove(e); });
@@ -251,7 +251,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 		this.unbind();
 		this.clearState();
 
-		keyboard.setDrag(false);
+		keyboard.setDragging(false);
 		node.removeClass('isDragging');
 		body.removeClass('isDragging');
 
@@ -351,6 +351,10 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 	};
 
 	onScroll () {
+		if (!keyboard.isDragging) {
+			return;
+		};
+
 		const isPopup = keyboard.isPopup();
 		const container = Util.getScrollContainer(isPopup);
 		const top = container.scrollTop();
