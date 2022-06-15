@@ -12,17 +12,25 @@ interface Props extends I.Popup, RouteComponentProps<any> {
 	onPage: (id: string) => void;
 	setConfirmPhrase: (v: () => void) => void;
 	setPinConfirmed: (v: boolean) => void;
+	setLoading: (v: boolean) => void;
+};
+
+interface State {
+	error: string;
 };
 
 const Constant: any = require('json/constant.json');
 const { dialog } = window.require('@electron/remote');
 
-const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends React.Component<Props, {}> {
+const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends React.Component<Props, State> {
 
 	refPhrase: any = null;
 	pinConfirmed: boolean = false;
 	format: string = '';
 	refCheckbox: any = null;
+	state = {
+		error: '',
+	};
 
 	constructor (props: any) {
 		super(props);
@@ -38,7 +46,8 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 
 	render () {
 		const { onPage, setConfirmPhrase } = this.props;
-		const { account, accountPath } = authStore;
+		const { error } = this.state;
+		const { account } = authStore;
 		const { config } = commonStore;
 		const pin = Storage.get('pin');
 		const canDelete = account.status.type == I.AccountStatusType.Active;
@@ -48,6 +57,8 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 			<div>
 				<Head {...this.props} id="index" name={translate('popupSettingsTitle')} />
 				<Title text={translate('popupSettingsAccountTitle')} />
+
+				{error ? <div className="message">{error}</div> : ''}
 
 				<div className="rows">
 					<div 
@@ -85,7 +96,7 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 								<Label text={translate('popupSettingsAccountMoveTitle')} />
 							</div>
 							<div className="side right" onMouseEnter={this.onLocationEnter} onMouseLeave={this.onLocationLeave}>
-								<Label text={accountPath} />
+								<Label text={account.info.localStoragePath} />
 							</div>
 						</div>
 					) : ''}
@@ -145,6 +156,8 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 	};
 
 	onFileOffload (e: any) {
+		const { setLoading } = this.props;
+
 		analytics.event('ScreenFileOffloadWarning');
 
 		popupStore.open('confirm',{
@@ -153,14 +166,14 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 				text: 'All media files will be deleted from your current device. They can be downloaded again from a backup node or another device.',
 				textConfirm: 'Yes',
 				onConfirm: () => {
-					this.setState({ loading: true });
+					setLoading(true);
 
 					C.FileListOffload([], false, (message: any) => {
+						setLoading(false);
+
 						if (message.error.code) {
 							return;
 						};
-
-						this.setState({ loading: false });
 
 						popupStore.open('confirm',{
 							data: {
@@ -179,6 +192,7 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 	};
 
 	onLocationMove (e: any) {
+		const { setLoading } = this.props;
 		const options = { 
 			properties: [ 'openDirectory' ],
 		};
@@ -189,10 +203,14 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 				return;
 			};
 
+			setLoading(true);
 			C.AccountMove(files[0], (message: any) => {
-				if (!message.error.code) {
+				if (message.error.code) {
+					this.setState({ error: message.error.description });
+				} else {
 					Util.route('/auth/setup/init'); 
 				};
+				setLoading(false);
 			});
 		});
 	};
