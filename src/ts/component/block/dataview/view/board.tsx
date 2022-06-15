@@ -269,15 +269,14 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 		this.width = clone.outerWidth();
 		this.height = clone.outerHeight();
 
-		$('body').addClass('grab');
 		target.addClass('isDragging');
 		clone.attr({ id: '' }).addClass('isClone').css({ zIndex: 10000, position: 'fixed', left: -10000, top: -10000 });
 		viewItem.append(clone);
 
 		$(document).off('dragover').on('dragover', (e: any) => { e.preventDefault(); });
 		$(window).off('dragend.board drag.board');
-
 		e.dataTransfer.setDragImage(clone.get(0), 0, 0);
+		$('body').addClass('grab');
 
 		keyboard.setDragging(true);
 		selection.preventSelect(true);
