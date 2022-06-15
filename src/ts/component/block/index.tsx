@@ -78,7 +78,7 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 		const index = Number(this.props.index) || 0;
 		const root = blockStore.getLeaf(rootId, rootId);
 
-		let canSelect = true;
+		let canSelect = !isInsideTable;
 		let canDrop = !readonly && !isInsideTable;
 		let canDropMiddle = canDrop;
 		let cn: string[] = [ 'block', DataUtil.blockClass(block, isDragging), 'index-' + index ];
