@@ -495,7 +495,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 			margin = (ww - mw) / 2; 
 		};
 
-		scroll.css({ width: ww, marginLeft: -margin, paddingLeft: margin });
+		scroll.css({ width: ww, marginLeft: -margin / 2 , paddingLeft: margin / 2 });
 		viewItem.css({ width: vw });
 	};
 	
