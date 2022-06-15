@@ -494,18 +494,17 @@ class BlockStore {
 		};
 	};
 
-	checkDraft (rootId: string) {
+	checkTypeSelect (rootId: string) {
 		const footer = this.getMapElement(rootId, Constant.blockId.footer);
 		if (!footer) {
 			return;
 		};
 
-		const object = detailStore.get(rootId, rootId, [ 'type' ], true);
-		const checkBlocks = this.checkRootEmpty(rootId);
-		const checkType = object.type == commonStore.type;
+		const object = detailStore.get(rootId, rootId, [ 'internalFlags' ]);
+		const check = (object.internalFlags || []).includes(I.ObjectFlag.SelectType);
 
 		let change = false;
-		if (checkBlocks && checkType) {
+		if (check) {
 			if (!footer.childrenIds.includes(Constant.blockId.type)) {
 				footer.childrenIds.push(Constant.blockId.type);
 				change = true;
@@ -520,20 +519,9 @@ class BlockStore {
 		};
 	};
 
-	checkRootEmpty (rootId: string) {
-		const root = this.getLeaf(rootId, rootId);
-		const rootElement = this.getMapElement(rootId, rootId);
-		const cnt = root.isObjectNote() ? 3 : 2;
-
-		return rootElement.childrenIds.length <= cnt;
-	};
-
-	checkBlockType (rootId: string): boolean {
+	checkBlockTypeExists (rootId: string): boolean {
 		const footer = this.getMapElement(rootId, Constant.blockId.footer);
-		if (!footer) {
-			return false;
-		};
-		return footer.childrenIds.includes(Constant.blockId.type);
+		return footer ? footer.childrenIds.includes(Constant.blockId.type) : false;
 	};
 
 };

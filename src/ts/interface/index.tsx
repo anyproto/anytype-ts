@@ -21,7 +21,7 @@ import { ThreadStatus, ThreadSummary, ThreadDevice, ThreadAccount, ThreadCafe, F
 import { Progress, ProgressType, ProgressState } from './progress';
 import { PopupParam, Popup } from './popup';
 import { MenuTab, MenuType, MenuDirection, MenuParam, Menu, MenuItem } from './menu';
-import { SmartBlockType, ObjectLayout, ObjectType, RelationType, RelationScope, Relation, OptionScope, SelectOption } from './object';
+import { SmartBlockType, ObjectLayout, ObjectType, ObjectFlag, RelationType, RelationScope, Relation, OptionScope, SelectOption } from './object';
 import { RestrictionObject, RestrictionDataview } from './restriction';
 
 import { PageInfo, BlockType, BlockPosition, BlockSplitMode, BlockAlign, BlockComponent, Block, BlockStructure } from './block';
@@ -103,6 +103,7 @@ export {
 	SmartBlockType,
 	ObjectLayout,
 	ObjectType,
+	ObjectFlag,
 	RelationType, 
 	RelationScope,
 	Relation,
