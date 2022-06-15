@@ -33,6 +33,8 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 	state = {
 		loading: false,
 	};
+	columnRefs: any = {};
+	isDraggingColumn: boolean = false;
 
 	constructor (props: any) {
 		super(props);
@@ -58,6 +60,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 								{groups.map((group: any, i: number) => (
 									<Column 
 										key={`board-column-${group.id}`} 
+										ref={(ref: any) => { this.columnRefs[group.id] = ref; }}
 										{...this.props} 
 										{...group} 
 										onAdd={this.onAdd} 
@@ -246,6 +249,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 
 				this.cache[record.id] = {
 					id: record.id,
+					groupId: group.id,
 					x: p.left,
 					y: p.top,
 					width: item.outerWidth(),
@@ -317,6 +321,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 
 		this.onDragStartCommon(e, node.find(`#column-${groupId}`));
 		this.initCacheColumn();
+		this.isDraggingColumn = true;
 
 		win.on('drag.board', (e: any) => { this.onDragMoveColumn(e, groupId); });
 		win.on('dragend.board', (e: any) => { this.onDragEndColumn(e); });
@@ -378,6 +383,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 
 		C.BlockDataviewGroupOrderUpdate(rootId, block.id, [ { viewId: view.id, groups: update } ]);
 
+		this.isDraggingColumn = false;
 		this.onDragEndCommon(e);
 		this.resize();
 	};
@@ -394,27 +400,15 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 
 	onDragMoveCard (e: any, record: any) {
 		const node = $(ReactDOM.findDOMNode(this));
-		const items = node.find('.card');
 		const ghost = $('<div />').addClass('ghost isCard');
+		const current = this.cache[record.id];
+
+		if (!current) {
+			return;
+		};
 
 		let isTop = false;
 		let hoverId = '';
-
-		for (let i = 0; i < items.length; ++i) {
-			const item = $(items.get(i));
-			const id = item.data('id');
-			const rect = this.cache[id];
-
-			if (id == record.id) {
-				continue;
-			};
-
-			if (rect && this.cache[record.id] && Util.rectsCollide({ x: e.pageX, y: e.pageY, width: this.width, height: this.height + 8 }, rect)) {
-				isTop = e.pageY <= rect.y + rect.height / 2;
-				hoverId = id;
-				break;
-			};
-		};
 
 		for (let i in this.cache) {
 			const rect = this.cache[i];
@@ -422,7 +416,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 				continue;
 			};
 
-			if (this.cache[record.id] && Util.rectsCollide({ x: e.pageX, y: e.pageY, width: this.width, height: this.height + 8 }, rect)) {
+			if (Util.rectsCollide({ x: e.pageX, y: e.pageY, width: this.width, height: this.height + 8 }, rect)) {
 				isTop = e.pageY <= rect.y + rect.height / 2;
 				hoverId = rect.id;
 				break;
@@ -438,9 +432,8 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 
 			if (hoverId) {
 				const card = node.find(`#card-${hoverId}`);
-				const rect = this.cache[hoverId];
 
-				ghost.css({ height: rect.height, width: rect.width });
+				ghost.css({ height: current.height, width: current.width });
 				isTop ? card.before(ghost) : card.after(ghost);
 			};
 		});
@@ -451,7 +444,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 	};
 
 	onScroll () {
-		if (!keyboard.isDragging) {
+		if (!this.isDraggingColumn) {
 			return;
 		};
 
@@ -460,11 +453,13 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 		const node = $(ReactDOM.findDOMNode(this));
 
 		groups.forEach((group: any, i: number) => {
-			const item = node.find(`#column-${group.id}`);
-			const p = item.offset();
+			if (this.cache[group.id]) {
+				const item = node.find(`#column-${group.id}`);
+				const p = item.offset();
 
-			this.cache[group.id].x = p.left;
-			this.cache[group.id].y = p.top;
+				this.cache[group.id].x = p.left;
+				this.cache[group.id].y = p.top;
+			};
 		});
 	};
 
