@@ -216,9 +216,9 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 	};
 
 	onLocationEnter (e: any) {
-		const { accountPath } = authStore;
+		const { account } = authStore;
 
-		Util.tooltipShow(accountPath, $(e.currentTarget), I.MenuDirection.Center, I.MenuDirection.Bottom);
+		Util.tooltipShow(account.info.localStoragePath, $(e.currentTarget), I.MenuDirection.Center, I.MenuDirection.Bottom);
 	};
 
 	onLocationLeave (e: any) {
