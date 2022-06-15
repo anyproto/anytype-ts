@@ -369,7 +369,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		
 		const { rootId } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
-		const checkType = blockStore.checkBlockType(rootId);
+		const checkType = blockStore.checkBlockTypeExists(rootId);
 		const readonly = this.isReadonly();
 
 		if (!root || readonly || checkType || (root && root.isLocked())) {
@@ -1193,7 +1193,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			this.blockSplit(block, range);
 		};
 
-		if (blockStore.checkBlockType(rootId)) {
+		if (blockStore.checkBlockTypeExists(rootId)) {
 			const object = detailStore.get(rootId, rootId, []);
 			analytics.event('CreateObject', { 
 				route: 'Editor',

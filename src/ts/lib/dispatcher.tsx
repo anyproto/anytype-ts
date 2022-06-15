@@ -285,7 +285,7 @@ class Dispatcher {
 					blockStore.updateStructure(rootId, id, childrenIds);
 
 					if (id == rootId) {
-						blockStore.checkDraft(rootId);
+						blockStore.checkTypeSelect(rootId);
 					};
 					break;
 
@@ -616,7 +616,7 @@ class Dispatcher {
 								blockStore.update(rootId, { id: rootId, layout: details.layout });
 							};
 	
-							blockStore.checkDraft(rootId);
+							blockStore.checkTypeSelect(rootId);
 						};
 					};
 					break;
@@ -635,7 +635,7 @@ class Dispatcher {
 						});
 					} else {
 						detailStore.delete(rootId, id, keys);
-						blockStore.checkDraft(rootId);
+						blockStore.checkTypeSelect(rootId);
 					};
 					break;
 
@@ -837,7 +837,7 @@ class Dispatcher {
 		blockStore.setStructure(rootId, structure);
 		blockStore.updateNumbers(rootId); 
 		blockStore.updateMarkup(rootId);
-		blockStore.checkDraft(rootId);
+		blockStore.checkTypeSelect(rootId);
 	};
 
 	public request (type: string, data: any, callBack?: (message: any) => void) {

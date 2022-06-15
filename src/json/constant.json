@@ -177,7 +177,8 @@
 		"audio": "_otaudio",
 		"relation": "_otrelation",
 		"note": "_otnote",
-		"task": "_ottask"
+		"task": "_ottask",
+		"bookmark": "_otbookmark"
 	},
 
 	"blockId": {

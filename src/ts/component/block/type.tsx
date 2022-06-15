@@ -103,7 +103,7 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 		const { filter } = this.state;
 		const object = detailStore.get(rootId, rootId, []);
 		
-		let items = DataUtil.getObjectTypesForNewObject(true).filter((it: any) => { return it.id != object.type; });
+		let items = DataUtil.getObjectTypesForNewObject(true).filter(it => it.id != object.type);
 		if (filter) {
 			const reg = new RegExp(Util.filterFix(filter), 'gi');
 
@@ -258,7 +258,7 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 			};
 
 			const onTemplate = () => {
-				first = blockStore.getFirstBlock(rootId, 1, (it: any) => { return it.isText(); });
+				first = blockStore.getFirstBlock(rootId, 1, it => it.isText());
 				if (!first) {
 					C.BlockCreate(rootId, '', I.BlockPosition.Bottom, param, (message: any) => { onBlock(message.blockId); });
 				} else {

@@ -80,7 +80,7 @@ class MenuHelp extends React.Component<Props, {}> {
 					key = 'template';
 				} else
 				if (isEditor) {
-					key = blockStore.checkBlockType(rootId) ? 'typeSelect' : 'editor';
+					key = blockStore.checkBlockTypeExists(rootId) ? 'typeSelect' : 'editor';
 				} else {
 					key = Util.toCamelCase([ page, action ].join('-'));
 				};

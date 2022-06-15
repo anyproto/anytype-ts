@@ -522,7 +522,6 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 		let marks = data.marks || [];
 		let position = length ? I.BlockPosition.Bottom : I.BlockPosition.Replace; 
 
-		const details: any = {};
 		const onCommand = (message: any) => {
 			focus.set(message.blockId || blockId, { from: length, to: length });
 			focus.apply();
@@ -612,6 +611,8 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 				} else 
 				if (item.isObject) {
 					const type = dbStore.getObjectType(item.objectTypeId);
+					const details: any = {};
+
 					if (type) {
 						details.type = type.id;
 						details.layout = type.layout;
@@ -633,7 +634,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 							});
 						};
 
-						DataUtil.pageCreate(rootId, blockId, details, position, template?.id, DataUtil.defaultLinkSettings(), cb);
+						DataUtil.pageCreate(rootId, blockId, details, position, template?.id, DataUtil.defaultLinkSettings(), [], cb);
 					};
 
 					const showMenu = () => {
@@ -651,11 +652,6 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 						} else {
 							create(message.records.length ? message.records[0] : '');
 						};
-					});
-				} else 
-				if (item.type == I.BlockType.Page) {
-					DataUtil.pageCreate(rootId, blockId, details, position, '', DataUtil.defaultLinkSettings(), (message: any) => {
-						DataUtil.objectOpenPopup({ ...details, id: message.targetId });
 					});
 				} else {
 					keyboard.setFocus(false);

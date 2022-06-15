@@ -65,7 +65,7 @@ class PageMainEdit extends React.Component<Props, {}> {
 		if (object.type == Constant.typeId.template) {
 			key = 'template';
 		} else 
-		if (!blockStore.checkBlockType(rootId)) {
+		if (!blockStore.checkBlockTypeExists(rootId)) {
 			key = 'editor';
 		};
 		if (key) {
