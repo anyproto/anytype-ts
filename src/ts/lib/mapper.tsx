@@ -675,6 +675,14 @@ const Mapper = {
 			return item;
 		},
 
+		InternalFlag: (value: I.ObjectFlag) => {
+			const item = new Model.InternalFlag();
+
+			item.setValue(value);
+
+			return item;
+		},
+
 	}
 
 };

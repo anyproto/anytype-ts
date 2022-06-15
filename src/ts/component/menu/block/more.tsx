@@ -177,15 +177,17 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const allowedSearch = !block.isObjectSet() && !block.isObjectSpace();
 		const allowedHighlight = !(!object.workspaceId || block.isObjectSpace() || !config.allowSpaces);
 		const allowedHistory = block.canHaveHistory() && !object.templateIsBundled;
-		const allowedTemplate = (object.type != Constant.typeId.note) && (object.id != profile);
+		const allowedTemplate = (object.type != Constant.typeId.note) && (object.id != profile) && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Template ]);
 		const allowedFav = !object.isArchived;
 		const allowedLock = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const allowedLink = config.experimental;
+		const allowedCopy = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Duplicate ]);
 
 		if (!allowedArchive)	 archive = null;
 		if (!allowedDelete)		 pageRemove = null;
 		if (!allowedLock)		 pageLock = null;
 		if (!allowedLink)		 pageLink = null;
+		if (!allowedCopy)		 pageCopy = null;
 		if (!allowedShare)		 share = null;
 		if (!allowedHighlight)	 highlight = null;
 		if (!allowedSearch)		 search = null;
@@ -196,9 +198,13 @@ class MenuBlockMore extends React.Component<Props, {}> {
 
 		let sections = [];
 		if (block.isObjectType() || block.isObjectRelation() || block.isObjectFileKind() || block.isObjectSet() || block.isObjectSpace()) {
+			if (!block.isObjectSet()) {
+				pageCopy = null;
+			};
+
 			sections = [
 				{ children: [ archive, pageRemove ] },
-				{ children: [ fav, pageLink, highlight ] },
+				{ children: [ fav, pageLink, pageCopy, highlight ] },
 				{ children: [ search ] },
 				{ children: [ print ] },
 				{ children: [ share, highlight ] },
@@ -451,7 +457,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				break;
 
 			case 'pageCreate':
-				DataUtil.pageCreate('', '', {}, I.BlockPosition.Bottom, rootId, {}, (message: any) => {
+				DataUtil.pageCreate('', '', {}, I.BlockPosition.Bottom, rootId, {}, [], (message: any) => {
 					DataUtil.objectOpen({ id: message.targetId });
 
 					analytics.event('CreateObject', {

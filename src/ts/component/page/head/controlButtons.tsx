@@ -38,7 +38,7 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 			return null;
 		};
 
-		let checkType = blockStore.checkBlockType(rootId);
+		let checkType = blockStore.checkBlockTypeExists(rootId);
 		let allowedDetails = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		let allowedLayout = !checkType && allowedDetails && !root.isObjectSet() && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Layout ]);
 		let allowedRelation = !checkType;

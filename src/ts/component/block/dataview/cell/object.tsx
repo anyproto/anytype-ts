@@ -355,16 +355,22 @@ const CellObject = observer(class CellObject extends React.Component<Props, Stat
 		const { relation } = this.props;
 		const typeId = relation.objectTypes.length ? relation.objectTypes[0] : '';
 		const details: any = { name: text };
+		const flags: I.ObjectFlag[] = [];
 
+		let type: any = null;
 		if (typeId) {
-			const type = dbStore.getObjectType(typeId);
+			type = dbStore.getObjectType(typeId);
 			if (type) {
 				details.type = type.id;
 				details.layout = type.layout;
 			};
 		};
 
-		DataUtil.pageCreate('', '', details, I.BlockPosition.Bottom, '', {}, (message: any) => {
+		if (!type) {
+			flags.push(I.ObjectFlag.SelectType);
+		};
+
+		DataUtil.pageCreate('', '', details, I.BlockPosition.Bottom, '', {}, flags, (message: any) => {
 			if (!message.error.code) {
 				this.onValueAdd(message.targetId);
 			};
