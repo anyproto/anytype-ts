@@ -40,7 +40,6 @@
 				.empty { display: inline; }
 			}
 		}
-		.cell.first { margin-left: -4px; }
 
 		.cellContent.c-file {
 			.element { margin-right: 2px; }
@@ -54,7 +53,7 @@
 	}
 
 	.block.blockFeatured.align0 {
-		.cellContent.type { margin-left: -6px; }
+		.cell.first { margin-left: -6px; }
 	}
 
 	.block.blockFeatured.small { @include text-common; padding: 0px; margin: 0px; line-height: 22px; }

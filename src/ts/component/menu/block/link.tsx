@@ -339,7 +339,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 		if (item.itemId == 'add') {
 			const type: any = dbStore.getObjectType(commonStore.type) || {};
 
-			DataUtil.pageCreate('', '', { type: type.id, name: filter }, I.BlockPosition.Bottom, '', {}, (message: any) => {
+			DataUtil.pageCreate('', '', { name: filter }, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.SelectType ], (message: any) => {
 				if (message.error.code) {
 					return;
 				};
@@ -347,7 +347,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 				onChange(I.MarkType.Object, message.targetId);
 
 				analytics.event('CreateObject', {
-					route: 'Mention',
+					route: 'Link',
 					objectType: type.id,
 					layout: type.layout,
 					template: '',

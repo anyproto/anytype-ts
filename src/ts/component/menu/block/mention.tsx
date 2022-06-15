@@ -249,13 +249,14 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 
 		if (item.id == 'add') {
 			const type: any = dbStore.getObjectType(commonStore.type) || {};
+			const name = filter.text.replace(/\\/g, '');
 
-			DataUtil.pageCreate('', '', { type: type.id, name: filter.text.replace(/\\/g, '') }, I.BlockPosition.Bottom, '', {}, (message: any) => {
+			DataUtil.pageCreate('', '', { name: name }, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.SelectType ], (message: any) => {
 				if (message.error.code) {
 					return;
 				};
 
-				onChange(I.MarkType.Object, message.targetId);
+				cb(message.targetId, name);
 
 				analytics.event('CreateObject', {
 					route: 'Mention',
