@@ -176,11 +176,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { rootId } = this.props;
-
-		C.BlockTableColumnListFill(rootId, [ columnId ], (message: any) => {
-			this.onOptions(e, type, rowId, columnId, cellId);
-		});
+		this.onOptions(e, type, rowId, columnId, cellId);
 	};
 
 	onHandleRow (e: any, type: I.BlockType, rowId: string, columnId: string, cellId: string) {
@@ -188,17 +184,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { rootId } = this.props;
-		const { columns } = this.getData();
-		const childrenIds = blockStore.getChildrenIds(rootId, rowId);
-
-		if (childrenIds.length != columns.length) {
-			C.BlockTableRowListFill(rootId, [ rowId ], (message: any) => { 
-				this.onOptions(e, type, rowId, columnId, cellId); 
-			});
-		} else {
-			this.onOptions(e, type, rowId, columnId, cellId);
-		};
+		this.onOptions(e, type, rowId, columnId, cellId);
 	};
 
 	onOptions (e: any, type: I.BlockType, rowId: string, columnId: string, cellId: string) {
@@ -238,6 +224,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		let optionsColor = this.optionsColor(cellId);
 		let element: any = null;
 		let blockIds: string[] = [];
+		let fill: any = null;
 
 		switch (type) {
 			case I.BlockType.TableRow:
@@ -250,6 +237,10 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 					element: node.find(`#row-${rowId}`).first(),
 					offsetY: 2,
 				});
+
+				fill = (callBack: () => void) => {
+					C.BlockTableRowListFill(rootId, [ rowId ], callBack);
+				};
 				break;
 
 			case I.BlockType.TableColumn:
@@ -270,6 +261,10 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 					offsetX: element.outerWidth() + 2,
 					offsetY: -element.outerHeight(),
 				});
+
+				fill = (callBack: () => void) => {
+					C.BlockTableColumnListFill(rootId, [ columnId ], callBack);
+				};
 				break;
 
 			default:
@@ -286,6 +281,10 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 					element,
 					horizontal: I.MenuDirection.Center,
 				});
+
+				fill = (callBack: () => void) => {
+					callBack();
+				};
 				break;
 		};
 
@@ -354,7 +353,9 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 								options: this.optionsHAlign(),
 								value: current.hAlign,
 								onSelect: (e: any, el: any) => {
-									C.BlockListSetAlign(rootId, blockIds, el.id);
+									fill(() => {
+										C.BlockListSetAlign(rootId, blockIds, el.id);
+									});
 									menuContext.close();
 								}
 							});
@@ -367,7 +368,9 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 								options: this.optionsVAlign(),
 								value: current.vAlign,
 								onSelect: (e: any, el: any) => {
-									C.BlockListSetVerticalAlign(rootId, blockIds, el.id);
+									fill(() => {
+										C.BlockListSetVerticalAlign(rootId, blockIds, el.id);
+									});
 									menuContext.close();
 								}
 							});
@@ -377,7 +380,9 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 							menuId = 'blockColor';
 							menuParam.data = Object.assign(menuParam.data, {
 								onChange: (id: string) => {
-									C.BlockTextListSetColor(rootId, blockIds, id);
+									fill(() => {
+										C.BlockTextListSetColor(rootId, blockIds, id);
+									});
 									menuContext.close();
 								}
 							});
@@ -387,7 +392,9 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 							menuId = 'blockBackground';
 							menuParam.data = Object.assign(menuParam.data, {
 								onChange: (id: string) => {
-									C.BlockListSetBackgroundColor(rootId, blockIds, id);
+									fill(() => {
+										C.BlockListSetBackgroundColor(rootId, blockIds, id);
+									});
 									menuContext.close();
 								}
 							});
