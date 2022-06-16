@@ -549,6 +549,18 @@ const Mapper = {
 			return content;
 		},
 
+		BlockTableRow: (obj: any) => {
+			const content = new Model.Block.Content.TableRow();
+
+			return content;
+		},
+
+		BlockTableColumn: (obj: any) => {
+			const content = new Model.Block.Content.TableColumn();
+
+			return content;
+		},
+
 		BlockTableOfContents: (obj: any) => {
 			const content = new Model.Block.Content.TableOfContents();
 	

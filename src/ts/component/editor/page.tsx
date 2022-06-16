@@ -1448,11 +1448,19 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		const cmd = cut ? 'BlockCut' : 'BlockCopy';
 		const focusBlock = blockStore.getLeaf(rootId, focused);
 		const tree = blockStore.getTree(rootId, blockStore.getBlocks(rootId));
-		
+
 		let text: string[] = [];
 		let blocks = blockStore.unwrapTree(tree).filter((it: I.Block) => {
 			return ids.indexOf(it.id) >= 0;
 		});
+
+		ids.forEach((id: string) => {
+			const block = blockStore.getLeaf(rootId, id);
+			if (block.isTable()) {
+				blocks = blocks.concat(blockStore.unwrapTree([ blockStore.wrapTree(rootId, block.id) ]));
+			};
+		});
+
 		blocks = Util.arrayUniqueObjects(blocks, 'id');
 
 		blocks = blocks.map((it: I.Block) => {
