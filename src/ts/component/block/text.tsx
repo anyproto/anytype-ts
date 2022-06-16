@@ -335,10 +335,6 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 				onChange: (marks: I.Mark[]) => { self.setMarks(marks); },
 			};
 
-			if (!scheme) {
-				url = 'http://' + url;
-			};
-
 			if (isInside) {
 				route = '/' + url.split('://')[1];
 
@@ -350,6 +346,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 					type: I.MarkType.Object,
 				});
 			} else {
+				url = Util.urlFix(url);
 				param = Object.assign(param, {
 					param: url,
 					type: I.MarkType.Link,

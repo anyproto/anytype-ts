@@ -698,6 +698,20 @@ class Util {
 	filterFix (v: string) {
 		return String(v || '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 	};
+
+	urlFix (url: string): string {
+		url = String(url || '');
+		if (!url) {
+			return '';
+		};
+
+		const scheme = this.getScheme(url);
+		if (!scheme) {
+			url = 'http://' + url;
+		};
+
+		return url;
+	};
 	
 	lengthFixOut (text: string, len: number): number {
 		const s = String(text || '').substring(0, len);
