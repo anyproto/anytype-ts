@@ -67,7 +67,14 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, St
 					<HeadSimple ref={(ref: any) => { this.refHead = ref;}} type="set" rootId={rootId} />
 
 					{children.map((block: I.Block, i: number) => (
-						<Block {...this.props} key={block.id} rootId={rootId} iconSize={20} block={block} />
+						<Block 
+							{...this.props} 
+							key={block.id} 
+							rootId={rootId} 
+							iconSize={20} 
+							block={block} 
+							className="noPlus" 
+						/>
 					))}
 				</div>
 

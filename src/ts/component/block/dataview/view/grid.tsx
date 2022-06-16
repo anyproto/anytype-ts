@@ -19,6 +19,8 @@ const HEIGHT = 48;
 
 const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 
+	ox: number = 0;
+
 	constructor (props: any) {
 		super (props);
 
@@ -232,6 +234,11 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 		e.stopPropagation();
 
 		const win = $(window);
+		const node = $(ReactDOM.findDOMNode(this));
+		const el = node.find(`#${Relation.cellId('head', relationKey, '')}`);
+		const offset = el.offset();
+
+		this.ox = offset.left;
 
 		$('body').addClass('colResize');
 		win.unbind('mousemove.cell mouseup.cell');
@@ -246,35 +253,37 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 		e.stopPropagation();
 
 		const { getView } = this.props;
-		const view = getView();
 		const node = $(ReactDOM.findDOMNode(this));
+		const view = getView();
+		const idx = view.relations.findIndex(it => it.relationKey == relationKey);
 		const el = node.find(`#${Relation.cellId('head', relationKey, '')}`);
-		const offset = el.offset();
-		const idx = view.relations.findIndex((it: I.ViewRelation) => { return it.relationKey == relationKey; });
 		const size = Constant.size.dataview.cell;
+		const width = this.checkWidth(e.pageX - this.ox);
 
-		let width = Math.floor(e.pageX - offset.left);
-		width = Math.max(size.min, width); 
-		width = Math.min(size.max, width);
+		el.css({ width });
+		node.find(`.cell.index${idx}`).css({ width });
 
-		view.relations[idx].width = width;
-
-		el.css({ width: width });
 		width <= size.icon ? el.addClass('small') : el.removeClass('small');
-		
 		this.resizeLast();
 	};
 
 	onResizeEnd (e: any, relationKey: string) {
 		const { rootId, block, getView } = this.props;
 		const view = getView();
+		const idx = view.relations.findIndex(it => it.relationKey == relationKey);
 
 		$(window).unbind('mousemove.cell mouseup.cell').trigger('resize');
 		$('body').removeClass('colResize');
 
+		view.relations[idx].width = this.checkWidth(e.pageX - this.ox);
 		C.BlockDataviewViewUpdate(rootId, block.id, view.id, view);
 
 		window.setTimeout(() => { keyboard.setResize(false); }, 50);
+	};
+
+	checkWidth (width: number): number {
+		const { min, max } = Constant.size.dataview.cell;
+		return Math.min(max, Math.max(min, Math.floor(width)));
 	};
 
 	onCellAdd (e: any) {
