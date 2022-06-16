@@ -176,7 +176,11 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		e.preventDefault();
 		e.stopPropagation();
 
-		this.onOptions(e, type, rowId, columnId, cellId);
+		const { rootId } = this.props;
+
+		C.BlockTableColumnListFill(rootId, [ columnId ], (message: any) => {
+			this.onOptions(e, type, rowId, columnId, cellId);
+		});
 	};
 
 	onHandleRow (e: any, type: I.BlockType, rowId: string, columnId: string, cellId: string) {
@@ -189,7 +193,9 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		const childrenIds = blockStore.getChildrenIds(rootId, rowId);
 
 		if (childrenIds.length != columns.length) {
-			C.BlockTableRowListFill(rootId, [ rowId ], () => { this.onOptions(e, type, rowId, columnId, cellId); });
+			C.BlockTableRowListFill(rootId, [ rowId ], (message: any) => { 
+				this.onOptions(e, type, rowId, columnId, cellId); 
+			});
 		} else {
 			this.onOptions(e, type, rowId, columnId, cellId);
 		};
@@ -211,7 +217,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		};
 
 		const node = $(ReactDOM.findDOMNode(this));
-		const { rows, columns } = this.getData();
+		const { rows } = this.getData();
 		const subIds = [ 'select2', 'blockColor', 'blockBackground' ];
 
 		let menuContext: any = null;
@@ -254,13 +260,9 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				options = options.concat(this.optionsColumn(columnId));
 				options = options.concat(optionsColor);
 
-				const idx = columns.findIndex(it => it.id == current.id);
-				if (idx >= 0) {
-					rows.forEach(row => {
-						const childrenIds = blockStore.getChildrenIds(rootId, row.id);
-						blockIds = blockIds.concat([ childrenIds[idx] ]);
-					});
-				};
+				rows.forEach(row => {
+					blockIds.push([ row.id, columnId ].join('-'));
+				});
 
 				element = node.find(`#cell-${cellId}`).first();
 				menuParam = Object.assign(menuParam, {
@@ -271,7 +273,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				break;
 
 			default:
-				blockIds = [ current.id ];
+				blockIds = [ cellId ];
 				options = options.concat([
 					{ id: 'row', name: 'Row', arrow: true },
 					{ id: 'column', name: 'Column', arrow: true },
@@ -329,7 +331,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 							menuParam.data = Object.assign(menuParam.data, {
 								options: this.optionsRow(rowId).filter(it => !it.isDiv),
 								onSelect: (e: any, item: any) => {
-									this.onSelect(e, item, rowId, columnId, current.id, blockIds);
+									this.onSelect(e, item, rowId, columnId, cellId, blockIds);
 								}
 							});
 							break;
@@ -340,7 +342,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 							menuParam.data = Object.assign(menuParam.data, {
 								options: this.optionsColumn(columnId).filter(it => !it.isDiv),
 								onSelect: (e: any, item: any) => {
-									this.onSelect(e, item, rowId, columnId, current.id, blockIds);
+									this.onSelect(e, item, rowId, columnId, cellId, blockIds);
 								}
 							});
 							break;
@@ -409,7 +411,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 					});
 				},
 				onSelect: (e: any, item: any) => {
-					this.onSelect(e, item, rowId, columnId, current.id, blockIds);
+					this.onSelect(e, item, rowId, columnId, cellId, blockIds);
 				}
 			},
 		});
