@@ -571,7 +571,6 @@ const Mapper = {
 			obj.content = Util.objectCopy(obj.content || {});
 	
 			let block = new Model.Block();
-			let content: any = null;
 	
 			block.setId(obj.id);
 			block.setAlign(obj.hAlign);

@@ -52,7 +52,7 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 		);
 
 		const EmptyBlock = () => (
-			<div className="block blockText noPlus">
+			<div className="block blockText noPlus align0">
 				<div className="wrapContent">
 					<div className="selectable">
 						<div className="dropTarget">
