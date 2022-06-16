@@ -203,7 +203,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		};
 
 		const node = $(ReactDOM.findDOMNode(this));
-		const { rows } = this.getData();
+		const { rows, columns } = this.getData();
 		const subIds = [ 'select2', 'blockColor', 'blockBackground' ];
 
 		let menuContext: any = null;
@@ -231,7 +231,9 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				options = options.concat(this.optionsRow(rowId));
 				options = options.concat(optionsColor);
 
-				blockIds = blockStore.getChildrenIds(rootId, rowId);
+				columns.forEach(column => {
+					blockIds.push([ rowId, column.id ].join('-'));
+				});
 
 				menuParam = Object.assign(menuParam, {
 					element: node.find(`#row-${rowId}`).first(),
