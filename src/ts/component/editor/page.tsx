@@ -1456,7 +1456,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 		ids.forEach((id: string) => {
 			const block = blockStore.getLeaf(rootId, id);
-			if (block.isTable()) {
+			if (block && block.isTable()) {
 				blocks = blocks.concat(blockStore.unwrapTree([ blockStore.wrapTree(rootId, block.id) ]));
 			};
 		});
