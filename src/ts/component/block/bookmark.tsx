@@ -1,17 +1,24 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { InputWithFile, ObjectName, ObjectDescription } from 'ts/component';
+import { InputWithFile, ObjectName, ObjectDescription, Loader } from 'ts/component';
 import { I, C, focus, Util } from 'ts/lib';
 import { commonStore, detailStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.BlockComponent {};
 
+interface State {
+	loading: boolean;
+};
+
 const $ = require('jquery');
 
-const BlockBookmark = observer(class BlockBookmark extends React.Component<Props, {}> {
+const BlockBookmark = observer(class BlockBookmark extends React.Component<Props, State> {
 
 	_isMounted: boolean = false;
+	state = {
+		loading: false,
+	};
 
 	constructor (props: any) {
 		super(props);
@@ -27,8 +34,12 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<Props
 		const { rootId, block, readonly } = this.props;
 		const object = detailStore.get(rootId, block.content.targetObjectId);
 		const { iconImage, picture, url } = object;
+		const { loading } = this.state;
 
 		let element = null;
+		if (loading) {
+			element = <Loader />;
+		} else 
 		if (url) {
 			let cn = [ 'inner', 'resizable' ];
 			let cnl = [ 'side', 'left' ];
@@ -110,18 +121,21 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<Props
 		if (e.shiftKey || e.altKey || e.ctrlKey || e.metaKey) {
 			return;
 		};
-		
-		const { block } = this.props;
+
+		const { rootId, block } = this.props;
+		const object = detailStore.get(rootId, block.content.targetObjectId);
 		const renderer = Util.getRenderer();
 
-		renderer.send('urlOpen', Util.urlFix(block.content.url));
+		renderer.send('urlOpen', Util.urlFix(object.url));
 	};
 	
 	onChangeUrl (e: any, url: string) {
 		const { rootId, block } = this.props;
-		const { id } = block;
 		
-		C.BlockBookmarkFetch(rootId, id, url);
+		this.setState({ loading: true });
+		C.BlockBookmarkFetch(rootId, block.id, url, (message: any) => {
+			this.setState({ loading: false });
+		});
 	};
 	
 	rebind () {

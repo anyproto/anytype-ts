@@ -58,9 +58,7 @@ const BlockAudio = observer(class BlockAudio extends React.Component<Props, {}> 
 				break;
 				
 			case I.FileState.Uploading:
-				element = (
-					<Loader />
-				);
+				element = <Loader />;
 				break;
 				
 			case I.FileState.Done:

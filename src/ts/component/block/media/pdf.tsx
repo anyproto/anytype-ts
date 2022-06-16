@@ -91,9 +91,7 @@ const BlockPdf = observer(class BlockPdf extends React.Component<Props, State> {
 				break;
 				
 			case I.FileState.Uploading:
-				element = (
-					<Loader />
-				);
+				element = <Loader />;
 				break;
 				
 			case I.FileState.Done:

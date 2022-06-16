@@ -24,7 +24,7 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 
 	render () {
 		const { timezone, autoSidebar, config } = commonStore;
-		const types = DataUtil.getObjectTypesForNewObject(false);
+		const types = DataUtil.getObjectTypesForNewObject();
 		const type = types.find(it => it.id == commonStore.type);
 		const timezones = DataUtil.timezones();
 
@@ -75,7 +75,7 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 	onType (e: any) {
 		const { getId } = this.props;
 		
-		let types = DataUtil.getObjectTypesForNewObject(false).map(it => it.id);
+		let types = DataUtil.getObjectTypesForNewObject().map(it => it.id);
 		types = types.filter(it => ![ Constant.typeId.bookmark ].includes(it));
 
 		menuStore.open('searchObject', {
