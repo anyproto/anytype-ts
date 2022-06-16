@@ -16,8 +16,8 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 
 	render () {
 		const { 
-			rootId, block, readonly, rowIdx, columnIdx, row, column, onOptions, onCellFocus, onCellBlur, onCellClick, onCellEnter, 
-			onCellLeave, onResizeStart, onDragStartColumn, onDragStartRow 
+			rootId, block, readonly, rowIdx, columnIdx, row, column, onHandleRow, onHandleColumn, onOptions, onCellFocus, onCellBlur, onCellClick, onCellEnter, 
+			onCellLeave, onCellKeyDown, onResizeStart, onDragStartColumn, onDragStartRow 
 		} = this.props;
 
 		if (!row || !column) {
@@ -35,9 +35,9 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 			<div 
 				className="icon handleColumn"
 				draggable={true}
-				onClick={(e: any) => { onOptions(e, I.BlockType.TableColumn, row.id, column.id, cellId); }}
+				onClick={(e: any) => { onHandleColumn(e, I.BlockType.TableColumn, row.id, column.id, cellId); }}
 				onDragStart={(e: any) => { onDragStartColumn(e, column.id); }}
-				onContextMenu={(e: any) => { onOptions(e, I.BlockType.TableColumn, row.id, column.id, cellId); }}
+				onContextMenu={(e: any) => { onHandleColumn(e, I.BlockType.TableColumn, row.id, column.id, cellId); }}
 			/>
 		);
 
@@ -45,9 +45,9 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 			<div 
 				className="icon handleRow"
 				draggable={true}
-				onClick={(e: any) => { onOptions(e, I.BlockType.TableRow, row.id, column.id, cellId); }}
+				onClick={(e: any) => { onHandleRow(e, I.BlockType.TableRow, row.id, column.id, cellId); }}
 				onDragStart={(e: any) => { onDragStartRow(e, row.id); }}
-				onContextMenu={(e: any) => { onOptions(e, I.BlockType.TableRow, row.id, column.id, cellId); }}
+				onContextMenu={(e: any) => { onHandleRow(e, I.BlockType.TableRow, row.id, column.id, cellId); }}
 			/>
 		);
 
@@ -96,6 +96,9 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 						readonly={readonly} 
 						isInsideTable={true}
 						className="noPlus"
+						onKeyDown={(e: any, text: string, marks: I.Mark[], range: I.TextRange, props: any) => { 
+							onCellKeyDown(e, row.id, column.id, cellId, text, marks, range, props);
+						}}
 						onFocus={(e: any) => { onCellFocus(e, row.id, column.id, cellId); }}
 						onBlur={(e: any) => { onCellBlur(e, row.id, column.id, cellId); }}
 						getWrapperWidth={() => { return Constant.size.editor; }} 

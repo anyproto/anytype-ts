@@ -35,12 +35,14 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		this.onSortStart = this.onSortStart.bind(this);
 		this.onSortEndColumn = this.onSortEndColumn.bind(this);
 		this.onSortEndRow = this.onSortEndRow.bind(this);
+		this.onHandleRow = this.onHandleRow.bind(this);
+		this.onHandleColumn = this.onHandleColumn.bind(this);
 		this.onCellClick = this.onCellClick.bind(this);
 		this.onCellFocus = this.onCellFocus.bind(this);
 		this.onCellBlur = this.onCellBlur.bind(this);
 		this.onCellEnter = this.onCellEnter.bind(this);
 		this.onCellLeave = this.onCellLeave.bind(this);
-		this.onKeyDown = this.onKeyDown.bind(this);
+		this.onCellKeyDown = this.onCellKeyDown.bind(this);
 		this.onOptions = this.onOptions.bind(this);
 		this.onResizeStart = this.onResizeStart.bind(this);
 		this.onDragStartRow = this.onDragStartRow.bind(this);
@@ -81,12 +83,14 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 											index={i}
 											getData={this.getData}
 											onOptions={this.onOptions}
+											onHandleRow={this.onHandleRow}
+											onHandleColumn={this.onHandleColumn}
 											onCellClick={this.onCellClick}
 											onCellFocus={this.onCellFocus}
 											onCellBlur={this.onCellBlur}
 											onCellEnter={this.onCellEnter}
 											onCellLeave={this.onCellLeave}
-											onKeyDown={this.onKeyDown}
+											onCellKeyDown={this.onCellKeyDown}
 											onResizeStart={this.onResizeStart}
 											onDragStartRow={this.onDragStartRow}
 											onDragStartColumn={this.onDragStartColumn}
@@ -167,6 +171,30 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		return { rowId: cellElement.parentId, columnId: columns[idx].id };
 	};
 
+	onHandleColumn (e: any, type: I.BlockType, rowId: string, columnId: string, cellId: string) {
+		e.persist();
+		e.preventDefault();
+		e.stopPropagation();
+
+		this.onOptions(e, type, rowId, columnId, cellId);
+	};
+
+	onHandleRow (e: any, type: I.BlockType, rowId: string, columnId: string, cellId: string) {
+		e.persist();
+		e.preventDefault();
+		e.stopPropagation();
+
+		const { rootId } = this.props;
+		const { columns } = this.getData();
+		const childrenIds = blockStore.getChildrenIds(rootId, rowId);
+
+		if (childrenIds.length != columns.length) {
+			C.BlockTableRowListFill(rootId, [ rowId ], () => { this.onOptions(e, type, rowId, columnId, cellId); });
+		} else {
+			this.onOptions(e, type, rowId, columnId, cellId);
+		};
+	};
+
 	onOptions (e: any, type: I.BlockType, rowId: string, columnId: string, cellId: string) {
 		if (!this._isMounted) {
 			return;
@@ -202,7 +230,6 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		let options: any[] = [];
 		let optionsAlign = this.optionsAlign(cellId);
 		let optionsColor = this.optionsColor(cellId);
-		let optionsSort = this.optionsSort();
 		let element: any = null;
 		let blockIds: string[] = [];
 
@@ -602,6 +629,23 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		};
 	};
 
+	onCellKeyDown (e: any, rowId: string, columnId: string, id: string, text: string, marks: I.Mark[], range: I.TextRange, props: any) {
+		const { rootId, onKeyDown } = this.props;
+		const { focused } = focus.state;
+
+
+		let ret = false;
+		
+		keyboard.shortcut(`shift+space`, e, (pressed: string) => {
+			ret = true;
+			this.onOptions(e, I.BlockType.Text, rowId, columnId, id);
+		});
+
+		if (!ret) {
+			onKeyDown(e, text, marks, range, props);
+		};
+	};
+
 	setEditing (id: string) {
 		if (!this._isMounted) {
 			return;
@@ -612,22 +656,6 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		node.find('.cell.isEditing').removeClass('isEditing');
 		if (id) {
 			node.find(`#cell-${id}`).addClass('isEditing');
-		};
-	};
-
-	onKeyDown (e: any, text: string, marks: I.Mark[], range: I.TextRange, props: any) {
-		const { onKeyDown } = this.props;
-		const { focused } = focus.state;
-
-		let ret = false;
-		
-		keyboard.shortcut(`shift+space`, e, (pressed: string) => {
-			ret = true;
-			//this.onOptions(e, focused);
-		});
-
-		if (!ret) {
-			onKeyDown(e, text, marks, range, props);
 		};
 	};
 
