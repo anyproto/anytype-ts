@@ -111,10 +111,16 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<Props
 			return;
 		};
 		
-		const { block } = this.props;
-		const renderer = Util.getRenderer();
-	
-		renderer.send('urlOpen', block.content.url);
+		let { block } = this.props;
+		let renderer = Util.getRenderer();
+		let url = block.content.url;
+		let scheme = Util.getScheme(url);
+
+		if (!scheme) {
+			url = 'http://' + url;
+		};
+
+		renderer.send('urlOpen', url);
 	};
 	
 	onChangeUrl (e: any, url: string) {
