@@ -188,7 +188,7 @@ const Mapper = {
 				views: (obj.getViewsList() || []).map(Mapper.From.View),
 				relations: (obj.getRelationsList() || []).map(Mapper.From.Relation),
 				groupOrder: (obj.getGroupordersList() || []).map(Mapper.From.GroupOrder),
-				objectOrder: (obj.getObjectsordersList() || []).map(Mapper.From.ObjectOrder),
+				objectOrder: (obj.getObjectordersList() || []).map(Mapper.From.ObjectOrder),
 			};
 		},
 

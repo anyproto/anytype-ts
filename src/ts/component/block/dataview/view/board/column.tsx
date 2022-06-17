@@ -62,20 +62,31 @@ const Column = observer(class Column extends React.Component<Props, State> {
 			>
 				<div 
 					className="head" 
-					draggable={true}
-					onDragStart={(e: any) => { onDragStartColumn(e, id); }}
 				>
-					<Cell 
-						id={'board-head-' + id} 
-						rootId={rootId}
-						subId={subId}
-						block={block}
-						relationKey={view.groupRelationKey} 
-						viewType={I.ViewType.Board}
-						getRecord={() => { return head; }}
-						readonly={true} 
-						placeholder={translate('placeholderCellCommon')}
-					/>
+					<div className="sides">
+						<div 
+							className="side left"
+							draggable={true}
+							onDragStart={(e: any) => { onDragStartColumn(e, id); }}
+						>
+							<Cell 
+								id={'board-head-' + id} 
+								rootId={rootId}
+								subId={subId}
+								block={block}
+								relationKey={view.groupRelationKey} 
+								viewType={I.ViewType.Board}
+								getRecord={() => { return head; }}
+								readonly={true} 
+								placeholder={translate('placeholderCellCommon')}
+							/>
+							<div className="cnt">{total}</div>
+						</div>
+						<div className="side right">
+							<Icon className="more" />
+							<Icon className="add" />
+						</div>
+					</div>
 				</div>
 
 				<div className="body" onScroll={this.onScroll}>
