@@ -426,32 +426,12 @@ class Dispatcher {
 						break;
 					};
 
-					if (data.hasUrl()) {
-						block.content.url = data.getUrl().getValue();
-					};
-
-					if (data.hasTitle()) {
-						block.content.title = data.getTitle().getValue();
-					};
-
-					if (data.hasDescription()) {
-						block.content.description = data.getDescription().getValue();
-					};
-
-					if (data.hasImagehash()) {
-						block.content.imageHash = data.getImagehash().getValue();
-					};
-
-					if (data.hasFaviconhash()) {
-						block.content.faviconHash = data.getFaviconhash().getValue();
-					};
-
-					if (data.hasType()) {
-						block.content.type = data.getType().getValue();
-					};
-
 					if (data.hasTargetobjectid()) {
 						block.content.targetObjectId = data.getTargetobjectid().getValue();
+					};
+
+					if (data.hasState()) {
+						block.content.state = data.getState().getValue();
 					};
 
 					break;

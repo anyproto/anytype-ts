@@ -140,6 +140,7 @@ const Mapper = {
 		BlockBookmark: (obj: any) => {
 			return {
 				targetObjectId: obj.getTargetobjectid(),
+				state: obj.getState(),
 			};
 		},
 
@@ -478,6 +479,7 @@ const Mapper = {
 			const content = new Model.Block.Content.Bookmark();
 	
 			content.setTargetobjectid(obj.targetObjectId);
+			content.setState(obj.state);
 
 			return content;
 		},

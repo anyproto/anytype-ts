@@ -1,24 +1,17 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { InputWithFile, ObjectName, ObjectDescription, Loader } from 'ts/component';
-import { I, C, focus, Util } from 'ts/lib';
+import { InputWithFile, ObjectName, ObjectDescription, Loader, Error } from 'ts/component';
+import { I, C, focus, Util, translate } from 'ts/lib';
 import { commonStore, detailStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.BlockComponent {};
 
-interface State {
-	loading: boolean;
-};
-
 const $ = require('jquery');
 
-const BlockBookmark = observer(class BlockBookmark extends React.Component<Props, State> {
+const BlockBookmark = observer(class BlockBookmark extends React.Component<Props, {}> {
 
 	_isMounted: boolean = false;
-	state = {
-		loading: false,
-	};
 
 	constructor (props: any) {
 		super(props);
@@ -32,47 +25,64 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<Props
 
 	render () {
 		const { rootId, block, readonly } = this.props;
+		const { state } = block.content;
 		const object = detailStore.get(rootId, block.content.targetObjectId);
 		const { iconImage, picture, url } = object;
-		const { loading } = this.state;
 
 		let element = null;
-		if (loading) {
-			element = <Loader />;
-		} else 
-		if (url) {
-			let cn = [ 'inner', 'resizable' ];
-			let cnl = [ 'side', 'left' ];
+		switch (state) {
+			default:
+			case I.BookmarkState.Error:
+			case I.BookmarkState.Empty:
+				element = (
+					<React.Fragment>
+						{state == I.BookmarkState.Error ? <Error text={translate('blockBookmarkError')} /> : ''}
+						<InputWithFile 
+							block={block} 	
+							icon="bookmark" 
+							textFile="Paste a link" 
+							withFile={false} 
+							onChangeUrl={this.onChangeUrl} 
+							readonly={readonly} 
+						/>
+					</React.Fragment>
+				);
+				break;
 				
-			if (picture) {
-				cn.push('withImage');
-			};
+			case I.BookmarkState.Fetching:
+				element = <Loader />;
+				break;
+				
+			case I.BookmarkState.Done:
+				let cn = [ 'inner', 'resizable' ];
+				let cnl = [ 'side', 'left' ];
+					
+				if (picture) {
+					cn.push('withImage');
+				};
 
-			if (block.bgColor) {
-				cnl.push('bgColor bgColor-' + block.bgColor);
-			};
-			
-			element = (
-				<div className={cn.join(' ')} data-href={url} onClick={this.onClick}>
-					<div className={cnl.join(' ')}>
-						<ObjectName object={object} />
-						<ObjectDescription object={object} />
-						<div className="link">
-							{iconImage ? <img src={commonStore.imageUrl(iconImage, 16)} className="fav" /> : ''}
-							{url}
+				if (block.bgColor) {
+					cnl.push('bgColor bgColor-' + block.bgColor);
+				};
+
+				element = (
+					<div className={cn.join(' ')} data-href={url} onClick={this.onClick}>
+						<div className={cnl.join(' ')}>
+							<ObjectName object={object} />
+							<ObjectDescription object={object} />
+							<div className="link">
+								{iconImage ? <img src={commonStore.imageUrl(iconImage, 16)} className="fav" /> : ''}
+								{url}
+							</div>
+						</div>
+						<div className="side right">
+							{picture ? <img src={commonStore.imageUrl(picture, 500)} className="img" /> : ''}
 						</div>
 					</div>
-					<div className="side right">
-						{picture ? <img src={commonStore.imageUrl(picture, 500)} className="img" /> : ''}
-					</div>
-				</div>
-			);
-		} else {
-			element = (
-				<InputWithFile block={block} icon="bookmark" textFile="Paste a link" withFile={false} onChangeUrl={this.onChangeUrl} readonly={readonly} />
-			);
+				);
+				break;
 		};
-		
+
 		return (
 			<div className={[ 'focusable', 'c' + block.id ].join(' ')} tabIndex={0} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp} onFocus={this.onFocus}>
 				{element}
@@ -131,11 +141,8 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<Props
 	
 	onChangeUrl (e: any, url: string) {
 		const { rootId, block } = this.props;
-		
-		this.setState({ loading: true });
-		C.BlockBookmarkFetch(rootId, block.id, url, (message: any) => {
-			this.setState({ loading: false });
-		});
+
+		C.BlockBookmarkFetch(rootId, block.id, url);
 	};
 	
 	rebind () {

@@ -239,6 +239,8 @@
 
 	"blockFileError": { "en": "There was an error uploading the file" },
 
+	"blockBookmarkError": { "en": "There was an error fetching the url" },
+
 	"popupSettingsTitle": { "en": "Settings" },
 	"popupSettingsAccountTitle": { "en": "Account & data" },
 	"popupSettingsAccountDeleteTitle": { "en": "Delete account" },

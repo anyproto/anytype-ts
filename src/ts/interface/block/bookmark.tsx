@@ -1,6 +1,14 @@
 import { I } from 'ts/lib';
 
+export enum BookmarkState {
+	Empty	 = 0,
+	Fetching = 1,
+	Done	 = 2,
+	Error	 = 3,
+};
+
 export interface ContentBookmark {
+	state: BookmarkState,
 	targetObjectId: string;
 };
 
