@@ -247,14 +247,17 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 			const subId = this.getSubId(group.id);
 			const records = dbStore.getRecords(subId, '');
 			const add = el.find('.card.add');
-			const addId = `group${group.id}-add`;
+			const addId = `${group.id}-add`;
 			const offset = add.offset();
 
 			let idx = 0;
 			records.forEach((record: any) => {
 				const item = node.find(`#card-${record.id}`);
-				const p = item.offset();
+				if (!item.length) {
+					return;
+				};
 
+				const p = item.offset();
 				this.cache[record.id] = {
 					id: record.id,
 					groupId: group.id,
@@ -274,6 +277,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 				width: add.outerWidth(),
 				height: add.outerHeight(),
 				index: idx++,
+				isAdd: true,
 			};
 		});
 	};
@@ -437,8 +441,14 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 				continue;
 			};
 
+			console.log(rect);
+
 			if (Util.rectsCollide({ x: e.pageX, y: e.pageY, width: this.width, height: this.height + 8 }, rect)) {
 				isTop = e.pageY <= rect.y + rect.height / 2;
+				if (rect.isAdd) {
+					isTop = true;
+				};
+
 				hoverId = rect.id;
 
 				this.newGroupId = rect.groupId;
@@ -465,6 +475,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 				const column = node.find(`#column-${this.newGroupId}`);
 				const container = column.find('.ReactVirtualized__Masonry__innerScrollContainer');
 				const height = container.height();
+				const rect = this.cache[hoverId];
 
 				container.attr({ 'data-height': height }).css({ height: 'auto', maxHeight: 'unset' });
 

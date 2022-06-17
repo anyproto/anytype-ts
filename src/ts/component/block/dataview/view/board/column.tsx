@@ -127,7 +127,7 @@ const Column = observer(class Column extends React.Component<Props, State> {
 														scrollTop={scrollTop}
 													/>
 
-													<div className={[ 'card', 'add', (!total ? 'first' : '') ].join(' ')} onClick={() => { onAdd(id); }}>
+													<div id={`card-${id}-add`} className={[ 'card', 'add', (!total ? 'first' : '') ].join(' ')} onClick={() => { onAdd(id); }}>
 														<Icon className="plus" />
 													</div>
 												</div>
