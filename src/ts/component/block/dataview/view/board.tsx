@@ -30,6 +30,8 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 	groupRelationKey: string = '';
 	oldIndex: number = -1;
 	newIndex: number = -1;
+	oldGroupId: string = '';
+	newGroupId: string = '';
 	state = {
 		loading: false,
 	};
@@ -239,10 +241,12 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 		const node = $(ReactDOM.findDOMNode(this));
 
 		this.cache = {};
+
 		groups.forEach((group: any, i: number) => {
-			const subId = dbStore.getSubId(rootId, [ block.id, group.id ].join(':'));
+			const subId = this.getSubId(group.id);
 			const records = dbStore.getRecords(subId, '');
 
+			let idx = 0;
 			records.forEach((record: any) => {
 				const item = node.find(`#card-${record.id}`);
 				const p = item.offset();
@@ -254,7 +258,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 					y: p.top,
 					width: item.outerWidth(),
 					height: item.outerHeight(),
-					index: i,
+					index: idx++,
 				};
 			});
 		});
@@ -381,7 +385,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 			update.push({ groupId: it.id, index: i });
 		});
 
-		C.BlockDataviewGroupOrderUpdate(rootId, block.id, [ { viewId: view.id, groups: update } ]);
+		C.BlockDataviewGroupOrderUpdate(rootId, block.id, { viewId: view.id, groups: update });
 
 		this.isDraggingColumn = false;
 		this.onDragEndCommon(e);
@@ -403,9 +407,14 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 		const ghost = $('<div />').addClass('ghost isCard');
 		const current = this.cache[record.id];
 
+		console.log(record, current);
+
 		if (!current) {
 			return;
 		};
+
+		this.oldGroupId = current.groupId;
+		this.oldIndex = current.index;
 
 		let isTop = false;
 		let hoverId = '';
@@ -419,6 +428,9 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 			if (Util.rectsCollide({ x: e.pageX, y: e.pageY, width: this.width, height: this.height + 8 }, rect)) {
 				isTop = e.pageY <= rect.y + rect.height / 2;
 				hoverId = rect.id;
+
+				this.newGroupId = rect.groupId;
+				this.newIndex = isTop ? rect.index : rect.index + 1;
 				break;
 			};
 		};
@@ -440,6 +452,20 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 	};
 
 	onDragEndCard (e: any) {
+		const { rootId, block } = this.props;
+
+		console.log(this.oldGroupId, this.newGroupId);
+		console.log(this.oldIndex, this.newIndex);
+
+		if (this.oldGroupId == this.newGroupId) {
+			let subId = this.getSubId(this.oldGroupId);
+			let records = dbStore.getRecords(subId, '');
+
+			dbStore.recordsSet(subId, '', arrayMove(records, this.oldIndex, this.newIndex));
+		} else {
+
+		};
+
 		this.onDragEndCommon(e);
 	};
 
@@ -461,6 +487,11 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 				this.cache[group.id].y = p.top;
 			};
 		});
+	};
+
+	getSubId (groupId: string) {
+		const { rootId, block } = this.props;
+		return dbStore.getSubId(rootId, [ block.id, groupId ].join(':'));
 	};
 
 	clear () {

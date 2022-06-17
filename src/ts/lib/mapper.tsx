@@ -187,7 +187,8 @@ const Mapper = {
 				sources: obj.getSourceList(),
 				views: (obj.getViewsList() || []).map(Mapper.From.View),
 				relations: (obj.getRelationsList() || []).map(Mapper.From.Relation),
-				groupOrder: (obj.getGrouporderList() || []).map(Mapper.From.GroupOrder),
+				groupOrder: (obj.getGroupordersList() || []).map(Mapper.From.GroupOrder),
+				objectOrder: (obj.getObjectsordersList() || []).map(Mapper.From.ObjectOrder),
 			};
 		},
 
@@ -440,12 +441,20 @@ const Mapper = {
 		GroupOrder: (obj: any) => {
 			return {
 				viewId: obj.getViewid(),
-				groups: (obj.getViewgroupList() || []).map((it: any) => {
+				groups: (obj.getViewgroupsList() || []).map((it: any) => {
 					return {
 						groupId: it.getGroupid(),
 						index: it.getIndex(),
 					};
 				}),
+			};
+		},
+
+		ObjectOrder: (obj: any) => {
+			return {
+				viewId: obj.getViewid(),
+				groupId: obj.getGroupid(),
+				objectIds: obj.getObjectidsList() || [],
 			};
 		},
 
@@ -723,7 +732,7 @@ const Mapper = {
 			const item = new Model.Block.Content.Dataview.GroupOrder();
 
 			item.setViewid(obj.viewId);
-			item.setViewgroupList(obj.groups.map((it: any) => {
+			item.setViewgroupsList(obj.groups.map((it: any) => {
 				const el = new Model.Block.Content.Dataview.ViewGroup();
 
 				el.setGroupid(it.groupId);
@@ -731,6 +740,16 @@ const Mapper = {
 
 				return el;
 			}));
+
+			return item;
+		},
+
+		ObjectOrder: (obj: any) => {
+			const item = new Model.Block.Content.Dataview.ObjectOrder();
+
+			item.setViewid(obj.viewId);
+			item.setGroupid(obj.groupId);
+			item.setObjectidsList(obj.objectIds);
 
 			return item;
 		},

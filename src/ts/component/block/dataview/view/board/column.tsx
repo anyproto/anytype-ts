@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Icon, Loader } from 'ts/component';
 import { I, C, translate } from 'ts/lib';
 import { observer } from 'mobx-react';
-import { dbStore } from 'ts/store';
+import { dbStore, detailStore } from 'ts/store';
 import { AutoSizer, WindowScroller, Masonry, CellMeasurer, CellMeasurerCache, createMasonryCellPositioner } from 'react-virtualized';
 
 import Card from './card';
@@ -55,6 +55,10 @@ const Column = observer(class Column extends React.Component<Props, State> {
 
 		head[view.groupRelationKey] = value;
 
+		records.forEach((it: any) => {
+			const object = detailStore.get(subId, it.id, [ view.groupRelationKey ]);
+		});
+
 		return (
 			<div 
 				id={'column-' + id} 
@@ -104,6 +108,10 @@ const Column = observer(class Column extends React.Component<Props, State> {
 														cellMeasurerCache={this.cache}
 														cellPositioner={this.cellPositioner}
 														cellRenderer={({ key, index, parent, style }) => {
+															if (!records[index]) {
+																return null;
+															};
+
 															return (
 																<CellMeasurer cache={this.cache} index={index} key={'gallery-card-measurer-' + view.id + index} parent={parent}>
 																	<Card 
@@ -137,6 +145,10 @@ const Column = observer(class Column extends React.Component<Props, State> {
 
 	componentDidMount () {
 		this.load();
+	};
+
+	componentDidUpdate () {
+		this.reset();
 	};
 
 	componentWillUnmount () {
@@ -179,6 +191,10 @@ const Column = observer(class Column extends React.Component<Props, State> {
 	};
 
 	reset () {
+		if (!this.ref) {
+			return;
+		};
+
 		this.cache.clearAll();
 		this.resetPositioner();
 		this.ref.clearCellPositions();

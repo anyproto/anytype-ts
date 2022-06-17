@@ -597,14 +597,24 @@ const BlockDataviewViewSetActive = (contextId: string, blockId: string, viewId: 
 	dispatcher.request(BlockDataviewViewSetActive.name, request, callBack);
 };
 
-const BlockDataviewGroupOrderUpdate = (contextId: string, blockId: string, order: any[], callBack?: (message: any) => void) => {
+const BlockDataviewGroupOrderUpdate = (contextId: string, blockId: string, order: any, callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockDataview.GroupOrder.Update.Request();
 	
 	request.setContextid(contextId);
 	request.setBlockid(blockId);
-	request.setGrouporderList(order.map(Mapper.To.GroupOrder));
+	request.setGrouporder(Mapper.To.GroupOrder(order));
 
 	dispatcher.request(BlockDataviewGroupOrderUpdate.name, request, callBack);
+};
+
+const BlockDataviewObjectOrderUpdate = (contextId: string, blockId: string, order: any, callBack?: (message: any) => void) => {
+	const request = new Rpc.BlockDataview.ObjectOrder.Update.Request();
+	
+	request.setContextid(contextId);
+	request.setBlockid(blockId);
+	request.setObjectsorder(Mapper.To.ObjectOrder(order));
+
+	dispatcher.request(BlockDataviewObjectOrderUpdate.name, request, callBack);
 };
 
 const BlockDataviewRecordCreate = (contextId: string, blockId: string, record: any, templateId: string, callBack?: (message: any) => void) => {
@@ -1391,6 +1401,7 @@ export {
 	BlockDataviewViewSetPosition,
 
 	BlockDataviewGroupOrderUpdate,
+	BlockDataviewObjectOrderUpdate,
 
 	BlockDataviewRelationAdd,
 	BlockDataviewRelationUpdate,
