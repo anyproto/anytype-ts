@@ -453,9 +453,20 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 
 		this.frame = raf(() => {
 			node.find(`.ghost.isCard`).remove();
+			node.find('.column').each((i: number, item: any) => {
+				item = $(item);
+
+				const height = Number(item.attr('data-height'));
+				item.css({ height, maxHeight: height });
+			});
 
 			if (hoverId) {
 				const card = node.find(`#card-${hoverId}`);
+				const column = node.find(`#column-${this.newGroupId}`);
+				const container = column.find('.ReactVirtualized__Masonry__innerScrollContainer');
+				const height = container.height();
+
+				container.attr({ 'data-height': height }).css({ height: 'auto', maxHeight: 'unset' });
 
 				ghost.css({ height: current.height, width: current.width });
 				isTop ? card.before(ghost) : card.after(ghost);
@@ -466,18 +477,18 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 	onDragEndCard (e: any) {
 		const { rootId, block } = this.props;
 
-		console.log(this.oldGroupId, this.newGroupId);
-		console.log(this.oldIndex, this.newIndex);
+		if (!this.oldGroupId || !this.newGroupId) {
+			return;
+		};
+
+		let oldSubId = this.getSubId(this.oldGroupId);
+		let newSubId = this.getSubId(this.newGroupId);
 
 		if (this.oldGroupId == this.newGroupId) {
-			let subId = this.getSubId(this.oldGroupId);
-			let records = dbStore.getRecords(subId, '');
-
-			dbStore.recordsSet(subId, '', arrayMove(records, this.oldIndex, this.newIndex));
+			let records = dbStore.getRecords(oldSubId, '');
+			dbStore.recordsSet(oldSubId, '', arrayMove(records, this.oldIndex, this.newIndex));
 		} else {
-			let oldSubId = this.getSubId(this.oldGroupId);
 			let oldRecords = dbStore.getRecords(oldSubId, '');
-			let newSubId = this.getSubId(this.newGroupId);
 			let newRecords = dbStore.getRecords(newSubId, '');
 			let id = oldRecords[this.oldIndex].id;
 			let record = detailStore.get(oldSubId, id);
