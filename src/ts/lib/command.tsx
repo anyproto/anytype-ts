@@ -607,12 +607,12 @@ const BlockDataviewGroupOrderUpdate = (contextId: string, blockId: string, order
 	dispatcher.request(BlockDataviewGroupOrderUpdate.name, request, callBack);
 };
 
-const BlockDataviewObjectOrderUpdate = (contextId: string, blockId: string, order: any, callBack?: (message: any) => void) => {
+const BlockDataviewObjectOrderUpdate = (contextId: string, blockId: string, orders: any[], callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockDataview.ObjectOrder.Update.Request();
 	
 	request.setContextid(contextId);
 	request.setBlockid(blockId);
-	request.setObjectsorder(Mapper.To.ObjectOrder(order));
+	request.setObjectordersList(orders.map(Mapper.To.ObjectOrder));
 
 	dispatcher.request(BlockDataviewObjectOrderUpdate.name, request, callBack);
 };

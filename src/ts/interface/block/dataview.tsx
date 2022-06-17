@@ -165,6 +165,7 @@ export interface ContentDataview {
 	sources: string[];
 	views: View[];
 	groupOrder: any[];
+	objectOrder: any[];
 };
 
 export interface BlockDataview extends I.Block {

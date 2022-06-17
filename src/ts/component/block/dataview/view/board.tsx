@@ -6,6 +6,7 @@ import { I, C, Util, DataUtil, analytics, keyboard } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 import arrayMove from 'array-move';
+import { set } from 'mobx';
 
 import Column from './board/column';
 
@@ -69,6 +70,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 										onDragStartColumn={this.onDragStartColumn}
 										onDragStartCard={this.onDragStartCard}
 										onScrollColumn={() => { return this.onScrollColumn(group.id); }}
+										applyGroupOrder={() => { return this.applyGroupOrder(group.id); }}
 										getSubId={() => { return this.getSubId(group.id); }}
 									/>
 								))}
@@ -167,9 +169,8 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 
 	onAdd (id: string) {
 		const { rootId, block, getView } = this.props;
-		const groups = dbStore.getGroups(rootId, block.id);
 		const view = getView();
-		const group = groups.find(it => it.id == id);
+		const group = dbStore.getGroup(rootId, block.id, id);
 		const object = detailStore.get(rootId, rootId, [ 'setOf' ], true);
 		const setOf = object.setOf || [];
 		const details: any = {};
@@ -397,9 +398,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 		this.isDraggingColumn = false;
 		this.onDragEndCommon(e);
 		this.resize();
-
-		this.oldIndex = this.newIndex -1;
-		this.oldGroupId = this.newGroupId = '';
+		this.clearValues();
 	};
 
 	onDragStartCard (e: any, groupId: any, record: any) {
@@ -474,12 +473,24 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 			return;
 		};
 
-		let oldSubId = this.getSubId(this.oldGroupId);
-		let newSubId = this.getSubId(this.newGroupId);
+		const { rootId, block, getView } = this.props;
+		const view = getView();
+		const orders: any[] = [];
+		const oldSubId = this.getSubId(this.oldGroupId);
+		const newSubId = this.getSubId(this.newGroupId);
+		const newGroup = dbStore.getGroup(rootId, block.id, this.newGroupId);
+
+		let change = false;
 
 		if (this.oldGroupId == this.newGroupId) {
 			let records = dbStore.getRecords(oldSubId, '');
-			dbStore.recordsSet(oldSubId, '', arrayMove(records, this.oldIndex, this.newIndex));
+			records = arrayMove(records, this.oldIndex, this.newIndex);
+
+			dbStore.recordsSet(oldSubId, '', records);
+
+			console.log(records.map(it => it.id));
+
+			orders.push({ viewId: view.id, groupId: this.oldGroupId, objectIds: records.map(it => it.id) });
 		} else {
 			let newRecords = dbStore.getRecords(newSubId, '');
 
@@ -489,10 +500,61 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 
 			newRecords.push({ id: record.id });
 			dbStore.recordsSet(newSubId, '', arrayMove(newRecords, newRecords.length - 1, this.newIndex));
+
+			orders.push({ viewId: view.id, groupId: this.oldGroupId, objectIds: dbStore.getRecords(oldSubId, '').map(it => it.id) });
+			orders.push({ viewId: view.id, groupId: this.newGroupId, objectIds: newRecords.map(it => it.id) });
+
+			change = true;
 		};
 
-		this.oldIndex = this.newIndex -1;
-		this.oldGroupId = this.newGroupId = '';
+		const setOrder = () => {
+			C.BlockDataviewObjectOrderUpdate(rootId, block.id, orders, () => {
+				orders.forEach((it: any) => {
+					let old = block.content.objectOrder.find(item => item.groupId == it.groupId);
+					if (old) {
+						set(old, it);
+					} else {
+						block.content.objectOrder.push(it);
+					};
+
+					this.applyGroupOrder(it.groupId);
+				});
+			});
+		};
+
+		if (change) {
+			C.ObjectSetDetails(record.id, [ { key: view.groupRelationKey, value: newGroup.value } ], setOrder);
+		} else {
+			setOrder();
+		};
+
+		this.clearValues();
+	};
+
+	applyGroupOrder (groupId: string) {
+		const { block } = this.props;
+		const order = block.content.objectOrder.find(it => it.groupId == groupId);
+		const subId = this.getSubId(groupId);
+
+		if (!order) {
+			return;
+		};
+
+		let records = dbStore.getRecords(subId, '');
+
+		records.sort((c1: any, c2: any) => {
+			let idx1 = order.objectIds.indexOf(c1.id);
+			let idx2 = order.objectIds.indexOf(c2.id);
+
+			console.log(c1.id, idx1);
+			console.log(c2.id, idx2);
+
+			if (idx1 > idx2) return 1;
+			if (idx1 < idx2) return -1;
+			return 0;
+		});
+
+		dbStore.recordsSet(subId, '', records);
 	};
 
 	onScroll () {
@@ -523,6 +585,11 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 	clear () {
 		const node = $(ReactDOM.findDOMNode(this));
 		node.find('.isOver').removeClass('isOver top bottom left right');
+	};
+
+	clearValues () {
+		this.oldIndex = this.newIndex -1;
+		this.oldGroupId = this.newGroupId = '';
 	};
 
 	onScrollColumn (groupId: string) {

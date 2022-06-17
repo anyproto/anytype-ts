@@ -323,6 +323,10 @@ class DbStore {
 		return this.groupMap.get(this.getId(rootId, blockId)) || [];
 	};
 
+	getGroup (rootId: string, blockId: string, groupId: string) {
+		return this.getGroups(rootId, blockId).find(it => it.id == groupId);
+	};
+
 	getId (rootId: string, blockId: string) {
 		return [ rootId, blockId ].join(':');
 	};

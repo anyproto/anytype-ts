@@ -1,6 +1,6 @@
 import { observable, action, computed, set, makeObservable } from 'mobx';
 import { I, M, Util, Storage, Mark, translate } from 'ts/lib';
-import { detailStore, commonStore } from 'ts/store';
+import { detailStore } from 'ts/store';
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
