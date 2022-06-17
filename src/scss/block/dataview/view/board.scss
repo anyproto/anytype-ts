@@ -5,6 +5,9 @@
 		.viewItem.viewBoard { padding: 20px 0px 0px 14px; }
         .viewItem.viewBoard {
 
+			.masonry { margin-bottom: 8px; }
+			.masonry.isEmpty { margin: 0px; }
+
 			.ghost { border: 1px dotted $colorOrange; border-radius: 12px; flex-shrink: 0; }
 			.ghost.isColumn { width: 240px; height: 100%; margin: 42px 14px 0px 0px; }
 			.ghost.isCard { margin-bottom: 8px; }
@@ -52,7 +55,7 @@
 
             .card.add { 
 				min-height: unset; text-align: center; padding: 10px 0px; margin: 0px; line-height: 1; transition: $transitionFast; cursor: pointer; 
-				border: 1px solid $colorBorderDark; border-radius: 12px; flex-direction: row; justify-content: center; margin-top: 8px; background: $colorWhite;
+				border: 1px solid $colorBorderDark; border-radius: 12px; flex-direction: row; justify-content: center; background: $colorWhite;
 			}
 			.card.add.first { margin: 0px; }
             .card.add {

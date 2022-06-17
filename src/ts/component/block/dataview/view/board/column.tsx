@@ -100,6 +100,7 @@ const Column = observer(class Column extends React.Component<Props, State> {
 												<div ref={registerChild}>
 													<Masonry
 														ref={(ref: any) => { this.ref = ref; }}
+														className={[ 'masonry', (!records.length ? 'isEmpty' : '') ].join(' ')}
 														autoHeight={true}
 														height={Number(height) || 0}
 														width={Number(width) || 0}
@@ -108,7 +109,7 @@ const Column = observer(class Column extends React.Component<Props, State> {
 														cellMeasurerCache={this.cache}
 														cellPositioner={this.cellPositioner}
 														cellRenderer={({ key, index, parent, style }) => {
-															if (!records[index]) {
+															if (records.length - 1 < index) {
 																return null;
 															};
 
