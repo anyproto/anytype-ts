@@ -3,11 +3,13 @@ import * as ReactDOM from 'react-dom';
 import { I, DataUtil, Relation } from 'ts/lib';
 import { dbStore, detailStore } from 'ts/store';
 import { observer } from 'mobx-react';
+
 import Cell from 'ts/component/block/dataview/cell';
 
 interface Props extends I.ViewComponent {
 	id: string;
 	groupId: string;
+	index: number;
 	onDragStartCard?: (e: any, groupId: any, record: any) => void;
 };
 
@@ -16,7 +18,7 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 	_isMounted: boolean = false;
 
 	render () {
-		const { rootId, block, groupId, id, getView, onContext, onRef, onDragStartCard } = this.props;
+		const { rootId, block, groupId, id, index, getView, onContext, onRef, onDragStartCard } = this.props;
 		const view = getView();
 		const relations = view.relations.filter((it: any) => { return it.isVisible; });
 		const idPrefix = 'dataviewCell';

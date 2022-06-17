@@ -5,9 +5,6 @@
 		.viewItem.viewBoard { padding: 20px 0px 0px 14px; }
         .viewItem.viewBoard {
 
-			.masonry { margin-bottom: 8px; }
-			.masonry.isEmpty { margin: 0px; }
-
 			.ghost { border: 1px dotted $colorOrange; border-radius: 12px; flex-shrink: 0; }
 			.ghost.isColumn { width: 240px; height: 100%; margin: 42px 14px 0px 0px; }
 			.ghost.isCard { margin-bottom: 8px; }
@@ -34,6 +31,8 @@
 					.empty { display: block; }
 					.tagItem { margin: 0px; }
 				}
+
+				.body { overflow-y: overlay; max-height: 600px; }
             }
 			.column.isDragging { opacity: 0.3; }
 			.column.isClone {
@@ -43,7 +42,7 @@
 
 			.column > .ghost { margin-top: 42px; width: 240px; flex-shrink: 0; }
 			
-            .card { width: 240px; display: flex; flex-direction: column; gap: 8px 0px; margin-bottom: 8px; }
+            .card { width: 240px; display: flex; flex-direction: column; gap: 8px 0px; margin-bottom: 8px; position: relative; }
 			.card {
 				.cardContent { border: 1px solid $colorBorderDark; border-radius: 12px; padding: 16px; background: $colorWhite; }
 			}
