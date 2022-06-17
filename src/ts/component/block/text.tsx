@@ -165,6 +165,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		};
 
 		let editor = null;
+
 		if (readonly) {
 			editor = <div id="value" className={cv.join(' ')} />;
 		} else {
@@ -195,9 +196,11 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 				<div className="markers">
 					{marker ? <Marker {...marker} id={id} color={color} /> : ''}
 				</div>
-				<div className="additional">
-					{additional}
-				</div>
+				{additional ? (
+					<div className="additional">
+						{additional}
+					</div>
+				) : ''}
 				<div className="wrap">
 					<span id="placeholder" className={[ 'placeholder', 'c' + id ].join(' ')}>{placeholder}</span>
 					{editor}
