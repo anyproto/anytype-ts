@@ -96,7 +96,7 @@ class DetailStore {
 		let map = this.map.get(rootId) || new Map();
 		let list = this.getArray(rootId, id);
 
-		list = list.filter((it: Detail) => { return keys.indexOf(it.relationKey) < 0 });
+		list = list.filter(it => !keys.includes(it.relationKey));
 		map.set(id, list);
 	};
 
@@ -115,7 +115,7 @@ class DetailStore {
 			if (!forceKeys) {
 				keys = keys.concat(Constant.defaultRelationKeys);
 			};
-			list = list.filter((it: Detail) => { return keys.includes(it.relationKey); });
+			list = list.filter(it => keys.includes(it.relationKey));
 		};
 		return this.check(Object.fromEntries(list.map(it => [ it.relationKey, it.value ])));
 	};

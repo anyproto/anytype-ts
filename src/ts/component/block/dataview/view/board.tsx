@@ -243,8 +243,12 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 		this.cache = {};
 
 		groups.forEach((group: any, i: number) => {
+			const el = node.find(`#column-${group.id}`);
 			const subId = this.getSubId(group.id);
 			const records = dbStore.getRecords(subId, '');
+			const add = el.find('.card.add');
+			const addId = `group${group.id}-add`;
+			const offset = add.offset();
 
 			let idx = 0;
 			records.forEach((record: any) => {
@@ -261,6 +265,16 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 					index: idx++,
 				};
 			});
+
+			this.cache[addId] = {
+				id: addId,
+				groupId: group.id,
+				x: offset.left,
+				y: offset.top,
+				width: add.outerWidth(),
+				height: add.outerHeight(),
+				index: idx++,
+			};
 		});
 	};
 
@@ -407,8 +421,6 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 		const ghost = $('<div />').addClass('ghost isCard');
 		const current = this.cache[record.id];
 
-		console.log(record, current);
-
 		if (!current) {
 			return;
 		};
@@ -463,7 +475,19 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 
 			dbStore.recordsSet(subId, '', arrayMove(records, this.oldIndex, this.newIndex));
 		} else {
+			let oldSubId = this.getSubId(this.oldGroupId);
+			let oldRecords = dbStore.getRecords(oldSubId, '');
+			let newSubId = this.getSubId(this.newGroupId);
+			let newRecords = dbStore.getRecords(newSubId, '');
+			let id = oldRecords[this.oldIndex].id;
+			let record = detailStore.get(oldSubId, id);
 
+			dbStore.recordDelete(oldSubId, '', id);
+			detailStore.set(newSubId, [ { id, details: record } ]);
+			detailStore.delete(oldSubId, id, Object.keys(record))
+
+			dbStore.recordAdd(newSubId, '', { id }, 1);
+			dbStore.recordsSet(newSubId, '', arrayMove(newRecords, newRecords.length - 1, this.newIndex));
 		};
 
 		this.onDragEndCommon(e);
