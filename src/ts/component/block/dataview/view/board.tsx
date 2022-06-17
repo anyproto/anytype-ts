@@ -479,33 +479,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 		const oldSubId = this.getSubId(this.oldGroupId);
 		const newSubId = this.getSubId(this.newGroupId);
 		const newGroup = dbStore.getGroup(rootId, block.id, this.newGroupId);
-
-		let change = false;
-
-		if (this.oldGroupId == this.newGroupId) {
-			let records = dbStore.getRecords(oldSubId, '');
-			records = arrayMove(records, this.oldIndex, this.newIndex);
-
-			dbStore.recordsSet(oldSubId, '', records);
-
-			console.log(records.map(it => it.id));
-
-			orders.push({ viewId: view.id, groupId: this.oldGroupId, objectIds: records.map(it => it.id) });
-		} else {
-			let newRecords = dbStore.getRecords(newSubId, '');
-
-			dbStore.recordDelete(oldSubId, '', record.id);
-			detailStore.set(newSubId, [ { id: record.id, details: record } ]);
-			detailStore.delete(oldSubId, record.id, Object.keys(record));
-
-			newRecords.push({ id: record.id });
-			dbStore.recordsSet(newSubId, '', arrayMove(newRecords, newRecords.length - 1, this.newIndex));
-
-			orders.push({ viewId: view.id, groupId: this.oldGroupId, objectIds: dbStore.getRecords(oldSubId, '').map(it => it.id) });
-			orders.push({ viewId: view.id, groupId: this.newGroupId, objectIds: newRecords.map(it => it.id) });
-
-			change = true;
-		};
+		const change = this.oldGroupId != this.newGroupId;
 
 		const setOrder = () => {
 			C.BlockDataviewObjectOrderUpdate(rootId, block.id, orders, () => {
@@ -522,7 +496,11 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 			});
 		};
 
+		orders.push({ viewId: view.id, groupId: this.oldGroupId, objectIds: dbStore.getRecords(oldSubId, '').map(it => it.id) });
+
 		if (change) {
+			orders.push({ viewId: view.id, groupId: this.newGroupId, objectIds: dbStore.getRecords(newSubId, '').map(it => it.id) });
+
 			C.ObjectSetDetails(record.id, [ { key: view.groupRelationKey, value: newGroup.value } ], setOrder);
 		} else {
 			setOrder();
@@ -545,10 +523,6 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 		records.sort((c1: any, c2: any) => {
 			let idx1 = order.objectIds.indexOf(c1.id);
 			let idx2 = order.objectIds.indexOf(c2.id);
-
-			console.log(c1.id, idx1);
-			console.log(c2.id, idx2);
-
 			if (idx1 > idx2) return 1;
 			if (idx1 < idx2) return -1;
 			return 0;
