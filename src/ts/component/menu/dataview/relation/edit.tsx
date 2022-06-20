@@ -542,7 +542,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		const node = $(ReactDOM.findDOMNode(this));
 		const name = this.ref ? this.ref.getValue() : '';
 		const button = node.find('#button');
-		const canSave = name.length && !this.isReadonly();
+		const canSave = name.length && (this.format !== null) && !this.isReadonly();
 
 		if (canSave) {
 			button.addClass('orange').removeClass('grey');
