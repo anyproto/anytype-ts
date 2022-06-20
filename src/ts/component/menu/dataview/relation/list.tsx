@@ -241,9 +241,10 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 		menuStore.open('relationSuggest', { 
 			element: `#${getId()} #item-add`,
 			offsetX: getSize().width,
-			vertical: I.MenuDirection.Bottom,
-			offsetY: -36,
+			vertical: I.MenuDirection.Top,
+			offsetY: 36,
 			noAnimation: true,
+			noFlipY: true,
 			data: {
 				...data,
 				menuIdEdit: menuIdEdit,
