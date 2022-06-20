@@ -459,7 +459,7 @@ const BlockLinkListSetAppearance = (contextId: string, blockIds: any[], iconSize
 
 // ---------------------- BLOCK TABLE ---------------------- //
 
-const BlockTableCreate = (contextId: string, targetId: string, position: I.BlockPosition, rows: number, columns: number, callBack?: (message: any) => void) => {
+const BlockTableCreate = (contextId: string, targetId: string, position: I.BlockPosition, rows: number, columns: number, withHeaderRow: boolean = false, callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockTable.Create.Request();
 	
 	request.setContextid(contextId);
@@ -467,6 +467,7 @@ const BlockTableCreate = (contextId: string, targetId: string, position: I.Block
 	request.setPosition(position);
 	request.setRows(rows);
 	request.setColumns(columns);
+	request.setWithheaderrow(withHeaderRow);
 
 	dispatcher.request(BlockTableCreate.name, request, callBack);
 };
