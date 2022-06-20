@@ -41,20 +41,18 @@ import {
 	Filter,
 	Cell,
 	ContentDataview,
-	BlockDataview,
 } from './block/dataview';
 
-import { BlockPage } from './block/page';
-import { LayoutStyle, ContentLayout, BlockLayout } from './block/layout';
-import { ContentIcon, BlockIcon } from './block/icon';
-import { LinkIconSize, LinkCardStyle, LinkDescription, ContentLink, BlockLink } from './block/link';
-import { TextStyle, MarkType, TextRange, Mark, ContentText, BlockText } from './block/text';
-import { FileType, FileState, FileStyle, ContentFile, BlockFile } from './block/file';
-import { ContentBookmark, BlockBookmark } from './block/bookmark';
-import { DivStyle, ContentDiv, BlockDiv } from './block/div';
-import { ContentRelation, BlockRelation } from './block/relation';
-import { ContentLatex, BlockLatex } from './block/latex';
-import { BlockComponentTable, ContentTableRow, BlockTableRow, ContentTable, BlockTable } from './block/table';
+import { LayoutStyle, ContentLayout } from './block/layout';
+import { ContentIcon } from './block/icon';
+import { LinkIconSize, LinkCardStyle, LinkDescription, ContentLink } from './block/link';
+import { TextStyle, MarkType, TextRange, Mark, ContentText } from './block/text';
+import { FileType, FileState, FileStyle, ContentFile } from './block/file';
+import { ContentBookmark } from './block/bookmark';
+import { DivStyle, ContentDiv } from './block/div';
+import { ContentRelation } from './block/relation';
+import { ContentLatex } from './block/latex';
+import { BlockComponentTable, ContentTableRow } from './block/table';
 
 export {
 	Account,
@@ -140,52 +138,37 @@ export {
 	Filter,
 	Cell,
 	ContentDataview,
-	BlockDataview,
-
-	BlockPage,
 
 	LayoutStyle,
 	ContentLayout,
-	BlockLayout,
 
 	ContentIcon,
-	BlockIcon,
 
 	LinkIconSize,
 	LinkCardStyle,
 	LinkDescription,
 	ContentLink,
-	BlockLink,
 
 	TextStyle,
 	MarkType,
 	TextRange,
 	Mark,
 	ContentText,
-	BlockText,
 
 	DivStyle,
 	ContentDiv,
-	BlockDiv,
 
 	FileType,
 	FileState,
 	FileStyle,
 	ContentFile,
-	BlockFile,
 
 	ContentBookmark,
-	BlockBookmark,
 
 	ContentRelation, 
-	BlockRelation,
 
 	ContentLatex,
-	BlockLatex,
 
 	BlockComponentTable,
 	ContentTableRow, 
-	BlockTableRow,
-	ContentTable, 
-	BlockTable,
 };
