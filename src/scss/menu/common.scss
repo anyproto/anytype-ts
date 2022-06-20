@@ -148,6 +148,10 @@
 			}
 		}
 
+		.item.withSwitch {
+			.clickable { display: flex; }
+		}
+
 		.item.withCheckbox {
 			.name { width: calc(100% - 46px); }
 		}

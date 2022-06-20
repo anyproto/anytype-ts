@@ -531,6 +531,16 @@ const BlockTableRowListClean = (contextId: string, blockIds: string[], callBack?
 	dispatcher.request(BlockTableRowListClean.name, request, callBack);
 };
 
+const BlockTableRowSetHeader = (contextId: string, targetId: string, isHeader: boolean, callBack?: (message: any) => void) => {
+	const request = new Rpc.BlockTable.RowSetHeader.Request();
+	
+	request.setContextid(contextId);
+	request.setTargetid(targetId);
+	request.setIsheader(isHeader);
+
+	dispatcher.request(BlockTableRowSetHeader.name, request, callBack);
+};
+
 const BlockTableColumnCreate = (contextId: string, targetId: string, position: I.BlockPosition, callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockTable.ColumnCreate.Request();
 	
@@ -1536,6 +1546,7 @@ export {
 	BlockTableRowDuplicate,
 	BlockTableRowListFill,
 	BlockTableRowListClean,
+	BlockTableRowSetHeader,
 
 	BlockDataviewViewCreate,
 	BlockDataviewViewUpdate,

@@ -1,13 +1,24 @@
 import { I, Util } from 'ts/lib';
 import { observable, intercept, makeObservable } from 'mobx';
 
-class BlockContentTable implements I.ContentTable {
+class BlockContentTableRow implements I.ContentTableRow {
 	
-	constructor (props: I.ContentTable) {
+	isHeader: boolean = false;
+	
+	constructor (props: I.ContentTableRow) {
 		let self = this;
 		
+		self.isHeader = Boolean(props.isHeader);
+
+		makeObservable(self, {
+			isHeader: observable,
+		});
+
+		intercept(self as any, (change: any) => { return Util.intercept(self, change); });
 	};
 
 };
 
-export default BlockContentTable;
+export {
+	BlockContentTableRow,
+}

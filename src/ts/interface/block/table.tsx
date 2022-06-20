@@ -16,9 +16,6 @@ export interface BlockComponentTable extends I.BlockComponent {
 	onDragStartColumn: (e: any, id: string) => void;
 };
 
-export interface ContentTable {
-};
-
-export interface BlockTable extends I.Block {
-	content: ContentTable;
+export interface ContentTableRow {
+	isHeader: boolean;
 };

@@ -852,8 +852,8 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
 		const layer = $('<div />');
-		const row = node.find(`#row-${id}`);
-		const clone = row.clone();
+		const el = node.find(`#row-${id}`);
+		const clone = el.clone();
 		const table = $('<div />').addClass('table isClone');
 
 		layer.css({ zIndex: 10000, position: 'fixed', left: -10000, top: -10000, paddingTop: 10, paddingLeft: 10 });
@@ -893,7 +893,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			const row = rows[i];
 			const rect = this.cache[row.id];
 
-			if (id == row.id) {
+			if ((id == row.id) || row.content.isHeader) {
 				continue;
 			};
 
@@ -1125,21 +1125,28 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 	optionsRow (id: string) {
 		const { rootId } = this.props;
 		const { rows } = this.getData();
+		const row = blockStore.getLeaf(rootId, id);
+		const isHeader = row.content.isHeader;
 		const idx = rows.findIndex(it => it.id == id);
 		const length = rows.length;
-		const options: any[] = [
-			{ id: 'rowBefore', icon: 'table-insert-top', name: 'Row before' },
-			{ id: 'rowAfter', icon: 'table-insert-bottom', name: 'Row after' },
+
+		let options: any[] = [
+			{ 
+				id: 'rowHeader', icon: 'table-header-row', name: 'Header row', withSwitch: true, switchValue: isHeader,
+				onSwitch: (e: any, v: boolean) => { C.BlockTableRowSetHeader(rootId, id, v); }
+			},
+			{ isDiv: true },
 		];
 
-		if (idx > 0) {
-			options.push({ id: 'rowMoveTop', icon: 'table-move-top', name: 'Move row up' });
+		if (!isHeader) {
+			options = options.concat([
+				{ id: 'rowBefore', icon: 'table-insert-top', name: 'Row before' },
+				{ id: 'rowAfter', icon: 'table-insert-bottom', name: 'Row after' },
+				(idx > 0) ? { id: 'rowMoveTop', icon: 'table-move-top', name: 'Move row up' } : null,
+				(idx < length - 1) ? { id: 'rowMoveBottom', icon: 'table-move-bottom', name: 'Move row down' } : null,
+				{ id: 'rowCopy', icon: 'copy', name: 'Duplicate row' },
+			]);
 		};
-		if (idx < length - 1) {
-			options.push({ id: 'rowMoveBottom', icon: 'table-move-bottom', name: 'Move row down' });
-		};
-
-		options.push({ id: 'rowCopy', icon: 'copy', name: 'Duplicate row' });
 
 		if (length > 1) {
 			options.push({ id: 'rowRemove', icon: 'remove', name: 'Delete row' });

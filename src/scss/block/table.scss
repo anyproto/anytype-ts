@@ -9,7 +9,7 @@
 		.scrollWrap > .inner { display: inline-block; position: relative; }
 
 		.handleRow, .handleColumn { 
-			cursor: grab !important; transition: $transitionFast; z-index: 10; border: 2px solid #fff; border-radius: 3px;
+			cursor: pointer; transition: $transitionFast; z-index: 10; border: 2px solid #fff; border-radius: 3px;
 			background-color: $colorOrange; position: absolute; display: none;
 		}
 		.handleColumn { 
@@ -20,6 +20,7 @@
 			height: 22px; width: 10px; background-image: url('~img/icon/table/handle/row.svg'); background-size: 8px 16px; 
 			top: 50%; left: -5px; margin-top: -11px;
 		}
+		.handleRow.canDrag, .handleColumn.canDrag { cursor: grab; }
 
 		.plusButton { z-index: 10; }
 		.plusButton { 

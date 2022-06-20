@@ -26,6 +26,7 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 
 		const cn = [ 'cell', 'column' + column.id ];
 		const cellId = [ row.id, column.id ].join('-');
+		const canDragRow = !row.content.isHeader;
 
 		if (block) {
 			cn.push('align-v' + block.vAlign);
@@ -33,7 +34,7 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 
 		const HandleColumn = (item: any) => (
 			<div 
-				className="icon handleColumn"
+				className="icon handleColumn canDrag"
 				draggable={true}
 				onClick={(e: any) => { onHandleColumn(e, I.BlockType.TableColumn, row.id, column.id, cellId); }}
 				onDragStart={(e: any) => { onDragStartColumn(e, column.id); }}
@@ -43,10 +44,10 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 
 		const HandleRow = (item: any) => (
 			<div 
-				className="icon handleRow"
-				draggable={true}
+				className={[ 'icon', 'handleRow', (canDragRow ? 'canDrag' : '') ].join(' ')}
+				draggable={canDragRow}
 				onClick={(e: any) => { onHandleRow(e, I.BlockType.TableRow, row.id, column.id, cellId); }}
-				onDragStart={(e: any) => { onDragStartRow(e, row.id); }}
+				onDragStart={(e: any) => { canDragRow ? onDragStartRow(e, row.id) : null; }}
 				onContextMenu={(e: any) => { onHandleRow(e, I.BlockType.TableRow, row.id, column.id, cellId); }}
 			/>
 		);

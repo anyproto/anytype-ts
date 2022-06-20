@@ -209,7 +209,9 @@ const Mapper = {
 		},
 
 		BlockTableRow: (obj: any) => {
-			return {};
+			return {
+				isHeader: obj.getIsheader(),
+			};
 		},
 
 		Block: (obj: any): I.Block => {
