@@ -118,6 +118,7 @@ export interface Block {
 	isFocusable?(): boolean;
 	isSelectable?(): boolean;
 	isDraggable?(): boolean;
+	isDeletable?(): boolean;
 
 	isPage?(): boolean;
 	isObjectPage?(): boolean;

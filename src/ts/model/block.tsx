@@ -142,6 +142,10 @@ class Block implements I.Block {
 		return !this.isSystem() && !this.isIcon() && !this.isTextTitle() && !this.isTextDescription() && !this.isFeatured() && !this.isType();
 	};
 
+	isDeletable (): boolean {
+		return !this.isSystem() && !this.isTextTitle() && !this.isTextDescription() && !this.isFeatured() && !this.isType();
+	};
+
 	isPage (): boolean { 
 		return (this.type == I.BlockType.Page);
 	};
