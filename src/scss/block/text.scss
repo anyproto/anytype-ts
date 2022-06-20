@@ -190,7 +190,7 @@
 		.additional { display: none; }
 	}
 
-	.block.blockText.code.isUnwrapped > .wrapContent > .selectable > .dropTarget .value { white-space: nowrap; overflow-x: auto !important; }
+	.block.blockText.code.isUnwrapped > .wrapContent > .selectable > .dropTarget #value { white-space: nowrap; overflow-x: auto; }
 
 	.block.blockText.latex > .wrapContent > .selectable > .dropTarget .flex { display: block; }
 	.block.blockText.latex > .wrapContent > .selectable > .dropTarget {
