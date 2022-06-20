@@ -1776,20 +1776,22 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 		blockIds = blockIds.filter((it: string) => {  
 			let block = blockStore.getLeaf(rootId, it);
-			return block && !block.isTextTitle();
+			return block && block.isDeletable();
 		});
 
-		focus.clear(true);
-		C.BlockListDelete(rootId, blockIds, (message: any) => {
-			if (message.error.code) {
-				return;
-			};
-			
-			if (next) {
-				let length = next.getLength();
-				this.focus(next.id, length, length, false);
-			};
-		});
+		if (blockIds.length) {
+			focus.clear(true);
+			C.BlockListDelete(rootId, blockIds, (message: any) => {
+				if (message.error.code) {
+					return;
+				};
+				
+				if (next) {
+					let length = next.getLength();
+					this.focus(next.id, length, length, false);
+				};
+			});
+		};
 	};
 	
 	onLastClick (e: any) {
