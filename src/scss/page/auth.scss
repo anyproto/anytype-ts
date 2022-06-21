@@ -67,16 +67,18 @@
 }
 
 .pageAuthRegister {
-	.frame { white-space: nowrap; padding-bottom: 36px; }
-	.fileWrap { margin-right: 16px; width: 64px; height: 64px; display: inline-block; vertical-align: middle; }
+	.frame { padding-bottom: 36px; }
+	.fileWrap { width: 64px; height: 64px; display: inline-block; vertical-align: middle; }
 
-	.input-text { width: 346px; vertical-align: middle; margin-right: 16px; }
+	.input-text { width: 346px; vertical-align: middle; }
 	.button { vertical-align: middle; width: 134px; padding: 0px; }	
 	.iconObject { margin-bottom: 0px; }
 	.iconObject { background-image: url('~img/icon/picture.svg'); background-size: 24px 18px; background-repeat: no-repeat; background-position: center; }
 	.iconObject.active {
 		.image { background-size: cover; }
 	}
+
+	.row.flex { flex-direction: row; align-items: center; gap: 0px 16px; margin-bottom: 16px; }
 }
 
 .pageAuthDeleted {

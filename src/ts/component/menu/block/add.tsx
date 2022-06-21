@@ -582,16 +582,20 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 				};
 
 				if (item.type == I.BlockType.Dataview) {
-					param.content.views = [
-						{ 
-							name: item.name,
-							type: item.itemId,
-						}
-					];
+					param.content.views = [ {  name: item.name, type: item.itemId } ];
 				};
 
 				if ((item.type == I.BlockType.Text) && (item.itemId != I.TextStyle.Code)) {
-					C.BlockListTurnInto(rootId, [ blockId ], item.itemId, onCommand);
+					C.BlockListTurnInto(rootId, [ blockId ], item.itemId, (message: any) => {
+						onCommand(message);
+
+						analytics.event('CreateBlock', { 
+							middleTime: message.middleTime, 
+							type: param.type, 
+							style: param.content?.style,
+							params: {},
+						});
+					});
 				} else 
 				if (item.isObject) {
 					const type = dbStore.getObjectType(item.objectTypeId);

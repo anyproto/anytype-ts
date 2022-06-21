@@ -98,11 +98,12 @@ const WorkspaceSetIsHighlighted = (objectId: string, isHightlighted: boolean, ca
 
 // ---------------------- ACCOUNT ---------------------- //
 
-const AccountCreate = (name: string, path: string, code: string, callBack?: (message: any) => void) => {
+const AccountCreate = (name: string, avatarPath: string, storePath: string, code: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Account.Create.Request();
 	
 	request.setName(name);
-	request.setAvatarlocalpath(path);
+	request.setAvatarlocalpath(avatarPath);
+	request.setStorepath(storePath);
 	request.setAlphainvitecode(code);
 
 	dispatcher.request(AccountCreate.name, request, callBack);
@@ -137,6 +138,14 @@ const AccountDelete = (revert: boolean, callBack?: (message: any) => void) => {
 	request.setRevert(revert);
 
 	dispatcher.request(AccountDelete.name, request, callBack);
+};
+
+const AccountMove = (path: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Account.Move.Request();
+	
+	request.setNewpath(path);
+
+	dispatcher.request(AccountMove.name, request, callBack);
 };
 
 // ---------------------- FILE ---------------------- //
@@ -1314,6 +1323,7 @@ export {
 	AccountSelect,
 	AccountStop,
 	AccountDelete,
+	AccountMove,
 
 	DebugSync,
 	DebugTree,
