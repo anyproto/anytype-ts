@@ -54,7 +54,7 @@ class CommonStore {
 	public sidebarOldFixed: boolean = false;
 	public isFullScreen: boolean = false;
 	public autoSidebarValue: boolean = false;
-	public timezoneValue: string = 'gmt';
+	public timezoneValue: I.Timezone = I.Timezone.GMT;
 
     constructor() {
         makeObservable(this, {
@@ -153,13 +153,12 @@ class CommonStore {
 		return this.sidebarObj;
 	};
 
-	get timezone(): string {
-		return String(this.timezoneValue || 'gmt');
+	get timezone(): I.Timezone {
+		return this.timezoneValue;
 	};
 
-	timezoneSet (v: string) {
-		this.timezoneValue = String(v || '');
-		Storage.set('timezone', this.timezoneValue);
+	timezoneSet (v: I.Timezone) {
+		this.timezoneValue = Number(v) || I.Timezone.GMT;
 	};
 
 	timezoneGet () {
@@ -342,7 +341,8 @@ class CommonStore {
 		blockStore.storeSetTemplate(info.marketplaceTemplateObjectId);
 		blockStore.storeSetRelation(info.marketplaceRelationObjectId);
 
-		commonStore.gatewaySet(info.gatewayUrl);
+		this.gatewaySet(info.gatewayUrl);
+		this.timezoneSet(info.timezone);
 
 		analytics.device(info.deviceId);
 	};

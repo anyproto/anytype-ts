@@ -115,3 +115,34 @@ export interface HeaderComponent {
 	onNavigation?: (e: any) => void;
 	onGraph?: (e: any) => void;
 };
+
+export enum Timezone {
+	GMT = 0,
+	ECT = 1,
+	EET = 2,
+	EAT = 3,
+	MET = 4,
+	NET = 5,
+	PLT = 6,
+	IST = 7,
+	BST = 8,
+	VST = 9,
+	CTT = 10,
+	JST = 11,
+	ACT = 12,
+	AET = 13,
+	SST = 14,
+	NST = 15,
+	MIT = 16,
+	HST = 17,
+	AST = 18,
+	PST = 19,
+	MST = 20,
+	CST = 21,
+	IET = 22,
+	PRT = 23,
+	CNT = 24,
+	BET = 25,
+	BRT = 26,
+	CAT = 27,
+};

@@ -16,6 +16,7 @@ import {
 	GraphView, 
 	TabIndex,
 	HeaderComponent,
+	Timezone,
 } from './common';
 import { ThreadStatus, ThreadSummary, ThreadDevice, ThreadAccount, ThreadCafe, FilesStatus } from './thread';
 import { Progress, ProgressType, ProgressState } from './progress';
@@ -78,6 +79,7 @@ export {
 	GraphView,
 	TabIndex,
 	HeaderComponent,
+	Timezone,
 	
 	ThreadStatus,
 	ThreadSummary,

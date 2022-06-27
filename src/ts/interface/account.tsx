@@ -1,3 +1,5 @@
+import { I } from 'ts/lib';
+
 export enum AccountStatusType {
 	Active			 = 0,
     PendingDeletion	 = 1,
@@ -21,6 +23,7 @@ export interface AccountInfo {
 	marketplaceRelationObjectId: string;
 	deviceId: string;
 	localStoragePath: string;
+	timezone: I.Timezone;
 };
 
 export interface AccountConfig {
