@@ -66,7 +66,7 @@
 				.txt { line-height: 24px; vertical-align: top; }
 			}
 
-			.cardName .name { @include clamp1; border-bottom: 1px solid $colorMediumGrey; }
+			.cardName .name { @include clamp1; border-bottom: 0.05em solid $colorMediumGrey; }
 		}
 
 		.linkCard.card {

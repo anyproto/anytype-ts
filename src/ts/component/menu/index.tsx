@@ -285,7 +285,7 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 
 	componentDidUpdate () {
 		const { param } = this.props;
-		const { noAnimation } = param;
+		const { noAnimation, element } = param;
 		const node = $(ReactDOM.findDOMNode(this)); 
 		const menu = node.find('.menu');
 

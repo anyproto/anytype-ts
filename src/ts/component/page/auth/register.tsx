@@ -15,7 +15,7 @@ const Constant = require('json/constant.json');
 
 const PageAuthRegister = observer(class PageAuthRegister extends React.Component<Props, State> {
 
-	nameRef: any;
+	refName: any = null;
 
 	state = {
 		error: '',
@@ -25,6 +25,7 @@ const PageAuthRegister = observer(class PageAuthRegister extends React.Component
 		super(props);
 
 		this.onFileClick = this.onFileClick.bind(this);
+		this.onPathClick = this.onPathClick.bind(this);
 		this.onNameChange = this.onNameChange.bind(this);
 		this.onSubmit = this.onSubmit.bind(this);
 	};
@@ -32,7 +33,7 @@ const PageAuthRegister = observer(class PageAuthRegister extends React.Component
 	render () {
 		const { cover } = commonStore;
 		const { error } = this.state;
-		const { name, preview } = authStore;
+		const { name, preview, accountPath } = authStore;
 
 		return (
 			<div>
@@ -45,12 +46,16 @@ const PageAuthRegister = observer(class PageAuthRegister extends React.Component
 					<Error text={error} />
 		
 					<form onSubmit={this.onSubmit}>
-						<div className="iconObject isHuman c64 fileWrap" onClick={this.onFileClick}>
-							{preview ? <img src={preview} className="iconImage c64" /> : ''}
+						<div className="row flex">
+							<div className="iconObject isHuman c64 fileWrap" onClick={this.onFileClick}>
+								{preview ? <img src={preview} className="iconImage c64" /> : ''}
+							</div>
+							<Input ref={(ref: any) => this.refName = ref} placeholder={translate('authRegisterName')} value={name} onKeyUp={this.onNameChange} />
+							<Button type="input" text={translate('authRegisterSubmit')} />
 						</div>
-					
-						<Input ref={(ref: any) => this.nameRef = ref} placeholder={translate('authRegisterName')} value={name} onKeyUp={this.onNameChange} />
-						<Button type="input" text={translate('authRegisterSubmit')} />
+						<div className="row cp" onClick={this.onPathClick}>
+							Account location: {accountPath}
+						</div>
 					</form>
 				</Frame>
 			</div>
@@ -58,11 +63,12 @@ const PageAuthRegister = observer(class PageAuthRegister extends React.Component
 	};
 	
 	componentDidMount () {
-		this.nameRef.focus();
+		this.refName.focus();
 	};
 	
 	componentDidUpdate () {
-		this.nameRef.focus();
+		this.refName.focus();
+		this.refName.setValue(authStore.name);
 	};
 
 	onFileClick (e: any) {
@@ -85,9 +91,24 @@ const PageAuthRegister = observer(class PageAuthRegister extends React.Component
 			});
 		});
 	};
+
+	onPathClick (e: any) {
+		const options = { 
+			properties: [ 'openDirectory' ],
+		};
+
+		dialog.showOpenDialog(options).then((result: any) => {
+			const files = result.filePaths;
+			if ((files == undefined) || !files.length) {
+				return;
+			};
+
+			authStore.accountPathSet(files[0]);
+		});
+	};
 	
 	onNameChange (e: any) {
-		authStore.nameSet(this.nameRef.getValue());
+		authStore.nameSet(this.refName.getValue());
 	};
 
 	onSubmit (e: any) {
@@ -95,13 +116,13 @@ const PageAuthRegister = observer(class PageAuthRegister extends React.Component
 		
 		const { match } = this.props;
 		
-		this.nameRef.setError(false);
+		this.refName.setError(false);
 
 		let error = '';
 		
 		if (!authStore.name) {
 			error = 'Name cannot be blank';
-			this.nameRef.setError(true);
+			this.refName.setError(true);
 		};
 		
 		if (!error) {

@@ -1531,7 +1531,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		};
 
 		const first = blockStore.getFirstBlock(rootId, 1, (it) => it.isText() && !it.isTextTitle() && !it.isTextDescription());
-		const isEmpty = (focused == first.id) && !first.getLength();
+		const object = detailStore.get(rootId, rootId, [ 'internalFlags' ]);
+		const isEmpty = (focused == first.id) && !first.getLength() && (object.internalFlags || []).includes(I.ObjectFlag.DeleteEmpty);
 
 		const options: any[] = [
 			{ id: 'link', name: 'Create link' },
@@ -1813,20 +1814,22 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 		blockIds = blockIds.filter((it: string) => {  
 			let block = blockStore.getLeaf(rootId, it);
-			return block && !block.isTextTitle();
+			return block && block.isDeletable();
 		});
 
-		focus.clear(true);
-		C.BlockListDelete(rootId, blockIds, (message: any) => {
-			if (message.error.code) {
-				return;
-			};
-			
-			if (next) {
-				let length = next.getLength();
-				this.focus(next.id, length, length, false);
-			};
-		});
+		if (blockIds.length) {
+			focus.clear(true);
+			C.BlockListDelete(rootId, blockIds, (message: any) => {
+				if (message.error.code) {
+					return;
+				};
+				
+				if (next) {
+					let length = next.getLength();
+					this.focus(next.id, length, length, false);
+				};
+			});
+		};
 	};
 	
 	onLastClick (e: any) {

@@ -27,17 +27,12 @@
 		}
 
 		lnk { position: relative; }
-		lnk, obj { cursor: pointer; color: inherit;  text-decoration: none; border-bottom: 1px solid $colorMediumGrey; transition: border-color 0.2s ease-in-out; }
+		lnk, obj { 
+			cursor: pointer; color: inherit; text-decoration: none; border-bottom: 0.075em solid; transition: border-color 0.2s ease-in-out;
+			opacity: 0.65;
+		}
 		lnk.disabled, obj.disabled { border-width: 0px; }
-		lnk::after {
-			content: ""; display: inline-block; background-image: url('~img/icon/link.svg'); background-repeat: no-repeat;
-			width: 14px; height: 14px; vertical-align: middle; margin: 0px 0px 4px 4px;
-		}
 		lnk:hover, obj:hover { border-color: $colorBlack; }
-
-		lnk, obj {
-			underline { text-decoration: none; }
-		}
 
 		mention { cursor: pointer; display: inline; user-select: all !important; position: relative; }
 		mention * { user-select: text !important; }
@@ -45,7 +40,7 @@
 			smile { display: none; position: relative; z-index: 1; }
 			.space { width: 4px; height: 20px; margin-top: -4px; vertical-align: middle; display: none; }
 
-			name { display: inline; white-space: normal; vertical-align: top; position: relative; border-bottom: 1px solid $colorMediumGrey; }
+			name { display: inline; white-space: normal; vertical-align: top; position: relative; border-bottom: 0.05em solid $colorMediumGrey; }
 		}
 		mention.disabled {
 			name { border-width: 0px; }
@@ -66,7 +61,7 @@
 		bold { font-weight: 600; }
 		italic { font-style: italic; }
 		strike { text-decoration: line-through; }
-		underline { text-decoration: underline; }
+		underline { border-bottom: 0.05em solid; }
 		
 		.markers { display: flex; }
 		.markers {
@@ -190,9 +185,7 @@
 		.additional { display: none; }
 	}
 
-	.block.blockText.code.isUnwrapped > .wrapContent > .selectable > .dropTarget .value {
-		white-space: nowrap; overflow-x: auto;
-	}
+	.block.blockText.code.isUnwrapped > .wrapContent > .selectable > .dropTarget #value { white-space: nowrap; overflow-x: auto; }
 
 	.block.blockText.latex > .wrapContent > .selectable > .dropTarget .flex { display: block; }
 	.block.blockText.latex > .wrapContent > .selectable > .dropTarget {

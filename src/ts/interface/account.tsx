@@ -1,3 +1,5 @@
+import { I } from 'ts/lib';
+
 export enum AccountStatusType {
 	Active			 = 0,
     PendingDeletion	 = 1,
@@ -20,6 +22,7 @@ export interface AccountInfo {
 	marketplaceTemplateObjectId: string;
 	marketplaceRelationObjectId: string;
 	deviceId: string;
+	localStoragePath: string;
 };
 
 export interface AccountConfig {

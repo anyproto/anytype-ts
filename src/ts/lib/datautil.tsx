@@ -1222,42 +1222,6 @@ class DataUtil {
 		].includes(type);
 	};
 
-	timezones () {
-		return [
-			{ id: 'gmt', name: 'Greenwich Mean Time', offset: 0 },
-			{ id: 'ect', name: 'European Central Time (GMT +1:00)', offset: 1 },
-			{ id: 'eet', name: 'Eastern European Time (GMT +2:00)', offset: 2 },
-			{ id: 'eat', name: 'Eastern African Time (GMT +3:00)', offset: 3 },
-			{ id: 'met', name: 'Middle East Time (GMT +3:30)', offset: 3.5 },
-			{ id: 'net', name: 'Near East Time (GMT +4:00)', offset: 4 },
-			{ id: 'plt', name: 'Pakistan Lahore Time (GMT +5:00)', offset: 5 },
-			{ id: 'ist', name: 'India Standard Time (GMT +5:30)', offset: 5.5 },
-			{ id: 'bst', name: 'Bangladesh Standard Time (GMT +6:00)', offset: 6 },
-			{ id: 'vst', name: 'Vietnam Standard Time (GMT +7:00)', offset: 7 },
-			{ id: 'ctt', name: 'China Taiwan Time (GMT +8:00)', offset: 8 },
-			{ id: 'jst', name: 'Japan Standard Time (GMT +9:00)', offset: 9 },
-			{ id: 'act', name: 'Australia Central Time (GMT +9:30)', offset: 9.5 },
-			{ id: 'aet', name: 'Australia Eastern Time (GMT +10:00)', offset: 10 },
-			{ id: 'sst', name: 'Solomon Standard Time (GMT +11:00)', offset: 11 },
-			{ id: 'nst', name: 'New Zealand Standard Time (GMT +12:00)', offset: 12 },
-			{ id: 'mit', name: 'Midway Islands Time (GMT -11:00)', offset: -11 },
-			{ id: 'hst', name: 'Hawaii Standard Time (GMT -10:00)', offset: -10 },
-			{ id: 'ast', name: 'Alaska Standard Time (GMT -9:00)', offset: -9 },
-			{ id: 'pst', name: 'Pacific Standard Time (GMT -8:00)', offset: -8 },
-			{ id: 'mst', name: 'Mountain Standard Time (GMT -7:00)', offset: -7 },
-			{ id: 'cst', name: 'Central Standard Time (GMT -6:00)', offset: -6 },
-			{ id: 'iet', name: 'Indiana Eastern Standard Time (GMT -5:00)', offset: -5 },
-			{ id: 'prt', name: 'Puerto Rico and US Virgin Islands Time (GMT -4:00)', offset: -4 },
-			{ id: 'cnt', name: 'Canada Newfoundland Time (GMT -3:30)', offset: -3.5 },
-			{ id: 'bet', name: 'Brazil Eastern Time	(GMT -3:00)', offset: -3 },
-			{ id: 'bst', name: 'Brazil Summer Time (GMT -2:00)', offset: -2 },
-			{ id: 'cat', name: 'Central African Time (GMT -1:00)', offset: -1 },
-		].map((it: any) => {
-			it.offset = it.offset * 3600;
-			return it;
-		});
-	};
-
 };
 
 export default new DataUtil();

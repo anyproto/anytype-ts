@@ -125,7 +125,9 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 					});
 				},
 				onUpload (hash: string) {
-					DataUtil.pageSetIcon(rootId, '', hash);
+					DataUtil.pageSetIcon(rootId, '', hash, () => {
+						menuStore.update('smile', { element: `#block-icon-${rootId}` });
+					});
 				},
 			}
 		});
@@ -145,11 +147,9 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 			};
 			
 			C.FileUpload('', files[0], I.FileType.Image, (message: any) => {
-				if (message.error.code) {
-					return;
+				if (message.hash) {
+					DataUtil.pageSetIcon(rootId, '', message.hash);
 				};
-				
-				DataUtil.pageSetIcon(rootId, '', message.hash);
 			});
 		});
 	};

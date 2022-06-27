@@ -78,6 +78,12 @@
 				.status { position: absolute; text-align: right; right: 24px; top: 50%; margin-top: -14px; height: 28px; color: $colorMediumGrey; }
 			}
 
+			.row.location { align-items: center; }
+			.row.location {
+				.side.right { @include text-small; }
+				.label { @include text-overflow-nw; width: 100%; }
+			}
+
 			.logout { color: $colorMediumGrey; cursor: pointer; text-align: center; @include text-paragraph; line-height: 28px; padding: 18px 0px; }
 			.logout:hover { color: $colorBlack; }
 		}
