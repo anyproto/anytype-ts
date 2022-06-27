@@ -9,18 +9,22 @@
 		.scrollWrap > .inner { display: inline-block; position: relative; }
 
 		.handleRow, .handleColumn { 
-			cursor: pointer; transition: $transitionFast; z-index: 10; border: 2px solid #fff; border-radius: 3px;
-			background-color: $colorOrange; position: absolute; display: none;
-		}
-		.handleColumn { 
-			height: 10px; width: 22px; background-image: url('~img/icon/table/handle/column.svg'); background-size: 16px 8px;
-			left: 50%; top: -5px; margin-left: -11px;
-		}
-		.handleRow {
-			height: 22px; width: 10px; background-image: url('~img/icon/table/handle/row.svg'); background-size: 8px 16px; 
-			top: 50%; left: -5px; margin-top: -11px;
+			cursor: pointer; z-index: 10; border: 2px solid #fff; background-color: $colorOrange; position: absolute; display: none;
+			transition: none;
 		}
 		.handleRow.canDrag, .handleColumn.canDrag { cursor: grab; }
+
+		.handleRow { height: 22px; width: 6px; top: 50%; left: -4px; margin-top: -11px; }
+		.handleRow:hover, .handleRow.active {
+			width: 10px; background-image: url('~img/icon/table/handle/row.svg'); background-size: 8px 16px; left: -6px;
+			border-radius: 3px;
+		}
+
+		.handleColumn { height: 6px; width: 22px; left: 50%; top: -4px; margin-left: -11px; }
+		.handleColumn:hover, .handleColumn.active { 
+			height: 10px; background-image: url('~img/icon/table/handle/column.svg'); background-size: 16px 8px;
+			top: -6px; border-radius: 3px;
+		}
 
 		.plusButton { z-index: 10; }
 		.plusButton { 
