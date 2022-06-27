@@ -213,14 +213,8 @@ Sentry.init({
 declare global {
 	interface Window { 
 		Store: any; 
-		Cmd: any; 
-		Util: any;
-		Dispatcher: any;
-		Analytics: any;
-		I: any;
-		Go: any;
-		Graph: any;
 		$: any;
+		Lib: any;
 
 		isWebVersion: boolean;
 		Config: any;
@@ -229,12 +223,14 @@ declare global {
 };
 
 window.Store = rootStore;
-window.Cmd = C;
-window.Dispatcher = dispatcher;
-window.Analytics = () => { return analytics.instance; };
-window.I = I;
-window.Go = (route: string) => { Util.route(route); };
 window.$ = $;
+window.Lib = {
+	I,
+	C,
+	Util,
+	analytics,
+	dispatcher,
+};
 
 class RoutePage extends React.Component<RouteComponentProps, {}> { 
 
@@ -345,7 +341,7 @@ class App extends React.Component<Props, State> {
 		const phrase = Storage.get('phrase');
 		const renderer = Util.getRenderer();
 		const restoreKeys = [
-			'pinTime', 'defaultType', 'autoSidebar', 'timezone',
+			'pinTime', 'defaultType', 'autoSidebar',
 		];
 
 		// Check auth phrase with keytar
