@@ -103,7 +103,7 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 		const { filter } = this.state;
 		const object = detailStore.get(rootId, rootId, []);
 		
-		let items = DataUtil.getObjectTypesForNewObject(true).filter(it => it.id != object.type);
+		let items = DataUtil.getObjectTypesForNewObject({ withSet: true }).filter(it => it.id != object.type);
 		if (filter) {
 			const reg = new RegExp(Util.filterFix(filter), 'gi');
 
@@ -294,7 +294,7 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 				if (isPopup) {
 					historyPopup.clear();
 				};
-				DataUtil.objectOpenEvent(e, { id: message.id, layout: I.ObjectLayout.Set });
+				DataUtil.objectOpen({ id: message.id, layout: I.ObjectLayout.Set });
 
 				analytics.event('CreateObject', {
 					route: 'SelectType',

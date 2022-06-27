@@ -17,6 +17,10 @@
 				.ReactVirtualized__List { padding-top: 48px; }
 			}
 
+			.pageMainType, .pageMainRelation, .pageMainBookmark {
+				.wrapper { padding-top: 126px; }
+			}
+
 			#bodyWrapper { padding-top: 30px; }
 
 			.footer { display: block; }
@@ -49,7 +53,7 @@
 			}
 		}
 
-		.pageMainType, .pageMainRelation {
+		.pageMainType, .pageMainRelation, .pageMainBookmark {
 			.wrapper { padding-top: 74px; }
 		}
 

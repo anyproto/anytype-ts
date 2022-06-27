@@ -214,6 +214,8 @@
     /* BlockBookmark */
 
     .block.blockBookmark {
+		.loaderWrapper { border: 0px; }
+
         .inner { border-color: transparent; background-color: $colorHover; }
         .inner.vertical {
             .side.right { border-color: $colorLinePrimary; }

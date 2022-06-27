@@ -1428,6 +1428,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			// Read files
 			if (items && items.length) {
 				let files = [];
+
 				for (let item of items) {
 					if (item.kind != 'file') {
 						continue;
@@ -1480,63 +1481,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		const url = match && match[0];
 		
 		if (block && url && !force && !block.isTextTitle() && !block.isTextDescription()) {
-			menuStore.open('select', { 
-				element: `#block-${focused}`,
-				offsetX: Constant.size.blockMenu,
-				onOpen: () => {
-					if (block) {
-						window.setTimeout(() => {
-							focus.set(block.id, { from: currentFrom, to: currentTo });
-							focus.apply();
-						});
-					};
-				},
-				data: {
-					value: '',
-					options: [
-						{ id: 'link', name: 'Create link' },
-						{ id: 'bookmark', name: 'Create bookmark' },
-						{ id: 'cancel', name: 'Cancel' },
-						//{ id: 'embed', name: 'Create embed' },
-					],
-					onSelect: (event: any, item: any) => {
-						let value = block.content.text;
-						let to = range.from + url.length;
-						let marks = Util.objectCopy(block.content.marks || []);
-
-						switch (item.id) {
-							case 'link':
-								value = Util.stringInsert(value, url + ' ', range.from, range.from);
-								marks.push({
-									type: I.MarkType.Link,
-									range: { from: range.from, to: to },
-									param: url,
-								});
-
-								DataUtil.blockSetText(rootId, block.id, value, marks, true, () => {
-									focus.set(block.id, { from: to + 1, to: to + 1 });
-									focus.apply();
-								});
-								break;
-
-							case 'bookmark':
-								C.BlockBookmarkCreateAndFetch(rootId, focused, length ? I.BlockPosition.Bottom : I.BlockPosition.Replace, url, (message: any) => {
-									analytics.event('CreateBlock', { middleTime: message.middleTime, type: I.BlockType.Bookmark });
-								});
-								break;
-
-							case 'cancel':
-								value = Util.stringInsert(block.content.text, url + ' ', range.from, range.from);
-
-								DataUtil.blockSetText(rootId, block.id, value, marks, true, () => {
-									focus.set(block.id, { from: to + 1, to: to + 1 });
-									focus.apply();
-								});
-								break;
-						};
-					},
-				}
-			});
+			this.onPasteUrl(url);
 			return;
 		};
 		
@@ -1571,6 +1516,99 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			this.focus(id, from, to, true);
 
 			analytics.event('PasteBlock');
+		});
+	};
+
+	onPasteUrl (url: string) {
+		const { rootId } = this.props;
+		const { focused, range } = focus.state;
+		const currentFrom = range.from;
+		const currentTo = range.to;
+		const block = blockStore.getLeaf(rootId, focused);
+
+		if (!block) {
+			return;
+		};
+
+		const first = blockStore.getFirstBlock(rootId, 1, (it) => it.isText() && !it.isTextTitle() && !it.isTextDescription());
+		const object = detailStore.get(rootId, rootId, [ 'internalFlags' ]);
+		const isEmpty = (focused == first.id) && !first.getLength() && (object.internalFlags || []).includes(I.ObjectFlag.DeleteEmpty);
+
+		const options: any[] = [
+			{ id: 'link', name: 'Create link' },
+			isEmpty ? { id: 'object', name: 'Create bookmark object' } : null,
+			{ id: 'block', name: 'Create bookmark block' },
+			{ id: 'cancel', name: 'Cancel' },
+			//{ id: 'embed', name: 'Create embed' },
+		].filter(it => it);
+
+		menuStore.open('select', { 
+			element: `#block-${focused}`,
+			offsetX: Constant.size.blockMenu,
+			onOpen: () => {
+				if (block) {
+					window.setTimeout(() => {
+						focus.set(block.id, { from: currentFrom, to: currentTo });
+						focus.apply();
+					});
+				};
+			},
+			data: {
+				value: '',
+				options,
+				onSelect: (event: any, item: any) => {
+					let value = block.content.text;
+					let to = range.from + url.length;
+					let marks = Util.objectCopy(block.content.marks || []);
+
+					switch (item.id) {
+						case 'link':
+							value = Util.stringInsert(value, url + ' ', range.from, range.from);
+							marks.push({
+								type: I.MarkType.Link,
+								range: { from: range.from, to: to },
+								param: url,
+							});
+
+							DataUtil.blockSetText(rootId, block.id, value, marks, true, () => {
+								focus.set(block.id, { from: to + 1, to: to + 1 });
+								focus.apply();
+							});
+							break;
+
+						case 'object':
+							C.ObjectToBookmark(rootId, url, (message: any) => {
+								if (message.error.code) {
+									return;
+								};
+
+								DataUtil.objectOpen({ id: message.objectId, layout: I.ObjectLayout.Bookmark });
+
+								analytics.event('CreateObject', {
+									objectType: Constant.typeId.bookmark,
+									layout: I.ObjectLayout.Bookmark,
+									template: '',
+								});
+							});
+							break;
+
+						case 'block':
+							C.BlockBookmarkCreateAndFetch(rootId, focused, length ? I.BlockPosition.Bottom : I.BlockPosition.Replace, url, (message: any) => {
+								analytics.event('CreateBlock', { middleTime: message.middleTime, type: I.BlockType.Bookmark });
+							});
+							break;
+
+						case 'cancel':
+							value = Util.stringInsert(block.content.text, url + ' ', range.from, range.from);
+
+							DataUtil.blockSetText(rootId, block.id, value, marks, true, () => {
+								focus.set(block.id, { from: to + 1, to: to + 1 });
+								focus.apply();
+							});
+							break;
+					};
+				},
+			}
 		});
 	};
 

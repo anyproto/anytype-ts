@@ -53,9 +53,9 @@ const ListIndex = observer(class ListIndex extends React.Component<Props, {}> {
 				targetId = item.id;
 			};
 
-			let { _empty_, layout, name, iconEmoji, iconImage, snippet } = object;
+			let { id, _empty_, layout, name, iconEmoji, iconImage, snippet } = object;
 			let type = dbStore.getObjectType(object.type);
-			let cn = [ 'item' ];
+			let cn = [ 'item', DataUtil.layoutClass(id, layout) ];
 			
 			if (_empty_) {
 				return (
@@ -67,8 +67,7 @@ const ListIndex = observer(class ListIndex extends React.Component<Props, {}> {
 				);
 			};
 
-			if (layout == I.ObjectLayout.Task) {
-				cn.push('isTask');
+			if ([ I.ObjectLayout.Task, I.ObjectLayout.Bookmark ].includes(layout)) {
 				icon = <IconObject size={18} object={object} canEdit={true} onCheckbox={(e: any) => { this.onCheckbox(e, object); }} />;
 			} else {
 				icon = <IconObject size={48} object={object} />;

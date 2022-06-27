@@ -165,6 +165,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		};
 
 		let editor = null;
+
 		if (readonly) {
 			editor = <div id="value" className={cv.join(' ')} />;
 		} else {
@@ -195,9 +196,11 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 				<div className="markers">
 					{marker ? <Marker {...marker} id={id} color={color} /> : ''}
 				</div>
-				<div className="additional">
-					{additional}
-				</div>
+				{additional ? (
+					<div className="additional">
+						{additional}
+					</div>
+				) : ''}
 				<div className="wrap">
 					<span id="placeholder" className={[ 'placeholder', 'c' + id ].join(' ')}>{placeholder}</span>
 					{editor}
@@ -335,10 +338,6 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 				onChange: (marks: I.Mark[]) => { self.setMarks(marks); },
 			};
 
-			if (!scheme) {
-				url = 'http://' + url;
-			};
-
 			if (isInside) {
 				route = '/' + url.split('://')[1];
 
@@ -350,6 +349,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 					type: I.MarkType.Object,
 				});
 			} else {
+				url = Util.urlFix(url);
 				param = Object.assign(param, {
 					param: url,
 					type: I.MarkType.Link,

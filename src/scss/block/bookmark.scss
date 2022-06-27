@@ -5,6 +5,8 @@
 	.block.blockBookmark {
 		.focusable { border-radius: 6px; }
 
+		.loaderWrapper { border-radius: 4px; border: solid 1px $colorBorderDark; height: 48px; width: 100%; }
+
 		.inner { 
 			display: flex; border-radius: inherit; border: 1px solid $colorLightGrey; transition: border-color 0.2s ease-in-out; 
 			cursor: pointer; position: relative; border-radius: 12px; overflow: hidden;

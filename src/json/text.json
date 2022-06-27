@@ -239,6 +239,8 @@
 
 	"blockFileError": { "en": "There was an error uploading the file" },
 
+	"blockBookmarkError": { "en": "There was an error fetching the url" },
+
 	"popupSettingsTitle": { "en": "Settings" },
 	"popupSettingsAccountTitle": { "en": "Account & data" },
 	"popupSettingsAccountDeleteTitle": { "en": "Delete account" },
@@ -430,6 +432,7 @@
 	"defaultNameSet": { "en": "New set" },
 	"defaultNameType": { "en": "New type" },
 	"defaultNameRelation": { "en": "New relation" },
+	"defaultNameBookmark": { "en": "New bookmark" },
 	"defaultNameView": { "en": "New view" },
 
 	"placeholderBlock": { "en": "Type text or / for commands" },

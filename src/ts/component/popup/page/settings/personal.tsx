@@ -12,6 +12,8 @@ interface Props extends I.Popup, RouteComponentProps<any> {
 	onPage: (id: string) => void;
 };
 
+const Constant = require('json/constant.json');
+
 const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal extends React.Component<Props, {}> {
 
 	constructor (props: any) {
@@ -60,7 +62,9 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 
 	onType (e: any) {
 		const { getId } = this.props;
-		const types = DataUtil.getObjectTypesForNewObject(false).map(it => it.id);
+		
+		let types = DataUtil.getObjectTypesForNewObject().map(it => it.id);
+		types = types.filter(it => ![ Constant.typeId.bookmark ].includes(it));
 
 		menuStore.open('searchObject', {
 			element: `#${getId()} #defaultType`,

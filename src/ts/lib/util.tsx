@@ -626,9 +626,7 @@ class Util {
 			x = Math.max(12, x);
 			x = Math.min(win.width() - obj.outerWidth() - 12, x);
 
-			raf(() => {
-				obj.css({ left: x, top: y, opacity: 1 });
-			});
+			obj.css({ left: x, top: y, opacity: 1 });
 		}, 250);
 	};
 	
@@ -708,6 +706,20 @@ class Util {
 	
 	filterFix (v: string) {
 		return String(v || '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+	};
+
+	urlFix (url: string): string {
+		url = String(url || '');
+		if (!url) {
+			return '';
+		};
+
+		const scheme = this.getScheme(url);
+		if (!scheme) {
+			url = 'http://' + url;
+		};
+
+		return url;
 	};
 	
 	lengthFixOut (text: string, len: number): number {
@@ -872,11 +884,13 @@ class Util {
 	route (route: string, replace?: boolean) {
 		const method = replace ? 'replace' : 'push';
 
-		this.tooltipHide(true);
-		this.previewHide(true);
-
 		menuStore.closeAll();
-		popupStore.closeAll(null, () => { this.history[method](route); });
+		popupStore.closeAll(null, () => { 
+			this.tooltipHide(true);
+			this.previewHide(true);
+
+			this.history[method](route); 
+		});
 	};
 
 	intercept (obj: any, change: any) {

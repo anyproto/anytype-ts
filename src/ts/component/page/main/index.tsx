@@ -532,7 +532,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		};
 
 		l ? wrapper.addClass('isSelecting') : wrapper.removeClass('isSelecting');
-		cnt.text(`Selected ${l} ${Util.cntWord(l, 'object', 'objects')}`);
+		cnt.text(`${l} ${Util.cntWord(l, 'object', 'objects')} selected`);
 
 		node.find('.item.isSelected').removeClass('isSelected');
 		this.selected.forEach((id: string) => {

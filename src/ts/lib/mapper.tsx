@@ -140,12 +140,8 @@ const Mapper = {
 
 		BlockBookmark: (obj: any) => {
 			return {
-				url: obj.getUrl(),
-				title: obj.getTitle(),
-				description: obj.getDescription(),
-				imageHash: obj.getImagehash(),
-				faviconHash: obj.getFaviconhash(),
-				type: obj.getType(),
+				targetObjectId: obj.getTargetobjectid(),
+				state: obj.getState(),
 			};
 		},
 
@@ -483,12 +479,8 @@ const Mapper = {
 		BlockBookmark: (obj: any) => {
 			const content = new Model.Block.Content.Bookmark();
 	
-			content.setUrl(obj.url);
-			content.setTitle(obj.title);
-			content.setDescription(obj.description);
-			content.setImagehash(obj.imageHash);
-			content.setFaviconhash(obj.faviconHash);
-			content.setType(obj.type);
+			content.setTargetobjectid(obj.targetObjectId);
+			content.setState(obj.state);
 
 			return content;
 		},

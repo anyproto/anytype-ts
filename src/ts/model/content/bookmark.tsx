@@ -3,27 +3,18 @@ import { observable, intercept, makeObservable } from 'mobx';
 
 class BlockContentBookmark implements I.ContentBookmark {
 	
-	url: string = '';
-	title: string = '';
-	description: string = '';
-	imageHash: string = '';
-	faviconHash: string = '';
+	targetObjectId: string = '';
+	state: I.BookmarkState = I.BookmarkState.Empty;
 	
 	constructor (props: I.ContentBookmark) {
 		let self = this;
 		
-		self.url = String(props.url || '');
-		self.title = String(props.title || '');
-		self.description = String(props.description || '');
-		self.imageHash = String(props.imageHash || '');
-		self.faviconHash = String(props.faviconHash || '');
+		self.targetObjectId = String(props.targetObjectId || '');
+		self.state = Number(props.state) || I.BookmarkState.Empty;
 
 		makeObservable(self, {
-			url: observable,
-			title: observable,
-			description: observable,
-			imageHash: observable,
-			faviconHash: observable,
+			targetObjectId: observable,
+			state: observable,
 		});
 
 		intercept(self as any, (change: any) => { return Util.intercept(self, change); });

@@ -95,10 +95,7 @@ const PreviewLink = observer(class PreviewLink extends React.Component<Props, St
 				return;
 			};
 
-			this.setState({
-				...message.previewLink,
-				loading: false,
-			});
+			this.setState({ ...message.previewLink, loading: false });
 		});
 	};
 

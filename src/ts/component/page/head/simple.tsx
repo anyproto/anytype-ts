@@ -75,7 +75,6 @@ const HeadSimple = observer(class Controls extends React.Component<Props, {}> {
 		if (allowCreate && (object.type == Constant.typeId.type)) {
 			button = <Button id="button-create" text="Create" onClick={onCreate} />;
 		};
-
 		if (object.type == Constant.typeId.relation) {
 			button = <Button id="button-create" text="Create set" onClick={onCreate} />;
 		};
@@ -97,9 +96,9 @@ const HeadSimple = observer(class Controls extends React.Component<Props, {}> {
 					</div>
 				</div>
 
-				<div className="side right">
-					{button}
-				</div>
+				{button ? (
+					<div className="side right">{button}</div>
+				) : ''}
 			</div>
 		);
 	};

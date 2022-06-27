@@ -109,7 +109,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 	onIconPage () {
 		const { rootId } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
-		
+
 		menuStore.open('smile', { 
 			element: '.editorControls #button-icon',
 			onOpen: () => {

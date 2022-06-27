@@ -128,6 +128,7 @@ class DataUtil {
 			case I.ObjectLayout.Image:		 c = (id ? 'isImage' : 'isFile'); break;
 			case I.ObjectLayout.File:		 c = 'isFile'; break;
 			case I.ObjectLayout.Note:		 c = 'isNote'; break;
+			case I.ObjectLayout.Bookmark:	 c = 'isBookmark'; break;
 		};
 		return c;
 	};
@@ -417,6 +418,7 @@ class DataUtil {
 			case I.ObjectLayout.Graph:		 r = 'graph'; break;
 			case I.ObjectLayout.Store:		 r = 'store'; break;
 			case I.ObjectLayout.History:	 r = 'history'; break;
+			case I.ObjectLayout.Bookmark:	 r = 'bookmark'; break;
 		};
 		return r;
 	};
@@ -556,7 +558,8 @@ class DataUtil {
 		].map(this.menuMapperBlock);
 	};
 
-	getObjectTypesForNewObject (withSet: boolean) {
+	getObjectTypesForNewObject (param?: any) {
+		const { withSet, withBookmark } = param || {};
 		const { config } = commonStore;
 		const skip = [ 
 			Constant.typeId.note, 
@@ -576,15 +579,20 @@ class DataUtil {
 		let note = dbStore.getObjectType(Constant.typeId.note);
 		let set = dbStore.getObjectType(Constant.typeId.set);
 		let task = dbStore.getObjectType(Constant.typeId.task);
+		let bookmark = dbStore.getObjectType(Constant.typeId.bookmark);
+
+		if (withBookmark && bookmark) {
+			items.unshift(bookmark);
+		};
 
 		items.sort(this.sortByName);
 
-		if (task) {
-			items.unshift(task);
-		};
-
 		if (withSet && set) {
 			items.unshift(set);
+		};
+
+		if (task) {
+			items.unshift(task);
 		};
 
 		if (page && note) {
@@ -602,7 +610,7 @@ class DataUtil {
 			{ type: I.BlockType.Page, id: 'existing', icon: 'existing', lang: 'Existing', arrow: true },
 		];
 		let i = 0;
-		let items = this.getObjectTypesForNewObject(true);
+		let items = this.getObjectTypesForNewObject({ withSet: true });
 
 		for (let type of items) {
 			ret.push({ 
@@ -1023,6 +1031,7 @@ class DataUtil {
 				ret.withIcon = true;
 				break;
 
+			case I.ObjectLayout.Bookmark:
 			case I.ObjectLayout.Task:
 				break;
 
