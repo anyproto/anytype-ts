@@ -27,6 +27,7 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 		const cn = [ 'cell', 'column' + column.id ];
 		const cellId = [ row.id, column.id ].join('-');
 		const canDragRow = !row.content.isHeader;
+		const inner = <div className="inner" />;
 
 		if (block) {
 			cn.push('align-v' + block.vAlign);
@@ -109,7 +110,7 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 				)}
 
 				<div className="resize" onMouseDown={(e: any) => { onResizeStart(e, column.id); }} />
-				<Icon className="menu" onClick={(e: any) => { onOptions(e, I.BlockType.Text, row.id, column.id, cellId); }} />
+				<Icon className="menu" inner={inner} onClick={(e: any) => { onOptions(e, I.BlockType.Text, row.id, column.id, cellId); }} />
 			</div>
 		);
 	};

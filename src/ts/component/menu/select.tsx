@@ -304,7 +304,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 		const { param } = this.props;
 		const { data } = param;
 		const { noFilter } = data;
-		const options = this.getItemsWithoutFilter();
+		const options = this.getItemsWithoutFilter().filter(it => !it.isDiv);
 
 		return !noFilter && (options.length > LIMIT);
 	};
@@ -322,13 +322,14 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 		if (withFilter) {
 			height += 60;
 		};
-		if (items.length <= LIMIT || noScroll) {
+		if (!withFilter || noScroll) {
 			height += 16;
 		};
 
-		for (let i = 0; i < items.length; ++i) {
-			height += this.getRowHeight(items[i]);
-		};
+		items.forEach((item: any) => {
+			height += this.getRowHeight(item);
+		});
+
 		if (!noScroll) {
 			height = Math.min(370, height);
 		};

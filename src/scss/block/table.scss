@@ -44,9 +44,9 @@
 			display: block; border-collapse: collapse; box-shadow: 0px 1px, 1px 0px; color: $colorBorderDark; position: relative; border-radius: 4px;
 		}
 
-		.table.isClone { border-radius: 4px; border: 2px solid #ffcf6f; box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2); };
+		.table.isClone { border-radius: 4px; box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2); };
 		.table.isClone {
-			.handleColumn { display: block; }
+			.handleColumn { display: block; border-color: $colorOrange; }
 			.cell { box-shadow: 0px 1px inset, 1px 0px inset; }
 		}
 		
@@ -125,7 +125,9 @@
 		}
 
 		.cell.isHighlightedCell {
-			.icon.menu { border-color: #ffcf6f; box-shadow: 0px 0px 0px 2px #ffcf6f; }
+			.icon.menu { 
+				.inner { border-color: #ffcf6f; box-shadow: 0px 0px 0px 2px #ffcf6f; }
+			}
 		}
 
 		.cell:hover {
@@ -163,15 +165,21 @@
 				.markers { padding: 9px 0px 9px 9px; }
 				.wrap { display: table; }
 				#value { display: table-cell; }
-				#value, .placeholder  { padding: 9px 9px 9px 0px; }
+				#value, .placeholder { padding: 9px 20px 9px 0px; }
+				.placeholder { display: none !important; }
 			}
 
-			.icon.menu { 
-				width: 8px; height: 20px; box-shadow: 0px 0px 0px 1px $colorBorderDark; border-radius: 10px; background-image: url('~img/icon/table/handle/cell.svg');
-				background-size: 8px 16px; position: absolute; right: 9px; top: 50%; margin-top: -10px; z-index: 2; cursor: pointer; opacity: 0; pointer-events: none;
-				background-color: #fff;
+			.icon.menu { width: 8px; height: 100%; position: absolute; right: 6px; top: 0px; z-index: 2; cursor: pointer; opacity: 0; pointer-events: none; }
+			.icon.menu {
+				.inner { 
+					width: 8px; height: 20px; border-radius: 4px; background-image: url('~img/icon/table/handle/cell.svg'); background-size: 8px 16px;
+					position: absolute; left: 0px; top: 50%; margin-top: -10px; background-repeat: no-repeat; background-position: center center; 
+					transition: $transitionFast;
+				} 
 			}
-			.icon.menu:hover { border-color: #ffcf6f; box-shadow: 0px 0px 0px 2px #ffcf6f; }
+			.icon.menu:hover {
+				.inner { box-shadow: 0px 0px 0px 1px $colorBorderDark; background-color: #fff; }
+			}
 
 			.block.blockText { @include text-common; }
 		}

@@ -1273,9 +1273,12 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 	};
 	
 	onMouseDown (e: any) {
-		const { dataset, block } = this.props;
+		const { dataset, block, isInsideTable } = this.props;
 		const { selection } = dataset || {};
-		const { id } = block;
+
+		if (isInsideTable) {
+			return;
+		};
 		
 		window.clearTimeout(this.timeoutClick);
 
@@ -1285,7 +1288,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			e.stopPropagation();
 			
 			this.clicks = 0;
-			selection.set(I.SelectType.Block, [ id ]);
+			selection.set(I.SelectType.Block, [ block.id ]);
 			focus.clear(true);
 			menuStore.close('blockContext');
 			window.clearTimeout(this.timeoutContext);

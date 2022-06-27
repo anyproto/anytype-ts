@@ -796,13 +796,21 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 		// Enter
 		keyboard.shortcut('enter, shift+enter', e, (pressed: string) => {
-			this.onEnterBlock(e, range, pressed, props);
+			if (isInsideTable && (pressed == 'enter')) {
+				this.onArrowVertical(e, 'arrowdown', length, props);
+			} else {
+				this.onEnterBlock(e, range, pressed);
+			};
 		});
 
 		if (!menuOpen) {
 			// Tab, indent block
 			keyboard.shortcut('tab, shift+tab', e, (pressed: string) => {
-				this.onTabBlock(e, pressed);
+				if (isInsideTable) {
+					this.onArrowHorizontal (e, 'arrowright', range, length, props);
+				} else {
+					this.onTabBlock(e, pressed);
+				};
 			});
 
 			// Last/first block
@@ -1144,15 +1152,17 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 	};
 
 	// Split
-	onEnterBlock (e: any, range: I.TextRange, pressed: string, props: any) {
+	onEnterBlock (e: any, range: I.TextRange, pressed: string) {
 		const { rootId } = this.props;
-		const { isInsideTable } = props;
 		const { focused } = focus.state;
 		const block = blockStore.getLeaf(rootId, focused);
 
 		if (!block) {
 			return;
 		};
+
+		const length = block.getLength();
+		const replace = !range.to && block.isTextList() && !length;
 
 		if (block.isTextCode() && (pressed == 'enter')) {
 			return;
@@ -1161,9 +1171,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			return;
 		};
 		if (block.isText() && !block.isTextCode() && pressed.match('shift')) {
-			return;
-		};
-		if (isInsideTable && (pressed == 'enter')) {
 			return;
 		};
 
@@ -1177,9 +1184,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		
 		e.preventDefault();
 		e.stopPropagation();
-
-		let length = block.getLength();
-		let replace = !range.to && block.isTextList() && !length;
 
 		if (replace) {
 			C.BlockListTurnInto(rootId, [ block.id ], I.TextStyle.Paragraph);

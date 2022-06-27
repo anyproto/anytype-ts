@@ -278,10 +278,11 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				]);
 				options = options.concat(optionsColor);
 
-				element = node.find(`#cell-${cellId}`);
+				element = node.find(`#cell-${cellId} .icon.menu .inner`);
 				menuParam = Object.assign(menuParam, {
 					element,
-					horizontal: I.MenuDirection.Center,
+					vertical: I.MenuDirection.Center,
+					offsetX: 12,
 				});
 
 				fill = (callBack: () => void) => {
@@ -330,7 +331,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 							menuId = 'select2';
 							menuParam.component = 'select';
 							menuParam.data = Object.assign(menuParam.data, {
-								options: this.optionsRow(rowId).filter(it => !it.isDiv),
+								options: this.optionsRow(rowId, true),
 								onSelect: (e: any, item: any) => {
 									this.onSelect(e, item, rowId, columnId, cellId, blockIds);
 								}
@@ -341,7 +342,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 							menuId = 'select2';
 							menuParam.component = 'select';
 							menuParam.data = Object.assign(menuParam.data, {
-								options: this.optionsColumn(columnId).filter(it => !it.isDiv),
+								options: this.optionsColumn(columnId, true),
 								onSelect: (e: any, item: any) => {
 									this.onSelect(e, item, rowId, columnId, cellId, blockIds);
 								}
@@ -421,6 +422,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				},
 				onSelect: (e: any, item: any) => {
 					this.onSelect(e, item, rowId, columnId, cellId, blockIds);
+					menuContext.close();
 				}
 			},
 		});
@@ -641,9 +643,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 	};
 
 	onCellKeyDown (e: any, rowId: string, columnId: string, id: string, text: string, marks: I.Mark[], range: I.TextRange, props: any) {
-		const { rootId, onKeyDown } = this.props;
-		const { focused } = focus.state;
-
+		const { onKeyDown } = this.props;
 
 		let ret = false;
 		
@@ -778,7 +778,6 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 
 		this.initCache(I.BlockType.TableColumn);
 		this.setEditing('');
-		this.onOptionsOpen(I.BlockType.TableColumn, '', id, '');
 		this.preventSelect(true);
 		this.preventDrop(true);
 	};
@@ -1122,7 +1121,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		return width;
 	};
 
-	optionsRow (id: string) {
+	optionsRow (id: string, isInner?: boolean) {
 		const { rootId } = this.props;
 		const { rows } = this.getData();
 		const row = blockStore.getLeaf(rootId, id);
@@ -1140,45 +1139,39 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 
 		if (!isHeader) {
 			options = options.concat([
-				{ id: 'rowBefore', icon: 'table-insert-top', name: 'Row before' },
-				{ id: 'rowAfter', icon: 'table-insert-bottom', name: 'Row after' },
-				(idx > 0) ? { id: 'rowMoveTop', icon: 'table-move-top', name: 'Move row up' } : null,
-				(idx < length - 1) ? { id: 'rowMoveBottom', icon: 'table-move-bottom', name: 'Move row down' } : null,
-				{ id: 'rowCopy', icon: 'copy', name: 'Duplicate row' },
+				{ id: 'rowBefore', icon: 'table-insert-top', name: 'Insert above' },
+				{ id: 'rowAfter', icon: 'table-insert-bottom', name: 'Insert below' },
+				(idx > 0) ? { id: 'rowMoveTop', icon: 'table-move-top', name: 'Move up' } : null,
+				(idx < length - 1) ? { id: 'rowMoveBottom', icon: 'table-move-bottom', name: 'Move down' } : null,
+				{ id: 'rowCopy', icon: 'copy', name: 'Duplicate' },
+				{ isDiv: true },
 			]);
 		};
 
-		if (length > 1) {
-			options.push({ id: 'rowRemove', icon: 'remove', name: 'Delete row' });
-		};
+		options = options.concat([
+			{ id: 'clearContent', icon: 'clear', name: 'Clear content' },
+			(length > 1) ? { id: 'rowRemove', icon: 'remove', name: 'Delete row' } : null,
+			!isInner ? { isDiv: true } : null,
+		]);
 
-		options.push({ isDiv: true });
 		return options;
 	};
 
-	optionsColumn (id: string) {
+	optionsColumn (id: string, isInner?: boolean) {
 		const { columns } = this.getData();
 		const idx = columns.findIndex(it => it.id == id);
 		const length = columns.length;
 		const options: any[] = [
-			{ id: 'columnBefore', icon: 'table-insert-left', name: 'Column before' },
-			{ id: 'columnAfter', icon: 'table-insert-right', name: 'Column after' },
+			{ id: 'columnBefore', icon: 'table-insert-left', name: 'Insert left' },
+			{ id: 'columnAfter', icon: 'table-insert-right', name: 'Insert right' },
+			(idx > 0) ? { id: 'columnMoveLeft', icon: 'table-move-left', name: 'Move left' } : null,
+			(idx < length - 1) ? { id: 'columnMoveRight', icon: 'table-move-right', name: 'Move right' } : null,
+			{ id: 'columnCopy', icon: 'copy', name: 'Duplicate' },
+			{ isDiv: true },
+			{ id: 'clearContent', icon: 'clear', name: 'Clear content' },
+			(length > 1) ? { id: 'columnRemove', icon: 'remove', name: 'Delete column' } : null,
+			!isInner ? { isDiv: true } : null,
 		];
-
-		if (idx > 0) {
-			options.push({ id: 'columnMoveLeft', icon: 'table-move-left', name: 'Move column left' });
-		};
-		if (idx < length - 1) {
-			options.push({ id: 'columnMoveRight', icon: 'table-move-right', name: 'Move column right' });
-		};
-
-		options.push({ id: 'columnCopy', icon: 'copy', name: 'Duplicate column' });
-
-		if (length > 1) {
-			options.push({ id: 'columnRemove', icon: 'remove', name: 'Delete column' });
-		};
-
-		options.push({ isDiv: true });
 		return options;
 	};
 
@@ -1196,9 +1189,8 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		return [
 			{ id: 'color', icon: 'color', name: 'Color', inner: innerColor, arrow: true },
 			{ id: 'background', icon: 'color', name: 'Background', inner: innerBackground, arrow: true },
-			{ id: 'style', icon: 'customize', name: 'Style', arrow: true },
+			{ id: 'style', icon: 'paragraph', name: 'Style', arrow: true },
 			{ id: 'clearStyle', icon: 'clear', name: 'Clear style' },
-			{ id: 'clearContent', icon: 'clear', name: 'Clear content' },
 			{ isDiv: true },
 		];
 	};
