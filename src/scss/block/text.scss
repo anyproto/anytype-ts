@@ -27,13 +27,17 @@
 		}
 
 		lnk { position: relative; }
-		lnk, obj { cursor: pointer; color: inherit; text-decoration: none; border-bottom: 1px solid $colorMediumGrey; transition: border-color 0.2s ease-in-out; }
+		lnk, obj { 
+			cursor: pointer; color: inherit; text-decoration: none; border-bottom: 1px solid $colorMediumGrey; transition: border-color 0.2s ease-in-out;
+		}
 		lnk.disabled, obj.disabled { border-width: 0px; }
 		lnk:hover, obj:hover { border-color: $colorBlack; }
 
 		lnk, obj {
 			underline { text-decoration: none; }
 		}
+
+		underline {}
 
 		mention { cursor: pointer; display: inline; user-select: all !important; position: relative; }
 		mention * { user-select: text !important; }
@@ -62,7 +66,7 @@
 		bold { font-weight: 600; }
 		italic { font-style: italic; }
 		strike { text-decoration: line-through; }
-		underline { text-decoration: underline; }
+		underline { border-bottom: 1px solid; }
 		
 		.markers { display: flex; }
 		.markers {
