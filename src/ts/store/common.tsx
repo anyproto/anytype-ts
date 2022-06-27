@@ -54,7 +54,6 @@ class CommonStore {
 	public sidebarOldFixed: boolean = false;
 	public isFullScreen: boolean = false;
 	public autoSidebarValue: boolean = false;
-	public timezoneValue: I.Timezone = I.Timezone.GMT;
 
     constructor() {
         makeObservable(this, {
@@ -70,7 +69,6 @@ class CommonStore {
 			nativeThemeIsDark: observable,
 			typeId: observable,
 			isFullScreen: observable,
-			timezoneValue: observable,
             config: computed,
             progress: computed,
             preview: computed,
@@ -81,7 +79,6 @@ class CommonStore {
 			theme: computed,
 			nativeTheme: computed,
 			sidebar: computed,
-			timezone: computed,
             coverSet: action,
             coverSetUploadedImage: action,
             gatewaySet: action,
@@ -151,18 +148,6 @@ class CommonStore {
 
 	get sidebar(): Sidebar {
 		return this.sidebarObj;
-	};
-
-	get timezone(): I.Timezone {
-		return this.timezoneValue;
-	};
-
-	timezoneSet (v: I.Timezone) {
-		this.timezoneValue = Number(v) || I.Timezone.GMT;
-	};
-
-	timezoneGet () {
-		return DataUtil.timezones().find(it => it.id == this.timezone);
 	};
 
     coverSet (id: string, image: string, type: I.CoverType) {
@@ -342,7 +327,6 @@ class CommonStore {
 		blockStore.storeSetRelation(info.marketplaceRelationObjectId);
 
 		this.gatewaySet(info.gatewayUrl);
-		this.timezoneSet(info.timezone);
 
 		analytics.device(info.deviceId);
 	};

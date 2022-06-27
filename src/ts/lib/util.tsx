@@ -325,11 +325,11 @@ class Util {
 		};
 	};
 
-	time () {
-		let timestamp = Math.floor((new Date()).getTime() / 1000);
-		let timezone = commonStore.timezoneGet();
+	time (): number {
+		const date = new Date();
+		const timestamp = Math.floor(date.getTime() / 1000);
 
-		return timestamp + timezone.offset;
+		return timestamp;
 	};
 
 	timestamp (y?: number, m?: number, d?: number, h?: number, i?: number, s?: number): number {
@@ -340,10 +340,16 @@ class Util {
 		i = Number(i) || 0;
 		s = Number(s) || 0;
 
-		let timestamp = Math.floor(Date.UTC(y, m - 1, d, h, i, s, 0) / 1000);
-		let timezone = commonStore.timezoneGet();
+		return Math.floor(Date.UTC(y, m - 1, d, h, i, s, 0) / 1000);
+	};
 
-		return timestamp - timezone.offset;
+	today () {
+		const t = this.time();
+		const d = Number(this.date('d', t));
+		const m = Number(this.date('n', t));
+		const y = Number(this.date('Y', t));
+
+		return this.timestamp(y, m, d);
 	};
 
 	parseDate (value: string, format?: I.DateFormat): number {
@@ -360,6 +366,7 @@ class Util {
 		let [ h, i, s ] = String(time || '').split(':').map((it: any) => { return Number(it) || 0; });
 
 		m = Math.min(12, Math.max(1, m));
+
 		let maxDays = Constant.monthDays[m];
 		if ((m == 2) && (y % 4 === 0)) {
 			maxDays = 29;
@@ -375,8 +382,7 @@ class Util {
 	date (format: string, timestamp: number) {
 		timestamp = Number(timestamp) || 0;
 
-		const timezone = commonStore.timezoneGet();
-		const d = new Date((timestamp + timezone.offset) * 1000);
+		const d = new Date((timestamp) * 1000);
 
 		const pad = (n: number, c: number) => {
 			let s = String(n);
@@ -399,7 +405,7 @@ class Util {
 				return t.substr(0,3);
 			},
 			j: () => {
-				return d.getUTCDate();
+				return d.getDate();
 			},
 			// Month
 			F: () => {
@@ -412,39 +418,39 @@ class Util {
 				return f.F().substr(0, 3);
 			},
 			n: () => {
-				return d.getUTCMonth() + 1;
+				return d.getMonth() + 1;
 			},
 			// Year
 			Y: () => {
-				return d.getUTCFullYear();
+				return d.getFullYear();
 			},
 			y: () => {
-				return (d.getUTCFullYear() + '').slice(2);
+				return (d.getFullYear() + '').slice(2);
 			},
 			// Time
 			a: () => {
-				return d.getUTCHours() > 11 ? 'pm' : 'am';
+				return d.getHours() > 11 ? 'pm' : 'am';
 			},
 			A: () => {
-				return d.getUTCHours() > 11 ? 'PM' : 'AM';
+				return d.getHours() > 11 ? 'PM' : 'AM';
 			},
 			g: () => {
-				return d.getUTCHours() % 12 || 12;
+				return d.getHours() % 12 || 12;
 			},
 			h: () => {
 				return pad(f.g(), 2);
 			},
 			H: () => {
-				return pad(d.getUTCHours(), 2);
+				return pad(d.getHours(), 2);
 			},
 			i: () => {
-				return pad(d.getUTCMinutes(), 2);
+				return pad(d.getMinutes(), 2);
 			},
 			s: () => {
-				return pad(d.getUTCSeconds(), 2);
+				return pad(d.getSeconds(), 2);
 			},
 			w: () => {
-				return d.getUTCDay();
+				return d.getDay();
 			},
 		};
 		return format.replace(/[\\]?([a-zA-Z])/g, (t: string, s: string) => {

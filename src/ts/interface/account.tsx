@@ -23,7 +23,6 @@ export interface AccountInfo {
 	marketplaceRelationObjectId: string;
 	deviceId: string;
 	localStoragePath: string;
-	timezone: I.Timezone;
 };
 
 export interface AccountConfig {
