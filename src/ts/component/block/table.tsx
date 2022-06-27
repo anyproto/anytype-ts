@@ -1204,7 +1204,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		};
 
 		return [
-			{ id: 'horizontal', icon: this.alignHIcon(current.hAlign), name: 'Horizontal align', arrow: true },
+			{ id: 'horizontal', icon: this.alignHIcon(current.hAlign), name: 'Text align', arrow: true },
 			{ id: 'vertical', icon: this.alignVIcon(current.vAlign), name: 'Vertical align', arrow: true },
 		];
 	};
