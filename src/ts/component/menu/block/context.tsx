@@ -56,10 +56,6 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 			markActions = markActions.filter((it: any) => { return ![ I.MarkType.Bold ].includes(it.type); });
 		};
 
-		if (!config.experimental) {
-			markActions = markActions.filter((it: any) => { return ![ I.MarkType.Under ].includes(it.type); });
-		};
-		
 		return (
 			<div className="flex">
 				{block.canTurn() ? (
