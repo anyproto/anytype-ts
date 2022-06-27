@@ -320,9 +320,11 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			return;
 		};
 
-		items.unbind('mouseenter.link');
+		items.each((i: number, item: any) => {
+			this.borderColor($(item));
+		});
 			
-		items.on('mouseenter.link', function (e: any) {
+		items.off('mouseenter.link').on('mouseenter.link', function (e: any) {
 			let el = $(this);
 			let range = el.data('range').split('-');
 			let url = String(el.attr('href') || '');
@@ -384,7 +386,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			return;
 		};
 
-		items.unbind('mouseenter.object mouseleave.object');
+		items.off('mouseenter.object mouseleave.object');
 
 		items.each((i: number, item: any) => {
 			item = $(item);
@@ -400,6 +402,8 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			if (_empty_ || isArchived || isDeleted) {
 				item.addClass('disabled');
 			};
+
+			this.borderColor(item);
 		});
 
 		items.on('mouseleave.object', function (e: any) { Util.tooltipHide(false); });
@@ -569,6 +573,18 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 				ReactDOM.render(<IconObject size={size} object={{ iconEmoji: data.param }} />, smile.get(0));
 			};
 		});
+	};
+
+	borderColor (obj: any) {
+		if (!obj.length) {
+			return;
+		};
+
+		const color = String(obj.css('color') || '').replace(/\s/g, '');
+		const rgb = color.match(/rgb\(([\d]+),([\d]+),([\d]+)\)/);
+
+		rgb.shift();
+		obj.css({ borderColor: `rgba(${rgb.join(',')},0.35)` });
 	};
 
 	emojiParam (style: I.TextStyle) {
