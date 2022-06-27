@@ -7,7 +7,7 @@
 .inputWithFile {
 	.txt { line-height: 20px; height: 20px; overflow: hidden; width: calc(100% - 26px); vertical-align: top; }
 	.fileWrap { display: inline-block; vertical-align: top; }
-	.fileWrap .border { border-bottom: 1px solid $colorMediumGrey; display: inline-block; line-height: 1; transition: $transitionFast; cursor: pointer; }
+	.fileWrap .border { border-bottom: 0.05em solid $colorMediumGrey; display: inline-block; line-height: 1; transition: $transitionFast; cursor: pointer; }
 	.fileWrap:hover .border { color: $colorBlack; }
 
 	.input::placeholder { color: $colorMediumGrey; }

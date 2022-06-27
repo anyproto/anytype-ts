@@ -11,6 +11,7 @@ interface Props {
 	index: number;
 	readonly: boolean;
 	width: number;
+	className?: string;
 	getRecord(index: number): any;
 	onRef?(ref: any, id: string): void;
 	onCellClick?(e: any, key: string, index: number): void;
@@ -22,7 +23,7 @@ const Constant = require('json/constant.json');
 const BodyCell = observer(class BodyCell extends React.Component<Props, {}> {
 
 	render () {
-		const { rootId, block, relationKey, index, readonly, onRef, onCellClick, onCellChange } = this.props;
+		const { rootId, block, className, relationKey, index, readonly, onRef, onCellClick, onCellChange } = this.props;
 		const relation: any = dbStore.getRelation(rootId, block.id, relationKey) || {};
 		const cn = [ 'cell', DataUtil.relationClass(relation.format), (!readonly ? 'canEdit' : '') ];
 		const idPrefix = 'dataviewCell';
@@ -37,6 +38,10 @@ const BodyCell = observer(class BodyCell extends React.Component<Props, {}> {
 
 		if (width <= size.icon) {
 			cn.push('small');
+		};
+
+		if (className) {
+			cn.push(className);
 		};
 
 		return (

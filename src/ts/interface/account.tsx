@@ -1,3 +1,5 @@
+import { I } from 'ts/lib';
+
 export enum AccountStatusType {
 	Active			 = 0,
     PendingDeletion	 = 1,

@@ -5,7 +5,7 @@
 	.block.blockTableOfContents { 
 		.item { cursor: pointer; color: $colorDarkGrey; padding: 4px 0px; @include text-common; }
 		.item {
-			span { border-bottom: 1px solid rgba(146, 144, 130, 0.5); transition: $transitionFast; }
+			span { border-bottom: 0.05em solid rgba(146, 144, 130, 0.5); transition: $transitionFast; }
 		}
 		.item:hover {
 			span { border-color: $colorDarkGrey; }

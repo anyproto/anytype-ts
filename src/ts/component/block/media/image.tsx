@@ -63,9 +63,7 @@ const BlockImage = observer(class BlockImage extends React.Component<Props, {}> 
 				break;
 				
 			case I.FileState.Uploading:
-				element = (
-					<Loader />
-				);
+				element = <Loader />;
 				break;
 				
 			case I.FileState.Done:

@@ -202,6 +202,10 @@ class Block implements I.Block {
 		return this.isPage() && (this.layout == I.ObjectLayout.Relation);
 	};
 
+	isObjectBookmark (): boolean { 
+		return this.isPage() && (this.layout == I.ObjectLayout.Bookmark);
+	};
+
 	isFeatured (): boolean {
 		return this.type == I.BlockType.Featured;
 	};

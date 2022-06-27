@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Icon, IconObject, Sync, ObjectName } from 'ts/component';
 import { I, Util, DataUtil, keyboard } from 'ts/lib';

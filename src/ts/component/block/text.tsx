@@ -164,6 +164,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		};
 
 		let editor = null;
+
 		if (readonly) {
 			editor = <div id="value" className={cv.join(' ')} />;
 		} else {
@@ -194,9 +195,11 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 				<div className="markers">
 					{marker ? <Marker {...marker} id={id} color={color} /> : ''}
 				</div>
-				<div className="additional">
-					{additional}
-				</div>
+				{additional ? (
+					<div className="additional">
+						{additional}
+					</div>
+				) : ''}
 				<div className="wrap">
 					<span id="placeholder" className={[ 'placeholder', 'c' + id ].join(' ')}>{placeholder}</span>
 					{editor}
@@ -316,9 +319,11 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			return;
 		};
 
-		items.unbind('mouseenter.link');
+		items.each((i: number, item: any) => {
+			this.borderColor($(item));
+		});
 			
-		items.on('mouseenter.link', function (e: any) {
+		items.off('mouseenter.link').on('mouseenter.link', function (e: any) {
 			let el = $(this);
 			let range = el.data('range').split('-');
 			let url = String(el.attr('href') || '');
@@ -334,10 +339,6 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 				onChange: (marks: I.Mark[]) => { self.setMarks(marks); },
 			};
 
-			if (!scheme) {
-				url = 'http://' + url;
-			};
-
 			if (isInside) {
 				route = '/' + url.split('://')[1];
 
@@ -349,6 +350,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 					type: I.MarkType.Object,
 				});
 			} else {
+				url = Util.urlFix(url);
 				param = Object.assign(param, {
 					param: url,
 					type: I.MarkType.Link,
@@ -383,7 +385,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			return;
 		};
 
-		items.unbind('mouseenter.object mouseleave.object');
+		items.off('mouseenter.object mouseleave.object');
 
 		items.each((i: number, item: any) => {
 			item = $(item);
@@ -399,6 +401,8 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			if (_empty_ || isArchived || isDeleted) {
 				item.addClass('disabled');
 			};
+
+			this.borderColor(item);
 		});
 
 		items.on('mouseleave.object', function (e: any) { Util.tooltipHide(false); });
@@ -568,6 +572,18 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 				ReactDOM.render(<IconObject size={size} object={{ iconEmoji: data.param }} />, smile.get(0));
 			};
 		});
+	};
+
+	borderColor (obj: any) {
+		if (!obj.length) {
+			return;
+		};
+
+		const color = String(obj.css('color') || '').replace(/\s/g, '');
+		const rgb = color.match(/rgb\(([\d]+),([\d]+),([\d]+)\)/);
+
+		rgb.shift();
+		obj.css({ borderColor: `rgba(${rgb.join(',')},0.35)` });
 	};
 
 	emojiParam (style: I.TextStyle) {

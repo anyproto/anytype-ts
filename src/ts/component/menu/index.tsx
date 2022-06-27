@@ -61,6 +61,7 @@ import MenuDataviewDate from './dataview/date';
 import MenuDataviewText from './dataview/text';
 import MenuDataviewSource from './dataview/source';
 import MenuDataviewContext from './dataview/context';
+import MenuDataviewCreateBookmark from './dataview/create/bookmark';
 
 interface Props extends I.Menu {
 	dataset?: any;
@@ -135,6 +136,7 @@ const Components: any = {
 	dataviewText:			 MenuDataviewText,
 	dataviewSource:			 MenuDataviewSource,
 	dataviewContext:		 MenuDataviewContext,
+	dataviewCreateBookmark:	 MenuDataviewCreateBookmark,
 };
 
 const Menu = observer(class Menu extends React.Component<Props, State> {

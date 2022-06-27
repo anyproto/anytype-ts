@@ -12,6 +12,7 @@ class ScrollOnMove {
 	documentWidth: number = 0;
 	documentHeight: number = 0;
 	isPopup: boolean = false;
+	frame: number = 0;
 
 	onMouseDown (e: any, isPopup: boolean) {
 		this.isPopup = isPopup;
@@ -117,7 +118,11 @@ class ScrollOnMove {
 			(nextScrollX !== currentScrollX) ||
 			(nextScrollY !== currentScrollY)
 		) {
-			raf(() => {
+			if (this.frame) {
+				raf.cancel(this.frame);
+			};
+
+			this.frame = raf(() => {
 				if (container) {
 					container.scrollTo(nextScrollX, nextScrollY);
 				};

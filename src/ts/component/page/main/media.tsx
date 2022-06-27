@@ -16,7 +16,6 @@ interface State {
 };
 
 const $ = require('jquery');
-const raf = require('raf');
 const { app } = window.require('@electron/remote')
 const path = window.require('path');
 const userPath = app.getPath('userData');
@@ -44,7 +43,6 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<Props
 
 	render () {
 		const { isDeleted } = this.state;
-		const { isPopup } = this.props;
 		const rootId = this.getRootId();
 		const object = detailStore.get(rootId, rootId, [ 'heightInPixels' ]);
 
@@ -52,14 +50,13 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<Props
 			return <Deleted {...this.props} />;
 		};
 
-		const featured: any = new M.Block({ id: rootId + '-featured', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
-		const blocks = blockStore.getBlocks(rootId);
-		const file = blocks.find((it: I.Block) => { return it.isFile(); });
-
 		if (this.loading) {
 			return <Loader id="loader" />;
 		};
 
+		const featured: any = new M.Block({ id: rootId + '-featured', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
+		const blocks = blockStore.getBlocks(rootId);
+		const file = blocks.find((it: I.Block) => { return it.isFile(); });
 		const relations = blocks.filter((it: I.Block) => { return it.isRelation(); });
 
 		const isVideo = file?.isFileVideo();
@@ -120,8 +117,8 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<Props
 									<Block {...this.props} key={featured.id} rootId={rootId} iconSize={20} block={featured} />
 
 									<div className="buttons">
-										<Button text="Open" color="blank" className="download" onClick={this.onOpen} />
-										<Button text="Download" color="blank" className="download" onClick={this.onDownload} />
+										<Button text="Open" color="blank" onClick={this.onOpen} />
+										<Button text="Download" color="blank" onClick={this.onDownload} />
 									</div>
 								</div>
 

@@ -317,6 +317,6 @@ html.themeDark {
     .cellContent.c-phone 
     {
         .name { border-color: $colorSecondary; }
-        .name:hover { border-color: $colorPrimary; }
+        .name:hover { color: $colorPrimary; border-color: $colorPrimary; }
     }
 }

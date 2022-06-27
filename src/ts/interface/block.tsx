@@ -134,6 +134,7 @@ export interface Block {
 	isObjectAudio?(): boolean;
 	isObjectType?(): boolean;
 	isObjectRelation?(): boolean;
+	isObjectBookmark?(): boolean;
 
 	isFeatured?(): boolean;
 	isDataview?(): boolean;

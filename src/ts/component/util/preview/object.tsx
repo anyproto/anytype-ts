@@ -46,7 +46,7 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 		const { name, description, coverType, coverId, coverX, coverY, coverScale } = object;
 		const author = detailStore.get(contextId, object.creator, []);
 		const type: any = dbStore.getObjectType(object.type) || {};
-		const childBlocks = blockStore.getChildren(contextId, rootId, (it: I.Block) => { return !it.isLayoutHeader(); }).slice(0, 10);
+		const childBlocks = blockStore.getChildren(contextId, rootId, it => !it.isLayoutHeader()).slice(0, 10);
 		const isTask = object.layout == I.ObjectLayout.Task;
 		const cn = [ 'previewObject' , check.className, className ];
 
@@ -312,18 +312,22 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 
 	componentDidMount () {
 		this._isMounted = true;
-		this.open();
+		this.load();
 	};
 
 	componentDidUpdate () {
-		const { rootId } = this.props;
+		const { rootId, position } = this.props;
 		const contextId = this.getRootId();
 		const root = blockStore.wrapTree(contextId, rootId);
 
-		this.open();
+		this.load();
 
 		if (root) {
 			blockStore.updateNumbersTree([ root ]);
+		};
+
+		if (position) {
+			position();
 		};
 	};
 
@@ -332,7 +336,7 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 		Action.pageClose(this.getRootId(), false);
 	};
 
-	open () {
+	load () {
 		const { loading } = this.state;
 		const { rootId, position, setObject } = this.props;
 		const contextId = this.getRootId();
@@ -353,9 +357,6 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 
 			if (setObject) {
 				setObject(detailStore.get(contextId, rootId, []));
-			};
-			if (position) {
-				position();
 			};
 		});
 	};
@@ -378,7 +379,7 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 
 	update () {
 		this.id = '';
-		this.open();
+		this.load();
 	};
 
 });

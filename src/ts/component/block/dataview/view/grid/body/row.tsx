@@ -32,7 +32,7 @@ const BodyRow = observer(class BodyRow extends React.Component<Props, {}> {
 		if (record.isDeleted) {
 			cn.push('isDeleted');
 		};
-		
+
 		return (
 			<div 
 				id={'row-' + index} 
@@ -53,6 +53,7 @@ const BodyRow = observer(class BodyRow extends React.Component<Props, {}> {
 							width={relation.width}
 							index={index} 
 							relationKey={relation.relationKey} 
+							className={`index${i}`}
 						/>
 					))}
 					<div className="cell last" />

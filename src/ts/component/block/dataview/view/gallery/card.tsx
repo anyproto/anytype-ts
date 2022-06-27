@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { I, DataUtil, Relation } from 'ts/lib';
-import { observer } from 'mobx-react';
-import { Cell, Cover, Icon } from 'ts/component';
 import * as ReactDOM from 'react-dom';
+import { Cell, Cover, Icon } from 'ts/component';
+import { I, DataUtil, Relation, Util } from 'ts/lib';
+import { observer } from 'mobx-react';
 import { commonStore, detailStore, dbStore } from 'ts/store';
 
 interface Props extends I.ViewComponent {
@@ -18,7 +18,7 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 	_isMounted: boolean = false;
 
 	render () {
-		const { rootId, block, index, getView, getRecord, onRef, style, onContext } = this.props;
+		const { rootId, block, index, getView, getRecord, onRef, style, onContext, onCellClick } = this.props;
 		const view = getView();
 		const { cardSize, coverFit, hideIcon } = view;
 		const relations = view.relations.filter((it: any) => { 
@@ -27,7 +27,6 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 		const idPrefix = 'dataviewCell';
 		const record = getRecord(index);
 		const cn = [ 'card', DataUtil.layoutClass(record.id, record.layout), DataUtil.cardSizeClass(cardSize) ];
-		//const readonly = this.props.readonly || record.isReadonly;
 		const readonly = true;
 		const subId = dbStore.getSubId(rootId, block.id);
 
@@ -95,6 +94,10 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 									index={index}
 									arrayLimit={2}
 									showTooltip={true}
+									onClick={(e: any) => { 
+										e.stopPropagation();
+										onCellClick(e, relation.relationKey, index); 
+									}}
 									tooltipX={I.MenuDirection.Left}
 								/>
 							);

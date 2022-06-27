@@ -67,6 +67,7 @@ let csp = [
 	"frame-src chrome-extension://react-developer-tools"
 ];
 let autoUpdate = false;
+let appIsReady = false;
 
 if (version.match('alpha')) {
 	defaultChannel = 'alpha';
@@ -129,9 +130,9 @@ function waitForLibraryAndCreateWindows () {
 
 function trayIcon () {
 	if (is.windows) {
-		return path.join(__dirname, '/electron/icon64x64.png');
+		return path.join(__dirname, 'electron', 'icon64x64.png');
 	} else {
-		return path.join(__dirname, '/electron/icon-tray-' + (isDarkTheme() ? 'white' : 'black') + '.png');
+		return path.join(__dirname, 'electron', `icon-tray-${(isDarkTheme() ? 'white' : 'black')}.png`);
 	};
 };
 
@@ -193,15 +194,6 @@ function initTray () {
 
 function createWindow () {
 	const image = nativeImage.createFromPath(path.join(__dirname, '/electron/icon512x512.png'));
-
-	session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
-		callback({
-			responseHeaders: {
-				...details.responseHeaders,
-				'Content-Security-Policy': [ csp.join('; ') ]
-			}
-		})
-	});
 
 	initTray();
 
@@ -803,6 +795,15 @@ function autoUpdaterInit () {
 };
 
 app.on('ready', () => {
+	session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
+		callback({
+			responseHeaders: {
+				...details.responseHeaders,
+				'Content-Security-Policy': [ csp.join('; ') ]
+			}
+		})
+	});
+
 	storage.get(CONFIG_NAME, (error, data) => {
 		config = data || {};
 		config.channel = String(config.channel || defaultChannel);
@@ -857,9 +858,7 @@ app.on('before-quit', (e) => {
 	};
 });
 
-app.on('activate', () => {
-	win ? win.show() : createWindow();
-});
+app.on('activate', () => { win ? win.show() : createWindow(); });
 
 app.on('open-url', (e, url) => {
 	e.preventDefault();

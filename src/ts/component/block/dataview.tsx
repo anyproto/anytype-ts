@@ -349,54 +349,63 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			return;
 		};
 
-		const menuParam: any = {
-			element: element,
-			className: 'single',
-			subIds: [ 'previewObject' ],
-			data: {
-				label: 'Choose a template',
-				noFilter: true,
-				noIcon: true,
-				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.template },
-					{ operator: I.FilterOperator.And, relationKey: 'targetObjectType', condition: I.FilterCondition.In, value: setOf },
-					{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
-				],
-				sorts: [
-					{ relationKey: 'name', type: I.SortType.Asc },
-				],
-				onOver: (e: any, context: any, item: any) => {
-					menuStore.open('previewObject', {
-						element: `#${context.props.getId()} #item-${item.id}`,
-						offsetX: context.props.getSize().width,
-						isSub: true,
-						vertical: I.MenuDirection.Center,
-						data: { rootId: item.id }
-					});
-				},
-				onSelect: (item: any) => {
-					create(item);
+		const first = setOf[0];
 
-					window.setTimeout(() => { menuStore.close('previewObject'); }, Constant.delay.menu);
+		if (first == Constant.typeId.bookmark) {
+			menuStore.open('dataviewCreateBookmark', {
+				type: I.MenuType.Horizontal,
+				element: element,
+				vertical: dir > 0 ? I.MenuDirection.Top : I.MenuDirection.Bottom,
+				horizontal: dir > 0 ? I.MenuDirection.Left : I.MenuDirection.Right,
+				data: {
+					command: (url: string, callBack: (message: any) => void) => {
+						C.ObjectCreateBookmark(url, callBack);
+					}
 				},
-			}
+			});
+			return;
 		};
 
 		const showPopup = () => {
-			popupStore.open('template', {
-				data: {
-					typeId: setOf[0],
-					onSelect: create,
-				},
-			});
+			popupStore.open('template', { data: { typeId: first, onSelect: create } });
 		};
 
 		const showMenu = () => {
-			menuStore.open('searchObject', menuParam);
-		};
+			menuStore.open('searchObject', {
+				element: element,
+				className: 'single',
+				subIds: [ 'previewObject' ],
+				vertical: dir > 0 ? I.MenuDirection.Top : I.MenuDirection.Bottom,
+				horizontal: dir > 0 ? I.MenuDirection.Left : I.MenuDirection.Right,
+				data: {
+					label: 'Choose a template',
+					noFilter: true,
+					noIcon: true,
+					filters: [
+						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.template },
+						{ operator: I.FilterOperator.And, relationKey: 'targetObjectType', condition: I.FilterCondition.In, value: setOf },
+						{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
+					],
+					sorts: [
+						{ relationKey: 'name', type: I.SortType.Asc },
+					],
+					onOver: (e: any, context: any, item: any) => {
+						menuStore.open('previewObject', {
+							element: `#${context.props.getId()} #item-${item.id}`,
+							offsetX: context.props.getSize().width,
+							isSub: true,
+							vertical: I.MenuDirection.Center,
+							data: { rootId: item.id }
+						});
+					},
+					onSelect: (item: any) => {
+						create(item);
 
-		menuParam.vertical = dir > 0 ? I.MenuDirection.Top : I.MenuDirection.Bottom;
-		menuParam.horizontal = dir > 0 ? I.MenuDirection.Left : I.MenuDirection.Right;
+						window.setTimeout(() => { menuStore.close('previewObject'); }, Constant.delay.menu);
+					},
+				}
+			});
+		};
 
 		DataUtil.checkTemplateCnt(setOf, (message: any) => {
 			if (message.records.length > 1) {
@@ -418,14 +427,15 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const ref = this.cellRefs.get(id);
 		const record = this.getRecord(index);
 		const view = this.getView();
-		const renderer = Util.getRenderer();
 
 		if (!relation || !ref || !record) {
 			return;
 		};
 
-		if ((view.type == I.ViewType.List) && ([ I.RelationType.Url, I.RelationType.Email, I.RelationType.Phone ].indexOf(relation.format) >= 0)) {
+		if ([ I.ViewType.List, I.ViewType.Gallery ].includes(view.type) && ([ I.RelationType.Url, I.RelationType.Email, I.RelationType.Phone ].indexOf(relation.format) >= 0)) {
 			const scheme = Relation.getUrlScheme(relation.format, record[relationKey]);
+			const renderer = Util.getRenderer();
+
 			renderer.send('urlOpen', scheme + record[relationKey]);
 			return;
 		};

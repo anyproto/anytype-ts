@@ -291,7 +291,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		const { rootId, block, readonly } = this.props;
 		const object = detailStore.get(rootId, rootId, [ Constant.relationKey.setOf ]);
 		const type = detailStore.get(rootId, object.type, []);
-		const allowed = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Type ]);
+		const allowed = ![ Constant.typeId.bookmark ].includes(object.type) && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Type ]);
 		const options: any[] = [];
 		
 		if (!type.isArchived && !type.isDeleted) {
@@ -345,7 +345,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		};
 
 		const object = detailStore.get(rootId, rootId, [ Constant.relationKey.setOf ]);
-		const types = DataUtil.getObjectTypesForNewObject(false).map(it => it.id);
+		const types = DataUtil.getObjectTypesForNewObject().map(it => it.id);
 
 		let menuId = '';
 		let menuParam = {
@@ -435,7 +435,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				break;
 
 			case 'setCreate':
-				C.ObjectCreateSet([ object.type ], { name: type.name + ' set', iconEmoji: type.iconEmoji }, '', [], (message: any) => {
+				C.ObjectCreateSet([ object.type ], { name: type.name + ' set', iconEmoji: type.iconEmoji }, '', (message: any) => {
 					if (!message.error.code) {
 						DataUtil.objectOpenPopup({ id: message.id, layout: I.ObjectLayout.Set });
 					};

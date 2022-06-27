@@ -170,7 +170,7 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 			nodes: this.nodes,
 			edges: this.edges,
 			forceProps: this.forceProps,
-			theme: commonStore.theme,
+			theme: commonStore.getThemeClass(),
 		}, [ transfer ]);
 
 		this.initImages();
