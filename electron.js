@@ -129,9 +129,9 @@ function waitForLibraryAndCreateWindows () {
 
 function trayIcon () {
 	if (is.windows) {
-		return path.join(__dirname, '/electron/icon64x64.png');
+		return path.join(__dirname, 'electron', 'icon64x64.png');
 	} else {
-		return path.join(__dirname, '/electron/icon-tray-' + (isDarkTheme() ? 'white' : 'black') + '.png');
+		return path.join(__dirname, 'electron', `icon-tray-${(isDarkTheme() ? 'white' : 'black')}.png`);
 	};
 };
 
