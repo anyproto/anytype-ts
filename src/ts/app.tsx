@@ -415,7 +415,9 @@ class App extends React.Component<Props, State> {
 		renderer.send('appLoaded', true);
 
 		renderer.on('init', (e: any, dataPath: string, config: any, isDark: boolean) => {
-			authStore.pathSet(dataPath);
+			authStore.walletPathSet(dataPath);
+			authStore.accountPathSet(dataPath);
+
 			Storage.init(dataPath);
 
 			this.initStorage();

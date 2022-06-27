@@ -12,16 +12,25 @@ interface Props extends I.Popup, RouteComponentProps<any> {
 	onPage: (id: string) => void;
 	setConfirmPhrase: (v: () => void) => void;
 	setPinConfirmed: (v: boolean) => void;
+	setLoading: (v: boolean) => void;
+};
+
+interface State {
+	error: string;
 };
 
 const Constant: any = require('json/constant.json');
+const { dialog } = window.require('@electron/remote');
 
-const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends React.Component<Props, {}> {
+const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends React.Component<Props, State> {
 
 	refPhrase: any = null;
 	pinConfirmed: boolean = false;
 	format: string = '';
 	refCheckbox: any = null;
+	state = {
+		error: '',
+	};
 
 	constructor (props: any) {
 		super(props);
@@ -30,18 +39,26 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 		this.onFileOffload = this.onFileOffload.bind(this);
 		this.onDelete = this.onDelete.bind(this);
 		this.onDeleteCancel = this.onDeleteCancel.bind(this);
+		this.onLocationMove = this.onLocationMove.bind(this);
+		this.onLocationEnter = this.onLocationEnter.bind(this);
+		this.onLocationLeave = this.onLocationLeave.bind(this);
 	};
 
 	render () {
 		const { onPage, setConfirmPhrase } = this.props;
+		const { error } = this.state;
 		const { account } = authStore;
+		const { config } = commonStore;
 		const pin = Storage.get('pin');
 		const canDelete = account.status.type == I.AccountStatusType.Active;
+		const canMove = config.experimental;
 
 		return (
 			<div>
 				<Head {...this.props} id="index" name={translate('popupSettingsTitle')} />
 				<Title text={translate('popupSettingsAccountTitle')} />
+
+				{error ? <div className="message">{error}</div> : ''}
 
 				<div className="rows">
 					<div 
@@ -72,6 +89,17 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 					</div>
 
 					<Label className="sectionName" text="Account" />
+
+					{canMove ? (
+						<div id="row-location" className="row flex location" onClick={this.onLocationMove}>
+							<div className="side left">
+								<Label text={translate('popupSettingsAccountMoveTitle')} />
+							</div>
+							<div className="side right" onMouseEnter={this.onLocationEnter} onMouseLeave={this.onLocationLeave}>
+								<Label text={account.info.localStoragePath} />
+							</div>
+						</div>
+					) : ''}
 
 					{canDelete ? (
 						<div className="row" onClick={() => { onPage('delete'); }}>
@@ -128,6 +156,8 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 	};
 
 	onFileOffload (e: any) {
+		const { setLoading } = this.props;
+
 		analytics.event('ScreenFileOffloadWarning');
 
 		popupStore.open('confirm',{
@@ -136,14 +166,14 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 				text: 'All media files will be deleted from your current device. They can be downloaded again from a backup node or another device.',
 				textConfirm: 'Yes',
 				onConfirm: () => {
-					this.setState({ loading: true });
+					setLoading(true);
 
 					C.FileListOffload([], false, (message: any) => {
+						setLoading(false);
+
 						if (message.error.code) {
 							return;
 						};
-
-						this.setState({ loading: false });
 
 						popupStore.open('confirm',{
 							data: {
@@ -159,6 +189,40 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 				},
 			}
 		});
+	};
+
+	onLocationMove (e: any) {
+		const { setLoading } = this.props;
+		const options = { 
+			properties: [ 'openDirectory' ],
+		};
+
+		dialog.showOpenDialog(options).then((result: any) => {
+			const files = result.filePaths;
+			if ((files == undefined) || !files.length) {
+				return;
+			};
+
+			setLoading(true);
+			C.AccountMove(files[0], (message: any) => {
+				if (message.error.code) {
+					this.setState({ error: message.error.description });
+				} else {
+					Util.route('/auth/setup/init'); 
+				};
+				setLoading(false);
+			});
+		});
+	};
+
+	onLocationEnter (e: any) {
+		const { account } = authStore;
+
+		Util.tooltipShow(account.info.localStoragePath, $(e.currentTarget), I.MenuDirection.Center, I.MenuDirection.Bottom);
+	};
+
+	onLocationLeave (e: any) {
+		Util.tooltipHide(false);
 	};
 
 });

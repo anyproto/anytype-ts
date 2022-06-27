@@ -117,21 +117,21 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<Props
 	};
 	
 	init () {
-		const { path, phrase } = authStore;
+		const { walletPath, phrase } = authStore;
 		const accountId = Storage.get('accountId');
 
 		if (!phrase) {
 			return;
 		};
 
-		C.WalletRecover(path, phrase, (message: any) => {
+		C.WalletRecover(walletPath, phrase, (message: any) => {
 			if (message.error.code) {
 				this.setError(message.error.description);
 			} else 
 			if (accountId) {
 				authStore.phraseSet(phrase);
 				
-				C.AccountSelect(accountId, path, (message: any) => {
+				C.AccountSelect(accountId, walletPath, (message: any) => {
 					if (message.error.code) {
 						Util.checkError(message.error.code);
 						this.setError(message.error.description);
@@ -148,18 +148,18 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<Props
 	
 	add () {
 		const { match } = this.props;
-		const { path, name, icon, code, phrase } = authStore;
+		const { walletPath, accountPath, name, icon, code } = authStore;
 		const renderer = Util.getRenderer();
 
 		commonStore.defaultTypeSet(Constant.typeId.note);
 
-		C.WalletCreate(path, (message: any) => {
+		C.WalletCreate(walletPath, (message: any) => {
 			if (message.error.code) {
 				this.setState({ error: message.error.description });
 			} else {
 				authStore.phraseSet(message.mnemonic);
 
-				C.AccountCreate(name, icon, code, (message: any) => {
+				C.AccountCreate(name, icon, accountPath, code, (message: any) => {
 					if (message.error.code) {
 						const error = Errors.AccountCreate[message.error.code] || message.error.description;
 						this.setError(error);
@@ -177,7 +177,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<Props
 						Storage.set('popupNewBlock', true);
 						Storage.set('popupVideo', true);
 
-						renderer.send('keytarSet', accountId, phrase);
+						renderer.send('keytarSet', accountId, authStore.phrase);
 						analytics.event('CreateAccount');
 						
 						if (match.params.id == 'register') {
@@ -194,9 +194,9 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<Props
 	};
 	
 	select () {
-		const { account, path } = authStore;
+		const { account, walletPath } = authStore;
 		
-		C.AccountSelect(account.id, path, (message: any) => {
+		C.AccountSelect(account.id, walletPath, (message: any) => {
 			if (message.error.code) {
 				Util.checkError(message.error.code);
 				this.setError(message.error.description);

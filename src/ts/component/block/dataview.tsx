@@ -323,7 +323,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 				const newRecord = message.record;
 				const records = dbStore.getRecords(subId, '');
-				const oldIndex = records.findIndex((it: any) => { return it.id == newRecord.id; });
+				const oldIndex = records.findIndex(it => it.id == newRecord.id);
 				const newIndex = dir > 0 ? records.length - 1 : 0;
 
 				dbStore.recordsSet(subId, '', arrayMove(records, oldIndex, newIndex));

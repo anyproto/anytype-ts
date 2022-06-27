@@ -1,3 +1,4 @@
+import Account from './account';
 import Block from './block';
 import BlockStructure from './blockStructure';
 
@@ -10,6 +11,8 @@ import Sort from './sort';
 import ObjectType from './objectType';
 
 export { 
+	Account,
+
 	Block,
 	BlockStructure,
 

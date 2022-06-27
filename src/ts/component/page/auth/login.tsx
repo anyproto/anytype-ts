@@ -64,12 +64,12 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<Props
 	onSubmit (e: any) {
 		e.preventDefault();
 		
-		const { path } = authStore;
+		const { walletPath } = authStore;
 		const phrase = this.phraseRef.getValue().trim();
 		
 		this.phraseRef.setError(false);
 		
-		C.WalletRecover(path, phrase, (message: any) => {
+		C.WalletRecover(walletPath, phrase, (message: any) => {
 			if (message.error.code) {
 				this.phraseRef.setError(true);
 				this.setState({ error: message.error.description });
