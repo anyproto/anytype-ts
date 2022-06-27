@@ -529,9 +529,6 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		const node = $(ReactDOM.findDOMNode(this));
 		const table = node.find('#table');
 
-		table.find('.handleColumn.active').removeClass('isActive');
-		table.find('.handleRow.active').removeClass('isActive');
-
 		switch (type) {
 			case I.BlockType.TableColumn:
 				const cells = table.find(`.cell.column${columnId}`);
@@ -539,14 +536,14 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				cells.addClass('isHighlightedColumn');
 				cells.first().addClass('isFirst');
 				cells.last().addClass('isLast');
-				cells.find('.handleColumn').addClass('active');
+				cells.find('.handleColumn').addClass('isActive');
 				break;
 
 			case I.BlockType.TableRow:
 				const row = table.find(`#row-${rowId}`);
 
 				row.addClass('isHighlightedRow');
-				row.find('.handleRow').addClass('active');
+				row.find('.handleRow').addClass('isActive');
 				break;
 
 			default:
@@ -567,8 +564,8 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		table.find('.isHighlightedRow').removeClass('isHighlightedRow');
 		table.find('.isHighlightedCell').removeClass('isHighlightedCell');
 
-		table.find('.handleColumn.active').removeClass('isActive');
-		table.find('.handleRow.active').removeClass('isActive');
+		table.find('.handleColumn.isActive').removeClass('isActive');
+		table.find('.handleRow.isActive').removeClass('isActive');
 
 		this.setEditing('');
 	};

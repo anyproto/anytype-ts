@@ -18,13 +18,13 @@
 		.handleRow.canDrag, .handleColumn.canDrag { cursor: grab; }
 
 		.handleRow { height: 22px; width: 6px; top: 50%; left: -4px; margin-top: -11px; }
-		.handleRow:hover, .handleRow.active {
+		.handleRow:hover, .handleRow.isActive {
 			width: 10px; background-image: url('~img/icon/table/handle/row.svg'); background-size: 8px 16px; left: -6px;
 			border-radius: 3px;
 		}
 
 		.handleColumn { height: 6px; width: 22px; left: 50%; top: -4px; margin-left: -11px; }
-		.handleColumn:hover, .handleColumn.active { 
+		.handleColumn:hover, .handleColumn.isActive { 
 			height: 10px; background-image: url('~img/icon/table/handle/column.svg'); background-size: 16px 8px;
 			top: -6px; border-radius: 3px;
 		}
