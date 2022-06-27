@@ -6,7 +6,6 @@ import { commonStore, menuStore } from 'ts/store';
 
 interface Props {}
 interface State {
-	loading: boolean;
 	object: any;
 };
 
@@ -19,7 +18,6 @@ const BORDER = 12;
 const Preview = observer(class Preview extends React.Component<Props, State> {
 	
 	state = {
-		loading: false,
 		object: null,
 	};
 	ref: any = null;

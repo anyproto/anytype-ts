@@ -152,7 +152,7 @@
 .cellContent.c-phone 
 {
 	.name { 
-		text-decoration: none; border-bottom: 1px solid $colorBorderDark; transition: $transitionFast; cursor: pointer; width: auto; 
+		text-decoration: none; border-bottom: 0.05em solid $colorBorderDark; transition: $transitionFast; cursor: pointer; width: auto; 
 		@include text-overflow-nw; width: 100%;
 	}
 	.name:hover { border-color: $colorBlack; }

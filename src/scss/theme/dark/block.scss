@@ -228,8 +228,6 @@
 
 	.block.blockTableOfContents { 
 		.item { color: $colorSecondary; }
-		.item span { border-bottom: 1px solid rgba(146, 144, 130, 0.5); }
-
 		.item:hover span { border-color: $colorDarkGrey; }
 	}
 }
