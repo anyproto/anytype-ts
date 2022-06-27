@@ -312,18 +312,22 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 
 	componentDidMount () {
 		this._isMounted = true;
-		this.open();
+		this.load();
 	};
 
 	componentDidUpdate () {
-		const { rootId } = this.props;
+		const { rootId, position } = this.props;
 		const contextId = this.getRootId();
 		const root = blockStore.wrapTree(contextId, rootId);
 
-		this.open();
+		this.load();
 
 		if (root) {
 			blockStore.updateNumbersTree([ root ]);
+		};
+
+		if (position) {
+			position();
 		};
 	};
 
@@ -332,7 +336,7 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 		Action.pageClose(this.getRootId(), false);
 	};
 
-	open () {
+	load () {
 		const { loading } = this.state;
 		const { rootId, position, setObject } = this.props;
 		const contextId = this.getRootId();
@@ -353,9 +357,6 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 
 			if (setObject) {
 				setObject(detailStore.get(contextId, rootId, []));
-			};
-			if (position) {
-				position();
 			};
 		});
 	};
@@ -378,7 +379,7 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 
 	update () {
 		this.id = '';
-		this.open();
+		this.load();
 	};
 
 });

@@ -37,21 +37,21 @@ const PreviewLink = observer(class PreviewLink extends React.Component<Props, St
 		const { url } = this.props;
 		const { loading, title, description, param, faviconUrl, imageUrl } = this.state;
 		
-		if (loading) {
-			return <Loader />;
-		};
-		
 		return (
 			<div className="previewLink">
-				{imageUrl ? <div className="img" style={{ backgroundImage: `url("${imageUrl}")` }} /> : ''}
-				<div className="info">
-					{title ? <div className="name">{title}</div> : ''}
-					{description ? <div className="descr">{description}</div> : ''}
-					<div className="link">
-						{faviconUrl ? <Icon icon={faviconUrl} className="fav" /> : ''}
-						{url}
-					</div> 
-				</div>
+				{loading ? <Loader /> : (
+					<React.Fragment>
+						{imageUrl ? <div className="img" style={{ backgroundImage: `url("${imageUrl}")` }} /> : ''}
+						<div className="info">
+							{title ? <div className="name">{title}</div> : ''}
+							{description ? <div className="descr">{description}</div> : ''}
+							<div className="link">
+								{faviconUrl ? <Icon icon={faviconUrl} className="fav" /> : ''}
+								{url}
+							</div> 
+						</div>
+					</React.Fragment>
+				)}
 			</div>
 		);
 	};
@@ -61,12 +61,17 @@ const PreviewLink = observer(class PreviewLink extends React.Component<Props, St
 	};
 
 	componentDidUpdate () {
+		const { position } = this.props;
 		const { imageUrl } = this.state;
 		const node = $(ReactDOM.findDOMNode(this));
 
 		imageUrl ? node.addClass('withImage') : node.removeClass('withImage');
 
 		this.load();
+
+		if (position) {
+			position();
+		};
 	};
 
 	load () {
@@ -82,7 +87,7 @@ const PreviewLink = observer(class PreviewLink extends React.Component<Props, St
 		if (scheme && !ALLOWED_SCHEME.includes(scheme)) {
 			return;
 		};
-		
+
 		C.LinkPreview(url, (message: any) => {
 			if (message.error.code) {
 				this.url = '';
@@ -94,10 +99,6 @@ const PreviewLink = observer(class PreviewLink extends React.Component<Props, St
 				...message.previewLink,
 				loading: false,
 			});
-
-			if (this.props.position) {
-				this.props.position();
-			};
 		});
 	};
 
