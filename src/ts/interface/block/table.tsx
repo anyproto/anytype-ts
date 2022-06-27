@@ -2,6 +2,8 @@ import { I } from 'ts/lib';
 
 export interface BlockComponentTable extends I.BlockComponent {
 	getData: () => any;
+	onEnterHandle: (e: any, type: I.BlockType, rowId: string, columnId: string) => void;
+	onLeaveHandle: (e: any) => void;
 	onHandleRow: (e: any, type: I.BlockType, rowId: string, columnId: string, cellId: string) => void;
 	onHandleColumn: (e: any, type: I.BlockType, rowId: string, columnId: string, cellId: string) => void;
 	onOptions: (e: any, type: I.BlockType, rowId: string, columnId: string, cellId: string) => void;

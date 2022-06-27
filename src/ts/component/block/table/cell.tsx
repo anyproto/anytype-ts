@@ -17,7 +17,7 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 	render () {
 		const { 
 			rootId, block, readonly, rowIdx, columnIdx, row, column, onHandleRow, onHandleColumn, onOptions, onCellFocus, onCellBlur, onCellClick, onCellEnter, 
-			onCellLeave, onCellKeyDown, onResizeStart, onDragStartColumn, onDragStartRow 
+			onCellLeave, onCellKeyDown, onResizeStart, onDragStartColumn, onDragStartRow, onEnterHandle, onLeaveHandle
 		} = this.props;
 
 		if (!row || !column) {
@@ -37,6 +37,8 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 			<div 
 				className="icon handleColumn canDrag"
 				draggable={true}
+				onMouseEnter={(e: any) => { onEnterHandle(e, I.BlockType.TableColumn, row.id, column.id); }}
+				onMouseLeave={(e: any) => { onLeaveHandle(e); }}
 				onClick={(e: any) => { onHandleColumn(e, I.BlockType.TableColumn, row.id, column.id, cellId); }}
 				onDragStart={(e: any) => { onDragStartColumn(e, column.id); }}
 				onContextMenu={(e: any) => { onHandleColumn(e, I.BlockType.TableColumn, row.id, column.id, cellId); }}
@@ -47,6 +49,8 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 			<div 
 				className={[ 'icon', 'handleRow', (canDragRow ? 'canDrag' : '') ].join(' ')}
 				draggable={canDragRow}
+				onMouseEnter={(e: any) => { onEnterHandle(e, I.BlockType.TableRow, row.id, column.id); }}
+				onMouseLeave={(e: any) => { onLeaveHandle(e); }}
 				onClick={(e: any) => { onHandleRow(e, I.BlockType.TableRow, row.id, column.id, cellId); }}
 				onDragStart={(e: any) => { canDragRow ? onDragStartRow(e, row.id) : null; }}
 				onContextMenu={(e: any) => { onHandleRow(e, I.BlockType.TableRow, row.id, column.id, cellId); }}

@@ -37,6 +37,8 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		this.onSortEndRow = this.onSortEndRow.bind(this);
 		this.onHandleRow = this.onHandleRow.bind(this);
 		this.onHandleColumn = this.onHandleColumn.bind(this);
+		this.onEnterHandle = this.onEnterHandle.bind(this);
+		this.onLeaveHandle = this.onLeaveHandle.bind(this)
 		this.onCellClick = this.onCellClick.bind(this);
 		this.onCellFocus = this.onCellFocus.bind(this);
 		this.onCellBlur = this.onCellBlur.bind(this);
@@ -83,6 +85,8 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 											index={i}
 											getData={this.getData}
 											onOptions={this.onOptions}
+											onEnterHandle={this.onEnterHandle}
+											onLeaveHandle={this.onLeaveHandle}
 											onHandleRow={this.onHandleRow}
 											onHandleColumn={this.onHandleColumn}
 											onCellClick={this.onCellClick}
@@ -185,6 +189,22 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		e.stopPropagation();
 
 		this.onOptions(e, type, rowId, columnId, cellId);
+	};
+
+	onEnterHandle (e: any, type: I.BlockType, rowId: string, columnId: string) {
+		e.persist();
+		e.preventDefault();
+		e.stopPropagation();
+
+		this.onOptionsOpen(type, rowId, columnId, '');
+	};
+
+	onLeaveHandle (e: any) {
+		e.persist();
+		e.preventDefault();
+		e.stopPropagation();
+
+		this.onOptionsClose();
 	};
 
 	onOptions (e: any, type: I.BlockType, rowId: string, columnId: string, cellId: string) {
@@ -498,6 +518,8 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 	};
 
 	onOptionsOpen (type: I.BlockType, rowId: string, columnId: string, cellId: string) {
+		console.log('onOptionsOpen', );
+
 		if (!this._isMounted) {
 			return;
 		};
