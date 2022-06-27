@@ -352,6 +352,10 @@ class Util {
 		return this.timestamp(y, m, d);
 	};
 
+	timezoneOffset (): number {
+		return new Date().getTimezoneOffset() * 60;
+	};
+
 	parseDate (value: string, format?: I.DateFormat): number {
 		let dt = new Date();
 		let [ date, time ] = String(value || '').split(' ');
@@ -377,7 +381,7 @@ class Util {
 		i = Math.min(60, Math.max(0, i));
 		s = Math.min(60, Math.max(0, s));
 
-		return this.timestamp(y, m, d, h, i, s) + dt.getTimezoneOffset() * 60;
+		return this.timestamp(y, m, d, h, i, s) + this.timezoneOffset();
 	};
 
 	date (format: string, timestamp: number) {

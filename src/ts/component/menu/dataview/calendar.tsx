@@ -136,6 +136,8 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<Props, 
 		const { data } = param;
 		const { onChange } = data;
 
+		value = value + Util.timezoneOffset();
+
 		menuStore.updateData(id, { value });
 
 		if (save) {
