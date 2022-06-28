@@ -425,7 +425,7 @@ const Mapper = {
 					break;
 
 				case 'tag':
-					value = field.getIdList();
+					value = field.getIdsList();
 					break;
 			};
 

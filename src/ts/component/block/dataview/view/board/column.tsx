@@ -79,6 +79,7 @@ const Column = observer(class Column extends React.Component<Props, State> {
 								viewType={I.ViewType.Board}
 								getRecord={() => { return head; }}
 								readonly={true} 
+								arrayLimit={2}
 								placeholder={translate('placeholderCellCommon')}
 							/>
 							<div className="cnt">{total}</div>

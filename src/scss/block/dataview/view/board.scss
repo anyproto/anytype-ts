@@ -29,12 +29,15 @@
 				.head * { cursor: grab; }
 				.head {
 					.sides { display: flex; width: 100%; }
-					.side.left { width: calc(100% - 46px); display: flex; align-items: center; gap: 0px 6px; }
-					.side.right { width: 46px; display: flex; align-items: center; gap: 0px 6px; }
+					.side.left { width: calc(100% - 54px); display: flex; align-items: flex-start; gap: 0px 6px; }
+					.side.right { width: 54px; display: flex; align-items: flex-start; gap: 0px 6px; flex-shrink: 0; }
+
+					.cellContent { max-width: 100%; display: inline; }
 
 					.empty { display: block; }
-					.tagItem { margin: 2px 0px 0px 0px; }
-					.cnt { @include text-common; color: $colorMediumGrey; }
+					.tagItem { margin: 3px 4px 0px 0px; max-width: 80px; }
+					.tagItem:last-child { margin-right: 0px; }
+					.cnt { @include text-common; line-height: 24px; color: $colorMediumGrey; }
 
 					.icon { flex-shrink: 0; width: 24px; height: 24px; background-size: 20px;  border-radius: 4px; cursor: pointer; }
 					.icon:hover { background-color: $colorVeryLightGrey; }

@@ -826,13 +826,12 @@ const ObjectCreate = (details: any, flags: I.ObjectFlag[], callBack?: (message: 
 	dispatcher.request(ObjectCreate.name, request, callBack);
 };
 
-const ObjectCreateSet = (sources: string[], details: any, templateId: string, flags: I.ObjectFlag[], callBack?: (message: any) => void) => {
+const ObjectCreateSet = (sources: string[], details: any, templateId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.CreateSet.Request();
 	
 	request.setSourceList(sources);
 	request.setDetails(Encode.encodeStruct(details));
 	request.setTemplateid(templateId);
-	request.setInternalflagsList(flags.map(Mapper.To.InternalFlag));
 
 	dispatcher.request(ObjectCreateSet.name, request, callBack);
 };
