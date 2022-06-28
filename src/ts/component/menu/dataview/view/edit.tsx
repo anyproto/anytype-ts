@@ -483,7 +483,8 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 		const { data } = param;
 		const { rootId, blockId } = data;
 		const options: any[] = dbStore.getRelations(rootId, blockId).filter((it: I.Relation) => {
-			return !it.isHidden && [ I.RelationType.Status, I.RelationType.Tag, I.RelationType.Checkbox ].includes(it.format);
+			return [ I.RelationType.Status, I.RelationType.Tag, I.RelationType.Checkbox ].includes(it.format) && 
+				(!it.isHidden || [ Constant.relationKey.done ].includes(it.relationKey));
 		}).map((it: any) => {
 			return { 
 				id: it.relationKey, 

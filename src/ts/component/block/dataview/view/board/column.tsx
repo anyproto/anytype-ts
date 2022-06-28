@@ -153,6 +153,10 @@ const Column = observer(class Column extends React.Component<Props, State> {
 			default:
 				filters.push({ operator: I.FilterOperator.And, relationKey: relation.relationKey, condition: I.FilterCondition.Equal, value: value });
 				break;
+
+			case I.RelationType.Tag:
+				filters.push({ operator: I.FilterOperator.And, relationKey: relation.relationKey, condition: I.FilterCondition.AllIn, value: value });
+				break;
 		};
 
 		this.setState({ loading: true });
