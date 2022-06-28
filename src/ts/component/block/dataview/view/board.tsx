@@ -493,7 +493,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 						block.content.objectOrder.push(it);
 					};
 
-					window.setTimeout(() => { this.applyGroupOrder(it.groupId); }, 50);
+					window.setTimeout(() => { this.applyGroupOrder(it.groupId); }, 30);
 				});
 			});
 		};
