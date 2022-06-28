@@ -149,11 +149,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		const namespace = isPopup ? '.popup' : '';
 		const renderer = Util.getRenderer();
 
-		let ids: string[] = [];
-		if (selection) {
-			ids = selection.get(I.SelectType.Block, true);
-		};
-		
 		win.on('mousemove.editor' + namespace, throttle((e: any) => { this.onMouseMove(e); }, THROTTLE));
 		win.on('keydown.editor' + namespace, (e: any) => { this.onKeyDownEditor(e); });
 		win.on('paste.editor' + namespace, (e: any) => {
@@ -162,6 +157,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			};
 		});
 		win.on('focus.editor' + namespace, (e: any) => {
+			let ids: string[] = [];
+			if (selection) {
+				ids = selection.get(I.SelectType.Block, true);
+			};
 			if (!ids.length && !menuStore.isOpen()) {
 				focus.restore();
 				focus.apply(); 

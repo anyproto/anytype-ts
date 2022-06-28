@@ -395,6 +395,7 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 
 		menuStore.open('blockAction', { 
 			offsetX: element.outerWidth(),
+			horizontal: I.MenuDirection.Right,
 			rect: rect,
 			data: {
 				blockId: block.id,
