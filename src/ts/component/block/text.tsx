@@ -321,10 +321,11 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		};
 
 		items.each((i: number, item: any) => {
-			this.borderColor($(item));
+			this.textStyle($(item));
 		});
-			
-		items.off('mouseenter.link').on('mouseenter.link', function (e: any) {
+
+		items.off('mouseenter.link');
+		items.on('mouseenter.link', function (e: any) {
 			let el = $(this);
 			let range = el.data('range').split('-');
 			let url = String(el.attr('href') || '');
@@ -386,8 +387,6 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			return;
 		};
 
-		items.off('mouseenter.object mouseleave.object');
-
 		items.each((i: number, item: any) => {
 			item = $(item);
 			
@@ -403,11 +402,11 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 				item.addClass('disabled');
 			};
 
-			this.borderColor(item);
+			this.textStyle(item);
 		});
 
+		items.off('mouseenter.object mouseleave.object');
 		items.on('mouseleave.object', function (e: any) { Util.tooltipHide(false); });
-			
 		items.on('mouseenter.object', function (e: any) {
 			const el = $(this);
 			const data = el.data();
@@ -575,16 +574,11 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		});
 	};
 
-	borderColor (obj: any) {
-		if (!obj.length) {
-			return;
-		};
-
+	textStyle (obj: any) {
 		const color = String(obj.css('color') || '').replace(/\s/g, '');
-		const rgb = color.match(/rgb\(([\d]+),([\d]+),([\d]+)\)/);
+		const rgb = color.match(/rgb\(([^\(]+)\)/)[1];
 
-		rgb.shift();
-		obj.css({ borderColor: `rgba(${rgb.join(',')},0.35)` });
+		obj.css({ borderColor: `rgba(${rgb},0.35)`, color: `rgba(${rgb},0.65)` });
 	};
 
 	emojiParam (style: I.TextStyle) {

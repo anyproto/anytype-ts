@@ -23,6 +23,7 @@ const ALLOWED_SCHEME = [ 'http', 'https' ];
 
 const PreviewLink = observer(class PreviewLink extends React.Component<Props, State> {
 	
+	_isMounted: boolean = false;
 	state = {
 		loading: false,
 		title: '',
@@ -57,6 +58,7 @@ const PreviewLink = observer(class PreviewLink extends React.Component<Props, St
 	};
 	
 	componentDidMount () {
+		this._isMounted = true;
 		this.load();
 	};
 
@@ -74,6 +76,10 @@ const PreviewLink = observer(class PreviewLink extends React.Component<Props, St
 		};
 	};
 
+	componentWillUnmount () {
+		this._isMounted = false;
+	};
+
 	load () {
 		const { url } = this.props;
 		if (this.url == url) {
@@ -89,13 +95,19 @@ const PreviewLink = observer(class PreviewLink extends React.Component<Props, St
 		};
 
 		C.LinkPreview(url, (message: any) => {
-			if (message.error.code) {
-				this.url = '';
-				this.setState({ loading: false });
+			if (!this._isMounted) {
 				return;
 			};
 
-			this.setState({ ...message.previewLink, loading: false });
+			let state: any = { loading: false };
+
+			if (message.error.code) {
+				this.url = '';
+			} else {
+				state = Object.assign(state, message.previewLink);
+			};
+
+			this.setState(state);
 		});
 	};
 
