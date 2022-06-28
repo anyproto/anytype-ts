@@ -18,7 +18,7 @@ const ViewList = observer(class ViewList extends React.Component<Props, {}> {
 	ref: any = null;
 
 	render () {
-		const { rootId, block, getData, getView, isPopup, readonly, onRowAdd } = this.props;
+		const { rootId, block, getData, getView, isPopup, readonly, onRecordAdd } = this.props;
 		const view = getView();
 		const subId = dbStore.getSubId(rootId, block.id);
 		const records = dbStore.getRecords(subId, '');
@@ -60,7 +60,7 @@ const ViewList = observer(class ViewList extends React.Component<Props, {}> {
 					{!readonly && allowed ? (
 						<div className="row add">
 							<div className="cell add">
-								<div className="btn" onClick={(e: any) => { onRowAdd(e, 1); }}>
+								<div className="btn" onClick={(e: any) => { onRecordAdd(e, 1); }}>
 									<Icon className="plus" />
 									<div className="name">{translate('blockDataviewNew')}</div>
 								</div>

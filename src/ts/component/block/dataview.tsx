@@ -38,7 +38,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		this.getRecord = this.getRecord.bind(this);
 		this.getView = this.getView.bind(this);
 		this.getKeys = this.getKeys.bind(this);
-		this.onRowAdd = this.onRowAdd.bind(this);
+		this.onRecordAdd = this.onRecordAdd.bind(this);
 		this.onCellClick = this.onCellClick.bind(this);
 		this.onCellChange = this.onCellChange.bind(this);
 		this.onContext = this.onContext.bind(this);
@@ -95,7 +95,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					getData={this.getData} 
 					getView={this.getView} 
 					getRecord={this.getRecord}
-					onRowAdd={this.onRowAdd}
+					onRecordAdd={this.onRecordAdd}
 				/>
 				<div className="content">
 					<ViewComponent 
@@ -109,7 +109,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 						getRecord={this.getRecord}
 						getView={this.getView} 
 						getKeys={this.getKeys}
-						onRowAdd={this.onRowAdd}
+						onRecordAdd={this.onRecordAdd}
 						onCellClick={this.onCellClick}
 						onCellChange={this.onCellChange}
 						optionCommand={this.optionCommand}
@@ -181,7 +181,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		if (!this.creating) {
-			keyboard.shortcut(`${cmd}+n`, e, (pressed: string) => { this.onRowAdd(e, -1, true); });
+			keyboard.shortcut(`${cmd}+n`, e, (pressed: string) => { this.onRecordAdd(e, -1, true); });
 		};
 
 		if (length) {
@@ -285,7 +285,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		return views.find((it: I.View) => { return it.id == viewId; }) || views[0];
 	};
 
-	onRowAdd (e: any, dir: number, withPopup?: boolean) {
+	onRecordAdd (e: any, dir: number, withPopup?: boolean) {
 		if (e.persist) {
 			e.persist();
 		};

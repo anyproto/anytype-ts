@@ -104,7 +104,7 @@ export interface ViewComponent {
 	getRecord(index: number): any;
 	getView?(): View;
 	getKeys?(viewId: string): string[];
-	onRowAdd?: (e: any, dir: number) => void;
+	onRecordAdd?: (e: any, dir: number) => void;
 	onCellClick?(e: any, key: string, index: number): void;
 	onContext?(e: any, id: string): void;
 	onCellChange?: (id: string, key: string, value: any, callBack?: (message: any) => void) => void;

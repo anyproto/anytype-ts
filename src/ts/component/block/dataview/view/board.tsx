@@ -40,7 +40,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 	constructor (props: any) {
 		super(props);
 		
-		this.onAdd = this.onAdd.bind(this);
+		this.onRecordAdd = this.onRecordAdd.bind(this);
 		this.onDragStartColumn = this.onDragStartColumn.bind(this);
 		this.onDragStartCard = this.onDragStartCard.bind(this);
 		this.getSubId = this.getSubId.bind(this);
@@ -66,7 +66,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 										ref={(ref: any) => { this.columnRefs[group.id] = ref; }}
 										{...this.props} 
 										{...group} 
-										onAdd={this.onAdd} 
+										onRecordAdd={this.onRecordAdd} 
 										onDragStartColumn={this.onDragStartColumn}
 										onDragStartCard={this.onDragStartCard}
 										onScrollColumn={() => { return this.onScrollColumn(group.id); }}
@@ -167,13 +167,14 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 		});
 	};
 
-	onAdd (id: string) {
+	onRecordAdd (groupId: string) {
 		const { rootId, block, getView } = this.props;
 		const view = getView();
-		const group = dbStore.getGroup(rootId, block.id, id);
+		const group = dbStore.getGroup(rootId, block.id, groupId);
 		const object = detailStore.get(rootId, rootId, [ 'setOf' ], true);
 		const setOf = object.setOf || [];
 		const details: any = {};
+		const subId = this.getSubId(groupId);
 
 		details[view.groupRelationKey] = group.value;
 
@@ -184,6 +185,11 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 				};
 
 				const newRecord = message.record;
+				const records = dbStore.getRecords(subId, '');
+				const oldIndex = records.findIndex(it => it.id == newRecord.id);
+				const newIndex = records.length - 1;
+
+				dbStore.recordsSet(subId, '', arrayMove(records, oldIndex, newIndex));
 
 				analytics.event('CreateObject', {
 					route: 'Set',
@@ -590,10 +596,10 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 		const mw = ww - 192;
 		const size = Constant.size.dataview.board;
 		const groups = dbStore.getGroups(rootId, block.id);
+		const width = 20 + groups.length * (size.card + size.margin);
 		
 		let vw = 0;
 		let margin = 0;
-		let width = groups.length * (size.card + size.margin);
 
 		if (width < mw) {
 			vw = mw;

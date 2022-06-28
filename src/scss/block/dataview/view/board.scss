@@ -28,16 +28,22 @@
                 .head { padding: 4px 10px; width: 240px; margin: 6px 0px; cursor: grab; border-radius: 12px; background: #fff; }
 				.head * { cursor: grab; }
 				.head {
-					.sides { display: flex; width: 100%; }
-					.side.left { width: calc(100% - 54px); display: flex; align-items: flex-start; gap: 0px 6px; }
-					.side.right { width: 54px; display: flex; align-items: flex-start; gap: 0px 6px; flex-shrink: 0; }
+					.sides { display: flex; width: 100%; gap: 0px 6px; }
+					.side.left { width: calc(100% - 54px); display: flex; align-items: flex-start; gap: 0px 6px; justify-content: flex-start; }
+					.side.right { width: 54px; display: flex; align-items: flex-start; gap: 0px 6px; flex-shrink: 0; justify-content: flex-end; }
 
 					.cellContent { max-width: 100%; display: inline; }
+					.cellContent {
+						.empty { display: block; }
+						.wrap { display: inline-block; white-space: nowrap; }
 
-					.empty { display: block; }
-					.tagItem { margin: 3px 8px 0px 0px; max-width: 80px; }
-					.tagItem:last-child { margin-right: 0px; }
-					.cnt { @include text-common; line-height: 24px; color: $colorMediumGrey; }
+						.tagItem { margin: 3px 8px 0px 0px; }
+						.tagItem:last-child { margin-right: 0px; }
+
+						.more { vertical-align: top; margin: 3px 0px 0px 0px; }
+					}
+
+					.cnt { display: inline-block; @include text-common; line-height: 24px; color: $colorMediumGrey; }
 
 					.icon { flex-shrink: 0; width: 24px; height: 24px; background-size: 20px;  border-radius: 4px; cursor: pointer; }
 					.icon:hover { background-color: $colorVeryLightGrey; }

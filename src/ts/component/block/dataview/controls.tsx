@@ -34,7 +34,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { className, rootId, block, getView, readonly, onRowAdd } = this.props;
+		const { className, rootId, block, getView, readonly, onRecordAdd } = this.props;
 		const views = dbStore.getViews(rootId, block.id);
 		const view = getView();
 		const sortCnt = view.sorts.length;
@@ -123,7 +123,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 						{buttons.map((item: any, i: number) => (
 							<ButtonItem key={item.id} {...item} />
 						))}	
-						{!readonly && allowedObject ? <Icon className="plus" tooltip="New object" onClick={(e: any) => { onRowAdd(e, -1); }} /> : ''}
+						{!readonly && allowedObject ? <Icon className="plus" tooltip="New object" onClick={(e: any) => { onRecordAdd(e, -1); }} /> : ''}
 					</div>
 				</div>
 

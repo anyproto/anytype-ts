@@ -32,7 +32,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { rootId, block, getView, readonly, onRowAdd, isPopup } = this.props;
+		const { rootId, block, getView, readonly, onRecordAdd, isPopup } = this.props;
 		const view = getView();
 		const relations = view.relations.filter((it: any) => { return it && it.isVisible; });
 		const subId = dbStore.getSubId(rootId, block.id);
@@ -90,7 +90,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 							{!readonly && allowed ? (
 								<div className="row add">
 									<div className="cell add">
-										<div className="btn" onClick={(e: any) => { onRowAdd(e, 1); }}>
+										<div className="btn" onClick={(e: any) => { onRecordAdd(e, 1); }}>
 											<Icon className="plus" />
 											<div className="name">{translate('blockDataviewNew')}</div>
 										</div>

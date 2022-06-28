@@ -10,7 +10,7 @@ import Cell from 'ts/component/block/dataview/cell';
 interface Props extends I.ViewComponent {
 	id: string;
 	value: any;
-	onAdd (groupId: string): void;
+	onRecordAdd (groupId: string): void;
 	onDragStartColumn?: (e: any, groupId: string) => void;
 	onScrollColumn?: () => void;
 	onDragStartCard?: (e: any, groupId: string, record: any) => void;
@@ -40,7 +40,7 @@ const Column = observer(class Column extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { rootId, block, id, getSubId, getView, onAdd, value, onDragStartColumn, isPopup } = this.props;
+		const { rootId, block, id, getSubId, getView, onRecordAdd, value, onDragStartColumn, isPopup } = this.props;
 		const { loading } = this.state;
 		const view = getView();
 		const subId = getSubId();
@@ -100,7 +100,7 @@ const Column = observer(class Column extends React.Component<Props, State> {
 
 								if (item.isAdd) {
 									content = (
-										<div key={key}  id={`card-${id}-add`} className="card add" onClick={() => { onAdd(id); }}>
+										<div key={key}  id={`card-${id}-add`} className="card add" onClick={() => { onRecordAdd(id); }}>
 											<Icon className="plus" />
 										</div>
 									);
