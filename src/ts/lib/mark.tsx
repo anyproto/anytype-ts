@@ -29,6 +29,20 @@ const Patterns = {
 	'(tm)': '™',
 };
 
+const Order: any = {};
+
+Order[I.MarkType.Object]	 = 0;
+Order[I.MarkType.Emoji]		 = 1;
+Order[I.MarkType.Mention]	 = 2;
+Order[I.MarkType.Link]		 = 3;
+Order[I.MarkType.Under]		 = 4;
+Order[I.MarkType.Strike]	 = 5;
+Order[I.MarkType.Code]		 = 6;
+Order[I.MarkType.Italic]	 = 7;
+Order[I.MarkType.Bold]		 = 8;
+Order[I.MarkType.Color]		 = 9;
+Order[I.MarkType.BgColor]	 = 10;
+
 enum Overlap {
 	Equal		 = 0,		 // a == b
 	Outer		 = 1,		 // b inside a
@@ -160,8 +174,10 @@ class Mark {
 	};
 	
 	sort (c1: I.Mark, c2: I.Mark) {
-		if (c1.type > c2.type) return 1;
-		if (c1.type < c2.type) return -1;
+		const o1 = Order[c1.type];
+		const o2 = Order[c2.type];
+		if (o1 > o2) return 1;
+		if (o1 < o2) return -1;
 		if (c1.range.from > c2.range.from) return 1;
 		if (c1.range.from < c2.range.from) return -1;
 		if (c1.range.to > c2.range.to) return 1;

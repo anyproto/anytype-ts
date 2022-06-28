@@ -103,6 +103,7 @@ export interface Block {
 	isFocusable?(): boolean;
 	isSelectable?(): boolean;
 	isDraggable?(): boolean;
+	isDeletable?(): boolean;
 
 	isPage?(): boolean;
 	isObjectPage?(): boolean;
@@ -118,6 +119,7 @@ export interface Block {
 	isObjectAudio?(): boolean;
 	isObjectType?(): boolean;
 	isObjectRelation?(): boolean;
+	isObjectBookmark?(): boolean;
 
 	isFeatured?(): boolean;
 	isDataview?(): boolean;

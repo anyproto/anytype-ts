@@ -46,7 +46,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 			{ type: I.MarkType.Bold, icon: 'bold', name: 'Bold' },
 			{ type: I.MarkType.Italic, icon: 'italic', name: 'Italic' },
 			{ type: I.MarkType.Strike, icon: 'strike', name: 'Strikethrough' },
-			{ type: I.MarkType.Under, icon: 'underline', name: 'Underline' },
+			{ type: I.MarkType.Under, icon: 'under', name: 'Underline' },
 			{ type: I.MarkType.Link, icon: 'link', name: 'Link' },
 			{ type: I.MarkType.Code, icon: 'kbd', name: 'Code' },
 		];
@@ -56,10 +56,6 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 			markActions = markActions.filter((it: any) => { return ![ I.MarkType.Bold ].includes(it.type); });
 		};
 
-		if (!config.experimental) {
-			markActions = markActions.filter((it: any) => { return ![ I.MarkType.Under ].includes(it.type); });
-		};
-		
 		return (
 			<div className="flex">
 				{block.canTurn() ? (

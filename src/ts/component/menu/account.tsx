@@ -58,13 +58,13 @@ const MenuAccount = observer(class MenuAccount extends React.Component<Props, St
 	};
 	
 	componentDidMount () {
-		const { path, accounts } = authStore;
+		const { walletPath, accounts } = authStore;
 		const phrase = Storage.get('phrase');
 		
 		if (!accounts.length) {
-			authStore.accountClear();
+			authStore.accountListClear();
 			
-			C.WalletRecover(path, phrase, (message: any) => {
+			C.WalletRecover(walletPath, phrase, (message: any) => {
 				C.AccountRecover((message: any) => {
 					if (message.error.code) {
 						Util.checkError(message.error.code);
@@ -78,11 +78,11 @@ const MenuAccount = observer(class MenuAccount extends React.Component<Props, St
 	};
 	
 	onSelect (e: any, id: string) {
-		const { path } = authStore;
+		const { walletPath } = authStore;
 		
 		this.props.close();
 		
-		C.AccountSelect(id, path, (message: any) => {
+		C.AccountSelect(id, walletPath, (message: any) => {
 			if (message.error.code) {
 				Util.checkError(message.error.code);
 			} else

@@ -112,7 +112,6 @@ const CellObject = observer(class CellObject extends React.Component<Props, Stat
 								key={item.id} 
 								object={item} 
 								iconSize={iconSize} 
-								onClick={(e: any) => { this.onClick(e, item.id); }} 
 								relation={relation} 
 								elementMapper={elementMapper} 
 							/>

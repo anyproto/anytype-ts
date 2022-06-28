@@ -41,6 +41,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<Props, {}
 		const subId = dbStore.getSubId(rootId, block.id);
 		const records = dbStore.getRecords(subId, '');
 		const { coverRelationKey, cardSize, hideIcon } = view;
+		const { offset, total } = dbStore.getMeta(subId, '');
 
 		// Subscriptions on dependent objects
 		for (let item of records) {

@@ -22,6 +22,7 @@ const Errors = require('json/error.json');
 
 const BLOCK_ID_OBJECT = 'dataview';
 const BLOCK_ID_TEMPLATE = 'templates';
+
 const NO_TEMPLATES = [ 
 	Constant.typeId.note, 
 	Constant.typeId.image, 
@@ -29,6 +30,7 @@ const NO_TEMPLATES = [
 	Constant.typeId.video, 
 	Constant.typeId.type, 
 	Constant.typeId.set, 
+	Constant.typeId.bookmark,
 ];
 
 const PageMainType = observer(class PageMainType extends React.Component<Props, State> {
@@ -51,6 +53,7 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 		
 		this.onTemplateAdd = this.onTemplateAdd.bind(this);
 		this.onObjectAdd = this.onObjectAdd.bind(this);
+		this.onRelationAdd = this.onRelationAdd.bind(this);
 		this.onSetAdd = this.onSetAdd.bind(this);
 		this.onCreate = this.onCreate.bind(this);
 		this.onLayout = this.onLayout.bind(this);
@@ -74,12 +77,12 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 		const totalTemplate = dbStore.getMeta(this.getSubIdTemplate(), '').total;
 		const totalObject = dbStore.getMeta(this.getSubIdObject(), '').total;
 		const layout: any = DataUtil.menuGetLayouts().find((it: any) => { return it.id == object.recommendedLayout; }) || {};
+		const showTemplates = !NO_TEMPLATES.includes(rootId);
 
-		const allowedObject = (type.types || []).indexOf(I.SmartBlockType.Page) >= 0;
+		const allowedObject = (type.types || []).includes(I.SmartBlockType.Page);
 		const allowedDetails = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const allowedRelation = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
-		const allowedTemplate = allowedObject;
-		const showTemplates = NO_TEMPLATES.indexOf(rootId) < 0;
+		const allowedTemplate = allowedObject && showTemplates;
 
 		let relations = Util.objectCopy(dbStore.getRelations(rootId, rootId));
 		if (!config.debug.ho) {
@@ -98,7 +101,7 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 		);
 
 		const ItemAdd = (item: any) => (
-			<div id="item-add" className="item add" onClick={(e: any) => { this.onRelationAdd(e); }}>
+			<div id="item-add" className="item add" onClick={this.onRelationAdd}>
 				<div className="clickable">
 					<Icon className="plus" />
 					<div className="name">New</div>
@@ -315,7 +318,11 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 				onSelect: (e: any, item: any) => {
 					switch (item.id) {
 						case 'object':
-							this.onObjectAdd();
+							if (rootId == Constant.typeId.bookmark) {
+								this.onBookmarkAdd();
+							} else {
+								this.onObjectAdd();
+							};
 							break;
 
 						case 'set':
@@ -364,11 +371,24 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 		});
 	};
 
+	onBookmarkAdd () {
+		menuStore.open('dataviewCreateBookmark', {
+			type: I.MenuType.Horizontal,
+			element: `#button-create`,
+			horizontal: I.MenuDirection.Right,
+			data: {
+				command: (url: string, callBack: (message: any) => void) => {
+					C.ObjectCreateBookmark(url, callBack);
+				}
+			},
+		});
+	};
+
 	onSetAdd () {
 		const rootId = this.getRootId();
 		const object = detailStore.get(rootId, rootId);
 
-		C.ObjectCreateSet([ rootId ], { name: object.name + ' set', iconEmoji: object.iconEmoji }, '', [], (message: any) => {
+		C.ObjectCreateSet([ rootId ], { name: object.name + ' set', iconEmoji: object.iconEmoji }, '', (message: any) => {
 			if (!message.error.code) {
 				focus.clear(true);
 				DataUtil.objectOpenPopup({ id: message.id, layout: I.ObjectLayout.Set });

@@ -245,6 +245,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 			let hasTurnText = true;
 			let hasTurnObject = true;
 			let hasTurnDiv = true;
+			let hasBookmark = true;
 			let hasFile = true;
 			let hasLink = true;
 			let hasTitle = false;
@@ -265,6 +266,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 					hasTurnDiv = false;
 				};
 				if (!block.canTurnPage())		 hasTurnObject = false;
+				if (!block.isBookmark())		 hasBookmark = false;
 				if (!block.isFile())			 hasFile = false;
 				if (!block.isLink())			 hasLink = false;
 				if (!block.canHaveAlign())		 hasAlign = false;
@@ -278,6 +280,10 @@ class MenuBlockAction extends React.Component<Props, State> {
 
 			if (hasTurnObject) {
 				section1.children.splice(2, 0, { id: 'turnObject', icon: 'object', name: 'Turn into object', arrow: true });
+			};
+
+			if (hasBookmark) {
+				section1.children.push({ id: 'openBookmarkAsObject', icon: 'expand', name: 'Open as object' });
 			};
 
 			if (hasFile) {
@@ -357,7 +363,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 		
 		const { content, align } = block;
 		const { color, bgColor } = content;
-		const types = DataUtil.getObjectTypesForNewObject(false).map((it: I.ObjectType) => { return it.id; }); 
+		const types = DataUtil.getObjectTypesForNewObject({ withSet: true }).map((it: I.ObjectType) => { return it.id; }); 
 
 		setActive(item, false);
 
@@ -546,11 +552,14 @@ class MenuBlockAction extends React.Component<Props, State> {
 		};
 
 		const ids = DataUtil.selectionGet(blockId, false, data);
-		//analytics.event(Util.toUpperCamelCase(`${getId()}-action`), { id: item.itemId });
 
 		switch (item.itemId) {
 			case 'download':
 				Action.download(block);
+				break;
+
+			case 'openBookmarkAsObject':
+				DataUtil.objectOpenPopup({ id: block.content.targetObjectId, layout: I.ObjectLayout.Bookmark });
 				break;
 
 			case 'openFileAsObject':

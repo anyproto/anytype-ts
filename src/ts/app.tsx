@@ -65,19 +65,13 @@ import 'scss/page/main/set.scss';
 import 'scss/page/main/space.scss';
 import 'scss/page/main/type.scss';
 import 'scss/page/main/relation.scss';
-import 'scss/page/main/store.scss';
 import 'scss/page/main/media.scss';
+import 'scss/page/main/bookmark.scss';
+import 'scss/page/main/store.scss';
 import 'scss/page/main/graph.scss';
 import 'scss/page/main/navigation.scss';
 
 import 'scss/block/common.scss';
-import 'scss/block/dataview.scss';
-import 'scss/block/dataview/cell.scss';
-import 'scss/block/dataview/view/common.scss';
-import 'scss/block/dataview/view/grid.scss';
-import 'scss/block/dataview/view/board.scss';
-import 'scss/block/dataview/view/list.scss';
-import 'scss/block/dataview/view/gallery.scss';
 import 'scss/block/text.scss';
 import 'scss/block/media.scss';
 import 'scss/block/file.scss';
@@ -93,6 +87,13 @@ import 'scss/block/featured.scss';
 import 'scss/block/type.scss';
 import 'scss/block/latex.scss';
 import 'scss/block/tableOfContents.scss';
+import 'scss/block/dataview.scss';
+import 'scss/block/dataview/cell.scss';
+import 'scss/block/dataview/view/common.scss';
+import 'scss/block/dataview/view/grid.scss';
+import 'scss/block/dataview/view/board.scss';
+import 'scss/block/dataview/view/list.scss';
+import 'scss/block/dataview/view/gallery.scss';
 
 import 'scss/popup/common.scss';
 import 'scss/popup/settings.scss';
@@ -145,6 +146,7 @@ import 'scss/menu/dataview/file.scss';
 import 'scss/menu/dataview/text.scss';
 import 'scss/menu/dataview/view.scss';
 import 'scss/menu/dataview/source.scss';
+import 'scss/menu/dataview/create/bookmark.scss';
 
 import 'scss/media/print.scss';
 
@@ -213,14 +215,8 @@ Sentry.init({
 declare global {
 	interface Window { 
 		Store: any; 
-		Cmd: any; 
-		Util: any;
-		Dispatcher: any;
-		Analytics: any;
-		I: any;
-		Go: any;
-		Graph: any;
 		$: any;
+		Lib: any;
 
 		isWebVersion: boolean;
 		Config: any;
@@ -229,12 +225,14 @@ declare global {
 };
 
 window.Store = rootStore;
-window.Cmd = C;
-window.Dispatcher = dispatcher;
-window.Analytics = () => { return analytics.instance; };
-window.I = I;
-window.Go = (route: string) => { Util.route(route); };
 window.$ = $;
+window.Lib = {
+	I,
+	C,
+	Util,
+	analytics,
+	dispatcher,
+};
 
 class RoutePage extends React.Component<RouteComponentProps, {}> { 
 
@@ -345,7 +343,7 @@ class App extends React.Component<Props, State> {
 		const phrase = Storage.get('phrase');
 		const renderer = Util.getRenderer();
 		const restoreKeys = [
-			'pinTime', 'defaultType', 'autoSidebar', 'timezone',
+			'pinTime', 'defaultType', 'autoSidebar',
 		];
 
 		// Check auth phrase with keytar
@@ -414,7 +412,9 @@ class App extends React.Component<Props, State> {
 		renderer.send('appLoaded', true);
 
 		renderer.on('init', (e: any, dataPath: string, config: any, isDark: boolean) => {
-			authStore.pathSet(dataPath);
+			authStore.walletPathSet(dataPath);
+			authStore.accountPathSet(dataPath);
+
 			Storage.init(dataPath);
 
 			this.initStorage();

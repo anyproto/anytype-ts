@@ -136,6 +136,10 @@ class Block implements I.Block {
 		return !this.isSystem() && !this.isIcon() && !this.isTextTitle() && !this.isTextDescription() && !this.isFeatured() && !this.isType();
 	};
 
+	isDeletable (): boolean {
+		return !this.isSystem() && !this.isTextTitle() && !this.isTextDescription() && !this.isFeatured() && !this.isType();
+	};
+
 	isPage (): boolean { 
 		return (this.type == I.BlockType.Page);
 	};
@@ -190,6 +194,10 @@ class Block implements I.Block {
 
 	isObjectRelation (): boolean { 
 		return this.isPage() && (this.layout == I.ObjectLayout.Relation);
+	};
+
+	isObjectBookmark (): boolean { 
+		return this.isPage() && (this.layout == I.ObjectLayout.Bookmark);
 	};
 
 	isFeatured (): boolean {

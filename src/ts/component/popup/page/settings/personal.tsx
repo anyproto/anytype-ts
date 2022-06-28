@@ -12,6 +12,8 @@ interface Props extends I.Popup, RouteComponentProps<any> {
 	onPage: (id: string) => void;
 };
 
+const Constant = require('json/constant.json');
+
 const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal extends React.Component<Props, {}> {
 
 	constructor (props: any) {
@@ -21,10 +23,9 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 	};
 
 	render () {
-		const { timezone, autoSidebar, config } = commonStore;
+		const { autoSidebar } = commonStore;
 		const types = DataUtil.getObjectTypesForNewObject(false);
 		const type = types.find(it => it.id == commonStore.type);
-		const timezones = DataUtil.timezones();
 
 		return (
 			<div>
@@ -46,17 +47,6 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 						</div>
 					</div>
 
-					{config.experimental ? (
-						<div className="row flex">
-							<div className="side left c25">
-								<Label text="Timezone" />
-							</div>
-							<div className="side right c75">
-								<Select id="timezone" arrowClassName="light" menuWidth={360} options={timezones} value={String(timezone || '')} onChange={(id: string) => { commonStore.timezoneSet(id); }}/>
-							</div>
-						</div>
-					) : ''}
-
 					<div className="row flex">
 						<div className="side left">
 							<Label text="Automatically hide and show Sidebar" />
@@ -72,7 +62,9 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 
 	onType (e: any) {
 		const { getId } = this.props;
-		const types = DataUtil.getObjectTypesForNewObject(false).map(it => it.id);
+		
+		let types = DataUtil.getObjectTypesForNewObject().map(it => it.id);
+		types = types.filter(it => ![ Constant.typeId.bookmark ].includes(it));
 
 		menuStore.open('searchObject', {
 			element: `#${getId()} #defaultType`,

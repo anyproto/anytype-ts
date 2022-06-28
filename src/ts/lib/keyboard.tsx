@@ -524,6 +524,7 @@ class Keyboard {
 				element: '#header',
 				type: I.MenuType.Horizontal,
 				horizontal: I.MenuDirection.Right,
+				offsetX: 10,
 				classNameWrap: 'fromHeader',
 				data: {
 					isPopup,

@@ -98,11 +98,12 @@ const WorkspaceSetIsHighlighted = (objectId: string, isHightlighted: boolean, ca
 
 // ---------------------- ACCOUNT ---------------------- //
 
-const AccountCreate = (name: string, path: string, code: string, callBack?: (message: any) => void) => {
+const AccountCreate = (name: string, avatarPath: string, storePath: string, code: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Account.Create.Request();
 	
 	request.setName(name);
-	request.setAvatarlocalpath(path);
+	request.setAvatarlocalpath(avatarPath);
+	request.setStorepath(storePath);
 	request.setAlphainvitecode(code);
 
 	dispatcher.request(AccountCreate.name, request, callBack);
@@ -137,6 +138,14 @@ const AccountDelete = (revert: boolean, callBack?: (message: any) => void) => {
 	request.setRevert(revert);
 
 	dispatcher.request(AccountDelete.name, request, callBack);
+};
+
+const AccountMove = (path: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Account.Move.Request();
+	
+	request.setNewpath(path);
+
+	dispatcher.request(AccountMove.name, request, callBack);
 };
 
 // ---------------------- FILE ---------------------- //
@@ -817,6 +826,34 @@ const ObjectCreate = (details: any, flags: I.ObjectFlag[], callBack?: (message: 
 	dispatcher.request(ObjectCreate.name, request, callBack);
 };
 
+const ObjectCreateSet = (sources: string[], details: any, templateId: string, flags: I.ObjectFlag[], callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.CreateSet.Request();
+	
+	request.setSourceList(sources);
+	request.setDetails(Encode.encodeStruct(details));
+	request.setTemplateid(templateId);
+	request.setInternalflagsList(flags.map(Mapper.To.InternalFlag));
+
+	dispatcher.request(ObjectCreateSet.name, request, callBack);
+};
+
+const ObjectCreateBookmark = (url: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.CreateBookmark.Request();
+	
+	request.setUrl(url);
+
+	dispatcher.request(ObjectCreateBookmark.name, request, callBack);
+};
+
+const ObjectBookmarkFetch = (contextId: string, url: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.BookmarkFetch.Request();
+	
+	request.setContextid(contextId);
+	request.setUrl(url);
+
+	dispatcher.request(ObjectBookmarkFetch.name, request, callBack);
+};
+
 const ObjectOpen = (objectId: string, traceId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.Open.Request();
 	
@@ -871,17 +908,6 @@ const ObjectRedo = (contextId: string, callBack?: (message: any) => void) => {
 	request.setContextid(contextId);
 
 	dispatcher.request(ObjectRedo.name, request, callBack);
-};
-
-const ObjectCreateSet = (sources: string[], details: any, templateId: string, flags: I.ObjectFlag[], callBack?: (message: any) => void) => {
-	const request = new Rpc.Object.CreateSet.Request();
-	
-	request.setSourceList(sources);
-	request.setDetails(Encode.encodeStruct(details));
-	request.setTemplateid(templateId);
-	request.setInternalflagsList(flags.map(Mapper.To.InternalFlag));
-
-	dispatcher.request(ObjectCreateSet.name, request, callBack);
 };
 
 const ObjectSetObjectType = (contextId: string, url: string, callBack?: (message: any) => void) => {
@@ -1157,6 +1183,15 @@ const ObjectToSet = (contextId: string, sources: string[], callBack?: (message: 
 	dispatcher.request(ObjectToSet.name, request, callBack);
 };
 
+const ObjectToBookmark = (contextId: string, url: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.ToBookmark.Request();
+	
+	request.setContextid(contextId);
+	request.setUrl(url);
+
+	dispatcher.request(ObjectToBookmark.name, request, callBack);
+};
+
 const ObjectDuplicate = (id: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.Duplicate.Request();
 	
@@ -1342,6 +1377,7 @@ export {
 	AccountSelect,
 	AccountStop,
 	AccountDelete,
+	AccountMove,
 
 	DebugSync,
 	DebugTree,
@@ -1440,13 +1476,11 @@ export {
 	ObjectOpenBreadcrumbs,
 	ObjectSetBreadcrumbs,
 	ObjectClose,
-	ObjectCreate,
 	ObjectUndo,
 	ObjectRedo,
 	ObjectGraph,
 	ObjectRelationAddFeatured,
 	ObjectRelationRemoveFeatured,
-	ObjectToSet,
 	ObjectAddWithObjectId,
 	ObjectShareByLink,
 	ObjectSearch,
@@ -1457,6 +1491,14 @@ export {
 	ObjectDuplicate,
 	ObjectApplyTemplate,
 	ObjectImportMarkdown,
+	ObjectBookmarkFetch,
+
+	ObjectCreate,
+	ObjectCreateSet,
+	ObjectCreateBookmark,
+
+	ObjectToSet,
+	ObjectToBookmark,
 
 	ObjectSetDetails,
 	ObjectSetObjectType,
@@ -1464,8 +1506,6 @@ export {
 	ObjectSetIsFavorite,
 	ObjectSetIsArchived,
 
-	ObjectCreateSet,
-	
 	ObjectListDuplicate,
 	ObjectListDelete,
 	ObjectListSetIsArchived,

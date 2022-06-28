@@ -78,6 +78,7 @@ class MenuContext extends React.Component<Props, {}> {
 		const length = objectIds.length;
 
 		let pageCopy = { id: 'copy', icon: 'copy', name: 'Duplicate' };
+		let open = { id: 'open', icon: 'expand', name: 'Open as object' };
 		let archive = null;
 		let archiveCnt = 0;
 		let fav = null;
@@ -110,7 +111,12 @@ class MenuContext extends React.Component<Props, {}> {
 			fav = { id: 'fav', name: 'Add to Favorites' };
 		};
 
+		if (length > 1) {
+			open = null;
+		};
+
 		if (archiveCnt == length) {
+			open = null;
 			archive = { id: 'unarchive', icon: 'restore', name: 'Restore from bin' };
 		} else {
 			archive = { id: 'archive', icon: 'remove', name: 'Move to bin' };
@@ -121,7 +127,7 @@ class MenuContext extends React.Component<Props, {}> {
 		if (!allowedCopy)		 pageCopy = null;
 
 		let sections = [
-			{ children: [ fav, pageCopy, archive ] },
+			{ children: [ open, fav, pageCopy, archive ] },
 		];
 
 		sections = sections.filter((section: any) => {
@@ -158,6 +164,10 @@ class MenuContext extends React.Component<Props, {}> {
 		focus.clear(false);
 		
 		switch (item.id) {
+
+			case 'open':
+				DataUtil.objectOpenPopup(detailStore.get(subId, objectIds[0], []));
+				break;
 
 			case 'copy':
 				C.ObjectListDuplicate(objectIds, (message: any) => {

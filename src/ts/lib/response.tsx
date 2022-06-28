@@ -72,6 +72,18 @@ const ObjectCreate = (response: any) => {
 	};
 };
 
+const ObjectCreateSet = (response: any) => {
+	return {
+		id: response.getId(),
+	};
+};
+
+const ObjectCreateBookmark = (response: any) => {
+	return {
+		pageId: response.getPageid(),
+	};
+};
+
 const NavigationGetObjectInfoWithLinks = (response: any) => {
 	const object = response.getObject();
 	const links = object.getLinks();
@@ -229,12 +241,6 @@ const ObjectTypeRelationAdd = (response: any) => {
 	};
 };
 
-const ObjectCreateSet = (response: any) => {
-	return {
-		id: response.getId(),
-	};
-};
-
 const ObjectSearch = (response: any) => {
 	return {
 		records: (response.getRecordsList() || []).map(Decode.decodeStruct),
@@ -295,6 +301,12 @@ const ObjectRelationOptionAdd = (response: any) => {
 const ObjectToSet = (response: any) => {
 	return {
 		id: response.getSetid(),
+	};
+};
+
+const ObjectToBookmark = (response: any) => {
+	return {
+		objectId: response.getObjectid(),
 	};
 };
 
@@ -375,6 +387,7 @@ export {
 
 	ObjectCreate,
 	ObjectCreateSet,
+	ObjectCreateBookmark,
 
 	NavigationGetObjectInfoWithLinks,
 
@@ -417,8 +430,10 @@ export {
 	ObjectRelationAdd,
 	ObjectRelationListAvailable,
 	ObjectRelationOptionAdd,
-	ObjectToSet,
 	ObjectShareByLink,
+
+	ObjectToSet,
+	ObjectToBookmark,
 
 	ObjectListDuplicate,
 

@@ -54,6 +54,25 @@ const PageHeadEdit = observer(class PageHeadEdit extends React.Component<Props, 
 			icon.type = I.BlockType.IconUser;
 		};
 
+		let note = null;
+		if (templateIsBundled) {
+			note = (
+				<div id="note" className="note">
+					<div className="inner">
+						<div className="sides">
+							<div className="side left">
+								This template cannot be changed, because it is Basic for this object type.<br />
+								If you want to edit, create a Duplicate of this template.
+							</div>
+							<div className="side right">
+								<Button color="dark" text="Duplicate" onClick={this.onClone} />
+							</div>
+						</div>
+					</div>
+				</div>
+			);
+		}
+
 		return (
 			<div>
 				<div id="editorSize" className="dragWrap">
@@ -68,21 +87,7 @@ const PageHeadEdit = observer(class PageHeadEdit extends React.Component<Props, 
 					<div id="dragValue" className="number">100%</div>
 				</div>
 
-				{templateIsBundled ? (
-					<div id="note" className="note">
-						<div className="inner">
-							<div className="sides">
-								<div className="side left">
-									This template cannot be changed, because it is Basic for this object type.<br />
-									If you want to edit, create a Duplicate of this template.
-								</div>
-								<div className="side right">
-									<Button color="dark" text="Duplicate" onClick={this.onClone} />
-								</div>
-							</div>
-						</div>
-					</div>
-				) : ''}
+				{note}
 
 				{check.withCover ? <Block {...this.props} key={cover.id} block={cover} className="noPlus" /> : ''}
 				{check.withIcon ? <Block {...this.props} key={icon.id} block={icon} className="noPlus" /> : ''}
