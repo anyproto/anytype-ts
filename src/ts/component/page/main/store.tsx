@@ -236,7 +236,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 							<InfiniteLoader
 								rowCount={items.length}
 								loadMoreRows={this.loadMoreRows}
-								isRowLoaded={({ index }) => { return index < items.length; }}
+								isRowLoaded={({ index }) => !!items[index]}
 							>
 								{({ onRowsRendered, registerChild }) => (
 									<AutoSizer className="scrollArea">

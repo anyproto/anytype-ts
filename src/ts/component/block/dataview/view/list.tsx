@@ -4,58 +4,76 @@ import { observer } from 'mobx-react';
 import { dbStore, blockStore } from 'ts/store';
 import { Icon } from 'ts/component';
 import { translate } from 'ts/lib';
-import { AutoSizer, WindowScroller, List } from 'react-virtualized';
+import { AutoSizer, WindowScroller, List, InfiniteLoader } from 'react-virtualized';
 
 import Row from './list/row';
 
-interface Props extends I.ViewComponent {}
+interface Props extends I.ViewComponent {};
 
 const $ = require('jquery');
+const Constant = require('json/constant.json');
 const HEIGHT = 32;
 
 const ViewList = observer(class ViewList extends React.Component<Props, {}> {
 
 	ref: any = null;
 
+	constructor (props: any) {
+		super (props);
+
+		this.loadMoreRows = this.loadMoreRows.bind(this);
+	};
+
 	render () {
-		const { rootId, block, getData, getView, isPopup, readonly, onRecordAdd } = this.props;
+		const { rootId, block, getView, isPopup, readonly, onRecordAdd } = this.props;
 		const view = getView();
 		const subId = dbStore.getSubId(rootId, block.id);
 		const records = dbStore.getRecords(subId, '');
 		const allowed = blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.Object ]);
+		const { total } = dbStore.getMeta(dbStore.getSubId(rootId, block.id), '');
 		const length = records.length;
 
 		return (
 			<div className="wrap">
 				<div className="viewItem viewList">
-					<WindowScroller scrollElement={isPopup ? $('#popupPage #innerWrap').get(0) : window}>
-						{({ height, isScrolling, registerChild, scrollTop }) => {
-							return (
-								<AutoSizer disableHeight={true}>
-									{({ width }) => (
-										<List
-											ref={(ref: any) => { this.ref = ref; }}
-											autoHeight={true}
-											height={Number(height) || 0}
-											width={Number(width) || 0}
-											isScrolling={isScrolling}
-											rowCount={records.length}
-											rowHeight={HEIGHT}
-											rowRenderer={({ key, index, style }) => (
-												<div className="listItem" key={'grid-row-' + view.id + index} style={style}>
-													<Row 
-														{...this.props}
-														index={index}
-													/>
-												</div>
+						<InfiniteLoader
+							isRowLoaded={({ index }) => (index < length - 1) && !!records[index]}
+							loadMoreRows={this.loadMoreRows}
+							rowCount={total}
+							threshold={10}
+						>
+						{({ onRowsRendered, registerChild }) => (
+							<WindowScroller scrollElement={isPopup ? $('#popupPage #innerWrap').get(0) : window}>
+								{({ height, isScrolling, registerChild, scrollTop }) => {
+									return (
+										<AutoSizer disableHeight={true}>
+											{({ width }) => (
+												<List
+													ref={(ref: any) => { this.ref = ref; }}
+													autoHeight={true}
+													height={Number(height) || 0}
+													width={Number(width) || 0}
+													isScrolling={isScrolling}
+													rowCount={records.length}
+													rowHeight={HEIGHT}
+													onRowsRendered={onRowsRendered}
+													rowRenderer={({ key, index, style }) => (
+														<div className="listItem" key={'grid-row-' + view.id + index} style={style}>
+															<Row 
+																{...this.props}
+																index={index}
+															/>
+														</div>
+													)}
+													scrollTop={scrollTop}
+												/>
 											)}
-											scrollTop={scrollTop}
-										/>
-									)}
-								</AutoSizer>
-							);
-						}}
-					</WindowScroller>
+										</AutoSizer>
+									);
+								}}
+							</WindowScroller>
+						)}
+					</InfiniteLoader>
 
 					{!readonly && allowed ? (
 						<div className="row add">
@@ -75,6 +93,15 @@ const ViewList = observer(class ViewList extends React.Component<Props, {}> {
 	componentDidUpdate () {
 		const win = $(window);
 		win.trigger('resize.editor');
+	};
+
+	loadMoreRows ({ startIndex, stopIndex }) {
+		const { rootId, block, getData } = this.props;
+		const { viewId, offset } = dbStore.getMeta(dbStore.getSubId(rootId, block.id), '');
+
+        return new Promise((resolve, reject) => {
+			getData(viewId, offset + Constant.limit.dataview.records, resolve);
+		});
 	};
 
 });

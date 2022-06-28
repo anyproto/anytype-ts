@@ -134,7 +134,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 						<InfiniteLoader
 							rowCount={this.items.length + 1}
 							loadMoreRows={this.loadMoreRows}
-							isRowLoaded={({ index }) => { return !!items[index]; }}
+							isRowLoaded={({ index }) => !!this.items[index]}
 							threshold={LIMIT_HEIGHT}
 						>
 							{({ onRowsRendered, registerChild }) => (

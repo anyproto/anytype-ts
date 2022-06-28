@@ -213,20 +213,16 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const subId = dbStore.getSubId(rootId, block.id);
 		const { viewId } = dbStore.getMeta(subId, '');
 		const viewChange = newViewId != viewId;
-		const meta: any = { offset: offset };
-		const cb = (message: any) => {
-			if (callBack) {
-				callBack(message);
-			};
-		};
 		const view = this.getView(newViewId);
 		const keys = this.getKeys(newViewId);
 
-		let limit = Constant.limit.dataview.records;
-		if ([ I.ViewType.Grid, I.ViewType.Gallery, I.ViewType.List ].indexOf(view.type) >= 0) {
-			limit = 0;
+		let limit = 0;
+		if ([ I.ViewType.Grid, I.ViewType.List ].includes(view.type)) {
+			limit = Constant.limit.dataview.records + offset;
+			offset = 0;
 		};
 
+		const meta: any = { offset: offset };
 		if (viewChange) {
 			meta.viewId = newViewId;
 			dbStore.recordsSet(subId, '', []);
@@ -235,7 +231,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		dbStore.metaSet(subId, '', meta);
 
 		if (![ I.ViewType.Board ].includes(view.type)) {
-			DataUtil.getDataviewData(rootId, block.id, newViewId, keys, offset, limit, false, cb);
+			DataUtil.getDataviewData(rootId, block.id, newViewId, keys, offset, limit, false, callBack);
 		};
 	};
 

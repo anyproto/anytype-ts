@@ -172,7 +172,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 									<InfiniteLoader
 										rowCount={pagesIn.length}
 										loadMoreRows={() => {}}
-										isRowLoaded={({ index }) => index < pagesIn.length}
+										isRowLoaded={({ index }) => !!pagesIn[index]}
 									>
 										{({ onRowsRendered, registerChild }) => (
 											<AutoSizer className="scrollArea">
@@ -213,7 +213,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 							<InfiniteLoader
 								rowCount={pagesOut.length}
 								loadMoreRows={() => {}}
-								isRowLoaded={({ index }) => index < pagesOut.length}
+								isRowLoaded={({ index }) => !!pagesOut[index]}
 							>
 								{({ onRowsRendered, registerChild }) => (
 									<AutoSizer className="scrollArea">

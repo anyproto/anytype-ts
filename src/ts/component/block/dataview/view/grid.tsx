@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { Icon } from 'ts/component';
 import { I, C, Util, translate, keyboard, Relation } from 'ts/lib';
 import { dbStore, menuStore, blockStore } from 'ts/store';
-import { AutoSizer, WindowScroller, List } from 'react-virtualized';
+import { AutoSizer, WindowScroller, List, InfiniteLoader } from 'react-virtualized';
 import { observer } from 'mobx-react';
 import arrayMove from 'array-move';
 
@@ -29,6 +29,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 		this.onResizeStart = this.onResizeStart.bind(this);
 		this.onSortStart = this.onSortStart.bind(this);
 		this.onSortEnd = this.onSortEnd.bind(this);
+		this.loadMoreRows = this.loadMoreRows.bind(this);
 	};
 
 	render () {
@@ -38,6 +39,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 		const subId = dbStore.getSubId(rootId, block.id);
 		const records = dbStore.getRecords(subId, '');
 		const allowed = blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.Object ]);
+		const { total } = dbStore.getMeta(dbStore.getSubId(rootId, block.id), '');
 		const length = records.length;
 
 		return (
@@ -53,39 +55,49 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 								onResizeStart={this.onResizeStart}
 							/>
 
-							<WindowScroller scrollElement={isPopup ? $('#popupPage #innerWrap').get(0) : window}>
-								{({ height, isScrolling, registerChild, scrollTop }) => {
-									return (
-										<AutoSizer disableHeight={true}>
-											{({ width }) => {
-												return (
-													<div ref={registerChild}>
-														<List
-															autoHeight={true}
-															height={Number(height) || 0}
-															width={Number(width) || 0}
-															isScrolling={isScrolling}
-															rowCount={length}
-															rowHeight={HEIGHT}
-															rowRenderer={({ key, index, style }) => (
-																<BodyRow 
-																	key={'grid-row-' + view.id + index} 
-																	{...this.props} 
-																	readonly={readonly || !allowed}
-																	index={index} 
-																	style={{ ...style, top: style.top + 2 }}
-																	cellPosition={this.cellPosition}
+							<InfiniteLoader
+								isRowLoaded={({ index }) => (index < length - 1) && !!records[index]}
+								loadMoreRows={this.loadMoreRows}
+								rowCount={total}
+								threshold={10}
+							>
+								{({ onRowsRendered, registerChild }) => (
+									<WindowScroller scrollElement={isPopup ? $('#popupPage #innerWrap').get(0) : window}>
+										{({ height, isScrolling, registerChild, scrollTop }) => {
+											return (
+												<AutoSizer disableHeight={true}>
+													{({ width }) => {
+														return (
+															<div ref={registerChild}>
+																<List
+																	autoHeight={true}
+																	height={Number(height) || 0}
+																	width={Number(width) || 0}
+																	isScrolling={isScrolling}
+																	rowCount={length}
+																	rowHeight={HEIGHT}
+																	onRowsRendered={onRowsRendered}
+																	rowRenderer={({ key, index, style }) => (
+																		<BodyRow 
+																			key={'grid-row-' + view.id + index} 
+																			{...this.props} 
+																			readonly={readonly || !allowed}
+																			index={index} 
+																			style={{ ...style, top: style.top + 2 }}
+																			cellPosition={this.cellPosition}
+																		/>
+																	)}
+																	scrollTop={scrollTop}
 																/>
-															)}
-															scrollTop={scrollTop}
-														/>
-													</div>
-												);
-											}}
-										</AutoSizer>
-									);
-								}}
-							</WindowScroller>
+															</div>
+														);
+													}}
+												</AutoSizer>
+											);
+										}}
+									</WindowScroller>
+								)}
+							</InfiniteLoader>
 
 							{!readonly && allowed ? (
 								<div className="row add">
@@ -324,6 +336,15 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 		C.BlockDataviewViewUpdate(rootId, block.id, view.id, view);
 
 		selection.preventSelect(false);
+	};
+
+	loadMoreRows ({ startIndex, stopIndex }) {
+		const { rootId, block, getData } = this.props;
+		const { viewId, offset } = dbStore.getMeta(dbStore.getSubId(rootId, block.id), '');
+
+        return new Promise((resolve, reject) => {
+			getData(viewId, offset + Constant.limit.dataview.records, resolve);
+		});
 	};
 	
 });
