@@ -471,11 +471,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 	onDragEndCard (e: any, record: any) {
 		this.onDragEndCommon(e);
 
-		if (!this.oldGroupId || !this.newGroupId) {
-			return;
-		};
-
-		if ((this.oldIndex == this.newIndex) && (this.oldGroupId == this.newGroupId)) {
+		if (!this.oldGroupId || !this.newGroupId || ((this.oldIndex == this.newIndex) && (this.oldGroupId == this.newGroupId))) {
 			return;
 		};
 
@@ -497,18 +493,34 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 						block.content.objectOrder.push(it);
 					};
 
-					this.applyGroupOrder(it.groupId);
+					window.setTimeout(() => { this.applyGroupOrder(it.groupId); }, 50);
 				});
 			});
 		};
 
-		orders.push({ viewId: view.id, groupId: this.oldGroupId, objectIds: dbStore.getRecords(oldSubId, '').map(it => it.id) });
+		let records: any[] = [];
 
 		if (change) {
-			orders.push({ viewId: view.id, groupId: this.newGroupId, objectIds: dbStore.getRecords(newSubId, '').map(it => it.id) });
+			dbStore.recordDelete(oldSubId, '', record.id);
+			dbStore.recordAdd(newSubId, '', { id: record.id }, 1);
+
+			records = dbStore.getRecords(newSubId, '');
+			records = arrayMove(records, records.findIndex(it => it.id == record.id), this.newIndex);
+			dbStore.recordsSet(newSubId, '', records);
+
+			detailStore.update(newSubId, { id: record.id, details: record }, true);
+			detailStore.delete(oldSubId, record.id, Object.keys(record));
+
+			orders.push({ viewId: view.id, groupId: this.oldGroupId, objectIds: dbStore.getRecords(oldSubId, '').map(it => it.id) });
+			orders.push({ viewId: view.id, groupId: this.newGroupId, objectIds: records.map(it => it.id) });
 
 			C.ObjectSetDetails(record.id, [ { key: view.groupRelationKey, value: newGroup.value } ], setOrder);
 		} else {
+			records = arrayMove(dbStore.getRecords(oldSubId, ''), this.oldIndex, this.newIndex);
+			dbStore.recordsSet(oldSubId, '', records);
+
+			orders.push({ viewId: view.id, groupId: this.oldGroupId, objectIds: records.map(it => it.id) });			
+
 			setOrder();
 		};
 
