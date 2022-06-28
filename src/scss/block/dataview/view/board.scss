@@ -35,7 +35,7 @@
 					.cellContent { max-width: 100%; display: inline; }
 
 					.empty { display: block; }
-					.tagItem { margin: 3px 4px 0px 0px; max-width: 80px; }
+					.tagItem { margin: 3px 8px 0px 0px; max-width: 80px; }
 					.tagItem:last-child { margin-right: 0px; }
 					.cnt { @include text-common; line-height: 24px; color: $colorMediumGrey; }
 
@@ -79,12 +79,18 @@
                 .icon { background-image: url('~img/icon/plus/menu1.svg'); }
             }
 
-			.cellContent.c-shortText {
-				.name { height: 24px; }
-			}
+			.card {
+				.cellContent {
+					.name:empty { display: none; }
+				}
 
-			.cellContent {
-				.name:empty { display: none; }
+				.cellContent.c-shortText {
+					.name { height: 24px; }
+				}
+
+				.cellContent.c-select {
+					.tagItem { margin: 0px 8px 0px 0px; }
+				}
 			}
         }
     }
