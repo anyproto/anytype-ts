@@ -575,10 +575,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 	};
 
 	textStyle (obj: any) {
-		const color = String(obj.css('color') || '').replace(/\s/g, '');
-		const rgb = color.match(/rgb\(([^\(]+)\)/)[1];
-
-		obj.css({ borderColor: `rgba(${rgb},0.35)`, color: `rgba(${rgb},0.65)` });
+		Util.textStyle(obj, { textOpacity: 0.65, borderOpacity: 0.35 });
 	};
 
 	emojiParam (style: I.TextStyle) {
