@@ -1190,7 +1190,7 @@ class DataUtil {
 		};
 
 		const subId = dbStore.getSubId(rootId, blockId);
-		const { viewId } = dbStore.getMeta(rootId, blockId);
+		const { viewId } = dbStore.getMeta(subId, '');
 		const viewChange = id != viewId;
 		const meta: any = { offset: offset };
 		const block = blockStore.getLeaf(rootId, blockId);

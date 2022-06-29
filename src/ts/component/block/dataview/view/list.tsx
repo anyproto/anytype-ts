@@ -96,11 +96,12 @@ const ViewList = observer(class ViewList extends React.Component<Props, {}> {
 	};
 
 	loadMoreRows ({ startIndex, stopIndex }) {
-		const { rootId, block, getData } = this.props;
-		const { viewId, offset } = dbStore.getMeta(dbStore.getSubId(rootId, block.id), '');
+		const { rootId, block, getData, getView } = this.props;
+		const { offset } = dbStore.getMeta(dbStore.getSubId(rootId, block.id), '');
+		const view = getView();
 
         return new Promise((resolve, reject) => {
-			getData(viewId, offset + Constant.limit.dataview.records, resolve);
+			getData(view.id, offset + Constant.limit.dataview.records, resolve);
 		});
 	};
 

@@ -223,11 +223,11 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		const meta: any = { offset: offset };
+	
 		if (viewChange) {
 			meta.viewId = newViewId;
 			dbStore.recordsSet(subId, '', []);
 		};
-
 		dbStore.metaSet(subId, '', meta);
 
 		if (![ I.ViewType.Board ].includes(view.type)) {
