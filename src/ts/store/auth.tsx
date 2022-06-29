@@ -16,6 +16,7 @@ class AuthStore {
 	public name: string = '';
 	public phrase: string = '';
 	public code: string = '';
+	public token: string = '';
 	public threadMap: Map<string, any> = new Map();
 
 	constructor () {
@@ -98,6 +99,10 @@ class AuthStore {
 
 	nameSet (v: string) {
 		this.name = v;
+    };
+
+	tokenSet (v: string) {
+		this.token = v;
     };
 
 	accountAdd (account: any) {

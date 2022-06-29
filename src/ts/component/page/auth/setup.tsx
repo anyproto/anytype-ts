@@ -127,21 +127,26 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<Props
 		C.WalletRecover(walletPath, phrase, (message: any) => {
 			if (message.error.code) {
 				this.setError(message.error.description);
-			} else 
-			if (accountId) {
-				authStore.phraseSet(phrase);
-				
-				C.AccountSelect(accountId, walletPath, (message: any) => {
-					if (message.error.code) {
-						Util.checkError(message.error.code);
-						this.setError(message.error.description);
-					} else
-					if (message.account) {
-						DataUtil.onAuth(message.account);
+			} else {
+				C.WalletCreateSession(phrase, (message: any) => {
+					authStore.tokenSet(message.token);
+
+					if (accountId) {
+						authStore.phraseSet(phrase);
+						
+						C.AccountSelect(accountId, walletPath, (message: any) => {
+							if (message.error.code) {
+								Util.checkError(message.error.code);
+								this.setError(message.error.description);
+							} else
+							if (message.account) {
+								DataUtil.onAuth(message.account);
+							};
+						});
+					} else {
+						Util.route('/auth/account-select');
 					};
 				});
-			} else {
-				Util.route('/auth/account-select');
 			};
 		});
 	};

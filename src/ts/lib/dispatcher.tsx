@@ -64,7 +64,10 @@ class Dispatcher {
 	};
 
 	listenEvents () {
-		this.stream = this.service.listenEvents(new Commands.Empty(), null);
+		const request = new Commands.StreamRequest();
+		request.setToken(authStore.token);
+
+		this.stream = this.service.listenSessionEvents(request, null);
 
 		this.stream.on('data', (event: any) => {
 			try {

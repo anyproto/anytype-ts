@@ -48,6 +48,12 @@ const WalletConvert = (response: any) => {
 	};
 };
 
+const WalletCreateSession = (response: any) => {
+	return {
+		token: response.getToken(),
+	};
+};
+
 const AccountCreate = (response: any) => {
 	return {
 		account: Mapper.From.Account(response.getAccount()),
@@ -374,6 +380,7 @@ export {
 
 	WalletCreate,
 	WalletConvert,
+	WalletCreateSession,
 
 	AccountCreate,
 	AccountSelect,
