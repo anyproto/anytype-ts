@@ -1,0 +1,23 @@
+@import "~scss/_vars";
+
+.menus {
+	.menu.menuDataviewGroupList { width: 360px; }
+	.menu.menuDataviewGroupList {
+		.content { overflow: visible; max-height: unset; padding: 0px; }
+		.wrap { height: 100%; display: flex; flex-direction: column; padding: 0px 0px 8px 0px; }
+
+		.items { flex-grow: 1; }
+		.item { padding: 4px 10px; }
+		.item {
+			.icon.plus { margin-right: 4px; background-image: url('~img/icon/plus/menu0.svg'); }
+			.switch { position: absolute; right: 16px; top: 50%; margin-top: -8px; }
+			.name { @include text-overflow-nw; width: calc(100% - 90px); }
+		}
+		.item:hover::before { background: $colorHover; }
+
+		.bottom { flex-shrink: 0; }
+		.bottom {
+			.line { margin-top: 0px; }
+		}
+	}
+}

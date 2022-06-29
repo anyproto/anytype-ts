@@ -151,29 +151,31 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 		};
 
 		const { rootId, block, readonly, getData, getView } = this.props;
+		const view = getView();
 
-		let tabs = [];
+		let tabs: any[] = [];
 		if (id == 'button-manager') {
-			tabs = [
+			tabs = tabs.concat([
 				{ id: 'relation', name: 'Relations', component: 'dataviewRelationList' },
 				{ id: 'filter', name: 'Filters', component: 'dataviewFilterList' },
 				{ id: 'sort', name: 'Sorts', component: 'dataviewSort' },
+				(view.type == I.ViewType.Board) ? { id: 'group', name: 'Groups', component: 'dataviewGroupList' } : null,
 				{ id: 'view', name: 'View', component: 'dataviewViewEdit' },
-			];
+			]);
 		};
 
 		menuStore.open(menu, { 
 			element: `#${id}`,
 			horizontal: I.MenuDirection.Center,
 			offsetY: 10,
-			tabs: tabs,
+			tabs: tabs.filter(it => it),
 			data: {
 				readonly: readonly,
 				rootId: rootId,
 				blockId: block.id, 
 				getData: getData,
 				getView: getView,
-				view: observable.box(getView()),
+				view: observable.box(view),
 			},
 		});
 	};

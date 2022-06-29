@@ -442,6 +442,7 @@ const Mapper = {
 					return {
 						groupId: it.getGroupid(),
 						index: it.getIndex(),
+						isHidden: it.getHidden(),
 					};
 				}),
 			};
@@ -730,6 +731,7 @@ const Mapper = {
 
 				el.setGroupid(it.groupId);
 				el.setIndex(it.index);
+				el.setHidden(it.isHidden);
 
 				return el;
 			}));

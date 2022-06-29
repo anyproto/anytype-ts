@@ -139,6 +139,7 @@ import 'scss/menu/dataview/common.scss';
 import 'scss/menu/dataview/sort.scss';
 import 'scss/menu/dataview/filter.scss';
 import 'scss/menu/dataview/relation.scss';
+import 'scss/menu/dataview/group.scss';
 import 'scss/menu/dataview/object.scss';
 import 'scss/menu/dataview/calendar.scss';
 import 'scss/menu/dataview/option.scss';
