@@ -259,7 +259,7 @@ class DbStore {
 		this.dataMap.set(this.getId(rootId, blockId), this.getRecords(rootId, blockId).filter(it => it.id != id));
 	};
 
-	groupsSet (rootId: string, blockId: string, groups: I.BoardGroup[]) {
+	groupsSet (rootId: string, blockId: string, groups: any[]) {
 		this.groupMap.set(this.getId(rootId, blockId), groups);
 	};
 

@@ -52,7 +52,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 		const { loading } = this.state;
 		const view = getView();
 		const { groupRelationKey } = view;
-		const groups = dbStore.getGroups(rootId, block.id);
+		const groups = this.getGroups(false);
 
 		return (
 			<div className="wrap">
@@ -97,7 +97,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 
 	componentWillUnmount () {
 		const { rootId, block } = this.props;
-		const groups = dbStore.getGroups(rootId, block.id);
+		const groups = this.getGroups(true);
 		const ids = [];
 
 		groups.forEach((it: any) => {
@@ -145,7 +145,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 
 		if (el) {
 			el.groups.forEach((it: any) => {
-				groupOrder[it.groupId] = it.index;
+				groupOrder[it.groupId] = it;
 			});
 		};
 
@@ -156,13 +156,20 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 				return;
 			};
 
-			message.groups.sort((c1: any, c2: any) => {
-				if (groupOrder[c1.id] > groupOrder[c2.id]) return 1;
-				if (groupOrder[c1.id] < groupOrder[c2.id]) return -1;
+			const groups = (message.groups || []).map((it: any) => {
+				it.isHidden = groupOrder[it.id]?.isHidden;
+				return it;
+			});
+
+			groups.sort((c1: any, c2: any) => {
+				const idx1 = groupOrder[c1.id]?.index;
+				const idx2 = groupOrder[c2.id]?.index;
+				if (idx1 > idx2) return 1;
+				if (idx1 < idx2) return -1;
 				return 0;
 			});
 
-			dbStore.groupsSet(rootId, block.id, message.groups);
+			dbStore.groupsSet(rootId, block.id, groups);
 			this.setState({ loading: false });
 		});
 	};
@@ -223,9 +230,19 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 		});
 	};
 
+	getGroups (withHidden: boolean) {
+		let { rootId, block } = this.props;
+		let groups = dbStore.getGroups(rootId, block.id)
+
+		if (!withHidden) {
+			groups = groups.filter(it => !it.isHidden);
+		};
+
+		return groups;
+	};
+
 	initCacheColumn () {
-		const { rootId, block } = this.props;
-		const groups = dbStore.getGroups(rootId, block.id);
+		const groups = this.getGroups(false);
 		const node = $(ReactDOM.findDOMNode(this));
 
 		this.cache = {};
@@ -341,8 +358,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 	};
 
 	onDragMoveColumn (e: any, groupId: string) {
-		const { rootId, block } = this.props;
-		const groups = dbStore.getGroups(rootId, block.id);
+		const groups = this.getGroups(false);
 		const node = $(ReactDOM.findDOMNode(this));
 		const ghost = $('<div />').addClass('ghost isColumn');
 		const current = this.cache[groupId];
@@ -391,12 +407,12 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 		const view = getView();
 		const update: any[] = [];
 
-		let groups = dbStore.getGroups(rootId, block.id);
+		let groups = this.getGroups(false);
 		groups = arrayMove(groups, this.oldIndex, this.newIndex);
 		dbStore.groupsSet(rootId, block.id, groups);
 
 		groups.forEach((it: any, i: number) => {
-			update.push({ groupId: it.id, index: i });
+			update.push({ groupId: it.id, index: i, isHidden: it.isHidden });
 		});
 
 		C.BlockDataviewGroupOrderUpdate(rootId, block.id, { viewId: view.id, groups: update });
@@ -554,8 +570,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 			return;
 		};
 
-		const { rootId, block } = this.props;
-		const groups = dbStore.getGroups(rootId, block.id);
+		const groups = this.getGroups(false);
 		const node = $(ReactDOM.findDOMNode(this));
 
 		groups.forEach((group: any, i: number) => {
@@ -607,7 +622,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 		const ww = win.width();
 		const mw = ww - 192;
 		const size = Constant.size.dataview.board;
-		const groups = dbStore.getGroups(rootId, block.id);
+		const groups = this.getGroups(false);
 		const width = 20 + groups.length * (size.card + size.margin);
 		
 		let vw = 0;

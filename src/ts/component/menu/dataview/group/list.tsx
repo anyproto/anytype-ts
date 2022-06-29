@@ -2,11 +2,13 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Icon, Switch } from 'ts/component';
-import { I, C, DataUtil, keyboard } from 'ts/lib';
+import { I, C, DataUtil, keyboard, translate } from 'ts/lib';
 import { menuStore, dbStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import arrayMove from 'array-move';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCache } from 'react-virtualized';
+
+import Cell from 'ts/component/block/dataview/cell';
 
 interface Props extends I.Menu {};
 
@@ -35,8 +37,10 @@ const MenuGroupList = observer(class MenuGroupList extends React.Component<Props
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { readonly, rootId, blockId } = data;
+		const { readonly, rootId, blockId, getView } = data;
 		const items = this.getItems();
+		const view = getView();
+		const block = blockStore.getLeaf(rootId, blockId);
 		const allowedView = blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
 
 		const Handle = SortableHandle(() => (
@@ -46,7 +50,11 @@ const MenuGroupList = observer(class MenuGroupList extends React.Component<Props
 		const Item = SortableElement((item: any) => {
 			const canHide = allowedView;
 			const canEdit = !readonly && allowedView;
+			const subId = dbStore.getSubId(rootId, [ blockId, item.id ].join(':'));
 			const cn = [ 'item' ];
+			const head = {};
+
+			head[view.groupRelationKey] = item.value;
 			
 			if (!canEdit) {
 				cn.push('isReadonly');
@@ -54,14 +62,25 @@ const MenuGroupList = observer(class MenuGroupList extends React.Component<Props
 
 			return (
 				<div 
-					id={'item-' + item.relationKey} 
+					id={'item-' + item.id} 
 					className={cn.join(' ')} 
 					onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }}
 					style={item.style}
 				>
 					{allowedView ? <Handle /> : ''}
 					<span className="clickable" onClick={(e: any) => { this.onClick(e, item); }}>
-						<div className="name">{item.value}</div>
+						<Cell 
+							id={'menu-group-' + item.id} 
+							rootId={rootId}
+							subId={subId}
+							block={block}
+							relationKey={view.groupRelationKey} 
+							viewType={I.ViewType.Board}
+							getRecord={() => { return head; }}
+							readonly={true} 
+							arrayLimit={2}
+							placeholder={translate('placeholderCellCommon')}
+						/>
 					</span>
 					{canHide ? (
 						<Switch 
@@ -219,25 +238,36 @@ const MenuGroupList = observer(class MenuGroupList extends React.Component<Props
 		const { param, dataset } = this.props;
 		const { selection } = dataset;
 		const { data } = param;
-		const { getView } = data;
-		const view = getView();
-		
+		const { rootId, blockId } = data;
+			
+		dbStore.groupsSet(rootId, blockId, arrayMove(this.getItems(), oldIndex, newIndex));
 		this.save();
 
 		selection.preventSelect(false);
 	};
 
 	onSwitch (e: any, item: any, v: boolean) {
-		const { param } = this.props;
-		const { data } = param;
-		const { getView } = data;
+		const groups = this.getItems();
+		const group = groups.find(it => it.id == item.id);
+
+		group.isHidden = !v;
+		this.save();
 	};
 
 	save () {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, onSave, getView } = data;
+		const { rootId, blockId, getView } = data;
 		const view = getView();
+		const groups = this.getItems();
+		const update: any[] = [];
+
+		groups.forEach((it: any, i: number) => {
+			update.push({ groupId: it.id, index: i, isHidden: it.isHidden });
+		});
+
+		dbStore.groupsSet(rootId, blockId, groups);
+		C.BlockDataviewGroupOrderUpdate(rootId, blockId, { viewId: view.id, groups: update });
 
 	};
 
