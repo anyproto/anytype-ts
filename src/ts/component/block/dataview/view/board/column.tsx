@@ -61,6 +61,7 @@ const Column = observer(class Column extends React.Component<Props, State> {
 		});
 
 		let label: any = null;
+		let showCell = true;
 
 		switch (relation.format) {
 			case I.RelationType.Checkbox:
@@ -83,7 +84,7 @@ const Column = observer(class Column extends React.Component<Props, State> {
 							draggable={true}
 							onDragStart={(e: any) => { onDragStartColumn(e, id); }}
 						>
-							{label ? label : (
+							{showCell ? (
 								<Cell 
 									id={'board-head-' + id} 
 									rootId={rootId}
@@ -96,7 +97,8 @@ const Column = observer(class Column extends React.Component<Props, State> {
 									arrayLimit={2}
 									placeholder={translate('placeholderCellCommon')}
 								/>
-							)}
+							) : ''}
+							{label}
 						</div>
 						<div className="side right">
 							<Icon className="more" />

@@ -25,7 +25,10 @@
             .columns { display: flex; flex-direction: row; gap: 0px 10px; }
             .column { width: 254px; flex-shrink: 0; display: flex; flex-direction: column; }
             .column {
-                .head { padding: 4px 10px; width: 240px; margin: 6px 0px; cursor: grab; border-radius: 12px; background: #fff; color: $colorDarkGrey; }
+                .head { 
+					padding: 4px 10px; width: 240px; margin: 6px 0px; cursor: grab; border-radius: 12px; background: #fff; color: $colorDarkGrey; 
+					line-height: 24px; 
+				}
 				.head * { cursor: grab; }
 				.head {
 					.sides { display: flex; width: 100%; gap: 0px 6px; }
@@ -43,11 +46,18 @@
 						.more { vertical-align: top; margin: 3px 0px 0px 0px; }
 					}
 
-					.icon { flex-shrink: 0; width: 24px; height: 24px; background-size: 20px;  border-radius: 4px; cursor: pointer; }
-					.icon:hover { background-color: $colorVeryLightGrey; }
+					.cellContent.c-checkbox { width: auto; }
+					.cellContent.c-checkbox {
+						.icon { width: 24px; height: 24px; vertical-align: top; }
+					}
 
-					.icon.more { background-image: url('~img/icon/menu/action/more0.svg'); }
-					.icon.add { background-image: url('~img/icon/plus/menu0.svg'); }
+					.side.right {
+						.icon { flex-shrink: 0; width: 24px; height: 24px; background-size: 20px; border-radius: 4px; cursor: pointer; vertical-align: top; }
+						.icon:hover { background-color: $colorVeryLightGrey; }
+
+						.icon.more { background-image: url('~img/icon/menu/action/more0.svg'); }
+						.icon.add { background-image: url('~img/icon/plus/menu0.svg'); }
+					}
 				}
 
 				.body { overflow-y: overlay; max-height: 600px; }
