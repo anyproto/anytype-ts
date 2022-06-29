@@ -161,17 +161,16 @@
 			}
 			.select:hover, .select.active { background: none; }
 			
-			.buttons { position: absolute; right: 16px; top: 0px; }
+			.buttons { position: absolute; right: 16px; top: 0px; display: flex; flex-direction: row; gap: 0px 8px; }
 			.buttons {
 				.btn { padding: 0px; height: 20px; line-height: 20px; color: $colorMediumGrey; @include text-common; cursor: pointer; }
 				.btn {
-					.icon { margin-right: 4px; vertical-align: top; }
+					.icon { margin-right: 4px; vertical-align: top; width: 20px; height: 20px; cursor: pointer; }
+					.icon.codeWrap { background-image: url('~img/icon/menu/action/wrap0.svg'); }
+					.icon.copy { background-image: url('~img/icon/menu/action/copy0.svg'); }
+
 					.txt { line-height: 20px; vertical-align: top; }
 				}
-			}
-
-			.icon.codeWrap { 
-				width: 20px; height: 20px; background-image: url('~img/icon/menu/action/wrap0.svg'); cursor: pointer;
 			}
 		}
 	}

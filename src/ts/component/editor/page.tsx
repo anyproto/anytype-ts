@@ -53,6 +53,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		this.onMouseMove = this.onMouseMove.bind(this);
 		this.onAdd = this.onAdd.bind(this);
 		this.onMenuAdd = this.onMenuAdd.bind(this);
+		this.onCopy = this.onCopy.bind(this);
 		this.onPaste = this.onPaste.bind(this);
 		this.onLastClick = this.onLastClick.bind(this);
 		this.blockCreate = this.blockCreate.bind(this);
@@ -119,6 +120,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 								onKeyDown={this.onKeyDownBlock}
 								onKeyUp={this.onKeyUpBlock}  
 								onMenuAdd={this.onMenuAdd}
+								onCopy={this.onCopy}
 								onPaste={this.onPaste}
 								readonly={readonly}
 								getWrapper={this.getWrapper}
@@ -1391,11 +1393,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			};
 		};
 		
-		Util.clipboardCopy(data, () => { 
-			C[cmd](rootId, blocks, range, cb);
-
-			analytics.event('CopyBlock');
-		});
+		C[cmd](rootId, blocks, range, cb);
+		analytics.event('CopyBlock');
 	};
 	
 	onPaste (e: any, force?: boolean, data?: any) {
