@@ -60,17 +60,30 @@ const MenuAccount = observer(class MenuAccount extends React.Component<Props, St
 	componentDidMount () {
 		const { walletPath, accounts } = authStore;
 		const phrase = Storage.get('phrase');
+		const setError = (message: any) => {
+			if (!message.error.code) {
+				return false;
+			};
+
+			Util.checkError(message.error.code);
+
+			const error = Errors.AccountCreate[message.error.code] || message.error.description;
+			this.setState({ error });
+
+			return true;
+		};
 		
 		if (!accounts.length) {
 			authStore.accountListClear();
 			
 			C.WalletRecover(walletPath, phrase, (message: any) => {
-				C.AccountRecover((message: any) => {
-					if (message.error.code) {
-						Util.checkError(message.error.code);
+				if (setError(message)) {
+					return;
+				};
 
-						const error = Errors.AccountCreate[message.error.code] || message.error.description;
-						this.setState({ error });
+				C.AccountRecover((message: any) => {
+					if (setError(message)) {
+						return;
 					};
 				});
 			});			

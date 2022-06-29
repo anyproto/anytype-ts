@@ -78,11 +78,16 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<Props
 		C.WalletRecover(walletPath, phrase, (message: any) => {
 			if (message.error.code) {
 				this.phraseRef.setError(true);
-				this.setState({ error: message.error.description });
-			} else {
-				authStore.phraseSet(phrase);
-				Util.route('/auth/account-select');
+				this.setState({ error: message.error.description });	
+				return;
 			};
+
+			C.WalletCreateSession(phrase, (message: any) => {
+				authStore.tokenSet(message.token);
+				authStore.phraseSet(phrase);
+
+				Util.route('/auth/account-select');
+			});
 		});
 	};
 

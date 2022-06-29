@@ -79,15 +79,19 @@ const PageAccountSelect = observer(class PageAccountSelect extends React.Compone
 		this.setState({ loading: true });
 		
 		C.WalletRecover(walletPath, phrase, (message: any) => {
-			C.AccountRecover((message: any) => {
-				const state: any = { loading: false };
+			C.WalletCreateSession(phrase, (message: any) => {
+				authStore.tokenSet(message.token);
 
-				if (message.error.code) {
-					Util.checkError(message.error.code);
-					state.error = Errors.AccountRecover[message.error.code] || message.error.description;
-				};
+				C.AccountRecover((message: any) => {
+					const state: any = { loading: false };
 
-				this.setState(state);
+					if (message.error.code) {
+						Util.checkError(message.error.code);
+						state.error = Errors.AccountRecover[message.error.code] || message.error.description;
+					};
+
+					this.setState(state);
+				});
 			});
 		});
 	};

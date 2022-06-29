@@ -124,30 +124,43 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<Props
 			return;
 		};
 
-		C.WalletRecover(walletPath, phrase, (message: any) => {
+		const setError = (message: any) => {
 			if (message.error.code) {
+				Util.checkError(message.error.code);
 				this.setError(message.error.description);
-			} else {
-				C.WalletCreateSession(phrase, (message: any) => {
-					authStore.tokenSet(message.token);
-
-					if (accountId) {
-						authStore.phraseSet(phrase);
-						
-						C.AccountSelect(accountId, walletPath, (message: any) => {
-							if (message.error.code) {
-								Util.checkError(message.error.code);
-								this.setError(message.error.description);
-							} else
-							if (message.account) {
-								DataUtil.onAuth(message.account);
-							};
-						});
-					} else {
-						Util.route('/auth/account-select');
-					};
-				});
+				return true;
 			};
+			return false;
+		};
+
+		C.WalletRecover(walletPath, phrase, (message: any) => {
+			if (setError(message)) {
+				return;
+			};
+
+			C.WalletCreateSession(phrase, (message: any) => {
+				if (setError(message)) {
+					return;
+				};
+
+				authStore.tokenSet(message.token);
+
+				if (accountId) {
+					authStore.phraseSet(phrase);
+					
+					C.AccountSelect(accountId, walletPath, (message: any) => {
+						if (setError(message)) {
+							return;
+						};
+
+						if (message.account) {
+							DataUtil.onAuth(message.account);
+						};
+					});
+				} else {
+					Util.route('/auth/account-select');
+				};
+			});
 		});
 	};
 	
