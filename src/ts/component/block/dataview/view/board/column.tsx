@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import { Icon, Loader } from 'ts/component';
 import { I, C, Util, translate, keyboard } from 'ts/lib';
 import { observer } from 'mobx-react';
@@ -22,6 +23,8 @@ interface State {
 	loading: boolean;
 };
 
+const Constant = require('json/constant.json');
+
 const Column = observer(class Column extends React.Component<Props, State> {
 
 	cache: any = {};
@@ -29,6 +32,7 @@ const Column = observer(class Column extends React.Component<Props, State> {
 	columnWidth: number = 0;
 	columnCount: number = 0;
 	offset: number = 0;
+	loading: boolean = false;
 	state = {
 		loading: false,
 	};
@@ -125,18 +129,23 @@ const Column = observer(class Column extends React.Component<Props, State> {
 	};
 
 	componentDidMount () {
-		this.load();
+		this.load(true);
 	};
 
 	componentWillUnmount () {
 		this.clear();
 	};
 
-	load () {
+	load (clear: boolean) {
+		if (this.loading) {
+			return;
+		};
+
 		const { rootId, block, getView, getKeys, getSubId, value, applyGroupOrder } = this.props;
 		const view = getView();
 		const relation = dbStore.getRelation(rootId, block.id, view.groupRelationKey);
 		const subId = getSubId();
+		const limit = Constant.limit.dataview.records + this.offset;
 
 		if (!relation) {
 			return;
@@ -158,10 +167,21 @@ const Column = observer(class Column extends React.Component<Props, State> {
 				break;
 		};
 
-		this.setState({ loading: true });
-		C.ObjectSearchSubscribe(subId, filters, view.sorts, getKeys(view.id), block.content.sources, 0, 100, true, '', '', false, () => {
+		if (clear) {
+			this.clear();
+			this.setState({ loading: true });
+		};
+
+		this.loading = true;
+
+		C.ObjectSearchSubscribe(subId, filters, view.sorts, getKeys(view.id), block.content.sources, 0, limit, true, '', '', false, () => {
 			applyGroupOrder();
-			this.setState({ loading: false });
+
+			if (clear) {
+				this.setState({ loading: false });
+			};
+
+			this.loading = false;
 		});
 	};
 
@@ -182,8 +202,17 @@ const Column = observer(class Column extends React.Component<Props, State> {
 	};
 
 	onScroll (e: any) {
+		const node = $(ReactDOM.findDOMNode(this));
+		const body = node.find('.body');
+		const st = body.scrollTop();
+
 		if (keyboard.isDragging) {
 			this.props.onScrollColumn();
+		};
+
+		if (st >= body.get(0).scrollHeight - body.height() - 100) {
+			this.offset += Constant.limit.dataview.records;
+			this.load(false);
 		};
 	};
 
