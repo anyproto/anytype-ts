@@ -15,7 +15,6 @@ const $ = require('jquery');
 const Constant = require('json/constant.json');
 const HEIGHT = 28;
 
-const LIMIT_LOAD = 100;
 const LIMIT_HEIGHT = 10;
 
 const MenuBlockMention = observer(class MenuBlockMention extends React.Component<Props, State> {
@@ -182,7 +181,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 			this.setState({ loading: true });
 		};
 
-		C.ObjectSearch(filters, sorts, Constant.defaultRelationKeys, filter, this.offset, LIMIT_LOAD, (message: any) => {
+		C.ObjectSearch(filters, sorts, Constant.defaultRelationKeys, filter, this.offset, Constant.limit.menu, (message: any) => {
 			if (callBack) {
 				callBack(null);
 			};
@@ -204,7 +203,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 
 	loadMoreRows ({ startIndex, stopIndex }) {
         return new Promise((resolve, reject) => {
-			this.offset += LIMIT_LOAD;
+			this.offset += Constant.limit.menu;
 			this.load(false, resolve);
 		});
 	};

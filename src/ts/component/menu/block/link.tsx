@@ -16,7 +16,6 @@ const Constant = require('json/constant.json');
 const HEIGHT_SECTION = 28;
 const HEIGHT_ITEM = 56;
 const LIMIT_HEIGHT = 6;
-const LIMIT_LOAD = 100;
 
 const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props, State> {
 
@@ -266,7 +265,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 	
 	loadMoreRows ({ startIndex, stopIndex }) {
         return new Promise((resolve, reject) => {
-			this.offset += LIMIT_LOAD;
+			this.offset += Constant.limit.menu;
 			this.load(false, resolve);
 		});
 	};
@@ -295,7 +294,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 			this.setState({ loading: true });
 		};
 
-		C.ObjectSearch(filters, sorts, Constant.defaultRelationKeys, filter.replace(/\\/g, ''), this.offset, LIMIT_LOAD, (message: any) => {
+		C.ObjectSearch(filters, sorts, Constant.defaultRelationKeys, filter.replace(/\\/g, ''), this.offset, Constant.limit.menu, (message: any) => {
 			if (callBack) {
 				callBack(null);
 			};

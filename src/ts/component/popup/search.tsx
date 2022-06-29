@@ -18,7 +18,6 @@ const Constant = require('json/constant.json');
 
 const HEIGHT = 32;
 const LIMIT_HEIGHT = 14;
-const LIMIT_LOAD = 100;
 
 const PopupSearch = observer(class PopupSearch extends React.Component<Props, State> {
 	
@@ -325,7 +324,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 
 	loadMoreRows ({ startIndex, stopIndex }) {
         return new Promise((resolve, reject) => {
-			this.offset += LIMIT_LOAD;
+			this.offset += Constant.limit.menu;
 			this.load(false, resolve);
 		});
 	};
@@ -356,7 +355,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 			this.setState({ loading: true });
 		};
 
-		C.ObjectSearch(filters, sorts, Constant.defaultRelationKeys, filter, this.offset, LIMIT_LOAD, (message: any) => {
+		C.ObjectSearch(filters, sorts, Constant.defaultRelationKeys, filter, this.offset, Constant.limit.menu, (message: any) => {
 			if (message.error.code) {
 				this.setState({ loading: false });
 				return;
