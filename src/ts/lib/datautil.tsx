@@ -391,12 +391,19 @@ class DataUtil {
 	objectOpenPopup (object: any, popupParam?: any) {
 		const { root } = blockStore;
 		const action = this.actionByLayout(object.layout);
+		const renderer = Util.getRenderer();
 
 		if ((action == 'edit') && (object.id == root)) {
 			this.objectOpen(object);
 			return;
 		};
-		
+
+		const route = this.objectRoute(object);
+		if (route) {
+			renderer.send('windowOpen', '/' + route);
+			return;
+		};
+
 		let param: any = Object.assign(popupParam || {}, {});
 		param.data = Object.assign(param.data || {}, { 
 			matchPopup: { 

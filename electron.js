@@ -348,6 +348,11 @@ function createWindow () {
 		});
 	});
 
+	ipcMain.on('windowOpen', (e, route) => {
+		deeplinkingUrl = route;
+		createWindow();
+	});
+
 	ipcMain.on('download', async (e, url) => {
 		const win = BrowserWindow.getFocusedWindow();
 		await download(win, url, { saveAs: true });
