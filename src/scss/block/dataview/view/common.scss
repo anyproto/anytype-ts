@@ -41,7 +41,7 @@
 
 				.cellContent.c-select { line-height: 18px; }
 				.cellContent.c-select {
-					.tagItem { max-width: 140px; margin-bottom: 0px; @include text-small; }
+					.tagItem { max-width: 40%; margin-bottom: 0px; @include text-small; }
 				}
 
 				.cellContent.c-object, .cellContent.c-file {

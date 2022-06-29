@@ -32,18 +32,16 @@
 					.side.left { width: calc(100% - 54px); display: flex; align-items: flex-start; gap: 0px 6px; justify-content: flex-start; }
 					.side.right { width: 54px; display: flex; align-items: flex-start; gap: 0px 6px; flex-shrink: 0; justify-content: flex-end; }
 
-					.cellContent { display: inline; }
+					.cellContent { width: 100%; display: inline; }
 					.cellContent {
 						.empty { display: block; line-height: 24px; }
 						.wrap { display: inline-block; white-space: nowrap; max-width: 100%; }
 
-						.tagItem { max-width: 60px; margin: 3px 8px 0px 0px; }
+						.tagItem { margin: 3px 8px 0px 0px; }
 						.tagItem:last-child { margin-right: 0px; }
 
 						.more { vertical-align: top; margin: 3px 0px 0px 0px; }
 					}
-
-					.cnt { display: inline-block; @include text-common; line-height: 24px; color: $colorMediumGrey; }
 
 					.icon { flex-shrink: 0; width: 24px; height: 24px; background-size: 20px;  border-radius: 4px; cursor: pointer; }
 					.icon:hover { background-color: $colorVeryLightGrey; }

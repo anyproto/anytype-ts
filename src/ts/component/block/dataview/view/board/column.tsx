@@ -82,7 +82,6 @@ const Column = observer(class Column extends React.Component<Props, State> {
 								arrayLimit={2}
 								placeholder={translate('placeholderCellCommon')}
 							/>
-							<div className="cnt">{total}</div>
 						</div>
 						<div className="side right">
 							<Icon className="more" />
