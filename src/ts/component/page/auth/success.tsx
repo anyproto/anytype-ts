@@ -39,17 +39,19 @@ const PageAuthSuccess = observer(class PageAuthSuccess extends React.Component<P
 					<Title text="Save your recovery phrase" />
 					<Label text="This phrase is needed to log in on another device and recover data. Please, keep it safe. You can find it anytime in settings." />
 						
-					<Textarea 
-						ref={(ref: any) => this.refPhrase = ref} 
-						id="phrase" 
-						value={phrase} 
-						className="isBlurred"
-						onFocus={this.onFocusPhrase} 
-						onBlur={this.onBlurPhrase} 
-						onCopy={this.onCopyPhrase}
-						placeholder="witch collapse practice feed shame open despair creek road again ice least lake tree young address brain envelope" 
-						readonly={true}
-					/>
+					<div className="textareaWrap">
+						<Textarea 
+							ref={(ref: any) => this.refPhrase = ref} 
+							id="phrase" 
+							value={phrase} 
+							className="isBlurred"
+							onFocus={this.onFocusPhrase} 
+							onBlur={this.onBlurPhrase} 
+							onCopy={this.onCopyPhrase}
+							placeholder="witch collapse practice feed shame open despair creek road again ice least lake tree young address brain envelope" 
+							readonly={true}
+						/>
+					</div>
 
 					<Button text={translate('authSuccessSubmit')} onClick={this.onSubmit} />
 				</Frame>

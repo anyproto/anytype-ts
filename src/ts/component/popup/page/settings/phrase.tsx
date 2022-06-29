@@ -54,19 +54,21 @@ const PopupSettingsPagePhrase = observer(class PopupSettingsPagePhrase extends R
 				<Label text={translate('popupSettingsPhraseText')} />
 				
 				<div className="inputs">
-					<Textarea 
-						ref={(ref: any) => this.refPhrase = ref} 
-						id="phrase" 
-						value={translate('popupSettingsPhraseStub')} 
-						className="isBlurred"
-						onFocus={this.onFocusPhrase} 
-						onBlur={this.onBlurPhrase} 
-						onCopy={() => { 
-							analytics.event('KeychainCopy', { type: onConfirmPhrase ? 'BeforeLogout' : 'ScreenSettings' });
-						}}
-						placeholder="witch collapse practice feed shame open despair creek road again ice least lake tree young address brain envelope" 
-						readonly={true} 
-					/>
+					<div className="textareaWrap">
+						<Textarea 
+							ref={(ref: any) => this.refPhrase = ref} 
+							id="phrase" 
+							value={translate('popupSettingsPhraseStub')} 
+							className="isBlurred"
+							onFocus={this.onFocusPhrase} 
+							onBlur={this.onBlurPhrase} 
+							onCopy={() => { 
+								analytics.event('KeychainCopy', { type: onConfirmPhrase ? 'BeforeLogout' : 'ScreenSettings' });
+							}}
+							placeholder="witch collapse practice feed shame open despair creek road again ice least lake tree young address brain envelope" 
+							readonly={true} 
+						/>
+					</div>
 				</div>
 
 				{!onConfirmPhrase ? (
