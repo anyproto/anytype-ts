@@ -25,7 +25,7 @@
             .columns { display: flex; flex-direction: row; gap: 0px 10px; }
             .column { width: 254px; flex-shrink: 0; display: flex; flex-direction: column; }
             .column {
-                .head { padding: 4px 10px; width: 240px; margin: 6px 0px; cursor: grab; border-radius: 12px; background: #fff; }
+                .head { padding: 4px 10px; width: 240px; margin: 6px 0px; cursor: grab; border-radius: 12px; background: #fff; color: $colorDarkGrey; }
 				.head * { cursor: grab; }
 				.head {
 					.sides { display: flex; width: 100%; gap: 0px 6px; }

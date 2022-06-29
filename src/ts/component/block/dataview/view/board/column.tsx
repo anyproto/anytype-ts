@@ -51,6 +51,7 @@ const Column = observer(class Column extends React.Component<Props, State> {
 		const records = dbStore.getRecords(subId, '');
 		const items = this.getItems();
 		const { offset, total } = dbStore.getMeta(subId, '');
+		const relation = dbStore.getRelation(rootId, block.id, view.groupRelationKey);
 		const head = {};
 
 		head[view.groupRelationKey] = value;
@@ -58,6 +59,14 @@ const Column = observer(class Column extends React.Component<Props, State> {
 		records.forEach((it: any) => {
 			const object = detailStore.get(subId, it.id, [ view.groupRelationKey ]);
 		});
+
+		let label: any = null;
+
+		switch (relation.format) {
+			case I.RelationType.Checkbox:
+				label = `${relation.name} is ${value ? 'checked' : 'unchecked'}`;
+				break;
+		};
 
 		return (
 			<div 
@@ -74,18 +83,20 @@ const Column = observer(class Column extends React.Component<Props, State> {
 							draggable={true}
 							onDragStart={(e: any) => { onDragStartColumn(e, id); }}
 						>
-							<Cell 
-								id={'board-head-' + id} 
-								rootId={rootId}
-								subId={subId}
-								block={block}
-								relationKey={view.groupRelationKey} 
-								viewType={I.ViewType.Board}
-								getRecord={() => { return head; }}
-								readonly={true} 
-								arrayLimit={2}
-								placeholder={translate('placeholderCellCommon')}
-							/>
+							{label ? label : (
+								<Cell 
+									id={'board-head-' + id} 
+									rootId={rootId}
+									subId={subId}
+									block={block}
+									relationKey={view.groupRelationKey} 
+									viewType={I.ViewType.Board}
+									getRecord={() => { return head; }}
+									readonly={true} 
+									arrayLimit={2}
+									placeholder={translate('placeholderCellCommon')}
+								/>
+							)}
 						</div>
 						<div className="side right">
 							<Icon className="more" />
@@ -163,7 +174,7 @@ const Column = observer(class Column extends React.Component<Props, State> {
 				break;
 
 			case I.RelationType.Tag:
-				filters.push({ operator: I.FilterOperator.And, relationKey: relation.relationKey, condition: I.FilterCondition.AllIn, value: value });
+				filters.push({ operator: I.FilterOperator.And, relationKey: relation.relationKey, condition: I.FilterCondition.ExactIn, value: value });
 				break;
 		};
 

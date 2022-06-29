@@ -31,6 +31,8 @@ const Mapper = {
 
 		if (v == V.STATUS)	 t = 'status';
 		if (v == V.TAG)		 t = 'tag';
+		if (v == V.CHECKBOX) t = 'checkbox';
+		if (v == V.DATE)	 t = 'date';
 		return t;
 	},
 
@@ -426,6 +428,10 @@ const Mapper = {
 
 				case 'tag':
 					value = field.getIdsList();
+					break;
+
+				case 'checkbox':
+					value = field.getChecked();
 					break;
 			};
 

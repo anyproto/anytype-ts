@@ -52,6 +52,8 @@ export enum FilterCondition {
 	NotEmpty		 = 12,
 	AllIn			 = 13,
 	NotAllIn		 = 14,
+	ExactIn			 = 15,
+    NotExactIn		 = 16,
 };
 
 export enum FilterQuickOption {
