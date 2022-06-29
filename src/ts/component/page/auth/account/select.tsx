@@ -3,7 +3,7 @@ import { RouteComponentProps } from 'react-router';
 import { Frame, Icon, Cover, Error, Title, IconObject, Header, FooterAuth as Footer, Loader, Button } from 'ts/component';
 import { commonStore, authStore } from 'ts/store';
 import { observer } from 'mobx-react';
-import { I, C, Util, translate } from 'ts/lib';
+import { I, C, Util, translate, DataUtil } from 'ts/lib';
 
 interface Props extends RouteComponentProps<any> {};
 
@@ -79,9 +79,7 @@ const PageAccountSelect = observer(class PageAccountSelect extends React.Compone
 		this.setState({ loading: true });
 		
 		C.WalletRecover(walletPath, phrase, (message: any) => {
-			C.WalletCreateSession(phrase, (message: any) => {
-				authStore.tokenSet(message.token);
-
+			DataUtil.createSession(() => {
 				C.AccountRecover((message: any) => {
 					const state: any = { loading: false };
 

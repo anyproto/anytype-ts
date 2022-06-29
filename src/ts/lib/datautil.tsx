@@ -1,4 +1,4 @@
-import { I, C, M, keyboard, crumbs, translate, Util, history as historyPopup, Storage, analytics, Relation } from 'ts/lib';
+import { I, C, M, keyboard, crumbs, translate, Util, history as historyPopup, Storage, analytics, Relation, dispatcher } from 'ts/lib';
 import { commonStore, blockStore, detailStore, dbStore, popupStore, authStore } from 'ts/store';
 
 const Constant = require('json/constant.json');
@@ -333,6 +333,17 @@ class DataUtil {
 
 			keyboard.initPinCheck();
 			Util.route(redirectTo ? redirectTo : '/main/index', true);
+		});
+	};
+
+	createSession (callBack?: (message: any) => void) {
+		C.WalletCreateSession(authStore.phrase, (message: any) => {
+			authStore.tokenSet(message.token);
+			dispatcher.listenEvents();
+
+			if (callBack) {
+				callBack(message);
+			};
 		});
 	};
 

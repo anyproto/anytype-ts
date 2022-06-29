@@ -138,12 +138,10 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<Props
 				return;
 			};
 
-			C.WalletCreateSession(phrase, (message: any) => {
+			DataUtil.createSession((message: any) => {
 				if (setError(message)) {
 					return;
 				};
-
-				authStore.tokenSet(message.token);
 
 				if (accountId) {
 					authStore.phraseSet(phrase);
