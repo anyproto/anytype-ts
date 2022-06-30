@@ -86,6 +86,8 @@ class Util {
 			args.shift();
 			win.webContents.send.apply(win.webContents, args);
 		};
+
+		console.log('[Send]', win, args);
 	};
 
 	savePage (win, exportPath, name) {

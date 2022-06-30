@@ -123,7 +123,8 @@ function createMainWindow () {
 		);
 	};
 
-	registerIpcEvents(mainWindow);
+	registerIpcEventsMain();
+	registerIpcEventsWindow();
 
 	UpdateManager.init(mainWindow);
 	UpdateManager.exit = exit;
@@ -152,24 +153,13 @@ function createChildWindow (route) {
 		};
 	});
 
-	registerIpcEvents(win);
+	registerIpcEventsWindow();
 };
 
-function registerIpcEvents (win) {
-	ipcMain.on('appLoaded', () => { Util.send(win, 'init', dataPath.join('/'), ConfigManager.config, Util.isDarkTheme()); });
+function registerIpcEventsMain () {
 	ipcMain.on('exit', (e, relaunch) => { exit(relaunch); });
 	ipcMain.on('shutdown', (e, relaunch) => { shutdown(relaunch); });
 	ipcMain.on('configSet', (e, config) => { setConfig(config); });
-
-	ipcMain.on('keytarSet', (e, key, value) => {
-		if (key && value) {
-			keytar.setPassword(KEYTAR_SERVICE, key, value);
-		};
-	});
-	ipcMain.on('keytarGet', (e, key) => {
-		keytar.getPassword(KEYTAR_SERVICE, key).then((value) => { Util.send(win, 'keytarGet', key, value); });
-	});
-	ipcMain.on('keytarDelete', (e, key) => { keytar.deletePassword(KEYTAR_SERVICE, key); });
 
 	ipcMain.on('updateDownload', (e) => { UpdateManager.download(); });
 	ipcMain.on('updateConfirm', (e) => { exit(true); }); 
@@ -179,21 +169,28 @@ function registerIpcEvents (win) {
 	ipcMain.on('pathOpen', async (e, v) => { shell.openPath(v); });
 	ipcMain.on('windowOpen', (e, v) => { createChildWindow(v); });
 
-	ipcMain.on('download', async (e, url) => { await download(win, url, { saveAs: true }); });
+	ipcMain.on('keytarSet', (e, key, value) => {
+		if (key && value) {
+			keytar.setPassword(KEYTAR_SERVICE, key, value);
+		};
+	});
+	ipcMain.on('keytarDelete', (e, key) => { keytar.deletePassword(KEYTAR_SERVICE, key); });
+};
 
-	ipcMain.on('proxyEvent', function () {
-		let args = Object.values(arguments);
+function registerIpcEventsWindow () {
+	ipcMain.on('appLoaded', () => { Util.send(BrowserWindow.getFocusedWindow(), 'init', dataPath.join('/'), ConfigManager.config, Util.isDarkTheme()); });
 
-		args.shift();
-		send.apply(this, args);
+	ipcMain.on('keytarGet', (e, key) => {
+		keytar.getPassword(KEYTAR_SERVICE, key).then((value) => { Util.send(BrowserWindow.getFocusedWindow(), 'keytarGet', key, value); });
 	});
 
-	ipcMain.on('winCommand', (e, cmd, param) => { WindowManager.command(win, cmd, param); });
+	ipcMain.on('download', async (e, url) => { await download(BrowserWindow.getFocusedWindow(), url, { saveAs: true }); });
+	ipcMain.on('winCommand', (e, cmd, param) => { WindowManager.command(BrowserWindow.getFocusedWindow(), cmd, param); });
 };
 
 function setConfig (obj, callBack) {
 	ConfigManager.set(obj, (err) => {
-		Util.send(mainWindow, 'config', ConfigManager.config);
+		Util.send(BrowserWindow.getFocusedWindow(), 'config', ConfigManager.config);
 
 		if (callBack) {
 			callBack(err);
@@ -220,7 +217,7 @@ app.on('second-instance', (event, argv, cwd) => {
 	if (!is.macos) {
 		deeplinkingUrl = argv.find((arg) => arg.startsWith(`${protocol}://`));
 		if (deeplinkingUrl) {
-			Util.send(mainWindow, 'route', Util.getRouteFromUrl(deeplinkingUrl));
+			Util.send(BrowserWindow.getFocusedWindow(), 'route', Util.getRouteFromUrl(deeplinkingUrl));
 		};
 	};
 
