@@ -1,4 +1,4 @@
-import { I, keyboard } from 'ts/lib';
+import { I, keyboard, Renderer } from 'ts/lib';
 import { commonStore, popupStore, menuStore } from 'ts/store';
 import { translate } from '.';
 
@@ -762,11 +762,9 @@ class Util {
 	};
 	
 	renderLink (obj: any) {
-		const renderer = this.getRenderer();
-
 		obj.find('a').unbind('click').on('click', function (e: any) {
 			e.preventDefault();
-			renderer.send('urlOpen', $(this).attr('href'));
+			Renderer.send('urlOpen', $(this).attr('href'));
 		});
 	};
 
@@ -786,15 +784,11 @@ class Util {
 	};
 	
 	onUrl (url: string) {
-		const renderer = this.getRenderer();
-
-		renderer.send('urlOpen', url);
+		Renderer.send('urlOpen', url);
 	};
 
 	onPath (path: string) {
-		const renderer = this.getRenderer();
-
-		renderer.send('pathOpen', path);
+		Renderer.send('pathOpen', path);
 	};
 	
 	emailCheck (v: string) {
@@ -857,12 +851,10 @@ class Util {
 			return;
 		};
 
-		const renderer = this.getRenderer();
-
 		// App is already working
 		if (code == Errors.Code.ANOTHER_ANYTYPE_PROCESS_IS_RUNNING) {
 			alert('You have another instance of anytype running on this machine. Closing...');
-			renderer.send('exit', false);
+			Renderer.send('exit', false);
 		};
 
 		// App needs update
@@ -872,8 +864,6 @@ class Util {
 	};
 
 	onErrorUpdate (onConfirm?: () => void) {
-		const renderer = this.getRenderer();
-
 		popupStore.open('confirm', {
 			data: {
 				icon: 'update',
@@ -882,7 +872,7 @@ class Util {
 				textConfirm: translate('confirmUpdateConfirm'),
 				canCancel: false,
 				onConfirm: () => {
-					renderer.send('update');
+					Renderer.send('update');
 					if (onConfirm) {
 						onConfirm();
 					};
@@ -1009,10 +999,6 @@ class Util {
 		});
 	};
 
-	getRenderer () {
-		const electron: any = window.require('electron') || {};
-		return electron.ipcRenderer || window.Renderer;
-	};
 	
 	resizeSidebar () {
 		const { sidebar } = commonStore;

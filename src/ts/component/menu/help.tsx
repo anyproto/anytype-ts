@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { MenuItemVertical } from 'ts/component';
-import { I, Util, Onboarding, keyboard, analytics } from 'ts/lib';
+import { I, Util, Onboarding, keyboard, analytics, Renderer } from 'ts/lib';
 import { popupStore, blockStore, detailStore } from 'ts/store';
 
 interface Props extends I.Menu {};
@@ -37,7 +37,6 @@ class MenuHelp extends React.Component<Props, {}> {
 
 	onClick (e: any, item: any) {
 		const { getId, close } = this.props;
-		const renderer = Util.getRenderer();
 
 		close();
 		analytics.event(Util.toUpperCamelCase([ getId(), item.id ].join('-')));
@@ -52,15 +51,15 @@ class MenuHelp extends React.Component<Props, {}> {
 				break;
 
 			case 'feedback':
-				renderer.send('urlOpen', Url.feedback);
+				Renderer.send('urlOpen', Url.feedback);
 				break;
 
 			case 'community':
-				renderer.send('urlOpen', Url.community);
+				Renderer.send('urlOpen', Url.community);
 				break;
 
 			case 'tutorial':
-				renderer.send('urlOpen', Url.docs);
+				Renderer.send('urlOpen', Url.docs);
 				break;
 
 			case 'hints':

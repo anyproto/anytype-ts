@@ -1,4 +1,4 @@
-import { I, C, M, keyboard, crumbs, translate, Util, history as historyPopup, Storage, analytics, Relation, dispatcher } from 'ts/lib';
+import { I, C, M, keyboard, crumbs, translate, Util, history as historyPopup, Storage, analytics, Relation, dispatcher, Renderer } from 'ts/lib';
 import { commonStore, blockStore, detailStore, dbStore, popupStore, authStore } from 'ts/store';
 
 const Constant = require('json/constant.json');
@@ -391,7 +391,6 @@ class DataUtil {
 	objectOpenPopup (object: any, popupParam?: any) {
 		const { root } = blockStore;
 		const action = this.actionByLayout(object.layout);
-		const renderer = Util.getRenderer();
 
 		if ((action == 'edit') && (object.id == root)) {
 			this.objectOpen(object);
@@ -400,7 +399,7 @@ class DataUtil {
 
 		const route = this.objectRoute(object);
 		if (route) {
-			renderer.send('windowOpen', '/' + route);
+			Renderer.send('windowOpen', '/' + route);
 			return;
 		};
 

@@ -1,4 +1,4 @@
-import { I, C, Util, DataUtil, Storage, focus, history as historyPopup, analytics } from 'ts/lib';
+import { I, C, Util, DataUtil, Storage, focus, history as historyPopup, analytics, Renderer } from 'ts/lib';
 import { commonStore, authStore, blockStore, detailStore, menuStore, popupStore } from 'ts/store';
 
 const $ = require('jquery');
@@ -33,9 +33,7 @@ class Keyboard {
 	init () {
 		this.unbind();
 		
-		const renderer = Util.getRenderer();
 		const win = $(window);
-
 		win.on('keydown.common', (e: any) => { this.onKeyDown(e); });
 		win.on('keyup.common', (e: any) => { this.onKeyUp(e); });
 		win.on('mousedown.common', (e: any) => { this.onMouseDown(e); });
@@ -54,8 +52,8 @@ class Keyboard {
 			Util.previewHide(true);
 		});
 
-		renderer.removeAllListeners('commandGlobal');
-		renderer.on('commandGlobal', (e: any, cmd: string, arg: any) => { this.onCommand(cmd, arg); });
+		Renderer.removeAllListeners('commandGlobal');
+		Renderer.on('commandGlobal', (e: any, cmd: string, arg: any) => { this.onCommand(cmd, arg); });
 	};
 	
 	unbind () {
@@ -503,10 +501,9 @@ class Keyboard {
 	onSaveAsHTML () {
 		const rootId = this.getRootId();
 		const object = detailStore.get(rootId, rootId);
-		const renderer = Util.getRenderer();
 
 		this.printApply('save', false);
-		renderer.send('winCommand', 'saveAsHTML', { name: object.name });
+		Renderer.send('winCommand', 'saveAsHTML', { name: object.name });
 	};
 
 	onSearch () {

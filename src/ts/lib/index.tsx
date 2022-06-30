@@ -3,6 +3,7 @@ import * as M from 'ts/model';
 import * as C from './command';
 import * as Response from './response';
 import Mapper from './mapper';
+import Renderer from './renderer';
 
 import { dispatcher } from './dispatcher';
 import { keyboard, Key } from './keyboard';
@@ -65,4 +66,5 @@ export {
 	Mapper,
 	Action,
 	Onboarding,
+	Renderer,
 };

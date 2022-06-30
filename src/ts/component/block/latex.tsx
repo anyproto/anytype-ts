@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { I, keyboard, Util, C, focus } from 'ts/lib';
+import { I, keyboard, Util, C, focus, Renderer } from 'ts/lib';
 import { Icon } from 'ts/component';
 import { observer } from 'mobx-react';
 import { menuStore, commonStore, blockStore } from 'ts/store';
@@ -404,7 +404,6 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 
 		const node = $(ReactDOM.findDOMNode(this));
 		const val = node.find('#value');
-		const renderer = Util.getRenderer();
 
 		value = String(value || '');
 		this.text = value;
@@ -423,7 +422,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 
 			item.unbind('click').click((e: any) => {
 				e.preventDefault();
-				renderer.send('urlOpen', item.attr('href'));
+				Renderer.send('urlOpen', item.attr('href'));
 			});
 		});
 

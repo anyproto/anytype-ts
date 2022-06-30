@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Icon, IconObject, MenuItemVertical } from 'ts/component';
-import { I, C, Util, DataUtil, Relation } from 'ts/lib';
+import { I, C, Util, DataUtil, Relation, Renderer } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { commonStore, detailStore, menuStore } from 'ts/store';
 import arrayMove from 'array-move';
@@ -224,7 +224,6 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 		const { data, classNameWrap } = param;
 		const { onChange } = data;
 		const element = $(`#${getId()} #item-${item.id}`);
-		const renderer = Util.getRenderer();
 
 		element.addClass('active');
 
@@ -256,7 +255,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 									break;
 							};
 							if (url) {
-								renderer.send('download', url);
+								Renderer.send('download', url);
 							};
 							break;
 

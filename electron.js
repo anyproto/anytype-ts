@@ -123,7 +123,7 @@ function createMainWindow () {
 		);
 	};
 
-	registerIpcEvents();
+	registerIpcEvents(mainWindow);
 
 	UpdateManager.init(mainWindow);
 	UpdateManager.exit = exit;
@@ -151,10 +151,12 @@ function createChildWindow (route) {
 			Util.send(win, 'route', route);
 		};
 	});
+
+	registerIpcEvents(win);
 };
 
-function registerIpcEvents () {
-	ipcMain.on('appLoaded', () => { Util.send(mainWindow, 'init', dataPath.join('/'), ConfigManager.config, Util.isDarkTheme()); });
+function registerIpcEvents (win) {
+	ipcMain.on('appLoaded', () => { Util.send(win, 'init', dataPath.join('/'), ConfigManager.config, Util.isDarkTheme()); });
 	ipcMain.on('exit', (e, relaunch) => { exit(relaunch); });
 	ipcMain.on('shutdown', (e, relaunch) => { shutdown(relaunch); });
 	ipcMain.on('configSet', (e, config) => { setConfig(config); });
@@ -165,7 +167,7 @@ function registerIpcEvents () {
 		};
 	});
 	ipcMain.on('keytarGet', (e, key) => {
-		keytar.getPassword(KEYTAR_SERVICE, key).then((value) => { Util.send(mainWindow, 'keytarGet', key, value); });
+		keytar.getPassword(KEYTAR_SERVICE, key).then((value) => { Util.send(win, 'keytarGet', key, value); });
 	});
 	ipcMain.on('keytarDelete', (e, key) => { keytar.deletePassword(KEYTAR_SERVICE, key); });
 
@@ -177,9 +179,7 @@ function registerIpcEvents () {
 	ipcMain.on('pathOpen', async (e, v) => { shell.openPath(v); });
 	ipcMain.on('windowOpen', (e, v) => { createChildWindow(v); });
 
-	ipcMain.on('download', async (e, url) => {
-		await download(BrowserWindow.getFocusedWindow(), url, { saveAs: true });
-	});
+	ipcMain.on('download', async (e, url) => { await download(win, url, { saveAs: true }); });
 
 	ipcMain.on('proxyEvent', function () {
 		let args = Object.values(arguments);
@@ -188,7 +188,7 @@ function registerIpcEvents () {
 		send.apply(this, args);
 	});
 
-	ipcMain.on('winCommand', (e, cmd, param) => { WindowManager.command(mainWindow, cmd, param); });
+	ipcMain.on('winCommand', (e, cmd, param) => { WindowManager.command(win, cmd, param); });
 };
 
 function setConfig (obj, callBack) {
@@ -228,6 +228,7 @@ app.on('second-instance', (event, argv, cwd) => {
 		if (mainWindow.isMinimized()) {
 			mainWindow.restore();
 		};
+
 		mainWindow.show();
 		mainWindow.focus();
 	};

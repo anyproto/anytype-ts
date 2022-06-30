@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Icon, Title, Label } from 'ts/component';
-import { I, Util, translate, analytics } from 'ts/lib';
+import { I, translate, analytics, Renderer } from 'ts/lib';
 import { commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -57,10 +57,8 @@ const PopupSettingsPageAppearance = observer(class PopupSettingsPageAppearance e
 	};
 
 	onTheme (id: string) {
-		const renderer = Util.getRenderer();
-
 		commonStore.themeSet(id);
-		renderer.send('configSet', { theme: id });
+		Renderer.send('configSet', { theme: id });
 		analytics.event('ThemeSet', { id });
 	};
 

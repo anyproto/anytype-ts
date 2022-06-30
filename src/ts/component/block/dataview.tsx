@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { I, C, Util, DataUtil, analytics, translate, keyboard, Onboarding, Relation } from 'ts/lib';
+import { I, C, Util, DataUtil, analytics, translate, keyboard, Onboarding, Relation, Renderer } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { blockStore, menuStore, dbStore, detailStore, popupStore, commonStore } from 'ts/store';
 import { throttle } from 'lodash';
@@ -434,9 +434,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		if ([ I.ViewType.List, I.ViewType.Gallery ].includes(view.type) && ([ I.RelationType.Url, I.RelationType.Email, I.RelationType.Phone ].indexOf(relation.format) >= 0)) {
 			const scheme = Relation.getUrlScheme(relation.format, record[relationKey]);
-			const renderer = Util.getRenderer();
 
-			renderer.send('urlOpen', scheme + record[relationKey]);
+			Renderer.send('urlOpen', scheme + record[relationKey]);
 			return;
 		};
 

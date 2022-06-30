@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { InputWithFile, ObjectName, ObjectDescription, Loader, Error } from 'ts/component';
-import { I, C, focus, Util, translate } from 'ts/lib';
+import { I, C, focus, Util, translate, Renderer } from 'ts/lib';
 import { commonStore, detailStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -134,9 +134,8 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<Props
 
 		const { rootId, block } = this.props;
 		const object = detailStore.get(rootId, block.content.targetObjectId);
-		const renderer = Util.getRenderer();
 
-		renderer.send('urlOpen', Util.urlFix(object.url));
+		Renderer.send('urlOpen', Util.urlFix(object.url));
 	};
 	
 	onChangeUrl (e: any, url: string) {

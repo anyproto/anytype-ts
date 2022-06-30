@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
 import { Header, FooterMainEdit as Footer, Loader, Block, Button, Deleted, Icon } from 'ts/component';
-import { I, C, Util, crumbs, Action, analytics } from 'ts/lib';
+import { I, C, Util, crumbs, Action, analytics, Renderer } from 'ts/lib';
 import { blockStore, detailStore, menuStore, dbStore } from 'ts/store';
 
 import HeadSimple from 'ts/component/page/head/simple';
@@ -158,9 +158,8 @@ const PageMainBookmark = observer(class PageMainBookmark extends React.Component
 	onOpen (e: any) {
 		const rootId = this.getRootId();
 		const object = detailStore.get(rootId, rootId, [ 'url' ]);
-		const renderer = Util.getRenderer();
 	
-		renderer.send('urlOpen', object.url);
+		Renderer.send('urlOpen', object.url);
 	};
 
 	onReload () {

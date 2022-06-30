@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Block, Icon, Loader, Deleted } from 'ts/component';
 import { commonStore, blockStore, detailStore, menuStore, popupStore } from 'ts/store';
-import { I, C, Key, Util, DataUtil, Mark, focus, keyboard, crumbs, Storage, Mapper, Action, translate, analytics } from 'ts/lib';
+import { I, C, Key, Util, DataUtil, Mark, focus, keyboard, crumbs, Storage, Mapper, Action, translate, analytics, Renderer } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 
@@ -149,7 +149,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 		const win = $(window);
 		const namespace = isPopup ? '.popup' : '';
-		const renderer = Util.getRenderer();
 
 		win.on('mousemove.editor' + namespace, throttle((e: any) => { this.onMouseMove(e); }, THROTTLE));
 		win.on('keydown.editor' + namespace, (e: any) => { this.onKeyDownEditor(e); });
@@ -177,8 +176,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 		Storage.set('askSurvey', 1);
 
-		renderer.removeAllListeners('commandEditor');
-		renderer.on('commandEditor', (e: any, cmd: string, arg: any) => { this.onCommand(cmd, arg); });
+		Renderer.removeAllListeners('commandEditor');
+		Renderer.on('commandEditor', (e: any, cmd: string, arg: any) => { this.onCommand(cmd, arg); });
 	};
 
 	componentDidUpdate () {
@@ -199,8 +198,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 	};
 	
 	componentWillUnmount () {
-		const renderer = Util.getRenderer();
-
 		this._isMounted = false;
 		this.uiHidden = false;
 		this.unbind();
@@ -208,7 +205,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 		focus.clear(false);
 		window.clearInterval(this.timeoutScreen);
-		renderer.removeAllListeners('commandEditor');
+		Renderer.removeAllListeners('commandEditor');
 	};
 
 	getWrapper () {

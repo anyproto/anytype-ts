@@ -6,7 +6,7 @@ import { Provider } from 'mobx-react';
 import { enableLogging } from 'mobx-logger';
 import { Page, SelectionProvider, DragProvider, Progress, Tooltip, Preview, Icon, ListPopup, ListMenu } from './component';
 import { commonStore, authStore, blockStore, detailStore, dbStore, menuStore, popupStore } from './store';
-import { I, C, Util, FileUtil, keyboard, Storage, analytics, dispatcher, translate, Action } from 'ts/lib';
+import { I, C, Util, FileUtil, keyboard, Storage, analytics, dispatcher, translate, Action, Renderer } from 'ts/lib';
 import * as Sentry from '@sentry/browser';
 import { configure } from 'mobx';
 
@@ -341,19 +341,18 @@ class App extends React.Component<Props, State> {
 		const redirect = Storage.get('redirect');
 		const accountId = Storage.get('accountId');
 		const phrase = Storage.get('phrase');
-		const renderer = Util.getRenderer();
 		const restoreKeys = [
 			'pinTime', 'defaultType', 'autoSidebar',
 		];
 
 		// Check auth phrase with keytar
 		if (accountId) {
-			renderer.send('keytarGet', accountId);
-			renderer.on('keytarGet', (e: any, key: string, value: string) => {
+			Renderer.send('keytarGet', accountId);
+			Renderer.on('keytarGet', (e: any, key: string, value: string) => {
 				if (accountId && (key == accountId)) {
 					if (phrase) {
 						value = phrase;
-						renderer.send('keytarSet', accountId, phrase);
+						Renderer.send('keytarSet', accountId, phrase);
 						Storage.delete('phrase');
 					};
 
@@ -405,13 +404,12 @@ class App extends React.Component<Props, State> {
 		const node = $(ReactDOM.findDOMNode(this));
 		const logo = node.find('#logo');
 		const logsDir = path.join(userPath, 'logs');
-		const renderer = Util.getRenderer();
 
 		try { fs.mkdirSync(logsDir); } catch (err) {};
 
-		renderer.send('appLoaded', true);
+		Renderer.send('appLoaded', true);
 
-		renderer.on('init', (e: any, dataPath: string, config: any, isDark: boolean) => {
+		Renderer.on('init', (e: any, dataPath: string, config: any, isDark: boolean) => {
 			authStore.walletPathSet(dataPath);
 			authStore.accountPathSet(dataPath);
 
@@ -431,11 +429,11 @@ class App extends React.Component<Props, State> {
 			}, 2000);
 		});
 		
-		renderer.on('route', (e: any, route: string) => {
+		Renderer.on('route', (e: any, route: string) => {
 			Util.route(route);
 		});
 
-		renderer.on('popup', (e: any, id: string, param: any, close?: boolean) => {
+		Renderer.on('popup', (e: any, id: string, param: any, close?: boolean) => {
 			param = param || {};
 			param.data = param.data || {};
 			param.data.rootId = keyboard.getRootId();
@@ -447,7 +445,7 @@ class App extends React.Component<Props, State> {
 			window.setTimeout(() => { popupStore.open(id, param); }, Constant.delay.popup);
 		});
 
-		renderer.on('checking-for-update', (e: any, auto: boolean) => {
+		Renderer.on('checking-for-update', (e: any, auto: boolean) => {
 			if (!auto) {
 				commonStore.progressSet({ 
 					status: 'Checking for update...', 
@@ -458,7 +456,7 @@ class App extends React.Component<Props, State> {
 			};
 		});
 
-		renderer.on('update-available', (e: any, auto: boolean) => {
+		Renderer.on('update-available', (e: any, auto: boolean) => {
 			commonStore.progressClear(); 
 
 			if (!auto) {
@@ -469,17 +467,17 @@ class App extends React.Component<Props, State> {
 						textConfirm: 'Update',
 						textCancel: 'Later',
 						onConfirm: () => {
-							renderer.send('updateDownload');
+							Renderer.send('updateDownload');
 						},
 						onCancel: () => {
-							renderer.send('updateCancel');
+							Renderer.send('updateCancel');
 						}, 
 					},
 				});
 			};
 		});
 
-		renderer.on('update-confirm', (e: any, auto: boolean) => {
+		Renderer.on('update-confirm', (e: any, auto: boolean) => {
 			commonStore.progressClear(); 
 
 			if (!auto) {
@@ -490,18 +488,18 @@ class App extends React.Component<Props, State> {
 						textConfirm: 'Restart and update',
 						textCancel: 'Later',
 						onConfirm: () => {
-							renderer.send('updateConfirm');
+							Renderer.send('updateConfirm');
 							Storage.delete('popupNewBlock');
 						},
 						onCancel: () => {
-							renderer.send('updateCancel');
+							Renderer.send('updateCancel');
 						}, 
 					},
 				});
 			};
 		});
 
-		renderer.on('update-not-available', (e: any, auto: boolean) => {
+		Renderer.on('update-not-available', (e: any, auto: boolean) => {
 			commonStore.progressClear(); 
 
 			if (!auto) {
@@ -516,13 +514,13 @@ class App extends React.Component<Props, State> {
 			};
 		});
 
-		renderer.on('download-progress', this.onProgress);
+		Renderer.on('download-progress', this.onProgress);
 
-		renderer.on('update-downloaded', (e: any, text: string) => {
+		Renderer.on('update-downloaded', (e: any, text: string) => {
 			commonStore.progressClear(); 
 		});
 
-		renderer.on('update-error', (e: any, err: string, auto: boolean) => {
+		Renderer.on('update-error', (e: any, err: string, auto: boolean) => {
 			console.error(err);
 			commonStore.progressClear();
 
@@ -534,39 +532,39 @@ class App extends React.Component<Props, State> {
 						textConfirm: 'Retry',
 						textCancel: 'Later',
 						onConfirm: () => {
-							renderer.send('updateDownload');
+							Renderer.send('updateDownload');
 						},
 						onCancel: () => {
-							renderer.send('updateCancel');
+							Renderer.send('updateCancel');
 						}, 
 					},
 				});
 			};
 		});
 
-		renderer.on('import', this.onImport);
-		renderer.on('export', this.onExport);
-		renderer.on('command', this.onCommand);
+		Renderer.on('import', this.onImport);
+		Renderer.on('export', this.onExport);
+		Renderer.on('command', this.onCommand);
 
-		renderer.on('config', (e: any, config: any) => { 
+		Renderer.on('config', (e: any, config: any) => { 
 			commonStore.configSet(config, true);
 			this.initTheme(config.theme);
 		});
 
-		renderer.on('enter-full-screen', () => {
+		Renderer.on('enter-full-screen', () => {
 			commonStore.fullscreenSet(true);
 		});
 
-		renderer.on('leave-full-screen', () => {
+		Renderer.on('leave-full-screen', () => {
 			commonStore.fullscreenSet(false);
 		});
 
-		renderer.on('native-theme', (e: any, isDark: boolean) => {
+		Renderer.on('native-theme', (e: any, isDark: boolean) => {
 			commonStore.nativeThemeSet(isDark);
 			commonStore.themeSet(commonStore.theme);
   		});
 
-		renderer.on('debugSync', (e: any) => {
+		Renderer.on('debugSync', (e: any) => {
 			C.DebugSync(100, (message: any) => {
 				if (!message.error.code) {
 					this.logToFile('sync', message);
@@ -574,23 +572,23 @@ class App extends React.Component<Props, State> {
 			});
 		});
 
-		renderer.on('debugTree', (e: any) => {
+		Renderer.on('debugTree', (e: any) => {
 			const rootId = keyboard.getRootId();
 
 			C.DebugTree(rootId, logsDir, (message: any) => {
 				if (!message.error.code) {
-					renderer.send('pathOpen', logsDir);
+					Renderer.send('pathOpen', logsDir);
 				};
 			});
 		});
 
-		renderer.on('shutdownStart', (e, relaunch) => {
+		Renderer.on('shutdownStart', (e, relaunch) => {
 			this.setState({ loading: true });
 		});
 
-		renderer.on('shutdown', (e, relaunch) => {
+		Renderer.on('shutdown', (e, relaunch) => {
 			C.AppShutdown(() => {
-				renderer.send('shutdown', relaunch);
+				Renderer.send('shutdown', relaunch);
 			});
 		});
 	};
@@ -598,7 +596,6 @@ class App extends React.Component<Props, State> {
 	logToFile (name: string, message: any) {
 		const logsDir = path.join(userPath, 'logs');
 		const log = path.join(logsDir, name + '_' + FileUtil.date() + '.json');
-		const renderer = Util.getRenderer();
 
 		try {
 			fs.writeFileSync(log, JSON.stringify(message, null, 5), 'utf-8');
@@ -606,13 +603,11 @@ class App extends React.Component<Props, State> {
 			console.log('[DebugSync] Failed to save a file');
 		};
 
-		renderer.send('pathOpen', logsDir);
+		Renderer.send('pathOpen', logsDir);
 	};
 
 	onCommand (e: any, key: string) {
-		const rootId = keyboard.getRootId();
-		const renderer = Util.getRenderer();
-
+		let rootId = keyboard.getRootId();
 		let options: any = {};
 
 		switch (key) {
@@ -656,7 +651,7 @@ class App extends React.Component<Props, State> {
 							return;
 						};
 
-						renderer.send('pathOpen', files[0]);
+						Renderer.send('pathOpen', files[0]);
 					});
 				});
 				break;
@@ -677,7 +672,7 @@ class App extends React.Component<Props, State> {
 							return;
 						};
 
-						renderer.send('pathOpen', files[0]);
+						Renderer.send('pathOpen', files[0]);
 					});
 				});
 				break;
@@ -706,29 +701,25 @@ class App extends React.Component<Props, State> {
 	};
 
 	onMenu (e: any) {
-		const renderer = Util.getRenderer();
-		renderer.send('winCommand', 'menu');
+		Renderer.send('winCommand', 'menu');
 	};
 
 	onMin (e: any) {
-		const renderer = Util.getRenderer();
-		renderer.send('winCommand', 'minimize');
+		Renderer.send('winCommand', 'minimize');
 	};
 
 	onMax (e: any) {
 		const node = $(ReactDOM.findDOMNode(this));
 		const icon = node.find('#minmax');
-		const renderer = Util.getRenderer();
 		const isMaximized = BrowserWindow.getFocusedWindow().isMaximized();
 
 		icon.removeClass('max window');
 		!isMaximized ? icon.addClass('max') : icon.addClass('window');
-		renderer.send('winCommand', 'maximize');
+		Renderer.send('winCommand', 'maximize');
 	};
 
 	onClose (e: any) {
-		const renderer = Util.getRenderer();
-		renderer.send('winCommand', 'close');
+		Renderer.send('winCommand', 'close');
 	};
 
 };

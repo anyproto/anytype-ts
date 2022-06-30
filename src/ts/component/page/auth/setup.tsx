@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Frame, Cover, Title, Error, Button, IconObject, Header, FooterAuth as Footer } from 'ts/component';
-import { Storage, translate, C, DataUtil, Util, analytics } from 'ts/lib';
+import { Storage, translate, C, DataUtil, Util, analytics, Renderer } from 'ts/lib';
 import { commonStore, authStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -165,7 +165,6 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<Props
 	add () {
 		const { match } = this.props;
 		const { walletPath, accountPath, name, icon, code } = authStore;
-		const renderer = Util.getRenderer();
 
 		commonStore.defaultTypeSet(Constant.typeId.note);
 
@@ -193,7 +192,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<Props
 						Storage.set('popupNewBlock', true);
 						Storage.set('popupVideo', true);
 
-						renderer.send('keytarSet', accountId, authStore.phrase);
+						Renderer.send('keytarSet', accountId, authStore.phrase);
 						analytics.event('CreateAccount');
 						
 						if (match.params.id == 'register') {

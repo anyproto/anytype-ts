@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
 import { Header, FooterMainEdit as Footer, Loader, Block, Button, IconObject, Deleted, ObjectName } from 'ts/component';
-import { I, M, C, Util, crumbs, Action } from 'ts/lib';
+import { I, M, C, Util, crumbs, Action, Renderer } from 'ts/lib';
 import { commonStore, blockStore, detailStore } from 'ts/store';
 
 interface Props extends RouteComponentProps<any> {
@@ -239,11 +239,10 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<Props
 		const blocks = blockStore.getBlocks(rootId);
 		const block = blocks.find((it: I.Block) => { return it.isFile(); });
 		const { content } = block;
-		const renderer = Util.getRenderer();
 
 		C.FileDownload(content.hash, path.join(userPath, 'tmp'), (message: any) => {
 			if (message.path) {
-				renderer.send('pathOpen', message.path);
+				Renderer.send('pathOpen', message.path);
 			};
 		});
 	};
@@ -253,9 +252,8 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<Props
 		const blocks = blockStore.getBlocks(rootId);
 		const block = blocks.find((it: I.Block) => { return it.isFile(); });
 		const { content } = block;
-		const renderer = Util.getRenderer();
 		
-		renderer.send('download', commonStore.fileUrl(content.hash));
+		Renderer.send('download', commonStore.fileUrl(content.hash));
 	};
 
 	getRootId () {

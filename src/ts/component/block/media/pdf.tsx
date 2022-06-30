@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { InputWithFile, Loader, Error, Pager } from 'ts/component';
-import { I, C, translate, focus, Action, Util, DataUtil, FileUtil } from 'ts/lib';
+import { I, C, translate, focus, Action, Util, DataUtil, FileUtil, Renderer } from 'ts/lib';
 import { commonStore, detailStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { Document, Page } from 'react-pdf';
@@ -181,11 +181,10 @@ const BlockPdf = observer(class BlockPdf extends React.Component<Props, State> {
 		const { block } = this.props;
 		const { content } = block;
 		const { hash } = content;
-		const renderer = Util.getRenderer();
 		
 		C.FileDownload(hash, path.join(userPath, 'tmp'), (message: any) => {
 			if (message.path) {
-				renderer.send('pathOpen', message.path);
+				Renderer.send('pathOpen', message.path);
 			};
 		});
 	};

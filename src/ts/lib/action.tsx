@@ -1,4 +1,4 @@
-import { I, C, focus, analytics, Util } from 'ts/lib';
+import { I, C, focus, analytics, Renderer } from 'ts/lib';
 import { commonStore, authStore, blockStore, detailStore, dbStore } from 'ts/store';
 
 const Constant = require('json/constant.json');
@@ -58,14 +58,13 @@ class Action {
 	download (block: I.Block) {
 		const { content } = block;
 		const { type, hash } = content;
-		const renderer = Util.getRenderer();
 
 		if (!hash) {
 			return;
 		};
 		
 		const url = block.isFileImage() ? commonStore.imageUrl(hash, Constant.size.image) : commonStore.fileUrl(hash);
-		renderer.send('download', url);
+		Renderer.send('download', url);
 
 		analytics.event('DownloadMedia', { type });
 	};
@@ -117,7 +116,6 @@ class Action {
 	};
 
 	export (ids: string[], format: I.ExportFormat, zip: boolean, nested: boolean, files: boolean, onSelectPath?: () => void, callBack?: (message: any) => void): void {
-		const renderer = Util.getRenderer();
 		const options = { 
 			properties: [ 'openDirectory' ],
 		};
@@ -137,7 +135,7 @@ class Action {
 					return;
 				};
 
-				renderer.send('pathOpen', paths[0]);
+				Renderer.send('pathOpen', paths[0]);
 				analytics.event('Export' + I.ExportFormat[format], { middleTime: message.middleTime });
 
 				if (callBack) {

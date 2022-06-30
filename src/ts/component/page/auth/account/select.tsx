@@ -3,7 +3,7 @@ import { RouteComponentProps } from 'react-router';
 import { Frame, Icon, Cover, Error, Title, IconObject, Header, FooterAuth as Footer, Loader, Button } from 'ts/component';
 import { commonStore, authStore } from 'ts/store';
 import { observer } from 'mobx-react';
-import { I, C, Util, translate, DataUtil } from 'ts/lib';
+import { I, C, Util, translate, DataUtil, Renderer } from 'ts/lib';
 
 interface Props extends RouteComponentProps<any> {};
 
@@ -104,10 +104,9 @@ const PageAccountSelect = observer(class PageAccountSelect extends React.Compone
 
 	onSelect (account: I.Account) {
 		const { phrase } = authStore;
-		const renderer = Util.getRenderer();
 		
 		authStore.accountSet(account);
-		renderer.send('keytarSet', account.id, phrase);
+		Renderer.send('keytarSet', account.id, phrase);
 		Util.route('/auth/setup/select');
 	};
 	

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { I, Onboarding, Util, Storage, analytics, keyboard } from 'ts/lib';
-import { ListPopup, Sidebar } from 'ts/component';
+import { I, Onboarding, Util, Storage, analytics, keyboard, Renderer } from 'ts/lib';
+import { Sidebar } from 'ts/component';
 import { authStore, commonStore, menuStore, popupStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -185,7 +185,6 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 		const win = $(window);
 		const path = [ match.params.page, match.params.action ].join('/');
 		const Component = Components[path];
-		const renderer = Util.getRenderer();
 
 		Util.tooltipHide(true);
 		Util.previewHide(true);
@@ -266,7 +265,7 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 							textCancel: 'Skip',
 							canCancel: true,
 							onConfirm: () => {
-								renderer.send('urlOpen', Util.sprintf(Url.survey, account.id));
+								Renderer.send('urlOpen', Util.sprintf(Url.survey, account.id));
 								Storage.set('lastSurveyTime', Util.time());
 
 								analytics.event('SurveyOpen');
