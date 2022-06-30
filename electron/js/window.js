@@ -17,7 +17,6 @@ const MIN_HEIGHT = 480;
 class WindowManager {
 
 	list = new Set();
-	exit = () => {};
 
 	create (param) {
 		param = Object.assign({
@@ -154,9 +153,7 @@ class WindowManager {
 				break;
 
 			case 'saveAsHTML':
-				dialog.showOpenDialog({ 
-					properties: [ 'openDirectory' ],
-				}).then((result) => {
+				dialog.showOpenDialog({ properties: [ 'openDirectory' ] }).then((result) => {
 					const files = result.filePaths;
 
 					if ((files == undefined) || !files.length) {
@@ -167,6 +164,12 @@ class WindowManager {
 				});
 				break;
 		};
+	};
+
+	updateTheme () {
+		this.list.forEach(it => {
+			Util.send(it, 'native-theme', Util.isDarkTheme());
+		});
 	};
 
 };

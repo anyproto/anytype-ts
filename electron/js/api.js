@@ -27,8 +27,6 @@ class Api {
 	};
 
 	keytarGet (win, key) {
-		console.log('[Api].keytarGet', key);
-
 		keytar.getPassword(KEYTAR_SERVICE, key).then((value) => { 
 			Util.send(win, 'keytarGet', key, value); 
 		});
@@ -40,6 +38,10 @@ class Api {
 
 	updateDownload (win) {
 		UpdateManager.download();
+	};
+
+	updateConfirm (win) {
+		this.exit(win, true);
 	};
 
 	updateCancel (win) {
@@ -64,6 +66,27 @@ class Api {
 
 	pathOpen (win, path) {
 		shell.openPath(path);
+	};
+
+	shutdown (win, relaunch) {
+		Util.log('info', '[Api].shutdown, relaunch: ' + relaunch);
+
+		if (relaunch) {
+			UpdateManager.relaunch();
+		} else {
+			app.exit(0);
+		};
+	};
+
+	exit (win, relaunch) {
+		if (app.isQuiting) {
+			return;
+		};
+
+		Util.log('info', '[Api].exit, relaunch: ' + relaunch);
+		Util.send(win, 'shutdownStart');
+
+		Server.stop().then(() => { this.shutdown(win, relaunch); });
 	};
 
 };

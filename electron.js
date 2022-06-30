@@ -15,6 +15,7 @@ const userPath = app.getPath('userData');
 const tmpPath = path.join(userPath, 'tmp');
 const binPath = fixPathForAsarUnpack(path.join(__dirname, 'dist', `anytypeHelper${is.windows ? '.exe' : ''}`));
 
+const Api = require('./electron/js/api.js');
 const ConfigManager = require('./electron/js/config.js');
 const UpdateManager = require('./electron/js/update.js');
 const MenuManager = require('./electron/js/menu.js');
@@ -23,8 +24,6 @@ const Server = require('./electron/js/server.js');
 const Util = require('./electron/js/util.js');
 
 app.removeAsDefaultProtocolClient(protocol);
-Util.setAppPath(path.join(__dirname));
-WindowManager.exit = exit;
 
 if (process.defaultApp) {
 	if (process.argv.length >= 2) {
@@ -33,8 +32,6 @@ if (process.defaultApp) {
 } else {
 	app.setAsDefaultProtocolClient(protocol);
 };
-
-remote.initialize();
 
 let deeplinkingUrl = '';
 let waitLibraryPromise;
@@ -50,13 +47,16 @@ let csp = [
 	"frame-src chrome-extension://react-developer-tools"
 ];
 
+remote.initialize();
+Util.setAppPath(path.join(__dirname));
+
 if (is.development && !port) {
 	console.error('ERROR: Please define SERVER_PORT env var');
-	exit(false);
+	Api.exit(mainWindow, false);
 };
 
 if (app.isPackaged && !app.requestSingleInstanceLock()) {
-	exit(false);
+	Api.exit(mainWindow, false);
 };
 
 storage.setDataPath(userPath);
@@ -81,7 +81,7 @@ function waitForLibraryAndCreateWindows () {
 
 nativeTheme.on('updated', () => {
 	MenuManager.updateTrayIcon();
-	Util.send(mainWindow, 'native-theme', Util.isDarkTheme());
+	WindowManager.updateTheme();
 });
 
 function createMainWindow () {
@@ -102,50 +102,22 @@ function createMainWindow () {
 		
 		e.preventDefault();
 		if (!is.linux) {
-			if (win.isFullScreen()) {
-				win.setFullScreen(false);
-				win.once('leave-full-screen', () => { win.hide(); });
+			if (mainWindow.isFullScreen()) {
+				mainWindow.setFullScreen(false);
+				mainWindow.once('leave-full-screen', () => { win.hide(); });
 			} else {
-				win.hide();
+				mainWindow.hide();
 			};
 		} else {
-			this.exit(false);
+			Api.exit(mainWindow, false);
 		};
 		return false;
 	});
 
-	registerIpcEvents();
-
 	UpdateManager.init(mainWindow);
-	UpdateManager.exit = exit;
 
-	MenuManager.exit = exit;
-	MenuManager.setConfig = setConfig;
-	MenuManager.setChannel = (channel) => {
-		if (!UpdateManager.isUpdating) {
-			setConfig({ channel: channel }, (error) => { 
-				UpdateManager.setChannel(channel); 
-			});
-		};
-	};
 	MenuManager.initMenu(mainWindow);
 	MenuManager.initTray(mainWindow);
-};
-
-function registerIpcEvents () {
-	ipcMain.on('exit', (e, relaunch) => { exit(relaunch); });
-	ipcMain.on('shutdown', (e, relaunch) => { shutdown(relaunch); });
-	ipcMain.on('updateConfirm', (e) => { exit(true); }); 
-};
-
-function setConfig (obj, callBack) {
-	ConfigManager.set(obj, (err) => {
-		Util.send(BrowserWindow.getFocusedWindow(), 'config', ConfigManager.config);
-
-		if (callBack) {
-			callBack(err);
-		};
-	});
 };
 
 app.on('ready', () => {
@@ -187,7 +159,7 @@ app.on('window-all-closed', (e) => {
 
 	if (is.linux) {
 		e.preventDefault();
-		exit(false);
+		Api.exit(mainWindow, false);
 	};
 });
 
@@ -198,11 +170,15 @@ app.on('before-quit', (e) => {
 		app.exit(0);
 	} else {
 		e.preventDefault();
-		exit(false);
+		Api.exit(mainWindow, false);
 	};
 });
 
-app.on('activate', () => { mainWindow ? mainWindow.show() : createMainWindow(); });
+app.on('activate', () => { 
+	console.log(WindowManager.list.size, mainWindow);
+
+	WindowManager.list.size ? mainWindow.show() : createMainWindow();
+});
 
 app.on('open-url', (e, url) => {
 	e.preventDefault();
@@ -212,27 +188,3 @@ app.on('open-url', (e, url) => {
 		mainWindow.show();
 	};
 });
-
-function shutdown (relaunch) {
-	Util.log('info', 'AppShutdown, relaunch: ' + relaunch);
-
-	if (relaunch) {
-		UpdateManager.relaunch();
-	} else {
-		app.exit(0);
-	};
-};
-
-function exit (relaunch) {
-	if (app.isQuiting) {
-		return;
-	};
-
-	Util.log('info', 'MW shutdown is starting, relaunch: ' + relaunch);
-	Util.send(mainWindow, 'shutdownStart');
-
-	Server.stop().then(()=>{
-		Util.log('info', 'MW shutdown complete');
-		shutdown(relaunch);
-	});
-};

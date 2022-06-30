@@ -19,8 +19,6 @@ class Renderer {
 			args.shift();
 			args.unshift(remote.getCurrentWindow());
 
-			console.log('[Renderer].send', args);
-
 			Api[cmd].apply(null, args);
 		} else {
 			const renderer = this.get();
@@ -28,15 +26,9 @@ class Renderer {
 		};
 	};
 
-	on (...args: any[]) {
+	on (event: string, callBack: any) {
 		const renderer = this.get();
-		const event = args[0];
-		const callBack = args[1];
-
-		renderer.on(event, (...args: any[]) => {
-			console.log('[Renderer].on', event, args);
-			callBack.apply(null, args);
-		});
+		renderer.on(event, callBack);
 	};
 
 	removeAllListeners (...args: any[]) {

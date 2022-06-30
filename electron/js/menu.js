@@ -2,6 +2,7 @@ const { app, shell, Menu, Tray } = require('electron');
 const { is } = require('electron-util');
 const path = require('path');
 
+const Api = require('./api.js');
 const ConfigManager = require('./config.js');
 const WindowManager = require('./window.js');
 const Util = require('./util.js');
@@ -12,9 +13,6 @@ class MenuManager {
 
 	menu = {};
 	tray = {};
-	setChannel = () => {};
-	setConfig = () => {};
-	exit = () => {};
 
 	initMenu (win) {
 		const { config } = ConfigManager;
@@ -48,7 +46,7 @@ class MenuManager {
 							if (win) {
 								win.hide();
 							};
-							this.exit(false); 
+							Api.exit(win, false); 
 						}
 					},
 				]
@@ -166,7 +164,7 @@ class MenuManager {
 					label: flags[i], type: 'checkbox', checked: config.debug[i],
 					click: () => {
 						config.debug[i] = !config.debug[i];
-						this.setConfig({ debug: config.debug });
+						Api.setConfig(win, { debug: config.debug });
 						
 						if ([ 'ho' ].includes(i)) {
 							win.reload();
@@ -198,7 +196,15 @@ class MenuManager {
 		];
 
 		let channels = channelSettings.map((it) => {
-			return { label: it.name, type: 'radio', checked: (config.channel == it.id), click: () => { this.setChannel(it.id); } }
+			return { 
+				label: it.name, type: 'radio', checked: (config.channel == it.id), 
+				click: () => { 
+					if (!UpdateManager.isUpdating) {
+						UpdateManager.setChannel(it.id); 
+						Api.setConfig(win, { channel: it.id });
+					};
+				} 
+			};
 		});
 		if (!config.sudo) {
 			channels = channels.filter(it => it.id != 'alpha');
@@ -211,7 +217,7 @@ class MenuManager {
 				{
 					label: 'Experimental', type: 'checkbox', checked: config.experimental,
 					click: () => { 
-						this.setConfig({ experimental: !config.experimental });
+						Api.setConfig(win, { experimental: !config.experimental });
 						win.reload();
 					}
 				},
@@ -237,7 +243,7 @@ class MenuManager {
 				},
 				{
 					label: 'Relaunch',
-					click: () => { this.exit(true); }
+					click: () => { Api.exit(win, true); }
 				},
 			]
 		};
@@ -290,7 +296,7 @@ class MenuManager {
 
 			Separator,
 
-			{ label: 'Quit', click: () => { hide(); this.exit(false); } },
+			{ label: 'Quit', click: () => { hide(); Api.exit(win, false); } },
 		]));
 	};
 

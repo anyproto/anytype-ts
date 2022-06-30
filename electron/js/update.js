@@ -2,6 +2,7 @@ const { app } = require('electron');
 const { autoUpdater } = require('electron-updater');
 const log = require('electron-log');
 
+const Api = require('./api.js');
 const ConfigManager = require('./config.js');
 const Util = require('./util.js');
 
@@ -12,7 +13,6 @@ class UpdateManager {
 	isUpdating = false;
 	autoUpdate = false;
 	timeout = 0;
-	exit = () => {};
 
 	init (win) {
 		const { channel } = ConfigManager.config;
@@ -79,7 +79,7 @@ class UpdateManager {
 			Util.send(win, 'update-downloaded');
 
 			if (!this.autoUpdate) {
-				this.exit(true);
+				Api.exit(win, true);
 			} else {
 				Util.send(win, 'update-confirm');
 			};
