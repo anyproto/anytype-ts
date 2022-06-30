@@ -179,9 +179,9 @@
 		"npmRebuild": true,
 		"buildDependenciesFromSource": true,
 		"generateUpdatesFilesForAllChannels": true,
-		"beforeBuild": "./electron/beforebuild.js",
-		"afterSign": "./electron/notarize.js",
-		"afterPack": "./electron/afterpack.js",
+		"beforeBuild": "./electron/hook/beforebuild.js",
+		"afterSign": "./electron/hook/notarize.js",
+		"afterPack": "./electron/hook/afterpack.js",
 		"appId": "com.anytype.anytype2",
 		"compression": "normal",
 		"productName": "Anytype",
@@ -218,14 +218,10 @@
 		"extraResources": [],
 		"files": [
 			"electron.js",
-			"electron/server.js",
-			"electron/util.js",
+			"electron/js/*",
 			"electron/env.json",
-			"electron/icon*",
-			"electron/about.css",
-			"electron/about.html",
-			"electron/about.js",
-			"electron/common.js",
+			"electron/img/*",
+			"electron/about/*",
 			"build",
 			"!dist/*",
 			"dist/index.html",
@@ -515,7 +511,7 @@
 			"sign": false
 		},
 		"mac": {
-			"icon": "electron/icon.icns",
+			"icon": "electron/img/icon.icns",
 			"type": "distribution",
 			"hardenedRuntime": true,
 			"gatekeeperAssess": false,
@@ -549,7 +545,7 @@
 		},
 		"win": {
 			"target": "nsis",
-			"icon": "electron/icon256x256.png",
+			"icon": "electron/img/icon256x256.png",
 			"publish": [
 				{
 					"provider": "spaces",
@@ -559,7 +555,7 @@
 			]
 		},
 		"linux": {
-			"icon": "electron/icon512x512.png",
+			"icon": "electron/img/icon512x512.png",
 			"category": "Utility",
 			"target": [
 				"snap",
