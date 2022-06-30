@@ -25,13 +25,6 @@ const SORT_IDS = [
 ];
 const SKIP_IDS = [ 'blockOpenBreadcrumbs', 'blockSetBreadcrumbs' ];
 
-/// #if USE_ADDON
-const bindings = window.require('bindings')({
-	bindings: 'addon.node',
-	module_root: path.join(app.getAppPath(), 'build'),
-});
-/// #endif
-
 class Dispatcher {
 
 	service: any = null;
@@ -41,26 +34,11 @@ class Dispatcher {
 	reconnects: number = 0;
 
 	constructor () {
-		/// #if USE_ADDON
-			this.service = new Service.ClientCommandsClient('http://127.0.0.1:80', null, null);
+		let serverAddr = getGlobal('serverAddr');
+		console.log('[Dispatcher] Server address: ', serverAddr);
+		this.service = new Service.ClientCommandsClient(serverAddr, null, null);
 
-			const handler = (item: any) => {
-				try {
-					this.event(Events.Event.deserializeBinary(item.data.buffer), false);
-				} catch (e) {
-					console.error(e);
-				};
-			};
-
-			this.service.client_.rpcCall = this.napiCall;
-			bindings.setEventHandler(handler);
-		/// #else
-			let serverAddr = getGlobal('serverAddr');
-			console.log('[Dispatcher] Server address: ', serverAddr);
-			this.service = new Service.ClientCommandsClient(serverAddr, null, null);
-
-			this.listenEvents();
-		/// #endif
+		this.listenEvents();
 	};
 
 	listenEvents () {

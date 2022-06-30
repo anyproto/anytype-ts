@@ -46,9 +46,7 @@ class WindowManager {
 
 	createMain (options) {
 		const { withState, route } = options;
-
 		const image = nativeImage.createFromPath(path.join(Util.imagePath(), 'icon512x512.png'));
-		const state = windowStateKeeper({ defaultWidth: DEFAULT_WIDTH, defaultHeight: DEFAULT_HEIGHT });
 
 		let param = {
 			minWidth: MIN_WIDTH,
@@ -83,6 +81,7 @@ class WindowManager {
 		};
 
 		if (withState) {
+			const state = windowStateKeeper({ defaultWidth: DEFAULT_WIDTH, defaultHeight: DEFAULT_HEIGHT });
 			param = Object.assign(param, {
 				x: state.x,
 				y: state.y,

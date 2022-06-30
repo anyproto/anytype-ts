@@ -5,7 +5,6 @@ const process = require('process');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 module.exports = (env) => {
-	const useGRPC = !process.env.ANYTYPE_USE_ADDON && (process.env.ANYTYPE_USE_GRPC || (process.platform == 'win32') || (env.NODE_ENV == 'development'));
 	const port = process.env.SERVER_PORT;
 
 	return {
@@ -60,8 +59,6 @@ module.exports = (env) => {
 						{ 
 							loader: 'ifdef-loader', 
 							options: {
-								USE_GRPC: useGRPC,
-								USE_ADDON: !useGRPC,
 								version: 3,
 								'ifdef-verbose': true,
 							},
@@ -97,17 +94,6 @@ module.exports = (env) => {
 			new webpack.DefinePlugin({
 				'process.env.NODE_ENV': JSON.stringify(env.NODE_ENV),
 			}),
-
-			function () {
-				this.plugin('compilation', (stats) => {
-					const dst = path.join(__dirname, 'electron', 'env.json');
-					const content = {
-						USE_GRPC: useGRPC
-					};
-					
-					fs.writeFileSync(dst, JSON.stringify(content, null, 3));
-				});
-			},
 		],
 		externals: {
 			bindings: 'require("bindings")'
