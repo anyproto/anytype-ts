@@ -838,7 +838,7 @@ class Dispatcher {
 		};
 
 		try {
-			this.service[ct](data, null, (error: any, response: any) => {
+			this.service[ct](data, { token: authStore.token }, (error: any, response: any) => {
 				if (!response) {
 					return;
 				};
