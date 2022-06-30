@@ -1,7 +1,6 @@
 const electron = require('electron');
-const { app, BrowserWindow, ipcMain, shell, session, nativeTheme } = require('electron');
+const { app, BrowserWindow, ipcMain, session, nativeTheme } = require('electron');
 const { is, fixPathForAsarUnpack } = require('electron-util');
-const { download } = require('electron-dl');
 const path = require('path');
 const os = require('os');
 const storage = require('electron-json-storage');
@@ -9,10 +8,6 @@ const fs = require('fs');
 const readChunk = require('read-chunk');
 const fileType = require('file-type');
 const port = process.env.SERVER_PORT;
-const keytar = require('keytar');
-const bindings = require('bindings');
-const envPath = path.join(__dirname, 'electron', 'env.json');
-const systemVersion = process.getSystemVersion();
 const protocol = 'anytype';
 const remote = require('@electron/remote/main');
 
@@ -21,13 +16,11 @@ const tmpPath = path.join(userPath, 'tmp');
 const binPath = fixPathForAsarUnpack(path.join(__dirname, 'dist', `anytypeHelper${is.windows ? '.exe' : ''}`));
 
 const ConfigManager = require('./electron/js/config.js');
-const UpdateManager = require('./electron/js/updater.js');
+const UpdateManager = require('./electron/js/update.js');
 const MenuManager = require('./electron/js/menu.js');
 const WindowManager = require('./electron/js/window.js');
 const Server = require('./electron/js/server.js');
 const Util = require('./electron/js/util.js');
-
-const KEYTAR_SERVICE = 'Anytype';
 
 app.removeAsDefaultProtocolClient(protocol);
 Util.setAppPath(path.join(__dirname));
@@ -41,14 +34,10 @@ if (process.defaultApp) {
 	app.setAsDefaultProtocolClient(protocol);
 };
 
-try { env = JSON.parse(fs.readFileSync(envPath)); } catch (e) {};
-
 remote.initialize();
 
-let env = {};
 let deeplinkingUrl = '';
 let waitLibraryPromise;
-let dataPath = [];
 let mainWindow = null;
 let csp = [
 	"default-src 'self' 'unsafe-eval'",
@@ -72,17 +61,6 @@ if (app.isPackaged && !app.requestSingleInstanceLock()) {
 
 storage.setDataPath(userPath);
 Util.mkDir(tmpPath);
-
-if (process.env.DATA_PATH) {
-	Util.mkDir(process.env.DATA_PATH);
-	dataPath.push(process.env.DATA_PATH);
-} else {
-	dataPath.push(userPath);
-	if (!app.isPackaged) {
-		dataPath.push('dev');
-	};
-	dataPath.push('data');
-};
 
 if (process.env.ANYTYPE_USE_SIDE_SERVER) {
 	// use the grpc server started from the outside
@@ -108,14 +86,6 @@ nativeTheme.on('updated', () => {
 
 function createMainWindow () {
 	mainWindow = WindowManager.createMain({ withState: true, route: Util.getRouteFromUrl(deeplinkingUrl) });
-
-	mainWindow.once('ready-to-show', () => {
-		mainWindow.show();
-
-		if (deeplinkingUrl) {
-			Util.send(mainWindow, 'route', Util.getRouteFromUrl(deeplinkingUrl));
-		};
-	});
 
 	if (process.env.ELECTRON_DEV_EXTENSIONS) {
 		BrowserWindow.addDevToolsExtension(
@@ -144,8 +114,7 @@ function createMainWindow () {
 		return false;
 	});
 
-	registerIpcEventsMain();
-	registerIpcEventsWindow();
+	registerIpcEvents();
 
 	UpdateManager.init(mainWindow);
 	UpdateManager.exit = exit;
@@ -163,41 +132,10 @@ function createMainWindow () {
 	MenuManager.initTray(mainWindow);
 };
 
-function createChildWindow (route) {
-	WindowManager.createMain({ withState: false, route: route });
-	registerIpcEventsWindow();
-};
-
-function registerIpcEventsMain () {
+function registerIpcEvents () {
 	ipcMain.on('exit', (e, relaunch) => { exit(relaunch); });
 	ipcMain.on('shutdown', (e, relaunch) => { shutdown(relaunch); });
-	ipcMain.on('configSet', (e, config) => { setConfig(config); });
-
-	ipcMain.on('updateDownload', (e) => { UpdateManager.download(); });
 	ipcMain.on('updateConfirm', (e) => { exit(true); }); 
-	ipcMain.on('updateCancel', (e) => { UpdateManager.cancel(); });
-
-	ipcMain.on('urlOpen', async (e, v) => { shell.openExternal(v); });
-	ipcMain.on('pathOpen', async (e, v) => { shell.openPath(v); });
-	ipcMain.on('windowOpen', (e, v) => { createChildWindow(v); });
-
-	ipcMain.on('keytarSet', (e, key, value) => {
-		if (key && value) {
-			keytar.setPassword(KEYTAR_SERVICE, key, value);
-		};
-	});
-	ipcMain.on('keytarDelete', (e, key) => { keytar.deletePassword(KEYTAR_SERVICE, key); });
-};
-
-function registerIpcEventsWindow () {
-	ipcMain.on('appLoaded', () => { Util.send(BrowserWindow.getFocusedWindow(), 'init', dataPath.join('/'), ConfigManager.config, Util.isDarkTheme()); });
-
-	ipcMain.on('keytarGet', (e, key) => {
-		keytar.getPassword(KEYTAR_SERVICE, key).then((value) => { Util.send(BrowserWindow.getFocusedWindow(), 'keytarGet', key, value); });
-	});
-
-	ipcMain.on('download', async (e, url) => { await download(BrowserWindow.getFocusedWindow(), url, { saveAs: true }); });
-	ipcMain.on('winCommand', (e, cmd, param) => { WindowManager.command(BrowserWindow.getFocusedWindow(), cmd, param); });
 };
 
 function setConfig (obj, callBack) {
@@ -228,12 +166,13 @@ app.on('second-instance', (event, argv, cwd) => {
 
 	if (!is.macos) {
 		deeplinkingUrl = argv.find((arg) => arg.startsWith(`${protocol}://`));
-		if (deeplinkingUrl) {
-			Util.send(BrowserWindow.getFocusedWindow(), 'route', Util.getRouteFromUrl(deeplinkingUrl));
-		};
 	};
 
 	if (mainWindow) {
+		if (deeplinkingUrl) {
+			Util.send(mainWindow, 'route', Util.getRouteFromUrl(deeplinkingUrl));
+		};
+
 		if (mainWindow.isMinimized()) {
 			mainWindow.restore();
 		};

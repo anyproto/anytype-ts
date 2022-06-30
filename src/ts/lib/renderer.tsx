@@ -1,4 +1,5 @@
-const { getCurrentWindow } = window.require('@electron/remote');
+const remote = window.require('@electron/remote');
+const Api = remote.require('./electron/js/api.js');
 
 class Renderer {
 
@@ -13,15 +14,34 @@ class Renderer {
 	};
 
 	send (...args: any[]) {
-		this.get().send.apply(this.renderer, args);
+		const cmd = args[0];
+		if (Api[cmd]) {
+			args.shift();
+			args.unshift(remote.getCurrentWindow());
+
+			console.log('[Renderer].send', args);
+
+			Api[cmd].apply(null, args);
+		} else {
+			const renderer = this.get();
+			renderer.send.apply(renderer, args);
+		};
 	};
 
 	on (...args: any[]) {
-		this.get().on.apply(this.renderer, args);
+		const renderer = this.get();
+		const event = args[0];
+		const callBack = args[1];
+
+		renderer.on(event, (...args: any[]) => {
+			console.log('[Renderer].on', event, args);
+			callBack.apply(null, args);
+		});
 	};
 
 	removeAllListeners (...args: any[]) {
-		this.get().removeAllListeners.apply(this.renderer, args);
+		const renderer = this.get();
+		renderer.removeAllListeners.apply(renderer, args);
 	};
 
 };

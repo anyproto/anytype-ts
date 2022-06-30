@@ -1,8 +1,9 @@
-const log = require('electron-log');
 const { app, shell, nativeTheme } = require('electron');
+const { is } = require('electron-util');
+const log = require('electron-log');
 const path = require('path');
-const version = app.getVersion();
 const protocol = 'anytype';
+const userPath = app.getPath('userData');
 
 const ConfigManager = require('./config.js');
 
@@ -59,23 +60,27 @@ class Util {
 		return bg[theme];
 	};
 
-	getDefaultChannel () {
-		let c = 'latest';
-		if (version.match('alpha')) {
-			c = 'alpha';
-		};
-		if (version.match('beta')) {
-			c = 'beta';
-		};
-		return c;
-	};
-
 	electronPath () {
 		return path.join(this.appPath, 'electron');
 	};
 
 	imagePath () {
 		return path.join(this.electronPath(), 'img');
+	};
+
+	dataPath () {
+		const dataPath = [];
+		if (process.env.DATA_PATH) {
+			this.mkDir(process.env.DATA_PATH);
+			dataPath.push(process.env.DATA_PATH);
+		} else {
+			dataPath.push(userPath);
+			if (is.development) {
+				dataPath.push('dev');
+			};
+			dataPath.push('data');
+		};
+		return path.join.apply(null, dataPath);
 	};
 
 	send () {
@@ -87,7 +92,7 @@ class Util {
 			win.webContents.send.apply(win.webContents, args);
 		};
 
-		console.log('[Send]', win, args);
+		console.log('[Send]', args);
 	};
 
 	savePage (win, exportPath, name) {

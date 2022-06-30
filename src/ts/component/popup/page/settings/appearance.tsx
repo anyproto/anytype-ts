@@ -58,7 +58,7 @@ const PopupSettingsPageAppearance = observer(class PopupSettingsPageAppearance e
 
 	onTheme (id: string) {
 		commonStore.themeSet(id);
-		Renderer.send('configSet', { theme: id });
+		Renderer.send('setConfig', { theme: id });
 		analytics.event('ThemeSet', { id });
 	};
 

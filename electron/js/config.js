@@ -1,5 +1,6 @@
+const { app } = require('electron');
 const storage = require('electron-json-storage');
-const Util = require('./util.js');
+const version = app.getVersion();
 
 const CONFIG_NAME = 'devconfig';
 
@@ -10,13 +11,11 @@ class ConfigManager {
 	init (callBack) {
 		storage.get(CONFIG_NAME, (error, data) => {
 			this.config = data || {};
-			this.config.channel = String(this.config.channel || Util.getDefaultChannel());
+			this.config.channel = String(this.config.channel || this.getDefaultChannel());
 
 			if (error) {
 				console.error(error);
 			};
-
-			Util.log('info', 'Config: ' + JSON.stringify(this.config, null, 3));
 
 			if (callBack) {
 				callBack();
@@ -32,6 +31,17 @@ class ConfigManager {
 				callBack(error);
 			};
 		});
+	};
+
+	getDefaultChannel () {
+		let c = 'latest';
+		if (version.match('alpha')) {
+			c = 'alpha';
+		};
+		if (version.match('beta')) {
+			c = 'beta';
+		};
+		return c;
 	};
 
 };

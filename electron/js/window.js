@@ -9,8 +9,8 @@ const port = process.env.SERVER_PORT;
 const MenuManager = require('./menu.js');
 const Util = require('./util.js');
 
-const DEFAULT_WIDTH = 800;
-const DEFAULT_HEIGHT = 600;
+const DEFAULT_WIDTH = 1024;
+const DEFAULT_HEIGHT = 768;
 const MIN_WIDTH = 752;
 const MIN_HEIGHT = 480;
 
@@ -39,6 +39,10 @@ class WindowManager {
 			win = null;
 		});
 
+		win.once('ready-to-show', () => { win.show(); });
+		win.on('enter-full-screen', () => { Util.send(win, 'enter-full-screen'); });
+		win.on('leave-full-screen', () => { Util.send(win, 'leave-full-screen'); });
+
 		this.list.add(win);
 
 		return win;
@@ -48,6 +52,7 @@ class WindowManager {
 		const { withState, route } = options;
 		const image = nativeImage.createFromPath(path.join(Util.imagePath(), 'icon512x512.png'));
 
+		let state = {};
 		let param = {
 			minWidth: MIN_WIDTH,
 			minHeight: MIN_HEIGHT,
@@ -81,7 +86,7 @@ class WindowManager {
 		};
 
 		if (withState) {
-			const state = windowStateKeeper({ defaultWidth: DEFAULT_WIDTH, defaultHeight: DEFAULT_HEIGHT });
+			state = windowStateKeeper({ defaultWidth: DEFAULT_WIDTH, defaultHeight: DEFAULT_HEIGHT });
 			param = Object.assign(param, {
 				x: state.x,
 				y: state.y,
@@ -89,6 +94,8 @@ class WindowManager {
 				height: state.height,
 			});
 		};
+
+		console.log('[WindowManager].createMain', param);
 
 		const win = this.create(param);
 
@@ -99,23 +106,11 @@ class WindowManager {
 		};
 
 		if (is.development) {
-			win.loadURL(`http://localhost:${port}`);
+			win.loadURL(`http://localhost:${port}#${route}`);
 			win.toggleDevTools();
 		} else {
-			win.loadFile('./dist/index.html');
+			win.loadFile(`./dist/index.html#${route}`);
 		};
-
-		win.once('ready-to-show', () => {
-			win.show();
-
-			if (route) {
-				Util.send(win, 'route', route);
-			};
-		});
-
-		win.on('enter-full-screen', () => { Util.send(win, 'enter-full-screen'); });
-		win.on('leave-full-screen', () => { Util.send(win, 'leave-full-screen'); });
-
 		return win;
 	};
 
@@ -123,8 +118,6 @@ class WindowManager {
 		const win = this.create({ width: 400, height: 400, useContentSize: true });
 
 		win.loadURL('file://' + path.join(Util.electronPath(), 'about', `index.html?version=${version}&theme=${Util.getTheme()}`));
-
-		win.once('ready-to-show', () => { win.show(); });
 		win.setMenu(null);
 
 		win.webContents.on('will-navigate', (e, url) => {

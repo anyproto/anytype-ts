@@ -1,5 +1,6 @@
 const { app, shell, Menu, Tray } = require('electron');
 const { is } = require('electron-util');
+const path = require('path');
 
 const ConfigManager = require('./config.js');
 const WindowManager = require('./window.js');

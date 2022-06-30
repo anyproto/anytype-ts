@@ -882,27 +882,6 @@ class Dispatcher {
 		};
 	};
 
-	/// #if USE_ADDON
-		napiCall (method: any, inputObj: any, outputObj: any, request: any, callBack?: (err: any, res: any) => void) {
-			const a = method.split('/');
-			method = a[a.length - 1];
-
-			const buffer = inputObj.serializeBinary();
-			const handler = (item: any) => {
-				try {
-					let message = request.b(item.data.buffer);
-					if (message) {
-						callBack(null, message);
-					};
-				} catch (err) {
-					console.error(err);
-				};
-			};
-
-			bindings.sendCommand(method, buffer, handler);
-		};
-	/// #endif
-
 };
 
 export let dispatcher = new Dispatcher();

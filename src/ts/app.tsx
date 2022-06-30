@@ -347,6 +347,7 @@ class App extends React.Component<Props, State> {
 		const restoreKeys = [
 			'pinTime', 'defaultType', 'autoSidebar',
 		];
+		const hash = window.location.hash.replace(/^#/, '');
 
 		// Check auth phrase with keytar
 		if (accountId) {
@@ -373,8 +374,8 @@ class App extends React.Component<Props, State> {
 			Storage.set('lastSurveyTime', Util.time());
 		};
 
-		if (redirect) {
-			Storage.set('redirectTo', redirect);
+		if (redirect || hash) {
+			Storage.set('redirectTo', redirect || hash);
 			Storage.delete('redirect');
 		};
 
@@ -410,7 +411,7 @@ class App extends React.Component<Props, State> {
 
 		try { fs.mkdirSync(logsDir); } catch (err) {};
 
-		Renderer.send('appLoaded', true);
+		Renderer.send('appOnLoad');
 
 		Renderer.on('init', (e: any, dataPath: string, config: any, isDark: boolean) => {
 			authStore.walletPathSet(dataPath);
@@ -431,7 +432,7 @@ class App extends React.Component<Props, State> {
 				window.setTimeout(() => { this.setState({ loading: false }); }, 600);
 			}, 2000);
 		});
-		
+
 		Renderer.on('route', (e: any, route: string) => {
 			Util.route(route);
 		});
