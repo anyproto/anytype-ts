@@ -1,8 +1,8 @@
 const log = require('electron-log');
-const { app, BrowserWindow, shell, nativeTheme } = require('electron');
-const { is } = require('electron-util');
+const { app, shell, nativeTheme } = require('electron');
 const path = require('path');
 const version = app.getVersion();
+const protocol = 'anytype';
 
 const ConfigManager = require('./config.js');
 
@@ -12,8 +12,14 @@ class Util {
 
 	appPath = '';
 
-	setPath (value) {
+	setAppPath (value) {
 		this.appPath = value;
+	};
+
+	mkDir (value) {
+		if (value) {
+			try { fs.mkdirSync(value); } catch (e) {};
+		};
 	};
 
     log (method, text) {
@@ -26,6 +32,10 @@ class Util {
 
 	isDarkTheme () {
 		return nativeTheme.shouldUseDarkColors || nativeTheme.shouldUseHighContrastColors || nativeTheme.shouldUseInvertedColorScheme;
+	};
+
+	getRouteFromUrl (url) {
+		return url.replace(`${protocol}://`, '/');
 	};
 
 	getTheme () {
@@ -60,8 +70,12 @@ class Util {
 		return c;
 	};
 
+	electronPath () {
+		return path.join(this.appPath, 'electron');
+	};
+
 	imagePath () {
-		return path.join(this.appPath, 'electron', 'img' );
+		return path.join(this.electronPath(), 'img');
 	};
 
 	send () {
@@ -72,39 +86,6 @@ class Util {
 			args.shift();
 			win.webContents.send.apply(win.webContents, args);
 		};
-	};
-
-	aboutWindow () {
-		let window = new BrowserWindow({
-			backgroundColor: this.getBgColor(),
-			width: 400,
-			height: 400,
-			useContentSize: true,
-			titleBarStyle: 'hidden-inset',
-			show: true,
-			icon: path.join(__dirname, 'electron', 'img', 'icon.png'),
-			webPreferences: {
-				nodeIntegration: true,
-			},
-		});
-
-		window.loadURL('file://' + path.join(__dirname, 'electron', 'about', `index.html?version=${version}&theme=${this.getTheme()}`));
-
-		window.once('closed', () => { window = null; });
-		window.once('ready-to-show', () => { window.show(); });
-		window.setMenu(null);
-
-		window.webContents.on('will-navigate', (e, url) => {
-			e.preventDefault();
-			shell.openExternal(url);
-		});
-
-		window.webContents.on('new-window', (e, url) => {
-			e.preventDefault();
-			shell.openExternal(url);
-		});
-
-		return window;
 	};
 
 	savePage (win, exportPath, name) {

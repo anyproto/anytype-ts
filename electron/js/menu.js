@@ -1,6 +1,8 @@
 const { app, shell, Menu, Tray } = require('electron');
+const { is } = require('electron-util');
 
 const ConfigManager = require('./config.js');
+const WindowManager = require('./window.js');
 const Util = require('./util.js');
 
 const Separator = { type: 'separator' };
@@ -11,6 +13,7 @@ class MenuManager {
 	tray = {};
 	setChannel = () => {};
 	setConfig = () => {};
+	exit = () => {};
 
 	initMenu (win) {
 		const { config } = ConfigManager;
@@ -19,24 +22,32 @@ class MenuManager {
 			{
 				label: 'Anytype',
 				submenu: [
-					{ label: 'About Anytype', click: () => { Util.aboutWindow(); } },
+					{ label: 'About Anytype', click: () => { WindowManager.createAbout(); } },
+
 					Separator,
+
 					{ role: 'services' },
+
 					Separator,
+
 					{ role: 'hide', label: 'Hide Anytype' },
 					{ role: 'hideothers' },
 					{ role: 'unhide' },
+
 					Separator,
+
 					{ label: 'Check for updates', click: () => { Updater.checkUpdate(false); } },
 					{ label: 'Settings', click: () => { Util.send(win, 'popup', 'settings', {}); } },
+
 					Separator,
+
 					{
 						label: 'Quit', accelerator: 'CmdOrCtrl+Q',
 						click: () => { 
 							if (win) {
 								win.hide();
 							};
-							exit(false); 
+							this.exit(false); 
 						}
 					},
 				]
@@ -225,7 +236,7 @@ class MenuManager {
 				},
 				{
 					label: 'Relaunch',
-					click: () => { exit(true); }
+					click: () => { this.exit(true); }
 				},
 			]
 		};
@@ -278,7 +289,7 @@ class MenuManager {
 
 			Separator,
 
-			{ label: 'Quit', click: () => { hide(); exit(false); } },
+			{ label: 'Quit', click: () => { hide(); this.exit(false); } },
 		]));
 	};
 

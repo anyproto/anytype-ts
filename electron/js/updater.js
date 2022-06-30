@@ -1,3 +1,4 @@
+const { app } = require('electron');
 const { autoUpdater } = require('electron-updater');
 const log = require('electron-log');
 
@@ -110,6 +111,9 @@ class UpdateManager {
 	};
 
 	relaunch () {
+		Util.log('info', 'Relaunch');
+		app.isQuiting = true;
+
 		autoUpdater.quitAndInstall();
 	};
 
