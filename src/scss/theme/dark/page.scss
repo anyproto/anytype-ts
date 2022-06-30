@@ -5,6 +5,7 @@
 
 .pageAuth, .pageIndex, .pageObject {
     .textarea { border: 0px; }
+	.textareaWrap { border: 0px; background-color: $colorBgLight; }
     .input { border-color: $colorLinePrimary; }
 }
 

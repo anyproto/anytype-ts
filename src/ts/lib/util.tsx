@@ -655,6 +655,9 @@ class Util {
 		
 		this.previewHide(false);
 		
+		node.addClass('isPreviewHover');
+		this.textStyle(node, { textOpacity: 1, borderOpacity: 1 });
+
 		window.clearTimeout(this.timeoutPreviewShow);
 		this.timeoutPreviewShow = window.setTimeout(() => {
 			this.isPreviewOpen = true;
@@ -663,15 +666,22 @@ class Util {
 	};
 	
 	previewHide (force: boolean) {
+		const elements = $('.isPreviewHover');
+
 		this.isPreviewOpen = false;
 		window.clearTimeout(this.timeoutPreviewShow);
+
+		elements.each((i: number, item: any) => {
+			this.textStyle($(item), { textOpacity: 0.65, borderOpacity: 0.35 });
+		});
+		elements.removeClass('isPreviewHover');
 
 		const obj = $('#preview');
 		if (force) {
 			obj.hide();
 			return;
 		};
-		
+
 		obj.css({ opacity: 0 });
 		this.timeoutPreviewHide = window.setTimeout(() => { 
 			obj.hide();
@@ -679,6 +689,22 @@ class Util {
 
 			commonStore.previewClear();
 		}, 250);
+	};
+
+	textStyle (obj: any, param: any) {
+		const color = String(obj.css('color') || '').replace(/\s/g, '');
+		const rgb = color.match(/rgba?\(([^\(]+)\)/);
+
+		if (!rgb || !rgb.length) {
+			return;
+		};
+
+		const [ r, g, b ] = rgb[1].split(',');
+
+		obj.css({ 
+			color: `rgba(${[ r, g, b, param.textOpacity ].join(',')})`, 
+			borderColor: `rgba(${[ r, g, b, param.borderOpacity ].join(',')}` 
+		});
 	};
 	
 	lbBr (s: string) {
