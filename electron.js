@@ -107,7 +107,7 @@ nativeTheme.on('updated', () => {
 });
 
 function createMainWindow () {
-	mainWindow = WindowManager.createMain({ withState: true });
+	mainWindow = WindowManager.createMain({ withState: true, route: Util.getRouteFromUrl(deeplinkingUrl) });
 
 	mainWindow.once('ready-to-show', () => {
 		mainWindow.show();
@@ -122,6 +122,27 @@ function createMainWindow () {
 			path.join(os.homedir(), '/Library/Application Support/Google/Chrome/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi/4.6.0_0')
 		);
 	};
+
+	mainWindow.on('close', (e) => {
+		Util.log('info', 'closeMain: ' + app.isQuiting);
+
+		if (app.isQuiting) {
+			return;
+		};
+		
+		e.preventDefault();
+		if (!is.linux) {
+			if (win.isFullScreen()) {
+				win.setFullScreen(false);
+				win.once('leave-full-screen', () => { win.hide(); });
+			} else {
+				win.hide();
+			};
+		} else {
+			this.exit(false);
+		};
+		return false;
+	});
 
 	registerIpcEventsMain();
 	registerIpcEventsWindow();
@@ -143,16 +164,7 @@ function createMainWindow () {
 };
 
 function createChildWindow (route) {
-	const win = WindowManager.createMain({ withState: false });
-
-	win.once('ready-to-show', () => {
-		win.show();
-
-		if (route) {
-			Util.send(win, 'route', route);
-		};
-	});
-
+	WindowManager.createMain({ withState: false, route: route });
 	registerIpcEventsWindow();
 };
 

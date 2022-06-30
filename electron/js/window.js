@@ -9,6 +9,8 @@ const port = process.env.SERVER_PORT;
 const MenuManager = require('./menu.js');
 const Util = require('./util.js');
 
+const DEFAULT_WIDTH = 800;
+const DEFAULT_HEIGHT = 600;
 const MIN_WIDTH = 752;
 const MIN_HEIGHT = 480;
 
@@ -43,14 +45,17 @@ class WindowManager {
 	};
 
 	createMain (options) {
-		const { withState } = options;
+		const { withState, route } = options;
 
 		const image = nativeImage.createFromPath(path.join(Util.imagePath(), 'icon512x512.png'));
-		const state = windowStateKeeper({ defaultWidth: 800, defaultHeight: 600 });
+		const state = windowStateKeeper({ defaultWidth: DEFAULT_WIDTH, defaultHeight: DEFAULT_HEIGHT });
 
 		let param = {
 			minWidth: MIN_WIDTH,
 			minHeight: MIN_HEIGHT,
+			width: DEFAULT_WIDTH, 
+			height: DEFAULT_HEIGHT,
+
 			webPreferences: {
 				nativeWindowOpen: true,
 				nodeIntegration: true,
@@ -101,29 +106,16 @@ class WindowManager {
 			win.loadFile('./dist/index.html');
 		};
 
+		win.once('ready-to-show', () => {
+			win.show();
+
+			if (route) {
+				Util.send(win, 'route', route);
+			};
+		});
+
 		win.on('enter-full-screen', () => { Util.send(win, 'enter-full-screen'); });
 		win.on('leave-full-screen', () => { Util.send(win, 'leave-full-screen'); });
-
-		win.on('close', (e) => {
-			Util.log('info', 'close: ' + app.isQuiting);
-
-			if (app.isQuiting) {
-				return;
-			};
-			
-			e.preventDefault();
-			if (!is.linux) {
-				if (win.isFullScreen()) {
-					win.setFullScreen(false);
-					win.once('leave-full-screen', () => { win.hide(); });
-				} else {
-					win.hide();
-				};
-			} else {
-				this.exit(false);
-			};
-			return false;
-		});
 
 		return win;
 	};

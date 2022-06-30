@@ -332,7 +332,10 @@ class App extends React.Component<Props, State> {
 		keyboard.init();
 		analytics.init();
 		
-		this.setIpcEvents();
+		this.registerIpcEvents();
+
+		$(window).off('beforeunload').on('beforeunload', () => {
+		});
 	};
 
 	initStorage () {
@@ -400,7 +403,7 @@ class App extends React.Component<Props, State> {
 		Util.addBodyClass('theme', theme);
 	};
 
-	setIpcEvents () {
+	registerIpcEvents () {
 		const node = $(ReactDOM.findDOMNode(this));
 		const logo = node.find('#logo');
 		const logsDir = path.join(userPath, 'logs');
