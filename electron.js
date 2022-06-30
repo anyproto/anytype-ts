@@ -1,5 +1,5 @@
 const electron = require('electron');
-const { app, BrowserWindow, ipcMain, session, nativeTheme } = require('electron');
+const { app, BrowserWindow, session, nativeTheme } = require('electron');
 const { is, fixPathForAsarUnpack } = require('electron-util');
 const path = require('path');
 const os = require('os');
@@ -34,7 +34,7 @@ if (process.defaultApp) {
 };
 
 let deeplinkingUrl = '';
-let waitLibraryPromise;
+let waitLibraryPromise = null;
 let mainWindow = null;
 let csp = [
 	"default-src 'self' 'unsafe-eval'",
@@ -175,8 +175,6 @@ app.on('before-quit', (e) => {
 });
 
 app.on('activate', () => { 
-	console.log(WindowManager.list.size, mainWindow);
-
 	WindowManager.list.size ? mainWindow.show() : createMainWindow();
 });
 
