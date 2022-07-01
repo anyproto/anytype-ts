@@ -149,7 +149,10 @@
 		
 		.tabPhrase {
 			.label { margin-bottom: 25px; }
-			.textarea { border-radius: 4px; padding: 20px 24px; color: $colorIce; }
+			.textarea { border-radius: 4px; padding: 20px 24px; color: $colorIce; background: none; }
+			.inputs { margin-bottom: 20px; }
+			.buttons { margin-top: 32px; }
+			.textareaWrap { overflow: hidden; background: #f7f5f0; }
 
 			.path { margin-bottom: 16px; height: 128px; display: flex; }
 			.path { 
@@ -167,9 +170,6 @@
 			.qrWrap {
 				canvas { width: 100%; height: 100%; }
 			}
-
-			.inputs { margin-bottom: 20px; }
-			.buttons { margin-top: 32px; }
 		}
 		
 		.tabPinSelect, .tabPinConfirm {

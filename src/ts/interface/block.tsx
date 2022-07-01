@@ -76,6 +76,7 @@ export interface BlockComponent {
 	onPaste?(e: any): void;
 	onFocus?(e: any): void;
 	onBlur?(e: any): void;
+	onCopy?(e: any, cut: boolean): void;
 	getWrapper?(): any;
 	getWrapperWidth?(): number;
 };

@@ -167,8 +167,8 @@
 				.line.lineType { width: 56px; height: 8px; background-color: $colorLightGrey; }
 			}
 	
-			.item.isTask, .item.isBookmark { padding-left: 40px; }
-			.item.isTask, .item.isBookmark {
+			.item.isTask.withIcon, .item.isBookmark.withIcon { padding-left: 40px; }
+			.item.isTask.withIcon, .item.isBookmark.withIcon {
 				.iconObject { position: absolute; left: 16px; top: 16px; z-index: 1; margin: 0px; }
 				.name { -webkit-line-clamp: 4; width: calc(100% - 20px); }
 			}

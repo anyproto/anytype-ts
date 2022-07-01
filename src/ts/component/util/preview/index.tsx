@@ -166,7 +166,7 @@ const Preview = observer(class Preview extends React.Component<Props, State> {
 		const oh = obj.outerHeight();
 
 		let css: any = { opacity: 0, left: 0, top: 0 };
-		let pcss: any = { top: 'auto', bottom: 'auto', width: '', left: '', height: nh + OFFSET_Y };
+		let pcss: any = { top: 'auto', bottom: 'auto', width: '', left: '', height: nh + OFFSET_Y, clipPath: '' };
 		let typeY = I.MenuDirection.Bottom;		
 		let ps = (1 - nw / ow) / 2 * 100;
 		let pe = ps + nw / ow * 100;
@@ -184,7 +184,6 @@ const Preview = observer(class Preview extends React.Component<Props, State> {
 		};
 		
 		obj.removeClass('top bottom');
-		poly.css(pcss);
 
 		if (offset.top + oh + nh >= st + wh) {
 			typeY = I.MenuDirection.Top;
@@ -194,21 +193,24 @@ const Preview = observer(class Preview extends React.Component<Props, State> {
 			css.top = offset.top - oh - OFFSET_Y;
 			obj.addClass('top');
 				
-			poly.css({ bottom: -nh - OFFSET_Y, clipPath: cpTop });
+			pcss.bottom = -nh - OFFSET_Y;
+			pcss.clipPath = cpTop;
 		};
 			
 		if (typeY == I.MenuDirection.Bottom) {
 			css.top = offset.top + nh + OFFSET_Y;
 			obj.addClass('bottom');
 				
-			poly.css({ top: -nh - OFFSET_Y, clipPath: cpBot });
+			pcss.top = -nh - OFFSET_Y;
+			pcss.clipPath = cpBot;
 		};
 			
 		css.left = offset.left - ow / 2 + nw / 2;
 		css.left = Math.max(BORDER, css.left);
 		css.left = Math.min(ww - ow - BORDER, css.left);
-		
+
 		obj.show().css(css);
+		poly.css(pcss);
 		
 		raf(() => { 
 			obj.css({ opacity: 1 });
