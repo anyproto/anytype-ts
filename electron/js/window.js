@@ -94,8 +94,6 @@ class WindowManager {
 			});
 		};
 
-		console.log('[WindowManager].createMain', param);
-
 		const win = this.create(param);
 
 		remote.enable(win.webContents);

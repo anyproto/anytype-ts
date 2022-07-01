@@ -17,7 +17,7 @@ class UpdateManager {
 	init (win) {
 		const { channel } = ConfigManager.config;
 
-		console.log('Channel: ', channel);
+		console.log('[UpdateManager].init, channel: ', channel);
 
 		autoUpdater.logger = log;
 		autoUpdater.logger.transports.file.level = 'debug';

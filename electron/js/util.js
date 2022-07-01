@@ -32,6 +32,10 @@ class Util {
 		console.log(text);
 	};
 
+	dateForFile() {
+		return new Date().toISOString().replace(/:/g, '_').replace(/\..+/, '');
+	};
+
 	// MacOs 12.2 (M1): always returns false regardless current color theme
 	isDarkTheme () {
 		return nativeTheme.shouldUseDarkColors || nativeTheme.shouldUseHighContrastColors || nativeTheme.shouldUseInvertedColorScheme;
@@ -93,8 +97,6 @@ class Util {
 			args.shift();
 			win.webContents.send.apply(win.webContents, args);
 		};
-
-		console.log('[Send]', args);
 	};
 
 	savePage (win, exportPath, name) {

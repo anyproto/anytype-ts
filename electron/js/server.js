@@ -1,14 +1,11 @@
 'use strict';
 const path = require('path');
 const childProcess = require('child_process');
-const electron = require('electron');
 const fs = require('fs');
 const stdoutWebProxyPrefix = 'gRPC Web proxy started at: ';
-const Util = require('./util.js');
+const { app, dialog, shell } = require('electron');
 
-function dateForFile() {
-	return new Date().toISOString().replace(/:/g, '_').replace(/\..+/, '');
-};
+const Util = require('./util.js');
 
 let maxStdErrChunksBuffer = 10;
 
@@ -29,7 +26,7 @@ class Server {
 					let env = process.env;
 					
 					if (!process.stdout.isTTY) {
-						env['GOLOG_FILE'] = path.join(logsDir, 'anytype_' + dateForFile() + '.log');
+						env['GOLOG_FILE'] = path.join(logsDir, `anytype_${Util.dateForFile()}.log`);
 					};
 					
 					let args = [ '127.0.0.1:0', '127.0.0.1:0' ];
@@ -49,8 +46,8 @@ class Server {
 					let str = data.toString();
 
 					if (!this.isRunning && str && (str.indexOf(stdoutWebProxyPrefix) >= 0)) {
-						var regex = new RegExp(stdoutWebProxyPrefix + '([^\n^\s]+)');
-						this.address = 'http://' + regex.exec(str)[1];
+						const regex = new RegExp(stdoutWebProxyPrefix + '([^\n^\s]+)');
+						this.address = 'https://' + regex.exec(str)[1];
 						this.isRunning = true;
 						resolve(true);
 					};
@@ -87,18 +84,17 @@ class Server {
 					
 					this.isRunning = false;
 					
-					let crashReport = path.join(logsDir, 'crash_' + dateForFile() + '.log');
+					let crashReport = path.join(logsDir, `crash_${Util.dateForFile()}.log`);
 					try {
 						fs.writeFileSync(crashReport, this.lastErrors.join('\n'), 'utf-8');
 					} catch(e) {
 						console.log('failed to save a file');
 					};
 					
-					electron.dialog.showErrorBox('Anytype helper crashed', 'You will be redirected to the crash log file. You can send it to Anytype developers: dev@anytype.io');
-					electron.shell.showItemInFolder(crashReport);
+					dialog.showErrorBox('Anytype helper crashed', 'You will be redirected to the crash log file. You can send it to Anytype developers: dev@anytype.io');
+					shell.showItemInFolder(crashReport);
 					
-					electron.app.relaunch();
-					electron.app.exit(0);
+					app.exit(0);
 				});
 			});
 		});
