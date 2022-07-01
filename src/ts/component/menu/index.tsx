@@ -450,7 +450,7 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 					break;
 
 				case I.MenuDirection.Bottom:
-					y = oy + eh + offsetY + 5;
+					y = oy + eh + offsetY;
 
 					// Switch
 					if (!noFlipY && (y >= wh - height - BORDER)) {
