@@ -221,8 +221,10 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 	};
 
 	onViewSet (item: any) {
-		this.props.getData(item.id, 0);
+		const { rootId, block } = this.props;
+		const subId = dbStore.getSubId(rootId, block.id);
 
+		dbStore.metaSet(subId, '', { ...dbStore.getMeta(subId, ''), viewId: item.id });
 		analytics.event('SwitchView', { type: item.type });
 	};
 

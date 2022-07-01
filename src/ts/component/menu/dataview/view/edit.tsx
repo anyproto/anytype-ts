@@ -197,11 +197,12 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 	};
 
 	save () {
-		const { param, position } = this.props;
+		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, onSave, getData } = data;
+		const { rootId, blockId, onSave } = data;
 		const view = data.view.get();
 		const allowedView = blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
+		const subId = dbStore.getSubId(rootId, blockId);
 
 		if (!allowedView) {
 			return;
@@ -218,11 +219,9 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 		} else 
 		if (view.name) {
 			C.BlockDataviewViewCreate(rootId, blockId, view, (message: any) => {
-				view.id = message.viewId;
-				getData(view.id, 0);
+				dbStore.metaSet(subId, '', { ...dbStore.getMeta(subId, ''), viewId: message.viewId });
 
 				cb();
-
 				analytics.event('AddView', { type: view.type });
 			});
 		};

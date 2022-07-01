@@ -50,8 +50,6 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 	render () {
 		const { rootId, block, getView } = this.props;
 		const { loading } = this.state;
-		const view = getView();
-		const { groupRelationKey } = view;
 		const groups = this.getGroups(false);
 
 		return (
@@ -83,15 +81,12 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 	};
 
 	componentDidMount () {
-		this.loadGroupList();
 		this.resize();
 		this.rebind();
 	};
 
 	componentDidUpdate () {
-		this.loadGroupList();
 		this.resize();
-
 		$(window).trigger('resize.editor');
 	};
 
@@ -128,10 +123,6 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 		const { rootId, block, getView } = this.props;
 		const view = getView();
 
-		if (this.groupRelationKey == view.groupRelationKey) {
-			return;
-		};
-
 		dbStore.groupsClear(rootId, block.id);
 		this.groupRelationKey = view.groupRelationKey;
 
@@ -151,7 +142,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 
 		this.setState({ loading: true });
 
-		C.ObjectRelationSearchDistinct(view.groupRelationKey, (message: any) => {
+		C.ObjectRelationSearchDistinct(view.groupRelationKey, view.filters, (message: any) => {
 			if (message.error.code) {
 				return;
 			};

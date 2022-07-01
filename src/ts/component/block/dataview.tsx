@@ -14,21 +14,15 @@ import ViewGallery from './dataview/view/gallery';
 import ViewList from './dataview/view/list';
 
 interface Props extends I.BlockComponent, RouteComponentProps<any> {};
-interface State {
-	viewId: string;
-};
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
 
-const BlockDataview = observer(class BlockDataview extends React.Component<Props, State> {
+const BlockDataview = observer(class BlockDataview extends React.Component<Props, {}> {
 
 	viewRef: any = null;
 	cellRefs: Map<string, any> = new Map();
 	viewId: string = '';
-	state = {
-		viewId: '',
-	};
 	creating: boolean = false;
 
 	constructor (props: any) {
@@ -60,6 +54,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			return null;
 		};
 
+		const { groupRelationKey } = view;
+
 		let ViewComponent: React.ReactType<I.ViewComponent>;
 		let className = '';
 
@@ -85,7 +81,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				className = 'viewList';
 				break;
 		};
-		
+
 		return (
 			<div>
 				<Controls 
@@ -99,6 +95,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				/>
 				<div className="content">
 					<ViewComponent 
+						key={'view' + view.id}
 						ref={(ref: any) => { this.viewRef = ref; }} 
 						onRef={(ref: any, id: string) => { this.cellRefs.set(id, ref); }} 
 						{...this.props} 
@@ -142,7 +139,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const { rootId, block } = this.props;
 		const { viewId } = dbStore.getMeta(dbStore.getSubId(rootId, block.id), '');
 
-		if (viewId != this.state.viewId) {
+		if (viewId != this.viewId) {
 			this.getData(viewId, 0);
 		};
 
@@ -206,8 +203,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			return;
 		};
 
-		this.state.viewId = newViewId;
-		this.setState({ viewId: newViewId });
+		this.viewId = newViewId;
 
 		const { rootId, block } = this.props;
 		const subId = dbStore.getSubId(rootId, block.id);
@@ -232,6 +228,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		if (![ I.ViewType.Board ].includes(view.type)) {
 			DataUtil.getDataviewData(rootId, block.id, newViewId, keys, offset, limit, false, callBack);
+		} else 
+		if (this.viewRef.loadGroupList) {
+			this.viewRef.loadGroupList();
 		};
 	};
 

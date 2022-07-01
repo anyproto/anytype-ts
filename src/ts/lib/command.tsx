@@ -974,10 +974,11 @@ const ObjectSearch = (filters: I.Filter[], sorts: I.Sort[], keys: string[], full
 	dispatcher.request(ObjectSearch.name, request, callBack);
 };
 
-const ObjectRelationSearchDistinct = (relationKey: string, callBack?: (message: any) => void) => {
+const ObjectRelationSearchDistinct = (relationKey: string, filters: I.Filter[], callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.RelationSearchDistinct.Request();
 
 	request.setRelationkey(relationKey);
+	request.setFiltersList(filters.map(Mapper.To.Filter));
 
 	dispatcher.request(ObjectRelationSearchDistinct.name, request, callBack);
 };
