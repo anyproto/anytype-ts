@@ -593,8 +593,6 @@ class App extends React.Component<Props, State> {
 	};
 
 	onInit (e: any, dataPath: string, config: any, isDark: boolean, windowData: any) {
-		console.log('INIT', dataPath, config, isDark, windowData);
-		
 		const node = $(ReactDOM.findDOMNode(this));
 		const loader = node.find('#root-loader');
 		const logo = loader.find('#logo');
