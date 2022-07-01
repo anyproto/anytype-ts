@@ -1,5 +1,5 @@
 import { observable, action, computed, set, makeObservable } from 'mobx';
-import { I, M, Storage, analytics } from 'ts/lib';
+import { I, M, Storage, analytics, Renderer } from 'ts/lib';
 import { blockStore, detailStore, commonStore, dbStore } from 'ts/store';
 import * as Sentry from '@sentry/browser';
 import { keyboard } from 'ts/lib';
@@ -130,6 +130,8 @@ class AuthStore {
 
 		if (account.id) {
 			Storage.set('accountId', account.id);
+			Renderer.send('setAccount', this.accountItem);
+
 			Sentry.setUser({ id: account.id });
 		};
     };

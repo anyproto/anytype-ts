@@ -6,7 +6,7 @@ import { Provider } from 'mobx-react';
 import { enableLogging } from 'mobx-logger';
 import { Page, SelectionProvider, DragProvider, Progress, Tooltip, Preview, Icon, ListPopup, ListMenu } from './component';
 import { commonStore, authStore, blockStore, detailStore, dbStore, menuStore, popupStore } from './store';
-import { I, C, Util, FileUtil, keyboard, Storage, analytics, dispatcher, translate, Action, Renderer } from 'ts/lib';
+import { I, C, Util, FileUtil, keyboard, Storage, analytics, dispatcher, translate, Action, Renderer, DataUtil } from 'ts/lib';
 import * as Sentry from '@sentry/browser';
 import { configure } from 'mobx';
 
@@ -263,6 +263,7 @@ class App extends React.Component<Props, State> {
 	constructor (props: any) {
 		super(props);
 
+		this.onInit = this.onInit.bind(this);
 		this.onImport = this.onImport.bind(this);
 		this.onProgress = this.onProgress.bind(this);
 		this.onCommand = this.onCommand.bind(this);
@@ -281,7 +282,7 @@ class App extends React.Component<Props, State> {
 				<Provider {...rootStore}>
 					<div>
 						{loading ? (
-							<div id="loader" className="loaderWrapper">
+							<div id="root-loader" className="loaderWrapper">
 								<div id="logo" className="logo" />
 							</div>
 						) : ''}
@@ -331,6 +332,7 @@ class App extends React.Component<Props, State> {
 		analytics.init();
 		
 		this.registerIpcEvents();
+		Renderer.send('appOnLoad');
 
 		$(window).off('beforeunload').on('beforeunload', (e: any) => {
 			if (!authStore.token) {
@@ -352,40 +354,14 @@ class App extends React.Component<Props, State> {
 		const cover = Storage.get('cover');
 		const lastSurveyTime = Number(Storage.get('lastSurveyTime')) || 0;
 		const redirect = Storage.get('redirect');
-		const accountId = Storage.get('accountId');
-		const phrase = Storage.get('phrase');
-		const restoreKeys = [
-			'pinTime', 'defaultType', 'autoSidebar',
-		];
-		const hash = window.location.hash.replace(/^#/, '');
-
-		// Check auth phrase with keytar
-		if (accountId) {
-			Renderer.send('keytarGet', accountId);
-			Renderer.on('keytarGet', (e: any, key: string, value: string) => {
-				if (accountId && (key == accountId)) {
-					if (phrase) {
-						value = phrase;
-						Renderer.send('keytarSet', accountId, phrase);
-						Storage.delete('phrase');
-					};
-
-					if (value) {
-						authStore.phraseSet(value);
-						Util.route('/auth/setup/init', true);
-					} else {
-						Storage.logout();
-					};
-				};
-			});
-		};
+		const restoreKeys = [ 'pinTime', 'defaultType', 'autoSidebar' ];
 
 		if (!lastSurveyTime) {
 			Storage.set('lastSurveyTime', Util.time());
 		};
 
-		if (hash || redirect) {
-			commonStore.redirectSet(hash || redirect);
+		if (redirect) {
+			commonStore.redirectSet(redirect);
 			Storage.delete('redirect');
 		};
 
@@ -415,32 +391,28 @@ class App extends React.Component<Props, State> {
 	};
 
 	registerIpcEvents () {
-		const node = $(ReactDOM.findDOMNode(this));
-		const logo = node.find('#logo');
-		const logsDir = path.join(userPath, 'logs');
+		const logPath = path.join(userPath, 'logs');
 
-		try { fs.mkdirSync(logsDir); } catch (err) {};
+		Renderer.on('init', this.onInit);
 
-		Renderer.send('appOnLoad');
+		Renderer.on('keytarGet', (e: any, key: string, value: string) => {
+			const accountId = Storage.get('accountId');
+			const phrase = Storage.get('phrase');
 
-		Renderer.on('init', (e: any, dataPath: string, config: any, isDark: boolean) => {
-			authStore.walletPathSet(dataPath);
-			authStore.accountPathSet(dataPath);
+			if (accountId && (key == accountId)) {
+				if (phrase) {
+					value = phrase;
+					Renderer.send('keytarSet', accountId, phrase);
+					Storage.delete('phrase');
+				};
 
-			Storage.init(dataPath);
-
-			this.initStorage();
-
-			commonStore.nativeThemeSet(isDark);
-			commonStore.configSet(config, true);
-			commonStore.themeSet(config.theme);
-
-			this.initTheme(config.theme);
-
-			window.setTimeout(() => {
-				logo.css({ opacity: 0 });
-				window.setTimeout(() => { this.setState({ loading: false }); }, 600);
-			}, 2000);
+				if (value) {
+					authStore.phraseSet(value);
+					Util.route('/auth/setup/init', true);
+				} else {
+					Storage.logout();
+				};
+			};
 		});
 
 		Renderer.on('route', (e: any, route: string) => {
@@ -589,9 +561,9 @@ class App extends React.Component<Props, State> {
 		Renderer.on('debugTree', (e: any) => {
 			const rootId = keyboard.getRootId();
 
-			C.DebugTree(rootId, logsDir, (message: any) => {
+			C.DebugTree(rootId, logPath, (message: any) => {
 				if (!message.error.code) {
-					Renderer.send('pathOpen', logsDir);
+					Renderer.send('pathOpen', logPath);
 				};
 			});
 		});
@@ -618,6 +590,43 @@ class App extends React.Component<Props, State> {
 		};
 
 		Renderer.send('pathOpen', logsDir);
+	};
+
+	onInit (e: any, dataPath: string, config: any, isDark: boolean, windowData: any) {
+		console.log('INIT', dataPath, config, isDark, windowData);
+		
+		const node = $(ReactDOM.findDOMNode(this));
+		const loader = node.find('#root-loader');
+		const logo = loader.find('#logo');
+		const accountId = Storage.get('accountId');
+
+		if (accountId) {
+			if (windowData.isChild) {
+				if (windowData.route) {
+					commonStore.redirectSet(windowData.route);
+				};
+
+				DataUtil.onAuth(windowData.account);
+			} else {
+				Renderer.send('keytarGet', accountId);
+			};
+		};
+
+		this.initStorage();
+		this.initTheme(config.theme);
+
+		authStore.walletPathSet(dataPath);
+		authStore.accountPathSet(dataPath);
+
+		commonStore.nativeThemeSet(isDark);
+		commonStore.configSet(config, true);
+		commonStore.themeSet(config.theme);
+
+		window.setTimeout(() => {
+			logo.css({ opacity: 0 });
+			window.setTimeout(() => { loader.css({ opacity: 0 }); }, 500);
+			window.setTimeout(() => { loader.remove(); }, 1000);
+		}, 2000);
 	};
 
 	onCommand (e: any, key: string) {

@@ -6,9 +6,6 @@ class Storage {
 		this.storage = localStorage;
 	};
 
-	init (dataPath: string) {
-	};
-	
 	get (key: string): any {
 		let o = String(this.storage[key] || '');
 		if (!o) {

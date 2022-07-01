@@ -12,12 +12,22 @@ const KEYTAR_SERVICE = 'Anytype';
 
 class Api {
 
+	account = null;
+
 	appOnLoad (win) {
-		Util.send(win, 'init', Util.dataPath(), ConfigManager.config, Util.isDarkTheme());
+		Util.send(win, 'init', Util.dataPath(), ConfigManager.config, Util.isDarkTheme(), {
+			isChild: win.isChild,
+			route: win.route,
+			account: this.account,
+		});
 	};
 
 	setConfig (win, config) {
 		ConfigManager.set(config, (err) => { Util.send(win, 'config', ConfigManager.config); });
+	};
+
+	setAccount (win, account) {
+		this.account = account;
 	};
 
 	keytarSet (win, key, value) {
@@ -57,7 +67,11 @@ class Api {
 	};
 
 	windowOpen (win, route) {
-		WindowManager.createMain({ withState: false, route: route });
+		WindowManager.createMain({ 
+			route: route, 
+			withState: false, 
+			isChild: true
+		});
 	};
 
 	urlOpen (win, url) {

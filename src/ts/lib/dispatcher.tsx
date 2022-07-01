@@ -42,6 +42,10 @@ class Dispatcher {
 	};
 
 	listenEvents () {
+		if (!authStore.token) {
+			return;
+		};
+
 		const request = new Commands.StreamRequest();
 		request.setToken(authStore.token);
 

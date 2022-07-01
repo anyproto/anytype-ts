@@ -13,6 +13,7 @@ const remote = require('@electron/remote/main');
 
 const userPath = app.getPath('userData');
 const tmpPath = path.join(userPath, 'tmp');
+const logPath = path.join(userPath, 'logs');
 const binPath = fixPathForAsarUnpack(path.join(__dirname, 'dist', `anytypeHelper${is.windows ? '.exe' : ''}`));
 
 const Api = require('./electron/js/api.js');
@@ -61,6 +62,7 @@ if (app.isPackaged && !app.requestSingleInstanceLock()) {
 
 storage.setDataPath(userPath);
 Util.mkDir(tmpPath);
+Util.mkDir(logPath);
 
 if (process.env.ANYTYPE_USE_SIDE_SERVER) {
 	// use the grpc server started from the outside
@@ -86,7 +88,7 @@ nativeTheme.on('updated', () => {
 });
 
 function createMainWindow () {
-	mainWindow = WindowManager.createMain({ withState: true, route: Util.getRouteFromUrl(deeplinkingUrl) });
+	mainWindow = WindowManager.createMain({ withState: true, route: Util.getRouteFromUrl(deeplinkingUrl), isChild: false });
 
 	if (process.env.ELECTRON_DEV_EXTENSIONS) {
 		BrowserWindow.addDevToolsExtension(

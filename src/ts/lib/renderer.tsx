@@ -15,15 +15,15 @@ class Renderer {
 
 	send (...args: any[]) {
 		const cmd = args[0];
-		if (Api[cmd]) {
-			args.shift();
-			args.unshift(remote.getCurrentWindow());
 
-			Api[cmd].apply(null, args);
-		} else {
-			const renderer = this.get();
-			renderer.send.apply(renderer, args);
+		if (!Api[cmd]) {
+			return;
 		};
+
+		args.shift();
+		args.unshift(remote.getCurrentWindow());
+
+		Api[cmd].apply(null, args);
 	};
 
 	on (event: string, callBack: any) {

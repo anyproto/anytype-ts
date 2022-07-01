@@ -18,7 +18,9 @@ class WindowManager {
 
 	list = new Set();
 
-	create (param) {
+	create (options, param) {
+		const { route, isChild } = options;
+
 		param = Object.assign({
 			backgroundColor: Util.getBgColor(),
 			icon: path.join(Util.imagePath(), 'icon.png'),
@@ -27,11 +29,14 @@ class WindowManager {
 			webPreferences: {},
 		}, param);
 
-		param.webPreferences = Object.assign({
-			nodeIntegration: true,
-		}, param.webPreferences);
+		param.webPreferences = Object.assign({ nodeIntegration: true }, param.webPreferences);
 
 		let win = new BrowserWindow(param);
+
+		win.isChild = isChild;
+		win.route = route;
+
+		this.list.add(win);
 
 		win.on('closed', () => {
 			this.list.delete(win);
@@ -42,13 +47,11 @@ class WindowManager {
 		win.on('enter-full-screen', () => { Util.send(win, 'enter-full-screen'); });
 		win.on('leave-full-screen', () => { Util.send(win, 'leave-full-screen'); });
 
-		this.list.add(win);
-
 		return win;
 	};
 
 	createMain (options) {
-		const { withState, route } = options;
+		const { withState, route, isChild } = options;
 		const image = nativeImage.createFromPath(path.join(Util.imagePath(), 'icon512x512.png'));
 
 		let state = {};
@@ -60,7 +63,6 @@ class WindowManager {
 
 			webPreferences: {
 				nativeWindowOpen: true,
-				nodeIntegration: true,
 				contextIsolation: false,
 				spellcheck: false
 			},
@@ -94,7 +96,7 @@ class WindowManager {
 			});
 		};
 
-		const win = this.create(param);
+		const win = this.create(options, param);
 
 		remote.enable(win.webContents);
 
@@ -103,16 +105,16 @@ class WindowManager {
 		};
 
 		if (is.development) {
-			win.loadURL(`http://localhost:${port}#${route}`);
+			win.loadURL(`http://localhost:${port}`);
 			win.toggleDevTools();
 		} else {
-			win.loadFile(`./dist/index.html#${route}`);
+			win.loadURL('file://' + path.join(Util.appPath, 'dist', 'index.html'));
 		};
 		return win;
 	};
 
 	createAbout () {
-		const win = this.create({ width: 400, height: 400, useContentSize: true });
+		const win = this.create({}, { width: 400, height: 400, useContentSize: true });
 
 		win.loadURL('file://' + path.join(Util.electronPath(), 'about', `index.html?version=${version}&theme=${Util.getTheme()}`));
 		win.setMenu(null);
