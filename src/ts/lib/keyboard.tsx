@@ -115,7 +115,7 @@ class Keyboard {
 		let add = false;
 		let remove = false;
 
-		if (snap == I.MenuDirection.Left && ww > Constant.size.sidebar.unfix) {
+		if ((snap == I.MenuDirection.Left) && (ww > Constant.size.sidebar.unfix)) {
 			if (x <= 20) {
 				add = true;
 			};
