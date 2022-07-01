@@ -276,18 +276,16 @@ class App extends React.Component<Props, State> {
 		const { loading } = this.state;
 		const isMaximized = BrowserWindow.getFocusedWindow()?.isMaximized();
 		
-		if (loading) {
-			return (
-				<div id="loader" className="loaderWrapper">
-					<div id="logo" className="logo" />
-				</div>
-			);
-		};
-
 		return (
 			<Router history={history}>
 				<Provider {...rootStore}>
 					<div>
+						{loading ? (
+							<div id="loader" className="loaderWrapper">
+								<div id="logo" className="logo" />
+							</div>
+						) : ''}
+
 						<Preview />
 						<Progress />
 						<Tooltip />
@@ -334,7 +332,19 @@ class App extends React.Component<Props, State> {
 		
 		this.registerIpcEvents();
 
-		$(window).off('beforeunload').on('beforeunload', () => {
+		$(window).off('beforeunload').on('beforeunload', (e: any) => {
+			if (!authStore.token) {
+				return;
+			};
+
+			e.preventDefault();
+
+			C.WalletCloseSession(authStore.token, () => {
+				authStore.tokenSet('');
+				window.close();
+			});
+
+			return false;
 		});
 	};
 
@@ -374,8 +384,8 @@ class App extends React.Component<Props, State> {
 			Storage.set('lastSurveyTime', Util.time());
 		};
 
-		if (redirect || hash) {
-			Storage.set('redirectTo', redirect || hash);
+		if (hash || redirect) {
+			commonStore.redirectSet(hash || redirect);
 			Storage.delete('redirect');
 		};
 

@@ -23,13 +23,14 @@ class Util {
 		};
 	};
 
-    log (method, text) {
-        if (!log[method]) {
-            method = 'info';
-        };
-        log[method](text);
-        console.log(text);
-    };
+	log (method, text) {
+		if (!log[method]) {
+			method = 'info';
+		};
+
+		log[method](text);
+		console.log(text);
+	};
 
 	isDarkTheme () {
 		return nativeTheme.shouldUseDarkColors || nativeTheme.shouldUseHighContrastColors || nativeTheme.shouldUseInvertedColorScheme;

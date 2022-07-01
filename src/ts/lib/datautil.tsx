@@ -280,11 +280,6 @@ class DataUtil {
 			return;
 		};
 
-		const redirectTo = Storage.get('redirectTo');
-
-		Storage.delete('redirect');
-		Storage.delete('redirectTo');
-
 		commonStore.infoSet(account.info);
 		commonStore.configSet(account.config, false);
 		authStore.accountSet(account);
@@ -332,7 +327,9 @@ class DataUtil {
 			};
 
 			keyboard.initPinCheck();
-			Util.route(redirectTo ? redirectTo : '/main/index', true);
+			
+			Util.route(commonStore.redirect ? commonStore.redirect : '/main/index', true);
+			commonStore.redirectSet('');
 		});
 	};
 

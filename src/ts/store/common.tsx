@@ -54,6 +54,7 @@ class CommonStore {
 	public sidebarOldFixed: boolean = false;
 	public isFullScreen: boolean = false;
 	public autoSidebarValue: boolean = false;
+	public redirect: string = '';
 
     constructor() {
         makeObservable(this, {
@@ -244,6 +245,10 @@ class CommonStore {
 		Storage.set('theme', v);
 		
 		this.setThemeClass();
+	};
+
+	redirectSet (v: string) {
+		this.redirect = v;
 	};
 
 	getThemeClass () {

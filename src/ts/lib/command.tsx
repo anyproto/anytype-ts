@@ -77,6 +77,14 @@ const WalletCreateSession = (mnemonic: string, callBack?: (message: any) => void
 	dispatcher.request(WalletCreateSession.name, request, callBack);
 };
 
+const WalletCloseSession = (token: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Wallet.CloseSession.Request();
+
+	request.setToken(token);
+
+	dispatcher.request(WalletCloseSession.name, request, callBack);
+};
+
 // ---------------------- WORKSPACE ---------------------- //
 
 const WorkspaceCreate = (name: string, callBack?: (message: any) => void) => {
@@ -1347,6 +1355,7 @@ export {
 	WalletRecover,
 	WalletConvert,
 	WalletCreateSession,
+	WalletCloseSession,
 
 	WorkspaceCreate,
 	WorkspaceSelect,

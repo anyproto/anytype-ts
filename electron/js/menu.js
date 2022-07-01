@@ -46,6 +46,7 @@ class MenuManager {
 							if (win) {
 								win.hide();
 							};
+							console.log(Api);
 							Api.exit(win, false); 
 						}
 					},

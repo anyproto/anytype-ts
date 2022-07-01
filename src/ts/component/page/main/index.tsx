@@ -664,7 +664,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 	};
 
 	onStore (e: any) {
-		DataUtil.objectOpenPopup({ layout: I.ObjectLayout.Store });
+		DataUtil.objectOpenEvent(e, { layout: I.ObjectLayout.Store });
 	};
 	
 	onAdd (e: any) {
