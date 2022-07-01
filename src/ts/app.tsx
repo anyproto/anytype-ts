@@ -600,11 +600,13 @@ class App extends React.Component<Props, State> {
 
 		if (accountId) {
 			if (windowData.isChild) {
-				if (windowData.route) {
-					commonStore.redirectSet(windowData.route);
-				};
-
-				DataUtil.onAuth(windowData.account);
+				authStore.phraseSet(windowData.phrase);
+				DataUtil.createSession(() => {
+					if (windowData.route) {
+						commonStore.redirectSet(windowData.route);
+					};
+					DataUtil.onAuth(windowData.account);
+				});
 			} else {
 				Renderer.send('keytarGet', accountId);
 			};

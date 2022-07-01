@@ -2,7 +2,6 @@ const { app, shell, Menu, Tray } = require('electron');
 const { is } = require('electron-util');
 const path = require('path');
 
-const Api = require('./api.js');
 const ConfigManager = require('./config.js');
 const WindowManager = require('./window.js');
 const Util = require('./util.js');
@@ -16,6 +15,12 @@ class MenuManager {
 
 	initMenu (win) {
 		const { config } = ConfigManager;
+		const Api = require('./api.js');
+		const channelSettings = [
+			{ id: 'alpha', name: 'Alpha' },
+			{ id: 'beta', name: 'Pre-release' },
+			{ id: 'latest', name: 'Public' },
+		];
 
 		let menuParam = [
 			{
@@ -43,10 +48,6 @@ class MenuManager {
 					{
 						label: 'Quit', accelerator: 'CmdOrCtrl+Q',
 						click: () => { 
-							if (win) {
-								win.hide();
-							};
-							console.log(Api);
 							Api.exit(win, false); 
 						}
 					},
@@ -190,11 +191,6 @@ class MenuManager {
 			});
 		};
 
-		let channelSettings = [
-			{ id: 'alpha', name: 'Alpha' },
-			{ id: 'beta', name: 'Pre-release' },
-			{ id: 'latest', name: 'Public' },
-		];
 
 		let channels = channelSettings.map((it) => {
 			return { 
@@ -258,6 +254,8 @@ class MenuManager {
 	};
 
 	initTray (win) {
+		const Api = require('./api.js');
+
 		const show = () => {
 			if (win) {
 				win.show();

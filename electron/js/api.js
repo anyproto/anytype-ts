@@ -13,12 +13,14 @@ const KEYTAR_SERVICE = 'Anytype';
 class Api {
 
 	account = null;
+	phrase = '';
 
 	appOnLoad (win) {
 		Util.send(win, 'init', Util.dataPath(), ConfigManager.config, Util.isDarkTheme(), {
 			isChild: win.isChild,
 			route: win.route,
 			account: this.account,
+			phrase: this.phrase,
 		});
 	};
 
@@ -38,6 +40,7 @@ class Api {
 
 	keytarGet (win, key) {
 		keytar.getPassword(KEYTAR_SERVICE, key).then((value) => { 
+			this.phrase = value;
 			Util.send(win, 'keytarGet', key, value); 
 		});
 	};
@@ -95,6 +98,10 @@ class Api {
 	exit (win, relaunch) {
 		if (app.isQuiting) {
 			return;
+		};
+
+		if (win) {
+			win.hide();
 		};
 
 		Util.log('info', '[Api].exit, relaunch: ' + relaunch);
