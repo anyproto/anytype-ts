@@ -32,6 +32,7 @@ class Util {
 		console.log(text);
 	};
 
+	// MacOs 12.2 (M1): always returns false regardless current color theme
 	isDarkTheme () {
 		return nativeTheme.shouldUseDarkColors || nativeTheme.shouldUseHighContrastColors || nativeTheme.shouldUseInvertedColorScheme;
 	};
