@@ -64,6 +64,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		this.onPaste = this.onPaste.bind(this);
 		this.onInput = this.onInput.bind(this);
 		this.onToggleWrap = this.onToggleWrap.bind(this);
+		this.onCopy = this.onCopy.bind(this);
 		this.onSelectIcon = this.onSelectIcon.bind(this);
 		this.onUploadIcon = this.onUploadIcon.bind(this);
 
@@ -141,6 +142,10 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 							<div className="btn" onClick={this.onToggleWrap}>
 								<Icon className="codeWrap" />
 								<div className="txt">{fields.isUnwrapped ? 'Wrap' : 'Unwrap'}</div>
+							</div>
+							<div className="btn" onClick={this.onCopy}>
+								<Icon className="copy" />
+								<div className="txt">Copy</div>
 							</div>
 						</div>
 					</React.Fragment>
@@ -320,7 +325,12 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			return;
 		};
 
-		items.off('mouseenter.link').on('mouseenter.link', function (e: any) {
+		items.each((i: number, item: any) => {
+			this.textStyle($(item));
+		});
+
+		items.off('mouseenter.link');
+		items.on('mouseenter.link', function (e: any) {
 			let el = $(this);
 			let range = el.data('range').split('-');
 			let url = String(el.attr('href') || '');
@@ -382,8 +392,6 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			return;
 		};
 
-		items.off('mouseenter.object mouseleave.object');
-
 		items.each((i: number, item: any) => {
 			item = $(item);
 			
@@ -398,10 +406,12 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			if (_empty_ || isArchived || isDeleted) {
 				item.addClass('disabled');
 			};
+
+			this.textStyle(item);
 		});
 
+		items.off('mouseenter.object mouseleave.object');
 		items.on('mouseleave.object', function (e: any) { Util.tooltipHide(false); });
-			
 		items.on('mouseenter.object', function (e: any) {
 			const el = $(this);
 			const data = el.data();
@@ -567,6 +577,10 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 				ReactDOM.render(<IconObject size={size} object={{ iconEmoji: data.param }} />, smile.get(0));
 			};
 		});
+	};
+
+	textStyle (obj: any) {
+		Util.textStyle(obj, { textOpacity: 0.65, borderOpacity: 0.35 });
 	};
 
 	emojiParam (style: I.TextStyle) {
@@ -1188,6 +1202,21 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		C.BlockListSetFields(rootId, [
 			{ blockId: id, fields: { ...fields, isUnwrapped: !fields.isUnwrapped } },
 		]);
+	};
+
+	onCopy (e: any) {
+		const { rootId, block } = this.props;
+
+		C.BlockCopy(rootId, [ block ], { from: 0, to: 0 }, (message: any) => {
+			Util.clipboardCopy({
+				text: message.textSlot,
+				html: message.htmlSlot,
+				anytype: {
+					range: { from: 0, to: 0 },
+					blocks: [ block ],
+				},
+			});
+		});
 	};
 	
 	onSelect (e: any) {

@@ -6,7 +6,10 @@
 		.section { padding: 6px 12px; }
 		.icon { width: 32px; height: 32px; background-size: 20px 20px; vertical-align: top; margin: 0px; border-radius: 4px; }
 		.icon:hover { background-color: $colorVeryLightGrey; }
-		.icon.blockStyle { width: 32px; background-position: 0px center; }
+		.icon.blockStyle { width: 44px; background-position: 6px center; }
+		.icon.blockStyle {
+			.icon.arrow { right: 6px; }
+		}
 		
 		.icon.blockStyle.active.text { background-image: url('~img/icon/menu/style/text.svg'); }
 		.icon.blockStyle.active.header1 { background-image: url('~img/icon/menu/style/header1.svg'); }

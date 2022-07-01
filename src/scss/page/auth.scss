@@ -5,11 +5,9 @@
 	.title { margin-bottom: 15px; }
 	.label { margin-bottom: 25px; }
 	.input { height: 40px; border: solid 1px $colorBorderDark; }
-	
-	.textarea { 
-		font-family: 'Plex'; padding: 7px 16px; height: auto; margin: 0px 0px 32px 0px; border: solid 1px $colorBorderDark; 
-		background-color: $colorWhite; 
-	}
+
+	.textareaWrap { overflow: hidden; background: #f7f5f0; margin: 0px 0px 32px 0px; border: solid 1px $colorBorderDark; }
+	.textarea { font-family: 'Plex'; padding: 7px 16px; height: auto; background-color: none; }
 	
 	.iconObject { margin-bottom: 12px; }
 	

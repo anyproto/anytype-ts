@@ -171,6 +171,9 @@ class MenuContext extends React.Component<Props, {}> {
 
 			case 'copy':
 				C.ObjectListDuplicate(objectIds, (message: any) => {
+					if (length == 1) {
+						DataUtil.objectOpenPopup(detailStore.get(subId, message.ids[0], []));
+					};
 					analytics.event('DuplicateObject', { count: length });
 				});
 				break;
