@@ -715,7 +715,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		};
 
 		const { sidebar } = commonStore;
-		const { fixed } = sidebar;
+		const { fixed, x, y, snap } = sidebar;
 		const win = $(window);
 		const ww = win.width();
 		const old = commonStore.sidebarOldFixed;
@@ -730,6 +730,8 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 				commonStore.sidebarOldFixed = true;
 			};
 		};
+
+		this.setStyle(x, y, snap);
 	};
 
 	getRowHeight (item: any) {
