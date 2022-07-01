@@ -6,6 +6,7 @@ const windowStateKeeper = require('electron-window-state');
 const remote = require('@electron/remote/main');
 const port = process.env.SERVER_PORT;
 
+const UpdateManager = require('./update.js');
 const MenuManager = require('./menu.js');
 const Util = require('./util.js');
 
@@ -44,6 +45,10 @@ class WindowManager {
 		});
 
 		win.once('ready-to-show', () => { win.show(); });
+		win.on('focus', () => { 
+			UpdateManager.setWindow(win);
+			MenuManager.setWindow(win); 
+		});
 		win.on('enter-full-screen', () => { Util.send(win, 'enter-full-screen'); });
 		win.on('leave-full-screen', () => { Util.send(win, 'leave-full-screen'); });
 

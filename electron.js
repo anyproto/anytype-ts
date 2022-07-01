@@ -117,10 +117,12 @@ function createMainWindow () {
 		return false;
 	});
 
-	UpdateManager.init(mainWindow);
+	UpdateManager.setWindow(mainWindow);
+	UpdateManager.init();
 
-	MenuManager.initMenu(mainWindow);
-	MenuManager.initTray(mainWindow);
+	MenuManager.setWindow(mainWindow);
+	MenuManager.initMenu();
+	MenuManager.initTray();
 };
 
 app.on('ready', () => {

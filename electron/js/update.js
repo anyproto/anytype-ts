@@ -10,11 +10,16 @@ const TIMEOUT_UPDATE = 600 * 1000;
 
 class UpdateManager {
 
+	win = null;
 	isUpdating = false;
 	autoUpdate = false;
 	timeout = 0;
 
-	init (win) {
+	setWindow (win) {
+		this.win = win;
+	};
+
+	init () {
 		const { channel } = ConfigManager.config;
 
 		console.log('[UpdateManager].init, channel: ', channel);
@@ -29,7 +34,7 @@ class UpdateManager {
 
 		autoUpdater.on('checking-for-update', () => {
 			Util.log('info', 'Checking for update');
-			Util.send(win, 'checking-for-update', this.autoUpdate);
+			Util.send(this.win, 'checking-for-update', this.autoUpdate);
 		});
 
 		autoUpdater.on('update-available', (info) => {
@@ -37,7 +42,7 @@ class UpdateManager {
 			this.clearTimeout();
 
 			Util.log('info', 'Update available: ' + JSON.stringify(info, null, 3));
-			Util.send(win, 'update-available', this.autoUpdate);
+			Util.send(this.win, 'update-available', this.autoUpdate);
 
 			if (this.autoUpdate) {
 				this.download();
@@ -48,14 +53,14 @@ class UpdateManager {
 			this.isUpdating = false;
 
 			Util.log('info', 'Update not available: ' +  JSON.stringify(info, null, 3));
-			Util.send(win, 'update-not-available', this.autoUpdate);
+			Util.send(this.win, 'update-not-available', this.autoUpdate);
 		});
 		
 		autoUpdater.on('error', (err) => { 
 			this.isUpdating = false;
 
 			Util.log('Error: ' + err);
-			Util.send(win, 'update-error', err, this.autoUpdate);
+			Util.send(this.win, 'update-error', err, this.autoUpdate);
 		});
 		
 		autoUpdater.on('download-progress', (progress) => {
@@ -69,19 +74,19 @@ class UpdateManager {
 			];
 
 			Util.log('info', msg.join(' '));
-			Util.send(win, 'download-progress', progress);
+			Util.send(this.win, 'download-progress', progress);
 		});
 
 		autoUpdater.on('update-downloaded', (info) => {
 			this.isUpdating = false;
 
 			Util.log('info', 'Update downloaded: ' +  JSON.stringify(info, null, 3));
-			Util.send(win, 'update-downloaded');
+			Util.send(this.win, 'update-downloaded');
 
 			if (!this.autoUpdate) {
-				Api.exit(win, true);
+				Api.exit(this.win, true);
 			} else {
-				Util.send(win, 'update-confirm');
+				Util.send(this.win, 'update-confirm');
 			};
 		});
 	};
