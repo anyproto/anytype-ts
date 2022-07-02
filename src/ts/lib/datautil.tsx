@@ -274,7 +274,7 @@ class DataUtil {
 		return ids;
 	};
 	
-	onAuth (account: I.Account) {
+	onAuth (account: I.Account, callBack?: () => void) {
 		if (!account) {
 			console.error('[onAuth] No account defined');
 			return;
@@ -330,6 +330,10 @@ class DataUtil {
 			
 			Util.route(commonStore.redirect ? commonStore.redirect : '/main/index', true);
 			commonStore.redirectSet('');
+
+			if (callBack) {
+				callBack();
+			};
 		});
 	};
 

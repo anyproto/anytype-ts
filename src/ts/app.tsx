@@ -598,6 +598,24 @@ class App extends React.Component<Props, State> {
 		const logo = loader.find('#logo');
 		const accountId = Storage.get('accountId');
 
+		const cb = () => {
+			this.initStorage();
+			this.initTheme(config.theme);
+
+			authStore.walletPathSet(dataPath);
+			authStore.accountPathSet(dataPath);
+
+			commonStore.nativeThemeSet(isDark);
+			commonStore.configSet(config, true);
+			commonStore.themeSet(config.theme);
+
+			window.setTimeout(() => {
+				logo.css({ opacity: 0 });
+				window.setTimeout(() => { loader.css({ opacity: 0 }); }, 500);
+				window.setTimeout(() => { loader.remove(); }, 1000);
+			}, 1000);
+		};
+
 		if (accountId) {
 			if (windowData.isChild) {
 				authStore.phraseSet(windowData.phrase);
@@ -605,28 +623,15 @@ class App extends React.Component<Props, State> {
 					if (windowData.route) {
 						commonStore.redirectSet(windowData.route);
 					};
-					DataUtil.onAuth(windowData.account);
+					DataUtil.onAuth(windowData.account, cb);
 				});
 			} else {
 				Renderer.send('keytarGet', accountId);
+				cb();
 			};
+		} else {
+			cb();
 		};
-
-		this.initStorage();
-		this.initTheme(config.theme);
-
-		authStore.walletPathSet(dataPath);
-		authStore.accountPathSet(dataPath);
-
-		commonStore.nativeThemeSet(isDark);
-		commonStore.configSet(config, true);
-		commonStore.themeSet(config.theme);
-
-		window.setTimeout(() => {
-			logo.css({ opacity: 0 });
-			window.setTimeout(() => { loader.css({ opacity: 0 }); }, 500);
-			window.setTimeout(() => { loader.remove(); }, 1000);
-		}, 2000);
 	};
 
 	onCommand (e: any, key: string) {
