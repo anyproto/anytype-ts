@@ -264,6 +264,7 @@ class App extends React.Component<Props, State> {
 		super(props);
 
 		this.onInit = this.onInit.bind(this);
+		this.onKeytarGet = this.onKeytarGet.bind(this);
 		this.onImport = this.onImport.bind(this);
 		this.onProgress = this.onProgress.bind(this);
 		this.onCommand = this.onCommand.bind(this);
@@ -333,21 +334,6 @@ class App extends React.Component<Props, State> {
 		
 		this.registerIpcEvents();
 		Renderer.send('appOnLoad');
-
-		$(window).off('beforeunload').on('beforeunload', (e: any) => {
-			if (!authStore.token) {
-				return;
-			};
-
-			e.preventDefault();
-
-			C.WalletCloseSession(authStore.token, () => {
-				authStore.tokenSet('');
-				window.close();
-			});
-
-			return false;
-		});
 	};
 
 	initStorage () {
@@ -391,33 +377,9 @@ class App extends React.Component<Props, State> {
 	};
 
 	registerIpcEvents () {
-		const logPath = path.join(userPath, 'logs');
-
 		Renderer.on('init', this.onInit);
-
-		Renderer.on('keytarGet', (e: any, key: string, value: string) => {
-			const accountId = Storage.get('accountId');
-			const phrase = Storage.get('phrase');
-
-			if (accountId && (key == accountId)) {
-				if (phrase) {
-					value = phrase;
-					Renderer.send('keytarSet', accountId, phrase);
-					Storage.delete('phrase');
-				};
-
-				if (value) {
-					authStore.phraseSet(value);
-					Util.route('/auth/setup/init', true);
-				} else {
-					Storage.logout();
-				};
-			};
-		});
-
-		Renderer.on('route', (e: any, route: string) => {
-			Util.route(route);
-		});
+		Renderer.on('keytarGet', this.onKeytarGet);
+		Renderer.on('route', (e: any, route: string) => { Util.route(route); });
 
 		Renderer.on('popup', (e: any, id: string, param: any, close?: boolean) => {
 			param = param || {};
@@ -537,46 +499,15 @@ class App extends React.Component<Props, State> {
 			this.initTheme(config.theme);
 		});
 
-		Renderer.on('enter-full-screen', () => {
-			commonStore.fullscreenSet(true);
-		});
-
-		Renderer.on('leave-full-screen', () => {
-			commonStore.fullscreenSet(false);
-		});
+		Renderer.on('enter-full-screen', () => { commonStore.fullscreenSet(true); });
+		Renderer.on('leave-full-screen', () => { commonStore.fullscreenSet(false); });
 
 		Renderer.on('native-theme', (e: any, isDark: boolean) => {
 			commonStore.nativeThemeSet(isDark);
 			commonStore.themeSet(commonStore.theme);
   		});
 
-		Renderer.on('debugSync', (e: any) => {
-			C.DebugSync(100, (message: any) => {
-				if (!message.error.code) {
-					this.logToFile('sync', message);
-				};
-			});
-		});
-
-		Renderer.on('debugTree', (e: any) => {
-			const rootId = keyboard.getRootId();
-
-			C.DebugTree(rootId, logPath, (message: any) => {
-				if (!message.error.code) {
-					Renderer.send('pathOpen', logPath);
-				};
-			});
-		});
-
-		Renderer.on('shutdownStart', (e, relaunch) => {
-			this.setState({ loading: true });
-		});
-
-		Renderer.on('shutdown', (e, relaunch) => {
-			C.AppShutdown(() => {
-				Renderer.send('shutdown', relaunch);
-			});
-		});
+		Renderer.on('shutdownStart', (e) => { this.setState({ loading: true }); });
 	};
 
 	logToFile (name: string, message: any) {
@@ -593,6 +524,7 @@ class App extends React.Component<Props, State> {
 	};
 
 	onInit (e: any, dataPath: string, config: any, isDark: boolean, windowData: any) {
+		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
 		const loader = node.find('#root-loader');
 		const logo = loader.find('#logo');
@@ -613,17 +545,32 @@ class App extends React.Component<Props, State> {
 				logo.css({ opacity: 0 });
 				window.setTimeout(() => { loader.css({ opacity: 0 }); }, 500);
 				window.setTimeout(() => { loader.remove(); }, 1000);
-			}, 1000);
+			}, 500);
 		};
 
 		if (accountId) {
 			if (windowData.isChild) {
 				authStore.phraseSet(windowData.phrase);
+
 				DataUtil.createSession(() => {
 					if (windowData.route) {
 						commonStore.redirectSet(windowData.route);
 					};
 					DataUtil.onAuth(windowData.account, cb);
+				});
+
+				win.off('beforeunload').on('beforeunload', (e: any) => {
+					Storage.delete('redirect');
+
+					if (authStore.token) {
+						e.preventDefault();
+
+						C.WalletCloseSession(authStore.token, () => {
+							authStore.tokenSet('');
+							window.close();
+						});
+						return false;
+					};
 				});
 			} else {
 				Renderer.send('keytarGet', accountId);
@@ -634,8 +581,29 @@ class App extends React.Component<Props, State> {
 		};
 	};
 
+	onKeytarGet (e: any, key: string, value: string) {
+		const accountId = Storage.get('accountId');
+		const phrase = Storage.get('phrase');
+
+		if (accountId && (key == accountId)) {
+			if (phrase) {
+				value = phrase;
+				Renderer.send('keytarSet', accountId, phrase);
+				Storage.delete('phrase');
+			};
+
+			if (value) {
+				authStore.phraseSet(value);
+				Util.route('/auth/setup/init', true);
+			} else {
+				Storage.logout();
+			};
+		};
+	};
+
 	onCommand (e: any, key: string) {
 		let rootId = keyboard.getRootId();
+		let logPath = path.join(userPath, 'logs');
 		let options: any = {};
 
 		switch (key) {
@@ -704,6 +672,23 @@ class App extends React.Component<Props, State> {
 					});
 				});
 				break;
+
+			case 'debugSync':
+				C.DebugSync(100, (message: any) => {
+					if (!message.error.code) {
+						this.logToFile('sync', message);
+					};
+				});
+				break;
+
+			case 'debugTree':
+				C.DebugTree(rootId, logPath, (message: any) => {
+					if (!message.error.code) {
+						Renderer.send('pathOpen', logPath);
+					};
+				});
+				break;
+
 		};
 	};
 
@@ -748,6 +733,9 @@ class App extends React.Component<Props, State> {
 
 	onClose (e: any) {
 		Renderer.send('winCommand', 'close');
+	};
+
+	getLogPath () {
 	};
 
 };
