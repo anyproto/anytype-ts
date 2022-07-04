@@ -8,7 +8,7 @@ import { Page, SelectionProvider, DragProvider, Progress, Tooltip, Preview, Icon
 import { commonStore, authStore, blockStore, detailStore, dbStore, menuStore, popupStore } from './store';
 import { I, C, Util, FileUtil, keyboard, Storage, analytics, dispatcher, translate, Action, Renderer, DataUtil } from 'ts/lib';
 import * as Sentry from '@sentry/browser';
-import { configure } from 'mobx';
+import { configure, spy } from 'mobx';
 
 configure({ enforceActions: 'never' });
 
@@ -186,6 +186,11 @@ console.log('[OS Version]', process.getSystemVersion());
 console.log('[APP Version]', version, 'isPackaged', app.isPackaged, 'Arch', process.arch);
 
 /*
+spy(event => {
+    if (event.type == 'action') {
+        console.log('[Mobx].event', event.name, event.arguments);
+    };
+});
 enableLogging({
 	predicate: () => true,
 	action: true,
@@ -450,9 +455,10 @@ class App extends React.Component<Props, State> {
 					DataUtil.onAuth(windowData.account, cb);
 				});
 
-				win.off('beforeunload').on('beforeunload', (e: any) => {
-					Storage.delete('redirect');
+				win.off('beforeunload unload');
 
+				win.on('beforeunload', (e: any) => { Storage.delete('redirect'); });
+				win.on('unload', (e: any) => {
 					if (authStore.token) {
 						e.preventDefault();
 

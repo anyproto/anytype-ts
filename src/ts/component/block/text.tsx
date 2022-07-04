@@ -6,7 +6,6 @@ import { I, C, keyboard, Key, Util, DataUtil, Mark, focus, Storage, translate, a
 import { observer } from 'mobx-react';
 import { getRange } from 'selection-ranges';
 import { commonStore, blockStore, detailStore, menuStore } from 'ts/store';
-import { throttle } from 'lodash';
 import * as Prism from 'prismjs';
 
 interface Props extends I.BlockComponent, RouteComponentProps<any> {
@@ -215,19 +214,19 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 	};
 	
 	componentDidMount () {
+		this._isMounted = true;
+
 		const { block } = this.props;
 		const { content } = block;
 		const { marks, text } = content;
 
 		this.marks = Util.objectCopy(marks || []);
-		this._isMounted = true;
 		this.setValue(text);
 	};
 	
 	componentDidUpdate () {
 		const { block } = this.props;
-		const { content } = block;
-		const { marks, text } = content;
+		const { marks, text } = block.content;
 		const { focused } = focus.state;
 
 		this.marks = Util.objectCopy(marks || []);
@@ -1268,7 +1267,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 					rootId: rootId,
 					dataset: dataset,
 					range: { from: currentFrom, to: currentTo },
-					marks: Util.objectCopy(this.marks),
+					marks: this.marks,
 					onChange: (marks: I.Mark[]) => {
 						this.marks = marks;
 						this.setMarks(marks);

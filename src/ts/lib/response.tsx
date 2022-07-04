@@ -90,6 +90,16 @@ const ObjectCreateBookmark = (response: any) => {
 	};
 };
 
+const ObjectOpen = (response: any) => {
+	return {
+	};
+};
+
+const ObjectShow = (response: any) => {
+	return {
+	};
+};
+
 const NavigationGetObjectInfoWithLinks = (response: any) => {
 	const object = response.getObject();
 	const links = object.getLinks();
@@ -389,36 +399,6 @@ export {
 	ObjectCreate,
 	ObjectCreateSet,
 	ObjectCreateBookmark,
-
-	NavigationGetObjectInfoWithLinks,
-
-	ObjectOpenBreadcrumbs,
-	
-	BlockSplit,
-	BlockCopy,
-	BlockCut,
-	BlockPaste,
-
-	BlockFileCreateAndUpload,
-	BlockBookmarkCreateAndFetch,
-	BlockLinkCreateWithObject,
-	
-	ObjectImportMarkdown,
-
-	BlockCreate,
-	BlockDataviewViewCreate,
-
-	BlockDataviewRecordCreate,
-	BlockDataviewRelationAdd,
-	BlockDataviewRelationListAvailable,
-	BlockDataviewRecordRelationOptionAdd,
-
-	BlockListDuplicate,
-	BlockListConvertToObjects,
-
-	HistoryGetVersions,
-	HistoryShowVersion,
-
 	ObjectTypeList,
 	ObjectTypeCreate,
 	ObjectTypeRelationAdd,
@@ -436,6 +416,36 @@ export {
 	ObjectToBookmark,
 
 	ObjectListDuplicate,
+
+	NavigationGetObjectInfoWithLinks,
+
+	ObjectOpen,
+	ObjectShow,
+	ObjectOpenBreadcrumbs,
+	ObjectImportMarkdown,
+	
+	BlockSplit,
+	BlockCopy,
+	BlockCut,
+	BlockPaste,
+
+	BlockFileCreateAndUpload,
+	BlockBookmarkCreateAndFetch,
+	BlockLinkCreateWithObject,
+	
+	BlockCreate,
+	BlockDataviewViewCreate,
+
+	BlockDataviewRecordCreate,
+	BlockDataviewRelationAdd,
+	BlockDataviewRelationListAvailable,
+	BlockDataviewRecordRelationOptionAdd,
+
+	BlockListDuplicate,
+	BlockListConvertToObjects,
+
+	HistoryGetVersions,
+	HistoryShowVersion,
 
 	TemplateCreateFromObject,
 	TemplateCreateFromObjectType,
