@@ -266,7 +266,13 @@ class App extends React.Component<Props, State> {
 		this.onInit = this.onInit.bind(this);
 		this.onKeytarGet = this.onKeytarGet.bind(this);
 		this.onImport = this.onImport.bind(this);
-		this.onProgress = this.onProgress.bind(this);
+		this.onPopup = this.onPopup.bind(this);
+		this.onUpdate = this.onUpdate.bind(this);
+		this.onUpdateConfirm = this.onUpdateConfirm.bind(this);
+		this.onUpdateAvailable = this.onUpdateAvailable.bind(this);
+		this.onUpdateUnavailable = this.onUpdateUnavailable.bind(this);
+		this.onUpdateProgress = this.onUpdateProgress.bind(this);
+		this.onUpdateError = this.onUpdateError.bind(this);
 		this.onCommand = this.onCommand.bind(this);
 		this.onMenu = this.onMenu.bind(this);
 		this.onMin = this.onMin.bind(this);
@@ -380,116 +386,14 @@ class App extends React.Component<Props, State> {
 		Renderer.on('init', this.onInit);
 		Renderer.on('keytarGet', this.onKeytarGet);
 		Renderer.on('route', (e: any, route: string) => { Util.route(route); });
-
-		Renderer.on('popup', (e: any, id: string, param: any, close?: boolean) => {
-			param = param || {};
-			param.data = param.data || {};
-			param.data.rootId = keyboard.getRootId();
-
-			if (close) {
-				popupStore.closeAll();
-			};
-			
-			window.setTimeout(() => { popupStore.open(id, param); }, Constant.delay.popup);
-		});
-
-		Renderer.on('checking-for-update', (e: any, auto: boolean) => {
-			if (!auto) {
-				commonStore.progressSet({ 
-					status: 'Checking for update...', 
-					current: 0, 
-					total: 1, 
-					isUnlocked: true 
-				});
-			};
-		});
-
-		Renderer.on('update-available', (e: any, auto: boolean) => {
-			commonStore.progressClear(); 
-
-			if (!auto) {
-				popupStore.open('confirm', {
-					data: {
-						title: 'Update available',
-						text: 'Do you want to update on a new version?',
-						textConfirm: 'Update',
-						textCancel: 'Later',
-						onConfirm: () => {
-							Renderer.send('updateDownload');
-						},
-						onCancel: () => {
-							Renderer.send('updateCancel');
-						}, 
-					},
-				});
-			};
-		});
-
-		Renderer.on('update-confirm', (e: any, auto: boolean) => {
-			commonStore.progressClear(); 
-
-			if (!auto) {
-				popupStore.open('confirm', {
-					data: {
-						title: 'Update available',
-						text: 'Do you want to update on a new version?',
-						textConfirm: 'Restart and update',
-						textCancel: 'Later',
-						onConfirm: () => {
-							Renderer.send('updateConfirm');
-							Storage.delete('popupNewBlock');
-						},
-						onCancel: () => {
-							Renderer.send('updateCancel');
-						}, 
-					},
-				});
-			};
-		});
-
-		Renderer.on('update-not-available', (e: any, auto: boolean) => {
-			commonStore.progressClear(); 
-
-			if (!auto) {
-				popupStore.open('confirm', {
-					data: {
-						title: 'You are up-to-date',
-						text: Util.sprintf('You are on the latest version: %s', version),
-						textConfirm: 'Great!',
-						canCancel: false,
-					},
-				});
-			};
-		});
-
-		Renderer.on('download-progress', this.onProgress);
-
-		Renderer.on('update-downloaded', (e: any, text: string) => {
-			commonStore.progressClear(); 
-		});
-
-		Renderer.on('update-error', (e: any, err: string, auto: boolean) => {
-			console.error(err);
-			commonStore.progressClear();
-
-			if (!auto) {
-				popupStore.open('confirm', {
-					data: {
-						title: translate('popupConfirmUpdateErrorTitle'),
-						text: Util.sprintf(translate('popupConfirmUpdateErrorText'), Error[err] || err),
-						textConfirm: 'Retry',
-						textCancel: 'Later',
-						onConfirm: () => {
-							Renderer.send('updateDownload');
-						},
-						onCancel: () => {
-							Renderer.send('updateCancel');
-						}, 
-					},
-				});
-			};
-		});
-
+		Renderer.on('popup', this.onPopup);
+		Renderer.on('checking-for-update', this.onUpdate);
+		Renderer.on('update-available', this.onUpdateAvailable);
+		Renderer.on('update-confirm', this.onUpdateConfirm);
+		Renderer.on('update-not-available', this.onUpdateUnavailable);
+		Renderer.on('download-progress', this.onUpdateProgress);
+		Renderer.on('update-downloaded', (e: any, text: string) => { commonStore.progressClear(); });
+		Renderer.on('update-error', this.onUpdateError);
 		Renderer.on('import', this.onImport);
 		Renderer.on('export', this.onExport);
 		Renderer.on('command', this.onCommand);
@@ -507,20 +411,7 @@ class App extends React.Component<Props, State> {
 			commonStore.themeSet(commonStore.theme);
   		});
 
-		Renderer.on('shutdownStart', (e) => { this.setState({ loading: true }); });
-	};
-
-	logToFile (name: string, message: any) {
-		const logsDir = path.join(userPath, 'logs');
-		const log = path.join(logsDir, name + '_' + FileUtil.date() + '.json');
-
-		try {
-			fs.writeFileSync(log, JSON.stringify(message, null, 5), 'utf-8');
-		} catch(e) {
-			console.log('[DebugSync] Failed to save a file');
-		};
-
-		Renderer.send('pathOpen', logsDir);
+		Renderer.on('shutdownStart', (e: any) => { this.setState({ loading: true }); });
 	};
 
 	onInit (e: any, dataPath: string, config: any, isDark: boolean, windowData: any) {
@@ -585,26 +476,141 @@ class App extends React.Component<Props, State> {
 		const accountId = Storage.get('accountId');
 		const phrase = Storage.get('phrase');
 
-		if (accountId && (key == accountId)) {
-			if (phrase) {
-				value = phrase;
-				Renderer.send('keytarSet', accountId, phrase);
-				Storage.delete('phrase');
-			};
+		if (!accountId || (key != accountId)) {
+			return;
+		};
 
-			if (value) {
-				authStore.phraseSet(value);
-				Util.route('/auth/setup/init', true);
-			} else {
-				Storage.logout();
-			};
+		if (phrase) {
+			value = phrase;
+			Renderer.send('keytarSet', accountId, phrase);
+			Storage.delete('phrase');
+		};
+
+		if (value) {
+			authStore.phraseSet(value);
+			Util.route('/auth/setup/init', true);
+		} else {
+			Storage.logout();
 		};
 	};
 
+	onPopup (e: any, id: string, param: any, close?: boolean) {
+		param = param || {};
+		param.data = param.data || {};
+		param.data.rootId = keyboard.getRootId();
+
+		if (close) {
+			popupStore.closeAll();
+		};
+		
+		window.setTimeout(() => { popupStore.open(id, param); }, Constant.delay.popup);
+	};
+
+	onUpdate (e: any, auto: boolean) {
+		if (auto) {
+			return;
+		};
+
+		commonStore.progressSet({ 
+			status: 'Checking for update...', 
+			current: 0, 
+			total: 1, 
+			isUnlocked: true 
+		});
+	};
+
+	onUpdateConfirm (e: any, auto: boolean) {
+		commonStore.progressClear(); 
+
+		if (auto) {
+			return;
+		};
+
+		popupStore.open('confirm', {
+			data: {
+				title: 'Update available',
+				text: 'Do you want to update on a new version?',
+				textConfirm: 'Restart and update',
+				textCancel: 'Later',
+				onConfirm: () => {
+					Renderer.send('updateConfirm');
+					Storage.delete('popupNewBlock');
+				},
+				onCancel: () => {
+					Renderer.send('updateCancel');
+				}, 
+			},
+		});
+	};
+
+	onUpdateAvailable (e: any, auto: boolean) {
+		commonStore.progressClear();
+
+		if (auto) {
+			return;
+		};
+
+		popupStore.open('confirm', {
+			data: {
+				title: 'Update available',
+				text: 'Do you want to update on a new version?',
+				textConfirm: 'Update',
+				textCancel: 'Later',
+				onConfirm: () => {
+					Renderer.send('updateDownload');
+				},
+				onCancel: () => {
+					Renderer.send('updateCancel');
+				}, 
+			},
+		});
+	};
+
+	onUpdateUnavailable (e: any, auto: boolean) {
+		commonStore.progressClear(); 
+
+		if (auto) {
+			return;
+		};
+
+		popupStore.open('confirm', {
+			data: {
+				title: 'You are up-to-date',
+				text: Util.sprintf('You are on the latest version: %s', version),
+				textConfirm: 'Great!',
+				canCancel: false,
+			},
+		});
+	};
+
+	onUpdateError (e: any, err: string, auto: boolean) {
+		console.error(err);
+		commonStore.progressClear();
+
+		if (auto) {
+			return;
+		};
+
+		popupStore.open('confirm', {
+			data: {
+				title: translate('popupConfirmUpdateErrorTitle'),
+				text: Util.sprintf(translate('popupConfirmUpdateErrorText'), Error[err] || err),
+				textConfirm: 'Retry',
+				textCancel: 'Later',
+				onConfirm: () => {
+					Renderer.send('updateDownload');
+				},
+				onCancel: () => {
+					Renderer.send('updateCancel');
+				}, 
+			},
+		});
+	};
+
 	onCommand (e: any, key: string) {
-		let rootId = keyboard.getRootId();
-		let logPath = path.join(userPath, 'logs');
-		let options: any = {};
+		const rootId = keyboard.getRootId();
+		const logPath = this.getLogPath();
+		const options: any = {};
 
 		switch (key) {
 			case 'undo':
@@ -632,9 +638,7 @@ class App extends React.Component<Props, State> {
 				break;
 
 			case 'exportTemplates':
-				options = { 
-					properties: [ 'openDirectory' ],
-				};
+				options.properties = [ 'openDirectory' ];
 
 				dialog.showOpenDialog(options).then((result: any) => {
 					const files = result.filePaths;
@@ -653,9 +657,7 @@ class App extends React.Component<Props, State> {
 				break;
 
 			case 'exportLocalstore':
-				options = { 
-					properties: [ 'openDirectory' ],
-				};
+				options.properties = [ 'openDirectory' ];
 
 				dialog.showOpenDialog(options).then((result: any) => {
 					const files = result.filePaths;
@@ -664,11 +666,9 @@ class App extends React.Component<Props, State> {
 					};
 
 					C.DebugExportLocalstore(files[0], [], (message: any) => {
-						if (message.error.code) {
-							return;
+						if (!message.error.code) {
+							Renderer.send('pathOpen', files[0]);
 						};
-
-						Renderer.send('pathOpen', files[0]);
 					});
 				});
 				break;
@@ -692,7 +692,7 @@ class App extends React.Component<Props, State> {
 		};
 	};
 
-	onProgress (e: any, progress: any) {
+	onUpdateProgress (e: any, progress: any) {
 		commonStore.progressSet({ 
 			status: Util.sprintf('Downloading update... %s/%s', FileUtil.size(progress.transferred), FileUtil.size(progress.total)), 
 			current: progress.transferred, 
@@ -736,6 +736,20 @@ class App extends React.Component<Props, State> {
 	};
 
 	getLogPath () {
+		return path.join(userPath, 'logs');
+	};
+
+	logToFile (name: string, message: any) {
+		const logPath = this.getLogPath();
+		const log = path.join(logPath, `${name}_${FileUtil.date()}.json`);
+
+		try {
+			fs.writeFileSync(log, JSON.stringify(message, null, 5), 'utf-8');
+		} catch(e) {
+			console.log('[logToFile] Failed to save a file');
+		};
+
+		Renderer.send('pathOpen', logPath);
 	};
 
 };
