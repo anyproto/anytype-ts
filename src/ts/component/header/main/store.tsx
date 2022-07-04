@@ -48,7 +48,7 @@ const HeaderMainStore = observer(class HeaderMainStore extends React.Component<P
 		const { rootId } = this.props;
 
 		popupStore.closeAll(null, () => {
-			DataUtil.objectOpen({ id: rootId, layout: I.ObjectLayout.Store });
+			DataUtil.objectOpenRoute({ id: rootId, layout: I.ObjectLayout.Store });
 		});
 	};
 

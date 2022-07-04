@@ -458,7 +458,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 
 			case 'pageCreate':
 				DataUtil.pageCreate('', '', {}, I.BlockPosition.Bottom, rootId, {}, [], (message: any) => {
-					DataUtil.objectOpen({ id: message.targetId });
+					DataUtil.objectOpenRoute({ id: message.targetId });
 
 					analytics.event('CreateObject', {
 						route: 'MenuObject',

@@ -170,7 +170,7 @@ const PageHeadEdit = observer(class PageHeadEdit extends React.Component<Props, 
 
 		C.TemplateClone(rootId, (message: any) => {
 			if (message.id) {
-				DataUtil.objectOpen({ id: message.id });
+				DataUtil.objectOpenRoute({ id: message.id });
 			};
 
 			analytics.event('CreateTemplate', { objectType: object.targetObjectType });

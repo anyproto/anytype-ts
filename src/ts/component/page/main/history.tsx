@@ -295,7 +295,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<P
 			this.setState({ loading: false });
 
 			if (message.error.code) {
-				DataUtil.objectOpen({ id: rootId, layout: object.layout });
+				DataUtil.objectOpenRoute({ id: rootId, layout: object.layout });
 				return;
 			};
 

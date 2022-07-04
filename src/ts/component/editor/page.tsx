@@ -1577,7 +1577,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 									return;
 								};
 
-								DataUtil.objectOpen({ id: message.objectId, layout: I.ObjectLayout.Bookmark });
+								DataUtil.objectOpenRoute({ id: message.objectId, layout: I.ObjectLayout.Bookmark });
 
 								analytics.event('CreateObject', {
 									objectType: Constant.typeId.bookmark,

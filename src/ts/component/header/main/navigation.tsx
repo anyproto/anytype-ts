@@ -53,7 +53,7 @@ const HeaderMainNavigation = observer(class HeaderMainNavigation extends React.C
 		const { rootId } = this.props;
 
 		popupStore.closeAll(null, () => {
-			DataUtil.objectOpen({ id: rootId, layout: I.ObjectLayout.Navigation });
+			DataUtil.objectOpenRoute({ id: rootId, layout: I.ObjectLayout.Navigation });
 		});
 	};
 

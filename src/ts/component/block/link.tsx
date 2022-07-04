@@ -154,7 +154,7 @@ const BlockLink = observer(class BlockLink extends React.Component<Props, {}> {
 			return;
 		};
 
-		DataUtil.objectOpen(object);
+		DataUtil.objectOpenRoute(object);
 	};
 	
 	onSelect (icon: string) {

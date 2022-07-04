@@ -355,25 +355,13 @@ class DataUtil {
 		if ((e.metaKey || e.ctrlKey || popupStore.isOpen('page'))) {
 			this.objectOpenPopup(object, popupParam);
 		} else 
-		if (e.shiftKey) { 
-			const route = this.objectRoute(object);
-			if (route) {
-				Renderer.send('windowOpen', '/' + route);
-			};
+		if (e.shiftKey) {
+			this.objectOpenWindow(object);
 		} else {
-			this.objectOpen(object);
+			this.objectOpenRoute(object);
 		};
 	};
 	
-	objectOpen (object: any) {
-		keyboard.setSource(null);
-
-		const route = this.objectRoute(object);
-		if (route) {
-			Util.route('/' + route);
-		};
-	};
-
 	objectRoute (object: any): string {
 		let action = this.actionByLayout(object.layout);
 		let id = object.id;
@@ -395,12 +383,21 @@ class DataUtil {
 		return route.join('/');
 	};
 
+	objectOpenRoute (object: any) {
+		keyboard.setSource(null);
+
+		const route = this.objectRoute(object);
+		if (route) {
+			Util.route('/' + route);
+		};
+	};
+
 	objectOpenPopup (object: any, popupParam?: any) {
 		const { root } = blockStore;
 		const action = this.actionByLayout(object.layout);
 
 		if ((action == 'edit') && (object.id == root)) {
-			this.objectOpen(object);
+			this.objectOpenRoute(object);
 			return;
 		};
 
@@ -418,6 +415,13 @@ class DataUtil {
 		keyboard.setSource(null);
 		historyPopup.pushMatch(param.data.matchPopup);
 		window.setTimeout(() => { popupStore.open('page', param); }, Constant.delay.popup);
+	};
+
+	objectOpenWindow (object: any) {
+		const route = this.objectRoute(object);
+		if (route) {
+			Renderer.send('windowOpen', '/' + route);
+		};
 	};
 
 	actionByLayout (v: I.ObjectLayout): string {

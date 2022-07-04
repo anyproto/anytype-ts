@@ -77,7 +77,7 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<Pro
 		const object = detailStore.get(rootId, rootId, []);
 
 		keyboard.disableClose(true);
-		popupStore.closeAll(null, () => { DataUtil.objectOpen(object); });
+		popupStore.closeAll(null, () => { DataUtil.objectOpenRoute(object); });
 	};
 	
 	onMore (e: any) {

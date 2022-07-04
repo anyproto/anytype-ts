@@ -53,7 +53,7 @@ const HeaderMainGraph = observer(class HeaderMainGraph extends React.Component<P
 		const { rootId } = this.props;
 
 		popupStore.closeAll(null, () => {
-			DataUtil.objectOpen({ id: rootId, layout: I.ObjectLayout.Graph });
+			DataUtil.objectOpenRoute({ id: rootId, layout: I.ObjectLayout.Graph });
 		});
 	};
 

@@ -294,7 +294,7 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 				if (isPopup) {
 					historyPopup.clear();
 				};
-				DataUtil.objectOpen({ id: message.id, layout: I.ObjectLayout.Set });
+				DataUtil.objectOpenRoute({ id: message.id, layout: I.ObjectLayout.Set });
 
 				analytics.event('CreateObject', {
 					route: 'SelectType',
