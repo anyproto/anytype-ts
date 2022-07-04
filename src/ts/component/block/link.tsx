@@ -65,6 +65,9 @@ const BlockLink = observer(class BlockLink extends React.Component<Props, {}> {
 			if (!isArchived) {
 				cn.push('cp');
 			};
+			if (content.cardStyle == I.LinkCardStyle.Card) {
+				cn.push('br');
+			};
 
 			element = (
 				<LinkCard 
