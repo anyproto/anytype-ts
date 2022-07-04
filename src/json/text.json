@@ -213,6 +213,9 @@
 	"blockNameLatex": { "en": "LaTex" },
 	"blockTextLatex": { "en": "Display a math equations" },
 
+	"blockNameSimpleTable": { "en": "Simple table" },
+	"blockTextSimpleTable": { "en": "Create a simple table" },
+	
 	"blockNameTableOfContents": { "en": "Table of contents" },
 	"blockTextTableOfContents": { "en": "" },
 

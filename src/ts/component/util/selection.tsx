@@ -501,8 +501,13 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 
 	getChildrenIds (id: string, ids: string[]) {
 		const rootId = keyboard.getRootId();
+		const block = blockStore.getLeaf(rootId, id);
+		
+		if (!block || block.isTable()) {
+			return;
+		};
+		
 		const childrenIds = blockStore.getChildrenIds(rootId, id);
-
 		if (!childrenIds.length) {
 			return;
 		};

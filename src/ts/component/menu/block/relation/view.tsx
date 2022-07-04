@@ -244,8 +244,8 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 
 		menuStore.open('relationSuggest', { 
 			element: `#${getId()} #item-add .info`,
-			offsetX: 32,
 			classNameWrap: classNameWrap,
+			offsetY: 8,
 			data: {
 				...data,
 				filter: '',

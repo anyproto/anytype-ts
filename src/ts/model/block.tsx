@@ -10,6 +10,7 @@ import BlockContentBookmark from './content/bookmark';
 import BlockContentText from './content/text';
 import BlockContentFile from './content/file';
 import BlockContentDataview from './content/dataview';
+import { BlockContentTableRow } from './content/table';
 
 const ContentModel = {
 	layout:		 BlockContentLayout,
@@ -21,6 +22,7 @@ const ContentModel = {
 	text:		 BlockContentText,
 	file:		 BlockContentFile,
 	dataview:	 BlockContentDataview,
+	tableRow:	 BlockContentTableRow,
 };
 
 class Block implements I.Block {
@@ -30,7 +32,9 @@ class Block implements I.Block {
 	parentId: string = '';
 	type: I.BlockType = I.BlockType.Empty;
 	childrenIds: string[] = [];
-	align: I.BlockAlign = I.BlockAlign.Left;
+	hAlign: I.BlockHAlign = I.BlockHAlign.Left;
+	vAlign: I.BlockVAlign = I.BlockVAlign.Top;
+
 	bgColor: string = '';
 	fields: any = {};
 	content: any = {};
@@ -42,7 +46,8 @@ class Block implements I.Block {
 		self.parentId = String(props.parentId || '');
 		self.layout = Number(props.layout) || I.ObjectLayout.Page;
 		self.type = props.type;
-		self.align = Number(props.align) || I.BlockAlign.Left;
+		self.hAlign = Number(props.hAlign) || I.BlockHAlign.Left;
+		self.vAlign = Number(props.vAlign) || I.BlockVAlign.Top;
 		self.bgColor = String(props.bgColor || '');
 		self.fields = props.fields || {};
 		self.childrenIds = props.childrenIds || [];
@@ -54,7 +59,8 @@ class Block implements I.Block {
 
 		makeObservable(self, {
 			layout: observable,
-			align: observable,
+			hAlign: observable,
+			vAlign: observable,
 			bgColor: observable,
 			fields: observable,
 			content: observable,
@@ -73,7 +79,7 @@ class Block implements I.Block {
 	};
 
 	canHaveAlign (): boolean {
-		return (this.isTextParagraph() || this.isTextQuote() || this.isTextHeader() || this.isFileImage() || this.isFileVideo() || this.isLatex());
+		return this.isTextParagraph() || this.isTextQuote() || this.isTextHeader() || this.isFileImage() || this.isFileVideo() || this.isLatex() || this.isTable();
 	};
 
 	canHaveColor (): boolean {
@@ -125,7 +131,7 @@ class Block implements I.Block {
 	};
 	
 	isFocusable (): boolean {
-		return !this.isSystem() && !this.isFeatured();
+		return !this.isSystem() && !this.isFeatured() && !this.isTable() && !this.isTableRow() && !this.isTableColumn();
 	};
 	
 	isSelectable (): boolean {
@@ -239,9 +245,29 @@ class Block implements I.Block {
 	isLayoutFooter (): boolean {
 		return this.isLayout() && (this.content.style == I.LayoutStyle.Footer);
 	};
+
+	isLayoutTableRows (): boolean {
+		return this.isLayout() && (this.content.style == I.LayoutStyle.TableRows);
+	};
+	
+	isLayoutTableColumns (): boolean {
+		return this.isLayout() && (this.content.style == I.LayoutStyle.TableColumns);
+	};
 	
 	isLink (): boolean {
 		return this.type == I.BlockType.Link;
+	};
+
+	isTable (): boolean {
+		return this.type == I.BlockType.Table;
+	};
+
+	isTableColumn (): boolean {
+		return this.type == I.BlockType.TableColumn;
+	};
+
+	isTableRow (): boolean {
+		return this.type == I.BlockType.TableRow;
 	};
 
 	isIcon (): boolean {

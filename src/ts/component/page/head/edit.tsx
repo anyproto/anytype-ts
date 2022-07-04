@@ -3,21 +3,12 @@ import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { I, M, C, DataUtil, analytics } from 'ts/lib';
 import { Block, Drag, Button } from 'ts/component';
-import { commonStore, blockStore, detailStore } from 'ts/store';
+import { blockStore, detailStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
-interface Props extends RouteComponentProps<any> {
-	dataset?: any;
-	rootId: string;
-	readonly: boolean;
-	onKeyDown?(e: any, text: string, marks: I.Mark[], range: I.TextRange): void;
-	onKeyUp?(e: any, text: string, marks: I.Mark[], range: I.TextRange): void;
-	onMenuAdd? (id: string, text: string, range: I.TextRange, marks: I.Mark[]): void;
-	onPaste?(e: any): void;
+interface Props extends I.BlockComponent, RouteComponentProps<any> {
 	onResize?(v: number): void;
-	getWrapper?(): any;
-	getWrapperWidth?(): number;
-}
+};
 
 const $ = require('jquery');
 
@@ -46,8 +37,8 @@ const PageHeadEdit = observer(class PageHeadEdit extends React.Component<Props, 
 		const check = DataUtil.checkDetails(rootId);
 		const object = check.object;
 		const header = blockStore.getLeaf(rootId, 'header') || {};
-		const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, align: object.layoutAlign, childrenIds: [], fields: {}, content: {} });
-		const icon: any = new M.Block({ id: rootId + '-icon', type: I.BlockType.IconPage, align: object.layoutAlign, childrenIds: [], fields: {}, content: {} });
+		const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, hAlign: object.layoutAlign, childrenIds: [], fields: {}, content: {} });
+		const icon: any = new M.Block({ id: rootId + '-icon', type: I.BlockType.IconPage, hAlign: object.layoutAlign, childrenIds: [], fields: {}, content: {} });
 		const templateIsBundled = object.templateIsBundled;
 
 		if (root.isObjectHuman()) {

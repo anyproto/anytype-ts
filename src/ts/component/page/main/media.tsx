@@ -85,7 +85,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<Props
 		};
 
 		if (file) {
-			file.align = I.BlockAlign.Center;
+			file.hAlign = I.BlockHAlign.Center;
 		};
 
 		let content = null;

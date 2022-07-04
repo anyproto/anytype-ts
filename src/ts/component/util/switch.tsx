@@ -63,7 +63,7 @@ class Switch extends React.Component<Props, State> {
 		if (readonly) {
 			return;
 		};
-		
+
 		this.setValue(!value);
 		
 		if (onChange) {
@@ -71,8 +71,8 @@ class Switch extends React.Component<Props, State> {
 		};
 	};
 	
-	setValue (v: boolean) {
-		this.setState({ value: v });
+	setValue (value: boolean) {
+		this.setState({ value });
 	};
 	
 	getValue () {

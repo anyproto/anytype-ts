@@ -18,6 +18,7 @@ import BlockRelation from './relation';
 import BlockFeatured from './featured';
 import BlockType from './type';
 import BlockLatex from './latex';
+import BlockTable from './table';
 import BlockTableOfContents from './tableOfContents';
 
 import BlockFile from './media/file';
@@ -27,9 +28,7 @@ import BlockAudio from './media/audio';
 import BlockPdf from './media/pdf'; 
 
 interface Props extends I.BlockComponent, RouteComponentProps<any> {
-	index?: any;
 	css?: any;
-	className?: string;
 	iconSize?: number;
 	isDragging?: boolean;
 };
@@ -43,7 +42,7 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 	ref: any = null;
 
 	public static defaultProps = {
-		align: I.BlockAlign.Left,
+		align: I.BlockHAlign.Left,
 		traceId: '',
 		history: null,
 		location: null,
@@ -68,8 +67,8 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { rootId, css, className, block, readonly, isDragging } = this.props;
-		const { id, type, fields, content, align, bgColor } = block;
+		const { rootId, css, className, block, readonly, isDragging, isInsideTable } = this.props;
+		const { id, type, fields, content, hAlign, bgColor } = block;
 
 		if (!id) {
 			return null;
@@ -79,16 +78,17 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 		const index = Number(this.props.index) || 0;
 		const root = blockStore.getLeaf(rootId, rootId);
 
-		let canSelect = true;
-		let canDrop = !readonly;
+		let canSelect = !isInsideTable;
+		let canDrop = !readonly && !isInsideTable;
 		let canDropMiddle = canDrop;
-		let cn: string[] = [ 'block', 'align' + align, DataUtil.blockClass(block, isDragging), 'index-' + index ];
+		let cn: string[] = [ 'block', DataUtil.blockClass(block, isDragging), 'index-' + index ];
 		let cd: string[] = [ 'wrapContent' ];
 		let blockComponent = null;
 		let empty = null;
 		let setRef = (ref: any) => { this.ref = ref; };
 		let additional = null;
-		
+		let renderChildren = !isInsideTable;
+
 		if (className) {
 			cn.push(className);
 		};
@@ -104,9 +104,9 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 		};
 
 		if (block.canHaveAlign()) {
-			cn.push('align' + align);
+			cn.push('align' + hAlign);
 		};
-		
+
 		switch (type) {
 			case I.BlockType.Text:
 				if (block.isTextCheckbox() && checked) {
@@ -210,6 +210,12 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 				blockComponent = <BlockLatex ref={setRef} {...this.props} />;
 				break;
 
+			case I.BlockType.Table:
+				renderChildren = false;
+				canDropMiddle = false;
+				blockComponent = <BlockTable ref={setRef} {...this.props} />;
+				break;
+
 			case I.BlockType.TableOfContents:
 				blockComponent = <BlockTableOfContents ref={setRef} {...this.props} />;
 				break;
@@ -264,7 +270,6 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 					data-type={I.SelectType.Block}
 				>
 					{object}
-					<div className="menuOver" />
 				</div>
 			);
 		} else {
@@ -283,18 +288,19 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 				
 				<div className={cd.join(' ')}>
 					{targetTop}
-
 					{object}
 					{empty}
 					{additional ? <div className="additional">{additional}</div> : ''}
 
-					<ListChildren 
-						key={'block-children-' + id} 
-						{...this.props} 
-						onMouseMove={this.onMouseMove} 
-						onMouseLeave={this.onMouseLeave} 
-						onResizeStart={this.onResizeStart} 
-					/>
+					{renderChildren ? (
+						<ListChildren 
+							key={'block-children-' + id} 
+							{...this.props} 
+							onMouseMove={this.onMouseMove} 
+							onMouseLeave={this.onMouseLeave} 
+							onResizeStart={this.onResizeStart} 
+						/>
+					) : ''}
 
 					{targetBot}
 					{targetColumn}

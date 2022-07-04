@@ -68,6 +68,8 @@
 		.input { border: 1px solid $colorLightGrey; padding: 0px 8px; }
 	
 		.title { @include text-small;  margin: 0px; padding: 7px 14px; font-weight: 400; color: $colorMediumGrey; }
+
+		.separator .inner { margin: 8px 14px 7px 14px; height: 1px; background: $colorLightGrey; }
 	
 		.item { padding: 4px 14px; @include text-common; line-height: 20px; position: relative; cursor: pointer; width: 100%; background: $colorWhite; }
 		.item.isDragging { box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.2); }
@@ -86,7 +88,7 @@
 		.item.isReadonly.hover::before, .item.isReadonly:hover::before { opacity: 0; background: none; }
 
 		.item.add { color: $colorDarkGrey; line-height: 20px; }
-		
+
 		.item {
 			.name { display: inline-block; vertical-align: top; position: relative; line-height: 20px; }
 
@@ -144,6 +146,10 @@
 				@include text-overflow-nw; display: inline-block; vertical-align: top; color: $colorDarkGrey; @include text-small; text-align: right;
 				flex-shrink: 0; line-height: 20px; width: 80px;
 			}
+		}
+
+		.item.withSwitch {
+			.clickable { display: flex; }
 		}
 
 		.item.withCheckbox {
