@@ -192,6 +192,8 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 				
 			case I.MarkType.Link:
 				mark = Mark.getInRange(marks, type, { from: from, to: to });
+				menuParam.rect = param.rect;
+				menuParam.offsetY = 0;
 				menuParam.data = Object.assign(menuParam.data, {
 					filter: mark ? mark.param : '',
 					type: mark ? mark.type : null,

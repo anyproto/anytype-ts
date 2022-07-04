@@ -104,6 +104,36 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 			);
 		};
 
+		const suggestionsList = loading ? <Loader /> : (
+			<InfiniteLoader
+				rowCount={items.length}
+				loadMoreRows={this.loadMoreRows}
+				isRowLoaded={({ index }) => !!this.items[index]}
+				threshold={LIMIT_HEIGHT}
+			>
+				{({ onRowsRendered, registerChild }) => (
+					<AutoSizer className="scrollArea">
+						{({ width, height }) => (
+							<List
+								ref={(ref: any) => { this.refList = ref; }}
+								width={width}
+								height={height}
+								deferredMeasurmentCache={this.cache}
+								rowCount={items.length}
+								rowHeight={({ index }) => this.getRowHeight(items[index])}
+								rowRenderer={rowRenderer}
+								onRowsRendered={onRowsRendered}
+								overscanRowCount={10}
+								onScroll={this.onScroll}
+							/>
+						)}
+					</AutoSizer>
+				)}
+			</InfiniteLoader>
+		);
+
+		const suggestions = filter.length ? <div className="items">{suggestionsList}</div> : '';
+
 		return (
 			<div className="wrap">
 				<Filter 
@@ -114,40 +144,13 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 					onClear={this.onFilterClear}
 				/>
 
-				<div className="items">
-					{loading ? <Loader /> : (
-						<InfiniteLoader
-							rowCount={items.length}
-							loadMoreRows={this.loadMoreRows}
-							isRowLoaded={({ index }) => !!this.items[index]}
-							threshold={LIMIT_HEIGHT}
-						>
-							{({ onRowsRendered, registerChild }) => (
-								<AutoSizer className="scrollArea">
-									{({ width, height }) => (
-										<List
-											ref={(ref: any) => { this.refList = ref; }}
-											width={width}
-											height={height}
-											deferredMeasurmentCache={this.cache}
-											rowCount={items.length}
-											rowHeight={({ index }) => this.getRowHeight(items[index])}
-											rowRenderer={rowRenderer}
-											onRowsRendered={onRowsRendered}
-											overscanRowCount={10}
-											onScroll={this.onScroll}
-										/>
-									)}
-								</AutoSizer>
-							)}
-						</InfiniteLoader>
-					)}
-				</div>
+				{suggestions}
 			</div>
 		);
 	};
 	
 	componentDidMount () {
+		menuStore.close('blockContext');
 		this._isMounted = true;
 		this.rebind();
 		this.resize();
@@ -371,11 +374,20 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 	};
 
 	resize () {
-		const { getId, position } = this.props;
+		const { getId, position, param } = this.props;
+		const { data } = param;
+		const { filter } = data;
 		const items = this.getItems(true);
 		const obj = $(`#${getId()} .content`);
 		const offset = 6;
-		const height = Math.max(HEIGHT_ITEM * 3 + offset, Math.min(HEIGHT_ITEM * LIMIT_HEIGHT, items.length * HEIGHT_ITEM + offset));
+		let height = Math.max(HEIGHT_ITEM * 3 + offset, Math.min(HEIGHT_ITEM * LIMIT_HEIGHT, items.length * HEIGHT_ITEM + offset));
+
+		if (!filter.length) {
+			obj.addClass('initial');
+		}
+		else {
+			obj.removeClass('initial');
+		}
 
 		obj.css({ height: height });
 		position();
