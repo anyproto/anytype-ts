@@ -1480,9 +1480,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		});
 		
 		range = Util.objectCopy(range);
-		if (focusBlock) {
-			//range = Util.rangeFixOut(focusBlock.content.text, range);
-		};
 
 		const data = { 
 			text: text.join('\n'), 
@@ -1889,8 +1886,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			style = I.TextStyle.Paragraph;
 		};
 
-		//range = Util.rangeFixOut(content.text, range);
-		
 		C.BlockSplit(rootId, focused.id, range, style, mode, (message: any) => {
 			if (message.error.code) {
 				return;
