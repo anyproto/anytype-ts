@@ -352,8 +352,14 @@ class DataUtil {
 		e.preventDefault();
 		e.stopPropagation();
 
-		if ((e.shiftKey || popupStore.isOpen('page'))) {
+		if ((e.metaKey || e.ctrlKey || popupStore.isOpen('page'))) {
 			this.objectOpenPopup(object, popupParam);
+		} else 
+		if (e.shiftKey) { 
+			const route = this.objectRoute(object);
+			if (route) {
+				Renderer.send('windowOpen', '/' + route);
+			};
 		} else {
 			this.objectOpen(object);
 		};
@@ -395,12 +401,6 @@ class DataUtil {
 
 		if ((action == 'edit') && (object.id == root)) {
 			this.objectOpen(object);
-			return;
-		};
-
-		const route = this.objectRoute(object);
-		if (route) {
-			Renderer.send('windowOpen', '/' + route);
 			return;
 		};
 
