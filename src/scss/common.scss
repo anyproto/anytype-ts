@@ -93,6 +93,10 @@ html.platformWindows {
 	::-webkit-scrollbar-button { display: none; }
 }
 
+html.platformLinux {
+	body { overflow-y: auto; }
+}
+
 .dn { display: none !important; }
 .txt { vertical-align: middle; display: inline-block; line-height: 1; }
 .flex { display: flex; }
