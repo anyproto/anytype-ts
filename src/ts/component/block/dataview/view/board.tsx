@@ -126,10 +126,10 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 		this.onDragStartCommon(e, node.find('#column-' + columnId));
 		this.initCache(node.find('.column'));
 
-		win.on('drag.board', throttle((e: any) => { this.onDragMoveColumn(e, columnId); }, THROTTLE));
+		win.on('drag.board', throttle((e: any) => { this.onDragColumnMove(e, columnId); }, THROTTLE));
 	};
 
-	onDragMoveColumn (e: any, columnId: any) {
+	onDragColumnMove (e: any, columnId: any) {
 		const node = $(ReactDOM.findDOMNode(this));
 		const items = node.find('.column');
 

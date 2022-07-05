@@ -300,7 +300,7 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 		const { getId, position } = this.props;
 		const items = this.getItems();
 		const obj = $(`#${getId()} .content`);
-		const height = Math.max(HEIGHT * 2, Math.min(280, items.length * HEIGHT + 58));
+		const height = Math.max(HEIGHT * 2, Math.min(360, items.length * HEIGHT + 58));
 
 		obj.css({ height: height });
 		position();

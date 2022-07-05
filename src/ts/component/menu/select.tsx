@@ -9,14 +9,16 @@ interface Props extends I.Menu {}
 const $ = require('jquery');
 const Constant = require('json/constant.json');
 
-const HEIGHT = 28;
+const HEIGHT_ITEM = 28;
+const HEIGHT_SECTION = 28;
 const HEIGHT_DESCRIPTION = 56;
+const HEIGHT_DIV = 16;
 const LIMIT = 10;
 
 const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> {
 
 	_isMounted: boolean = false;	
-	n: number = 0;
+	n: number = -1;
 	cache: any = null;
 	filter: string = '';
 	refFilter: any = null;
@@ -34,10 +36,9 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { filter, value, noFilter } = data;
-		const options = this.getItemsWithoutFilter();
-		const items = this.getItems();
-		const withFilter = !noFilter && (options.length > LIMIT);
+		const { filter, value } = data;
+		const items = this.getItems(true);
+		const withFilter = this.isWithFilter();
 
 		const rowRenderer = (param: any) => {
 			const item = items[param.index];
@@ -48,6 +49,31 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 			if (item.isHidden) {
 				cn.push('isHidden');
 			};
+
+			let content = null;
+			if (item.isSection) {
+				content = <div className={[ 'sectionName', (param.index == 0 ? 'first' : '') ].join(' ')} style={param.style}>{item.name}</div>;
+			} else
+			if (item.isDiv) {
+				content = (
+					<div className="separator" style={param.style}>
+						<div className="inner" />
+					</div>
+				);
+			} else {
+				content = (
+					<MenuItemVertical 
+						{...item} 
+						icon={item.icon}
+						className={cn.join(' ')} 
+						checkbox={item.checkbox || (item.id == value)} 
+						onClick={(e: any) => { this.onClick(e, item); }} 
+						onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }} 
+						style={param.style}
+					/>
+				);
+			};
+
 			return (
 				<CellMeasurer
 					key={param.key}
@@ -57,16 +83,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 					rowIndex={param.index}
 					hasFixedWidth={() => {}}
 				>
-					<MenuItemVertical 
-						{...item} 
-						icon={item.icon}
-						className={cn.join(' ')} 
-						isActive={item.id == value} 
-						checkbox={item.id == value} 
-						onClick={(e: any) => { this.onClick(e, item); }} 
-						onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }} 
-						style={param.style}
-					/>
+					{content}
 				</CellMeasurer>
 			);
 		};
@@ -100,7 +117,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 										height={height}
 										deferredMeasurmentCache={this.cache}
 										rowCount={items.length}
-										rowHeight={({ index }) => { return this.rowHeight(items[index]); }}
+										rowHeight={({ index }) => { return this.getRowHeight(items[index]); }}
 										rowRenderer={rowRenderer}
 										onRowsRendered={onRowsRendered}
 										onScroll={this.onScroll}
@@ -119,7 +136,8 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 		const { param, setActive } = this.props;
 		const { data } = param;
 		const { value, noKeys } = data;
-		const items = this.getItems();
+		const items = this.getItems(true);
+		const withFilter = this.isWithFilter();
 		
 		this._isMounted = true;
 		if (!noKeys) {
@@ -128,12 +146,12 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 
 		this.cache = new CellMeasurerCache({
 			fixedWidth: true,
-			defaultHeight: HEIGHT,
+			defaultHeight: HEIGHT_ITEM,
 			keyMapper: (i: number) => { return (items[i] || {}).id; },
 		});
 		
-		let active = items.find((it: any) => { return it.id == value });
-		if (!active) {
+		let active = value ? items.find(it => it.id == value) : null;
+		if (!active && items.length && !withFilter) {
 			active = items[0];
 		};
 
@@ -149,8 +167,9 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 		const { param } = this.props;
 		const { data } = param;
 		const { filter } = data;
+		const withFilter = this.isWithFilter();
 
-		if (this.filter != filter) {
+		if (withFilter && (this.filter != filter)) {
 			this.filter = filter;
 			this.n = -1;
 			this.top = 0;
@@ -192,15 +211,35 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 
 		return (data.options || []).filter((it: any) => { return it; });
 	};
+
+	getSections () {
+		const { param } = this.props;
+		const { data } = param;
+
+		return (data.sections || []);
+	};
 	
-	getItems () {
+	getItems (withSections: boolean) {
 		const { param } = this.props;
 		const { data } = param;
 		const filter = new RegExp(Util.filterFix(data.filter), 'gi');
+		const sections = this.getSections();
 
-		let items = this.getItemsWithoutFilter();
+		let items: any[] = [];
+
+		if (sections && sections.length) {
+			for (let section of sections) {
+				if (withSections) {
+					items.push({ id: section.id, name: section.name, isSection: true });
+				};
+				items = items.concat(section.children);
+			};
+		} else {
+			items = this.getItemsWithoutFilter();
+		};
+
 		if (data.filter) {
-			items = items.filter((it: any) => { return it.name.match(filter); });
+			items = items.filter(it => String(it.name || '').match(filter));
 		};
 		return items || [];
 	};
@@ -248,35 +287,51 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 		this.props.param.data.filter = v;
 	};
 
+	getRowHeight (item: any) {
+		if (item.isDiv) return HEIGHT_DIV;
+		if (item.isSection) return HEIGHT_SECTION;
+		if (item.withDescription) return HEIGHT_DESCRIPTION;
+		return HEIGHT_ITEM;
+	};
+
 	onScroll ({ clientHeight, scrollHeight, scrollTop }) {
 		if (scrollTop) {
 			this.top = scrollTop;
 		};
 	};
 
+	isWithFilter () {
+		const { param } = this.props;
+		const { data } = param;
+		const { noFilter } = data;
+		const options = this.getItemsWithoutFilter().filter(it => !it.isDiv);
+
+		return !noFilter && (options.length > LIMIT);
+	};
+
 	resize () {
 		const { position, getId, param } = this.props;
 		const { data } = param;
-		const { noFilter, noScroll } = data;
-		const options = this.getItemsWithoutFilter();
-		const items = this.getItems();
+		const { noScroll } = data;
+		const items = this.getItems(true);
 		const obj = $(`#${getId()}`);
 		const content = obj.find('.content');
-		const withFilter = !noFilter && (options.length > LIMIT);
+		const withFilter = this.isWithFilter();
 		
 		let height = 0;
 		if (withFilter) {
-			height += 44;
+			height += 60;
 		};
-		if (items.length <= LIMIT || noScroll) {
+		if (!withFilter || noScroll) {
 			height += 16;
 		};
 
-		for (let i = 0; i < items.length; ++i) {
-			height += this.rowHeight(items[i]);
-		};
+		items.forEach((item: any) => {
+			height += this.getRowHeight(item);
+		});
+
 		if (!noScroll) {
-			height = Math.min(360, height);
+			height = Math.min(370, height);
 		};
 		height = Math.max(44, height);
 
@@ -284,10 +339,6 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 		withFilter ? obj.addClass('withFilter') : obj.removeClass('withFilter');
 
 		position();
-	};
-
-	rowHeight (item: any) {
-		return item.withDescription ? HEIGHT_DESCRIPTION : HEIGHT;
 	};
 
 });

@@ -110,6 +110,7 @@ class Storage {
 			'dataPath',
 			'sidebar',
 			'writing',
+			'timezone',
 		];
 
 		keys.forEach(key => this.delete(key));

@@ -56,7 +56,7 @@ const PageMainSpace = observer(class PageMainSpace extends React.Component<Props
 		const object = Util.objectCopy(detailStore.get(rootId, rootId, []));
 		const children = blockStore.getChildren(rootId, rootId, (it: any) => { return it.id == 'dataview'; });
 
-		const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, align: object.layoutAlign, childrenIds: [], fields: {}, content: {} });
+		const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, hAlign: object.layoutAlign, childrenIds: [], fields: {}, content: {} });
 		const highlighted = dbStore.getRecords(this.getSubIdHighlighted(), '');
 
 		return (

@@ -7,7 +7,7 @@ interface Props extends I.Menu {};
 
 const $ = require('jquery');
 
-class MenuBlockAlign extends React.Component<Props, {}> {
+class MenuBlockHAlign extends React.Component<Props, {}> {
 	
 	n: number = 0;
 	
@@ -85,4 +85,4 @@ class MenuBlockAlign extends React.Component<Props, {}> {
 	
 };
 
-export default MenuBlockAlign;
+export default MenuBlockHAlign;

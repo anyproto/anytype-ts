@@ -4,19 +4,21 @@
 	.block.blockFile { padding: 6px 0px; white-space: nowrap; }
 	.block.blockFile.withFile { padding: 0px; }
 	.block.blockFile {
+		.flex { cursor: pointer; }
+
 		.loaderWrapper { border-radius: 4px; border: solid 1px $colorBorderDark; height: 48px; width: 100%; }
 		.error { margin: 0px; font-size: 12px; line-height: 24px; height: 24px; }
 		
 		.name {
-			min-width: 40px; max-width: calc(100% - 180px); height: 24px; line-height: 24px; display: inline-block;
-			vertical-align: top; cursor: pointer; @include text-overflow-nw;  
+			min-width: 40px; height: 24px; line-height: 24px; display: inline-block;
+			vertical-align: top; cursor: pointer; @include text-overflow-nw; margin: 0px 8px 0px 4px;
 		}
 		.size {
-			@include text-common; max-width: 100px; height: 24px; line-height: 24px; color: $colorMediumGrey; margin: 0px 8px;
-			display: inline-block; vertical-align: top;
+			@include text-common; max-width: 100px; height: 24px; line-height: 24px; color: $colorMediumGrey;
+			display: inline-block; vertical-align: top; flex-shrink: 0;
 		}
 
-		.iconObject { margin-right: 4px; }
+		.iconObject { flex-shrink: 0; }
 	}
 	.block.blockFile:hover {
 		.download { opacity: 1; }

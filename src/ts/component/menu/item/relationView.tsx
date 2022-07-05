@@ -7,7 +7,7 @@ import { observer } from 'mobx-react';
 interface Props extends I.Relation {
 	dataset?: any;
 	rootId: string;
-	block: I.Block;
+	block?: I.Block;
 	isFeatured?: boolean;
 	classNameWrap?: string;
 	readonly?: boolean;

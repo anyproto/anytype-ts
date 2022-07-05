@@ -93,7 +93,7 @@ export interface ViewRelation {
 
 export interface ViewComponent {
 	rootId: string;
-	block: I.Block;
+	block?: I.Block;
 	readonly: boolean;
 	bodyContainer?: string;
 	pageContainer?: string;
@@ -127,7 +127,7 @@ export interface View {
 export interface Cell {
 	rootId: string;
 	subId: string;
-	block: I.Block;
+	block?: I.Block;
 	id?: string;
 	idPrefix?: string;
 	relation?: I.Relation;

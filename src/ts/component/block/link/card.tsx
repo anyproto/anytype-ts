@@ -79,16 +79,8 @@ const LinkCard = observer(class LinkCard extends React.Component<Props, {}> {
 							{descr ? <div className="cardDescription">{descr}</div> : ''}
 
 							<div className="cardFeatured">
-								{withType && type ? (
-									<div className="item">
-										{type.name}
-									</div>
-								) : ''}
-
-								{/*withTags ? (
-									<div className="item">
-									</div>
-								) : ''*/}
+								{withType && type ? <div className="item">{type.name}</div> : ''}
+								{/*withTags ? <div className="item"></div> : ''*/}
 							</div>
 
 							<div className="archive">{translate('blockLinkArchived')}</div>
