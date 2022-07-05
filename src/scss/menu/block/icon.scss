@@ -58,6 +58,7 @@
 		.icon.set { background-image: url('~img/icon/menu/action/set0.svg'); }
 		.icon.restore { background-image: url('~img/icon/menu/action/restore0.svg'); }
 		.icon.customize { background-image: url('~img/icon/menu/action/customize0.svg'); }
+		.icon.clear { background-image: url('~img/icon/menu/action/clear0.svg'); }
 
 		.icon.clock { background-image: url('~img/icon/menu/action/clock0.svg'); }
 		.icon.settings { background-image: url('~img/icon/menu/action/settings0.svg'); }
@@ -71,6 +72,7 @@
 		.icon.export { background-image: url('~img/icon/menu/action/export0.svg'); }
 		.icon.pageLock { background-image: url('~img/icon/menu/action/pageLock0.svg'); }
 		.icon.pageUnlock { background-image: url('~img/icon/menu/action/pageUnlock0.svg'); }
+		.icon.sort { background-image: url('~img/icon/menu/action/sort0.svg'); }
 
 		.icon.coverChange { background-image: url('~img/icon/cover/change.svg'); }
 		.icon.coverPosition { background-image: url('~img/icon/cover/position.svg'); }
@@ -79,18 +81,31 @@
 		.icon.align.center { background-image: url('~img/icon/menu/align/center.svg'); }
 		.icon.align.right { background-image: url('~img/icon/menu/align/right.svg'); }
 
+		.icon.valign.top { background-image: url('~img/icon/menu/valign/top.svg'); }
+		.icon.valign.middle { background-image: url('~img/icon/menu/valign/middle.svg'); }
+		.icon.valign.bottom { background-image: url('~img/icon/menu/valign/bottom.svg'); }
+
 		.icon.linkStyle0 { background-image: url('~img/icon/menu/linkSettings/style0.svg'); }
 		.icon.linkStyle1 { background-image: url('~img/icon/menu/linkSettings/style1.svg'); }
 		.icon.linkStyle2 { background-image: url('~img/icon/menu/linkSettings/style2.svg'); }
 
 		.icon.relation-filter { background-image: url('~img/icon/menu/relation/filter.svg'); }
-		.icon.hide { background-image: url('~img/icon/menu/relation/hide.svg'); }
+		.icon.relation-sort0 { background-image: url('~img/icon/menu/relation/sort.svg'); }
+		.icon.relation-sort1 { background-image: url('~img/icon/menu/relation/sort.svg'); transform: rotateZ(180deg); }
+		.icon.relation-hide { background-image: url('~img/icon/menu/relation/hide.svg'); }
+		.icon.relation-insert-left { background-image: url('~img/icon/menu/relation/insert.svg'); }
+		.icon.relation-insert-right { background-image: url('~img/icon/menu/relation/insert.svg'); transform: rotateZ(180deg); }
 
-		.icon.sort0 { background-image: url('~img/icon/menu/relation/sort.svg'); }
-		.icon.sort1 { background-image: url('~img/icon/menu/relation/sort.svg'); transform: rotateZ(180deg); }
+		.icon.table-move-left { background-image: url('~img/icon/menu/table/move-h.svg'); }
+		.icon.table-move-right { background-image: url('~img/icon/menu/table/move-h.svg'); transform: rotateZ(180deg); }
+		.icon.table-move-top { background-image: url('~img/icon/menu/table/move-v.svg'); }
+		.icon.table-move-bottom { background-image: url('~img/icon/menu/table/move-v.svg'); transform: rotateZ(180deg); }
 
-		.icon.insert-left { background-image: url('~img/icon/menu/relation/insert.svg'); }
-		.icon.insert-right { background-image: url('~img/icon/menu/relation/insert.svg'); transform: rotateZ(180deg); }
+		.icon.table-header-row { background-image: url('~img/icon/menu/table/header-row.svg'); }
+		.icon.table-insert-left { background-image: url('~img/icon/menu/table/insert-h.svg'); }
+		.icon.table-insert-right { background-image: url('~img/icon/menu/table/insert-h.svg'); transform: rotateZ(180deg); }
+		.icon.table-insert-top { background-image: url('~img/icon/menu/table/insert-v.svg'); }
+		.icon.table-insert-bottom { background-image: url('~img/icon/menu/table/insert-v.svg'); transform: rotateZ(180deg); }
 
 		.icon.lock { width: 8px !important; height: 20px !important; background-image: url('~img/icon/lock.svg'); }
 

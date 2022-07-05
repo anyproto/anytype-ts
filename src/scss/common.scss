@@ -114,7 +114,7 @@ html.platformLinux {
 .isDone { color: $colorMediumGrey; }
 .placeholder { 
 	pointer-events: none; color: $colorSecondary; position: absolute; left: 0px; top: 0px; z-index: 0; width: 100%; height: 100%; cursor: text; 
-	overflow: hidden; white-space: nowrap;
+	overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
 }
 ::-webkit-input-placeholder { color: $colorSecondary !important; }
 .isBlurred { filter: blur(7px); }

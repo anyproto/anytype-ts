@@ -19,6 +19,7 @@ interface State {
 };
 
 const $ = require('jquery');
+const raf = require('raf');
 const Errors = require('json/error.json');
 
 const PageMainSet = observer(class PageMainSet extends React.Component<Props, State> {
@@ -207,21 +208,24 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, St
 		if (this.loading || !this._isMounted) {
 			return;
 		};
-		
+
 		const win = $(window);
 		const { isPopup } = this.props;
-		const node = $(ReactDOM.findDOMNode(this));
-		const cover = node.find('.block.blockCover');
-		const obj = $(isPopup ? '#popupPage #innerWrap' : '#page.isFull');
-		const header = obj.find('#header');
-		const hh = isPopup ? header.height() : Util.sizeHeader();
+		
+		raf(() => {
+			const node = $(ReactDOM.findDOMNode(this));
+			const cover = node.find('.block.blockCover');
+			const obj = $(isPopup ? '#popupPage #innerWrap' : '#page.isFull');
+			const header = obj.find('#header');
+			const hh = isPopup ? header.height() : Util.sizeHeader();
 
-		if (cover.length) {
-			cover.css({ top: hh });
-		};
+			if (cover.length) {
+				cover.css({ top: hh });
+			};
 
-		obj.css({ minHeight: isPopup ? '' : win.height() });
-		node.css({ paddingTop: isPopup ? 0 : hh });
+			obj.css({ minHeight: isPopup ? '' : win.height() });
+			node.css({ paddingTop: isPopup && !obj.hasClass('full') ? 0 : hh });
+		});
 	};
 
 });

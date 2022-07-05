@@ -224,7 +224,7 @@ class Analytics {
 		};
 
 		if (undefined !== converted.align) {
-			converted.align = I.BlockAlign[converted.align];
+			converted.align = I.BlockHAlign[converted.align];
 		};
 
 		param = Object.assign(param, converted);

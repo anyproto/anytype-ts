@@ -373,7 +373,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 		const items = this.getItems(true);
 		const obj = $(`#${getId()} .content`);
 		const offset = noFilter ? 16 : 58;
-		const height = Math.max(HEIGHT + offset, Math.min(280, items.length * HEIGHT + offset));
+		const height = Math.max(HEIGHT + offset, Math.min(360, items.length * HEIGHT + offset));
 
 		obj.css({ height: height });
 		position();

@@ -103,9 +103,11 @@ class Dispatcher {
 		if (v == V.BLOCKSETLINK)				 t = 'blockSetLink';
 		if (v == V.BLOCKSETBOOKMARK)			 t = 'blockSetBookmark';
 		if (v == V.BLOCKSETALIGN)				 t = 'blockSetAlign';
+		if (v == V.BLOCKSETVERTICALALIGN)		 t = 'blockSetVerticalAlign';
 		if (v == V.BLOCKSETDIV)					 t = 'blockSetDiv';
 		if (v == V.BLOCKSETRELATION)			 t = 'blockSetRelation';
 		if (v == V.BLOCKSETLATEX)				 t = 'blockSetLatex';
+		if (v == V.BLOCKSETTABLEROW)			 t = 'blockSetTableRow';
 
 		if (v == V.BLOCKDATAVIEWVIEWSET)		 t = 'blockDataviewViewSet';
 		if (v == V.BLOCKDATAVIEWVIEWDELETE)		 t = 'blockDataviewViewDelete';
@@ -439,7 +441,18 @@ class Dispatcher {
 						break;
 					};
 
-					block.align = data.getAlign();
+					block.hAlign = data.getAlign();
+					blockStore.update(rootId, block);
+					break;
+
+				case 'blockSetVerticalAlign':
+					id = data.getId();
+					block = blockStore.getLeaf(rootId, id);
+					if (!block) {
+						break;
+					};
+
+					block.vAlign = data.getVerticalalign();
 					blockStore.update(rootId, block);
 					break;
 
@@ -466,6 +479,20 @@ class Dispatcher {
 
 					if (data.hasText()) {
 						block.content.text = data.getText().getValue();
+					};
+
+					blockStore.update(rootId, block);
+					break;
+
+				case 'blockSetTableRow':
+					id = data.getId();
+					block = blockStore.getLeaf(rootId, id);
+					if (!block) {
+						break;
+					};
+
+					if (data.hasIsheader()) {
+						block.content.isHeader = data.getIsheader().getValue();
 					};
 
 					blockStore.update(rootId, block);

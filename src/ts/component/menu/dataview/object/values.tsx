@@ -291,7 +291,7 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 		const items = this.getItems();
 		const obj = $(`#${getId()} .content`);
 		const offset = 16;
-		const height = Math.max(HEIGHT + offset, Math.min(280, items.length * HEIGHT + offset));
+		const height = Math.max(HEIGHT + offset, Math.min(360, items.length * HEIGHT + offset));
 
 		obj.css({ height: height });
 		position();

@@ -61,13 +61,11 @@ const BlockFile = observer(class BlockFile extends React.Component<Props, {}> {
 				
 			case I.FileState.Done:
 				element = (
-					<React.Fragment>
-						<span className="cp" onMouseDown={this.onOpen}>
-							<IconObject object={{ ...object, layout: I.ObjectLayout.File }} size={24} />
-							<span className="name">{name}</span>
-							<span className="size">{FileUtil.size(sizeInBytes)}</span>
-						</span>
-					</React.Fragment>
+					<div className="flex" onMouseDown={this.onOpen}>
+						<IconObject object={{ ...object, layout: I.ObjectLayout.File }} size={24} />
+						<span className="name">{name}</span>
+						<span className="size">{FileUtil.size(sizeInBytes)}</span>
+					</div>
 				);
 				break;
 		};
@@ -91,7 +89,7 @@ const BlockFile = observer(class BlockFile extends React.Component<Props, {}> {
 		const { onKeyDown } = this.props;
 		
 		if (onKeyDown) {
-			onKeyDown(e, '', [], { from: 0, to: 0 });
+			onKeyDown(e, '', [], { from: 0, to: 0 }, this.props);
 		};
 	};
 	

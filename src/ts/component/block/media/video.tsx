@@ -146,7 +146,7 @@ const BlockVideo = observer(class BlockVideo extends React.Component<Props, {}> 
 		const { onKeyDown } = this.props;
 		
 		if (onKeyDown) {
-			onKeyDown(e, '', [], { from: 0, to: 0 });
+			onKeyDown(e, '', [], { from: 0, to: 0 }, this.props);
 		};
 	};
 	

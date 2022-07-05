@@ -70,7 +70,6 @@
 	
 	.block:hover > .wrapMenu > .icon.dnd { opacity: 1; background-image: url('~img/icon/block/menu1.svg'); }
 	.block.showMenu > .wrapMenu > .icon.dnd { opacity: 1; }
-	.block.showMenu > .wrapContent > .selectable > .menuOver { opacity: 1; }
 
 	.block.isAdding.top > .wrapContent > .selectable > .dropTarget { border-radius: 0px 0px 4px 4px !important; }
 	.block.isAdding.bottom > .wrapContent > .selectable > .dropTarget { border-radius: 4px 4px 0px 0px !important; }
@@ -91,7 +90,6 @@
 }
 
 #dragProvider.isDragging {
-	.block > .wrapContent > .selectable > .menuOver { opacity: 1; }
 	.block > .wrapContent > .selectable.isSelectionSelected::after { display: none; }
 	.block > .wrapMenu > .icon.dnd { opacity: 1; }
 }

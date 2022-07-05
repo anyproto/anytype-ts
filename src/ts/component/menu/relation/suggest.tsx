@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Filter, Icon } from 'ts/component';
+import { Filter, Icon, Loader } from 'ts/component';
 import { I, Util, DataUtil, analytics, keyboard } from 'ts/lib';
 import { commonStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -22,10 +22,9 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 	state = {
 		loading: false,
 	};
-
 	_isMounted: boolean = false;	
 	filter: string = '';
-	cache: any = null;
+	cache: any = {};
 	items: any[] = [];
 	refFilter: any = null;
 	refList: any = null;
@@ -41,13 +40,10 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 	
 	render () {
 		const { param } = this.props;
+		const { loading } = this.state;
 		const { data } = param;
 		const { filter } = data;
 		const items = this.getItems();
-
-		if (!this.cache) {
-			return null;
-		};
 
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
@@ -105,30 +101,32 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 				/>
 
 				<div className="items">
-					<InfiniteLoader
-						rowCount={items.length}
-						loadMoreRows={() => {}}
-						isRowLoaded={() => { return true; }}
-						threshold={LIMIT}
-					>
-						{({ onRowsRendered, registerChild }) => (
-							<AutoSizer className="scrollArea">
-								{({ width, height }) => (
-									<List
-										ref={(ref: any) => { this.refList = ref; }}
-										width={width}
-										height={height}
-										deferredMeasurmentCache={this.cache}
-										rowCount={items.length}
-										rowHeight={HEIGHT}
-										rowRenderer={rowRenderer}
-										onRowsRendered={onRowsRendered}
-										overscanRowCount={LIMIT}
-									/>
-								)}
-							</AutoSizer>
-						)}
-					</InfiniteLoader>
+					{loading ? <Loader / > : (
+						<InfiniteLoader
+							rowCount={items.length}
+							loadMoreRows={() => {}}
+							isRowLoaded={() => { return true; }}
+							threshold={LIMIT}
+						>
+							{({ onRowsRendered, registerChild }) => (
+								<AutoSizer className="scrollArea">
+									{({ width, height }) => (
+										<List
+											ref={(ref: any) => { this.refList = ref; }}
+											width={width}
+											height={height}
+											deferredMeasurmentCache={this.cache}
+											rowCount={items.length}
+											rowHeight={HEIGHT}
+											rowRenderer={rowRenderer}
+											onRowsRendered={onRowsRendered}
+											overscanRowCount={LIMIT}
+										/>
+									)}
+								</AutoSizer>
+							)}
+						</InfiniteLoader>
+					)}
 				</div>
 			</div>
 		);
@@ -292,7 +290,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		const items = this.getItems();
 		const obj = $(`#${getId()} .content`);
 		const offset = 68;
-		const height = Math.max(HEIGHT * 1 + offset, Math.min(280, items.length * HEIGHT + offset));
+		const height = Math.max(HEIGHT * 1 + offset, Math.min(360, items.length * HEIGHT + offset));
 
 		obj.css({ height: height });
 		position();

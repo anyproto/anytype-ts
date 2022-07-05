@@ -300,7 +300,15 @@ class MenuManager {
 	};
 
 	getTrayIcon () {
-		const icon = is.windows ? 'icon64x64.png' : `icon-tray-${(Util.isDarkTheme() ? 'white' : 'black')}.png`;
+		let icon = '';
+		if (is.windows) {
+			icon = 'icon64x64.png';
+		} else 
+		if (is.linux) {
+			icon = 'icon-tray-white.png';
+		} else {
+			icon = `icon-tray-${(Util.isDarkTheme() ? 'white' : 'black')}.png`;
+		}
 		return path.join(Util.imagePath(), icon);
 	};
 

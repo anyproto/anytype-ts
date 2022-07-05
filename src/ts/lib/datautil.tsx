@@ -79,6 +79,7 @@ class DataUtil {
 			case I.BlockType.Featured:				 c.push('blockFeatured'); break;
 			case I.BlockType.Type:					 c.push('blockType'); break;
 			case I.BlockType.Latex:					 c.push('blockLatex'); break;
+			case I.BlockType.Table:					 c.push('blockTable'); break;
 			case I.BlockType.TableOfContents:		 c.push('blockTableOfContents'); break;
 
 			case I.BlockType.File:
@@ -246,13 +247,13 @@ class DataUtil {
 		return c;
 	};
 	
-	alignIcon (v: I.BlockAlign): string {
+	alignIcon (v: I.BlockHAlign): string {
 		let icon = '';
 		switch (v) {
 			default:
-			case I.BlockAlign.Left:		 icon = 'left'; break;
-			case I.BlockAlign.Center:	 icon = 'center'; break;
-			case I.BlockAlign.Right:	 icon = 'right'; break;
+			case I.BlockHAlign.Left:		 icon = 'left'; break;
+			case I.BlockHAlign.Center:	 icon = 'center'; break;
+			case I.BlockHAlign.Right:	 icon = 'right'; break;
 		};
 		return icon;
 	};
@@ -507,7 +508,7 @@ class DataUtil {
 		C.ObjectSetLayout(rootId, layout, callBack);
 	};
 
-	pageSetAlign (rootId: string, align: I.BlockAlign, callBack?: (message: any) => void) {
+	pageSetAlign (rootId: string, align: I.BlockHAlign, callBack?: (message: any) => void) {
 		C.BlockListSetAlign(rootId, [], align, callBack);
 	};
 
@@ -568,7 +569,7 @@ class DataUtil {
 	};
 
 	menuGetBlockMedia () {
-		return [
+		const ret: any[] = [
 			{ type: I.BlockType.File, id: I.FileType.File, icon: 'file', lang: 'File' },
 			{ type: I.BlockType.File, id: I.FileType.Image, icon: 'image', lang: 'Image' },
 			{ type: I.BlockType.File, id: I.FileType.Video, icon: 'video', lang: 'Video' },
@@ -577,7 +578,8 @@ class DataUtil {
 			{ type: I.BlockType.Bookmark, id: 'bookmark', icon: 'bookmark', lang: 'Bookmark' },
 			{ type: I.BlockType.Text, id: I.TextStyle.Code, icon: 'code', lang: 'Code' },
 			{ type: I.BlockType.Latex, id: I.BlockType.Latex, icon: 'latex', lang: 'Latex' },
-		].map(this.menuMapperBlock);
+		];
+		return ret.map(this.menuMapperBlock);
 	};
 
 	getObjectTypesForNewObject (param?: any) {
@@ -651,11 +653,18 @@ class DataUtil {
 	};
 
 	menuGetBlockOther () {
-		return [
+		const { config } = commonStore;
+		const ret: any[] = [
 			{ type: I.BlockType.Div, id: I.DivStyle.Line, icon: 'div-line', lang: 'Line' },
 			{ type: I.BlockType.Div, id: I.DivStyle.Dot, icon: 'dot', lang: 'Dot' },
 			{ type: I.BlockType.TableOfContents, id: I.BlockType.TableOfContents, icon: 'tableOfContents', lang: 'TableOfContents', aliases: [ 'tc', 'toc' ] }
-		].map(this.menuMapperBlock);
+		];
+
+		if (config.experimental) {
+			ret.push({ type: I.BlockType.Table, id: I.BlockType.Table, icon: 'table', lang: 'SimpleTable' });
+		};
+
+		return ret.map(this.menuMapperBlock);
 	};
 
 	menuGetBlockDataview () {
@@ -711,7 +720,8 @@ class DataUtil {
 	};
 
 	// Action menu
-	menuGetActions (hasFile: boolean, hasLink: boolean) {
+	menuGetActions (param: any) {
+		let { hasText, hasFile, hasLink } = param;
 		let cmd = keyboard.ctrlSymbol();
 		let items: any[] = [
 			{ id: 'move', icon: 'move', name: 'Move to', arrow: true },
@@ -719,6 +729,10 @@ class DataUtil {
 			{ id: 'remove', icon: 'remove', name: 'Delete', caption: 'Del' },
 			//{ id: 'comment', icon: 'comment', name: 'Comment' }
 		];
+
+		if (hasText) {
+			items.push({ id: 'clear', icon: 'clear', name: 'Clear style' });
+		};
 		
 		if (hasFile) {
 			items.push({ id: 'download', icon: 'download', name: 'Download' });
@@ -730,7 +744,7 @@ class DataUtil {
 		if (hasLink) {
 			items.push({ id: 'linkSettings', icon: 'customize', name: 'Appearance', arrow: true });
 		};
-		
+
 		items = items.map((it: any) => {
 			it.isAction = true;
 			return it;
@@ -761,13 +775,13 @@ class DataUtil {
 	
 	menuGetAlign (hasQuote: boolean) {
 		let ret = [
-			{ id: I.BlockAlign.Left, icon: 'align left', name: 'Align left', isAlign: true },
-			{ id: I.BlockAlign.Center, icon: 'align center', name: 'Align center', isAlign: true },
-			{ id: I.BlockAlign.Right, icon: 'align right', name: 'Align right', isAlign: true },
+			{ id: I.BlockHAlign.Left, icon: 'align left', name: 'Align left', isAlign: true },
+			{ id: I.BlockHAlign.Center, icon: 'align center', name: 'Align center', isAlign: true },
+			{ id: I.BlockHAlign.Right, icon: 'align right', name: 'Align right', isAlign: true },
 		];
 
 		if (hasQuote) {
-			ret = ret.filter((it: any) => { return it.id != I.BlockAlign.Center; });
+			ret = ret.filter((it: any) => { return it.id != I.BlockHAlign.Center; });
 		};
 
 		return ret;
@@ -862,9 +876,21 @@ class DataUtil {
 			};
 			s._sortWeight_ = 0;
 			s.children = (s.children || []).filter((c: any) => { 
-				let ret = false;
-				c._sortWeight_ = 0;
 
+				let ret = false;
+
+				if (c.isBlock && (c.type == I.BlockType.Table)) {
+					const match = filter.match(/table([\d]+)(?:[^\d]{1}([\d]+))?/i);
+					if (match) {
+						c.rowCnt = Math.max(1, Math.min(25, Number(match[1]) || 3));
+						c.columnCnt = Math.max(1, Math.min(25, Number(match[2]) || 3));
+
+						c.name += ` ${c.rowCnt}x${c.columnCnt}`;
+						ret = true;
+					};
+				};
+
+				c._sortWeight_ = 0;
 				if (c.skipFilter) {
 					ret = true;
 				} else 
@@ -887,11 +913,11 @@ class DataUtil {
 				s._sortWeight_ += c._sortWeight_;
 				return ret; 
 			});
-			s.children.sort((c1: any, c2: any) => this.sortByWeight(c1, c2));
+			s.children = s.children.sort((c1: any, c2: any) => this.sortByWeight(c1, c2));
 			return s.children.length > 0;
 		});
 
-		sections.sort((c1: any, c2: any) => this.sortByWeight(c1, c2));
+		sections = sections.sort((c1: any, c2: any) => this.sortByWeight(c1, c2));
 		return sections;
 	};
 	

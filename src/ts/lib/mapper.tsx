@@ -21,6 +21,9 @@ const Mapper = {
 		if (v == V.RELATION)			 t = I.BlockType.Relation;
 		if (v == V.FEATUREDRELATIONS)	 t = I.BlockType.Featured;
 		if (v == V.LATEX)				 t = I.BlockType.Latex;
+		if (v == V.TABLE)				 t = I.BlockType.Table;
+		if (v == V.TABLECOLUMN)			 t = I.BlockType.TableColumn;
+		if (v == V.TABLEROW)			 t = I.BlockType.TableRow;
 		if (v == V.TABLEOFCONTENTS)		 t = I.BlockType.TableOfContents;
 		return t;
 	},
@@ -193,43 +196,49 @@ const Mapper = {
 		BlockTableOfContents: (obj: any) => {
 			return {};
 		},
+
+		BlockTable: (obj: any) => {
+			return {};
+		},
 	
+		BlockTableColumn: (obj: any) => {
+			return {};
+		},
+
+		BlockTableRow: (obj: any) => {
+			return {
+				isHeader: obj.getIsheader(),
+			};
+		},
+
 		Block: (obj: any): I.Block => {
-			let type = Mapper.BlockType(obj.getContentCase());
-			let fn = 'get' + Util.ucFirst(type);
-			let content = obj[fn] ? obj[fn]() : {};
-	
-			let item: I.Block = {
+			const type = Mapper.BlockType(obj.getContentCase());
+			const fn = 'get' + Util.ucFirst(type);
+			const fm = Util.toUpperCamelCase('block-' + type);
+			const content = obj[fn] ? obj[fn]() : {};
+			const item: I.Block = {
 				id: obj.getId(),
 				type: type,
 				childrenIds: obj.getChildrenidsList() || [],
 				fields: Decode.decodeStruct(obj.getFields()),
-				content: {} as any,
-				align: obj.getAlign(),
+				hAlign: obj.getAlign(),
+				vAlign: obj.getVerticalalign(),
 				bgColor: obj.getBackgroundcolor(),
+				content: {} as any,
 			};
 
-			const fm = Util.toUpperCamelCase('block-' + type);
 			if (Mapper.From[fm]) {
 				item.content = Mapper.From[fm](content);
 			} else {
 				console.log('[Mapper] From does not exist: ', fm);
 			};
-	
 			return item;
 		},
 
 		Restrictions: (obj: any): any => {
-			if (!obj) {
-				return {
-					object: [],
-					dataview: [],
-				};
-			};
-
 			return {
-				object: obj.getObjectList() || [],
-				dataview: (obj.getDataviewList() || []).map(Mapper.From.RestrictionsDataview),
+				object: obj ? obj.getObjectList() || [] : [],
+				dataview: obj ? (obj.getDataviewList() || []).map(Mapper.From.RestrictionsDataview) : [],
 			};
 		},
 
@@ -529,6 +538,24 @@ const Mapper = {
 			return content;
 		},
 
+		BlockTable: (obj: any) => {
+			const content = new Model.Block.Content.Table();
+
+			return content;
+		},
+
+		BlockTableRow: (obj: any) => {
+			const content = new Model.Block.Content.TableRow();
+
+			return content;
+		},
+
+		BlockTableColumn: (obj: any) => {
+			const content = new Model.Block.Content.TableColumn();
+
+			return content;
+		},
+
 		BlockTableOfContents: (obj: any) => {
 			const content = new Model.Block.Content.TableOfContents();
 	
@@ -539,10 +566,10 @@ const Mapper = {
 			obj.content = Util.objectCopy(obj.content || {});
 	
 			let block = new Model.Block();
-			let content: any = null;
 	
 			block.setId(obj.id);
-			block.setAlign(obj.align);
+			block.setAlign(obj.hAlign);
+			block.setVerticalalign(obj.vAlign);
 			block.setBackgroundcolor(obj.bgColor);
 	
 			if (obj.childrenIds) {

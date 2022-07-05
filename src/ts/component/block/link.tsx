@@ -65,6 +65,9 @@ const BlockLink = observer(class BlockLink extends React.Component<Props, {}> {
 			if (!isArchived) {
 				cn.push('cp');
 			};
+			if (content.cardStyle == I.LinkCardStyle.Card) {
+				cn.push('br');
+			};
 
 			element = (
 				<LinkCard 
@@ -126,7 +129,7 @@ const BlockLink = observer(class BlockLink extends React.Component<Props, {}> {
 		const { onKeyDown } = this.props;
 
 		if (onKeyDown) {
-			onKeyDown(e, '', [], { from: 0, to: 0 });
+			onKeyDown(e, '', [], { from: 0, to: 0 }, this.props);
 		};
 	};
 	

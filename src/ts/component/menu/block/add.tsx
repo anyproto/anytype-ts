@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { MenuItemVertical, Icon, Cell } from 'ts/component';
-import { I, keyboard, Mark, C, focus, Action, Util, DataUtil, Storage, translate, analytics, Relation } from 'ts/lib';
+import { I, M, Mark, keyboard, C, focus, Action, Util, DataUtil, Storage, translate, analytics, Relation } from 'ts/lib';
 import { blockStore, commonStore, dbStore, menuStore, detailStore, popupStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
@@ -13,7 +13,7 @@ interface State {
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
-const HEIGHT = 28;
+const HEIGHT_ITEM = 28;
 const HEIGHT_SECTION = 42;
 const HEIGHT_DESCRIPTION = 56;
 const HEIGHT_RELATION = 32;
@@ -32,6 +32,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 	relations: any[] = [];
 	refList: any = null;
 	n: number = 0;
+	filter: string = '';
 	
 	constructor (props: any) {
 		super(props);
@@ -161,8 +162,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 
 			return (
 				<CellMeasurer
-					key={param.key}
-					parent={param.parent}
+					{...param}
 					cache={this.cache}
 					columnIndex={0}
 					rowIndex={index}
@@ -194,10 +194,10 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 											height={height}
 											deferredMeasurmentCache={this.cache}
 											rowCount={items.length}
-											rowHeight={({ index }) => { return this.rowHeight(items[index], index); }}
+											rowHeight={({ index }) => { return this.getRowHeight(items[index], index); }}
 											rowRenderer={rowRenderer}
 											onRowsRendered={onRowsRendered}
-											overscanRowCount={10}
+											overscanRowCount={20}
 										/>
 									)}
 								</AutoSizer>
@@ -211,7 +211,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 	
 	componentDidMount () {
 		const { getId } = this.props;
-		const items = this.getItems(false);
+		const items = this.getItems(true);
 		
 		this._isMounted = true;
 		this.rebind();
@@ -221,7 +221,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 
 		this.cache = new CellMeasurerCache({
 			fixedWidth: true,
-			defaultHeight: HEIGHT,
+			defaultHeight: HEIGHT_ITEM,
 			keyMapper: (i: number) => { return (items[i] || {}).id; },
 		});
 		
@@ -230,14 +230,27 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 	
 	componentDidUpdate () {
 		const { filter } = commonStore;
-		const items = this.getItems(false);
+		const items = this.getItems(true);
+		const itemsWithoutSections = this.getItems(false);
 
-		if (!items.length && !this.emptyLength) {
+		if (!itemsWithoutSections.length && !this.emptyLength) {
 			this.emptyLength = filter.text.length;
 		};
 
 		if ((filter.text.length - this.emptyLength > 3) && !items.length) {
 			this.props.close();
+			return;
+		};
+
+		this.cache = new CellMeasurerCache({
+			fixedWidth: true,
+			defaultHeight: HEIGHT_ITEM,
+			keyMapper: (i: number) => { return (items[i] || {}).id; },
+		});
+
+		if (this.filter != filter.text) {
+			this.filter = filter.text;
+			this.forceUpdate();
 			return;
 		};
 
@@ -342,7 +355,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 		]);
 		
 		if (filter && filter.text) {
-			const actions = DataUtil.menuGetActions(false, false);
+			const actions = DataUtil.menuGetActions({ hasFile: false, hasLink: false });
 
 			if (block.canTurnPage()) {
 				actions.push({ id: 'turnObject', icon: 'object', name: 'Turn into object', arrow: true });
@@ -531,7 +544,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 				C.BlockListSetAlign(rootId, [ blockId ], item.itemId, (message: any) => {
 					onCommand(message);
 
-					analytics.event('ChangeBlockAlign', { align: item.itemId, count: 1 });
+					analytics.event('ChangeBlockHAlign', { align: item.itemId, count: 1 });
 				});
 			};
 
@@ -585,6 +598,9 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 					param.content.views = [ {  name: item.name, type: item.itemId } ];
 				};
 
+				if (item.type == I.BlockType.Table) {
+					C.BlockTableCreate(rootId, blockId, position, Number(item.rowCnt) || 3, Number(item.columnCnt) || 3, true);
+				} else
 				if ((item.type == I.BlockType.Text) && (item.itemId != I.TextStyle.Code)) {
 					C.BlockListTurnInto(rootId, [ blockId ], item.itemId, (message: any) => {
 						onCommand(message);
@@ -695,22 +711,25 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 		
 		let height = 16;
 		for (let i = 0; i < items.length; ++i) {
-			height += this.rowHeight(items[i], i);
+			height += this.getRowHeight(items[i], i);
 		};
-		height = Math.max(HEIGHT + 18, Math.min(360, height));
+		height = Math.max(HEIGHT_ITEM + 18, Math.min(360, height));
 
 		obj.css({ height: height });
 		position();
 	};
 
-	rowHeight (item: any, index: number) {
+	getRowHeight (item: any, index: number) {
 		if (item.isRelation || item.isRelationAdd) {
 			return HEIGHT_RELATION;
 		};
-		if (item.isSection) {
-			return index > 0 ? HEIGHT_SECTION : HEIGHT;
+		if (item.isSection && index > 0) {
+			return HEIGHT_SECTION;
 		};
-		return item.isBlock ? HEIGHT_DESCRIPTION : HEIGHT;
+		if (item.isBlock) {
+			return HEIGHT_DESCRIPTION;
+		};
+		return HEIGHT_ITEM;
 	};
 
 	recalcIndex () {

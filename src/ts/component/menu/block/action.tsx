@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Filter, MenuItemVertical } from 'ts/component';
-import { I, C, keyboard, DataUtil, Util, focus, Action, translate, analytics } from 'ts/lib';
 import { commonStore, blockStore, menuStore } from 'ts/store';
+import { I, C, keyboard, DataUtil, focus, Action, translate, analytics } from 'ts/lib';
 
 interface Props extends I.Menu {};
 interface State {
@@ -178,6 +178,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 			let hasTurnList = true;
 			let hasTurnDiv = true;
 			let hasTurnFile = true;
+			let hasText = true;
 			let hasFile = true;
 			let hasLink = true;
 			let hasQuote = false;
@@ -185,6 +186,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 			let hasAlign = true;
 			let hasColor = true;
 			let hasBg = true;
+			let hasTable = true;
 
 			for (let id of blockIds) {
 				const block = blockStore.getLeaf(rootId, id);
@@ -197,11 +199,13 @@ class MenuBlockAction extends React.Component<Props, State> {
 				if (!block.canTurnList())		 hasTurnList = false;
 				if (!block.isDiv())				 hasTurnDiv = false;
 				if (!block.isFile())			 hasTurnFile = false;
+				if (!block.isText())			 hasText = false;
 				if (!block.canHaveAlign())		 hasAlign = false;
 				if (!block.canHaveColor())		 hasColor = false;
 				if (!block.canHaveBackground())	 hasBg = false;
 				if (!block.isFile())			 hasFile = false;
 				if (!block.isLink())			 hasLink = false;
+				if (!block.isTable())			 hasTable = false;
 
 				if (block.isTextTitle())		 hasAction = false;
 				if (block.isTextDescription())	 hasAction = false;
@@ -223,19 +227,12 @@ class MenuBlockAction extends React.Component<Props, State> {
 			};
 			
 			if (hasAction) {
-				action.children = DataUtil.menuGetActions(hasFile, hasLink);
+				action.children = DataUtil.menuGetActions({ hasText, hasFile, hasLink });
 				sections.push(action);
 			};
 
 			sections = DataUtil.menuSectionsFilter(sections, filter);
 		} else {
-			const section1: any = { 
-				children: [
-					{ id: 'remove', icon: 'remove', name: 'Delete', caption: 'Del' },
-					{ id: 'copy', icon: 'copy', name: 'Duplicate', caption: `${cmd} + D` },
-					{ id: 'move', icon: 'move', name: 'Move to', arrow: true },
-				] 
-			};
 			const section2: any = { 
 				children: [
 					//{ id: 'comment', icon: 'comment', name: 'Comment' },
@@ -245,6 +242,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 			let hasTurnText = true;
 			let hasTurnObject = true;
 			let hasTurnDiv = true;
+			let hasText = true;
 			let hasBookmark = true;
 			let hasFile = true;
 			let hasLink = true;
@@ -266,6 +264,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 					hasTurnDiv = false;
 				};
 				if (!block.canTurnPage())		 hasTurnObject = false;
+				if (!block.isText())			 hasText = false;
 				if (!block.isBookmark())		 hasBookmark = false;
 				if (!block.isFile())			 hasFile = false;
 				if (!block.isLink())			 hasLink = false;
@@ -276,6 +275,10 @@ class MenuBlockAction extends React.Component<Props, State> {
 				if (block.isTextTitle())		 hasTitle = true;
 				if (block.isTextDescription())	 hasTitle = true;
 				if (block.isFeatured())			 hasTitle = true;
+			};
+
+			const section1: any = { 
+				children: DataUtil.menuGetActions({ hasText, hasFile, hasLink })
 			};
 
 			if (hasTurnObject) {
@@ -510,11 +513,11 @@ class MenuBlockAction extends React.Component<Props, State> {
 
 				menuParam.data = Object.assign(menuParam.data, {
 					value: align,
-					onSelect: (align: I.BlockAlign) => {
+					onSelect: (align: I.BlockHAlign) => {
 						C.BlockListSetAlign(rootId, blockIds, align, (message: any) => {
 							this.setFocus(blockIds[0]);
 
-							analytics.event('ChangeBlockAlign', { align, count: blockIds.length });
+							analytics.event('ChangeBlockHAlign', { align, count: blockIds.length });
 						});
 
 						close();
@@ -573,6 +576,12 @@ class MenuBlockAction extends React.Component<Props, State> {
 			case 'remove':
 				Action.remove(rootId, blockId, ids);
 				break;
+			
+			case 'clear':
+				C.BlockTextListClearStyle(rootId, blockIds, () => {
+					analytics.event('ClearBlockStyle', { count: blockIds.length });
+				});
+				break;
 				
 			default:
 				// Text colors
@@ -590,7 +599,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 				// Align
 				if (item.isAlign) {
 					C.BlockListSetAlign(rootId, blockIds, item.itemId, () => {
-						analytics.event('ChangeBlockAlign', { align: item.itemId, count: blockIds.length });
+						analytics.event('ChangeBlockHAlign', { align: item.itemId, count: blockIds.length });
 					});
 				} else 
 					
