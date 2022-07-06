@@ -49,7 +49,7 @@ const PageAuthPinCheck = observer(class PageAuthPinCheck extends React.Component
 
 	onSuccess (pin: string) {
 		const { account } = authStore;
-		const redirect = Storage.get('redirect');
+		const { redirect } = commonStore;
 
 		keyboard.setPinChecked(true);
 

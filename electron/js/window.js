@@ -1,4 +1,4 @@
-const { app, BrowserWindow, nativeImage, dialog } = require('electron');
+const { app, BrowserWindow, nativeImage, dialog, screen } = require('electron');
 const { is } = require('electron-util');
 const version = app.getVersion();
 const path = require('path');
@@ -56,7 +56,7 @@ class WindowManager {
 	};
 
 	createMain (options) {
-		const { withState, route, isChild } = options;
+		const { isChild } = options;
 		const image = nativeImage.createFromPath(path.join(Util.imagePath(), 'icon512x512.png'));
 
 		let state = {};
@@ -91,7 +91,7 @@ class WindowManager {
 			param.icon = path.join(Util.imagePath(), 'icon64x64.png');
 		};
 
-		if (withState) {
+		if (!isChild) {
 			state = windowStateKeeper({ defaultWidth: DEFAULT_WIDTH, defaultHeight: DEFAULT_HEIGHT });
 			param = Object.assign(param, {
 				x: state.x,
@@ -99,13 +99,21 @@ class WindowManager {
 				width: state.width,
 				height: state.height,
 			});
+		} else {
+			const primaryDisplay = screen.getPrimaryDisplay();
+	  		const { width, height } = primaryDisplay.workAreaSize;
+
+			param = Object.assign(param, {
+				x: width / 2 - param.width / 2,
+				y: height / 2 - param.height / 2 + 20,
+			});
 		};
 
 		const win = this.create(options, param);
 
 		remote.enable(win.webContents);
 
-		if (withState) {
+		if (!isChild) {
 			state.manage(win);
 		};
 

@@ -456,10 +456,7 @@ class App extends React.Component<Props, State> {
 					DataUtil.onAuth(windowData.account, cb);
 				});
 
-				win.off('beforeunload unload');
-
-				win.on('beforeunload', (e: any) => { Storage.delete('redirect'); });
-				win.on('unload', (e: any) => {
+				win.off('unload').on('unload', (e: any) => {
 					if (authStore.token) {
 						e.preventDefault();
 

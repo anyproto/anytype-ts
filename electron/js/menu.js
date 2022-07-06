@@ -58,7 +58,7 @@ class MenuManager {
 				submenu: [
 					{ 
 						label: 'New window', accelerator: 'CmdOrCtrl+Shift+N',
-						click: () => { WindowManager.createMain({ withState: false, isChild: true }); } 
+						click: () => { WindowManager.createMain({ isChild: true }); } 
 					},
 
 					Separator,

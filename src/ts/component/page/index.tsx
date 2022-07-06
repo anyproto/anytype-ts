@@ -244,6 +244,7 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 					popupStore.open('video', { data: { type: 'onboarding' } });
 					Storage.delete('popupVideo');
 				};
+
 				Storage.set('redirect', history.location.pathname);
 			};
 

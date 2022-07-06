@@ -70,11 +70,7 @@ class Api {
 	};
 
 	windowOpen (win, route) {
-		WindowManager.createMain({ 
-			route: route, 
-			withState: false, 
-			isChild: true
-		});
+		WindowManager.createMain({ route, isChild: true });
 	};
 
 	urlOpen (win, url) {
