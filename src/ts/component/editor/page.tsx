@@ -1358,6 +1358,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		const ids = blockStore.getBlocks(rootId, (it: any) => { return it.isSelectable(); }).map((it: any) => { return it.id; }); 
 		
 		selection.set(I.SelectType.Block, ids);
+		focus.clear(true);
 		menuStore.close('blockContext');
 	};
 	
