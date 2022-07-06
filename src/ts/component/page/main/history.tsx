@@ -322,8 +322,6 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<P
 			};
 
 			this.version = message.version;
-
-			dispatcher.onObjectShow(rootId, message.objectShow);
 			this.forceUpdate();
 
 			if (this.refHeader) {

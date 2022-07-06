@@ -92,11 +92,13 @@ const ObjectCreateBookmark = (response: any) => {
 
 const ObjectOpen = (response: any) => {
 	return {
+		object: onObjectShow(response.getObject()),
 	};
 };
 
 const ObjectShow = (response: any) => {
 	return {
+		object: onObjectShow(response.getObject()),
 	};
 };
 
@@ -235,7 +237,7 @@ const HistoryShowVersion = (response: any) => {
 	const version = response.getVersion();
 	return {
 		version: version ? Mapper.From.HistoryVersion(response.getVersion()) : null,
-		objectShow: onObjectShow(response.getObjectshow()),
+		object: onObjectShow(response.getObjectshow()),
 	};
 };
 

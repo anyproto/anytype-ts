@@ -900,7 +900,13 @@ const HistoryShowVersion = (pageId: string, versionId: string, callBack?: (messa
 	request.setPageid(pageId);
 	request.setVersionid(versionId);
 
-	dispatcher.request(HistoryShowVersion.name, request, callBack);
+	dispatcher.request(HistoryShowVersion.name, request, (message: any) => {
+		dispatcher.onObjectShow(pageId, message.object);
+
+		if (callBack) {
+			callBack(message);
+		};
+	});
 };
 
 const HistorySetVersion = (pageId: string, versionId: string, callBack?: (message: any) => void) => {
@@ -1018,7 +1024,13 @@ const ObjectOpen = (objectId: string, traceId: string, callBack?: (message: any)
 	request.setObjectid(objectId);
 	request.setTraceid(traceId);
 
-	dispatcher.request(ObjectOpen.name, request, callBack);
+	dispatcher.request(ObjectOpen.name, request, (message: any) => {
+		dispatcher.onObjectShow(objectId, message.object);
+
+		if (callBack) {
+			callBack(message);
+		};
+	});
 };
 
 const ObjectShow = (objectId: string, traceId: string, callBack?: (message: any) => void) => {
@@ -1027,7 +1039,13 @@ const ObjectShow = (objectId: string, traceId: string, callBack?: (message: any)
 	request.setObjectid(objectId);
 	request.setTraceid(traceId);
 
-	dispatcher.request(ObjectShow.name, request, callBack);
+	dispatcher.request(ObjectShow.name, request, (message: any) => {
+		dispatcher.onObjectShow(objectId, message.object);
+
+		if (callBack) {
+			callBack(message);
+		};
+	});
 };
 
 const ObjectOpenBreadcrumbs = (callBack?: (message: any) => void) => {

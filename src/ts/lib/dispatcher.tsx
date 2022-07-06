@@ -217,10 +217,6 @@ class Dispatcher {
 					});
 					break;
 
-				case 'objectShow':
-					this.onObjectShow(rootId, Response.onObjectShow(data));
-					break;
-
 				case 'objectRemove':
 					ids = data.getIdsList();
 					crumbs.removeItems(I.CrumbsType.Recent, ids);
