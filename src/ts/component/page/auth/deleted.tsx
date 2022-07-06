@@ -29,6 +29,10 @@ const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<P
 	
 	render () {
 		const { account } = authStore;
+		if (!account) {
+			return null;
+		};
+
 		const { cover } = commonStore;
 		const { error } = this.state;
 		const duration = Math.max(0, account.status.date - Util.time());
@@ -114,7 +118,7 @@ const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<P
 				text: 'These objects will be deleted irrevocably. You can’t undo this action.',
 				textConfirm: 'Delete',
 				onConfirm: () => { 
-					C.AccountStop(false);
+					C.AccountStop(true);
 					authStore.logout();
 					Util.route('/');
 				},
