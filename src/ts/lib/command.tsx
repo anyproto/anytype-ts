@@ -901,7 +901,7 @@ const HistoryShowVersion = (pageId: string, versionId: string, callBack?: (messa
 	request.setVersionid(versionId);
 
 	dispatcher.request(HistoryShowVersion.name, request, (message: any) => {
-		dispatcher.onObjectShow(pageId, message.object);
+		dispatcher.onObjectView(pageId, message.objectView);
 
 		if (callBack) {
 			callBack(message);
@@ -1025,7 +1025,7 @@ const ObjectOpen = (objectId: string, traceId: string, callBack?: (message: any)
 	request.setTraceid(traceId);
 
 	dispatcher.request(ObjectOpen.name, request, (message: any) => {
-		dispatcher.onObjectShow(objectId, message.object);
+		dispatcher.onObjectView(objectId, message.objectView);
 
 		if (callBack) {
 			callBack(message);
@@ -1040,7 +1040,7 @@ const ObjectShow = (objectId: string, traceId: string, callBack?: (message: any)
 	request.setTraceid(traceId);
 
 	dispatcher.request(ObjectShow.name, request, (message: any) => {
-		dispatcher.onObjectShow(objectId, message.object);
+		dispatcher.onObjectView(objectId, message.objectView);
 
 		if (callBack) {
 			callBack(message);

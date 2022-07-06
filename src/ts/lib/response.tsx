@@ -92,13 +92,13 @@ const ObjectCreateBookmark = (response: any) => {
 
 const ObjectOpen = (response: any) => {
 	return {
-		object: onObjectShow(response.getObject()),
+		objectView: onObjectView(response.getObjectview()),
 	};
 };
 
 const ObjectShow = (response: any) => {
 	return {
-		object: onObjectShow(response.getObject()),
+		objectView: onObjectView(response.getObjectview()),
 	};
 };
 
@@ -237,7 +237,7 @@ const HistoryShowVersion = (response: any) => {
 	const version = response.getVersion();
 	return {
 		version: version ? Mapper.From.HistoryVersion(response.getVersion()) : null,
-		object: onObjectShow(response.getObjectshow()),
+		objectView: onObjectView(response.getObjectview()),
 	};
 };
 
@@ -370,7 +370,7 @@ const UnsplashDownload = (response: any) => {
 	};
 };
 
-const onObjectShow = (response: any) => {
+const onObjectView = (response: any) => {
 	return {
 		rootId: response.getRootid(),
 		blocks: (response.getBlocksList() || []).map(Mapper.From.Block),
@@ -458,5 +458,5 @@ export {
 	UnsplashSearch,
 	UnsplashDownload,
 
-	onObjectShow,
+	onObjectView,
 };

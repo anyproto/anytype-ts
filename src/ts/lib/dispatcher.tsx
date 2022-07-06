@@ -755,7 +755,7 @@ class Dispatcher {
 		return 0;
 	};
 
-	onObjectShow (rootId: string, message: any) {
+	onObjectView (rootId: string, message: any) {
 		let { blocks, details, restrictions } = message;
 		let root = blocks.find((it: any) => { return it.id == rootId; });
 
