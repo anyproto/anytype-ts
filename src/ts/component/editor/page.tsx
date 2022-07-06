@@ -1358,10 +1358,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 	onSelectAll () {
 		const { dataset, rootId } = this.props;
 		const { selection } = dataset || {};
-		const ids = blockStore.getBlocks(rootId, (it: any) => { return it.isSelectable(); }).map((it: any) => { return it.id; }); 
+		const ids = blockStore.getBlocks(rootId, it => it.isSelectable()).map(it => it.id); 
 		
 		selection.set(I.SelectType.Block, ids);
-		menuStore.close('blockContext');
+		selection.checkSelected(I.SelectType.Block);
 	};
 	
 	onAdd (e: any) {
