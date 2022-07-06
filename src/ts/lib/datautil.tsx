@@ -355,9 +355,6 @@ class DataUtil {
 
 		if ((e.metaKey || e.ctrlKey || popupStore.isOpen('page'))) {
 			this.objectOpenPopup(object, popupParam);
-		} else 
-		if (e.shiftKey) {
-			this.objectOpenWindow(object);
 		} else {
 			this.objectOpenRoute(object);
 		};

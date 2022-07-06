@@ -75,7 +75,7 @@ if (process.env.ANYTYPE_USE_SIDE_SERVER) {
 function waitForLibraryAndCreateWindows () {
 	waitLibraryPromise.then((res) => {
 		global.serverAddr = Server.getAddress();
-		createMainWindow();
+		createWindow();
 	}, (err) => {
 		electron.dialog.showErrorBox('Error: failed to run server', err.toString());
 	});
@@ -87,7 +87,7 @@ nativeTheme.on('updated', () => {
 	WindowManager.updateTheme();
 });
 
-function createMainWindow () {
+function createWindow () {
 	mainWindow = WindowManager.createMain({ withState: true, route: Util.getRouteFromUrl(deeplinkingUrl), isChild: false });
 
 	if (process.env.ELECTRON_DEV_EXTENSIONS) {
@@ -180,7 +180,7 @@ app.on('before-quit', (e) => {
 });
 
 app.on('activate', () => { 
-	WindowManager.list.size ? mainWindow.show() : createMainWindow();
+	WindowManager.list.size ? mainWindow.show() : createWindow();
 });
 
 app.on('open-url', (e, url) => {

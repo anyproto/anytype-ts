@@ -1,12 +1,16 @@
-const { app, shell, Menu, Tray, BrowserWindow } = require('electron');
+const { app, shell, Menu, Tray } = require('electron');
 const { is } = require('electron-util');
 const path = require('path');
 
 const ConfigManager = require('./config.js');
-const WindowManager = require('./window.js');
 const Util = require('./util.js');
 
 const Separator = { type: 'separator' };
+const ChannelSettings = [
+	{ id: 'alpha', name: 'Alpha' },
+	{ id: 'beta', name: 'Pre-release' },
+	{ id: 'latest', name: 'Public' },
+];
 
 class MenuManager {
 
@@ -21,11 +25,7 @@ class MenuManager {
 	initMenu () {
 		const { config } = ConfigManager;
 		const Api = require('./api.js');
-		const channelSettings = [
-			{ id: 'alpha', name: 'Alpha' },
-			{ id: 'beta', name: 'Pre-release' },
-			{ id: 'latest', name: 'Public' },
-		];
+		const WindowManager = require('./window.js');
 
 		let menuParam = [
 			{
@@ -56,6 +56,13 @@ class MenuManager {
 			{
 				role: 'fileMenu',
 				submenu: [
+					{ 
+						label: 'New window', accelerator: 'CmdOrCtrl+Shift+N',
+						click: () => { WindowManager.createMain({ withState: false, isChild: true }); } 
+					},
+
+					Separator,
+
 					{ label: 'Show work directory', click: () => { shell.openPath(app.getPath('userData')); } },
 					{
 						label: 'Import',
@@ -186,7 +193,7 @@ class MenuManager {
 		};
 
 
-		let channels = channelSettings.map((it) => {
+		let channels = ChannelSettings.map((it) => {
 			return { 
 				label: it.name, type: 'radio', checked: (config.channel == it.id), 
 				click: () => { 
