@@ -936,15 +936,16 @@ class Dispatcher {
 			const buffer = inputObj.serializeBinary();
 			const handler = (item: any) => {
 				try {
-					let message = request.b(item.data.buffer);
+					let message = request.g(item.data.buffer);
 					if (message) {
 						callBack(null, message);
+					} else {
+						console.error('[napiCall]: message is undefined', method);
 					};
 				} catch (err) {
-					console.error(err);
+					console.error('[napiCall]: ', err);
 				};
 			};
-
 			bindings.sendCommand(method, buffer, handler);
 		};
 	/// #endif
