@@ -518,8 +518,6 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 	};
 
 	onOptionsOpen (type: I.BlockType, rowId: string, columnId: string, cellId: string) {
-		console.log('onOptionsOpen', );
-
 		if (!this._isMounted) {
 			return;
 		};

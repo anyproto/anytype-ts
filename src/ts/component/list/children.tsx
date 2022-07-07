@@ -55,8 +55,6 @@ const ListChildren = observer(class ListChildren extends React.Component<Props, 
 			);
 		};
 
-		console.log('LENGTH', length);
-
 		return (
 			<div id={'block-children-' + block.id} className={cn.join(' ')} onMouseMove={onMouseMove} onMouseLeave={onMouseLeave}>
 				{children.map((item: any, i: number) => {
