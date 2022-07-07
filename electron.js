@@ -136,8 +136,6 @@ function createWindow () {
 		args = args || [];
 		args.unshift(win);
 
-		console.log(cmd, args);
-
 		if (Api[cmd]) {
 			Api[cmd].apply(Api, args);
 		} else {
