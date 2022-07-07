@@ -27,7 +27,7 @@ const Mapper = {
 
 	BoardGroupType (v: number) {
 		let t = '';
-		let V = Rpc.Object.RelationSearchDistinct.Response.Group.ValueCase;
+		let V = Model.Block.Content.Dataview.Group.ValueCase;
 
 		if (v == V.STATUS)	 t = 'status';
 		if (v == V.TAG)		 t = 'tag';
