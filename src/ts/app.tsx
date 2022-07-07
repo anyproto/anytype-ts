@@ -233,6 +233,7 @@ window.Lib = {
 	Util,
 	analytics,
 	dispatcher,
+	keyboard,
 };
 
 class RoutePage extends React.Component<RouteComponentProps, {}> { 

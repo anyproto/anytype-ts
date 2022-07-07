@@ -141,7 +141,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 			targetId = String(data.id || '');
 			target = blockStore.getLeaf(rootId, targetId);
 		};
-		
+
 		if (isFileDrop) {
 			let paths: string[] = [];
 			for (let file of dt.files) {
@@ -157,7 +157,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 			});
 		} else
 		if (data && this.canDrop && (position != I.BlockPosition.None)) {
-			this.onDrop(e, data.dropType, data.rootId, targetId, position);
+			this.onDrop(e, data.dropType, rootId, targetId, position);
 		};
 
 		this.clearState();
@@ -296,7 +296,6 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 				isToggle = target.isTextToggle();
 		
 				if (target.isLink() && (position == I.BlockPosition.InnerFirst)) {
-					contextId = keyboard.getRootId();
 					targetContextId = target.content.targetBlockId;
 					targetId = '';
 
@@ -322,6 +321,8 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 				targetId = '';
 				break;
 		};
+
+		console.log('[dragProvider.onDrop] from:', contextId, 'to: ', targetContextId);
 
 		// Source type
 		switch (this.dropType) {
