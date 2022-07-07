@@ -88,13 +88,6 @@ nativeTheme.on('updated', () => {
 });
 
 function createWindow () {
-	ipcMain.handle('Api', (e, cmd, args) => {
-		args = args || [];
-		args.unshift(e.sender);
-
-		Api[cmd].apply(Api, args);
-	});
-
 	mainWindow = WindowManager.createMain({ route: Util.getRouteFromUrl(deeplinkingUrl), isChild: false });
 
 	if (process.env.ELECTRON_DEV_EXTENSIONS) {
@@ -130,6 +123,18 @@ function createWindow () {
 	MenuManager.setWindow(mainWindow);
 	MenuManager.initMenu();
 	MenuManager.initTray();
+
+	ipcMain.handle('Api', (e, cmd, args) => {
+		args = args || [];
+		args.unshift(BrowserWindow.fromId(e.sender.id));
+
+		const Api = require('./electron/js/api.js');
+		if (Api[cmd]) {
+			Api[cmd].apply(Api, args);
+		} else {
+			console.error('Api method not defined:', cmd, Api);
+		};
+	});
 };
 
 app.on('ready', () => {

@@ -1,15 +1,21 @@
 class Renderer {
 
 	send (...args: any[]) {
-		window.Electron.Api(args);
+		args = args || [];
+
+		const cmd = args[0];
+		args.shift();
+
+		window.Electron.Api(cmd, args);
 	};
 
 	on (event: string, callBack: any) {
+		this.remove(event);
 		window.Electron.on(event, callBack);
 	};
 
-	removeAllListeners (...args: any[]) {
-		window.Electron.removeAllListeners.apply(null, args);
+	remove (event: string) {
+		window.Electron.removeAllListeners(event);
 	};
 
 };

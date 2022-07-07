@@ -116,6 +116,10 @@
 	.controlButtons { left: 114px !important; text-align: left !important; } 
 }
 
+.editorWrapper.isNote {
+	.editorControls { margin-bottom: 16px; }
+}
+
 /* Human */ 
 
 .editorWrapper.isHuman.withIcon {

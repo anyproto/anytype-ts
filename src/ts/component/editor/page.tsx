@@ -173,7 +173,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 		Storage.set('askSurvey', 1);
 
-		Renderer.removeAllListeners('commandEditor');
+		Renderer.remove('commandEditor');
 		Renderer.on('commandEditor', (e: any, cmd: string, arg: any) => { this.onCommand(cmd, arg); });
 	};
 
@@ -202,7 +202,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 		focus.clear(false);
 		window.clearInterval(this.timeoutScreen);
-		Renderer.removeAllListeners('commandEditor');
+		Renderer.remove('commandEditor');
 	};
 
 	getWrapper () {

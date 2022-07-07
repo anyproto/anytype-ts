@@ -52,7 +52,7 @@ class Keyboard {
 			Util.previewHide(true);
 		});
 
-		Renderer.removeAllListeners('commandGlobal');
+		Renderer.remove('commandGlobal');
 		Renderer.on('commandGlobal', (e: any, cmd: string, arg: any) => { this.onCommand(cmd, arg); });
 	};
 	

@@ -23,7 +23,7 @@ contextBridge.exposeInMainWorld('Electron', {
 	tmpPath: path.join(userPath, 'tmp'),
 	getPath: (fp, fn) => path.join(fp, fn),
 
-	isMaximized: () => BrowserWindow.getFocusedWindow().isMaximized(),
+	isMaximized: () => BrowserWindow.getFocusedWindow()?.isMaximized(),
 	getGlobal: (key) => getGlobal(key),
 	showOpenDialog: dialog.showOpenDialog,
 
@@ -31,7 +31,7 @@ contextBridge.exposeInMainWorld('Electron', {
 	readChunk,
 	fileType,
 
-	on: ipcRenderer.on,
-	removeAllListeners: ipcRenderer.removeAllListeners,
+	on: (event, callBack) => ipcRenderer.on(event, callBack),
+	removeAllListeners: (event) => ipcRenderer.removeAllListeners(event),
 	Api: (cmd, args) => ipcRenderer.invoke('Api', cmd, args),
 });
