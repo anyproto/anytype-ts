@@ -30,6 +30,13 @@ class WindowManager {
 			webPreferences: {},
 		}, param);
 
+		param.webPreferences = Object.assign({
+			nativeWindowOpen: true,
+			contextIsolation: true,
+			nodeIntegration: false,
+			spellcheck: false,
+		}, param.webPreferences);
+
 		let win = new BrowserWindow(param);
 
 		win.isChild = isChild;
@@ -66,10 +73,6 @@ class WindowManager {
 			height: DEFAULT_HEIGHT,
 
 			webPreferences: {
-				nativeWindowOpen: true,
-				contextIsolation: true,
-				nodeIntegration: true,
-				spellcheck: false,
 				preload: path.join(Util.electronPath(), 'js', 'preload.js'),
 			},
 		};
@@ -128,7 +131,11 @@ class WindowManager {
 	};
 
 	createAbout () {
-		const win = this.create({}, { width: 400, height: 400, useContentSize: true });
+		const win = this.create({}, { 
+			width: 400, 
+			height: 400, 
+			useContentSize: true,
+		});
 
 		win.loadURL('file://' + path.join(Util.electronPath(), 'about', `index.html?version=${version}&theme=${Util.getTheme()}`));
 		win.setMenu(null);
