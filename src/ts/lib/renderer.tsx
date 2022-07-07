@@ -1,12 +1,7 @@
 class Renderer {
 
 	send (...args: any[]) {
-		const cmd = args[0];
-
-		args.shift();
-		args.unshift(window.Electron.currentWindow);
-
-		window.Electron.Api(cmd, args);
+		window.Electron.Api(args);
 	};
 
 	on (event: string, callBack: any) {

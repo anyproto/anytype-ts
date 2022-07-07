@@ -3,11 +3,8 @@ import { commonStore, popupStore, menuStore } from 'ts/store';
 import { translate } from '.';
 
 const $ = require('jquery');
-const fs = window.require('fs');
 const Constant = require('json/constant.json');
 const Errors = require('json/error.json');
-const os = window.require('os');
-const path = window.require('path');
 const Cover = require('json/cover.json');
 
 class Util {
@@ -842,7 +839,7 @@ class Util {
 	};
 
 	getPlatform () {
-		return Constant.platforms[os.platform()];
+		return Constant.platforms[window.Electron.platform];
 	};
 
 	checkError (code: number) {
@@ -950,22 +947,6 @@ class Util {
 
 	sizeHeader (): number {
 		return this.getPlatform() == I.Platform.Windows ? 68 : 52;
-	};
-
-	deleteFolderRecursive (p: string) {
-		if (!fs.existsSync(p) ) {
-			return;
-		};
-
-		fs.readdirSync(p).forEach((file: any) => {
-			const cp = path.join(p, file);
-			if (fs.lstatSync(cp).isDirectory()) {
-				this.deleteFolderRecursive(cp);
-			} else {
-				fs.unlinkSync(cp);
-			};
-		});
-		fs.rmdirSync(p);
 	};
 
 	searchParam (url: string): any {

@@ -13,7 +13,6 @@ interface Props extends I.Popup, RouteComponentProps<any> {
 	setLoading: (v: boolean) => void;
 };
 
-const { dialog } = window.require('@electron/remote');
 const Constant = require('json/constant.json');
 
 const PopupSettingsPageWallpaper = observer(class PopupSettingsPageWallpaper extends React.Component<Props, {}> {
@@ -88,7 +87,7 @@ const PopupSettingsPageWallpaper = observer(class PopupSettingsPageWallpaper ext
 			filters: [ { name: '', extensions: Constant.extension.cover } ]
 		};
 
-		dialog.showOpenDialog(options).then((result: any) => {
+		window.Electron.showOpenDialog(options).then((result: any) => {
 			const files = result.filePaths;
 			if ((files == undefined) || !files.length) {
 				return;

@@ -21,7 +21,6 @@ interface State {
 	size: Size;
 };
 
-const { dialog } = window.require('@electron/remote');
 const $ = require('jquery');
 const raf = require('raf');
 const SMALL_WIDTH = 248;
@@ -263,7 +262,7 @@ class InputWithFile extends React.Component<Props, State> {
 			];
 		};
 		
-		dialog.showOpenDialog(options).then((result: any) => {
+		window.Electron.showOpenDialog(options).then((result: any) => {
 			const files = result.filePaths;
 			const file = files && files.length ? files[0] : '';
 

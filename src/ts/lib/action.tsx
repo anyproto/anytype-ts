@@ -2,7 +2,6 @@ import { I, C, focus, analytics, Renderer } from 'ts/lib';
 import { commonStore, authStore, blockStore, detailStore, dbStore } from 'ts/store';
 
 const Constant = require('json/constant.json');
-const { dialog } = window.require('@electron/remote');
 
 class Action {
 
@@ -120,7 +119,7 @@ class Action {
 			properties: [ 'openDirectory' ],
 		};
 
-		dialog.showOpenDialog(options).then((result: any) => {
+		window.Electron.showOpenDialog(options).then((result: any) => {
 			const paths = result.filePaths;
 			if ((paths == undefined) || !paths.length) {
 				return;

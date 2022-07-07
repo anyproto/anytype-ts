@@ -31,12 +31,13 @@ class Dispatcher {
 	timeoutEvent: any = {};
 	reconnects: number = 0;
 
-	constructor () {
-		let serverAddr = window.Electron.getGlobal('serverAddr');
-		console.log('[Dispatcher] Server address: ', serverAddr);
-		this.service = new Service.ClientCommandsClient(serverAddr, null, null);
+	init () {
+		const serverAddr = window.Electron.getGlobal('serverAddr');
 
+		this.service = new Service.ClientCommandsClient(serverAddr, null, null);
 		this.listenEvents();
+
+		console.log('[Dispatcher].init Server address: ', serverAddr);
 	};
 
 	listenEvents () {

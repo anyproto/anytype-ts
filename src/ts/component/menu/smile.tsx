@@ -14,7 +14,6 @@ interface State {
 const $ = require('jquery');
 const EmojiData = require('json/emoji.json');
 const Constant = require('json/constant.json');
-const { dialog } = window.require('@electron/remote');
 
 const LIMIT_RECENT = 18;
 const LIMIT_ROW = 9;
@@ -314,7 +313,7 @@ class MenuSmile extends React.Component<Props, State> {
 
 		close();
 		
-		dialog.showOpenDialog(options).then((result: any) => {
+		window.Electron.showOpenDialog(options).then((result: any) => {
 			const files = result.filePaths;
 			if ((files == undefined) || !files.length) {
 				return;

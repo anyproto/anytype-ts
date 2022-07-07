@@ -18,7 +18,6 @@ interface State {
 const $ = require('jquery');
 const Constant = require('json/constant.json');
 const Url = require('json/url.json');
-const { dialog } = window.require('@electron/remote');
 
 const BlockCover = observer(class BlockCover extends React.Component<Props, State> {
 	
@@ -224,7 +223,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 			filters: [ { name: '', extensions: Constant.extension.cover } ]
 		};
 		
-		dialog.showOpenDialog(options).then((result: any) => {
+		window.Electron.showOpenDialog(options).then((result: any) => {
 			const files = result.filePaths;
 			if ((files == undefined) || !files.length) {
 				return;

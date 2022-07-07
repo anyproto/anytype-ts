@@ -19,7 +19,6 @@ interface State {
 	loading: boolean;
 };
 
-const { dialog } = window.require('@electron/remote');
 const Constant = require('json/constant.json');
 const $ = require('jquery');
 
@@ -198,7 +197,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 			filters: [ { name: '', extensions: Constant.extension.cover } ]
 		};
 
-		dialog.showOpenDialog(options).then((result: any) => {
+		window.Electron.showOpenDialog(options).then((result: any) => {
 			const files = result.filePaths;
 			if ((files == undefined) || !files.length) {
 				return;

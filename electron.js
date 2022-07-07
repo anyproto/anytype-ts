@@ -89,8 +89,10 @@ nativeTheme.on('updated', () => {
 
 function createWindow () {
 	ipcMain.handle('Api', (e, cmd, args) => {
-		console.log(arguments);
-		return 'Api return';
+		args = args || [];
+		args.unshift(e.sender);
+
+		Api[cmd].apply(Api, args);
 	});
 
 	mainWindow = WindowManager.createMain({ route: Util.getRouteFromUrl(deeplinkingUrl), isChild: false });

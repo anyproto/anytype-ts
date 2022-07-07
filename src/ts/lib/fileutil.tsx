@@ -1,8 +1,5 @@
 import { Util } from 'ts/lib';
 
-const fs = window.require('fs');
-const readChunk = window.require('read-chunk');
-const fileType = window.require('file-type');
 const Constant = require('json/constant.json');
 const loadImage = require('blueimp-load-image');
 
@@ -10,9 +7,9 @@ class FileUtil {
 
 	fromPath (path: string) {
 		let fn = path.split('/');
-		let stat = fs.statSync(path);
-		let buffer = readChunk.sync(path, 0, stat.size);
-		let type = fileType(buffer);
+		let stat = window.Electron.fs.statSync(path);
+		let buffer = window.Electron.readChunk.sync(path, 0, stat.size);
+		let type = window.Electron.fileType(buffer);
 		let file = new File([ new Blob([ buffer ]) ], fn[fn.length - 1], { type: type.mime });
 		return file;
 	};

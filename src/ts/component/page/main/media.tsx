@@ -16,9 +16,6 @@ interface State {
 };
 
 const $ = require('jquery');
-const { app } = window.require('@electron/remote')
-const path = window.require('path');
-const userPath = app.getPath('userData');
 const Errors = require('json/error.json');
 
 const MAX_HEIGHT = 396;
@@ -240,7 +237,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<Props
 		const block = blocks.find((it: I.Block) => { return it.isFile(); });
 		const { content } = block;
 
-		C.FileDownload(content.hash, path.join(userPath, 'tmp'), (message: any) => {
+		C.FileDownload(content.hash, window.Electron.tmpPath, (message: any) => {
 			if (message.path) {
 				Renderer.send('pathOpen', message.path);
 			};

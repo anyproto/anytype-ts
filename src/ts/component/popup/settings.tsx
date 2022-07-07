@@ -28,7 +28,6 @@ interface State {
 	loading: boolean;
 };
 
-const { dialog } = window.require('@electron/remote');
 const $ = require('jquery');
 
 const Components: any = {
@@ -180,7 +179,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 			options.properties.push('openDirectory');
 		};
 
-		dialog.showOpenDialog(options).then((result: any) => {
+		window.Electron.showOpenDialog(options).then((result: any) => {
 			const files = result.filePaths;
 			if ((files == undefined) || !files.length) {
 				return;

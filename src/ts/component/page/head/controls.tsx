@@ -21,7 +21,6 @@ interface State {
 	loading: boolean;
 };
 
-const { dialog } = window.require('@electron/remote');
 const Constant = require('json/constant.json');
 const $ = require('jquery');
 
@@ -140,7 +139,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 			filters: [ { name: '', extensions: Constant.extension.image } ]
 		};
 		
-		dialog.showOpenDialog(options).then((result: any) => {
+		window.Electron.showOpenDialog(options).then((result: any) => {
 			const files = result.filePaths;
 			if ((files == undefined) || !files.length) {
 				return;

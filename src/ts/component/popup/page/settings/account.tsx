@@ -20,7 +20,6 @@ interface State {
 };
 
 const Constant: any = require('json/constant.json');
-const { dialog } = window.require('@electron/remote');
 
 const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends React.Component<Props, State> {
 
@@ -200,7 +199,7 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 			properties: [ 'openDirectory' ],
 		};
 
-		dialog.showOpenDialog(options).then((result: any) => {
+		window.Electron.showOpenDialog(options).then((result: any) => {
 			const files = result.filePaths;
 			if ((files == undefined) || !files.length) {
 				return;

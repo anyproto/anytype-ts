@@ -10,7 +10,6 @@ interface State {
 	error: string;
 }
 
-const { dialog } = window.require('@electron/remote');
 const Constant = require('json/constant.json');
 
 const PageAuthRegister = observer(class PageAuthRegister extends React.Component<Props, State> {
@@ -77,7 +76,7 @@ const PageAuthRegister = observer(class PageAuthRegister extends React.Component
 			filters: [ { name: '', extensions: Constant.extension.image } ]
 		};
 		
-		dialog.showOpenDialog(options).then((result: any) => {
+		window.Electron.showOpenDialog(options).then((result: any) => {
 			const files = result.filePaths;
 			if ((files == undefined) || !files.length) {
 				return;
@@ -97,7 +96,7 @@ const PageAuthRegister = observer(class PageAuthRegister extends React.Component
 			properties: [ 'openDirectory' ],
 		};
 
-		dialog.showOpenDialog(options).then((result: any) => {
+		window.Electron.showOpenDialog(options).then((result: any) => {
 			const files = result.filePaths;
 			if ((files == undefined) || !files.length) {
 				return;

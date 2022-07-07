@@ -155,7 +155,6 @@ import 'scss/theme/dark/common.scss';
 
 const $ = require('jquery');
 const path = require('path');
-const { dialog } = window.require('@electron/remote');
 const hs = require('history');
 const memoryHistory = hs.createMemoryHistory;
 const history = memoryHistory();
@@ -220,7 +219,7 @@ enableLogging({
 */
 
 Sentry.init({
-	release: window.Electron.version,
+	release: window.Electron.version.app,
 	environment: (window.Electron.isPackaged ? 'production' : 'development'),
 	dsn: Constant.sentry,
 	maxBreadcrumbs: 0,
@@ -337,14 +336,16 @@ class App extends React.Component<Props, State> {
 	
 	init () {
 		Util.init(history);
+
+		dispatcher.init();
 		keyboard.init();
 		analytics.init();
 		
 		this.registerIpcEvents();
 		Renderer.send('appOnLoad');
 
-		console.log('[Process] os version:', process.getSystemVersion(), 'arch:', process.arch);
-		console.log('[App] version:', window.Electron.version, 'isPackaged', window.Electron.isPackaged);
+		console.log('[Process] os version:', window.Electron.version.system, 'arch:', window.Electron.arch);
+		console.log('[App] version:', window.Electron.version.app, 'isPackaged', window.Electron.isPackaged);
 	};
 
 	initStorage () {
@@ -579,7 +580,7 @@ class App extends React.Component<Props, State> {
 		popupStore.open('confirm', {
 			data: {
 				title: 'You are up-to-date',
-				text: Util.sprintf('You are on the latest version: %s', window.Electron.version),
+				text: Util.sprintf('You are on the latest version: %s', window.Electron.version.app),
 				textConfirm: 'Great!',
 				canCancel: false,
 			},
@@ -643,7 +644,7 @@ class App extends React.Component<Props, State> {
 			case 'exportTemplates':
 				options.properties = [ 'openDirectory' ];
 
-				dialog.showOpenDialog(options).then((result: any) => {
+				window.Electron.showOpenDialog(options).then((result: any) => {
 					const files = result.filePaths;
 					if ((files == undefined) || !files.length) {
 						return;
@@ -662,7 +663,7 @@ class App extends React.Component<Props, State> {
 			case 'exportLocalstore':
 				options.properties = [ 'openDirectory' ];
 
-				dialog.showOpenDialog(options).then((result: any) => {
+				window.Electron.showOpenDialog.showOpenDialog(options).then((result: any) => {
 					const files = result.filePaths;
 					if ((files == undefined) || !files.length) {
 						return;

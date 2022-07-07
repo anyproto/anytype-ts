@@ -17,14 +17,10 @@ interface Props extends RouteComponentProps<any> {
 	onOpen?(): void;
 };
 
-const { app } = window.require('@electron/remote');
 const Constant = require('json/constant.json');
 const Errors = require('json/error.json');
 const $ = require('jquery');
 const raf = require('raf');
-const fs = window.require('fs');
-const path = window.require('path');
-const userPath = app.getPath('userData');
 
 const THROTTLE = 20;
 const BUTTON_OFFSET = 10;
@@ -1518,7 +1514,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		const { dataset, rootId } = this.props;
 		const { selection } = dataset || {};
 		const { focused, range } = focus.state;
-		const filePath = path.join(userPath, 'tmp');
+		const filePath = window.Electron.tmpPath;
 		const currentFrom = range.from;
 		const currentTo = range.to;
 
@@ -1559,12 +1555,12 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 					commonStore.progressSet({ status: translate('commonProgress'), current: 0, total: files.length });
 
 					for (let file of files) {
-						const fn = path.join(filePath, file.name);
+						const fn = window.Electron.getPath(filePath, file.name);
 						const reader = new FileReader();
 
 						reader.readAsBinaryString(file); 
 						reader.onloadend = () => {
-							fs.writeFile(fn, reader.result, 'binary', (err: any) => {
+							window.Electron.fs.writeFile(fn, reader.result, 'binary', (err: any) => {
 								if (err) {
 									console.error(err);
 									commonStore.progressSet({ status: translate('commonProgress'), current: 0, total: 0 });
