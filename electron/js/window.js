@@ -30,8 +30,6 @@ class WindowManager {
 			webPreferences: {},
 		}, param);
 
-		param.webPreferences = Object.assign({ nodeIntegration: true }, param.webPreferences);
-
 		let win = new BrowserWindow(param);
 
 		win.isChild = isChild;
@@ -69,7 +67,8 @@ class WindowManager {
 			webPreferences: {
 				nativeWindowOpen: true,
 				contextIsolation: false,
-				spellcheck: false
+				nodeIntegration: true,
+				spellcheck: false,
 			},
 		};
 
