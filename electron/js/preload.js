@@ -16,7 +16,7 @@ contextBridge.exposeInMainWorld('Electron', {
 	platform: os.platform(),
 	arch: process.arch,
 
-	currentWindow: getCurrentWindow(),
+	currentWindow: () => getCurrentWindow(),
 
 	isPackaged: app.isPackaged,
 	userPath,

@@ -124,17 +124,19 @@ function createWindow () {
 	MenuManager.initMenu();
 	MenuManager.initTray();
 
-	ipcMain.handle('Api', (e, cmd, args) => {
+	ipcMain.handle('Api', (e, id, cmd, args) => {
 		const Api = require('./electron/js/api.js');
-		const win = BrowserWindow.fromId(e.sender.id);
+		const win = BrowserWindow.fromId(id);
 
 		if (!win) {
-			console.error('[Api] window is not defined', cmd, e.sender.id);
+			console.error('[Api] window is not defined', cmd, id);
 			return;
 		};
 
 		args = args || [];
 		args.unshift(win);
+
+		console.log(cmd, args);
 
 		if (Api[cmd]) {
 			Api[cmd].apply(Api, args);

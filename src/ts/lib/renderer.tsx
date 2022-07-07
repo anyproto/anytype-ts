@@ -6,7 +6,7 @@ class Renderer {
 		const cmd = args[0];
 		args.shift();
 
-		window.Electron.Api(cmd, args);
+		window.Electron.Api(window.Electron.currentWindow().windowId, cmd, args);
 	};
 
 	on (event: string, callBack: any) {

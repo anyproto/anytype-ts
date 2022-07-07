@@ -34,6 +34,7 @@ class WindowManager {
 
 		win.isChild = isChild;
 		win.route = route;
+		win.windowId = win.id;
 
 		this.list.add(win);
 
