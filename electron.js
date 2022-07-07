@@ -1,5 +1,5 @@
 const electron = require('electron');
-const { app, BrowserWindow, session, nativeTheme } = require('electron');
+const { app, BrowserWindow, session, nativeTheme, ipcMain } = require('electron');
 const { is, fixPathForAsarUnpack } = require('electron-util');
 const path = require('path');
 const os = require('os');
@@ -88,6 +88,11 @@ nativeTheme.on('updated', () => {
 });
 
 function createWindow () {
+	ipcMain.handle('Api', (e, cmd, args) => {
+		console.log(arguments);
+		return 'Api return';
+	});
+
 	mainWindow = WindowManager.createMain({ route: Util.getRouteFromUrl(deeplinkingUrl), isChild: false });
 
 	if (process.env.ELECTRON_DEV_EXTENSIONS) {

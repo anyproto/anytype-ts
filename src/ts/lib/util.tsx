@@ -2,7 +2,6 @@ import { I, keyboard, Renderer } from 'ts/lib';
 import { commonStore, popupStore, menuStore } from 'ts/store';
 import { translate } from '.';
 
-const raf = require('raf');
 const $ = require('jquery');
 const fs = window.require('fs');
 const Constant = require('json/constant.json');

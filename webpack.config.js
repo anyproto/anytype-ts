@@ -12,7 +12,7 @@ module.exports = (env) => {
 	
 		//devtool: 'source-map',
 
-		target: 'electron-renderer',
+		//target: 'electron-renderer',
 
 		optimization: {
 			minimize: false,

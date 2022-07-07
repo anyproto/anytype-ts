@@ -6,9 +6,7 @@ import arrayMove from 'array-move';
 const Service = require('lib/pb/protos/service/service_grpc_web_pb');
 const Commands = require('lib/pb/protos/commands_pb');
 const Events = require('lib/pb/protos/events_pb');
-const path = require('path');
 const Constant = require('json/constant.json');
-const { app, getGlobal } = window.require('@electron/remote');
 
 const SORT_IDS = [ 
 	'objectShow', 
@@ -34,7 +32,7 @@ class Dispatcher {
 	reconnects: number = 0;
 
 	constructor () {
-		let serverAddr = getGlobal('serverAddr');
+		let serverAddr = window.Electron.getGlobal('serverAddr');
 		console.log('[Dispatcher] Server address: ', serverAddr);
 		this.service = new Service.ClientCommandsClient(serverAddr, null, null);
 

@@ -66,9 +66,10 @@ class WindowManager {
 
 			webPreferences: {
 				nativeWindowOpen: true,
-				contextIsolation: false,
+				contextIsolation: true,
 				nodeIntegration: true,
 				spellcheck: false,
+				preload: path.join(Util.electronPath(), 'js', 'preload.js'),
 			},
 		};
 

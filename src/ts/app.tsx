@@ -153,19 +153,9 @@ import 'scss/media/print.scss';
 
 import 'scss/theme/dark/common.scss';
 
-interface RouteElement { path: string; };
-interface Props {};
-
-interface State {
-	loading: boolean;
-};
-
 const $ = require('jquery');
 const path = require('path');
-const { app, dialog, process, BrowserWindow } = window.require('@electron/remote');
-const version = app.getVersion();
-const userPath = app.getPath('userData');
-const fs = window.require('fs');
+const { dialog } = window.require('@electron/remote');
 const hs = require('history');
 const memoryHistory = hs.createMemoryHistory;
 const history = memoryHistory();
@@ -173,6 +163,27 @@ const Constant =  require('json/constant.json');
 const Error = require('json/error.json');
 
 const Routes: RouteElement[] = require('json/route.json');
+
+interface RouteElement { path: string; };
+interface Props {};
+
+interface State {
+	loading: boolean;
+};
+
+declare global {
+	interface Window { 
+		Electron: any;
+		Store: any; 
+		$: any;
+		Lib: any;
+
+		isWebVersion: boolean;
+		Config: any;
+		Renderer: any;
+	}
+};
+
 const rootStore = {
 	commonStore,
 	authStore,
@@ -183,8 +194,15 @@ const rootStore = {
 	popupStore,
 };
 
-console.log('[OS Version]', process.getSystemVersion());
-console.log('[APP Version]', version, 'isPackaged', app.isPackaged, 'Arch', process.arch);
+window.Store = rootStore;
+window.$ = $;
+window.Lib = {
+	I,
+	C,
+	Util,
+	analytics,
+	dispatcher,
+};
 
 /*
 spy(event => {
@@ -202,8 +220,8 @@ enableLogging({
 */
 
 Sentry.init({
-	release: version,
-	environment: (app.isPackaged ? 'production' : 'development'),
+	release: window.Electron.version,
+	environment: (window.Electron.isPackaged ? 'production' : 'development'),
 	dsn: Constant.sentry,
 	maxBreadcrumbs: 0,
 	beforeSend: (e: any) => {
@@ -217,28 +235,6 @@ Sentry.init({
 		})
 	]
 });
-
-declare global {
-	interface Window { 
-		Store: any; 
-		$: any;
-		Lib: any;
-
-		isWebVersion: boolean;
-		Config: any;
-		Renderer: any;
-	}
-};
-
-window.Store = rootStore;
-window.$ = $;
-window.Lib = {
-	I,
-	C,
-	Util,
-	analytics,
-	dispatcher,
-};
 
 class RoutePage extends React.Component<RouteComponentProps, {}> { 
 
@@ -288,7 +284,7 @@ class App extends React.Component<Props, State> {
 	
 	render () {
 		const { loading } = this.state;
-		const isMaximized = BrowserWindow.getFocusedWindow()?.isMaximized();
+		const isMaximized = window.Electron.isMaximized();
 		
 		return (
 			<Router history={history}>
@@ -346,6 +342,9 @@ class App extends React.Component<Props, State> {
 		
 		this.registerIpcEvents();
 		Renderer.send('appOnLoad');
+
+		console.log('[Process] os version:', process.getSystemVersion(), 'arch:', process.arch);
+		console.log('[App] version:', window.Electron.version, 'isPackaged', window.Electron.isPackaged);
 	};
 
 	initStorage () {
@@ -580,7 +579,7 @@ class App extends React.Component<Props, State> {
 		popupStore.open('confirm', {
 			data: {
 				title: 'You are up-to-date',
-				text: Util.sprintf('You are on the latest version: %s', version),
+				text: Util.sprintf('You are on the latest version: %s', window.Electron.version),
 				textConfirm: 'Great!',
 				canCancel: false,
 			},
@@ -678,11 +677,7 @@ class App extends React.Component<Props, State> {
 				break;
 
 			case 'debugSync':
-				C.DebugSync(100, (message: any) => {
-					if (!message.error.code) {
-						this.logToFile('sync', message);
-					};
-				});
+				C.DebugSync(100);
 				break;
 
 			case 'debugTree':
@@ -728,7 +723,7 @@ class App extends React.Component<Props, State> {
 	onMax (e: any) {
 		const node = $(ReactDOM.findDOMNode(this));
 		const icon = node.find('#minmax');
-		const isMaximized = BrowserWindow.getFocusedWindow().isMaximized();
+		const isMaximized = window.Electron.isMaximized();
 
 		icon.removeClass('max window');
 		!isMaximized ? icon.addClass('max') : icon.addClass('window');
@@ -740,20 +735,7 @@ class App extends React.Component<Props, State> {
 	};
 
 	getLogPath () {
-		return path.join(userPath, 'logs');
-	};
-
-	logToFile (name: string, message: any) {
-		const logPath = this.getLogPath();
-		const log = path.join(logPath, `${name}_${FileUtil.date()}.json`);
-
-		try {
-			fs.writeFileSync(log, JSON.stringify(message, null, 5), 'utf-8');
-		} catch(e) {
-			console.log('[logToFile] Failed to save a file');
-		};
-
-		Renderer.send('pathOpen', logPath);
+		return path.join(window.Electron.userPath, 'logs');
 	};
 
 };
