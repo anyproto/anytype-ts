@@ -14,9 +14,7 @@
 		}
 
 		.items { height: 100%;
-			.sectionName.isDivider {
-				color: transparent;
-				padding: 0;
+			.sectionName.isDivider { color: transparent; padding: 0;
 
 				&:after {
 					content: '';
@@ -28,8 +26,7 @@
 				}
 			}
 
-			.sectionName.isDivider.first:after {display: none;
-			}
+			.sectionName.isDivider.first:after {display: none; }
 		}
 
 		.filter { flex-shrink: 0; }
@@ -49,17 +46,9 @@
 			padding-bottom: 0;
 			color: $colorBlack !important;
 
-			.icon {
-				top: 3px;
-				width: 27px;
-				height: 27px;
-				left: 8px;
-			}
+			.icon { top: 3px; width: 27px; height: 27px; left: 8px;}
 
-			.info {
-				padding-left: 25px !important;
-				line-height: 31px;
-			}
+			.info { padding-left: 25px !important; line-height: 31px;}
 		}
 		.item.withDescription.withIcon, .item.add, .item.link {
 			.info { padding-left: 52px; }
