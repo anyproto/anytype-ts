@@ -32,12 +32,12 @@ class Dispatcher {
 	reconnects: number = 0;
 
 	init () {
-		const serverAddr = window.Electron.getGlobal('serverAddr');
+		const address = window.Electron.getGlobal('serverAddress');
 
-		this.service = new Service.ClientCommandsClient(serverAddr, null, null);
+		this.service = new Service.ClientCommandsClient(address, null, null);
 		this.listenEvents();
 
-		console.log('[Dispatcher].init Server address: ', serverAddr);
+		console.log('[Dispatcher].init Server address: ', address);
 	};
 
 	listenEvents () {

@@ -74,7 +74,7 @@ if (process.env.ANYTYPE_USE_SIDE_SERVER) {
 
 function waitForLibraryAndCreateWindows () {
 	waitLibraryPromise.then((res) => {
-		global.serverAddr = Server.getAddress();
+		global.serverAddress = Server.getAddress();
 		createWindow();
 	}, (err) => {
 		electron.dialog.showErrorBox('Error: failed to run server', err.toString());
