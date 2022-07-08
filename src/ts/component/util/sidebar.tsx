@@ -324,16 +324,18 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 
 		const regN = new RegExp(`:${parentId}$`);
 		const regS = new RegExp(`^${parentId}$`);
-		const branch = this.branches.find(it => it.match(regN) || it.match(regS)) || '';
+		const branch = this.branches.find(it => it.match(regN) || it.match(regS)) || parentId;
 
 		for (let item of items) {
-			let branchId = [ branch, item.id ].join(':');
-
-			if (this.branches.includes(branchId)) {
-				continue;
-			};
-
-			let links = this.checkLinks(Relation.getArrayValue(item.links));
+			let links = this.checkLinks(Relation.getArrayValue(item.links)).filter(it => {
+				const branchId = [ branch, it ].join(':');
+				if (this.branches.includes(branchId)) {
+					return false;
+				} else {
+					this.branches.push(branchId);
+					return true;
+				};
+			});
 			let length = links.length;
 			let newItem = {
 				details: item,
@@ -344,7 +346,6 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 				sectionId,
 			};
 			list.push(newItem);
-			this.branches.push(branchId);
 
 			if (!length) {
 				continue;
