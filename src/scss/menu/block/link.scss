@@ -13,7 +13,24 @@
 			.ReactVirtualized__Grid__innerScrollContainer { margin-top: 0px; }
 		}
 
-		.items { height: 100%; }
+		.items { height: 100%;
+			.sectionName.isDivider {
+				color: transparent;
+				padding: 0;
+
+				&:after {
+					content: '';
+					display: block;
+					width: calc(100% - 28px);
+					height: 1px;
+					background-color: #EAE9E0;
+					margin-left: 14px;
+				}
+			}
+
+			.sectionName.isDivider.first:after {display: none;
+			}
+		}
 
 		.filter { flex-shrink: 0; }
 
@@ -26,6 +43,23 @@
 
 		.item.withDescription {
 			.info { padding: 0px; }
+		}
+		.item.withDescription.isButton {
+			padding-top: 0;
+			padding-bottom: 0;
+			color: $colorBlack !important;
+
+			.icon {
+				top: 3px;
+				width: 27px;
+				height: 27px;
+				left: 8px;
+			}
+
+			.info {
+				padding-left: 25px !important;
+				line-height: 31px;
+			}
 		}
 		.item.withDescription.withIcon, .item.add, .item.link {
 			.info { padding-left: 52px; }

@@ -26,19 +26,13 @@
 	}
 }
 
-.preview.top {
+.preview.top,
+.preview.bottom{
 	.head { border-top: 1px solid $colorLightGrey; bottom: 0px; padding-bottom: 11px; }
 	.img { border-radius: 8px 8px 0px 0px; border-top: 0px; }
 }
 
-.preview.bottom {
-	.head { border-bottom: 1px solid $colorLightGrey; top: 0px; padding-top: 11px; }
-}
-
-.preview.withHead.top {
+.preview.withHead.top,
+.preview.withHead.bottom{
 	.content { padding-bottom: 44px; }
-}
-
-.preview.withHead.bottom {
-	.content { padding-top: 44px; }
 }

@@ -15,6 +15,8 @@ const $ = require('jquery');
 const Constant = require('json/constant.json');
 const HEIGHT_SECTION = 28;
 const HEIGHT_ITEM = 56;
+const HEIGHT_BUTTON = 33;
+const HEIGHT_DIVIDER = 1;
 const LIMIT_HEIGHT = 6;
 const LIMIT_LOAD = 100;
 
@@ -66,11 +68,16 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 			if (item.isHidden) {
 				cn.push('isHidden');
 			};
+			if (item.isButton) {
+				cn.push('isButton');
+			};
+
+
 
 			let content = null;
 
 			if (item.isSection) {
-				content = <div className={[ 'sectionName', (param.index == 0 ? 'first' : '') ].join(' ')} style={param.style}>{item.name}</div>;
+				content = <div className={[ 'sectionName', (param.index == 0 ? 'first' : ''), (item.isDivider ? 'isDivider' : '') ].join(' ')} style={param.style}>{item.name}</div>;
 			} else {
 				content = (
 					<MenuItemVertical 
@@ -222,7 +229,6 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 		let items = [].concat(this.items);
 
 		if (filter) {
-			text = `Create object “${filter}”`;
 			items = items.filter((it: any) => {
 				let ret = false;
 				if (it.name && it.name.match(reg)) {
@@ -234,19 +240,29 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 				return ret;
 			});
 		};
-
-		items.unshift({ id: 'add', name: text, icon: 'plus' });
 		
 		let sections: any[] = [
 			{ id: I.MarkType.Object, name: 'Objects', children: items }
 		];
 
 		if (filter) {
-			sections.unshift({ 
-				id: I.MarkType.Link, name: 'Web sites',
-				children: [
-					{ id: 'link', name: filter, icon: 'link' }
-				] 
+			const expUrl = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)?/gi;
+			const expUrlProtocol = /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)?/gi;
+
+			const regexpUrl = new RegExp(expUrl);
+			const regexpUrlProtocol = new RegExp(expUrlProtocol);
+
+			const buttons = [
+				{ id: 'add', name: 'Create new object', icon: 'plus', isButton: true }
+			];
+
+			if (filter.match(regexpUrl) || filter.match(regexpUrlProtocol)) {
+				buttons.unshift({ id: 'link', name: 'Link to website', icon: 'link', isButton: true });
+			}
+
+			sections.push({
+				id: I.MarkType.Link, name: '', isDivider: true,
+				children: buttons
 			});
 		};
 
@@ -260,7 +276,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 		let items: any[] = [];
 		for (let section of sections) {
 			if (withSections) {
-				items.push({ id: section.id, name: section.name, isSection: true });
+				items.push({ id: section.id, name: section.name, isSection: true, isDivider: section.isDivider });
 			};
 			items = items.concat(section.children);
 		};
@@ -370,8 +386,23 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 	};
 
 	getRowHeight (item: any) {
-		return item.isSection ? HEIGHT_SECTION : HEIGHT_ITEM;
+		let h = HEIGHT_ITEM;
+		if (item.isSection) {
+			h = item.isDivider ? HEIGHT_DIVIDER : HEIGHT_SECTION;
+		}
+		if (item.isButton) {
+			h = HEIGHT_BUTTON
+		}
+		return h;
 	};
+
+	getListHeight (items: any) {
+		let h = 0;
+		for (let item of items) {
+			h += this.getRowHeight(item);
+		}
+		return h;
+	}
 
 	resize () {
 		const { getId, position, param } = this.props;
@@ -380,7 +411,10 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 		const items = this.getItems(true);
 		const obj = $(`#${getId()} .content`);
 		const offset = 6;
-		let height = Math.max(HEIGHT_ITEM * 3 + offset, Math.min(HEIGHT_ITEM * LIMIT_HEIGHT, items.length * HEIGHT_ITEM + offset));
+
+		const maxObjHeight = HEIGHT_ITEM * LIMIT_HEIGHT;
+		const midObjHeight = this.getListHeight(items) + offset + HEIGHT_ITEM;
+		let height = Math.min(maxObjHeight, midObjHeight);
 
 		if (!filter.length) {
 			obj.addClass('initial');
