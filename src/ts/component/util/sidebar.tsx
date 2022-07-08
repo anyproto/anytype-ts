@@ -26,7 +26,6 @@ const MAX_DEPTH = 100;
 const LIMIT = 20;
 const HEIGHT = 28;
 const SNAP_THRESHOLD = 30;
-
 const SKIP_TYPES_LOAD = [
 	Constant.typeId.space,
 ];
@@ -49,6 +48,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 	cache: any = {};
 	subId: string = '';
 	subscriptionIds: any = {};
+	branches: string[] = [];
 
 	constructor (props: any) {
 		super(props);
@@ -322,7 +322,17 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 			return list;
 		};
 
+		const regN = new RegExp(`:${parentId}$`);
+		const regS = new RegExp(`^${parentId}$`);
+		const branch = this.branches.find(it => it.match(regN) || it.match(regS)) || '';
+
 		for (let item of items) {
+			let branchId = [ branch, item.id ].join(':');
+
+			if (this.branches.includes(branchId)) {
+				continue;
+			};
+
 			let links = this.checkLinks(Relation.getArrayValue(item.links));
 			let length = links.length;
 			let newItem = {
@@ -334,6 +344,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 				sectionId,
 			};
 			list.push(newItem);
+			this.branches.push(branchId);
 
 			if (!length) {
 				continue;
@@ -353,6 +364,8 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 	getItems () {
 		let sections = this.getSections();
 		let items: any[] = [];
+
+		this.branches = [];
 
 		sections.forEach((section: any) => {
 			const children = this.getRecords(dbStore.getSubId(Constant.subIds.sidebar, section.id));
@@ -378,6 +391,8 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 			};
 			item.isOpen = Storage.checkToggle(Constant.subIds.sidebar, this.getId(item));
 			items.push(item);
+
+			this.branches.push(item.id);
 
 			if (item.isOpen) {
 				items = this.unwrap(section.id, items, section.id, children, 0);
