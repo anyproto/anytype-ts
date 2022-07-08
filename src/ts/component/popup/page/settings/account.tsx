@@ -40,8 +40,6 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 		this.onDelete = this.onDelete.bind(this);
 		this.onDeleteCancel = this.onDeleteCancel.bind(this);
 		this.onLocationMove = this.onLocationMove.bind(this);
-		this.onLocationEnter = this.onLocationEnter.bind(this);
-		this.onLocationLeave = this.onLocationLeave.bind(this);
 	};
 
 	render () {
@@ -91,13 +89,9 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 					<Label className="sectionName" text="Account" />
 
 					{canMove ? (
-						<div id="row-location" className="row flex location" onClick={this.onLocationMove}>
-							<div className="side left">
-								<Label text={translate('popupSettingsAccountMoveTitle')} />
-							</div>
-							<div className="side right" onMouseEnter={this.onLocationEnter} onMouseLeave={this.onLocationLeave}>
-								<Label text={account.info.localStoragePath} />
-							</div>
+						<div id="row-location" className="row location" onClick={this.onLocationMove}>
+							<Label text={translate('popupSettingsAccountMoveTitle')} />
+							<Icon className="arrow" />
 						</div>
 					) : ''}
 
@@ -192,8 +186,11 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 	};
 
 	onLocationMove (e: any) {
+		const { account } = authStore;
 		const { setLoading } = this.props;
+		const accountPath = account.info.localStoragePath.replace(new RegExp(account.id + '\/?$'), '');
 		const options = { 
+			defaultPath: accountPath,
 			properties: [ 'openDirectory' ],
 		};
 
@@ -213,16 +210,6 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 				setLoading(false);
 			});
 		});
-	};
-
-	onLocationEnter (e: any) {
-		const { account } = authStore;
-
-		Util.tooltipShow(account.info.localStoragePath, $(e.currentTarget), I.MenuDirection.Center, I.MenuDirection.Bottom);
-	};
-
-	onLocationLeave (e: any) {
-		Util.tooltipHide(false);
 	};
 
 });

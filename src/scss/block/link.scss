@@ -14,7 +14,7 @@
 			right: 16px; top: 21px; z-index: 1; background: $colorLightGrey; @include text-small; display: none;
 		}
 
-		.focusable { border-radius: 12px; }
+		.focusable.br { border-radius: 12px; }
 
         .loading, .deleted { color: $colorMediumGrey; }
         .loading, .deleted {

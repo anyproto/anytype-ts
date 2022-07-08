@@ -428,7 +428,7 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 			} else {
 				const el = this.getElement();
 				if (!el || !el.length) {
-					console.log('[Menu.position]', id, 'element not found', element);
+					console.log('[Menu].position', id, 'element not found', element);
 					return;
 				};
 

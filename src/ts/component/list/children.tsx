@@ -22,7 +22,7 @@ const ListChildren = observer(class ListChildren extends React.Component<Props, 
 	};
 	
 	render () {
-		const { onMouseMove, onMouseLeave, onResizeStart, rootId, block, index, readonly, className } = this.props;
+		const { onMouseMove, onMouseLeave, onResizeStart, rootId, block, index, readonly } = this.props;
 		const childrenIds = blockStore.getChildrenIds(rootId, block.id);
 		const children = blockStore.getChildren(rootId, block.id);
 		const length = childrenIds.length;
@@ -39,6 +39,7 @@ const ListChildren = observer(class ListChildren extends React.Component<Props, 
 			};
 		};
 		
+		const className = String(this.props.className || '').replace(/first|last/g, '');
 		const cn = [ 'children', (block.isTextToggle() ? 'canToggle' : '') ];
 		
 		let ColResize: any = (): any => null;
@@ -73,7 +74,7 @@ const ListChildren = observer(class ListChildren extends React.Component<Props, 
 					if (i == length - 1) {
 						cn.push('last');
 					};
-					
+
 					return (
 						<React.Fragment key={item.id}>
 							{(i > 0) && isRow ? <ColResize index={i} /> : ''}

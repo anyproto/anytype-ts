@@ -208,10 +208,14 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 			},
 			data: {
 				onSelect: (icon: string) => {
-					DataUtil.pageSetIcon(rootId, icon, '');
+					DataUtil.pageSetIcon(rootId, icon, '', () => {
+						menuStore.update('smile', { element: `#block-icon-${rootId}` });
+					});
 				},
 				onUpload (hash: string) {
-					DataUtil.pageSetIcon(rootId, '', hash);
+					DataUtil.pageSetIcon(rootId, '', hash, () => {
+						menuStore.update('smile', { element: `#block-icon-${rootId}` });
+					});
 				},
 			}
 		});

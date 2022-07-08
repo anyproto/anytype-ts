@@ -45,7 +45,6 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<Props
 						<div className="textareaWrap">
 							<Textarea ref={(ref: any) => this.phraseRef = ref} placeholder={translate('authLoginPhrase')} onKeyDown={this.onKeyDown} />
 						</div>
-
 						<div className="buttons">
 							<Button type="input" text={translate('authLoginLogin')} />
 							<Button text={translate('authLoginBack')} color="grey" onClick={this.onCancel} />

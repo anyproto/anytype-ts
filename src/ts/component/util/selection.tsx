@@ -270,13 +270,9 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			};
 		};
 		
-		let ids = this.get(I.SelectType.Block, true);
-		if (ids.length > 0) {
-			menuStore.close('blockContext');
-			focus.clear(true);
-		};
-		
 		scrollOnMove.onMouseUp(e);
+
+		this.checkSelected(I.SelectType.Block);
 		this.clearState();
 	};
 
@@ -362,7 +358,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	
 	checkEachNode (e: any, rect: any, item: any) {
 		const id = String(item.attr('data-id') || '');
-		const type = String(item.attr('data-type') || '');
+		const type = item.attr('data-type');
 
 		if (!id || !type) {
 			return;
@@ -478,12 +474,12 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		this.clearState();
 	};
 	
-	set (type: any, ids: string[]) {
+	set (type: I.SelectType, ids: string[]) {
 		this.ids.set(type, Util.arrayUnique(ids || []));
 		this.renderSelection();
 	};
 	
-	get (type: any, withChildren?: boolean): any {
+	get (type: I.SelectType, withChildren?: boolean): any {
 		let ids = Util.objectCopy(this.ids.get(type) || []);
 
 		if (type == I.SelectType.Block) {
@@ -497,6 +493,16 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		};
 
 		return ids;
+	};
+
+	checkSelected (type: I.SelectType) {
+		let ids = this.get(type, true);
+		if (!ids.length) {
+			return;
+		};
+
+		focus.clear(true);
+		menuStore.close('blockContext');
 	};
 
 	getChildrenIds (id: string, ids: string[]) {

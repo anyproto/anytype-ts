@@ -916,11 +916,11 @@ class Dispatcher {
 
 				if (debug && !SKIP_IDS.includes(type)) {
 					const times = [
-						'Middle time:', middleTime + 'ms',
-						'Render time:', renderTime + 'ms',
-						'Total time:', totalTime + 'ms',
+						'Middle:', middleTime + 'ms',
+						'Render:', renderTime + 'ms',
+						'Total:', totalTime + 'ms',
 					];
-					console.log(`%cCallback.${type}`, 'font-weight: bold; color: green;', times.join('\t'));
+					console.log(`%cTimes.${type}`, 'font-weight: bold; color: darkgreen;', times.join('\t'));
 				};
 			});
 		} catch (err) {
@@ -936,15 +936,16 @@ class Dispatcher {
 			const buffer = inputObj.serializeBinary();
 			const handler = (item: any) => {
 				try {
-					let message = request.b(item.data.buffer);
+					let message = request.g(item.data.buffer);
 					if (message) {
 						callBack(null, message);
+					} else {
+						console.error('[napiCall]: message is undefined', method);
 					};
 				} catch (err) {
-					console.error(err);
+					console.error('[napiCall]: ', err);
 				};
 			};
-
 			bindings.sendCommand(method, buffer, handler);
 		};
 	/// #endif

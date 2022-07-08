@@ -141,14 +141,14 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 			targetId = String(data.id || '');
 			target = blockStore.getLeaf(rootId, targetId);
 		};
-		
+
 		if (isFileDrop) {
 			let paths: string[] = [];
 			for (let file of dt.files) {
 				paths.push(file.path);
 			};
 
-			console.log('[dragProvider.onDrop] paths', paths);
+			console.log('[DragProvider].onDrop paths', paths);
 
 			C.FileDrop(rootId, targetId, position, paths, () => {
 				if (target && target.isTextToggle() && (position == I.BlockPosition.InnerFirst)) {
@@ -157,7 +157,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 			});
 		} else
 		if (data && this.canDrop && (position != I.BlockPosition.None)) {
-			this.onDrop(e, data.dropType, data.rootId, targetId, position);
+			this.onDrop(e, data.dropType, rootId, targetId, position);
 		};
 
 		this.clearState();
@@ -196,7 +196,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 		e.stopPropagation();
 		focus.clear(true);
 
-		console.log('[dragProvider.onDragStart]', type, ids);
+		console.log('[DragProvider].onDragStart', type, ids);
 
 		this.top = container.scrollTop();
 		this.refLayer.show(rootId, type, ids, component);
@@ -276,8 +276,8 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 			selection.preventClear(false);
 		};
 
-		console.log('[dragProvider.onDrop] src type:', this.dropType, 'dst type:', type);
-		console.log('[dragProvider.onDrop] target:', targetId, 'ids:', this.ids, 'position:', position);
+		console.log('[DragProvider].onDrop src type:', this.dropType, 'dst type:', type);
+		console.log('[DragProvider].onDrop target:', targetId, 'ids:', this.ids, 'position:', position);
 
 		let contextId = rootId;
 		let targetContextId = rootId;
@@ -289,19 +289,18 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 				const target = blockStore.getLeaf(rootId, targetId);
 				
 				if (!target) {
-					console.log('[dragProvider.onDrop] No target', target);
+					console.log('[DragProvider].onDrop No target', target);
 					break;
 				};
 
 				isToggle = target.isTextToggle();
 		
 				if (target.isLink() && (position == I.BlockPosition.InnerFirst)) {
-					contextId = keyboard.getRootId();
 					targetContextId = target.content.targetBlockId;
 					targetId = '';
 
 					if (contextId == targetContextId) {
-						console.log('[dragProvider.onDrop] Contexts are equal');
+						console.log('[DragProvider].onDrop Contexts are equal');
 						return;
 					};
 				} else {
@@ -322,6 +321,8 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 				targetId = '';
 				break;
 		};
+
+		console.log('[DragProvider].onDrop from:', contextId, 'to: ', targetContextId);
 
 		// Source type
 		switch (this.dropType) {
