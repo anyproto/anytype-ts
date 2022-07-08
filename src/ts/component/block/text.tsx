@@ -1079,7 +1079,6 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		const { rootId, block } = this.props;
 		const { content } = block;
 		const value = this.getValue();
-		const check = Storage.get('writing');
 
 		if (content.style == I.TextStyle.Code) {
 			marks = [];
@@ -1097,11 +1096,6 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		DataUtil.blockSetText(rootId, block.id, value, marks, update, (message: any) => {
 			if (callBack) {
 				callBack();
-			};
-
-			if (!check) {
-				analytics.event('Writing');
-				Storage.set('writing', 1);
 			};
 		});
 	};

@@ -896,11 +896,11 @@ class Dispatcher {
 
 				if (debug && !SKIP_IDS.includes(type)) {
 					const times = [
-						'Middle time:', middleTime + 'ms',
-						'Render time:', renderTime + 'ms',
-						'Total time:', totalTime + 'ms',
+						'Middle:', middleTime + 'ms',
+						'Render:', renderTime + 'ms',
+						'Total:', totalTime + 'ms',
 					];
-					console.log(`%cCallback.${type}`, 'font-weight: bold; color: green;', times.join('\t'));
+					console.log(`%cTimes.${type}`, 'font-weight: bold; color: darkgreen;', times.join('\t'));
 				};
 			});
 		} catch (err) {

@@ -652,7 +652,6 @@ class Util {
 		this.previewHide(false);
 		
 		node.addClass('isPreviewHover');
-		this.textStyle(node, { textOpacity: 1, borderOpacity: 1 });
 
 		window.clearTimeout(this.timeoutPreviewShow);
 		this.timeoutPreviewShow = window.setTimeout(() => {
@@ -662,15 +661,10 @@ class Util {
 	};
 	
 	previewHide (force: boolean) {
-		const elements = $('.isPreviewHover');
-
 		this.isPreviewOpen = false;
 		window.clearTimeout(this.timeoutPreviewShow);
 
-		elements.each((i: number, item: any) => {
-			this.textStyle($(item), { textOpacity: 0.65, borderOpacity: 0.35 });
-		});
-		elements.removeClass('isPreviewHover');
+		$('.isPreviewHover').removeClass('isPreviewHover');
 
 		const obj = $('#preview');
 		if (force) {

@@ -201,6 +201,7 @@ window.Lib = {
 	Util,
 	analytics,
 	dispatcher,
+	keyboard,
 };
 
 /*
