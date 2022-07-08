@@ -27,7 +27,10 @@ contextBridge.exposeInMainWorld('Electron', {
 	getGlobal: (key) => getGlobal(key),
 	showOpenDialog: dialog.showOpenDialog,
 
-	fs,
+	fs: {
+		writeFile: fs.writeFile,
+		statSync: fs.statSync,
+	},
 	readChunk,
 	fileType,
 
