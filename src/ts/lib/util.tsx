@@ -655,6 +655,8 @@ class Util {
 		
 		this.previewHide(false);
 		
+		node.addClass('isPreviewHover');
+
 		window.clearTimeout(this.timeoutPreviewShow);
 		this.timeoutPreviewShow = window.setTimeout(() => {
 			this.isPreviewOpen = true;
@@ -666,12 +668,14 @@ class Util {
 		this.isPreviewOpen = false;
 		window.clearTimeout(this.timeoutPreviewShow);
 
+		$('.isPreviewHover').removeClass('isPreviewHover');
+
 		const obj = $('#preview');
 		if (force) {
 			obj.hide();
 			return;
 		};
-		
+
 		obj.css({ opacity: 0 });
 		this.timeoutPreviewHide = window.setTimeout(() => { 
 			obj.hide();
@@ -679,6 +683,22 @@ class Util {
 
 			commonStore.previewClear();
 		}, 250);
+	};
+
+	textStyle (obj: any, param: any) {
+		const color = String(obj.css('color') || '').replace(/\s/g, '');
+		const rgb = color.match(/rgba?\(([^\(]+)\)/);
+
+		if (!rgb || !rgb.length) {
+			return;
+		};
+
+		const [ r, g, b ] = rgb[1].split(',');
+
+		obj.css({ 
+			color: `rgba(${[ r, g, b, param.textOpacity ].join(',')})`, 
+			borderColor: `rgba(${[ r, g, b, param.borderOpacity ].join(',')}` 
+		});
 	};
 	
 	lbBr (s: string) {

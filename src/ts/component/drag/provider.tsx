@@ -11,6 +11,7 @@ interface Props {
 };
 
 const $ = require('jquery');
+const raf = require('raf');
 const Constant = require('json/constant.json');
 
 const OFFSET = 100;
@@ -24,9 +25,9 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 	position: I.BlockPosition = I.BlockPosition.None;
 	hoverData: any = null;
 	canDrop: boolean = false;
-	timeoutHover: number = 0;
 	init: boolean = false;
 	top: number = 0;
+	frame: number = 0;
 
 	objects: any = null;
 	objectData: Map<string, any> = new Map();
@@ -62,8 +63,8 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 		const rootId = keyboard.getRootId();
 
 		this.init = true;
-		this.objects = node.find('.dropTarget.root-' + rootId);
-
+		this.objects = node.find('.dropTarget.isDroppable.root-' + rootId);
+		
 		this.objects.each((i: number, el: any) => {
 			const item = $(el);
 			const data = item.data();
@@ -140,14 +141,14 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 			targetId = String(data.id || '');
 			target = blockStore.getLeaf(rootId, targetId);
 		};
-		
+
 		if (isFileDrop) {
 			let paths: string[] = [];
 			for (let file of dt.files) {
 				paths.push(file.path);
 			};
 
-			console.log('[dragProvider.onDrop] paths', paths);
+			console.log('[DragProvider].onDrop paths', paths);
 
 			C.FileDrop(rootId, targetId, position, paths, () => {
 				if (target && target.isTextToggle() && (position == I.BlockPosition.InnerFirst)) {
@@ -156,7 +157,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 			});
 		} else
 		if (data && this.canDrop && (position != I.BlockPosition.None)) {
-			this.onDrop(e, data.dropType, data.rootId, targetId, position);
+			this.onDrop(e, data.dropType, rootId, targetId, position);
 		};
 
 		this.clearState();
@@ -195,7 +196,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 		e.stopPropagation();
 		focus.clear(true);
 
-		console.log('[dragProvider.onDragStart]', type, ids);
+		console.log('[DragProvider].onDragStart', type, ids);
 
 		this.top = container.scrollTop();
 		this.refLayer.show(rootId, type, ids, component);
@@ -275,8 +276,8 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 			selection.preventClear(false);
 		};
 
-		console.log('[dragProvider.onDrop] src type:', this.dropType, 'dst type:', type);
-		console.log('[dragProvider.onDrop] target:', targetId, 'ids:', this.ids, 'position:', position);
+		console.log('[DragProvider].onDrop src type:', this.dropType, 'dst type:', type);
+		console.log('[DragProvider].onDrop target:', targetId, 'ids:', this.ids, 'position:', position);
 
 		let contextId = rootId;
 		let targetContextId = rootId;
@@ -288,19 +289,18 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 				const target = blockStore.getLeaf(rootId, targetId);
 				
 				if (!target) {
-					console.log('[dragProvider.onDrop] No target', target);
+					console.log('[DragProvider].onDrop No target', target);
 					break;
 				};
 
 				isToggle = target.isTextToggle();
 		
 				if (target.isLink() && (position == I.BlockPosition.InnerFirst)) {
-					contextId = keyboard.getRootId();
 					targetContextId = target.content.targetBlockId;
 					targetId = '';
 
 					if (contextId == targetContextId) {
-						console.log('[dragProvider.onDrop] Contexts are equal');
+						console.log('[DragProvider].onDrop Contexts are equal');
 						return;
 					};
 				} else {
@@ -321,6 +321,8 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 				targetId = '';
 				break;
 		};
+
+		console.log('[DragProvider].onDrop from:', contextId, 'to: ', targetContextId);
 
 		// Source type
 		switch (this.dropType) {
@@ -403,6 +405,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 		let isText = false;
 		let isFeatured = false;
 		let isType = false;
+		let isTable = false;
 
 		if (this.hoverData) {
 			this.canDrop = true;
@@ -431,6 +434,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 				isText = type == I.BlockType.Text;
 				isFeatured = type == I.BlockType.Featured;
 				isType = type == I.BlockType.Type;
+				isTable = type == I.BlockType.Table;
 			};
 
 			initVars();
@@ -509,6 +513,10 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 				recalcPosition();
 			};
 
+			if (isTable && [ I.BlockPosition.Left, I.BlockPosition.Right ].includes(this.position)) {
+				recalcPosition();
+			};
+
 			// You can't drop on Featured or Type
 			if (isFeatured || isType) {
 				this.setPosition(I.BlockPosition.None);
@@ -556,13 +564,16 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 			};
 		};
 
-		window.clearTimeout(this.timeoutHover);
-		if ((this.position != I.BlockPosition.None) && this.canDrop && this.hoverData) {
-			this.clearStyle();
-			obj.addClass('isOver ' + this.getDirectionClass(this.position));
-		} else {
-			this.timeoutHover = window.setTimeout(() => { this.clearStyle(); }, 10);
+		if (this.frame) {
+			raf.cancel(this.frame);
 		};
+
+		this.frame = raf(() => {
+			this.clearStyle();
+			if ((this.position != I.BlockPosition.None) && this.canDrop && this.hoverData) {
+				obj.addClass('isOver ' + this.getDirectionClass(this.position));
+			};
+		});
 	};
 
 	unbind () {

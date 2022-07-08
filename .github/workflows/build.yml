@@ -26,7 +26,7 @@ jobs:
       - name: Install Node.js, NPM and Yarn
         uses: actions/setup-node@v1
         with:
-          node-version: 16.13.2
+          node-version: 16.15.1
 
       - name: Install Webpack
         run: npm install --save-dev webpack-cli

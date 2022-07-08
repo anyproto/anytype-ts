@@ -366,7 +366,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		const items = this.getItems();
 		const obj = $(`#${getId()} .content`);
 		const offset = noFilter ? 16 : 58;
-		const height = Math.max(HEIGHT * 2, Math.min(280, items.length * HEIGHT + offset));
+		const height = Math.max(HEIGHT * 2, Math.min(360, items.length * HEIGHT + offset));
 
 		obj.css({ height: height });
 		position();

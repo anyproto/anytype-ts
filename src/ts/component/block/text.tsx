@@ -6,7 +6,6 @@ import { I, C, keyboard, Key, Util, DataUtil, Mark, focus, Storage, translate, a
 import { observer } from 'mobx-react';
 import { getRange } from 'selection-ranges';
 import { commonStore, blockStore, detailStore, menuStore } from 'ts/store';
-import { throttle } from 'lodash';
 import * as Prism from 'prismjs';
 
 interface Props extends I.BlockComponent, RouteComponentProps<any> {
@@ -64,6 +63,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		this.onPaste = this.onPaste.bind(this);
 		this.onInput = this.onInput.bind(this);
 		this.onToggleWrap = this.onToggleWrap.bind(this);
+		this.onCopy = this.onCopy.bind(this);
 		this.onSelectIcon = this.onSelectIcon.bind(this);
 		this.onUploadIcon = this.onUploadIcon.bind(this);
 
@@ -142,6 +142,10 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 								<Icon className="codeWrap" />
 								<div className="txt">{fields.isUnwrapped ? 'Wrap' : 'Unwrap'}</div>
 							</div>
+							<div className="btn" onClick={this.onCopy}>
+								<Icon className="copy" />
+								<div className="txt">Copy</div>
+							</div>
 						</div>
 					</React.Fragment>
 				);
@@ -189,7 +193,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 					onDragStart={(e: any) => { e.preventDefault(); }}
 				/>
 			);
-		}
+		};
 		
 		return (
 			<div className="flex">
@@ -575,10 +579,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 	};
 
 	textStyle (obj: any) {
-		const color = String(obj.css('color') || '').replace(/\s/g, '');
-		const rgb = color.match(/rgb\(([^\(]+)\)/)[1];
-
-		obj.css({ borderColor: `rgba(${rgb},0.35)`, color: `rgba(${rgb},0.65)` });
+		Util.textStyle(obj, { textOpacity: 0.65, borderOpacity: 0.35 });
 	};
 
 	emojiParam (style: I.TextStyle) {
@@ -686,7 +687,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			};
 			
 			DataUtil.blockSetText(rootId, block.id, value, this.marks, true, () => {
-				onKeyDown(e, value, this.marks, range);
+				onKeyDown(e, value, this.marks, range, this.props);
 			});
 
 			ret = true;
@@ -703,7 +704,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 				};
 
 				DataUtil.blockSetText(rootId, block.id, value, this.marks, true, () => { 
-					onKeyDown(e, value, this.marks, range);
+					onKeyDown(e, value, this.marks, range, this.props);
 				});
 				ret = true;
 			});
@@ -726,7 +727,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			} else {
 				this.setText(this.marks, true, () => {
 					focus.apply();
-					onKeyDown(e, value, this.marks, range);
+					onKeyDown(e, value, this.marks, range, this.props);
 				});
 			};
 
@@ -744,7 +745,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 
 				this.marks = Mark.checkRanges(value, parsed.marks);
 				DataUtil.blockSetText(rootId, block.id, value, this.marks, true, () => {
-					onKeyDown(e, value, this.marks, range);
+					onKeyDown(e, value, this.marks, range, this.props);
 				});
 				ret = true;
 			};
@@ -786,13 +787,13 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			this.placeholderHide();
 		};
 		
-		onKeyDown(e, value, this.marks, range);
+		onKeyDown(e, value, this.marks, range, this.props);
 	};
 	
 	onKeyUp (e: any) {
 		e.persist();
 		
-		const { rootId, block, onMenuAdd } = this.props;
+		const { rootId, block, onMenuAdd, isInsideTable } = this.props;
 		const { filter } = commonStore;
 		const { id, content } = block;
 		const range = this.getRange();
@@ -800,15 +801,18 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		const Markdown = {
 			'[\\*\\-\\+]':	 I.TextStyle.Bulleted,
 			'\\[\\]':		 I.TextStyle.Checkbox,
-			'1\\.':			 I.TextStyle.Numbered,
 			'#':			 I.TextStyle.Header1,
 			'##':			 I.TextStyle.Header2,
 			'###':			 I.TextStyle.Header3,
-			'\\>':			 I.TextStyle.Toggle,
 			'"':			 I.TextStyle.Quote,
 			'```':			 I.TextStyle.Code,
 		};
 		const Length: any = {};
+
+		if (!isInsideTable) {
+			Markdown['\\>'] = I.TextStyle.Toggle;
+			Markdown['1\\.'] = I.TextStyle.Numbered;
+		};
 
 		Length[I.TextStyle.Bulleted] = 1;
 		Length[I.TextStyle.Checkbox] = 2;
@@ -869,7 +873,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		};
 
 		// Open add menu
-		if (canOpenMenuAdd) { 
+		if (canOpenMenuAdd && !isInsideTable) { 
 			DataUtil.blockSetText(rootId, block.id, value, this.marks, true, () => {
 				onMenuAdd(id, Util.stringCut(value, range.from - 1, range.from), range, this.marks);
 			});
@@ -901,7 +905,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			cmdParsed = true;
 		};
 		
-		if (newBlock.type) {
+		if (!isInsideTable && newBlock.type) {
 			C.BlockCreate(rootId, id, position, newBlock, () => {
 				this.setValue('');
 				
@@ -1008,6 +1012,8 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 				element: el,
 				rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
 				offsetX: rect ? 0 : Constant.size.blockMenu,
+				noFlipX: false,
+				noFlipY: false,
 				onClose: () => {
 					this.preventSaveOnBlur = false;
 				},
@@ -1113,14 +1119,20 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 	};
 	
 	onFocus (e: any) {
+		const { onFocus } = this.props;
+
 		e.persist();
 
 		this.placeholderCheck();
 		keyboard.setFocus(true);
+
+		if (onFocus) {
+			onFocus(e);
+		};
 	};
 	
 	onBlur (e: any) {
-		const { block } = this.props;
+		const { block, onBlur } = this.props;
 
 		if (!block.isTextTitle() && !block.isTextDescription()) {
 			this.placeholderHide();
@@ -1131,6 +1143,10 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 
 		if (!this.preventSaveOnBlur) {
 			this.setText(this.marks, true);
+		};
+
+		if (onBlur) {
+			onBlur(e);
 		};
 
 		let key = '';
@@ -1201,9 +1217,24 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			{ blockId: id, fields: { ...fields, isUnwrapped: !fields.isUnwrapped } },
 		]);
 	};
+
+	onCopy (e: any) {
+		const { rootId, block } = this.props;
+
+		C.BlockCopy(rootId, [ block ], { from: 0, to: 0 }, (message: any) => {
+			Util.clipboardCopy({
+				text: message.textSlot,
+				html: message.htmlSlot,
+				anytype: {
+					range: { from: 0, to: 0 },
+					blocks: [ block ],
+				},
+			});
+		});
+	};
 	
 	onSelect (e: any) {
-		const { rootId, dataset, block, isPopup } = this.props;
+		const { rootId, dataset, block, isPopup, isInsideTable } = this.props;
 		const ids = DataUtil.selectionGet('', false, this.props);
 
 		focus.set(block.id, this.getRange());
@@ -1253,6 +1284,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 					dataset: dataset,
 					range: { from: currentFrom, to: currentTo },
 					marks: Util.objectCopy(this.marks),
+					isInsideTable,
 					onChange: (marks: I.Mark[]) => {
 						this.marks = marks;
 						this.setMarks(marks);
@@ -1268,9 +1300,12 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 	};
 	
 	onMouseDown (e: any) {
-		const { dataset, block } = this.props;
+		const { dataset, block, isInsideTable } = this.props;
 		const { selection } = dataset || {};
-		const { id } = block;
+
+		if (isInsideTable) {
+			return;
+		};
 		
 		window.clearTimeout(this.timeoutClick);
 
@@ -1280,7 +1315,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			e.stopPropagation();
 			
 			this.clicks = 0;
-			selection.set(I.SelectType.Block, [ id ]);
+			selection.set(I.SelectType.Block, [ block.id ]);
 			focus.clear(true);
 			menuStore.close('blockContext');
 			window.clearTimeout(this.timeoutContext);

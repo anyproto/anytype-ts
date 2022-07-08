@@ -31,7 +31,7 @@ import MenuBlockBackground from './block/background';
 import MenuBlockCover from './block/cover';
 import MenuBlockAction from './block/action';
 import MenuBlockMore from './block/more';
-import MenuBlockAlign from './block/align';
+import MenuBlockHAlign from './block/align';
 import MenuBlockLink from './block/link';
 import MenuBlockMention from './block/mention';
 import MenuBlockLayout from './block/layout';
@@ -106,7 +106,7 @@ const Components: any = {
 	blockColor:				 MenuBlockColor,
 	blockBackground:		 MenuBlockBackground,
 	blockMore:				 MenuBlockMore,
-	blockAlign:				 MenuBlockAlign,
+	blockAlign:				 MenuBlockHAlign,
 	blockLink:				 MenuBlockLink,
 	blockCover:				 MenuBlockCover,
 	blockMention:			 MenuBlockMention,
@@ -168,7 +168,7 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 
 	render () {
 		const { id, param } = this.props;
-		const { element, tabs, type, vertical, horizontal, passThrough, noDimmer, withArrow } = param;
+		const { element, tabs, type, vertical, horizontal, passThrough, noDimmer, component, withArrow } = param;
 		const { data } = param;
 		
 		let tab = '';
@@ -182,11 +182,16 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 
 		const cn = [ 
 			'menu', 
-			menuId,
 			(type == I.MenuType.Horizontal ? 'horizontal' : 'vertical'),
 			'v' + vertical,
 			'h' + horizontal
 		];
+		if (component) {
+			cn.push(Util.toCamelCase('menu-' + component));
+		} else {
+			cn.push(menuId);
+		};
+
 		const cd = [];
 
 		if (tab) {
@@ -194,6 +199,9 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 			if (item) {
 				Component = Components[item.component];
 			};
+		} else 
+		if (component) {
+			Component = Components[component];
 		} else {
 			Component = Components[id];
 		};
@@ -422,7 +430,7 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 			} else {
 				const el = this.getElement();
 				if (!el || !el.length) {
-					console.log('[Menu.position]', id, 'element not found', element);
+					console.log('[Menu].position', id, 'element not found', element);
 					return;
 				};
 
@@ -680,9 +688,30 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 		const l = items.length;
 		const item = items[this.ref.n];
 
-		keyboard.shortcut('arrowup', e, (pressed: string) => {
-			e.preventDefault();
-			
+		const onArrowDown = () => {
+			this.ref.n++;
+			if (this.ref.n > l - 1) {
+				this.ref.n = 0;
+			};
+
+			this.setActive(null, true);
+
+			let item = items[this.ref.n];
+			if (!item) {
+				return;
+			};
+
+			if (item.isDiv) {
+				onArrowDown();
+				return;
+			};
+
+			if (!item.arrow && this.ref.onOver) {
+				this.ref.onOver(e, item);
+			};
+		};
+
+		const onArrowUp = () => {
 			this.ref.n--;
 			if (this.ref.n < 0) {
 				if ((this.ref.n == -1) && refInput) {
@@ -696,24 +725,28 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 			this.setActive(null, true);
 
 			let item = items[this.ref.n];
-			if (item && !item.arrow && this.ref.onOver) {
+			if (!item) {
+				return;
+			};
+
+			if (item.isDiv) {
+				onArrowUp();
+				return;
+			};
+
+			if (!item.arrow && this.ref.onOver) {
 				this.ref.onOver(e, item);
 			};
+		};
+
+		keyboard.shortcut('arrowup', e, (pressed: string) => {
+			e.preventDefault();
+			onArrowUp();
 		});
 
 		keyboard.shortcut('arrowdown', e, (pressed: string) => {
 			e.preventDefault();
-			this.ref.n++;
-			if (this.ref.n > l - 1) {
-				this.ref.n = 0;
-			};
-
-			this.setActive(null, true);
-
-			let item = items[this.ref.n];
-			if (item && !item.arrow && this.ref.onOver) {
-				this.ref.onOver(e, item);
-			};
+			onArrowDown();
 		});
 
 		if (this.ref && this.ref.onClick) {	

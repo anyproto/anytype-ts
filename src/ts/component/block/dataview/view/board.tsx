@@ -348,8 +348,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 		win.on('dragend.board', (e: any) => { this.onDragEndColumn(e); });
 	};
 
-	onDragMoveColumn (e: any, groupId: string) {
-		const groups = this.getGroups(false);
+	onDragMoveColumn (e: any, groupId: any) {
 		const node = $(ReactDOM.findDOMNode(this));
 		const ghost = $('<div />').addClass('ghost isColumn');
 		const current = this.cache[groupId];

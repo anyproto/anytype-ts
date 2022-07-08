@@ -722,24 +722,23 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		};
 
 		const { sidebar } = commonStore;
-		const { fixed } = sidebar;
+		const { fixed, x, y, snap } = sidebar;
 		const win = $(window);
 		const ww = win.width();
 		const old = commonStore.sidebarOldFixed;
-		const btn = $('#footer #button-expand');
 
 		if (ww > Constant.size.sidebar.unfix) {
 			if (!fixed && old) {
 				commonStore.sidebarSet({ fixed: true });
 			};
-			btn.show();
 		} else {
 			if (fixed) {
 				commonStore.sidebarSet({ fixed: false });
 				commonStore.sidebarOldFixed = true;
 			};
-			btn.hide();
 		};
+
+		this.setStyle(x, y, snap);
 	};
 
 	getRowHeight (item: any) {

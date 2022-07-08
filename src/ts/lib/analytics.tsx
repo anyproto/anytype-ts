@@ -51,7 +51,7 @@ class Analytics {
 			osVersion: os.release(),
 		});
 
-		console.log('[Analytics.init]', this.instance);
+		console.log('[Analytics].init', this.instance);
 
 		this.isInit = true;
 	};
@@ -61,7 +61,7 @@ class Analytics {
 			return;
 		};
 		if (this.debug()) {
-			console.log('[Analytics.profile]', account.id);
+			console.log('[Analytics].profile', account.id);
 		};
 		this.instance.setUserId(account.id);
 	};
@@ -74,7 +74,7 @@ class Analytics {
 		this.instance.setUserProperties({ middlewareDeviceId: id });
 
 		if (this.debug()) {
-			console.log('[Analytics.device]', id);
+			console.log('[Analytics].device', id);
 		};
 	};
 
@@ -83,7 +83,7 @@ class Analytics {
 		Storage.set(KEY_ORIGINAL_ID, id);
 
 		if (this.debug()) {
-			console.log('[Analytics.setContext]', context, id);
+			console.log('[Analytics].setContext', context, id);
 		};
 	};
 
@@ -224,13 +224,13 @@ class Analytics {
 		};
 
 		if (undefined !== converted.align) {
-			converted.align = I.BlockAlign[converted.align];
+			converted.align = I.BlockHAlign[converted.align];
 		};
 
 		param = Object.assign(param, converted);
 
 		if (this.debug()) {
-			console.log('[Analytics.event]', code, param);
+			console.log('[Analytics].event', code, param);
 		};
 		
 		this.instance.logEvent(code, param);

@@ -252,15 +252,6 @@ const BlockTextSetIcon = (contextId: string, blockId: string, iconEmoji: string,
 	dispatcher.request(BlockTextSetIcon.name, request, callBack);
 };
 
-const BlockTextListSetStyle = (contextId: string, blockIds: string[], style: I.TextStyle, callBack?: (message: any) => void) => {
-	const request = new Rpc.BlockText.ListSetStyle.Request();
-	
-	request.setContextid(contextId);
-    request.setBlockidsList(blockIds);
-    request.setStyle(style);
-
-	dispatcher.request(BlockTextListSetStyle.name, request, callBack);
-};
 
 const BlockSetFields = (contextId: string, blockId: string, fields: any, callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.SetFields.Request();
@@ -475,6 +466,140 @@ const BlockLinkListSetAppearance = (contextId: string, blockIds: any[], iconSize
 	dispatcher.request(BlockLinkListSetAppearance.name, request, callBack);
 };
 
+// ---------------------- BLOCK TABLE ---------------------- //
+
+const BlockTableCreate = (contextId: string, targetId: string, position: I.BlockPosition, rows: number, columns: number, withHeaderRow: boolean = false, callBack?: (message: any) => void) => {
+	const request = new Rpc.BlockTable.Create.Request();
+	
+	request.setContextid(contextId);
+	request.setTargetid(targetId);
+	request.setPosition(position);
+	request.setRows(rows);
+	request.setColumns(columns);
+	request.setWithheaderrow(withHeaderRow);
+
+	dispatcher.request(BlockTableCreate.name, request, callBack);
+};
+
+const BlockTableExpand = (contextId: string, targetId: string, rows: number, columns: number, callBack?: (message: any) => void) => {
+	const request = new Rpc.BlockTable.Expand.Request();
+	
+	request.setContextid(contextId);
+	request.setTargetid(targetId);
+	request.setRows(rows);
+	request.setColumns(columns);
+
+	dispatcher.request(BlockTableExpand.name, request, callBack);
+};
+
+const BlockTableSort = (contextId: string, columnId: string, type: I.SortType, callBack?: (message: any) => void) => {
+	const request = new Rpc.BlockTable.Sort.Request();
+	
+	request.setContextid(contextId);
+	request.setColumnid(columnId);
+	request.setType(type);
+
+	dispatcher.request(BlockTableSort.name, request, callBack);
+};
+
+const BlockTableRowCreate = (contextId: string, targetId: string, position: I.BlockPosition, callBack?: (message: any) => void) => {
+	const request = new Rpc.BlockTable.RowCreate.Request();
+	
+	request.setContextid(contextId);
+	request.setTargetid(targetId);
+	request.setPosition(position);
+
+	dispatcher.request(BlockTableRowCreate.name, request, callBack);
+};
+
+const BlockTableRowDuplicate = (contextId: string, blockId: string, targetId: string, position: I.BlockPosition, callBack?: (message: any) => void) => {
+	const request = new Rpc.BlockTable.RowDuplicate.Request();
+	
+	request.setContextid(contextId);
+	request.setBlockid(blockId);
+	request.setTargetid(targetId);
+	request.setPosition(position);
+
+	dispatcher.request(BlockTableRowDuplicate.name, request, callBack);
+};
+
+const BlockTableRowListFill = (contextId: string, blockIds: string[], callBack?: (message: any) => void) => {
+	const request = new Rpc.BlockTable.RowListFill.Request();
+	
+	request.setContextid(contextId);
+	request.setBlockidsList(blockIds);
+
+	dispatcher.request(BlockTableRowListFill.name, request, callBack);
+};
+
+const BlockTableRowListClean = (contextId: string, blockIds: string[], callBack?: (message: any) => void) => {
+	const request = new Rpc.BlockTable.RowListClean.Request();
+	
+	request.setContextid(contextId);
+	request.setBlockidsList(blockIds);
+
+	dispatcher.request(BlockTableRowListClean.name, request, callBack);
+};
+
+const BlockTableRowSetHeader = (contextId: string, targetId: string, isHeader: boolean, callBack?: (message: any) => void) => {
+	const request = new Rpc.BlockTable.RowSetHeader.Request();
+	
+	request.setContextid(contextId);
+	request.setTargetid(targetId);
+	request.setIsheader(isHeader);
+
+	dispatcher.request(BlockTableRowSetHeader.name, request, callBack);
+};
+
+const BlockTableColumnCreate = (contextId: string, targetId: string, position: I.BlockPosition, callBack?: (message: any) => void) => {
+	const request = new Rpc.BlockTable.ColumnCreate.Request();
+	
+	request.setContextid(contextId);
+	request.setTargetid(targetId);
+	request.setPosition(position);
+
+	dispatcher.request(BlockTableColumnCreate.name, request, callBack);
+};
+
+const BlockTableColumnDelete = (contextId: string, targetId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.BlockTable.ColumnDelete.Request();
+	
+	request.setContextid(contextId);
+	request.setTargetid(targetId);
+
+	dispatcher.request(BlockTableColumnDelete.name, request, callBack);
+};
+
+const BlockTableColumnMove = (contextId: string, targetId: string, dropTargetId: string, position: I.BlockPosition, callBack?: (message: any) => void) => {
+	const request = new Rpc.BlockTable.ColumnMove.Request();
+	
+	request.setContextid(contextId);
+	request.setTargetid(targetId);
+	request.setDroptargetid(dropTargetId);
+	request.setPosition(position);
+
+	dispatcher.request(BlockTableColumnMove.name, request, callBack);
+};
+
+const BlockTableColumnDuplicate = (contextId: string, targetId: string, position: I.BlockPosition, callBack?: (message: any) => void) => {
+	const request = new Rpc.BlockTable.ColumnDuplicate.Request();
+	
+	request.setContextid(contextId);
+	request.setTargetid(targetId);
+	request.setPosition(position);
+
+	dispatcher.request(BlockTableColumnDuplicate.name, request, callBack);
+};
+
+const BlockTableColumnListFill = (contextId: string, blockIds: string[], callBack?: (message: any) => void) => {
+	const request = new Rpc.BlockTable.ColumnListFill.Request();
+	
+	request.setContextid(contextId);
+	request.setBlockidsList(blockIds);
+
+	dispatcher.request(BlockTableColumnListFill.name, request, callBack);
+};
+
 // ---------------------- BLOCK FILE ---------------------- //
 
 const BlockFileCreateAndUpload = (contextId: string, targetId: string, position: I.BlockPosition, url: string, path: string, callBack?: (message: any) => void) => {
@@ -521,6 +646,34 @@ const BlockTextListSetMark = (contextId: string, blockIds: string[], mark: I.Mar
 	dispatcher.request(BlockTextListSetMark.name, request, callBack);
 };
 
+const BlockTextListSetStyle = (contextId: string, blockIds: string[], style: I.TextStyle, callBack?: (message: any) => void) => {
+	const request = new Rpc.BlockText.ListSetStyle.Request();
+	
+	request.setContextid(contextId);
+	request.setBlockidsList(blockIds);
+	request.setStyle(style);
+
+	dispatcher.request(BlockTextListSetStyle.name, request, callBack);
+};
+
+const BlockTextListClearStyle = (contextId: string, blockIds: string[], callBack?: (message: any) => void) => {
+	const request = new Rpc.BlockText.ListClearStyle.Request();
+	
+	request.setContextid(contextId);
+    request.setBlockidsList(blockIds);
+
+	dispatcher.request(BlockTextListClearStyle.name, request, callBack);
+};
+
+const BlockTextListClearContent = (contextId: string, blockIds: string[], callBack?: (message: any) => void) => {
+	const request = new Rpc.BlockText.ListClearContent.Request();
+	
+	request.setContextid(contextId);
+    request.setBlockidsList(blockIds);
+
+	dispatcher.request(BlockTextListClearContent.name, request, callBack);
+};
+
 const BlockListSetFields = (contextId: string, fields: any, callBack?: (message: any) => void) => {
 	fields = fields.map(Mapper.To.Fields);
 
@@ -542,7 +695,7 @@ const BlockListSetBackgroundColor = (contextId: string, blockIds: string[], colo
 	dispatcher.request(BlockListSetBackgroundColor.name, request, callBack);
 };
 
-const BlockListSetAlign = (contextId: string, blockIds: string[], align: I.BlockAlign, callBack?: (message: any) => void) => {
+const BlockListSetAlign = (contextId: string, blockIds: string[], align: I.BlockHAlign, callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.ListSetAlign.Request();
 	
 	request.setContextid(contextId);
@@ -550,6 +703,16 @@ const BlockListSetAlign = (contextId: string, blockIds: string[], align: I.Block
     request.setAlign(align);
 
 	dispatcher.request(BlockListSetAlign.name, request, callBack);
+};
+
+const BlockListSetVerticalAlign = (contextId: string, blockIds: string[], align: I.BlockVAlign, callBack?: (message: any) => void) => {
+	const request = new Rpc.Block.ListSetVerticalAlign.Request();
+	
+	request.setContextid(contextId);
+    request.setBlockidsList(blockIds);
+    request.setVerticalalign(align);
+
+	dispatcher.request(BlockListSetVerticalAlign.name, request, callBack);
 };
 
 const BlockDataviewViewCreate = (contextId: string, blockId: string, view: any, callBack?: (message: any) => void) => {
@@ -1407,13 +1570,17 @@ export {
 	BlockListTurnInto,
 	BlockListSetFields,
 	BlockListSetAlign,
+	BlockListSetVerticalAlign,
 
 	BlockTextSetText,
 	BlockTextSetChecked,
 	BlockTextSetIcon,
+
 	BlockTextListSetStyle,
 	BlockTextListSetMark,
 	BlockTextListSetColor,
+	BlockTextListClearStyle,
+	BlockTextListClearContent,
 
 	BlockBookmarkFetch,
 	BlockBookmarkCreateAndFetch,
@@ -1429,6 +1596,22 @@ export {
 	BlockLatexSetText,
 
 	BlockRelationSetKey,
+
+	BlockTableCreate,
+	BlockTableExpand,
+	BlockTableSort,
+
+	BlockTableColumnCreate,
+	BlockTableColumnDelete,
+	BlockTableColumnMove,
+	BlockTableColumnDuplicate,
+	BlockTableColumnListFill,
+
+	BlockTableRowCreate,
+	BlockTableRowDuplicate,
+	BlockTableRowListFill,
+	BlockTableRowListClean,
+	BlockTableRowSetHeader,
 
 	BlockDataviewViewCreate,
 	BlockDataviewViewUpdate,

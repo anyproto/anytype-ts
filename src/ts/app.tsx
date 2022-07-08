@@ -86,6 +86,7 @@ import 'scss/block/relation.scss';
 import 'scss/block/featured.scss';
 import 'scss/block/type.scss';
 import 'scss/block/latex.scss';
+import 'scss/block/table.scss';
 import 'scss/block/tableOfContents.scss';
 import 'scss/block/dataview.scss';
 import 'scss/block/dataview/cell.scss';
@@ -233,6 +234,7 @@ window.Lib = {
 	Util,
 	analytics,
 	dispatcher,
+	keyboard,
 };
 
 class RoutePage extends React.Component<RouteComponentProps, {}> { 

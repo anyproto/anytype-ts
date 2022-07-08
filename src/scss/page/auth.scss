@@ -5,11 +5,9 @@
 	.title { margin-bottom: 15px; }
 	.label { margin-bottom: 25px; }
 	.input { height: 40px; border: solid 1px $colorBorderDark; }
-	
-	.textarea { 
-		font-family: 'Plex'; padding: 7px 16px; height: auto; margin: 0px 0px 32px 0px; border: solid 1px $colorBorderDark; 
-		background-color: $colorWhite; 
-	}
+
+	.textareaWrap { overflow: hidden; background: #f7f5f0; margin: 0px 0px 32px 0px; border: solid 1px $colorBorderDark; }
+	.textarea { font-family: 'Plex'; padding: 7px 16px; height: auto; background: none; }
 	
 	.iconObject { margin-bottom: 12px; }
 	
@@ -24,6 +22,7 @@
 
 .pageAuthLogin {
 	.label { margin-bottom: 9px; }
+	.textareaWrap { background: none; }
 }
 
 .pageAuthPinSelect, .pageAuthPinConfirm, .pageAuthPinCheck {
@@ -63,7 +62,7 @@
 }
 
 .pageAuthSuccess {
-	.textarea { border-radius: 4px; padding: 20px 24px; color: $colorIce; }
+	.textareaWrap { border-radius: 4px; padding: 20px 24px; color: $colorIce; }
 }
 
 .pageAuthRegister {
@@ -79,6 +78,8 @@
 	}
 
 	.row.flex { flex-direction: row; align-items: center; gap: 0px 16px; margin-bottom: 16px; }
+
+	.row.location { @include text-small; @include text-overflow-nw; }
 }
 
 .pageAuthDeleted {

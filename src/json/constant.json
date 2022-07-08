@@ -208,7 +208,7 @@
 		"table": {
 			"min": 50,
 			"max": 500,
-			"default": 70
+			"default": 140
 		},
 
 		"dataview": {

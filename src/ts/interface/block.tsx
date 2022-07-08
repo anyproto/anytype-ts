@@ -25,6 +25,9 @@ export enum BlockType {
 	Featured			 = 'featured',
 	Type				 = 'type',
 	Latex				 = 'latex',
+	Table				 = 'table',
+	TableColumn			 = 'tableColumn',
+	TableRow			 = 'tableRow',
 	TableOfContents		 = 'tableOfContents',
 };
 
@@ -45,23 +48,35 @@ export enum BlockSplitMode {
 	Inner = 2,
 };
 
-export enum BlockAlign {
+export enum BlockHAlign {
 	Left	 = 0,
 	Center	 = 1,
 	Right	 = 2,
+};
+
+export enum BlockVAlign {
+	Top		 = 0,
+	Middle	 = 1,
+	Bottom	 = 2,
 };
 
 export interface BlockComponent {
 	dataset?: any;
 	rootId: string;
 	traceId?: string;
-	block: I.Block;
+	block?: I.Block;
 	readonly?: boolean;
 	isPopup?: boolean;
-	onKeyDown?(e: any, text: string, marks: I.Mark[], range: I.TextRange): void;
+	isInsideTable?: boolean;
+	index?: any;
+	className?: string;
+	onKeyDown?(e: any, text: string, marks: I.Mark[], range: I.TextRange, props: any): void;
 	onKeyUp?(e: any, text: string, marks: I.Mark[], range: I.TextRange): void;
 	onMenuAdd? (id: string, text: string, range: I.TextRange, marks: I.Mark[]): void;
 	onPaste?(e: any): void;
+	onFocus?(e: any): void;
+	onBlur?(e: any): void;
+	onCopy?(e: any, cut: boolean): void;
 	getWrapper?(): any;
 	getWrapperWidth?(): number;
 };
@@ -77,7 +92,8 @@ export interface Block {
 	layout?: I.ObjectLayout;
 	parentId?: string;
 	fields: any;
-	align?: BlockAlign;
+	hAlign?: BlockHAlign;
+	vAlign?: BlockVAlign;
 	bgColor?: string;
 	content: any;
 	childrenIds: string[];
@@ -132,6 +148,12 @@ export interface Block {
 	isLayoutDiv?(): boolean;
 	isLayoutHeader?(): boolean;
 	isLayoutFooter?(): boolean;
+	isLayoutTableRows?(): boolean;
+	isLayoutTableColumns?(): boolean;
+
+	isTable?(): boolean;
+	isTableColumn?(): boolean;
+	isTableRow?(): boolean;
 
 	isBookmark?(): boolean;
 	isLink?(): boolean;

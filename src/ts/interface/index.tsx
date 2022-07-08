@@ -24,7 +24,7 @@ import { MenuTab, MenuType, MenuDirection, MenuParam, Menu, MenuItem } from './m
 import { SmartBlockType, ObjectLayout, ObjectType, ObjectFlag, RelationType, RelationScope, Relation, OptionScope, SelectOption } from './object';
 import { RestrictionObject, RestrictionDataview } from './restriction';
 
-import { PageInfo, BlockType, BlockPosition, BlockSplitMode, BlockAlign, BlockComponent, Block, BlockStructure } from './block';
+import { PageInfo, BlockType, BlockPosition, BlockSplitMode, BlockHAlign, BlockVAlign, BlockComponent, Block, BlockStructure } from './block';
 import {
 	CardSize,
 	DateFormat,
@@ -42,19 +42,18 @@ import {
 	Cell,
 	BoardGroup,
 	ContentDataview,
-	BlockDataview,
 } from './block/dataview';
 
-import { BlockPage } from './block/page';
-import { LayoutStyle, ContentLayout, BlockLayout } from './block/layout';
-import { ContentIcon, BlockIcon } from './block/icon';
-import { LinkIconSize, LinkCardStyle, LinkDescription, ContentLink, BlockLink } from './block/link';
-import { TextStyle, MarkType, TextRange, Mark, ContentText, BlockText } from './block/text';
-import { FileType, FileState, FileStyle, ContentFile, BlockFile } from './block/file';
-import { BookmarkState, ContentBookmark, BlockBookmark } from './block/bookmark';
-import { DivStyle, ContentDiv, BlockDiv } from './block/div';
-import { ContentRelation, BlockRelation } from './block/relation';
-import { ContentLatex, BlockLatex } from './block/latex';
+import { LayoutStyle, ContentLayout } from './block/layout';
+import { ContentIcon } from './block/icon';
+import { LinkIconSize, LinkCardStyle, LinkDescription, ContentLink } from './block/link';
+import { TextStyle, MarkType, TextRange, Mark, ContentText } from './block/text';
+import { FileType, FileState, FileStyle, ContentFile } from './block/file';
+import { BookmarkState, ContentBookmark } from './block/bookmark';
+import { DivStyle, ContentDiv } from './block/div';
+import { ContentRelation } from './block/relation';
+import { ContentLatex } from './block/latex';
+import { BlockComponentTable, ContentTableRow } from './block/table';
 
 export {
 	Account,
@@ -119,7 +118,8 @@ export {
 	BlockType,
 	BlockPosition,
 	BlockSplitMode,
-	BlockAlign,
+	BlockHAlign,
+	BlockVAlign,
 	BlockComponent,
 	Block,
 	BlockStructure,
@@ -140,47 +140,38 @@ export {
 	Cell,
 	BoardGroup,
 	ContentDataview,
-	BlockDataview,
-
-	BlockPage,
 
 	LayoutStyle,
 	ContentLayout,
-	BlockLayout,
 
 	ContentIcon,
-	BlockIcon,
 
 	LinkIconSize,
 	LinkCardStyle,
 	LinkDescription,
 	ContentLink,
-	BlockLink,
 
 	TextStyle,
 	MarkType,
 	TextRange,
 	Mark,
 	ContentText,
-	BlockText,
 
 	DivStyle,
 	ContentDiv,
-	BlockDiv,
 
 	FileType,
 	FileState,
 	FileStyle,
 	ContentFile,
-	BlockFile,
 
 	BookmarkState,
 	ContentBookmark,
-	BlockBookmark,
 
 	ContentRelation, 
-	BlockRelation,
 
 	ContentLatex,
-	BlockLatex,
-}
+
+	BlockComponentTable,
+	ContentTableRow, 
+};

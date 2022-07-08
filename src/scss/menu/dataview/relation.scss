@@ -24,7 +24,7 @@
 	.menu.menuDataviewRelationEdit { width: 224px; }
 	.menu.menuDataviewRelationEdit {
 		.switch { position: absolute; right: 16px; top: 50%; margin-top: -8px; }
-		.button { width: 100%; margin-top: 8px; }
+		.button { width: 100%; }
 		.button.grey { cursor: default; }
 
 		.item:hover::before { background: $colorHover; }

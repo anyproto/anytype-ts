@@ -29,7 +29,6 @@
 		lnk { position: relative; }
 		lnk, obj { cursor: pointer; color: inherit; text-decoration: none; border-bottom: 0.075em solid; transition: border-color 0.2s ease-in-out; }
 		lnk.disabled, obj.disabled { border-width: 0px; }
-		lnk:hover, obj:hover { border-color: $colorBlack; }
 
 		mention { cursor: pointer; display: inline; user-select: all !important; position: relative; }
 		mention * { user-select: text !important; }
@@ -162,19 +161,27 @@
 			}
 			.select:hover, .select.active { background: none; }
 			
-			.buttons { position: absolute; right: 16px; top: 0px; }
+			.buttons { 
+				position: absolute; right: 16px; top: 0px; display: flex; flex-direction: row; gap: 0px 8px; opacity: 0; 
+				transition: $transitionFast;
+			}
 			.buttons {
-				.btn { padding: 0px; height: 20px; line-height: 20px; color: $colorMediumGrey; @include text-common; cursor: pointer; }
+				.btn { 
+					padding: 0px; height: 20px; line-height: 20px; color: $colorMediumGrey; @include text-common; cursor: pointer; 
+					display: flex; flex-direction: row; gap: 0px 4px; align-items: center;
+				}
 				.btn {
-					.icon { margin-right: 4px; vertical-align: top; }
+					.icon { flex-shrink: 0; width: 20px; height: 20px; cursor: pointer; }
+					.icon.codeWrap { background-image: url('~img/icon/menu/action/wrap0.svg'); }
+					.icon.copy { background-image: url('~img/icon/menu/action/copy0.svg'); }
+
 					.txt { line-height: 20px; vertical-align: top; }
 				}
 			}
-
-			.icon.codeWrap { 
-				width: 20px; height: 20px; background-image: url('~img/icon/menu/action/wrap0.svg'); cursor: pointer;
-			}
 		}
+	}
+	.block.blockText.code:hover > .wrapContent > .selectable > .dropTarget > .flex {
+		.additional .buttons { opacity: 1; }
 	}
 
 	.block.blockText.code.isReadonly > .wrapContent > .selectable > .dropTarget > .flex {

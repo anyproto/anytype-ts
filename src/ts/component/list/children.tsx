@@ -5,17 +5,11 @@ import { blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { I, C, focus, translate } from 'ts/lib';
 
-interface Props extends RouteComponentProps<any> {
-	rootId: string;
-	block: any;
-	index?: any;
-	readonly?: boolean;
+interface Props extends I.BlockComponent, RouteComponentProps<any> {
 	onMouseMove? (e: any): void;
 	onMouseLeave? (e: any): void;
 	onResizeStart? (e: any, index: number): void;
-	getWrapperWidth?(): number;
-	getWrapper?(): any;
-}
+};
 
 const ListChildren = observer(class ListChildren extends React.Component<Props, {}> {
 	
@@ -45,6 +39,7 @@ const ListChildren = observer(class ListChildren extends React.Component<Props, 
 			};
 		};
 		
+		const className = String(this.props.className || '').replace(/first|last/g, '');
 		const cn = [ 'children', (block.isTextToggle() ? 'canToggle' : '') ];
 		
 		let ColResize: any = (): any => null;
@@ -59,24 +54,27 @@ const ListChildren = observer(class ListChildren extends React.Component<Props, 
 				</div>
 			);
 		};
-		
+
 		return (
 			<div id={'block-children-' + block.id} className={cn.join(' ')} onMouseMove={onMouseMove} onMouseLeave={onMouseLeave}>
 				{children.map((item: any, i: number) => {
 					let css: any = {};
 					let cn = [];
-					
+
 					if (isRow) {
 						css.width = (item.fields.width || 1 / length ) * 100 + '%';
 					};
-					
+
+					if (className) {
+						cn.push(className);
+					};
 					if (i == 0) {
 						cn.push('first');
 					};
 					if (i == length - 1) {
 						cn.push('last');
 					};
-					
+
 					return (
 						<React.Fragment key={item.id}>
 							{(i > 0) && isRow ? <ColResize index={i} /> : ''}

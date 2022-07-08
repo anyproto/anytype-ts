@@ -156,7 +156,7 @@ class MenuBlockLayout extends React.Component<Props, {}> {
 
 				menuParam.data = Object.assign(menuParam.data, {
 					value: object.layoutAlign,
-					onSelect: (align: I.BlockAlign) => {
+					onSelect: (align: I.BlockHAlign) => {
 						DataUtil.pageSetAlign(rootId, align);
 
 						analytics.event('SetLayoutAlign', { align });

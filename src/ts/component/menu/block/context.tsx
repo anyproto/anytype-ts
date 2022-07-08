@@ -22,7 +22,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 		const { data } = param;
 		const { range } = focus.state;
 		const { config } = commonStore;
-		const { blockId, rootId, marks } = data;
+		const { blockId, rootId, marks, isInsideTable } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
 
 		if (!block) {
@@ -34,6 +34,8 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 		const styleIcon = DataUtil.styleIcon(type, style);
 		const colorMark = Mark.getInRange(marks, I.MarkType.Color, range) || {};
 		const bgMark = Mark.getInRange(marks, I.MarkType.BgColor, range) || {};
+		const canTurn = block.canTurn() && !isInsideTable;
+		const hasMore = !isInsideTable;
 
 		const color = (
 			<div className={[ 'inner', 'textColor', 'textColor-' + (colorMark.param || 'default') ].join(' ')} />
@@ -58,7 +60,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 
 		return (
 			<div className="flex">
-				{block.canTurn() ? (
+				{canTurn ? (
 					<div className="section">
 						<Icon id={'button-' + blockId + '-style'} arrow={true} tooltip="Switch style" tooltipY={I.MenuDirection.Top} className={[ styleIcon, 'blockStyle' ].join(' ')} onMouseDown={(e: any) => { this.onMark(e, 'style'); }} />
 					</div>
@@ -91,10 +93,12 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 					</div>
 				) : ''}
 				
-				<div className="section">
-					<Icon id={'button-' + blockId + '-comment'} className="comment dn" tooltip="Comment" tooltipY={I.MenuDirection.Top}  onMouseDown={(e: any) => {}} />
-					<Icon id={'button-' + blockId + '-more'} className="more" tooltip="More options" tooltipY={I.MenuDirection.Top}  onMouseDown={(e: any) => { this.onMark(e, 'more'); }} />
-				</div>
+				{hasMore ? (
+					<div className="section">
+						<Icon id={'button-' + blockId + '-comment'} className="comment dn" tooltip="Comment" tooltipY={I.MenuDirection.Top}  onMouseDown={(e: any) => {}} />
+						<Icon id={'button-' + blockId + '-more'} className="more" tooltip="More options" tooltipY={I.MenuDirection.Top}  onMouseDown={(e: any) => { this.onMark(e, 'more'); }} />
+					</div>
+				) : ''}
 			</div>
 		);
 	};

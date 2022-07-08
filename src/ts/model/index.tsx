@@ -1,5 +1,4 @@
 import Account from './account';
-
 import Block from './block';
 import BlockStructure from './blockStructure';
 
