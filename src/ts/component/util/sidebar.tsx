@@ -22,7 +22,7 @@ const $ = require('jquery');
 const Constant = require('json/constant.json');
 const sha1 = require('sha1');
 
-const MAX_DEPTH = 100;
+const MAX_DEPTH = 15;
 const LIMIT = 20;
 const HEIGHT = 28;
 const SNAP_THRESHOLD = 30;
