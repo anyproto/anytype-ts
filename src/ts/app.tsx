@@ -428,17 +428,17 @@ class App extends React.Component<Props, State> {
 		const logo = loader.find('#logo');
 		const accountId = Storage.get('accountId');
 
+		commonStore.configSet(config, true);
+		commonStore.nativeThemeSet(isDark);
+		commonStore.themeSet(config.theme);
+
+		authStore.walletPathSet(dataPath);
+		authStore.accountPathSet(dataPath);
+
+		this.initStorage();
+		this.initTheme(config.theme);
+
 		const cb = () => {
-			this.initStorage();
-			this.initTheme(config.theme);
-
-			authStore.walletPathSet(dataPath);
-			authStore.accountPathSet(dataPath);
-
-			commonStore.nativeThemeSet(isDark);
-			commonStore.configSet(config, true);
-			commonStore.themeSet(config.theme);
-
 			window.setTimeout(() => {
 				logo.css({ opacity: 0 });
 				window.setTimeout(() => { loader.css({ opacity: 0 }); }, 500);
