@@ -50,8 +50,6 @@ class Dispatcher {
 
 		this.stream = this.service.listenSessionEvents(request, null);
 
-		console.log(this.stream);
-
 		this.stream.on('data', (event: any) => {
 			try {
 				this.event(event, false);
