@@ -628,12 +628,12 @@ class Keyboard {
 	initPinCheck () {
 		const { account } = authStore;
 		const { pinTime } = commonStore;
+		const pin = Storage.get('pin');
 
 		if (!account) {
 			return;
 		};
 
-		const pin = Storage.get('pin');
 		if (!pin) {
 			this.setPinChecked(true);
 			return;
