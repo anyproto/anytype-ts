@@ -404,21 +404,19 @@ class App extends React.Component<Props, State> {
 		Renderer.on('import', this.onImport);
 		Renderer.on('export', this.onExport);
 		Renderer.on('command', this.onCommand);
+		Renderer.on('enter-full-screen', () => { commonStore.fullscreenSet(true); });
+		Renderer.on('leave-full-screen', () => { commonStore.fullscreenSet(false); });
+		Renderer.on('shutdownStart', (e: any) => { this.setState({ loading: true }); });
 
 		Renderer.on('config', (e: any, config: any) => { 
 			commonStore.configSet(config, true);
 			this.initTheme(config.theme);
 		});
 
-		Renderer.on('enter-full-screen', () => { commonStore.fullscreenSet(true); });
-		Renderer.on('leave-full-screen', () => { commonStore.fullscreenSet(false); });
-
 		Renderer.on('native-theme', (e: any, isDark: boolean) => {
 			commonStore.nativeThemeSet(isDark);
 			commonStore.themeSet(commonStore.theme);
   		});
-
-		Renderer.on('shutdownStart', (e: any) => { this.setState({ loading: true }); });
 	};
 
 	onInit (e: any, dataPath: string, config: any, isDark: boolean, windowData: any) {
@@ -439,11 +437,9 @@ class App extends React.Component<Props, State> {
 		this.initTheme(config.theme);
 
 		const cb = () => {
-			window.setTimeout(() => {
-				logo.css({ opacity: 0 });
-				window.setTimeout(() => { loader.css({ opacity: 0 }); }, 500);
-				window.setTimeout(() => { loader.remove(); }, 1000);
-			}, 500);
+			logo.css({ opacity: 0 });
+			window.setTimeout(() => { loader.css({ opacity: 0 }); }, 500);
+			window.setTimeout(() => { loader.remove(); }, 1000);
 		};
 
 		if (accountId) {
@@ -454,19 +450,21 @@ class App extends React.Component<Props, State> {
 					if (windowData.route) {
 						commonStore.redirectSet(windowData.route);
 					};
+
 					DataUtil.onAuth(windowData.account, cb);
 				});
 
 				win.off('unload').on('unload', (e: any) => {
-					if (authStore.token) {
-						e.preventDefault();
-
-						C.WalletCloseSession(authStore.token, () => {
-							authStore.tokenSet('');
-							window.close();
-						});
-						return false;
+					if (!authStore.token) {
+						return;
 					};
+
+					e.preventDefault();
+					C.WalletCloseSession(authStore.token, () => {
+						authStore.tokenSet('');
+						window.close();
+					});
+					return false;
 				});
 			} else {
 				Renderer.send('keytarGet', accountId);
