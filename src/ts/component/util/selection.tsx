@@ -296,6 +296,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 
 	drawRect (rect: any) {
 		const { config } = commonStore;
+
 		if (!config.debug.ui) {
 			return;
 		};
