@@ -4,7 +4,7 @@
 
 	.menu.menuDataviewObjectList { width: 288px; }
 	.menu.menuDataviewObjectList {
-		.content { padding-bottom: 0px; transition: none; }
+		.content { padding: 0px; transition: none; }
 		.wrap { height: 100%; display: flex; flex-direction: column; }
 		.wrap.noFilter {
 			.items { height: 100%; }

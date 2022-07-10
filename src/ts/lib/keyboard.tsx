@@ -642,7 +642,7 @@ class Keyboard {
 		window.clearTimeout(this.timeoutPin);
 		this.timeoutPin = window.setTimeout(() => {
 			this.setPinChecked(false);
-			popupStore.closeAll(null, () => { Util.route('/auth/pin-check'); });
+			Util.route('/auth/pin-check');
 		}, pinTime);
 	};
 

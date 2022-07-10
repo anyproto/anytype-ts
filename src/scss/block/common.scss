@@ -44,6 +44,7 @@
 		.emptyToggle:hover { color: $colorBlack; }
 	}
 
+	.block > .wrapContent > .selectable { position: relative; }
 	.block > .wrapContent > .children > .block.last { margin: 0px; }
 
 	.block.isReadonly {
