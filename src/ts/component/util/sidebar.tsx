@@ -328,7 +328,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 
 		for (let item of items) {
 			let links = this.checkLinks(Relation.getArrayValue(item.links)).filter(it => {
-				const branchId = [ branch, it ].join(':');
+				const branchId = [ branch, it ].join('-');
 				if (this.branches.includes(branchId)) {
 					return false;
 				} else {

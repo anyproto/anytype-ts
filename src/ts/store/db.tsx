@@ -306,7 +306,7 @@ class DbStore {
 	};
 
 	getId (rootId: string, blockId: string) {
-		return [ rootId, blockId ].join(':');
+		return [ rootId, blockId ].join('-');
 	};
 
 	getSubId (rootId: string, blockId: string) {
