@@ -411,6 +411,17 @@ const Mapper = {
             };
 		},
 
+		ObjectView: (obj: any) => {
+			return {
+				rootId: obj.getRootid(),
+				blocks: (obj.getBlocksList() || []).map(Mapper.From.Block),
+				details: (obj.getDetailsList() || []).map(Mapper.From.Details),
+				objectTypes: (obj.getObjecttypesList() || []).map(Mapper.From.ObjectType),
+				relations: (obj.getRelationsList() || []).map(Mapper.From.Relation),
+				restrictions: Mapper.From.Restrictions(obj.getRestrictions()),
+			};
+		},
+
     },
 
 	//------------------------------------------------------------

@@ -754,8 +754,8 @@ class Dispatcher {
 		return 0;
 	};
 
-	onObjectView (rootId: string, traceId: string, message: any) {
-		let { blocks, details, restrictions } = message;
+	onObjectView (rootId: string, traceId: string, objectView: any) {
+		let { blocks, details, restrictions } = objectView;
 		let root = blocks.find((it: any) => it.id == rootId);
 		let ctx: string[] = [ rootId ];
 		
@@ -769,8 +769,8 @@ class Dispatcher {
 			analytics.setContext(root.fields.analyticsContext, root.fields.analyticsOriginalId);
 		};
 
-		dbStore.relationsSet(contextId, rootId, message.relations);
-		dbStore.objectTypesSet(message.objectTypes);
+		dbStore.relationsSet(contextId, rootId, objectView.relations);
+		dbStore.objectTypesSet(objectView.objectTypes);
 
 		detailStore.set(contextId, details);
 		blockStore.restrictionsSet(contextId, restrictions);
