@@ -1,4 +1,4 @@
-const { app, shell } = require('electron');
+const { app, shell, nativeTheme } = require('electron');
 const keytar = require('keytar');
 const { download } = require('electron-dl');
 
@@ -30,6 +30,11 @@ class Api {
 
 	setAccount (win, account) {
 		this.account = account;
+	};
+
+	setTheme (win, theme) {
+		nativeTheme.themeSource = theme || 'light';
+		this.setConfig(win, { theme });
 	};
 
 	keytarSet (win, key, value) {

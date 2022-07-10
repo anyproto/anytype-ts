@@ -123,7 +123,6 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 		$(window).unbind('resize.settings');
 	};
 
-
 	setConfirmPin (v: () => void) {
 		this.onConfirmPin = v;
 		this.forceUpdate();
