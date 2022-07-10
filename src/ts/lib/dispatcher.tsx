@@ -754,21 +754,28 @@ class Dispatcher {
 		return 0;
 	};
 
-	onObjectView (rootId: string, message: any) {
+	onObjectView (rootId: string, traceId: string, message: any) {
 		let { blocks, details, restrictions } = message;
-		let root = blocks.find((it: any) => { return it.id == rootId; });
+		let root = blocks.find((it: any) => it.id == rootId);
+		let ctx: string[] = [ rootId ];
+		
+		if (traceId) {
+			ctx.push(traceId);
+		};
+
+		let contextId = ctx.join('-');
 
 		if (root && root.fields.analyticsContext) {
 			analytics.setContext(root.fields.analyticsContext, root.fields.analyticsOriginalId);
 		};
 
-		dbStore.relationsSet(rootId, rootId, message.relations);
+		dbStore.relationsSet(contextId, rootId, message.relations);
 		dbStore.objectTypesSet(message.objectTypes);
 
-		detailStore.set(rootId, details);
-		blockStore.restrictionsSet(rootId, restrictions);
+		detailStore.set(contextId, details);
+		blockStore.restrictionsSet(contextId, restrictions);
 
-		let object = detailStore.get(rootId, rootId, []);
+		let object = detailStore.get(contextId, rootId, []);
 		if (root) {
 			root.type = I.BlockType.Page;
 			root.layout = object.layout;
@@ -778,8 +785,8 @@ class Dispatcher {
 
 		blocks = blocks.map((it: any) => {
 			if (it.type == I.BlockType.Dataview) {
-				dbStore.relationsSet(rootId, it.id, it.content.relations);
-				dbStore.viewsSet(rootId, it.id, it.content.views);
+				dbStore.relationsSet(contextId, it.id, it.content.relations);
+				dbStore.viewsSet(contextId, it.id, it.content.views);
 			};
 
 			if (it.id == rootId) {
@@ -813,11 +820,11 @@ class Dispatcher {
 			content: {}
 		}));
 
-		blockStore.set(rootId, blocks);
-		blockStore.setStructure(rootId, structure);
-		blockStore.updateNumbers(rootId); 
-		blockStore.updateMarkup(rootId);
-		blockStore.checkTypeSelect(rootId);
+		blockStore.set(contextId, blocks);
+		blockStore.setStructure(contextId, structure);
+		blockStore.updateNumbers(contextId); 
+		blockStore.updateMarkup(contextId);
+		blockStore.checkTypeSelect(contextId);
 	};
 
 	public request (type: string, data: any, callBack?: (message: any) => void) {
