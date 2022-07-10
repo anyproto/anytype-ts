@@ -285,6 +285,7 @@ class DataUtil {
 		commonStore.configSet(account.config, false);
 		authStore.accountSet(account);
 
+		const pin = Storage.get('pin');
 		const { root, profile } = blockStore;
 
 		if (!root) {
@@ -299,6 +300,7 @@ class DataUtil {
 
 		crumbs.init();
 		commonStore.sidebarInit();
+		keyboard.initPinCheck();
 
 		analytics.profile(account);
 		analytics.event('OpenAccount');
@@ -327,11 +329,13 @@ class DataUtil {
 				commonStore.coverSet(object.coverId, object.coverId, object.coverType);
 			};
 
-			keyboard.initPinCheck();
+			if (pin) {
+				Util.route('/auth/pin-check');
+			} else {
+				Util.route(commonStore.redirect ? commonStore.redirect : '/main/index', true);
+				commonStore.redirectSet('');
+			};
 			
-			Util.route(commonStore.redirect ? commonStore.redirect : '/main/index', true);
-			commonStore.redirectSet('');
-
 			if (callBack) {
 				callBack();
 			};
