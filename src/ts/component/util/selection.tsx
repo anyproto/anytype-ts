@@ -9,6 +9,7 @@ import { throttle } from 'lodash';
 interface Props {};
 
 const $ = require('jquery');
+const raf = require('raf');
 
 const THROTTLE = 20;
 const THRESHOLD = 10;
@@ -25,6 +26,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	nodes: any = null;
 	top: number = 0;
 	containerOffset = null;
+	frame: number = 0;
 
 	cache: Map<string, any> = new Map();
 	ids: Map<string, string[]> = new Map();
@@ -533,27 +535,29 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			return;
 		};
 
-		$('.isSelectionSelected').removeClass('isSelectionSelected');
-
 		const node = $(ReactDOM.findDOMNode(this));
 
-		for (let i in I.SelectType) {
-			const type = I.SelectType[i];
-			const ids = this.get(type);
+		if (this.frame) {
+			raf.cancel(this.frame);
+		};
 
-			for (let id of ids) {
-				node.find(`#selectable-${id}`).addClass('isSelectionSelected');
+		this.frame = raf(() => {
+			$('.isSelectionSelected').removeClass('isSelectionSelected');
 
-				if (type == I.SelectType.Block) {
-					node.find(`#block-${id}`).addClass('isSelectionSelected');
-					node.find(`#block-children-${id} .block`).addClass('isSelectionSelected');
+			for (let i in I.SelectType) {
+				const type = I.SelectType[i];
+				const ids = this.get(type);
+
+				for (let id of ids) {
+					node.find(`#selectable-${id}`).addClass('isSelectionSelected');
+
+					if (type == I.SelectType.Block) {
+						node.find(`#block-${id}`).addClass('isSelectionSelected');
+						node.find(`#block-children-${id} .block`).addClass('isSelectionSelected');
+					};
 				};
 			};
-
-			if (type == I.SelectType.Block) {
-				node.find('.block.isSelectionSelected .children .selectable.isSelectionSelected').removeClass('isSelectionSelected');
-			};
-		};
+		});
 	};
 	
 	injectProps (children: any) {
