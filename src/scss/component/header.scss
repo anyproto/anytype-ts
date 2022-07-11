@@ -73,12 +73,14 @@
 
 .header.mainHistory { height: 38px; width: calc(100% - 254px); background: $colorWhite; }
 .header.mainHistory {
+	.side.center { white-space: nowrap; }
+
 	.item { 
 		color: $colorVeryDarkGrey; transition: $transitionFast; cursor: pointer; height: 20px; line-height: 20px; 
 		display: inline-block; vertical-align: middle; white-space: nowrap;
 	}
 	.item {
-		.icon.arrow { width: 20px; height: 20px; margin-right: 8px; background-image: url('~img/arrow/history0.svg'); margin: 0px; }
+		.icon.arrow { width: 20px; height: 20px; background-image: url('~img/arrow/history0.svg'); margin: 0px; vertical-align: top; }
 	}
 	.item.orange { color: $colorOrange !important; font-weight: 500; }
 	
