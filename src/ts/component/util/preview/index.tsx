@@ -182,8 +182,6 @@ const Preview = observer(class Preview extends React.Component<Props, State> {
 			cpTop = 'polygon(0% 100%, ' + ps + '% 0%, ' + pe + '% 0%, 100% 100%)';
 			cpBot = 'polygon(0% 0%, ' + ps + '% 100%, ' + pe + '% 100%, 100% 0%)';
 		};
-		
-		obj.removeClass('top bottom');
 
 		if (offset.top + oh + nh >= st + wh) {
 			typeY = I.MenuDirection.Top;
@@ -191,7 +189,6 @@ const Preview = observer(class Preview extends React.Component<Props, State> {
 		
 		if (typeY == I.MenuDirection.Top) {
 			css.top = offset.top - oh - OFFSET_Y;
-			obj.addClass('top');
 				
 			pcss.bottom = -nh - OFFSET_Y;
 			pcss.clipPath = cpTop;
@@ -199,7 +196,6 @@ const Preview = observer(class Preview extends React.Component<Props, State> {
 			
 		if (typeY == I.MenuDirection.Bottom) {
 			css.top = offset.top + nh + OFFSET_Y;
-			obj.addClass('bottom');
 				
 			pcss.top = -nh - OFFSET_Y;
 			pcss.clipPath = cpBot;
