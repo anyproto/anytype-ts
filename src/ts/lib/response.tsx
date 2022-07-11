@@ -121,6 +121,7 @@ const NavigationGetObjectInfoWithLinks = (response: any) => {
 const ObjectOpenBreadcrumbs = (response: any) => {
 	return {
 		objectId: response.getObjectid(),
+		objectView: Mapper.From.ObjectView(response.getObjectview()),
 	};
 };
 

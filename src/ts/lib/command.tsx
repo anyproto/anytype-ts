@@ -1050,7 +1050,14 @@ const ObjectShow = (objectId: string, traceId: string, callBack?: (message: any)
 
 const ObjectOpenBreadcrumbs = (callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.OpenBreadcrumbs.Request();
-	dispatcher.request(ObjectOpenBreadcrumbs.name, request, callBack);
+
+	dispatcher.request(ObjectOpenBreadcrumbs.name, request, (message: any) => {
+		dispatcher.onObjectView(message.objectId, '', message.objectView);
+
+		if (callBack) {
+			callBack(message);
+		};
+	});
 };
 
 const ObjectSetBreadcrumbs = (contextId: string, pageIds: string[], callBack?: (message: any) => void) => {
