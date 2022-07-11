@@ -56,12 +56,14 @@ class MenuManager {
 			{
 				role: 'fileMenu',
 				submenu: [
+					/*
 					{ 
 						label: 'New window', accelerator: 'CmdOrCtrl+Shift+N',
 						click: () => { WindowManager.createMain({ isChild: true }); } 
 					},
 
 					Separator,
+					*/
 
 					{ label: 'Show work directory', click: () => { shell.openPath(app.getPath('userData')); } },
 					{
@@ -211,6 +213,13 @@ class MenuManager {
 		const menuSudo = { 
 			label: 'Sudo',
 			submenu: [
+				{ 
+					label: 'New window', accelerator: 'CmdOrCtrl+Shift+N',
+					click: () => { WindowManager.createMain({ isChild: true }); } 
+				},
+
+				Separator,
+
 				{ label: 'Version', submenu: channels },
 				{
 					label: 'Experimental', type: 'checkbox', checked: config.experimental,
@@ -219,6 +228,9 @@ class MenuManager {
 						this.win.reload();
 					}
 				},
+
+				Separator,
+
 				{
 					label: 'Export templates',
 					click: () => { Util.send(this.win, 'command', 'exportTemplates'); }
@@ -231,6 +243,9 @@ class MenuManager {
 					label: 'Export localstore',
 					click: () => { Util.send(this.win, 'command', 'exportLocalstore'); }
 				},
+
+				Separator,
+
 				{
 					label: 'Create workspace',
 					click: () => { Util.send(this.win, 'commandGlobal', 'workspace');	}
