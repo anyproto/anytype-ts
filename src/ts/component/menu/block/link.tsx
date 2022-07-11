@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { MenuItemVertical, Loader, Filter, ObjectName } from 'ts/component';
+import { MenuItemVertical, Filter, ObjectName } from 'ts/component';
 import { I, C, Util, keyboard, DataUtil, analytics } from 'ts/lib';
 import { commonStore, dbStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -48,7 +48,6 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 	};
 	
 	render () {
-		const { loading } = this.state;
 		const { param } = this.props;
 		const { data } = param;
 		const { filter } = data;
@@ -71,9 +70,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 			if (item.isButton) {
 				cn.push('isButton');
 			};
-
-
-
+			
 			let content = null;
 
 			if (item.isSection) {
@@ -113,7 +110,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 
 
 
-		const suggestionsList = loading ? <Loader /> : (
+		const list = (
 			<InfiniteLoader
 				rowCount={items.length}
 				loadMoreRows={this.loadMoreRows}
@@ -141,7 +138,6 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 			</InfiniteLoader>
 		);
 
-		const suggestions = filter.length ? <div className="items">{suggestionsList}</div> : '';
 
 		return (
 			<div className="wrap">
@@ -153,7 +149,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 					onClear={this.onFilterClear}
 				/>
 
-				{suggestions}
+				{filter.length ? <div className="items">{list}</div> : ''}
 			</div>
 		);
 	};
