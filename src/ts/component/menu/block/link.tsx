@@ -16,7 +16,7 @@ const Constant = require('json/constant.json');
 const HEIGHT_SECTION = 28;
 const HEIGHT_ITEM = 56;
 const HEIGHT_BUTTON = 33;
-const HEIGHT_DIVIDER = 1;
+const HEIGHT_FILTER = 43;
 const LIMIT_HEIGHT = 6;
 const LIMIT_LOAD = 100;
 
@@ -77,7 +77,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 			let content = null;
 
 			if (item.isSection) {
-				content = <div className={[ 'sectionName', (param.index == 0 ? 'first' : ''), (item.isDivider ? 'isDivider' : '') ].join(' ')} style={param.style}>{item.name}</div>;
+				content = <div className={[ 'sectionName', (param.index == 0 ? 'first' : '') ].join(' ')} style={param.style}>{item.name}</div>;
 			} else {
 				content = (
 					<MenuItemVertical 
@@ -110,6 +110,8 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 				</CellMeasurer>
 			);
 		};
+
+
 
 		const suggestionsList = loading ? <Loader /> : (
 			<InfiniteLoader
@@ -261,7 +263,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 			}
 
 			sections.push({
-				id: I.MarkType.Link, name: '', isDivider: true,
+				id: I.MarkType.Link, name: '', isDiv: true,
 				children: buttons
 			});
 		};
@@ -276,7 +278,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 		let items: any[] = [];
 		for (let section of sections) {
 			if (withSections) {
-				items.push({ id: section.id, name: section.name, isSection: true, isDivider: section.isDivider });
+				items.push({ id: section.id, name: section.name, isSection: true});
 			};
 			items = items.concat(section.children);
 		};
@@ -388,7 +390,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 	getRowHeight (item: any) {
 		let h = HEIGHT_ITEM;
 		if (item.isSection) {
-			h = item.isDivider ? HEIGHT_DIVIDER : HEIGHT_SECTION;
+			h = HEIGHT_SECTION;
 		}
 		if (item.isButton) {
 			h = HEIGHT_BUTTON
@@ -417,6 +419,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 		let height = Math.min(maxObjHeight, midObjHeight);
 
 		if (!filter.length) {
+			height = HEIGHT_FILTER;
 			obj.addClass('initial');
 		}
 		else {
