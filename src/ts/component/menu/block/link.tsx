@@ -222,7 +222,6 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 		const { filter } = data;
 		const reg = new RegExp(Util.filterFix(filter), 'gi');
 
-		let text = 'Create new object';
 		let items = [].concat(this.items);
 
 		if (filter) {
@@ -250,7 +249,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 			const regexpUrlProtocol = new RegExp(expUrlProtocol);
 
 			const buttons = [
-				{ id: 'add', name: 'Create new object', icon: 'plus', isButton: true }
+				{ id: 'add', name: `Create object "${filter}"`, icon: 'plus', isButton: true }
 			];
 
 			if (filter.match(regexpUrl) || filter.match(regexpUrlProtocol)) {
