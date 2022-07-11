@@ -140,6 +140,8 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 				blockIds: blockIds,
 			} as any,
 		};
+
+		let closeContext = false;
 		
 		switch (type) {
 			
@@ -211,6 +213,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 					}
 				});
 
+				closeContext = true;
 				menuId = 'blockLink';
 				break;
 				
@@ -256,6 +259,10 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 
 		if (menuId && !menuStore.isOpen(menuId)) {
 			menuStore.closeAll(Constant.menuIds.context, () => {
+				if (closeContext) {
+					menuStore.close('blockContext');
+				}
+
 				menuStore.open(menuId, menuParam);
 			});
 		};

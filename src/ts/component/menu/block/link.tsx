@@ -159,7 +159,6 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 	};
 	
 	componentDidMount () {
-		menuStore.close('blockContext');
 		this._isMounted = true;
 		this.rebind();
 		this.resize();
