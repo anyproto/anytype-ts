@@ -12,8 +12,8 @@ const Util = require('./util.js');
 
 const DEFAULT_WIDTH = 1024;
 const DEFAULT_HEIGHT = 768;
-const MIN_WIDTH = 752;
-const MIN_HEIGHT = 480;
+const MIN_WIDTH = 800;
+const MIN_HEIGHT = 600;
 
 class WindowManager {
 
