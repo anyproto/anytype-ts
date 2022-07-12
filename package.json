@@ -55,7 +55,6 @@
 		"@types/react-dnd-html5-backend": "^3.0.2",
 		"@types/react-dom": "^16.9.8",
 		"@types/react-router-dom": "^4.3.5",
-		"@webpack-cli/serve": "^1.7.0",
 		"babel-loader": "^8.2.1",
 		"babel-preset-env": "^1.7.0",
 		"electron": "^19.0.7",
