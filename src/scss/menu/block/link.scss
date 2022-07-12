@@ -12,27 +12,18 @@
 		}
 
 		.items { height: 100%; }
-
 		.filter { flex-shrink: 0; }
 
+		.item { display: flex; }
 		.item {
 			.name { @include text-overflow-nw; width: 100%; }
 
 			.icon.plus { background-image: url('~img/icon/menu/link/object.svg'); }
-			.icon.link { background-image: url('~img/icon/menu/link/url.svg'); }
+			//.icon.link { background-image: url('~img/icon/menu/link/url.svg'); }
 		}
 
 		.item.withDescription {
 			.info { padding: 0px; }
-		}
-		.item.withDescription.isButton {
-			padding-top: 0;
-			padding-bottom: 0;
-			color: $colorBlack !important;
-
-			.icon { top: 3px; width: 27px; height: 27px; left: 8px;}
-
-			.info { padding-left: 25px !important; line-height: 31px;}
 		}
 		.item.withDescription.withIcon, .item.add, .item.link {
 			.info { padding-left: 52px; }

@@ -13,10 +13,12 @@ interface State {
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
+
 const HEIGHT_SECTION = 28;
-const HEIGHT_ITEM = 56;
-const HEIGHT_BUTTON = 33;
-const HEIGHT_FILTER = 43;
+const HEIGHT_ITEM = 28;
+const HEIGHT_ITEM_BIG = 56;
+const HEIGHT_FILTER = 44;
+
 const LIMIT_HEIGHT = 6;
 const LIMIT_LOAD = 100;
 
@@ -56,7 +58,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
 			const type: any = dbStore.getObjectType(item.type);
-			const cn = [ 'isBig' ];
+			const cn = [];
 
 			let object = { ...item, id: item.itemId };
 			if ([ 'add', 'link' ].indexOf(item.itemId) >= 0) {
@@ -67,14 +69,21 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 			if (item.isHidden) {
 				cn.push('isHidden');
 			};
-			if (item.isButton) {
-				cn.push('isButton');
+			if (item.isBig) {
+				cn.push('isBig');
 			};
 			
 			let content = null;
 
 			if (item.isSection) {
 				content = <div className={[ 'sectionName', (param.index == 0 ? 'first' : '') ].join(' ')} style={param.style}>{item.name}</div>;
+			} else
+			if (item.isDiv) {
+				content = (
+					<div className="separator" style={param.style}>
+						<div className="inner" />
+					</div>
+				);
 			} else {
 				content = (
 					<MenuItemVertical 
@@ -84,7 +93,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 						name={<ObjectName object={item} />}
 						onMouseEnter={(e: any) => { this.onOver(e, item); }} 
 						onClick={(e: any) => { this.onClick(e, item); }}
-						withDescription={true}
+						withDescription={item.isBig}
 						description={type ? type.name : undefined}
 						style={param.style}
 						iconSize={40}
@@ -108,36 +117,35 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 			);
 		};
 
-
-
 		const list = (
-			<InfiniteLoader
-				rowCount={items.length}
-				loadMoreRows={this.loadMoreRows}
-				isRowLoaded={({ index }) => !!this.items[index]}
-				threshold={LIMIT_HEIGHT}
-			>
-				{({ onRowsRendered, registerChild }) => (
-					<AutoSizer className="scrollArea">
-						{({ width, height }) => (
-							<List
-								ref={(ref: any) => { this.refList = ref; }}
-								width={width}
-								height={height}
-								deferredMeasurmentCache={this.cache}
-								rowCount={items.length}
-								rowHeight={({ index }) => this.getRowHeight(items[index])}
-								rowRenderer={rowRenderer}
-								onRowsRendered={onRowsRendered}
-								overscanRowCount={10}
-								onScroll={this.onScroll}
-							/>
-						)}
-					</AutoSizer>
-				)}
-			</InfiniteLoader>
+			<div className="items">
+				<InfiniteLoader
+					rowCount={items.length}
+					loadMoreRows={this.loadMoreRows}
+					isRowLoaded={({ index }) => !!this.items[index]}
+					threshold={LIMIT_HEIGHT}
+				>
+					{({ onRowsRendered, registerChild }) => (
+						<AutoSizer className="scrollArea">
+							{({ width, height }) => (
+								<List
+									ref={(ref: any) => { this.refList = ref; }}
+									width={width}
+									height={height}
+									deferredMeasurmentCache={this.cache}
+									rowCount={items.length}
+									rowHeight={({ index }) => this.getRowHeight(items[index])}
+									rowRenderer={rowRenderer}
+									onRowsRendered={onRowsRendered}
+									overscanRowCount={10}
+									onScroll={this.onScroll}
+								/>
+							)}
+						</AutoSizer>
+					)}
+				</InfiniteLoader>
+			</div>
 		);
-
 
 		return (
 			<div className="wrap">
@@ -149,7 +157,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 					onClear={this.onFilterClear}
 				/>
 
-				{filter.length ? <div className="items">{list}</div> : ''}
+				{filter ? list : ''}
 			</div>
 		);
 	};
@@ -222,46 +230,46 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 		const { filter } = data;
 		const reg = new RegExp(Util.filterFix(filter), 'gi');
 
-		let items = [].concat(this.items);
-
-		if (filter) {
-			items = items.filter((it: any) => {
-				let ret = false;
-				if (it.name && it.name.match(reg)) {
-					ret = true;
-				} else 
-				if (it.description && it.description.match(reg)) {
-					ret = true;
-				};
-				return ret;
-			});
+		if (!filter) {
+			return [];
 		};
-		
-		let sections: any[] = [
-			{ id: I.MarkType.Object, name: 'Objects', children: items }
+
+		const expUrl = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)?/gi;
+		const expUrlProtocol = /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)?/gi;
+
+		const regexpUrl = new RegExp(expUrl);
+		const regexpUrlProtocol = new RegExp(expUrlProtocol);
+		const buttons: any[] = [
+			{ id: 'add', name: `Create object "${filter}"`, icon: 'plus' }
 		];
 
-		if (filter) {
-			const expUrl = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)?/gi;
-			const expUrlProtocol = /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)?/gi;
+		let items = [];
 
-			const regexpUrl = new RegExp(expUrl);
-			const regexpUrlProtocol = new RegExp(expUrlProtocol);
+		items = items.concat(this.items);
+		items.push({ isDiv: true });
 
-			const buttons = [
-				{ id: 'add', name: `Create object "${filter}"`, icon: 'plus', isButton: true }
-			];
+		items = items.filter((it: any) => {
+			let ret = false;
+			if (it.name && it.name.match(reg)) {
+				ret = true;
+			} else 
+			if (it.description && it.description.match(reg)) {
+				ret = true;
+			};
+			return ret;
+		}).map((it: any) => { 
+			it.isBig = true; 
+			return it;
+		});
 
-			if (filter.match(regexpUrl) || filter.match(regexpUrlProtocol)) {
-				buttons.unshift({ id: 'link', name: 'Link to website', icon: 'link', isButton: true });
-			}
-
-			sections.push({
-				id: I.MarkType.Link, name: '', isDiv: true,
-				children: buttons
-			});
+		if (filter.match(regexpUrl) || filter.match(regexpUrlProtocol)) {
+			buttons.unshift({ id: 'link', name: 'Link to website', icon: 'link' });
 		};
 
+		let sections: any[] = [
+			{ id: I.MarkType.Object, name: 'Objects', children: items },
+			{ id: I.MarkType.Link, name: '', children: buttons },
+		];
 		sections = DataUtil.menuSectionsMap(sections);
 		return sections;
 	};
@@ -271,7 +279,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 		
 		let items: any[] = [];
 		for (let section of sections) {
-			if (withSections) {
+			if (withSections && section.name) {
 				items.push({ id: section.id, name: section.name, isSection: true});
 			};
 			items = items.concat(section.children);
@@ -383,21 +391,16 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 
 	getRowHeight (item: any) {
 		let h = HEIGHT_ITEM;
-		if (item.isSection) {
-			h = HEIGHT_SECTION;
-		}
-		if (item.isButton) {
-			h = HEIGHT_BUTTON
-		}
+		if (item.isSection) h = HEIGHT_SECTION;
+		if (item.isBig) h = HEIGHT_ITEM_BIG;
 		return h;
 	};
 
 	getListHeight (items: any) {
-		let h = 0;
-		for (let item of items) {
-			h += this.getRowHeight(item);
-		}
-		return h;
+		return items.reduce((res: number, item: any) => {
+			res += this.getRowHeight(item);
+			return res;
+		}, 0);
 	}
 
 	resize () {
@@ -406,21 +409,17 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 		const { filter } = data;
 		const items = this.getItems(true);
 		const obj = $(`#${getId()} .content`);
-		const offset = 6;
+		const offset = 16;
 
-		const maxObjHeight = HEIGHT_ITEM * LIMIT_HEIGHT;
-		const midObjHeight = this.getListHeight(items) + offset + HEIGHT_ITEM;
-		let height = Math.min(maxObjHeight, midObjHeight);
-
-		if (!filter.length) {
-			height = HEIGHT_FILTER;
-			obj.addClass('initial');
-		}
-		else {
+		let height = HEIGHT_FILTER;
+		if (filter) {
+			height += this.getListHeight(items) + offset;
 			obj.removeClass('initial');
-		}
+		} else {
+			obj.addClass('initial');
+		};
 
-		obj.css({ height: height });
+		obj.css({ height });
 		position();
 	};
 	

@@ -107,7 +107,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { param, close, getId, dataset } = this.props;
+		const { param, close, getId, getSize } = this.props;
 		const { data } = param;
 		const { blockId, blockIds, rootId, onChange, range } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
@@ -120,7 +120,6 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 
 		keyboard.disableContext(true);
 		focus.set(blockId, range);
-		//analytics.event(Util.toUpperCamelCase(`${getId()}-action`), { id: type });
 
 		if (type != 'style') {
 			focus.apply();
@@ -198,8 +197,13 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 				
 			case I.MarkType.Link:
 				mark = Mark.getInRange(marks, type, { from: from, to: to });
-				menuParam.rect = param.rect;
-				menuParam.offsetY = 0;
+
+				menuParam = Object.assign(menuParam, {
+					offsetY: 0,
+					rect: param.rect,
+					width: getSize().width,
+				});
+
 				menuParam.data = Object.assign(menuParam.data, {
 					filter: mark ? mark.param : '',
 					type: mark ? mark.type : null,
@@ -258,11 +262,13 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 		};
 
 		if (menuId && !menuStore.isOpen(menuId)) {
-			menuStore.closeAll(Constant.menuIds.context, () => {
-				if (closeContext) {
-					menuStore.close('blockContext');
-				}
+			const menuIds = Constant.menuIds.context;
+			
+			if (closeContext) {
+				menuIds.push(this.props.id);
+			};
 
+			menuStore.closeAll(menuIds, () => {
 				menuStore.open(menuId, menuParam);
 			});
 		};
