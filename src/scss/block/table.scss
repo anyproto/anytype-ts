@@ -81,13 +81,13 @@
 			.wrapContent { border-radius: 0px 0px 0px 4px; }
 		}
 
-		.row.isHighlightedRow { border-radius: 4px; z-index: 2; }
+		.row.isHighlightedRow { border-radius: 4px; z-index: 2; box-shadow: 0px 0px 0px 2px $tableBorderOrange; }
 		.row.isHighlightedRow {
 			.handleRow { display: block; }
 
-			.cell { box-shadow: 1px 0px inset, 0px 2px $tableBorderOrange, 0px -2px $tableBorderOrange; padding-top: 0px; padding-left: 1px; }
-			.cell:first-child { border-radius: 4px 0px 0px 4px; box-shadow: -2px 0px $tableBorderOrange, 0px 2px $tableBorderOrange, 0px -2px $tableBorderOrange; padding: 0px; }
-			.cell:last-child { border-radius: 0px 4px 4px 0px; box-shadow: 1px 0px inset, 2px 0px $tableBorderOrange, 0px 2px $tableBorderOrange, 0px -2px $tableBorderOrange; padding: 0px; padding-left: 1px; }
+			.cell { box-shadow: 1px 0px inset; padding-top: 0px; padding-left: 1px; }
+			.cell:first-child { border-radius: 4px 0px 0px 4px; box-shadow: 0px 0px; padding: 0px; }
+			.cell:last-child { border-radius: 0px 4px 4px 0px; }
 			.cell .block .wrapContent { padding-top: 1px; }
 		}
 
@@ -100,7 +100,7 @@
 			box-shadow: 1px 1px inset; color: $colorBorderDark; padding: 1px 0px 0px 1px;
 		}
 
-		.cell.isEditing { box-shadow: 0px 0px 0px 2px $tableBorderOrange; border-radius: 2px; padding: 0px; }
+		.cell.isEditing { box-shadow: 0px 0px 0px 1px $tableBorderOrange; border-radius: 2px; padding: 0px; }
 		.cell.isEditing {
 			.handleColumn { top: -4px; }
 			.handleRow { left: -4px; }
