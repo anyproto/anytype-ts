@@ -5,10 +5,10 @@
 	.inner { position: relative; width: 100%; height: 35px; }
 	.input { padding: 0px !important; height: 28px; line-height: 28px; vertical-align: top; border: 0px !important; width: calc(100% - 24px); background: none; }
 	.icon.clear { 
-		width: 20px; height: 20px; background-image: url('~img/icon/clear0.svg'); position: absolute; right: 0px; top: 4px;
+		width: 20px; height: 20px; background-image: url('~img/icon/clearFilter0.svg') !important; position: absolute; right: 0px; top: 4px;
 		cursor: pointer; opacity: 0;
 	}
-	.icon.clear:hover { background-image: url('~img/icon/clear1.svg'); }
+	.icon.clear:hover { background-image: url('~img/icon/clearFilter1.svg') !important; }
 
 	.line { height: 1px; margin: 0px !important; background: $colorLightGrey; display: block; }
 }

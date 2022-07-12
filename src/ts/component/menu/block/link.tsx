@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { MenuItemVertical, Loader, Filter, ObjectName } from 'ts/component';
+import { MenuItemVertical, Filter, ObjectName } from 'ts/component';
 import { I, C, Util, keyboard, DataUtil, analytics } from 'ts/lib';
 import { commonStore, dbStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -13,8 +13,13 @@ interface State {
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
+
 const HEIGHT_SECTION = 28;
-const HEIGHT_ITEM = 56;
+const HEIGHT_ITEM = 28;
+const HEIGHT_ITEM_BIG = 56;
+const HEIGHT_DIV = 16;
+const HEIGHT_FILTER = 44;
+
 const LIMIT_HEIGHT = 6;
 const LIMIT_LOAD = 100;
 
@@ -46,7 +51,6 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 	};
 	
 	render () {
-		const { loading } = this.state;
 		const { param } = this.props;
 		const { data } = param;
 		const { filter } = data;
@@ -55,23 +59,33 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
 			const type: any = dbStore.getObjectType(item.type);
-			const cn = [ 'isBig' ];
+			const cn = [];
 
 			let object = { ...item, id: item.itemId };
-			if ([ 'add', 'link' ].indexOf(item.itemId) >= 0) {
-				cn.push(item.itemId);
-				object = null;
-			};
-
-			if (item.isHidden) {
-				cn.push('isHidden');
-			};
-
 			let content = null;
 
 			if (item.isSection) {
 				content = <div className={[ 'sectionName', (param.index == 0 ? 'first' : '') ].join(' ')} style={param.style}>{item.name}</div>;
+			} else
+			if (item.isDiv) {
+				content = (
+					<div className="separator" style={param.style}>
+						<div className="inner" />
+					</div>
+				);
 			} else {
+				if ([ 'add', 'link' ].indexOf(item.itemId) >= 0) {
+					cn.push(item.itemId);
+					object = null;
+				};
+
+				if (item.isHidden) {
+					cn.push('isHidden');
+				};
+				if (item.isBig) {
+					cn.push('isBig');
+				};
+
 				content = (
 					<MenuItemVertical 
 						id={item.id}
@@ -80,7 +94,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 						name={<ObjectName object={item} />}
 						onMouseEnter={(e: any) => { this.onOver(e, item); }} 
 						onClick={(e: any) => { this.onClick(e, item); }}
-						withDescription={true}
+						withDescription={item.isBig}
 						description={type ? type.name : undefined}
 						style={param.style}
 						iconSize={40}
@@ -104,6 +118,36 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 			);
 		};
 
+		const list = (
+			<div className="items">
+				<InfiniteLoader
+					rowCount={items.length}
+					loadMoreRows={this.loadMoreRows}
+					isRowLoaded={({ index }) => !!this.items[index]}
+					threshold={LIMIT_HEIGHT}
+				>
+					{({ onRowsRendered, registerChild }) => (
+						<AutoSizer className="scrollArea">
+							{({ width, height }) => (
+								<List
+									ref={(ref: any) => { this.refList = ref; }}
+									width={width}
+									height={height}
+									deferredMeasurmentCache={this.cache}
+									rowCount={items.length}
+									rowHeight={({ index }) => this.getRowHeight(items[index])}
+									rowRenderer={rowRenderer}
+									onRowsRendered={onRowsRendered}
+									overscanRowCount={10}
+									onScroll={this.onScroll}
+								/>
+							)}
+						</AutoSizer>
+					)}
+				</InfiniteLoader>
+			</div>
+		);
+
 		return (
 			<div className="wrap">
 				<Filter 
@@ -114,35 +158,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 					onClear={this.onFilterClear}
 				/>
 
-				<div className="items">
-					{loading ? <Loader /> : (
-						<InfiniteLoader
-							rowCount={items.length}
-							loadMoreRows={this.loadMoreRows}
-							isRowLoaded={({ index }) => !!this.items[index]}
-							threshold={LIMIT_HEIGHT}
-						>
-							{({ onRowsRendered, registerChild }) => (
-								<AutoSizer className="scrollArea">
-									{({ width, height }) => (
-										<List
-											ref={(ref: any) => { this.refList = ref; }}
-											width={width}
-											height={height}
-											deferredMeasurmentCache={this.cache}
-											rowCount={items.length}
-											rowHeight={({ index }) => this.getRowHeight(items[index])}
-											rowRenderer={rowRenderer}
-											onRowsRendered={onRowsRendered}
-											overscanRowCount={10}
-											onScroll={this.onScroll}
-										/>
-									)}
-								</AutoSizer>
-							)}
-						</InfiniteLoader>
-					)}
-				</div>
+				{filter ? list : ''}
 			</div>
 		);
 	};
@@ -213,42 +229,50 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 		const { param } = this.props;
 		const { data } = param;
 		const { filter } = data;
-		const reg = new RegExp(Util.filterFix(filter), 'gi');
 
-		let text = 'Create new object';
-		let items = [].concat(this.items);
-
-		if (filter) {
-			text = `Create object “${filter}”`;
-			items = items.filter((it: any) => {
-				let ret = false;
-				if (it.name && it.name.match(reg)) {
-					ret = true;
-				} else 
-				if (it.description && it.description.match(reg)) {
-					ret = true;
-				};
-				return ret;
-			});
+		if (!filter) {
+			return [];
 		};
 
-		items.unshift({ id: 'add', name: text, icon: 'plus' });
-		
-		let sections: any[] = [
-			{ id: I.MarkType.Object, name: 'Objects', children: items }
+		const reg = new RegExp(Util.filterFix(filter), 'gi');
+		const regUrl = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)?/gi;
+		const regProtocol = /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)?/gi;
+		const buttons: any[] = [
+			{ id: 'add', name: `Create object "${filter}"`, icon: 'plus' }
 		];
 
-		if (filter) {
-			sections.unshift({ 
-				id: I.MarkType.Link, name: 'Web sites',
-				children: [
-					{ id: 'link', name: filter, icon: 'link' }
-				] 
-			});
+		let items = [].concat(this.items);
+
+		items = items.filter((it: any) => {
+			let ret = false;
+			if (it.name && it.name.match(reg)) {
+				ret = true;
+			} else 
+			if (it.description && it.description.match(reg)) {
+				ret = true;
+			};
+			return ret;
+		}).map((it: any) => { 
+			it.isBig = true; 
+			return it;
+		});
+
+		if (items.length) {
+			items.push({ isDiv: true });
 		};
 
-		sections = DataUtil.menuSectionsMap(sections);
-		return sections;
+		if (filter.match(new RegExp(regUrl)) || filter.match(new RegExp(regProtocol))) {
+			buttons.unshift({ id: 'link', name: 'Link to website', icon: 'link' });
+		};
+
+		let sections: any[] = [
+			{ id: I.MarkType.Link, name: '', children: buttons },
+		];
+
+		if (items.length) {
+			sections.unshift({ id: I.MarkType.Object, name: 'Objects', children: items });
+		};
+		return DataUtil.menuSectionsMap(sections);
 	};
 
 	getItems (withSections: boolean) {
@@ -256,8 +280,8 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 		
 		let items: any[] = [];
 		for (let section of sections) {
-			if (withSections) {
-				items.push({ id: section.id, name: section.name, isSection: true });
+			if (withSections && section.name) {
+				items.push({ id: section.id, name: section.name, isSection: true});
 			};
 			items = items.concat(section.children);
 		};
@@ -367,17 +391,37 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 	};
 
 	getRowHeight (item: any) {
-		return item.isSection ? HEIGHT_SECTION : HEIGHT_ITEM;
+		let h = HEIGHT_ITEM;
+		if (item.isSection) h = HEIGHT_SECTION;
+		if (item.isBig) h = HEIGHT_ITEM_BIG;
+		if (item.isDiv) h = HEIGHT_DIV;
+		return h;
 	};
 
+	getListHeight (items: any) {
+		return items.reduce((res: number, item: any) => {
+			res += this.getRowHeight(item);
+			return res;
+		}, 0);
+	}
+
 	resize () {
-		const { getId, position } = this.props;
+		const { getId, position, param } = this.props;
+		const { data } = param;
+		const { filter } = data;
 		const items = this.getItems(true);
 		const obj = $(`#${getId()} .content`);
-		const offset = 6;
-		const height = Math.max(HEIGHT_ITEM * 3 + offset, Math.min(HEIGHT_ITEM * LIMIT_HEIGHT, items.length * HEIGHT_ITEM + offset));
+		const offset = 16;
 
-		obj.css({ height: height });
+		let height = HEIGHT_FILTER;
+		if (filter) {
+			height += this.getListHeight(items) + offset;
+			obj.removeClass('initial');
+		} else {
+			obj.addClass('initial');
+		};
+
+		obj.css({ height });
 		position();
 	};
 	

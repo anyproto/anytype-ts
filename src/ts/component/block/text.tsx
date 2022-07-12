@@ -1266,8 +1266,8 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 				element: el,
 				rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
 				type: I.MenuType.Horizontal,
-				offsetY: -4,
-				vertical: I.MenuDirection.Top,
+				offsetY: 4,
+				vertical: I.MenuDirection.Bottom,
 				horizontal: I.MenuDirection.Center,
 				passThrough: true,
 				onClose: () => {

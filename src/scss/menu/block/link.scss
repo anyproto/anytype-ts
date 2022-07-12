@@ -1,23 +1,22 @@
 @import "~scss/_vars";
 
 .menus {
-	.menu.menuBlockLink { width: 360px; }
+	.menu.menuBlockLink { width: 420px; }
 	.menu.menuBlockLink {
-		.content { transition: none; padding: 0px; max-height: 420px; padding: 8px 0px 0px 0px;  }
+		.content { transition: none; padding: 0px; max-height: 420px; padding: 8px 0px 0px 0px; }
+		.content.initial .filter .line { display: none; }
+
 		.wrap { height: 100%; display: flex; flex-direction: column; }
 		.wrap.withLabel {
 			.ReactVirtualized__Grid__innerScrollContainer { margin-top: 0px; }
 		}
 
 		.items { height: 100%; }
-
 		.filter { flex-shrink: 0; }
 
+		.item { display: flex; }
 		.item {
 			.name { @include text-overflow-nw; width: 100%; }
-
-			.icon.plus { background-image: url('~img/icon/menu/link/object.svg'); }
-			.icon.link { background-image: url('~img/icon/menu/link/url.svg'); }
 		}
 
 		.item.withDescription {
