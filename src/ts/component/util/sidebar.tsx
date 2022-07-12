@@ -22,11 +22,10 @@ const $ = require('jquery');
 const Constant = require('json/constant.json');
 const sha1 = require('sha1');
 
-const MAX_DEPTH = 100;
+const MAX_DEPTH = 15;
 const LIMIT = 20;
 const HEIGHT = 28;
 const SNAP_THRESHOLD = 30;
-
 const SKIP_TYPES_LOAD = [
 	Constant.typeId.space,
 ];
@@ -49,6 +48,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 	cache: any = {};
 	subId: string = '';
 	subscriptionIds: any = {};
+	branches: string[] = [];
 
 	constructor (props: any) {
 		super(props);
@@ -322,8 +322,20 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 			return list;
 		};
 
+		const regN = new RegExp(`:${parentId}$`);
+		const regS = new RegExp(`^${parentId}$`);
+		const branch = this.branches.find(it => it.match(regN) || it.match(regS)) || parentId;
+
 		for (let item of items) {
-			let links = this.checkLinks(Relation.getArrayValue(item.links));
+			let links = this.checkLinks(Relation.getArrayValue(item.links)).filter(it => {
+				const branchId = [ branch, it ].join(':');
+				if (this.branches.includes(branchId)) {
+					return false;
+				} else {
+					this.branches.push(branchId);
+					return true;
+				};
+			});
 			let length = links.length;
 			let newItem = {
 				details: item,
@@ -354,6 +366,8 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		let sections = this.getSections();
 		let items: any[] = [];
 
+		this.branches = [];
+
 		sections.forEach((section: any) => {
 			const children = this.getRecords(dbStore.getSubId(Constant.subIds.sidebar, section.id));
 
@@ -378,6 +392,8 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 			};
 			item.isOpen = Storage.checkToggle(Constant.subIds.sidebar, this.getId(item));
 			items.push(item);
+
+			this.branches.push(item.id);
 
 			if (item.isOpen) {
 				items = this.unwrap(section.id, items, section.id, children, 0);

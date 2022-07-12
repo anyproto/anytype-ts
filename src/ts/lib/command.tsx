@@ -908,7 +908,7 @@ const HistoryShowVersion = (pageId: string, versionId: string, callBack?: (messa
 };
 
 const HistorySetVersion = (pageId: string, versionId: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.History.Show.Request();
+	const request = new Rpc.History.SetVersion.Request();
 	
 	request.setPageid(pageId);
 	request.setVersionid(versionId);
