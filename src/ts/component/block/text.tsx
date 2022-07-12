@@ -667,6 +667,8 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			{ key: `${cmd}+a`, preventDefault: true },
 			{ key: `${cmd}+[`, preventDefault: false },
 			{ key: `${cmd}+]`, preventDefault: false },
+			{ key: `tab`, preventDefault: false },
+			{ key: `shift+tab`, preventDefault: true },
 		];
 
 		keyboard.shortcut('enter, shift+enter', e, (pressed: string) => {
@@ -1080,7 +1082,6 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		const { rootId, block } = this.props;
 		const { content } = block;
 		const value = this.getValue();
-		const check = Storage.get('writing');
 
 		if (content.style == I.TextStyle.Code) {
 			marks = [];
@@ -1098,11 +1099,6 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		DataUtil.blockSetText(rootId, block.id, value, marks, update, (message: any) => {
 			if (callBack) {
 				callBack();
-			};
-
-			if (!check) {
-				analytics.event('Writing');
-				Storage.set('writing', 1);
 			};
 		});
 	};

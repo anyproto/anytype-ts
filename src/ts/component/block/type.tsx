@@ -158,7 +158,7 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 			this.n++;
 			if (this.n > items.length - 1) {
 				this.n = 0;
-				focus.scroll(isPopup);
+				focus.scroll(isPopup, block.id);
 			};
 
 			focus.clear(true);

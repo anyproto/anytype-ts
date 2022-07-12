@@ -940,14 +940,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 		const { rootId } = this.props;
 		const dir = pressed.match(Key.up) ? -1 : 1;
-		const next = blockStore.getFirstBlock(rootId, -dir, (item: any) => { return item.isFocusable(); });
-		if (!next) {
-			return;
-		};
-
-		const l = next.getLength();
-		focus.set(next.id, (dir < 0 ? { from: 0, to: 0 } : { from: l, to: l }));
-		focus.apply();
+		const next = blockStore.getFirstBlock(rootId, -dir, it => it.isFocusable());
+		
+		this.focusNextBlock(next, dir);
 	};
 
 	// Expand selection up/down
@@ -1253,18 +1248,13 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			e.preventDefault();
 
 			const parent = blockStore.getHighestParent(rootId, next.id);
-			const l = next.getLength();
 
 			// If highest parent is closed toggle, next is parent
 			if (parent && parent.isTextToggle() && !Storage.checkToggle(rootId, parent.id)) {
 				next = parent;
 			};
 
-			window.setTimeout(() => {
-				focus.set(next.id, (dir > 0 ? { from: 0, to: 0 } : { from: l, to: l }));
-				focus.apply();
-				focus.scroll(isPopup);
-			});
+			this.focusNextBlock(next, dir);
 		};
 
 		if (isInsideTable) {
@@ -1336,15 +1326,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 					};
 				};
 
-				const next = blockStore.getLeaf(rootId, nextCellId);
-				if (next) {
-					const l = next.getLength();
-					window.setTimeout(() => {
-						focus.set(next.id, (dir > 0 ? { from: 0, to: 0 } : { from: l, to: l }));
-						focus.apply();
-						focus.scroll(isPopup);
-					});
-				};
+				this.focusNextBlock(blockStore.getLeaf(rootId, nextCellId), dir);
 			};
 
 			if (rowElement.childrenIds.length - 1 < idx) {
@@ -1518,8 +1500,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		const { selection } = dataset || {};
 		const { focused, range } = focus.state;
 		const filePath = path.join(userPath, 'tmp');
-		const currentFrom = range.from;
-		const currentTo = range.to;
 
 		if (this.isReadonly()) {
 			return;
@@ -2037,6 +2017,17 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		};
 
 		this.resize();
+	};
+
+	focusNextBlock (next: I.Block, dir: number) {
+		if (!next) {
+			return;
+		};
+
+		const l = next.getLength();
+		const from = dir > 0 ? 0 : l;
+
+		this.focus(next.id, from, from, true);
 	};
 
 	onResize (v: number) {

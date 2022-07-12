@@ -90,10 +90,7 @@ class Focus {
 		return this;
 	};
 	
-	scroll (isPopup: boolean, id?: string) {
-		const { focused } = this.state;
-
-		id = String(id || focused || '');
+	scroll (isPopup: boolean, id: string) {
 		if (!id) {
 			return;
 		};
@@ -108,17 +105,16 @@ class Focus {
 		const no = node.offset().top;
 		const o = Constant.size.lastBlock + Util.sizeHeader();
 		const st = container.scrollTop();
-		const y = isPopup ? (no - container.offset().top + st) : no;
+		
+		let y = isPopup ? (no - container.offset().top + st) : no;
 
 		if ((y >= st) && (y <= st + h - o)) {
 			return;
 		};
 
-		if (y >= h - o) {
-			container.scrollTop(y - h + o);
-		};
+		container.scrollTop(Math.max(y, h - o) - h + o);
 	};
-	
+
 };
 
 export let focus: Focus = new Focus();
