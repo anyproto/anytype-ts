@@ -17,9 +17,6 @@
 		.item { display: flex; }
 		.item {
 			.name { @include text-overflow-nw; width: 100%; }
-
-			.icon.plus { background-image: url('~img/icon/menu/link/object.svg'); }
-			//.icon.link { background-image: url('~img/icon/menu/link/url.svg'); }
 		}
 
 		.item.withDescription {

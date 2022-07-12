@@ -1421,12 +1421,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		const { rootId, isPopup } = this.props;
 		const top = Util.getScrollContainer(isPopup).scrollTop();
 
-		/*
-		if (Math.abs(top - this.scrollTop) >= 10) {
-			this.uiHide();
-		};
-		*/
-
 		this.scrollTop = top;
 		Storage.setScroll('editor' + (isPopup ? 'Popup' : ''), rootId, top);
 		Util.previewHide(false);
@@ -1592,9 +1586,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		e.preventDefault();
 
 		const block = blockStore.getLeaf(rootId, focused);
-		const length = block ? block.getLength() : 0;
-		const reg = new RegExp(/^((?:[a-z]+:(?:\/\/)?)|\/\/)([^\s\/\?#]+)([^\s\?#]+)(?:\?([^#\s]*))?(?:#([^\s]*))?$/gi);
-		const match = data.text.match(reg);
+		const match = Util.matchUrl(data.text);
 		const url = match && match[0];
 		
 		if (block && url && !force && !block.isTextTitle() && !block.isTextDescription()) {

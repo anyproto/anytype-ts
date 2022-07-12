@@ -17,6 +17,7 @@ const Constant = require('json/constant.json');
 const HEIGHT_SECTION = 28;
 const HEIGHT_ITEM = 28;
 const HEIGHT_ITEM_BIG = 56;
+const HEIGHT_DIV = 16;
 const HEIGHT_FILTER = 44;
 
 const LIMIT_HEIGHT = 6;
@@ -61,18 +62,6 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 			const cn = [];
 
 			let object = { ...item, id: item.itemId };
-			if ([ 'add', 'link' ].indexOf(item.itemId) >= 0) {
-				cn.push(item.itemId);
-				object = null;
-			};
-
-			if (item.isHidden) {
-				cn.push('isHidden');
-			};
-			if (item.isBig) {
-				cn.push('isBig');
-			};
-			
 			let content = null;
 
 			if (item.isSection) {
@@ -85,6 +74,18 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 					</div>
 				);
 			} else {
+				if ([ 'add', 'link' ].indexOf(item.itemId) >= 0) {
+					cn.push(item.itemId);
+					object = null;
+				};
+
+				if (item.isHidden) {
+					cn.push('isHidden');
+				};
+				if (item.isBig) {
+					cn.push('isBig');
+				};
+
 				content = (
 					<MenuItemVertical 
 						id={item.id}
@@ -228,25 +229,19 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 		const { param } = this.props;
 		const { data } = param;
 		const { filter } = data;
-		const reg = new RegExp(Util.filterFix(filter), 'gi');
 
 		if (!filter) {
 			return [];
 		};
 
-		const expUrl = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)?/gi;
-		const expUrlProtocol = /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)?/gi;
-
-		const regexpUrl = new RegExp(expUrl);
-		const regexpUrlProtocol = new RegExp(expUrlProtocol);
+		const reg = new RegExp(Util.filterFix(filter), 'gi');
+		const regUrl = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)?/gi;
+		const regProtocol = /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)?/gi;
 		const buttons: any[] = [
 			{ id: 'add', name: `Create object "${filter}"`, icon: 'plus' }
 		];
 
-		let items = [];
-
-		items = items.concat(this.items);
-		items.push({ isDiv: true });
+		let items = [].concat(this.items);
 
 		items = items.filter((it: any) => {
 			let ret = false;
@@ -262,16 +257,22 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 			return it;
 		});
 
-		if (filter.match(regexpUrl) || filter.match(regexpUrlProtocol)) {
+		if (items.length) {
+			items.push({ isDiv: true });
+		};
+
+		if (filter.match(new RegExp(regUrl)) || filter.match(new RegExp(regProtocol))) {
 			buttons.unshift({ id: 'link', name: 'Link to website', icon: 'link' });
 		};
 
 		let sections: any[] = [
-			{ id: I.MarkType.Object, name: 'Objects', children: items },
 			{ id: I.MarkType.Link, name: '', children: buttons },
 		];
-		sections = DataUtil.menuSectionsMap(sections);
-		return sections;
+
+		if (items.length) {
+			sections.unshift({ id: I.MarkType.Object, name: 'Objects', children: items });
+		};
+		return DataUtil.menuSectionsMap(sections);
 	};
 
 	getItems (withSections: boolean) {
@@ -393,6 +394,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 		let h = HEIGHT_ITEM;
 		if (item.isSection) h = HEIGHT_SECTION;
 		if (item.isBig) h = HEIGHT_ITEM_BIG;
+		if (item.isDiv) h = HEIGHT_DIV;
 		return h;
 	};
 

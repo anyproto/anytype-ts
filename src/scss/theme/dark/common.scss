@@ -71,6 +71,8 @@ html.themeDark {
 
     .filter {
         .line { background: $colorLineSecondary; }
+		.icon.clear { background-image: url('#{$themePath}/icon/clearFilter0.svg') !important; }
+		.icon.clear:hover { background-image: url('#{$themePath}/icon/clearFilter1.svg') !important; }
     }
 
     .frame { background: $colorBlack; }
