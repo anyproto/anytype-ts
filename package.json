@@ -71,10 +71,10 @@
 		"tslint-react": "^4.2.0",
 		"url-loader": "^2.3.0",
 		"wait-for-localhost-cli": "^3.0.0",
-		"webpack": "~4",
 		"webpack-bundle-analyzer": "^4.5.0",
+		"webpack": "^4.44.2",
 		"webpack-cli": "^3.3.12",
-		"webpack-dev-server": "~3"
+		"webpack-dev-server": "^3.11.0"
 	},
 	"dependencies": {
 		"@electron/remote": "^2.0.1",
