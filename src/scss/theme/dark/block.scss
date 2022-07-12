@@ -125,10 +125,6 @@
             .row { box-shadow: 0px 1px $colorLineSecondary inset; }
         }
 
-        .viewItem.viewBoard {
-            .cellContent.isName { color: $colorPrimary; }
-        }
-
         .viewItem.viewList {
             .cellContent.isName { color: $colorPrimary; }
         }
@@ -143,9 +139,10 @@
         }
 
         .viewItem.viewBoard {
-            .cardContent { background: $colorBlack; border-color: $colorLinePrimary; }
-			.card.add { border-color: $colorLinePrimary; }
+            .cardContent { background: $colorBgLight; border-color: $colorLinePrimary; }
+			.card.add { background: $colorBgLight; border-color: $colorLinePrimary; }
             .cellContent.isName { color: $colorPrimary; }
+			.column .head { background: $colorBlack; }
         }
     }
 

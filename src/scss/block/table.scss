@@ -100,7 +100,7 @@
 			box-shadow: 1px 1px inset; color: $colorBorderDark; padding: 1px 0px 0px 1px;
 		}
 
-		.cell.isEditing { box-shadow: 0px 0px 0px 1px $tableBorderOrange; border-radius: 2px; padding: 0px; }
+		.cell.isEditing { box-shadow: 0px 0px 0px 2px $tableBorderOrange; border-radius: 2px; padding: 0px; }
 		.cell.isEditing {
 			.handleColumn { top: -4px; }
 			.handleRow { left: -4px; }
