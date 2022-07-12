@@ -174,35 +174,37 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<Props
 			} else {
 				authStore.phraseSet(message.mnemonic);
 
-				C.AccountCreate(name, icon, accountPath, code, (message: any) => {
-					if (message.error.code) {
-						const error = Errors.AccountCreate[message.error.code] || message.error.description;
-						this.setError(error);
-					} else
-					if (message.account) {
-						if (message.config) {
-							commonStore.configSet(message.config, false);
-						};
+				DataUtil.createSession((message: any) => {
+					C.AccountCreate(name, icon, accountPath, code, (message: any) => {
+						if (message.error.code) {
+							const error = Errors.AccountCreate[message.error.code] || message.error.description;
+							this.setError(error);
+						} else
+						if (message.account) {
+							if (message.config) {
+								commonStore.configSet(message.config, false);
+							};
 
-						const accountId = message.account.id;
+							const accountId = message.account.id;
 
-						authStore.accountSet(message.account);
-						authStore.previewSet('');
+							authStore.accountSet(message.account);
+							authStore.previewSet('');
 
-						Storage.set('popupNewBlock', true);
-						Storage.set('popupVideo', true);
+							Storage.set('popupNewBlock', true);
+							Storage.set('popupVideo', true);
 
-						Renderer.send('keytarSet', accountId, authStore.phrase);
-						analytics.event('CreateAccount');
-						
-						if (match.params.id == 'register') {
-							Util.route('/auth/success');
-						};
+							Renderer.send('keytarSet', accountId, authStore.phrase);
+							analytics.event('CreateAccount');
 							
-						if (match.params.id == 'add') {
-							Util.route('/auth/pin-select/add');
+							if (match.params.id == 'register') {
+								Util.route('/auth/success');
+							};
+								
+							if (match.params.id == 'add') {
+								Util.route('/auth/pin-select/add');
+							};
 						};
-					};
+					});
 				});
 			};
 		});
