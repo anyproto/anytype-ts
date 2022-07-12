@@ -352,6 +352,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 		const node = $(ReactDOM.findDOMNode(this));
 		const ghost = $('<div />').addClass('ghost isColumn');
 		const current = this.cache[groupId];
+		const groups = this.getGroups(false);
 
 		if (!current) {
 			return;
