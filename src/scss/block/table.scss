@@ -6,27 +6,32 @@
 
 	.block.blockTable { padding: 6px 0px; }
 	.block.blockTable {
-		.scrollWrap { width: 100%; padding: 4px; line-height: 0px; }
+		.scrollWrap { width: 100%; padding: 8px; line-height: 0px; }
 		.scrollWrap.withScroll { overflow-x: overlay; padding-bottom: 8px; }
 
 		.scrollWrap > .inner { display: inline-block; position: relative; }
 
 		.handleRow, .handleColumn { 
-			cursor: pointer; z-index: 10; border: 2px solid #fff; background-color: $colorOrange; position: absolute; display: none;
-			transition: none;
+			cursor: pointer; z-index: 10; background-color: #fff; position: absolute; display: none;
+			transition: none; padding: 2px; border-radius: 3px;
 		}
 		.handleRow.canDrag, .handleColumn.canDrag { cursor: grab; }
 
+		.handleRow::after, .handleColumn::after {
+			content: ""; display: block; background-color: $colorOrange; width: 100%; height: 100%; background-position: center;
+			background-repeat: no-repeat; border-radius: 3px;
+		}
+
 		.handleRow { height: 22px; width: 6px; top: 50%; left: -4px; margin-top: -11px; }
-		.handleRow:hover, .handleRow.isActive {
-			width: 10px; background-image: url('~img/icon/table/handle/row.svg'); background-size: 8px 16px; left: -6px;
-			border-radius: 3px;
+		.handleRow:hover, .handleRow.isActive { width: 14px; left: -8px; border-radius: 3px; }
+		.handleRow:hover::after, .handleRow.isActive::after {
+			background-image: url('~img/icon/table/handle/row.svg'); background-size: 8px 16px;
 		}
 
 		.handleColumn { height: 6px; width: 22px; left: 50%; top: -4px; margin-left: -11px; }
-		.handleColumn:hover, .handleColumn.isActive { 
-			height: 10px; background-image: url('~img/icon/table/handle/column.svg'); background-size: 16px 8px;
-			top: -6px; border-radius: 3px;
+		.handleColumn:hover, .handleColumn.isActive { height: 14px; top: -8px; border-radius: 3px; }
+		.handleColumn:hover::after, .handleColumn.isActive::after {
+			background-image: url('~img/icon/table/handle/column.svg'); background-size: 16px 8px;
 		}
 
 		.plusButton { z-index: 10; }
@@ -47,11 +52,9 @@
 			.icon { opacity: 1; }
 		}
 
-		.table { 
-			display: block; border-collapse: collapse; box-shadow: 0px 1px, 1px 0px; color: $colorBorderDark; position: relative; border-radius: 4px;
-		}
+		.table { display: block; border-collapse: collapse; box-shadow: 0px 1px, 1px 0px; color: $colorBorderDark; position: relative; border-radius: 4px; }
 
-		.table.isClone { border-radius: 4px; box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2); };
+		.table.isClone { border-radius: 4px; box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2); border: 2px solid $tableBorderOrange; }
 		.table.isClone {
 			.handleColumn { display: block; border-color: $colorOrange; }
 			.cell { box-shadow: 0px 1px inset, 1px 0px inset; }
@@ -78,12 +81,13 @@
 			.wrapContent { border-radius: 0px 0px 0px 4px; }
 		}
 
-		.row.isHighlightedRow { border-radius: 4px; z-index: 2; }
+		.row.isHighlightedRow { border-radius: 4px; z-index: 2; box-shadow: 0px 0px 0px 2px $tableBorderOrange; }
 		.row.isHighlightedRow {
 			.handleRow { display: block; }
-			.cell { box-shadow: 1px 0px inset, 0px 2px $tableBorderOrange, 0px -2px $tableBorderOrange; padding: 0px; }
-			.cell:first-child { border-radius: 4px 0px 0px 4px; box-shadow: -2px 0px $tableBorderOrange, 0px 2px $tableBorderOrange, 0px -2px $tableBorderOrange; }
-			.cell:last-child { border-radius: 0px 4px 4px 0px; box-shadow: 2px 0px $tableBorderOrange, 0px 2px $tableBorderOrange, 0px -2px $tableBorderOrange; }
+
+			.cell { box-shadow: 1px 0px inset; padding-top: 0px; padding-left: 1px; }
+			.cell:first-child { border-radius: 4px 0px 0px 4px; box-shadow: 0px 0px; padding: 0px; }
+			.cell:last-child { border-radius: 0px 4px 4px 0px; }
 			.cell .block .wrapContent { padding-top: 1px; }
 		}
 
@@ -96,8 +100,11 @@
 			box-shadow: 1px 1px inset; color: $colorBorderDark; padding: 1px 0px 0px 1px;
 		}
 
-		.cell.isEditing { box-shadow: 0px 0px 0px 2px $tableBorderOrange; border-radius: 2px; padding: 0px; }
+		.cell.isEditing { box-shadow: 0px 0px 0px 1px $tableBorderOrange; border-radius: 2px; padding: 0px; }
 		.cell.isEditing {
+			.handleColumn { top: -4px; }
+			.handleRow { left: -4px; }
+
 			.block .wrapContent { padding-left: 1px; padding-top: 1px; }
 		}
 
