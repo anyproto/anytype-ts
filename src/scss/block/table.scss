@@ -52,11 +52,9 @@
 			.icon { opacity: 1; }
 		}
 
-		.table { 
-			display: block; border-collapse: collapse; box-shadow: 0px 1px, 1px 0px; color: $colorBorderDark; position: relative; border-radius: 4px;
-		}
+		.table { display: block; border-collapse: collapse; box-shadow: 0px 1px, 1px 0px; color: $colorBorderDark; position: relative; border-radius: 4px; }
 
-		.table.isClone { border-radius: 4px; box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2); };
+		.table.isClone { border-radius: 4px; box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2); border: 2px solid $tableBorderOrange; }
 		.table.isClone {
 			.handleColumn { display: block; border-color: $colorOrange; }
 			.cell { box-shadow: 0px 1px inset, 1px 0px inset; }

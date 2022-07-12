@@ -72,6 +72,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				tabIndex={0} 
 				className={cn.join(' ')}
 			>
+				<div id="selectionFrame" />
 				<div id="scrollWrap" className="scrollWrap" onScroll={this.onScroll}>
 					<div className="inner">
 						<div id="table" className="table">
@@ -235,7 +236,9 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			onOpen: (context: any) => {
 				menuContext = context;
 
-				this.onOptionsOpen(type, rowId, columnId, cellId);
+				raf(() => {
+					this.onOptionsOpen(type, rowId, columnId, cellId);
+				}); 
 			},
 			onClose: () => {
 				menuStore.clearTimeout();
@@ -872,7 +875,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		const clone = el.clone();
 		const table = $('<div />').addClass('table isClone');
 
-		layer.css({ zIndex: 10000, position: 'fixed', left: -10000, top: -10000, paddingTop: 10, paddingLeft: 10 });
+		layer.css({ zIndex: 10000, position: 'fixed', left: -10000, top: -10000 });
 		node.append(layer);
 		layer.append(table);
 		table.append(clone);
@@ -1018,6 +1021,10 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 	};
 
 	onSortEndColumn (id: string, targetId: string, position: I.BlockPosition): void {
+		if (!id || !targetId || (position == I.BlockPosition.None)) {
+			return;
+		};
+
 		const { rootId } = this.props;
 
 		C.BlockTableColumnMove(rootId, id, targetId, position);
@@ -1027,6 +1034,10 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 	};
 
 	onSortEndRow (id: string, targetId: string, position: I.BlockPosition) {
+		if (!id || !targetId || (position == I.BlockPosition.None)) {
+			return;
+		};
+
 		const { rootId } = this.props;
 
 		C.BlockListMoveToExistingObject(rootId, rootId, [ id ], targetId, position);
