@@ -23,7 +23,6 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 	_isMounted: boolean = false;
 	offsetX: number = 0;
 	cache: any = {};
-	width: number = 0;
 	scrollX: number = 0;
 	frame: number = 0;
 	hoverId: string = '';
@@ -792,8 +791,6 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			table.append(rowElement);
 		});
 
-		this.width = widths[idx];
-
 		table.css({ width: widths[idx], zIndex: 10000, position: 'fixed', left: -10000, top: -10000 });
 		node.append(table);
 
@@ -816,6 +813,11 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 
 		const node = $(ReactDOM.findDOMNode(this));
 		const { columns } = this.getData();
+		const current = this.cache[id];
+
+		if (!current) {
+			return;
+		};
 
 		this.hoverId = '';
 		this.position = I.BlockPosition.None;
@@ -828,9 +830,9 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				continue;
 			};
 
-			if (rect && Util.rectsCollide({ x: e.pageX, y: 0, width: this.width, height: 1 }, rect)) {
+			if (rect && Util.rectsCollide({ x: e.pageX, y: 0, width: current.width, height: current.height }, rect)) {
 				this.hoverId = column.id;
-				this.position = (i == 0) && (e.pageX <= rect.x + rect.width / 2) ? I.BlockPosition.Left : I.BlockPosition.Right;
+				this.position = (i < current.index) ? I.BlockPosition.Left : I.BlockPosition.Right;
 				break;
 			};
 		};
@@ -880,8 +882,6 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		layer.append(table);
 		table.append(clone);
 		
-		this.width = table.width();
-
 		$(document).off('dragover').on('dragover', (e: any) => { e.preventDefault(); });
 		e.dataTransfer.setDragImage(layer.get(0), 0, 0);
 
@@ -902,6 +902,11 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 
 		const node = $(ReactDOM.findDOMNode(this));
 		const { rows } = this.getData();
+		const current = this.cache[id];
+
+		if (!current) {
+			return;
+		};
 
 		this.hoverId = '';
 		this.position = I.BlockPosition.None;
@@ -914,9 +919,9 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				continue;
 			};
 
-			if (rect && Util.rectsCollide({ x: e.pageX, y: e.pageY, width: this.width, height: 1 }, rect)) {
+			if (rect && Util.rectsCollide({ x: e.pageX, y: e.pageY, width: current.width, height: current.height }, rect)) {
 				this.hoverId = row.id;
-				this.position = (i == rows.length - 1) && (e.pageY > rect.y + rect.height / 2) ? I.BlockPosition.Bottom : I.BlockPosition.Top;
+				this.position = (i < current.index) ? I.BlockPosition.Top : I.BlockPosition.Bottom;
 				break;
 			};
 		};
