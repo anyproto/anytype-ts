@@ -26,7 +26,6 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	nodes: any = null;
 	top: number = 0;
 	containerOffset = null;
-	frame: number = 0;
 
 	cache: Map<string, any> = new Map();
 	ids: Map<string, string[]> = new Map();
@@ -538,27 +537,21 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 
 		const node = $(ReactDOM.findDOMNode(this));
 
-		if (this.frame) {
-			raf.cancel(this.frame);
-		};
+		$('.isSelectionSelected').removeClass('isSelectionSelected');
 
-		this.frame = raf(() => {
-			$('.isSelectionSelected').removeClass('isSelectionSelected');
+		for (let i in I.SelectType) {
+			const type = I.SelectType[i];
+			const ids = this.get(type);
 
-			for (let i in I.SelectType) {
-				const type = I.SelectType[i];
-				const ids = this.get(type);
+			for (let id of ids) {
+				node.find(`#selectable-${id}`).addClass('isSelectionSelected');
 
-				for (let id of ids) {
-					node.find(`#selectable-${id}`).addClass('isSelectionSelected');
-
-					if (type == I.SelectType.Block) {
-						node.find(`#block-${id}`).addClass('isSelectionSelected');
-						node.find(`#block-children-${id} .block`).addClass('isSelectionSelected');
-					};
+				if (type == I.SelectType.Block) {
+					node.find(`#block-${id}`).addClass('isSelectionSelected');
+					node.find(`#block-children-${id} .block`).addClass('isSelectionSelected');
 				};
 			};
-		});
+		};
 	};
 	
 	injectProps (children: any) {

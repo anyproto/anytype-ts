@@ -1074,7 +1074,7 @@ class Util {
 	};
 
 	matchUrl (url: string) {
-		const reg = new RegExp(/^((?:[a-z]+:(?:\/\/)?)|\/\/)([^\s\/\?#]+)([^\s\?#]+)(?:\?([^#\s]*))?(?:#([^\s]*))?$/gi);
+		const reg = new RegExp(/^((?:[a-z]+:(?:\/\/)?)|\/\/)?([^\s\/\?#]+)([^\s\?#]+)(?:\?([^#\s]*))?(?:#([^\s]*))?$/gi);
 		return url.match(reg);
 	};
 

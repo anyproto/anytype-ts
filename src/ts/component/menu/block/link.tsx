@@ -235,7 +235,6 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 		};
 
 		const reg = new RegExp(Util.filterFix(filter), 'gi');
-		const regUrl = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)?/gi;
 		const regProtocol = /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)?/gi;
 		const buttons: any[] = [
 			{ id: 'add', name: `Create object "${filter}"`, icon: 'plus' }
@@ -261,7 +260,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 			items.push({ isDiv: true });
 		};
 
-		if (filter.match(new RegExp(regUrl)) || filter.match(new RegExp(regProtocol))) {
+		if (Util.matchUrl(filter) || filter.match(new RegExp(regProtocol))) {
 			buttons.unshift({ id: 'link', name: 'Link to website', icon: 'link' });
 		};
 
