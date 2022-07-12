@@ -225,6 +225,9 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		const node = $(ReactDOM.findDOMNode(this));
 		const { rows, columns } = this.getData();
 		const subIds = [ 'select2', 'blockColor', 'blockBackground' ];
+		const optionsAlign = this.optionsAlign(cellId);
+		const optionsColor = this.optionsColor(cellId);
+		const blockIds = this.getBlockIds(type, rowId, columnId, cellId);
 
 		let menuContext: any = null;
 		let menuParam: any = {
@@ -240,20 +243,13 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		};
 
 		let options: any[] = [];
-		let optionsAlign = this.optionsAlign(cellId);
-		let optionsColor = this.optionsColor(cellId);
 		let element: any = null;
-		let blockIds: string[] = [];
 		let fill: any = null;
 
 		switch (type) {
 			case I.BlockType.TableRow:
 				options = options.concat(this.optionsRow(rowId));
 				options = options.concat(optionsColor);
-
-				columns.forEach(column => {
-					blockIds.push([ rowId, column.id ].join('-'));
-				});
 
 				menuParam = Object.assign(menuParam, {
 					element: node.find(`#row-${rowId}`).first(),
@@ -273,10 +269,6 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				options = options.concat(this.optionsColumn(columnId));
 				options = options.concat(optionsColor);
 
-				rows.forEach(row => {
-					blockIds.push([ row.id, columnId ].join('-'));
-				});
-
 				element = node.find(`#cell-${cellId}`).first();
 				menuParam = Object.assign(menuParam, {
 					element,
@@ -290,7 +282,6 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				break;
 
 			default:
-				blockIds = [ cellId ];
 				options = options.concat([
 					{ id: 'row', name: 'Row', arrow: true },
 					{ id: 'column', name: 'Column', arrow: true },
@@ -353,7 +344,8 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 							menuParam.data = Object.assign(menuParam.data, {
 								options: this.optionsRow(rowId, true),
 								onSelect: (e: any, item: any) => {
-									this.onSelect(e, item, rowId, columnId, cellId, blockIds);
+									this.onSelect(e, item, rowId, columnId, cellId, this.getBlockIds(I.BlockType.TableRow, rowId, columnId, cellId));
+									menuContext.close();
 								}
 							});
 							break;
@@ -364,7 +356,8 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 							menuParam.data = Object.assign(menuParam.data, {
 								options: this.optionsColumn(columnId, true),
 								onSelect: (e: any, item: any) => {
-									this.onSelect(e, item, rowId, columnId, cellId, blockIds);
+									this.onSelect(e, item, rowId, columnId, cellId, this.getBlockIds(I.BlockType.TableColumn, rowId, columnId, cellId));
+									menuContext.close();
 								}
 							});
 							break;
@@ -376,9 +369,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 								options: this.optionsHAlign(),
 								value: current.hAlign,
 								onSelect: (e: any, el: any) => {
-									fill(() => {
-										C.BlockListSetAlign(rootId, blockIds, el.id);
-									});
+									fill(() => { C.BlockListSetAlign(rootId, blockIds, el.id); });
 									menuContext.close();
 								}
 							});
@@ -391,9 +382,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 								options: this.optionsVAlign(),
 								value: current.vAlign,
 								onSelect: (e: any, el: any) => {
-									fill(() => {
-										C.BlockListSetVerticalAlign(rootId, blockIds, el.id);
-									});
+									fill(() => { C.BlockListSetVerticalAlign(rootId, blockIds, el.id); });
 									menuContext.close();
 								}
 							});
@@ -403,9 +392,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 							menuId = 'blockColor';
 							menuParam.data = Object.assign(menuParam.data, {
 								onChange: (id: string) => {
-									fill(() => {
-										C.BlockTextListSetColor(rootId, blockIds, id);
-									});
+									fill(() => { C.BlockTextListSetColor(rootId, blockIds, id); });
 									menuContext.close();
 								}
 							});
@@ -415,9 +402,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 							menuId = 'blockBackground';
 							menuParam.data = Object.assign(menuParam.data, {
 								onChange: (id: string) => {
-									fill(() => {
-										C.BlockListSetBackgroundColor(rootId, blockIds, id);
-									});
+									fill(() => { C.BlockListSetBackgroundColor(rootId, blockIds, id); });
 									menuContext.close();
 								}
 							});
@@ -472,7 +457,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			case 'columnMoveRight':
 				childrenIds = blockStore.getChildrenIds(rootId, columnContainer.id);
 				oldIndex = childrenIds.indexOf(columnId);
-				newIndex = item.id == 'columnMoveLeft' ? oldIndex - 1 : oldIndex + 1;
+				newIndex = oldIndex + (item.id == 'columnMoveLeft' ? -1 : 1);
 
 				this.onSortEndColumn(oldIndex, newIndex);
 				break;
@@ -482,7 +467,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				break;
 
 			case 'columnCopy':
-				C.BlockTableColumnDuplicate(rootId, columnId, I.BlockPosition.Right);
+				C.BlockTableColumnDuplicate(rootId, columnId, columnId, I.BlockPosition.Right);
 				break;
 
 			case 'rowBefore':
@@ -493,8 +478,8 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			case 'rowMoveTop':
 			case 'rowMoveBottom':
 				childrenIds = blockStore.getChildrenIds(rootId, rowContainer.id);
-				oldIndex = childrenIds.indexOf(targetCellId);
-				newIndex = item.id == 'rowMoveTop' ? oldIndex - 1 : oldIndex + 1;
+				oldIndex = childrenIds.indexOf(rowId);
+				newIndex = oldIndex + (item.id == 'rowMoveTop' ? -1 : 1);
 
 				this.onSortEndRow(oldIndex, newIndex);
 				break;
@@ -1287,6 +1272,31 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			{ id: I.SortType.Asc, name: 'Ascending' },
 			{ id: I.SortType.Desc, name: 'Descending' },
 		];
+	};
+
+	getBlockIds (type: I.BlockType, rowId: string, columnId: string, cellId: string): string[] {
+		const { rows, columns } = this.getData();
+		const blockIds: string[] = [];
+
+		switch (type) {
+			case I.BlockType.TableRow:
+				columns.forEach(column => {
+					blockIds.push([ rowId, column.id ].join('-'));
+				});
+				break;
+
+			case I.BlockType.TableColumn:
+				rows.forEach(row => {
+					blockIds.push([ row.id, columnId ].join('-'));
+				});
+				break;
+
+			default:
+				blockIds.push(cellId);
+				break;
+		};
+
+		return blockIds;
 	};
 
 });
