@@ -468,7 +468,7 @@ const BlockLinkListSetAppearance = (contextId: string, blockIds: any[], iconSize
 
 // ---------------------- BLOCK TABLE ---------------------- //
 
-const BlockTableCreate = (contextId: string, targetId: string, position: I.BlockPosition, rows: number, columns: number, withHeaderRow: boolean = false, callBack?: (message: any) => void) => {
+const BlockTableCreate = (contextId: string, targetId: string, position: I.BlockPosition, rows: number, columns: number, withHeaderRow, callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockTable.Create.Request();
 	
 	request.setContextid(contextId);
@@ -581,10 +581,11 @@ const BlockTableColumnMove = (contextId: string, targetId: string, dropTargetId:
 	dispatcher.request(BlockTableColumnMove.name, request, callBack);
 };
 
-const BlockTableColumnDuplicate = (contextId: string, targetId: string, position: I.BlockPosition, callBack?: (message: any) => void) => {
+const BlockTableColumnDuplicate = (contextId: string, blockId: string, targetId: string, position: I.BlockPosition, callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockTable.ColumnDuplicate.Request();
 	
 	request.setContextid(contextId);
+	request.setBlockid(blockId);
 	request.setTargetid(targetId);
 	request.setPosition(position);
 

@@ -23,11 +23,10 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 	_isMounted: boolean = false;
 	offsetX: number = 0;
 	cache: any = {};
-	width: number = 0;
-	oldIndex: number = -1;
-	newIndex: number = -1;
 	scrollX: number = 0;
 	frame: number = 0;
+	hoverId: string = '';
+	position: I.BlockPosition = I.BlockPosition.None;
 
 	constructor (props: any) {
 		super(props);
@@ -72,6 +71,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				tabIndex={0} 
 				className={cn.join(' ')}
 			>
+				<div id="selectionFrame" />
 				<div id="scrollWrap" className="scrollWrap" onScroll={this.onScroll}>
 					<div className="inner">
 						<div id="table" className="table">
@@ -225,35 +225,36 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		const node = $(ReactDOM.findDOMNode(this));
 		const { rows, columns } = this.getData();
 		const subIds = [ 'select2', 'blockColor', 'blockBackground' ];
+		const optionsAlign = this.optionsAlign(cellId);
+		const optionsColor = this.optionsColor(cellId);
+		const blockIds = this.getBlockIds(type, rowId, columnId, cellId);
 
 		let menuContext: any = null;
 		let menuParam: any = {
 			component: 'select',
 			onOpen: (context: any) => {
 				menuContext = context;
-				this.onOptionsOpen(type, rowId, columnId, cellId);
+
+				raf(() => {
+					this.onOptionsOpen(type, rowId, columnId, cellId);
+				}); 
 			},
 			onClose: () => {
+				menuStore.clearTimeout();
+
 				this.onOptionsClose();
 			},
 			subIds: subIds,
 		};
 
 		let options: any[] = [];
-		let optionsAlign = this.optionsAlign(cellId);
-		let optionsColor = this.optionsColor(cellId);
 		let element: any = null;
-		let blockIds: string[] = [];
 		let fill: any = null;
 
 		switch (type) {
 			case I.BlockType.TableRow:
 				options = options.concat(this.optionsRow(rowId));
 				options = options.concat(optionsColor);
-
-				columns.forEach(column => {
-					blockIds.push([ rowId, column.id ].join('-'));
-				});
 
 				menuParam = Object.assign(menuParam, {
 					element: node.find(`#row-${rowId}`).first(),
@@ -273,10 +274,6 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				options = options.concat(this.optionsColumn(columnId));
 				options = options.concat(optionsColor);
 
-				rows.forEach(row => {
-					blockIds.push([ row.id, columnId ].join('-'));
-				});
-
 				element = node.find(`#cell-${cellId}`).first();
 				menuParam = Object.assign(menuParam, {
 					element,
@@ -290,7 +287,6 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				break;
 
 			default:
-				blockIds = [ cellId ];
 				options = options.concat([
 					{ id: 'row', name: 'Row', arrow: true },
 					{ id: 'column', name: 'Column', arrow: true },
@@ -353,7 +349,8 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 							menuParam.data = Object.assign(menuParam.data, {
 								options: this.optionsRow(rowId, true),
 								onSelect: (e: any, item: any) => {
-									this.onSelect(e, item, rowId, columnId, cellId, blockIds);
+									this.onSelect(e, item, rowId, columnId, cellId, this.getBlockIds(I.BlockType.TableRow, rowId, columnId, cellId));
+									menuContext.close();
 								}
 							});
 							break;
@@ -364,7 +361,8 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 							menuParam.data = Object.assign(menuParam.data, {
 								options: this.optionsColumn(columnId, true),
 								onSelect: (e: any, item: any) => {
-									this.onSelect(e, item, rowId, columnId, cellId, blockIds);
+									this.onSelect(e, item, rowId, columnId, cellId, this.getBlockIds(I.BlockType.TableColumn, rowId, columnId, cellId));
+									menuContext.close();
 								}
 							});
 							break;
@@ -376,9 +374,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 								options: this.optionsHAlign(),
 								value: current.hAlign,
 								onSelect: (e: any, el: any) => {
-									fill(() => {
-										C.BlockListSetAlign(rootId, blockIds, el.id);
-									});
+									fill(() => { C.BlockListSetAlign(rootId, blockIds, el.id); });
 									menuContext.close();
 								}
 							});
@@ -391,9 +387,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 								options: this.optionsVAlign(),
 								value: current.vAlign,
 								onSelect: (e: any, el: any) => {
-									fill(() => {
-										C.BlockListSetVerticalAlign(rootId, blockIds, el.id);
-									});
+									fill(() => { C.BlockListSetVerticalAlign(rootId, blockIds, el.id); });
 									menuContext.close();
 								}
 							});
@@ -403,9 +397,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 							menuId = 'blockColor';
 							menuParam.data = Object.assign(menuParam.data, {
 								onChange: (id: string) => {
-									fill(() => {
-										C.BlockTextListSetColor(rootId, blockIds, id);
-									});
+									fill(() => { C.BlockTextListSetColor(rootId, blockIds, id); });
 									menuContext.close();
 								}
 							});
@@ -415,9 +407,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 							menuId = 'blockBackground';
 							menuParam.data = Object.assign(menuParam.data, {
 								onChange: (id: string) => {
-									fill(() => {
-										C.BlockListSetBackgroundColor(rootId, blockIds, id);
-									});
+									fill(() => { C.BlockListSetBackgroundColor(rootId, blockIds, id); });
 									menuContext.close();
 								}
 							});
@@ -456,11 +446,12 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		};
 
 		const { rootId } = this.props;
-		const { rowContainer, columnContainer } = this.getData();
-
-		let childrenIds: string[] = [];
-		let oldIndex = 0;
-		let newIndex = 0;
+		const { rows, columns } = this.getData();
+	
+		let position: I.BlockPosition = I.BlockPosition.None;
+		let next: any = null;
+		let idx: number = -1;
+		let nextIdx: number = -1;
 
 		switch (item.id) {
 			case 'columnBefore':
@@ -470,11 +461,14 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 
 			case 'columnMoveLeft':
 			case 'columnMoveRight':
-				childrenIds = blockStore.getChildrenIds(rootId, columnContainer.id);
-				oldIndex = childrenIds.indexOf(columnId);
-				newIndex = item.id == 'columnMoveLeft' ? oldIndex - 1 : oldIndex + 1;
+				position = (item.id == 'columnMoveLeft') ? I.BlockPosition.Left : I.BlockPosition.Right;
+				idx = columns.findIndex(it => it.id == columnId);
+				nextIdx = idx + (position == I.BlockPosition.Left ? -1 : 1);
+				next = columns[nextIdx];
 
-				this.onSortEndColumn(oldIndex, newIndex);
+				if (next) {
+					this.onSortEndColumn(columnId, next.id, position);
+				};
 				break;
 
 			case 'columnRemove':
@@ -482,7 +476,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				break;
 
 			case 'columnCopy':
-				C.BlockTableColumnDuplicate(rootId, columnId, I.BlockPosition.Right);
+				C.BlockTableColumnDuplicate(rootId, columnId, columnId, I.BlockPosition.Right);
 				break;
 
 			case 'rowBefore':
@@ -492,11 +486,14 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 
 			case 'rowMoveTop':
 			case 'rowMoveBottom':
-				childrenIds = blockStore.getChildrenIds(rootId, rowContainer.id);
-				oldIndex = childrenIds.indexOf(targetCellId);
-				newIndex = item.id == 'rowMoveTop' ? oldIndex - 1 : oldIndex + 1;
+				position = (item.id == 'rowMoveTop') ? I.BlockPosition.Top : I.BlockPosition.Bottom;
+				idx = rows.findIndex(it => it.id == rowId);
+				nextIdx = idx + (position == I.BlockPosition.Top ? -1 : 1);
+				next = rows[nextIdx];
 
-				this.onSortEndRow(oldIndex, newIndex);
+				if (next) {
+					this.onSortEndRow(rowId, next.id, position);
+				};
 				break;
 
 			case 'rowCopy':
@@ -794,8 +791,6 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			table.append(rowElement);
 		});
 
-		this.width = widths[idx];
-
 		table.css({ width: widths[idx], zIndex: 10000, position: 'fixed', left: -10000, top: -10000 });
 		node.append(table);
 
@@ -803,7 +798,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		e.dataTransfer.setDragImage(table.get(0), table.outerWidth(), -3);
 
 		win.on('drag.tableColumn', throttle((e: any) => { this.onDragMoveColumn(e, id); }, 40));
-		win.on('dragend.tableColumn', (e: any) => { this.onDragEndColumn(e); });
+		win.on('dragend.tableColumn', (e: any) => { this.onDragEndColumn(e, id); });
 
 		this.initCache(I.BlockType.TableColumn);
 		this.setEditing('');
@@ -818,11 +813,14 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 
 		const node = $(ReactDOM.findDOMNode(this));
 		const { columns } = this.getData();
+		const current = this.cache[id];
 
-		this.oldIndex = columns.findIndex(it => it.id == id);
+		if (!current) {
+			return;
+		};
 
-		let hoverId = '';
-		let isLeft = false;
+		this.hoverId = '';
+		this.position = I.BlockPosition.None;
 
 		for (let i = 0; i < columns.length; ++i) {
 			const column = columns[i];
@@ -832,11 +830,9 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				continue;
 			};
 
-			if (rect && Util.rectsCollide({ x: e.pageX, y: 0, width: this.width, height: 1 }, rect)) {
-				isLeft = (i == 0) && (e.pageX <= rect.x + rect.width / 2);
-				hoverId = column.id;
-				
-				this.newIndex = isLeft ? rect.index : rect.index + 1;
+			if (rect && Util.rectsCollide({ x: e.pageX, y: 0, width: current.width, height: current.height }, rect)) {
+				this.hoverId = column.id;
+				this.position = (i < current.index) ? I.BlockPosition.Left : I.BlockPosition.Right;
 				break;
 			};
 		};
@@ -848,23 +844,20 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		this.frame = raf(() => {
 			node.find('.cell.isOver').removeClass('isOver left right');
 
-			if (hoverId) {
-				node.find(`.cell.column${hoverId}`).addClass('isOver ' + (isLeft ? 'left' : 'right'));
+			if (this.hoverId) {
+				node.find(`.cell.column${this.hoverId}`).addClass('isOver ' + (this.position == I.BlockPosition.Left ? 'left' : 'right'));
 			};
 		});
-
-		this.newIndex = Math.max(0, this.newIndex);
-		this.newIndex = Math.min(columns.length - 1, this.newIndex);
 	};
 
-	onDragEndColumn (e: any) {
+	onDragEndColumn (e: any, id: string) {
 		e.preventDefault();
 
 		const node = $(ReactDOM.findDOMNode(this));
 		const win = $(window);
 
 		this.cache = {};
-		this.onSortEndColumn(this.oldIndex, this.newIndex);
+		this.onSortEndColumn(id, this.hoverId, this.position);
 		this.preventSelect(false);
 		this.preventDrop(false);
 		this.onOptionsClose();
@@ -884,18 +877,16 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		const clone = el.clone();
 		const table = $('<div />').addClass('table isClone');
 
-		layer.css({ zIndex: 10000, position: 'fixed', left: -10000, top: -10000, paddingTop: 10, paddingLeft: 10 });
+		layer.css({ zIndex: 10000, position: 'fixed', left: -10000, top: -10000 });
 		node.append(layer);
 		layer.append(table);
 		table.append(clone);
 		
-		this.width = table.width();
-
 		$(document).off('dragover').on('dragover', (e: any) => { e.preventDefault(); });
 		e.dataTransfer.setDragImage(layer.get(0), 0, 0);
 
 		win.on('drag.tableRow', throttle((e: any) => { this.onDragMoveRow(e, id); }, 40));
-		win.on('dragend.tableRow', (e: any) => { this.onDragEndRow(e); });
+		win.on('dragend.tableRow', (e: any) => { this.onDragEndRow(e, id); });
 
 		this.initCache(I.BlockType.TableRow);
 		this.setEditing('');
@@ -911,11 +902,14 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 
 		const node = $(ReactDOM.findDOMNode(this));
 		const { rows } = this.getData();
+		const current = this.cache[id];
 
-		this.oldIndex = rows.findIndex(it => it.id == id);
+		if (!current) {
+			return;
+		};
 
-		let hoverId = '';
-		let isBottom = false;
+		this.hoverId = '';
+		this.position = I.BlockPosition.None;
 
 		for (let i = 0; i < rows.length; ++i) {
 			const row = rows[i];
@@ -925,11 +919,9 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				continue;
 			};
 
-			if (rect && Util.rectsCollide({ x: e.pageX, y: e.pageY, width: this.width, height: 1 }, rect)) {
-				isBottom = (i == rows.length - 1) && (e.pageY > rect.y + rect.height / 2);
-				hoverId = row.id;
-				
-				this.newIndex = isBottom ? rect.index + 1 : rect.index;
+			if (rect && Util.rectsCollide({ x: e.pageX, y: e.pageY, width: current.width, height: current.height }, rect)) {
+				this.hoverId = row.id;
+				this.position = (i < current.index) ? I.BlockPosition.Top : I.BlockPosition.Bottom;
 				break;
 			};
 		};
@@ -941,23 +933,20 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		this.frame = raf(() => {
 			node.find('.row.isOver').removeClass('isOver top bottom');
 
-			if (hoverId) {
-				node.find(`#row-${hoverId}`).addClass('isOver ' + (isBottom ? 'bottom' : 'top'));
+			if (this.hoverId) {
+				node.find(`#row-${this.hoverId}`).addClass('isOver ' + (this.position == I.BlockPosition.Bottom ? 'bottom' : 'top'));
 			};
 		});
-
-		this.newIndex = Math.max(0, this.newIndex);
-		this.newIndex = Math.min(rows.length - 1, this.newIndex);
 	};
 
-	onDragEndRow (e: any) {
+	onDragEndRow (e: any, id: string) {
 		e.preventDefault();
 
 		const node = $(ReactDOM.findDOMNode(this));
 		const win = $(window);
 
 		this.cache = {};
-		this.onSortEndRow(this.oldIndex, this.newIndex);
+		this.onSortEndRow(id, this.hoverId, this.position);
 		this.preventSelect(false);
 		this.preventDrop(false);
 		this.onOptionsClose();
@@ -1036,37 +1025,27 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		this.preventSelect(true);
 	};
 
-	onSortEndColumn (oldIndex: number, newIndex: number): void {
-		const { rootId } = this.props;
-		const { columns } = this.getData();
-		const oldColumn = columns[oldIndex];
-		const newColumn = columns[newIndex];
-
-		if (!oldColumn || !newColumn) {
+	onSortEndColumn (id: string, targetId: string, position: I.BlockPosition): void {
+		if (!id || !targetId || (position == I.BlockPosition.None)) {
 			return;
 		};
 
-		const position = newIndex < oldIndex ? I.BlockPosition.Left : I.BlockPosition.Right;
-		C.BlockTableColumnMove(rootId, oldColumn.id, newColumn.id, position);
+		const { rootId } = this.props;
+
+		C.BlockTableColumnMove(rootId, id, targetId, position);
 
 		$('body').removeClass('grab');
 		this.preventSelect(false);
 	};
 
-	onSortEndRow (oldIndex: number, newIndex: number) {
-		const { rootId } = this.props;
-		const { rowContainer } = this.getData();
-		const childrenIds = blockStore.getChildrenIds(rootId, rowContainer.id);
-		const current = childrenIds[oldIndex];
-		const target = childrenIds[newIndex];
-		const position = newIndex < oldIndex ? I.BlockPosition.Top : I.BlockPosition.Bottom;
-
-		if (current == target) {
+	onSortEndRow (id: string, targetId: string, position: I.BlockPosition) {
+		if (!id || !targetId || (position == I.BlockPosition.None)) {
 			return;
 		};
 
-		blockStore.updateStructure(rootId, rowContainer.id, arrayMove(childrenIds, oldIndex, newIndex));
-		C.BlockListMoveToExistingObject(rootId, rootId, [ current ], target, position);
+		const { rootId } = this.props;
+
+		C.BlockListMoveToExistingObject(rootId, rootId, [ id ], targetId, position);
 
 		$('body').removeClass('grab');
 		this.preventSelect(false);
@@ -1287,6 +1266,31 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			{ id: I.SortType.Asc, name: 'Ascending' },
 			{ id: I.SortType.Desc, name: 'Descending' },
 		];
+	};
+
+	getBlockIds (type: I.BlockType, rowId: string, columnId: string, cellId: string): string[] {
+		const { rows, columns } = this.getData();
+		const blockIds: string[] = [];
+
+		switch (type) {
+			case I.BlockType.TableRow:
+				columns.forEach(column => {
+					blockIds.push([ rowId, column.id ].join('-'));
+				});
+				break;
+
+			case I.BlockType.TableColumn:
+				rows.forEach(row => {
+					blockIds.push([ row.id, columnId ].join('-'));
+				});
+				break;
+
+			default:
+				blockIds.push(cellId);
+				break;
+		};
+
+		return blockIds;
 	};
 
 });
