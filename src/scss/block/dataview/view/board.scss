@@ -2,10 +2,12 @@
 
 .blocks {
 	.block.blockDataview {
-
+		.viewItem.viewBoard { padding: 20px 0px 0px 14px; }
         .viewItem.viewBoard {
 
-			.ghost { display: none; border: 1px dotted $colorOrange; border-radius: 12px; }
+			.ghost { border: 1px dotted $colorOrange; border-radius: 12px; flex-shrink: 0; }
+			.ghost.isColumn { width: 240px; height: 100%; margin: 42px 14px 0px 0px; }
+			.ghost.isCard { margin-bottom: 8px; }
 			
 			.isOver.left {
 				.ghost.left { display: block; }
@@ -20,22 +22,59 @@
 				.ghost.bottom { display: block; }
 			}
 
-            .columns { display: flex; gap: 0px 24px; flex-direction: row; }
-            .column { display: flex; flex-direction: row; gap: 0px 24px; }
+            .columns { display: flex; flex-direction: row; gap: 0px 10px; }
+            .column { width: 254px; flex-shrink: 0; display: flex; flex-direction: column; }
             .column {
-				.body { width: 240px; display: flex; flex-direction: column; }
-                .head { padding: 10px 4px; width: 100%; margin: 0px; }
+                .head { 
+					padding: 4px 10px; width: 240px; margin: 6px 0px; cursor: grab; border-radius: 12px; background: #fff; color: $colorDarkGrey; 
+					line-height: 24px; 
+				}
+				.head * { cursor: grab; }
+				.head {
+					.sides { display: flex; width: 100%; gap: 0px 6px; }
+					.side.left { width: calc(100% - 54px); display: flex; align-items: flex-start; gap: 0px 6px; justify-content: flex-start; }
+					.side.right { width: 54px; display: flex; align-items: flex-start; gap: 0px 6px; flex-shrink: 0; justify-content: flex-end; }
+
+					.cellContent { width: 100%; display: inline; }
+					.cellContent {
+						.empty { display: block; line-height: 24px; }
+						.wrap { display: inline-block; white-space: nowrap; max-width: 100%; }
+
+						.tagItem { margin: 3px 8px 0px 0px; }
+						.tagItem:last-child { margin-right: 0px; }
+
+						.more { vertical-align: top; margin: 3px 0px 0px 0px; }
+					}
+
+					.cellContent.c-checkbox { width: auto; }
+					.cellContent.c-checkbox {
+						.icon { width: 24px; height: 24px; vertical-align: top; }
+					}
+
+					.side.right {
+						.icon { flex-shrink: 0; width: 24px; height: 24px; background-size: 20px; border-radius: 4px; cursor: pointer; vertical-align: top; }
+						.icon:hover { background-color: $colorVeryLightGrey; }
+
+						.icon.more { background-image: url('~img/icon/menu/action/more0.svg'); }
+						.icon.add { background-image: url('~img/icon/plus/menu0.svg'); }
+					}
+				}
+
+				.body { overflow-y: overlay; max-height: 600px; }
             }
-			.column.isDragging {
-				.body { opacity: 0.3; }
+			.column.isDragging { opacity: 0.3; }
+			.column.isClone {
+				.body { overflow: visible; max-height: unset; }
+				.card { box-shadow: 0px 0px; }
 			}
 
 			.column > .ghost { margin-top: 42px; width: 240px; flex-shrink: 0; }
 			
-            .card { width: 240px; display: flex; flex-direction: column; gap: 8px 0px; margin-bottom: 8px; }
+            .card { width: 240px; display: flex; flex-direction: column; gap: 8px 0px; margin-bottom: 8px; position: relative; }
 			.card {
 				.cardContent { border: 1px solid $colorBorderDark; border-radius: 12px; padding: 16px; background: $colorWhite; }
 			}
+			.card:last-child { margin: 0px; }
 
 			.card.isDragging {
 				.cardContent { opacity: 0.3; }
@@ -43,8 +82,9 @@
 
             .card.add { 
 				min-height: unset; text-align: center; padding: 10px 0px; margin: 0px; line-height: 1; transition: $transitionFast; cursor: pointer; 
-				border: 1px solid $colorBorderDark; border-radius: 12px; flex-direction: row; justify-content: center;
+				border: 1px solid $colorBorderDark; border-radius: 12px; flex-direction: row; justify-content: center; background: $colorWhite;
 			}
+			.card.add.first { margin: 0px; }
             .card.add {
                 .icon { vertical-align: top; }
             }
@@ -53,12 +93,18 @@
                 .icon { background-image: url('~img/icon/plus/menu1.svg'); }
             }
 
-			.cellContent.c-shortText {
-				.name { height: 24px; }
-			}
+			.card {
+				.cellContent {
+					.name:empty { display: none; }
+				}
 
-			.cellContent {
-				.name:empty { display: none; }
+				.cellContent.c-shortText {
+					.name { height: 24px; }
+				}
+
+				.cellContent.c-select {
+					.tagItem { margin: 0px 8px 0px 0px; }
+				}
 			}
         }
     }

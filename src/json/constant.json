@@ -46,7 +46,8 @@
 		},
 		"store": {
 			"records": 50
-		}
+		},
+		"menu": 100
 	},
 
 	"subIds": {

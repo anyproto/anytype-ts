@@ -608,7 +608,7 @@ class Keyboard {
 		this.isResizing = v;
 	};
 	
-	setDrag (v: boolean) {
+	setDragging (v: boolean) {
 		this.isDragging = v;
 	};
 

@@ -106,7 +106,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 					<InfiniteLoader
 						rowCount={items.length}
 						loadMoreRows={() => {}}
-						isRowLoaded={({ index }) => index < items.length}
+						isRowLoaded={({ index }) => !!items[index]}
 					>
 						{({ onRowsRendered, registerChild }) => (
 							<AutoSizer className="scrollArea">

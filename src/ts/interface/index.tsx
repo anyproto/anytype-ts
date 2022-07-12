@@ -40,6 +40,7 @@ import {
 	FilterQuickOption,
 	Filter,
 	Cell,
+	BoardGroup,
 	ContentDataview,
 } from './block/dataview';
 
@@ -137,6 +138,7 @@ export {
 	FilterQuickOption,
 	Filter,
 	Cell,
+	BoardGroup,
 	ContentDataview,
 
 	LayoutStyle,

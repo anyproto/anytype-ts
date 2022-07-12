@@ -8,6 +8,7 @@ class DbStore {
     public viewMap: Map<string, I.View[]> = observable.map(new Map());
     public dataMap: Map<string, any[]> = observable.map(new Map());
     public metaMap: Map<string, any> = observable.map(new Map());
+	public groupMap: Map<string, any> = observable.map(new Map());
 
     constructor() {
         makeObservable(this, {
@@ -33,7 +34,8 @@ class DbStore {
             recordsClear: action,
             recordAdd: action,
             recordUpdate: action,
-            recordDelete: action
+            recordDelete: action,
+			groupsSet: action,
         });
     }
 
@@ -254,10 +256,22 @@ class DbStore {
 	};
 
     recordDelete (rootId: string, blockId: string, id: string) {
-		let records = this.getRecords(rootId, blockId);
-		records = records.filter((it: any) => { return it.id != id; });
+		this.dataMap.set(this.getId(rootId, blockId), this.getRecords(rootId, blockId).filter(it => it.id != id));
+	};
 
-		this.dataMap.set(this.getId(rootId, blockId), records);
+	groupsSet (rootId: string, blockId: string, groups: any[]) {
+		this.groupMap.set(this.getId(rootId, blockId), groups);
+	};
+
+	groupsClear (rootId: string, blockId: string) {
+		const groups = this.getGroups(rootId, blockId);
+
+		groups.forEach((it: any) => {
+			const subId = this.getSubId(rootId, [ blockId, it.id ].join(':'));
+			dbStore.recordsClear(subId, '');
+		});
+
+		this.groupsSet(rootId, blockId, []);
 	};
 
     getObjectType (id: string): I.ObjectType {
@@ -303,6 +317,14 @@ class DbStore {
 	getRecord (rootId: string, blockId: string, id: string) {
 		const records = this.getRecords(rootId, blockId);
 		return records.find((it: any) => { return it.id == id; });
+	};
+
+	getGroups (rootId: string, blockId: string) {
+		return this.groupMap.get(this.getId(rootId, blockId)) || [];
+	};
+
+	getGroup (rootId: string, blockId: string, groupId: string) {
+		return this.getGroups(rootId, blockId).find(it => it.id == groupId);
 	};
 
 	getId (rootId: string, blockId: string) {

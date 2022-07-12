@@ -42,7 +42,7 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 						<MenuItemVertical 
 							key={i} 
 							{...action} 
-							icon={action.icon || action.id}
+							icon={action.icon}
 							readonly={!allowedView}
 							checkbox={(view.type == action.id) && (item.id == 'type')}
 							onMouseEnter={(e: any) => { this.onMouseEnter(e, action); }}
@@ -197,11 +197,12 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 	};
 
 	save () {
-		const { param, position } = this.props;
+		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, onSave, getData } = data;
+		const { rootId, blockId, onSave } = data;
 		const view = data.view.get();
 		const allowedView = blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
+		const subId = dbStore.getSubId(rootId, blockId);
 
 		if (!allowedView) {
 			return;
@@ -218,11 +219,9 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 		} else 
 		if (view.name) {
 			C.BlockDataviewViewCreate(rootId, blockId, view, (message: any) => {
-				view.id = message.viewId;
-				getData(view.id, 0);
+				dbStore.metaSet(subId, '', { ...dbStore.getMeta(subId, ''), viewId: message.viewId });
 
 				cb();
-
 				analytics.event('AddView', { type: view.type });
 			});
 		};
@@ -234,10 +233,7 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 		const { rootId, blockId, readonly } = data;
 		const view = data.view.get();
 		const views = dbStore.getViews(rootId, blockId);
-		const fileOption = this.getFileOptions().find((it: any) => { return it.id == view.coverRelationKey; });
-		const sizeOption = this.getSizeOptions().find((it: any) => { return it.id == view.cardSize; });
 		const allowedView = blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
-
 		const types = DataUtil.menuGetViews().map((it: any) => {
 			it.sectionId = 'type';
 			it.icon = 'view c' + it.id;
@@ -247,24 +243,29 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 		let settings: any[] = [];
 
 		if (view.type == I.ViewType.Gallery) {
+			const fileOption = this.getFileOptions().find(it => it.id == view.coverRelationKey);
+			const sizeOption = this.getSizeOptions().find(it => it.id == view.cardSize);
+
 			settings = settings.concat([
+				{ id: 'coverRelationKey', name: 'Cover', caption: (fileOption ? fileOption.name : 'Select'), withCaption: true, arrow: true },
+				{ id: 'cardSize', name: 'Card size', caption: (sizeOption ? sizeOption.name : 'Select'), withCaption: true, arrow: true },
 				{ 
-					id: 'coverRelationKey', icon: 'item-cover', name: 'Cover', caption: fileOption ? fileOption.name : 'Select',
-					withCaption: true, arrow: true,
-				},
-				{ 
-					id: 'cardSize', icon: 'item-size', name: 'Card size', caption: sizeOption ? sizeOption.name : 'Select',
-					withCaption: true, arrow: true,
-				},
-				{
-					id: 'coverFit', icon: 'item-fit', name: 'Fit image', withSwitch: true, switchValue: view.coverFit,
+					id: 'coverFit', name: 'Fit image', withSwitch: true, switchValue: view.coverFit, 
 					onSwitch: (e: any, v: boolean) => { this.onSwitch(e, 'coverFit', v); }
 				}
 			]);
 		};
 
+		if (view.type == I.ViewType.Board) {
+			const groupOption = this.getGroupOptions().find(it => it.id == view.groupRelationKey);
+
+			settings = settings.concat([
+				{ id: 'groupRelationKey', name: 'Group by', caption: groupOption ? groupOption.name : 'Select', withCaption: true, arrow: true },
+			]);
+		};
+
 		settings.push({
-			id: 'hideIcon', icon: 'item-icon', name: 'Show icon', withSwitch: true, switchValue: !view.hideIcon,
+			id: 'hideIcon', name: 'Show icon', withSwitch: true, switchValue: !view.hideIcon,
 			onSwitch: (e: any, v: boolean) => { this.onSwitch(e, 'hideIcon', !v); }
 		});
 
@@ -283,7 +284,7 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 		};
 
 		sections = sections.map((s: any) => {
-			s.children = s.children.filter((it: any) => { return it; });
+			s.children = s.children.filter(it => it);
 			return s;
 		});
 
@@ -351,6 +352,13 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 				menuId = 'select';
 				menuParam.data = Object.assign(menuParam.data, {
 					options: this.getFileOptions(),
+				});
+				break;
+
+			case 'groupRelationKey':
+				menuId = 'select';
+				menuParam.data = Object.assign(menuParam.data, {
+					options: this.getGroupOptions(),
 				});
 				break;
 
@@ -466,6 +474,26 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 		return [
 			{ id: '', icon: '', name: 'None' },
 			{ id: 'pageCover', icon: 'image', name: 'Page cover' }
+		].concat(options);
+	};
+
+	getGroupOptions () {
+		const { param } = this.props;
+		const { data } = param;
+		const { rootId, blockId } = data;
+		const options: any[] = dbStore.getRelations(rootId, blockId).filter((it: I.Relation) => {
+			return [ I.RelationType.Status, I.RelationType.Tag, I.RelationType.Checkbox ].includes(it.format) && 
+				(!it.isHidden || [ Constant.relationKey.done ].includes(it.relationKey));
+		}).map((it: any) => {
+			return { 
+				id: it.relationKey, 
+				icon: 'relation ' + DataUtil.relationClass(it.format),
+				name: it.name, 
+			};
+		});
+
+		return [
+			{ id: '', icon: '', name: 'None' },
 		].concat(options);
 	};
 

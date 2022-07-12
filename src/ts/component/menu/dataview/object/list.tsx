@@ -17,7 +17,6 @@ const HEIGHT = 28;
 const MENU_ID = 'dataviewObjectValues';
 
 const LIMIT_HEIGHT = 20;
-const LIMIT_LOAD = 100;
 
 const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends React.Component<Props, State> {
 
@@ -256,7 +255,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 			this.setState({ loading: true });
 		};
 
-		C.ObjectSearch(filters, sorts, Constant.defaultRelationKeys, filter, this.offset, LIMIT_LOAD, (message: any) => {
+		C.ObjectSearch(filters, sorts, Constant.defaultRelationKeys, filter, this.offset, Constant.limit.menu, (message: any) => {
 			if (callBack) {
 				callBack(message);
 			};
@@ -280,7 +279,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 
 	loadMoreRows ({ startIndex, stopIndex }) {
         return new Promise((resolve, reject) => {
-			this.offset += LIMIT_LOAD;
+			this.offset += Constant.limit.menu;
 			this.load(false, resolve);
 		});
 	};

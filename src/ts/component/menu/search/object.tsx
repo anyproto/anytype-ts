@@ -14,9 +14,7 @@ interface State {
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
-
 const LIMIT_HEIGHT = 10;
-const LIMIT_LOAD = 100;
 
 const MenuSearchObject = observer(class MenuSearchObject extends React.Component<Props, State> {
 
@@ -238,7 +236,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 
 	loadMoreRows ({ startIndex, stopIndex }) {
         return new Promise((resolve, reject) => {
-			this.offset += LIMIT_LOAD;
+			this.offset += Constant.limit.menu;
 			this.load(false, resolve);
 		});
 	};
@@ -276,7 +274,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 			this.setState({ loading: true });
 		};
 
-		C.ObjectSearch(filters, sorts, Constant.defaultRelationKeys, Util.filterFix(filter), this.offset, LIMIT_LOAD, (message: any) => {
+		C.ObjectSearch(filters, sorts, Constant.defaultRelationKeys, Util.filterFix(filter), this.offset, Constant.limit.menu, (message: any) => {
 			if (!this._isMounted) {
 				return;
 			};

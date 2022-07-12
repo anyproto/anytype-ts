@@ -769,6 +769,26 @@ const BlockDataviewViewSetActive = (contextId: string, blockId: string, viewId: 
 	dispatcher.request(BlockDataviewViewSetActive.name, request, callBack);
 };
 
+const BlockDataviewGroupOrderUpdate = (contextId: string, blockId: string, order: any, callBack?: (message: any) => void) => {
+	const request = new Rpc.BlockDataview.GroupOrder.Update.Request();
+	
+	request.setContextid(contextId);
+	request.setBlockid(blockId);
+	request.setGrouporder(Mapper.To.GroupOrder(order));
+
+	dispatcher.request(BlockDataviewGroupOrderUpdate.name, request, callBack);
+};
+
+const BlockDataviewObjectOrderUpdate = (contextId: string, blockId: string, orders: any[], callBack?: (message: any) => void) => {
+	const request = new Rpc.BlockDataview.ObjectOrder.Update.Request();
+	
+	request.setContextid(contextId);
+	request.setBlockid(blockId);
+	request.setObjectordersList(orders.map(Mapper.To.ObjectOrder));
+
+	dispatcher.request(BlockDataviewObjectOrderUpdate.name, request, callBack);
+};
+
 const BlockDataviewRecordCreate = (contextId: string, blockId: string, record: any, templateId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockDataviewRecord.Create.Request();
 	
@@ -1052,23 +1072,6 @@ const ObjectRedo = (contextId: string, callBack?: (message: any) => void) => {
 	dispatcher.request(ObjectRedo.name, request, callBack);
 };
 
-const ObjectSearch = (filters: I.Filter[], sorts: I.Sort[], keys: string[], fullText: string, offset: number, limit: number, callBack?: (message: any) => void) => {
-	const request = new Rpc.Object.Search.Request();
-
-	filters = filters.concat([
-		{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
-	]);
-	
-	request.setFiltersList(filters.map(Mapper.To.Filter));
-	request.setSortsList(sorts.map(Mapper.To.Sort));
-	request.setFulltext(fullText);
-	request.setOffset(offset);
-	request.setLimit(limit);
-	request.setKeysList(keys);
-
-	dispatcher.request(ObjectSearch.name, request, callBack);
-};
-
 const ObjectSetObjectType = (contextId: string, url: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.SetObjectType.Request();
 	
@@ -1115,6 +1118,32 @@ const OnSubscribe = (subId: string, keys: string[], message: any) => {
 	}));
 	detailStore.set(subId, details);
 	dbStore.recordsSet(subId, '', message.records.map((it: any) => { return { id: it.id }; }));
+};
+
+const ObjectSearch = (filters: I.Filter[], sorts: I.Sort[], keys: string[], fullText: string, offset: number, limit: number, callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.Search.Request();
+
+	filters = filters.concat([
+		{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
+	]);
+	
+	request.setFiltersList(filters.map(Mapper.To.Filter));
+	request.setSortsList(sorts.map(Mapper.To.Sort));
+	request.setFulltext(fullText);
+	request.setOffset(offset);
+	request.setLimit(limit);
+	request.setKeysList(keys);
+
+	dispatcher.request(ObjectSearch.name, request, callBack);
+};
+
+const ObjectRelationSearchDistinct = (relationKey: string, filters: I.Filter[], callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.RelationSearchDistinct.Request();
+
+	request.setRelationkey(relationKey);
+	request.setFiltersList(filters.map(Mapper.To.Filter));
+
+	dispatcher.request(ObjectRelationSearchDistinct.name, request, callBack);
 };
 
 const ObjectSearchSubscribe = (subId: string, filters: I.Filter[], sorts: I.Sort[], keys: string[], sources: string[], offset: number, limit: number, ignoreWorkspace: boolean, afterId: string, beforeId: string, noDeps: boolean, callBack?: (message: any) => void) => {
@@ -1590,6 +1619,9 @@ export {
 	BlockDataviewViewSetActive,
 	BlockDataviewViewSetPosition,
 
+	BlockDataviewGroupOrderUpdate,
+	BlockDataviewObjectOrderUpdate,
+
 	BlockDataviewRelationAdd,
 	BlockDataviewRelationUpdate,
 	BlockDataviewRelationDelete,
@@ -1635,6 +1667,7 @@ export {
 	ObjectAddWithObjectId,
 	ObjectShareByLink,
 	ObjectSearch,
+	ObjectRelationSearchDistinct,
 	ObjectSearchSubscribe,
 	ObjectSubscribeIds,
 	ObjectSearchUnsubscribe,

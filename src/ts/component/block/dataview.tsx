@@ -14,21 +14,15 @@ import ViewGallery from './dataview/view/gallery';
 import ViewList from './dataview/view/list';
 
 interface Props extends I.BlockComponent, RouteComponentProps<any> {};
-interface State {
-	viewId: string;
-};
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
 
-const BlockDataview = observer(class BlockDataview extends React.Component<Props, State> {
+const BlockDataview = observer(class BlockDataview extends React.Component<Props, {}> {
 
 	viewRef: any = null;
 	cellRefs: Map<string, any> = new Map();
 	viewId: string = '';
-	state = {
-		viewId: '',
-	};
 	creating: boolean = false;
 
 	constructor (props: any) {
@@ -37,7 +31,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		this.getData = this.getData.bind(this);
 		this.getRecord = this.getRecord.bind(this);
 		this.getView = this.getView.bind(this);
-		this.onRowAdd = this.onRowAdd.bind(this);
+		this.getKeys = this.getKeys.bind(this);
+		this.onRecordAdd = this.onRecordAdd.bind(this);
 		this.onCellClick = this.onCellClick.bind(this);
 		this.onCellChange = this.onCellChange.bind(this);
 		this.onContext = this.onContext.bind(this);
@@ -58,6 +53,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		if (!view) {
 			return null;
 		};
+
+		const { groupRelationKey } = view;
 
 		let ViewComponent: React.ReactType<I.ViewComponent>;
 		let className = '';
@@ -84,7 +81,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				className = 'viewList';
 				break;
 		};
-		
+
 		return (
 			<div>
 				<Controls 
@@ -94,10 +91,11 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					getData={this.getData} 
 					getView={this.getView} 
 					getRecord={this.getRecord}
-					onRowAdd={this.onRowAdd}
+					onRecordAdd={this.onRecordAdd}
 				/>
 				<div className="content">
 					<ViewComponent 
+						key={'view' + view.id}
 						ref={(ref: any) => { this.viewRef = ref; }} 
 						onRef={(ref: any, id: string) => { this.cellRefs.set(id, ref); }} 
 						{...this.props} 
@@ -107,7 +105,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 						getData={this.getData} 
 						getRecord={this.getRecord}
 						getView={this.getView} 
-						onRowAdd={this.onRowAdd}
+						getKeys={this.getKeys}
+						onRecordAdd={this.onRecordAdd}
 						onCellClick={this.onCellClick}
 						onCellChange={this.onCellChange}
 						optionCommand={this.optionCommand}
@@ -140,7 +139,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const { rootId, block } = this.props;
 		const { viewId } = dbStore.getMeta(dbStore.getSubId(rootId, block.id), '');
 
-		if (viewId != this.state.viewId) {
+		if (viewId != this.viewId) {
 			this.getData(viewId, 0);
 		};
 
@@ -179,7 +178,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		if (!this.creating) {
-			keyboard.shortcut(`${cmd}+n`, e, (pressed: string) => { this.onRowAdd(e, -1, true); });
+			keyboard.shortcut(`${cmd}+n`, e, (pressed: string) => { this.onRecordAdd(e, -1, true); });
 		};
 
 		if (length) {
@@ -192,7 +191,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 	};
 
-	getKeys (id: string) {
+	getKeys (id: string): string[] {
 		const view = this.getView(id);
 		const relationKeys = view.relations.map((it: any) => { return it.relationKey; });
 
@@ -204,34 +203,35 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			return;
 		};
 
-		this.state.viewId = newViewId;
-		this.setState({ viewId: newViewId });
+		this.viewId = newViewId;
 
 		const { rootId, block } = this.props;
 		const subId = dbStore.getSubId(rootId, block.id);
 		const { viewId } = dbStore.getMeta(subId, '');
 		const viewChange = newViewId != viewId;
-		const meta: any = { offset: offset };
-		const cb = (message: any) => {
-			if (callBack) {
-				callBack(message);
-			};
-		};
 		const view = this.getView(newViewId);
-		const keys = this.getKeys(view.id);
-		
-		let limit = Constant.limit.dataview.records;
-		if ([ I.ViewType.Grid, I.ViewType.Gallery, I.ViewType.List ].indexOf(view.type) >= 0) {
-			limit = 0;
+		const keys = this.getKeys(newViewId);
+
+		let limit = 0;
+		if ([ I.ViewType.Grid, I.ViewType.List ].includes(view.type)) {
+			limit = Constant.limit.dataview.records + offset;
+			offset = 0;
 		};
 
+		const meta: any = { offset: offset };
+	
 		if (viewChange) {
 			meta.viewId = newViewId;
 			dbStore.recordsSet(subId, '', []);
 		};
-
 		dbStore.metaSet(subId, '', meta);
-		DataUtil.getDataviewData(rootId, block.id, newViewId, keys, offset, limit, false, cb);
+
+		if (![ I.ViewType.Board ].includes(view.type)) {
+			DataUtil.getDataviewData(rootId, block.id, newViewId, keys, offset, limit, false, callBack);
+		} else 
+		if (this.viewRef.loadGroupList) {
+			this.viewRef.loadGroupList();
+		};
 	};
 
 	getRecord (index: number) {
@@ -280,7 +280,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		return views.find((it: I.View) => { return it.id == viewId; }) || views[0];
 	};
 
-	onRowAdd (e: any, dir: number, withPopup?: boolean) {
+	onRecordAdd (e: any, dir: number, withPopup?: boolean) {
 		if (e.persist) {
 			e.persist();
 		};
@@ -345,7 +345,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		if (!setOf.length) {
-			create('');
+			create(null);
 			return;
 		};
 

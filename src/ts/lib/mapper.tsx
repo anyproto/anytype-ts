@@ -28,6 +28,17 @@ const Mapper = {
 		return t;
 	},
 
+	BoardGroupType (v: number) {
+		let t = '';
+		let V = Model.Block.Content.Dataview.Group.ValueCase;
+
+		if (v == V.STATUS)	 t = 'status';
+		if (v == V.TAG)		 t = 'tag';
+		if (v == V.CHECKBOX) t = 'checkbox';
+		if (v == V.DATE)	 t = 'date';
+		return t;
+	},
+
 	From: {
 
 		Account: (obj: any): I.Account => {
@@ -178,6 +189,8 @@ const Mapper = {
 				sources: obj.getSourceList(),
 				views: (obj.getViewsList() || []).map(Mapper.From.View),
 				relations: (obj.getRelationsList() || []).map(Mapper.From.Relation),
+				groupOrder: (obj.getGroupordersList() || []).map(Mapper.From.GroupOrder),
+				objectOrder: (obj.getObjectordersList() || []).map(Mapper.From.ObjectOrder),
 			};
 		},
 
@@ -324,6 +337,7 @@ const Mapper = {
 				type: obj.getType(),
 				name: obj.getName(),
 				coverRelationKey: obj.getCoverrelationkey(),
+				groupRelationKey: obj.getGrouprelationkey(),
 				coverFit: obj.getCoverfit(),
 				cardSize: obj.getCardsize(),
 				hideIcon: obj.getHideicon(),
@@ -409,6 +423,52 @@ const Mapper = {
 				artist: obj.getArtist(),
 				artistUrl: obj.getArtisturl(),
             };
+		},
+
+		BoardGroup: (obj: any): I.BoardGroup => {
+			const type = Mapper.BoardGroupType(obj.getValueCase());
+			const field = obj['get' + Util.ucFirst(type)]();
+
+			let value: any = null;
+			switch (type) {
+				case 'status':
+					value = field.getId();
+					break;
+
+				case 'tag':
+					value = field.getIdsList();
+					break;
+
+				case 'checkbox':
+					value = field.getChecked();
+					break;
+			};
+
+			return { 
+				id: obj.getId(),
+				value,
+			};
+		},
+
+		GroupOrder: (obj: any) => {
+			return {
+				viewId: obj.getViewid(),
+				groups: (obj.getViewgroupsList() || []).map((it: any) => {
+					return {
+						groupId: it.getGroupid(),
+						index: it.getIndex(),
+						isHidden: it.getHidden(),
+					};
+				}),
+			};
+		},
+
+		ObjectOrder: (obj: any) => {
+			return {
+				viewId: obj.getViewid(),
+				groupId: obj.getGroupid(),
+				objectIds: obj.getObjectidsList() || [],
+			};
 		},
 
     },
@@ -635,6 +695,7 @@ const Mapper = {
 			item.setName(obj.name);
 			item.setType(obj.type);
 			item.setCoverrelationkey(obj.coverRelationKey);
+			item.setGrouprelationkey(obj.groupRelationKey);
 			item.setCoverfit(obj.coverFit);
 			item.setCardsize(obj.cardSize);
 			item.setHideicon(obj.hideIcon);
@@ -690,6 +751,33 @@ const Mapper = {
 			item.setId(obj.id);
 			item.setText(obj.text);
 			item.setColor(obj.color);
+
+			return item;
+		},
+
+		GroupOrder: (obj: any) => {
+			const item = new Model.Block.Content.Dataview.GroupOrder();
+
+			item.setViewid(obj.viewId);
+			item.setViewgroupsList(obj.groups.map((it: any) => {
+				const el = new Model.Block.Content.Dataview.ViewGroup();
+
+				el.setGroupid(it.groupId);
+				el.setIndex(it.index);
+				el.setHidden(it.isHidden);
+
+				return el;
+			}));
+
+			return item;
+		},
+
+		ObjectOrder: (obj: any) => {
+			const item = new Model.Block.Content.Dataview.ObjectOrder();
+
+			item.setViewid(obj.viewId);
+			item.setGroupid(obj.groupId);
+			item.setObjectidsList(obj.objectIds);
 
 			return item;
 		},
