@@ -22,13 +22,13 @@
 			background-repeat: no-repeat; border-radius: 3px;
 		}
 
-		.handleRow { height: 22px; width: 6px; top: 50%; left: -2px; margin-top: -11px; }
+		.handleRow { height: 22px; width: 6px; top: 50%; left: -4px; margin-top: -11px; }
 		.handleRow:hover, .handleRow.isActive { width: 14px; left: -8px; border-radius: 3px; }
 		.handleRow:hover::after, .handleRow.isActive::after {
 			background-image: url('~img/icon/table/handle/row.svg'); background-size: 8px 16px;
 		}
 
-		.handleColumn { height: 6px; width: 22px; left: 50%; top: -2px; margin-left: -11px; }
+		.handleColumn { height: 6px; width: 22px; left: 50%; top: -4px; margin-left: -11px; }
 		.handleColumn:hover, .handleColumn.isActive { height: 14px; top: -8px; border-radius: 3px; }
 		.handleColumn:hover::after, .handleColumn.isActive::after {
 			background-image: url('~img/icon/table/handle/column.svg'); background-size: 16px 8px;
@@ -87,7 +87,7 @@
 
 			.cell { box-shadow: 1px 0px inset, 0px 2px $tableBorderOrange, 0px -2px $tableBorderOrange; padding-top: 0px; padding-left: 1px; }
 			.cell:first-child { border-radius: 4px 0px 0px 4px; box-shadow: -2px 0px $tableBorderOrange, 0px 2px $tableBorderOrange, 0px -2px $tableBorderOrange; padding: 0px; }
-			.cell:last-child { border-radius: 0px 4px 4px 0px; box-shadow: 2px 0px $tableBorderOrange, 0px 2px $tableBorderOrange, 0px -2px $tableBorderOrange; padding: 0px; }
+			.cell:last-child { border-radius: 0px 4px 4px 0px; box-shadow: 1px 0px inset, 2px 0px $tableBorderOrange, 0px 2px $tableBorderOrange, 0px -2px $tableBorderOrange; padding: 0px; padding-left: 1px; }
 			.cell .block .wrapContent { padding-top: 1px; }
 		}
 
