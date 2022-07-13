@@ -26,7 +26,6 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 
 		const cn = [ 'cell', 'column' + column.id ];
 		const cellId = [ row.id, column.id ].join('-');
-		const canDragRow = !row.content.isHeader;
 		const inner = <div className="inner" />;
 
 		if (block) {
@@ -37,6 +36,7 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 			let onDragStart: any = () => {};
 			let onClick: any = () => {};
 			let cn = [ 'handle' ];
+			let canDrag = true;
 
 			switch (item.type) {
 				case I.BlockType.TableColumn:
@@ -48,19 +48,23 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 
 				case I.BlockType.TableRow:
 					cn.push('handleRow');
+					canDrag = !row.content.isHeader;
 
-					if (canDragRow) {
-						cn.push('canDrag');
+					if (canDrag) {
 						onDragStart = (e: any) => { onDragStartRow(e, row.id); };
 					};
 					onClick = (e: any) => { onHandleRow(e, item.type, row.id, column.id, cellId); };
 					break;
 			};
 
+			if (canDrag) {
+				cn.push('canDrag');
+			};
+
 			return (
 				<div 
 					className={cn.join(' ')}
-					draggable={true}
+					draggable={canDrag}
 					onMouseEnter={(e: any) => { onEnterHandle(e, item.type, row.id, column.id); }}
 					onMouseLeave={(e: any) => { onLeaveHandle(e); }}
 					onClick={onClick}
