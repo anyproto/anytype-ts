@@ -22,10 +22,10 @@
 		.item.withDescription {
 			.info { padding: 0px; }
 		}
-		.item.withDescription.withIcon, .item.add, .item.link {
+		.item.withDescription.withIcon {
 			.info { padding-left: 52px; }
 		}
 
-		.item.add, .item.link { color: $colorDarkGrey; }
+		.item.add { color: $colorBlack; }
 	}
 }

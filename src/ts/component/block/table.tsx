@@ -738,6 +738,9 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			this.offsetX = el.first().offset().left;
 		};
 
+		this.setEditing('');
+		focus.clear(true);
+
 		body.addClass('colResize');
 		win.unbind('mousemove.table mouseup.table');
 		win.on('mousemove.table', throttle((e: any) => { this.onResizeMove(e, id); }, 40));
@@ -1342,6 +1345,10 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				};
 
 				obj = table.find(`#row-${rowId}`);
+				if (!obj.length) {
+					return;
+				};
+
 				offset = obj.offset();
 
 				x = offset.left - containerOffset.left;
@@ -1377,6 +1384,10 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				};
 
 				obj = table.find(`#cell-${cellId}`);
+				if (!obj.length) {
+					return;
+				};
+
 				offset = obj.offset();
 
 				x = offset.left - containerOffset.left;
