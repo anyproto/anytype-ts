@@ -548,7 +548,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		};
 
 		this.frameRemove([ I.BlockPosition.None ]);
-		this.frameSet(type, rowId, columnId, cellId, I.BlockPosition.None);
+		this.frameAdd(type, rowId, columnId, cellId, I.BlockPosition.None);
 	};
 
 	onOptionsClose () {
@@ -700,7 +700,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			node.find(`#cell-${id}`).addClass('isEditing');
 			
 			this.frameRemove([ I.BlockPosition.None ]);
-			this.frameSet(I.BlockType.Text, '', '', id, I.BlockPosition.None);
+			this.frameAdd(I.BlockType.Text, '', '', id, I.BlockPosition.None);
 		} else {
 			this.frameRemove([ I.BlockPosition.None ]);
 		};
@@ -854,7 +854,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 
 		this.frame = raf(() => {
 			this.frameRemove([ I.BlockPosition.Left, I.BlockPosition.Right ]);
-			this.frameSet(I.BlockType.TableColumn, '', this.hoverId, '', this.position);
+			this.frameAdd(I.BlockType.TableColumn, '', this.hoverId, '', this.position);
 		});
 	};
 
@@ -944,7 +944,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 
 		this.frame = raf(() => {
 			this.frameRemove([ I.BlockPosition.Top, I.BlockPosition.Bottom ]);
-			this.frameSet(I.BlockType.TableRow, this.hoverId, '', '', this.position);
+			this.frameAdd(I.BlockType.TableRow, this.hoverId, '', '', this.position);
 		});
 	};
 
@@ -1307,7 +1307,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		return blockIds;
 	};
 
-	frameSet (type: I.BlockType, rowId: string, columnId: string, cellId: string, position: I.BlockPosition) {
+	frameAdd (type: I.BlockType, rowId: string, columnId: string, cellId: string, position: I.BlockPosition) {
 		const node = $(ReactDOM.findDOMNode(this));
 		const table = node.find('#table');
 		const frameContainer = node.find('#selectionFrameContainer');

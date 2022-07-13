@@ -199,7 +199,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 				mark = Mark.getInRange(marks, type, { from: from, to: to });
 
 				menuParam = Object.assign(menuParam, {
-					offsetY: 0,
+					offsetY: param.offsetY,
 					rect: param.rect,
 					width: getSize().width,
 				});
@@ -217,8 +217,9 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 					}
 				});
 
-				closeContext = true;
 				menuId = 'blockLink';
+
+				closeContext = true;
 				break;
 				
 			case I.MarkType.Color:
@@ -262,7 +263,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 		};
 
 		if (menuId && !menuStore.isOpen(menuId)) {
-			const menuIds = Constant.menuIds.context;
+			const menuIds = [].concat(Constant.menuIds.context);
 			
 			if (closeContext) {
 				menuIds.push(this.props.id);
