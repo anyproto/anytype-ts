@@ -758,6 +758,11 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 
 		this.setColumnsWidths(widths);
 		this.resize();
+
+		if (this.id) {
+			this.frameRemove([ I.BlockPosition.None ]);
+			this.frameAdd(I.BlockType.Text, '', '', this.id, I.BlockPosition.None);
+		};
 	};
 
 	onResizeEnd (e: any, id: string) {
@@ -1342,6 +1347,10 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				};
 
 				obj = table.find(`#row-${rowId}`);
+				if (!obj.length) {
+					return;
+				};
+
 				offset = obj.offset();
 
 				x = offset.left - containerOffset.left;
@@ -1377,6 +1386,10 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				};
 
 				obj = table.find(`#cell-${cellId}`);
+				if (!obj.length) {
+					return;
+				};
+
 				offset = obj.offset();
 
 				x = offset.left - containerOffset.left;
