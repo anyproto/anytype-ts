@@ -1674,7 +1674,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 						case 'block':
 							C.BlockBookmarkCreateAndFetch(rootId, focused, length ? I.BlockPosition.Bottom : I.BlockPosition.Replace, url, (message: any) => {
-								analytics.event('CreateBlock', { middleTime: message.middleTime, type: I.BlockType.Bookmark });
+								if (!message.error.code) {
+									analytics.event('CreateBlock', { middleTime: message.middleTime, type: I.BlockType.Bookmark });
+								};
 							});
 							break;
 
