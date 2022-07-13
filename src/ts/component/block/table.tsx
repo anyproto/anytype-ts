@@ -688,10 +688,6 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 
 		let ret = false;
 
-		keyboard.shortcut(`shift+enter`, e, (pressed: string) => {
-			this.setEditing(id);
-		});
-		
 		keyboard.shortcut(`shift+space`, e, (pressed: string) => {
 			ret = true;
 			this.onOptions(e, I.BlockType.Text, rowId, columnId, id);
@@ -703,9 +699,6 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 	};
 
 	onCellKeyUp (e: any, rowId: string, columnId: string, id: string, text: string, marks: I.Mark[], range: I.TextRange, props: any) {
-		keyboard.shortcut(`backspace, delete`, e, (pressed: string) => {
-			this.setEditing(id);
-		});
 	};
 
 	setEditing (id: string) {
@@ -1130,7 +1123,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		const container = $(isPopup ? '#popupPage #innerWrap' : '#page.isFull');
 		const ww = container.width();
 		const mw = ww - PADDING * 2;
-		const wrapperWidth = getWrapperWidth();
+		const wrapperWidth = getWrapperWidth() + Constant.size.blockMenu;
 		const offset = Constant.size.blockMenu + 10;
 		const wrap = node.find('#scrollWrap');
 		const row = node.find('.row').first();
@@ -1142,11 +1135,11 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		});
 
 		width > mw ? wrap.addClass('withScroll') : wrap.removeClass('withScroll');
-		width = Math.min(mw, width);
+		width = Math.max(wrapperWidth, Math.min(mw, width));
 
 		obj.css({
 			width: (width >= wrapperWidth) ? width : 'auto',
-			marginLeft: (width >= wrapperWidth) ? Math.min(0, (wrapperWidth - width) / 2) + offset / 2 : '',
+			marginLeft: (width >= wrapperWidth) ? Math.min(0, (wrapperWidth - width) / 2) : '',
 		});
 	};
 

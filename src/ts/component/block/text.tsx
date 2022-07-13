@@ -631,7 +631,13 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 	};
 
 	onInput (e: any) {
+		const { onUpdate } = this.props;
+		
 		this.placeholderCheck();
+
+		if (onUpdate) {
+			onUpdate();
+		};
 	};
 	
 	onKeyDown (e: any) {
@@ -1164,7 +1170,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		this.preventMenu = true;
 
 		this.setText(this.marks, true);
-		this.props.onPaste(e);
+		this.props.onPaste(e, this.props);
 	};
 	
 	onToggle (e: any) {
