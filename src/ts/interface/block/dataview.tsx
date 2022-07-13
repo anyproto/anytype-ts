@@ -52,6 +52,8 @@ export enum FilterCondition {
 	NotEmpty		 = 12,
 	AllIn			 = 13,
 	NotAllIn		 = 14,
+	ExactIn			 = 15,
+    NotExactIn		 = 16,
 };
 
 export enum FilterQuickOption {
@@ -100,10 +102,11 @@ export interface ViewComponent {
 	dataset?: any;
 	isPopup?: boolean;
 	onRef?(ref: any, id: string): void;
-	getData(viewId: string, offset: number): void;
+	getData(viewId: string, offset: number, callBack?: (message: any) => void): void;
 	getRecord(index: number): any;
 	getView?(): View;
-	onRowAdd?: (e: any, dir: number) => void;
+	getKeys?(viewId: string): string[];
+	onRecordAdd?: (e: any, dir: number) => void;
 	onCellClick?(e: any, key: string, index: number): void;
 	onContext?(e: any, id: string): void;
 	onCellChange?: (id: string, key: string, value: any, callBack?: (message: any) => void) => void;
@@ -115,6 +118,7 @@ export interface View {
 	name: string;
 	type: ViewType;
 	coverRelationKey: string;
+	groupRelationKey: string;
 	coverFit: boolean;
 	cardSize: I.CardSize;
 	hideIcon: boolean;
@@ -154,9 +158,16 @@ export interface Cell {
 	arrayLimit?: number;
 };
 
+export interface BoardGroup {
+	id: string;
+	value: any;
+};
+
 export interface ContentDataview {
 	sources: string[];
 	views: View[];
+	groupOrder: any[];
+	objectOrder: any[];
 };
 
 export interface BlockDataview extends I.Block {

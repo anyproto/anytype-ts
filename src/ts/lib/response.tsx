@@ -266,6 +266,12 @@ const ObjectSearch = (response: any) => {
 	};
 };
 
+const ObjectRelationSearchDistinct = (response: any) => {
+	return {
+		groups: (response.getGroupsList() || []).map(Mapper.From.BoardGroup),
+	};
+};
+
 const ObjectSearchSubscribe = (response: any) => {
 	const counters = response.getCounters();
 	return {

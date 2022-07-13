@@ -225,8 +225,9 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 	};
 	
 	componentDidUpdate () {
-		const { block } = this.props;
-		const { marks, text } = block.content;
+		const { block, onUpdate } = this.props;
+		const { content } = block;
+		const { marks, text } = content;
 		const { focused } = focus.state;
 
 		this.marks = Util.objectCopy(marks || []);
@@ -238,6 +239,10 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 
 		if (focused == block.id) {
 			focus.apply();
+		};
+
+		if (onUpdate) {
+			onUpdate();
 		};
 	};
 	
@@ -793,8 +798,8 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 	
 	onKeyUp (e: any) {
 		e.persist();
-		
-		const { rootId, block, onMenuAdd, isInsideTable } = this.props;
+
+		const { rootId, block, onMenuAdd, isInsideTable, onKeyUp } = this.props;
 		const { filter } = commonStore;
 		const { id, content } = block;
 		const range = this.getRange();
@@ -828,7 +833,6 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		const menuOpenAdd = menuStore.isOpen('blockAdd');
 		const menuOpenMention = menuStore.isOpen('blockMention');
 		
-		let ret = false;
 		let value = this.getValue();
 		let cmdParsed = false;
 		let newBlock: any = { 
@@ -967,9 +971,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			return;
 		};
 
-		keyboard.shortcut('backspace, delete', e, (pressed: string) => {
-			menuStore.close('blockContext');
-		});
+		keyboard.shortcut('backspace, delete', e, (pressed: string) => { menuStore.close('blockContext'); });
 
 		this.placeholderCheck();
 
@@ -989,9 +991,8 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			focus.apply();
 		};
 
-		if (!ret) {
-			this.setText(this.marks, false);
-		};
+		this.setText(this.marks, false);
+		onKeyUp(e, value, this.marks, range, this.props);
 	};
 
 	onMention () {
@@ -1265,8 +1266,8 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 				element: el,
 				rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
 				type: I.MenuType.Horizontal,
-				offsetY: -4,
-				vertical: I.MenuDirection.Top,
+				offsetY: 4,
+				vertical: I.MenuDirection.Bottom,
 				horizontal: I.MenuDirection.Center,
 				passThrough: true,
 				onClose: () => {

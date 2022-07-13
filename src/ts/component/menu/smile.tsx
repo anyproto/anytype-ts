@@ -124,7 +124,7 @@ class MenuSmile extends React.Component<Props, State> {
 					<InfiniteLoader
 						rowCount={items.length}
 						loadMoreRows={() => {}}
-						isRowLoaded={({ index }) => index < items.length}
+						isRowLoaded={({ index }) => !!items[index]}
 					>
 						{({ onRowsRendered, registerChild }) => (
 							<AutoSizer className="scrollArea">

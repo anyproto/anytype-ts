@@ -1039,6 +1039,11 @@ class Util {
 		return !((y1 + h1 < y2) || (y1 > y2 + h2) || (x1 + w1 < x2) || (x1 > x2 + w2));
 	};
 
+	matchUrl (url: string) {
+		const reg = new RegExp(/^((?:[a-z]+:(?:\/\/)?)|\/\/)([^\s\/\?#]+)([^\s\?#]+)(?:\?([^#\s]*))?(?:#([^\s]*))?$/gi);
+		return url.match(reg);
+	};
+
 };
 
 export default new Util();

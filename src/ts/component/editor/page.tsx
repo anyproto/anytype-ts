@@ -832,7 +832,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		];
 	};
 	
-	onKeyUpBlock (e: any, text: string, marks: I.Mark[], range: I.TextRange) {
+	onKeyUpBlock (e: any, text: string, marks: I.Mark[], range: I.TextRange, props: any) {
 	};
 
 	// Indentation
@@ -1044,6 +1044,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 					element: el,
 					rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
 					horizontal: I.MenuDirection.Center,
+					offsetY: 4,
 					data: {
 						filter: mark ? mark.param : '',
 						type: mark ? mark.type : null,
@@ -1209,7 +1210,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		};
 
 		const { focused, range } = focus.state;
-		const { rootId, isPopup } = this.props;
+		const { rootId } = this.props;
 		const { isInsideTable } = props;
 		const block = blockStore.getLeaf(rootId, focused);
 		const dir = pressed.match(Key.up) ? -1 : 1;
@@ -1258,18 +1259,12 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 			if ((idx >= 0) && nextRow) {
 				const nextRowElement = blockStore.getMapElement(rootId, nextRow.id);
-				const onFillRow = () => {
+				C.BlockTableRowListFill(rootId, [ nextRow.id ], () => {
 					if (nextRowElement) {
 						next = blockStore.getLeaf(rootId, nextRowElement.childrenIds[idx]);
 					};
 					cb();
-				};
-
-				if (nextRowElement.childrenIds.length - 1 < idx) {
-					C.BlockTableRowListFill(rootId, [ nextRow.id ], onFillRow);
-				} else {
-					onFillRow();
-				};
+				});
 			};
 		} else {
 			cb();
@@ -1396,12 +1391,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		const { rootId, isPopup } = this.props;
 		const top = Util.getScrollContainer(isPopup).scrollTop();
 
-		/*
-		if (Math.abs(top - this.scrollTop) >= 10) {
-			this.uiHide();
-		};
-		*/
-
 		this.scrollTop = top;
 		Storage.setScroll('editor' + (isPopup ? 'Popup' : ''), rootId, top);
 		Util.previewHide(false);
@@ -1455,9 +1444,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		});
 		
 		range = Util.objectCopy(range);
-		if (focusBlock) {
-			range = Util.rangeFixOut(focusBlock.content.text, range);
-		};
 
 		const data = { 
 			text: text.join('\n'), 
@@ -1565,9 +1551,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		e.preventDefault();
 
 		const block = blockStore.getLeaf(rootId, focused);
-		const length = block ? block.getLength() : 0;
-		const reg = new RegExp(/^((?:[a-z]+:(?:\/\/)?)|\/\/)([^\s\/\?#]+)([^\s\?#]+)(?:\?([^#\s]*))?(?:#([^\s]*))?$/gi);
-		const match = data.text.match(reg);
+		const match = Util.matchUrl(data.text);
 		const url = match && match[0];
 		
 		if (block && url && !force && !block.isTextTitle() && !block.isTextDescription()) {
@@ -1862,8 +1846,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			style = I.TextStyle.Paragraph;
 		};
 
-		range = Util.rangeFixOut(content.text, range);
-		
 		C.BlockSplit(rootId, focused.id, range, style, mode, (message: any) => {
 			if (message.error.code) {
 				return;

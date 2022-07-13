@@ -1,0 +1,29 @@
+@import "~scss/_vars";
+
+.menus {
+	.menu.menuDataviewGroupList { width: 360px; }
+	.menu.menuDataviewGroupList {
+		.content { max-height: unset; padding: 0px; }
+		.wrap { height: 100%; display: flex; flex-direction: column; padding: 0px; }
+
+		.items { flex-grow: 1; }
+		.item { padding: 4px 10px; display: flex; }
+		.item {
+			.icon.plus { margin-right: 4px; background-image: url('~img/icon/plus/menu0.svg'); }
+			.switch { position: absolute; right: 16px; top: 50%; margin-top: -8px; }
+
+			.cellContent {
+				.wrap { display: inline-block; }
+				.tagItem { margin: 1px 4px 0px 0px; cursor: pointer; }
+				.more { margin: 1px 0px 0px 0px; vertical-align: top; }
+				.empty { display: inline-block; }
+			}
+		}
+		.item:hover::before { background: $colorHover; }
+
+		.bottom { flex-shrink: 0; }
+		.bottom {
+			.line { margin-top: 0px; }
+		}
+	}
+}

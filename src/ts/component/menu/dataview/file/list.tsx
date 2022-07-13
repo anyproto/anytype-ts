@@ -15,9 +15,7 @@ const $ = require('jquery');
 const Constant = require('json/constant.json');
 const HEIGHT = 28;
 const MENU_ID = 'dataviewFileValues';
-
 const LIMIT_HEIGHT = 20;
-const LIMIT_LOAD = 100;
 
 const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.Component<Props, State> {
 
@@ -229,7 +227,7 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 			this.setState({ loading: true });
 		};
 
-		C.ObjectSearch(filters, sorts, Constant.defaultRelationKeys, filter, this.offset, LIMIT_LOAD, (message: any) => {
+		C.ObjectSearch(filters, sorts, Constant.defaultRelationKeys, filter, this.offset, Constant.limit.menu, (message: any) => {
 			if (callBack) {
 				callBack(message);
 			};
@@ -253,7 +251,7 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 
 	loadMoreRows ({ startIndex, stopIndex }) {
         return new Promise((resolve, reject) => {
-			this.offset += LIMIT_LOAD;
+			this.offset += Constant.limit.menu;
 			this.load(false, resolve);
 		});
 	};

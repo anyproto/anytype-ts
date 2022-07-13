@@ -1,6 +1,6 @@
 {
 	"name": "anytype2",
-	"version": "0.26.9-alpha",
+	"version": "0.26.13-alpha",
 	"description": "Anytype",
 	"main": "electron.js",
 	"scripts": {
@@ -53,7 +53,6 @@
 		"@types/react-dnd-html5-backend": "^3.0.2",
 		"@types/react-dom": "^16.9.8",
 		"@types/react-router-dom": "^4.3.5",
-		"@webpack-cli/serve": "^1.7.0",
 		"babel-loader": "^8.2.1",
 		"babel-preset-env": "^1.7.0",
 		"electron": "^19.0.7",
@@ -69,10 +68,10 @@
 		"tslint-react": "^4.2.0",
 		"url-loader": "^2.3.0",
 		"wait-for-localhost-cli": "^3.0.0",
-		"webpack": "~4",
 		"webpack-bundle-analyzer": "^4.5.0",
+		"webpack": "^4.44.2",
 		"webpack-cli": "^3.3.12",
-		"webpack-dev-server": "~3"
+		"webpack-dev-server": "^3.11.0"
 	},
 	"dependencies": {
 		"@electron/remote": "^2.0.1",
