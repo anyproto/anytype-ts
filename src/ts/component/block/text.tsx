@@ -75,6 +75,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		const { rootId, block, readonly, index } = this.props;
 		const { id, fields, content } = block;
 		const { text, marks, style, checked, color, iconEmoji, iconImage } = content;
+		const { theme } = commonStore;
 		const root = blockStore.getLeaf(rootId, rootId);
 		const footer = blockStore.getMapElement(rootId, Constant.blockId.footer);
 

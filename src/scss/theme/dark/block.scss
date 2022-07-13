@@ -234,9 +234,14 @@
 
 	.block.blockTable { 
 		.plusButton .icon { background-color: rgba(236, 217, 27, 0.25); }
-		.handleRow, .handleColumn { border-color: $colorBlack; }
-		.table { color: $colorLinePrimary; }
-		.cell { background: $colorBlack; color: $colorLinePrimary; }
+
+		.handle { 
+			.inner::before { background-color: $colorBlack; }
+		}
+		
+		.row { border-color: $colorLinePrimary; }
+
+		.cell { background: $colorBlack; border-color: $colorLinePrimary; }
 		.cell {
 			.block { color: $colorPrimary; }
 		}
