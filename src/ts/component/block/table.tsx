@@ -738,6 +738,9 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			this.offsetX = el.first().offset().left;
 		};
 
+		this.setEditing('');
+		focus.clear(true);
+
 		body.addClass('colResize');
 		win.unbind('mousemove.table mouseup.table');
 		win.on('mousemove.table', throttle((e: any) => { this.onResizeMove(e, id); }, 40));
@@ -758,11 +761,6 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 
 		this.setColumnsWidths(widths);
 		this.resize();
-
-		if (this.id) {
-			this.frameRemove([ I.BlockPosition.None ]);
-			this.frameAdd(I.BlockType.Text, '', '', this.id, I.BlockPosition.None);
-		};
 	};
 
 	onResizeEnd (e: any, id: string) {
