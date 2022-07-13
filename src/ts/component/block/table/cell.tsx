@@ -33,29 +33,44 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 			cn.push('align-v' + block.vAlign);
 		};
 
-		const HandleColumn = (item: any) => (
-			<div 
-				className="icon handleColumn canDrag"
-				draggable={true}
-				onMouseEnter={(e: any) => { onEnterHandle(e, I.BlockType.TableColumn, row.id, column.id); }}
-				onMouseLeave={(e: any) => { onLeaveHandle(e); }}
-				onClick={(e: any) => { onHandleColumn(e, I.BlockType.TableColumn, row.id, column.id, cellId); }}
-				onDragStart={(e: any) => { onDragStartColumn(e, column.id); }}
-				onContextMenu={(e: any) => { onHandleColumn(e, I.BlockType.TableColumn, row.id, column.id, cellId); }}
-			/>
-		);
+		const Handle = (item: any) => {
+			let onDragStart: any = () => {};
+			let onClick: any = () => {};
+			let cn = [ 'handle' ];
 
-		const HandleRow = (item: any) => (
-			<div 
-				className={[ 'icon', 'handleRow', (canDragRow ? 'canDrag' : '') ].join(' ')}
-				draggable={canDragRow}
-				onMouseEnter={(e: any) => { onEnterHandle(e, I.BlockType.TableRow, row.id, column.id); }}
-				onMouseLeave={(e: any) => { onLeaveHandle(e); }}
-				onClick={(e: any) => { onHandleRow(e, I.BlockType.TableRow, row.id, column.id, cellId); }}
-				onDragStart={(e: any) => { canDragRow ? onDragStartRow(e, row.id) : null; }}
-				onContextMenu={(e: any) => { onHandleRow(e, I.BlockType.TableRow, row.id, column.id, cellId); }}
-			/>
-		);
+			switch (item.type) {
+				case I.BlockType.TableColumn:
+					cn.push('handleColumn canDrag');
+
+					onDragStart = (e: any) => { onDragStartColumn(e, column.id); };
+					onClick = (e: any) => { onHandleColumn(e, item.type, row.id, column.id, cellId); }
+					break;
+
+				case I.BlockType.TableRow:
+					cn.push('handleRow');
+
+					if (canDragRow) {
+						cn.push('canDrag');
+						onDragStart = (e: any) => { onDragStartRow(e, row.id); };
+					};
+					onClick = (e: any) => { onHandleRow(e, item.type, row.id, column.id, cellId); };
+					break;
+			};
+
+			return (
+				<div 
+					className={cn.join(' ')}
+					draggable={true}
+					onMouseEnter={(e: any) => { onEnterHandle(e, item.type, row.id, column.id); }}
+					onMouseLeave={(e: any) => { onLeaveHandle(e); }}
+					onClick={onClick}
+					onDragStart={onDragStart}
+					onContextMenu={onClick}
+				>
+					<div className="inner" />
+				</div>
+			);
+		};
 
 		const EmptyBlock = () => (
 			<div className="block blockText noPlus align0">
@@ -90,8 +105,8 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 				onContextMenu={(e: any) => { onOptions(e, I.BlockType.Text, row.id, column.id, cellId); }}
 				data-column-id={column.id}
 			>
-				{!rowIdx ? <HandleColumn {...column} /> : ''}
-				{!columnIdx ? <HandleRow {...row} /> : ''}
+				{!rowIdx ? <Handle type={I.BlockType.TableColumn} {...column} /> : ''}
+				{!columnIdx ? <Handle type={I.BlockType.TableRow} {...row} /> : ''}
 
 				{block ? (
 					<Block 
