@@ -84,7 +84,7 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 			<div
 				id={`cell-${cellId}`}
 				className={cn.join(' ')}
-				onMouseDown={(e: any) => { onCellClick(e, row.id, column.id, cellId); }}
+				onClick={(e: any) => { onCellClick(e, row.id, column.id, cellId); }}
 				onMouseEnter={(e: any) => { onCellEnter(e, row.id, column.id, cellId); }}
 				onMouseLeave={(e: any) => { onCellLeave(e, row.id, column.id, cellId); }}
 				onContextMenu={(e: any) => { onOptions(e, I.BlockType.Text, row.id, column.id, cellId); }}

@@ -27,6 +27,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 	frame: number = 0;
 	hoverId: string = '';
 	position: I.BlockPosition = I.BlockPosition.None;
+	frames: any[] = [];
 
 	constructor (props: any) {
 		super(props);
@@ -71,9 +72,10 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				tabIndex={0} 
 				className={cn.join(' ')}
 			>
-				<div id="selectionFrame" />
 				<div id="scrollWrap" className="scrollWrap" onScroll={this.onScroll}>
 					<div className="inner">
+						<div id="selectionFrameContainer" />
+
 						<div id="table" className="table">
 							<div className="rows">
 								{rows.map((row: any, i: number) => {
@@ -223,7 +225,6 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		};
 
 		const node = $(ReactDOM.findDOMNode(this));
-		const { rows, columns } = this.getData();
 		const subIds = [ 'select2', 'blockColor', 'blockBackground' ];
 		const optionsAlign = this.optionsAlign(cellId);
 		const optionsColor = this.optionsColor(cellId);
@@ -545,6 +546,9 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				table.find(`#cell-${cellId}`).addClass('isHighlightedCell');
 				break;
 		};
+
+		this.frameRemove([ I.BlockPosition.None ]);
+		this.frameAdd(type, rowId, columnId, cellId, I.BlockPosition.None);
 	};
 
 	onOptionsClose () {
@@ -691,8 +695,14 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		const node = $(ReactDOM.findDOMNode(this));
 		
 		node.find('.cell.isEditing').removeClass('isEditing');
+
 		if (id) {
 			node.find(`#cell-${id}`).addClass('isEditing');
+			
+			this.frameRemove([ I.BlockPosition.None ]);
+			this.frameAdd(I.BlockType.Text, '', '', id, I.BlockPosition.None);
+		} else {
+			this.frameRemove([ I.BlockPosition.None ]);
 		};
 	};
 
@@ -802,6 +812,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 
 		this.initCache(I.BlockType.TableColumn);
 		this.setEditing('');
+		this.onOptionsOpen(I.BlockType.TableColumn, '', id, '');
 		this.preventSelect(true);
 		this.preventDrop(true);
 	};
@@ -842,11 +853,8 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		};
 
 		this.frame = raf(() => {
-			node.find('.cell.isOver').removeClass('isOver left right');
-
-			if (this.hoverId) {
-				node.find(`.cell.column${this.hoverId}`).addClass('isOver ' + (this.position == I.BlockPosition.Left ? 'left' : 'right'));
-			};
+			this.frameRemove([ I.BlockPosition.Left, I.BlockPosition.Right ]);
+			this.frameAdd(I.BlockType.TableColumn, '', this.hoverId, '', this.position);
 		});
 	};
 
@@ -856,11 +864,16 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		const node = $(ReactDOM.findDOMNode(this));
 		const win = $(window);
 
+		if (this.frame) {
+			raf.cancel(this.frame);
+		};
+
 		this.cache = {};
 		this.onSortEndColumn(id, this.hoverId, this.position);
 		this.preventSelect(false);
 		this.preventDrop(false);
 		this.onOptionsClose();
+		this.frameRemove([ I.BlockPosition.Left, I.BlockPosition.Right ]);
 
 		win.off('drag.tableColumn dragend.tableColumn');
 		node.find('.table.isClone').remove();
@@ -900,7 +913,6 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			return;
 		};
 
-		const node = $(ReactDOM.findDOMNode(this));
 		const { rows } = this.getData();
 		const current = this.cache[id];
 
@@ -931,11 +943,8 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		};
 
 		this.frame = raf(() => {
-			node.find('.row.isOver').removeClass('isOver top bottom');
-
-			if (this.hoverId) {
-				node.find(`#row-${this.hoverId}`).addClass('isOver ' + (this.position == I.BlockPosition.Bottom ? 'bottom' : 'top'));
-			};
+			this.frameRemove([ I.BlockPosition.Top, I.BlockPosition.Bottom ]);
+			this.frameAdd(I.BlockType.TableRow, this.hoverId, '', '', this.position);
 		});
 	};
 
@@ -945,11 +954,16 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		const node = $(ReactDOM.findDOMNode(this));
 		const win = $(window);
 
+		if (this.frame) {
+			raf.cancel(this.frame);
+		};
+
 		this.cache = {};
 		this.onSortEndRow(id, this.hoverId, this.position);
 		this.preventSelect(false);
 		this.preventDrop(false);
 		this.onOptionsClose();
+		this.frameRemove([ I.BlockPosition.Top, I.BlockPosition.Bottom ]);
 
 		win.off('drag.tableRow dragend.tableRow');
 		node.find('.table.isClone').remove();
@@ -1291,6 +1305,122 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		};
 
 		return blockIds;
+	};
+
+	frameAdd (type: I.BlockType, rowId: string, columnId: string, cellId: string, position: I.BlockPosition) {
+		const node = $(ReactDOM.findDOMNode(this));
+		const table = node.find('#table');
+		const frameContainer = node.find('#selectionFrameContainer');
+		const containerOffset = frameContainer.offset();
+		const id = [ type, rowId, columnId, cellId, position ].join('-');
+
+		let obj: any = null;
+		let offset: any = null;
+		let x = 0;
+		let y = 0;
+		let w = 0;
+		let h = 0;
+
+		switch (type) {
+			case I.BlockType.TableRow:
+				if (!rowId) {
+					return;
+				};
+
+				obj = table.find(`#row-${rowId}`);
+				offset = obj.offset();
+
+				x = offset.left - containerOffset.left;
+				y = offset.top - containerOffset.top;
+				w = obj.outerWidth();
+				h = obj.outerHeight();
+				break;
+
+			case I.BlockType.TableColumn:
+				if (!columnId) {
+					return;
+				};
+
+				const cells = table.find(`.cell.column${columnId}`);
+
+				cells.each((i: number, obj: any) => {
+					obj = $(obj);
+
+					if (i == 0) {
+						offset = obj.offset();
+						x = offset.left - containerOffset.left;
+						y = offset.top - containerOffset.top;
+						w = obj.outerWidth();
+					};
+
+					h += obj.outerHeight();
+				});
+				break;
+
+			default:
+				if (!cellId) {
+					return;
+				};
+
+				obj = table.find(`#cell-${cellId}`);
+				offset = obj.offset();
+
+				x = offset.left - containerOffset.left;
+				y = offset.top - containerOffset.top;
+				w = obj.outerWidth();
+				h = obj.outerHeight();
+				break;
+		};
+
+		x -= 1;
+		y -= 1;
+		w += 2;
+		h += 2;
+
+		const frame = { id, x, y, w, h, position };
+		if (!this.frames.find(it => it.id == frame.id)) {
+			this.frames.push(frame);
+		};
+		this.frameRender(frame);
+	};
+
+	frameRemove (positions: I.BlockPosition[]) {
+		const node = $(ReactDOM.findDOMNode(this));
+		const frameContainer = node.find('#selectionFrameContainer');
+
+		this.frames = this.frames.filter(it => !positions.includes(it.position));
+
+		positions.forEach((it: I.BlockPosition) => {
+			const c = this.getClassByPosition(it);
+			frameContainer.find('.selectionFrame' + (c ? `.${c}` : '')).remove();
+		});
+	};
+
+	frameRender (item: any) {
+		const node = $(ReactDOM.findDOMNode(this));
+		const frameContainer = node.find('#selectionFrameContainer');
+		const c = this.getClassByPosition(item.position);
+
+		let obj = frameContainer.find(`#frame-${item.id}`);
+		if (!obj.length) {
+			const frame = $('<div class="selectionFrame"></div>');
+
+			frameContainer.append(frame);
+			frame.attr({ id: `frame-${item.id}` }).addClass(c);
+
+			obj = frame;
+		};
+
+		obj.css({ left: item.x, top: item.y, width: item.w, height: item.h });
+	};
+
+	getClassByPosition (position: I.BlockPosition) {
+		let c = '';
+		if (position == I.BlockPosition.Left) c = 'left';
+		if (position == I.BlockPosition.Right) c = 'right';
+		if (position == I.BlockPosition.Top) c = 'top';
+		if (position == I.BlockPosition.Bottom) c = 'bottom';
+		return c;
 	};
 
 });
