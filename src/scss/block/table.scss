@@ -27,13 +27,13 @@
 			background-repeat: no-repeat; border-radius: 3px;
 		}
 
-		.handleRow { height: 22px; width: 2px; top: 50%; left: -1px; margin-top: -11px; padding: 2px 0px; }
+		.handleRow { height: 22px; width: 2px; top: 50%; left: -2px; margin-top: -11px; padding: 2px 0px; }
 		.handleRow:hover, .handleRow.isActive { width: 10px; left: -6px; border-radius: 3px; }
 		.handleRow:hover::after, .handleRow.isActive::after {
 			background-image: url('~img/icon/table/handle/row.svg'); background-size: 8px 16px;
 		}
 
-		.handleColumn { height: 2px; width: 22px; left: 50%; top: -1px; margin-left: -11px; padding: 0px 2px; }
+		.handleColumn { height: 2px; width: 22px; left: 50%; top: -2px; margin-left: -11px; padding: 0px 2px; }
 		.handleColumn:hover, .handleColumn.isActive { height: 10px; top: -6px; border-radius: 3px; }
 		.handleColumn:hover::after, .handleColumn.isActive::after {
 			background-image: url('~img/icon/table/handle/column.svg'); background-size: 16px 8px;
@@ -181,7 +181,6 @@
 
 			.block.blockText { @include text-common; }
 		}
-		.cell.isEditing { z-index: 2; }
 	}
 
 	.block.blockTable > .wrapContent > .dropTarget.targetBot { display: block; height: 2px; }
