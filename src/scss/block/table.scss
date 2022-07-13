@@ -11,6 +11,11 @@
 
 		.scrollWrap > .inner { display: inline-block; position: relative; }
 
+		#selectionFrameContainer { position: absolute; left: 0px; top: 0px; pointer-events: none; z-index: 10; }
+		#selectionFrameContainer {
+			.selectionFrame { border: 2px solid $tableBorderOrange; position: absolute; border-radius: 4px; }
+		}
+
 		.handleRow, .handleColumn { 
 			cursor: pointer; z-index: 10; background-color: #fff; position: absolute; display: none;
 			transition: none; padding: 2px; border-radius: 3px;
@@ -97,15 +102,13 @@
 
 		.cell { 
 			@include text-common; vertical-align: top; position: relative; cursor: text; flex-shrink: 0; background: #fff;
-			box-shadow: 1px 1px inset; color: $colorBorderDark; padding: 1px 0px 0px 1px;
+			color: $colorBorderDark; border-left: 1px solid $colorBorderDark; border-top: 1px solid $colorBorderDark;
 		}
 
-		.cell.isEditing { box-shadow: 0px 0px 0px 2px $tableBorderOrange; border-radius: 2px; padding: 0px; }
+		.cell.isEditing { padding: 0px; }
 		.cell.isEditing {
 			.handleColumn { top: -4px; }
 			.handleRow { left: -4px; }
-
-			.block .wrapContent { padding-left: 1px; padding-top: 1px; }
 		}
 
 		.cell.isHighlightedColumn {

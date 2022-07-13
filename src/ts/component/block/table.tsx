@@ -71,7 +71,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				tabIndex={0} 
 				className={cn.join(' ')}
 			>
-				<div id="selectionFrame" />
+				<div id="selectionFrameContainer" />
 				<div id="scrollWrap" className="scrollWrap" onScroll={this.onScroll}>
 					<div className="inner">
 						<div id="table" className="table">
@@ -223,7 +223,6 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		};
 
 		const node = $(ReactDOM.findDOMNode(this));
-		const { rows, columns } = this.getData();
 		const subIds = [ 'select2', 'blockColor', 'blockBackground' ];
 		const optionsAlign = this.optionsAlign(cellId);
 		const optionsColor = this.optionsColor(cellId);
@@ -691,8 +690,12 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		const node = $(ReactDOM.findDOMNode(this));
 		
 		node.find('.cell.isEditing').removeClass('isEditing');
+
 		if (id) {
 			node.find(`#cell-${id}`).addClass('isEditing');
+			this.frameSet(I.BlockType.Text, '', '', id);
+		} else {
+			this.frameRemove();
 		};
 	};
 
@@ -1291,6 +1294,54 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		};
 
 		return blockIds;
+	};
+
+	frameSet (type: I.BlockType, rowId: string, columnId: string, cellId: string) {
+		const node = $(ReactDOM.findDOMNode(this));
+		const table = node.find('#table');
+		const frameContainer = node.find('#selectionFrameContainer');
+		const scrollWrap = node.find('#scrollWrap');
+		const frame = $('<div class="selectionFrame"></div>');
+		const containerOffset = scrollWrap.offset();
+
+		this.frameRemove();
+
+		let obj: any = null;
+		let offset: any = null;
+		let x = 0;
+		let y = 0;
+		let w = 0;
+		let h = 0;
+
+		switch (type) {
+			case I.BlockType.TableRow:
+				break;
+
+			case I.BlockType.TableColumn:
+				break;
+
+			default:
+				obj = table.find(`#cell-${cellId}`);
+				offset = obj.offset();
+
+				x = offset.left - containerOffset.left - 1;
+				y = offset.top - containerOffset.top - 1;
+				w = obj.width() + 4;
+				h = obj.height() + 4;
+				break;
+		};
+
+		console.log({ left: x, top: y, width: w, height: h });
+
+		frameContainer.append(frame);
+		frame.css({ left: x, top: y, width: w, height: h });
+	};
+
+	frameRemove () {
+		const node = $(ReactDOM.findDOMNode(this));
+		const frameContainer = node.find('#selectionFrameContainer');
+
+		frameContainer.html('');
 	};
 
 });
