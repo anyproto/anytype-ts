@@ -607,6 +607,8 @@ const Mapper = {
 		BlockTableRow: (obj: any) => {
 			const content = new Model.Block.Content.TableRow();
 
+			content.setIsheader(obj.isHeader);
+
 			return content;
 		},
 

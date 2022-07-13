@@ -674,12 +674,12 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		if (platform == I.Platform.Mac) {
 			// Print or prev string
 			keyboard.shortcut('ctrl+p', e, (pressed: string) => {
-				this.onArrowVertical(e, Key.up, length, props);
+				this.onArrowVertical(e, Key.up, range, length, props);
 			});
 
 			// Next string
 			keyboard.shortcut('ctrl+n', e, (pressed: string) => {
-				this.onArrowVertical(e, Key.down, length, props);
+				this.onArrowVertical(e, Key.down, range, length, props);
 			});
 		};
 
@@ -767,7 +767,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		};
 
 		keyboard.shortcut('arrowup, arrowdown', e, (pressed: string) => {
-			this.onArrowVertical(e, pressed, length, props);
+			this.onArrowVertical(e, pressed, range, length, props);
 		});
 
 		keyboard.shortcut('arrowleft', e, (pressed: string) => {
@@ -798,7 +798,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		// Enter
 		keyboard.shortcut('enter, shift+enter', e, (pressed: string) => {
 			if (isInsideTable && (pressed == 'enter')) {
-				this.onArrowVertical(e, 'arrowdown', length, props);
+				this.onArrowVertical(e, 'arrowdown', { from: length, to: length }, length, props);
 			} else {
 				this.onEnterBlock(e, range, pressed);
 			};
@@ -808,7 +808,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			// Tab, indent block
 			keyboard.shortcut('tab, shift+tab', e, (pressed: string) => {
 				if (isInsideTable) {
-					this.onArrowHorizontal (e, 'arrowright', range, length, props);
+					this.onArrowHorizontal (e, 'arrowright', { from: length, to: length }, length, props);
 				} else {
 					this.onTabBlock(e, pressed);
 				};
@@ -1211,12 +1211,12 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		return blockStore.getNextBlock(rootId, element.parentId, dir, it => it.isTableRow());
 	};
 
-	onArrowVertical (e: any, pressed: string, length: number, props: any) {
+	onArrowVertical (e: any, pressed: string, range: I.TextRange, length: number, props: any) {
 		if (menuStore.isOpen()) {
 			return;
 		};
 
-		const { focused, range } = focus.state;
+		const { focused } = focus.state;
 		const { rootId } = this.props;
 		const { isInsideTable } = props;
 		const block = blockStore.getLeaf(rootId, focused);
