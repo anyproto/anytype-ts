@@ -1488,7 +1488,11 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			return;
 		};
 
-		if (!data && this.onPasteFile(e, props)) {
+		if (!data) {
+			data = this.getClipboardData(e);
+		};
+
+		if (this.onPasteFile(e, props)) {
 			return;
 		};
 
@@ -1537,20 +1541,18 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		});
 	};
 
-	onPasteFile (e: any, props: any) {
+	onPasteFile (e: any, props: any): boolean {
+		const { isInsideTable } = props;
+		
+		if (isInsideTable) {
+			return false;
+		};
+
 		const filePath = window.Electron.tmpPath;
 		const cb = e.clipboardData || e.originalEvent.clipboardData;
 		const items = cb.items;
 		const files: any[] = [];
-
-		const data: any = {
-			text: String(cb.getData('text/plain') || ''),
-			html: String(cb.getData('text/html') || ''),
-			anytype: JSON.parse(String(cb.getData('application/json') || '{}')),
-			files: [],
-		};
-
-		data.anytype.range = data.anytype.range || { from: 0, to: 0 };
+		const data: any = this.getClipboardData(e);
 
 		if (!items || !items.length) {
 			return false;
@@ -1688,6 +1690,18 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 				},
 			}
 		});
+	};
+
+	getClipboardData (e: any) {
+		const cb = e.clipboardData || e.originalEvent.clipboardData;
+		const data: any = {
+			text: String(cb.getData('text/plain') || ''),
+			html: String(cb.getData('text/html') || ''),
+			anytype: JSON.parse(String(cb.getData('application/json') || '{}')),
+			files: [],
+		};
+		data.anytype.range = data.anytype.range || { from: 0, to: 0 };
+		return data;
 	};
 
 	onHistory (e: any) {
