@@ -204,7 +204,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		e.preventDefault();
 		e.stopPropagation();
 
-		//this.onOptionsClose();
+		this.onOptionsClose();
 	};
 
 	onOptions (e: any, type: I.BlockType, rowId: string, columnId: string, cellId: string) {
@@ -545,7 +545,8 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				break;
 		};
 
-		this.frameSet(type, rowId, columnId, cellId);
+		this.frameRemove([ I.BlockPosition.None ]);
+		this.frameSet(type, rowId, columnId, cellId, I.BlockPosition.None);
 	};
 
 	onOptionsClose () {
@@ -695,9 +696,11 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 
 		if (id) {
 			node.find(`#cell-${id}`).addClass('isEditing');
-			this.frameSet(I.BlockType.Text, '', '', id);
+			
+			this.frameRemove([ I.BlockPosition.None ]);
+			this.frameSet(I.BlockType.Text, '', '', id, I.BlockPosition.None);
 		} else {
-			this.frameRemove();
+			this.frameRemove([ I.BlockPosition.None ]);
 		};
 	};
 
@@ -807,6 +810,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 
 		this.initCache(I.BlockType.TableColumn);
 		this.setEditing('');
+		this.onOptionsOpen(I.BlockType.TableColumn, '', id, '');
 		this.preventSelect(true);
 		this.preventDrop(true);
 	};
@@ -847,11 +851,8 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		};
 
 		this.frame = raf(() => {
-			node.find('.cell.isOver').removeClass('isOver left right');
-
-			if (this.hoverId) {
-				node.find(`.cell.column${this.hoverId}`).addClass('isOver ' + (this.position == I.BlockPosition.Left ? 'left' : 'right'));
-			};
+			this.frameRemove([ I.BlockPosition.Left, I.BlockPosition.Right ]);
+			this.frameSet(I.BlockType.TableColumn, '', this.hoverId, '', this.position);
 		});
 	};
 
@@ -866,6 +867,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		this.preventSelect(false);
 		this.preventDrop(false);
 		this.onOptionsClose();
+		this.frameRemove([ I.BlockPosition.Left, I.BlockPosition.Right ]);
 
 		win.off('drag.tableColumn dragend.tableColumn');
 		node.find('.table.isClone').remove();
@@ -905,7 +907,6 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			return;
 		};
 
-		const node = $(ReactDOM.findDOMNode(this));
 		const { rows } = this.getData();
 		const current = this.cache[id];
 
@@ -936,11 +937,8 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		};
 
 		this.frame = raf(() => {
-			node.find('.row.isOver').removeClass('isOver top bottom');
-
-			if (this.hoverId) {
-				node.find(`#row-${this.hoverId}`).addClass('isOver ' + (this.position == I.BlockPosition.Bottom ? 'bottom' : 'top'));
-			};
+			this.frameRemove([ I.BlockPosition.Top, I.BlockPosition.Bottom ]);
+			this.frameSet(I.BlockType.TableRow, this.hoverId, '', '', this.position);
 		});
 	};
 
@@ -955,6 +953,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		this.preventSelect(false);
 		this.preventDrop(false);
 		this.onOptionsClose();
+		this.frameRemove([ I.BlockPosition.Top, I.BlockPosition.Bottom ]);
 
 		win.off('drag.tableRow dragend.tableRow');
 		node.find('.table.isClone').remove();
@@ -1298,15 +1297,14 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		return blockIds;
 	};
 
-	frameSet (type: I.BlockType, rowId: string, columnId: string, cellId: string) {
+	frameSet (type: I.BlockType, rowId: string, columnId: string, cellId: string, position: I.BlockPosition) {
 		const node = $(ReactDOM.findDOMNode(this));
 		const table = node.find('#table');
 		const frameContainer = node.find('#selectionFrameContainer');
 		const scrollWrap = node.find('#scrollWrap');
 		const frame = $('<div class="selectionFrame"></div>');
 		const containerOffset = scrollWrap.offset();
-
-		this.frameRemove();
+		const c = this.getClassByPosition(position);
 
 		let obj: any = null;
 		let offset: any = null;
@@ -1314,6 +1312,10 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		let y = 0;
 		let w = 0;
 		let h = 0;
+
+		if (c) {
+			frame.addClass(c);
+		};
 
 		switch (type) {
 			case I.BlockType.TableRow:
@@ -1363,11 +1365,23 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		frame.css({ left: x, top: y, width: w, height: h });
 	};
 
-	frameRemove () {
+	frameRemove (positions: I.BlockPosition[]) {
 		const node = $(ReactDOM.findDOMNode(this));
 		const frameContainer = node.find('#selectionFrameContainer');
 
-		frameContainer.html('');
+		positions.forEach((it: I.BlockPosition) => {
+			const c = this.getClassByPosition(it);
+			frameContainer.find('.selectionFrame' + (c ? `.${c}` : '')).remove();
+		});
+	};
+
+	getClassByPosition (position: I.BlockPosition) {
+		let c = '';
+		if (position == I.BlockPosition.Left) c = 'left';
+		if (position == I.BlockPosition.Right) c = 'right';
+		if (position == I.BlockPosition.Top) c = 'top';
+		if (position == I.BlockPosition.Bottom) c = 'bottom';
+		return c;
 	};
 
 });

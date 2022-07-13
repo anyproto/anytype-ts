@@ -14,12 +14,13 @@
 		#selectionFrameContainer { position: absolute; left: 0px; top: 0px; pointer-events: none; z-index: 10; }
 		#selectionFrameContainer {
 			.selectionFrame { border: 2px solid $tableBorderOrange; position: absolute; border-radius: 4px; }
+			.selectionFrame.left { border-width: 0px; border-left-width: 2px; border-radius: 0px; }
+			.selectionFrame.right { border-width: 0px; border-right-width: 2px; border-radius: 0px; }
+			.selectionFrame.top { border-width: 0px; border-top-width: 2px; border-radius: 0px; }
+			.selectionFrame.bottom { border-width: 0px; border-bottom-width: 2px; border-radius: 0px; }
 		}
 
-		.handleRow, .handleColumn { 
-			cursor: pointer; z-index: 11; background-color: #fff; position: absolute; display: block; transition: none; 
-			transform: translate3d(0px,0px,0px);
-		}
+		.handleRow, .handleColumn { cursor: pointer; z-index: 11; background-color: #fff; position: absolute; display: none; transition: none; }
 		.handleRow.canDrag, .handleColumn.canDrag { cursor: grab; }
 
 		.handleRow::after, .handleColumn::after {
@@ -108,7 +109,7 @@
 		}
 
 		.cell.isOver { z-index: 2; }
-		.cell.isOver.left { box-shadow: 0px 1px inset, -2px 0px 0px $tableBorderOrange; padding-left: 0px; }
+		.cell.isOver.left { box-shadow: 0px 1px inset, -2px 0px 0px $tableBorderOrange; }
 		.cell.isOver.left {
 			.block .wrapContent { padding-left: 1px; }
 		}
