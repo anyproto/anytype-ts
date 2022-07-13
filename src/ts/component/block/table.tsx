@@ -204,7 +204,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		e.preventDefault();
 		e.stopPropagation();
 
-		this.onOptionsClose();
+		//this.onOptionsClose();
 	};
 
 	onOptions (e: any, type: I.BlockType, rowId: string, columnId: string, cellId: string) {
@@ -544,6 +544,8 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				table.find(`#cell-${cellId}`).addClass('isHighlightedCell');
 				break;
 		};
+
+		this.frameSet(type, rowId, columnId, cellId);
 	};
 
 	onOptionsClose () {
@@ -1315,23 +1317,47 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 
 		switch (type) {
 			case I.BlockType.TableRow:
+				obj = table.find(`#row-${rowId}`);
+				offset = obj.offset();
+
+				x = offset.left - containerOffset.left;
+				y = offset.top - containerOffset.top;
+				w = obj.outerWidth();
+				h = obj.outerHeight();
 				break;
 
 			case I.BlockType.TableColumn:
+				const cells = table.find(`.cell.column${columnId}`);
+
+				cells.each((i: number, obj: any) => {
+					obj = $(obj);
+
+					if (i == 0) {
+						offset = obj.offset();
+						x = offset.left - containerOffset.left;
+						y = offset.top - containerOffset.top;
+						w = obj.outerWidth();
+					};
+
+					h += obj.outerHeight();
+				});
 				break;
 
 			default:
 				obj = table.find(`#cell-${cellId}`);
 				offset = obj.offset();
 
-				x = offset.left - containerOffset.left - 1;
-				y = offset.top - containerOffset.top - 1;
-				w = obj.width() + 4;
-				h = obj.height() + 4;
+				x = offset.left - containerOffset.left;
+				y = offset.top - containerOffset.top;
+				w = obj.outerWidth();
+				h = obj.outerHeight();
 				break;
 		};
 
-		console.log({ left: x, top: y, width: w, height: h });
+		x -= 1;
+		y -= 1;
+		w += 2;
+		h += 2;
 
 		frameContainer.append(frame);
 		frame.css({ left: x, top: y, width: w, height: h });
