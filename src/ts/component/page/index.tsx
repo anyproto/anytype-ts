@@ -31,6 +31,7 @@ import PageMainRelation from './main/relation';
 import PageMainStore from './main/store';
 import PageMainGraph from './main/graph';
 import PageMainNavigation from './main/navigation';
+import PageMainCreate from './main/create';
 
 const Constant = require('json/constant.json');
 const Url = require('json/url.json');
@@ -66,6 +67,7 @@ const Components: any = {
 	'main/store':			 PageMainStore,
 	'main/graph':			 PageMainGraph,
 	'main/navigation':		 PageMainNavigation,
+	'main/create':			 PageMainCreate,
 };
 
 interface Props extends RouteComponentProps<any> {

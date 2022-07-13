@@ -357,8 +357,11 @@ class DataUtil {
 		e.preventDefault();
 		e.stopPropagation();
 
-		if ((e.metaKey || e.ctrlKey || popupStore.isOpen('page'))) {
+		if (e.shiftKey || popupStore.isOpen('page')) {
 			this.objectOpenPopup(object, popupParam);
+		} else
+		if ((e.metaKey || e.ctrlKey)) {
+			this.objectOpenWindow(object);
 		} else {
 			this.objectOpenRoute(object);
 		};

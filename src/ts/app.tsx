@@ -448,10 +448,7 @@ class App extends React.Component<Props, State> {
 				authStore.phraseSet(windowData.phrase);
 
 				DataUtil.createSession(() => {
-					if (windowData.route) {
-						commonStore.redirectSet(windowData.route);
-					};
-
+					commonStore.redirectSet(windowData.route || '');
 					DataUtil.onAuth(windowData.account, cb);
 				});
 

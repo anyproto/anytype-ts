@@ -217,6 +217,10 @@ class MenuManager {
 					label: 'New window', accelerator: 'CmdOrCtrl+Shift+N',
 					click: () => { WindowManager.createMain({ isChild: true }); } 
 				},
+				{ 
+					label: 'New object', accelerator: 'CmdOrCtrl+Alt+N',
+					click: () => { WindowManager.createMain({ route: '/main/create', isChild: true }); } 
+				},
 
 				Separator,
 
