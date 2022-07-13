@@ -71,7 +71,6 @@
 		.table.isClone { border-radius: 4px; box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2); border: 2px solid $tableBorderOrange; }
 		.table.isClone {
 			.handleColumn { display: block; border-color: $colorOrange; }
-			.cell { box-shadow: 0px 1px inset, 1px 0px inset; }
 		}
 		
 		.row { display: grid; position: relative; border-right: 1px solid $colorBorderDark; }
@@ -99,6 +98,10 @@
 
 		.row.isHighlightedRow {
 			.handleRow { display: block; }
+		}
+
+		.row.isHeader {
+			.block { font-weight: 500; }
 		}
 
 		.cell { 

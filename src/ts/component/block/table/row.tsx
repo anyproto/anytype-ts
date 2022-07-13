@@ -15,9 +15,14 @@ const BlockTableRow = observer(class BlockTableRow extends React.Component<Props
 		const childrenIds = blockStore.getChildrenIds(rootId, block.id);
 		const children = blockStore.getChildren(rootId, block.id);
 		const length = childrenIds.length;
+		const cn = [ 'row' ];
+
+		if (block.content.isHeader) {
+			cn.push('isHeader');
+		};
 
 		return (
-			<div id={`row-${block.id}`} className="row">
+			<div id={`row-${block.id}`} className={cn.join(' ')}>
 				{columns.map((column: any, i: number) => {
 					const child = children.find(it => it.id == [ block.id, column.id ].join('-'));
 					return (
