@@ -1481,71 +1481,15 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		const { dataset, rootId } = this.props;
 		const { selection } = dataset || {};
 		const { focused, range } = focus.state;
-		const filePath = window.Electron.tmpPath;
+
+		menuStore.closeAll([ 'blockAdd' ]);
 
 		if (this.isReadonly()) {
 			return;
 		};
 
-		menuStore.closeAll([ 'blockAdd' ]);
-
-		if (!data) {
-			const cb = e.clipboardData || e.originalEvent.clipboardData;
-			const items = cb.items;
-
-			data = {
-				text: String(cb.getData('text/plain') || ''),
-				html: String(cb.getData('text/html') || ''),
-				anytype: JSON.parse(String(cb.getData('application/json') || '{}')),
-				files: [],
-			};
-			data.anytype.range = data.anytype.range || { from: 0, to: 0 };
-
-			// Read files
-			if (items && items.length) {
-				let files = [];
-
-				for (let item of items) {
-					if (item.kind != 'file') {
-						continue;
-					};
-
-					const file = item.getAsFile();
-					if (file) {
-						files.push(file);
-					};
-				};
-
-				if (files.length) {
-					commonStore.progressSet({ status: translate('commonProgress'), current: 0, total: files.length });
-
-					for (let file of files) {
-						const fn = window.Electron.getPath(filePath, file.name);
-						const reader = new FileReader();
-
-						reader.readAsBinaryString(file); 
-						reader.onloadend = () => {
-							window.Electron.fs.writeFile(fn, reader.result, 'binary', (err: any) => {
-								if (err) {
-									console.error(err);
-									commonStore.progressSet({ status: translate('commonProgress'), current: 0, total: 0 });
-									return;
-								};
-
-								data.files.push({ name: file.name, path: fn });
-
-								commonStore.progressSet({ status: translate('commonProgress'), current: data.files.length, total: files.length });
-
-								if (data.files.length == files.length) {
-									this.onPaste(e, props, true, data);
-								};
-							});
-						};
-					};
-
-					return;
-				};
-			};
+		if (!data && this.onPasteFile(e, props)) {
+			return;
 		};
 
 		e.preventDefault();
@@ -1591,6 +1535,65 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 			analytics.event('PasteBlock');
 		});
+	};
+
+	onPasteFile (e: any, props: any) {
+		const filePath = window.Electron.tmpPath;
+		const cb = e.clipboardData || e.originalEvent.clipboardData;
+		const items = cb.items;
+		const files: any[] = [];
+
+		const data: any = {
+			text: String(cb.getData('text/plain') || ''),
+			html: String(cb.getData('text/html') || ''),
+			anytype: JSON.parse(String(cb.getData('application/json') || '{}')),
+			files: [],
+		};
+
+		data.anytype.range = data.anytype.range || { from: 0, to: 0 };
+
+		if (!items || !items.length) {
+			return false;
+		};
+
+		for (let item of items) {
+			if (item.kind != 'file') {
+				continue;
+			};
+
+			const file = item.getAsFile();
+			if (file) {
+				files.push(file);
+			};
+		};
+
+		if (!files.length) {
+			return false;
+		};
+
+		for (let file of files) {
+			const fn = window.Electron.getPath(filePath, file.name);
+			const reader = new FileReader();
+
+			reader.readAsBinaryString(file); 
+			reader.onloadend = () => {
+				window.Electron.fs.writeFile(fn, reader.result, 'binary', (err: any) => {
+					if (err) {
+						console.error(err);
+						commonStore.progressSet({ status: translate('commonProgress'), current: 0, total: 0 });
+						return;
+					};
+
+					data.files.push({ name: file.name, path: fn });
+
+					if (data.files.length == files.length) {
+						this.onPaste(e, props, true, data);
+					};
+				});
+			};
+		};
+
+		return true;
 	};
 
 	onPasteUrl (url: string, props: any) {
