@@ -21,7 +21,7 @@
 		}
 
 		.handle { 
-			cursor: pointer; z-index: 11;  position: absolute; display: block; transition: none; padding: 6px; 
+			cursor: pointer; z-index: 11;  position: absolute; display: none; transition: none; padding: 6px; 
 			transform: translateX(-50%) translateY(-50%);
 		}
 		.handle.canDrag { cursor: grab; }
