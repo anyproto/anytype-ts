@@ -249,7 +249,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		const { onKeyUp } = this.props;
 
 		if (onKeyUp) {
-			onKeyUp(e, '', [], { from: 0, to: 0 });
+			onKeyUp(e, '', [], { from: 0, to: 0 }, this.props);
 		};
 	};
 

@@ -839,7 +839,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		];
 	};
 	
-	onKeyUpBlock (e: any, text: string, marks: I.Mark[], range: I.TextRange) {
+	onKeyUpBlock (e: any, text: string, marks: I.Mark[], range: I.TextRange, props: any) {
 	};
 
 	// Indentation
@@ -1217,7 +1217,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		};
 
 		const { focused, range } = focus.state;
-		const { rootId, isPopup } = this.props;
+		const { rootId } = this.props;
 		const { isInsideTable } = props;
 		const block = blockStore.getLeaf(rootId, focused);
 		const dir = pressed.match(Key.up) ? -1 : 1;
@@ -1266,18 +1266,12 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 			if ((idx >= 0) && nextRow) {
 				const nextRowElement = blockStore.getMapElement(rootId, nextRow.id);
-				const onFillRow = () => {
+				C.BlockTableRowListFill(rootId, [ nextRow.id ], () => {
 					if (nextRowElement) {
 						next = blockStore.getLeaf(rootId, nextRowElement.childrenIds[idx]);
 					};
 					cb();
-				};
-
-				if (nextRowElement.childrenIds.length - 1 < idx) {
-					C.BlockTableRowListFill(rootId, [ nextRow.id ], onFillRow);
-				} else {
-					onFillRow();
-				};
+				});
 			};
 		} else {
 			cb();

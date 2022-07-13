@@ -17,7 +17,7 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 	render () {
 		const { 
 			rootId, block, readonly, rowIdx, columnIdx, row, column, onHandleRow, onHandleColumn, onOptions, onCellFocus, onCellBlur, onCellClick, onCellEnter, 
-			onCellLeave, onCellKeyDown, onResizeStart, onDragStartColumn, onDragStartRow, onEnterHandle, onLeaveHandle
+			onCellLeave, onCellKeyDown, onCellKeyUp, onResizeStart, onDragStartColumn, onDragStartRow, onEnterHandle, onLeaveHandle, onCellUpdate
 		} = this.props;
 
 		if (!row || !column) {
@@ -124,6 +124,10 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 						onKeyDown={(e: any, text: string, marks: I.Mark[], range: I.TextRange, props: any) => { 
 							onCellKeyDown(e, row.id, column.id, cellId, text, marks, range, props);
 						}}
+						onKeyUp={(e: any, text: string, marks: I.Mark[], range: I.TextRange, props: any) => { 
+							onCellKeyUp(e, row.id, column.id, cellId, text, marks, range, props);
+						}}
+						onUpdate={() => { onCellUpdate(row.id, column.id, cellId); }}
 						onFocus={(e: any) => { onCellFocus(e, row.id, column.id, cellId); }}
 						onBlur={(e: any) => { onCellBlur(e, row.id, column.id, cellId); }}
 						getWrapperWidth={() => { return Constant.size.editor; }} 

@@ -28,6 +28,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 	hoverId: string = '';
 	position: I.BlockPosition = I.BlockPosition.None;
 	frames: any[] = [];
+	id: string = '';
 
 	constructor (props: any) {
 		super(props);
@@ -38,13 +39,15 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		this.onHandleRow = this.onHandleRow.bind(this);
 		this.onHandleColumn = this.onHandleColumn.bind(this);
 		this.onEnterHandle = this.onEnterHandle.bind(this);
-		this.onLeaveHandle = this.onLeaveHandle.bind(this)
+		this.onLeaveHandle = this.onLeaveHandle.bind(this);
+		this.onCellUpdate = this.onCellUpdate.bind(this);
 		this.onCellClick = this.onCellClick.bind(this);
 		this.onCellFocus = this.onCellFocus.bind(this);
 		this.onCellBlur = this.onCellBlur.bind(this);
 		this.onCellEnter = this.onCellEnter.bind(this);
 		this.onCellLeave = this.onCellLeave.bind(this);
 		this.onCellKeyDown = this.onCellKeyDown.bind(this);
+		this.onCellKeyUp = this.onCellKeyUp.bind(this);
 		this.onOptions = this.onOptions.bind(this);
 		this.onResizeStart = this.onResizeStart.bind(this);
 		this.onDragStartRow = this.onDragStartRow.bind(this);
@@ -91,12 +94,14 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 											onLeaveHandle={this.onLeaveHandle}
 											onHandleRow={this.onHandleRow}
 											onHandleColumn={this.onHandleColumn}
+											onCellUpdate={this.onCellUpdate}
 											onCellClick={this.onCellClick}
 											onCellFocus={this.onCellFocus}
 											onCellBlur={this.onCellBlur}
 											onCellEnter={this.onCellEnter}
 											onCellLeave={this.onCellLeave}
 											onCellKeyDown={this.onCellKeyDown}
+											onCellKeyUp={this.onCellKeyUp}
 											onResizeStart={this.onResizeStart}
 											onDragStartRow={this.onDragStartRow}
 											onDragStartColumn={this.onDragStartColumn}
@@ -589,6 +594,12 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		C.BlockTableRowCreate(rootId, rows[rows.length - 1].id, I.BlockPosition.Bottom);
 	};
 
+	onCellUpdate (rowId: string, columnId: string, cellId: string) {
+		if (this.id == cellId) {
+			this.setEditing(cellId);
+		};
+	};
+
 	onCellFocus (e: any, rowId: string, columnId: string, cellId: string) {
 		const { rootId } = this.props;
 		const cell = blockStore.getLeaf(rootId, cellId);
@@ -676,6 +687,10 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		const { onKeyDown } = this.props;
 
 		let ret = false;
+
+		keyboard.shortcut(`shift+enter`, e, (pressed: string) => {
+			this.setEditing(id);
+		});
 		
 		keyboard.shortcut(`shift+space`, e, (pressed: string) => {
 			ret = true;
@@ -687,13 +702,20 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		};
 	};
 
+	onCellKeyUp (e: any, rowId: string, columnId: string, id: string, text: string, marks: I.Mark[], range: I.TextRange, props: any) {
+		keyboard.shortcut(`backspace, delete`, e, (pressed: string) => {
+			this.setEditing(id);
+		});
+	};
+
 	setEditing (id: string) {
 		if (!this._isMounted) {
 			return;
 		};
 
+		this.id = id;
+
 		const node = $(ReactDOM.findDOMNode(this));
-		
 		node.find('.cell.isEditing').removeClass('isEditing');
 
 		if (id) {
@@ -822,7 +844,6 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			return;
 		};
 
-		const node = $(ReactDOM.findDOMNode(this));
 		const { columns } = this.getData();
 		const current = this.cache[id];
 

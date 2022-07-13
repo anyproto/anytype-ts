@@ -211,7 +211,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 		const { isEditing } = this.state;
 
 		if (onKeyUp && !isEditing) {
-			onKeyUp(e, '', [], { from: 0, to: 0 });
+			onKeyUp(e, '', [], { from: 0, to: 0 }, this.props);
 		};
 	};
 
