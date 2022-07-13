@@ -27,10 +27,13 @@
 		.handle.canDrag { cursor: grab; }
 
 		.handle {
-			.inner { background-color: #fff; height: 22px; width: 2px; padding: 2px 0px; }
+			.inner { height: 22px; width: 2px; padding: 2px 0px; position: relative; }
 			.inner::after {
 				content: ""; display: block; background-color: $colorOrange; width: 100%; height: 100%; background-position: center;
-				background-repeat: no-repeat; border-radius: 3px;
+				background-repeat: no-repeat; border-radius: 3px; position: relative; z-index: 1;
+			}
+			.inner::before {
+				content: ""; height: 100%; width: 2px; position: absolute; left: 50%; margin-left: -1px; top: 0px; background: #fff; z-index: 0;
 			}
 		}
 		.handle:hover, .handle.isActive {
