@@ -1051,6 +1051,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 					element: el,
 					rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
 					horizontal: I.MenuDirection.Center,
+					offsetY: 4,
 					data: {
 						filter: mark ? mark.param : '',
 						type: mark ? mark.type : null,

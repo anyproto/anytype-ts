@@ -121,10 +121,6 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 		keyboard.disableContext(true);
 		focus.set(blockId, range);
 
-		if (type != 'style') {
-			focus.apply();
-		};
-		
 		let marks = data.marks || [];
 		let mark: any = null;
 		let menuId = '';
@@ -141,6 +137,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 		};
 
 		let closeContext = false;
+		let focusApply = true;
 		
 		switch (type) {
 			
@@ -151,7 +148,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 				break;
 				
 			case 'style':
-				focus.clear(false);
+
 				menuParam.data = Object.assign(menuParam.data, {
 					onSelect: (item: any) => {
 						if (item.type == I.BlockType.Text) {
@@ -177,6 +174,8 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 				});
 
 				menuId = 'blockStyle';
+
+				focusApply = false;
 				break;
 				
 			case 'more':
@@ -220,6 +219,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 				menuId = 'blockLink';
 
 				closeContext = true;
+				focusApply = false;
 				break;
 				
 			case I.MarkType.Color:
@@ -261,6 +261,8 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 				menuId = 'blockBackground';
 				break;
 		};
+
+		focusApply ? focus.apply() : focus.clear(false);
 
 		if (menuId && !menuStore.isOpen(menuId)) {
 			const menuIds = [].concat(Constant.menuIds.context);
