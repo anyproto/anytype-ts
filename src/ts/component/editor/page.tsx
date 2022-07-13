@@ -156,7 +156,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		win.on('keydown.editor' + namespace, (e: any) => { this.onKeyDownEditor(e); });
 		win.on('paste.editor' + namespace, (e: any) => {
 			if (!keyboard.isFocused) {
-				this.onPaste(e); 
+				this.onPaste(e, {});
 			};
 		});
 		win.on('focus.editor' + namespace, (e: any) => {
@@ -1484,7 +1484,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		analytics.event('CopyBlock');
 	};
 	
-	onPaste (e: any, force?: boolean, data?: any) {
+	onPaste (e: any, props: any, force?: boolean, data?: any) {
 		const { dataset, rootId } = this.props;
 		const { selection } = dataset || {};
 		const { focused, range } = focus.state;
@@ -1544,7 +1544,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 								commonStore.progressSet({ status: translate('commonProgress'), current: data.files.length, total: files.length });
 
 								if (data.files.length == files.length) {
-									this.onPaste(e, true, data);
+									this.onPaste(e, props, true, data);
 								};
 							});
 						};
@@ -1562,7 +1562,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		const url = match && match[0];
 		
 		if (block && url && !force && !block.isTextTitle() && !block.isTextDescription()) {
-			this.onPasteUrl(url);
+			this.onPasteUrl(url, props);
 			return;
 		};
 		
@@ -1600,7 +1600,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		});
 	};
 
-	onPasteUrl (url: string) {
+	onPasteUrl (url: string, props: any) {
+		const { isInsideTable } = props;
 		const { rootId } = this.props;
 		const { focused, range } = focus.state;
 		const currentFrom = range.from;
@@ -1617,8 +1618,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 		const options: any[] = [
 			{ id: 'link', name: 'Create link' },
-			isEmpty ? { id: 'object', name: 'Create bookmark object' } : null,
-			{ id: 'block', name: 'Create bookmark block' },
+			isEmpty && !isInsideTable ? { id: 'object', name: 'Create bookmark object' } : null,
+			!isInsideTable ? { id: 'block', name: 'Create bookmark block' } : null,
 			{ id: 'cancel', name: 'Cancel' },
 			//{ id: 'embed', name: 'Create embed' },
 		].filter(it => it);

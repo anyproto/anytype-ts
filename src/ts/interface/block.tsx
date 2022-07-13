@@ -73,7 +73,7 @@ export interface BlockComponent {
 	onKeyDown?(e: any, text: string, marks: I.Mark[], range: I.TextRange, props: any): void;
 	onKeyUp?(e: any, text: string, marks: I.Mark[], range: I.TextRange, props: any): void;
 	onMenuAdd? (id: string, text: string, range: I.TextRange, marks: I.Mark[]): void;
-	onPaste?(e: any): void;
+	onPaste?(e: any, props: any): void;
 	onFocus?(e: any): void;
 	onBlur?(e: any): void;
 	onCopy?(e: any, cut: boolean): void;
