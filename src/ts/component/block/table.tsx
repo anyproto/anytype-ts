@@ -27,6 +27,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 	frame: number = 0;
 	hoverId: string = '';
 	position: I.BlockPosition = I.BlockPosition.None;
+	frames: any[] = [];
 
 	constructor (props: any) {
 		super(props);
@@ -71,9 +72,10 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				tabIndex={0} 
 				className={cn.join(' ')}
 			>
-				<div id="selectionFrameContainer" />
 				<div id="scrollWrap" className="scrollWrap" onScroll={this.onScroll}>
 					<div className="inner">
+						<div id="selectionFrameContainer" />
+
 						<div id="table" className="table">
 							<div className="rows">
 								{rows.map((row: any, i: number) => {
@@ -862,6 +864,10 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		const node = $(ReactDOM.findDOMNode(this));
 		const win = $(window);
 
+		if (this.frame) {
+			raf.cancel(this.frame);
+		};
+
 		this.cache = {};
 		this.onSortEndColumn(id, this.hoverId, this.position);
 		this.preventSelect(false);
@@ -947,6 +953,10 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 
 		const node = $(ReactDOM.findDOMNode(this));
 		const win = $(window);
+
+		if (this.frame) {
+			raf.cancel(this.frame);
+		};
 
 		this.cache = {};
 		this.onSortEndRow(id, this.hoverId, this.position);
@@ -1301,10 +1311,8 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		const node = $(ReactDOM.findDOMNode(this));
 		const table = node.find('#table');
 		const frameContainer = node.find('#selectionFrameContainer');
-		const scrollWrap = node.find('#scrollWrap');
-		const frame = $('<div class="selectionFrame"></div>');
-		const containerOffset = scrollWrap.offset();
-		const c = this.getClassByPosition(position);
+		const containerOffset = frameContainer.offset();
+		const id = [ type, rowId, columnId, cellId, position ].join('-');
 
 		let obj: any = null;
 		let offset: any = null;
@@ -1313,12 +1321,12 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		let w = 0;
 		let h = 0;
 
-		if (c) {
-			frame.addClass(c);
-		};
-
 		switch (type) {
 			case I.BlockType.TableRow:
+				if (!rowId) {
+					return;
+				};
+
 				obj = table.find(`#row-${rowId}`);
 				offset = obj.offset();
 
@@ -1329,6 +1337,10 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				break;
 
 			case I.BlockType.TableColumn:
+				if (!columnId) {
+					return;
+				};
+
 				const cells = table.find(`.cell.column${columnId}`);
 
 				cells.each((i: number, obj: any) => {
@@ -1346,6 +1358,10 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				break;
 
 			default:
+				if (!cellId) {
+					return;
+				};
+
 				obj = table.find(`#cell-${cellId}`);
 				offset = obj.offset();
 
@@ -1361,18 +1377,41 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		w += 2;
 		h += 2;
 
-		frameContainer.append(frame);
-		frame.css({ left: x, top: y, width: w, height: h });
+		const frame = { id, x, y, w, h, position };
+		if (!this.frames.find(it => it.id == frame.id)) {
+			this.frames.push(frame);
+		};
+		this.frameRender(frame);
 	};
 
 	frameRemove (positions: I.BlockPosition[]) {
 		const node = $(ReactDOM.findDOMNode(this));
 		const frameContainer = node.find('#selectionFrameContainer');
 
+		this.frames = this.frames.filter(it => !positions.includes(it.position));
+
 		positions.forEach((it: I.BlockPosition) => {
 			const c = this.getClassByPosition(it);
 			frameContainer.find('.selectionFrame' + (c ? `.${c}` : '')).remove();
 		});
+	};
+
+	frameRender (item: any) {
+		const node = $(ReactDOM.findDOMNode(this));
+		const frameContainer = node.find('#selectionFrameContainer');
+		const c = this.getClassByPosition(item.position);
+
+		let obj = frameContainer.find(`#frame-${item.id}`);
+		if (!obj.length) {
+			const frame = $('<div class="selectionFrame"></div>');
+
+			frameContainer.append(frame);
+			frame.attr({ id: `frame-${item.id}` }).addClass(c);
+
+			obj = frame;
+		};
+
+		obj.css({ left: item.x, top: item.y, width: item.w, height: item.h });
 	};
 
 	getClassByPosition (position: I.BlockPosition) {
