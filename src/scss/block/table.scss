@@ -93,10 +93,6 @@
 			.handleRow { display: block; }
 		}
 
-		.row.isOver { z-index: 1; }
-		.row.isOver.top { box-shadow: 0px -2px 0px $tableBorderOrange; }
-		.row.isOver.bottom { box-shadow: 0px 2px 0px $tableBorderOrange; }
-
 		.cell { 
 			@include text-common; vertical-align: top; position: relative; cursor: text; flex-shrink: 0; background: #fff;
 			color: $colorBorderDark; border-left: 1px solid $colorBorderDark; border-top: 1px solid $colorBorderDark;
@@ -107,13 +103,6 @@
 		.cell.isHighlightedColumn {
 			.handleColumn { display: block; }
 		}
-
-		.cell.isOver { z-index: 2; }
-		.cell.isOver.left { box-shadow: 0px 1px inset, -2px 0px 0px $tableBorderOrange; }
-		.cell.isOver.left {
-			.block .wrapContent { padding-left: 1px; }
-		}
-		.cell.isOver.right { box-shadow: 1px 1px inset, 2px 0px 0px $tableBorderOrange; }
 
 		.cell.isEditing {
 			.handleRow, .handleColumn { display: block; }
