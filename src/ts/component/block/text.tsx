@@ -631,7 +631,13 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 	};
 
 	onInput (e: any) {
+		const { onUpdate } = this.props;
+		
 		this.placeholderCheck();
+
+		if (onUpdate) {
+			onUpdate();
+		};
 	};
 	
 	onKeyDown (e: any) {

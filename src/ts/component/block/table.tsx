@@ -688,10 +688,6 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 
 		let ret = false;
 
-		keyboard.shortcut(`shift+enter`, e, (pressed: string) => {
-			this.setEditing(id);
-		});
-		
 		keyboard.shortcut(`shift+space`, e, (pressed: string) => {
 			ret = true;
 			this.onOptions(e, I.BlockType.Text, rowId, columnId, id);
@@ -703,9 +699,6 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 	};
 
 	onCellKeyUp (e: any, rowId: string, columnId: string, id: string, text: string, marks: I.Mark[], range: I.TextRange, props: any) {
-		keyboard.shortcut(`backspace, delete`, e, (pressed: string) => {
-			this.setEditing(id);
-		});
 	};
 
 	setEditing (id: string) {
