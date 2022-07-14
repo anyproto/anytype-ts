@@ -1157,7 +1157,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				width = s;
 			};
 		};
-		return width;
+		return Math.floor(width);
 	};
 
 	optionsRow (id: string, isInner?: boolean) {
