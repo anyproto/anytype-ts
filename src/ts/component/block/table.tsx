@@ -823,7 +823,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		node.append(table);
 
 		$(document).off('dragover').on('dragover', (e: any) => { e.preventDefault(); });
-		e.dataTransfer.setDragImage(table.get(0), table.outerWidth(), -3);
+		e.dataTransfer.setDragImage(table.get(0), table.outerWidth(), 0);
 
 		win.on('drag.tableColumn', throttle((e: any) => { this.onDragMoveColumn(e, id); }, 40));
 		win.on('dragend.tableColumn', (e: any) => { this.onDragEndColumn(e, id); });
@@ -913,7 +913,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		table.append(clone);
 		
 		$(document).off('dragover').on('dragover', (e: any) => { e.preventDefault(); });
-		e.dataTransfer.setDragImage(layer.get(0), 0, 0);
+		e.dataTransfer.setDragImage(layer.get(0), 0, table.outerHeight());
 
 		win.on('drag.tableRow', throttle((e: any) => { this.onDragMoveRow(e, id); }, 40));
 		win.on('dragend.tableRow', (e: any) => { this.onDragEndRow(e, id); });
