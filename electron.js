@@ -1,3 +1,5 @@
+'use strict';
+
 const electron = require('electron');
 const { app, BrowserWindow, session, nativeTheme, ipcMain } = require('electron');
 const { is, fixPathForAsarUnpack } = require('electron-util');
@@ -205,5 +207,18 @@ app.on('open-url', (e, url) => {
 	if (mainWindow) {
 		Util.send(mainWindow, 'route', Util.getRouteFromUrl(url));
 		mainWindow.show();
+	};
+});
+
+app.on('certificate-error', (e, webContents, url, error, certificate, callback) => {
+	const u = new URL(url);
+
+	console.log(url, u);
+
+	if ([ '127.0.0.1', 'localhost' ].includes(u.hostname)) {
+		e.preventDefault();
+		callback(true);
+	} else {
+		callback(false);
 	};
 });
