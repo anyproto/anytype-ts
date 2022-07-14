@@ -39,6 +39,7 @@ class Api {
 
 	keytarSet (win, key, value) {
 		if (key && value) {
+			this.phrase = value;
 			keytar.setPassword(KEYTAR_SERVICE, key, value);
 		};
 	};
