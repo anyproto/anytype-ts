@@ -117,6 +117,10 @@
     }
 }
 
+html.bodyMainIndex {
+	#sidebar { display: none; }
+}
+
 html.platformMac {
     body.isFullScreen {
         .sidebar {

@@ -1019,11 +1019,14 @@ class Util {
 		const footer = page.find('#footer');
 		const loader = page.find('#loader');
 		
-		const width = fixed ? obj.width() : 0;
-		const pw = win.width() - width - 1;
-		const css: any = { width: '' };
-		const cssLoader: any = { width: pw, left: '', right: '' };
-
+		let width = fixed ? obj.width() : 0;
+		if (obj.css('display') == 'none') {
+			width = 0;
+		};
+		
+		let pw = win.width() - width - 1;
+		let css: any = { width: '' };
+		let cssLoader: any = { width: pw, left: '', right: '' };
 		let dummy = $('.sidebarDummy');
 
 		header.css(css).removeClass('withSidebar snapLeft snapRight');
