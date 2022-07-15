@@ -326,7 +326,11 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				const oldIndex = records.findIndex(it => it.id == newRecord.id);
 				const newIndex = dir > 0 ? records.length - 1 : 0;
 
-				dbStore.recordsSet(subId, '', arrayMove(records, oldIndex, newIndex));
+				if (oldIndex < 0) {
+					records[(dir > 0 ? 'push' : 'unshift')]({ id: newRecord.id });
+				} else {
+					dbStore.recordsSet(subId, '', arrayMove(records, oldIndex, newIndex));
+				};
 
 				const id = Relation.cellId('dataviewCell', 'name', newIndex);
 				const ref = this.cellRefs.get(id);
