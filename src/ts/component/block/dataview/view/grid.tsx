@@ -62,7 +62,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 								threshold={10}
 							>
 								{({ onRowsRendered, registerChild }) => (
-									<WindowScroller scrollElement={isPopup ? $('#popupPage #innerWrap').get(0) : window}>
+									<WindowScroller scrollElement={isPopup ? $('#popupPage-innerWrap').get(0) : window}>
 										{({ height, isScrolling, registerChild, scrollTop }) => {
 											return (
 												<AutoSizer disableHeight={true}>
@@ -165,7 +165,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 		const scroll = node.find('.scroll');
 		const wrap = node.find('.scrollWrap');
 		const grid = node.find('.ReactVirtualized__Grid__innerScrollContainer');
-		const container = $(isPopup ? '#popupPage #innerWrap' : '#page.isFull');
+		const container = Util.getPageContainer(isPopup);
 		const ww = container.width();
 		const mw = ww - PADDING * 2;
 		const subId = dbStore.getSubId(rootId, block.id);

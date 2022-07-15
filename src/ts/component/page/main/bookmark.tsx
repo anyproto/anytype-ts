@@ -183,7 +183,7 @@ const PageMainBookmark = observer(class PageMainBookmark extends React.Component
 		const { isPopup } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
 		const cover = node.find('.block.blockCover');
-		const obj = $(isPopup ? '#popupPage #innerWrap' : '#page.isFull');
+		const obj = Util.getPageContainer(isPopup);
 		const header = obj.find('#header');
 		const hh = isPopup ? header.height() : Util.sizeHeader();
 

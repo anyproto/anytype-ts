@@ -64,7 +64,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<Props, {}
 			<div className="wrap">
 				<div className="viewItem viewGallery">
 					<div className="galleryWrap">
-						<WindowScroller scrollElement={isPopup ? $('#popupPage #innerWrap').get(0) : window}>
+						<WindowScroller scrollElement={isPopup ? $('#popupPage-innerWrap').get(0) : window}>
 							{({ height, isScrolling, registerChild, scrollTop }) => {
 								return (
 									<AutoSizer 

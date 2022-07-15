@@ -268,7 +268,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<Props
 		const node = $(ReactDOM.findDOMNode(this));
 		const blocks = node.find('#blocks');
 		const empty = node.find('#empty');
-		const container = isPopup ? $('#popupPage #innerWrap') : $(window);
+		const container = Util.getScrollContainer(isPopup);
 		const wh = container.height();
 
 		if (blocks.hasClass('vertical')) {

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I } from 'ts/lib';
+import { I, Util } from 'ts/lib';
 import { Icon } from 'ts/component';
 import { observer } from 'mobx-react';
 import { RouteComponentProps } from 'react-router';
@@ -109,10 +109,9 @@ const GraphPanel = observer(class Graph extends React.Component<Props, State> {
     };
 
     resize () {
-        const { isPopup } = this.props;
         const node = $(ReactDOM.findDOMNode(this));
-		const obj = $(isPopup ? '#popupPage #innerWrap' : '#page.isFull');
-		const header = obj.find('#header');
+		const container = Util.getPageContainer(this.props.isPopup);
+		const header = container.find('#header');
 		const tabs = node.find('.tabs');
 		const hh = header.height();
 

@@ -427,10 +427,11 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 		const { isPopup } = data;
 		const items = this.getItems();
 		const win = $(window);
-		const obj = $(`#${getId()} #innerWrap`);
+		const obj = $(`#${getId()}-innerWrap`);
 		const content = obj.find('.content');
 		const height = Math.max(110, Math.min(HEIGHT * LIMIT_HEIGHT, items.length * HEIGHT + 16));
-		const header = $(isPopup ? '#popupPage #innerWrap #header' : '#page.isFull #header');
+		const container = Util.getPageContainer(isPopup);
+		const header = container.find('#header');
 		const ww = win.width();
 		const element = header.find('#path');
 

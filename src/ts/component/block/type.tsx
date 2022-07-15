@@ -211,7 +211,7 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 		el.addClass('hover');
 
 		if (scroll) {
-			const container = isPopup ? $('#popupPage #innerWrap') : $(window);
+			const container = Util.getScrollContainer(isPopup);
 			const st = container.scrollTop();
 			const h = container.height();
 			const o = Constant.size.lastBlock + Util.sizeHeader();
