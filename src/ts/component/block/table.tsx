@@ -223,31 +223,22 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		e.stopPropagation();
 
 		const { rootId } = this.props;
-		const current = blockStore.getLeaf(rootId, cellId);
-
-		if (!current) {
-			return;
-		};
-
+		const current: any = blockStore.getLeaf(rootId, cellId) || {};
 		const node = $(ReactDOM.findDOMNode(this));
 		const subIds = [ 'select2', 'blockColor', 'blockBackground' ];
 		const optionsAlign = this.optionsAlign(cellId);
 		const optionsColor = this.optionsColor(cellId);
-		const blockIds = this.getBlockIds(type, rowId, columnId, cellId);
-
+		
+		let blockIds = [];
 		let menuContext: any = null;
 		let menuParam: any = {
 			component: 'select',
 			onOpen: (context: any) => {
 				menuContext = context;
-
-				raf(() => {
-					this.onOptionsOpen(type, rowId, columnId, cellId);
-				}); 
+				raf(() => { this.onOptionsOpen(type, rowId, columnId, cellId); }); 
 			},
 			onClose: () => {
 				menuStore.clearTimeout();
-
 				this.onOptionsClose();
 			},
 			subIds: subIds,
@@ -268,6 +259,8 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				});
 
 				fill = (callBack: () => void) => {
+					blockIds = this.getBlockIds(type, rowId, columnId, cellId);
+
 					C.BlockTableRowListFill(rootId, [ rowId ], callBack);
 				};
 				break;
@@ -288,6 +281,8 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				});
 
 				fill = (callBack: () => void) => {
+					blockIds = this.getBlockIds(type, rowId, columnId, cellId);
+
 					C.BlockTableColumnListFill(rootId, [ columnId ], callBack);
 				};
 				break;
@@ -308,6 +303,8 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				});
 
 				fill = (callBack: () => void) => {
+					blockIds = this.getBlockIds(type, rowId, columnId, cellId);
+
 					callBack();
 				};
 				break;
@@ -1044,10 +1041,12 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 	};
 
 	alignHIcon (v: I.BlockHAlign): string {
+		v = v || I.BlockHAlign.Left;
 		return [ 'align', String(I.BlockHAlign[v]).toLowerCase() ].join(' ');
 	};
 
 	alignVIcon (v: I.BlockVAlign): string {
+		v = v || I.BlockVAlign.Top;
 		return [ 'valign', String(I.BlockVAlign[v]).toLowerCase() ].join(' ');
 	};
 
@@ -1214,16 +1213,11 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		return options;
 	};
 
-	optionsColor (id: string) {
+	optionsColor (cellId: string) {
 		const { rootId } = this.props;
-		const current = blockStore.getLeaf(rootId, id);
-
-		if (!current) {
-			return;
-		};
-
-		const innerColor = <div className={[ 'inner', 'textColor textColor-' + (current.content.color || 'default') ].join(' ')} />;
-		const innerBackground = <div className={[ 'inner', 'bgColor bgColor-' + (current.bgColor || 'default') ].join(' ')} />;
+		const current = blockStore.getLeaf(rootId, cellId);
+		const innerColor = <div className={[ 'inner', 'textColor textColor-' + (current?.content.color || 'default') ].join(' ')} />;
+		const innerBackground = <div className={[ 'inner', 'bgColor bgColor-' + (current?.bgColor || 'default') ].join(' ')} />;
 
 		return [
 			{ id: 'color', icon: 'color', name: 'Color', inner: innerColor, arrow: true },
@@ -1234,17 +1228,13 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		];
 	};
 
-	optionsAlign (id: string) {
+	optionsAlign (cellId: string) {
 		const { rootId } = this.props;
-		const current = blockStore.getLeaf(rootId, id);
-
-		if (!current) {
-			return [];
-		};
+		const current = blockStore.getLeaf(rootId, cellId);
 
 		return [
-			{ id: 'horizontal', icon: this.alignHIcon(current.hAlign), name: 'Text align', arrow: true },
-			{ id: 'vertical', icon: this.alignVIcon(current.vAlign), name: 'Vertical align', arrow: true },
+			{ id: 'horizontal', icon: this.alignHIcon(current?.hAlign), name: 'Text align', arrow: true },
+			{ id: 'vertical', icon: this.alignVIcon(current?.vAlign), name: 'Vertical align', arrow: true },
 		];
 	};
 

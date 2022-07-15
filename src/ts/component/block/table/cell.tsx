@@ -24,6 +24,7 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 			return null;
 		};
 
+		const { isHeader } = row.content;
 		const cn = [ 'cell', 'column' + column.id ];
 		const cellId = [ row.id, column.id ].join('-');
 		const inner = <div className="inner" />;
@@ -48,7 +49,7 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 
 				case I.BlockType.TableRow:
 					cn.push('handleRow');
-					canDrag = !row.content.isHeader;
+					canDrag = !isHeader;
 
 					if (canDrag) {
 						onDragStart = (e: any) => { onDragStartRow(e, row.id); };
