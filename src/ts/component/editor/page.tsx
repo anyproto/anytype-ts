@@ -414,6 +414,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			};
 
 			let obj = $(`#block-${block.id}`);
+			if (!obj.length) {
+				continue;
+			};
+
 			let el = obj.get(0);
 			let rect = el.getBoundingClientRect() as DOMRect;
 
