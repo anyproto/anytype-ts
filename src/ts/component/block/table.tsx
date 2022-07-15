@@ -948,13 +948,17 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			const row = rows[i];
 			const rect = this.cache[row.id];
 
-			if ((id == row.id) || row.content.isHeader) {
+			if (id == row.id) {
 				continue;
 			};
 
 			if (rect && Util.rectsCollide({ x: e.pageX, y: e.pageY, width: current.width, height: current.height }, rect)) {
 				this.hoverId = row.id;
 				this.position = (i < current.index) ? I.BlockPosition.Top : I.BlockPosition.Bottom;
+
+				if (row.content.isHeader) {
+					this.position = I.BlockPosition.Bottom;
+				};
 				break;
 			};
 		};
