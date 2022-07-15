@@ -5,7 +5,9 @@ import { blockStore } from 'ts/store';
 
 import Cell from './cell';
 
-interface Props extends I.BlockComponentTable {};
+interface Props extends I.BlockComponentTable {
+	onRowUpdate: (rowId: string) => void;
+};
 
 const BlockTableRow = observer(class BlockTableRow extends React.Component<Props, {}> {
 
@@ -40,6 +42,14 @@ const BlockTableRow = observer(class BlockTableRow extends React.Component<Props
 				})}
 			</div>
 		);
+	};
+
+	componentDidUpdate () {
+		const { onRowUpdate, block } = this.props;
+
+		if (onRowUpdate) {
+			onRowUpdate(block.id);
+		};
 	};
 	
 });

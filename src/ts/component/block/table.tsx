@@ -28,7 +28,8 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 	hoverId: string = '';
 	position: I.BlockPosition = I.BlockPosition.None;
 	frames: any[] = [];
-	id: string = '';
+	rowId: string = '';
+	cellId: string = '';
 
 	constructor (props: any) {
 		super(props);
@@ -40,6 +41,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		this.onHandleColumn = this.onHandleColumn.bind(this);
 		this.onEnterHandle = this.onEnterHandle.bind(this);
 		this.onLeaveHandle = this.onLeaveHandle.bind(this);
+		this.onRowUpdate = this.onRowUpdate.bind(this);
 		this.onCellUpdate = this.onCellUpdate.bind(this);
 		this.onCellClick = this.onCellClick.bind(this);
 		this.onCellFocus = this.onCellFocus.bind(this);
@@ -94,6 +96,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 											onLeaveHandle={this.onLeaveHandle}
 											onHandleRow={this.onHandleRow}
 											onHandleColumn={this.onHandleColumn}
+											onRowUpdate={this.onRowUpdate}
 											onCellUpdate={this.onCellUpdate}
 											onCellClick={this.onCellClick}
 											onCellFocus={this.onCellFocus}
@@ -547,6 +550,8 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			case I.BlockType.TableRow:
 				const row = table.find(`#row-${rowId}`);
 
+				this.rowId = rowId;
+
 				row.addClass('isHighlightedRow');
 				row.find('.handleRow').addClass('isActive');
 				break;
@@ -575,6 +580,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		table.find('.handleColumn.isActive').removeClass('isActive');
 		table.find('.handleRow.isActive').removeClass('isActive');
 
+		this.rowId = '';
 		this.setEditing('');
 	};
 
@@ -598,8 +604,14 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		C.BlockTableRowCreate(rootId, rows[rows.length - 1].id, I.BlockPosition.Bottom);
 	};
 
-	onCellUpdate (rowId: string, columnId: string, cellId: string) {
-		if (this.id == cellId) {
+	onRowUpdate (rowId: string) {
+		if (this.rowId == rowId) {
+			this.onOptionsOpen(I.BlockType.TableRow, rowId, '', '');
+		};
+	};
+
+	onCellUpdate (cellId: string) {
+		if (this.cellId == cellId) {
 			this.setEditing(cellId);
 		};
 	};
@@ -710,7 +722,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			return;
 		};
 
-		this.id = id;
+		this.cellId = id;
 
 		const node = $(ReactDOM.findDOMNode(this));
 		node.find('.cell.isEditing').removeClass('isEditing');

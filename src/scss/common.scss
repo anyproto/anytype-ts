@@ -4,7 +4,7 @@
 html, body { height: 100%; }
 
 body {
-	font-family: 'Inter'; font-size: 14px; line-height: 22px; letter-spacing: 0.2px; color: $colorBlack;
+	font-family: 'Inter'; @include text-common; color: $colorBlack;
 	overflow-x: hidden; overflow-y: overlay; background: #fff;
 	-webkit-font-smoothing: antialiased;
 	backface-visibility: hidden;

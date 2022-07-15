@@ -19,7 +19,7 @@ const PopupSettingsPageImportIndex = observer(class PopupSettingsPageImportIndex
 		const items = [
 			{ id: 'notion', name: 'Notion', disabled: false },
 			{ id: 'evernote', name: 'Evernote', disabled: true },
-			{ id: 'roam', name: 'Roam Researh', disabled: true },
+			{ id: 'roam', name: 'Roam Research', disabled: true },
 			{ id: 'word', name: 'Word', disabled: true },
 			{ id: 'text', name: 'Text & Markdown', disabled: true },
 			{ id: 'html', name: 'HTML', disabled: true },

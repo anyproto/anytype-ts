@@ -110,8 +110,8 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 				onContextMenu={(e: any) => { onOptions(e, I.BlockType.Text, row.id, column.id, cellId); }}
 				data-column-id={column.id}
 			>
-				{!rowIdx ? <Handle type={I.BlockType.TableColumn} {...column} /> : ''}
-				{!columnIdx ? <Handle type={I.BlockType.TableRow} {...row} /> : ''}
+				{!rowIdx ? <Handle key={'handle-column-' + cellId} type={I.BlockType.TableColumn} {...column} /> : ''}
+				{!columnIdx ? <Handle key={'handle-row-' + cellId} type={I.BlockType.TableRow} {...row} /> : ''}
 
 				{block ? (
 					<Block 
@@ -128,7 +128,7 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 						onKeyUp={(e: any, text: string, marks: I.Mark[], range: I.TextRange, props: any) => { 
 							onCellKeyUp(e, row.id, column.id, cellId, text, marks, range, props);
 						}}
-						onUpdate={() => { onCellUpdate(row.id, column.id, cellId); }}
+						onUpdate={() => { onCellUpdate(cellId); }}
 						onFocus={(e: any) => { onCellFocus(e, row.id, column.id, cellId); }}
 						onBlur={(e: any) => { onCellBlur(e, row.id, column.id, cellId); }}
 						getWrapperWidth={() => { return Constant.size.editor; }} 

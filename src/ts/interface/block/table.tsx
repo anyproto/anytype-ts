@@ -12,7 +12,7 @@ export interface BlockComponentTable extends I.BlockComponent {
 	onCellBlur: (e: any, rowId: string, columnId: string, cellId: string) => void;
 	onCellEnter: (e: any, rowId: string, columnId: string, cellId: string) => void;
 	onCellLeave: (e: any, rowId: string, columnId: string, cellId: string) => void;
-	onCellUpdate: (rowId: string, columnId: string, cellId: string) => void;
+	onCellUpdate: (cellId: string) => void;
 	onCellKeyDown: (e: any, rowId: string, columnId: string, cellId: string, text: string, marks: I.Mark[], range: I.TextRange, props: any) => void;
 	onCellKeyUp: (e: any, rowId: string, columnId: string, cellId: string, text: string, marks: I.Mark[], range: I.TextRange, props: any) => void;
 	onResizeStart: (e: any, id: string) => void;
