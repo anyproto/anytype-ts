@@ -766,45 +766,41 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			};
 		};
 
-		keyboard.shortcut('arrowup, arrowdown', e, (pressed: string) => {
-			this.onArrowVertical(e, pressed, range, length, props);
-		});
-
-		keyboard.shortcut('arrowleft', e, (pressed: string) => {
-			this.onArrowHorizontal(e, pressed, range, length, props);
-		});
-
-		keyboard.shortcut('arrowright', e, (pressed: string) => {
-			this.onArrowHorizontal(e, pressed, range, length, props);
-		});
-
-		keyboard.shortcut('alt+arrowdown, alt+arrowup', e, (pressed: string) => {
-			if (block.isTextToggle()) {
-				e.preventDefault();
-				blockStore.toggle(rootId, block.id, pressed.match('arrowdown') ? true : false);
-			};
-		});
-
-		// Expand selection
-		keyboard.shortcut('shift+arrowup, shift+arrowdown', e, (pressed: string) => {
-			this.onShiftArrowBlock(e, range, pressed);
-		});
-
-		// Backspace
-		keyboard.shortcut('backspace, delete', e, (pressed: string) => {
-			this.onBackspaceBlock(e, range, pressed, props);
-		});
-
-		// Enter
-		keyboard.shortcut('enter, shift+enter', e, (pressed: string) => {
-			if (isInsideTable && (pressed == 'enter')) {
-				this.onArrowVertical(e, 'arrowdown', { from: length, to: length }, length, props);
-			} else {
-				this.onEnterBlock(e, range, pressed);
-			};
-		});
-
 		if (!menuOpen) {
+			keyboard.shortcut('alt+arrowdown, alt+arrowup', e, (pressed: string) => {
+				if (block.isTextToggle()) {
+					e.preventDefault();
+					blockStore.toggle(rootId, block.id, pressed.match('arrowdown') ? true : false);
+				};
+			});
+
+			// Expand selection
+			keyboard.shortcut('shift+arrowup, shift+arrowdown', e, (pressed: string) => {
+				this.onShiftArrowBlock(e, range, pressed);
+			});
+
+			// Backspace
+			keyboard.shortcut('backspace, delete', e, (pressed: string) => {
+				this.onBackspaceBlock(e, range, pressed, props);
+			});
+
+			keyboard.shortcut('arrowup, arrowdown', e, (pressed: string) => {
+				this.onArrowVertical(e, pressed, range, length, props);
+			});
+
+			keyboard.shortcut('arrowleft, arrowright', e, (pressed: string) => {
+				this.onArrowHorizontal(e, pressed, range, length, props);
+			});
+
+			// Enter
+			keyboard.shortcut('enter, shift+enter', e, (pressed: string) => {
+				if (isInsideTable && (pressed == 'enter')) {
+					this.onArrowVertical(e, 'arrowdown', { from: length, to: length }, length, props);
+				} else {
+					this.onEnterBlock(e, range, pressed);
+				};
+			});
+
 			// Tab, indent block
 			keyboard.shortcut('tab, shift+tab', e, (pressed: string) => {
 				if (isInsideTable) {
@@ -2036,12 +2032,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 	getWidth (w: number) {
 		const { isPopup, rootId } = this.props;
-		const { sidebar } = commonStore;
-		const { fixed } = sidebar;
 		const container = $(isPopup ? '#popupPage #innerWrap' : '#page.isFull');
 		const mw = container.width() - 120;
 		const root = blockStore.getLeaf(rootId, rootId);
-		//const sb = $('#sidebar');
 		
 		if (root && root.isObjectSet()) {
 			this.width = container.width() - 192;
