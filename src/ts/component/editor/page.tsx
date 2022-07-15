@@ -174,7 +174,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		this.resize();
 		win.on('resize.editor' + namespace, (e: any) => { this.resize(); });
 
-		Util.getScrollContainer(isPopup).on('scroll.editor' + namespace, (e: any) => { this.onScroll(e); });
+		Util.getScrollContainer(isPopup).on('scroll.editor' + namespace, throttle((e: any) => { this.onScroll(e); }, THROTTLE));
 
 		Storage.set('askSurvey', 1);
 
@@ -221,7 +221,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 	};
 
 	open () {
-		const { rootId, onOpen, history, isPopup } = this.props;
+		const { rootId, onOpen, isPopup } = this.props;
 
 		if (this.id == rootId) {
 			return;
@@ -1999,7 +1999,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 	};
 
 	getContainer () {
-		return $(this.props.isPopup ? '#popupPage #innerWrap' : '#page.isFull');
+		return Util.getPageContainer(this.props.isPopup);
 	};
 	
 	focus (id: string, from: number, to: number, scroll: boolean) {
@@ -2046,7 +2046,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		const { isPopup, rootId } = this.props;
 		const { sidebar } = commonStore;
 		const { fixed } = sidebar;
-		const container = $(isPopup ? '#popupPage #innerWrap' : '#page.isFull');
+		const container = Util.getPageContainer(isPopup);
 		const mw = container.width() - 120;
 		const root = blockStore.getLeaf(rootId, rootId);
 		//const sb = $('#sidebar');

@@ -71,7 +71,7 @@ const PopupPrompt = observer(class PopupPrompt extends React.Component<Props, {}
 
 	resize () {
 		const { getId } = this.props;
-		const obj = $(`#${getId()} #innerWrap`);
+		const obj = $(`#${getId()}-innerWrap`);
 
 		obj.css({ marginTop: -obj.outerHeight() / 2, marginLeft: -obj.outerWidth() / 2 });
 	};

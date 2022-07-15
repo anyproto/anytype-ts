@@ -142,7 +142,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 
 	resize () {
 		const win = $(window);
-		const obj = $(this.props.isPopup ? '#popupPage #innerWrap' : '#page.isFull');
+		const obj = Util.getPageContainer(this.props.isPopup);
 		const wrapper = obj.find('.wrapper');
 		const hh = Util.sizeHeader();
 		const platform = Util.getPlatform();
@@ -175,8 +175,8 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 
 	togglePanel (v: boolean) {
 		const { isPopup } = this.props;
-		const obj = $(isPopup ? '#popupPage #innerWrap' : '#page.isFull');
-		const wrapper = obj.find('.wrapper');
+		const container = Util.getPageContainer(isPopup);
+		const wrapper = container.find('.wrapper');
 
 		v ? wrapper.addClass('withPanel') : wrapper.removeClass('withPanel');
 	};

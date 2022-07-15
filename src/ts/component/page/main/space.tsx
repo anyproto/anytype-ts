@@ -245,15 +245,15 @@ const PageMainSpace = observer(class PageMainSpace extends React.Component<Props
 		const { isPopup } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
 		const cover = node.find('.block.blockCover');
-		const obj = $(isPopup ? '#popupPage #innerWrap' : '#page.isFull');
-		const header = obj.find('#header');
+		const container = Util.getPageContainer(isPopup);
+		const header = container.find('#header');
 		const hh = isPopup ? header.height() : Util.sizeHeader();
 
 		if (cover.length) {
 			cover.css({ top: hh });
 		};
 
-		obj.css({ minHeight: isPopup ? '' : win.height() });
+		container.css({ minHeight: isPopup ? '' : win.height() });
 		node.css({ paddingTop: isPopup ? 0 : hh });
 	};
 

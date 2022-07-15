@@ -170,7 +170,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		this.cache.clear();
 
 		if (isPopup) {
-			const popupContainer = $('#popupPage #innerWrap');
+			const popupContainer = $('#popupPage-innerWrap');
 			if (popupContainer.length) {
 				this.containerOffset = popupContainer.offset();
 				this.x -= this.containerOffset.left;
@@ -526,7 +526,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	};
 
 	getPageContainer () {
-		return $(Util.getPageContainer(keyboard.isPopup() ? 'popup' : 'page'));
+		return $(Util.getCellContainer(keyboard.isPopup() ? 'popup' : 'page'));
 	};
 
 	renderSelection () {

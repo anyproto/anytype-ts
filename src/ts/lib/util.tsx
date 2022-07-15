@@ -655,8 +655,6 @@ class Util {
 		
 		this.previewHide(false);
 		
-		node.addClass('isPreviewHover');
-
 		window.clearTimeout(this.timeoutPreviewShow);
 		this.timeoutPreviewShow = window.setTimeout(() => {
 			this.isPreviewOpen = true;
@@ -667,8 +665,6 @@ class Util {
 	previewHide (force: boolean) {
 		this.isPreviewOpen = false;
 		window.clearTimeout(this.timeoutPreviewShow);
-
-		$('.isPreviewHover').removeClass('isPreviewHover');
 
 		const obj = $('#preview');
 		if (force) {
@@ -918,7 +914,11 @@ class Util {
 	};
 
 	getScrollContainer (isPopup: boolean) {
-		return $(isPopup ? '#popupPage #innerWrap' : window);
+		return $(isPopup ? '#popupPage-innerWrap' : window);
+	};
+
+	getPageContainer (isPopup: boolean) {
+		return $(isPopup ? '#popupPage-innerWrap' : '#page.isFull');
 	};
 
 	getBodyContainer (type: string) {
@@ -928,7 +928,7 @@ class Util {
 				return 'body';
 
 			case 'popup':
-				return '#popupPage #innerWrap';
+				return '#popupPage-innerWrap';
 			
 			case 'menuBlockAdd':
 				return `#${type} .content`;
@@ -938,14 +938,14 @@ class Util {
 		};
 	};
 
-	getPageContainer (type: string) {
+	getCellContainer (type: string) {
 		switch (type) {
 			default:
 			case 'page':
 				return '#page.isFull';
 
 			case 'popup':
-				return '#popupPage';
+				return '#popupPage-innerWrap';
 
 			case 'menuBlockAdd':
 			case 'menuBlockRelationView':
