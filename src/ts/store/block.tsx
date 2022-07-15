@@ -229,19 +229,8 @@ class BlockStore {
 	};
 
     getChildren (rootId: string, blockId: string, filter?: (it: any) => boolean): I.Block[] {
-		let blocks = this.getBlocks(rootId);
-		let childrenIds = this.getChildrenIds(rootId, blockId);
-		
-		return childrenIds.map((it: string) => {
-			return blocks.find((item: any) => { return item.id == it; });
-		}).filter((it: any) => {
-			if (!it) {
-				return false;
-			};
-			if (filter) {
-				return filter(it);
-			};
-			return true;
+		return this.getChildrenIds(rootId, blockId).map(id => this.getLeaf(rootId, id)).filter((it: any) => {
+			return it ? (filter ? filter(it) : true) : false;
 		});
 	};
 
