@@ -373,17 +373,26 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		const checkType = blockStore.checkBlockTypeExists(rootId);
 		const readonly = this.isReadonly();
 
-		if (!root || readonly || checkType || (root && root.isLocked())) {
-			return;
-		};
-
-		if (keyboard.isResizing || menuStore.isOpen()) {
+		if (
+			!root || 
+			readonly || 
+			checkType || 
+			(root && root.isLocked()) || 
+			keyboard.isResizing || 
+			menuStore.isOpen() || 
+			this.loading
+		) {
 			return;
 		};
 
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
 		const container = node.find('.editor');
+		
+		if (!container.length) {
+			return;
+		};
+
 		const rectContainer = (container.get(0) as Element).getBoundingClientRect() as DOMRect;
 		const featured = node.find(`#block-${Constant.blockId.featured}`);
 		const st = win.scrollTop();
