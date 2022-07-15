@@ -13,7 +13,7 @@ interface Props extends I.Menu {};
 
 const $ = require('jquery');
 const HEIGHT_SECTION = 28;
-const HEIGHT_ITEM = 48;
+const HEIGHT_ITEM = 40;
 const LIMIT = 20;
 
 const MenuViewList = observer(class MenuViewList extends React.Component<Props> {
@@ -54,7 +54,6 @@ const MenuViewList = observer(class MenuViewList extends React.Component<Props> 
 			>
 				{allowed ? <Handle /> : ''}
 				<div className="clickable" onClick={(e: any) => { getData(item.id, 0); }}>
-					<Icon className={'view c' + item.type} />
 					<div className="name">{item.name}</div>
 				</div>
 				<div className="buttons">
@@ -325,9 +324,10 @@ const MenuViewList = observer(class MenuViewList extends React.Component<Props> 
 		const { getId, position } = this.props;
 		const items = this.getItems();
 		const obj = $(`#${getId()} .content`);
-		const height = Math.max(HEIGHT_ITEM + 58, Math.min(360, items.length * HEIGHT_ITEM + 58));
+		const offset = 50;
+		const height = Math.max(HEIGHT_ITEM + offset, Math.min(360, items.length * HEIGHT_ITEM + offset));
 
-		obj.css({ height: height });
+		obj.css({ height });
 		position();
 	};
 

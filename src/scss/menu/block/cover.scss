@@ -22,7 +22,7 @@
 			.inner { height: 35px; }
 		}
 
-		.sections { overflow: auto; flex-grow: 1; height: 300px; }
+		.sections { overflow: auto; flex-grow: 1; }
 		.section > .name { margin-bottom: 8px; }
 		.section:first-child { padding-top: 8px; }
 		.section:last-child { padding-bottom: 8px; }
@@ -50,9 +50,15 @@
 		}
 
 		.body.upload { padding: 16px; }
+		.body.gallery {
+			.sections { height: 362px; }
+		}
+		.body.unsplash {
+			.sections { height: 318px; }
+		}
 
 		.dropzone { 
-			height: 330px; display: flex; align-items: center; border-radius: 2px; background: rgba(134, 125, 66, 0.08); 
+			height: 330px; display: flex; align-items: center; border-radius: 2px; background: rgba(80, 73, 28, 0.08);
 			justify-content: center; flex-direction: column; gap: 6px 0px; cursor: pointer;
 		}
 		.dropzone.isDraggingOver { background: rgba(255,187,44,0.3); }

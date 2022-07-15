@@ -43,7 +43,8 @@
 
 		.block.blockMedia { padding: 0px; border-radius: 6px; background: $colorHover; }
 		.block.blockMedia {
-			.wrap { position: static; overflow: visible; }
+			.wrap { position: static; overflow: visible; width: 100%; height: 100%; }
+			.selectable, .dropTarget { height: 100%; }
 		}
 
 		.block.blockFeatured { padding: 0px; margin: 0px; line-height: 28px; }
