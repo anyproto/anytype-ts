@@ -17,7 +17,7 @@
 		.head {
 			.icon.back { width: 24px; height: 24px; cursor: pointer; background-image: url('~img/icon/popup/settings/back0.svg'); margin-top: -2px; }
 			
-			.element { color: $colorVeryDarkGrey; cursor: pointer; }
+			.element { color: $colorDarkGrey; cursor: pointer; }
 			.element:hover { color: $colorBlack; }
 			.element:hover {
 				.icon.back { background-image: url('~img/icon/popup/settings/back1.svg'); } 

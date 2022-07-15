@@ -28,7 +28,8 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 	hoverId: string = '';
 	position: I.BlockPosition = I.BlockPosition.None;
 	frames: any[] = [];
-	id: string = '';
+	rowId: string = '';
+	cellId: string = '';
 
 	constructor (props: any) {
 		super(props);
@@ -40,6 +41,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		this.onHandleColumn = this.onHandleColumn.bind(this);
 		this.onEnterHandle = this.onEnterHandle.bind(this);
 		this.onLeaveHandle = this.onLeaveHandle.bind(this);
+		this.onRowUpdate = this.onRowUpdate.bind(this);
 		this.onCellUpdate = this.onCellUpdate.bind(this);
 		this.onCellClick = this.onCellClick.bind(this);
 		this.onCellFocus = this.onCellFocus.bind(this);
@@ -94,6 +96,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 											onLeaveHandle={this.onLeaveHandle}
 											onHandleRow={this.onHandleRow}
 											onHandleColumn={this.onHandleColumn}
+											onRowUpdate={this.onRowUpdate}
 											onCellUpdate={this.onCellUpdate}
 											onCellClick={this.onCellClick}
 											onCellFocus={this.onCellFocus}
@@ -223,31 +226,20 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		e.stopPropagation();
 
 		const { rootId } = this.props;
-		const current = blockStore.getLeaf(rootId, cellId);
-
-		if (!current) {
-			return;
-		};
-
+		const current: any = blockStore.getLeaf(rootId, cellId) || {};
 		const node = $(ReactDOM.findDOMNode(this));
 		const subIds = [ 'select2', 'blockColor', 'blockBackground' ];
-		const optionsAlign = this.optionsAlign(cellId);
-		const optionsColor = this.optionsColor(cellId);
-		const blockIds = this.getBlockIds(type, rowId, columnId, cellId);
-
+		
+		let blockIds = [];
 		let menuContext: any = null;
 		let menuParam: any = {
 			component: 'select',
 			onOpen: (context: any) => {
 				menuContext = context;
-
-				raf(() => {
-					this.onOptionsOpen(type, rowId, columnId, cellId);
-				}); 
+				raf(() => { this.onOptionsOpen(type, rowId, columnId, cellId); }); 
 			},
 			onClose: () => {
 				menuStore.clearTimeout();
-
 				this.onOptionsClose();
 			},
 			subIds: subIds,
@@ -256,11 +248,15 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		let options: any[] = [];
 		let element: any = null;
 		let fill: any = null;
+		let optionsStyle: any[] = [];
 
 		switch (type) {
 			case I.BlockType.TableRow:
 				options = options.concat(this.optionsRow(rowId));
-				options = options.concat(optionsColor);
+				options = options.concat(this.optionsColor(''));
+				options = options.concat(this.optionsAlign(''));
+
+				optionsStyle = this.optionsStyle('');
 
 				menuParam = Object.assign(menuParam, {
 					element: node.find(`#row-${rowId}`).first(),
@@ -268,6 +264,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				});
 
 				fill = (callBack: () => void) => {
+					blockIds = this.getBlockIds(type, rowId, columnId, cellId);
 					C.BlockTableRowListFill(rootId, [ rowId ], callBack);
 				};
 				break;
@@ -278,7 +275,10 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 					{ isDiv: true },
 				]);
 				options = options.concat(this.optionsColumn(columnId));
-				options = options.concat(optionsColor);
+				options = options.concat(this.optionsColor(''));
+				options = options.concat(this.optionsAlign(''));
+
+				optionsStyle = this.optionsStyle('');
 
 				element = node.find(`#cell-${cellId}`).first();
 				menuParam = Object.assign(menuParam, {
@@ -288,6 +288,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				});
 
 				fill = (callBack: () => void) => {
+					blockIds = this.getBlockIds(type, rowId, columnId, cellId);
 					C.BlockTableColumnListFill(rootId, [ columnId ], callBack);
 				};
 				break;
@@ -298,7 +299,10 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 					{ id: 'column', name: 'Column', arrow: true },
 					{ isDiv: true },
 				]);
-				options = options.concat(optionsColor);
+				options = options.concat(this.optionsColor(cellId));
+				options = options.concat(this.optionsAlign(cellId));
+
+				optionsStyle = this.optionsStyle(cellId);
 
 				element = node.find(`#cell-${cellId} .icon.menu .inner`);
 				menuParam = Object.assign(menuParam, {
@@ -308,12 +312,11 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				});
 
 				fill = (callBack: () => void) => {
+					blockIds = this.getBlockIds(type, rowId, columnId, cellId);
 					callBack();
 				};
 				break;
 		};
-
-		options = options.concat(optionsAlign);
 
 		menuParam = Object.assign(menuParam, {
 			data: {
@@ -355,7 +358,9 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 							menuParam.data = Object.assign(menuParam.data, {
 								options: this.optionsRow(rowId, true),
 								onSelect: (e: any, item: any) => {
-									this.onSelect(e, item, rowId, columnId, cellId, this.getBlockIds(I.BlockType.TableRow, rowId, columnId, cellId));
+									fill(() => { 
+										this.onSelect(e, item, rowId, columnId, cellId, this.getBlockIds(I.BlockType.TableRow, rowId, columnId, cellId)); 
+									});
 									menuContext.close();
 								}
 							});
@@ -367,7 +372,9 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 							menuParam.data = Object.assign(menuParam.data, {
 								options: this.optionsColumn(columnId, true),
 								onSelect: (e: any, item: any) => {
-									this.onSelect(e, item, rowId, columnId, cellId, this.getBlockIds(I.BlockType.TableColumn, rowId, columnId, cellId));
+									fill(() => { 
+										this.onSelect(e, item, rowId, columnId, cellId, this.getBlockIds(I.BlockType.TableColumn, rowId, columnId, cellId)); 
+									});
 									menuContext.close();
 								}
 							});
@@ -423,9 +430,9 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 							menuId = 'select2';
 							menuParam.component = 'select';
 							menuParam.data = Object.assign(menuParam.data, {
-								options: this.optionsStyle(cellId),
+								options: optionsStyle,
 								onSelect: (e: any, el: any) => {
-									C.BlockTextListSetMark(rootId, blockIds, { type: el.id, param: '', range: { from: 0, to: 0 } });
+									fill(() => { C.BlockTextListSetMark(rootId, blockIds, { type: el.id, param: '', range: { from: 0, to: 0 } }); });
 									menuContext.close();
 								}
 							});
@@ -543,6 +550,8 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			case I.BlockType.TableRow:
 				const row = table.find(`#row-${rowId}`);
 
+				this.rowId = rowId;
+
 				row.addClass('isHighlightedRow');
 				row.find('.handleRow').addClass('isActive');
 				break;
@@ -571,6 +580,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		table.find('.handleColumn.isActive').removeClass('isActive');
 		table.find('.handleRow.isActive').removeClass('isActive');
 
+		this.rowId = '';
 		this.setEditing('');
 	};
 
@@ -594,8 +604,14 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		C.BlockTableRowCreate(rootId, rows[rows.length - 1].id, I.BlockPosition.Bottom);
 	};
 
-	onCellUpdate (rowId: string, columnId: string, cellId: string) {
-		if (this.id == cellId) {
+	onRowUpdate (rowId: string) {
+		if (this.rowId == rowId) {
+			this.onOptionsOpen(I.BlockType.TableRow, rowId, '', '');
+		};
+	};
+
+	onCellUpdate (cellId: string) {
+		if (this.cellId == cellId) {
 			this.setEditing(cellId);
 		};
 	};
@@ -706,7 +722,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			return;
 		};
 
-		this.id = id;
+		this.cellId = id;
 
 		const node = $(ReactDOM.findDOMNode(this));
 		node.find('.cell.isEditing').removeClass('isEditing');
@@ -944,13 +960,17 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			const row = rows[i];
 			const rect = this.cache[row.id];
 
-			if ((id == row.id) || row.content.isHeader) {
+			if (id == row.id) {
 				continue;
 			};
 
 			if (rect && Util.rectsCollide({ x: e.pageX, y: e.pageY, width: current.width, height: current.height }, rect)) {
 				this.hoverId = row.id;
 				this.position = (i < current.index) ? I.BlockPosition.Top : I.BlockPosition.Bottom;
+
+				if (row.content.isHeader) {
+					this.position = I.BlockPosition.Bottom;
+				};
 				break;
 			};
 		};
@@ -1044,10 +1064,12 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 	};
 
 	alignHIcon (v: I.BlockHAlign): string {
+		v = v || I.BlockHAlign.Left;
 		return [ 'align', String(I.BlockHAlign[v]).toLowerCase() ].join(' ');
 	};
 
 	alignVIcon (v: I.BlockVAlign): string {
+		v = v || I.BlockVAlign.Top;
 		return [ 'valign', String(I.BlockVAlign[v]).toLowerCase() ].join(' ');
 	};
 
@@ -1214,16 +1236,11 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		return options;
 	};
 
-	optionsColor (id: string) {
+	optionsColor (cellId: string) {
 		const { rootId } = this.props;
-		const current = blockStore.getLeaf(rootId, id);
-
-		if (!current) {
-			return;
-		};
-
-		const innerColor = <div className={[ 'inner', 'textColor textColor-' + (current.content.color || 'default') ].join(' ')} />;
-		const innerBackground = <div className={[ 'inner', 'bgColor bgColor-' + (current.bgColor || 'default') ].join(' ')} />;
+		const current = blockStore.getLeaf(rootId, cellId);
+		const innerColor = <div className={[ 'inner', 'textColor textColor-' + (current?.content.color || 'default') ].join(' ')} />;
+		const innerBackground = <div className={[ 'inner', 'bgColor bgColor-' + (current?.bgColor || 'default') ].join(' ')} />;
 
 		return [
 			{ id: 'color', icon: 'color', name: 'Color', inner: innerColor, arrow: true },
@@ -1234,17 +1251,13 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		];
 	};
 
-	optionsAlign (id: string) {
+	optionsAlign (cellId: string) {
 		const { rootId } = this.props;
-		const current = blockStore.getLeaf(rootId, id);
-
-		if (!current) {
-			return [];
-		};
+		const current = blockStore.getLeaf(rootId, cellId);
 
 		return [
-			{ id: 'horizontal', icon: this.alignHIcon(current.hAlign), name: 'Text align', arrow: true },
-			{ id: 'vertical', icon: this.alignVIcon(current.vAlign), name: 'Vertical align', arrow: true },
+			{ id: 'horizontal', icon: this.alignHIcon(current?.hAlign), name: 'Text align', arrow: true },
+			{ id: 'vertical', icon: this.alignVIcon(current?.vAlign), name: 'Vertical align', arrow: true },
 		];
 	};
 
@@ -1270,24 +1283,22 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		});
 	};
 
-	optionsStyle (id: string) {
+	optionsStyle (cellId: string) {
 		const { rootId } = this.props;
-		const current = blockStore.getLeaf(rootId, id);
-
-		if (!current) {
-			return;
-		};
-
-		const length = current.getLength();
+		const current = blockStore.getLeaf(rootId, cellId);
 		const ret: any[] = [
 			{ id: I.MarkType.Bold, icon: 'bold', name: 'Bold' },
 			{ id: I.MarkType.Italic, icon: 'italic', name: 'Italic' },
 			{ id: I.MarkType.Strike, icon: 'strike', name: 'Strikethrough' },
 		];
 
+		let length = 0;
+		if (current) {
+			length = current.getLength();
+		};
+
 		return ret.map(it => {
-			const mark = Mark.getInRange(current.content.marks, it.id, { from: 0, to: length });
-			it.checkbox = !!mark;
+			it.checkbox = current ? !!Mark.getInRange(current.content.marks, it.id, { from: 0, to: length }) : false;
 			return it;
 		});
 	};

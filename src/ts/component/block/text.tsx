@@ -680,6 +680,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			{ key: `${cmd}+]`, preventDefault: false },
 			{ key: `tab`, preventDefault: false },
 			{ key: `shift+tab`, preventDefault: true },
+			{ key: `shift+space`, preventDefault: true },
 		];
 
 		keyboard.shortcut('enter, shift+enter', e, (pressed: string) => {
