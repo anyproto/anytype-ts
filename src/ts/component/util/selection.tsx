@@ -23,7 +23,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	moved: boolean = false;
 	focused: string = '';
 	range: any = null;
-	nodes: any = null;
+	nodes: any[] = [];
 	top: number = 0;
 	containerOffset = null;
 
@@ -133,10 +133,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			return;
 		};
 
-		this.nodes = this.getPageContainer().find('.selectable');
-		this.nodes.each((i: number, item: any) => {
-			this.cacheRect($(item));
-		});
+		this.nodes.forEach(it => this.cacheRect(it));
 
 		this.checkNodes({ ...e, pageX: x, pageY: y });
 		this.drawRect(rect);
@@ -160,10 +157,10 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		const { focused } = focus.state;
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
+		const nodes = this.getPageContainer().find('.selectable');
 		
 		node.find('#selection-rect').css({ transform: 'translate3d(0px, 0px, 0px)', width: 0, height: 0 }).show();
-
-		this.nodes = this.getPageContainer().find('.selectable');
+		
 		this.x = e.pageX;
 		this.y = e.pageY;
 		this.moved = false;
@@ -182,9 +179,18 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		};
 
 		keyboard.disablePreview(true);
-		
-		this.nodes.each((i: number, item: any) => {
-			this.cacheRect($(item));
+
+		nodes.each((i: number, item: any) => {
+			item = $(item);
+
+			const node = {
+				id: item.attr('data-id'),
+				type: item.attr('data-type'),
+				obj: item,
+			};
+
+			this.nodes.push(node);
+			this.cacheRect(node);
 		});
 
 		if (e.shiftKey) {
@@ -291,6 +297,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		this.focused = '';
 		this.range = null;
 		this.isSelecting = false;
+		this.nodes = [];
 	};
 
 	drawRect (rect: any) {
@@ -319,29 +326,23 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			y -= this.containerOffset.top - top;
 		};
 
-		const rect = {
+		return {
 			x: Math.min(this.x, x),
 			y: Math.min(this.y, y),
 			width: Math.abs(x - this.x) - 10,
 			height: Math.abs(y - this.y) - 10
 		};
-		return rect;
 	};
 	
-	cacheRect (obj: any) {
-		const id = String(obj.attr('data-id') || '');
-		if (!id) {
-			return null;
-		};
-		
-		let cached = this.cache.get(id);
+	cacheRect (node: any) {
+		let cached = this.cache.get(node.id);
 		if (cached) {
 			return cached;
 		};
-		
+
 		const isPopup = keyboard.isPopup();
-		const offset = obj.offset();
-		const rect = obj.get(0).getBoundingClientRect() as DOMRect;
+		const offset = node.obj.offset();
+		const rect = node.obj.get(0).getBoundingClientRect() as DOMRect;
 		
 		let x = offset.left;
 		let y = offset.top;
@@ -354,19 +355,17 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 
 		cached = { x, y, width: rect.width, height: rect.height };
 
-		this.cache.set(id, cached);
+		this.cache.set(node.id, cached);
 		return cached;
 	};
 	
-	checkEachNode (e: any, rect: any, item: any) {
-		const id = String(item.attr('data-id') || '');
-		const type = item.attr('data-type');
-
+	checkEachNode (e: any, rect: any, node: any) {
+		const { id, type } = node;
 		if (!id || !type) {
 			return;
 		};
 			
-		const cached = this.cacheRect(item);
+		const cached = this.cacheRect(node);
 		if (!cached || !Util.rectsCollide(rect, cached)) {
 			return;
 		};
@@ -395,14 +394,14 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		};
 		
 		const { focused, range } = focus.state;
-		const rect = this.getRect(e.pageX, e.pageY);
+		const rect = Util.objectCopy(this.getRect(e.pageX, e.pageY));
 
 		if (!e.shiftKey && !e.altKey && !(e.ctrlKey || e.metaKey)) {
 			this.initIds();
 		};
 
-		this.nodes.each((i: number, item: any) => { 
-			this.checkEachNode(e, Util.objectCopy(rect), $(item)); 
+		this.nodes.forEach((item: any) => { 
+			this.checkEachNode(e, rect, item);
 		});
 		
 		this.renderSelection();
@@ -420,7 +419,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 				return;
 			};
 
-			const el = value.get(0) as Element;			
+			const el = value.get(0) as Element;
 			const range = getRange(el); 
 			
 			if (!this.range) {
@@ -535,8 +534,6 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			return;
 		};
 
-		const node = $(ReactDOM.findDOMNode(this));
-
 		$('.isSelectionSelected').removeClass('isSelectionSelected');
 
 		for (let i in I.SelectType) {
@@ -544,11 +541,11 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			const ids = this.get(type);
 
 			for (let id of ids) {
-				node.find(`#selectable-${id}`).addClass('isSelectionSelected');
+				$(`#selectable-${id}`).addClass('isSelectionSelected');
 
 				if (type == I.SelectType.Block) {
-					node.find(`#block-${id}`).addClass('isSelectionSelected');
-					node.find(`#block-children-${id} .block`).addClass('isSelectionSelected');
+					$(`#block-${id}`).addClass('isSelectionSelected');
+					$(`#block-children-${id} .block`).addClass('isSelectionSelected');
 				};
 			};
 		};

@@ -2,7 +2,6 @@ const raf = require('raf');
 const $ = require('jquery');
 
 const BORDER = 100;
-const THROTTLE = 30;
 
 class ScrollOnMove {
 	
@@ -51,10 +50,11 @@ class ScrollOnMove {
 
 	checkForWindowScroll (param: any) {
 		this.clear();
-
-		if (this.adjustWindowScroll(param)) {
-			this.timeout = window.setTimeout(() => { this.checkForWindowScroll(param); }, THROTTLE);
-		};
+		this.frame = raf(() => {
+			if (this.adjustWindowScroll(param)) {
+				this.checkForWindowScroll(param);
+			};
+		});
 	};
 
 	adjustWindowScroll (param: any) {
@@ -118,15 +118,9 @@ class ScrollOnMove {
 			(nextScrollX !== currentScrollX) ||
 			(nextScrollY !== currentScrollY)
 		) {
-			if (this.frame) {
-				raf.cancel(this.frame);
+			if (container) {
+				container.scrollTo(nextScrollX, nextScrollY);
 			};
-
-			this.frame = raf(() => {
-				if (container) {
-					container.scrollTo(nextScrollX, nextScrollY);
-				};
-			});
 			return true;
 		} else {
 			return false;
@@ -168,7 +162,9 @@ class ScrollOnMove {
 	};
 
 	clear () {
-		window.clearTimeout(this.timeout);
+		if (this.frame) {
+			raf.cancel(this.frame);
+		};
 	};
 	
 };
