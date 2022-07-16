@@ -6,6 +6,7 @@ import Mapper from './mapper';
 
 import { dispatcher } from './dispatcher';
 import { keyboard, Key } from './keyboard';
+import { sidebar } from './sidebar';
 import Storage from './storage';
 import Util from './util';
 import DataUtil from './datautil';
@@ -41,6 +42,7 @@ const translate = (key: string): string => {
 export {
 	dispatcher,
 	keyboard,
+	sidebar,
 	focus,
 	Key,
 	Storage,

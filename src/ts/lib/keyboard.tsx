@@ -1,4 +1,4 @@
-import { I, C, Util, DataUtil, Storage, focus, history as historyPopup, analytics } from 'ts/lib';
+import { I, C, Util, DataUtil, Storage, focus, history as historyPopup, analytics, sidebar } from 'ts/lib';
 import { commonStore, authStore, blockStore, detailStore, menuStore, popupStore } from 'ts/store';
 
 const $ = require('jquery');
@@ -90,8 +90,8 @@ class Keyboard {
 	};
 
 	onMouseMove (e: any) {
-		const { sidebar, autoSidebar } = commonStore;
-		const { snap, fixed, width } = sidebar;
+		const { autoSidebar } = commonStore;
+		const { snap, fixed, width } = sidebar.obj;
 		const x = e.pageX;
 		const y = e.pageY;
 

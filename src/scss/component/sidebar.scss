@@ -63,6 +63,8 @@
         .item * { cursor: pointer; }
         .item:hover { background-color: $colorHover; }
 
+		.item.collapse { display: none; }
+
         .icon { width: 20px; height: 20px; }
         .icon.store { background-image: url('~img/icon/sidebar/store.svg'); }
         .icon.add { background-image: url('~img/icon/sidebar/add.svg'); }
@@ -115,6 +117,12 @@
         }
 
     }
+}
+
+.sidebar.fixed {
+	.foot {
+		.item.collapse { display: flex; }
+	}
 }
 
 html.bodyMainIndex {

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Icon, IconObject } from 'ts/component';
-import { I, DataUtil } from 'ts/lib';
-import { blockStore, detailStore, commonStore, popupStore, menuStore } from 'ts/store';
+import { I, DataUtil, sidebar } from 'ts/lib';
+import { blockStore, detailStore, popupStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props {};
@@ -21,8 +21,7 @@ const Footer = observer(class Item extends React.Component<Props, {}> {
 	};
 
 	render () {
-        const { sidebar } = commonStore;
-        const { fixed } = sidebar;
+        const { fixed } = sidebar.obj;
         const profile = detailStore.get(Constant.subIds.profile, blockStore.profile);
 
 		return (
@@ -43,11 +42,9 @@ const Footer = observer(class Item extends React.Component<Props, {}> {
                     <Icon className="settings" tooltip="Settings" tooltipY={I.MenuDirection.Top} />
                 </div>
 
-                {fixed ? (
-                    <div className="item" onClick={this.onCollapse}>
-                        <Icon className="collapse" tooltip="Collapse sidebar" tooltipY={I.MenuDirection.Top} />
-                    </div>
-                ) : ''}
+				<div className="item collapse" onClick={this.onCollapse}>
+					<Icon className="collapse" tooltip="Collapse sidebar" tooltipY={I.MenuDirection.Top} />
+				</div>
             </div>
 		);
 	};
@@ -56,7 +53,7 @@ const Footer = observer(class Item extends React.Component<Props, {}> {
 		e.preventDefault();
 		e.stopPropagation();
 
-		commonStore.sidebarSet({ fixed: false });
+		sidebar.set({ fixed: false });
 		menuStore.close('previewObject');
 		$(window).trigger('resize');
 	};

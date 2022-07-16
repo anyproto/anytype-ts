@@ -1,5 +1,5 @@
 import { observable, action, computed, set, makeObservable } from 'mobx';
-import { I, Storage, Util, DataUtil } from 'ts/lib';
+import { I, Storage, Util } from 'ts/lib';
 import { analytics } from 'ts/lib';
 import { blockStore } from 'ts/store';
 
@@ -24,15 +24,6 @@ interface Cover {
 	type: I.CoverType;
 };
 
-interface Sidebar {
-	x: number;
-	y: number;
-	width: number;
-	height: number;
-	fixed: boolean;
-	snap: I.MenuDirection;
-};
-
 const Constant = require('json/constant.json');
 const $ = require('jquery');
 
@@ -50,15 +41,12 @@ class CommonStore {
 	public nativeThemeIsDark: boolean = false;
 	public typeId: string = '';
 	public pinTimeId: number = 0;
-	public sidebarObj: Sidebar = { width: 0, height: 0, x: 0, y: 0, fixed: false, snap: I.MenuDirection.Left };
-	public sidebarOldFixed: boolean = false;
 	public isFullScreen: boolean = false;
 	public autoSidebarValue: boolean = false;
 
     constructor() {
         makeObservable(this, {
             coverObj: observable,
-			sidebarObj: observable,
             coverImg: observable,
             progressObj: observable,
             filterObj: observable,
@@ -78,7 +66,6 @@ class CommonStore {
             gateway: computed,
 			theme: computed,
 			nativeTheme: computed,
-			sidebar: computed,
             coverSet: action,
             coverSetUploadedImage: action,
             gatewaySet: action,
@@ -90,7 +77,6 @@ class CommonStore {
             previewSet: action,
 			themeSet: action,
 			nativeThemeSet: action,
-			sidebarSet: action,
         });
     };
 
@@ -144,10 +130,6 @@ class CommonStore {
 
 	get nativeTheme(): string {
 		return this.nativeThemeIsDark ? 'dark' : '';
-	};
-
-	get sidebar(): Sidebar {
-		return this.sidebarObj;
 	};
 
     coverSet (id: string, image: string, type: I.CoverType) {
@@ -263,58 +245,6 @@ class CommonStore {
 		this.nativeThemeIsDark = isDark;
 	};
 
-	sidebarInit () {
-		const stored = Storage.get('sidebar');
-		if (stored) {
-			this.sidebarSet(stored);
-			return;
-		};
-
-		const platform = Util.getPlatform();
-		const isWindows = platform == I.Platform.Windows;
-		const offset = isWindows ? 30 : 0;
-		const win = $(window);
-		const wh = win.height();
-		const height = this.sidebarMaxHeight();
-		const y = (wh - offset) / 2 - height / 2 + offset;
-
-		Storage.setToggle(Constant.subIds.sidebar, 'favorite', true);
-		Storage.setToggle(Constant.subIds.sidebar, 'recent', true);
-		Storage.setToggle(Constant.subIds.sidebar, 'set', true);
-
-		this.sidebarSet({
-			height,
-			y,
-			x: 0,
-			fixed: true,
-			snap: I.MenuDirection.Left,
-		});
-
-		this.sidebarOldFixed = false;
-		this.autoSidebarSet(true);
-	};
-
-	sidebarSet (v: any) {
-		const size = Constant.size.sidebar;
-
-		v = Object.assign(this.sidebarObj, v);
-		v.fixed = Boolean(v.fixed);
-		
-		v.width = Number(v.width) || 0;
-		v.width = Math.max(size.width.min, Math.min(size.width.max, v.width));
-		
-		v.height = Number(v.height) || 0;
-		v.height = Math.max(size.height.min, Math.min(this.sidebarMaxHeight(), v.height));
-
-		set(this.sidebarObj, v);
-		Storage.set('sidebar', v);
-	};
-
-	sidebarMaxHeight () {
-		const win = $(window);
-		const wh = win.height() - Util.sizeHeader();
-		return wh - 144;
-	};
 
 	infoSet (info: I.AccountInfo) {
 		console.log('[commonStore.infoSet]', info);

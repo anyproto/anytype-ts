@@ -40,8 +40,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	render () {
-		const { sidebar } = commonStore;
-		const { fixed } = sidebar;
 		const { rootId, block, isPopup } = this.props;
 		const views = dbStore.getViews(rootId, block.id);
 

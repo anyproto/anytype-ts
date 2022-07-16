@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, C, DataUtil, Util, keyboard, Storage, Relation, analytics } from 'ts/lib';
+import { I, C, DataUtil, Util, keyboard, Storage, Relation, analytics, sidebar } from 'ts/lib';
 import { Loader } from 'ts/component';
 import { blockStore, commonStore, dbStore, detailStore, menuStore } from 'ts/store';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
@@ -64,23 +64,9 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { sidebar } = commonStore;
-		const { width, height, x, y, fixed, snap } = sidebar;
 		const { loading } = this.state;
 		const items = this.getItems();
-		const css: any = { width };
 		const cn = [ 'sidebar' ];
-
-		if (snap == I.MenuDirection.Left) {
-			cn.push('left');
-		};
-		if (snap == I.MenuDirection.Right) {
-			cn.push('right');
-		};
-
-		if (fixed) {
-			cn.push('fixed');
-		};
 
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
@@ -110,7 +96,6 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
             <div 
 				id="sidebar" 
 				className={cn.join(' ')} 
-				style={css} 
 				onMouseDown={this.onDragStart}
 			>
 				<div className="head" />
@@ -158,6 +143,8 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 	componentDidMount () {
 		this._isMounted = true;
 
+		sidebar.init();
+
 		this.loadSections();
 		this.rebind();
 	};
@@ -194,8 +181,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 	};
 
 	restore () {
-		const { sidebar } = commonStore;
-		const { x, y, snap } = sidebar;
+		const { x, y, snap } = sidebar.obj;
 		const node = $(ReactDOM.findDOMNode(this));
 		const body = node.find('.body');
 
@@ -521,8 +507,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 
 		const { dataset } = this.props;
 		const { selection } = dataset || {};
-		const { sidebar } = commonStore;
-		const { fixed } = sidebar;
+		const { fixed } = sidebar.obj;
 		const node = $(ReactDOM.findDOMNode(this));
 		const win = $(window);
 		const body = $('body');
@@ -549,8 +534,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 	};
 
 	onResizeMove (e: any, dir: I.MenuType) {
-		const { sidebar } = commonStore;
-		const { snap, width, fixed } = sidebar;
+		const { snap, width, fixed } = sidebar.obj;
 		const win = $(window);
 
 		if (dir == I.MenuType.Horizontal) {
@@ -581,7 +565,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		if (dir == I.MenuType.Vertical) {
 			update.height = this.height;
 		};
-		commonStore.sidebarSet(update);
+		sidebar.set(update);
 
 		if (selection) {
 			selection.preventSelect(false);
@@ -598,8 +582,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 
 		const { dataset } = this.props;
 		const { selection } = dataset || {};
-		const { sidebar } = commonStore;
-		const { fixed } = sidebar;
+		const { fixed } = sidebar.obj;
 
 		if (fixed) {
 			return;
@@ -651,7 +634,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 			x = 0;
 		};
 
-		commonStore.sidebarSet({ x, y, snap });
+		sidebar.set({ x, y, snap });
 		this.setStyle(x, y, snap);
 
 		win.unbind('mousemove.sidebar mouseup.sidebar');
@@ -675,26 +658,9 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		return snap;
 	};
 
-	checkCoords (x: number, y: number): { x: number, y: number } {
-		const win = $(window);
-		const wh = win.height();
-		const ww = win.width();
-		const hh = Util.sizeHeader();
-
-		x = Number(x);
-		x = Math.max(0, x);
-		x = Math.min(ww - this.width, x);
-
-		y = Number(y);
-		y = Math.max((wh - hh) * 0.1, y);
-		y = Math.min(hh + (wh - hh) * 0.9 - this.height, y);
-
-		return { x, y };
-	};
-
 	setStyle (x: number, y: number, snap: I.MenuDirection) {
 		const node = $(ReactDOM.findDOMNode(this));
-		const coords = this.checkCoords(x, y);
+		const coords = sidebar.checkCoords(x, y);
 
 		node.removeClass('left right');
 
@@ -716,8 +682,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 			return;
 		};
 
-		const { sidebar } = commonStore;
-		const { width, height, fixed } = sidebar;
+		const { width, height, fixed } = sidebar.obj;
 		const node = $(ReactDOM.findDOMNode(this));
 		const head = node.find('.head');
 		const platform = Util.getPlatform();
@@ -737,20 +702,18 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 			return;
 		};
 
-		const { sidebar } = commonStore;
-		const { fixed, x, y, snap } = sidebar;
+		const { fixed, x, y, snap } = sidebar.obj;
 		const win = $(window);
 		const ww = win.width();
-		const old = commonStore.sidebarOldFixed;
 
 		if (ww > Constant.size.sidebar.unfix) {
-			if (!fixed && old) {
-				commonStore.sidebarSet({ fixed: true });
+			if (!fixed && sidebar.fixed) {
+				sidebar.set({ fixed: true });
 			};
 		} else {
 			if (fixed) {
-				commonStore.sidebarSet({ fixed: false });
-				commonStore.sidebarOldFixed = true;
+				sidebar.set({ fixed: false });
+				sidebar.fixed = true;
 			};
 		};
 
@@ -778,12 +741,11 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 
 	getHeight (height: number) {
 		const size = Constant.size.sidebar.height;
-		return Math.max(size.min, Math.min(commonStore.sidebarMaxHeight(), height));
+		return Math.max(size.min, Math.min(sidebar.maxHeight(), height));
 	};
 
 	setHeight (height: number) {
-		const { sidebar } = commonStore;
-		const { fixed } = sidebar;
+		const { fixed } = sidebar.obj;
 		const node = $(ReactDOM.findDOMNode(this));
 
 		node.css({ height: (fixed ? '' : this.getHeight(height)) });
