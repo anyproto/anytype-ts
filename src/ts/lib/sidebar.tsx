@@ -194,11 +194,14 @@ class Sidebar {
 			return;
 		};
 
+		const { autoSidebar } = commonStore;
+
 		this.obj.removeClass('anim').addClass('active');
 		this.obj.css({ left: this.data.x, top: this.data.y, height: this.data.height });
 		this.obj.addClass('anim').removeClass('fixed');
 
-		if () {
+		if (!autoSidebar) {
+			this.obj.removeClass('active');
 		};
 
 		this.removeAnimation();
