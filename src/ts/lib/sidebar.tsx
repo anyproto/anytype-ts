@@ -13,9 +13,10 @@ interface SidebarData {
 const raf = require('raf');
 const $ = require('jquery');
 const Constant = require('json/constant.json');
+
 const SNAP_THRESHOLD = 30;
 const SHOW_THRESHOLD = 58;
-const ANIMATION = 350;
+const ANIMATION = 500;
 
 class Sidebar {
 
@@ -219,10 +220,14 @@ class Sidebar {
 		this.obj.addClass('anim');
 
 		raf(() => { 
+			const css: any = {};
 			if (autoSidebar) {
 				css.top = this.data.y;
 				css.height = this.data.height;
+				css.transform = `translate3d(0px,0px,0px)`;
 			} else {
+				css.top = 0;
+				css.height = '100%';
 				css.transform = `translate3d(${tx}%,0px,0px)`;
 			};
 			this.obj.css(css);
