@@ -8,7 +8,7 @@
 
 .sidebar { 
     position: fixed; background-color: #fff; z-index: 18; border-radius: 12px; box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2); 
-	display: flex; flex-direction: column; user-select: none;
+	display: flex; flex-direction: column; user-select: none; transition: none;
 }
 .sidebar.left { left: 0px; transform: translate3d(-110%,0px,0px); }
 .sidebar.right { right: 0px; transform: translate3d(110%,0px,0px); }
@@ -17,7 +17,7 @@
 	transform: translate3d(0px,0px,0px);
 }
 .sidebar.anim { transition: left 0.3s ease-in-out, top 0.3s ease-in-out, box-shadow 0.3s ease-in-out, transform 0.3s ease-in-out; }
-.sidebar.active { transform: translate3d(0px,0px,0px); }
+.sidebar.active { transform: translate3d(0px,0px,0px) !important; }
 
 .sidebar.right {
     .resize-h { right: auto; left: -5px; }

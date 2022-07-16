@@ -10,6 +10,7 @@ interface SidebarData {
 	snap: I.MenuDirection;
 };
 
+const raf = require('raf');
 const $ = require('jquery');
 const Constant = require('json/constant.json');
 const SNAP_THRESHOLD = 30;
@@ -216,7 +217,8 @@ class Sidebar {
 		this.obj.removeClass('anim');
 		this.obj.addClass('active');
 		this.obj.css({ left: 0, top: 50 });
-		this.obj.addClass('anim fixed');
+
+		raf(() => { this.obj.addClass('anim fixed'); });
 
 		this.removeAnimation();
 		this.setFixed(true);
@@ -250,7 +252,9 @@ class Sidebar {
 			this.fixed = true;
 		};
 
-		this.set({ height: this.maxHeight() });
+		if (!fixed) {
+			this.set({ height: this.maxHeight() });
+		};
 	};
 
 	resizeHead () {
