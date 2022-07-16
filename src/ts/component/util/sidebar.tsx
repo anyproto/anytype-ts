@@ -94,9 +94,8 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
             <div 
 				id="sidebar" 
 				className={cn.join(' ')} 
-				onMouseDown={this.onDragStart}
 			>
-				<div id="head" className="head" />
+				<div id="head" className="head" onMouseDown={this.onDragStart} />
 				
 				<div id="body" className="body">
 					{loading ? (

@@ -1010,7 +1010,6 @@ class Util {
 	
 	resizeSidebar () {
 		const { fixed, snap } = sidebar.data;
-
 		const win = $(window);
 		const obj = $('#sidebar');
 		const page = $('#page.isFull');

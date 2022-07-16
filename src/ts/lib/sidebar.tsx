@@ -10,17 +10,19 @@ interface SidebarData {
 	snap: I.MenuDirection;
 };
 
+const $ = require('jquery');
 const Constant = require('json/constant.json');
 const SNAP_THRESHOLD = 30;
+const SHOW_THRESHOLD = 58;
 const ANIMATION = 300;
 
 class Sidebar {
 
-	data: SidebarData = { x: 0, y: 0, width: 0, height: 0, fixed: false, snap: I.MenuDirection.None };
+	data: SidebarData = { x: 0, y: 0, width: 0, height: 0, fixed: false, snap: null };
 	obj: any = null;
 	fixed: boolean = false;
 
-	timeoutShow: number = 0;
+	timeoutHide: number = 0;
 	timeoutAnim: number = 0;
 
 	init () {
@@ -72,9 +74,12 @@ class Sidebar {
 		v.height = this.checkHeight(v.height);
 
 		this.data = Object.assign(this.data, v);
-		Storage.set('sidebar', v);
-
+		this.save();
 		this.setStyle();
+	};
+
+	save () {
+		Storage.set('sidebar', this.data);
 	};
 
 	setStyle () {
@@ -97,7 +102,6 @@ class Sidebar {
 
 		if (fixed) {
 			cn.push('fixed');
-			css.height = '';
 		};
 		if (snap == I.MenuDirection.Left) {
 			cn.push('left');
@@ -113,8 +117,18 @@ class Sidebar {
 		this.checkButton();
 	};
 
+	setFixed (v: boolean) {
+		this.data.fixed = v;
+		this.checkButton();
+		this.resizeHead();
+		this.save();
+
+		Util.resizeSidebar();
+		$(window).trigger('resize');
+	};
+
 	onMouseMove () {
-		window.clearTimeout(this.timeoutShow);
+		window.clearTimeout(this.timeoutHide);
 
 		if (!this.obj || !this.obj.length) {
 			return;
@@ -125,70 +139,75 @@ class Sidebar {
 			return;
 		};
 
+		if (this.data.fixed) {
+			return;
+		};
+
 		const { x } = keyboard.mouse.page;
 		const { snap, width } = this.data;
 		const win = $(window);
 		const ww = win.width();
 		const menuOpen = menuStore.isOpenList([ 'dataviewContext', 'preview' ]);
 
-		let add = false;
-		let remove = false;
+		let show = false;
+		let hide = false;
 
 		if ((snap == I.MenuDirection.Left) && (ww > Constant.size.sidebar.unfix)) {
-			if (x <= 20) {
-				add = true;
-			};
-			if (x > width + 10) {
-				remove = true;
+			if (x <= SHOW_THRESHOLD) {
+				show = true;
+			}
+			if (x >= width + 10) {
+				hide = true;
 			};
 		};
 
 		if (snap == I.MenuDirection.Right) {
-			if (x >= ww - 20) {
-				add = true;
+			if (x >= ww - SHOW_THRESHOLD) {
+				show = true;
 			};
-			if (x < ww - width - 10) {
-				remove = true;
+			if (x <= ww - width - 10) {
+				hide = true;
 			};
 		};
 
 		if (menuOpen) {
-			remove = false;
+			hide = false;
 		};
 
-		if (add) {
+		if (show) {
 			this.show();
 		};
 
-		if (remove) {
-			this.timeoutShow = window.setTimeout(() => { this.hide(); }, 200);
+		if (hide && this.obj.hasClass('active')) {
+			this.timeoutHide = window.setTimeout(() => { this.hide(); }, 200);
 		};
 	};
 
 	collapse () {
+		if (!this.obj || !this.obj.length) {
+			return;
+		};
+
+		this.obj.removeClass('anim').addClass('active')
 		this.obj.css({ left: this.data.x, top: this.data.y, height: this.data.height });
-		this.show();
-		this.obj.removeClass('fixed');
-		this.data.fixed = false;
-		this.checkButton();
-		this.resizeHead();
+		this.obj.addClass('anim').removeClass('fixed');
 
-		Util.resizeSidebar();
-
-		
-		$(window).trigger('resize.dataview');
+		this.removeAnimation();
+		this.setFixed(false);
 	};
 
 	expand () {
-		this.obj.css({ left: 0, top: 50, height: '' });
-		this.show();
-		this.obj.addClass('fixed');
-		this.data.fixed = true;
-		this.checkButton();
-		this.resizeHead();
+		if (!this.obj || !this.obj.length) {
+			return;
+		};
 
-		Util.resizeSidebar();
-		$(window).trigger('resize.dataview');
+		this.obj.removeClass('anim');
+		this.obj.addClass('active');
+		this.obj.css({ left: 0, top: 50 });
+		this.obj.addClass('anim fixed');
+
+		this.removeAnimation();
+		this.setFixed(true);
 	};
 
 	show () {
