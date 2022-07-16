@@ -174,6 +174,9 @@ class Sidebar {
 		this.resizeHead();
 
 		Util.resizeSidebar();
+
+		
+		$(window).trigger('resize.dataview');
 	};
 
 	expand () {
@@ -185,6 +188,7 @@ class Sidebar {
 		this.resizeHead();
 
 		Util.resizeSidebar();
+		$(window).trigger('resize.dataview');
 	};
 
 	show () {
