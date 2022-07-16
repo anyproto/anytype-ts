@@ -38,7 +38,7 @@
 
     .loaderWrapper { position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; }
 
-    .head { position: relative; flex-shrink: 0; -webkit-app-region: no-drag; }
+    .head { position: relative; flex-shrink: 0; -webkit-app-region: no-drag; cursor: grab; }
     .head {
         .icon.expand { 
             width: 44px; height: 32px; background-size: 20px 20px; background-image: url('~img/icon/header/expand.svg');

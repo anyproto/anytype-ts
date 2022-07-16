@@ -28,18 +28,33 @@ const FooterMainEdit = observer(class FooterMainEdit extends React.Component<Pro
 
 		return (
 			<div id="footer" className="footer footerMainEdit">
-				<Icon id="button-expand" className="big expand" tooltip="Show sidebar" tooltipY={I.MenuDirection.Top} onClick={() => { sidebar.expand(); }} />
-				<Icon id="button-help" className="big help" tooltip="Help" tooltipY={I.MenuDirection.Top} onClick={this.onHelp} />
+				<Icon 
+					id="button-expand" 
+					className="big expand" 
+					tooltip="Show sidebar" 
+					tooltipY={I.MenuDirection.Top} 
+					onClick={() => { sidebar.expand(); }} 
+				/>
+
+				<Icon 
+					id="button-help" 
+					className="big help" 
+					tooltip="Help" 
+					tooltipY={I.MenuDirection.Top} 
+					onClick={this.onHelp} 
+				/>
 			</div>
 		);
 	};
 
 	componentDidMount () {
 		sidebar.checkButton();
+		Util.resizeSidebar();
 	};
 
 	componentDidUpdate () {
 		sidebar.checkButton();
+		Util.resizeSidebar();
 	};
 
 	onHelp () {
