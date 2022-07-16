@@ -16,7 +16,7 @@ const Constant = require('json/constant.json');
 
 const SNAP_THRESHOLD = 30;
 const SHOW_THRESHOLD = 58;
-const ANIMATION = 500;
+const ANIMATION = 300;
 
 class Sidebar {
 
@@ -345,8 +345,8 @@ class Sidebar {
 		x = Math.min(ww - this.data.width, x);
 
 		y = Number(y);
-		y = Math.max((wh - hh) * 0.1, y);
-		y = Math.min(hh + (wh - hh) * 0.9 - this.data.height, y);
+		y = Math.max(hh, y);
+		y = Math.min(wh - 62 - this.data.height, y);
 
 		return { x, y };
 	};

@@ -13,13 +13,13 @@
 .sidebar.left { left: 0px; transform: translate3d(-110%,0px,0px); }
 .sidebar.right { right: 0px; transform: translate3d(110%,0px,0px); }
 .sidebar.fixed { 
-	height: 100% !important; top: 0px !important; border-radius: 0px; box-shadow: 0px 0px; border-right: 1px solid $colorLightGrey; 
+	height: 100% !important; top: 0px !important; border-radius: 0px; box-shadow: 0px 0px rgba(0, 0, 0, 0); border-right: 1px solid $colorLightGrey; 
 	transform: translate3d(0px,0px,0px);
 }
 .sidebar.anim { 
 	transition-property: left, top, box-shadow, transform;
-	transition-duration: 0.5s;
-	transition-timing-function: cubic-bezier(0.85, 0, 0.15, 1);
+	transition-duration: 0.3s;
+	transition-timing-function: ease-in-out;
 }
 .sidebar.active { transform: translate3d(0px,0px,0px); }
 
