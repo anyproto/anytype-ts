@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, C, DataUtil, Util, keyboard, Storage, Relation, analytics } from 'ts/lib';
+import { I, C, DataUtil, Util, keyboard, Storage, Relation, analytics, sidebar } from 'ts/lib';
 import { Loader } from 'ts/component';
-import { blockStore, commonStore, dbStore, detailStore, menuStore } from 'ts/store';
+import { blockStore, dbStore, detailStore, menuStore } from 'ts/store';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { observer } from 'mobx-react';
 
@@ -25,7 +25,6 @@ const sha1 = require('sha1');
 const MAX_DEPTH = 15;
 const LIMIT = 20;
 const HEIGHT = 28;
-const SNAP_THRESHOLD = 30;
 const SKIP_TYPES_LOAD = [
 	Constant.typeId.space,
 ];
@@ -41,14 +40,13 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 	id: string = '';
 	ox: number = 0;
 	oy: number = 0;
-	width: number = 0;
-	height: number = 0;
-	refList: any = null;
-	refFooter: any = null;
 	cache: any = {};
 	subId: string = '';
 	subscriptionIds: any = {};
 	branches: string[] = [];
+
+	refList: any = null;
+	refFooter: any = null;
 
 	constructor (props: any) {
 		super(props);
@@ -64,23 +62,9 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { sidebar } = commonStore;
-		const { width, height, x, y, fixed, snap } = sidebar;
 		const { loading } = this.state;
 		const items = this.getItems();
-		const css: any = { width };
 		const cn = [ 'sidebar' ];
-
-		if (snap == I.MenuDirection.Left) {
-			cn.push('left');
-		};
-		if (snap == I.MenuDirection.Right) {
-			cn.push('right');
-		};
-
-		if (fixed) {
-			cn.push('fixed');
-		};
 
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
@@ -110,12 +94,10 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
             <div 
 				id="sidebar" 
 				className={cn.join(' ')} 
-				style={css} 
-				onMouseDown={this.onDragStart}
 			>
-				<div className="head" />
+				<div id="head" className="head" onMouseDown={this.onDragStart} />
 				
-				<div className="body">
+				<div id="body" className="body">
 					{loading ? (
 						<Loader />
 					) : (
@@ -158,6 +140,8 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 	componentDidMount () {
 		this._isMounted = true;
 
+		sidebar.init();
+
 		this.loadSections();
 		this.rebind();
 	};
@@ -165,7 +149,6 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 	componentDidUpdate () {
 		const items = this.getItems();
 
-		this.resize();
 		this.restore();
 
 		this.cache = new CellMeasurerCache({
@@ -186,7 +169,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 
 	rebind () {
 		this.unbind();
-		$(window).on('resize.sidebar', (e: any) => { this.onWindowResize(); });
+		$(window).on('resize.sidebar', (e: any) => { sidebar.resize(); });
 	};
 
 	unbind () {
@@ -194,14 +177,8 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 	};
 
 	restore () {
-		const { sidebar } = commonStore;
-		const { x, y, snap } = sidebar;
 		const node = $(ReactDOM.findDOMNode(this));
-		const body = node.find('.body');
-
-		this.width = node.width();
-		this.height = node.height();
-		this.setStyle(x, y, snap);
+		const body = node.find('#body');
 
 		this.id = keyboard.getRootId();
 		this.setActive(this.id);
@@ -521,8 +498,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 
 		const { dataset } = this.props;
 		const { selection } = dataset || {};
-		const { sidebar } = commonStore;
-		const { fixed } = sidebar;
+		const { fixed } = sidebar.data;
 		const node = $(ReactDOM.findDOMNode(this));
 		const win = $(window);
 		const body = $('body');
@@ -532,8 +508,6 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 			return;
 		};
 		
-		this.width = node.width();
-		this.height = node.height();
 		this.ox = offset.left;
 		this.oy = offset.top;
 
@@ -549,39 +523,23 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 	};
 
 	onResizeMove (e: any, dir: I.MenuType) {
-		const { sidebar } = commonStore;
-		const { snap, width, fixed } = sidebar;
-		const win = $(window);
+		const { snap, width } = sidebar.data;
 
 		if (dir == I.MenuType.Horizontal) {
 			const d = (snap == I.MenuDirection.Right) ? (this.ox - e.pageX + width) : e.pageX - this.ox;
-	
-			this.width = this.getWidth(d);
-			this.setWidth(this.width);
-
-			if (fixed) {
-				win.trigger('resize.editor');
-			};
+			sidebar.set({ width: d });
 		};
 
 		if (dir == I.MenuType.Vertical) {
-			this.height = this.getHeight(e.pageY - this.oy);
-			this.setHeight(this.height);
+			sidebar.set({ height: e.pageY - this.oy });
 		};
+
+		Util.resizeSidebar();
 	};
 
 	onResizeEnd (e: any, dir: I.MenuType) {
 		const { dataset } = this.props;
 		const { selection } = dataset || {};
-		const update: any = {};
-
-		if (dir == I.MenuType.Horizontal) {
-			update.width = this.width;
-		};
-		if (dir == I.MenuType.Vertical) {
-			update.height = this.height;
-		};
-		commonStore.sidebarSet(update);
 
 		if (selection) {
 			selection.preventSelect(false);
@@ -598,21 +556,16 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 
 		const { dataset } = this.props;
 		const { selection } = dataset || {};
-		const { sidebar } = commonStore;
-		const { fixed } = sidebar;
-
-		if (fixed) {
-			return;
-		};
 
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
 		const offset = node.offset();
 
-		this.width = node.width();
-		this.height = node.height();
 		this.ox = e.pageX - offset.left;
 		this.oy = e.pageY - offset.top;
+
+		sidebar.set({ fixed: false });
+		Util.resizeSidebar();
 
 		keyboard.setDragging(true);
 		if (selection) {
@@ -627,134 +580,22 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 	onDragMove (e: any) {
 		const win = $(window);
 		
-		let x = e.pageX - this.ox - win.scrollLeft();
-		let y = e.pageY - this.oy - win.scrollTop();
-		let snap = this.checkSnap(x);
-
-		if (snap !== null) {
-			x = 0;
-		};
-
-		this.setStyle(x, y, snap);
+		sidebar.set({ 
+			x: e.pageX - this.ox - win.scrollLeft(), 
+			y: e.pageY - this.oy - win.scrollTop(),
+		});
 	};
 
 	onDragEnd (e: any) {
 		const { dataset } = this.props;
 		const { selection } = dataset || {};
-		const win = $(window);
 		
-		let x = e.pageX - this.ox - win.scrollLeft();
-		let y = e.pageY - this.oy - win.scrollTop();
-		let snap = this.checkSnap(x);
-
-		if (snap !== null) {
-			x = 0;
-		};
-
-		commonStore.sidebarSet({ x, y, snap });
-		this.setStyle(x, y, snap);
-
-		win.unbind('mousemove.sidebar mouseup.sidebar');
+		$(window).unbind('mousemove.sidebar mouseup.sidebar');
 		keyboard.setDragging(false);
 
 		if (selection) {
 			selection.preventSelect(false);
 		};
-	};
-
-	checkSnap (x: number) {
-		let win = $(window);
-		let snap = null;
-
-		if (x <= SNAP_THRESHOLD) {
-			snap = I.MenuDirection.Left;
-		};
-		if (x + this.width >= win.width() - SNAP_THRESHOLD) {
-			snap = I.MenuDirection.Right;
-		};
-		return snap;
-	};
-
-	checkCoords (x: number, y: number): { x: number, y: number } {
-		const win = $(window);
-		const wh = win.height();
-		const ww = win.width();
-		const hh = Util.sizeHeader();
-
-		x = Number(x);
-		x = Math.max(0, x);
-		x = Math.min(ww - this.width, x);
-
-		y = Number(y);
-		y = Math.max((wh - hh) * 0.1, y);
-		y = Math.min(hh + (wh - hh) * 0.9 - this.height, y);
-
-		return { x, y };
-	};
-
-	setStyle (x: number, y: number, snap: I.MenuDirection) {
-		const node = $(ReactDOM.findDOMNode(this));
-		const coords = this.checkCoords(x, y);
-
-		node.removeClass('left right');
-
-		if (snap == I.MenuDirection.Left) {
-			node.addClass('left');
-		};
-		if (snap == I.MenuDirection.Right) {
-			node.addClass('right');
-		};
-
-		node.css({ 
-			top: coords.y,
-			left: (snap === null ? coords.x : ''),
-		});
-	};
-
-	resize () {
-		if (!this._isMounted) {
-			return;
-		};
-
-		const { sidebar } = commonStore;
-		const { width, height, fixed } = sidebar;
-		const node = $(ReactDOM.findDOMNode(this));
-		const head = node.find('.head');
-		const platform = Util.getPlatform();
-
-		let h = 0;
-		if (fixed) {
-			h = platform == I.Platform.Windows ? 30 : Util.sizeHeader() - 10;
-		};
-		head.css({ height: h });
-
-		this.setWidth(width);
-		this.setHeight(height);
-	};
-
-	onWindowResize () {
-		if (!this._isMounted) {
-			return;
-		};
-
-		const { sidebar } = commonStore;
-		const { fixed, x, y, snap } = sidebar;
-		const win = $(window);
-		const ww = win.width();
-		const old = commonStore.sidebarOldFixed;
-
-		if (ww > Constant.size.sidebar.unfix) {
-			if (!fixed && old) {
-				commonStore.sidebarSet({ fixed: true });
-			};
-		} else {
-			if (fixed) {
-				commonStore.sidebarSet({ fixed: false });
-				commonStore.sidebarOldFixed = true;
-			};
-		};
-
-		this.setStyle(x, y, snap);
 	};
 
 	getRowHeight (item: any) {
@@ -763,30 +604,6 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 			height = item.withPadding ? 38 : 30;
 		};
 		return height;
-	};
-
-	getWidth (width: number) {
-		const size = Constant.size.sidebar.width;
-		return Math.max(size.min, Math.min(size.max, width));
-	};
-
-	setWidth (width: number) {
-		const node = $(ReactDOM.findDOMNode(this));
-		node.css({ width: this.getWidth(width) });
-		Util.resizeSidebar();
-	};
-
-	getHeight (height: number) {
-		const size = Constant.size.sidebar.height;
-		return Math.max(size.min, Math.min(commonStore.sidebarMaxHeight(), height));
-	};
-
-	setHeight (height: number) {
-		const { sidebar } = commonStore;
-		const { fixed } = sidebar;
-		const node = $(ReactDOM.findDOMNode(this));
-
-		node.css({ height: (fixed ? '' : this.getHeight(height)) });
 	};
 
 });

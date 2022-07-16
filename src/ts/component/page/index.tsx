@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { I, Onboarding, Util, Storage, analytics, keyboard } from 'ts/lib';
-import { ListPopup, Sidebar } from 'ts/component';
+import { Sidebar } from 'ts/component';
 import { authStore, commonStore, menuStore, popupStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 

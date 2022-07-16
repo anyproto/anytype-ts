@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Header, Block, Loader, Icon, Deleted } from 'ts/component';
+import { Header, FooterMainEdit as Footer, Block, Loader, Icon, Deleted } from 'ts/component';
 import { blockStore, detailStore } from 'ts/store';
 import { I, M, C, Util, DataUtil, dispatcher } from 'ts/lib';
 import { observer } from 'mobx-react';
@@ -34,6 +34,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<P
 	
 	version: I.HistoryVersion = null;
 	refHeader: any = null;
+	refFooter: any = null;
 	scrollLeft: number = 0;
 	scrollRight: number = 0;
 	lastId: string = '';
@@ -45,7 +46,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<P
 	};
 
 	render () {
-		const { match } = this.props;
+		const { isPopup } = this.props;
 		const { versions, isDeleted } = this.state;
 		const rootId = this.getRootId();
 		const groups = this.groupData(versions);
@@ -147,6 +148,8 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<P
 						</div>
 					</div>
 				</div>
+
+				<Footer ref={(ref: any) => { this.refFooter = ref; }} {...this.props} rootId={rootId} isPopup={isPopup} />
 			</div>
 		);
 	};

@@ -40,8 +40,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	render () {
-		const { sidebar } = commonStore;
-		const { fixed } = sidebar;
 		const { rootId, block, isPopup } = this.props;
 		const views = dbStore.getViews(rootId, block.id);
 
@@ -161,7 +159,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		this.unbind();
 
 		const win = $(window);
-		win.on('resize.dataview', () => { this.resize(); });
+		win.on('resize.dataview', (e: any) => { this.resize(); });
 		win.on('keydown.dataview', throttle((e: any) => { this.onKeyDown(e); }, 100));
 	};
 

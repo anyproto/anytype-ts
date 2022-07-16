@@ -1,4 +1,4 @@
-import { I, keyboard } from 'ts/lib';
+import { I, keyboard, sidebar } from 'ts/lib';
 import { commonStore, popupStore, menuStore } from 'ts/store';
 import { translate } from '.';
 
@@ -1009,9 +1009,7 @@ class Util {
 	};
 	
 	resizeSidebar () {
-		const { sidebar } = commonStore;
-		const { fixed, snap } = sidebar;
-
+		const { fixed, snap } = sidebar.data;
 		const win = $(window);
 		const obj = $('#sidebar');
 		const page = $('#page.isFull');
