@@ -299,7 +299,6 @@ class DataUtil {
 		};
 
 		crumbs.init();
-		commonStore.sidebarInit();
 		keyboard.initPinCheck();
 
 		analytics.profile(account);

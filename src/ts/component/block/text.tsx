@@ -680,6 +680,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			{ key: `${cmd}+]`, preventDefault: false },
 			{ key: `tab`, preventDefault: false },
 			{ key: `shift+tab`, preventDefault: true },
+			{ key: `shift+space`, preventDefault: true },
 		];
 
 		keyboard.shortcut('enter, shift+enter', e, (pressed: string) => {
@@ -1262,7 +1263,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		menuStore.closeAll([ 'blockAdd', 'blockMention' ]);
 
 		this.timeoutContext = window.setTimeout(() => {
-			const pageContainer = $(isPopup ? '#popupPage #innerWrap' : '#page.isFull');
+			const pageContainer = Util.getPageContainer(isPopup);
 
 			pageContainer.unbind('click.context').on('click.context', () => { 
 				pageContainer.unbind('click.context');

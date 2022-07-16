@@ -43,7 +43,7 @@ const ViewList = observer(class ViewList extends React.Component<Props, {}> {
 							threshold={10}
 						>
 						{({ onRowsRendered, registerChild }) => (
-							<WindowScroller scrollElement={isPopup ? $('#popupPage #innerWrap').get(0) : window}>
+							<WindowScroller scrollElement={isPopup ? $('#popupPage-innerWrap').get(0) : window}>
 								{({ height, isScrolling, registerChild, scrollTop }) => {
 									return (
 										<AutoSizer disableHeight={true}>

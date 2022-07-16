@@ -436,13 +436,13 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 
 	resize () {
 		const win = $(window);
-		const obj = $(this.props.isPopup ? '#popupPage #innerWrap' : '#page.isFull');
-		const wrapper = obj.find('.wrapper');
+		const container = Util.getPageContainer(this.props.isPopup);
+		const wrapper = container.find('.wrapper');
 		const hh = Util.sizeHeader();
 		const platform = Util.getPlatform();
-		const isPopup = this.props.isPopup && !obj.hasClass('full');
+		const isPopup = this.props.isPopup && !container.hasClass('full');
 		
-		let wh = isPopup ? obj.height() - hh : win.height();
+		let wh = isPopup ? container.height() - hh : win.height();
 
 		if (platform == I.Platform.Windows) {
 			wh += 30;

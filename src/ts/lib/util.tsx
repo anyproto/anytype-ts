@@ -1,4 +1,4 @@
-import { I, keyboard, Renderer } from 'ts/lib';
+import { I, keyboard, Renderer, sidebar } from 'ts/lib';
 import { commonStore, popupStore, menuStore } from 'ts/store';
 import { translate } from '.';
 
@@ -651,8 +651,6 @@ class Util {
 		
 		this.previewHide(false);
 		
-		node.addClass('isPreviewHover');
-
 		window.clearTimeout(this.timeoutPreviewShow);
 		this.timeoutPreviewShow = window.setTimeout(() => {
 			this.isPreviewOpen = true;
@@ -663,8 +661,6 @@ class Util {
 	previewHide (force: boolean) {
 		this.isPreviewOpen = false;
 		window.clearTimeout(this.timeoutPreviewShow);
-
-		$('.isPreviewHover').removeClass('isPreviewHover');
 
 		const obj = $('#preview');
 		if (force) {
@@ -904,7 +900,11 @@ class Util {
 	};
 
 	getScrollContainer (isPopup: boolean) {
-		return $(isPopup ? '#popupPage #innerWrap' : window);
+		return $(isPopup ? '#popupPage-innerWrap' : window);
+	};
+
+	getPageContainer (isPopup: boolean) {
+		return $(isPopup ? '#popupPage-innerWrap' : '#page.isFull');
 	};
 
 	getBodyContainer (type: string) {
@@ -914,7 +914,7 @@ class Util {
 				return 'body';
 
 			case 'popup':
-				return '#popupPage #innerWrap';
+				return '#popupPage-innerWrap';
 			
 			case 'menuBlockAdd':
 				return `#${type} .content`;
@@ -924,14 +924,14 @@ class Util {
 		};
 	};
 
-	getPageContainer (type: string) {
+	getCellContainer (type: string) {
 		switch (type) {
 			default:
 			case 'page':
 				return '#page.isFull';
 
 			case 'popup':
-				return '#popupPage';
+				return '#popupPage-innerWrap';
 
 			case 'menuBlockAdd':
 			case 'menuBlockRelationView':
@@ -975,9 +975,7 @@ class Util {
 
 	
 	resizeSidebar () {
-		const { sidebar } = commonStore;
-		const { fixed, snap } = sidebar;
-
+		const { fixed, snap } = sidebar.data;
 		const win = $(window);
 		const obj = $('#sidebar');
 		const page = $('#page.isFull');
@@ -985,11 +983,14 @@ class Util {
 		const footer = page.find('#footer');
 		const loader = page.find('#loader');
 		
-		const width = fixed ? obj.width() : 0;
-		const pw = win.width() - width - 1;
-		const css: any = { width: '' };
-		const cssLoader: any = { width: pw, left: '', right: '' };
-
+		let width = fixed ? obj.width() : 0;
+		if (obj.css('display') == 'none') {
+			width = 0;
+		};
+		
+		let pw = win.width() - width - 1;
+		let css: any = { width: '' };
+		let cssLoader: any = { width: pw, left: '', right: '' };
 		let dummy = $('.sidebarDummy');
 
 		header.css(css).removeClass('withSidebar snapLeft snapRight');

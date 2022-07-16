@@ -2,7 +2,7 @@
 
 .sync {
 	background: $colorVeryLightGrey; border-radius: 4px; @include text-small; padding: 0px 6px; display: inline-block; vertical-align: middle;
-	color: $colorMediumGrey; white-space: nowrap; height: 18px; display: flex; align-items: center; gap: 0px 4px;
+	color: $colorDarkGrey; white-space: nowrap; height: 18px; display: flex; align-items: center; gap: 0px 4px;
 }
 .sync {
 	.bullet { width: 8px; height: 8px; border-radius: 100%; background: $colorLightGrey; }

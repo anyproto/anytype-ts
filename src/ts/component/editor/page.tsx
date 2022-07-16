@@ -22,7 +22,7 @@ const Errors = require('json/error.json');
 const $ = require('jquery');
 const raf = require('raf');
 
-const THROTTLE = 20;
+const THROTTLE = 40;
 const BUTTON_OFFSET = 10;
 
 const EditorPage = observer(class EditorPage extends React.Component<Props, {}> {
@@ -169,7 +169,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		this.resize();
 		win.on('resize.editor' + namespace, (e: any) => { this.resize(); });
 
-		Util.getScrollContainer(isPopup).on('scroll.editor' + namespace, (e: any) => { this.onScroll(e); });
+		Util.getScrollContainer(isPopup).on('scroll.editor' + namespace, throttle((e: any) => { this.onScroll(e); }, THROTTLE));
 
 		Storage.set('askSurvey', 1);
 
@@ -214,7 +214,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 	};
 
 	open () {
-		const { rootId, onOpen, history, isPopup } = this.props;
+		const { rootId, onOpen, isPopup } = this.props;
 
 		if (this.id == rootId) {
 			return;
@@ -366,23 +366,32 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		const checkType = blockStore.checkBlockTypeExists(rootId);
 		const readonly = this.isReadonly();
 
-		if (!root || readonly || checkType || (root && root.isLocked())) {
-			return;
-		};
-
-		const container = $('.editor');
-		if (!container.length) {
+		if (
+			!root || 
+			readonly || 
+			checkType || 
+			(root && root.isLocked()) || 
+			keyboard.isResizing || 
+			menuStore.isOpen() || 
+			this.loading
+		) {
 			return;
 		};
 
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
-		const items = node.find('.block').not('.noPlus');
+		const container = node.find('.editor');
+		
+		if (!container.length) {
+			return;
+		};
+
 		const rectContainer = (container.get(0) as Element).getBoundingClientRect() as DOMRect;
 		const featured = node.find(`#block-${Constant.blockId.featured}`);
 		const st = win.scrollTop();
-		const add = node.find('#button-block-add');
+		const button = node.find('#button-block-add');
 		const { pageX, pageY } = e;
+		const blocks = blockStore.getBlocks(rootId);
 
 		let offset = 140;
 		let hovered: any = null;
@@ -392,30 +401,37 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			offset = featured.offset().top + featured.outerHeight() - BUTTON_OFFSET;
 		};
 
-		// Find hovered block by mouse coords
-		items.each((i: number, item: any) => {
-			let rect = item.getBoundingClientRect() as DOMRect;
+		for (let block of blocks) {
+			if (!block.canCreateBlock()) {
+				continue;
+			};
+
+			let obj = $(`#block-${block.id}`);
+			if (!obj.length) {
+				continue;
+			};
+
+			let el = obj.get(0);
+			let rect = el.getBoundingClientRect() as DOMRect;
+
 			rect.y += st;
 
 			if ((pageX >= rect.x) && (pageX <= rect.x + rect.width) && (pageY >= rect.y) && (pageY <= rect.y + rect.height)) {
-				hovered = item as Element;
+				this.hoverId = block.id;
+				hovered = el as Element;
 				hoveredRect = rect;
 			};
-		});
-		
+		};
+
 		if (hovered) {
 			hovered = $(hovered);
-			this.hoverId = hovered.data('id');
-		};
-		
-		if (keyboard.isResizing || menuStore.isOpen()) {
-			hovered = null;
 		};
 		
 		const { x, y, height } = hoveredRect;
 		const out = () => {
-			add.removeClass('show');
-			items.removeClass('showMenu isAdding top bottom');
+			button.removeClass('show');
+			node.find('.block.showMenu').removeClass('showMenu');
+			node.find('.block.isAdding').removeClass('isAdding top bottom');
 		};
 		
 		if (this.frame) {
@@ -441,24 +457,20 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			this.hoverPosition = pageY < (y + height / 2) ? I.BlockPosition.Top : I.BlockPosition.Bottom;
 		};
 
-
 		this.frame = raf(() => {
 			if (this.hoverPosition == I.BlockPosition.None) {
 				out();
 				return;
 			};
 
-			let ax = hoveredRect.x - (rectContainer.x - Constant.size.blockMenu) + 2;
-			let ay = pageY - rectContainer.y - BUTTON_OFFSET - st;
+			let buttonX = hoveredRect.x - (rectContainer.x - Constant.size.blockMenu) + 2;
+			let buttonY = pageY - rectContainer.y - BUTTON_OFFSET - st;
 			
-			add.addClass('show').css({ transform: `translate3d(${ax}px,${ay}px,0px)` });
-			items.addClass('showMenu').removeClass('isAdding top bottom');
+			button.addClass('show').css({ transform: `translate3d(${buttonX}px,${buttonY}px,0px)` });
+			node.find('.block').addClass('showMenu').removeClass('isAdding top bottom');
 			
 			if (pageX <= x + 20) {
-				const block = blockStore.getLeaf(rootId, this.hoverId);
-				if (block && block.canCreateBlock()) {
-					hovered.addClass('isAdding ' + (this.hoverPosition == I.BlockPosition.Top ? 'top' : 'bottom'));
-				};
+				hovered.addClass('isAdding ' + (this.hoverPosition == I.BlockPosition.Top ? 'top' : 'bottom'));
 			};
 		});
 	};
@@ -759,45 +771,41 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			};
 		};
 
-		keyboard.shortcut('arrowup, arrowdown', e, (pressed: string) => {
-			this.onArrowVertical(e, pressed, range, length, props);
-		});
-
-		keyboard.shortcut('arrowleft', e, (pressed: string) => {
-			this.onArrowHorizontal(e, pressed, range, length, props);
-		});
-
-		keyboard.shortcut('arrowright', e, (pressed: string) => {
-			this.onArrowHorizontal(e, pressed, range, length, props);
-		});
-
-		keyboard.shortcut('alt+arrowdown, alt+arrowup', e, (pressed: string) => {
-			if (block.isTextToggle()) {
-				e.preventDefault();
-				blockStore.toggle(rootId, block.id, pressed.match('arrowdown') ? true : false);
-			};
-		});
-
-		// Expand selection
-		keyboard.shortcut('shift+arrowup, shift+arrowdown', e, (pressed: string) => {
-			this.onShiftArrowBlock(e, range, pressed);
-		});
-
-		// Backspace
-		keyboard.shortcut('backspace, delete', e, (pressed: string) => {
-			this.onBackspaceBlock(e, range, pressed, props);
-		});
-
-		// Enter
-		keyboard.shortcut('enter, shift+enter', e, (pressed: string) => {
-			if (isInsideTable && (pressed == 'enter')) {
-				this.onArrowVertical(e, 'arrowdown', { from: length, to: length }, length, props);
-			} else {
-				this.onEnterBlock(e, range, pressed);
-			};
-		});
-
 		if (!menuOpen) {
+			keyboard.shortcut('alt+arrowdown, alt+arrowup', e, (pressed: string) => {
+				if (block.isTextToggle()) {
+					e.preventDefault();
+					blockStore.toggle(rootId, block.id, pressed.match('arrowdown') ? true : false);
+				};
+			});
+
+			// Expand selection
+			keyboard.shortcut('shift+arrowup, shift+arrowdown', e, (pressed: string) => {
+				this.onShiftArrowBlock(e, range, pressed);
+			});
+
+			// Backspace
+			keyboard.shortcut('backspace, delete', e, (pressed: string) => {
+				this.onBackspaceBlock(e, range, pressed, props);
+			});
+
+			keyboard.shortcut('arrowup, arrowdown', e, (pressed: string) => {
+				this.onArrowVertical(e, pressed, range, length, props);
+			});
+
+			keyboard.shortcut('arrowleft, arrowright', e, (pressed: string) => {
+				this.onArrowHorizontal(e, pressed, range, length, props);
+			});
+
+			// Enter
+			keyboard.shortcut('enter, shift+enter', e, (pressed: string) => {
+				if (isInsideTable && (pressed == 'enter')) {
+					this.onArrowVertical(e, 'arrowdown', { from: length, to: length }, length, props);
+				} else {
+					this.onEnterBlock(e, range, pressed);
+				};
+			});
+
 			// Tab, indent block
 			keyboard.shortcut('tab, shift+tab', e, (pressed: string) => {
 				if (isInsideTable) {
@@ -2003,7 +2011,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 	};
 
 	getContainer () {
-		return $(this.props.isPopup ? '#popupPage #innerWrap' : '#page.isFull');
+		return Util.getPageContainer(this.props.isPopup);
 	};
 	
 	focus (id: string, from: number, to: number, scroll: boolean) {
@@ -2048,12 +2056,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 	getWidth (w: number) {
 		const { isPopup, rootId } = this.props;
-		const { sidebar } = commonStore;
-		const { fixed } = sidebar;
-		const container = $(isPopup ? '#popupPage #innerWrap' : '#page.isFull');
+		const container = Util.getPageContainer(isPopup);
 		const mw = container.width() - 120;
 		const root = blockStore.getLeaf(rootId, rootId);
-		//const sb = $('#sidebar');
 		
 		if (root && root.isObjectSet()) {
 			this.width = container.width() - 192;

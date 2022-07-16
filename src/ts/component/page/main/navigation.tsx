@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Icon, Button, Cover, Loader, IconObject, Header, ObjectName, ObjectDescription } from 'ts/component';
-import { I, C, DataUtil, crumbs, keyboard, Key, focus, translate } from 'ts/lib';
+import { I, C, DataUtil, Util, keyboard, Key, focus, translate } from 'ts/lib';
 import { blockStore, popupStore, commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
@@ -315,13 +315,13 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 		const node = $(ReactDOM.findDOMNode(this));
 
 		raf(() => {
-			const obj = $(isPopup ? '#popupPage #innerWrap' : window);
+			const container = Util.getScrollContainer(isPopup);
 			const header = node.find('#header');
 			const items = node.find('.items');
 			const sides = node.find('.sides');
 			const empty = node.find('#empty');
 			const hh = header.height();
-			const oh = obj.height() - hh;
+			const oh = container.height() - hh;
 
 			node.css({ paddingTop: isPopup ? 0 : hh });
 			sides.css({ height: oh });

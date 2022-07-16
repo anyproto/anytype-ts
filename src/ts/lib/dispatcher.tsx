@@ -875,7 +875,7 @@ class Dispatcher {
 
 				if (message.error.code) {
 					console.error('Error', type, 'code:', message.error.code, 'description:', message.error.description);
-					Sentry.captureMessage(type + ': ' + message.error.description);
+					Sentry.captureMessage(`${type}: code: ${code} msg: ${message.error.description}`);
 					analytics.event('Exception', { method: type, code: message.error.code });
 				};
 

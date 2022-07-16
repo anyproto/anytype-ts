@@ -1,4 +1,4 @@
-import { I, C, Util, DataUtil, Storage, focus, history as historyPopup, analytics, Renderer } from 'ts/lib';
+import { I, C, Util, DataUtil, Storage, focus, history as historyPopup, analytics, Renderer, sidebar } from 'ts/lib';
 import { commonStore, authStore, blockStore, detailStore, menuStore, popupStore } from 'ts/store';
 
 const $ = require('jquery');
@@ -88,63 +88,12 @@ class Keyboard {
 	};
 
 	onMouseMove (e: any) {
-		const { sidebar, autoSidebar } = commonStore;
-		const { snap, fixed, width } = sidebar;
-		const x = e.pageX;
-		const y = e.pageY;
-
 		this.mouse = {
-			page: { x, y },
+			page: { x: e.pageX, y: e.pageY },
 			client: { x: e.clientX, y: e.clientY },
 		};
 
-		window.clearTimeout(this.timeoutSidebarHide);
-		window.clearTimeout(this.timeoutSidebarAnim);
-
-		if (this.isDragging || this.isResizing || !autoSidebar || fixed) {
-			return;
-		};
-
-		const el = $('#sidebar');
-		const win = $(window);
-		const ww = win.width();
-		const menuOpen = menuStore.isOpenList([ 'dataviewContext', 'preview' ]);
-
-		let add = false;
-		let remove = false;
-
-		if ((snap == I.MenuDirection.Left) && (ww > Constant.size.sidebar.unfix)) {
-			if (x <= 20) {
-				add = true;
-			};
-			if (x > width + 10) {
-				remove = true;
-			};
-		};
-
-		if (snap == I.MenuDirection.Right) {
-			if (x >= ww - 20) {
-				add = true;
-			};
-			if (x < ww - width - 10) {
-				remove = true;
-			};
-		};
-
-		if (menuOpen) {
-			remove = false;
-		};
-
-		if (add) {
-			el.addClass('anim active');
-		};
-
-		if (remove) {
-			this.timeoutSidebarHide = window.setTimeout(() => {
-				el.removeClass('active');
-				this.timeoutSidebarAnim = window.setTimeout(() => { el.removeClass('anim'); }, 200);
-			}, 200);
-		};
+		sidebar.onMouseMove();
 	};
 	
 	onKeyDown (e: any) {

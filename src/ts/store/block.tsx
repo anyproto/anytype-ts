@@ -15,7 +15,7 @@ class BlockStore {
     public storeIdRelation: string = '';
 
     public treeMap: Map<string, Map<string, I.BlockStructure>> = new Map();
-    public blockMap: Map<string, I.Block[]> = new Map();
+    public blockMap: Map<string, Map<string, I.Block>> = new Map();
     public restrictionMap: Map<string, Map<string, any>> = new Map();
 
     constructor() {
@@ -98,12 +98,20 @@ class BlockStore {
 	};
 	
     set (rootId: string, blocks: I.Block[]) {
-		this.blockMap.set(rootId, blocks);
+		const map: Map<string, I.Block> = new Map();
+		
+		blocks.forEach((it: I.Block) => {
+			map.set(it.id, it);
+		});
+
+		this.blockMap.set(rootId, map);
 	};
 
     add (rootId: string, block: I.Block) {
-		let blocks = this.getBlocks(rootId);
-		blocks.push(block);
+		const map = this.blockMap.get(rootId);
+		if (map) {
+			map.set(block.id, block);
+		};
 	};
 
     update (rootId: string, param: any) {
@@ -167,12 +175,12 @@ class BlockStore {
 		};
 	};
 
-    delete (rootId: string, blockId: string) {
+    delete (rootId: string, id: string) {
 		let blocks = this.getBlocks(rootId);
 		let map = this.getMap(rootId);
 
-		this.blockMap.set(rootId, blocks.filter((it: any) => { return it.id != blockId; }));
-		map.delete(blockId);
+		this.set(rootId, blocks.filter(it => it.id != id));
+		map.delete(id);
 	};
 
     restrictionsSet (rootId: string, restrictions: any) {
@@ -201,23 +209,18 @@ class BlockStore {
 	};
 
     getLeaf (rootId: string, id: string): any {
-		let blocks = this.getBlocks(rootId);
-		return blocks.find((it: any) => { return it.id == id; });
+		let map = this.blockMap.get(rootId);
+		return map ? map.get(id) : null;
 	};
 
-    getBlocks (rootId: string, filter?: (it: any) => boolean) {
-		let blocks = this.blockMap.get(rootId) || [];
-
-		if (!filter) {
-			return blocks;
+    getBlocks (rootId: string, filter?: (it: any) => boolean): I.Block[] {
+		let map = this.blockMap.get(rootId);
+		if (!map) {
+			return [];
 		};
 
-		return blocks.filter((it: any) => {
-			if (filter) {
-				return filter(it);
-			};
-			return true;
-		});
+		const blocks = Array.from(map.values());
+		return filter ? blocks.filter(it => filter(it)) : blocks;
 	};
 
     getChildrenIds (rootId: string, blockId: string): string[] {
@@ -226,19 +229,8 @@ class BlockStore {
 	};
 
     getChildren (rootId: string, blockId: string, filter?: (it: any) => boolean): I.Block[] {
-		let blocks = this.getBlocks(rootId);
-		let childrenIds = this.getChildrenIds(rootId, blockId);
-		
-		return childrenIds.map((it: string) => {
-			return blocks.find((item: any) => { return item.id == it; });
-		}).filter((it: any) => {
-			if (!it) {
-				return false;
-			};
-			if (filter) {
-				return filter(it);
-			};
-			return true;
+		return this.getChildrenIds(rootId, blockId).map(id => this.getLeaf(rootId, id)).filter((it: any) => {
+			return it ? (filter ? filter(it) : true) : false;
 		});
 	};
 
@@ -437,7 +429,7 @@ class BlockStore {
 	};
 
 	updateMarkup (rootId: string) {
-		let blocks = Util.objectCopy(this.getBlocks(rootId, (it: I.Block) => { return it.isText(); }));
+		let blocks = Util.objectCopy(this.getBlocks(rootId, it => it.isText()));
 		for (let block of blocks) {
 			let text = block.content.text;
 			let marks = block.content.marks || [];

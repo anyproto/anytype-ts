@@ -94,7 +94,7 @@ class PopupHelp extends React.Component<Props, {}> {
 		raf(() => {
 			const { getId } = this.props;
 			const win = $(window);
-			const obj = $(`#${getId()} #innerWrap`);
+			const obj = $(`#${getId()}-innerWrap`);
 			const width = Math.max(732, Math.min(960, win.width() - 128));
 
 			obj.css({ width: width, marginLeft: -width / 2 });

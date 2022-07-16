@@ -285,7 +285,7 @@ class PopupShortcut extends React.Component<Props, State> {
 
 		raf(() => {
 			const win = $(window);
-			const obj = $(`#${getId()} #innerWrap`);
+			const obj = $(`#${getId()}-innerWrap`);
 			const width = Math.max(732, Math.min(960, win.width() - 128));
 
 			obj.css({ width: width, marginLeft: -width / 2, marginTop: 0 });

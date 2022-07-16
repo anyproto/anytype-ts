@@ -370,7 +370,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const { data } = param;
 		const { isPopup } = data;
 		const obj = $(`#${getId()} .content`);
-		const container = $(isPopup ? '#popupPage #innerWrap' : window);
+		const container = Util.getScrollContainer(isPopup);
 		const offset = isPopup ? 16 : 120;
 		const min = isPopup ? 480 : 640;
 

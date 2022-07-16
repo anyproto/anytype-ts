@@ -196,7 +196,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 	onRelation (e: any) {
 		const { isPopup, rootId } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
-		const container = $(isPopup ? '#popupPage #innerWrap' : window);
+		const container = Util.getScrollContainer(isPopup);
 		const st = container.scrollTop();
 		const rect = { x: container.width() / 2 , y: Util.sizeHeader() + st, width: 1, height: 1 };
 		const cnw = [ 'fixed' ];

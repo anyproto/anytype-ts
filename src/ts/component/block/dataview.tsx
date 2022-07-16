@@ -40,8 +40,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	render () {
-		const { sidebar } = commonStore;
-		const { fixed } = sidebar;
 		const { rootId, block, isPopup } = this.props;
 		const views = dbStore.getViews(rootId, block.id);
 
@@ -100,7 +98,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 						onRef={(ref: any, id: string) => { this.cellRefs.set(id, ref); }} 
 						{...this.props} 
 						bodyContainer={Util.getBodyContainer(isPopup ? 'popup' : 'page')}
-						pageContainer={Util.getPageContainer(isPopup ? 'popup' : 'page')}
+						pageContainer={Util.getCellContainer(isPopup ? 'popup' : 'page')}
 						readonly={false} 
 						getData={this.getData} 
 						getRecord={this.getRecord}
@@ -161,7 +159,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		this.unbind();
 
 		const win = $(window);
-		win.on('resize.dataview', () => { this.resize(); });
+		win.on('resize.dataview', (e: any) => { this.resize(); });
 		win.on('keydown.dataview', throttle((e: any) => { this.onKeyDown(e); }, 100));
 	};
 
@@ -227,7 +225,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		dbStore.metaSet(subId, '', meta);
 
 		if (![ I.ViewType.Board ].includes(view.type)) {
-			DataUtil.getDataviewData(rootId, block.id, newViewId, keys, offset, limit, false, callBack);
+			DataUtil.getDataviewData(rootId, block.id, newViewId, keys, 0, 0, false, callBack);
 		} else 
 		if (this.viewRef.loadGroupList) {
 			this.viewRef.loadGroupList();
@@ -326,7 +324,11 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				const oldIndex = records.findIndex(it => it.id == newRecord.id);
 				const newIndex = dir > 0 ? records.length - 1 : 0;
 
-				dbStore.recordsSet(subId, '', arrayMove(records, oldIndex, newIndex));
+				if (oldIndex < 0) {
+					records[(dir > 0 ? 'push' : 'unshift')]({ id: newRecord.id });
+				} else {
+					dbStore.recordsSet(subId, '', arrayMove(records, oldIndex, newIndex));
+				};
 
 				const id = Relation.cellId('dataviewCell', 'name', newIndex);
 				const ref = this.cellRefs.get(id);

@@ -67,7 +67,7 @@ const BlockRelation = observer(class BlockRelation extends React.Component<Props
 								menuClassName="fromBlock"
 								onCellChange={this.onCellChange}
 								bodyContainer={Util.getBodyContainer(isPopup ? 'popup' : 'page')}
-								pageContainer={Util.getPageContainer(isPopup ? 'popup' : 'page')}
+								pageContainer={Util.getCellContainer(isPopup ? 'popup' : 'page')}
 								optionCommand={this.optionCommand}
 							/>
 						</div>

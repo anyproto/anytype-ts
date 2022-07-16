@@ -101,6 +101,7 @@
 		}
 
 		.row.isHeader {
+			.cell { background-color: $colorVeryLightGrey; }
 			.block { font-weight: 500; }
 		}
 

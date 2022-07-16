@@ -151,7 +151,7 @@ class MenuSearchText extends React.Component<Props, {}> {
 		if (!isPopup) {
 			return $('#page.isFull');
 		} else {
-			return $('.popup').last().find('#innerWrap');
+			return $('.popup').last().find('.innerWrap');
 		};
 	};
 

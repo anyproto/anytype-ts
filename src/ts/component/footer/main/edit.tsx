@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Icon } from 'ts/component';
-import { I, Util } from 'ts/lib';
+import { I, Util, sidebar } from 'ts/lib';
 import { menuStore, blockStore, commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -16,14 +16,11 @@ const FooterMainEdit = observer(class FooterMainEdit extends React.Component<Pro
 		super(props);
 		
 		this.onHelp = this.onHelp.bind(this);
-		this.onSidebarExpand = this.onSidebarExpand.bind(this);
 	};
 
 	render () {
 		const { rootId } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
-		const { sidebar } = commonStore;
-		const { fixed } = sidebar;
 
 		if (!root) {
 			return null;
@@ -31,25 +28,33 @@ const FooterMainEdit = observer(class FooterMainEdit extends React.Component<Pro
 
 		return (
 			<div id="footer" className="footer footerMainEdit">
-				{!fixed ? (
-					<Icon id="button-expand" className="big expand" tooltip="Show sidebar" tooltipY={I.MenuDirection.Top} onClick={this.onSidebarExpand} />
-				) : ''}
+				<Icon 
+					id="button-expand" 
+					className="big expand" 
+					tooltip="Show sidebar" 
+					tooltipY={I.MenuDirection.Top} 
+					onClick={() => { sidebar.expand(); }} 
+				/>
 
-				<Icon id="button-help" className="big help" tooltip="Help" tooltipY={I.MenuDirection.Top} onClick={this.onHelp} />
+				<Icon 
+					id="button-help" 
+					className="big help" 
+					tooltip="Help" 
+					tooltipY={I.MenuDirection.Top} 
+					onClick={this.onHelp} 
+				/>
 			</div>
 		);
 	};
 
 	componentDidMount () {
+		sidebar.checkButton();
 		Util.resizeSidebar();
 	};
 
 	componentDidUpdate () {
-		Util.resizeSidebar();	
-	};
-
-	onSidebarExpand () {
-		commonStore.sidebarSet({ fixed: true });
+		sidebar.checkButton();
+		Util.resizeSidebar();
 	};
 
 	onHelp () {
