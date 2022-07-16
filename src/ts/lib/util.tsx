@@ -1009,7 +1009,7 @@ class Util {
 	};
 	
 	resizeSidebar () {
-		const { fixed, snap } = sidebar.obj;
+		const { fixed, snap } = sidebar.data;
 
 		const win = $(window);
 		const obj = $('#sidebar');

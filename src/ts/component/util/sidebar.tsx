@@ -499,7 +499,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 
 		const { dataset } = this.props;
 		const { selection } = dataset || {};
-		const { fixed } = sidebar.obj;
+		const { fixed } = sidebar.data;
 		const node = $(ReactDOM.findDOMNode(this));
 		const win = $(window);
 		const body = $('body');
@@ -524,7 +524,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 	};
 
 	onResizeMove (e: any, dir: I.MenuType) {
-		const { snap, width } = sidebar.obj;
+		const { snap, width } = sidebar.data;
 
 		if (dir == I.MenuType.Horizontal) {
 			const d = (snap == I.MenuDirection.Right) ? (this.ox - e.pageX + width) : e.pageX - this.ox;

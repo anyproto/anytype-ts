@@ -1,7 +1,7 @@
-import { I, Storage, Util } from 'ts/lib';
+import { I, Storage, Util, keyboard } from 'ts/lib';
 import { commonStore, menuStore } from 'ts/store';
 
-interface SidebarObj {
+interface SidebarData {
 	x: number;
 	y: number;
 	width: number;
@@ -15,10 +15,14 @@ const SNAP_THRESHOLD = 30;
 
 class Sidebar {
 
-	obj: SidebarObj = { x: 0, y: 0, width: 0, height: 0, fixed: false, snap: I.MenuDirection.None };
+	data: SidebarData = { x: 0, y: 0, width: 0, height: 0, fixed: false, snap: I.MenuDirection.None };
+	obj: any = null;
 	fixed: boolean = false;
+	timeoutShow: number = 0;
 
 	init () {
+		this.obj = $('#sidebar');
+
 		const stored = Storage.get('sidebar');
 		if (stored) {
 			this.set(stored);
@@ -51,7 +55,7 @@ class Sidebar {
 	};
 
 	set (v: any) {
-		v = Object.assign(this.obj, v);
+		v = Object.assign(this.data, v);
 
 		const { x, y } = this.checkCoords(v.x, v.y);
 		const snap = this.checkSnap(x);
@@ -63,7 +67,7 @@ class Sidebar {
 		v.width = this.checkWidth(v.width);
 		v.height = this.checkHeight(v.height);
 
-		this.obj = Object.assign(this.obj, v);
+		this.data = Object.assign(this.data, v);
 		Storage.set('sidebar', v);
 
 		this.setStyle();
@@ -71,10 +75,13 @@ class Sidebar {
 	};
 
 	setStyle () {
-		const obj = $('#sidebar');
-		const head = obj.find('#head');
+		if (!this.obj || !this.obj.length) {
+			return;
+		};
+
+		const head = this.obj.find('#head');
 		const platform = Util.getPlatform();
-		const { fixed, snap, x, y, width, height } = this.obj;
+		const { fixed, snap, x, y, width, height } = this.data;
 		const css: any = {};
 		const cn = [];
 		const hh = fixed ? (platform == I.Platform.Windows ? 30 : Util.sizeHeader()) : 12;
@@ -99,22 +106,64 @@ class Sidebar {
 			cn.push('right');
 		};
 
-		obj.removeClass('left right fixed');
-		obj.css(css).addClass(cn.join(' '));
 		head.css({ height: hh });
 
+		this.obj.removeClass('left right fixed');
+		this.obj.css(css).addClass(cn.join(' '));
 		this.checkButton();
 	};
 
-	checkButton () {
-		const { fixed } = this.obj;
-		const button = $('#footer #button-expand');
-
-		if (!button.length) {
+	onMouseMove () {
+		if (!this.obj || !this.obj.length) {
 			return;
 		};
 
-		fixed ? button.hide() : button.show();
+		if (keyboard.isDragging) {
+			this.obj.addClass('active');
+			return;
+		};
+
+		const { x } = keyboard.mouse.page;
+		const { snap, width } = this.data;
+		const win = $(window);
+		const ww = win.width();
+		const menuOpen = menuStore.isOpenList([ 'dataviewContext', 'preview' ]);
+
+		let add = false;
+		let remove = false;
+
+		if ((snap == I.MenuDirection.Left) && (ww > Constant.size.sidebar.unfix)) {
+			if (x <= 20) {
+				add = true;
+			};
+			if (x > width + 10) {
+				remove = true;
+			};
+		};
+
+		if (snap == I.MenuDirection.Right) {
+			if (x >= ww - 20) {
+				add = true;
+			};
+			if (x < ww - width - 10) {
+				remove = true;
+			};
+		};
+
+		if (menuOpen) {
+			remove = false;
+		};
+
+		if (add) {
+			this.obj.addClass('anim active');
+		};
+
+		if (remove) {
+			this.timeoutShow = window.setTimeout(() => {
+				this.obj.removeClass('active');
+				window.setTimeout(() => { this.obj.removeClass('anim'); }, 200);
+			}, 200);
+		};
 	};
 
 	collapse () {
@@ -125,21 +174,35 @@ class Sidebar {
 		this.set({ fixed: true });
 	};
 
+	show () {
+	};
+
+	hide () {
+	};
+
 	resize () {
-		const { fixed } = this.obj;
+		const { fixed } = this.data;
 		const win = $(window);
 		const ww = win.width();
 
-		if (ww > Constant.size.sidebar.unfix) {
-			if (!fixed && this.fixed) {
-				this.expand();
-			};
-		} else {
-			if (fixed) {
-				this.collapse();
-				this.fixed = true;
-			};
+		if ((ww > Constant.size.sidebar.unfix) && !fixed && this.fixed) {
+			this.expand();
 		};
+		if ((ww <= Constant.size.sidebar.unfix) && fixed) {
+			this.collapse();
+			this.fixed = true;
+		};
+	};
+
+	checkButton () {
+		const { fixed } = this.data;
+		const button = $('#footer #button-expand');
+
+		if (!button.length) {
+			return;
+		};
+
+		fixed ? button.hide() : button.show();
 	};
 
 	checkCoords (x: number, y: number): { x: number, y: number } {
@@ -150,11 +213,11 @@ class Sidebar {
 
 		x = Number(x);
 		x = Math.max(0, x);
-		x = Math.min(ww - this.obj.width, x);
+		x = Math.min(ww - this.data.width, x);
 
 		y = Number(y);
 		y = Math.max((wh - hh) * 0.1, y);
-		y = Math.min(hh + (wh - hh) * 0.9 - this.obj.height, y);
+		y = Math.min(hh + (wh - hh) * 0.9 - this.data.height, y);
 
 		return { x, y };
 	};
@@ -166,7 +229,7 @@ class Sidebar {
 		if (x <= SNAP_THRESHOLD) {
 			snap = I.MenuDirection.Left;
 		};
-		if (x + this.obj.width >= win.width() - SNAP_THRESHOLD) {
+		if (x + this.data.width >= win.width() - SNAP_THRESHOLD) {
 			snap = I.MenuDirection.Right;
 		};
 		return snap;

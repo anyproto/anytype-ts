@@ -21,7 +21,7 @@ const Footer = observer(class Item extends React.Component<Props, {}> {
 	};
 
 	render () {
-        const { fixed } = sidebar.obj;
+        const { fixed } = sidebar.data;
         const profile = detailStore.get(Constant.subIds.profile, blockStore.profile);
 
 		return (
