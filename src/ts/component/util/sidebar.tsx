@@ -534,6 +534,8 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		if (dir == I.MenuType.Vertical) {
 			sidebar.set({ height: e.pageY - this.oy });
 		};
+
+		Util.resizeSidebar();
 	};
 
 	onResizeEnd (e: any, dir: I.MenuType) {
@@ -563,6 +565,9 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		this.ox = e.pageX - offset.left;
 		this.oy = e.pageY - offset.top;
 
+		sidebar.set({ fixed: false });
+		Util.resizeSidebar();
+
 		keyboard.setDragging(true);
 		if (selection) {
 			selection.preventSelect(true);
@@ -577,7 +582,6 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		const win = $(window);
 		
 		sidebar.set({ 
-			fixed: false,
 			x: e.pageX - this.ox - win.scrollLeft(), 
 			y: e.pageY - this.oy - win.scrollTop(),
 		});

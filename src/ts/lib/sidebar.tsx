@@ -12,13 +12,16 @@ interface SidebarData {
 
 const Constant = require('json/constant.json');
 const SNAP_THRESHOLD = 30;
+const ANIMATION = 300;
 
 class Sidebar {
 
 	data: SidebarData = { x: 0, y: 0, width: 0, height: 0, fixed: false, snap: I.MenuDirection.None };
 	obj: any = null;
 	fixed: boolean = false;
+
 	timeoutShow: number = 0;
+	timeoutAnim: number = 0;
 
 	init () {
 		this.obj = $('#sidebar');
@@ -49,6 +52,7 @@ class Sidebar {
 			fixed: true,
 			snap: I.MenuDirection.Left,
 		});
+		Util.resizeSidebar();
 
 		this.fixed = false;
 		commonStore.autoSidebarSet(true);
@@ -71,7 +75,6 @@ class Sidebar {
 		Storage.set('sidebar', v);
 
 		this.setStyle();
-		Util.resizeSidebar();
 	};
 
 	setStyle () {
@@ -79,12 +82,9 @@ class Sidebar {
 			return;
 		};
 
-		const head = this.obj.find('#head');
-		const platform = Util.getPlatform();
 		const { fixed, snap, x, y, width, height } = this.data;
 		const css: any = {};
 		const cn = [];
-		const hh = fixed ? (platform == I.Platform.Windows ? 30 : Util.sizeHeader()) : 12;
 
 		css.left = '';
 		css.top = y;
@@ -106,20 +106,22 @@ class Sidebar {
 			cn.push('right');
 		};
 
-		head.css({ height: hh });
-
 		this.obj.removeClass('left right fixed');
 		this.obj.css(css).addClass(cn.join(' '));
+
+		this.resizeHead();
 		this.checkButton();
 	};
 
 	onMouseMove () {
+		window.clearTimeout(this.timeoutShow);
+
 		if (!this.obj || !this.obj.length) {
 			return;
 		};
 
 		if (keyboard.isDragging) {
-			this.obj.addClass('active');
+			this.obj.removeClass('anim').addClass('active');
 			return;
 		};
 
@@ -155,29 +157,49 @@ class Sidebar {
 		};
 
 		if (add) {
-			this.obj.addClass('anim active');
+			this.show();
 		};
 
 		if (remove) {
-			this.timeoutShow = window.setTimeout(() => {
-				this.obj.removeClass('active');
-				window.setTimeout(() => { this.obj.removeClass('anim'); }, 200);
-			}, 200);
+			this.timeoutShow = window.setTimeout(() => { this.hide(); }, 200);
 		};
 	};
 
 	collapse () {
-		this.set({ fixed: false });
+		this.obj.css({ left: this.data.x, top: this.data.y, height: this.data.height });
+		this.show();
+		this.obj.removeClass('fixed');
+		this.data.fixed = false;
+		this.checkButton();
+		this.resizeHead();
+
+		Util.resizeSidebar();
 	};
 
 	expand () {
-		this.set({ fixed: true });
+		this.obj.css({ left: 0, top: 50, height: '' });
+		this.show();
+		this.obj.addClass('fixed');
+		this.data.fixed = true;
+		this.checkButton();
+		this.resizeHead();
+
+		Util.resizeSidebar();
 	};
 
 	show () {
+		this.obj.addClass('anim active');
+		this.removeAnimation();
 	};
 
 	hide () {
+		this.obj.addClass('anim').removeClass('active');
+		this.removeAnimation();
+	};
+
+	removeAnimation () {
+		window.clearTimeout(this.timeoutAnim);
+		this.timeoutAnim = window.setTimeout(() => { this.obj.removeClass('anim'); }, ANIMATION);
 	};
 
 	resize () {
@@ -192,6 +214,13 @@ class Sidebar {
 			this.collapse();
 			this.fixed = true;
 		};
+	};
+
+	resizeHead () {
+		const head = this.obj.find('#head');
+		const platform = Util.getPlatform();
+
+		head.css({ height: this.data.fixed ? (platform == I.Platform.Windows ? 30 : Util.sizeHeader()) : 12 });
 	};
 
 	checkButton () {
