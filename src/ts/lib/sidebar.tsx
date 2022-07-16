@@ -152,7 +152,7 @@ class Sidebar {
 		const menuOpen = menuStore.isOpenList([ 'dataviewContext', 'preview' ]);
 		const popupOpen = popupStore.isOpen();
 
-		if (this.data.fixed || popupOpen || !autoSidebar) {
+		if (this.data.fixed || !autoSidebar) {
 			return;
 		};
 
@@ -177,7 +177,12 @@ class Sidebar {
 			};
 		};
 
+		if (popupOpen) {
+			show = false;
+		};
+
 		if (menuOpen) {
+			show = false;
 			hide = false;
 		};
 
@@ -199,9 +204,10 @@ class Sidebar {
 
 		this.obj.removeClass('anim').addClass('active');
 		this.obj.css({ left: this.data.x, top: this.data.y, height: this.data.height });
+		this.obj.addClass('anim');
 
 		raf(() => { 
-			this.obj.addClass('anim').removeClass('fixed');
+			this.obj.removeClass('fixed');
 			if (!autoSidebar) {
 				this.obj.removeClass('active');
 			};
@@ -226,11 +232,10 @@ class Sidebar {
 			css.right = 0;
 		};
 
-		this.obj.removeClass('anim');
-		this.obj.addClass('active');
-		this.obj.css(css);
+		this.obj.removeClass('anim').addClass('active');
+		this.obj.css(css).addClass('anim');
 
-		raf(() => { this.obj.addClass('anim fixed'); });
+		raf(() => { this.obj.addClass('fixed'); });
 
 		this.removeAnimation();
 		this.setFixed(true);
