@@ -7,7 +7,7 @@
 }
 
 .sidebar { 
-    position: fixed; background-color: #fff; z-index: 18; border-radius: 12px; box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2); 
+    position: fixed; background-color: #fff; z-index: 21; border-radius: 12px; box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2); 
 	display: flex; flex-direction: column; user-select: none; transition: none;
 }
 .sidebar.left { left: 0px; transform: translate3d(-110%,0px,0px); }
