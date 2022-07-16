@@ -16,8 +16,8 @@
 	height: 100% !important; top: 0px !important; border-radius: 0px; box-shadow: 0px 0px; border-right: 1px solid $colorLightGrey; 
 	transform: translate3d(0px,0px,0px);
 }
-.sidebar.anim { transition: left 0.3s ease-in-out, top 0.3s ease-in-out, box-shadow 0.3s ease-in-out, transform 0.3s ease-in-out; }
-.sidebar.active { transform: translate3d(0px,0px,0px) !important; }
+.sidebar.anim { transition: left 0.3s ease-in-out, top 0.3s ease-in-out, box-shadow 0.3s ease-in-out, transform 0.3s ease-in-out, opacity 0.3s ease-in-out; }
+.sidebar.active { transform: translate3d(0px,0px,0px); }
 
 .sidebar.right {
     .resize-h { right: auto; left: -5px; }

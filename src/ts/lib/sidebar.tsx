@@ -15,13 +15,14 @@ const $ = require('jquery');
 const Constant = require('json/constant.json');
 const SNAP_THRESHOLD = 30;
 const SHOW_THRESHOLD = 58;
-const ANIMATION = 300;
+const ANIMATION = 350;
 
 class Sidebar {
 
 	data: SidebarData = { x: 0, y: 0, width: 0, height: 0, fixed: false, snap: null };
 	obj: any = null;
 	fixed: boolean = false;
+	animating: boolean = false;
 
 	timeoutHide: number = 0;
 	timeoutAnim: number = 0;
@@ -140,10 +141,6 @@ class Sidebar {
 			return;
 		};
 
-		if (this.data.fixed) {
-			return;
-		};
-
 		const { autoSidebar } = commonStore;
 		const { x } = keyboard.mouse.page;
 		const { snap, width } = this.data;
@@ -152,7 +149,7 @@ class Sidebar {
 		const menuOpen = menuStore.isOpenList([ 'dataviewContext', 'preview' ]);
 		const popupOpen = popupStore.isOpen();
 
-		if (this.data.fixed || !autoSidebar) {
+		if (this.data.fixed || this.animating || !autoSidebar) {
 			return;
 		};
 
@@ -200,20 +197,43 @@ class Sidebar {
 			return;
 		};
 
-		const { autoSidebar } = commonStore;
+		this.animating = true;
 
-		this.obj.removeClass('anim').addClass('active');
-		this.obj.css({ left: this.data.x, top: this.data.y, height: this.data.height });
+		const { autoSidebar } = commonStore;
+		const { snap } = this.data;
+		const css: any = { top: 0, height: '100%' };
+		
+		let tx = 0;
+		if (snap == I.MenuDirection.Left) {
+			css.left = 0;
+			tx = -110;
+		};
+
+		if (snap == I.MenuDirection.Right) {
+			css.right = 0;
+			tx = 110;
+		};
+
+		this.obj.removeClass('anim');
+		this.obj.css(css);
 		this.obj.addClass('anim');
 
 		raf(() => { 
-			this.obj.removeClass('fixed');
+			if (autoSidebar) {
+				css.top = this.data.y;
+				css.height = this.data.height;
+			} else {
+				css.transform = `translate3d(${tx}%,0px,0px)`;
+			};
+			this.obj.css(css);
+		});
+
+		this.removeAnimation(() => {
+			this.obj.css({ transform: '', height: this.data.height });
 			if (!autoSidebar) {
 				this.obj.removeClass('active');
 			};
 		});
-
-		this.removeAnimation();
 		this.setFixed(false);
 	};
 
@@ -222,8 +242,14 @@ class Sidebar {
 			return;
 		};
 
+		const { autoSidebar } = commonStore;
 		const { snap } = this.data;
-		const css: any = { top: 50 };
+		const css: any = { top: 0, transform: 'translate3d(0px,0px,0px)' };
+
+		if (autoSidebar) {
+			css.top = 50;
+			css.height = this.data.height;
+		};
 
 		if (snap == I.MenuDirection.Left) {
 			css.left = 0;
@@ -232,12 +258,16 @@ class Sidebar {
 			css.right = 0;
 		};
 
-		this.obj.removeClass('anim').addClass('active');
+		this.obj.removeClass('anim');
 		this.obj.css(css).addClass('anim');
 
-		raf(() => { this.obj.addClass('fixed'); });
+		raf(() => {
+			this.obj.css({ top: 0 }).addClass('fixed'); 
+		});
 
-		this.removeAnimation();
+		this.removeAnimation(() => {
+			this.obj.css({ transform: '', height: this.data.height, top: this.data.y, left: '', right: '' });
+		});
 		this.setFixed(true);
 	};
 
@@ -251,9 +281,16 @@ class Sidebar {
 		this.removeAnimation();
 	};
 
-	removeAnimation () {
+	removeAnimation (callBack?: () => void) {
 		window.clearTimeout(this.timeoutAnim);
-		this.timeoutAnim = window.setTimeout(() => { this.obj.removeClass('anim'); }, ANIMATION);
+		this.timeoutAnim = window.setTimeout(() => { 
+			this.obj.removeClass('anim'); 
+			this.animating = false;
+
+			if (callBack) {
+				callBack();
+			};
+		}, ANIMATION);
 	};
 
 	resize () {
