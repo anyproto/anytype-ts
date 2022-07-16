@@ -346,7 +346,7 @@ class Sidebar {
 
 		y = Number(y);
 		y = Math.max(hh, y);
-		y = Math.min(wh - 62 - this.data.height, y);
+		y = Math.min(wh - 68 - this.data.height, y);
 
 		return { x, y };
 	};

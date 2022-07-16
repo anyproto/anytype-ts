@@ -273,9 +273,9 @@ html.themeDark {
 
     .sidebar { 
         background-color: $colorBlack; color: $colorPrimary; border-color: $colorLineSecondary !important; 
-        box-shadow: 0px 4px 16px rgb(0 0 0 / 20%), 0px 0px 0px 1px #393933 inset;
+        box-shadow: 0px 4px 16px rgba(0,0,0,0.2);
     }
-    .sidebar.fixed { box-shadow: 0px 0px; }
+    .sidebar.fixed { box-shadow: 0px 0px rgba(0,0,0,0); }
     .sidebar {
         .body {
             .icon.set { background-image: url('#{$themePath}/icon/sidebar/set.svg'); }
