@@ -1,5 +1,5 @@
 import { I, Storage, Util } from 'ts/lib';
-import { commonStore } from 'ts/store';
+import { commonStore, menuStore } from 'ts/store';
 
 interface SidebarObj {
 	x: number;
@@ -11,6 +11,7 @@ interface SidebarObj {
 };
 
 const Constant = require('json/constant.json');
+const SNAP_THRESHOLD = 30;
 
 class Sidebar {
 
@@ -50,37 +51,33 @@ class Sidebar {
 	};
 
 	set (v: any) {
-		const size = Constant.size.sidebar;
-
 		v = Object.assign(this.obj, v);
 
 		const { x, y } = this.checkCoords(v.x, v.y);
+		const snap = this.checkSnap(x);
 
 		v.fixed = Boolean(v.fixed);
 		v.x = x;
 		v.y = y;
-		v.snap = Number(v.snap) || I.MenuDirection.None;
-		
-		v.width = Number(v.width) || 0;
-		v.width = Math.max(size.width.min, Math.min(size.width.max, v.width));
-		
-		v.height = Number(v.height) || 0;
-		v.height = Math.max(size.height.min, Math.min(this.maxHeight(), v.height));
+		v.snap = snap;
+		v.width = this.checkWidth(v.width);
+		v.height = this.checkHeight(v.height);
 
 		this.obj = Object.assign(this.obj, v);
 		Storage.set('sidebar', v);
 
 		this.setStyle();
+		Util.resizeSidebar();
 	};
 
 	setStyle () {
 		const obj = $('#sidebar');
-		const button = $('#footer #button-expand');
+		const head = obj.find('#head');
+		const platform = Util.getPlatform();
 		const { fixed, snap, x, y, width, height } = this.obj;
 		const css: any = {};
 		const cn = [];
-
-		obj.removeClass('left right fixed');
+		const hh = fixed ? (platform == I.Platform.Windows ? 30 : Util.sizeHeader()) : 12;
 
 		css.left = '';
 		css.top = y;
@@ -102,9 +99,47 @@ class Sidebar {
 			cn.push('right');
 		};
 
-		console.log(css);
-		fixed ? button.hide() : button.show();
+		obj.removeClass('left right fixed');
 		obj.css(css).addClass(cn.join(' '));
+		head.css({ height: hh });
+
+		this.checkButton();
+	};
+
+	checkButton () {
+		const { fixed } = this.obj;
+		const button = $('#footer #button-expand');
+
+		if (!button.length) {
+			return;
+		};
+
+		fixed ? button.hide() : button.show();
+	};
+
+	collapse () {
+		this.set({ fixed: false });
+	};
+
+	expand () {
+		this.set({ fixed: true });
+	};
+
+	resize () {
+		const { fixed } = this.obj;
+		const win = $(window);
+		const ww = win.width();
+
+		if (ww > Constant.size.sidebar.unfix) {
+			if (!fixed && this.fixed) {
+				this.expand();
+			};
+		} else {
+			if (fixed) {
+				this.collapse();
+				this.fixed = true;
+			};
+		};
 	};
 
 	checkCoords (x: number, y: number): { x: number, y: number } {
@@ -122,6 +157,33 @@ class Sidebar {
 		y = Math.min(hh + (wh - hh) * 0.9 - this.obj.height, y);
 
 		return { x, y };
+	};
+
+	checkSnap (x: number) {
+		let win = $(window);
+		let snap = null;
+
+		if (x <= SNAP_THRESHOLD) {
+			snap = I.MenuDirection.Left;
+		};
+		if (x + this.obj.width >= win.width() - SNAP_THRESHOLD) {
+			snap = I.MenuDirection.Right;
+		};
+		return snap;
+	};
+
+	checkWidth (width: number) {
+		const size = Constant.size.sidebar.width;
+
+		width = Number(width) || 0;
+		return Math.max(size.min, Math.min(size.max, width));
+	};
+
+	checkHeight (height: number) {
+		const size = Constant.size.sidebar.height;
+
+		height = Number(height) || 0;
+		return Math.max(size.min, Math.min(sidebar.maxHeight(), height));
 	};
 
 	maxHeight () {

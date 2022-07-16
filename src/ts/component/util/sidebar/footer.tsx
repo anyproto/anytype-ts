@@ -53,9 +53,7 @@ const Footer = observer(class Item extends React.Component<Props, {}> {
 		e.preventDefault();
 		e.stopPropagation();
 
-		sidebar.set({ fixed: false });
-		menuStore.close('previewObject');
-		$(window).trigger('resize');
+		sidebar.collapse();
 	};
 
     onProfile (e: any) {
