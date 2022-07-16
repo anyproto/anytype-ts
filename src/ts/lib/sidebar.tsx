@@ -1,5 +1,5 @@
 import { I, Storage, Util, keyboard } from 'ts/lib';
-import { commonStore, menuStore } from 'ts/store';
+import { commonStore, menuStore, popupStore } from 'ts/store';
 
 interface SidebarData {
 	x: number;
@@ -143,11 +143,17 @@ class Sidebar {
 			return;
 		};
 
+		const { autoSidebar } = commonStore;
 		const { x } = keyboard.mouse.page;
 		const { snap, width } = this.data;
 		const win = $(window);
 		const ww = win.width();
 		const menuOpen = menuStore.isOpenList([ 'dataviewContext', 'preview' ]);
+		const popupOpen = popupStore.isOpen();
+
+		if (this.data.fixed || popupOpen || !autoSidebar) {
+			return;
+		};
 
 		let show = false;
 		let hide = false;
@@ -188,9 +194,12 @@ class Sidebar {
 			return;
 		};
 
-		this.obj.removeClass('anim').addClass('active')
+		this.obj.removeClass('anim').addClass('active');
 		this.obj.css({ left: this.data.x, top: this.data.y, height: this.data.height });
 		this.obj.addClass('anim').removeClass('fixed');
+
+		if () {
+		};
 
 		this.removeAnimation();
 		this.setFixed(false);
@@ -237,6 +246,8 @@ class Sidebar {
 			this.collapse();
 			this.fixed = true;
 		};
+
+		this.set({ height: this.maxHeight() });
 	};
 
 	resizeHead () {
