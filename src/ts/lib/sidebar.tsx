@@ -374,21 +374,23 @@ class Sidebar {
 			header.addClass('withSidebar');
 			footer.addClass('withSidebar');
 		};
-		if (snap == I.MenuDirection.Left) {
-			dummy = $('#sidebarDummyLeft');
-			header.addClass('snapLeft');
-			footer.addClass('snapLeft');
 
-			cssLoader.left = '';
-			cssLoader.right = 0;
-		};
-		if (snap == I.MenuDirection.Right) {
-			dummy = $('#sidebarDummyRight');
-			header.addClass('snapRight');
-			footer.addClass('snapRight');
+		if (snap !== null) {
+			if (snap == I.MenuDirection.Right) {
+				dummy = $('#sidebarDummyRight');
+				header.addClass('snapRight');
+				footer.addClass('snapRight');
 
-			cssLoader.left = 0;
-			cssLoader.right = '';
+				cssLoader.left = 0;
+				cssLoader.right = '';
+			} else {
+				dummy = $('#sidebarDummyLeft');
+				header.addClass('snapLeft');
+				footer.addClass('snapLeft');
+
+				cssLoader.left = '';
+				cssLoader.right = 0;
+			};
 		};
 
 		if (dummy && dummy.length) {
