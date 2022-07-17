@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { I, Onboarding, Util, Storage, analytics, keyboard } from 'ts/lib';
+import { I, Onboarding, Util, Storage, analytics, keyboard, sidebar } from 'ts/lib';
 import { Sidebar } from 'ts/component';
 import { authStore, commonStore, menuStore, popupStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -124,9 +124,9 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 			content = (
 				<div className="pageFlex">
 					{sb}
-					<div className="sidebarDummy left" />
+					<div id="sidebarDummyLeft" className="sidebarDummy left" />
 					{wrap}
-					<div className="sidebarDummy right" />
+					<div id="sidebarDummyRight" className="sidebarDummy right" />
 				</div>
 			);
 		};
@@ -374,7 +374,7 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 				this.refChild.resize();			
 			};
 
-			Util.resizeSidebar();
+			sidebar.resizePage();
 		});
 	};
 	

@@ -7,7 +7,6 @@ interface SidebarData {
 	width: number;
 	height: number;
 	fixed: boolean;
-	snap: I.MenuDirection;
 };
 
 const raf = require('raf');
@@ -20,7 +19,7 @@ const ANIMATION = 300;
 
 class Sidebar {
 
-	data: SidebarData = { x: 0, y: 0, width: 0, height: 0, fixed: false, snap: null };
+	data: SidebarData = { x: 0, y: 0, width: 0, height: 0, fixed: false };
 	obj: any = null;
 	fixed: boolean = false;
 	animating: boolean = false;
@@ -57,9 +56,10 @@ class Sidebar {
 			fixed: true,
 			snap: I.MenuDirection.Left,
 		});
-		Util.resizeSidebar();
 
+		this.resizePage();
 		this.fixed = false;
+
 		commonStore.autoSidebarSet(true);
 	};
 
@@ -67,12 +67,10 @@ class Sidebar {
 		v = Object.assign(this.data, v);
 
 		const { x, y } = this.checkCoords(v.x, v.y);
-		const snap = this.checkSnap(x);
 
 		v.fixed = Boolean(v.fixed);
 		v.x = x;
 		v.y = y;
-		v.snap = snap;
 		v.width = this.checkWidth(v.width);
 		v.height = this.checkHeight(v.height);
 
@@ -90,21 +88,20 @@ class Sidebar {
 			return;
 		};
 
-		const { fixed, snap, x, y, width, height } = this.data;
-		const css: any = {};
+		const { fixed, x, y, width, height } = this.data;
+		const snap = this.getSnap();
+		const css: any = { left: '', right: '', width };
 		const cn = [];
 
-		css.left = '';
-		css.top = y;
-		css.width = width;
-		css.height = height;
+		if (fixed) {
+			cn.push('fixed active');
+		} else {
+			css.top = y;
+			css.height = height;
+		};
 
 		if (snap === null) {
 			css.left = x;
-		};
-
-		if (fixed) {
-			cn.push('fixed');
 		};
 		if (snap == I.MenuDirection.Left) {
 			cn.push('left');
@@ -122,11 +119,12 @@ class Sidebar {
 
 	setFixed (v: boolean) {
 		this.data.fixed = v;
+
 		this.checkButton();
 		this.resizeHead();
+		this.resizePage();
 		this.save();
 
-		Util.resizeSidebar();
 		$(window).trigger('resize');
 	};
 
@@ -144,7 +142,8 @@ class Sidebar {
 
 		const { autoSidebar } = commonStore;
 		const { x } = keyboard.mouse.page;
-		const { snap, width } = this.data;
+		const {  width } = this.data;
+		const snap = this.getSnap();
 		const win = $(window);
 		const ww = win.width();
 		const menuOpen = menuStore.isOpenList([ 'dataviewContext', 'preview' ]);
@@ -161,7 +160,7 @@ class Sidebar {
 			if (x <= SHOW_THRESHOLD) {
 				show = true;
 			}
-			if (x >= width + 10) {
+			if (x >= width + 20) {
 				hide = true;
 			};
 		};
@@ -170,7 +169,7 @@ class Sidebar {
 			if (x >= ww - SHOW_THRESHOLD) {
 				show = true;
 			};
-			if (x <= ww - width - 10) {
+			if (x <= ww - width - 20) {
 				hide = true;
 			};
 		};
@@ -201,7 +200,7 @@ class Sidebar {
 		this.animating = true;
 
 		const { autoSidebar } = commonStore;
-		const { snap } = this.data;
+		const snap = this.getSnap();
 		const css: any = { top: 0, height: '100%' };
 		
 		let tx = 0;
@@ -234,7 +233,8 @@ class Sidebar {
 		});
 
 		this.removeAnimation(() => {
-			this.obj.css({ transform: '', height: this.data.height });
+			this.obj.css({ transform: '' });
+
 			if (!autoSidebar) {
 				this.obj.removeClass('active');
 			};
@@ -248,7 +248,7 @@ class Sidebar {
 		};
 
 		const { autoSidebar } = commonStore;
-		const { snap } = this.data;
+		const snap = this.getSnap();
 		const css: any = { top: 0, transform: 'translate3d(0px,0px,0px)' };
 
 		if (autoSidebar) {
@@ -277,16 +277,28 @@ class Sidebar {
 	};
 
 	show () {
+		if (!this.obj || !this.obj.length) {
+			return;
+		};
+
 		this.obj.addClass('anim active');
 		this.removeAnimation();
 	};
 
 	hide () {
+		if (!this.obj || !this.obj.length) {
+			return;
+		};
+
 		this.obj.addClass('anim').removeClass('active');
 		this.removeAnimation();
 	};
 
 	removeAnimation (callBack?: () => void) {
+		if (!this.obj || !this.obj.length) {
+			return;
+		};
+
 		window.clearTimeout(this.timeoutAnim);
 		this.timeoutAnim = window.setTimeout(() => { 
 			this.obj.removeClass('anim'); 
@@ -300,14 +312,17 @@ class Sidebar {
 
 	resize () {
 		const { fixed } = this.data;
+		const { unfix } = Constant.size.sidebar;
 		const win = $(window);
 		const ww = win.width();
 
-		if ((ww > Constant.size.sidebar.unfix) && !fixed && this.fixed) {
-			this.expand();
+		if ((ww > unfix) && !fixed && this.fixed) {
+			this.fixed = false;
 		};
-		if ((ww <= Constant.size.sidebar.unfix) && fixed) {
-			this.collapse();
+		if ((ww <= unfix) && fixed && !this.fixed) {
+			this.obj.addClass('anim').removeClass('active fixed');
+			this.setFixed(false);
+			this.removeAnimation();
 			this.fixed = true;
 		};
 
@@ -317,10 +332,74 @@ class Sidebar {
 	};
 
 	resizeHead () {
+		if (!this.obj || !this.obj.length) {
+			return;
+		};
+
 		const head = this.obj.find('#head');
 		const platform = Util.getPlatform();
 
 		head.css({ height: this.data.fixed ? (platform == I.Platform.Windows ? 30 : Util.sizeHeader()) : 12 });
+	};
+
+	resizePage () {
+		if (!this.obj || !this.obj.length) {
+			return;
+		};
+
+		const { fixed } = this.data;
+		const snap = this.getSnap();
+		const win = $(window);
+		const page = $('#page.isFull');
+		const header = page.find('#header');
+		const footer = page.find('#footer');
+		const loader = page.find('#loader');
+		
+		let width = fixed ? this.obj.width() : 0;
+		if (this.obj.css('display') == 'none') {
+			width = 0;
+		};
+		
+		let pw = win.width() - width - 1;
+		let css: any = { width: '' };
+		let cssLoader: any = { width: pw, left: '', right: '' };
+		let dummy = null;
+
+		header.css(css).removeClass('withSidebar snapLeft snapRight');
+		footer.css(css).removeClass('withSidebar snapLeft snapRight');
+
+		if (!this.obj.length) {
+			return;
+		};
+
+		if (fixed) {
+			header.addClass('withSidebar');
+			footer.addClass('withSidebar');
+		};
+		css.width = header.outerWidth() - width - 1;
+		
+		if (snap == I.MenuDirection.Left) {
+			dummy = $('#sidebarDummyLeft');
+			header.addClass('snapLeft');
+			footer.addClass('snapLeft');
+
+			cssLoader.left = '';
+			cssLoader.right = 0;
+		};
+		if (snap == I.MenuDirection.Right) {
+			dummy = $('#sidebarDummyRight');
+			header.addClass('snapRight');
+			footer.addClass('snapRight');
+
+			cssLoader.left = 0;
+			cssLoader.right = '';
+		};
+
+		dummy.css({ width: width + 8 });
+		page.css({ width: pw });
+		loader.css(cssLoader);
+		header.css(css);
+		footer.css(css);
 	};
 
 	checkButton () {
@@ -335,6 +414,7 @@ class Sidebar {
 	};
 
 	checkCoords (x: number, y: number): { x: number, y: number } {
+		const { width, height } = this.data;
 		const win = $(window);
 		const wh = win.height();
 		const ww = win.width();
@@ -342,46 +422,43 @@ class Sidebar {
 
 		x = Number(x);
 		x = Math.max(0, x);
-		x = Math.min(ww - this.data.width, x);
+		x = Math.min(ww - width, x);
 
 		y = Number(y);
 		y = Math.max(hh, y);
-		y = Math.min(wh - 68 - this.data.height, y);
+		y = Math.min(wh - SHOW_THRESHOLD - 10 - height, y);
 
 		return { x, y };
 	};
 
-	checkSnap (x: number) {
-		let win = $(window);
-		let snap = null;
+	getSnap () {
+		const { x, width } = this.data;
+		const win = $(window);
+		const ww = win.width();
 
+		let snap = null;
 		if (x <= SNAP_THRESHOLD) {
 			snap = I.MenuDirection.Left;
-		};
-		if (x + this.data.width >= win.width() - SNAP_THRESHOLD) {
+		} else
+		if (x + width >= ww - SNAP_THRESHOLD) {
 			snap = I.MenuDirection.Right;
 		};
 		return snap;
 	};
 
 	checkWidth (width: number) {
-		const size = Constant.size.sidebar.width;
-
-		width = Number(width) || 0;
-		return Math.max(size.min, Math.min(size.max, width));
+		const { min, max } = Constant.size.sidebar.width;
+		return Math.max(min, Math.min(max, Number(width) || 0));
 	};
 
 	checkHeight (height: number) {
-		const size = Constant.size.sidebar.height;
-
-		height = Number(height) || 0;
-		return Math.max(size.min, Math.min(sidebar.maxHeight(), height));
+		const { min } = Constant.size.sidebar.height;
+		return Math.max(min, Math.min(this.maxHeight(), Number(height) || 0));
 	};
 
 	maxHeight () {
 		const win = $(window);
-		const wh = win.height() - Util.sizeHeader();
-		return wh - 144;
+		return win.height() - Util.sizeHeader() - SHOW_THRESHOLD - 10;
 	};
 
 };

@@ -523,7 +523,8 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 	};
 
 	onResizeMove (e: any, dir: I.MenuType) {
-		const { snap, width } = sidebar.data;
+		const { width } = sidebar.data;
+		const snap = sidebar.getSnap();
 
 		if (dir == I.MenuType.Horizontal) {
 			const d = (snap == I.MenuDirection.Right) ? (this.ox - e.pageX + width) : e.pageX - this.ox;
@@ -534,7 +535,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 			sidebar.set({ height: e.pageY - this.oy });
 		};
 
-		Util.resizeSidebar();
+		sidebar.resizePage();
 	};
 
 	onResizeEnd (e: any, dir: I.MenuType) {
@@ -565,7 +566,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		this.oy = e.pageY - offset.top;
 
 		sidebar.set({ fixed: false });
-		Util.resizeSidebar();
+		sidebar.resizePage();
 
 		keyboard.setDragging(true);
 		if (selection) {

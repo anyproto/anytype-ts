@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { I, DataUtil, Util, keyboard } from 'ts/lib';
+import { I, DataUtil, Util, keyboard, sidebar } from 'ts/lib';
 
 import HeaderAuthIndex from './auth';
 import HeaderMainIndex from './main/index';
@@ -63,11 +63,11 @@ class Header extends React.Component<Props, {}> {
 	};
 
 	componentDidMount () {
-		Util.resizeSidebar();
+		sidebar.resizePage();
 	};
 
 	componentDidUpdate () {
-		Util.resizeSidebar();
+		sidebar.resizePage();
 		this.refChild.forceUpdate();
 	};
 

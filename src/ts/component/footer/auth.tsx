@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Icon } from 'ts/component';
-import { I, Util } from 'ts/lib';
+import { I, Util, sidebar } from 'ts/lib';
 import { menuStore } from 'ts/store';
 
 interface Props {};
@@ -23,11 +23,11 @@ class FooterAuth extends React.Component<Props, {}> {
 	};
 
 	componentDidMount () {
-		Util.resizeSidebar();
+		sidebar.resizePage();
 	};
 
 	componentDidUpdate () {
-		Util.resizeSidebar();	
+		sidebar.resizePage();	
 	};
 
 	onHelp () {
