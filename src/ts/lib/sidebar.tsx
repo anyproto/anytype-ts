@@ -368,16 +368,12 @@ class Sidebar {
 		header.css(css).removeClass('withSidebar snapLeft snapRight');
 		footer.css(css).removeClass('withSidebar snapLeft snapRight');
 
-		if (!this.obj.length) {
-			return;
-		};
-
+		css.width = header.outerWidth() - width - 1;
+		
 		if (fixed) {
 			header.addClass('withSidebar');
 			footer.addClass('withSidebar');
 		};
-		css.width = header.outerWidth() - width - 1;
-		
 		if (snap == I.MenuDirection.Left) {
 			dummy = $('#sidebarDummyLeft');
 			header.addClass('snapLeft');
@@ -395,7 +391,10 @@ class Sidebar {
 			cssLoader.right = '';
 		};
 
-		dummy.css({ width: width + 8 });
+		if (dummy && dummy.length) {
+			dummy.css({ width: width + 8 });
+		};
+
 		page.css({ width: pw });
 		loader.css(cssLoader);
 		header.css(css);
