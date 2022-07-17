@@ -9,8 +9,8 @@
 .header.snapLeft { right: 0px; }
 
 .header {
-	.side {	line-height: 28px; display: flex; align-items: center; flex-direction: row; }
-	.side.left { padding: 0px 6px; width: 20%; flex-shrink: 0; }
+	.side {	height: 100%; display: flex; align-items: center; flex-direction: row; }
+	.side.left { padding: 0px 6px; width: 20%; flex-shrink: 0; -webkit-app-region: no-drag; }
 	.side.center { width: 60%; flex-grow: 1; justify-content: center; }
 	.side.right { padding: 0px 10px; width: 20%; flex-shrink: 0; justify-content: end; gap: 0px 16px; }
 

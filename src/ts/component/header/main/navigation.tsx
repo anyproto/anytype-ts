@@ -36,7 +36,7 @@ const HeaderMainNavigation = observer(class HeaderMainNavigation extends React.C
 				</div>
 
 				<div className="side center">
-					<div id="path" className="path" onMouseDown={onSearch} onMouseOver={this.onPathOver} onMouseOut={this.onPathOut}>
+					<div id="path" className="path" onClick={onSearch} onMouseOver={this.onPathOver} onMouseOut={this.onPathOut}>
 						<div className="inner">
 							<IconObject object={object} size={18} />
 							<div className="name">{object.name}</div>
