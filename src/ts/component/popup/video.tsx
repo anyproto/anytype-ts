@@ -35,7 +35,7 @@ class PopupVideo extends React.Component<Props, {}> {
 					</div>
 				`;
 
-				content = <iframe srcDoc={src} frameBorder={0} scrolling="no"></iframe>;
+				content = <iframe srcDoc={src} frameBorder={0} scrolling="no" />;
 				break;
 		};
 		

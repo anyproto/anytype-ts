@@ -28,6 +28,7 @@ const PageAuthRegister = observer(class PageAuthRegister extends React.Component
 		this.onPathClick = this.onPathClick.bind(this);
 		this.onNameChange = this.onNameChange.bind(this);
 		this.onSubmit = this.onSubmit.bind(this);
+		this.onAdvanced = this.onAdvanced.bind(this);
 	};
 	
 	render () {
@@ -47,7 +48,11 @@ const PageAuthRegister = observer(class PageAuthRegister extends React.Component
 						<div className="name">{translate('authLoginBack')}</div>
 					</div>
 
-					{config.experimental ? <div id="button-advanced" className="authRegisterAdvanced" onClick={this.onAdvanced}>{translate('authRegisterAdvanced')}</div> : ''}
+					{config.experimental ? (
+						<div id="button-advanced" className="authRegisterAdvanced" onClick={this.onAdvanced}>
+							{translate('authRegisterAdvanced')}
+						</div>
+					) : ''}
 
 					<Error text={error} />
 		
@@ -58,10 +63,6 @@ const PageAuthRegister = observer(class PageAuthRegister extends React.Component
 						<Label text={translate('authRegisterLabel')} />
 						<Input ref={(ref: any) => this.refName = ref} placeholder={translate('authRegisterName')} value={name} onKeyUp={this.onNameChange} />
 						<Button type="input" text={translate('authRegisterSubmit')} />
-
-						{/*<div className="row cp location" onClick={this.onPathClick}>*/}
-						{/*	Account location: {accountPath}*/}
-						{/*</div>*/}
 					</form>
 				</Frame>
 			</div>

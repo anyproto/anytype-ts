@@ -401,6 +401,8 @@ class Sidebar {
 		loader.css(cssLoader);
 		header.css(css);
 		footer.css(css);
+
+		this.checkButton();
 	};
 
 	checkButton () {

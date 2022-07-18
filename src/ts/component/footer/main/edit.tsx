@@ -48,12 +48,10 @@ const FooterMainEdit = observer(class FooterMainEdit extends React.Component<Pro
 	};
 
 	componentDidMount () {
-		sidebar.checkButton();
 		sidebar.resizePage();
 	};
 
 	componentDidUpdate () {
-		sidebar.checkButton();
 		sidebar.resizePage();
 	};
 

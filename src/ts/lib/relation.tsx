@@ -183,10 +183,14 @@ class Relation {
 			case I.RelationType.Tag:
 			case I.RelationType.Object:
 			case I.RelationType.Relations:
+				if ('object' !== typeof(value)) {
+					value = [];
+				};
+
 				value = Util.objectCopy(value || []);
 				value = Util.arrayUnique(value);
-				value = value.map((it: any) => { return String(it || ''); });
-				value = value.filter((it: any) => { return it; });
+				value = value.map(it => String(it || ''));
+				value = value.filter(it => it);
 
 				if (maxCount && relation.maxCount) {
 					value = value.slice(value.length - relation.maxCount, value.length);
