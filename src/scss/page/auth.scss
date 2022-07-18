@@ -6,16 +6,21 @@
 	.label { margin-bottom: 26px; }
 	.input { height: 40px; border: solid 1px $colorBorderDark; }
 
-	.authBackWrap { position: absolute; top: 12px; left: 14px; display: flex; flex-wrap: nowrap; cursor: pointer; }
-	.authBackWrap .back { width: 20px; height: 22px; margin-right: 1px; }
-	.authBackWrap .name { font-size: 14px; line-height: 22px; letter-spacing: -0.12px; color: $colorDarkGrey; }
+	.authBackWrap { position: absolute; top: 12px; left: 14px; display: flex; align-items: center; flex-wrap: nowrap; cursor: pointer; }
+	.authBackWrap .icon.back { width: 24px; height: 24px; background-image: url('~img/icon/popup/settings/back0.svg'); transition: none; }
+	.authBackWrap .name { font-size: 14px; line-height: 22px; letter-spacing: -0.12px; color: $colorDarkGrey; transition: none; }
+
+	.authBackWrap:hover {
+		.icon.back { background-image: url('~img/icon/popup/settings/back1.svg'); }
+		.name { color: $colorBlack; }
+	}
 
 	.textareaWrap { overflow: hidden; background: #f7f5f0; margin: 0px 0px 32px 0px; border: solid 1px $colorBorderDark; }
 	.textarea { font-family: 'Plex'; padding: 7px 16px; height: auto; background: none; }
 	
 	.iconObject { margin-bottom: 12px; }
 	
-	.button { margin-right: 16px; font-size: 16px; line-height: 24px; letter-spacing: -0.2px; width: 176px; }
+	.button { margin-right: 16px; @include text-paragraph; width: 176px; }
 	.button:last-child { margin: 0px; }
 }
 
@@ -26,14 +31,9 @@
 	.label { font-size: 18px; line-height: 26px; letter-spacing: -0.28px; }
 }
 
-.pageIndexIndex, .pageAuthInvite {
-	.form { display: flex; }
-	.input { margin-right: 16px; }
-}
-
-.pageAuthLogin {
-	.inputWrap { margin-bottom: 32px; }
-	.inputWrap .input { text-align: center; border: solid 0px; border-bottom: solid 1px $colorBorderDark; }
+.pageAuthLogin,
+.pageAuthInvite {
+	.input { text-align: center; border: solid 0px; border-bottom: solid 1px $colorBorderDark; font-family: 'Plex'; margin-bottom: 32px; }
 }
 
 .pageAuthPinSelect, .pageAuthPinConfirm, .pageAuthPinCheck {

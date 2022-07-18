@@ -55,9 +55,8 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<Props
 					<Error text={error} />
 							
 					<form onSubmit={this.onSubmit}>
-						<div className="inputWrap">
-							<Input ref={(ref: any) => this.phraseRef = ref} placeholder={translate('authLoginLabel')} onKeyDown={this.onKeyDown} />
-						</div>
+						<Input ref={(ref: any) => this.phraseRef = ref} placeholder={translate('authLoginLabel')} onKeyDown={this.onKeyDown} />
+
 						<div className="buttons">
 							<Button type="input" text={translate('authLoginLogin')} />
 						</div>

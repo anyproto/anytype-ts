@@ -93,7 +93,7 @@
 	"authNoticeStart": { "en": "Start" },
 
 	"authLoginTitle": { "en": "Login with keychain" },
-	"authLoginLabel": { "en": "Type your recovery phrase or private key" },
+	"authLoginLabel": { "en": "Type your recovery phrase" },
 	"authLoginPhrase": { "en": "witch collapse practice feed shame open despair creek road again ice least" },
 	"authLoginLogin": { "en": "Continue" },
 	"authLoginBack": { "en": "Back" },
