@@ -7,7 +7,8 @@ import { observer } from 'mobx-react';
 
 import MenuHelp from './help';
 import MenuOnboarding from './onboarding';
-import MenuAccount from './account';
+import MenuAccount from './account/account';
+import MenuAccountPath from './account/path';
 import MenuSelect from './select';
 import MenuButton from './button';
 
@@ -84,6 +85,7 @@ const Components: any = {
 	help:					 MenuHelp,
 	onboarding:				 MenuOnboarding,
 	account:				 MenuAccount,
+	accountPath:			 MenuAccountPath,
 	select:					 MenuSelect,
 	button:					 MenuButton,
 

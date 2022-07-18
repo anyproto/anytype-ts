@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import {Frame, Cover, Label, Error, Input, Button, Header, FooterAuth as Footer, Icon} from 'ts/component';
-import { commonStore, authStore } from 'ts/store';
+import {commonStore, authStore, menuStore} from 'ts/store';
 import { observer } from 'mobx-react';
-import { FileUtil, Util, translate } from 'ts/lib';
+import {FileUtil, Util, translate, I} from 'ts/lib';
 
 interface Props extends RouteComponentProps<any> {}
 interface State {
@@ -33,7 +33,7 @@ const PageAuthRegister = observer(class PageAuthRegister extends React.Component
 	render () {
 		const { cover } = commonStore;
 		const { error } = this.state;
-		const { name, preview, accountPath } = authStore;
+		const { name, preview } = authStore;
 
 		return (
 			<div>
@@ -46,6 +46,7 @@ const PageAuthRegister = observer(class PageAuthRegister extends React.Component
 						<Icon className="back" />
 						<div className="name">{translate('authLoginBack')}</div>
 					</div>
+					<div id="button-advanced" className="authRegisterAdvanced" onClick={this.onAdvanced}>{translate('authRegisterAdvanced')}</div>
 					<Error text={error} />
 		
 					<form onSubmit={this.onSubmit}>
@@ -134,6 +135,20 @@ const PageAuthRegister = observer(class PageAuthRegister extends React.Component
 			this.setState({ error: error });
 		};
 	};
+
+	onAdvanced (e: any) {
+		const { accountPath } = authStore;
+
+		menuStore.open('accountPath', {
+			element: '#button-advanced',
+			offsetY: 0,
+			vertical: I.MenuDirection.Bottom,
+			horizontal: I.MenuDirection.Center,
+			data: {
+				accountPath: accountPath
+			}
+		});
+	}
 
 	onCancel (e: any) {
 		Util.route('/auth/select');

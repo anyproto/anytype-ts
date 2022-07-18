@@ -102,6 +102,7 @@
 	"authRegisterLabel": { "en": "New profile" },
 	"authRegisterName": { "en": "Enter your name" },
 	"authRegisterSubmit": { "en": "Create" },
+	"authRegisterAdvanced": {"en": "Advanced"},
 
 	"authAccountSelectTitle": { "en": "Choose profile" },
 	"authAccountSelectAdd": { "en": "Add profile" },
