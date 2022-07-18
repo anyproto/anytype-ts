@@ -121,6 +121,7 @@ class Sidebar {
 
 	setFixed (v: boolean) {
 		this.data.fixed = v;
+		this.data.snap = this.getSnap();
 
 		this.checkButton();
 		this.resizeHead();
@@ -354,8 +355,10 @@ class Sidebar {
 		const header = page.find('#header');
 		const footer = page.find('#footer');
 		const loader = page.find('#loader');
+		const dummyLeft = $('#sidebarDummyLeft');
+		const dummyRight = $('#sidebarDummyRight');
 		
-		let width = fixed ? this.data.width : 0;
+		let width = fixed ? this.obj.outerWidth() : 0;
 		if (this.obj.css('display') == 'none') {
 			width = 0;
 		};
@@ -368,6 +371,9 @@ class Sidebar {
 		header.css(css).removeClass('withSidebar snapLeft snapRight');
 		footer.css(css).removeClass('withSidebar snapLeft snapRight');
 
+		dummyLeft.css({ width: 0 });
+		dummyRight.css({ width: 0 });
+
 		css.width = header.outerWidth() - width - 1;
 		
 		if (fixed) {
@@ -377,14 +383,14 @@ class Sidebar {
 
 		if (snap !== null) {
 			if (snap == I.MenuDirection.Right) {
-				dummy = $('#sidebarDummyRight');
+				dummy = dummyRight;
 				header.addClass('snapRight');
 				footer.addClass('snapRight');
 
 				cssLoader.left = 0;
 				cssLoader.right = '';
 			} else {
-				dummy = $('#sidebarDummyLeft');
+				dummy = dummyLeft;
 				header.addClass('snapLeft');
 				footer.addClass('snapLeft');
 
@@ -434,8 +440,8 @@ class Sidebar {
 		return { x, y };
 	};
 
-	getSnap () {
-		const { x, width } = this.data;
+	getSnap (): I.MenuDirection {
+		const { x, width, fixed } = this.data;
 		const win = $(window);
 		const ww = win.width();
 
@@ -446,20 +452,23 @@ class Sidebar {
 		if (x + width >= ww - SNAP_THRESHOLD) {
 			snap = I.MenuDirection.Right;
 		};
+		if (fixed && (snap === null)) {
+			snap = I.MenuDirection.Left;
+		};
 		return snap;
 	};
 
-	checkWidth (width: number) {
+	checkWidth (width: number): number {
 		const { min, max } = Constant.size.sidebar.width;
 		return Math.max(min, Math.min(max, Number(width) || 0));
 	};
 
-	checkHeight (height: number) {
+	checkHeight (height: number): number {
 		const { min } = Constant.size.sidebar.height;
 		return Math.max(min, Math.min(this.maxHeight(), Number(height) || 0));
 	};
 
-	maxHeight () {
+	maxHeight (): number {
 		const win = $(window);
 		return win.height() - Util.sizeHeader() - SHOW_THRESHOLD - 10;
 	};

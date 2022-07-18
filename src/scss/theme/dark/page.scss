@@ -6,6 +6,11 @@
 .pageAuth, .pageIndex, .pageObject {
     .textarea { border: 0px; }
     .input { border-color: $colorLinePrimary; }
+
+	.authBackWrap:hover { color: $colorPrimary; }
+    .authBackWrap:hover {
+		.icon.back { background-image: url('#{$themePath}/icon/popup/settings/back1.svg'); } 
+	}
 }
 
 .pageAuthRegister {

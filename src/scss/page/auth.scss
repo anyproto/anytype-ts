@@ -6,13 +6,14 @@
 	.label { margin-bottom: 26px; }
 	.input { height: 40px; border: solid 1px $colorBorderDark; }
 
-	.authBackWrap { position: absolute; top: 8px; left: 8px; display: flex; align-items: center; flex-wrap: nowrap; cursor: pointer; }
-	.authBackWrap .icon.back { width: 24px; height: 24px; background-image: url('~img/icon/popup/settings/back0.svg'); transition: none; }
-	.authBackWrap .name { font-size: 14px; line-height: 22px; letter-spacing: -0.12px; color: $colorDarkGrey; transition: none; }
+	.authBackWrap { position: absolute; top: 8px; left: 8px; display: flex; align-items: center; flex-wrap: nowrap; cursor: pointer; color: $colorDarkGrey; }
+	.authBackWrap {
+		.icon.back { width: 24px; height: 24px; background-image: url('~img/icon/popup/settings/back0.svg'); transition: none; }
+	}
 
+	.authBackWrap:hover { color: $colorBlack; }
 	.authBackWrap:hover {
 		.icon.back { background-image: url('~img/icon/popup/settings/back1.svg'); }
-		.name { color: $colorBlack; }
 	}
 
 	.textareaWrap { overflow: hidden; background: #f7f5f0; margin: 0px 0px 32px 0px; border: solid 1px $colorBorderDark; }

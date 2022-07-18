@@ -37,7 +37,7 @@
             }
 
             .element:hover { color: $colorPrimary; }
-            .element:hover {
+			.element:hover {
 				.icon.back { background-image: url('#{$themePath}/icon/popup/settings/back1.svg'); } 
 			}
         }
