@@ -31,7 +31,7 @@ const PageAuthRegister = observer(class PageAuthRegister extends React.Component
 	};
 	
 	render () {
-		const { cover } = commonStore;
+		const { cover, config } = commonStore;
 		const { error } = this.state;
 		const { name, preview, accountPath } = authStore;
 
@@ -53,9 +53,11 @@ const PageAuthRegister = observer(class PageAuthRegister extends React.Component
 							<Input ref={(ref: any) => this.refName = ref} placeholder={translate('authRegisterName')} value={name} onKeyUp={this.onNameChange} />
 							<Button type="input" text={translate('authRegisterSubmit')} />
 						</div>
-						<div className="row cp location" onClick={this.onPathClick}>
-							Account location: {accountPath}
-						</div>
+						{config.experimental ? (
+							<div className="row cp location" onClick={this.onPathClick}>
+								Account location: {accountPath}
+							</div>
+						) : ''}
 					</form>
 				</Frame>
 			</div>
