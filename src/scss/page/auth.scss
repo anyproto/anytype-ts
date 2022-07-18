@@ -20,8 +20,16 @@
 	
 	.iconObject { margin-bottom: 12px; }
 	
-	.button { margin-right: 16px; @include text-paragraph; width: 176px; }
+	.button { margin-right: 16px; width: 176px; }
 	.button:last-child { margin: 0px; }
+}
+
+.pageIndex.pageIndexIndex,
+.pageAuth.pageAuthSelect,
+.pageAuthLogin,
+.pageAuthInvite
+.pageAuthRegister {
+	.button { @include text-paragraph; }
 }
 
 .pageIndex.pageIndexIndex,
