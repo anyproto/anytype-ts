@@ -7,6 +7,7 @@ interface SidebarData {
 	width: number;
 	height: number;
 	fixed: boolean;
+	snap: I.MenuDirection;
 };
 
 const raf = require('raf');
@@ -19,7 +20,7 @@ const ANIMATION = 300;
 
 class Sidebar {
 
-	data: SidebarData = { x: 0, y: 0, width: 0, height: 0, fixed: false };
+	data: SidebarData = { x: 0, y: 0, width: 0, height: 0, fixed: false, snap: null };
 	obj: any = null;
 	fixed: boolean = false;
 	animating: boolean = false;
@@ -67,12 +68,14 @@ class Sidebar {
 		v = Object.assign(this.data, v);
 
 		const { x, y } = this.checkCoords(v.x, v.y);
+		const snap = this.getSnap();
 
 		v.fixed = Boolean(v.fixed);
 		v.x = x;
 		v.y = y;
 		v.width = this.checkWidth(v.width);
 		v.height = this.checkHeight(v.height);
+		v.snap = snap;
 
 		this.data = Object.assign(this.data, v);
 		this.save();
@@ -88,8 +91,7 @@ class Sidebar {
 			return;
 		};
 
-		const { fixed, x, y, width, height } = this.data;
-		const snap = this.getSnap();
+		const { fixed, x, y, width, height, snap } = this.data;
 		const css: any = { left: '', right: '', width };
 		const cn = [];
 
@@ -142,8 +144,7 @@ class Sidebar {
 
 		const { autoSidebar } = commonStore;
 		const { x } = keyboard.mouse.page;
-		const {  width } = this.data;
-		const snap = this.getSnap();
+		const { width, snap } = this.data;
 		const win = $(window);
 		const ww = win.width();
 		const menuOpen = menuStore.isOpenList([ 'dataviewContext', 'preview' ]);
@@ -200,7 +201,7 @@ class Sidebar {
 		this.animating = true;
 
 		const { autoSidebar } = commonStore;
-		const snap = this.getSnap();
+		const { snap } = this.data;
 		const css: any = { top: 0, height: '100%' };
 		
 		let tx = 0;
@@ -248,7 +249,7 @@ class Sidebar {
 		};
 
 		const { autoSidebar } = commonStore;
-		const snap = this.getSnap();
+		const { snap } = this.data;
 		const css: any = { top: 0, transform: 'translate3d(0px,0px,0px)' };
 
 		if (autoSidebar) {
@@ -347,15 +348,14 @@ class Sidebar {
 			return;
 		};
 
-		const { fixed } = this.data;
-		const snap = this.getSnap();
+		const { fixed, snap } = this.data;
 		const win = $(window);
 		const page = $('#page.isFull');
 		const header = page.find('#header');
 		const footer = page.find('#footer');
 		const loader = page.find('#loader');
 		
-		let width = fixed ? this.obj.width() : 0;
+		let width = fixed ? this.data.width : 0;
 		if (this.obj.css('display') == 'none') {
 			width = 0;
 		};
