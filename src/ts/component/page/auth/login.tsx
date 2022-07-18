@@ -1,6 +1,16 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Frame, Cover, Title, Label, Error, Textarea, Button, Header, FooterAuth as Footer } from 'ts/component';
+import {
+	Frame,
+	Cover,
+	Title,
+	Error,
+	Input,
+	Button,
+	Header,
+	FooterAuth as Footer,
+	Icon
+} from 'ts/component';
 import { Util, translate, C, keyboard } from 'ts/lib';
 import { commonStore, authStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -37,17 +47,19 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<Props
 				<Footer />
 				
 				<Frame>
+					<div className="authBackWrap" onClick={this.onCancel}>
+						<Icon className="back" />
+						<div className="name">{translate('authLoginBack')}</div>
+					</div>
 					<Title text={translate('authLoginTitle')} />
-					<Label text={translate('authLoginLabel')} />
 					<Error text={error} />
 							
 					<form onSubmit={this.onSubmit}>
-						<div className="textareaWrap">
-							<Textarea ref={(ref: any) => this.phraseRef = ref} placeholder={translate('authLoginPhrase')} onKeyDown={this.onKeyDown} />
+						<div className="inputWrap">
+							<Input ref={(ref: any) => this.phraseRef = ref} placeholder={translate('authLoginLabel')} onKeyDown={this.onKeyDown} />
 						</div>
 						<div className="buttons">
 							<Button type="input" text={translate('authLoginLogin')} />
-							<Button text={translate('authLoginBack')} color="grey" onClick={this.onCancel} />
 						</div>
 					</form>
 				</Frame>

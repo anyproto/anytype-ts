@@ -1,18 +1,29 @@
 @import "~scss/_vars";
 
 .pageAuth, .pageIndex, .pageObject {
-	.frame { width: 672px; padding: 36px 48px 32px 48px; }
-	.title { margin-bottom: 15px; }
-	.label { margin-bottom: 25px; }
+	.frame { width: 672px; padding: 59px 48px 48px 48px; text-align: center; }
+	.title { margin-bottom: 22px; }
+	.label { margin-bottom: 26px; }
 	.input { height: 40px; border: solid 1px $colorBorderDark; }
+
+	.authBackWrap { position: absolute; top: 12px; left: 14px; display: flex; flex-wrap: nowrap; cursor: pointer; }
+	.authBackWrap .back { width: 20px; height: 22px; margin-right: 1px; }
+	.authBackWrap .name { font-size: 14px; line-height: 22px; letter-spacing: -0.12px; color: $colorDarkGrey; }
 
 	.textareaWrap { overflow: hidden; background: #f7f5f0; margin: 0px 0px 32px 0px; border: solid 1px $colorBorderDark; }
 	.textarea { font-family: 'Plex'; padding: 7px 16px; height: auto; background: none; }
 	
 	.iconObject { margin-bottom: 12px; }
 	
-	.button { margin-right: 16px; }
+	.button { margin-right: 16px; font-size: 16px; line-height: 24px; letter-spacing: -0.2px; width: 176px; }
 	.button:last-child { margin: 0px; }
+}
+
+.pageIndex.pageIndexIndex,
+.pageAuth.pageAuthSelect {
+	.frame { padding: 59px 112px 48px 112px; }
+	.title { font-size: 44px; line-height: 40px; letter-spacing: -1px; font-weight: 700; }
+	.label { font-size: 18px; line-height: 26px; letter-spacing: -0.28px; }
 }
 
 .pageIndexIndex, .pageAuthInvite {
@@ -21,8 +32,8 @@
 }
 
 .pageAuthLogin {
-	.label { margin-bottom: 9px; }
-	.textareaWrap { background: none; }
+	.inputWrap { margin-bottom: 32px; }
+	.inputWrap .input { text-align: center; border: solid 0px; border-bottom: solid 1px $colorBorderDark; }
 }
 
 .pageAuthPinSelect, .pageAuthPinConfirm, .pageAuthPinCheck {
@@ -67,12 +78,12 @@
 
 .pageAuthRegister {
 	.frame { padding-bottom: 36px; }
-	.fileWrap { width: 64px; height: 64px; display: inline-block; vertical-align: middle; }
+	.fileWrap { background-color: $colorBorderDark; display: block; margin: 0 auto 24px; }
 
-	.input-text { width: 346px; vertical-align: middle; }
-	.button { vertical-align: middle; width: 134px; padding: 0px; }	
-	.iconObject { margin-bottom: 0px; }
-	.iconObject { background-image: url('~img/icon/picture.svg'); background-size: 24px 18px; background-repeat: no-repeat; background-position: center; }
+	.label { margin-bottom: 0; }
+	.input-text { display: block; text-align: center; padding-bottom: 9px; width: 360px; margin: 0 auto 32px; font-size: 28px; line-height: 32px; font-weight: 700; border: solid 0px; border-bottom: solid 1px $colorBorderDark; }
+	.button { vertical-align: middle; width: 134px; padding: 0px; }
+	.iconObject { background-image: url('~img/icon/camera.svg'); background-size: 40px 30px; background-repeat: no-repeat; background-position: center; }
 	.iconObject.active {
 		.image { background-size: cover; }
 	}

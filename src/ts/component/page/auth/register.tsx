@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Frame, Cover, Title, Error, Input, Button, Header, FooterAuth as Footer } from 'ts/component';
+import {Frame, Cover, Label, Error, Input, Button, Header, FooterAuth as Footer, Icon} from 'ts/component';
 import { commonStore, authStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { FileUtil, Util, translate } from 'ts/lib';
@@ -42,20 +42,23 @@ const PageAuthRegister = observer(class PageAuthRegister extends React.Component
 				<Footer />
 				
 				<Frame>
-					<Title text={translate('authRegisterTitle')} />
+					<div className="authBackWrap" onClick={this.onCancel}>
+						<Icon className="back" />
+						<div className="name">{translate('authLoginBack')}</div>
+					</div>
 					<Error text={error} />
 		
 					<form onSubmit={this.onSubmit}>
-						<div className="row flex">
-							<div className="iconObject isHuman c64 fileWrap" onClick={this.onFileClick}>
-								{preview ? <img src={preview} className="iconImage c64" /> : ''}
-							</div>
-							<Input ref={(ref: any) => this.refName = ref} placeholder={translate('authRegisterName')} value={name} onKeyUp={this.onNameChange} />
-							<Button type="input" text={translate('authRegisterSubmit')} />
+						<div className="iconObject isHuman c96 fileWrap" onClick={this.onFileClick}>
+							{preview ? <img src={preview} className="iconImage c64" /> : ''}
 						</div>
-						<div className="row cp location" onClick={this.onPathClick}>
-							Account location: {accountPath}
-						</div>
+						<Label text={translate('authRegisterLabel')} />
+						<Input ref={(ref: any) => this.refName = ref} placeholder={translate('authRegisterName')} value={name} onKeyUp={this.onNameChange} />
+						<Button type="input" text={translate('authRegisterSubmit')} />
+
+						{/*<div className="row cp location" onClick={this.onPathClick}>*/}
+						{/*	Account location: {accountPath}*/}
+						{/*</div>*/}
 					</form>
 				</Frame>
 			</div>
@@ -130,6 +133,10 @@ const PageAuthRegister = observer(class PageAuthRegister extends React.Component
 		} else {
 			this.setState({ error: error });
 		};
+	};
+
+	onCancel (e: any) {
+		Util.route('/auth/select');
 	};
 	
 });
