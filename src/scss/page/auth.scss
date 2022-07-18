@@ -29,7 +29,7 @@
 .pageAuthLogin,
 .pageAuthInvite
 .pageAuthRegister {
-	.button { @include text-paragraph; }
+	.button { font-size: 16px; letter-spacing: -0.2px; }
 }
 
 .pageIndex.pageIndexIndex,
