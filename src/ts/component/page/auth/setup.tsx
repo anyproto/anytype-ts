@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Frame, Cover, Title, Error, Button, IconObject, Header, FooterAuth as Footer } from 'ts/component';
+import { Frame, Cover, Title, Error, Button, Header, FooterAuth as Footer } from 'ts/component';
 import { Storage, translate, C, DataUtil, Util, analytics } from 'ts/lib';
 import { commonStore, authStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -62,7 +62,6 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<Props
 				<Footer />
 				
 				<Frame>
-					<IconObject size={64} object={{ iconEmoji: icon }} />
 					<Title text={title} />
 					<Error text={error} />
 					{error ? <Button text={translate('authSetupBack')} onClick={() => { Util.route('/'); }} /> : ''}

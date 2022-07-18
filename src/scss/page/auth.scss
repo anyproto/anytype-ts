@@ -1,28 +1,47 @@
 @import "~scss/_vars";
 
 .pageAuth, .pageIndex, .pageObject {
-	.frame { width: 672px; padding: 36px 48px 32px 48px; }
-	.title { margin-bottom: 15px; }
-	.label { margin-bottom: 25px; }
+	.frame { width: 672px; padding: 60px 48px 48px 48px; text-align: center; }
+	.title { margin-bottom: 22px; }
+	.label { margin-bottom: 26px; }
 	.input { height: 40px; border: solid 1px $colorBorderDark; }
+
+	.authBackWrap { position: absolute; top: 8px; left: 8px; display: flex; align-items: center; flex-wrap: nowrap; cursor: pointer; }
+	.authBackWrap .icon.back { width: 24px; height: 24px; background-image: url('~img/icon/popup/settings/back0.svg'); transition: none; }
+	.authBackWrap .name { font-size: 14px; line-height: 22px; letter-spacing: -0.12px; color: $colorDarkGrey; transition: none; }
+
+	.authBackWrap:hover {
+		.icon.back { background-image: url('~img/icon/popup/settings/back1.svg'); }
+		.name { color: $colorBlack; }
+	}
 
 	.textareaWrap { overflow: hidden; background: #f7f5f0; margin: 0px 0px 32px 0px; border: solid 1px $colorBorderDark; }
 	.textarea { font-family: 'Plex'; padding: 7px 16px; height: auto; background: none; }
 	
 	.iconObject { margin-bottom: 12px; }
 	
-	.button { margin-right: 16px; }
+	.button { margin-right: 16px; width: 176px; }
 	.button:last-child { margin: 0px; }
 }
 
-.pageIndexIndex, .pageAuthInvite {
-	.form { display: flex; }
-	.input { margin-right: 16px; }
+.pageIndex.pageIndexIndex,
+.pageAuth.pageAuthSelect,
+.pageAuthLogin,
+.pageAuthInvite
+.pageAuthRegister {
+	.button { @include text-paragraph; }
 }
 
-.pageAuthLogin {
-	.label { margin-bottom: 9px; }
-	.textareaWrap { background: none; }
+.pageIndex.pageIndexIndex,
+.pageAuth.pageAuthSelect {
+	.frame { padding: 59px 112px 48px 112px; }
+	.title { font-size: 44px; line-height: 40px; letter-spacing: -1px; font-weight: 700; }
+	.label { font-size: 18px; line-height: 26px; letter-spacing: -0.28px; }
+}
+
+.pageAuthLogin,
+.pageAuthInvite {
+	.input { text-align: center; border: solid 0px; border-bottom: solid 1px $colorBorderDark; font-family: 'Plex'; margin-bottom: 32px; }
 }
 
 .pageAuthPinSelect, .pageAuthPinConfirm, .pageAuthPinCheck {
@@ -66,13 +85,16 @@
 }
 
 .pageAuthRegister {
-	.frame { padding-bottom: 36px; }
-	.fileWrap { width: 64px; height: 64px; display: inline-block; vertical-align: middle; }
+	.authRegisterAdvanced { line-height: 24px; cursor: pointer; position: absolute; top: 8px; right: 16px; color: $colorDarkGrey; transition: none; }
+	.authRegisterAdvanced:hover { color: $colorBlack; }
 
-	.input-text { width: 346px; vertical-align: middle; }
-	.button { vertical-align: middle; width: 134px; padding: 0px; }	
-	.iconObject { margin-bottom: 0px; }
-	.iconObject { background-image: url('~img/icon/picture.svg'); background-size: 24px 18px; background-repeat: no-repeat; background-position: center; }
+	.frame { padding-bottom: 36px; }
+	.fileWrap { background-color: $colorBorderDark; display: block; margin: 0 auto 24px; }
+
+	.label { margin-bottom: 0; }
+	.input-text { display: block; text-align: center; padding-bottom: 9px; width: 360px; margin: 0 auto 32px; font-size: 28px; line-height: 32px; font-weight: 700; border: solid 0px; border-bottom: solid 1px $colorBorderDark; }
+	.button { vertical-align: middle; width: 134px; padding: 0px; }
+	.iconObject { background-image: url('~img/icon/camera.svg'); background-size: 40px 30px; background-repeat: no-repeat; background-position: center; }
 	.iconObject.active {
 		.image { background-size: cover; }
 	}

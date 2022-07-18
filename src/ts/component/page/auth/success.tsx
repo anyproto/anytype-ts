@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Frame, Cover, Title, Label, Button, IconObject, Header, FooterAuth as Footer, Textarea } from 'ts/component';
+import { Frame, Cover, Title, Label, Button, Header, FooterAuth as Footer, Textarea } from 'ts/component';
 import { translate, DataUtil, analytics } from 'ts/lib';
 import { commonStore, authStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -34,8 +34,6 @@ const PageAuthSuccess = observer(class PageAuthSuccess extends React.Component<P
 				<Footer />
 				
 				<Frame>
-					<IconObject size={64} object={{ iconEmoji: '🎉' }} />
-
 					<Title text="Save your recovery phrase" />
 					<Label text="This phrase is needed to log in on another device and recover data. Please, keep it safe. You can find it anytime in settings." />
 						
