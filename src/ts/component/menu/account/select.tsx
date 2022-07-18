@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Icon, IconObject, Error } from 'ts/component';
-import { authStore, commonStore } from 'ts/store';
+import { authStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { I, C, Util, DataUtil, Storage, translate } from 'ts/lib';
 
@@ -12,7 +12,7 @@ interface State {
 
 const Errors = require('json/error.json');
 
-const MenuAccount = observer(class MenuAccount extends React.Component<Props, State> {
+const MenuAccountSelect = observer(class MenuAccountSelect extends React.Component<Props, State> {
 
     state = {
         error: ''
@@ -98,4 +98,4 @@ const MenuAccount = observer(class MenuAccount extends React.Component<Props, St
 
 });
 
-export default MenuAccount;
+export default MenuAccountSelect;

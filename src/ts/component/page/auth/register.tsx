@@ -1,14 +1,14 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import {Frame, Cover, Label, Error, Input, Button, Header, FooterAuth as Footer, Icon} from 'ts/component';
-import {commonStore, authStore, menuStore} from 'ts/store';
+import { Frame, Cover, Label, Error, Input, Button, Header, FooterAuth as Footer, Icon } from 'ts/component';
+import { commonStore, authStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
-import {FileUtil, Util, translate, I} from 'ts/lib';
+import { FileUtil, Util, translate, I } from 'ts/lib';
 
-interface Props extends RouteComponentProps<any> {}
+interface Props extends RouteComponentProps<any> {};
 interface State {
 	error: string;
-}
+};
 
 const { dialog } = window.require('@electron/remote');
 const Constant = require('json/constant.json');
@@ -140,16 +140,11 @@ const PageAuthRegister = observer(class PageAuthRegister extends React.Component
 	};
 
 	onAdvanced (e: any) {
-		const { accountPath } = authStore;
-
 		menuStore.open('accountPath', {
 			element: '#button-advanced',
 			offsetY: 7,
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Center,
-			data: {
-				accountPath: accountPath
-			}
 		});
 	}
 

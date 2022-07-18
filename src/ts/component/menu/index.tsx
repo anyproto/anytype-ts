@@ -7,7 +7,7 @@ import { observer } from 'mobx-react';
 
 import MenuHelp from './help';
 import MenuOnboarding from './onboarding';
-import MenuAccount from './account/select';
+import MenuAccountSelect from './account/select';
 import MenuAccountPath from './account/path';
 import MenuSelect from './select';
 import MenuButton from './button';
@@ -84,7 +84,7 @@ const ARROW_HEIGHT = 8;
 const Components: any = {
 	help:					 MenuHelp,
 	onboarding:				 MenuOnboarding,
-	account:				 MenuAccount,
+	accountSelect:			 MenuAccountSelect,
 	accountPath:			 MenuAccountPath,
 	select:					 MenuSelect,
 	button:					 MenuButton,

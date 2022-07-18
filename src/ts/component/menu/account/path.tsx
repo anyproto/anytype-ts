@@ -1,34 +1,33 @@
 import * as React from 'react';
 import { I } from 'ts/lib';
-import {authStore} from 'ts/store';
-import {Button, Label} from 'ts/component';
-
-const { dialog } = window.require('@electron/remote');
+import { Button, Label, Title } from 'ts/component';
+import { authStore } from 'ts/store';
 
 interface Props extends I.Menu {};
+
+const { dialog } = window.require('@electron/remote');
 
 class MenuAccountPath extends React.Component<Props, {}> {
 
     constructor (props: any) {
         super(props);
 
-        // this.onClick = this.onClick.bind(this);
+        this.onClick = this.onClick.bind(this);
     };
 
     render () {
-        const { param } = this.props;
-        const { data } = param;
+		const { accountPath } = authStore;
 
         return (
-            <div className="menuAccountPath">
-                <Label className="menuTitle" text="Account data location" />
-                <Label text={data.accountPath} />
-                <Button onClick={this.onPathClick} text={'Customize'} color="grey" className="c28" />
+            <div>
+                <Label className="bold" text="Account data location" />
+                <Label text={accountPath} onClick={this.onClick} />
+                <Button onClick={this.onClick} text={'Customize'} color="grey" className="c28" />
             </div>
         );
     };
 
-    onPathClick (e: any) {
+    onClick (e: any) {
         const options = {
             properties: [ 'openDirectory' ],
         };

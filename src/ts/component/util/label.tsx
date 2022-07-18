@@ -6,6 +6,7 @@ interface Props {
 	id?: string;
 	text: string;
 	className?: string;
+	onClick?: (e: any) => void;
 };
 
 const $ = require('jquery');
@@ -13,7 +14,7 @@ const $ = require('jquery');
 class Label extends React.Component<Props, {}> {
 
 	render () {
-		const { id, text, className } = this.props;
+		const { id, text, className, onClick } = this.props;
 		
 		let cn = [ 'label' ];
 		if (className) {
@@ -21,7 +22,7 @@ class Label extends React.Component<Props, {}> {
 		};
 		
 		return (
-			<div id={id} className={cn.join(' ')} dangerouslySetInnerHTML={{ __html: text }} />
+			<div id={id} className={cn.join(' ')} dangerouslySetInnerHTML={{ __html: text }} onClick={onClick} />
 		);
 	};
 	

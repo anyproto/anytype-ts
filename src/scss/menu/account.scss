@@ -27,11 +27,12 @@
 		}
 	}
 
-	.menu.menuAccountPath { width: 320px; padding: 11px 16px 16px 16px;
-
-		.content { padding: 0; overflow: visible;
+	.menu.menuAccountPath { width: 320px; padding: 11px 16px 16px 16px; }
+	.menu.menuAccountPath {
+		.content { padding: 0; overflow: visible; }
+		.content {
+			.label.bold { margin-bottom: 6px; font-weight: 600; }
 			.label { margin-bottom: 11px; }
-			.label.menuTitle { margin-bottom: 6px; font-weight: 600; }
 		}
 	}
 }
