@@ -141,7 +141,7 @@ const PageAuthRegister = observer(class PageAuthRegister extends React.Component
 
 		menuStore.open('accountPath', {
 			element: '#button-advanced',
-			offsetY: 0,
+			offsetY: 7,
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Center,
 			data: {
