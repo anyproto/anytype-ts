@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Icon } from 'ts/component';
-import { I, Util } from 'ts/lib';
+import { I, sidebar } from 'ts/lib';
 import { menuStore } from 'ts/store';
 
 interface Props extends RouteComponentProps<any>  {};
@@ -23,11 +23,11 @@ class FooterMainIndex extends React.Component<Props, {}> {
 	};
 
 	componentDidMount () {
-		Util.resizeSidebar();
+		sidebar.resizePage();
 	};
 
 	componentDidUpdate () {
-		Util.resizeSidebar();	
+		sidebar.resizePage();	
 	};
 
 	onHelp () {

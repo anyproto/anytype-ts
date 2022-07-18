@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { I, Onboarding, Util, Storage, analytics, keyboard, Renderer } from 'ts/lib';
+import { I, Onboarding, Util, Storage, analytics, keyboard, Renderer, sidebar } from 'ts/lib';
 import { Sidebar } from 'ts/component';
 import { authStore, commonStore, menuStore, popupStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -126,9 +126,9 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 			content = (
 				<div className="pageFlex">
 					{sb}
-					<div className="sidebarDummy left" />
+					<div id="sidebarDummyLeft" className="sidebarDummy left" />
 					{wrap}
-					<div className="sidebarDummy right" />
+					<div id="sidebarDummyRight" className="sidebarDummy right" />
 				</div>
 			);
 		};
@@ -349,6 +349,12 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 	};
 	
 	setBodyClass () {
+		const { isPopup } = this.props;
+	
+		if (isPopup) {
+			return;
+		};
+
 		const { config } = commonStore;
 		const platform = Util.getPlatform();
 		const cn = [ 
@@ -362,7 +368,6 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 		};
 
 		obj.attr({ class: cn.join(' ') });
-
 		commonStore.setThemeClass();
 	};
 	
@@ -376,7 +381,7 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 				this.refChild.resize();			
 			};
 
-			Util.resizeSidebar();
+			sidebar.resizePage();
 		});
 	};
 	

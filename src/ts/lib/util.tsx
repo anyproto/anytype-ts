@@ -975,9 +975,10 @@ class Util {
 
 	
 	resizeSidebar () {
-		const { fixed, snap } = sidebar.data;
+		const { fixed } = sidebar.data;
+		const snap = sidebar.getSnap();
 		const win = $(window);
-		const obj = $('#sidebar');
+		const obj = sidebar.obj;
 		const page = $('#page.isFull');
 		const header = page.find('#header');
 		const footer = page.find('#footer');
@@ -991,11 +992,10 @@ class Util {
 		let pw = win.width() - width - 1;
 		let css: any = { width: '' };
 		let cssLoader: any = { width: pw, left: '', right: '' };
-		let dummy = $('.sidebarDummy');
+		let dummy = null;
 
 		header.css(css).removeClass('withSidebar snapLeft snapRight');
 		footer.css(css).removeClass('withSidebar snapLeft snapRight');
-		dummy.css(css);
 
 		if (!obj.length) {
 			return;
@@ -1007,23 +1007,24 @@ class Util {
 		};
 		css.width = header.outerWidth() - width - 1;
 		
-		if (snap !== null) {
-			if (snap == I.MenuDirection.Right) {
-				dummy = $('.sidebarDummy.right');
-				header.addClass('snapRight');
-				footer.addClass('snapRight');
+		if (snap == I.MenuDirection.Left) {
+			dummy = $('.sidebarDummyLeft');
+			header.addClass('snapLeft');
+			footer.addClass('snapLeft');
 
-				cssLoader.left = 0;
-				cssLoader.right = '';
-			} else {
-				dummy = $('.sidebarDummy.left');
-				header.addClass('snapLeft');
-				footer.addClass('snapLeft');
-
-				cssLoader.left = '';
-				cssLoader.right = 0;
-			};
+			cssLoader.left = '';
+			cssLoader.right = 0;
 		};
+		if (snap == I.MenuDirection.Right) {
+			dummy = $('#sidebarDummyRight');
+			header.addClass('snapRight');
+			footer.addClass('snapRight');
+
+			cssLoader.left = 0;
+			cssLoader.right = '';
+		};
+
+		console.log(dummy, width);
 
 		dummy.css({ width });
 		page.css({ width: pw });
