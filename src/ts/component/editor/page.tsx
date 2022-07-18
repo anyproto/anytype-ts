@@ -414,7 +414,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			};
 
 			let obj = $(`#block-${block.id}`);
-			if (!obj.length) {
+			if (!obj.length || obj.hasClass('noPlus')) {
 				continue;
 			};
 

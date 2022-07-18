@@ -359,7 +359,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 								options: this.optionsRow(rowId, true),
 								onSelect: (e: any, item: any) => {
 									fill(() => { 
-										this.onSelect(e, item, rowId, columnId, cellId, this.getBlockIds(I.BlockType.TableRow, rowId, columnId, cellId)); 
+										this.onSelect(e, item, rowId, columnId, this.getBlockIds(I.BlockType.TableRow, rowId, columnId, cellId)); 
 									});
 									menuContext.close();
 								}
@@ -373,7 +373,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 								options: this.optionsColumn(columnId, true),
 								onSelect: (e: any, item: any) => {
 									fill(() => { 
-										this.onSelect(e, item, rowId, columnId, cellId, this.getBlockIds(I.BlockType.TableColumn, rowId, columnId, cellId)); 
+										this.onSelect(e, item, rowId, columnId, this.getBlockIds(I.BlockType.TableColumn, rowId, columnId, cellId)); 
 									});
 									menuContext.close();
 								}
@@ -444,7 +444,9 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 					});
 				},
 				onSelect: (e: any, item: any) => {
-					this.onSelect(e, item, rowId, columnId, cellId, blockIds);
+					fill(() => { 
+						this.onSelect(e, item, rowId, columnId, blockIds);
+					});
 					menuContext.close();
 				}
 			},
@@ -453,14 +455,14 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		menuStore.open('select1', menuParam);
 	};
 
-	onSelect (e: any, item: any, rowId: string, columnId: string, targetCellId: string, blockIds: string[]) {
+	onSelect (e: any, item: any, rowId: string, columnId: string, blockIds: string[]) {
 		if (item.arrow) {
 			return;
 		};
 
 		const { rootId } = this.props;
 		const { rows, columns } = this.getData();
-	
+
 		let position: I.BlockPosition = I.BlockPosition.None;
 		let next: any = null;
 		let idx: number = -1;
