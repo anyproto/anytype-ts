@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { I } from 'ts/lib';
 import {authStore} from 'ts/store';
-import {Button} from 'ts/component';
+import {Button, Label} from 'ts/component';
 
 const { dialog } = window.require('@electron/remote');
 
@@ -21,8 +21,8 @@ class MenuAccountPath extends React.Component<Props, {}> {
 
         return (
             <div className="menuAccountPath">
-                <p className="menuTitle">Account data location</p>
-                <p>{data.accountPath}</p>
+                <Label className="menuTitle" text="Account data location" />
+                <Label text={data.accountPath} />
                 <Button onClick={this.onPathClick} text={'Customize'} color="grey" className="c28" />
             </div>
         );

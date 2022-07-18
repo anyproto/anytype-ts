@@ -7,7 +7,7 @@ import { observer } from 'mobx-react';
 
 import MenuHelp from './help';
 import MenuOnboarding from './onboarding';
-import MenuAccount from './account/account';
+import MenuAccount from './account/select';
 import MenuAccountPath from './account/path';
 import MenuSelect from './select';
 import MenuButton from './button';

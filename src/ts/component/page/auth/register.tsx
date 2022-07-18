@@ -31,7 +31,7 @@ const PageAuthRegister = observer(class PageAuthRegister extends React.Component
 	};
 	
 	render () {
-		const { cover } = commonStore;
+		const { cover, config } = commonStore;
 		const { error } = this.state;
 		const { name, preview } = authStore;
 
@@ -46,7 +46,9 @@ const PageAuthRegister = observer(class PageAuthRegister extends React.Component
 						<Icon className="back" />
 						<div className="name">{translate('authLoginBack')}</div>
 					</div>
-					<div id="button-advanced" className="authRegisterAdvanced" onClick={this.onAdvanced}>{translate('authRegisterAdvanced')}</div>
+
+					{config.experimental ? <div id="button-advanced" className="authRegisterAdvanced" onClick={this.onAdvanced}>{translate('authRegisterAdvanced')}</div> : ''}
+
 					<Error text={error} />
 		
 					<form onSubmit={this.onSubmit}>
