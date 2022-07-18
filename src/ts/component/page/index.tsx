@@ -347,6 +347,12 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 	};
 	
 	setBodyClass () {
+		const { isPopup } = this.props;
+	
+		if (isPopup) {
+			return;
+		};
+
 		const { config } = commonStore;
 		const platform = Util.getPlatform();
 		const cn = [ 
@@ -360,7 +366,6 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 		};
 
 		obj.attr({ class: cn.join(' ') });
-
 		commonStore.setThemeClass();
 	};
 	
