@@ -265,13 +265,11 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 			buttons.unshift({ id: 'link', name: 'Link to website', icon: 'link' });
 		};
 
-		let sections: any[] = [
-			{ id: I.MarkType.Link, name: '', children: buttons },
-		];
-
+		let sections: any[] = [];
 		if (items.length) {
-			sections.unshift({ id: I.MarkType.Object, name: 'Objects', children: items });
+			sections.push({ id: I.MarkType.Object, name: 'Objects', children: items });
 		};
+		sections.push({ id: I.MarkType.Link, name: '', children: buttons });
 		return DataUtil.menuSectionsMap(sections);
 	};
 
@@ -281,7 +279,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 		let items: any[] = [];
 		for (let section of sections) {
 			if (withSections && section.name) {
-				items.push({ id: section.id, name: section.name, isSection: true});
+				items.push({ id: section.id, name: section.name, isSection: true });
 			};
 			items = items.concat(section.children);
 		};
