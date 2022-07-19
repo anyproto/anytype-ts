@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { MenuItemVertical, Filter, ObjectName } from 'ts/component';
-import { I, C, Util, keyboard, DataUtil, analytics } from 'ts/lib';
+import { I, C, Util, keyboard, DataUtil, analytics, focus } from 'ts/lib';
 import { commonStore, dbStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
@@ -217,11 +217,13 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 	};
 
 	onFilterClear () {
-		const { param } = this.props;
+		const { param, close } = this.props;
 		const { data } = param;
 		const { type, onChange } = data;
 
 		onChange(type, '');
+		close();
+		focus.apply();
 	};
 
 	getSections () {
