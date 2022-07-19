@@ -139,6 +139,7 @@ class MenuManager {
 						label: 'Fullscreen', type: 'checkbox', checked: this.win.isFullScreen(),
 						click: () => { this.win.setFullScreen(!this.win.isFullScreen()); }
 					},
+					{ label: 'Reload', accelerator: 'CmdOrCtrl+R', click: () => { this.win.reload(); } }
 				]
 			},
 			{
@@ -188,7 +189,6 @@ class MenuManager {
 				label: 'Debug',
 				submenu: [
 					{ label: 'Flags', submenu: flagMenu },
-					{ label: 'Refresh', accelerator: 'CmdOrCtrl+R', click: () => { this.win.reload(); } },
 					{ label: 'Dev Tools', accelerator: 'Alt+CmdOrCtrl+I', click: () => { this.win.webContents.openDevTools(); } },
 				]
 			});
