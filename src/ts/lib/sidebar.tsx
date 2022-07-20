@@ -284,6 +284,7 @@ class Sidebar {
 			return;
 		};
 
+		this.obj.css({ top: this.data.y, height: this.data.height });
 		this.obj.addClass('anim active');
 		this.removeAnimation();
 	};
