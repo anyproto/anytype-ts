@@ -37,8 +37,8 @@ $transitionFast: all 0.2s ease-in-out;
 @mixin text-header1 { font-family: 'Inter'; font-size: 28px; line-height: 32px; letter-spacing: -0.56px; font-weight: 600; }
 @mixin text-header2 { font-family: 'Inter'; font-size: 22px; line-height: 28px; letter-spacing: -0.48px; font-weight: 600; }
 @mixin text-header3 { font-size: 18px; line-height: 26px; letter-spacing: -0.28px; font-weight: 600; }
-@mixin text-description { font-size: 18px; line-height: 26px; letter-spacing: -0.16px; }
-@mixin text-quote { font-size: 18px; line-height: 26px; letter-spacing: -0.16px; }
+@mixin text-description { font-size: 18px; line-height: 26px; letter-spacing: -0.28px; }
+@mixin text-quote { font-size: 18px; line-height: 26px; letter-spacing: -0.28px; }
 
 @mixin pos-abs-mid { position: absolute; left: 50%; top: 50%; }
 
