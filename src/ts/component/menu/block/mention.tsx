@@ -331,7 +331,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		const items = this.getItems();
 		const obj = $(`#${getId()} .content`);
 		const offset = 4;
-		const height = Math.max(HEIGHT_ITEM * 1 + offset, Math.min(HEIGHT_ITEM * LIMIT_HEIGHT, items.length * HEIGHT_ITEM + offset));
+		const height = Math.max(44, Math.min(HEIGHT_ITEM * LIMIT_HEIGHT, items.length * HEIGHT_ITEM + offset));
 
 		obj.css({ height });
 		position();

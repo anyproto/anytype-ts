@@ -87,7 +87,7 @@
 		.item.isReadonly::before { transition: none; }
 		.item.isReadonly.hover::before, .item.isReadonly:hover::before { opacity: 0; background: none; }
 
-		.item.add { color: $colorDarkGrey; line-height: 20px; }
+		.item.add { line-height: 20px; }
 
 		.item {
 			.name { display: inline-block; vertical-align: top; position: relative; line-height: 20px; }
