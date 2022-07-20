@@ -164,8 +164,12 @@
 
 				.markers { padding: 9px 0px 9px 9px; }
 				.wrap { display: table; }
+
 				#value { display: table-cell; }
 				#value, .placeholder { padding: 9px 20px 9px 0px; }
+
+				.focusable.isFocused { background: none; }
+
 				.placeholder { display: none !important; }
 			}
 
