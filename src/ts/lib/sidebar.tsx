@@ -202,8 +202,9 @@ class Sidebar {
 		this.animating = true;
 
 		const { autoSidebar } = commonStore;
-		const { snap } = this.data;
+		const { x, y, width, height, snap } = this.data;
 		const css: any = { top: 0, height: '100%' };
+		const mouse = keyboard.mouse.page;
 		
 		let tx = 0;
 		if (snap == I.MenuDirection.Left) {
@@ -222,9 +223,9 @@ class Sidebar {
 
 		raf(() => { 
 			const css: any = {};
-			if (autoSidebar) {
-				css.top = this.data.y;
-				css.height = this.data.height;
+			if (autoSidebar && (mouse.x >= x) && (mouse.x <= x + width)) {
+				css.top = y;
+				css.height = height;
 				css.transform = `translate3d(0px,0px,0px)`;
 			} else {
 				css.top = 0;
