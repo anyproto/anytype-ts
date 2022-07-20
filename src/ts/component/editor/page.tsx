@@ -130,7 +130,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 						))}
 					</div>
 					
-					<div className="blockLast" onClick={this.onLastClick} />
+					<div id="blockLast" className="blockLast" onClick={this.onLastClick} />
 				</div>
 			</div>
 		);
@@ -139,6 +139,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 	componentDidMount () {
 		const { dataset, isPopup } = this.props;
 		const { selection } = dataset || {};
+		const win = $(window);
+		const namespace = isPopup ? '-popup' : '';
+		const renderer = Util.getRenderer();
 
 		this._isMounted = true;
 
@@ -147,10 +150,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		this.open();
 
 		keyboard.disableClose(false);
-
-		const win = $(window);
-		const namespace = isPopup ? '.popup' : '';
-		const renderer = Util.getRenderer();
 
 		win.on('mousemove.editor' + namespace, throttle((e: any) => { this.onMouseMove(e); }, THROTTLE));
 		win.on('keydown.editor' + namespace, (e: any) => { this.onKeyDownEditor(e); });
@@ -326,9 +325,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 	
 	unbind () {
 		const { isPopup } = this.props;
-		const namespace = isPopup ? '.popup' : '';
+		const namespace = isPopup ? '-popup' : '';
 		const events = 'keydown.editor mousemove.editor scroll.editor paste.editor resize.editor focus.editor';
-		const a = events.split(' ').map((it: string) => { return it + namespace; });
+		const a = events.split(' ').map(it => it + namespace);
 
 		$(window).unbind(a.join(' '));
 	};
@@ -1460,15 +1459,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		
 		range = Util.objectCopy(range);
 
-		const data = { 
-			text: text.join('\n'), 
-			html: null, 
-			anytype: { 
-				range: range,
-				blocks: blocks, 
-			},
-		};
-
 		const cb = (message: any) => {
 			const blocks = (message.anySlot || []).map(Mapper.From.Block);
 
@@ -1968,7 +1958,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		const node = $(ReactDOM.findDOMNode(this));
 		const note = node.find('#note');
 		const blocks = node.find('.blocks');
-		const last = node.find('.blockLast');
+		const last = node.find('#blockLast');
 		const size = node.find('#editorSize');
 		const cover = node.find('.block.blockCover');
 		const obj = this.getContainer();
@@ -1978,6 +1968,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		const hh = isPopup ? header.height() : Util.sizeHeader();
 
 		if (blocks.length && last.length) {
+			last.css({ height: '' });
+
 			const ct = isPopup ? container.offset().top : 0;
 			const h = container.height();
 			const height = blocks.outerHeight() + blocks.offset().top - ct;

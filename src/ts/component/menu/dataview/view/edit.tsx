@@ -210,8 +210,6 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 
 		if (view.id) {
 			C.BlockDataviewViewUpdate(rootId, blockId, view.id, view, (message: any) => {
-				console.log('getData', view.id);
-
 				getData(view.id, 0);
 
 				if (onSave) {

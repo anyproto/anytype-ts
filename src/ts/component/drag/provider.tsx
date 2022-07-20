@@ -120,9 +120,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 
 		const dt = (e.dataTransfer || e.originalEvent.dataTransfer);
 		const isFileDrop = dt.files && dt.files.length;
-		const last = blockStore.getFirstBlock(rootId, -1, (it: I.Block) => {
-			return !it.isSystem() && !it.isLayoutFooter();
-		});
+		const last = blockStore.getFirstBlock(rootId, -1, it => it.canCreateBlock());
 
 		let position = this.position;
 		let data: any = null;
