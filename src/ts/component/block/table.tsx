@@ -62,7 +62,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 	};
 
 	render () {
-		const { rootId, block, readonly } = this.props;
+		const { block } = this.props;
 		const { rows, columns } = this.getData();
 		const cn = [ 'wrap', 'focusable', 'c' + block.id ];
 
@@ -70,6 +70,8 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		columns.forEach((column: I.Block) => {
 			const { width } = column.fields || {};
 		});
+
+		console.log('table props', this.props);
 
 		return (
 			<div 
@@ -619,7 +621,11 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 	};
 
 	onCellFocus (e: any, rowId: string, columnId: string, cellId: string) {
-		const { rootId } = this.props;
+		const { rootId, readonly } = this.props;
+		if (readonly) {
+			return;
+		};
+
 		const cell = blockStore.getLeaf(rootId, cellId);
 		const cb = () => {
 			this.setEditing(cellId);
@@ -644,7 +650,9 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 	};
 
 	onCellClick (e: any, rowId: string, columnId: string, cellId: string) {
-		this.onCellFocus(e, rowId, columnId, cellId);
+		if (!this.props.readonly) {
+			this.onCellFocus(e, rowId, columnId, cellId);
+		};
 	};
 
 	onCellEnter (e: any, rowId: string, columnId: string, id: string) {

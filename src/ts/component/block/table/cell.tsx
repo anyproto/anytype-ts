@@ -14,9 +14,15 @@ const Constant = require('json/constant.json');
 
 const BlockTableCell = observer(class BlockTableCell extends React.Component<Props, {}> {
 
+	constructor(props: Props) {
+		super(props);
+
+		this.onMouseDown = this.onMouseDown.bind(this);
+	};
+
 	render () {
 		const { 
-			rootId, block, readonly, rowIdx, columnIdx, row, column, onHandleRow, onHandleColumn, onOptions, onCellFocus, onCellBlur, onCellClick, onCellEnter, 
+			readonly, block, rowIdx, columnIdx, row, column, onHandleRow, onHandleColumn, onOptions, onCellFocus, onCellBlur, onCellClick, onCellEnter, 
 			onCellLeave, onCellKeyDown, onCellKeyUp, onResizeStart, onDragStartColumn, onDragStartRow, onEnterHandle, onLeaveHandle, onCellUpdate
 		} = this.props;
 
@@ -77,28 +83,38 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 			);
 		};
 
-		const EmptyBlock = () => (
-			<div className="block blockText noPlus align0">
-				<div className="wrapContent">
-					<div className="selectable">
-						<div className="dropTarget">
-							<div className="flex">
-								<div className="markers" />
-								<div
-									id="value"
-									className="value"
-									contentEditable={true}
-									suppressContentEditableWarning={true}
-									onFocus={(e: any) => { onCellFocus(e, row.id, column.id, cellId); }}
-									onBlur={(e: any) => { onCellBlur(e, row.id, column.id, cellId); }}
-									onDragStart={(e: any) => { e.preventDefault(); }}
-								/>
+		const EmptyBlock = () => {
+			const cn = [ 'block', 'blockText', 'noPlus', 'align0' ];
+			const cv = [ 'value' ]; 
+
+			if (readonly) {
+				cn.push('isReadonly');
+				cv.push('isReadonly');
+			};
+
+			return (
+				<div className={cn.join(' ')}>
+					<div className="wrapContent">
+						<div className="selectable">
+							<div className="dropTarget">
+								<div className="flex">
+									<div className="markers" />
+									<div
+										id="value"
+										className={cv.join(' ')}
+										contentEditable={!readonly}
+										suppressContentEditableWarning={true}
+										onFocus={(e: any) => { onCellFocus(e, row.id, column.id, cellId); }}
+										onBlur={(e: any) => { onCellBlur(e, row.id, column.id, cellId); }}
+										onDragStart={(e: any) => { e.preventDefault(); }}
+									/>
+								</div>
 							</div>
 						</div>
 					</div>
 				</div>
-			</div>
-		);
+			);
+		};
 
 		return (
 			<div
@@ -107,6 +123,7 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 				onClick={(e: any) => { onCellClick(e, row.id, column.id, cellId); }}
 				onMouseEnter={(e: any) => { onCellEnter(e, row.id, column.id, cellId); }}
 				onMouseLeave={(e: any) => { onCellLeave(e, row.id, column.id, cellId); }}
+				onMouseDown={this.onMouseDown}
 				onContextMenu={(e: any) => { onOptions(e, I.BlockType.Text, row.id, column.id, cellId); }}
 				data-column-id={column.id}
 			>
@@ -118,8 +135,6 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 						key={`block-${cellId}`} 
 						{...this.props} 
 						block={block} 
-						rootId={rootId} 
-						readonly={readonly} 
 						isInsideTable={true}
 						className="noPlus"
 						onKeyDown={(e: any, text: string, marks: I.Mark[], range: I.TextRange, props: any) => { 
@@ -141,6 +156,21 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 				<Icon className="menu" inner={inner} onClick={(e: any) => { onOptions(e, I.BlockType.Text, row.id, column.id, cellId); }} />
 			</div>
 		);
+	};
+
+	onMouseDown (e: any) {
+		const { dataset } = this.props;
+		const { selection } = dataset || {};
+
+		if (!selection) {
+			return;
+		};
+
+		selection.preventSelect(true);
+
+		$(window).off('mousedown.table-cell').on('mousedown.table-cell', (e: any) => {
+			selection.preventSelect(false);
+		});
 	};
 
 });

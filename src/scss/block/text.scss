@@ -3,8 +3,8 @@
 .blocks {
 	.block.blockText { @include text-paragraph; word-wrap: break-word; }
 	.block.blockText {
-		#value { -webkit-user-modify: read-write-plaintext-only; width: 100%; overflow: hidden; position: relative; z-index: 1; }
-		#value * { user-select: text; }
+		#value { -webkit-user-modify: read-write-plaintext-only; width: 100%; overflow: hidden; position: relative; z-index: 1; user-select: text; }
+		#value * { user-select: text !important; }
 
 		.placeholder { display: none; }
 
@@ -83,14 +83,14 @@
 
 	.block.blockText > .wrapContent > .selectable > .dropTarget > .flex > .wrap { flex: auto; position: relative; padding: 0px; width: 100%; }	
 
-	.block.blockText > .wrapContent > .selectable > .dropTarget .value.isFocused { background: none; }
+	.block.blockText > .wrapContent > .selectable > .dropTarget > .flex > #value.isFocused { background: none; }
 
 	.block.blockText.isReadonly > .wrapContent > .selectable > .dropTarget .marker.check { cursor: default; }
-	.block.blockText.isReadonly > .wrapContent > .selectable > .dropTarget .value { min-height: 24px; cursor: text !important; user-select: text !important; }
-	.block.blockText.isReadonly > .wrapContent > .selectable > .dropTarget .placeholder { display: none; }
+	.block.blockText.isReadonly > .wrapContent > .selectable > .dropTarget > .flex > #value { min-height: 24px; cursor: text !important; user-select: text !important; }
+	.block.blockText.isReadonly > .wrapContent > .selectable > .dropTarget > .flex > .placeholder { display: none; }
 
 	.block.blockText.isReadonly.code > .wrapContent > .selectable > .dropTarget { padding: 16px; }
-	.block.blockText.isReadonly.title > .wrapContent > .selectable > .dropTarget .value { min-height: 1em; }
+	.block.blockText.isReadonly.title > .wrapContent > .selectable > .dropTarget > .flex > #value { min-height: 1em; }
 
 	.block.blockText.isChecked > .wrapContent > .selectable > .dropTarget * { color: $colorMediumGrey !important; }
 
@@ -102,7 +102,7 @@
 			color: $colorMediumGrey; position: absolute; z-index: 0; left: 0px; top: 0px; display: none;
 			width: 100%; height: 100%; cursor: text; 
 		}
-		.value { -webkit-user-modify: read-write-plaintext-only; }
+		#value { -webkit-user-modify: read-write-plaintext-only; }
 	}
 	.block.blockText.title > .wrapContent > .selectable > .dropTarget { padding: 4px 0px 2px 0px; }
 
@@ -149,11 +149,10 @@
 	.block.blockText.code > .wrapContent > .selectable > .dropTarget { padding: 41px 16px 16px 16px; background: rgba(247,245,240,0.5); }
 	.block.blockText.code > .wrapContent > .selectable > .dropTarget > .flex { position: static; } 
 	.block.blockText.code > .wrapContent > .selectable > .dropTarget > .flex {
-		.value { font-family: 'Plex'; @include text-common; tab-size: 4; }
-		.value * { background: none; }
-		.additional { 
-			position: absolute; top: 9px; left: 0px; z-index: 1; display: block; padding: 0px 16px; width: 100%;
-		}
+		#value { font-family: 'Plex'; @include text-common; tab-size: 4; }
+		#value * { background: none; }
+
+		.additional { position: absolute; top: 9px; left: 0px; z-index: 1; display: block; padding: 0px 16px; width: 100%; }
 		.additional {
 			.select { border: 0px; color: $colorMediumGrey; @include text-common; border-radius: 0px; padding: 0px 20px 0px 0px; }
 			.select {
@@ -185,7 +184,7 @@
 	}
 
 	.block.blockText.code.isReadonly > .wrapContent > .selectable > .dropTarget > .flex {
-		.value { white-space: pre !important; }
+		#value { white-space: pre !important; }
 		.additional { display: none; }
 	}
 
