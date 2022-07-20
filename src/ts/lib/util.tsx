@@ -1058,8 +1058,6 @@ class Util {
 			cssLoader.right = '';
 		};
 
-		console.log(dummy, width);
-
 		dummy.css({ width });
 		page.css({ width: pw });
 		loader.css(cssLoader);

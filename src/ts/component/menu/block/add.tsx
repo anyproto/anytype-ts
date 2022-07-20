@@ -599,7 +599,12 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 				};
 
 				if (item.type == I.BlockType.Table) {
-					C.BlockTableCreate(rootId, blockId, position, Number(item.rowCnt) || 3, Number(item.columnCnt) || 3, false);
+					C.BlockTableCreate(rootId, blockId, position, Number(item.rowCnt) || 3, Number(item.columnCnt) || 3, false, (message: any) => {
+						analytics.event('CreateBlock', { 
+							middleTime: message.middleTime, 
+							type: param.type, 
+						});
+					});
 				} else
 				if ((item.type == I.BlockType.Text) && (item.itemId != I.TextStyle.Code)) {
 					C.BlockListTurnInto(rootId, [ blockId ], item.itemId, (message: any) => {

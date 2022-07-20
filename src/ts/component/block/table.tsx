@@ -71,8 +71,6 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			const { width } = column.fields || {};
 		});
 
-		console.log('table props', this.props);
-
 		return (
 			<div 
 				id="wrap"

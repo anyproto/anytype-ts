@@ -89,8 +89,6 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 		let additional = null;
 		let renderChildren = !isInsideTable;
 
-		console.log('block.props', this.props);
-
 		if (className) {
 			cn.push(className);
 		};
