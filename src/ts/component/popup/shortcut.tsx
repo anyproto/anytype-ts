@@ -110,8 +110,9 @@ class PopupShortcut extends React.Component<Props, State> {
 						{ mac: '&#8984; + F',			 com: 'Ctrl + F',			 name: 'Find on page' },
 						{ mac: '&#8984; + Q',			 com: 'Ctrl + Q',			 name: 'Close Anytype' },
 						{ mac: '&#8984; + Y',			 com: 'Ctrl + H',			 name: 'Show page edit history' },
-						{ mac: '&#8984; + Click',		 com: 'Ctrl + Click',	 name: 'On page link will open it in modal view' },
-						{ mac: 'Ctrl + Space',		 com: 'Ctrl + Space',	 name: 'Shortcuts to launch shortcuts view' },
+						{ mac: '&#8984; + Click',		 com: 'Ctrl + Click',		 name: 'On page link will open it in modal view' },
+						{ mac: 'Ctrl + Space',			 com: 'Ctrl + Space',		 name: 'Shortcuts to launch shortcuts view' },
+						{ mac: '&#8984; + \\',			 com: 'Ctrl + \\',			 name: 'Toggle sidebar' },
 					]
 				},
 
