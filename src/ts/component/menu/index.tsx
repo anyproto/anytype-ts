@@ -767,15 +767,25 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 			});
 		};
 
-		if (this.ref && this.ref.onRemove && refInput && !refInput.isFocused) {
-			keyboard.shortcut('backspace', e, (pressed: string) => {
-				e.preventDefault();
+		if (!refInput || (refInput && !refInput.isFocused)) {
+			if (this.ref && this.ref.onRemove) {
+				keyboard.shortcut('backspace', e, (pressed: string) => {
+					e.preventDefault();
 
-				this.ref.n--;
-				this.checkIndex();
-				this.ref.onRemove(e, item);
-				this.setActive(null, true);
-			});
+					this.ref.n--;
+					this.checkIndex();
+					this.ref.onRemove(e, item);
+					this.setActive(null, true);
+				});
+			};
+
+			if (this.ref && this.ref.onSwitch) {
+				keyboard.shortcut('space', e, (pressed: string) => {
+					e.preventDefault();
+
+					this.ref.onSwitch(e, item);
+				});
+			};
 		};
 	};
 

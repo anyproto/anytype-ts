@@ -217,6 +217,40 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		this.onOptionsClose();
 	};
 
+	getOptions (type: I.BlockType, rowId: string, columnId: string, cellId: string) {
+		let options: any[] = [];
+
+		switch (type) {
+			case I.BlockType.TableRow:
+				options = options.concat(this.optionsRow(rowId));
+				options = options.concat(this.optionsColor(''));
+				options = options.concat(this.optionsAlign(''));
+				break;
+
+			case I.BlockType.TableColumn:
+				options = options.concat([
+					{ id: 'sort', icon: 'sort', name: 'Sort', arrow: true },
+					{ isDiv: true },
+				]);
+				options = options.concat(this.optionsColumn(columnId));
+				options = options.concat(this.optionsColor(''));
+				options = options.concat(this.optionsAlign(''));
+				break;
+
+			default:
+				options = options.concat([
+					{ id: 'row', name: 'Row', arrow: true },
+					{ id: 'column', name: 'Column', arrow: true },
+					{ isDiv: true },
+				]);
+				options = options.concat(this.optionsColor(cellId));
+				options = options.concat(this.optionsAlign(cellId));
+				break;
+		};
+
+		return options;
+	};
+
 	onOptions (e: any, type: I.BlockType, rowId: string, columnId: string, cellId: string) {
 		if (!this._isMounted) {
 			return;
@@ -229,6 +263,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		const current: any = blockStore.getLeaf(rootId, cellId) || {};
 		const node = $(ReactDOM.findDOMNode(this));
 		const subIds = [ 'select2', 'blockColor', 'blockBackground' ];
+		const options: any[] = this.getOptions(type, rowId, columnId, cellId);
 		
 		let blockIds = [];
 		let menuContext: any = null;
@@ -245,17 +280,12 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			subIds: subIds,
 		};
 
-		let options: any[] = [];
 		let element: any = null;
 		let fill: any = null;
 		let optionsStyle: any[] = [];
 
 		switch (type) {
 			case I.BlockType.TableRow:
-				options = options.concat(this.optionsRow(rowId));
-				options = options.concat(this.optionsColor(''));
-				options = options.concat(this.optionsAlign(''));
-
 				optionsStyle = this.optionsStyle('');
 
 				menuParam = Object.assign(menuParam, {
@@ -270,14 +300,6 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				break;
 
 			case I.BlockType.TableColumn:
-				options = options.concat([
-					{ id: 'sort', icon: 'sort', name: 'Sort', arrow: true },
-					{ isDiv: true },
-				]);
-				options = options.concat(this.optionsColumn(columnId));
-				options = options.concat(this.optionsColor(''));
-				options = options.concat(this.optionsAlign(''));
-
 				optionsStyle = this.optionsStyle('');
 
 				element = node.find(`#cell-${cellId}`).first();
@@ -294,14 +316,6 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				break;
 
 			default:
-				options = options.concat([
-					{ id: 'row', name: 'Row', arrow: true },
-					{ id: 'column', name: 'Column', arrow: true },
-					{ isDiv: true },
-				]);
-				options = options.concat(this.optionsColor(cellId));
-				options = options.concat(this.optionsAlign(cellId));
-
 				optionsStyle = this.optionsStyle(cellId);
 
 				element = node.find(`#cell-${cellId} .icon.menu .inner`);
@@ -320,19 +334,31 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 
 		menuParam = Object.assign(menuParam, {
 			data: {
+				filter: '',
 				options: options,
+				onSwitch: (e: any, item: any) => {
+					if (item.onSwitch) {
+						item.onSwitch(e, !item.switchValue, () => {
+							if (menuContext.ref && menuContext.ref.updateOptions) {
+								menuContext.ref.updateOptions(this.getOptions(type, rowId, columnId, cellId));
+							};
+						});
+					};
+				},
 				onOver: (e: any, item: any) => {
 					if (!item.arrow) {
 						menuStore.closeAll(subIds);
 						return;
 					};
 
+					let menuSubContext = null;
 					let menuId = '';
 					let menuParam: any = {
 						element: `#${menuContext.getId()} #item-${item.id}`,
 						offsetX: menuContext.getSize().width,
 						vertical: I.MenuDirection.Center,
 						isSub: true,
+						onOpen: (context: any) => { menuSubContext = context; },
 						data: {
 							rootId, 
 							rebind: menuContext.ref.rebind,
@@ -357,6 +383,15 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 							menuParam.component = 'select';
 							menuParam.data = Object.assign(menuParam.data, {
 								options: this.optionsRow(rowId, true),
+								onSwitch: (e: any, item: any) => {
+									if (item.onSwitch) {
+										item.onSwitch(e, !item.switchValue, () => {
+											if (menuSubContext.ref && menuSubContext.ref.updateOptions) {
+												menuSubContext.ref.updateOptions(this.optionsRow(rowId, true));
+											};
+										});
+									};
+								},
 								onSelect: (e: any, item: any) => {
 									fill(() => { 
 										this.onSelect(e, item, rowId, columnId, this.getBlockIds(I.BlockType.TableRow, rowId, columnId, cellId)); 
@@ -1201,7 +1236,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		let options: any[] = [
 			{ 
 				id: 'rowHeader', icon: 'table-header-row', name: 'Header row', withSwitch: true, switchValue: isHeader,
-				onSwitch: (e: any, v: boolean) => { C.BlockTableRowSetHeader(rootId, id, v); }
+				onSwitch: (e: any, v: boolean, callBack?: () => void) => { C.BlockTableRowSetHeader(rootId, id, v, callBack); }
 			},
 			{ isDiv: true },
 		];

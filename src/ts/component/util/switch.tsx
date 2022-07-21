@@ -55,6 +55,12 @@ class Switch extends React.Component<Props, State> {
 	componentDidMount () {
 		this.setValue(this.props.value);
 	};
+
+	componentDidUpdate () {
+		if (this.props.value != this.state.value) {
+			this.setValue(this.props.value);
+		};
+	};
 	
 	onChange (e: any) {
 		const { onChange, readonly } = this.props;
