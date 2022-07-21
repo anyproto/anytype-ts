@@ -6,6 +6,9 @@
 	.label { margin-bottom: 26px; }
 	.input { height: 40px; border: solid 1px $colorBorderDark; }
 
+	.header { width: 100% !important; }
+	.footer { width: 100% !important; }
+
 	.authBackWrap { position: absolute; top: 8px; left: 8px; display: flex; align-items: center; flex-wrap: nowrap; cursor: pointer; color: $colorDarkGrey; }
 	.authBackWrap {
 		.icon.back { width: 24px; height: 24px; background-image: url('~img/icon/popup/settings/back0.svg'); transition: none; }

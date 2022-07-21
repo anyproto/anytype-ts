@@ -75,7 +75,7 @@
 	"confirmUpdateConfirm": { "en": "Update" },
 
 	"authInviteTitle": { "en": "Welcome to Anytype" },
-	"authInviteLabel": { "en": "Enter your invitation code. If you don't have one just go to <a href=\"https://anytype.io\">anytype.io</a> and sign up to the waiting list. We are inviting people on the rolling basis." },
+	"authInviteLabel": { "en": "Enter your invite code. If you don't have one, visit <a href=\"https://anytype.io\">anytype.io</a> to register for early access. We are inviting new testers on a rolling basis." },
 	"authInvitePlaceholder": { "en": "Code" },
 	"authInviteLogin": { "en": "Enter" },
 	"authInviteEmpty": { "en": "Invite code is empty" },

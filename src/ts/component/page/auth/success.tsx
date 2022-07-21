@@ -34,8 +34,8 @@ const PageAuthSuccess = observer(class PageAuthSuccess extends React.Component<P
 				<Footer />
 				
 				<Frame>
-					<Title text="Save your recovery phrase" />
-					<Label text="This phrase is needed to log in on another device and recover data. Please, keep it safe. You can find it anytime in settings." />
+					<Title text="Here's your Recovery Phrase" />
+					<Label text="Please save it somewhere safe - you will need it login to your account on other devices and to recover your data.<br/><br/>Tap below to reveal:" />
 						
 					<div className="textareaWrap">
 						<Textarea 
