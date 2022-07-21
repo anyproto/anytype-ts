@@ -2033,7 +2033,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		blocks.forEach((block: I.Block) => {
 			const el = node.find(`#block-${block.id} #wrap`);
 			if (el.length) {
-				el.trigger('resizeInit');
+				el.trigger('resizeTable');
 			};
 		});
 
