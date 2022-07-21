@@ -1953,7 +1953,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		if (this.loading || !this._isMounted) {
 			return;
 		};
-		
+
 		const { rootId, isPopup } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
 		const note = node.find('#note');
