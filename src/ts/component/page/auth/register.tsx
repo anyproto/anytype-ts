@@ -49,7 +49,7 @@ const PageAuthRegister = observer(class PageAuthRegister extends React.Component
 					</div>
 
 					{config.experimental ? (
-						<div id="button-advanced" className="authRegisterAdvanced" onClick={this.onAdvanced}>
+						<div id="button-advanced" className="advanced" onClick={this.onAdvanced}>
 							{translate('authRegisterAdvanced')}
 						</div>
 					) : ''}

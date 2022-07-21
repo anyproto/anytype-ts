@@ -1,13 +1,14 @@
 import * as React from 'react';
 import { I } from 'ts/lib';
-import { Button, Label, Title } from 'ts/component';
+import { Button, Label } from 'ts/component';
 import { authStore } from 'ts/store';
+import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {};
 
 const { dialog } = window.require('@electron/remote');
 
-class MenuAccountPath extends React.Component<Props, {}> {
+const MenuAccountPath = observer(class MenuAccountPath extends React.Component<Props, {}> {
 
     constructor (props: any) {
         super(props);
@@ -42,6 +43,6 @@ class MenuAccountPath extends React.Component<Props, {}> {
         });
     };
 
-};
+});
 
 export default MenuAccountPath;
