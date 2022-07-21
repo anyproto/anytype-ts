@@ -32,7 +32,7 @@
 		.content { padding: 0; overflow: visible; }
 		.content {
 			.label.bold { margin-bottom: 6px; font-weight: 600; }
-			.label { margin-bottom: 11px; }
+			.label { margin-bottom: 11px; word-break: break-word; }
 		}
 	}
 }
