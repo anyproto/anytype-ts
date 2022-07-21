@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 
 interface Props {
 	id?: string;
@@ -9,20 +10,14 @@ interface Props {
 	onChange?(e: any, value: boolean): void;
 };
 
-interface State {
-	value: boolean;
-};
-
-class Switch extends React.Component<Props, State> {
+class Switch extends React.Component<Props, {}> {
 
 	public static defaultProps = {
 		value: false,
 		color: 'orange',
 	};
 
-	state = {
-		value: false
-	};
+	value: boolean = false;
 
 	constructor (props: any) {
 		super(props);
@@ -32,14 +27,10 @@ class Switch extends React.Component<Props, State> {
 	
 	render () {
 		const { id, color, className, readonly } = this.props;
-		const { value } = this.state;
 		
 		let cn = [ 'switch', color ];
 		if (className) {
 			cn.push(className);
-		};
-		if (value) {
-			cn.push('active');
 		};
 		if (readonly) {
 			cn.push('isReadonly');
@@ -57,32 +48,33 @@ class Switch extends React.Component<Props, State> {
 	};
 
 	componentDidUpdate () {
-		if (this.props.value != this.state.value) {
-			this.setValue(this.props.value);
-		};
+		this.setValue(this.props.value);
 	};
 	
 	onChange (e: any) {
 		const { onChange, readonly } = this.props;
-		const { value } = this.state;
 
 		if (readonly) {
 			return;
 		};
 
-		this.setValue(!value);
-		
+		const value = !this.value;
+
+		this.setValue(value);
 		if (onChange) {
-			onChange(e, !value);
+			onChange(e, value);
 		};
 	};
 	
 	setValue (value: boolean) {
-		this.setState({ value });
+		const node = $(ReactDOM.findDOMNode(this));
+
+		this.value = value;
+		value ? node.addClass('active') : node.removeClass('active');
 	};
 	
 	getValue () {
-		return this.state.value;
+		return this.value;
 	};
 	
 };

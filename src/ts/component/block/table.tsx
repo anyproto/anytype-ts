@@ -1239,7 +1239,17 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		let options: any[] = [
 			{ 
 				id: 'rowHeader', icon: 'table-header-row', name: 'Header row', withSwitch: true, switchValue: isHeader,
-				onSwitch: (e: any, v: boolean, callBack?: () => void) => { C.BlockTableRowSetHeader(rootId, id, v, callBack); }
+				onSwitch: (e: any, v: boolean, callBack?: () => void) => { 
+					C.BlockTableRowSetHeader(rootId, id, v, (message: any) => {
+						this.frames.forEach((it: any) => {
+							this.frameAdd(it.type, it.rowId, it.columnId, it.cellId, it.position);
+						});
+
+						if (callBack) {
+							callBack();
+						};
+					}); 
+				}
 			},
 			{ isDiv: true },
 		];
@@ -1459,11 +1469,17 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		w += 2;
 		h += 2;
 
-		const frame = { id, x, y, w, h, position };
-		if (!this.frames.find(it => it.id == frame.id)) {
-			this.frames.push(frame);
+		let frame = { id, x, y, w, h, type, rowId, columnId, cellId, position };
+		let current = this.frames.find(it => it.id == frame.id);
+		
+		if (!current) {
+			current = frame;
+			this.frames.push(current);
+		} else {
+			current = Object.assign(current, frame);
 		};
-		this.frameRender(frame);
+
+		this.frameRender(current);
 	};
 
 	frameRemove (positions: I.BlockPosition[]) {
