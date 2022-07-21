@@ -4,7 +4,8 @@
 /* PageAuth */
 
 .pageAuth, .pageIndex, .pageObject {
-    .textarea { border: 0px; }
+	.textareaWrap { background-color: $colorBgLight; border: 0px; }
+
     .input { border-color: $colorLinePrimary; }
 
 	.authBackWrap:hover { color: $colorPrimary; }
