@@ -2021,12 +2021,21 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 	onResize (v: number) {
 		v = Number(v) || 0;
 
+		const { rootId } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
 		const width = this.getWidth(v);
 		const elements = node.find('#elements');
+		const blocks = blockStore.getBlocks(rootId, it => it.isTable());
 
 		node.css({ width: width });
 		elements.css({ width: width, marginLeft: -width / 2 });
+
+		blocks.forEach((block: I.Block) => {
+			const el = node.find(`#block-${block.id} #wrap`);
+			if (el.length) {
+				el.trigger('resizeInit');
+			};
+		});
 
 		if (this.refHeader && this.refHeader.refDrag) {
 			this.refHeader.refDrag.setValue(v);

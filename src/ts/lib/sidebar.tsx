@@ -402,7 +402,7 @@ class Sidebar {
 		};
 
 		if (dummy && dummy.length) {
-			dummy.css({ width: width + 8 });
+			dummy.css({ width: width ? width + 8 : 0 });
 		};
 
 		page.css({ width: pw });
