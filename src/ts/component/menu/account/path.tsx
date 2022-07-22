@@ -6,8 +6,6 @@ import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {};
 
-const { dialog } = window.require('@electron/remote');
-
 const MenuAccountPath = observer(class MenuAccountPath extends React.Component<Props, {}> {
 
     constructor (props: any) {
@@ -33,7 +31,7 @@ const MenuAccountPath = observer(class MenuAccountPath extends React.Component<P
             properties: [ 'openDirectory' ],
         };
 
-        dialog.showOpenDialog(options).then((result: any) => {
+        window.Electron.showOpenDialog(options).then((result: any) => {
             const files = result.filePaths;
             if ((files == undefined) || !files.length) {
                 return;
