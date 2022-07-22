@@ -523,18 +523,22 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 	};
 
 	onResizeMove (e: any, dir: I.MenuType) {
+		const { isPopup } = this.props;
 		const { width, snap } = sidebar.data;
 
 		if (dir == I.MenuType.Horizontal) {
-			const d = (snap == I.MenuDirection.Right) ? (this.ox - e.pageX + width) : e.pageX - this.ox;
-			sidebar.set({ width: d });
+			sidebar.setWidth((snap == I.MenuDirection.Right) ? (this.ox - e.pageX + width) : (e.pageX - this.ox));
 		};
 
 		if (dir == I.MenuType.Vertical) {
-			sidebar.set({ height: e.pageY - this.oy });
+			sidebar.setHeight(e.pageY - this.oy);
 		};
 
 		sidebar.resizePage();
+
+		if (!isPopup) {
+			$(window).trigger('resize.editor');
+		};
 	};
 
 	onResizeEnd (e: any, dir: I.MenuType) {

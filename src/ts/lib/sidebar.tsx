@@ -119,6 +119,18 @@ class Sidebar {
 		this.checkButton();
 	};
 
+	setWidth (v: number) {
+		this.data.width = this.checkWidth(v);
+		this.save();
+		this.setStyle();
+	};
+
+	setHeight (v: number) {
+		this.data.height = this.checkHeight(v);
+		this.save();
+		this.setStyle();
+	};
+
 	setFixed (v: boolean) {
 		this.data.fixed = v;
 		this.data.snap = this.getSnap();

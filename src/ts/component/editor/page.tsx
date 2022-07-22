@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Block, Icon, Loader, Deleted } from 'ts/component';
 import { commonStore, blockStore, detailStore, menuStore, popupStore } from 'ts/store';
-import { I, C, Key, Util, DataUtil, Mark, focus, keyboard, crumbs, Storage, Mapper, Action, translate, analytics } from 'ts/lib';
+import { I, C, Key, Util, DataUtil, Mark, focus, keyboard, crumbs, Storage, Mapper, Action, translate, analytics, sidebar } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 
@@ -1758,9 +1758,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 	
 	blockMerge (focused: I.Block, dir: number) {
 		const { rootId } = this.props;
-		const next = blockStore.getNextBlock(rootId, focused.id, dir, (it: any) => {
-			return it.isFocusable();
-		});
+		const next = blockStore.getNextBlock(rootId, focused.id, dir, it => it.isFocusable());
 
 		if (!next) {
 			return;
@@ -1805,9 +1803,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 					return;
 				};
 
-				const next = blockStore.getNextBlock(rootId, focused.id, -1, (it: any) => {
-					return it.isFocusable();
-				});
+				const next = blockStore.getNextBlock(rootId, focused.id, -1, it => it.isFocusable());
 				if (next) {
 					const nl = dir < 0 ? next.getLength() : 0;
 					this.focus(next.id, nl, nl, false);
@@ -2046,17 +2042,22 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 	getWidth (w: number) {
 		const { isPopup, rootId } = this.props;
 		const container = Util.getPageContainer(isPopup);
-		const mw = container.width() - 120;
 		const root = blockStore.getLeaf(rootId, rootId);
-		
-		if (root && root.isObjectSet()) {
-			this.width = container.width() - 192;
-		} else {
-			w = Number(w) || 0;
-			w = (mw - Constant.size.editor) * w;
+		const size = Constant.size.editor;
 
-			this.width = Math.max(Constant.size.editor, Math.min(mw, Constant.size.editor + w));
+		let mw = container.width();
+
+		if (root && root.isObjectSet()) {
+			this.width = mw - 192;
+		} else {
+			mw -= 120;
+
+			w = Number(w) || 0;
+			w = (mw - size) * w;
+
+			this.width = Math.max(size, Math.min(mw, size + w));
 		};
+
 		return this.width;
 	};
 
