@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Icon, Button, Title, Label } from 'ts/component';
+import { Icon, Title, Label } from 'ts/component';
 import { I, C, Storage, translate, Util, analytics } from 'ts/lib';
 import { authStore, commonStore, popupStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -10,7 +10,6 @@ import Head from './head';
 interface Props extends I.Popup, RouteComponentProps<any> {
 	prevPage: string;
 	onPage: (id: string) => void;
-	setConfirmPhrase: (v: () => void) => void;
 	setPinConfirmed: (v: boolean) => void;
 	setLoading: (v: boolean) => void;
 };
@@ -43,7 +42,7 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 	};
 
 	render () {
-		const { onPage, setConfirmPhrase } = this.props;
+		const { onPage } = this.props;
 		const { error } = this.state;
 		const { account } = authStore;
 		const { config } = commonStore;
@@ -59,13 +58,7 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 				{error ? <div className="message">{error}</div> : ''}
 
 				<div className="rows">
-					<div 
-						className="row" 
-						onClick={() => { 
-							setConfirmPhrase(null);
-							onPage('phrase'); 
-						}}
-					>
+					<div className="row" onClick={() => { onPage('phrase'); }}>
 						<Icon className="phrase" />
 						<Label text={translate('popupSettingsPhraseTitle')} />
 						<Icon className="arrow" />
@@ -110,22 +103,7 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 	};
 
 	onLogout (e: any) {
-		const { close, onPage, setConfirmPhrase, setPinConfirmed } = this.props;
-
-		setConfirmPhrase(() => {
-			close();
-
-			window.setTimeout(() => {
-				C.AccountStop(false);
-				authStore.logout();
-				Util.route('/');
-	
-				setPinConfirmed(false);
-				setConfirmPhrase(null);
-			}, Constant.delay.popup);
-		});
-
-		onPage('phrase');
+		this.props.onPage('logout');
 	};
 
 	onDelete (e: any) {

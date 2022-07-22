@@ -12,6 +12,7 @@ import PagePersonal from './page/settings/personal';
 import PageAppearance from './page/settings/appearance';
 import PageWallpaper from './page/settings/wallpaper';
 import PagePhrase from './page/settings/phrase';
+import PageLogout from './page/settings/logout';
 
 import PagePinIndex from './page/settings/pin/index';
 import PagePinSelect from './page/settings/pin/select';
@@ -39,6 +40,7 @@ const Components: any = {
 	appearance:			 PageAppearance,
 	wallpaper:			 PageWallpaper,
 	phrase:				 PagePhrase,
+	logout:				 PageLogout,
 
 	pinIndex:			 PagePinIndex,
 	pinSelect:			 PagePinSelect,
@@ -59,7 +61,6 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 	prevPage: string = '';
 	pinConfirmed: boolean = false;
 	onConfirmPin: any = null;
-	onConfirmPhrase: any = null;
 
 	constructor (props: any) {
 		super(props);
@@ -67,7 +68,6 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 		this.onPage = this.onPage.bind(this);
 		this.onExport = this.onExport.bind(this);
 		this.onImport = this.onImport.bind(this);
-		this.setConfirmPhrase = this.setConfirmPhrase.bind(this);
 		this.setConfirmPin = this.setConfirmPin.bind(this);
 		this.setPinConfirmed = this.setPinConfirmed.bind(this);
 		this.setLoading = this.setLoading.bind(this);
@@ -90,9 +90,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 					onExport={this.onExport} 
 					onImport={this.onImport}
 					onConfirmPin={this.onConfirmPin}
-					onConfirmPhrase={this.onConfirmPhrase}
 					setConfirmPin={this.setConfirmPin}
-					setConfirmPhrase={this.setConfirmPhrase}
 					setPinConfirmed={this.setPinConfirmed}
 					setLoading={this.setLoading}
 				/>
@@ -127,11 +125,6 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 
 	setConfirmPin (v: () => void) {
 		this.onConfirmPin = v;
-		this.forceUpdate();
-	};
-
-	setConfirmPhrase (v: () => void) {
-		this.onConfirmPhrase = v;
 		this.forceUpdate();
 	};
 

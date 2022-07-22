@@ -19,9 +19,7 @@
 		.icon.back { background-image: url('~img/icon/popup/settings/back1.svg'); }
 	}
 
-	.textareaWrap { overflow: hidden; background: #f7f5f0; margin: 0px 0px 32px 0px; border: solid 1px $colorBorderDark; }
-	.textarea { font-family: 'Plex'; padding: 7px 16px; height: auto; background: none; }
-	
+	.textareaWrap { margin: 0px 0px 32px 0px; }
 	.iconObject { margin-bottom: 12px; }
 	
 	.button { margin-right: 16px; width: 176px; }
@@ -86,7 +84,7 @@
 
 .pageAuthSuccess {
 	.label { margin-bottom: 10px; }
-	.textareaWrap { border-radius: 4px; padding: 20px 24px; color: $colorIce; }
+	.textareaWrap { color: $colorIce; }
 }
 
 .pageAuthRegister {

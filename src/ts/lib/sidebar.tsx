@@ -370,6 +370,8 @@ class Sidebar {
 		let cssLoader: any = { width: pw, left: '', right: '' };
 		let dummy = null;
 
+		console.log('SIDEBAR', width, pw);
+
 		header.css(css).removeClass('withSidebar snapLeft snapRight');
 		footer.css(css).removeClass('withSidebar snapLeft snapRight');
 

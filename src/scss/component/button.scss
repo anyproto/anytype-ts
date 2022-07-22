@@ -20,6 +20,8 @@
 .button.blank { line-height: 36px; background: none; border: solid 1px $colorLightGrey; }
 .button.blank:hover { border-color: $colorBlack; }
 
+.button.blank.red { color: $colorRed; }
+
 .button.c28 { height: 28px; line-height: 26px; border-radius: 6px; }
 
 input.button { line-height: 1; }
