@@ -341,74 +341,63 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 
 		e.preventDefault();
 
-		switch (k) {
-			case Key.up:
-				n--;
-				if (n < 0) {
-					n = l - 1;
-				};
-				this.setState({ n: n });
-				this.setActive();
-				break;
-				
-			case Key.down:
-				n++;
-				if (n > l - 1) {
-					n = 0;
-				};
-				this.setState({ n: n });
-				this.setActive();
-				break;
+		keyboard.shortcut('arrowup, arrowdown', e, (pressed: string) => {
+			const dir = pressed.match(Key.up) ? -1 : 1;
 
-			case Key.left:
-				this.setState({ n: 0 });
-				this.panel--;
-				if (this.panel < Panel.Left) {
-					this.panel = Panel.Right;
-				};
+			n += dir;
+			if (n < 0) {
+				n = l - 1;
+			};
+			if (n > l - 1) {
+				n = 0;
+			};
+			this.setState({ n });
+			this.setActive();
+		});
 
-				if ((this.panel == Panel.Left) && !this.getItems().length) {
-					this.panel = Panel.Right;
-				};
-				if ((this.panel == Panel.Right) && !this.getItems().length) {
-					this.panel = Panel.Center;
-				};
+		keyboard.shortcut('arrowleft, arrowright', e, (pressed: string) => {
+			const dir = pressed.match(Key.left) ? -1 : 1;
 
-				this.setActive();
-				break;
-				
-			case Key.right:
-				this.setState({ n: 0 });
-				this.panel++;
-				if (this.panel > Panel.Right) {
-					this.panel = Panel.Left;
-				};
-				
-				if ((this.panel == Panel.Left) && !this.getItems().length) {
-					this.panel = Panel.Center;
-				};
-				if ((this.panel == Panel.Right) && !this.getItems().length) {
-					this.panel = Panel.Left;
-				};
+			this.setState({ n: 0 });
+			this.panel += dir;
 
-				this.setActive();
-				break;
-				
-			case Key.enter:
-			case Key.space:
-				const item = items[n];
-				if (!item) {
-					break;
-				};
+			if (this.panel < Panel.Left) {
+				this.panel = Panel.Right;
+			};
 
-				if (this.panel == Panel.Center) {
-					this.onConfirm(e, item);
-				} else {
-					this.loadPage(item.id);
-				};
-				break;
+			if ((this.panel == Panel.Left) && !this.getItems().length) {
+				this.panel = Panel.Right;
+			};
+			if ((this.panel == Panel.Right) && !this.getItems().length) {
+				this.panel = Panel.Center;
+			};
 
-		};
+			if (this.panel > Panel.Right) {
+				this.panel = Panel.Left;
+			};
+			
+			if ((this.panel == Panel.Left) && !this.getItems().length) {
+				this.panel = Panel.Center;
+			};
+			if ((this.panel == Panel.Right) && !this.getItems().length) {
+				this.panel = Panel.Left;
+			};
+
+			this.setActive();
+		});
+
+		keyboard.shortcut('enter, space', e, (pressed: string) => {
+			const item = items[n];
+			if (!item) {
+				return;
+			};
+
+			if (this.panel == Panel.Center) {
+				this.onConfirm(e, item);
+			} else {
+				this.loadPage(item.id);
+			};
+		});
 	};
 
 	getItems () {
