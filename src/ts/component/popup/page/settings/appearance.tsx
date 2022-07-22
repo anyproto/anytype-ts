@@ -23,7 +23,7 @@ const PopupSettingsPageAppearance = observer(class PopupSettingsPageAppearance e
 			{ id: 'system', class: 'system', name: 'System' },
 		];
 
-		const inner = <div className="inner"></div>;
+		const inner = <div className="inner" />;
 
 		return (
 			<div>

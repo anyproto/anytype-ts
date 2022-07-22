@@ -13,7 +13,8 @@ interface State {
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
-const HEIGHT = 28;
+const HEIGHT_ITEM = 28;
+const HEIGHT_DIV = 16;
 
 const LIMIT_HEIGHT = 10;
 
@@ -49,6 +50,39 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 			const item: any = items[param.index];
 			const type: any = dbStore.getObjectType(item.type);
 
+			let content = null;
+
+			if (item.isDiv) {
+				content = (
+					<div className="separator" style={param.style}>
+						<div className="inner" />
+					</div>
+				);
+			} else {
+				let cn = [];
+				if (item.itemId == 'add') {
+					cn.push('add');
+				};
+				if (item.isHidden) {
+					cn.push('isHidden');
+				};
+
+				content = (
+					<MenuItemVertical 
+						id={item.id}
+						object={item.itemId == 'add' ? undefined : item}
+						icon={item.icon}
+						name={<ObjectName object={item} />}
+						onMouseEnter={(e: any) => { this.onOver(e, item); }} 
+						onClick={(e: any) => { this.onClick(e, item); }}
+						withCaption={true}
+						caption={type ? type.name : undefined}
+						style={param.style}
+						className={cn.join(' ')}
+					/>
+				);
+			};
+
 			return (
 				<CellMeasurer
 					key={param.key}
@@ -58,18 +92,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 					rowIndex={param.index}
 					hasFixedWidth={() => {}}
 				>
-					<MenuItemVertical 
-						id={item.id}
-						object={item.id == 'add' ? undefined : item}
-						icon={item.icon}
-						name={<ObjectName object={item} />}
-						onMouseEnter={(e: any) => { this.onOver(e, item); }} 
-						onClick={(e: any) => { this.onClick(e, item); }}
-						withCaption={true}
-						caption={type ? type.name : undefined}
-						style={param.style}
-						className={[ (item.id == 'add' ? 'add' : ''), (item.isHidden ? 'isHidden' : '') ].join(' ')}
-					/>
+					{content}
 				</CellMeasurer>
 			);
 		};
@@ -92,7 +115,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 										height={height}
 										deferredMeasurmentCache={this.cache}
 										rowCount={items.length}
-										rowHeight={HEIGHT}
+										rowHeight={({ index }) => this.getRowHeight(items[index])}
 										rowRenderer={rowRenderer}
 										onRowsRendered={onRowsRendered}
 										overscanRowCount={10}
@@ -127,7 +150,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 
 		this.cache = new CellMeasurerCache({
 			fixedWidth: true,
-			defaultHeight: HEIGHT,
+			defaultHeight: HEIGHT_ITEM,
 			keyMapper: (i: number) => { return (items[i] || {}).id; },
 		});
 
@@ -149,12 +172,38 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		$(window).unbind('keydown.menu');
 	};
 
-	getItems () {
-		return [
-			{ id: 'add', name: 'Create new object', icon: 'plus', skipFilter: true }
-		].concat(this.items);
+	getSections () {
+		const { filter } = commonStore;
+
+		let items = [].concat(this.items);
+		if (items.length) {
+			items.push({ isDiv: true });
+		};
+
+		let sections: any[] = [];
+		if (items.length) {
+			sections.push({ id: I.MarkType.Object, name: 'Objects', children: items });
+		};
+		if (filter.text) {
+			sections.push({ 
+				children: [
+					{ id: 'add', name: `Create object "${filter.text}"`, icon: 'plus' }
+				]
+			});
+		};
+		return DataUtil.menuSectionsMap(sections);
 	};
-	
+
+	getItems () {
+		const sections = this.getSections();
+		
+		let items: any[] = [];
+		for (let section of sections) {
+			items = items.concat(section.children);
+		};
+		return items;
+	};
+
 	load (clear: boolean, callBack?: (value: any) => void) {
 		const { config } = commonStore;
 		const { param } = this.props;
@@ -246,7 +295,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 			onChange(name + ' ', marks, from, to + 1);
 		};
 
-		if (item.id == 'add') {
+		if (item.itemId == 'add') {
 			const type: any = dbStore.getObjectType(commonStore.type) || {};
 			const name = filter.text.replace(/\\/g, '');
 
@@ -265,20 +314,26 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 				});
 			});
 		} else {
-			cb(item.id, item.name);
+			cb(item.itemId, item.name);
 		};
 
 		this.props.close();
+	};
+
+	getRowHeight (item: any) {
+		let h = HEIGHT_ITEM;
+		if (item.isDiv) h = HEIGHT_DIV;
+		return h;
 	};
 
 	resize () {
 		const { getId, position } = this.props;
 		const items = this.getItems();
 		const obj = $(`#${getId()} .content`);
-		const offset = 16;
-		const height = Math.max(HEIGHT * 1 + offset, Math.min(HEIGHT * LIMIT_HEIGHT, items.length * HEIGHT + offset));
+		const offset = 4;
+		const height = Math.max(44, Math.min(HEIGHT_ITEM * LIMIT_HEIGHT, items.length * HEIGHT_ITEM + offset));
 
-		obj.css({ height: height });
+		obj.css({ height });
 		position();
 	};
 	

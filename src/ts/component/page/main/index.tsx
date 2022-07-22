@@ -17,7 +17,6 @@ interface State {
 	loading: boolean;
 };
 
-const $ = require('jquery');
 const Constant: any = require('json/constant.json');
 
 const PageMainIndex = observer(class PageMainIndex extends React.Component<Props, State> {
@@ -225,13 +224,12 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		this.onScroll();
 		this.selectionRender();
 		this.rebind();
-
+		this.resize();
+		
 		analytics.setContext('', '');
 	};
 	
 	componentDidUpdate () {
-		this.resize();
-
 		if (this.id) {
 			const node = $(ReactDOM.findDOMNode(this));
 			const item = node.find(`#item-${this.id}`);
@@ -239,6 +237,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 			item.addClass('hover');
 		};
 
+		this.resize();
 		this.selectionRender();
 	};
 
@@ -843,7 +842,6 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 	};
 	
 	resize () {
-		const list = this.getList();
 		const size = Constant.size.index;
 		const win = $(window);
 		const wh = win.height();

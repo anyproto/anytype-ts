@@ -8,5 +8,10 @@
 		.item {
 			.name { @include text-overflow-nw; width: 100%; }
 		}
+
+		.item.add {
+			.name { margin: 0px; }
+			.caption { display: none; }
+		}
 	}
 }

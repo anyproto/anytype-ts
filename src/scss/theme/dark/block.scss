@@ -240,6 +240,9 @@
 		}
 		
 		.row { border-color: $colorLinePrimary; }
+		.row.isHeader {
+			.cell { background-color: rgba(140, 158, 165, 0.25); }
+		}
 
 		.cell { background: $colorBlack; border-color: $colorLinePrimary; }
 		.cell {

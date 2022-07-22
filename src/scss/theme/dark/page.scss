@@ -4,13 +4,19 @@
 /* PageAuth */
 
 .pageAuth, .pageIndex, .pageObject {
-    .textarea { border: 0px; }
-	.textareaWrap { border: 0px; background-color: $colorBgLight; }
     .input { border-color: $colorLinePrimary; }
+
+	.authBackWrap:hover { color: $colorPrimary; }
+    .authBackWrap:hover {
+		.icon.back { background-image: url('#{$themePath}/icon/popup/settings/back1.svg'); } 
+	}
 }
 
 .pageAuthRegister {
     .iconObject { background-image: url('#{$themePath}/icon/picture.svg'); }
+
+	.advanced { color: $colorSecondary; }
+	.advanced:hover { color: $colorPrimary; }
 }
 
 .pageAuthDeleted {

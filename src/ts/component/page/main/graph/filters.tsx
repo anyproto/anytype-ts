@@ -16,11 +16,8 @@ const GraphFilters = observer(class PreviewObject extends React.Component<Props,
 	};
 	
 	render () {
-
-
 		return (
-			<div className="panelFilters">
-			</div>
+			<div className="panelFilters" />
 		);
 	};
 

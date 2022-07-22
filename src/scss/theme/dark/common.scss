@@ -83,6 +83,8 @@ html.themeDark {
 
     .sync { background: $colorBgIcon; }
 
+	.textareaWrap { background-color: $colorBgLight; }
+
     .select { border-color: $colorLinePrimary; }
     .select:hover, .select.active { background: $colorHover; }
     .select {

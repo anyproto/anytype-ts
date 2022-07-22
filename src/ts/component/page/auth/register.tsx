@@ -1,14 +1,14 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Frame, Cover, Title, Error, Input, Button, Header, FooterAuth as Footer } from 'ts/component';
-import { commonStore, authStore } from 'ts/store';
+import { Frame, Cover, Label, Error, Input, Button, Header, FooterAuth as Footer, Icon } from 'ts/component';
+import { commonStore, authStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
-import { FileUtil, Util, translate } from 'ts/lib';
+import { FileUtil, Util, translate, I } from 'ts/lib';
 
-interface Props extends RouteComponentProps<any> {}
+interface Props extends RouteComponentProps<any> {};
 interface State {
 	error: string;
-}
+};
 
 const Constant = require('json/constant.json');
 
@@ -27,12 +27,13 @@ const PageAuthRegister = observer(class PageAuthRegister extends React.Component
 		this.onPathClick = this.onPathClick.bind(this);
 		this.onNameChange = this.onNameChange.bind(this);
 		this.onSubmit = this.onSubmit.bind(this);
+		this.onAdvanced = this.onAdvanced.bind(this);
 	};
 	
 	render () {
-		const { cover } = commonStore;
+		const { cover, config } = commonStore;
 		const { error } = this.state;
-		const { name, preview, accountPath } = authStore;
+		const { name, preview } = authStore;
 
 		return (
 			<div>
@@ -41,20 +42,26 @@ const PageAuthRegister = observer(class PageAuthRegister extends React.Component
 				<Footer />
 				
 				<Frame>
-					<Title text={translate('authRegisterTitle')} />
+					<div className="authBackWrap" onClick={this.onCancel}>
+						<Icon className="back" />
+						<div className="name">{translate('authLoginBack')}</div>
+					</div>
+
+					{config.experimental ? (
+						<div id="button-advanced" className="advanced" onClick={this.onAdvanced}>
+							{translate('authRegisterAdvanced')}
+						</div>
+					) : ''}
+
 					<Error text={error} />
 		
 					<form onSubmit={this.onSubmit}>
-						<div className="row flex">
-							<div className="iconObject isHuman c64 fileWrap" onClick={this.onFileClick}>
-								{preview ? <img src={preview} className="iconImage c64" /> : ''}
-							</div>
-							<Input ref={(ref: any) => this.refName = ref} placeholder={translate('authRegisterName')} value={name} onKeyUp={this.onNameChange} />
-							<Button type="input" text={translate('authRegisterSubmit')} />
+						<div className="iconObject isHuman c96 fileWrap" onClick={this.onFileClick}>
+							{preview ? <img src={preview} className="iconImage c64" /> : ''}
 						</div>
-						<div className="row cp location" onClick={this.onPathClick}>
-							Account location: {accountPath}
-						</div>
+						<Label text={translate('authRegisterLabel')} />
+						<Input ref={(ref: any) => this.refName = ref} placeholder={translate('authRegisterName')} value={name} onKeyUp={this.onNameChange} />
+						<Button type="input" text={translate('authRegisterSubmit')} />
 					</form>
 				</Frame>
 			</div>
@@ -129,6 +136,19 @@ const PageAuthRegister = observer(class PageAuthRegister extends React.Component
 		} else {
 			this.setState({ error: error });
 		};
+	};
+
+	onAdvanced (e: any) {
+		menuStore.open('accountPath', {
+			element: '#button-advanced',
+			offsetY: 7,
+			vertical: I.MenuDirection.Bottom,
+			horizontal: I.MenuDirection.Center,
+		});
+	}
+
+	onCancel (e: any) {
+		Util.route('/auth/select');
 	};
 	
 });

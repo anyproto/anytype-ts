@@ -820,13 +820,10 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			'###':			 I.TextStyle.Header3,
 			'"':			 I.TextStyle.Quote,
 			'```':			 I.TextStyle.Code,
+			'\\>':			 I.TextStyle.Toggle,
+			'1\\.':			 I.TextStyle.Numbered,
 		};
 		const Length: any = {};
-
-		if (!isInsideTable) {
-			Markdown['\\>'] = I.TextStyle.Toggle;
-			Markdown['1\\.'] = I.TextStyle.Numbered;
-		};
 
 		Length[I.TextStyle.Bulleted] = 1;
 		Length[I.TextStyle.Checkbox] = 2;
@@ -918,7 +915,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			cmdParsed = true;
 		};
 		
-		if (!isInsideTable && newBlock.type) {
+		if (newBlock.type && !isInsideTable) {
 			C.BlockCreate(rootId, id, position, newBlock, () => {
 				this.setValue('');
 				
@@ -927,7 +924,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			});
 		};
 
-		if (block.canHaveMarks()) {
+		if (block.canHaveMarks() && !isInsideTable) {
 			// Parse markdown commands
 			for (let k in Markdown) {
 				const reg = new RegExp(`^(${k} )`);
@@ -1307,10 +1304,6 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		const { dataset, block, isInsideTable } = this.props;
 		const { selection } = dataset || {};
 
-		if (isInsideTable) {
-			return;
-		};
-		
 		window.clearTimeout(this.timeoutClick);
 
 		this.clicks++;
@@ -1319,10 +1312,16 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			e.stopPropagation();
 			
 			this.clicks = 0;
-			selection.set(I.SelectType.Block, [ block.id ]);
-			focus.clear(true);
-			menuStore.close('blockContext');
-			window.clearTimeout(this.timeoutContext);
+
+			if (isInsideTable) {
+				focus.set(block.id, { from: 0, to: block.getLength() });
+				focus.apply();
+			} else {
+				selection.set(I.SelectType.Block, [ block.id ]);
+				focus.clear(true);
+				menuStore.close('blockContext');
+				window.clearTimeout(this.timeoutContext);
+			};
 		};
 	};
 	

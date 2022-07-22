@@ -220,6 +220,8 @@ class CommonStore {
 		
 		this.isFullScreen = v;
 		v ? body.addClass('isFullScreen') : body.removeClass('isFullScreen');
+
+		$(window).trigger('resize');
 	};
 
 	themeSet (v: string) {

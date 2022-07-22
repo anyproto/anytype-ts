@@ -164,8 +164,12 @@
 
 				.markers { padding: 9px 0px 9px 9px; }
 				.wrap { display: table; }
+
 				#value { display: table-cell; }
 				#value, .placeholder { padding: 9px 20px 9px 0px; }
+
+				.focusable.isFocused { background: none; }
+
 				.placeholder { display: none !important; }
 			}
 
@@ -186,4 +190,14 @@
 	}
 
 	.block.blockTable > .wrapContent > .dropTarget.targetBot { display: block; height: 2px; }
+	
+	.block.blockTable.isReadonly {
+		#selectionFrameContainer { display: none; }
+
+		.handle { display: none !important; }
+		.cell {
+			.block { min-height: 40px; }
+			.icon.menu { display: none; }
+		}
+	}
 }

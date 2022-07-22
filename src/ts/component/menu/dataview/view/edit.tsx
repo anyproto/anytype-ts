@@ -30,7 +30,7 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 		const { data } = param;
 		const { rootId, blockId } = data;
 		const view = data.view.get();
-		const { cardSize, coverFit, hideIcon } = view;
+		const { cardSize, coverFit, hideIcon, groupRelationKey } = view;
 		const sections = this.getSections();
 		const allowedView = blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
 
@@ -199,7 +199,7 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 	save () {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, onSave } = data;
+		const { rootId, blockId, onSave, getData } = data;
 		const view = data.view.get();
 		const allowedView = blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
 		const subId = dbStore.getSubId(rootId, blockId);
@@ -208,20 +208,22 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 			return;
 		};
 
-		const cb = () => {
-			if (onSave) {
-				onSave();
-			};
-		};
-
 		if (view.id) {
-			C.BlockDataviewViewUpdate(rootId, blockId, view.id, view, cb);
+			C.BlockDataviewViewUpdate(rootId, blockId, view.id, view, (message: any) => {
+				getData(view.id, 0);
+
+				if (onSave) {
+					onSave();
+				};
+			});
 		} else 
 		if (view.name) {
 			C.BlockDataviewViewCreate(rootId, blockId, view, (message: any) => {
 				dbStore.metaSet(subId, '', { ...dbStore.getMeta(subId, ''), viewId: message.viewId });
 
-				cb();
+				if (onSave) {
+					onSave();
+				};
 				analytics.event('AddView', { type: view.type });
 			});
 		};

@@ -467,7 +467,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 			return false;
 		};
 		
-		const { x, y} = this.setTransform(e.pageX - this.rect.x - this.x, e.pageY - this.rect.y - this.y);
+		const { x, y } = this.setTransform(e.pageX - this.rect.x - this.x, e.pageY - this.rect.y - this.y);
 		this.cx = x;
 		this.cy = y;
 	};
@@ -599,8 +599,8 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 	};
 	
 	setTransform (x: number, y: number) {
-		let mx = (this.rect.cw - this.rect.width) / 2;
-		let my = (this.rect.ch - this.rect.height) / 2;
+		let mx = this.rect.cw - this.rect.width;
+		let my = this.rect.ch - this.rect.height;
 
 		x = Math.max(-mx, Math.min(0, x));
 		y = Math.max(-my, Math.min(0, y));

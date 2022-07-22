@@ -545,11 +545,8 @@ class DataUtil {
 			{ id: I.TextStyle.Header2, lang: 'Header2', aliases: [ 'h2', 'head2' ] },
 			{ id: I.TextStyle.Header3, lang: 'Header3', aliases: [ 'h3', 'head3' ] },
 			{ id: I.TextStyle.Quote, lang: 'Quote' },
+			{ id: I.TextStyle.Callout, lang: 'Callout' },
 		];
-		
-		if (config.experimental) {
-			ret.push({ id: I.TextStyle.Callout, lang: 'Callout' });
-		};
 		
 		return ret.map((it: any) => {
 			it.type = I.BlockType.Text;
@@ -656,17 +653,12 @@ class DataUtil {
 	};
 
 	menuGetBlockOther () {
-		const { config } = commonStore;
 		const ret: any[] = [
 			{ type: I.BlockType.Div, id: I.DivStyle.Line, icon: 'div-line', lang: 'Line' },
 			{ type: I.BlockType.Div, id: I.DivStyle.Dot, icon: 'dot', lang: 'Dot' },
-			{ type: I.BlockType.TableOfContents, id: I.BlockType.TableOfContents, icon: 'tableOfContents', lang: 'TableOfContents', aliases: [ 'tc', 'toc' ] }
+			{ type: I.BlockType.TableOfContents, id: I.BlockType.TableOfContents, icon: 'tableOfContents', lang: 'TableOfContents', aliases: [ 'tc', 'toc' ] },
+			{ type: I.BlockType.Table, id: I.BlockType.Table, icon: 'table', lang: 'SimpleTable' }
 		];
-
-		if (config.experimental) {
-			ret.push({ type: I.BlockType.Table, id: I.BlockType.Table, icon: 'table', lang: 'SimpleTable' });
-		};
-
 		return ret.map(this.menuMapperBlock);
 	};
 

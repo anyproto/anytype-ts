@@ -9,15 +9,16 @@
 		.title { font-size: 28px; line-height: 32px; letter-spacing: -0.36px; font-weight: 600; padding: 20px 0px; text-align: center; }
 		.description { margin-bottom: 26px; }
 		.inputs { margin-bottom: 32px; }
+		.textareaWrap { color: $colorIce; }
 		
 		.head { 
-			position: absolute; left: 0px; top: 0px; width: 100%; height: 40px; padding: 11px 12px; background: $colorWhite; z-index: 1;
+			position: absolute; left: 0px; top: 0px; width: 100%; height: 40px; padding: 8px 12px; background: $colorWhite; z-index: 1;
 			border-radius: 12px 12px 0px 0px; 
 		}
 		.head {
 			.icon.back { width: 24px; height: 24px; cursor: pointer; background-image: url('~img/icon/popup/settings/back0.svg'); margin-top: -2px; }
 			
-			.element { color: $colorDarkGrey; cursor: pointer; }
+			.element { color: $colorDarkGrey; cursor: pointer; display: inline-block; height: 24px; line-height: 24px; }
 			.element:hover { color: $colorBlack; }
 			.element:hover {
 				.icon.back { background-image: url('~img/icon/popup/settings/back1.svg'); } 
@@ -149,10 +150,7 @@
 		
 		.tabPhrase {
 			.label { margin-bottom: 25px; }
-			.textarea { border-radius: 4px; padding: 20px 24px; color: $colorIce; background: none; }
 			.inputs { margin-bottom: 20px; }
-			.buttons { margin-top: 32px; }
-			.textareaWrap { overflow: hidden; background: #f7f5f0; }
 
 			.path { margin-bottom: 16px; height: 128px; display: flex; }
 			.path { 
@@ -170,6 +168,15 @@
 			.qrWrap {
 				canvas { width: 100%; height: 100%; }
 			}
+
+			.button { font-size: 16px; }
+		}
+
+		.tabLogout {
+			.label { margin-bottom: 25px; }
+			.inputs { margin-bottom: 20px; }
+			.buttons { margin-top: 32px; display: flex; gap: 0px 16px; }
+			.button { font-size: 16px; }
 		}
 		
 		.tabPinSelect, .tabPinConfirm {

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { MenuItemVertical, Filter, ObjectName } from 'ts/component';
-import { I, C, Util, keyboard, DataUtil, analytics } from 'ts/lib';
+import { I, C, Util, keyboard, DataUtil, analytics, focus } from 'ts/lib';
 import { commonStore, dbStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
@@ -217,11 +217,13 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 	};
 
 	onFilterClear () {
-		const { param } = this.props;
+		const { param, close } = this.props;
 		const { data } = param;
 		const { type, onChange } = data;
 
 		onChange(type, '');
+		close();
+		focus.apply();
 	};
 
 	getSections () {
@@ -263,13 +265,11 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 			buttons.unshift({ id: 'link', name: 'Link to website', icon: 'link' });
 		};
 
-		let sections: any[] = [
-			{ id: I.MarkType.Link, name: '', children: buttons },
-		];
-
+		let sections: any[] = [];
 		if (items.length) {
-			sections.unshift({ id: I.MarkType.Object, name: 'Objects', children: items });
+			sections.push({ id: I.MarkType.Object, name: 'Objects', children: items });
 		};
+		sections.push({ id: I.MarkType.Link, name: '', children: buttons });
 		return DataUtil.menuSectionsMap(sections);
 	};
 
@@ -279,7 +279,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 		let items: any[] = [];
 		for (let section of sections) {
 			if (withSections && section.name) {
-				items.push({ id: section.id, name: section.name, isSection: true});
+				items.push({ id: section.id, name: section.name, isSection: true });
 			};
 			items = items.concat(section.children);
 		};

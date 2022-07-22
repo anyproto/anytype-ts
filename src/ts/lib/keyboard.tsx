@@ -114,6 +114,11 @@ class Keyboard {
 			this.onBack();
 		});
 
+		this.shortcut(`${cmd}+\\`, e, (pressed: string) => {
+			e.preventDefault();
+			sidebar.data.fixed ? sidebar.collapse() : sidebar.expand();
+		});
+
 		if (platform == I.Platform.Mac) {
 			this.shortcut('cmd+[', e, (pressed: string) => { this.onBack(); });
 			this.shortcut('cmd+]', e, (pressed: string) => { this.onForward(); });

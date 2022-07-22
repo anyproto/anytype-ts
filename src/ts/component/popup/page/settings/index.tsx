@@ -14,17 +14,20 @@ const PopupSettingsPageIndex = observer(class PopupSettingsPageIndex extends Rea
 
 	render () {
 		const { onPage } = this.props;
+		const { account } = authStore;
 
 		return (
 			<div>
 				<Title text={translate('popupSettingsTitle')} />
 
 				<div className="rows">
-					<div className="row" onClick={() => { onPage('account'); }}>
-						<Icon className="account" />
-						<Label text={translate('popupSettingsAccountTitle')} />
-						<Icon className="arrow" />
-					</div>
+					{account ? (
+						<div className="row" onClick={() => { onPage('account'); }}>
+							<Icon className="account" />
+							<Label text={translate('popupSettingsAccountTitle')} />
+							<Icon className="arrow" />
+						</div>
+					) : ''}
 
 					<div className="row" onClick={() => { onPage('personal'); }}>
 						<Icon className="personal" />

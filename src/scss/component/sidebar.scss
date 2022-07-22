@@ -1,6 +1,6 @@
 @import "~scss/_vars";
 
-.pageFlex { display: flex; flex-direction: row; justify-content: space-between; }
+.pageFlex { display: flex; flex-direction: row; justify-content: space-between; width: 100% !important; }
 .pageFlex {
 	.sidebarDummy { flex-shrink: 0; }
     #page { width: 100%; position: relative; }
@@ -115,7 +115,7 @@
         .item.isSection.withPadding { padding-top: 8px; }
         .item.isSection {
             .icon.arrow { background-image: url('~img/arrow/sidebar.svg'); }
-            .name { @include text-paragraph; @include text-overflow-nw; font-weight: 500; flex-grow: 1; }
+            .name { @include text-paragraph; @include text-overflow-nw; font-weight: 600; flex-grow: 1; }
             .cnt { flex-shrink: 0; text-align: right; @include text-small; flex-basis: 20px; }
         }
 

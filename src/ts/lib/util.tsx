@@ -974,65 +974,6 @@ class Util {
 	};
 
 	
-	resizeSidebar () {
-		const { fixed } = sidebar.data;
-		const snap = sidebar.getSnap();
-		const win = $(window);
-		const obj = sidebar.obj;
-		const page = $('#page.isFull');
-		const header = page.find('#header');
-		const footer = page.find('#footer');
-		const loader = page.find('#loader');
-		
-		let width = fixed ? obj.width() : 0;
-		if (obj.css('display') == 'none') {
-			width = 0;
-		};
-		
-		let pw = win.width() - width - 1;
-		let css: any = { width: '' };
-		let cssLoader: any = { width: pw, left: '', right: '' };
-		let dummy = null;
-
-		header.css(css).removeClass('withSidebar snapLeft snapRight');
-		footer.css(css).removeClass('withSidebar snapLeft snapRight');
-
-		if (!obj.length) {
-			return;
-		};
-
-		if (fixed) {
-			header.addClass('withSidebar');
-			footer.addClass('withSidebar');
-		};
-		css.width = header.outerWidth() - width - 1;
-		
-		if (snap == I.MenuDirection.Left) {
-			dummy = $('.sidebarDummyLeft');
-			header.addClass('snapLeft');
-			footer.addClass('snapLeft');
-
-			cssLoader.left = '';
-			cssLoader.right = 0;
-		};
-		if (snap == I.MenuDirection.Right) {
-			dummy = $('#sidebarDummyRight');
-			header.addClass('snapRight');
-			footer.addClass('snapRight');
-
-			cssLoader.left = 0;
-			cssLoader.right = '';
-		};
-
-		console.log(dummy, width);
-
-		dummy.css({ width });
-		page.css({ width: pw });
-		loader.css(cssLoader);
-		header.css(css);
-		footer.css(css);
-	};
-
 	rectsCollide (rect1: any, rect2: any) {
 		return this.coordsCollide(rect1.x, rect1.y, rect1.width, rect1.height, rect2.x, rect2.y, rect2.width, rect2.height);
 	};

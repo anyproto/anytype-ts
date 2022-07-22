@@ -3,14 +3,16 @@ import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Title, Label, Textarea, Button } from 'ts/component';
 import { I, C, translate, analytics, Util } from 'ts/lib';
-import { commonStore, authStore } from 'ts/store';
+import { authStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 import Head from './head';
 
 interface Props extends I.Popup, RouteComponentProps<any> {
 	prevPage: string;
+	isLogout: boolean;
 	onPage: (id: string) => void;
+	setPinConfirmed: (v: boolean) => void;
 };
 
 interface State {
@@ -18,13 +20,9 @@ interface State {
 	showCode: boolean;
 };
 
-const QRCode = require('qrcode.react');
-const QRColor = {
-	'': '#fff',
-	dark: '#aca996',
-};
+const Constant = require('json/constant.json');
 
-const PopupSettingsPagePhrase = observer(class PopupSettingsPagePhrase extends React.Component<Props, State> {
+const PopupSettingsPageLogout = observer(class PopupSettingsPageLogout extends React.Component<Props, State> {
 
 	refPhrase: any = null;
 	state = {
@@ -37,13 +35,11 @@ const PopupSettingsPagePhrase = observer(class PopupSettingsPagePhrase extends R
 
 		this.onFocus = this.onFocus.bind(this);
 		this.onBlur = this.onBlur.bind(this);
+		this.onBackup = this.onBackup.bind(this);
+		this.onLogout = this.onLogout.bind(this);
 	};
 
 	render () {
-		const { entropy, showCode } = this.state;
-		const { theme } = commonStore;
-		const { phrase } = authStore;
-
 		return (
 			<div>
 				<Head {...this.props} id="account" name={translate('popupSettingsAccountTitle')} />
@@ -60,23 +56,16 @@ const PopupSettingsPagePhrase = observer(class PopupSettingsPagePhrase extends R
 							className="isBlurred"
 							onFocus={this.onFocus} 
 							onBlur={this.onBlur} 
-							onCopy={() => { analytics.event('KeychainCopy', { type: 'ScreenSettings' }); }}
+							onCopy={() => { analytics.event('KeychainCopy', { type: 'BeforeLogout' }); }}
 							placeholder="witch collapse practice feed shame open despair creek road again ice least lake tree young address brain envelope" 
 							readonly={true} 
 						/>
 					</div>
 				</div>
 
-				<div className="path">
-					<div className="side left">
-						<b>{translate('popupSettingsMobileQRSubTitle')}</b>
-						<Label text={translate('popupSettingsMobileQRText')} />
-					</div>
-					<div className={[ 'side', 'right', (!showCode ? 'isBlurred' : '') ].join(' ')} onClick={() => { this.setState({ showCode: !showCode }); }}>
-						<div className="qrWrap">
-							<QRCode value={showCode ? entropy : translate('popupSettingsCodeStub')} bgColor={QRColor[theme]} size={100} />
-						</div>
-					</div>
+				<div className="buttons">
+					<Button color="blank" text={translate('popupSettingsPhraseBackup')} onClick={this.onBackup} />
+					<Button color="blank" className="red" text={translate('popupSettingsLogout')} onClick={this.onLogout} />
 				</div>
 			</div>
 		);
@@ -91,7 +80,7 @@ const PopupSettingsPagePhrase = observer(class PopupSettingsPagePhrase extends R
 			});
 		};
 
-		analytics.event('ScreenKeychain', { type: 'ScreenSettings' });
+		analytics.event('ScreenKeychain', { type: 'BeforeLogout' });
 	};
 
 	onFocus () {
@@ -114,6 +103,25 @@ const PopupSettingsPagePhrase = observer(class PopupSettingsPagePhrase extends R
 		window.getSelection().removeAllRanges();
 	};
 
+	onBackup (e: any) {
+		this.refPhrase.focus();
+		Util.clipboardCopy({ text: authStore.phrase });
+
+		analytics.event('KeychainCopy', { type: 'BeforeLogout' });
+	};
+
+	onLogout (e: any) {
+		const { setPinConfirmed } = this.props;
+
+		window.setTimeout(() => {
+			C.AccountStop(false);
+			authStore.logout();
+			Util.route('/');
+
+			setPinConfirmed(false);
+		}, Constant.delay.popup);
+	};
+
 });
 
-export default PopupSettingsPagePhrase;
+export default PopupSettingsPageLogout;

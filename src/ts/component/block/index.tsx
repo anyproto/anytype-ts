@@ -232,11 +232,7 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 			targetTop = <DropTarget {...this.props} isTargetTop={true} rootId={rootId} id={id} style={style} type={type} dropType={I.DropType.Block} canDropMiddle={canDropMiddle} />;
 			targetBot = <DropTarget {...this.props} isTargetBottom={true} rootId={rootId} id={id} style={style} type={type} dropType={I.DropType.Block} canDropMiddle={canDropMiddle} />;
 		} else {
-			object = (
-				<div className="dropTarget">
-					{blockComponent}
-				</div>
-			);
+			object = <div className="dropTarget">{blockComponent}</div>;
 
 			targetTop = <div className="dropTarget targetTop" />;
 			targetBot = <div className="dropTarget targetBot" />;
@@ -269,11 +265,7 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 				</div>
 			);
 		} else {
-			object = (
-				<div className="selectable">
-					{object}
-				</div>
-			);
+			object = <div className="selectable">{object}</div>;
 		};
 
 		return (

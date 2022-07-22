@@ -4,7 +4,11 @@
 	.menu.menuBlockLink { width: 420px; }
 	.menu.menuBlockLink {
 		.content { transition: none; padding: 0px; max-height: 420px; padding: 8px 0px 0px 0px; }
-		.content.initial .filter .line { display: none; }
+		.content.initial {
+			.filter {
+				.line { display: none; }
+			}
+		}
 
 		.wrap { height: 100%; display: flex; flex-direction: column; }
 		.wrap.withLabel {
@@ -12,7 +16,11 @@
 		}
 
 		.items { height: 100%; }
+
 		.filter { flex-shrink: 0; }
+		.filter {
+			.icon.clear { opacity: 1; }
+		}
 
 		.item { display: flex; }
 		.item {

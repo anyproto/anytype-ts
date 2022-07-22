@@ -10,7 +10,10 @@ const $ = require('jquery');
 class MenuItemVertical extends React.Component<Props, {}> {
 
 	render () {
-		let { id, icon, object, inner, name, description, caption, color, arrow, checkbox, isActive, withDescription, withCaption, withSwitch, className, onClick, onMouseEnter, onMouseLeave, style, iconSize, switchValue, onSwitch, readonly, forceLetter } = this.props;
+		let { 
+			id, icon, object, inner, name, description, caption, color, arrow, checkbox, isActive, withDescription, withCaption, withSwitch, 
+			className, style, iconSize, switchValue, readonly, forceLetter, onClick, onSwitch, onMouseEnter, onMouseLeave,
+		} = this.props;
 		let cn = [ 'item' ];
 
 		if (className) {

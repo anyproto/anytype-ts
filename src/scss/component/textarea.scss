@@ -1,8 +1,9 @@
 @import "~scss/_vars";
 
-.textarea {
-	width: 100%; resize: none; font-size: 14px; border: 0px; background: #f7f5f0; padding: 20px;
-	line-height: 22px; letter-spacing: -0.12px; color: inherit; display: block; font-family: 'Plex'; 
+.textareaWrap { overflow: hidden; background: $colorVeryLightGrey; border-radius: 8px; }
+.textarea { 
+	padding: 20px 24px; width: 100%; resize: none; @include text-common; border: 0px; color: inherit; display: block; font-family: 'Plex'; 
+	background: none; 
 }
 .textarea::placeholder { color: $colorBorderDark; }
 

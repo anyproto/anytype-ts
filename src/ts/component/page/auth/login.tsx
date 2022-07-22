@@ -37,11 +37,15 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<Props
 				<Footer />
 				
 				<Frame>
+					<div className="authBackWrap" onClick={this.onCancel}>
+						<Icon className="back" />
+						<div className="name">{translate('authLoginBack')}</div>
+					</div>
 					<Title text={translate('authLoginTitle')} />
-					<Label text={translate('authLoginLabel')} />
 					<Error text={error} />
 							
 					<form onSubmit={this.onSubmit}>
+<<<<<<< HEAD
 						<div className="textareaWrap">
 							<Textarea 
 								ref={(ref: any) => this.phraseRef = ref} 
@@ -49,9 +53,12 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<Props
 								onKeyDown={this.onKeyDown} 
 							/>
 						</div>
+=======
+						<Input ref={(ref: any) => this.phraseRef = ref} placeholder={translate('authLoginLabel')} onKeyDown={this.onKeyDown} />
+
+>>>>>>> 61f4b50cd685c938acd48ce81a3f7a0a16ae3f3f
 						<div className="buttons">
 							<Button type="input" text={translate('authLoginLogin')} />
-							<Button text={translate('authLoginBack')} color="grey" onClick={this.onCancel} />
 						</div>
 					</form>
 				</Frame>

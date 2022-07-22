@@ -40,6 +40,10 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 		const items = this.getItems(true);
 		const withFilter = this.isWithFilter();
 
+		items.forEach((item: any) => {
+			const { switchValue } = item;
+		});
+
 		const rowRenderer = (param: any) => {
 			const item = items[param.index];
 			const cn = [];
@@ -179,7 +183,9 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 			this.refList.scrollToPosition(this.top);
 		};
 
-		this.focus();
+		if (this.n == -1) {
+			this.focus();
+		};
 		this.resize();
 	};
 	
@@ -283,6 +289,16 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 		};
 	};
 
+	onSwitch (e: any, item: any) {
+		const { param } = this.props;
+		const { data } = param;
+		const { onSwitch } = data;
+
+		if (onSwitch) {
+			onSwitch(e, item);
+		};
+	};
+
 	onFilterChange (v: string) {
 		this.props.param.data.filter = v;
 	};
@@ -308,6 +324,10 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 
 		return !noFilter && (options.length > LIMIT);
 	};
+
+	updateOptions (options: any[]) {
+		this.props.param.data.options = options;
+	}
 
 	resize () {
 		const { position, getId, param } = this.props;

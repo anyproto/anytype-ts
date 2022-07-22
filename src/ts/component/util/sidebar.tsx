@@ -91,7 +91,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		};
 
 		return (
-            <div 
+			<div 
 				id="sidebar" 
 				className={cn.join(' ')} 
 			>
@@ -133,7 +133,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 
 				<div className="resize-h" onMouseDown={(e: any) => { this.onResizeStart(e, I.MenuType.Horizontal); }} />
 				{/*<div className="resize-v" onMouseDown={(e: any) => { this.onResizeStart(e, I.MenuType.Vertical); }} />*/}
-            </div>
+			</div>
 		);
 	};
 
@@ -523,8 +523,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 	};
 
 	onResizeMove (e: any, dir: I.MenuType) {
-		const { width } = sidebar.data;
-		const snap = sidebar.getSnap();
+		const { width, snap } = sidebar.data;
 
 		if (dir == I.MenuType.Horizontal) {
 			const d = (snap == I.MenuDirection.Right) ? (this.ox - e.pageX + width) : e.pageX - this.ox;

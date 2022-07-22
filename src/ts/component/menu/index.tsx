@@ -7,7 +7,8 @@ import { observer } from 'mobx-react';
 
 import MenuHelp from './help';
 import MenuOnboarding from './onboarding';
-import MenuAccount from './account';
+import MenuAccountSelect from './account/select';
+import MenuAccountPath from './account/path';
 import MenuSelect from './select';
 import MenuButton from './button';
 
@@ -83,7 +84,8 @@ const ARROW_HEIGHT = 8;
 const Components: any = {
 	help:					 MenuHelp,
 	onboarding:				 MenuOnboarding,
-	account:				 MenuAccount,
+	accountSelect:			 MenuAccountSelect,
+	accountPath:			 MenuAccountPath,
 	select:					 MenuSelect,
 	button:					 MenuButton,
 
@@ -765,15 +767,25 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 			});
 		};
 
-		if (this.ref && this.ref.onRemove && refInput && !refInput.isFocused) {
-			keyboard.shortcut('backspace', e, (pressed: string) => {
-				e.preventDefault();
+		if (!refInput || (refInput && !refInput.isFocused)) {
+			if (this.ref && this.ref.onRemove) {
+				keyboard.shortcut('backspace', e, (pressed: string) => {
+					e.preventDefault();
 
-				this.ref.n--;
-				this.checkIndex();
-				this.ref.onRemove(e, item);
-				this.setActive(null, true);
-			});
+					this.ref.n--;
+					this.checkIndex();
+					this.ref.onRemove(e, item);
+					this.setActive(null, true);
+				});
+			};
+
+			if (this.ref && this.ref.onSwitch) {
+				keyboard.shortcut('space', e, (pressed: string) => {
+					e.preventDefault();
+
+					this.ref.onSwitch(e, item);
+				});
+			};
 		};
 	};
 

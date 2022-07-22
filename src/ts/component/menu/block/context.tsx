@@ -201,6 +201,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 					offsetY: param.offsetY,
 					rect: param.rect,
 					width: getSize().width,
+					noFlipY: true,
 				});
 
 				menuParam.data = Object.assign(menuParam.data, {

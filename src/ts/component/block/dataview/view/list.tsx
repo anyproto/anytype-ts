@@ -36,12 +36,12 @@ const ViewList = observer(class ViewList extends React.Component<Props, {}> {
 		return (
 			<div className="wrap">
 				<div className="viewItem viewList">
-						<InfiniteLoader
-							isRowLoaded={({ index }) => (index < length - 1) && !!records[index]}
-							loadMoreRows={this.loadMoreRows}
-							rowCount={total}
-							threshold={10}
-						>
+					<InfiniteLoader
+						isRowLoaded={({ index }) => (index < length - 1) && !!records[index]}
+						loadMoreRows={this.loadMoreRows}
+						rowCount={total}
+						threshold={10}
+					>
 						{({ onRowsRendered, registerChild }) => (
 							<WindowScroller scrollElement={isPopup ? $('#popupPage-innerWrap').get(0) : window}>
 								{({ height, isScrolling, registerChild, scrollTop }) => {
