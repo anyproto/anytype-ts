@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Icon, Button, Cover, Loader, IconObject, Header, ObjectName, ObjectDescription } from 'ts/component';
-import { I, C, DataUtil, Util, keyboard, Key, focus, translate } from 'ts/lib';
+import { I, C, DataUtil, Util, keyboard, Key, focus, translate, sidebar } from 'ts/lib';
 import { blockStore, popupStore, commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
@@ -239,6 +239,16 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 							</InfiniteLoader>
 						)}
 					</div>
+				</div>
+
+				<div id="footer" className="footer footerMainNavigation">
+					<Icon 
+						id="button-expand" 
+						className="big" 
+						tooltip="Show sidebar" 
+						tooltipY={I.MenuDirection.Top} 
+						onClick={() => { sidebar.expand(); }} 
+					/>
 				</div>
 			</div>
 		);

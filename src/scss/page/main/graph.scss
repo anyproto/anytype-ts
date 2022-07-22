@@ -11,9 +11,7 @@
             z-index: 21; position: absolute; right: 0px; top: 0px; display: none; background: $colorWhite;
         }
         .side.right {
-            .bottom { 
-                position: absolute; left: 0px; bottom: 0px; padding: 14px 16px; width: 100%; border-top: 1px solid $colorLightGrey;
-            }
+            .bottom { position: absolute; left: 0px; bottom: 0px; padding: 14px 16px; width: 100%; border-top: 1px solid $colorLightGrey; }
             .bottom {
                 .icon.search { 
                     width: 20px; height: 20px; margin-right: 8px; vertical-align: top; background-image: url('~img/icon/graph/search.svg');
@@ -32,15 +30,6 @@
 
     .wrapper.withPanel {
         .side.right { display: block; }
-    }
-
-    .footer { display: block !important; position: absolute; }
-    .footer {
-        .icon { 
-            width: 44px; height: 44px; background-color: $colorWhite; box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.2); border-radius: 12px; 
-		    background-size: 20px 20px; position: absolute; right: 20px; bottom: 20px; 
-        }
-        .icon.manager { background-image: url('~img/icon/dataview/button/manager0.svg'); }
     }
 
     #graphWrapper { height: 100%; }

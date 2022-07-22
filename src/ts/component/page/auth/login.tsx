@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Frame, Cover, Title, Label, Error, Textarea, Button, Header, FooterAuth as Footer } from 'ts/component';
+import { Frame, Cover, Title, Input, Error, Button, Header, FooterAuth as Footer, Icon } from 'ts/component';
 import { Util, translate, C, keyboard, DataUtil } from 'ts/lib';
 import { commonStore, authStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -45,18 +45,8 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<Props
 					<Error text={error} />
 							
 					<form onSubmit={this.onSubmit}>
-<<<<<<< HEAD
-						<div className="textareaWrap">
-							<Textarea 
-								ref={(ref: any) => this.phraseRef = ref} 
-								placeholder={translate('authLoginPhrase')} 
-								onKeyDown={this.onKeyDown} 
-							/>
-						</div>
-=======
 						<Input ref={(ref: any) => this.phraseRef = ref} placeholder={translate('authLoginLabel')} onKeyDown={this.onKeyDown} />
 
->>>>>>> 61f4b50cd685c938acd48ce81a3f7a0a16ae3f3f
 						<div className="buttons">
 							<Button type="input" text={translate('authLoginLogin')} />
 						</div>
