@@ -523,7 +523,6 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 	};
 
 	onResizeMove (e: any, dir: I.MenuType) {
-		const { isPopup } = this.props;
 		const { width, snap } = sidebar.data;
 
 		if (dir == I.MenuType.Horizontal) {
@@ -535,10 +534,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		};
 
 		sidebar.resizePage();
-
-		if (!isPopup) {
-			$(window).trigger('resize.editor');
-		};
+		$(window).trigger('resize');
 	};
 
 	onResizeEnd (e: any, dir: I.MenuType) {
