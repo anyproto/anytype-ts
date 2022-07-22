@@ -232,10 +232,11 @@ class Sidebar {
 		this.obj.removeClass('anim');
 		this.obj.css(css);
 		this.obj.addClass('anim');
+		this.setFixed(false);
 
 		raf(() => { 
 			const css: any = {};
-			if (autoSidebar && (mouse.x >= x) && (mouse.x <= x + width)) {
+			if ((this.data.snap === null) || (autoSidebar && (mouse.x >= x) && (mouse.x <= x + width))) {
 				css.top = y;
 				css.height = height;
 				css.transform = `translate3d(0px,0px,0px)`;
@@ -254,7 +255,6 @@ class Sidebar {
 				this.obj.removeClass('active');
 			};
 		});
-		this.setFixed(false);
 	};
 
 	expand () {
@@ -280,6 +280,7 @@ class Sidebar {
 
 		this.obj.removeClass('anim');
 		this.obj.css(css).addClass('anim');
+		this.setFixed(true);
 
 		raf(() => {
 			this.obj.css({ top: 0 }).addClass('fixed'); 
@@ -288,7 +289,6 @@ class Sidebar {
 		this.removeAnimation(() => {
 			this.obj.css({ transform: '', height: this.data.height, top: this.data.y, left: '', right: '' });
 		});
-		this.setFixed(true);
 	};
 
 	show () {
