@@ -347,10 +347,6 @@ class Sidebar {
 	};
 
 	resizePage () {
-		if (!this.obj || !this.obj.length) {
-			return;
-		};
-
 		const { fixed, snap } = this.data;
 		const win = $(window);
 		const page = $('#page.isFull');
@@ -359,18 +355,18 @@ class Sidebar {
 		const loader = page.find('#loader');
 		const dummyLeft = $('#sidebarDummyLeft');
 		const dummyRight = $('#sidebarDummyRight');
-		
-		let width = fixed ? this.obj.outerWidth() : 0;
-		if (this.obj.css('display') == 'none') {
-			width = 0;
+
+		let width = 0;
+		if (this.obj && this.obj.length) {
+			if (fixed && (this.obj.css('display') != 'none')) {
+				width = this.obj.outerWidth();
+			};
 		};
 		
 		let pw = win.width() - width - 1;
 		let css: any = { width: '' };
 		let cssLoader: any = { width: pw, left: '', right: '' };
 		let dummy = null;
-
-		console.log('SIDEBAR', width, pw);
 
 		header.css(css).removeClass('withSidebar snapLeft snapRight');
 		footer.css(css).removeClass('withSidebar snapLeft snapRight');

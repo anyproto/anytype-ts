@@ -843,7 +843,6 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 	};
 	
 	resize () {
-		const list = this.getList();
 		const size = Constant.size.index;
 		const win = $(window);
 		const wh = win.height();
