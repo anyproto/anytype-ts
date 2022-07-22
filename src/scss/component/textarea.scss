@@ -1,7 +1,10 @@
 @import "~scss/_vars";
 
-.textareaWrap { overflow: hidden; background: $colorVeryLightGrey; border-radius: 8px; padding: 20px 24px; }
-.textarea { width: 100%; resize: none; @include text-common; border: 0px;  color: inherit; display: block; font-family: 'Plex'; background: none; }
+.textareaWrap { overflow: hidden; background: $colorVeryLightGrey; border-radius: 8px; }
+.textarea { 
+	padding: 20px 24px; width: 100%; resize: none; @include text-common; border: 0px; color: inherit; display: block; font-family: 'Plex'; 
+	background: none; 
+}
 .textarea::placeholder { color: $colorBorderDark; }
 
 .textarea.withError { border-color: #f6a085 !important; border-width: 2px !important; border-radius: 1px; }

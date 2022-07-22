@@ -362,7 +362,7 @@ class Sidebar {
 				width = this.obj.outerWidth();
 			};
 		};
-		
+
 		let pw = win.width() - width - 1;
 		let css: any = { width: '' };
 		let cssLoader: any = { width: pw, left: '', right: '' };

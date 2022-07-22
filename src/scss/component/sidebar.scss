@@ -1,6 +1,6 @@
 @import "~scss/_vars";
 
-.pageFlex { display: flex; flex-direction: row; justify-content: space-between; }
+.pageFlex { display: flex; flex-direction: row; justify-content: space-between; width: 100% !important; }
 .pageFlex {
 	.sidebarDummy { flex-shrink: 0; }
     #page { width: 100%; position: relative; }
