@@ -21,6 +21,9 @@ const Constant = require('json/constant.json');
 
 const ControlButtons = observer(class ControlButtons extends React.Component<Props, {}> {
 	
+	menuContext: any = null;
+	timeout: number = 0;
+
 	constructor (props: any) {
 		super(props);
 
@@ -125,7 +128,7 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 		const hasCover = object.coverType != I.CoverType.None;
 		
 		if (!hasCover) {
-			this.onChange(element, onCoverOpen, onCoverClose);
+			this.onChange(element);
 		} else {
 			const options: any[] = [
 				{ id: 'change', icon: 'coverChange', name: 'Change cover' },
@@ -137,35 +140,39 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 				options.push({ id: 'remove', icon: 'remove', name: 'Remove' });
 			};
 
-			let menuContext = null;
+			this.menuContext = null;
+
 			menuStore.open('select', {
 				element,
 				horizontal: I.MenuDirection.Center,
 				onOpen: (context: any) => {
-					menuContext = context;
+					this.menuContext = context;
 					onCoverOpen();
 				},
-				onClose: onCoverClose,
-				subIds: [ 'blockCover' ],
+				onClose: () => {
+					window.clearTimeout(this.timeout);
+					this.timeout = window.setTimeout(() => { onCoverClose }, Constant.delay.menu);
+				},
 				data: {
 					noClose: true,
 					options: options,
 					onSelect: (e: any, item: any) => {
 						switch (item.id) {
 							case 'change':
-								this.onChange(`#menuSelect #item-${item.id}`, null, () => {
-									menuContext.close();
-								});
+								this.onChange(element);
+								this.menuContext.close();
+
+								window.clearTimeout(this.timeout);
 								break;
 							
 							case 'position':
 								onEdit(e);
-								menuContext.close();
+								this.menuContext.close();
 								break;
 	
 							case 'remove':
 								DataUtil.pageSetCover(rootId, I.CoverType.None, '');
-								menuContext.close();
+								this.menuContext.close();
 	
 								analytics.event('RemoveCover');
 								break;
@@ -176,14 +183,14 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 		};
 	};
 
-	onChange (element: any, onOpen: (context: any) => void, onClose: () => void) {
-		const { rootId, onEdit, onUploadStart, onUpload } = this.props;
+	onChange (element: any) {
+		const { rootId, onEdit, onUploadStart, onUpload, onCoverOpen, onCoverClose } = this.props;
 
 		menuStore.open('blockCover', {
 			element,
 			horizontal: I.MenuDirection.Center,
-			onOpen,
-			onClose,
+			onOpen: onCoverOpen,
+			onClose: onCoverClose,
 			data: {
 				rootId,
 				onEdit,

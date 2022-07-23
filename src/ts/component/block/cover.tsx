@@ -77,8 +77,6 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 		const root = blockStore.getLeaf(rootId, rootId);
 		const cn = [ 'elements', 'editorControlElements' ];
 
-		console.log(coverType, coverId, isImage);
-
 		if (!root) {
 			return null;
 		};
@@ -315,6 +313,8 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 
 		const node = $(ReactDOM.findDOMNode(this));
 		node.find('#elements').addClass('hover');
+
+		console.log('onCoverOpen');
 		
 		focus.clear(true);
 	};
@@ -323,6 +323,8 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 		if (!this._isMounted) {
 			return;
 		};
+
+		console.log('onCoverClose');
 		
 		const node = $(ReactDOM.findDOMNode(this));
 		node.find('#elements').removeClass('hover');
