@@ -314,8 +314,6 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 		const node = $(ReactDOM.findDOMNode(this));
 		node.find('#elements').addClass('hover');
 
-		console.log('onCoverOpen');
-		
 		focus.clear(true);
 	};
 
@@ -324,8 +322,6 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 			return;
 		};
 
-		console.log('onCoverClose');
-		
 		const node = $(ReactDOM.findDOMNode(this));
 		node.find('#elements').removeClass('hover');
 	};

@@ -208,7 +208,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 					{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
 				];
 
-				C.ObjectSearch(filters, sorts, Constant.defaultRelationKeys, filter, 0, 0, (message: any) => {
+				C.ObjectSearch(filters, sorts, Constant.defaultRelationKeys, filter, 0, 300, (message: any) => {
 					message.records.forEach((item: any) => {
 						this.items.push({
 							id: item.id,
