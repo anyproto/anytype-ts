@@ -77,6 +77,8 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 		const root = blockStore.getLeaf(rootId, rootId);
 		const cn = [ 'elements', 'editorControlElements' ];
 
+		console.log(coverType, coverId, isImage);
+
 		if (!root) {
 			return null;
 		};
@@ -175,6 +177,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 	};
 	
 	componentDidUpdate () {
+		this.loaded = false;
 		this.resize();
 
 		Util.renderLink($(ReactDOM.findDOMNode(this)));

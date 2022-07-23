@@ -42,19 +42,17 @@
 			}
 		}
 	
-		.section.unsplash {
-			.items { grid-template-columns: repeat(3, 120px); }
-			.item {
-				.cover { height: 72px; }
-			}
-		}
-
 		.body.upload { padding: 16px; }
 		.body.gallery {
 			.sections { height: 362px; }
 		}
-		.body.unsplash {
+		.body.unsplash, .body.library {
 			.sections { height: 318px; }
+
+			.items { grid-template-columns: repeat(3, 120px); }
+			.item {
+				.cover { height: 72px; }
+			}
 		}
 
 		.dropzone { 

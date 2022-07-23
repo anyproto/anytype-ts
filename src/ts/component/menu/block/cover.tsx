@@ -10,7 +10,8 @@ interface Props extends I.Menu {};
 enum Tab {
 	Gallery	 = 0,
 	Unsplash = 1,
-	Upload	 = 2,
+	Library	 = 2,
+	Upload	 = 3,
 };
 
 interface State {
@@ -54,6 +55,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 		const tabs: any[] = [
 			{ id: Tab.Gallery, name: 'Gallery' },
 			{ id: Tab.Unsplash, name: 'Unsplash' },
+			{ id: Tab.Library, name: 'Library' },
 			{ id: Tab.Upload, name: 'Upload' },
 		].filter(it => it);
 
@@ -90,6 +92,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 				break;
 
 			case Tab.Unsplash:
+			case Tab.Library:
 				content = (
 					<React.Fragment>
 						<Filter 
@@ -99,7 +102,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 						/>
 
 						<div className="sections">
-							<div className="section unsplash">
+							<div className="section">
 								<div className="items">
 									{this.items.map((item: any, i: number) => (
 										<Item key={i} {...item} />
@@ -135,7 +138,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 						<div 
 							key={item.id} 
 							className={[ 'btn', (item.id == tab ? 'active' : '') ].join(' ')}
-							onClick={() => { this.setState({ tab: item.id }); }}
+							onClick={() => { this.setTab(item.id); }}
 						>
 							{item.name}
 						</div>
@@ -168,25 +171,62 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 	};
 
 	load () {
-		const { filter } = this.state;
+		const { filter, tab } = this.state;
 
 		this.items = [];
-		C.UnsplashSearch(filter, LIMIT, (message: any) => {
-			if (message.error.code) {
-				return;
-			};
 
-			message.pictures.forEach((item: any) => {
-				this.items.push({
-					id: item.id,
-					type: I.CoverType.Source,
-					src: item.url,
-					artist: item.artist,
+		switch (tab) {
+			case Tab.Unsplash:
+				C.UnsplashSearch(filter, LIMIT, (message: any) => {
+					if (message.error.code) {
+						return;
+					};
+
+					message.pictures.forEach((item: any) => {
+						this.items.push({
+							id: item.id,
+							type: I.CoverType.Source,
+							src: item.url,
+							artist: item.artist,
+						});
+					});
+
+					this.forceUpdate();
 				});
-			});
+				break;
 
-			this.forceUpdate();
-		});
+			case Tab.Library:
+				const filters: I.Filter[] = [
+					{ operator: I.FilterOperator.And, relationKey: 'workspaceId', condition: I.FilterCondition.Empty, value: null },
+					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.image },
+					{ operator: I.FilterOperator.And, relationKey: 'widthInPixels', condition: I.FilterCondition.GreaterOrEqual, value: Constant.size.cover },
+					{ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.Equal, value: false },
+					{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
+					{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
+				];
+				const sorts = [ 
+					{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
+				];
+
+				C.ObjectSearch(filters, sorts, Constant.defaultRelationKeys, filter, 0, 0, (message: any) => {
+					message.records.forEach((item: any) => {
+						this.items.push({
+							id: item.id,
+							type: I.CoverType.Upload,
+							src: commonStore.imageUrl(item.id, 150),
+							artist: item.name,
+						});
+					});
+					this.forceUpdate();
+				});
+				break;
+		};
+	};
+
+	setTab (tab: Tab) {
+		this.state.tab = tab;
+		this.setState({ tab });
+		this.load();
 	};
 
 	onUpload (e: any) {
