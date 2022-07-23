@@ -51,11 +51,12 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 	};
 
 	render () {
+		const { config } = commonStore;
 		const { filter, tab } = this.state;
 		const tabs: any[] = [
 			{ id: Tab.Gallery, name: 'Gallery' },
 			{ id: Tab.Unsplash, name: 'Unsplash' },
-			{ id: Tab.Library, name: 'Library' },
+			config.experimental ? { id: Tab.Library, name: 'Library' } : null,
 			{ id: Tab.Upload, name: 'Upload' },
 		].filter(it => it);
 
