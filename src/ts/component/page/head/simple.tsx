@@ -201,10 +201,6 @@ const HeadSimple = observer(class Controls extends React.Component<Props, {}> {
 			DataUtil.blockSetText(rootId, id, value, [], true);
 			update[id] = value;
 		};
-
-		if (root.isObjectType()) {
-			dbStore.objectTypeUpdate({ id: rootId, name: update.title, description: update.description });
-		};
 	};
 
 	getRange (id: string) {

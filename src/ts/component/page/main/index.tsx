@@ -628,13 +628,6 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 		C.ObjectListSetIsArchived(ids, v, () => {
 			analytics.event(v ? 'MoveToBin' : 'RestoreFromBin', { count: items.length });
-
-			items.forEach((it: any) => {
-				const object = this.getObject(it);
-				if (object.type == Constant.typeId.type) {
-					dbStore.objectTypeUpdate({ id: object.id, isArchived: v });
-				};
-			});
 		});
 	};
 

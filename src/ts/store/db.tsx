@@ -19,7 +19,6 @@ class DbStore {
 			clearAll: action,
             objectTypesSet: action,
             objectTypeAdd: action,
-            objectTypeUpdate: action,
             relationsSet: action,
             relationsClear: action,
             relationAdd: action,

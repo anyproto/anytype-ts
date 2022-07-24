@@ -425,10 +425,6 @@ class MenuBlockMore extends React.Component<Props, {}> {
 						return;
 					};
 
-					if ((blockId == rootId) && (object.type == Constant.typeId.type)) {
-						dbStore.objectTypeUpdate({ id: object.id, isArchived: true });
-					};
-
 					keyboard.onBack();
 					analytics.event('MoveToBin', { count: 1 });
 				});
@@ -438,10 +434,6 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				C.ObjectSetIsArchived(rootId, false, (message: any) => {
 					if (message.error.code) {
 						return;
-					};
-
-					if ((blockId == rootId) && (object.type == Constant.typeId.type)) {
-						dbStore.objectTypeUpdate({ id: object.id, isArchived: false });
 					};
 
 					analytics.event('RestoreFromBin', { count: 1 });

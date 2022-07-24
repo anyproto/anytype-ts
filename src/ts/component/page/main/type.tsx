@@ -456,7 +456,6 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 	onLayout (layout: string) {
 		const rootId = this.getRootId();
 
-		dbStore.objectTypeUpdate({ id: rootId, recommendedLayout: layout });
 		C.ObjectSetDetails(rootId, [ { key: 'recommendedLayout', value: layout } ]);
 
 		analytics.event('ChangeRecommendedLayout', { objectType: rootId, layout: layout });
