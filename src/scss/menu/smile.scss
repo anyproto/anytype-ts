@@ -19,11 +19,6 @@
 		}
 	
 		.items { overflow: overlay; height: 288px; }
-		.emptySearch { height: 100%; line-height: 256px; padding: 16px; text-align: center; }
-		.emptySearch {
-			b { display: block; font-weight: 400; color: $colorBlack; }
-			.txt { line-height: 24px; color: $colorMediumGrey; }
-		}
 		
 		.section { padding: 11px 14px !important; border: 0px; }
 		.section > .name { padding: 0px; margin: 0px; }

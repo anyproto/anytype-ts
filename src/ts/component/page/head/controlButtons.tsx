@@ -10,6 +10,7 @@ interface Props {
 	onIcon: (e: any) => void;
 	onCoverOpen: () => void;
 	onCoverClose: () => void;
+	onCoverSelect: (item: any) => void;
 	onLayout: (e: any) => void;
 	onRelation: (e: any) => void;
 	onEdit: (e: any) => void;
@@ -175,7 +176,9 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 	};
 
 	onChange (element: any) {
-		const { rootId, onEdit, onUploadStart, onUpload, onCoverOpen, onCoverClose } = this.props;
+		const { rootId, onEdit, onUploadStart, onUpload, onCoverOpen, onCoverClose, onCoverSelect } = this.props;
+
+		console.log(onCoverSelect);
 
 		menuStore.open('blockCover', {
 			element,
@@ -190,9 +193,7 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 				onEdit,
 				onUploadStart,
 				onUpload,
-				onSelect: (item: any) => {
-					DataUtil.pageSetCover(rootId, item.type, item.id, item.coverX, item.coverY, item.coverScale);
-				}
+				onSelect: onCoverSelect
 			},
 		});
 	};

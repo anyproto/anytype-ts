@@ -44,6 +44,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 		this.onIcon = this.onIcon.bind(this);
 		this.onCoverOpen = this.onCoverOpen.bind(this);
 		this.onCoverClose = this.onCoverClose.bind(this);
+		this.onCoverSelect = this.onCoverSelect.bind(this);
 		this.onLayout = this.onLayout.bind(this);
 		this.onRelation = this.onRelation.bind(this);
 
@@ -133,6 +134,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 					onIcon={this.onIcon} 
 					onCoverOpen={this.onCoverOpen}
 					onCoverClose={this.onCoverClose}
+					onCoverSelect={this.onCoverSelect}
 					onLayout={this.onLayout}
 					onRelation={this.onRelation}
 					onEdit={this.onEdit}
@@ -173,7 +175,6 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 	};
 	
 	componentDidUpdate () {
-		this.loaded = false;
 		this.resize();
 
 		Util.renderLink($(ReactDOM.findDOMNode(this)));
@@ -322,6 +323,17 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 
 		const node = $(ReactDOM.findDOMNode(this));
 		node.find('#elements').removeClass('hover');
+	};
+
+	onCoverSelect (item: any) {
+		const { rootId } = this.props;
+
+		console.log('onCoverSelect', item);
+
+		DataUtil.pageSetCover(rootId, item.type, item.id, item.coverX, item.coverY, item.coverScale);
+
+		this.loaded = false;
+		this.setState({ justUploaded: true });
 	};
 	
 	onEdit (e: any) {

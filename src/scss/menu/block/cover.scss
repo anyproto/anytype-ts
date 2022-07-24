@@ -22,6 +22,8 @@
 			.inner { height: 35px; }
 		}
 
+		.emptySearch { line-height: 318px !important; }
+
 		.sections { overflow: auto; flex-grow: 1; }
 		.section > .name { margin-bottom: 8px; }
 		.section:first-child { padding-top: 8px; }

@@ -36,6 +36,7 @@ import 'scss/component/frame.scss';
 import 'scss/component/switch.scss';
 import 'scss/component/title.scss';
 import 'scss/component/select.scss';
+import 'scss/component/emptySearch.scss';
 import 'scss/component/tag.scss';
 import 'scss/component/dragLayer.scss';
 import 'scss/component/dragbox.scss';

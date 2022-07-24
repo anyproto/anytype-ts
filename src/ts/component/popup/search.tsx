@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Icon, Input, Loader, IconObject, ObjectName, ObjectDescription } from 'ts/component';
+import { Icon, Input, Loader, IconObject, ObjectName, ObjectDescription, EmptySearch } from 'ts/component';
 import { I, C, Util, DataUtil, keyboard, Key, focus, translate, analytics } from 'ts/lib';
 import { commonStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -120,12 +120,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 				</form>
 
 				{!items.length && !loading ? (
-					<div id="empty" key="empty" className="emptySearch">
-						<div className="label">
-							<b>There are no objects named <span>"{filter}"</span></b>
-							Try creating a new one or search for something else.
-						</div>
-					</div>
+					<EmptySearch text={filter ? Util.sprintf(translate('popupSearchEmptyFilter'), filter) : translate('popupSearchEmpty')} />
 				) : ''}
 				
 				{this.cache && items.length && !loading ? (

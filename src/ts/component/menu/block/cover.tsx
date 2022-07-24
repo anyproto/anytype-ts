@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, C, DataUtil, analytics } from 'ts/lib';
-import { Cover, Filter, Icon, Label } from 'ts/component';
+import { I, C, DataUtil, analytics, Util, translate } from 'ts/lib';
+import { Cover, Filter, Icon, Label, EmptySearch } from 'ts/component';
 import { detailStore, commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -59,6 +59,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 			config.experimental ? { id: Tab.Library, name: 'Library' } : null,
 			{ id: Tab.Upload, name: 'Upload' },
 		].filter(it => it);
+		const sections = this.getSections();
 
 		const Item = (item: any) => (
 			<div className="item" onClick={(e: any) => { this.onSelect(e, item); }}>
@@ -79,39 +80,31 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 		);
 
 		let content = null;
+		let filterElement = null;
+
+		if ([ Tab.Unsplash, Tab.Library ].includes(tab)) {
+			filterElement = (
+				<Filter 
+					ref={(ref: any) => { this.refFilter = ref; }}
+					value={filter}
+					onChange={this.onFilterChange} 
+				/>
+			);
+		};
+
 		switch (tab) {
 			case Tab.Gallery:
-				const sections = this.getSections();
-
-				content = (
-					<div className="sections">
-						{sections.map((section: any, i: number) => (
-							<Section key={i} {...section} />
-						))}
-					</div>
-				);
-				break;
-
 			case Tab.Unsplash:
 			case Tab.Library:
 				content = (
 					<React.Fragment>
-						<Filter 
-							ref={(ref: any) => { this.refFilter = ref; }}
-							value={filter}
-							onChange={this.onFilterChange} 
-						/>
-
-						<div className="sections">
-							<div className="section">
-								<div className="items">
-									{this.items.map((item: any, i: number) => (
-										<Item key={i} {...item} />
-									))}
-								</div>
+						{sections.length ? (
+							<div className="sections">
+								{sections.map((section: any, i: number) => (
+									<Section key={i} {...section} />
+								))}
 							</div>
-						</div>
-						
+						) : <EmptySearch text={filter ? Util.sprintf(translate('menuBlockCoverEmptyFilter'), filter) : translate('menuBlockCoverEmpty')} />}
 					</React.Fragment>
 				);
 				break;
@@ -147,6 +140,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 				</div>
 
 				<div className={[ 'body', Tab[tab].toLowerCase() ].join(' ')}>
+					{filterElement}
 					{content}
 				</div>
 			</div>
@@ -180,6 +174,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 			case Tab.Unsplash:
 				C.UnsplashSearch(filter, LIMIT, (message: any) => {
 					if (message.error.code) {
+						this.forceUpdate();
 						return;
 					};
 
@@ -200,7 +195,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 				const filters: I.Filter[] = [
 					{ operator: I.FilterOperator.And, relationKey: 'workspaceId', condition: I.FilterCondition.Empty, value: null },
 					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.image },
-					{ operator: I.FilterOperator.And, relationKey: 'widthInPixels', condition: I.FilterCondition.GreaterOrEqual, value: 1600 },
+					{ operator: I.FilterOperator.And, relationKey: 'widthInPixels', condition: I.FilterCondition.GreaterOrEqual, value: 1000 },
 					{ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.Equal, value: false },
 					{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
 					{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
@@ -302,10 +297,26 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 	};
 
 	getSections () {
-		return [
-			{ name: 'Gradients', children: DataUtil.coverGradients() },
-			{ name: 'Solid colors', children: DataUtil.coverColors() },
-		];
+		const { tab } = this.state;
+		
+		let sections: any[] = [];
+		switch (tab) {
+			case Tab.Gallery:
+				sections = sections.concat([
+					{ name: 'Gradients', children: DataUtil.coverGradients() },
+					{ name: 'Solid colors', children: DataUtil.coverColors() },
+				]);
+				break;
+
+			case Tab.Library:
+			case Tab.Unsplash:
+				if (this.items.length) {
+					sections.push({ children: this.items });
+				};
+				break;
+		};
+
+		return sections;
 	};
 
 	onDragOver (e: any) {

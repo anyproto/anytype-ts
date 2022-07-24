@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Filter, IconEmoji } from 'ts/component';
+import { Filter, IconEmoji, EmptySearch } from 'ts/component';
 import { I, C, Util, SmileUtil, keyboard, Storage, translate, analytics } from 'ts/lib';
 import { menuStore } from 'ts/store';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
@@ -149,12 +149,7 @@ class MenuSmile extends React.Component<Props, State> {
 						)}
 					</InfiniteLoader>
 					{!sections.length ? (
-						<div className="emptySearch">
-							<div 
-								className="txt" 
-								dangerouslySetInnerHTML={{ __html: Util.sprintf(translate('menuSmileEmpty'), filter) }} 
-							/>
-						</div>
+						<EmptySearch text={Util.sprintf(translate('menuSmileEmpty'), filter)} />
 					): ''}
 				</div>
 			</div>
@@ -211,15 +206,15 @@ class MenuSmile extends React.Component<Props, State> {
 			return s;
 		});
 		
-		if (filter) {
-			sections = sections.filter((s: any) => {
-				s.children = (s.children || []).filter((c: any) => { return c.smile.match(reg); });
-				return s.children.length > 0;
-			});
-		};
-		
 		if (lastIds && lastIds.length) {
 			sections.unshift({ id: ID_RECENT, name: 'Recently used', children: lastIds });
+		};
+
+		if (filter) {
+			sections = sections.filter((s: any) => {
+				s.children = (s.children || []).filter(c =>  c.smile.match(reg));
+				return s.children.length > 0;
+			});
 		};
 		
 		return sections;
@@ -230,21 +225,15 @@ class MenuSmile extends React.Component<Props, State> {
 		let items: any[] = [];
 		let ret: any[] = [];
 		let length = sections.reduce((res: number, section: any) => { 
-			if (section.id == ID_RECENT) {
-				return res;
-			};
-			return res + section.children.length; 
+			return (section.id == ID_RECENT) ? res : res + section.children.length; 
 		}, 0);
 
-		if (length <= LIMIT_SEARCH) {
+		if (length && (length <= LIMIT_SEARCH)) {
 			sections = [
 				{ 
 					id: 'search', name: 'Search results', isSection: true,
 					children: sections.reduce((res: any[], section: any) => {
-						if (section.id == ID_RECENT) {
-							return res;
-						};
-						return res.concat(section.children); 
+						return (section.id == ID_RECENT) ? res : res.concat(section.children); 
 					}, [])
 				}
 			];
