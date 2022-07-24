@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { I, C, DataUtil, analytics, Util, translate } from 'ts/lib';
-import { Cover, Filter, Icon, Label, EmptySearch } from 'ts/component';
+import { Cover, Filter, Icon, Label, EmptySearch, Loader } from 'ts/component';
 import { detailStore, commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -52,7 +52,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 
 	render () {
 		const { config } = commonStore;
-		const { filter, tab } = this.state;
+		const { filter, tab, loading } = this.state;
 		const tabs: any[] = [
 			{ id: Tab.Gallery, name: 'Gallery' },
 			{ id: Tab.Unsplash, name: 'Unsplash' },
@@ -125,6 +125,10 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 				break;
 		};
 
+		if (loading) {
+			content = <Loader />;
+		};
+
 		return (
 			<div className="wrap">
 				<div className="head">
@@ -170,11 +174,18 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 
 		this.items = [];
 
+		if (![ Tab.Unsplash, Tab.Library ].includes(tab)) {
+			this.setState({ loading: false });
+			return;
+		};
+
 		switch (tab) {
 			case Tab.Unsplash:
+				this.setState({ loading: true });
+
 				C.UnsplashSearch(filter, LIMIT, (message: any) => {
 					if (message.error.code) {
-						this.forceUpdate();
+						this.setState({ loading: false });
 						return;
 					};
 
@@ -187,7 +198,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 						});
 					});
 
-					this.forceUpdate();
+					this.setState({ loading: false });
 				});
 				break;
 
@@ -204,7 +215,13 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 					{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
 				];
 
+				this.setState({ loading: true });
 				C.ObjectSearch(filters, sorts, Constant.defaultRelationKeys, filter, 0, 300, (message: any) => {
+					if (message.error.code) {
+						this.setState({ loading: false });
+						return;
+					};
+
 					message.records.forEach((item: any) => {
 						this.items.push({
 							id: item.id,
@@ -214,7 +231,8 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 							coverY: -0.25,
 						});
 					});
-					this.forceUpdate();
+
+					this.setState({ loading: false });
 				});
 				break;
 		};

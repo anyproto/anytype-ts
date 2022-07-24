@@ -178,8 +178,6 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 	onChange (element: any) {
 		const { rootId, onEdit, onUploadStart, onUpload, onCoverOpen, onCoverClose, onCoverSelect } = this.props;
 
-		console.log(onCoverSelect);
-
 		menuStore.open('blockCover', {
 			element,
 			horizontal: I.MenuDirection.Center,

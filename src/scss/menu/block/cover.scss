@@ -50,6 +50,7 @@
 		}
 		.body.unsplash, .body.library {
 			.sections { height: 318px; }
+			.loaderWrapper { height: 318px; position: relative; background: none; }
 
 			.items { grid-template-columns: repeat(3, 120px); }
 			.item {
