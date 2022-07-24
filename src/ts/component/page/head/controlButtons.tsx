@@ -21,7 +21,6 @@ const Constant = require('json/constant.json');
 
 const ControlButtons = observer(class ControlButtons extends React.Component<Props, {}> {
 	
-	menuContext: any = null;
 	timeout: number = 0;
 
 	constructor (props: any) {
@@ -129,58 +128,50 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 		
 		if (!hasCover) {
 			this.onChange(element);
-		} else {
-			const options: any[] = [
-				{ id: 'change', icon: 'coverChange', name: 'Change cover' },
-			];
-			if (DataUtil.coverIsImage(object.coverType)) {
-				options.push({ id: 'position', icon: 'coverPosition', name: 'Reposition' });
-			};
-			if (hasCover) {
-				options.push({ id: 'remove', icon: 'remove', name: 'Remove' });
-			};
-
-			this.menuContext = null;
-
-			menuStore.open('select', {
-				element,
-				horizontal: I.MenuDirection.Center,
-				onOpen: (context: any) => {
-					this.menuContext = context;
-					onCoverOpen();
-				},
-				onClose: () => {
-					window.clearTimeout(this.timeout);
-					this.timeout = window.setTimeout(() => { onCoverClose }, Constant.delay.menu);
-				},
-				data: {
-					noClose: true,
-					options: options,
-					onSelect: (e: any, item: any) => {
-						switch (item.id) {
-							case 'change':
-								this.onChange(element);
-								this.menuContext.close();
-
-								window.clearTimeout(this.timeout);
-								break;
-							
-							case 'position':
-								onEdit(e);
-								this.menuContext.close();
-								break;
-	
-							case 'remove':
-								DataUtil.pageSetCover(rootId, I.CoverType.None, '');
-								this.menuContext.close();
-	
-								analytics.event('RemoveCover');
-								break;
-						};
-					}
-				}
-			});
+			return;
 		};
+
+		const options: any[] = [
+			{ id: 'change', icon: 'coverChange', name: 'Change cover' },
+		];
+		if (DataUtil.coverIsImage(object.coverType)) {
+			options.push({ id: 'position', icon: 'coverPosition', name: 'Reposition' });
+		};
+		if (hasCover) {
+			options.push({ id: 'remove', icon: 'remove', name: 'Remove' });
+		};
+
+		menuStore.open('select', {
+			element,
+			horizontal: I.MenuDirection.Center,
+			onOpen: onCoverOpen,
+			onClose: () => {
+				window.clearTimeout(this.timeout);
+				this.timeout = window.setTimeout(() => { onCoverClose(); }, Constant.delay.menu);
+			},
+			data: {
+				options: options,
+				onSelect: (e: any, item: any) => {
+					switch (item.id) {
+						case 'change':
+							window.setTimeout(() => {
+								window.clearTimeout(this.timeout);
+								this.onChange(element);
+							}, Constant.delay.menu);
+							break;
+						
+						case 'position':
+							onEdit(e);
+							break;
+
+						case 'remove':
+							DataUtil.pageSetCover(rootId, I.CoverType.None, '');
+							analytics.event('RemoveCover');
+							break;
+					};
+				}
+			}
+		});
 	};
 
 	onChange (element: any) {
@@ -189,7 +180,10 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 		menuStore.open('blockCover', {
 			element,
 			horizontal: I.MenuDirection.Center,
-			onOpen: onCoverOpen,
+			onOpen: () => {
+				window.clearTimeout(this.timeout);
+				onCoverOpen();
+			},
 			onClose: onCoverClose,
 			data: {
 				rootId,
