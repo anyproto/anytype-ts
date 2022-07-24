@@ -10,14 +10,16 @@
 		background-size: 20px 20px;
 	}
 	
-	#button-expand { position: absolute; left: 14px; bottom: 14px; }
+	#button-expand { position: absolute; left: 14px; bottom: 14px; background-image: url('~img/icon/footer/expand.svg'); }
 	#button-help { position: absolute; right: 14px; bottom: 14px; }
+	#button-manager { position: absolute; right: 14px; bottom: 14px; background-image: url('~img/icon/dataview/button/manager0.svg'); }
 }
 
 .footer.snapRight { left: 0px; }
 .footer.snapLeft { right: 0px; }
 
 .footer.footerMainEdit {
-	#button-expand { background-image: url('~img/icon/footer/expand.svg'); }
 	#button-help { background-image: url('~img/icon/footer/help.svg'); }
 }
+
+.footer.footerMainGraph { display: block !important; position: absolute; }

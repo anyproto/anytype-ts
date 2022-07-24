@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { I, C, Util, analytics } from 'ts/lib';
 import { RouteComponentProps } from 'react-router';
+import { I, C, Util, analytics, sidebar } from 'ts/lib';
 import { Header, Graph, Icon, Loader } from 'ts/component';
 import { blockStore, detailStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -44,7 +44,6 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 
 	render () {
 		const { loading } = this.state;
-		const { isPopup } = this.props;
 		const rootId = this.getRootId();
 		const ref = this.refGraph;
 
@@ -81,8 +80,22 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 					</div>
 				</div>
 
-				<div id="footer" className="footer">
-					<Icon className="manager" onClick={() => { this.togglePanel(true); }} />
+				<div id="footer" className="footer footerMainGraph">
+					<Icon 
+						id="button-expand" 
+						className="big" 
+						tooltip="Show sidebar" 
+						tooltipY={I.MenuDirection.Top} 
+						onClick={() => { sidebar.expand(); }} 
+					/>
+
+					<Icon 
+						id="button-manager" 
+						className="big" 
+						tooltip="Sidebar settings"
+						tooltipY={I.MenuDirection.Top} 
+						onClick={() => { this.togglePanel(true); }} 
+					/>
 				</div>
 			</div>
 		);

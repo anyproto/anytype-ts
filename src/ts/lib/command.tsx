@@ -36,9 +36,9 @@ const AppShutdown = (callBack?: (message: any) => void) => {
 	dispatcher.request(AppShutdown.name, request, callBack);
 };
 
-const AppVersionGet = (callBack?: (message: any) => void) => {
+const AppGetVersion = (callBack?: (message: any) => void) => {
 	const request = new Commands.Empty();
-	dispatcher.request(AppVersionGet.name, request, callBack);
+	dispatcher.request(AppGetVersion.name, request, callBack);
 };
 
 // ---------------------- WALLET ---------------------- //
@@ -1525,7 +1525,7 @@ export {
 	LinkPreview,
 	ProcessCancel,
 
-	AppVersionGet,
+	AppGetVersion,
 	AppShutdown,
 
 	WalletCreate,

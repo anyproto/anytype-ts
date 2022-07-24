@@ -225,6 +225,7 @@ const Mapper = {
 		},
 
 		Block: (obj: any): I.Block => {
+			const cc = obj.getContentCase();
 			const type = Mapper.BlockType(obj.getContentCase());
 			const fn = 'get' + Util.ucFirst(type);
 			const fm = Util.toUpperCamelCase('block-' + type);
@@ -243,7 +244,7 @@ const Mapper = {
 			if (Mapper.From[fm]) {
 				item.content = Mapper.From[fm](content);
 			} else {
-				console.log('[Mapper] From does not exist: ', fm);
+				console.log('[Mapper] From does not exist: ', fm, cc);
 			};
 			return item;
 		},
