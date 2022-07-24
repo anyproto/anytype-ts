@@ -18,7 +18,6 @@ class DbStore {
             objectTypes: computed,
 			clearAll: action,
             objectTypesSet: action,
-            objectTypeAdd: action,
             relationsSet: action,
             relationsClear: action,
             relationAdd: action,
@@ -57,21 +56,10 @@ class DbStore {
 		for (let type of types) {
 			const check = this.getObjectType(type.id);
 			if (check) {
-				this.objectTypeUpdate(type);
+				set(check, type);
 			} else {
-				this.objectTypeAdd(type);
+				this.objectTypeList.push(new M.ObjectType(type));
 			};
-		};
-	};
-
-    objectTypeAdd (type: any) {
-		this.objectTypeList.push(new M.ObjectType(type));
-	};
-
-    objectTypeUpdate (type: any) {
-		const item = this.getObjectType(type.id);
-		if (item) {
-			set(item, type);
 		};
 	};
 
