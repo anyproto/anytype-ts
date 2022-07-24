@@ -216,6 +216,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 							type: I.CoverType.Upload,
 							src: commonStore.imageUrl(item.id, 150),
 							artist: item.name,
+							coverY: -0.25,
 						});
 					});
 					this.forceUpdate();
