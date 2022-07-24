@@ -328,12 +328,8 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 	onCoverSelect (item: any) {
 		const { rootId } = this.props;
 
-		console.log('onCoverSelect', item);
-
-		DataUtil.pageSetCover(rootId, item.type, item.id, item.coverX, item.coverY, item.coverScale);
-
 		this.loaded = false;
-		this.setState({ justUploaded: true });
+		DataUtil.pageSetCover(rootId, item.type, item.id, item.coverX, item.coverY, item.coverScale);
 	};
 	
 	onEdit (e: any) {
