@@ -35,7 +35,7 @@ const PopupSettingsPageLogout = observer(class PopupSettingsPageLogout extends R
 
 		this.onFocus = this.onFocus.bind(this);
 		this.onBlur = this.onBlur.bind(this);
-		this.onBackup = this.onBackup.bind(this);
+		this.onCopy = this.onCopy.bind(this);
 		this.onLogout = this.onLogout.bind(this);
 	};
 
@@ -56,7 +56,7 @@ const PopupSettingsPageLogout = observer(class PopupSettingsPageLogout extends R
 							className="isBlurred"
 							onFocus={this.onFocus} 
 							onBlur={this.onBlur} 
-							onCopy={() => { analytics.event('KeychainCopy', { type: 'BeforeLogout' }); }}
+							onCopy={this.onCopy}
 							placeholder="witch collapse practice feed shame open despair creek road again ice least lake tree young address brain envelope" 
 							readonly={true} 
 						/>
@@ -64,7 +64,7 @@ const PopupSettingsPageLogout = observer(class PopupSettingsPageLogout extends R
 				</div>
 
 				<div className="buttons">
-					<Button color="blank" text={translate('popupSettingsPhraseBackup')} onClick={this.onBackup} />
+					<Button color="blank" text={translate('popupSettingsPhraseBackup')} onClick={this.onCopy} />
 					<Button color="blank" className="red" text={translate('popupSettingsLogout')} onClick={this.onLogout} />
 				</div>
 			</div>
@@ -103,7 +103,7 @@ const PopupSettingsPageLogout = observer(class PopupSettingsPageLogout extends R
 		window.getSelection().removeAllRanges();
 	};
 
-	onBackup (e: any) {
+	onCopy (e: any) {
 		this.refPhrase.focus();
 		Util.clipboardCopy({ text: authStore.phrase });
 

@@ -116,6 +116,7 @@
 	"authSuccessTitle": { "en": "Congratulations!" },
 	"authSuccessLabel": { "en": "You've created your first profile! It is stored on your device and nobody will know about it until you share it!" },
 	"authSuccessSubmit": { "en": "Let's start!" },
+	"authSuccessCopy": { "en": "Show and copy phrase" },
 
 	"authPinCheckTitle": { "en": "Enter pin code" },
 	"authPinCheckError": { "en": "Incorrect pin" },

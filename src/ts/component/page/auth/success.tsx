@@ -1,7 +1,8 @@
 import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Frame, Cover, Title, Label, Button, Header, FooterAuth as Footer, Textarea } from 'ts/component';
-import { translate, DataUtil, analytics } from 'ts/lib';
+import { translate, DataUtil, analytics, Util } from 'ts/lib';
 import { commonStore, authStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -17,15 +18,14 @@ const PageAuthSuccess = observer(class PageAuthSuccess extends React.Component<P
 	constructor (props: any) {
 		super(props);
 
-		this.onFocusPhrase = this.onFocusPhrase.bind(this);
-		this.onBlurPhrase = this.onBlurPhrase.bind(this);
+		this.onFocus = this.onFocus.bind(this);
+		this.onBlur = this.onBlur.bind(this);
 		this.onSubmit = this.onSubmit.bind(this);
-		this.onCopyPhrase = this.onCopyPhrase.bind(this);
+		this.onCopy = this.onCopy.bind(this);
 	};
 
 	render () {
 		const { cover } = commonStore;
-		const { phrase } = authStore;
 
 		return (
 			<div>
@@ -35,23 +35,26 @@ const PageAuthSuccess = observer(class PageAuthSuccess extends React.Component<P
 				
 				<Frame>
 					<Title text="Here's your Recovery Phrase" />
-					<Label text="Please save it somewhere safe - you will need it login to your account on other devices and to recover your data.<br/><br/>Tap below to reveal:" />
+					<Label text="Please save it somewhere safe - you will need it login to your account on other devices and to recover your data. You can also locate this phrase in your Account Settings.<br/><br/>Tap below to reveal:" />
 						
 					<div className="textareaWrap">
 						<Textarea 
 							ref={(ref: any) => this.refPhrase = ref} 
 							id="phrase" 
-							value={phrase} 
+							value={translate('popupSettingsPhraseStub')} 
 							className="isBlurred"
-							onFocus={this.onFocusPhrase} 
-							onBlur={this.onBlurPhrase} 
-							onCopy={this.onCopyPhrase}
+							onFocus={this.onFocus} 
+							onBlur={this.onBlur} 
+							onCopy={this.onCopy}
 							placeholder="witch collapse practice feed shame open despair creek road again ice least lake tree young address brain envelope" 
 							readonly={true}
 						/>
 					</div>
 
-					<Button text={translate('authSuccessSubmit')} onClick={this.onSubmit} />
+					<div className="buttons">
+						<Button color="blank" text={translate('authSuccessCopy')} onClick={this.onCopy} />
+						<Button text={translate('authSuccessSubmit')} onClick={this.onSubmit} />
+					</div>
 				</Frame>
 			</div>
 		);
@@ -65,26 +68,31 @@ const PageAuthSuccess = observer(class PageAuthSuccess extends React.Component<P
 		DataUtil.onAuth(authStore.account);
 	};
 
-	onFocusPhrase (e: any) {
+	onFocus (e: any) {
+		const node = $(ReactDOM.findDOMNode(this));
+		const phrase = node.find('#phrase');
+
+		this.refPhrase.setValue(authStore.phrase);
 		this.refPhrase.select();
-		this.elementUnblur(e);
+
+		phrase.removeClass('isBlurred');
 	};
 
-	onBlurPhrase (e: any) {
-		this.elementBlur(e);
+	onBlur (e: any) {
+		const node = $(ReactDOM.findDOMNode(this));
+		const phrase = node.find('#phrase');
+
+		this.refPhrase.setValue(translate('popupSettingsPhraseStub'));
+
+		phrase.addClass('isBlurred');
 		window.getSelection().removeAllRanges();
 	};
 
-	onCopyPhrase () {
-		analytics.event('KeychainCopy', { type: 'FirstSession' });
-	};
+	onCopy () {
+		this.refPhrase.focus();
+		Util.clipboardCopy({ text: authStore.phrase });
 
-	elementBlur (e: any) {
-		$(e.currentTarget).addClass('isBlurred');
-	};
-
-	elementUnblur (e: any) {
-		$(e.currentTarget).removeClass('isBlurred');
+		analytics.event('KeychainCopy', { type: 'BeforeLogout' });
 	};
 
 });
