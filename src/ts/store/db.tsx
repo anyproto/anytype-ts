@@ -54,16 +54,12 @@ class DbStore {
 	};
 
     objectTypesSet (types: I.ObjectType[]) {
-		let list = this.objectTypeList;
-
-		types = (types || []).map((it: any) => { return new M.ObjectType(it); });
-
 		for (let type of types) {
 			const check = this.getObjectType(type.id);
 			if (check) {
 				this.objectTypeUpdate(type);
 			} else {
-				list.push(type);
+				this.objectTypeAdd(type);
 			};
 		};
 	};
