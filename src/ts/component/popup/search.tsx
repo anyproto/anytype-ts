@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon, Input, Loader, IconObject, ObjectName, ObjectDescription } from 'ts/component';
 import { I, C, Util, DataUtil, keyboard, Key, focus, translate, analytics } from 'ts/lib';
-import { commonStore, dbStore } from 'ts/store';
+import { commonStore, detailStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
@@ -58,7 +58,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 		);
 
 		const Item = (item: any) => {
-			const type = dbStore.getObjectType(item.type);
+			const type = detailStore.get(Constant.subId.type, item.type, []);
 			const description = (item.layout != I.ObjectLayout.Note) ? (item.description || item.snippet) : '';
 
 			return (

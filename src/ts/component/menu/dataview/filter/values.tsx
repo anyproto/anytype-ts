@@ -117,7 +117,8 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 			
 			case I.RelationType.Object:
 				Item = (element: any) => {	
-					const type = dbStore.getObjectType(element.type);
+					const type = detailStore.get(Constant.subId.type, element.type, []);
+
 					return (
 						<div 
 							id={'item-' + element.id} 
@@ -129,7 +130,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 								<div className="name">{element.name}</div>
 							</div>
 							<div className="caption">
-								{type?.name}
+								{type.name}
 							</div>
 							<div className="buttons">
 								<Icon className="delete" onClick={(e: any) => { this.onRemove(e, element); }} />
@@ -138,8 +139,8 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 					);
 				};
 
-				list = Relation.getArrayValue(item.value).map((it: string) => { return detailStore.get(subId, it, []); })
-				list = list.filter((it: any) => { return !it._empty_; });
+				list = Relation.getArrayValue(item.value).map(it => detailStore.get(subId, it, []));
+				list = list.filter(it => !it._empty_);
 
 				value = (
 					<React.Fragment>

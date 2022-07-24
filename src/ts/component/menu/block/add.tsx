@@ -412,7 +412,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 		const { data } = param;
 		const { rootId, blockId } = data;
 		const { config, filter } = commonStore;
-		const types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map((it: I.ObjectType) => { return it.id; });
+		const types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map(it => it.id);
 		const block = blockStore.getLeaf(rootId, blockId);
 
 		let filters = [
@@ -619,13 +619,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 					});
 				} else 
 				if (item.isObject) {
-					const type = dbStore.getObjectType(item.objectTypeId);
-					const details: any = {};
-
-					if (type) {
-						details.type = type.id;
-						details.layout = type.layout;
-					};
+					const details = { type: item.objectTypeId };
 
 					const create = (template: any) => {
 						const cb = (message: any) => {

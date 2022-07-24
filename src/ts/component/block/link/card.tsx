@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { IconObject, Cover, ObjectName } from 'ts/component';
-import { dbStore } from 'ts/store';
-import { I, DataUtil, translate, Relation } from 'ts/lib';
+import { detailStore } from 'ts/store';
+import { I, DataUtil, translate } from 'ts/lib';
 import { observer } from 'mobx-react';
 
 interface Props extends I.BlockComponent, RouteComponentProps<any> {
@@ -19,6 +19,8 @@ interface Props extends I.BlockComponent, RouteComponentProps<any> {
     onClick?(e: any): void;
 };
 
+const Constant = require('json/constant.json');
+
 const LinkCard = observer(class LinkCard extends React.Component<Props, {}> {
 
 	render () {
@@ -26,7 +28,7 @@ const LinkCard = observer(class LinkCard extends React.Component<Props, {}> {
         const { id, layout, coverType, coverId, coverX, coverY, coverScale, snippet } = object;
 		const { size, iconSize } = this.getIconSize();
 		const canDescription = ![ I.ObjectLayout.Note ].includes(object.layout);
-		const type = dbStore.getObjectType(object.type);
+		const type = detailStore.get(Constant.subId.type, object.type, []);
 		const withIcon = this.props.iconSize != I.LinkIconSize.None;
 		const withType = this.hasRelationKey('type');
         const withCover = this.hasRelationKey('cover') && coverId && coverType;

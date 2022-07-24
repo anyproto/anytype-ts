@@ -44,7 +44,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 	};
 
 	render () {
-		const { rootId, traceId, block, iconSize, isPopup, readonly } = this.props;
+		const { rootId, block, iconSize, isPopup, readonly } = this.props;
 		const storeId = this.getStoreId();
 		const object = detailStore.get(rootId, storeId, [ 
 			Constant.relationKey.featured, 
@@ -52,7 +52,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			Constant.relationKey.setOf, 
 		]);
 		const items = this.getItems();
-		const type: any = dbStore.getObjectType(object.type);
+		const type = detailStore.get(Constant.subId.type, object.type, []);
 		const bullet = <div className="bullet" />;
 		const allowedValue = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const setOf = Relation.getArrayValue(object[Constant.relationKey.setOf]);
@@ -97,7 +97,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 		return (
 			<div className={[ 'wrap', 'focusable', 'c' + block.id ].join(' ')} tabIndex={0} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp}>
-				{type ? (
+				{!type._empty_ ? (
 					<span className="cell canEdit first">
 						<div 
 							id={Relation.cellId(PREFIX, Constant.relationKey.type, 0)} 
@@ -106,7 +106,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 							onMouseEnter={(e: any) => { this.onMouseEnter(e, Constant.relationKey.type); }}
 							onMouseLeave={this.onMouseLeave}
 						>
-							<div className="name">{Util.shorten(type.name || DataUtil.defaultName('page'), 32)}</div>
+							<div className="name">{Util.shorten(type.name, 32)}</div>
 						</div>
 					</span>
 				): ''}
@@ -421,7 +421,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 		const { rootId } = this.props;
 		const object = detailStore.get(rootId, rootId, [ Constant.relationKey.setOf ]);
-		const type: any = dbStore.getObjectType(object.type);
+		const type = detailStore.get(Constant.subId.type, object.type);
 
 		this.menuContext.close();
 

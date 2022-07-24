@@ -72,7 +72,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 			return null;
 		};
 
-		const profile = detailStore.get(Constant.subIds.profile, blockStore.profile);
+		const profile = detailStore.get(Constant.subId.profile, blockStore.profile);
 		const list = this.getList();
 		const length = list.length;
 		const isDeleted = authStore.accountIsDeleted();
@@ -246,7 +246,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		this.unbind();
 
 		menuStore.closeAll(Constant.menuIds.index);
-		Action.dbClear(Constant.subIds.index);
+		Action.dbClear(Constant.subId.index);
 	};
 
 	rebind () {
@@ -395,7 +395,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 		this.setState({ loading: true });
 
-		C.ObjectSearchSubscribe(Constant.subIds.index, filters, sorts, Constant.defaultRelationKeys, [], 0, 100, true, '', '', false, (message: any) => {
+		C.ObjectSearchSubscribe(Constant.subId.index, filters, sorts, Constant.defaultRelationKeys, [], 0, 100, true, '', '', false, (message: any) => {
 			if (!this._isMounted || message.error.code) {
 				return;
 			};
@@ -457,7 +457,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 	};
 	
 	onProfile (e: any) {
-		const object = detailStore.get(Constant.subIds.profile, blockStore.profile);
+		const object = detailStore.get(Constant.subId.profile, blockStore.profile);
 		DataUtil.objectOpenEvent(e, object);
 	};
 	
@@ -690,7 +690,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		let link = null;
 		let remove = null;
 		let move = { id: 'move', icon: 'move', name: 'Move to', arrow: true };
-		let types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map((it: I.ObjectType) => { return it.id; });
+		let types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map(it => it.id);
 		
 		if (favorites.length) {
 			link = { id: 'unfav', icon: 'unfav', name: 'Remove from Favorites' };
@@ -888,7 +888,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		const { root, recent } = blockStore;
 		const { config } = commonStore;
 		const { tab, filter } = this.state;
-		const records = dbStore.getRecords(Constant.subIds.index, '');
+		const records = dbStore.getRecords(Constant.subId.index, '');
 
 		let reg = null;
 		let list: any[] = [];
@@ -941,7 +941,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 			default:
 				list = records.map((it: any) => {
-					return detailStore.get(Constant.subIds.index, it.id);
+					return detailStore.get(Constant.subId.index, it.id);
 				});
 				break;
 		};

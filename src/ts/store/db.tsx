@@ -1,5 +1,8 @@
 import { observable, action, computed, set, intercept, makeObservable } from 'mobx';
 import { I, M, DataUtil, Util } from 'ts/lib';
+import { detailStore } from 'ts/store';
+
+const Constant = require('json/constant.json');
 
 class DbStore {
 
@@ -278,10 +281,10 @@ class DbStore {
 		return this.objectTypeList.find((it: I.ObjectType) => { return it.id == id; });
 	};
 
-    getObjectTypesForSBType (SBType: I.SmartBlockType): I.ObjectType[] {
-		return this.objectTypes.filter((it: I.ObjectType) => {
-			return (it.types.indexOf(SBType) >= 0) && !it.isArchived;
-		});
+    getObjectTypesForSBType (SBType: I.SmartBlockType): any[] {
+		return dbStore.getRecords(Constant.subId.type, '').
+			map(it => detailStore.get(Constant.subId.type, it.id, [])).
+			filter(it => it._smartBlockTypes_.includes(SBType) && !it.isArchived && !it.isDeleted && !it._empty_);
 	};
 
     getRelations (rootId: string, blockId: string): I.Relation[] {

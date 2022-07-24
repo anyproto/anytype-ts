@@ -20,7 +20,7 @@ const Footer = observer(class Item extends React.Component<Props, {}> {
 	};
 
 	render () {
-        const profile = detailStore.get(Constant.subIds.profile, blockStore.profile);
+        const profile = detailStore.get(Constant.subId.profile, blockStore.profile);
 
 		return (
 			<div className="foot">
@@ -48,7 +48,7 @@ const Footer = observer(class Item extends React.Component<Props, {}> {
 	};
 
     onProfile (e: any) {
-		const object = detailStore.get(Constant.subIds.profile, blockStore.profile);
+		const object = detailStore.get(Constant.subId.profile, blockStore.profile);
 		DataUtil.objectOpenEvent(e, object);
 	};
 

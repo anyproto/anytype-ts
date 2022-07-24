@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Filter, MenuItemVertical, Icon, Loader, ObjectName } from 'ts/component';
 import { I, C, Util, keyboard, DataUtil, Relation } from 'ts/lib';
-import { commonStore, dbStore, menuStore } from 'ts/store';
+import { commonStore, dbStore, menuStore, detailStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
@@ -53,7 +53,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
-			const type: any = dbStore.getObjectType(item.type) || {};
+			const type = detailStore.get(Constant.subId.type, item.type, []);
 			const name = <ObjectName object={item} />;
 
 			let content = null;
@@ -335,18 +335,11 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		if (item.id == 'add') {
 			let details: any = { name: filter };
 			let typeId = relation.objectTypes.length ? relation.objectTypes[0] : '';
-			let type: any = null;
 			let flags: I.ObjectFlag[] = [];
 			
 			if (typeId) {
-				type = dbStore.getObjectType(typeId);
-				if (type) {
-					details.type = type.id;
-					details.layout = type.layout;
-				};
-			};
-
-			if (!type) {
+				details.typeId = typeId;
+			} else {
 				flags.push(I.ObjectFlag.SelectType);
 			};
 

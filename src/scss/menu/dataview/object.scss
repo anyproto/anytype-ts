@@ -5,8 +5,11 @@
 	.menu.menuDataviewObjectList { width: 288px; }
 	.menu.menuDataviewObjectList {
 		.content { padding: 0px; transition: none; }
-		.wrap { height: 100%; display: flex; flex-direction: column; }
+		
+		.wrap { padding-top: 8px; height: 100%; display: flex; flex-direction: column; }
+		.wrap.noFilter { padding-top: 0px; }
 		.wrap.noFilter {
+			.content { padding: 0px; }
 			.items { height: 100%; }
 		}
 
