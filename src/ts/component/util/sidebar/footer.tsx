@@ -24,25 +24,11 @@ const Footer = observer(class Item extends React.Component<Props, {}> {
 
 		return (
 			<div className="foot">
-                <div className="item" onClick={this.onProfile}>
-                   	<IconObject object={profile} size={26} tooltip="Your profile" tooltipY={I.MenuDirection.Top} />
-                </div>
-				
-                <div className="item" onClick={this.onStore}>
-                    <Icon className="store" tooltip="Library" tooltipY={I.MenuDirection.Top} />
-                </div>
-                
-            	<div className="item" onClick={this.onAdd}>
-                    <Icon className="add" tooltip="Create new object" tooltipY={I.MenuDirection.Top} />
-			    </div>
-                
-                <div className="item" onClick={this.onSettings}>
-                    <Icon className="settings" tooltip="Settings" tooltipY={I.MenuDirection.Top} />
-                </div>
-
-				<div className="item collapse" onClick={() => { sidebar.collapse(); }}>
-					<Icon className="collapse" tooltip="Collapse sidebar" tooltipY={I.MenuDirection.Top} />
-				</div>
+				<Icon inner={<IconObject object={profile} size={26} />} tooltip="Your profile" tooltipY={I.MenuDirection.Top} onClick={this.onProfile} />
+				<Icon className="store" tooltip="Library" tooltipY={I.MenuDirection.Top} onClick={this.onStore} />
+				<Icon className="add" tooltip="Create new object" tooltipY={I.MenuDirection.Top} onClick={this.onAdd} />
+				<Icon className="settings" tooltip="Settings" tooltipY={I.MenuDirection.Top} onClick={this.onSettings} />
+				<Icon className="collapse" tooltip="Collapse sidebar" tooltipY={I.MenuDirection.Top} onClick={() => { sidebar.collapse(); }} />
             </div>
 		);
 	};
