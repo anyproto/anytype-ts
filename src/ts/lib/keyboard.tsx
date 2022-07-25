@@ -39,7 +39,7 @@ class Keyboard {
 		win.on('mousedown.common', (e: any) => { this.onMouseDown(e); });
 		win.on('scroll.common', (e: any) => { this.onScroll(e); });
 
-		win.unbind('mousemove.common beforeunload.common blur.common');
+		win.off('mousemove.common beforeunload.common blur.common');
 		
 		win.on('mousemove.common', (e: any) => {
 			this.initPinCheck();
@@ -57,7 +57,7 @@ class Keyboard {
 	};
 	
 	unbind () {
-		$(window).unbind('keyup.common keydown.common mousedown.common scroll.common mousemove.common blur.common');
+		$(window).off('keyup.common keydown.common mousedown.common scroll.common mousemove.common blur.common');
 	};
 
 	onScroll (e: any) {

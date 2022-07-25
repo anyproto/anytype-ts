@@ -186,7 +186,7 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<Pro
 	};
 
 	unbind () {
-		$(window).unbind('keydown.menu');
+		$(window).off('keydown.menu');
 	};
 
 	onOver (e: any, item: any) {

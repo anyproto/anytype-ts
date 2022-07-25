@@ -207,7 +207,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<Props
 		const wrap = node.find('.block.blockMedia .wrapContent');
 
 		if (img.length) {
-			img.unbind('load').on('load', () => {
+			img.off('load').on('load', () => {
 				const w = img.width();
 				const h = img.height();
 

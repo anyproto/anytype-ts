@@ -282,7 +282,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 		const { getId } = this.props;
 		const obj = $(`#${getId()}`);
 
-		obj.unbind('click mousedown').on('click mousedown', (e: any) => {
+		obj.off('click mousedown').on('click mousedown', (e: any) => {
 			const target = $(e.target);
 			if (!target.hasClass('icon') && !target.hasClass('inner')) {
 				e.preventDefault();

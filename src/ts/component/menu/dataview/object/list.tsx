@@ -193,7 +193,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 	};
 	
 	unbind () {
-		$(window).unbind('keydown.menu');
+		$(window).off('keydown.menu');
 	};
 
 	onKeyDown (e: any) {

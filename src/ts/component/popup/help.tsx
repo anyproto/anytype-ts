@@ -79,11 +79,11 @@ class PopupHelp extends React.Component<Props, {}> {
 		this.unbind();
 		
 		const win = $(window);
-		win.unbind('resize.help').on('resize.help', () => { this.resize(); });
+		win.off('resize.help').on('resize.help', () => { this.resize(); });
 	};
 
 	unbind () {
-		$(window).unbind('resize.help');
+		$(window).off('resize.help');
 	};
 
 	resize () {

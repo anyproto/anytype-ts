@@ -49,7 +49,7 @@ const Progress = observer(class Progress extends React.Component<Props, {}> {
 	};
 
 	componentDidMount () {
-		$(window).unbind('resize.progress').on('resize.progress', () => { this.resize(); });
+		$(window).off('resize.progress').on('resize.progress', () => { this.resize(); });
 	};
 	
 	componentDidUpdate () {
@@ -72,7 +72,7 @@ const Progress = observer(class Progress extends React.Component<Props, {}> {
 	};
 
 	componentWillUnmount () {
-		$(window).unbind('resize.progress');
+		$(window).off('resize.progress');
 	};
 	
 	onCancel (e: any) {
@@ -102,7 +102,7 @@ const Progress = observer(class Progress extends React.Component<Props, {}> {
 		this.dx = e.pageX - offset.left;
 		this.dy = e.pageY - offset.top;
 
-		win.unbind('mousemove.progress mouseup.progress');
+		win.off('mousemove.progress mouseup.progress');
 		win.on('mousemove.progress', (e: any) => { this.onDragMove(e); });
 		win.on('mouseup.progress', (e: any) => { this.onDragEnd(e); });
 	};
@@ -116,7 +116,7 @@ const Progress = observer(class Progress extends React.Component<Props, {}> {
 	};
 
 	onDragEnd (e: any) {
-		$(window).unbind('mousemove.progress mouseup.progress');
+		$(window).off('mousemove.progress mouseup.progress');
 	};
 
 	checkCoords (x: number, y: number): { x: number, y: number } {

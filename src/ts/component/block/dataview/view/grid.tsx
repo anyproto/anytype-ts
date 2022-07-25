@@ -139,14 +139,14 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 		const node = $(ReactDOM.findDOMNode(this));
 		const scroll = node.find('.scroll');
 
-		scroll.unbind('.scroll').scroll(this.onScroll);
+		scroll.off('.scroll').scroll(this.onScroll);
 	};
 
 	unbind () {
 		const node = $(ReactDOM.findDOMNode(this));
 		const scroll = node.find('.scroll');
 
-		scroll.unbind('.scroll');
+		scroll.off('.scroll');
 	};
 
 	onScroll () {
@@ -252,7 +252,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 		this.ox = offset.left;
 
 		$('body').addClass('colResize');
-		win.unbind('mousemove.cell mouseup.cell');
+		win.off('mousemove.cell mouseup.cell');
 		win.on('mousemove.cell', (e: any) => { this.onResizeMove(e, relationKey); });
 		win.on('mouseup.cell', (e: any) => { this.onResizeEnd(e, relationKey); });
 
@@ -283,7 +283,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 		const view = getView();
 		const idx = view.relations.findIndex(it => it.relationKey == relationKey);
 
-		$(window).unbind('mousemove.cell mouseup.cell').trigger('resize');
+		$(window).off('mousemove.cell mouseup.cell').trigger('resize');
 		$('body').removeClass('colResize');
 
 		view.relations[idx].width = this.checkWidth(e.pageX - this.ox);

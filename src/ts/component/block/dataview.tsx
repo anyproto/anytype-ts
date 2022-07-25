@@ -152,7 +152,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	unbind () {
-		$(window).unbind('resize.dataview keydown.dataview');
+		$(window).off('resize.dataview keydown.dataview');
 	};
 
 	rebind () {

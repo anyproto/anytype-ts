@@ -195,7 +195,7 @@ const MenuGroupList = observer(class MenuGroupList extends React.Component<Props
 	};
 	
 	unbind () {
-		$(window).unbind('keydown.menu');
+		$(window).off('keydown.menu');
 	};
 
 	onKeyDown (e: any) {

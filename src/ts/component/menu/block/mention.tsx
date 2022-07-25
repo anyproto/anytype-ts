@@ -169,7 +169,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 	};
 	
 	unbind () {
-		$(window).unbind('keydown.menu');
+		$(window).off('keydown.menu');
 	};
 
 	getSections () {

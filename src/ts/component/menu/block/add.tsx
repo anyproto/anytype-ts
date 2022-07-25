@@ -225,7 +225,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 			keyMapper: (i: number) => { return (items[i] || {}).id; },
 		});
 		
-		$(`#${getId()}`).unbind('mouseleave').on('mouseleave', () => { window.clearTimeout(this.timeout); });
+		$(`#${getId()}`).off('mouseleave').on('mouseleave', () => { window.clearTimeout(this.timeout); });
 	};
 	
 	componentDidUpdate () {
@@ -315,7 +315,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 	};
 	
 	unbind () {
-		$(window).unbind('keydown.menu');
+		$(window).off('keydown.menu');
 	};
 	
 	getSections () {

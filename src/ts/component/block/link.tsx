@@ -122,7 +122,7 @@ const BlockLink = observer(class BlockLink extends React.Component<Props, {}> {
 		};
 		
 		const node = $(ReactDOM.findDOMNode(this));
-		node.unbind('resize');
+		node.off('resize');
 	};
 
 	onKeyDown (e: any) {

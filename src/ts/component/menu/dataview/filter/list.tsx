@@ -184,7 +184,7 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<Pro
 		const { getId } = this.props;
 		const obj = $(`#${getId()} .content`);
 
-		obj.unbind('click').on('click', () => { menuStore.closeAll(Constant.menuIds.cell); });
+		obj.off('click').on('click', () => { menuStore.closeAll(Constant.menuIds.cell); });
 
 		this.unbind();
 		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
@@ -192,7 +192,7 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<Pro
 	};
 	
 	unbind () {
-		$(window).unbind('keydown.menu');
+		$(window).off('keydown.menu');
 	};
 
 	onAdd (e: any) {

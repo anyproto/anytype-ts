@@ -170,7 +170,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 		this.resize();
 
 		Util.renderLink($(ReactDOM.findDOMNode(this)));
-		$(window).unbind('resize.cover').on('resize.cover', () => { this.resize(); });
+		$(window).off('resize.cover').on('resize.cover', () => { this.resize(); });
 	};
 	
 	componentDidUpdate () {
@@ -181,7 +181,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 	
 	componentWillUnmount () {
 		this._isMounted = false;
-		$(window).unbind('resize.cover');
+		$(window).off('resize.cover');
 	};
 
 	onIcon (e: any) {
@@ -457,7 +457,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 
 		node.addClass('isDragging');
 		
-		win.unbind('mousemove.cover mouseup.cover');
+		win.off('mousemove.cover mouseup.cover');
 		win.on('mousemove.cover', (e: any) => { this.onDragMove(e); });
 		win.on('mouseup.cover', (e: any) => { this.onDragEnd(e); });
 	};
@@ -486,7 +486,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 			selection.preventSelect(true);
 		};
 
-		win.unbind('mousemove.cover mouseup.cover');
+		win.off('mousemove.cover mouseup.cover');
 		node.removeClass('isDragging');
 		
 		this.x = e.pageX - this.rect.x - this.x;

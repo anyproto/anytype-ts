@@ -417,14 +417,14 @@ class Cell extends React.Component<Props, {}> {
 					setOn();
 				};
 
-				$(pageContainer).unbind('mousedown.cell').on('mousedown.cell', (e: any) => { 
+				$(pageContainer).off('mousedown.cell').on('mousedown.cell', (e: any) => { 
 					if (!$(e.target).parents(`#${cellId}`).length) {
 						menuStore.closeAll(Constant.menuIds.cell); 
 					};
 				});
 
 				if (!config.debug.ui) {
-					win.unbind('blur.cell').on('blur.cell', () => { menuStore.closeAll(Constant.menuIds.cell); });
+					win.off('blur.cell').on('blur.cell', () => { menuStore.closeAll(Constant.menuIds.cell); });
 				};
 			} else 
 			if (closeIfOpen) {

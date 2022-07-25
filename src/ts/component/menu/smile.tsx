@@ -365,7 +365,7 @@ class MenuSmile extends React.Component<Props, State> {
 
 		if (item && item.skin_variations) {
 			this.timeoutMenu = window.setTimeout(() => {
-				win.unbind('mouseup.smile');
+				win.off('mouseup.smile');
 				
 				menuStore.open('smileSkin', {
 					type: I.MenuType.Horizontal,
@@ -386,7 +386,7 @@ class MenuSmile extends React.Component<Props, State> {
 			}, 200);
 		};
 		
-		win.unbind('mouseup.smile').on('mouseup.smile', () => {
+		win.off('mouseup.smile').on('mouseup.smile', () => {
 			if (menuStore.isOpen('smileSkin')) {
 				return;
 			};
@@ -395,7 +395,7 @@ class MenuSmile extends React.Component<Props, State> {
 				close();
 			};
 			window.clearTimeout(this.timeoutMenu);
-			win.unbind('mouseup.smile')
+			win.off('mouseup.smile')
 		});
 	};
 	

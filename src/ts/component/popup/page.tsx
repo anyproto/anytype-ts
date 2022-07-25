@@ -59,11 +59,11 @@ const PopupPage = observer(class PopupPage extends React.Component<Props, {}> {
 		this.unbind();
 		
 		const win = $(window);
-		win.unbind('resize.popupPage').on('resize.popupPage', () => { this.resize(); });
+		win.off('resize.popupPage').on('resize.popupPage', () => { this.resize(); });
 	};
 
 	unbind () {
-		$(window).unbind('resize.popupPage');
+		$(window).off('resize.popupPage');
 	};
 
 	resize () {

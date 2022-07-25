@@ -68,7 +68,7 @@ const MenuDataviewDate = observer(class MenuDataviewDate extends React.Component
 	};
 	
 	unbind () {
-		$(window).unbind('keydown.menu');
+		$(window).off('keydown.menu');
 	};
 
 	getSections () {

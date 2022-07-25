@@ -156,7 +156,7 @@ const BlockAudio = observer(class BlockAudio extends React.Component<Props, {}> 
 		const el = node.find('#audio');
 
 		if (el.length) {
-			el.unbind('canplay timeupdate play ended pause');
+			el.off('canplay timeupdate play ended pause');
 		};
 	};
 

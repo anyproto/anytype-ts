@@ -96,7 +96,7 @@ class Popup extends React.Component<Props, {}> {
 	};
 	
 	unbind () {
-		$(window).unbind('resize.popup');
+		$(window).off('resize.popup');
 	};
 	
 	animate () {

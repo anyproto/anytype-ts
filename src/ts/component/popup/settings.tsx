@@ -118,7 +118,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 	};
 
 	componentWillUnmount () {
-		$(window).unbind('resize.settings');
+		$(window).off('resize.settings');
 	};
 
 	setConfirmPin (v: () => void) {
@@ -190,7 +190,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 
 	init () {
 		this.props.position();
-		$(window).unbind('resize.settings').on('resize.settings', () => { this.props.position(); });
+		$(window).off('resize.settings').on('resize.settings', () => { this.props.position(); });
 	};
 
 });

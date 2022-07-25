@@ -300,7 +300,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 	};
 	
 	unbind () {
-		$(window).unbind('keydown.menu');
+		$(window).off('keydown.menu');
 	};
 
 	init () {

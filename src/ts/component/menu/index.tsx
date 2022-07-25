@@ -364,7 +364,7 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 	};
 	
 	unbind () {
-		$(window).unbind('resize.' + this.getId());
+		$(window).off('resize.' + this.getId());
 	};
 	
 	animate () {

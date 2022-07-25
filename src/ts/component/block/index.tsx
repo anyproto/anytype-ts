@@ -591,7 +591,7 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 	};
 	
 	unbind () {
-		$(window).unbind('mousemove.block mouseup.block');
+		$(window).off('mousemove.block mouseup.block');
 	};
 	
 	onEmptyColumn () {

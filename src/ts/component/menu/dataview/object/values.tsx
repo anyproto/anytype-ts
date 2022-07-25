@@ -173,7 +173,7 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 	};
 	
 	unbind () {
-		$(window).unbind('keydown.menu');
+		$(window).off('keydown.menu');
 	};
 
 	getItems () {

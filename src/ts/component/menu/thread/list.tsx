@@ -89,15 +89,15 @@ const MenuThreadList = observer(class MenuThreadList extends React.Component<Pro
 			}, 1000);
 		};
 
-		obj.unbind('mouseenter').on('mouseenter', () => { clear(); });
+		obj.off('mouseenter').on('mouseenter', () => { clear(); });
 
-		obj.unbind('mouseleave').on('mouseleave', () => {
+		obj.off('mouseleave').on('mouseleave', () => {
 			const status = $('#menuThreadStatus');
 			if (status.length) {
-				status.unbind('mouseenter').on('mouseenter', () => { 
+				status.off('mouseenter').on('mouseenter', () => { 
 					clear();
 				});
-				status.unbind('mouseleave').on('mouseleave', leave);
+				status.off('mouseleave').on('mouseleave', leave);
 			};
 			leave();
 		});

@@ -195,7 +195,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<Props> 
 	};
 	
 	unbind () {
-		$(window).unbind('keydown.menu');
+		$(window).off('keydown.menu');
 	};
 
 	getItems () {

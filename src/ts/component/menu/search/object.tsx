@@ -219,7 +219,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 	};
 	
 	unbind () {
-		$(window).unbind('keydown.menu');
+		$(window).off('keydown.menu');
 	};
 
 	focus () {

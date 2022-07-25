@@ -68,7 +68,7 @@ class MenuContext extends React.Component<Props, {}> {
 	};
 	
 	unbind () {
-		$(window).unbind('keydown.menu');
+		$(window).off('keydown.menu');
 	};
 	
 	getSections () {

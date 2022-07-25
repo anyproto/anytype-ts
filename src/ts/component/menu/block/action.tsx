@@ -100,7 +100,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 		this.rebind();
 		this.focus();
 
-		menu.unbind('mouseleave').on('mouseleave', () => { menuStore.clearTimeout(); });
+		menu.off('mouseleave').on('mouseleave', () => { menuStore.clearTimeout(); });
 	};
 
 	componentDidUpdate () {
@@ -141,7 +141,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 	};
 	
 	unbind () {
-		$(window).unbind('keydown.menu');
+		$(window).off('keydown.menu');
 	};
 	
 	getSections () {

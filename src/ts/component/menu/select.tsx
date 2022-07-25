@@ -200,7 +200,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 	};
 	
 	unbind () {
-		$(window).unbind('keydown.menu');
+		$(window).off('keydown.menu');
 	};
 
 	focus () {

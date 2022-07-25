@@ -370,7 +370,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 
 			Util.previewShow(el, param);
 
-			el.unbind('click.link').on('click.link', (e: any) => {
+			el.off('click.link').on('click.link', (e: any) => {
 				e.preventDefault();
 				if (isInside) {
 					Util.route(route);
@@ -439,7 +439,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 				return;
 			};
 
-			el.unbind('click.object').on('click.object', function (e: any) {
+			el.off('click.object').on('click.object', function (e: any) {
 				e.preventDefault();
 				DataUtil.objectOpenEvent(e, object);
 			});
@@ -516,7 +516,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			};
 		});
 		
-		items.unbind('mouseenter.mention');
+		items.off('mouseenter.mention');
 
 		items.on('mouseenter.mention', function (e: any) {
 			const el = $(this);
@@ -529,7 +529,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 
 			const object = detailStore.get(rootId, data.param, []);
 
-			el.unbind('click.mention').on('click.mention', function (e: any) {
+			el.off('click.mention').on('click.mention', function (e: any) {
 				e.preventDefault();
 				DataUtil.objectOpenEvent(e, object);
 			});
@@ -1262,8 +1262,8 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		this.timeoutContext = window.setTimeout(() => {
 			const pageContainer = Util.getPageContainer(isPopup);
 
-			pageContainer.unbind('click.context').on('click.context', () => { 
-				pageContainer.unbind('click.context');
+			pageContainer.off('click.context').on('click.context', () => { 
+				pageContainer.off('click.context');
 				menuStore.close('blockContext'); 
 			});
 

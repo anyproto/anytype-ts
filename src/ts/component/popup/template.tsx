@@ -83,7 +83,7 @@ class PopupTemplate extends React.Component<Props, State> {
 	};
 
 	unbind () {
-		$(window).unbind('keyup.popupTemplate');
+		$(window).off('keyup.popupTemplate');
 	};
 
 	rebind () {

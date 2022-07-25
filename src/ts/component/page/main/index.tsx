@@ -258,7 +258,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 	};
 
 	unbind () {
-		$(window).unbind('scroll.page keyup.page');
+		$(window).off('scroll.page keyup.page');
 	};
 
 	onKeyUp (e: any) {

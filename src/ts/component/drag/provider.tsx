@@ -579,7 +579,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 	};
 
 	unbind () {
-		$(window).unbind('dragend.drag drag.drag');
+		$(window).off('dragend.drag drag.drag');
 	};
 
 	setClass (ids: string[]) {

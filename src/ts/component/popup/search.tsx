@@ -223,7 +223,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 	};
 
 	unbind () {
-		$(window).unbind('keydown.search resize.search');
+		$(window).off('keydown.search resize.search');
 	};
 	
 	onSubmit (e: any) {

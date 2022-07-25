@@ -186,8 +186,8 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 	unbind () {
 		const { getId } = this.props;
 
-		$(window).unbind('keydown.menu');
-		$(`#${getId()}`).unbind('click');
+		$(window).off('down.menu');
+		$(`#${getId()}`).off('ck');
 	};
 
 	onKeyDown (e: any) {

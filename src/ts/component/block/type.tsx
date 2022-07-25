@@ -95,7 +95,7 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 	};
 
 	unbind () {
-		$(window).unbind('keydown.blockType');
+		$(window).off('keydown.blockType');
 	};
 
 	getItems () {

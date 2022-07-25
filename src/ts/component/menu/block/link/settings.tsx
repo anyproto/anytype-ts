@@ -68,7 +68,7 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 	};
 	
 	unbind () {
-		$(window).unbind('keydown.menu');
+		$(window).off('keydown.menu');
 	};
 
 	onClick (e: any, item: any) {

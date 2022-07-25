@@ -309,11 +309,11 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 		
 		const win = $(window);
 		win.on('keydown.navigation', (e: any) => { this.onKeyDown(e); });
-		win.unbind('resize.navigation').on('resize.navigation', () => { this.resize(); });
+		win.off('resize.navigation').on('resize.navigation', () => { this.resize(); });
 	};
 
 	unbind () {
-		$(window).unbind('keydown.navigation resize.navigation');
+		$(window).off('keydown.navigation resize.navigation');
 	};
 	
 	resize () {

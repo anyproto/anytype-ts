@@ -109,7 +109,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 		this.setRange({ start: length, end: length });
 		this.setValue(this.text);
 
-		node.unbind('resize').on('resize', (e: any) => { this.resize(); });
+		node.off('resize').on('resize', (e: any) => { this.resize(); });
 	};
 
 	componentDidUpdate () {
@@ -159,7 +159,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 	};
 
 	unbind () {
-		$(window).unbind('click.latex');
+		$(window).off('click.latex');
 	};
 
 	focus () {
@@ -420,7 +420,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 		val.find('a').each((i: number, item: any) => {
 			item = $(item);
 
-			item.unbind('click').click((e: any) => {
+			item.off('click').click((e: any) => {
 				e.preventDefault();
 				Renderer.send('urlOpen', item.attr('href'));
 			});
@@ -480,9 +480,9 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 		
 		selection.preventSelect(true);
 
-		win.unbind('mouseup.latex').on('mouseup.latex', (e: any) => {	
+		win.off('mouseup.latex').on('mouseup.latex', (e: any) => {	
 			selection.preventSelect(false);
-			win.unbind('mouseup.latex');
+			win.off('mouseup.latex');
 		});
 	};
 

@@ -174,8 +174,8 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<P
 		sideLeft.scrollTop(this.scrollLeft);
 		sideRight.scrollTop(this.scrollRight);
 
-		sideLeft.unbind('scroll').scroll(() => { this.onScrollLeft(); });
-		sideRight.unbind('scroll').scroll(() => { this.onScrollRight(); });
+		sideLeft.off('scroll').scroll(() => { this.onScrollLeft(); });
+		sideRight.off('scroll').scroll(() => { this.onScrollRight(); });
 
 		blockStore.updateNumbers(rootId);
 	};

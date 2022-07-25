@@ -184,7 +184,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 	};
 	
 	unbind () {
-		$(window).unbind('keydown.menu');
+		$(window).off('keydown.menu');
 	};
 
 	getItems () {

@@ -138,8 +138,8 @@ const BlockVideo = observer(class BlockVideo extends React.Component<Props, {}> 
 		const node = $(ReactDOM.findDOMNode(this));
 		const video = node.find('video');
 		
-		node.unbind('resizeInit resizeStart resize resizeEnd');
-		video.unbind('canplay');
+		node.off('resizeInit resizeStart resize resizeEnd');
+		video.off('canplay');
 	};
 	
 	onKeyDown (e: any) {
@@ -184,7 +184,7 @@ const BlockVideo = observer(class BlockVideo extends React.Component<Props, {}> 
 
 		$('audio, video').each((i: number, item: any) => { item.pause(); });
 		
-		video.unbind('ended pause play');
+		video.off('ended pause play');
 		el.play();
 		
 		video.on('play', () => {
@@ -232,7 +232,7 @@ const BlockVideo = observer(class BlockVideo extends React.Component<Props, {}> 
 		const node = $(ReactDOM.findDOMNode(this));
 		
 		focus.set(block.id, { from: 0, to: 0 });
-		win.unbind('mousemove.media mouseup.media');
+		win.off('mousemove.media mouseup.media');
 		
 		if (selection) {
 			selection.hide();
@@ -285,7 +285,7 @@ const BlockVideo = observer(class BlockVideo extends React.Component<Props, {}> 
 		const rect = (wrap.get(0) as Element).getBoundingClientRect() as DOMRect;
 		const w = this.getWidth(checkMax, e.pageX - rect.x + 20);
 		
-		win.unbind('mousemove.media mouseup.media');
+		win.off('mousemove.media mouseup.media');
 		node.removeClass('isResizing');
 		
 		if (selection) {

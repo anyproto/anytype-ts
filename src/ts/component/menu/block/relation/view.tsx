@@ -117,7 +117,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const scrollWrap = node.find('#scrollWrap');
 
 		this.resize();
-		scrollWrap.unbind('scroll').on('scroll', (e: any) => { this.onScroll(); });
+		scrollWrap.off('scroll').on('scroll', (e: any) => { this.onScroll(); });
 
 		this.selectionPrevent(true);
 	};

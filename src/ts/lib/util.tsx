@@ -1,4 +1,4 @@
-import { I, keyboard, Renderer, sidebar } from 'ts/lib';
+import { I, keyboard, Renderer } from 'ts/lib';
 import { commonStore, popupStore, menuStore } from 'ts/store';
 import { translate } from '.';
 
@@ -641,11 +641,11 @@ class Util {
 		
 		const obj = $('#preview');
 		
-		node.unbind('mouseleave.link').on('mouseleave.link', (e: any) => {
+		node.off('mouseleave.link').on('mouseleave.link', (e: any) => {
 			window.clearTimeout(this.timeoutPreviewShow);
 		});
 		
-		obj.unbind('mouseleave.link').on('mouseleave.link', (e: any) => {
+		obj.off('mouseleave.link').on('mouseleave.link', (e: any) => {
 			this.previewHide(false);
 		});
 		
@@ -748,7 +748,7 @@ class Util {
 	};
 	
 	renderLink (obj: any) {
-		obj.find('a').unbind('click').on('click', function (e: any) {
+		obj.find('a').off('click').on('click', function (e: any) {
 			e.preventDefault();
 			Renderer.send('urlOpen', $(this).attr('href'));
 		});
@@ -757,7 +757,7 @@ class Util {
 	renderLinks (obj: any) {
 		const self = this;
 
-		obj.find('a').unbind('click').click(function (e: any) {
+		obj.find('a').off('click').click(function (e: any) {
 			e.preventDefault();
 			const el = $(this);
 

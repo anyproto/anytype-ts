@@ -134,7 +134,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 
 	componentDidMount () {
 		this.resize();
-		$(window).unbind('resize.controls').on('resize.controls', () => { this.resize(); });
+		$(window).off('resize.controls').on('resize.controls', () => { this.resize(); });
 	};
 
 	componentDidUpdate () {
@@ -142,7 +142,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 	};
 
 	componentWillUnmount () {
-		$(window).unbind('resize.controls');
+		$(window).off('resize.controls');
 	};
 	
 	onButton (e: any, id: string, menu: string) {

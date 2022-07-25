@@ -322,7 +322,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		const events = 'keydown.editor mousemove.editor scroll.editor paste.editor resize.editor focus.editor';
 		const a = events.split(' ').map(it => it + namespace);
 
-		$(window).unbind(a.join(' '));
+		$(window).off(a.join(' '));
 	};
 	
 	uiHide () {
@@ -338,7 +338,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		
 		window.clearTimeout(this.timeoutMove);
 		this.timeoutMove = window.setTimeout(() => {
-			$(window).unbind('mousemove.ui').on('mousemove.ui', (e: any) => { this.uiShow(); });
+			$(window).off('mousemove.ui').on('mousemove.ui', (e: any) => { this.uiShow(); });
 		}, 100);
 	};
 
@@ -352,7 +352,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		obj.find('#footer').css({ opacity: 1 });
 		
 		this.uiHidden = false;
-		$(window).unbind('mousemove.ui');
+		$(window).off('mousemove.ui');
 	};
 	
 	onMouseMove (e: any) {

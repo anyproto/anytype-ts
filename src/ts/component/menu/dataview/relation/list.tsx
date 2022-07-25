@@ -200,7 +200,7 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 	};
 	
 	unbind () {
-		$(window).unbind('keydown.menu');
+		$(window).off('keydown.menu');
 	};
 
 	onKeyDown (e: any) {

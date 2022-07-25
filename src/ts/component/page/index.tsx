@@ -308,7 +308,7 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 
 	unbind () {
 		const { isPopup } = this.props;
-		$(window).unbind('resize.page' + (isPopup ? 'Popup' : ''));
+		$(window).off('resize.page' + (isPopup ? 'Popup' : ''));
 	};
 	
 	event () {

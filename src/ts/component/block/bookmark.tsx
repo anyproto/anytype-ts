@@ -150,7 +150,7 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<Props
 		};
 		
 		const node = $(ReactDOM.findDOMNode(this));
-		node.unbind('resize').on('resize', (e: any) => { this.resize(); });
+		node.off('resize').on('resize', (e: any) => { this.resize(); });
 	};
 	
 	unbind () {
@@ -159,7 +159,7 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<Props
 		};
 		
 		const node = $(ReactDOM.findDOMNode(this));
-		node.unbind('resize');
+		node.off('resize');
 	};
 	
 	resize () {
