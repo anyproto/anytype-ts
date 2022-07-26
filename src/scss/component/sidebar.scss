@@ -67,11 +67,10 @@
 
 		.iconObject { height: 52px; }
 
-		.icon.collapse { display: none; }
         .icon.store { background-image: url('~img/icon/sidebar/store.svg'); }
         .icon.add { background-image: url('~img/icon/sidebar/add.svg'); }
         .icon.settings { background-image: url('~img/icon/sidebar/settings.svg'); }
-        .icon.collapse { background-image: url('~img/icon/sidebar/collapse.svg'); }
+        .icon.collapse { display: none; background-image: url('~img/icon/sidebar/collapse.svg'); }
     }
     
     .body { overflow: hidden; height: 100%; position: relative; flex-grow: 1; }
@@ -123,7 +122,7 @@
 
 .sidebar.fixed {
 	.foot {
-		.item.collapse { display: flex; }
+		.icon.collapse { display: flex; }
 	}
 }
 
