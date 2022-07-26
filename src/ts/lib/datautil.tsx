@@ -1244,6 +1244,14 @@ class DataUtil {
 		].includes(type);
 	};
 
+	getSystemTypes () {
+		return [
+			Constant.typeId.type,
+			Constant.typeId.template,
+			Constant.typeId.relation,
+		];
+	};
+
 };
 
 export default new DataUtil();

@@ -212,6 +212,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 
 		const filters: any[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
+			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: DataUtil.getSystemTypes(), },
 		];
 		const sorts = [
 			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },

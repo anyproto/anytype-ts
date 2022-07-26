@@ -882,6 +882,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		const { config } = commonStore;
 		const { tab, filter } = this.state;
 		const records = dbStore.getRecords(Constant.subId.index, '');
+		const isRecent = tab == I.TabIndex.Recent;
 
 		let reg = null;
 		let list: any[] = [];
@@ -895,7 +896,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		switch (tab) {
 			case I.TabIndex.Favorite:
 			case I.TabIndex.Recent:
-				if (tab == I.TabIndex.Recent) {
+				if (isRecent) {
 					rootId = recent;
 					recentIds = crumbs.get(I.CrumbsType.Recent).ids;
 				};
@@ -906,14 +907,18 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 					};
 
 					const object = detailStore.get(rootId, it.content.targetBlockId, []);
-					const { name, isArchived, isDeleted } = object;
+					const { name, isArchived, isDeleted, type } = object;
 
 					if (reg && name && !name.match(reg)) {
 						return false;
 					};
+					if (isRecent && DataUtil.getSystemTypes().includes(type)) {
+						return false;
+					};
+
 					return !isArchived && !isDeleted;
 				}).map((it: any) => {
-					if (tab == I.TabIndex.Recent) {
+					if (isRecent) {
 						it._order = recentIds.findIndex((id: string) => { return id == it.content.targetBlockId; });
 					};
 
@@ -922,7 +927,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 					return it;
 				});
 
-				if (tab == I.TabIndex.Recent) {
+				if (isRecent) {
 					list.sort((c1: any, c2: any) => {
 						if (c1._order > c2._order) return -1;
 						if (c2._order < c1._order) return 1;

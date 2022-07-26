@@ -238,7 +238,9 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		const { param } = this.props;
 		const { data } = param;
 		const { types, filter } = data;
-		const filters = [];
+		const filters: I.Filter[] = [
+			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: DataUtil.getSystemTypes(), },
+		];
 		const sorts = [
 			{ relationKey: 'name', type: I.SortType.Asc },
 		];

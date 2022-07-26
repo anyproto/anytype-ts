@@ -301,6 +301,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 
 		const filters: any[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
+			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: DataUtil.getSystemTypes(), },
 		];
 		const sorts = [
 			{ relationKey: 'lastModifiedDate', type: I.SortType.Desc },

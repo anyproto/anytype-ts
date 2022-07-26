@@ -205,15 +205,8 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 			{ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.Equal, value: false },
 			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
 			{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
-			{ 
-				operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, 
-				value: [
-					'_anytype_profile',
-					profile,
-					root,
-				]
-			},
-			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: SKIP_TYPES_LOAD },
+			{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: [ '_anytype_profile', profile, root ] },
+			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: SKIP_TYPES_LOAD.concat(DataUtil.getSystemTypes()) },
 		];
 
 		let n = 0;
