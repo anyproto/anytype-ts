@@ -405,12 +405,14 @@ export {
 	ObjectSearchSubscribe,
 	ObjectSubscribeIds,
 	ObjectGraph,
+
 	ObjectRelationAdd,
 	ObjectRelationListAvailable,
 	ObjectRelationOptionAdd,
-	ObjectShareByLink,
+	ObjectRelationSearchDistinct,
 
 	ObjectToSet,
+	ObjectShareByLink,
 	ObjectToBookmark,
 
 	ObjectListDuplicate,
