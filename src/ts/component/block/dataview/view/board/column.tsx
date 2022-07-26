@@ -56,8 +56,9 @@ const Column = observer(class Column extends React.Component<Props, State> {
 
 		head[view.groupRelationKey] = value;
 
-		records.forEach((it: any) => {
-			const object = detailStore.get(subId, it.id, [ view.groupRelationKey ]);
+		// Subscriptions
+		records.forEach((id: string) => {
+			const object = detailStore.get(subId, id, [ view.groupRelationKey ]);
 		});
 
 		let label: any = null;
@@ -205,13 +206,10 @@ const Column = observer(class Column extends React.Component<Props, State> {
 
 	getItems () {
 		const { getSubId, id } = this.props;
-		const subId = getSubId();
-		const records = dbStore.getRecords(subId, '');
-		const items = Util.objectCopy(records);
+		const items = Util.objectCopy(dbStore.getRecords(getSubId(), '')).map(id => { return { id }; });
 
-		return items.concat([
-			{ id: `${id}-add`, isAdd: true }
-		]);
+		items.push({ id: `${id}-add`, isAdd: true });
+		return items;
 	};
 
 	onScroll (e: any) {

@@ -191,7 +191,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 	getKeys (id: string): string[] {
 		const view = this.getView(id);
-		const relationKeys = view.relations.map((it: any) => { return it.relationKey; });
+		const relationKeys = view.relations.map(it => it.relationKey);
 
 		return Util.arrayUnique(Constant.defaultRelationKeys.concat(relationKeys).concat(Constant.coverRelationKeys));
 	};
@@ -241,8 +241,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			return {};
 		};
 
-		const record = records[index] || {};
-		const item = detailStore.get(subId, record.id);
+		const item = detailStore.get(subId, records[index]);
 
 		let name = String(item.name || '');
 		let isReadonly = Boolean(item.isReadonly);
@@ -321,11 +320,11 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 				const newRecord = message.record;
 				const records = dbStore.getRecords(subId, '');
-				const oldIndex = records.findIndex(it => it.id == newRecord.id);
+				const oldIndex = records.findIndex(it => it == newRecord.id);
 				const newIndex = dir > 0 ? records.length - 1 : 0;
 
 				if (oldIndex < 0) {
-					records[(dir > 0 ? 'push' : 'unshift')]({ id: newRecord.id });
+					dbStore.recordAdd (subId, '', newRecord.id, dir);
 				} else {
 					dbStore.recordsSet(subId, '', arrayMove(records, oldIndex, newIndex));
 				};
@@ -452,20 +451,19 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	onCellChange (id: string, relationKey: string, value: any, callBack?: (message: any) => void) {
 		const { rootId, block } = this.props;
 		const subId = dbStore.getSubId(rootId, block.id);
-		const record = dbStore.getRecord(subId, '', id);
 		const relation = dbStore.getRelation(rootId, block.id, relationKey);
 
-		if (!record || !relation) {
+		if (!relation) {
 			return;
 		};
 
 		value = Relation.formatValue(relation, value, true);
 
-		let obj: any = { id: record.id };
+		let obj: any = { id: id };
 		obj[relationKey] = value;
 
-		detailStore.update(subId, record.id, obj);
-		C.ObjectSetDetails(record.id, [ { key: relationKey, value: value } ], callBack);
+		detailStore.update(subId, id, obj);
+		C.ObjectSetDetails(id, [ { key: relationKey, value: value } ], callBack);
 
 		const key = Relation.checkRelationValue(relation, value) ? 'ChangeRelationValue' : 'DeleteRelationValue';		
 		analytics.event(key, { type: 'dataview' });

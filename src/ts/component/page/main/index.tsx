@@ -938,9 +938,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 				break;
 
 			default:
-				list = records.map((it: any) => {
-					return detailStore.get(Constant.subId.index, it.id);
-				});
+				list = records.map(id => detailStore.get(Constant.subId.index, id));
 				break;
 		};
 

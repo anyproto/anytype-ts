@@ -257,7 +257,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 	};
 
 	checkLinks (ids: string[]) {
-		return ids.filter(id => !dbStore.getRecordsIds(Constant.subId.deleted, '').includes(id));
+		return ids.filter(id => !dbStore.getRecords(Constant.subId.deleted, '').includes(id));
 	};
 
 	loadItem (id: string, links: string[]) {
@@ -273,7 +273,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 	};
 
 	getRecords (subId: string) {
-		let records: any[] = dbStore.getRecordsIds(subId, '');
+		let records: any[] = dbStore.getRecords(subId, '');
 
 		records = records.map((id: string) => { 
 			let item = detailStore.get(subId, id, [ 'id', 'type', 'links' ], true);

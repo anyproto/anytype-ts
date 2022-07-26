@@ -1118,7 +1118,7 @@ const OnSubscribe = (subId: string, keys: string[], message: any) => {
 		return { id: it.id, details: it }; 
 	}));
 	detailStore.set(subId, details);
-	dbStore.recordsSet(subId, '', message.records.map((it: any) => { return { id: it.id }; }));
+	dbStore.recordsSet(subId, '', message.records.map(it => it.id));
 };
 
 const ObjectSearch = (filters: I.Filter[], sorts: I.Sort[], keys: string[], fullText: string, offset: number, limit: number, callBack?: (message: any) => void) => {
