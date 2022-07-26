@@ -21,6 +21,7 @@ contextBridge.exposeInMainWorld('Electron', {
 	isPackaged: app.isPackaged,
 	userPath,
 	tmpPath: path.join(userPath, 'tmp'),
+	logPath: path.join(userPath, 'logs'),
 	getPath: (fp, fn) => path.join(fp, fn),
 
 	isMaximized: () => BrowserWindow.getFocusedWindow()?.isMaximized(),

@@ -1,5 +1,4 @@
 const webpack = require('webpack');
-const fs = require('fs');
 const path = require('path');
 const process = require('process');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
@@ -35,17 +34,20 @@ module.exports = (env) => {
 		
 		devServer: {
 			hot: true,
-			inline: true,
-			contentBase: path.join(__dirname, 'dist'),
+			static: path.join(__dirname, 'dist'),
+			static: {
+				directory: path.join(__dirname, 'dist'),
+				watch: {
+					ignored: [
+						path.resolve(__dirname, 'dist'),
+						path.resolve(__dirname, 'node_modules')
+					],
+					usePolling: false,
+				},
+			},
 			historyApiFallback: true,
 			host: 'localhost',
 			port: port,
-			watchOptions: {
-				ignored: [
-					path.resolve(__dirname, 'dist'),
-					path.resolve(__dirname, 'node_modules')
-				],
-			},
 		},
 	
 		module: {
@@ -92,9 +94,6 @@ module.exports = (env) => {
 		},
 		plugins: [
 			//new BundleAnalyzerPlugin(),
-			new webpack.DefinePlugin({
-				'process.env.NODE_ENV': JSON.stringify(env.NODE_ENV),
-			}),
 		],
 		externals: {
 			bindings: 'require("bindings")'

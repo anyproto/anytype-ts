@@ -155,7 +155,6 @@ import 'scss/media/print.scss';
 import 'scss/theme/dark/common.scss';
 
 const $ = require('jquery');
-const path = require('path');
 const hs = require('history');
 const memoryHistory = hs.createMemoryHistory;
 const history = memoryHistory();
@@ -610,7 +609,7 @@ class App extends React.Component<Props, State> {
 
 	onCommand (e: any, key: string) {
 		const rootId = keyboard.getRootId();
-		const logPath = this.getLogPath();
+		const logPath = window.Electron.logPath;
 		const options: any = {};
 
 		switch (key) {
@@ -730,10 +729,6 @@ class App extends React.Component<Props, State> {
 
 	onClose (e: any) {
 		Renderer.send('winCommand', 'close');
-	};
-
-	getLogPath () {
-		return path.join(window.Electron.userPath, 'logs');
 	};
 
 };
