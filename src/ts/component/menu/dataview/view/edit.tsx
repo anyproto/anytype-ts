@@ -203,9 +203,14 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 		const view = data.view.get();
 		const allowedView = blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
 		const subId = dbStore.getSubId(rootId, blockId);
+		const groupOption = this.getGroupOption();
 
 		if (!allowedView) {
 			return;
+		};
+
+		if (view.type == I.ViewType.Board) {
+			view.groupRelationKey = groupOption.id;
 		};
 
 		if (view.id) {
@@ -224,6 +229,8 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 				if (onSave) {
 					onSave();
 				};
+
+				getData(message.viewId);
 				analytics.event('AddView', { type: view.type });
 			});
 		};
@@ -259,7 +266,7 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 		};
 
 		if (view.type == I.ViewType.Board) {
-			const groupOption = this.getGroupOptions().find(it => it.id == view.groupRelationKey);
+			const groupOption = this.getGroupOption();
 
 			settings = settings.concat([
 				{ id: 'groupRelationKey', name: 'Group by', caption: groupOption ? groupOption.name : 'Select', withCaption: true, arrow: true },
@@ -412,11 +419,12 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 				case 'copy':
 					close();
 
-					C.BlockDataviewViewCreate(rootId, blockId, view, () => {
+					C.BlockDataviewViewCreate(rootId, blockId, view, (message: any) => {
 						if (onSave) {
 							onSave();
 						};
 
+						getData(message.viewId, 0);
 						analytics.event('AddView', { type: view.type });
 					});
 					break;
@@ -494,9 +502,16 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 			};
 		});
 
-		return [
-			{ id: '', icon: '', name: 'None' },
-		].concat(options);
+		return options;
+	};
+
+	getGroupOption () {
+		const { param } = this.props;
+		const { data } = param;
+		const view = data.view.get();
+		const groupOptions = this.getGroupOptions();
+
+		return groupOptions.length ? (groupOptions.find(it => it.id == view.groupRelationKey) || groupOptions[0]) : null;
 	};
 
 	resize () {
