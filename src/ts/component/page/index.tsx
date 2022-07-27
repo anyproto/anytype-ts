@@ -85,13 +85,16 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 		const { isPopup } = this.props;
 		const { config, theme } = commonStore;
 		const { account } = authStore;
-		const { status } = account;
-		const { type } = status;
 		const match = this.getMatch();
 		const { page, action } = match.params || {};
 		const path = [ page, action ].join('/');
 		const showNotice = !Boolean(Storage.get('firstRun'));
 		const showSidebar = (page == 'main');
+
+		if (account) {
+			const { status } = account;
+			const { type } = status;
+		};
 
 		if (showNotice) {
 			Components['/'] = PageAuthNotice;
