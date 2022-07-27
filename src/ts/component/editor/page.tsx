@@ -1422,7 +1422,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		ids = ids.concat(this.getLayoutIds(ids));
 
 		const cmd = cut ? 'BlockCut' : 'BlockCopy';
-		const focusBlock = blockStore.getLeaf(rootId, focused);
 		const tree = blockStore.getTree(rootId, blockStore.getBlocks(rootId));
 
 		let text: string[] = [];
