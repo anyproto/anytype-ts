@@ -590,20 +590,24 @@ class Keyboard {
 	initPinCheck () {
 		const { account } = authStore;
 		const { pinTime } = commonStore;
+		const check = () => {
+			const pin = Storage.get('pin');
+			if (!pin) {
+				this.setPinChecked(true);
+				return false;
+			};
+			return true;
+		};
 
-		if (!account) {
+		if (!account || !check()) {
 			return;
 		};
 
-		const pin = Storage.get('pin');
-		if (!pin) {
-			this.setPinChecked(true);
-			return;
-		};
-		
 		window.clearTimeout(this.timeoutPin);
 		this.timeoutPin = window.setTimeout(() => {
-			const pin = Storage.get('pin');
+			if (!check()) {
+				return;
+			};
 
 			this.setPinChecked(false);
 			Util.route('/auth/pin-check');
