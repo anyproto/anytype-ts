@@ -105,7 +105,6 @@ class Storage {
 			'graph',
 			'gateway',
 			'dataPath',
-			'sidebar',
 			'writing',
 			'timezone',
 		];

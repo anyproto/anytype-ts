@@ -264,14 +264,14 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<Props
 		const blocks = node.find('#blocks');
 		const empty = node.find('#empty');
 		const container = Util.getScrollContainer(isPopup);
-		const wh = container.height();
+		const wh = container.height() - 60;
 
 		if (blocks.hasClass('vertical')) {
 			blocks.css({ minHeight: wh });
 		};
 
 		if (empty.length) {
-			empty.css({ lineHeight: (wh - 60) + 'px' });
+			empty.css({ lineHeight: wh + 'px' });
 		};
 	};
 

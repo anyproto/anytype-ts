@@ -59,20 +59,18 @@
 
     .foot { display: flex; flex-direction: row; align-items: center;  }
     .foot {
-        .item { 
+        .icon { 
 			height: 52px; flex-basis: 20%; flex-grow: 1; display: flex; align-items: center; justify-content: center; cursor: pointer; 
-			flex-direction: row; 
+			flex-direction: row; background-size: 20px; cursor: pointer;
 		}
-        .item * { cursor: pointer; }
-        .item:hover { background-color: $colorHover; }
+        .icon:hover { background-color: $colorHover; }
 
-		.item.collapse { display: none; }
+		.iconObject { height: 52px; }
 
-        .icon { width: 20px; height: 20px; }
         .icon.store { background-image: url('~img/icon/sidebar/store.svg'); }
         .icon.add { background-image: url('~img/icon/sidebar/add.svg'); }
         .icon.settings { background-image: url('~img/icon/sidebar/settings.svg'); }
-        .icon.collapse { background-image: url('~img/icon/sidebar/collapse.svg'); }
+        .icon.collapse { display: none; background-image: url('~img/icon/sidebar/collapse.svg'); }
     }
     
     .body { overflow: hidden; height: 100%; position: relative; flex-grow: 1; }
@@ -124,7 +122,7 @@
 
 .sidebar.fixed {
 	.foot {
-		.item.collapse { display: flex; }
+		.icon.collapse { display: flex; }
 	}
 }
 
@@ -135,7 +133,7 @@ html.bodyMainIndex {
 html.platformMac {
     body.isFullScreen {
         .sidebar {
-            .head { height: 0px !important; }
+            .head { height: 12px !important; }
         }
     }
 }

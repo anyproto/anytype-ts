@@ -232,6 +232,7 @@ class Keyboard {
 		let rootId = '';
 		let root: any = null;
 		let details: any = { isDraft: true };
+		let flags: I.ObjectFlag[] = [ I.ObjectFlag.SelectType ];
 		
 		if (this.isMainEditor()) {
 			rootId = this.getRootId();
@@ -257,8 +258,12 @@ class Keyboard {
 				};
 			};
 		};
+
+		if (!targetId) {
+			flags = flags.concat([ I.ObjectFlag.DeleteEmpty ]);
+		};
 		
-		DataUtil.pageCreate(rootId, targetId, details, position, '', {}, [], (message: any) => {
+		DataUtil.pageCreate(rootId, targetId, details, position, '', {}, flags, (message: any) => {
 			DataUtil.objectOpenPopup({ id: message.targetId });
 		});
 	};

@@ -93,6 +93,11 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 		const showNotice = !Boolean(Storage.get('firstRun'));
 		const showSidebar = (page == 'main');
 
+		if (account) {
+			const { status } = account || {};
+			const { type } = status || {};
+		};
+
 		if (showNotice) {
 			Components['/'] = PageAuthNotice;
 		};
