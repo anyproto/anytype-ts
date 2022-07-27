@@ -92,8 +92,8 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 		const showSidebar = (page == 'main');
 
 		if (account) {
-			const { status } = account;
-			const { type } = status;
+			const { status } = account || {};
+			const { type } = status || {};
 		};
 
 		if (showNotice) {
