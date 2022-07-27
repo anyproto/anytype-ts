@@ -603,6 +603,8 @@ class Keyboard {
 		
 		window.clearTimeout(this.timeoutPin);
 		this.timeoutPin = window.setTimeout(() => {
+			const pin = Storage.get('pin');
+
 			this.setPinChecked(false);
 			Util.route('/auth/pin-check');
 		}, pinTime);
