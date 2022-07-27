@@ -99,6 +99,7 @@ class Account implements I.Account {
 
 		makeObservable(self, {
 			id: observable,
+			status: observable,
 		});
 
 		intercept(self as any, (change: any) => { return Util.intercept(self, change); });
