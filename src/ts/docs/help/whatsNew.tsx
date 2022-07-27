@@ -8,23 +8,28 @@ export default [
 
 	{ style: I.TextStyle.Title, text: `Happy August, Anytypers!` },
 	{ text: `Over the past weeks our team has been busy with both process and product updates. From now on, you can expect a cross-platform release every four weeks.` },
-	{ text: `We’ll continue publishing Desktop release notes here; meanwhile, you’ll be able to find the full release notes for every platform in the News & Announcements section of our Community Forums.` },
-	{ text: `Without further ado, here’s what we’ve cooked up for you in this release:` },
+	{ text: `We'll continue publishing Desktop release notes here; meanwhile, you'll be able to find the full release notes for every platform in the News & Announcements section of our Community Forums.` },
+	{ text: `Without further ado, here's what we've cooked up for you in this release:` },
 
-	{ style: I.TextStyle.Header2, text: `💎 Highlights of this Release:` },
-	{ text: `Simple tables are here! As one of our most popular feature requests, we’re so excited to introduce simple tables across all platforms. From the editor, simply type </table> and customize the number of cells, column widths, and background colors to your liking.` },
-	{ text: `Bookmarks as Objects: To help keep track of links you’ve bookmarked around the web, you can now create Sets with Type: Bookmark, so you can view and sort them all in one place. Say goodbye to lost links forever!` },
-	{ text: `New ‘Getting Started’ Objects (New Users only): Upon registration, new users will see an updated ‘Get Started’ page and ‘Advanced’ page, with concise explanations of core concepts and a set of bookmarked demo videos for typical use cases.` },
-	{ text: `For everyone else who’s interested in honing your Anytype superpowers, check out our demo videos and let us know what other kind of content or use cases you’d like to see!` },
+	{ style: I.TextStyle.Header2, text: `Highlights of this Release:` },
+	{ text: `Simple tables are here! As one of our most popular feature requests, we're so excited to introduce simple tables across all platforms. From the editor, simply type <span class="highlight">/table</span> and customize the number of cells, column widths, and background colors to your liking. You can use shortcut <span class="highlight">/table{x}-{y}</span> to create table with <span class="highlight">X</span> rows and <span class="highlight">Y</span> columns as well.` },
+	{ text: `<video src="./img/help/table.mp4" controls autoplay loop class="full">` },
 
-	{ style: I.TextStyle.Header2, text: `🚀 Features & Enhancements:` },
+	{ text: `Bookmarks as Objects: To help keep track of links you've bookmarked around the web, you can now create Sets with Type: Bookmark, so you can view and sort them all in one place. Say goodbye to lost links forever!` },
+	{ text: `<img src="./img/help/bookmark.png" class="full">` },
+
+	{ text: `New <span class="highlight">Getting Started</span> Objects (New Users only): Upon registration, new users will see an updated <span class="highlight">Get Started</span> page and <span class="highlight">Advanced</span> page, with concise explanations of core concepts and a set of bookmarked demo videos for typical use cases.` },
+	{ text: `For everyone else who's interested in honing your Anytype superpowers, check out our demo videos and let us know what other kind of content or use cases you'd like to see!` },
+
+	{ style: I.TextStyle.Header2, text: `Features & Enhancements:` },
 	{ style: I.TextStyle.Bulleted, text: `Text underline: The underline option is here. Underline away, friends!` },
-	{ style: I.TextStyle.Bulleted, text: `Callout blocks: By using /callout in our editor, you can now create Callout Blocks as a way to highlight specific bits of information, like this:` },
+	{ style: I.TextStyle.Bulleted, text: `Callout blocks: By using <span class="highlight">/callout</span> in our editor, you can now create Callout Blocks as a way to highlight specific bits of information, like this:` },
+	{ text: `<img src="./img/help/callout.png" class="full">` },
 
-	{ style: I.TextStyle.Header2, text: `⚡ Quality-of-Life Improvements:` },
+	{ style: I.TextStyle.Header2, text: `Quality-of-Life Improvements:` },
 	{ style: I.TextStyle.Bulleted, text: `Text letter spacings were corrected for improved readability` },
 	{ style: I.TextStyle.Bulleted, text: `Link styles have been updated and the double squircle icons next to text links have been removed` },
-	{ style: I.TextStyle.Bulleted, text: `Code blocks now have a ‘copy’ button in the interface` },
+	{ style: I.TextStyle.Bulleted, text: `Code blocks now have a <span class="highlight">copy</span> button in the interface` },
 	{ style: I.TextStyle.Bulleted, text: `Sidebar and editor got a technical update, and now work a bit faster` },
 	{ style: I.TextStyle.Bulleted, text: `Recovery phrase and QR code are now not only blurred, but replaced with a substitute for security purposes` },
 	{ style: I.TextStyle.Bulleted, text: `The preload screen has a new Anytype icon and logo` },
@@ -33,7 +38,7 @@ export default [
 	{ style: I.TextStyle.Bulleted, text: `Menus like mention or search (which load a list of Objects) now load page-by-page, for performance optimization` },
 	{ style: I.TextStyle.Bulleted, text: `Author was removed from featured Relations by default` },
 
-	{ style: I.TextStyle.Header2, text: `🐛 Bug Fixes` },
+	{ style: I.TextStyle.Header2, text: `Bug Fixes` },
 	{ style: I.TextStyle.Bulleted, text: `Fixed a bug that was causing Anytype to crash during startup with a Javascript error` },
 	{ style: I.TextStyle.Bulleted, text: `Fixed a bug that was allowing the Type selection interface to reappear after the Type had been selected` },
 	{ style: I.TextStyle.Bulleted, text: `Fixed a bug that was allowing pasting in locked Pages` },
@@ -43,7 +48,7 @@ export default [
 	{ style: I.TextStyle.Bulleted, text: `Removed circular references in the sidebar` },
 	{ style: I.TextStyle.Bulleted, text: `Dragging blocks to the sidebar is now working for normal Objects` },
 	{ style: I.TextStyle.Bulleted, text: `Fixed ability to change source in Sets after creation` },
-	{ style: I.TextStyle.Bulleted, text: `Fixed a scroll problem when navigating Objects with Ctrl/Cmd + arrow up/down` },
+	{ style: I.TextStyle.Bulleted, text: `Fixed a scroll problem when navigating Objects with <span class="highlight">${cmd}+Arrow up/down</span>` },
 	{ style: I.TextStyle.Bulleted, text: `Removed the ability to copy/paste the title of a page as a title block` },
 
 	{ type: I.BlockType.Div, style: I.DivStyle.Dot },
