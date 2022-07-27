@@ -91,6 +91,8 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 		const showNotice = !Boolean(Storage.get('firstRun'));
 		const showSidebar = (page == 'main');
 
+		console.log(JSON.stringify(account, null, 3));
+
 		if (account) {
 			const { status } = account || {};
 			const { type } = status || {};
