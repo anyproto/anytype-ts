@@ -80,6 +80,7 @@ export interface BlockComponent {
 	onUpdate?(): void;
 	getWrapper?(): any;
 	getWrapperWidth?(): number;
+	blockRemove?(focused?: I.Block): void;
 };
 
 export interface BlockStructure {
