@@ -337,7 +337,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 			Constant.typeId.image,
 			Constant.typeId.video,
 			Constant.typeId.audio,
-		];
+		].concat(DataUtil.getSystemTypes());
 
 		const filters: any[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
