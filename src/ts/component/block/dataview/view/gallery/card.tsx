@@ -138,7 +138,7 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 	onClick (e: any) {
 		e.preventDefault();
 
-		if (keyboard.isSpecial(e)) {
+		if (keyboard.withCommand(e)) {
 			return;
 		};
 

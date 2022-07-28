@@ -203,7 +203,7 @@ const BlockPdf = observer(class BlockPdf extends React.Component<Props, State> {
 	};
 
 	onClick (e: any) {
-		if (keyboard.isSpecial(e)) {
+		if (keyboard.withCommand(e)) {
 			return;
 		};
 

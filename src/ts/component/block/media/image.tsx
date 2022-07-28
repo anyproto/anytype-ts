@@ -216,7 +216,7 @@ const BlockImage = observer(class BlockImage extends React.Component<Props, {}> 
 	};
 	
 	onClick (e: any) {
-		if (keyboard.isSpecial(e)) {
+		if (keyboard.withCommand(e)) {
 			return;
 		};
 

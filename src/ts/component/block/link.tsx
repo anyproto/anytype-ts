@@ -153,7 +153,7 @@ const BlockLink = observer(class BlockLink extends React.Component<Props, {}> {
 		const object = detailStore.get(rootId, targetBlockId, []);
 		const { _empty_ , isArchived } = object;
 
-		if (keyboard.isSpecial(e) || _empty_ || isArchived || (targetBlockId == rootId)) {
+		if (keyboard.withCommand(e) || _empty_ || isArchived || (targetBlockId == rootId)) {
 			return;
 		};
 

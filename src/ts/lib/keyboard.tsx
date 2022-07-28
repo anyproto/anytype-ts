@@ -660,6 +660,10 @@ class Keyboard {
 		].includes(this.eventKey(e));
 	};
 
+	withCommand (e: any): boolean {
+		return e.shiftKey || e.ctrlKey || e.metaKey || e.altKey;
+	};
+
 	eventKey (e: any) {
 		return e && e.key ? e.key.toLowerCase() : '';
 	};
