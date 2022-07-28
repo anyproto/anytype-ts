@@ -281,9 +281,7 @@ class Keyboard {
 	};
 
 	onKeyUp (e: any) {
-		const key = e.key.toLowerCase();
-
-		this.pressed = this.pressed.filter((it: string) => { return it != key; });
+		this.pressed = this.pressed.filter(it => it != this.eventKey(e));
 	};
 
 	onBack () {
@@ -655,14 +653,15 @@ class Keyboard {
 		this.isCloseDisabled = v;
 	};
 	
-	isArrow (k: string): boolean {
-		const keys: string[] = [ Key.up, Key.down, Key.left, Key.right ];
-		return keys.indexOf(k) >= 0;
+	isSpecial (e: any): boolean {
+		return [ 
+			Key.escape, Key.backspace, Key.tab, Key.enter, Key.shift, Key.ctrl, 
+			Key.alt, Key.meta, Key.up, Key.down, Key.left, Key.right,
+		].includes(this.eventKey(e));
 	};
-	
-	isSpecial (k: string): boolean {
-		const keys: string[] = [ Key.escape, Key.backspace, Key.tab, Key.enter, Key.shift, Key.ctrl, Key.alt, Key.meta ];
-		return this.isArrow(k) || keys.indexOf(k) >= 0;
+
+	eventKey (e: any) {
+		return e && e.key ? e.key.toLowerCase() : '';
 	};
 
 	shortcut (s: string, e: any, callBack: (pressed: string) => void) {
@@ -671,7 +670,7 @@ class Keyboard {
 		};
 
 		const a = s.split(',').map((it: string) => { return it.trim(); });
-		const key = e.key.toLowerCase();
+		const key = this.eventKey(e);
 		const which = e.which;
 
 		let pressed = [];

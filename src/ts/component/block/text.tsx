@@ -660,7 +660,6 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		let value = this.getValue();
 		let ret = false;
 
-		const k = e.key.toLowerCase();	
 		const range = this.getRange();
 		const symbolBefore = range ? value[range.from - 1] : '';
 		const cmd = keyboard.ctrlKey();
@@ -797,7 +796,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		
 		focus.set(id, range);
 
-		if (!keyboard.isSpecial(k)) {
+		if (!keyboard.isSpecial(e)) {
 			this.placeholderHide();
 		};
 		
@@ -811,7 +810,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		const { filter } = commonStore;
 		const { id, content } = block;
 		const range = this.getRange();
-		const k = e.key.toLowerCase();
+		const k = keyboard.eventKey(e);
 		const Markdown = {
 			'[\\*\\-\\+]':	 I.TextStyle.Bulleted,
 			'\\[\\]':		 I.TextStyle.Checkbox,
@@ -847,8 +846,8 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 
 		const symbolBefore = range ? value[range.from - 1] : '';
 		const isSpaceBefore = range ? (!range.from || (value[range.from - 2] == ' ') || (value[range.from - 2] == '\n')) : false;
-		const canOpenMenuAdd = (symbolBefore == '/') && !this.preventMenu && !keyboard.isSpecial(k) && !menuOpenAdd && !block.isTextCode() && !block.isTextTitle() && !block.isTextDescription();
-		const canOpenMentionMenu = (symbolBefore == '@') && !this.preventMenu && (isSpaceBefore || (range.from == 1)) && !keyboard.isSpecial(k) && !menuOpenMention && !block.isTextCode() && !block.isTextTitle() && !block.isTextDescription();
+		const canOpenMenuAdd = (symbolBefore == '/') && !this.preventMenu && !keyboard.isSpecial(e) && !menuOpenAdd && !block.isTextCode() && !block.isTextTitle() && !block.isTextDescription();
+		const canOpenMentionMenu = (symbolBefore == '@') && !this.preventMenu && (isSpaceBefore || (range.from == 1)) && !keyboard.isSpecial(e) && !menuOpenMention && !block.isTextCode() && !block.isTextTitle() && !block.isTextDescription();
 		const parsed = this.getMarksFromHtml();
 
 		this.preventMenu = false;

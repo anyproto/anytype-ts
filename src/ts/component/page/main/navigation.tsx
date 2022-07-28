@@ -345,7 +345,6 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 		const l = items.length;
 
 		let { n } = this.state;
-		let k = e.key.toLowerCase();
 
 		keyboard.disableMouse(true);
 

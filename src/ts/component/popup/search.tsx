@@ -243,7 +243,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 
 		keyboard.disableMouse(true);
 
-		let k = e.key.toLowerCase();
+		let k = keyboard.eventKey(e);
 
 		if (k == Key.tab) {
 			k = e.shiftKey ? Key.up : Key.down;

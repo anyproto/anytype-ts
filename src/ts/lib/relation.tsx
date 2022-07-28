@@ -137,6 +137,9 @@ class Relation {
 						ret = ret.concat(extendedOptions);
 						break;
 
+					case I.FilterCondition.None:
+						break;
+
 					default: 
 						ret = ret.concat(defaultOptions);
 						break;

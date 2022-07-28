@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { InputWithFile, Loader, Icon, Error } from 'ts/component';
-import { I, C, translate, focus, Action, DataUtil } from 'ts/lib';
+import { I, C, translate, focus, Action, DataUtil, keyboard } from 'ts/lib';
 import { commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -216,7 +216,7 @@ const BlockImage = observer(class BlockImage extends React.Component<Props, {}> 
 	};
 	
 	onClick (e: any) {
-		if (e.shiftKey || e.ctrlKey || e.metaKey) {
+		if (keyboard.isSpecial(e)) {
 			return;
 		};
 

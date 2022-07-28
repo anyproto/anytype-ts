@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Input } from  'ts/component';
-import { Key } from 'ts/lib';
+import { keyboard } from 'ts/lib';
 
 interface Props {
 	size?: number;
@@ -75,13 +75,16 @@ class Pin extends React.Component<Props, {}> {
 
 	onKeyDown (e: any, id: number, value: string) {
 		const prev = this.refObj[id - 1];
-		const k = e.key.toLowerCase();
 
-		if ((k == Key.backspace) && prev) {
+		if (!prev) {
+			return;
+		};
+
+		keyboard.shortcut('backspace', e, (pressed: string) => {
 			prev.setValue('');
 			prev.setType('text');
 			prev.focus();
-		};
+		});
 	};
 
 	onKeyUp (e: any, id: number, value: string) {

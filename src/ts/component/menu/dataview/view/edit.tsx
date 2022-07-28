@@ -119,7 +119,7 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 		const { data } = param;
 		const view = data.view.get();
 		const item = this.getItems()[this.n];
-		const k = e.key.toLowerCase();
+		const k = keyboard.eventKey(e);
 
 		let ret = false;
 

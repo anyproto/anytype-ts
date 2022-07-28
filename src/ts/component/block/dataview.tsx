@@ -412,7 +412,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	onCellClick (e: any, relationKey: string, index: number) {
-		if (e.button || e.shiftKey || e.ctrlKey || e.metaKey || e.altKey) {
+		if (e.button || keyboard.isSpecial(e)) {
 			return;
 		};
 
