@@ -359,12 +359,12 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 	};
 
 	onCreateType (e: any) {
-		const param: any = { 
+		const details: any = { 
 			name: '',
 			layout: I.ObjectLayout.Page, 
 		};
 
-		C.ObjectTypeCreate(param, (message: any) => {
+		C.ObjectTypeCreate(details, [ I.ObjectFlag.DeleteEmpty ], (message: any) => {
 			if (message.error.code) {
 				return;
 			};
@@ -396,7 +396,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 		const limit = this.getRowLimit();
 		const rootId = this.getRootId();
 		const subId = dbStore.getSubId(rootId, BLOCK_ID);
-		const records = dbStore.getRecords(subId, '').map((it: any) => { return detailStore.get(subId, it.id); });
+		const records = dbStore.getRecords(subId, '').map(id => detailStore.get(subId, id));
 
 		records.sort((c1: any, c2: any) => {
 			const cr1 = c1.creator;
