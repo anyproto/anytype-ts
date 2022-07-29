@@ -40,6 +40,24 @@
 			.iconEmoji .emoji-mart-emoji { vertical-align: top; }
 			.iconEmoji .emoji-mart-emoji span { margin-top: 2px; }
 		}
+
+		.foot { padding: 5px 16px 6px 16px; border-top: 1px solid $colorLightGrey; display: flex; justify-content: space-between; }
+		.foot {
+			.icon { width: 32px; height: 32px; border-radius: 4px; background-size: 20px; flex-shrink: 0; cursor: pointer; transition: $transitionFast; }
+			.icon:hover { background-color: $colorVeryLightGrey; }
+
+			.icon.recent { background-image: url('~img/icon/emoji/recent0.svg'); }
+			.icon.recent.active { background-image: url('~img/icon/emoji/recent1.svg'); }
+
+			.icon.smile { background-image: url('~img/icon/emoji/smile0.svg'); }
+			.icon.smile.active { background-image: url('~img/icon/emoji/smile1.svg'); }
+
+			.icon.animal { background-image: url('~img/icon/emoji/animal0.svg'); }
+			.icon.animal.active { background-image: url('~img/icon/emoji/animal1.svg'); }
+
+			.icon.food { background-image: url('~img/icon/emoji/food0.svg'); }
+			.icon.food.active { background-image: url('~img/icon/emoji/food1.svg'); }
+		}
 	}
 	
 	.menu.menuSmileSkin { padding: 4px 10px; white-space: nowrap; }

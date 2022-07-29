@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Filter, IconEmoji } from 'ts/component';
+import { Filter, IconEmoji, Icon } from 'ts/component';
 import { I, C, Util, SmileUtil, keyboard, Storage, translate, analytics } from 'ts/lib';
 import { menuStore } from 'ts/store';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
@@ -54,6 +54,17 @@ class MenuSmile extends React.Component<Props, State> {
 		const { noHead, noUpload, noRemove } = data;
 		const sections = this.getSections();
 		const items = this.getItems();
+		const groups = [ 
+			{ id: 'recent', name: 'Recent' }, 
+			{ id: 'smile', name: 'Smileys & Emotions' },
+			{ id: 'animal', name: 'Animals & Nature' },
+			{ id: 'food', name: 'Food & Drink' },
+			{ id: 'activity', name: 'Activity' },
+			{ id: 'travel', name: 'Travel & Places' },
+			{ id: 'object', name: 'Objects' },
+			{ id: 'symbol', name: 'Symbols' },
+			{ id: 'flag', name: 'Flags' },
+		];
 
 		if (!this.cache) {
 			return null;
@@ -155,8 +166,15 @@ class MenuSmile extends React.Component<Props, State> {
 								dangerouslySetInnerHTML={{ __html: Util.sprintf(translate('menuSmileEmpty'), filter) }} 
 							/>
 						</div>
-					): ''}
+					) : ''}
 				</div>
+				{sections.length ? (
+					<div className="foot">
+						{groups.map((group: any, i: number) => (
+							<Icon key={i} className={group.id} tooltip={group.name} tooltipY={I.MenuDirection.Bottom} />
+						))}
+					</div>
+				) : ''}
 			</div>
 		);
 	};
