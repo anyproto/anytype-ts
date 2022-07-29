@@ -508,9 +508,8 @@ class MenuSmile extends React.Component<Props, State> {
 
 	onScroll ({ clientHeight, scrollHeight, scrollTop }) {
 		const cache = this.getGroupCache();
-
 		for (let item of cache) {
-			if ((scrollTop >= item.start) && (scrollTop <= item.end)) {
+			if ((scrollTop >= item.start) && (scrollTop < item.end)) {
 				this.setActiveGroup(item.id);
 				break;
 			};
