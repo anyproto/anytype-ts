@@ -1,4 +1,4 @@
-const { app, BrowserWindow, nativeImage, dialog, screen } = require('electron');
+const { app, BrowserWindow, nativeImage, dialog, screen, Menu, MenuItem } = require('electron');
 const { is } = require('electron-util');
 const version = app.getVersion();
 const path = require('path');
@@ -34,7 +34,7 @@ class WindowManager {
 			nativeWindowOpen: true,
 			contextIsolation: true,
 			nodeIntegration: false,
-			spellcheck: false,
+			spellcheck: true,
 		}, param.webPreferences);
 
 		let win = new BrowserWindow(param);
@@ -57,6 +57,36 @@ class WindowManager {
 		});
 		win.on('enter-full-screen', () => { Util.send(win, 'enter-full-screen'); });
 		win.on('leave-full-screen', () => { Util.send(win, 'leave-full-screen'); });
+
+		//win.webContents.session.setSpellCheckerLanguages([ 'en-US', 'fr' ]);
+
+		win.webContents.on('context-menu', (e, params) => {
+			const menu = new Menu();
+
+			// Add each spelling suggestion
+			for (const suggestion of params.dictionarySuggestions) {
+				menu.append(new MenuItem({
+					label: suggestion,
+					click: () => win.webContents.replaceMisspelling(suggestion),
+				}));
+			};
+
+			// Allow users to add the misspelled word to the dictionary
+			if (params.misspelledWord) {
+				menu.append(
+					new MenuItem({
+						label: 'Add to dictionary',
+						click: () => win.webContents.session.addWordToSpellCheckerDictionary(params.misspelledWord),
+					})
+				);
+			};
+
+			menu.popup();
+		});
+
+		const possibleLanguages = win.webContents.session.availableSpellCheckerLanguages;
+
+		console.log(possibleLanguages);
 
 		return win;
 	};
