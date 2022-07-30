@@ -1,4 +1,4 @@
-const { app, BrowserWindow, nativeImage, dialog, screen, Menu, MenuItem } = require('electron');
+const { app, BrowserWindow, nativeImage, dialog, screen } = require('electron');
 const { is } = require('electron-util');
 const version = app.getVersion();
 const path = require('path');
@@ -6,6 +6,7 @@ const windowStateKeeper = require('electron-window-state');
 const remote = require('@electron/remote/main');
 const port = process.env.SERVER_PORT;
 
+const ConfigManager = require('./config.js');
 const UpdateManager = require('./update.js');
 const MenuManager = require('./menu.js');
 const Util = require('./util.js');
@@ -21,6 +22,7 @@ class WindowManager {
 
 	create (options, param) {
 		const { route, isChild } = options;
+		const { language } = ConfigManager.config;
 
 		param = Object.assign({
 			backgroundColor: Util.getBgColor(),
@@ -58,36 +60,11 @@ class WindowManager {
 		win.on('enter-full-screen', () => { Util.send(win, 'enter-full-screen'); });
 		win.on('leave-full-screen', () => { Util.send(win, 'leave-full-screen'); });
 
-		//win.webContents.session.setSpellCheckerLanguages([ 'en-US', 'fr' ]);
+		if (language) {
+			win.webContents.session.setSpellCheckerLanguages([ language ]);
+		};
 
-		win.webContents.on('context-menu', (e, params) => {
-			const menu = new Menu();
-
-			// Add each spelling suggestion
-			for (const suggestion of params.dictionarySuggestions) {
-				menu.append(new MenuItem({
-					label: suggestion,
-					click: () => win.webContents.replaceMisspelling(suggestion),
-				}));
-			};
-
-			// Allow users to add the misspelled word to the dictionary
-			if (params.misspelledWord) {
-				menu.append(
-					new MenuItem({
-						label: 'Add to dictionary',
-						click: () => win.webContents.session.addWordToSpellCheckerDictionary(params.misspelledWord),
-					})
-				);
-			};
-
-			menu.popup();
-		});
-
-		const possibleLanguages = win.webContents.session.availableSpellCheckerLanguages;
-
-		console.log(possibleLanguages);
-
+		win.webContents.on('context-menu', (e, param) => MenuManager.spellcheck(param));
 		return win;
 	};
 

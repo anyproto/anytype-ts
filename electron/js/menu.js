@@ -1,4 +1,4 @@
-const { app, shell, Menu, Tray } = require('electron');
+const { app, shell, Menu, Tray, MenuItem } = require('electron');
 const { is } = require('electron-util');
 const path = require('path');
 
@@ -14,7 +14,7 @@ const ChannelSettings = [
 
 class MenuManager {
 
-	window = null;
+	win = null;
 	menu = {};
 	tray = {};
 
@@ -317,6 +317,28 @@ class MenuManager {
 
 			{ label: 'Quit', click: () => { hide(); Api.exit(this.win, false); } },
 		]));
+	};
+
+	spellcheck (params) {
+		const menu = new Menu();
+
+		for (const suggestion of params.dictionarySuggestions) {
+			menu.append(new MenuItem({
+				label: suggestion,
+				click: () => this.win.webContents.replaceMisspelling(suggestion),
+			}));
+		};
+
+		if (params.misspelledWord) {
+			menu.append(
+				new MenuItem({
+					label: 'Add to dictionary',
+					click: () => this.win.webContents.session.addWordToSpellCheckerDictionary(params.misspelledWord),
+				})
+			);
+		};
+
+		menu.popup();
 	};
 
 	updateTrayIcon () {

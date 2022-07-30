@@ -44,6 +44,7 @@ class CommonStore {
 	public isFullScreen: boolean = false;
 	public autoSidebarValue: boolean = false;
 	public redirect: string = '';
+	public languages: string[] = [];
 
     constructor() {
         makeObservable(this, {
@@ -252,6 +253,9 @@ class CommonStore {
 		this.nativeThemeIsDark = isDark;
 	};
 
+	languagesSet (v: string[]) {
+		this.languages = v;
+	};
 
 	infoSet (info: I.AccountInfo) {
 		console.log('[commonStore.infoSet]', info);

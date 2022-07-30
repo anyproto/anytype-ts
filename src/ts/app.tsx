@@ -419,7 +419,8 @@ class App extends React.Component<Props, State> {
   		});
 	};
 
-	onInit (e: any, dataPath: string, config: any, isDark: boolean, windowData: any) {
+	onInit (e: any, data: any) {
+		const { dataPath, config, isDark, isChild, route, account, phrase, languages } = data;
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
 		const loader = node.find('#root-loader');
@@ -429,6 +430,7 @@ class App extends React.Component<Props, State> {
 		commonStore.configSet(config, true);
 		commonStore.nativeThemeSet(isDark);
 		commonStore.themeSet(config.theme);
+		commonStore.languagesSet(languages);
 
 		authStore.walletPathSet(dataPath);
 		authStore.accountPathSet(dataPath);
@@ -443,12 +445,12 @@ class App extends React.Component<Props, State> {
 		};
 
 		if (accountId) {
-			if (windowData.isChild) {
-				authStore.phraseSet(windowData.phrase);
+			if (isChild) {
+				authStore.phraseSet(phrase);
 
 				DataUtil.createSession(() => {
-					commonStore.redirectSet(windowData.route || '');
-					DataUtil.onAuth(windowData.account, cb);
+					commonStore.redirectSet(route || '');
+					DataUtil.onAuth(account, cb);
 				});
 
 				win.off('unload').on('unload', (e: any) => {
