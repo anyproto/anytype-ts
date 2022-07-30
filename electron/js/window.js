@@ -57,14 +57,14 @@ class WindowManager {
 			UpdateManager.setWindow(win);
 			MenuManager.setWindow(win); 
 		});
-		win.on('enter-full-screen', () => { Util.send(win, 'enter-full-screen'); });
-		win.on('leave-full-screen', () => { Util.send(win, 'leave-full-screen'); });
+		win.on('enter-full-screen', () => Util.send(win, 'enter-full-screen'));
+		win.on('leave-full-screen', () => Util.send(win, 'leave-full-screen'));
 
 		if (language) {
 			win.webContents.session.setSpellCheckerLanguages([ language ]);
 		};
 
-		win.webContents.on('context-menu', (e, param) => MenuManager.spellcheck(param));
+		win.webContents.on('context-menu', (e, param) => Util.send(win, 'spellcheck', param));
 		return win;
 	};
 

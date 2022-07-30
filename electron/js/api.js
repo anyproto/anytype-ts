@@ -46,6 +46,10 @@ class Api {
 		this.setConfig(win, { language });
 	};
 
+	spellcheckAdd (win, s) {
+		win.webContents.session.addWordToSpellCheckerDictionary(s);
+	};
+
 	keytarSet (win, key, value) {
 		if (key && value) {
 			this.phrase = value;

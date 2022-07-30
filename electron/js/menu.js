@@ -319,28 +319,6 @@ class MenuManager {
 		]));
 	};
 
-	spellcheck (params) {
-		const menu = new Menu();
-
-		for (const suggestion of params.dictionarySuggestions) {
-			menu.append(new MenuItem({
-				label: suggestion,
-				click: () => this.win.webContents.replaceMisspelling(suggestion),
-			}));
-		};
-
-		if (params.misspelledWord) {
-			menu.append(
-				new MenuItem({
-					label: 'Add to dictionary',
-					click: () => this.win.webContents.session.addWordToSpellCheckerDictionary(params.misspelledWord),
-				})
-			);
-		};
-
-		menu.popup();
-	};
-
 	updateTrayIcon () {
 		if (this.tray) {
 			this.tray.setImage(this.getTrayIcon());

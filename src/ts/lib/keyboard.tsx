@@ -26,9 +26,10 @@ class Keyboard {
 	isPreviewDisabled: boolean = false;
 	isMouseDisabled: boolean = false;
 	isPinChecked: boolean = false;
-	isContextDisabled: boolean = false;
 	isBlurDisabled: boolean = false;
 	isCloseDisabled: boolean = false;
+	isContextCloseDisabled: boolean = false;
+	isContextOpenDisabled: boolean = false;
 	
 	init () {
 		this.unbind();
@@ -633,8 +634,13 @@ class Keyboard {
 	};
 
 	// Flag to prevent menuBlockContext from closing
-	disableContext (v: boolean) {
-		this.isContextDisabled = v;
+	disableContextClose (v: boolean) {
+		this.isContextCloseDisabled = v;
+	};
+
+	// Flag to prevent menuBlockContext from opening
+	disableContextOpen (v: boolean) {
+		this.isContextOpenDisabled = v;
 	};
 	
 	disablePreview (v: boolean) {
