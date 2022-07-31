@@ -77,6 +77,7 @@ class Textarea extends React.Component<Props, State> {
 				onBlur={this.onBlur}
 				onCopy={this.onCopy}
 				maxLength={maxLength ? maxLength : undefined}
+				spellCheck={false}
 			/>
 		);
 	};

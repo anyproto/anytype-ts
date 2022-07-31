@@ -97,6 +97,7 @@ class Input extends React.Component<Props, State> {
 				maxLength={maxLength ? maxLength : undefined}
 				accept={accept ? accept : undefined}
 				multiple={multiple}
+				spellCheck={false}
 			/>
 		);
 	};
