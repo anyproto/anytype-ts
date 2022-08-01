@@ -75,6 +75,11 @@ html.themeDark {
 		.icon.clear:hover { background-image: url('#{$themePath}/icon/clearFilter1.svg') !important; }
     }
 
+	.emptySearch {
+		b { color: $colorPrimary; }
+		.label { color: $colorSecondary; }
+	}
+
     .frame { background: $colorBlack; }
 
     .switch { background: $colorBgInactive; }

@@ -330,6 +330,7 @@
 
 	"popupSearchPlaceholder": { "en": "Search for an object..." },
 	"popupSearchEmpty": { "en": "No objects found" },
+	"popupSearchEmptyFilter": { "en": "<b>There are no objects named <span>\"%s\"</span></b>Try creating a new one or search for something else" },
 
 	"popupConfirmUpdateErrorTitle": { "en": "Oops!" },
 	"popupConfirmUpdateErrorText": { "en": "Can't check available updates, please try again later.<br/><span class=\"error\">%s</span>" },
@@ -340,7 +341,7 @@
 	"menuSmileRandom": { "en": "Random emoji" },
 	"menuSmileUpload": { "en": "Upload image" },
 	"menuSmileRemove": { "en": "Remove" },
-	"menuSmileEmpty": { "en": "<b>There are no emojis named \"%s\"</b>Try to find a new one or upload your image" },
+	"menuSmileEmpty": { "en": "<b>There are no emojis named <span>\"%s\"</span></b>Try to find a new one or upload your image" },
 
 	"menuCalendarToday": { "en": "Today" },
 	"menuCalendarTomorrow": { "en": "Tomorrow" },
@@ -348,6 +349,8 @@
 	"menuBlockCoverUpload": { "en": "Upload image" },
 	"menuBlockCoverEdit": { "en": "Reposition" },
 	"menuBlockCoverRemove": { "en": "Remove" },
+	"menuBlockCoverEmpty": { "en": "There are no covers found" },
+	"menuBlockCoverEmptyFilter": { "en": "<b>There are no covers named <span>\"%s\"</span></b>Try to find a new one or upload your image" },
 
 	"menuBlockLinkPlaceholder": { "en": "Enter link URL" },
 	"menuBlockLinkLink": { "en": "Link" },

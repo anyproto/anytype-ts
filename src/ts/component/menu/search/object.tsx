@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { MenuItemVertical, Filter, Loader, ObjectName } from 'ts/component';
+import { MenuItemVertical, Filter, Loader, ObjectName, EmptySearch } from 'ts/component';
 import { I, C, keyboard, Util, DataUtil, translate, analytics } from 'ts/lib';
 import { commonStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -127,16 +127,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 				{loading ? <Loader /> : ''}
 
 				{!items.length && !loading ? (
-					<div id="empty" key="empty" className="emptySearch">
-						<div className="label">
-							{filter ? (
-								<React.Fragment>
-									<b>There are no objects named <span>"{filter}"</span></b>
-									Try creating a new one or search for something else.
-								</React.Fragment>
-							) : translate('popupSearchEmpty')}
-						</div>
-					</div>
+					<EmptySearch text={filter ? Util.sprintf(translate('popupSearchEmptyFilter'), filter) : translate('popupSearchEmpty')} />
 				) : ''}
 
 				{this.cache && items.length && !loading ? (
@@ -399,7 +390,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		const l = items.length + (label ? 1 : 0);
 		const height = Math.max(min, Math.min(h * LIMIT_HEIGHT, l * h + 16));
 
-		obj.css({ height: height });
+		obj.css({ height });
 		position();
 	};
 
