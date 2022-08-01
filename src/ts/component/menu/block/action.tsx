@@ -136,12 +136,32 @@ class MenuBlockAction extends React.Component<Props, State> {
 	
 	rebind () {
 		this.unbind();
-		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
+		$(window).on('keydown.menu', (e: any) => { this.onKeyDown(e); });
 		window.setTimeout(() => { this.props.setActive(); }, 15);
 	};
 	
 	unbind () {
 		$(window).unbind('keydown.menu');
+	};
+
+	onKeyDown (e: any) {
+		const { onKeyDown, param } = this.props;
+		const { data } = param;
+		const { blockRemove } = data;
+		const { filter } = this.state;
+
+		let ret = false;
+
+		keyboard.shortcut('backspace', e, (pressed: string) => {
+			if (!filter && blockRemove) {
+				blockRemove();
+				ret = true;
+			};
+		});
+
+		if (!ret) {
+			onKeyDown(e);
+		};
 	};
 	
 	getSections () {

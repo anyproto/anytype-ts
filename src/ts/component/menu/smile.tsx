@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Filter, IconEmoji, EmptySearch } from 'ts/component';
+import { Filter, Icon, IconEmoji, EmptySearch } from 'ts/component';
 import { I, C, Util, SmileUtil, keyboard, Storage, translate, analytics } from 'ts/lib';
 import { menuStore } from 'ts/store';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
@@ -30,12 +30,15 @@ class MenuSmile extends React.Component<Props, State> {
 		page: 0,
 	};
 
-	ref: any = null;
+	refFilter: any = null;
+	refList: any = null;
+
 	id: string = '';
 	skin: number = 1;
 	timeoutMenu: number = 0;
 	timeoutFilter: number = 0;
 	cache: any = null;
+	groupCache: any[] = [];
 
 	constructor (props: any) {
 		super(props);
@@ -45,6 +48,7 @@ class MenuSmile extends React.Component<Props, State> {
 		this.onRandom = this.onRandom.bind(this);
 		this.onUpload = this.onUpload.bind(this);
 		this.onRemove = this.onRemove.bind(this);
+		this.onScroll = this.onScroll.bind(this);
 	};
 	
 	render () {
@@ -54,6 +58,7 @@ class MenuSmile extends React.Component<Props, State> {
 		const { noHead, noUpload, noRemove } = data;
 		const sections = this.getSections();
 		const items = this.getItems();
+		const groups = this.getGroups();
 
 		if (!this.cache) {
 			return null;
@@ -115,7 +120,7 @@ class MenuSmile extends React.Component<Props, State> {
 				) : ''}
 				
 				<Filter 
-					ref={(ref: any) => { this.ref = ref; }}
+					ref={(ref: any) => { this.refFilter = ref; }}
 					value={filter}
 					className={!noHead ? 'withHead' : ''} 
 					onChange={(e: any) => { this.onKeyUp(e, false); }} 
@@ -131,18 +136,17 @@ class MenuSmile extends React.Component<Props, State> {
 							<AutoSizer className="scrollArea">
 								{({ width, height }) => (
 									<List
-										ref={registerChild}
+										ref={(ref: any) => { this.refList = ref; }}
 										width={width}
 										height={height}
 										deferredMeasurmentCache={this.cache}
 										rowCount={items.length}
-										rowHeight={({ index }) => {
-											const item = items[index];
-											return item.isSection ? HEIGHT_SECTION : HEIGHT_ITEM;
-										}}
+										rowHeight={({ index }) => this.getRowHeight(items[index])}
 										rowRenderer={rowRenderer}
 										onRowsRendered={onRowsRendered}
 										overscanRowCount={10}
+										onScroll={this.onScroll}
+										scrollToAlignment="start"
 									/>
 								)}
 							</AutoSizer>
@@ -152,6 +156,21 @@ class MenuSmile extends React.Component<Props, State> {
 						<EmptySearch text={Util.sprintf(translate('menuSmileEmpty'), filter)} />
 					): ''}
 				</div>
+
+				{sections.length ? (
+					<div id="foot" className="foot">
+						{groups.map((group: any, i: number) => (
+							<Icon 
+								key={i} 
+								id={`item-${group.id}`}
+								className={group.id} 
+								tooltip={group.name} 
+								tooltipY={I.MenuDirection.Bottom} 
+								onClick={(e: any) => { this.onGroup(group.id); }} 
+							/>
+						))}
+					</div>
+				) : ''}
 			</div>
 		);
 	};
@@ -170,8 +189,8 @@ class MenuSmile extends React.Component<Props, State> {
 		};
 
 		window.setTimeout(() => {
-			if (this.ref) {
-				this.ref.focus();
+			if (this.refFilter) {
+				this.refFilter.focus();
 			};
 		}, 15);
 	};
@@ -180,9 +199,11 @@ class MenuSmile extends React.Component<Props, State> {
 		const node = $(ReactDOM.findDOMNode(this));
 		
 		if (this.id) {
-			node.find('#item-' + this.id).addClass('active');
+			node.find(`#item-${this.id}`).addClass('active');
 			this.id = '';
 		};
+
+		this.groupCache = [];
 	};
 	
 	componentWillUnmount () {
@@ -191,35 +212,45 @@ class MenuSmile extends React.Component<Props, State> {
 		keyboard.setFocus(false);
 		menuStore.close('smileSkin');
 	};
-	
-	getSections () {
-		const { filter } = this.state;
-		const reg = new RegExp(filter, 'gi');
+
+	checkRecent (sections: any[]) {
 		const lastIds = Storage.get('lastSmileIds') || [];
 
-		let sections = Util.objectCopy(EmojiData.categories);
-		
-		sections = sections.map((s: any) => {
-			s.children = s.emojis.map((it: string) => { 
-				return { smile: it, skin: this.skin }; 
-			});
-			return s;
-		});
-		
 		if (lastIds && lastIds.length) {
 			sections.unshift({ id: ID_RECENT, name: 'Recently used', children: lastIds });
 		};
 
+		return sections;
+	};
+
+	getGroups () {
+		return this.checkRecent(EmojiData.categories.map(it => { return { id: it.id, name: it.name }}));
+	};
+	
+	getSections () {
+		const { filter } = this.state;
+		const reg = new RegExp(filter, 'gi');
+
+		let sections: any[] = [];
+
+		EmojiData.categories.forEach((it: any) => {
+			sections.push({
+				id: it.id,
+				name: it.name,
+				children: it.emojis.map(id => { return { smile: id, skin: this.skin }}),
+			});
+		});
+
 		if (filter) {
 			sections = sections.filter((s: any) => {
-				s.children = (s.children || []).filter(c =>  c.smile.match(reg));
+				s.children = (s.children || []).filter(c => c.smile.match(reg));
 				return s.children.length > 0;
 			});
 		};
 		
-		return sections;
+		return this.checkRecent(sections);
 	};
-	
+
 	getItems () {
 		let sections = this.getSections();
 		let items: any[] = [];
@@ -274,6 +305,10 @@ class MenuSmile extends React.Component<Props, State> {
 		return ret;
 	};
 	
+	getRowHeight (item: any) {
+		return item.isSection ? HEIGHT_SECTION : HEIGHT_ITEM;
+	};
+
 	onSubmit (e: any) {
 		e.preventDefault();
 		
@@ -283,7 +318,7 @@ class MenuSmile extends React.Component<Props, State> {
 	onKeyUp (e: any, force: boolean) {
 		window.clearTimeout(this.timeoutFilter);
 		this.timeoutFilter = window.setTimeout(() => {
-			this.setState({ page: 0, filter: Util.filterFix(this.ref.getValue()) });
+			this.setState({ page: 0, filter: Util.filterFix(this.refFilter.getValue()) });
 		}, force ? 0 : 50);
 	};
 	
@@ -420,6 +455,62 @@ class MenuSmile extends React.Component<Props, State> {
 	onRemove () {
 		this.onSelect('', 1);
 		this.props.close();
+	};
+
+	onGroup (id: string) {
+		const items = this.getItems();
+		const idx = items.findIndex(it => it.id == id);
+
+		this.refList.scrollToRow(Math.max(0, idx));
+	};
+
+	getGroupCache () {
+		if (this.groupCache.length) {
+			return this.groupCache;
+		};
+
+		let items = this.getItems();
+		let t = 0;
+		let last = null;
+
+		for (let i = 0; i < items.length; i++) {
+			const item = items[i];
+
+			if (item.isSection) {
+				last = this.groupCache[this.groupCache.length - 1];
+				if (last) {
+					last.end = t;
+				};
+
+				this.groupCache.push({ id: item.id, start: t, end: 0 });
+			};
+
+			t += this.getRowHeight(item);
+		};
+
+		last = this.groupCache[this.groupCache.length - 1];
+		if (last) {
+			last.end = t;
+		};
+		return this.groupCache;
+	};
+
+	onScroll ({ clientHeight, scrollHeight, scrollTop }) {
+		const cache = this.getGroupCache();
+		for (let item of cache) {
+			if ((scrollTop >= item.start) && (scrollTop < item.end)) {
+				this.setActiveGroup(item.id);
+				break;
+			};
+		};
+	};
+
+	setActiveGroup (id: string) {
+		const node = $(ReactDOM.findDOMNode(this));
+		const foot = node.find('#foot');
+
+		foot.find('.active').removeClass('active');
+		foot.find(`#item-${id}`).addClass('active');
 	};
 	
 };

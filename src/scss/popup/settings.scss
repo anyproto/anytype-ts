@@ -150,10 +150,11 @@
 		
 		.tabPhrase {
 			.label { margin-bottom: 25px; }
-			.inputs { margin-bottom: 20px; }
+			.inputs { margin-bottom: 40px; }
+			.textareaWrap { margin-bottom: 20px; }
 
-			.path { margin-bottom: 16px; height: 128px; display: flex; }
-			.path { 
+			.sides { margin-bottom: 20px; display: flex; }
+			.sides { 
 				b { margin-bottom: 5px; display: block; }
 				.label { margin: 0px; }
 				.side { width: 100%; }
