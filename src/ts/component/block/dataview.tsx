@@ -205,8 +205,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		const { rootId, block } = this.props;
 		const subId = dbStore.getSubId(rootId, block.id);
-		const { viewId } = dbStore.getMeta(subId, '');
-		const viewChange = newViewId != viewId;
 		const view = this.getView(newViewId);
 		const keys = this.getKeys(newViewId);
 
@@ -216,13 +214,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			offset = 0;
 		};
 
-		const meta: any = { offset: offset };
-	
-		if (viewChange) {
-			meta.viewId = newViewId;
-			dbStore.recordsSet(subId, '', []);
-		};
-		dbStore.metaSet(subId, '', meta);
+		dbStore.recordsSet(subId, '', []);
+		dbStore.metaSet(subId, '', { offset: offset, viewId: newViewId });
 
 		if (![ I.ViewType.Board ].includes(view.type)) {
 			DataUtil.getDataviewData(rootId, block.id, newViewId, keys, 0, 0, false, callBack);

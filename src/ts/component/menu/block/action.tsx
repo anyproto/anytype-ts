@@ -150,8 +150,6 @@ class MenuBlockAction extends React.Component<Props, State> {
 		const { data } = param;
 		const { blockId, blockIds, rootId } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
-		const cmd = keyboard.ctrlSymbol();
-		const { config } = commonStore;
 		
 		if (!block) {
 			return [];
@@ -464,9 +462,17 @@ class MenuBlockAction extends React.Component<Props, State> {
 					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: types }
 				];
 
+				let skipIds = [ rootId ];
+				blockIds.forEach((id: string) => {
+					const block = blockStore.getLeaf(rootId, id);
+					if (block && block.isLink() && block.content.targetBlockId) {
+						skipIds.push(block.content.targetBlockId);
+					};
+				});
+
 				menuParam.data = Object.assign(menuParam.data, {
 					type: I.NavigationType.Move, 
-					skipIds: [ rootId ],
+					skipIds: skipIds,
 					position: I.BlockPosition.Bottom,
 					filters: filters,
 					onSelect: () => { close(); }

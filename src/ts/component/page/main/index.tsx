@@ -745,7 +745,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 									blockId: item.id,
 									blockIds: [ item.id ],
 									type: I.NavigationType.Move, 
-									skipIds: [ rootId ],
+									skipIds: [ item._object_.id ],
 									filters: filters,
 									position: I.BlockPosition.Bottom,
 									onSelect: (el: any) => { menuContext.close(); }
