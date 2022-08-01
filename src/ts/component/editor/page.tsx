@@ -1614,7 +1614,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 		const first = blockStore.getFirstBlock(rootId, 1, (it) => it.isText() && !it.isTextTitle() && !it.isTextDescription());
 		const object = detailStore.get(rootId, rootId, [ 'internalFlags' ]);
-		const isEmpty = (focused == first.id) && !first.getLength() && (object.internalFlags || []).includes(I.ObjectFlag.DeleteEmpty);
+		const isEmpty = first && (focused == first.id) && !first.getLength() && (object.internalFlags || []).includes(I.ObjectFlag.DeleteEmpty);
 
 		const options: any[] = [
 			{ id: 'link', name: 'Create link' },
