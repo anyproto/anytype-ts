@@ -37,7 +37,7 @@ const ViewList = observer(class ViewList extends React.Component<Props, {}> {
 			<div className="wrap">
 				<div className="viewItem viewList">
 					<InfiniteLoader
-						isRowLoaded={({ index }) => (index < length - 1) && !!records[index]}
+						isRowLoaded={({ index }) => !!records[index]}
 						loadMoreRows={this.loadMoreRows}
 						rowCount={total}
 						threshold={10}
