@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { I, C, analytics, keyboard, Key, translate, DataUtil } from 'ts/lib';
+import { I, C, analytics, keyboard, Key, translate, DataUtil, Util } from 'ts/lib';
 import { Input, MenuItemVertical } from 'ts/component';
 import { blockStore, dbStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -212,6 +212,8 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 		if (current.type == I.ViewType.Board) {
 			current.groupRelationKey = groupOption.id;
 		};
+
+		current.name = current.name || translate(`viewName${current.type}`);
 
 		C.BlockDataviewViewUpdate(rootId, blockId, current.id, current, (message: any) => {
 			if (view.id == current.id) {
