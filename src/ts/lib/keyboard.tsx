@@ -25,6 +25,7 @@ class Keyboard {
 	isFocused: boolean = false;
 	isPreviewDisabled: boolean = false;
 	isMouseDisabled: boolean = false;
+	isNavigationDisabled: boolean = false;
 	isPinChecked: boolean = false;
 	isContextDisabled: boolean = false;
 	isBlurDisabled: boolean = false;
@@ -103,30 +104,26 @@ class Keyboard {
 		const key = e.key.toLowerCase();
 		const cmd = this.ctrlKey();
 		const isMain = this.isMain();
+		const ids = this.selection.get(I.SelectType.Block);
+		const isMac = platform == I.Platform.Mac;
 
 		this.pressed.push(key);
-
-		// Go back
-		this.shortcut('backspace', e, (pressed: string) => {
-			const ids = this.selection.get(I.SelectType.Block);
-			if (!isMain || (isMain && !this.isMainIndex()) || this.isFocused || ids.length) {
-				return;
-			};
-
-			this.onBack();
-		});
 
 		this.shortcut(`${cmd}+\\`, e, (pressed: string) => {
 			e.preventDefault();
 			sidebar.data.fixed ? sidebar.collapse() : sidebar.expand();
 		});
 
-		if (platform == I.Platform.Mac) {
-			this.shortcut('cmd+[', e, (pressed: string) => { this.onBack(); });
-			this.shortcut('cmd+]', e, (pressed: string) => { this.onForward(); });
-		} else {
-			this.shortcut('alt+arrowleft', e, (pressed: string) => { this.onBack(); });
-			this.shortcut('alt+arrowright', e, (pressed: string) => { this.onForward(); });
+		// Navigation
+		if (!this.isNavigationDisabled) {
+			this.shortcut('backspace', e, (pressed: string) => {
+				if (isMain && !this.isFocused && !ids.length) {
+					this.onBack();
+				};
+			});
+
+			keyboard.shortcut(isMac ? 'cmd+[' : 'alt+arrowleft', e, (pressed: string) => { this.onBack(); });
+			keyboard.shortcut(isMac ? 'cmd+]' : 'alt+arrowright', e, (pressed: string) => { this.onForward(); });
 		};
 
 		// Close popups and menus
@@ -634,6 +631,10 @@ class Keyboard {
 	
 	disableMouse (v: boolean) {
 		this.isMouseDisabled = v;
+	};
+
+	disableNavigation (v: boolean) {
+		this.isNavigationDisabled = v;
 	};
 
 	// Flag to prevent blur events
