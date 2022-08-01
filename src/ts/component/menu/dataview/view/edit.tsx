@@ -199,8 +199,9 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 	save () {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, onSave, getData } = data;
-		const view = data.view.get();
+		const { rootId, blockId, onSave, getData, getView } = data;
+		const view = getView();
+		const current = data.view.get();
 		const allowedView = blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
 		const groupOption = this.getGroupOption();
 
@@ -208,12 +209,14 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 			return;
 		};
 
-		if (view.type == I.ViewType.Board) {
-			view.groupRelationKey = groupOption.id;
+		if (current.type == I.ViewType.Board) {
+			current.groupRelationKey = groupOption.id;
 		};
 
-		C.BlockDataviewViewUpdate(rootId, blockId, view.id, view, (message: any) => {
-			getData(view.id, 0);
+		C.BlockDataviewViewUpdate(rootId, blockId, current.id, current, (message: any) => {
+			if (view.id == current.id) {
+				getData(view.id, 0);
+			};
 
 			if (onSave) {
 				onSave();
