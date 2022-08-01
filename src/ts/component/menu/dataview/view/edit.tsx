@@ -202,7 +202,6 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 		const { rootId, blockId, onSave, getData } = data;
 		const view = data.view.get();
 		const allowedView = blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
-		const subId = dbStore.getSubId(rootId, blockId);
 		const groupOption = this.getGroupOption();
 
 		if (!allowedView) {
@@ -213,27 +212,13 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 			view.groupRelationKey = groupOption.id;
 		};
 
-		if (view.id) {
-			C.BlockDataviewViewUpdate(rootId, blockId, view.id, view, (message: any) => {
-				getData(view.id, 0);
+		C.BlockDataviewViewUpdate(rootId, blockId, view.id, view, (message: any) => {
+			getData(view.id, 0);
 
-				if (onSave) {
-					onSave();
-				};
-			});
-		} else 
-		if (view.name) {
-			C.BlockDataviewViewCreate(rootId, blockId, view, (message: any) => {
-				dbStore.metaSet(subId, '', { ...dbStore.getMeta(subId, ''), viewId: message.viewId });
-
-				if (onSave) {
-					onSave();
-				};
-
-				getData(message.viewId);
-				analytics.event('AddView', { type: view.type });
-			});
-		};
+			if (onSave) {
+				onSave();
+			};
+		});
 	};
 
 	getSections () {
