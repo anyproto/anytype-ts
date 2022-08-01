@@ -357,6 +357,10 @@ class DataUtil {
 	};
 
 	objectRoute (object: any): string {
+		if (!object) {
+			return;
+		};
+
 		let action = this.actionByLayout(object.layout);
 		let id = object.id;
 
@@ -650,15 +654,15 @@ class DataUtil {
 	menuGetTurnPage () {
 		const { config } = commonStore;
 		const ret = [];
-
-		let objectTypes = dbStore.objectTypes;
+	
+		let types = this.getObjectTypesForNewObject(); 
 		if (!config.debug.ho) {
-			objectTypes = objectTypes.filter((it: I.ObjectType) => { return !it.isHidden; });
+			types = types.filter(it => !it.isHidden);
 		};
-		objectTypes.sort(this.sortByName);
+		types.sort(this.sortByName);
 
 		let i = 0;
-		for (let type of objectTypes) {
+		for (let type of types) {
 			ret.push({ 
 				type: I.BlockType.Page, 
 				id: 'object' + i++, 

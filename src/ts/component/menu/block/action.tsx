@@ -136,12 +136,32 @@ class MenuBlockAction extends React.Component<Props, State> {
 	
 	rebind () {
 		this.unbind();
-		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
+		$(window).on('keydown.menu', (e: any) => { this.onKeyDown(e); });
 		window.setTimeout(() => { this.props.setActive(); }, 15);
 	};
 	
 	unbind () {
 		$(window).unbind('keydown.menu');
+	};
+
+	onKeyDown (e: any) {
+		const { onKeyDown, param } = this.props;
+		const { data } = param;
+		const { blockRemove } = data;
+		const { filter } = this.state;
+
+		let ret = false;
+
+		keyboard.shortcut('backspace', e, (pressed: string) => {
+			if (!filter && blockRemove) {
+				blockRemove();
+				ret = true;
+			};
+		});
+
+		if (!ret) {
+			onKeyDown(e);
+		};
 	};
 	
 	getSections () {
@@ -150,8 +170,6 @@ class MenuBlockAction extends React.Component<Props, State> {
 		const { data } = param;
 		const { blockId, blockIds, rootId } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
-		const cmd = keyboard.ctrlSymbol();
-		const { config } = commonStore;
 		
 		if (!block) {
 			return [];
@@ -464,9 +482,17 @@ class MenuBlockAction extends React.Component<Props, State> {
 					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: types }
 				];
 
+				let skipIds = [ rootId ];
+				blockIds.forEach((id: string) => {
+					const block = blockStore.getLeaf(rootId, id);
+					if (block && block.isLink() && block.content.targetBlockId) {
+						skipIds.push(block.content.targetBlockId);
+					};
+				});
+
 				menuParam.data = Object.assign(menuParam.data, {
 					type: I.NavigationType.Move, 
-					skipIds: [ rootId ],
+					skipIds: skipIds,
 					position: I.BlockPosition.Bottom,
 					filters: filters,
 					onSelect: () => { close(); }

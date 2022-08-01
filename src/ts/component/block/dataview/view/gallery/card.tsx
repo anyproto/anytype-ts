@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Cell, Cover, Icon } from 'ts/component';
-import { I, DataUtil, Relation, Util } from 'ts/lib';
+import { I, DataUtil, Relation, keyboard } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { commonStore, detailStore, dbStore } from 'ts/store';
 
@@ -138,7 +138,7 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 	onClick (e: any) {
 		e.preventDefault();
 
-		if (e.shiftKey || e.ctrlKey || e.metaKey || e.altKey) {
+		if (keyboard.withCommand(e)) {
 			return;
 		};
 

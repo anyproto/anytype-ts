@@ -37,6 +37,8 @@ const PopupSettingsPagePhrase = observer(class PopupSettingsPagePhrase extends R
 
 		this.onFocus = this.onFocus.bind(this);
 		this.onBlur = this.onBlur.bind(this);
+		this.onCopy = this.onCopy.bind(this);
+		this.onCode = this.onCode.bind(this);
 	};
 
 	render () {
@@ -65,19 +67,25 @@ const PopupSettingsPagePhrase = observer(class PopupSettingsPagePhrase extends R
 							readonly={true} 
 						/>
 					</div>
+
+					<Button color="blank" text={translate('popupSettingsPhraseCopy')} onClick={this.onCopy} />
 				</div>
 
-				<div className="path">
+				<div className="sides">
 					<div className="side left">
 						<b>{translate('popupSettingsMobileQRSubTitle')}</b>
 						<Label text={translate('popupSettingsMobileQRText')} />
 					</div>
-					<div className={[ 'side', 'right', (!showCode ? 'isBlurred' : '') ].join(' ')} onClick={() => { this.setState({ showCode: !showCode }); }}>
+
+					<div className={[ 'side', 'right', (!showCode ? 'isBlurred' : '') ].join(' ')} onClick={this.onCode}>
 						<div className="qrWrap">
 							<QRCode value={showCode ? entropy : translate('popupSettingsCodeStub')} bgColor={QRColor[theme]} size={100} />
 						</div>
 					</div>
 				</div>
+
+				<Button color="blank" text={translate('popupSettingsPhraseShowQR')} onClick={this.onCode} />
+
 			</div>
 		);
 	};
@@ -112,6 +120,17 @@ const PopupSettingsPagePhrase = observer(class PopupSettingsPagePhrase extends R
 
 		phrase.addClass('isBlurred');
 		window.getSelection().removeAllRanges();
+	};
+
+	onCopy (e: any) {
+		this.refPhrase.focus();
+		Util.clipboardCopy({ text: authStore.phrase });
+
+		analytics.event('KeychainCopy', { type: 'ScreenSettings' });
+	};
+
+	onCode () {
+		 this.setState({ showCode: !this.state.showCode });
 	};
 
 });

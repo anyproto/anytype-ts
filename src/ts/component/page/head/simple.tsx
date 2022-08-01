@@ -83,7 +83,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props, {}> {
 			<div className="headSimple">
 				{check.withIcon ? (
 					<div className="side left">
-						<IconObject id={'icon-' + rootId} size={object.iconImage ? 112 : 96} object={object} canEdit={allowDetails} onSelect={this.onSelect} onUpload={this.onUpload} />
+						<IconObject id={'block-icon-' + rootId} size={object.iconImage ? 112 : 96} object={object} canEdit={allowDetails} onSelect={this.onSelect} onUpload={this.onUpload} />
 					</div>
 				) : ''}
 

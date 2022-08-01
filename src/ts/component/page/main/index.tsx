@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Icon, IconObject, ListIndex, Cover, Header, FooterMainIndex as Footer, Filter } from 'ts/component';
+import { Icon, IconObject, ListIndex, Cover, Header, FooterMainIndex as Footer, Filter, EmptySearch } from 'ts/component';
 import { commonStore, blockStore, detailStore, menuStore, dbStore, popupStore, authStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { I, C, Util, DataUtil, translate, crumbs, Storage, analytics, keyboard, Action } from 'ts/lib';
@@ -116,11 +116,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 		if (!loading) {
 			if (!list.length) {
-				content = (
-					<div className="emptySearch">
-						There are no objects in {tab.name} tab
-					</div>
-				);
+				content = <EmptySearch text={`There are no objects in ${tab.name} tab`} />;
 			} else {
 				content = (
 					<ListIndex 
@@ -749,7 +745,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 									blockId: item.id,
 									blockIds: [ item.id ],
 									type: I.NavigationType.Move, 
-									skipIds: [ rootId ],
+									skipIds: [ item._object_.id ],
 									filters: filters,
 									position: I.BlockPosition.Bottom,
 									onSelect: (el: any) => { menuContext.close(); }

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, DataUtil, Relation } from 'ts/lib';
+import { I, DataUtil, Relation, keyboard } from 'ts/lib';
 import { dbStore, detailStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -77,7 +77,7 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 	onClick (e: any) {
 		e.preventDefault();
 
-		if (e.shiftKey || e.ctrlKey || e.metaKey || e.altKey) {
+		if (keyboard.withCommand(e)) {
 			return;
 		};
 

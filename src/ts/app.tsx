@@ -36,6 +36,7 @@ import 'scss/component/frame.scss';
 import 'scss/component/switch.scss';
 import 'scss/component/title.scss';
 import 'scss/component/select.scss';
+import 'scss/component/emptySearch.scss';
 import 'scss/component/tag.scss';
 import 'scss/component/dragLayer.scss';
 import 'scss/component/dragbox.scss';
@@ -107,7 +108,6 @@ import 'scss/popup/confirm.scss';
 import 'scss/popup/page.scss';
 import 'scss/popup/template.scss';
 import 'scss/popup/export.scss';
-import 'scss/popup/video.scss';
 
 import 'emoji-mart/css/emoji-mart.css';
 import 'scss/menu/common.scss';

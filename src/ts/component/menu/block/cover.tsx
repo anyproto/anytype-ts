@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, C, DataUtil, analytics } from 'ts/lib';
-import { Cover, Filter, Icon, Label } from 'ts/component';
+import { I, C, DataUtil, analytics, Util, translate } from 'ts/lib';
+import { Cover, Filter, Icon, Label, EmptySearch, Loader } from 'ts/component';
 import { detailStore, commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -10,7 +10,8 @@ interface Props extends I.Menu {};
 enum Tab {
 	Gallery	 = 0,
 	Unsplash = 1,
-	Upload	 = 2,
+	Library	 = 2,
+	Upload	 = 3,
 };
 
 interface State {
@@ -50,12 +51,15 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 	};
 
 	render () {
-		const { filter, tab } = this.state;
+		const { config } = commonStore;
+		const { filter, tab, loading } = this.state;
 		const tabs: any[] = [
 			{ id: Tab.Gallery, name: 'Gallery' },
 			{ id: Tab.Unsplash, name: 'Unsplash' },
+			config.experimental ? { id: Tab.Library, name: 'Library' } : null,
 			{ id: Tab.Upload, name: 'Upload' },
 		].filter(it => it);
+		const sections = this.getSections();
 
 		const Item = (item: any) => (
 			<div className="item" onClick={(e: any) => { this.onSelect(e, item); }}>
@@ -76,38 +80,31 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 		);
 
 		let content = null;
+		let filterElement = null;
+
+		if ([ Tab.Unsplash, Tab.Library ].includes(tab)) {
+			filterElement = (
+				<Filter 
+					ref={(ref: any) => { this.refFilter = ref; }}
+					value={filter}
+					onChange={this.onFilterChange} 
+				/>
+			);
+		};
+
 		switch (tab) {
 			case Tab.Gallery:
-				const sections = this.getSections();
-
-				content = (
-					<div className="sections">
-						{sections.map((section: any, i: number) => (
-							<Section key={i} {...section} />
-						))}
-					</div>
-				);
-				break;
-
 			case Tab.Unsplash:
+			case Tab.Library:
 				content = (
 					<React.Fragment>
-						<Filter 
-							ref={(ref: any) => { this.refFilter = ref; }}
-							value={filter}
-							onChange={this.onFilterChange} 
-						/>
-
-						<div className="sections">
-							<div className="section unsplash">
-								<div className="items">
-									{this.items.map((item: any, i: number) => (
-										<Item key={i} {...item} />
-									))}
-								</div>
+						{sections.length ? (
+							<div className="sections">
+								{sections.map((section: any, i: number) => (
+									<Section key={i} {...section} />
+								))}
 							</div>
-						</div>
-						
+						) : <EmptySearch text={filter ? Util.sprintf(translate('menuBlockCoverEmptyFilter'), filter) : translate('menuBlockCoverEmpty')} />}
 					</React.Fragment>
 				);
 				break;
@@ -128,6 +125,10 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 				break;
 		};
 
+		if (loading) {
+			content = <Loader />;
+		};
+
 		return (
 			<div className="wrap">
 				<div className="head">
@@ -135,7 +136,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 						<div 
 							key={item.id} 
 							className={[ 'btn', (item.id == tab ? 'active' : '') ].join(' ')}
-							onClick={() => { this.setState({ tab: item.id }); }}
+							onClick={() => { this.setTab(item.id); }}
 						>
 							{item.name}
 						</div>
@@ -143,6 +144,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 				</div>
 
 				<div className={[ 'body', Tab[tab].toLowerCase() ].join(' ')}>
+					{filterElement}
 					{content}
 				</div>
 			</div>
@@ -168,25 +170,78 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 	};
 
 	load () {
-		const { filter } = this.state;
+		const { filter, tab } = this.state;
 
 		this.items = [];
-		C.UnsplashSearch(filter, LIMIT, (message: any) => {
-			if (message.error.code) {
-				return;
-			};
 
-			message.pictures.forEach((item: any) => {
-				this.items.push({
-					id: item.id,
-					type: I.CoverType.Source,
-					src: item.url,
-					artist: item.artist,
+		if (![ Tab.Unsplash, Tab.Library ].includes(tab)) {
+			this.setState({ loading: false });
+			return;
+		};
+
+		switch (tab) {
+			case Tab.Unsplash:
+				this.setState({ loading: true });
+
+				C.UnsplashSearch(filter, LIMIT, (message: any) => {
+					if (message.error.code) {
+						this.setState({ loading: false });
+						return;
+					};
+
+					message.pictures.forEach((item: any) => {
+						this.items.push({
+							id: item.id,
+							type: I.CoverType.Source,
+							src: item.url,
+							artist: item.artist,
+						});
+					});
+
+					this.setState({ loading: false });
 				});
-			});
+				break;
 
-			this.forceUpdate();
-		});
+			case Tab.Library:
+				const filters: I.Filter[] = [
+					{ operator: I.FilterOperator.And, relationKey: 'workspaceId', condition: I.FilterCondition.Empty, value: null },
+					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.image },
+					{ operator: I.FilterOperator.And, relationKey: 'widthInPixels', condition: I.FilterCondition.GreaterOrEqual, value: 1000 },
+					{ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.Equal, value: false },
+					{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
+					{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
+				];
+				const sorts = [ 
+					{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
+				];
+
+				this.setState({ loading: true });
+				C.ObjectSearch(filters, sorts, Constant.defaultRelationKeys, filter, 0, 300, (message: any) => {
+					if (message.error.code) {
+						this.setState({ loading: false });
+						return;
+					};
+
+					message.records.forEach((item: any) => {
+						this.items.push({
+							id: item.id,
+							type: I.CoverType.Upload,
+							src: commonStore.imageUrl(item.id, 150),
+							artist: item.name,
+							coverY: -0.25,
+						});
+					});
+
+					this.setState({ loading: false });
+				});
+				break;
+		};
+	};
+
+	setTab (tab: Tab) {
+		this.state.tab = tab;
+		this.setState({ tab });
+		this.load();
 	};
 
 	onUpload (e: any) {
@@ -260,10 +315,26 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 	};
 
 	getSections () {
-		return [
-			{ name: 'Gradients', children: DataUtil.coverGradients() },
-			{ name: 'Solid colors', children: DataUtil.coverColors() },
-		];
+		const { tab } = this.state;
+		
+		let sections: any[] = [];
+		switch (tab) {
+			case Tab.Gallery:
+				sections = sections.concat([
+					{ name: 'Gradients', children: DataUtil.coverGradients() },
+					{ name: 'Solid colors', children: DataUtil.coverColors() },
+				]);
+				break;
+
+			case Tab.Library:
+			case Tab.Unsplash:
+				if (this.items.length) {
+					sections.push({ children: this.items });
+				};
+				break;
+		};
+
+		return sections;
 	};
 
 	onDragOver (e: any) {
