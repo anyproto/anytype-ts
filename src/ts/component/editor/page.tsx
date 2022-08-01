@@ -62,6 +62,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		this.getWrapperWidth = this.getWrapperWidth.bind(this);
 		this.resize = this.resize.bind(this);
 		this.focusTitle = this.focusTitle.bind(this);
+		this.blockRemove = this.blockRemove.bind(this);
 	};
 
 	render () {
@@ -124,6 +125,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 								onCopy={this.onCopy}
 								onPaste={this.onPaste}
 								readonly={readonly}
+								blockRemove={this.blockRemove}
 								getWrapper={this.getWrapper}
 								getWrapperWidth={this.getWrapperWidth}
 							/>
