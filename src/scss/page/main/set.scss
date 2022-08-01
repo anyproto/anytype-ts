@@ -21,6 +21,7 @@
 			.side.left { width: 96px; }
 			.side.center { width: calc(100% - 128px); }
 		}
+		#button-icon { display: none; }
 	}
 
 	.setWrapper.withCover, .setWrapper.withIconAndCover {
