@@ -268,7 +268,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		viewId = viewId || dbStore.getMeta(dbStore.getSubId(rootId, block.id), '').viewId;
-		return views.find((it: I.View) => { return it.id == viewId; }) || views[0];
+		return dbStore.getView(rootId, block.id, viewId) || views[0];
 	};
 
 	onRecordAdd (e: any, dir: number, withPopup?: boolean) {

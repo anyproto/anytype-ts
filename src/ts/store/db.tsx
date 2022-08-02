@@ -299,7 +299,7 @@ class DbStore {
 
     getView (rootId: string, blockId: string, id: string): I.View {
 		const views = this.getViews(rootId, blockId);
-		return views.find((it: I.View) => { return it.id == id; });
+		return views.find(it => it.id == id);
 	};
 
     getMeta (rootId: string, blockId: string) {
