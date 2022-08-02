@@ -18,13 +18,12 @@ contextBridge.exposeInMainWorld('Electron', {
 	platform: os.platform(),
 	arch: process.arch,
 
-	currentWindow: () => getCurrentWindow(),
-
 	isPackaged: app.isPackaged,
 	userPath,
 	tmpPath,
 	logPath,
 
+	currentWindow: () => getCurrentWindow(),
 	isMaximized: () => BrowserWindow.getFocusedWindow()?.isMaximized(),
 	getGlobal: (key) => getGlobal(key),
 	showOpenDialog: dialog.showOpenDialog,
