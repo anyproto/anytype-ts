@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { I, history as historyPopup } from 'ts/lib';
+import { I, history as historyPopup } from 'Lib';
 import { RouteComponentProps } from 'react-router';
-import { Page } from 'ts/component';
+import { Page } from 'Component';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Popup, RouteComponentProps<any> {};

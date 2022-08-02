@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, C, DataUtil, analytics, Util, translate } from 'ts/lib';
-import { Cover, Filter, Icon, Label, EmptySearch, Loader } from 'ts/component';
-import { detailStore, commonStore } from 'ts/store';
+import { I, C, DataUtil, analytics, Util, translate } from 'Lib';
+import { Cover, Filter, Icon, Label, EmptySearch, Loader } from 'Component';
+import { detailStore, commonStore } from 'Store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {};

@@ -1,5 +1,5 @@
-import { I, C, focus, analytics, Renderer } from 'ts/lib';
-import { commonStore, authStore, blockStore, detailStore, dbStore } from 'ts/store';
+import { I, C, focus, analytics, Renderer } from 'Lib';
+import { commonStore, authStore, blockStore, detailStore, dbStore } from 'Store';
 
 const Constant = require('json/constant.json');
 

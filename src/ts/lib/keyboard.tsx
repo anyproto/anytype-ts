@@ -1,5 +1,5 @@
-import { I, C, Util, DataUtil, Storage, focus, history as historyPopup, analytics, Renderer, sidebar } from 'ts/lib';
-import { commonStore, authStore, blockStore, detailStore, menuStore, popupStore } from 'ts/store';
+import { I, C, Util, DataUtil, Storage, focus, history as historyPopup, analytics, Renderer, sidebar } from 'Lib';
+import { commonStore, authStore, blockStore, detailStore, menuStore, popupStore } from 'Store';
 
 const $ = require('jquery');
 const KeyCode = require('json/key.json');

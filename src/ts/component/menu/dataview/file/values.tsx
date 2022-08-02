@@ -1,10 +1,10 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
-import { Icon, IconObject, MenuItemVertical } from 'ts/component';
-import { I, C, Util, DataUtil, Relation, Renderer } from 'ts/lib';
+import { Icon, IconObject, MenuItemVertical } from 'Component';
+import { I, C, Util, DataUtil, Relation, Renderer } from 'Lib';
 import { observer } from 'mobx-react';
-import { commonStore, detailStore, menuStore } from 'ts/store';
+import { commonStore, detailStore, menuStore } from 'Store';
 import arrayMove from 'array-move';
 
 interface Props extends I.Menu {}

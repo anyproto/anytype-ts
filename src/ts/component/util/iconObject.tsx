@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { IconEmoji } from 'ts/component';
-import { I, Util, SmileUtil, DataUtil, FileUtil } from 'ts/lib';
-import { commonStore, menuStore } from 'ts/store';
+import { IconEmoji } from 'Component';
+import { I, Util, SmileUtil, DataUtil, FileUtil } from 'Lib';
+import { commonStore, menuStore } from 'Store';
 import { observer } from 'mobx-react';
 
 interface Props {

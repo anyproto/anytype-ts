@@ -1,5 +1,5 @@
-import { I, keyboard, Renderer } from 'ts/lib';
-import { commonStore, popupStore, menuStore } from 'ts/store';
+import { I, keyboard, Renderer } from 'Lib';
+import { commonStore, popupStore, menuStore } from 'Store';
 import { translate } from '.';
 
 const $ = require('jquery');

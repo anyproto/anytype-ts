@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { I } from 'ts/lib';
-import { commonStore } from 'ts/store';
+import { I } from 'Lib';
+import { commonStore } from 'Store';
 import { observer } from 'mobx-react';
 
 interface Props {

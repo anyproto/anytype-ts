@@ -1,11 +1,11 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Icon, Drag, Cover, Loader } from 'ts/component';
-import { I, C, Util, DataUtil, focus, translate } from 'ts/lib';
-import { commonStore, blockStore, detailStore, menuStore } from 'ts/store';
+import { Icon, Drag, Cover, Loader } from 'Component';
+import { I, C, Util, DataUtil, focus, translate } from 'Lib';
+import { commonStore, blockStore, detailStore, menuStore } from 'Store';
 import { observer } from 'mobx-react';
 
-import ControlButtons  from 'ts/component/page/head/controlButtons';
+import ControlButtons  from 'Component/page/head/controlButtons';
 
 interface Props extends I.BlockComponent {};
 

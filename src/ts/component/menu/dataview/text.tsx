@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, Util, keyboard, translate } from 'ts/lib';
+import { I, Util, keyboard, translate } from 'Lib';
 import { observer } from 'mobx-react';
 import { setRange } from 'selection-ranges';
 

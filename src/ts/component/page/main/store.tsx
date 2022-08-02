@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Title, Label, Button, IconObject, Loader, Cover, Header } from 'ts/component';
-import { I, C, DataUtil, Util, Storage, Action, Onboarding, analytics } from 'ts/lib';
-import { dbStore, blockStore, detailStore, } from 'ts/store';
+import { Title, Label, Button, IconObject, Loader, Cover, Header } from 'Component';
+import { I, C, DataUtil, Util, Storage, Action, Onboarding, analytics } from 'Lib';
+import { dbStore, blockStore, detailStore, } from 'Store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 

@@ -1,11 +1,11 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Icon, Loader } from 'ts/component';
-import { I, DataUtil, translate, keyboard } from 'ts/lib';
-import { detailStore, blockStore } from 'ts/store';
+import { Icon, Loader } from 'Component';
+import { I, DataUtil, translate, keyboard } from 'Lib';
+import { detailStore, blockStore } from 'Store';
 import { observer } from 'mobx-react';
-import { focus } from 'ts/lib';
+import { focus } from 'Lib';
 
 import LinkCard from './link/card';
 

@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { I, DataUtil, Relation, translate, keyboard } from 'ts/lib';
-import { Filter, MenuItemVertical } from 'ts/component';
+import { I, DataUtil, Relation, translate, keyboard } from 'Lib';
+import { Filter, MenuItemVertical } from 'Component';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
-import { menuStore } from 'ts/store';
+import { menuStore } from 'Store';
 
 interface Props extends I.Menu {}
 

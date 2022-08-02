@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { PreviewLink, PreviewObject } from 'ts/component';
-import { I, Util, DataUtil, Mark, translate, Renderer } from 'ts/lib';
+import { PreviewLink, PreviewObject } from 'Component';
+import { I, Util, DataUtil, Mark, translate, Renderer } from 'Lib';
 import { observer } from 'mobx-react';
-import { commonStore, menuStore } from 'ts/store';
+import { commonStore, menuStore } from 'Store';
 
 interface Props {}
 interface State {

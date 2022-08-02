@@ -1,5 +1,5 @@
-import { I, C, M, keyboard, crumbs, translate, Util, history as historyPopup, Storage, analytics, Relation, dispatcher, Renderer } from 'ts/lib';
-import { commonStore, blockStore, detailStore, dbStore, popupStore, authStore } from 'ts/store';
+import { I, C, M, keyboard, crumbs, translate, Util, history as historyPopup, Storage, analytics, Relation, dispatcher, Renderer } from 'Lib';
+import { commonStore, blockStore, detailStore, dbStore, popupStore, authStore } from 'Store';
 
 const Constant = require('json/constant.json');
 const Errors = require('json/error.json');

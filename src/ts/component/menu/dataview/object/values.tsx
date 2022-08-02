@@ -1,10 +1,10 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
-import { Icon, IconObject, ObjectName } from 'ts/component';
-import { I, DataUtil, keyboard, Relation } from 'ts/lib';
+import { Icon, IconObject, ObjectName } from 'Component';
+import { I, DataUtil, keyboard, Relation } from 'Lib';
 import arrayMove from 'array-move';
-import { commonStore, detailStore, menuStore } from 'ts/store';
+import { commonStore, detailStore, menuStore } from 'Store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCache } from 'react-virtualized';
 

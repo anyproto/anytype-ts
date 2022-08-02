@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, C, DataUtil, Util, keyboard, Storage, Relation, analytics, sidebar } from 'ts/lib';
-import { Loader } from 'ts/component';
-import { blockStore, dbStore, detailStore, menuStore } from 'ts/store';
+import { I, C, DataUtil, Util, keyboard, Storage, Relation, analytics, sidebar } from 'Lib';
+import { Loader } from 'Component';
+import { blockStore, dbStore, detailStore, menuStore } from 'Store';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { observer } from 'mobx-react';
 

@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { DragLayer } from 'ts/component';
-import { I, C, focus, keyboard, Util, scrollOnMove, analytics } from 'ts/lib';
-import { blockStore } from 'ts/store';
+import { DragLayer } from 'Component';
+import { I, C, focus, keyboard, Util, scrollOnMove, analytics } from 'Lib';
+import { blockStore } from 'Store';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 

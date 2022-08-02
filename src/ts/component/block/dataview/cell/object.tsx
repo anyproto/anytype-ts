@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { DragBox } from 'ts/component';
-import { I, Relation, DataUtil, translate, Util, keyboard, analytics } from 'ts/lib';
-import { menuStore, detailStore, dbStore } from 'ts/store';
+import { DragBox } from 'Component';
+import { I, Relation, DataUtil, translate, Util, keyboard, analytics } from 'Lib';
+import { menuStore, detailStore, dbStore } from 'Store';
 import { observer } from 'mobx-react';
 import { getRange, setRange } from 'selection-ranges';
 import arrayMove from 'array-move';

@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { MenuItemVertical, Filter, Loader, ObjectName, EmptySearch } from 'ts/component';
-import { I, C, keyboard, Util, DataUtil, translate, analytics } from 'ts/lib';
-import { commonStore, dbStore } from 'ts/store';
+import { MenuItemVertical, Filter, Loader, ObjectName, EmptySearch } from 'Component';
+import { I, C, keyboard, Util, DataUtil, translate, analytics } from 'Lib';
+import { commonStore, dbStore } from 'Store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 

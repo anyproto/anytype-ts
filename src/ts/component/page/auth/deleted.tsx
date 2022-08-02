@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Frame, Cover, Title, Label, Error, Header, FooterAuth as Footer } from 'ts/component';
-import { I, Util, C, Action, analytics } from 'ts/lib';
-import { commonStore, authStore, popupStore } from 'ts/store';
+import { Frame, Cover, Title, Label, Error, Header, FooterAuth as Footer } from 'Component';
+import { I, Util, C, Action, analytics } from 'Lib';
+import { commonStore, authStore, popupStore } from 'Store';
 import { observer } from 'mobx-react';
 import { PieChart } from 'react-minimal-pie-chart';
 

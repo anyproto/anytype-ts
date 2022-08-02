@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Block } from 'ts/component';
-import { blockStore } from 'ts/store';
+import { Block } from 'Component';
+import { blockStore } from 'Store';
 import { observer } from 'mobx-react';
-import { I, C, focus, translate } from 'ts/lib';
+import { I, C, focus, translate } from 'Lib';
 
 interface Props extends I.BlockComponent, RouteComponentProps<any> {
 	onMouseMove? (e: any): void;

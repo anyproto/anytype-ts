@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Emoji } from 'emoji-mart';
-import { IconObject } from 'ts/component';
-import { I, SmileUtil } from 'ts/lib';
-import { commonStore } from 'ts/store';
+import { IconObject } from 'Component';
+import { I, SmileUtil } from 'Lib';
+import { commonStore } from 'Store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {};

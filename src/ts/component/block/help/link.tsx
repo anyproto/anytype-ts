@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { IconObject } from 'ts/component';
-import { Util } from 'ts/lib';
+import { IconObject } from 'Component';
+import { Util } from 'Lib';
 
 interface Props extends RouteComponentProps<any> {
 	icon?: string;

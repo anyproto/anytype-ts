@@ -1,14 +1,14 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Block, Icon, Loader, Deleted } from 'ts/component';
-import { commonStore, blockStore, detailStore, menuStore, popupStore } from 'ts/store';
-import { I, C, Key, Util, DataUtil, Mark, focus, keyboard, crumbs, Storage, Mapper, Action, translate, analytics, Renderer } from 'ts/lib';
+import { Block, Icon, Loader, Deleted } from 'Component';
+import { commonStore, blockStore, detailStore, menuStore, popupStore } from 'Store';
+import { I, C, Key, Util, DataUtil, Mark, focus, keyboard, crumbs, Storage, Mapper, Action, translate, analytics, Renderer } from 'Lib';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 
-import Controls from 'ts/component/page/head/controls';
-import PageHeadEdit from 'ts/component/page/head/edit';
+import Controls from 'Component/page/head/controls';
+import PageHeadEdit from 'Component/page/head/edit';
 
 interface Props extends RouteComponentProps<any> {
 	dataset?: any;

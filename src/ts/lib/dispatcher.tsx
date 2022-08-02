@@ -1,5 +1,5 @@
-import { authStore, commonStore, blockStore, detailStore, dbStore } from 'ts/store';
-import { Util, I, M, Decode, translate, analytics, Response, Mapper, crumbs } from 'ts/lib';
+import { authStore, commonStore, blockStore, detailStore, dbStore } from 'Store';
+import { Util, I, M, Decode, translate, analytics, Response, Mapper, crumbs } from 'Lib';
 import * as Sentry from '@sentry/browser';
 import arrayMove from 'array-move';
 

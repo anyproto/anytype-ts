@@ -1,9 +1,9 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
-import { Icon, Switch } from 'ts/component';
-import { I, C, DataUtil, keyboard } from 'ts/lib';
-import { menuStore, dbStore, blockStore } from 'ts/store';
+import { Icon, Switch } from 'Component';
+import { I, C, DataUtil, keyboard } from 'Lib';
+import { menuStore, dbStore, blockStore } from 'Store';
 import { observer } from 'mobx-react';
 import arrayMove from 'array-move';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCache } from 'react-virtualized';

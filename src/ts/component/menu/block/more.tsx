@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { MenuItemVertical } from 'ts/component';
-import { I, C, keyboard, analytics, DataUtil, Util, focus } from 'ts/lib';
-import { blockStore, detailStore, commonStore, dbStore, menuStore, popupStore } from 'ts/store';
+import { MenuItemVertical } from 'Component';
+import { I, C, keyboard, analytics, DataUtil, Util, focus } from 'Lib';
+import { blockStore, detailStore, commonStore, dbStore, menuStore, popupStore } from 'Store';
 
 interface Props extends I.Menu {
 	history?: any;

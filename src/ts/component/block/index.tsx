@@ -1,10 +1,10 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { I, C, DataUtil, keyboard, focus, Storage, Util } from 'ts/lib';
-import { DropTarget, ListChildren, Icon } from 'ts/component';
+import { I, C, DataUtil, keyboard, focus, Storage, Util } from 'Lib';
+import { DropTarget, ListChildren, Icon } from 'Component';
 import { observer } from 'mobx-react';
-import { menuStore, blockStore, detailStore } from 'ts/store';
+import { menuStore, blockStore, detailStore } from 'Store';
 
 import BlockDataview from './dataview';
 import BlockText from './text';

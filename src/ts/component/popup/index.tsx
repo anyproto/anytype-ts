@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, Util, analytics } from 'ts/lib';
-import { Dimmer } from 'ts/component';
-import { menuStore, popupStore } from 'ts/store';
+import { I, Util, analytics } from 'Lib';
+import { Dimmer } from 'Component';
+import { menuStore, popupStore } from 'Store';
 import { RouteComponentProps } from 'react-router';
 
 import PopupSettings from './settings';

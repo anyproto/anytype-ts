@@ -1,6 +1,6 @@
 import * as amplitude from 'amplitude-js';
-import { I, C, Util, Storage } from 'ts/lib';
-import { commonStore } from 'ts/store';
+import { I, C, Util, Storage } from 'Lib';
+import { commonStore } from 'Store';
 
 const Constant = require('json/constant.json');
 

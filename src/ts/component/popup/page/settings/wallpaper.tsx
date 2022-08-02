@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Cover, Title, Label } from 'ts/component';
-import { I, C, DataUtil, translate, analytics } from 'ts/lib';
-import { commonStore, blockStore } from 'ts/store';
+import { Cover, Title, Label } from 'Component';
+import { I, C, DataUtil, translate, analytics } from 'Lib';
+import { commonStore, blockStore } from 'Store';
 import { observer } from 'mobx-react';
 
 import Head from './head';

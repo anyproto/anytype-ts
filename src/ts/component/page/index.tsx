@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { I, Onboarding, Util, Storage, analytics, keyboard, Renderer, sidebar } from 'ts/lib';
-import { Sidebar } from 'ts/component';
-import { authStore, commonStore, menuStore, popupStore, blockStore } from 'ts/store';
+import { I, Onboarding, Util, Storage, analytics, keyboard, Renderer, sidebar } from 'Lib';
+import { Sidebar } from 'Component';
+import { authStore, commonStore, menuStore, popupStore, blockStore } from 'Store';
 import { observer } from 'mobx-react';
 
 import PageAuthInvite from './auth/invite';

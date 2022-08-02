@@ -1,9 +1,9 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Icon } from 'ts/component';
-import { I, C, keyboard, focus, Util, Mark } from 'ts/lib';
+import { Icon } from 'Component';
+import { I, C, keyboard, focus, Util, Mark } from 'Lib';
 import { observer } from 'mobx-react';
-import { menuStore, blockStore } from 'ts/store';
+import { menuStore, blockStore } from 'Store';
 import arrayMove from 'array-move';
 import { throttle } from 'lodash';
 

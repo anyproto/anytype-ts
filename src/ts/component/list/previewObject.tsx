@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { PreviewObject, Icon } from 'ts/component';
-import { keyboard, Action } from 'ts/lib';
+import { PreviewObject, Icon } from 'Component';
+import { keyboard, Action } from 'Lib';
 
 interface Props {
 	getItems: () => any[];

@@ -1,10 +1,10 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Icon, IconObject, ListIndex, Cover, Header, FooterMainIndex as Footer, Filter, EmptySearch } from 'ts/component';
-import { commonStore, blockStore, detailStore, menuStore, dbStore, popupStore, authStore } from 'ts/store';
+import { Icon, IconObject, ListIndex, Cover, Header, FooterMainIndex as Footer, Filter, EmptySearch } from 'Component';
+import { commonStore, blockStore, detailStore, menuStore, dbStore, popupStore, authStore } from 'Store';
 import { observer } from 'mobx-react';
-import { I, C, Util, DataUtil, translate, crumbs, Storage, analytics, keyboard, Action } from 'ts/lib';
+import { I, C, Util, DataUtil, translate, crumbs, Storage, analytics, keyboard, Action } from 'Lib';
 import arrayMove from 'array-move';
 
 interface Props extends RouteComponentProps<any> {

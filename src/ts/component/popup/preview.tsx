@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Loader } from 'ts/component';
-import { I, Util } from 'ts/lib';
+import { Loader } from 'Component';
+import { I, Util } from 'Lib';
 
 const $ = require('jquery');
 

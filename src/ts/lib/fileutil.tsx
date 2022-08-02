@@ -1,4 +1,4 @@
-import { Util } from 'ts/lib';
+import { Util } from 'Lib';
 
 const Constant = require('json/constant.json');
 const loadImage = require('blueimp-load-image');

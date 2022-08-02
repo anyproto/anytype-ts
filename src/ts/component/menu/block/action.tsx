@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Filter, MenuItemVertical } from 'ts/component';
-import { commonStore, blockStore, menuStore } from 'ts/store';
-import { I, C, keyboard, DataUtil, focus, Action, translate, analytics } from 'ts/lib';
+import { Filter, MenuItemVertical } from 'Component';
+import { commonStore, blockStore, menuStore } from 'Store';
+import { I, C, keyboard, DataUtil, focus, Action, translate, analytics } from 'Lib';
 
 interface Props extends I.Menu {};
 interface State {

@@ -1,9 +1,9 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { getRange } from 'selection-ranges';
-import { I, M, focus, keyboard, scrollOnMove, Util } from 'ts/lib';
+import { I, M, focus, keyboard, scrollOnMove, Util } from 'Lib';
 import { observer } from 'mobx-react';
-import { commonStore, blockStore, menuStore } from 'ts/store';
+import { commonStore, blockStore, menuStore } from 'Store';
 import { throttle } from 'lodash';
 
 const $ = require('jquery');

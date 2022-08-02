@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Loader, Title, Label, ListObjectPreview } from 'ts/component';
-import { I, C, focus, Util, Action } from 'ts/lib';
-import { dbStore } from 'ts/store';
+import { Loader, Title, Label, ListObjectPreview } from 'Component';
+import { I, C, focus, Util, Action } from 'Lib';
+import { dbStore } from 'Store';
 
 interface Props extends I.Popup, RouteComponentProps<any> {};
 

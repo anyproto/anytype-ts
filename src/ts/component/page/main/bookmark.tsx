@@ -2,11 +2,11 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
-import { Header, FooterMainEdit as Footer, Loader, Block, Button, Deleted, Icon } from 'ts/component';
-import { I, C, Util, crumbs, Action, analytics, Renderer } from 'ts/lib';
-import { blockStore, detailStore, menuStore, dbStore } from 'ts/store';
+import { Header, FooterMainEdit as Footer, Loader, Block, Button, Deleted, Icon } from 'Component';
+import { I, C, Util, crumbs, Action, analytics, Renderer } from 'Lib';
+import { blockStore, detailStore, menuStore, dbStore } from 'Store';
 
-import HeadSimple from 'ts/component/page/head/simple';
+import HeadSimple from 'Component/page/head/simple';
 
 interface Props extends RouteComponentProps<any> {
 	rootId: string;

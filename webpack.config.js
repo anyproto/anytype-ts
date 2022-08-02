@@ -1,4 +1,3 @@
-const webpack = require('webpack');
 const path = require('path');
 const process = require('process');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
@@ -24,6 +23,14 @@ module.exports = (env) => {
 	
 		resolve: {
 			extensions: [ '.ts', '.tsx', '.js', '.jsx' ],
+			alias: {
+      			Lib: path.resolve(__dirname, 'src/ts/lib'),
+				Store: path.resolve(__dirname, 'src/ts/store'),
+				Component: path.resolve(__dirname, 'src/ts/component'),
+				Interface: path.resolve(__dirname, 'src/ts/interface'),
+				Model: path.resolve(__dirname, 'src/ts/model'),
+				Docs: path.resolve(__dirname, 'src/ts/docs'),
+    		},
 			modules: [
 				path.resolve('./src/'),
 				path.resolve('./electron/'),
@@ -55,20 +62,8 @@ module.exports = (env) => {
 				{
 					test: /\.ts(x?)$/,
 					exclude: /node_modules/,
-					use: [
-						{
-							loader: 'ts-loader'
-						},
-						{ 
-							loader: 'ifdef-loader', 
-							options: {
-								version: 3,
-								'ifdef-verbose': true,
-							},
-						},
-					]
+					loader: 'ts-loader'
 				},
-				{ test: /\.node$/, loader: 'node-loader' },
 				{
 					enforce: 'pre',
 					test: /\.js$/,

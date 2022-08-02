@@ -1,10 +1,10 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { I, keyboard, Util, C, focus, Renderer } from 'ts/lib';
-import { Icon } from 'ts/component';
+import { I, keyboard, Util, C, focus, Renderer } from 'Lib';
+import { Icon } from 'Component';
 import { observer } from 'mobx-react';
-import { menuStore, commonStore, blockStore } from 'ts/store';
+import { menuStore, commonStore, blockStore } from 'Store';
 import { getRange, setRange } from 'selection-ranges';
 import * as Prism from 'prismjs';
 

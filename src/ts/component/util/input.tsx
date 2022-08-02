@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, keyboard } from 'ts/lib';
+import { I, keyboard } from 'Lib';
 import Inputmask from 'inputmask';
 
 interface Props {

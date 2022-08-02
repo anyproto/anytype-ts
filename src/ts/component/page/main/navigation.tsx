@@ -1,9 +1,9 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Icon, Button, Cover, Loader, IconObject, Header, ObjectName, ObjectDescription } from 'ts/component';
-import { I, C, DataUtil, Util, keyboard, Key, focus, translate, sidebar } from 'ts/lib';
-import { blockStore, popupStore, commonStore } from 'ts/store';
+import { Icon, Button, Cover, Loader, IconObject, Header, ObjectName, ObjectDescription } from 'Component';
+import { I, C, DataUtil, Util, keyboard, Key, focus, translate, sidebar } from 'Lib';
+import { blockStore, popupStore, commonStore } from 'Store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 

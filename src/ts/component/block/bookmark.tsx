@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { InputWithFile, ObjectName, ObjectDescription, Loader, Error } from 'ts/component';
-import { I, C, focus, Util, translate, Renderer } from 'ts/lib';
-import { commonStore, detailStore } from 'ts/store';
+import { InputWithFile, ObjectName, ObjectDescription, Loader, Error } from 'Component';
+import { I, C, focus, Util, translate, Renderer } from 'Lib';
+import { commonStore, detailStore } from 'Store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.BlockComponent {};

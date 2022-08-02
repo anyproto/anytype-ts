@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { authStore } from 'ts/store';
-import { I, Util } from 'ts/lib';
+import { authStore } from 'Store';
+import { I, Util } from 'Lib';
 
 interface Props extends I.Menu {};
 

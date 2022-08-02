@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { I } from 'ts/lib';
+import { I } from 'Lib';
 import { observer } from 'mobx-react';
-import { dbStore, blockStore } from 'ts/store';
-import { Icon } from 'ts/component';
-import { translate } from 'ts/lib';
+import { dbStore, blockStore } from 'Store';
+import { Icon } from 'Component';
+import { translate } from 'Lib';
 import { AutoSizer, WindowScroller, List, InfiniteLoader } from 'react-virtualized';
 
 import Row from './list/row';

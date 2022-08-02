@@ -6,7 +6,7 @@ import { Provider } from 'mobx-react';
 import { enableLogging } from 'mobx-logger';
 import { Page, SelectionProvider, DragProvider, Progress, Tooltip, Preview, Icon, ListPopup, ListMenu } from './component';
 import { commonStore, authStore, blockStore, detailStore, dbStore, menuStore, popupStore } from './store';
-import { I, C, Util, FileUtil, keyboard, Storage, analytics, dispatcher, translate, Action, Renderer, DataUtil } from 'ts/lib';
+import { I, C, Util, FileUtil, keyboard, Storage, analytics, dispatcher, translate, Action, Renderer, DataUtil } from 'Lib';
 import * as Sentry from '@sentry/browser';
 import { configure, spy } from 'mobx';
 

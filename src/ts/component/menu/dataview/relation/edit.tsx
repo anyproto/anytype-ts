@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, C, DataUtil, Relation, translate } from 'ts/lib';
-import { Icon, Input, MenuItemVertical, Button } from 'ts/component';
-import { blockStore, dbStore, menuStore } from 'ts/store';
+import { I, C, DataUtil, Relation, translate } from 'Lib';
+import { Icon, Input, MenuItemVertical, Button } from 'Component';
+import { blockStore, dbStore, menuStore } from 'Store';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
 

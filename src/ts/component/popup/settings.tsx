@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Loader } from 'ts/component';
-import { I, C, Storage, Util, analytics, Action, keyboard } from 'ts/lib';
-import { blockStore, popupStore } from 'ts/store';
+import { Loader } from 'Component';
+import { I, C, Storage, Util, analytics, Action, keyboard } from 'Lib';
+import { blockStore, popupStore } from 'Store';
 import { observer } from 'mobx-react';
 
 import PageIndex from './page/settings/index';
@@ -204,11 +204,6 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 		Action.export([], format, true, true, true, () => { this.props.close(); });
 	};
 
-<<<<<<< HEAD
-	init () {
-		this.props.position();
-		$(window).off('resize.settings').on('resize.settings', () => { this.props.position(); });
-=======
 	onKeyDown (e: any) {
 		const platform = Util.getPlatform();
 		const isMac = platform == I.Platform.Mac;
@@ -217,10 +212,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 	};
 
 	onBack () {
-		const { close } = this.props;
-
-		this.prevPage ? this.onPage(this.prevPage) : close();
->>>>>>> a2b50fbacb8426577bc8d8bf7bb5de8331ec1092
+		this.prevPage ? this.onPage(this.prevPage) : this.props.close();
 	};
 
 });

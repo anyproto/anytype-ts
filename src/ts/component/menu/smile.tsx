@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Filter, Icon, IconEmoji, EmptySearch } from 'ts/component';
-import { I, C, Util, SmileUtil, keyboard, Storage, translate, analytics } from 'ts/lib';
-import { menuStore } from 'ts/store';
+import { Filter, Icon, IconEmoji, EmptySearch } from 'Component';
+import { I, C, Util, SmileUtil, keyboard, Storage, translate, analytics } from 'Lib';
+import { menuStore } from 'Store';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
 interface Props extends I.Menu {};

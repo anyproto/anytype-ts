@@ -1,4 +1,4 @@
-import { I, keyboard, Util } from 'ts/lib';
+import { I, keyboard, Util } from 'Lib';
 import { setRange } from 'selection-ranges';
 
 const $ = require('jquery');

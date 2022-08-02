@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Icon, IconObject, Switch } from 'ts/component';
-import { I } from 'ts/lib';
+import { Icon, IconObject, Switch } from 'Component';
+import { I } from 'Lib';
 
 interface Props extends I.MenuItem {};
 

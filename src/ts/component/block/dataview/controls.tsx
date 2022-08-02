@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Icon } from 'ts/component';
-import { C, I, Util, analytics } from 'ts/lib';
-import { menuStore, dbStore, blockStore } from 'ts/store';
+import { Icon } from 'Component';
+import { C, I, Util, analytics } from 'Lib';
+import { menuStore, dbStore, blockStore } from 'Store';
 import { observable } from 'mobx';
 import { observer } from 'mobx-react';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
