@@ -208,7 +208,7 @@ const CellObject = observer(class CellObject extends React.Component<Props, Stat
 		};
 
 		let value = Relation.getArrayValue(record[relation.relationKey]);
-		value = value.map((id: string) => { return detailStore.get(subId, id, []); });
+		value = value.map(id => detailStore.get(subId, id, []));
 		value = value.filter((it: any) => { return !it._empty_; });
 		return value;
 	};

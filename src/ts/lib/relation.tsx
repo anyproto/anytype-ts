@@ -137,6 +137,9 @@ class Relation {
 						ret = ret.concat(extendedOptions);
 						break;
 
+					case I.FilterCondition.None:
+						break;
+
 					default: 
 						ret = ret.concat(defaultOptions);
 						break;
@@ -279,7 +282,7 @@ class Relation {
 		if ('object' != typeof(value)) {
 			value = value ? [ value ] : [];
 		};
-		value = value.filter((it: string) => { return it; });
+		value = value.filter(it => it);
 		return Util.arrayUnique(value);
 	};
 

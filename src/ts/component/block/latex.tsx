@@ -240,7 +240,6 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 
 		const { filter } = commonStore;
 		const value = this.getValue();
-		const k = e.key.toLowerCase();
 		const node = $(ReactDOM.findDOMNode(this));
 		const input = node.find('#input');
 		const el: any = input.get(0);
@@ -249,7 +248,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 
 		let menuOpen = menuStore.isOpen('blockLatex');
 
-		if ((symbolBefore == '\\') && !keyboard.isSpecial(k)) {
+		if ((symbolBefore == '\\') && !keyboard.isSpecial(e)) {
 			commonStore.filterSet(range.start, '');
 			this.onMenu(e, 'input', false);
 		};

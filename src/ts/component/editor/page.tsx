@@ -58,6 +58,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		this.getWrapperWidth = this.getWrapperWidth.bind(this);
 		this.resize = this.resize.bind(this);
 		this.focusTitle = this.focusTitle.bind(this);
+		this.blockRemove = this.blockRemove.bind(this);
 	};
 
 	render () {
@@ -120,6 +121,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 								onCopy={this.onCopy}
 								onPaste={this.onPaste}
 								readonly={readonly}
+								blockRemove={this.blockRemove}
 								getWrapper={this.getWrapper}
 								getWrapperWidth={this.getWrapperWidth}
 							/>
@@ -1563,7 +1565,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 		const first = blockStore.getFirstBlock(rootId, 1, (it) => it.isText() && !it.isTextTitle() && !it.isTextDescription());
 		const object = detailStore.get(rootId, rootId, [ 'internalFlags' ]);
-		const isEmpty = (focused == first.id) && !first.getLength() && (object.internalFlags || []).includes(I.ObjectFlag.DeleteEmpty);
+		const isEmpty = first && (focused == first.id) && !first.getLength() && (object.internalFlags || []).includes(I.ObjectFlag.DeleteEmpty);
 
 		const options: any[] = [
 			{ id: 'link', name: 'Create link' },

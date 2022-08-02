@@ -94,7 +94,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 								<Tag {...element} className={DataUtil.tagClass(relation.format)} />
 							</div>
 							<div className="buttons">
-								<Icon className="delete" onClick={(e: any) => { this.onRemove(e, element); }} />
+								<Icon className="delete" onClick={(e: any) => { this.onDelete(e, element); }} />
 							</div>
 						</div>
 					);
@@ -132,7 +132,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 								{type?.name}
 							</div>
 							<div className="buttons">
-								<Icon className="delete" onClick={(e: any) => { this.onRemove(e, element); }} />
+								<Icon className="delete" onClick={(e: any) => { this.onDelete(e, element); }} />
 							</div>
 						</div>
 					);
@@ -455,7 +455,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		}, timeout ? TIMEOUT : 0);
 	};
 
-	onRemove (e: any, element: any) {
+	onDelete (e: any, element: any) {
 		const { param } = this.props;
 		const { data } = param;
 		const { getView, itemId } = data;
@@ -467,7 +467,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		};
 
 		let value = Relation.getArrayValue(item.value);
-		value = value.filter((it: any) => { return it != element.id; });
+		value = value.filter(it => it != element.id);
 		value = Util.arrayUnique(value);
 
 		this.onChange('value', value);

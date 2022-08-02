@@ -1,30 +1,47 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Label, Icon, Cover } from 'ts/component';
+import { Label, Icon, Cover, Button } from 'ts/component';
 import { I, Docs, Util, translate } from 'ts/lib';
 import Block from 'ts/component/block/help';
 
 interface Props extends I.Popup, RouteComponentProps<any> {};
 
+interface State {
+	showFull: boolean;
+};
+
 const Url = require('json/url.json');
 const $ = require('jquery');
 const raf = require('raf');
 
-class PopupHelp extends React.Component<Props, {}> {
+class PopupHelp extends React.Component<Props, State> {
 
 	_isMounted: boolean = false;
+	state = {
+		showFull: false,
+	};
 	
 	render () {
-		const { param } = this.props;
-		const { data } = param;
-		const { document } = data;
-		
-		let doc = Docs.Help[Util.toUpperCamelCase(document)] || [];
-		let title = doc.find((it: any) => { return it.style == I.TextStyle.Title; });
-		let cover = doc.find((it: any) => { return it.type == I.BlockType.Cover; });
+		const { showFull } = this.state;
+		const document = this.getDocument();
+		const blocks = this.getBlocks();
+		const title = blocks.find(it => it.style == I.TextStyle.Title);
+		const cover = blocks.find(it => it.type == I.BlockType.Cover);
+		const isWhatsNew = document == 'WhatsNew';
 
-		doc = doc.filter((it: any) => { return it.type != I.BlockType.Cover; });
+		const Section = (item: any) => (
+			<div className="section">
+				{item.children.map((child: any, i: number) => (
+					<Block key={i} {...this.props} {...child} />
+				))}
+			</div>
+		);
+
+		let sections = this.getSections();
+		if (isWhatsNew && !showFull) {
+			sections = sections.slice(0, 3);
+		};
 
 		return (
 			<div className="wrapper">
@@ -43,10 +60,16 @@ class PopupHelp extends React.Component<Props, {}> {
 					{cover ? <Cover {...cover.param} /> : ''}
 
 					<div className="blocks">
-						{doc.map((item: any, i: number) => (
-							<Block key={i} {...this.props} {...item} />
+						{sections.map((section: any, i: number) => (
+							<Section key={i} {...this.props} {...section} />
 						))}
 					</div>
+
+					{isWhatsNew && !showFull ? (
+						<div className="buttons">
+							<Button color="orange" text="Older releases" onClick={() => { this.setState({ showFull: true }) }} />
+						</div>
+					) : ''}
 				</div>
 			</div>
 		);
@@ -84,6 +107,47 @@ class PopupHelp extends React.Component<Props, {}> {
 
 	unbind () {
 		$(window).off('resize.help');
+	};
+
+	getDocument () {
+		const { param } = this.props;
+		const { data } = param;
+
+		return Util.toUpperCamelCase(data.document);
+	};
+
+	getBlocks () {
+		return Docs.Help[this.getDocument()] || [];
+	};
+
+	getSections (): any[] {
+		const document = this.getDocument();
+		const blocks = this.getBlocks().filter(it => it.type != I.BlockType.Cover);
+
+		let sections: any[] = [];
+		switch (document) {
+			default: 
+				sections.push({ children: blocks });
+				break;
+
+			case 'WhatsNew':
+				let section = { children: [], header: null };
+				for (let block of blocks) {
+					if (!section.header && [ I.TextStyle.Title, I.TextStyle.Header1, I.TextStyle.Header2, I.TextStyle.Header3 ].includes(block.style)) {
+						section.header = block;
+					};
+
+					section.children.push(block);
+
+					if (block.type == I.BlockType.Div) {
+						sections.push(section);
+						section = { children: [], header: null };
+					};
+				};
+				break;
+		};
+
+		return sections;
 	};
 
 	resize () {

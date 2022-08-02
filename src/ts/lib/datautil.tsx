@@ -367,6 +367,10 @@ class DataUtil {
 	};
 	
 	objectRoute (object: any): string {
+		if (!object) {
+			return;
+		};
+
 		let action = this.actionByLayout(object.layout);
 		let id = object.id;
 

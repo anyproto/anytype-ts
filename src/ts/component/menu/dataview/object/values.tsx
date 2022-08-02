@@ -180,10 +180,10 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 		const { config } = commonStore;
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, subId, valueMapper, nameAdd } = data;
+		const { subId, valueMapper, nameAdd } = data;
 
 		let value: any[] = Relation.getArrayValue(data.value);
-		value = value.map((it: string) => { return detailStore.get(subId, it, []); });
+		value = value.map(it => detailStore.get(subId, it, []));
 
 		if (valueMapper) {
 			value = value.map(valueMapper);
@@ -240,7 +240,7 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 		const relation = data.relation.get();
 		
 		let value = Relation.getArrayValue(data.value);
-		value = value.filter((it: any) => { return it != item.id; });
+		value = value.filter(it => it != item.id);
 		
 		if (relation) {
 			value = Relation.formatValue(relation, value, true);

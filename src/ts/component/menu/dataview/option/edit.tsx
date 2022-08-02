@@ -167,9 +167,9 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<Pro
 		const relation = data.relation.get();
 		
 		let value = Relation.getArrayValue(data.value);
-		value = value.filter((it: any) => { return it != option.id; });
+		value = value.filter(it => it != option.id);
 
-		relation.selectDict = relation.selectDict.filter((it: any) => { return it.id != option.id; });
+		relation.selectDict = relation.selectDict.filter(it => it.id != option.id);
 		optionCommand('delete', rootId, blockId, relation.relationKey, record.id, option);
 
 		menuStore.updateData(id, { value });
@@ -187,7 +187,7 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<Pro
 		const { data } = param;
 		const { option, rootId, blockId, record, optionCommand } = data;
 		const relation = data.relation.get();
-		const idx = relation.selectDict.findIndex((it: any) => { return it.id == option.id; });
+		const idx = relation.selectDict.findIndex(it => it.id == option.id);
 		const value = this.refName.getValue();
 
 		if (!value) {

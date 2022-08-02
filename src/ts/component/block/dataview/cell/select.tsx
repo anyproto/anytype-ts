@@ -293,7 +293,7 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 
 		let value = Relation.getArrayValue(record[relation.relationKey]);
 		value = value.map((id: string) => { 
-			return (relation.selectDict || []).find((it: any) => { return it.id == id; });
+			return (relation.selectDict || []).find(it => it.id == id);
 		});
 		value = value.filter((it: any) => { return it && it.id; });
 

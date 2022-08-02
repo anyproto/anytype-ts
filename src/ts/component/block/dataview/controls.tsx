@@ -17,6 +17,7 @@ interface State {
 };
 
 const $ = require('jquery');
+const raf = require('raf');
 
 const Controls = observer(class Controls extends React.Component<Props, State> {
 
@@ -184,6 +185,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 		const { rootId, block, getView, getData } = this.props;
 		const view = getView();
 		const relations = Util.objectCopy(view.relations);
+		const subId = dbStore.getSubId(rootId, block.id);
 		const filters: I.Filter[] = [];
 
 		for (let relation of relations) {
@@ -199,24 +201,32 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 			});
 		};
 
-		menuStore.open('dataviewViewEdit', {
-			element: `#button-view-add`,
-			horizontal: I.MenuDirection.Center,
-			noFlipY: true,
-			data: {
-				rootId: rootId,
-				blockId: block.id,
-				getData: getData,
-				getView: getView,
-				view: observable.box({ 
-					type: I.ViewType.Grid,
-					relations: relations,
-					filters: filters,
-				}),
-				onSave: () => {
-					this.forceUpdate();
+		const newView = {
+			name: `New view`,
+			type: I.ViewType.Grid,
+			filters,
+		};
+
+		C.BlockDataviewViewCreate(rootId, block.id, newView, (message: any) => {
+			const view = dbStore.getView(rootId, block.id, message.viewId);
+
+			menuStore.open('dataviewViewEdit', {
+				element: `#view-item-${message.viewId}`,
+				horizontal: I.MenuDirection.Center,
+				noFlipY: true,
+				data: {
+					rootId: rootId,
+					blockId: block.id,
+					getData: getData,
+					getView: getView,
+					view: observable.box(view),
+					onSave: () => {
+						this.forceUpdate();
+					},
 				},
-			},
+			});
+
+			analytics.event('AddView', { type: view.type });
 		});
 	};
 

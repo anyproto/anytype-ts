@@ -19,11 +19,6 @@
 		}
 	
 		.items { overflow: overlay; height: 288px; }
-		.emptySearch { height: 100%; line-height: 256px; padding: 16px; text-align: center; }
-		.emptySearch {
-			b { display: block; font-weight: 400; color: $colorBlack; }
-			.txt { line-height: 24px; color: $colorMediumGrey; }
-		}
 		
 		.section { padding: 11px 14px !important; border: 0px; }
 		.section > .name { padding: 0px; margin: 0px; }
@@ -39,6 +34,39 @@
 			.iconObject { position: absolute; left: 50%; top: 50%; margin: -16px 0px 0px -16px; width: 32px; height: 32px; line-height: 32px; }
 			.iconEmoji .emoji-mart-emoji { vertical-align: top; }
 			.iconEmoji .emoji-mart-emoji span { margin-top: 2px; }
+		}
+
+		.foot { padding: 5px 16px 6px 16px; border-top: 1px solid $colorLightGrey; display: flex; justify-content: space-between; }
+		.foot {
+			.icon { width: 32px; height: 32px; border-radius: 4px; background-size: 20px; flex-shrink: 0; cursor: pointer; transition: $transitionFast; }
+			.icon:hover { background-color: $colorVeryLightGrey; }
+
+			.icon.recent { background-image: url('~img/icon/emoji/recent0.svg'); }
+			.icon.recent.active { background-image: url('~img/icon/emoji/recent1.svg'); }
+
+			.icon.people { background-image: url('~img/icon/emoji/people0.svg'); }
+			.icon.people.active { background-image: url('~img/icon/emoji/people1.svg'); }
+
+			.icon.nature { background-image: url('~img/icon/emoji/nature0.svg'); }
+			.icon.nature.active { background-image: url('~img/icon/emoji/nature1.svg'); }
+
+			.icon.foods { background-image: url('~img/icon/emoji/foods0.svg'); }
+			.icon.foods.active { background-image: url('~img/icon/emoji/foods1.svg'); }
+
+			.icon.activity { background-image: url('~img/icon/emoji/activity0.svg'); }
+			.icon.activity.active { background-image: url('~img/icon/emoji/activity1.svg'); }
+
+			.icon.places { background-image: url('~img/icon/emoji/places0.svg'); }
+			.icon.places.active { background-image: url('~img/icon/emoji/places1.svg'); }
+
+			.icon.objects { background-image: url('~img/icon/emoji/objects0.svg'); }
+			.icon.objects.active { background-image: url('~img/icon/emoji/objects1.svg'); }
+
+			.icon.symbols { background-image: url('~img/icon/emoji/symbols0.svg'); }
+			.icon.symbols.active { background-image: url('~img/icon/emoji/symbols1.svg'); }
+
+			.icon.flags { background-image: url('~img/icon/emoji/flags0.svg'); }
+			.icon.flags.active { background-image: url('~img/icon/emoji/flags1.svg'); }
 		}
 	}
 	

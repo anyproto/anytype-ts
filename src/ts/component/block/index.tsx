@@ -380,7 +380,7 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 			return;
 		};
 		
-		const { dataset, rootId, block } = this.props;
+		const { dataset, rootId, block, blockRemove } = this.props;
 		const { selection } = dataset || {};
 		const elementId = `#button-block-menu-${block.id}`;
 		const element = $(elementId);
@@ -396,6 +396,7 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 				blockIds: DataUtil.selectionGet(block.id, true, this.props),
 				rootId: rootId,
 				dataset: dataset,
+				blockRemove: blockRemove
 			},
 			onClose: () => {
 				selection.clear(true);

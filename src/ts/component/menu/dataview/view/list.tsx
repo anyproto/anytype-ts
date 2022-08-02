@@ -208,18 +208,6 @@ const MenuViewList = observer(class MenuViewList extends React.Component<Props> 
 		return items;
 	};
 
-	getValue (): any[] {
-		const { param } = this.props;
-		const { data } = param;
-
-		let value = Util.objectCopy(data.value || []);
-		if ('object' != typeof(value)) {
-			value = value ? [ value ] : [];
-		};
-		value = value.filter((it: string) => { return it; });
-		return value;
-	};
-
 	onOver (e: any, item: any) {
 		if (!keyboard.isMouseDisabled) {
 			this.props.setActive(item, false);

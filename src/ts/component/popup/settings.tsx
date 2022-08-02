@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Loader } from 'ts/component';
-import { I, C, Storage, Util, analytics, Action } from 'ts/lib';
+import { I, C, Storage, Util, analytics, Action, keyboard } from 'ts/lib';
 import { blockStore, popupStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -110,15 +110,31 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 		const { page } = data;
 
 		this.onPage(page || 'index');
-		this.init();
+		this.rebind();
+
+		keyboard.disableNavigation(true);
 	};
 
 	componentDidUpdate () {
-		this.init();
+		this.props.position();
 	};
 
 	componentWillUnmount () {
 		$(window).off('resize.settings');
+		this.unbind();
+		keyboard.disableNavigation(false);
+	};
+
+	rebind () {
+		const win = $(window);
+
+		this.unbind();
+		win.on('resize.settings', () => { this.props.position(); });
+		win.on('keydown.settings', (e: any) => { this.onKeyDown(e); });
+	};
+
+	unbind () {
+		$(window).off('resize.settings keydown.settings');
 	};
 
 	setConfirmPin (v: () => void) {
@@ -188,9 +204,23 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 		Action.export([], format, true, true, true, () => { this.props.close(); });
 	};
 
+<<<<<<< HEAD
 	init () {
 		this.props.position();
 		$(window).off('resize.settings').on('resize.settings', () => { this.props.position(); });
+=======
+	onKeyDown (e: any) {
+		const platform = Util.getPlatform();
+		const isMac = platform == I.Platform.Mac;
+
+		keyboard.shortcut(isMac ? 'cmd+[' : 'alt+arrowleft', e, (pressed: string) => { this.onBack(); });
+	};
+
+	onBack () {
+		const { close } = this.props;
+
+		this.prevPage ? this.onPage(this.prevPage) : close();
+>>>>>>> a2b50fbacb8426577bc8d8bf7bb5de8331ec1092
 	};
 
 });
