@@ -180,7 +180,6 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 
 		if (relation.relationKey == Constant.relationKey.name) {
 			let size = iconSize;
-			let is = undefined;
 
 			switch (viewType) {
 				case I.ViewType.Gallery:
@@ -190,7 +189,7 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 
 				case I.ViewType.Board:
 					size = 48;
-					if (record.layout == I.ObjectLayout.Task) {
+					if ([ I.ObjectLayout.Task, I.ObjectLayout.Bookmark ].includes(record.layout)) {
 						size = 24;
 					};
 					break;
@@ -210,7 +209,6 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 							onUpload={this.onIconUpload}
 							onCheckbox={this.onCheckbox}
 							size={size} 
-							iconSize={is}
 							canEdit={!record.isReadonly} 
 							offsetY={4} 
 							object={record} 
