@@ -1188,30 +1188,44 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			return;
 		};
 
-		const { isPopup, block, getWrapperWidth } = this.props;
+		const { isPopup, rootId, block, getWrapperWidth } = this.props;
+		const element = blockStore.getMapElement(rootId, block.id);
+		const parent = blockStore.getLeaf(rootId, element.parentId);
 		const node = $(ReactDOM.findDOMNode(this));
-		const obj = $(`#block-${block.id}`);
-		const container = Util.getPageContainer(isPopup);
-		const ww = container.width();
-		const mw = ww - PADDING;
-		const wrapperWidth = getWrapperWidth() + Constant.size.blockMenu;
-		const offset = Constant.size.blockMenu + 10;
 		const wrap = node.find('#scrollWrap');
 		const row = node.find('.row').first();
+		
+		let width = 0;
+		let maxWidth = 0;
+		let wrapperWidth = 0;
 
-		let width = offset;
-
+		width += Constant.size.blockMenu + 10;
 		String(row.css('grid-template-columns') || '').split(' ').forEach((it: string) => {
 			width += parseInt(it);
 		});
 
-		width > mw ? wrap.addClass('withScroll') : wrap.removeClass('withScroll');
-		width = Math.max(wrapperWidth, Math.min(mw, width));
+		if (parent.isPage() || parent.isLayoutDiv()) {
+			const obj = $(`#block-${block.id}`);
+			const container = Util.getPageContainer(isPopup);
 
-		obj.css({
-			width: (width >= wrapperWidth) ? width : 'auto',
-			marginLeft: (width >= wrapperWidth) ? Math.min(0, (wrapperWidth - width) / 2) : '',
-		});
+			maxWidth = container.width() - PADDING;
+			wrapperWidth = getWrapperWidth() + Constant.size.blockMenu;
+
+			width > maxWidth ? wrap.addClass('withScroll') : wrap.removeClass('withScroll');
+			width = Math.max(wrapperWidth, Math.min(maxWidth, width));
+
+			obj.css({
+				width: (width >= wrapperWidth) ? width : 'auto',
+				marginLeft: (width >= wrapperWidth) ? Math.min(0, (wrapperWidth - width) / 2) : '',
+			});
+		} else {
+			const parentObj = $(`#block-${parent.id}`);
+			if (parentObj.length) {
+				maxWidth = parentObj.width() - Constant.size.blockMenu;
+			};
+		};
+
+		width > maxWidth ? wrap.addClass('withScroll') : wrap.removeClass('withScroll');
 	};
 
 	checkWidth (w: number) {
@@ -1513,12 +1527,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 	};
 
 	getClassByPosition (position: I.BlockPosition) {
-		let c = '';
-		if (position == I.BlockPosition.Left) c = 'left';
-		if (position == I.BlockPosition.Right) c = 'right';
-		if (position == I.BlockPosition.Top) c = 'top';
-		if (position == I.BlockPosition.Bottom) c = 'bottom';
-		return c;
+		return I.BlockPosition[position].toLowerCase();
 	};
 
 });
