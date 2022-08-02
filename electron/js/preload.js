@@ -31,6 +31,7 @@ contextBridge.exposeInMainWorld('Electron', {
 	fs: {
 		writeFile: fs.writeFile,
 		statSync: fs.statSync,
+		unlink: fs.unlink,
 	},
 	readChunk,
 	fileType,

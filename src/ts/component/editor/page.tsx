@@ -1531,9 +1531,12 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 				id = focused;
 				from = to = message.caretPosition;
 			};
-			
-			this.focus(id, from, to, true);
 
+			data.files.forEach((item: any) => {
+				window.Electron.fs.unlink(item.path, () => {});
+			});
+
+			this.focus(id, from, to, true);
 			analytics.event('PasteBlock');
 		});
 	};
