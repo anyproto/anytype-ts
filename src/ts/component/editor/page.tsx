@@ -1478,6 +1478,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		const { dataset, rootId } = this.props;
 		const { selection } = dataset || {};
 		const { focused, range } = focus.state;
+		const cb = e.clipboardData || e.originalEvent.clipboardData;
+		const items = cb.items;
+		const files: any[] = [];
 
 		menuStore.closeAll([ 'blockAdd' ]);
 
@@ -1489,8 +1492,17 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			data = this.getClipboardData(e);
 		};
 
-		if (this.onPasteFile(e, props)) {
-			return;
+		if (items && items.length) {
+			for (let item of items) {
+				if (item.kind != 'file') {
+					continue;
+				};
+
+				const file = item.getAsFile();
+				if (file) {
+					files.push({ name: file.name, path: file.path });
+				};
+			};
 		};
 
 		e.preventDefault();
@@ -1508,7 +1520,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		let from = 0;
 		let to = 0;
 
-		C.BlockPaste(rootId, focused, range, selection.get(I.SelectType.Block, true), data.anytype.range.to > 0, { text: data.text, html: data.html, anytype: data.anytype.blocks, files: data.files }, (message: any) => {
+		C.BlockPaste(rootId, focused, range, selection.get(I.SelectType.Block, true), data.anytype.range.to > 0, { ...data, anytype: data.anytype.blocks, files }, (message: any) => {
 			if (message.error.code) {
 				return;
 			};
@@ -1532,70 +1544,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 				from = to = message.caretPosition;
 			};
 
-			data.files.forEach((item: any) => {
-				window.Electron.fs.unlink(item.path, () => {});
-			});
-
 			this.focus(id, from, to, true);
 			analytics.event('PasteBlock');
 		});
-	};
-
-	onPasteFile (e: any, props: any): boolean {
-		const { isInsideTable } = props;
-		
-		if (isInsideTable) {
-			return false;
-		};
-
-		const filePath = window.Electron.tmpPath;
-		const cb = e.clipboardData || e.originalEvent.clipboardData;
-		const items = cb.items;
-		const files: any[] = [];
-		const data: any = this.getClipboardData(e);
-
-		if (!items || !items.length) {
-			return false;
-		};
-
-		for (let item of items) {
-			if (item.kind != 'file') {
-				continue;
-			};
-
-			const file = item.getAsFile();
-			if (file) {
-				files.push(file);
-			};
-		};
-
-		if (!files.length) {
-			return false;
-		};
-
-		for (let file of files) {
-			const fn = window.Electron.getPath(filePath, file.name);
-			const reader = new FileReader();
-
-			reader.readAsBinaryString(file); 
-			reader.onloadend = () => {
-				window.Electron.fs.writeFile(fn, reader.result, 'binary', (err: any) => {
-					if (err) {
-						console.error(err);
-						commonStore.progressSet({ status: translate('commonProgress'), current: 0, total: 0 });
-						return;
-					};
-
-					data.files.push({ name: file.name, path: fn });
-
-					if (data.files.length == files.length) {
-						this.onPaste(e, props, true, data);
-					};
-				});
-			};
-		};
-
-		return true;
 	};
 
 	onPasteUrl (url: string, props: any) {

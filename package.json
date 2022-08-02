@@ -100,6 +100,7 @@
 		"emoji-mart": "^2.11.2",
 		"escape-string-regexp": "^4.0.0",
 		"file-type": "^12.4.2",
+		"filereader": "^0.10.3",
 		"findandreplacedomtext": "^0.4.6",
 		"fs": "^0.0.1-security",
 		"get-input-selection": "^1.1.4",

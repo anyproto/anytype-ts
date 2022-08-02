@@ -212,9 +212,6 @@ app.on('open-url', (e, url) => {
 
 app.on('certificate-error', (e, webContents, url, error, certificate, callback) => {
 	const u = new URL(url);
-
-	console.log(url, u);
-
 	if ([ '127.0.0.1', 'localhost' ].includes(u.hostname)) {
 		e.preventDefault();
 		callback(true);

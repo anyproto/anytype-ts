@@ -6,11 +6,10 @@ const loadImage = require('blueimp-load-image');
 class FileUtil {
 
 	fromPath (path: string) {
-		let fn = path.split('/');
-		let stat = window.Electron.fs.statSync(path);
-		let buffer = window.Electron.readChunk.sync(path, 0, stat.size);
-		let type = window.Electron.fileType(buffer);
-		let file = new File([ new Blob([ buffer ]) ], fn[fn.length - 1], { type: type.mime });
+		const { buffer, type } = window.Electron.fileParam(path);
+		const fn = path.split('/');
+		const file = new File([ new Blob([ buffer ]) ], fn[fn.length - 1], { type: type.mime });
+
 		return file;
 	};
 
