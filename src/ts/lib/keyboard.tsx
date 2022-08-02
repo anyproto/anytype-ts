@@ -101,11 +101,12 @@ class Keyboard {
 	
 	onKeyDown (e: any) {
 		const platform = Util.getPlatform();
+		const isMac = platform == I.Platform.Mac;
 		const key = e.key.toLowerCase();
 		const cmd = this.ctrlKey();
 		const isMain = this.isMain();
 		const ids = this.selection.get(I.SelectType.Block);
-		const isMac = platform == I.Platform.Mac;
+		const isMenuOpen = menuStore.isOpen();
 
 		this.pressed.push(key);
 
@@ -117,7 +118,7 @@ class Keyboard {
 		// Navigation
 		if (!this.isNavigationDisabled) {
 			this.shortcut('backspace', e, (pressed: string) => {
-				if (isMain && !this.isFocused && !ids.length) {
+				if (isMain && !this.isFocused && !ids.length && !isMenuOpen) {
 					this.onBack();
 				};
 			});

@@ -94,7 +94,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 								<Tag {...element} className={DataUtil.tagClass(relation.format)} />
 							</div>
 							<div className="buttons">
-								<Icon className="delete" onClick={(e: any) => { this.onRemove(e, element); }} />
+								<Icon className="delete" onClick={(e: any) => { this.onDelete(e, element); }} />
 							</div>
 						</div>
 					);
@@ -132,7 +132,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 								{type?.name}
 							</div>
 							<div className="buttons">
-								<Icon className="delete" onClick={(e: any) => { this.onRemove(e, element); }} />
+								<Icon className="delete" onClick={(e: any) => { this.onDelete(e, element); }} />
 							</div>
 						</div>
 					);
@@ -411,6 +411,9 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 
 		this.checkClear(v);
 
+		console.log('onChange', timeout);
+		console.trace();
+
 		window.clearTimeout(this.timeoutChange);
 		this.timeoutChange = window.setTimeout(() => {
 			item = Util.objectCopy(item);
@@ -455,7 +458,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		}, timeout ? TIMEOUT : 0);
 	};
 
-	onRemove (e: any, element: any) {
+	onDelete (e: any, element: any) {
 		const { param } = this.props;
 		const { data } = param;
 		const { getView, itemId } = data;
