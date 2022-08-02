@@ -33,7 +33,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 		const { rootId, subId } = data;
 		
 		let value = Relation.getArrayValue(data.value);
-		value = value.map((it: string) => { return detailStore.get(subId, it, []); });
+		value = value.map(it => detailStore.get(subId, it, []));
 		value = value.filter((it: any) => { return !it._empty_; });
 
         const Handle = SortableHandle(() => (
@@ -139,7 +139,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 		const { selection } = dataset;
 		const { data } = param;
 		
-		let value = Util.objectCopy(data.value || []);
+		let value = Relation.getArrayValue(data.value);
 		value = arrayMove(value, oldIndex, newIndex);
 
 		menuStore.updateData(id, { value });
