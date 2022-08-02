@@ -40,7 +40,7 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 						<div className="side right">
 							<div id="defaultType" className="select" onClick={this.onType}>
 								<div className="item">
-									<div className="name">{type.name || DataUtil.defaultName('page')}</div>
+									<div className="name">{type?.name || 'Select'}</div>
 								</div>
 								<Icon className="arrow light" />
 							</div>
