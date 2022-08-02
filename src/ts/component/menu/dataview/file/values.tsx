@@ -30,7 +30,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 	render () {
 		const { param, position } = this.props;
 		const { data } = param;
-		const { rootId, subId } = data;
+		const { subId } = data;
 		
 		let value = Relation.getArrayValue(data.value);
 		value = value.map(it => detailStore.get(subId, it, []));
@@ -202,7 +202,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 		const { param } = this.props;
 		const { data } = param;
 
-		let value = Util.objectCopy(data.value || []);
+		let value = Relation.getArrayValue(data.value);
 		value.push(hash);
 		value = Util.arrayUnique(value);
 
@@ -226,8 +226,9 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 		const element = $(`#${getId()} #item-${item.id}`);
 		const renderer = Util.getRenderer();
 
-		element.addClass('active');
+		let value = Relation.getArrayValue(data.value);
 
+		element.addClass('active');
 		menuStore.open('select', { 
 			element: element.find('.icon.more'),
 			horizontal: I.MenuDirection.Center,
@@ -261,8 +262,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 							break;
 
 						case 'remove':
-							let value = Util.objectCopy(data.value || []);
-							value = value.filter((it: any) => { return it != item.id; });
+							value = value.filter(it => it != item.id);
 							value = Util.arrayUnique(value);
 
 							onChange(value, () => {
