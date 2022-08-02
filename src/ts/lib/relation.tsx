@@ -282,7 +282,7 @@ class Relation {
 		if ('object' != typeof(value)) {
 			value = value ? [ value ] : [];
 		};
-		value = value.filter((it: string) => { return it; });
+		value = value.filter(it => it);
 		return Util.arrayUnique(value);
 	};
 

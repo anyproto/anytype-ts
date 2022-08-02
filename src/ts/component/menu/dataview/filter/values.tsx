@@ -467,7 +467,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		};
 
 		let value = Relation.getArrayValue(item.value);
-		value = value.filter((it: any) => { return it != element.id; });
+		value = value.filter(it => it != element.id);
 		value = Util.arrayUnique(value);
 
 		this.onChange('value', value);
