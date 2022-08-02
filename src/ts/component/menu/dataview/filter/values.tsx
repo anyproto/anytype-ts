@@ -411,9 +411,6 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 
 		this.checkClear(v);
 
-		console.log('onChange', timeout);
-		console.trace();
-
 		window.clearTimeout(this.timeoutChange);
 		this.timeoutChange = window.setTimeout(() => {
 			item = Util.objectCopy(item);
