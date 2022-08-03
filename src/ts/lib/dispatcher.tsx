@@ -31,9 +31,7 @@ class Dispatcher {
 	timeoutEvent: any = {};
 	reconnects: number = 0;
 
-	init () {
-		const address = window.Electron.getGlobal('serverAddress');
-
+	init (address: string) {
 		this.service = new Service.ClientCommandsClient(address, null, null);
 		this.listenEvents();
 

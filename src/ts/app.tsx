@@ -338,7 +338,7 @@ class App extends React.Component<Props, State> {
 	init () {
 		Util.init(history);
 
-		dispatcher.init();
+		dispatcher.init(window.Electron.getGlobal('serverAddress'));
 		keyboard.init();
 		analytics.init();
 		
