@@ -345,13 +345,26 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 				break;
 
 			case I.NavigationType.Link:
-				newBlock = {
-					type: I.BlockType.Link,
-					content: {
-						...DataUtil.defaultLinkSettings(),
-						targetBlockId: String(item.id || ''),
-					},
+				switch (item.type) {
+					case Constant.typeId.bookmark:
+						newBlock.type = I.BlockType.Bookmark;
+						newBlock.content = { 
+							state: I.BookmarkState.Done,
+							targetObjectId: String(item.id || ''),
+						};
+						break;
+
+					default:
+						newBlock.type = I.BlockType.Link;
+						newBlock.content = {
+							...DataUtil.defaultLinkSettings(),
+							targetBlockId: String(item.id || ''),
+						};
+						break;
 				};
+
+				console.log(newBlock);
+
 				C.BlockCreate(rootId, blockId, position, newBlock);
 				break;
 
