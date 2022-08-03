@@ -18,7 +18,6 @@ class BlockContentLink implements I.ContentLink {
 		self.description = Number(props.description) || I.LinkDescription.None;
 		self.relations = props.relations || [];
 
-
 		makeObservable(self, {
 			targetBlockId: observable,
 			iconSize: observable,
