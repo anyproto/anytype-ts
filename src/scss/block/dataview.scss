@@ -55,6 +55,14 @@
 			.icon.manager:hover, .icon.manager.active { background-image: url('~img/icon/dataview/button/manager1.svg'); }
 			.icon.plus:hover, .icon.plus.active { background-image: url('~img/icon/dataview/button/plus1.svg'); }
 
+			.button { padding: 0px 8px; }
+			.button {
+				.icon.plus-small { 
+					margin: 0px 4px 0px 0px; width: 12px; height: 12px; background-image: url('~img/icon/dataview/button/plus-small.svg'); 
+					vertical-align: middle;
+				}
+			}
+
 			.icon.on {
 				.dot { display: block; }
 			}

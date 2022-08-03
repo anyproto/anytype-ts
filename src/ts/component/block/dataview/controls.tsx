@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Icon } from 'ts/component';
+import { Icon, Button } from 'ts/component';
 import { C, I, Util, analytics } from 'ts/lib';
 import { menuStore, dbStore, blockStore } from 'ts/store';
 import { observable } from 'mobx';
@@ -124,7 +124,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 						{buttons.map((item: any, i: number) => (
 							<ButtonItem key={item.id} {...item} />
 						))}	
-						{!readonly && allowedObject ? <Icon className="plus" tooltip="New object" onClick={(e: any) => { onRecordAdd(e, -1); }} /> : ''}
+						{!readonly && allowedObject ? <Button color="orange" icon="plus-small" className="c28" tooltip="New object" text="New" onClick={(e: any) => { onRecordAdd(e, -1); }} /> : ''}
 					</div>
 				</div>
 
