@@ -657,7 +657,9 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 	};
 
 	onCellFocus (e: any, rowId: string, columnId: string, cellId: string) {
-		const { rootId, readonly } = this.props;
+		const { rootId, readonly, dataset } = this.props;
+		const { selection } = dataset || {};
+
 		if (readonly) {
 			return;
 		};
@@ -674,6 +676,8 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 
 				focus.set(cellId, { from: 0, to: 0 });
 				focus.apply();
+
+				selection.clear(true);
 			});
 		} else {
 			cb();
