@@ -12,16 +12,16 @@
 		"start:electron-wait-webpack-win": "cross-env-shell wait-for-localhost $SERVER_PORT && npm run electron-win",
 		"start:dev": "npm-run-all --parallel start:watch start:electron-wait-webpack",
 		"start:dev-win": "npm-run-all --parallel start:watch start:electron-wait-webpack-win",
-		"build": "webpack --mode=production --node-env=production  -p --config webpack.config.js",
+		"build": "webpack --mode=production --node-env=production --config webpack.config.js",
 		"build:deps": "webpack --config webpack.node.config.js --stats detailed | grep 'node_modules' | sed 's/.*\\(node_modules\\/[^\\/[:space:]]\\{1,\\}\\)\\/.*/\\1/' | uniq | node save-node-deps.js",
-		"dist:mac": "webpack --mode=production --node-env=production -p && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` electron-builder --macos --arm64 --x64",
-		"dist:macarm": "webpack --mode=production --node-env=production -p && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` electron-builder --macos --arm64",
-		"dist:macamd": "webpack --mode=production --node-env=production -p && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` electron-builder --macos --x64",
-		"dist:win": "webpack --mode=production --node-env=production -p && electron-builder --windows",
-		"dist:linux": "webpack --mode=production --node-env=production -p && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` electron-builder --linux",
-		"publish:mac": "webpack --mode=production --node-env=production -p && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` BUILD_NUMBER=`git rev-parse --short HEAD` electron-builder --macos --publish  always",
-		"publish:linux": "webpack --mode=production --node-env=production -p && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` BUILD_NUMBER=`git rev-parse --short HEAD` electron-builder --linux --publish  always",
-		"publish:win": "webpack --mode=production --node-env=production -p && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` BUILD_NUMBER=`git rev-parse --short HEAD` electron-builder --windows --publish  always",
+		"dist:mac": "npm run build:deps && webpack --progress --mode=production --node-env=production && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` electron-builder --macos --arm64 --x64",
+		"dist:macarm": "npm run build:deps && webpack --mode=production --node-env=production && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` electron-builder --macos --arm64",
+		"dist:macamd": "npm run build:deps && webpack --mode=production --node-env=production && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` electron-builder --macos --x64",
+		"dist:win": "npm run build:deps && webpack --mode=production --node-env=production && electron-builder --windows",
+		"dist:linux": "npm run build:deps && webpack --mode=production --node-env=production && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` electron-builder --linux",
+		"publish:mac": "webpack --mode=production --node-env=production && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` BUILD_NUMBER=`git rev-parse --short HEAD` electron-builder --macos --publish  always",
+		"publish:linux": "webpack --mode=production --node-env=production && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` BUILD_NUMBER=`git rev-parse --short HEAD` electron-builder --linux --publish  always",
+		"publish:win": "webpack --mode=production --node-env=production && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` BUILD_NUMBER=`git rev-parse --short HEAD` electron-builder --windows --publish  always",
 		"postinstall": "npx patch-package && electron-builder install-app-deps"
 	},
 	"repository": {
@@ -74,7 +74,7 @@
 		"webpack-dev-server": "^4.9.3"
 	},
 	"dependencies": {
-		"@electron/remote": "^2.0.1",
+		"@electron/remote": "^2.0.8",
 		"@sentry/browser": "^5.27.4",
 		"amplitude-js": "^5.11.0",
 		"array-move": "^2.2.2",
@@ -190,14 +190,18 @@
 			"dist/img/**/*",
 			"dist/css/**/*",
 			"dist/js/**/*",
-			"electron/icon*",
-			"electron/about.css",
-			"electron/about.html",
-			"electron/common.js",
-			"electron/about.js",
+			"electron/img/*",
+			"electron/about/*",
+			"electron/js/preload.js",
 			"build",
 			"node_modules/keytar/build/Release/keytar.node",
-			"node_modules/lodash.isequal"
+			"node_modules/lodash.isequal",
+			"node_modules/read-chunk",
+			"node_modules/@electron/remote",
+			"node_modules/with-open-file",
+			"node_modules/p-try",
+			"node_modules/p-finally",
+			"node_modules/file-type"
 		],
 		"extraResources": [],
 		"files": [
@@ -220,8 +224,14 @@
 			"dist/*.node",
 			"dist/workers/**/*",
 			"!node_modules/**/*",
-			"node_modules/google-protobuf",
-			"node_modules/grpc-web",
+			{
+				"from": "node_modules/google-protobuf",
+				"to": "node_modules/google-protobuf"
+			},
+			{
+				"from": "node_modules/grpc-web",
+				"to": "node_modules/grpc-web"
+			},
 			{
 				"from": "node_modules/lodash.isequal",
 				"to": "node_modules/lodash.isequal"
@@ -229,6 +239,30 @@
 			{
 				"from": "node_modules/lodash.escaperegexp",
 				"to": "node_modules/lodash.escaperegexp"
+			},
+			{
+				"from": "node_modules/read-chunk",
+				"to": "node_modules/read-chunk"
+			},
+			{
+				"from": "node_modules/with-open-file",
+				"to": "node_modules/with-open-file"
+			},
+			{
+				"from": "node_modules/@electron/remote",
+				"to": "node_modules/@electron/remote"
+			},
+			{
+				"from": "node_modules/p-try",
+				"to": "node_modules/p-try"
+			},
+			{
+				"from": "node_modules/p-finally",
+				"to": "node_modules/p-finally"
+			},
+			{
+				"from": "node_modules/file-type",
+				"to": "node_modules/file-type"
 			},
 			{
 				"from": "node_modules/@electron",
@@ -257,10 +291,6 @@
 			{
 				"from": "node_modules/debug",
 				"to": "node_modules/debug"
-			},
-			{
-				"from": "node_modules/electron",
-				"to": "node_modules/electron"
 			},
 			{
 				"from": "node_modules/electron-dl",

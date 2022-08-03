@@ -1,5 +1,5 @@
 const { app, BrowserWindow, nativeImage, dialog, screen } = require('electron');
-const { is } = require('electron-util');
+const { is, fixPathForAsarUnpack } = require('electron-util');
 const version = app.getVersion();
 const path = require('path');
 const windowStateKeeper = require('electron-window-state');
@@ -73,7 +73,7 @@ class WindowManager {
 			height: DEFAULT_HEIGHT,
 
 			webPreferences: {
-				preload: path.join(Util.electronPath(), 'js', 'preload.js'),
+				preload: fixPathForAsarUnpack(path.join(Util.electronPath(), 'js', 'preload.js')),
 			},
 		};
 

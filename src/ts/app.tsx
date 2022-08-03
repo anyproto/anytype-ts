@@ -438,8 +438,8 @@ class App extends React.Component<Props, State> {
 
 		const cb = () => {
 			logo.css({ opacity: 0 });
-			window.setTimeout(() => { loader.css({ opacity: 0 }); }, 500);
-			window.setTimeout(() => { loader.remove(); }, 1000);
+			window.setTimeout(() => { loader.css({ opacity: 0 }); }, 1000);
+			window.setTimeout(() => { loader.remove(); }, 1500);
 		};
 
 		if (accountId) {
