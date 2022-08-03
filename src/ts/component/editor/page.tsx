@@ -808,7 +808,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			// Enter
 			keyboard.shortcut('enter, shift+enter', e, (pressed: string) => {
 				if (isInsideTable && (pressed == 'enter')) {
-					this.onArrowVertical(e, 'arrowdown', { from: length, to: length }, length, props);
+					this.onArrowVertical(e, Key.down, { from: length, to: length }, length, props);
 				} else {
 					this.onEnterBlock(e, range, pressed);
 				};
@@ -816,10 +816,12 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 			// Tab, indent block
 			keyboard.shortcut('tab, shift+tab', e, (pressed: string) => {
+				const isShift = pressed.match('shift') ? true : false;
+
 				if (isInsideTable) {
-					this.onArrowHorizontal (e, 'arrowright', { from: length, to: length }, length, props);
+					this.onArrowHorizontal(e, isShift ? Key.left : Key.right, { from: length, to: length }, length, props);
 				} else {
-					this.onTabBlock(e, pressed);
+					this.onTabBlock(e, isShift);
 				};
 			});
 
@@ -1112,7 +1114,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 	};
 
 	// Indentation
-	onTabBlock (e: any, pressed: string) {
+	onTabBlock (e: any, isShift: boolean) {
 		e.preventDefault();
 			
 		const { rootId } = this.props;
@@ -1123,7 +1125,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			return;
 		};
 
-		const isShift = pressed.match('shift');
 		const element = blockStore.getMapElement(rootId, block.id);
 		const parent = blockStore.getLeaf(rootId, element.parentId);
 		const parentElement = blockStore.getMapElement(rootId, parent.id);
@@ -1289,7 +1290,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 	onArrowHorizontal (e: any, pressed: string, range: I.TextRange, length: number, props: any) {
 		const { focused } = focus.state;
-		const { rootId, isPopup } = this.props;
+		const { rootId } = this.props;
 		const { isInsideTable } = props;
 		const block = blockStore.getLeaf(rootId, focused);
 		const dir = pressed.match(Key.left) ? -1 : 1;
