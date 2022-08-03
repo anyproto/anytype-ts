@@ -23,6 +23,7 @@ const WindowManager = require('./electron/js/window.js');
 const Server = require('./electron/js/server.js');
 const Util = require('./electron/js/util.js');
 
+app.commandLine.appendSwitch("ignore-connections-limit", "localhost, 127.0.0.1");
 app.removeAsDefaultProtocolClient(protocol);
 
 if (process.defaultApp) {
