@@ -23,7 +23,7 @@ const WindowManager = require('./electron/js/window.js');
 const Server = require('./electron/js/server.js');
 const Util = require('./electron/js/util.js');
 
-app.commandLine.appendSwitch("ignore-connections-limit", "localhost, 127.0.0.1");
+app.commandLine.appendSwitch('ignore-connections-limit', 'localhost, 127.0.0.1');
 app.removeAsDefaultProtocolClient(protocol);
 
 if (process.defaultApp) {
@@ -208,15 +208,5 @@ app.on('open-url', (e, url) => {
 	if (mainWindow) {
 		Util.send(mainWindow, 'route', Util.getRouteFromUrl(url));
 		mainWindow.show();
-	};
-});
-
-app.on('certificate-error', (e, webContents, url, error, certificate, callback) => {
-	const u = new URL(url);
-	if ([ '127.0.0.1', 'localhost' ].includes(u.hostname)) {
-		e.preventDefault();
-		callback(true);
-	} else {
-		callback(false);
 	};
 });
