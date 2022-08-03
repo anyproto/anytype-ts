@@ -22,7 +22,6 @@ import { analytics } from './analytics';
 import { crumbs } from './crumbs';
 import { history } from './history';
 import Action from './action';
-import * as Docs from 'Docs';
 import Onboarding from './onboarding';
 
 const Constant = require('json/constant.json');
@@ -57,7 +56,6 @@ export {
 	C,
 	Response,
 	M,
-	Docs,
 	translate,
 	analytics,
 	crumbs,

@@ -1,8 +1,9 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon } from 'Component';
-import { I, Docs, Onboarding, Util, analytics, keyboard } from 'Lib';
+import { I, Onboarding, Util, analytics, keyboard } from 'Lib';
 import { menuStore } from 'Store';
+import * as Docs from 'Docs';
 
 interface Props extends I.Menu {};
 

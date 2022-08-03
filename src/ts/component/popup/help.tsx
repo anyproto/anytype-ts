@@ -2,7 +2,8 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Label, Icon, Cover, Button } from 'Component';
-import { I, Docs, Util, translate } from 'Lib';
+import { I, Util, translate } from 'Lib';
+import * as Docs from 'Docs';
 import Block from 'Component/block/help';
 
 interface Props extends I.Popup, RouteComponentProps<any> {};
