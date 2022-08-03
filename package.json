@@ -13,7 +13,7 @@
 		"start:dev": "npm-run-all --parallel start:watch start:electron-wait-webpack",
 		"start:dev-win": "npm-run-all --parallel start:watch start:electron-wait-webpack-win",
 		"build": "webpack --mode=production --node-env=production  -p --config webpack.config.js",
-		"build:deps": "webpack --config webpack.node.config.js --display-modules --display-cached | grep \"node_modules\" | sed 's/.*\\(node_modules\\/[^\\/]*\\).*/\\1/' | uniq | node save-node-deps.js",
+		"build:deps": "webpack --config webpack.node.config.js --stats detailed | grep 'node_modules' | sed 's/.*\\(node_modules\\/[^\\/[:space:]]\\{1,\\}\\)\\/.*/\\1/' | uniq | node save-node-deps.js",
 		"dist:mac": "webpack --mode=production --node-env=production -p && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` electron-builder --macos --arm64 --x64",
 		"dist:macarm": "webpack --mode=production --node-env=production -p && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` electron-builder --macos --arm64",
 		"dist:macamd": "webpack --mode=production --node-env=production -p && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` electron-builder --macos --x64",
@@ -243,10 +243,6 @@
 				"to": "node_modules/balanced-match"
 			},
 			{
-				"from": "node_modules/bindings",
-				"to": "node_modules/bindings"
-			},
-			{
 				"from": "node_modules/brace-expansion",
 				"to": "node_modules/brace-expansion"
 			},
@@ -301,14 +297,6 @@
 			{
 				"from": "node_modules/ext-name",
 				"to": "node_modules/ext-name"
-			},
-			{
-				"from": "node_modules/file-type",
-				"to": "node_modules/file-type"
-			},
-			{
-				"from": "node_modules/file-uri-to-path",
-				"to": "node_modules/file-uri-to-path"
 			},
 			{
 				"from": "node_modules/fs-extra",
@@ -411,14 +399,6 @@
 				"to": "node_modules/once"
 			},
 			{
-				"from": "node_modules/p-finally",
-				"to": "node_modules/p-finally"
-			},
-			{
-				"from": "node_modules/p-try",
-				"to": "node_modules/p-try"
-			},
-			{
 				"from": "node_modules/path-exists",
 				"to": "node_modules/path-exists"
 			},
@@ -427,16 +407,8 @@
 				"to": "node_modules/path-is-absolute"
 			},
 			{
-				"from": "node_modules/pify",
-				"to": "node_modules/pify"
-			},
-			{
 				"from": "node_modules/pupa",
 				"to": "node_modules/pupa"
-			},
-			{
-				"from": "node_modules/read-chunk",
-				"to": "node_modules/read-chunk"
 			},
 			{
 				"from": "node_modules/rimraf",
@@ -473,10 +445,6 @@
 			{
 				"from": "node_modules/unused-filename",
 				"to": "node_modules/unused-filename"
-			},
-			{
-				"from": "node_modules/with-open-file",
-				"to": "node_modules/with-open-file"
 			},
 			{
 				"from": "node_modules/wrappy",

@@ -17,14 +17,7 @@ stdin.on('end', function() {
 	let packageJSON = JSON.parse(packageFile);
 
 	lines = [ ...new Set(lines) ];
-	lines = lines.filter(function (el) {
-		return el != "";
-	}).map((it) => {
-		return {
-			from: it,
-			to: it,
-		};
-	});
+	lines = lines.filter((el) => { return el && el.match(/^node_modules/); }).map((it) => { return { from: it, to: it }; });
 
 	packageJSON.build.files = baseDepsJSON.concat(lines);
 	let jsonS = JSON.stringify(packageJSON, null, '\t');
