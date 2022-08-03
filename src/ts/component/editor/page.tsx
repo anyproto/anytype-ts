@@ -1621,7 +1621,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			{ id: 'link', name: 'Create link' },
 			isEmpty && !isInsideTable ? { id: 'object', name: 'Create bookmark object' } : null,
 			!isInsideTable ? { id: 'block', name: 'Create bookmark block' } : null,
-			{ id: 'cancel', name: 'Cancel' },
+			{ id: 'cancel', name: 'Paste as text' },
 			//{ id: 'embed', name: 'Create embed' },
 		].filter(it => it);
 
