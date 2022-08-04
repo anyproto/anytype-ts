@@ -508,7 +508,9 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				break;
 
 			case 'pageReload':
-				C.ObjectBookmarkFetch(rootId, object.url);
+				C.ObjectBookmarkFetch(rootId, object.url, () => {
+					analytics.event('ReloadSourceData');
+				});
 				break;
 
 			case 'fav':
