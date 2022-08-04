@@ -437,11 +437,14 @@ class App extends React.Component<Props, State> {
 		this.initTheme(config.theme);
 
 		const cb = () => {
-			logo.css({ opacity: 0 });
 			window.setTimeout(() => { 
-				loader.css({ opacity: 0 }); 
-				window.setTimeout(() => { loader.remove(); }, 500);
-			}, 1500);
+				logo.css({ opacity: 0 });
+
+				window.setTimeout(() => { 
+					loader.css({ opacity: 0 }); 
+					window.setTimeout(() => { loader.remove(); }, 500);
+				}, 750);
+			}, 1000);
 		};
 
 		if (accountId) {
