@@ -2,19 +2,13 @@ const path = require('path');
 const process = require('process');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
-module.exports = (env) => {
+module.exports = (env, argv) => {
 	const port = process.env.SERVER_PORT;
 
 	return {
-		mode: env.NODE_ENV,
-	
-		//devtool: 'source-map',
-
-		//target: 'electron-renderer',
-
 		optimization: {
 			minimize: false,
-			removeAvailableModules: false,
+			removeAvailableModules: true,
     		removeEmptyChunks: true,
     		splitChunks: false,
 		},
