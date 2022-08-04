@@ -6,7 +6,7 @@ const path = require('path');
 const readChunk = require('read-chunk');
 const fileType = require('file-type');
 const userPath = app.getPath('userData');
-const tmpPath = path.join(userPath, 'tmp');
+const tmpPath = app.getPath('temp');
 const logPath = path.join(userPath, 'logs');
 
 contextBridge.exposeInMainWorld('Electron', {

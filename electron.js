@@ -48,9 +48,6 @@ let csp = [
 	"frame-src chrome-extension://react-developer-tools"
 ];
 
-remote.initialize();
-Util.setAppPath(path.join(__dirname));
-
 if (is.development && !port) {
 	console.error('ERROR: Please define SERVER_PORT env var');
 	Api.exit(mainWindow, false);
@@ -60,8 +57,9 @@ if (app.isPackaged && !app.requestSingleInstanceLock()) {
 	Api.exit(mainWindow, false);
 };
 
+remote.initialize();
 storage.setDataPath(userPath);
-Util.mkDir(tmpPath);
+Util.setAppPath(path.join(__dirname));
 Util.mkDir(logPath);
 
 if (process.env.ANYTYPE_USE_SIDE_SERVER) {
