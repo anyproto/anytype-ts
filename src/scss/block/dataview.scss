@@ -24,18 +24,22 @@
 			.side.right { text-align: right; width: 120px; }
 
 			.views { white-space: nowrap; display: inline-block; line-height: 20px; }
-			.viewItem { 
-				margin-right: 20px; display: inline-block; vertical-align: top; transition: color 0.2s ease-in-out; cursor: pointer; 
-				white-space: nowrap; @include text-header3; @include text-overflow-nw; max-width: 120px; color: $colorMediumGrey; line-height: 20px; 
+			.views {
+				.viewItem { 
+					margin-right: 20px; display: inline-block; vertical-align: top; transition: color 0.2s ease-in-out; cursor: pointer; 
+					white-space: nowrap; @include text-header3; @include text-overflow-nw; max-width: 120px; color: $colorMediumGrey; line-height: 20px; 
+				}
+				.viewItem { 
+					.icon.arrow { width: 20px; height: 20px; background-image: url('~img/arrow/view.svg'); }
+				}
+				.viewItem:last-child { margin: 0px; }
+				.viewItem:hover, .viewItem.active { color: $colorBlack; }
+				
+				.viewItem.isDragging { background: rgba(255,255,255,0.5); padding: 0px 4px; border-radius: 4px; width: auto !important; }
+				.viewItem.btn { line-height: 20px; }
+
+				.icon.plus { opacity: 0; }
 			}
-			.viewItem { 
-				.icon.arrow { width: 20px; height: 20px; background-image: url('~img/arrow/view.svg'); }
-			}
-			.viewItem:last-child { margin: 0px; }
-			.viewItem:hover, .viewItem.active { color: $colorBlack; }
-			
-			.viewItem.isDragging { background: rgba(255,255,255,0.5); padding: 0px 4px; border-radius: 4px; width: auto !important; }
-			.viewItem.btn { line-height: 20px; }
 
 			.first { display: none; }
 
@@ -69,6 +73,11 @@
 		}
 		.dataviewControls.viewGrid {
 			.line { width: 100%; margin: 0px; }
+		}
+		.dataviewControls:hover {
+			.views {
+				.icon.plus { opacity: 1; }
+			}
 		}
 
 		.content {
