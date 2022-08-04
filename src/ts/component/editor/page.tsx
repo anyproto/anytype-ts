@@ -1316,6 +1316,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 				return;
 			};
 
+			const fill = (id: string, callBack: () => void) => {
+				C.BlockTableRowListFill(rootId, [ id ], callBack);
+			};	
+
 			const cb = () => {
 				let nextCellId = '';
 
@@ -1327,7 +1331,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 					const nextRow = this.getNextTableRow(block.id, dir);
 					if (nextRow) {
 						const nextRowElement = blockStore.getMapElement(rootId, nextRow.id);
-						nextCellId = nextRowElement.childrenIds[dir > 0 ? 0 : nextRowElement.childrenIds.length - 1];
+						fill(nextRow.id, () => {
+							nextCellId = nextRowElement.childrenIds[dir > 0 ? 0 : nextRowElement.childrenIds.length - 1];
+							this.focusNextBlock(blockStore.getLeaf(rootId, nextCellId), dir);
+						});
 					};
 				};
 
@@ -1335,7 +1342,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			};
 
 			if (rowElement.childrenIds.length - 1 < idx) {
-				C.BlockTableRowListFill(rootId, [ element.parentId ], cb);
+				fill(element.parentId, cb);
 			} else {
 				cb();
 			};
