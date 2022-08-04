@@ -191,7 +191,12 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 	getKeys (id: string): string[] {
 		const view = this.getView(id);
-		const relationKeys = view.relations.map((it: any) => { return it.relationKey; });
+		const relationKeys = (view.relations || []).map(it => it.relationKey);
+
+		let keys = Constant.defaultRelationKeys.concat(Constant.coverRelationKeys);
+		if (view) {
+			keys = keys.concat(relationKeys);
+		};
 
 		return Util.arrayUnique(Constant.defaultRelationKeys.concat(relationKeys).concat(Constant.coverRelationKeys));
 	};
