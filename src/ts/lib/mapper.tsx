@@ -189,8 +189,8 @@ const Mapper = {
 				sources: obj.getSourceList(),
 				views: (obj.getViewsList() || []).map(Mapper.From.View),
 				relations: (obj.getRelationsList() || []).map(Mapper.From.Relation),
-				groupOrder: (obj.getGroupordersList() || []).map(Mapper.From.GroupOrder),
-				objectOrder: (obj.getObjectordersList() || []).map(Mapper.From.ObjectOrder),
+				groupOrder: [], //(obj.getGroupordersList() || []).map(Mapper.From.GroupOrder),
+				objectOrder: [], //(obj.getObjectordersList() || []).map(Mapper.From.ObjectOrder),
 			};
 		},
 
@@ -344,7 +344,7 @@ const Mapper = {
 				type: obj.getType(),
 				name: obj.getName(),
 				coverRelationKey: obj.getCoverrelationkey(),
-				groupRelationKey: obj.getGrouprelationkey(),
+				groupRelationKey: '', //obj.getGrouprelationkey(),
 				coverFit: obj.getCoverfit(),
 				cardSize: obj.getCardsize(),
 				hideIcon: obj.getHideicon(),

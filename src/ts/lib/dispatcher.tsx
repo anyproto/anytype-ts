@@ -556,15 +556,6 @@ class Dispatcher {
 					blockStore.update(rootId, block);
 					break;
 
-				case 'blockDataviewRelationSet':
-					id = data.getId();
-
-					const relation = Mapper.From.Relation(data.getRelation());
-					const item = dbStore.getRelation(rootId, id, relation.relationKey);
-
-					item ? dbStore.relationUpdate(rootId, id, relation) : dbStore.relationAdd(rootId, id, relation);
-					break;
-
 				case 'blockDataviewRelationDelete':
 					id = data.getId();
 					dbStore.relationDelete(rootId, id, data.getRelationkey());

@@ -18,10 +18,7 @@ class DbStore {
             objectTypes: computed,
 			clearAll: action,
             objectTypesSet: action,
-            relationsSet: action,
             relationsClear: action,
-            relationAdd: action,
-            relationUpdate: action,
             relationDelete: action,
             viewsSet: action,
 			viewsSort: action,
@@ -68,12 +65,7 @@ class DbStore {
 
 		list = list.map(it => new M.Relation(it));
 		for (let item of list) {
-			const check = this.getRelation(rootId, blockId, item.relationKey);
-			if (check) {
-				this.relationUpdate(rootId, blockId, item);
-			} else {
-				relations.push(item);
-			};
+			relations.push(item);
 		};
 		
 		this.relationMap.set(key, relations);
@@ -81,28 +73,6 @@ class DbStore {
 
     relationsClear (rootId: string, blockId: string) {
 		this.relationMap.delete(this.getId(rootId, blockId));
-	};
-
-    relationAdd (rootId: string, blockId: string, item: any) {
-		const relations = this.getRelations(rootId, blockId);
-		const relation = this.getRelation(rootId, blockId, item.relationKey);
-
-		if (relation) {
-			this.relationUpdate(rootId, blockId, item);
-		} else {
-			relations.push(new M.Relation(item));
-		};
-	};
-
-    relationUpdate (rootId: string, blockId: string, item: any) {
-		const relations = this.getRelations(rootId, blockId);
-		const idx = relations.findIndex(it => it.relationKey == item.relationKey);
-
-		if (idx < 0) {
-			return;
-		};
-
-		set(relations[idx], item);
 	};
 
     relationDelete (rootId: string, blockId: string, key: string) {
