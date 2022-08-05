@@ -1,5 +1,3 @@
-import { I } from 'ts/lib';
-
 export enum SmartBlockType {
     Breadcrumbs		 = 0,
 
@@ -95,11 +93,4 @@ export interface ObjectType {
 	isArchived: boolean;
 	isReadonly: boolean;
 	types: SmartBlockType[];
-};
-
-export interface SelectOption {
-	id: string;
-	text: string;
-	color: string;
-	scope: I.OptionScope;
 };

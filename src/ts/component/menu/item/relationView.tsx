@@ -23,7 +23,7 @@ interface Props {
 	onFav(e: any, item: any): void;
 	onCellClick(e: any, relationKey: string, index: number): void;
 	onCellChange(id: string, relationKey: string, value: any, callBack?: (message: any) => void): void;
-	optionCommand(code: string, rootId: string, blockId: string, relationKey: string, recordId: string, option: I.SelectOption, callBack?: (message: any) => void): void;
+	optionCommand(code: string, rootId: string, blockId: string, relationKey: string, recordId: string, option: any, callBack?: (message: any) => void): void;
 };
 
 const PREFIX = 'menuBlockRelationView';

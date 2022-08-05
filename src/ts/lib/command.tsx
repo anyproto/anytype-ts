@@ -863,7 +863,7 @@ const BlockDataviewRecordRelationOptionAdd = (contextId: string, blockId: string
 	dispatcher.request(BlockDataviewRecordRelationOptionAdd.name, request, callBack);
 };
 
-const BlockDataviewRecordRelationOptionUpdate = (contextId: string, blockId: string, relationKey: string, recordId: string, option: I.SelectOption, callBack?: (message: any) => void) => {
+const BlockDataviewRecordRelationOptionUpdate = (contextId: string, blockId: string, relationKey: string, recordId: string, option: any, callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockDataviewRecord.RelationOption.Update.Request();
 	
 	request.setContextid(contextId);
@@ -1227,7 +1227,7 @@ const ObjectRelationOptionAdd = (contextId: string, relationKey: string, option:
 	dispatcher.request(ObjectRelationOptionAdd.name, request, callBack);
 };
 
-const ObjectRelationOptionUpdate = (contextId: string, relationKey: string, option: I.SelectOption, callBack?: (message: any) => void) => {
+const ObjectRelationOptionUpdate = (contextId: string, relationKey: string, option: any, callBack?: (message: any) => void) => {
 	const request = new Rpc.ObjectRelationOption.Update.Request();
 	
 	request.setContextid(contextId);

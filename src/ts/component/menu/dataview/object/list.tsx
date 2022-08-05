@@ -224,7 +224,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		
 		let ret = Util.objectCopy(this.items);
 
-		ret = ret.filter((it: I.SelectOption) => { return value.indexOf(it.id) < 0; });
+		ret = ret.filter((it: any) => { return value.indexOf(it.id) < 0; });
 
 		if (data.filter && canAdd) {
 			ret.unshift({ id: 'add', name: `Create object named "${data.filter}"` });

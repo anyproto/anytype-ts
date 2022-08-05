@@ -312,7 +312,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 		});
 	};
 
-	getItems (withSections: boolean): I.SelectOption[] {
+	getItems (withSections: boolean): any[] {
 		const { param } = this.props;
 		const { data } = param;
 		const { canAdd, filterMapper } = data;
@@ -334,8 +334,8 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 
 		if (data.filter) {
 			const filter = new RegExp(Util.filterFix(data.filter), 'gi');
-			check = items.filter((it: I.SelectOption) => { return it.text.toLowerCase() == data.filter.toLowerCase(); });
-			items = items.filter((it: I.SelectOption) => { return it.text.match(filter); });
+			check = items.filter((it: any) => { return it.text.toLowerCase() == data.filter.toLowerCase(); });
+			items = items.filter((it: any) => { return it.text.match(filter); });
 
 			if (canAdd && !check.length) {
 				const name = isStatus ? `Set status "${data.filter}"` : `Create option "${data.filter}"`;
@@ -343,7 +343,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 			};
 		};
 
-		items = items.filter((it: I.SelectOption) => { return value.indexOf(it.id) < 0; });
+		items = items.filter((it: any) => { return value.indexOf(it.id) < 0; });
 
 		for (let item of items) {
 			if (!sections[item.scope]) {

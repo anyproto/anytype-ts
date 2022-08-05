@@ -159,7 +159,7 @@ const BlockRelation = observer(class BlockRelation extends React.Component<Props
 		focus.set(block.id, { from: 0, to: 0 });
 	};
 
-	optionCommand (code: string, rootId: string, blockId: string, relationKey: string, recordId: string, option: I.SelectOption, callBack?: (message: any) => void) {
+	optionCommand (code: string, rootId: string, blockId: string, relationKey: string, recordId: string, option: any, callBack?: (message: any) => void) {
 		switch (code) {
 			case 'add':
 				C.ObjectRelationOptionAdd(rootId, relationKey, option, callBack);

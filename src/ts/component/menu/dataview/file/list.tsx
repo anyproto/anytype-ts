@@ -203,7 +203,7 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 		const value = Relation.getArrayValue(data.value);
 
 		let ret = Util.objectCopy(this.items);
-		ret = ret.filter((it: I.SelectOption) => { return value.indexOf(it.id) < 0; });
+		ret = ret.filter((it: any) => { return value.indexOf(it.id) < 0; });
 		return ret;
 	};
 	

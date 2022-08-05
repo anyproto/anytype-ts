@@ -349,7 +349,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		analytics.event(key, { type: 'menu' });
 	};
 
-	optionCommand (code: string, rootId: string, blockId: string, relationKey: string, recordId: string, option: I.SelectOption, callBack?: (message: any) => void) {
+	optionCommand (code: string, rootId: string, blockId: string, relationKey: string, recordId: string, option: any, callBack?: (message: any) => void) {
 		switch (code) {
 			case 'add':
 				C.ObjectRelationOptionAdd(rootId, relationKey, option, callBack);

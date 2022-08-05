@@ -20,7 +20,7 @@ interface Props extends I.Cell {
 	tooltipX?: I.MenuDirection;
 	tooltipY?: I.MenuDirection;
 	maxWidth?: number;
-	optionCommand?: (code: string, rootId: string, blockId: string, relationKey: string, recordId: string, option: I.SelectOption, callBack?: (message: any) => void) => void;
+	optionCommand?: (code: string, rootId: string, blockId: string, relationKey: string, recordId: string, option: any, callBack?: (message: any) => void) => void;
 };
 
 const $ = require('jquery');
