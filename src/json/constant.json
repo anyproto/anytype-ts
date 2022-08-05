@@ -166,7 +166,8 @@
 		"deleted": "deleted",
 		"sidebar": "sidebar",
 		"type": "type",
-		"relation": "relation"
+		"relation": "relation",
+		"option": "option"
 	},
 
 	"typeId": {
@@ -182,7 +183,8 @@
 		"relation": "_otrelation",
 		"note": "_otnote",
 		"task": "_ottask",
-		"bookmark": "_otbookmark"
+		"bookmark": "_otbookmark",
+		"option": "_otrelationoption"
 	},
 
 	"blockId": {

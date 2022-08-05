@@ -322,6 +322,10 @@ class DataUtil {
 		C.ObjectSearchSubscribe(Constant.subId.relation, [
 			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.relation }
 		], [], Constant.defaultRelationKeys, [], 0, 0, true, '', '', true);
+
+		C.ObjectSearchSubscribe(Constant.subId.option, [
+			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.option }
+		], [], Constant.defaultRelationKeys, [], 0, 0, true, '', '', true);
 		
 		if (profile) {
 			C.ObjectSubscribeIds(Constant.subId.profile, [ profile ], Constant.defaultRelationKeys, true);
