@@ -115,9 +115,6 @@ const BlockRelation = observer(class BlockRelation extends React.Component<Props
 				menuIdEdit: 'blockRelationEdit',
 				skipIds: [],
 				ref: 'block',
-				listCommand: (rootId: string, blockId: string, callBack?: (message: any) => void) => {
-					C.ObjectRelationListAvailable(rootId, callBack);
-				},
 				addCommand: (rootId: string, blockId: string, relation: any, onChange?: (relation: any) => void) => {
 					C.ObjectRelationAdd(rootId, relation, (message: any) => {
 						if (message.error.code) {

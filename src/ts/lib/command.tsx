@@ -1275,13 +1275,6 @@ const ObjectRelationDelete = (contextId: string, relationKey: string, callBack?:
 	dispatcher.request(ObjectRelationDelete.name, request, callBack);
 };
 
-const ObjectRelationListAvailable = (contextId: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.ObjectRelation.ListAvailable.Request();
-	
-	request.setContextid(contextId);
-
-	dispatcher.request(ObjectRelationListAvailable.name, request, callBack);
-};
 
 const ObjectRelationAddFeatured = (contextId: string, keys: string[], callBack?: (message: any) => void) => {
 	const request = new Rpc.ObjectRelation.AddFeatured.Request();
@@ -1654,7 +1647,6 @@ export {
 	ObjectRelationAdd,
 	ObjectRelationUpdate,
 	ObjectRelationDelete,
-	ObjectRelationListAvailable,
 
 	ObjectOpen,
 	ObjectShow,

@@ -273,6 +273,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 
 		this.setState({ loading: true });
 
+		/*
 		C.ObjectRelationListAvailable(rootId, (message: any) => {
 			this.relations = message.relations.sort(DataUtil.sortByName).map((it: any) => {
 				it.id = it.relationKey;
@@ -299,6 +300,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 
 			this.setState({ loading: false });
 		});
+		*/
 	};
 	
 	checkFilter () {
