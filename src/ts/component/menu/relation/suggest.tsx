@@ -289,10 +289,10 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		const { getId, position } = this.props;
 		const items = this.getItems();
 		const obj = $(`#${getId()} .content`);
-		const offset = 68;
+		const offset = 60;
 		const height = Math.max(HEIGHT * 1 + offset, Math.min(360, items.length * HEIGHT + offset));
 
-		obj.css({ height: height });
+		obj.css({ height });
 		position();
 	};
 

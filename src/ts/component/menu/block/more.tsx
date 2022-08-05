@@ -272,7 +272,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			return;
 		};
 		
-		let types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map((it: I.ObjectType) => { return it.id; });
+		let types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map(it => it.id);
 		let filters = [];
 		let menuId = '';
 		let menuParam: I.MenuParam = {
@@ -428,10 +428,6 @@ class MenuBlockMore extends React.Component<Props, {}> {
 						return;
 					};
 
-					if ((blockId == rootId) && (object.type == Constant.typeId.type)) {
-						dbStore.objectTypeUpdate({ id: object.id, isArchived: true });
-					};
-
 					keyboard.onBack();
 					analytics.event('MoveToBin', { count: 1 });
 				});
@@ -441,10 +437,6 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				C.ObjectSetIsArchived(rootId, false, (message: any) => {
 					if (message.error.code) {
 						return;
-					};
-
-					if ((blockId == rootId) && (object.type == Constant.typeId.type)) {
-						dbStore.objectTypeUpdate({ id: object.id, isArchived: false });
 					};
 
 					analytics.event('RestoreFromBin', { count: 1 });

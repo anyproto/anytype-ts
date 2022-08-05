@@ -72,7 +72,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 			return null;
 		};
 
-		const profile = detailStore.get(Constant.subIds.profile, blockStore.profile);
+		const profile = detailStore.get(Constant.subId.profile, blockStore.profile);
 		const list = this.getList();
 		const length = list.length;
 		const isDeleted = authStore.accountIsDeleted();
@@ -242,7 +242,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		this.unbind();
 
 		menuStore.closeAll(Constant.menuIds.index);
-		Action.dbClear(Constant.subIds.index);
+		Action.dbClear(Constant.subId.index);
 	};
 
 	rebind () {
@@ -391,7 +391,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 		this.setState({ loading: true });
 
-		C.ObjectSearchSubscribe(Constant.subIds.index, filters, sorts, Constant.defaultRelationKeys, [], 0, 100, true, '', '', false, (message: any) => {
+		C.ObjectSearchSubscribe(Constant.subId.index, filters, sorts, Constant.defaultRelationKeys, [], 0, 100, true, '', '', false, (message: any) => {
 			if (!this._isMounted || message.error.code) {
 				return;
 			};
@@ -453,7 +453,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 	};
 	
 	onProfile (e: any) {
-		const object = detailStore.get(Constant.subIds.profile, blockStore.profile);
+		const object = detailStore.get(Constant.subId.profile, blockStore.profile);
 		DataUtil.objectOpenEvent(e, object);
 	};
 	
@@ -624,13 +624,6 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 		C.ObjectListSetIsArchived(ids, v, () => {
 			analytics.event(v ? 'MoveToBin' : 'RestoreFromBin', { count: items.length });
-
-			items.forEach((it: any) => {
-				const object = this.getObject(it);
-				if (object.type == Constant.typeId.type) {
-					dbStore.objectTypeUpdate({ id: object.id, isArchived: v });
-				};
-			});
 		});
 	};
 
@@ -686,7 +679,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		let link = null;
 		let remove = null;
 		let move = { id: 'move', icon: 'move', name: 'Move to', arrow: true };
-		let types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map((it: I.ObjectType) => { return it.id; });
+		let types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map(it => it.id);
 		
 		if (favorites.length) {
 			link = { id: 'unfav', icon: 'unfav', name: 'Remove from Favorites' };
@@ -884,7 +877,8 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		const { root, recent } = blockStore;
 		const { config } = commonStore;
 		const { tab, filter } = this.state;
-		const records = dbStore.getRecords(Constant.subIds.index, '');
+		const records = dbStore.getRecords(Constant.subId.index, '');
+		const isRecent = tab == I.TabIndex.Recent;
 
 		let reg = null;
 		let list: any[] = [];
@@ -898,7 +892,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		switch (tab) {
 			case I.TabIndex.Favorite:
 			case I.TabIndex.Recent:
-				if (tab == I.TabIndex.Recent) {
+				if (isRecent) {
 					rootId = recent;
 					recentIds = crumbs.get(I.CrumbsType.Recent).ids;
 				};
@@ -909,14 +903,18 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 					};
 
 					const object = detailStore.get(rootId, it.content.targetBlockId, []);
-					const { name, isArchived, isDeleted } = object;
+					const { name, isArchived, isDeleted, type } = object;
 
 					if (reg && name && !name.match(reg)) {
 						return false;
 					};
+					if (isRecent && DataUtil.getSystemTypes().includes(type)) {
+						return false;
+					};
+
 					return !isArchived && !isDeleted;
 				}).map((it: any) => {
-					if (tab == I.TabIndex.Recent) {
+					if (isRecent) {
 						it._order = recentIds.findIndex((id: string) => { return id == it.content.targetBlockId; });
 					};
 
@@ -925,7 +923,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 					return it;
 				});
 
-				if (tab == I.TabIndex.Recent) {
+				if (isRecent) {
 					list.sort((c1: any, c2: any) => {
 						if (c1._order > c2._order) return -1;
 						if (c2._order < c1._order) return 1;
@@ -936,9 +934,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 				break;
 
 			default:
-				list = records.map((it: any) => {
-					return detailStore.get(Constant.subIds.index, it.id);
-				});
+				list = records.map(id => detailStore.get(Constant.subId.index, id));
 				break;
 		};
 

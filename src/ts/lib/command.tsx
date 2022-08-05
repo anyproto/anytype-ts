@@ -935,10 +935,11 @@ const ObjectTypeList = (callBack?: (message: any) => void) => {
 	dispatcher.request(ObjectTypeList.name, request, callBack);
 };
 
-const ObjectTypeCreate = (objectType: any, callBack?: (message: any) => void) => {
+const ObjectTypeCreate = (details: any, flags: I.ObjectFlag[], callBack?: (message: any) => void) => {
 	const request = new Rpc.ObjectType.Create.Request();
 	
-	request.setObjecttype(Mapper.To.ObjectType(objectType));
+	request.setDetails(Encode.encodeStruct(details));
+	request.setInternalflagsList(flags.map(Mapper.To.InternalFlag))
 
 	dispatcher.request(ObjectTypeCreate.name, request, callBack);
 };
@@ -1118,7 +1119,7 @@ const OnSubscribe = (subId: string, keys: string[], message: any) => {
 		return { id: it.id, details: it }; 
 	}));
 	detailStore.set(subId, details);
-	dbStore.recordsSet(subId, '', message.records.map((it: any) => { return { id: it.id }; }));
+	dbStore.recordsSet(subId, '', message.records.map(it => it.id));
 };
 
 const ObjectSearch = (filters: I.Filter[], sorts: I.Sort[], keys: string[], fullText: string, offset: number, limit: number, callBack?: (message: any) => void) => {

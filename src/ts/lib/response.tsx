@@ -231,10 +231,10 @@ const ObjectTypeList = (response: any) => {
 
 const ObjectTypeCreate = (response: any) => {
 	return {
-		objectType: Mapper.From.ObjectType(response.getObjecttype()),
+		objectType: Decode.decodeStruct(response.getNewdetails()),
 	};
 };
-
+ 
 const ObjectTypeRelationAdd = (response: any) => {
 	return {
 		relations: (response.getRelationsList() || []).map(Mapper.From.Relation),

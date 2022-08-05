@@ -184,7 +184,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 
 				const newRecord = message.record;
 				const records = dbStore.getRecords(subId, '');
-				const oldIndex = records.findIndex(it => it.id == newRecord.id);
+				const oldIndex = records.findIndex(it => it == newRecord.id);
 				const newIndex = records.length - 1;
 
 				dbStore.recordsSet(subId, '', arrayMove(records, oldIndex, newIndex));
@@ -509,7 +509,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 
 		if (change) {
 			dbStore.recordDelete(oldSubId, '', record.id);
-			dbStore.recordAdd(newSubId, '', { id: record.id }, 1);
+			dbStore.recordAdd(newSubId, '', record.id, 1);
 
 			records = dbStore.getRecords(newSubId, '');
 			records = arrayMove(records, records.findIndex(it => it.id == record.id), this.newIndex);
@@ -518,15 +518,15 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 			detailStore.update(newSubId, { id: record.id, details: record }, true);
 			detailStore.delete(oldSubId, record.id, Object.keys(record));
 
-			orders.push({ viewId: view.id, groupId: this.oldGroupId, objectIds: dbStore.getRecords(oldSubId, '').map(it => it.id) });
-			orders.push({ viewId: view.id, groupId: this.newGroupId, objectIds: records.map(it => it.id) });
+			orders.push({ viewId: view.id, groupId: this.oldGroupId, objectIds: dbStore.getRecords(oldSubId, '') });
+			orders.push({ viewId: view.id, groupId: this.newGroupId, objectIds: records });
 
 			C.ObjectSetDetails(record.id, [ { key: view.groupRelationKey, value: newGroup.value } ], setOrder);
 		} else {
 			records = arrayMove(dbStore.getRecords(oldSubId, ''), this.oldIndex, this.newIndex);
 			dbStore.recordsSet(oldSubId, '', records);
 
-			orders.push({ viewId: view.id, groupId: this.oldGroupId, objectIds: records.map(it => it.id) });			
+			orders.push({ viewId: view.id, groupId: this.oldGroupId, objectIds: records });
 
 			setOrder();
 		};

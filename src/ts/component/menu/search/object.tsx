@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { MenuItemVertical, Filter, Loader, ObjectName, EmptySearch } from 'ts/component';
 import { I, C, keyboard, Util, DataUtil, translate, analytics } from 'ts/lib';
-import { commonStore, dbStore } from 'ts/store';
+import { commonStore, detailStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
@@ -60,7 +60,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
-			const type: any = dbStore.getObjectType(item.type);
+			const type = detailStore.get(Constant.subId.type, item.type, []);
 			const cn = [];
 			
 			if (item.id == 'add') {

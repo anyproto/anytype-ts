@@ -311,12 +311,16 @@ class DataUtil {
 			dbStore.objectTypesSet(message.objectTypes);
 		});
 
-		C.ObjectSearchSubscribe(Constant.subIds.deleted, [
+		C.ObjectSearchSubscribe(Constant.subId.deleted, [
 			{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: true }
 		], [], [ 'id', 'isDeleted' ], [], 0, 0, true, '', '', true);
+
+		C.ObjectSearchSubscribe(Constant.subId.type, [
+			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.type }
+		], [], Constant.defaultRelationKeys, [], 0, 0, true, '', '', true);
 		
 		if (profile) {
-			C.ObjectSubscribeIds(Constant.subIds.profile, [ profile ], Constant.defaultRelationKeys, true);
+			C.ObjectSubscribeIds(Constant.subId.profile, [ profile ], Constant.defaultRelationKeys, true);
 		};
 
 		C.ObjectOpen(root, '', (message: any) => {
@@ -562,6 +566,12 @@ class DataUtil {
 	getObjectTypesForNewObject (param?: any) {
 		const { withSet, withBookmark } = param || {};
 		const { config } = commonStore;
+		const page = detailStore.get(Constant.subId.type, Constant.typeId.page, []);
+		const note = detailStore.get(Constant.subId.type, Constant.typeId.note, []);
+		const set = detailStore.get(Constant.subId.type, Constant.typeId.set, []);
+		const task = detailStore.get(Constant.subId.type, Constant.typeId.task, []);
+		const bookmark = detailStore.get(Constant.subId.type, Constant.typeId.bookmark, []);
+
 		const skip = [ 
 			Constant.typeId.note, 
 			Constant.typeId.page, 
@@ -569,34 +579,29 @@ class DataUtil {
 			Constant.typeId.task,
 			Constant.typeId.bookmark,
 		];
-
+	
 		let items = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).filter((it: any) => {
-			return skip.indexOf(it.id) < 0;
+			if (!config.debug.ho) {
+				return !it.isHidden;
+			};
+			return !skip.includes(it.id);
 		});
-		if (!config.debug.ho) {
-			items = items.filter((it: I.ObjectType) => { return !it.isHidden; })
-		};
-		let page = dbStore.getObjectType(Constant.typeId.page);
-		let note = dbStore.getObjectType(Constant.typeId.note);
-		let set = dbStore.getObjectType(Constant.typeId.set);
-		let task = dbStore.getObjectType(Constant.typeId.task);
-		let bookmark = dbStore.getObjectType(Constant.typeId.bookmark);
 
-		if (withBookmark && bookmark) {
+		if (withBookmark && !bookmark._empty_) {
 			items.unshift(bookmark);
 		};
 
 		items.sort(this.sortByName);
 
-		if (withSet && set) {
+		if (withSet && !set._empty_) {
 			items.unshift(set);
 		};
 
-		if (task) {
+		if (!task._empty_) {
 			items.unshift(task);
 		};
 
-		if (page && note) {
+		if (!page._empty_ && !note._empty_) {
 			if (commonStore.type == Constant.typeId.note) {
 				items = [ page, note ].concat(items);
 			} else {
@@ -1240,6 +1245,14 @@ class DataUtil {
 			Constant.typeId.audio, 
 			Constant.typeId.video,
 		].includes(type);
+	};
+
+	getSystemTypes () {
+		return [
+			Constant.typeId.type,
+			Constant.typeId.template,
+			Constant.typeId.relation,
+		];
 	};
 
 };

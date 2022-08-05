@@ -749,15 +749,15 @@ class Dispatcher {
 		};
 
 		let records = dbStore.getRecords(sid, '');
-		let oldIndex = records.findIndex((it: any) => { return it.id == id; });
+		let oldIndex = records.findIndex((it => it == id));
 		let newIndex = 0;
 
 		if (afterId) {
-			newIndex = records.findIndex((it: any) => { return it.id == afterId; });
+			newIndex = records.findIndex(it => it == afterId);
 		};
 
 		if (oldIndex < 0) {
-			records.push({ id });
+			records.push(id);
 		};
 
 		if (oldIndex !== newIndex) {

@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Loader, Title, Label, ListObjectPreview } from 'ts/component';
-import { I, C, focus, Util, Action } from 'ts/lib';
-import { dbStore } from 'ts/store';
+import { I, C, focus, Util } from 'ts/lib';
+import { detailStore } from 'ts/store';
 
 interface Props extends I.Popup, RouteComponentProps<any> {};
 
@@ -37,7 +37,7 @@ class PopupTemplate extends React.Component<Props, State> {
 		const { param } = this.props;
 		const { data } = param;
 		const { typeId } = data;
-		const type = dbStore.getObjectType(typeId);
+		const type = detailStore.get(Constant.subId.type, typeId, []);
 		const length = items.length;
 
 		if (loading) {

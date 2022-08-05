@@ -1,5 +1,6 @@
 import { observable, action, set, intercept, makeObservable } from 'mobx';
 import { I, Relation, DataUtil, translate } from 'ts/lib';
+import { dbStore } from 'ts/store';
 
 const Constant = require('json/constant.json');
 
@@ -136,6 +137,11 @@ class DetailStore {
 
 		if (object.isDeleted) {
 			name = translate('commonDeleted');
+		};
+
+		if (object.type == Constant.typeId.type) {
+			const type = dbStore.getObjectType(object.id);
+			object._smartBlockTypes_ = type ? type.types || [] : [];
 		};
 
 		return {

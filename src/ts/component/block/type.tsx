@@ -36,7 +36,7 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 		const items = this.getItems();
 		const { filter } = this.state;
 		const object = detailStore.get(rootId, rootId, []);
-		const type: any = dbStore.getObjectType(object.type) || {};
+		const type = detailStore.get(Constant.subId.type, object.type);
 
 		const Item = (item: any) => {
 			return (

@@ -1,12 +1,15 @@
 import { observable, action, computed, set, intercept, makeObservable } from 'mobx';
 import { I, M, DataUtil, Util } from 'ts/lib';
+import { detailStore } from 'ts/store';
+
+const Constant = require('json/constant.json');
 
 class DbStore {
 
     public objectTypeList: I.ObjectType[] = observable.array([]);
     public relationMap: Map<string, I.Relation[]> = observable.map(new Map());
     public viewMap: Map<string, I.View[]> = observable.map(new Map());
-    public dataMap: Map<string, any[]> = observable.map(new Map());
+    public recordMap: Map<string, string[]> = observable.map(new Map());
     public metaMap: Map<string, any> = observable.map(new Map());
 	public groupMap: Map<string, any> = observable.map(new Map());
 
@@ -15,8 +18,6 @@ class DbStore {
             objectTypes: computed,
 			clearAll: action,
             objectTypesSet: action,
-            objectTypeAdd: action,
-            objectTypeUpdate: action,
             relationsSet: action,
             relationsClear: action,
             relationAdd: action,
@@ -33,7 +34,6 @@ class DbStore {
             recordsSet: action,
             recordsClear: action,
             recordAdd: action,
-            recordUpdate: action,
             recordDelete: action,
 			groupsSet: action,
         });
@@ -47,33 +47,18 @@ class DbStore {
 		this.objectTypeList = observable.array([]);
     	this.relationMap = observable.map(new Map());
     	this.viewMap = observable.map(new Map());
-    	this.dataMap = observable.map(new Map());
+    	this.recordMap = observable.map(new Map());
     	this.metaMap = observable.map(new Map());
 	};
 
     objectTypesSet (types: I.ObjectType[]) {
-		let list = this.objectTypeList;
-
-		types = (types || []).map((it: any) => { return new M.ObjectType(it); });
-
 		for (let type of types) {
 			const check = this.getObjectType(type.id);
 			if (check) {
-				this.objectTypeUpdate(type);
+				set(check, type);
 			} else {
-				list.push(type);
+				this.objectTypeList.push(new M.ObjectType(type));
 			};
-		};
-	};
-
-    objectTypeAdd (type: any) {
-		this.objectTypeList.push(new M.ObjectType(type));
-	};
-
-    objectTypeUpdate (type: any) {
-		const item = this.getObjectType(type.id);
-		if (item) {
-			set(item, type);
 		};
 	};
 
@@ -221,42 +206,23 @@ class DbStore {
 		this.metaMap.delete(this.getId(rootId, blockId));
 	};
 
-    recordsSet (rootId: string, blockId: string, list: any[]) {
-		list = list.map((obj: any) => {
-			obj = observable(obj);
-			intercept(obj as any, (change: any) => { return Util.intercept(obj, change); });
-			return obj;
-		});
-
-		this.dataMap.set(this.getId(rootId, blockId), observable.array(list));
+    recordsSet (rootId: string, blockId: string, list: string[]) {
+		this.recordMap.set(this.getId(rootId, blockId), observable.array(list));
 	};
 
     recordsClear (rootId: string, blockId: string) {
-		this.dataMap.delete(this.getId(rootId, blockId));
+		this.recordMap.delete(this.getId(rootId, blockId));
 	};
 
-    recordAdd (rootId: string, blockId: string, obj: any, dir: number): number {
+    recordAdd (rootId: string, blockId: string, id: string, dir: number): number {
 		const records = this.getRecords(rootId, blockId);
 		
-		obj = observable(obj);
-		intercept(obj as any, (change: any) => { return Util.intercept(obj, change); });
-
-		dir > 0 ? records.push(obj) : records.unshift(obj);
+		dir > 0 ? records.push(id) : records.unshift(id);
 		return dir > 0 ? records.length - 1 : 0;
 	};
 
-    recordUpdate (rootId: string, blockId: string, obj: any) {
-		const records = this.getRecords(rootId, blockId);
-		const record = records.find((it: any) => { return it.id == obj.id; });
-		if (!record) {
-			return;
-		};
-
-		set(record, obj);
-	};
-
     recordDelete (rootId: string, blockId: string, id: string) {
-		this.dataMap.set(this.getId(rootId, blockId), this.getRecords(rootId, blockId).filter(it => it.id != id));
+		this.recordMap.set(this.getId(rootId, blockId), this.getRecords(rootId, blockId).filter(it => it != id));
 	};
 
 	groupsSet (rootId: string, blockId: string, groups: any[]) {
@@ -278,10 +244,10 @@ class DbStore {
 		return this.objectTypeList.find((it: I.ObjectType) => { return it.id == id; });
 	};
 
-    getObjectTypesForSBType (SBType: I.SmartBlockType): I.ObjectType[] {
-		return this.objectTypes.filter((it: I.ObjectType) => {
-			return (it.types.indexOf(SBType) >= 0) && !it.isArchived;
-		});
+    getObjectTypesForSBType (SBType: I.SmartBlockType): any[] {
+		return dbStore.getRecords(Constant.subId.type, '').
+			map(id => detailStore.get(Constant.subId.type, id, [])).
+			filter(it => it._smartBlockTypes_.includes(SBType) && !it.isArchived && !it.isDeleted && !it._empty_);
 	};
 
     getRelations (rootId: string, blockId: string): I.Relation[] {
@@ -307,16 +273,7 @@ class DbStore {
 	};
 
     getRecords (rootId: string, blockId: string) {
-		return this.dataMap.get(this.getId(rootId, blockId)) || [];
-	};
-
-	getRecordsIds (rootId: string, blockId: string) {
-		return this.getRecords(rootId, blockId).map(it => it.id);
-	};
-
-	getRecord (rootId: string, blockId: string, id: string) {
-		const records = this.getRecords(rootId, blockId);
-		return records.find((it: any) => { return it.id == id; });
+		return this.recordMap.get(this.getId(rootId, blockId)) || [];
 	};
 
 	getGroups (rootId: string, blockId: string) {

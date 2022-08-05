@@ -34,8 +34,8 @@ const Item = observer(class Item extends React.Component<Props, {}> {
 
 	render () {
 		const { id, parentId, elementId, depth, style, length, details, isSection, withPadding, onClick, onContext } = this.props;
-		const subId = dbStore.getSubId(Constant.subIds.sidebar, parentId);
-		const check = Storage.checkToggle(Constant.subIds.sidebar, elementId);
+		const subId = dbStore.getSubId(Constant.subId.sidebar, parentId);
+		const check = Storage.checkToggle(Constant.subId.sidebar, elementId);
 		const object = detailStore.get(subId, id, Constant.sidebarRelationKeys, true);
 		const cn = [ 'item', 'c' + id, (check ? 'active' : '') ];
 		const rootId = keyboard.getRootId();
@@ -116,7 +116,7 @@ const Item = observer(class Item extends React.Component<Props, {}> {
 		e.stopPropagation();
 
 		const { id, parentId, onToggle } = this.props;
-		const subId = dbStore.getSubId(Constant.subIds.sidebar, parentId);
+		const subId = dbStore.getSubId(Constant.subId.sidebar, parentId);
 		const object = detailStore.get(subId, id, Constant.sidebarRelationKeys, true);
 
 		onToggle(e, { ...this.props, details: object });

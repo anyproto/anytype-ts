@@ -50,12 +50,13 @@
 		"menu": 100
 	},
 
-	"subIds": {
+	"subId": {
 		"index": "index",
 		"search": "search",
 		"profile": "profile",
 		"deleted": "deleted",
-		"sidebar": "sidebar"
+		"sidebar": "sidebar",
+		"type": "type"
 	},
 
 	"menuIds": {
