@@ -25,7 +25,7 @@ class PopupPreview extends React.Component<Props, {}> {
 			<div>
 				<Loader id="loader" />
 				<div id="wrap" className="wrap">
-					<div id="content">
+					<div id="blockContent" className="blocks">
 						<Block {...this.props} key={block.id} rootId={rootId} block={block} readonly={true} />
 					</div>
 				</div>
@@ -63,7 +63,7 @@ class PopupPreview extends React.Component<Props, {}> {
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
 		const inner = node.find('#wrap');
-		const content = node.find('#content');
+		const content = node.find('#blockContent');
 		const loader = node.find('#loader');
 
 		switch (block.content.type) {
