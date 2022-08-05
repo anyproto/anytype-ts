@@ -979,8 +979,6 @@ class DataUtil {
 	};
 
 	dataviewRelationAdd (rootId: string, blockId: string, relation: any, index: number, view?: I.View, callBack?: (message: any) => void) {
-		relation = new M.Relation(relation);
-
 		C.BlockDataviewRelationAdd(rootId, blockId, relation, (message: any) => {
 			if (message.error.code || !view) {
 				return;
@@ -1010,7 +1008,7 @@ class DataUtil {
 	};
 
 	dataviewRelationUpdate (rootId: string, blockId: string, relation: any, view?: I.View, callBack?: (message: any) => void) {
-		C.BlockDataviewRelationUpdate(rootId, blockId, relation.relationKey, new M.Relation(relation), (message: any) => {
+		C.BlockDataviewRelationUpdate(rootId, blockId, relation.relationKey, relation, (message: any) => {
 			if (message.error.code || !view) {
 				return;
 			};

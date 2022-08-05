@@ -62,7 +62,6 @@ class DbStore {
 		const key = this.getId(rootId, blockId);
 		const relations = this.getRelations(rootId, blockId);
 
-		list = list.map(it => new M.Relation(it));
 		for (let item of list) {
 			relations.push(item);
 		};
