@@ -144,6 +144,11 @@ class DetailStore {
 			object._smartBlockTypes_ = type ? type.types || [] : [];
 		};
 
+		if (object.type == Constant.typeId.relation) {
+			object.relationKey = object.id.replace(/_(br|ir)/, '');
+			object.relationFormat = Number(object.relationFormat) || I.RelationType.LongText;
+		};
+
 		return {
 			...object,
 			name,
@@ -153,7 +158,6 @@ class DetailStore {
 			iconImage: Relation.getStringValue(object.iconImage),
 			layoutAlign: Number(object.layoutAlign) || I.BlockHAlign.Left,
 			recommendedLayout: Number(object.recommendedLayout) || I.ObjectLayout.Page,
-			relationFormat: Number(object.relationFormat) || I.RelationType.LongText,
 			coverX: Number(object.coverX) || 0,
 			coverY: Number(object.coverY) || 0,
 			coverScale: Number(object.coverScale) || 0,

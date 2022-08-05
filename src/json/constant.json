@@ -50,15 +50,6 @@
 		"menu": 100
 	},
 
-	"subId": {
-		"index": "index",
-		"search": "search",
-		"profile": "profile",
-		"deleted": "deleted",
-		"sidebar": "sidebar",
-		"type": "type"
-	},
-
 	"menuIds": {
 		"cell": [ 
 			"select", "button", "dataviewText", "dataviewRelationEdit", "dataviewObjectList", "dataviewObjectValues", 
@@ -166,6 +157,16 @@
 		"space": "workspaceId",
 		"creator": "creator",
 		"setOf": "setOf"
+	},
+
+	"subId": {
+		"index": "index",
+		"search": "search",
+		"profile": "profile",
+		"deleted": "deleted",
+		"sidebar": "sidebar",
+		"type": "type",
+		"relation": "relation"
 	},
 
 	"typeId": {
