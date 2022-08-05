@@ -9,6 +9,8 @@ interface Props extends I.Popup, RouteComponentProps<any> {};
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
+const BORDER = 16;
+const PADDING = 8;
 
 class PopupPreview extends React.Component<Props, {}> {
 	
@@ -74,8 +76,8 @@ class PopupPreview extends React.Component<Props, {}> {
 					
 					let cw = img.width;
 					let ch = img.height;
-					let mw = win.width() - 68;
-					let mh = win.height() - 68;
+					let mw = win.width() - BORDER * 2;
+					let mh = win.height() - BORDER * 2;
 					let width = 0, height = 0;
 					
 					if (cw >= ch) {
@@ -86,8 +88,8 @@ class PopupPreview extends React.Component<Props, {}> {
 						width = Math.min(mw, height / (ch / cw));
 					};
 					
-					content.css({ width: width });
-					inner.css({ height: height });
+					content.css({ width: width - PADDING * 2 });
+					inner.css({ height: height - PADDING });
 					
 					position();
 				};
