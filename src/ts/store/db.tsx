@@ -18,7 +18,6 @@ class DbStore {
             objectTypes: computed,
 			clearAll: action,
             objectTypesSet: action,
-            relationsClear: action,
             relationDelete: action,
             viewsSet: action,
 			viewsSort: action,
@@ -69,10 +68,6 @@ class DbStore {
 		};
 		
 		this.relationMap.set(key, relations);
-	};
-
-    relationsClear (rootId: string, blockId: string) {
-		this.relationMap.delete(this.getId(rootId, blockId));
 	};
 
     relationDelete (rootId: string, blockId: string, key: string) {

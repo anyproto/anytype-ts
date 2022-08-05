@@ -143,7 +143,7 @@ class Util {
 	};
 	
 	toCamelCase (str: string) {
-		const s = str.replace(/[_\-\s]([a-zA-Z]{1})/g, (s: string, p1: string) => {
+		const s = String(str || '').replace(/[_\-\s]([a-zA-Z]{1})/g, (s: string, p1: string) => {
 			return String(p1 || '').toUpperCase();
 		});
 		return s.substr(0, 1).toLowerCase() + s.substr(1, s.length);

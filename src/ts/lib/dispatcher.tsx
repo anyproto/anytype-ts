@@ -1,5 +1,5 @@
 import { authStore, commonStore, blockStore, detailStore, dbStore } from 'ts/store';
-import { Util, I, M, Decode, translate, analytics, Response, Mapper, crumbs } from 'ts/lib';
+import { Util, I, M, Decode, translate, analytics, Response, Mapper, crumbs, Action } from 'ts/lib';
 import * as Sentry from '@sentry/browser';
 import arrayMove from 'array-move';
 
@@ -265,10 +265,7 @@ class Dispatcher {
 						};
 
 						if (block.type == I.BlockType.Dataview) {
-							dbStore.relationsClear(rootId, blockId);
-							dbStore.viewsClear(rootId, blockId);
-							dbStore.metaClear(rootId, blockId);
-							dbStore.recordsClear(rootId, blockId);
+							Action.dbClear(rootId, blockId);
 						};
 
 						blockStore.delete(rootId, blockId);
@@ -630,29 +627,6 @@ class Dispatcher {
 					};
 					break;
 
-				case 'objectRelationsSet':
-				case 'objectRelationsAmend':
-					id = data.getId();
-					block = blockStore.getLeaf(rootId, id);
-					if (!block) {
-						break;
-					};
-
-					if (type == 'objectRelationsSet') {
-						dbStore.relationsClear(rootId, rootId);
-					};
-
-					dbStore.relationsSet(rootId, rootId, (data.getRelationsList() || []).map(Mapper.From.Relation));
-					break;
-
-				case 'objectRelationsRemove':
-					id = data.getId();
-					keys = data.getKeysList() || [];
-
-					for (let key of keys) {
-						dbStore.relationDelete(rootId, id, key);
-					};
-					break;
 
 				case 'subscriptionAdd':
 					id = data.getId();
@@ -773,7 +747,6 @@ class Dispatcher {
 			analytics.setContext(root.fields.analyticsContext, root.fields.analyticsOriginalId);
 		};
 
-		dbStore.relationsSet(rootId, rootId, message.relations);
 		dbStore.objectTypesSet(message.objectTypes);
 		dbStore.recordsSet(rootId, rootId + '-relations', message.relationLinks.map(it => it.id));
 

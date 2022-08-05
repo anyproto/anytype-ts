@@ -242,7 +242,6 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		this.unbind();
 
 		menuStore.closeAll(Constant.menuIds.index);
-		Action.dbClear(Constant.subId.index);
 	};
 
 	rebind () {
