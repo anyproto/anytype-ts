@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { InputWithFile, Loader, Icon, Error } from 'ts/component';
-import { I, C, translate, focus, Action, DataUtil, keyboard } from 'ts/lib';
-import { commonStore } from 'ts/store';
+import { I, C, translate, focus, Action, keyboard } from 'ts/lib';
+import { commonStore, popupStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.BlockComponent {}
@@ -216,15 +216,9 @@ const BlockImage = observer(class BlockImage extends React.Component<Props, {}> 
 	};
 	
 	onClick (e: any) {
-		if (keyboard.withCommand(e)) {
-			return;
+		if (!keyboard.withCommand(e)) {
+			popupStore.open('preview', { data: { block: this.props.block } });
 		};
-
-		const { block } = this.props;
-		const { content } = block;
-		const { hash } = content;
-
-		DataUtil.objectOpenPopup({ id: hash, layout: I.ObjectLayout.Image });
 	};
 	
 	getUrl () {
