@@ -94,26 +94,7 @@ export interface ObjectType {
 	isHidden: boolean;
 	isArchived: boolean;
 	isReadonly: boolean;
-	relations: Relation[];
 	types: SmartBlockType[];
-};
-
-export interface Relation {
-	relationKey: string;
-	format: RelationType;
-	name: string;
-	isHidden: boolean;
-	isReadonlyValue?: boolean;
-	isReadonlyRelation?: boolean;
-	objectId?: string;
-	dataSource?: number;
-	objectTypes?: string[];
-	selectDict?: any[];
-	maxCount?: number;
-	scope?: RelationScope;
-	includeTime?: boolean;
-	dateFormat?: I.DateFormat;
-	timeFormat?: I.TimeFormat;
 };
 
 export interface SelectOption {

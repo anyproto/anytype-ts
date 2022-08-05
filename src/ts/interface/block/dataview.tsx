@@ -134,7 +134,7 @@ export interface Cell {
 	block?: I.Block;
 	id?: string;
 	idPrefix?: string;
-	relation?: I.Relation;
+	relation?: any;
 	index?: number;
 	viewType: I.ViewType;
 	readonly?: boolean;

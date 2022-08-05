@@ -5,7 +5,9 @@ import { SortableHandle } from 'react-sortable-hoc';
 import { observer } from 'mobx-react';
 import { menuStore } from 'ts/store';
 
-interface Props extends I.Relation {
+interface Props {
+	format: I.RelationType;
+	name: string;
 	onClick?: (e: any) => void;
 }
 

@@ -1,7 +1,7 @@
 import { I, M, Util } from 'ts/lib';
 import { observable, intercept, makeObservable } from 'mobx';
 
-class Relation implements I.Relation {
+class Relation {
 
 	objectId: string = '';
 	relationKey: string = '';
@@ -16,7 +16,7 @@ class Relation implements I.Relation {
 	scope: I.RelationScope = I.RelationScope.Object;
 	selectDict: any[] = [] as any[];
 
-	constructor (props: I.Relation) {
+	constructor (props: any) {
 		let self = this;
 
 		self.objectId = String(props.objectId || '');

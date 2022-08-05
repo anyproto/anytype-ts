@@ -595,7 +595,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		};
 	};
 
-	getRelation (): I.Relation {
+	getRelation (): any {
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, blockId, relationKey } = data;

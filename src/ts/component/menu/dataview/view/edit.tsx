@@ -461,7 +461,7 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, blockId } = data;
-		const options: any[] = dbStore.getRelations(rootId, blockId).filter((it: I.Relation) => {
+		const options: any[] = dbStore.getRelations(rootId, blockId).filter((it: any) => {
 			return !it.isHidden && (it.format == I.RelationType.File);
 		}).map((it: any) => {
 			return { 
@@ -481,7 +481,7 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, blockId } = data;
-		const options: any[] = dbStore.getRelations(rootId, blockId).filter((it: I.Relation) => {
+		const options: any[] = dbStore.getRelations(rootId, blockId).filter((it: any) => {
 			return [ I.RelationType.Status, I.RelationType.Tag, I.RelationType.Checkbox ].includes(it.format) && 
 				(!it.isHidden || [ Constant.relationKey.done ].includes(it.relationKey));
 		}).map((it: any) => {

@@ -69,7 +69,7 @@ class DragLayer extends React.Component<{}, State> {
 
 				items = ids.map((relationKey: string) => {
 					return dbStore.getRelation(rootId, rootId, relationKey);
-				}).filter((it: I.Relation) => { return it; });
+				}).filter(it => it);
 
 				content = (
 					<div className="menus">

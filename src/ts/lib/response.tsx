@@ -365,6 +365,7 @@ const onObjectShow = (response: any) => {
 		details: (response.getDetailsList() || []).map(Mapper.From.Details),
 		objectTypes: (response.getObjecttypesList() || []).map(Mapper.From.ObjectType),
 		relations: (response.getRelationsList() || []).map(Mapper.From.Relation),
+		relationLinks: (response.getRelationlinksList() || []).map(Mapper.From.RelationLink),
 		restrictions: Mapper.From.Restrictions(response.getRestrictions()),
 	};
 };

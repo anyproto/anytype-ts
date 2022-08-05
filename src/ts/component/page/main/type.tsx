@@ -408,7 +408,7 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 				rootId: rootId,
 				ref: 'type',
 				menuIdEdit: 'blockRelationEdit',
-				skipIds: relations.map((it: I.Relation) => { return it.relationKey; }),
+				skipIds: relations.map(it => it.relationKey),
 				listCommand: (rootId: string, blockId: string, callBack?: (message: any) => void) => {
 					C.ObjectRelationListAvailable(rootId, callBack);
 				},

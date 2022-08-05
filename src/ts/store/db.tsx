@@ -7,7 +7,7 @@ const Constant = require('json/constant.json');
 class DbStore {
 
     public objectTypeList: I.ObjectType[] = observable.array([]);
-    public relationMap: Map<string, I.Relation[]> = observable.map(new Map());
+    public relationMap: Map<string, any[]> = observable.map(new Map());
     public viewMap: Map<string, I.View[]> = observable.map(new Map());
     public recordMap: Map<string, string[]> = observable.map(new Map());
     public metaMap: Map<string, any> = observable.map(new Map());
@@ -62,11 +62,11 @@ class DbStore {
 		};
 	};
 
-    relationsSet (rootId: string, blockId: string, list: I.Relation[]) {
+    relationsSet (rootId: string, blockId: string, list: any[]) {
 		const key = this.getId(rootId, blockId);
 		const relations = this.getRelations(rootId, blockId);
 
-		list = list.map((it: I.Relation) => { return new M.Relation(it); });
+		list = list.map(it => new M.Relation(it));
 		for (let item of list) {
 			const check = this.getRelation(rootId, blockId, item.relationKey);
 			if (check) {
@@ -96,7 +96,7 @@ class DbStore {
 
     relationUpdate (rootId: string, blockId: string, item: any) {
 		const relations = this.getRelations(rootId, blockId);
-		const idx = relations.findIndex((it: I.Relation) => { return it.relationKey == item.relationKey; });
+		const idx = relations.findIndex(it => it.relationKey == item.relationKey);
 
 		if (idx < 0) {
 			return;
@@ -107,7 +107,7 @@ class DbStore {
 
     relationDelete (rootId: string, blockId: string, key: string) {
 		let relations = this.getRelations(rootId, blockId);
-		relations = relations.filter((it: I.Relation) => { return it.relationKey != key; });
+		relations = relations.filter(it => it.relationKey != key);
 		this.relationMap.set(this.getId(rootId, blockId), relations);
 	};
 
@@ -241,7 +241,7 @@ class DbStore {
 	};
 
     getObjectType (id: string): I.ObjectType {
-		return this.objectTypeList.find((it: I.ObjectType) => { return it.id == id; });
+		return this.objectTypeList.find(it => it.id == id);
 	};
 
     getObjectTypesForSBType (SBType: I.SmartBlockType): any[] {
@@ -250,13 +250,13 @@ class DbStore {
 			filter(it => it._smartBlockTypes_.includes(SBType) && !it.isArchived && !it.isDeleted && !it._empty_);
 	};
 
-    getRelations (rootId: string, blockId: string): I.Relation[] {
-		return this.relationMap.get(this.getId(rootId, blockId)) || [];
+    getRelations (rootId: string, blockId: string): any[] {
+		return dbStore.getRecords(rootId, blockId + '-relations').map(id => detailStore.get(Constant.subId.relation, id, []));
 	};
 
-    getRelation (rootId: string, blockId: string, relationKey: string): I.Relation {
+    getRelation (rootId: string, blockId: string, relationKey: string): any {
 		const relations = this.getRelations(rootId, blockId);
-		return relations.find((it: I.Relation) => { return it.relationKey == relationKey; });
+		return relations.find(it => it.relationKey == relationKey);
 	};
 
     getViews (rootId: string, blockId: string): I.View[] {

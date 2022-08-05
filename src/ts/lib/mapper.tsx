@@ -274,11 +274,10 @@ const Mapper = {
 				isArchived: obj.getIsarchived(),
 				isReadonly: obj.getReadonly(),
 				types: obj.getTypesList(),
-				relations: (obj.getRelationsList() || []).map(Mapper.From.Relation),
 			};
 		},
 
-		Relation: (obj: any): I.Relation => {
+		Relation: (obj: any): any => {
 			return {
 				objectId: '',
 				relationKey: obj.getKey(),
@@ -292,6 +291,13 @@ const Mapper = {
 				objectTypes: obj.getObjecttypesList(),
 				scope: obj.getScope(),
 				selectDict: (obj.getSelectdictList() || []).map(Mapper.From.SelectOption),
+			};
+		},
+
+		RelationLink: (obj: any): any => {
+			return {
+				id: obj.getId(),
+				relationKey: obj.getKey(),
 			};
 		},
 

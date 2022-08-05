@@ -194,7 +194,7 @@ const PageMainSpace = observer(class PageMainSpace extends React.Component<Props
 				rootId: rootId,
 				ref: 'space',
 				menuIdEdit: 'blockRelationEdit',
-				skipIds: relations.map((it: I.Relation) => { return it.relationKey; }),
+				skipIds: relations.map(it => it.relationKey),
 				listCommand: (rootId: string, blockId: string, callBack?: (message: any) => void) => {
 					C.ObjectRelationListAvailable(rootId, callBack);
 				},

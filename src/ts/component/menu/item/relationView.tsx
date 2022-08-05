@@ -4,7 +4,11 @@ import { I, Util, DataUtil, Relation } from 'ts/lib';
 import { detailStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
-interface Props extends I.Relation {
+interface Props {
+	relationKey: string;
+	name: string;
+	format: I.RelationType;
+	isHidden: boolean;
 	dataset?: any;
 	rootId: string;
 	block?: I.Block;

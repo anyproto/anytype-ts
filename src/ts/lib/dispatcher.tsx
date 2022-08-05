@@ -766,8 +766,8 @@ class Dispatcher {
 	};
 
 	sort (c1: any, c2: any) {
-		let idx1 = SORT_IDS.findIndex((it: string) => { return it == this.eventType(c1.getValueCase()); });
-		let idx2 = SORT_IDS.findIndex((it: string) => { return it == this.eventType(c2.getValueCase()); });
+		let idx1 = SORT_IDS.findIndex(it => it == this.eventType(c1.getValueCase()));
+		let idx2 = SORT_IDS.findIndex(it => it == this.eventType(c2.getValueCase()));
 
 		if (idx1 > idx2) return 1;
 		if (idx1 < idx2) return -1;
@@ -784,6 +784,7 @@ class Dispatcher {
 
 		dbStore.relationsSet(rootId, rootId, message.relations);
 		dbStore.objectTypesSet(message.objectTypes);
+		dbStore.recordsSet(rootId, rootId + '-relations', message.relationLinks.map(it => it.id));
 
 		detailStore.set(rootId, details);
 		blockStore.restrictionsSet(rootId, restrictions);

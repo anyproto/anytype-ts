@@ -1,4 +1,4 @@
-import { I, M, Util, DataUtil } from 'ts/lib';
+import { I, Util, DataUtil } from 'ts/lib';
 import { observable, intercept, makeObservable } from 'mobx';
 
 class ObjectType implements I.ObjectType {
@@ -11,7 +11,6 @@ class ObjectType implements I.ObjectType {
 	isArchived: boolean = false;
 	isHidden: boolean = false;
 	isReadonly: boolean = false;
-	relations: I.Relation[] = [];
 	types: I.SmartBlockType[] = [];
 
 	constructor (props: I.ObjectType) {
@@ -25,14 +24,12 @@ class ObjectType implements I.ObjectType {
 		self.isArchived = Boolean(props.isArchived);
 		self.isHidden = Boolean(props.isHidden);
 		self.isReadonly = Boolean(props.isReadonly);
-		self.relations = (props.relations || []).map((it: any) => { return new M.Relation(it); });
 		self.types = props.types || [];
 
 		makeObservable(self, {
 			name: observable,
 			description: observable,
 			layout: observable,
-			relations: observable,
 			types: observable,
 			isArchived: observable,
 		});
