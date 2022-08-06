@@ -448,8 +448,6 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 		} else
 		if (coverType == I.CoverType.Image) {
 			el.src = Util.coverSrc(coverId);
-		} else {
-			this.setLoading(false);
 		};
 	};
 	
