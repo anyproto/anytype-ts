@@ -66,7 +66,7 @@ class DbStore {
 			relations.push(item);
 		};
 
-		this.relationMap.set(key, relations);
+		this.relationMap.set(key, Util.arrayUniqueObjects(relations, 'id'));
 	};
 
     relationDelete (rootId: string, blockId: string, key: string) {
