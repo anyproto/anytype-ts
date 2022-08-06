@@ -142,11 +142,13 @@ class DetailStore {
 		if (object.type == Constant.typeId.type) {
 			const type = dbStore.getObjectType(object.id);
 			object._smartBlockTypes_ = type ? type.types || [] : [];
+			object.recommendedLayout = Number(object.recommendedLayout) || I.ObjectLayout.Page;
 		};
 
 		if (object.type == Constant.typeId.relation) {
-			object.relationKey = object.id.replace(/_(br|ir)/, '');
 			object.relationFormat = Number(object.relationFormat) || I.RelationType.LongText;
+			object.scope = Number(object.scope) || I.RelationScope.Object;
+			object.format = object.relationFormat;
 		};
 
 		return {
@@ -157,7 +159,6 @@ class DetailStore {
 			type: Relation.getStringValue(object.type),
 			iconImage: Relation.getStringValue(object.iconImage),
 			layoutAlign: Number(object.layoutAlign) || I.BlockHAlign.Left,
-			recommendedLayout: Number(object.recommendedLayout) || I.ObjectLayout.Page,
 			coverX: Number(object.coverX) || 0,
 			coverY: Number(object.coverY) || 0,
 			coverScale: Number(object.coverScale) || 0,

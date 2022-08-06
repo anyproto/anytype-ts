@@ -44,6 +44,8 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
 
+			console.log(item);
+
 			let content = null;
 			if (item.id == 'add') {
 				content =  (
@@ -195,26 +197,20 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		const { data } = param;
 		const skipIds = (data.skipIds || []).concat(Constant.systemRelationKeys);
 		const name = data.filter ? `Create relation "${data.filter}"` : 'Create from scratch';
-		const items = dbStore.getRecords(Constant.subId.relation, '').map(id => detailStore.get(Constant.subId.relation, id, []));
+		const records = dbStore.getRecords(Constant.subId.relation, '').filter(id => !skipIds.includes(id));
+		const items = records.map(id => detailStore.get(Constant.subId.relation, id, Constant.relationrelationKeys));
 
-		let ret: any[] = [ { relationKey: 'add', name: name } ];
+		console.log(items);
 
-		ret = ret.concat(items).filter(it => !skipIds.includes(it.relationKey));
-
+		let ret: any[] = [].concat(items);
 		if (data.filter) {
 			const filter = new RegExp(Util.filterFix(data.filter), 'gi');
 			ret = ret.filter(it => it.name.match(filter));
 		};
-
 		if (!config.debug.ho) {
 			ret = ret.filter(it => !it.isHidden);
 		};
-
-		ret = ret.map((it: any) => {
-			it.id = it.relationKey;
-			return it;
-		});
-
+		ret.unshift({ id: 'add', name: name });
 		return ret;
 	};
 	

@@ -316,12 +316,12 @@ class DataUtil {
 		], [], [ 'id', 'isDeleted' ], [], 0, 0, true, '', '', true);
 
 		C.ObjectSearchSubscribe(Constant.subId.type, [
-			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.type }
+			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.type },
 		], [], Constant.defaultRelationKeys, [], 0, 0, true, '', '', true);
 
 		C.ObjectSearchSubscribe(Constant.subId.relation, [
 			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.relation }
-		], [], Constant.defaultRelationKeys, [], 0, 0, true, '', '', true);
+		], [], Constant.relationRelationKeys, [], 0, 0, true, '', '', true);
 
 		C.ObjectSearchSubscribe(Constant.subId.option, [
 			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.option }

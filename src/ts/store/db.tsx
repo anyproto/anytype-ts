@@ -65,7 +65,7 @@ class DbStore {
 		for (let item of list) {
 			relations.push(item);
 		};
-		
+
 		this.relationMap.set(key, relations);
 	};
 
@@ -215,7 +215,10 @@ class DbStore {
 	};
 
     getRelations (rootId: string, blockId: string): any[] {
-		return dbStore.getRecords(rootId, blockId + '-relations').map(id => detailStore.get(Constant.subId.relation, id, []));
+		return (this.relationMap.get(this.getId(rootId, blockId)) || []).map(it => {
+			const object = detailStore.get(Constant.subId.relation, it.id, Constant.relationRelationKeys);
+			return { ...object, relationKey: it.relationKey };
+		}).filter(it => !it._empty_);
 	};
 
     getRelation (rootId: string, blockId: string, relationKey: string): any {

@@ -148,6 +148,10 @@
 		"relationFormat", "fileExt", "fileMimeType", "links", "restrictions"
 	],
 
+	"relationRelationKeys": [
+		"id", "type", "layout", "name", "relationFormat", "relationKey", "scope", "isHidden", "isDeleted", "isArchived", "isFavorite", "restrictions"
+	],
+
 	"relationKey": {
 		"name": "name",
 		"description": "description",

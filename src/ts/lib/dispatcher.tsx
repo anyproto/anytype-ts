@@ -748,7 +748,7 @@ class Dispatcher {
 		};
 
 		dbStore.objectTypesSet(message.objectTypes);
-		dbStore.recordsSet(rootId, rootId + '-relations', message.relationLinks.map(it => it.id));
+		dbStore.relationsSet(rootId, rootId, message.relationLinks);
 
 		detailStore.set(rootId, details);
 		blockStore.restrictionsSet(rootId, restrictions);
