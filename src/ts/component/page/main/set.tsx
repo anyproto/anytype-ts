@@ -163,13 +163,9 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, St
 				ref: 'set',
 				menuIdEdit: 'blockRelationEdit',
 				skipIds: relations.map(it => it.relationKey),
-				addCommand: (rootId: string, blockId: string, relation: any, onChange?: (relation: any) => void) => {
-					C.ObjectRelationAdd(rootId, relation, () => { 
+				addCommand: (rootId: string, blockId: string, relationId: string) => {
+					C.ObjectRelationAdd(rootId, [ relationId ], () => { 
 						menuStore.close('relationSuggest'); 
-
-						if (onChange) {
-							onChange(relation);
-						};
 					});
 				},
 			}

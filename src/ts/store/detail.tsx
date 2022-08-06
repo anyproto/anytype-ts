@@ -163,6 +163,9 @@ class DetailStore {
 			coverY: Number(object.coverY) || 0,
 			coverScale: Number(object.coverScale) || 0,
 			coverType: Number(object.coverType) || I.CoverType.None,
+			isArchived: Boolean(object.isArchived),
+			isFavorite: Boolean(object.isFavorite),
+			isHidden: Boolean(object.isHidden),
 		};
 	};
 

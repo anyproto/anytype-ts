@@ -216,8 +216,7 @@ class DbStore {
 
     getRelations (rootId: string, blockId: string): any[] {
 		return (this.relationMap.get(this.getId(rootId, blockId)) || []).map(it => {
-			const object = detailStore.get(Constant.subId.relation, it.id, Constant.relationRelationKeys);
-			return { ...object, relationKey: it.relationKey };
+			return detailStore.get(Constant.subId.relation, it.id, Constant.relationRelationKeys);
 		}).filter(it => !it._empty_);
 	};
 

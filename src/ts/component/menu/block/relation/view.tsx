@@ -252,13 +252,9 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 				ref: 'menu',
 				menuIdEdit: 'blockRelationEdit',
 				skipIds: relations.map(it => it.relationKey),
-				addCommand: (rootId: string, blockId: string, relation: any, onChange?: (relation: any) => void) => {
-					C.ObjectRelationAdd(rootId, relation, () => { 
+				addCommand: (rootId: string, blockId: string, relationId: string) => {
+					C.ObjectRelationAdd(rootId, [ relationId ], () => { 
 						menuStore.close('relationSuggest'); 
-
-						if (onChange) {
-							onChange(relation);
-						};
 					});
 				},
 			}
@@ -283,7 +279,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 				...data,
 				relationKey: relationKey,
 				addCommand: (rootId: string, blockId: string, relation: any, onChange?: (relation: any) => void) => {
-					C.ObjectRelationAdd(rootId, relation, () => {
+					C.ObjectRelationAdd(rootId, [ relation.id ], () => {
 						if (onChange) {
 							onChange(relation);
 						};

@@ -1247,11 +1247,11 @@ const ObjectRelationOptionDelete = (contextId: string, relationKey: string, opti
 	dispatcher.request(ObjectRelationOptionDelete.name, request, callBack);
 };
 
-const ObjectRelationAdd = (contextId: string, relation: any, callBack?: (message: any) => void) => {
+const ObjectRelationAdd = (contextId: string, relationIds: string[], callBack?: (message: any) => void) => {
 	const request = new Rpc.ObjectRelation.Add.Request();
 	
 	request.setContextid(contextId);
-	request.setRelation(Mapper.To.Relation(relation));
+	request.setRelationidsList(relationIds);
 
 	dispatcher.request(ObjectRelationAdd.name, request, callBack);
 };

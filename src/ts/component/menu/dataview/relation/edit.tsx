@@ -358,15 +358,12 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 						menuIdEdit: 'blockRelationEdit',
 						filter: '',
 						ref: 'dataview',
-						skipIds: relations.map((it: I.ViewRelation) => { return it.relationKey; }),
-						addCommand: (rootId: string, blockId: string, newRelation: any, onChange?: (relation: any) => void) => {
-							DataUtil.dataviewRelationAdd(rootId, blockId, newRelation, Math.max(0, idx + item.dir), view, () => {
+						skipIds: relations.map(it => it.relationKey),
+						addCommand: (rootId: string, blockId: string, relationKey: string) => {
+							DataUtil.dataviewRelationAdd(rootId, blockId, [ relationKey ], Math.max(0, idx + item.dir), view, () => {
 								menuStore.closeAll([ this.props.id, 'relationSuggest' ]);
 								getData(view.id, 0);
 							});
-						},
-						listCommand: (rootId: string, blockId: string, callBack?: (message: any) => void) => {
-							C.BlockDataviewRelationListAvailable(rootId, blockId, callBack);
 						},
 					}
 				});

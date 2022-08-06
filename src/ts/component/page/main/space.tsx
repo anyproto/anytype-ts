@@ -195,13 +195,9 @@ const PageMainSpace = observer(class PageMainSpace extends React.Component<Props
 				ref: 'space',
 				menuIdEdit: 'blockRelationEdit',
 				skipIds: relations.map(it => it.relationKey),
-				addCommand: (rootId: string, blockId: string, relation: any, onChange?: (relation: any) => void) => {
-					C.ObjectRelationAdd(rootId, relation, () => { 
+				addCommand: (rootId: string, blockId: string, relationId: string) => {
+					C.ObjectRelationAdd(rootId, [ relationId ], () => { 
 						menuStore.close('relationSuggest'); 
-
-						if (onChange) {
-							onChange(relation);
-						};
 					});
 				},
 			}

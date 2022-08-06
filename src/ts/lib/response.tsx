@@ -280,12 +280,6 @@ const ObjectGraph = (response: any) => {
 	};
 };
 
-const ObjectRelationAdd = (response: any) => {
-	return {
-		relation: Mapper.From.Relation(response.getRelation()),
-	};
-};
-
 const ObjectRelationOptionAdd = (response: any) => {
 	return {
 		option: Mapper.From.SelectOption(response.getOption()),
@@ -422,7 +416,6 @@ export {
 	ObjectSearchSubscribe,
 	ObjectSubscribeIds,
 	ObjectGraph,
-	ObjectRelationAdd,
 	ObjectRelationOptionAdd,
 	ObjectShareByLink,
 

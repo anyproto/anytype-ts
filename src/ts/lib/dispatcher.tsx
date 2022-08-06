@@ -558,6 +558,11 @@ class Dispatcher {
 					dbStore.relationDelete(rootId, id, data.getRelationkey());
 					break;
 
+				case 'objectRelationsAmend':
+					
+
+					break;
+
 				case 'objectDetailsSet':
 					id = data.getId();
 					subIds = data.getSubidsList() || [];

@@ -44,8 +44,6 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
 
-			console.log(item);
-
 			let content = null;
 			if (item.id == 'add') {
 				content =  (
@@ -200,8 +198,6 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		const records = dbStore.getRecords(Constant.subId.relation, '').filter(id => !skipIds.includes(id));
 		const items = records.map(id => detailStore.get(Constant.subId.relation, id, Constant.relationrelationKeys));
 
-		console.log(items);
-
 		let ret: any[] = [].concat(items);
 		if (data.filter) {
 			const filter = new RegExp(Util.filterFix(data.filter), 'gi');
@@ -227,7 +223,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 	onClick (e: any, item: any) {
 		const { close, param, getId } = this.props;
 		const { data, classNameWrap } = param;
-		const { rootId, blockId, menuIdEdit, addCommand, onAdd, ref, onChange } = data;
+		const { rootId, blockId, menuIdEdit, addCommand, onAdd, ref } = data;
 
 		e.preventDefault();
 		e.stopPropagation();
@@ -263,7 +259,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		} else 
 		if (addCommand) {
 			close(); 
-			addCommand(rootId, blockId, item, onChange);
+			addCommand(rootId, blockId, item.id);
 			analytics.event('AddExistingRelation', { format: item.format, type: ref });
 		};
 	};
