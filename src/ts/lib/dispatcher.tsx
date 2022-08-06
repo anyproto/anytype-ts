@@ -559,8 +559,8 @@ class Dispatcher {
 					break;
 
 				case 'objectRelationsAmend':
-					
-
+					id = data.getId();
+					dbStore.relationsSet(rootId, id, (data.getRelationlinksList() || []).map(Mapper.From.RelationLink));
 					break;
 
 				case 'objectDetailsSet':

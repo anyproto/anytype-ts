@@ -61,10 +61,9 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 			} else {
 				content = (
 					<MenuItemVertical 
-						id={item.relationKey}
+						{...item}
 						className={item.isHidden ? 'isHidden' : ''}
 						style={param.style}
-						name={item.name}
 						object={item}
 						onMouseEnter={(e: any) => { this.onOver(e, item); }} 
 						onClick={(e: any) => { this.onClick(e, item); }}
