@@ -301,7 +301,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 			if (!config.debug.ho && it.isHidden) {
 				return false;
 			};
-			return [ I.RelationScope.Object, I.RelationScope.Type ].indexOf(it.scope) >= 0;
+			return [ I.RelationScope.Object, I.RelationScope.Type ].includes(it.scope);
 		});
 
 		return items;

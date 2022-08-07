@@ -144,13 +144,13 @@
 	],
 
 	"sidebarRelationKeys": [
-		"id", "name", "snippet", "layout", "type", "iconEmoji", "iconImage", "isHidden", "isDeleted", "isArchived", "isFavorite", "done", 
+		"id", "name", "snippet", "layout", "type", "iconEmoji", "iconImage", "isReadonly", "isHidden", "isDeleted", "isArchived", "isFavorite", "done", 
 		"relationFormat", "fileExt", "fileMimeType", "links", "restrictions"
 	],
 
 	"relationRelationKeys": [
-		"id", "type", "layout", "name", "relationFormat", "relationKey", "scope", "isHidden", "isDeleted", "isArchived", "isFavorite", "restrictions",
-		"relationMaxCount", "relationReadonly", "relationDefaultValue"
+		"id", "type", "layout", "name", "relationFormat", "relationKey", "scope", "isReadonly", "isHidden", "isDeleted", "isArchived", "isFavorite", "restrictions",
+		"relationMaxCount", "relationReadonly", "relationDefaultValue", "relationFormatObjectTypes"
 	],
 
 	"relationKey": {

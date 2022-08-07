@@ -284,7 +284,7 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 				...data,
 				relationKey: item.relationKey,
 				updateCommand: (rootId: string, blockId: string, relation: any) => {
-					DataUtil.dataviewRelationUpdate(rootId, blockId, relation, getView());
+					DataUtil.dataviewRelationUpdate(relation, getView());
 				},
 			}
 		});

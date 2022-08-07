@@ -983,7 +983,7 @@ class DataUtil {
 	};
 
 	dataviewRelationAdd (rootId: string, blockId: string, relation: any, index: number, view?: I.View, callBack?: (message: any) => void) {
-		C.BlockDataviewRelationAdd(rootId, blockId, relation, (message: any) => {
+		C.BlockDataviewRelationAdd(rootId, blockId, relation.id, (message: any) => {
 			if (message.error.code || !view) {
 				return;
 			};
@@ -1011,16 +1011,11 @@ class DataUtil {
 		});
 	};
 
-	dataviewRelationUpdate (rootId: string, blockId: string, relation: any, view?: I.View, callBack?: (message: any) => void) {
-		C.BlockDataviewRelationUpdate(rootId, blockId, relation.relationKey, relation, (message: any) => {
-			if (message.error.code || !view) {
-				return;
-			};
-			
-			if (callBack) {
-				callBack(message);
-			};
-		});
+	dataviewRelationUpdate (relation: any, view?: I.View, callBack?: (message: any) => void) {
+		const details = [ 
+			{ key: 'name', value: relation.name },
+		];
+		C.ObjectSetDetails(relation.id, details, callBack);
 	};
 
 	dataviewRelationDelete (rootId: string, blockId: string, relationKey: string, view?: I.View, callBack?: (message: any) => void) {

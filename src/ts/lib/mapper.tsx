@@ -277,23 +277,6 @@ const Mapper = {
 			};
 		},
 
-		Relation: (obj: any): any => {
-			return {
-				objectId: '',
-				relationKey: obj.getKey(),
-				format: obj.getFormat(),
-				name: obj.getName(),
-				dataSource: obj.getDatasource(),
-				isHidden: obj.getHidden(),
-				isReadonlyValue: obj.getReadonly(),
-				isReadonlyRelation: obj.getReadonlyrelation(),
-				maxCount: obj.getMaxcount(),
-				objectTypes: obj.getObjecttypesList(),
-				scope: obj.getScope(),
-				selectDict: (obj.getSelectdictList() || []).map(Mapper.From.SelectOption),
-			};
-		},
-
 		RelationLink: (obj: any): any => {
 			return {
 				id: obj.getId(),

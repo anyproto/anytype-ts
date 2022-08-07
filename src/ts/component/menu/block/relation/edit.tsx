@@ -225,7 +225,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 	};
 
 	isReadonly () {
-		const { param, getId } = this.props;
+		const { param } = this.props;
 		const { data } = param;
 		const { rootId, readonly } = data;
 		const relation = this.getRelation();
@@ -430,6 +430,8 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, relationKey } = data;
+
+		console.log(dbStore.getRelation(rootId, rootId, relationKey));
 
 		return dbStore.getRelation(rootId, rootId, relationKey);
 	};
