@@ -11,7 +11,7 @@ interface Props extends I.ViewComponent, I.ViewRelation {
 	block?: I.Block;
 	index: number;
 	onResizeStart(e: any, key: string): void;
-}
+};
 
 const Constant = require('json/constant.json');
 
@@ -54,8 +54,9 @@ const HeadCell = observer(class HeadCell extends React.Component<Props, {}> {
 
 	onEdit (e: any) {
 		const { rootId, block, readonly, getData, getView, relationKey } = this.props;
+		const relation = dbStore.getRelation(rootId, block.id, relationKey);
 
-		if (keyboard.isResizing) {
+		if (!relation || keyboard.isResizing) {
 			return;
 		};
 
@@ -68,7 +69,7 @@ const HeadCell = observer(class HeadCell extends React.Component<Props, {}> {
 				getView: getView,
 				rootId: rootId,
 				blockId: block.id,
-				relationKey: relationKey,
+				relationId: relation.id,
 				readonly: readonly,
 				extendedOptions: true,
 				addCommand: (rootId: string, blockId: string, relation: any, onChange?: (relation: any) => void) => {
@@ -77,9 +78,6 @@ const HeadCell = observer(class HeadCell extends React.Component<Props, {}> {
 							onChange(relation);
 						};
 					});
-				},
-				updateCommand: (rootId: string, blockId: string, relation: any) => {
-					DataUtil.dataviewRelationUpdate(relation);
 				},
 			}
 		});

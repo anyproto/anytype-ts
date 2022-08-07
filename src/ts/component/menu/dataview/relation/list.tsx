@@ -252,8 +252,8 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 				ref: 'dataview',
 				skipIds: relations.map((it: I.ViewRelation) => { return it.relationKey; }),
 				onAdd: onAdd,
-				addCommand: (rootId: string, blockId: string, relationKey: string) => {
-					DataUtil.dataviewRelationAdd(rootId, blockId, [ relationKey ], -1, getView(), () => {
+				addCommand: (rootId: string, blockId: string, relationId: string) => {
+					DataUtil.dataviewRelationAdd(rootId, blockId, [ relationId ], -1, getView(), () => {
 						onAdd();
 					});
 				},
@@ -270,9 +270,10 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 	onClick (e: any, item: any) {
 		const { param, getId } = this.props;
 		const { data } = param;
-		const { readonly, getView } = data;
+		const { rootId, blockId, readonly } = data;
+		const relation = dbStore.getRelation(rootId, blockId, item.relationKey);
 
-		if (readonly) {
+		if (!relation || readonly) {
 			return;
 		};
 		
@@ -282,10 +283,7 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 			noAnimation: true,
 			data: {
 				...data,
-				relationKey: item.relationKey,
-				updateCommand: (rootId: string, blockId: string, relation: any) => {
-					DataUtil.dataviewRelationUpdate(relation);
-				},
+				relationId: relation.id,
 			}
 		});
 	};

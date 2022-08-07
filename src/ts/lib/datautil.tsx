@@ -1011,13 +1011,6 @@ class DataUtil {
 		});
 	};
 
-	dataviewRelationUpdate (relation: any, callBack?: (message: any) => void) {
-		const details = [ 
-			{ key: 'name', value: relation.name },
-		];
-		C.ObjectSetDetails(relation.id, details, callBack);
-	};
-
 	dataviewRelationDelete (rootId: string, blockId: string, relationKey: string, view?: I.View, callBack?: (message: any) => void) {
 		C.BlockDataviewRelationDelete(rootId, blockId, relationKey, (message: any) => {
 			if (message.error.code || !view) {

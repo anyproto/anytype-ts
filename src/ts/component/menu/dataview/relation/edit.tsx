@@ -273,11 +273,11 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 	onClick (e: any, item: any) {
 		const { param, getId, getSize } = this.props;
 		const { data } = param;
-		const { rootId, blockId, relationKey, getView, getData } = data;
+		const { rootId, blockId, getView, getData } = data;
 		const view = getView();
 		const relation = this.getRelation();
 		const relations = DataUtil.viewGetRelations(rootId, blockId, view);
-		const idx = view.relations.findIndex((it: I.ViewRelation) => { return it.relationKey == relationKey; });
+		const idx = view.relations.findIndex(it => it.relationKey == relation.relationKey);
 
 		if (!relation) {
 			return;
@@ -305,7 +305,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 				break;
 
 			case 'remove':
-				DataUtil.dataviewRelationDelete(rootId, blockId, relationKey, view);		
+				DataUtil.dataviewRelationDelete(rootId, blockId, relation.relationKey, view);		
 				break;
 
 			case 'filter':
@@ -584,28 +584,29 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 	update (newRelation: any) {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, updateCommand } = data;
-		const relation = this.getViewRelation();
+		const { relationId } = data;
+		const details = [ 
+			{ key: 'name', value: newRelation.name },
+		];
 
-		if (updateCommand) {
-			updateCommand(rootId, blockId, Object.assign(relation, newRelation));
-		};
+		C.ObjectSetDetails(relationId, details);
 	};
 
 	getRelation (): any {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, relationKey } = data;
+		const { relationId } = data;
 
-		return dbStore.getRelation(rootId, blockId, relationKey);
+		return dbStore.getRelationById(relationId);
 	};
 
 	getViewRelation (): I.ViewRelation {
 		const { param } = this.props;
 		const { data } = param;
-		const { relationKey, getView } = data;
+		const { getView } = data;
+		const relation = this.getRelation();
 
-		return getView()?.getRelation(relationKey);
+		return getView()?.getRelation(relation.relationKey);
 	};
 
 });
