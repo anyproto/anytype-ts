@@ -9,8 +9,10 @@
 		.wrapMenu { width: 48px; text-align: right; position: relative; flex-shrink: 0; z-index: 1; flex-basis: 48px; }
 		.wrapContent { width: calc(100% - 48px); position: relative; flex-grow: 1; }
 
-		.wrapContent > .dropTarget.targetTop { display: none; }
-		.wrapContent > .dropTarget.targetBot { display: none; }
+		.wrapContent > .dropTarget.targetTop, .wrapContent > .dropTarget.targetBot { 
+			padding: 0px; width: 100%; position: absolute; left: 0px; border-radius: 0px !important; 
+		}
+		.wrapContent > .dropTarget.targetBot { height: 2px; bottom: -2px; }
 
 		.flex { position: relative; z-index: 2; }
 		.icon.dnd { 
@@ -84,10 +86,6 @@
 
 	.block.blockIconPage > .wrapMenu { visibility: hidden; }
 	.block.blockIconUser > .wrapMenu { visibility: hidden; }
-
-	// Remove padding for first block after title
-	.block.index-0 { padding-top: 0px !important; }
-	#block-div-1 > .wrapContent > .children > .block.first { padding-top: 0px !important; }
 }
 
 #dragProvider.isDragging {

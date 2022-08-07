@@ -1,7 +1,6 @@
 @import "~scss/_vars";
 
 .blocks {
-	.block.blockLink { padding: 6px 0px; }
 	.block.blockLink {
 		.isArchived {
 			.cardName { color: $colorMediumGrey; }
@@ -69,6 +68,7 @@
 			.cardName .name { @include clamp1; border-bottom: 0.05em solid $colorMediumGrey; }
 		}
 
+		.linkCard.card { margin: 6px 0px; }
 		.linkCard.card {
 			.side.left { padding: 21px 16px; border: 1px solid $colorBorderDark; border-radius: 12px; }
 			.side.right { border-radius: 0px 12px 12px 0px; }
