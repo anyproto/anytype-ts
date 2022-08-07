@@ -429,8 +429,8 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 				rootId: rootId,
 				relationKey: relationKey,
 				readonly: !allowed,
-				updateCommand: (rootId: string, blockId: string, relation: any) => {
-					C.ObjectRelationUpdate(rootId, relation);
+				updateCommand: (relation: any) => {
+					DataUtil.objectRelationUpdate(relation);
 				},
 				addCommand: (rootId: string, blockId: string, relationId: string, onChange?: (relation: any) => void) => {
 					C.ObjectTypeRelationAdd(rootId, [ relationId ], () => {

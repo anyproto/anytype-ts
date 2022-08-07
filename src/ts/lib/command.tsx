@@ -951,14 +951,6 @@ const ObjectTypeRelationAdd = (objectTypeId: string, relationIds: string[], call
 	dispatcher.request(ObjectTypeRelationAdd.name, request, callBack);
 };
 
-const ObjectTypeRelationUpdate = (objectTypeId: string, relation: any, callBack?: (message: any) => void) => {
-	const request = new Rpc.ObjectType.Relation.Update.Request();
-	
-	request.setObjecttypeurl(objectTypeId);
-	request.setRelation(Mapper.To.Relation(relation));
-
-	dispatcher.request(ObjectTypeRelationUpdate.name, request, callBack);
-};
 
 const ObjectTypeRelationRemove = (objectTypeId: string, relationKey: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.ObjectType.Relation.Remove.Request();
@@ -1243,16 +1235,6 @@ const ObjectRelationAdd = (contextId: string, relationIds: string[], callBack?: 
 	request.setRelationidsList(relationIds);
 
 	dispatcher.request(ObjectRelationAdd.name, request, callBack);
-};
-
-const ObjectRelationUpdate = (contextId: string, relation: any, callBack?: (message: any) => void) => {
-	const request = new Rpc.ObjectRelation.Update.Request();
-	
-	request.setContextid(contextId);
-	request.setRelationkey(relation.relationKey);
-	request.setRelation(Mapper.To.Relation(relation));
-
-	dispatcher.request(ObjectRelationUpdate.name, request, callBack);
 };
 
 const ObjectRelationDelete = (contextId: string, relationKey: string, callBack?: (message: any) => void) => {
@@ -1625,7 +1607,6 @@ export {
 	ObjectTypeCreate,
 	ObjectTypeRelationList,
 	ObjectTypeRelationAdd,
-	ObjectTypeRelationUpdate,
 	ObjectTypeRelationRemove,
 
 	ObjectRelationOptionAdd,
@@ -1633,7 +1614,6 @@ export {
     ObjectRelationOptionDelete,
 
 	ObjectRelationAdd,
-	ObjectRelationUpdate,
 	ObjectRelationDelete,
 
 	ObjectOpen,

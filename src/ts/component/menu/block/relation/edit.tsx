@@ -418,11 +418,11 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 	update (newRelation: any) {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, updateCommand } = data;
+		const { updateCommand } = data;
 		const relation = this.getRelation();
 		
 		if (updateCommand) {
-			updateCommand(rootId, blockId, Object.assign(relation, newRelation));
+			updateCommand(Object.assign(relation, newRelation));
 		};
 	};
 

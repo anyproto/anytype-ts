@@ -79,7 +79,7 @@ const HeadCell = observer(class HeadCell extends React.Component<Props, {}> {
 					});
 				},
 				updateCommand: (rootId: string, blockId: string, relation: any) => {
-					DataUtil.dataviewRelationUpdate(relation, getView());
+					DataUtil.dataviewRelationUpdate(relation);
 				},
 			}
 		});
