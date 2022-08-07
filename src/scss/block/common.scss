@@ -10,9 +10,9 @@
 		.wrapContent { width: calc(100% - 48px); position: relative; flex-grow: 1; }
 
 		.wrapContent > .dropTarget.targetTop, .wrapContent > .dropTarget.targetBot { 
-			padding: 0px; width: 100%; position: absolute; left: 0px; border-radius: 0px !important; 
+			padding: 0px; width: 100%; position: absolute; left: 0px; border-radius: 0px !important; pointer-events: none;
 		}
-		.wrapContent > .dropTarget.targetBot { height: 2px; bottom: -2px; }
+		.wrapContent > .dropTarget.targetBot { height: 2px; bottom: 0px; }
 
 		.flex { position: relative; z-index: 2; }
 		.icon.dnd { 
@@ -82,8 +82,6 @@
 	.block.isToggled > .wrapContent > .emptyToggle { display: block; }
 	.block.isToggled > .wrapContent > .selectable > .dropTarget > .flex > .markers > .marker.toggle { transform: rotateZ(90deg); }
 	
-	.block.isDragging > .wrapContent > .selectable > .dropTarget { opacity: 0.3; min-height: 20px; }
-
 	.block.blockIconPage > .wrapMenu { visibility: hidden; }
 	.block.blockIconUser > .wrapMenu { visibility: hidden; }
 }
