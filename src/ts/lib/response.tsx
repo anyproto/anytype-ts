@@ -191,12 +191,6 @@ const BlockDataviewRecordCreate = (response: any) => {
 	};
 };
 
-const BlockDataviewRelationAdd = (response: any) => {
-	return {
-		relationKey: response.getRelationkey(),
-	};
-};
-
 const BlockDataviewRelationListAvailable = (response: any) => {
 	return {
 	};
@@ -389,7 +383,6 @@ export {
 	BlockDataviewViewCreate,
 
 	BlockDataviewRecordCreate,
-	BlockDataviewRelationAdd,
 	BlockDataviewRelationListAvailable,
 	BlockDataviewRecordRelationOptionAdd,
 

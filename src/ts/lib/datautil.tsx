@@ -982,12 +982,17 @@ class DataUtil {
 		return Util.arrayUniqueObjects(ret, 'relationKey');
 	};
 
-	dataviewRelationAdd (rootId: string, blockId: string, relation: any, index: number, view?: I.View, callBack?: (message: any) => void) {
-		C.BlockDataviewRelationAdd(rootId, blockId, relation.id, (message: any) => {
-			if (message.error.code || !view) {
+	dataviewRelationAdd (rootId: string, blockId: string, relationIds: string[], index: number, view?: I.View, callBack?: (message: any) => void) {
+		if (!view) {
+			return;
+		};
+
+		C.BlockDataviewRelationAdd(rootId, blockId, relationIds, (message: any) => {
+			if (message.error.code) {
 				return;
 			};
 
+			/*
 			let rel = view.getRelation(message.relationKey);
 			if (rel) {
 				rel.isVisible = true;
@@ -1008,21 +1013,7 @@ class DataUtil {
 			};
 
 			C.BlockDataviewViewUpdate(rootId, blockId, view.id, view);
-		});
-	};
-
-	dataviewRelationDelete (rootId: string, blockId: string, relationKey: string, view?: I.View, callBack?: (message: any) => void) {
-		C.BlockDataviewRelationDelete(rootId, blockId, relationKey, (message: any) => {
-			if (message.error.code || !view) {
-				return;
-			};
-			
-			if (callBack) {
-				callBack(message);
-			};
-
-			view.relations = view.relations.filter((it: I.ViewRelation) => { return it.relationKey != relationKey; });
-			C.BlockDataviewViewUpdate(rootId, blockId, view.id, view);
+			*/
 		});
 	};
 
