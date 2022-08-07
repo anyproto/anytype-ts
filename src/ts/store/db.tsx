@@ -223,6 +223,10 @@ class DbStore {
 		return relations.find(it => it.relationKey == relationKey);
 	};
 
+	getRelationById (id: string): any {
+		return detailStore.get(Constant.subId.relation, id, Constant.relationRelationKeys);
+	};
+
     getViews (rootId: string, blockId: string): I.View[] {
 		return this.viewMap.get(this.getId(rootId, blockId)) || [];
 	};

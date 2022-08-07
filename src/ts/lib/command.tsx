@@ -951,12 +951,11 @@ const ObjectTypeRelationAdd = (objectTypeId: string, relationIds: string[], call
 	dispatcher.request(ObjectTypeRelationAdd.name, request, callBack);
 };
 
-
-const ObjectTypeRelationRemove = (objectTypeId: string, relationKey: string, callBack?: (message: any) => void) => {
+const ObjectTypeRelationRemove = (objectTypeId: string, relationId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.ObjectType.Relation.Remove.Request();
 	
 	request.setObjecttypeurl(objectTypeId);
-	request.setRelationkey(relationKey);
+	request.setRelationid(relationId);
 
 	dispatcher.request(ObjectTypeRelationRemove.name, request, callBack);
 };

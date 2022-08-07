@@ -5,6 +5,7 @@ import { detailStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props {
+	id: string;
 	relationKey: string;
 	name: string;
 	format: I.RelationType;
@@ -53,9 +54,9 @@ const MenuItemRelationView = observer(class MenuItemRelationView extends React.C
 	};
 
 	render () {
-		const { rootId, block, relationKey, canEdit, canDrag, canFav, readonly, format, name, isHidden, isFeatured, classNameWrap, onEdit, onRef, onFav, onCellClick, onCellChange, optionCommand } = this.props;
+		const { rootId, block, id, relationKey, canEdit, canDrag, canFav, readonly, format, name, isHidden, isFeatured, classNameWrap, onEdit, onRef, onFav, onCellClick, onCellChange, optionCommand } = this.props;
 
-		const id = Relation.cellId(PREFIX, relationKey, '0');
+		const cellId = Relation.cellId(PREFIX, relationKey, '0');
 		const fcn = [ 'fav' ];
 		const tooltip = isFeatured ? 'Remove from featured relations' : 'Add to featured relations';
 		const cn = [ 'item', 'sides' ];
@@ -75,20 +76,20 @@ const MenuItemRelationView = observer(class MenuItemRelationView extends React.C
 		return (
 			<div className={cn.join(' ')}>
 				<div 
-					id={`item-${relationKey}`} 
+					id={`item-${id}`} 
 					className={[ 'info', (canEdit ? 'canEdit' : '') ].join(' ')} 
-					onClick={(e: any) => { onEdit(e, relationKey); }}
+					onClick={(e: any) => { onEdit(e, id); }}
 				>
 					{canDrag ? <Icon className="dnd" draggable={true} onDragStart={this.onDragStart} /> : ''}
 					{readonly ? <Icon className="lock" /> : ''}
 					{name}
 				</div>
 				<div
-					id={id} 
+					id={cellId} 
 					className={[ 'cell', DataUtil.relationClass(format), (!readonly ? 'canEdit' : '') ].join(' ')} 
 				>
 					<Cell 
-						ref={(ref: any) => { onRef(id, ref); }} 
+						ref={(ref: any) => { onRef(cellId, ref); }} 
 						rootId={rootId}
 						subId={rootId}
 						storeId={rootId}

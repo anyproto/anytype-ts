@@ -86,14 +86,14 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 
 		let relations = Util.objectCopy(dbStore.getRelations(rootId, rootId));
 		if (!config.debug.ho) {
-			relations = relations.filter((it: any) => { return !it.isHidden; });
+			relations = relations.filter(it => !it.isHidden);
 		};
-		relations = relations.filter((it: any) => { return Constant.systemRelationKeys.indexOf(it.relationKey) < 0; });
+		relations = relations.filter(it => !Constant.systemRelationKeys.includes(it.relationKey));
 		relations.sort(DataUtil.sortByHidden);
 
 		const Relation = (item: any) => (
-			<div id={'item-' + item.relationKey} className={[ 'item', (item.isHidden ? 'isHidden' : ''), 'canEdit' ].join(' ')}>
-				<div className="clickable" onClick={(e: any) => { this.onRelationEdit(e, item.relationKey); }}>
+			<div id={'item-' + item.id} className={[ 'item', (item.isHidden ? 'isHidden' : ''), 'canEdit' ].join(' ')}>
+				<div className="clickable" onClick={(e: any) => { this.onRelationEdit(e, item.id); }}>
 					<Icon className={[ 'relation', DataUtil.relationClass(item.format) ].join(' ')} />
 					<div className="name">{item.name}</div>
 				</div>
@@ -418,7 +418,7 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 		});
 	};
 
-	onRelationEdit (e: any, relationKey: string) {
+	onRelationEdit (e: any, id: string) {
 		const rootId = this.getRootId();
 		const allowed = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
 		
@@ -427,7 +427,7 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 			horizontal: I.MenuDirection.Center,
 			data: {
 				rootId: rootId,
-				relationKey: relationKey,
+				relationId: id,
 				readonly: !allowed,
 				addCommand: (rootId: string, blockId: string, relationId: string, onChange?: (relation: any) => void) => {
 					C.ObjectTypeRelationAdd(rootId, [ relationId ], () => {
@@ -436,8 +436,8 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 						};
 					});
 				},
-				deleteCommand: (rootId: string, blockId: string, relationKey: string) => {
-					C.ObjectTypeRelationRemove(rootId, relationKey);
+				deleteCommand: () => {
+					C.ObjectTypeRelationRemove(rootId, id);
 				},
 			}
 		});

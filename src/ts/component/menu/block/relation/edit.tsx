@@ -41,7 +41,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		const typeId = this.objectTypes.length ? this.objectTypes[0] : '';
 		const type = detailStore.get(Constant.subId.type, typeId, []);
 		const allowed = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
-		const canDelete = allowed && relation && Constant.systemRelationKeys.indexOf(relation.relationKey) < 0;
+		const canDelete = allowed && relation && !Constant.systemRelationKeys.includes(relation.relationKey);
 		const isReadonly = this.isReadonly();
 
 		let opts: any = null;
@@ -159,7 +159,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		const { filter } = data;
 		const relation = this.getRelation();
 
-		if (relation) {
+		if (relation && !relation._empty_) {
 			this.format = relation.format;
 			this.objectTypes = relation.objectTypes;
 			this.forceUpdate();
@@ -364,10 +364,10 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 	onRemove (e: any) {
 		const { close, param } = this.props;
 		const { data } = param;
-		const { rootId, relationKey, blockId, deleteCommand } = data;
+		const { deleteCommand } = data;
 
 		if (deleteCommand) {
-			deleteCommand(rootId, blockId, relationKey);
+			deleteCommand();
 		};
 		close();
 
@@ -435,9 +435,9 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 	getRelation () {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, relationKey } = data;
+		const { relationId } = data;
 
-		return dbStore.getRelation(rootId, rootId, relationKey);
+		return relationId ? dbStore.getRelationById(relationId) : null;
 	};
 
 });

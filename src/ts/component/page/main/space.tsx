@@ -182,45 +182,6 @@ const PageMainSpace = observer(class PageMainSpace extends React.Component<Props
 		};
 	};
 
-	onAdd (e: any) {
-		const rootId = this.getRootId();
-		const relations = dbStore.getRelations(rootId, rootId);
-
-		menuStore.open('relationSuggest', { 
-			element: $(e.currentTarget),
-			offsetX: 32,
-			data: {
-				filter: '',
-				rootId: rootId,
-				ref: 'space',
-				menuIdEdit: 'blockRelationEdit',
-				skipIds: relations.map(it => it.relationKey),
-				addCommand: (rootId: string, blockId: string, relationId: string) => {
-					C.ObjectRelationAdd(rootId, [ relationId ], () => { 
-						menuStore.close('relationSuggest'); 
-					});
-				},
-			}
-		});
-	};
-
-	onEdit (e: any, relationKey: string) {
-		const rootId = this.getRootId();
-		
-		menuStore.open('blockRelationEdit', { 
-			element: $(e.currentTarget),
-			horizontal: I.MenuDirection.Center,
-			data: {
-				rootId: rootId,
-				relationKey: relationKey,
-				readonly: false,
-				deleteCommand: (rootId: string, blockId: string, relationKey: string) => {
-					C.ObjectRelationDelete(rootId, relationKey);
-				},
-			}
-		});
-	};
-
 	getRootId () {
 		const { rootId, match } = this.props;
 		return rootId ? rootId : match.params.id;

@@ -169,7 +169,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		let featured = object[Constant.relationKey.featured] || [];
 
 		if (!config.debug.ho) {
-			items = items.filter((it: any) => { return !it.isHidden; });
+			items = items.filter(it => !it.isHidden);
 		};
 		items.sort(DataUtil.sortByHidden);
 
@@ -245,7 +245,8 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		menuStore.open('relationSuggest', { 
 			element: `#${getId()} #item-add .info`,
 			classNameWrap: classNameWrap,
-			offsetY: 8,
+			offsetY: -8,
+			vertical: I.MenuDirection.Top,
 			data: {
 				...data,
 				filter: '',
@@ -261,7 +262,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		});
 	};
 
-	onEdit (e: any, relationKey: string) {
+	onEdit (e: any, id: string) {
 		const { param, getId } = this.props;
 		const { data, classNameWrap } = param;
 		const { rootId } = data;
@@ -272,12 +273,12 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		};
 		
 		menuStore.open('blockRelationEdit', { 
-			element: `#${getId()} #item-${relationKey}`,
+			element: `#${getId()} #item-${id}`,
 			horizontal: I.MenuDirection.Center,
 			classNameWrap: classNameWrap,
 			data: {
 				...data,
-				relationKey: relationKey,
+				relationId: id,
 				addCommand: (rootId: string, blockId: string, relation: any, onChange?: (relation: any) => void) => {
 					C.ObjectRelationAdd(rootId, [ relation.id ], () => {
 						if (onChange) {
@@ -285,8 +286,8 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 						};
 					});
 				},
-				deleteCommand: (rootId: string, blockId: string, relationKey: string) => {
-					C.ObjectRelationDelete(rootId, relationKey);
+				deleteCommand: () => {
+					C.ObjectRelationDelete(rootId, id);
 				},
 			}
 		});
