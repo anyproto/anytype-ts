@@ -214,9 +214,6 @@ const PageMainSpace = observer(class PageMainSpace extends React.Component<Props
 				rootId: rootId,
 				relationKey: relationKey,
 				readonly: false,
-				updateCommand: (relation: any) => {
-					DataUtil.objectRelationUpdate(relation);
-				},
 				deleteCommand: (rootId: string, blockId: string, relationKey: string) => {
 					C.ObjectRelationDelete(rootId, relationKey);
 				},

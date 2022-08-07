@@ -285,9 +285,6 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 						};
 					});
 				},
-				updateCommand: (relation: any) => {
-					DataUtil.objectRelationUpdate(relation);
-				},
 				deleteCommand: (rootId: string, blockId: string, relationKey: string) => {
 					C.ObjectRelationDelete(rootId, relationKey);
 				},

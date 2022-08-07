@@ -1011,13 +1011,6 @@ class DataUtil {
 		});
 	};
 
-	objectRelationUpdate (relation: any, callBack?: (message: any) => void) {
-		const details = [ 
-			{ key: 'name', value: relation.name },
-		];
-		C.ObjectSetDetails(relation.id, details, callBack);
-	};
-
 	dataviewRelationUpdate (relation: any, callBack?: (message: any) => void) {
 		const details = [ 
 			{ key: 'name', value: relation.name },

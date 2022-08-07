@@ -707,23 +707,6 @@ const Mapper = {
 			return item;
 		},
 
-		Relation: (obj: any) => {
-			const item = new Model.Relation();
-			
-			item.setKey(obj.relationKey);
-			item.setFormat(obj.format);
-			item.setName(obj.name);
-			item.setDefaultvalue(obj.defaultValue);
-			item.setDatasource(obj.dataSource);
-			item.setHidden(obj.isHidden);
-			item.setReadonly(obj.isReadonly);
-			item.setMaxcount(obj.maxCount);
-			item.setObjecttypesList(obj.objectTypes);
-			item.setSelectdictList((obj.selectDict || []).map(Mapper.To.SelectOption));
-
-			return item;
-		},
-
 		SelectOption: (obj: any) => {
 			const item = new Model.Relation.Option();
 

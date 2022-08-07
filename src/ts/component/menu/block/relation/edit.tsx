@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, analytics, DataUtil, translate } from 'ts/lib';
+import { C, I, analytics, DataUtil, translate } from 'ts/lib';
 import { Input, MenuItemVertical, Button, Icon } from 'ts/component';
 import { dbStore, menuStore, blockStore, detailStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -410,20 +410,26 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		const { data } = param;
 		const { rootId, blockId, addCommand, onChange } = data;
 
-		if (addCommand) {
-			addCommand(rootId, blockId, newRelation, onChange);
+		const details = { 
+			name: newRelation.name, 
+			relationFormat: newRelation.format,
+			type: Constant.typeId.relation,
+			layout: I.ObjectLayout.Relation,
 		};
+
+		C.ObjectCreate(details, [], (message: any) => {
+			if (addCommand) {
+				addCommand(rootId, blockId, message.pageId, onChange);
+			};
+		});
 	};
 
 	update (newRelation: any) {
-		const { param } = this.props;
-		const { data } = param;
-		const { updateCommand } = data;
 		const relation = this.getRelation();
-		
-		if (updateCommand) {
-			updateCommand(Object.assign(relation, newRelation));
-		};
+		const details = [ 
+			{ key: 'name', value: newRelation.name },
+		];
+		C.ObjectSetDetails(relation.id, details);
 	};
 
 	getRelation () {

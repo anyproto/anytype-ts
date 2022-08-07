@@ -4,7 +4,7 @@ import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
 import { Header, FooterMainEdit as Footer, Loader, Block, Deleted } from 'ts/component';
 import { I, M, C, DataUtil, Util, crumbs, Action } from 'ts/lib';
-import { blockStore, dbStore, menuStore } from 'ts/store';
+import { blockStore } from 'ts/store';
 
 import Controls from 'ts/component/page/head/controls';
 import HeadSimple from 'ts/component/page/head/simple';
@@ -148,48 +148,6 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, St
 		if (close) {
 			Action.pageClose(rootId, true);
 		};
-	};
-
-	onAdd (e: any) {
-		const rootId = this.getRootId();
-		const relations = dbStore.getRelations(rootId, rootId);
-
-		menuStore.open('relationSuggest', { 
-			element: $(e.currentTarget),
-			offsetX: 32,
-			data: {
-				filter: '',
-				rootId: rootId,
-				ref: 'set',
-				menuIdEdit: 'blockRelationEdit',
-				skipIds: relations.map(it => it.relationKey),
-				addCommand: (rootId: string, blockId: string, relationId: string) => {
-					C.ObjectRelationAdd(rootId, [ relationId ], () => { 
-						menuStore.close('relationSuggest'); 
-					});
-				},
-			}
-		});
-	};
-
-	onEdit (e: any, relationKey: string) {
-		const rootId = this.getRootId();
-		
-		menuStore.open('blockRelationEdit', { 
-			element: $(e.currentTarget),
-			horizontal: I.MenuDirection.Center,
-			data: {
-				rootId: rootId,
-				relationKey: relationKey,
-				readonly: false,
-				updateCommand: (relation: any) => {
-					DataUtil.objectRelationUpdate(relation);
-				},
-				deleteCommand: (rootId: string, blockId: string, relationKey: string) => {
-					C.ObjectRelationDelete(rootId, relationKey);
-				},
-			}
-		});
 	};
 
 	getRootId () {
