@@ -437,8 +437,6 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		const { data } = param;
 		const { rootId, relationKey } = data;
 
-		console.log(dbStore.getRelation(rootId, rootId, relationKey));
-
 		return dbStore.getRelation(rootId, rootId, relationKey);
 	};
 
