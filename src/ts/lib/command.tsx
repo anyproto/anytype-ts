@@ -1236,11 +1236,11 @@ const ObjectRelationAdd = (contextId: string, relationIds: string[], callBack?: 
 	dispatcher.request(ObjectRelationAdd.name, request, callBack);
 };
 
-const ObjectRelationDelete = (contextId: string, relationKey: string, callBack?: (message: any) => void) => {
+const ObjectRelationDelete = (contextId: string, relationId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.ObjectRelation.Delete.Request();
 	
 	request.setContextid(contextId);
-	request.setRelationkey(relationKey);
+	request.setRelationid(relationId);
 
 	dispatcher.request(ObjectRelationDelete.name, request, callBack);
 };

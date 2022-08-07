@@ -563,6 +563,13 @@ class Dispatcher {
 					dbStore.relationsSet(rootId, id, (data.getRelationlinksList() || []).map(Mapper.From.RelationLink));
 					break;
 
+				case 'objectRelationsRemove':
+					id = data.getId();
+					ids = data.getRelationidsList();
+
+					ids.forEach(it => dbStore.relationDelete(rootId, id, it));
+					break;
+
 				case 'objectDetailsSet':
 					id = data.getId();
 					subIds = data.getSubidsList() || [];

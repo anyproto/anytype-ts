@@ -241,11 +241,11 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 				classNameWrap: classNameWrap,
 				data: {
 					...data,
+					rebind: this.rebind,
 					onChange: (relation: any) => { 
 						close(); 
 						analytics.event('CreateRelation', { format: relation.format, type: ref });
 					},
-					rebind: this.rebind,
 				}
 			});
 		} else 

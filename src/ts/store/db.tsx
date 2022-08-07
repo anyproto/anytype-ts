@@ -69,8 +69,8 @@ class DbStore {
 		this.relationMap.set(key, Util.arrayUniqueObjects(relations, 'id'));
 	};
 
-    relationDelete (rootId: string, blockId: string, key: string) {
-		this.relationMap.set(this.getId(rootId, blockId), this.getRelations(rootId, blockId).filter(it => it.relationKey != key));
+    relationDelete (rootId: string, blockId: string, id: string) {
+		this.relationMap.set(this.getId(rootId, blockId), this.getRelations(rootId, blockId).filter(it => it.id != id));
 	};
 
     viewsSet (rootId: string, blockId: string, list: I.View[]) {
