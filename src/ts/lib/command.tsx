@@ -953,11 +953,11 @@ const ObjectTypeRelationList = (objectTypeId: string, otherTypes: boolean, callB
 	dispatcher.request(ObjectTypeRelationList.name, request, callBack);
 };
 
-const ObjectTypeRelationAdd = (objectTypeId: string, relations: any[], callBack?: (message: any) => void) => {
+const ObjectTypeRelationAdd = (objectTypeId: string, relationIds: string[], callBack?: (message: any) => void) => {
 	const request = new Rpc.ObjectType.Relation.Add.Request();
 	
 	request.setObjecttypeurl(objectTypeId);
-	request.setRelationsList(relations.map(Mapper.To.Relation));
+	request.setRelationidsList(relationIds);
 
 	dispatcher.request(ObjectTypeRelationAdd.name, request, callBack);
 };

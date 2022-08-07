@@ -188,9 +188,9 @@ const Mapper = {
 			return {
 				sources: obj.getSourceList(),
 				views: (obj.getViewsList() || []).map(Mapper.From.View),
-				relations: (obj.getRelationsList() || []).map(Mapper.From.Relation),
-				groupOrder: [], //(obj.getGroupordersList() || []).map(Mapper.From.GroupOrder),
-				objectOrder: [], //(obj.getObjectordersList() || []).map(Mapper.From.ObjectOrder),
+				relationLinks: (obj.getRelationlinksList() || []).map(Mapper.From.RelationLink),
+				groupOrder: (obj.getGroupordersList() || []).map(Mapper.From.GroupOrder),
+				objectOrder: (obj.getObjectordersList() || []).map(Mapper.From.ObjectOrder),
 			};
 		},
 
@@ -720,19 +720,6 @@ const Mapper = {
 
 			item.setName(obj.name);
 			item.setLocalpath(obj.path);
-
-			return item;
-		},
-
-		ObjectType: (obj: any) => {
-			const item = new Model.ObjectType();
-			
-			item.setUrl(obj.id);
-			item.setName(obj.name);
-			item.setLayout(obj.layout);
-			item.setIconemoji(obj.iconEmoji);
-			item.setHidden(obj.isHidden);
-			item.setRelationsList((obj.relations || []).map(Mapper.To.Relation));
 
 			return item;
 		},

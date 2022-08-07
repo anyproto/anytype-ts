@@ -70,8 +70,7 @@ class DbStore {
 	};
 
     relationDelete (rootId: string, blockId: string, key: string) {
-		let relations = this.getRelations(rootId, blockId);
-		this.relationMap.set(this.getId(rootId, blockId), relations.filter(it => it.relationKey != key);
+		this.relationMap.set(this.getId(rootId, blockId), this.getRelations(rootId, blockId).filter(it => it.relationKey != key));
 	};
 
     viewsSet (rootId: string, blockId: string, list: I.View[]) {

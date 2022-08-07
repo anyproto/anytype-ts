@@ -199,7 +199,6 @@ const BlockDataviewRelationAdd = (response: any) => {
 
 const BlockDataviewRelationListAvailable = (response: any) => {
 	return {
-		relations: (response.getRelationsList() || []).map(Mapper.From.Relation),
 	};
 };
 
@@ -235,12 +234,6 @@ const ObjectTypeCreate = (response: any) => {
 	};
 };
  
-const ObjectTypeRelationAdd = (response: any) => {
-	return {
-		relations: (response.getRelationsList() || []).map(Mapper.From.Relation),
-	};
-};
-
 const ObjectSearch = (response: any) => {
 	return {
 		records: (response.getRecordsList() || []).map(Decode.decodeStruct),
@@ -352,7 +345,6 @@ const onObjectShow = (response: any) => {
 		blocks: (response.getBlocksList() || []).map(Mapper.From.Block),
 		details: (response.getDetailsList() || []).map(Mapper.From.Details),
 		objectTypes: (response.getObjecttypesList() || []).map(Mapper.From.ObjectType),
-		relations: (response.getRelationsList() || []).map(Mapper.From.Relation),
 		relationLinks: (response.getRelationlinksList() || []).map(Mapper.From.RelationLink),
 		restrictions: Mapper.From.Restrictions(response.getRestrictions()),
 	};
@@ -409,7 +401,6 @@ export {
 
 	ObjectTypeList,
 	ObjectTypeCreate,
-	ObjectTypeRelationAdd,
 
 	ObjectSearch,
 	ObjectRelationSearchDistinct,

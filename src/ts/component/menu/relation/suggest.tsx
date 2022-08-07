@@ -220,9 +220,9 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 	};
 	
 	onClick (e: any, item: any) {
-		const { close, param, getId } = this.props;
+		const { close, param, getId, getSize } = this.props;
 		const { data, classNameWrap } = param;
-		const { rootId, blockId, menuIdEdit, addCommand, onAdd, ref } = data;
+		const { rootId, blockId, menuIdEdit, addCommand, ref } = data;
 
 		e.preventDefault();
 		e.stopPropagation();
@@ -233,23 +233,16 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		};
 
 		if (item.id == 'add') {
-			const obj = $(`#${getId()}`);
-
 			menuStore.open(menuIdEdit, { 
 				element: `#${getId()} #item-${item.id}`,
-				offsetX: obj.outerWidth(),
-				offsetY: -76,
+				offsetX: getSize().width,
+				offsetY: -80,
 				noAnimation: true,
 				classNameWrap: classNameWrap,
 				data: {
 					...data,
 					onChange: (relation: any) => { 
 						close(); 
-						
-						if (onAdd) {
-							onAdd();
-						};
-
 						analytics.event('CreateRelation', { format: relation.format, type: ref });
 					},
 					rebind: this.rebind,
