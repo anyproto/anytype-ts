@@ -159,7 +159,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		const { filter } = data;
 		const relation = this.getRelation();
 
-		if (relation && !relation._empty_) {
+		if (relation) {
 			this.format = relation.format;
 			this.objectTypes = relation.objectTypes;
 			this.forceUpdate();

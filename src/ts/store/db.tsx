@@ -1,6 +1,6 @@
 import { observable, action, computed, set, intercept, makeObservable } from 'mobx';
 import { I, M, DataUtil, Util } from 'ts/lib';
-import { detailStore } from 'ts/store';
+import { detailStore, commonStore } from 'ts/store';
 
 const Constant = require('json/constant.json');
 
@@ -213,9 +213,14 @@ class DbStore {
 	};
 
     getRelations (rootId: string, blockId: string): any[] {
-		return (this.relationMap.get(this.getId(rootId, blockId)) || []).map(it => {
-			return detailStore.get(Constant.subId.relation, it.id, Constant.relationRelationKeys);
-		}).filter(it => !it._empty_);
+		let { config } = commonStore;
+		let relations = this.relationMap.get(this.getId(rootId, blockId)) || [];
+
+		relations = relations.map(it => this.getRelationById(it.id));
+		relations = relations.filter((it: any) => {
+			return it ? (!config.debug.ho ? !it.isHidden : true) : false;
+		});
+		return relations;
 	};
 
     getRelation (rootId: string, blockId: string, relationKey: string): any {
@@ -224,7 +229,8 @@ class DbStore {
 	};
 
 	getRelationById (id: string): any {
-		return detailStore.get(Constant.subId.relation, id, Constant.relationRelationKeys);
+		const relation = detailStore.get(Constant.subId.relation, id, Constant.relationRelationKeys);
+		return !relation._empty_ ? relation : null;
 	};
 
     getViews (rootId: string, blockId: string): I.View[] {

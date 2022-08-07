@@ -940,7 +940,7 @@ class DataUtil {
 
 		if (!config.debug.ho) {
 			relations = relations.filter((it: any) => { 
-				if ([ Constant.relationKey.name ].indexOf(it.relationKey) >= 0) {
+				if ([ Constant.relationKey.name ].includes(it.relationKey)) {
 					return true;
 				};
 				return !it.isHidden; 

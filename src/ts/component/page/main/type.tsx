@@ -84,12 +84,8 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 		const allowedRelation = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
 		const allowedTemplate = allowedObject && showTemplates;
 
-		let relations = Util.objectCopy(dbStore.getRelations(rootId, rootId));
-		if (!config.debug.ho) {
-			relations = relations.filter(it => !it.isHidden);
-		};
+		let relations = Util.objectCopy(dbStore.getRelations(rootId, rootId)).sort(DataUtil.sortByHidden);
 		relations = relations.filter(it => !Constant.systemRelationKeys.includes(it.relationKey));
-		relations.sort(DataUtil.sortByHidden);
 
 		const Relation = (item: any) => (
 			<div id={'item-' + item.id} className={[ 'item', (item.isHidden ? 'isHidden' : ''), 'canEdit' ].join(' ')}>

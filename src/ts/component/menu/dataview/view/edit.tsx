@@ -462,7 +462,7 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 		const { data } = param;
 		const { rootId, blockId } = data;
 		const options: any[] = dbStore.getRelations(rootId, blockId).filter((it: any) => {
-			return !it.isHidden && (it.format == I.RelationType.File);
+			return it.format == I.RelationType.File;
 		}).map((it: any) => {
 			return { 
 				id: it.relationKey, 
