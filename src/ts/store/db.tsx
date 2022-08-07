@@ -224,11 +224,19 @@ class DbStore {
 	};
 
     getRelation (rootId: string, blockId: string, relationKey: string): any {
+		if (!relationKey) {
+			return null;
+		};
+
 		const relations = this.getRelations(rootId, blockId);
 		return relations.find(it => it.relationKey == relationKey);
 	};
 
 	getRelationById (id: string): any {
+		if (!id) {
+			return null;
+		};
+
 		const relation = detailStore.get(Constant.subId.relation, id, Constant.relationRelationKeys);
 		return !relation._empty_ ? relation : null;
 	};
