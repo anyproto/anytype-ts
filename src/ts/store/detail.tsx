@@ -147,6 +147,7 @@ class DetailStore {
 
 		if (object.type == Constant.typeId.relation) {
 			object.relationFormat = Number(object.relationFormat) || I.RelationType.LongText;
+			object.relationReadonly = Boolean(object.relationReadonly);
 			object.scope = Number(object.scope) || I.RelationScope.Object;
 			object.format = object.relationFormat;
 		};
