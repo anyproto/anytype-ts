@@ -7,10 +7,6 @@ import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from
 
 interface Props extends I.Menu {};
 
-interface State {
-	loading: boolean;
-};
-
 const $ = require('jquery');
 const Constant = require('json/constant.json');
 const HEIGHT_ITEM = 28;
@@ -19,17 +15,12 @@ const HEIGHT_DESCRIPTION = 56;
 const HEIGHT_RELATION = 32;
 const LIMIT = 40;
 
-const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, State> {
+const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, {}> {
 	
 	_isMounted = false;
-		state = {
-		loading: false,
-	};
-
 	emptyLength: number = 0;
 	timeout: number = 0;
 	cache: any = {};
-	relations: any[] = [];
 	refList: any = null;
 	n: number = 0;
 	filter: string = '';
@@ -217,7 +208,6 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 		this.rebind();
 		this.checkFilter();
 		this.resize();
-		this.load();
 
 		this.cache = new CellMeasurerCache({
 			fixedWidth: true,
@@ -265,44 +255,6 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 		menuStore.closeAll(Constant.menuIds.add);
 	};
 
-	load () {
-		const { param } = this.props;
-		const { data } = param;
-		const { rootId } = data;
-		const { config } = commonStore;
-
-		this.setState({ loading: true });
-
-		/*
-		C.ObjectRelationListAvailable(rootId, (message: any) => {
-			this.relations = message.relations.sort(DataUtil.sortByName).map((it: any) => {
-				it.id = it.relationKey;
-				it.type = I.BlockType.Relation;
-				it.isRelation = true;
-				it.isBlock = true;
-				return it;
-			});
-
-			this.relations = this.relations.filter((it: any) => {
-				if (!config.debug.ho && it.isHidden) {
-					return false;
-				};
-				return [ I.RelationScope.Object, I.RelationScope.Type ].indexOf(it.scope) >= 0;
-			});
-
-			this.relations.unshift({
-				id: 'add',
-				name: 'New relation',
-				type: I.BlockType.Relation,
-				isRelationAdd: true,
-				isBlock: true,
-			});
-
-			this.setState({ loading: false });
-		});
-		*/
-	};
-	
 	checkFilter () {
 		const { filter } = commonStore;
 		const obj = $('#menuBlockAdd');
@@ -318,6 +270,41 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 	
 	unbind () {
 		$(window).unbind('keydown.menu');
+	};
+
+	getRelations () {
+		const { param } = this.props;
+		const { data } = param;
+		const { rootId } = data;
+		const { config } = commonStore;
+		const relations = dbStore.getRelations(rootId, rootId);
+
+		let items = [
+			{
+				id: 'add',
+				name: 'New relation',
+				type: I.BlockType.Relation,
+				isRelationAdd: true,
+				isBlock: true,
+			},
+		];
+
+		items = items.concat(relations.sort(DataUtil.sortByName).map((it: any) => {
+			it.id = it.relationKey;
+			it.type = I.BlockType.Relation;
+			it.isRelation = true;
+			it.isBlock = true;
+			return it;
+		}));
+
+		items = items.filter((it: any) => {
+			if (!config.debug.ho && it.isHidden) {
+				return false;
+			};
+			return [ I.RelationScope.Object, I.RelationScope.Type ].indexOf(it.scope) >= 0;
+		});
+
+		return items;
 	};
 	
 	getSections () {
@@ -353,7 +340,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 		});
 
 		sections = sections.concat([
-			{ id: 'relation', name: 'Relations', children: this.relations },
+			{ id: 'relation', name: 'Relations', children: this.getRelations() },
 		]);
 		
 		if (filter && filter.text) {
