@@ -247,7 +247,7 @@ class Dispatcher {
 						block = Mapper.From.Block(block);
 
 						if (block.type == I.BlockType.Dataview) {
-							dbStore.relationsSet(rootId, block.id, block.content.relations);
+							//dbStore.relationsSet(rootId, block.id, block.content.relations);
 							dbStore.viewsSet(rootId, block.id, block.content.views);
 						};
 
@@ -768,7 +768,7 @@ class Dispatcher {
 
 		blocks = blocks.map((it: any) => {
 			if (it.type == I.BlockType.Dataview) {
-				dbStore.relationsSet(rootId, it.id, it.content.relations);
+				//dbStore.relationsSet(rootId, it.id, it.content.relations);
 				dbStore.viewsSet(rootId, it.id, it.content.views);
 			};
 
