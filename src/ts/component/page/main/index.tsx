@@ -310,7 +310,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 		let tabs: any[] = [
 			{ id: I.TabIndex.Favorite, name: 'Favorites' },
-			{ id: I.TabIndex.Recent, name: 'History' },
+			{ id: I.TabIndex.Recent, name: 'Recent' },
 			{ id: I.TabIndex.Set, name: 'Sets', load: true },
 		];
 
@@ -913,23 +913,18 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 					return !isArchived && !isDeleted;
 				}).map((it: any) => {
-					if (isRecent) {
-						it._order = recentIds.findIndex((id: string) => { return id == it.content.targetBlockId; });
-					};
-
-					it._object_ = detailStore.get(rootId, it.content.targetBlockId, [ 'templateIsBundled' ]);
+					it._object_ = detailStore.get(rootId, it.content.targetBlockId, [ 'templateIsBundled', 'lastModifiedDate' ]);
 					it.isBlock = true;
 					return it;
 				});
 
 				if (isRecent) {
 					list.sort((c1: any, c2: any) => {
-						if (c1._order > c2._order) return -1;
-						if (c2._order < c1._order) return 1;
+						if (c1._object_.lastModifiedDate > c2._object_.lastModifiedDate) return -1;
+						if (c2._object_.lastModifiedDate < c1._object_.lastModifiedDate) return 1;
 						return 0;
 					});
 				};
-
 				break;
 
 			default:
