@@ -982,12 +982,12 @@ class DataUtil {
 		return Util.arrayUniqueObjects(ret, 'relationKey');
 	};
 
-	dataviewRelationAdd (rootId: string, blockId: string, relationIds: string[], index: number, view?: I.View, callBack?: (message: any) => void) {
+	dataviewRelationAdd (rootId: string, blockId: string, relationId: string, index: number, view?: I.View, callBack?: (message: any) => void) {
 		if (!view) {
 			return;
 		};
 
-		C.BlockDataviewRelationAdd(rootId, blockId, relationIds, (message: any) => {
+		C.BlockDataviewRelationAdd(rootId, blockId, relationId, (message: any) => {
 			if (message.error.code) {
 				return;
 			};

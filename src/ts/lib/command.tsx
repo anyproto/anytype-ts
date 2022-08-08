@@ -820,12 +820,12 @@ const BlockRelationSetKey = (contextId: string, blockId: string, relationKey: st
 	dispatcher.request(BlockRelationSetKey.name, request, callBack);
 };
 
-const BlockDataviewRelationAdd = (contextId: string, blockId: string, relationIds: string[], callBack?: (message: any) => void) => {
+const BlockDataviewRelationAdd = (contextId: string, blockId: string, relationId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockDataview.Relation.Add.Request();
 	
 	request.setContextid(contextId);
 	request.setBlockid(blockId);
-	request.setRelationidsList(relationIds);
+	request.setRelationid(relationId);
 
 	dispatcher.request(BlockDataviewRelationAdd.name, request, callBack);
 };

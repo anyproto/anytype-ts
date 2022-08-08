@@ -687,7 +687,7 @@ const Mapper = {
 			item.setName(obj.name);
 			item.setType(obj.type);
 			item.setCoverrelationkey(obj.coverRelationKey);
-			item.setGrouprelationkey(obj.groupRelationKey);
+			//item.setGrouprelationkey(obj.groupRelationKey);
 			item.setCoverfit(obj.coverFit);
 			item.setCardsize(obj.cardSize);
 			item.setHideicon(obj.hideIcon);

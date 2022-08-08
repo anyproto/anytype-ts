@@ -228,7 +228,6 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 		const { rootId, blockId, getData, getView } = data;
 		const view = getView();
 		const relations = DataUtil.viewGetRelations(rootId, blockId, view);
-		const menuIdEdit = 'dataviewRelationEdit';
 
 		const onAdd = () => {
 			getData(getView().id, 0);
@@ -247,13 +246,13 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 			noFlipY: true,
 			data: {
 				...data,
-				menuIdEdit: menuIdEdit,
+				menuIdEdit: 'dataviewRelationEdit',
 				filter: '',
 				ref: 'dataview',
 				skipIds: relations.map((it: I.ViewRelation) => { return it.relationKey; }),
 				onAdd: onAdd,
 				addCommand: (rootId: string, blockId: string, relationId: string) => {
-					DataUtil.dataviewRelationAdd(rootId, blockId, [ relationId ], -1, getView(), () => {
+					DataUtil.dataviewRelationAdd(rootId, blockId, relationId, -1, getView(), () => {
 						onAdd();
 					});
 				},

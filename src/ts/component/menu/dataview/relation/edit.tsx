@@ -365,7 +365,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 						ref: 'dataview',
 						skipIds: relations.map(it => it.relationKey),
 						addCommand: (rootId: string, blockId: string, relationId: string) => {
-							DataUtil.dataviewRelationAdd(rootId, blockId, [ relationId ], Math.max(0, idx + item.dir), view, () => {
+							DataUtil.dataviewRelationAdd(rootId, blockId, relationId, Math.max(0, idx + item.dir), view, () => {
 								menuStore.closeAll([ this.props.id, 'relationSuggest' ]);
 								getData(view.id, 0);
 							});
@@ -581,9 +581,18 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		const { data } = param;
 		const { rootId, blockId, addCommand, onChange } = data;
 
-		if (addCommand) {
-			addCommand(rootId, blockId, newRelation, onChange);
+		const details = { 
+			name: newRelation.name, 
+			relationFormat: newRelation.format,
+			type: Constant.typeId.relation,
+			layout: I.ObjectLayout.Relation,
 		};
+
+		C.ObjectCreate(details, [], (message: any) => {
+			if (addCommand) {
+				addCommand(rootId, blockId, message.pageId, onChange);
+			};
+		});
 	};
 
 	update (newRelation: any) {
@@ -611,7 +620,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		const { getView } = data;
 		const relation = this.getRelation();
 
-		return getView()?.getRelation(relation.relationKey);
+		return relation ? getView()?.getRelation(relation.relationKey) : null;
 	};
 
 });
