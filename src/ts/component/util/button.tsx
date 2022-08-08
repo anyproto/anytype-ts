@@ -44,7 +44,7 @@ class Button extends React.Component<Props, {}> {
 		
 			default:
 				content = (
-					<div id={id} className={cn.join(' ')} onMouseDown={onClick}>
+					<div id={id} className={cn.join(' ')} onMouseDown={onClick} onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave}>
 						{icon ? <Icon className={icon} /> : ''}
 						<div className="txt" dangerouslySetInnerHTML={{ __html: text }} />
 					</div>
@@ -52,7 +52,17 @@ class Button extends React.Component<Props, {}> {
 				break;
 				
 			case 'input':
-				content = <input id={id} type={subType} className={cn.join(' ')} onMouseDown={onClick} value={text} />
+				content = (
+					<input 
+						id={id} 
+						type={subType} 
+						value={text} 
+						className={cn.join(' ')} 
+						onMouseDown={onClick} 
+						onMouseEnter={this.onMouseEnter} 
+						onMouseLeave={this.onMouseLeave} 
+					/>
+				);
 				break;
 		};
 		
