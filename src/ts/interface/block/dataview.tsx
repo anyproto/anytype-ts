@@ -166,6 +166,7 @@ export interface BoardGroup {
 export interface ContentDataview {
 	sources: string[];
 	views: View[];
+	relationLinks: any[];
 	groupOrder: any[];
 	objectOrder: any[];
 };

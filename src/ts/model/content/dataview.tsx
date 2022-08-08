@@ -7,6 +7,7 @@ class BlockContentDataview implements I.ContentDataview {
 	
 	sources: string[] = [];
 	views: I.View[] = [];
+	relationLinks: any[] = [];
 	groupOrder: any[] = [];
 	objectOrder: any[] = [];
 	
@@ -14,7 +15,8 @@ class BlockContentDataview implements I.ContentDataview {
 		let self = this;
 
 		self.sources = props.sources || [];
-		self.views = (props.views || []).map((it: I.View) => { return new View(it); });
+		self.views = (props.views || []).map(it => new View(it));
+		self.relationLinks = props.relationLinks || [];
 		self.groupOrder = props.groupOrder || [];
 		self.objectOrder = props.objectOrder || [];
 		
