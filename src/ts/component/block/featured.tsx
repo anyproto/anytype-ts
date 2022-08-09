@@ -165,7 +165,6 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 									elementId={id}
 									rootId={rootId}
 									subId={rootId}
-									storeId={rootId}
 									block={block}
 									relationKey={relationKey}
 									getRecord={() => { return record; }}
