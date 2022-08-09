@@ -48,7 +48,7 @@ const PopupSettingsPagePhrase = observer(class PopupSettingsPagePhrase extends R
 
 		return (
 			<div>
-				<Head {...this.props} id="account" name={translate('popupSettingsAccountTitle')} />
+				<Head {...this.props} returnTo="account" name={translate('popupSettingsAccountTitle')} />
 				
 				<Title text={translate('popupSettingsPhraseTitle')} />
 				<Label text={translate('popupSettingsPhraseText')} />

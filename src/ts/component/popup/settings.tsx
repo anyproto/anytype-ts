@@ -86,6 +86,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 			content = (
 				<Component 
 					{...this.props} 
+					prevPage={this.prevPage}
 					onPage={this.onPage} 
 					onExport={this.onExport} 
 					onImport={this.onImport}
@@ -156,19 +157,20 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 		const { page } = data || {};
 		const pin = Storage.get('pin');
 
+		this.prevPage = page;
+
 		if (pin && (id == 'phrase') && !this.pinConfirmed) {
 			this.setConfirmPin(() => { 
 				this.setPinConfirmed(true);
 				this.onPage('phrase');
 				this.setPinConfirmed(false);
 			});
+
 			this.onPage('pinConfirm');
 			return;
 		};
 
-		this.prevPage = page;
 		popupStore.updateData(this.props.id, { page: id });
-
 		analytics.event('settings', { params: { id } });
 	};
 

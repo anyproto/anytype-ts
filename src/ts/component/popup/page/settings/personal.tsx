@@ -29,7 +29,7 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 
 		return (
 			<div>
-				<Head {...this.props} id="index" name={translate('popupSettingsTitle')} />
+				<Head {...this.props} returnTo="index" name={translate('popupSettingsTitle')} />
 				<Title text={translate('popupSettingsPersonalTitle')} />
 
 				<div className="rows">

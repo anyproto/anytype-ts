@@ -2,8 +2,8 @@ import * as React from 'react';
 import { Icon } from 'ts/component';
 
 interface Props {
-	id: string;
-	prevPage: string;
+	returnTo?: string;
+	prevPage?: string;
 	name: string;
 	onPage: (id: string) => void;
 };
@@ -11,11 +11,11 @@ interface Props {
 class PopupSettingsHead extends React.Component<Props, {}> {
 
 	render () {
-		const { id, name, prevPage, onPage } = this.props;
+		const { name, returnTo, prevPage, onPage } = this.props;
 
 		return (
 			<div className="head">
-				<div className="element" onClick={() => { onPage(id || prevPage); }}>
+				<div className="element" onClick={() => { onPage(returnTo || prevPage); }}>
 					<Icon className="back" />
 					{name}
 				</div>

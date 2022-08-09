@@ -626,8 +626,6 @@ class Util {
 			x = Math.max(12, x);
 			x = Math.min(win.width() - obj.outerWidth() - 12, x);
 
-			console.log(obj, x, y);
-
 			obj.css({ left: x, top: y, opacity: 1 });
 		}, 250);
 	};

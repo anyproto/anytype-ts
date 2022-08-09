@@ -19,7 +19,7 @@ const PopupSettingsPageImportNotion = observer(class PopupSettingsPageImportNoti
 
 		return (
 			<div>
-				<Head {...this.props} id="importIndex" name={translate('popupSettingsImportTitle')} />
+				<Head {...this.props} returnTo="importIndex" name={translate('popupSettingsImportTitle')} />
 
 				<Title text={translate('popupSettingsImportHow')} />
 				<Label text={translate('popupSettingsImportFirst')} />

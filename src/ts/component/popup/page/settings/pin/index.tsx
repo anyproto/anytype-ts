@@ -38,7 +38,7 @@ const PopupSettingsPagePinIndex = observer(class PopupSettingsPagePinIndex exten
 
 		return (
 			<div>
-				<Head {...this.props} id="account" name={translate('popupSettingsAccountTitle')} />
+				<Head {...this.props} returnTo="account" name={translate('popupSettingsAccountTitle')} />
 
 				<Title text={translate('popupSettingsPinTitle')} />
 				<Label className="description" text={translate('popupSettingsPinText')} />

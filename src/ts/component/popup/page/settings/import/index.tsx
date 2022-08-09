@@ -48,7 +48,7 @@ const PopupSettingsPageImportIndex = observer(class PopupSettingsPageImportIndex
 
 		return (
 			<div>
-				<Head {...this.props} id="index" name={translate('popupSettingsTitle')} />
+				<Head {...this.props} returnTo="index" name={translate('popupSettingsTitle')} />
 
 				<Title text={translate('popupSettingsImportTitle')} />
 				<Label text={translate('popupSettingsImportText')} />

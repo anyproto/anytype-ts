@@ -27,7 +27,7 @@ const PopupSettingsPageAppearance = observer(class PopupSettingsPageAppearance e
 
 		return (
 			<div>
-				<Head {...this.props} id="index" name={translate('popupSettingsTitle')} />
+				<Head {...this.props} returnTo="index" name={translate('popupSettingsTitle')} />
 				<Title text={translate('popupSettingsAppearanceTitle')} />
 
 				<div className="rows">

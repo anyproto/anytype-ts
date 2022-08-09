@@ -56,7 +56,7 @@ const PopupSettingsPageWallpaper = observer(class PopupSettingsPageWallpaper ext
 
 		return (
 			<div>
-				<Head {...this.props} id="appearance" name={translate('popupSettingsAppearanceTitle')} />
+				<Head {...this.props} returnTo="appearance" name={translate('popupSettingsAppearanceTitle')} />
 				<Title text={translate('popupSettingsWallpaperTitle')} />
 
 				<div className="row first">

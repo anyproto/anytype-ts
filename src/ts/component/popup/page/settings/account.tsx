@@ -52,7 +52,7 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 
 		return (
 			<div>
-				<Head {...this.props} id="index" name={translate('popupSettingsTitle')} />
+				<Head {...this.props} returnTo="index" name={translate('popupSettingsTitle')} />
 				<Title text={translate('popupSettingsAccountTitle')} />
 
 				{error ? <div className="message">{error}</div> : ''}

@@ -58,7 +58,15 @@ const PageAuthPinConfirm = observer(class PageAuthPinConfirm extends React.Compo
     };
 
 	componentDidMount () {
-		window.setTimeout(() => { this.refObj[1].focus(); }, 15);
+		this.focus();
+	};
+
+	componentDidUpdate () {
+		this.focus();
+	};
+
+	focus () {
+		window.setTimeout(() => { this.refObj[1].focus(); }, 50);
 	};
 
 	onSuccess (pin: string) {

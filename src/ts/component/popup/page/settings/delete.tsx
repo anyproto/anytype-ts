@@ -27,7 +27,7 @@ const PopupSettingsPageDelete = observer(class PopupSettingsPageDelete extends R
 	render () {
 		return (
 			<div>
-				<Head {...this.props} id="account" name={translate('commonCancel')} />
+				<Head {...this.props} returnTo="account" name={translate('commonCancel')} />
 				<Title text={translate('popupSettingsAccountDeleteTitle')} />
 
 				<div className="text">

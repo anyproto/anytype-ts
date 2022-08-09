@@ -24,7 +24,7 @@ const PopupSettingsPagePinSelect = observer(class PopupSettingsPagePinSelect ext
 	render () {
 		return (
 			<div>
-				<Head {...this.props} id="pinIndex" name={translate('commonCancel')} />
+				<Head {...this.props} returnTo="pinIndex" name={translate('commonCancel')} />
 
 				<Title text={translate('popupSettingsPinTitle')} />
 				<Label text={translate('popupSettingsPinText')} />
