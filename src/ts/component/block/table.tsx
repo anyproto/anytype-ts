@@ -64,7 +64,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 	render () {
 		const { block } = this.props;
 		const { rows, columns } = this.getData();
-		const cn = [ 'wrap', 'focusable', 'c' + block.id ];
+		const cn = [ 'wrap', 'focusable', 'c' + block.id, 'resizable' ];
 
 		// Subscriptions
 		columns.forEach((column: I.Block) => {
@@ -163,7 +163,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		this.unbind();
 
 		win.on('resize.' + block.id, () => { this.resize(); });
-		node.on('resizeTable', () => { this.resize(); });
+		node.on('resize', () => { this.resize(); });
 	};
 
 	getData () {
@@ -1198,7 +1198,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		const node = $(ReactDOM.findDOMNode(this));
 		const wrap = node.find('#scrollWrap');
 		const row = node.find('.row').first();
-		
+
 		let width = 0;
 		let maxWidth = 0;
 		let wrapperWidth = 0;
@@ -1227,9 +1227,9 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			if (parentObj.length) {
 				maxWidth = parentObj.width() - Constant.size.blockMenu;
 			};
-		};
 
-		width > maxWidth ? wrap.addClass('withScroll') : wrap.removeClass('withScroll');
+			width > maxWidth ? wrap.addClass('withScroll') : wrap.removeClass('withScroll');
+		};
 	};
 
 	checkWidth (w: number) {

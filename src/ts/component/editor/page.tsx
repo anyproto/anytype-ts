@@ -2037,12 +2037,14 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		node.css({ width: width });
 		elements.css({ width: width, marginLeft: -width / 2 });
 
+		/*
 		blocks.forEach((block: I.Block) => {
 			const el = node.find(`#block-${block.id} #wrap`);
 			if (el.length) {
-				el.trigger('resizeTable');
+				el.trigger('resize');
 			};
 		});
+		*/
 
 		if (this.refHeader && this.refHeader.refDrag) {
 			this.refHeader.refDrag.setValue(v);

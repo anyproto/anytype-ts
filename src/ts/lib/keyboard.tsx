@@ -105,7 +105,7 @@ class Keyboard {
 		const key = e.key.toLowerCase();
 		const cmd = this.ctrlKey();
 		const isMain = this.isMain();
-		const ids = this.selection.get(I.SelectType.Block);
+		const ids = this.selection ? this.selection.get(I.SelectType.Block) : [];
 		const isMenuOpen = menuStore.isOpen();
 
 		this.pressed.push(key);

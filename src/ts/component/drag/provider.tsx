@@ -511,10 +511,6 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 				recalcPosition();
 			};
 
-			if (isTable && [ I.BlockPosition.Left, I.BlockPosition.Right ].includes(this.position)) {
-				recalcPosition();
-			};
-
 			// You can't drop on Featured or Type
 			if (isFeatured || isType) {
 				this.setPosition(I.BlockPosition.None);
