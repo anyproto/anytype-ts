@@ -251,8 +251,16 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 					break;
 
 			};
+
+			const param = {
+				subId,
+				filters: filters.concat(sectionFilters),
+				sorts,
+				keys: Constant.sidebarRelationKeys,
+				limit: section.limit
+			};
 			
-			C.ObjectSearchSubscribe(subId, filters.concat(sectionFilters), sorts, Constant.sidebarRelationKeys, [], 0, section.limit, true, '', '', true, cb);
+			DataUtil.searchSubscribe(param, cb);
 		});
 	};
 
@@ -269,7 +277,11 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		};
 
 		this.subscriptionIds[id] = hash;
-		C.ObjectSubscribeIds(subId, links, Constant.sidebarRelationKeys, true);
+		DataUtil.subscribeIds({
+			subId, 
+			ids: links, 
+			keys: Constant.sidebarRelationKeys,
+		});
 	};
 
 	getRecords (subId: string) {

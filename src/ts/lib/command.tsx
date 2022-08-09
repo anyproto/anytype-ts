@@ -1083,25 +1083,6 @@ const ObjectSetDetails = (contextId: string, details: any[], callBack?: (message
 	dispatcher.request(ObjectSetDetails.name, request, callBack);
 };
 
-const OnSubscribe = (subId: string, keys: string[], message: any) => {
-	if (message.error.code) {
-		return;
-	};
-
-	if (message.counters) {
-		dbStore.metaSet(subId, '', { total: message.counters.total, keys: keys });
-	};
-
-	let details = [];
-	details = details.concat(message.dependencies.map((it: any) => { return { id: it.id, details: it }; }));
-	details = details.concat(message.records.map((it: any) => { 
-		keys.forEach((k: string) => { it[k] = it[k] || ''; });
-		return { id: it.id, details: it }; 
-	}));
-	detailStore.set(subId, details);
-	dbStore.recordsSet(subId, '', message.records.map(it => it.id));
-};
-
 const ObjectSearch = (filters: I.Filter[], sorts: I.Sort[], keys: string[], fullText: string, offset: number, limit: number, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.Search.Request();
 
@@ -1129,10 +1110,6 @@ const ObjectRelationSearchDistinct = (relationKey: string, filters: I.Filter[], 
 };
 
 const ObjectSearchSubscribe = (subId: string, filters: I.Filter[], sorts: I.Sort[], keys: string[], sources: string[], offset: number, limit: number, ignoreWorkspace: boolean, afterId: string, beforeId: string, noDeps: boolean, callBack?: (message: any) => void) => {
-	if (!subId) {
-		console.error('[ObjectSearchSubscribe] subId is empty');
-	};
-
 	const request = new Rpc.Object.SearchSubscribe.Request();
 
 	request.setSubid(subId);
@@ -1147,22 +1124,10 @@ const ObjectSearchSubscribe = (subId: string, filters: I.Filter[], sorts: I.Sort
 	request.setBeforeid(beforeId);
 	request.setNodepsubscription(noDeps);
 
-	const cb = (message: any) => {
-		OnSubscribe(subId, keys, message);
-
-		if (callBack) {
-			callBack(message);
-		};
-	};
-
-	dispatcher.request(ObjectSearchSubscribe.name, request, cb);
+	dispatcher.request(ObjectSearchSubscribe.name, request, callBack);
 };
 
 const ObjectSubscribeIds = (subId: string, ids: string[], keys: string[], ignoreWorkspace: boolean, callBack?: (message: any) => void) => {
-	if (!subId) {
-		console.error('[ObjectSubscribeIds] subId is empty');
-	};
-
 	const request = new Rpc.Object.SubscribeIds.Request();
 
 	request.setSubid(subId);
@@ -1170,23 +1135,7 @@ const ObjectSubscribeIds = (subId: string, ids: string[], keys: string[], ignore
 	request.setKeysList(keys);
 	request.setIgnoreworkspace(ignoreWorkspace);
 
-	const cb = (message: any) => {
-		message.records.sort((c1: any, c2: any) => {
-			const i1 = ids.indexOf(c1.id);
-			const i2 = ids.indexOf(c2.id);
-			if (i1 > i2) return 1; 
-			if (i1 < i2) return -1;
-			return 0;
-		});
-
-		OnSubscribe(subId, keys, message);
-
-		if (callBack) {
-			callBack(message);
-		};
-	};
-
-	dispatcher.request(ObjectSubscribeIds.name, request, cb);
+	dispatcher.request(ObjectSubscribeIds.name, request, callBack);
 };
 
 const ObjectSearchUnsubscribe = (subIds: string[], callBack?: (message: any) => void) => {

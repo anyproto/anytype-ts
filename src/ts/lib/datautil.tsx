@@ -311,24 +311,48 @@ class DataUtil {
 			dbStore.objectTypesSet(message.objectTypes);
 		});
 
-		C.ObjectSearchSubscribe(Constant.subId.deleted, [
-			{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: true }
-		], [], [ 'id', 'isDeleted' ], [], 0, 0, true, '', '', true);
+		let param: any = {
+			subId: Constant.subId.deleted,
+			filters: [
+				{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: true }
+			],
+			keys: [ 'id', 'isDeleted' ],
+			noDeps: true
+		};
+		this.searchSubscribe(param);
 
-		C.ObjectSearchSubscribe(Constant.subId.type, [
-			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.type },
-		], [], Constant.defaultRelationKeys, [], 0, 0, true, '', '', true);
+		param = {
+			subId: Constant.subId.type,
+			filters: [
+				{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.type }
+			],
+			noDeps: true
+		}
+		this.searchSubscribe(param);
 
-		C.ObjectSearchSubscribe(Constant.subId.relation, [
-			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.relation }
-		], [], Constant.relationRelationKeys, [], 0, 0, true, '', '', true);
+		param = {
+			subId: Constant.subId.relation,
+			filters: [
+				{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.relation }
+			],
+			noDeps: true
+		}
+		this.searchSubscribe(param);
 
-		C.ObjectSearchSubscribe(Constant.subId.option, [
-			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.option }
-		], [], Constant.defaultRelationKeys, [], 0, 0, true, '', '', true);
-		
+		param = {
+			subId: Constant.subId.option,
+			filters: [
+				{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.option }
+			],
+			noDeps: true
+		}
+		this.searchSubscribe(param);
+
 		if (profile) {
-			C.ObjectSubscribeIds(Constant.subId.profile, [ profile ], Constant.defaultRelationKeys, true);
+			this.subscribeIds({
+				subId: Constant.subId.profile, 
+				ids: [ profile ], 
+			});
 		};
 
 		C.ObjectOpen(root, '', (message: any) => {
@@ -1238,6 +1262,91 @@ class DataUtil {
 			Constant.typeId.template,
 			Constant.typeId.relation,
 		];
+	};
+
+	onSubscribe (subId: string, keys: string[], message: any) {
+		if (message.error.code) {
+			return;
+		};
+
+		if (message.counters) {
+			dbStore.metaSet(subId, '', { total: message.counters.total, keys: keys });
+		};
+
+		let details = [];
+		details = details.concat(message.dependencies.map((it: any) => { return { id: it.id, details: it }; }));
+		details = details.concat(message.records.map((it: any) => { 
+			keys.forEach((k: string) => { it[k] = it[k] || ''; });
+			return { id: it.id, details: it }; 
+		}));
+		detailStore.set(subId, details);
+		dbStore.recordsSet(subId, '', message.records.map(it => it.id));
+	};
+
+	searchSubscribe (param: any, callBack?: (message: any) => void) {
+		param = Object.assign({
+			subId: '',
+			filters: [],
+			sorts: [],
+			keys: Constant.defaultRelationKeys,
+			sources: [],
+			offset: 0,
+			limit: 0,
+			ignoreWorkspace: true,
+			afterId: '',
+			beforeId: '',
+			noDeps: false,
+		}, param);
+
+		const { subId, filters, sorts, keys, sources, offset, limit, ignoreWorkspace, afterId, beforeId, noDeps } = param;
+
+		if (!subId) {
+			console.error('[DataUtil].searchSubscribe: subId is empty');
+			return;
+		};
+
+		C.ObjectSearchSubscribe(subId, filters, sorts, keys, sources, offset, limit, ignoreWorkspace, afterId, beforeId, noDeps, (message: any) => {
+			this.onSubscribe(subId, keys, message);
+
+			if (callBack) {
+				callBack(message);
+			};
+		});
+	};
+
+	subscribeIds (param: any, callBack?: (message: any) => void) {
+		param = Object.assign({
+			subId: '',
+			ids: [],
+			keys: Constant.defaultRelationKeys,
+		}, param);
+
+		const { subId, ids, keys } = param;
+
+		if (!subId) {
+			console.error('[DataUtil].subscribeIds: subId is empty');
+			return;
+		};
+		if (!ids.length) {
+			console.error('[DataUtil].subscribeIds: ids list is empty');
+			return;
+		};
+
+		C.ObjectSubscribeIds(subId, ids, keys, true, (message: any) => {
+			message.records.sort((c1: any, c2: any) => {
+				const i1 = ids.indexOf(c1.id);
+				const i2 = ids.indexOf(c2.id);
+				if (i1 > i2) return 1; 
+				if (i1 < i2) return -1;
+				return 0;
+			});
+
+			this.onSubscribe(subId, keys, message);
+
+			if (callBack) {
+				callBack(message);
+			};
+		});
 	};
 
 };

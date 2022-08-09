@@ -162,7 +162,17 @@ const ListObject = observer(class ListObject extends React.Component<Props, {}> 
 		]);
 
 		dbStore.metaSet(subId, '', { offset: offset });
-		C.ObjectSearchSubscribe(subId, filters, view.sorts, this.getKeys(), block.content.sources, offset, limit, true, '', '', false, callBack);
+
+		const param = {
+			subId,
+			filters,
+			sorts: view.sorts,
+			keys: this.getKeys(),
+			sources: block.content.sources,
+			offset,
+			limit,
+		};
+		DataUtil.searchSubscribe(param, callBack);
 	};
 
 });

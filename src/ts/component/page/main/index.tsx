@@ -390,7 +390,13 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 		this.setState({ loading: true });
 
-		C.ObjectSearchSubscribe(Constant.subId.index, filters, sorts, Constant.defaultRelationKeys, [], 0, 100, true, '', '', false, (message: any) => {
+		const param = {
+			subId: Constant.subId.index,
+			filters,
+			sorts,
+			limit: 100,
+		};
+		DataUtil.searchSubscribe(param, (message: any) => {
 			if (!this._isMounted || message.error.code) {
 				return;
 			};

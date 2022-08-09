@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon, Loader } from 'ts/component';
-import { I, C, Util, translate, keyboard } from 'ts/lib';
+import { I, DataUtil, Util, translate, keyboard } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { dbStore, detailStore } from 'ts/store';
 
@@ -188,7 +188,15 @@ const Column = observer(class Column extends React.Component<Props, State> {
 
 		this.loading = true;
 
-		C.ObjectSearchSubscribe(subId, filters, view.sorts, getKeys(view.id), block.content.sources, 0, limit, true, '', '', false, () => {
+		const param = {
+			subId,
+			filters,
+			sorts: view.sorts,
+			keys: getKeys(view.id),
+			sources: block.content.sources,
+			limit,
+		};
+		DataUtil.searchSubscribe(param, () => {
 			applyGroupOrder();
 
 			if (clear) {
