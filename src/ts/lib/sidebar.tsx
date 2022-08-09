@@ -15,7 +15,7 @@ const $ = require('jquery');
 const Constant = require('json/constant.json');
 
 const SNAP_THRESHOLD = 30;
-const SHOW_THRESHOLD = 58;
+const SHOW_THRESHOLD = 30;
 const ANIMATION = 300;
 
 class Sidebar {
