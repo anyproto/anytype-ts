@@ -6,6 +6,8 @@ const path = require('path');
 const readChunk = require('read-chunk');
 const fileType = require('file-type');
 const userPath = app.getPath('userData');
+const tmpPath = app.getPath('temp');
+const logPath = path.join(userPath, 'logs');
 
 contextBridge.exposeInMainWorld('Electron', {
 	version: {
@@ -16,24 +18,23 @@ contextBridge.exposeInMainWorld('Electron', {
 	platform: os.platform(),
 	arch: process.arch,
 
-	currentWindow: () => getCurrentWindow(),
-
 	isPackaged: app.isPackaged,
 	userPath,
-	tmpPath: path.join(userPath, 'tmp'),
-	logPath: path.join(userPath, 'logs'),
-	getPath: (fp, fn) => path.join(fp, fn),
+	tmpPath,
+	logPath,
 
+	currentWindow: () => getCurrentWindow(),
 	isMaximized: () => BrowserWindow.getFocusedWindow()?.isMaximized(),
 	getGlobal: (key) => getGlobal(key),
 	showOpenDialog: dialog.showOpenDialog,
 
-	fs: {
-		writeFile: fs.writeFile,
-		statSync: fs.statSync,
+	fileParam: (path) => {
+		let stat = fs.statSync(path);
+		let buffer = readChunk.sync(path, 0, stat.size);
+		let type = fileType(buffer);
+
+		return { buffer, type };
 	},
-	readChunk,
-	fileType,
 
 	on: (event, callBack) => ipcRenderer.on(event, callBack),
 	removeAllListeners: (event) => ipcRenderer.removeAllListeners(event),

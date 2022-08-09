@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { Icon, IconObject, Error } from 'ts/component';
-import { authStore } from 'ts/store';
+import { Icon, IconObject, Error } from 'Component';
+import { authStore } from 'Store';
 import { observer } from 'mobx-react';
-import { I, C, Util, DataUtil, Storage, translate } from 'ts/lib';
+import { I, C, Util, DataUtil, Storage, translate } from 'Lib';
 
 interface Props extends I.Menu {};
 

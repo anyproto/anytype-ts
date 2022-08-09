@@ -22,6 +22,9 @@
 			.inner { height: 35px; }
 		}
 
+		.emptySearch { line-height: 318px !important; }
+		.loaderWrapper { position: relative; background: none; }
+
 		.sections { overflow: auto; flex-grow: 1; }
 		.section > .name { margin-bottom: 8px; }
 		.section:first-child { padding-top: 8px; }
@@ -42,7 +45,13 @@
 			}
 		}
 	
-		.section.unsplash {
+		.body.gallery {
+			.sections { height: 362px; }
+		}
+		.body.unsplash, .body.library {
+			.sections { height: 318px; }
+			.loaderWrapper { height: 318px; }
+
 			.items { grid-template-columns: repeat(3, 120px); }
 			.item {
 				.cover { height: 72px; }
@@ -50,26 +59,23 @@
 		}
 
 		.body.upload { padding: 16px; }
-		.body.gallery {
-			.sections { height: 362px; }
-		}
-		.body.unsplash {
-			.sections { height: 318px; }
-		}
+		.body.upload {
+			.loaderWrapper { height: 330px; }
 
-		.dropzone { 
-			height: 330px; display: flex; align-items: center; border-radius: 2px; background: rgba(80, 73, 28, 0.08);
-			justify-content: center; flex-direction: column; gap: 6px 0px; cursor: pointer;
-		}
-		.dropzone.isDraggingOver { background: rgba(255,187,44,0.3); }
-
-		.dropzone {
-			.icon.coverUpload { 
-				width: 28px; height: 28px; background-image: url('~img/icon/cover/upload.svg');
-				display: block; 
+			.dropzone { 
+				height: 330px; display: flex; align-items: center; border-radius: 2px; background: rgba(80, 73, 28, 0.08);
+				justify-content: center; flex-direction: column; gap: 6px 0px; cursor: pointer;
 			}
-			.label {
-				span { color: $colorDarkGrey; }
+			.dropzone.isDraggingOver { background: rgba(255,187,44,0.3); }
+
+			.dropzone {
+				.icon.coverUpload { 
+					width: 28px; height: 28px; background-image: url('~img/icon/cover/upload.svg');
+					display: block; 
+				}
+				.label {
+					span { color: $colorDarkGrey; }
+				}
 			}
 		}
 	}

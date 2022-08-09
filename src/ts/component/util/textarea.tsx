@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { keyboard } from 'ts/lib';
+import { keyboard } from 'Lib';
 
 const $ = require('jquery');
 

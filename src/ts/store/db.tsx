@@ -1,5 +1,5 @@
 import { observable, action, computed, set, intercept, makeObservable } from 'mobx';
-import { I, M, DataUtil, Util } from 'ts/lib';
+import { I, M, DataUtil, Util } from 'Lib';
 
 class DbStore {
 
@@ -299,7 +299,7 @@ class DbStore {
 
     getView (rootId: string, blockId: string, id: string): I.View {
 		const views = this.getViews(rootId, blockId);
-		return views.find((it: I.View) => { return it.id == id; });
+		return views.find(it => it.id == id);
 	};
 
     getMeta (rootId: string, blockId: string) {

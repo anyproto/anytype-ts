@@ -1,5 +1,5 @@
-import { I, Storage, Util, keyboard } from 'ts/lib';
-import { commonStore, menuStore, popupStore } from 'ts/store';
+import { I, Storage, Util, keyboard } from 'Lib';
+import { commonStore, menuStore, popupStore } from 'Store';
 
 interface SidebarData {
 	x: number;
@@ -15,7 +15,7 @@ const $ = require('jquery');
 const Constant = require('json/constant.json');
 
 const SNAP_THRESHOLD = 30;
-const SHOW_THRESHOLD = 58;
+const SHOW_THRESHOLD = 30;
 const ANIMATION = 300;
 
 class Sidebar {

@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { Filter, MenuItemVertical } from 'ts/component';
-import { I, Util, Key, keyboard } from 'ts/lib';
+import { Filter, MenuItemVertical } from 'Component';
+import { I, Util, Key, keyboard } from 'Lib';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 

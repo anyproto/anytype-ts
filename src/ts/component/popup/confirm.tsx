@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { Title, Icon, Label, Button } from 'ts/component';
-import { I, keyboard, translate } from 'ts/lib';
+import { Title, Icon, Label, Button } from 'Component';
+import { I, keyboard, translate } from 'Lib';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Popup {};

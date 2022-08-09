@@ -1,0 +1,8 @@
+@import "~scss/_vars";
+
+.emptySearch { height: 100%; padding: 0px 16px; text-align: center; }
+.emptySearch {
+	b { display: block; font-weight: 400; color: $colorBlack; }
+	span { @include text-overflow-nw; max-width: 100%; display: block; }
+	.txt { line-height: 24px; color: $colorMediumGrey; width: 100%; }
+}

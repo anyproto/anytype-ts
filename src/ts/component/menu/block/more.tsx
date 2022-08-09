@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { MenuItemVertical } from 'ts/component';
-import { I, C, keyboard, analytics, DataUtil, Util, focus } from 'ts/lib';
-import { blockStore, detailStore, commonStore, dbStore, menuStore, popupStore } from 'ts/store';
+import { MenuItemVertical } from 'Component';
+import { I, C, keyboard, analytics, DataUtil, Util, focus } from 'Lib';
+import { blockStore, detailStore, commonStore, dbStore, menuStore, popupStore } from 'Store';
 
 interface Props extends I.Menu {
 	history?: any;
@@ -136,6 +136,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		let pageExport = { id: 'pageExport', icon: 'export', name: 'Export' };
 		let pageCopy = { id: 'pageCopy', icon: 'copy', name: 'Duplicate object' };
 		let pageLink = { id: 'pageLink', icon: 'link', name: 'Copy link' };
+		let pageReload = { id: 'pageReload', icon: 'reload', name: 'Reload from source' };
 		let blockRemove = { id: 'blockRemove', icon: 'remove', name: 'Delete' };
 
 		if (object.isFavorite) {
@@ -182,12 +183,14 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const allowedLock = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const allowedLink = config.experimental;
 		const allowedCopy = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Duplicate ]);
+		const allowedReload = object.url && block.isObjectBookmark();
 
 		if (!allowedArchive)	 archive = null;
 		if (!allowedDelete)		 pageRemove = null;
 		if (!allowedLock)		 pageLock = null;
 		if (!allowedLink)		 pageLink = null;
 		if (!allowedCopy)		 pageCopy = null;
+		if (!allowedReload)		 pageReload = null;
 		if (!allowedShare)		 share = null;
 		if (!allowedHighlight)	 highlight = null;
 		if (!allowedSearch)		 search = null;
@@ -215,7 +218,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				{ children: [ undo, redo, history, archive, pageRemove ] },
 				{ children: [ fav, pageLink, pageCopy, template, pageLock ] },
 				{ children: [ search ] },
-				{ children: [ print, pageExport ] },
+				{ children: [ print, pageExport, pageReload ] },
 				{ children: [ highlight ] },
 			];
 			sections = sections.map((it: any, i: number) => { return { ...it, id: 'page' + i }; });
@@ -502,6 +505,12 @@ class MenuBlockMore extends React.Component<Props, {}> {
 
 			case 'pageLink':
 				Util.clipboardCopy({ text: Url.protocol + DataUtil.objectRoute(object) });
+				break;
+
+			case 'pageReload':
+				C.ObjectBookmarkFetch(rootId, object.url, () => {
+					analytics.event('ReloadSourceData');
+				});
 				break;
 
 			case 'fav':

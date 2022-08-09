@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { I } from 'ts/lib';
+import { I } from 'Lib';
 import { observer } from 'mobx-react';
-import { blockStore } from 'ts/store';
+import { blockStore } from 'Store';
 
 import Cell from './cell';
 

@@ -1,11 +1,11 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Select, Marker, Loader, IconObject, Icon } from 'ts/component';
-import { I, C, keyboard, Key, Util, DataUtil, Mark, focus, Storage, translate, analytics, Renderer } from 'ts/lib';
+import { Select, Marker, Loader, IconObject, Icon } from 'Component';
+import { I, C, keyboard, Key, Util, DataUtil, Mark, focus, Storage, translate, analytics, Renderer } from 'Lib';
 import { observer } from 'mobx-react';
 import { getRange } from 'selection-ranges';
-import { commonStore, blockStore, detailStore, menuStore } from 'ts/store';
+import { commonStore, blockStore, detailStore, menuStore } from 'Store';
 import * as Prism from 'prismjs';
 
 interface Props extends I.BlockComponent, RouteComponentProps<any> {
@@ -660,7 +660,6 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		let value = this.getValue();
 		let ret = false;
 
-		const k = e.key.toLowerCase();	
 		const range = this.getRange();
 		const symbolBefore = range ? value[range.from - 1] : '';
 		const cmd = keyboard.ctrlKey();
@@ -678,9 +677,8 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			{ key: `${cmd}+a`, preventDefault: true },
 			{ key: `${cmd}+[`, preventDefault: false },
 			{ key: `${cmd}+]`, preventDefault: false },
-			{ key: `tab`, preventDefault: false },
 			{ key: `shift+tab`, preventDefault: true },
-			{ key: `shift+space`, preventDefault: true },
+			{ key: `shift+space`, preventDefault: false },
 		];
 
 		keyboard.shortcut('enter, shift+enter', e, (pressed: string) => {
@@ -797,7 +795,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		
 		focus.set(id, range);
 
-		if (!keyboard.isSpecial(k)) {
+		if (!keyboard.isSpecial(e)) {
 			this.placeholderHide();
 		};
 		
@@ -811,7 +809,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		const { filter } = commonStore;
 		const { id, content } = block;
 		const range = this.getRange();
-		const k = e.key.toLowerCase();
+		const k = keyboard.eventKey(e);
 		const Markdown = {
 			'[\\*\\-\\+]':	 I.TextStyle.Bulleted,
 			'\\[\\]':		 I.TextStyle.Checkbox,
@@ -847,8 +845,8 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 
 		const symbolBefore = range ? value[range.from - 1] : '';
 		const isSpaceBefore = range ? (!range.from || (value[range.from - 2] == ' ') || (value[range.from - 2] == '\n')) : false;
-		const canOpenMenuAdd = (symbolBefore == '/') && !this.preventMenu && !keyboard.isSpecial(k) && !menuOpenAdd && !block.isTextCode() && !block.isTextTitle() && !block.isTextDescription();
-		const canOpenMentionMenu = (symbolBefore == '@') && !this.preventMenu && (isSpaceBefore || (range.from == 1)) && !keyboard.isSpecial(k) && !menuOpenMention && !block.isTextCode() && !block.isTextTitle() && !block.isTextDescription();
+		const canOpenMenuAdd = (symbolBefore == '/') && !this.preventMenu && !keyboard.isSpecial(e) && !menuOpenAdd && !block.isTextCode() && !block.isTextTitle() && !block.isTextDescription();
+		const canOpenMentionMenu = (symbolBefore == '@') && !this.preventMenu && (isSpaceBefore || (range.from == 1)) && !keyboard.isSpecial(e) && !menuOpenMention && !block.isTextCode() && !block.isTextTitle() && !block.isTextDescription();
 		const parsed = this.getMarksFromHtml();
 
 		this.preventMenu = false;

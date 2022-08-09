@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Loader } from 'ts/component';
-import { dbStore, detailStore, popupStore } from 'ts/store';
-import { I, C, Util, DataUtil, analytics, keyboard } from 'ts/lib';
+import { Loader } from 'Component';
+import { dbStore, detailStore, popupStore } from 'Store';
+import { I, C, Util, DataUtil, analytics, keyboard } from 'Lib';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 import arrayMove from 'array-move';

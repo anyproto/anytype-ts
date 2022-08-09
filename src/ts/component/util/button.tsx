@@ -1,5 +1,7 @@
 import * as React from 'react';
-import { Icon } from 'ts/component';
+import * as ReactDOM from 'react-dom';
+import { I, Util } from 'Lib';
+import { Icon } from 'Component';
 
 interface Props {
 	id?: string;
@@ -9,6 +11,9 @@ interface Props {
 	text?: string;
 	className?: string;
 	color?: string;
+	tooltip?: string;
+	tooltipX?: I.MenuDirection;
+	tooltipY?: I.MenuDirection;
 	onClick?(e: any): void;
 };
 
@@ -18,7 +23,16 @@ class Button extends React.Component<Props, {}> {
 		subType: 'submit',
 		color: 'orange',
 		className: '',
+		tooltipX: I.MenuDirection.Center,
+		tooltipY: I.MenuDirection.Bottom,
     };
+
+	constructor (props: any) {
+		super(props);
+
+		this.onMouseEnter = this.onMouseEnter.bind(this);
+		this.onMouseLeave = this.onMouseLeave.bind(this);
+	};
 
 	render () {
 		const { id, type, subType, icon, text, className, color, onClick } = this.props;
@@ -30,7 +44,7 @@ class Button extends React.Component<Props, {}> {
 		
 			default:
 				content = (
-					<div id={id} className={cn.join(' ')} onMouseDown={onClick}>
+					<div id={id} className={cn.join(' ')} onMouseDown={onClick} onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave}>
 						{icon ? <Icon className={icon} /> : ''}
 						<div className="txt" dangerouslySetInnerHTML={{ __html: text }} />
 					</div>
@@ -38,11 +52,34 @@ class Button extends React.Component<Props, {}> {
 				break;
 				
 			case 'input':
-				content = <input id={id} type={subType} className={cn.join(' ')} onMouseDown={onClick} value={text} />
+				content = (
+					<input 
+						id={id} 
+						type={subType} 
+						value={text} 
+						className={cn.join(' ')} 
+						onMouseDown={onClick} 
+						onMouseEnter={this.onMouseEnter} 
+						onMouseLeave={this.onMouseLeave} 
+					/>
+				);
 				break;
 		};
 		
 		return content;
+	};
+
+	onMouseEnter (e: any) {
+		const { tooltip, tooltipX, tooltipY } = this.props;
+		const node = $(ReactDOM.findDOMNode(this));
+		
+		if (tooltip) {
+			Util.tooltipShow(tooltip, node, tooltipX, tooltipY);
+		};
+	};
+	
+	onMouseLeave (e: any) {
+		Util.tooltipHide(false);
 	};
 	
 };

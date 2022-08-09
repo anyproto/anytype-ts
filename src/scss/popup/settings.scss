@@ -10,10 +10,11 @@
 		.description { margin-bottom: 26px; }
 		.inputs { margin-bottom: 32px; }
 		.textareaWrap { color: $colorIce; }
+		.pin { text-align: center; }
 		
 		.head { 
 			position: absolute; left: 0px; top: 0px; width: 100%; height: 40px; padding: 8px 12px; background: $colorWhite; z-index: 1;
-			border-radius: 12px 12px 0px 0px; 
+			border-radius: 12px 12px 0px 0px; text-align: left;
 		}
 		.head {
 			.icon.back { width: 24px; height: 24px; cursor: pointer; background-image: url('~img/icon/popup/settings/back0.svg'); margin-top: -2px; }
@@ -150,10 +151,11 @@
 		
 		.tabPhrase {
 			.label { margin-bottom: 25px; }
-			.inputs { margin-bottom: 20px; }
+			.inputs { margin-bottom: 40px; }
+			.textareaWrap { margin-bottom: 20px; }
 
-			.path { margin-bottom: 16px; height: 128px; display: flex; }
-			.path { 
+			.sides { margin-bottom: 20px; display: flex; }
+			.sides { 
 				b { margin-bottom: 5px; display: block; }
 				.label { margin: 0px; }
 				.side { width: 100%; }
@@ -177,6 +179,8 @@
 			.inputs { margin-bottom: 20px; }
 			.buttons { margin-top: 32px; display: flex; gap: 0px 16px; }
 		}
+
+		.tabPinConfirm { text-align: center; }
 		
 		.tabPinSelect, .tabPinConfirm {
 			.label { margin-bottom: 23px; }

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Emoji } from 'emoji-mart';
-import { commonStore, menuStore } from 'ts/store';
-import { SmileUtil } from 'ts/lib';
+import { commonStore, menuStore } from 'Store';
+import { SmileUtil } from 'Lib';
 import { observer } from 'mobx-react';
 
 interface Props {

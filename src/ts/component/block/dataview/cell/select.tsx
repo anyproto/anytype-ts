@@ -1,9 +1,9 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Tag, Icon, DragBox } from 'ts/component';
-import { I, Relation, DataUtil, translate, keyboard, Util } from 'ts/lib';
+import { Tag, Icon, DragBox } from 'Component';
+import { I, Relation, DataUtil, translate, keyboard, Util } from 'Lib';
 import { observer } from 'mobx-react';
-import { menuStore } from 'ts/store';
+import { menuStore } from 'Store';
 import { getRange, setRange } from 'selection-ranges';
 import arrayMove from 'array-move';
 
@@ -293,7 +293,7 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 
 		let value = Relation.getArrayValue(record[relation.relationKey]);
 		value = value.map((id: string) => { 
-			return (relation.selectDict || []).find((it: any) => { return it.id == id; });
+			return (relation.selectDict || []).find(it => it.id == id);
 		});
 		value = value.filter((it: any) => { return it && it.id; });
 

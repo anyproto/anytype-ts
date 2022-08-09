@@ -1,5 +1,5 @@
-import { authStore, commonStore, blockStore, detailStore, dbStore } from 'ts/store';
-import { Util, I, M, Decode, translate, analytics, Response, Mapper, crumbs } from 'ts/lib';
+import { authStore, commonStore, blockStore, detailStore, dbStore } from 'Store';
+import { Util, I, M, Decode, translate, analytics, Response, Mapper, crumbs, Renderer } from 'Lib';
 import * as Sentry from '@sentry/browser';
 import arrayMove from 'array-move';
 
@@ -31,9 +31,7 @@ class Dispatcher {
 	timeoutEvent: any = {};
 	reconnects: number = 0;
 
-	init () {
-		const address = window.Electron.getGlobal('serverAddress');
-
+	init (address: string) {
 		this.service = new Service.ClientCommandsClient(address, null, null);
 		this.listenEvents();
 
@@ -202,6 +200,8 @@ class Dispatcher {
 				case 'accountUpdate':
 					authStore.accountSet({ status: Mapper.From.AccountStatus(data.getStatus()) });
 					commonStore.configSet(Mapper.From.AccountConfig(data.getConfig()), true);
+
+					Renderer.send('setConfig', Util.objectCopy(commonStore.config));
 					break;
 
 				case 'accountConfigUpdate':

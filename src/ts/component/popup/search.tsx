@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Icon, Input, Loader, IconObject, ObjectName, ObjectDescription } from 'ts/component';
-import { I, C, Util, DataUtil, keyboard, Key, focus, translate, analytics } from 'ts/lib';
-import { commonStore, dbStore } from 'ts/store';
+import { Icon, Input, Loader, IconObject, ObjectName, ObjectDescription, EmptySearch } from 'Component';
+import { I, C, Util, DataUtil, keyboard, Key, focus, translate, analytics } from 'Lib';
+import { commonStore, dbStore } from 'Store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
@@ -89,7 +89,19 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 		};
 
 		const rowRenderer = ({ index, key, style, parent }) => {
-			const item = items[index];
+			let item = items[index];
+			let content = null;
+
+			if (item.isSection) {
+				content = <div className={[ 'sectionName', (index == 0 ? 'first' : '') ].join(' ')} style={style}>{item.name}</div>;
+			} else {
+				content = (
+					<div className="row" style={style}>
+						<Item {...item} index={index} />
+					</div>
+				);
+			};
+
 			return (
 				<CellMeasurer
 					key={key}
@@ -99,9 +111,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 					rowIndex={index}
 					hasFixedWidth={() => {}}
 				>
-					<div className="row" style={style}>
-						<Item {...item} index={index} />
-					</div>
+					{content}
 				</CellMeasurer>
 			);
 		};
@@ -120,12 +130,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 				</form>
 
 				{!items.length && !loading ? (
-					<div id="empty" key="empty" className="emptySearch">
-						<div className="label">
-							<b>There are no objects named <span>"{filter}"</span></b>
-							Try creating a new one or search for something else.
-						</div>
-					</div>
+					<EmptySearch text={filter ? Util.sprintf(translate('popupSearchEmptyFilter'), filter) : translate('popupSearchEmpty')} />
 				) : ''}
 				
 				{this.cache && items.length && !loading ? (
@@ -243,7 +248,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 
 		keyboard.disableMouse(true);
 
-		let k = e.key.toLowerCase();
+		let k = keyboard.eventKey(e);
 
 		if (k == Key.tab) {
 			k = e.shiftKey ? Key.up : Key.down;
@@ -265,20 +270,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 		};
 
 		keyboard.shortcut('arrowup, arrowdown', e, (pressed: string) => {
-			const dir = pressed.match(Key.up) ? -1 : 1;
-
-			this.n += dir;
-
-			if (this.n < 0) {
-				this.n = l - 1;
-			};
-
-			if (this.n > l - 1) {
-				this.n = 0;
-			};
-
-			this.setActive();
-			this.refList.scrollToRow(Math.max(0, this.n));
+			this.onArrow(pressed.match(Key.up) ? -1 : 1);
 		});
 
 		keyboard.shortcut('enter, space', e, (pressed: string) => {
@@ -291,6 +283,29 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 		keyboard.shortcut('escape', e, (pressed: string) => {
 			this.props.close();
 		});
+	};
+
+	onArrow (dir: number) {
+		const items = this.getItems();
+		const l = items.length;
+
+		this.n += dir;
+
+		if (this.n < 0) {
+			this.n = l - 1;
+		};
+
+		if (this.n > l - 1) {
+			this.n = 0;
+		};
+
+		if (items[this.n].isSection) {
+			this.onArrow(dir);
+			return;
+		};
+
+		this.setActive();
+		this.refList.scrollToRow(Math.max(0, this.n));
 	};
 
 	setActive (item?: any) {
@@ -381,7 +396,11 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 	};
 
 	getItems () {
-		return this.items.filter(this.filterMapper);
+		const items = this.items.filter(this.filterMapper);
+
+		items.unshift({ name: 'Recent objects', isSection: true });
+
+		return items;
 	};
 
 	filterMapper (it: any) {

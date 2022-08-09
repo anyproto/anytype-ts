@@ -122,6 +122,7 @@
 		"done", 
 		"fileExt", 
 		"fileMimeType",
+		"sizeInBytes",
 		"restrictions"
 	],
 

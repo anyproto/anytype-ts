@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Title, Label, Button } from 'ts/component';
-import { I, translate } from 'ts/lib';
+import { Title, Label, Button } from 'Component';
+import { I, translate } from 'Lib';
 import { observer } from 'mobx-react';
 
 import Head from '../head';
@@ -19,7 +19,7 @@ const PopupSettingsPageExportMarkdown = observer(class PopupSettingsPageExportMa
 
 		return (
 			<div>
-				<Head {...this.props} id="index" name={translate('popupSettingsTitle')} />
+				<Head {...this.props} returnTo="index" name={translate('popupSettingsTitle')} />
 
 				<Title text={translate('popupSettingsExportMarkdownTitle')} />
 				<Label text={translate('popupSettingsExportMarkdownText')} />

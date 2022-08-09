@@ -1,4 +1,4 @@
-import { Mapper, Decode } from 'ts/lib';
+import { Mapper, Decode } from 'Lib';
 
 const DebugSync = (response: any) => {
 	return response.toObject();

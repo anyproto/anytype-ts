@@ -40,9 +40,7 @@ input, textarea, select { font-family: 'Inter'; }
 #drag {
 	.sides { display: none; }
 }
-#root-loader { 
-	position: fixed; width: 100%; height: 100%; left: 0px; top: 0px; background: #fff; z-index: 1000; transition: opacity 0.5s ease-in-out; 
-}
+#root-loader { position: fixed; width: 100%; height: 100%; left: 0px; top: 0px; background: #fff; z-index: 1000; transition: opacity 0.5s ease-in-out; }
 #root-loader {
 	.logo { 
 		width: 120px; height: 24px; background: url('~img/logo/color.svg') no-repeat; background-size: 100% 100%; 

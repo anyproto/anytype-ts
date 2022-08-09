@@ -1,4 +1,4 @@
-import { I, Util } from 'ts/lib';
+import { I, Util } from 'Lib';
 import { observable, intercept, makeObservable } from 'mobx';
 
 class AccountInfo implements I.AccountInfo {
@@ -44,14 +44,17 @@ class AccountInfo implements I.AccountInfo {
 class AccountConfig implements I.AccountConfig {
 	
 	allowSpaces: boolean = false;
+	allowBeta: boolean = false;
 	
 	constructor (props: I.AccountConfig) {
 		let self = this;
 		
 		self.allowSpaces = Boolean(props.allowSpaces);
+		self.allowBeta = Boolean(props.allowBeta);
 
 		makeObservable(self, {
 			allowSpaces: observable,
+			allowBeta: observable,
 		});
 
 		intercept(self as any, (change: any) => { return Util.intercept(self, change); });

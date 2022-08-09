@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { IconObject, Block, Button } from 'ts/component';
-import { I, M, DataUtil, focus, keyboard } from 'ts/lib';
-import { blockStore, detailStore, dbStore } from 'ts/store';
+import { IconObject, Block, Button } from 'Component';
+import { I, M, DataUtil, focus, keyboard } from 'Lib';
+import { blockStore, detailStore, dbStore } from 'Store';
 import { observer } from 'mobx-react';
 import { getRange } from 'selection-ranges';
 
@@ -83,7 +83,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props, {}> {
 			<div className="headSimple">
 				{check.withIcon ? (
 					<div className="side left">
-						<IconObject id={'icon-' + rootId} size={object.iconImage ? 112 : 96} object={object} canEdit={allowDetails} onSelect={this.onSelect} onUpload={this.onUpload} />
+						<IconObject id={'block-icon-' + rootId} size={object.iconImage ? 112 : 96} object={object} canEdit={allowDetails} onSelect={this.onSelect} onUpload={this.onUpload} />
 					</div>
 				) : ''}
 

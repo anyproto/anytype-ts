@@ -1,4 +1,4 @@
-import { I, M, Decode, Util, Encode } from 'ts/lib';
+import { I, M, Decode, Util, Encode } from 'Lib';
 
 const Commands = require('lib/pb/protos/commands_pb');
 const Model = require('lib/pkg/lib/pb/model/protos/models_pb.js');
@@ -66,6 +66,7 @@ const Mapper = {
 		AccountConfig: (obj: any): I.AccountConfig => {
 			return {
 				allowSpaces: obj.getEnablespaces(),
+				allowBeta: true,//obj.getEnablebetachannel(),
 			};
 		},
 

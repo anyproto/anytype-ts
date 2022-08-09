@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { IconObject } from 'ts/component';
-import { I, DataUtil, translate, Relation } from 'ts/lib';
+import { IconObject } from 'Component';
+import { I, DataUtil, translate, Relation } from 'Lib';
 import { observer } from 'mobx-react';
-import { detailStore, dbStore } from 'ts/store';
+import { detailStore, dbStore } from 'Store';
 
 interface Props extends I.Cell {}
 interface State { 
@@ -32,7 +32,7 @@ const CellFile = observer(class CellFile extends React.Component<Props, State> {
 		};
 
 		let value = Relation.getArrayValue(record[relation.relationKey]);
-		value = value.map((it: string) => { return detailStore.get(subId, it, []); });
+		value = value.map(it => detailStore.get(subId, it, []));
 		value = value.filter((it: any) => { return !it._empty_; });
 		
 		if (elementMapper) {

@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Icon, Label } from 'ts/component';
-import { Util, C, Storage } from 'ts/lib';
-import { commonStore } from 'ts/store';
+import { Icon, Label } from 'Component';
+import { Util, C, Storage } from 'Lib';
+import { commonStore } from 'Store';
 import { observer } from 'mobx-react';
 
 interface Props {}

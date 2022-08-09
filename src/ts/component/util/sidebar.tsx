@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, C, DataUtil, Util, keyboard, Storage, Relation, analytics, sidebar } from 'ts/lib';
-import { Loader } from 'ts/component';
-import { blockStore, dbStore, detailStore, menuStore } from 'ts/store';
+import { I, C, DataUtil, Util, keyboard, Storage, Relation, analytics, sidebar } from 'Lib';
+import { Loader } from 'Component';
+import { blockStore, dbStore, detailStore, menuStore } from 'Store';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { observer } from 'mobx-react';
 
@@ -189,7 +189,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 	getSections () {
 		return [
 			{ id: I.TabIndex.Favorite, name: 'Favorites', limit: 0, },
-			{ id: I.TabIndex.Recent, name: 'History', limit: 10, },
+			{ id: I.TabIndex.Recent, name: 'Recent', limit: 10, },
 			{ id: I.TabIndex.Set, name: 'Sets', limit: 20, },
 		];
 	};
@@ -241,10 +241,10 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 
 				case I.TabIndex.Recent:
 					sectionFilters = [
-						{ operator: I.FilterOperator.And, relationKey: 'lastOpenedDate', condition: I.FilterCondition.Greater, value: 0 }
+						{ operator: I.FilterOperator.And, relationKey: 'lastModifiedDate', condition: I.FilterCondition.Greater, value: 0 }
 					];
 					sorts = [
-						{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
+						{ relationKey: 'lastModifiedDate', type: I.SortType.Desc },
 					];
 					break;
 

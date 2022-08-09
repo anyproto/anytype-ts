@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { I } from 'ts/lib';
-import { Icon, Block } from 'ts/component';
+import { I } from 'Lib';
+import { Icon, Block } from 'Component';
 import { observer } from 'mobx-react';
 
 interface Props extends I.BlockComponentTable {

@@ -1,9 +1,9 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Icon, IconObject } from 'ts/component';
-import { authStore, menuStore } from 'ts/store';
+import { Icon, IconObject } from 'Component';
+import { authStore, menuStore } from 'Store';
 import { observer } from 'mobx-react';
-import { I, DataUtil, translate, Util } from 'ts/lib';
+import { I, DataUtil, translate, Util } from 'Lib';
 
 interface Props extends I.Menu {}
 

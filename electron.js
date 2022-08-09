@@ -23,6 +23,7 @@ const WindowManager = require('./electron/js/window.js');
 const Server = require('./electron/js/server.js');
 const Util = require('./electron/js/util.js');
 
+app.commandLine.appendSwitch('ignore-connections-limit', 'localhost, 127.0.0.1');
 app.removeAsDefaultProtocolClient(protocol);
 
 if (process.defaultApp) {
@@ -42,13 +43,10 @@ let csp = [
 	"media-src 'self' http://*:* https://*:* data: blob: file://*",
 	"style-src 'unsafe-inline' http://localhost:* file://*",
 	"font-src data: file://*",
-	"connect-src http://localhost:* http://127.0.0.1:* ws://localhost:* https://sentry.anytype.io https://anytype.io https://api.amplitude.com/ devtools://devtools data: https://*.wistia.com https://*.wistia.net https://embedwistia-a.akamaihd.net",
-	"script-src-elem file: http://localhost:* https://sentry.io devtools://devtools 'unsafe-inline' https://*.wistia.com https://*.wistia.net",
+	"connect-src http://localhost:* http://127.0.0.1:* ws://localhost:* https://sentry.anytype.io https://anytype.io https://api.amplitude.com/ devtools://devtools data:",
+	"script-src-elem file: http://localhost:* https://sentry.io devtools://devtools 'unsafe-inline'",
 	"frame-src chrome-extension://react-developer-tools"
 ];
-
-remote.initialize();
-Util.setAppPath(path.join(__dirname));
 
 if (is.development && !port) {
 	console.error('ERROR: Please define SERVER_PORT env var');
@@ -59,8 +57,9 @@ if (app.isPackaged && !app.requestSingleInstanceLock()) {
 	Api.exit(mainWindow, false);
 };
 
+remote.initialize();
 storage.setDataPath(userPath);
-Util.mkDir(tmpPath);
+Util.setAppPath(path.join(__dirname));
 Util.mkDir(logPath);
 
 if (process.env.ANYTYPE_USE_SIDE_SERVER) {
@@ -207,18 +206,5 @@ app.on('open-url', (e, url) => {
 	if (mainWindow) {
 		Util.send(mainWindow, 'route', Util.getRouteFromUrl(url));
 		mainWindow.show();
-	};
-});
-
-app.on('certificate-error', (e, webContents, url, error, certificate, callback) => {
-	const u = new URL(url);
-
-	console.log(url, u);
-
-	if ([ '127.0.0.1', 'localhost' ].includes(u.hostname)) {
-		e.preventDefault();
-		callback(true);
-	} else {
-		callback(false);
 	};
 });

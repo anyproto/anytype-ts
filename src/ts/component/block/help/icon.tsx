@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { IconObject } from 'ts/component';
+import { IconObject } from 'Component';
 
 interface Props {
 	icon?: string;

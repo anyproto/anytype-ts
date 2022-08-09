@@ -1,5 +1,5 @@
-import { I, keyboard, Renderer } from 'ts/lib';
-import { commonStore, popupStore, menuStore } from 'ts/store';
+import { I, keyboard, Renderer } from 'Lib';
+import { commonStore, popupStore, menuStore } from 'Store';
 import { translate } from '.';
 
 const $ = require('jquery');
@@ -628,7 +628,7 @@ class Util {
 	
 	tooltipHide (force: boolean) {
 		let obj = $('#tooltip');
-		
+
 		obj.css({ opacity: 0 });
 		window.clearTimeout(this.timeoutTooltip);
 		this.timeoutTooltip = window.setTimeout(() => { obj.hide(); }, force ? 0 : Constant.delay.tooltip);

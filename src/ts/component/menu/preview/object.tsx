@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { I } from 'ts/lib';
-import { PreviewObject } from 'ts/component';
+import { I } from 'Lib';
+import { PreviewObject } from 'Component';
 
 interface Props extends I.Menu {};
 

@@ -1,6 +1,6 @@
 import * as amplitude from 'amplitude-js';
-import { I, C, Util, Storage } from 'ts/lib';
-import { commonStore } from 'ts/store';
+import { I, C, Util, Storage } from 'Lib';
+import { commonStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -190,10 +190,24 @@ class Analytics {
 				data.type = I.FileType[data.type];
 				break;
 
+			case 'DownloadMedia':
+				data.type = Number(data.type) || 0;
+				data.type = I.FileType[data.type];
+				break;
+
 			case 'CreateRelation':
 			case 'AddExistingRelation':
 				data.format = Number(data.format) || 0;
 				data.format = I.RelationType[data.format];
+				break;
+
+			case 'OpenAsObject':
+				if (data.type == I.BlockType.File) {
+					if (undefined !== data.params?.fileType) {
+						data.fileType = Number(data.params.fileType) || 0;
+						data.type = I.FileType[data.fileType];
+					};
+				};
 				break;
 		};
 

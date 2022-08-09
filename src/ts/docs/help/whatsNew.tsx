@@ -1,4 +1,4 @@
-import { I, keyboard } from 'ts/lib';
+import { I, keyboard } from 'Lib';
 
 const cmd = keyboard.ctrlSymbol();
 

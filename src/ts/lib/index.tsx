@@ -1,5 +1,5 @@
-import * as I from 'ts/interface';
-import * as M from 'ts/model';
+import * as I from 'Interface';
+import * as M from 'Model';
 import * as C from './command';
 import * as Response from './response';
 import Mapper from './mapper';
@@ -22,7 +22,6 @@ import { analytics } from './analytics';
 import { crumbs } from './crumbs';
 import { history } from './history';
 import Action from './action';
-import * as Docs from 'ts/docs';
 import Onboarding from './onboarding';
 
 const Constant = require('json/constant.json');
@@ -57,7 +56,6 @@ export {
 	C,
 	Response,
 	M,
-	Docs,
 	translate,
 	analytics,
 	crumbs,

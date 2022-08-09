@@ -1,10 +1,10 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { I, C, DataUtil, keyboard, focus, Storage, Util } from 'ts/lib';
-import { DropTarget, ListChildren, Icon } from 'ts/component';
+import { I, C, DataUtil, keyboard, focus, Storage, Util } from 'Lib';
+import { DropTarget, ListChildren, Icon } from 'Component';
 import { observer } from 'mobx-react';
-import { menuStore, blockStore, detailStore } from 'ts/store';
+import { menuStore, blockStore, detailStore } from 'Store';
 
 import BlockDataview from './dataview';
 import BlockText from './text';
@@ -81,7 +81,7 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 		let canSelect = !isInsideTable;
 		let canDrop = !readonly && !isInsideTable;
 		let canDropMiddle = canDrop;
-		let cn: string[] = [ 'block', DataUtil.blockClass(block, isDragging), 'index-' + index, 'align' + hAlign ];
+		let cn: string[] = [ 'block', DataUtil.blockClass(block, isDragging), 'align' + hAlign ];
 		let cd: string[] = [ 'wrapContent' ];
 		let blockComponent = null;
 		let empty = null;
@@ -380,7 +380,7 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 			return;
 		};
 		
-		const { dataset, rootId, block } = this.props;
+		const { dataset, rootId, block, blockRemove } = this.props;
 		const { selection } = dataset || {};
 		const elementId = `#button-block-menu-${block.id}`;
 		const element = $(elementId);
@@ -396,6 +396,7 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 				blockIds: DataUtil.selectionGet(block.id, true, this.props),
 				rootId: rootId,
 				dataset: dataset,
+				blockRemove: blockRemove
 			},
 			onClose: () => {
 				selection.clear(true);

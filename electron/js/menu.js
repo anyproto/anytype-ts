@@ -6,11 +6,6 @@ const ConfigManager = require('./config.js');
 const Util = require('./util.js');
 
 const Separator = { type: 'separator' };
-const ChannelSettings = [
-	{ id: 'alpha', name: 'Alpha' },
-	{ id: 'beta', name: 'Pre-release' },
-	{ id: 'latest', name: 'Public' },
-];
 
 class MenuManager {
 
@@ -26,6 +21,7 @@ class MenuManager {
 		const { config } = ConfigManager;
 		const Api = require('./api.js');
 		const WindowManager = require('./window.js');
+		const UpdateManager = require('./update.js');
 
 		let menuParam = [
 			{
@@ -123,7 +119,9 @@ class MenuManager {
 						label: 'Search', accelerator: 'CmdOrCtrl+F',
 						click: () => { Util.send(this.win, 'commandGlobal', 'search'); }
 					},
+
 					Separator,
+
 					{
 						label: 'Print', accelerator: 'CmdOrCtrl+P',
 						click: () => { Util.send(this.win, 'commandGlobal', 'print'); }
@@ -133,6 +131,17 @@ class MenuManager {
 			{
 				role: 'windowMenu',
 				submenu: [
+					{ 
+						label: 'New window', accelerator: 'CmdOrCtrl+Shift+N',
+						click: () => { WindowManager.createMain({ isChild: true }); } 
+					},
+					{ 
+						label: 'New object', accelerator: 'CmdOrCtrl+Alt+N',
+						click: () => { WindowManager.createMain({ route: '/main/create', isChild: true }); } 
+					},
+
+					Separator,
+
 					{ role: 'minimize' },
 					{ role: 'zoom' },
 					{
@@ -194,39 +203,27 @@ class MenuManager {
 			});
 		};
 
-
-		let channels = ChannelSettings.map((it) => {
-			return { 
-				label: it.name, type: 'radio', checked: (config.channel == it.id), 
-				click: () => { 
-					if (!UpdateManager.isUpdating) {
-						UpdateManager.setChannel(it.id); 
-						Api.setConfig(this.win, { channel: it.id });
-					};
-				} 
+		const channels = ConfigManager.getChannels().map(it => {
+			it.click = () => { 
+				if (!UpdateManager.isUpdating) {
+					UpdateManager.setChannel(it.id); 
+					Api.setConfig(this.win, { channel: it.id });
+				};
 			};
-		});
-		if (!config.sudo) {
-			channels = channels.filter(it => it.id != 'alpha');
+			return it;
+		}); 
+
+		if (channels.length > 1) {
+			menuParam.push({ label: 'Version', submenu: channels });
 		};
 
 		const menuSudo = { 
 			label: 'Sudo',
 			submenu: [
-				{ 
-					label: 'New window', accelerator: 'CmdOrCtrl+Shift+N',
-					click: () => { WindowManager.createMain({ isChild: true }); } 
-				},
-				{ 
-					label: 'New object', accelerator: 'CmdOrCtrl+Alt+N',
-					click: () => { WindowManager.createMain({ route: '/main/create', isChild: true }); } 
-				},
-
 				Separator,
 
-				{ label: 'Version', submenu: channels },
 				{
-					label: 'Experimental', type: 'checkbox', checked: config.experimental,
+					label: 'Experimental features', type: 'checkbox', checked: config.experimental,
 					click: () => { 
 						Api.setConfig(this.win, { experimental: !config.experimental });
 						this.win.reload();

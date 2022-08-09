@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Filter, MenuItemVertical } from 'ts/component';
-import { commonStore, blockStore, menuStore } from 'ts/store';
-import { I, C, keyboard, DataUtil, focus, Action, translate, analytics } from 'ts/lib';
+import { Filter, MenuItemVertical } from 'Component';
+import { commonStore, blockStore, menuStore } from 'Store';
+import { I, C, keyboard, DataUtil, focus, Action, translate, analytics } from 'Lib';
 
 interface Props extends I.Menu {};
 interface State {
@@ -136,12 +136,32 @@ class MenuBlockAction extends React.Component<Props, State> {
 	
 	rebind () {
 		this.unbind();
-		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
+		$(window).on('keydown.menu', (e: any) => { this.onKeyDown(e); });
 		window.setTimeout(() => { this.props.setActive(); }, 15);
 	};
 	
 	unbind () {
 		$(window).off('keydown.menu');
+	};
+
+	onKeyDown (e: any) {
+		const { onKeyDown, param } = this.props;
+		const { data } = param;
+		const { blockRemove } = data;
+		const { filter } = this.state;
+
+		let ret = false;
+
+		keyboard.shortcut('backspace', e, (pressed: string) => {
+			if (!filter && blockRemove) {
+				blockRemove();
+				ret = true;
+			};
+		});
+
+		if (!ret) {
+			onKeyDown(e);
+		};
 	};
 	
 	getSections () {
@@ -569,10 +589,14 @@ class MenuBlockAction extends React.Component<Props, State> {
 
 			case 'openBookmarkAsObject':
 				DataUtil.objectOpenPopup({ id: block.content.targetObjectId, layout: I.ObjectLayout.Bookmark });
+
+				analytics.event('OpenAsObject', { type: block.type });
 				break;
 
 			case 'openFileAsObject':
 				DataUtil.objectOpenPopup({ id: block.content.hash, layout: I.ObjectLayout.File });
+
+				analytics.event('OpenAsObject', { type: block.type, params: { fileType: block.content.type } });
 				break;
 					
 			case 'copy':

@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { I, Onboarding, Util, Storage, analytics, keyboard, Renderer, sidebar } from 'ts/lib';
-import { Sidebar } from 'ts/component';
-import { authStore, commonStore, menuStore, popupStore, blockStore } from 'ts/store';
+import { I, Onboarding, Util, Storage, analytics, keyboard, Renderer, sidebar } from 'Lib';
+import { Sidebar } from 'Component';
+import { authStore, commonStore, menuStore, popupStore, blockStore } from 'Store';
 import { observer } from 'mobx-react';
 
 import PageAuthInvite from './auth/invite';
@@ -26,7 +26,6 @@ import PageMainSet from './main/set';
 import PageMainSpace from './main/space';
 import PageMainType from './main/type';
 import PageMainMedia from './main/media';
-import PageMainBookmark from './main/bookmark';
 import PageMainRelation from './main/relation';
 import PageMainStore from './main/store';
 import PageMainGraph from './main/graph';
@@ -62,7 +61,6 @@ const Components: any = {
 	'main/space':			 PageMainSpace,
 	'main/type':			 PageMainType,
 	'main/media':			 PageMainMedia,
-	'main/bookmark':		 PageMainBookmark,
 	'main/relation':		 PageMainRelation,
 	'main/store':			 PageMainStore,
 	'main/graph':			 PageMainGraph,
@@ -235,23 +233,16 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 		
 		window.setTimeout(() => {
 			let popupNewBlock = Storage.get('popupNewBlock');
-			let popupVideo = Storage.get('popupVideo');
-
 			let onboarding = Storage.get('onboarding');
 
 			if (isMain && account) {
-				if (!onboarding || popupVideo) {
+				if (!onboarding) {
 					popupNewBlock = true;
 				};
 				if (!popupNewBlock && onboarding) {
 					popupStore.open('help', { data: { document: 'whatsNew' } });
 					Storage.set('popupNewBlock', true);
 				};
-				if (popupVideo) {
-					popupStore.open('video', { data: { type: 'onboarding' } });
-					Storage.delete('popupVideo');
-				};
-
 				Storage.set('redirect', history.location.pathname);
 			};
 

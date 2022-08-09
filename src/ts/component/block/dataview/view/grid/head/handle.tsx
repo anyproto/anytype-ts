@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { I } from 'ts/lib';
-import { IconObject } from 'ts/component';
+import { I } from 'Lib';
+import { IconObject } from 'Component';
 import { SortableHandle } from 'react-sortable-hoc';
 import { observer } from 'mobx-react';
-import { menuStore } from 'ts/store';
+import { menuStore } from 'Store';
 
 interface Props extends I.Relation {
 	onClick?: (e: any) => void;

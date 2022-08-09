@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { Filter, MenuItemVertical, Icon, Loader, ObjectName } from 'ts/component';
-import { I, C, Util, keyboard, DataUtil, Relation } from 'ts/lib';
-import { commonStore, dbStore, menuStore } from 'ts/store';
+import { Filter, MenuItemVertical, Icon, Loader, ObjectName } from 'Component';
+import { I, C, Util, keyboard, DataUtil, Relation } from 'Lib';
+import { commonStore, dbStore, menuStore } from 'Store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
@@ -366,9 +366,9 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		const items = this.getItems();
 		const obj = $(`#${getId()} .content`);
 		const offset = noFilter ? 16 : 58;
-		const height = Math.max(HEIGHT * 2, Math.min(360, items.length * HEIGHT + offset));
+		const height = Math.max(HEIGHT, Math.min(360, items.length * HEIGHT + offset));
 
-		obj.css({ height: height });
+		obj.css({ height });
 		position();
 	};
 

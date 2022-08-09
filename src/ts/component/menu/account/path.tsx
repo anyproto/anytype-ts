@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { I } from 'ts/lib';
-import { Button, Label } from 'ts/component';
-import { authStore } from 'ts/store';
+import { I } from 'Lib';
+import { Button, Label } from 'Component';
+import { authStore } from 'Store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {};

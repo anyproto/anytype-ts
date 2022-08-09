@@ -1,14 +1,14 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Block, Icon, Loader, Deleted } from 'ts/component';
-import { commonStore, blockStore, detailStore, menuStore, popupStore } from 'ts/store';
-import { I, C, Key, Util, DataUtil, Mark, focus, keyboard, crumbs, Storage, Mapper, Action, translate, analytics, Renderer } from 'ts/lib';
+import { Block, Icon, Loader, Deleted } from 'Component';
+import { commonStore, blockStore, detailStore, menuStore, popupStore } from 'Store';
+import { I, C, Key, Util, DataUtil, Mark, focus, keyboard, crumbs, Storage, Mapper, Action, translate, analytics, Renderer } from 'Lib';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 
-import Controls from 'ts/component/page/head/controls';
-import PageHeadEdit from 'ts/component/page/head/edit';
+import Controls from 'Component/page/head/controls';
+import PageHeadEdit from 'Component/page/head/edit';
 
 interface Props extends RouteComponentProps<any> {
 	dataset?: any;
@@ -58,6 +58,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		this.getWrapperWidth = this.getWrapperWidth.bind(this);
 		this.resize = this.resize.bind(this);
 		this.focusTitle = this.focusTitle.bind(this);
+		this.blockRemove = this.blockRemove.bind(this);
 	};
 
 	render () {
@@ -120,6 +121,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 								onCopy={this.onCopy}
 								onPaste={this.onPaste}
 								readonly={readonly}
+								blockRemove={this.blockRemove}
 								getWrapper={this.getWrapper}
 								getWrapperWidth={this.getWrapperWidth}
 							/>
@@ -799,7 +801,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			// Enter
 			keyboard.shortcut('enter, shift+enter', e, (pressed: string) => {
 				if (isInsideTable && (pressed == 'enter')) {
-					this.onArrowVertical(e, 'arrowdown', { from: length, to: length }, length, props);
+					this.onArrowVertical(e, Key.down, { from: length, to: length }, length, props);
 				} else {
 					this.onEnterBlock(e, range, pressed);
 				};
@@ -807,10 +809,12 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 			// Tab, indent block
 			keyboard.shortcut('tab, shift+tab', e, (pressed: string) => {
+				const isShift = pressed.match('shift') ? true : false;
+
 				if (isInsideTable) {
-					this.onArrowHorizontal (e, 'arrowright', { from: length, to: length }, length, props);
+					this.onArrowHorizontal(e, isShift ? Key.left : Key.right, { from: length, to: length }, length, props);
 				} else {
-					this.onTabBlock(e, pressed);
+					this.onTabBlock(e, isShift);
 				};
 			});
 
@@ -1103,7 +1107,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 	};
 
 	// Indentation
-	onTabBlock (e: any, pressed: string) {
+	onTabBlock (e: any, isShift: boolean) {
 		e.preventDefault();
 			
 		const { rootId } = this.props;
@@ -1114,7 +1118,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			return;
 		};
 
-		const isShift = pressed.match('shift');
 		const element = blockStore.getMapElement(rootId, block.id);
 		const parent = blockStore.getLeaf(rootId, element.parentId);
 		const parentElement = blockStore.getMapElement(rootId, parent.id);
@@ -1280,7 +1283,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 	onArrowHorizontal (e: any, pressed: string, range: I.TextRange, length: number, props: any) {
 		const { focused } = focus.state;
-		const { rootId, isPopup } = this.props;
+		const { rootId } = this.props;
 		const { isInsideTable } = props;
 		const block = blockStore.getLeaf(rootId, focused);
 		const dir = pressed.match(Key.left) ? -1 : 1;
@@ -1306,6 +1309,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 				return;
 			};
 
+			const fill = (id: string, callBack: () => void) => {
+				C.BlockTableRowListFill(rootId, [ id ], callBack);
+			};	
+
 			const cb = () => {
 				let nextCellId = '';
 
@@ -1317,7 +1324,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 					const nextRow = this.getNextTableRow(block.id, dir);
 					if (nextRow) {
 						const nextRowElement = blockStore.getMapElement(rootId, nextRow.id);
-						nextCellId = nextRowElement.childrenIds[dir > 0 ? 0 : nextRowElement.childrenIds.length - 1];
+						fill(nextRow.id, () => {
+							nextCellId = nextRowElement.childrenIds[dir > 0 ? 0 : nextRowElement.childrenIds.length - 1];
+							this.focusNextBlock(blockStore.getLeaf(rootId, nextCellId), dir);
+						});
 					};
 				};
 
@@ -1325,7 +1335,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			};
 
 			if (rowElement.childrenIds.length - 1 < idx) {
-				C.BlockTableRowListFill(rootId, [ element.parentId ], cb);
+				fill(element.parentId, cb);
 			} else {
 				cb();
 			};
@@ -1404,27 +1414,34 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 	};
 	
 	onCopy (e: any, cut: boolean) {
-		e.preventDefault();
-
 		const { dataset, rootId } = this.props;
 		const { selection } = dataset || {};
 		const readonly = this.isReadonly();
+		const root = blockStore.getLeaf(rootId, rootId);
+		const { focused } = focus.state;
 
-		if (readonly && cut) {
+		if (!root || (readonly && cut)) {
 			return;
 		};
 
-		let { focused, range } = focus.state;
 		let ids = selection.get(I.SelectType.Block, true);
+
+		if (root.isLocked() && !ids.length) {
+			return;
+		};
+
+		e.preventDefault();
+
 		if (!ids.length) {
 			ids = [ focused ];
 		};
 		ids = ids.concat(this.getLayoutIds(ids));
 
+		const range = Util.objectCopy(focus.state.range);
 		const cmd = cut ? 'BlockCut' : 'BlockCopy';
 		const tree = blockStore.getTree(rootId, blockStore.getBlocks(rootId));
+		const text: string[] = [];
 
-		let text: string[] = [];
 		let blocks = blockStore.unwrapTree(tree).filter((it: I.Block) => {
 			return ids.indexOf(it.id) >= 0;
 		});
@@ -1437,7 +1454,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		});
 
 		blocks = Util.arrayUniqueObjects(blocks, 'id');
-
 		blocks = blocks.map((it: I.Block) => {
 			const element = blockStore.getMapElement(rootId, it.id);
 
@@ -1449,35 +1465,34 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			return it;
 		});
 		
-		range = Util.objectCopy(range);
-
-		const cb = (message: any) => {
-			const blocks = (message.anySlot || []).map(Mapper.From.Block);
-
+		C[cmd](rootId, blocks, range, (message: any) => {
 			Util.clipboardCopy({
 				text: message.textSlot,
 				html: message.htmlSlot,
 				anytype: {
 					range: range,
-					blocks: blocks,
+					blocks: (message.anySlot || []).map(Mapper.From.Block),
 				},
 			});
 
 			if (cut) {
 				menuStore.close('blockContext');
+
 				focus.set(focused, { from: range.from, to: range.from });
 				focus.apply();
 			};
-		};
-		
-		C[cmd](rootId, blocks, range, cb);
-		analytics.event('CopyBlock');
+		});
+
+		analytics.event(cut ? 'CutBlock' : 'CopyBlock');
 	};
 	
 	onPaste (e: any, props: any, force?: boolean, data?: any) {
 		const { dataset, rootId } = this.props;
 		const { selection } = dataset || {};
 		const { focused, range } = focus.state;
+		const cb = e.clipboardData || e.originalEvent.clipboardData;
+		const items = cb.items;
+		const files: any[] = [];
 
 		menuStore.closeAll([ 'blockAdd' ]);
 
@@ -1489,8 +1504,17 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			data = this.getClipboardData(e);
 		};
 
-		if (this.onPasteFile(e, props)) {
-			return;
+		if (items && items.length) {
+			for (let item of items) {
+				if (item.kind != 'file') {
+					continue;
+				};
+
+				const file = item.getAsFile();
+				if (file) {
+					files.push({ name: file.name, path: file.path });
+				};
+			};
 		};
 
 		e.preventDefault();
@@ -1508,7 +1532,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		let from = 0;
 		let to = 0;
 
-		C.BlockPaste(rootId, focused, range, selection.get(I.SelectType.Block, true), data.anytype.range.to > 0, { text: data.text, html: data.html, anytype: data.anytype.blocks, files: data.files }, (message: any) => {
+		C.BlockPaste(rootId, focused, range, selection.get(I.SelectType.Block, true), data.anytype.range.to > 0, { ...data, anytype: data.anytype.blocks, files }, (message: any) => {
 			if (message.error.code) {
 				return;
 			};
@@ -1531,68 +1555,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 				id = focused;
 				from = to = message.caretPosition;
 			};
-			
-			this.focus(id, from, to, true);
 
+			this.focus(id, from, to, true);
 			analytics.event('PasteBlock');
 		});
-	};
-
-	onPasteFile (e: any, props: any): boolean {
-		const { isInsideTable } = props;
-		
-		if (isInsideTable) {
-			return false;
-		};
-
-		const filePath = window.Electron.tmpPath;
-		const cb = e.clipboardData || e.originalEvent.clipboardData;
-		const items = cb.items;
-		const files: any[] = [];
-		const data: any = this.getClipboardData(e);
-
-		if (!items || !items.length) {
-			return false;
-		};
-
-		for (let item of items) {
-			if (item.kind != 'file') {
-				continue;
-			};
-
-			const file = item.getAsFile();
-			if (file) {
-				files.push(file);
-			};
-		};
-
-		if (!files.length) {
-			return false;
-		};
-
-		for (let file of files) {
-			const fn = window.Electron.getPath(filePath, file.name);
-			const reader = new FileReader();
-
-			reader.readAsBinaryString(file); 
-			reader.onloadend = () => {
-				window.Electron.fs.writeFile(fn, reader.result, 'binary', (err: any) => {
-					if (err) {
-						console.error(err);
-						commonStore.progressSet({ status: translate('commonProgress'), current: 0, total: 0 });
-						return;
-					};
-
-					data.files.push({ name: file.name, path: fn });
-
-					if (data.files.length == files.length) {
-						this.onPaste(e, props, true, data);
-					};
-				});
-			};
-		};
-
-		return true;
 	};
 
 	onPasteUrl (url: string, props: any) {
@@ -1609,13 +1575,13 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 		const first = blockStore.getFirstBlock(rootId, 1, (it) => it.isText() && !it.isTextTitle() && !it.isTextDescription());
 		const object = detailStore.get(rootId, rootId, [ 'internalFlags' ]);
-		const isEmpty = (focused == first.id) && !first.getLength() && (object.internalFlags || []).includes(I.ObjectFlag.DeleteEmpty);
+		const isEmpty = first && (focused == first.id) && !first.getLength() && (object.internalFlags || []).includes(I.ObjectFlag.DeleteEmpty);
 
 		const options: any[] = [
 			{ id: 'link', name: 'Create link' },
 			isEmpty && !isInsideTable ? { id: 'object', name: 'Create bookmark object' } : null,
 			!isInsideTable ? { id: 'block', name: 'Create bookmark block' } : null,
-			{ id: 'cancel', name: 'Cancel' },
+			{ id: 'cancel', name: 'Paste as text' },
 			//{ id: 'embed', name: 'Create embed' },
 		].filter(it => it);
 
@@ -2037,12 +2003,14 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		node.css({ width: width });
 		elements.css({ width: width, marginLeft: -width / 2 });
 
+		/*
 		blocks.forEach((block: I.Block) => {
 			const el = node.find(`#block-${block.id} #wrap`);
 			if (el.length) {
-				el.trigger('resizeTable');
+				el.trigger('resize');
 			};
 		});
+		*/
 
 		if (this.refHeader && this.refHeader.refDrag) {
 			this.refHeader.refDrag.setValue(v);

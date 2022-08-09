@@ -1,4 +1,4 @@
-import { I, Util, analytics } from 'ts/lib';
+import { I, Util, analytics } from 'Lib';
 
 const $ = require('jquery');
 const Tags = [ 

@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { I, C, Util, DataUtil, analytics, translate, keyboard, Onboarding, Relation, Renderer } from 'ts/lib';
+import { I, C, Util, DataUtil, analytics, translate, keyboard, Onboarding, Relation, Renderer } from 'Lib';
 import { observer } from 'mobx-react';
-import { blockStore, menuStore, dbStore, detailStore, popupStore, commonStore } from 'ts/store';
+import { blockStore, menuStore, dbStore, detailStore, popupStore, commonStore } from 'Store';
 import { throttle } from 'lodash';
 import arrayMove from 'array-move';
 
@@ -191,7 +191,12 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 	getKeys (id: string): string[] {
 		const view = this.getView(id);
-		const relationKeys = view.relations.map((it: any) => { return it.relationKey; });
+		const relationKeys = (view.relations || []).map(it => it.relationKey);
+
+		let keys = Constant.defaultRelationKeys.concat(Constant.coverRelationKeys);
+		if (view) {
+			keys = keys.concat(relationKeys);
+		};
 
 		return Util.arrayUnique(Constant.defaultRelationKeys.concat(relationKeys).concat(Constant.coverRelationKeys));
 	};
@@ -268,7 +273,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		viewId = viewId || dbStore.getMeta(dbStore.getSubId(rootId, block.id), '').viewId;
-		return views.find((it: I.View) => { return it.id == viewId; }) || views[0];
+		return dbStore.getView(rootId, block.id, viewId) || views[0];
 	};
 
 	onRecordAdd (e: any, dir: number, withPopup?: boolean) {
@@ -412,7 +417,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	onCellClick (e: any, relationKey: string, index: number) {
-		if (e.button || e.shiftKey || e.ctrlKey || e.metaKey || e.altKey) {
+		if (e.button || keyboard.withCommand(e)) {
 			return;
 		};
 

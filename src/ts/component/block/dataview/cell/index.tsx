@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, DataUtil, Util, keyboard, Relation, Renderer } from 'ts/lib';
-import { commonStore, menuStore, dbStore } from 'ts/store';
+import { I, DataUtil, Util, keyboard, Relation, Renderer } from 'Lib';
+import { commonStore, menuStore, dbStore } from 'Store';
 import { observable } from 'mobx';
 
 import CellText from './text';

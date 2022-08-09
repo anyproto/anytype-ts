@@ -1,8 +1,8 @@
 import { observable, action, computed, set, makeObservable } from 'mobx';
-import { I, M, Storage, analytics, Renderer } from 'ts/lib';
-import { blockStore, detailStore, commonStore, dbStore } from 'ts/store';
+import { I, M, Storage, analytics, Renderer } from 'Lib';
+import { blockStore, detailStore, commonStore, dbStore } from 'Store';
 import * as Sentry from '@sentry/browser';
-import { keyboard } from 'ts/lib';
+import { keyboard } from 'Lib';
 
 class AuthStore {
 	

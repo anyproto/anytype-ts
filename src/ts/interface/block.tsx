@@ -1,4 +1,4 @@
-import { I } from 'ts/lib';
+import { I } from 'Lib';
 
 export interface PageInfo {
 	id: string;
@@ -80,6 +80,7 @@ export interface BlockComponent {
 	onUpdate?(): void;
 	getWrapper?(): any;
 	getWrapperWidth?(): number;
+	blockRemove?(focused?: I.Block): void;
 };
 
 export interface BlockStructure {

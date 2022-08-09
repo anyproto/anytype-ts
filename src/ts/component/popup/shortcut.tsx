@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { I, Util } from 'ts/lib';
+import { I, Util } from 'Lib';
 
 interface Props extends I.Popup, RouteComponentProps<any> {};
 

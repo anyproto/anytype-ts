@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Frame, Cover, Title, Label, Error, Pin, Header, FooterAuth as Footer } from 'ts/component';
-import { translate, Util } from 'ts/lib';
-import { commonStore, authStore } from 'ts/store';
+import { Frame, Cover, Title, Label, Error, Pin, Header, FooterAuth as Footer } from 'Component';
+import { translate, Util } from 'Lib';
+import { commonStore, authStore } from 'Store';
 import { observer } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any> {}
@@ -15,7 +15,7 @@ const Constant: any = require('json/constant.json');
 
 const PageAuthPinSelect = observer(class PageAuthPinSelect extends React.Component<Props, State> {
 	
-	refObj: any = {};
+	ref: any = null;
 	state = {
 		error: ''
 	};
@@ -30,11 +30,6 @@ const PageAuthPinSelect = observer(class PageAuthPinSelect extends React.Compone
 		const { cover } = commonStore;
 		const { error } = this.state;
 		
-		let inputs = [];
-		for (let i = 1; i <= Constant.pinSize; ++i) {
-			inputs.push({ id: i });
-		};
-		
         return (
 			<div>
 				<Cover {...cover} className="main" />
@@ -46,11 +41,28 @@ const PageAuthPinSelect = observer(class PageAuthPinSelect extends React.Compone
 					<Label text={translate('authPinSelectLabel')} />
 					<Error text={error} />
 					
-					<Pin onSuccess={this.onSuccess} />
+					<Pin ref={(ref: any) => { this.ref = ref; }} onSuccess={this.onSuccess} />
 				</Frame>
 			</div>
 		);
     };
+
+	componentDidMount () {
+		this.rebind();
+	};
+
+	componentWillUnmount () {
+		this.unbind();
+	};
+
+	unbind () {
+		$(window).off('focus.pin');
+	};
+
+	rebind () {
+		this.unbind();
+		$(window).on('focus.pin', () => { console.log('focus'); this.ref.focus(); });
+	};
 
 	onSuccess (pin: string) {
 		const { match } = this.props;

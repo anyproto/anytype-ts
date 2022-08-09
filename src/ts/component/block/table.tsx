@@ -1,9 +1,9 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Icon } from 'ts/component';
-import { I, C, keyboard, focus, Util, Mark } from 'ts/lib';
+import { Icon } from 'Component';
+import { I, C, keyboard, focus, Util, Mark } from 'Lib';
 import { observer } from 'mobx-react';
-import { menuStore, blockStore } from 'ts/store';
+import { menuStore, blockStore } from 'Store';
 import arrayMove from 'array-move';
 import { throttle } from 'lodash';
 
@@ -64,7 +64,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 	render () {
 		const { block } = this.props;
 		const { rows, columns } = this.getData();
-		const cn = [ 'wrap', 'focusable', 'c' + block.id ];
+		const cn = [ 'wrap', 'focusable', 'c' + block.id, 'resizable' ];
 
 		// Subscriptions
 		columns.forEach((column: I.Block) => {
@@ -163,7 +163,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		this.unbind();
 
 		win.on('resize.' + block.id, () => { this.resize(); });
-		node.on('resizeTable', () => { this.resize(); });
+		node.on('resize', () => { this.resize(); });
 	};
 
 	getData () {
@@ -657,7 +657,9 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 	};
 
 	onCellFocus (e: any, rowId: string, columnId: string, cellId: string) {
-		const { rootId, readonly } = this.props;
+		const { rootId, readonly, dataset } = this.props;
+		const { selection } = dataset || {};
+
 		if (readonly) {
 			return;
 		};
@@ -674,6 +676,8 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 
 				focus.set(cellId, { from: 0, to: 0 });
 				focus.apply();
+
+				selection.clear(true);
 			});
 		} else {
 			cb();
@@ -1188,30 +1192,44 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			return;
 		};
 
-		const { isPopup, block, getWrapperWidth } = this.props;
+		const { isPopup, rootId, block, getWrapperWidth } = this.props;
+		const element = blockStore.getMapElement(rootId, block.id);
+		const parent = blockStore.getLeaf(rootId, element.parentId);
 		const node = $(ReactDOM.findDOMNode(this));
-		const obj = $(`#block-${block.id}`);
-		const container = Util.getPageContainer(isPopup);
-		const ww = container.width();
-		const mw = ww - PADDING;
-		const wrapperWidth = getWrapperWidth() + Constant.size.blockMenu;
-		const offset = Constant.size.blockMenu + 10;
 		const wrap = node.find('#scrollWrap');
 		const row = node.find('.row').first();
 
-		let width = offset;
+		let width = 0;
+		let maxWidth = 0;
+		let wrapperWidth = 0;
 
+		width += Constant.size.blockMenu + 10;
 		String(row.css('grid-template-columns') || '').split(' ').forEach((it: string) => {
 			width += parseInt(it);
 		});
 
-		width > mw ? wrap.addClass('withScroll') : wrap.removeClass('withScroll');
-		width = Math.max(wrapperWidth, Math.min(mw, width));
+		if (parent.isPage() || parent.isLayoutDiv()) {
+			const obj = $(`#block-${block.id}`);
+			const container = Util.getPageContainer(isPopup);
 
-		obj.css({
-			width: (width >= wrapperWidth) ? width : 'auto',
-			marginLeft: (width >= wrapperWidth) ? Math.min(0, (wrapperWidth - width) / 2) : '',
-		});
+			maxWidth = container.width() - PADDING;
+			wrapperWidth = getWrapperWidth() + Constant.size.blockMenu;
+
+			width > maxWidth ? wrap.addClass('withScroll') : wrap.removeClass('withScroll');
+			width = Math.max(wrapperWidth, Math.min(maxWidth, width));
+
+			obj.css({
+				width: (width >= wrapperWidth) ? width : 'auto',
+				marginLeft: (width >= wrapperWidth) ? Math.min(0, (wrapperWidth - width) / 2) : '',
+			});
+		} else {
+			const parentObj = $(`#block-${parent.id}`);
+			if (parentObj.length) {
+				maxWidth = parentObj.width() - Constant.size.blockMenu;
+			};
+
+			width > maxWidth ? wrap.addClass('withScroll') : wrap.removeClass('withScroll');
+		};
 	};
 
 	checkWidth (w: number) {
@@ -1513,12 +1531,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 	};
 
 	getClassByPosition (position: I.BlockPosition) {
-		let c = '';
-		if (position == I.BlockPosition.Left) c = 'left';
-		if (position == I.BlockPosition.Right) c = 'right';
-		if (position == I.BlockPosition.Top) c = 'top';
-		if (position == I.BlockPosition.Bottom) c = 'bottom';
-		return c;
+		return I.BlockPosition[position].toLowerCase();
 	};
 
 });

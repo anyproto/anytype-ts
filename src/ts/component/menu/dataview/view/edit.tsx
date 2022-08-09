@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { I, C, analytics, keyboard, Key, translate, DataUtil } from 'ts/lib';
-import { Input, MenuItemVertical } from 'ts/component';
-import { blockStore, dbStore, menuStore } from 'ts/store';
+import { I, C, analytics, keyboard, Key, translate, DataUtil, Util } from 'Lib';
+import { Input, MenuItemVertical } from 'Component';
+import { blockStore, dbStore, menuStore } from 'Store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {};
@@ -119,7 +119,7 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 		const { data } = param;
 		const view = data.view.get();
 		const item = this.getItems()[this.n];
-		const k = e.key.toLowerCase();
+		const k = keyboard.eventKey(e);
 
 		let ret = false;
 
@@ -199,34 +199,31 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 	save () {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, onSave, getData } = data;
-		const view = data.view.get();
+		const { rootId, blockId, onSave, getData, getView } = data;
+		const view = getView();
+		const current = data.view.get();
 		const allowedView = blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
-		const subId = dbStore.getSubId(rootId, blockId);
+		const groupOption = this.getGroupOption();
 
 		if (!allowedView) {
 			return;
 		};
 
-		if (view.id) {
-			C.BlockDataviewViewUpdate(rootId, blockId, view.id, view, (message: any) => {
-				getData(view.id, 0);
-
-				if (onSave) {
-					onSave();
-				};
-			});
-		} else 
-		if (view.name) {
-			C.BlockDataviewViewCreate(rootId, blockId, view, (message: any) => {
-				dbStore.metaSet(subId, '', { ...dbStore.getMeta(subId, ''), viewId: message.viewId });
-
-				if (onSave) {
-					onSave();
-				};
-				analytics.event('AddView', { type: view.type });
-			});
+		if (current.type == I.ViewType.Board) {
+			current.groupRelationKey = groupOption.id;
 		};
+
+		current.name = current.name || translate(`viewName${current.type}`);
+
+		C.BlockDataviewViewUpdate(rootId, blockId, current.id, current, (message: any) => {
+			if (view.id == current.id) {
+				getData(view.id, 0);
+			};
+
+			if (onSave) {
+				onSave();
+			};
+		});
 	};
 
 	getSections () {
@@ -259,7 +256,7 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 		};
 
 		if (view.type == I.ViewType.Board) {
-			const groupOption = this.getGroupOptions().find(it => it.id == view.groupRelationKey);
+			const groupOption = this.getGroupOption();
 
 			settings = settings.concat([
 				{ id: 'groupRelationKey', name: 'Group by', caption: groupOption ? groupOption.name : 'Select', withCaption: true, arrow: true },
@@ -412,11 +409,12 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 				case 'copy':
 					close();
 
-					C.BlockDataviewViewCreate(rootId, blockId, view, () => {
+					C.BlockDataviewViewCreate(rootId, blockId, view, (message: any) => {
 						if (onSave) {
 							onSave();
 						};
 
+						getData(message.viewId, 0);
 						analytics.event('AddView', { type: view.type });
 					});
 					break;
@@ -494,9 +492,16 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 			};
 		});
 
-		return [
-			{ id: '', icon: '', name: 'None' },
-		].concat(options);
+		return options;
+	};
+
+	getGroupOption () {
+		const { param } = this.props;
+		const { data } = param;
+		const view = data.view.get();
+		const groupOptions = this.getGroupOptions();
+
+		return groupOptions.length ? (groupOptions.find(it => it.id == view.groupRelationKey) || groupOptions[0]) : null;
 	};
 
 	resize () {

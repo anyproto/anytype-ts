@@ -6,7 +6,7 @@ import { Provider } from 'mobx-react';
 import { enableLogging } from 'mobx-logger';
 import { Page, SelectionProvider, DragProvider, Progress, Tooltip, Preview, Icon, ListPopup, ListMenu } from './component';
 import { commonStore, authStore, blockStore, detailStore, dbStore, menuStore, popupStore } from './store';
-import { I, C, Util, FileUtil, keyboard, Storage, analytics, dispatcher, translate, Action, Renderer, DataUtil, focus, Mark } from 'ts/lib';
+import { I, C, Util, FileUtil, keyboard, Storage, analytics, dispatcher, translate, Action, Renderer, DataUtil, focus, Mark } from 'Lib';
 import * as Sentry from '@sentry/browser';
 import { configure, spy } from 'mobx';
 
@@ -36,6 +36,7 @@ import 'scss/component/frame.scss';
 import 'scss/component/switch.scss';
 import 'scss/component/title.scss';
 import 'scss/component/select.scss';
+import 'scss/component/emptySearch.scss';
 import 'scss/component/tag.scss';
 import 'scss/component/dragLayer.scss';
 import 'scss/component/dragbox.scss';
@@ -107,7 +108,6 @@ import 'scss/popup/confirm.scss';
 import 'scss/popup/page.scss';
 import 'scss/popup/template.scss';
 import 'scss/popup/export.scss';
-import 'scss/popup/video.scss';
 
 import 'emoji-mart/css/emoji-mart.css';
 import 'scss/menu/common.scss';
@@ -203,6 +203,7 @@ window.Lib = {
 	analytics,
 	dispatcher,
 	keyboard,
+	Renderer,
 };
 
 /*
@@ -340,7 +341,7 @@ class App extends React.Component<Props, State> {
 	init () {
 		Util.init(history);
 
-		dispatcher.init();
+		dispatcher.init(window.Electron.getGlobal('serverAddress'));
 		keyboard.init();
 		analytics.init();
 		
@@ -442,9 +443,14 @@ class App extends React.Component<Props, State> {
 		this.initTheme(config.theme);
 
 		const cb = () => {
-			logo.css({ opacity: 0 });
-			window.setTimeout(() => { loader.css({ opacity: 0 }); }, 500);
-			window.setTimeout(() => { loader.remove(); }, 1000);
+			window.setTimeout(() => { 
+				logo.css({ opacity: 0 });
+
+				window.setTimeout(() => { 
+					loader.css({ opacity: 0 }); 
+					window.setTimeout(() => { loader.remove(); }, 500);
+				}, 750);
+			}, 1000);
 		};
 
 		if (accountId) {

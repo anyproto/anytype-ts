@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { IconObject, Loader } from 'ts/component';
-import { I, C, DataUtil } from 'ts/lib';
-import { menuStore, detailStore } from 'ts/store';
+import { IconObject, Loader } from 'Component';
+import { I, C, DataUtil } from 'Lib';
+import { menuStore, detailStore } from 'Store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.BlockComponent {};

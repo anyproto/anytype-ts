@@ -26,24 +26,11 @@
 			}
 		}
 
-		.emptySearch { height: 100%; width: 100%; line-height: 84px; padding: 8px 16px; text-align: center; }
-		.emptySearch {
-			b { display: block; font-weight: 400; color: $colorBlack; }
-			.label { line-height: 24px; color: $colorMediumGrey; display: inline-block; vertical-align: middle; width: 100%; }
-			span {
-				white-space: nowrap;
-				overflow: hidden;
-				text-overflow: ellipsis;
-				max-width: 100%;
-				display: block;
-			}
-		}
-		
 		.items { height: 100%; }
 		.items {
 			.pad { height: 12px; }
 
-			.section { height: 32px; line-height: 22px; padding: 5px 16px; font-weight: 500; color: $colorMediumGrey; }
+			.sectionName { @include text-small; height: 32px; line-height: 22px; padding: 5px 16px; font-weight: 500; color: $colorMediumGrey; }
 
 			.item { 
 				cursor: pointer; transition: $transitionFast; position: relative; height: 32px; line-height: 22px; padding: 7px 16px; white-space: nowrap;

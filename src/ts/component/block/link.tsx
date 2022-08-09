@@ -1,11 +1,11 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Icon, Loader } from 'ts/component';
-import { I, DataUtil, translate } from 'ts/lib';
-import { detailStore, blockStore } from 'ts/store';
+import { Icon, Loader } from 'Component';
+import { I, DataUtil, translate, keyboard } from 'Lib';
+import { detailStore, blockStore } from 'Store';
 import { observer } from 'mobx-react';
-import { focus } from 'ts/lib';
+import { focus } from 'Lib';
 
 import LinkCard from './link/card';
 
@@ -153,11 +153,11 @@ const BlockLink = observer(class BlockLink extends React.Component<Props, {}> {
 		const object = detailStore.get(rootId, targetBlockId, []);
 		const { _empty_ , isArchived } = object;
 
-		if (e.shiftKey || e.ctrlKey || e.metaKey || _empty_ || isArchived || (targetBlockId == rootId)) {
+		if (keyboard.withCommand(e) || _empty_ || isArchived || (targetBlockId == rootId)) {
 			return;
 		};
 
-		DataUtil.objectOpenRoute(object);
+		DataUtil.objectOpenEvent(e, object);
 	};
 	
 	onSelect (icon: string) {

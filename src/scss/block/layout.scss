@@ -3,16 +3,15 @@
 .blocks {
 	
 	.block.blockLayout > .wrapContent > .selectable > .dropTarget { display: none; }
+	.block.blockLayout > .wrapContent > .dropTarget { display: none; }
 	
 	/* Row */
 	.block.blockLayout.c0 { padding: 14px 0px; }
 	.block.blockLayout.c0 > .wrapMenu { display: none; }
 	.block.blockLayout.c0 > .wrapContent { width: 100%; overflow: visible; }
 	.block.blockLayout.c0 > .wrapContent > .children { display: flex; flex-direction: row; align-items: stretch; }
-	.block.blockLayout.c0 > .wrapContent > .dropTarget.targetTop { display: block; }
-	.block.blockLayout.c0 > .wrapContent > .dropTarget.targetBot { display: block; }
 	
-	.block.blockLayout.c0 > .wrapContent > .dropTarget { padding: 0px; width: calc(100% - 48px); height: 15px; position: absolute; left: 48px; border-radius: 0px !important; }
+	.block.blockLayout.c0 > .wrapContent > .dropTarget { display: block; width: calc(100% - 48px); left: 48px; height: 15px; }
 	.block.blockLayout.c0 > .wrapContent > .dropTarget.targetTop { top: -14px; }
 	.block.blockLayout.c0 > .wrapContent > .dropTarget.targetBot { bottom: -14px; }
 

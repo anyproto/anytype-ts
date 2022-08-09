@@ -1,5 +1,5 @@
-import { I, C, M, keyboard, crumbs, translate, Util, history as historyPopup, Storage, analytics, Relation, dispatcher, Renderer, Mark } from 'ts/lib';
-import { commonStore, blockStore, detailStore, dbStore, popupStore, authStore } from 'ts/store';
+import { I, C, M, keyboard, crumbs, translate, Util, history as historyPopup, Storage, analytics, Relation, dispatcher, Renderer, Mark } from 'Lib';
+import { commonStore, blockStore, detailStore, dbStore, popupStore, authStore } from 'Store';
 
 const Constant = require('json/constant.json');
 const Errors = require('json/error.json');
@@ -367,6 +367,10 @@ class DataUtil {
 	};
 	
 	objectRoute (object: any): string {
+		if (!object) {
+			return;
+		};
+
 		let action = this.actionByLayout(object.layout);
 		let id = object.id;
 
@@ -444,7 +448,6 @@ class DataUtil {
 			case I.ObjectLayout.Graph:		 r = 'graph'; break;
 			case I.ObjectLayout.Store:		 r = 'store'; break;
 			case I.ObjectLayout.History:	 r = 'history'; break;
-			case I.ObjectLayout.Bookmark:	 r = 'bookmark'; break;
 		};
 		return r;
 	};

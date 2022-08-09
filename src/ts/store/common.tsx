@@ -1,7 +1,7 @@
 import { observable, action, computed, set, makeObservable } from 'mobx';
-import { I, Storage, Util } from 'ts/lib';
-import { analytics } from 'ts/lib';
-import { blockStore } from 'ts/store';
+import { I, Storage, Util } from 'Lib';
+import { analytics } from 'Lib';
+import { blockStore } from 'Store';
 
 interface Preview {
 	type: I.MarkType,

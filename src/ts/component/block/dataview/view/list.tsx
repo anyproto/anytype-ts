@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { I } from 'ts/lib';
+import { I } from 'Lib';
 import { observer } from 'mobx-react';
-import { dbStore, blockStore } from 'ts/store';
-import { Icon } from 'ts/component';
-import { translate } from 'ts/lib';
+import { dbStore, blockStore } from 'Store';
+import { Icon } from 'Component';
+import { translate } from 'Lib';
 import { AutoSizer, WindowScroller, List, InfiniteLoader } from 'react-virtualized';
 
 import Row from './list/row';
@@ -37,7 +37,7 @@ const ViewList = observer(class ViewList extends React.Component<Props, {}> {
 			<div className="wrap">
 				<div className="viewItem viewList">
 					<InfiniteLoader
-						isRowLoaded={({ index }) => (index < length - 1) && !!records[index]}
+						isRowLoaded={({ index }) => !!records[index]}
 						loadMoreRows={this.loadMoreRows}
 						rowCount={total}
 						threshold={10}
