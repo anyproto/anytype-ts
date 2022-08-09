@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { Filter, Icon, Loader } from 'ts/component';
-import { I, Util, DataUtil, analytics, keyboard } from 'ts/lib';
-import { commonStore, menuStore } from 'ts/store';
+import { Filter, Icon, Loader } from 'Component';
+import { I, Util, DataUtil, analytics, keyboard } from 'Lib';
+import { commonStore, menuStore } from 'Store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
@@ -184,7 +184,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 	};
 	
 	unbind () {
-		$(window).unbind('keydown.menu');
+		$(window).off('keydown.menu');
 	};
 
 	getItems () {

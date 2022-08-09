@@ -2,9 +2,9 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
-import { Header, FooterMainEdit as Footer, Loader, Block, Button, IconObject, Deleted, ObjectName } from 'ts/component';
-import { I, M, C, Util, crumbs, Action } from 'ts/lib';
-import { commonStore, blockStore, detailStore } from 'ts/store';
+import { Header, FooterMainEdit as Footer, Loader, Block, Button, IconObject, Deleted, ObjectName } from 'Component';
+import { I, M, C, Util, crumbs, Action, Renderer } from 'Lib';
+import { commonStore, blockStore, detailStore } from 'Store';
 
 interface Props extends RouteComponentProps<any> {
 	rootId: string;
@@ -16,9 +16,6 @@ interface State {
 };
 
 const $ = require('jquery');
-const { app } = window.require('@electron/remote')
-const path = window.require('path');
-const userPath = app.getPath('userData');
 const Errors = require('json/error.json');
 
 const MAX_HEIGHT = 396;
@@ -210,7 +207,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<Props
 		const wrap = node.find('.block.blockMedia .wrapContent');
 
 		if (img.length) {
-			img.unbind('load').on('load', () => {
+			img.off('load').on('load', () => {
 				const w = img.width();
 				const h = img.height();
 
@@ -239,11 +236,10 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<Props
 		const blocks = blockStore.getBlocks(rootId);
 		const block = blocks.find((it: I.Block) => { return it.isFile(); });
 		const { content } = block;
-		const renderer = Util.getRenderer();
 
-		C.FileDownload(content.hash, path.join(userPath, 'tmp'), (message: any) => {
+		C.FileDownload(content.hash, window.Electron.tmpPath, (message: any) => {
 			if (message.path) {
-				renderer.send('pathOpen', message.path);
+				Renderer.send('pathOpen', message.path);
 			};
 		});
 	};
@@ -253,9 +249,8 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<Props
 		const blocks = blockStore.getBlocks(rootId);
 		const block = blocks.find((it: I.Block) => { return it.isFile(); });
 		const { content } = block;
-		const renderer = Util.getRenderer();
 		
-		renderer.send('download', commonStore.fileUrl(content.hash));
+		Renderer.send('download', commonStore.fileUrl(content.hash));
 	};
 
 	getRootId () {

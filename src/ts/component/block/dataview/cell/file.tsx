@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { IconObject } from 'ts/component';
-import { I, DataUtil, translate, Relation } from 'ts/lib';
+import { IconObject } from 'Component';
+import { I, DataUtil, translate, Relation } from 'Lib';
 import { observer } from 'mobx-react';
-import { detailStore, dbStore } from 'ts/store';
+import { detailStore, dbStore } from 'Store';
 
 interface Props extends I.Cell {}
 interface State { 

@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Filter, Icon, IconEmoji, EmptySearch } from 'ts/component';
-import { I, C, Util, SmileUtil, keyboard, Storage, translate, analytics } from 'ts/lib';
-import { menuStore } from 'ts/store';
+import { Filter, Icon, IconEmoji, EmptySearch } from 'Component';
+import { I, C, Util, SmileUtil, keyboard, Storage, translate, analytics } from 'Lib';
+import { menuStore } from 'Store';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
 interface Props extends I.Menu {};
@@ -14,7 +14,6 @@ interface State {
 const $ = require('jquery');
 const EmojiData = require('json/emoji.json');
 const Constant = require('json/constant.json');
-const { dialog } = window.require('@electron/remote');
 
 const LIMIT_RECENT = 18;
 const LIMIT_ROW = 9;
@@ -338,7 +337,7 @@ class MenuSmile extends React.Component<Props, State> {
 
 		close();
 		
-		dialog.showOpenDialog(options).then((result: any) => {
+		window.Electron.showOpenDialog(options).then((result: any) => {
 			const files = result.filePaths;
 			if ((files == undefined) || !files.length) {
 				return;
@@ -390,7 +389,7 @@ class MenuSmile extends React.Component<Props, State> {
 
 		if (item && item.skin_variations) {
 			this.timeoutMenu = window.setTimeout(() => {
-				win.unbind('mouseup.smile');
+				win.off('mouseup.smile');
 				
 				menuStore.open('smileSkin', {
 					type: I.MenuType.Horizontal,
@@ -411,7 +410,7 @@ class MenuSmile extends React.Component<Props, State> {
 			}, 200);
 		};
 		
-		win.unbind('mouseup.smile').on('mouseup.smile', () => {
+		win.off('mouseup.smile').on('mouseup.smile', () => {
 			if (menuStore.isOpen('smileSkin')) {
 				return;
 			};
@@ -420,7 +419,7 @@ class MenuSmile extends React.Component<Props, State> {
 				close();
 			};
 			window.clearTimeout(this.timeoutMenu);
-			win.unbind('mouseup.smile')
+			win.off('mouseup.smile')
 		});
 	};
 	

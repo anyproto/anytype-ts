@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, keyboard, Util, analytics } from 'ts/lib';
-import { Dimmer, Icon } from 'ts/component';
-import { menuStore, popupStore } from 'ts/store';
+import { I, keyboard, Util, analytics } from 'Lib';
+import { Dimmer, Icon } from 'Component';
+import { menuStore, popupStore } from 'Store';
 import { observer } from 'mobx-react';
 
 import MenuHelp from './help';
@@ -364,7 +364,7 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 	};
 	
 	unbind () {
-		$(window).unbind('resize.' + this.getId());
+		$(window).off('resize.' + this.getId());
 	};
 	
 	animate () {

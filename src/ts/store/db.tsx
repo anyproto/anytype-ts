@@ -1,5 +1,5 @@
 import { observable, action, computed, set, intercept, makeObservable } from 'mobx';
-import { I, M, DataUtil, Util } from 'ts/lib';
+import { I, M, DataUtil, Util } from 'Lib';
 
 class DbStore {
 
@@ -328,7 +328,7 @@ class DbStore {
 	};
 
 	getId (rootId: string, blockId: string) {
-		return [ rootId, blockId ].join(':');
+		return [ rootId, blockId ].join('-');
 	};
 
 	getSubId (rootId: string, blockId: string) {

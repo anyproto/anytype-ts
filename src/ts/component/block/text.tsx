@@ -1,11 +1,11 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Select, Marker, Loader, IconObject, Icon } from 'ts/component';
-import { I, C, keyboard, Key, Util, DataUtil, Mark, focus, Storage, translate, analytics } from 'ts/lib';
+import { Select, Marker, Loader, IconObject, Icon } from 'Component';
+import { I, C, keyboard, Key, Util, DataUtil, Mark, focus, Storage, translate, analytics, Renderer } from 'Lib';
 import { observer } from 'mobx-react';
 import { getRange } from 'selection-ranges';
-import { commonStore, blockStore, detailStore, menuStore } from 'ts/store';
+import { commonStore, blockStore, detailStore, menuStore } from 'Store';
 import * as Prism from 'prismjs';
 
 interface Props extends I.BlockComponent, RouteComponentProps<any> {
@@ -215,12 +215,13 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 	};
 	
 	componentDidMount () {
+		this._isMounted = true;
+
 		const { block } = this.props;
 		const { content } = block;
 		const { marks, text } = content;
 
 		this.marks = Util.objectCopy(marks || []);
-		this._isMounted = true;
 		this.setValue(text);
 	};
 	
@@ -323,7 +324,6 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		const value = node.find('#value');
 		const items = value.find('lnk');
 		const self = this;
-		const renderer = Util.getRenderer();
 
 		if (!items.length) {
 			return;
@@ -370,12 +370,12 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 
 			Util.previewShow(el, param);
 
-			el.unbind('click.link').on('click.link', (e: any) => {
+			el.off('click.link').on('click.link', (e: any) => {
 				e.preventDefault();
 				if (isInside) {
 					Util.route(route);
 				} else {
-					renderer.send('urlOpen', url);
+					Renderer.send('urlOpen', url);
 				};
 			});
 		});
@@ -439,7 +439,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 				return;
 			};
 
-			el.unbind('click.object').on('click.object', function (e: any) {
+			el.off('click.object').on('click.object', function (e: any) {
 				e.preventDefault();
 				DataUtil.objectOpenEvent(e, object);
 			});
@@ -516,7 +516,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			};
 		});
 		
-		items.unbind('mouseenter.mention');
+		items.off('mouseenter.mention');
 
 		items.on('mouseenter.mention', function (e: any) {
 			const el = $(this);
@@ -529,7 +529,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 
 			const object = detailStore.get(rootId, data.param, []);
 
-			el.unbind('click.mention').on('click.mention', function (e: any) {
+			el.off('click.mention').on('click.mention', function (e: any) {
 				e.preventDefault();
 				DataUtil.objectOpenEvent(e, object);
 			});
@@ -1260,8 +1260,8 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		this.timeoutContext = window.setTimeout(() => {
 			const pageContainer = Util.getPageContainer(isPopup);
 
-			pageContainer.unbind('click.context').on('click.context', () => { 
-				pageContainer.unbind('click.context');
+			pageContainer.off('click.context').on('click.context', () => { 
+				pageContainer.off('click.context');
 				menuStore.close('blockContext'); 
 			});
 
@@ -1282,7 +1282,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 					rootId: rootId,
 					dataset: dataset,
 					range: { from: currentFrom, to: currentTo },
-					marks: Util.objectCopy(this.marks),
+					marks: this.marks,
 					isInsideTable,
 					onChange: (marks: I.Mark[]) => {
 						this.marks = marks;

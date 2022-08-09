@@ -1,5 +1,5 @@
-import { I, DataUtil, Util, FileUtil, translate } from 'ts/lib';
-import { dbStore } from 'ts/store';
+import { I, DataUtil, Util, FileUtil, translate } from 'Lib';
+import { dbStore } from 'Store';
 
 const Constant = require('json/constant.json');
 

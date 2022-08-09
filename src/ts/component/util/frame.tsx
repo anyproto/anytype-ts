@@ -30,7 +30,7 @@ class Frame extends React.Component<{}, {}> {
 	};
 	
 	unbind () {
-		$(window).unbind('resize.frame');
+		$(window).off('resize.frame');
 	};
 	
 	resize () {

@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Icon, Input, Loader, IconObject, ObjectName, ObjectDescription, EmptySearch } from 'ts/component';
-import { I, C, Util, DataUtil, keyboard, Key, focus, translate, analytics } from 'ts/lib';
-import { commonStore, dbStore } from 'ts/store';
+import { Icon, Input, Loader, IconObject, ObjectName, ObjectDescription, EmptySearch } from 'Component';
+import { I, C, Util, DataUtil, keyboard, Key, focus, translate, analytics } from 'Lib';
+import { commonStore, dbStore } from 'Store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
@@ -228,7 +228,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 	};
 
 	unbind () {
-		$(window).unbind('keydown.search resize.search');
+		$(window).off('keydown.search resize.search');
 	};
 	
 	onSubmit (e: any) {

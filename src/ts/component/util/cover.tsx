@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { I, Util } from 'ts/lib';
-import { commonStore } from 'ts/store';
+import { I, Util } from 'Lib';
+import { commonStore } from 'Store';
 
 interface Props {
 	id?: string;

@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { Input } from  'ts/component';
-import { keyboard } from 'ts/lib';
+import { Input } from  'Component';
+import { keyboard } from 'Lib';
 
 interface Props {
 	size?: number;

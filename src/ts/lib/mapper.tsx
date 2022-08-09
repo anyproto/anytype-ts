@@ -1,4 +1,4 @@
-import { I, M, Decode, Util, Encode } from 'ts/lib';
+import { I, M, Decode, Util, Encode } from 'Lib';
 
 const Commands = require('lib/pb/protos/commands_pb');
 const Model = require('lib/pkg/lib/pb/model/protos/models_pb.js');
@@ -425,6 +425,17 @@ const Mapper = {
 				artist: obj.getArtist(),
 				artistUrl: obj.getArtisturl(),
             };
+		},
+
+		ObjectView: (obj: any) => {
+			return {
+				rootId: obj.getRootid(),
+				blocks: (obj.getBlocksList() || []).map(Mapper.From.Block),
+				details: (obj.getDetailsList() || []).map(Mapper.From.Details),
+				objectTypes: (obj.getObjecttypesList() || []).map(Mapper.From.ObjectType),
+				relations: (obj.getRelationsList() || []).map(Mapper.From.Relation),
+				restrictions: Mapper.From.Restrictions(obj.getRestrictions()),
+			};
 		},
 
 		BoardGroup: (obj: any): I.BoardGroup => {

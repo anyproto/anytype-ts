@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Loader } from 'ts/component';
-import { I, C, Storage, Util, analytics, Action, keyboard } from 'ts/lib';
-import { blockStore, popupStore } from 'ts/store';
+import { Loader } from 'Component';
+import { I, C, Storage, Util, analytics, Action, keyboard } from 'Lib';
+import { blockStore, popupStore } from 'Store';
 import { observer } from 'mobx-react';
 
 import PageIndex from './page/settings/index';
@@ -29,7 +29,6 @@ interface State {
 	loading: boolean;
 };
 
-const { dialog } = window.require('@electron/remote');
 const $ = require('jquery');
 
 const Components: any = {
@@ -122,6 +121,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 	};
 
 	componentWillUnmount () {
+		$(window).off('resize.settings');
 		this.unbind();
 		keyboard.disableNavigation(false);
 	};
@@ -189,7 +189,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 			options.properties.push('openDirectory');
 		};
 
-		dialog.showOpenDialog(options).then((result: any) => {
+		window.Electron.showOpenDialog(options).then((result: any) => {
 			const files = result.filePaths;
 			if ((files == undefined) || !files.length) {
 				return;
@@ -214,9 +214,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 	};
 
 	onBack () {
-		const { close } = this.props;
-
-		this.prevPage ? this.onPage(this.prevPage) : close();
+		this.prevPage ? this.onPage(this.prevPage) : this.props.close();
 	};
 
 });

@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Icon } from 'ts/component';
-import { I, sidebar } from 'ts/lib';
-import { menuStore } from 'ts/store';
+import { Icon } from 'Component';
+import { I, sidebar } from 'Lib';
+import { menuStore } from 'Store';
 
 interface Props extends RouteComponentProps<any>  {};
 

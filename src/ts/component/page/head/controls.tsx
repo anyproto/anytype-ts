@@ -1,9 +1,9 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Loader } from 'ts/component';
-import { I, C, focus, DataUtil, Util } from 'ts/lib';
-import { menuStore, blockStore, detailStore } from 'ts/store';
+import { Loader } from 'Component';
+import { I, C, focus, DataUtil, Util } from 'Lib';
+import { menuStore, blockStore, detailStore } from 'Store';
 import { observer } from 'mobx-react';
 
 import ControlButtons  from './controlButtons';
@@ -21,7 +21,6 @@ interface State {
 	loading: boolean;
 };
 
-const { dialog } = window.require('@electron/remote');
 const Constant = require('json/constant.json');
 const $ = require('jquery');
 
@@ -142,7 +141,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 			filters: [ { name: '', extensions: Constant.extension.image } ]
 		};
 		
-		dialog.showOpenDialog(options).then((result: any) => {
+		window.Electron.showOpenDialog(options).then((result: any) => {
 			const files = result.filePaths;
 			if ((files == undefined) || !files.length) {
 				return;

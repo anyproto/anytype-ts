@@ -1,4 +1,4 @@
-import { I, M, Util } from 'ts/lib';
+import { I, M, Util } from 'Lib';
 import { observable, intercept, makeObservable } from 'mobx';
 
 class Relation implements I.Relation {

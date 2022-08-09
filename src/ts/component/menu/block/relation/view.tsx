@@ -1,11 +1,11 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, C, DataUtil, Util, Relation, analytics } from 'ts/lib';
-import { commonStore, blockStore, detailStore, dbStore, menuStore } from 'ts/store';
-import { Icon } from 'ts/component';
+import { I, C, DataUtil, Util, Relation, analytics } from 'Lib';
+import { commonStore, blockStore, detailStore, dbStore, menuStore } from 'Store';
+import { Icon } from 'Component';
 import { observer } from 'mobx-react';
 
-import Item from 'ts/component/menu/item/relationView';
+import Item from 'Component/menu/item/relationView';
 
 interface Props extends I.Menu {};
 
@@ -117,7 +117,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const scrollWrap = node.find('#scrollWrap');
 
 		this.resize();
-		scrollWrap.unbind('scroll').on('scroll', (e: any) => { this.onScroll(); });
+		scrollWrap.off('scroll').on('scroll', (e: any) => { this.onScroll(); });
 
 		this.selectionPrevent(true);
 	};

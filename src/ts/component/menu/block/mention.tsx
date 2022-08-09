@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { MenuItemVertical, Loader, ObjectName } from 'ts/component';
-import { I, C, keyboard, Util, DataUtil, Mark, analytics } from 'ts/lib';
-import { commonStore, dbStore } from 'ts/store';
+import { MenuItemVertical, Loader, ObjectName } from 'Component';
+import { I, C, keyboard, Util, DataUtil, Mark, analytics } from 'Lib';
+import { commonStore, dbStore } from 'Store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
@@ -169,7 +169,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 	};
 	
 	unbind () {
-		$(window).unbind('keydown.menu');
+		$(window).off('keydown.menu');
 	};
 
 	getSections () {

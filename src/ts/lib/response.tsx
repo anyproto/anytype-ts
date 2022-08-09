@@ -1,4 +1,4 @@
-import { Mapper, Decode } from 'ts/lib';
+import { Mapper, Decode } from 'Lib';
 
 const DebugSync = (response: any) => {
 	return response.toObject();
@@ -48,6 +48,12 @@ const WalletConvert = (response: any) => {
 	};
 };
 
+const WalletCreateSession = (response: any) => {
+	return {
+		token: response.getToken(),
+	};
+};
+
 const AccountCreate = (response: any) => {
 	return {
 		account: Mapper.From.Account(response.getAccount()),
@@ -84,6 +90,18 @@ const ObjectCreateBookmark = (response: any) => {
 	};
 };
 
+const ObjectOpen = (response: any) => {
+	return {
+		objectView: Mapper.From.ObjectView(response.getObjectview()),
+	};
+};
+
+const ObjectShow = (response: any) => {
+	return {
+		objectView: Mapper.From.ObjectView(response.getObjectview()),
+	};
+};
+
 const NavigationGetObjectInfoWithLinks = (response: any) => {
 	const object = response.getObject();
 	const links = object.getLinks();
@@ -103,6 +121,7 @@ const NavigationGetObjectInfoWithLinks = (response: any) => {
 const ObjectOpenBreadcrumbs = (response: any) => {
 	return {
 		objectId: response.getObjectid(),
+		objectView: Mapper.From.ObjectView(response.getObjectview()),
 	};
 };
 
@@ -219,7 +238,7 @@ const HistoryShowVersion = (response: any) => {
 	const version = response.getVersion();
 	return {
 		version: version ? Mapper.From.HistoryVersion(response.getVersion()) : null,
-		objectShow: onObjectShow(response.getObjectshow()),
+		objectView: Mapper.From.ObjectView(response.getObjectview()),
 	};
 };
 
@@ -358,17 +377,6 @@ const UnsplashDownload = (response: any) => {
 	};
 };
 
-const onObjectShow = (response: any) => {
-	return {
-		rootId: response.getRootid(),
-		blocks: (response.getBlocksList() || []).map(Mapper.From.Block),
-		details: (response.getDetailsList() || []).map(Mapper.From.Details),
-		objectTypes: (response.getObjecttypesList() || []).map(Mapper.From.ObjectType),
-		relations: (response.getRelationsList() || []).map(Mapper.From.Relation),
-		restrictions: Mapper.From.Restrictions(response.getRestrictions()),
-	};
-};
-
 export {
 	DebugSync,
 
@@ -380,6 +388,7 @@ export {
 
 	WalletCreate,
 	WalletConvert,
+	WalletCreateSession,
 
 	AccountCreate,
 	AccountSelect,
@@ -388,10 +397,32 @@ export {
 	ObjectCreate,
 	ObjectCreateSet,
 	ObjectCreateBookmark,
+	ObjectTypeList,
+	ObjectTypeCreate,
+	ObjectTypeRelationAdd,
+
+	ObjectSearch,
+	ObjectSearchSubscribe,
+	ObjectSubscribeIds,
+	ObjectGraph,
+
+	ObjectRelationAdd,
+	ObjectRelationListAvailable,
+	ObjectRelationOptionAdd,
+	ObjectRelationSearchDistinct,
+
+	ObjectToSet,
+	ObjectShareByLink,
+	ObjectToBookmark,
+
+	ObjectListDuplicate,
 
 	NavigationGetObjectInfoWithLinks,
 
+	ObjectOpen,
+	ObjectShow,
 	ObjectOpenBreadcrumbs,
+	ObjectImportMarkdown,
 	
 	BlockSplit,
 	BlockCopy,
@@ -402,8 +433,6 @@ export {
 	BlockBookmarkCreateAndFetch,
 	BlockLinkCreateWithObject,
 	
-	ObjectImportMarkdown,
-
 	BlockCreate,
 	BlockDataviewViewCreate,
 
@@ -418,25 +447,6 @@ export {
 	HistoryGetVersions,
 	HistoryShowVersion,
 
-	ObjectTypeList,
-	ObjectTypeCreate,
-	ObjectTypeRelationAdd,
-
-	ObjectSearch,
-	ObjectRelationSearchDistinct,
-	ObjectSearchSubscribe,
-	ObjectSubscribeIds,
-	ObjectGraph,
-	ObjectRelationAdd,
-	ObjectRelationListAvailable,
-	ObjectRelationOptionAdd,
-	ObjectShareByLink,
-
-	ObjectToSet,
-	ObjectToBookmark,
-
-	ObjectListDuplicate,
-
 	TemplateCreateFromObject,
 	TemplateCreateFromObjectType,
 	TemplateClone,
@@ -445,6 +455,4 @@ export {
 
 	UnsplashSearch,
 	UnsplashDownload,
-
-	onObjectShow,
 };

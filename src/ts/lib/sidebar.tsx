@@ -1,5 +1,5 @@
-import { I, Storage, Util, keyboard } from 'ts/lib';
-import { commonStore, menuStore, popupStore } from 'ts/store';
+import { I, Storage, Util, keyboard } from 'Lib';
+import { commonStore, menuStore, popupStore } from 'Store';
 
 interface SidebarData {
 	x: number;

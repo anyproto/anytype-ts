@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { IconObject, Filter } from 'ts/component';
-import { I, C, DataUtil, Util, Onboarding, focus, keyboard, analytics, history as historyPopup, Storage } from 'ts/lib';
-import { dbStore, popupStore, detailStore, blockStore } from 'ts/store';
+import { IconObject, Filter } from 'Component';
+import { I, C, DataUtil, Util, Onboarding, focus, keyboard, analytics, history as historyPopup, Storage } from 'Lib';
+import { dbStore, popupStore, detailStore, blockStore } from 'Store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.BlockComponent {}
@@ -95,7 +95,7 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 	};
 
 	unbind () {
-		$(window).unbind('keydown.blockType');
+		$(window).off('keydown.blockType');
 	};
 
 	getItems () {
@@ -294,7 +294,7 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 				if (isPopup) {
 					historyPopup.clear();
 				};
-				DataUtil.objectOpen({ id: message.id, layout: I.ObjectLayout.Set });
+				DataUtil.objectOpenRoute({ id: message.id, layout: I.ObjectLayout.Set });
 
 				analytics.event('CreateObject', {
 					route: 'SelectType',

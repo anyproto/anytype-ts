@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { I, Onboarding, Util, Storage, analytics, keyboard, sidebar } from 'ts/lib';
-import { Sidebar } from 'ts/component';
-import { authStore, commonStore, menuStore, popupStore, blockStore } from 'ts/store';
+import { I, Onboarding, Util, Storage, analytics, keyboard, Renderer, sidebar } from 'Lib';
+import { Sidebar } from 'Component';
+import { authStore, commonStore, menuStore, popupStore, blockStore } from 'Store';
 import { observer } from 'mobx-react';
 
 import PageAuthInvite from './auth/invite';
@@ -30,6 +30,7 @@ import PageMainRelation from './main/relation';
 import PageMainStore from './main/store';
 import PageMainGraph from './main/graph';
 import PageMainNavigation from './main/navigation';
+import PageMainCreate from './main/create';
 
 const Constant = require('json/constant.json');
 const Url = require('json/url.json');
@@ -64,6 +65,7 @@ const Components: any = {
 	'main/store':			 PageMainStore,
 	'main/graph':			 PageMainGraph,
 	'main/navigation':		 PageMainNavigation,
+	'main/create':			 PageMainCreate,
 };
 
 interface Props extends RouteComponentProps<any> {
@@ -188,7 +190,6 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 		const win = $(window);
 		const path = [ match.params.page, match.params.action ].join('/');
 		const Component = Components[path];
-		const renderer = Util.getRenderer();
 
 		Util.tooltipHide(true);
 		Util.previewHide(true);
@@ -263,7 +264,7 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 							textCancel: 'Skip',
 							canCancel: true,
 							onConfirm: () => {
-								renderer.send('urlOpen', Util.sprintf(Url.survey, account.id));
+								Renderer.send('urlOpen', Util.sprintf(Url.survey, account.id));
 								Storage.set('lastSurveyTime', Util.time());
 
 								analytics.event('SurveyOpen');
@@ -303,7 +304,7 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 
 	unbind () {
 		const { isPopup } = this.props;
-		$(window).unbind('resize.page' + (isPopup ? 'Popup' : ''));
+		$(window).off('resize.page' + (isPopup ? 'Popup' : ''));
 	};
 	
 	event () {

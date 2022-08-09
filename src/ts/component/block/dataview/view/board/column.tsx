@@ -1,12 +1,12 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Icon, Loader } from 'ts/component';
-import { I, C, Util, translate, keyboard } from 'ts/lib';
+import { Icon, Loader } from 'Component';
+import { I, C, Util, translate, keyboard } from 'Lib';
 import { observer } from 'mobx-react';
-import { dbStore, detailStore } from 'ts/store';
+import { dbStore, detailStore } from 'Store';
 
 import Card from './card';
-import Cell from 'ts/component/block/dataview/cell';
+import Cell from 'Component/block/dataview/cell';
 
 interface Props extends I.ViewComponent {
 	id: string;

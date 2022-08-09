@@ -1,16 +1,15 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
-import { Icon, IconObject, MenuItemVertical } from 'ts/component';
-import { I, C, Util, DataUtil, Relation } from 'ts/lib';
+import { Icon, IconObject, MenuItemVertical } from 'Component';
+import { I, C, Util, DataUtil, Relation, Renderer } from 'Lib';
 import { observer } from 'mobx-react';
-import { commonStore, detailStore, menuStore } from 'ts/store';
+import { commonStore, detailStore, menuStore } from 'Store';
 import arrayMove from 'array-move';
 
 interface Props extends I.Menu {}
 
 const $ = require('jquery');
-const { dialog } = window.require('@electron/remote');
 const Constant = require('json/constant.json');
 const MENU_ID = 'dataviewFileList';
 
@@ -186,7 +185,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 			filters: [  ] 
 		};
 		
-		dialog.showOpenDialog(options).then((result: any) => {
+		window.Electron.showOpenDialog(options).then((result: any) => {
 			const files = result.filePaths;
 			const file = files && files.length ? files[0] : '';
 
@@ -224,7 +223,6 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 		const { data, classNameWrap } = param;
 		const { onChange } = data;
 		const element = $(`#${getId()} #item-${item.id}`);
-		const renderer = Util.getRenderer();
 
 		let value = Relation.getArrayValue(data.value);
 
@@ -257,7 +255,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 									break;
 							};
 							if (url) {
-								renderer.send('download', url);
+								Renderer.send('download', url);
 							};
 							break;
 

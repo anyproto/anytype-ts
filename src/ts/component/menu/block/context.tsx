@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { Icon } from 'ts/component';
-import { I, C, Mark, DataUtil, focus, keyboard, Storage } from 'ts/lib';
-import { blockStore, menuStore, commonStore } from 'ts/store';
+import { Icon } from 'Component';
+import { I, C, Mark, DataUtil, focus, keyboard, Storage } from 'Lib';
+import { blockStore, menuStore, commonStore } from 'Store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {};
@@ -282,7 +282,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 		const { getId } = this.props;
 		const obj = $(`#${getId()}`);
 
-		obj.unbind('click mousedown').on('click mousedown', (e: any) => {
+		obj.off('click mousedown').on('click mousedown', (e: any) => {
 			const target = $(e.target);
 			if (!target.hasClass('icon') && !target.hasClass('inner')) {
 				e.preventDefault();

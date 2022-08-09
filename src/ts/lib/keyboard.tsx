@@ -1,5 +1,5 @@
-import { I, C, Util, DataUtil, Storage, focus, history as historyPopup, analytics, sidebar } from 'ts/lib';
-import { commonStore, authStore, blockStore, detailStore, menuStore, popupStore } from 'ts/store';
+import { I, C, Util, DataUtil, Storage, focus, history as historyPopup, analytics, Renderer, sidebar } from 'Lib';
+import { commonStore, authStore, blockStore, detailStore, menuStore, popupStore } from 'Store';
 
 const $ = require('jquery');
 const KeyCode = require('json/key.json');
@@ -34,15 +34,13 @@ class Keyboard {
 	init () {
 		this.unbind();
 		
-		const renderer = Util.getRenderer();
 		const win = $(window);
-
 		win.on('keydown.common', (e: any) => { this.onKeyDown(e); });
 		win.on('keyup.common', (e: any) => { this.onKeyUp(e); });
 		win.on('mousedown.common', (e: any) => { this.onMouseDown(e); });
 		win.on('scroll.common', (e: any) => { this.onScroll(e); });
 
-		win.unbind('mousemove.common beforeunload.common blur.common');
+		win.off('mousemove.common beforeunload.common blur.common');
 		
 		win.on('mousemove.common', (e: any) => {
 			this.initPinCheck();
@@ -55,12 +53,12 @@ class Keyboard {
 			Util.previewHide(true);
 		});
 
-		renderer.removeAllListeners('commandGlobal');
-		renderer.on('commandGlobal', (e: any, cmd: string, arg: any) => { this.onCommand(cmd, arg); });
+		Renderer.remove('commandGlobal');
+		Renderer.on('commandGlobal', (e: any, cmd: string, arg: any) => { this.onCommand(cmd, arg); });
 	};
 	
 	unbind () {
-		$(window).unbind('keyup.common keydown.common mousedown.common scroll.common mousemove.common blur.common');
+		$(window).off('keyup.common keydown.common mousedown.common scroll.common mousemove.common blur.common');
 	};
 
 	onScroll (e: any) {
@@ -458,10 +456,9 @@ class Keyboard {
 	onSaveAsHTML () {
 		const rootId = this.getRootId();
 		const object = detailStore.get(rootId, rootId);
-		const renderer = Util.getRenderer();
 
 		this.printApply('save', false);
-		renderer.send('winCommand', 'saveAsHTML', { name: object.name });
+		Renderer.send('winCommand', 'saveAsHTML', { name: object.name });
 	};
 
 	onSearch () {

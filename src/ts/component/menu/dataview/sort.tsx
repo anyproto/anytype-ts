@@ -1,10 +1,10 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
-import { Icon, IconObject, Select } from 'ts/component';
-import { I, C, Relation, Util, keyboard, analytics } from 'ts/lib';
+import { Icon, IconObject, Select } from 'Component';
+import { I, C, Relation, Util, keyboard, analytics } from 'Lib';
 import arrayMove from 'array-move';
-import { menuStore, dbStore, blockStore } from 'ts/store';
+import { menuStore, dbStore, blockStore } from 'Store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCache } from 'react-virtualized';
 
@@ -204,7 +204,7 @@ const MenuSort = observer(class MenuSort extends React.Component<Props, {}> {
 	};
 	
 	unbind () {
-		$(window).unbind('keydown.menu');
+		$(window).off('keydown.menu');
 	};
 
 	getItems () {

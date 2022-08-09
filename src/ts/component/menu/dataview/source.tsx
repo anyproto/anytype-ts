@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { Icon, IconObject } from 'ts/component';
-import { I, C, DataUtil, Relation } from 'ts/lib';
-import { Util, keyboard } from 'ts/lib';
+import { Icon, IconObject } from 'Component';
+import { I, C, DataUtil, Relation } from 'Lib';
+import { Util, keyboard } from 'Lib';
 import { observer } from 'mobx-react';
-import { detailStore, menuStore, commonStore } from 'ts/store';
+import { detailStore, menuStore, commonStore } from 'Store';
 
 interface Props extends I.Menu {};
 
@@ -92,7 +92,7 @@ const MenuSource = observer(class MenuSource extends React.Component<Props, {}> 
 		const { getId } = this.props;
 		const obj = $(`#${getId()} .content`);
 
-		obj.unbind('click').on('click', () => { menuStore.closeAll(Constant.menuIds.cell); });
+		obj.off('click').on('click', () => { menuStore.closeAll(Constant.menuIds.cell); });
 
 		this.unbind();
 		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
@@ -100,7 +100,7 @@ const MenuSource = observer(class MenuSource extends React.Component<Props, {}> 
 	};
 	
 	unbind () {
-		$(window).unbind('keydown.menu');
+		$(window).off('keydown.menu');
 	};
 
 	onAdd (e: any) {

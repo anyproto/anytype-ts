@@ -1,14 +1,14 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Block, Icon, Loader, Deleted } from 'ts/component';
-import { commonStore, blockStore, detailStore, menuStore, popupStore } from 'ts/store';
-import { I, C, Key, Util, DataUtil, Mark, focus, keyboard, crumbs, Storage, Mapper, Action, translate, analytics, sidebar } from 'ts/lib';
+import { Block, Icon, Loader, Deleted } from 'Component';
+import { commonStore, blockStore, detailStore, menuStore, popupStore } from 'Store';
+import { I, C, Key, Util, DataUtil, Mark, focus, keyboard, crumbs, Storage, Mapper, Action, translate, analytics, Renderer } from 'Lib';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 
-import Controls from 'ts/component/page/head/controls';
-import PageHeadEdit from 'ts/component/page/head/edit';
+import Controls from 'Component/page/head/controls';
+import PageHeadEdit from 'Component/page/head/edit';
 
 interface Props extends RouteComponentProps<any> {
 	dataset?: any;
@@ -17,14 +17,10 @@ interface Props extends RouteComponentProps<any> {
 	onOpen?(): void;
 };
 
-const { app } = window.require('@electron/remote');
 const Constant = require('json/constant.json');
 const Errors = require('json/error.json');
 const $ = require('jquery');
 const raf = require('raf');
-const fs = window.require('fs');
-const path = window.require('path');
-const userPath = app.getPath('userData');
 
 const THROTTLE = 40;
 const BUTTON_OFFSET = 10;
@@ -143,7 +139,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		const { selection } = dataset || {};
 		const win = $(window);
 		const namespace = isPopup ? '-popup' : '';
-		const renderer = Util.getRenderer();
 
 		this._isMounted = true;
 
@@ -179,8 +174,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 		Storage.set('askSurvey', 1);
 
-		renderer.removeAllListeners('commandEditor');
-		renderer.on('commandEditor', (e: any, cmd: string, arg: any) => { this.onCommand(cmd, arg); });
+		Renderer.remove('commandEditor');
+		Renderer.on('commandEditor', (e: any, cmd: string, arg: any) => { this.onCommand(cmd, arg); });
 	};
 
 	componentDidUpdate () {
@@ -201,8 +196,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 	};
 	
 	componentWillUnmount () {
-		const renderer = Util.getRenderer();
-
 		this._isMounted = false;
 		this.uiHidden = false;
 		this.unbind();
@@ -210,7 +203,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 		focus.clear(false);
 		window.clearInterval(this.timeoutScreen);
-		renderer.removeAllListeners('commandEditor');
+		Renderer.remove('commandEditor');
 	};
 
 	getWrapper () {
@@ -331,7 +324,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		const events = 'keydown.editor mousemove.editor scroll.editor paste.editor resize.editor focus.editor';
 		const a = events.split(' ').map(it => it + namespace);
 
-		$(window).unbind(a.join(' '));
+		$(window).off(a.join(' '));
 	};
 	
 	uiHide () {
@@ -347,7 +340,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		
 		window.clearTimeout(this.timeoutMove);
 		this.timeoutMove = window.setTimeout(() => {
-			$(window).unbind('mousemove.ui').on('mousemove.ui', (e: any) => { this.uiShow(); });
+			$(window).off('mousemove.ui').on('mousemove.ui', (e: any) => { this.uiShow(); });
 		}, 100);
 	};
 
@@ -361,7 +354,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		obj.find('#footer').css({ opacity: 1 });
 		
 		this.uiHidden = false;
-		$(window).unbind('mousemove.ui');
+		$(window).off('mousemove.ui');
 	};
 	
 	onMouseMove (e: any) {
@@ -1497,69 +1490,29 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		const { dataset, rootId } = this.props;
 		const { selection } = dataset || {};
 		const { focused, range } = focus.state;
-		const filePath = path.join(userPath, 'tmp');
+		const cb = e.clipboardData || e.originalEvent.clipboardData;
+		const items = cb.items;
+		const files: any[] = [];
+
+		menuStore.closeAll([ 'blockAdd' ]);
 
 		if (this.isReadonly()) {
 			return;
 		};
 
-		menuStore.closeAll([ 'blockAdd' ]);
-
 		if (!data) {
-			const cb = e.clipboardData || e.originalEvent.clipboardData;
-			const items = cb.items;
+			data = this.getClipboardData(e);
+		};
 
-			data = {
-				text: String(cb.getData('text/plain') || ''),
-				html: String(cb.getData('text/html') || ''),
-				anytype: JSON.parse(String(cb.getData('application/json') || '{}')),
-				files: [],
-			};
-			data.anytype.range = data.anytype.range || { from: 0, to: 0 };
-
-			// Read files
-			if (items && items.length) {
-				let files = [];
-
-				for (let item of items) {
-					if (item.kind != 'file') {
-						continue;
-					};
-
-					const file = item.getAsFile();
-					if (file) {
-						files.push(file);
-					};
+		if (items && items.length) {
+			for (let item of items) {
+				if (item.kind != 'file') {
+					continue;
 				};
 
-				if (files.length) {
-					commonStore.progressSet({ status: translate('commonProgress'), current: 0, total: files.length });
-
-					for (let file of files) {
-						const fn = path.join(filePath, file.name);
-						const reader = new FileReader();
-
-						reader.readAsBinaryString(file); 
-						reader.onloadend = () => {
-							fs.writeFile(fn, reader.result, 'binary', (err: any) => {
-								if (err) {
-									console.error(err);
-									commonStore.progressSet({ status: translate('commonProgress'), current: 0, total: 0 });
-									return;
-								};
-
-								data.files.push({ name: file.name, path: fn });
-
-								commonStore.progressSet({ status: translate('commonProgress'), current: data.files.length, total: files.length });
-
-								if (data.files.length == files.length) {
-									this.onPaste(e, props, true, data);
-								};
-							});
-						};
-					};
-
-					return;
+				const file = item.getAsFile();
+				if (file) {
+					files.push({ name: file.name, path: file.path });
 				};
 			};
 		};
@@ -1579,7 +1532,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		let from = 0;
 		let to = 0;
 
-		C.BlockPaste(rootId, focused, range, selection.get(I.SelectType.Block, true), data.anytype.range.to > 0, { text: data.text, html: data.html, anytype: data.anytype.blocks, files: data.files }, (message: any) => {
+		C.BlockPaste(rootId, focused, range, selection.get(I.SelectType.Block, true), data.anytype.range.to > 0, { ...data, anytype: data.anytype.blocks, files }, (message: any) => {
 			if (message.error.code) {
 				return;
 			};
@@ -1602,9 +1555,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 				id = focused;
 				from = to = message.caretPosition;
 			};
-			
-			this.focus(id, from, to, true);
 
+			this.focus(id, from, to, true);
 			analytics.event('PasteBlock');
 		});
 	};
@@ -1673,7 +1625,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 									return;
 								};
 
-								DataUtil.objectOpen({ id: message.objectId, layout: I.ObjectLayout.Bookmark });
+								DataUtil.objectOpenRoute({ id: message.objectId, layout: I.ObjectLayout.Bookmark });
 
 								analytics.event('CreateObject', {
 									objectType: Constant.typeId.bookmark,
@@ -1685,7 +1637,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 						case 'block':
 							C.BlockBookmarkCreateAndFetch(rootId, focused, length ? I.BlockPosition.Bottom : I.BlockPosition.Replace, url, (message: any) => {
-								analytics.event('CreateBlock', { middleTime: message.middleTime, type: I.BlockType.Bookmark });
+								if (!message.error.code) {
+									analytics.event('CreateBlock', { middleTime: message.middleTime, type: I.BlockType.Bookmark });
+								};
 							});
 							break;
 
@@ -1701,6 +1655,18 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 				},
 			}
 		});
+	};
+
+	getClipboardData (e: any) {
+		const cb = e.clipboardData || e.originalEvent.clipboardData;
+		const data: any = {
+			text: String(cb.getData('text/plain') || ''),
+			html: String(cb.getData('text/html') || ''),
+			anytype: JSON.parse(String(cb.getData('application/json') || '{}')),
+			files: [],
+		};
+		data.anytype.range = data.anytype.range || { from: 0, to: 0 };
+		return data;
 	};
 
 	onHistory (e: any) {

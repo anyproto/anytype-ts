@@ -1,7 +1,7 @@
 import { observable, action, computed, set, makeObservable } from 'mobx';
-import { I, Storage, Util } from 'ts/lib';
-import { analytics } from 'ts/lib';
-import { blockStore } from 'ts/store';
+import { I, Storage, Util } from 'Lib';
+import { analytics } from 'Lib';
+import { blockStore } from 'Store';
 
 interface Preview {
 	type: I.MarkType,
@@ -43,6 +43,7 @@ class CommonStore {
 	public pinTimeId: number = 0;
 	public isFullScreen: boolean = false;
 	public autoSidebarValue: boolean = false;
+	public redirect: string = '';
 
     constructor() {
         makeObservable(this, {
@@ -230,6 +231,10 @@ class CommonStore {
 		this.setThemeClass();
 	};
 
+	redirectSet (v: string) {
+		this.redirect = v;
+	};
+
 	getThemeClass () {
 		if (this.themeId == 'system') {
 			return this.nativeThemeIsDark ? 'dark' : '';
@@ -246,7 +251,6 @@ class CommonStore {
 		console.log('[nativeThemeSet]', isDark);
 		this.nativeThemeIsDark = isDark;
 	};
-
 
 	infoSet (info: I.AccountInfo) {
 		console.log('[commonStore.infoSet]', info);

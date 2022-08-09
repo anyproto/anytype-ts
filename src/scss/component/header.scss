@@ -16,6 +16,7 @@
 
 	.path { 
 		width: 66%; display: inline-block; border-radius: 6px; height: 28px; line-height: 26px; cursor: pointer; transition: $transitionFast;
+		@include text-overflow-nw; padding: 0px 6px;
 	}
 
 	.tabs { white-space: nowrap; background: $colorLightGrey; display: inline-block; height: 28px; padding: 2px; border-radius: 6px; }
@@ -72,12 +73,14 @@
 
 .header.mainHistory { height: 38px; width: calc(100% - 254px); background: $colorWhite; }
 .header.mainHistory {
+	.side.center { white-space: nowrap; }
+
 	.item { 
 		color: $colorVeryDarkGrey; transition: $transitionFast; cursor: pointer; height: 20px; line-height: 20px; 
 		display: inline-block; vertical-align: middle; white-space: nowrap;
 	}
 	.item {
-		.icon.arrow { width: 20px; height: 20px; margin-right: 8px; background-image: url('~img/arrow/history0.svg'); margin: 0px; }
+		.icon.arrow { width: 20px; height: 20px; background-image: url('~img/arrow/history0.svg'); margin: 0px; vertical-align: top; }
 	}
 	.item.orange { color: $colorOrange !important; font-weight: 500; }
 	

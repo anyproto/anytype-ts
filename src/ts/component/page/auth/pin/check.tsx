@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Frame, Cover, Title, Error, Pin, Header, FooterAuth as Footer } from 'ts/component';
-import { Util, Storage, translate, keyboard } from 'ts/lib';
-import { authStore, commonStore } from 'ts/store';
+import { Frame, Cover, Title, Error, Pin, Header, FooterAuth as Footer } from 'Component';
+import { Util, Storage, translate, keyboard } from 'Lib';
+import { authStore, commonStore } from 'Store';
 import { observer } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any> {};
@@ -68,7 +68,7 @@ const PageAuthPinCheck = observer(class PageAuthPinCheck extends React.Component
 
 	onSuccess (pin: string) {
 		const { account } = authStore;
-		const redirect = Storage.get('redirect');
+		const { redirect } = commonStore;
 
 		keyboard.setPinChecked(true);
 

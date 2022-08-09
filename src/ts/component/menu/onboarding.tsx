@@ -1,8 +1,9 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Icon } from 'ts/component';
-import { I, Docs, Onboarding, Util, analytics, keyboard } from 'ts/lib';
-import { menuStore } from 'ts/store';
+import { Icon } from 'Component';
+import { I, Onboarding, Util, analytics, keyboard } from 'Lib';
+import { menuStore } from 'Store';
+import * as Docs from 'Docs';
 
 interface Props extends I.Menu {};
 
@@ -76,7 +77,7 @@ class MenuOnboarding extends React.Component<Props, {}> {
 	};
 	
 	unbind () {
-		$(window).unbind('keydown.menu');
+		$(window).off('keydown.menu');
 	};
 
 	scroll () {

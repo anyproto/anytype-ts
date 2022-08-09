@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Util } from 'ts/lib';
+import { Util } from 'Lib';
 import { observer } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any> {};

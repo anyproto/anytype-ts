@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { I, C, analytics, keyboard, Key, translate, DataUtil, Util } from 'ts/lib';
-import { Input, MenuItemVertical } from 'ts/component';
-import { blockStore, dbStore, menuStore } from 'ts/store';
+import { I, C, analytics, keyboard, Key, translate, DataUtil, Util } from 'Lib';
+import { Input, MenuItemVertical } from 'Component';
+import { blockStore, dbStore, menuStore } from 'Store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {};
@@ -111,7 +111,7 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 	};
 	
 	unbind () {
-		$(window).unbind('keydown.menu');
+		$(window).off('keydown.menu');
 	};
 	
 	onKeyDown (e: any) {
