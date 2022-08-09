@@ -5,6 +5,7 @@ const { download } = require('electron-dl');
 const ConfigManager = require('./config.js');
 const WindowManager = require('./window.js');
 const UpdateManager = require('./update.js');
+const MenuManager = require('./menu.js');
 const Server = require('./server.js');
 const Util = require('./util.js');
 
@@ -26,6 +27,10 @@ class Api {
 
 	setConfig (win, config) {
 		ConfigManager.set(config, (err) => { Util.send(win, 'config', ConfigManager.config); });
+
+		if (undefined !== config.allowBeta) {
+			MenuManager.initMenu();
+		};
 	};
 
 	setAccount (win, account) {

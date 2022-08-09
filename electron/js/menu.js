@@ -26,6 +26,7 @@ class MenuManager {
 		const { config } = ConfigManager;
 		const Api = require('./api.js');
 		const WindowManager = require('./window.js');
+		const channels = this.getChannels();
 
 		let menuParam = [
 			{
@@ -123,7 +124,9 @@ class MenuManager {
 						label: 'Search', accelerator: 'CmdOrCtrl+F',
 						click: () => { Util.send(this.win, 'commandGlobal', 'search'); }
 					},
+
 					Separator,
+
 					{
 						label: 'Print', accelerator: 'CmdOrCtrl+P',
 						click: () => { Util.send(this.win, 'commandGlobal', 'print'); }
@@ -133,6 +136,17 @@ class MenuManager {
 			{
 				role: 'windowMenu',
 				submenu: [
+					{ 
+						label: 'New window', accelerator: 'CmdOrCtrl+Shift+N',
+						click: () => { WindowManager.createMain({ isChild: true }); } 
+					},
+					{ 
+						label: 'New object', accelerator: 'CmdOrCtrl+Alt+N',
+						click: () => { WindowManager.createMain({ route: '/main/create', isChild: true }); } 
+					},
+
+					Separator,
+
 					{ role: 'minimize' },
 					{ role: 'zoom' },
 					{
@@ -194,39 +208,20 @@ class MenuManager {
 			});
 		};
 
-
-		let channels = ChannelSettings.map((it) => {
-			return { 
-				label: it.name, type: 'radio', checked: (config.channel == it.id), 
-				click: () => { 
-					if (!UpdateManager.isUpdating) {
-						UpdateManager.setChannel(it.id); 
-						Api.setConfig(this.win, { channel: it.id });
-					};
-				} 
-			};
-		});
-		if (!config.sudo) {
-			channels = channels.filter(it => it.id != 'alpha');
+		if (channels.length > 1) {
+			menuParam.push({ label: 'Version', submenu: channels });
 		};
+
+		console.log(config);
+		console.log(channels);
 
 		const menuSudo = { 
 			label: 'Sudo',
 			submenu: [
-				{ 
-					label: 'New window', accelerator: 'CmdOrCtrl+Shift+N',
-					click: () => { WindowManager.createMain({ isChild: true }); } 
-				},
-				{ 
-					label: 'New object', accelerator: 'CmdOrCtrl+Alt+N',
-					click: () => { WindowManager.createMain({ route: '/main/create', isChild: true }); } 
-				},
-
 				Separator,
 
-				{ label: 'Version', submenu: channels },
 				{
-					label: 'Experimental', type: 'checkbox', checked: config.experimental,
+					label: 'Experimental features', type: 'checkbox', checked: config.experimental,
 					click: () => { 
 						Api.setConfig(this.win, { experimental: !config.experimental });
 						this.win.reload();
@@ -336,6 +331,29 @@ class MenuManager {
 			icon = `icon-tray-${(Util.isDarkTheme() ? 'white' : 'black')}.png`;
 		}
 		return path.join(Util.imagePath(), icon);
+	};
+
+	getChannels () {
+		const { config } = ConfigManager;
+
+		let channels = ChannelSettings.map((it) => {
+			return { 
+				id: it.id, label: it.name, type: 'radio', checked: (config.channel == it.id), 
+				click: () => { 
+					if (!UpdateManager.isUpdating) {
+						UpdateManager.setChannel(it.id); 
+						Api.setConfig(this.win, { channel: it.id });
+					};
+				} 
+			};
+		});
+		if (!config.sudo && !config.allowBeta) {
+			channels = channels.filter(it => it.id != 'beta');
+		};
+		if (!config.sudo) {
+			channels = channels.filter(it => it.id != 'alpha');
+		};
+		return channels;
 	};
 
 };

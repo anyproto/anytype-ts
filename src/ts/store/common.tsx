@@ -252,7 +252,6 @@ class CommonStore {
 		this.nativeThemeIsDark = isDark;
 	};
 
-
 	infoSet (info: I.AccountInfo) {
 		console.log('[commonStore.infoSet]', info);
 

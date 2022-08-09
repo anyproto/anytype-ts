@@ -1,5 +1,5 @@
 import { authStore, commonStore, blockStore, detailStore, dbStore } from 'Store';
-import { Util, I, M, Decode, translate, analytics, Response, Mapper, crumbs } from 'Lib';
+import { Util, I, M, Decode, translate, analytics, Response, Mapper, crumbs, Renderer } from 'Lib';
 import * as Sentry from '@sentry/browser';
 import arrayMove from 'array-move';
 
@@ -200,6 +200,8 @@ class Dispatcher {
 				case 'accountUpdate':
 					authStore.accountSet({ status: Mapper.From.AccountStatus(data.getStatus()) });
 					commonStore.configSet(Mapper.From.AccountConfig(data.getConfig()), true);
+
+					Renderer.send('setConfig', Util.objectCopy(commonStore.config));
 					break;
 
 				case 'accountConfigUpdate':

@@ -202,6 +202,7 @@ window.Lib = {
 	analytics,
 	dispatcher,
 	keyboard,
+	Renderer,
 };
 
 /*
