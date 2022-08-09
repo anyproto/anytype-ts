@@ -11,9 +11,9 @@ html.debug {
 		.block  > .wrapContent > .dropTarget.targetTop { background: rgba(0,0,255,0.1); }
 		.block  > .wrapContent > .dropTarget.targetBot { background: rgba(0,0,255,0.1); }
 
-		.block.blockLayout.c0 { border-color: rgba(0,255,0,0.3); }
-		.block.blockLayout.c1 { border-color: rgba(0,0,255,0.3); }
-		.block.blockLayout.c2 { border-width: 2px; border-color: rgba(0,255,0,0.3); padding: 2px; }
+		.block.blockLayout.layoutRow { border-color: rgba(0,255,0,0.3); }
+		.block.blockLayout.layoutColumn { border-color: rgba(0,0,255,0.3); }
+		.block.blockLayout.layoutDiv { border-width: 2px; border-color: rgba(0,255,0,0.3); padding: 2px; }
 	}
 
 	.sidebar {

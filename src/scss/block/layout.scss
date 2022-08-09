@@ -6,57 +6,57 @@
 	.block.blockLayout > .wrapContent > .dropTarget { display: none; }
 	
 	/* Row */
-	.block.blockLayout.c0 { padding: 14px 0px; }
-	.block.blockLayout.c0 > .wrapMenu { display: none; }
-	.block.blockLayout.c0 > .wrapContent { width: 100%; overflow: visible; }
-	.block.blockLayout.c0 > .wrapContent > .children { display: flex; flex-direction: row; align-items: stretch; }
+	.block.blockLayout.layoutRow { padding: 14px 0px; }
+	.block.blockLayout.layoutRow > .wrapMenu { display: none; }
+	.block.blockLayout.layoutRow > .wrapContent { width: 100%; overflow: visible; }
+	.block.blockLayout.layoutRow > .wrapContent > .children { display: flex; flex-direction: row; align-items: stretch; }
 	
-	.block.blockLayout.c0 > .wrapContent > .dropTarget { display: block; width: calc(100% - 48px); left: 48px; height: 15px; }
-	.block.blockLayout.c0 > .wrapContent > .dropTarget.targetTop { top: -14px; }
-	.block.blockLayout.c0 > .wrapContent > .dropTarget.targetBot { bottom: -14px; }
+	.block.blockLayout.layoutRow > .wrapContent > .dropTarget { display: block; width: calc(100% - 48px); left: 48px; height: 15px; }
+	.block.blockLayout.layoutRow > .wrapContent > .dropTarget.targetTop { top: -14px; }
+	.block.blockLayout.layoutRow > .wrapContent > .dropTarget.targetBot { bottom: -14px; }
 
 	/* Column */
-	.block.blockLayout.c1 { padding: 0px; margin: 0px; }
-	.block.blockLayout.c1 {
+	.block.blockLayout.layoutColumn { padding: 0px; margin: 0px; }
+	.block.blockLayout.layoutColumn {
 		.targetCol { flex-grow: 1; position: relative; }
 		.targetCol.isOver.bottom { box-shadow: 0px 0px; }
 		.targetCol.isOver.bottom::after { 
 			content: ""; width: calc(100% - 48px); height: 2px; background: $colorOrange; position: absolute; left: 48px; top: 0px; 
 		}
 	}
-	.block.blockLayout.c1 > .wrapMenu { display: none; }
-	.block.blockLayout.c1 > .wrapContent { width: 100%; display: flex; flex-flow: column; }
+	.block.blockLayout.layoutColumn > .wrapMenu { display: none; }
+	.block.blockLayout.layoutColumn > .wrapContent { width: 100%; display: flex; flex-flow: column; }
 
-	.block.blockLayout.c1 > .wrapContent > .children > .blockDataview {
+	.block.blockLayout.layoutColumn > .wrapContent > .children > .blockDataview {
 		.content { overflow: hidden; }
 	}
 
-	.block.blockLayout.c1 > .wrapContent > .children > .block.first.blockText.header1 { padding-top: 0px; }
-	.block.blockLayout.c1 > .wrapContent > .children > .block.last.blockText.header1 { padding-bottom: 0px; }
+	.block.blockLayout.layoutColumn > .wrapContent > .children > .block.first.blockText.header1 { padding-top: 0px; }
+	.block.blockLayout.layoutColumn > .wrapContent > .children > .block.last.blockText.header1 { padding-bottom: 0px; }
 
-	.block.blockLayout.c1 > .wrapContent > .children > .block.first.blockText.header2 { padding-top: 0px; }
-	.block.blockLayout.c1 > .wrapContent > .children > .block.last.blockText.header2 { padding-bottom: 0px; }
+	.block.blockLayout.layoutColumn > .wrapContent > .children > .block.first.blockText.header2 { padding-top: 0px; }
+	.block.blockLayout.layoutColumn > .wrapContent > .children > .block.last.blockText.header2 { padding-bottom: 0px; }
 
-	.block.blockLayout.c1 > .wrapContent > .children > .block.first.blockText.header3 { padding-top: 0px; }
-	.block.blockLayout.c1 > .wrapContent > .children > .block.last.blockText.header3 { padding-bottom: 0px; }
+	.block.blockLayout.layoutColumn > .wrapContent > .children > .block.first.blockText.header3 { padding-top: 0px; }
+	.block.blockLayout.layoutColumn > .wrapContent > .children > .block.last.blockText.header3 { padding-bottom: 0px; }
 
-	.block.blockLayout.c1 > .wrapContent > .children > .block.first.blockFile > .wrapContent > .selectable > .dropTarget { padding-top: 0px; }
-	.block.blockLayout.c1 > .wrapContent > .children > .block.last.blockFile > .wrapContent > .selectable > .dropTarget { padding-bottom: 0px; }
+	.block.blockLayout.layoutColumn > .wrapContent > .children > .block.first.blockFile > .wrapContent > .selectable > .dropTarget { padding-top: 0px; }
+	.block.blockLayout.layoutColumn > .wrapContent > .children > .block.last.blockFile > .wrapContent > .selectable > .dropTarget { padding-bottom: 0px; }
 
-	.block.blockLayout.c1 > .wrapContent > .children > .block.first.blockMedia > .wrapContent > .selectable > .dropTarget { padding-top: 0px; }
-	.block.blockLayout.c1 > .wrapContent > .children > .block.last.blockMedia > .wrapContent > .selectable > .dropTarget { padding-bottom: 0px; }
+	.block.blockLayout.layoutColumn > .wrapContent > .children > .block.first.blockMedia > .wrapContent > .selectable > .dropTarget { padding-top: 0px; }
+	.block.blockLayout.layoutColumn > .wrapContent > .children > .block.last.blockMedia > .wrapContent > .selectable > .dropTarget { padding-bottom: 0px; }
 	
 	/* Div */
-	.block.blockLayout.c2 > .wrapMenu { display: none; }
-	.block.blockLayout.c2 > .wrapContent { width: 100%; overflow: visible; }
+	.block.blockLayout.layoutDiv > .wrapMenu { display: none; }
+	.block.blockLayout.layoutDiv > .wrapContent { width: 100%; overflow: visible; }
 
 	/* Header */
-	.block.blockLayout.c3 { margin: 0px !important; }
-	.block.blockLayout.c3 > .wrapMenu { display: none; }
-	.block.blockLayout.c3 > .wrapContent { width: 100%; overflow: visible; }
+	.block.blockLayout.layoutHeader { margin: 0px !important; }
+	.block.blockLayout.layoutHeader > .wrapMenu { display: none; }
+	.block.blockLayout.layoutHeader > .wrapContent { width: 100%; overflow: visible; }
 
 	/* Footer */
-	.block.blockLayout.c100 { margin: 0px !important; }
-	.block.blockLayout.c100 > .wrapMenu { display: none; }
-	.block.blockLayout.c100 > .wrapContent { width: 100%; overflow: visible; }
+	.block.blockLayout.layoutFooter { margin: 0px !important; }
+	.block.blockLayout.layoutFooter > .wrapMenu { display: none; }
+	.block.blockLayout.layoutFooter > .wrapContent { width: 100%; overflow: visible; }
 }

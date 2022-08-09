@@ -49,7 +49,7 @@ class View implements I.View {
 	};
 
 	getRelation (relationKey: string) {
-		return this.relations.find((it: I.ViewRelation) => { return it.relationKey == relationKey; });
+		return this.relations.find(it => it.relationKey == relationKey);
 	};
 
 	getFilter (index: number) {

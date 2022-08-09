@@ -6,45 +6,24 @@ const Errors = require('json/error.json');
 
 class DataUtil {
 
-	map (list: any[], field: string): any {
-		list = list|| [] as any[];
-		
-		let map = {} as any;
-		for (let item of list) {
-			map[item[field]] = map[item[field]] || [];
-			map[item[field]].push(item);
-		};
-		return map;
+	blockTextClass (v: I.TextStyle): string {
+		return Util.toCamelCase('text-' + String(I.TextStyle[v] || 'paragraph').toLowerCase());
 	};
 	
-	unique (list: any[], field: string) {
-		list = list|| [] as any[];
-		
-		let map = {} as any;
-		for (let item of list) {
-			map[item[field]] = item;
-		};
-		return map;
-	};
-	
-	unmap (map: any) {
-		let ret: any[] = [] as any[];
-		for (let field in map) {
-			ret = ret.concat(map[field]);
-		};
-		return ret;
+	blockDivClass (v: I.DivStyle): string {
+		return Util.toCamelCase('div-' + String(I.DivStyle[v]).toLowerCase());
 	};
 
-	textClass (v: I.TextStyle): string {
-		return String(I.TextStyle[v] || 'paragraph').toLowerCase();
+	blockLayoutClass (v: I.LayoutStyle): string {
+		return Util.toCamelCase('layout-' + String(I.LayoutStyle[v]).toLowerCase());
 	};
-	
+
 	styleIcon (type: I.BlockType, v: number): string {
 		let icon = '';
 		switch (type) {
 			case I.BlockType.Text:
 				switch (v) {
-					default:					 icon = this.textClass(v); break;
+					default:					 icon = this.blockTextClass(v); break;
 					case I.TextStyle.Code:		 icon = 'kbd'; break;
 				};
 				break;
@@ -63,54 +42,34 @@ class DataUtil {
 	blockClass (block: any, isDragging?: boolean) {
 		const { content } = block;
 		const { style, type, state } = content;
+		const dc = Util.toCamelCase('block-' + block.type);
 
 		let c = [];
-		switch (block.type) {
-			case I.BlockType.Text:					 c.push('blockText ' + this.textClass(style)); break;
-			case I.BlockType.Layout:				 c.push('blockLayout c' + style); break;
-			case I.BlockType.IconPage:				 c.push('blockIconPage'); break;
-			case I.BlockType.IconUser:				 c.push('blockIconUser'); break;
-			case I.BlockType.Bookmark:				 c.push('blockBookmark'); break;
-			case I.BlockType.Dataview:				 c.push('blockDataview'); break;
-			case I.BlockType.Div:					 c.push('blockDiv c' + style); break;
-			case I.BlockType.Link:					 c.push('blockLink'); break;
-			case I.BlockType.Cover:					 c.push('blockCover'); break;
-			case I.BlockType.Relation:				 c.push('blockRelation'); break;
-			case I.BlockType.Featured:				 c.push('blockFeatured'); break;
-			case I.BlockType.Type:					 c.push('blockType'); break;
-			case I.BlockType.Latex:					 c.push('blockLatex'); break;
-			case I.BlockType.Table:					 c.push('blockTable'); break;
-			case I.BlockType.TableOfContents:		 c.push('blockTableOfContents'); break;
+		if (block.type == I.BlockType.File) {
+			if (state == I.FileState.Done) {
+				c.push('withFile');
+			};
 
-			case I.BlockType.File:
-				if (state == I.FileState.Done) {
-					c.push('withFile');
-				};
-
-				if (isDragging || (style == I.FileStyle.Link)) {
-					c.push('blockFile');
-					break;
-				};
+			if (isDragging || (style == I.FileStyle.Link) || (type == I.FileType.File)) {
+				c.push(dc);
+			} else {
+				c.push('blockMedia');
 
 				switch (type) {
-					default: 
-					case I.FileType.File: 
-						c.push('blockFile');
-						break;
-					case I.FileType.Image: 
-						c.push('blockMedia isImage');
-						break;
-					case I.FileType.Video: 
-						c.push('blockMedia isVideo');
-						break;
-					case I.FileType.Audio: 
-						c.push('blockMedia isAudio');
-						break;
-					case I.FileType.Pdf: 
-						c.push('blockMedia isPdf');
-						break;
+					case I.FileType.Image:	 c.push('isImage'); break;
+					case I.FileType.Video:	 c.push('isVideo'); break;
+					case I.FileType.Audio:	 c.push('isAudio'); break;
+					case I.FileType.Pdf:	 c.push('isPdf'); break;
 				};
-				break;
+			};
+		} else {
+			c.push(dc);
+
+			switch (block.type) {
+				case I.BlockType.Text:					 c.push(this.blockTextClass(style)); break;
+				case I.BlockType.Layout:				 c.push(this.blockLayoutClass(style)); break;
+				case I.BlockType.Div:					 c.push(this.blockDivClass(style)); break;
+			};
 		};
 
 		return c.join(' ');
@@ -561,7 +520,7 @@ class DataUtil {
 		
 		return ret.map((it: any) => {
 			it.type = I.BlockType.Text;
-			it.icon = this.textClass(it.id);
+			it.icon = this.blockTextClass(it.id);
 			return this.menuMapperBlock(it);
 		});
 	};
@@ -574,7 +533,7 @@ class DataUtil {
 			{ id: I.TextStyle.Toggle, lang: 'Toggle' },
 		].map((it: any) => {
 			it.type = I.BlockType.Text;
-			it.icon = this.textClass(it.id);
+			it.icon = this.blockTextClass(it.id);
 			return this.menuMapperBlock(it);
 		});
 	};
