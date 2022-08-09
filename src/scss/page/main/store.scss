@@ -37,7 +37,7 @@
 
 			.item { display: inline-block; vertical-align: top; position: relative; cursor: pointer; }
 			.item {
-				.iconObject.isObjectType, .iconObject.isRelation { position: absolute; left: 0px; top: 0px; }
+				.iconObject.isType, .iconObject.isRelation { position: absolute; left: 0px; top: 0px; }
 
 				.info { height: 100%; position: relative; display: flex; align-items: center; }
 				.info {
