@@ -212,9 +212,6 @@ class MenuManager {
 			menuParam.push({ label: 'Version', submenu: channels });
 		};
 
-		console.log(config);
-		console.log(channels);
-
 		const menuSudo = { 
 			label: 'Sudo',
 			submenu: [
