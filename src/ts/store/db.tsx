@@ -216,14 +216,14 @@ class DbStore {
 		let { config } = commonStore;
 		let relations = this.relationMap.get(this.getId(rootId, blockId)) || [];
 
-		relations = relations.map(it => this.getRelation(rootId, blockId, it.relationKey));
+		relations = relations.map(it => this.getRelationByKey(it.relationKey));
 		relations = relations.filter((it: any) => {
 			return it ? (!config.debug.ho ? !it.isHidden : true) : false;
 		});
 		return relations;
 	};
 
-    getRelation (rootId: string, blockId: string, relationKey: string): any {
+    getRelationByKey (relationKey: string): any {
 		if (!relationKey) {
 			return null;
 		};

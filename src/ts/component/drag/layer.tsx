@@ -68,7 +68,7 @@ class DragLayer extends React.Component<{}, State> {
 				const block = blockStore.getLeaf(rootId, rootId);
 
 				items = ids.map((relationKey: string) => {
-					return dbStore.getRelation(rootId, rootId, relationKey);
+					return dbStore.getRelationByKey(relationKey);
 				}).filter(it => it);
 
 				content = (

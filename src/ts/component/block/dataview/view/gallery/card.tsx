@@ -22,7 +22,7 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 		const view = getView();
 		const { cardSize, coverFit, hideIcon } = view;
 		const relations = view.relations.filter((it: any) => { 
-			return it.isVisible && dbStore.getRelation(rootId, block.id, it.relationKey); 
+			return it.isVisible && dbStore.getRelationByKey(it.relationKey); 
 		});
 		const idPrefix = 'dataviewCell';
 		const record = getRecord(index);

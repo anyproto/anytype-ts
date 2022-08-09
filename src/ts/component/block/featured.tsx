@@ -136,7 +136,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 				{items.map((relationKey: any, i: any) => {
 					const id = Relation.cellId(PREFIX + block.id, relationKey, 0);
-					const relation = dbStore.getRelation(rootId, rootId, relationKey);
+					const relation = dbStore.getRelationByKey(relationKey);
 					const canEdit = !readonly && allowedValue && !relation.isReadonlyValue;
 					const cn = [ 'cell', (canEdit ? 'canEdit' : '') ];
 					const record = detailStore.get(rootId, storeId, [ relationKey ]);
@@ -223,7 +223,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		];
 
 		return (object[Constant.relationKey.featured] || []).filter((it: any) => {
-			const relation = dbStore.getRelation(rootId, rootId, it);
+			const relation = dbStore.getRelationByKey(it);
 			if (!relation) {
 				return false;
 			};
@@ -254,8 +254,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 	};
 
 	onCellClick (e: any, relationKey: string, index: number) {
-		const { rootId } = this.props;
-		const relation = dbStore.getRelation(rootId, rootId, relationKey);
+		const relation = dbStore.getRelationByKey(relationKey);
 
 		if (!relation || relation.isReadonlyValue) {
 			return;
@@ -270,9 +269,8 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 	};
 
 	onMouseEnter (e: any, relationKey: string) {
-		const { rootId } = this.props;
 		const cell = $('#' + Relation.cellId(PREFIX, relationKey, 0));
-		const relation = dbStore.getRelation(rootId, rootId, relationKey);
+		const relation = dbStore.getRelationByKey(relationKey);
 
 		if (relation) {
 			Util.tooltipShow(relation.name, cell, I.MenuDirection.Center, I.MenuDirection.Top);
@@ -473,7 +471,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		};
 
 		const { isPopup, rootId, readonly } = this.props;
-		const relation = dbStore.getRelation(rootId, rootId, relationKey);
+		const relation = dbStore.getRelationByKey(relationKey);
 
 		if (readonly) {
 			return;

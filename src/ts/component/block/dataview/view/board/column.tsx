@@ -51,7 +51,7 @@ const Column = observer(class Column extends React.Component<Props, State> {
 		const records = dbStore.getRecords(subId, '');
 		const items = this.getItems();
 		const { offset, total } = dbStore.getMeta(subId, '');
-		const relation = dbStore.getRelation(rootId, block.id, view.groupRelationKey);
+		const relation = dbStore.getRelationByKey(view.groupRelationKey);
 		const head = {};
 
 		head[view.groupRelationKey] = value;
@@ -157,7 +157,7 @@ const Column = observer(class Column extends React.Component<Props, State> {
 
 		const { rootId, block, getView, getKeys, getSubId, value, applyGroupOrder } = this.props;
 		const view = getView();
-		const relation = dbStore.getRelation(rootId, block.id, view.groupRelationKey);
+		const relation = dbStore.getRelationByKey(view.groupRelationKey);
 		const subId = getSubId();
 		const limit = Constant.limit.dataview.records + this.offset;
 

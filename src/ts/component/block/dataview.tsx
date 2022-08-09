@@ -296,7 +296,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				continue;
 			};
 			
-			const relation = dbStore.getRelation(rootId, block.id, filter.relationKey);
+			const relation = dbStore.getRelationByKey(filter.relationKey);
 			if (!relation || relation.isReadonlyValue) {
 				continue;
 			};
@@ -419,7 +419,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		const { rootId, block } = this.props;
-		const relation = dbStore.getRelation(rootId, block.id, relationKey);
+		const relation = dbStore.getRelationByKey(relationKey);
 		const id = Relation.cellId('dataviewCell', relationKey, index);
 		const ref = this.cellRefs.get(id);
 		const record = this.getRecord(index);
@@ -447,7 +447,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	onCellChange (id: string, relationKey: string, value: any, callBack?: (message: any) => void) {
 		const { rootId, block } = this.props;
 		const subId = dbStore.getSubId(rootId, block.id);
-		const relation = dbStore.getRelation(rootId, block.id, relationKey);
+		const relation = dbStore.getRelationByKey(relationKey);
 
 		if (!relation) {
 			return;

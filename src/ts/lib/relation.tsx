@@ -241,7 +241,7 @@ class Relation {
 
 	getOptions (rootId: string, blockId: string, view: I.View) {
 		let relations: any[] = DataUtil.viewGetRelations(rootId, blockId, view).filter((it: I.ViewRelation) => { 
-			const relation = dbStore.getRelation(rootId, blockId, it.relationKey);
+			const relation = dbStore.getRelationByKey(it.relationKey);
 			return relation && (relation.format != I.RelationType.File) && (it.relationKey != Constant.relationKey.done);
 		});
 		let idxName = relations.findIndex((it: any) => { return it.relationKey == Constant.relationKey.name; });
@@ -252,7 +252,7 @@ class Relation {
 
 		let ret: any[] = [];
 		relations.forEach((it: I.ViewRelation) => {
-			const relation: any = dbStore.getRelation(rootId, blockId, it.relationKey);
+			const relation: any = dbStore.getRelationByKey(it.relationKey);
 			if (!relation) {
 				return;
 			};

@@ -92,7 +92,6 @@ const MenuItemRelationView = observer(class MenuItemRelationView extends React.C
 						ref={(ref: any) => { onRef(cellId, ref); }} 
 						rootId={rootId}
 						subId={rootId}
-						storeId={rootId}
 						block={block}
 						relationKey={relationKey}
 						getRecord={() => { return object; }}

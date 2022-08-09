@@ -22,7 +22,7 @@ const HeadRow = observer(class HeadRow extends React.Component<Props, {}> {
 		const { rootId, block, readonly, getView, onCellAdd, onSortStart, onSortEnd, onResizeStart } = this.props;
 		const view = getView();
 		const relations = view.relations.filter((it: any) => { 
-			return it.isVisible && dbStore.getRelation(rootId, block.id, it.relationKey); 
+			return it.isVisible && dbStore.getRelationByKey(it.relationKey); 
 		});
 		const allowed = blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.Relation ]);
 

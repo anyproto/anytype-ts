@@ -20,7 +20,7 @@ const Row = observer(class Row extends React.Component<Props, {}> {
 		const { rootId, block, index, getView, onCellClick, onRef, style, getRecord, onContext } = this.props;
 		const view = getView();
 		const relations = view.relations.filter((it: any) => { 
-			return it.isVisible && dbStore.getRelation(rootId, block.id, it.relationKey); 
+			return it.isVisible && dbStore.getRelationByKey(it.relationKey); 
 		});
 		const idPrefix = 'dataviewCell';
 		const { hideIcon } = view;

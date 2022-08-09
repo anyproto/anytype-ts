@@ -300,7 +300,7 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<Pro
 	getItems () {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, getView } = data;
+		const { getView } = data;
 		const view = getView();
 
 		if (!view) {
@@ -312,9 +312,9 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<Pro
 			return { 
 				...it, 
 				id: n++,
-				relation: dbStore.getRelation(rootId, blockId, it.relationKey),
+				relation: dbStore.getRelationByKey(it.relationKey),
 			};
-		}).filter((it: any) => { return it.relation; });
+		}).filter(it => it.relation);
 	};
 
 	getRelationOptions () {

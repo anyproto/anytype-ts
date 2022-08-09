@@ -269,8 +269,8 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 	onClick (e: any, item: any) {
 		const { param, getId } = this.props;
 		const { data } = param;
-		const { rootId, blockId, readonly } = data;
-		const relation = dbStore.getRelation(rootId, blockId, item.relationKey);
+		const { readonly } = data;
+		const relation = dbStore.getRelationByKey(item.relationKey);
 
 		if (!relation || readonly) {
 			return;
@@ -343,7 +343,7 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 
 		return DataUtil.viewGetRelations(rootId, blockId, view).map((it: any) => {
 			it.id = it.relationKey;
-			it.relation = dbStore.getRelation(rootId, blockId, it.relationKey) || {};
+			it.relation = dbStore.getRelationByKey(it.relationKey) || {};
 			return it;
 		});
 	};

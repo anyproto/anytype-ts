@@ -35,9 +35,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<Props, {}
 	render () {
 		const { rootId, block, getData, getView, getKeys, isPopup } = this.props;
 		const view = getView();
-		const viewRelations = view.relations.filter((it: any) => { 
-			return it.isVisible && dbStore.getRelation(rootId, block.id, it.relationKey); 
-		});
+		const viewRelations = view.relations.filter(it => it.isVisible && dbStore.getRelationByKey(it.relationKey));
 		const subId = dbStore.getSubId(rootId, block.id);
 		const records = dbStore.getRecords(subId, '');
 		const { coverRelationKey, cardSize, hideIcon } = view;
@@ -48,7 +46,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<Props, {}
 			const item = detailStore.get(subId, id, getKeys(view.id));
 		
 			for (let k in item) {
-				const relation = dbStore.getRelation(rootId, block.id, k);
+				const relation = dbStore.getRelationByKey(k);
 				if (!relation || ![ I.RelationType.Object, I.RelationType.File ].includes(relation.format)) {
 					continue;
 				};

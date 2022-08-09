@@ -290,7 +290,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, readonly } = data;
-		const relation = dbStore.getRelation(rootId, rootId, relationKey);
+		const relation = dbStore.getRelationByKey(relationKey);
 
 		if (!relation || readonly || relation.isReadonlyValue) {
 			return;
@@ -323,7 +323,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId } = data;
-		const relation = dbStore.getRelation(rootId, rootId, relationKey);
+		const relation = dbStore.getRelationByKey(relationKey);
 		const details = [ 
 			{ key: relationKey, value: Relation.formatValue(relation, value, true) },
 		];

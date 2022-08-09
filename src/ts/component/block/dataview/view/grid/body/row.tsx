@@ -18,7 +18,7 @@ const BodyRow = observer(class BodyRow extends React.Component<Props, {}> {
 		const { rootId, block, index, getView, getRecord, style, onContext } = this.props;
 		const view = getView();
 		const relations = view.relations.filter((it: any) => { 
-			return it.isVisible && dbStore.getRelation(rootId, block.id, it.relationKey); 
+			return it.isVisible && dbStore.getRelationByKey(it.relationKey); 
 		});
 		const record = getRecord(index);
 		const cn = [ 'row' ];

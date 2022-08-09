@@ -45,15 +45,15 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 
 		const subId = dbStore.getSubId(rootId, blockId);
 		const item = view.getFilter(itemId);
-		const relation: any = dbStore.getRelation(rootId, blockId, item.relationKey) || {};
+		const relation: any = dbStore.getRelationByKey(item.relationKey) || {};
 		const relationOptions = this.getRelationOptions();
 		const conditionOptions = Relation.filterConditionsByType(relation.format);
 		const checkboxOptions: I.Option[] = [
 			{ id: '1', name: 'Checked' },
 			{ id: '0', name: 'Unchecked' },
 		];
-		const relationOption: any = relationOptions.find((it: any) => { return it.id == item.relationKey; }) || {};
-		const conditionOption: any = conditionOptions.find((it: any) => { return it.id == item.condition; }) || {};
+		const relationOption: any = relationOptions.find(it => it.id == item.relationKey) || {};
+		const conditionOption: any = conditionOptions.find(it => it.id == item.condition) || {};
 		const items = this.getItems();
 
 		let value = null;
@@ -254,9 +254,9 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 	componentDidUpdate () {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, getView, itemId } = data;
-
+		const { getView, itemId } = data;
 		const view = getView();
+
 		if (!view) {
 			return;
 		};
@@ -265,7 +265,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		this.props.setActive();
 
 		const item = view.getFilter(itemId);
-		const relation = dbStore.getRelation(rootId, blockId, item.relationKey);
+		const relation = dbStore.getRelationByKey(item.relationKey);
 
 		if (relation && this.refValue) {
 			const isDate = relation.format == I.RelationType.Date;
@@ -322,9 +322,9 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 	getItems () {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, getView, itemId } = data;
+		const { getView, itemId } = data;
 		const item = getView().getFilter(itemId);
-		const relation: any = dbStore.getRelation(rootId, blockId, item.relationKey) || {};
+		const relation: any = dbStore.getRelationByKey(item.relationKey) || {};
 		const relationOptions = this.getRelationOptions();
 		const relationOption: any = relationOptions.find(it => it.id == item.relationKey) || {};
 		
@@ -393,7 +393,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 	onChange (k: string, v: any, timeout?: boolean) {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, getView, itemId, save } = data;
+		const { getView, itemId, save } = data;
 		const view = getView();
 
 		if (!view) {
@@ -405,7 +405,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 			return;
 		};
 
-		const relation = dbStore.getRelation(rootId, blockId, item.relationKey);
+		const relation = dbStore.getRelationByKey(item.relationKey);
 		if (!relation) {
 			return;
 		};
@@ -419,7 +419,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 
 			// Remove value when we change relation, filter non unique entries
 			if (k == 'relationKey') {
-				const relation = dbStore.getRelation(rootId, blockId, v);
+				const relation = dbStore.getRelationByKey(v);
 				const conditions = Relation.filterConditionsByType(relation.format);
 
 				item.condition = conditions.length ? conditions[0].id : I.FilterCondition.None;
@@ -542,7 +542,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		const { data } = param;
 		const { rootId, blockId, getView, itemId } = data;
 		const item = getView().getFilter(itemId);
-		const relation = dbStore.getRelation(rootId, blockId, item.relationKey);
+		const relation = dbStore.getRelationByKey(item.relationKey);
 
 		menuStore.closeAll([ 'dataviewOptionList', 'select' ], () => {
 			menuStore.open('dataviewOptionList', { 
@@ -569,7 +569,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		const { param, getId, getSize } = this.props;
 		const { data } = param;
 		const { rootId, blockId } = data;
-		const relation = dbStore.getRelation(rootId, blockId, item.relationKey);
+		const relation = dbStore.getRelationByKey(item.relationKey);
 
 		menuStore.closeAll([ 'dataviewObjectValues', 'dataviewObjectList', 'select' ], () => {
 			menuStore.open('dataviewObjectList', { 

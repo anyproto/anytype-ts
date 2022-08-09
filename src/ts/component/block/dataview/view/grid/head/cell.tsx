@@ -24,8 +24,8 @@ const HeadCell = observer(class HeadCell extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { rootId, block, relationKey, index, onResizeStart } = this.props;
-		const relation: any = dbStore.getRelation(rootId, block.id, relationKey) || {};
+		const { relationKey, index, onResizeStart } = this.props;
+		const relation: any = dbStore.getRelationByKey(relationKey) || {};
 		const { format, name } = relation;
 		const width = Relation.width(this.props.width, format);
 		const size = Constant.size.dataview.cell;
@@ -54,7 +54,7 @@ const HeadCell = observer(class HeadCell extends React.Component<Props, {}> {
 
 	onEdit (e: any) {
 		const { rootId, block, readonly, getData, getView, relationKey } = this.props;
-		const relation = dbStore.getRelation(rootId, block.id, relationKey);
+		const relation = dbStore.getRelationByKey(relationKey);
 
 		if (!relation || keyboard.isResizing) {
 			return;

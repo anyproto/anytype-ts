@@ -58,7 +58,7 @@ const MenuSort = observer(class MenuSort extends React.Component<Props, {}> {
 		));
 		
 		const Item = SortableElement((item: any) => {
-			const relation: any = dbStore.getRelation(rootId, blockId, item.relationKey) || {};
+			const relation: any = dbStore.getRelationByKey(item.relationKey) || {};
 			return (
 				<div 
 					id={'item-' + item.id} 

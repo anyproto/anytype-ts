@@ -39,9 +39,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 		const views = dbStore.getViews(rootId, block.id);
 		const view = getView();
 		const sortCnt = view.sorts.length;
-		const filters = view.filters.filter((it: any) => {
-			return dbStore.getRelation(rootId, block.id, it.relationKey);
-		});
+		const filters = view.filters.filter(it => dbStore.getRelationByKey(it.relationKey));
 		const filterCnt = filters.length;
 		const allowedObject = blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.Object ]);
 		const allowedView = blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.View ]);

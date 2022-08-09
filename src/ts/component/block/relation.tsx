@@ -29,7 +29,7 @@ const BlockRelation = observer(class BlockRelation extends React.Component<Props
 		const { rootId, block, readonly, isPopup } = this.props;
 		const { content } = block;
 		const { key } = content;
-		const relation = dbStore.getRelation(rootId, rootId, key);
+		const relation = dbStore.getRelationByKey(key);
 		const idPrefix = 'blockRelationCell' + block.id;
 		const id = Relation.cellId(idPrefix, key, '0');
 		const allowedValue = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]) && relation && !relation.isReadonlyValue;
@@ -56,7 +56,6 @@ const BlockRelation = observer(class BlockRelation extends React.Component<Props
 								ref={(ref: any) => { this.refCell = ref; }}
 								rootId={rootId}
 								subId={rootId}
-								storeId={rootId}
 								block={block}
 								relationKey={relation.relationKey}
 								getRecord={() => { return detailStore.get(rootId, rootId, [ relation.relationKey ], true); }}
@@ -132,7 +131,7 @@ const BlockRelation = observer(class BlockRelation extends React.Component<Props
 
 	onCellChange (id: string, relationKey: string, value: any, callBack?: (message: any) => void) {
 		const { rootId } = this.props;
-		const relation = dbStore.getRelation(rootId, rootId, relationKey);
+		const relation = dbStore.getRelationByKey(relationKey);
 		const details = [ 
 			{ key: relationKey, value: Relation.formatValue(relation, value, true) },
 		];
