@@ -116,6 +116,9 @@ class PopupShortcut extends React.Component<Props, State> {
 						{ mac: `${cmd} + Click`,		 com: 'Ctrl + Click',		 name: 'On page link will open it in modal view' },
 						{ mac: `Ctrl + Space`,			 com: 'Ctrl + Space',		 name: 'Shortcuts to launch shortcuts view' },
 						{ mac: `${cmd} + \\`,			 com: 'Ctrl + \\',			 name: 'Toggle sidebar' },
+						{ mac: `${cmd} + Plus`,			 com: 'Ctrl + Plus',		 name: 'Zoom in' },
+						{ mac: `${cmd} + Minus`,		 com: 'Ctrl + Minus',		 name: 'Zoom out' },
+						{ mac: `${cmd} + 0`,			 com: 'Ctrl + 0',			 name: 'Default zoom' },
 					]
 				},
 
