@@ -12,11 +12,10 @@ interface State {
 }
 
 const sha1 = require('sha1');
-const Constant: any = require('json/constant.json');
 
 const PageAuthPinConfirm = observer(class PageAuthPinConfirm extends React.Component<Props, State> {
 	
-	refObj: any = {};
+	ref: any = null;
 	state = {
 		error: ''
 	};
@@ -31,11 +30,6 @@ const PageAuthPinConfirm = observer(class PageAuthPinConfirm extends React.Compo
 		const { cover } = commonStore;
 		const { error } = this.state;
 		
-		let inputs = [];
-		for (let i = 1; i <= Constant.pinSize; ++i) {
-			inputs.push({ id: i });
-		};
-		
         return (
 			<div>
 				<Cover {...cover} className="main" />
@@ -48,6 +42,7 @@ const PageAuthPinConfirm = observer(class PageAuthPinConfirm extends React.Compo
 					<Error text={error} />
 					
 					<Pin 
+						ref={(ref: any) => { this.ref = ref; }}
 						value={authStore.pin} 
 						onSuccess={this.onSuccess} 
 						onError={() => { this.setState({ error: translate('authPinConfirmError') }) }} 
@@ -58,15 +53,20 @@ const PageAuthPinConfirm = observer(class PageAuthPinConfirm extends React.Compo
     };
 
 	componentDidMount () {
-		this.focus();
+		this.rebind();
 	};
 
-	componentDidUpdate () {
-		this.focus();
+	componentWillUnmount () {
+		this.unbind();
 	};
 
-	focus () {
-		window.setTimeout(() => { this.refObj[1].focus(); }, 50);
+	unbind () {
+		$(window).off('focus.pin');
+	};
+
+	rebind () {
+		this.unbind();
+		$(window).on('focus.pin', () => { console.log('focus'); this.ref.focus(); });
 	};
 
 	onSuccess (pin: string) {

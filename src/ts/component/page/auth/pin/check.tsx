@@ -13,6 +13,7 @@ interface State {
 
 const PageAuthPinCheck = observer(class PageAuthPinCheck extends React.Component<Props, State> {
 	
+	ref: any = null;
 	state = {
 		error: ''
 	};
@@ -38,6 +39,7 @@ const PageAuthPinCheck = observer(class PageAuthPinCheck extends React.Component
 					<Error text={error} />
 
 					<Pin 
+						ref={(ref: any) => { this.ref = ref; }}
 						value={Storage.get('pin')} 
 						onSuccess={this.onSuccess} 
 						onError={() => { this.setState({ error: translate('authPinCheckError') }) }} 
@@ -45,6 +47,23 @@ const PageAuthPinCheck = observer(class PageAuthPinCheck extends React.Component
 				</Frame>
 			</div>
 		);
+	};
+
+	componentDidMount () {
+		this.rebind();
+	};
+
+	componentWillUnmount () {
+		this.unbind();
+	};
+
+	unbind () {
+		$(window).off('focus.pin');
+	};
+
+	rebind () {
+		this.unbind();
+		$(window).on('focus.pin', () => { console.log('focus'); this.ref.focus(); });
 	};
 
 	onSuccess (pin: string) {

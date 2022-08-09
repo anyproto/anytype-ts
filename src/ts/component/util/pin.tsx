@@ -59,10 +59,13 @@ class Pin extends React.Component<Props, {}> {
 	};
 
 	init () {
-		const { focus } = this.props;
-		if (focus) {
-			this.refObj[1].focus();
+		if (this.props.focus) {
+			this.focus();
 		};
+	};
+
+	focus () {
+		this.refObj[1].focus();
 	};
 
 	onFocus (e: any, id: number) {
