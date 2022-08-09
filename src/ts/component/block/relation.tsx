@@ -116,7 +116,7 @@ const BlockRelation = observer(class BlockRelation extends React.Component<Props
 				skipIds: [],
 				ref: 'block',
 				addCommand: (rootId: string, blockId: string, relationId: string) => {
-					const relation = dbStore.getRelationById(relationId);
+					const relation = dbStore.getRelationById(rootId, blockId, relationId);
 
 					C.ObjectRelationAdd(rootId, [ relationId ], (message: any) => {
 						if (!message.error.code) {

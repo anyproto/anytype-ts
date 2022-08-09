@@ -390,13 +390,12 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 		this.setState({ loading: true });
 
-		const param = {
+		DataUtil.searchSubscribe({
 			subId: Constant.subId.index,
 			filters,
 			sorts,
 			limit: 100,
-		};
-		DataUtil.searchSubscribe(param, (message: any) => {
+		}, (message: any) => {
 			if (!this._isMounted || message.error.code) {
 				return;
 			};

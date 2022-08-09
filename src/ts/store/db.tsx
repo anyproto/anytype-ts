@@ -216,7 +216,7 @@ class DbStore {
 		let { config } = commonStore;
 		let relations = this.relationMap.get(this.getId(rootId, blockId)) || [];
 
-		relations = relations.map(it => this.getRelationById(it.id));
+		relations = relations.map(it => this.getRelation(rootId, blockId, it.relationKey));
 		relations = relations.filter((it: any) => {
 			return it ? (!config.debug.ho ? !it.isHidden : true) : false;
 		});
@@ -228,17 +228,24 @@ class DbStore {
 			return null;
 		};
 
-		const relations = this.getRelations(rootId, blockId);
-		return relations.find(it => it.relationKey == relationKey);
+		const object = detailStore.get(Constant.subId.relation, relationKey, Constant.relationRelationKeys);
+		return object._empty_ ? null : object;
 	};
 
-	getRelationById (id: string): any {
+	getRelationById (rootId: string, blockId: string, id: string): any {
 		if (!id) {
 			return null;
 		};
 
-		const relation = detailStore.get(Constant.subId.relation, id, Constant.relationRelationKeys);
-		return !relation._empty_ ? relation : null;
+		const relations = this.getRelations(rootId, blockId);
+		const relation = relations.find(it => it.id == id);
+
+		if (!relation) {
+			return null;
+		};
+
+		const object = detailStore.get(Constant.subId.relation, relation.relationKey, Constant.relationRelationKeys);
+		return object._empty_ ? null : object;
 	};
 
     getViews (rootId: string, blockId: string): I.View[] {

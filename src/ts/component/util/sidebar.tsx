@@ -252,15 +252,13 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 
 			};
 
-			const param = {
+			DataUtil.searchSubscribe({
 				subId,
 				filters: filters.concat(sectionFilters),
 				sorts,
 				keys: Constant.sidebarRelationKeys,
 				limit: section.limit
-			};
-			
-			DataUtil.searchSubscribe(param, cb);
+			}, cb);
 		});
 	};
 

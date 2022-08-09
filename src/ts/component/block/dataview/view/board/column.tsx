@@ -188,15 +188,14 @@ const Column = observer(class Column extends React.Component<Props, State> {
 
 		this.loading = true;
 
-		const param = {
+		DataUtil.searchSubscribe({
 			subId,
 			filters,
 			sorts: view.sorts,
 			keys: getKeys(view.id),
 			sources: block.content.sources,
 			limit,
-		};
-		DataUtil.searchSubscribe(param, () => {
+		}, () => {
 			applyGroupOrder();
 
 			if (clear) {

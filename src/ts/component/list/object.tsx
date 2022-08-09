@@ -163,7 +163,7 @@ const ListObject = observer(class ListObject extends React.Component<Props, {}> 
 
 		dbStore.metaSet(subId, '', { offset: offset });
 
-		const param = {
+		DataUtil.searchSubscribe({
 			subId,
 			filters,
 			sorts: view.sorts,
@@ -171,8 +171,7 @@ const ListObject = observer(class ListObject extends React.Component<Props, {}> 
 			sources: block.content.sources,
 			offset,
 			limit,
-		};
-		DataUtil.searchSubscribe(param, callBack);
+		}, callBack);
 	};
 
 });

@@ -311,42 +311,39 @@ class DataUtil {
 			dbStore.objectTypesSet(message.objectTypes);
 		});
 
-		let param: any = {
+		this.searchSubscribe({
 			subId: Constant.subId.deleted,
 			filters: [
 				{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: true }
 			],
 			keys: [ 'id', 'isDeleted' ],
 			noDeps: true
-		};
-		this.searchSubscribe(param);
+		});
 
-		param = {
+		this.searchSubscribe({
 			subId: Constant.subId.type,
 			filters: [
 				{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.type }
 			],
 			noDeps: true
-		}
-		this.searchSubscribe(param);
+		});
 
-		param = {
+		this.searchSubscribe({
 			subId: Constant.subId.relation,
+			idField: 'relationKey',
 			filters: [
 				{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.relation }
 			],
 			noDeps: true
-		}
-		this.searchSubscribe(param);
+		});
 
-		param = {
+		this.searchSubscribe({
 			subId: Constant.subId.option,
 			filters: [
 				{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.option }
 			],
 			noDeps: true
-		}
-		this.searchSubscribe(param);
+		});
 
 		if (profile) {
 			this.subscribeIds({
@@ -1240,7 +1237,16 @@ class DataUtil {
 		};
 
 		dbStore.metaSet(subId, '', meta);
-		C.ObjectSearchSubscribe(subId, filters, view.sorts, keys, block.content.sources, offset, limit, true, '', '', false);
+
+		this.searchSubscribe({
+			subId,
+			filters,
+			sorts: view.sorts,
+			keys,
+			sources: block.content.sources,
+			offset,
+			limit,
+		});
 	};
 
 	coverIsImage (type: I.CoverType) {
@@ -1264,28 +1270,28 @@ class DataUtil {
 		];
 	};
 
-	onSubscribe (subId: string, keys: string[], message: any) {
+	onSubscribe (subId: string, idField: string, keys: string[], message: any) {
 		if (message.error.code) {
 			return;
 		};
-
 		if (message.counters) {
 			dbStore.metaSet(subId, '', { total: message.counters.total, keys: keys });
 		};
 
 		let details = [];
-		details = details.concat(message.dependencies.map((it: any) => { return { id: it.id, details: it }; }));
+		details = details.concat(message.dependencies.map((it: any) => { return { id: it[idField], details: it }; }));
 		details = details.concat(message.records.map((it: any) => { 
 			keys.forEach((k: string) => { it[k] = it[k] || ''; });
-			return { id: it.id, details: it }; 
+			return { id: it[idField], details: it }; 
 		}));
 		detailStore.set(subId, details);
-		dbStore.recordsSet(subId, '', message.records.map(it => it.id));
+		dbStore.recordsSet(subId, '', message.records.map(it => it[idField]));
 	};
 
 	searchSubscribe (param: any, callBack?: (message: any) => void) {
 		param = Object.assign({
 			subId: '',
+			idField: 'id',
 			filters: [],
 			sorts: [],
 			keys: Constant.defaultRelationKeys,
@@ -1298,15 +1304,17 @@ class DataUtil {
 			noDeps: false,
 		}, param);
 
-		const { subId, filters, sorts, keys, sources, offset, limit, ignoreWorkspace, afterId, beforeId, noDeps } = param;
+		const { subId, idField, filters, sorts, keys, sources, offset, limit, ignoreWorkspace, afterId, beforeId, noDeps } = param;
 
 		if (!subId) {
 			console.error('[DataUtil].searchSubscribe: subId is empty');
 			return;
 		};
 
+		keys.push(idField);
+
 		C.ObjectSearchSubscribe(subId, filters, sorts, keys, sources, offset, limit, ignoreWorkspace, afterId, beforeId, noDeps, (message: any) => {
-			this.onSubscribe(subId, keys, message);
+			this.onSubscribe(subId, idField, keys, message);
 
 			if (callBack) {
 				callBack(message);
@@ -1321,7 +1329,9 @@ class DataUtil {
 			keys: Constant.defaultRelationKeys,
 		}, param);
 
-		const { subId, ids, keys } = param;
+		let { subId, ids, keys } = param;
+
+		ids = Util.arrayUnique(ids.filter(it => it));
 
 		if (!subId) {
 			console.error('[DataUtil].subscribeIds: subId is empty');
@@ -1341,7 +1351,7 @@ class DataUtil {
 				return 0;
 			});
 
-			this.onSubscribe(subId, keys, message);
+			this.onSubscribe(subId, 'id', keys, message);
 
 			if (callBack) {
 				callBack(message);

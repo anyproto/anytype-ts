@@ -252,15 +252,13 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 			const filters = view.filters.concat([
 				{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
 			]);
-
-			const param = {
+			DataUtil.searchSubscribe({
 				subId: this.getSubIdTemplate(),
 				filters,
 				sorts: view.sorts,
 				keys: [ 'id' ],
 				sources: block.content.sources,
-			};
-			DataUtil.searchSubscribe(param);
+			});
 		};
 	};
 
