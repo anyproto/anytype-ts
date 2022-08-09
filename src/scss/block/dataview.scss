@@ -19,7 +19,7 @@
 			.line { height: 1px; width: calc(100% - 14px); background: $colorLightGrey; margin-left: 14px; }
 
 			.sides { display: flex; }
-			.side { padding: 26px 0px; height: 72px; white-space: nowrap; }
+			.side { padding: 23px 0px; white-space: nowrap; line-height: 28px; }
 			.side.left { padding-left: 14px; width: calc(100% - 120px); }
 			.side.right { text-align: right; width: 120px; }
 
@@ -48,7 +48,7 @@
 				.first { display: inline-block; line-height: 20px; }
 			}
 
-			.icon { vertical-align: top; cursor: pointer; transition: $transitionFast; position: relative; width: 20px; height: 20px; margin: 0px 18px 0px 0px; }
+			.icon { cursor: pointer; transition: $transitionFast; position: relative; width: 20px; height: 20px; margin: 0px 18px 0px 0px; }
 			.icon:last-child { margin: 0px; }
 
 			.icon.search { background-image: url('~img/icon/dataview/button/search0.svg'); }
