@@ -30,7 +30,7 @@
 		.items {
 			.pad { height: 12px; }
 
-			.section { height: 32px; line-height: 22px; padding: 5px 16px; font-weight: 500; color: $colorMediumGrey; }
+			.sectionName { @include text-small; height: 32px; line-height: 22px; padding: 5px 16px; font-weight: 500; color: $colorMediumGrey; }
 
 			.item { 
 				cursor: pointer; transition: $transitionFast; position: relative; height: 32px; line-height: 22px; padding: 7px 16px; white-space: nowrap;
