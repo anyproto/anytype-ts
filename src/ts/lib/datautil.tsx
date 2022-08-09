@@ -331,6 +331,7 @@ class DataUtil {
 		this.searchSubscribe({
 			subId: Constant.subId.relation,
 			idField: 'relationKey',
+			keys: Constant.relationRelationKeys,
 			filters: [
 				{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.relation }
 			],
