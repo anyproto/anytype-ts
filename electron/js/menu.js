@@ -6,11 +6,6 @@ const ConfigManager = require('./config.js');
 const Util = require('./util.js');
 
 const Separator = { type: 'separator' };
-const ChannelSettings = [
-	{ id: 'alpha', name: 'Alpha' },
-	{ id: 'beta', name: 'Pre-release' },
-	{ id: 'latest', name: 'Public' },
-];
 
 class MenuManager {
 
@@ -26,7 +21,7 @@ class MenuManager {
 		const { config } = ConfigManager;
 		const Api = require('./api.js');
 		const WindowManager = require('./window.js');
-		const channels = this.getChannels();
+		const UpdateManager = require('./update.js');
 
 		let menuParam = [
 			{
@@ -208,6 +203,16 @@ class MenuManager {
 			});
 		};
 
+		const channels = ConfigManager.getChannels().map(it => {
+			it.click = () => { 
+				if (!UpdateManager.isUpdating) {
+					UpdateManager.setChannel(it.id); 
+					Api.setConfig(this.win, { channel: it.id });
+				};
+			};
+			return it;
+		}); 
+
 		if (channels.length > 1) {
 			menuParam.push({ label: 'Version', submenu: channels });
 		};
@@ -328,29 +333,6 @@ class MenuManager {
 			icon = `icon-tray-${(Util.isDarkTheme() ? 'white' : 'black')}.png`;
 		}
 		return path.join(Util.imagePath(), icon);
-	};
-
-	getChannels () {
-		const { config } = ConfigManager;
-
-		let channels = ChannelSettings.map((it) => {
-			return { 
-				id: it.id, label: it.name, type: 'radio', checked: (config.channel == it.id), 
-				click: () => { 
-					if (!UpdateManager.isUpdating) {
-						UpdateManager.setChannel(it.id); 
-						Api.setConfig(this.win, { channel: it.id });
-					};
-				} 
-			};
-		});
-		if (!config.sudo && !config.allowBeta) {
-			channels = channels.filter(it => it.id != 'beta');
-		};
-		if (!config.sudo) {
-			channels = channels.filter(it => it.id != 'alpha');
-		};
-		return channels;
 	};
 
 };

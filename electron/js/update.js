@@ -93,7 +93,7 @@ class UpdateManager {
 
 	setChannel (channel) {
 		autoUpdater.channel = channel;
-		checkUpdate(false);
+		this.checkUpdate(false);
 	};
 
 	checkUpdate (auto) {
