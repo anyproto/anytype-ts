@@ -1309,6 +1309,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 				return;
 			};
 
+			const fill = (id: string, callBack: () => void) => {
+				C.BlockTableRowListFill(rootId, [ id ], callBack);
+			};	
+
 			const cb = () => {
 				let nextCellId = '';
 
@@ -1320,7 +1324,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 					const nextRow = this.getNextTableRow(block.id, dir);
 					if (nextRow) {
 						const nextRowElement = blockStore.getMapElement(rootId, nextRow.id);
-						nextCellId = nextRowElement.childrenIds[dir > 0 ? 0 : nextRowElement.childrenIds.length - 1];
+						fill(nextRow.id, () => {
+							nextCellId = nextRowElement.childrenIds[dir > 0 ? 0 : nextRowElement.childrenIds.length - 1];
+							this.focusNextBlock(blockStore.getLeaf(rootId, nextCellId), dir);
+						});
 					};
 				};
 
@@ -1328,7 +1335,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			};
 
 			if (rowElement.childrenIds.length - 1 < idx) {
-				C.BlockTableRowListFill(rootId, [ element.parentId ], cb);
+				fill(element.parentId, cb);
 			} else {
 				cb();
 			};
@@ -1407,27 +1414,34 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 	};
 	
 	onCopy (e: any, cut: boolean) {
-		e.preventDefault();
-
 		const { dataset, rootId } = this.props;
 		const { selection } = dataset || {};
 		const readonly = this.isReadonly();
+		const root = blockStore.getLeaf(rootId, rootId);
+		const { focused } = focus.state;
 
-		if (readonly && cut) {
+		if (!root || (readonly && cut)) {
 			return;
 		};
 
-		let { focused, range } = focus.state;
 		let ids = selection.get(I.SelectType.Block, true);
+
+		if (root.isLocked() && !ids.length) {
+			return;
+		};
+
+		e.preventDefault();
+
 		if (!ids.length) {
 			ids = [ focused ];
 		};
 		ids = ids.concat(this.getLayoutIds(ids));
 
+		const range = Util.objectCopy(focus.state.range);
 		const cmd = cut ? 'BlockCut' : 'BlockCopy';
 		const tree = blockStore.getTree(rootId, blockStore.getBlocks(rootId));
+		const text: string[] = [];
 
-		let text: string[] = [];
 		let blocks = blockStore.unwrapTree(tree).filter((it: I.Block) => {
 			return ids.indexOf(it.id) >= 0;
 		});
@@ -1440,7 +1454,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		});
 
 		blocks = Util.arrayUniqueObjects(blocks, 'id');
-
 		blocks = blocks.map((it: I.Block) => {
 			const element = blockStore.getMapElement(rootId, it.id);
 
@@ -1452,29 +1465,25 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			return it;
 		});
 		
-		range = Util.objectCopy(range);
-
-		const cb = (message: any) => {
-			const blocks = (message.anySlot || []).map(Mapper.From.Block);
-
+		C[cmd](rootId, blocks, range, (message: any) => {
 			Util.clipboardCopy({
 				text: message.textSlot,
 				html: message.htmlSlot,
 				anytype: {
 					range: range,
-					blocks: blocks,
+					blocks: (message.anySlot || []).map(Mapper.From.Block),
 				},
 			});
 
 			if (cut) {
 				menuStore.close('blockContext');
+
 				focus.set(focused, { from: range.from, to: range.from });
 				focus.apply();
 			};
-		};
-		
-		C[cmd](rootId, blocks, range, cb);
-		analytics.event('CopyBlock');
+		});
+
+		analytics.event(cut ? 'CutBlock' : 'CopyBlock');
 	};
 	
 	onPaste (e: any, props: any, force?: boolean, data?: any) {
@@ -1572,7 +1581,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			{ id: 'link', name: 'Create link' },
 			isEmpty && !isInsideTable ? { id: 'object', name: 'Create bookmark object' } : null,
 			!isInsideTable ? { id: 'block', name: 'Create bookmark block' } : null,
-			{ id: 'cancel', name: 'Cancel' },
+			{ id: 'cancel', name: 'Paste as text' },
 			//{ id: 'embed', name: 'Create embed' },
 		].filter(it => it);
 

@@ -89,7 +89,19 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 		};
 
 		const rowRenderer = ({ index, key, style, parent }) => {
-			const item = items[index];
+			let item = items[index];
+			let content = null;
+
+			if (item.isSection) {
+				content = <div className={[ 'sectionName', (index == 0 ? 'first' : '') ].join(' ')} style={style}>{item.name}</div>;
+			} else {
+				content = (
+					<div className="row" style={style}>
+						<Item {...item} index={index} />
+					</div>
+				);
+			};
+
 			return (
 				<CellMeasurer
 					key={key}
@@ -99,9 +111,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 					rowIndex={index}
 					hasFixedWidth={() => {}}
 				>
-					<div className="row" style={style}>
-						<Item {...item} index={index} />
-					</div>
+					{content}
 				</CellMeasurer>
 			);
 		};
@@ -260,20 +270,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 		};
 
 		keyboard.shortcut('arrowup, arrowdown', e, (pressed: string) => {
-			const dir = pressed.match(Key.up) ? -1 : 1;
-
-			this.n += dir;
-
-			if (this.n < 0) {
-				this.n = l - 1;
-			};
-
-			if (this.n > l - 1) {
-				this.n = 0;
-			};
-
-			this.setActive();
-			this.refList.scrollToRow(Math.max(0, this.n));
+			this.onArrow(pressed.match(Key.up) ? -1 : 1);
 		});
 
 		keyboard.shortcut('enter, space', e, (pressed: string) => {
@@ -286,6 +283,29 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 		keyboard.shortcut('escape', e, (pressed: string) => {
 			this.props.close();
 		});
+	};
+
+	onArrow (dir: number) {
+		const items = this.getItems();
+		const l = items.length;
+
+		this.n += dir;
+
+		if (this.n < 0) {
+			this.n = l - 1;
+		};
+
+		if (this.n > l - 1) {
+			this.n = 0;
+		};
+
+		if (items[this.n].isSection) {
+			this.onArrow(dir);
+			return;
+		};
+
+		this.setActive();
+		this.refList.scrollToRow(Math.max(0, this.n));
 	};
 
 	setActive (item?: any) {
@@ -376,7 +396,11 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 	};
 
 	getItems () {
-		return this.items.filter(this.filterMapper);
+		const items = this.items.filter(this.filterMapper);
+
+		items.unshift({ name: 'Recent objects', isSection: true });
+
+		return items;
 	};
 
 	filterMapper (it: any) {

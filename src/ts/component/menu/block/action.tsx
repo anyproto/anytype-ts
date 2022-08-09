@@ -589,10 +589,14 @@ class MenuBlockAction extends React.Component<Props, State> {
 
 			case 'openBookmarkAsObject':
 				DataUtil.objectOpenPopup({ id: block.content.targetObjectId, layout: I.ObjectLayout.Bookmark });
+
+				analytics.event('OpenAsObject', { type: block.type });
 				break;
 
 			case 'openFileAsObject':
 				DataUtil.objectOpenPopup({ id: block.content.hash, layout: I.ObjectLayout.File });
+
+				analytics.event('OpenAsObject', { type: block.type, params: { fileType: block.content.type } });
 				break;
 					
 			case 'copy':

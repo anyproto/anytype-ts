@@ -622,13 +622,15 @@ class Util {
 			x = Math.max(12, x);
 			x = Math.min(win.width() - obj.outerWidth() - 12, x);
 
+			console.log(obj, x, y);
+
 			obj.css({ left: x, top: y, opacity: 1 });
 		}, 250);
 	};
 	
 	tooltipHide (force: boolean) {
 		let obj = $('#tooltip');
-		
+
 		obj.css({ opacity: 0 });
 		window.clearTimeout(this.timeoutTooltip);
 		this.timeoutTooltip = window.setTimeout(() => { obj.hide(); }, force ? 0 : Constant.delay.tooltip);
