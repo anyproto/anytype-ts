@@ -7,15 +7,15 @@ const Errors = require('json/error.json');
 class DataUtil {
 
 	blockTextClass (v: I.TextStyle): string {
-		return Util.toCamelCase('text-' + String(I.TextStyle[v] || 'paragraph').toLowerCase());
+		return Util.toCamelCase('text-' + String(I.TextStyle[v] || 'paragraph'));
 	};
 	
 	blockDivClass (v: I.DivStyle): string {
-		return Util.toCamelCase('div-' + String(I.DivStyle[v]).toLowerCase());
+		return Util.toCamelCase('div-' + String(I.DivStyle[v]));
 	};
 
 	blockLayoutClass (v: I.LayoutStyle): string {
-		return Util.toCamelCase('layout-' + String(I.LayoutStyle[v]).toLowerCase());
+		return Util.toCamelCase('layout-' + String(I.LayoutStyle[v]));
 	};
 
 	styleIcon (type: I.BlockType, v: number): string {
@@ -78,17 +78,8 @@ class DataUtil {
 	layoutClass (id: string, layout: I.ObjectLayout) {
 		let c = '';
 		switch (layout) {
-			default:
-			case I.ObjectLayout.Page:		 c = 'isPage'; break;
-			case I.ObjectLayout.Human:		 c = 'isHuman'; break;
-			case I.ObjectLayout.Task:		 c = 'isTask'; break;
-			case I.ObjectLayout.Type:		 c = 'isObjectType'; break;
-			case I.ObjectLayout.Relation:	 c = 'isRelation'; break;
-			case I.ObjectLayout.Set:		 c = 'isSet'; break;
+			default: c = Util.toCamelCase('is-' + I.ObjectLayout[layout]); break;
 			case I.ObjectLayout.Image:		 c = (id ? 'isImage' : 'isFile'); break;
-			case I.ObjectLayout.File:		 c = 'isFile'; break;
-			case I.ObjectLayout.Note:		 c = 'isNote'; break;
-			case I.ObjectLayout.Bookmark:	 c = 'isBookmark'; break;
 		};
 		return c;
 	};
