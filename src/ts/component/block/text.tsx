@@ -706,7 +706,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		});
 
 		keyboard.shortcut('arrowleft, arrowright, arrowdown, arrowup', e, (pressed: string) => {
-			keyboard.disableContext(false);
+			keyboard.disableContextClose(false);
 		});
 
 		saveKeys.forEach((item: any) => {
@@ -1245,7 +1245,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		window.clearTimeout(this.timeoutContext);
 
 		if (!currentTo || (currentFrom == currentTo) || !block.canHaveMarks() || ids.length) {
-			if (!keyboard.isContextDisabled) {
+			if (!keyboard.isContextCloseDisabled) {
 				menuStore.close('blockContext');
 			};
 			return;
@@ -1258,6 +1258,10 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		menuStore.closeAll([ 'blockAdd', 'blockMention' ]);
 
 		this.timeoutContext = window.setTimeout(() => {
+			if (keyboard.isContextOpenDisabled) {
+				return;
+			};
+
 			const pageContainer = Util.getPageContainer(isPopup);
 
 			pageContainer.off('click.context').on('click.context', () => { 
@@ -1274,7 +1278,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 				horizontal: I.MenuDirection.Center,
 				passThrough: true,
 				onClose: () => {
-					keyboard.disableContext(false);
+					keyboard.disableContextClose(false);
 				},
 				data: {
 					blockId: block.id,

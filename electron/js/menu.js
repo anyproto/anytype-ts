@@ -1,4 +1,4 @@
-const { app, shell, Menu, Tray } = require('electron');
+const { app, shell, Menu, Tray, MenuItem } = require('electron');
 const { is } = require('electron-util');
 const path = require('path');
 
@@ -9,7 +9,7 @@ const Separator = { type: 'separator' };
 
 class MenuManager {
 
-	window = null;
+	win = null;
 	menu = {};
 	tray = {};
 

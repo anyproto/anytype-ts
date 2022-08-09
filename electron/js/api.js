@@ -17,11 +17,15 @@ class Api {
 	phrase = '';
 
 	appOnLoad (win) {
-		Util.send(win, 'init', Util.dataPath(), ConfigManager.config, Util.isDarkTheme(), {
+		Util.send(win, 'init', {
+			dataPath: Util.dataPath(),
+			config: ConfigManager.config,
+			isDark: Util.isDarkTheme(),
 			isChild: win.isChild,
 			route: win.route,
 			account: this.account,
 			phrase: this.phrase,
+			languages: win.webContents.session.availableSpellCheckerLanguages,
 		});
 	};
 
@@ -40,6 +44,15 @@ class Api {
 	setTheme (win, theme) {
 		nativeTheme.themeSource = theme || 'light';
 		this.setConfig(win, { theme });
+	};
+
+	setLanguage (win, language) {
+		win.webContents.session.setSpellCheckerLanguages([ language ]);
+		this.setConfig(win, { language });
+	};
+
+	spellcheckAdd (win, s) {
+		win.webContents.session.addWordToSpellCheckerDictionary(s);
 	};
 
 	keytarSet (win, key, value) {

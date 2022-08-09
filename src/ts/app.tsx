@@ -6,7 +6,7 @@ import { Provider } from 'mobx-react';
 import { enableLogging } from 'mobx-logger';
 import { Page, SelectionProvider, DragProvider, Progress, Tooltip, Preview, Icon, ListPopup, ListMenu } from './component';
 import { commonStore, authStore, blockStore, detailStore, dbStore, menuStore, popupStore } from './store';
-import { I, C, Util, FileUtil, keyboard, Storage, analytics, dispatcher, translate, Action, Renderer, DataUtil } from 'Lib';
+import { I, C, Util, FileUtil, keyboard, Storage, analytics, dispatcher, translate, Action, Renderer, DataUtil, focus, Mark } from 'Lib';
 import * as Sentry from '@sentry/browser';
 import { configure, spy } from 'mobx';
 
@@ -155,6 +155,7 @@ import 'scss/media/print.scss';
 import 'scss/theme/dark/common.scss';
 
 const $ = require('jquery');
+const raf = require('raf');
 const hs = require('history');
 const memoryHistory = hs.createMemoryHistory;
 const history = memoryHistory();
@@ -277,6 +278,7 @@ class App extends React.Component<Props, State> {
 		this.onUpdateProgress = this.onUpdateProgress.bind(this);
 		this.onUpdateError = this.onUpdateError.bind(this);
 		this.onCommand = this.onCommand.bind(this);
+		this.onSpellcheck = this.onSpellcheck.bind(this);
 		this.onMenu = this.onMenu.bind(this);
 		this.onMin = this.onMin.bind(this);
 		this.onMax = this.onMax.bind(this);
@@ -405,6 +407,7 @@ class App extends React.Component<Props, State> {
 		Renderer.on('import', this.onImport);
 		Renderer.on('export', this.onExport);
 		Renderer.on('command', this.onCommand);
+		Renderer.on('spellcheck', this.onSpellcheck);
 		Renderer.on('enter-full-screen', () => { commonStore.fullscreenSet(true); });
 		Renderer.on('leave-full-screen', () => { commonStore.fullscreenSet(false); });
 		Renderer.on('shutdownStart', (e: any) => { this.setState({ loading: true }); });
@@ -420,7 +423,8 @@ class App extends React.Component<Props, State> {
   		});
 	};
 
-	onInit (e: any, dataPath: string, config: any, isDark: boolean, windowData: any) {
+	onInit (e: any, data: any) {
+		const { dataPath, config, isDark, isChild, route, account, phrase, languages } = data;
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
 		const loader = node.find('#root-loader');
@@ -430,6 +434,7 @@ class App extends React.Component<Props, State> {
 		commonStore.configSet(config, true);
 		commonStore.nativeThemeSet(isDark);
 		commonStore.themeSet(config.theme);
+		commonStore.languagesSet(languages);
 
 		authStore.walletPathSet(dataPath);
 		authStore.accountPathSet(dataPath);
@@ -449,12 +454,12 @@ class App extends React.Component<Props, State> {
 		};
 
 		if (accountId) {
-			if (windowData.isChild) {
-				authStore.phraseSet(windowData.phrase);
+			if (isChild) {
+				authStore.phraseSet(phrase);
 
 				DataUtil.createSession(() => {
-					commonStore.redirectSet(windowData.route || '');
-					DataUtil.onAuth(windowData.account, cb);
+					commonStore.redirectSet(route || '');
+					DataUtil.onAuth(account, cb);
 				});
 
 				win.off('unload').on('unload', (e: any) => {
@@ -735,6 +740,41 @@ class App extends React.Component<Props, State> {
 
 	onClose (e: any) {
 		Renderer.send('winCommand', 'close');
+	};
+
+	onSpellcheck (e: any, param: any) {
+		if (!param.misspelledWord) {
+			return;
+		};
+
+		keyboard.disableContextOpen(true);
+
+		const rootId = keyboard.getRootId();
+		const rect = Util.selectionRect();
+		const { focused, range } = focus.state;
+		const options: any = param.dictionarySuggestions.map(it => { return { id: it, name: it }; });
+
+		options.push({ id: 'add-to-dictionary', name: 'Add to dictionary' });
+
+		menuStore.open('select', {
+			rect: rect,
+			onOpen: () => { menuStore.close('blockContext'); },
+			onClose: () => { keyboard.disableContextOpen(false); },
+			data: {
+				options,
+				onSelect: (e: any, item: any) => {
+					raf(() => { 
+						focus.apply(); 
+
+						if (item.id == 'add-to-dictionary') {
+							Renderer.send('spellcheckAdd', param.misspelledWord);
+						} else {
+							DataUtil.blockInsertText(rootId, focused, item.id, range.from, range.to);
+						};
+					});
+				},
+			}
+		});
 	};
 
 };

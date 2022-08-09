@@ -6,6 +6,7 @@ const windowStateKeeper = require('electron-window-state');
 const remote = require('@electron/remote/main');
 const port = process.env.SERVER_PORT;
 
+const ConfigManager = require('./config.js');
 const UpdateManager = require('./update.js');
 const MenuManager = require('./menu.js');
 const Util = require('./util.js');
@@ -21,6 +22,7 @@ class WindowManager {
 
 	create (options, param) {
 		const { route, isChild } = options;
+		const { language } = ConfigManager.config;
 
 		param = Object.assign({
 			backgroundColor: Util.getBgColor(),
@@ -34,7 +36,7 @@ class WindowManager {
 			nativeWindowOpen: true,
 			contextIsolation: true,
 			nodeIntegration: false,
-			spellcheck: false,
+			spellcheck: true,
 		}, param.webPreferences);
 
 		let win = new BrowserWindow(param);
@@ -55,9 +57,14 @@ class WindowManager {
 			UpdateManager.setWindow(win);
 			MenuManager.setWindow(win); 
 		});
-		win.on('enter-full-screen', () => { Util.send(win, 'enter-full-screen'); });
-		win.on('leave-full-screen', () => { Util.send(win, 'leave-full-screen'); });
+		win.on('enter-full-screen', () => Util.send(win, 'enter-full-screen'));
+		win.on('leave-full-screen', () => Util.send(win, 'leave-full-screen'));
 
+		if (language) {
+			win.webContents.session.setSpellCheckerLanguages([ language ]);
+		};
+
+		win.webContents.on('context-menu', (e, param) => Util.send(win, 'spellcheck', param));
 		return win;
 	};
 

@@ -118,7 +118,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 		
 		const { from, to } = range;
 
-		keyboard.disableContext(true);
+		keyboard.disableContextClose(true);
 		focus.set(blockId, range);
 
 		let marks = data.marks || [];

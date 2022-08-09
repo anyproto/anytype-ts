@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Icon, Title, Label, Switch, Select } from 'Component';
-import { I, translate, DataUtil, analytics } from 'Lib';
+import { I, translate, DataUtil, analytics, Renderer } from 'Lib';
 import { commonStore, menuStore } from 'Store';
 import { observer } from 'mobx-react';
 
@@ -23,7 +23,7 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 	};
 
 	render () {
-		const { autoSidebar } = commonStore;
+		const { autoSidebar, languages, config } = commonStore;
 		const types = DataUtil.getObjectTypesForNewObject(false);
 		const type = types.find(it => it.id == commonStore.type);
 
@@ -44,6 +44,22 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 								</div>
 								<Icon className="arrow light" />
 							</div>
+						</div>
+					</div>
+
+					<div className="row flex">
+						<div className="side left">
+							<Label text="Spellcheck language" />
+						</div>
+						<div className="side right">
+							<Select 
+								id="spellcheck" 
+								value={config.language} 
+								initial="Select" 
+								options={languages.map(it => { return { id: it, name: it }; })} 
+								onChange={(v: any) => { Renderer.send('setLanguage', v); }}
+								arrowClassName="light"
+							/>
 						</div>
 					</div>
 

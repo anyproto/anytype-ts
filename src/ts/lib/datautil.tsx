@@ -1,4 +1,4 @@
-import { I, C, M, keyboard, crumbs, translate, Util, history as historyPopup, Storage, analytics, Relation, dispatcher, Renderer } from 'Lib';
+import { I, C, M, keyboard, crumbs, translate, Util, history as historyPopup, Storage, analytics, Relation, dispatcher, Renderer, Mark } from 'Lib';
 import { commonStore, blockStore, detailStore, dbStore, popupStore, authStore } from 'Store';
 
 const Constant = require('json/constant.json');
@@ -531,6 +531,19 @@ class DataUtil {
 				callBack(message);
 			};
 		});
+	};
+
+	blockInsertText (rootId: string, blockId: string, needle: string, from: number, to: number, callBack?: (message: any) => void) {
+		const block = blockStore.getLeaf(rootId, blockId);
+		if (!block) {
+			return;
+		};
+
+		const diff = needle.length - (to - from);
+		const text = Util.stringInsert(block.content.text, needle, from, to);
+		const marks = Mark.adjust(block.content.marks, 0, diff);
+
+		this.blockSetText(rootId, blockId, text, marks, true, callBack);
 	};
 
 	menuMapperBlock (it: any) {
