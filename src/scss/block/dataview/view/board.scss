@@ -93,15 +93,15 @@
 
             .card.add { 
 				min-height: unset; text-align: center; padding: 10px 0px; margin: 0px; line-height: 1; transition: $transitionFast; cursor: pointer; 
-				border: 1px solid $colorBorderDark; border-radius: 12px; flex-direction: row; justify-content: center; background: $colorWhite;
+				border: 1px solid $colorVeryLightGrey; border-radius: 12px; flex-direction: row; justify-content: center; background: $colorWhite;
 			}
 			.card.add.first { margin: 0px; }
             .card.add {
-                .icon { vertical-align: top; }
+                .icon { background-image: url('~img/icon/plus/column0.svg'); vertical-align: top; }
             }
             .card.add:hover { border-color: $colorBlack; }
             .card.add:hover {
-                .icon { background-image: url('~img/icon/plus/menu1.svg'); }
+                .icon { background-image: url('~img/icon/plus/column1.svg'); }
             }
 
 			.card {

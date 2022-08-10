@@ -1,3 +1,5 @@
+import { Util } from 'Lib';
+
 class Renderer {
 
 	send (...args: any[]) {
@@ -6,7 +8,7 @@ class Renderer {
 		const cmd = args[0];
 		args.shift();
 
-		window.Electron.Api(window.Electron.currentWindow().windowId, cmd, args);
+		window.Electron.Api(window.Electron.currentWindow().windowId, cmd, Util.objectCopy(args));
 	};
 
 	on (event: string, callBack: any) {
