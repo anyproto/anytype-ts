@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon, Loader } from 'Component';
-import { I, C, Util, translate, keyboard } from 'Lib';
+import { I, C, Util, translate, keyboard, DataUtil } from 'Lib';
 import { observer } from 'mobx-react';
 import { dbStore, detailStore } from 'Store';
 
@@ -54,6 +54,10 @@ const Column = observer(class Column extends React.Component<Props, State> {
 		const relation = dbStore.getRelation(rootId, block.id, view.groupRelationKey);
 		const head = {};
 
+		const colors = DataUtil.menuGetBgColors();
+		const color = colors[Util.rand(0, colors.length - 1)];
+		const cnbg = 'bgColor ' + color.id;
+
 		head[view.groupRelationKey] = value;
 
 		records.forEach((it: any) => {
@@ -75,9 +79,7 @@ const Column = observer(class Column extends React.Component<Props, State> {
 				className="column withColor" 
 				data-id={id}
 			>
-				<div 
-					className="head" 
-				>
+				<div className="head">
 					<div className="sides">
 						<div 
 							className="side left"
@@ -106,39 +108,42 @@ const Column = observer(class Column extends React.Component<Props, State> {
 							<Icon className="add"  onClick={() => { onRecordAdd(id, -1); }} />
 						</div>
 					</div>
+
+					<div className={cnbg} />
 				</div>
 
 				<div className="body" onScroll={this.onScroll}>
-					{loading ? <Loader / > : (
-						<React.Fragment>
-							{items.map((item: any, i: number) => {
-								let content = null;
-								let key = [ 'board', view.id, id, item.id ].join('-');
+					<div className="bg">
+						{loading ? <Loader / > : (
+							<React.Fragment>
+								{items.map((item: any, i: number) => {
+									let content = null;
+									let key = [ 'board', view.id, id, item.id ].join('-');
 
-								if (item.isAdd) {
-									content = (
-										<div key={key}  id={`card-${id}-add`} className="card add" onClick={() => { onRecordAdd(id, 1); }}>
-											<Icon className="plus" />
-										</div>
-									);
-								} else {
-									content = (
-										<Card 
-											key={key} 
-											{...this.props} 
-											id={item.id} 
-											groupId={id}
-											index={i}
-										/>
-									);
-								};
-								return content;
-							})}
-						</React.Fragment>
-					)}
+									if (item.isAdd) {
+										content = (
+											<div key={key}  id={`card-${id}-add`} className="card add" onClick={() => { onRecordAdd(id, 1); }}>
+												<Icon className="plus" />
+											</div>
+										);
+									} else {
+										content = (
+											<Card 
+												key={key} 
+												{...this.props} 
+												id={item.id} 
+												groupId={id}
+												index={i}
+											/>
+										);
+									};
+									return content;
+								})}
+							</React.Fragment>
+						)}
+						<div className={cnbg} />
+					</div>
 				</div>
-
-				<div className="bgColor" />
 			</div>
 		);
 	};
