@@ -92,7 +92,7 @@ const MenuGroupEdit = observer(class MenuGroupEdit extends React.Component<Props
 		return [
 			{ 
 				children: [ 
-					{ id: 'hide', icon: 'hide', name: (this.isHidden ? 'Hide column' : 'Show column') } 
+					{ id: 'hide', icon: 'hide', name: (this.isHidden ? 'Show column' : 'Hide column') } 
 				]
 			},
 			{ children: colors },
@@ -144,7 +144,7 @@ const MenuGroupEdit = observer(class MenuGroupEdit extends React.Component<Props
 			update.push(item);
 		});
 
-		dbStore.groupsSet(rootId, blockId, groups);
+		dbStore.groupsSet(rootId, blockId, update);
 		C.BlockDataviewGroupOrderUpdate(rootId, blockId, { viewId: view.id, groups: update });
 
 		this.forceUpdate();
