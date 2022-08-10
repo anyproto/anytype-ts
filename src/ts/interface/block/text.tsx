@@ -22,7 +22,7 @@ export enum MarkType {
 	Code		 = 1,
 	Italic		 = 2,
 	Bold		 = 3,
-	Under		 = 4,
+	Underline	 = 4,
 	Link		 = 5,
 	Color		 = 6,
 	BgColor		 = 7,

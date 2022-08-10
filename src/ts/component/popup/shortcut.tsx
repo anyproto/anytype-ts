@@ -160,11 +160,12 @@ class PopupShortcut extends React.Component<Props, State> {
 					name: 'Text style', children: [
 						{ mac: `${cmd} + B`,			 com: 'Ctrl + B',			 name: 'Bold' },
 						{ mac: `${cmd} + I`,			 com: 'Ctrl + I',			 name: 'Italic' },
-						{ mac: `${cmd} + Shift +S`,	 com: 'Ctrl + Shift + S',	 name: 'Strikethrough' },
+						{ mac: `${cmd} + U`,			 com: 'Ctrl + U',			 name: 'Underline' },
+						{ mac: `${cmd} + Shift +S`,		 com: 'Ctrl + Shift + S',	 name: 'Strikethrough' },
 						{ mac: `${cmd} + K`,			 com: 'Ctrl + K',			 name: 'Add a link' },
 						{ mac: `${cmd} + L`,			 com: 'Ctrl + L',			 name: 'Convert to Inline code' },
-						{ mac: `${cmd} + Shift + C`,		 com: 'Ctrl + Shift + C',	 name: 'Apply previously selected font color' },
-						{ mac: `${cmd} + Shift + H`,		 com: 'Ctrl + Shift + H',	 name: 'Apply previously selected highlight' },
+						{ mac: `${cmd} + Shift + C`,	 com: 'Ctrl + Shift + C',	 name: 'Apply previously selected font color' },
+						{ mac: `${cmd} + Shift + H`,	 com: 'Ctrl + Shift + H',	 name: 'Apply previously selected highlight' },
 					]
 				},
 			],

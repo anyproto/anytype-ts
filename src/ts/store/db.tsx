@@ -260,7 +260,7 @@ class DbStore {
 	};
 
 	groupsSet (rootId: string, blockId: string, groups: any[]) {
-		this.groupMap.set(this.getId(rootId, blockId), groups);
+		this.groupMap.set(this.getId(rootId, blockId), observable(groups));
 	};
 
 	groupsClear (rootId: string, blockId: string) {

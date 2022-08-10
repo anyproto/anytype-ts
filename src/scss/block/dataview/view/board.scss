@@ -28,11 +28,11 @@
 				.bgColor { position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; opacity: 0.5; }
 				.bgColor-default { background-color: #f1f0ed; }
 
-                .head { cursor: grab; color: $colorDarkGrey; width: 100%; position: relative; }
+                .head { cursor: grab; color: $colorDarkGrey; width: 100%; position: relative; padding: 8px 0px 0px 0px; }
 				.head * { cursor: grab; }
 				.head {
 					.sides { 
-						display: flex; width: 100%; gap: 0px 6px; background: #fff; border-radius: 12px; padding: 4px 16px; line-height: 24px;
+						display: flex; width: 100%; gap: 0px 6px; background: #fff; border-radius: 12px; padding: 0px 16px; line-height: 24px;
 						position: relative; z-index: 1;
 					}
 					.side.left { width: calc(100% - 54px); display: flex; align-items: flex-start; gap: 0px 6px; justify-content: flex-start; }

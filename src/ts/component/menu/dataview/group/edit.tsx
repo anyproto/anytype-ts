@@ -133,17 +133,20 @@ const MenuGroupEdit = observer(class MenuGroupEdit extends React.Component<Props
 		const { rootId, blockId, groupId, getView } = data;
 		const view = getView();
 		const group = dbStore.getGroup(rootId, blockId, groupId);
+		const groups = this.getItems();
+		const update: any[] = [];
 
-		if (!group) {
-			return;
-		};
+		groups.forEach((it: any, i: number) => {
+			const item = { ...it, groupId: it.id, index: i };
+			if (it.id == groupId) {
+				item.bgColor = this.color;
+				item.isHidden = this.isHidden;
+			};
+			update.push(item);
+		});
 
-		console.log(group);
-
-		group.isHidden = this.isHidden;
-		group.bgColor = this.color;
-
-		C.BlockDataviewGroupOrderUpdate(rootId, blockId, { viewId: view.id, groups: [ { groupId: group.id, ...group } ] });
+		dbStore.groupsSet(rootId, blockId, groups);
+		C.BlockDataviewGroupOrderUpdate(rootId, blockId, { viewId: view.id, groups: update });
 		this.forceUpdate();
 	};
 	

@@ -835,6 +835,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		return [
 			{ key: `${cmd}+b`,		 type: I.MarkType.Bold,		 param: '' },
 			{ key: `${cmd}+i`,		 type: I.MarkType.Italic,	 param: '' },
+			{ key: `${cmd}+u`,		 type: I.MarkType.Underline, param: '' },
 			{ key: `${cmd}+shift+s`, type: I.MarkType.Strike,	 param: '' },
 			{ key: `${cmd}+k`,		 type: I.MarkType.Link,		 param: '' },
 			{ key: `${cmd}+l`,		 type: I.MarkType.Code,		 param: '' },
