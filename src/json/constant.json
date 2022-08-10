@@ -164,7 +164,8 @@
 		"done": "done",
 		"space": "workspaceId",
 		"creator": "creator",
-		"setOf": "setOf"
+		"setOf": "setOf",
+		"source": "url"
 	},
 
 	"typeId": {
