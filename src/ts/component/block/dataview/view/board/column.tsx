@@ -11,7 +11,7 @@ import Cell from 'Component/block/dataview/cell';
 interface Props extends I.ViewComponent {
 	id: string;
 	value: any;
-	onRecordAdd (groupId: string): void;
+	onRecordAdd (groupId: string, dir: number): void;
 	onDragStartColumn?: (e: any, groupId: string) => void;
 	onScrollColumn?: () => void;
 	onDragStartCard?: (e: any, groupId: string, record: any) => void;
@@ -100,9 +100,10 @@ const Column = observer(class Column extends React.Component<Props, State> {
 							) : ''}
 							{label}
 						</div>
+
 						<div className="side right">
 							<Icon className="more" />
-							<Icon className="add" />
+							<Icon className="add"  onClick={() => { onRecordAdd(id, -1); }} />
 						</div>
 					</div>
 				</div>
@@ -116,7 +117,7 @@ const Column = observer(class Column extends React.Component<Props, State> {
 
 								if (item.isAdd) {
 									content = (
-										<div key={key}  id={`card-${id}-add`} className="card add" onClick={() => { onRecordAdd(id); }}>
+										<div key={key}  id={`card-${id}-add`} className="card add" onClick={() => { onRecordAdd(id, 1); }}>
 											<Icon className="plus" />
 										</div>
 									);

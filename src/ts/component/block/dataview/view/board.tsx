@@ -165,7 +165,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 		});
 	};
 
-	onRecordAdd (groupId: string) {
+	onRecordAdd (groupId: string, dir: number) {
 		const { rootId, block, getView } = this.props;
 		const view = getView();
 		const group = dbStore.getGroup(rootId, block.id, groupId);
@@ -185,7 +185,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 				const newRecord = message.record;
 				const records = dbStore.getRecords(subId, '');
 				const oldIndex = records.findIndex(it => it.id == newRecord.id);
-				const newIndex = records.length - 1;
+				const newIndex = dir > 0 ? records.length - 1 : 0;
 
 				dbStore.recordsSet(subId, '', arrayMove(records, oldIndex, newIndex));
 
