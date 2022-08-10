@@ -384,10 +384,12 @@ class Cell extends React.Component<Props, {}> {
 						
 						if (item.id == 'go') {
 							Renderer.send('urlOpen', scheme + value);
+							analytics.event('RelationUrlOpenLink');
 						};
 
 						if (item.id == 'copy') {
 							Util.clipboardCopy({ text: value, html: value });
+							analytics.event('RelationUrlCopyLink');
 						};
 
 						if (item.id == 'reload') {
