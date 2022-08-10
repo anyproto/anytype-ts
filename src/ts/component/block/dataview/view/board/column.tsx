@@ -23,6 +23,7 @@ interface State {
 	loading: boolean;
 };
 
+const $ = require('jquery');
 const Constant = require('json/constant.json');
 
 const Column = observer(class Column extends React.Component<Props, State> {
@@ -243,9 +244,15 @@ const Column = observer(class Column extends React.Component<Props, State> {
 
 	onMore (e: any) {
 		const { rootId, block, id, getView } = this.props;
+		const node = $(ReactDOM.findDOMNode(this));
+
+		node.addClass('active');
 
 		menuStore.open('dataviewGroupEdit', {
 			element: `#button-${id}-more`,
+			onClose: () => {
+				node.removeClass('active');
+			},
 			data: {
 				rootId,
 				blockId: block.id,

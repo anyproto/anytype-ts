@@ -71,7 +71,7 @@
 					.bgColor { border-radius: 0px 0px 4px 4px; }
 				}
             }
-			.column:hover {
+			.column:hover, .column.active {
 				.head .side.right .icon { opacity: 1; }
 			}
 

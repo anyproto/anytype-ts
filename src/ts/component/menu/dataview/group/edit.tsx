@@ -119,6 +119,7 @@ const MenuGroupEdit = observer(class MenuGroupEdit extends React.Component<Props
 		};
 
 		this.save();
+		this.props.close();
 	};
 
 	onMouseEnter (e: any, item: any) {
