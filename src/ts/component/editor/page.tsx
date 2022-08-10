@@ -1578,11 +1578,11 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		const isEmpty = first && (focused == first.id) && !first.getLength() && (object.internalFlags || []).includes(I.ObjectFlag.DeleteEmpty);
 
 		const options: any[] = [
-			{ id: 'link', name: 'Create link' },
+			{ id: 'link', name: 'Paste as link' },
 			isEmpty && !isInsideTable ? { id: 'object', name: 'Create bookmark object' } : null,
-			!isInsideTable ? { id: 'block', name: 'Create bookmark block' } : null,
+			!isInsideTable ? { id: 'block', name: 'Create bookmark' } : null,
 			{ id: 'cancel', name: 'Paste as text' },
-			//{ id: 'embed', name: 'Create embed' },
+			//{ id: 'embed', name: 'Paste as embed' },
 		].filter(it => it);
 
 		menuStore.open('select', { 
