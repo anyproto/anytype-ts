@@ -22,11 +22,11 @@
 				.ghost.bottom { display: block; }
 			}
 
-            .columns { display: flex; flex-direction: row; gap: 0px 10px; }
-            .column { width: 254px; flex-shrink: 0; display: flex; flex-direction: column; }
+            .columns { display: flex; flex-direction: row; gap: 0px 8px; }
+            .column { width: 254px; flex-shrink: 0; display: flex; flex-direction: column; border-radius: 4px; }
             .column {
                 .head { 
-					padding: 4px 10px; width: 240px; margin: 6px 0px; cursor: grab; border-radius: 12px; background: #fff; color: $colorDarkGrey; 
+					padding: 4px 10px; width: 240px; margin: 6px auto; cursor: grab; border-radius: 12px; background: #fff; color: $colorDarkGrey; 
 					line-height: 24px; 
 				}
 				.head * { cursor: grab; }
@@ -73,6 +73,9 @@
 				}
 			}
 
+			.column.bgColor {
+				.head { background: none; }
+			}
 			.column.isDragging { opacity: 0.3; }
 			.column.isClone {
 				.body { overflow: visible; max-height: unset; }
@@ -81,7 +84,7 @@
 
 			.column > .ghost { margin-top: 42px; width: 240px; flex-shrink: 0; }
 			
-            .card { width: 240px; display: flex; flex-direction: column; gap: 8px 0px; margin-bottom: 8px; position: relative; }
+            .card { width: 240px; display: flex; flex-direction: column; gap: 8px 0px; margin: 0px auto 8px auto; position: relative; }
 			.card {
 				.cardContent { border: 1px solid $colorBorderDark; border-radius: 12px; padding: 16px; background: $colorWhite; }
 			}
@@ -92,7 +95,7 @@
 			}
 
             .card.add { 
-				min-height: unset; text-align: center; padding: 10px 0px; margin: 0px; line-height: 1; transition: $transitionFast; cursor: pointer; 
+				min-height: unset; text-align: center; padding: 10px 0px; margin: 0px auto; line-height: 1; transition: $transitionFast; cursor: pointer; 
 				border: 1px solid $colorVeryLightGrey; border-radius: 12px; flex-direction: row; justify-content: center; background: $colorWhite;
 			}
 			.card.add.first { margin: 0px; }
