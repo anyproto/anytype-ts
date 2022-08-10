@@ -72,6 +72,7 @@ class MenuSmile extends React.Component<Props, State> {
 					onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }}
 					onMouseLeave={(e: any) => { this.onMouseLeave(e); }} 
 					onMouseDown={(e: any) => { this.onMouseDown(item.id, item.smile, item.skin); }}
+					onContextMenu={(e: any) => { this.onSkin(item.id, item.smile); }}
 				>
 					<div className="iconObject c32" data-code={str}>
 						<IconEmoji className="c32" size={28} icon={str} />
@@ -390,23 +391,7 @@ class MenuSmile extends React.Component<Props, State> {
 		if (item && item.skin_variations) {
 			this.timeoutMenu = window.setTimeout(() => {
 				win.off('mouseup.smile');
-				
-				menuStore.open('smileSkin', {
-					type: I.MenuType.Horizontal,
-					element: '.menuSmile #item-' + n,
-					vertical: I.MenuDirection.Top,
-					horizontal: I.MenuDirection.Center,
-					data: {
-						smileId: id,
-						onSelect: (skin: number) => {
-							this.onSelect(id, skin);
-							close();
-						}
-					},
-					onClose: () => {
-						this.id = '';
-					}
-				});
+				this.onSkin(n, id);
 			}, 200);
 		};
 		
@@ -420,6 +405,28 @@ class MenuSmile extends React.Component<Props, State> {
 			};
 			window.clearTimeout(this.timeoutMenu);
 			win.off('mouseup.smile')
+		});
+	};
+
+	onSkin (n: number, id: string) {
+		const { close } = this.props;
+
+		menuStore.open('smileSkin', {
+			type: I.MenuType.Horizontal,
+			element: '.menuSmile #item-' + n,
+			vertical: I.MenuDirection.Top,
+			horizontal: I.MenuDirection.Center,
+			data: {
+				smileId: id,
+				onSelect: (skin: number) => {
+					this.onSelect(id, skin);
+
+					close();
+				}
+			},
+			onClose: () => {
+				this.id = '';
+			}
 		});
 	};
 	
