@@ -608,13 +608,12 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 	resize () {
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
-		const scroll = node.find('.scroll');
 		const viewItem = node.find('.viewItem');
 		const ww = win.width();
 		const mw = ww - 192;
 		const size = Constant.size.dataview.board;
 		const groups = this.getGroups(false);
-		const width = 30 + groups.length * (size.card + size.margin);
+		const width = groups.length * (size.card + size.margin);
 		
 		let vw = 0;
 		let margin = 0;
@@ -626,7 +625,6 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 			margin = (ww - mw) / 2; 
 		};
 
-		scroll.css({ width: ww, marginLeft: -margin / 2 , paddingLeft: margin / 2 });
 		viewItem.css({ width: vw });
 	};
 	
