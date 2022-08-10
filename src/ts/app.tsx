@@ -749,6 +749,7 @@ class App extends React.Component<Props, State> {
 
 		keyboard.disableContextOpen(true);
 
+		const win = $(window);
 		const rootId = keyboard.getRootId();
 		const rect = Util.selectionRect();
 		const { focused, range } = focus.state;
@@ -757,7 +758,7 @@ class App extends React.Component<Props, State> {
 		options.push({ id: 'add-to-dictionary', name: 'Add to dictionary' });
 
 		menuStore.open('select', {
-			rect: rect,
+			rect: { ...rect, y: rect.y + win.scrollTop() },
 			onOpen: () => { menuStore.close('blockContext'); },
 			onClose: () => { keyboard.disableContextOpen(false); },
 			data: {
