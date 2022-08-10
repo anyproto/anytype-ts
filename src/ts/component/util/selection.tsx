@@ -1,20 +1,17 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { getRange } from 'selection-ranges';
-import { I, M, C, Key, focus, keyboard, scrollOnMove, Util, analytics } from 'ts/lib';
+import { I, M, focus, keyboard, scrollOnMove, Util } from 'Lib';
 import { observer } from 'mobx-react';
-import { commonStore, blockStore, menuStore } from 'ts/store';
+import { commonStore, blockStore, menuStore } from 'Store';
 import { throttle } from 'lodash';
 
-interface Props {};
-
 const $ = require('jquery');
-const raf = require('raf');
 
 const THROTTLE = 20;
 const THRESHOLD = 10;
 
-const SelectionProvider = observer(class SelectionProvider extends React.Component<Props, {}> {
+const SelectionProvider = observer(class SelectionProvider extends React.Component<{}, {}> {
 
 	_isMounted = false;
 	x: number = 0;
@@ -72,14 +69,14 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	};
 	
 	unbindMouse () {
-		$(window).unbind(`mousemove.selection mouseup.selection`);
+		$(window).off('mousemove.selection mouseup.selection');
 	};
 	
 	unbindKeyboard () {
 		const isPopup = keyboard.isPopup();
 
-		$(window).unbind(`keydown.selection keyup.selection`);
-		Util.getScrollContainer(isPopup).unbind('scroll.selection');
+		$(window).off('keydown.selection keyup.selection');
+		Util.getScrollContainer(isPopup).off('scroll.selection');
 	};
 
 	preventSelect (v: boolean) {

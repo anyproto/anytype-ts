@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { keyboard } from 'ts/lib';
+import { keyboard } from 'Lib';
 
 const $ = require('jquery');
 
@@ -77,6 +77,7 @@ class Textarea extends React.Component<Props, State> {
 				onBlur={this.onBlur}
 				onCopy={this.onCopy}
 				maxLength={maxLength ? maxLength : undefined}
+				spellCheck={false}
 			/>
 		);
 	};

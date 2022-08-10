@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { IconObject, Loader } from 'ts/component';
-import { I, C, DataUtil } from 'ts/lib';
-import { menuStore, detailStore } from 'ts/store';
+import { IconObject, Loader } from 'Component';
+import { I, C, DataUtil } from 'Lib';
+import { menuStore, detailStore } from 'Store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.BlockComponent {};
@@ -11,7 +11,6 @@ interface State {
 };
 
 const Constant = require('json/constant.json');
-const { dialog } = window.require('@electron/remote');
 
 const BlockIconUser = observer(class BlockIconUser extends React.Component<Props, State> {
 
@@ -83,7 +82,7 @@ const BlockIconUser = observer(class BlockIconUser extends React.Component<Props
 			filters: [ { name: '', extensions: Constant.extension.cover } ]
 		};
 
-		dialog.showOpenDialog(options).then((result: any) => {
+		window.Electron.showOpenDialog(options).then((result: any) => {
 			const files = result.filePaths;
 			if ((files == undefined) || !files.length) {
 				return;

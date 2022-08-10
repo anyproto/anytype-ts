@@ -22,7 +22,7 @@
 
 .button.blank.red { color: $colorRed; }
 
-.button.c28 { height: 28px; line-height: 26px; border-radius: 6px; }
+.button.c28 { @include text-small; height: 28px; line-height: 28px; border-radius: 6px; }
 
 input.button { line-height: 1; }
 

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, Util } from 'ts/lib';
+import { I, Util } from 'Lib';
 
 interface Props {
 	id?: string;
@@ -79,9 +79,11 @@ class Icon extends React.Component<Props, {}> {
 	};
 	
 	onMouseLeave (e: any) {
-		const { onMouseLeave } = this.props;
+		const { tooltip, onMouseLeave } = this.props;
 		
-		Util.tooltipHide(false);
+		if (tooltip) {
+			Util.tooltipHide(false);
+		};
 		
 		if (onMouseLeave) {
 			onMouseLeave(e);

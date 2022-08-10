@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { Input, Button } from 'ts/component';
-import { I, Util, keyboard, translate, analytics } from 'ts/lib';
+import { Input, Button } from 'Component';
+import { I, Util, keyboard, translate, analytics } from 'Lib';
 
 interface Props extends I.Menu {};
 

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, keyboard } from 'ts/lib';
+import { I, keyboard } from 'Lib';
 import Inputmask from 'inputmask';
 
 interface Props {
@@ -97,6 +97,7 @@ class Input extends React.Component<Props, State> {
 				maxLength={maxLength ? maxLength : undefined}
 				accept={accept ? accept : undefined}
 				multiple={multiple}
+				spellCheck={false}
 			/>
 		);
 	};

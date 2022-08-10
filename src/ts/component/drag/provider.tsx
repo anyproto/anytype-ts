@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { DragLayer } from 'ts/component';
-import { I, C, focus, keyboard, Util, scrollOnMove, analytics } from 'ts/lib';
-import { blockStore } from 'ts/store';
+import { DragLayer } from 'Component';
+import { I, C, focus, keyboard, Util, scrollOnMove, analytics } from 'Lib';
+import { blockStore } from 'Store';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 
@@ -19,8 +19,6 @@ const OFFSET = 100;
 const DragProvider = observer(class DragProvider extends React.Component<Props, {}> {
 
 	refLayer: any = null;
-	dropType: I.DropType = I.DropType.None;
-	ids: string[] = [];
 	commonDropPrevented: boolean = false;
 	position: I.BlockPosition = I.BlockPosition.None;
 	hoverData: any = null;
@@ -114,6 +112,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 
 		const rootId = keyboard.getRootId();
 		const root = blockStore.getLeaf(rootId, rootId);
+
 		if (!root || root.isLocked()) {
 			return;
 		};
@@ -155,7 +154,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 			});
 		} else
 		if (data && this.canDrop && (position != I.BlockPosition.None)) {
-			this.onDrop(e, data.dropType, rootId, targetId, position);
+			this.onDrop(e, data.dropType, targetId, position);
 		};
 
 		this.clearState();
@@ -176,7 +175,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 		const diff = isPopup ? Math.abs(top - this.top) * (top > this.top ? 1 : -1) : 0;
 
 		this.initData();
-		this.checkNodes(e.pageX, e.pageY + diff, isFileDrag);
+		this.checkNodes(e, e.pageX, e.pageY + diff, isFileDrag);
 	};
 
 	onDragStart (e: any, type: I.DropType, ids: string[], component: any) {
@@ -198,11 +197,17 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 
 		this.top = container.scrollTop();
 		this.refLayer.show(rootId, type, ids, component);
-		this.set(type, ids);
+		this.setClass(ids);
 		this.unbind();
 		this.initData();
 
 		e.dataTransfer.setDragImage(layer.get(0), 0, 0);
+		e.dataTransfer.setData('application/json', JSON.stringify({
+			rootId,
+			dropType: type,
+			ids,
+		}));
+
 		node.addClass('isDragging');
 		body.addClass('isDragging');
 		keyboard.setDragging(true);
@@ -219,7 +224,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 
 		if (selection) {
 			if (type == I.DropType.Block) {
-				selection.set(I.SelectType.Block, this.ids);
+				selection.set(I.SelectType.Block, ids);
 			};
 			selection.hide();
 			selection.preventSelect(true);
@@ -233,7 +238,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 		const top = Util.getScrollContainer(isPopup).scrollTop();
 		const diff = isPopup ? Math.abs(top - this.top) * (top > this.top ? 1 : -1) : 0;
 
-		this.checkNodes(e.pageX, e.pageY + diff, isFileDrag);
+		this.checkNodes(e, e.pageX, e.pageY + diff, isFileDrag);
 		scrollOnMove.onMouseMove(e.clientX, e.clientY);
 	};
 
@@ -266,7 +271,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 		scrollOnMove.onMouseUp(e);
 	};
 
-	onDrop (e: any, type: string, rootId: string, targetId: string, position: I.BlockPosition) {
+	onDrop (e: any, type: string, targetId: string, position: I.BlockPosition) {
 		const { dataset } = this.props;
 		const { selection } = dataset || {};
 		
@@ -274,17 +279,18 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 			selection.preventClear(false);
 		};
 
-		console.log('[DragProvider].onDrop src type:', this.dropType, 'dst type:', type);
-		console.log('[DragProvider].onDrop target:', targetId, 'ids:', this.ids, 'position:', position);
+		let data: any = {};
+		try { data = JSON.parse(e.dataTransfer.getData('application/json')) || {}; } catch (e) {};
 
+		let { rootId, dropType, ids } = data;
 		let contextId = rootId;
-		let targetContextId = rootId;
+		let targetContextId = keyboard.getRootId();
 		let isToggle = false;
 
 		// DropTarget type
 		switch (type) {
 			case I.DropType.Block:
-				const target = blockStore.getLeaf(rootId, targetId);
+				const target = blockStore.getLeaf(targetContextId, targetId);
 				
 				if (!target) {
 					console.log('[DragProvider].onDrop No target', target);
@@ -302,12 +308,12 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 						return;
 					};
 				} else {
-					const element = blockStore.getMapElement(rootId, targetId);
-					const parent = blockStore.getLeaf(rootId, element.parentId);
+					const element = blockStore.getMapElement(targetContextId, targetId);
+					const parent = blockStore.getLeaf(targetContextId, element.parentId);
 
 					if (parent && parent.isLayoutColumn() && ([ I.BlockPosition.Left, I.BlockPosition.Right ].indexOf(position) >= 0)) {
 						targetId = parent.id;
-					};	
+					};
 				};
 				break;
 
@@ -323,9 +329,9 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 		console.log('[DragProvider].onDrop from:', contextId, 'to: ', targetContextId);
 
 		// Source type
-		switch (this.dropType) {
+		switch (dropType) {
 			case I.DropType.Block:
-				C.BlockListMoveToExistingObject(contextId, targetContextId, this.ids || [], targetId, position, () => {
+				C.BlockListMoveToExistingObject(contextId, targetContextId, ids || [], targetId, position, () => {
 					if (isToggle && (position == I.BlockPosition.InnerFirst)) {
 						blockStore.toggle(rootId, targetId, true);
 					};
@@ -334,17 +340,13 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 						selection.renderSelection();
 					};
 
-					analytics.event('ReorderBlock', { count: this.ids.length });
+					analytics.event('ReorderBlock', { count: ids.length });
 				});
 				break;
 
 			case I.DropType.Relation:
-				this.ids.forEach((key: string) => {
-					let param: any = {
-						type: I.BlockType.Relation,
-						content: { key }
-					};
-					C.BlockCreate(targetContextId, targetId, position, param);
+				ids.forEach((key: string) => {
+					C.BlockCreate(targetContextId, targetId, position, { type: I.BlockType.Relation, content: { key } });
 				});
 				break;
 		};
@@ -365,8 +367,9 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 		};
 	};
 
-	checkNodes (ex: number, ey: number, isFileDrag: boolean) {
-		const rootId = keyboard.getRootId();
+	checkNodes (e, ex: number, ey: number, isFileDrag: boolean) {
+		let data: any = {};
+		try { data = JSON.parse(e.dataTransfer.getData('application/json')) || {}; } catch (e) {};
 
 		this.setHoverData(null);
 		this.setPosition(I.BlockPosition.None);
@@ -385,6 +388,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 			};
 		};
 
+		let { rootId, dropType, ids } = data;
 		let x = 0;
 		let y = 0;
 		let width = 0;
@@ -408,8 +412,8 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 		if (this.hoverData) {
 			this.canDrop = true;
 
-			if (!isFileDrag && (this.dropType == I.DropType.Block)) {
-				this.canDrop = this.checkParentIds(this.hoverData.id);
+			if (!isFileDrag && (dropType == I.DropType.Block)) {
+				this.canDrop = this.checkParentIds(ids, this.hoverData.id);
 			};
 
 			const initVars = () => {
@@ -511,10 +515,6 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 				recalcPosition();
 			};
 
-			if (isTable && [ I.BlockPosition.Left, I.BlockPosition.Right ].includes(this.position)) {
-				recalcPosition();
-			};
-
 			// You can't drop on Featured or Type
 			if (isFeatured || isType) {
 				this.setPosition(I.BlockPosition.None);
@@ -575,25 +575,22 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 	};
 
 	unbind () {
-		$(window).unbind('dragend.drag drag.drag');
+		$(window).off('dragend.drag drag.drag');
 	};
 
-	set (type: I.DropType, ids: string[]) {
-		this.dropType = type;
-		this.ids = ids.map((id: any) => { return id.toString(); });
-
+	setClass (ids: string[]) {
 		$('.block.isDragging').removeClass('isDragging');
-		for (let id of this.ids) {
+		for (let id of ids) {
 			$('#block-' + id).addClass('isDragging');
 		};
 	};
 
-	checkParentIds (id: string): boolean {
+	checkParentIds (ids: string[], id: string): boolean {
 		let parentIds: string[] = [];
 		this.getParentIds(id, parentIds);
 
-		for (let dropId of this.ids) {
-			if ((dropId == id) || (parentIds.length && (parentIds.indexOf(dropId) >= 0))) {
+		for (let dropId of ids) {
+			if ((dropId == id) || (parentIds.length && parentIds.includes(dropId))) {
 				return false;
 			};
 		};

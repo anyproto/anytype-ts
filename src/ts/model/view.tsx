@@ -1,4 +1,4 @@
-import { I, M, Util, DataUtil } from 'ts/lib';
+import { I, M, Util, DataUtil } from 'Lib';
 import { observable, intercept, makeObservable } from 'mobx';
 
 class View implements I.View {
@@ -7,10 +7,11 @@ class View implements I.View {
 	name: string = '';
 	type: I.ViewType = I.ViewType.Grid;
 	coverRelationKey: string = '';
-	groupRelationKey: string = '';
 	coverFit: boolean = false;
 	cardSize: I.CardSize = I.CardSize.Small;
 	hideIcon: boolean = false;
+	groupRelationKey: string = '';
+	groupBackgroundColors: boolean = false;
 	sorts: I.Sort[] = [];
 	filters: I.Filter[] = [];
 	relations: any[] = [];
@@ -22,10 +23,11 @@ class View implements I.View {
 		self.name = String(props.name || DataUtil.defaultName('view'));
 		self.type = Number(props.type) || I.ViewType.Grid;
 		self.coverRelationKey = String(props.coverRelationKey || '');
-		self.groupRelationKey = String(props.groupRelationKey || '');
 		self.coverFit = Boolean(props.coverFit);
 		self.hideIcon = Boolean(props.hideIcon);
 		self.cardSize = Number(props.cardSize) || I.CardSize.Small;
+		self.groupRelationKey = String(props.groupRelationKey || '');
+		self.groupBackgroundColors = Boolean(props.groupBackgroundColors);
 		
 		self.relations = (props.relations || []).map((it: I.ViewRelation) => { return new M.ViewRelation(it); });
 		self.filters = (props.filters || []).map((it: I.Filter) => { return new M.Filter(it); });
@@ -36,10 +38,11 @@ class View implements I.View {
 			name: observable,
 			type: observable,
 			coverRelationKey: observable,
-			groupRelationKey: observable,
 			coverFit: observable,
 			cardSize: observable,
 			hideIcon: observable,
+			groupRelationKey: observable,
+			groupBackgroundColors: observable,
 			sorts: observable,
 			filters: observable,
 			relations: observable,

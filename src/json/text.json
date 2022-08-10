@@ -258,11 +258,13 @@
 	"popupSettingsPicture": { "en": "Pictures" },
 	"popupSettingsColor": { "en": "Colors" },
 	"popupSettingsGradient": { "en": "Gradients" },
+	"popupSettingsCodeStub": { "en": "Follow the white rabbit" },
+	"popupSettingsMobileQRSubTitle": { "en": "To use Anytype on Android & iOS:" },
+	"popupSettingsMobileQRText": { "en": "1. Launch Anytype<br/>2. Press \"Login\"<br/>3. Press \"Scan QR code\"<br/>4. Click on the QR code (at the right) to display it clearly<br/>5. Point your phone to this screen" },
 	"popupSettingsPhraseTitle": { "en": "Recovery phrase" },
 	"popupSettingsPhraseStub": { "en": "You take the red pill, you stay in Wonderland, and I show you how deep the rabbit hole goes." },
-	"popupSettingsCodeStub": { "en": "Follow the white rabbit" },
-	"popupSettingsMobileQRSubTitle": { "en": "To use Anytype on Android & iOS" },
-	"popupSettingsMobileQRText": { "en": "— Launch Anytype<br/>— Press \"Login\"<br/>— \"Scan QR code\"<br/>— Click on the QR code to display it clearly<br/>— Point your phone to this screen" },
+	"popupSettingsPhraseCopy": { "en": "Show and copy phrase" },
+	"popupSettingsPhraseShowQR": { "en": "Show QR-code" },
 	"popupSettingsPhraseText": { "en": "Your Recovery phrase protects your account. You’ll need it to sign in if you don’t have access to your devices. Keep it in a safe place. Click to show:" },
 	"popupSettingsPhraseBackup": { "en": "Back up phrase" },
 	"popupSettingsPinTitle": { "en": "Pin code" },
@@ -328,6 +330,7 @@
 
 	"popupSearchPlaceholder": { "en": "Search for an object..." },
 	"popupSearchEmpty": { "en": "No objects found" },
+	"popupSearchEmptyFilter": { "en": "<b>There are no objects named <span>\"%s\"</span></b>Try creating a new one or search for something else" },
 
 	"popupConfirmUpdateErrorTitle": { "en": "Oops!" },
 	"popupConfirmUpdateErrorText": { "en": "Can't check available updates, please try again later.<br/><span class=\"error\">%s</span>" },
@@ -338,7 +341,7 @@
 	"menuSmileRandom": { "en": "Random emoji" },
 	"menuSmileUpload": { "en": "Upload image" },
 	"menuSmileRemove": { "en": "Remove" },
-	"menuSmileEmpty": { "en": "<b>There are no emojis named \"%s\"</b>Try to find a new one or upload your image" },
+	"menuSmileEmpty": { "en": "<b>There are no emojis named <span>\"%s\"</span></b>Try to find a new one or upload your image" },
 
 	"menuCalendarToday": { "en": "Today" },
 	"menuCalendarTomorrow": { "en": "Tomorrow" },
@@ -346,6 +349,8 @@
 	"menuBlockCoverUpload": { "en": "Upload image" },
 	"menuBlockCoverEdit": { "en": "Reposition" },
 	"menuBlockCoverRemove": { "en": "Remove" },
+	"menuBlockCoverEmpty": { "en": "There are no covers found" },
+	"menuBlockCoverEmptyFilter": { "en": "<b>There are no covers named <span>\"%s\"</span></b>Try to find a new one or upload your image" },
 
 	"menuBlockLinkPlaceholder": { "en": "Enter link URL" },
 	"menuBlockLinkLink": { "en": "Link" },

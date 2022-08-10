@@ -1,9 +1,9 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Title, Label, Checkbox } from 'ts/component';
-import { I, C, translate, Util } from 'ts/lib';
-import { authStore } from 'ts/store';
+import { Title, Label, Checkbox } from 'Component';
+import { I, C, translate, Util } from 'Lib';
+import { authStore } from 'Store';
 import { observer } from 'mobx-react';
 
 import Head from './head';
@@ -27,7 +27,7 @@ const PopupSettingsPageDelete = observer(class PopupSettingsPageDelete extends R
 	render () {
 		return (
 			<div>
-				<Head {...this.props} id="account" name={translate('commonCancel')} />
+				<Head {...this.props} returnTo="account" name={translate('commonCancel')} />
 				<Title text={translate('popupSettingsAccountDeleteTitle')} />
 
 				<div className="text">

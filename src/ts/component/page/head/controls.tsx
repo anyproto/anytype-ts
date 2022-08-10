@@ -1,9 +1,9 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Loader } from 'ts/component';
-import { I, C, focus, DataUtil, Util } from 'ts/lib';
-import { menuStore, blockStore, detailStore } from 'ts/store';
+import { Loader } from 'Component';
+import { I, C, focus, DataUtil, Util } from 'Lib';
+import { menuStore, blockStore, detailStore } from 'Store';
 import { observer } from 'mobx-react';
 
 import ControlButtons  from './controlButtons';
@@ -21,7 +21,6 @@ interface State {
 	loading: boolean;
 };
 
-const { dialog } = window.require('@electron/remote');
 const Constant = require('json/constant.json');
 const $ = require('jquery');
 
@@ -38,6 +37,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 		this.onIcon = this.onIcon.bind(this);
 		this.onCoverOpen = this.onCoverOpen.bind(this);
 		this.onCoverClose = this.onCoverClose.bind(this);
+		this.onCoverSelect = this.onCoverSelect.bind(this)
 		this.onLayout = this.onLayout.bind(this);
 		this.onRelation = this.onRelation.bind(this);
 		
@@ -76,6 +76,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 					onIcon={this.onIcon} 
 					onCoverOpen={this.onCoverOpen}
 					onCoverClose={this.onCoverClose}
+					onCoverSelect={this.onCoverSelect}
 					onLayout={this.onLayout}
 					onRelation={this.onRelation}
 					onEdit={() => {}}
@@ -140,7 +141,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 			filters: [ { name: '', extensions: Constant.extension.image } ]
 		};
 		
-		dialog.showOpenDialog(options).then((result: any) => {
+		window.Electron.showOpenDialog(options).then((result: any) => {
 			const files = result.filePaths;
 			if ((files == undefined) || !files.length) {
 				return;
@@ -170,6 +171,12 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 		
 		const node = $(ReactDOM.findDOMNode(this));
 		node.removeClass('hover');
+	};
+
+	onCoverSelect (item: any) {
+		const { rootId } = this.props;
+
+		DataUtil.pageSetCover(rootId, item.type, item.id, item.coverX, item.coverY, item.coverScale);
 	};
 
 	onLayout (e: any) {

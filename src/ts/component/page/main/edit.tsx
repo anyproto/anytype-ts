@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Header, FooterMainEdit as Footer, EditorPage } from 'ts/component';
-import { detailStore, blockStore } from 'ts/store';
-import { Onboarding } from 'ts/lib';
+import { Header, FooterMainEdit as Footer, EditorPage } from 'Component';
+import { detailStore, blockStore } from 'Store';
+import { Onboarding } from 'Lib';
 
 interface Props extends RouteComponentProps<any> {
 	rootId: string;

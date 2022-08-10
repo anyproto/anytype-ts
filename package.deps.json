@@ -1,13 +1,9 @@
 [
 	"electron.js",
-	"electron/server.js",
-	"electron/util.js",
+	"electron/js/*",
 	"electron/env.json",
-	"electron/icon*",
-	"electron/about.css",
-	"electron/about.html",
-	"electron/about.js",
-	"electron/common.js",
+	"electron/img/*",
+	"electron/about/*",
 	"build",
 	"!dist/*",
 	"dist/index.html",
@@ -22,14 +18,44 @@
 	"dist/*.node",
 	"dist/workers/**/*",
 	"!node_modules/**/*",
-	"node_modules/google-protobuf",
-	"node_modules/grpc-web",
 	{
-      "from": "node_modules/lodash.isequal",
-      "to": "node_modules/lodash.isequal"
+		"from": "node_modules/google-protobuf",
+		"to": "node_modules/google-protobuf"
+    },
+	{
+		"from": "node_modules/grpc-web",
+		"to": "node_modules/grpc-web"
+    },
+	{
+		"from": "node_modules/lodash.isequal",
+		"to": "node_modules/lodash.isequal"
     },
     {
-      "from": "node_modules/lodash.escaperegexp",
-      "to": "node_modules/lodash.escaperegexp"
+		"from": "node_modules/lodash.escaperegexp",
+		"to": "node_modules/lodash.escaperegexp"
+    },
+    {
+		"from": "node_modules/read-chunk",
+		"to": "node_modules/read-chunk"
+	},
+    {
+		"from": "node_modules/with-open-file",
+		"to": "node_modules/with-open-file"
+    },
+    {
+		"from": "node_modules/@electron/remote",
+		"to": "node_modules/@electron/remote"
+    },
+    {
+		"from": "node_modules/p-try",
+		"to": "node_modules/p-try"
+    },
+    {
+		"from": "node_modules/p-finally",
+		"to": "node_modules/p-finally"
+    },
+    {
+		"from": "node_modules/file-type",
+		"to": "node_modules/file-type"
     }
 ]

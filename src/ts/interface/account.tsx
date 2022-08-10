@@ -25,6 +25,7 @@ export interface AccountInfo {
 
 export interface AccountConfig {
 	allowSpaces: boolean;
+	allowBeta: boolean;
 };
 
 export interface AccountStatus {

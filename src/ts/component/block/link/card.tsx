@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { IconObject, Cover, ObjectName } from 'ts/component';
-import { detailStore } from 'ts/store';
-import { I, DataUtil, translate } from 'ts/lib';
+import { IconObject, Cover, ObjectName } from 'Component';
+import { detailStore } from 'Store';
+import { I, DataUtil, translate } from 'Lib';
 import { observer } from 'mobx-react';
 
 interface Props extends I.BlockComponent, RouteComponentProps<any> {

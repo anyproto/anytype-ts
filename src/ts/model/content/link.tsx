@@ -1,4 +1,4 @@
-import { I, Util } from 'ts/lib';
+import { I, Util } from 'Lib';
 import { observable, intercept, makeObservable } from 'mobx';
 
 class BlockContentLink implements I.ContentLink {
@@ -17,7 +17,6 @@ class BlockContentLink implements I.ContentLink {
 		self.cardStyle = Number(props.cardStyle) || I.LinkCardStyle.Text;
 		self.description = Number(props.description) || I.LinkDescription.None;
 		self.relations = props.relations || [];
-
 
 		makeObservable(self, {
 			targetBlockId: observable,

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { I, focus } from 'ts/lib';
+import { I, focus } from 'Lib';
 import { observer } from 'mobx-react';
 
 interface Props extends I.BlockComponent {}

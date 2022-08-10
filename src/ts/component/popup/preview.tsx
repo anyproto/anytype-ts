@@ -1,12 +1,16 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Loader } from 'ts/component';
-import { I, Util } from 'ts/lib';
-
-const $ = require('jquery');
+import { Loader, Block } from 'Component';
+import { I } from 'Lib';
+import { commonStore } from 'Store';
 
 interface Props extends I.Popup, RouteComponentProps<any> {}; 
+
+const $ = require('jquery');
+const Constant = require('json/constant.json');
+const BORDER = 16;
+const PADDING = 8;
 
 class PopupPreview extends React.Component<Props, {}> {
 	
@@ -17,20 +21,15 @@ class PopupPreview extends React.Component<Props, {}> {
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { type } = data;
-		
-		let content = null;
-		switch (type) {
-			case I.FileType.Image:
-				content = <img id="content" />;
-				break;
-		};
+		const { rootId, block } = data;
 		
 		return (
 			<div>
 				<Loader id="loader" />
 				<div id="wrap" className="wrap">
-					{content}
+					<div id="blockContent" className="blocks">
+						<Block {...this.props} key={block.id} rootId={rootId} block={block} readonly={true} />
+					</div>
 				</div>
 			</div>
 		);
@@ -38,24 +37,38 @@ class PopupPreview extends React.Component<Props, {}> {
 	
 	componentDidMount () {
 		this.resize();
+		this.rebind();
 	};
 	
 	componentDidUpdate () {
 		this.resize();
 	};
+
+	componentWillUnmount () {
+		this.unbind();
+	};
+
+	unbind () {
+		$(window).off('resize.popupPreview');
+	};
+
+	rebind () {
+		this.unbind();
+		$(window).on('resize.popupPreview', () => { this.resize(); });
+	};
 	
 	resize () {
 		const { param, position } = this.props;
 		const { data } = param;
-		const { type, url } = data;
+		const { block } = data;
 		
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
 		const inner = node.find('#wrap');
-		const content = node.find('#content');
-		const loader = node.find('.loaderWrapper');
+		const content = node.find('#blockContent');
+		const loader = node.find('#loader');
 
-		switch (type) {
+		switch (block.content.type) {
 			case I.FileType.Image:
 				const img = new Image();
 				img.onload = function () {
@@ -63,8 +76,8 @@ class PopupPreview extends React.Component<Props, {}> {
 					
 					let cw = img.width;
 					let ch = img.height;
-					let mw = win.width() - 68;
-					let mh = win.height() - 68;
+					let mw = win.width() - BORDER * 2;
+					let mh = win.height() - BORDER * 2;
 					let width = 0, height = 0;
 					
 					if (cw >= ch) {
@@ -75,12 +88,12 @@ class PopupPreview extends React.Component<Props, {}> {
 						width = Math.min(mw, height / (ch / cw));
 					};
 					
-					content.css({ width: width }).attr({ src: url });
-					inner.css({ height: height });
+					content.css({ width: width - PADDING * 2 });
+					inner.css({ height: height - PADDING });
 					
 					position();
 				};
-				img.src = url;
+				img.src = commonStore.imageUrl(block.content.hash, Constant.size.image);
 				break;
 		};
 		

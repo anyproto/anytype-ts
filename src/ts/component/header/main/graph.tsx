@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Icon, IconObject } from 'ts/component';
-import { I, Util, DataUtil, keyboard } from 'ts/lib';
-import { blockStore, detailStore, popupStore } from 'ts/store';
+import { Icon, IconObject } from 'Component';
+import { I, Util, DataUtil, keyboard } from 'Lib';
+import { blockStore, detailStore, popupStore } from 'Store';
 import { observer } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any>, I.HeaderComponent {};
@@ -53,7 +53,7 @@ const HeaderMainGraph = observer(class HeaderMainGraph extends React.Component<P
 		const { rootId } = this.props;
 
 		popupStore.closeAll(null, () => {
-			DataUtil.objectOpen({ id: rootId, layout: I.ObjectLayout.Graph });
+			DataUtil.objectOpenRoute({ id: rootId, layout: I.ObjectLayout.Graph });
 		});
 	};
 

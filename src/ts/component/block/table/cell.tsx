@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { I } from 'ts/lib';
-import { Icon, Block } from 'ts/component';
+import { I } from 'Lib';
+import { Icon, Block } from 'Component';
 import { observer } from 'mobx-react';
 
 interface Props extends I.BlockComponentTable {
@@ -124,7 +124,6 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 				onMouseEnter={(e: any) => { onCellEnter(e, row.id, column.id, cellId); }}
 				onMouseLeave={(e: any) => { onCellLeave(e, row.id, column.id, cellId); }}
 				onMouseDown={this.onMouseDown}
-				onContextMenu={(e: any) => { onOptions(e, I.BlockType.Text, row.id, column.id, cellId); }}
 				data-column-id={column.id}
 			>
 				{!rowIdx ? <Handle key={'handle-column-' + cellId} type={I.BlockType.TableColumn} {...column} /> : ''}

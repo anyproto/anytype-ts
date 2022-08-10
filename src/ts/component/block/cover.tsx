@@ -1,24 +1,22 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Icon, Drag, Cover, Loader } from 'ts/component';
-import { I, C, Util, DataUtil, focus, translate } from 'ts/lib';
-import { commonStore, blockStore, detailStore, menuStore } from 'ts/store';
+import { Icon, Drag, Cover, Loader } from 'Component';
+import { I, C, Util, DataUtil, focus, translate } from 'Lib';
+import { commonStore, blockStore, detailStore, menuStore } from 'Store';
 import { observer } from 'mobx-react';
 
-import ControlButtons  from 'ts/component/page/head/controlButtons';
+import ControlButtons  from 'Component/page/head/controlButtons';
 
 interface Props extends I.BlockComponent {};
 
 interface State {
 	isEditing: boolean;
 	justUploaded: boolean;
-	loading: boolean;
 };
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
 const Url = require('json/url.json');
-const { dialog } = window.require('@electron/remote');
 
 const BlockCover = observer(class BlockCover extends React.Component<Props, State> {
 	
@@ -26,7 +24,6 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 	state = {
 		isEditing: false,
 		justUploaded: false,
-		loading: false,
 	};
 	cover: any = null;
 	refDrag: any = null;
@@ -46,6 +43,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 		this.onIcon = this.onIcon.bind(this);
 		this.onCoverOpen = this.onCoverOpen.bind(this);
 		this.onCoverClose = this.onCoverClose.bind(this);
+		this.onCoverSelect = this.onCoverSelect.bind(this);
 		this.onLayout = this.onLayout.bind(this);
 		this.onRelation = this.onRelation.bind(this);
 
@@ -69,7 +67,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 	};
 	
 	render () {
-		const { isEditing, loading } = this.state;
+		const { isEditing } = this.state;
 		const { rootId, readonly } = this.props;
 		const object = detailStore.get(rootId, rootId, [ 'iconImage', 'iconEmoji' ].concat(Constant.coverRelationKeys), true);
 		const { coverType, coverId } = object;
@@ -135,6 +133,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 					onIcon={this.onIcon} 
 					onCoverOpen={this.onCoverOpen}
 					onCoverClose={this.onCoverClose}
+					onCoverSelect={this.onCoverSelect}
 					onLayout={this.onLayout}
 					onRelation={this.onRelation}
 					onEdit={this.onEdit}
@@ -158,7 +157,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 				onDragLeave={this.onDragLeave} 
 				onDrop={this.onDrop}
 			>
-				{loading ? <Loader /> : ''}
+				<Loader id="cover-loader" />
 				{content}
 				{elements}
 				{author}
@@ -171,7 +170,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 		this.resize();
 
 		Util.renderLink($(ReactDOM.findDOMNode(this)));
-		$(window).unbind('resize.cover').on('resize.cover', () => { this.resize(); });
+		$(window).off('resize.cover').on('resize.cover', () => { this.resize(); });
 	};
 	
 	componentDidUpdate () {
@@ -182,7 +181,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 	
 	componentWillUnmount () {
 		this._isMounted = false;
-		$(window).unbind('resize.cover');
+		$(window).off('resize.cover');
 	};
 
 	onIcon (e: any) {
@@ -228,7 +227,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 			filters: [ { name: '', extensions: Constant.extension.cover } ]
 		};
 		
-		dialog.showOpenDialog(options).then((result: any) => {
+		window.Electron.showOpenDialog(options).then((result: any) => {
 			const files = result.filePaths;
 			if ((files == undefined) || !files.length) {
 				return;
@@ -312,7 +311,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 
 		const node = $(ReactDOM.findDOMNode(this));
 		node.find('#elements').addClass('hover');
-		
+
 		focus.clear(true);
 	};
 
@@ -320,9 +319,16 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 		if (!this._isMounted) {
 			return;
 		};
-		
+
 		const node = $(ReactDOM.findDOMNode(this));
 		node.find('#elements').removeClass('hover');
+	};
+
+	onCoverSelect (item: any) {
+		const { rootId } = this.props;
+
+		this.loaded = false;
+		DataUtil.pageSetCover(rootId, item.type, item.id, item.coverX, item.coverY, item.coverScale);
 	};
 	
 	onEdit (e: any) {
@@ -335,9 +341,16 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 
 		this.setState({ isEditing: true });
 	};
+
+	setLoading (v: boolean) {
+		const node = $(ReactDOM.findDOMNode(this));
+		const loader = node.find('#cover-loader');
+
+		v ? loader.show() : loader.hide();
+	};
 	
 	onUploadStart () {
-		this.setState({ loading: true });
+		this.setLoading(true);
 	};
 	
 	onUpload (type: I.CoverType, hash: string) {
@@ -350,7 +363,8 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 
 		DataUtil.pageSetCover(rootId, type, hash, this.coords.x, this.coords.y, this.scale, () => {
 			this.loaded = false;
-			this.setState({ loading: false, justUploaded: true });
+			this.setState({ justUploaded: true });
+			this.setLoading(false);
 		});
 	};
 	
@@ -404,6 +418,8 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 			return;
 		};
 
+		this.setLoading(true);
+
 		const cb = () => {
 			const object = detailStore.get(rootId, rootId, [ 'coverScale' ], true);
 			const { coverScale } = object;
@@ -416,6 +432,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 			this.onScaleMove($.Event('resize'), coverScale);
 			this.cover.css({ opacity: 1 });
 			this.loaded = true;
+			this.setLoading(false);
 		};
 		
 		if (this.loaded) {
@@ -458,7 +475,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 
 		node.addClass('isDragging');
 		
-		win.unbind('mousemove.cover mouseup.cover');
+		win.off('mousemove.cover mouseup.cover');
 		win.on('mousemove.cover', (e: any) => { this.onDragMove(e); });
 		win.on('mouseup.cover', (e: any) => { this.onDragEnd(e); });
 	};
@@ -487,7 +504,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 			selection.preventSelect(true);
 		};
 
-		win.unbind('mousemove.cover mouseup.cover');
+		win.off('mousemove.cover mouseup.cover');
 		node.removeClass('isDragging');
 		
 		this.x = e.pageX - this.rect.x - this.x;
@@ -584,10 +601,10 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 		
 		node.removeClass('isDraggingOver');
 		preventCommonDrop(true);
-		this.setState({ loading: true });
+		this.setLoading(true);
 		
 		C.FileUpload('', file, I.FileType.Image, (message: any) => {
-			this.setState({ loading: false });
+			this.setLoading(false);
 			preventCommonDrop(false);
 			
 			if (message.error.code) {

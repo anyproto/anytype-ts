@@ -1,5 +1,5 @@
-import { I, Util, Mark, dispatcher, Encode, Mapper } from 'ts/lib';
-import { dbStore, detailStore } from 'ts/store';
+import { I, Util, Mark, dispatcher, Encode, Mapper } from 'Lib';
+import { dbStore, detailStore } from 'Store';
 
 const Commands = require('lib/pb/protos/commands_pb');
 const Model = require('lib/pkg/lib/pb/model/protos/models_pb.js');
@@ -67,6 +67,22 @@ const WalletConvert = (mnemonic: string, entropy: string, callBack?: (message: a
 	request.setEntropy(entropy);
 
 	dispatcher.request(WalletConvert.name, request, callBack);
+};
+
+const WalletCreateSession = (mnemonic: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Wallet.CreateSession.Request();
+
+	request.setMnemonic(mnemonic);
+
+	dispatcher.request(WalletCreateSession.name, request, callBack);
+};
+
+const WalletCloseSession = (token: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Wallet.CloseSession.Request();
+
+	request.setToken(token);
+
+	dispatcher.request(WalletCloseSession.name, request, callBack);
 };
 
 // ---------------------- WORKSPACE ---------------------- //
@@ -905,7 +921,13 @@ const HistoryShowVersion = (pageId: string, versionId: string, callBack?: (messa
 	request.setPageid(pageId);
 	request.setVersionid(versionId);
 
-	dispatcher.request(HistoryShowVersion.name, request, callBack);
+	dispatcher.request(HistoryShowVersion.name, request, (message: any) => {
+		dispatcher.onObjectView(pageId, '', message.objectView);
+
+		if (callBack) {
+			callBack(message);
+		};
+	});
 };
 
 const HistorySetVersion = (pageId: string, versionId: string, callBack?: (message: any) => void) => {
@@ -1024,7 +1046,13 @@ const ObjectOpen = (objectId: string, traceId: string, callBack?: (message: any)
 	request.setObjectid(objectId);
 	request.setTraceid(traceId);
 
-	dispatcher.request(ObjectOpen.name, request, callBack);
+	dispatcher.request(ObjectOpen.name, request, (message: any) => {
+		dispatcher.onObjectView(objectId, traceId, message.objectView);
+
+		if (callBack) {
+			callBack(message);
+		};
+	});
 };
 
 const ObjectShow = (objectId: string, traceId: string, callBack?: (message: any) => void) => {
@@ -1033,12 +1061,25 @@ const ObjectShow = (objectId: string, traceId: string, callBack?: (message: any)
 	request.setObjectid(objectId);
 	request.setTraceid(traceId);
 
-	dispatcher.request(ObjectShow.name, request, callBack);
+	dispatcher.request(ObjectShow.name, request, (message: any) => {
+		dispatcher.onObjectView(objectId, traceId, message.objectView);
+
+		if (callBack) {
+			callBack(message);
+		};
+	});
 };
 
 const ObjectOpenBreadcrumbs = (callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.OpenBreadcrumbs.Request();
-	dispatcher.request(ObjectOpenBreadcrumbs.name, request, callBack);
+
+	dispatcher.request(ObjectOpenBreadcrumbs.name, request, (message: any) => {
+		dispatcher.onObjectView(message.objectId, '', message.objectView);
+
+		if (callBack) {
+			callBack(message);
+		};
+	});
 };
 
 const ObjectSetBreadcrumbs = (contextId: string, pageIds: string[], callBack?: (message: any) => void) => {
@@ -1532,6 +1573,8 @@ export {
 	WalletCreate,
 	WalletRecover,
 	WalletConvert,
+	WalletCreateSession,
+	WalletCloseSession,
 
 	WorkspaceCreate,
 	WorkspaceSelect,

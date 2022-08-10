@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Icon } from 'ts/component';
-import { C, I, Util, analytics } from 'ts/lib';
-import { menuStore, dbStore, blockStore } from 'ts/store';
+import { Icon, Button } from 'Component';
+import { C, I, Util, analytics } from 'Lib';
+import { menuStore, dbStore, blockStore } from 'Store';
 import { observable } from 'mobx';
 import { observer } from 'mobx-react';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
@@ -17,6 +17,7 @@ interface State {
 };
 
 const $ = require('jquery');
+const raf = require('raf');
 
 const Controls = observer(class Controls extends React.Component<Props, State> {
 
@@ -123,7 +124,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 						{buttons.map((item: any, i: number) => (
 							<ButtonItem key={item.id} {...item} />
 						))}	
-						{!readonly && allowedObject ? <Icon className="plus" tooltip="New object" onClick={(e: any) => { onRecordAdd(e, -1); }} /> : ''}
+						{!readonly && allowedObject ? <Button color="orange" icon="plus-small" className="c28" tooltip="New object" text="New" onClick={(e: any) => { onRecordAdd(e, -1); }} /> : ''}
 					</div>
 				</div>
 
@@ -134,7 +135,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 
 	componentDidMount () {
 		this.resize();
-		$(window).unbind('resize.controls').on('resize.controls', () => { this.resize(); });
+		$(window).off('resize.controls').on('resize.controls', () => { this.resize(); });
 	};
 
 	componentDidUpdate () {
@@ -142,7 +143,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 	};
 
 	componentWillUnmount () {
-		$(window).unbind('resize.controls');
+		$(window).off('resize.controls');
 	};
 	
 	onButton (e: any, id: string, menu: string) {
@@ -184,6 +185,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 		const { rootId, block, getView, getData } = this.props;
 		const view = getView();
 		const relations = Util.objectCopy(view.relations);
+		const subId = dbStore.getSubId(rootId, block.id);
 		const filters: I.Filter[] = [];
 
 		for (let relation of relations) {
@@ -199,24 +201,32 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 			});
 		};
 
-		menuStore.open('dataviewViewEdit', {
-			element: `#button-view-add`,
-			horizontal: I.MenuDirection.Center,
-			noFlipY: true,
-			data: {
-				rootId: rootId,
-				blockId: block.id,
-				getData: getData,
-				getView: getView,
-				view: observable.box({ 
-					type: I.ViewType.Grid,
-					relations: relations,
-					filters: filters,
-				}),
-				onSave: () => {
-					this.forceUpdate();
+		const newView = {
+			name: `New view`,
+			type: I.ViewType.Grid,
+			filters,
+		};
+
+		C.BlockDataviewViewCreate(rootId, block.id, newView, (message: any) => {
+			const view = dbStore.getView(rootId, block.id, message.viewId);
+
+			menuStore.open('dataviewViewEdit', {
+				element: `#view-item-${message.viewId}`,
+				horizontal: I.MenuDirection.Center,
+				noFlipY: true,
+				data: {
+					rootId: rootId,
+					blockId: block.id,
+					getData: getData,
+					getView: getView,
+					view: observable.box(view),
+					onSave: () => {
+						this.forceUpdate();
+					},
 				},
-			},
+			});
+
+			analytics.event('AddView', { type: view.type });
 		});
 	};
 

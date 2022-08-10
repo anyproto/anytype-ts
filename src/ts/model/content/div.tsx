@@ -1,4 +1,4 @@
-import { I, Util } from 'ts/lib';
+import { I, Util } from 'Lib';
 import { observable, intercept, makeObservable } from 'mobx';
 
 class BlockContentDiv implements I.ContentDiv {

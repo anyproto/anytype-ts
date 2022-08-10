@@ -73,6 +73,8 @@
 		.icon.pageLock { background-image: url('~img/icon/menu/action/pageLock0.svg'); }
 		.icon.pageUnlock { background-image: url('~img/icon/menu/action/pageUnlock0.svg'); }
 		.icon.sort { background-image: url('~img/icon/menu/action/sort0.svg'); }
+		.icon.reload { background-image: url('~img/icon/menu/action/reload0.svg'); }
+		.icon.hide { background-image: url('~img/icon/menu/relation/hide.svg'); }
 
 		.icon.coverChange { background-image: url('~img/icon/cover/change.svg'); }
 		.icon.coverPosition { background-image: url('~img/icon/cover/position.svg'); }
@@ -109,6 +111,7 @@
 
 		.icon.lock { width: 8px !important; height: 20px !important; background-image: url('~img/icon/lock.svg'); }
 
+		.icon.color { z-index: 1; }
 		.icon.color {
 			.inner { 
 				width: 16px; height: 16px; position: absolute; left: 50%; top: 50%; margin: -8px 0px 0px -8px; border-radius: 100%;

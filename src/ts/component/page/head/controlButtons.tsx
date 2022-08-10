@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { Icon } from 'ts/component';
-import { I, DataUtil, translate, analytics, focus } from 'ts/lib';
-import { blockStore, menuStore, detailStore } from 'ts/store';
+import { Icon } from 'Component';
+import { I, DataUtil, translate, analytics, focus } from 'Lib';
+import { blockStore, menuStore, detailStore } from 'Store';
 import { observer } from 'mobx-react';
 
 interface Props {
@@ -10,6 +10,7 @@ interface Props {
 	onIcon: (e: any) => void;
 	onCoverOpen: () => void;
 	onCoverClose: () => void;
+	onCoverSelect: (item: any) => void;
 	onLayout: (e: any) => void;
 	onRelation: (e: any) => void;
 	onEdit: (e: any) => void;
@@ -21,6 +22,8 @@ const Constant = require('json/constant.json');
 
 const ControlButtons = observer(class ControlButtons extends React.Component<Props, {}> {
 	
+	timeout: number = 0;
+
 	constructor (props: any) {
 		super(props);
 
@@ -125,73 +128,70 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 		const hasCover = object.coverType != I.CoverType.None;
 		
 		if (!hasCover) {
-			this.onChange(element, onCoverOpen, onCoverClose);
-		} else {
-			const options: any[] = [
-				{ id: 'change', icon: 'coverChange', name: 'Change cover' },
-			];
-			if (DataUtil.coverIsImage(object.coverType)) {
-				options.push({ id: 'position', icon: 'coverPosition', name: 'Reposition' });
-			};
-			if (hasCover) {
-				options.push({ id: 'remove', icon: 'remove', name: 'Remove' });
-			};
-
-			let menuContext = null;
-			menuStore.open('select', {
-				element,
-				horizontal: I.MenuDirection.Center,
-				onOpen: (context: any) => {
-					menuContext = context;
-					onCoverOpen();
-				},
-				onClose: onCoverClose,
-				subIds: [ 'blockCover' ],
-				data: {
-					noClose: true,
-					options: options,
-					onSelect: (e: any, item: any) => {
-						switch (item.id) {
-							case 'change':
-								this.onChange(`#menuSelect #item-${item.id}`, null, () => {
-									menuContext.close();
-								});
-								break;
-							
-							case 'position':
-								onEdit(e);
-								menuContext.close();
-								break;
-	
-							case 'remove':
-								DataUtil.pageSetCover(rootId, I.CoverType.None, '');
-								menuContext.close();
-	
-								analytics.event('RemoveCover');
-								break;
-						};
-					}
-				}
-			});
+			this.onChange(element);
+			return;
 		};
+
+		const options: any[] = [
+			{ id: 'change', icon: 'coverChange', name: 'Change cover' },
+		];
+		if (DataUtil.coverIsImage(object.coverType)) {
+			options.push({ id: 'position', icon: 'coverPosition', name: 'Reposition' });
+		};
+		if (hasCover) {
+			options.push({ id: 'remove', icon: 'remove', name: 'Remove' });
+		};
+
+		menuStore.open('select', {
+			element,
+			horizontal: I.MenuDirection.Center,
+			onOpen: onCoverOpen,
+			onClose: () => {
+				window.clearTimeout(this.timeout);
+				this.timeout = window.setTimeout(() => { onCoverClose(); }, Constant.delay.menu);
+			},
+			data: {
+				options: options,
+				onSelect: (e: any, item: any) => {
+					switch (item.id) {
+						case 'change':
+							window.setTimeout(() => {
+								window.clearTimeout(this.timeout);
+								this.onChange(element);
+							}, Constant.delay.menu);
+							break;
+						
+						case 'position':
+							onEdit(e);
+							break;
+
+						case 'remove':
+							DataUtil.pageSetCover(rootId, I.CoverType.None, '');
+							analytics.event('RemoveCover');
+							break;
+					};
+				}
+			}
+		});
 	};
 
-	onChange (element: any, onOpen: (context: any) => void, onClose: () => void) {
-		const { rootId, onEdit, onUploadStart, onUpload } = this.props;
+	onChange (element: any) {
+		const { rootId, onEdit, onUploadStart, onUpload, onCoverOpen, onCoverClose, onCoverSelect } = this.props;
 
 		menuStore.open('blockCover', {
 			element,
 			horizontal: I.MenuDirection.Center,
-			onOpen,
-			onClose,
+			onOpen: () => {
+				window.clearTimeout(this.timeout);
+				onCoverOpen();
+			},
+			onClose: onCoverClose,
 			data: {
 				rootId,
 				onEdit,
 				onUploadStart,
 				onUpload,
-				onSelect: (item: any) => {
-					DataUtil.pageSetCover(rootId, item.type, item.id, item.coverX, item.coverY, item.coverScale);
-				}
+				onSelect: onCoverSelect
 			},
 		});
 	};

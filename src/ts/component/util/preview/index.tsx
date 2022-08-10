@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { PreviewLink, PreviewObject } from 'ts/component';
-import { I, Util, DataUtil, Mark, translate } from 'ts/lib';
+import { PreviewLink, PreviewObject } from 'Component';
+import { I, Util, DataUtil, Mark, translate, Renderer } from 'Lib';
 import { observer } from 'mobx-react';
-import { commonStore, menuStore } from 'ts/store';
+import { commonStore, menuStore } from 'Store';
 
 interface Props {}
 interface State {
@@ -89,11 +89,10 @@ const Preview = observer(class Preview extends React.Component<Props, State> {
 		const { preview } = commonStore;
 		const { type, param } = preview;
 		const { object } = this.state;
-		const renderer = Util.getRenderer();
 
 		switch (type) {
 			case I.MarkType.Link:
-				renderer.send('urlOpen', param);	
+				Renderer.send('urlOpen', param);	
 				break;
 
 			case I.MarkType.Object:

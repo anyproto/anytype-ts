@@ -1,6 +1,6 @@
 import { observable, action, computed, set, makeObservable } from 'mobx';
-import { I, M, Util, Storage, Mark, translate } from 'ts/lib';
-import { detailStore } from 'ts/store';
+import { I, M, Util, Storage, Mark, translate } from 'Lib';
+import { detailStore } from 'Store';
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
@@ -462,7 +462,6 @@ class BlockStore {
 
 				if (old != name) {
 					const d = String(old || '').length - String(name || '').length;
-
 					text = Util.stringInsert(text, name, mark.range.from, mark.range.to);
 
 					if (d != 0) {

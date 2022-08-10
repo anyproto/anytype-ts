@@ -1,9 +1,9 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
-import { Icon } from 'ts/component';
-import { I, C, Util, keyboard } from 'ts/lib';
-import { menuStore, dbStore, blockStore } from 'ts/store';
+import { Icon } from 'Component';
+import { I, C, Util, keyboard } from 'Lib';
+import { menuStore, dbStore, blockStore } from 'Store';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
 import arrayMove from 'array-move';
@@ -195,7 +195,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<Props> 
 	};
 	
 	unbind () {
-		$(window).unbind('keydown.menu');
+		$(window).off('keydown.menu');
 	};
 
 	getItems () {
@@ -206,18 +206,6 @@ const MenuViewList = observer(class MenuViewList extends React.Component<Props> 
 
 		items.unshift({ id: 'label', name: 'Views', isSection: true });
 		return items;
-	};
-
-	getValue (): any[] {
-		const { param } = this.props;
-		const { data } = param;
-
-		let value = Util.objectCopy(data.value || []);
-		if ('object' != typeof(value)) {
-			value = value ? [ value ] : [];
-		};
-		value = value.filter((it: string) => { return it; });
-		return value;
 	};
 
 	onOver (e: any, item: any) {

@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { I, Action, keyboard } from 'ts/lib';
-import { Title, Select, Button, Switch } from 'ts/component';
-import { commonStore } from 'ts/store';
+import { I, Action, keyboard } from 'Lib';
+import { Title, Select, Button, Switch } from 'Component';
+import { commonStore } from 'Store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Popup {};

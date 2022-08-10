@@ -1,5 +1,5 @@
-import { I, C, M, keyboard, crumbs, translate, Util, history as historyPopup, Storage, analytics, Relation, sidebar } from 'ts/lib';
-import { commonStore, blockStore, detailStore, dbStore, popupStore, authStore } from 'ts/store';
+import { I, C, M, keyboard, crumbs, translate, Util, history as historyPopup, Storage, analytics, Relation, dispatcher, Renderer, Mark } from 'Lib';
+import { commonStore, blockStore, detailStore, dbStore, popupStore, authStore } from 'Store';
 
 const Constant = require('json/constant.json');
 const Errors = require('json/error.json');
@@ -275,21 +275,17 @@ class DataUtil {
 		return ids;
 	};
 	
-	onAuth (account: I.Account) {
+	onAuth (account: I.Account, callBack?: () => void) {
 		if (!account) {
 			console.error('[onAuth] No account defined');
 			return;
 		};
 
-		const redirectTo = Storage.get('redirectTo');
-
-		Storage.delete('redirect');
-		Storage.delete('redirectTo');
-
 		commonStore.infoSet(account.info);
 		commonStore.configSet(account.config, false);
 		authStore.accountSet(account);
 
+		const pin = Storage.get('pin');
 		const { root, profile } = blockStore;
 
 		if (!root) {
@@ -303,6 +299,7 @@ class DataUtil {
 		};
 
 		crumbs.init();
+		keyboard.initPinCheck();
 
 		analytics.profile(account);
 		analytics.event('OpenAccount');
@@ -335,8 +332,27 @@ class DataUtil {
 				commonStore.coverSet(object.coverId, object.coverId, object.coverType);
 			};
 
-			keyboard.initPinCheck();
-			Util.route(redirectTo ? redirectTo : '/main/index', true);
+			if (pin) {
+				Util.route('/auth/pin-check');
+			} else {
+				Util.route(commonStore.redirect ? commonStore.redirect : '/main/index', true);
+				commonStore.redirectSet('');
+			};
+			
+			if (callBack) {
+				callBack();
+			};
+		});
+	};
+
+	createSession (callBack?: (message: any) => void) {
+		C.WalletCreateSession(authStore.phrase, (message: any) => {
+			authStore.tokenSet(message.token);
+			dispatcher.listenEvents();
+
+			if (callBack) {
+				callBack(message);
+			};
 		});
 	};
 
@@ -344,23 +360,21 @@ class DataUtil {
 		e.preventDefault();
 		e.stopPropagation();
 
-		if ((e.shiftKey || popupStore.isOpen('page'))) {
+		if (e.shiftKey || popupStore.isOpen('page')) {
 			this.objectOpenPopup(object, popupParam);
+		} else
+		if ((e.metaKey || e.ctrlKey)) {
+			this.objectOpenWindow(object);
 		} else {
-			this.objectOpen(object);
+			this.objectOpenRoute(object);
 		};
 	};
 	
-	objectOpen (object: any) {
-		keyboard.setSource(null);
-
-		const route = this.objectRoute(object);
-		if (route) {
-			Util.route('/' + route);
-		};
-	};
-
 	objectRoute (object: any): string {
+		if (!object) {
+			return;
+		};
+
 		let action = this.actionByLayout(object.layout);
 		let id = object.id;
 
@@ -381,15 +395,24 @@ class DataUtil {
 		return route.join('/');
 	};
 
+	objectOpenRoute (object: any) {
+		keyboard.setSource(null);
+
+		const route = this.objectRoute(object);
+		if (route) {
+			Util.route('/' + route);
+		};
+	};
+
 	objectOpenPopup (object: any, popupParam?: any) {
 		const { root } = blockStore;
 		const action = this.actionByLayout(object.layout);
 
 		if ((action == 'edit') && (object.id == root)) {
-			this.objectOpen(object);
+			this.objectOpenRoute(object);
 			return;
 		};
-		
+
 		let param: any = Object.assign(popupParam || {}, {});
 		param.data = Object.assign(param.data || {}, { 
 			matchPopup: { 
@@ -404,6 +427,13 @@ class DataUtil {
 		keyboard.setSource(null);
 		historyPopup.pushMatch(param.data.matchPopup);
 		window.setTimeout(() => { popupStore.open('page', param); }, Constant.delay.popup);
+	};
+
+	objectOpenWindow (object: any) {
+		const route = this.objectRoute(object);
+		if (route) {
+			Renderer.send('windowOpen', '/' + route);
+		};
 	};
 
 	actionByLayout (v: I.ObjectLayout): string {
@@ -422,7 +452,6 @@ class DataUtil {
 			case I.ObjectLayout.Graph:		 r = 'graph'; break;
 			case I.ObjectLayout.Store:		 r = 'store'; break;
 			case I.ObjectLayout.History:	 r = 'history'; break;
-			case I.ObjectLayout.Bookmark:	 r = 'bookmark'; break;
 		};
 		return r;
 	};
@@ -506,6 +535,19 @@ class DataUtil {
 				callBack(message);
 			};
 		});
+	};
+
+	blockInsertText (rootId: string, blockId: string, needle: string, from: number, to: number, callBack?: (message: any) => void) {
+		const block = blockStore.getLeaf(rootId, blockId);
+		if (!block) {
+			return;
+		};
+
+		const diff = needle.length - (to - from);
+		const text = Util.stringInsert(block.content.text, needle, from, to);
+		const marks = Mark.adjust(block.content.marks, 0, diff);
+
+		this.blockSetText(rootId, blockId, text, marks, true, callBack);
 	};
 
 	menuMapperBlock (it: any) {

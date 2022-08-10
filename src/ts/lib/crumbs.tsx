@@ -1,5 +1,5 @@
-import { I, C, Util, Storage } from 'ts/lib';
-import { blockStore } from 'ts/store';
+import { I, C, Util, Storage } from 'Lib';
+import { blockStore } from 'Store';
 
 interface CrumbsObject {
 	ids: string[];

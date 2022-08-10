@@ -1,14 +1,14 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Block, Icon, Loader, Deleted } from 'ts/component';
-import { commonStore, blockStore, detailStore, menuStore, popupStore } from 'ts/store';
-import { I, C, Key, Util, DataUtil, Mark, focus, keyboard, crumbs, Storage, Mapper, Action, translate, analytics, sidebar } from 'ts/lib';
+import { Block, Icon, Loader, Deleted } from 'Component';
+import { commonStore, blockStore, detailStore, menuStore, popupStore } from 'Store';
+import { I, C, Key, Util, DataUtil, Mark, focus, keyboard, crumbs, Storage, Mapper, Action, translate, analytics, Renderer } from 'Lib';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 
-import Controls from 'ts/component/page/head/controls';
-import PageHeadEdit from 'ts/component/page/head/edit';
+import Controls from 'Component/page/head/controls';
+import PageHeadEdit from 'Component/page/head/edit';
 
 interface Props extends RouteComponentProps<any> {
 	dataset?: any;
@@ -17,14 +17,10 @@ interface Props extends RouteComponentProps<any> {
 	onOpen?(): void;
 };
 
-const { app } = window.require('@electron/remote');
 const Constant = require('json/constant.json');
 const Errors = require('json/error.json');
 const $ = require('jquery');
 const raf = require('raf');
-const fs = window.require('fs');
-const path = window.require('path');
-const userPath = app.getPath('userData');
 
 const THROTTLE = 40;
 const BUTTON_OFFSET = 10;
@@ -62,6 +58,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		this.getWrapperWidth = this.getWrapperWidth.bind(this);
 		this.resize = this.resize.bind(this);
 		this.focusTitle = this.focusTitle.bind(this);
+		this.blockRemove = this.blockRemove.bind(this);
 	};
 
 	render () {
@@ -124,6 +121,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 								onCopy={this.onCopy}
 								onPaste={this.onPaste}
 								readonly={readonly}
+								blockRemove={this.blockRemove}
 								getWrapper={this.getWrapper}
 								getWrapperWidth={this.getWrapperWidth}
 							/>
@@ -141,7 +139,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		const { selection } = dataset || {};
 		const win = $(window);
 		const namespace = isPopup ? '-popup' : '';
-		const renderer = Util.getRenderer();
 
 		this._isMounted = true;
 
@@ -177,8 +174,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 		Storage.set('askSurvey', 1);
 
-		renderer.removeAllListeners('commandEditor');
-		renderer.on('commandEditor', (e: any, cmd: string, arg: any) => { this.onCommand(cmd, arg); });
+		Renderer.remove('commandEditor');
+		Renderer.on('commandEditor', (e: any, cmd: string, arg: any) => { this.onCommand(cmd, arg); });
 	};
 
 	componentDidUpdate () {
@@ -199,8 +196,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 	};
 	
 	componentWillUnmount () {
-		const renderer = Util.getRenderer();
-
 		this._isMounted = false;
 		this.uiHidden = false;
 		this.unbind();
@@ -208,7 +203,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 		focus.clear(false);
 		window.clearInterval(this.timeoutScreen);
-		renderer.removeAllListeners('commandEditor');
+		Renderer.remove('commandEditor');
 	};
 
 	getWrapper () {
@@ -329,7 +324,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		const events = 'keydown.editor mousemove.editor scroll.editor paste.editor resize.editor focus.editor';
 		const a = events.split(' ').map(it => it + namespace);
 
-		$(window).unbind(a.join(' '));
+		$(window).off(a.join(' '));
 	};
 	
 	uiHide () {
@@ -345,7 +340,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		
 		window.clearTimeout(this.timeoutMove);
 		this.timeoutMove = window.setTimeout(() => {
-			$(window).unbind('mousemove.ui').on('mousemove.ui', (e: any) => { this.uiShow(); });
+			$(window).off('mousemove.ui').on('mousemove.ui', (e: any) => { this.uiShow(); });
 		}, 100);
 	};
 
@@ -359,7 +354,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		obj.find('#footer').css({ opacity: 1 });
 		
 		this.uiHidden = false;
-		$(window).unbind('mousemove.ui');
+		$(window).off('mousemove.ui');
 	};
 	
 	onMouseMove (e: any) {
@@ -806,7 +801,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			// Enter
 			keyboard.shortcut('enter, shift+enter', e, (pressed: string) => {
 				if (isInsideTable && (pressed == 'enter')) {
-					this.onArrowVertical(e, 'arrowdown', { from: length, to: length }, length, props);
+					this.onArrowVertical(e, Key.down, { from: length, to: length }, length, props);
 				} else {
 					this.onEnterBlock(e, range, pressed);
 				};
@@ -814,10 +809,12 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 			// Tab, indent block
 			keyboard.shortcut('tab, shift+tab', e, (pressed: string) => {
+				const isShift = pressed.match('shift') ? true : false;
+
 				if (isInsideTable) {
-					this.onArrowHorizontal (e, 'arrowright', { from: length, to: length }, length, props);
+					this.onArrowHorizontal(e, isShift ? Key.left : Key.right, { from: length, to: length }, length, props);
 				} else {
-					this.onTabBlock(e, pressed);
+					this.onTabBlock(e, isShift);
 				};
 			});
 
@@ -838,6 +835,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		return [
 			{ key: `${cmd}+b`,		 type: I.MarkType.Bold,		 param: '' },
 			{ key: `${cmd}+i`,		 type: I.MarkType.Italic,	 param: '' },
+			{ key: `${cmd}+u`,		 type: I.MarkType.Underline, param: '' },
 			{ key: `${cmd}+shift+s`, type: I.MarkType.Strike,	 param: '' },
 			{ key: `${cmd}+k`,		 type: I.MarkType.Link,		 param: '' },
 			{ key: `${cmd}+l`,		 type: I.MarkType.Code,		 param: '' },
@@ -1110,7 +1108,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 	};
 
 	// Indentation
-	onTabBlock (e: any, pressed: string) {
+	onTabBlock (e: any, isShift: boolean) {
 		e.preventDefault();
 			
 		const { rootId } = this.props;
@@ -1121,7 +1119,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			return;
 		};
 
-		const isShift = pressed.match('shift');
 		const element = blockStore.getMapElement(rootId, block.id);
 		const parent = blockStore.getLeaf(rootId, element.parentId);
 		const parentElement = blockStore.getMapElement(rootId, parent.id);
@@ -1287,7 +1284,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 	onArrowHorizontal (e: any, pressed: string, range: I.TextRange, length: number, props: any) {
 		const { focused } = focus.state;
-		const { rootId, isPopup } = this.props;
+		const { rootId } = this.props;
 		const { isInsideTable } = props;
 		const block = blockStore.getLeaf(rootId, focused);
 		const dir = pressed.match(Key.left) ? -1 : 1;
@@ -1313,6 +1310,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 				return;
 			};
 
+			const fill = (id: string, callBack: () => void) => {
+				C.BlockTableRowListFill(rootId, [ id ], callBack);
+			};	
+
 			const cb = () => {
 				let nextCellId = '';
 
@@ -1324,7 +1325,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 					const nextRow = this.getNextTableRow(block.id, dir);
 					if (nextRow) {
 						const nextRowElement = blockStore.getMapElement(rootId, nextRow.id);
-						nextCellId = nextRowElement.childrenIds[dir > 0 ? 0 : nextRowElement.childrenIds.length - 1];
+						fill(nextRow.id, () => {
+							nextCellId = nextRowElement.childrenIds[dir > 0 ? 0 : nextRowElement.childrenIds.length - 1];
+							this.focusNextBlock(blockStore.getLeaf(rootId, nextCellId), dir);
+						});
 					};
 				};
 
@@ -1332,7 +1336,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			};
 
 			if (rowElement.childrenIds.length - 1 < idx) {
-				C.BlockTableRowListFill(rootId, [ element.parentId ], cb);
+				fill(element.parentId, cb);
 			} else {
 				cb();
 			};
@@ -1411,28 +1415,34 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 	};
 	
 	onCopy (e: any, cut: boolean) {
-		e.preventDefault();
-
 		const { dataset, rootId } = this.props;
 		const { selection } = dataset || {};
 		const readonly = this.isReadonly();
+		const root = blockStore.getLeaf(rootId, rootId);
+		const { focused } = focus.state;
 
-		if (readonly && cut) {
+		if (!root || (readonly && cut)) {
 			return;
 		};
 
-		let { focused, range } = focus.state;
 		let ids = selection.get(I.SelectType.Block, true);
+
+		if (root.isLocked() && !ids.length) {
+			return;
+		};
+
+		e.preventDefault();
+
 		if (!ids.length) {
 			ids = [ focused ];
 		};
 		ids = ids.concat(this.getLayoutIds(ids));
 
+		const range = Util.objectCopy(focus.state.range);
 		const cmd = cut ? 'BlockCut' : 'BlockCopy';
-		const focusBlock = blockStore.getLeaf(rootId, focused);
 		const tree = blockStore.getTree(rootId, blockStore.getBlocks(rootId));
+		const text: string[] = [];
 
-		let text: string[] = [];
 		let blocks = blockStore.unwrapTree(tree).filter((it: I.Block) => {
 			return ids.indexOf(it.id) >= 0;
 		});
@@ -1445,7 +1455,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		});
 
 		blocks = Util.arrayUniqueObjects(blocks, 'id');
-
 		blocks = blocks.map((it: I.Block) => {
 			const element = blockStore.getMapElement(rootId, it.id);
 
@@ -1457,98 +1466,54 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			return it;
 		});
 		
-		range = Util.objectCopy(range);
-
-		const cb = (message: any) => {
-			const blocks = (message.anySlot || []).map(Mapper.From.Block);
-
+		C[cmd](rootId, blocks, range, (message: any) => {
 			Util.clipboardCopy({
 				text: message.textSlot,
 				html: message.htmlSlot,
 				anytype: {
 					range: range,
-					blocks: blocks,
+					blocks: (message.anySlot || []).map(Mapper.From.Block),
 				},
 			});
 
 			if (cut) {
 				menuStore.close('blockContext');
+
 				focus.set(focused, { from: range.from, to: range.from });
 				focus.apply();
 			};
-		};
-		
-		C[cmd](rootId, blocks, range, cb);
-		analytics.event('CopyBlock');
+		});
+
+		analytics.event(cut ? 'CutBlock' : 'CopyBlock');
 	};
 	
 	onPaste (e: any, props: any, force?: boolean, data?: any) {
 		const { dataset, rootId } = this.props;
 		const { selection } = dataset || {};
 		const { focused, range } = focus.state;
-		const filePath = path.join(userPath, 'tmp');
+		const cb = e.clipboardData || e.originalEvent.clipboardData;
+		const items = cb.items;
+		const files: any[] = [];
+
+		menuStore.closeAll([ 'blockAdd' ]);
 
 		if (this.isReadonly()) {
 			return;
 		};
 
-		menuStore.closeAll([ 'blockAdd' ]);
-
 		if (!data) {
-			const cb = e.clipboardData || e.originalEvent.clipboardData;
-			const items = cb.items;
+			data = this.getClipboardData(e);
+		};
 
-			data = {
-				text: String(cb.getData('text/plain') || ''),
-				html: String(cb.getData('text/html') || ''),
-				anytype: JSON.parse(String(cb.getData('application/json') || '{}')),
-				files: [],
-			};
-			data.anytype.range = data.anytype.range || { from: 0, to: 0 };
-
-			// Read files
-			if (items && items.length) {
-				let files = [];
-
-				for (let item of items) {
-					if (item.kind != 'file') {
-						continue;
-					};
-
-					const file = item.getAsFile();
-					if (file) {
-						files.push(file);
-					};
+		if (items && items.length) {
+			for (let item of items) {
+				if (item.kind != 'file') {
+					continue;
 				};
 
-				if (files.length) {
-					commonStore.progressSet({ status: translate('commonProgress'), current: 0, total: files.length });
-
-					for (let file of files) {
-						const fn = path.join(filePath, file.name);
-						const reader = new FileReader();
-
-						reader.readAsBinaryString(file); 
-						reader.onloadend = () => {
-							fs.writeFile(fn, reader.result, 'binary', (err: any) => {
-								if (err) {
-									console.error(err);
-									commonStore.progressSet({ status: translate('commonProgress'), current: 0, total: 0 });
-									return;
-								};
-
-								data.files.push({ name: file.name, path: fn });
-
-								commonStore.progressSet({ status: translate('commonProgress'), current: data.files.length, total: files.length });
-
-								if (data.files.length == files.length) {
-									this.onPaste(e, props, true, data);
-								};
-							});
-						};
-					};
-
-					return;
+				const file = item.getAsFile();
+				if (file) {
+					files.push({ name: file.name, path: file.path });
 				};
 			};
 		};
@@ -1568,7 +1533,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		let from = 0;
 		let to = 0;
 
-		C.BlockPaste(rootId, focused, range, selection.get(I.SelectType.Block, true), data.anytype.range.to > 0, { text: data.text, html: data.html, anytype: data.anytype.blocks, files: data.files }, (message: any) => {
+		C.BlockPaste(rootId, focused, range, selection.get(I.SelectType.Block, true), data.anytype.range.to > 0, { ...data, anytype: data.anytype.blocks, files }, (message: any) => {
 			if (message.error.code) {
 				return;
 			};
@@ -1591,9 +1556,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 				id = focused;
 				from = to = message.caretPosition;
 			};
-			
-			this.focus(id, from, to, true);
 
+			this.focus(id, from, to, true);
 			analytics.event('PasteBlock');
 		});
 	};
@@ -1612,14 +1576,14 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 		const first = blockStore.getFirstBlock(rootId, 1, (it) => it.isText() && !it.isTextTitle() && !it.isTextDescription());
 		const object = detailStore.get(rootId, rootId, [ 'internalFlags' ]);
-		const isEmpty = (focused == first.id) && !first.getLength() && (object.internalFlags || []).includes(I.ObjectFlag.DeleteEmpty);
+		const isEmpty = first && (focused == first.id) && !first.getLength() && (object.internalFlags || []).includes(I.ObjectFlag.DeleteEmpty);
 
 		const options: any[] = [
-			{ id: 'link', name: 'Create link' },
+			{ id: 'link', name: 'Paste as link' },
 			isEmpty && !isInsideTable ? { id: 'object', name: 'Create bookmark object' } : null,
-			!isInsideTable ? { id: 'block', name: 'Create bookmark block' } : null,
-			{ id: 'cancel', name: 'Cancel' },
-			//{ id: 'embed', name: 'Create embed' },
+			!isInsideTable ? { id: 'block', name: 'Create bookmark' } : null,
+			{ id: 'cancel', name: 'Paste as text' },
+			//{ id: 'embed', name: 'Paste as embed' },
 		].filter(it => it);
 
 		menuStore.open('select', { 
@@ -1662,7 +1626,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 									return;
 								};
 
-								DataUtil.objectOpen({ id: message.objectId, layout: I.ObjectLayout.Bookmark });
+								DataUtil.objectOpenRoute({ id: message.objectId, layout: I.ObjectLayout.Bookmark });
 
 								analytics.event('CreateObject', {
 									objectType: Constant.typeId.bookmark,
@@ -1674,7 +1638,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 						case 'block':
 							C.BlockBookmarkCreateAndFetch(rootId, focused, length ? I.BlockPosition.Bottom : I.BlockPosition.Replace, url, (message: any) => {
-								analytics.event('CreateBlock', { middleTime: message.middleTime, type: I.BlockType.Bookmark });
+								if (!message.error.code) {
+									analytics.event('CreateBlock', { middleTime: message.middleTime, type: I.BlockType.Bookmark });
+								};
 							});
 							break;
 
@@ -1690,6 +1656,18 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 				},
 			}
 		});
+	};
+
+	getClipboardData (e: any) {
+		const cb = e.clipboardData || e.originalEvent.clipboardData;
+		const data: any = {
+			text: String(cb.getData('text/plain') || ''),
+			html: String(cb.getData('text/html') || ''),
+			anytype: JSON.parse(String(cb.getData('application/json') || '{}')),
+			files: [],
+		};
+		data.anytype.range = data.anytype.range || { from: 0, to: 0 };
+		return data;
 	};
 
 	onHistory (e: any) {
@@ -2026,12 +2004,14 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		node.css({ width: width });
 		elements.css({ width: width, marginLeft: -width / 2 });
 
+		/*
 		blocks.forEach((block: I.Block) => {
 			const el = node.find(`#block-${block.id} #wrap`);
 			if (el.length) {
-				el.trigger('resizeTable');
+				el.trigger('resize');
 			};
 		});
+		*/
 
 		if (this.refHeader && this.refHeader.refDrag) {
 			this.refHeader.refDrag.setValue(v);

@@ -1,5 +1,5 @@
-import { I, Storage, Util, keyboard } from 'ts/lib';
-import { commonStore, menuStore, popupStore } from 'ts/store';
+import { I, Storage, Util, keyboard } from 'Lib';
+import { commonStore, menuStore, popupStore } from 'Store';
 
 interface SidebarData {
 	x: number;
@@ -15,7 +15,7 @@ const $ = require('jquery');
 const Constant = require('json/constant.json');
 
 const SNAP_THRESHOLD = 30;
-const SHOW_THRESHOLD = 58;
+const SHOW_THRESHOLD = 30;
 const ANIMATION = 300;
 
 class Sidebar {
@@ -375,9 +375,9 @@ class Sidebar {
 			};
 		};
 
-		let pw = win.width() - width - 1;
+		let pageWidth = win.width() - width;
 		let css: any = { width: '' };
-		let cssLoader: any = { width: pw, left: '', right: '' };
+		let cssLoader: any = { width: pageWidth, left: '', right: '' };
 		let dummy = null;
 
 		header.css(css).removeClass('withSidebar snapLeft snapRight');
@@ -386,7 +386,7 @@ class Sidebar {
 		dummyLeft.css({ width: 0 });
 		dummyRight.css({ width: 0 });
 
-		css.width = header.outerWidth() - width - 1;
+		css.width = header.outerWidth() - width;
 		
 		if (fixed) {
 			header.addClass('withSidebar');
@@ -415,7 +415,7 @@ class Sidebar {
 			dummy.css({ width: width ? width + 8 : 0 });
 		};
 
-		page.css({ width: pw });
+		page.css({ width: pageWidth });
 		loader.css(cssLoader);
 		header.css(css);
 		footer.css(css);

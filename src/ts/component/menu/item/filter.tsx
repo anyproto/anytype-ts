@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { I, Relation, DataUtil, Util } from 'ts/lib';
-import { Icon, Tag, IconObject } from 'ts/component';
-import { detailStore } from 'ts/store';
+import { I, Relation, DataUtil, Util } from 'Lib';
+import { Icon, Tag, IconObject } from 'Component';
+import { detailStore } from 'Store';
 import { SortableHandle, SortableElement } from 'react-sortable-hoc';
 import { observer } from 'mobx-react';
 

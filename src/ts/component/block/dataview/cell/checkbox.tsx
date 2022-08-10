@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { Icon } from 'ts/component';
-import { I } from 'ts/lib';
+import { Icon } from 'Component';
+import { I } from 'Lib';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Cell {}

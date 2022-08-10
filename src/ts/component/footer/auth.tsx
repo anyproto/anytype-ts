@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { Icon } from 'ts/component';
-import { I, Util, sidebar } from 'ts/lib';
-import { menuStore } from 'ts/store';
+import { Icon } from 'Component';
+import { I, Util, sidebar } from 'Lib';
+import { menuStore } from 'Store';
 
 interface Props {};
 

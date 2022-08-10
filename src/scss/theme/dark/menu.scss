@@ -80,15 +80,10 @@
     /* MenuSmile */
 
     .menu.menuSmile {
-        .head { border-color: $colorLineSecondary; color: $colorSecondary; }
+        .head, .foot { border-color: $colorLineSecondary; color: $colorSecondary; }
         .head {
             .btn:hover, .btn.active { color: $colorPrimary; }
         }
-
-        .emptySearch {
-			b { color: $colorPrimary; }
-			.label { color: $colorSecondary; }
-		}
     }
 
     /* MenuBlockCover */
@@ -164,13 +159,6 @@
 	}
 
     /* MenuSearchObject */
-
-    .menu.menuSearchObject {
-		.emptySearch {
-			b { color: $colorPrimary; }
-			.label { color: $colorSecondary; }
-		}
-    }
 
     .menu.menuSearchObject.big {
         .item {

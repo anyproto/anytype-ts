@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { MenuItemVertical } from 'ts/component';
-import { I, keyboard, Key, Util, DataUtil, analytics } from 'ts/lib';
-import { blockStore } from 'ts/store';
+import { MenuItemVertical } from 'Component';
+import { I, keyboard, Key, Util, DataUtil, analytics } from 'Lib';
+import { blockStore } from 'Store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {}
@@ -60,7 +60,7 @@ const MenuBlockStyle = observer(class MenuBlockStyle extends React.Component<Pro
 	};
 	
 	unbind () {
-		$(window).unbind('keydown.menu');
+		$(window).off('down.menu');
 	};
 	
 	getActive (): number {

@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { InputWithFile, Loader, Error, Pager } from 'ts/component';
-import { I, C, translate, focus, Action, Util, DataUtil, FileUtil } from 'ts/lib';
-import { commonStore, detailStore } from 'ts/store';
+import { InputWithFile, Loader, Error, Pager } from 'Component';
+import { I, C, translate, focus, Action, Util, DataUtil, FileUtil, Renderer, keyboard } from 'Lib';
+import { commonStore, detailStore } from 'Store';
 import { observer } from 'mobx-react';
 import { Document, Page } from 'react-pdf';
 import { pdfjs } from 'react-pdf';
@@ -11,9 +11,6 @@ pdfjs.GlobalWorkerOptions.workerSrc = 'workers/pdf.min.js';
 
 interface Props extends I.BlockComponent {};
 
-const { app } = window.require('@electron/remote');
-const userPath = app.getPath('userData');
-const path = window.require('path');
 const Constant = require('json/constant.json');
 
 interface State {
@@ -181,11 +178,10 @@ const BlockPdf = observer(class BlockPdf extends React.Component<Props, State> {
 		const { block } = this.props;
 		const { content } = block;
 		const { hash } = content;
-		const renderer = Util.getRenderer();
 		
-		C.FileDownload(hash, path.join(userPath, 'tmp'), (message: any) => {
+		C.FileDownload(hash, window.Electron.tmpPath, (message: any) => {
 			if (message.path) {
-				renderer.send('pathOpen', message.path);
+				Renderer.send('pathOpen', message.path);
 			};
 		});
 	};
@@ -203,7 +199,7 @@ const BlockPdf = observer(class BlockPdf extends React.Component<Props, State> {
 	};
 
 	onClick (e: any) {
-		if (e.shiftKey || e.ctrlKey || e.metaKey) {
+		if (keyboard.withCommand(e)) {
 			return;
 		};
 

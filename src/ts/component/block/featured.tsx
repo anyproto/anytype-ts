@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { I, C, DataUtil, Util, focus, analytics, Relation } from 'ts/lib';
-import { Cell } from 'ts/component';
+import { I, C, DataUtil, Util, focus, analytics, Relation } from 'Lib';
+import { Cell } from 'Component';
 import { observer } from 'mobx-react';
-import { blockStore, detailStore, dbStore, menuStore } from 'ts/store';
+import { blockStore, detailStore, dbStore, menuStore } from 'Store';
 
 interface Props extends I.BlockComponent {
 	iconSize?: number;

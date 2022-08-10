@@ -1,11 +1,11 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Select, Marker, Loader, IconObject, Icon } from 'ts/component';
-import { I, C, keyboard, Key, Util, DataUtil, Mark, focus, Storage, translate, analytics } from 'ts/lib';
+import { Select, Marker, Loader, IconObject, Icon } from 'Component';
+import { I, C, keyboard, Key, Util, DataUtil, Mark, focus, Storage, translate, analytics, Renderer } from 'Lib';
 import { observer } from 'mobx-react';
 import { getRange } from 'selection-ranges';
-import { commonStore, blockStore, detailStore, menuStore } from 'ts/store';
+import { commonStore, blockStore, detailStore, menuStore } from 'Store';
 import * as Prism from 'prismjs';
 
 interface Props extends I.BlockComponent, RouteComponentProps<any> {
@@ -215,12 +215,13 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 	};
 	
 	componentDidMount () {
+		this._isMounted = true;
+
 		const { block } = this.props;
 		const { content } = block;
 		const { marks, text } = content;
 
 		this.marks = Util.objectCopy(marks || []);
-		this._isMounted = true;
 		this.setValue(text);
 	};
 	
@@ -323,7 +324,6 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		const value = node.find('#value');
 		const items = value.find('lnk');
 		const self = this;
-		const renderer = Util.getRenderer();
 
 		if (!items.length) {
 			return;
@@ -370,12 +370,12 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 
 			Util.previewShow(el, param);
 
-			el.unbind('click.link').on('click.link', (e: any) => {
+			el.off('click.link').on('click.link', (e: any) => {
 				e.preventDefault();
 				if (isInside) {
 					Util.route(route);
 				} else {
-					renderer.send('urlOpen', url);
+					Renderer.send('urlOpen', url);
 				};
 			});
 		});
@@ -439,7 +439,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 				return;
 			};
 
-			el.unbind('click.object').on('click.object', function (e: any) {
+			el.off('click.object').on('click.object', function (e: any) {
 				e.preventDefault();
 				DataUtil.objectOpenEvent(e, object);
 			});
@@ -516,7 +516,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			};
 		});
 		
-		items.unbind('mouseenter.mention');
+		items.off('mouseenter.mention');
 
 		items.on('mouseenter.mention', function (e: any) {
 			const el = $(this);
@@ -529,7 +529,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 
 			const object = detailStore.get(rootId, data.param, []);
 
-			el.unbind('click.mention').on('click.mention', function (e: any) {
+			el.off('click.mention').on('click.mention', function (e: any) {
 				e.preventDefault();
 				DataUtil.objectOpenEvent(e, object);
 			});
@@ -660,7 +660,6 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		let value = this.getValue();
 		let ret = false;
 
-		const k = e.key.toLowerCase();	
 		const range = this.getRange();
 		const symbolBefore = range ? value[range.from - 1] : '';
 		const cmd = keyboard.ctrlKey();
@@ -678,9 +677,8 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			{ key: `${cmd}+a`, preventDefault: true },
 			{ key: `${cmd}+[`, preventDefault: false },
 			{ key: `${cmd}+]`, preventDefault: false },
-			{ key: `tab`, preventDefault: false },
 			{ key: `shift+tab`, preventDefault: true },
-			{ key: `shift+space`, preventDefault: true },
+			{ key: `shift+space`, preventDefault: false },
 		];
 
 		keyboard.shortcut('enter, shift+enter', e, (pressed: string) => {
@@ -708,7 +706,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		});
 
 		keyboard.shortcut('arrowleft, arrowright, arrowdown, arrowup', e, (pressed: string) => {
-			keyboard.disableContext(false);
+			keyboard.disableContextClose(false);
 		});
 
 		saveKeys.forEach((item: any) => {
@@ -797,7 +795,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		
 		focus.set(id, range);
 
-		if (!keyboard.isSpecial(k)) {
+		if (!keyboard.isSpecial(e)) {
 			this.placeholderHide();
 		};
 		
@@ -811,7 +809,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		const { filter } = commonStore;
 		const { id, content } = block;
 		const range = this.getRange();
-		const k = e.key.toLowerCase();
+		const k = keyboard.eventKey(e);
 		const Markdown = {
 			'[\\*\\-\\+]':	 I.TextStyle.Bulleted,
 			'\\[\\]':		 I.TextStyle.Checkbox,
@@ -847,8 +845,8 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 
 		const symbolBefore = range ? value[range.from - 1] : '';
 		const isSpaceBefore = range ? (!range.from || (value[range.from - 2] == ' ') || (value[range.from - 2] == '\n')) : false;
-		const canOpenMenuAdd = (symbolBefore == '/') && !this.preventMenu && !keyboard.isSpecial(k) && !menuOpenAdd && !block.isTextCode() && !block.isTextTitle() && !block.isTextDescription();
-		const canOpenMentionMenu = (symbolBefore == '@') && !this.preventMenu && (isSpaceBefore || (range.from == 1)) && !keyboard.isSpecial(k) && !menuOpenMention && !block.isTextCode() && !block.isTextTitle() && !block.isTextDescription();
+		const canOpenMenuAdd = (symbolBefore == '/') && !this.preventMenu && !keyboard.isSpecial(e) && !menuOpenAdd && !block.isTextCode() && !block.isTextTitle() && !block.isTextDescription();
+		const canOpenMentionMenu = (symbolBefore == '@') && !this.preventMenu && (isSpaceBefore || (range.from == 1)) && !keyboard.isSpecial(e) && !menuOpenMention && !block.isTextCode() && !block.isTextTitle() && !block.isTextDescription();
 		const parsed = this.getMarksFromHtml();
 
 		this.preventMenu = false;
@@ -1247,7 +1245,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		window.clearTimeout(this.timeoutContext);
 
 		if (!currentTo || (currentFrom == currentTo) || !block.canHaveMarks() || ids.length) {
-			if (!keyboard.isContextDisabled) {
+			if (!keyboard.isContextCloseDisabled) {
 				menuStore.close('blockContext');
 			};
 			return;
@@ -1260,10 +1258,14 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		menuStore.closeAll([ 'blockAdd', 'blockMention' ]);
 
 		this.timeoutContext = window.setTimeout(() => {
+			if (keyboard.isContextOpenDisabled) {
+				return;
+			};
+
 			const pageContainer = Util.getPageContainer(isPopup);
 
-			pageContainer.unbind('click.context').on('click.context', () => { 
-				pageContainer.unbind('click.context');
+			pageContainer.off('click.context').on('click.context', () => { 
+				pageContainer.off('click.context');
 				menuStore.close('blockContext'); 
 			});
 
@@ -1276,7 +1278,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 				horizontal: I.MenuDirection.Center,
 				passThrough: true,
 				onClose: () => {
-					keyboard.disableContext(false);
+					keyboard.disableContextClose(false);
 				},
 				data: {
 					blockId: block.id,
@@ -1284,7 +1286,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 					rootId: rootId,
 					dataset: dataset,
 					range: { from: currentFrom, to: currentTo },
-					marks: Util.objectCopy(this.marks),
+					marks: this.marks,
 					isInsideTable,
 					onChange: (marks: I.Mark[]) => {
 						this.marks = marks;

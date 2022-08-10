@@ -1,5 +1,5 @@
-import { I, DataUtil, Util, FileUtil, translate } from 'ts/lib';
-import { dbStore } from 'ts/store';
+import { I, DataUtil, Util, FileUtil, translate } from 'Lib';
+import { dbStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -135,6 +135,9 @@ class Relation {
 
 					case I.FilterCondition.In:
 						ret = ret.concat(extendedOptions);
+						break;
+
+					case I.FilterCondition.None:
 						break;
 
 					default: 
@@ -279,7 +282,7 @@ class Relation {
 		if ('object' != typeof(value)) {
 			value = value ? [ value ] : [];
 		};
-		value = value.filter((it: string) => { return it; });
+		value = value.filter(it => it);
 		return Util.arrayUnique(value);
 	};
 

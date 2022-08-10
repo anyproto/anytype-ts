@@ -30,8 +30,8 @@ window.require = window.require || function (mod) {
 
             ret.getGlobal = function (v) {
                 switch (v) {
-                    case 'serverAddr':
-                        return window.serverAddr;
+                    case 'serverAddress':
+                        return window.serverAddress;
                 };
             };
             break;

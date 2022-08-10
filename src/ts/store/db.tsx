@@ -1,5 +1,5 @@
 import { observable, action, computed, set, intercept, makeObservable } from 'mobx';
-import { I, M, DataUtil, Util } from 'ts/lib';
+import { I, M, DataUtil } from 'ts/lib';
 import { detailStore } from 'ts/store';
 
 const Constant = require('json/constant.json');
@@ -226,7 +226,7 @@ class DbStore {
 	};
 
 	groupsSet (rootId: string, blockId: string, groups: any[]) {
-		this.groupMap.set(this.getId(rootId, blockId), groups);
+		this.groupMap.set(this.getId(rootId, blockId), observable(groups));
 	};
 
 	groupsClear (rootId: string, blockId: string) {
@@ -265,7 +265,7 @@ class DbStore {
 
     getView (rootId: string, blockId: string, id: string): I.View {
 		const views = this.getViews(rootId, blockId);
-		return views.find((it: I.View) => { return it.id == id; });
+		return views.find(it => it.id == id);
 	};
 
     getMeta (rootId: string, blockId: string) {
@@ -285,7 +285,7 @@ class DbStore {
 	};
 
 	getId (rootId: string, blockId: string) {
-		return [ rootId, blockId ].join(':');
+		return [ rootId, blockId ].join('-');
 	};
 
 	getSubId (rootId: string, blockId: string) {

@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { I, Relation } from 'ts/lib';
+import { I, Relation } from 'Lib';
 import { observer } from 'mobx-react';
-import { dbStore, detailStore } from 'ts/store';
+import { dbStore, detailStore } from 'Store';
 import { AutoSizer, WindowScroller, Masonry, CellMeasurer, CellMeasurerCache, createMasonryCellPositioner } from 'react-virtualized';
 
 import Card from './gallery/card';

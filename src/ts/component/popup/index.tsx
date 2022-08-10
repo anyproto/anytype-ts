@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, Util, analytics } from 'ts/lib';
-import { Dimmer } from 'ts/component';
-import { menuStore, popupStore } from 'ts/store';
+import { I, Util, analytics } from 'Lib';
+import { Dimmer } from 'Component';
+import { menuStore, popupStore } from 'Store';
 import { RouteComponentProps } from 'react-router';
 
 import PopupSettings from './settings';
@@ -15,7 +15,6 @@ import PopupShortcut from './shortcut';
 import PopupPage from './page';
 import PopupTemplate from './template';
 import PopupExport from './export';
-import PopupVideo from './video';
 
 interface Props extends I.Popup, RouteComponentProps<any> {};
 
@@ -50,7 +49,6 @@ class Popup extends React.Component<Props, {}> {
 			page:		 PopupPage,
 			template:	 PopupTemplate,
 			export:		 PopupExport,
-			video:		 PopupVideo,
 		};
 		
 		const popupId = this.getId();
@@ -96,7 +94,7 @@ class Popup extends React.Component<Props, {}> {
 	};
 	
 	unbind () {
-		$(window).unbind('resize.popup');
+		$(window).off('resize.popup');
 	};
 	
 	animate () {

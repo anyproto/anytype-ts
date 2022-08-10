@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Icon, Title, Label } from 'ts/component';
-import { I, translate } from 'ts/lib';
-import { authStore } from 'ts/store';
+import { Icon, Title, Label } from 'Component';
+import { I, translate } from 'Lib';
+import { authStore } from 'Store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Popup, RouteComponentProps<any> {

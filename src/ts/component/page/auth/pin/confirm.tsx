@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Frame, Cover, Title, Label, Error, Pin, Header, FooterAuth as Footer } from 'ts/component';
-import { Storage, Util, translate } from 'ts/lib';
-import { commonStore, authStore } from 'ts/store';
+import { Frame, Cover, Title, Label, Error, Pin, Header, FooterAuth as Footer } from 'Component';
+import { Storage, Util, translate } from 'Lib';
+import { commonStore, authStore } from 'Store';
 import { observer } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any> {}
@@ -12,11 +12,10 @@ interface State {
 }
 
 const sha1 = require('sha1');
-const Constant: any = require('json/constant.json');
 
 const PageAuthPinConfirm = observer(class PageAuthPinConfirm extends React.Component<Props, State> {
 	
-	refObj: any = {};
+	ref: any = null;
 	state = {
 		error: ''
 	};
@@ -31,11 +30,6 @@ const PageAuthPinConfirm = observer(class PageAuthPinConfirm extends React.Compo
 		const { cover } = commonStore;
 		const { error } = this.state;
 		
-		let inputs = [];
-		for (let i = 1; i <= Constant.pinSize; ++i) {
-			inputs.push({ id: i });
-		};
-		
         return (
 			<div>
 				<Cover {...cover} className="main" />
@@ -48,6 +42,7 @@ const PageAuthPinConfirm = observer(class PageAuthPinConfirm extends React.Compo
 					<Error text={error} />
 					
 					<Pin 
+						ref={(ref: any) => { this.ref = ref; }}
 						value={authStore.pin} 
 						onSuccess={this.onSuccess} 
 						onError={() => { this.setState({ error: translate('authPinConfirmError') }) }} 
@@ -58,7 +53,20 @@ const PageAuthPinConfirm = observer(class PageAuthPinConfirm extends React.Compo
     };
 
 	componentDidMount () {
-		window.setTimeout(() => { this.refObj[1].focus(); }, 15);
+		this.rebind();
+	};
+
+	componentWillUnmount () {
+		this.unbind();
+	};
+
+	unbind () {
+		$(window).off('focus.pin');
+	};
+
+	rebind () {
+		this.unbind();
+		$(window).on('focus.pin', () => { console.log('focus'); this.ref.focus(); });
 	};
 
 	onSuccess (pin: string) {

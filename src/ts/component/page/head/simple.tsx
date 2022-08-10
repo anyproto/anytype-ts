@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { IconObject, Block, Button } from 'ts/component';
-import { I, M, DataUtil, focus, keyboard } from 'ts/lib';
-import { blockStore, detailStore, dbStore } from 'ts/store';
+import { IconObject, Block, Button } from 'Component';
+import { I, M, DataUtil, focus, keyboard } from 'Lib';
+import { blockStore, detailStore, dbStore } from 'Store';
 import { observer } from 'mobx-react';
 import { getRange } from 'selection-ranges';
 

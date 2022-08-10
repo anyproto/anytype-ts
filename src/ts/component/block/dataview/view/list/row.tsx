@@ -1,9 +1,9 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, Relation } from 'ts/lib';
+import { I, Relation } from 'Lib';
 import { observer } from 'mobx-react';
-import { Cell } from 'ts/component';
-import { dbStore } from 'ts/store';
+import { Cell } from 'Component';
+import { dbStore } from 'Store';
 
 interface Props extends I.ViewComponent {
 	index: number;

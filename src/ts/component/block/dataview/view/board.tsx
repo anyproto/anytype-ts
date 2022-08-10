@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Loader } from 'ts/component';
-import { dbStore, detailStore, popupStore } from 'ts/store';
-import { I, C, Util, DataUtil, analytics, keyboard } from 'ts/lib';
+import { Loader } from 'Component';
+import { dbStore, detailStore, popupStore } from 'Store';
+import { I, C, Util, DataUtil, analytics, keyboard } from 'Lib';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 import arrayMove from 'array-move';
@@ -149,6 +149,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 
 			const groups = (message.groups || []).map((it: any) => {
 				it.isHidden = groupOrder[it.id]?.isHidden;
+				it.bgColor = groupOrder[it.id]?.bgColor;
 				return it;
 			});
 
@@ -165,7 +166,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 		});
 	};
 
-	onRecordAdd (groupId: string) {
+	onRecordAdd (groupId: string, dir: number) {
 		const { rootId, block, getView } = this.props;
 		const view = getView();
 		const group = dbStore.getGroup(rootId, block.id, groupId);
@@ -185,7 +186,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 				const newRecord = message.record;
 				const records = dbStore.getRecords(subId, '');
 				const oldIndex = records.findIndex(it => it == newRecord.id);
-				const newIndex = records.length - 1;
+				const newIndex = dir > 0 ? records.length - 1 : 0;
 
 				dbStore.recordsSet(subId, '', arrayMove(records, oldIndex, newIndex));
 
@@ -605,7 +606,6 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 	};
 
 	resize () {
-		const { rootId, block } = this.props;
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
 		const scroll = node.find('.scroll');
@@ -614,7 +614,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 		const mw = ww - 192;
 		const size = Constant.size.dataview.board;
 		const groups = this.getGroups(false);
-		const width = 20 + groups.length * (size.card + size.margin);
+		const width = 30 + groups.length * (size.card + size.margin);
 		
 		let vw = 0;
 		let margin = 0;

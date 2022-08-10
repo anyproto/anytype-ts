@@ -2,10 +2,10 @@
 
 .blocks {
 	.block.blockDataview {
-		.viewItem.viewBoard { padding: 20px 0px 0px 14px; }
+		.viewItem.viewBoard { padding: 16px 0px 0px 14px; }
         .viewItem.viewBoard {
 
-			.ghost { border: 1px dotted $colorOrange; border-radius: 12px; flex-shrink: 0; }
+			.ghost { border: 0.05em dashed $colorOrange; border-radius: 12px; flex-shrink: 0; }
 			.ghost.isColumn { width: 240px; height: 100%; margin: 42px 14px 0px 0px; }
 			.ghost.isCard { margin-bottom: 8px; }
 			
@@ -22,16 +22,19 @@
 				.ghost.bottom { display: block; }
 			}
 
-            .columns { display: flex; flex-direction: row; gap: 0px 10px; }
-            .column { width: 254px; flex-shrink: 0; display: flex; flex-direction: column; }
+            .columns { display: flex; flex-direction: row; gap: 0px 8px; }
+            .column { width: 254px; flex-shrink: 0; display: flex; flex-direction: column; position: relative; }
             .column {
-                .head { 
-					padding: 4px 10px; width: 240px; margin: 6px 0px; cursor: grab; border-radius: 12px; background: #fff; color: $colorDarkGrey; 
-					line-height: 24px; 
-				}
+				.bgColor { position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; opacity: 0.5; }
+				.bgColor-default { background-color: #f1f0ed; }
+
+                .head { cursor: grab; color: $colorDarkGrey; width: 100%; position: relative; padding: 8px 0px 0px 0px; }
 				.head * { cursor: grab; }
 				.head {
-					.sides { display: flex; width: 100%; gap: 0px 6px; }
+					.sides { 
+						display: flex; width: 100%; gap: 0px 6px; background: #fff; border-radius: 12px; padding: 0px 16px; line-height: 24px;
+						position: relative; z-index: 1;
+					}
 					.side.left { width: calc(100% - 54px); display: flex; align-items: flex-start; gap: 0px 6px; justify-content: flex-start; }
 					.side.right { width: 54px; display: flex; align-items: flex-start; gap: 0px 6px; flex-shrink: 0; justify-content: flex-end; }
 
@@ -52,16 +55,32 @@
 					}
 
 					.side.right {
-						.icon { flex-shrink: 0; width: 24px; height: 24px; background-size: 20px; border-radius: 4px; cursor: pointer; vertical-align: top; }
+						.icon { 
+							flex-shrink: 0; width: 24px; height: 24px; background-size: 20px; border-radius: 4px; cursor: pointer; vertical-align: top; 
+							opacity: 0; 
+						}
 						.icon:hover { background-color: $colorVeryLightGrey; }
 
 						.icon.more { background-image: url('~img/icon/menu/action/more0.svg'); }
 						.icon.add { background-image: url('~img/icon/plus/menu0.svg'); }
 					}
+
+					.bgColor { border-radius: 4px 4px 0px 0px; }
 				}
 
-				.body { overflow-y: overlay; max-height: 600px; }
+				.body { overflow-y: overlay; max-height: 1500px; position: relative; z-index: 1; }
+				.body {
+					.bg { position: relative; padding: 8px; }
+					.bgColor { border-radius: 0px 0px 4px 4px; }
+				}
             }
+			.column:hover {
+				.head .side.right .icon { opacity: 1; }
+			}
+
+			.column.withColor {
+				.head .sides { background: none; }
+			}
 			.column.isDragging { opacity: 0.3; }
 			.column.isClone {
 				.body { overflow: visible; max-height: unset; }
@@ -70,7 +89,7 @@
 
 			.column > .ghost { margin-top: 42px; width: 240px; flex-shrink: 0; }
 			
-            .card { width: 240px; display: flex; flex-direction: column; gap: 8px 0px; margin-bottom: 8px; position: relative; }
+            .card { width: 240px; display: flex; flex-direction: column; margin: 0px auto 8px auto; position: relative; z-index: 1; }
 			.card {
 				.cardContent { border: 1px solid $colorBorderDark; border-radius: 12px; padding: 16px; background: $colorWhite; }
 			}
@@ -81,16 +100,16 @@
 			}
 
             .card.add { 
-				min-height: unset; text-align: center; padding: 10px 0px; margin: 0px; line-height: 1; transition: $transitionFast; cursor: pointer; 
-				border: 1px solid $colorBorderDark; border-radius: 12px; flex-direction: row; justify-content: center; background: $colorWhite;
+				min-height: unset; text-align: center; padding: 10px 0px; margin: 0px auto; line-height: 1; transition: $transitionFast; cursor: pointer; 
+				border: 1px solid $colorVeryLightGrey; border-radius: 12px; flex-direction: row; justify-content: center; background: $colorWhite;
 			}
 			.card.add.first { margin: 0px; }
             .card.add {
-                .icon { vertical-align: top; }
+                .icon { background-image: url('~img/icon/plus/column0.svg'); vertical-align: top; }
             }
             .card.add:hover { border-color: $colorBlack; }
             .card.add:hover {
-                .icon { background-image: url('~img/icon/plus/menu1.svg'); }
+                .icon { background-image: url('~img/icon/plus/column1.svg'); }
             }
 
 			.card {

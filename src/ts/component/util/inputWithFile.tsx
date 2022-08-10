@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Icon, Input, Button } from 'ts/component';
-import { I, keyboard, focus, translate } from 'ts/lib';
+import { Icon, Input, Button } from 'Component';
+import { I, keyboard, focus, translate } from 'Lib';
 
 interface Props {
 	icon?: string;
@@ -21,7 +21,6 @@ interface State {
 	size: Size;
 };
 
-const { dialog } = window.require('@electron/remote');
 const $ = require('jquery');
 const raf = require('raf');
 const SMALL_WIDTH = 248;
@@ -159,7 +158,7 @@ class InputWithFile extends React.Component<Props, State> {
 		};
 		
 		const node = $(ReactDOM.findDOMNode(this));
-		node.unbind('resize').on('resize', (e: any) => { this.resize(); });
+		node.off('resize').on('resize', (e: any) => { this.resize(); });
 	};
 	
 	unbind () {
@@ -169,7 +168,7 @@ class InputWithFile extends React.Component<Props, State> {
 		};
 		
 		const node = $(ReactDOM.findDOMNode(this));
-		node.unbind('resize');
+		node.off('resize');
 	};
 	
 	resize () {
@@ -263,7 +262,7 @@ class InputWithFile extends React.Component<Props, State> {
 			];
 		};
 		
-		dialog.showOpenDialog(options).then((result: any) => {
+		window.Electron.showOpenDialog(options).then((result: any) => {
 			const files = result.filePaths;
 			const file = files && files.length ? files[0] : '';
 

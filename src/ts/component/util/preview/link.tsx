@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Icon, Loader } from 'ts/component';
-import { C, Util } from 'ts/lib';
+import { Icon, Loader } from 'Component';
+import { C, Util } from 'Lib';
 import { observer } from 'mobx-react';
 
 interface Props {

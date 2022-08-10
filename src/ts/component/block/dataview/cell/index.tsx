@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, DataUtil, Util, keyboard, Relation } from 'ts/lib';
-import { commonStore, menuStore, dbStore } from 'ts/store';
+import { I, DataUtil, Util, keyboard, Relation, Renderer } from 'Lib';
+import { commonStore, menuStore, dbStore } from 'Store';
 import { observable } from 'mobx';
 
 import CellText from './text';
@@ -155,7 +155,6 @@ class Cell extends React.Component<Props, {}> {
 		const record = getRecord(index);
 		const { config } = commonStore;
 		const cellId = Relation.cellId(idPrefix, relation.relationKey, index);
-		const renderer = Util.getRenderer();
 		const value = record[relation.relationKey] || '';
 
 		if (!this.canEdit()) {
@@ -166,7 +165,7 @@ class Cell extends React.Component<Props, {}> {
 				case I.RelationType.Phone:
 					if (value) {
 						const scheme = Relation.getUrlScheme(relation.format, value);
-						renderer.send('urlOpen', scheme + value);
+						Renderer.send('urlOpen', scheme + value);
 						break;
 					};
 			};
@@ -357,7 +356,7 @@ class Cell extends React.Component<Props, {}> {
 
 				if (e.shiftKey && value) {
 					const scheme = Relation.getUrlScheme(relation.format, value);
-					renderer.send('urlOpen', scheme + value);
+					Renderer.send('urlOpen', scheme + value);
 
 					ret = true;
 					break;
@@ -379,7 +378,7 @@ class Cell extends React.Component<Props, {}> {
 						const scheme = Relation.getUrlScheme(relation.format, value);
 						
 						if (item.id == 'go') {
-							renderer.send('urlOpen', scheme + value);
+							Renderer.send('urlOpen', scheme + value);
 						};
 
 						if (item.id == 'copy') {
@@ -418,14 +417,14 @@ class Cell extends React.Component<Props, {}> {
 					setOn();
 				};
 
-				$(pageContainer).unbind('mousedown.cell').on('mousedown.cell', (e: any) => { 
+				$(pageContainer).off('mousedown.cell').on('mousedown.cell', (e: any) => { 
 					if (!$(e.target).parents(`#${cellId}`).length) {
 						menuStore.closeAll(Constant.menuIds.cell); 
 					};
 				});
 
 				if (!config.debug.ui) {
-					win.unbind('blur.cell').on('blur.cell', () => { menuStore.closeAll(Constant.menuIds.cell); });
+					win.off('blur.cell').on('blur.cell', () => { menuStore.closeAll(Constant.menuIds.cell); });
 				};
 			} else 
 			if (closeIfOpen) {

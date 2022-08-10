@@ -1,10 +1,10 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
-import { Icon, IconObject, ObjectName } from 'ts/component';
-import { blockStore, dbStore, detailStore } from 'ts/store';
+import { Icon, IconObject, ObjectName } from 'Component';
+import { blockStore, dbStore, detailStore } from 'Store';
 import { observer } from 'mobx-react';
-import { I, DataUtil } from 'ts/lib';
+import { I, DataUtil } from 'Lib';
 
 interface Props {
 	canDrag: boolean;

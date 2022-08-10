@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Filter, MenuItemVertical, Icon } from 'ts/component';
+import { Filter, MenuItemVertical, Icon } from 'Component';
 import { observer } from 'mobx-react';
 
 interface Props {

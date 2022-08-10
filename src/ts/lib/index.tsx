@@ -1,8 +1,9 @@
-import * as I from 'ts/interface';
-import * as M from 'ts/model';
+import * as I from 'Interface';
+import * as M from 'Model';
 import * as C from './command';
 import * as Response from './response';
 import Mapper from './mapper';
+import Renderer from './renderer';
 
 import { dispatcher } from './dispatcher';
 import { keyboard, Key } from './keyboard';
@@ -21,7 +22,6 @@ import { analytics } from './analytics';
 import { crumbs } from './crumbs';
 import { history } from './history';
 import Action from './action';
-import * as Docs from 'ts/docs';
 import Onboarding from './onboarding';
 
 const Constant = require('json/constant.json');
@@ -56,7 +56,6 @@ export {
 	C,
 	Response,
 	M,
-	Docs,
 	translate,
 	analytics,
 	crumbs,
@@ -67,4 +66,5 @@ export {
 	Mapper,
 	Action,
 	Onboarding,
+	Renderer,
 };

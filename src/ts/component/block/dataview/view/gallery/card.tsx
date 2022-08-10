@@ -1,9 +1,9 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Cell, Cover, Icon } from 'ts/component';
-import { I, DataUtil, Relation, Util } from 'ts/lib';
+import { Cell, Cover, Icon } from 'Component';
+import { I, DataUtil, Relation, keyboard } from 'Lib';
 import { observer } from 'mobx-react';
-import { commonStore, detailStore, dbStore } from 'ts/store';
+import { commonStore, detailStore, dbStore } from 'Store';
 
 interface Props extends I.ViewComponent {
 	index: number;
@@ -138,7 +138,7 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 	onClick (e: any) {
 		e.preventDefault();
 
-		if (e.shiftKey || e.ctrlKey || e.metaKey || e.altKey) {
+		if (keyboard.withCommand(e)) {
 			return;
 		};
 

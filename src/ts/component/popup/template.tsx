@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Loader, Title, Label, ListObjectPreview } from 'ts/component';
-import { I, C, focus, Util } from 'ts/lib';
-import { detailStore } from 'ts/store';
+import { Loader, Title, Label, ListObjectPreview } from 'Component';
+import { I, C, focus, Util } from 'Lib';
+import { detailStore } from 'Store';
 
 interface Props extends I.Popup, RouteComponentProps<any> {};
 
@@ -83,7 +83,7 @@ class PopupTemplate extends React.Component<Props, State> {
 	};
 
 	unbind () {
-		$(window).unbind('keyup.popupTemplate');
+		$(window).off('keyup.popupTemplate');
 	};
 
 	rebind () {

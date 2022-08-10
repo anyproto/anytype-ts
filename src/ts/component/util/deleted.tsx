@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { Icon, Label, Button } from 'ts/component';
-import { Util } from 'ts/lib';
+import { Icon, Label, Button } from 'Component';
+import { Util } from 'Lib';
 
 interface Props {
 	className?: string;

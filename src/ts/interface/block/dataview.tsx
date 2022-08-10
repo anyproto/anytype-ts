@@ -1,4 +1,4 @@
-import { I } from 'ts/lib';
+import { I } from 'Lib';
 
 export enum CardSize {
 	Small	 = 0,
@@ -119,6 +119,7 @@ export interface View {
 	type: ViewType;
 	coverRelationKey: string;
 	groupRelationKey: string;
+	groupBackgroundColors?: boolean;
 	coverFit: boolean;
 	cardSize: I.CardSize;
 	hideIcon: boolean;

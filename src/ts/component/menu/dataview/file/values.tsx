@@ -1,16 +1,15 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
-import { Icon, IconObject, MenuItemVertical } from 'ts/component';
-import { I, C, Util, DataUtil, Relation } from 'ts/lib';
+import { Icon, IconObject, MenuItemVertical } from 'Component';
+import { I, C, Util, DataUtil, Relation, Renderer } from 'Lib';
 import { observer } from 'mobx-react';
-import { commonStore, detailStore, menuStore } from 'ts/store';
+import { commonStore, detailStore, menuStore } from 'Store';
 import arrayMove from 'array-move';
 
 interface Props extends I.Menu {}
 
 const $ = require('jquery');
-const { dialog } = window.require('@electron/remote');
 const Constant = require('json/constant.json');
 const MENU_ID = 'dataviewFileList';
 
@@ -30,10 +29,10 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 	render () {
 		const { param, position } = this.props;
 		const { data } = param;
-		const { rootId, subId } = data;
+		const { subId } = data;
 		
 		let value = Relation.getArrayValue(data.value);
-		value = value.map((it: string) => { return detailStore.get(subId, it, []); });
+		value = value.map(it => detailStore.get(subId, it, []));
 		value = value.filter((it: any) => { return !it._empty_; });
 
         const Handle = SortableHandle(() => (
@@ -139,7 +138,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 		const { selection } = dataset;
 		const { data } = param;
 		
-		let value = Util.objectCopy(data.value || []);
+		let value = Relation.getArrayValue(data.value);
 		value = arrayMove(value, oldIndex, newIndex);
 
 		menuStore.updateData(id, { value });
@@ -186,7 +185,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 			filters: [  ] 
 		};
 		
-		dialog.showOpenDialog(options).then((result: any) => {
+		window.Electron.showOpenDialog(options).then((result: any) => {
 			const files = result.filePaths;
 			const file = files && files.length ? files[0] : '';
 
@@ -202,7 +201,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 		const { param } = this.props;
 		const { data } = param;
 
-		let value = Util.objectCopy(data.value || []);
+		let value = Relation.getArrayValue(data.value);
 		value.push(hash);
 		value = Util.arrayUnique(value);
 
@@ -224,10 +223,10 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 		const { data, classNameWrap } = param;
 		const { onChange } = data;
 		const element = $(`#${getId()} #item-${item.id}`);
-		const renderer = Util.getRenderer();
+
+		let value = Relation.getArrayValue(data.value);
 
 		element.addClass('active');
-
 		menuStore.open('select', { 
 			element: element.find('.icon.more'),
 			horizontal: I.MenuDirection.Center,
@@ -256,13 +255,12 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 									break;
 							};
 							if (url) {
-								renderer.send('download', url);
+								Renderer.send('download', url);
 							};
 							break;
 
 						case 'remove':
-							let value = Util.objectCopy(data.value || []);
-							value = value.filter((it: any) => { return it != item.id; });
+							value = value.filter(it => it != item.id);
 							value = Util.arrayUnique(value);
 
 							onChange(value, () => {

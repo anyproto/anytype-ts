@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { I, DataUtil, Relation, translate, keyboard } from 'ts/lib';
-import { Filter, MenuItemVertical } from 'ts/component';
+import { I, DataUtil, Relation, translate, keyboard } from 'Lib';
+import { Filter, MenuItemVertical } from 'Component';
+import { menuStore } from 'Store';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
-import { menuStore } from 'ts/store';
 
-interface Props extends I.Menu {}
+interface Props extends I.Menu {};
 
 const $ = require('jquery');
 
@@ -38,6 +38,7 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<Pro
 								key={i} 
 								{...action} 
 								onClick={(e: any) => { this.onClick(e, action); }}
+								onMouseEnter={(e: any) => { this.onMouseEnter(e, action); }}
 							/>
 						);
 					})}
@@ -97,7 +98,7 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<Pro
 	};
 	
 	unbind () {
-		$(window).unbind('keydown.menu');
+		$(window).off('down.menu');
 	};
 
 	getSections () {
@@ -160,6 +161,12 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<Pro
 		};
 	};
 
+	onMouseEnter (e: any, item: any) {
+		if (!keyboard.isMouseDisabled) {
+			this.props.setActive(item, false);
+		};
+	};
+
 	remove () {
 		const { param, close, id } = this.props;
 		const { data } = param;
@@ -167,9 +174,9 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<Pro
 		const relation = data.relation.get();
 		
 		let value = Relation.getArrayValue(data.value);
-		value = value.filter((it: any) => { return it != option.id; });
+		value = value.filter(it => it != option.id);
 
-		relation.selectDict = relation.selectDict.filter((it: any) => { return it.id != option.id; });
+		relation.selectDict = relation.selectDict.filter(it => it.id != option.id);
 		optionCommand('delete', rootId, blockId, relation.relationKey, record.id, option);
 
 		menuStore.updateData(id, { value });
@@ -187,7 +194,7 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<Pro
 		const { data } = param;
 		const { option, rootId, blockId, record, optionCommand } = data;
 		const relation = data.relation.get();
-		const idx = relation.selectDict.findIndex((it: any) => { return it.id == option.id; });
+		const idx = relation.selectDict.findIndex(it => it.id == option.id);
 		const value = this.refName.getValue();
 
 		if (!value) {

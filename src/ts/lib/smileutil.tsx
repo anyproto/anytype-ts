@@ -1,4 +1,4 @@
-import { Util } from 'ts/lib';
+import { Util } from 'Lib';
 import { getEmojiDataFromNative } from 'emoji-mart';
 
 const EmojiData = require('json/emoji.json');

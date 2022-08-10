@@ -1,5 +1,6 @@
-import { I, Storage, Docs, Util } from 'ts/lib';
-import { menuStore } from 'ts/store';
+import { I, Storage, Util } from 'Lib';
+import * as Docs from 'Docs';
+import { menuStore } from 'Store';
 
 const Constant = require('json/constant.json');
 

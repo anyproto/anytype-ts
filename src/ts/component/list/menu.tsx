@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { Menu } from 'ts/component';
-import { menuStore } from 'ts/store';
+import { Menu } from 'Component';
+import { menuStore } from 'Store';
 import { observer } from 'mobx-react';
-import { I } from 'ts/lib';
+import { I } from 'Lib';
 
 interface Props {
 	dataset?: any;

@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { MenuItemVertical, Filter, ObjectName } from 'ts/component';
-import { I, C, Util, keyboard, DataUtil, analytics, focus } from 'ts/lib';
-import { commonStore, dbStore, menuStore, detailStore } from 'ts/store';
+import { MenuItemVertical, Filter, ObjectName } from 'Component';
+import { I, C, Util, keyboard, DataUtil, analytics, focus } from 'Lib';
+import { commonStore, menuStore, detailStore } from 'Store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
@@ -209,7 +209,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 	};
 	
 	unbind () {
-		$(window).unbind('keydown.menu');
+		$(window).off('keydown.menu');
 	};
 
 	onFilterChange (e: any) {

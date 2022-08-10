@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Title, Label, Select } from 'ts/component';
-import { I, Util, Storage, translate, analytics } from 'ts/lib';
-import { commonStore } from 'ts/store';
+import { Title, Label, Select } from 'Component';
+import { I, Util, Storage, translate, analytics } from 'Lib';
+import { commonStore } from 'Store';
 import { observer } from 'mobx-react';
 
 import Head from '../head';
@@ -38,7 +38,7 @@ const PopupSettingsPagePinIndex = observer(class PopupSettingsPagePinIndex exten
 
 		return (
 			<div>
-				<Head {...this.props} id="account" name={translate('popupSettingsAccountTitle')} />
+				<Head {...this.props} returnTo="account" name={translate('popupSettingsAccountTitle')} />
 
 				<Title text={translate('popupSettingsPinTitle')} />
 				<Label className="description" text={translate('popupSettingsPinText')} />

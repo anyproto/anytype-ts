@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { I, Util } from 'ts/lib';
+import { I, Util } from 'Lib';
 
 interface Props extends I.Popup, RouteComponentProps<any> {};
 
@@ -98,21 +98,27 @@ class PopupShortcut extends React.Component<Props, State> {
 	};
 
 	getSections (id: string) {
+		let cmd = '&#8984;';
 		let sections = {
 
 			main: [
 				{
 					name: 'Basics', children: [
-						{ mac: '&#8984; + N',			 com: 'Ctrl + N',			 name: 'Create a new page on the dashboard' },
-						{ mac: '&#8984; + Z',			 com: 'Ctrl + Z',			 name: 'Undo' },
-						{ mac: '&#8984; + Shift + Z',	 com: 'Ctrl + Shift + Z',	 name: 'Redo' },
-						{ mac: '&#8984; + P',			 com: 'Ctrl + P',			 name: 'Print' },
-						{ mac: '&#8984; + F',			 com: 'Ctrl + F',			 name: 'Find on page' },
-						{ mac: '&#8984; + Q',			 com: 'Ctrl + Q',			 name: 'Close Anytype' },
-						{ mac: '&#8984; + Y',			 com: 'Ctrl + H',			 name: 'Show page edit history' },
-						{ mac: '&#8984; + Click',		 com: 'Ctrl + Click',		 name: 'On page link will open it in modal view' },
-						{ mac: 'Ctrl + Space',			 com: 'Ctrl + Space',		 name: 'Shortcuts to launch shortcuts view' },
-						{ mac: '&#8984; + \\',			 com: 'Ctrl + \\',			 name: 'Toggle sidebar' },
+						{ mac: `${cmd} + N`,			 com: 'Ctrl + N',			 name: 'Create a new object on the dashboard' },
+						{ mac: `${cmd} + Shift + N`,	 com: 'Ctrl + Shift + N',	 name: 'New Anytype window' },
+						{ mac: `${cmd} + Option + N`,	 com: 'Ctrl + Alt + N',		 name: 'Create a new object in new window' },
+						{ mac: `${cmd} + Z`,			 com: 'Ctrl + Z',			 name: 'Undo' },
+						{ mac: `${cmd} + Shift + Z`,	 com: 'Ctrl + Shift + Z',	 name: 'Redo' },
+						{ mac: `${cmd} + P`,			 com: 'Ctrl + P',			 name: 'Print' },
+						{ mac: `${cmd} + F`,			 com: 'Ctrl + F',			 name: 'Find on page' },
+						{ mac: `${cmd} + Q`,			 com: 'Ctrl + Q',			 name: 'Close Anytype' },
+						{ mac: `${cmd} + Y`,			 com: 'Ctrl + H',			 name: 'Show page edit history' },
+						{ mac: `${cmd} + Click`,		 com: 'Ctrl + Click',		 name: 'On page link will open it in modal view' },
+						{ mac: `Ctrl + Space`,			 com: 'Ctrl + Space',		 name: 'Shortcuts to launch shortcuts view' },
+						{ mac: `${cmd} + \\`,			 com: 'Ctrl + \\',			 name: 'Toggle sidebar' },
+						{ mac: `${cmd} + Plus`,			 com: 'Ctrl + Plus',		 name: 'Zoom in' },
+						{ mac: `${cmd} + Minus`,		 com: 'Ctrl + Minus',		 name: 'Zoom out' },
+						{ mac: `${cmd} + 0`,			 com: 'Ctrl + 0',			 name: 'Default zoom' },
 					]
 				},
 
@@ -130,9 +136,9 @@ class PopupShortcut extends React.Component<Props, State> {
 					name: 'Selection', children: [
 						{ com: 'Double Click',			 name: 'Select word' },
 						{ com: 'Triple Click',			 name: 'Select an entire block' },
-						{ mac: '&#8984; + A',			 com: 'Ctrl + A',			 name: 'Select all blocks in the page' },
+						{ mac: `${cmd} + A`,			 com: 'Ctrl + A',			 name: 'Select all blocks in the page' },
 						{ com: 'Shift + ↑ or ↓',		 name: 'Expand your selection up or down' },
-						{ mac: '&#8984; + Click',		 com: 'Ctrl + Click',		 name: 'On block will select or de-select an entire block' },
+						{ mac: `${cmd} + Click`,		 com: 'Ctrl + Click',		 name: 'On block will select or de-select an entire block' },
 						{ com: 'Shift + Click',			 name: 'Select block and all blocks in between' },
 					]
 				},
@@ -140,25 +146,26 @@ class PopupShortcut extends React.Component<Props, State> {
 				{
 					name: 'Actions', children: [
 						{ com: '/',						 name: 'Activate command menu' },
-						{ mac: '&#8984; + /',			 com: 'Ctrl + /',			 name: 'Open action menu' },
-						{ mac: '&#8984; + Delete',		 com: 'Ctrl + Backspace',	 name: 'Deletes the words left to the cursor' },
-						{ mac: '&#8984; + C',			 com: 'Ctrl + C',			 name: 'Copy selected block/blocks or text part' },
-						{ mac: '&#8984; + X',			 com: 'Ctrl + X',			 name: 'Cut selected block/blocks or text part' },
-						{ mac: '&#8984; + V',			 com: 'Ctrl + V',			 name: 'Paste data outside Anytype, block/blocks or text part' },
-						{ mac: '&#8984; + D',			 com: 'Ctrl + D',			 name: 'Duplicate selected block/blocks' },
-						{ mac: '&#8984; + E',			 com: 'Ctrl + E',		 name: 'Launch emoji menu' },
+						{ mac: `${cmd} + /`,			 com: 'Ctrl + /',			 name: 'Open action menu' },
+						{ mac: `${cmd} + Delete`,		 com: 'Ctrl + Backspace',	 name: 'Deletes the words left to the cursor' },
+						{ mac: `${cmd} + C`,			 com: 'Ctrl + C',			 name: 'Copy selected block/blocks or text part' },
+						{ mac: `${cmd} + X`,			 com: 'Ctrl + X',			 name: 'Cut selected block/blocks or text part' },
+						{ mac: `${cmd} + V`,			 com: 'Ctrl + V',			 name: 'Paste data outside Anytype, block/blocks or text part' },
+						{ mac: `${cmd} + D`,			 com: 'Ctrl + D',			 name: 'Duplicate selected block/blocks' },
+						{ mac: `${cmd} + E`,			 com: 'Ctrl + E',		 name: 'Launch emoji menu' },
 					]
 				},
 
 				{
 					name: 'Text style', children: [
-						{ mac: '&#8984; + B',			 com: 'Ctrl + B',			 name: 'Bold' },
-						{ mac: '&#8984; + I',			 com: 'Ctrl + I',			 name: 'Italic' },
-						{ mac: '&#8984; + Shift +S',	 com: 'Ctrl + Shift + S',	 name: 'Strikethrough' },
-						{ mac: '&#8984; + K',			 com: 'Ctrl + K',			 name: 'Add a link' },
-						{ mac: '&#8984; + L',			 com: 'Ctrl + L',			 name: 'Convert to Inline code' },
-						{ mac: '&#8984; + Shift + C',		 com: 'Ctrl + Shift + C',	 name: 'Apply previously selected font color' },
-						{ mac: '&#8984; + Shift + H',		 com: 'Ctrl + Shift + H',	 name: 'Apply previously selected highlight' },
+						{ mac: `${cmd} + B`,			 com: 'Ctrl + B',			 name: 'Bold' },
+						{ mac: `${cmd} + I`,			 com: 'Ctrl + I',			 name: 'Italic' },
+						{ mac: `${cmd} + U`,			 com: 'Ctrl + U',			 name: 'Underline' },
+						{ mac: `${cmd} + Shift +S`,		 com: 'Ctrl + Shift + S',	 name: 'Strikethrough' },
+						{ mac: `${cmd} + K`,			 com: 'Ctrl + K',			 name: 'Add a link' },
+						{ mac: `${cmd} + L`,			 com: 'Ctrl + L',			 name: 'Convert to Inline code' },
+						{ mac: `${cmd} + Shift + C`,	 com: 'Ctrl + Shift + C',	 name: 'Apply previously selected font color' },
+						{ mac: `${cmd} + Shift + H`,	 com: 'Ctrl + Shift + H',	 name: 'Apply previously selected highlight' },
 					]
 				},
 			],
@@ -166,12 +173,12 @@ class PopupShortcut extends React.Component<Props, State> {
 			navigation: [
 				{
 					name: 'Basics', children: [
-						{ mac: '&#8984; + O',			 com: 'Ctrl + O',			 name: 'Open the navigation pane' },
-						{ mac: '&#8984; + Option + O',	 com: 'Ctrl + Alt + O',		 name: 'Open the graph pane' },
-						{ mac: '&#8984; + S',			 com: 'Ctrl + S',			 name: 'Open the search pane' },
-						{ mac: '&#8984; + Enter',		 com: 'Alt + H',			 name: 'Return to the home screen' },
-						{ mac: '&#8984; + [',			 com: 'Alt + ←',			 name: 'Show the previous page from history' },
-						{ mac: '&#8984; + ]',			 com: 'Alt + →',			 name: 'Show the next page from history' },
+						{ mac: `${cmd} + O`,			 com: 'Ctrl + O',			 name: 'Open the navigation pane' },
+						{ mac: `${cmd} + Option + O`,	 com: 'Ctrl + Alt + O',		 name: 'Open the graph pane' },
+						{ mac: `${cmd} + S`,			 com: 'Ctrl + S',			 name: 'Open the search pane' },
+						{ mac: `${cmd} + Enter`,		 com: 'Alt + H',			 name: 'Return to the home screen' },
+						{ mac: `${cmd} + [`,			 com: 'Alt + ←',			 name: 'Show the previous page from history' },
+						{ mac: `${cmd} + ]`,			 com: 'Alt + →',			 name: 'Show the next page from history' },
 					]
 				},
 
@@ -189,10 +196,10 @@ class PopupShortcut extends React.Component<Props, State> {
 					name: 'Page navigation', children: [
 						{ com: '↓',				 name: 'Go down one line' },
 						{ com: '↑',				 name: 'Go up one line' },
-						{ mac: '&#8984; + ←',	 com: 'Ctrl + ←',	 name: 'Go to the start of the line' },
-						{ mac: '&#8984; + →',	 com: 'Ctrl + →',	 name: 'Go to the end of the line' },
-						{ mac: '&#8984; + ↑',	 com: 'Ctrl + ↑',	 name: 'Go to the start of the page' },
-						{ mac: '&#8984; + ↓',	 com: 'Ctrl + ↓',	 name: 'Go to the end of the page' },
+						{ mac: `${cmd} + ←`,	 com: 'Ctrl + ←',	 name: 'Go to the start of the line' },
+						{ mac: `${cmd} + →`,	 com: 'Ctrl + →',	 name: 'Go to the end of the line' },
+						{ mac: `${cmd} + ↑`,	 com: 'Ctrl + ↑',	 name: 'Go to the start of the page' },
+						{ mac: `${cmd} + ↓`,	 com: 'Ctrl + ↓',	 name: 'Go to the end of the page' },
 					]
 				},
 			],
@@ -209,11 +216,13 @@ class PopupShortcut extends React.Component<Props, State> {
 						{ com: '[] + Space',		 name: 'Create a to-do checkbox' },
 						{ com: '1. + Space',		 name: 'Create a numbered list' },
 						{ com: '>  + Space',		 name: 'Create a toggle list' },
-						{ com: '```',		 name: 'Create a code block' },
-						{ com: '`',		 name: 'Inline code' },
-						{ com: '** or __',		 name: 'Inline bold' },
-						{ com: '* or _',		 name: 'Inline italic' },
-						{ com: '~~',		 name: 'Inline strikethrough' },
+						{ com: '```',				 name: 'Create a code block' },
+						{ com: '---',				 name: 'Create line divider' },
+						{ com: '***',				 name: 'Create dots divider' },
+						{ com: '`',					 name: 'Inline code' },
+						{ com: '** or __',			 name: 'Inline bold' },
+						{ com: '* or _',			 name: 'Inline italic' },
+						{ com: '~~',				 name: 'Inline strikethrough' },
 					]
 				},
 			],

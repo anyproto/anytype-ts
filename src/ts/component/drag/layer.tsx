@@ -1,10 +1,10 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Block } from 'ts/component';
-import { I, M, Util } from 'ts/lib';
-import { blockStore, dbStore } from 'ts/store';
+import { Block } from 'Component';
+import { I, M, Util } from 'Lib';
+import { blockStore, dbStore } from 'Store';
 
-import RelationItem from 'ts/component/menu/item/relationView';
+import RelationItem from 'Component/menu/item/relationView';
 
 interface State {
 	rootId: string;

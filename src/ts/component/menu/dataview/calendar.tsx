@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { I, Util, translate } from 'ts/lib';
-import { Select } from 'ts/component';
+import { I, Util, translate } from 'Lib';
+import { Select } from 'Component';
 import { observer } from 'mobx-react';
-import { menuStore } from 'ts/store';
+import { menuStore } from 'Store';
 
 const Constant = require('json/constant.json');
 

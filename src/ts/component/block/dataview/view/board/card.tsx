@@ -1,10 +1,10 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, DataUtil, Relation } from 'ts/lib';
-import { dbStore, detailStore } from 'ts/store';
+import { I, DataUtil, Relation, keyboard } from 'Lib';
+import { dbStore, detailStore } from 'Store';
 import { observer } from 'mobx-react';
 
-import Cell from 'ts/component/block/dataview/cell';
+import Cell from 'Component/block/dataview/cell';
 
 interface Props extends I.ViewComponent {
 	id: string;
@@ -77,7 +77,7 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 	onClick (e: any) {
 		e.preventDefault();
 
-		if (e.shiftKey || e.ctrlKey || e.metaKey || e.altKey) {
+		if (keyboard.withCommand(e)) {
 			return;
 		};
 
