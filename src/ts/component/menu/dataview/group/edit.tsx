@@ -132,8 +132,7 @@ const MenuGroupEdit = observer(class MenuGroupEdit extends React.Component<Props
 		const { data } = param;
 		const { rootId, blockId, groupId, getView } = data;
 		const view = getView();
-		const group = dbStore.getGroup(rootId, blockId, groupId);
-		const groups = this.getItems();
+		const groups = dbStore.getGroups(rootId, blockId);
 		const update: any[] = [];
 
 		groups.forEach((it: any, i: number) => {
@@ -147,6 +146,7 @@ const MenuGroupEdit = observer(class MenuGroupEdit extends React.Component<Props
 
 		dbStore.groupsSet(rootId, blockId, groups);
 		C.BlockDataviewGroupOrderUpdate(rootId, blockId, { viewId: view.id, groups: update });
+
 		this.forceUpdate();
 	};
 	

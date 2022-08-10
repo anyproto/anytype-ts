@@ -111,6 +111,7 @@
 
 		.icon.lock { width: 8px !important; height: 20px !important; background-image: url('~img/icon/lock.svg'); }
 
+		.icon.color { z-index: 1; }
 		.icon.color {
 			.inner { 
 				width: 16px; height: 16px; position: absolute; left: 50%; top: 50%; margin: -8px 0px 0px -8px; border-radius: 100%;

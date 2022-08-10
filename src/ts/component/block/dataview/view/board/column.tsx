@@ -45,7 +45,7 @@ const Column = observer(class Column extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { rootId, block, id, getSubId, getView, onRecordAdd, value, onDragStartColumn, isPopup } = this.props;
+		const { rootId, block, id, getSubId, getView, onRecordAdd, value, onDragStartColumn } = this.props;
 		const { loading } = this.state;
 		const view = getView();
 		const subId = getSubId();
@@ -60,6 +60,8 @@ const Column = observer(class Column extends React.Component<Props, State> {
 		
 		let label: any = null;
 		let showCell = true;
+
+		console.log(group);
 
 		if (view.groupBackgroundColors) {
 			cn.push('withColor');
