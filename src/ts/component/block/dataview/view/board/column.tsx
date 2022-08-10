@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { Icon, Loader } from 'Component';
 import { I, C, Util, translate, keyboard, DataUtil } from 'Lib';
 import { observer } from 'mobx-react';
-import { dbStore, detailStore } from 'Store';
+import { dbStore, detailStore, menuStore } from 'Store';
 
 import Card from './card';
 import Cell from 'Component/block/dataview/cell';
@@ -41,6 +41,7 @@ const Column = observer(class Column extends React.Component<Props, State> {
 		super(props);
 
 		this.onScroll = this.onScroll.bind(this);
+		this.onMore = this.onMore.bind(this);
 	};
 
 	render () {
@@ -54,16 +55,22 @@ const Column = observer(class Column extends React.Component<Props, State> {
 		const relation = dbStore.getRelation(rootId, block.id, view.groupRelationKey);
 		const group = dbStore.getGroup(rootId, block.id, id);
 		const head = {};
-		const cnbg = 'bgColor ' + group.bgColor;
+		const cn = [ 'column' ];
+		const cnbg = [];
+		
+		let label: any = null;
+		let showCell = true;
+
+		if (view.groupBackgroundColors) {
+			cn.push('withColor');
+			cnbg.push('bgColor bgColor-' + (group.bgColor || 'default'));
+		};
 
 		head[view.groupRelationKey] = value;
 
 		records.forEach((it: any) => {
 			const object = detailStore.get(subId, it.id, [ view.groupRelationKey ]);
 		});
-
-		let label: any = null;
-		let showCell = true;
 
 		switch (relation.format) {
 			case I.RelationType.Checkbox:
@@ -74,7 +81,7 @@ const Column = observer(class Column extends React.Component<Props, State> {
 		return (
 			<div 
 				id={'column-' + id} 
-				className="column withColor" 
+				className={cn.join(' ')}
 				data-id={id}
 			>
 				<div className="head">
@@ -102,12 +109,12 @@ const Column = observer(class Column extends React.Component<Props, State> {
 						</div>
 
 						<div className="side right">
-							<Icon className="more" />
+							<Icon id={`button-${id}-more`} className="more" onClick={this.onMore} />
 							<Icon className="add"  onClick={() => { onRecordAdd(id, -1); }} />
 						</div>
 					</div>
 
-					<div className={cnbg} />
+					<div className={cnbg.join(' ')} />
 				</div>
 
 				<div className="body" onScroll={this.onScroll}>
@@ -139,7 +146,7 @@ const Column = observer(class Column extends React.Component<Props, State> {
 								})}
 							</React.Fragment>
 						)}
-						<div className={cnbg} />
+						<div className={cnbg.join(' ')} />
 					</div>
 				</div>
 			</div>
@@ -232,6 +239,20 @@ const Column = observer(class Column extends React.Component<Props, State> {
 			this.offset += Constant.limit.dataview.records;
 			this.load(false);
 		};
+	};
+
+	onMore (e: any) {
+		const { rootId, block, id, getView } = this.props;
+
+		menuStore.open('dataviewGroupEdit', {
+			element: `#button-${id}-more`,
+			data: {
+				rootId,
+				blockId: block.id,
+				groupId: id,
+				getView,
+			}
+		});
 	};
 
 });

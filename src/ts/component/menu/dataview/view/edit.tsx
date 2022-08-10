@@ -260,6 +260,10 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 
 			settings = settings.concat([
 				{ id: 'groupRelationKey', name: 'Group by', caption: groupOption ? groupOption.name : 'Select', withCaption: true, arrow: true },
+				{ 
+					id: 'groupBackgroundColors', name: 'Color columns', withSwitch: true, switchValue: view.coverFit, 
+					onSwitch: (e: any, v: boolean) => { this.onSwitch(e, 'groupBackgroundColors', v); }
+				},
 			]);
 		};
 

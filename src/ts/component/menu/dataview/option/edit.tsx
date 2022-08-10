@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { I, DataUtil, Relation, translate, keyboard } from 'Lib';
 import { Filter, MenuItemVertical } from 'Component';
+import { menuStore } from 'Store';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
-import { menuStore } from 'Store';
 
-interface Props extends I.Menu {}
+interface Props extends I.Menu {};
 
 const $ = require('jquery');
 
@@ -38,6 +38,7 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<Pro
 								key={i} 
 								{...action} 
 								onClick={(e: any) => { this.onClick(e, action); }}
+								onMouseEnter={(e: any) => { this.onMouseEnter(e, action); }}
 							/>
 						);
 					})}
@@ -157,6 +158,12 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<Pro
 		} else
 		if (item.id == 'remove') {
 			this.remove();
+		};
+	};
+
+	onMouseEnter (e: any, item: any) {
+		if (!keyboard.isMouseDisabled) {
+			this.props.setActive(item, false);
 		};
 	};
 

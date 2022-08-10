@@ -268,7 +268,6 @@ const MenuGroupList = observer(class MenuGroupList extends React.Component<Props
 
 		dbStore.groupsSet(rootId, blockId, groups);
 		C.BlockDataviewGroupOrderUpdate(rootId, blockId, { viewId: view.id, groups: update });
-
 	};
 
 	onScroll ({ clientHeight, scrollHeight, scrollTop }) {

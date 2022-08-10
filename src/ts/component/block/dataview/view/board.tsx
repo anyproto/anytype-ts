@@ -122,8 +122,6 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 	loadGroupList () {
 		const { rootId, block, getView } = this.props;
 		const view = getView();
-		const colors = DataUtil.menuGetBgColors();
-		const color = colors[Util.rand(0, colors.length - 1)];
 
 		dbStore.groupsClear(rootId, block.id);
 		this.groupRelationKey = view.groupRelationKey;
@@ -151,7 +149,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 
 			const groups = (message.groups || []).map((it: any) => {
 				it.isHidden = groupOrder[it.id]?.isHidden;
-				it.bgColor = colors[Util.rand(0, colors.length - 1)].id;
+				it.bgColor = groupOrder[it.id]?.bgColor;
 				return it;
 			});
 
