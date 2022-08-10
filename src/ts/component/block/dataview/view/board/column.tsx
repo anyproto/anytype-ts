@@ -52,11 +52,9 @@ const Column = observer(class Column extends React.Component<Props, State> {
 		const items = this.getItems();
 		const { offset, total } = dbStore.getMeta(subId, '');
 		const relation = dbStore.getRelation(rootId, block.id, view.groupRelationKey);
+		const group = dbStore.getGroup(rootId, block.id, id);
 		const head = {};
-
-		const colors = DataUtil.menuGetBgColors();
-		const color = colors[Util.rand(0, colors.length - 1)];
-		const cnbg = 'bgColor ' + color.id;
+		const cnbg = 'bgColor ' + group.bgColor;
 
 		head[view.groupRelationKey] = value;
 

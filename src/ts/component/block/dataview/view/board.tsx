@@ -122,6 +122,8 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 	loadGroupList () {
 		const { rootId, block, getView } = this.props;
 		const view = getView();
+		const colors = DataUtil.menuGetBgColors();
+		const color = colors[Util.rand(0, colors.length - 1)];
 
 		dbStore.groupsClear(rootId, block.id);
 		this.groupRelationKey = view.groupRelationKey;
@@ -149,6 +151,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 
 			const groups = (message.groups || []).map((it: any) => {
 				it.isHidden = groupOrder[it.id]?.isHidden;
+				it.bgColor = colors[Util.rand(0, colors.length - 1)].id;
 				return it;
 			});
 
@@ -605,7 +608,6 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 	};
 
 	resize () {
-		const { rootId, block } = this.props;
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
 		const scroll = node.find('.scroll');
@@ -614,7 +616,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 		const mw = ww - 192;
 		const size = Constant.size.dataview.board;
 		const groups = this.getGroups(false);
-		const width = 20 + groups.length * (size.card + size.margin);
+		const width = 30 + groups.length * (size.card + size.margin);
 		
 		let vw = 0;
 		let margin = 0;
