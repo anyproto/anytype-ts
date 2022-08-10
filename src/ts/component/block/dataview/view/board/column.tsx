@@ -72,7 +72,7 @@ const Column = observer(class Column extends React.Component<Props, State> {
 		return (
 			<div 
 				id={'column-' + id} 
-				className="column" 
+				className="column withColor" 
 				data-id={id}
 			>
 				<div 
@@ -138,6 +138,7 @@ const Column = observer(class Column extends React.Component<Props, State> {
 					)}
 				</div>
 
+				<div className="bgColor" />
 			</div>
 		);
 	};
