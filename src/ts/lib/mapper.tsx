@@ -713,6 +713,7 @@ const Mapper = {
 			item.setType(obj.type);
 			item.setCoverrelationkey(obj.coverRelationKey);
 			item.setGrouprelationkey(obj.groupRelationKey);
+			item.setGroupbackgroundcolors(obj.groupBackgroundColors);
 			item.setCoverfit(obj.coverFit);
 			item.setCardsize(obj.cardSize);
 			item.setHideicon(obj.hideIcon);
