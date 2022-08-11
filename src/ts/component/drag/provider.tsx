@@ -139,6 +139,12 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 			target = blockStore.getLeaf(rootId, targetId);
 		};
 
+		// Last drop zone
+		if (targetId == 'blockLast') {
+			targetId = '';
+			position = I.BlockPosition.Bottom;
+		};
+
 		if (isFileDrop) {
 			let paths: string[] = [];
 			for (let file of dt.files) {
@@ -407,7 +413,6 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 		let isText = false;
 		let isFeatured = false;
 		let isType = false;
-		let isTable = false;
 
 		if (this.hoverData) {
 			this.canDrop = true;
@@ -436,7 +441,6 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 				isText = type == I.BlockType.Text;
 				isFeatured = type == I.BlockType.Featured;
 				isType = type == I.BlockType.Type;
-				isTable = type == I.BlockType.Table;
 			};
 
 			initVars();
@@ -537,6 +541,10 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 				if (rootId == this.hoverData.targetContextId) {
 					this.setPosition(I.BlockPosition.None);
 				};
+			};
+
+			if ((this.hoverData.id == 'blockLast') && (this.position != I.BlockPosition.None)) {
+				this.setPosition(I.BlockPosition.Top);
 			};
 
 			if (!isTargetBot && 

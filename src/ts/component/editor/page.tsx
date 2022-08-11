@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Block, Icon, Loader, Deleted } from 'Component';
+import { Block, Icon, Loader, Deleted, DropTarget } from 'Component';
 import { commonStore, blockStore, detailStore, menuStore, popupStore } from 'Store';
 import { I, C, Key, Util, DataUtil, Mark, focus, keyboard, crumbs, Storage, Mapper, Action, translate, analytics, Renderer } from 'Lib';
 import { observer } from 'mobx-react';
@@ -128,7 +128,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 						))}
 					</div>
 					
-					<div id="blockLast" className="blockLast" onClick={this.onLastClick} />
+					<DropTarget rootId={rootId} id="blockLast" dropType={I.DropType.Block} canDropMiddle={false}>
+						<div id="blockLast" className="blockLast" onClick={this.onLastClick} />
+					</DropTarget>
 				</div>
 			</div>
 		);
