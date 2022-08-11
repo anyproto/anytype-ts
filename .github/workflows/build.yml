@@ -61,6 +61,7 @@ jobs:
           APPLEIDPASS: ${{ secrets.APPLEIDPASS }}
           DO_KEY_ID: ${{ secrets.DO_KEY_ID }}
           DO_SECRET_KEY: ${{ secrets.DO_SECRET_KEY }}
+          USE_HARD_LINKS: false
 
       - name: Build Front
         if: matrix.os != 'macos-latest'
@@ -76,6 +77,7 @@ jobs:
           APPLEIDPASS: ${{ secrets.APPLEIDPASS }}
           DO_KEY_ID: ${{ secrets.DO_KEY_ID }}
           DO_SECRET_KEY: ${{ secrets.DO_SECRET_KEY }}
+          USE_HARD_LINKS: false
 
       - name: Make artifacts dir
         run: | 
