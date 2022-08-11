@@ -61,8 +61,6 @@ const Column = observer(class Column extends React.Component<Props, State> {
 		let label: any = null;
 		let showCell = true;
 
-		console.log(group);
-
 		if (view.groupBackgroundColors) {
 			cn.push('withColor');
 			cnbg.push('bgColor bgColor-' + (group.bgColor || 'default'));

@@ -369,8 +369,6 @@ class Cell extends React.Component<Props, {}> {
 					options.push({ id: 'reload', icon: 'reload', name: 'Reload from source' });
 				};
 
-				console.log(options);
-
 				param.data = Object.assign(param.data, {
 					disabled: !value, 
 					options,
