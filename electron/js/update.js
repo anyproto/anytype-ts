@@ -2,7 +2,6 @@ const { app } = require('electron');
 const { autoUpdater } = require('electron-updater');
 const log = require('electron-log');
 
-const Api = require('./api.js');
 const ConfigManager = require('./config.js');
 const Util = require('./util.js');
 
@@ -78,6 +77,8 @@ class UpdateManager {
 		});
 
 		autoUpdater.on('update-downloaded', (info) => {
+			const Api = require('./api.js');
+
 			this.isUpdating = false;
 
 			Util.log('info', 'Update downloaded: ' +  JSON.stringify(info, null, 3));
