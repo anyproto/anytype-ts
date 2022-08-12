@@ -26,9 +26,11 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 		const { autoSidebar, config } = commonStore;
 		const types = DataUtil.getObjectTypesForNewObject(false);
 		const type = types.find(it => it.id == commonStore.type);
-		const languages = (commonStore.languages || []).filter(it => ![ 'ru' ].includes(it)).map(it => { 
+		
+		let languages: any[] = [ { id: '', name: 'Disabled' } ];
+		languages = languages.concat((commonStore.languages || []).filter(it => ![ 'ru' ].includes(it)).map(it => { 
 			return { id: it, name: Constant.spellingLang[it] }; 
-		});
+		}));
 
 		return (
 			<div>
@@ -58,7 +60,6 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 							<Select 
 								id="spellcheck" 
 								value={config.language} 
-								initial="Select" 
 								options={languages} 
 								onChange={(v: any) => { Renderer.send('setLanguage', v); }}
 								arrowClassName="light"
