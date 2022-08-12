@@ -1364,6 +1364,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			{ id: I.MarkType.Bold, icon: 'bold', name: 'Bold' },
 			{ id: I.MarkType.Italic, icon: 'italic', name: 'Italic' },
 			{ id: I.MarkType.Strike, icon: 'strike', name: 'Strikethrough' },
+			{ id: I.MarkType.Underline, icon: 'underline', name: 'Underline' },
 		];
 
 		let length = 0;
