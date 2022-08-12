@@ -82,8 +82,6 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 	refSidebar: any = null;
 
 	render () {
-		console.trace();
-
 		const { isPopup } = this.props;
 		const { config, theme } = commonStore;
 		const { account } = authStore;
