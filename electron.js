@@ -11,7 +11,6 @@ const protocol = 'anytype';
 const remote = require('@electron/remote/main');
 
 const userPath = app.getPath('userData');
-const tmpPath = path.join(userPath, 'tmp');
 const logPath = path.join(userPath, 'logs');
 const binPath = fixPathForAsarUnpack(path.join(__dirname, 'dist', `anytypeHelper${is.windows ? '.exe' : ''}`));
 
