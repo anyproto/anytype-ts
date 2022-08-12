@@ -175,6 +175,7 @@ app.on('second-instance', (event, argv, cwd) => {
 	};
 });
 
+/*
 app.on('window-all-closed', (e) => {
 	Util.log('info', 'window-all-closed');
 
@@ -183,6 +184,7 @@ app.on('window-all-closed', (e) => {
 		Api.exit(mainWindow, false);
 	};
 });
+*/
 
 app.on('before-quit', (e) => {
 	Util.log('info', 'before-quit');
