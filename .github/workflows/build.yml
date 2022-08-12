@@ -43,9 +43,6 @@ jobs:
           ./update.sh ${{secrets.USER}} ${{secrets.TOKEN}} ${{matrix.os}} arm
           ./update.sh ${{secrets.USER}} ${{secrets.TOKEN}} ${{matrix.os}} amd
 
-      - name: Update Deps
-        run: npm run build:deps
-
       - name: Build Front
         if: matrix.os == 'macos-latest'
         uses: samuelmeuli/action-electron-builder@v1
