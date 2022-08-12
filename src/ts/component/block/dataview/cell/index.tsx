@@ -345,7 +345,7 @@ class Cell extends React.Component<Props, {}> {
 					width: width,
 				});
 
-				let name = 'Go to';
+				let name = 'Open link';
 				if (relation.format == I.RelationType.Email) {
 					name = 'Mail to';
 				};
@@ -363,7 +363,7 @@ class Cell extends React.Component<Props, {}> {
 
 				let options = [
 					{ id: 'go', icon: 'browse', name: name },
-					{ id: 'copy', icon: 'copy', name: 'Copy' },
+					{ id: 'copy', icon: 'copy', name: 'Copy link' },
 				];
 				if (relation.relationKey == Constant.relationKey.source) {
 					options.push({ id: 'reload', icon: 'reload', name: 'Reload from source' });
