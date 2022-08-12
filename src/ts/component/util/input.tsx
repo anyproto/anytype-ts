@@ -162,8 +162,6 @@ class Input extends React.Component<Props, State> {
 		};
 		
 		keyboard.setFocus(false);
-
-		console.log('onBlur');
 	};
 	
 	onPaste (e: any) {

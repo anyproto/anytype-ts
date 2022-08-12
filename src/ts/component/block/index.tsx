@@ -75,7 +75,6 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 		};
 
 		const { style, checked } = content;
-		const index = Number(this.props.index) || 0;
 		const root = blockStore.getLeaf(rootId, rootId);
 
 		let canSelect = !isInsideTable;
@@ -242,7 +241,7 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 			targetTop = null;
 		};
 
-		if (block.isLayoutColumn()) {
+		if (block.isLayoutColumn() && canDrop) {
 			const childrenIds = blockStore.getChildrenIds(rootId, block.id);
 			const lastId = childrenIds.length ? childrenIds[childrenIds.length - 1] : '';
 
