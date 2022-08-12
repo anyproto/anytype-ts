@@ -162,6 +162,8 @@ class Input extends React.Component<Props, State> {
 		};
 		
 		keyboard.setFocus(false);
+
+		console.log('onBlur');
 	};
 	
 	onPaste (e: any) {
@@ -185,8 +187,9 @@ class Input extends React.Component<Props, State> {
 			if (!this._isMounted) {
 				return;
 			};
-			
-			$(ReactDOM.findDOMNode(this)).get(0).focus({ preventScroll: true }); 
+
+			const node = $(ReactDOM.findDOMNode(this));
+			node.get(0).focus({ preventScroll: true }); 
 		});
 	};
 	
@@ -240,14 +243,17 @@ class Input extends React.Component<Props, State> {
 	};
 
 	setRange (range: I.TextRange) {
-		if (!this._isMounted) {
-			return;
-		};
+		window.setTimeout(() => { 
+			if (!this._isMounted) {
+				return;
+			};
 
-		this.focus();
-		
-		let node = $(ReactDOM.findDOMNode(this));
-		window.setTimeout(() => { node.get(0).setSelectionRange(range.from, range.to); });
+			const node = $(ReactDOM.findDOMNode(this));
+			const el = node.get(0);
+
+			el.focus({ preventScroll: true }); 
+			el.setSelectionRange(range.from, range.to); 
+		});
 	};
 	
 	addClass (v: string) {
