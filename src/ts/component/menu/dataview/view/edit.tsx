@@ -30,7 +30,7 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 		const { data } = param;
 		const { rootId, blockId } = data;
 		const view = data.view.get();
-		const { cardSize, coverFit, hideIcon, groupRelationKey } = view;
+		const { cardSize, coverFit, hideIcon, groupRelationKey, groupBackgroundColors } = view;
 		const sections = this.getSections();
 		const allowedView = blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
 
@@ -261,7 +261,7 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 			settings = settings.concat([
 				{ id: 'groupRelationKey', name: 'Group by', caption: groupOption ? groupOption.name : 'Select', withCaption: true, arrow: true },
 				{ 
-					id: 'groupBackgroundColors', name: 'Color columns', withSwitch: true, switchValue: view.coverFit, 
+					id: 'groupBackgroundColors', name: 'Color columns', withSwitch: true, switchValue: view.groupBackgroundColors, 
 					onSwitch: (e: any, v: boolean) => { this.onSwitch(e, 'groupBackgroundColors', v); }
 				},
 			]);
