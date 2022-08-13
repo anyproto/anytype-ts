@@ -543,7 +543,8 @@
 				"snap",
 				"AppImage",
 				"deb",
-				"rpm"
+				"rpm",
+				"pacman"
 			],
 			"description": "Anytype",
 			"publish": [
