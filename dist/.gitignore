@@ -30,3 +30,4 @@ latest-linux.yml
 *.deb
 *.rpm
 *.pacman
+*.node
