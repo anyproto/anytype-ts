@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Loader } from 'Component';
 import { dbStore, detailStore, popupStore } from 'Store';
-import { I, C, Util, DataUtil, analytics, keyboard } from 'Lib';
+import { I, C, Util, DataUtil, analytics, keyboard, Relation } from 'Lib';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 import arrayMove from 'array-move';
@@ -131,6 +131,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 			return;
 		};
 
+		const relation = dbStore.getRelation(rootId, block.id, view.groupRelationKey);
 		const groupOrder: any = {};
  		const el = block.content.groupOrder.find(it => it.viewId == view.id);
 
@@ -148,8 +149,27 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 			};
 
 			const groups = (message.groups || []).map((it: any) => {
+				let bgColor = 'gray';
+				let value: any = it.value;
+				let option: any = null;
+
+				switch (relation.format) {
+					case I.RelationType.Tag:
+						value = Relation.getArrayValue(value);
+						if (value.length) {
+							option = relation.selectDict.find(it => it.id == value[0]);
+							bgColor = option?.color;
+						};
+						break;
+
+					case I.RelationType.Status:
+						option = relation.selectDict.find(it => it.id == value);
+						bgColor = option?.color;
+						break;
+				};
+
 				it.isHidden = groupOrder[it.id]?.isHidden;
-				it.bgColor = groupOrder[it.id]?.bgColor;
+				it.bgColor = groupOrder[it.id]?.bgColor || bgColor;
 				return it;
 			});
 

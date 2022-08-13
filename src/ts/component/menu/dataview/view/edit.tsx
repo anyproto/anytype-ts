@@ -209,19 +209,32 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 			return;
 		};
 
+		let clearGroups = false;
+
 		if (current.type == I.ViewType.Board) {
-			current.groupRelationKey = groupOption.id;
+			if (current.groupRelationKey != groupOption.id) {
+				current.groupRelationKey = groupOption.id;
+				clearGroups = true;
+			};
 		};
 
 		current.name = current.name || translate(`viewName${current.type}`);
 
-		C.BlockDataviewViewUpdate(rootId, blockId, current.id, current, (message: any) => {
+		const cb = () => {
 			if (view.id == current.id) {
 				getData(view.id, 0);
 			};
 
 			if (onSave) {
 				onSave();
+			};
+		};
+
+		C.BlockDataviewViewUpdate(rootId, blockId, current.id, current, (message: any) => {
+			if (clearGroups) {
+				C.BlockDataviewGroupOrderUpdate(rootId, blockId, { viewId: current.id, groups: [] }, cb);
+			} else {
+				cb();
 			};
 		});
 	};
