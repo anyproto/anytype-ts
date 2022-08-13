@@ -116,12 +116,6 @@ class Keyboard {
 
 		// Navigation
 		if (!this.isNavigationDisabled) {
-			this.shortcut('backspace', e, (pressed: string) => {
-				if (isMain && !this.isFocused && !ids.length && !isMenuOpen) {
-					this.onBack();
-				};
-			});
-
 			keyboard.shortcut(isMac ? 'cmd+[' : 'alt+arrowleft', e, (pressed: string) => { this.onBack(); });
 			keyboard.shortcut(isMac ? 'cmd+]' : 'alt+arrowright', e, (pressed: string) => { this.onForward(); });
 		};

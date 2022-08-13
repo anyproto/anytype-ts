@@ -47,7 +47,7 @@ class Api {
 	};
 
 	setLanguage (win, language) {
-		win.webContents.session.setSpellCheckerLanguages([ language ]);
+		win.webContents.session.setSpellCheckerLanguages(language ? [ language ] : []);
 		this.setConfig(win, { language });
 	};
 

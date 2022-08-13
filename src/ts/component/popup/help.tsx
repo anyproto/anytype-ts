@@ -81,13 +81,13 @@ class PopupHelp extends React.Component<Props, State> {
 		this.rebind();
 		this.resize();
 
-		Util.renderLink($(ReactDOM.findDOMNode(this)));
+		Util.renderLinks($(ReactDOM.findDOMNode(this)));
 	};
 
 	componentDidUpdate () {
 		this.resize();
 
-		Util.renderLink($(ReactDOM.findDOMNode(this)));
+		Util.renderLinks($(ReactDOM.findDOMNode(this)));
 	};
 
 	componentWillUnmount () {

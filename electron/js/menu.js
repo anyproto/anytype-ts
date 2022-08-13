@@ -1,4 +1,4 @@
-const { app, shell, Menu, Tray, MenuItem } = require('electron');
+const { app, shell, Menu, Tray } = require('electron');
 const { is } = require('electron-util');
 const path = require('path');
 
@@ -41,7 +41,7 @@ class MenuManager {
 
 					Separator,
 
-					{ label: 'Check for updates', click: () => { Updater.checkUpdate(false); } },
+					{ label: 'Check for updates', click: () => { UpdateManager.checkUpdate(false); } },
 					{ label: 'Settings', click: () => { Util.send(this.win, 'popup', 'settings', {}); } },
 
 					Separator,

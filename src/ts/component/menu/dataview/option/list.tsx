@@ -122,7 +122,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 						</InfiniteLoader>
 					) : (
 						<div className="item empty">
-							No options available
+							Type to create a new option
 						</div>
 					)}
 				</div>

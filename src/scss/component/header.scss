@@ -68,6 +68,9 @@
 	.icon:hover, .icon.active { background-color: rgba(0,0,0,0.15); }
 
 	.path { border: 1px solid rgba(255,255,255,0.5); color: $colorWhite; text-align: center; }
+
+	.side.left { -webkit-app-region: drag; }
+	.side.right { -webkit-app-region: drag; }
 }
 .header.mainIndex.selectFixed { background: rgba(0,0,0,0.7); }
 

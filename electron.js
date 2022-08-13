@@ -11,7 +11,6 @@ const protocol = 'anytype';
 const remote = require('@electron/remote/main');
 
 const userPath = app.getPath('userData');
-const tmpPath = path.join(userPath, 'tmp');
 const logPath = path.join(userPath, 'logs');
 const binPath = fixPathForAsarUnpack(path.join(__dirname, 'dist', `anytypeHelper${is.windows ? '.exe' : ''}`));
 
@@ -176,6 +175,7 @@ app.on('second-instance', (event, argv, cwd) => {
 	};
 });
 
+/*
 app.on('window-all-closed', (e) => {
 	Util.log('info', 'window-all-closed');
 
@@ -184,6 +184,7 @@ app.on('window-all-closed', (e) => {
 		Api.exit(mainWindow, false);
 	};
 });
+*/
 
 app.on('before-quit', (e) => {
 	Util.log('info', 'before-quit');

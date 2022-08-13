@@ -72,6 +72,8 @@
             .icon.bulleted { background-image: url('#{$themePath}/icon/menu/action/block/bulleted1.svg'); }
             .icon.numbered { background-image: url('#{$themePath}/icon/menu/action/block/numbered1.svg'); }
             .icon.toggle { background-image: url('#{$themePath}/icon/menu/action/block/toggle1.svg'); }
+
+			.icon.callout { background-image: url('#{$themePath}/icon/menu/action/block/callout1.svg'); }
         }
 
         .sectionName::before { background-color: $colorLineSecondary; }
@@ -222,6 +224,7 @@
 		.icon.active.italic { background-image: url('#{$themePath}/icon/menu/action/mark/italic1.svg'); }
 		.icon.active.link { background-image: url('#{$themePath}/icon/menu/action/mark/link1.svg'); }
 		.icon.active.strike { background-image: url('#{$themePath}/icon/menu/action/mark/strike1.svg'); }
+		.icon.active.underline { background-image: url('#{$themePath}/icon/menu/action/mark/underline1.svg'); }
     }
 
 	/* MenuBlockLink */

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, DataUtil, Util, keyboard, Relation, Renderer } from 'Lib';
+import { I, C, analytics, DataUtil, Util, keyboard, Relation, Renderer } from 'Lib';
 import { commonStore, menuStore, dbStore } from 'Store';
 import { observable } from 'mobx';
 
@@ -342,11 +342,10 @@ class Cell extends React.Component<Props, {}> {
 			case I.RelationType.Email:
 			case I.RelationType.Phone:
 				param = Object.assign(param, {
-					type: I.MenuType.Horizontal,
 					width: width,
 				});
 
-				let name = 'Go to';
+				let name = 'Open link';
 				if (relation.format == I.RelationType.Email) {
 					name = 'Mail to';
 				};
@@ -362,15 +361,19 @@ class Cell extends React.Component<Props, {}> {
 					break;
 				};
 
+				let options = [
+					{ id: 'go', icon: 'browse', name: name },
+					{ id: 'copy', icon: 'copy', name: 'Copy link' },
+				];
+				if (relation.relationKey == Constant.relationKey.source) {
+					options.push({ id: 'reload', icon: 'reload', name: 'Reload from source' });
+				};
+
 				param.data = Object.assign(param.data, {
 					disabled: !value, 
-					options: [
-						{ id: 'go', name: name },
-						{ id: 'copy', name: 'Copy' },
-					],
+					options,
 					onSelect: (event: any, item: any) => {
 						let value = '';
-
 						if (this.ref && this.ref.ref) {
 							value = this.ref.ref.getValue();
 						};
@@ -379,15 +382,24 @@ class Cell extends React.Component<Props, {}> {
 						
 						if (item.id == 'go') {
 							Renderer.send('urlOpen', scheme + value);
+							analytics.event('RelationUrlOpen');
 						};
 
 						if (item.id == 'copy') {
 							Util.clipboardCopy({ text: value, html: value });
+							analytics.event('RelationUrlCopy');
+						};
+
+						if (item.id == 'reload') {
+							Util.clipboardCopy({ text: value, html: value });
+							C.ObjectBookmarkFetch(rootId, value, () => {
+								analytics.event('ReloadSourceData');
+							});
 						};
 					},
 				});
 
-				menuId = 'button';
+				menuId = 'select';
 				closeIfOpen = false;
 				break;
 					

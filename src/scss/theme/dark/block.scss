@@ -247,6 +247,10 @@
 		.cell { background: $colorBlack; border-color: $colorLinePrimary; }
 		.cell {
 			.block { color: $colorPrimary; }
+
+			.icon.menu:hover {
+				.inner { box-shadow: 0px 0px; background-color: #484843; }
+			}
 		}
 	}
 }

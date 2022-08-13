@@ -41,11 +41,8 @@ class DragLayer extends React.Component<{}, State> {
 		
 		switch (type) {
 			case I.DropType.Block:
-				items = ids.map((id: string) => {
-					const block = blockStore.getLeaf(rootId, id);
-					return new M.Block(Util.objectCopy(block));
-				});
-			
+				items = ids.map(id => new M.Block(Util.objectCopy(blockStore.getLeaf(rootId, id))));
+
 				content = (
 					<div className="blocks">
 						{items.map((block: any, i: number) => (

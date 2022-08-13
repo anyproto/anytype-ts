@@ -63,7 +63,7 @@ const PageAuthPinCheck = observer(class PageAuthPinCheck extends React.Component
 
 	rebind () {
 		this.unbind();
-		$(window).on('focus.pin', () => { console.log('focus'); this.ref.focus(); });
+		$(window).on('focus.pin', () => { this.ref.focus(); });
 	};
 
 	onSuccess (pin: string) {

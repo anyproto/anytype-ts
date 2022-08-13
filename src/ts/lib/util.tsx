@@ -734,33 +734,16 @@ class Util {
 		return url;
 	};
 	
-	lengthFixOut (text: string, len: number): number {
-		const s = String(text || '').substring(0, len);
-		return [...s].length;
-	};
-	
-	// Fix emoji lengths for GO
-	rangeFixOut (text: string, range: I.TextRange): I.TextRange {
-		range = this.objectCopy(range);
-		range.from = this.lengthFixOut(text, range.from);
-		range.to = this.lengthFixOut(text, range.to);
-		return range;
-	};
-	
-	renderLink (obj: any) {
-		obj.find('a').off('click').on('click', function (e: any) {
-			e.preventDefault();
-			Renderer.send('urlOpen', $(this).attr('href'));
-		});
-	};
-
 	renderLinks (obj: any) {
 		const self = this;
+		const links = obj.find('a');
 
-		obj.find('a').off('click').click(function (e: any) {
+		links.off('click auxclick');
+		links.on('auxclick', (e: any) => { e.preventDefault(); });
+		links.click(function (e: any) {
 			e.preventDefault();
-			const el = $(this);
 
+			const el = $(this);
 			if (el.hasClass('path')) {
 				self.onPath(el.attr('href'));
 			} else {
@@ -779,10 +762,6 @@ class Util {
 	
 	emailCheck (v: string) {
 		return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,5})+$/.test(String(v || ''));
-	};
-
-	isNumber (s: string) {
-		return String((Number(s) || 0) || '') === String(s || '');
 	};
 
 	coverSrc (id: string, preview?: boolean): string {

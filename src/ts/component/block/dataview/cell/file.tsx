@@ -31,12 +31,12 @@ const CellFile = observer(class CellFile extends React.Component<Props, State> {
 			return null;
 		};
 
-		let value = Relation.getArrayValue(record[relation.relationKey]);
+		let value: any[] = Relation.getArrayValue(record[relation.relationKey]);
 		value = value.map(it => detailStore.get(subId, it, []));
-		value = value.filter((it: any) => { return !it._empty_; });
+		value = value.filter(it => !it._empty_);
 		
 		if (elementMapper) {
-			value = value.map((it: any) => { return elementMapper(relation, it); });
+			value = value.map(it => elementMapper(relation, it));
 		};
 
 		const cn = [ 'wrap' ];
