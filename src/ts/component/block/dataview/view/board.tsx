@@ -147,7 +147,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 			};
 
 			const groups = (message.groups || []).map((it: any) => {
-				let bgColor = 'gray';
+				let bgColor = 'grey';
 				let value: any = it.value;
 				let option: any = null;
 

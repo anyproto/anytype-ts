@@ -35,6 +35,8 @@
 					.side.left { width: calc(100% - 54px); display: flex; align-items: flex-start; gap: 0px 6px; justify-content: flex-start; }
 					.side.right { width: 54px; display: flex; align-items: flex-start; gap: 0px 6px; flex-shrink: 0; justify-content: flex-end; }
 
+					.label { @include text-overflow-nw; }
+
 					.cellContent { width: 100%; display: inline; }
 					.cellContent {
 						.empty { display: block; line-height: 24px; }

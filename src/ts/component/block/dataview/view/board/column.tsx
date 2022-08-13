@@ -53,7 +53,7 @@ const Column = observer(class Column extends React.Component<Props, State> {
 		const records = dbStore.getRecords(subId, '');
 		const items = this.getItems();
 		const { offset, total } = dbStore.getMeta(subId, '');
-		const relation = dbStore.getRelation(rootId, block.id, view.groupRelationKey);
+		const relation: any = dbStore.getRelation(rootId, block.id, view.groupRelationKey) || {};
 		const group = dbStore.getGroup(rootId, block.id, id);
 		const head = {};
 		const cn = [ 'column' ];
@@ -106,7 +106,7 @@ const Column = observer(class Column extends React.Component<Props, State> {
 									placeholder={translate('placeholderCellCommon')}
 								/>
 							) : ''}
-							{label}
+							<span className="label">{label}</span>
 						</div>
 
 						<div className="side right">
