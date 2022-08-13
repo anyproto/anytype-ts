@@ -136,9 +136,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
  		const el = block.content.groupOrder.find(it => it.viewId == view.id);
 
 		if (el) {
-			el.groups.forEach((it: any) => {
-				groupOrder[it.groupId] = it;
-			});
+			el.groups.forEach(it => groupOrder[it.groupId] = it);
 		};
 
 		this.setState({ loading: true });
@@ -424,7 +422,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 		dbStore.groupsSet(rootId, block.id, groups);
 
 		groups.forEach((it: any, i: number) => {
-			update.push({ groupId: it.id, index: i, isHidden: it.isHidden });
+			update.push({ ...it, groupId: it.id, index: i });
 		});
 
 		C.BlockDataviewGroupOrderUpdate(rootId, block.id, { viewId: view.id, groups: update });
