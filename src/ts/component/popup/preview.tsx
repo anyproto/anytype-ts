@@ -87,9 +87,9 @@ class PopupPreview extends React.Component<Props, {}> {
 						height = Math.min(mh, ch);
 						width = Math.min(mw, height / (ch / cw));
 					};
-					
+
 					content.css({ width: width - PADDING * 2 });
-					inner.css({ height: height - PADDING });
+					inner.css({ height: height - PADDING * 2 });
 					
 					position();
 				};

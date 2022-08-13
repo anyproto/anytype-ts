@@ -7,10 +7,13 @@
 		.content { display: block; }
 
 		#blockContent {
+			* { height: 100%; }
+
 			.block { padding: 0px; margin: 0px; }
 			.block {
 				.wrapMenu { display: none; }
 				.wrapContent { width: 100%; }
+				.media { object-fit: cover; }
 			}
 		}
 	}
