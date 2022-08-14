@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
-import { Header, FooterMainEdit as Footer, Loader, Block, Deleted } from 'Component';
+import { Header, Footer, Loader, Block, Deleted } from 'Component';
 import { I, M, C, DataUtil, Util, crumbs, Action } from 'Lib';
 import { blockStore, dbStore, menuStore } from 'Store';
 
@@ -79,7 +79,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, St
 					))}
 				</div>
 
-				<Footer {...this.props} rootId={rootId} />
+				<Footer component="mainEdit" {...this.props} />
 			</div>
 		);
 	};

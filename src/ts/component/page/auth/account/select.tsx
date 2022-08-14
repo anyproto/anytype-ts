@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Frame, Icon, Cover, Error, Title, IconObject, Header, FooterAuth as Footer, Loader, Button } from 'Component';
+import { Frame, Icon, Cover, Error, Title, IconObject, Header, Footer, Loader, Button } from 'Component';
 import { commonStore, authStore } from 'Store';
 import { observer } from 'mobx-react';
 import { I, C, Util, translate, DataUtil, Renderer } from 'Lib';
@@ -44,7 +44,7 @@ const PageAccountSelect = observer(class PageAccountSelect extends React.Compone
 			<div>
 				<Cover {...cover} className="main" />
 				<Header {...this.props} component="authIndex" />
-				<Footer />
+				<Footer {...this.props} component="authIndex" />
 				
 				<Frame>
 					{loading ? <Loader /> : (

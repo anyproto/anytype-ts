@@ -18,10 +18,7 @@ import ListObjectPreview from './list/previewObject';
 import ListObject from './list/object';
 
 import Header from './header';
-
-import FooterAuth from './footer/auth';
-import FooterMainIndex from './footer/main/index';
-import FooterMainEdit from './footer/main/edit';
+import Footer from './header';
 
 import Menu from './menu';
 import MenuItemVertical from './menu/item/vertical';
@@ -86,9 +83,7 @@ export {
 	ListObjectPreview,
 	ListObject,
 	Header,
-	FooterAuth,
-	FooterMainIndex,
-	FooterMainEdit,
+	Footer,
 	Pager,
 	Dimmer,
 	Switch,
