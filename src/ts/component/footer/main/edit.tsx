@@ -11,7 +11,7 @@ const FooterMainEdit = observer(class FooterMainEdit extends React.Component<Pro
 		const { onHelp } = this.props;
 
 		return (
-			<div id="footer" className="footer footerMainEdit">
+			<React.Fragment>
 				<Icon 
 					id="button-expand" 
 					className="big expand" 
@@ -27,7 +27,7 @@ const FooterMainEdit = observer(class FooterMainEdit extends React.Component<Pro
 					tooltipY={I.MenuDirection.Top} 
 					onClick={onHelp} 
 				/>
-			</div>
+			</React.Fragment>
 		);
 	};
 

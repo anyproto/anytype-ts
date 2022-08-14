@@ -18,7 +18,7 @@ import ListObjectPreview from './list/previewObject';
 import ListObject from './list/object';
 
 import Header from './header';
-import Footer from './header';
+import Footer from './footer';
 
 import Menu from './menu';
 import MenuItemVertical from './menu/item/vertical';
