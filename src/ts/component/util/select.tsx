@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { I } from 'ts/lib';
-import { Icon, MenuItemVertical } from 'ts/component';
-import { menuStore } from 'ts/store';
+import { I } from 'Lib';
+import { Icon, MenuItemVertical } from 'Component';
+import { menuStore } from 'Store';
 
 interface Props {
 	id: string;
@@ -53,7 +53,7 @@ class Select extends React.Component<Props, State> {
 		const cn = [ 'select', (className ? className : '') ];
 		const acn = [ 'arrow', (arrowClassName ? arrowClassName : '') ];
 
-		let current: I.Option = options.find((item: any) => { return item.id == value; });
+		let current: I.Option = options.find(item => item.id == value);
 		if (!current) {
 			current = options[0];
 		};

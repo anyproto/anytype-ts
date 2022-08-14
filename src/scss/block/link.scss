@@ -5,12 +5,6 @@
 		.isArchived {
 			.cardName { color: $colorMediumGrey; }
             .cardName span::before { display: none; }
-			.archive { display: block !important; }
-		}
-
-		.archive { 
-			padding: 0px 4px; @include text-common; line-height: 18px; border-radius: 3px; white-space: nowrap; position: absolute; height: 18px; 
-			right: 16px; top: 21px; z-index: 1; background: $colorLightGrey; @include text-small; display: none;
 		}
 
 		.focusable.br { border-radius: 12px; }
@@ -78,6 +72,8 @@
 
 			.cardName { @include text-common; line-height: 18px; }
 			.cardName .name { @include clamp2; }
+
+			.archive { position: absolute; right: 16px; top: 16px; z-index: 1; }
 		}
 
 		.linkCard.c48.withIcon {

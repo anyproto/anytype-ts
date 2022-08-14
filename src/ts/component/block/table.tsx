@@ -1,9 +1,9 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Icon } from 'ts/component';
-import { I, C, keyboard, focus, Util, Mark } from 'ts/lib';
+import { Icon } from 'Component';
+import { I, C, keyboard, focus, Util, Mark } from 'Lib';
 import { observer } from 'mobx-react';
-import { menuStore, blockStore } from 'ts/store';
+import { menuStore, blockStore } from 'Store';
 import arrayMove from 'array-move';
 import { throttle } from 'lodash';
 
@@ -64,7 +64,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 	render () {
 		const { block } = this.props;
 		const { rows, columns } = this.getData();
-		const cn = [ 'wrap', 'focusable', 'c' + block.id ];
+		const cn = [ 'wrap', 'focusable', 'c' + block.id, 'resizable' ];
 
 		// Subscriptions
 		columns.forEach((column: I.Block) => {
@@ -163,7 +163,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		this.unbind();
 
 		win.on('resize.' + block.id, () => { this.resize(); });
-		node.on('resizeTable', () => { this.resize(); });
+		node.on('resize', () => { this.resize(); });
 	};
 
 	getData () {
@@ -808,7 +808,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		focus.clear(true);
 
 		body.addClass('colResize');
-		win.unbind('mousemove.table mouseup.table');
+		win.off('mousemove.table mouseup.table');
 		win.on('mousemove.table', throttle((e: any) => { this.onResizeMove(e, id); }, 40));
 		win.on('mouseup.table', (e: any) => { this.onResizeEnd(e, id); });
 
@@ -837,7 +837,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			{ blockId: id, fields: { width } },
 		]);
 
-		$(window).unbind('mousemove.table mouseup.table');
+		$(window).off('mousemove.table mouseup.table');
 		$('body').removeClass('colResize');
 		keyboard.setResize(false);
 	};
@@ -1198,7 +1198,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		const node = $(ReactDOM.findDOMNode(this));
 		const wrap = node.find('#scrollWrap');
 		const row = node.find('.row').first();
-		
+
 		let width = 0;
 		let maxWidth = 0;
 		let wrapperWidth = 0;
@@ -1227,9 +1227,9 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			if (parentObj.length) {
 				maxWidth = parentObj.width() - Constant.size.blockMenu;
 			};
-		};
 
-		width > maxWidth ? wrap.addClass('withScroll') : wrap.removeClass('withScroll');
+			width > maxWidth ? wrap.addClass('withScroll') : wrap.removeClass('withScroll');
+		};
 	};
 
 	checkWidth (w: number) {
@@ -1364,6 +1364,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			{ id: I.MarkType.Bold, icon: 'bold', name: 'Bold' },
 			{ id: I.MarkType.Italic, icon: 'italic', name: 'Italic' },
 			{ id: I.MarkType.Strike, icon: 'strike', name: 'Strikethrough' },
+			{ id: I.MarkType.Underline, icon: 'underline', name: 'Underline' },
 		];
 
 		let length = 0;

@@ -1,8 +1,7 @@
-import { I, C, focus, analytics, Util } from 'ts/lib';
-import { commonStore, authStore, blockStore, detailStore, dbStore } from 'ts/store';
+import { I, C, focus, analytics, Renderer } from 'Lib';
+import { commonStore, authStore, blockStore, detailStore, dbStore } from 'Store';
 
 const Constant = require('json/constant.json');
-const { dialog } = window.require('@electron/remote');
 
 class Action {
 
@@ -68,14 +67,13 @@ class Action {
 	download (block: I.Block) {
 		const { content } = block;
 		const { type, hash } = content;
-		const renderer = Util.getRenderer();
 
 		if (!hash) {
 			return;
 		};
 		
 		const url = block.isFileImage() ? commonStore.imageUrl(hash, Constant.size.image) : commonStore.fileUrl(hash);
-		renderer.send('download', url);
+		Renderer.send('download', url);
 
 		analytics.event('DownloadMedia', { type });
 	};
@@ -127,12 +125,11 @@ class Action {
 	};
 
 	export (ids: string[], format: I.ExportFormat, zip: boolean, nested: boolean, files: boolean, onSelectPath?: () => void, callBack?: (message: any) => void): void {
-		const renderer = Util.getRenderer();
 		const options = { 
 			properties: [ 'openDirectory' ],
 		};
 
-		dialog.showOpenDialog(options).then((result: any) => {
+		window.Electron.showOpenDialog(options).then((result: any) => {
 			const paths = result.filePaths;
 			if ((paths == undefined) || !paths.length) {
 				return;
@@ -147,7 +144,7 @@ class Action {
 					return;
 				};
 
-				renderer.send('pathOpen', paths[0]);
+				Renderer.send('pathOpen', paths[0]);
 				analytics.event('Export' + I.ExportFormat[format], { middleTime: message.middleTime });
 
 				if (callBack) {

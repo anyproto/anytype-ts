@@ -6,9 +6,9 @@ import { Provider } from 'mobx-react';
 import { enableLogging } from 'mobx-logger';
 import { Page, SelectionProvider, DragProvider, Progress, Tooltip, Preview, Icon, ListPopup, ListMenu } from './component';
 import { commonStore, authStore, blockStore, detailStore, dbStore, menuStore, popupStore } from './store';
-import { I, C, Util, FileUtil, keyboard, Storage, analytics, dispatcher, translate, Action } from 'ts/lib';
+import { I, C, Util, FileUtil, keyboard, Storage, analytics, dispatcher, translate, Action, Renderer, DataUtil, focus, Mark } from 'Lib';
 import * as Sentry from '@sentry/browser';
-import { configure } from 'mobx';
+import { configure, spy } from 'mobx';
 
 configure({ enforceActions: 'never' });
 
@@ -67,7 +67,6 @@ import 'scss/page/main/space.scss';
 import 'scss/page/main/type.scss';
 import 'scss/page/main/relation.scss';
 import 'scss/page/main/media.scss';
-import 'scss/page/main/bookmark.scss';
 import 'scss/page/main/store.scss';
 import 'scss/page/main/graph.scss';
 import 'scss/page/main/navigation.scss';
@@ -154,19 +153,8 @@ import 'scss/media/print.scss';
 
 import 'scss/theme/dark/common.scss';
 
-interface RouteElement { path: string; };
-interface Props {};
-
-interface State {
-	loading: boolean;
-};
-
 const $ = require('jquery');
-const path = require('path');
-const { app, dialog, process, BrowserWindow } = window.require('@electron/remote');
-const version = app.getVersion();
-const userPath = app.getPath('userData');
-const fs = window.require('fs');
+const raf = require('raf');
 const hs = require('history');
 const memoryHistory = hs.createMemoryHistory;
 const history = memoryHistory();
@@ -174,6 +162,27 @@ const Constant =  require('json/constant.json');
 const Error = require('json/error.json');
 
 const Routes: RouteElement[] = require('json/route.json');
+
+interface RouteElement { path: string; };
+interface Props {};
+
+interface State {
+	loading: boolean;
+};
+
+declare global {
+	interface Window { 
+		Electron: any;
+		Store: any; 
+		$: any;
+		Lib: any;
+
+		isWebVersion: boolean;
+		Config: any;
+		Renderer: any;
+	}
+};
+
 const rootStore = {
 	commonStore,
 	authStore,
@@ -184,10 +193,24 @@ const rootStore = {
 	popupStore,
 };
 
-console.log('[OS Version]', process.getSystemVersion());
-console.log('[APP Version]', version, 'isPackaged', app.isPackaged, 'Arch', process.arch);
+window.Store = rootStore;
+window.$ = $;
+window.Lib = {
+	I,
+	C,
+	Util,
+	analytics,
+	dispatcher,
+	keyboard,
+	Renderer,
+};
 
 /*
+spy(event => {
+    if (event.type == 'action') {
+        console.log('[Mobx].event', event.name, event.arguments);
+    };
+});
 enableLogging({
 	predicate: () => true,
 	action: true,
@@ -195,11 +218,10 @@ enableLogging({
 	transaction: true,
 	compute: true,
 });
-*/
 
 Sentry.init({
-	release: version,
-	environment: (app.isPackaged ? 'production' : 'development'),
+	release: window.Electron.version.app,
+	environment: (window.Electron.isPackaged ? 'production' : 'development'),
 	dsn: Constant.sentry,
 	maxBreadcrumbs: 0,
 	beforeSend: (e: any) => {
@@ -213,29 +235,7 @@ Sentry.init({
 		})
 	]
 });
-
-declare global {
-	interface Window { 
-		Store: any; 
-		$: any;
-		Lib: any;
-
-		isWebVersion: boolean;
-		Config: any;
-		Renderer: any;
-	}
-};
-
-window.Store = rootStore;
-window.$ = $;
-window.Lib = {
-	I,
-	C,
-	Util,
-	analytics,
-	dispatcher,
-	keyboard,
-};
+*/
 
 class RoutePage extends React.Component<RouteComponentProps, {}> { 
 
@@ -266,9 +266,18 @@ class App extends React.Component<Props, State> {
 	constructor (props: any) {
 		super(props);
 
+		this.onInit = this.onInit.bind(this);
+		this.onKeytarGet = this.onKeytarGet.bind(this);
 		this.onImport = this.onImport.bind(this);
-		this.onProgress = this.onProgress.bind(this);
+		this.onPopup = this.onPopup.bind(this);
+		this.onUpdate = this.onUpdate.bind(this);
+		this.onUpdateConfirm = this.onUpdateConfirm.bind(this);
+		this.onUpdateAvailable = this.onUpdateAvailable.bind(this);
+		this.onUpdateUnavailable = this.onUpdateUnavailable.bind(this);
+		this.onUpdateProgress = this.onUpdateProgress.bind(this);
+		this.onUpdateError = this.onUpdateError.bind(this);
 		this.onCommand = this.onCommand.bind(this);
+		this.onSpellcheck = this.onSpellcheck.bind(this);
 		this.onMenu = this.onMenu.bind(this);
 		this.onMin = this.onMin.bind(this);
 		this.onMax = this.onMax.bind(this);
@@ -277,20 +286,18 @@ class App extends React.Component<Props, State> {
 	
 	render () {
 		const { loading } = this.state;
-		const isMaximized = BrowserWindow.getFocusedWindow()?.isMaximized();
+		const isMaximized = window.Electron.isMaximized();
 		
-		if (loading) {
-			return (
-				<div id="loader" className="loaderWrapper">
-					<div id="logo" className="logo" />
-				</div>
-			);
-		};
-
 		return (
 			<Router history={history}>
 				<Provider {...rootStore}>
 					<div>
+						{loading ? (
+							<div id="root-loader" className="loaderWrapper">
+								<div id="logo" className="logo" />
+							</div>
+						) : ''}
+
 						<Preview />
 						<Progress />
 						<Tooltip />
@@ -332,50 +339,30 @@ class App extends React.Component<Props, State> {
 	
 	init () {
 		Util.init(history);
+
+		dispatcher.init(window.Electron.getGlobal('serverAddress'));
 		keyboard.init();
 		analytics.init();
 		
-		this.setIpcEvents();
+		this.registerIpcEvents();
+		Renderer.send('appOnLoad');
+
+		console.log('[Process] os version:', window.Electron.version.system, 'arch:', window.Electron.arch);
+		console.log('[App] version:', window.Electron.version.app, 'isPackaged', window.Electron.isPackaged);
 	};
 
 	initStorage () {
 		const cover = Storage.get('cover');
 		const lastSurveyTime = Number(Storage.get('lastSurveyTime')) || 0;
 		const redirect = Storage.get('redirect');
-		const accountId = Storage.get('accountId');
-		const phrase = Storage.get('phrase');
-		const renderer = Util.getRenderer();
-		const restoreKeys = [
-			'pinTime', 'defaultType', 'autoSidebar',
-		];
-
-		// Check auth phrase with keytar
-		if (accountId) {
-			renderer.send('keytarGet', accountId);
-			renderer.on('keytarGet', (e: any, key: string, value: string) => {
-				if (accountId && (key == accountId)) {
-					if (phrase) {
-						value = phrase;
-						renderer.send('keytarSet', accountId, phrase);
-						Storage.delete('phrase');
-					};
-
-					if (value) {
-						authStore.phraseSet(value);
-						Util.route('/auth/setup/init', true);
-					} else {
-						Storage.logout();
-					};
-				};
-			});
-		};
+		const restoreKeys = [ 'pinTime', 'defaultType', 'autoSidebar' ];
 
 		if (!lastSurveyTime) {
 			Storage.set('lastSurveyTime', Util.time());
 		};
 
 		if (redirect) {
-			Storage.set('redirectTo', redirect);
+			commonStore.redirectSet(redirect);
 			Storage.delete('redirect');
 		};
 
@@ -404,219 +391,236 @@ class App extends React.Component<Props, State> {
 		Util.addBodyClass('theme', theme);
 	};
 
-	setIpcEvents () {
-		const node = $(ReactDOM.findDOMNode(this));
-		const logo = node.find('#logo');
-		const logsDir = path.join(userPath, 'logs');
-		const renderer = Util.getRenderer();
+	registerIpcEvents () {
+		Renderer.on('init', this.onInit);
+		Renderer.on('keytarGet', this.onKeytarGet);
+		Renderer.on('route', (e: any, route: string) => { Util.route(route); });
+		Renderer.on('popup', this.onPopup);
+		Renderer.on('checking-for-update', this.onUpdate);
+		Renderer.on('update-available', this.onUpdateAvailable);
+		Renderer.on('update-confirm', this.onUpdateConfirm);
+		Renderer.on('update-not-available', this.onUpdateUnavailable);
+		Renderer.on('download-progress', this.onUpdateProgress);
+		Renderer.on('update-downloaded', (e: any, text: string) => { commonStore.progressClear(); });
+		Renderer.on('update-error', this.onUpdateError);
+		Renderer.on('import', this.onImport);
+		Renderer.on('export', this.onExport);
+		Renderer.on('command', this.onCommand);
+		Renderer.on('spellcheck', this.onSpellcheck);
+		Renderer.on('enter-full-screen', () => { commonStore.fullscreenSet(true); });
+		Renderer.on('leave-full-screen', () => { commonStore.fullscreenSet(false); });
+		Renderer.on('shutdownStart', (e: any) => { this.setState({ loading: true }); });
 
-		try { fs.mkdirSync(logsDir); } catch (err) {};
-
-		renderer.send('appLoaded', true);
-
-		renderer.on('init', (e: any, dataPath: string, config: any, isDark: boolean) => {
-			authStore.walletPathSet(dataPath);
-			authStore.accountPathSet(dataPath);
-
-			Storage.init(dataPath);
-
-			this.initStorage();
-
-			commonStore.nativeThemeSet(isDark);
-			commonStore.configSet(config, true);
-			commonStore.themeSet(config.theme);
-
-			this.initTheme(config.theme);
-
-			window.setTimeout(() => {
-				logo.css({ opacity: 0 });
-				window.setTimeout(() => { this.setState({ loading: false }); }, 600);
-			}, 2000);
-		});
-		
-		renderer.on('route', (e: any, route: string) => {
-			Util.route(route);
-		});
-
-		renderer.on('popup', (e: any, id: string, param: any, close?: boolean) => {
-			param = param || {};
-			param.data = param.data || {};
-			param.data.rootId = keyboard.getRootId();
-
-			if (close) {
-				popupStore.closeAll();
-			};
-			
-			window.setTimeout(() => { popupStore.open(id, param); }, Constant.delay.popup);
-		});
-
-		renderer.on('checking-for-update', (e: any, auto: boolean) => {
-			if (!auto) {
-				commonStore.progressSet({ 
-					status: 'Checking for update...', 
-					current: 0, 
-					total: 1, 
-					isUnlocked: true 
-				});
-			};
-		});
-
-		renderer.on('update-available', (e: any, auto: boolean) => {
-			commonStore.progressClear(); 
-
-			if (!auto) {
-				popupStore.open('confirm', {
-					data: {
-						title: 'Update available',
-						text: 'Do you want to update on a new version?',
-						textConfirm: 'Update',
-						textCancel: 'Later',
-						onConfirm: () => {
-							renderer.send('updateDownload');
-						},
-						onCancel: () => {
-							renderer.send('updateCancel');
-						}, 
-					},
-				});
-			};
-		});
-
-		renderer.on('update-confirm', (e: any, auto: boolean) => {
-			commonStore.progressClear(); 
-
-			if (!auto) {
-				popupStore.open('confirm', {
-					data: {
-						title: 'Update available',
-						text: 'Do you want to update on a new version?',
-						textConfirm: 'Restart and update',
-						textCancel: 'Later',
-						onConfirm: () => {
-							Storage.delete('popupNewBlock');
-							renderer.send('updateConfirm');
-						},
-						onCancel: () => {
-							renderer.send('updateCancel');
-						}, 
-					},
-				});
-			};
-		});
-
-		renderer.on('update-not-available', (e: any, auto: boolean) => {
-			commonStore.progressClear(); 
-
-			if (!auto) {
-				popupStore.open('confirm', {
-					data: {
-						title: 'You are up-to-date',
-						text: Util.sprintf('You are on the latest version: %s', version),
-						textConfirm: 'Great!',
-						canCancel: false,
-					},
-				});
-			};
-		});
-
-		renderer.on('download-progress', this.onProgress);
-
-		renderer.on('update-downloaded', (e: any, text: string) => {
-			commonStore.progressClear(); 
-		});
-
-		renderer.on('update-error', (e: any, err: string, auto: boolean) => {
-			console.error(err);
-			commonStore.progressClear();
-
-			if (!auto) {
-				popupStore.open('confirm', {
-					data: {
-						title: translate('popupConfirmUpdateErrorTitle'),
-						text: Util.sprintf(translate('popupConfirmUpdateErrorText'), Error[err] || err),
-						textConfirm: 'Retry',
-						textCancel: 'Later',
-						onConfirm: () => {
-							renderer.send('updateDownload');
-						},
-						onCancel: () => {
-							renderer.send('updateCancel');
-						}, 
-					},
-				});
-			};
-		});
-
-		renderer.on('import', this.onImport);
-		renderer.on('export', this.onExport);
-		renderer.on('command', this.onCommand);
-
-		renderer.on('config', (e: any, config: any) => { 
+		Renderer.on('config', (e: any, config: any) => { 
 			commonStore.configSet(config, true);
 			this.initTheme(config.theme);
 		});
 
-		renderer.on('enter-full-screen', () => {
-			commonStore.fullscreenSet(true);
-		});
-
-		renderer.on('leave-full-screen', () => {
-			commonStore.fullscreenSet(false);
-		});
-
-		renderer.on('native-theme', (e: any, isDark: boolean) => {
+		Renderer.on('native-theme', (e: any, isDark: boolean) => {
 			commonStore.nativeThemeSet(isDark);
 			commonStore.themeSet(commonStore.theme);
   		});
+	};
 
-		renderer.on('debugSync', (e: any) => {
-			C.DebugSync(100, (message: any) => {
-				if (!message.error.code) {
-					this.logToFile('sync', message);
-				};
-			});
-		});
+	onInit (e: any, data: any) {
+		const { dataPath, config, isDark, isChild, route, account, phrase, languages } = data;
+		const win = $(window);
+		const node = $(ReactDOM.findDOMNode(this));
+		const loader = node.find('#root-loader');
+		const logo = loader.find('#logo');
+		const accountId = Storage.get('accountId');
 
-		renderer.on('debugTree', (e: any) => {
-			const rootId = keyboard.getRootId();
+		commonStore.configSet(config, true);
+		commonStore.nativeThemeSet(isDark);
+		commonStore.themeSet(config.theme);
+		commonStore.languagesSet(languages);
 
-			C.DebugTree(rootId, logsDir, (message: any) => {
-				if (!message.error.code) {
-					renderer.send('pathOpen', logsDir);
-				};
-			});
-		});
+		authStore.walletPathSet(dataPath);
+		authStore.accountPathSet(dataPath);
 
-		renderer.on('shutdownStart', (e, relaunch) => {
-			this.setState({ loading: true });
-		});
+		this.initStorage();
+		this.initTheme(config.theme);
 
-		renderer.on('shutdown', (e, relaunch) => {
-			C.AppShutdown(() => {
-				renderer.send('shutdown', relaunch);
-			});
+		const cb = () => {
+			window.setTimeout(() => { 
+				logo.css({ opacity: 0 });
+
+				window.setTimeout(() => { 
+					loader.css({ opacity: 0 }); 
+					window.setTimeout(() => { loader.remove(); }, 500);
+				}, 750);
+			}, 1000);
+		};
+
+		if (accountId) {
+			if (isChild) {
+				authStore.phraseSet(phrase);
+
+				DataUtil.createSession(() => {
+					commonStore.redirectSet(route || '');
+					DataUtil.onAuth(account, cb);
+				});
+
+				win.off('unload').on('unload', (e: any) => {
+					if (!authStore.token) {
+						return;
+					};
+
+					e.preventDefault();
+					C.WalletCloseSession(authStore.token, () => {
+						authStore.tokenSet('');
+						window.close();
+					});
+					return false;
+				});
+			} else {
+				Renderer.send('keytarGet', accountId);
+				cb();
+			};
+		} else {
+			cb();
+		};
+	};
+
+	onKeytarGet (e: any, key: string, value: string) {
+		const accountId = Storage.get('accountId');
+		const phrase = Storage.get('phrase');
+
+		if (!accountId || (key != accountId)) {
+			return;
+		};
+
+		if (phrase) {
+			value = phrase;
+			Renderer.send('keytarSet', accountId, phrase);
+			Storage.delete('phrase');
+		};
+
+		if (value) {
+			authStore.phraseSet(value);
+			Util.route('/auth/setup/init', true);
+		} else {
+			Storage.logout();
+		};
+	};
+
+	onPopup (e: any, id: string, param: any, close?: boolean) {
+		param = param || {};
+		param.data = param.data || {};
+		param.data.rootId = keyboard.getRootId();
+
+		if (close) {
+			popupStore.closeAll();
+		};
+		
+		window.setTimeout(() => { popupStore.open(id, param); }, Constant.delay.popup);
+	};
+
+	onUpdate (e: any, auto: boolean) {
+		if (auto) {
+			return;
+		};
+
+		commonStore.progressSet({ 
+			status: 'Checking for update...', 
+			current: 0, 
+			total: 1, 
+			isUnlocked: true 
 		});
 	};
 
-	logToFile (name: string, message: any) {
-		const logsDir = path.join(userPath, 'logs');
-		const log = path.join(logsDir, name + '_' + FileUtil.date() + '.json');
-		const renderer = Util.getRenderer();
+	onUpdateConfirm (e: any, auto: boolean) {
+		commonStore.progressClear(); 
 
-		try {
-			fs.writeFileSync(log, JSON.stringify(message, null, 5), 'utf-8');
-		} catch(e) {
-			console.log('[DebugSync] Failed to save a file');
+		if (auto) {
+			return;
 		};
 
-		renderer.send('pathOpen', logsDir);
+		popupStore.open('confirm', {
+			data: {
+				title: 'Update available',
+				text: 'Do you want to update on a new version?',
+				textConfirm: 'Restart and update',
+				textCancel: 'Later',
+				onConfirm: () => {
+					Renderer.send('updateConfirm');
+					Storage.delete('popupNewBlock');
+				},
+				onCancel: () => {
+					Renderer.send('updateCancel');
+				}, 
+			},
+		});
+	};
+
+	onUpdateAvailable (e: any, auto: boolean) {
+		commonStore.progressClear();
+
+		if (auto) {
+			return;
+		};
+
+		popupStore.open('confirm', {
+			data: {
+				title: 'Update available',
+				text: 'Do you want to update on a new version?',
+				textConfirm: 'Update',
+				textCancel: 'Later',
+				onConfirm: () => {
+					Renderer.send('updateDownload');
+				},
+				onCancel: () => {
+					Renderer.send('updateCancel');
+				}, 
+			},
+		});
+	};
+
+	onUpdateUnavailable (e: any, auto: boolean) {
+		commonStore.progressClear(); 
+
+		if (auto) {
+			return;
+		};
+
+		popupStore.open('confirm', {
+			data: {
+				title: 'You are up-to-date',
+				text: Util.sprintf('You are on the latest version: %s', window.Electron.version.app),
+				textConfirm: 'Great!',
+				canCancel: false,
+			},
+		});
+	};
+
+	onUpdateError (e: any, err: string, auto: boolean) {
+		console.error(err);
+		commonStore.progressClear();
+
+		if (auto) {
+			return;
+		};
+
+		popupStore.open('confirm', {
+			data: {
+				title: translate('popupConfirmUpdateErrorTitle'),
+				text: Util.sprintf(translate('popupConfirmUpdateErrorText'), Error[err] || err),
+				textConfirm: 'Retry',
+				textCancel: 'Later',
+				onConfirm: () => {
+					Renderer.send('updateDownload');
+				},
+				onCancel: () => {
+					Renderer.send('updateCancel');
+				}, 
+			},
+		});
 	};
 
 	onCommand (e: any, key: string) {
 		const rootId = keyboard.getRootId();
-		const renderer = Util.getRenderer();
-
-		let options: any = {};
+		const logPath = window.Electron.logPath;
+		const options: any = {};
 
 		switch (key) {
 			case 'undo':
@@ -644,11 +648,9 @@ class App extends React.Component<Props, State> {
 				break;
 
 			case 'exportTemplates':
-				options = { 
-					properties: [ 'openDirectory' ],
-				};
+				options.properties = [ 'openDirectory' ];
 
-				dialog.showOpenDialog(options).then((result: any) => {
+				window.Electron.showOpenDialog(options).then((result: any) => {
 					const files = result.filePaths;
 					if ((files == undefined) || !files.length) {
 						return;
@@ -659,35 +661,44 @@ class App extends React.Component<Props, State> {
 							return;
 						};
 
-						renderer.send('pathOpen', files[0]);
+						Renderer.send('pathOpen', files[0]);
 					});
 				});
 				break;
 
 			case 'exportLocalstore':
-				options = { 
-					properties: [ 'openDirectory' ],
-				};
+				options.properties = [ 'openDirectory' ];
 
-				dialog.showOpenDialog(options).then((result: any) => {
+				window.Electron.showOpenDialog.showOpenDialog(options).then((result: any) => {
 					const files = result.filePaths;
 					if ((files == undefined) || !files.length) {
 						return;
 					};
 
 					C.DebugExportLocalstore(files[0], [], (message: any) => {
-						if (message.error.code) {
-							return;
+						if (!message.error.code) {
+							Renderer.send('pathOpen', files[0]);
 						};
-
-						renderer.send('pathOpen', files[0]);
 					});
 				});
 				break;
+
+			case 'debugSync':
+				C.DebugSync(100);
+				break;
+
+			case 'debugTree':
+				C.DebugTree(rootId, logPath, (message: any) => {
+					if (!message.error.code) {
+						Renderer.send('pathOpen', logPath);
+					};
+				});
+				break;
+
 		};
 	};
 
-	onProgress (e: any, progress: any) {
+	onUpdateProgress (e: any, progress: any) {
 		commonStore.progressSet({ 
 			status: Util.sprintf('Downloading update... %s/%s', FileUtil.size(progress.transferred), FileUtil.size(progress.total)), 
 			current: progress.transferred, 
@@ -709,29 +720,61 @@ class App extends React.Component<Props, State> {
 	};
 
 	onMenu (e: any) {
-		const renderer = Util.getRenderer();
-		renderer.send('winCommand', 'menu');
+		Renderer.send('winCommand', 'menu');
 	};
 
 	onMin (e: any) {
-		const renderer = Util.getRenderer();
-		renderer.send('winCommand', 'minimize');
+		Renderer.send('winCommand', 'minimize');
 	};
 
 	onMax (e: any) {
 		const node = $(ReactDOM.findDOMNode(this));
 		const icon = node.find('#minmax');
-		const renderer = Util.getRenderer();
-		const isMaximized = BrowserWindow.getFocusedWindow().isMaximized();
+		const isMaximized = window.Electron.isMaximized();
 
 		icon.removeClass('max window');
 		!isMaximized ? icon.addClass('max') : icon.addClass('window');
-		renderer.send('winCommand', 'maximize');
+		Renderer.send('winCommand', 'maximize');
 	};
 
 	onClose (e: any) {
-		const renderer = Util.getRenderer();
-		renderer.send('winCommand', 'close');
+		Renderer.send('winCommand', 'close');
+	};
+
+	onSpellcheck (e: any, param: any) {
+		if (!param.misspelledWord) {
+			return;
+		};
+
+		keyboard.disableContextOpen(true);
+
+		const win = $(window);
+		const rootId = keyboard.getRootId();
+		const rect = Util.selectionRect();
+		const { focused, range } = focus.state;
+		const options: any = param.dictionarySuggestions.map(it => { return { id: it, name: it }; });
+
+		options.push({ id: 'add-to-dictionary', name: 'Add to dictionary' });
+
+		menuStore.open('select', {
+			rect: { ...rect, y: rect.y + win.scrollTop() },
+			onOpen: () => { menuStore.close('blockContext'); },
+			onClose: () => { keyboard.disableContextOpen(false); },
+			data: {
+				options,
+				onSelect: (e: any, item: any) => {
+					raf(() => { 
+						focus.apply(); 
+
+						if (item.id == 'add-to-dictionary') {
+							Renderer.send('spellcheckAdd', param.misspelledWord);
+						} else {
+							DataUtil.blockInsertText(rootId, focused, item.id, range.from, range.to);
+						};
+					});
+				},
+			}
+		});
 	};
 
 };

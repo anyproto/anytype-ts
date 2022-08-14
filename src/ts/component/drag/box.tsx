@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Util } from 'ts/lib';
+import { Util } from 'Lib';
 
 interface Props {
 	onDragEnd(oldIndex: number, newIndex: number): void;

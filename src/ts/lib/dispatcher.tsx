@@ -1,14 +1,12 @@
-import { authStore, commonStore, blockStore, detailStore, dbStore } from 'ts/store';
-import { Util, I, M, Decode, translate, analytics, Response, Mapper, crumbs, Action } from 'ts/lib';
+import { authStore, commonStore, blockStore, detailStore, dbStore } from 'Store';
+import { Util, I, M, Decode, translate, analytics, Response, Mapper, crumbs, Renderer, Action } from 'Lib';
 import * as Sentry from '@sentry/browser';
 import arrayMove from 'array-move';
 
 const Service = require('lib/pb/protos/service/service_grpc_web_pb');
 const Commands = require('lib/pb/protos/commands_pb');
 const Events = require('lib/pb/protos/events_pb');
-const path = require('path');
 const Constant = require('json/constant.json');
-const { app, getGlobal } = window.require('@electron/remote');
 
 const SORT_IDS = [ 
 	'objectShow', 
@@ -25,13 +23,6 @@ const SORT_IDS = [
 ];
 const SKIP_IDS = [ 'blockOpenBreadcrumbs', 'blockSetBreadcrumbs' ];
 
-/// #if USE_ADDON
-const bindings = window.require('bindings')({
-	bindings: 'addon.node',
-	module_root: path.join(app.getAppPath(), 'build'),
-});
-/// #endif
-
 class Dispatcher {
 
 	service: any = null;
@@ -40,31 +31,22 @@ class Dispatcher {
 	timeoutEvent: any = {};
 	reconnects: number = 0;
 
-	constructor () {
-		/// #if USE_ADDON
-			this.service = new Service.ClientCommandsClient('http://127.0.0.1:80', null, null);
+	init (address: string) {
+		this.service = new Service.ClientCommandsClient(address, null, null);
+		this.listenEvents();
 
-			const handler = (item: any) => {
-				try {
-					this.event(Events.Event.deserializeBinary(item.data.buffer), false);
-				} catch (e) {
-					console.error(e);
-				};
-			};
-
-			this.service.client_.rpcCall = this.napiCall;
-			bindings.setEventHandler(handler);
-		/// #else
-			let serverAddr = getGlobal('serverAddr');
-			console.log('[Dispatcher] Server address: ', serverAddr);
-			this.service = new Service.ClientCommandsClient(serverAddr, null, null);
-
-			this.listenEvents();
-		/// #endif
+		console.log('[Dispatcher].init Server address: ', address);
 	};
 
 	listenEvents () {
-		this.stream = this.service.listenEvents(new Commands.Empty(), null);
+		if (!authStore.token) {
+			return;
+		};
+
+		const request = new Commands.StreamRequest();
+		request.setToken(authStore.token);
+
+		this.stream = this.service.listenSessionEvents(request, null);
 
 		this.stream.on('data', (event: any) => {
 			try {
@@ -218,6 +200,8 @@ class Dispatcher {
 				case 'accountUpdate':
 					authStore.accountSet({ status: Mapper.From.AccountStatus(data.getStatus()) });
 					commonStore.configSet(Mapper.From.AccountConfig(data.getConfig()), true);
+
+					Renderer.send('setConfig', Util.objectCopy(commonStore.config));
 					break;
 
 				case 'accountConfigUpdate':
@@ -230,10 +214,6 @@ class Dispatcher {
 						cafe: Mapper.From.ThreadCafe(data.getCafe()),
 						accounts: (data.getAccountsList() || []).map(Mapper.From.ThreadAccount),
 					});
-					break;
-
-				case 'objectShow':
-					this.onObjectShow(rootId, Response.onObjectShow(data));
 					break;
 
 				case 'objectRemove':
@@ -751,21 +731,28 @@ class Dispatcher {
 		return 0;
 	};
 
-	onObjectShow (rootId: string, message: any) {
-		let { blocks, details, restrictions } = message;
-		let root = blocks.find((it: any) => { return it.id == rootId; });
+	onObjectView (rootId: string, traceId: string, objectView: any) {
+		let { blocks, details, restrictions, objectTypes, relationLinks } = objectView;
+		let root = blocks.find((it: any) => it.id == rootId);
+		let ctx: string[] = [ rootId ];
+		
+		if (traceId) {
+			ctx.push(traceId);
+		};
+
+		let contextId = ctx.join('-');
 
 		if (root && root.fields.analyticsContext) {
 			analytics.setContext(root.fields.analyticsContext, root.fields.analyticsOriginalId);
 		};
 
-		dbStore.objectTypesSet(message.objectTypes);
-		dbStore.relationsSet(rootId, rootId, message.relationLinks);
+		dbStore.objectTypesSet(objectTypes);
+		dbStore.relationsSet(rootId, rootId, relationLinks);
 
-		detailStore.set(rootId, details);
-		blockStore.restrictionsSet(rootId, restrictions);
+		detailStore.set(contextId, details);
+		blockStore.restrictionsSet(contextId, restrictions);
 
-		let object = detailStore.get(rootId, rootId, []);
+		let object = detailStore.get(contextId, rootId, []);
 		if (root) {
 			root.type = I.BlockType.Page;
 			root.layout = object.layout;
@@ -810,11 +797,11 @@ class Dispatcher {
 			content: {}
 		}));
 
-		blockStore.set(rootId, blocks);
-		blockStore.setStructure(rootId, structure);
-		blockStore.updateNumbers(rootId); 
-		blockStore.updateMarkup(rootId);
-		blockStore.checkTypeSelect(rootId);
+		blockStore.set(contextId, blocks);
+		blockStore.setStructure(contextId, structure);
+		blockStore.updateNumbers(contextId); 
+		blockStore.updateMarkup(contextId);
+		blockStore.checkTypeSelect(contextId);
 	};
 
 	public request (type: string, data: any, callBack?: (message: any) => void) {
@@ -839,7 +826,7 @@ class Dispatcher {
 		};
 
 		try {
-			this.service[ct](data, null, (error: any, response: any) => {
+			this.service[ct](data, { token: authStore.token }, (error: any, response: any) => {
 				if (!response) {
 					return;
 				};
@@ -904,28 +891,6 @@ class Dispatcher {
 			console.error(err);
 		};
 	};
-
-	/// #if USE_ADDON
-		napiCall (method: any, inputObj: any, outputObj: any, request: any, callBack?: (err: any, res: any) => void) {
-			const a = method.split('/');
-			method = a[a.length - 1];
-
-			const buffer = inputObj.serializeBinary();
-			const handler = (item: any) => {
-				try {
-					let message = request.g(item.data.buffer);
-					if (message) {
-						callBack(null, message);
-					} else {
-						console.error('[napiCall]: message is undefined', method);
-					};
-				} catch (err) {
-					console.error('[napiCall]: ', err);
-				};
-			};
-			bindings.sendCommand(method, buffer, handler);
-		};
-	/// #endif
 
 };
 

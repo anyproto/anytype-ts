@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Icon, Button } from 'ts/component';
-import { C, I, Util, analytics } from 'ts/lib';
-import { menuStore, dbStore, blockStore } from 'ts/store';
+import { Icon, Button } from 'Component';
+import { C, I, Util, analytics } from 'Lib';
+import { menuStore, dbStore, blockStore } from 'Store';
 import { observable } from 'mobx';
 import { observer } from 'mobx-react';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
@@ -133,7 +133,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 
 	componentDidMount () {
 		this.resize();
-		$(window).unbind('resize.controls').on('resize.controls', () => { this.resize(); });
+		$(window).off('resize.controls').on('resize.controls', () => { this.resize(); });
 	};
 
 	componentDidUpdate () {
@@ -141,7 +141,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 	};
 
 	componentWillUnmount () {
-		$(window).unbind('resize.controls');
+		$(window).off('resize.controls');
 	};
 	
 	onButton (e: any, id: string, menu: string) {

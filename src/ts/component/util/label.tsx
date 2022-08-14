@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Util } from 'ts/lib';
+import { Util } from 'Lib';
 
 interface Props {
 	id?: string;
@@ -27,7 +27,7 @@ class Label extends React.Component<Props, {}> {
 	};
 	
 	componentDidMount () {
-		Util.renderLink($(ReactDOM.findDOMNode(this)));
+		Util.renderLinks($(ReactDOM.findDOMNode(this)));
 	};
 	
 };

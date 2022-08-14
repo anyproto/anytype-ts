@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { MenuItemVertical } from 'ts/component';
-import { blockStore } from 'ts/store';
-import { I, keyboard, Key, DataUtil } from 'ts/lib';
+import { MenuItemVertical } from 'Component';
+import { blockStore } from 'Store';
+import { I, keyboard, Key, DataUtil } from 'Lib';
 
 interface Props extends I.Menu {};
 
@@ -56,7 +56,7 @@ class MenuBlockColor extends React.Component<Props, {}> {
 	};
 	
 	unbind () {
-		$(window).unbind('keydown.menu');
+		$(window).off('keydown.menu');
 	};
 
 	getItems () {

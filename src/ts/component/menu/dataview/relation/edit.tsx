@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, C, DataUtil, Relation, translate } from 'ts/lib';
-import { Icon, Input, MenuItemVertical, Button } from 'ts/component';
-import { blockStore, dbStore, menuStore, detailStore } from 'ts/store';
+import { I, C, DataUtil, Relation, translate } from 'Lib';
+import { Icon, Input, MenuItemVertical, Button } from 'Component';
+import { blockStore, dbStore, menuStore, detailStore } from 'Store';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
 
@@ -204,8 +204,8 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 	unbind () {
 		const { getId } = this.props;
 
-		$(window).unbind('keydown.menu');
-		$(`#${getId()}`).unbind('click.menu');
+		$(window).off('down.menu');
+		$(`#${getId()}`).off('ck.menu');
 	};
 
 	focus () {

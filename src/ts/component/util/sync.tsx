@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, Util, DataUtil, translate } from 'ts/lib';
-import { authStore } from 'ts/store';
+import { I, Util, DataUtil, translate } from 'Lib';
+import { authStore } from 'Store';
 import { observer } from 'mobx-react';
 
 interface Props {

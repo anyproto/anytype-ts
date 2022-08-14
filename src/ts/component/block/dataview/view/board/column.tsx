@@ -1,17 +1,17 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Icon, Loader } from 'ts/component';
-import { I, DataUtil, Util, translate, keyboard } from 'ts/lib';
+import { Icon, Loader } from 'Component';
+import { I, Util, translate, keyboard, DataUtil } from 'Lib';
 import { observer } from 'mobx-react';
-import { dbStore, detailStore } from 'ts/store';
+import { dbStore, detailStore, menuStore } from 'Store';
 
 import Card from './card';
-import Cell from 'ts/component/block/dataview/cell';
+import Cell from 'Component/block/dataview/cell';
 
 interface Props extends I.ViewComponent {
 	id: string;
 	value: any;
-	onRecordAdd (groupId: string): void;
+	onRecordAdd (groupId: string, dir: number): void;
 	onDragStartColumn?: (e: any, groupId: string) => void;
 	onScrollColumn?: () => void;
 	onDragStartCard?: (e: any, groupId: string, record: any) => void;
@@ -41,10 +41,11 @@ const Column = observer(class Column extends React.Component<Props, State> {
 		super(props);
 
 		this.onScroll = this.onScroll.bind(this);
+		this.onMore = this.onMore.bind(this);
 	};
 
 	render () {
-		const { rootId, block, id, getSubId, getView, onRecordAdd, value, onDragStartColumn, isPopup } = this.props;
+		const { rootId, block, id, getSubId, getView, onRecordAdd, value, onDragStartColumn } = this.props;
 		const { loading } = this.state;
 		const view = getView();
 		const subId = getSubId();
@@ -52,7 +53,18 @@ const Column = observer(class Column extends React.Component<Props, State> {
 		const items = this.getItems();
 		const { offset, total } = dbStore.getMeta(subId, '');
 		const relation = dbStore.getRelationByKey(view.groupRelationKey);
+		const group = dbStore.getGroup(rootId, block.id, id);
 		const head = {};
+		const cn = [ 'column' ];
+		const cnbg = [];
+		
+		let label: any = null;
+		let showCell = true;
+
+		if (view.groupBackgroundColors) {
+			cn.push('withColor');
+			cnbg.push('bgColor bgColor-' + (group.bgColor || 'default'));
+		};
 
 		head[view.groupRelationKey] = value;
 
@@ -60,9 +72,6 @@ const Column = observer(class Column extends React.Component<Props, State> {
 		records.forEach((id: string) => {
 			const object = detailStore.get(subId, id, [ view.groupRelationKey ]);
 		});
-
-		let label: any = null;
-		let showCell = true;
 
 		switch (relation.format) {
 			case I.RelationType.Checkbox:
@@ -73,12 +82,10 @@ const Column = observer(class Column extends React.Component<Props, State> {
 		return (
 			<div 
 				id={'column-' + id} 
-				className="column" 
+				className={cn.join(' ')}
 				data-id={id}
 			>
-				<div 
-					className="head" 
-				>
+				<div className="head">
 					<div className="sides">
 						<div 
 							className="side left"
@@ -101,43 +108,48 @@ const Column = observer(class Column extends React.Component<Props, State> {
 							) : ''}
 							{label}
 						</div>
+
 						<div className="side right">
-							<Icon className="more" />
-							<Icon className="add" />
+							<Icon id={`button-${id}-more`} className="more" onClick={this.onMore} />
+							<Icon className="add"  onClick={() => { onRecordAdd(id, -1); }} />
 						</div>
 					</div>
+
+					<div className={cnbg.join(' ')} />
 				</div>
 
 				<div className="body" onScroll={this.onScroll}>
-					{loading ? <Loader / > : (
-						<React.Fragment>
-							{items.map((item: any, i: number) => {
-								let content = null;
-								let key = [ 'board', view.id, id, item.id ].join('-');
+					<div className="bg">
+						{loading ? <Loader / > : (
+							<React.Fragment>
+								{items.map((item: any, i: number) => {
+									let content = null;
+									let key = [ 'board', view.id, id, item.id ].join('-');
 
-								if (item.isAdd) {
-									content = (
-										<div key={key}  id={`card-${id}-add`} className="card add" onClick={() => { onRecordAdd(id); }}>
-											<Icon className="plus" />
-										</div>
-									);
-								} else {
-									content = (
-										<Card 
-											key={key} 
-											{...this.props} 
-											id={item.id} 
-											groupId={id}
-											index={i}
-										/>
-									);
-								};
-								return content;
-							})}
-						</React.Fragment>
-					)}
+									if (item.isAdd) {
+										content = (
+											<div key={key}  id={`card-${id}-add`} className="card add" onClick={() => { onRecordAdd(id, 1); }}>
+												<Icon className="plus" />
+											</div>
+										);
+									} else {
+										content = (
+											<Card 
+												key={key} 
+												{...this.props} 
+												id={item.id} 
+												groupId={id}
+												index={i}
+											/>
+										);
+									};
+									return content;
+								})}
+							</React.Fragment>
+						)}
+						<div className={cnbg.join(' ')} />
+					</div>
 				</div>
-
 			</div>
 		);
 	};
@@ -165,11 +177,11 @@ const Column = observer(class Column extends React.Component<Props, State> {
 			return;
 		};
 
-		const filters: I.Filter[] = [
+		const filters: I.Filter[] = view.filters.concat([
 			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
 			{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
 			{ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.Equal, value: false },
-		];
+		]);
 
 		switch (relation.format) {
 			default:
@@ -232,6 +244,20 @@ const Column = observer(class Column extends React.Component<Props, State> {
 			this.offset += Constant.limit.dataview.records;
 			this.load(false);
 		};
+	};
+
+	onMore (e: any) {
+		const { rootId, block, id, getView } = this.props;
+
+		menuStore.open('dataviewGroupEdit', {
+			element: `#button-${id}-more`,
+			data: {
+				rootId,
+				blockId: block.id,
+				groupId: id,
+				getView,
+			}
+		});
 	};
 
 });

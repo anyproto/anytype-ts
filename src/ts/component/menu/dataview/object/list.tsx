@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { Filter, MenuItemVertical, Icon, Loader, ObjectName } from 'ts/component';
-import { I, C, Util, keyboard, DataUtil, Relation } from 'ts/lib';
-import { commonStore, dbStore, menuStore, detailStore } from 'ts/store';
+import { Filter, MenuItemVertical, Icon, Loader, ObjectName } from 'Component';
+import { I, C, Util, keyboard, DataUtil, Relation } from 'Lib';
+import { commonStore, menuStore, detailStore } from 'Store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
@@ -193,7 +193,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 	};
 	
 	unbind () {
-		$(window).unbind('keydown.menu');
+		$(window).off('keydown.menu');
 	};
 
 	onKeyDown (e: any) {

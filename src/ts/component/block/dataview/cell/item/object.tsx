@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { IconObject, ObjectName, Icon } from 'ts/component';
+import { IconObject, ObjectName, Icon } from 'Component';
 
 interface Props {
 	object: any;

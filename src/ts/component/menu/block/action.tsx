@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Filter, MenuItemVertical } from 'ts/component';
-import { commonStore, blockStore, menuStore } from 'ts/store';
-import { I, C, keyboard, DataUtil, focus, Action, translate, analytics } from 'ts/lib';
+import { Filter, MenuItemVertical } from 'Component';
+import { commonStore, blockStore, menuStore } from 'Store';
+import { I, C, keyboard, DataUtil, focus, Action, translate, analytics } from 'Lib';
 
 interface Props extends I.Menu {};
 interface State {
@@ -100,7 +100,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 		this.rebind();
 		this.focus();
 
-		menu.unbind('mouseleave').on('mouseleave', () => { menuStore.clearTimeout(); });
+		menu.off('mouseleave').on('mouseleave', () => { menuStore.clearTimeout(); });
 	};
 
 	componentDidUpdate () {
@@ -141,7 +141,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 	};
 	
 	unbind () {
-		$(window).unbind('keydown.menu');
+		$(window).off('keydown.menu');
 	};
 
 	onKeyDown (e: any) {

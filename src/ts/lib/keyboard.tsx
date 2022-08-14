@@ -1,5 +1,5 @@
-import { I, C, Util, DataUtil, Storage, focus, history as historyPopup, analytics, sidebar } from 'ts/lib';
-import { commonStore, authStore, blockStore, detailStore, menuStore, popupStore } from 'ts/store';
+import { I, C, Util, DataUtil, Storage, focus, history as historyPopup, analytics, Renderer, sidebar } from 'Lib';
+import { commonStore, authStore, blockStore, detailStore, menuStore, popupStore } from 'Store';
 
 const $ = require('jquery');
 const KeyCode = require('json/key.json');
@@ -27,22 +27,21 @@ class Keyboard {
 	isMouseDisabled: boolean = false;
 	isNavigationDisabled: boolean = false;
 	isPinChecked: boolean = false;
-	isContextDisabled: boolean = false;
 	isBlurDisabled: boolean = false;
 	isCloseDisabled: boolean = false;
+	isContextCloseDisabled: boolean = false;
+	isContextOpenDisabled: boolean = false;
 	
 	init () {
 		this.unbind();
 		
-		const renderer = Util.getRenderer();
 		const win = $(window);
-
 		win.on('keydown.common', (e: any) => { this.onKeyDown(e); });
 		win.on('keyup.common', (e: any) => { this.onKeyUp(e); });
 		win.on('mousedown.common', (e: any) => { this.onMouseDown(e); });
 		win.on('scroll.common', (e: any) => { this.onScroll(e); });
 
-		win.unbind('mousemove.common beforeunload.common blur.common');
+		win.off('mousemove.common beforeunload.common blur.common');
 		
 		win.on('mousemove.common', (e: any) => {
 			this.initPinCheck();
@@ -55,12 +54,12 @@ class Keyboard {
 			Util.previewHide(true);
 		});
 
-		renderer.removeAllListeners('commandGlobal');
-		renderer.on('commandGlobal', (e: any, cmd: string, arg: any) => { this.onCommand(cmd, arg); });
+		Renderer.remove('commandGlobal');
+		Renderer.on('commandGlobal', (e: any, cmd: string, arg: any) => { this.onCommand(cmd, arg); });
 	};
 	
 	unbind () {
-		$(window).unbind('keyup.common keydown.common mousedown.common scroll.common mousemove.common blur.common');
+		$(window).off('keyup.common keydown.common mousedown.common scroll.common mousemove.common blur.common');
 	};
 
 	onScroll (e: any) {
@@ -105,7 +104,7 @@ class Keyboard {
 		const key = e.key.toLowerCase();
 		const cmd = this.ctrlKey();
 		const isMain = this.isMain();
-		const ids = this.selection.get(I.SelectType.Block);
+		const ids = this.selection ? this.selection.get(I.SelectType.Block) : [];
 		const isMenuOpen = menuStore.isOpen();
 
 		this.pressed.push(key);
@@ -117,12 +116,6 @@ class Keyboard {
 
 		// Navigation
 		if (!this.isNavigationDisabled) {
-			this.shortcut('backspace', e, (pressed: string) => {
-				if (isMain && !this.isFocused && !ids.length && !isMenuOpen) {
-					this.onBack();
-				};
-			});
-
 			keyboard.shortcut(isMac ? 'cmd+[' : 'alt+arrowleft', e, (pressed: string) => { this.onBack(); });
 			keyboard.shortcut(isMac ? 'cmd+]' : 'alt+arrowright', e, (pressed: string) => { this.onForward(); });
 		};
@@ -458,10 +451,9 @@ class Keyboard {
 	onSaveAsHTML () {
 		const rootId = this.getRootId();
 		const object = detailStore.get(rootId, rootId);
-		const renderer = Util.getRenderer();
 
 		this.printApply('save', false);
-		renderer.send('winCommand', 'saveAsHTML', { name: object.name });
+		Renderer.send('winCommand', 'saveAsHTML', { name: object.name });
 	};
 
 	onSearch () {
@@ -642,8 +634,13 @@ class Keyboard {
 	};
 
 	// Flag to prevent menuBlockContext from closing
-	disableContext (v: boolean) {
-		this.isContextDisabled = v;
+	disableContextClose (v: boolean) {
+		this.isContextCloseDisabled = v;
+	};
+
+	// Flag to prevent menuBlockContext from opening
+	disableContextOpen (v: boolean) {
+		this.isContextOpenDisabled = v;
 	};
 	
 	disablePreview (v: boolean) {

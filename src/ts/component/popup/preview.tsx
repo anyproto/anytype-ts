@@ -1,9 +1,9 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Loader, Block } from 'ts/component';
-import { I } from 'ts/lib';
-import { commonStore } from 'ts/store';
+import { Loader, Block } from 'Component';
+import { I } from 'Lib';
+import { commonStore } from 'Store';
 
 interface Props extends I.Popup, RouteComponentProps<any> {}; 
 
@@ -87,9 +87,9 @@ class PopupPreview extends React.Component<Props, {}> {
 						height = Math.min(mh, ch);
 						width = Math.min(mw, height / (ch / cw));
 					};
-					
+
 					content.css({ width: width - PADDING * 2 });
-					inner.css({ height: height - PADDING });
+					inner.css({ height: height - PADDING * 2 });
 					
 					position();
 				};

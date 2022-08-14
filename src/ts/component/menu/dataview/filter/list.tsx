@@ -1,14 +1,14 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { SortableContainer } from 'react-sortable-hoc';
-import { Icon } from 'ts/component';
-import { dbStore, menuStore, blockStore } from 'ts/store';
-import { I, C, Util, keyboard, analytics, Relation } from 'ts/lib';
+import { Icon } from 'Component';
+import { dbStore, menuStore, blockStore } from 'Store';
+import { I, C, Util, keyboard, analytics, Relation } from 'Lib';
 import { observer } from 'mobx-react';
 import arrayMove from 'array-move';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCache } from 'react-virtualized';
 
-import Item from 'ts/component/menu/item/filter';
+import Item from 'Component/menu/item/filter';
 
 interface Props extends I.Menu {};
 
@@ -184,7 +184,7 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<Pro
 		const { getId } = this.props;
 		const obj = $(`#${getId()} .content`);
 
-		obj.unbind('click').on('click', () => { menuStore.closeAll(Constant.menuIds.cell); });
+		obj.off('click').on('click', () => { menuStore.closeAll(Constant.menuIds.cell); });
 
 		this.unbind();
 		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
@@ -192,7 +192,7 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<Pro
 	};
 	
 	unbind () {
-		$(window).unbind('keydown.menu');
+		$(window).off('keydown.menu');
 	};
 
 	onAdd (e: any) {

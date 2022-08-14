@@ -1,4 +1,4 @@
-import { I, Util, DataUtil } from 'ts/lib';
+import { I, Util, DataUtil } from 'Lib';
 import { observable, intercept, makeObservable } from 'mobx';
 
 class ObjectType implements I.ObjectType {

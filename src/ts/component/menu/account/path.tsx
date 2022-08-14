@@ -1,12 +1,10 @@
 import * as React from 'react';
-import { I } from 'ts/lib';
-import { Button, Label } from 'ts/component';
-import { authStore } from 'ts/store';
+import { I } from 'Lib';
+import { Button, Label } from 'Component';
+import { authStore } from 'Store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {};
-
-const { dialog } = window.require('@electron/remote');
 
 const MenuAccountPath = observer(class MenuAccountPath extends React.Component<Props, {}> {
 
@@ -33,7 +31,7 @@ const MenuAccountPath = observer(class MenuAccountPath extends React.Component<P
             properties: [ 'openDirectory' ],
         };
 
-        dialog.showOpenDialog(options).then((result: any) => {
+        window.Electron.showOpenDialog(options).then((result: any) => {
             const files = result.filePaths;
             if ((files == undefined) || !files.length) {
                 return;

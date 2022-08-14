@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Frame, Cover, Title, Error, Input, Button, Header, FooterAuth as Footer, Icon } from 'ts/component';
-import { Util, translate, C, keyboard } from 'ts/lib';
-import { commonStore, authStore } from 'ts/store';
+import { Frame, Cover, Title, Input, Error, Button, Header, Footer, Icon } from 'Component';
+import { Util, translate, C, keyboard, DataUtil } from 'Lib';
+import { commonStore, authStore } from 'Store';
 import { observer } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any> {}
@@ -34,7 +34,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<Props
 			<div>
 				<Cover {...cover} className="main" />
 				<Header {...this.props} component="authIndex" />
-				<Footer />
+				<Footer {...this.props} component="authIndex" />
 				
 				<Frame>
 					<div className="authBackWrap" onClick={this.onCancel}>
@@ -75,11 +75,15 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<Props
 		C.WalletRecover(walletPath, phrase, (message: any) => {
 			if (message.error.code) {
 				this.phraseRef.setError(true);
-				this.setState({ error: message.error.description });
-			} else {
-				authStore.phraseSet(phrase);
-				Util.route('/auth/account-select');
+				this.setState({ error: message.error.description });	
+				return;
 			};
+
+			authStore.phraseSet(phrase);
+
+			DataUtil.createSession(() => {
+				Util.route('/auth/account-select');
+			});
 		});
 	};
 

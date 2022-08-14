@@ -1,9 +1,9 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Icon, Button, Cover, Loader, IconObject, Header, ObjectName, ObjectDescription } from 'ts/component';
-import { I, C, DataUtil, Util, keyboard, Key, focus, translate, sidebar } from 'ts/lib';
-import { blockStore, popupStore, commonStore } from 'ts/store';
+import { Icon, Button, Cover, Loader, IconObject, Header, ObjectName, ObjectDescription } from 'Component';
+import { I, C, DataUtil, Util, keyboard, Key, focus, translate, sidebar } from 'Lib';
+import { blockStore, popupStore, commonStore } from 'Store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
@@ -309,11 +309,11 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 		
 		const win = $(window);
 		win.on('keydown.navigation', (e: any) => { this.onKeyDown(e); });
-		win.unbind('resize.navigation').on('resize.navigation', () => { this.resize(); });
+		win.off('resize.navigation').on('resize.navigation', () => { this.resize(); });
 	};
 
 	unbind () {
-		$(window).unbind('keydown.navigation resize.navigation');
+		$(window).off('keydown.navigation resize.navigation');
 	};
 	
 	resize () {
@@ -520,7 +520,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 		const { isPopup } = this.props;
 		const obj = { id: item.id, layout: I.ObjectLayout.Navigation };
 
-		isPopup ? DataUtil.objectOpenPopup(obj) : DataUtil.objectOpen(obj);
+		isPopup ? DataUtil.objectOpenPopup(obj) : DataUtil.objectOpenRoute(obj);
 	};
 
 	onConfirm (e: any, item: I.PageInfo) {

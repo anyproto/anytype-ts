@@ -1,9 +1,9 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Frame, Cover, Title, Label, Button, Header, FooterAuth as Footer, Textarea } from 'ts/component';
-import { translate, DataUtil, analytics, Util } from 'ts/lib';
-import { commonStore, authStore } from 'ts/store';
+import { Frame, Cover, Title, Label, Button, Header, Footer, Textarea } from 'Component';
+import { translate, DataUtil, analytics, Util } from 'Lib';
+import { commonStore, authStore } from 'Store';
 import { observer } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any> {};
@@ -31,7 +31,7 @@ const PageAuthSuccess = observer(class PageAuthSuccess extends React.Component<P
 			<div>
 				<Cover {...cover} />
 				<Header {...this.props} component="authIndex" />
-				<Footer />
+				<Footer {...this.props} component="authIndex" />
 				
 				<Frame>
 					<Title text="Here's your Recovery Phrase" />

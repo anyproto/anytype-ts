@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, Util } from 'ts/lib';
-import { Icon } from 'ts/component';
+import { I, Util } from 'Lib';
+import { Icon } from 'Component';
 
 interface Props {
 	id?: string;

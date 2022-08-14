@@ -1,5 +1,5 @@
-import { I, DataUtil, Util, FileUtil, translate } from 'ts/lib';
-import { dbStore } from 'ts/store';
+import { I, DataUtil, Util, FileUtil, translate } from 'Lib';
+import { dbStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -44,7 +44,6 @@ class Relation {
 				ret = ret.concat([ 
 					{ id: I.FilterCondition.In,			 name: translate('filterConditionInArray') }, 
 					{ id: I.FilterCondition.AllIn,		 name: translate('filterConditionAllIn') }, 
-					{ id: I.FilterCondition.Equal,		 name: translate('filterConditionEqual') },
 					{ id: I.FilterCondition.NotIn,		 name: translate('filterConditionNotInArray') },
 					{ id: I.FilterCondition.Empty,		 name: translate('filterConditionEmpty') }, 
 					{ id: I.FilterCondition.NotEmpty,	 name: translate('filterConditionNotEmpty') },

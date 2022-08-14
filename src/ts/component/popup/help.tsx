@@ -1,9 +1,10 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Label, Icon, Cover, Button } from 'ts/component';
-import { I, Docs, Util, translate } from 'ts/lib';
-import Block from 'ts/component/block/help';
+import { Label, Icon, Cover, Button } from 'Component';
+import { I, Util, translate } from 'Lib';
+import * as Docs from 'Docs';
+import Block from 'Component/block/help';
 
 interface Props extends I.Popup, RouteComponentProps<any> {};
 
@@ -80,13 +81,13 @@ class PopupHelp extends React.Component<Props, State> {
 		this.rebind();
 		this.resize();
 
-		Util.renderLink($(ReactDOM.findDOMNode(this)));
+		Util.renderLinks($(ReactDOM.findDOMNode(this)));
 	};
 
 	componentDidUpdate () {
 		this.resize();
 
-		Util.renderLink($(ReactDOM.findDOMNode(this)));
+		Util.renderLinks($(ReactDOM.findDOMNode(this)));
 	};
 
 	componentWillUnmount () {
@@ -102,11 +103,11 @@ class PopupHelp extends React.Component<Props, State> {
 		this.unbind();
 		
 		const win = $(window);
-		win.unbind('resize.help').on('resize.help', () => { this.resize(); });
+		win.off('resize.help').on('resize.help', () => { this.resize(); });
 	};
 
 	unbind () {
-		$(window).unbind('resize.help');
+		$(window).off('resize.help');
 	};
 
 	getDocument () {

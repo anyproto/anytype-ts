@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Input, Icon } from 'ts/component';
-import { I, translate } from 'ts/lib';
+import { Input, Icon } from 'Component';
+import { I, translate } from 'Lib';
 
 interface Props {
 	className?: string;

@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { I, keyboard, DataUtil, Util } from 'ts/lib';
+import { I, keyboard, DataUtil, Util } from 'Lib';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { observer } from 'mobx-react';
-import { commonStore, menuStore } from 'ts/store';
+import { commonStore, menuStore } from 'Store';
 
 interface Props extends I.Menu {};
 
@@ -186,7 +186,7 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<Pro
 	};
 
 	unbind () {
-		$(window).unbind('keydown.menu');
+		$(window).off('keydown.menu');
 	};
 
 	onOver (e: any, item: any) {

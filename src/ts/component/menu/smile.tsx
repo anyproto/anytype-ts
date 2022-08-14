@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Filter, Icon, IconEmoji, EmptySearch } from 'ts/component';
-import { I, C, Util, SmileUtil, keyboard, Storage, translate, analytics } from 'ts/lib';
-import { menuStore } from 'ts/store';
+import { Filter, Icon, IconEmoji, EmptySearch } from 'Component';
+import { I, C, Util, SmileUtil, keyboard, Storage, translate, analytics } from 'Lib';
+import { menuStore } from 'Store';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
 interface Props extends I.Menu {};
@@ -14,7 +14,6 @@ interface State {
 const $ = require('jquery');
 const EmojiData = require('json/emoji.json');
 const Constant = require('json/constant.json');
-const { dialog } = window.require('@electron/remote');
 
 const LIMIT_RECENT = 18;
 const LIMIT_ROW = 9;
@@ -72,7 +71,8 @@ class MenuSmile extends React.Component<Props, State> {
 					className="item" 
 					onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }}
 					onMouseLeave={(e: any) => { this.onMouseLeave(e); }} 
-					onMouseDown={(e: any) => { this.onMouseDown(item.id, item.smile, item.skin); }}
+					onMouseDown={(e: any) => { this.onMouseDown(e, item.id, item.smile, item.skin); }}
+					onContextMenu={(e: any) => { this.onSkin(e, item.id, item.smile); }}
 				>
 					<div className="iconObject c32" data-code={str}>
 						<IconEmoji className="c32" size={28} icon={str} />
@@ -338,7 +338,7 @@ class MenuSmile extends React.Component<Props, State> {
 
 		close();
 		
-		dialog.showOpenDialog(options).then((result: any) => {
+		window.Electron.showOpenDialog(options).then((result: any) => {
 			const files = result.filePaths;
 			if ((files == undefined) || !files.length) {
 				return;
@@ -380,7 +380,7 @@ class MenuSmile extends React.Component<Props, State> {
 		Util.tooltipHide(false);
 	};
 	
-	onMouseDown (n: number, id: string, skin: number) {
+	onMouseDown (e: any, n: number, id: string, skin: number) {
 		const { close } = this.props;
 		const win = $(window);
 		const item = EmojiData.emojis[id];
@@ -388,30 +388,18 @@ class MenuSmile extends React.Component<Props, State> {
 		this.id = id;
 		window.clearTimeout(this.timeoutMenu);
 
+		if (e.button == 2) {
+			return;
+		};
+
 		if (item && item.skin_variations) {
 			this.timeoutMenu = window.setTimeout(() => {
-				win.unbind('mouseup.smile');
-				
-				menuStore.open('smileSkin', {
-					type: I.MenuType.Horizontal,
-					element: '.menuSmile #item-' + n,
-					vertical: I.MenuDirection.Top,
-					horizontal: I.MenuDirection.Center,
-					data: {
-						smileId: id,
-						onSelect: (skin: number) => {
-							this.onSelect(id, skin);
-							close();
-						}
-					},
-					onClose: () => {
-						this.id = '';
-					}
-				});
+				win.off('mouseup.smile');
+				this.onSkin(e, n, id);
 			}, 200);
 		};
 		
-		win.unbind('mouseup.smile').on('mouseup.smile', () => {
+		win.off('mouseup.smile').on('mouseup.smile', () => {
 			if (menuStore.isOpen('smileSkin')) {
 				return;
 			};
@@ -420,7 +408,34 @@ class MenuSmile extends React.Component<Props, State> {
 				close();
 			};
 			window.clearTimeout(this.timeoutMenu);
-			win.unbind('mouseup.smile')
+			win.off('mouseup.smile')
+		});
+	};
+
+	onSkin (e: any, n: number, id: string) {
+		const { close } = this.props;
+		const item = EmojiData.emojis[id];
+
+		if (!item || !item.skin_variations) {
+			return;
+		};
+
+		menuStore.open('smileSkin', {
+			type: I.MenuType.Horizontal,
+			element: '.menuSmile #item-' + n,
+			vertical: I.MenuDirection.Top,
+			horizontal: I.MenuDirection.Center,
+			data: {
+				smileId: id,
+				onSelect: (skin: number) => {
+					this.onSelect(id, skin);
+
+					close();
+				}
+			},
+			onClose: () => {
+				this.id = '';
+			}
 		});
 	};
 	

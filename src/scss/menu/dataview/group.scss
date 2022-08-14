@@ -10,13 +10,15 @@
 		.item { padding: 4px 10px; display: flex; }
 		.item {
 			.icon.plus { margin-right: 4px; background-image: url('~img/icon/plus/menu0.svg'); }
+			.clickable { width: calc(100% - 60px); }
 			.switch { position: absolute; right: 16px; top: 50%; margin-top: -8px; }
 
 			.cellContent {
-				.wrap { display: inline-block; }
-				.tagItem { margin: 1px 4px 0px 0px; cursor: pointer; }
+				.wrap { display: inline-block;  width: 100%; }
+				.tagItem { margin: 1px 4px 0px 0px; cursor: pointer; max-width: 130px; }
 				.more { margin: 1px 0px 0px 0px; vertical-align: top; }
 				.empty { display: inline-block; }
+				.over { white-space: nowrap; overflow: hidden; width: 100%; }
 			}
 		}
 		.item:hover::before { background: $colorHover; }

@@ -67,8 +67,7 @@ else
   echo "Moving... "
   rm -rf "$folder"
   mkdir -p "$folder"
-  mv -fv addon/* $folder
-  rm -rf addon
+  mv -fv grpc-server dist/anytypeHelper
 fi;
 
 rm -rf dist/lib/pb

@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { Cell, Icon } from 'ts/component';
-import { I, Util, DataUtil, Relation } from 'ts/lib';
-import { detailStore } from 'ts/store';
+import { Cell, Icon } from 'Component';
+import { I, Util, DataUtil, Relation } from 'Lib';
+import { detailStore } from 'Store';
 import { observer } from 'mobx-react';
 
 interface Props {

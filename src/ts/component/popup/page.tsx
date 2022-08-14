@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { I, history as historyPopup } from 'ts/lib';
+import { I, history as historyPopup } from 'Lib';
 import { RouteComponentProps } from 'react-router';
-import { Page } from 'ts/component';
+import { Page } from 'Component';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Popup, RouteComponentProps<any> {};
@@ -59,11 +59,11 @@ const PopupPage = observer(class PopupPage extends React.Component<Props, {}> {
 		this.unbind();
 		
 		const win = $(window);
-		win.unbind('resize.popupPage').on('resize.popupPage', () => { this.resize(); });
+		win.off('resize.popupPage').on('resize.popupPage', () => { this.resize(); });
 	};
 
 	unbind () {
-		$(window).unbind('resize.popupPage');
+		$(window).off('resize.popupPage');
 	};
 
 	resize () {

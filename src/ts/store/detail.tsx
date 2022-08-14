@@ -1,6 +1,6 @@
 import { observable, action, set, intercept, makeObservable } from 'mobx';
-import { I, Relation, DataUtil, translate } from 'ts/lib';
-import { dbStore } from 'ts/store';
+import { I, Relation, DataUtil, translate } from 'Lib';
+import { dbStore } from 'Store';
 
 const Constant = require('json/constant.json');
 

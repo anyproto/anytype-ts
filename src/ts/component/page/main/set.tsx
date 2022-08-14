@@ -2,12 +2,12 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
-import { Header, FooterMainEdit as Footer, Loader, Block, Deleted } from 'ts/component';
-import { I, M, C, DataUtil, Util, crumbs, Action } from 'ts/lib';
-import { blockStore } from 'ts/store';
+import { Header, Footer, Loader, Block, Deleted } from 'Component';
+import { I, M, C, DataUtil, Util, crumbs, Action } from 'Lib';
+import { blockStore } from 'Store';
 
-import Controls from 'ts/component/page/head/controls';
-import HeadSimple from 'ts/component/page/head/simple';
+import Controls from 'Component/page/head/controls';
+import HeadSimple from 'Component/page/head/simple';
 
 interface Props extends RouteComponentProps<any> {
 	rootId: string;
@@ -79,7 +79,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, St
 					))}
 				</div>
 
-				<Footer {...this.props} rootId={rootId} />
+				<Footer component="mainEdit" {...this.props} />
 			</div>
 		);
 	};

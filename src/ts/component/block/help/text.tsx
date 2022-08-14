@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { Marker } from 'ts/component';
-import { I } from 'ts/lib';
+import { Marker } from 'Component';
+import { I } from 'Lib';
 
 interface Props {
 	text?: string;

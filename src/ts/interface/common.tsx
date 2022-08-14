@@ -115,3 +115,7 @@ export interface HeaderComponent {
 	onNavigation?: (e: any) => void;
 	onGraph?: (e: any) => void;
 };
+
+export interface FooterComponent {
+	onHelp?: (e: any) => void;
+};

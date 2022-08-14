@@ -1,4 +1,4 @@
-import { I, Util } from 'ts/lib';
+import { I, Util } from 'Lib';
 import { observable, intercept, makeObservable } from 'mobx';
 
 import BlockContentLayout from './content/layout';
@@ -119,7 +119,7 @@ class Block implements I.Block {
 	};
 
 	canCreateBlock (): boolean {
-		return !this.isSystem() && !this.isTextTitle() && !this.isTextDescription() && !this.isFeatured() && !this.isType();
+		return !this.isSystem() && !this.isTextTitle() && !this.isTextDescription() && !this.isFeatured() && !this.isType() && !this.isTableRow();
 	};
 
 	isSystem () {

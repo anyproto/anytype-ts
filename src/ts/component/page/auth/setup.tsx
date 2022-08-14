@@ -1,9 +1,9 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Frame, Cover, Title, Error, Button, Header, FooterAuth as Footer } from 'ts/component';
-import { Storage, translate, C, DataUtil, Util, analytics } from 'ts/lib';
-import { commonStore, authStore } from 'ts/store';
+import { Frame, Cover, Title, Error, Button, Header, Footer } from 'Component';
+import { Storage, translate, C, DataUtil, Util, analytics, Renderer } from 'Lib';
+import { commonStore, authStore } from 'Store';
 import { observer } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any> {};
@@ -59,7 +59,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<Props
 			<div>
 				<Cover {...cover} className="main" />
 				<Header {...this.props} component="authIndex" />
-				<Footer />
+				<Footer {...this.props} component="authIndex" />
 				
 				<Frame>
 					<Title text={title} />
@@ -123,32 +123,47 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<Props
 			return;
 		};
 
-		C.WalletRecover(walletPath, phrase, (message: any) => {
+		const setError = (message: any) => {
 			if (message.error.code) {
+				Util.checkError(message.error.code);
 				this.setError(message.error.description);
-			} else 
-			if (accountId) {
-				authStore.phraseSet(phrase);
-				
-				C.AccountSelect(accountId, walletPath, (message: any) => {
-					if (message.error.code) {
-						Util.checkError(message.error.code);
-						this.setError(message.error.description);
-					} else
-					if (message.account) {
-						DataUtil.onAuth(message.account);
-					};
-				});
-			} else {
-				Util.route('/auth/account-select');
+				return true;
 			};
+			return false;
+		};
+
+		C.WalletRecover(walletPath, phrase, (message: any) => {
+			if (setError(message)) {
+				return;
+			};
+
+			DataUtil.createSession((message: any) => {
+				if (setError(message)) {
+					return;
+				};
+
+				if (accountId) {
+					authStore.phraseSet(phrase);
+					
+					C.AccountSelect(accountId, walletPath, (message: any) => {
+						if (setError(message)) {
+							return;
+						};
+
+						if (message.account) {
+							DataUtil.onAuth(message.account);
+						};
+					});
+				} else {
+					Util.route('/auth/account-select');
+				};
+			});
 		});
 	};
 	
 	add () {
 		const { match } = this.props;
 		const { walletPath, accountPath, name, icon, code } = authStore;
-		const renderer = Util.getRenderer();
 
 		commonStore.defaultTypeSet(Constant.typeId.note);
 
@@ -158,34 +173,36 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<Props
 			} else {
 				authStore.phraseSet(message.mnemonic);
 
-				C.AccountCreate(name, icon, accountPath, code, (message: any) => {
-					if (message.error.code) {
-						const error = Errors.AccountCreate[message.error.code] || message.error.description;
-						this.setError(error);
-					} else
-					if (message.account) {
-						if (message.config) {
-							commonStore.configSet(message.config, false);
-						};
+				DataUtil.createSession((message: any) => {
+					C.AccountCreate(name, icon, accountPath, code, (message: any) => {
+						if (message.error.code) {
+							const error = Errors.AccountCreate[message.error.code] || message.error.description;
+							this.setError(error);
+						} else
+						if (message.account) {
+							if (message.config) {
+								commonStore.configSet(message.config, false);
+							};
 
-						const accountId = message.account.id;
+							const accountId = message.account.id;
 
-						authStore.accountSet(message.account);
-						authStore.previewSet('');
+							authStore.accountSet(message.account);
+							authStore.previewSet('');
 
-						Storage.set('popupNewBlock', true);
+							Storage.set('popupNewBlock', true);
 
-						renderer.send('keytarSet', accountId, authStore.phrase);
-						analytics.event('CreateAccount');
-						
-						if (match.params.id == 'register') {
-							Util.route('/auth/success');
-						};
+							Renderer.send('keytarSet', accountId, authStore.phrase);
+							analytics.event('CreateAccount');
 							
-						if (match.params.id == 'add') {
-							Util.route('/auth/pin-select/add');
+							if (match.params.id == 'register') {
+								Util.route('/auth/success');
+							};
+								
+							if (match.params.id == 'add') {
+								Util.route('/auth/pin-select/add');
+							};
 						};
-					};
+					});
 				});
 			};
 		});

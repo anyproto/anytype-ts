@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, DataUtil, Util, keyboard, Relation } from 'ts/lib';
-import { commonStore, menuStore, dbStore } from 'ts/store';
+import { I, C, analytics, DataUtil, Util, keyboard, Relation, Renderer } from 'Lib';
+import { commonStore, menuStore, dbStore } from 'Store';
 import { observable } from 'mobx';
 
 import CellText from './text';
@@ -154,7 +154,6 @@ class Cell extends React.Component<Props, {}> {
 		const record = getRecord(index);
 		const { config } = commonStore;
 		const cellId = Relation.cellId(idPrefix, relation.relationKey, index);
-		const renderer = Util.getRenderer();
 		const value = record[relation.relationKey] || '';
 
 		if (!this.canEdit()) {
@@ -165,7 +164,7 @@ class Cell extends React.Component<Props, {}> {
 				case I.RelationType.Phone:
 					if (value) {
 						const scheme = Relation.getUrlScheme(relation.format, value);
-						renderer.send('urlOpen', scheme + value);
+						Renderer.send('urlOpen', scheme + value);
 						break;
 					};
 			};
@@ -342,11 +341,10 @@ class Cell extends React.Component<Props, {}> {
 			case I.RelationType.Email:
 			case I.RelationType.Phone:
 				param = Object.assign(param, {
-					type: I.MenuType.Horizontal,
 					width: width,
 				});
 
-				let name = 'Go to';
+				let name = 'Open link';
 				if (relation.format == I.RelationType.Email) {
 					name = 'Mail to';
 				};
@@ -356,21 +354,25 @@ class Cell extends React.Component<Props, {}> {
 
 				if (e.shiftKey && value) {
 					const scheme = Relation.getUrlScheme(relation.format, value);
-					renderer.send('urlOpen', scheme + value);
+					Renderer.send('urlOpen', scheme + value);
 
 					ret = true;
 					break;
 				};
 
+				let options = [
+					{ id: 'go', icon: 'browse', name: name },
+					{ id: 'copy', icon: 'copy', name: 'Copy link' },
+				];
+				if (relation.relationKey == Constant.relationKey.source) {
+					options.push({ id: 'reload', icon: 'reload', name: 'Reload from source' });
+				};
+
 				param.data = Object.assign(param.data, {
 					disabled: !value, 
-					options: [
-						{ id: 'go', name: name },
-						{ id: 'copy', name: 'Copy' },
-					],
+					options,
 					onSelect: (event: any, item: any) => {
 						let value = '';
-
 						if (this.ref && this.ref.ref) {
 							value = this.ref.ref.getValue();
 						};
@@ -378,16 +380,25 @@ class Cell extends React.Component<Props, {}> {
 						const scheme = Relation.getUrlScheme(relation.format, value);
 						
 						if (item.id == 'go') {
-							renderer.send('urlOpen', scheme + value);
+							Renderer.send('urlOpen', scheme + value);
+							analytics.event('RelationUrlOpen');
 						};
 
 						if (item.id == 'copy') {
 							Util.clipboardCopy({ text: value, html: value });
+							analytics.event('RelationUrlCopy');
+						};
+
+						if (item.id == 'reload') {
+							Util.clipboardCopy({ text: value, html: value });
+							C.ObjectBookmarkFetch(rootId, value, () => {
+								analytics.event('ReloadSourceData');
+							});
 						};
 					},
 				});
 
-				menuId = 'button';
+				menuId = 'select';
 				closeIfOpen = false;
 				break;
 					
@@ -417,14 +428,14 @@ class Cell extends React.Component<Props, {}> {
 					setOn();
 				};
 
-				$(pageContainer).unbind('mousedown.cell').on('mousedown.cell', (e: any) => { 
+				$(pageContainer).off('mousedown.cell').on('mousedown.cell', (e: any) => { 
 					if (!$(e.target).parents(`#${cellId}`).length) {
 						menuStore.closeAll(Constant.menuIds.cell); 
 					};
 				});
 
 				if (!config.debug.ui) {
-					win.unbind('blur.cell').on('blur.cell', () => { menuStore.closeAll(Constant.menuIds.cell); });
+					win.off('blur.cell').on('blur.cell', () => { menuStore.closeAll(Constant.menuIds.cell); });
 				};
 			} else 
 			if (closeIfOpen) {

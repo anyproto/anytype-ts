@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, keyboard, Util, analytics } from 'ts/lib';
-import { Dimmer, Icon } from 'ts/component';
-import { menuStore, popupStore } from 'ts/store';
+import { I, keyboard, Util, analytics } from 'Lib';
+import { Dimmer, Icon } from 'Component';
+import { menuStore, popupStore } from 'Store';
 import { observer } from 'mobx-react';
 
 import MenuHelp from './help';
@@ -47,6 +47,7 @@ import MenuRelationSuggest from './relation/suggest';
 import MenuDataviewRelationList from './dataview/relation/list';
 import MenuDataviewRelationEdit from './dataview/relation/edit';
 import MenuDataviewGroupList from './dataview/group/list';
+import MenuDataviewGroupEdit from './dataview/group/edit';
 import MenuDataviewObjectList from './dataview/object/list';
 import MenuDataviewObjectValues from './dataview/object/values';
 import MenuDataviewFileList from './dataview/file/list';
@@ -124,6 +125,7 @@ const Components: any = {
 	dataviewRelationList:	 MenuDataviewRelationList,
 	dataviewRelationEdit:	 MenuDataviewRelationEdit,
 	dataviewGroupList:		 MenuDataviewGroupList,
+	dataviewGroupEdit:		 MenuDataviewGroupEdit,
 	dataviewObjectList:		 MenuDataviewObjectList,
 	dataviewObjectValues:	 MenuDataviewObjectValues,
 	dataviewFileList:		 MenuDataviewFileList,
@@ -364,7 +366,7 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 	};
 	
 	unbind () {
-		$(window).unbind('resize.' + this.getId());
+		$(window).off('resize.' + this.getId());
 	};
 	
 	animate () {

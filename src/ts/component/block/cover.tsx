@@ -1,11 +1,11 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Icon, Drag, Cover, Loader } from 'ts/component';
-import { I, C, Util, DataUtil, focus, translate } from 'ts/lib';
-import { commonStore, blockStore, detailStore, menuStore } from 'ts/store';
+import { Icon, Drag, Cover, Loader } from 'Component';
+import { I, C, Util, DataUtil, focus, translate } from 'Lib';
+import { commonStore, blockStore, detailStore, menuStore } from 'Store';
 import { observer } from 'mobx-react';
 
-import ControlButtons  from 'ts/component/page/head/controlButtons';
+import ControlButtons  from 'Component/page/head/controlButtons';
 
 interface Props extends I.BlockComponent {};
 
@@ -17,7 +17,6 @@ interface State {
 const $ = require('jquery');
 const Constant = require('json/constant.json');
 const Url = require('json/url.json');
-const { dialog } = window.require('@electron/remote');
 
 const BlockCover = observer(class BlockCover extends React.Component<Props, State> {
 	
@@ -170,19 +169,19 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 		this._isMounted = true;
 		this.resize();
 
-		Util.renderLink($(ReactDOM.findDOMNode(this)));
-		$(window).unbind('resize.cover').on('resize.cover', () => { this.resize(); });
+		Util.renderLinks($(ReactDOM.findDOMNode(this)));
+		$(window).off('resize.cover').on('resize.cover', () => { this.resize(); });
 	};
 	
 	componentDidUpdate () {
 		this.resize();
 
-		Util.renderLink($(ReactDOM.findDOMNode(this)));
+		Util.renderLinks($(ReactDOM.findDOMNode(this)));
 	};
 	
 	componentWillUnmount () {
 		this._isMounted = false;
-		$(window).unbind('resize.cover');
+		$(window).off('resize.cover');
 	};
 
 	onIcon (e: any) {
@@ -228,7 +227,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 			filters: [ { name: '', extensions: Constant.extension.cover } ]
 		};
 		
-		dialog.showOpenDialog(options).then((result: any) => {
+		window.Electron.showOpenDialog(options).then((result: any) => {
 			const files = result.filePaths;
 			if ((files == undefined) || !files.length) {
 				return;
@@ -475,7 +474,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 
 		node.addClass('isDragging');
 		
-		win.unbind('mousemove.cover mouseup.cover');
+		win.off('mousemove.cover mouseup.cover');
 		win.on('mousemove.cover', (e: any) => { this.onDragMove(e); });
 		win.on('mouseup.cover', (e: any) => { this.onDragEnd(e); });
 	};
@@ -504,7 +503,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 			selection.preventSelect(true);
 		};
 
-		win.unbind('mousemove.cover mouseup.cover');
+		win.off('mousemove.cover mouseup.cover');
 		node.removeClass('isDragging');
 		
 		this.x = e.pageX - this.rect.x - this.x;

@@ -1,45 +1,19 @@
 import * as React from 'react';
-import { RouteComponentProps } from 'react-router';
-import { Icon } from 'ts/component';
-import { I, sidebar } from 'ts/lib';
-import { menuStore } from 'ts/store';
+import { Icon } from 'Component';
+import { I } from 'Lib';
 
-interface Props extends RouteComponentProps<any>  {};
+interface Props extends I.FooterComponent  {};
 
 class FooterMainIndex extends React.Component<Props, {}> {
 	
-	constructor (props: any) {
-		super(props);
-		
-		this.onHelp = this.onHelp.bind(this);
-	};
-
 	render () {
+		const { onHelp } = this.props;
+
 		return (
-			<div id="footer" className="footer">
-				<Icon id="button-help" className="help" tooltip="Help" tooltipY={I.MenuDirection.Top} onClick={this.onHelp} />
-			</div>
+			<Icon id="button-help" className="help" tooltip="Help" tooltipY={I.MenuDirection.Top} onClick={onHelp} />
 		);
 	};
 
-	componentDidMount () {
-		sidebar.resizePage();
-	};
-
-	componentDidUpdate () {
-		sidebar.resizePage();	
-	};
-
-	onHelp () {
-		menuStore.open('help', {
-			type: I.MenuType.Vertical, 
-			element: '#button-help',
-			offsetY: -4,
-			vertical: I.MenuDirection.Top,
-			horizontal: I.MenuDirection.Right
-		});
-	};
-	
 };
 
 export default FooterMainIndex;

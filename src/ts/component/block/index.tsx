@@ -1,10 +1,10 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { I, C, DataUtil, keyboard, focus, Storage, Util } from 'ts/lib';
-import { DropTarget, ListChildren, Icon } from 'ts/component';
+import { I, C, DataUtil, keyboard, focus, Storage, Util } from 'Lib';
+import { DropTarget, ListChildren, Icon } from 'Component';
 import { observer } from 'mobx-react';
-import { menuStore, blockStore, detailStore } from 'ts/store';
+import { menuStore, blockStore, detailStore } from 'Store';
 
 import BlockDataview from './dataview';
 import BlockText from './text';
@@ -75,7 +75,6 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 		};
 
 		const { style, checked } = content;
-		const index = Number(this.props.index) || 0;
 		const root = blockStore.getLeaf(rootId, rootId);
 
 		let canSelect = !isInsideTable;
@@ -242,7 +241,7 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 			targetTop = null;
 		};
 
-		if (block.isLayoutColumn()) {
+		if (block.isLayoutColumn() && canDrop) {
 			const childrenIds = blockStore.getChildrenIds(rootId, block.id);
 			const lastId = childrenIds.length ? childrenIds[childrenIds.length - 1] : '';
 
@@ -592,7 +591,7 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 	};
 	
 	unbind () {
-		$(window).unbind('mousemove.block mouseup.block');
+		$(window).off('mousemove.block mouseup.block');
 	};
 	
 	onEmptyColumn () {

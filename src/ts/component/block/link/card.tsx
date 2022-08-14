@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { IconObject, Cover, ObjectName } from 'ts/component';
-import { detailStore } from 'ts/store';
-import { I, DataUtil, translate } from 'ts/lib';
+import { IconObject, Cover, ObjectName } from 'Component';
+import { I, DataUtil, translate } from 'Lib';
+import { detailStore } from 'Store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.BlockComponent, RouteComponentProps<any> {
@@ -25,7 +25,7 @@ const LinkCard = observer(class LinkCard extends React.Component<Props, {}> {
 
 	render () {
         const { rootId, block, description, cardStyle, object, className, canEdit, onClick, onSelect, onUpload, onCheckbox } = this.props;
-        const { id, layout, coverType, coverId, coverX, coverY, coverScale, snippet } = object;
+        const { id, layout, coverType, coverId, coverX, coverY, coverScale, snippet, isArchived, isDeleted } = object;
 		const { size, iconSize } = this.getIconSize();
 		const canDescription = ![ I.ObjectLayout.Note ].includes(object.layout);
 		const type = detailStore.get(Constant.subId.type, object.type, []);
@@ -49,6 +49,8 @@ const LinkCard = observer(class LinkCard extends React.Component<Props, {}> {
 		};
 
 		let descr = '';
+		let archive = null;
+
 		if (canDescription) {
 			if (description == I.LinkDescription.Added) {
 				descr = object.description;
@@ -56,6 +58,10 @@ const LinkCard = observer(class LinkCard extends React.Component<Props, {}> {
 			if (description == I.LinkDescription.Content) {
 				descr = object.snippet;
 			};
+		};
+
+		if (isArchived || isDeleted) {
+			archive = <div className="tagItem isTag tagColor-grey archive">{translate('blockLinkArchived')}</div>;
 		};
 
 		return (
@@ -77,6 +83,8 @@ const LinkCard = observer(class LinkCard extends React.Component<Props, {}> {
 									/>
 								) : ''}
 								<ObjectName object={object} />
+
+								{archive}
 							</div>
 							{descr ? <div className="cardDescription">{descr}</div> : ''}
 
@@ -84,8 +92,6 @@ const LinkCard = observer(class LinkCard extends React.Component<Props, {}> {
 								{withType && type ? <div className="item">{type.name}</div> : ''}
 								{/*withTags ? <div className="item"></div> : ''*/}
 							</div>
-
-							<div className="archive">{translate('blockLinkArchived')}</div>
 						</div>
 					</div>
 					{withCover ? (

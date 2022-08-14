@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { Icon } from 'ts/component';
-import { I, C, Mark, DataUtil, focus, keyboard, Storage } from 'ts/lib';
-import { blockStore, menuStore, commonStore } from 'ts/store';
+import { Icon } from 'Component';
+import { I, C, Mark, DataUtil, focus, keyboard, Storage } from 'Lib';
+import { blockStore, menuStore, commonStore } from 'Store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {};
@@ -48,7 +48,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 			{ type: I.MarkType.Bold, icon: 'bold', name: 'Bold' },
 			{ type: I.MarkType.Italic, icon: 'italic', name: 'Italic' },
 			{ type: I.MarkType.Strike, icon: 'strike', name: 'Strikethrough' },
-			{ type: I.MarkType.Under, icon: 'under', name: 'Underline' },
+			{ type: I.MarkType.Underline, icon: 'underline', name: 'Underline' },
 			{ type: I.MarkType.Link, icon: 'link', name: 'Link' },
 			{ type: I.MarkType.Code, icon: 'kbd', name: 'Code' },
 		];
@@ -118,7 +118,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 		
 		const { from, to } = range;
 
-		keyboard.disableContext(true);
+		keyboard.disableContextClose(true);
 		focus.set(blockId, range);
 
 		let marks = data.marks || [];
@@ -282,7 +282,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 		const { getId } = this.props;
 		const obj = $(`#${getId()}`);
 
-		obj.unbind('click mousedown').on('click mousedown', (e: any) => {
+		obj.off('click mousedown').on('click mousedown', (e: any) => {
 			const target = $(e.target);
 			if (!target.hasClass('icon') && !target.hasClass('inner')) {
 				e.preventDefault();

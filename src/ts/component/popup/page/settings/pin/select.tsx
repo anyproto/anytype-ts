@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Title, Label, Pin } from 'ts/component';
-import { I, Storage, translate } from 'ts/lib';
+import { Title, Label, Pin } from 'Component';
+import { I, Storage, translate } from 'Lib';
 import { observer } from 'mobx-react';
 
 import Head from '../head';
@@ -24,7 +24,7 @@ const PopupSettingsPagePinSelect = observer(class PopupSettingsPagePinSelect ext
 	render () {
 		return (
 			<div>
-				<Head {...this.props} id="pinIndex" name={translate('commonCancel')} />
+				<Head {...this.props} returnTo="pinIndex" name={translate('commonCancel')} />
 
 				<Title text={translate('popupSettingsPinTitle')} />
 				<Label text={translate('popupSettingsPinText')} />

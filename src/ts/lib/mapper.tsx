@@ -1,4 +1,4 @@
-import { I, M, Decode, Util, Encode } from 'ts/lib';
+import { I, M, Decode, Util, Encode } from 'Lib';
 
 const Commands = require('lib/pb/protos/commands_pb');
 const Model = require('lib/pkg/lib/pb/model/protos/models_pb.js');
@@ -66,6 +66,7 @@ const Mapper = {
 		AccountConfig: (obj: any): I.AccountConfig => {
 			return {
 				allowSpaces: obj.getEnablespaces(),
+				allowBeta: obj.getEnableprereleasechannel(),
 			};
 		},
 
@@ -327,10 +328,11 @@ const Mapper = {
 				type: obj.getType(),
 				name: obj.getName(),
 				coverRelationKey: obj.getCoverrelationkey(),
-				groupRelationKey: '', //obj.getGrouprelationkey(),
 				coverFit: obj.getCoverfit(),
 				cardSize: obj.getCardsize(),
 				hideIcon: obj.getHideicon(),
+				groupRelationKey: '', //obj.getGrouprelationkey(),
+				//groupBackgroundColors: obj.getGroupbackgroundcolors(),
 				sorts: obj.getSortsList().map(Mapper.From.Sort),
 				filters: obj.getFiltersList().map(Mapper.From.Filter),
 				relations: obj.getRelationsList().map(Mapper.From.ViewRelation),
@@ -415,6 +417,17 @@ const Mapper = {
             };
 		},
 
+		ObjectView: (obj: any) => {
+			return {
+				rootId: obj.getRootid(),
+				blocks: (obj.getBlocksList() || []).map(Mapper.From.Block),
+				details: (obj.getDetailsList() || []).map(Mapper.From.Details),
+				objectTypes: (obj.getObjecttypesList() || []).map(Mapper.From.ObjectType),
+				relationLinks: (obj.getRelationlinksList() || []).map(Mapper.From.RelationLink),
+				restrictions: Mapper.From.Restrictions(obj.getRestrictions()),
+			};
+		},
+
 		BoardGroup: (obj: any): I.BoardGroup => {
 			const type = Mapper.BoardGroupType(obj.getValueCase());
 			const field = obj['get' + Util.ucFirst(type)]();
@@ -448,6 +461,7 @@ const Mapper = {
 						groupId: it.getGroupid(),
 						index: it.getIndex(),
 						isHidden: it.getHidden(),
+						bgColor: '', //it.getBackgroundcolor(),
 					};
 				}),
 			};
@@ -727,6 +741,7 @@ const Mapper = {
 				el.setGroupid(it.groupId);
 				el.setIndex(it.index);
 				el.setHidden(it.isHidden);
+				//el.setBackgroundcolor(it.bgColor);
 
 				return el;
 			}));

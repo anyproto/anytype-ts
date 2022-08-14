@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Icon, Title, Label } from 'ts/component';
-import { I, Util, translate } from 'ts/lib';
+import { Icon, Title, Label } from 'Component';
+import { I, Util, translate } from 'Lib';
 import { observer } from 'mobx-react';
 
 import Head from '../head';
@@ -48,7 +48,7 @@ const PopupSettingsPageImportIndex = observer(class PopupSettingsPageImportIndex
 
 		return (
 			<div>
-				<Head {...this.props} id="index" name={translate('popupSettingsTitle')} />
+				<Head {...this.props} returnTo="index" name={translate('popupSettingsTitle')} />
 
 				<Title text={translate('popupSettingsImportTitle')} />
 				<Label text={translate('popupSettingsImportText')} />

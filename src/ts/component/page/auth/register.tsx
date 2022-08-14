@@ -1,16 +1,15 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Frame, Cover, Label, Error, Input, Button, Header, FooterAuth as Footer, Icon } from 'ts/component';
-import { commonStore, authStore, menuStore } from 'ts/store';
+import { Frame, Cover, Label, Error, Input, Button, Header, Footer, Icon } from 'Component';
+import { commonStore, authStore, menuStore } from 'Store';
 import { observer } from 'mobx-react';
-import { FileUtil, Util, translate, I } from 'ts/lib';
+import { FileUtil, Util, translate, I } from 'Lib';
 
 interface Props extends RouteComponentProps<any> {};
 interface State {
 	error: string;
 };
 
-const { dialog } = window.require('@electron/remote');
 const Constant = require('json/constant.json');
 
 const PageAuthRegister = observer(class PageAuthRegister extends React.Component<Props, State> {
@@ -40,7 +39,7 @@ const PageAuthRegister = observer(class PageAuthRegister extends React.Component
 			<div>
 				<Cover {...cover} className="main" />
 				<Header {...this.props} component="authIndex" />
-				<Footer />
+				<Footer {...this.props} component="authIndex" />
 				
 				<Frame>
 					<div className="authBackWrap" onClick={this.onCancel}>
@@ -84,7 +83,7 @@ const PageAuthRegister = observer(class PageAuthRegister extends React.Component
 			filters: [ { name: '', extensions: Constant.extension.image } ]
 		};
 		
-		dialog.showOpenDialog(options).then((result: any) => {
+		window.Electron.showOpenDialog(options).then((result: any) => {
 			const files = result.filePaths;
 			if ((files == undefined) || !files.length) {
 				return;
@@ -104,7 +103,7 @@ const PageAuthRegister = observer(class PageAuthRegister extends React.Component
 			properties: [ 'openDirectory' ],
 		};
 
-		dialog.showOpenDialog(options).then((result: any) => {
+		window.Electron.showOpenDialog(options).then((result: any) => {
 			const files = result.filePaths;
 			if ((files == undefined) || !files.length) {
 				return;

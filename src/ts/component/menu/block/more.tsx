@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { MenuItemVertical } from 'ts/component';
-import { I, C, keyboard, analytics, DataUtil, Util, focus } from 'ts/lib';
-import { blockStore, detailStore, commonStore, dbStore, menuStore, popupStore } from 'ts/store';
+import { MenuItemVertical } from 'Component';
+import { I, C, keyboard, analytics, DataUtil, Util, focus } from 'Lib';
+import { blockStore, detailStore, commonStore, dbStore, menuStore, popupStore } from 'Store';
 
 interface Props extends I.Menu {
 	history?: any;
@@ -97,7 +97,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 	};
 	
 	unbind () {
-		$(window).unbind('keydown.menu');
+		$(window).off('keydown.menu');
 	};
 	
 	getSections () {
@@ -453,7 +453,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 
 			case 'pageCreate':
 				DataUtil.pageCreate('', '', {}, I.BlockPosition.Bottom, rootId, {}, [], (message: any) => {
-					DataUtil.objectOpen({ id: message.targetId });
+					DataUtil.objectOpenRoute({ id: message.targetId });
 
 					analytics.event('CreateObject', {
 						route: 'MenuObject',

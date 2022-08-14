@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Util } from 'ts/lib';
-import { Icon } from 'ts/component';
+import { Util } from 'Lib';
+import { Icon } from 'Component';
 
 interface Props {
 	id?: string;
@@ -97,7 +97,7 @@ class Drag extends React.Component<Props, {}> {
 			onStart(e, this.value);
 		};
 
-		win.unbind('mousemove.drag touchmove.drag').on('mousemove.drag touchmove.drag', (e: any) => {
+		win.off('mousemove.drag touchmove.drag').on('mousemove.drag touchmove.drag', (e: any) => {
 			this.move(e.pageX - ox - iw / 2);
 
 			if (onMove) {
@@ -105,7 +105,7 @@ class Drag extends React.Component<Props, {}> {
 			};
 		});
 		
-		win.unbind('mouseup.drag touchend.drag').on('mouseup.drag touchend.drag', (e: any) => {
+		win.off('mouseup.drag touchend.drag').on('mouseup.drag touchend.drag', (e: any) => {
 			this.end(e);
 
 			if (onEnd) {
@@ -140,7 +140,7 @@ class Drag extends React.Component<Props, {}> {
 	end (e: any) {
 		const win = $(window);
 		
-		win.unbind('mousemove.drag touchmove.drag mouseup.drag touchend.drag');
+		win.off('mousemove.drag touchmove.drag mouseup.drag touchend.drag');
 
 		$('body').removeClass('grab');
 		this.node.removeClass('isDragging');

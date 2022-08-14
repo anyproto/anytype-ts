@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, C, DataUtil, Util, keyboard, Storage, Relation, analytics, sidebar } from 'ts/lib';
-import { Loader } from 'ts/component';
-import { blockStore, dbStore, detailStore, menuStore } from 'ts/store';
+import { I, C, DataUtil, Util, keyboard, Storage, Relation, analytics, sidebar } from 'Lib';
+import { Loader } from 'Component';
+import { blockStore, dbStore, detailStore, menuStore } from 'Store';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { observer } from 'mobx-react';
 
@@ -173,7 +173,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 	};
 
 	unbind () {
-		$(window).unbind('resize.sidebar');
+		$(window).off('resize.sidebar');
 	};
 
 	restore () {
@@ -308,7 +308,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 
 		for (let item of items) {
 			let links = this.checkLinks(Relation.getArrayValue(item.links)).filter(it => {
-				const branchId = [ branch, it ].join(':');
+				const branchId = [ branch, it ].join('-');
 				if (this.branches.includes(branchId)) {
 					return false;
 				} else {
@@ -520,7 +520,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 
 		keyboard.setResize(true);
 		body.addClass(dir == I.MenuType.Vertical ? 'rowResize' : 'colResize');
-		win.unbind('mousemove.sidebar mouseup.sidebar');
+		win.off('mousemove.sidebar mouseup.sidebar');
 		win.on('mousemove.sidebar', (e: any) => { this.onResizeMove(e, dir); });
 		win.on('mouseup.sidebar', (e: any) => { this.onResizeEnd(e, dir); });
 	};
@@ -550,7 +550,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 
 		keyboard.setResize(false);
 		$('body').removeClass('rowResize colResize');
-		$(window).unbind('mousemove.sidebar mouseup.sidebar');
+		$(window).off('mousemove.sidebar mouseup.sidebar');
 	};
 
 	onDragStart (e: any) {
@@ -575,7 +575,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 			selection.preventSelect(true);
 		};
 
-		win.unbind('mousemove.sidebar mouseup.sidebar');
+		win.off('mousemove.sidebar mouseup.sidebar');
 		win.on('mousemove.sidebar', (e: any) => { this.onDragMove(e); });
 		win.on('mouseup.sidebar', (e: any) => { this.onDragEnd(e); });
 	};
@@ -593,7 +593,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		const { dataset } = this.props;
 		const { selection } = dataset || {};
 		
-		$(window).unbind('mousemove.sidebar mouseup.sidebar');
+		$(window).off('mousemove.sidebar mouseup.sidebar');
 		keyboard.setDragging(false);
 
 		if (selection) {

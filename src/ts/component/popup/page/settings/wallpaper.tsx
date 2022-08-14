@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Cover, Title, Label } from 'ts/component';
-import { I, C, DataUtil, translate, analytics } from 'ts/lib';
-import { commonStore, blockStore } from 'ts/store';
+import { Cover, Title, Label } from 'Component';
+import { I, C, DataUtil, translate, analytics } from 'Lib';
+import { commonStore, blockStore } from 'Store';
 import { observer } from 'mobx-react';
 
 import Head from './head';
@@ -13,7 +13,6 @@ interface Props extends I.Popup, RouteComponentProps<any> {
 	setLoading: (v: boolean) => void;
 };
 
-const { dialog } = window.require('@electron/remote');
 const Constant = require('json/constant.json');
 
 const PopupSettingsPageWallpaper = observer(class PopupSettingsPageWallpaper extends React.Component<Props, {}> {
@@ -56,7 +55,7 @@ const PopupSettingsPageWallpaper = observer(class PopupSettingsPageWallpaper ext
 
 		return (
 			<div>
-				<Head {...this.props} id="appearance" name={translate('popupSettingsAppearanceTitle')} />
+				<Head {...this.props} returnTo="appearance" name={translate('popupSettingsAppearanceTitle')} />
 				<Title text={translate('popupSettingsWallpaperTitle')} />
 
 				<div className="row first">
@@ -88,7 +87,7 @@ const PopupSettingsPageWallpaper = observer(class PopupSettingsPageWallpaper ext
 			filters: [ { name: '', extensions: Constant.extension.cover } ]
 		};
 
-		dialog.showOpenDialog(options).then((result: any) => {
+		window.Electron.showOpenDialog(options).then((result: any) => {
 			const files = result.filePaths;
 			if ((files == undefined) || !files.length) {
 				return;

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { I } from 'ts/lib';
+import { I } from 'Lib';
 
 interface Props {
 	id: string;

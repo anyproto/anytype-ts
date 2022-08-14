@@ -1,8 +1,8 @@
 import { observable, action, computed, set, makeObservable } from 'mobx';
-import { I, M, Storage, analytics } from 'ts/lib';
-import { blockStore, detailStore, commonStore, dbStore } from 'ts/store';
+import { I, M, Storage, analytics, Renderer } from 'Lib';
+import { blockStore, detailStore, commonStore, dbStore } from 'Store';
 import * as Sentry from '@sentry/browser';
-import { keyboard } from 'ts/lib';
+import { keyboard } from 'Lib';
 
 class AuthStore {
 	
@@ -16,6 +16,7 @@ class AuthStore {
 	public name: string = '';
 	public phrase: string = '';
 	public code: string = '';
+	public token: string = '';
 	public threadMap: Map<string, any> = new Map();
 
 	constructor () {
@@ -100,6 +101,10 @@ class AuthStore {
 		this.name = v;
     };
 
+	tokenSet (v: string) {
+		this.token = v;
+    };
+
 	accountAdd (account: any) {
 		account.info = account.info || {};
 		account.status = account.status || {};
@@ -125,6 +130,8 @@ class AuthStore {
 
 		if (account.id) {
 			Storage.set('accountId', account.id);
+			Renderer.send('setAccount', this.accountItem);
+
 			Sentry.setUser({ id: account.id });
 		};
     };

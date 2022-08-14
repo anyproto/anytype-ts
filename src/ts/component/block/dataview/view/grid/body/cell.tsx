@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { I, DataUtil, Relation } from 'ts/lib';
-import { Cell } from 'ts/component';
-import { dbStore } from 'ts/store';
+import { I, DataUtil, Relation } from 'Lib';
+import { Cell } from 'Component';
+import { dbStore } from 'Store';
 import { observer } from 'mobx-react';
 
 interface Props {

@@ -1,4 +1,4 @@
-import { I, Util, analytics } from 'ts/lib';
+import { I, Util, analytics } from 'Lib';
 
 const $ = require('jquery');
 const Tags = [ 
@@ -35,7 +35,7 @@ Order[I.MarkType.Object]	 = 0;
 Order[I.MarkType.Emoji]		 = 1;
 Order[I.MarkType.Mention]	 = 2;
 Order[I.MarkType.Link]		 = 3;
-Order[I.MarkType.Under]		 = 4;
+Order[I.MarkType.Underline]	 = 4;
 Order[I.MarkType.Strike]	 = 5;
 Order[I.MarkType.Code]		 = 6;
 Order[I.MarkType.Italic]	 = 7;

@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Icon, Title, Label, Switch, Select } from 'ts/component';
-import { I, translate, DataUtil, analytics } from 'ts/lib';
-import { commonStore, menuStore } from 'ts/store';
+import { Icon, Title, Label, Switch, Select } from 'Component';
+import { I, translate, DataUtil, analytics, Renderer } from 'Lib';
+import { commonStore, menuStore } from 'Store';
 import { observer } from 'mobx-react';
 
 import Head from './head';
@@ -23,13 +23,18 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 	};
 
 	render () {
-		const { autoSidebar } = commonStore;
+		const { autoSidebar, config } = commonStore;
 		const types = DataUtil.getObjectTypesForNewObject(false);
 		const type = types.find(it => it.id == commonStore.type);
+		
+		let languages: any[] = [ { id: '', name: 'Disabled' } ];
+		languages = languages.concat((commonStore.languages || []).filter(it => ![ 'ru' ].includes(it)).map(it => { 
+			return { id: it, name: Constant.spellingLang[it] }; 
+		}));
 
 		return (
 			<div>
-				<Head {...this.props} id="index" name={translate('popupSettingsTitle')} />
+				<Head {...this.props} returnTo="index" name={translate('popupSettingsTitle')} />
 				<Title text={translate('popupSettingsPersonalTitle')} />
 
 				<div className="rows">
@@ -44,6 +49,21 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 								</div>
 								<Icon className="arrow light" />
 							</div>
+						</div>
+					</div>
+
+					<div className="row flex">
+						<div className="side left">
+							<Label text="Spellcheck language" />
+						</div>
+						<div className="side right">
+							<Select 
+								id="spellcheck" 
+								value={config.language} 
+								options={languages} 
+								onChange={(v: any) => { Renderer.send('setLanguage', v); }}
+								arrowClassName="light"
+							/>
 						</div>
 					</div>
 

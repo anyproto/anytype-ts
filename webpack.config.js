@@ -1,23 +1,14 @@
-const webpack = require('webpack');
-const fs = require('fs');
 const path = require('path');
 const process = require('process');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
-module.exports = (env) => {
-	const useGRPC = !process.env.ANYTYPE_USE_ADDON && (process.env.ANYTYPE_USE_GRPC || (process.platform == 'win32') || (env.NODE_ENV == 'development'));
+module.exports = (env, argv) => {
 	const port = process.env.SERVER_PORT;
 
 	return {
-		mode: env.NODE_ENV,
-	
-		//devtool: 'source-map',
-
-		target: 'electron-renderer',
-
 		optimization: {
 			minimize: false,
-			removeAvailableModules: false,
+			removeAvailableModules: true,
     		removeEmptyChunks: true,
     		splitChunks: false,
 		},
@@ -26,8 +17,17 @@ module.exports = (env) => {
 	
 		resolve: {
 			extensions: [ '.ts', '.tsx', '.js', '.jsx' ],
+			alias: {
+      			Lib: path.resolve(__dirname, 'src/ts/lib'),
+				Store: path.resolve(__dirname, 'src/ts/store'),
+				Component: path.resolve(__dirname, 'src/ts/component'),
+				Interface: path.resolve(__dirname, 'src/ts/interface'),
+				Model: path.resolve(__dirname, 'src/ts/model'),
+				Docs: path.resolve(__dirname, 'src/ts/docs'),
+    		},
 			modules: [
 				path.resolve('./src/'),
+				path.resolve('./electron/'),
 				path.resolve('./dist/'),
 				path.resolve('./node_modules')
 			]
@@ -35,17 +35,20 @@ module.exports = (env) => {
 		
 		devServer: {
 			hot: true,
-			inline: true,
-			contentBase: path.join(__dirname, 'dist'),
+			static: path.join(__dirname, 'dist'),
+			static: {
+				directory: path.join(__dirname, 'dist'),
+				watch: {
+					ignored: [
+						path.resolve(__dirname, 'dist'),
+						path.resolve(__dirname, 'node_modules')
+					],
+					usePolling: false,
+				},
+			},
 			historyApiFallback: true,
 			host: 'localhost',
 			port: port,
-			watchOptions: {
-				ignored: [
-					path.resolve(__dirname, 'dist'),
-					path.resolve(__dirname, 'node_modules')
-				],
-			},
 		},
 	
 		module: {
@@ -53,22 +56,8 @@ module.exports = (env) => {
 				{
 					test: /\.ts(x?)$/,
 					exclude: /node_modules/,
-					use: [
-						{
-							loader: 'ts-loader'
-						},
-						{ 
-							loader: 'ifdef-loader', 
-							options: {
-								USE_GRPC: useGRPC,
-								USE_ADDON: !useGRPC,
-								version: 3,
-								'ifdef-verbose': true,
-							},
-						},
-					]
+					loader: 'ts-loader'
 				},
-				{ test: /\.node$/, loader: 'node-loader' },
 				{
 					enforce: 'pre',
 					test: /\.js$/,
@@ -94,20 +83,6 @@ module.exports = (env) => {
 		},
 		plugins: [
 			//new BundleAnalyzerPlugin(),
-			new webpack.DefinePlugin({
-				'process.env.NODE_ENV': JSON.stringify(env.NODE_ENV),
-			}),
-
-			function () {
-				this.plugin('compilation', (stats) => {
-					const dst = path.join(__dirname, 'electron', 'env.json');
-					const content = {
-						USE_GRPC: useGRPC
-					};
-					
-					fs.writeFileSync(dst, JSON.stringify(content, null, 3));
-				});
-			},
 		],
 		externals: {
 			bindings: 'require("bindings")'

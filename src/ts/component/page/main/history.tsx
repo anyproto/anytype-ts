@@ -1,9 +1,9 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Header, FooterMainEdit as Footer, Block, Loader, Icon, Deleted } from 'ts/component';
-import { blockStore, detailStore } from 'ts/store';
-import { I, M, C, Util, DataUtil, dispatcher } from 'ts/lib';
+import { Header, Footer, Block, Loader, Icon, Deleted } from 'Component';
+import { blockStore, detailStore } from 'Store';
+import { I, M, C, Util, DataUtil, dispatcher } from 'Lib';
 import { observer } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any> {
@@ -149,7 +149,11 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<P
 					</div>
 				</div>
 
-				<Footer ref={(ref: any) => { this.refFooter = ref; }} {...this.props} rootId={rootId} isPopup={isPopup} />
+				<Footer 
+					component="mainEdit" 
+					ref={(ref: any) => { this.refFooter = ref; }} 
+					{...this.props} 
+				/>
 			</div>
 		);
 	};
@@ -174,8 +178,8 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<P
 		sideLeft.scrollTop(this.scrollLeft);
 		sideRight.scrollTop(this.scrollRight);
 
-		sideLeft.unbind('scroll').scroll(() => { this.onScrollLeft(); });
-		sideRight.unbind('scroll').scroll(() => { this.onScrollRight(); });
+		sideLeft.off('scroll').scroll(() => { this.onScrollLeft(); });
+		sideRight.off('scroll').scroll(() => { this.onScrollRight(); });
 
 		blockStore.updateNumbers(rootId);
 	};
@@ -298,7 +302,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<P
 			this.setState({ loading: false });
 
 			if (message.error.code) {
-				DataUtil.objectOpen({ id: rootId, layout: object.layout });
+				DataUtil.objectOpenRoute({ id: rootId, layout: object.layout });
 				return;
 			};
 
@@ -325,8 +329,6 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<P
 			};
 
 			this.version = message.version;
-
-			dispatcher.onObjectShow(rootId, message.objectShow);
 			this.forceUpdate();
 
 			if (this.refHeader) {

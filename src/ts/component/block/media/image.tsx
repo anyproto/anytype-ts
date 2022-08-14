@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { InputWithFile, Loader, Icon, Error } from 'ts/component';
-import { I, C, translate, focus, Action, keyboard } from 'ts/lib';
-import { commonStore, popupStore } from 'ts/store';
+import { InputWithFile, Loader, Icon, Error } from 'Component';
+import { I, C, translate, focus, Action, keyboard } from 'Lib';
+import { commonStore, popupStore } from 'Store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.BlockComponent {}
@@ -140,7 +140,7 @@ const BlockImage = observer(class BlockImage extends React.Component<Props, {}> 
 		const node = $(ReactDOM.findDOMNode(this));
 		
 		focus.set(block.id, { from: 0, to: 0 });
-		win.unbind('mousemove.media mouseup.media');
+		win.off('mousemove.media mouseup.media');
 		
 		if (selection) {
 			selection.hide();
@@ -192,7 +192,7 @@ const BlockImage = observer(class BlockImage extends React.Component<Props, {}> 
 		const ox = wrap.offset().left;
 		const w = this.getWidth(checkMax, e.pageX - ox + 20);
 		
-		win.unbind('mousemove.media mouseup.media');
+		win.off('mousemove.media mouseup.media');
 		node.removeClass('isResizing');
 		
 		if (selection) {

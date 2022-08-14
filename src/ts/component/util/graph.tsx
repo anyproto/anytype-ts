@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, Util, DataUtil, SmileUtil, FileUtil, translate } from 'ts/lib';
-import { commonStore, blockStore } from 'ts/store';
+import { I, Util, DataUtil, SmileUtil, FileUtil, translate } from 'Lib';
+import { commonStore, blockStore } from 'Store';
 import { observer } from 'mobx-react';
 import * as d3 from 'd3';
 
@@ -324,6 +324,10 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 
 			case I.ObjectLayout.Note:
 				src = 'img/icon/note.svg';
+				break;
+
+			case I.ObjectLayout.Bookmark:
+				src = commonStore.imageUrl(d.iconImage, 24);
 				break;
 				
 			default:

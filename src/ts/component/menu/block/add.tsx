@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { MenuItemVertical, Icon, Cell } from 'ts/component';
-import { I, M, Mark, keyboard, C, focus, Action, Util, DataUtil, Storage, translate, analytics, Relation } from 'ts/lib';
-import { blockStore, commonStore, dbStore, menuStore, detailStore, popupStore } from 'ts/store';
+import { MenuItemVertical, Icon, Cell } from 'Component';
+import { I, M, Mark, keyboard, C, focus, Action, Util, DataUtil, Storage, translate, analytics, Relation } from 'Lib';
+import { blockStore, commonStore, dbStore, menuStore, detailStore, popupStore } from 'Store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
@@ -214,7 +214,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 			keyMapper: (i: number) => { return (items[i] || {}).id; },
 		});
 		
-		$(`#${getId()}`).unbind('mouseleave').on('mouseleave', () => { window.clearTimeout(this.timeout); });
+		$(`#${getId()}`).off('mouseleave').on('mouseleave', () => { window.clearTimeout(this.timeout); });
 	};
 	
 	componentDidUpdate () {
@@ -268,7 +268,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 	};
 	
 	unbind () {
-		$(window).unbind('keydown.menu');
+		$(window).off('keydown.menu');
 	};
 
 	getRelations () {

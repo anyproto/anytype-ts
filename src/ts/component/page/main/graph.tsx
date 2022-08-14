@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { I, C, Util, analytics, sidebar } from 'ts/lib';
-import { Header, Graph, Icon, Loader } from 'ts/component';
-import { blockStore, detailStore } from 'ts/store';
+import { I, C, Util, analytics, sidebar } from 'Lib';
+import { Header, Graph, Icon, Loader } from 'Component';
+import { blockStore, detailStore } from 'Store';
 import { observer } from 'mobx-react';
 
 import Panel from './graph/panel';

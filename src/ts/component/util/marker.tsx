@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { I } from 'ts/lib';
-import { commonStore } from 'ts/store';
+import { I } from 'Lib';
+import { commonStore } from 'Store';
 import { observer } from 'mobx-react';
 
 interface Props {
@@ -15,17 +15,17 @@ interface Props {
 const Constant = require('json/constant.json');
 const Icons = {
 	bullets: {
-		default: require('img/icon/bullet/default.svg'),
+		default: require('img/icon/bullet/default.svg').default,
 	},
 	checkbox: {
-		0:		 require('img/icon/marker/checkbox0.svg'),
-		1:		 require('img/icon/marker/checkbox1.svg'),
+		0:		 require('img/icon/marker/checkbox0.svg').default,
+		1:		 require('img/icon/marker/checkbox1.svg').default,
 	},
 	task: {
-		0:		 require('img/icon/object/checkbox0.svg'),
-		1:		 require('img/icon/object/checkbox1.svg'),
+		0:		 require('img/icon/object/checkbox0.svg').default,
+		1:		 require('img/icon/object/checkbox1.svg').default,
 	},
-	toggle:		 require('img/icon/marker/toggle.svg'),
+	toggle:		 require('img/icon/marker/toggle.svg').default,
 };
 
 for (let c of Constant.textColor) {
@@ -35,9 +35,9 @@ for (let c of Constant.textColor) {
 const Theme = {
 	dark: {
 		bullets: {
-			default: require('img/theme/dark/icon/bullet/default.svg'),
+			default: require('img/theme/dark/icon/bullet/default.svg').default,
 		},
-		toggle:		 require('img/theme/dark/icon/marker/toggle.svg'),
+		toggle:		 require('img/theme/dark/icon/marker/toggle.svg').default,
 	},
 };
 

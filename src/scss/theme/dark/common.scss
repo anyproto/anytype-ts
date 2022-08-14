@@ -12,7 +12,7 @@ html.themeDark {
     a { color: $colorPrimary; }
     a:hover { color: $colorOrange; }
 
-    #root > #loader { background: $colorBlack; }
+    #root-loader { background: $colorBlack; }
 
     ::selection { color: $colorBlack; }
 	
@@ -81,6 +81,8 @@ html.themeDark {
 	}
 
     .frame { background: $colorBlack; }
+
+    .textarea { background: none; }
 
     .switch { background: $colorBgInactive; }
 

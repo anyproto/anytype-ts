@@ -1,9 +1,9 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Title, Label, Textarea, Button } from 'ts/component';
-import { I, C, translate, analytics, Util } from 'ts/lib';
-import { authStore } from 'ts/store';
+import { Title, Label, Textarea, Button } from 'Component';
+import { I, C, translate, analytics, Util } from 'Lib';
+import { authStore } from 'Store';
 import { observer } from 'mobx-react';
 
 import Head from './head';
@@ -42,7 +42,7 @@ const PopupSettingsPageLogout = observer(class PopupSettingsPageLogout extends R
 	render () {
 		return (
 			<div>
-				<Head {...this.props} id="account" name={translate('popupSettingsAccountTitle')} />
+				<Head {...this.props} returnTo="account" name={translate('popupSettingsAccountTitle')} />
 				
 				<Title text={translate('popupSettingsPhraseTitle')} />
 				<Label text={translate('popupSettingsPhraseText')} />

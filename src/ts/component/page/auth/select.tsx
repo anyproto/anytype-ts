@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Frame, Cover, Title, Label, Error, Button, Header, FooterAuth as Footer } from 'ts/component';
-import { Util, translate, C } from 'ts/lib';
-import { commonStore, authStore } from 'ts/store';
+import { Frame, Cover, Title, Label, Error, Button, Header, Footer } from 'Component';
+import { Util, translate, C } from 'Lib';
+import { commonStore, authStore } from 'Store';
 import { observer } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any> {}
@@ -31,7 +31,7 @@ const PageAuthSelect = observer(class PageAuthSelect extends React.Component<Pro
 			<div>
 				<Cover {...cover} className="main" />
 				<Header {...this.props} component="authIndex" />
-				<Footer />
+				<Footer {...this.props} component="authIndex" />
 				
 				<Frame>
 					<Title text={translate('authSelectTitle')} />

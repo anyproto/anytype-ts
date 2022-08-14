@@ -1,4 +1,4 @@
-import { I } from 'ts/lib';
+import { I } from 'Lib';
 
 export interface ContentLatex {
 	text: string;

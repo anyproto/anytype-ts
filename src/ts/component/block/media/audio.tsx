@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { InputWithFile, Icon, Loader, Error, Drag } from 'ts/component';
-import { I, translate, focus, Util, keyboard, Action } from 'ts/lib';
-import { commonStore } from 'ts/store';
+import { InputWithFile, Icon, Loader, Error, Drag } from 'Component';
+import { I, translate, focus, Util, keyboard, Action } from 'Lib';
+import { commonStore } from 'Store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.BlockComponent {}
@@ -156,7 +156,7 @@ const BlockAudio = observer(class BlockAudio extends React.Component<Props, {}> 
 		const el = node.find('#audio');
 
 		if (el.length) {
-			el.unbind('canplay timeupdate play ended pause');
+			el.off('canplay timeupdate play ended pause');
 		};
 	};
 

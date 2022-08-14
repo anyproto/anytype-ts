@@ -1,14 +1,10 @@
-import { I, keyboard, sidebar } from 'ts/lib';
-import { commonStore, popupStore, menuStore } from 'ts/store';
+import { I, keyboard, Renderer } from 'Lib';
+import { commonStore, popupStore, menuStore } from 'Store';
 import { translate } from '.';
 
-const raf = require('raf');
 const $ = require('jquery');
-const fs = window.require('fs');
 const Constant = require('json/constant.json');
 const Errors = require('json/error.json');
-const os = window.require('os');
-const path = window.require('path');
 const Cover = require('json/cover.json');
 
 class Util {
@@ -626,8 +622,6 @@ class Util {
 			x = Math.max(12, x);
 			x = Math.min(win.width() - obj.outerWidth() - 12, x);
 
-			console.log(obj, x, y);
-
 			obj.css({ left: x, top: y, opacity: 1 });
 		}, 250);
 	};
@@ -647,11 +641,11 @@ class Util {
 		
 		const obj = $('#preview');
 		
-		node.unbind('mouseleave.link').on('mouseleave.link', (e: any) => {
+		node.off('mouseleave.link').on('mouseleave.link', (e: any) => {
 			window.clearTimeout(this.timeoutPreviewShow);
 		});
 		
-		obj.unbind('mouseleave.link').on('mouseleave.link', (e: any) => {
+		obj.off('mouseleave.link').on('mouseleave.link', (e: any) => {
 			this.previewHide(false);
 		});
 		
@@ -740,35 +734,16 @@ class Util {
 		return url;
 	};
 	
-	lengthFixOut (text: string, len: number): number {
-		const s = String(text || '').substring(0, len);
-		return [...s].length;
-	};
-	
-	// Fix emoji lengths for GO
-	rangeFixOut (text: string, range: I.TextRange): I.TextRange {
-		range = this.objectCopy(range);
-		range.from = this.lengthFixOut(text, range.from);
-		range.to = this.lengthFixOut(text, range.to);
-		return range;
-	};
-	
-	renderLink (obj: any) {
-		const renderer = this.getRenderer();
-
-		obj.find('a').unbind('click').on('click', function (e: any) {
-			e.preventDefault();
-			renderer.send('urlOpen', $(this).attr('href'));
-		});
-	};
-
 	renderLinks (obj: any) {
 		const self = this;
+		const links = obj.find('a');
 
-		obj.find('a').unbind('click').click(function (e: any) {
+		links.off('click auxclick');
+		links.on('auxclick', (e: any) => { e.preventDefault(); });
+		links.click(function (e: any) {
 			e.preventDefault();
-			const el = $(this);
 
+			const el = $(this);
 			if (el.hasClass('path')) {
 				self.onPath(el.attr('href'));
 			} else {
@@ -778,23 +753,15 @@ class Util {
 	};
 	
 	onUrl (url: string) {
-		const renderer = this.getRenderer();
-
-		renderer.send('urlOpen', url);
+		Renderer.send('urlOpen', url);
 	};
 
 	onPath (path: string) {
-		const renderer = this.getRenderer();
-
-		renderer.send('pathOpen', path);
+		Renderer.send('pathOpen', path);
 	};
 	
 	emailCheck (v: string) {
 		return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,5})+$/.test(String(v || ''));
-	};
-
-	isNumber (s: string) {
-		return String((Number(s) || 0) || '') === String(s || '');
 	};
 
 	coverSrc (id: string, preview?: boolean): string {
@@ -841,7 +808,7 @@ class Util {
 	};
 
 	getPlatform () {
-		return Constant.platforms[os.platform()];
+		return Constant.platforms[window.Electron.platform];
 	};
 
 	checkError (code: number) {
@@ -849,12 +816,10 @@ class Util {
 			return;
 		};
 
-		const renderer = this.getRenderer();
-
 		// App is already working
 		if (code == Errors.Code.ANOTHER_ANYTYPE_PROCESS_IS_RUNNING) {
 			alert('You have another instance of anytype running on this machine. Closing...');
-			renderer.send('exit', false);
+			Renderer.send('exit', false);
 		};
 
 		// App needs update
@@ -864,8 +829,6 @@ class Util {
 	};
 
 	onErrorUpdate (onConfirm?: () => void) {
-		const renderer = this.getRenderer();
-
 		popupStore.open('confirm', {
 			data: {
 				icon: 'update',
@@ -874,7 +837,7 @@ class Util {
 				textConfirm: translate('confirmUpdateConfirm'),
 				canCancel: false,
 				onConfirm: () => {
-					renderer.send('update');
+					Renderer.send('update');
 					if (onConfirm) {
 						onConfirm();
 					};
@@ -959,22 +922,6 @@ class Util {
 		return this.getPlatform() == I.Platform.Windows ? 68 : 52;
 	};
 
-	deleteFolderRecursive (p: string) {
-		if (!fs.existsSync(p) ) {
-			return;
-		};
-
-		fs.readdirSync(p).forEach((file: any) => {
-			const cp = path.join(p, file);
-			if (fs.lstatSync(cp).isDirectory()) {
-				this.deleteFolderRecursive(cp);
-			} else {
-				fs.unlinkSync(cp);
-			};
-		});
-		fs.rmdirSync(p);
-	};
-
 	searchParam (url: string): any {
 		var a = url.replace(/^\?/, '').split('&');
 		var param: any = {};
@@ -1005,10 +952,6 @@ class Util {
 		});
 	};
 
-	getRenderer () {
-		const electron: any = window.require('electron') || {};
-		return electron.ipcRenderer || window.Renderer;
-	};
 	
 	rectsCollide (rect1: any, rect2: any) {
 		return this.coordsCollide(rect1.x, rect1.y, rect1.width, rect1.height, rect2.x, rect2.y, rect2.width, rect2.height);

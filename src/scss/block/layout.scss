@@ -18,7 +18,7 @@
 	/* Column */
 	.block.blockLayout.layoutColumn { padding: 0px; margin: 0px; }
 	.block.blockLayout.layoutColumn {
-		.targetCol { flex-grow: 1; position: relative; }
+		.targetCol { flex-grow: 1; position: relative; display: block; }
 		.targetCol.isOver.bottom { box-shadow: 0px 0px; }
 		.targetCol.isOver.bottom::after { 
 			content: ""; width: calc(100% - 48px); height: 2px; background: $colorOrange; position: absolute; left: 48px; top: 0px; 

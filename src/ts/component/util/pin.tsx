@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { Input } from  'ts/component';
-import { keyboard } from 'ts/lib';
+import { Input } from  'Component';
+import { keyboard } from 'Lib';
 
 interface Props {
 	size?: number;
@@ -21,6 +21,7 @@ class Pin extends React.Component<Props, {}> {
 		value: '',
 	};
 
+	n: number = 0;
 	refObj: any = {};
 	timeout: number = 0;
 
@@ -59,13 +60,17 @@ class Pin extends React.Component<Props, {}> {
 	};
 
 	init () {
-		const { focus } = this.props;
-		if (focus) {
-			this.refObj[1].focus();
+		if (this.props.focus) {
+			this.focus();
 		};
 	};
 
+	focus () {
+		this.refObj[(this.n || 1)].focus();
+	};
+
 	onFocus (e: any, id: number) {
+		this.n = id;
 		this.refObj[id].addClass('active');
 	};
 
@@ -76,15 +81,13 @@ class Pin extends React.Component<Props, {}> {
 	onKeyDown (e: any, id: number, value: string) {
 		const prev = this.refObj[id - 1];
 
-		if (!prev) {
-			return;
+		if (prev) {
+			keyboard.shortcut('backspace', e, (pressed: string) => {
+				prev.setValue('');
+				prev.setType('text');
+				prev.focus();
+			});
 		};
-
-		keyboard.shortcut('backspace', e, (pressed: string) => {
-			prev.setValue('');
-			prev.setType('text');
-			prev.focus();
-		});
 	};
 
 	onKeyUp (e: any, id: number, value: string) {

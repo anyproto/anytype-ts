@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Frame, Cover, Title, Error, Pin, Header, FooterAuth as Footer } from 'ts/component';
-import { Util, Storage, translate, keyboard } from 'ts/lib';
-import { authStore, commonStore } from 'ts/store';
+import { Frame, Cover, Title, Error, Pin, Header, Footer } from 'Component';
+import { Util, Storage, translate, keyboard } from 'Lib';
+import { authStore, commonStore } from 'Store';
 import { observer } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any> {};
@@ -13,6 +13,7 @@ interface State {
 
 const PageAuthPinCheck = observer(class PageAuthPinCheck extends React.Component<Props, State> {
 	
+	ref: any = null;
 	state = {
 		error: ''
 	};
@@ -31,13 +32,14 @@ const PageAuthPinCheck = observer(class PageAuthPinCheck extends React.Component
 			<div>
 				<Cover {...cover} className="main" />
 				<Header {...this.props} component="authIndex" />
-				<Footer />
+				<Footer {...this.props} component="authIndex" />
 				
 				<Frame>
 					<Title text={translate('authPinCheckTitle')} />
 					<Error text={error} />
 
 					<Pin 
+						ref={(ref: any) => { this.ref = ref; }}
 						value={Storage.get('pin')} 
 						onSuccess={this.onSuccess} 
 						onError={() => { this.setState({ error: translate('authPinCheckError') }) }} 
@@ -47,9 +49,26 @@ const PageAuthPinCheck = observer(class PageAuthPinCheck extends React.Component
 		);
 	};
 
+	componentDidMount () {
+		this.rebind();
+	};
+
+	componentWillUnmount () {
+		this.unbind();
+	};
+
+	unbind () {
+		$(window).off('focus.pin');
+	};
+
+	rebind () {
+		this.unbind();
+		$(window).on('focus.pin', () => { this.ref.focus(); });
+	};
+
 	onSuccess (pin: string) {
 		const { account } = authStore;
-		const redirect = Storage.get('redirect');
+		const { redirect } = commonStore;
 
 		keyboard.setPinChecked(true);
 

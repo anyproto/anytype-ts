@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Frame, Icon, Cover, Error, Title, IconObject, Header, FooterAuth as Footer, Loader, Button } from 'ts/component';
-import { commonStore, authStore } from 'ts/store';
+import { Frame, Icon, Cover, Error, Title, IconObject, Header, Footer, Loader, Button } from 'Component';
+import { commonStore, authStore } from 'Store';
 import { observer } from 'mobx-react';
-import { I, C, Util, translate } from 'ts/lib';
+import { I, C, Util, translate, DataUtil, Renderer } from 'Lib';
 
 interface Props extends RouteComponentProps<any> {};
 
@@ -44,7 +44,7 @@ const PageAccountSelect = observer(class PageAccountSelect extends React.Compone
 			<div>
 				<Cover {...cover} className="main" />
 				<Header {...this.props} component="authIndex" />
-				<Footer />
+				<Footer {...this.props} component="authIndex" />
 				
 				<Frame>
 					{loading ? <Loader /> : (
@@ -79,15 +79,17 @@ const PageAccountSelect = observer(class PageAccountSelect extends React.Compone
 		this.setState({ loading: true });
 		
 		C.WalletRecover(walletPath, phrase, (message: any) => {
-			C.AccountRecover((message: any) => {
-				const state: any = { loading: false };
+			DataUtil.createSession(() => {
+				C.AccountRecover((message: any) => {
+					const state: any = { loading: false };
 
-				if (message.error.code) {
-					Util.checkError(message.error.code);
-					state.error = Errors.AccountRecover[message.error.code] || message.error.description;
-				};
+					if (message.error.code) {
+						Util.checkError(message.error.code);
+						state.error = Errors.AccountRecover[message.error.code] || message.error.description;
+					};
 
-				this.setState(state);
+					this.setState(state);
+				});
 			});
 		});
 	};
@@ -102,10 +104,9 @@ const PageAccountSelect = observer(class PageAccountSelect extends React.Compone
 
 	onSelect (account: I.Account) {
 		const { phrase } = authStore;
-		const renderer = Util.getRenderer();
 		
 		authStore.accountSet(account);
-		renderer.send('keytarSet', account.id, phrase);
+		Renderer.send('keytarSet', account.id, phrase);
 		Util.route('/auth/setup/select');
 	};
 	
