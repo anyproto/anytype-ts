@@ -32,8 +32,6 @@ class Footer extends React.Component<Props, {}> {
 		const Component = Components[component] || null;
 		const cn = [ 'footer', component ];
 
-		console.log('Footer', component);
-
 		return (
 			<div id="footer" className={cn.join(' ')}>
 				<Component 
