@@ -47,7 +47,6 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 	};
 
 	render () {
-		const { rootId, block, getView } = this.props;
 		const { loading } = this.state;
 		const groups = this.getGroups(false);
 
@@ -105,16 +104,22 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 	};
 
 	rebind () {
+		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
 		const scroll = node.find('.scroll');
 
-		scroll.off('scroll').on('scroll', throttle((e: any) => { this.onScroll(); }, 20));
+		this.unbind();
+
+		win.on('scroll.board', (e: any) => { this.onScrollWindow(); });
+		scroll.on('scroll', (e: any) => { this.onScrollView(); });
 	};
 
 	unbind () {
+		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
 		const scroll = node.find('.scroll');
 
+		win.off('scroll.board');
 		scroll.off('scroll');
 	};
 
@@ -580,7 +585,18 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 		dbStore.recordsSet(subId, '', records);
 	};
 
-	onScroll () {
+	onScrollWindow () {
+		const win = $(window);
+		const node = $(ReactDOM.findDOMNode(this));
+		const scroll = node.find('.scroll');
+		const columns = node.find('.column .body');
+		const wh = win.height();
+		const rect = scroll.get(0).getBoundingClientRect();
+
+		columns.css({ height: Math.min(wh, wh - rect.y - 56) });
+	};
+
+	onScrollView () {
 		const groups = this.getGroups(false);
 		const node = $(ReactDOM.findDOMNode(this));
 
@@ -657,19 +673,12 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 		const size = Constant.size.dataview.board;
 		const groups = this.getGroups(false);
 		const width = 30 + groups.length * (size.card + size.margin);
-		
-		let vw = 0;
-		let margin = 0;
-
-		if (width < mw) {
-			vw = mw;
-		} else {
-			vw = width;
-			margin = (ww - mw) / 2; 
-		};
+		const margin = width >= mw ? (ww - mw) / 2 : 0;
 
 		scroll.css({ width: ww, marginLeft: -margin / 2 , paddingLeft: margin / 2 });
-		viewItem.css({ width: vw });
+		viewItem.css({ width: width < mw ? mw : width });
+
+		this.onScrollWindow();
 	};
 	
 });
