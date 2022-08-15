@@ -593,7 +593,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 		const wh = win.height();
 		const rect = scroll.get(0).getBoundingClientRect();
 
-		columns.css({ height: Math.min(wh, wh - rect.y - 56) });
+		columns.css({ maxHeight: Math.min(wh, wh - rect.y - 56) });
 	};
 
 	onScrollView () {
