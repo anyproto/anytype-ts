@@ -823,24 +823,15 @@ class DataUtil {
 	};
 
 	menuGetViews () {
-		const { config } = commonStore;
-		
-		let ret = [
+		return [
 			{ id: I.ViewType.Grid },
 			{ id: I.ViewType.Gallery },
 			{ id: I.ViewType.List },
-		];
-		if (config.experimental) {
-			ret = ret.concat([
-				{ id: I.ViewType.Board },
-			]);
-		};
-
-		ret = ret.map((it: any) => {
+			{ id: I.ViewType.Board },
+		].map((it: any) => {
 			it.name = translate('viewName' + it.id);
 			return it;
 		});
-		return ret;
 	};
 
 	menuGetRelationTypes () {
