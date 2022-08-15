@@ -140,10 +140,15 @@
 
         .viewItem.viewBoard {
 			.ghost { border-color: $colorOrange; }
-            .cardContent { background: $colorBgLight; border-color: $colorLinePrimary; }
-			.card.add { background: $colorBgLight; border-color: $colorLinePrimary; }
+            .cardContent { background: $colorBgLight; border-color: $colorLineSecondary; }
+			.card.add { background: $colorBgLight; border-color: $colorLineSecondary; }
             .cellContent.isName { color: $colorPrimary; }
 			.column .head { background: $colorBlack; }
+
+			.card.add:hover, .card:hover .cardContent { border-color: $colorLinePrimary; }
+			.card.add:hover {
+                .icon { background-image: url('#{$themePath}/icon/plus/column1.svg'); }
+            }
         }
     }
 

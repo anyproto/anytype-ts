@@ -90,9 +90,24 @@
 			
             .card { width: 240px; display: flex; flex-direction: column; margin: 0px auto 8px auto; position: relative; z-index: 1; }
 			.card {
-				.cardContent { border: 1px solid $colorBorderDark; border-radius: 12px; padding: 16px; background: $colorWhite; }
+				.cardContent { 
+					border: 1px solid $colorBorderDark; border-radius: 12px; padding: 16px; background: $colorWhite; transition: border-color 0.2s ease-in-out;
+				}
+
+				.cellContent {
+					.name:empty { display: none; }
+				}
+
+				.cellContent.c-shortText {
+					.name { height: 24px; }
+				}
+
+				.cellContent.c-select {
+					.tagItem { margin: 0px 8px 0px 0px; }
+				}
 			}
 			.card:last-child { margin: 0px; }
+			.card.add:hover, .card:hover .cardContent { border-color: $colorBlack; }
 
 			.card.isDragging {
 				.cardContent { opacity: 0.3; }
@@ -106,24 +121,9 @@
             .card.add {
                 .icon { background-image: url('~img/icon/plus/column0.svg'); vertical-align: top; }
             }
-            .card.add:hover { border-color: $colorBlack; }
             .card.add:hover {
                 .icon { background-image: url('~img/icon/plus/column1.svg'); }
             }
-
-			.card {
-				.cellContent {
-					.name:empty { display: none; }
-				}
-
-				.cellContent.c-shortText {
-					.name { height: 24px; }
-				}
-
-				.cellContent.c-select {
-					.tagItem { margin: 0px 8px 0px 0px; }
-				}
-			}
         }
     }
 }
