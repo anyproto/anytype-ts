@@ -79,6 +79,7 @@ const MenuGroupList = observer(class MenuGroupList extends React.Component<Props
 							getRecord={() => { return head; }}
 							readonly={true} 
 							arrayLimit={2}
+							withLabel={true}
 							placeholder={translate('placeholderCellCommon')}
 						/>
 					</span>
@@ -289,8 +290,6 @@ const MenuGroupList = observer(class MenuGroupList extends React.Component<Props
 		const items = this.getItems();
 		const obj = $(`#${getId()} .content`);
 		const height = Math.max(HEIGHT * 2, Math.min(360, items.length * HEIGHT + 16));
-
-		console.log(items.length, height);
 
 		obj.css({ height: height });
 		position();

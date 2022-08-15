@@ -146,6 +146,7 @@ export interface Cell {
 	isInline?: boolean;
 	iconSize?: number;
 	placeholder?: string;
+	withLabel?: boolean;
 	getView?(): View;
 	getRecord(index: number): any;
 	onChange?(value: any, callBack?: (message: any) => void): void;

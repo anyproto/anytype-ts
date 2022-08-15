@@ -48,7 +48,7 @@
 						.more { vertical-align: top; margin: 3px 0px 0px 0px; }
 					}
 
-					.cellContent.c-checkbox { width: auto; }
+					.cellContent.c-checkbox { width: auto; display: flex; gap: 0px 6px; }
 					.cellContent.c-checkbox {
 						.icon { width: 24px; height: 24px; vertical-align: top; }
 					}
