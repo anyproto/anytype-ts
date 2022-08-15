@@ -186,7 +186,7 @@ class Relation {
 			case I.RelationType.Object:
 			case I.RelationType.Relations:
 				if ('object' !== typeof(value)) {
-					value = [];
+					value = value ? [ value ] : [];
 				};
 
 				value = Util.objectCopy(value || []);

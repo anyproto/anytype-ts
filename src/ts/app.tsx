@@ -218,6 +218,7 @@ enableLogging({
 	transaction: true,
 	compute: true,
 });
+*/
 
 Sentry.init({
 	release: window.Electron.version.app,
@@ -235,7 +236,6 @@ Sentry.init({
 		})
 	]
 });
-*/
 
 class RoutePage extends React.Component<RouteComponentProps, {}> { 
 
