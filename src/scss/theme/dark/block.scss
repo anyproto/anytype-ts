@@ -139,6 +139,7 @@
         }
 
         .viewItem.viewBoard {
+			.ghost { border-color: $colorOrange; }
             .cardContent { background: $colorBgLight; border-color: $colorLinePrimary; }
 			.card.add { background: $colorBgLight; border-color: $colorLinePrimary; }
             .cellContent.isName { color: $colorPrimary; }
