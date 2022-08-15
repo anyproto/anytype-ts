@@ -7,7 +7,7 @@
 
 			.ghost { border: 0.05em dashed $colorOrange; border-radius: 12px; flex-shrink: 0; }
 			.ghost.isColumn { width: 240px; height: 100%; margin: 0px 14px 0px 0px; }
-			.ghost.isCard { margin-bottom: 8px; }
+			.ghost.isCard { margin-bottom: 8px; background-color: rgba(0,0,0,0.02); }
 			
 			.isOver.left {
 				.ghost.left { display: block; }

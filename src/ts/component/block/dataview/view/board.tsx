@@ -279,15 +279,18 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 	};
 
 	initCacheCard () {
-		const { rootId, block } = this.props;
-		const groups = dbStore.getGroups(rootId, block.id);
+		const groups = this.getGroups(false);
 		const node = $(ReactDOM.findDOMNode(this));
 
 		this.cache = {};
 
 		groups.forEach((group: any, i: number) => {
-			const items = this.columnRefs[group.id].getItems() || [];
+			const column = this.columnRefs[group.id];
+			if (!column) {
+				return;
+			};
 
+			const items = column.getItems() || [];
 			items.forEach((item: any, i: number) => {
 				const el = node.find(`#card-${item.id}`);
 				if (!el.length) {
@@ -345,6 +348,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 
 		node.find('.isClone').remove();
 		node.find('.isDragging').removeClass('isDragging');
+		node.find('.isOver').removeClass('isOver top bottom left right');
 		node.find(`.ghost`).remove();
 
 		selection.preventSelect(false);
@@ -354,9 +358,6 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 		if (this.frame) {
 			raf.cancel(this.frame);
 		};
-
-		this.cache = {};
-		this.clear();
 	};
 
 	onDragStartColumn (e: any, groupId: string) {
@@ -430,6 +431,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 
 		C.BlockDataviewGroupOrderUpdate(rootId, block.id, { viewId: view.id, groups: update });
 
+		this.cache = {};
 		this.isDraggingColumn = false;
 		this.onDragEndCommon(e);
 		this.resize();
@@ -494,9 +496,10 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 	};
 
 	onDragEndCard (e: any, record: any) {
-		this.onDragEndCommon(e);
-
 		const current = this.cache[record.id];
+
+		this.onDragEndCommon(e);
+		this.cache = {};
 
 		if (!current.groupId || !this.newGroupId || ((current.index == this.newIndex) && (current.groupId == this.newGroupId))) {
 			return;
