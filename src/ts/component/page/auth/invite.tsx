@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import {Frame, Cover, Title, Label, Error, Input, Button, Header, FooterAuth as Footer, Icon} from 'Component';
+import {Frame, Cover, Title, Label, Error, Input, Button, Header, Footer, Icon} from 'Component';
 import { Util, translate } from 'Lib';
 import { commonStore, authStore } from 'Store';
 import { observer } from 'mobx-react';
@@ -32,7 +32,7 @@ const PageAuthInvite = observer(class PageAuthInvite extends React.Component<Pro
 			<div>
 				<Cover {...cover} className="main" />
 				<Header {...this.props} component="authIndex" />
-				<Footer />
+				<Footer {...this.props} component="authIndex" />
 				
 				<Frame>
 					<div className="authBackWrap" onClick={this.onCancel}>

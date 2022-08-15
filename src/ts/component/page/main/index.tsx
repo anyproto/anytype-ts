@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Icon, IconObject, ListIndex, Cover, Header, FooterMainIndex as Footer, Filter, EmptySearch } from 'Component';
+import { Icon, IconObject, ListIndex, Cover, Header, Footer, Filter, EmptySearch } from 'Component';
 import { commonStore, blockStore, detailStore, menuStore, dbStore, popupStore, authStore } from 'Store';
 import { observer } from 'mobx-react';
 import { I, C, Util, DataUtil, translate, crumbs, Storage, analytics, keyboard, Action } from 'Lib';
@@ -146,7 +146,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 			<div>
 				<Cover {...cover} className="main" />
 				<Header {...this.props} component="mainIndex" />
-				<Footer {...this.props} />
+				<Footer {...this.props} component="mainIndex" />
 				
 				<div id="body" className="wrapper">
 					<div id="title" className="title">

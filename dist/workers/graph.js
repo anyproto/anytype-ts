@@ -16,6 +16,7 @@ const fontItalic = `italic ${font}`;
 const ObjectLayout = {
 	Human:	 1,
 	Task:	 2,
+	Bookmark: 11,
 };
 
 const EdgeType = {
@@ -514,8 +515,12 @@ const isLayoutTask = (d) => {
 	return d.layout === ObjectLayout.Task;
 };
 
+const isLayoutBookmark = (d) => {
+	return d.layout === ObjectLayout.Bookmark;
+};
+
 const isIconCircle = (d) => {
-	return isLayoutHuman(d) || isLayoutTask(d);
+	return isLayoutHuman(d) || isLayoutTask(d) || isLayoutBookmark(d);
 };
 
 const nameCircleIcon = (d) => {

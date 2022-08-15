@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
-import { IconObject, Header, FooterMainEdit as Footer, Loader, Block, ListObject, Button, Deleted } from 'Component';
-import { I, M, C, crumbs, Action, Util, DataUtil } from 'Lib';
-import { detailStore, dbStore, commonStore } from 'Store';
+import { Header, Footer, Loader, ListObject, Deleted } from 'Component';
+import { I, C, crumbs, Action, Util, DataUtil } from 'Lib';
+import { detailStore, dbStore } from 'Store';
 
 import HeadSimple from 'Component/page/head/simple';
 
@@ -63,7 +63,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 					</div>
 				</div>
 
-				<Footer {...this.props} rootId={rootId} />
+				<Footer component="mainEdit" {...this.props} />
 			</div>
 		);
 	};

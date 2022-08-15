@@ -40,6 +40,7 @@ const GraphPreview = observer(class PreviewObject extends React.Component<Props,
 		const { layout, fileExt, description, snippet, coverType, coverId, coverX, coverY, coverScale } = object;
 		const author = detailStore.get(contextId, object.creator, []);
 		const isTask = object.layout == I.ObjectLayout.Task;
+		const isBookmark = object.layout == I.ObjectLayout.Bookmark;
 		const cn = [ 'panelPreview', 'blocks', check.className, ];
 		const featured: any = new M.Block({ id: rootId + '-featured', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
 
@@ -48,23 +49,27 @@ const GraphPreview = observer(class PreviewObject extends React.Component<Props,
 			name += '.' + fileExt;
 		};
 
+		let icon = null;
+		if (isTask || isBookmark) {
+			icon = <IconObject size={24} object={object} />;
+		} else {
+			icon = <IconObject size={48} iconSize={32} object={object} />;
+		};
+
 		return (
 			<div className={cn.join(' ')}>
 				{loading ? <Loader /> : (
 					<React.Fragment>
 						{coverType && coverId ? <Cover type={coverType} id={coverId} image={coverId} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={false} /> : ''}
 						<div className="heading">
-							{isTask ? (
-								<Icon className={[ 'checkbox', (object.done ? 'active' : '') ].join(' ')} />
-							) : (
-								<IconObject size={48} iconSize={32} object={object} />
-							)}
-
 							{layout == I.ObjectLayout.Note ? (
 								<ObjectName object={object} className="description" />
 							) : (
 								<React.Fragment>
-									<ObjectName object={object} className="title" />
+									<div className="titleWrap">
+										{icon}
+										<ObjectName object={object} className="title" />
+									</div>
 									<ObjectDescription object={object} className="description" />
 								</React.Fragment>
 							)}

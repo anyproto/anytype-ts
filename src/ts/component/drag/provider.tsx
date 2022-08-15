@@ -181,7 +181,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 		const sidebar = $('#sidebar');
 		const layer = $('#dragLayer');
 		const body = $('body');
-		const dataTransfer = { rootId, dropType, ids }; 
+		const dataTransfer = { rootId, dropType, ids, withAlt: e.altKey }; 
 
 		e.stopPropagation();
 		focus.clear(true);
@@ -268,7 +268,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 	onDrop (e: any, type: string, targetId: string, position: I.BlockPosition) {
 		const { dataset } = this.props;
 		const { selection } = dataset || {};
-		
+
 		if (selection) {
 			selection.preventClear(false);
 		};
@@ -276,7 +276,8 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 		let data: any = {};
 		try { data = JSON.parse(e.dataTransfer.getData('text/plain')) || {}; } catch (e) {};
 
-		let { rootId, dropType, ids } = data;
+		let { rootId, dropType, withAlt } = data;
+		let ids = data.ids || [];
 		let contextId = rootId;
 		let targetContextId = keyboard.getRootId();
 		let isToggle = false;
@@ -325,7 +326,11 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 		// Source type
 		switch (dropType) {
 			case I.DropType.Block:
-				C.BlockListMoveToExistingObject(contextId, targetContextId, ids || [], targetId, position, () => {
+				const cb = (message: any) => {
+					if (message.error.code) {
+						return;
+					};
+
 					if (isToggle && (position == I.BlockPosition.InnerFirst)) {
 						blockStore.toggle(rootId, targetId, true);
 					};
@@ -333,9 +338,19 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 					if (selection) {
 						selection.renderSelection();
 					};
+				};
 
-					analytics.event('ReorderBlock', { count: ids.length });
-				});
+				if (withAlt && (contextId == targetContextId)) {
+					C.BlockListDuplicate(contextId, ids, targetId, position, (message: any) => {
+						cb(message);
+						analytics.event('DuplicateBlock', { count: ids.length });
+					});
+				} else {
+					C.BlockListMoveToExistingObject(contextId, targetContextId, ids || [], targetId, position, (message: any) => {
+						cb(message);
+						analytics.event('ReorderBlock', { count: ids.length });
+					});
+				};
 				break;
 
 			case I.DropType.Relation:
