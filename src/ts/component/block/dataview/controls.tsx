@@ -244,6 +244,8 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 		const { rootId, block, getView, getData } = this.props;
 		const allowed = blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.View ]);
 
+		this.onViewSet(item);
+
 		menuStore.open('dataviewViewEdit', { 
 			element: element,
 			horizontal: I.MenuDirection.Center,
