@@ -263,7 +263,7 @@ const MenuGroupList = observer(class MenuGroupList extends React.Component<Props
 		const update: any[] = [];
 
 		groups.forEach((it: any, i: number) => {
-			update.push({ groupId: it.id, index: i, isHidden: it.isHidden });
+			update.push({ ...it, groupId: it.id, index: i });
 		});
 
 		dbStore.groupsSet(rootId, blockId, groups);
@@ -287,8 +287,10 @@ const MenuGroupList = observer(class MenuGroupList extends React.Component<Props
 	resize () {
 		const { getId, position } = this.props;
 		const items = this.getItems();
-		const obj = $('#' + getId() + ' .content');
-		const height = Math.max(HEIGHT * 2, Math.min(360, items.length * HEIGHT + 58));
+		const obj = $(`#${getId()} .content`);
+		const height = Math.max(HEIGHT * 2, Math.min(360, items.length * HEIGHT + 16));
+
+		console.log(items.length, height);
 
 		obj.css({ height: height });
 		position();
