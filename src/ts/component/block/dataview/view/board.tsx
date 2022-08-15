@@ -34,6 +34,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 	};
 	columnRefs: any = {};
 	isDraggingColumn: boolean = false;
+	isDraggingCard: boolean = false;
 
 	constructor (props: any) {
 		super(props);
@@ -442,6 +443,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 
 		this.onDragStartCommon(e, $(e.currentTarget));
 		this.initCacheCard();
+		this.isDraggingCard = true;
 
 		win.on('drag.board', (e: any) => { this.onDragMoveCard(e, record); });
 		win.on('dragend.board', (e: any) => { this.onDragEndCard(e, record); });
@@ -500,6 +502,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 
 		this.onDragEndCommon(e);
 		this.cache = {};
+		this.isDraggingCard = false;
 
 		if (!current.groupId || !this.newGroupId || ((current.index == this.newIndex) && (current.groupId == this.newGroupId))) {
 			return;
@@ -578,22 +581,46 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 	};
 
 	onScroll () {
-		if (!this.isDraggingColumn) {
-			return;
-		};
-
 		const groups = this.getGroups(false);
 		const node = $(ReactDOM.findDOMNode(this));
 
-		groups.forEach((group: any, i: number) => {
-			if (this.cache[group.id]) {
-				const item = node.find(`#column-${group.id}`);
-				const p = item.offset();
+		if (this.isDraggingColumn) {
+			groups.forEach((group: any, i: number) => {
+				if (!this.cache[group.id]) {
+					return;
+				};
 
-				this.cache[group.id].x = p.left;
-				this.cache[group.id].y = p.top;
-			};
-		});
+				const el = node.find(`#column-${group.id}`);
+				if (!el.length) {
+					return;
+				};
+
+				const { left, top } = el.offset();
+				this.cache[group.id].x = left;
+				this.cache[group.id].y = top;
+			});
+		};
+
+		if (this.isDraggingCard) {
+			groups.forEach((group: any, i: number) => {
+				const column = this.columnRefs[group.id];
+				if (!column) {
+					return;
+				};
+
+				const items = column.getItems() || [];
+				items.forEach((item: any, i: number) => {
+					const el = node.find(`#card-${item.id}`);
+					if (!el.length) {
+						return;
+					};
+
+					const { left, top } = el.offset();
+					this.cache[item.id].x = left;
+					this.cache[item.id].y = top;
+				});
+			});
+		};
 	};
 
 	getSubId (groupId: string) {
@@ -623,12 +650,13 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 	resize () {
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
+		const scroll = node.find('.scroll');
 		const viewItem = node.find('.viewItem');
 		const ww = win.width();
 		const mw = ww - 192;
 		const size = Constant.size.dataview.board;
 		const groups = this.getGroups(false);
-		const width = groups.length * (size.card + size.margin);
+		const width = 30 + groups.length * (size.card + size.margin);
 		
 		let vw = 0;
 		let margin = 0;
@@ -640,6 +668,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 			margin = (ww - mw) / 2; 
 		};
 
+		scroll.css({ width: ww, marginLeft: -margin / 2 , paddingLeft: margin / 2 });
 		viewItem.css({ width: vw });
 	};
 	
