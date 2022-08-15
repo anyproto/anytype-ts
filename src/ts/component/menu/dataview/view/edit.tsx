@@ -498,10 +498,28 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, blockId } = data;
-		const options: any[] = dbStore.getRelations(rootId, blockId).filter((it: I.Relation) => {
-			return [ I.RelationType.Status, I.RelationType.Tag, I.RelationType.Checkbox ].includes(it.format) && 
-				(!it.isHidden || [ Constant.relationKey.done ].includes(it.relationKey));
-		}).map((it: any) => {
+		const formats = [ I.RelationType.Status, I.RelationType.Tag, I.RelationType.Checkbox ];
+		
+		let options: any[] = dbStore.getRelations(rootId, blockId);
+
+		options = options.filter((it: I.Relation) => {
+			return formats.includes(it.format) && (!it.isHidden || [ Constant.relationKey.done ].includes(it.relationKey));
+		});
+
+		options.sort((c1: any, c2: any) => {
+			if ((c1.format == I.RelationType.Status) && (c2.format != I.RelationType.Status)) return -1;
+			if ((c1.format != I.RelationType.Status) && (c2.format == I.RelationType.Status)) return 1;
+
+			if ((c1.format == I.RelationType.Tag) && (c2.format != I.RelationType.Tag)) return -1;
+			if ((c1.format != I.RelationType.Tag) && (c2.format == I.RelationType.Tag)) return 1;
+
+			if ((c1.format == I.RelationType.Checkbox) && (c2.format != I.RelationType.Checkbox)) return -1;
+			if ((c1.format != I.RelationType.Checkbox) && (c2.format == I.RelationType.Checkbox)) return 1;
+
+			return 0;
+		});
+
+		options = options.map((it: any) => {
 			return { 
 				id: it.relationKey, 
 				icon: 'relation ' + DataUtil.relationClass(it.format),
