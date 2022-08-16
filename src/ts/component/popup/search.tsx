@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon, Input, Loader, IconObject, ObjectName, ObjectDescription, EmptySearch } from 'Component';
 import { I, C, Util, DataUtil, keyboard, Key, focus, translate, analytics } from 'Lib';
-import { commonStore, dbStore } from 'Store';
+import { commonStore, detailStore } from 'Store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
@@ -58,7 +58,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 		);
 
 		const Item = (item: any) => {
-			const type = dbStore.getObjectType(item.type);
+			const type = detailStore.get(Constant.subId.type, item.type, []);
 			const description = (item.layout != I.ObjectLayout.Note) ? (item.description || item.snippet) : '';
 
 			return (
@@ -352,7 +352,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 			Constant.typeId.image,
 			Constant.typeId.video,
 			Constant.typeId.audio,
-		];
+		].concat(DataUtil.getSystemTypes());
 
 		const filters: any[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },

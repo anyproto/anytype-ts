@@ -356,16 +356,9 @@ const CellObject = observer(class CellObject extends React.Component<Props, Stat
 		const details: any = { name: text };
 		const flags: I.ObjectFlag[] = [];
 
-		let type: any = null;
 		if (typeId) {
-			type = dbStore.getObjectType(typeId);
-			if (type) {
-				details.type = type.id;
-				details.layout = type.layout;
-			};
-		};
-
-		if (!type) {
+			details.type = typeId;
+		} else {
 			flags.push(I.ObjectFlag.SelectType);
 		};
 

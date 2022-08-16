@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { I, analytics, DataUtil, translate } from 'Lib';
-import { Input, MenuItemVertical, Button, Icon, Switch } from 'Component';
-import { dbStore, menuStore, blockStore } from 'Store';
+import { Input, MenuItemVertical, Button, Icon } from 'Component';
+import { dbStore, menuStore, blockStore, detailStore } from 'Store';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
 
@@ -38,8 +38,8 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		const relation = this.getRelation();
 		const isDate = this.format == I.RelationType.Date;
 		const isObject = this.format == I.RelationType.Object;
-		const type = this.objectTypes.length ? this.objectTypes[0] : '';
-		const objectType = dbStore.getObjectType(type);
+		const typeId = this.objectTypes.length ? this.objectTypes[0] : '';
+		const type = detailStore.get(Constant.subId.type, typeId, []);
 		const allowed = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
 		const canDelete = allowed && relation && Constant.systemRelationKeys.indexOf(relation.relationKey) < 0;
 		const isReadonly = this.isReadonly();
@@ -47,14 +47,12 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		let opts: any = null;
 		let typeProps: any = { name: 'Select object type' };
 
-		if (isObject) {
+		if (isObject && !isReadonly) {
 			const l = this.objectTypes.length;
-			const type = l ? this.objectTypes[0] : '';
-			const objectType = dbStore.getObjectType(type);
 
-			if (objectType) {
-				typeProps.name = objectType.name || DataUtil.defaultName('page');
-				typeProps.object = { ...objectType, layout: I.ObjectLayout.Type };
+			if (!type._empty_) {
+				typeProps.name = type.name;
+				typeProps.object = type;
 			};
 
 			typeProps.caption = l > 1 ? '+' + (l - 1) : '';
@@ -73,10 +71,6 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 					/>
 				</div>
 			);
-
-			if (isReadonly && !objectType) {
-				opts = null;
-			};
 		};
 		/*
 		const opts = (
@@ -293,10 +287,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 				value: this.objectTypes, 
 				types: [ Constant.typeId.type ],
 				relation: observable.box(relation),
-				valueMapper: (it: any) => {
-					const type = dbStore.getObjectType(it.id);
-					return { ...type, layout: I.ObjectLayout.Type };
-				},
+				valueMapper: it => detailStore.get(Constant.subId.type, it.id, []),
 				onChange: (value: any, callBack?: () => void) => {
 					this.objectTypes = value;
 					this.save();

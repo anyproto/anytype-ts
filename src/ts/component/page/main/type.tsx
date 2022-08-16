@@ -72,14 +72,14 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 		const rootId = this.getRootId();
 		const object = Util.objectCopy(detailStore.get(rootId, rootId, [ 'recommendedLayout' ]));
 
-		const type: any = dbStore.getObjectType(rootId) || {};
+		const type = detailStore.get(Constant.subId.type, rootId, []);
 		const templates = dbStore.getRecords(this.getSubIdTemplate(), '');
 		const totalTemplate = dbStore.getMeta(this.getSubIdTemplate(), '').total;
 		const totalObject = dbStore.getMeta(this.getSubIdObject(), '').total;
 		const layout: any = DataUtil.menuGetLayouts().find((it: any) => { return it.id == object.recommendedLayout; }) || {};
 		const showTemplates = !NO_TEMPLATES.includes(rootId);
 
-		const allowedObject = (type.types || []).includes(I.SmartBlockType.Page);
+		const allowedObject = (type._smartBlockTypes_ || []).includes(I.SmartBlockType.Page);
 		const allowedDetails = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const allowedRelation = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
 		const allowedTemplate = allowedObject && showTemplates;
@@ -284,7 +284,7 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 			};
 
 			focus.clear(true);
-			dbStore.recordAdd(rootId, BLOCK_ID_TEMPLATE, message.record, 1);
+			dbStore.recordAdd(rootId, BLOCK_ID_TEMPLATE, message.record.id, 1);
 			analytics.event('CreateTemplate', { objectType: rootId });
 
 			DataUtil.objectOpenPopup(message.record, {
@@ -299,8 +299,8 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 
 	onCreate () {
 		const rootId = this.getRootId();
-		const type: any = dbStore.getObjectType(rootId) || {};
-		const allowedObject = (type.types || []).indexOf(I.SmartBlockType.Page) >= 0;
+		const type = detailStore.get(Constant.subId.type, rootId, []);
+		const allowedObject = (type._smartBlockTypes_ || []).indexOf(I.SmartBlockType.Page) >= 0;
 		const options = [];
 
 		if (allowedObject) {
@@ -456,7 +456,6 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 	onLayout (layout: string) {
 		const rootId = this.getRootId();
 
-		dbStore.objectTypeUpdate({ id: rootId, recommendedLayout: layout });
 		C.ObjectSetDetails(rootId, [ { key: 'recommendedLayout', value: layout } ]);
 
 		analytics.event('ChangeRecommendedLayout', { objectType: rootId, layout: layout });

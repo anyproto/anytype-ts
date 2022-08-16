@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { MenuItemVertical, Loader, ObjectName } from 'Component';
 import { I, C, keyboard, Util, DataUtil, Mark, analytics } from 'Lib';
-import { commonStore, dbStore } from 'Store';
+import { commonStore, detailStore } from 'Store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
@@ -48,7 +48,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
-			const type: any = dbStore.getObjectType(item.type);
+			const type = detailStore.get(Constant.subId.type, item.type, []);
 
 			let content = null;
 
@@ -212,6 +212,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 
 		const filters: any[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
+			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: DataUtil.getSystemTypes(), },
 		];
 		const sorts = [
 			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
@@ -296,7 +297,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		};
 
 		if (item.itemId == 'add') {
-			const type: any = dbStore.getObjectType(commonStore.type) || {};
+			const type = detailStore.get(Constant.subId.type, commonStore.type, []);
 			const name = filter.text.replace(/\\/g, '');
 
 			DataUtil.pageCreate('', '', { name: name }, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.SelectType ], (message: any) => {
