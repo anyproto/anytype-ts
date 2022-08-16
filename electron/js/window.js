@@ -37,6 +37,7 @@ class WindowManager {
 			contextIsolation: true,
 			nodeIntegration: false,
 			spellcheck: true,
+			sandbox: false,
 		}, param.webPreferences);
 
 		let win = new BrowserWindow(param);

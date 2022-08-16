@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
-import { Icon, Header, FooterMainEdit as Footer, Loader, ListObjectPreview, ListObject, Select, Deleted } from 'Component';
+import { Icon, Header, Footer, Loader, ListObjectPreview, ListObject, Select, Deleted } from 'Component';
 import { I, C, DataUtil, Util, focus, crumbs, Action, analytics } from 'Lib';
 import { commonStore, detailStore, dbStore, menuStore, popupStore, blockStore } from 'Store';
 
@@ -190,7 +190,7 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 					</div>
 				</div>
 
-				<Footer {...this.props} rootId={rootId} />
+				<Footer component="mainEdit" {...this.props} />
 			</div>
 		);
 	};

@@ -43,9 +43,6 @@ jobs:
           ./update.sh ${{secrets.USER}} ${{secrets.TOKEN}} ${{matrix.os}} arm
           ./update.sh ${{secrets.USER}} ${{secrets.TOKEN}} ${{matrix.os}} amd
 
-      - name: Update Deps
-        run: npm run build:deps
-
       - name: Build Front
         if: matrix.os == 'macos-latest'
         uses: samuelmeuli/action-electron-builder@v1
@@ -61,6 +58,7 @@ jobs:
           APPLEIDPASS: ${{ secrets.APPLEIDPASS }}
           DO_KEY_ID: ${{ secrets.DO_KEY_ID }}
           DO_SECRET_KEY: ${{ secrets.DO_SECRET_KEY }}
+          USE_HARD_LINKS: false
 
       - name: Build Front
         if: matrix.os != 'macos-latest'
@@ -76,6 +74,7 @@ jobs:
           APPLEIDPASS: ${{ secrets.APPLEIDPASS }}
           DO_KEY_ID: ${{ secrets.DO_KEY_ID }}
           DO_SECRET_KEY: ${{ secrets.DO_SECRET_KEY }}
+          USE_HARD_LINKS: false
 
       - name: Make artifacts dir
         run: | 

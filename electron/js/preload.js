@@ -1,5 +1,5 @@
 const { ipcRenderer, contextBridge } = require('electron');
-const { app, getCurrentWindow, getGlobal, dialog, BrowserWindow, process } = require('@electron/remote');
+const { app, getCurrentWindow, getGlobal, dialog, BrowserWindow } = require('@electron/remote');
 const fs = require('fs');
 const os = require('os');
 const path = require('path');

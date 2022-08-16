@@ -44,7 +44,6 @@ class Relation {
 				ret = ret.concat([ 
 					{ id: I.FilterCondition.In,			 name: translate('filterConditionInArray') }, 
 					{ id: I.FilterCondition.AllIn,		 name: translate('filterConditionAllIn') }, 
-					{ id: I.FilterCondition.Equal,		 name: translate('filterConditionEqual') },
 					{ id: I.FilterCondition.NotIn,		 name: translate('filterConditionNotInArray') },
 					{ id: I.FilterCondition.Empty,		 name: translate('filterConditionEmpty') }, 
 					{ id: I.FilterCondition.NotEmpty,	 name: translate('filterConditionNotEmpty') },
@@ -187,7 +186,7 @@ class Relation {
 			case I.RelationType.Object:
 			case I.RelationType.Relations:
 				if ('object' !== typeof(value)) {
-					value = [];
+					value = value ? [ value ] : [];
 				};
 
 				value = Util.objectCopy(value || []);

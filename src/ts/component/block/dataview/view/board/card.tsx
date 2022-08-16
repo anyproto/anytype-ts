@@ -36,26 +36,33 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 				onClick={(e: any) => { this.onClick(e); }}
 				onContextMenu={(e: any) => { onContext(e, record.id); }}
 			>
-				<div className="cardContent">
-					{relations.map((relation: any, i: number) => {
-						const id = Relation.cellId(idPrefix, relation.relationKey, 0);
-						return (
-							<Cell 
-								key={'board-cell-' + view.id + relation.relationKey} 
-								{...this.props}
-								getRecord={() => { return record; }}
-								subId={subId}
-								ref={(ref: any) => { onRef(ref, id); }} 
-								relationKey={relation.relationKey}
-								index={0}
-								viewType={view.type}
-								idPrefix={idPrefix}
-								arrayLimit={2}
-								showTooltip={true}
-								tooltipX={I.MenuDirection.Left}
-							/>
-						);
-					})}
+				<div 
+					id={'selectable-' + record.id} 
+					className={[ 'selectable', 'type-' + I.SelectType.Record ].join(' ')} 
+					data-id={record.id}
+					data-type={I.SelectType.Record}
+				>
+					<div className="cardContent">
+						{relations.map((relation: any, i: number) => {
+							const id = Relation.cellId(idPrefix, relation.relationKey, 0);
+							return (
+								<Cell 
+									key={'board-cell-' + view.id + relation.relationKey} 
+									{...this.props}
+									getRecord={() => { return record; }}
+									subId={subId}
+									ref={(ref: any) => { onRef(ref, id); }} 
+									relationKey={relation.relationKey}
+									index={0}
+									viewType={view.type}
+									idPrefix={idPrefix}
+									arrayLimit={2}
+									showTooltip={true}
+									tooltipX={I.MenuDirection.Left}
+								/>
+							);
+						})}
+					</div>
 				</div>
 			</div>
 		);

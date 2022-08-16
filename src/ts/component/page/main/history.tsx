@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Header, FooterMainEdit as Footer, Block, Loader, Icon, Deleted } from 'Component';
+import { Header, Footer, Block, Loader, Icon, Deleted } from 'Component';
 import { blockStore, detailStore } from 'Store';
 import { I, M, C, Util, DataUtil, dispatcher } from 'Lib';
 import { observer } from 'mobx-react';
@@ -149,7 +149,11 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<P
 					</div>
 				</div>
 
-				<Footer ref={(ref: any) => { this.refFooter = ref; }} {...this.props} rootId={rootId} isPopup={isPopup} />
+				<Footer 
+					component="mainEdit" 
+					ref={(ref: any) => { this.refFooter = ref; }} 
+					{...this.props} 
+				/>
 			</div>
 		);
 	};

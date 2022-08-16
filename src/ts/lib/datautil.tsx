@@ -828,24 +828,15 @@ class DataUtil {
 	};
 
 	menuGetViews () {
-		const { config } = commonStore;
-		
-		let ret = [
+		return [
 			{ id: I.ViewType.Grid },
 			{ id: I.ViewType.Gallery },
 			{ id: I.ViewType.List },
-		];
-		if (config.experimental) {
-			ret = ret.concat([
-				{ id: I.ViewType.Board },
-			]);
-		};
-
-		ret = ret.map((it: any) => {
+			{ id: I.ViewType.Board },
+		].map((it: any) => {
 			it.name = translate('viewName' + it.id);
 			return it;
 		});
-		return ret;
 	};
 
 	menuGetRelationTypes () {
@@ -1292,6 +1283,20 @@ class DataUtil {
 			Constant.typeId.template,
 			Constant.typeId.relation,
 		];
+	};
+
+	dataviewGroupUpdate (rootId: string, blockId: string, viewId: string, groups: any[]) {
+		const block = blockStore.getLeaf(rootId, blockId);
+		if (!block) {
+			return;
+		};
+
+		const el = block.content.groupOrder.find(it => it.viewId == viewId);
+		if (el) {
+			el.groups = groups;
+		};
+
+		blockStore.updateContent(rootId, blockId, block.content);
 	};
 
 };

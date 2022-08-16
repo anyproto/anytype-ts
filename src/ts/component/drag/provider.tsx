@@ -35,7 +35,6 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 
 		this.onDragOver = this.onDragOver.bind(this);
 		this.onDragStart = this.onDragStart.bind(this);
-		this.onDragMove = this.onDragMove.bind(this);
 		this.onDragEnd = this.onDragEnd.bind(this);
 		this.onDropCommon = this.onDropCommon.bind(this);
 		this.onDrop = this.onDrop.bind(this);
@@ -45,7 +44,12 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 	render () {
 		const children = this.injectProps(this.props.children);
 		return (
-			<div id="dragProvider" className="dragProvider" onDragOver={this.onDragOver} onDrop={this.onDropCommon}>
+			<div 
+				id="dragProvider" 
+				className="dragProvider" 
+				onDragOver={this.onDragOver} 
+				onDrop={this.onDropCommon}
+			>
 				<DragLayer {...this.props} ref={(ref: any) => { this.refLayer = ref; }} />
 				{children}
 			</div>
@@ -117,8 +121,8 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 			return;
 		};
 
-		const dt = (e.dataTransfer || e.originalEvent.dataTransfer);
-		const isFileDrop = dt.files && dt.files.length;
+		const dataTransfer = e.dataTransfer;
+		const isFileDrop = dataTransfer.files && dataTransfer.files.length;
 		const last = blockStore.getFirstBlock(rootId, -1, it => it.canCreateBlock());
 
 		let position = this.position;
@@ -139,9 +143,15 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 			target = blockStore.getLeaf(rootId, targetId);
 		};
 
+		// Last drop zone
+		if (targetId == 'blockLast') {
+			targetId = '';
+			position = I.BlockPosition.Bottom;
+		};
+
 		if (isFileDrop) {
 			let paths: string[] = [];
-			for (let file of dt.files) {
+			for (let file of dataTransfer.files) {
 				paths.push(file.path);
 			};
 
@@ -160,25 +170,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 		this.clearState();
 	};
 
-	onDragOver (e: any) {
-		if (this.commonDropPrevented) {
-			return;
-		};
-
-		e.preventDefault();
-   		e.stopPropagation();
-
-		const isPopup = keyboard.isPopup();
-		const dt = (e.dataTransfer || e.originalEvent.dataTransfer);
-		const isFileDrag = dt.types.indexOf('Files') >= 0;
-		const top = Util.getScrollContainer(isPopup).scrollTop();
-		const diff = isPopup ? Math.abs(top - this.top) * (top > this.top ? 1 : -1) : 0;
-
-		this.initData();
-		this.checkNodes(e, e.pageX, e.pageY + diff, isFileDrag);
-	};
-
-	onDragStart (e: any, type: I.DropType, ids: string[], component: any) {
+	onDragStart (e: any, dropType: I.DropType, ids: string[], component: any) {
 		const { dataset } = this.props;
 		const rootId = keyboard.getRootId();
 		const isPopup = keyboard.isPopup();
@@ -189,31 +181,28 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 		const sidebar = $('#sidebar');
 		const layer = $('#dragLayer');
 		const body = $('body');
+		const dataTransfer = { rootId, dropType, ids, withAlt: e.altKey }; 
 
 		e.stopPropagation();
 		focus.clear(true);
 
-		console.log('[DragProvider].onDragStart', type, ids);
+		console.log('[DragProvider].onDragStart', dropType, ids);
 
 		this.top = container.scrollTop();
-		this.refLayer.show(rootId, type, ids, component);
+		this.refLayer.show(rootId, dropType, ids, component);
 		this.setClass(ids);
-		this.unbind();
 		this.initData();
+		this.unbind();
 
 		e.dataTransfer.setDragImage(layer.get(0), 0, 0);
-		e.dataTransfer.setData('application/json', JSON.stringify({
-			rootId,
-			dropType: type,
-			ids,
-		}));
+		e.dataTransfer.setData('text/plain', JSON.stringify(dataTransfer));
+		e.dataTransfer.setData('data-' + JSON.stringify(dataTransfer), '1');
 
 		node.addClass('isDragging');
 		body.addClass('isDragging');
 		keyboard.setDragging(true);
 		Util.previewHide(false);
 
-		win.on('drag.drag', (e: any) => { this.onDragMove(e); });
 		win.on('dragend.drag', (e: any) => { this.onDragEnd(e); });
 
 		container.off('scroll.drag').on('scroll.drag', throttle((e: any) => { this.onScroll(); }, 20));
@@ -223,7 +212,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 		scrollOnMove.onMouseDown(e, isPopup);
 
 		if (selection) {
-			if (type == I.DropType.Block) {
+			if (dropType == I.DropType.Block) {
 				selection.set(I.SelectType.Block, ids);
 			};
 			selection.hide();
@@ -231,15 +220,20 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 		};
 	};
 
-	onDragMove (e: any) {
+	onDragOver (e: any) {
+		if (this.commonDropPrevented) {
+			return;
+		};
+
+		e.preventDefault();
+   		e.stopPropagation();
+
 		const isPopup = keyboard.isPopup();
-		const dt = (e.dataTransfer || e.originalEvent.dataTransfer);
-		const isFileDrag = dt.types.indexOf('Files') >= 0;
 		const top = Util.getScrollContainer(isPopup).scrollTop();
 		const diff = isPopup ? Math.abs(top - this.top) * (top > this.top ? 1 : -1) : 0;
 
-		this.checkNodes(e, e.pageX, e.pageY + diff, isFileDrag);
-		scrollOnMove.onMouseMove(e.clientX, e.clientY);
+		this.initData();
+		this.checkNodes(e, e.pageX, e.pageY + diff);
 	};
 
 	onDragEnd (e: any) {
@@ -252,8 +246,8 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 		const body = $('body');
 
 		this.refLayer.hide();
-		this.unbind();
 		this.clearState();
+		this.unbind();
 
 		keyboard.setDragging(false);
 		node.removeClass('isDragging');
@@ -274,15 +268,16 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 	onDrop (e: any, type: string, targetId: string, position: I.BlockPosition) {
 		const { dataset } = this.props;
 		const { selection } = dataset || {};
-		
+
 		if (selection) {
 			selection.preventClear(false);
 		};
 
 		let data: any = {};
-		try { data = JSON.parse(e.dataTransfer.getData('application/json')) || {}; } catch (e) {};
+		try { data = JSON.parse(e.dataTransfer.getData('text/plain')) || {}; } catch (e) {};
 
-		let { rootId, dropType, ids } = data;
+		let { rootId, dropType, withAlt } = data;
+		let ids = data.ids || [];
 		let contextId = rootId;
 		let targetContextId = keyboard.getRootId();
 		let isToggle = false;
@@ -331,7 +326,11 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 		// Source type
 		switch (dropType) {
 			case I.DropType.Block:
-				C.BlockListMoveToExistingObject(contextId, targetContextId, ids || [], targetId, position, () => {
+				const cb = (message: any) => {
+					if (message.error.code) {
+						return;
+					};
+
 					if (isToggle && (position == I.BlockPosition.InnerFirst)) {
 						blockStore.toggle(rootId, targetId, true);
 					};
@@ -339,9 +338,19 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 					if (selection) {
 						selection.renderSelection();
 					};
+				};
 
-					analytics.event('ReorderBlock', { count: ids.length });
-				});
+				if (withAlt && (contextId == targetContextId)) {
+					C.BlockListDuplicate(contextId, ids, targetId, position, (message: any) => {
+						cb(message);
+						analytics.event('DuplicateBlock', { count: ids.length });
+					});
+				} else {
+					C.BlockListMoveToExistingObject(contextId, targetContextId, ids || [], targetId, position, (message: any) => {
+						cb(message);
+						analytics.event('ReorderBlock', { count: ids.length });
+					});
+				};
 				break;
 
 			case I.DropType.Relation:
@@ -367,9 +376,19 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 		};
 	};
 
-	checkNodes (e, ex: number, ey: number, isFileDrag: boolean) {
+	checkNodes (e: any, ex: number, ey: number) {
+		let dataTransfer = e.dataTransfer || e.originalEvent.dataTransfer;
+		let isFileDrag = dataTransfer.types.includes('Files');
 		let data: any = {};
-		try { data = JSON.parse(e.dataTransfer.getData('application/json')) || {}; } catch (e) {};
+
+		try {
+			for (let type of dataTransfer.types) {
+				if (type.match(/^data-/)) {
+					data = JSON.parse(type.replace(/^data-/, ''));
+					break;
+				};
+			};
+		} catch (e) {};
 
 		this.setHoverData(null);
 		this.setPosition(I.BlockPosition.None);
@@ -388,7 +407,9 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 			};
 		};
 
-		let { rootId, dropType, ids } = data;
+		let dropType = String(data.droptype) || '';
+		let rootId = String(data.rootid) || '';
+		let ids = data.ids || [];
 		let x = 0;
 		let y = 0;
 		let width = 0;
@@ -400,14 +421,12 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 		let type: any = '';
 		let style = 0;
 		let canDropMiddle = 0;
-
 		let col1 = 0; 
 		let col2 = 0;
 
 		let isText = false;
 		let isFeatured = false;
 		let isType = false;
-		let isTable = false;
 
 		if (this.hoverData) {
 			this.canDrop = true;
@@ -436,7 +455,6 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 				isText = type == I.BlockType.Text;
 				isFeatured = type == I.BlockType.Featured;
 				isType = type == I.BlockType.Type;
-				isTable = type == I.BlockType.Table;
 			};
 
 			initVars();
@@ -539,6 +557,10 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 				};
 			};
 
+			if ((this.hoverData.id == 'blockLast') && (this.position != I.BlockPosition.None)) {
+				this.setPosition(I.BlockPosition.Top);
+			};
+
 			if (!isTargetBot && 
 			[
 				I.TextStyle.Paragraph, 
@@ -572,10 +594,6 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 				obj.addClass('isOver ' + this.getDirectionClass(this.position));
 			};
 		});
-	};
-
-	unbind () {
-		$(window).off('dragend.drag drag.drag');
 	};
 
 	setClass (ids: string[]) {
@@ -673,6 +691,10 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 
 	setPosition (v: I.BlockPosition) {
 		this.position = v;
+	};
+
+	unbind () {
+		$(window).off('drag.drag dragend.drag');
 	};
 
 });

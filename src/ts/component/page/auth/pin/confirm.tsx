@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Frame, Cover, Title, Label, Error, Pin, Header, FooterAuth as Footer } from 'Component';
+import { Frame, Cover, Title, Label, Error, Pin, Header, Footer } from 'Component';
 import { Storage, Util, translate } from 'Lib';
 import { commonStore, authStore } from 'Store';
 import { observer } from 'mobx-react';
@@ -34,7 +34,7 @@ const PageAuthPinConfirm = observer(class PageAuthPinConfirm extends React.Compo
 			<div>
 				<Cover {...cover} className="main" />
 				<Header {...this.props} component="authIndex" />
-				<Footer />
+				<Footer {...this.props} component="authIndex" />
 				
 				<Frame>
 					<Title text={translate('authPinConfirmTitle')} />
@@ -66,7 +66,7 @@ const PageAuthPinConfirm = observer(class PageAuthPinConfirm extends React.Compo
 
 	rebind () {
 		this.unbind();
-		$(window).on('focus.pin', () => { console.log('focus'); this.ref.focus(); });
+		$(window).on('focus.pin', () => { this.ref.focus(); });
 	};
 
 	onSuccess (pin: string) {

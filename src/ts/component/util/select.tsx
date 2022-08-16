@@ -53,7 +53,7 @@ class Select extends React.Component<Props, State> {
 		const cn = [ 'select', (className ? className : '') ];
 		const acn = [ 'arrow', (arrowClassName ? arrowClassName : '') ];
 
-		let current: I.Option = options.find((item: any) => { return item.id == value; });
+		let current: I.Option = options.find(item => item.id == value);
 		if (!current) {
 			current = options[0];
 		};

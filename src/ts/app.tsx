@@ -67,7 +67,6 @@ import 'scss/page/main/space.scss';
 import 'scss/page/main/type.scss';
 import 'scss/page/main/relation.scss';
 import 'scss/page/main/media.scss';
-import 'scss/page/main/bookmark.scss';
 import 'scss/page/main/store.scss';
 import 'scss/page/main/graph.scss';
 import 'scss/page/main/navigation.scss';

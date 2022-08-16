@@ -11,7 +11,6 @@ interface State {
 };
 
 const $ = require('jquery');
-const raf = require('raf');
 const Constant = require('json/constant.json');
 const MENU_ID = 'dataviewCalendar';
 
@@ -188,10 +187,7 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 					break;
 
 				case I.ViewType.Board:
-					size = 48;
-					if ([ I.ObjectLayout.Task, I.ObjectLayout.Bookmark ].includes(record.layout)) {
-						size = 24;
-					};
+					size = 24;
 					break;
 			};
 
@@ -278,7 +274,6 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 
 			if (this.ref) {
 				this.ref.setValue(value);
-
 				if (this.ref.setRange) {
 					let length = String(value || '').length;
 					this.ref.setRange(this.range || { from: length, to: length });

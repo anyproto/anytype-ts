@@ -11,12 +11,6 @@ done.md
 commands.md
 .idea
 tools
-dist/*.node
 docs/*
 electron/env.json
 src/json/schema
-dist/bundle-back.js
-dist/builder-debug.yml
-dist/mac/
-dist/mac-arm64/
-dist/.icon-ico/

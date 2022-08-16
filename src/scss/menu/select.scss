@@ -6,7 +6,7 @@
 		.items { height: 100%; }
 		.item.empty { margin-top: 8px; }
 
-		.item { display: flex; }
+		.item { display: flex; align-items: center; }
 		.item {
 			.icon { flex-shrink: 0; }
 			.name { width: 100%; @include text-overflow-nw; }

@@ -66,7 +66,7 @@ const Mapper = {
 		AccountConfig: (obj: any): I.AccountConfig => {
 			return {
 				allowSpaces: obj.getEnablespaces(),
-				allowBeta: true,//obj.getEnablebetachannel(),
+				allowBeta: obj.getEnableprereleasechannel(),
 			};
 		},
 
@@ -343,7 +343,7 @@ const Mapper = {
 				cardSize: obj.getCardsize(),
 				hideIcon: obj.getHideicon(),
 				groupRelationKey: obj.getGrouprelationkey(),
-				//groupBackgroundColors: obj.getGroupbackgroundcolors(),
+				groupBackgroundColors: obj.getGroupbackgroundcolors(),
 				sorts: obj.getSortsList().map(Mapper.From.Sort),
 				filters: obj.getFiltersList().map(Mapper.From.Filter),
 				relations: obj.getRelationsList().map(Mapper.From.ViewRelation),
@@ -472,7 +472,7 @@ const Mapper = {
 						groupId: it.getGroupid(),
 						index: it.getIndex(),
 						isHidden: it.getHidden(),
-						bgColor: '', //it.getBackgroundcolor(),
+						bgColor: it.getBackgroundcolor(),
 					};
 				}),
 			};
@@ -713,6 +713,7 @@ const Mapper = {
 			item.setType(obj.type);
 			item.setCoverrelationkey(obj.coverRelationKey);
 			item.setGrouprelationkey(obj.groupRelationKey);
+			item.setGroupbackgroundcolors(obj.groupBackgroundColors);
 			item.setCoverfit(obj.coverFit);
 			item.setCardsize(obj.cardSize);
 			item.setHideicon(obj.hideIcon);
@@ -782,7 +783,7 @@ const Mapper = {
 				el.setGroupid(it.groupId);
 				el.setIndex(it.index);
 				el.setHidden(it.isHidden);
-				//el.setBackgroundcolor(it.bgColor);
+				el.setBackgroundcolor(it.bgColor);
 
 				return el;
 			}));

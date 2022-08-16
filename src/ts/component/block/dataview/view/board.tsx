@@ -1,10 +1,9 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Loader } from 'Component';
-import { dbStore, detailStore, popupStore } from 'Store';
-import { I, C, Util, DataUtil, analytics, keyboard } from 'Lib';
+import { dbStore, detailStore, popupStore, blockStore } from 'Store';
+import { I, C, Util, DataUtil, analytics, keyboard, Relation } from 'Lib';
 import { observer } from 'mobx-react';
-import { throttle } from 'lodash';
 import arrayMove from 'array-move';
 import { set } from 'mobx';
 
@@ -27,15 +26,14 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 	cache: any = {};
 	frame: number = 0;
 	groupRelationKey: string = '';
-	oldIndex: number = -1;
 	newIndex: number = -1;
-	oldGroupId: string = '';
 	newGroupId: string = '';
 	state = {
 		loading: false,
 	};
 	columnRefs: any = {};
 	isDraggingColumn: boolean = false;
+	isDraggingCard: boolean = false;
 
 	constructor (props: any) {
 		super(props);
@@ -48,7 +46,6 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 	};
 
 	render () {
-		const { rootId, block, getView } = this.props;
 		const { loading } = this.state;
 		const groups = this.getGroups(false);
 
@@ -106,16 +103,22 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 	};
 
 	rebind () {
+		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
 		const scroll = node.find('.scroll');
 
-		scroll.off('scroll').on('scroll', throttle((e: any) => { this.onScroll(); }, 20));
+		this.unbind();
+
+		win.on('scroll.board', (e: any) => { this.onScrollWindow(); });
+		scroll.on('scroll', (e: any) => { this.onScrollView(); });
 	};
 
 	unbind () {
+		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
 		const scroll = node.find('.scroll');
 
+		win.off('scroll.board');
 		scroll.off('scroll');
 	};
 
@@ -131,13 +134,12 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 			return;
 		};
 
+		const relation = dbStore.getRelation(rootId, block.id, view.groupRelationKey);
 		const groupOrder: any = {};
  		const el = block.content.groupOrder.find(it => it.viewId == view.id);
 
 		if (el) {
-			el.groups.forEach((it: any) => {
-				groupOrder[it.groupId] = it;
-			});
+			el.groups.forEach(it => groupOrder[it.groupId] = it);
 		};
 
 		this.setState({ loading: true });
@@ -148,8 +150,27 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 			};
 
 			const groups = (message.groups || []).map((it: any) => {
+				let bgColor = 'grey';
+				let value: any = it.value;
+				let option: any = null;
+
+				switch (relation.format) {
+					case I.RelationType.Tag:
+						value = Relation.getArrayValue(value);
+						if (value.length) {
+							option = relation.selectDict.find(it => it.id == value[0]);
+							bgColor = option?.color;
+						};
+						break;
+
+					case I.RelationType.Status:
+						option = relation.selectDict.find(it => it.id == value);
+						bgColor = option?.color;
+						break;
+				};
+
 				it.isHidden = groupOrder[it.id]?.isHidden;
-				it.bgColor = groupOrder[it.id]?.bgColor;
+				it.bgColor = groupOrder[it.id]?.bgColor || bgColor;
 				return it;
 			});
 
@@ -234,38 +255,47 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 	};
 
 	initCacheColumn () {
-		const groups = this.getGroups(false);
+		const groups = this.getGroups(true);
 		const node = $(ReactDOM.findDOMNode(this));
 
 		this.cache = {};
 		groups.forEach((group: any, i: number) => {
 			const el = node.find(`#column-${group.id}`);
-			if (!el.length) {
-				return;
+			const item = {
+				id: group.id,
+				index: i,
+				x: 0,
+				y: 0,
+				width: 0,
+				height: 0,
 			};
 
-			const { left, top } = el.offset();
-			this.cache[group.id] = {
-				id: group.id,
-				x: left,
-				y: top,
-				width: el.outerWidth(),
-				height: el.outerHeight(),
-				index: i,
+			if (el.length) {
+				const { left, top } = el.offset();
+
+				item.x = left;
+				item.y = top;
+				item.width = el.outerWidth();
+				item.height = el.outerHeight();
 			};
+			
+			this.cache[group.id] = item;
 		});
 	};
 
 	initCacheCard () {
-		const { rootId, block } = this.props;
-		const groups = dbStore.getGroups(rootId, block.id);
+		const groups = this.getGroups(false);
 		const node = $(ReactDOM.findDOMNode(this));
 
 		this.cache = {};
 
 		groups.forEach((group: any, i: number) => {
-			const items = this.columnRefs[group.id].getItems() || [];
+			const column = this.columnRefs[group.id];
+			if (!column) {
+				return;
+			};
 
+			const items = column.getItems() || [];
 			items.forEach((item: any, i: number) => {
 				const el = node.find(`#card-${item.id}`);
 				if (!el.length) {
@@ -323,6 +353,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 
 		node.find('.isClone').remove();
 		node.find('.isDragging').removeClass('isDragging');
+		node.find('.isOver').removeClass('isOver top bottom left right');
 		node.find(`.ghost`).remove();
 
 		selection.preventSelect(false);
@@ -332,9 +363,6 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 		if (this.frame) {
 			raf.cancel(this.frame);
 		};
-
-		this.cache = {};
-		this.clear();
 	};
 
 	onDragStartColumn (e: any, groupId: string) {
@@ -346,7 +374,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 		this.isDraggingColumn = true;
 
 		win.on('drag.board', (e: any) => { this.onDragMoveColumn(e, groupId); });
-		win.on('dragend.board', (e: any) => { this.onDragEndColumn(e); });
+		win.on('dragend.board', (e: any) => { this.onDragEndColumn(e, groupId); });
 	};
 
 	onDragMoveColumn (e: any, groupId: any) {
@@ -358,8 +386,6 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 		if (!current) {
 			return;
 		};
-
-		this.oldIndex = groups.findIndex(it => it.id == groupId);
 
 		let isLeft = false;
 		let hoverId = '';
@@ -389,30 +415,32 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 				const el = node.find(`#column-${hoverId}`);
 
 				isLeft ? el.before(ghost) : el.after(ghost);
-				ghost.css({ height: this.cache[hoverId].height });
+				ghost.css({ height: current.height });
 			};
 		});
 	};
 
-	onDragEndColumn (e: any) {
+	onDragEndColumn (e: any, groupId: string) {
 		const { rootId, block, getView } = this.props;
 		const view = getView();
 		const update: any[] = [];
+		const current = this.cache[groupId];
 
-		let groups = this.getGroups(false);
-		groups = arrayMove(groups, this.oldIndex, this.newIndex);
+		let groups = this.getGroups(true);
+		groups = arrayMove(groups, current.index, this.newIndex);
 		dbStore.groupsSet(rootId, block.id, groups);
 
 		groups.forEach((it: any, i: number) => {
-			update.push({ groupId: it.id, index: i, isHidden: it.isHidden });
+			update.push({ ...it, groupId: it.id, index: i });
 		});
 
+		DataUtil.dataviewGroupUpdate(rootId, block.id, view.id, update);
 		C.BlockDataviewGroupOrderUpdate(rootId, block.id, { viewId: view.id, groups: update });
 
+		this.cache = {};
 		this.isDraggingColumn = false;
 		this.onDragEndCommon(e);
 		this.resize();
-		this.clearValues();
 	};
 
 	onDragStartCard (e: any, groupId: any, record: any) {
@@ -420,6 +448,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 
 		this.onDragStartCommon(e, $(e.currentTarget));
 		this.initCacheCard();
+		this.isDraggingCard = true;
 
 		win.on('drag.board', (e: any) => { this.onDragMoveCard(e, record); });
 		win.on('dragend.board', (e: any) => { this.onDragEndCard(e, record); });
@@ -433,9 +462,6 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 		if (!current) {
 			return;
 		};
-
-		this.oldGroupId = current.groupId;
-		this.oldIndex = current.index;
 
 		let isTop = false;
 		let hoverId = '';
@@ -470,26 +496,30 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 			if (hoverId) {
 				const card = node.find(`#card-${hoverId}`);
 
-				ghost.css({ height: current.height, width: current.width });
+				ghost.css({ height: current.height });
 				isTop ? card.before(ghost) : card.after(ghost);
 			};
 		});
 	};
 
 	onDragEndCard (e: any, record: any) {
-		this.onDragEndCommon(e);
+		const current = this.cache[record.id];
 
-		if (!this.oldGroupId || !this.newGroupId || ((this.oldIndex == this.newIndex) && (this.oldGroupId == this.newGroupId))) {
+		this.onDragEndCommon(e);
+		this.cache = {};
+		this.isDraggingCard = false;
+
+		if (!current.groupId || !this.newGroupId || ((current.index == this.newIndex) && (current.groupId == this.newGroupId))) {
 			return;
 		};
 
 		const { rootId, block, getView } = this.props;
 		const view = getView();
 		const orders: any[] = [];
-		const oldSubId = this.getSubId(this.oldGroupId);
+		const oldSubId = this.getSubId(current.groupId);
 		const newSubId = this.getSubId(this.newGroupId);
 		const newGroup = dbStore.getGroup(rootId, block.id, this.newGroupId);
-		const change = this.oldGroupId != this.newGroupId;
+		const change = current.groupId != this.newGroupId;
 
 		const setOrder = () => {
 			C.BlockDataviewObjectOrderUpdate(rootId, block.id, orders, () => {
@@ -519,20 +549,17 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 			detailStore.update(newSubId, { id: record.id, details: record }, true);
 			detailStore.delete(oldSubId, record.id, Object.keys(record));
 
-			orders.push({ viewId: view.id, groupId: this.oldGroupId, objectIds: dbStore.getRecords(oldSubId, '') });
+			orders.push({ viewId: view.id, groupId: current.groupId, objectIds: dbStore.getRecords(oldSubId, '') });
 			orders.push({ viewId: view.id, groupId: this.newGroupId, objectIds: records });
 
 			C.ObjectSetDetails(record.id, [ { key: view.groupRelationKey, value: newGroup.value } ], setOrder);
 		} else {
-			records = arrayMove(dbStore.getRecords(oldSubId, ''), this.oldIndex, this.newIndex);
+			records = arrayMove(dbStore.getRecords(oldSubId, ''), current.index, this.newIndex);
 			dbStore.recordsSet(oldSubId, '', records);
 
-			orders.push({ viewId: view.id, groupId: this.oldGroupId, objectIds: records });
-
+			orders.push({ viewId: view.id, groupId: current.groupId, objectIds: records });			
 			setOrder();
 		};
-
-		this.clearValues();
 	};
 
 	applyGroupOrder (groupId: string) {
@@ -557,23 +584,58 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 		dbStore.recordsSet(subId, '', records);
 	};
 
-	onScroll () {
-		if (!this.isDraggingColumn) {
-			return;
-		};
+	onScrollWindow () {
+		const win = $(window);
+		const node = $(ReactDOM.findDOMNode(this));
+		const scroll = node.find('.scroll');
+		const columns = node.find('.column .body');
+		const wh = win.height();
+		const rect = scroll.get(0).getBoundingClientRect();
 
+		columns.css({ maxHeight: Math.min(wh, wh - rect.y - 56) });
+	};
+
+	onScrollView () {
 		const groups = this.getGroups(false);
 		const node = $(ReactDOM.findDOMNode(this));
 
-		groups.forEach((group: any, i: number) => {
-			if (this.cache[group.id]) {
-				const item = node.find(`#column-${group.id}`);
-				const p = item.offset();
+		if (this.isDraggingColumn) {
+			groups.forEach((group: any, i: number) => {
+				if (!this.cache[group.id]) {
+					return;
+				};
 
-				this.cache[group.id].x = p.left;
-				this.cache[group.id].y = p.top;
-			};
-		});
+				const el = node.find(`#column-${group.id}`);
+				if (!el.length) {
+					return;
+				};
+
+				const { left, top } = el.offset();
+				this.cache[group.id].x = left;
+				this.cache[group.id].y = top;
+			});
+		};
+
+		if (this.isDraggingCard) {
+			groups.forEach((group: any, i: number) => {
+				const column = this.columnRefs[group.id];
+				if (!column) {
+					return;
+				};
+
+				const items = column.getItems() || [];
+				items.forEach((item: any, i: number) => {
+					const el = node.find(`#card-${item.id}`);
+					if (!el.length) {
+						return;
+					};
+
+					const { left, top } = el.offset();
+					this.cache[item.id].x = left;
+					this.cache[item.id].y = top;
+				});
+			});
+		};
 	};
 
 	getSubId (groupId: string) {
@@ -584,11 +646,6 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 	clear () {
 		const node = $(ReactDOM.findDOMNode(this));
 		node.find('.isOver').removeClass('isOver top bottom left right');
-	};
-
-	clearValues () {
-		this.oldIndex = this.newIndex -1;
-		this.oldGroupId = this.newGroupId = '';
 	};
 
 	onScrollColumn (groupId: string) {
@@ -615,19 +672,12 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 		const size = Constant.size.dataview.board;
 		const groups = this.getGroups(false);
 		const width = 30 + groups.length * (size.card + size.margin);
-		
-		let vw = 0;
-		let margin = 0;
-
-		if (width < mw) {
-			vw = mw;
-		} else {
-			vw = width;
-			margin = (ww - mw) / 2; 
-		};
+		const margin = width >= mw ? (ww - mw) / 2 : 0;
 
 		scroll.css({ width: ww, marginLeft: -margin / 2 , paddingLeft: margin / 2 });
-		viewItem.css({ width: vw });
+		viewItem.css({ width: width < mw ? mw : width });
+
+		this.onScrollWindow();
 	};
 	
 });

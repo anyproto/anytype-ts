@@ -169,14 +169,14 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 		this._isMounted = true;
 		this.resize();
 
-		Util.renderLink($(ReactDOM.findDOMNode(this)));
+		Util.renderLinks($(ReactDOM.findDOMNode(this)));
 		$(window).off('resize.cover').on('resize.cover', () => { this.resize(); });
 	};
 	
 	componentDidUpdate () {
 		this.resize();
 
-		Util.renderLink($(ReactDOM.findDOMNode(this)));
+		Util.renderLinks($(ReactDOM.findDOMNode(this)));
 	};
 	
 	componentWillUnmount () {

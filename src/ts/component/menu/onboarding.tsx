@@ -47,7 +47,7 @@ class MenuOnboarding extends React.Component<Props, {}> {
 
 	componentDidMount () {
 		this.rebind();
-		Util.renderLink($(ReactDOM.findDOMNode(this)));
+		Util.renderLinks($(ReactDOM.findDOMNode(this)));
 	};
 
 	componentDidUpdate () {
@@ -63,7 +63,7 @@ class MenuOnboarding extends React.Component<Props, {}> {
 		this.rebind();
 		this.scroll();
 
-		Util.renderLink(node);
+		Util.renderLinks(node);
 		analytics.event('ScreenOnboarding');
 	};
 

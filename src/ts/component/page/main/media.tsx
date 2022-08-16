@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
-import { Header, FooterMainEdit as Footer, Loader, Block, Button, IconObject, Deleted, ObjectName } from 'Component';
+import { Header, Footer, Loader, Block, Button, IconObject, Deleted, ObjectName } from 'Component';
 import { I, M, C, Util, crumbs, Action, Renderer } from 'Lib';
 import { commonStore, blockStore, detailStore } from 'Store';
 
@@ -133,7 +133,10 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<Props
 					)}
 				</div>
 
-				<Footer {...this.props} rootId={rootId} />
+				<Footer 
+					component="mainEdit" 
+					{...this.props} 
+				/>
 			</div>
 		);
 	};

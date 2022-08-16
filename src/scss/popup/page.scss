@@ -82,6 +82,7 @@ html.platformMac {
 html.platformWindows {
 	.popups {
 		.popup.popupPage {
+			.header { top: 0px !important; }
 			.innerWrap.full {
 				.page { padding-top: 30px; }
 			}

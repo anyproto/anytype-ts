@@ -27,6 +27,7 @@ const Patterns = {
 	'(c)': '©',
 	'(r)': '®',
 	'(tm)': '™',
+	'...': '…',
 };
 
 const Order: any = {};

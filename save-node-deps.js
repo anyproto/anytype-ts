@@ -23,6 +23,8 @@ stdin.on('end', function() {
 		return el && el.match(/^node_modules/) && !el.match(new RegExp(`^node_modules/(${skipIds.join('|')})$`)); 
 	}).map((it) => { return { from: it, to: it }; });
 
+	console.log(lines);
+
 	packageJSON.build.files = baseDepsJSON.concat(lines);
 	let jsonS = JSON.stringify(packageJSON, null, '\t');
 	fs.writeFileSync('package.json', jsonS);

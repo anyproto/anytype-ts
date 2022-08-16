@@ -1,6 +1,6 @@
 {
 	"name": "anytype2",
-	"version": "0.27.2-alpha",
+	"version": "0.27.13-alpha",
 	"description": "Anytype",
 	"main": "electron.js",
 	"scripts": {
@@ -55,7 +55,7 @@
 		"@types/react-router-dom": "^4.3.5",
 		"babel-loader": "^8.2.1",
 		"babel-preset-env": "^1.7.0",
-		"electron": "^19.0.9",
+		"electron": "^20.0.2",
 		"electron-builder": "^23.1.0",
 		"electron-notarize": "^0.2.1",
 		"file-loader": "^6.2.0",

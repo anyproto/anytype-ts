@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Block, Icon, Loader, Deleted } from 'Component';
+import { Block, Icon, Loader, Deleted, DropTarget } from 'Component';
 import { commonStore, blockStore, detailStore, menuStore, popupStore } from 'Store';
 import { I, C, Key, Util, DataUtil, Mark, focus, keyboard, crumbs, Storage, Mapper, Action, translate, analytics, Renderer } from 'Lib';
 import { observer } from 'mobx-react';
@@ -128,7 +128,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 						))}
 					</div>
 					
-					<div id="blockLast" className="blockLast" onClick={this.onLastClick} />
+					<DropTarget rootId={rootId} id="blockLast" dropType={I.DropType.Block} canDropMiddle={false}>
+						<div id="blockLast" className="blockLast" onClick={this.onLastClick} />
+					</DropTarget>
 				</div>
 			</div>
 		);
@@ -665,7 +667,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		};
 
 		const platform = Util.getPlatform();
-		const menuOpen = menuStore.isOpen();
 		const cmd = keyboard.ctrlKey();
 
 		// Last line break doesn't expand range.to
@@ -772,17 +773,17 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			};
 		};
 
-		if (!menuOpen) {
+		if (!this.menuCheck()) {
+			// Expand selection
+			keyboard.shortcut('shift+arrowup, shift+arrowdown', e, (pressed: string) => {
+				this.onShiftArrowBlock(e, range, length, pressed);
+			});
+
 			keyboard.shortcut('alt+arrowdown, alt+arrowup', e, (pressed: string) => {
 				if (block.isTextToggle()) {
 					e.preventDefault();
 					blockStore.toggle(rootId, block.id, pressed.match('arrowdown') ? true : false);
 				};
-			});
-
-			// Expand selection
-			keyboard.shortcut('shift+arrowup, shift+arrowdown', e, (pressed: string) => {
-				this.onShiftArrowBlock(e, range, pressed);
 			});
 
 			// Backspace
@@ -981,14 +982,14 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 	};
 
 	// Expand selection up/down
-	onShiftArrowBlock (e: any, range: I.TextRange, pressed: string) {
+	onShiftArrowBlock (e: any, range: I.TextRange, length: number, pressed: string) {
 		const { dataset, rootId } = this.props;
 		const { selection } = dataset || {};
 		const { focused } = focus.state;
 		const dir = pressed.match(Key.up) ? -1 : 1;
 		const block = blockStore.getLeaf(rootId, focused);
 
-		if (!block) {
+		if (!block || this.menuCheck()) {
 			return;
 		};
 
@@ -996,7 +997,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		const st = win.scrollTop();
 		const element = $(`#block-${block.id}`);
 		const value = element.find('#value');
-		const length = block.getLength();
 
 		let sRect = Util.selectionRect();
 		let vRect: any = {};
@@ -1175,11 +1175,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			return;
 		};
 
-		const menus = menuStore.list;
-		const exclude = [ 'blockContext', 'onboarding' ];
-		const menuCheck = (menus.length > 1) || ((menus.length == 1) && (!exclude.includes(menus[0].id)));
-		
-		if (menuCheck) {
+		if (this.menuCheck()) {
 			return;
 		};
 		
@@ -1206,6 +1202,12 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 				layout: object.layout,
 			});
 		};
+	};
+
+	menuCheck () {
+		const menus = menuStore.list;
+		const exclude = [ 'blockContext', 'onboarding' ];
+		return (menus.length > 1) || ((menus.length == 1) && (!exclude.includes(menus[0].id)));
 	};
 
 	getNextTableRow (id: string, dir: number) {

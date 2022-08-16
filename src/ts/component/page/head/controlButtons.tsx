@@ -45,7 +45,7 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 		let allowedDetails = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		let allowedLayout = !checkType && allowedDetails && !root.isObjectSet() && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Layout ]);
 		let allowedRelation = !checkType;
-		let allowedIcon = !checkType && allowedDetails && !root.isObjectTask() && !root.isObjectNote();
+		let allowedIcon = !checkType && allowedDetails && !root.isObjectTask() && !root.isObjectNote() && !root.isObjectBookmark();
 		let allowedCover = !checkType && allowedDetails && !root.isObjectNote();
 
 		if (root.isLocked()) {
