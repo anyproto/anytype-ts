@@ -261,18 +261,11 @@ const MenuGroupList = observer(class MenuGroupList extends React.Component<Props
 		const { rootId, blockId, getView } = data;
 		const view = getView();
 		const groups = this.getItems();
-		const block = blockStore.getLeaf(rootId, blockId);
-		const el = block.content.groupOrder.find(it => it.viewId == view.id);
 		const update: any[] = [];
 
 		groups.forEach((it: any, i: number) => {
 			update.push({ ...it, groupId: it.id, index: i });
 		});
-
-		if (el) {
-			el.groups = update;
-			blockStore.updateContent(rootId, blockId, { groupOrder: block.content.groupOrder });
-		};
 
 		dbStore.groupsSet(rootId, blockId, groups);
 		C.BlockDataviewGroupOrderUpdate(rootId, blockId, { viewId: view.id, groups: update });

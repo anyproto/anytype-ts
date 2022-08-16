@@ -425,7 +425,6 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 		const view = getView();
 		const update: any[] = [];
 		const current = this.cache[groupId];
-		const el = block.content.groupOrder.find(it => it.viewId == view.id);
 
 		let groups = this.getGroups(true);
 		groups = arrayMove(groups, current.index, this.newIndex);
@@ -434,11 +433,6 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 		groups.forEach((it: any, i: number) => {
 			update.push({ ...it, groupId: it.id, index: i });
 		});
-
-		if (el) {
-			el.groups = update;
-			blockStore.updateContent(rootId, block.id, { groupOrder: block.content.groupOrder });
-		};
 
 		C.BlockDataviewGroupOrderUpdate(rootId, block.id, { viewId: view.id, groups: update });
 
