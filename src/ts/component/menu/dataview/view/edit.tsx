@@ -35,6 +35,8 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 		const sections = this.getSections();
 		const allowedView = blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
 
+		console.log('groupRelationKey', groupRelationKey);
+
 		const Section = (item: any) => (
 			<div id={'section-' + item.id} className="section">
 				{item.name ? <div className="name">{item.name}</div> : ''}
@@ -202,7 +204,6 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 		const { data } = param;
 		const { rootId, blockId, onSave, getData, getView } = data;
 		const view = getView();
-		const current = data.view.get();
 		const allowedView = blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
 		const block = blockStore.getLeaf(rootId, blockId);
 
@@ -210,10 +211,17 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 			return;
 		};
 
+		let current = data.view.get();
+
+		current = Object.assign(current, { 
+			...this.param, 
+			name: this.param.name || translate(`viewName${current.type}`),
+		});
+
 		const clearGroups = (current.type == I.ViewType.Board) && this.param.groupRelationKey && (current.groupRelationKey != this.param.groupRelationKey);
 		const cb = () => {
 			if (view.id == current.id) {
-				getData(view.id, 0);
+				getData(current.id, 0);
 			};
 
 			if (onSave) {
@@ -221,11 +229,9 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 			};
 		};
 
-		this.param.name = this.param.name || translate(`viewName${current.type}`);
-
 		C.BlockDataviewViewUpdate(rootId, blockId, current.id, { ...current, ...this.param }, (message: any) => {
 			if (clearGroups) {
-				DataUtil.dataviewGroupUpdate(rootId, blockId, view.id, []);
+				DataUtil.dataviewGroupUpdate(rootId, blockId, current.id, []);
 				C.BlockDataviewGroupOrderUpdate(rootId, blockId, { viewId: current.id, groups: [] }, cb);
 			} else {
 				cb();
