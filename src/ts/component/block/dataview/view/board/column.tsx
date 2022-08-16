@@ -173,15 +173,23 @@ const Column = observer(class Column extends React.Component<Props, State> {
 			{ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.Equal, value: false },
 		]);
 
-		switch (relation.format) {
-			default:
-				filters.push({ operator: I.FilterOperator.And, relationKey: relation.relationKey, condition: I.FilterCondition.Equal, value: value });
-				break;
+		console.log(value);
 
-			case I.RelationType.Tag:
-				filters.push({ operator: I.FilterOperator.And, relationKey: relation.relationKey, condition: I.FilterCondition.ExactIn, value: value });
-				break;
+		if (!value || !value.length) {
+			filters.push({ operator: I.FilterOperator.And, relationKey: relation.relationKey, condition: I.FilterCondition.Empty, value: null });
+		} else {
+			switch (relation.format) {
+				default:
+					filters.push({ operator: I.FilterOperator.And, relationKey: relation.relationKey, condition: I.FilterCondition.Equal, value: value });
+					break;
+
+				case I.RelationType.Tag:
+					filters.push({ operator: I.FilterOperator.And, relationKey: relation.relationKey, condition: I.FilterCondition.ExactIn, value: value });
+					break;
+			};
 		};
+
+		console.log(filters);
 
 		if (clear) {
 			this.clear();
