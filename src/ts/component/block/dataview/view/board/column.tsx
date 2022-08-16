@@ -95,7 +95,7 @@ const Column = observer(class Column extends React.Component<Props, State> {
 								readonly={true} 
 								arrayLimit={2}
 								withLabel={true}
-								placeholder={translate('placeholderCellCommon')}
+								placeholder={translate('commonEmpty')}
 							/>
 						</div>
 

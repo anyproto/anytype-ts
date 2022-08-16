@@ -150,6 +150,9 @@
 					.icon:hover { background-color: $colorBgIcon; }
 				}
 			}
+			.column.withColor {
+				.head .empty { color: $colorBlack; }
+			}
 
 			.card.add:hover, .card:hover .cardContent { border-color: $colorLinePrimary; }
 			.card.add:hover {
