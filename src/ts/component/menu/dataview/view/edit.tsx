@@ -35,8 +35,6 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 		const sections = this.getSections();
 		const allowedView = blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
 
-		console.log('groupRelationKey', groupRelationKey);
-
 		const Section = (item: any) => (
 			<div id={'section-' + item.id} className="section">
 				{item.name ? <div className="name">{item.name}</div> : ''}
@@ -229,7 +227,7 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 			};
 		};
 
-		C.BlockDataviewViewUpdate(rootId, blockId, current.id, { ...current, ...this.param }, (message: any) => {
+		C.BlockDataviewViewUpdate(rootId, blockId, current.id, current, (message: any) => {
 			if (clearGroups) {
 				DataUtil.dataviewGroupUpdate(rootId, blockId, current.id, []);
 				C.BlockDataviewGroupOrderUpdate(rootId, blockId, { viewId: current.id, groups: [] }, cb);

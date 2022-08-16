@@ -243,8 +243,9 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 
 		const { rootId, block, getView, getData } = this.props;
 		const allowed = blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.View ]);
+		const view = dbStore.getView(rootId, block.id, item.id);
 
-		this.onViewSet(item);
+		this.onViewSet(view);
 
 		menuStore.open('dataviewViewEdit', { 
 			element: element,
@@ -254,7 +255,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 				rootId: rootId,
 				blockId: block.id,
 				readonly: !allowed,
-				view: observable.box(item),
+				view: observable.box(view),
 				getView: getView,
 				getData: getData,
 				onSave: () => { this.forceUpdate(); },
