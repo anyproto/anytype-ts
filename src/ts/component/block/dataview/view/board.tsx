@@ -415,7 +415,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 				const el = node.find(`#column-${hoverId}`);
 
 				isLeft ? el.before(ghost) : el.after(ghost);
-				ghost.css({ height: this.cache[hoverId].height });
+				ghost.css({ height: current.height });
 			};
 		});
 	};
@@ -434,6 +434,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 			update.push({ ...it, groupId: it.id, index: i });
 		});
 
+		DataUtil.dataviewGroupUpdate(rootId, block.id, view.id, update);
 		C.BlockDataviewGroupOrderUpdate(rootId, block.id, { viewId: view.id, groups: update });
 
 		this.cache = {};
@@ -495,7 +496,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 			if (hoverId) {
 				const card = node.find(`#card-${hoverId}`);
 
-				ghost.css({ height: current.height, width: current.width });
+				ghost.css({ height: current.height });
 				isTop ? card.before(ghost) : card.after(ghost);
 			};
 		});

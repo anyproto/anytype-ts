@@ -1272,6 +1272,20 @@ class DataUtil {
 		].includes(type);
 	};
 
+	dataviewGroupUpdate (rootId: string, blockId: string, viewId: string, groups: any[]) {
+		const block = blockStore.getLeaf(rootId, blockId);
+		if (!block) {
+			return;
+		};
+
+		const el = block.content.groupOrder.find(it => it.viewId == viewId);
+		if (el) {
+			el.groups = groups;
+		};
+
+		blockStore.updateContent(rootId, blockId, block.content);
+	};
+
 };
 
 export default new DataUtil();

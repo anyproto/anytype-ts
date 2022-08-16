@@ -22,7 +22,7 @@
 				.ghost.bottom { display: block; }
 			}
 
-            .columns { display: flex; flex-direction: row; gap: 0px 8px; }
+            .columns { display: flex; flex-direction: row; gap: 0px 8px; align-items: flex-start; }
             .column { width: 254px; flex-shrink: 0; display: flex; flex-direction: column; position: relative; }
             .column {
 				.bgColor { position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; opacity: 0.5; }

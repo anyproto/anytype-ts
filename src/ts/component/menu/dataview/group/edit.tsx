@@ -146,6 +146,7 @@ const MenuGroupEdit = observer(class MenuGroupEdit extends React.Component<Props
 		});
 
 		dbStore.groupsSet(rootId, blockId, update);
+		DataUtil.dataviewGroupUpdate(rootId, blockId, view.id, update);
 		C.BlockDataviewGroupOrderUpdate(rootId, blockId, { viewId: view.id, groups: update });
 
 		this.forceUpdate();

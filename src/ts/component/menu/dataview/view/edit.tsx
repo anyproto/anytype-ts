@@ -225,6 +225,7 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 
 		C.BlockDataviewViewUpdate(rootId, blockId, current.id, { ...current, ...this.param }, (message: any) => {
 			if (clearGroups) {
+				DataUtil.dataviewGroupUpdate(rootId, blockId, view.id, []);
 				C.BlockDataviewGroupOrderUpdate(rootId, blockId, { viewId: current.id, groups: [] }, cb);
 			} else {
 				cb();
