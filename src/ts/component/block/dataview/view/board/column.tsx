@@ -23,6 +23,7 @@ interface State {
 	loading: boolean;
 };
 
+const $ = require('jquery');
 const Constant = require('json/constant.json');
 
 const Column = observer(class Column extends React.Component<Props, State> {
@@ -52,15 +53,11 @@ const Column = observer(class Column extends React.Component<Props, State> {
 		const records = dbStore.getRecords(subId, '');
 		const items = this.getItems();
 		const { offset, total } = dbStore.getMeta(subId, '');
-		const relation = dbStore.getRelation(rootId, block.id, view.groupRelationKey);
 		const group = dbStore.getGroup(rootId, block.id, id);
 		const head = {};
 		const cn = [ 'column' ];
 		const cnbg = [];
 		
-		let label: any = null;
-		let showCell = true;
-
 		if (view.groupBackgroundColors) {
 			cn.push('withColor');
 			cnbg.push('bgColor bgColor-' + (group.bgColor || 'default'));
@@ -71,12 +68,6 @@ const Column = observer(class Column extends React.Component<Props, State> {
 		records.forEach((it: any) => {
 			const object = detailStore.get(subId, it.id, [ view.groupRelationKey ]);
 		});
-
-		switch (relation.format) {
-			case I.RelationType.Checkbox:
-				label = `${relation.name} is ${value ? 'checked' : 'unchecked'}`;
-				break;
-		};
 
 		return (
 			<div 
@@ -91,21 +82,19 @@ const Column = observer(class Column extends React.Component<Props, State> {
 							draggable={true}
 							onDragStart={(e: any) => { onDragStartColumn(e, id); }}
 						>
-							{showCell ? (
-								<Cell 
-									id={'board-head-' + id} 
-									rootId={rootId}
-									subId={subId}
-									block={block}
-									relationKey={view.groupRelationKey} 
-									viewType={I.ViewType.Board}
-									getRecord={() => { return head; }}
-									readonly={true} 
-									arrayLimit={2}
-									placeholder={translate('placeholderCellCommon')}
-								/>
-							) : ''}
-							{label}
+							<Cell 
+								id={'board-head-' + id} 
+								rootId={rootId}
+								subId={subId}
+								block={block}
+								relationKey={view.groupRelationKey} 
+								viewType={I.ViewType.Board}
+								getRecord={() => { return head; }}
+								readonly={true} 
+								arrayLimit={2}
+								withLabel={true}
+								placeholder={translate('placeholderCellCommon')}
+							/>
 						</div>
 
 						<div className="side right">
@@ -243,9 +232,15 @@ const Column = observer(class Column extends React.Component<Props, State> {
 
 	onMore (e: any) {
 		const { rootId, block, id, getView } = this.props;
+		const node = $(ReactDOM.findDOMNode(this));
+
+		node.addClass('active');
 
 		menuStore.open('dataviewGroupEdit', {
 			element: `#button-${id}-more`,
+			onClose: () => {
+				node.removeClass('active');
+			},
 			data: {
 				rootId,
 				blockId: block.id,

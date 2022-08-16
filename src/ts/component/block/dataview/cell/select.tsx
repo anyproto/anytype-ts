@@ -37,7 +37,7 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 	};
 
 	render () {
-		const { id, rootId, block, relation, getRecord, index, elementMapper, arrayLimit } = this.props;
+		const { relation, getRecord, index, elementMapper, arrayLimit } = this.props;
 		const { isEditing } = this.state;
 		const record = getRecord(index);
 		const canClear = relation.format == I.RelationType.Status;
@@ -291,12 +291,11 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 			return [];
 		};
 
-		let value = Relation.getArrayValue(record[relation.relationKey]);
+		let value: any = Relation.getArrayValue(record[relation.relationKey]);
 		value = value.map((id: string) => { 
 			return (relation.selectDict || []).find(it => it.id == id);
 		});
-		value = value.filter((it: any) => { return it && it.id; });
-
+		value = value.filter(it => it && it.id);
 		return value;
 	};
 

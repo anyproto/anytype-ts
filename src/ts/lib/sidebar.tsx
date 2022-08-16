@@ -412,7 +412,7 @@ class Sidebar {
 		};
 
 		if (dummy && dummy.length) {
-			dummy.css({ width: width ? width + 8 : 0 });
+			dummy.css({ width: width ? width : 0 });
 		};
 
 		page.css({ width: pageWidth });

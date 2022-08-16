@@ -219,8 +219,8 @@
 				"margin": 16
 			},
 			"board": {
-				"card": 240,
-				"margin": 24
+				"card": 254,
+				"margin": 8
 			},
 			"cell": {
 				"default": 192,

@@ -3,7 +3,7 @@ import { Icon } from 'Component';
 import { I } from 'Lib';
 import { observer } from 'mobx-react';
 
-interface Props extends I.Cell {}
+interface Props extends I.Cell {};
 
 const CellCheckbox = observer(class CellCheckbox extends React.Component<Props, {}> {
 
@@ -14,7 +14,7 @@ const CellCheckbox = observer(class CellCheckbox extends React.Component<Props, 
 	};
 
 	render () {
-		const { index, getRecord } = this.props;
+		const { index, getRecord, withLabel, relation } = this.props;
 		const record = getRecord(index);
 		if (!record) {
 			return null;
@@ -27,7 +27,17 @@ const CellCheckbox = observer(class CellCheckbox extends React.Component<Props, 
 			cn.push('active');
 		};
 
-		return <Icon className={cn.join(' ')} />;
+		let label = null;
+		if (withLabel) {
+			label = <span className="label">{relation.name} is {value ? 'checked' : 'unchecked'}</span>;
+		};
+
+		return (
+			<React.Fragment>
+				<Icon className={cn.join(' ')} />
+				{label}
+			</React.Fragment>
+		);
 	};
 
 	getValue () {

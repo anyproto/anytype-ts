@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { I, C, DataUtil, keyboard } from 'Lib';
 import { MenuItemVertical } from 'Component';
-import { dbStore } from 'Store';
+import { dbStore, blockStore } from 'Store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {};
@@ -92,7 +92,7 @@ const MenuGroupEdit = observer(class MenuGroupEdit extends React.Component<Props
 		return [
 			{ 
 				children: [ 
-					{ id: 'hide', icon: 'hide', name: (this.isHidden ? 'Hide column' : 'Show column') } 
+					{ id: 'hide', icon: 'hide', name: (this.isHidden ? 'Show column' : 'Hide column') } 
 				]
 			},
 			{ children: colors },
@@ -119,6 +119,7 @@ const MenuGroupEdit = observer(class MenuGroupEdit extends React.Component<Props
 		};
 
 		this.save();
+		this.props.close();
 	};
 
 	onMouseEnter (e: any, item: any) {
@@ -144,7 +145,8 @@ const MenuGroupEdit = observer(class MenuGroupEdit extends React.Component<Props
 			update.push(item);
 		});
 
-		dbStore.groupsSet(rootId, blockId, groups);
+		dbStore.groupsSet(rootId, blockId, update);
+		DataUtil.dataviewGroupUpdate(rootId, blockId, view.id, update);
 		C.BlockDataviewGroupOrderUpdate(rootId, blockId, { viewId: view.id, groups: update });
 
 		this.forceUpdate();

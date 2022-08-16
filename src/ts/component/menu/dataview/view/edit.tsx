@@ -14,6 +14,7 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 	n: number = -1;
 	ref: any = null;
 	isFocused: boolean = false;
+	param: any = {};
 
 	constructor(props: any) {
 		super(props);
@@ -30,7 +31,7 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 		const { data } = param;
 		const { rootId, blockId } = data;
 		const view = data.view.get();
-		const { cardSize, coverFit, hideIcon, groupRelationKey } = view;
+		const { cardSize, coverFit, hideIcon, groupRelationKey, groupBackgroundColors } = view;
 		const sections = this.getSections();
 		const allowedView = blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
 
@@ -201,27 +202,37 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 		const { data } = param;
 		const { rootId, blockId, onSave, getData, getView } = data;
 		const view = getView();
-		const current = data.view.get();
 		const allowedView = blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
-		const groupOption = this.getGroupOption();
+		const block = blockStore.getLeaf(rootId, blockId);
 
-		if (!allowedView) {
+		if (!allowedView || !block) {
 			return;
 		};
 
-		if (current.type == I.ViewType.Board) {
-			current.groupRelationKey = groupOption.id;
-		};
+		let current = data.view.get();
 
-		current.name = current.name || translate(`viewName${current.type}`);
+		current = Object.assign(current, { 
+			...this.param, 
+			name: this.param.name || translate(`viewName${current.type}`),
+		});
 
-		C.BlockDataviewViewUpdate(rootId, blockId, current.id, current, (message: any) => {
+		const clearGroups = (current.type == I.ViewType.Board) && this.param.groupRelationKey && (current.groupRelationKey != this.param.groupRelationKey);
+		const cb = () => {
 			if (view.id == current.id) {
-				getData(view.id, 0);
+				getData(current.id, 0);
 			};
 
 			if (onSave) {
 				onSave();
+			};
+		};
+
+		C.BlockDataviewViewUpdate(rootId, blockId, current.id, current, (message: any) => {
+			if (clearGroups) {
+				DataUtil.dataviewGroupUpdate(rootId, blockId, current.id, []);
+				C.BlockDataviewGroupOrderUpdate(rootId, blockId, { viewId: current.id, groups: [] }, cb);
+			} else {
+				cb();
 			};
 		});
 	};
@@ -261,7 +272,7 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 			settings = settings.concat([
 				{ id: 'groupRelationKey', name: 'Group by', caption: groupOption ? groupOption.name : 'Select', withCaption: true, arrow: true },
 				{ 
-					id: 'groupBackgroundColors', name: 'Color columns', withSwitch: true, switchValue: view.coverFit, 
+					id: 'groupBackgroundColors', name: 'Color columns', withSwitch: true, switchValue: view.groupBackgroundColors, 
 					onSwitch: (e: any, v: boolean) => { this.onSwitch(e, 'groupBackgroundColors', v); }
 				},
 			]);
@@ -322,7 +333,7 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 		const { param, getId, getSize } = this.props;
 		const { data } = param;
 		const { rootId, blockId } = data;
-		const view = data.view.get();
+		const current = data.view.get();
 		const allowedView = blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
 
 		menuStore.closeAll(Constant.menuIds.viewEdit);
@@ -339,11 +350,11 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 			isSub: true,
 			data: {
 				rebind: this.rebind,
-				value: view[item.id],
+				value: current[item.id],
 				onSelect: (e: any, el: any) => {
-					view[item.id] = el.id;
+					this.param[item.id] = el.id;
 					
-					if (view.id) {
+					if (current.id) {
 						this.save();
 					};
 				},
@@ -485,10 +496,28 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, blockId } = data;
-		const options: any[] = dbStore.getRelations(rootId, blockId).filter((it: I.Relation) => {
-			return [ I.RelationType.Status, I.RelationType.Tag, I.RelationType.Checkbox ].includes(it.format) && 
-				(!it.isHidden || [ Constant.relationKey.done ].includes(it.relationKey));
-		}).map((it: any) => {
+		const formats = [ I.RelationType.Status, I.RelationType.Tag, I.RelationType.Checkbox ];
+		
+		let options: any[] = dbStore.getRelations(rootId, blockId);
+
+		options = options.filter((it: I.Relation) => {
+			return formats.includes(it.format) && (!it.isHidden || [ Constant.relationKey.done ].includes(it.relationKey));
+		});
+
+		options.sort((c1: any, c2: any) => {
+			if ((c1.format == I.RelationType.Status) && (c2.format != I.RelationType.Status)) return -1;
+			if ((c1.format != I.RelationType.Status) && (c2.format == I.RelationType.Status)) return 1;
+
+			if ((c1.format == I.RelationType.Tag) && (c2.format != I.RelationType.Tag)) return -1;
+			if ((c1.format != I.RelationType.Tag) && (c2.format == I.RelationType.Tag)) return 1;
+
+			if ((c1.format == I.RelationType.Checkbox) && (c2.format != I.RelationType.Checkbox)) return -1;
+			if ((c1.format != I.RelationType.Checkbox) && (c2.format == I.RelationType.Checkbox)) return 1;
+
+			return 0;
+		});
+
+		options = options.map((it: any) => {
 			return { 
 				id: it.relationKey, 
 				icon: 'relation ' + DataUtil.relationClass(it.format),
@@ -502,10 +531,10 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 	getGroupOption () {
 		const { param } = this.props;
 		const { data } = param;
-		const view = data.view.get();
+		const current = data.view.get();
 		const groupOptions = this.getGroupOptions();
 
-		return groupOptions.length ? (groupOptions.find(it => it.id == view.groupRelationKey) || groupOptions[0]) : null;
+		return groupOptions.length ? (groupOptions.find(it => it.id == current.groupRelationKey) || groupOptions[0]) : null;
 	};
 
 	resize () {

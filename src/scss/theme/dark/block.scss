@@ -139,10 +139,22 @@
         }
 
         .viewItem.viewBoard {
-            .cardContent { background: $colorBgLight; border-color: $colorLinePrimary; }
-			.card.add { background: $colorBgLight; border-color: $colorLinePrimary; }
+			.ghost { border-color: $colorOrange; }
+            .cardContent { background: $colorBgLight; border-color: $colorLineSecondary; }
+			.card.add { background: $colorBgLight; border-color: $colorLineSecondary; }
             .cellContent.isName { color: $colorPrimary; }
-			.column .head { background: $colorBlack; }
+
+			.column {
+				.head { background: $colorBlack; }
+				.side.right {
+					.icon:hover { background-color: $colorBgIcon; }
+				}
+			}
+
+			.card.add:hover, .card:hover .cardContent { border-color: $colorLinePrimary; }
+			.card.add:hover {
+                .icon { background-image: url('#{$themePath}/icon/plus/column1.svg'); }
+            }
         }
     }
 
