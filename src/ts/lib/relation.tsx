@@ -268,6 +268,69 @@ class Relation {
 		return ret;
 	};
 
+	getSizeOptions () {
+		return [
+			{ id: I.CardSize.Small, name: 'Small' },
+			{ id: I.CardSize.Medium, name: 'Medium' },
+			{ id: I.CardSize.Large, name: 'Large' },
+		];
+	};
+
+	getCoverOptions (rootId: string, blockId: string) {
+		const options: any[] = dbStore.getRelations(rootId, blockId).filter((it: I.Relation) => {
+			return !it.isHidden && (it.format == I.RelationType.File);
+		}).map((it: any) => {
+			return { 
+				id: it.relationKey, 
+				icon: 'relation ' + DataUtil.relationClass(it.format),
+				name: it.name, 
+			};
+		});
+
+		return [
+			{ id: '', icon: '', name: 'None' },
+			{ id: 'pageCover', icon: 'image', name: 'Page cover' }
+		].concat(options);
+	};
+
+	getGroupOptions (rootId: string, blockId: string) {
+		const formats = [ I.RelationType.Status, I.RelationType.Tag, I.RelationType.Checkbox ];
+		
+		let options: any[] = dbStore.getRelations(rootId, blockId);
+
+		options = options.filter((it: I.Relation) => {
+			return formats.includes(it.format) && (!it.isHidden || [ Constant.relationKey.done ].includes(it.relationKey));
+		});
+
+		options.sort((c1: any, c2: any) => {
+			if ((c1.format == I.RelationType.Status) && (c2.format != I.RelationType.Status)) return -1;
+			if ((c1.format != I.RelationType.Status) && (c2.format == I.RelationType.Status)) return 1;
+
+			if ((c1.format == I.RelationType.Tag) && (c2.format != I.RelationType.Tag)) return -1;
+			if ((c1.format != I.RelationType.Tag) && (c2.format == I.RelationType.Tag)) return 1;
+
+			if ((c1.format == I.RelationType.Checkbox) && (c2.format != I.RelationType.Checkbox)) return -1;
+			if ((c1.format != I.RelationType.Checkbox) && (c2.format == I.RelationType.Checkbox)) return 1;
+
+			return 0;
+		});
+
+		options = options.map((it: any) => {
+			return { 
+				id: it.relationKey, 
+				icon: 'relation ' + DataUtil.relationClass(it.format),
+				name: it.name, 
+			};
+		});
+
+		return options;
+	};
+
+	getGroupOption (rootId: string, blockId: string, relationKey: string) {
+		const groupOptions = this.getGroupOptions(rootId, blockId);
+		return groupOptions.length ? (groupOptions.find(it => it.id == relationKey) || groupOptions[0]) : null;
+	};
+
 	getStringValue (value: any) {
 		if (('object' == typeof(value)) && value && value.hasOwnProperty('length')) {
 			return String(value.length ? value[0] : '');

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon, Button } from 'Component';
-import { C, I, Util, analytics } from 'Lib';
+import { C, I, Util, analytics, Relation } from 'Lib';
 import { menuStore, dbStore, blockStore } from 'Store';
 import { observable } from 'mobx';
 import { observer } from 'mobx-react';
@@ -181,11 +181,12 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 		});
 	};
 
-	onViewAdd () {
-		const { rootId, block, getView, getData } = this.props;
+	onViewAdd (e: any) {
+		e.persist();
+
+		const { rootId, block, getView } = this.props;
 		const view = getView();
 		const relations = Util.objectCopy(view.relations);
-		const subId = dbStore.getSubId(rootId, block.id);
 		const filters: I.Filter[] = [];
 
 		for (let relation of relations) {
@@ -204,28 +205,14 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 		const newView = {
 			name: `New view`,
 			type: I.ViewType.Grid,
+			groupRelationKey: Relation.getGroupOption(rootId, block.id, '')?.id,
 			filters,
 		};
 
 		C.BlockDataviewViewCreate(rootId, block.id, newView, (message: any) => {
 			const view = dbStore.getView(rootId, block.id, message.viewId);
-
-			menuStore.open('dataviewViewEdit', {
-				element: `#view-item-${message.viewId}`,
-				horizontal: I.MenuDirection.Center,
-				noFlipY: true,
-				data: {
-					rootId: rootId,
-					blockId: block.id,
-					getData: getData,
-					getView: getView,
-					view: observable.box(view),
-					onSave: () => {
-						this.forceUpdate();
-					},
-				},
-			});
-
+			
+			this.onViewEdit(e, `#views #view-item-${message.viewId}`, view);
 			analytics.event('AddView', { type: view.type });
 		});
 	};
