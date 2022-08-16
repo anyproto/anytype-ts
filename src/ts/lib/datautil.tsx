@@ -620,10 +620,10 @@ class DataUtil {
 		];
 	
 		let items = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).filter((it: any) => {
-			if (!config.debug.ho) {
-				return !it.isHidden;
+			if (skip.includes(it.id)) {
+				return false;
 			};
-			return !skip.includes(it.id);
+			return config.debug.ho ? true : !it.isHidden;
 		});
 
 		if (withBookmark && !bookmark._empty_) {
