@@ -173,23 +173,27 @@ const Column = observer(class Column extends React.Component<Props, State> {
 			{ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.Equal, value: false },
 		]);
 
-		console.log(value);
+		switch (relation.format) {
+			default:
+				filters.push({ operator: I.FilterOperator.And, relationKey: relation.relationKey, condition: I.FilterCondition.Equal, value: value });
+				break;
 
-		if (!value || !value.length) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: relation.relationKey, condition: I.FilterCondition.Empty, value: null });
-		} else {
-			switch (relation.format) {
-				default:
+			case I.RelationType.Status:
+				if (!value || !value.length) {
+					filters.push({ operator: I.FilterOperator.And, relationKey: relation.relationKey, condition: I.FilterCondition.Empty, value: null });
+				} else {
 					filters.push({ operator: I.FilterOperator.And, relationKey: relation.relationKey, condition: I.FilterCondition.Equal, value: value });
-					break;
+				}
+				break;
 
-				case I.RelationType.Tag:
+			case I.RelationType.Tag:
+				if (!value || !value.length) {
+					filters.push({ operator: I.FilterOperator.And, relationKey: relation.relationKey, condition: I.FilterCondition.Empty, value: null });
+				} else {
 					filters.push({ operator: I.FilterOperator.And, relationKey: relation.relationKey, condition: I.FilterCondition.ExactIn, value: value });
-					break;
-			};
+				};
+				break;
 		};
-
-		console.log(filters);
 
 		if (clear) {
 			this.clear();
