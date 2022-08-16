@@ -143,7 +143,13 @@
             .cardContent { background: $colorBgLight; border-color: $colorLineSecondary; }
 			.card.add { background: $colorBgLight; border-color: $colorLineSecondary; }
             .cellContent.isName { color: $colorPrimary; }
-			.column .head { background: $colorBlack; }
+
+			.column {
+				.head { background: $colorBlack; }
+				.side.right {
+					.icon:hover { background-color: $colorBgIcon; }
+				}
+			}
 
 			.card.add:hover, .card:hover .cardContent { border-color: $colorLinePrimary; }
 			.card.add:hover {
