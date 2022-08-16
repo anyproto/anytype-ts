@@ -1,9 +1,9 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon, Loader } from 'Component';
-import { I, C, Util, translate, keyboard, DataUtil } from 'Lib';
+import { I, C, Util, translate, keyboard } from 'Lib';
 import { observer } from 'mobx-react';
-import { dbStore, detailStore, menuStore } from 'Store';
+import { dbStore, detailStore, menuStore, commonStore } from 'Store';
 
 import Card from './card';
 import Cell from 'Component/block/dataview/cell';
@@ -46,6 +46,7 @@ const Column = observer(class Column extends React.Component<Props, State> {
 	};
 
 	render () {
+		const { config } = commonStore;
 		const { rootId, block, id, getSubId, getView, onRecordAdd, value, onDragStartColumn } = this.props;
 		const { loading } = this.state;
 		const view = getView();
@@ -80,7 +81,7 @@ const Column = observer(class Column extends React.Component<Props, State> {
 					<div className="sides">
 						<div 
 							className="side left"
-							draggable={true}
+							draggable={config.experimental}
 							onDragStart={(e: any) => { onDragStartColumn(e, id); }}
 						>
 							<Cell 

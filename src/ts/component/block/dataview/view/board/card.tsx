@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { I, DataUtil, Relation, keyboard } from 'Lib';
-import { dbStore, detailStore } from 'Store';
+import { dbStore, detailStore, commonStore } from 'Store';
 import { observer } from 'mobx-react';
 
 import Cell from 'Component/block/dataview/cell';
@@ -18,7 +18,8 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 	_isMounted: boolean = false;
 
 	render () {
-		const { rootId, block, groupId, id, index, getView, onContext, onRef, onDragStartCard } = this.props;
+		const { config } = commonStore;
+		const { rootId, block, groupId, id, getView, onContext, onRef, onDragStartCard } = this.props;
 		const view = getView();
 		const relations = view.relations.filter((it: any) => { return it.isVisible; });
 		const idPrefix = 'dataviewCell';
@@ -31,7 +32,7 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 				id={`card-${record.id}`}
 				className={cn.join(' ')} 
 				data-id={record.id}
-				draggable={true}
+				draggable={config.experimental}
 				onDragStart={(e: any) => { onDragStartCard(e, groupId, record); }}
 				onClick={(e: any) => { this.onClick(e); }}
 				onContextMenu={(e: any) => { onContext(e, record.id); }}
