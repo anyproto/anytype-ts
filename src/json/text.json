@@ -17,8 +17,10 @@
 	"commonValue": { "en": "Value" },
 	"commonProgress": { "en": "Processing..." },
 	"commonArchived": { "en": "Object is in the bin" },
-	"commonDeleted": { "en": "Non-existent object" },
 	"commonEmpty": { "en": "Empty" },
+
+	"commonDeletedObject": { "en": "Non-existent object" },
+	"commonDeletedType": { "en": "Deleted type" },
 
 	"month1": { "en": "January" },
 	"month2": { "en": "February" },

@@ -136,12 +136,16 @@ class DetailStore {
 		};
 
 		if (object.isDeleted) {
-			name = translate('commonDeleted');
+			name = translate('commonDeletedObject');
 		};
 
 		if (object.type == Constant.typeId.type) {
 			const type = dbStore.getObjectType(object.id);
 			object._smartBlockTypes_ = type ? type.types || [] : [];
+
+			if (object.isDeleted) {
+				name = translate('commonDeletedType');
+			};
 		};
 
 		return {

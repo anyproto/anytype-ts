@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { I, C, DataUtil, Util, focus, analytics, Relation } from 'Lib';
+import { I, C, DataUtil, Util, focus, analytics, Relation, translate } from 'Lib';
 import { Cell } from 'Component';
-import { observer } from 'mobx-react';
 import { blockStore, detailStore, dbStore, menuStore } from 'Store';
+import { observer } from 'mobx-react';
 
 interface Props extends I.BlockComponent {
 	iconSize?: number;
@@ -97,19 +97,17 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 		return (
 			<div className={[ 'wrap', 'focusable', 'c' + block.id ].join(' ')} tabIndex={0} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp}>
-				{!type._empty_ ? (
-					<span className="cell canEdit first">
-						<div 
-							id={Relation.cellId(PREFIX, Constant.relationKey.type, 0)} 
-							className="cellContent type"
-							onClick={this.onType}
-							onMouseEnter={(e: any) => { this.onMouseEnter(e, Constant.relationKey.type); }}
-							onMouseLeave={this.onMouseLeave}
-						>
-							<div className="name">{Util.shorten(type.name, 32)}</div>
-						</div>
-					</span>
-				): ''}
+				<span className="cell canEdit first">
+					<div 
+						id={Relation.cellId(PREFIX, Constant.relationKey.type, 0)} 
+						className="cellContent type"
+						onClick={this.onType}
+						onMouseEnter={(e: any) => { this.onMouseEnter(e, Constant.relationKey.type); }}
+						onMouseLeave={this.onMouseLeave}
+					>
+						<div className="name">{type._empty_ ? translate('commonDeletedType') : Util.shorten(type.name, 32)}</div>
+					</div>
+				</span>
 
 				{object.layout == I.ObjectLayout.Set ? (
 					<span className={[ 'cell', (!readonly ? 'canEdit' : '') ].join(' ')}>
@@ -328,7 +326,8 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			} else 
 			if (message.records.length == 2) {
 				options.push({ id: 'setOpenMenu', name: 'Open set', arrow: true });
-			} else {
+			} else 
+			if (!type._empty_ && !type.isDeleted) {
 				options.push({ id: 'setCreate', name: 'Create set' });
 			};
 

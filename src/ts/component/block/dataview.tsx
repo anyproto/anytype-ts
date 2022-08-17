@@ -260,7 +260,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			name = String(item.snippet || '').replace(/\n/g, ' ');
 		};
 		if (item.isDeleted) {
-			name = translate('commonDeleted');
 			isReadonly = true;
 		};
 

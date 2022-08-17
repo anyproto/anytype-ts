@@ -427,7 +427,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 				tt = translate('commonArchived');
 			};
 			if (object.isDeleted) {
-				tt = translate('commonDeleted');
+				tt = translate('commonDeletedObject');
 			};
 
 			if (tt) {
