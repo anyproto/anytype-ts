@@ -13,10 +13,13 @@
 		}
 		.inner:hover { border-color: $colorMediumGrey; }
 		.inner.bgColor { border: 0px; }
+		.inner.isArchived { cursor: default; }
 		
 		.inner {
-			.side.left { width: 100%; padding: 16px; }
+			.side.left { width: 100%; padding: 16px; position: relative; }
 			.side.right { border-radius: 0px 12px 12px 0px; overflow: hidden; display: none; }
+
+			.archive { position: absolute; right: 10px; top: 10px; z-index: 1; }
 		}
 		
 		.inner.vertical { display: block; }

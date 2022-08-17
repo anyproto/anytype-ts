@@ -60,7 +60,7 @@ const LinkCard = observer(class LinkCard extends React.Component<Props, {}> {
 			};
 		};
 
-		if (isArchived || isDeleted) {
+		if (isArchived) {
 			archive = <div className="tagItem isTag tagColor-grey archive">{translate('blockLinkArchived')}</div>;
 		};
 

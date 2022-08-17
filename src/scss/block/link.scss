@@ -73,7 +73,7 @@
 			.cardName { @include text-common; line-height: 18px; }
 			.cardName .name { @include clamp2; }
 
-			.archive { position: absolute; right: 16px; top: 16px; z-index: 1; }
+			.archive { position: absolute; right: 10px; top: 10px; z-index: 1; }
 		}
 
 		.linkCard.c48.withIcon {

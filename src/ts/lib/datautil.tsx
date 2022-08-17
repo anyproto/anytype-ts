@@ -737,7 +737,7 @@ class DataUtil {
 
 	// Action menu
 	menuGetActions (param: any) {
-		let { hasText, hasFile, hasLink } = param;
+		let { hasText, hasFile, hasLink, hasBookmark, hasTurnObject } = param;
 		let cmd = keyboard.ctrlSymbol();
 		let items: any[] = [
 			{ id: 'move', icon: 'move', name: 'Move to', arrow: true },
@@ -746,6 +746,10 @@ class DataUtil {
 			//{ id: 'comment', icon: 'comment', name: 'Comment' }
 		];
 
+		if (hasTurnObject) {
+			items.push({ id: 'turnObject', icon: 'object', name: 'Turn into object', arrow: true });
+		};
+		
 		if (hasText) {
 			items.push({ id: 'clear', icon: 'clear', name: 'Clear style' });
 		};
@@ -755,6 +759,10 @@ class DataUtil {
 			items.push({ id: 'openFileAsObject', icon: 'expand', name: 'Open as object' });
 			//items.push({ id: 'rename', icon: 'rename', name: 'Rename' });
 			//items.push({ id: 'replace', icon: 'replace', name: 'Replace' });
+		};
+
+		if (hasBookmark) {
+			items.push({ id: 'openBookmarkAsObject', icon: 'expand', name: 'Open as object' });
 		};
 
 		if (hasLink) {

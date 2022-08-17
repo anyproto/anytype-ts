@@ -27,9 +27,15 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<Props
 		const { rootId, block, readonly } = this.props;
 		const { state } = block.content;
 		const object = detailStore.get(rootId, block.content.targetObjectId);
-		const { iconImage, picture, url } = object;
+		const { iconImage, picture, url, isArchived } = object;
 
 		let element = null;
+		let archive = null;
+
+		if (isArchived) {
+			archive = <div className="tagItem isTag tagColor-grey archive">{translate('blockLinkArchived')}</div>;
+		};
+
 		switch (state) {
 			default:
 			case I.BookmarkState.Error:
@@ -61,6 +67,10 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<Props
 					cn.push('withImage');
 				};
 
+				if (isArchived) {
+					cn.push('isArchived');
+				};
+
 				if (block.bgColor) {
 					cnl.push('bgColor bgColor-' + block.bgColor);
 				};
@@ -74,6 +84,8 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<Props
 								{iconImage ? <img src={commonStore.imageUrl(iconImage, 16)} className="fav" /> : ''}
 								{url}
 							</div>
+
+							{archive}
 						</div>
 						<div className="side right">
 							{picture ? <img src={commonStore.imageUrl(picture, 500)} className="img" /> : ''}
