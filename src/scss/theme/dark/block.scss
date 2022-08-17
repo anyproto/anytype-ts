@@ -227,15 +227,16 @@
 
     .block.blockBookmark {
 		.loaderWrapper { border: 0px; }
+		.deleted { color: $colorSecondary; }
 
         .inner { border-color: transparent; background-color: $colorHover; }
         .inner.vertical {
+			.name { color: $colorPrimary; }
+    	    .descr { color: $colorSecondary; }
+	        .link { color: $colorSecondary; }
+
             .side.right { border-color: $colorLinePrimary; }
         }
-
-        .name { color: $colorPrimary; }
-        .descr { color: $colorSecondary; }
-        .link { color: $colorSecondary; }
     }
 
     /* BlockTableOfContenst */

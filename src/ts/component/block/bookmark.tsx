@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { InputWithFile, ObjectName, ObjectDescription, Loader, Error } from 'ts/component';
+import { InputWithFile, ObjectName, ObjectDescription, Loader, Error, Icon } from 'ts/component';
 import { I, C, focus, Util, translate, analytics, Renderer } from 'ts/lib';
 import { commonStore, detailStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -27,72 +27,81 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<Props
 		const { rootId, block, readonly } = this.props;
 		const { state } = block.content;
 		const object = detailStore.get(rootId, block.content.targetObjectId);
-		const { iconImage, picture, url, isArchived } = object;
+		const { iconImage, picture, url, isArchived, isDeleted } = object;
 
 		let element = null;
-		let archive = null;
 
-		if (isArchived) {
-			archive = <div className="tagItem isTag tagColor-grey archive">{translate('blockLinkArchived')}</div>;
-		};
-
-		switch (state) {
-			default:
-			case I.BookmarkState.Error:
-			case I.BookmarkState.Empty:
-				element = (
-					<React.Fragment>
-						{state == I.BookmarkState.Error ? <Error text={translate('blockBookmarkError')} /> : ''}
-						<InputWithFile 
-							block={block} 	
-							icon="bookmark" 
-							textFile="Paste a link" 
-							withFile={false} 
-							onChangeUrl={this.onChangeUrl} 
-							readonly={readonly} 
-						/>
-					</React.Fragment>
-				);
-				break;
-				
-			case I.BookmarkState.Fetching:
-				element = <Loader />;
-				break;
-				
-			case I.BookmarkState.Done:
-				let cn = [ 'inner', 'resizable' ];
-				let cnl = [ 'side', 'left' ];
+		if (isDeleted) {
+			element = (
+				<div className="deleted">
+					<Icon className="ghost" />
+					<div className="name">{translate('commonDeletedObject')}</div>
+				</div>
+			);
+		} else {
+			switch (state) {
+				default:
+				case I.BookmarkState.Error:
+				case I.BookmarkState.Empty:
+					element = (
+						<React.Fragment>
+							{state == I.BookmarkState.Error ? <Error text={translate('blockBookmarkError')} /> : ''}
+							<InputWithFile 
+								block={block} 	
+								icon="bookmark" 
+								textFile="Paste a link" 
+								withFile={false} 
+								onChangeUrl={this.onChangeUrl} 
+								readonly={readonly} 
+							/>
+						</React.Fragment>
+					);
+					break;
 					
-				if (picture) {
-					cn.push('withImage');
-				};
+				case I.BookmarkState.Fetching:
+					element = <Loader />;
+					break;
+					
+				case I.BookmarkState.Done:
+					let cn = [ 'inner', 'resizable' ];
+					let cnl = [ 'side', 'left' ];
+					let archive = null;
+						
+					if (picture) {
+						cn.push('withImage');
+					};
 
-				if (isArchived) {
-					cn.push('isArchived');
-				};
+					if (isArchived) {
+						cn.push('isArchived');
+					};
 
-				if (block.bgColor) {
-					cnl.push('bgColor bgColor-' + block.bgColor);
-				};
+					if (block.bgColor) {
+						cnl.push('bgColor bgColor-' + block.bgColor);
+					};
 
-				element = (
-					<div className={cn.join(' ')} data-href={url} onClick={this.onClick}>
-						<div className={cnl.join(' ')}>
-							<ObjectName object={object} />
-							<ObjectDescription object={object} />
-							<div className="link">
-								{iconImage ? <img src={commonStore.imageUrl(iconImage, 16)} className="fav" /> : ''}
-								{url}
+					if (isArchived) {
+						archive = <div className="tagItem isTag tagColor-grey archive">{translate('blockLinkArchived')}</div>;
+					};
+
+					element = (
+						<div className={cn.join(' ')} data-href={url} onClick={this.onClick}>
+							<div className={cnl.join(' ')}>
+								<ObjectName object={object} />
+								<ObjectDescription object={object} />
+								<div className="link">
+									{iconImage ? <img src={commonStore.imageUrl(iconImage, 16)} className="fav" /> : ''}
+									{url}
+								</div>
+
+								{archive}
 							</div>
-
-							{archive}
+							<div className="side right">
+								{picture ? <img src={commonStore.imageUrl(picture, 500)} className="img" /> : ''}
+							</div>
 						</div>
-						<div className="side right">
-							{picture ? <img src={commonStore.imageUrl(picture, 500)} className="img" /> : ''}
-						</div>
-					</div>
-				);
-				break;
+					);
+					break;
+			};
 		};
 
 		return (
