@@ -74,8 +74,8 @@ class MenuManager {
 
 					Separator,
 
-					{ label: 'Object diagnostics', click: () => { Util.send(this.win, 'debugSync'); } },
-					{ label: 'Tree diagnostics', click: () => { this.win.show(); Util.send(this.win, 'debugTree'); } },
+					{ label: 'Object diagnostics', click: () => { Util.send(this.win, 'command', 'debugSync'); } },
+					{ label: 'Tree diagnostics', click: () => { this.win.show(); Util.send(this.win, 'command', 'debugTree'); } },
 
 					Separator,
 
