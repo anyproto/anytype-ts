@@ -123,7 +123,10 @@
         .viewItem.viewGrid { box-shadow: 0px -1px $colorLineSecondary inset; }
         .viewItem.viewGrid {
             .row { box-shadow: 0px 1px $colorLineSecondary inset; }
+			.cellHead .resize .line { background-color: $colorLineSecondary; }
         }
+
+		.blocks .block.blockDataview .viewItem.viewGrid 
 
         .viewItem.viewList {
             .cellContent.isName { color: $colorPrimary; }
