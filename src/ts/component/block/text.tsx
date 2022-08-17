@@ -576,7 +576,6 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			};
 
 			const smile = item.find('smile');
-			
 			if (smile && smile.length) {
 				ReactDOM.render(<IconObject size={size} object={{ iconEmoji: data.param }} />, smile.get(0));
 			};
