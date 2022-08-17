@@ -105,7 +105,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 						onMouseEnter={(e: any) => { this.onMouseEnter(e, Constant.relationKey.type); }}
 						onMouseLeave={this.onMouseLeave}
 					>
-						<div className="name">{type._empty_ ? translate('commonDeletedType') : Util.shorten(type.name, 32)}</div>
+						<div className="name">{type._empty_ || type.isDeleted ? translate('commonDeletedType') : Util.shorten(type.name, 32)}</div>
 					</div>
 				</span>
 

@@ -71,12 +71,8 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 					<IconObject object={item} size={18} />
 					<ObjectName object={item} />
 
-					{type ? (
-						<React.Fragment>
-							{div}
-							<div className="type">{type.name || DataUtil.defaultName('page')}</div>
-						</React.Fragment>
-					) : ''}
+					{div}
+					<div className="type">{type._empty_ || type.isDeleted ? translate('commonDeletedType') : type.name}</div>
 
 					{description ? (
 						<React.Fragment>
