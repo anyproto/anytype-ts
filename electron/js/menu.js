@@ -178,7 +178,7 @@ class MenuManager {
 			},
 		];
 
-		if (config.allowDebug) {
+		if (config.allowDebug || config.allowBeta) {
 			config.debug = config.debug || {};
 
 			const flags = { 
