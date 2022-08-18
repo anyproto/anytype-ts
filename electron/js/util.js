@@ -75,17 +75,23 @@ class Util {
 	};
 
 	dataPath () {
+		const version = app.getVersion();
 		const dataPath = [];
+
 		if (process.env.DATA_PATH) {
 			this.mkDir(process.env.DATA_PATH);
 			dataPath.push(process.env.DATA_PATH);
 		} else {
 			dataPath.push(userPath);
+			if (version.match('beta')) {
+				dataPath.push('beta');
+			} else 
 			if (is.development) {
 				dataPath.push('dev');
 			};
 			dataPath.push('data');
 		};
+
 		return path.join.apply(null, dataPath);
 	};
 
