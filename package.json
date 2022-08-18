@@ -528,9 +528,6 @@
 		"win": {
 			"target": "nsis",
 			"icon": "electron/img/icon256x256.png",
-			"nsis": {
-				"deleteAppDataOnUninstall": true
-			},
 			"publish": [
 				{
 					"provider": "spaces",
@@ -538,6 +535,9 @@
 					"region": "fra1"
 				}
 			]
+		},
+		"nsis": {
+			"deleteAppDataOnUninstall": true
 		},
 		"linux": {
 			"icon": "electron/img/icon512x512.png",
