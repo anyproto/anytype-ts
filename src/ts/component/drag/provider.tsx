@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { DragLayer } from 'Component';
-import { I, C, focus, keyboard, Util, scrollOnMove, analytics } from 'Lib';
+import { I, C, focus, keyboard, Util, scrollOnMove, analytics, Action } from 'Lib';
 import { blockStore } from 'Store';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
@@ -340,11 +340,8 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 					};
 				};
 
-				if (withAlt && (contextId == targetContextId)) {
-					C.BlockListDuplicate(contextId, ids, targetId, position, (message: any) => {
-						cb(message);
-						analytics.event('DuplicateBlock', { count: ids.length });
-					});
+				if (withAlt) {
+					Action.duplicate(contextId, targetContextId, ids, targetId, position, cb);
 				} else {
 					C.BlockListMoveToExistingObject(contextId, targetContextId, ids || [], targetId, position, (message: any) => {
 						cb(message);

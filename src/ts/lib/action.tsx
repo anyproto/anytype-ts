@@ -68,8 +68,8 @@ class Action {
 		analytics.event('DownloadMedia', { type });
 	};
 
-	duplicate (rootId: string, blockId: string, blockIds: string[], callBack?: (message: any) => void) {
-		C.BlockListDuplicate(rootId, blockIds, blockId, I.BlockPosition.Bottom, (message: any) => {
+	duplicate (rootId: string, targetContextId: string, blockId: string, blockIds: string[], callBack?: (message: any) => void) {
+		C.BlockListDuplicate(rootId, targetContextId, blockIds, blockId, I.BlockPosition.Bottom, (message: any) => {
 			if (message.error.code) {
 				return;
 			};

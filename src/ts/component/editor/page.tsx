@@ -588,7 +588,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 				};
 
 				e.preventDefault();
-				Action.duplicate(rootId, ids[ids.length - 1], ids, () => { focus.clear(true); });
+				Action.duplicate(rootId, rootId, ids[ids.length - 1], ids, () => { focus.clear(true); });
 			});
 
 			// Open action menu
@@ -731,7 +731,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		// Duplicate
 		keyboard.shortcut(`${cmd}+d`, e, (pressed: string) => {
 			e.preventDefault();
-			Action.duplicate(rootId, block.id, [ block.id ]);
+			Action.duplicate(rootId, rootId, block.id, [ block.id ]);
 		});
 
 		// Open action menu
