@@ -528,6 +528,9 @@
 		"win": {
 			"target": "nsis",
 			"icon": "electron/img/icon256x256.png",
+			"nsis": {
+				"deleteAppDataOnUninstall": true
+			},
 			"publish": [
 				{
 					"provider": "spaces",
