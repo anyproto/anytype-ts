@@ -56,10 +56,13 @@ class Focus {
 		};
 
 		if (withRange) {
+			console.log($(document.activeElement));
 			$(document.activeElement).blur();
 			window.getSelection().removeAllRanges();
 			keyboard.setFocus(false);
 		};
+
+		$('.focusable.isFocused').removeClass('isFocused');
 	};
 	
 	apply (): Focus {

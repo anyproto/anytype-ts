@@ -147,17 +147,29 @@ class MenuBlockAction extends React.Component<Props, State> {
 	onKeyDown (e: any) {
 		const { onKeyDown, param } = this.props;
 		const { data } = param;
-		const { blockRemove } = data;
+		const { rootId, blockIds, blockRemove } = data;
 		const { filter } = this.state;
+		const { focused } = focus.state;
+		const cmd = keyboard.ctrlKey();
 
 		let ret = false;
 
-		keyboard.shortcut('backspace', e, (pressed: string) => {
-			if (!filter && blockRemove) {
+		if (!filter && blockRemove) {
+			keyboard.shortcut('backspace, delete', e, (pressed: string) => {
 				blockRemove();
 				ret = true;
-			};
-		});
+			});
+		};
+
+		if (focused) {
+			keyboard.shortcut(`${cmd}+d`, e, (pressed: string) => {
+				Action.duplicate(rootId, blockIds[blockIds.length - 1], blockIds, () => { 
+					focus.clear(true); 
+				});
+				this.refFilter.blur();
+				ret = true;
+			});
+		};
 
 		if (!ret) {
 			onKeyDown(e);
