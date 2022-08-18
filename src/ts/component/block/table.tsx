@@ -1,10 +1,9 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon } from 'Component';
-import { I, C, keyboard, focus, Util, Mark } from 'Lib';
+import { I, C, keyboard, focus, Util, Mark, Action } from 'Lib';
 import { observer } from 'mobx-react';
 import { menuStore, blockStore } from 'Store';
-import arrayMove from 'array-move';
 import { throttle } from 'lodash';
 
 import Row from './table/row';
@@ -1148,7 +1147,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 
 		const { rootId } = this.props;
 
-		C.BlockListMoveToExistingObject(rootId, rootId, [ id ], targetId, position);
+		Action.move(rootId, rootId, targetId, [ id ], position);
 
 		$('body').removeClass('grab');
 		this.preventSelect(false);

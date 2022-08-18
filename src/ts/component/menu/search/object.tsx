@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { MenuItemVertical, Filter, Loader, ObjectName, EmptySearch } from 'Component';
-import { I, C, keyboard, Util, DataUtil, translate, analytics } from 'Lib';
+import { I, C, keyboard, Util, DataUtil, translate, analytics, Action } from 'Lib';
 import { commonStore, detailStore } from 'Store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
@@ -341,7 +341,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 				break;
 
 			case I.NavigationType.Move:
-				C.BlockListMoveToExistingObject(rootId, item.id, blockIds, '', I.BlockPosition.Bottom);
+				Action.move(rootId, rootId, '', blockIds, I.BlockPosition.Bottom);
 				break;
 
 			case I.NavigationType.Link:

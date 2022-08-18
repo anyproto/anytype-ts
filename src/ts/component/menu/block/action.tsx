@@ -163,7 +163,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 
 		if (focused) {
 			keyboard.shortcut(`${cmd}+d`, e, (pressed: string) => {
-				Action.duplicate(rootId, rootId, blockIds[blockIds.length - 1], blockIds, () => { 
+				Action.duplicate(rootId, rootId, blockIds[blockIds.length - 1], blockIds, I.BlockPosition.Bottom, () => { 
 					focus.clear(true); 
 				});
 				this.refFilter.blur();
@@ -607,7 +607,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 				break;
 					
 			case 'copy':
-				Action.duplicate(rootId, rootId, ids[ids.length - 1], ids);
+				Action.duplicate(rootId, rootId, ids[ids.length - 1], ids, I.BlockPosition.Bottom);
 				break;
 				
 			case 'remove':

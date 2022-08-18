@@ -375,7 +375,7 @@ const BlockPaste = (contextId: string, focusedId: string, range: I.TextRange, bl
 	dispatcher.request(BlockPaste.name, request, callBack);
 };
 
-const BlockListMoveToExistingObject = (contextId: string, targetContextId: string, blockIds: string[], targetId: string, position: I.BlockPosition, callBack?: (message: any) => void) => {
+const BlockListMoveToExistingObject = (contextId: string, targetContextId: string, targetId: string, blockIds: string[], position: I.BlockPosition, callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.ListMoveToExistingObject.Request();
 	
 	request.setContextid(contextId);

@@ -555,7 +555,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 						break;
 
 					case 'copy':
-						Action.duplicate(rootId, rootId, blockId, [ blockId ]);
+						Action.duplicate(rootId, rootId, blockId, [ blockId ], I.BlockPosition.Bottom);
 						break;
 					
 					case 'remove':
