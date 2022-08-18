@@ -167,7 +167,7 @@ const CellObject = observer(class CellObject extends React.Component<Props, Stat
 	};
 
 	onClick (e: any, id: string) {
-		const { canEdit, canOpen } = this.props;
+		const { canOpen } = this.props;
 		const item = this.getItems().find(item => item.id == id);
 
 		if (canOpen && item) {
@@ -207,9 +207,9 @@ const CellObject = observer(class CellObject extends React.Component<Props, Stat
 			return [];
 		};
 
-		let value = Relation.getArrayValue(record[relation.relationKey]);
+		let value: any[] = Relation.getArrayValue(record[relation.relationKey]);
 		value = value.map(id => detailStore.get(subId, id, []));
-		value = value.filter((it: any) => { return !it._empty_; });
+		value = value.filter(it => !it._empty_);
 		return value;
 	};
 

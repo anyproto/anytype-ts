@@ -147,6 +147,8 @@ export interface Cell {
 	iconSize?: number;
 	placeholder?: string;
 	withLabel?: boolean;
+	textLimit?: number;
+	arrayLimit?: number;
 	getView?(): View;
 	getRecord(index: number): any;
 	onChange?(value: any, callBack?: (message: any) => void): void;
@@ -157,7 +159,6 @@ export interface Cell {
 	onCellChange?: (id: string, key: string, value: any, callBack?: (message: any) => void) => void;
 	cellPosition?: (cellId: string) => void;
 	elementMapper?: (relation: any, item: any) => any;
-	arrayLimit?: number;
 };
 
 export interface BoardGroup {

@@ -179,6 +179,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 									showTooltip={true}
 									tooltipX={I.MenuDirection.Left}
 									arrayLimit={2}
+									textLimit={300}
 									onMouseLeave={this.onMouseLeave}
 								/>
 							</span>
