@@ -83,11 +83,11 @@ class Util {
 			dataPath.push(process.env.DATA_PATH);
 		} else {
 			dataPath.push(userPath);
-			if (version.match('beta')) {
-				dataPath.push('beta');
-			} else 
 			if (is.development) {
 				dataPath.push('dev');
+			} else 
+			if (version.match('beta')) {
+				dataPath.push('beta');
 			};
 			dataPath.push('data');
 		};
