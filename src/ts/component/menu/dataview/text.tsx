@@ -144,7 +144,6 @@ const MenuText = observer(class MenuText extends React.Component<Props, {}> {
 		const o = obj.offset();
 		const cell = $(`#${cellId}`);
 
-		obj.css({ height: 'auto' });
 		input.css({ height: 'auto' });
 
 		raf(() => {
