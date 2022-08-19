@@ -83,7 +83,9 @@ html.platformWindows {
 	.popups {
 		.popup.popupPage {
 			.header { top: 0px !important; }
+
 			.innerWrap.full {
+				.header { top: 30px !important; }
 				.page { padding-top: 30px; }
 			}
 		}

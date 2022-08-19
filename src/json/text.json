@@ -170,11 +170,8 @@
 	"blockNameToggle": { "en": "Toggle" },
 	"blockTextToggle": { "en": "Hide and show content inside" },
 
-	"blockNamePage": { "en": "Page" },
-	"blockTextPage": { "en": "Create new page inside this one" },
-
 	"blockNameExisting": { "en": "Link to object" },
-	"blockTextExisting": { "en": "Link to existing page" },
+	"blockTextExisting": { "en": "Link to existing object" },
 
 	"blockNameFile": { "en": "File" },
 	"blockTextFile": { "en": "Store file in original state" },
@@ -325,10 +322,10 @@
 	"popupNavigationMove": { "en": "Move to" },
 	"popupNavigationLink": { "en": "Link" },
 	"popupNavigationCancel": { "en": "Cancel" },
-	"popupNavigationLinkFrom": { "en": "Link from page" },
-	"popupNavigationLinkTo": { "en": "Link to page" },
-	"popupNavigationEmptyTo": { "en": "No links to this page" },
-	"popupNavigationEmptyFrom": { "en": "No links to other pages" },
+	"popupNavigationLinkFrom": { "en": "Links from object" },
+	"popupNavigationLinkTo": { "en": "Links to object" },
+	"popupNavigationEmptyTo": { "en": "No links to this object" },
+	"popupNavigationEmptyFrom": { "en": "No links to other obejcts" },
 
 	"popupSearchPlaceholder": { "en": "Search for an object..." },
 	"popupSearchEmpty": { "en": "No objects found" },
