@@ -250,7 +250,8 @@ const ObjectTypeList = (response: any) => {
 
 const ObjectTypeCreate = (response: any) => {
 	return {
-		objectType: Decode.decodeStruct(response.getNewdetails()),
+		//objectType: Decode.decodeStruct(response.getNewdetails()),
+		objectType: Mapper.From.ObjectType(response.getObjecttype()),
 	};
 };
  

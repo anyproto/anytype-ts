@@ -962,8 +962,9 @@ const ObjectTypeList = (callBack?: (message: any) => void) => {
 const ObjectTypeCreate = (details: any, flags: I.ObjectFlag[], callBack?: (message: any) => void) => {
 	const request = new Rpc.ObjectType.Create.Request();
 	
-	request.setDetails(Encode.encodeStruct(details));
-	request.setInternalflagsList(flags.map(Mapper.To.InternalFlag))
+	request.setObjecttype(Mapper.To.ObjectType(details));
+	//request.setDetails(Encode.encodeStruct(details));
+	//request.setInternalflagsList(flags.map(Mapper.To.InternalFlag))
 
 	dispatcher.request(ObjectTypeCreate.name, request, callBack);
 };
