@@ -1,8 +1,9 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Loader } from 'Component';
-import { dbStore, detailStore, popupStore, blockStore } from 'Store';
+import { dbStore, detailStore, popupStore } from 'Store';
 import { I, C, Util, DataUtil, analytics, keyboard, Relation } from 'Lib';
+import { throttle } from 'lodash';
 import { observer } from 'mobx-react';
 import arrayMove from 'array-move';
 import { set } from 'mobx';
@@ -109,7 +110,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 
 		this.unbind();
 
-		win.on('scroll.board', (e: any) => { this.onScrollWindow(); });
+		win.on('scroll.board', throttle((e: any) => { this.onScrollWindow(); }, 20));
 		scroll.on('scroll', (e: any) => { this.onScrollView(); });
 	};
 
