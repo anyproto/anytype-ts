@@ -247,7 +247,7 @@ class DbStore {
     getObjectTypesForSBType (SBType: I.SmartBlockType): any[] {
 		return dbStore.getRecords(Constant.subId.type, '').
 			map(id => detailStore.get(Constant.subId.type, id, [])).
-			filter(it => it._smartBlockTypes_.includes(SBType) && !it.isArchived && !it.isDeleted && !it._empty_);
+			filter(it => (it._smartBlockTypes_ || []).includes(SBType) && !it.isArchived && !it.isDeleted && !it._empty_);
 	};
 
     getRelations (rootId: string, blockId: string): I.Relation[] {

@@ -328,7 +328,7 @@ class MenuManager {
 	};
 
 	updateTrayIcon () {
-		if (this.tray) {
+		if (this.tray && this.tray.setImage) {
 			this.tray.setImage(this.getTrayIcon());
 		};
 	};
