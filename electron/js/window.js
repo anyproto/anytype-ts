@@ -21,6 +21,7 @@ class WindowManager {
 	list = new Set();
 
 	create (options, param) {
+		const Api = require('./api.js');
 		const { route, isChild } = options;
 		const { language } = ConfigManager.config;
 
@@ -61,11 +62,9 @@ class WindowManager {
 		win.on('enter-full-screen', () => Util.send(win, 'enter-full-screen'));
 		win.on('leave-full-screen', () => Util.send(win, 'leave-full-screen'));
 
-		if (language) {
-			win.webContents.session.setSpellCheckerLanguages([ language ]);
-		};
-
 		win.webContents.on('context-menu', (e, param) => Util.send(win, 'spellcheck', param));
+
+		Api.setLanguage(win, language);
 		return win;
 	};
 
