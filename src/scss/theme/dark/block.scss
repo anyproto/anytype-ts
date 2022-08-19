@@ -154,7 +154,7 @@
 				}
 			}
 			.column.withColor {
-				.head .empty { color: $colorBlack; }
+				.head .empty { color: $colorSecondary; }
 			}
 
 			.card.add:hover, .card:hover .cardContent { border-color: $colorLinePrimary; }
