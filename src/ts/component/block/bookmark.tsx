@@ -80,7 +80,7 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<Props
 					};
 
 					if (isArchived) {
-						archive = <div className="tagItem isTag tagColor-grey archive">{translate('blockLinkArchived')}</div>;
+						archive = <div className="tagItem isTag archive">{translate('blockLinkArchived')}</div>;
 					};
 
 					element = (

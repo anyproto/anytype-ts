@@ -233,7 +233,7 @@
 		.deleted { color: $colorSecondary; }
 
         .inner { border-color: transparent; background-color: $colorHover; }
-        .inner.vertical {
+        .inner {
 			.name { color: $colorPrimary; }
     	    .descr { color: $colorSecondary; }
 	        .link { color: $colorSecondary; }

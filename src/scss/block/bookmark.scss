@@ -25,9 +25,8 @@
 			.side.left { width: 100%; padding: 16px; position: relative; }
 			.side.right { border-radius: 0px 12px 12px 0px; overflow: hidden; display: none; }
 
-			.name { @include text-common; line-height: 18px; height: 18px; color: $colorBlack; @include clamp2; margin-bottom: 4px; }
+			.name { @include text-common; line-height: 18px; height: 18px; @include clamp2; margin-bottom: 4px; }
 			.descr { @include text-small; line-height: 16px; color: $colorVeryDarkGrey; margin-bottom: 6px; @include clamp2; }
-
 			.archive { position: absolute; right: 10px; top: 10px; z-index: 1; }
 		}
 		
