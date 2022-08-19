@@ -61,7 +61,7 @@ const Column = observer(class Column extends React.Component<Props, State> {
 		
 		if (view.groupBackgroundColors) {
 			cn.push('withColor');
-			cnbg.push('bgColor bgColor-' + (group.bgColor || 'default'));
+			cnbg.push('bgColor bgColor-' + (group.bgColor || 'grey'));
 		};
 
 		head[view.groupRelationKey] = value;
