@@ -922,7 +922,9 @@ const HistoryShowVersion = (pageId: string, versionId: string, callBack?: (messa
 	request.setVersionid(versionId);
 
 	dispatcher.request(HistoryShowVersion.name, request, (message: any) => {
-		dispatcher.onObjectView(pageId, '', message.objectView);
+		if (!message.error.code) {
+			dispatcher.onObjectView(pageId, '', message.objectView);
+		};
 
 		if (callBack) {
 			callBack(message);
@@ -1047,7 +1049,9 @@ const ObjectOpen = (objectId: string, traceId: string, callBack?: (message: any)
 	request.setTraceid(traceId);
 
 	dispatcher.request(ObjectOpen.name, request, (message: any) => {
-		dispatcher.onObjectView(objectId, traceId, message.objectView);
+		if (!message.error.code) {
+			dispatcher.onObjectView(objectId, traceId, message.objectView);
+		};
 
 		if (callBack) {
 			callBack(message);
@@ -1062,7 +1066,9 @@ const ObjectShow = (objectId: string, traceId: string, callBack?: (message: any)
 	request.setTraceid(traceId);
 
 	dispatcher.request(ObjectShow.name, request, (message: any) => {
-		dispatcher.onObjectView(objectId, traceId, message.objectView);
+		if (!message.error.code) {
+			dispatcher.onObjectView(objectId, traceId, message.objectView);
+		};
 
 		if (callBack) {
 			callBack(message);
@@ -1074,7 +1080,9 @@ const ObjectOpenBreadcrumbs = (callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.OpenBreadcrumbs.Request();
 
 	dispatcher.request(ObjectOpenBreadcrumbs.name, request, (message: any) => {
-		dispatcher.onObjectView(message.objectId, '', message.objectView);
+		if (!message.error.code) {
+			dispatcher.onObjectView(message.objectId, '', message.objectView);
+		};
 
 		if (callBack) {
 			callBack(message);
