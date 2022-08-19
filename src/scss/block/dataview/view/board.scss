@@ -101,6 +101,10 @@
 					.name { height: 24px; }
 				}
 
+				.cellContent.c-longText {
+					.name { @include clamp3; }
+				}
+
 				.cellContent.c-select {
 					.tagItem { margin: 0px 8px 0px 0px; }
 				}
