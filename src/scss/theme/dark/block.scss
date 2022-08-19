@@ -126,9 +126,7 @@
 			.cellHead .resize .line { background-color: $colorLineSecondary; }
         }
 
-		.blocks .block.blockDataview .viewItem.viewGrid 
-
-        .viewItem.viewList {
+        .viewItem.viewList, .viewItem.viewGallery, .viewItem.viewBoard {
             .cellContent.isName { color: $colorPrimary; }
         }
 
@@ -137,15 +135,12 @@
             .card {
                 .cover { border-color: $colorLinePrimary; background-color: $colorBgIcon; }
             }
-
-            .cellContent.isName { color: $colorPrimary; }
         }
 
         .viewItem.viewBoard {
 			.ghost { border-color: $colorOrange; }
             .cardContent { background: $colorBgLight; border-color: $colorLineSecondary; }
 			.card.add { background: $colorBgLight; border-color: $colorLineSecondary; }
-            .cellContent.isName { color: $colorPrimary; }
 
 			.column {
 				.head { background: $colorBlack; }
