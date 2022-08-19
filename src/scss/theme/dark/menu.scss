@@ -86,6 +86,19 @@
         .head {
             .btn:hover, .btn.active { color: $colorPrimary; }
         }
+
+		.foot {
+			.icon:hover { background-color: $colorBgIcon; }
+			.icon.recent.active { background-image: url('#{$themePath}/icon/emoji/recent1.svg'); }
+			.icon.people.active { background-image: url('#{$themePath}/icon/emoji/people1.svg'); }
+			.icon.nature.active { background-image: url('#{$themePath}/icon/emoji/nature1.svg'); }
+			.icon.foods.active { background-image: url('#{$themePath}/icon/emoji/foods1.svg'); }
+			.icon.activity.active { background-image: url('#{$themePath}/icon/emoji/activity1.svg'); }
+			.icon.places.active { background-image: url('#{$themePath}/icon/emoji/places1.svg'); }
+			.icon.objects.active { background-image: url('#{$themePath}/icon/emoji/objects1.svg'); }
+			.icon.symbols.active { background-image: url('#{$themePath}/icon/emoji/symbols1.svg'); }
+			.icon.flags.active { background-image: url('#{$themePath}/icon/emoji/flags1.svg'); }
+		}
     }
 
     /* MenuBlockCover */
