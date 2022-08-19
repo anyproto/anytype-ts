@@ -183,7 +183,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const allowedLock = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const allowedLink = config.experimental;
 		const allowedCopy = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Duplicate ]);
-		const allowedReload = object.url && block.isObjectBookmark();
+		const allowedReload = object.source && block.isObjectBookmark();
 
 		if (!allowedArchive)	 archive = null;
 		if (!allowedDelete)		 pageRemove = null;
@@ -500,7 +500,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				break;
 
 			case 'pageReload':
-				C.ObjectBookmarkFetch(rootId, object.url, () => {
+				C.ObjectBookmarkFetch(rootId, object.source, () => {
 					analytics.event('ReloadSourceData');
 				});
 				break;

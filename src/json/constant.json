@@ -166,7 +166,7 @@
 		"space": "workspaceId",
 		"creator": "creator",
 		"setOf": "setOf",
-		"source": "url"
+		"source": "source"
 	},
 
 	"typeId": {

@@ -156,7 +156,7 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<Props
 		const { rootId, block } = this.props;
 		const object = detailStore.get(rootId, block.content.targetObjectId);
 
-		Renderer.send('urlOpen', Util.urlFix(object.url));
+		Renderer.send('urlOpen', Util.urlFix(object.source));
 		analytics.event('BlockBookmarkOpenUrl');
 	};
 	
