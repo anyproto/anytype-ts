@@ -186,15 +186,9 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 	};
 
 	onKeyUp (e: any, v: string) {
-		const { param } = this.props;
-		const { data } = param;
-		const view = data.view.get();
-
-		if (!this.isFocused) {
-			return;
+		if (this.isFocused) {
+			this.param.name = v;
 		};
-
-		view.name = v;
 	};
 
 	save () {
@@ -215,6 +209,8 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 			...this.param, 
 			name: this.param.name || translate(`viewName${current.type}`),
 		});
+
+		console.log();
 
 		const clearGroups = (current.type == I.ViewType.Board) && this.param.groupRelationKey && (current.groupRelationKey != this.param.groupRelationKey);
 		const cb = () => {
