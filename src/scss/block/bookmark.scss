@@ -19,7 +19,6 @@
 		}
 		.inner:hover { border-color: $colorMediumGrey; }
 		.inner.bgColor { border: 0px; }
-		.inner.isArchived { cursor: default; }
 		
 		.inner {
 			.side.left { width: 100%; padding: 16px; position: relative; }
