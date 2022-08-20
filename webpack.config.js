@@ -84,8 +84,5 @@ module.exports = (env, argv) => {
 		plugins: [
 			//new BundleAnalyzerPlugin(),
 		],
-		externals: {
-			bindings: 'require("bindings")'
-		},
 	};
 };
