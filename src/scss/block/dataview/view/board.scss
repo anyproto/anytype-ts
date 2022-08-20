@@ -130,3 +130,7 @@
         }
     }
 }
+
+html.platformLinux {
+	.blocks .block.blockDataview .viewItem.viewBoard .column .body { overflow-y: auto; }
+}
