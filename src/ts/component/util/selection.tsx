@@ -6,12 +6,16 @@ import { observer } from 'mobx-react';
 import { commonStore, blockStore, menuStore } from 'Store';
 import { throttle } from 'lodash';
 
+interface Props {
+	children?: React.ReactNode;
+};
+
 const $ = require('jquery');
 
 const THROTTLE = 20;
 const THRESHOLD = 10;
 
-const SelectionProvider = observer(class SelectionProvider extends React.Component<{}, {}> {
+const SelectionProvider = observer(class SelectionProvider extends React.Component<Props, {}> {
 
 	_isMounted = false;
 	x: number = 0;

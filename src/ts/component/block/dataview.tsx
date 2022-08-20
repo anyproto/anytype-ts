@@ -52,9 +52,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			return null;
 		};
 
-		const { groupRelationKey } = view;
-
-		let ViewComponent: React.ReactType<I.ViewComponent>;
+		let { groupRelationKey } = view;
+		let ViewComponent: any = null;
 		let className = '';
 
 		switch (view.type) {

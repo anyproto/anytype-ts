@@ -13,6 +13,7 @@ interface Props {
 	scale?: number;
 	withScale?: boolean;
 	preview?: boolean;
+	children?: React.ReactNode;
 	onClick?(e: any): void;
 	onMouseDown?(e: any): void;
 };
