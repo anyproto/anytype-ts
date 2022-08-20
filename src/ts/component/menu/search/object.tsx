@@ -354,24 +354,6 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 						};
 						break;
 
-					case Constant.typeId.file:
-					case Constant.typeId.image:
-					case Constant.typeId.video:
-					case Constant.typeId.audio:
-					case Constant.typeId.pdf:
-						newBlock.type = I.BlockType.File;
-						newBlock.content = { 
-							state: I.BookmarkState.Done,
-							file: { 
-								hash: item.id, 
-								name: item.name,
-								size: item.sizeInBytes, 
-								mime: item.fileMimeType,
-								style: I.FileStyle.Embed,
-							},
-						};
-						break;
-
 					default:
 						newBlock.type = I.BlockType.Link;
 						newBlock.content = {
