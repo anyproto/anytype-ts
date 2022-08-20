@@ -204,13 +204,15 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 		};
 
 		let current = data.view.get();
+		let clearGroups = (current.type == I.ViewType.Board) && this.param.groupRelationKey && (current.groupRelationKey != this.param.groupRelationKey);
 
-		current = Object.assign(current, { 
-			...this.param, 
-			name: this.param.name || translate(`viewName${current.type}`),
-		});
+		current = Object.assign(current, this.param);
+		current.name = current.name || translate(`viewName${current.type}`);
 
-		const clearGroups = (current.type == I.ViewType.Board) && this.param.groupRelationKey && (current.groupRelationKey != this.param.groupRelationKey);
+		if ((current.type == I.ViewType.Board) && !current.groupRelationKey) {
+			current.groupRelationKey = Relation.getGroupOption(rootId, blockId, current.groupRelationKey)?.id;
+		};
+
 		const cb = () => {
 			if (view.id == current.id) {
 				getData(current.id, 0);
