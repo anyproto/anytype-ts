@@ -664,11 +664,12 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 	};
 
 	resize () {
-		const win = $(window);
+		const { isPopup } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
 		const scroll = node.find('.scroll');
 		const viewItem = node.find('.viewItem');
-		const ww = win.width();
+		const container = Util.getPageContainer(isPopup);
+		const ww = container.width();
 		const mw = ww - 192;
 		const size = Constant.size.dataview.board;
 		const groups = this.getGroups(false);
