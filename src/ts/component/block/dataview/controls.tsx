@@ -170,6 +170,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 			horizontal: I.MenuDirection.Center,
 			offsetY: 10,
 			tabs: tabs.filter(it => it),
+			noFlipY: true,
 			data: {
 				readonly: readonly,
 				rootId: rootId,
