@@ -190,7 +190,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			this.cacheRect(node);
 		});
 
-		if (e.shiftKey) {
+		if (keyboard.isShift()) {
 			let target = $(e.target.closest('.selectable'));
 			let type = target.attr('data-type');
 			let id = target.attr('data-id');
@@ -241,7 +241,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		};
 		
 		if (!this.moved) {
-			if (!e.shiftKey && !e.altKey && !(e.ctrlKey || e.metaKey)) {
+			if (!keyboard.isShift() && !keyboard.isAlt() && !(keyboard.isCtrl() || keyboard.isMeta())) {
 				if (!this.isClearPrevented) {
 					this.initIds();
 				};
@@ -254,7 +254,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 				const id = target.attr('data-id');
 				const type = target.attr('data-type');
 				
-				if (target.length && e.shiftKey && ids.length && (type == I.SelectType.Block)) {
+				if (target.length && keyboard.isShift() && ids.length && (type == I.SelectType.Block)) {
 					const rootId = keyboard.getRootId();
 					const first = ids.length ? ids[0] : this.focused;
 					const tree = blockStore.getTree(rootId, blockStore.getBlocks(rootId));
@@ -369,14 +369,14 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 
 		let ids = this.get(type, false);
 
-		if (e.ctrlKey || e.metaKey) {
+		if (keyboard.isCtrl() || keyboard.isMeta()) {
 			if (ids.includes(id)) {
 				ids = ids.filter(it => it != id);
 			} else {
 				ids.push(id);
 			};
 		} else
-		if (e.altKey) {
+		if (keyboard.isAlt()) {
 			ids = ids.filter(it => it != id);
 		} else {
 			ids.push(id);
@@ -393,7 +393,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		const { focused, range } = focus.state;
 		const rect = Util.objectCopy(this.getRect(e.pageX, e.pageY));
 
-		if (!e.shiftKey && !e.altKey && !(e.ctrlKey || e.metaKey)) {
+		if (!keyboard.isShift() && !keyboard.isAlt() && !(keyboard.isCtrl() || keyboard.isMeta())) {
 			this.initIds();
 		};
 
@@ -410,7 +410,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			return;
 		};
 		
-		if ((length <= 1) && !(e.ctrlKey || e.metaKey)) {
+		if ((length <= 1) && !(keyboard.isCtrl() || keyboard.isMeta())) {
 			const value = selected.find('.value');
 			if (!value.length) {
 				return;
