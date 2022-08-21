@@ -70,7 +70,7 @@
 				.icon { display: inline-block; }
 			}
 			
-			.marker.number { vertical-align: baseline; min-width: 24px; width: auto; }
+			.marker.number { vertical-align: baseline; min-width: 24px; width: auto; word-break: normal; }
 			.marker.number > span { min-width: 100%; display: inline-block; text-align: center; }
 			
 			.marker.check, .marker.toggle { cursor: pointer; }
