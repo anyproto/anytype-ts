@@ -32,9 +32,8 @@ const BlockImage = observer(class BlockImage extends React.Component<Props, {}> 
 
 	render () {
 		const { block, readonly } = this.props;
-		const { id, fields, content } = block;
-		const { width } = fields;
-		const { state } = content;
+		const { width } = block.fields || {};
+		const { state, hash } = block.content;
 		
 		let element = null;
 		let css: any = {};
@@ -69,7 +68,7 @@ const BlockImage = observer(class BlockImage extends React.Component<Props, {}> 
 			case I.FileState.Done:
 				element = (
 					<div id="wrap" className="wrap" style={css}>
-						<img className="media" src={this.getUrl()} onDragStart={(e: any) => { e.preventDefault(); }} onClick={this.onClick} onLoad={this.onLoad} onError={this.onError} />
+						<img className="media" src={commonStore.imageUrl(hash, Constant.size.image)} onDragStart={(e: any) => { e.preventDefault(); }} onClick={this.onClick} onLoad={this.onLoad} onError={this.onError} />
 						<Icon className="resize" onMouseDown={(e: any) => { this.onResizeStart(e, false); }} />
 					</div>
 				);
@@ -77,7 +76,7 @@ const BlockImage = observer(class BlockImage extends React.Component<Props, {}> 
 		};
 		
 		return (
-			<div className={[ 'focusable', 'c' + id ].join(' ')} tabIndex={0} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp} onFocus={this.onFocus}>
+			<div className={[ 'focusable', 'c' + block.id ].join(' ')} tabIndex={0} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp} onFocus={this.onFocus}>
 				{element}
 			</div>
 		);
@@ -219,14 +218,6 @@ const BlockImage = observer(class BlockImage extends React.Component<Props, {}> 
 		if (!keyboard.withCommand(e)) {
 			popupStore.open('preview', { data: { block: this.props.block } });
 		};
-	};
-	
-	getUrl () {
-		const { block } = this.props;
-		const { content } = block;
-		const { hash } = content;
-		
-		return commonStore.imageUrl(hash, Constant.size.image);
 	};
 	
 	getWidth (checkMax: boolean, v: number): number {

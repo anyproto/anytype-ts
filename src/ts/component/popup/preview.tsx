@@ -22,14 +22,21 @@ class PopupPreview extends React.Component<Props, {}> {
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, block } = data;
-		
+		const { hash } = block.content;
+
+		let content = null;
+
+		switch (block.content.type) {
+			case I.FileType.Image:
+				content = <img className="media" src={commonStore.imageUrl(hash, Constant.size.image)} />
+				break;
+		};
+
 		return (
 			<div>
 				<Loader id="loader" />
 				<div id="wrap" className="wrap">
-					<div id="blockContent" className="blocks">
-						<Block {...this.props} key={block.id} rootId={rootId} block={block} readonly={true} />
-					</div>
+					{content}
 				</div>
 			</div>
 		);
@@ -58,14 +65,14 @@ class PopupPreview extends React.Component<Props, {}> {
 	};
 	
 	resize () {
-		const { param, position } = this.props;
+		const { param, position, getId } = this.props;
 		const { data } = param;
 		const { block } = data;
 		
+		const obj = $(`#${getId()}-innerWrap`);
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
-		const inner = node.find('#wrap');
-		const content = node.find('#blockContent');
+		const wrap = node.find('#wrap');
 		const loader = node.find('#loader');
 
 		switch (block.content.type) {
@@ -88,8 +95,7 @@ class PopupPreview extends React.Component<Props, {}> {
 						width = Math.min(mw, height / (ch / cw));
 					};
 
-					content.css({ width: width - PADDING * 2 });
-					inner.css({ height: height - PADDING * 2 });
+					wrap.css({ height: height - PADDING * 2, width: width - PADDING * 2 });
 					
 					position();
 				};
