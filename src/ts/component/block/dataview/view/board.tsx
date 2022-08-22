@@ -135,11 +135,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 			return;
 		};
 
-		const relation = dbStore.getRelation(rootId, block.id, view.groupRelationKey);
-		if (!relation) {
-			return;
-		};
-
+		const relation = dbStore.getRelationByKey(view.groupRelationKey);
 		const groupOrder: any = {};
  		const el = block.content.groupOrder.find(it => it.viewId == view.id);
 
