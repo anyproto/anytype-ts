@@ -261,7 +261,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 	};
 
 	loadItem (id: string, links: string[]) {
-		const hash = sha1(links.join(''));
+		const hash = sha1(Util.arrayUnique(links).sort().join(''));
 		const subId = dbStore.getSubId(Constant.subId.sidebar, id);
 
 		if (this.subscriptionIds[id] && (this.subscriptionIds[id] == hash)) {
@@ -325,7 +325,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 			const check = Storage.checkToggle(Constant.subId.sidebar, id);
 
 			if (check) {
-				this.loadItem(item.id, links);
+				this.loadItem(item.id, item.links);
 				list = this.unwrap(sectionId, list, item.id, this.getRecords(dbStore.getSubId(Constant.subId.sidebar, item.id)), depth + 1);
 			};
 		};
