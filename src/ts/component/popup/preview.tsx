@@ -10,7 +10,6 @@ interface Props extends I.Popup, RouteComponentProps<any> {};
 const $ = require('jquery');
 const Constant = require('json/constant.json');
 const BORDER = 16;
-const PADDING = 8;
 
 class PopupPreview extends React.Component<Props, {}> {
 	
@@ -33,12 +32,12 @@ class PopupPreview extends React.Component<Props, {}> {
 		};
 
 		return (
-			<div>
+			<React.Fragment>
 				<Loader id="loader" />
 				<div id="wrap" className="wrap">
 					{content}
 				</div>
-			</div>
+			</React.Fragment>
 		);
 	};
 	
@@ -65,15 +64,18 @@ class PopupPreview extends React.Component<Props, {}> {
 	};
 	
 	resize () {
-		const { param, position, getId } = this.props;
+		const { param, getId } = this.props;
 		const { data } = param;
 		const { block } = data;
 		
 		const obj = $(`#${getId()}-innerWrap`);
 		const win = $(window);
-		const node = $(ReactDOM.findDOMNode(this));
-		const wrap = node.find('#wrap');
-		const loader = node.find('#loader');
+		const wrap = obj.find('#wrap');
+		const loader = obj.find('#loader');
+		const mw = win.width() - BORDER * 2;
+		const mh = win.height() - BORDER * 2;
+
+		wrap.css({ height: 450, width: 450 });
 
 		switch (block.content.type) {
 			case I.FileType.Image:
@@ -83,8 +85,6 @@ class PopupPreview extends React.Component<Props, {}> {
 					
 					let cw = img.width;
 					let ch = img.height;
-					let mw = win.width() - BORDER * 2;
-					let mh = win.height() - BORDER * 2;
 					let width = 0, height = 0;
 					
 					if (cw >= ch) {
@@ -95,9 +95,7 @@ class PopupPreview extends React.Component<Props, {}> {
 						width = Math.min(mw, height / (ch / cw));
 					};
 
-					wrap.css({ height: height - PADDING * 2, width: width - PADDING * 2 });
-					
-					position();
+					wrap.css({ height: height, width: width  });
 				};
 				img.src = commonStore.imageUrl(block.content.hash, Constant.size.image);
 				break;
