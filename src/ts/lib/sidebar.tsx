@@ -493,7 +493,7 @@ class Sidebar {
 
 	maxHeight (): number {
 		const win = $(window);
-		return win.height() - Util.sizeHeader() - SHOW_THRESHOLD - 10;
+		return win.height() - Util.sizeHeader() - 52 - 10;
 	};
 
 };

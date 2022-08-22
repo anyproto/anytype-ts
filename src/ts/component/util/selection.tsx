@@ -191,7 +191,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		});
 
 		if (keyboard.isShift()) {
-			let target = $(e.target.closest('.selectable'));
+			let target = $(e.target).closest('.selectable');
 			let type = target.attr('data-type');
 			let id = target.attr('data-id');
 			let ids = this.get(type);
@@ -250,7 +250,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 				this.checkNodes(e);
 				
 				const ids = this.get(I.SelectType.Block, true);
-				const target = $(e.target.closest('.selectable'));
+				const target = $(e.target).closest('.selectable');
 				const id = target.attr('data-id');
 				const type = target.attr('data-type');
 				
