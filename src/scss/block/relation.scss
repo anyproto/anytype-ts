@@ -13,15 +13,19 @@
 
 		.sides { display: flex; }
 
-		.info { padding: 6px 2px 6px 0px; line-height: 20px; width: 30%; min-width: 40px; flex-shrink: 0; @include text-overflow-nw; }
+		.info { 
+			padding: 6px 2px 6px 0px; line-height: 20px; width: 30%; min-width: 40px; flex-shrink: 0; @include text-overflow-nw; 
+			display: flex; align-items: center; gap: 0px 6px;
+		}
 		.info.noValue { width: 100%; color: $colorSecondary; }
 		.info.noValue.canEdit { cursor: pointer; }
 
 		.info {
 			.name { 
 				display: inline-block; vertical-align: top; @include text-common; line-height: 20px; @include text-overflow-nw; 
-				width: calc(100% - 24px); color: $colorVeryDarkGrey;
+				color: $colorVeryDarkGrey; width: 100%;
 			}
+			.icon.lock { width: 8px; height: 20px; background-image: url('~img/icon/lock.svg'); flex-shrink: 0; }
 		}
 
 		.cellContent.canEdit {

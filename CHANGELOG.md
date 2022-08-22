@@ -1,5 +1,202 @@
 # Changelog
 
+## [v0.27.19-beta](https://github.com/anytypeio/js-anytype/tree/v0.27.19-beta) (2022-08-18)
+
+[Full Changelog](https://github.com/anytypeio/js-anytype/compare/v0.27.18-alpha...v0.27.19-beta)
+
+## [v0.27.18-alpha](https://github.com/anytypeio/js-anytype/tree/v0.27.18-alpha) (2022-08-18)
+
+[Full Changelog](https://github.com/anytypeio/js-anytype/compare/v0.27.17-beta...v0.27.18-alpha)
+
+## [v0.27.17-beta](https://github.com/anytypeio/js-anytype/tree/v0.27.17-beta) (2022-08-18)
+
+[Full Changelog](https://github.com/anytypeio/js-anytype/compare/v0.27.16-alpha...v0.27.17-beta)
+
+## [v0.27.16-alpha](https://github.com/anytypeio/js-anytype/tree/v0.27.16-alpha) (2022-08-18)
+
+[Full Changelog](https://github.com/anytypeio/js-anytype/compare/v0.27.15-beta...v0.27.16-alpha)
+
+## [v0.27.15-beta](https://github.com/anytypeio/js-anytype/tree/v0.27.15-beta) (2022-08-17)
+
+[Full Changelog](https://github.com/anytypeio/js-anytype/compare/v0.27.14-alpha...v0.27.15-beta)
+
+## [v0.27.14-alpha](https://github.com/anytypeio/js-anytype/tree/v0.27.14-alpha) (2022-08-17)
+
+[Full Changelog](https://github.com/anytypeio/js-anytype/compare/v0.27.13-alpha...v0.27.14-alpha)
+
+**Merged pull requests:**
+
+- Feature/PROD-267: Board [\#1349](https://github.com/anytypeio/js-anytype/pull/1349) ([ra3orblade](https://github.com/ra3orblade))
+- Feature/JS-133: Migrate to "Object type as Object" [\#1334](https://github.com/anytypeio/js-anytype/pull/1334) ([ra3orblade](https://github.com/ra3orblade))
+
+## [v0.27.13-alpha](https://github.com/anytypeio/js-anytype/tree/v0.27.13-alpha) (2022-08-13)
+
+[Full Changelog](https://github.com/anytypeio/js-anytype/compare/v0.27.12-alpha...v0.27.13-alpha)
+
+## [v0.27.12-alpha](https://github.com/anytypeio/js-anytype/tree/v0.27.12-alpha) (2022-08-13)
+
+[Full Changelog](https://github.com/anytypeio/js-anytype/compare/v0.27.11-alpha...v0.27.12-alpha)
+
+## [v0.27.11-alpha](https://github.com/anytypeio/js-anytype/tree/v0.27.11-alpha) (2022-08-12)
+
+[Full Changelog](https://github.com/anytypeio/js-anytype/compare/v0.27.10-alpha...v0.27.11-alpha)
+
+## [v0.27.10-alpha](https://github.com/anytypeio/js-anytype/tree/v0.27.10-alpha) (2022-08-12)
+
+[Full Changelog](https://github.com/anytypeio/js-anytype/compare/v0.27.9-alpha...v0.27.10-alpha)
+
+## [v0.27.9-alpha](https://github.com/anytypeio/js-anytype/tree/v0.27.9-alpha) (2022-08-12)
+
+[Full Changelog](https://github.com/anytypeio/js-anytype/compare/v0.27.8-beta...v0.27.9-alpha)
+
+## [v0.27.8-beta](https://github.com/anytypeio/js-anytype/tree/v0.27.8-beta) (2022-08-12)
+
+[Full Changelog](https://github.com/anytypeio/js-anytype/compare/v0.27.7-alpha...v0.27.8-beta)
+
+## [v0.27.7-alpha](https://github.com/anytypeio/js-anytype/tree/v0.27.7-alpha) (2022-08-12)
+
+[Full Changelog](https://github.com/anytypeio/js-anytype/compare/v0.27.6-beta...v0.27.7-alpha)
+
+## [v0.27.6-beta](https://github.com/anytypeio/js-anytype/tree/v0.27.6-beta) (2022-08-12)
+
+[Full Changelog](https://github.com/anytypeio/js-anytype/compare/v0.27.5-alpha...v0.27.6-beta)
+
+## [v0.27.5-alpha](https://github.com/anytypeio/js-anytype/tree/v0.27.5-alpha) (2022-08-11)
+
+[Full Changelog](https://github.com/anytypeio/js-anytype/compare/v0.27.4-alpha...v0.27.5-alpha)
+
+## [v0.27.4-alpha](https://github.com/anytypeio/js-anytype/tree/v0.27.4-alpha) (2022-08-11)
+
+[Full Changelog](https://github.com/anytypeio/js-anytype/compare/v0.27.3-alpha...v0.27.4-alpha)
+
+## [v0.27.3-alpha](https://github.com/anytypeio/js-anytype/tree/v0.27.3-alpha) (2022-08-11)
+
+[Full Changelog](https://github.com/anytypeio/js-anytype/compare/v0.27.2-alpha...v0.27.3-alpha)
+
+**Merged pull requests:**
+
+- Feature/JS-165: Zoom level [\#1345](https://github.com/anytypeio/js-anytype/pull/1345) ([ra3orblade](https://github.com/ra3orblade))
+- Feature/JS-167: Spellcheck [\#1344](https://github.com/anytypeio/js-anytype/pull/1344) ([ra3orblade](https://github.com/ra3orblade))
+- Feature/JS-131: Npm security [\#1335](https://github.com/anytypeio/js-anytype/pull/1335) ([ra3orblade](https://github.com/ra3orblade))
+
+## [v0.27.2-alpha](https://github.com/anytypeio/js-anytype/tree/v0.27.2-alpha) (2022-08-05)
+
+[Full Changelog](https://github.com/anytypeio/js-anytype/compare/v0.27.1-alpha...v0.27.2-alpha)
+
+**Merged pull requests:**
+
+- Feature/JS-190: Bookmarks [\#1347](https://github.com/anytypeio/js-anytype/pull/1347) ([ra3orblade](https://github.com/ra3orblade))
+
+## [v0.27.1-alpha](https://github.com/anytypeio/js-anytype/tree/v0.27.1-alpha) (2022-08-02)
+
+[Full Changelog](https://github.com/anytypeio/js-anytype/compare/v0.27.0...v0.27.1-alpha)
+
+**Merged pull requests:**
+
+- Bugfix/JS-173: Fix table resize in columns [\#1346](https://github.com/anytypeio/js-anytype/pull/1346) ([ra3orblade](https://github.com/ra3orblade))
+- Feature/JS-169: Emoji groups [\#1343](https://github.com/anytypeio/js-anytype/pull/1343) ([ra3orblade](https://github.com/ra3orblade))
+- Feature/JS-164: Remove PopupVideo [\#1342](https://github.com/anytypeio/js-anytype/pull/1342) ([ra3orblade](https://github.com/ra3orblade))
+- Feature/JS-166: Settings navigation [\#1341](https://github.com/anytypeio/js-anytype/pull/1341) ([ra3orblade](https://github.com/ra3orblade))
+- Feature/2nv1z99: Whats new optimisation [\#1340](https://github.com/anytypeio/js-anytype/pull/1340) ([ra3orblade](https://github.com/ra3orblade))
+- Feature/JS-159: Popup settings phrase and QR buttons [\#1339](https://github.com/anytypeio/js-anytype/pull/1339) ([ra3orblade](https://github.com/ra3orblade))
+- Bugfix/JS-158: Link in popup navigation problem + refactoring [\#1338](https://github.com/anytypeio/js-anytype/pull/1338) ([ra3orblade](https://github.com/ra3orblade))
+- Feature/JS-154: Remove block when block menu is open on backspace [\#1337](https://github.com/anytypeio/js-anytype/pull/1337) ([ra3orblade](https://github.com/ra3orblade))
+- Feature/Board [\#1336](https://github.com/anytypeio/js-anytype/pull/1336) ([ra3orblade](https://github.com/ra3orblade))
+- Feature/Library covers [\#1333](https://github.com/anytypeio/js-anytype/pull/1333) ([ra3orblade](https://github.com/ra3orblade))
+
+## [v0.27.0](https://github.com/anytypeio/js-anytype/tree/v0.27.0) (2022-08-01)
+
+[Full Changelog](https://github.com/anytypeio/js-anytype/compare/v0.26.24-alpha...v0.27.0)
+
+## [v0.26.24-alpha](https://github.com/anytypeio/js-anytype/tree/v0.26.24-alpha) (2022-07-29)
+
+[Full Changelog](https://github.com/anytypeio/js-anytype/compare/v0.26.23-alpha...v0.26.24-alpha)
+
+## [v0.26.23-alpha](https://github.com/anytypeio/js-anytype/tree/v0.26.23-alpha) (2022-07-28)
+
+[Full Changelog](https://github.com/anytypeio/js-anytype/compare/v0.26.22-alpha...v0.26.23-alpha)
+
+## [v0.26.22-alpha](https://github.com/anytypeio/js-anytype/tree/v0.26.22-alpha) (2022-07-27)
+
+[Full Changelog](https://github.com/anytypeio/js-anytype/compare/v0.26.21-alpha...v0.26.22-alpha)
+
+## [v0.26.21-alpha](https://github.com/anytypeio/js-anytype/tree/v0.26.21-alpha) (2022-07-25)
+
+[Full Changelog](https://github.com/anytypeio/js-anytype/compare/v0.26.20-alpha...v0.26.21-alpha)
+
+**Merged pull requests:**
+
+- Release [\#1332](https://github.com/anytypeio/js-anytype/pull/1332) ([ra3orblade](https://github.com/ra3orblade))
+
+## [v0.26.20-alpha](https://github.com/anytypeio/js-anytype/tree/v0.26.20-alpha) (2022-07-22)
+
+[Full Changelog](https://github.com/anytypeio/js-anytype/compare/v0.26.19-alpha...v0.26.20-alpha)
+
+## [v0.26.19-alpha](https://github.com/anytypeio/js-anytype/tree/v0.26.19-alpha) (2022-07-22)
+
+[Full Changelog](https://github.com/anytypeio/js-anytype/compare/v0.26.18-alpha...v0.26.19-alpha)
+
+## [v0.26.18-alpha](https://github.com/anytypeio/js-anytype/tree/v0.26.18-alpha) (2022-07-19)
+
+[Full Changelog](https://github.com/anytypeio/js-anytype/compare/v0.26.17-alpha...v0.26.18-alpha)
+
+**Merged pull requests:**
+
+- Auth login and register markup update [\#1331](https://github.com/anytypeio/js-anytype/pull/1331) ([mhlv](https://github.com/mhlv))
+
+## [v0.26.17-alpha](https://github.com/anytypeio/js-anytype/tree/v0.26.17-alpha) (2022-07-17)
+
+[Full Changelog](https://github.com/anytypeio/js-anytype/compare/v0.26.16-alpha...v0.26.17-alpha)
+
+## [v0.26.16-alpha](https://github.com/anytypeio/js-anytype/tree/v0.26.16-alpha) (2022-07-16)
+
+[Full Changelog](https://github.com/anytypeio/js-anytype/compare/v0.26.15-alpha...v0.26.16-alpha)
+
+**Merged pull requests:**
+
+- Feature/Sidebar rework [\#1330](https://github.com/anytypeio/js-anytype/pull/1330) ([ra3orblade](https://github.com/ra3orblade))
+
+## [v0.26.15-alpha](https://github.com/anytypeio/js-anytype/tree/v0.26.15-alpha) (2022-07-15)
+
+[Full Changelog](https://github.com/anytypeio/js-anytype/compare/v0.26.14-alpha...v0.26.15-alpha)
+
+**Merged pull requests:**
+
+- Optimisations [\#1329](https://github.com/anytypeio/js-anytype/pull/1329) ([ra3orblade](https://github.com/ra3orblade))
+
+## [v0.26.14-alpha](https://github.com/anytypeio/js-anytype/tree/v0.26.14-alpha) (2022-07-14)
+
+[Full Changelog](https://github.com/anytypeio/js-anytype/compare/v0.26.13-alpha...v0.26.14-alpha)
+
+## [v0.26.13-alpha](https://github.com/anytypeio/js-anytype/tree/v0.26.13-alpha) (2022-07-13)
+
+[Full Changelog](https://github.com/anytypeio/js-anytype/compare/v0.26.12-alpha...v0.26.13-alpha)
+
+**Merged pull requests:**
+
+- Feature/Table [\#1327](https://github.com/anytypeio/js-anytype/pull/1327) ([ra3orblade](https://github.com/ra3orblade))
+
+## [v0.26.12-alpha](https://github.com/anytypeio/js-anytype/tree/v0.26.12-alpha) (2022-07-12)
+
+[Full Changelog](https://github.com/anytypeio/js-anytype/compare/v0.26.11-alpha...v0.26.12-alpha)
+
+## [v0.26.11-alpha](https://github.com/anytypeio/js-anytype/tree/v0.26.11-alpha) (2022-07-12)
+
+[Full Changelog](https://github.com/anytypeio/js-anytype/compare/v0.26.10-alpha...v0.26.11-alpha)
+
+## [v0.26.10-alpha](https://github.com/anytypeio/js-anytype/tree/v0.26.10-alpha) (2022-07-12)
+
+[Full Changelog](https://github.com/anytypeio/js-anytype/compare/v0.26.9-alpha...v0.26.10-alpha)
+
+**Merged pull requests:**
+
+- Feature/Table fixes [\#1326](https://github.com/anytypeio/js-anytype/pull/1326) ([ra3orblade](https://github.com/ra3orblade))
+- Library Updates [\#1325](https://github.com/anytypeio/js-anytype/pull/1325) ([ra3orblade](https://github.com/ra3orblade))
+- Syncing branch feature/link-markup [\#1323](https://github.com/anytypeio/js-anytype/pull/1323) ([mhlv](https://github.com/mhlv))
+- Remove utf fix [\#1321](https://github.com/anytypeio/js-anytype/pull/1321) ([ra3orblade](https://github.com/ra3orblade))
+- Feature/MenuBlockLink updates [\#1320](https://github.com/anytypeio/js-anytype/pull/1320) ([mhlv](https://github.com/mhlv))
+- Feature/Board [\#1308](https://github.com/anytypeio/js-anytype/pull/1308) ([ra3orblade](https://github.com/ra3orblade))
+
 ## [v0.26.9-alpha](https://github.com/anytypeio/js-anytype/tree/v0.26.9-alpha) (2022-07-06)
 
 [Full Changelog](https://github.com/anytypeio/js-anytype/compare/v0.26.8-alpha...v0.26.9-alpha)

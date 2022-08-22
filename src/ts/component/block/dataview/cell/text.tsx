@@ -39,7 +39,7 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 
 	render () {
 		const { isEditing } = this.state;
-		const { index, relation, viewType, getView, getRecord, canEdit, isInline, iconSize, onParentClick, placeholder } = this.props;
+		const { index, relation, viewType, getView, getRecord, textLimit, isInline, iconSize, onParentClick, placeholder } = this.props;
 		const record = getRecord(index);
 		
 		if (!record) {
@@ -132,8 +132,12 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 			);
 		} else {
 			Name = (item: any) => {
-				if (item.name) {
-					return <div className="name" dangerouslySetInnerHTML={{ __html: item.name }} />;
+				let name = item.name;
+				if (name) {
+					if (textLimit) {
+						name = Util.shorten(name, textLimit);
+					};
+					return <div className="name" dangerouslySetInnerHTML={{ __html: name }} />;
 				} else {
 					return (
 						<div className="empty">
@@ -187,10 +191,7 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 					break;
 
 				case I.ViewType.Board:
-					size = 48;
-					if ([ I.ObjectLayout.Task, I.ObjectLayout.Bookmark ].includes(record.layout)) {
-						size = 24;
-					};
+					size = 24;
 					break;
 			};
 

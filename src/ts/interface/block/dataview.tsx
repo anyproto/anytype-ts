@@ -119,7 +119,7 @@ export interface View {
 	type: ViewType;
 	coverRelationKey: string;
 	groupRelationKey: string;
-	groupBackgroundColors?: boolean;
+	groupBackgroundColors: boolean;
 	coverFit: boolean;
 	cardSize: I.CardSize;
 	hideIcon: boolean;
@@ -146,6 +146,9 @@ export interface Cell {
 	isInline?: boolean;
 	iconSize?: number;
 	placeholder?: string;
+	withLabel?: boolean;
+	textLimit?: number;
+	arrayLimit?: number;
 	getView?(): View;
 	getRecord(index: number): any;
 	onChange?(value: any, callBack?: (message: any) => void): void;
@@ -156,7 +159,6 @@ export interface Cell {
 	onCellChange?: (id: string, key: string, value: any, callBack?: (message: any) => void) => void;
 	cellPosition?: (cellId: string) => void;
 	elementMapper?: (relation: any, item: any) => any;
-	arrayLimit?: number;
 };
 
 export interface BoardGroup {

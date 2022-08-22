@@ -7,6 +7,12 @@
 
 		.loaderWrapper { border-radius: 4px; border: solid 1px $colorBorderDark; height: 48px; width: 100%; }
 
+		.deleted { display: flex; gap: 0px 6px; align-items: center; color: $colorMediumGrey; }
+        .deleted {
+			.icon.ghost { width: 24px; height: 24px; }
+            .name { display: inline-block; vertical-align: top; max-width: calc(100% - 26px); position: relative; @include text-overflow-nw; margin: 0px; }
+        }
+
 		.inner { 
 			display: flex; border-radius: inherit; border: 1px solid $colorLightGrey; transition: border-color 0.2s ease-in-out; 
 			cursor: pointer; position: relative; border-radius: 12px; overflow: hidden;
@@ -15,8 +21,12 @@
 		.inner.bgColor { border: 0px; }
 		
 		.inner {
-			.side.left { width: 100%; padding: 16px; }
+			.side.left { width: 100%; padding: 16px; position: relative; }
 			.side.right { border-radius: 0px 12px 12px 0px; overflow: hidden; display: none; }
+
+			.name { @include text-common; line-height: 18px; height: 18px; @include clamp2; margin-bottom: 4px; }
+			.descr { @include text-small; line-height: 16px; color: $colorVeryDarkGrey; margin-bottom: 6px; @include clamp2; }
+			.archive { position: absolute; right: 10px; top: 10px; z-index: 1; }
 		}
 		
 		.inner.vertical { display: block; }
@@ -38,9 +48,6 @@
 			.side.left { width: 100%; }
 			.side.right { width: 100%; }
 		}
-
-		.name { @include text-common; line-height: 18px; height: 18px; color: $colorBlack; @include clamp2; margin-bottom: 4px; }
-		.descr { @include text-small; line-height: 16px; color: $colorVeryDarkGrey; margin-bottom: 6px; @include clamp2; }
 
 		.link { 
 			@include text-small; height: 18px; color: $colorDarkGrey; @include text-overflow-nw; display: flex; gap: 0px 6px; 

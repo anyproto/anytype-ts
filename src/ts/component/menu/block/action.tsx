@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Filter, MenuItemVertical } from 'Component';
-import { commonStore, blockStore, menuStore } from 'Store';
+import { detailStore, blockStore, menuStore } from 'Store';
 import { I, C, keyboard, DataUtil, focus, Action, translate, analytics } from 'Lib';
 
 interface Props extends I.Menu {};
@@ -147,17 +147,29 @@ class MenuBlockAction extends React.Component<Props, State> {
 	onKeyDown (e: any) {
 		const { onKeyDown, param } = this.props;
 		const { data } = param;
-		const { blockRemove } = data;
+		const { rootId, blockIds, blockRemove } = data;
 		const { filter } = this.state;
+		const { focused } = focus.state;
+		const cmd = keyboard.ctrlKey();
 
 		let ret = false;
 
-		keyboard.shortcut('backspace', e, (pressed: string) => {
-			if (!filter && blockRemove) {
+		if (!filter && blockRemove) {
+			keyboard.shortcut('backspace, delete', e, (pressed: string) => {
 				blockRemove();
 				ret = true;
-			};
-		});
+			});
+		};
+
+		if (focused) {
+			keyboard.shortcut(`${cmd}+d`, e, (pressed: string) => {
+				Action.duplicate(rootId, blockIds[blockIds.length - 1], blockIds, () => { 
+					focus.clear(true); 
+				});
+				this.refFilter.blur();
+				ret = true;
+			});
+		};
 
 		if (!ret) {
 			onKeyDown(e);
@@ -192,7 +204,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 			const color = { id: 'color', icon: 'color', name: 'Color', arrow: true, children: DataUtil.menuGetTextColors() };
 
 			let hasTurnText = true;
-			let hasTurnPage = true;
+			let hasTurnObject = true;
 			let hasTurnList = true;
 			let hasTurnDiv = true;
 			let hasTurnFile = true;
@@ -204,7 +216,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 			let hasAlign = true;
 			let hasColor = true;
 			let hasBg = true;
-			let hasTable = true;
+			let hasBookmark = true;
 
 			for (let id of blockIds) {
 				const block = blockStore.getLeaf(rootId, id);
@@ -212,8 +224,15 @@ class MenuBlockAction extends React.Component<Props, State> {
 					continue;
 				};
 
+				if (block.isBookmark()) {
+					const object = detailStore.get(rootId, block.content.targetObjectId, [ 'isArchived', 'isDeleted' ], true);
+					if (object.isArchived || object.isDeleted) {
+						hasBookmark = false;
+					};
+				};
+
 				if (!block.canTurnText())		 hasTurnText = false;
-				if (!block.canTurnPage())		 hasTurnPage = false;
+				if (!block.canTurnPage())		 hasTurnObject = false;
 				if (!block.canTurnList())		 hasTurnList = false;
 				if (!block.isDiv())				 hasTurnDiv = false;
 				if (!block.isFile())			 hasTurnFile = false;
@@ -223,7 +242,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 				if (!block.canHaveBackground())	 hasBg = false;
 				if (!block.isFile())			 hasFile = false;
 				if (!block.isLink())			 hasLink = false;
-				if (!block.isTable())			 hasTable = false;
+				if (!block.isBookmark())		 hasBookmark = false;
 
 				if (block.isTextTitle())		 hasAction = false;
 				if (block.isTextDescription())	 hasAction = false;
@@ -232,7 +251,6 @@ class MenuBlockAction extends React.Component<Props, State> {
 			};
 
 			if (hasTurnText)	 sections.push(turnText);
-			if (hasTurnPage)	 sections.push(turnPage);
 			if (hasTurnList)	 sections.push(turnList);
 			if (hasTurnDiv)		 sections.push(turnDiv);
 			if (hasTurnFile)	 sections.push(turnFile);
@@ -245,7 +263,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 			};
 			
 			if (hasAction) {
-				action.children = DataUtil.menuGetActions({ hasText, hasFile, hasLink });
+				action.children = DataUtil.menuGetActions({ hasText, hasFile, hasLink, hasBookmark });
 				sections.push(action);
 			};
 
@@ -275,6 +293,13 @@ class MenuBlockAction extends React.Component<Props, State> {
 					continue;
 				};
 
+				if (block.isBookmark()) {
+					const object = detailStore.get(rootId, block.content.targetObjectId, [ 'isArchived', 'isDeleted' ], true);
+					if (object.isArchived || object.isDeleted) {
+						hasBookmark = false;
+					};
+				};
+
 				if (!block.canTurnText() || block.isDiv()) {
 					hasTurnText = false;
 				};
@@ -296,29 +321,11 @@ class MenuBlockAction extends React.Component<Props, State> {
 			};
 
 			const section1: any = { 
-				children: DataUtil.menuGetActions({ hasText, hasFile, hasLink })
-			};
-
-			if (hasTurnObject) {
-				section1.children.splice(2, 0, { id: 'turnObject', icon: 'object', name: 'Turn into object', arrow: true });
-			};
-
-			if (hasBookmark) {
-				section1.children.push({ id: 'openBookmarkAsObject', icon: 'expand', name: 'Open as object' });
+				children: DataUtil.menuGetActions({ hasText, hasFile, hasLink, hasBookmark, hasTurnObject })
 			};
 
 			if (hasFile) {
-				section1.children = section1.children.concat([
-					{ id: 'download', icon: 'download', name: 'Download' },
-					{ id: 'openFileAsObject', icon: 'expand', name: 'Open as object' },
-					//{ id: 'rename', icon: 'rename', name: 'Rename' },
-					//{ id: 'replace', icon: 'replace', name: 'Replace' }
-				]);
 				section2.children.push({ id: 'turnStyle', icon: 'customize', name: 'Appearance', arrow: true, isFile: true },);
-			};
-
-			if (hasLink) {
-				section1.children.push({ id: 'linkSettings', icon: 'customize', name: 'Appearance', arrow: true });
 			};
 
 			if (hasTitle) {

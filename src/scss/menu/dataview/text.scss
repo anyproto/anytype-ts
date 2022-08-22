@@ -1,7 +1,7 @@
 @import "~scss/_vars";
 
 .menus {
-	.menu.menuDataviewText { box-shadow: 0px 0px; background: transparent; }
+	.menu.menuDataviewText { box-shadow: 0px 0px; background: transparent; height: auto !important; }
 	.menu.menuDataviewText {
 		.content { overflow: visible; max-height: none; transition: $transitionFast; padding: 0px; }
 		#input { 

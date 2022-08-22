@@ -1,6 +1,6 @@
 {
 	"name": "anytype2",
-	"version": "0.27.13-alpha",
+	"version": "0.27.24-alpha",
 	"description": "Anytype",
 	"main": "electron.js",
 	"scripts": {
@@ -535,6 +535,9 @@
 					"region": "fra1"
 				}
 			]
+		},
+		"nsis": {
+			"deleteAppDataOnUninstall": true
 		},
 		"linux": {
 			"icon": "electron/img/icon512x512.png",

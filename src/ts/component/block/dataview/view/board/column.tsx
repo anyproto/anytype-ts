@@ -1,9 +1,9 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon, Loader } from 'Component';
-import { I, Util, translate, keyboard, DataUtil } from 'Lib';
+import {  I, Util, translate, keyboard, DataUtil } from 'Lib';
 import { observer } from 'mobx-react';
-import { dbStore, detailStore, menuStore } from 'Store';
+import { dbStore, detailStore, menuStore, commonStore } from 'Store';
 
 import Card from './card';
 import Cell from 'Component/block/dataview/cell';
@@ -23,6 +23,7 @@ interface State {
 	loading: boolean;
 };
 
+const $ = require('jquery');
 const Constant = require('json/constant.json');
 
 const Column = observer(class Column extends React.Component<Props, State> {
@@ -45,6 +46,7 @@ const Column = observer(class Column extends React.Component<Props, State> {
 	};
 
 	render () {
+		const { config } = commonStore;
 		const { rootId, block, id, getSubId, getView, onRecordAdd, value, onDragStartColumn } = this.props;
 		const { loading } = this.state;
 		const view = getView();
@@ -52,18 +54,14 @@ const Column = observer(class Column extends React.Component<Props, State> {
 		const records = dbStore.getRecords(subId, '');
 		const items = this.getItems();
 		const { offset, total } = dbStore.getMeta(subId, '');
-		const relation = dbStore.getRelationByKey(view.groupRelationKey);
 		const group = dbStore.getGroup(rootId, block.id, id);
 		const head = {};
 		const cn = [ 'column' ];
 		const cnbg = [];
 		
-		let label: any = null;
-		let showCell = true;
-
 		if (view.groupBackgroundColors) {
 			cn.push('withColor');
-			cnbg.push('bgColor bgColor-' + (group.bgColor || 'default'));
+			cnbg.push('bgColor bgColor-' + (group.bgColor || 'grey'));
 		};
 
 		head[view.groupRelationKey] = value;
@@ -72,12 +70,6 @@ const Column = observer(class Column extends React.Component<Props, State> {
 		records.forEach((id: string) => {
 			const object = detailStore.get(subId, id, [ view.groupRelationKey ]);
 		});
-
-		switch (relation.format) {
-			case I.RelationType.Checkbox:
-				label = `${relation.name} is ${value ? 'checked' : 'unchecked'}`;
-				break;
-		};
 
 		return (
 			<div 
@@ -89,24 +81,22 @@ const Column = observer(class Column extends React.Component<Props, State> {
 					<div className="sides">
 						<div 
 							className="side left"
-							draggable={true}
+							draggable={config.experimental}
 							onDragStart={(e: any) => { onDragStartColumn(e, id); }}
 						>
-							{showCell ? (
-								<Cell 
-									id={'board-head-' + id} 
-									rootId={rootId}
-									subId={subId}
-									block={block}
-									relationKey={view.groupRelationKey} 
-									viewType={I.ViewType.Board}
-									getRecord={() => { return head; }}
-									readonly={true} 
-									arrayLimit={2}
-									placeholder={translate('placeholderCellCommon')}
-								/>
-							) : ''}
-							{label}
+							<Cell 
+								id={'board-head-' + id} 
+								rootId={rootId}
+								subId={subId}
+								block={block}
+								relationKey={view.groupRelationKey} 
+								viewType={I.ViewType.Board}
+								getRecord={() => { return head; }}
+								readonly={true} 
+								arrayLimit={2}
+								withLabel={true}
+								placeholder={translate('commonEmpty')}
+							/>
 						</div>
 
 						<div className="side right">
@@ -188,8 +178,20 @@ const Column = observer(class Column extends React.Component<Props, State> {
 				filters.push({ operator: I.FilterOperator.And, relationKey: relation.relationKey, condition: I.FilterCondition.Equal, value: value });
 				break;
 
+			case I.RelationType.Status:
+				if (!value || !value.length) {
+					filters.push({ operator: I.FilterOperator.And, relationKey: relation.relationKey, condition: I.FilterCondition.Empty, value: null });
+				} else {
+					filters.push({ operator: I.FilterOperator.And, relationKey: relation.relationKey, condition: I.FilterCondition.Equal, value: value });
+				}
+				break;
+
 			case I.RelationType.Tag:
-				filters.push({ operator: I.FilterOperator.And, relationKey: relation.relationKey, condition: I.FilterCondition.ExactIn, value: value });
+				if (!value || !value.length) {
+					filters.push({ operator: I.FilterOperator.And, relationKey: relation.relationKey, condition: I.FilterCondition.Empty, value: null });
+				} else {
+					filters.push({ operator: I.FilterOperator.And, relationKey: relation.relationKey, condition: I.FilterCondition.ExactIn, value: value });
+				};
 				break;
 		};
 
@@ -248,9 +250,15 @@ const Column = observer(class Column extends React.Component<Props, State> {
 
 	onMore (e: any) {
 		const { rootId, block, id, getView } = this.props;
+		const node = $(ReactDOM.findDOMNode(this));
+
+		node.addClass('active');
 
 		menuStore.open('dataviewGroupEdit', {
 			element: `#button-${id}-more`,
+			onClose: () => {
+				node.removeClass('active');
+			},
 			data: {
 				rootId,
 				blockId: block.id,

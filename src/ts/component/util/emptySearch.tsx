@@ -6,8 +6,11 @@ interface Props {
 };
 
 const $ = require('jquery');
+const raf = require('raf');
 
 class EmptySearch extends React.Component<Props, {}> {
+
+	_isMounted: boolean = false;
 
 	render () {
 		const { text } = this.props;
@@ -20,6 +23,7 @@ class EmptySearch extends React.Component<Props, {}> {
 	};
 	
 	componentDidMount () {
+		this._isMounted = true;
 		this.resize();
 	};
 
@@ -27,9 +31,19 @@ class EmptySearch extends React.Component<Props, {}> {
 		this.resize();
 	};
 
+	componentWillUnmount () {
+		this._isMounted = false;
+	};
+
 	resize () {
-		const node = $(ReactDOM.findDOMNode(this));
-		node.css({ lineHeight: node.height() + 'px' });
+		raf(() => {
+			if (!this._isMounted) {
+				return;
+			};
+
+			const node = $(ReactDOM.findDOMNode(this));
+			node.css({ lineHeight: node.height() + 'px' });
+		});
 	};
 
 };

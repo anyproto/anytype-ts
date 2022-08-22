@@ -427,7 +427,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 				tt = translate('commonArchived');
 			};
 			if (object.isDeleted) {
-				tt = translate('commonDeleted');
+				tt = translate('commonDeletedObject');
 			};
 
 			if (tt) {
@@ -576,7 +576,6 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			};
 
 			const smile = item.find('smile');
-			
 			if (smile && smile.length) {
 				ReactDOM.render(<IconObject size={size} object={{ iconEmoji: data.param }} />, smile.get(0));
 			};

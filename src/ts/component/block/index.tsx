@@ -386,6 +386,10 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 		const offset = element.offset();
 		const rect = { x: offset.left, y: keyboard.mouse.page.y, width: element.width(), height: 0 };
 
+		if (!block.isText()) {
+			focus.set(block.id, { from: 0, to: 0 });
+		};
+
 		menuStore.open('blockAction', { 
 			offsetX: element.outerWidth(),
 			horizontal: I.MenuDirection.Right,

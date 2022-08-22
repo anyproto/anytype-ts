@@ -79,6 +79,7 @@ const MenuGroupList = observer(class MenuGroupList extends React.Component<Props
 							getRecord={() => { return head; }}
 							readonly={true} 
 							arrayLimit={2}
+							withLabel={true}
 							placeholder={translate('placeholderCellCommon')}
 						/>
 					</span>
@@ -263,10 +264,11 @@ const MenuGroupList = observer(class MenuGroupList extends React.Component<Props
 		const update: any[] = [];
 
 		groups.forEach((it: any, i: number) => {
-			update.push({ groupId: it.id, index: i, isHidden: it.isHidden });
+			update.push({ ...it, groupId: it.id, index: i });
 		});
 
 		dbStore.groupsSet(rootId, blockId, groups);
+		DataUtil.dataviewGroupUpdate(rootId, blockId, view.id, update);
 		C.BlockDataviewGroupOrderUpdate(rootId, blockId, { viewId: view.id, groups: update });
 	};
 
@@ -287,8 +289,8 @@ const MenuGroupList = observer(class MenuGroupList extends React.Component<Props
 	resize () {
 		const { getId, position } = this.props;
 		const items = this.getItems();
-		const obj = $('#' + getId() + ' .content');
-		const height = Math.max(HEIGHT * 2, Math.min(360, items.length * HEIGHT + 58));
+		const obj = $(`#${getId()} .content`);
+		const height = Math.max(HEIGHT * 2, Math.min(360, items.length * HEIGHT + 16));
 
 		obj.css({ height: height });
 		position();

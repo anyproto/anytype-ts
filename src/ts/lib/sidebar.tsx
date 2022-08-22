@@ -327,10 +327,11 @@ class Sidebar {
 	};
 
 	resize () {
-		const { fixed } = this.data;
+		const { fixed, snap, width } = this.data;
 		const { unfix } = Constant.size.sidebar;
 		const win = $(window);
 		const ww = win.width();
+		const set: any = {};
 
 		if ((ww > unfix) && !fixed && this.fixed) {
 			this.fixed = false;
@@ -343,7 +344,17 @@ class Sidebar {
 		};
 
 		if (!fixed) {
-			this.set({ height: this.maxHeight() });
+			set.height = this.maxHeight();
+		};
+		if (snap == I.MenuDirection.Left) {
+			set.x = 0;
+		};
+		if (snap == I.MenuDirection.Right) {
+			set.x = ww - width;
+		};
+
+		if (Util.objectLength(set)) {
+			this.set(set);
 		};
 	};
 
@@ -412,7 +423,7 @@ class Sidebar {
 		};
 
 		if (dummy && dummy.length) {
-			dummy.css({ width: width ? width + 8 : 0 });
+			dummy.css({ width: width ? width : 0 });
 		};
 
 		page.css({ width: pageWidth });
@@ -482,7 +493,7 @@ class Sidebar {
 
 	maxHeight (): number {
 		const win = $(window);
-		return win.height() - Util.sizeHeader() - SHOW_THRESHOLD - 10;
+		return win.height() - Util.sizeHeader() - 52 - 10;
 	};
 
 };

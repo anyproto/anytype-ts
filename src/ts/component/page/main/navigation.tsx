@@ -165,7 +165,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 					<div id={'panel-' + Panel.Left} className="items left">
 						{!isRoot ? (
 							<React.Fragment>
-								<div className="sideName">{translate('popupNavigationLinkFrom')}</div>
+								<div className="sideName">{translate('popupNavigationLinkTo')}</div>
 								{!pagesIn.length ? (
 									<ItemEmpty name={translate('popupNavigationEmptyTo')} />
 								) : (
@@ -206,7 +206,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 					</div>
 
 					<div id={'panel-' + Panel.Right} className="items right">
-						<div className="sideName">{translate('popupNavigationLinkTo')}</div>
+						<div className="sideName">{translate('popupNavigationLinkFrom')}</div>
 						{!pagesOut.length ? (
 							<ItemEmpty name={translate('popupNavigationEmptyFrom')} />
 						) : (

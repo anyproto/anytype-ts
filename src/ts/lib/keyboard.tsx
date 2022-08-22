@@ -104,8 +104,6 @@ class Keyboard {
 		const key = e.key.toLowerCase();
 		const cmd = this.ctrlKey();
 		const isMain = this.isMain();
-		const ids = this.selection ? this.selection.get(I.SelectType.Block) : [];
-		const isMenuOpen = menuStore.isOpen();
 
 		this.pressed.push(key);
 
@@ -724,6 +722,26 @@ class Keyboard {
 	ctrlKey () {
 		const platform = Util.getPlatform();
 		return platform == I.Platform.Mac ? 'cmd' : 'ctrl';
+	};
+
+	checkPressed (key: string) {
+		return this.pressed.includes(key);
+	};
+
+	isShift () {
+		return this.checkPressed(Key.shift);
+	};
+
+	isAlt () {
+		return this.checkPressed(Key.alt);
+	};
+
+	isCtrl () {
+		return this.checkPressed(Key.ctrl);
+	};
+
+	isMeta () {
+		return this.checkPressed(Key.meta);
 	};
 
 };

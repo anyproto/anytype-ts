@@ -123,9 +123,10 @@
         .viewItem.viewGrid { box-shadow: 0px -1px $colorLineSecondary inset; }
         .viewItem.viewGrid {
             .row { box-shadow: 0px 1px $colorLineSecondary inset; }
+			.cellHead .resize .line { background-color: $colorLineSecondary; }
         }
 
-        .viewItem.viewList {
+        .viewItem.viewList, .viewItem.viewGallery, .viewItem.viewBoard {
             .cellContent.isName { color: $colorPrimary; }
         }
 
@@ -134,15 +135,27 @@
             .card {
                 .cover { border-color: $colorLinePrimary; background-color: $colorBgIcon; }
             }
-
-            .cellContent.isName { color: $colorPrimary; }
         }
 
         .viewItem.viewBoard {
-            .cardContent { background: $colorBgLight; border-color: $colorLinePrimary; }
-			.card.add { background: $colorBgLight; border-color: $colorLinePrimary; }
-            .cellContent.isName { color: $colorPrimary; }
-			.column .head { background: $colorBlack; }
+			.ghost { border-color: $colorOrange; }
+            .cardContent { background: $colorBgLight; border-color: $colorLineSecondary; }
+			.card.add { background: $colorBgLight; border-color: $colorLineSecondary; }
+
+			.column {
+				.head { background: $colorBlack; }
+				.side.right {
+					.icon:hover { background-color: $colorBgIcon; }
+				}
+			}
+			.column.withColor {
+				.head .empty { color: $colorSecondary; }
+			}
+
+			.card.add:hover, .card:hover .cardContent { border-color: $colorLinePrimary; }
+			.card.add:hover {
+                .icon { background-image: url('#{$themePath}/icon/plus/column1.svg'); }
+            }
         }
     }
 
@@ -212,15 +225,16 @@
 
     .block.blockBookmark {
 		.loaderWrapper { border: 0px; }
+		.deleted { color: $colorSecondary; }
 
         .inner { border-color: transparent; background-color: $colorHover; }
-        .inner.vertical {
+        .inner {
+			.name { color: $colorPrimary; }
+    	    .descr { color: $colorSecondary; }
+	        .link { color: $colorSecondary; }
+
             .side.right { border-color: $colorLinePrimary; }
         }
-
-        .name { color: $colorPrimary; }
-        .descr { color: $colorSecondary; }
-        .link { color: $colorSecondary; }
     }
 
     /* BlockTableOfContenst */

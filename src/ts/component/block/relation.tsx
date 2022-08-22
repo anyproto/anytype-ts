@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Cell } from 'Component';
+import { Cell, Icon } from 'Component';
 import { I, C, DataUtil, Util, focus, analytics, Relation } from 'Lib';
 import { observer } from 'mobx-react';
 import { menuStore, detailStore, dbStore, blockStore } from 'Store';
@@ -45,7 +45,8 @@ const BlockRelation = observer(class BlockRelation extends React.Component<Props
 				(
 					<div className="sides">
 						<div className="info">
-							{relation.name}
+							{!allowedValue ? <Icon className="lock" /> : ''}
+							<div className="name">{relation.name}</div>
 						</div>
 						<div 
 							id={id} 

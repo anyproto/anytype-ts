@@ -600,10 +600,10 @@ class DataUtil {
 		];
 	
 		let items = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).filter((it: any) => {
-			if (!config.debug.ho) {
-				return !it.isHidden;
+			if (skip.includes(it.id)) {
+				return false;
 			};
-			return !skip.includes(it.id);
+			return config.debug.ho ? true : !it.isHidden;
 		});
 
 		if (withBookmark && !bookmark._empty_) {
@@ -717,7 +717,7 @@ class DataUtil {
 
 	// Action menu
 	menuGetActions (param: any) {
-		let { hasText, hasFile, hasLink } = param;
+		let { hasText, hasFile, hasLink, hasBookmark, hasTurnObject } = param;
 		let cmd = keyboard.ctrlSymbol();
 		let items: any[] = [
 			{ id: 'move', icon: 'move', name: 'Move to', arrow: true },
@@ -726,6 +726,10 @@ class DataUtil {
 			//{ id: 'comment', icon: 'comment', name: 'Comment' }
 		];
 
+		if (hasTurnObject) {
+			items.push({ id: 'turnObject', icon: 'object', name: 'Turn into object', arrow: true });
+		};
+		
 		if (hasText) {
 			items.push({ id: 'clear', icon: 'clear', name: 'Clear style' });
 		};
@@ -735,6 +739,10 @@ class DataUtil {
 			items.push({ id: 'openFileAsObject', icon: 'expand', name: 'Open as object' });
 			//items.push({ id: 'rename', icon: 'rename', name: 'Rename' });
 			//items.push({ id: 'replace', icon: 'replace', name: 'Replace' });
+		};
+
+		if (hasBookmark) {
+			items.push({ id: 'openBookmarkAsObject', icon: 'expand', name: 'Open as object' });
 		};
 
 		if (hasLink) {
@@ -808,24 +816,15 @@ class DataUtil {
 	};
 
 	menuGetViews () {
-		const { config } = commonStore;
-		
-		let ret = [
+		return [
 			{ id: I.ViewType.Grid },
 			{ id: I.ViewType.Gallery },
 			{ id: I.ViewType.List },
-		];
-		if (config.experimental) {
-			ret = ret.concat([
-				{ id: I.ViewType.Board },
-			]);
-		};
-
-		ret = ret.map((it: any) => {
+			{ id: I.ViewType.Board },
+		].map((it: any) => {
 			it.name = translate('viewName' + it.id);
 			return it;
 		});
-		return ret;
 	};
 
 	menuGetRelationTypes () {
@@ -1347,6 +1346,20 @@ class DataUtil {
 				callBack(message);
 			};
 		});
+	};
+
+	dataviewGroupUpdate (rootId: string, blockId: string, viewId: string, groups: any[]) {
+		const block = blockStore.getLeaf(rootId, blockId);
+		if (!block) {
+			return;
+		};
+
+		const el = block.content.groupOrder.find(it => it.viewId == viewId);
+		if (el) {
+			el.groups = groups;
+		};
+
+		blockStore.updateContent(rootId, blockId, block.content);
 	};
 
 };

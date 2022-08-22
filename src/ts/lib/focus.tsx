@@ -60,6 +60,8 @@ class Focus {
 			window.getSelection().removeAllRanges();
 			keyboard.setFocus(false);
 		};
+
+		$('.focusable.isFocused').removeClass('isFocused');
 	};
 	
 	apply (): Focus {

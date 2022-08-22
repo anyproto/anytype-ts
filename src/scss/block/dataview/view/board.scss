@@ -5,8 +5,8 @@
 		.viewItem.viewBoard { padding: 16px 0px 0px 14px; }
         .viewItem.viewBoard {
 
-			.ghost { border: 0.05em dashed $colorOrange; border-radius: 12px; flex-shrink: 0; }
-			.ghost.isColumn { width: 240px; height: 100%; margin: 42px 14px 0px 0px; }
+			.ghost { border: 1px dotted $colorBorderDark; border-radius: 12px; flex-shrink: 0; }
+			.ghost.isColumn { width: 240px; height: 100%; margin: 0px 14px 0px 0px; }
 			.ghost.isCard { margin-bottom: 8px; }
 			
 			.isOver.left {
@@ -22,21 +22,19 @@
 				.ghost.bottom { display: block; }
 			}
 
-            .columns { display: flex; flex-direction: row; gap: 0px 8px; }
+            .columns { display: flex; flex-direction: row; gap: 0px 8px; align-items: flex-start; }
             .column { width: 254px; flex-shrink: 0; display: flex; flex-direction: column; position: relative; }
             .column {
 				.bgColor { position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; opacity: 0.5; }
-				.bgColor-default { background-color: #f1f0ed; }
 
-                .head { cursor: grab; color: $colorDarkGrey; width: 100%; position: relative; padding: 8px 0px 0px 0px; }
+                .head { cursor: grab; color: $colorDarkGrey; width: 100%; position: relative; padding: 8px 10px 8px 16px; }
 				.head * { cursor: grab; }
 				.head {
-					.sides { 
-						display: flex; width: 100%; gap: 0px 6px; background: #fff; border-radius: 12px; padding: 0px 16px; line-height: 24px;
-						position: relative; z-index: 1;
-					}
+					.sides { display: flex; width: 100%; gap: 0px 6px; line-height: 24px; position: relative; z-index: 1; }
 					.side.left { width: calc(100% - 54px); display: flex; align-items: flex-start; gap: 0px 6px; justify-content: flex-start; }
 					.side.right { width: 54px; display: flex; align-items: flex-start; gap: 0px 6px; flex-shrink: 0; justify-content: flex-end; }
+
+					.label { @include text-overflow-nw; }
 
 					.cellContent { width: 100%; display: inline; }
 					.cellContent {
@@ -49,7 +47,7 @@
 						.more { vertical-align: top; margin: 3px 0px 0px 0px; }
 					}
 
-					.cellContent.c-checkbox { width: auto; }
+					.cellContent.c-checkbox { width: auto; display: flex; gap: 0px 6px; }
 					.cellContent.c-checkbox {
 						.icon { width: 24px; height: 24px; vertical-align: top; }
 					}
@@ -70,11 +68,11 @@
 
 				.body { overflow-y: overlay; max-height: 1500px; position: relative; z-index: 1; }
 				.body {
-					.bg { position: relative; padding: 8px; }
+					.bg { position: relative; padding: 0px 8px 8px 8px; }
 					.bgColor { border-radius: 0px 0px 4px 4px; }
 				}
             }
-			.column:hover {
+			.column:hover, .column.active {
 				.head .side.right .icon { opacity: 1; }
 			}
 
@@ -91,9 +89,28 @@
 			
             .card { width: 240px; display: flex; flex-direction: column; margin: 0px auto 8px auto; position: relative; z-index: 1; }
 			.card {
-				.cardContent { border: 1px solid $colorBorderDark; border-radius: 12px; padding: 16px; background: $colorWhite; }
+				.cardContent { 
+					border: 1px solid $colorBorderDark; border-radius: 12px; padding: 16px; background: $colorWhite; transition: border-color 0.2s ease-in-out;
+				}
+
+				.cellContent {
+					.name:empty { display: none; }
+				}
+
+				.cellContent.c-shortText {
+					.name { height: 24px; }
+				}
+
+				.cellContent.c-longText {
+					.name { @include clamp3; }
+				}
+
+				.cellContent.c-select {
+					.tagItem { margin: 0px 8px 0px 0px; }
+				}
 			}
 			.card:last-child { margin: 0px; }
+			.card.add:hover, .card:hover .cardContent { border-color: $colorBlack; }
 
 			.card.isDragging {
 				.cardContent { opacity: 0.3; }
@@ -107,24 +124,13 @@
             .card.add {
                 .icon { background-image: url('~img/icon/plus/column0.svg'); vertical-align: top; }
             }
-            .card.add:hover { border-color: $colorBlack; }
             .card.add:hover {
                 .icon { background-image: url('~img/icon/plus/column1.svg'); }
             }
-
-			.card {
-				.cellContent {
-					.name:empty { display: none; }
-				}
-
-				.cellContent.c-shortText {
-					.name { height: 24px; }
-				}
-
-				.cellContent.c-select {
-					.tagItem { margin: 0px 8px 0px 0px; }
-				}
-			}
         }
     }
+}
+
+html.platformLinux {
+	.blocks .block.blockDataview .viewItem.viewBoard .column .body { overflow-y: auto; }
 }

@@ -114,6 +114,7 @@ class Dispatcher {
 
 		if (v == V.BLOCKDATAVIEWRELATIONSET)	 t = 'blockDataviewRelationSet';
 		if (v == V.BLOCKDATAVIEWRELATIONDELETE)	 t = 'blockDataviewRelationDelete';
+		if (v == V.BLOCKDATAVIEWGROUPORDERUPDATE)	 t = 'blockDataviewGroupOrderUpdate';
 
 		if (v == V.SUBSCRIPTIONADD)				 t = 'subscriptionAdd';
 		if (v == V.SUBSCRIPTIONREMOVE)			 t = 'subscriptionRemove';
@@ -548,6 +549,25 @@ class Dispatcher {
 					ids = data.getRelationidsList();
 
 					ids.forEach(it => dbStore.relationDelete(rootId, id, it));
+					break;
+
+				case 'blockDataviewGroupOrderUpdate':
+					id = data.getId();
+					block = blockStore.getLeaf(rootId, id);
+					if (!block) {
+						break;
+					};
+
+					if (data.hasGrouporder()) {
+						const order = Mapper.From.GroupOrder(data.getGrouporder());
+						const el = block.content.groupOrder.find(it => it.viewId == order.viewId);
+
+						if (el) {
+							el.groups = order.groups;
+						};
+					};
+
+					blockStore.update(rootId, block);
 					break;
 
 				case 'objectDetailsSet':

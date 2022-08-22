@@ -234,7 +234,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 
 				case I.TabIndex.Recent:
 					sectionFilters = [
-						{ operator: I.FilterOperator.And, relationKey: 'lastModifiedDate', condition: I.FilterCondition.Greater, value: 0 }
+						{ operator: I.FilterOperator.And, relationKey: 'lastOpenedDate', condition: I.FilterCondition.Greater, value: 0 }
 					];
 					sorts = [
 						{ relationKey: 'lastModifiedDate', type: I.SortType.Desc },

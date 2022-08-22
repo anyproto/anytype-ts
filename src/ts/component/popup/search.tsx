@@ -71,12 +71,8 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 					<IconObject object={item} size={18} />
 					<ObjectName object={item} />
 
-					{type ? (
-						<React.Fragment>
-							{div}
-							<div className="type">{type.name || DataUtil.defaultName('page')}</div>
-						</React.Fragment>
-					) : ''}
+					{div}
+					<div className="type">{type._empty_ || type.isDeleted ? translate('commonDeletedType') : type.name}</div>
 
 					{description ? (
 						<React.Fragment>
@@ -397,9 +393,9 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 
 	getItems () {
 		const items = this.items.filter(this.filterMapper);
-
-		items.unshift({ name: 'Recent objects', isSection: true });
-
+		if (items.length) {
+			items.unshift({ name: 'Recent objects', isSection: true });
+		};
 		return items;
 	};
 
@@ -448,13 +444,13 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 		const win = $(window);
 		const obj = $(`#${getId()}-innerWrap`);
 		const content = obj.find('.content');
-		const height = Math.max(110, Math.min(HEIGHT * LIMIT_HEIGHT, items.length * HEIGHT + 16));
 		const container = Util.getPageContainer(isPopup);
 		const header = container.find('#header');
 		const ww = win.width();
 		const element = header.find('#path');
 
 		let width = ww * 0.4;
+		let height = Math.max(80, Math.min(HEIGHT * LIMIT_HEIGHT, items.length * HEIGHT + 16));
 		let x = ww / 2 - width / 2;
 		let y = Util.sizeHeader();
 
@@ -464,6 +460,10 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 			width = element.outerWidth();
 			x = left;
 			y = top - win.scrollTop() + 40;
+		};
+
+		if (!items.length) {
+			height = 110;
 		};
 
 		obj.css({ width, left: x, top: y });

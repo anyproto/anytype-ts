@@ -84,15 +84,17 @@ html.platformWindows {
 			background-image: url('~img/logo/small.svg'); 
 		}
 	}
-
-	::-webkit-scrollbar { width: 6px; height: 6px; }
-	::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.5); border-radius: 6px; }
-	::-webkit-scrollbar-corner { background-color: transparent; }
-	::-webkit-scrollbar-button { display: none; }
 }
 
 html.platformLinux {
 	body { overflow-y: auto; }
+}
+
+html.platformWindows, html.platformLinux {
+	::-webkit-scrollbar { width: 6px; height: 6px; }
+	::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.5); border-radius: 6px; }
+	::-webkit-scrollbar-corner { background-color: transparent; }
+	::-webkit-scrollbar-button { display: none; }
 }
 
 .dn { display: none !important; }
@@ -167,6 +169,7 @@ search.active { background: orange !important; }
 .bgColor-teal { background: #d6f5f3 !important; }
 .bgColor-lime { background: #e3f7d0 !important; }
 
+.isTag.archive { color: $colorDarkGrey; background: $colorVeryLightGrey; }
 .isTag.tagColor-default { color: $colorBlack !important; background: #fff !important; box-shadow: 0px 0px 0px 1px $colorLightGrey inset; }
 .isTag.tagColor-grey { color: #8c9ea5 !important; background: #ebeff1 !important; }
 .isTag.tagColor-yellow { color: #b2a616 !important; background: #fbf5b8 !important; }

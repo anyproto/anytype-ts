@@ -13,7 +13,9 @@ class Renderer {
 
 	on (event: string, callBack: any) {
 		this.remove(event);
-		window.Electron.on(event, callBack);
+		window.Electron.on(event, (...args: any[]) => {
+			callBack.apply(this, args);
+		});
 	};
 
 	remove (event: string) {

@@ -63,6 +63,7 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 								options={languages} 
 								onChange={(v: any) => { Renderer.send('setLanguage', v); }}
 								arrowClassName="light"
+								menuWidth={300}
 							/>
 						</div>
 					</div>
