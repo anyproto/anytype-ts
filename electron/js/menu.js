@@ -145,15 +145,15 @@ class MenuManager {
 					{ role: 'minimize' },
 					{
 						label: 'Zoom in', accelerator: 'CmdOrCtrl+Plus',
-						click: () => { this.win.webContents.setZoomLevel(this.win.webContents.getZoomLevel() + 1); }
+						click: () => { Api.setZoom(this.win, this.win.webContents.getZoomLevel() + 1); }
 					},
 					{
 						label: 'Zoom out', accelerator: 'CmdOrCtrl+-',
-						click: () => { this.win.webContents.setZoomLevel(this.win.webContents.getZoomLevel() - 1); }
+						click: () => { Api.setZoom(this.win, this.win.webContents.getZoomLevel() - 1); }
 					},
 					{
 						label: 'Default zoom', accelerator: 'CmdOrCtrl+0',
-						click: () => { this.win.webContents.setZoomLevel(0); }
+						click: () => { Api.setZoom(this.win, 0); }
 					},
 					{
 						label: 'Fullscreen', type: 'checkbox', checked: this.win.isFullScreen(),
