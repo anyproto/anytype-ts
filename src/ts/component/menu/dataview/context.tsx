@@ -119,7 +119,7 @@ class MenuContext extends React.Component<Props, {}> {
 			open = null;
 			archive = { id: 'unarchive', icon: 'restore', name: 'Restore from bin' };
 		} else {
-			archive = { id: 'archive', icon: 'remove', name: 'Delete' };
+			archive = { id: 'archive', icon: 'remove', name: 'Move to bin' };
 		};
 
 		if (!allowedArchive)	 archive = null;

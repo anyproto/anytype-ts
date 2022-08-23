@@ -154,7 +154,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		if (object.isArchived) {
 			archive = { id: 'pageUnarchive', icon: 'restore', name: 'Restore from bin' };
 		} else {
-			archive = { id: 'pageArchive', icon: 'remove', name: 'Delete' };
+			archive = { id: 'pageArchive', icon: 'remove', name: 'Move to bin' };
 		};
 
 		if (object.isHighlighted) {
