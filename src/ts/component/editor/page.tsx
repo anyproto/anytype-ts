@@ -268,6 +268,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 		const { rootId } = this.props;
 		const { focused, range } = focus.state;
+		const popupOpen = popupStore.isOpen();
+		const menuOpen = menuStore.isOpen();
 
 		let length = 0;
 		if (focused) {
@@ -279,6 +281,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 		switch (cmd) {
 			case 'selectAll':
+				if (popupOpen || menuOpen) {
+					break;
+				};
+
 				if ((range.from == 0) && (range.to == length)) {
 					this.onSelectAll();
 				} else {
@@ -497,7 +503,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 		// Select all
 		keyboard.shortcut(`${cmd}+a`, e, (pressed: string) => {
-			if (popupOpen) {
+			if (popupOpen || menuOpen) {
 				return;
 			};
 
