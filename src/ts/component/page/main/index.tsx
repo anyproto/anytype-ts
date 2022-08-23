@@ -89,7 +89,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 		if (tab.id == I.TabIndex.Favorite) {
 			selectionButtons = [
-				{ id: 'archive', icon: 'delete', name: 'Move to bin' },
+				{ id: 'archive', icon: 'delete', name: 'Delete' },
 				{ id: 'unfav', icon: 'unfav', name: 'Remove from favorites' },
 			].concat(selectionButtons);
 		} else
@@ -100,7 +100,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 			].concat(selectionButtons);
 		} else {
 			selectionButtons = [
-				{ id: 'archive', icon: 'delete', name: 'Move to bin' },
+				{ id: 'archive', icon: 'delete', name: 'Delete' },
 				{ id: 'fav', icon: 'fav', name: 'Add to favorites' },
 			].concat(selectionButtons);
 		};
@@ -692,7 +692,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 			remove = { id: 'remove', icon: 'remove', name: 'Delete' };
 			archive = { id: 'unarchive', icon: 'undo', name: 'Restore from bin' };
 		} else {
-			archive = { id: 'archive', icon: 'remove', name: 'Move to bin' };
+			archive = { id: 'archive', icon: 'remove', name: 'Delete' };
 		};
 
 		if (!blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Delete ])) {
