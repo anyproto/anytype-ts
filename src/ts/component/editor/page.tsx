@@ -62,6 +62,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 	};
 
 	render () {
+		const { rootId } = this.props;
+		const root = blockStore.getLeaf(rootId, rootId);
+
 		if (this.isDeleted) {
 			return <Deleted {...this.props} />;
 		};
@@ -69,9 +72,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		if (this.loading) {
 			return <Loader id="loader" />;
 		};
-
-		const { rootId } = this.props;
-		const root = blockStore.getLeaf(rootId, rootId);
 
 		if (!root) {
 			return null;
