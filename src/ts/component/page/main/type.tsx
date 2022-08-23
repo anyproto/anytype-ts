@@ -73,10 +73,10 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 		const object = Util.objectCopy(detailStore.get(rootId, rootId, [ 'recommendedLayout' ]));
 
 		const type = detailStore.get(Constant.subId.type, rootId, []);
-		const templates = dbStore.getRecords(this.getSubIdTemplate(), '');
+		const templates = dbStore.getRecords(this.getSubIdTemplate(), '').map(id => detailStore.get(this.getSubIdTemplate(), id, []));
 		const totalTemplate = dbStore.getMeta(this.getSubIdTemplate(), '').total;
 		const totalObject = dbStore.getMeta(this.getSubIdObject(), '').total;
-		const layout: any = DataUtil.menuGetLayouts().find((it: any) => { return it.id == object.recommendedLayout; }) || {};
+		const layout: any = DataUtil.menuGetLayouts().find(it => it.id == object.recommendedLayout) || {};
 		const showTemplates = !NO_TEMPLATES.includes(rootId);
 
 		const allowedObject = (type._smartBlockTypes_ || []).includes(I.SmartBlockType.Page);
@@ -86,9 +86,9 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 
 		let relations = Util.objectCopy(dbStore.getRelations(rootId, rootId));
 		if (!config.debug.ho) {
-			relations = relations.filter((it: any) => { return !it.isHidden; });
+			relations = relations.filter(it => !it.isHidden);
 		};
-		relations = relations.filter((it: any) => { return Constant.systemRelationKeys.indexOf(it.relationKey) < 0; });
+		relations = relations.filter(it => !Constant.systemRelationKeys.includes(it.relationKey));
 		relations.sort(DataUtil.sortByHidden);
 
 		const Relation = (item: any) => (
