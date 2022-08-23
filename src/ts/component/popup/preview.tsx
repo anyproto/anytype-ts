@@ -20,12 +20,12 @@ class PopupPreview extends React.Component<Props, {}> {
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, block } = data;
-		const { hash } = block.content;
+		const { block } = data;
+		const { hash, type } = block.content;
 
 		let content = null;
 
-		switch (block.content.type) {
+		switch (type) {
 			case I.FileType.Image:
 				content = <img className="media" src={commonStore.imageUrl(hash, Constant.size.image)} />
 				break;
@@ -67,6 +67,7 @@ class PopupPreview extends React.Component<Props, {}> {
 		const { param, getId } = this.props;
 		const { data } = param;
 		const { block } = data;
+		const { hash, type } = block.content;
 		
 		const obj = $(`#${getId()}-innerWrap`);
 		const win = $(window);
@@ -77,17 +78,15 @@ class PopupPreview extends React.Component<Props, {}> {
 
 		wrap.css({ height: 450, width: 450 });
 
-		switch (block.content.type) {
+		switch (type) {
 			case I.FileType.Image:
 				const img = new Image();
 				img.onload = function () {
-					loader.remove();
-					
 					let cw = img.width;
 					let ch = img.height;
 					let width = 0, height = 0;
-					
-					if (cw >= ch) {
+
+					if (cw > ch) {
 						width = Math.min(mw, cw);
 						height = Math.min(mh, width / (cw / ch));
 					} else {
@@ -95,9 +94,10 @@ class PopupPreview extends React.Component<Props, {}> {
 						width = Math.min(mw, height / (ch / cw));
 					};
 
-					wrap.css({ height: height, width: width  });
+					wrap.css({ height, width  });
+					loader.remove();
 				};
-				img.src = commonStore.imageUrl(block.content.hash, Constant.size.image);
+				img.src = commonStore.imageUrl(hash, Constant.size.image);
 				break;
 		};
 		
