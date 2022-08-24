@@ -99,7 +99,7 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 						onKeyDown={this.onKeyDown}
 						onKeyUp={this.onKeyUp}
 					>
-						{' '}
+						{'\n'}
 					</span>
 
 					{canClear ? <Icon className="clear" onMouseDown={this.onClear} /> : ''}

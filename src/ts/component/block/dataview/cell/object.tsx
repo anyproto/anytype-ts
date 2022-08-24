@@ -97,7 +97,7 @@ const CellObject = observer(class CellObject extends React.Component<Props, Stat
 						onKeyDown={this.onKeyDown}
 						onKeyUp={this.onKeyUp}
 					>
-						{' '}
+						{'\n'}
 					</span>
 				</div>
 			);
