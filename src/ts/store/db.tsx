@@ -205,23 +205,27 @@ class DbStore {
 			return null;
 		};
 
-		const object = detailStore.get(Constant.subId.relation, relationKey, Constant.relationRelationKeys);
-		return object._empty_ ? null : object;
+		const map = detailStore.map.get(Constant.subId.relation);
+		for (const [ key, list ] of map) {
+			if (!list.length) {
+				return null;
+			};
+
+			const rk = list.find(it => it.relationKey == 'relationKey');
+			if (rk.value == relationKey) {
+				const object = detailStore.check(Object.fromEntries(list.map(it => [ it.relationKey, it.value ])));
+				return object._empty_ ? null : object;
+			};
+		};
+		return null;
 	};
 
-	getRelationById (rootId: string, blockId: string, id: string): any {
+	getRelationById (id: string): any {
 		if (!id) {
 			return null;
 		};
 
-		const relations = this.getRelations(rootId, blockId);
-		const relation = relations.find(it => it.id == id);
-
-		if (!relation) {
-			return null;
-		};
-
-		const object = detailStore.get(Constant.subId.relation, relation.relationKey, Constant.relationRelationKeys);
+		const object = detailStore.get(Constant.subId.relation, id, Constant.relationRelationKeys);
 		return object._empty_ ? null : object;
 	};
 

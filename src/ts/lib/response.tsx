@@ -74,19 +74,19 @@ const AccountDelete = (response: any) => {
 
 const ObjectCreate = (response: any) => {
 	return {
-		pageId: response.getPageid(),
+		objectId: response.getObjectid(),
 	};
 };
 
 const ObjectCreateSet = (response: any) => {
 	return {
-		id: response.getId(),
+		objectId: response.getObjectid(),
 	};
 };
 
 const ObjectCreateBookmark = (response: any) => {
 	return {
-		pageId: response.getPageid(),
+		objectId: response.getObjectid(),
 	};
 };
 

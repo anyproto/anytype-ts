@@ -392,7 +392,7 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 		C.ObjectCreateSet([ rootId ], { name: object.name + ' set', iconEmoji: object.iconEmoji }, '', (message: any) => {
 			if (!message.error.code) {
 				focus.clear(true);
-				DataUtil.objectOpenPopup({ id: message.id, layout: I.ObjectLayout.Set });
+				DataUtil.objectOpenPopup({ id: message.objectId, layout: I.ObjectLayout.Set });
 			};
 		});
 	};

@@ -419,7 +419,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 
 		C.ObjectCreate(details, [], (message: any) => {
 			if (addCommand) {
-				addCommand(rootId, blockId, message.pageId, onChange);
+				addCommand(rootId, blockId, message.objectId, onChange);
 			};
 		});
 	};
@@ -438,9 +438,9 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 	getRelation () {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, relationId } = data;
+		const { relationId } = data;
 
-		return dbStore.getRelationById(rootId, blockId, relationId);
+		return dbStore.getRelationById(relationId);
 	};
 
 });
