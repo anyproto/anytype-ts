@@ -153,10 +153,9 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		const isPopup = keyboard.isPopup();
 		const { focused } = focus.state;
 		const win = $(window);
-		const node = $(ReactDOM.findDOMNode(this));
 		const nodes = this.getPageContainer().find('.selectable');
 		
-		node.find('#selection-rect').css({ transform: 'translate3d(0px, 0px, 0px)', width: 0, height: 0 }).show();
+		$('#selection-rect').css({ transform: 'translate3d(0px, 0px, 0px)', width: 0, height: 0 }).show();
 		
 		this.x = e.pageX;
 		this.y = e.pageY;
@@ -298,20 +297,18 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	};
 
 	drawRect (rect: any) {
-		const { config } = commonStore;
+		const el = $('#selection-rect');
+		const range = Util.selectionRange();
 
-		if (!config.debug.ui) {
-			return;
+		if (range) {
+			el.hide();
+		} else {
+			el.show().css({ 
+				transform: `translate3d(${rect.x + 10}px, ${rect.y + 10}px, 0px)`,
+				width: rect.width - 10, 
+				height: rect.height - 10,
+			});
 		};
-
-		const node = $(ReactDOM.findDOMNode(this));
-		const el = node.find('#selection-rect');
-
-		el.css({ 
-			transform: `translate3d(${rect.x + 10}px, ${rect.y + 10}px, 0px)`,
-			width: rect.width - 10, 
-			height: rect.height - 10,
-		});
 	};
 	
 	getRect (x: number, y: number) {
@@ -447,14 +444,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	};
 	
 	hide () {
-		if (!this._isMounted) {
-			return
-		};
-		
-		const node = $(ReactDOM.findDOMNode(this));
-		const el = node.find('#selection-rect');
-		
-		el.hide();
+		$('#selection-rect').hide();
 		this.unbindMouse();
 	};
 	
