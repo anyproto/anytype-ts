@@ -146,8 +146,7 @@ class DetailStore {
 			if (object.isDeleted) {
 				name = translate('commonDeletedType');
 			};
-		};
-
+		} else
 		if (object.type == Constant.typeId.relation) {
 			object.relationFormat = Number(object.relationFormat) || I.RelationType.LongText;
 			//object.isReadonlyRelation = Boolean(object.relationReadonly);
@@ -155,6 +154,7 @@ class DetailStore {
 			object.scope = Number(object.scope) || I.RelationScope.Object;
 			object.format = object.relationFormat;
 			object.objectTypes = object.relationFormatObjectTypes || [];
+			object.selectDict = object.selectDict || [];
 		};
 
 		return {
