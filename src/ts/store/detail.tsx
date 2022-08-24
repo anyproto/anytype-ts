@@ -140,8 +140,7 @@ class DetailStore {
 		};
 
 		if (object.type == Constant.typeId.type) {
-			const type = dbStore.getObjectType(object.id);
-			object._smartBlockTypes_ = type ? type.types || [] : [];
+			object.smartblockTypes = object.smartblockTypes || [];
 			object.recommendedLayout = Number(object.recommendedLayout) || I.ObjectLayout.Page;
 
 			if (object.isDeleted) {

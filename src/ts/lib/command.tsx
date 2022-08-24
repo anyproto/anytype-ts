@@ -1166,7 +1166,7 @@ const ObjectSearchSubscribe = (subId: string, filters: I.Filter[], sorts: I.Sort
 	request.setSortsList(sorts.map(Mapper.To.Sort));
 	request.setOffset(offset);
 	request.setLimit(limit);
-	request.setKeysList(keys);
+	request.setKeysList(Util.arrayUnique(keys));
 	request.setSourceList(sources);
 	request.setIgnoreworkspace(ignoreWorkspace);
 	request.setAfterid(afterId);

@@ -269,6 +269,7 @@ class DataUtil {
 
 		this.searchSubscribe({
 			subId: Constant.subId.type,
+			keys: Constant.defaultRelationKeys.concat([ 'smartblockTypes' ]),
 			filters: [
 				{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.type }
 			],
