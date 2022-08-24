@@ -87,11 +87,7 @@ class Dataview {
 				};
 			};
 
-			if (callBack) {
-				callBack(message);
-			};
-
-			C.BlockDataviewViewUpdate(rootId, blockId, view.id, view);
+			C.BlockDataviewViewUpdate(rootId, blockId, view.id, view, callBack);
 		});
 	};
 
