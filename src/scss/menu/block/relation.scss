@@ -63,7 +63,7 @@
 
 			.info { 
 				width: 192px; @include text-overflow-nw; line-height: 20px; border-radius: 4px; transition: background 0.2s ease-in-out; 
-				flex-shrink: 0; margin-right: 6px; padding: 5px 0px; color: $colorDarkGrey;
+				flex-shrink: 0; margin-right: 6px; padding: 6px 0px; color: $colorDarkGrey;
 			}
 			.info.canEdit { cursor: pointer; }
 			.info.canEdit:hover { background: $colorHover; }

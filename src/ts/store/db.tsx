@@ -7,6 +7,7 @@ const Constant = require('json/constant.json');
 class DbStore {
 
     public relationMap: Map<string, any[]> = observable.map(new Map());
+	public relationKeyMap: any = {};
     public viewMap: Map<string, I.View[]> = observable.map(new Map());
     public recordMap: Map<string, string[]> = observable.map(new Map());
     public metaMap: Map<string, any> = observable.map(new Map());
@@ -201,23 +202,7 @@ class DbStore {
 	};
 
     getRelationByKey (relationKey: string): any {
-		if (!relationKey) {
-			return null;
-		};
-
-		const map = detailStore.map.get(Constant.subId.relation);
-		for (const [ key, list ] of map) {
-			if (!list.length) {
-				return null;
-			};
-
-			const rk = list.find(it => it.relationKey == 'relationKey');
-			if (rk.value == relationKey) {
-				const object = detailStore.check(Object.fromEntries(list.map(it => [ it.relationKey, it.value ])));
-				return object._empty_ ? null : object;
-			};
-		};
-		return null;
+		return relationKey ? this.getRelationById(this.relationKeyMap[relationKey]) : null;
 	};
 
 	getRelationById (id: string): any {

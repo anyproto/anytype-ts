@@ -113,6 +113,7 @@ class DetailStore {
 		};
 		
 		if (keys) {
+			keys.push('id');
 			if (!forceKeys) {
 				keys = keys.concat(Constant.defaultRelationKeys);
 			};

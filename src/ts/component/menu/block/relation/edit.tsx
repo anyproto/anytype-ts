@@ -428,11 +428,10 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		const { param } = this.props;
 		const { data } = param;
 		const { relationId } = data;
-		const details = [ 
-			{ key: 'name', value: newRelation.name },
-		];
 
-		C.ObjectSetDetails(relationId, details);
+		C.ObjectSetDetails(relationId, [ 
+			{ key: 'name', value: newRelation.name },
+		]);
 	};
 
 	getRelation () {

@@ -278,7 +278,12 @@ class DataUtil {
 			filters: [
 				{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.relation }
 			],
-			noDeps: true
+			noDeps: true,
+		}, () => {
+			const records = dbStore.getRecords(Constant.subId.relation, '').map(id => detailStore.get(Constant.subId.relation, id, [ 'relationKey' ], true));
+			for (let record of records) {
+				dbStore.relationKeyMap[record.relationKey] = record.id;
+			};
 		});
 
 		this.searchSubscribe({
