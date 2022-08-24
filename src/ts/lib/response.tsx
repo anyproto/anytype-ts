@@ -90,6 +90,12 @@ const ObjectCreateBookmark = (response: any) => {
 	};
 };
 
+const ObjectCreateObjectType = (response: any) => {
+	return {
+		objectId: response.getObjectid(),
+	};
+};
+
 const ObjectOpen = (response: any) => {
 	return {
 		objectView: Mapper.From.ObjectView(response.getObjectview()),
@@ -235,12 +241,6 @@ const HistoryShowVersion = (response: any) => {
 	};
 };
 
-const ObjectTypeCreate = (response: any) => {
-	return {
-		objectType: Decode.decodeStruct(response.getNewdetails()),
-	};
-};
- 
 const ObjectSearch = (response: any) => {
 	return {
 		records: (response.getRecordsList() || []).map(Decode.decodeStruct),
@@ -366,7 +366,7 @@ export {
 	ObjectCreate,
 	ObjectCreateSet,
 	ObjectCreateBookmark,
-	ObjectTypeCreate,
+	ObjectCreateObjectType,
 
 	ObjectSearch,
 	ObjectSearchSubscribe,

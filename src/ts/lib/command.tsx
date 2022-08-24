@@ -942,15 +942,6 @@ const HistoryGetVersions = (pageId: string, lastVersionId: string, limit: number
 
 // ---------------------- OBJECT TYPE ---------------------- //
 
-const ObjectTypeCreate = (details: any, flags: I.ObjectFlag[], callBack?: (message: any) => void) => {
-	const request = new Rpc.ObjectType.Create.Request();
-	
-	request.setDetails(Encode.encodeStruct(details));
-	request.setInternalflagsList(flags.map(Mapper.To.InternalFlag));
-
-	dispatcher.request(ObjectTypeCreate.name, request, callBack);
-};
-
 const ObjectTypeRelationList = (objectTypeId: string, otherTypes: boolean, callBack?: (message: any) => void) => {
 	const request = new Rpc.ObjectType.Relation.List.Request();
 	
@@ -1005,6 +996,15 @@ const ObjectCreateBookmark = (url: string, callBack?: (message: any) => void) =>
 	request.setUrl(url);
 
 	dispatcher.request(ObjectCreateBookmark.name, request, callBack);
+};
+
+const ObjectCreateObjectType = (details: any, flags: I.ObjectFlag[], callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.CreateObjectType.Request();
+	
+	request.setDetails(Encode.encodeStruct(details));
+	request.setInternalflagsList(flags.map(Mapper.To.InternalFlag));
+
+	dispatcher.request(ObjectCreateObjectType.name, request, callBack);
 };
 
 const ObjectBookmarkFetch = (contextId: string, url: string, callBack?: (message: any) => void) => {
@@ -1595,7 +1595,6 @@ export {
 	HistoryShowVersion,
 	HistorySetVersion,
 
-	ObjectTypeCreate,
 	ObjectTypeRelationList,
 	ObjectTypeRelationAdd,
 	ObjectTypeRelationRemove,
@@ -1632,6 +1631,7 @@ export {
 	ObjectCreate,
 	ObjectCreateSet,
 	ObjectCreateBookmark,
+	ObjectCreateObjectType,
 
 	ObjectToSet,
 	ObjectToBookmark,
