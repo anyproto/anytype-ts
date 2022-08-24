@@ -6,7 +6,6 @@ import View from './view';
 import ViewRelation from './viewRelation';
 import Filter from './filter';
 import Sort from './sort';
-import ObjectType from './objectType';
 
 export { 
 	Account,
@@ -18,5 +17,4 @@ export {
 	ViewRelation,
 	Filter,
 	Sort,
-	ObjectType,
 };

@@ -264,20 +264,6 @@ const Mapper = {
 			};
 		},
 
-		ObjectType: (obj: any): I.ObjectType => {
-			return {
-				id: obj.getUrl(),
-				name: obj.getName(),
-				description: obj.getDescription(),
-				layout: obj.getLayout(),
-				iconEmoji: obj.getIconemoji(),
-				isHidden: obj.getHidden(),
-				isArchived: obj.getIsarchived(),
-				isReadonly: obj.getReadonly(),
-				types: obj.getTypesList(),
-			};
-		},
-
 		RelationLink: (obj: any): any => {
 			return {
 				id: obj.getId(),
@@ -422,7 +408,6 @@ const Mapper = {
 				rootId: obj.getRootid(),
 				blocks: (obj.getBlocksList() || []).map(Mapper.From.Block),
 				details: (obj.getDetailsList() || []).map(Mapper.From.Details),
-				objectTypes: (obj.getObjecttypesList() || []).map(Mapper.From.ObjectType),
 				relationLinks: (obj.getRelationlinksList() || []).map(Mapper.From.RelationLink),
 				restrictions: Mapper.From.Restrictions(obj.getRestrictions()),
 			};

@@ -752,7 +752,7 @@ class Dispatcher {
 	};
 
 	onObjectView (rootId: string, traceId: string, objectView: any) {
-		let { blocks, details, restrictions, objectTypes, relationLinks } = objectView;
+		let { blocks, details, restrictions, relationLinks } = objectView;
 		let root = blocks.find((it: any) => it.id == rootId);
 		let ctx: string[] = [ rootId ];
 		
@@ -766,7 +766,6 @@ class Dispatcher {
 			analytics.setContext(root.fields.analyticsContext, root.fields.analyticsOriginalId);
 		};
 
-		dbStore.objectTypesSet(objectTypes);
 		dbStore.relationsSet(rootId, rootId, relationLinks);
 
 		detailStore.set(contextId, details);

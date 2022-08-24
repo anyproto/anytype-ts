@@ -942,12 +942,6 @@ const HistoryGetVersions = (pageId: string, lastVersionId: string, limit: number
 
 // ---------------------- OBJECT TYPE ---------------------- //
 
-const ObjectTypeList = (callBack?: (message: any) => void) => {
-	const request = new Rpc.ObjectType.List.Request();
-	
-	dispatcher.request(ObjectTypeList.name, request, callBack);
-};
-
 const ObjectTypeCreate = (details: any, flags: I.ObjectFlag[], callBack?: (message: any) => void) => {
 	const request = new Rpc.ObjectType.Create.Request();
 	
@@ -1601,7 +1595,6 @@ export {
 	HistoryShowVersion,
 	HistorySetVersion,
 
-	ObjectTypeList,
 	ObjectTypeCreate,
 	ObjectTypeRelationList,
 	ObjectTypeRelationAdd,

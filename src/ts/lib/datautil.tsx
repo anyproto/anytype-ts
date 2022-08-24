@@ -254,10 +254,6 @@ class DataUtil {
 		analytics.profile(account);
 		analytics.event('OpenAccount');
 		
-		C.ObjectTypeList((message: any) => {
-			dbStore.objectTypesSet(message.objectTypes);
-		});
-
 		this.searchSubscribe({
 			subId: Constant.subId.deleted,
 			filters: [

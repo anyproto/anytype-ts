@@ -391,7 +391,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 		
 		const { content, align } = block;
 		const { color, bgColor } = content;
-		const types = DataUtil.getObjectTypesForNewObject({ withSet: true }).map((it: I.ObjectType) => { return it.id; }); 
+		const types = DataUtil.getObjectTypesForNewObject({ withSet: true }).map(it => it.id); 
 
 		setActive(item, false);
 

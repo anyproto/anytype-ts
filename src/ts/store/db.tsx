@@ -6,7 +6,6 @@ const Constant = require('json/constant.json');
 
 class DbStore {
 
-    public objectTypeList: I.ObjectType[] = observable.array([]);
     public relationMap: Map<string, any[]> = observable.map(new Map());
     public viewMap: Map<string, I.View[]> = observable.map(new Map());
     public recordMap: Map<string, string[]> = observable.map(new Map());
@@ -15,9 +14,7 @@ class DbStore {
 
     constructor() {
         makeObservable(this, {
-            objectTypes: computed,
 			clearAll: action,
-            objectTypesSet: action,
             relationDelete: action,
             viewsSet: action,
 			viewsSort: action,
@@ -35,27 +32,11 @@ class DbStore {
         });
     }
 
-    get objectTypes(): I.ObjectType[] {
-		return this.objectTypeList;
-	};
-
 	clearAll () {
-		this.objectTypeList = observable.array([]);
     	this.relationMap = observable.map(new Map());
     	this.viewMap = observable.map(new Map());
     	this.recordMap = observable.map(new Map());
     	this.metaMap = observable.map(new Map());
-	};
-
-    objectTypesSet (types: I.ObjectType[]) {
-		for (let type of types) {
-			const check = this.getObjectType(type.id);
-			if (check) {
-				set(check, type);
-			} else {
-				this.objectTypeList.push(new M.ObjectType(type));
-			};
-		};
 	};
 
     relationsSet (rootId: string, blockId: string, list: any[]) {
@@ -200,10 +181,6 @@ class DbStore {
 		});
 
 		this.groupsSet(rootId, blockId, []);
-	};
-
-    getObjectType (id: string): I.ObjectType {
-		return this.objectTypeList.find(it => it.id == id);
 	};
 
     getObjectTypesForSBType (SBType: I.SmartBlockType): any[] {

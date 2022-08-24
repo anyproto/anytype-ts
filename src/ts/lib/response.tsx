@@ -235,12 +235,6 @@ const HistoryShowVersion = (response: any) => {
 	};
 };
 
-const ObjectTypeList = (response: any) => {
-	return {
-		objectTypes: (response.getObjecttypesList() || []).map(Mapper.From.ObjectType),
-	};
-};
-
 const ObjectTypeCreate = (response: any) => {
 	return {
 		objectType: Decode.decodeStruct(response.getNewdetails()),
@@ -372,7 +366,6 @@ export {
 	ObjectCreate,
 	ObjectCreateSet,
 	ObjectCreateBookmark,
-	ObjectTypeList,
 	ObjectTypeCreate,
 
 	ObjectSearch,

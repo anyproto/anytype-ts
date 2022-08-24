@@ -82,15 +82,3 @@ export enum ObjectFlag {
 	SelectType		 = 1,
     SelectTemplate	 = 2,
 };
-
-export interface ObjectType {
-	id: string;
-	name: string;
-	description?: string;
-	layout: ObjectLayout;
-	iconEmoji: string;
-	isHidden: boolean;
-	isArchived: boolean;
-	isReadonly: boolean;
-	types: SmartBlockType[];
-};

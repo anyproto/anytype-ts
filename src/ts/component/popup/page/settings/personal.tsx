@@ -83,9 +83,7 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 
 	onType (e: any) {
 		const { getId } = this.props;
-		
-		let types = DataUtil.getObjectTypesForNewObject().map(it => it.id);
-		types = types.filter(it => ![ Constant.typeId.bookmark ].includes(it));
+		const types = DataUtil.getObjectTypesForNewObject().map(it => it.id);
 
 		menuStore.open('searchObject', {
 			element: `#${getId()} #defaultType`,
