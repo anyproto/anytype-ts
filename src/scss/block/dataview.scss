@@ -27,7 +27,7 @@
 			.views {
 				.viewItem { 
 					margin-right: 20px; display: inline-block; vertical-align: top; transition: color 0.2s ease-in-out; cursor: pointer; 
-					white-space: nowrap; @include text-header3; @include text-overflow-nw; max-width: 120px; color: $colorMediumGrey; line-height: 20px; 
+					white-space: nowrap; @include text-header3; @include text-overflow-nw; max-width: 250px; color: $colorMediumGrey; line-height: 20px; 
 				}
 				.viewItem { 
 					.icon.arrow { width: 20px; height: 20px; background-image: url('~img/arrow/view.svg'); }
