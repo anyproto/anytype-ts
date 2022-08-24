@@ -190,7 +190,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		return [
 			{ id: I.TabIndex.Favorite, name: 'Favorites', limit: 0, },
 			{ id: I.TabIndex.Recent, name: 'Recent', limit: 10, },
-			{ id: I.TabIndex.Set, name: 'Sets', limit: 20, },
+			{ id: I.TabIndex.Set, name: 'Sets', limit: 0, },
 		];
 	};
 
