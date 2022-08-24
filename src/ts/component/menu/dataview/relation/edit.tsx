@@ -584,11 +584,9 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		const details = { 
 			name: newRelation.name, 
 			relationFormat: newRelation.format,
-			type: Constant.typeId.relation,
-			layout: I.ObjectLayout.Relation,
 		};
 
-		C.ObjectCreate(details, [], (message: any) => {
+		C.ObjectCreateRelation(details, [], (message: any) => {
 			if (addCommand) {
 				addCommand(rootId, blockId, message.objectId, onChange);
 			};

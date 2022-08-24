@@ -96,6 +96,12 @@ const ObjectCreateObjectType = (response: any) => {
 	};
 };
 
+const ObjectCreateRelation = (response: any) => {
+	return {
+		objectId: response.getObjectid(),
+	};
+};
+
 const ObjectOpen = (response: any) => {
 	return {
 		objectView: Mapper.From.ObjectView(response.getObjectview()),
@@ -367,6 +373,7 @@ export {
 	ObjectCreateSet,
 	ObjectCreateBookmark,
 	ObjectCreateObjectType,
+	ObjectCreateRelation,
 
 	ObjectSearch,
 	ObjectSearchSubscribe,

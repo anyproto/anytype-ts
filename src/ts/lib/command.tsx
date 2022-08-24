@@ -1,5 +1,4 @@
 import { I, Util, Mark, dispatcher, Encode, Mapper } from 'Lib';
-import { dbStore, detailStore } from 'Store';
 
 const Commands = require('lib/pb/protos/commands_pb');
 const Model = require('lib/pkg/lib/pb/model/protos/models_pb.js');
@@ -1007,6 +1006,14 @@ const ObjectCreateObjectType = (details: any, flags: I.ObjectFlag[], callBack?: 
 	dispatcher.request(ObjectCreateObjectType.name, request, callBack);
 };
 
+const ObjectCreateRelation = (details: any, flags: I.ObjectFlag[], callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.CreateRelation.Request();
+	
+	request.setDetails(Encode.encodeStruct(details));
+
+	dispatcher.request(ObjectCreateRelation.name, request, callBack);
+};
+
 const ObjectBookmarkFetch = (contextId: string, url: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.BookmarkFetch.Request();
 	
@@ -1632,6 +1639,7 @@ export {
 	ObjectCreateSet,
 	ObjectCreateBookmark,
 	ObjectCreateObjectType,
+	ObjectCreateRelation,
 
 	ObjectToSet,
 	ObjectToBookmark,
