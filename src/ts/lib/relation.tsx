@@ -1,4 +1,4 @@
-import { I, DataUtil, Util, FileUtil, translate } from 'Lib';
+import { I, DataUtil, Util, FileUtil, translate, Dataview } from 'Lib';
 import { dbStore } from 'Store';
 
 const Constant = require('json/constant.json');
@@ -239,7 +239,7 @@ class Relation {
 	};
 
 	getOptions (rootId: string, blockId: string, view: I.View) {
-		let relations: any[] = DataUtil.viewGetRelations(rootId, blockId, view).filter((it: I.ViewRelation) => { 
+		let relations: any[] = Dataview.viewGetRelations(rootId, blockId, view).filter((it: I.ViewRelation) => { 
 			const relation = dbStore.getRelationByKey(it.relationKey);
 			return relation && (relation.format != I.RelationType.File) && (it.relationKey != Constant.relationKey.done);
 		});

@@ -15,6 +15,7 @@ import SmileUtil from './smileutil';
 import Mark from './mark';
 import Relation from './relation';
 import FileUtil from './fileutil';
+import Dataview from './dataview';
 import { focus } from './focus';
 import { Encode, Decode } from './struct';
 import { scrollOnMove } from './scrollOnMove';
@@ -52,6 +53,7 @@ export {
 	Mark,
 	Relation,
 	FileUtil,
+	Dataview,
 	I,
 	C,
 	Response,

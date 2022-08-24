@@ -1,5 +1,5 @@
 import { observable, action, computed, set, intercept, makeObservable } from 'mobx';
-import { I, M, DataUtil, Util } from 'ts/lib';
+import { I, M, DataUtil, Util, Dataview } from 'ts/lib';
 import { detailStore, commonStore } from 'ts/store';
 
 const Constant = require('json/constant.json');
@@ -16,6 +16,7 @@ class DbStore {
     constructor() {
         makeObservable(this, {
 			clearAll: action,
+			relationsSet: action,
             relationDelete: action,
             viewsSet: action,
 			viewsSort: action,
@@ -60,7 +61,7 @@ class DbStore {
 		const views = this.getViews(rootId, blockId);
 
 		list = list.map((it: I.View) => { 
-			it.relations = DataUtil.viewGetRelations(rootId, blockId, it);
+			it.relations = Dataview.viewGetRelations(rootId, blockId, it);
 			return new M.View(it); 
 		});
 
@@ -112,7 +113,7 @@ class DbStore {
 			return;
 		};
 
-		item.relations = DataUtil.viewGetRelations(rootId, blockId, item);
+		item.relations = Dataview.viewGetRelations(rootId, blockId, item);
 		set(views[idx], item);
 	};
 
@@ -190,14 +191,17 @@ class DbStore {
 			filter(it => !it._empty_ && (it.smartblockTypes || []).includes(SBType) && !it.isArchived && !it.isDeleted);
 	};
 
-    getRelations (rootId: string, blockId: string): any[] {
+    getRelations (rootId: string, blockId: string, param?: any): any[] {
+		let { withHidden } = param || {};
 		let { config } = commonStore;
 		let relations = this.relationMap.get(this.getId(rootId, blockId)) || [];
 
 		relations = relations.map(it => this.getRelationByKey(it.relationKey));
-		relations = relations.filter((it: any) => {
-			return it ? (!config.debug.ho ? !it.isHidden : true) : false;
-		});
+		if (!withHidden) {
+			relations = relations.filter((it: any) => {
+				return it ? (!config.debug.ho ? !it.isHidden : true) : false;
+			});
+		};
 		return relations;
 	};
 

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { I, DataUtil, keyboard, Relation } from 'Lib';
+import { I, DataUtil, keyboard, Relation, Dataview } from 'Lib';
 import { SortableElement } from 'react-sortable-hoc';
 import { menuStore, dbStore } from 'Store';
 import { observer } from 'mobx-react';
@@ -73,7 +73,7 @@ const HeadCell = observer(class HeadCell extends React.Component<Props, {}> {
 				readonly: readonly,
 				extendedOptions: true,
 				addCommand: (rootId: string, blockId: string, relationId: string) => {
-					DataUtil.dataviewRelationAdd(rootId, blockId, relationId, -1, getView());
+					Dataview.relationAdd(rootId, blockId, relationId, -1, getView());
 				},
 			}
 		});

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, C, DataUtil, Relation, translate } from 'Lib';
+import { I, C, DataUtil, Relation, translate, Dataview } from 'Lib';
 import { Icon, Input, MenuItemVertical, Button } from 'Component';
 import { blockStore, dbStore, menuStore, detailStore } from 'Store';
 import { observer } from 'mobx-react';
@@ -276,7 +276,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		const { rootId, blockId, getView, getData } = data;
 		const view = getView();
 		const relation = this.getRelation();
-		const relations = DataUtil.viewGetRelations(rootId, blockId, view);
+		const relations = Dataview.viewGetRelations(rootId, blockId, view);
 		const idx = view.relations.findIndex(it => it.relationKey == relation.relationKey);
 
 		if (!relation) {
@@ -365,7 +365,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 						ref: 'dataview',
 						skipIds: relations.map(it => it.relationKey),
 						addCommand: (rootId: string, blockId: string, relationId: string) => {
-							DataUtil.dataviewRelationAdd(rootId, blockId, relationId, Math.max(0, idx + item.dir), view, () => {
+							Dataview.relationAdd(rootId, blockId, relationId, Math.max(0, idx + item.dir), view, () => {
 								menuStore.closeAll([ this.props.id, 'relationSuggest' ]);
 								getData(view.id, 0);
 							});

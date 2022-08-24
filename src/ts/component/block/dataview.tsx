@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { I, C, Util, DataUtil, analytics, translate, keyboard, Onboarding, Relation, Renderer } from 'Lib';
+import { I, C, Util, DataUtil, analytics, Dataview, keyboard, Onboarding, Relation, Renderer } from 'Lib';
 import { observer } from 'mobx-react';
-import { blockStore, menuStore, dbStore, detailStore, popupStore, commonStore } from 'Store';
+import { blockStore, menuStore, dbStore, detailStore, popupStore } from 'Store';
 import { throttle } from 'lodash';
 import arrayMove from 'array-move';
 
@@ -229,7 +229,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		dbStore.metaSet(subId, '', { offset: offset, viewId: newViewId });
 
 		if (![ I.ViewType.Board ].includes(view.type)) {
-			DataUtil.getDataviewData(rootId, block.id, newViewId, keys, 0, 0, false, callBack);
+			Dataview.getData(rootId, block.id, newViewId, keys, 0, 0, false, callBack);
 		} else 
 		if (this.viewRef.loadGroupList) {
 			this.viewRef.loadGroupList();

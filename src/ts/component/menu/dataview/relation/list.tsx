@@ -2,8 +2,8 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Icon, Switch } from 'Component';
-import { I, C, DataUtil, keyboard } from 'Lib';
-import { menuStore, dbStore, blockStore, detailStore } from 'Store';
+import { I, C, DataUtil, keyboard, Dataview } from 'Lib';
+import { menuStore, dbStore, blockStore } from 'Store';
 import { observer } from 'mobx-react';
 import arrayMove from 'array-move';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCache } from 'react-virtualized';
@@ -227,7 +227,7 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 		const { data } = param;
 		const { rootId, blockId, getData, getView } = data;
 		const view = getView();
-		const relations = DataUtil.viewGetRelations(rootId, blockId, view);
+		const relations = Dataview.viewGetRelations(rootId, blockId, view);
 
 		const onAdd = () => {
 			getData(getView().id, 0);
@@ -252,7 +252,7 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 				skipIds: relations.map((it: I.ViewRelation) => { return it.relationKey; }),
 				onAdd: onAdd,
 				addCommand: (rootId: string, blockId: string, relationId: string) => {
-					DataUtil.dataviewRelationAdd(rootId, blockId, relationId, -1, getView(), () => {
+					Dataview.relationAdd(rootId, blockId, relationId, -1, getView(), () => {
 						onAdd();
 					});
 				},
@@ -341,7 +341,7 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 		const { rootId, blockId, getView } = data;
 		const view = getView();
 
-		return DataUtil.viewGetRelations(rootId, blockId, view).map((it: any) => {
+		return Dataview.viewGetRelations(rootId, blockId, view).map((it: any) => {
 			it.id = it.relationKey;
 			it.relation = dbStore.getRelationByKey(it.relationKey) || {};
 			return it;
