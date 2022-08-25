@@ -1048,13 +1048,15 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		const mark = Mark.getInRange(marks, type, range);
 		const el = $(`#block-${block.id}`);
 		const win = $(window);
-		const rect = Util.selectionRect();
 
 		if (type == I.MarkType.Link) {
 			menuStore.close('blockContext', () => {
 				menuStore.open('blockLink', {
 					element: el,
-					rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
+					recalcRect: () => {
+						const rect = Util.selectionRect();
+						return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
+					},
 					horizontal: I.MenuDirection.Center,
 					offsetY: 4,
 					data: {
@@ -1376,19 +1378,23 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 	onMenuAdd (blockId: string, text: string, range: I.TextRange, marks: I.Mark[]) {
 		const { rootId } = this.props;
 		const block = blockStore.getLeaf(rootId, blockId);
+		const win = $(window);
 
 		if (!block) {
 			return;
 		};
 
-		const win = $(window);
-		const rect = Util.selectionRect();
-
 		commonStore.filterSet(range.from, '');
 		menuStore.open('blockAdd', { 
 			element: $('#block-' + blockId),
-			rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
-			offsetX: rect ? 0 : Constant.size.blockMenu,
+			recalcRect: () => {
+				const rect = Util.selectionRect();
+				return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
+			},
+			offsetX: () => {
+				const rect = Util.selectionRect();
+				return rect ? 0 : Constant.size.blockMenu;
+			},
 			commonFilter: true,
 			onClose: () => {
 				focus.apply();

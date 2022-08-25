@@ -151,9 +151,8 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 
 	onScroll () {
 		const win = $(window);
-		const { list } = menuStore;
 
-		for (let menu of list) {
+		for (let menu of menuStore.list) {
 			win.trigger('resize.' + Util.toCamelCase('menu-' + menu.id));
 		};
 	};

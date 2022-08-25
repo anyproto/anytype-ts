@@ -337,12 +337,14 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 
 		raf(() => {
 			let rect = null;
-			if (element == 'input') {
-				rect = Util.selectionRect();
-			};
-
 			menuStore.open('blockLatex', {
-				rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
+				recalcRect: () => {
+					let rect = null;
+					if (element == 'input') {
+						rect = Util.selectionRect();
+					};
+					return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
+				},
 				element: `#block-${block.id} #${element}`,
 				offsetY: 4,
 				offsetX: rect ? 0 : Constant.size.blockMenu,
