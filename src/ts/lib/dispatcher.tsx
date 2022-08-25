@@ -175,6 +175,7 @@ class Dispatcher {
 		let uniqueSubIds: string[] = [];
 		let subId: string = '';
 		let afterId: string = '';
+		let content: any = {};
 
 		messages.sort((c1: any, c2: any) => { return self.sort(c1, c2); });
 
@@ -314,40 +315,37 @@ class Dispatcher {
 
 				case 'blockSetText':
 					id = data.getId();
-					block = Util.objectCopy(blockStore.getLeaf(rootId, id));
-					if (!block || !block.id) {
-						break;
-					};
+					content = {};
 
 					if (data.hasText()) {
-						block.content.text = data.getText().getValue();
+						content.text = data.getText().getValue();
 					};
 
 					if (data.hasMarks()) {
-						block.content.marks = (data.getMarks().getValue().getMarksList() || []).map(Mapper.From.Mark);
+						content.marks = (data.getMarks().getValue().getMarksList() || []).map(Mapper.From.Mark);
 					};
 
 					if (data.hasStyle()) {
-						block.content.style = data.getStyle().getValue();
+						content.style = data.getStyle().getValue();
 					};
 
 					if (data.hasChecked()) {
-						block.content.checked = data.getChecked().getValue();
+						content.checked = data.getChecked().getValue();
 					};
 
 					if (data.hasColor()) {
-						block.content.color = data.getColor().getValue();
+						content.color = data.getColor().getValue();
 					};
 
 					if (data.hasIconemoji()) {
-						block.content.iconEmoji = data.getIconemoji().getValue();
+						content.iconEmoji = data.getIconemoji().getValue();
 					};
 
 					if (data.hasIconimage()) {
-						block.content.iconImage = data.getIconimage().getValue();
+						content.iconImage = data.getIconimage().getValue();
 					};
 
-					blockStore.update(rootId, block);
+					blockStore.updateContent(rootId, id, content);
 					break;
 
 				case 'blockSetDiv':
@@ -776,14 +774,16 @@ class Dispatcher {
 
 	onObjectView (rootId: string, traceId: string, objectView: any) {
 		let { blocks, details, restrictions } = objectView;
-		let root = blocks.find((it: any) => it.id == rootId);
+		let root = blocks.find(it => it.id == rootId);
 		let ctx: string[] = [ rootId ];
+		let structure: any[] = [];
 		
 		if (traceId) {
 			ctx.push(traceId);
 		};
 
 		let contextId = ctx.join('-');
+		let object = detailStore.get(contextId, rootId, []);
 
 		if (root && root.fields.analyticsContext) {
 			analytics.setContext(root.fields.analyticsContext, root.fields.analyticsOriginalId);
@@ -795,23 +795,18 @@ class Dispatcher {
 		detailStore.set(contextId, details);
 		blockStore.restrictionsSet(contextId, restrictions);
 
-		let object = detailStore.get(contextId, rootId, []);
 		if (root) {
 			root.type = I.BlockType.Page;
 			root.layout = object.layout;
-		};
+			root.childrenIds.push(Constant.blockId.footer);
 
-		const structure: any[] = [];
+			structure.push({ id: Constant.blockId.footer, childrenIds: [] });
+		};
 
 		blocks = blocks.map((it: any) => {
 			if (it.type == I.BlockType.Dataview) {
 				dbStore.relationsSet(contextId, it.id, it.content.relations);
 				dbStore.viewsSet(contextId, it.id, it.content.views);
-			};
-
-			if (it.id == rootId) {
-				it.childrenIds.push(Constant.blockId.footer);
-				structure.push({ id: Constant.blockId.footer, childrenIds: [] });
 			};
 
 			structure.push({ id: it.id, childrenIds: it.childrenIds });

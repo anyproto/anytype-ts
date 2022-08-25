@@ -95,7 +95,7 @@ class Action {
 				callBack(message);
 			};
 
-			analytics.event((contextId == targetContextId ? 'MoveBlock' : 'ReorderBlock'), { count: message.blockIds.length });
+			analytics.event((contextId == targetContextId ? 'MoveBlock' : 'ReorderBlock'), { count: blockIds.length });
 		});
 	};
 

@@ -259,15 +259,14 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 					const first = ids.length ? ids[0] : this.focused;
 					const tree = blockStore.getTree(rootId, blockStore.getBlocks(rootId));
 					const list = blockStore.unwrapTree(tree);
-					const idxStart = list.findIndex((it: I.Block) => { return it.id == first; });
-					const idxEnd = list.findIndex((it: I.Block) => { return it.id == id; });
+					const idxStart = list.findIndex(it => it.id == first);
+					const idxEnd = list.findIndex(it => it.id == id);
 					const start = idxStart < idxEnd ? idxStart : idxEnd;
 					const end = idxStart < idxEnd ? idxEnd : idxStart;
-
-					let slice = list.slice(start, end + 1).
-						map((it: I.Block) => { return new M.Block(it); }).
-						filter((it: I.Block) => { return it.isSelectable(); }).
-						map((it: I.Block) => { return it.id; });
+					const slice = list.slice(start, end + 1).
+						map(it => new M.Block(it)).
+						filter(it => it.isSelectable()).
+						map(it => it.id);
 
 					this.set(type, ids.concat(slice));
 				};

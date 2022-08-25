@@ -79,16 +79,26 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		const root = blockStore.getLeaf(rootId, rootId);
 		const footer = blockStore.getMapElement(rootId, Constant.blockId.footer);
 
+		console.log('BlockText.render', style);
+
 		let marker: any = null;
 		let placeholder = translate('placeholderBlock');
-		let ct = color ? 'textColor textColor-' + color : '';
-		let cv: string[] = [ 'value', 'focusable', 'c' + id, ct, (readonly ? 'isReadonly' : '') ];
+		let cv: string[] = [ 'value', 'focusable', 'c' + id ];
 		let additional = null;
+
+		if (color) {
+			cv.push('textColor textColor-' + color);
+		};
+
+		if (readonly) {
+			cv.push('isReadonly');
+		};
 
 		if (root.isObjectNote() && (index == 1) && (footer.childrenIds.indexOf(Constant.blockId.type) >= 0)) {
 			placeholder = 'Type something to proceed with Note';
 		};
 
+		// Subscriptions
 		for (let mark of marks) {
 			if ([ I.MarkType.Mention, I.MarkType.Object ].includes(mark.type)) {
 				const object = detailStore.get(rootId, mark.param, []);

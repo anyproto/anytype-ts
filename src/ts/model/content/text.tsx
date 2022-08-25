@@ -44,7 +44,7 @@ class BlockContentText implements I.ContentText {
 		self.color = String(props.color || '');
 		self.iconEmoji = String(props.iconEmoji || '');
 		self.iconImage = String(props.iconImage || '');
-		self.marks = (props.marks || []).map((it: I.Mark) => { return new Mark(it); });
+		self.marks = (props.marks || []).map(it => new Mark(it));
 
 		makeObservable(self, {
 			text: observable,
@@ -56,7 +56,11 @@ class BlockContentText implements I.ContentText {
 			marks: observable,
 		});
 
-		intercept(self as any, (change: any) => { return Util.intercept(self, change); });
+		intercept(self as any, (change: any) => { 
+			console.log('CHANGE', change);
+			console.log('RESULT', Util.intercept(self, change));
+			return Util.intercept(self, change); 
+		});
 	};
 
 };

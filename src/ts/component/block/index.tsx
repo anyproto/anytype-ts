@@ -77,6 +77,8 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 		const { style, checked } = content;
 		const root = blockStore.getLeaf(rootId, rootId);
 
+		console.log('BlockIndex.render', style);
+
 		let canSelect = !isInsideTable;
 		let canDrop = !readonly && !isInsideTable;
 		let canDropMiddle = canDrop;
