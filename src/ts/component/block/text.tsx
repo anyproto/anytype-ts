@@ -903,25 +903,15 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			return;
 		};
 
-		let position = I.BlockPosition.Replace;
-
 		// Make div
-		if (value == '---') {
+		if ([ '---', '***' ].includes(value)) {
 			newBlock.type = I.BlockType.Div;
-			newBlock.content.style = I.DivStyle.Line;
-			position = I.BlockPosition.Top;
-			cmdParsed = true;
-		};
-
-		if (value == '***') {
-			newBlock.type = I.BlockType.Div;
-			newBlock.content.style = I.DivStyle.Dot;
-			position = I.BlockPosition.Top;
+			newBlock.content.style = value == '---' ? I.DivStyle.Line : I.DivStyle.Dot;
 			cmdParsed = true;
 		};
 		
 		if (newBlock.type && !isInsideTable) {
-			C.BlockCreate(rootId, id, position, newBlock, () => {
+			C.BlockCreate(rootId, id, I.BlockPosition.Top, newBlock, () => {
 				this.setValue('');
 				
 				focus.set(block.id, { from: 0, to: 0 });
@@ -954,10 +944,14 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 					};
 
 					if (style == I.TextStyle.Code) {
-						newBlock.fields = { lang: (Storage.get('codeLang') || Constant.default.codeLang) };
 						newBlock.content.marks = [];
 					};
 
+					DataUtil.blockSetText(rootId, id, value, this.marks, true, () => {
+						C.BlockListTurnInto(rootId, [ id ], style);
+					});
+
+					/*
 					C.BlockCreate(rootId, id, I.BlockPosition.Replace, newBlock, (message: any) => {
 						keyboard.setFocus(false);
 						focus.set(message.blockId, { from: 0, to: 0 });
@@ -969,6 +963,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 							style: newBlock.content?.style,
 						});
 					});
+					*/
 
 					cmdParsed = true;
 					break;
