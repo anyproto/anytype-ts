@@ -931,39 +931,16 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 
 				if (value.match(reg) && (content.style != style)) {
 					value = value.replace(reg, (s: string, p: string) => { return s.replace(p, ''); });
-					this.marks = Mark.adjust(this.marks, 0, -(Length[style] + 1));
-
-					newBlock.type = I.BlockType.Text;
-					newBlock.fields = {};
-					newBlock.content = { 
-						...content, 
-						marks: this.marks,
-						checked: false,
-						text: value, 
-						style: style,
-					};
 
 					if (style == I.TextStyle.Code) {
-						newBlock.content.marks = [];
+						this.marks = [];
+					} else {
+						this.marks = Mark.adjust(this.marks, 0, -(Length[style] + 1));
 					};
 
 					DataUtil.blockSetText(rootId, id, value, this.marks, true, () => {
 						C.BlockListTurnInto(rootId, [ id ], style);
 					});
-
-					/*
-					C.BlockCreate(rootId, id, I.BlockPosition.Replace, newBlock, (message: any) => {
-						keyboard.setFocus(false);
-						focus.set(message.blockId, { from: 0, to: 0 });
-						focus.apply();
-
-						analytics.event('CreateBlock', { 
-							middleTime: message.middleTime, 
-							type: newBlock.type, 
-							style: newBlock.content?.style,
-						});
-					});
-					*/
 
 					cmdParsed = true;
 					break;
