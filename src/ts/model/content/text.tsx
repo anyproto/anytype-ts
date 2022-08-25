@@ -1,5 +1,5 @@
 import { I, Util } from 'Lib';
-import { observable, intercept, observe, makeObservable } from 'mobx';
+import { observable, intercept, makeObservable } from 'mobx';
 
 class Mark implements I.Mark {
 	

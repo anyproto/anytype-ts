@@ -181,22 +181,21 @@ class AuthStore {
 	logout (removeData: boolean) {
 		C.WalletCloseSession(this.token, () => {
 			this.tokenSet('');
-
-			C.AccountStop(removeData, () => {
-				analytics.event('LogOut');
-				analytics.profile({ id: '' });
-
-				keyboard.setPinChecked(false);
-				commonStore.coverSetDefault();
-
-				blockStore.clearAll();
-				detailStore.clearAll();
-				dbStore.clearAll();
-
-				Storage.logout();
-				this.clearAll();
-			});
+			C.AccountStop(removeData);
 		});
+
+		analytics.event('LogOut');
+		analytics.profile({ id: '' });
+
+		keyboard.setPinChecked(false);
+		commonStore.coverSetDefault();
+
+		blockStore.clearAll();
+		detailStore.clearAll();
+		dbStore.clearAll();
+		this.clearAll();
+
+		Storage.logout();
     };
 
 };

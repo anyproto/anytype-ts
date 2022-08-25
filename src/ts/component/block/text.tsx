@@ -87,7 +87,6 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		if (color) {
 			cv.push('textColor textColor-' + color);
 		};
-
 		if (readonly) {
 			cv.push('isReadonly');
 		};

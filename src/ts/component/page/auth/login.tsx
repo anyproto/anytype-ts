@@ -80,10 +80,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<Props
 			};
 
 			authStore.phraseSet(phrase);
-
-			DataUtil.createSession(() => {
-				Util.route('/auth/account-select');
-			});
+			Util.route('/auth/account-select');
 		});
 	};
 
