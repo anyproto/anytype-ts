@@ -1,14 +1,10 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { getRange } from 'selection-ranges';
 import { I, M, focus, keyboard, scrollOnMove, Util } from 'Lib';
 import { observer } from 'mobx-react';
-import { commonStore, blockStore, menuStore } from 'Store';
-import { throttle } from 'lodash';
+import { blockStore, menuStore } from 'Store';
 
 const $ = require('jquery');
-
-const THROTTLE = 20;
 const THRESHOLD = 10;
 
 const SelectionProvider = observer(class SelectionProvider extends React.Component<{}, {}> {
@@ -23,6 +19,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	nodes: any[] = [];
 	top: number = 0;
 	containerOffset = null;
+	frame: number = 0;
 
 	cache: Map<string, any> = new Map();
 	ids: Map<string, string[]> = new Map();
@@ -119,13 +116,10 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		const isPopup = keyboard.isPopup();
 		const top = Util.getScrollContainer(isPopup).scrollTop();
 		const d = top > this.top ? 1 : -1;
-
-		let { x, y } = keyboard.mouse.page;
-		if (!isPopup) {
-			y += Math.abs(top - this.top) * d;
-		};
-
+		const x = keyboard.mouse.page.x;
+		const y = keyboard.mouse.page + Math.abs(top - this.top) * d;
 		const rect = this.getRect(x, y);
+
 		if ((rect.width < THRESHOLD) && (rect.height < THRESHOLD)) {
 			return;
 		};
@@ -133,7 +127,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		this.nodes.forEach(it => this.cacheRect(it));
 
 		this.checkNodes({ ...e, pageX: x, pageY: y });
-		this.drawRect(rect);
+		this.drawRect(x, y);
 		this.renderSelection();
 
 		scrollOnMove.onMouseMove(keyboard.mouse.client.x, keyboard.mouse.client.y);
@@ -154,27 +148,22 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		const { focused } = focus.state;
 		const win = $(window);
 		const nodes = this.getPageContainer().find('.selectable');
-		
-		$('#selection-rect').css({ transform: 'translate3d(0px, 0px, 0px)', width: 0, height: 0 }).show();
+		const container = Util.getScrollContainer(isPopup);
 		
 		this.x = e.pageX;
 		this.y = e.pageY;
 		this.moved = false;
 		this.focused = focused;
 		this.isSelecting = true;
-		this.top = Util.getScrollContainer(isPopup).scrollTop();
+		this.top = container.scrollTop();
 		this.cache.clear();
-
-		if (isPopup) {
-			const popupContainer = $('#popupPage-innerWrap');
-			if (popupContainer.length) {
-				this.containerOffset = popupContainer.offset();
-				this.x -= this.containerOffset.left;
-				this.y -= this.containerOffset.top - this.top;
-			};
-		};
+		this.show();
 
 		keyboard.disablePreview(true);
+
+		if (isPopup && container.length) {
+			this.containerOffset = container.offset();
+		};
 
 		nodes.each((i: number, item: any) => {
 			item = $(item);
@@ -203,13 +192,13 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		scrollOnMove.onMouseDown(e, isPopup);
 		this.unbindMouse();
 
-		win.on(`mousemove.selection`, throttle((e: any) => { this.onMouseMove(e); }, THROTTLE));
+		win.on(`mousemove.selection`, (e: any) => { this.onMouseMove(e); });
 		win.on(`blur.selection mouseup.selection`, (e: any) => { this.onMouseUp(e); });
 	};
 	
 	onMouseMove (e: any) {
 		e.preventDefault();
-		
+
 		if (!this._isMounted) {
 			return;
 		};
@@ -218,27 +207,27 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			this.hide();
 			return;
 		};
-		
+
 		const isPopup = keyboard.isPopup();
 		const rect = this.getRect(e.pageX, e.pageY);
 
 		if ((rect.width < THRESHOLD) && (rect.height < THRESHOLD)) {
 			return;
 		};
-
+		
 		this.top = Util.getScrollContainer(isPopup).scrollTop();
 		this.checkNodes(e);
-		this.drawRect(rect);
-		
-		scrollOnMove.onMouseMove(e.clientX, e.clientY);
+		this.drawRect(e.pageX, e.pageY);
 		this.moved = true;
+
+		scrollOnMove.onMouseMove(e.clientX, e.clientY);
 	};
 	
 	onMouseUp (e: any) {
 		if (!this._isMounted) {
 			return;
 		};
-		
+
 		if (!this.moved) {
 			if (!keyboard.isShift() && !keyboard.isAlt() && !(keyboard.isCtrl() || keyboard.isMeta())) {
 				if (!this.isClearPrevented) {
@@ -296,35 +285,28 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		this.nodes = [];
 	};
 
-	drawRect (rect: any) {
+	drawRect (x: number, y: number) {
 		const el = $('#selection-rect');
 		const range = Util.selectionRange();
+		const rect = this.getRect(x, y);
 
 		if (range) {
 			el.hide();
 		} else {
 			el.show().css({ 
-				transform: `translate3d(${rect.x + 10}px, ${rect.y + 10}px, 0px)`,
-				width: rect.width - 10, 
-				height: rect.height - 10,
+				transform: `translate3d(${rect.x}px, ${rect.y}px, 0px)`,
+				width: rect.width, 
+				height: rect.height,
 			});
 		};
 	};
 	
 	getRect (x: number, y: number) {
-		const isPopup = keyboard.isPopup();
-		
-		if (isPopup && this.containerOffset) {
-			const top = Util.getScrollContainer(isPopup).scrollTop();
-			x -= this.containerOffset.left;
-			y -= this.containerOffset.top - top;
-		};
-
 		return {
 			x: Math.min(this.x, x),
 			y: Math.min(this.y, y),
-			width: Math.abs(x - this.x) - 10,
-			height: Math.abs(y - this.y) - 10
+			width: Math.abs(x - this.x),
+			height: Math.abs(y - this.y),
 		};
 	};
 	
@@ -334,18 +316,9 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			return cached;
 		};
 
-		const isPopup = keyboard.isPopup();
 		const offset = node.obj.offset();
 		const rect = node.obj.get(0).getBoundingClientRect() as DOMRect;
-		
-		let x = offset.left;
-		let y = offset.top;
-
-		if (isPopup && this.containerOffset) {
-			const top = Util.getScrollContainer(isPopup).scrollTop();
-			x -= this.containerOffset.left;
-			y -= this.containerOffset.top - top;
-		};
+		const { x, y } = this.recalcCoords(offset.left, offset.top);
 
 		cached = { x, y, width: rect.width, height: rect.height };
 
@@ -388,7 +361,8 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		};
 		
 		const { focused, range } = focus.state;
-		const rect = Util.objectCopy(this.getRect(e.pageX, e.pageY));
+		const { x, y } = this.recalcCoords(e.pageX, e.pageY);
+		const rect = Util.objectCopy(this.getRect(x, y));
 
 		if (!keyboard.isShift() && !keyboard.isAlt() && !(keyboard.isCtrl() || keyboard.isMeta())) {
 			this.initIds();
@@ -441,6 +415,10 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			window.getSelection().empty();
 			window.focus();
 		};
+	};
+
+	show () {
+		$('#selection-rect').css({ transform: 'translate3d(0px, 0px, 0px)', width: 0, height: 0 }).show();
 	};
 	
 	hide () {
@@ -536,6 +514,19 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 				};
 			};
 		};
+	};
+
+	recalcCoords (x: number, y: number): { x: number, y: number } {
+		const isPopup = keyboard.isPopup();
+
+		if (isPopup && this.containerOffset) {
+			const top = Util.getScrollContainer(isPopup).scrollTop();
+
+			x -= this.containerOffset.left;
+			y -= this.containerOffset.top - top;
+		};
+
+		return { x, y };
 	};
 	
 	injectProps (children: any) {
