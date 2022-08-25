@@ -162,8 +162,10 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		this._isMounted = false;
 		this.unbind();
 
-		C.ObjectSearchUnsubscribe(Object.keys(this.subscriptionIds).map(id => dbStore.getSubId(Constant.subId.sidebar, id)));
-
+		const subIds = Object.keys(this.subscriptionIds).map(id => dbStore.getSubId(Constant.subId.sidebar, id));
+		if (subIds.length) {
+			C.ObjectSearchUnsubscribe(subIds);
+		};
 		Util.tooltipHide(true);
 	};
 
@@ -252,6 +254,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 
 			};
 			
+			this.subscriptionIds[section.id] = '';
 			C.ObjectSearchSubscribe(subId, filters.concat(sectionFilters), sorts, Constant.sidebarRelationKeys, [], 0, section.limit, true, '', '', true, cb);
 		});
 	};

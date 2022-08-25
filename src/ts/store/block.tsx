@@ -124,11 +124,6 @@ class BlockStore {
 
 	updateContent (rootId: string, blockId: string, content: any) {
 		const block = this.getLeaf(rootId, blockId);
-
-		console.log('updateContent', rootId, blockId, block);
-		console.log(JSON.stringify(block?.content, null, 3));
-		console.log(JSON.stringify(content, null, 3));
-
 		if (block) {
 			set(block.content, content);
 		};

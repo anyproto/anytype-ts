@@ -1,5 +1,5 @@
 import { observable, action, computed, set, makeObservable } from 'mobx';
-import { I, M, Storage, analytics, Renderer } from 'Lib';
+import { I, M, C, Storage, analytics, Renderer } from 'Lib';
 import { blockStore, detailStore, commonStore, dbStore } from 'Store';
 import * as Sentry from '@sentry/browser';
 import { keyboard } from 'Lib';
@@ -178,19 +178,25 @@ class AuthStore {
 		this.codeSet('');
 	};
 
-	logout () {
-		analytics.event('LogOut');
-		analytics.profile({ id: '' });
+	logout (removeData: boolean) {
+		C.WalletCloseSession(this.token, () => {
+			this.tokenSet('');
 
-		keyboard.setPinChecked(false);
-		commonStore.coverSetDefault();
+			C.AccountStop(removeData, () => {
+				analytics.event('LogOut');
+				analytics.profile({ id: '' });
 
-		blockStore.clearAll();
-		detailStore.clearAll();
-		dbStore.clearAll();
+				keyboard.setPinChecked(false);
+				commonStore.coverSetDefault();
 
-		Storage.logout();
-		this.clearAll();
+				blockStore.clearAll();
+				detailStore.clearAll();
+				dbStore.clearAll();
+
+				Storage.logout();
+				this.clearAll();
+			});
+		});
     };
 
 };

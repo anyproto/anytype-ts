@@ -1,5 +1,5 @@
 import { I, Util } from 'Lib';
-import { observable, intercept, makeObservable } from 'mobx';
+import { observable, intercept, observe, makeObservable } from 'mobx';
 
 class Mark implements I.Mark {
 	
@@ -56,11 +56,7 @@ class BlockContentText implements I.ContentText {
 			marks: observable,
 		});
 
-		intercept(self as any, (change: any) => { 
-			console.log('CHANGE', change);
-			console.log('RESULT', Util.intercept(self, change));
-			return Util.intercept(self, change); 
-		});
+		intercept(self as any, (change: any) => { return Util.intercept(self, change); });
 	};
 
 };

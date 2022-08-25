@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Select, Marker, Loader, IconObject, Icon } from 'Component';
 import { I, C, keyboard, Key, Util, DataUtil, Mark, focus, Storage, translate, analytics, Renderer } from 'Lib';
-import { observer } from 'mobx-react';
+import { observer, } from 'mobx-react';
 import { getRange } from 'selection-ranges';
 import { commonStore, blockStore, detailStore, menuStore } from 'Store';
 import * as Prism from 'prismjs';
@@ -78,8 +78,6 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		const { theme } = commonStore;
 		const root = blockStore.getLeaf(rootId, rootId);
 		const footer = blockStore.getMapElement(rootId, Constant.blockId.footer);
-
-		console.log('BlockText.render', style);
 
 		let marker: any = null;
 		let placeholder = translate('placeholderBlock');

@@ -59,6 +59,7 @@ class Block implements I.Block {
 
 		makeObservable(self, {
 			layout: observable,
+			type: observable,
 			hAlign: observable,
 			vAlign: observable,
 			bgColor: observable,
@@ -66,11 +67,7 @@ class Block implements I.Block {
 			content: observable,
 		});
 
-		intercept(self as any, (change: any) => { 
-			console.log('CHANGE', change);
-			console.log('RESULT', Util.intercept(self, change));
-			return Util.intercept(self, change); 
-		});
+		intercept(self as any, (change: any) => { return Util.intercept(self, change); });
 		return self;
 	};
 
