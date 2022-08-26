@@ -26,6 +26,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 
 	cache: Map<string, any> = new Map();
 	ids: Map<string, string[]> = new Map();
+	idsOnStart: Map<string, string[]> = new Map();
 
 	isSelecting: boolean = false;
 	isSelectionPrevented: boolean = false;
@@ -165,6 +166,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		this.isSelecting = true;
 		this.top = Util.getScrollContainer(isPopup).scrollTop();
 		this.cache.clear();
+		this.idsOnStart = new Map(this.ids);
 
 		if (isPopup) {
 			const popupContainer = $('#popupPage-innerWrap');
@@ -369,7 +371,8 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		let ids = this.get(type, false);
 
 		if (keyboard.isCtrl() || keyboard.isMeta()) {
-			if (ids.includes(id)) {
+			const idsOnStart = this.idsOnStart.get(type) || [];
+			if (idsOnStart.includes(id)) {
 				ids = ids.filter(it => it != id);
 			} else {
 				ids.push(id);
@@ -381,7 +384,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			ids.push(id);
 		};
 
-		this.ids.set(type, Util.arrayUnique(ids));
+		this.ids.set(type, ids);
 	};
 	
 	checkNodes (e: any) {
