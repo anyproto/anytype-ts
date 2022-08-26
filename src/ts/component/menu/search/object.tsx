@@ -352,7 +352,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 						newBlock.content = { 
 							state: I.BookmarkState.Done,
 							targetObjectId: item.id,
-							url: item.source || item.url,
+							url: item.source,
 						};
 						break;
 

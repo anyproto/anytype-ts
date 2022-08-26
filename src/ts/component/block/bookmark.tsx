@@ -154,7 +154,7 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<Props
 		const { url, targetObjectId } = block.content;
 		const object = detailStore.get(rootId, targetObjectId);
 
-		return object.source || object.url || url;
+		return object.source || url;
 	};
 	
 	onClick (e: any) {
