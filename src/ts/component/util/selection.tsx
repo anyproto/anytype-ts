@@ -204,7 +204,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		scrollOnMove.onMouseDown(e, isPopup);
 		this.unbindMouse();
 
-		win.on(`mousemove.selection`, throttle((e: any) => { this.onMouseMove(e); }, THROTTLE));
+		win.on(`mousemove.selection`, (e: any) => { this.onMouseMove(e); });
 		win.on(`blur.selection mouseup.selection`, (e: any) => { this.onMouseUp(e); });
 	};
 	
@@ -239,7 +239,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		if (!this._isMounted) {
 			return;
 		};
-		
+
 		if (!this.moved) {
 			if (!keyboard.isShift() && !keyboard.isAlt() && !(keyboard.isCtrl() || keyboard.isMeta())) {
 				if (!this.isClearPrevented) {
