@@ -25,9 +25,10 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<Props
 
 	render () {
 		const { rootId, block, readonly } = this.props;
-		const { state } = block.content;
-		const object = detailStore.get(rootId, block.content.targetObjectId);
-		const { iconImage, picture, url, isArchived, isDeleted } = object;
+		const { state, targetObjectId } = block.content;
+		const object = detailStore.get(rootId, targetObjectId);
+		const { iconImage, picture, isArchived, isDeleted } = object;
+		const url = this.getUrl();
 
 		let element = null;
 
@@ -147,16 +148,21 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<Props
 		const { block } = this.props;
 		focus.set(block.id, { from: 0, to: 0 });
 	};
+
+	getUrl () {
+		const { rootId, block } = this.props;
+		const { url, targetObjectId } = block.content;
+		const object = detailStore.get(rootId, targetObjectId);
+
+		return object.source || object.url || url;
+	};
 	
 	onClick (e: any) {
 		if (e.shiftKey || e.altKey || e.ctrlKey || e.metaKey) {
 			return;
 		};
 
-		const { rootId, block } = this.props;
-		const object = detailStore.get(rootId, block.content.targetObjectId);
-
-		Renderer.send('urlOpen', Util.urlFix(object.source));
+		Renderer.send('urlOpen', Util.urlFix(this.getUrl()));
 		analytics.event('BlockBookmarkOpenUrl');
 	};
 	
@@ -198,7 +204,7 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<Props
 
 		width <= mw / 2 ? inner.addClass('vertical') : inner.removeClass('vertical');
 	};
-	
+
 });
 
 export default BlockBookmark;

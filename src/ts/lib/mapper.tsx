@@ -157,6 +157,7 @@ const Mapper = {
 			return {
 				targetObjectId: obj.getTargetobjectid(),
 				state: obj.getState(),
+				url: obj.getUrl(),
 			};
 		},
 
