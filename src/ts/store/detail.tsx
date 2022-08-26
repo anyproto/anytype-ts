@@ -181,7 +181,7 @@ class DetailStore {
 	};
 
     clearAll () {
-		this.map = new Map();
+		this.map.clear();
 	};
 };
 

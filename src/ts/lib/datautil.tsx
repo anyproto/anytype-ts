@@ -880,8 +880,8 @@ class DataUtil {
 					if (match) {
 						c.rowCnt = Math.max(1, Math.min(25, Number(match[1]) || 3));
 						c.columnCnt = Math.max(1, Math.min(25, Number(match[2]) || 3));
+						c.name = `Table ${c.rowCnt}x${c.columnCnt}`;
 
-						c.name += ` ${c.rowCnt}x${c.columnCnt}`;
 						ret = true;
 					};
 				};

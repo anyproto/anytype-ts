@@ -53,6 +53,13 @@ class Api {
 		this.setConfig(win, { language });
 	};
 
+	setZoom (win, zoom) {
+		zoom = Number(zoom) || 0;
+
+		win.webContents.setZoomLevel(zoom);
+		this.setConfig(win, { zoom });
+	};
+
 	spellcheckAdd (win, s) {
 		win.webContents.session.addWordToSpellCheckerDictionary(s);
 	};

@@ -374,7 +374,7 @@ const BlockPaste = (contextId: string, focusedId: string, range: I.TextRange, bl
 	dispatcher.request(BlockPaste.name, request, callBack);
 };
 
-const BlockListMoveToExistingObject = (contextId: string, targetContextId: string, blockIds: string[], targetId: string, position: I.BlockPosition, callBack?: (message: any) => void) => {
+const BlockListMoveToExistingObject = (contextId: string, targetContextId: string, targetId: string, blockIds: string[], position: I.BlockPosition, callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.ListMoveToExistingObject.Request();
 	
 	request.setContextid(contextId);
@@ -396,10 +396,11 @@ const BlockListConvertToObjects = (contextId: string, blockIds: string[], type: 
 	dispatcher.request(BlockListConvertToObjects.name, request, callBack);
 };
 
-const BlockListDuplicate = (contextId: string, blockIds: string[], targetId: string, position: I.BlockPosition, callBack?: (message: any) => void) => {
+const BlockListDuplicate = (contextId: string, targetContextId: string, blockIds: string[], targetId: string, position: I.BlockPosition, callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.ListDuplicate.Request();
 	
 	request.setContextid(contextId);
+	request.setTargetcontextid(targetContextId);
     request.setBlockidsList(blockIds);
     request.setTargetid(targetId);
     request.setPosition(position);

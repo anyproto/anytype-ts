@@ -162,8 +162,10 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		this._isMounted = false;
 		this.unbind();
 
-		C.ObjectSearchUnsubscribe(Object.keys(this.subscriptionIds).map(id => dbStore.getSubId(Constant.subId.sidebar, id)));
-
+		const subIds = Object.keys(this.subscriptionIds).map(id => dbStore.getSubId(Constant.subId.sidebar, id));
+		if (subIds.length) {
+			C.ObjectSearchUnsubscribe(subIds);
+		};
 		Util.tooltipHide(true);
 	};
 
@@ -190,7 +192,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		return [
 			{ id: I.TabIndex.Favorite, name: 'Favorites', limit: 0, },
 			{ id: I.TabIndex.Recent, name: 'Recent', limit: 10, },
-			{ id: I.TabIndex.Set, name: 'Sets', limit: 20, },
+			{ id: I.TabIndex.Set, name: 'Sets', limit: 0, },
 		];
 	};
 
@@ -252,6 +254,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 
 			};
 
+			this.subscriptionIds[section.id] = '';
 			DataUtil.searchSubscribe({
 				subId,
 				filters: filters.concat(sectionFilters),
@@ -267,7 +270,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 	};
 
 	loadItem (id: string, links: string[]) {
-		const hash = sha1(links.join(''));
+		const hash = sha1(Util.arrayUnique(links).sort().join(''));
 		const subId = dbStore.getSubId(Constant.subId.sidebar, id);
 
 		if (this.subscriptionIds[id] && (this.subscriptionIds[id] == hash)) {
@@ -335,7 +338,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 			const check = Storage.checkToggle(Constant.subId.sidebar, id);
 
 			if (check) {
-				this.loadItem(item.id, links);
+				this.loadItem(item.id, item.links);
 				list = this.unwrap(sectionId, list, item.id, this.getRecords(dbStore.getSubId(Constant.subId.sidebar, item.id)), depth + 1);
 			};
 		};

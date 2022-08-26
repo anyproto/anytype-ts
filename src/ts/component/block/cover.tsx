@@ -343,6 +343,10 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 	};
 
 	setLoading (v: boolean) {
+		if (!this._isMounted) {
+			return;
+		};
+
 		const node = $(ReactDOM.findDOMNode(this));
 		const loader = node.find('#cover-loader');
 

@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Select, Marker, Loader, IconObject, Icon } from 'Component';
 import { I, C, keyboard, Key, Util, DataUtil, Mark, focus, Storage, translate, analytics, Renderer } from 'Lib';
-import { observer } from 'mobx-react';
+import { observer, } from 'mobx-react';
 import { getRange } from 'selection-ranges';
 import { commonStore, blockStore, detailStore, menuStore } from 'Store';
 import * as Prism from 'prismjs';
@@ -81,14 +81,21 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 
 		let marker: any = null;
 		let placeholder = translate('placeholderBlock');
-		let ct = color ? 'textColor textColor-' + color : '';
-		let cv: string[] = [ 'value', 'focusable', 'c' + id, ct, (readonly ? 'isReadonly' : '') ];
+		let cv: string[] = [ 'value', 'focusable', 'c' + id ];
 		let additional = null;
+
+		if (color) {
+			cv.push('textColor textColor-' + color);
+		};
+		if (readonly) {
+			cv.push('isReadonly');
+		};
 
 		if (root.isObjectNote() && (index == 1) && (footer.childrenIds.indexOf(Constant.blockId.type) >= 0)) {
 			placeholder = 'Type something to proceed with Note';
 		};
 
+		// Subscriptions
 		for (let mark of marks) {
 			if ([ I.MarkType.Mention, I.MarkType.Object ].includes(mark.type)) {
 				const object = detailStore.get(rootId, mark.param, []);
@@ -895,25 +902,15 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			return;
 		};
 
-		let position = I.BlockPosition.Replace;
-
 		// Make div
-		if (value == '---') {
+		if ([ '---', '***' ].includes(value)) {
 			newBlock.type = I.BlockType.Div;
-			newBlock.content.style = I.DivStyle.Line;
-			position = I.BlockPosition.Top;
-			cmdParsed = true;
-		};
-
-		if (value == '***') {
-			newBlock.type = I.BlockType.Div;
-			newBlock.content.style = I.DivStyle.Dot;
-			position = I.BlockPosition.Top;
+			newBlock.content.style = value == '---' ? I.DivStyle.Line : I.DivStyle.Dot;
 			cmdParsed = true;
 		};
 		
 		if (newBlock.type && !isInsideTable) {
-			C.BlockCreate(rootId, id, position, newBlock, () => {
+			C.BlockCreate(rootId, id, I.BlockPosition.Top, newBlock, () => {
 				this.setValue('');
 				
 				focus.set(block.id, { from: 0, to: 0 });
@@ -933,33 +930,15 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 
 				if (value.match(reg) && (content.style != style)) {
 					value = value.replace(reg, (s: string, p: string) => { return s.replace(p, ''); });
-					this.marks = Mark.adjust(this.marks, 0, -(Length[style] + 1));
-
-					newBlock.type = I.BlockType.Text;
-					newBlock.fields = {};
-					newBlock.content = { 
-						...content, 
-						marks: this.marks,
-						checked: false,
-						text: value, 
-						style: style,
-					};
 
 					if (style == I.TextStyle.Code) {
-						newBlock.fields = { lang: (Storage.get('codeLang') || Constant.default.codeLang) };
-						newBlock.content.marks = [];
+						this.marks = [];
+					} else {
+						this.marks = Mark.adjust(this.marks, 0, -(Length[style] + 1));
 					};
 
-					C.BlockCreate(rootId, id, I.BlockPosition.Replace, newBlock, (message: any) => {
-						keyboard.setFocus(false);
-						focus.set(message.blockId, { from: 0, to: 0 });
-						focus.apply();
-
-						analytics.event('CreateBlock', { 
-							middleTime: message.middleTime, 
-							type: newBlock.type, 
-							style: newBlock.content?.style,
-						});
+					DataUtil.blockSetText(rootId, id, value, this.marks, true, () => {
+						C.BlockListTurnInto(rootId, [ id ], style);
 					});
 
 					cmdParsed = true;

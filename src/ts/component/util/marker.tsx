@@ -29,7 +29,7 @@ const Icons = {
 };
 
 for (let c of Constant.textColor) {
-	Icons.bullets[c] = require(`img/icon/bullet/${c}.svg`);
+	Icons.bullets[c] = require(`img/icon/bullet/${c}.svg`).default;
 };
 
 const Theme = {

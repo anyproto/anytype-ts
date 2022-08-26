@@ -25,7 +25,7 @@ const MenuSource = observer(class MenuSource extends React.Component<Props, {}> 
 	render () {
 		const { config } = commonStore;
 		const items = this.getItems();
-		const types = this.getObjects().filter(it => it.type == Constant.typeId.type)
+		const types = this.getObjects().filter(it => it.type == Constant.typeId.type);
 		
 		const Item = (item: any) => {
 			const canDelete = item.id != 'type';
@@ -148,7 +148,7 @@ const MenuSource = observer(class MenuSource extends React.Component<Props, {}> 
 				return;
 			};
 
-			const types = DataUtil.getObjectTypesForNewObject({ withBookmark: true }).map(it => it.id);
+			const types = DataUtil.getObjectTypesForNewObject({ withSet: true, withBookmark: true }).map(it => it.id);
 			const filters = [
 				{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: types }
 			];

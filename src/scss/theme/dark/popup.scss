@@ -93,6 +93,12 @@
         }
     }
 
+	/* PopupPreview */
+
+	.popup.popupPreview {
+		#loader { background: $colorBlack; }
+	}
+
     /* PopupHelp */
 
     .popup.popupHelp {

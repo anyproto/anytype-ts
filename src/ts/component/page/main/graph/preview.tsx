@@ -38,7 +38,6 @@ const GraphPreview = observer(class PreviewObject extends React.Component<Props,
 		const check = DataUtil.checkDetails(contextId, rootId);
 		const object = check.object;
 		const { layout, fileExt, description, snippet, coverType, coverId, coverX, coverY, coverScale } = object;
-		const author = detailStore.get(contextId, object.creator, []);
 		const isTask = object.layout == I.ObjectLayout.Task;
 		const isBookmark = object.layout == I.ObjectLayout.Bookmark;
 		const cn = [ 'panelPreview', 'blocks', check.className, ];

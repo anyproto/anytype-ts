@@ -2,21 +2,13 @@
 
 .popups {
 	.popup.popupPreview {
-		.innerWrap { padding: 8px; min-width: 50px; min-height: 50px; margin: -25px 0px 0px -25px; }
-		.wrap { width: 100%; height: 100%; overflow-x: hidden; overflow-y: overlay; line-height: 0px; border-radius: 8px; }
-		.content { display: block; }
-
-		#blockContent { height: 100%; }
-		#blockContent {
-			* { height: 100%; }
-
-			.block { padding: 0px; margin: 0px; }
-			.block {
-				.wrapMenu { display: none; }
-				.wrapContent { width: 100%; }
-				.media { object-fit: cover; }
-			}
+		.innerWrap { 
+			padding: 8px; min-width: 450px; min-height: 450px; margin: 0px !important; transform: translate3d(-50%, -50%, 0px) !important;
 		}
-		#blockContent * { cursor: default; }
+		.innerWrap.anim { transition: $transitionFast; }
+		#loader { background: #fff; width: 100%; height: 100%; }
+
+		.wrap { width: 100%; height: 100%; overflow: hidden; line-height: 0px; border-radius: 8px; }
+		.media { width: 100%; height: 100%; object-fit: contain; margin: 0px auto; }
 	}
 }

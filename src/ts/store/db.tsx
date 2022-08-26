@@ -35,10 +35,10 @@ class DbStore {
     }
 
 	clearAll () {
-    	this.relationMap = observable.map(new Map());
-    	this.viewMap = observable.map(new Map());
-    	this.recordMap = observable.map(new Map());
-    	this.metaMap = observable.map(new Map());
+    	this.relationMap.clear();
+    	this.viewMap.clear();
+    	this.recordMap.clear();
+    	this.metaMap.clear();
 	};
 
     relationsSet (rootId: string, blockId: string, list: any[]) {

@@ -73,10 +73,10 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 		const object = Util.objectCopy(detailStore.get(rootId, rootId, [ 'recommendedLayout' ]));
 
 		const type = detailStore.get(Constant.subId.type, rootId, []);
-		const templates = dbStore.getRecords(this.getSubIdTemplate(), '');
+		const templates = dbStore.getRecords(this.getSubIdTemplate(), '').map(id => detailStore.get(this.getSubIdTemplate(), id, []));
 		const totalTemplate = dbStore.getMeta(this.getSubIdTemplate(), '').total;
 		const totalObject = dbStore.getMeta(this.getSubIdObject(), '').total;
-		const layout: any = DataUtil.menuGetLayouts().find((it: any) => { return it.id == object.recommendedLayout; }) || {};
+		const layout: any = DataUtil.menuGetLayouts().find(it => it.id == object.recommendedLayout) || {};
 		const showTemplates = !NO_TEMPLATES.includes(rootId);
 
 		const allowedObject = (type.smartblockTypes || []).includes(I.SmartBlockType.Page);

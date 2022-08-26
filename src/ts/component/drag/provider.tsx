@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { DragLayer } from 'Component';
-import { I, C, focus, keyboard, Util, scrollOnMove, analytics } from 'Lib';
+import { I, C, focus, keyboard, Util, scrollOnMove, analytics, Action } from 'Lib';
 import { blockStore } from 'Store';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
@@ -327,12 +327,8 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 		switch (dropType) {
 			case I.DropType.Block:
 				const cb = (message: any) => {
-					if (message.error.code) {
-						return;
-					};
-
 					if (isToggle && (position == I.BlockPosition.InnerFirst)) {
-						blockStore.toggle(rootId, targetId, true);
+						blockStore.toggle(contextId, targetId, true);
 					};
 
 					if (selection) {
@@ -340,16 +336,10 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 					};
 				};
 
-				if (withAlt && (contextId == targetContextId)) {
-					C.BlockListDuplicate(contextId, ids, targetId, position, (message: any) => {
-						cb(message);
-						analytics.event('DuplicateBlock', { count: ids.length });
-					});
+				if (withAlt) {
+					Action.duplicate(contextId, targetContextId, targetId, ids, position, cb);
 				} else {
-					C.BlockListMoveToExistingObject(contextId, targetContextId, ids || [], targetId, position, (message: any) => {
-						cb(message);
-						analytics.event('ReorderBlock', { count: ids.length });
-					});
+					Action.move(contextId, targetContextId, targetId, ids, position, cb);
 				};
 				break;
 

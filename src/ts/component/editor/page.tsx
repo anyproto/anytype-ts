@@ -62,6 +62,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 	};
 
 	render () {
+		const { rootId } = this.props;
+		const root = blockStore.getLeaf(rootId, rootId);
+
 		if (this.isDeleted) {
 			return <Deleted {...this.props} />;
 		};
@@ -69,9 +72,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		if (this.loading) {
 			return <Loader id="loader" />;
 		};
-
-		const { rootId } = this.props;
-		const root = blockStore.getLeaf(rootId, rootId);
 
 		if (!root) {
 			return null;
@@ -268,6 +268,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 		const { rootId } = this.props;
 		const { focused, range } = focus.state;
+		const popupOpen = popupStore.isOpen();
+		const menuOpen = menuStore.isOpen();
 
 		let length = 0;
 		if (focused) {
@@ -279,6 +281,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 		switch (cmd) {
 			case 'selectAll':
+				if (popupOpen || menuOpen) {
+					break;
+				};
+
 				if ((range.from == 0) && (range.to == length)) {
 					this.onSelectAll();
 				} else {
@@ -497,7 +503,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 		// Select all
 		keyboard.shortcut(`${cmd}+a`, e, (pressed: string) => {
-			if (popupOpen) {
+			if (popupOpen || menuOpen) {
 				return;
 			};
 
@@ -588,7 +594,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 				};
 
 				e.preventDefault();
-				Action.duplicate(rootId, ids[ids.length - 1], ids, () => { focus.clear(true); });
+				Action.duplicate(rootId, rootId, ids[ids.length - 1], ids, I.BlockPosition.Bottom, () => { focus.clear(true); });
 			});
 
 			// Open action menu
@@ -731,7 +737,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		// Duplicate
 		keyboard.shortcut(`${cmd}+d`, e, (pressed: string) => {
 			e.preventDefault();
-			Action.duplicate(rootId, block.id, [ block.id ]);
+			Action.duplicate(rootId, rootId, block.id, [ block.id ], I.BlockPosition.Bottom);
 		});
 
 		// Open action menu
@@ -880,12 +886,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		const canTab = obj && !first.isTextTitle() && !first.isTextDescription() && obj.canHaveChildren() && first.isIndentable();
 		
 		if (canTab) {
-			C.BlockListMoveToExistingObject(rootId, rootId, ids, obj.id, (shift ? I.BlockPosition.Bottom : I.BlockPosition.Inner), () => {
+			Action.move(rootId, rootId, obj.id, ids, (shift ? I.BlockPosition.Bottom : I.BlockPosition.Inner), () => {
 				if (next && next.isTextToggle()) {
 					blockStore.toggle(rootId, next.id, true);
 				};
-
-				analytics.event('ReorderBlock', { count: ids.length });
 			});
 		};
 	};
@@ -933,11 +937,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			position = isFirst ? I.BlockPosition.Top : I.BlockPosition.Bottom;
 		};
 
-		C.BlockListMoveToExistingObject(rootId, rootId, [ block.id ], next.id, position, (message: any) => {
-			focus.apply();
-
-			analytics.event('ReorderBlock', { count: 1 });
-		});
+		Action.move(rootId, rootId, next.id, [ block.id ], position, () => { focus.apply(); });
 	};
 
 	// Move focus to first/last block
@@ -1141,14 +1141,12 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			return;
 		};
 
-		C.BlockListMoveToExistingObject(rootId, rootId, [ block.id ], obj.id, (isShift ? I.BlockPosition.Bottom : I.BlockPosition.Inner), (message: any) => {
+		Action.move(rootId, rootId, obj.id, [ block.id ], (isShift ? I.BlockPosition.Bottom : I.BlockPosition.Inner), () => {
 			window.setTimeout(() => { focus.apply(); });
 
 			if (next && next.isTextToggle()) {
 				blockStore.toggle(rootId, next.id, true);
 			};
-
-			analytics.event('ReorderBlock', { count: 1 });
 		});
 	};
 

@@ -78,8 +78,8 @@ class Action {
 		analytics.event('DownloadMedia', { type });
 	};
 
-	duplicate (rootId: string, blockId: string, blockIds: string[], callBack?: (message: any) => void) {
-		C.BlockListDuplicate(rootId, blockIds, blockId, I.BlockPosition.Bottom, (message: any) => {
+	duplicate (rootId: string, targetContextId: string, blockId: string, blockIds: string[], position: I.BlockPosition, callBack?: (message: any) => void) {
+		C.BlockListDuplicate(rootId, targetContextId, blockIds, blockId, position, (message: any) => {
 			if (message.error.code) {
 				return;
 			};
@@ -92,6 +92,20 @@ class Action {
 			};
 
 			analytics.event('DuplicateBlock', { count: message.blockIds.length });
+		});
+	};
+
+	move (contextId: string, targetContextId: string, targetId: string, blockIds: string[], position: I.BlockPosition, callBack?: (message: any) => void) {
+		C.BlockListMoveToExistingObject(contextId, targetContextId, targetId, blockIds, position, (message: any) => {
+			if (message.error.code) {
+				return;
+			};
+
+			if (callBack) {
+				callBack(message);
+			};
+
+			analytics.event((contextId == targetContextId ? 'MoveBlock' : 'ReorderBlock'), { count: blockIds.length });
 		});
 	};
 

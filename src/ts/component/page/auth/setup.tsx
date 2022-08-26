@@ -8,7 +8,6 @@ import { observer } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any> {};
 interface State {
-	icon: string;
 	index: number;
 	error: string;
 };
@@ -16,24 +15,20 @@ interface State {
 const $ = require('jquery');
 const Constant = require('json/constant.json');
 const Errors = require('json/error.json');
-const Icons: number[] = [
-	12, 1230, 1, 130, 2, 230, 3, 330, 4, 430, 5, 530, 6, 630, 7, 730, 8, 830, 9, 930, 10, 1030, 11, 1130
-];
 
 const PageAuthSetup = observer(class PageAuthSetup extends React.Component<Props, State> {
 
 	i: number = 0;
 	t: number = 0;
 	state = {
-		icon: '',
 		index: 0,
 		error: '',
 	};
 
 	render () {
-		const { match, history } = this.props;
 		const { cover } = commonStore;
-		const { icon, error } = this.state;
+		const { match } = this.props;
+		const { error } = this.state;
 		
 		let title = '';
 		switch (match.params.id) {
@@ -76,8 +71,6 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<Props
 		const label = node.find('#label');
 		
 		this.clear();
-		this.setClock();
-		this.i = window.setInterval(() => { this.setClock(); }, 1000);
 		this.t = window.setTimeout(() => { label.show(); }, 10000);
 		
 		switch (match.params.id) {
@@ -102,17 +95,6 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<Props
 	
 	componentWillUnmount () {
 		this.clear();
-	};
-	
-	setClock () {
-		let { index } = this.state;
-			
-		index++;
-		if (index >= Icons.length) {
-			index = 0;
-		};
-			
-		this.setState({ icon: ':clock' + Icons[index] + ':', index: index });
 	};
 	
 	init () {
@@ -242,11 +224,10 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<Props
 		};
 		
 		this.clear();
-		this.setState({ icon: ':skull_and_crossbones:', error: v });
+		this.setState({ error: v });
 	};
 	
 	clear () {
-		window.clearInterval(this.i);
 		window.clearTimeout(this.t);
 	};
 

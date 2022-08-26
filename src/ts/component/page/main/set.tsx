@@ -12,6 +12,7 @@ import HeadSimple from 'Component/page/head/simple';
 interface Props extends RouteComponentProps<any> {
 	rootId: string;
 	isPopup?: boolean;
+	dataset?: any;
 };
 
 interface State {

@@ -10,7 +10,6 @@ interface Props extends I.Popup, RouteComponentProps<any> {};
 const $ = require('jquery');
 const Constant = require('json/constant.json');
 const BORDER = 16;
-const PADDING = 8;
 
 class PopupPreview extends React.Component<Props, {}> {
 	
@@ -21,17 +20,24 @@ class PopupPreview extends React.Component<Props, {}> {
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, block } = data;
-		
+		const { block } = data;
+		const { hash, type } = block.content;
+
+		let content = null;
+
+		switch (type) {
+			case I.FileType.Image:
+				content = <img className="media" src={commonStore.imageUrl(hash, Constant.size.image)} />
+				break;
+		};
+
 		return (
-			<div>
+			<React.Fragment>
 				<Loader id="loader" />
 				<div id="wrap" className="wrap">
-					<div id="blockContent" className="blocks">
-						<Block {...this.props} key={block.id} rootId={rootId} block={block} readonly={true} />
-					</div>
+					{content}
 				</div>
-			</div>
+			</React.Fragment>
 		);
 	};
 	
@@ -58,29 +64,29 @@ class PopupPreview extends React.Component<Props, {}> {
 	};
 	
 	resize () {
-		const { param, position } = this.props;
+		const { param, getId } = this.props;
 		const { data } = param;
 		const { block } = data;
+		const { hash, type } = block.content;
 		
+		const obj = $(`#${getId()}-innerWrap`);
 		const win = $(window);
-		const node = $(ReactDOM.findDOMNode(this));
-		const inner = node.find('#wrap');
-		const content = node.find('#blockContent');
-		const loader = node.find('#loader');
+		const wrap = obj.find('#wrap');
+		const loader = obj.find('#loader');
+		const mw = win.width() - BORDER * 2;
+		const mh = win.height() - BORDER * 2;
 
-		switch (block.content.type) {
+		wrap.css({ height: 450, width: 450 });
+
+		switch (type) {
 			case I.FileType.Image:
 				const img = new Image();
 				img.onload = function () {
-					loader.remove();
-					
 					let cw = img.width;
 					let ch = img.height;
-					let mw = win.width() - BORDER * 2;
-					let mh = win.height() - BORDER * 2;
 					let width = 0, height = 0;
-					
-					if (cw >= ch) {
+
+					if (cw > ch) {
 						width = Math.min(mw, cw);
 						height = Math.min(mh, width / (cw / ch));
 					} else {
@@ -88,12 +94,10 @@ class PopupPreview extends React.Component<Props, {}> {
 						width = Math.min(mw, height / (ch / cw));
 					};
 
-					content.css({ width: width - PADDING * 2 });
-					inner.css({ height: height - PADDING * 2 });
-					
-					position();
+					wrap.css({ height, width  });
+					loader.remove();
 				};
-				img.src = commonStore.imageUrl(block.content.hash, Constant.size.image);
+				img.src = commonStore.imageUrl(hash, Constant.size.image);
 				break;
 		};
 		

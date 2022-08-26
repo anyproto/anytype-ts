@@ -543,8 +543,8 @@ class App extends React.Component<Props, State> {
 				textConfirm: 'Restart and update',
 				textCancel: 'Later',
 				onConfirm: () => {
-					Renderer.send('updateConfirm');
 					Storage.delete('popupNewBlock');
+					Renderer.send('updateConfirm');
 				},
 				onCancel: () => {
 					Renderer.send('updateCancel');

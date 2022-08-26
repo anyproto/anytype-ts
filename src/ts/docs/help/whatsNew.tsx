@@ -6,7 +6,65 @@ export default [
 	{ type: I.BlockType.Cover, param: { type: I.CoverType.Gradient, id: 'pinkOrange' } },
 	{ type: I.BlockType.IconPage, icon: '👋' },
 
-	{ style: I.TextStyle.Title, text: `Happy August, Anytypers!` },
+	{ style: I.TextStyle.Title, text: `Your Workflows Just Got a Major Upgrade!` },
+	{ text: `Hey, Anytypers!` },
+	{ text: `We just couldn't let August go by without another monster release. Hold on tight, 'cause this one's packed with updates that we hope will make your workflows all the more enjoyable` },
+
+	{ text: `Here's what you can look forward to with this release:` },
+
+	{ style: I.TextStyle.Header2, text: `💎 Highlights of this Release` },
+
+	{ text: `Kanban: Task management just got way easier with Kanban views for Sets. In this first iteration, you can group your Objects according to Relations: Status, Tag, or Checkbox. Dragging Objects between columns will automatically update the Relations` },
+	{ text: `<video src="./img/help/kanban.mp4" controls autoplay loop class="full">` },
+
+	{ text: `Multi-window display: By simply holding <span class="highlight">${cmd}</span> and clicking on any Object in your workspace, you can now open it in a new window. Even better, drag and drop blocks between windows for some seriously efficient workflows` },
+	{ text: `<img src="./img/help/multi-window.png" class="full">` },
+
+	{ text: `Spellcheck: Your dreams of typo-free note taking just came true. Choose your input language by heading to <span class="highlight">Settings > Personalization > Spellcheck language</span> and - depending on your typing accuracy - get ready to see some corrections` },
+	{ text: `<img src="./img/help/spellcheck.png" class="full">` },
+
+	{ style: I.TextStyle.Header2, text: `🚀 Quality-of-life Improvements:` },
+
+	{ style: I.TextStyle.Bulleted, text: `Previously-uploaded images now saved in Image Library: When selecting Object covers you can now choose from a library of any images you have uploaded to your workspace` },
+	{ style: I.TextStyle.Bulleted, text: `Delete block shortcut added: Simply press Backspace with your block menu open (orange three-dots menu), and you'll delete the whole block` },
+	{ style: I.TextStyle.Bulleted, text: `Copy Recovery Phrase button added to Settings: To reduce the number of lost recovery phrases, we introduced buttons in our Recovery Phrase and Logout screens to show and automatically copy your phrase` },
+	{ style: I.TextStyle.Bulleted, text: `'What's New' window optimization: For faster performance, the 'Whats New' window was optimized and now shows the previous three releases. Older releases can be viewed by clicking the <span class="highlight">Older Releases</span> button at the bottom of the window` },
+	{ style: I.TextStyle.Bulleted, text: `Settings keyboard navigation introduced: Navigate back in Settings using keystrokes <span class="highlight">${cmd} + \[</span> or <span class="highlight">Alt + arrow left</span>` },
+	{ style: I.TextStyle.Bulleted, text: `Emoji group icons introduced: Search for emojis more quickly using the group icons at the bottom of the emoji picker` },
+	{ style: I.TextStyle.Bulleted, text: `Emoji skin tones added: Right-click emojis from the picker to change the skin tone` },
+	{ style: I.TextStyle.Bulleted, text: `Zoom-in/Zoom-out now possible: Not just for Object view, but any open window. <span class="highlight">${cmd} +</span> for zoom-in, <span class="highlight">${cmd} -</span> for zoom-out and <span class="highlight">${cmd}+0</span> to restore zoom` },
+	{ style: I.TextStyle.Bulleted, text: `View creation process in Sets has been updated to include 'Duplicate' and 'Remove' views` },
+	{ style: I.TextStyle.Bulleted, text: `Context menu when pasting URLs updated: A more user-friendly context menu includes options to <span class="highlight">Create bookmark</span>, <span class="highlight">Paste as Link</span>, or <span class="highlight">Paste as Text</span>` },
+	{ style: I.TextStyle.Bulleted, text: `Button to create new Objects from Set view has an updated design clearer workflows` },
+	{ style: I.TextStyle.Bulleted, text: `Bookmark Objects are now fully editable: Open bookmarks option to reload bookmark from source was moved in Object menu` },
+	{ style: I.TextStyle.Bulleted, text: `Linking to bookmark Objects now creates Bookmark blocks rather than Link blocks` },
+	{ style: I.TextStyle.Bulleted, text: `Application size is now 250MB less when unpacked` },
+	{ style: I.TextStyle.Bulleted, text: `Image preview modal window has been re-introduced` },
+	{ style: I.TextStyle.Bulleted, text: `History tab on dashboard and sidebar is now changed to 'Recent' and sorts Objects by last modified (rather than last opened) date` },
+	{ style: I.TextStyle.Bulleted, text: `Pin-code prompt window now correctly restores focus when application window is focused` },
+	{ style: I.TextStyle.Bulleted, text: `Shortcut added for underline markup: <span class="highlight">${cmd} + U</span>` },
+	{ style: I.TextStyle.Bulleted, text: `Dragging blocks with pressed <span class="highlight">Alt</span> now duplicates them on drop` },
+
+	{ style: I.TextStyle.Header2, text: `🔐 Security` },
+	{ style: I.TextStyle.Bulleted, text: `Electron part of the app was completely re-written, resulting in huge security improvements and Electron was updated to 20.0.2 from 19.0.7` },
+	{ style: I.TextStyle.Bulleted, text: `Libp2p upgrade` },
+
+	{ style: I.TextStyle.Header2, text: `🐛 Bug Fixes` },
+
+	{ style: I.TextStyle.Bulleted, text: `Fixed: Objects can no longer be glimpsed before entering pin-code` },
+	{ style: I.TextStyle.Bulleted, text: `Fixed: Block links are now opening correctly from modal window` },
+	{ style: I.TextStyle.Bulleted, text: `Removed: Onboarding video popup was causing application crashes for new users` },
+	{ style: I.TextStyle.Bulleted, text: `Removed: Update progress bar from print version of Objects` },
+	{ style: I.TextStyle.Bulleted, text: `Fixed: Bug that was preventing <span class="highlight">Shift + Space</span> combination from working` },
+	{ style: I.TextStyle.Bulleted, text: `Removed: Temporary files that were saved in .tmp folder inside application data, when pasting media or exporting files in external applications` },
+	{ style: I.TextStyle.Bulleted, text: `Fixed: Number-of-days filter in Sets no longer prevents value removal` },
+	{ style: I.TextStyle.Bulleted, text: `Fixed: Simple tables within columns are now being resized correctly` },
+	{ style: I.TextStyle.Bulleted, text: `Fixed: Tab key while editing simple tables is no longer causing the cursor to jump two cells` },
+
+	{ type: I.BlockType.Div, style: I.DivStyle.Dot },
+	// --------------------------------------------//
+
+	{ style: I.TextStyle.Header1, text: `Happy August, Anytypers!` },
 	{ text: `Over the past weeks our team has been busy with both process and product updates. From now on, you can expect a cross-platform release every four weeks.` },
 	{ text: `We'll continue publishing Desktop release notes here; meanwhile, you'll be able to find the full release notes for every platform in the News & Announcements section of our Community Forums.` },
 	{ text: `Without further ado, here's what we've cooked up for you in this release:` },

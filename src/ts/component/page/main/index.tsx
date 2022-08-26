@@ -829,9 +829,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		const nidx = element.childrenIds.indexOf(target.id);
 
 		blockStore.updateStructure(root, root, arrayMove(element.childrenIds, oidx, nidx));
-		C.BlockListMoveToExistingObject(root, root, [ current.id ], target.id, position);
-
-		analytics.event('ReorderObjects', { route: 'ScreenHome' });
+		Action.move(root, root, target.id, [ current.id ], position);
 	};
 	
 	resize () {
