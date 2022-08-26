@@ -4,11 +4,9 @@ import { getRange } from 'selection-ranges';
 import { I, M, focus, keyboard, scrollOnMove, Util } from 'Lib';
 import { observer } from 'mobx-react';
 import { commonStore, blockStore, menuStore } from 'Store';
-import { throttle } from 'lodash';
 
 const $ = require('jquery');
 
-const THROTTLE = 20;
 const THRESHOLD = 10;
 
 const SelectionProvider = observer(class SelectionProvider extends React.Component<{}, {}> {
@@ -143,7 +141,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	
 	onMouseDown (e: any) {
 		if (e.button || !this._isMounted || menuStore.isOpen()) {
-			return
+			return;
 		};
 		
 		if (this.isSelectionPrevented) {
@@ -211,8 +209,6 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	};
 	
 	onMouseMove (e: any) {
-		e.preventDefault();
-		
 		if (!this._isMounted) {
 			return;
 		};
@@ -411,7 +407,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		if (!length) {
 			return;
 		};
-		
+
 		if ((length <= 1) && !(keyboard.isCtrl() || keyboard.isMeta())) {
 			const value = selected.find('.value');
 			if (!value.length) {
