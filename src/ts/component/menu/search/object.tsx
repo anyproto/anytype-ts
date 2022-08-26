@@ -342,7 +342,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 				break;
 
 			case I.NavigationType.Move:
-				Action.move(rootId, rootId, '', blockIds, I.BlockPosition.Bottom);
+				Action.move(rootId, item.id, '', blockIds, I.BlockPosition.Bottom);
 				break;
 
 			case I.NavigationType.Link:
