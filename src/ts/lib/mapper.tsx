@@ -565,6 +565,7 @@ const Mapper = {
 	
 			content.setTargetobjectid(obj.targetObjectId);
 			content.setState(obj.state);
+			content.setUrl(obj.url);
 
 			return content;
 		},

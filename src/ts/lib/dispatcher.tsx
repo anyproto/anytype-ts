@@ -775,15 +775,8 @@ class Dispatcher {
 	onObjectView (rootId: string, traceId: string, objectView: any) {
 		let { blocks, details, restrictions } = objectView;
 		let root = blocks.find(it => it.id == rootId);
-		let ctx: string[] = [ rootId ];
 		let structure: any[] = [];
-		
-		if (traceId) {
-			ctx.push(traceId);
-		};
-
-		let contextId = ctx.join('-');
-		let object = detailStore.get(contextId, rootId, []);
+		let contextId = [ rootId, traceId ].filter(it => it).join('-');
 
 		if (root && root.fields.analyticsContext) {
 			analytics.setContext(root.fields.analyticsContext, root.fields.analyticsOriginalId);
@@ -796,6 +789,8 @@ class Dispatcher {
 		blockStore.restrictionsSet(contextId, restrictions);
 
 		if (root) {
+			let object = detailStore.get(contextId, rootId, []);
+
 			root.type = I.BlockType.Page;
 			root.layout = object.layout;
 			root.childrenIds.push(Constant.blockId.footer);

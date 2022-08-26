@@ -242,6 +242,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		const { type, dataMapper, dataSort, skipIds } = data;
 		const { filter } = this.state;
 		const { config } = commonStore;
+		const keys = Constant.defaultRelationKeys.concat([ 'source' ]);
 		
 		const filters: any[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
@@ -265,7 +266,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 			this.setState({ loading: true });
 		};
 
-		C.ObjectSearch(filters, sorts, Constant.defaultRelationKeys, Util.filterFix(filter), this.offset, Constant.limit.menu, (message: any) => {
+		C.ObjectSearch(filters, sorts, keys, Util.filterFix(filter), this.offset, Constant.limit.menu, (message: any) => {
 			if (!this._isMounted) {
 				return;
 			};
@@ -351,6 +352,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 						newBlock.content = { 
 							state: I.BookmarkState.Done,
 							targetObjectId: item.id,
+							url: item.source,
 						};
 						break;
 
