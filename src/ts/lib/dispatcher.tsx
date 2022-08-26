@@ -568,6 +568,11 @@ class Dispatcher {
 					blockStore.update(rootId, block);
 					break;
 
+				case 'blockDataviewRelationSet':
+					id = data.getId();
+					dbStore.relationsSet(rootId, id, (data.getRelationlinksList() || []).map(Mapper.From.RelationLink));
+					break;
+
 				case 'objectDetailsSet':
 					id = data.getId();
 					subIds = data.getSubidsList() || [];
