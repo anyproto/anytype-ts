@@ -206,7 +206,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			};
 		};
 
-		return Util.arrayUnique(Constant.defaultRelationKeys.concat(relationKeys).concat(Constant.coverRelationKeys));
+		return Util.arrayUnique(keys);
 	};
 
 	getData (newViewId: string, offset: number, callBack?: (message: any) => void) {
