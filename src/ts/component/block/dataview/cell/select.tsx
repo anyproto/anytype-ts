@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { Tag, Icon, DragBox } from 'Component';
 import { I, Relation, DataUtil, translate, keyboard, Util } from 'Lib';
 import { observer } from 'mobx-react';
-import { menuStore } from 'Store';
+import { menuStore, detailStore } from 'Store';
 import { getRange, setRange } from 'selection-ranges';
 import arrayMove from 'array-move';
 
@@ -15,7 +15,7 @@ interface State {
 };
 
 const $ = require('jquery');
-
+const Constant = require('json/constant.json');
 const MAX_LENGTH = 32;
 
 const CellSelect = observer(class CellSelect extends React.Component<Props, State> {
@@ -291,11 +291,9 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 			return [];
 		};
 
-		let value: any = Relation.getArrayValue(record[relation.relationKey]);
-		value = value.map((id: string) => { 
-			return (relation.selectDict || []).find(it => it.id == id);
-		});
-		value = value.filter(it => it && it.id);
+		let value: any[] = Relation.getArrayValue(record[relation.relationKey]);
+		value = value.map(id => detailStore.get(Constant.subId.option, id));
+		value = value.filter(it => !it._empty_);
 		return value;
 	};
 
