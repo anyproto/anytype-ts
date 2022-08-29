@@ -1015,6 +1015,14 @@ const ObjectCreateRelation = (details: any, flags: I.ObjectFlag[], callBack?: (m
 	dispatcher.request(ObjectCreateRelation.name, request, callBack);
 };
 
+const ObjectCreateRelationOption = (details: any, callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.CreateRelation.Request();
+	
+	request.setDetails(Encode.encodeStruct(details));
+
+	dispatcher.request(ObjectCreateRelationOption.name, request, callBack);
+};
+
 const ObjectBookmarkFetch = (contextId: string, url: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.BookmarkFetch.Request();
 	
@@ -1641,6 +1649,7 @@ export {
 	ObjectCreateBookmark,
 	ObjectCreateObjectType,
 	ObjectCreateRelation,
+	ObjectCreateRelationOption,
 
 	ObjectToSet,
 	ObjectToBookmark,
