@@ -148,10 +148,6 @@ class DetailStore {
 			};
 		};
 
-		if (object.type == Constant.typeId.bookmark) {
-			object.source = object.source || object.url;
-		};
-
 		return {
 			...object,
 			name,
