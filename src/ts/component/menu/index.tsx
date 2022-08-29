@@ -847,9 +847,9 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 			return;
 		};
 
-		let el = menu.find(`#item-${item.itemId}`);
+		let el = menu.find(`#item-${$.escapeSelector(item.itemId)}`);
 		if (!el.length) {
-			el = menu.find(`#item-${item.id}`);
+			el = menu.find(`#item-${$.escapeSelector(item.id)}`);
 		};
 
 		if (!el.length) {
