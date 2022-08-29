@@ -100,10 +100,8 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 					);
 				};
 
-				list = Relation.getArrayValue(item.value).map((id: string) => { 
-					return (relation.selectDict || []).find((it: any) => { return it.id == id; });
-				});
-				list = list.filter((it: any) => { return it && it.id; });
+				list = Relation.getArrayValue(item.value).map(id => detailStore.get(Constant.subId.option, id, []));
+				list = list.filter(it => !it._empty_);
 
 				value = (
 					<React.Fragment>

@@ -292,7 +292,7 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 		};
 
 		let value: any[] = Relation.getArrayValue(record[relation.relationKey]);
-		value = value.map(id => detailStore.get(Constant.subId.option, id));
+		value = value.map(id => detailStore.get(Constant.subId.option, id, []));
 		value = value.filter(it => !it._empty_);
 		return value;
 	};
