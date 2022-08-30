@@ -479,17 +479,17 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 			return;
 		};
 
-		const { x, y } = keyboard.mouse.page;
-		const subId = dbStore.getSubId(Constant.subId.sidebar, item.parentId);
-
 		this.setActive(item.id);
 
 		menuStore.open('dataviewContext', {
-			rect: { width: 0, height: 0, x: x + 4, y: y },
+			recalcRect: () => {
+				const { x, y } = keyboard.mouse.page;
+				return { width: 0, height: 0, x: x + 4, y: y };
+			},
 			onClose: () => { this.setActive(this.id); },
 			data: {
 				objectIds: [ item.id ],
-				subId,
+				subId: dbStore.getSubId(Constant.subId.sidebar, item.parentId),
 			}
 		});
 	};

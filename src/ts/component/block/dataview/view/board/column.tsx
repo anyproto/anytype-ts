@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon, Loader } from 'Component';
-import {  I, Util, translate, keyboard, DataUtil } from 'Lib';
+import { I, C, Util, translate, keyboard, Relation } from 'Lib';
 import { observer } from 'mobx-react';
 import { dbStore, detailStore, menuStore, commonStore } from 'Store';
 
@@ -157,7 +157,7 @@ const Column = observer(class Column extends React.Component<Props, State> {
 			return;
 		};
 
-		const { rootId, block, getView, getKeys, getSubId, value, applyGroupOrder } = this.props;
+		const { rootId, block, getView, getKeys, getSubId, applyGroupOrder } = this.props;
 		const view = getView();
 		const relation = dbStore.getRelationByKey(view.groupRelationKey);
 		const subId = getSubId();
@@ -173,27 +173,28 @@ const Column = observer(class Column extends React.Component<Props, State> {
 			{ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.Equal, value: false },
 		]);
 
+		let value = this.props.value;
+		let filter: any = { operator: I.FilterOperator.And, relationKey: relation.relationKey };
+
 		switch (relation.format) {
 			default:
-				filters.push({ operator: I.FilterOperator.And, relationKey: relation.relationKey, condition: I.FilterCondition.Equal, value: value });
+				filter.condition = I.FilterCondition.Equal;
+				filter.value = value;
 				break;
 
 			case I.RelationType.Status:
-				if (!value || !value.length) {
-					filters.push({ operator: I.FilterOperator.And, relationKey: relation.relationKey, condition: I.FilterCondition.Empty, value: null });
-				} else {
-					filters.push({ operator: I.FilterOperator.And, relationKey: relation.relationKey, condition: I.FilterCondition.Equal, value: value });
-				}
+				filter.condition = value ? I.FilterCondition.Equal : I.FilterCondition.Empty;
+				filter.value = value ? value : null;
 				break;
 
 			case I.RelationType.Tag:
-				if (!value || !value.length) {
-					filters.push({ operator: I.FilterOperator.And, relationKey: relation.relationKey, condition: I.FilterCondition.Empty, value: null });
-				} else {
-					filters.push({ operator: I.FilterOperator.And, relationKey: relation.relationKey, condition: I.FilterCondition.ExactIn, value: value });
-				};
+				value = Relation.getArrayValue(value);
+				filter.condition = value.length ? I.FilterCondition.ExactIn : I.FilterCondition.Empty;
+				filter.value = value.length ? value : null;
 				break;
 		};
+
+		filters.push(filter);
 
 		if (clear) {
 			this.clear();

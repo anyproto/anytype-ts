@@ -148,7 +148,7 @@ const MenuText = observer(class MenuText extends React.Component<Props, {}> {
 
 		raf(() => {
 			const sh = input.get(0).scrollHeight;
-			const height = Math.max(cell.outerHeight(), Math.min(wh - hh - o.top - 20, sh));
+			const height = Math.min(wh - hh - o.top - 20, Math.max(cell.outerHeight(), sh));
 
 			input.css({ height }).scrollTop(sh);
 			position();

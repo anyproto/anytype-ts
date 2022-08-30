@@ -59,7 +59,11 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 			} else {
 				const src = this.getPicture();
 				if (src) {
-					cover = <Cover type={I.CoverType.Upload} src={src} />;
+					cover = (
+						<div className="cover type1">
+							<img src={src} />
+						</div>
+					);
 				};
 			};
 		};

@@ -10,6 +10,7 @@ export enum BookmarkState {
 export interface ContentBookmark {
 	state: BookmarkState,
 	targetObjectId: string;
+	url: string;
 };
 
 export interface BlockBookmark extends I.Block {

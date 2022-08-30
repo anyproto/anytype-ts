@@ -248,7 +248,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		].concat(data.filters || []);
 
 		const sorts = [
-			{ relationKey: 'lastModifiedDate', type: I.SortType.Desc },
+			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
 		].concat(data.sorts || []);
 
 		if (skipIds && skipIds.length) {
@@ -341,7 +341,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 				break;
 
 			case I.NavigationType.Move:
-				Action.move(rootId, rootId, '', blockIds, I.BlockPosition.Bottom);
+				Action.move(rootId, item.id, '', blockIds, I.BlockPosition.Bottom);
 				break;
 
 			case I.NavigationType.Link:

@@ -205,20 +205,22 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 		const { isPopup, rootId } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
 		const container = Util.getScrollContainer(isPopup);
-		const st = container.scrollTop();
-		const rect = { x: container.width() / 2 , y: Util.sizeHeader() + st, width: 1, height: 1 };
 		const cnw = [ 'fixed' ];
 
-		if (isPopup) {
-			const offset = container.offset();
-			rect.x += offset.left;
-			rect.y += offset.top;
-		} else {
+		if (!isPopup) {
 			cnw.push('fromHeader');
 		};
 
 		const param: any = {
-			rect: rect,
+			recalcRect: () => {
+				const rect = { x: container.width() / 2 , y: Util.sizeHeader() + container.scrollTop(), width: 1, height: 1 };
+				if (isPopup) {
+					const offset = container.offset();
+					rect.x += offset.left;
+					rect.y += offset.top;
+				};
+				return rect;
+			},
 			horizontal: I.MenuDirection.Left,
 			noFlipX: true,
 			noFlipY: true,

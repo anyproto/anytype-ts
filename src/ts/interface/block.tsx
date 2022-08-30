@@ -61,6 +61,7 @@ export enum BlockVAlign {
 };
 
 export interface BlockComponent {
+	children?: any[];
 	dataset?: any;
 	rootId: string;
 	traceId?: string;

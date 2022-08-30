@@ -4,14 +4,16 @@ import { getRange } from 'selection-ranges';
 import { I, M, focus, keyboard, scrollOnMove, Util } from 'Lib';
 import { observer } from 'mobx-react';
 import { commonStore, blockStore, menuStore } from 'Store';
-import { throttle } from 'lodash';
+
+interface Props {
+	children?: React.ReactNode;
+};
 
 const $ = require('jquery');
 
-const THROTTLE = 20;
 const THRESHOLD = 10;
 
-const SelectionProvider = observer(class SelectionProvider extends React.Component<{}, {}> {
+const SelectionProvider = observer(class SelectionProvider extends React.Component<Props, {}> {
 
 	_isMounted = false;
 	x: number = 0;
@@ -26,6 +28,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 
 	cache: Map<string, any> = new Map();
 	ids: Map<string, string[]> = new Map();
+	idsOnStart: Map<string, string[]> = new Map();
 
 	isSelecting: boolean = false;
 	isSelectionPrevented: boolean = false;
@@ -142,7 +145,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	
 	onMouseDown (e: any) {
 		if (e.button || !this._isMounted || menuStore.isOpen()) {
-			return
+			return;
 		};
 		
 		if (this.isSelectionPrevented) {
@@ -165,6 +168,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		this.isSelecting = true;
 		this.top = Util.getScrollContainer(isPopup).scrollTop();
 		this.cache.clear();
+		this.idsOnStart = new Map(this.ids);
 
 		if (isPopup) {
 			const popupContainer = $('#popupPage-innerWrap');
@@ -204,13 +208,11 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		scrollOnMove.onMouseDown(e, isPopup);
 		this.unbindMouse();
 
-		win.on(`mousemove.selection`, throttle((e: any) => { this.onMouseMove(e); }, THROTTLE));
+		win.on(`mousemove.selection`, (e: any) => { this.onMouseMove(e); });
 		win.on(`blur.selection mouseup.selection`, (e: any) => { this.onMouseUp(e); });
 	};
 	
 	onMouseMove (e: any) {
-		e.preventDefault();
-		
 		if (!this._isMounted) {
 			return;
 		};
@@ -239,7 +241,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		if (!this._isMounted) {
 			return;
 		};
-		
+
 		if (!this.moved) {
 			if (!keyboard.isShift() && !keyboard.isAlt() && !(keyboard.isCtrl() || keyboard.isMeta())) {
 				if (!this.isClearPrevented) {
@@ -369,7 +371,8 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		let ids = this.get(type, false);
 
 		if (keyboard.isCtrl() || keyboard.isMeta()) {
-			if (ids.includes(id)) {
+			const idsOnStart = this.idsOnStart.get(type) || [];
+			if (idsOnStart.includes(id)) {
 				ids = ids.filter(it => it != id);
 			} else {
 				ids.push(id);
@@ -381,7 +384,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			ids.push(id);
 		};
 
-		this.ids.set(type, Util.arrayUnique(ids));
+		this.ids.set(type, ids);
 	};
 	
 	checkNodes (e: any) {
@@ -408,7 +411,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		if (!length) {
 			return;
 		};
-		
+
 		if ((length <= 1) && !(keyboard.isCtrl() || keyboard.isMeta())) {
 			const value = selected.find('.value');
 			if (!value.length) {

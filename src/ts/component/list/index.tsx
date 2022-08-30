@@ -8,7 +8,7 @@ import { I, DataUtil } from 'Lib';
 
 interface Props {
 	canDrag: boolean;
-	getList?(): void;
+	getList?(): any[];
 	onClick?(e: any, item: any): void;
 	onSelect?(e: any, item: any): void;
 	onAdd?(e: any): void;
@@ -98,7 +98,7 @@ const ListIndex = observer(class ListIndex extends React.Component<Props, {}> {
 		let List = SortableContainer((item: any) => {
 			return (
 				<React.Fragment>
-					{item.list.map((item: any, i: number) => (
+					{children.map((item: any, i: number) => (
 						<Item key={item.id} {...item} index={i} disabled={!canDrag} />
 					))}
 				</React.Fragment>
@@ -111,7 +111,6 @@ const ListIndex = observer(class ListIndex extends React.Component<Props, {}> {
 					axis="xy" 
 					transitionDuration={150}
 					distance={10}
-					list={children} 
 					helperClass="isDragging"
 					getContainer={helperContainer}
 					helperContainer={helperContainer} 

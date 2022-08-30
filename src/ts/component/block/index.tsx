@@ -383,8 +383,6 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 		const { selection } = dataset || {};
 		const elementId = `#button-block-menu-${block.id}`;
 		const element = $(elementId);
-		const offset = element.offset();
-		const rect = { x: offset.left, y: keyboard.mouse.page.y, width: element.width(), height: 0 };
 
 		if (!block.isText()) {
 			focus.set(block.id, { from: 0, to: 0 });
@@ -393,7 +391,10 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 		menuStore.open('blockAction', { 
 			offsetX: element.outerWidth(),
 			horizontal: I.MenuDirection.Right,
-			rect: rect,
+			recalcRect: () => {
+				const offset = element.offset();
+				return { x: offset.left, y: keyboard.mouse.page.y, width: element.width(), height: 0 };
+			},
 			data: {
 				blockId: block.id,
 				blockIds: DataUtil.selectionGet(block.id, true, this.props),

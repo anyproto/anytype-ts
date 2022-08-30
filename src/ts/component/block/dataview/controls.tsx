@@ -17,7 +17,6 @@ interface State {
 };
 
 const $ = require('jquery');
-const raf = require('raf');
 
 const Controls = observer(class Controls extends React.Component<Props, State> {
 
@@ -65,7 +64,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 		const ViewItem = SortableElement((item: any) => (
 			<div 
 				id={'view-item-' + item.id} 
-				className={'viewItem ' + (item.active ? 'active' : '')} 
+				className={'viewItem ' + (item.id == view.id ? 'active' : '')} 
 				onClick={(e: any) => { this.onViewSet(item); }} 
 				onContextMenu={(e: any) => { this.onViewEdit(e, '#views #view-item-' + item.id, item); }}
 			>
@@ -79,7 +78,6 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 					<ViewItem 
 						key={i} 
 						{...item} 
-						active={item.id == view.id} 
 						index={i} 
 					/>
 				))}

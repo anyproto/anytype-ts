@@ -60,10 +60,15 @@ const HeadCell = observer(class HeadCell extends React.Component<Props, {}> {
 			return;
 		};
 
+		const element = `#${Relation.cellId('head', relationKey, '')}`;
+		const obj = $(element);
+
 		menuStore.open('dataviewRelationEdit', { 
-			element: '#' + Relation.cellId('head', relationKey, ''),
+			element,
 			horizontal: I.MenuDirection.Center,
 			noFlipY: true,
+			onOpen: () => { obj.addClass('active'); },
+			onClose: () => { obj.removeClass('active'); },
 			data: {
 				getData: getData,
 				getView: getView,

@@ -52,9 +52,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			return null;
 		};
 
-		const { groupRelationKey } = view;
-
-		let ViewComponent: React.ReactType<I.ViewComponent>;
+		let { groupRelationKey } = view;
+		let ViewComponent: any = null;
 		let className = '';
 
 		switch (view.type) {
@@ -204,6 +203,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				keys.push(view.groupRelationKey);
 			};
 		};
+
 		return Util.arrayUnique(keys);
 	};
 
@@ -477,7 +477,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		const { rootId, block, dataset } = this.props;
 		const { selection } = dataset || {};
-		const { x, y } = keyboard.mouse.page;
 		const subId = dbStore.getSubId(rootId, block.id);
 		
 		let ids = selection.get(I.SelectType.Record);
@@ -486,7 +485,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		menuStore.open('dataviewContext', {
-			rect: { width: 0, height: 0, x: x + 4, y: y },
+			recalcRect: () => { 
+				const { x, y } = keyboard.mouse.page;
+				return { width: 0, height: 0, x: x + 4, y: y };
+			},
 			onClose: () => { selection.clear(true); },
 			data: {
 				objectIds: ids,

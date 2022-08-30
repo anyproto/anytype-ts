@@ -12,11 +12,13 @@
 			}
 			.card {
 				.cover { 
-					position: relative; height: 144px; background-position: top center;
-					background-color: $colorHover; width: 100%; border-bottom: 1px solid $colorBorderDark; 
+					position: relative; height: 144px; background-position: top center; display: flex; align-items: center;
+					background-color: $colorHover; width: 100%; border-bottom: 1px solid $colorBorderDark; justify-content: center;
 				}
 
 				.cover {
+					img { width: 100%; height: 100%; object-fit: cover; }
+
 					.inner { 
 						position: relative; color: $colorSecondary; transition: $transitionFast; width: 100%; height: 100%; 
 						background-image: url('~img/icon/dataview/gallery-image-preview.svg'); background-repeat: no-repeat;
@@ -44,6 +46,7 @@
 
 			.card.coverFit {
 				.cover { background-size: contain; background-position: center center; }
+				.cover img { width: auto; height: auto; max-height: 100%; max-width: 100%; object-fit: contain; }
 			}
 
 			.card.small {

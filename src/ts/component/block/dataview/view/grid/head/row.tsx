@@ -59,7 +59,7 @@ const HeadRow = observer(class HeadRow extends React.Component<Props, {}> {
 				onSortStart={onSortStart}
 				onSortEnd={onSortEnd}
 				helperClass="isDragging"
-				helperContainer={() => { return $('#block-' + block.id + ' .wrap').get(0); }}
+				helperContainer={() => { return $(`#block-${block.id} .wrap`).get(0); }}
 			/>
 		);
 	};

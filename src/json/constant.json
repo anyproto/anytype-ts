@@ -359,6 +359,7 @@
 		"vhdl":			 "VHDL",
 		"vb":			 "Visual Basic",
 		"wasm":			 "WebAssembly",
+		"wolfram":		 "Wolfram",
 		"xml":			 "XML",
 		"yaml":			 "YAML"
 	},

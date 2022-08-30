@@ -156,15 +156,16 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<Props, 
 		
 		let m = Number(Util.date('n', value));
 		let y = Number(Util.date('Y', value));
+		let md = Constant.monthDays;
 		
 		// February
 		if (y % 4 === 0) {
-			Constant.monthDays[2] = 29;
+			md[2] = 29;
 		};
 		
-		let wdf = Number(Util.date('w', Util.timestamp(y, m, 1)));
-		let wdl = Number(Util.date('w', Util.timestamp(y, m, Constant.monthDays[m])));
-		
+		let wdf = Number(Util.date('N', Util.timestamp(y, m, 1)));
+		let wdl = Number(Util.date('N', Util.timestamp(y, m, md[m])));
+
 		let pm = m - 1;
 		let nm = m + 1;
 		let py = y;
@@ -182,14 +183,16 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<Props, 
 
 		let days = [];
 		for (let i = 1; i <= wdf; ++i) {
-			days.push({ d: Constant.monthDays[pm] - (wdf - i), m: pm, y: py });
+			days.push({ d: md[pm] - (wdf - i), m: pm, y: py });
 		};
-		for (let i = 1; i <= Constant.monthDays[m]; ++i) {
+		for (let i = 1; i <= md[m]; ++i) {
 			days.push({ y: y, m: m, d: i });
 		};
+
 		for (let i = 1; i < 7 - wdl; ++i) {
 			days.push({ d: i, m: nm, y: ny });
 		};
+
 		return days;
 	};
 	

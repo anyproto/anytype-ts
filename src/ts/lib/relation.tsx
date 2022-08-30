@@ -1,5 +1,5 @@
 import { I, DataUtil, Util, FileUtil, translate, Dataview } from 'Lib';
-import { dbStore } from 'Store';
+import { dbStore, commonStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -277,6 +277,8 @@ class Relation {
 	};
 
 	getCoverOptions (rootId: string, blockId: string) {
+		const { config } = commonStore;
+
 		const options: any[] = dbStore.getRelations(rootId, blockId).filter((it: any) => {
 			return !it.isHidden && (it.format == I.RelationType.File);
 		}).map((it: any) => {
@@ -287,10 +289,16 @@ class Relation {
 			};
 		});
 
-		return [
+		const ret = [
 			{ id: '', icon: '', name: 'None' },
-			{ id: 'pageCover', icon: 'image', name: 'Page cover' }
-		].concat(options);
+			{ id: 'pageCover', icon: 'image', name: 'Page cover' },
+		];
+
+		if (config.experimental) {
+			ret.push({ id: 'iconImage', icon: 'image', name: 'Image' });
+		};
+
+		return ret.concat(options);
 	};
 
 	getGroupOptions (rootId: string, blockId: string) {
