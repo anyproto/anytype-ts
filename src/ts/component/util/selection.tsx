@@ -5,11 +5,15 @@ import { I, M, focus, keyboard, scrollOnMove, Util } from 'Lib';
 import { observer } from 'mobx-react';
 import { commonStore, blockStore, menuStore } from 'Store';
 
+interface Props {
+	children?: React.ReactNode;
+};
+
 const $ = require('jquery');
 
 const THRESHOLD = 10;
 
-const SelectionProvider = observer(class SelectionProvider extends React.Component<{}, {}> {
+const SelectionProvider = observer(class SelectionProvider extends React.Component<Props, {}> {
 
 	_isMounted = false;
 	x: number = 0;
