@@ -103,12 +103,14 @@ initColor = () => {
 					0: '#dfddd0',
 					1: '#8c9ea5',
 					over: '#ffd15b',
+					targetOver: '#c5efa3',
 				},
 				node: {
 					common: '#f3f2ec',
 					filter: '#e3f7d0',
 					focused: '#fef3c5',
-					over: '#d6f5f3',
+					over: '#ffd15b',
+					targetOver: '#c5efa3',
 				},
 			}; 
 			break;
@@ -122,12 +124,14 @@ initColor = () => {
 					0: '#525148',
 					1: '#8c9ea5',
 					over: '#ffd15b',
+					targetOver: '#294b0e',
 				},
 				node: {
 					common: '#484843',
 					filter: '#e3f7d0',
 					focused: '#fef3c5',
-					over: '#d6f5f3',
+					over: '#ffd15b',
+					targetOver: '#294b0e',
 				},
 			};
 			break;
@@ -247,12 +251,17 @@ drawLine = (d, aWidth, aLength, arrowStart, arrowEnd) => {
 	let bg = Color.link[d.type] || Color.link[0];
 
 	ctx.globalAlpha = 1;
+
 	if (forceProps.filter && !d.source.name.match(forceProps.filter) && !d.target.name.match(forceProps.filter)) {
 		ctx.globalAlpha = 0.2;
 	};
 
 	if (d.source.isOver) {
 		bg = Color.link.over;
+	};
+
+	if (d.target.isOver) {
+		bg = Color.link.targetOver;
 	};
 
     let a1 = Math.atan2(y2 - y1, x2 - x1);
@@ -336,12 +345,12 @@ drawNode = (d) => {
 	};
 
 	if (d.isOver) {
-		stroke = Color.link.over;
+		stroke = Color.node.over;
 		ctx.lineWidth = 1;
 	};
 
 	if (isMatched) {
-		stroke = Color.link.over;
+		stroke = Color.node.over;
 		ctx.lineWidth = 2;
 	};
 
