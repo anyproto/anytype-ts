@@ -1,8 +1,9 @@
 import * as React from 'react';
-import { I, history as historyPopup } from 'Lib';
+import { I, history as historyPopup, Util } from 'Lib';
 import { RouteComponentProps } from 'react-router';
 import { Page } from 'Component';
 import { observer } from 'mobx-react';
+import { menuStore } from 'Store';
 
 interface Props extends I.Popup, RouteComponentProps<any> {};
 
@@ -33,7 +34,7 @@ const PopupPage = observer(class PopupPage extends React.Component<Props, {}> {
 	};
 
 	componentDidMount () {
-		const { param } = this.props;
+		const { param, getId } = this.props;
 		const { data } = param;
 		const { matchPopup } = data;
 
@@ -58,12 +59,26 @@ const PopupPage = observer(class PopupPage extends React.Component<Props, {}> {
 		
 		this.unbind();
 		
+		const { getId } = this.props;
 		const win = $(window);
-		win.off('resize.popupPage').on('resize.popupPage', () => { this.resize(); });
+		const obj = $(`#${getId()}`);
+
+		win.on('resize.popupPage', () => { this.resize(); });
+
+		obj.find('.innerWrap').on('scroll', () => {
+			for (let menu of menuStore.list) {
+				win.trigger('resize.' + Util.toCamelCase('menu-' + menu.id));
+			};
+		});
 	};
 
 	unbind () {
-		$(window).off('resize.popupPage');
+		const { getId } = this.props;
+		const win = $(window);
+		const obj = $(`#${getId()}`);
+
+		win.off('resize.popupPage');
+		obj.find('.innerWrap').off('scroll');
 	};
 
 	resize () {

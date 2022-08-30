@@ -990,12 +990,16 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		commonStore.filterSet(range.from - 1, '');
 
 		raf(() => {
-			const rect = Util.selectionRect();
-
 			menuStore.open('blockMention', {
 				element: el,
-				rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
-				offsetX: rect ? 0 : Constant.size.blockMenu,
+				recalcRect: () => {
+					const rect = Util.selectionRect();
+					return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
+				},
+				offsetX: () => {
+					const rect = Util.selectionRect();
+					return rect ? 0 : Constant.size.blockMenu;
+				},
 				noFlipX: false,
 				noFlipY: false,
 				onClose: () => {
@@ -1029,20 +1033,25 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 	onSmile () {
 		const { rootId, block } = this.props;
 		const win = $(window);
-		const range = this.getRange();
-		const rect = Util.selectionRect();
-
-		let value = this.getValue();
 
 		menuStore.open('smile', {
 			element: '#block-' + block.id,
-			rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
-			offsetX: rect ? 0 : Constant.size.blockMenu,
+			recalcRect: () => {
+				const rect = Util.selectionRect();
+				return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
+			},
+			offsetX: () => {
+				const rect = Util.selectionRect();
+				return rect ? 0 : Constant.size.blockMenu;
+			},
 			data: {
 				noHead: true,
 				rootId: rootId,
 				blockId: block.id,
 				onSelect: (icon: string) => {
+					let range = this.getRange();
+					let value = this.getValue();
+
 					this.marks = Mark.adjust(this.marks, range.from, 1);
 					this.marks = Mark.toggle(this.marks, { 
 						type: I.MarkType.Emoji, 
@@ -1232,7 +1241,6 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 
 		const win = $(window);
 		const el = $('#block-' + block.id);
-		const rect = Util.selectionRect();
 
 		menuStore.closeAll([ 'blockAdd', 'blockMention' ]);
 
@@ -1250,7 +1258,10 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 
 			menuStore.open('blockContext', {
 				element: el,
-				rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
+				recalcRect: () => { 
+					const rect = Util.selectionRect();
+					return rect ? { ...rect, y: rect.y + win.scrollTop() } : null; 
+				},
 				type: I.MenuType.Horizontal,
 				offsetY: 4,
 				vertical: I.MenuDirection.Bottom,
