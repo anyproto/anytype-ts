@@ -249,7 +249,17 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 				};
 				this.renderSelection();
 			} else {
-				this.checkNodes(e);
+				let needCheck = false;
+				if (keyboard.isCtrl() || keyboard.isMeta()) {
+					for (let i in I.SelectType) {
+						const idsOnStart = this.idsOnStart.get(I.SelectType[i]) || [];
+						needCheck = needCheck || Boolean(idsOnStart.length);
+					};
+				};
+
+				if (needCheck) {
+					this.checkNodes(e);
+				};
 				
 				const ids = this.get(I.SelectType.Block, true);
 				const target = $(e.target).closest('.selectable');
@@ -384,9 +394,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			ids.push(id);
 		};
 
-		this.ids.set(type, ids);
-		console.log('IDS SET', type, ids);
-		console.trace();
+		this.ids.set(type, Util.arrayUnique(ids));
 	};
 	
 	checkNodes (e: any) {
