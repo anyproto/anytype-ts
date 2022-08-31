@@ -144,7 +144,7 @@ class MenuManager {
 
 					{ role: 'minimize' },
 					{
-						label: 'Zoom in', accelerator: 'CmdOrCtrl+Plus',
+						label: 'Zoom in', accelerator: 'CmdOrCtrl+=',
 						click: () => { Api.setZoom(this.win, this.win.webContents.getZoomLevel() + 1); }
 					},
 					{
