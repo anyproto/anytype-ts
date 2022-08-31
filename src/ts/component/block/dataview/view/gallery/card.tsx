@@ -142,15 +142,17 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 	onClick (e: any) {
 		e.preventDefault();
 
-		if (keyboard.withCommand(e)) {
-			return;
-		};
-
-		const { index, getRecord, onContext } = this.props;
+		const { index, getRecord, onContext, dataset } = this.props;
+		const { selection } = dataset || {};
 		const record = getRecord(index);
 		const cb = {
-			0: () => { DataUtil.objectOpenPopup(record); },
+			0: () => { DataUtil.objectOpenEvent(e, record); },
 			2: () => { onContext(e, record.id); }
+		};
+
+		const ids = selection ? selection.get(I.SelectType.Block) : [];
+		if (keyboard.withCommand(e) && ids.length) {
+			return;
 		};
 
 		if (cb[e.button]) {

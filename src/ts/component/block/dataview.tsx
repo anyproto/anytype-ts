@@ -167,7 +167,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const { selection } = dataset || {};
 		const root = blockStore.getLeaf(rootId, rootId);
 		const cmd = keyboard.ctrlKey();
-		const ids = selection.get(I.SelectType.Record);
+		const ids = selection ? selection.get(I.SelectType.Block) : [];
 		const length = ids.length;
 
 		if (!root || (!root.isObjectSet() && !root.isObjectSpace())) {
@@ -447,9 +447,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		if ((relationKey == 'name') && (!ref.ref.state.isEditing)) {
 			const ids = selection ? selection.get(I.SelectType.Record) : [];
-
-			console.log(ids);
-
 			if (keyboard.withCommand(e)) {
 				if (ids.length) {
 					return;
