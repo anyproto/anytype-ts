@@ -54,7 +54,7 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 
 					<div className="row flex">
 						<div className="side left">
-							<Label text="Spellcheck language" />
+							<Label text="Spellcheck languages" />
 						</div>
 						<div className="side right">
 							<Select 
