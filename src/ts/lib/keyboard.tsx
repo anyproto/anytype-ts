@@ -744,6 +744,10 @@ class Keyboard {
 		return this.checkPressed(Key.meta);
 	};
 
+	isCtrlOrMeta () {
+		return this.isCtrl() || this.isMeta();
+	};
+
 };
 
 export enum Key {
