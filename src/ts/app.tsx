@@ -750,14 +750,16 @@ class App extends React.Component<Props, State> {
 
 		const win = $(window);
 		const rootId = keyboard.getRootId();
-		const rect = Util.selectionRect();
 		const { focused, range } = focus.state;
 		const options: any = param.dictionarySuggestions.map(it => { return { id: it, name: it }; });
 
 		options.push({ id: 'add-to-dictionary', name: 'Add to dictionary' });
 
 		menuStore.open('select', {
-			rect: { ...rect, y: rect.y + win.scrollTop() },
+			recalcRect: () => { 
+				const rect = Util.selectionRect();
+				return rect ? { ...rect, y: rect.y + win.scrollTop() } : null; 
+			},
 			onOpen: () => { menuStore.close('blockContext'); },
 			onClose: () => { keyboard.disableContextOpen(false); },
 			data: {

@@ -118,8 +118,7 @@ const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<P
 				text: 'These objects will be deleted irrevocably. You can’t undo this action.',
 				textConfirm: 'Delete',
 				onConfirm: () => { 
-					C.AccountStop(true);
-					authStore.logout();
+					authStore.logout(true);
 					Util.route('/');
 				},
 			},

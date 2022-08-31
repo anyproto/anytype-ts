@@ -114,8 +114,7 @@ const PopupSettingsPageLogout = observer(class PopupSettingsPageLogout extends R
 		const { setPinConfirmed } = this.props;
 
 		window.setTimeout(() => {
-			C.AccountStop(false);
-			authStore.logout();
+			authStore.logout(false);
 			Util.route('/');
 
 			setPinConfirmed(false);

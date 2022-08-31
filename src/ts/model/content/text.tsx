@@ -44,7 +44,7 @@ class BlockContentText implements I.ContentText {
 		self.color = String(props.color || '');
 		self.iconEmoji = String(props.iconEmoji || '');
 		self.iconImage = String(props.iconImage || '');
-		self.marks = (props.marks || []).map((it: I.Mark) => { return new Mark(it); });
+		self.marks = (props.marks || []).map(it => new Mark(it));
 
 		makeObservable(self, {
 			text: observable,

@@ -142,9 +142,9 @@ class BlockStore {
 		this.recentSet('');
 		this.rootSet('');
 
-		this.blockMap = new Map();
-		this.treeMap = new Map();
-		this.restrictionMap = new Map();
+		this.blockMap.clear();
+		this.treeMap.clear();
+		this.restrictionMap.clear();
 	};
 
 	setStructure (rootId: string, blocks: any[]) {

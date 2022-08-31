@@ -529,13 +529,15 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 
 		const cb = () => {
 			if (item.isTextColor) {
-				C.BlockTextListSetColor(rootId, [ blockId ], item.value, onCommand);
+				C.BlockTextListSetColor(rootId, [ blockId ], item.value, (message: any) => {
+					onCommand(message);
+					analytics.event('ChangeBlockColor', { color: item.value, count: 1 });
+				});
 			};
 
 			if (item.isBgColor) {
 				C.BlockListSetBackgroundColor(rootId, [ blockId ], item.value, (message: any) => {
 					onCommand(message);
-
 					analytics.event('ChangeBlockBackground', { color: item.value, count: 1 });
 				});
 			};
@@ -543,7 +545,6 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 			if (item.isAlign) {
 				C.BlockListSetAlign(rootId, [ blockId ], item.itemId, (message: any) => {
 					onCommand(message);
-
 					analytics.event('ChangeBlockHAlign', { align: item.itemId, count: 1 });
 				});
 			};
@@ -622,7 +623,8 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 					const details = { type: item.objectTypeId };
 
 					const create = (template: any) => {
-						const cb = (message: any) => {
+
+						DataUtil.pageCreate(rootId, blockId, details, position, template?.id, DataUtil.defaultLinkSettings(), [], (message: any) => {
 							if (message.error.code) {
 								return;
 							};
@@ -635,9 +637,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 								layout: template?.layout,
 								template: (template && template.templateIsBundled ? template.id : 'custom'),
 							});
-						};
-
-						DataUtil.pageCreate(rootId, blockId, details, position, template?.id, DataUtil.defaultLinkSettings(), [], cb);
+						});
 					};
 
 					const showMenu = () => {
@@ -660,7 +660,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 					keyboard.setFocus(false);
 
 					blockCreate(blockId, position, param, (newBlockId: string) => {
-						focus.set(blockId, { from: length, to: length });
+						focus.set(newBlockId, { from: length, to: length });
 						focus.apply();
 
 						// Auto-open BlockRelation suggest menu

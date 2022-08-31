@@ -2,37 +2,55 @@
 
 .blocks {
 	.block.blockDataview {
+		.cellHead { 
+			text-align: left; color: $colorDarkGrey; font-weight: 400; line-height: 20px; position: relative; 
+			cursor: grab; display: inline-block; vertical-align: top; transition: background-color 0.2s ease-in-out;
+		}
+		.cellHead {
+			.cellContent { cursor: grab; height: 46px !important; overflow: visible !important; }
+			.flex { padding: 14px; }
+			.iconObject { width: 20px; height: 20px; margin: 0px 4px 0px 0px; vertical-align: top; flex-shrink: 0; display: none; }
+			.name { 
+				display: inline-block; line-height: 20px; height: 20px; vertical-align: top; width: 100%; 
+				@include text-overflow-nw;
+			}
+			.resize { width: 20px; height: 20px; position: absolute; right: 0px; top: 14px; cursor: col-resize; z-index: 10; }
+			.resize {
+				.line { width: 1px; height: 100%; background: #e0ded2; position: absolute; top: 0px; left: 19px; }
+			}
+		}
+		.cellHead.small { text-align: center; }
+		.cellHead.small {
+			.flex { display: inline-block; }
+			.iconObject { display: block; }
+			.name { display: none; }
+		}
+		.cellHead.last { overflow: visible; cursor: pointer; padding: 14px; }
+		.cellHead.last {
+			.icon.plus { margin: 0px; }
+		}
+
+		.cellHead.isDragging { border: 0px; background: rgba(255,255,255,0.75);  }
+		.cellHead.isDragging::after {
+			content: ""; display: block; width: 100%; height: calc(100% + 2px); position: absolute; left: 0px; top: 0px; z-index: 0; pointer-events: none;
+			background-color: rgba(255,255,255,0.75);
+		}
+		.cellHead.isDragging {
+			.resize { display: none; }
+		}
+
+		.cellHead:hover::after, .cellHead.active::after { 
+			content: ""; display: block; width: 100%; height: calc(100% + 2px); position: absolute; left: 0px; top: 0px; z-index: 0; pointer-events: none;
+			background-color: $colorHover; 
+		}
+
+		.cellHead.last:hover, .cellHead.last.active {
+			.icon.plus { background-image: url('~img/icon/plus/menu1.svg'); }
+		}
+
         .viewItem.viewGrid { display: table; width: 100%; position: relative; box-shadow: 0px -1px #e0ded2 inset; }
 		.viewItem.viewGrid {
-			.rowHead { display: block; white-space: nowrap; width: calc(100% - 4px); margin-left: 2px; height: 48px; }
-
-			.cellHead { 
-				text-align: left; color: $colorDarkGrey; padding: 14px; font-weight: 400; line-height: 20px; position: relative; 
-				@include text-overflow-nw; cursor: grab; display: inline-block; vertical-align: top;
-			}
-			.cellHead {
-				.cellContent { cursor: grab; }
-				.iconObject { width: 20px; height: 20px; margin: 0px 4px 0px 0px; vertical-align: top; flex-shrink: 0; display: none; }
-				.name { 
-					display: inline-block; line-height: 20px; height: 20px; vertical-align: top; width: calc(100% - 24px); 
-					@include text-overflow-nw;
-				}
-				.resize { width: 20px; height: 20px; position: absolute; right: 0px; top: 14px; cursor: col-resize; z-index: 1; }
-				.resize {
-					.line { width: 1px; height: 100%; background: #e0ded2; position: absolute; top: 0px; left: 19px; }
-				}
-			}
-			.cellHead.small { text-align: center; }
-			.cellHead.small {
-				.flex { display: inline-block; }
-				.iconObject { display: block; }
-				.name { display: none; }
-			}
-			.cellHead.last { overflow: visible; }
-			.cellHead.last {
-				.icon.plus { margin: 0px; }
-			}
-			.cellHead.isDragging { border: 0px; background: rgba(255,255,255,0.75); }
+			.rowHead { display: block; white-space: nowrap; width: calc(100% - 4px); margin-left: 2px; height: 46px; }
 
 			.icon.checkbox { vertical-align: top; }
 			.icon.edit { width: 36px; height: 48px; position: absolute; right: 0px; top: 0px; }

@@ -107,6 +107,7 @@ class PopupShortcut extends React.Component<Props, State> {
 						{ mac: `${cmd} + N`,			 com: 'Ctrl + N',			 name: 'Create a new object on the dashboard' },
 						{ mac: `${cmd} + Shift + N`,	 com: 'Ctrl + Shift + N',	 name: 'New Anytype window' },
 						{ mac: `${cmd} + Option + N`,	 com: 'Ctrl + Alt + N',		 name: 'Create a new object in new window' },
+						{ mac: `${cmd} + Option + F`,	 com: 'Ctrl + Alt + F',		 name: 'Toggle fullscreen' },
 						{ mac: `${cmd} + Z`,			 com: 'Ctrl + Z',			 name: 'Undo' },
 						{ mac: `${cmd} + Shift + Z`,	 com: 'Ctrl + Shift + Z',	 name: 'Redo' },
 						{ mac: `${cmd} + P`,			 com: 'Ctrl + P',			 name: 'Print' },

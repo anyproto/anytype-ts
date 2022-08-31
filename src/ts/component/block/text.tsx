@@ -1,9 +1,10 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { RouteComponentProps } from 'react-router';
 import { Select, Marker, Loader, IconObject, Icon } from 'Component';
 import { I, C, keyboard, Key, Util, DataUtil, Mark, focus, Storage, translate, analytics, Renderer } from 'Lib';
-import { observer } from 'mobx-react';
+import { observer, } from 'mobx-react';
 import { getRange } from 'selection-ranges';
 import { commonStore, blockStore, detailStore, menuStore } from 'Store';
 import * as Prism from 'prismjs';
@@ -24,6 +25,7 @@ const langs = [
 	'livescript', 'lua', 'markdown', 'makefile', 'matlab', 'nginx', 'objectivec', 'ocaml', 'pascal', 'perl', 'php', 'powershell', 'prolog',
 	'python', 'r', 'reason', 'ruby', 'rust', 'sass', 'java', 'scala', 'scheme', 'scss', 'sql', 'swift', 'typescript', 'vbnet', 'verilog',
 	'vhdl', 'visual-basic', 'wasm', 'yaml', 'javascript', 'css', 'markup', 'markup-templating', 'csharp', 'php', 'go', 'swift', 'kotlin',
+	'wolfram',
 ];
 for (let lang of langs) {
 	require(`prismjs/components/prism-${lang}.js`);
@@ -81,14 +83,21 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 
 		let marker: any = null;
 		let placeholder = translate('placeholderBlock');
-		let ct = color ? 'textColor textColor-' + color : '';
-		let cv: string[] = [ 'value', 'focusable', 'c' + id, ct, (readonly ? 'isReadonly' : '') ];
+		let cv: string[] = [ 'value', 'focusable', 'c' + id ];
 		let additional = null;
+
+		if (color) {
+			cv.push('textColor textColor-' + color);
+		};
+		if (readonly) {
+			cv.push('isReadonly');
+		};
 
 		if (root.isObjectNote() && (index == 1) && (footer.childrenIds.indexOf(Constant.blockId.type) >= 0)) {
 			placeholder = 'Type something to proceed with Note';
 		};
 
+		// Subscriptions
 		for (let mark of marks) {
 			if ([ I.MarkType.Mention, I.MarkType.Object ].includes(mark.type)) {
 				const object = detailStore.get(rootId, mark.param, []);
@@ -507,13 +516,17 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 				item.addClass('isDone');
 			};
 
-			if (icon) {
-				ReactDOM.render(icon, smile.get(0), () => {
+			function AppWithCallbackAfterRender() {
+				React.useEffect(() => {
 					if (smile.html()) {
 						item.addClass('withImage c' + size);
 					};
 				});
+				return icon;
 			};
+
+			const root = createRoot(smile.get(0));
+			root.render(<AppWithCallbackAfterRender />);
 		});
 		
 		items.off('mouseenter.mention');
@@ -576,9 +589,12 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			};
 
 			const smile = item.find('smile');
-			if (smile && smile.length) {
-				ReactDOM.render(<IconObject size={size} object={{ iconEmoji: data.param }} />, smile.get(0));
+			if (!smile.length) {
+				return;
 			};
+
+			const root = createRoot(smile.get(0));
+			root.render(<IconObject size={size} object={{ iconEmoji: data.param }} />);
 		});
 	};
 
@@ -895,25 +911,15 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			return;
 		};
 
-		let position = I.BlockPosition.Replace;
-
 		// Make div
-		if (value == '---') {
+		if ([ '---', '***' ].includes(value)) {
 			newBlock.type = I.BlockType.Div;
-			newBlock.content.style = I.DivStyle.Line;
-			position = I.BlockPosition.Top;
-			cmdParsed = true;
-		};
-
-		if (value == '***') {
-			newBlock.type = I.BlockType.Div;
-			newBlock.content.style = I.DivStyle.Dot;
-			position = I.BlockPosition.Top;
+			newBlock.content.style = value == '---' ? I.DivStyle.Line : I.DivStyle.Dot;
 			cmdParsed = true;
 		};
 		
 		if (newBlock.type && !isInsideTable) {
-			C.BlockCreate(rootId, id, position, newBlock, () => {
+			C.BlockCreate(rootId, id, I.BlockPosition.Top, newBlock, () => {
 				this.setValue('');
 				
 				focus.set(block.id, { from: 0, to: 0 });
@@ -933,33 +939,15 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 
 				if (value.match(reg) && (content.style != style)) {
 					value = value.replace(reg, (s: string, p: string) => { return s.replace(p, ''); });
-					this.marks = Mark.adjust(this.marks, 0, -(Length[style] + 1));
-
-					newBlock.type = I.BlockType.Text;
-					newBlock.fields = {};
-					newBlock.content = { 
-						...content, 
-						marks: this.marks,
-						checked: false,
-						text: value, 
-						style: style,
-					};
 
 					if (style == I.TextStyle.Code) {
-						newBlock.fields = { lang: (Storage.get('codeLang') || Constant.default.codeLang) };
-						newBlock.content.marks = [];
+						this.marks = [];
+					} else {
+						this.marks = Mark.adjust(this.marks, 0, -(Length[style] + 1));
 					};
 
-					C.BlockCreate(rootId, id, I.BlockPosition.Replace, newBlock, (message: any) => {
-						keyboard.setFocus(false);
-						focus.set(message.blockId, { from: 0, to: 0 });
-						focus.apply();
-
-						analytics.event('CreateBlock', { 
-							middleTime: message.middleTime, 
-							type: newBlock.type, 
-							style: newBlock.content?.style,
-						});
+					DataUtil.blockSetText(rootId, id, value, this.marks, true, () => {
+						C.BlockListTurnInto(rootId, [ id ], style);
 					});
 
 					cmdParsed = true;
@@ -1010,12 +998,16 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		commonStore.filterSet(range.from - 1, '');
 
 		raf(() => {
-			const rect = Util.selectionRect();
-
 			menuStore.open('blockMention', {
 				element: el,
-				rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
-				offsetX: rect ? 0 : Constant.size.blockMenu,
+				recalcRect: () => {
+					const rect = Util.selectionRect();
+					return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
+				},
+				offsetX: () => {
+					const rect = Util.selectionRect();
+					return rect ? 0 : Constant.size.blockMenu;
+				},
 				noFlipX: false,
 				noFlipY: false,
 				onClose: () => {
@@ -1049,20 +1041,25 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 	onSmile () {
 		const { rootId, block } = this.props;
 		const win = $(window);
-		const range = this.getRange();
-		const rect = Util.selectionRect();
-
-		let value = this.getValue();
 
 		menuStore.open('smile', {
 			element: '#block-' + block.id,
-			rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
-			offsetX: rect ? 0 : Constant.size.blockMenu,
+			recalcRect: () => {
+				const rect = Util.selectionRect();
+				return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
+			},
+			offsetX: () => {
+				const rect = Util.selectionRect();
+				return rect ? 0 : Constant.size.blockMenu;
+			},
 			data: {
 				noHead: true,
 				rootId: rootId,
 				blockId: block.id,
 				onSelect: (icon: string) => {
+					let range = this.getRange();
+					let value = this.getValue();
+
 					this.marks = Mark.adjust(this.marks, range.from, 1);
 					this.marks = Mark.toggle(this.marks, { 
 						type: I.MarkType.Emoji, 
@@ -1252,7 +1249,6 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 
 		const win = $(window);
 		const el = $('#block-' + block.id);
-		const rect = Util.selectionRect();
 
 		menuStore.closeAll([ 'blockAdd', 'blockMention' ]);
 
@@ -1270,7 +1266,10 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 
 			menuStore.open('blockContext', {
 				element: el,
-				rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
+				recalcRect: () => { 
+					const rect = Util.selectionRect();
+					return rect ? { ...rect, y: rect.y + win.scrollTop() } : null; 
+				},
 				type: I.MenuType.Horizontal,
 				offsetY: 4,
 				vertical: I.MenuDirection.Bottom,

@@ -149,6 +149,10 @@ const MenuGroupEdit = observer(class MenuGroupEdit extends React.Component<Props
 		DataUtil.dataviewGroupUpdate(rootId, blockId, view.id, update);
 		C.BlockDataviewGroupOrderUpdate(rootId, blockId, { viewId: view.id, groups: update });
 
+		if (!view.groupBackgroundColors && this.color) {
+			C.BlockDataviewViewUpdate(rootId, blockId, view.id, { ...view, groupBackgroundColors: true });
+		};
+
 		this.forceUpdate();
 	};
 	

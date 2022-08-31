@@ -4,10 +4,14 @@ import { I, M, focus, keyboard, scrollOnMove, Util } from 'Lib';
 import { observer } from 'mobx-react';
 import { blockStore, menuStore } from 'Store';
 
+interface Props {
+	children?: React.ReactNode;
+};
+
 const $ = require('jquery');
 const THRESHOLD = 10;
 
-const SelectionProvider = observer(class SelectionProvider extends React.Component<{}, {}> {
+const SelectionProvider = observer(class SelectionProvider extends React.Component<Props, {}> {
 
 	_isMounted = false;
 	x: number = 0;
@@ -23,6 +27,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 
 	cache: Map<string, any> = new Map();
 	ids: Map<string, string[]> = new Map();
+	idsOnStart: Map<string, string[]> = new Map();
 
 	isSelecting: boolean = false;
 	isSelectionPrevented: boolean = false;
@@ -136,7 +141,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	
 	onMouseDown (e: any) {
 		if (e.button || !this._isMounted || menuStore.isOpen()) {
-			return
+			return;
 		};
 		
 		if (this.isSelectionPrevented) {
@@ -157,7 +162,20 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		this.isSelecting = true;
 		this.top = container.scrollTop();
 		this.cache.clear();
+<<<<<<< HEAD
 		this.show();
+=======
+		this.idsOnStart = new Map(this.ids);
+
+		if (isPopup) {
+			const popupContainer = $('#popupPage-innerWrap');
+			if (popupContainer.length) {
+				this.containerOffset = popupContainer.offset();
+				this.x -= this.containerOffset.left;
+				this.y -= this.containerOffset.top - this.top;
+			};
+		};
+>>>>>>> f63d5082726357ba7e1587e2072cbdf0611c1a83
 
 		keyboard.disablePreview(true);
 
@@ -197,8 +215,11 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	};
 	
 	onMouseMove (e: any) {
+<<<<<<< HEAD
 		e.preventDefault();
 
+=======
+>>>>>>> f63d5082726357ba7e1587e2072cbdf0611c1a83
 		if (!this._isMounted) {
 			return;
 		};
@@ -247,15 +268,14 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 					const first = ids.length ? ids[0] : this.focused;
 					const tree = blockStore.getTree(rootId, blockStore.getBlocks(rootId));
 					const list = blockStore.unwrapTree(tree);
-					const idxStart = list.findIndex((it: I.Block) => { return it.id == first; });
-					const idxEnd = list.findIndex((it: I.Block) => { return it.id == id; });
+					const idxStart = list.findIndex(it => it.id == first);
+					const idxEnd = list.findIndex(it => it.id == id);
 					const start = idxStart < idxEnd ? idxStart : idxEnd;
 					const end = idxStart < idxEnd ? idxEnd : idxStart;
-
-					let slice = list.slice(start, end + 1).
-						map((it: I.Block) => { return new M.Block(it); }).
-						filter((it: I.Block) => { return it.isSelectable(); }).
-						map((it: I.Block) => { return it.id; });
+					const slice = list.slice(start, end + 1).
+						map(it => new M.Block(it)).
+						filter(it => it.isSelectable()).
+						map(it => it.id);
 
 					this.set(type, ids.concat(slice));
 				};
@@ -340,7 +360,8 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		let ids = this.get(type, false);
 
 		if (keyboard.isCtrl() || keyboard.isMeta()) {
-			if (ids.includes(id)) {
+			const idsOnStart = this.idsOnStart.get(type) || [];
+			if (idsOnStart.includes(id)) {
 				ids = ids.filter(it => it != id);
 			} else {
 				ids.push(id);
@@ -352,7 +373,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			ids.push(id);
 		};
 
-		this.ids.set(type, Util.arrayUnique(ids));
+		this.ids.set(type, ids);
 	};
 	
 	checkNodes (e: any) {
@@ -380,7 +401,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		if (!length) {
 			return;
 		};
-		
+
 		if ((length <= 1) && !(keyboard.isCtrl() || keyboard.isMeta())) {
 			const value = selected.find('.value');
 			if (!value.length) {

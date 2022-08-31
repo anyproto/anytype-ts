@@ -225,10 +225,16 @@ class MenuBlockAction extends React.Component<Props, State> {
 				};
 
 				if (block.isBookmark()) {
-					const object = detailStore.get(rootId, block.content.targetObjectId, [ 'isArchived', 'isDeleted' ], true);
-					if (object.isArchived || object.isDeleted) {
+					if (!block.content.targetObjectId) {
 						hasBookmark = false;
+					} else {
+						const object = detailStore.get(rootId, block.content.targetObjectId, [ 'isArchived', 'isDeleted' ], true);
+						if (object.isArchived || object.isDeleted) {
+							hasBookmark = false;
+						};
 					};
+				} else {
+					hasBookmark = false;
 				};
 
 				if (!block.canTurnText())		 hasTurnText = false;
@@ -242,7 +248,6 @@ class MenuBlockAction extends React.Component<Props, State> {
 				if (!block.canHaveBackground())	 hasBg = false;
 				if (!block.isFile())			 hasFile = false;
 				if (!block.isLink())			 hasLink = false;
-				if (!block.isBookmark())		 hasBookmark = false;
 
 				if (block.isTextTitle())		 hasAction = false;
 				if (block.isTextDescription())	 hasAction = false;
@@ -294,10 +299,16 @@ class MenuBlockAction extends React.Component<Props, State> {
 				};
 
 				if (block.isBookmark()) {
-					const object = detailStore.get(rootId, block.content.targetObjectId, [ 'isArchived', 'isDeleted' ], true);
-					if (object.isArchived || object.isDeleted) {
+					if (!block.content.targetObjectId) {
 						hasBookmark = false;
+					} else {
+						const object = detailStore.get(rootId, block.content.targetObjectId, [ 'isArchived', 'isDeleted' ], true);
+						if (object.isArchived || object.isDeleted) {
+							hasBookmark = false;
+						};
 					};
+				} else {
+					hasBookmark = false;
 				};
 
 				if (!block.canTurnText() || block.isDiv()) {
@@ -308,7 +319,6 @@ class MenuBlockAction extends React.Component<Props, State> {
 				};
 				if (!block.canTurnPage())		 hasTurnObject = false;
 				if (!block.isText())			 hasText = false;
-				if (!block.isBookmark())		 hasBookmark = false;
 				if (!block.isFile())			 hasFile = false;
 				if (!block.isLink())			 hasLink = false;
 				if (!block.canHaveAlign())		 hasAlign = false;
