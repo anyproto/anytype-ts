@@ -283,26 +283,10 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 				this.refFilter.setValue('');
 			};
 			this.onFilterChange('');
-			this.onValueAdd(message.option.id);
+			this.onValueAdd(message.objectId);
 
 			window.setTimeout(() => { this.resize(); }, 50);
 		});
-
-		/*
-		optionCommand('add', rootId, blockId, relation.relationKey, record.id, option, (message: any) => {
-			if (message.error.code) {
-				return;
-			};
-
-			if (this.refFilter) {
-				this.refFilter.setValue('');
-			};
-			this.onFilterChange('');
-			this.onValueAdd(message.option.id);
-
-			window.setTimeout(() => { this.resize(); }, 50);
-		});
-		*/
 	};
 	
 	onEdit (e: any, item: any) {
