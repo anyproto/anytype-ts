@@ -145,7 +145,18 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 				return;
 			};
 
-			this.data.edges = message.edges.filter(d => { return (d.source !== d.target); });
+			const hashes: any = [];
+
+			this.data.edges = message.edges.filter(d => { 
+				const hash = [ d.source, d.target ].join('-');
+				if (hashes.includes(hash)) {
+					return false;
+				};
+
+				hashes.push(hash);
+				return (d.source !== d.target); 
+			});
+
 			this.data.nodes = message.nodes.map(it => detailStore.check(it));
 			this.refGraph.init();
 

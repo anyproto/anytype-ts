@@ -52,11 +52,13 @@ class Api {
 		this.setConfig(win, { theme });
 	};
 
-	setLanguage (win, language) {
-		win.webContents.session.setSpellCheckerLanguages(language ? [ language ] : []);
-		win.webContents.session.setSpellCheckerEnabled(language ? true : false);
+	setLanguage (win, languages) {
+		languages = languages || [];
 
-		this.setConfig(win, { language });
+		win.webContents.session.setSpellCheckerLanguages(languages);
+		win.webContents.session.setSpellCheckerEnabled(languages.length ? true : false);
+
+		this.setConfig(win, { languages });
 	};
 
 	setZoom (win, zoom) {

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { MenuItemVertical, Filter, Loader, ObjectName, EmptySearch } from 'Component';
-import { I, C, keyboard, Util, DataUtil, translate, analytics, Action } from 'Lib';
+import { I, C, keyboard, Util, DataUtil, translate, analytics, Action, focus } from 'Lib';
 import { commonStore, detailStore } from 'Store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
@@ -334,6 +334,12 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		};
 
 		let newBlock: any = {};
+		let cb = (message: any) => {
+			if (!message.error.code) {
+				focus.set(message.blockId, { from: 0, to: 0 });
+				focus.apply();
+			};
+		};
 
 		switch (type) {
 			case I.NavigationType.Go:
@@ -363,7 +369,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 						break;
 				};
 
-				C.BlockCreate(rootId, blockId, position, newBlock);
+				C.BlockCreate(rootId, blockId, position, newBlock, cb);
 				break;
 
 			case I.NavigationType.LinkTo:

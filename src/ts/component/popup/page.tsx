@@ -65,7 +65,7 @@ const PopupPage = observer(class PopupPage extends React.Component<Props, {}> {
 
 		win.on('resize.popupPage', () => { this.resize(); });
 
-		obj.find('.innerWrap').on('scroll', () => {
+		obj.find('.innerWrap').on('scroll.common', () => {
 			for (let menu of menuStore.list) {
 				win.trigger('resize.' + Util.toCamelCase('menu-' + menu.id));
 			};
@@ -78,7 +78,7 @@ const PopupPage = observer(class PopupPage extends React.Component<Props, {}> {
 		const obj = $(`#${getId()}`);
 
 		win.off('resize.popupPage');
-		obj.find('.innerWrap').off('scroll');
+		obj.find('.innerWrap').off('scroll.common');
 	};
 
 	resize () {
