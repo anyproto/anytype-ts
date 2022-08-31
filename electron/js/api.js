@@ -46,11 +46,11 @@ class Api {
 		this.setConfig(win, { theme });
 	};
 
-	setLanguage (win, language) {
-		win.webContents.session.setSpellCheckerLanguages(language);
-		win.webContents.session.setSpellCheckerEnabled(language.length ? true : false);
+	setLanguage (win, languages) {
+		win.webContents.session.setSpellCheckerLanguages(languages);
+		win.webContents.session.setSpellCheckerEnabled(languages.length ? true : false);
 
-		this.setConfig(win, { language });
+		this.setConfig(win, { languages });
 	};
 
 	setZoom (win, zoom) {
