@@ -26,7 +26,7 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<Props, 
 		const { value } = data;
 		const items = this.getData();
 
-		const d = Number(Util.date('d', value));
+		const d = Number(Util.date('j', value));
 		const m = Number(Util.date('n', value));
 		const y = Number(Util.date('Y', value));
 		const today = Util.today();
@@ -136,8 +136,6 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<Props, 
 		const { data } = param;
 		const { onChange } = data;
 
-		value = value + Util.timezoneOffset();
-
 		menuStore.updateData(id, { value });
 
 		if (save) {
@@ -165,7 +163,6 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<Props, 
 		
 		let wdf = Number(Util.date('N', Util.timestamp(y, m, 1)));
 		let wdl = Number(Util.date('N', Util.timestamp(y, m, md[m])));
-
 		let pm = m - 1;
 		let nm = m + 1;
 		let py = y;
