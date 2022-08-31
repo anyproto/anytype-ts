@@ -948,6 +948,10 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 
 					DataUtil.blockSetText(rootId, id, value, this.marks, true, () => {
 						C.BlockListTurnInto(rootId, [ id ], style);
+
+						if (style == I.TextStyle.Toggle) {
+							blockStore.toggle(rootId, id, true);
+						};
 					});
 
 					cmdParsed = true;
