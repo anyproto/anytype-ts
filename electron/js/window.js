@@ -64,7 +64,7 @@ class WindowManager {
 
 		win.webContents.on('context-menu', (e, param) => Util.send(win, 'spellcheck', param));
 
-		Api.setLanguage(win, language);
+		Api.setLanguage(win, [ language ]);
 		Api.setZoom(win, zoom);
 
 		return win;

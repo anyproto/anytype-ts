@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Filter, MenuItemVertical } from 'Component';
-import { I, Util, Key, keyboard } from 'Lib';
+import { I, Util, Relation, keyboard } from 'Lib';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
@@ -47,6 +47,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 		const rowRenderer = (param: any) => {
 			const item = items[param.index];
 			const cn = [];
+
 			if (item.isInitial) {
 				cn.push('isInitial');
 			};
@@ -70,7 +71,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 						{...item} 
 						icon={item.icon}
 						className={cn.join(' ')} 
-						checkbox={item.checkbox || (item.id == value)} 
+						checkbox={this.isActive(item)} 
 						onClick={(e: any) => { this.onClick(e, item); }} 
 						onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }} 
 						style={param.style}
@@ -327,7 +328,15 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 
 	updateOptions (options: any[]) {
 		this.props.param.data.options = options;
-	}
+	};
+
+	isActive (item: any) {
+		const { param } = this.props;
+		const { data } = param;
+		const value = Relation.getArrayValue(data.value);
+
+		return item.checkbox || value.includes(item.id);
+	};
 
 	resize () {
 		const { position, getId, param } = this.props;
