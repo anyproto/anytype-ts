@@ -22,7 +22,7 @@ class MenuSearchText extends React.Component<Props, {}> {
 	constructor (props: any) {
 		super(props);
 		
-		this.clear = this.clear.bind(this);
+		this.onClear = this.onClear.bind(this);
 		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onKeyDown = this.onKeyDown.bind(this);
 		this.onSearch = this.onSearch.bind(this);
@@ -48,7 +48,7 @@ class MenuSearchText extends React.Component<Props, {}> {
 
 					<div className="line" />
 
-					<Icon className="clear" onClick={this.clear} />
+					<Icon className="clear" onClick={this.onClear} />
 				</div>
 			</div>
 		);
@@ -149,6 +149,11 @@ class MenuSearchText extends React.Component<Props, {}> {
 		cnt.text(`${this.n + 1}/${items.length}`);
 	};
 
+	onClear () {
+		this.ref.setValue('');
+		this.clear();
+	};
+
 	clear () {
 		const node = $(ReactDOM.findDOMNode(this));
 		const switcher = node.find('#switcher');
@@ -159,7 +164,6 @@ class MenuSearchText extends React.Component<Props, {}> {
 			item.replaceWith(item.html());
 		});
 
-		this.ref.setValue('');
 		switcher.removeClass('active');
 	};
 
