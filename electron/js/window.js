@@ -23,7 +23,7 @@ class WindowManager {
 	create (options, param) {
 		const Api = require('./api.js');
 		const { route, isChild } = options;
-		const { language, zoom } = ConfigManager.config;
+		const { languages, zoom } = ConfigManager.config;
 
 		param = Object.assign({
 			backgroundColor: Util.getBgColor(),
@@ -64,7 +64,7 @@ class WindowManager {
 
 		win.webContents.on('context-menu', (e, param) => Util.send(win, 'spellcheck', param));
 
-		Api.setLanguage(win, language);
+		Api.setLanguage(win, languages);
 		Api.setZoom(win, zoom);
 
 		return win;
