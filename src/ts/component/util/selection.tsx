@@ -385,6 +385,8 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		};
 
 		this.ids.set(type, ids);
+		console.log('IDS SET', type, ids);
+		console.trace();
 	};
 	
 	checkNodes (e: any) {
