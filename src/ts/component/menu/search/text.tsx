@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Input, Button } from 'Component';
+import * as ReactDOM from 'react-dom';
+import { Icon, Input, Button } from 'Component';
 import { I, Util, keyboard, translate, analytics } from 'Lib';
 
 interface Props extends I.Menu {};
@@ -21,6 +22,7 @@ class MenuSearchText extends React.Component<Props, {}> {
 	constructor (props: any) {
 		super(props);
 		
+		this.clear = this.clear.bind(this);
 		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onKeyDown = this.onKeyDown.bind(this);
 		this.onSearch = this.onSearch.bind(this);
@@ -33,9 +35,20 @@ class MenuSearchText extends React.Component<Props, {}> {
 		
 		return (
 			<div className="flex">
+				<Icon className="search" />
+
 				<Input ref={(ref: any) => { this.ref = ref; }} value={value} placeholder={translate('commonSearch')} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp} />
 				<div className="buttons">
-					<Button onClick={this.onSearch} color="blank" text={translate('commonSearchButton')} />
+
+					<div id="switcher" className="switcher">
+						<Icon className="arrow left" onClick={() => { this.n--; this.focus(); }} />
+						<div id="cnt" className="cnt"></div>
+						<Icon className="arrow right" onClick={() => { this.n++; this.focus(); }} />
+					</div>
+
+					<div className="line" />
+
+					<Icon className="clear" onClick={this.clear} />
 				</div>
 			</div>
 		);
@@ -86,6 +99,8 @@ class MenuSearchText extends React.Component<Props, {}> {
 	search () {
 		const searchContainer = this.getSearchContainer();
 		const value = Util.filterFix(this.ref.getValue());
+		const node = $(ReactDOM.findDOMNode(this));
+		const switcher = node.find('#switcher').removeClass('active');
 
 		if (this.last != value) {
 			this.n = 0;
@@ -117,15 +132,35 @@ class MenuSearchText extends React.Component<Props, {}> {
 				return true;
 			},
 		});
+
+		const items = this.getItems();
+
+		if (items.length) {
+			switcher.addClass('active');
+			this.setCnt();
+		};
+	};
+
+	setCnt () {
+		const node = $(ReactDOM.findDOMNode(this));
+		const cnt = node.find('#cnt');
+		const items = this.getItems();
+
+		cnt.text(`${this.n + 1}/${items.length}`);
 	};
 
 	clear () {
-		const searchContainer = this.getSearchContainer();
+		const node = $(ReactDOM.findDOMNode(this));
+		const switcher = node.find('#switcher');
+		const items = this.getItems();
 
-		searchContainer.find('search').each((i: number, item: any) => {
+		items.each((i: number, item: any) => {
 			item = $(item);
 			item.replaceWith(item.html());
 		});
+
+		this.ref.setValue('');
+		switcher.removeClass('active');
 	};
 
 	getScrollContainer () {
@@ -155,13 +190,17 @@ class MenuSearchText extends React.Component<Props, {}> {
 		};
 	};
 
+	getItems () {
+		return this.getSearchContainer().find('search');
+	};
+
 	focus () {
 		const { param } = this.props;
 		const { data } = param;
 		const { isPopup } = data;
 		const scrollContainer = this.getScrollContainer();
 		const searchContainer = this.getSearchContainer();
-		const items = searchContainer.find('search');
+		const items = this.getItems();
 		const offset = Constant.size.lastBlock + Util.sizeHeader();
 
 		if (this.n > items.length - 1) {
@@ -169,8 +208,10 @@ class MenuSearchText extends React.Component<Props, {}> {
 		};
 
 		searchContainer.find('search.active').removeClass('active');
+		this.setCnt();
 
 		const next = $(items.get(this.n));
+
 		if (next && next.length) {
 			next.addClass('active');
 		
