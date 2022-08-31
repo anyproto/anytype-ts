@@ -161,7 +161,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 			});
 		};
 
-		if (focused) {
+		if (focused || (!focused && keyboard.isFocused)) {
 			keyboard.shortcut(`${cmd}+d`, e, (pressed: string) => {
 				Action.duplicate(rootId, rootId, blockIds[blockIds.length - 1], blockIds, I.BlockPosition.Bottom, () => { 
 					focus.clear(true); 
