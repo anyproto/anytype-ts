@@ -156,7 +156,7 @@ class MenuManager {
 						click: () => { Api.setZoom(this.win, 0); }
 					},
 					{
-						label: 'Fullscreen', type: 'checkbox', checked: this.win.isFullScreen(),
+						label: 'Fullscreen', accelerator: 'CmdOrCtrl+Alt+F', type: 'checkbox', checked: this.win.isFullScreen(),
 						click: () => { this.win.setFullScreen(!this.win.isFullScreen()); }
 					},
 					{ label: 'Reload', accelerator: 'CmdOrCtrl+R', click: () => { this.win.reload(); } }
