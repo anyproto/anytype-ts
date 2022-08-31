@@ -182,6 +182,10 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<P
 		sideRight.off('scroll').scroll(() => { this.onScrollRight(); });
 
 		blockStore.updateNumbers(rootId);
+
+		if (this.refHeader) {
+			this.refHeader.refChild.setVersion(this.version);
+		};
 	};
 
 	onScrollLeft () {
@@ -330,10 +334,6 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<P
 
 			this.version = message.version;
 			this.forceUpdate();
-
-			if (this.refHeader) {
-				this.refHeader.refChild.setVersion(this.version);
-			};
 		});
 	};
 	
