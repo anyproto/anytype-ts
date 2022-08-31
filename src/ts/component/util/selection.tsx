@@ -162,9 +162,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		this.isSelecting = true;
 		this.top = container.scrollTop();
 		this.cache.clear();
-<<<<<<< HEAD
 		this.show();
-=======
 		this.idsOnStart = new Map(this.ids);
 
 		if (isPopup) {
@@ -175,7 +173,6 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 				this.y -= this.containerOffset.top - this.top;
 			};
 		};
->>>>>>> f63d5082726357ba7e1587e2072cbdf0611c1a83
 
 		keyboard.disablePreview(true);
 
@@ -215,11 +212,6 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	};
 	
 	onMouseMove (e: any) {
-<<<<<<< HEAD
-		e.preventDefault();
-
-=======
->>>>>>> f63d5082726357ba7e1587e2072cbdf0611c1a83
 		if (!this._isMounted) {
 			return;
 		};
