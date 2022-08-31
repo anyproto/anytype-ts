@@ -559,6 +559,7 @@ class Keyboard {
 
 	setPinChecked (v: boolean) {
 		this.isPinChecked = v;
+		Renderer.send('setPinChecked', v);
 	};
 
 	setMatch (match: any) {

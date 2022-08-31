@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon, Loader } from 'Component';
-import { I, C, Util, translate, keyboard, Relation } from 'Lib';
+import { I, Util, translate, keyboard, Relation, DataUtil } from 'Lib';
 import { observer } from 'mobx-react';
 import { dbStore, detailStore, menuStore, commonStore } from 'Store';
 

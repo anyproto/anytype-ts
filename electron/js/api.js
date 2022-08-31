@@ -15,6 +15,7 @@ class Api {
 
 	account = null;
 	phrase = '';
+	isPinChecked = false;
 
 	appOnLoad (win) {
 		Util.send(win, 'init', {
@@ -25,6 +26,7 @@ class Api {
 			route: win.route,
 			account: this.account,
 			phrase: this.phrase,
+			isPinChecked: this.isPinChecked,
 			languages: win.webContents.session.availableSpellCheckerLanguages,
 		});
 	};
@@ -39,6 +41,10 @@ class Api {
 
 	setAccount (win, account) {
 		this.account = account;
+	};
+
+	setPinChecked (win, isPinChecked) {
+		this.isPinChecked = isPinChecked;
 	};
 
 	setTheme (win, theme) {

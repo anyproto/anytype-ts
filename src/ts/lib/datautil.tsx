@@ -313,7 +313,7 @@ class DataUtil {
 				commonStore.coverSet(object.coverId, object.coverId, object.coverType);
 			};
 
-			if (pin) {
+			if (pin && !keyboard.isPinChecked) {
 				Util.route('/auth/pin-check');
 			} else {
 				Util.route(commonStore.redirect ? commonStore.redirect : '/main/index', true);

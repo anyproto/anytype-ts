@@ -423,7 +423,7 @@ class App extends React.Component<Props, State> {
 	};
 
 	onInit (e: any, data: any) {
-		const { dataPath, config, isDark, isChild, route, account, phrase, languages } = data;
+		const { dataPath, config, isDark, isChild, route, account, phrase, languages, isPinChecked } = data;
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
 		const loader = node.find('#root-loader');
@@ -458,6 +458,8 @@ class App extends React.Component<Props, State> {
 
 				DataUtil.createSession(() => {
 					commonStore.redirectSet(route || '');
+					keyboard.setPinChecked(isPinChecked);
+
 					DataUtil.onAuth(account, cb);
 				});
 
