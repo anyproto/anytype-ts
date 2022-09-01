@@ -22,7 +22,7 @@ body.isFullScreen {
 }
 
 :focus { outline: 0px; }
-::selection { background-color: rgb(181, 213, 255, 0.5); }
+::selection { background-color: rgba(42, 167, 238, 0.15); }
 
 input:-webkit-autofill,
 input:-webkit-autofill:hover, 
