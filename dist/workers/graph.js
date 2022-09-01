@@ -103,14 +103,14 @@ initColor = () => {
 					0: '#dfddd0',
 					1: '#8c9ea5',
 					over: '#ffd15b',
-					targetOver: '#c5efa3',
+					targetOver: '#5dd400',
 				},
 				node: {
 					common: '#f3f2ec',
 					filter: '#e3f7d0',
 					focused: '#fef3c5',
 					over: '#ffd15b',
-					targetOver: '#c5efa3',
+					targetOver: '#5dd400',
 				},
 			}; 
 			break;
@@ -124,14 +124,14 @@ initColor = () => {
 					0: '#525148',
 					1: '#8c9ea5',
 					over: '#ffd15b',
-					targetOver: '#294b0e',
+					targetOver: '#5dd400',
 				},
 				node: {
 					common: '#484843',
 					filter: '#e3f7d0',
 					focused: '#fef3c5',
 					over: '#ffd15b',
-					targetOver: '#294b0e',
+					targetOver: '#5dd400',
 				},
 			};
 			break;
