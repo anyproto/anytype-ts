@@ -336,7 +336,7 @@ class Util {
 		i = Number(i) || 0;
 		s = Number(s) || 0;
 
-		return Math.floor(Date.UTC(y, m - 1, d, h, i, s, 0) / 1000);
+		return Math.floor(new Date(y, m - 1, d, h, i, s, 0).getTime() / 1000);
 	};
 
 	today () {

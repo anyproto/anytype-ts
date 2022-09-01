@@ -85,16 +85,20 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 	onClick (e: any) {
 		e.preventDefault();
 
-		if (keyboard.withCommand(e)) {
-			return;
-		};
-
-		const { rootId, block, groupId, id, onContext } = this.props;
+		const { rootId, block, groupId, id, onContext, dataset } = this.props;
+		const { selection } = dataset || {};
 		const subId = dbStore.getSubId(rootId, [ block.id, groupId ].join(':'));
 		const record = detailStore.get(subId, id);
 		const cb = {
-			0: () => { DataUtil.objectOpenPopup(record); },
+			0: () => {
+				keyboard.withCommand(e) ? DataUtil.objectOpenWindow(record) : DataUtil.objectOpenPopup(record); 
+			},
 			2: () => { onContext(e, record.id); }
+		};
+
+		const ids = selection ? selection.get(I.SelectType.Record) : [];
+		if (keyboard.withCommand(e) && ids.length) {
+			return;
 		};
 
 		if (cb[e.button]) {

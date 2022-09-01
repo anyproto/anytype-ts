@@ -147,39 +147,37 @@ const BlockLink = observer(class BlockLink extends React.Component<Props, {}> {
 	};
 	
 	onClick (e: any) {
-		const { rootId, block } = this.props;
-		const { content } = block;
-		const { targetBlockId } = content;
+		const { rootId, block, dataset } = this.props;
+		const { selection } = dataset || {};
+		const { targetBlockId } = block.content;
 		const object = detailStore.get(rootId, targetBlockId, []);
 		const { _empty_ , isArchived } = object;
+		const ids = selection ? selection.get(I.SelectType.Block) : [];
 
-		if (keyboard.withCommand(e) || _empty_ || isArchived || (targetBlockId == rootId)) {
+		if (_empty_ || isArchived || (targetBlockId == rootId)) {
 			return;
 		};
-
-		DataUtil.objectOpenEvent(e, object);
+		
+		if (!(keyboard.withCommand(e) && ids.length)) {
+			DataUtil.objectOpenEvent(e, object);
+		};
 	};
 	
 	onSelect (icon: string) {
 		const { block } = this.props;
-		const { content } = block;
-		const { targetBlockId } = content;
-		
-		DataUtil.pageSetIcon(targetBlockId, icon, '');
+
+		DataUtil.pageSetIcon(block.content.targetBlockId, icon, '');
 	};
 
 	onUpload (hash: string) {
 		const { block } = this.props;
-		const { content } = block;
-		const { targetBlockId } = content;
-		
-		DataUtil.pageSetIcon(targetBlockId, '', hash);
+
+		DataUtil.pageSetIcon(block.content.targetBlockId, '', hash);
 	};
 
 	onCheckbox () {
 		const { rootId, block } = this.props;
-		const { content } = block;
-		const { targetBlockId } = content;
+		const { targetBlockId } = block.content;
 		const object = detailStore.get(rootId, targetBlockId, []);
 
 		DataUtil.pageSetDone(targetBlockId, !object.done);
@@ -191,7 +189,6 @@ const BlockLink = observer(class BlockLink extends React.Component<Props, {}> {
 		const card = node.find('.linkCard');
 		const icon = node.find('.iconObject');
 		const rect = node.get(0).getBoundingClientRect() as DOMRect;
-
 		const width = rect.width;
 		const mw = getWrapperWidth();
 

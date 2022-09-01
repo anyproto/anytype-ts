@@ -167,7 +167,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const { selection } = dataset || {};
 		const root = blockStore.getLeaf(rootId, rootId);
 		const cmd = keyboard.ctrlKey();
-		const ids = selection.get(I.SelectType.Record);
+		const ids = selection ? selection.get(I.SelectType.Block) : [];
 		const length = ids.length;
 
 		if (!root || (!root.isObjectSet() && !root.isObjectSpace())) {
@@ -421,11 +421,12 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	onCellClick (e: any, relationKey: string, index: number) {
-		if (e.button || keyboard.withCommand(e)) {
+		if (e.button) {
 			return;
 		};
 
-		const { rootId, block } = this.props;
+		const { dataset } = this.props;
+		const { selection } = dataset || {};
 		const relation = dbStore.getRelationByKey(relationKey);
 		const id = Relation.cellId('dataviewCell', relationKey, index);
 		const ref = this.cellRefs.get(id);
@@ -444,7 +445,16 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		if ((relationKey == 'name') && (!ref.ref.state.isEditing)) {
-			DataUtil.objectOpenPopup(record);
+			const ids = selection ? selection.get(I.SelectType.Record) : [];
+			if (keyboard.withCommand(e)) {
+				if (ids.length) {
+					return;
+				} else {
+					DataUtil.objectOpenWindow(record);
+				};
+			} else {
+				DataUtil.objectOpenPopup(record);
+			};
 		} else {
 			ref.onClick(e);
 		};

@@ -161,7 +161,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 			});
 		};
 
-		if (focused) {
+		if (focused || (!focused && keyboard.isFocused)) {
 			keyboard.shortcut(`${cmd}+d`, e, (pressed: string) => {
 				Action.duplicate(rootId, rootId, blockIds[blockIds.length - 1], blockIds, I.BlockPosition.Bottom, () => { 
 					focus.clear(true); 
@@ -445,6 +445,10 @@ class MenuBlockAction extends React.Component<Props, State> {
 						if (item.type == I.BlockType.Text) {
 							C.BlockListTurnInto(rootId, blockIds, item.itemId, (message: any) => {
 								this.setFocus(blockIds[0]);
+
+								if (item.itemId == I.TextStyle.Toggle) {
+									blockIds.forEach(id => blockStore.toggle(rootId, id, true))
+								};
 							});
 						};
 

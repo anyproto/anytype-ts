@@ -598,7 +598,8 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 					const details = { type: item.objectTypeId };
 
 					const create = (template: any) => {
-						const cb = (message: any) => {
+
+						DataUtil.pageCreate(rootId, blockId, details, position, template?.id, DataUtil.defaultLinkSettings(), [], (message: any) => {
 							if (message.error.code) {
 								return;
 							};
@@ -611,9 +612,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 								layout: template?.layout,
 								template: (template && template.templateIsBundled ? template.id : 'custom'),
 							});
-						};
-
-						DataUtil.pageCreate(rootId, blockId, details, position, template?.id, DataUtil.defaultLinkSettings(), [], cb);
+						});
 					};
 
 					const showMenu = () => {
@@ -636,7 +635,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 					keyboard.setFocus(false);
 
 					blockCreate(blockId, position, param, (newBlockId: string) => {
-						focus.set(blockId, { from: length, to: length });
+						focus.set(newBlockId, { from: length, to: length });
 						focus.apply();
 
 						// Auto-open BlockRelation suggest menu
