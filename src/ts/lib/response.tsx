@@ -233,12 +233,6 @@ const BlockDataviewRelationListAvailable = (response: any) => {
 	};
 };
 
-const BlockDataviewRecordRelationOptionAdd = (response: any) => {
-	return {
-		option: Mapper.From.SelectOption(response.getOption()),
-	};
-};
-
 const HistoryGetVersions = (response: any) => {
 	return {
 		versions: (response.getVersionsList() || []).map(Mapper.From.HistoryVersion),
@@ -289,12 +283,6 @@ const ObjectGraph = (response: any) => {
 	return {
 		edges: (response.getEdgesList() || []).map(Mapper.From.GraphEdge),
 		nodes: (response.getNodesList() || []).map(Decode.decodeStruct),
-	};
-};
-
-const ObjectRelationOptionAdd = (response: any) => {
-	return {
-		option: Mapper.From.SelectOption(response.getOption()),
 	};
 };
 
@@ -387,7 +375,6 @@ export {
 	ObjectSubscribeIds,
 	ObjectGraph,
 
-	ObjectRelationOptionAdd,
 	ObjectRelationSearchDistinct,
 
 	ObjectToSet,
@@ -417,7 +404,6 @@ export {
 
 	BlockDataviewRecordCreate,
 	BlockDataviewRelationListAvailable,
-	BlockDataviewRecordRelationOptionAdd,
 
 	BlockListDuplicate,
 	BlockListConvertToObjects,

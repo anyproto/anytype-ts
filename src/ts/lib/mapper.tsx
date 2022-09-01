@@ -272,15 +272,6 @@ const Mapper = {
 			};
 		},
 
-		SelectOption: (obj: any) => {
-			return {
-				id: obj.getId(),
-				text: obj.getText(),
-				color: obj.getColor(),
-				scope: obj.getScope(),
-			};
-		},
-
 		ViewRelation: (obj: any) => {
             return {
                 relationKey: obj.getKey(),
@@ -705,16 +696,6 @@ const Mapper = {
 
 			item.setName(obj.name);
 			item.setLocalpath(obj.path);
-
-			return item;
-		},
-
-		SelectOption: (obj: any) => {
-			const item = new Model.Relation.Option();
-
-			item.setId(obj.id);
-			item.setText(obj.text);
-			item.setColor(obj.color);
 
 			return item;
 		},

@@ -336,15 +336,12 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 	optionCommand (code: string, rootId: string, blockId: string, relationKey: string, recordId: string, option: any, callBack?: (message: any) => void) {
 		switch (code) {
 			case 'add':
-				C.ObjectRelationOptionAdd(rootId, relationKey, option, callBack);
 				break;
 
 			case 'update':
-				C.ObjectRelationOptionUpdate(rootId, relationKey, option, callBack);
 				break;
 
 			case 'delete':
-				C.ObjectRelationOptionDelete(rootId, relationKey, option.id, callBack);
 				break;
 		};
 	};

@@ -510,15 +510,12 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	optionCommand (code: string, rootId: string, blockId: string, relationKey: string, recordId: string, option: any, callBack?: (message: any) => void) {
 		switch (code) {
 			case 'add':
-				C.BlockDataviewRecordRelationOptionAdd(rootId, blockId, relationKey, recordId, option, callBack);
 				break;
 
 			case 'update':
-				C.BlockDataviewRecordRelationOptionUpdate(rootId, blockId, relationKey, recordId, option, callBack);
 				break;
 
 			case 'delete':
-				C.BlockDataviewRecordRelationOptionDelete(rootId, blockId, relationKey, recordId, option.id, callBack);
 				break;
 		};
 	};
