@@ -14,7 +14,6 @@ interface Props {
 	isTargetTop?: boolean;
 	isTargetBottom?: boolean;
 	isTargetColumn?: boolean;
-	children?: React.ReactNode;
 	onClick?(e: any): void;
 };
 

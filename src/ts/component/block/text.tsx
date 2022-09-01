@@ -1,6 +1,5 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { createRoot } from 'react-dom/client';
 import { RouteComponentProps } from 'react-router';
 import { Select, Marker, Loader, IconObject, Icon } from 'Component';
 import { I, C, keyboard, Key, Util, DataUtil, Mark, focus, Storage, translate, analytics, Renderer } from 'Lib';
@@ -516,17 +515,11 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 				item.addClass('isDone');
 			};
 
-			function AppWithCallbackAfterRender() {
-				React.useEffect(() => {
-					if (smile.html()) {
-						item.addClass('withImage c' + size);
-					};
-				});
-				return icon;
-			};
-
-			const root = createRoot(smile.get(0));
-			root.render(<AppWithCallbackAfterRender />);
+			ReactDOM.render(icon, smile.get(0), () => {
+				if (smile.html()) {
+					item.addClass('withImage c' + size);
+				};
+			});
 		});
 		
 		items.off('mouseenter.mention');
@@ -593,8 +586,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 				return;
 			};
 
-			const root = createRoot(smile.get(0));
-			root.render(<IconObject size={size} object={{ iconEmoji: data.param }} />);
+			ReactDOM.render(<IconObject size={size} object={{ iconEmoji: data.param }} />, smile.get(0));
 		});
 	};
 

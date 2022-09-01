@@ -3,7 +3,6 @@ import * as ReactDOM from 'react-dom';
 import { Util } from 'Lib';
 
 interface Props {
-	children?: React.ReactNode;
 	onDragEnd(oldIndex: number, newIndex: number): void;
 	onClick?(e: any, id: string): void;
 };
