@@ -140,21 +140,33 @@ class Select extends React.Component<Props, State> {
 			onClose: () => { $(element).removeClass('active'); },
 			data: {
 				noFilter,
+				noClose: true,
 				value,
 				options,
 				onSelect: (e: any, item: any) => {
 					let { value } = this.state;
+					
 					if (item.id) {
-						value = isMultiple ? value.concat([ item.id ]) : [ item.id ];
+						if (isMultiple) {
+							value = value.includes(item.id) ? value.filter(it => it != item.id) : [ ...value, item.id ];
+						} else {
+							value = [ item.id ];
+						};
 					} else {
 						value = [];
 					};
+
 					this.setValue(value);
 
 					if (onChange) {
 						onChange(this.getValue());
 					};
-					this.hide();
+
+					if (!isMultiple) {
+						this.hide();
+					} else {
+						menuStore.updateData('select', { value });
+					};
 				},
 			},
 		});
