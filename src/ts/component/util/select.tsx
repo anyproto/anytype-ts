@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { I } from 'Lib';
+import { I, Relation } from 'Lib';
 import { Icon, MenuItemVertical } from 'Component';
 import { menuStore } from 'Store';
 
@@ -16,11 +16,12 @@ interface Props {
 	options: I.Option[];
 	noFilter: boolean;
 	horizontal?: I.MenuDirection;
+	isMultiple?: boolean;
 	onChange? (id: any): void;
 };
 
 interface State {
-	value: any;
+	value: string[];
 	options: I.Option[];
 };
 
@@ -36,7 +37,7 @@ class Select extends React.Component<Props, State> {
 	
 	_isMounted: boolean = false;
 	state = {
-		value: '',
+		value: [],
 		options: [] as I.Option[]
 	};
 	
@@ -49,20 +50,31 @@ class Select extends React.Component<Props, State> {
 	
 	render () {
 		const { id, className, arrowClassName } = this.props;
-		const { value, options } = this.state;
+		const { options } = this.state;
 		const cn = [ 'select', (className ? className : '') ];
 		const acn = [ 'arrow', (arrowClassName ? arrowClassName : '') ];
+		const value = Relation.getArrayValue(this.state.value);
 
-		let current: I.Option = options.find(item => item.id == value);
-		if (!current) {
-			current = options[0];
+		let current: any[] = [];
+		
+		value.forEach((id: string) => {
+			const option = options.find(item => item.id == id);
+			if (option) {
+				current.push(option);
+			};
+		});
+
+		if (!current.length && options.length) {
+			current.push(options[0]);
 		};
 
 		return (
 			<div id={'select-' + id} className={cn.join(' ')} onClick={this.show}>
 				{current ? (
 					<React.Fragment>
-						<MenuItemVertical {...current} />
+						{current.map((item: any, i: number) => (
+							<MenuItemVertical key={i} {...item} />
+						))}
 						<Icon className={acn.join(' ')} />
 					</React.Fragment>
 				) : ''}
@@ -73,66 +85,75 @@ class Select extends React.Component<Props, State> {
 	componentDidMount () {
 		this._isMounted = true;
 
-		let { options, initial } = this.props;
-		let opts = [];
-		let value = String(this.props.value || '');
+		let { initial } = this.props;
+		let options = [];
+		let value = Relation.getArrayValue(this.props.value);
 		
 		if (initial) {
-			opts.unshift({ id: '', name: initial, isInitial: true });			
+			options.push({ id: '', name: initial, isInitial: true });			
 		};
-
-		for (let option of options) {
-			opts.push(option);
-		};
-		
-		if (!value && opts.length) {
-			value = opts[0].id;
+		for (let option of this.props.options) {
+			options.push(option);
 		};
 		
-		this.setState({ value: value, options: opts });
+		if (!value.length && options.length) {
+			value = [ options[0].id ];
+		};
+		
+		this.setState({ value, options });
 	};
 
 	componentWillUnmount () {
 		this._isMounted = false;
 	};
 
-	getValue (): string {
-		return String(this.state.value || '');
+	getValue (): any {
+		const { isMultiple } = this.props;
+		const value = Relation.getArrayValue(this.state.value);
+		return isMultiple ? value : value[0];
 	};
 	
-	setValue (v: string) {
+	setValue (v: any) {
+		const value = Relation.getArrayValue(v);
+
 		if (this._isMounted) {
-			this.setState({ value: v });
+			this.state.value = value;
+			this.setState({ value });
 		};
 	};
 	
 	show () {
-		const { id, horizontal, element, menuClassName, menuClassNameWrap, onChange, menuWidth, noFilter } = this.props;
+		const { id, horizontal, menuClassName, menuClassNameWrap, onChange, menuWidth, noFilter, isMultiple } = this.props;
 		const { value, options } = this.state;
+		const elementId = `#select-${id}`;
+		const element = this.props.element || elementId;
 		
 		menuStore.open('select', { 
-			element: element || '#select-' + id,
-			horizontal: horizontal,
+			element,
+			horizontal,
 			className: menuClassName,
 			classNameWrap: menuClassNameWrap,
 			width: menuWidth,
 			onOpen: () => {
-				window.setTimeout(() => {
-					$('#select-' + id).addClass('active');
-				});
+				window.setTimeout(() => { $(element).addClass('active'); });
 			},
-			onClose: () => {
-				$('#select-' + id).removeClass('active');
-			},
+			onClose: () => { $(element).removeClass('active'); },
 			data: {
-				noFilter: noFilter,
-				value: value,
-				options: options,
+				noFilter,
+				value,
+				options,
 				onSelect: (e: any, item: any) => {
-					if (onChange) {
-						onChange(item.id);
+					let { value } = this.state;
+					if (item.id) {
+						value = isMultiple ? value.concat([ item.id ]) : [ item.id ];
+					} else {
+						value = [];
 					};
-					this.setValue(item.id);
+					this.setValue(value);
+
+					if (onChange) {
+						onChange(this.getValue());
+					};
 					this.hide();
 				},
 			},

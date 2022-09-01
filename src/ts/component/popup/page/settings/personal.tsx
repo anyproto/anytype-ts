@@ -27,10 +27,10 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 		const types = DataUtil.getObjectTypesForNewObject(false);
 		const type = types.find(it => it.id == commonStore.type);
 		
-		let languages: any[] = [ { id: '', name: 'Disabled' } ];
-		languages = languages.concat((commonStore.languages || []).filter(it => ![ 'ru' ].includes(it)).map(it => { 
-			return { id: it, name: Constant.spellingLang[it] }; 
-		}));
+		let languages: any[] = [];
+		languages = languages.concat(commonStore.languages || []);
+		languages = languages.map(it => { return { id: it, name: Constant.spellingLang[it] }; });
+		languages.unshift({ id: '', name: 'Disabled' });
 
 		return (
 			<div>
@@ -59,11 +59,12 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 						<div className="side right">
 							<Select 
 								id="spellcheck" 
-								value={config.language} 
+								value={config.languages} 
 								options={languages} 
 								onChange={(v: any) => { Renderer.send('setLanguage', v); }}
 								arrowClassName="light"
 								menuWidth={300}
+								isMultiple={true}
 							/>
 						</div>
 					</div>
