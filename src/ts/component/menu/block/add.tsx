@@ -529,13 +529,15 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 
 		const cb = () => {
 			if (item.isTextColor) {
-				C.BlockTextListSetColor(rootId, [ blockId ], item.value, onCommand);
+				C.BlockTextListSetColor(rootId, [ blockId ], item.value, (message: any) => {
+					onCommand(message);
+					analytics.event('ChangeBlockColor', { color: item.value, count: 1 });
+				});
 			};
 
 			if (item.isBgColor) {
 				C.BlockListSetBackgroundColor(rootId, [ blockId ], item.value, (message: any) => {
 					onCommand(message);
-
 					analytics.event('ChangeBlockBackground', { color: item.value, count: 1 });
 				});
 			};
@@ -543,7 +545,6 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 			if (item.isAlign) {
 				C.BlockListSetAlign(rootId, [ blockId ], item.itemId, (message: any) => {
 					onCommand(message);
-
 					analytics.event('ChangeBlockHAlign', { align: item.itemId, count: 1 });
 				});
 			};

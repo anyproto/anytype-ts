@@ -3,5 +3,6 @@
 #selection { position: relative; user-select: none; }
 #selection * { user-select: none; }
 #selection-rect { 
-	border: 1px dotted $colorBlack; position: absolute; left: 0px; top: 0px; width: 0px; height: 0px; display: none; z-index: 102; opacity: 0; 
+	position: absolute; left: 0px; top: 0px; width: 0px; height: 0px; display: none; z-index: 102; background: rgba(42, 167, 238, 0.15); 
+	border: 0.05em solid #2aa7ee;
 }
