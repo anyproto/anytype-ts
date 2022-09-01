@@ -8,7 +8,6 @@ import { throttle } from 'lodash';
 
 interface Props {
 	dataset?: any;
-	children?: React.ReactNode;
 };
 
 const $ = require('jquery');

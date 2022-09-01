@@ -254,6 +254,8 @@ class Mark {
 	};
 
 	adjust (marks: I.Mark[], from: number, length: number) {
+		marks = marks || [];
+
 		for (let mark of marks) {
 			if ((mark.range.from <= from) && (mark.range.to > from)) {
 				mark.range.to += length;

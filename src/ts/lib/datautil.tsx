@@ -360,6 +360,8 @@ class DataUtil {
 		e.preventDefault();
 		e.stopPropagation();
 
+		console.log('objectOpenEvent', e.shiftKey, object);
+
 		if (e.shiftKey || popupStore.isOpen('page')) {
 			this.objectOpenPopup(object, popupParam);
 		} else

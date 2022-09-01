@@ -4,14 +4,10 @@ import { I, M, focus, keyboard, scrollOnMove, Util } from 'Lib';
 import { observer } from 'mobx-react';
 import { blockStore, menuStore } from 'Store';
 
-interface Props {
-	children?: React.ReactNode;
-};
-
 const $ = require('jquery');
 const THRESHOLD = 10;
 
-const SelectionProvider = observer(class SelectionProvider extends React.Component<Props, {}> {
+const SelectionProvider = observer(class SelectionProvider extends React.Component<{}, {}> {
 
 	_isMounted = false;
 	x: number = 0;
@@ -242,13 +238,23 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		};
 
 		if (!this.moved) {
-			if (!keyboard.isShift() && !keyboard.isAlt() && !(keyboard.isCtrl() || keyboard.isMeta())) {
+			if (!keyboard.isShift() && !keyboard.isAlt() && !keyboard.isCtrlOrMeta()) {
 				if (!this.isClearPrevented) {
 					this.initIds();
 				};
 				this.renderSelection();
 			} else {
-				this.checkNodes(e);
+				let needCheck = false;
+				if (keyboard.isCtrlOrMeta()) {
+					for (let i in I.SelectType) {
+						const idsOnStart = this.idsOnStart.get(I.SelectType[i]) || [];
+						needCheck = needCheck || Boolean(idsOnStart.length);
+					};
+				};
+
+				if (needCheck) {
+					this.checkNodes(e);
+				};
 				
 				const ids = this.get(I.SelectType.Block, true);
 				const target = $(e.target).closest('.selectable');
@@ -351,7 +357,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 
 		let ids = this.get(type, false);
 
-		if (keyboard.isCtrl() || keyboard.isMeta()) {
+		if (keyboard.isCtrlOrMeta()) {
 			const idsOnStart = this.idsOnStart.get(type) || [];
 			if (idsOnStart.includes(id)) {
 				ids = ids.filter(it => it != id);
@@ -365,7 +371,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			ids.push(id);
 		};
 
-		this.ids.set(type, ids);
+		this.ids.set(type, Util.arrayUnique(ids));
 	};
 	
 	checkNodes (e: any) {
@@ -377,7 +383,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		const { x, y } = this.recalcCoords(e.pageX, e.pageY);
 		const rect = Util.objectCopy(this.getRect(x, y));
 
-		if (!keyboard.isShift() && !keyboard.isAlt() && !(keyboard.isCtrl() || keyboard.isMeta())) {
+		if (!keyboard.isShift() && !keyboard.isAlt() && !keyboard.isCtrlOrMeta()) {
 			this.initIds();
 		};
 
@@ -394,7 +400,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			return;
 		};
 
-		if ((length <= 1) && !(keyboard.isCtrl() || keyboard.isMeta())) {
+		if ((length <= 1) && !keyboard.isCtrlOrMeta()) {
 			const value = selected.find('.value');
 			if (!value.length) {
 				return;

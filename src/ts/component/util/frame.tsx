@@ -1,14 +1,10 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
-interface Props {
-	children?: React.ReactNode;
-};
-
 const $ = require('jquery');
 const raf = require('raf');
 
-class Frame extends React.Component<Props, {}> {
+class Frame extends React.Component<{}, {}> {
 
 	_isMounted: boolean = false;
 

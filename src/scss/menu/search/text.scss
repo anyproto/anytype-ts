@@ -3,15 +3,30 @@
 .menus {
 	.menu.menuSearchText { width: 400px; height: 44px; padding: 0px; position: fixed; top: 42px; }
 	.menu.menuSearchText {
-		.flex { width: 100%; flex-direction: row; align-items: center; }
-		.input { height: 100%; padding: 13.5px 16px; flex-grow: 1; width: 100%; }
-		.buttons { flex-shrink: 0; color: $colorMediumGrey; font-weight: 500; user-select: none; display: flex; gap: 0px 16px; height: 100%; }
+		.content { height: 100%; display: block; }
+		.flex { width: 100%; flex-direction: row; align-items: center; padding: 0px 0px 0px 8px; }
+		.input { height: 100%; padding: 13.5px 0px 13.5px 6px; flex-grow: 1; width: 100%; }
+		.icon.search { flex-shrink: 0; margin: 0px; }
+
+		.buttons { 
+			flex-shrink: 0; color: $colorMediumGrey; font-weight: 500; user-select: none; display: flex; gap: 0px 12px; height: 100%; 
+			align-items: center; padding: 0px 12px;
+		}
 		.buttons {
-			.button { 
-				display: inline-block; vertical-align: top; cursor: pointer; transition: $transitionFast; 
-				background: none; border: 0px; padding: 0px; height: 100%; padding: 0px 16px; line-height: 44px;
+			.switcher { display: none; flex-direction: row; align-items: center; gap: 0px 4px; }
+			.switcher.active { display: flex; }
+
+			.line { height: 20px; width: 1px; background: $colorBorderDark; }
+
+			.icon.arrow { 
+				width: 24px; height: 24px; border-radius: 4px; transition: $transitionFast; margin: 0px; 	
+				background-image: url('~img/arrow/search.svg'); 
 			}
-			.button:hover { color: $colorBlack; }
+			.icon.arrow.right { transform: rotateZ(180deg); }
+			.icon.arrow:hover { background-color: $colorHover; }
+
+			.icon.clear { width: 20px; height: 20px; background-image: url('~img/icon/clearFilter0.svg') !important; cursor: pointer; }
+			.icon.clear:hover { background-image: url('~img/icon/clearFilter1.svg') !important; }
 		}
 	}
 }

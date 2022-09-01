@@ -29,7 +29,7 @@ jobs:
           node-version: 16.15.1
 
       - name: Install Webpack
-        run: npm install --save-dev webpack-cli
+        run: npm install --save-dev webpack-cli --legacy-peer-deps
 
       - name: Update Addon
         if: matrix.os != 'macos-latest'
