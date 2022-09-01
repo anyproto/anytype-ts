@@ -24,7 +24,6 @@ interface Props {
 	onFav(e: any, item: any): void;
 	onCellClick(e: any, relationKey: string, index: number): void;
 	onCellChange(id: string, relationKey: string, value: any, callBack?: (message: any) => void): void;
-	optionCommand(code: string, rootId: string, blockId: string, relationKey: string, recordId: string, option: any, callBack?: (message: any) => void): void;
 };
 
 const PREFIX = 'menuBlockRelationView';
@@ -44,7 +43,6 @@ const MenuItemRelationView = observer(class MenuItemRelationView extends React.C
 		onFav: () => {},
 		onCellClick: () => {},
 		onCellChange: () => {},
-		optionCommand: () => {},
 	};
 
 	constructor (props: any) {
@@ -54,7 +52,7 @@ const MenuItemRelationView = observer(class MenuItemRelationView extends React.C
 	};
 
 	render () {
-		const { rootId, block, id, relationKey, canEdit, canDrag, canFav, readonly, format, name, isHidden, isFeatured, classNameWrap, onEdit, onRef, onFav, onCellClick, onCellChange, optionCommand } = this.props;
+		const { rootId, block, id, relationKey, canEdit, canDrag, canFav, readonly, format, name, isHidden, isFeatured, classNameWrap, onEdit, onRef, onFav, onCellClick, onCellChange } = this.props;
 
 		const cellId = Relation.cellId(PREFIX, relationKey, '0');
 		const fcn = [ 'fav' ];
@@ -105,7 +103,6 @@ const MenuItemRelationView = observer(class MenuItemRelationView extends React.C
 						readonly={readonly}
 						onClick={(e: any) => { onCellClick(e, relationKey, 0); }}
 						onCellChange={onCellChange}
-						optionCommand={optionCommand}
 					/>
 					{canFav ? (
 						<Icon className={fcn.join(' ')} onClick={(e: any) => { onFav(e, relationKey); }} tooltip={tooltip} />

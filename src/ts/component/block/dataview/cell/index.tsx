@@ -19,7 +19,6 @@ interface Props extends I.Cell {
 	tooltipX?: I.MenuDirection;
 	tooltipY?: I.MenuDirection;
 	maxWidth?: number;
-	optionCommand?: (code: string, rootId: string, blockId: string, relationKey: string, recordId: string, option: any, callBack?: (message: any) => void) => void;
 };
 
 const $ = require('jquery');
@@ -149,7 +148,7 @@ class Cell extends React.Component<Props, {}> {
 	onClick (e: any) {
 		e.stopPropagation();
 
-		const { rootId, subId, block, index, getRecord, maxWidth, menuClassName, menuClassNameWrap, idPrefix, pageContainer, bodyContainer, optionCommand, cellPosition, placeholder } = this.props;
+		const { rootId, subId, block, index, getRecord, maxWidth, menuClassName, menuClassNameWrap, idPrefix, pageContainer, bodyContainer, cellPosition, placeholder } = this.props;
 		const relation = this.getRelation();
 		const record = getRecord(index);
 		const { config } = commonStore;
@@ -247,7 +246,6 @@ class Cell extends React.Component<Props, {}> {
 				value, 
 				relation: observable.box(relation),
 				record,
-				optionCommand,
 				placeholder,
 				onChange: (value: any, callBack?: (message: any) => void) => {
 					if (this.ref && this.ref.onChange) {

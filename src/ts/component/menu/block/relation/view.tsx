@@ -25,7 +25,6 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		this.onEdit = this.onEdit.bind(this);
 		this.onCellClick = this.onCellClick.bind(this);
 		this.onCellChange = this.onCellChange.bind(this);
-		this.optionCommand = this.optionCommand.bind(this);
 	};
 
 	render () {
@@ -82,7 +81,6 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 								classNameWrap={classNameWrap}
 								onCellClick={this.onCellClick}
 								onCellChange={this.onCellChange}
-								optionCommand={this.optionCommand}
 							/>
 						);
 					})}
@@ -331,19 +329,6 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 
 		const key = Relation.checkRelationValue(relation, value) ? 'ChangeRelationValue' : 'DeleteRelationValue';	
 		analytics.event(key, { type: 'menu' });
-	};
-
-	optionCommand (code: string, rootId: string, blockId: string, relationKey: string, recordId: string, option: any, callBack?: (message: any) => void) {
-		switch (code) {
-			case 'add':
-				break;
-
-			case 'update':
-				break;
-
-			case 'delete':
-				break;
-		};
 	};
 
 	resize () {

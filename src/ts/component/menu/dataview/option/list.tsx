@@ -254,7 +254,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 	onOptionAdd () {
 		const { param } = this.props;
 		const { data } = param;
-		const { filter, rootId, blockId, record, optionCommand } = data;
+		const { filter } = data;
 		const relation = data.relation.get();
 		const colors = DataUtil.menuGetBgColors();
 		const option = { text: filter, color: colors[Util.rand(1, colors.length - 1)].value };

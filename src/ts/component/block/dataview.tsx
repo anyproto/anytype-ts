@@ -36,7 +36,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		this.onCellClick = this.onCellClick.bind(this);
 		this.onCellChange = this.onCellChange.bind(this);
 		this.onContext = this.onContext.bind(this);
-		this.optionCommand = this.optionCommand.bind(this);
 	};
 
 	render () {
@@ -106,7 +105,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 						onRecordAdd={this.onRecordAdd}
 						onCellClick={this.onCellClick}
 						onCellChange={this.onCellChange}
-						optionCommand={this.optionCommand}
 						onContext={this.onContext}
 					/>
 				</div>
@@ -505,19 +503,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				subId,
 			}
 		});
-	};
-
-	optionCommand (code: string, rootId: string, blockId: string, relationKey: string, recordId: string, option: any, callBack?: (message: any) => void) {
-		switch (code) {
-			case 'add':
-				break;
-
-			case 'update':
-				break;
-
-			case 'delete':
-				break;
-		};
 	};
 
 	resize () {

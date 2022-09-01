@@ -7,9 +7,8 @@ import { menuStore, detailStore } from 'Store';
 import { getRange, setRange } from 'selection-ranges';
 import arrayMove from 'array-move';
 
-interface Props extends I.Cell {
-	optionCommand?: (code: string, rootId: string, blockId: string, relationKey: string, recordId: string, option: any, callBack?: (message: any) => void) => void;
-};
+interface Props extends I.Cell {};
+
 interface State { 
 	isEditing: boolean; 
 };

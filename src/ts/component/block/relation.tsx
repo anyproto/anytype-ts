@@ -22,7 +22,6 @@ const BlockRelation = observer(class BlockRelation extends React.Component<Props
 		this.onMenu = this.onMenu.bind(this);
 		this.onCellClick = this.onCellClick.bind(this);
 		this.onCellChange = this.onCellChange.bind(this);
-		this.optionCommand = this.optionCommand.bind(this);
 	};
 
 	render (): any {
@@ -68,7 +67,6 @@ const BlockRelation = observer(class BlockRelation extends React.Component<Props
 								onCellChange={this.onCellChange}
 								bodyContainer={Util.getBodyContainer(isPopup ? 'popup' : 'page')}
 								pageContainer={Util.getCellContainer(isPopup ? 'popup' : 'page')}
-								optionCommand={this.optionCommand}
 							/>
 						</div>
 					</div>
@@ -150,19 +148,6 @@ const BlockRelation = observer(class BlockRelation extends React.Component<Props
 		};
 
 		focus.set(block.id, { from: 0, to: 0 });
-	};
-
-	optionCommand (code: string, rootId: string, blockId: string, relationKey: string, recordId: string, option: any, callBack?: (message: any) => void) {
-		switch (code) {
-			case 'add':
-				break;
-
-			case 'update':
-				break;
-
-			case 'delete':
-				break;
-		};
 	};
 
 });
