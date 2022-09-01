@@ -158,7 +158,6 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		this.isSelecting = true;
 		this.top = container.scrollTop();
 		this.cache.clear();
-		this.show();
 		this.idsOnStart = new Map(this.ids);
 
 		if (isPopup) {
@@ -188,6 +187,10 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			this.nodes.push(node);
 			this.cacheRect(node);
 		});
+
+		if (this.nodes.length) {
+			this.show();
+		};
 
 		if (keyboard.isShift()) {
 			let target = $(e.target).closest('.selectable');
@@ -304,6 +307,10 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	};
 
 	drawRect (x: number, y: number) {
+		if (!this.nodes.length) {
+			return;
+		};
+
 		const el = $('#selection-rect');
 		const range = Util.selectionRange();
 		const rect = this.getRect(x, y);
