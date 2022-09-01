@@ -57,6 +57,7 @@ class Api {
 
 	setZoom (win, zoom) {
 		zoom = Number(zoom) || 0;
+		zoom = Math.max(-5, Math.min(5, zoom));
 
 		win.webContents.setZoomLevel(zoom);
 		this.setConfig(win, { zoom });
