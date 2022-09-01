@@ -191,12 +191,10 @@ class Keyboard {
 
 			// Go to dashboard
 			this.shortcut('cmd+enter, alt+h', e, (pressed: string) => {
-				let check = platform == I.Platform.Mac ? pressed == 'cmd+enter' : true;
-				if (!check || !authStore.account) {
-					return;
+				let check = isMac ? pressed == 'cmd+enter' : true;
+				if (check && !authStore.account && !popupStore.isOpen('search')) {
+					Util.route('/main/index');
 				};
-
-				Util.route('/main/index');
 			});
 
 			// Create new page

@@ -428,12 +428,12 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 		};
 
 		e.stopPropagation();
+		this.props.close();
 
 		const filter = Util.filterFix(this.refFilter.getValue());
 
 		DataUtil.objectOpenEvent(e, { ...item, id: item.id });
 		analytics.event('SearchResult', { index: item.index + 1, length: filter.length });
-		this.props.close();
 	};
 
 	resize () {
