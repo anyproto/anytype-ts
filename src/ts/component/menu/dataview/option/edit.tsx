@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { I, DataUtil, Relation, translate, keyboard } from 'Lib';
+import { I, C, DataUtil, Relation, translate, keyboard } from 'Lib';
 import { Filter, MenuItemVertical } from 'Component';
 import { menuStore } from 'Store';
 import { observer } from 'mobx-react';
@@ -20,7 +20,6 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<Pro
 		const { param } = this.props;
 		const { data } = param;
 		const { option } = data;
-		const relation = data.relation.get();
 		const sections = this.getSections();
 
 		const Section = (item: any) => (
@@ -176,7 +175,6 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<Pro
 		let value = Relation.getArrayValue(data.value);
 		value = value.filter(it => it != option.id);
 
-		relation.selectDict = relation.selectDict.filter(it => it.id != option.id);
 		//optionCommand('delete', rootId, blockId, relation.relationKey, record.id, option);
 
 		menuStore.updateData(id, { value });
@@ -193,8 +191,6 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<Pro
 		const { param } = this.props;
 		const { data } = param;
 		const { option } = data;
-		const relation = data.relation.get();
-		const idx = relation.selectDict.findIndex(it => it.id == option.id);
 		const value = this.refName.getValue();
 
 		if (!value) {
@@ -204,11 +200,13 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<Pro
 		option.text = value;
 		option.color = this.color;
 
-		relation.selectDict[idx] = option;
-		//optionCommand('update', rootId, blockId, relation.relationKey, record.id, relation.selectDict[idx]);
+		const details = [ 
+			{ key: 'text', value },
+			{ key: 'color', value: this.color },
+		];
+		C.ObjectSetDetails(option.id, details);
 
 		this.props.param.data.option = option;
-		menuStore.updateData('dataviewOptionList', { relation: observable.box(relation) });
 	};
 	
 });
