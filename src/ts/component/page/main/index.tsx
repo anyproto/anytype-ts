@@ -877,7 +877,6 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 	getList () {
 		const { root, recent } = blockStore;
-		const { config } = commonStore;
 		const { tab, filter } = this.state;
 		const records = dbStore.getRecords(Constant.subId.index, '');
 		const isRecent = tab == I.TabIndex.Recent;
@@ -910,10 +909,6 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 					if (reg && name && !name.match(reg)) {
 						return false;
 					};
-					if (isRecent && DataUtil.getSystemTypes().includes(type)) {
-						return false;
-					};
-
 					return !isArchived && !isDeleted;
 				}).map((it: any) => {
 					it._object_ = detailStore.get(rootId, it.content.targetBlockId, [ 'templateIsBundled', 'lastModifiedDate' ]);

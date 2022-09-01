@@ -68,7 +68,6 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 			return <Loader id="loader" />;
 		};
 
-		const { config } = commonStore;
 		const rootId = this.getRootId();
 		const object = Util.objectCopy(detailStore.get(rootId, rootId, [ 'recommendedLayout' ]));
 
@@ -86,6 +85,8 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 
 		let relations = Util.objectCopy(dbStore.getRelations(rootId, rootId)).sort(DataUtil.sortByHidden);
 		relations = relations.filter(it => !Constant.systemRelationKeys.includes(it.relationKey));
+
+		console.log(relations);
 
 		const Relation = (item: any) => (
 			<div id={'item-' + item.id} className={[ 'item', (item.isHidden ? 'isHidden' : ''), 'canEdit' ].join(' ')}>

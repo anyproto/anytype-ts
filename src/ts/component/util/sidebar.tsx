@@ -208,7 +208,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
 			{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
 			{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: [ '_anytype_profile', profile, root ] },
-			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: SKIP_TYPES_LOAD.concat(DataUtil.getSystemTypes()) },
+			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: SKIP_TYPES_LOAD },
 		];
 
 		let n = 0;
@@ -229,6 +229,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 			switch (section.id) {
 				case I.TabIndex.Favorite:
 					sectionFilters = [
+						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: DataUtil.getSystemTypes() },
 						{ operator: I.FilterOperator.And, relationKey: 'isFavorite', condition: I.FilterCondition.Equal, value: true }
 					];
 					sorts = [];
@@ -245,6 +246,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 
 				case I.TabIndex.Set:
 					sectionFilters = [
+						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: DataUtil.getSystemTypes() },
 						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.set }
 					];
 					sorts = [
