@@ -156,6 +156,10 @@ class DetailStore {
 			object.format = object.relationFormat;
 			object.objectTypes = object.relationFormatObjectTypes || [];
 			object.selectDict = object.selectDict || [];
+		} else
+		if (object.type == Constant.typeId.option) {
+			object.text = String(object.relationOptionText || '');
+			object.color = String(object.relationOptionColor || '');
 		};
 
 		return {

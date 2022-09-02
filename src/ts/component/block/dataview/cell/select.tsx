@@ -49,6 +49,7 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 		let placeholder = this.props.placeholder || translate(`placeholderCell${relation.format}`);
 		let value = this.getItems();
 		let length = value.length;
+		let content = null;
 
 		if (elementMapper) {
 			value = value.map((it: any) => { return elementMapper(relation, it); });
@@ -61,7 +62,8 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 			};
 		};
 
-		let content = null;
+		console.log(value);
+
 		if (isEditing) {
 			content = (
 				<div id="value" onClick={this.onFocus}>
@@ -291,7 +293,7 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 		};
 
 		let value: any[] = Relation.getArrayValue(record[relation.relationKey]);
-		value = value.map(id => detailStore.get(Constant.subId.option, id, []));
+		value = value.map(id => detailStore.get(Constant.subId.option, id, Constant.optionRelationKeys));
 		value = value.filter(it => !it._empty_);
 		return value;
 	};

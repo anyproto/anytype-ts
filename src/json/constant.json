@@ -153,6 +153,10 @@
 		"relationMaxCount", "relationReadonly", "relationDefaultValue", "relationFormatObjectTypes"
 	],
 
+	"optionRelationKeys": [
+		"id", "type", "layout", "relationOptionText", "relationOptionColor", "relationKey"
+	],
+
 	"relationKey": {
 		"name": "name",
 		"description": "description",
@@ -190,7 +194,7 @@
 		"note": "_otnote",
 		"task": "_ottask",
 		"bookmark": "_otbookmark",
-		"option": "_otrelationoption"
+		"option": "_otrelationOption"
 	},
 
 	"blockId": {

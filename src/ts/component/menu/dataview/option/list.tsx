@@ -264,7 +264,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 		};
 
 		const items = this.getItems(false);
-		const match = items.find((it: any) => { return it.text == option.text; });
+		const match = items.find(it => it.text == option.text);
 
 		if (match) {
 			this.onValueAdd(match.id);
@@ -273,7 +273,8 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 
 		C.ObjectCreateRelationOption({
 			relationKey: relation.relationKey,
-			...option,
+			relationOptionText: option.text,
+			relationOptionColor: option.color,
 		}, (message: any) => {
 			if (message.error.code) {
 				return;
