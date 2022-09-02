@@ -5,7 +5,7 @@ import { Select, Marker, Loader, IconObject, Icon } from 'Component';
 import { I, C, keyboard, Key, Util, DataUtil, Mark, focus, Storage, translate, analytics, Renderer } from 'Lib';
 import { observer, } from 'mobx-react';
 import { getRange } from 'selection-ranges';
-import { commonStore, blockStore, detailStore, menuStore } from 'Store';
+import { commonStore, blockStore, detailStore, menuStore, dbStore } from 'Store';
 import * as Prism from 'prismjs';
 
 interface Props extends I.BlockComponent, RouteComponentProps<any> {
@@ -78,7 +78,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		const { text, marks, style, checked, color, iconEmoji, iconImage } = content;
 		const { theme } = commonStore;
 		const root = blockStore.getLeaf(rootId, rootId);
-		const footer = blockStore.getMapElement(rootId, Constant.blockId.footer);
+		const header = blockStore.getMapElement(rootId, Constant.blockId.header);
 
 		let marker: any = null;
 		let placeholder = translate('placeholderBlock');
@@ -92,8 +92,11 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			cv.push('isReadonly');
 		};
 
-		if (root.isObjectNote() && (index == 1) && (footer.childrenIds.indexOf(Constant.blockId.type) >= 0)) {
-			placeholder = 'Type something to proceed with Note';
+		if ((index <= 1) && blockStore.checkBlockTypeExists(rootId)) {
+			const object = detailStore.get(rootId, rootId, [ 'type' ], true);
+			const type = dbStore.getObjectType(object.type);
+
+			placeholder = `Type something to proceed with ${type?.name} type`;
 		};
 
 		// Subscriptions

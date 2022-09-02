@@ -61,7 +61,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 	};
 
 	render () {
-		const { block } = this.props;
+		const { block, readonly } = this.props;
 		const { rows, columns } = this.getData();
 		const cn = [ 'wrap', 'focusable', 'c' + block.id, 'resizable' ];
 
@@ -112,15 +112,19 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 								})}
 							</div>
 						</div>
-						<div id="plus-v" className="plusButton vertical" onClick={this.onPlusV}>
-							<Icon />
-						</div>
-						<div id="plus-h" className="plusButton horizontal" onClick={this.onPlusH}>
-							<Icon />
-						</div>
-						<div id="plus-c" className="plusButton circle" onClick={this.onPlus}>
-							<Icon />
-						</div>
+						{!readonly ? (
+							<React.Fragment>
+								<div id="plus-v" className="plusButton vertical" onClick={this.onPlusV}>
+									<Icon />
+								</div>
+								<div id="plus-h" className="plusButton horizontal" onClick={this.onPlusH}>
+									<Icon />
+								</div>
+								<div id="plus-c" className="plusButton circle" onClick={this.onPlus}>
+									<Icon />
+								</div>
+							</React.Fragment>
+						) : ''}
 					</div>
 				</div>
 			</div>
