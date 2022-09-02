@@ -83,6 +83,9 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	
 	preventClear (v: boolean) {
 		this.isClearPrevented = v;
+
+		console.log('preventClear', v);
+		console.trace();
 	};
 	
 	scrollToElement (id: string, dir: number) {
