@@ -62,8 +62,6 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 			};
 		};
 
-		console.log(value);
-
 		if (isEditing) {
 			content = (
 				<div id="value" onClick={this.onFocus}>

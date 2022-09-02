@@ -1,13 +1,14 @@
 import * as React from 'react';
 import { Icon, Tag, Filter } from 'Component';
 import { I, C, Util, DataUtil, keyboard, Relation } from 'Lib';
-import { menuStore } from 'Store';
+import { menuStore, dbStore, detailStore } from 'Store';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {};
 
 const $ = require('jquery');
+const Constant = require('json/constant.json');
 const HEIGHT = 28;
 const LIMIT = 40;
 
@@ -324,13 +325,9 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 		const isStatus = relation.format == I.RelationType.Status;
 		const value = Relation.getArrayValue(data.value);
 
-		let items = Util.objectCopy(relation.selectDict || []);
-		let sections: any = {};
+		let items = dbStore.getRecords(Constant.subId.option, '').map(id => detailStore.get(Constant.subId.option, id, Constant.optionRelationKeys)).filter(it => it.relationKey == relation.relationKey);
 		let ret = [];
 		let check = [];
-
-		sections[I.OptionScope.Local] = { id: I.OptionScope.Local, name: 'Select option', children: [] };
-		sections[I.OptionScope.Relation] = { id: I.OptionScope.Relation, name: 'Everywhere', children: [] };
 
 		if (filterMapper) {
 			items = items.filter(filterMapper);
@@ -338,36 +335,18 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 
 		if (data.filter) {
 			const filter = new RegExp(Util.filterFix(data.filter), 'gi');
-			check = items.filter((it: any) => { return it.text.toLowerCase() == data.filter.toLowerCase(); });
-			items = items.filter((it: any) => { return it.text.match(filter); });
+			
+			check = items.filter(it => it.text.toLowerCase() == data.filter.toLowerCase());
+			items = items.filter(it => it.text.match(filter));
 
 			if (canAdd && !check.length) {
-				const name = isStatus ? `Set status "${data.filter}"` : `Create option "${data.filter}"`;
-				ret.unshift({ id: 'add', name: name });
+				ret.unshift({ id: 'add', name: isStatus ? `Set status "${data.filter}"` : `Create option "${data.filter}"` });
 			};
 		};
 
-		items = items.filter((it: any) => { return value.indexOf(it.id) < 0; });
+		items = items.filter(it => !value.includes(it.id));
 
-		for (let item of items) {
-			if (!sections[item.scope]) {
-				continue;
-			};
-			sections[item.scope].children.push(item);
-		};
-
-		for (let i in sections) {
-			let section = sections[i];
-			if (!section.children.length) {
-				continue;
-			};
-			if (withSections) {
-				ret.push({ id: section.id, name: section.name, isSection: true });
-			};
-			ret = ret.concat(section.children);
-		};
-
-		return ret;
+		return ret.concat(items);
 	};
 
 	resize () {

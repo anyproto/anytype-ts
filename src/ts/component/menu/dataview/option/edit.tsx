@@ -197,15 +197,17 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<Pro
 			return;
 		};
 
+		/*
 		option.text = value;
 		option.color = this.color;
+		*/
 
-		C.ObjectSetDetails(option.id, [ 
+		C.ObjectSetDetails(option.id.replace('-', ':'), [ 
 			{ key: 'relationOptionText', value },
-			{ key: 'RelationOptionColor', value: this.color },
+			{ key: 'relationOptionColor', value: this.color },
 		]);
 
-		this.props.param.data.option = option;
+		//this.props.param.data.option = option;
 	};
 	
 });
