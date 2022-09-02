@@ -453,7 +453,13 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	};
 	
 	clear (force: false) {
-		if (!this._isMounted || (this.isClearPrevented && !force)) {
+		if (force) {
+			this.preventClear(false);
+		};
+
+		console.log('isClearPrevented', this.isClearPrevented, 'force', force);
+
+		if (!this._isMounted || this.isClearPrevented) {
 			return;
 		};
 

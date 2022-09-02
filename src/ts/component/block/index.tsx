@@ -363,13 +363,6 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 	};
 	
 	onMenuDown (e: any) {
-		const { dataset } = this.props;
-		const { selection } = dataset || {};
-		
-		if (selection) {
-			selection.preventClear(true);
-		};
-
 		focus.clear(true);
 		Util.previewHide(true);
 	};
