@@ -109,32 +109,6 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		};
 	};
 	
-	onScroll (e: any) {
-		if (!this.isSelecting || !this.moved) {
-			return;
-		};
-
-		const isPopup = keyboard.isPopup();
-		const top = Util.getScrollContainer(isPopup).scrollTop();
-		const d = top > this.top ? 1 : -1;
-		const x = keyboard.mouse.page.x;
-		const y = keyboard.mouse.page + Math.abs(top - this.top) * d;
-		const rect = this.getRect(x, y);
-
-		if ((rect.width < THRESHOLD) && (rect.height < THRESHOLD)) {
-			return;
-		};
-
-		this.nodes.forEach(it => this.cacheRect(it));
-
-		this.checkNodes({ ...e, pageX: x, pageY: y });
-		this.drawRect(x, y);
-		this.renderSelection();
-
-		scrollOnMove.onMouseMove(keyboard.mouse.client.x, keyboard.mouse.client.y);
-		this.moved = true;
-	};
-	
 	onMouseDown (e: any) {
 		if (e.button || !this._isMounted || menuStore.isOpen()) {
 			return;
@@ -233,6 +207,32 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		this.moved = true;
 
 		scrollOnMove.onMouseMove(e.clientX, e.clientY);
+	};
+
+	onScroll (e: any) {
+		if (!this.isSelecting || !this.moved) {
+			return;
+		};
+
+		const isPopup = keyboard.isPopup();
+		const top = Util.getScrollContainer(isPopup).scrollTop();
+		const d = top > this.top ? 1 : -1;
+		const x = keyboard.mouse.page.x;
+		const y = keyboard.mouse.page.y + Math.abs(top - this.top) * d;
+		const rect = this.getRect(x, y);
+
+		if ((rect.width < THRESHOLD) && (rect.height < THRESHOLD)) {
+			return;
+		};
+
+		this.nodes.forEach(it => this.cacheRect(it));
+
+		this.checkNodes({ ...e, pageX: x, pageY: y });
+		this.drawRect(x, y);
+		this.renderSelection();
+
+		scrollOnMove.onMouseMove(keyboard.mouse.client.x, keyboard.mouse.client.y);
+		this.moved = true;
 	};
 	
 	onMouseUp (e: any) {
