@@ -20,6 +20,7 @@ interface State {
 
 const $ = require('jquery');
 const Errors = require('json/error.json');
+const Constant = require('json/constant.json');
 
 const BLOCK_ID_HIGHLIGHTED = 'highlighted';
 
@@ -54,10 +55,11 @@ const PageMainSpace = observer(class PageMainSpace extends React.Component<Props
 		const rootId = this.getRootId();
 		const check = DataUtil.checkDetails(rootId);
 		const object = Util.objectCopy(detailStore.get(rootId, rootId, []));
-		const children = blockStore.getChildren(rootId, rootId, (it: any) => { return it.id == 'dataview'; });
+		const children = blockStore.getChildren(rootId, rootId, it => it.id == Constant.blockId.dataview);
+		const subIdHighlighted = this.getSubIdHighlighted();
 
 		const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, hAlign: object.layoutAlign, childrenIds: [], fields: {}, content: {} });
-		const highlighted = dbStore.getRecords(this.getSubIdHighlighted(), '');
+		const highlighted = dbStore.getRecords(subIdHighlighted, '').map(id => detailStore.get(subIdHighlighted, id, []));
 
 		return (
 			<div className={[ 'setWrapper', check.className ].join(' ')}>
