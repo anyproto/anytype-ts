@@ -260,12 +260,7 @@ class Dispatcher {
 				case 'blockSetChildrenIds':
 					id = data.getId();
 
-					const childrenIds = data.getChildrenidsList();
-					if ((id == rootId) && !childrenIds.includes(Constant.blockId.footer)) {
-						childrenIds.push(Constant.blockId.footer);
-					};
-
-					blockStore.updateStructure(rootId, id, childrenIds);
+					blockStore.updateStructure(rootId, id, data.getChildrenidsList());
 
 					if (id == rootId) {
 						blockStore.checkTypeSelect(rootId);
@@ -793,9 +788,6 @@ class Dispatcher {
 
 			root.type = I.BlockType.Page;
 			root.layout = object.layout;
-			root.childrenIds.push(Constant.blockId.footer);
-
-			structure.push({ id: Constant.blockId.footer, childrenIds: [] });
 		};
 
 		blocks = blocks.map((it: any) => {
@@ -808,22 +800,10 @@ class Dispatcher {
 			return new M.Block(it);
 		});
 
-		// Footer
-		blocks.push(new M.Block({
-			id: Constant.blockId.footer,
-			parentId: rootId,
-			type: I.BlockType.Layout,
-			fields: {},
-			childrenIds: [],
-			content: {
-				style: I.LayoutStyle.Footer,
-			}
-		}));
-
 		// BlockType
 		blocks.push(new M.Block({
 			id: Constant.blockId.type,
-			parentId: Constant.blockId.footer,
+			parentId: Constant.blockId.header,
 			type: I.BlockType.Type,
 			fields: {},
 			childrenIds: [],

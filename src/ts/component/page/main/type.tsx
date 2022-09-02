@@ -71,10 +71,11 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 		const { config } = commonStore;
 		const rootId = this.getRootId();
 		const object = Util.objectCopy(detailStore.get(rootId, rootId, [ 'recommendedLayout' ]));
+		const subIdTemplate = this.getSubIdTemplate();
 
 		const type = detailStore.get(Constant.subId.type, rootId, []);
-		const templates = dbStore.getRecords(this.getSubIdTemplate(), '').map(id => detailStore.get(this.getSubIdTemplate(), id, []));
-		const totalTemplate = dbStore.getMeta(this.getSubIdTemplate(), '').total;
+		const templates = dbStore.getRecords(subIdTemplate, '').map(id => detailStore.get(subIdTemplate, id, []));
+		const totalTemplate = dbStore.getMeta(subIdTemplate, '').total;
 		const totalObject = dbStore.getMeta(this.getSubIdObject(), '').total;
 		const layout: any = DataUtil.menuGetLayouts().find(it => it.id == object.recommendedLayout) || {};
 		const showTemplates = !NO_TEMPLATES.includes(rootId);

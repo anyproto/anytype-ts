@@ -55,7 +55,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, St
 		const rootId = this.getRootId();
 		const check = DataUtil.checkDetails(rootId);
 
-		const children = blockStore.getChildren(rootId, rootId, (it: any) => { return it.isDataview(); });
+		const children = blockStore.getChildren(rootId, rootId, it => it.isDataview());
 		const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, childrenIds: [], fields: {}, content: {} });
 
 		return (

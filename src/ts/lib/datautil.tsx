@@ -360,8 +360,6 @@ class DataUtil {
 		e.preventDefault();
 		e.stopPropagation();
 
-		console.log('objectOpenEvent', e.shiftKey, object);
-
 		if (e.shiftKey || popupStore.isOpen('page')) {
 			this.objectOpenPopup(object, popupParam);
 		} else
@@ -605,7 +603,7 @@ class DataUtil {
 	};
 
 	getObjectTypesForNewObject (param?: any) {
-		const { withSet, withBookmark } = param || {};
+		const { withSet, withBookmark, withDefault } = param || {};
 		const { config } = commonStore;
 		const page = detailStore.get(Constant.subId.type, Constant.typeId.page, []);
 		const note = detailStore.get(Constant.subId.type, Constant.typeId.note, []);
@@ -621,12 +619,16 @@ class DataUtil {
 			Constant.typeId.bookmark,
 		];
 	
-		let items = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).filter((it: any) => {
-			if (skip.includes(it.id)) {
-				return false;
-			};
-			return config.debug.ho ? true : !it.isHidden;
-		});
+		let items: any[] = [];
+
+		if (!withDefault) {
+			items = items.concat(dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).filter((it: any) => {
+				if (skip.includes(it.id)) {
+					return false;
+				};
+				return config.debug.ho ? true : !it.isHidden;
+			}));
+		};
 
 		if (withBookmark && !bookmark._empty_) {
 			items.unshift(bookmark);
