@@ -191,7 +191,7 @@
 		"featured": "featuredRelations",
 		"dataview": "dataview",
 		"type": "type",
-		"footer": "footer"
+		"header": "header"
 	},
 
 	"size": {
