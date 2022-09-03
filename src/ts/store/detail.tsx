@@ -150,8 +150,8 @@ class DetailStore {
 		} else
 		if (object.type == Constant.typeId.relation) {
 			object.relationFormat = Number(object.relationFormat) || I.RelationType.LongText;
-			//object.isReadonlyRelation = Boolean(object.relationReadonly);
-			//object.isReadonlyValue = Boolean(object.isReadonly);
+			object.isReadonlyRelation = Boolean(object.isReadonly);
+			//object.isReadonlyValue = Boolean(object.readonlyValue);
 			object.scope = Number(object.scope) || I.RelationScope.Object;
 			object.format = object.relationFormat;
 			object.objectTypes = object.relationFormatObjectTypes || [];
