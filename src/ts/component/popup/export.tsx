@@ -43,7 +43,14 @@ const PopupExport = observer(class PopupExport extends React.Component<Props, {}
 						<div key={i} className="row">
 							<div className="name">{item.name}</div>
 							<div className="value">
-								<Switch className="big" value={this[item.id]} onChange={(e: any, v: boolean) => { this[item.id] = v; }} />
+								<Switch 
+									className="big" 
+									value={this[item.id]} 
+									onChange={(e: any, v: boolean) => { 
+										this[item.id] = v; 
+										this.save();
+									}} 
+								/>
 							</div>
 						</div>
 					))}
@@ -86,7 +93,7 @@ const PopupExport = observer(class PopupExport extends React.Component<Props, {}
 	};
 
 	init () {
-		const options = Storage.get('export');
+		const options = Storage.get(this.props.getId());
 		if (options) {
 			this.format = options.format;
 			this.zip = options.zip;
@@ -96,7 +103,7 @@ const PopupExport = observer(class PopupExport extends React.Component<Props, {}
 	};
 
 	save () {
-		Storage.set('export', { format: this.format, zip: this.zip, nested: this.nested, files: this.files });
+		Storage.set(this.props.getId(), { format: this.format, zip: this.zip, nested: this.nested, files: this.files }, true);
 	};
 
 	onConfirm (e: any) {
