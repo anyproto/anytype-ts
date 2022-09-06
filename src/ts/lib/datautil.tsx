@@ -1124,12 +1124,16 @@ class DataUtil {
 	};
 
 	isFileType (type: string) {
-		return [ 
+		return this.getFileTypes().includes(type);
+	};
+
+	getFileTypes () {
+		return [
 			Constant.typeId.file, 
 			Constant.typeId.image, 
 			Constant.typeId.audio, 
 			Constant.typeId.video,
-		].includes(type);
+		];
 	};
 
 	getSystemTypes () {
@@ -1137,6 +1141,7 @@ class DataUtil {
 			Constant.typeId.type,
 			Constant.typeId.template,
 			Constant.typeId.relation,
+			Constant.typeId.option,
 		];
 	};
 

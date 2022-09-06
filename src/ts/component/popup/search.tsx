@@ -343,12 +343,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 	load (clear: boolean, callBack?: (value: any) => void) {
 		const { config } = commonStore;
 		const { filter } = this.state;
-		const skipTypes = [
-			Constant.typeId.file,
-			Constant.typeId.image,
-			Constant.typeId.video,
-			Constant.typeId.audio,
-		].concat(DataUtil.getSystemTypes());
+		const skipTypes = [].concat(DataUtil.getFileTypes()).concat(DataUtil.getSystemTypes());
 
 		const filters: any[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },

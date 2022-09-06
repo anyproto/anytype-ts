@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { I, C, Util, analytics, sidebar } from 'Lib';
+import { I, C, Util, analytics, sidebar, DataUtil } from 'Lib';
 import { Header, Graph, Icon, Loader } from 'Component';
 import { blockStore, detailStore } from 'Store';
 import { observer } from 'mobx-react';
@@ -117,17 +117,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 			{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
 			{ 
 				operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, 
-				value: [ 
-					Constant.typeId.relation,
-					Constant.typeId.type,
-					Constant.typeId.template,
-					Constant.typeId.space,
-					
-					Constant.typeId.file,
-					Constant.typeId.image,
-					Constant.typeId.video,
-					Constant.typeId.audio,
-				] 
+				value: [ Constant.typeId.space ].concat(DataUtil.getFileTypes()).concat(DataUtil.getSystemTypes())
 			},
 			{ 
 				operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, 

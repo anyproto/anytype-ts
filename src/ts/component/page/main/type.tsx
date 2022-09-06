@@ -3,7 +3,7 @@ import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
 import { Icon, Header, Footer, Loader, ListObjectPreview, ListObject, Select, Deleted } from 'Component';
 import { I, C, DataUtil, Util, focus, crumbs, Action, analytics } from 'Lib';
-import { commonStore, detailStore, dbStore, menuStore, popupStore, blockStore } from 'Store';
+import { detailStore, dbStore, menuStore, popupStore, blockStore } from 'Store';
 
 import HeadSimple from 'Component/page/head/simple';
 
@@ -25,13 +25,9 @@ const BLOCK_ID_TEMPLATE = 'templates';
 
 const NO_TEMPLATES = [ 
 	Constant.typeId.note, 
-	Constant.typeId.image, 
-	Constant.typeId.file, 
-	Constant.typeId.video, 
-	Constant.typeId.type, 
 	Constant.typeId.set, 
 	Constant.typeId.bookmark,
-];
+].concat(DataUtil.getFileTypes()).concat(DataUtil.getSystemTypes());
 
 const PageMainType = observer(class PageMainType extends React.Component<Props, State> {
 
