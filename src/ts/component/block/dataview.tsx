@@ -360,8 +360,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				vertical: dir > 0 ? I.MenuDirection.Top : I.MenuDirection.Bottom,
 				horizontal: dir > 0 ? I.MenuDirection.Left : I.MenuDirection.Right,
 				data: {
-					command: (url: string, callBack: (message: any) => void) => {
-						C.ObjectCreateBookmark(url, callBack);
+					command: (source: string, callBack: (message: any) => void) => {
+						C.ObjectCreateBookmark({ source }, callBack);
 					}
 				},
 			});

@@ -945,10 +945,10 @@ const ObjectCreateSet = (sources: string[], details: any, templateId: string, ca
 	dispatcher.request(ObjectCreateSet.name, request, callBack);
 };
 
-const ObjectCreateBookmark = (url: string, callBack?: (message: any) => void) => {
+const ObjectCreateBookmark = (details: any, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.CreateBookmark.Request();
 	
-	request.setUrl(url);
+	request.setDetails(Encode.encodeStruct(details));
 
 	dispatcher.request(ObjectCreateBookmark.name, request, callBack);
 };

@@ -159,13 +159,13 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 					case I.RelationType.Tag:
 						value = Relation.getArrayValue(value);
 						if (value.length) {
-							option = relation.selectDict.find(it => it.id == value[0]);
+							option = detailStore.get(Constant.subId.option, value[0]);
 							bgColor = option?.color;
 						};
 						break;
 
 					case I.RelationType.Status:
-						option = relation.selectDict.find(it => it.id == value);
+						option = detailStore.get(Constant.subId.option, value);
 						bgColor = option?.color;
 						break;
 				};
