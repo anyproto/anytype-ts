@@ -43,14 +43,6 @@ jobs:
           ./update.sh ${{secrets.USER}} ${{secrets.TOKEN}} ${{matrix.os}} arm
           ./update.sh ${{secrets.USER}} ${{secrets.TOKEN}} ${{matrix.os}} amd
 
-      - name: Install Snapcraft
-        uses: samuelmeuli/action-snapcraft@v1
-        # Only install Snapcraft on Ubuntu
-        if: startsWith(matrix.os, 'ubuntu')
-        with:
-          # Log in to Snap Store
-          snapcraft_token: ${{ secrets.SNAPCRAFT }}
-
       - name: Build Front
         if: matrix.os == 'macos-latest'
         uses: samuelmeuli/action-electron-builder@v1
