@@ -44,6 +44,7 @@
 			background-color: $colorHover; 
 		}
 
+		.cellHead.last::after, .cellHead.active::after { background: none; }
 		.cellHead.last:hover, .cellHead.last.active {
 			.icon.plus { background-image: url('~img/icon/plus/menu1.svg'); }
 		}
