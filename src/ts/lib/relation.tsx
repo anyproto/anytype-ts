@@ -347,12 +347,21 @@ class Relation {
 	};
 
 	getArrayValue (value: any): string[] {
-		value = Util.objectCopy(value || []);
+		value = Util.objectCopy(value);
+
 		if ('object' != typeof(value)) {
-			value = value ? [ value ] : [];
+			value = !this.isEmpty(value) ? [ value ] : [];
+		} else 
+		if (!Util.objectLength(value)) {
+			value = [];
 		};
-		value = value.filter(it => it);
+
+		value = value.filter(it => !this.isEmpty(it));
 		return Util.arrayUnique(value);
+	};
+
+	isEmpty (v: any) {
+		return (v === null) || (v === undefined) || (v === '');
 	};
 
 	getUrlScheme (type: I.RelationType, value: any): string {

@@ -146,7 +146,7 @@ class Select extends React.Component<Props, State> {
 				onSelect: (e: any, item: any) => {
 					let { value } = this.state;
 					
-					if (item.id) {
+					if (item.id !== '') {
 						if (isMultiple) {
 							value = value.includes(item.id) ? value.filter(it => it != item.id) : [ ...value, item.id ];
 						} else {

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { I, Action, keyboard } from 'Lib';
+import { I, Action, keyboard, Storage } from 'Lib';
 import { Title, Select, Button, Switch } from 'Component';
 import { commonStore } from 'Store';
 import { observer } from 'mobx-react';
@@ -26,6 +26,8 @@ const PopupExport = observer(class PopupExport extends React.Component<Props, {}
 			{ id: I.ExportFormat.Markdown, name: 'Markdown' },
 			(config.experimental ? { id: I.ExportFormat.Html, name: 'HTML' } : null),
 		];
+
+		this.init();
 
 		let options = null;
 		if (this.format == I.ExportFormat.Markdown) {
@@ -62,6 +64,7 @@ const PopupExport = observer(class PopupExport extends React.Component<Props, {}
 							options={formats} 
 							onChange={(v: any) => { 
 								this.format = v; 
+								this.save();
 								this.forceUpdate();
 							}} 
 						/>
@@ -76,6 +79,24 @@ const PopupExport = observer(class PopupExport extends React.Component<Props, {}
 				</div>
 			</React.Fragment>
 		);
+	};
+
+	componentDidMount () {
+		this.init();
+	};
+
+	init () {
+		const options = Storage.get('export');
+		if (options) {
+			this.format = options.format;
+			this.zip = options.zip;
+			this.nested = options.nested;
+			this.files = options.files;
+		};
+	};
+
+	save () {
+		Storage.set('export', { format: this.format, zip: this.zip, nested: this.nested, files: this.files });
 	};
 
 	onConfirm (e: any) {
@@ -93,6 +114,7 @@ const PopupExport = observer(class PopupExport extends React.Component<Props, {}
 				break;
 		};
 		
+		this.save();
 		close();
 	};
 
