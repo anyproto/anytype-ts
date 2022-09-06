@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { I, Action, keyboard } from 'Lib';
+import { I, Action, keyboard, Storage } from 'Lib';
 import { Title, Select, Button, Switch } from 'Component';
 import { commonStore } from 'Store';
 import { observer } from 'mobx-react';
@@ -27,6 +27,8 @@ const PopupExport = observer(class PopupExport extends React.Component<Props, {}
 			(config.experimental ? { id: I.ExportFormat.Html, name: 'HTML' } : null),
 		];
 
+		this.init();
+
 		let options = null;
 		if (this.format == I.ExportFormat.Markdown) {
 			const items = [
@@ -41,7 +43,14 @@ const PopupExport = observer(class PopupExport extends React.Component<Props, {}
 						<div key={i} className="row">
 							<div className="name">{item.name}</div>
 							<div className="value">
-								<Switch className="big" value={this[item.id]} onChange={(e: any, v: boolean) => { this[item.id] = v; }} />
+								<Switch 
+									className="big" 
+									value={this[item.id]} 
+									onChange={(e: any, v: boolean) => { 
+										this[item.id] = v; 
+										this.save();
+									}} 
+								/>
 							</div>
 						</div>
 					))}
@@ -62,6 +71,7 @@ const PopupExport = observer(class PopupExport extends React.Component<Props, {}
 							options={formats} 
 							onChange={(v: any) => { 
 								this.format = v; 
+								this.save();
 								this.forceUpdate();
 							}} 
 						/>
@@ -76,6 +86,24 @@ const PopupExport = observer(class PopupExport extends React.Component<Props, {}
 				</div>
 			</React.Fragment>
 		);
+	};
+
+	componentDidMount () {
+		this.init();
+	};
+
+	init () {
+		const options = Storage.get(this.props.getId());
+		if (options) {
+			this.format = options.format;
+			this.zip = options.zip;
+			this.nested = options.nested;
+			this.files = options.files;
+		};
+	};
+
+	save () {
+		Storage.set(this.props.getId(), { format: this.format, zip: this.zip, nested: this.nested, files: this.files }, true);
 	};
 
 	onConfirm (e: any) {
@@ -93,6 +121,7 @@ const PopupExport = observer(class PopupExport extends React.Component<Props, {}
 				break;
 		};
 		
+		this.save();
 		close();
 	};
 

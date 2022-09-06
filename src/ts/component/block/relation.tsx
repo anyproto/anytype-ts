@@ -98,6 +98,7 @@ const BlockRelation = observer(class BlockRelation extends React.Component<Props
 
 	onMenu (e: any) {
 		const { rootId, block, readonly } = this.props;
+		const relations = dbStore.getRelations(rootId, rootId);
 
 		if (readonly) {
 			return;
@@ -111,7 +112,7 @@ const BlockRelation = observer(class BlockRelation extends React.Component<Props
 				blockId: block.id,
 				filter: '',
 				menuIdEdit: 'blockRelationEdit',
-				skipIds: [],
+				skipIds: relations.map(it => it.relationKey),
 				ref: 'block',
 				addCommand: (rootId: string, blockId: string, relationId: string) => {
 					const relation = dbStore.getRelationById(relationId);
