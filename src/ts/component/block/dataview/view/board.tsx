@@ -354,7 +354,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 		const node = $(ReactDOM.findDOMNode(this));
 
 		$('body').removeClass('grab');
-		$(window).off('dragend.board drag.board');
+		$(window).off('dragend.board drag.board').trigger('mouseup.selection');
 
 		node.find('.isClone').remove();
 		node.find('.isDragging').removeClass('isDragging');
