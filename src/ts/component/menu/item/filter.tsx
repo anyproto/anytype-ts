@@ -78,8 +78,7 @@ const MenuItemFilter = observer(class MenuItemFilter extends React.Component<Pro
 
 			case I.RelationType.Tag:
 			case I.RelationType.Status:
-				list = Relation.getArrayValue(value).map(id => detailStore.get(Constant.subId.option, id, Constant.optionRelationKeys));
-				list = list.filter(it => !it._empty_);
+				list = Relation.getOptions(value);
 
 				if (list.length) {
 					v = (

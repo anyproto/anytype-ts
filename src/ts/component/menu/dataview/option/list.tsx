@@ -34,7 +34,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 		const { filter, canAdd, noFilter } = data;
 		const relation = data.relation.get();
 		const value = data.value || [];
-		const items = this.getItems(true);
+		const items = this.getItems();
 		const placeholder = canAdd ? 'Filter or create options...' : 'Filter options...';
 
 		if (!this.cache) {
@@ -132,7 +132,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 	};
 	
 	componentDidMount () {
-		const items = this.getItems(true);
+		const items = this.getItems();
 
 		this._isMounted = true;
 		this.focus();
@@ -192,7 +192,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 	};
 
 	onKeyDown (e: any) {
-		let item = this.getItems(false)[this.n];
+		let item = this.getItems()[this.n];
 		let ret = false;
 
 		keyboard.shortcut('arrowright', e, (pressed: string) => {
@@ -264,7 +264,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 			return;
 		};
 
-		const items = this.getItems(false);
+		const items = this.getItems();
 		const match = items.find(it => it.text == option.text);
 
 		if (match) {
@@ -317,7 +317,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 		});
 	};
 
-	getItems (withSections: boolean): any[] {
+	getItems (): any[] {
 		const { param } = this.props;
 		const { data } = param;
 		const { canAdd, filterMapper } = data;
@@ -353,7 +353,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 		const { getId, position, param } = this.props;
 		const { data } = param;
 		const { noFilter } = data;
-		const items = this.getItems(true);
+		const items = this.getItems();
 		const obj = $(`#${getId()} .content`);
 		const offset = noFilter ? 16 : 58;
 		const height = Math.max(HEIGHT + offset, Math.min(360, items.length * HEIGHT + offset));

@@ -286,14 +286,7 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 		const { relation, getRecord, index } = this.props;
 		const record = getRecord(index);
 
-		if (!relation || !record) {
-			return [];
-		};
-
-		let value: any[] = Relation.getArrayValue(record[relation.relationKey]);
-		value = value.map(id => detailStore.get(Constant.subId.option, id, Constant.optionRelationKeys));
-		value = value.filter(it => !it._empty_);
-		return value;
+		return record && relation ? Relation.getOptions(record[relation.relationKey]) : [];
 	};
 
 	getItemIds (): string[] {

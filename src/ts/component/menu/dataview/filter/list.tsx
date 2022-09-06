@@ -322,7 +322,7 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<Pro
 		const { data } = param;
 		const { rootId, blockId, getView } = data;
 
-		return Relation.getOptions(rootId, blockId, getView());
+		return Relation.getFilterOptions(rootId, blockId, getView());
 	};
 
 	onScroll ({ clientHeight, scrollHeight, scrollTop }) {

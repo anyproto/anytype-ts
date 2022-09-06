@@ -229,7 +229,7 @@ const MenuSort = observer(class MenuSort extends React.Component<Props, {}> {
 		const { data } = param;
 		const { rootId, blockId, getView } = data;
 
-		return Relation.getOptions(rootId, blockId, getView());
+		return Relation.getFilterOptions(rootId, blockId, getView());
 	};
 
 	onOver (e: any, item: any) {

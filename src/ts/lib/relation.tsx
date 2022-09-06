@@ -1,5 +1,5 @@
 import { I, DataUtil, Util, FileUtil, translate, Dataview } from 'Lib';
-import { dbStore, commonStore } from 'Store';
+import { dbStore, commonStore, detailStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -238,7 +238,14 @@ class Relation {
 		return null;
 	};
 
-	getOptions (rootId: string, blockId: string, view: I.View) {
+	getOptions (value: any[]) {
+		value = this.getArrayValue(value);
+		value = value.map(id => detailStore.get(Constant.subId.option, id, Constant.optionRelationKeys));
+		value = value.filter(it => !it._empty_);
+		return value;
+	};
+
+	getFilterOptions (rootId: string, blockId: string, view: I.View) {
 		let relations: any[] = Dataview.viewGetRelations(rootId, blockId, view).filter((it: I.ViewRelation) => { 
 			const relation = dbStore.getRelationByKey(it.relationKey);
 			return relation && (relation.format != I.RelationType.File) && (it.relationKey != Constant.relationKey.done);
