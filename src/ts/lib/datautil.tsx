@@ -1264,6 +1264,11 @@ class DataUtil {
 		const filters = view.filters.concat([
 			{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
 		]);
+		const sorts = view.sorts.map((it: I.Sort) => {
+			const relation = view.getRelation(it.relationKey);
+			it.includeTime = relation.includeTime;
+			return it;
+		});
 
 		if (viewChange) {
 			meta.viewId = id;
@@ -1273,7 +1278,7 @@ class DataUtil {
 		};
 
 		dbStore.metaSet(subId, '', meta);
-		C.ObjectSearchSubscribe(subId, filters, view.sorts, keys, block.content.sources, offset, limit, true, '', '', false);
+		C.ObjectSearchSubscribe(subId, filters, sorts, keys, block.content.sources, offset, limit, true, '', '', false);
 	};
 
 	coverIsImage (type: I.CoverType) {
