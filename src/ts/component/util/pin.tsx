@@ -120,8 +120,10 @@ class Pin extends React.Component<Props, {}> {
 		if (!value || (value == sha1(pin))) {
 			onSuccess(pin);
 		} else {
+			this.n = 1;
 			this.clear();
 			this.init();
+			this.focus();
 
 			onError();
 		};
