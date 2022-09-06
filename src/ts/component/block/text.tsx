@@ -920,8 +920,6 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 				const reg = new RegExp(`^(${k} )`);
 				const style = Markdown[k];
 
-				console.log(style, reg);
-
 				if ((style == I.TextStyle.Numbered) && block.isTextHeader()) {
 					continue;
 				};
