@@ -163,7 +163,7 @@
     /* BlockType */
 
     .block.blockType {
-        .item { border-color: $colorLineSecondary; }
+        .item { border-color: $colorLineSecondary; color: $colorSecondary; }
         .item.hover { background: $colorHover; }
     }
 

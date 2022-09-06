@@ -78,7 +78,6 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		const { text, marks, style, checked, color, iconEmoji, iconImage } = content;
 		const { theme } = commonStore;
 		const root = blockStore.getLeaf(rootId, rootId);
-		const header = blockStore.getMapElement(rootId, Constant.blockId.header);
 
 		let marker: any = null;
 		let placeholder = translate('placeholderBlock');
@@ -90,13 +89,6 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		};
 		if (readonly) {
 			cv.push('isReadonly');
-		};
-
-		if ((index <= 1) && blockStore.checkBlockTypeExists(rootId)) {
-			const object = detailStore.get(rootId, rootId, [ 'type' ], true);
-			const type = dbStore.getObjectType(object.type);
-
-			placeholder = `Type something to proceed with ${type?.name} type`;
 		};
 
 		// Subscriptions

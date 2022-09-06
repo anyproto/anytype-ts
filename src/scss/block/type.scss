@@ -10,7 +10,7 @@
 
 		.item { 
 			position: relative; padding: 4px 8px; cursor: pointer; border-radius: 2px; border-radius: 6px; border: 1px solid $colorBorderDark; 
-			display: inline-block; display: flex; align-items: center; gap: 0px 4px;
+			display: inline-block; display: flex; align-items: center; gap: 0px 4px; color: $colorDarkGrey;
 		}
 		.item.hover { background: $colorHover; }
 
