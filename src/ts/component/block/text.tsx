@@ -920,11 +920,13 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 				const reg = new RegExp(`^(${k} )`);
 				const style = Markdown[k];
 
+				console.log(style, reg);
+
 				if ((style == I.TextStyle.Numbered) && block.isTextHeader()) {
 					continue;
 				};
 
-				if (value.match(reg) && (content.style != style)) {
+				if (value.match(reg)) {
 					value = value.replace(reg, (s: string, p: string) => { return s.replace(p, ''); });
 
 					if (style == I.TextStyle.Code) {
@@ -932,6 +934,8 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 					} else {
 						this.marks = Mark.adjust(this.marks, 0, -(Length[style] + 1));
 					};
+
+					this.setValue(value);
 
 					DataUtil.blockSetText(rootId, id, value, this.marks, true, () => {
 						C.BlockListTurnInto(rootId, [ id ], style);
