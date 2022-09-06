@@ -547,7 +547,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 			keyboard.shortcut('escape', e, (pressed: string) => {
 				if (!menuOpen) {
-					selection.clear(false);
+					selection.clear();
 				};
 			});
 
@@ -610,7 +610,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 							dataset: dataset,
 						},
 						onClose: () => {
-							selection.clear(true);
+							selection.clear();
 							focus.apply();
 						}
 					});
@@ -637,7 +637,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 				return;
 			};
 
-			selection.clear(false);
+			selection.clear();
 			focus.restore();
 			focus.apply();
 		});
@@ -648,7 +648,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 				return;
 			};
 
-			selection.clear(false);
+			selection.clear();
 			focus.restore();
 
 			const focused = focus.state.focused || Constant.blockId.title;
@@ -753,7 +753,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 						dataset: dataset,
 					},
 					onClose: () => {
-						selection.clear(true);
+						selection.clear();
 						focus.set(block.id, range);
 						focus.apply();
 					}

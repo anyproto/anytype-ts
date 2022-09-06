@@ -356,7 +356,6 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 		};
 		
 		selection.preventSelect(true);
-		selection.preventClear(true);
 
 		const ids: string[] = DataUtil.selectionGet(block.id, false, this.props);
 		onDragStart(e, I.DropType.Block, ids, this);
@@ -396,7 +395,7 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 				blockRemove: blockRemove
 			},
 			onClose: () => {
-				selection.clear(true);
+				selection.clear();
 				focus.apply();
 			}
 		});
@@ -422,7 +421,7 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 		
 		if (selection) {
 			selection.preventSelect(true);
-			selection.clear(true);
+			selection.clear();
 		};
 
 		this.unbind();

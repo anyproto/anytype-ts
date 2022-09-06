@@ -268,7 +268,7 @@ class DataUtil {
 		
 		let ids: string[] = selection.get(I.SelectType.Block, withChildren);
 		if (id && ids.indexOf(id) < 0) {
-			selection.clear(true);
+			selection.clear();
 			selection.set(I.SelectType.Block, [ id ]);
 			ids = selection.get(I.SelectType.Block, withChildren);
 		};

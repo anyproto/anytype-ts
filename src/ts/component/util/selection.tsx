@@ -81,13 +81,6 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		this.isSelectionPrevented = v;
 	};
 	
-	preventClear (v: boolean) {
-		this.isClearPrevented = v;
-
-		console.log('preventClear', v);
-		console.trace();
-	};
-	
 	scrollToElement (id: string, dir: number) {
 		const isPopup = keyboard.isPopup();
 
@@ -456,16 +449,8 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	};
 	
 	clear (force: false) {
-		if (force) {
-			this.preventClear(false);
-		};
-
 		if (!this._isMounted || this.isClearPrevented) {
 			return;
-		};
-
-		if (force) {
-			this.preventClear(false);
 		};
 
 		this.initIds();

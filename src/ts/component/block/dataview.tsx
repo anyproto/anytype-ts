@@ -182,7 +182,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			keyboard.shortcut('backspace, delete', e, (pressed: string) => {
 				C.ObjectListSetIsArchived(ids, true);
 				
-				selection.clear(false);
+				selection.clear();
 				analytics.event('MoveToBin', { count: length });
 			});
 		};
@@ -500,7 +500,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				const { x, y } = keyboard.mouse.page;
 				return { width: 0, height: 0, x: x + 4, y: y };
 			},
-			onClose: () => { selection.clear(true); },
+			onClose: () => { selection.clear(); },
 			data: {
 				objectIds: ids,
 				subId,

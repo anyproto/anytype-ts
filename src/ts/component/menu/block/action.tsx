@@ -401,7 +401,6 @@ class MenuBlockAction extends React.Component<Props, State> {
 		
 		const { content, align } = block;
 		const { color, bgColor } = content;
-		const types = DataUtil.getObjectTypesForNewObject({ withSet: true }).map((it: I.ObjectType) => { return it.id; }); 
 
 		setActive(item, false);
 
@@ -414,6 +413,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 		const el = node.find('#item-' + item.id);
 		const offsetX = node.outerWidth();
 		
+		let types: string[] = [];
 		let ids: string[] = [];
 		let filters = [];
 		let menuId = '';
@@ -470,6 +470,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 				break;
 
 			case 'turnObject':
+				types = DataUtil.getObjectTypesForNewObject({ withSet: true }).map(it => it.id); 
 				menuId = 'searchObject';
 				menuParam.className = 'single';
 
@@ -497,6 +498,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 				break;
 
 			case 'move':
+				types = DataUtil.getObjectTypesForNewObject().map(it => it.id); 
 				menuId = 'searchObject';
 
 				filters = [
