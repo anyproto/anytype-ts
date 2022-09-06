@@ -108,6 +108,7 @@
 
         .cellHead .resize .line { background: $colorLineSecondary; }
         .cellHead.isDragging { background: $colorHover; }
+		.cellHead.isDragging::after { background-color: $colorHover; }
 
         .viewItem.viewGrid,
 		.viewItem.viewList {

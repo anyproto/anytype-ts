@@ -265,16 +265,22 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 		const { rootId, block, getView } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
 		const view = getView();
+		const width = this.checkWidth(e.pageX - this.ox);
+		const size = Constant.size.dataview.cell;
+		const el = node.find(`#${Relation.cellId('head', relationKey, '')}`);
+
 		const relations = view.relations.filter((it: any) => { 
 			return it.isVisible && dbStore.getRelation(rootId, block.id, it.relationKey); 
 		});
-		const idx = relations.findIndex(it => it.relationKey == relationKey);
-		const el = node.find(`#${Relation.cellId('head', relationKey, '')}`);
-		const size = Constant.size.dataview.cell;
-		const width = this.checkWidth(e.pageX - this.ox);
+		const columns = relations.map((it: any) => {
+			if (it.relationKey == relationKey) {
+				it.width = width;
+			};
+			return it.width + 'px';
+		}).concat([ 'auto' ]).join(' ');
 
-		el.css({ width });
-		node.find(`.cell.index${idx}`).css({ width });
+		node.find('.rowHead').css({ gridTemplateColumns: columns });
+		node.find('.row > .selectable').css({ gridTemplateColumns: columns });
 
 		width <= size.icon ? el.addClass('small') : el.removeClass('small');
 		this.resizeLast();

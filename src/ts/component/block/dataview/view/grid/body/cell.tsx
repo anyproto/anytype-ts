@@ -50,7 +50,6 @@ const BodyCell = observer(class BodyCell extends React.Component<Props, {}> {
 				id={id} 
 				className={cn.join(' ')} 
 				onClick={(e: any) => { onCellClick(e, relation.relationKey, index); }} 
-				style={{ width: width }}
 			>
 				<Cell 
 					ref={(ref: any) => { onRef(ref, id); }} 

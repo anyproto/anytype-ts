@@ -30,9 +30,9 @@
 			.icon.plus { margin: 0px; }
 		}
 
-		.cellHead.isDragging { border: 0px; background: rgba(255,255,255,0.75);  }
+		.cellHead.isDragging { border: 0px; background: rgba(255,255,255,0.75); }
 		.cellHead.isDragging::after {
-			content: ""; display: block; width: 100%; height: calc(100% + 2px); position: absolute; left: 0px; top: 0px; z-index: 0; pointer-events: none;
+			content: ""; display: block; width: 100%; height: 100%; position: absolute; left: 0px; top: 0px; z-index: 0; pointer-events: none;
 			background-color: rgba(255,255,255,0.75);
 		}
 		.cellHead.isDragging {
@@ -40,7 +40,7 @@
 		}
 
 		.cellHead:hover::after, .cellHead.active::after { 
-			content: ""; display: block; width: 100%; height: calc(100% + 2px); position: absolute; left: 0px; top: 0px; z-index: 0; pointer-events: none;
+			content: ""; display: block; width: 100%; height: 100%; position: absolute; left: 0px; top: 0px; z-index: 0; pointer-events: none;
 			background-color: $colorHover; 
 		}
 
@@ -51,7 +51,7 @@
 
         .viewItem.viewGrid { display: table; width: 100%; position: relative; box-shadow: 0px -1px #e0ded2 inset; }
 		.viewItem.viewGrid {
-			.rowHead { display: block; white-space: nowrap; width: calc(100% - 4px); margin-left: 2px; height: 46px; }
+			.rowHead { display: grid; white-space: nowrap; width: calc(100% - 4px); margin-left: 2px; height: 46px; }
 
 			.icon.checkbox { vertical-align: top; }
 			.icon.edit { width: 36px; height: 48px; position: absolute; right: 0px; top: 0px; }
@@ -69,6 +69,8 @@
 					.icon.edit { display: block; }
 				}
 			}
+
+			.row > .selectable { display: grid; }
 
 			.cellContent { width: 100%; overflow: hidden; height: 20px; line-height: 20px; }
 			.cellContent {
