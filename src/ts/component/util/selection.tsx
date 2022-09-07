@@ -27,7 +27,6 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 
 	isSelecting: boolean = false;
 	isSelectionPrevented: boolean = false;
-	isClearPrevented: boolean = false;
 	
 	constructor (props: any) {
 		super(props);
@@ -237,9 +236,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 
 		if (!this.moved) {
 			if (!keyboard.isShift() && !keyboard.isAlt() && !keyboard.isCtrlOrMeta()) {
-				if (!this.isClearPrevented) {
-					this.initIds();
-				};
+				this.initIds();
 				this.renderSelection();
 			} else {
 				let needCheck = false;
@@ -449,8 +446,8 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		this.unbindMouse();
 	};
 	
-	clear (force: false) {
-		if (!this._isMounted || this.isClearPrevented) {
+	clear () {
+		if (!this._isMounted) {
 			return;
 		};
 
