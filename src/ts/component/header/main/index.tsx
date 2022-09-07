@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { I } from 'Lib';
+import { I, DataUtil } from 'Lib';
 import { Icon } from 'Component';
 import { popupStore } from 'Store';
 import { observer } from 'mobx-react';
@@ -36,6 +36,10 @@ const HeaderMainIndex = observer(class HeaderMainIndex extends React.Component<P
 	onSettings (e: any) {
 		popupStore.open('settings', {});
 	};
+
+	componentDidMount () {
+		DataUtil.setWindowTitleText('Main | Anytype')
+	}
 
 });
 

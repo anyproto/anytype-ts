@@ -1318,6 +1318,16 @@ class DataUtil {
 		blockStore.updateContent(rootId, blockId, block.content);
 	};
 
+	setWindowTitle (rootId: string) {
+		const object = detailStore.get(rootId, rootId, []);
+		const name = object.name ? object.name + ' | Anytype' : 'Anytype';
+		this.setWindowTitleText(name);
+	}
+
+	setWindowTitleText (title: string) {
+		document.title = title
+	}
+
 };
 
 export default new DataUtil();
