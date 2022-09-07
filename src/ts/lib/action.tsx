@@ -12,18 +12,15 @@ class Action {
 		};
 
 		const onClose = () => {
-			const blocks = blockStore.getBlocks(rootId, (it: I.Block) => { return it.isDataview(); });
+			const blocks = blockStore.getBlocks(rootId, it => it.isDataview());
 
 			for (let block of blocks) {
-				dbStore.relationsClear(rootId, block.id);
-				dbStore.viewsClear(rootId, block.id);
-
-				this.dbClear(dbStore.getSubId(rootId, block.id));
+				this.dbClearBlock(rootId, block.id);
 			};
 
+			this.dbClearRoot(rootId);
+
 			blockStore.clear(rootId);
-			detailStore.clear(rootId);
-			dbStore.relationsClear(rootId, rootId);
 			authStore.threadRemove(rootId);
 		};
 
@@ -34,10 +31,28 @@ class Action {
 		};
 	};
 
-	dbClear (subId: string) {
+	dbClearRoot (rootId: string) {
+		if (!rootId) {
+			return;
+		};
+
+		dbStore.metaClear(rootId, '');
+		dbStore.recordsClear(rootId, '');
+
+		detailStore.clear(rootId);
+	};
+
+	dbClearBlock (rootId: string, blockId: string) {
+		if (!rootId || !blockId) {
+			return;
+		};
+
+		const subId = dbStore.getSubId(rootId, blockId);
+
 		dbStore.metaClear(subId, '');
 		dbStore.recordsClear(subId, '');
 		dbStore.recordsClear(subId + '/dep', '');
+		dbStore.viewsClear(rootId, blockId);
 
 		detailStore.clear(subId);
 

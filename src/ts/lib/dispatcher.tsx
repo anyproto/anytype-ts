@@ -1,5 +1,5 @@
 import { authStore, commonStore, blockStore, detailStore, dbStore } from 'Store';
-import { Util, I, M, Decode, translate, analytics, Response, Mapper, crumbs, Renderer } from 'Lib';
+import { Util, I, M, Decode, translate, analytics, Response, Mapper, crumbs, Renderer, Action } from 'Lib';
 import * as Sentry from '@sentry/browser';
 import arrayMove from 'array-move';
 
@@ -247,10 +247,7 @@ class Dispatcher {
 						};
 
 						if (block.type == I.BlockType.Dataview) {
-							dbStore.relationsClear(rootId, blockId);
-							dbStore.viewsClear(rootId, blockId);
-							dbStore.metaClear(rootId, blockId);
-							dbStore.recordsClear(rootId, blockId);
+							Action.dbClearBlock(rootId, blockId);
 						};
 
 						blockStore.delete(rootId, blockId);
