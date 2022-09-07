@@ -620,6 +620,7 @@ class App extends React.Component<Props, State> {
 	onCommand (e: any, key: string) {
 		const rootId = keyboard.getRootId();
 		const logPath = window.Electron.logPath;
+		const tmpPath = window.Electron.tmpPath;
 		const options: any = {};
 
 		switch (key) {
@@ -684,7 +685,13 @@ class App extends React.Component<Props, State> {
 				break;
 
 			case 'debugSync':
-				C.DebugSync(100);
+				C.DebugSync(100, (message: any) => {
+					if (!message.error.code) {
+						window.Electron.fileWrite('debug-sync.json', JSON.stringify(message, null, 5), 'text');
+
+						Renderer.send('pathOpen', tmpPath);
+					};
+				});
 				break;
 
 			case 'debugTree':

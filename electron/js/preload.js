@@ -36,6 +36,15 @@ contextBridge.exposeInMainWorld('Electron', {
 		return { buffer, type };
 	},
 
+	fileWrite: (name, data, options) => {
+		name = String(name || 'temp');
+		name = name.replace('..', '');
+
+		const fp = path.join(tmpPath, name);
+		fs.writeFileSync(fp, data, options);
+		return fp;
+	},
+
 	on: (event, callBack) => ipcRenderer.on(event, callBack),
 	removeAllListeners: (event) => ipcRenderer.removeAllListeners(event),
 	Api: (id, cmd, args) => ipcRenderer.invoke('Api', id, cmd, args),
