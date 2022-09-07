@@ -274,20 +274,26 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 
 	onTemplateAdd () {
 		const rootId = this.getRootId();
+		const details: any = { 
+			type: Constant.typeId.template, 
+			targetObjectType: rootId,
+		};
 
-		C.BlockDataviewRecordCreate(rootId, BLOCK_ID_TEMPLATE, { targetObjectType: rootId }, '', (message) => {
+		C.ObjectCreate(details, [], '', (message) => {
 			if (message.error.code) {
 				return;
 			};
 
+			const object = detailStore.get(rootId, message.objectId, []);
+
 			focus.clear(true);
-			dbStore.recordAdd(rootId, BLOCK_ID_TEMPLATE, message.record.id, 1);
+			dbStore.recordAdd(rootId, BLOCK_ID_TEMPLATE, object.id, 1);
 			analytics.event('CreateTemplate', { objectType: rootId });
 
-			DataUtil.objectOpenPopup(message.record, {
+			DataUtil.objectOpenPopup(object, {
 				onClose: () => {
 					if (this.refListPreview) {
-						this.refListPreview.updateItem(message.record.id);
+						this.refListPreview.updateItem(object.id);
 					};
 				}
 			});

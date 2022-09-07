@@ -194,28 +194,40 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 		const group = dbStore.getGroup(rootId, block.id, groupId);
 		const object = detailStore.get(rootId, rootId, [ 'setOf' ], true);
 		const setOf = object.setOf || [];
-		const details: any = {};
 		const subId = this.getSubId(groupId);
+		const types = Relation.getSetOfObjects(rootId, rootId, Constant.typeId.type);
+		const relations = Relation.getSetOfObjects(rootId, rootId, Constant.typeId.relation);
+		const details: any = {};
 
 		details[view.groupRelationKey] = group.value;
 
+		if (types.length) {
+			details.type = types[0].id
+		};
+
+		if (relations.length) {
+			relations.forEach((it: any) => {
+				details[it.id] = Relation.formatValue(it, null, true);
+			});
+		};
+
 		const create = (template: any) => {
-			C.BlockDataviewRecordCreate(rootId, block.id, details, template?.id, (message: any) => {
+			C.ObjectCreate(details, [], template?.id, (message: any) => {
 				if (message.error.code) {
 					return;
 				};
 
-				const newRecord = message.record;
+				const object = detailStore.get(subId, message.objectId, []);
 				const records = dbStore.getRecords(subId, '');
-				const oldIndex = records.findIndex(it => it == newRecord.id);
+				const oldIndex = records.findIndex(it => it == object.id);
 				const newIndex = dir > 0 ? records.length - 1 : 0;
 
 				dbStore.recordsSet(subId, '', arrayMove(records, oldIndex, newIndex));
 
 				analytics.event('CreateObject', {
 					route: 'Set',
-					objectType: newRecord.type,
-					layout: newRecord.layout,
+					objectType: object.type,
+					layout: object.layout,
 					template: template ? (template.templateIsBundled ? template.id : 'custom') : '',
 				});
 			});

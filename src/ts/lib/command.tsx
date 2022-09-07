@@ -806,16 +806,6 @@ const BlockDataviewObjectOrderUpdate = (contextId: string, blockId: string, orde
 	dispatcher.request(BlockDataviewObjectOrderUpdate.name, request, callBack);
 };
 
-const BlockDataviewRecordCreate = (contextId: string, blockId: string, record: any, templateId: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.BlockDataviewRecord.Create.Request();
-	
-	request.setContextid(contextId);
-	request.setBlockid(blockId);
-	request.setRecord(Encode.encodeStruct(record));
-	request.setTemplateid(templateId);
-
-	dispatcher.request(BlockDataviewRecordCreate.name, request, callBack);
-};
 
 const BlockDataviewRelationListAvailable = (contextId: string, blockId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockDataview.Relation.ListAvailable.Request();
@@ -926,11 +916,12 @@ const ObjectTypeRelationRemove = (objectTypeId: string, relationId: string, call
 
 // ---------------------- OBJECT ---------------------- //
 
-const ObjectCreate = (details: any, flags: I.ObjectFlag[], callBack?: (message: any) => void) => {
+const ObjectCreate = (details: any, flags: I.ObjectFlag[], templateId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.Create.Request();
 	
 	request.setDetails(Encode.encodeStruct(details));
 	request.setInternalflagsList(flags.map(Mapper.To.InternalFlag));
+	request.setTemplateid(templateId);
 
 	dispatcher.request(ObjectCreate.name, request, callBack);
 };
@@ -1525,7 +1516,6 @@ export {
 	BlockDataviewRelationDelete,
 	BlockDataviewRelationListAvailable,
 
-	BlockDataviewRecordCreate,
 	BlockDataviewSetSource,
 
 	HistoryGetVersions,	

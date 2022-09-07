@@ -387,6 +387,24 @@ class Relation {
 		};
 		return ret;
 	};
+
+	getSetOfObjects (rootId: string, objectId: string, typeId: string) {
+		const object = detailStore.get(rootId, objectId, [ 'setOf' ]);
+		const setOf = this.getArrayValue(object.setOf);
+		const ret = [];
+
+		setOf.forEach((id: string) => {
+			let el = detailStore.get(Constant.subId.type, id, []);
+			if (el._empty_) {
+				el = detailStore.get(Constant.subId.relation, id, []);
+			};
+			if (!el._empty_) {
+				ret.push(el);
+			};
+		});
+
+		return ret.filter(it => typeId == it.type);
+	};
 	
 };
 

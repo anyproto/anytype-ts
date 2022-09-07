@@ -222,12 +222,6 @@ const BlockDataviewViewCreate = (response: any) => {
 	};
 };
 
-const BlockDataviewRecordCreate = (response: any) => {
-	return {
-		record: Mapper.From.Record(response.getRecord()),
-	};
-};
-
 const BlockDataviewRelationListAvailable = (response: any) => {
 	return {
 	};
@@ -402,7 +396,6 @@ export {
 	BlockCreate,
 	BlockDataviewViewCreate,
 
-	BlockDataviewRecordCreate,
 	BlockDataviewRelationListAvailable,
 
 	BlockListDuplicate,

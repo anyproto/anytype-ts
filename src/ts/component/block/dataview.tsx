@@ -295,7 +295,20 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			I.FilterCondition.AllIn,
 		]; 
 
-		const newRecord: any = {};
+		const types = Relation.getSetOfObjects(rootId, rootId, Constant.typeId.type);
+		const relations = Relation.getSetOfObjects(rootId, rootId, Constant.typeId.relation);
+		const details: any = {};
+
+		if (types.length) {
+			details.type = types[0].id
+		};
+
+		if (relations.length) {
+			relations.forEach((it: any) => {
+				details[it.id] = Relation.formatValue(it, null, true);
+			});
+		};
+
 		for (let filter of view.filters) {
 			if (!conditions.includes(filter.condition) || !filter.value) {
 				continue;
@@ -306,26 +319,26 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				continue;
 			};
 
-			newRecord[filter.relationKey] = Relation.formatValue(relation, filter.value, true);
+			details[filter.relationKey] = Relation.formatValue(relation, filter.value, true);
 		};
 
 		this.creating = true;
 
 		const create = (template: any) => {
-			C.BlockDataviewRecordCreate(rootId, block.id, newRecord, template?.id, (message: any) => {
+			C.ObjectCreate(details, [], template?.id, (message: any) => {
 				this.creating = false;
 
 				if (message.error.code) {
 					return;
 				};
 
-				const newRecord = message.record;
 				const records = dbStore.getRecords(subId, '');
-				const oldIndex = records.findIndex(it => it == newRecord.id);
+				const object = detailStore.get(subId, message.objectId, []);
+				const oldIndex = records.findIndex(it => it == object.id);
 				const newIndex = dir > 0 ? records.length - 1 : 0;
 
 				if (oldIndex < 0) {
-					dbStore.recordAdd (subId, '', newRecord.id, dir);
+					dbStore.recordAdd (subId, '', object.id, dir);
 				} else {
 					dbStore.recordsSet(subId, '', arrayMove(records, oldIndex, newIndex));
 				};
@@ -339,8 +352,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 				analytics.event('CreateObject', {
 					route: 'Set',
-					objectType: newRecord.type,
-					layout: newRecord.layout,
+					objectType: object.type,
+					layout: object.layout,
 					template: template ? (template.templateIsBundled ? template.id : 'custom') : '',
 				});
 			});

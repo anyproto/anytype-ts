@@ -55,25 +55,9 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		const type = detailStore.get(Constant.subId.type, object.type, []);
 		const bullet = <div className="bullet" />;
 		const allowedValue = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
-		const setOf = Relation.getArrayValue(object[Constant.relationKey.setOf]);
-	
-		let types = [];
-		let relations = [];
 
-		setOf.forEach((it: string) => {
-			const o = detailStore.get(rootId, it, []);
-			if (o._empty_) {
-				return;
-			};
-
-			if (o.type == Constant.typeId.type) {
-				types.push(o.name);
-			};
-			if (o.type == Constant.typeId.relation) {
-				relations.push(o.name);
-			};
-		});
-
+		let types = Relation.getSetOfObjects(rootId, storeId, Constant.typeId.type).map(it => it.name);
+		let relations = Relation.getSetOfObjects(rootId, storeId, Constant.typeId.relation).map(it => it.name);
 		let setOfString = [];
 		let tl = types.length;
 		let rl = relations.length;
