@@ -130,17 +130,12 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		this.cache.clear();
 		this.idsOnStart = new Map(this.ids);
 
-		if (isPopup) {
-			const popupContainer = $('#popupPage-innerWrap');
-			if (popupContainer.length) {
-				this.containerOffset = popupContainer.offset();
-			};
-		};
-
 		keyboard.disablePreview(true);
 
 		if (isPopup && container.length) {
 			this.containerOffset = container.offset();
+			this.x -= this.containerOffset.left;
+			this.y -= this.containerOffset.top - this.top;
 		};
 
 		nodes.each((i: number, item: any) => {
@@ -189,7 +184,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		};
 
 		const isPopup = keyboard.isPopup();
-		const rect = this.getRect(e.pageX, e.pageY);
+		const rect = this.getRect(this.x, this.y, e.pageX, e.pageY);
 
 		if ((rect.width < THRESHOLD) && (rect.height < THRESHOLD)) {
 			return;
@@ -213,7 +208,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		const d = top > this.top ? 1 : -1;
 		const x = keyboard.mouse.page.x;
 		const y = keyboard.mouse.page.y + Math.abs(top - this.top) * d;
-		const rect = this.getRect(x, y);
+		const rect = this.getRect(this.x, this.y, x, y);
 
 		if ((rect.width < THRESHOLD) && (rect.height < THRESHOLD)) {
 			return;
@@ -305,7 +300,17 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 
 		const el = $('#selection-rect');
 		const range = Util.selectionRange();
-		const rect = this.getRect(x, y);
+		const isPopup = keyboard.isPopup();
+
+		let x1 = this.x;
+		let y1 = this.y;
+
+		if (isPopup) {
+			x1 = x1 + this.containerOffset.left;
+			y1 = y1 + this.containerOffset.top - this.top;
+		};
+
+		const rect = this.getRect(x1, y1, x, y);
 
 		if (range) {
 			el.hide();
@@ -318,12 +323,12 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		};
 	};
 	
-	getRect (x: number, y: number) {
+	getRect (x1: number, y1: number, x2: number, y2: number) {
 		return {
-			x: Math.min(this.x, x),
-			y: Math.min(this.y, y),
-			width: Math.abs(x - this.x),
-			height: Math.abs(y - this.y),
+			x: Math.min(x1, x2),
+			y: Math.min(y1, y2),
+			width: Math.abs(x2 - x1),
+			height: Math.abs(y2 - y1),
 		};
 	};
 	
@@ -380,7 +385,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		
 		const { focused, range } = focus.state;
 		const { x, y } = this.recalcCoords(e.pageX, e.pageY);
-		const rect = Util.objectCopy(this.getRect(x, y));
+		const rect = Util.objectCopy(this.getRect(this.x, this.y, x, y));
 
 		if (!keyboard.isShift() && !keyboard.isAlt() && !keyboard.isCtrlOrMeta()) {
 			this.initIds();
@@ -394,7 +399,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 
 		const ids = this.get(I.SelectType.Block, false);
 		const length = ids.length;
-		
+
 		if (!length) {
 			return;
 		};
