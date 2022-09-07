@@ -1490,10 +1490,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		analytics.event(cut ? 'CutBlock' : 'CopyBlock');
 	};
 
-	getClipboardFiles (e: any, data: any, callBack: (data: any) => void) {
+	getClipboardFiles (e: any) {
 		const items = (e.clipboardData || e.originalEvent.clipboardData).items;
 		const files = [];
-		const ret = [];
 
 		if (items && items.length) {
 			for (let item of items) {
@@ -1507,6 +1506,12 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 				};
 			};
 		};
+		return files;
+	};
+
+	saveClipboardFiles (e: any, data: any, callBack: (data: any) => void) {
+		const files = this.getClipboardFiles(e);
+		const ret = [];
 
 		if (!files.length) {
 			return;
@@ -1542,7 +1547,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		const { dataset, rootId } = this.props;
 		const { selection } = dataset || {};
 		const { focused, range } = focus.state;
-		const items = (e.clipboardData || e.originalEvent.clipboardData).items;
+		const files = this.getClipboardFiles(e);
 
 		menuStore.closeAll([ 'blockAdd' ]);
 
@@ -1554,8 +1559,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			data = this.getClipboardData(e);
 		};
 
-		if (items && items.length) {
-			this.getClipboardFiles(e, data, (data: any) => {
+		if (files.length) {
+			this.saveClipboardFiles(e, data, (data: any) => {
 				this.onPaste(e, props, force, data);
 			});
 			return;
