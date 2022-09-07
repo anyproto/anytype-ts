@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Loader, IconObject, Cover, Icon } from 'Component';
 import { commonStore, detailStore, blockStore, dbStore } from 'Store';
-import { I, C, DataUtil, Action } from 'Lib';
+import { I, C, DataUtil, Action, translate, Util } from 'Lib';
 import { observer } from 'mobx-react';
 
 interface Props {
@@ -280,7 +280,7 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 								<div className="name">{name}</div>
 								<div className="description">{description}</div>
 								<div className="featured">
-									{type.name}
+									{type ? Util.shorten(type.name, 32) : translate('commonDeletedType')}
 									<div className="bullet" />
 									{author.name}
 								</div>

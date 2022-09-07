@@ -80,8 +80,6 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 		const allowedRelation = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
 		const allowedTemplate = allowedObject && showTemplates;
 
-		console.log(allowedObject, showTemplates);
-
 		let relations = Util.objectCopy(dbStore.getRelations(rootId, rootId)).sort(DataUtil.sortByHidden);
 		relations = relations.filter(it => !Constant.systemRelationKeys.includes(it.relationKey));
 

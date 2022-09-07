@@ -392,10 +392,10 @@ class Relation {
 
 		setOf.forEach((id: string) => {
 			let el = dbStore.getType(id);
-			if (el._empty_) {
+			if (!el) {
 				el = dbStore.getRelationByKey(id);
 			};
-			if (!el._empty_) {
+			if (el) {
 				ret.push(el);
 			};
 		});

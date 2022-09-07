@@ -309,7 +309,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			if (message.records.length == 2) {
 				options.push({ id: 'setOpenMenu', name: 'Open set', arrow: true });
 			} else 
-			if (!type._empty_ && !type.isDeleted) {
+			if (type && !type.isDeleted) {
 				options.push({ id: 'setCreate', name: 'Create set' });
 			};
 
