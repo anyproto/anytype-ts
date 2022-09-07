@@ -396,40 +396,41 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		};
 
 		const relation = this.getRelation();
-		const newRelation: any = { name: name, format: this.format };
-
-		if (this.format == I.RelationType.Object) {
-			newRelation.objectTypes = this.objectTypes;
+		const item: any = { 
+			name: name, 
+			relationFormat: this.format 
 		};
 
-		relation ? this.update(newRelation) : this.add(newRelation);
+		if (this.format == I.RelationType.Object) {
+			item.relationFormatObjectTypes = this.objectTypes;
+		};
+
+		relation ? this.update(item) : this.add(item);
 	};
 
-	add (newRelation: any) {
+	add (item: any) {
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, blockId, addCommand, onChange } = data;
 
-		const details = { 
-			name: newRelation.name, 
-			relationFormat: newRelation.format,
-		};
-
-		C.ObjectCreateRelation(details, [], (message: any) => {
+		C.ObjectCreateRelation(item, [], (message: any) => {
 			if (addCommand) {
 				addCommand(rootId, blockId, message.objectId, onChange);
 			};
 		});
 	};
 
-	update (newRelation: any) {
+	update (item: any) {
 		const { param } = this.props;
 		const { data } = param;
 		const { relationId } = data;
+		const details: any[] = [];
 
-		C.ObjectSetDetails(relationId, [ 
-			{ key: 'name', value: newRelation.name },
-		]);
+		for (let k in item) {
+			details.push({ key: k, value: item[k] });
+		};
+
+		C.ObjectSetDetails(relationId, details);
 	};
 
 	getRelation () {
