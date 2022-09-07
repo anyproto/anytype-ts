@@ -394,15 +394,17 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		
 		this.renderSelection();
 
-		const selected = $('.selectable.isSelectionSelected');
-		const length = selected.length;
-
+		const ids = this.get(I.SelectType.Block, false);
+		const length = ids.length;
+		
 		if (!length) {
 			return;
 		};
 
 		if ((length <= 1) && !keyboard.isCtrlOrMeta()) {
-			const value = selected.find('.value');
+			const selected = $(`#block-${ids[0]}`);
+			const value = selected.find('#value');
+			
 			if (!value.length) {
 				return;
 			};
@@ -515,6 +517,8 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			return;
 		};
 
+		const rootId = keyboard.getRootId();
+
 		$('.isSelectionSelected').removeClass('isSelectionSelected');
 
 		for (let i in I.SelectType) {
@@ -526,7 +530,11 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 
 				if (type == I.SelectType.Block) {
 					$(`#block-${id}`).addClass('isSelectionSelected');
-					$(`#block-children-${id} .block`).addClass('isSelectionSelected');
+
+					const childrenIds = blockStore.getChildrenIds(rootId, id);
+					childrenIds.forEach((childId: string) => {
+						$(`#block-${childId}`).addClass('isSelectionSelected');
+					});
 				};
 			};
 		};
