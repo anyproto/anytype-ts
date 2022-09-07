@@ -134,8 +134,6 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			const popupContainer = $('#popupPage-innerWrap');
 			if (popupContainer.length) {
 				this.containerOffset = popupContainer.offset();
-				this.x -= this.containerOffset.left;
-				this.y -= this.containerOffset.top - this.top;
 			};
 		};
 
