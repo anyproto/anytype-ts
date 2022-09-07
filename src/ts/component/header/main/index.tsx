@@ -38,8 +38,8 @@ const HeaderMainIndex = observer(class HeaderMainIndex extends React.Component<P
 	};
 
 	componentDidMount () {
-		DataUtil.setWindowTitleText('Main | Anytype')
-	}
+		DataUtil.setWindowTitleText('Dashboard');
+	};
 
 });
 

@@ -74,10 +74,11 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<Pro
 
 	componentDidMount () {
 		this.setTitle();
-	}
+	};
+
 	componentDidUpdate () {
 		this.setTitle();
-	}
+	};
 
 	onOpen () {
 		const { rootId } = this.props;
@@ -163,7 +164,7 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<Pro
 	};
 
 	setTitle () {
-		const {rootId, isPopup} = this.props;
+		const { rootId, isPopup } = this.props;
 
 		if (!isPopup) {
 			DataUtil.setWindowTitle(rootId);

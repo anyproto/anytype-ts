@@ -1320,12 +1320,13 @@ class DataUtil {
 
 	setWindowTitle (rootId: string) {
 		const object = detailStore.get(rootId, rootId, []);
-		const name = object.name ? object.name + ' | Anytype' : 'Anytype';
+		const name = object.name ? object.name : '';
 		this.setWindowTitleText(name);
 	}
 
-	setWindowTitleText (title: string) {
-		document.title = title
+	setWindowTitleText (objectName: string) {
+		const baseTitle = 'Anytype';
+		document.title = objectName.length ? objectName + ' | ' + baseTitle : baseTitle;
 	}
 
 };
