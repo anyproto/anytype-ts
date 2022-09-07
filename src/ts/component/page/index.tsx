@@ -246,6 +246,10 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 				Storage.set('redirect', history.location.pathname);
 			};
 
+			if (isMain && !isMainIndex) {
+				Storage.set('askSurvey', 1);
+			};
+
 			if (isMainIndex) {
 				if (account && askSurvey && !popupStore.isOpen() && !lastSurveyCanceled && (lastSurveyTime <= Util.time() - 86400 * days)) {
 					analytics.event('SurveyShow');
@@ -275,7 +279,6 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 				};
 
 				this.shareCheck();
-
 				Storage.delete('redirect');
 			};
 		}, Constant.delay.popup);

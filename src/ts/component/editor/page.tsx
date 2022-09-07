@@ -171,10 +171,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 		this.resize();
 		win.on('resize.editor' + namespace, (e: any) => { this.resize(); });
-
 		Util.getScrollContainer(isPopup).on('scroll.editor' + namespace, throttle((e: any) => { this.onScroll(e); }, THROTTLE));
-
-		Storage.set('askSurvey', 1);
 
 		Renderer.remove('commandEditor');
 		Renderer.on('commandEditor', (e: any, cmd: string, arg: any) => { this.onCommand(cmd, arg); });

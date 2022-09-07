@@ -167,33 +167,17 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 		const container = Util.getPageContainer(isPopup);
 		const ww = container.width();
 		const mw = ww - PADDING * 2;
-		const subId = dbStore.getSubId(rootId, block.id);
-		const records = dbStore.getRecords(subId, '');
-		const length = records.length;
+		const length = dbStore.getRecords(dbStore.getSubId(rootId, block.id), '').length;
 		const margin = (ww - mw) / 2;
-
-		let width = Constant.size.blockMenu;
-		let vw = 0;
-		let pr = 0;
-
-		for (let relation of view.relations) {
-			if (relation.isVisible) {
-				width += relation.width;
-			};
-		};
-
-		vw = width <= mw ? mw : width;
-
-		if (width > mw) {
-			pr = PADDING;
-			vw += PADDING;
-		};
+		const width = view.relations.filter(it => it.isVisible).reduce((res: number, current: any) => { 
+			return res + current.width;
+		}, Constant.size.blockMenu);
+		const vw = Math.max(mw, width) + (width > mw ? PADDING : 0);
+		const pr = width > mw ? PADDING : 0;
 
 		scroll.css({ width: ww - 4, marginLeft: -margin - 2, paddingLeft: margin });
 		wrap.css({ width: vw, paddingRight: pr });
 		grid.css({ height: length * HEIGHT + 4, maxHeight: length * HEIGHT + 4 });
-		
-		this.resizeLast();
 	};
 
 	cellPosition (cellId: string) {
@@ -217,26 +201,6 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 		if (x - sx + width >= ww - 92) {
 			content.css({ left: 'auto', right: 0 });
 		};
-	};
-
-	resizeLast () {
-		const { getView } = this.props;
-		const view = getView();
-		const win = $(window);
-		const node = $(ReactDOM.findDOMNode(this));
-		const lastHead = node.find('.cellHead.last');
-		const ww = win.width();
-		const mw = ww - 192;
-		
-		let width = 0;
-		for (let relation of view.relations) {
-			if (!relation.isVisible) {
-				continue;
-			};
-			width += relation.width;
-		};
-
-		lastHead.css({ width: (width > mw ? 48 : 'auto') });
 	};
 
 	onResizeStart (e: any, relationKey: string) {
@@ -283,7 +247,6 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 		node.find('.row > .selectable').css({ gridTemplateColumns: columns });
 
 		width <= size.icon ? el.addClass('small') : el.removeClass('small');
-		this.resizeLast();
 	};
 
 	onResizeEnd (e: any, relationKey: string) {

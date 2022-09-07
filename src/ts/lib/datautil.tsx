@@ -1266,7 +1266,9 @@ class DataUtil {
 		]);
 		const sorts = view.sorts.map((it: I.Sort) => {
 			const relation = view.getRelation(it.relationKey);
-			it.includeTime = relation.includeTime;
+			if (relation) {
+				it.includeTime = relation.includeTime;
+			};
 			return it;
 		});
 

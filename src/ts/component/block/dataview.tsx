@@ -151,15 +151,17 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	unbind () {
-		$(window).off('resize.dataview keydown.dataview');
+		const { block } = this.props;
+		$(window).off(`resize.${block.id} keydown.${block.id}`);
 	};
 
 	rebind () {
-		this.unbind();
-
+		const { block } = this.props;
 		const win = $(window);
-		win.on('resize.dataview', (e: any) => { this.resize(); });
-		win.on('keydown.dataview', throttle((e: any) => { this.onKeyDown(e); }, 100));
+
+		this.unbind();
+		win.on(`resize.${block.id}`, throttle((e: any) => { this.resize(); }, 20));
+		win.on(`keydown.${block.id}`, throttle((e: any) => { this.onKeyDown(e); }, 100));
 	};
 
 	onKeyDown (e: any) {
