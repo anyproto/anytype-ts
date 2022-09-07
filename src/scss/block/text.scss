@@ -3,7 +3,10 @@
 .blocks {
 	.block.blockText { @include text-paragraph; word-wrap: break-word; }
 	.block.blockText {
-		#value { -webkit-user-modify: read-write-plaintext-only; width: 100%; overflow: hidden; position: relative; z-index: 1; user-select: text; }
+		#value { 
+			-webkit-user-modify: read-write-plaintext-only; width: 100%; overflow: hidden; position: relative; z-index: 1; user-select: text;
+			padding: 1px 0px;
+		}
 		#value * { user-select: text !important; }
 		#value.focusable.isFocused { background: none; }
 
@@ -90,12 +93,12 @@
 	.block.blockText.isReadonly > .wrapContent > .selectable > .dropTarget > .flex > #value { min-height: 24px; cursor: text !important; user-select: text !important; }
 	.block.blockText.isReadonly > .wrapContent > .selectable > .dropTarget > .flex > .placeholder { display: none; }
 
-	.block.blockText.isReadonly.textCode > .wrapContent > .selectable > .dropTarget { padding: 16px; }
+	.block.blockText.isReadonly.textCode > .wrapContent > .selectable > .dropTarget { padding: 15px; }
 	.block.blockText.isReadonly.textTitle > .wrapContent > .selectable > .dropTarget > .flex > #value { min-height: 1em; }
 
 	.block.blockText.isChecked > .wrapContent > .selectable > .dropTarget * { color: $colorMediumGrey !important; }
 
-	.block.blockText > .wrapContent > .selectable > .dropTarget { padding: 3px 0px; }
+	.block.blockText > .wrapContent > .selectable > .dropTarget { padding: 2px 0px; }
 
 	.block.blockText.textTitle { padding: 22px 0px 6px 0px !important; @include text-title; }
 	.block.blockText.textTitle {
@@ -105,24 +108,24 @@
 		}
 		#value { -webkit-user-modify: read-write-plaintext-only; }
 	}
-	.block.blockText.textTitle > .wrapContent > .selectable > .dropTarget { padding: 4px 0px 2px 0px; }
+	.block.blockText.textTitle > .wrapContent > .selectable > .dropTarget { padding: 3px 0px 1px 0px; }
 
 	.block.blockText.textDescription { padding: 0px 0px 6px 0px; @include text-description; }
 
 	.block.blockText.textHeader1 { padding: 22px 0px 0px 0px; }
-	.block.blockText.textHeader1 > .wrapContent > .selectable > .dropTarget { @include text-header1; line-height: 35px; padding: 4px 0px 2px 0px; }
+	.block.blockText.textHeader1 > .wrapContent > .selectable > .dropTarget { @include text-header1; line-height: 35px; padding: 3px 0px 1px 0px; }
 	.block.blockText.textHeader1 > .wrapContent > .selectable > .dropTarget mention .space { width: 6px; height: 32px; }
 	
 	.block.blockText.textHeader2 { padding: 14px 0px 0px 0px; }
-	.block.blockText.textHeader2 > .wrapContent > .selectable > .dropTarget { @include text-header2; padding: 3px 0px 2px 0px; }
+	.block.blockText.textHeader2 > .wrapContent > .selectable > .dropTarget { @include text-header2; padding: 2px 0px 1px 0px; }
 	.block.blockText.textHeader2 > .wrapContent > .selectable > .dropTarget mention .space { width: 5px; height: 28px; }
 	
 	.block.blockText.textHeader3 { padding: 14px 0px 0px 0px; }
-	.block.blockText.textHeader3 > .wrapContent > .selectable > .dropTarget { @include text-header3; padding: 2px 0px 3px 0px; }
+	.block.blockText.textHeader3 > .wrapContent > .selectable > .dropTarget { @include text-header3; padding: 1px 0px 2px 0px; }
 	.block.blockText.textHeader3 > .wrapContent > .selectable > .dropTarget mention .space { width: 5px; height: 26px; }
 	
 	.block.blockText.textQuote { padding: 6px 0px 6px 0px; }
-	.block.blockText.textQuote > .wrapContent > .selectable > .dropTarget { @include text-quote; padding: 2px 0px 3px 0px; }
+	.block.blockText.textQuote > .wrapContent > .selectable > .dropTarget { @include text-quote; padding: 1px 0px 2px 0px; }
 	.block.blockText.textQuote > .wrapContent > .selectable > .dropTarget mention .space { width: 5px; height: 26px; }
 	.block.blockText.textQuote > .wrapContent > .additional > .line { 
 		width: 0px; height: 100%; position: absolute; left: 11px; top: 0px; border-left: 2px solid $colorOrange; 
@@ -148,7 +151,7 @@
 	.block.blockText.textCallout.last > .wrapContent { margin-bottom: 0px; }
 
 	.block.blockText.textCode { padding: 6px 0px; }
-	.block.blockText.textCode > .wrapContent > .selectable > .dropTarget { padding: 41px 16px 16px 16px; background: rgba(247,245,240,0.5); }
+	.block.blockText.textCode > .wrapContent > .selectable > .dropTarget { padding: 40px 16px 15px 16px; background: rgba(247,245,240,0.5); }
 	.block.blockText.textCode > .wrapContent > .selectable > .dropTarget > .flex { position: static; } 
 	.block.blockText.textCode > .wrapContent > .selectable > .dropTarget > .flex {
 		#value { font-family: 'Plex'; @include text-common; tab-size: 4; }
