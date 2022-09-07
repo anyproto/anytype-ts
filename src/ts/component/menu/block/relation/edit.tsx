@@ -39,7 +39,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		const isDate = this.format == I.RelationType.Date;
 		const isObject = this.format == I.RelationType.Object;
 		const typeId = this.objectTypes.length ? this.objectTypes[0] : '';
-		const type = detailStore.get(Constant.subId.type, typeId, []);
+		const type = dbStore.getType(typeId);
 		const allowed = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
 		const canDelete = allowed && relation && !Constant.systemRelationKeys.includes(relation.relationKey);
 		const isReadonly = this.isReadonly();
@@ -287,7 +287,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 				value: this.objectTypes, 
 				types: [ Constant.typeId.type ],
 				relation: observable.box(relation),
-				valueMapper: it => detailStore.get(Constant.subId.type, it.id, []),
+				valueMapper: it => dbStore.getType(it.id),
 				onChange: (value: any, callBack?: () => void) => {
 					this.objectTypes = value;
 					this.save();

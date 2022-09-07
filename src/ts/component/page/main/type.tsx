@@ -68,7 +68,7 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 		const object = Util.objectCopy(detailStore.get(rootId, rootId, [ 'recommendedLayout' ]));
 		const subIdTemplate = this.getSubIdTemplate();
 
-		const type = detailStore.get(Constant.subId.type, rootId, []);
+		const type = dbStore.getType(rootId);
 		const templates = dbStore.getRecords(subIdTemplate, '').map(id => detailStore.get(subIdTemplate, id, []));
 		const totalTemplate = dbStore.getMeta(subIdTemplate, '').total;
 		const totalObject = dbStore.getMeta(this.getSubIdObject(), '').total;
@@ -79,6 +79,8 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 		const allowedDetails = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const allowedRelation = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
 		const allowedTemplate = allowedObject && showTemplates;
+
+		console.log(allowedObject, showTemplates);
 
 		let relations = Util.objectCopy(dbStore.getRelations(rootId, rootId)).sort(DataUtil.sortByHidden);
 		relations = relations.filter(it => !Constant.systemRelationKeys.includes(it.relationKey));
@@ -302,7 +304,7 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 
 	onCreate () {
 		const rootId = this.getRootId();
-		const type = detailStore.get(Constant.subId.type, rootId, []);
+		const type = dbStore.getType(rootId);
 		const allowedObject = (type.smartblockTypes || []).indexOf(I.SmartBlockType.Page) >= 0;
 		const options = [];
 

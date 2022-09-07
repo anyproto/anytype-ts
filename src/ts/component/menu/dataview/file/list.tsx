@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Filter, MenuItemVertical, Icon, Loader } from 'Component';
 import { I, C, Util, Relation, keyboard, DataUtil } from 'Lib';
-import { commonStore, menuStore, detailStore } from 'Store';
+import { commonStore, menuStore, dbStore } from 'Store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
@@ -51,7 +51,7 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
-			const type = detailStore.get(Constant.subId.type, item.type, []);
+			const type = dbStore.getType(item.type);
 
 			let content = null;
 			if (item.id == 'add') {

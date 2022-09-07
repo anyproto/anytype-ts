@@ -239,10 +239,7 @@ class Relation {
 	};
 
 	getOptions (value: any[]) {
-		value = this.getArrayValue(value);
-		value = value.map(id => detailStore.get(Constant.subId.option, id, Constant.optionRelationKeys));
-		value = value.filter(it => !it._empty_);
-		return value;
+		return this.getArrayValue(value).map(id => dbStore.getOption(id)).filter(it => it && !it._empty_);
 	};
 
 	getFilterOptions (rootId: string, blockId: string, view: I.View) {
@@ -394,9 +391,9 @@ class Relation {
 		const ret = [];
 
 		setOf.forEach((id: string) => {
-			let el = detailStore.get(Constant.subId.type, id, []);
+			let el = dbStore.getType(id);
 			if (el._empty_) {
-				el = detailStore.get(Constant.subId.relation, id, []);
+				el = dbStore.getRelationByKey(id);
 			};
 			if (!el._empty_) {
 				ret.push(el);

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { MenuItemVertical, Loader, ObjectName } from 'Component';
 import { I, C, keyboard, Util, DataUtil, Mark, analytics } from 'Lib';
-import { commonStore, detailStore } from 'Store';
+import { commonStore, detailStore, dbStore } from 'Store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
@@ -48,7 +48,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
-			const type = detailStore.get(Constant.subId.type, item.type, []);
+			const type = dbStore.getType(item.type);
 
 			let content = null;
 
@@ -297,7 +297,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		};
 
 		if (item.itemId == 'add') {
-			const type = detailStore.get(Constant.subId.type, commonStore.type, []);
+			const type = dbStore.getType(commonStore.type);
 			const name = filter.text.replace(/\\/g, '');
 
 			DataUtil.pageCreate('', '', { name: name }, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.SelectType ], (message: any) => {

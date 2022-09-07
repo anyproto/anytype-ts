@@ -94,7 +94,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 
 		if ((index <= 1) && blockStore.checkBlockTypeExists(rootId)) {
 			const object = detailStore.get(rootId, rootId, [ 'type' ], true);
-			const type = detailStore.get(Constant.subId.type, object.type);
+			const type = dbStore.getType(object.type);
 
 			placeholder = `Type something to proceed with ${type?.name} type`;
 		};

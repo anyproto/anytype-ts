@@ -52,7 +52,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			Constant.relationKey.setOf, 
 		]);
 		const items = this.getItems();
-		const type = detailStore.get(Constant.subId.type, object.type, []);
+		const type = dbStore.getType(object.type);
 		const bullet = <div className="bullet" />;
 		const allowedValue = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 
@@ -89,7 +89,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 						onMouseEnter={(e: any) => { this.onMouseEnter(e, Constant.relationKey.type); }}
 						onMouseLeave={this.onMouseLeave}
 					>
-						<div className="name">{type._empty_ || type.isDeleted ? translate('commonDeletedType') : Util.shorten(type.name, 32)}</div>
+						<div className="name">{type ? Util.shorten(type.name, 32) : translate('commonDeletedType')}</div>
 					</div>
 				</span>
 
@@ -402,7 +402,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 		const { rootId } = this.props;
 		const object = detailStore.get(rootId, rootId, [ Constant.relationKey.setOf ]);
-		const type = detailStore.get(Constant.subId.type, object.type);
+		const type = dbStore.getType(object.type);
 
 		this.menuContext.close();
 

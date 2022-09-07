@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { MenuItemVertical, Filter, ObjectName } from 'Component';
 import { I, C, Util, keyboard, DataUtil, analytics, focus } from 'Lib';
-import { commonStore, menuStore, detailStore } from 'Store';
+import { commonStore, menuStore, detailStore, dbStore } from 'Store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
@@ -57,7 +57,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
-			const type = detailStore.get(Constant.subId.type, item.type, []);
+			const type = dbStore.getType(item.type);
 			const cn = [];
 
 			let object = { ...item, id: item.itemId };
@@ -360,7 +360,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 			onChange(I.MarkType.Link, filter);
 		} else
 		if (item.itemId == 'add') {
-			const type = detailStore.get(Constant.subId.type, commonStore.type, []);
+			const type = dbStore.getType(commonStore.type);
 
 			DataUtil.pageCreate('', '', { name: filter }, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.SelectType ], (message: any) => {
 				if (message.error.code) {

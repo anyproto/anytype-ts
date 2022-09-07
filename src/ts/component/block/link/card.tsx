@@ -2,7 +2,7 @@ import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { IconObject, Cover, ObjectName } from 'Component';
 import { I, DataUtil, translate } from 'Lib';
-import { detailStore } from 'Store';
+import { dbStore } from 'Store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.BlockComponent, RouteComponentProps<any> {
@@ -28,7 +28,7 @@ const LinkCard = observer(class LinkCard extends React.Component<Props, {}> {
         const { id, layout, coverType, coverId, coverX, coverY, coverScale, snippet, isArchived, isDeleted } = object;
 		const { size, iconSize } = this.getIconSize();
 		const canDescription = ![ I.ObjectLayout.Note ].includes(object.layout);
-		const type = detailStore.get(Constant.subId.type, object.type, []);
+		const type = dbStore.getType(object.type);
 		const withIcon = this.props.iconSize != I.LinkIconSize.None;
 		const withType = this.hasRelationKey('type');
         const withCover = this.hasRelationKey('cover') && coverId && coverType;

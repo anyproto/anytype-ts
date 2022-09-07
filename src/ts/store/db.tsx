@@ -189,9 +189,13 @@ class DbStore {
 		this.groupsSet(rootId, blockId, []);
 	};
 
+	getType (id: string) {
+		const object = detailStore.get(Constant.subId.type, id, Constant.typeRelationKeys);
+		return object._empty_ ? null : object;
+	};
+
     getObjectTypesForSBType (SBType: I.SmartBlockType): any[] {
-		return dbStore.getRecords(Constant.subId.type, '').
-			map(id => detailStore.get(Constant.subId.type, id, [ 'smartblockTypes' ])).
+		return dbStore.getRecords(Constant.subId.type, '').map(id => this.getType(id)).
 			filter(it => !it._empty_ && (it.smartblockTypes || []).includes(SBType) && !it.isArchived && !it.isDeleted);
 	};
 
@@ -218,7 +222,12 @@ class DbStore {
 			return null;
 		};
 
-		const object = detailStore.get(Constant.subId.relation, id, Constant.relationRelationKeys);
+		const object = detailStore.get(Constant.subId.relation, id, Constant.relationRelationKeys, true);
+		return object._empty_ ? null : object;
+	};
+
+	getOption (id: string) {
+		const object = detailStore.get(Constant.subId.option, id, Constant.optionRelationKeys, true);
 		return object._empty_ ? null : object;
 	};
 

@@ -54,7 +54,7 @@ const ListIndex = observer(class ListIndex extends React.Component<Props, {}> {
 			};
 
 			let { id, _empty_, layout, name, iconEmoji, iconImage, snippet } = object;
-			let type = detailStore.get(Constant.subId.type, object.type, []);
+			let type = dbStore.getType(object.type);
 			let cn = [ 'item', DataUtil.layoutClass(id, layout) ];
 			
 			if (_empty_) {

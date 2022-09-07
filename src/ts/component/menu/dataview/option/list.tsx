@@ -325,7 +325,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 		const isStatus = relation.format == I.RelationType.Status;
 		const value = Relation.getArrayValue(data.value);
 
-		let items = dbStore.getRecords(Constant.subId.option, '').map(id => detailStore.get(Constant.subId.option, id, Constant.optionRelationKeys)).filter(it => it.relationKey == relation.relationKey);
+		let items = Relation.getOptions(dbStore.getRecords(Constant.subId.option, '')).filter(it => it.relationKey == relation.relationKey);
 		let ret = [];
 		let check = [];
 

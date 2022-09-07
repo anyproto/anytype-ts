@@ -49,7 +49,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		if (isObject && !isReadonly) {
 			const l = this.objectTypes.length;
 			const typeId = l ? this.objectTypes[0] : '';
-			const type = detailStore.get(Constant.subId.type, typeId, []);
+			const type = dbStore.getType(typeId);
 
 			if (!type._empty_) {
 				typeProps.name = type.name;
@@ -447,7 +447,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 				value: this.objectTypes, 
 				types: [ Constant.typeId.type ],
 				relation: observable.box(relation),
-				valueMapper: it => detailStore.get(Constant.subId.type, it.id, []),
+				valueMapper: it => dbStore.getType(it.id),
 				onChange: (value: any, callBack?: () => void) => {
 					const vr = this.getViewRelation();
 

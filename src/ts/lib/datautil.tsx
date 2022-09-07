@@ -265,7 +265,7 @@ class DataUtil {
 
 		this.searchSubscribe({
 			subId: Constant.subId.type,
-			keys: Constant.defaultRelationKeys.concat([ 'smartblockTypes' ]),
+			keys: Constant.defaultRelationKeys.concat(Constant.typeRelationKeys),
 			filters: [
 				{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.type }
 			],
@@ -280,7 +280,7 @@ class DataUtil {
 			],
 			noDeps: true,
 		}, () => {
-			const records = dbStore.getRecords(Constant.subId.relation, '').map(id => detailStore.get(Constant.subId.relation, id, [ 'relationKey' ], true));
+			const records = dbStore.getRecords(Constant.subId.relation, '').map(id => dbStore.getRelationById(id));
 			for (let record of records) {
 				dbStore.relationKeyMap[record.relationKey] = record.id;
 			};
@@ -587,11 +587,11 @@ class DataUtil {
 	getObjectTypesForNewObject (param?: any) {
 		const { withSet, withBookmark, withDefault } = param || {};
 		const { config } = commonStore;
-		const page = detailStore.get(Constant.subId.type, Constant.typeId.page, []);
-		const note = detailStore.get(Constant.subId.type, Constant.typeId.note, []);
-		const set = detailStore.get(Constant.subId.type, Constant.typeId.set, []);
-		const task = detailStore.get(Constant.subId.type, Constant.typeId.task, []);
-		const bookmark = detailStore.get(Constant.subId.type, Constant.typeId.bookmark, []);
+		const page = dbStore.getType(Constant.typeId.page);
+		const note = dbStore.getType(Constant.typeId.note);
+		const set = dbStore.getType(Constant.typeId.set);
+		const task = dbStore.getType(Constant.typeId.task);
+		const bookmark = dbStore.getType(Constant.typeId.bookmark);
 
 		const skip = [ 
 			Constant.typeId.note, 
