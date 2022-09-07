@@ -247,7 +247,7 @@ class Dispatcher {
 						};
 
 						if (block.type == I.BlockType.Dataview) {
-							Action.dbClear(rootId, blockId);
+							Action.dbClearBlock(rootId, blockId);
 						};
 
 						blockStore.delete(rootId, blockId);
@@ -529,7 +529,7 @@ class Dispatcher {
 
 				case 'blockDataviewRelationDelete':
 					id = data.getId();
-					dbStore.relationDelete(rootId, id, data.getRelationkey());
+					dbStore.relationListDelete(rootId, id, data.getRelationidsList() || []);
 					break;
 
 				case 'objectRelationsAmend':
@@ -539,9 +539,7 @@ class Dispatcher {
 
 				case 'objectRelationsRemove':
 					id = data.getId();
-					ids = data.getRelationidsList();
-
-					ids.forEach(it => dbStore.relationDelete(rootId, id, it));
+					dbStore.relationListDelete(rootId, id, data.getRelationidsList() || []);
 					break;
 
 				case 'blockDataviewGroupOrderUpdate':

@@ -56,6 +56,10 @@ class DbStore {
 		this.relationMap.set(this.getId(rootId, blockId), this.getRelations(rootId, blockId).filter(it => it.id != id));
 	};
 
+	relationListDelete (rootId: string, blockId: string, ids: string[]) {
+		this.relationMap.set(this.getId(rootId, blockId), this.getRelations(rootId, blockId).filter(it => !ids.includes(it.id)));
+	};
+
     viewsSet (rootId: string, blockId: string, list: I.View[]) {
 		const key = this.getId(rootId, blockId);
 		const views = this.getViews(rootId, blockId);

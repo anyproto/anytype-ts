@@ -15,12 +15,10 @@ class Action {
 			const blocks = blockStore.getBlocks(rootId, it => it.isDataview());
 
 			for (let block of blocks) {
-				dbStore.viewsClear(rootId, block.id);
-
-				this.dbClear(rootId, block.id);
+				this.dbClearBlock(rootId, block.id);
 			};
 
-			this.dbClear(rootId, '');
+			this.dbClearRoot(rootId);
 
 			blockStore.clear(rootId);
 			authStore.threadRemove(rootId);
@@ -33,25 +31,32 @@ class Action {
 		};
 	};
 
-	dbClear (rootId: string, blockId: string) {
-		if (rootId) {
-			dbStore.metaClear(rootId, '');
-			dbStore.recordsClear(rootId, '');
-
-			detailStore.clear(rootId);
+	dbClearRoot (rootId: string) {
+		if (!rootId) {
+			return;
 		};
 
-		if (rootId && blockId) {
-			const subId = dbStore.getSubId(rootId, blockId);
+		dbStore.metaClear(rootId, '');
+		dbStore.recordsClear(rootId, '');
 
-			dbStore.metaClear(subId, '');
-			dbStore.recordsClear(subId, '');
-			dbStore.recordsClear(subId + '/dep', '');
+		detailStore.clear(rootId);
+	};
 
-			detailStore.clear(subId);
-
-			C.ObjectSearchUnsubscribe([ subId ]);
+	dbClearBlock (rootId: string, blockId: string) {
+		if (!rootId || !blockId) {
+			return;
 		};
+
+		const subId = dbStore.getSubId(rootId, blockId);
+
+		dbStore.metaClear(subId, '');
+		dbStore.recordsClear(subId, '');
+		dbStore.recordsClear(subId + '/dep', '');
+		dbStore.viewsClear(rootId, blockId);
+
+		detailStore.clear(subId);
+
+		C.ObjectSearchUnsubscribe([ subId ]);
 	};
 
 	upload (type: I.FileType, rootId: string, blockId: string, url: string, path: string, callBack?: (message: any) => void) {

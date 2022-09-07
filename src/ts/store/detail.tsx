@@ -70,7 +70,7 @@ class DetailStore {
 		};
 
 		for (let k in item.details) {
-			let el = list.find((it: Detail) => { return it.relationKey == k; });
+			let el = list.find(it => it.relationKey == k);
 			if (el) {
 				set(el, { value: item.details[k] });
 			} else {
