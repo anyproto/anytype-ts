@@ -168,8 +168,8 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<Pro
 
 		if (!isPopup) {
 			DataUtil.setWindowTitle(rootId);
-		}
-	}
+		};
+	};
 	
 });
 

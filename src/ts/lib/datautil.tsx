@@ -1318,16 +1318,32 @@ class DataUtil {
 		blockStore.updateContent(rootId, blockId, block.content);
 	};
 
-	setWindowTitle (rootId: string) {
-		const object = detailStore.get(rootId, rootId, []);
-		const name = object.name ? object.name : '';
-		this.setWindowTitleText(name);
+	getObjectName (object: any) {
+		const { isDeleted, type, layout, snippet } = object;
+
+		let name = '';
+		if (!isDeleted && this.isFileType(type)) {
+			name = this.fileName(object);
+		} else
+		if (layout == I.ObjectLayout.Note) {
+			name = snippet || translate('commonEmpty');
+		} else {
+			name = object.name || this.defaultName('page');
+		};
+
+		return name;
 	}
 
-	setWindowTitleText (objectName: string) {
-		const baseTitle = 'Anytype';
-		document.title = objectName.length ? objectName + ' | ' + baseTitle : baseTitle;
-	}
+	setWindowTitle (rootId: string) {
+		const object = detailStore.get(rootId, rootId, []);
+		const name = this.getObjectName(object);
+
+		this.setWindowTitleText(name);
+	};
+
+	setWindowTitleText (name: string) {
+		document.title = [ name, Constant.appName ].join(' | ');
+	};
 
 };
 
