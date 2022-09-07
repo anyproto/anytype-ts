@@ -5,6 +5,8 @@
 	"amplitude": "1ba981d1a9afb8af8c81847ef3383a20",
 	"protocol": "anytype",
 
+	"appName": "Anytype",
+
 	"platforms": {
 		"win32": 	"Windows",
 		"darwin":	"Mac",
