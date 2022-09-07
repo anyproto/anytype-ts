@@ -1318,6 +1318,33 @@ class DataUtil {
 		blockStore.updateContent(rootId, blockId, block.content);
 	};
 
+	getObjectName (object: any) {
+		const { isDeleted, type, layout, snippet } = object;
+
+		let name = '';
+		if (!isDeleted && this.isFileType(type)) {
+			name = this.fileName(object);
+		} else
+		if (layout == I.ObjectLayout.Note) {
+			name = snippet || translate('commonEmpty');
+		} else {
+			name = object.name || this.defaultName('page');
+		};
+
+		return name;
+	}
+
+	setWindowTitle (rootId: string) {
+		const object = detailStore.get(rootId, rootId, []);
+		const name = this.getObjectName(object);
+
+		this.setWindowTitleText(name);
+	};
+
+	setWindowTitleText (name: string) {
+		document.title = [ name, Constant.appName ].join(' | ');
+	};
+
 };
 
 export default new DataUtil();
