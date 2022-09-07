@@ -2,7 +2,7 @@ import * as React from 'react';
 import { getRange } from 'selection-ranges';
 import { I, M, focus, keyboard, scrollOnMove, Util } from 'Lib';
 import { observer } from 'mobx-react';
-import { blockStore, menuStore } from 'Store';
+import { blockStore, menuStore, popupStore } from 'Store';
 
 const $ = require('jquery');
 const THRESHOLD = 10;
@@ -106,7 +106,9 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	};
 	
 	onMouseDown (e: any) {
-		if (e.button || !this._isMounted || menuStore.isOpen()) {
+		const isPopup = keyboard.isPopup();
+
+		if (e.button || !this._isMounted || menuStore.isOpen() || (!isPopup && popupStore.isOpen())) {
 			return;
 		};
 		
@@ -115,7 +117,6 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			return;
 		};
 		
-		const isPopup = keyboard.isPopup();
 		const { focused } = focus.state;
 		const win = $(window);
 		const nodes = this.getPageContainer().find('.selectable');
