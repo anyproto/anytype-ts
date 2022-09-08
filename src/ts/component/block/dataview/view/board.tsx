@@ -257,18 +257,9 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 			return;
 		};
 
-		const showPopup = () => {
-			popupStore.open('template', {
-				data: {
-					typeId: setOf[0],
-					onSelect: create,
-				},
-			});
-		};
-
 		DataUtil.checkTemplateCnt(setOf, (message: any) => {
 			if (message.records.length > 1) {
-				showPopup();
+				popupStore.open('template', { data: { typeId: first, onSelect: create } });
 			} else {
 				create(message.records.length ? message.records[0] : '');
 			};
