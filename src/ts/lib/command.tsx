@@ -969,6 +969,15 @@ const ObjectCreateRelationOption = (details: any, callBack?: (message: any) => v
 	dispatcher.request(ObjectCreateRelationOption.name, request, callBack);
 };
 
+const RelationListRemoveOption = (optionIds: string[], checkInObjects: boolean, callBack?: (message: any) => void) => {
+	const request = new Rpc.Relation.ListRemoveOption.Request();
+	
+	request.setOptionidsList(optionIds);
+	request.setCheckinobjects(checkInObjects);
+
+	dispatcher.request(RelationListRemoveOption.name, request, callBack);
+};
+
 const ObjectBookmarkFetch = (contextId: string, url: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.BookmarkFetch.Request();
 	
@@ -1556,6 +1565,8 @@ export {
 	ObjectCreateObjectType,
 	ObjectCreateRelation,
 	ObjectCreateRelationOption,
+
+	RelationListRemoveOption,
 
 	ObjectToSet,
 	ObjectToBookmark,

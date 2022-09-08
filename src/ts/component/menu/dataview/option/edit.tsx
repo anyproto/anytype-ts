@@ -175,7 +175,7 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<Pro
 		let value = Relation.getArrayValue(data.value);
 		value = value.filter(it => it != option.id);
 
-		//optionCommand('delete', rootId, blockId, relation.relationKey, record.id, option);
+		C.RelationListRemoveOption([ option.id ], false);
 
 		menuStore.updateData(id, { value });
 		menuStore.updateData('dataviewOptionList', { 
