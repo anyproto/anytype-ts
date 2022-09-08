@@ -125,6 +125,7 @@
 
 	"defaultRelationKeys": [ 
 		"id", 
+		"workspaceId",
 		"name", 
 		"description", 
 		"snippet",

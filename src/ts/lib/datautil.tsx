@@ -253,57 +253,6 @@ class DataUtil {
 
 		analytics.profile(account);
 		analytics.event('OpenAccount');
-		
-		this.searchSubscribe({
-			subId: Constant.subId.deleted,
-			filters: [
-				{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: true }
-			],
-			keys: [ 'id', 'isDeleted' ],
-			noDeps: true
-		});
-
-		this.searchSubscribe({
-			subId: Constant.subId.type,
-			keys: Constant.defaultRelationKeys.concat(Constant.typeRelationKeys),
-			filters: [
-				{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.type }
-			],
-			noDeps: true
-		});
-
-		this.searchSubscribe({
-			subId: Constant.subId.relation,
-			keys: Constant.relationRelationKeys,
-			filters: [
-				{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.relation },
-				{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
-			],
-			noDeps: true,
-		}, () => {
-			const records = dbStore.getRecords(Constant.subId.relation, '').map(id => dbStore.getRelationById(id));
-			for (let record of records) {
-				dbStore.relationKeyMap[record.relationKey] = record.id;
-			};
-		});
-
-		this.searchSubscribe({
-			subId: Constant.subId.option,
-			keys: Constant.optionRelationKeys,
-			filters: [
-				{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.option },
-				{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
-				{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
-			],
-			noDeps: true
-		});
-
-		if (profile) {
-			this.subscribeIds({
-				subId: Constant.subId.profile, 
-				ids: [ profile ], 
-			});
-		};
 
 		C.ObjectOpen(root, '', (message: any) => {
 			if (message.error.code == Errors.Code.ANYTYPE_NEEDS_UPGRADE) {
@@ -311,10 +260,69 @@ class DataUtil {
 				return;
 			};
 
-			const object = detailStore.get(root, root, Constant.coverRelationKeys);
+			const object = detailStore.get(root, root);
+			if (object._empty_) {
+				console.error('Dashboard is empty');
+				return;
+			};
 
-			if (!object._empty_ && object.coverId && (object.coverType != I.CoverType.None)) {
+			console.log(object);
+
+			if (object.coverId && (object.coverType != I.CoverType.None)) {
 				commonStore.coverSet(object.coverId, object.coverId, object.coverType);
+			};
+
+			commonStore.workspaceSet(object.workspaceId);
+
+			this.searchSubscribe({
+				subId: Constant.subId.deleted,
+				filters: [
+					{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: true },
+				],
+				keys: [ 'id', 'isDeleted' ],
+				noDeps: true
+			});
+
+			this.searchSubscribe({
+				subId: Constant.subId.type,
+				keys: Constant.defaultRelationKeys.concat(Constant.typeRelationKeys),
+				filters: [
+					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.type }
+				],
+				noDeps: true
+			});
+
+			this.searchSubscribe({
+				subId: Constant.subId.relation,
+				keys: Constant.relationRelationKeys,
+				filters: [
+					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.relation },
+					{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
+				],
+				noDeps: true,
+			}, () => {
+				const records = dbStore.getRecords(Constant.subId.relation, '').map(id => dbStore.getRelationById(id));
+				for (let record of records) {
+					dbStore.relationKeyMap[record.relationKey] = record.id;
+				};
+			});
+
+			this.searchSubscribe({
+				subId: Constant.subId.option,
+				keys: Constant.optionRelationKeys,
+				filters: [
+					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.option },
+					{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
+					{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
+				],
+				noDeps: true
+			});
+
+			if (profile) {
+				this.subscribeIds({
+					subId: Constant.subId.profile, 
+					ids: [ profile ], 
+				});
 			};
 
 			if (pin && !keyboard.isPinChecked) {
@@ -1054,7 +1062,10 @@ class DataUtil {
 			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
 		];
 
-		C.ObjectSearch(filters, [], [], '', 0, limit, (message: any) => {
+		this.search({
+			filters,
+			limit,
+		}, (message: any) => {
 			if (message.error.code) {
 				return;
 			};
@@ -1176,7 +1187,7 @@ class DataUtil {
 			sources: [],
 			offset: 0,
 			limit: 0,
-			ignoreWorkspace: true,
+			ignoreWorkspace: false,
 			afterId: '',
 			beforeId: '',
 			noDeps: false,
@@ -1187,6 +1198,10 @@ class DataUtil {
 		if (!subId) {
 			console.error('[DataUtil].searchSubscribe: subId is empty');
 			return;
+		};
+
+		if (!ignoreWorkspace) {
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'workspaceId', condition: I.FilterCondition.Equal, value: commonStore.workspace });
 		};
 
 		keys.push(idField);
@@ -1235,6 +1250,30 @@ class DataUtil {
 				callBack(message);
 			};
 		});
+	};
+
+	search (param: any, callBack?: (message: any) => void) {
+		param = Object.assign({
+			idField: 'id',
+			fullText: '',
+			filters: [],
+			sorts: [],
+			keys: Constant.defaultRelationKeys,
+			offset: 0,
+			limit: 0,
+			ignoreWorkspace: false,
+		}, param);
+
+		let { idField, filters, sorts, keys, fullText, offset, limit, ignoreWorkspace } = param;
+
+		if (!ignoreWorkspace) {
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'workspaceId', condition: I.FilterCondition.Equal, value: commonStore.workspace });
+		};
+
+		fullText = fullText.replace(/\\/g, '');
+		fullText = Util.filterFix(fullText);
+
+		C.ObjectSearch(filters, sorts, keys.concat([ idField ]), fullText, offset, limit, callBack);
 	};
 
 	dataviewGroupUpdate (rootId: string, blockId: string, viewId: string, groups: any[]) {

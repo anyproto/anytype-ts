@@ -45,6 +45,7 @@ class CommonStore {
 	public autoSidebarValue: boolean = false;
 	public redirect: string = '';
 	public languages: string[] = [];
+	public workspaceId: string = '';
 
     constructor() {
         makeObservable(this, {
@@ -59,6 +60,7 @@ class CommonStore {
 			nativeThemeIsDark: observable,
 			typeId: observable,
 			isFullScreen: observable,
+			workspaceId: observable,
             config: computed,
             progress: computed,
             preview: computed,
@@ -68,6 +70,7 @@ class CommonStore {
             gateway: computed,
 			theme: computed,
 			nativeTheme: computed,
+			workspace: computed,
             coverSet: action,
             coverSetUploadedImage: action,
             gatewaySet: action,
@@ -79,6 +82,7 @@ class CommonStore {
             previewSet: action,
 			themeSet: action,
 			nativeThemeSet: action,
+			workspaceSet: action,
         });
     };
 
@@ -132,6 +136,10 @@ class CommonStore {
 
 	get nativeTheme(): string {
 		return this.nativeThemeIsDark ? 'dark' : '';
+	};
+
+	get workspace(): string {
+		return String(this.workspaceId || '');
 	};
 
     coverSet (id: string, image: string, type: I.CoverType) {
@@ -195,6 +203,10 @@ class CommonStore {
 
     previewSet (preview: Preview) {
 		this.previewObj = preview;
+	};
+
+	workspaceSet (id: string) {
+		this.workspaceId = String(id || '');
 	};
 
 	previewClear () {

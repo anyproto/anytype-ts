@@ -231,7 +231,13 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 			this.setState({ loading: true });
 		};
 
-		C.ObjectSearch(filters, sorts, Constant.defaultRelationKeys, filter, this.offset, Constant.limit.menu, (message: any) => {
+		DataUtil.search({
+			filters,
+			sorts,
+			fullText: filter,
+			offset: this.offset,
+			limit: Constant.limit.menu,
+		}, (message: any) => {
 			if (callBack) {
 				callBack(null);
 			};

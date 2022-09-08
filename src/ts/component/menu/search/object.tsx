@@ -265,7 +265,13 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 			this.setState({ loading: true });
 		};
 
-		C.ObjectSearch(filters, sorts, Constant.defaultRelationKeys, Util.filterFix(filter), this.offset, Constant.limit.menu, (message: any) => {
+		DataUtil.search({
+			filters,
+			sorts,
+			fullText: filter,
+			offset: this.offset,
+			limit: Constant.limit.menu,
+		}, (message: any) => {
 			if (!this._isMounted) {
 				return;
 			};

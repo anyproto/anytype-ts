@@ -72,7 +72,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 					<ObjectName object={item} />
 
 					{div}
-					<div className="type">{type._empty_ || type.isDeleted ? translate('commonDeletedType') : type.name}</div>
+					<div className="type">{!type || type.isDeleted ? translate('commonDeletedType') : type.name}</div>
 
 					{description ? (
 						<React.Fragment>
@@ -361,7 +361,13 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 			this.setState({ loading: true });
 		};
 
-		C.ObjectSearch(filters, sorts, Constant.defaultRelationKeys, filter, this.offset, Constant.limit.menu, (message: any) => {
+		DataUtil.search({
+			filters,
+			sorts,
+			fullText: filter,
+			offset: this.offset,
+			limit: Constant.limit.menu,
+		}, (message: any) => {
 			if (message.error.code) {
 				this.setState({ loading: false });
 				return;

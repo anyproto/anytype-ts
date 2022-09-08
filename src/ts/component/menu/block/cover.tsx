@@ -215,9 +215,16 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 				];
 
 				this.setState({ loading: true });
-				C.ObjectSearch(filters, sorts, Constant.defaultRelationKeys, filter, 0, 300, (message: any) => {
+
+				DataUtil.search({
+					filters,
+					sorts,
+					fullText: filter,
+					limit: 300,
+				}, (message: any) => {
+					this.setState({ loading: false });
+
 					if (message.error.code) {
-						this.setState({ loading: false });
 						return;
 					};
 
@@ -230,8 +237,6 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 							coverY: -0.25,
 						});
 					});
-
-					this.setState({ loading: false });
 				});
 				break;
 		};
