@@ -149,15 +149,17 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	unbind () {
-		$(window).off('resize.dataview keydown.dataview');
+		const { block } = this.props;
+		$(window).off(`resize.${block.id} keydown.${block.id}`);
 	};
 
 	rebind () {
-		this.unbind();
-
+		const { block } = this.props;
 		const win = $(window);
-		win.on('resize.dataview', (e: any) => { this.resize(); });
-		win.on('keydown.dataview', throttle((e: any) => { this.onKeyDown(e); }, 100));
+
+		this.unbind();
+		win.on(`resize.${block.id}`, throttle((e: any) => { this.resize(); }, 20));
+		win.on(`keydown.${block.id}`, throttle((e: any) => { this.onKeyDown(e); }, 100));
 	};
 
 	onKeyDown (e: any) {
@@ -180,7 +182,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			keyboard.shortcut('backspace, delete', e, (pressed: string) => {
 				C.ObjectListSetIsArchived(ids, true);
 				
-				selection.clear(false);
+				selection.clear();
 				analytics.event('MoveToBin', { count: length });
 			});
 		};
@@ -510,7 +512,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				const { x, y } = keyboard.mouse.page;
 				return { width: 0, height: 0, x: x + 4, y: y };
 			},
-			onClose: () => { selection.clear(true); },
+			onClose: () => { selection.clear(); },
 			data: {
 				objectIds: ids,
 				subId,

@@ -12,7 +12,9 @@ const Constant = require('json/constant.json');
 
 const BlockType = observer(class BlockType extends React.Component<Props, {}> {
 
+	_isMounted: boolean = false;
 	n: number = 0;
+	isFocused: boolean = false;
 
 	constructor (props: any) {
 		super(props);
@@ -20,6 +22,7 @@ const BlockType = observer(class BlockType extends React.Component<Props, {}> {
 		this.onKeyDown = this.onKeyDown.bind(this);
 		this.onOut = this.onOut.bind(this);
 		this.onFocus = this.onFocus.bind(this);
+		this.onTemplate = this.onTemplate.bind(this);
 	};
 
 	render (): any {
@@ -52,7 +55,13 @@ const BlockType = observer(class BlockType extends React.Component<Props, {}> {
 	};
 
 	componentDidMount () {
+		this._isMounted = true;
+
 		Onboarding.start('typeSelect', this.props.isPopup);
+	};
+
+	componentWillUnmount () {
+		this._isMounted = false;
 	};
 
 	getItems () {
@@ -113,8 +122,11 @@ const BlockType = observer(class BlockType extends React.Component<Props, {}> {
 	};
 	
 	onFocus () {
-		const items = this.getItems();
+		if (this.isFocused) {
+			return;
+		};
 
+		const items = this.getItems();
 		if (items.length) {
 			this.n = 0;
 			this.setHover(items[this.n]);
@@ -140,15 +152,26 @@ const BlockType = observer(class BlockType extends React.Component<Props, {}> {
 		if (item) {
 			node.find('#item-' + item.id).addClass('hover');
 		};
+
+		this.isFocused = item ? true : false;
 	};
 
 	onMenu (e: any) {
 		const { rootId, block } = this.props;
-		const types = DataUtil.getObjectTypesForNewObject().map(it => it.id);
+		const types = DataUtil.getObjectTypesForNewObject().map(it => it.id).filter((id: string) => {
+			return ![ Constant.typeId.page, Constant.typeId.task, Constant.typeId.set ].includes(id);
+		});
+		const element = `#block-${block.id} #item-menu`;
+		const obj = $(element);
 
 		menuStore.open('searchObject', {
-			element: `#block-${block.id} #item-menu`,
+			element,
 			className: 'big single',
+			onOpen: () => { obj.addClass('active'); },
+			onClose: () => { 
+				obj.removeClass('active'); 
+				focus.apply();
+			},
 			data: {
 				isBig: true,
 				rootId: rootId,
@@ -185,52 +208,6 @@ const BlockType = observer(class BlockType extends React.Component<Props, {}> {
 		};
 
 		const { rootId, isPopup } = this.props;
-		const param = {
-			type: I.BlockType.Text,
-			style: I.TextStyle.Paragraph,
-		};
-		const namespace = isPopup ? '-popup' : '';
-
-		Util.getScrollContainer(isPopup).scrollTop(0);
-		Storage.setScroll('editor' + (isPopup ? 'Popup' : ''), rootId, 0);
-
-		let first = null;
-
-		const create = (template: any) => {
-
-			const onBlock = (id: string) => {
-				if (first) {
-					const l = first.getLength();
-					
-					focus.set(first.id, { from: l, to: l });
-					focus.apply();
-				};
-
-				$(window).trigger('resize.editor' + namespace);
-			};
-
-			const onTemplate = () => {
-				first = blockStore.getFirstBlock(rootId, 1, it => it.isText());
-				if (!first) {
-					C.BlockCreate(rootId, '', I.BlockPosition.Bottom, param, (message: any) => { onBlock(message.blockId); });
-				} else {
-					onBlock(first.id);
-				};
-			};
-
-			if (template) {
-				C.ObjectApplyTemplate(rootId, template.id, onTemplate);
-			} else {
-				C.ObjectSetObjectType(rootId, item.id, onTemplate);
-			};
-
-			analytics.event('CreateObject', {
-				route: 'SelectType',
-				objectType: item.id,
-				layout: template?.layout,
-				template: (template && template.isBundledTemplate ? template.id : 'custom'),
-			});
-		};
 
 		if (item.id == Constant.typeId.set) {
 			C.ObjectToSet(rootId, [], (message: any) => {
@@ -249,11 +226,63 @@ const BlockType = observer(class BlockType extends React.Component<Props, {}> {
 		} else {
 			DataUtil.checkTemplateCnt([ item.id ], (message: any) => {
 				if (message.records.length > 1) {
-					popupStore.open('template', { data: { typeId: item.id, onSelect: create } });
+					popupStore.open('template', { 
+						data: { 
+							typeId: item.id, 
+							onSelect: (template: any) => {
+								this.onCreate(item.id, template);
+							} 
+						} 
+					});
 				} else {
-					create(message.records.length ? message.records[0] : '');
+					this.onCreate(item.id, message.records.length ? message.records[0] : null);
 				};
 			});
+		};
+	};
+
+	onCreate (typeId: any, template: any) {
+		const { rootId } = this.props;
+
+		if (template) {
+			C.ObjectApplyTemplate(rootId, template.id, this.onTemplate);
+		} else {
+			C.ObjectSetObjectType(rootId, typeId, this.onTemplate);
+		};
+
+		analytics.event('CreateObject', {
+			route: 'SelectType',
+			objectType: typeId,
+			layout: template?.layout,
+			template: (template && template.isBundledTemplate ? template.id : 'custom'),
+		});
+	};
+
+	onBlock (id: string) {
+		const { rootId, isPopup } = this.props;
+		const block = blockStore.getFirstBlock(rootId, 1, it => it.isText());
+		const namespace = isPopup ? '-popup' : '';
+
+		if (block) {
+			const l = block.getLength();
+			
+			focus.set(block.id, { from: l, to: l });
+			focus.apply();
+		};
+
+		$(window).trigger('resize.editor' + namespace);
+	};
+
+	onTemplate () {
+		const { rootId } = this.props;
+		const first = blockStore.getFirstBlock(rootId, 1, it => it.isText());
+
+		if (!first) {
+			C.BlockCreate(rootId, '', I.BlockPosition.Bottom, { type: I.BlockType.Text, style: I.TextStyle.Paragraph }, (message: any) => { 
+				this.onBlock(message.blockId); 
+			});
+		} else {
+			this.onBlock(first.id);
 		};
 	};
 

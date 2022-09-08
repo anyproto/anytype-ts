@@ -90,11 +90,13 @@ const PageAuthRegister = observer(class PageAuthRegister extends React.Component
 			};
 
 			let path = files[0];
-			
-			authStore.iconSet(path);
-			FileUtil.loadPreviewBase64(FileUtil.fromPath(path), {}, (image: string, param: any) => {
-				authStore.previewSet(image);
-			});
+			let file = FileUtil.fromPath(path);
+			if (file) {
+				authStore.iconSet(path);
+				FileUtil.loadPreviewBase64(file, {}, (image: string, param: any) => { 
+					authStore.previewSet(image);
+				});
+			};
 		});
 	};
 

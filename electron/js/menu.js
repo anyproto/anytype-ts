@@ -283,6 +283,7 @@ class MenuManager {
 
 	initTray () {
 		const Api = require('./api.js');
+		const UpdateManager = require('./update.js');
 
 		const show = () => {
 			if (this.win) {

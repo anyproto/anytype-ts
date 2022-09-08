@@ -680,7 +680,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				focus.set(cellId, { from: 0, to: 0 });
 				focus.apply();
 
-				selection.clear(true);
+				selection.clear();
 			});
 		} else {
 			cb();

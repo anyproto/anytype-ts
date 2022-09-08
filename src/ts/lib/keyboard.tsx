@@ -52,6 +52,8 @@ class Keyboard {
 		win.on('blur.common', () => {
 			Util.tooltipHide(true);
 			Util.previewHide(true);
+
+			this.pressed = [];
 		});
 
 		Renderer.remove('commandGlobal');

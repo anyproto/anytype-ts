@@ -108,6 +108,7 @@
 
         .cellHead .resize .line { background: $colorLineSecondary; }
         .cellHead.isDragging { background: $colorHover; }
+		.cellHead.isDragging::after { background-color: $colorHover; }
 
         .viewItem.viewGrid,
 		.viewItem.viewList {
@@ -125,6 +126,11 @@
             .row { box-shadow: 0px 1px $colorLineSecondary inset; }
 			.cellHead .resize .line { background-color: $colorLineSecondary; }
 			.cellHead:hover::after, .cellHead.active::after { background-color: $colorHover; }
+
+			.cellHead.last::after, .cellHead.active::after { background: none; }
+			.cellHead.last:hover, .cellHead.last.active {
+				.icon.plus { background-image: url('#{$themePath}/icon/plus/menu1.svg'); }
+			}
         }
 
         .viewItem.viewList, .viewItem.viewGallery, .viewItem.viewBoard {
@@ -163,7 +169,7 @@
     /* BlockType */
 
     .block.blockType {
-        .item { border-color: $colorLineSecondary; }
+        .item { border-color: $colorLineSecondary; color: $colorSecondary; }
         .item.hover { background: $colorHover; }
     }
 

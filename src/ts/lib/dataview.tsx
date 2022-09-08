@@ -105,6 +105,13 @@ class Dataview {
 		const filters = view.filters.concat([
 			{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
 		]);
+		const sorts = view.sorts.map((it: I.Sort) => {
+			const relation = view.getRelation(it.relationKey);
+			if (relation) {
+				it.includeTime = relation.includeTime;
+			};
+			return it;
+		});
 
 		if (viewChange) {
 			meta.viewId = id;
@@ -118,7 +125,7 @@ class Dataview {
 		DataUtil.searchSubscribe({
 			subId,
 			filters,
-			sorts: view.sorts,
+			sorts,
 			keys,
 			sources: block.content.sources,
 			offset,

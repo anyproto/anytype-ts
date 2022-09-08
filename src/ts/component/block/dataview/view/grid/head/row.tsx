@@ -24,6 +24,7 @@ const HeadRow = observer(class HeadRow extends React.Component<Props, {}> {
 		const relations = view.relations.filter((it: any) => { 
 			return it.isVisible && dbStore.getRelationByKey(it.relationKey); 
 		});
+		const columns = relations.map(it => it.width + 'px').concat([ 'auto' ]);
 		const allowed = blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.Relation ]);
 
 		// Subscriptions
@@ -32,7 +33,10 @@ const HeadRow = observer(class HeadRow extends React.Component<Props, {}> {
 		});
 		
 		const Row = SortableContainer((item: any) => (
-			<div className="rowHead">
+			<div 
+				className="rowHead" 
+				style={{ gridTemplateColumns: columns.join(' ') }}
+			>
 				{relations.map((relation: any, i: number) => (
 					<Cell 
 						key={'grid-head-' + relation.relationKey} 

@@ -72,6 +72,14 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<Pro
 		);
 	};
 
+	componentDidMount () {
+		this.setTitle();
+	};
+
+	componentDidUpdate () {
+		this.setTitle();
+	};
+
 	onOpen () {
 		const { rootId } = this.props;
 		const object = detailStore.get(rootId, rootId, []);
@@ -153,6 +161,14 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<Pro
 	getContainer () {
 		const { isPopup } = this.props;
 		return (isPopup ? '.popup' : '') + ' .header';
+	};
+
+	setTitle () {
+		const { rootId, isPopup } = this.props;
+
+		if (!isPopup) {
+			DataUtil.setWindowTitle(rootId);
+		};
 	};
 	
 });

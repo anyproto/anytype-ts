@@ -74,6 +74,7 @@ export enum FilterQuickOption {
 export interface Sort {
 	relationKey: string;
 	type: SortType;
+	includeTime?: boolean;
 };
 
 export interface Filter {

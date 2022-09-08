@@ -218,7 +218,7 @@ class DataUtil {
 		
 		let ids: string[] = selection.get(I.SelectType.Block, withChildren);
 		if (id && ids.indexOf(id) < 0) {
-			selection.clear(true);
+			selection.clear();
 			selection.set(I.SelectType.Block, [ id ]);
 			ids = selection.get(I.SelectType.Block, withChildren);
 		};
@@ -1246,6 +1246,33 @@ class DataUtil {
 		};
 
 		blockStore.updateContent(rootId, blockId, block.content);
+	};
+
+	getObjectName (object: any) {
+		const { isDeleted, type, layout, snippet } = object;
+
+		let name = '';
+		if (!isDeleted && this.isFileType(type)) {
+			name = this.fileName(object);
+		} else
+		if (layout == I.ObjectLayout.Note) {
+			name = snippet || translate('commonEmpty');
+		} else {
+			name = object.name || this.defaultName('page');
+		};
+
+		return name;
+	}
+
+	setWindowTitle (rootId: string) {
+		const object = detailStore.get(rootId, rootId, []);
+		const name = this.getObjectName(object);
+
+		this.setWindowTitleText(name);
+	};
+
+	setWindowTitleText (name: string) {
+		document.title = [ name, Constant.appName ].join(' | ');
 	};
 
 };

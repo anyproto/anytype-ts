@@ -297,6 +297,7 @@ const Mapper = {
 			return {
 				relationKey: obj.getRelationkey(),
 				type: obj.getType(),
+				//includeTime: obj.getIncludetime(),
 			};
 		},
 
@@ -666,6 +667,7 @@ const Mapper = {
 			
 			item.setRelationkey(obj.relationKey);
 			item.setType(obj.type);
+			//item.setIncludetime(obj.includeTime);
 
 			return item;
 		},

@@ -78,7 +78,6 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		const { text, marks, style, checked, color, iconEmoji, iconImage } = content;
 		const { theme } = commonStore;
 		const root = blockStore.getLeaf(rootId, rootId);
-		const header = blockStore.getMapElement(rootId, Constant.blockId.header);
 
 		let marker: any = null;
 		let placeholder = translate('placeholderBlock');
@@ -90,13 +89,6 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		};
 		if (readonly) {
 			cv.push('isReadonly');
-		};
-
-		if ((index <= 1) && blockStore.checkBlockTypeExists(rootId)) {
-			const object = detailStore.get(rootId, rootId, [ 'type' ], true);
-			const type = dbStore.getType(object.type);
-
-			placeholder = `Type something to proceed with ${type?.name} type`;
 		};
 
 		// Subscriptions
@@ -932,7 +924,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 					continue;
 				};
 
-				if (value.match(reg) && (content.style != style)) {
+				if (value.match(reg)) {
 					value = value.replace(reg, (s: string, p: string) => { return s.replace(p, ''); });
 
 					if (style == I.TextStyle.Code) {
@@ -940,6 +932,8 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 					} else {
 						this.marks = Mark.adjust(this.marks, 0, -(Length[style] + 1));
 					};
+
+					this.setValue(value);
 
 					DataUtil.blockSetText(rootId, id, value, this.marks, true, () => {
 						C.BlockListTurnInto(rootId, [ id ], style);

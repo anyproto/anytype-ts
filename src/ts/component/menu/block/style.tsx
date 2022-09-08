@@ -143,7 +143,7 @@ const MenuBlockStyle = observer(class MenuBlockStyle extends React.Component<Pro
 		onSelect(item);
 
 		if (selection) {
-			selection.clear(false);
+			selection.clear();
 		};
 
 		analytics.event('ChangeBlockStyle', { type: item.type, style: item.itemId });

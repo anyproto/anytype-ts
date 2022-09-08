@@ -40,6 +40,7 @@ const SNAP = 0.01;
 const Block = observer(class Block extends React.Component<Props, {}> {
 
 	ref: any = null;
+	ids: string[] = [];
 
 	public static defaultProps = {
 		align: I.BlockHAlign.Left,
@@ -356,15 +357,18 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 		};
 		
 		selection.preventSelect(true);
-		selection.preventClear(true);
 
 		const ids: string[] = DataUtil.selectionGet(block.id, false, this.props);
 		onDragStart(e, I.DropType.Block, ids, this);
 	};
 	
 	onMenuDown (e: any) {
+		const { block } = this.props;
+
 		focus.clear(true);
 		Util.previewHide(true);
+
+		this.ids = DataUtil.selectionGet(block.id, true, this.props);
 	};
 	
 	onMenuClick (e: any) {
@@ -381,6 +385,8 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 			focus.set(block.id, { from: 0, to: 0 });
 		};
 
+		selection.set(I.SelectType.Block, this.ids);
+
 		menuStore.open('blockAction', { 
 			offsetX: element.outerWidth(),
 			horizontal: I.MenuDirection.Right,
@@ -390,13 +396,13 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 			},
 			data: {
 				blockId: block.id,
-				blockIds: DataUtil.selectionGet(block.id, true, this.props),
+				blockIds: this.ids,
 				rootId: rootId,
 				dataset: dataset,
 				blockRemove: blockRemove
 			},
 			onClose: () => {
-				selection.clear(true);
+				selection.clear();
 				focus.apply();
 			}
 		});
@@ -422,7 +428,7 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 		
 		if (selection) {
 			selection.preventSelect(true);
-			selection.clear(true);
+			selection.clear();
 		};
 
 		this.unbind();

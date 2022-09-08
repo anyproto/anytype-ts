@@ -9,7 +9,7 @@
 		.cellHead {
 			.cellContent { cursor: grab; height: 46px !important; overflow: visible !important; }
 			.flex { padding: 14px; }
-			.iconObject { width: 20px; height: 20px; margin: 0px 4px 0px 0px; vertical-align: top; flex-shrink: 0; display: none; }
+			.iconObject { width: 20px; height: 20px; margin: 0px; vertical-align: top; flex-shrink: 0; display: none; }
 			.name { 
 				display: inline-block; line-height: 20px; height: 20px; vertical-align: top; width: 100%; 
 				@include text-overflow-nw;
@@ -30,9 +30,9 @@
 			.icon.plus { margin: 0px; }
 		}
 
-		.cellHead.isDragging { border: 0px; background: rgba(255,255,255,0.75);  }
+		.cellHead.isDragging { border: 0px; background: rgba(255,255,255,0.75); }
 		.cellHead.isDragging::after {
-			content: ""; display: block; width: 100%; height: calc(100% + 2px); position: absolute; left: 0px; top: 0px; z-index: 0; pointer-events: none;
+			content: ""; display: block; width: 100%; height: calc(100% - 1px); position: absolute; left: 0px; top: 0px; z-index: 0; pointer-events: none;
 			background-color: rgba(255,255,255,0.75);
 		}
 		.cellHead.isDragging {
@@ -40,17 +40,18 @@
 		}
 
 		.cellHead:hover::after, .cellHead.active::after { 
-			content: ""; display: block; width: 100%; height: calc(100% + 2px); position: absolute; left: 0px; top: 0px; z-index: 0; pointer-events: none;
+			content: ""; display: block; width: 100%; height: calc(100% - 1px); position: absolute; left: 0px; top: 0px; z-index: 0; pointer-events: none;
 			background-color: $colorHover; 
 		}
 
+		.cellHead.last::after, .cellHead.active::after { background: none; }
 		.cellHead.last:hover, .cellHead.last.active {
 			.icon.plus { background-image: url('~img/icon/plus/menu1.svg'); }
 		}
 
         .viewItem.viewGrid { display: table; width: 100%; position: relative; box-shadow: 0px -1px #e0ded2 inset; }
 		.viewItem.viewGrid {
-			.rowHead { display: block; white-space: nowrap; width: calc(100% - 4px); margin-left: 2px; height: 46px; }
+			.rowHead { display: grid; white-space: nowrap; width: calc(100% - 4px); margin-left: 2px; height: 46px; }
 
 			.icon.checkbox { vertical-align: top; }
 			.icon.edit { width: 36px; height: 48px; position: absolute; right: 0px; top: 0px; }
@@ -68,6 +69,8 @@
 					.icon.edit { display: block; }
 				}
 			}
+
+			.row > .selectable { display: grid; }
 
 			.cellContent { width: 100%; overflow: hidden; height: 20px; line-height: 20px; }
 			.cellContent {

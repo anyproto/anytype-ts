@@ -171,10 +171,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 		this.resize();
 		win.on('resize.editor' + namespace, (e: any) => { this.resize(); });
-
 		Util.getScrollContainer(isPopup).on('scroll.editor' + namespace, throttle((e: any) => { this.onScroll(e); }, THROTTLE));
-
-		Storage.set('askSurvey', 1);
 
 		Renderer.remove('commandEditor');
 		Renderer.on('commandEditor', (e: any, cmd: string, arg: any) => { this.onCommand(cmd, arg); });
@@ -547,7 +544,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 			keyboard.shortcut('escape', e, (pressed: string) => {
 				if (!menuOpen) {
-					selection.clear(false);
+					selection.clear();
 				};
 			});
 
@@ -610,7 +607,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 							dataset: dataset,
 						},
 						onClose: () => {
-							selection.clear(true);
+							selection.clear();
 							focus.apply();
 						}
 					});
@@ -637,7 +634,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 				return;
 			};
 
-			selection.clear(false);
+			selection.clear();
 			focus.restore();
 			focus.apply();
 		});
@@ -648,7 +645,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 				return;
 			};
 
-			selection.clear(false);
+			selection.clear();
 			focus.restore();
 
 			const focused = focus.state.focused || Constant.blockId.title;
@@ -753,7 +750,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 						dataset: dataset,
 					},
 					onClose: () => {
-						selection.clear(true);
+						selection.clear();
 						focus.set(block.id, range);
 						focus.apply();
 					}
@@ -1492,14 +1489,65 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 		analytics.event(cut ? 'CutBlock' : 'CopyBlock');
 	};
+
+	getClipboardFiles (e: any) {
+		const items = (e.clipboardData || e.originalEvent.clipboardData).items;
+		const files = [];
+
+		if (items && items.length) {
+			for (let item of items) {
+				if (item.kind != 'file') {
+					continue;
+				};
+
+				const file = item.getAsFile();
+				if (file) {
+					files.push(file);
+				};
+			};
+		};
+		return files;
+	};
+
+	saveClipboardFiles (e: any, data: any, callBack: (data: any) => void) {
+		const files = this.getClipboardFiles(e);
+		const ret = [];
+
+		if (!files.length) {
+			return;
+		};
+
+		const cb = () => {
+			if (ret.length == files.length) {
+				callBack({ ...data, files: ret });
+			};
+		};
+
+		for (let file of files) {
+			if (file.path) {
+				ret.push({ name: file.name, path: file.path });
+				cb();
+			} else {
+				const reader = new FileReader();
+				reader.onload = function(e) {
+					ret.push({ 
+						name: file.name, 
+						path: window.Electron.fileWrite(file.name, reader.result, 'binary'),
+					});
+					cb();
+				};
+				reader.onerror = function(e) {
+				};
+				reader.readAsBinaryString(file);
+			};
+		};
+	};
 	
 	onPaste (e: any, props: any, force?: boolean, data?: any) {
 		const { dataset, rootId } = this.props;
 		const { selection } = dataset || {};
 		const { focused, range } = focus.state;
-		const cb = e.clipboardData || e.originalEvent.clipboardData;
-		const items = cb.items;
-		const files: any[] = [];
+		const files = this.getClipboardFiles(e);
 
 		menuStore.closeAll([ 'blockAdd' ]);
 
@@ -1511,17 +1559,11 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			data = this.getClipboardData(e);
 		};
 
-		if (items && items.length) {
-			for (let item of items) {
-				if (item.kind != 'file') {
-					continue;
-				};
-
-				const file = item.getAsFile();
-				if (file) {
-					files.push({ name: file.name, path: file.path });
-				};
-			};
+		if (files.length) {
+			this.saveClipboardFiles(e, data, (data: any) => {
+				this.onPaste(e, props, force, data);
+			});
+			return;
 		};
 
 		e.preventDefault();
@@ -1539,7 +1581,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		let from = 0;
 		let to = 0;
 
-		C.BlockPaste(rootId, focused, range, selection.get(I.SelectType.Block, true), data.anytype.range.to > 0, { ...data, anytype: data.anytype.blocks, files }, (message: any) => {
+		C.BlockPaste(rootId, focused, range, selection.get(I.SelectType.Block, true), data.anytype.range.to > 0, { ...data, anytype: data.anytype.blocks }, (message: any) => {
 			if (message.error.code) {
 				return;
 			};

@@ -258,7 +258,6 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 
 		if (selection) {
 			selection.preventSelect(false);
-			selection.preventClear(false);
 		};
 
 		$('.isDragging').removeClass('isDragging');
@@ -268,10 +267,6 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 	onDrop (e: any, type: string, targetId: string, position: I.BlockPosition) {
 		const { dataset } = this.props;
 		const { selection } = dataset || {};
-
-		if (selection) {
-			selection.preventClear(false);
-		};
 
 		let data: any = {};
 		try { data = JSON.parse(e.dataTransfer.getData('text/plain')) || {}; } catch (e) {};
