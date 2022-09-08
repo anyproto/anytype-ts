@@ -545,20 +545,23 @@ class Dispatcher {
 				case 'blockDataviewGroupOrderUpdate':
 					id = data.getId();
 					block = blockStore.getLeaf(rootId, id);
+
 					if (!block) {
 						break;
 					};
 
 					if (data.hasGrouporder()) {
 						const order = Mapper.From.GroupOrder(data.getGrouporder());
-						const el = block.content.groupOrder.find(it => it.viewId == order.viewId);
+						const idx = block.content.groupOrder.findIndex(it => it.viewId == order.viewId);
 
-						if (el) {
-							el.groups = order.groups;
+						if (idx >= 0) {
+							block.content.groupOrder[idx] = order;
+						} else {
+							block.content.groupOrder.push(order);
 						};
 					};
 
-					blockStore.update(rootId, block);
+					blockStore.updateContent(rootId, id, { groupOrder: block.content.groupOrder });
 					break;
 
 				case 'blockDataviewRelationSet':

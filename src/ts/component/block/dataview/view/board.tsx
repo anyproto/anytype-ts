@@ -104,13 +104,11 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 	};
 
 	rebind () {
-		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
 		const scroll = node.find('.scroll');
 
 		this.unbind();
 
-		win.on('scroll.board', throttle((e: any) => { this.onScrollWindow(); }, 20));
 		scroll.on('scroll', (e: any) => { this.onScrollView(); });
 	};
 
@@ -607,17 +605,6 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 		dbStore.recordsSet(subId, '', records);
 	};
 
-	onScrollWindow () {
-		const win = $(window);
-		const node = $(ReactDOM.findDOMNode(this));
-		const scroll = node.find('.scroll');
-		const columns = node.find('.column .body');
-		const wh = win.height();
-		const rect = scroll.get(0).getBoundingClientRect();
-
-		columns.css({ maxHeight: Math.min(wh, wh - rect.y - 56) });
-	};
-
 	onScrollView () {
 		const groups = this.getGroups(false);
 		const node = $(ReactDOM.findDOMNode(this));
@@ -700,8 +687,6 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 
 		scroll.css({ width: ww, marginLeft: -margin / 2 , paddingLeft: margin / 2 });
 		viewItem.css({ width: width < mw ? mw : width });
-
-		this.onScrollWindow();
 	};
 	
 });
