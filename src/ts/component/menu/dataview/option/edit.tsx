@@ -197,7 +197,7 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<Pro
 			return;
 		};
 
-		C.ObjectSetDetails(option.id.replace('-', ':'), [ 
+		C.ObjectSetDetails(option.id, [ 
 			{ key: 'relationOptionText', value },
 			{ key: 'relationOptionColor', value: this.color },
 		]);

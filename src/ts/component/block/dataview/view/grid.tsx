@@ -226,7 +226,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { rootId, block, getView } = this.props;
+		const { getView } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
 		const view = getView();
 		const width = this.checkWidth(e.pageX - this.ox);
@@ -234,7 +234,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 		const el = node.find(`#${Relation.cellId('head', relationKey, '')}`);
 
 		const relations = view.relations.filter((it: any) => { 
-			return it.isVisible && dbStore.getRelation(rootId, block.id, it.relationKey); 
+			return it.isVisible && dbStore.getRelationByKey(it.relationKey); 
 		});
 		const columns = relations.map((it: any) => {
 			if (it.relationKey == relationKey) {

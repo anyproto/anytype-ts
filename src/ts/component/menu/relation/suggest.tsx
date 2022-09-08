@@ -195,7 +195,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		const skipIds = (data.skipIds || []).concat(Constant.systemRelationKeys);
 		const name = data.filter ? `Create relation "${data.filter}"` : 'Create from scratch';
 		const records = dbStore.getRecords(Constant.subId.relation, '');
-		const items = records.map(id => dbStore.getRelationById(id)).filter(it => !skipIds.includes(it.relationKey));
+		const items = records.map(id => dbStore.getRelationById(id)).filter(it => it && !skipIds.includes(it.relationKey));
 
 		let ret: any[] = [].concat(items);
 		if (data.filter) {

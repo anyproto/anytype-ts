@@ -157,7 +157,6 @@ class DetailStore {
 			object.objectTypes = object.relationFormatObjectTypes || [];
 		} else
 		if (object.type == Constant.typeId.option) {
-			object.id = object.id.replace(':', '-');
 			object.text = String(object.relationOptionText || '');
 			object.color = String(object.relationOptionColor || '');
 		};
