@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Loader } from 'Component';
-import { dbStore, detailStore, popupStore } from 'Store';
 import { I, C, Util, DataUtil, analytics, keyboard, Relation } from 'Lib';
+import { dbStore, detailStore, popupStore, menuStore } from 'Store';
 import { throttle } from 'lodash';
 import { observer } from 'mobx-react';
 import arrayMove from 'array-move';
@@ -195,6 +195,8 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 		const object = detailStore.get(rootId, rootId, [ 'setOf' ], true);
 		const setOf = object.setOf || [];
 		const subId = this.getSubId(groupId);
+		const node = $(ReactDOM.findDOMNode(this));
+		const element = node.find(`#card-${groupId}-add`);
 		const types = Relation.getSetOfObjects(rootId, rootId, Constant.typeId.type);
 		const relations = Relation.getSetOfObjects(rootId, rootId, Constant.typeId.relation);
 		const details: any = {};
@@ -202,7 +204,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 		details[view.groupRelationKey] = group.value;
 
 		if (types.length) {
-			details.type = types[0].id
+			details.type = types[0].id;
 		};
 
 		if (relations.length) {
@@ -235,6 +237,23 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 
 		if (!setOf.length) {
 			create(null);
+			return;
+		};
+
+		const first = setOf[0];
+
+		if (first == Constant.typeId.bookmark) {
+			menuStore.open('dataviewCreateBookmark', {
+				type: I.MenuType.Horizontal,
+				element,
+				vertical: dir > 0 ? I.MenuDirection.Top : I.MenuDirection.Bottom,
+				horizontal: dir > 0 ? I.MenuDirection.Left : I.MenuDirection.Right,
+				data: {
+					command: (source: string, callBack: (message: any) => void) => {
+						C.ObjectCreateBookmark({ ...details, source }, callBack);
+					}
+				},
+			});
 			return;
 		};
 
