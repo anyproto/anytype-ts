@@ -186,7 +186,7 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 		const lastSurveyTime = Number(Storage.get('lastSurveyTime')) || 0;
 		const lastSurveyCanceled = Number(Storage.get('lastSurveyCanceled')) || 0;
 		const askSurvey = Number(Storage.get('askSurvey')) || 0;
-		const days = lastSurveyTime ? 90 : 14;
+		const days = lastSurveyTime ? 90 : 30;
 		const win = $(window);
 		const path = [ match.params.page, match.params.action ].join('/');
 		const Component = Components[path];
@@ -235,7 +235,7 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 			let popupNewBlock = Storage.get('popupNewBlock');
 			let onboarding = Storage.get('onboarding');
 
-			if (isMain && account) {
+			if (isMain) {
 				if (!onboarding) {
 					popupNewBlock = true;
 				};
@@ -251,7 +251,7 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 			};
 
 			if (isMainIndex) {
-				if (account && askSurvey && !popupStore.isOpen() && !lastSurveyCanceled && (lastSurveyTime <= Util.time() - 86400 * days)) {
+				if (askSurvey && !popupStore.isOpen() && !lastSurveyCanceled && (lastSurveyTime <= Util.time() - 86400 * days)) {
 					analytics.event('SurveyShow');
 
 					const onClose = () => {
@@ -263,12 +263,12 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 						onClose: onClose,
 						data: {
 							title: 'We need your opinion',
-							text: 'Please, tell us what you think about Anytype. Participate in 1 min survey',
+							text: 'Hi there! We\'d love if you\'d help us improve Anytype by taking part in this 5-minute survey.',
 							textConfirm: 'Let\'s go!',
 							textCancel: 'Skip',
 							canCancel: true,
 							onConfirm: () => {
-								Renderer.send('urlOpen', Util.sprintf(Url.survey, account.id));
+								Renderer.send('urlOpen', Util.sprintf(Url.survey.pmf, account.id));
 								Storage.set('lastSurveyTime', Util.time());
 
 								analytics.event('SurveyOpen');

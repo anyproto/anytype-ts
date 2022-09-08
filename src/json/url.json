@@ -4,7 +4,11 @@
 	"telegram": "https://t.me/anytype",
 	"twitter": "https://twitter.com/AnytypeLabs",
 	"feedback": "https://community.anytype.io/composer",
-	"survey": "https://anytype.typeform.com/to/kpqcOT47#anytypeid=%s",
+	"survey": {
+		"new": "https://anytype.typeform.com/to/GlS8NAKb",
+		"pmf": "https://anytype.typeform.com/to/CXu6nG9R#anytypeid=%s",
+		"exit": "https://anytype.typeform.com/to/lSyoRr8U"
+	},
 	"unsplash": {
 		"site": "https://unsplash.com/",
 		"utm": "?utm_source=Anytype&utm_medium=referral"

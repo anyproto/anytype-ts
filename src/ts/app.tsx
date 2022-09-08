@@ -160,6 +160,7 @@ const memoryHistory = hs.createMemoryHistory;
 const history = memoryHistory();
 const Constant =  require('json/constant.json');
 const Error = require('json/error.json');
+const Url = require('json/url.json');
 
 const Routes: RouteElement[] = require('json/route.json');
 
@@ -440,6 +441,8 @@ class App extends React.Component<Props, State> {
 
 		this.initStorage();
 		this.initTheme(config.theme);
+
+		// setTimeout(this.newUserSurvey,2000);
 
 		const cb = () => {
 			window.setTimeout(() => { 
@@ -785,6 +788,24 @@ class App extends React.Component<Props, State> {
 			}
 		});
 	};
+
+	newUserSurvey () {
+		const text = 'Hi there, We hope you\'re enjoying your experience in Anytype! We\'d love to hear your feedback so we can keep improving the product.'
+
+		popupStore.open('confirm', {
+			data: {
+				title: 'Time to take a survey!',
+				text: text,
+				textConfirm: 'Let\'s Go!',
+				textCancel: 'Skip',
+				canConfirm: true,
+				canCancel: true,
+				onConfirm: () => {
+					Util.onUrl(Url.newUserSurvey);
+				}
+			}
+		});
+	}
 
 };
 
