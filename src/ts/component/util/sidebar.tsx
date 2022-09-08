@@ -262,7 +262,8 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 				filters: filters.concat(sectionFilters),
 				sorts,
 				keys: Constant.sidebarRelationKeys,
-				limit: section.limit
+				limit: section.limit,
+				noDeps: true,
 			}, cb);
 		});
 	};
