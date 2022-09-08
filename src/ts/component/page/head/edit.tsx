@@ -7,7 +7,7 @@ import { blockStore, detailStore } from 'Store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.BlockComponent, RouteComponentProps<any> {
-	onResize?(v: number): void;
+	setLayoutWidth?(v: number): void;
 };
 
 const $ = require('jquery');
@@ -130,7 +130,7 @@ const PageHeadEdit = observer(class PageHeadEdit extends React.Component<Props, 
 	};
 	
 	onScaleMove (e: any, v: number) {
-		this.props.onResize(v);
+		this.props.setLayoutWidth(v);
 		this.setPercent(v);
 	};
 	

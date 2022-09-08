@@ -1190,51 +1190,6 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		rows.css({ gridTemplateColumns: sizes.map(it => it + 'px').join(' ') });
 	};
 
-	resize () {
-		if (!this._isMounted) {
-			return;
-		};
-
-		const { isPopup, rootId, block, getWrapperWidth } = this.props;
-		const element = blockStore.getMapElement(rootId, block.id);
-		const parent = blockStore.getLeaf(rootId, element.parentId);
-		const node = $(ReactDOM.findDOMNode(this));
-		const wrap = node.find('#scrollWrap');
-		const row = node.find('.row').first();
-
-		let width = 0;
-		let maxWidth = 0;
-		let wrapperWidth = 0;
-
-		width += Constant.size.blockMenu + 10;
-		String(row.css('grid-template-columns') || '').split(' ').forEach((it: string) => {
-			width += parseInt(it);
-		});
-
-		if (parent.isPage() || parent.isLayoutDiv()) {
-			const obj = $(`#block-${block.id}`);
-			const container = Util.getPageContainer(isPopup);
-
-			maxWidth = container.width() - PADDING;
-			wrapperWidth = getWrapperWidth() + Constant.size.blockMenu;
-
-			width > maxWidth ? wrap.addClass('withScroll') : wrap.removeClass('withScroll');
-			width = Math.max(wrapperWidth, Math.min(maxWidth, width));
-
-			obj.css({
-				width: (width >= wrapperWidth) ? width : 'auto',
-				marginLeft: (width >= wrapperWidth) ? Math.min(0, (wrapperWidth - width) / 2) : '',
-			});
-		} else {
-			const parentObj = $(`#block-${parent.id}`);
-			if (parentObj.length) {
-				maxWidth = parentObj.width() - Constant.size.blockMenu;
-			};
-
-			width > maxWidth ? wrap.addClass('withScroll') : wrap.removeClass('withScroll');
-		};
-	};
-
 	checkWidth (w: number) {
 		const { min, max } = Constant.size.table;
 		const steps = 5;
@@ -1536,6 +1491,51 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 
 	getClassByPosition (position: I.BlockPosition) {
 		return I.BlockPosition[position].toLowerCase();
+	};
+
+	resize () {
+		if (!this._isMounted) {
+			return;
+		};
+
+		const { isPopup, rootId, block, getWrapperWidth } = this.props;
+		const element = blockStore.getMapElement(rootId, block.id);
+		const parent = blockStore.getLeaf(rootId, element.parentId);
+		const node = $(ReactDOM.findDOMNode(this));
+		const wrap = node.find('#scrollWrap');
+		const row = node.find('.row').first();
+
+		let width = 0;
+		let maxWidth = 0;
+		let wrapperWidth = 0;
+
+		width += Constant.size.blockMenu + 10;
+		String(row.css('grid-template-columns') || '').split(' ').forEach((it: string) => {
+			width += parseInt(it);
+		});
+
+		if (parent.isPage() || parent.isLayoutDiv()) {
+			const obj = $(`#block-${block.id}`);
+			const container = Util.getPageContainer(isPopup);
+
+			maxWidth = container.width() - PADDING;
+			wrapperWidth = getWrapperWidth() + Constant.size.blockMenu;
+
+			width > maxWidth ? wrap.addClass('withScroll') : wrap.removeClass('withScroll');
+			width = Math.max(wrapperWidth, Math.min(maxWidth, width));
+
+			obj.css({
+				width: (width >= wrapperWidth) ? width : 'auto',
+				marginLeft: (width >= wrapperWidth) ? Math.min(0, (wrapperWidth - width) / 2) : '',
+			});
+		} else {
+			const parentObj = $(`#block-${parent.id}`);
+			if (parentObj.length) {
+				maxWidth = parentObj.width() - Constant.size.blockMenu;
+			};
+
+			width > maxWidth ? wrap.addClass('withScroll') : wrap.removeClass('withScroll');
+		};
 	};
 
 });

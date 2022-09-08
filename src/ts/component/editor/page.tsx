@@ -59,6 +59,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		this.resize = this.resize.bind(this);
 		this.focusTitle = this.focusTitle.bind(this);
 		this.blockRemove = this.blockRemove.bind(this);
+		this.setLayoutWidth = this.setLayoutWidth.bind(this);
 	};
 
 	render () {
@@ -103,7 +104,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 							onKeyUp={this.onKeyUpBlock}  
 							onMenuAdd={this.onMenuAdd}
 							onPaste={this.onPaste}
-							onResize={(v: number) => { this.onResize(v); }}
+							setLayoutWidth={this.setLayoutWidth}
 							readonly={readonly}
 							getWrapper={this.getWrapper}
 							getWrapperWidth={this.getWrapperWidth}
@@ -169,7 +170,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			Util.getScrollContainer(isPopup).scrollTop(this.scrollTop);
 		});
 
-		this.resize();
 		win.on('resize.editor' + namespace, (e: any) => { this.resize(); });
 		Util.getScrollContainer(isPopup).on('scroll.editor' + namespace, throttle((e: any) => { this.onScroll(e); }, THROTTLE));
 
@@ -210,7 +210,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 	};
 
 	getWrapperWidth (): number {
-		return this.width;
+		const { rootId } = this.props;
+		const root = blockStore.getLeaf(rootId, rootId);
+
+		return this.getWidth(root?.fields?.width);
 	};
 
 	open () {
@@ -253,8 +256,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			};
 
 			window.clearTimeout(this.timeoutMove);
-			window.setTimeout(() => { this.uiShow(); }, 10);
-			this.resize();
+			window.setTimeout(() => { 
+				this.uiShow(); 
+				this.resize();
+			}, 15);
 		});
 	};
 
@@ -1989,6 +1994,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		const container = Util.getScrollContainer(isPopup);
 		const hh = isPopup ? header.height() : Util.sizeHeader();
 
+		this.setLayoutWidth(root?.fields?.width);
+
 		if (blocks.length && last.length) {
 			last.css({ height: '' });
 
@@ -2008,8 +2015,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		if (cover.length) {
 			cover.css({ top: hh });
 		};
-
-		this.onResize(root?.fields?.width);
 	};
 
 	getContainer () {
@@ -2040,26 +2045,17 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		this.focus(next.id, from, from, true);
 	};
 
-	onResize (v: number) {
+	setLayoutWidth (v: number) {
 		v = Number(v) || 0;
 
-		const { rootId } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
 		const width = this.getWidth(v);
 		const elements = node.find('#elements');
-		const blocks = blockStore.getBlocks(rootId, it => it.isTable());
 
-		node.css({ width: width });
-		elements.css({ width: width, marginLeft: -width / 2 });
+		this.width = width;
 
-		/*
-		blocks.forEach((block: I.Block) => {
-			const el = node.find(`#block-${block.id} #wrap`);
-			if (el.length) {
-				el.trigger('resize');
-			};
-		});
-		*/
+		node.css({ width });
+		elements.css({ width, marginLeft: -width / 2 });
 
 		if (this.refHeader && this.refHeader.refDrag) {
 			this.refHeader.refDrag.setValue(v);
@@ -2068,25 +2064,25 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 	};
 
 	getWidth (w: number) {
+		w = Number(w) || 0;
+
 		const { isPopup, rootId } = this.props;
 		const container = Util.getPageContainer(isPopup);
 		const root = blockStore.getLeaf(rootId, rootId);
 		const size = Constant.size.editor;
 
 		let mw = container.width();
+		let width = 0;
 
 		if (root && root.isObjectSet()) {
-			this.width = mw - 192;
+			width = mw - 192;
 		} else {
 			mw -= 120;
-
-			w = Number(w) || 0;
 			w = (mw - size) * w;
-
-			this.width = Math.max(size, Math.min(mw, size + w));
+			width = Math.max(size, Math.min(mw, size + w));
 		};
 
-		return this.width;
+		return width;
 	};
 
 	isReadonly () {
