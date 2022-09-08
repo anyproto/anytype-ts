@@ -352,7 +352,6 @@ class App extends React.Component<Props, State> {
 	};
 
 	initStorage () {
-		const cover = Storage.get('cover');
 		const lastSurveyTime = Number(Storage.get('lastSurveyTime')) || 0;
 		const redirect = Storage.get('redirect');
 		const restoreKeys = [ 'pinTime', 'defaultType', 'autoSidebar' ];
@@ -368,7 +367,7 @@ class App extends React.Component<Props, State> {
 
 		Storage.delete('lastSurveyCanceled');
 
-		cover ? commonStore.coverSet(cover.id, cover.image, cover.type) : commonStore.coverSetDefault();
+		commonStore.coverSetDefault();
 
 		restoreKeys.forEach((it: string) => {
 			commonStore[Util.toCamelCase(it + '-Set')](Storage.get(it));

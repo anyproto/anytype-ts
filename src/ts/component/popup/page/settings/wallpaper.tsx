@@ -25,11 +25,11 @@ const PopupSettingsPageWallpaper = observer(class PopupSettingsPageWallpaper ext
 	};
 
 	render () {
-		const { cover, coverImage } = commonStore;
+		const { cover } = commonStore;
 
 		let covers = [];
-		if (coverImage) {
-			covers.push({ id: coverImage, image: coverImage, type: I.CoverType.Upload });
+		if (cover.type == I.CoverType.Upload) {
+			covers.push(cover);
 		};
 		for (let i = 1; i <= Constant.coverCnt; ++i) {
 			covers.push({ id: 'c' + i, image: '', type: I.CoverType.Image });

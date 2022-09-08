@@ -30,7 +30,6 @@ const $ = require('jquery');
 class CommonStore {
 
     public coverObj: Cover = { id: '', type: 0, image: '' };
-    public coverImg: string = '';
     public progressObj: I.Progress = null;
     public filterObj: Filter = { from: 0, text: '' };
     public gatewayUrl: string = '';
@@ -50,7 +49,6 @@ class CommonStore {
     constructor() {
         makeObservable(this, {
             coverObj: observable,
-            coverImg: observable,
             progressObj: observable,
             filterObj: observable,
             gatewayUrl: observable,
@@ -66,13 +64,11 @@ class CommonStore {
             preview: computed,
             filter: computed,
             cover: computed,
-            coverImage: computed,
             gateway: computed,
 			theme: computed,
 			nativeTheme: computed,
 			workspace: computed,
             coverSet: action,
-            coverSetUploadedImage: action,
             gatewaySet: action,
             progressSet: action,
             progressClear: action,
@@ -104,10 +100,6 @@ class CommonStore {
 
     get cover(): Cover {
 		return this.coverObj;
-	};
-
-    get coverImage(): string {
-		return this.coverImg;
 	};
 
     get gateway(): string {
@@ -144,16 +136,6 @@ class CommonStore {
 
     coverSet (id: string, image: string, type: I.CoverType) {
 		this.coverObj = { id, image, type };
-		Storage.set('cover', this.coverObj);
-
-		if (type == I.CoverType.Upload) {
-			this.coverSetUploadedImage(image);
-		};
-	};
-
-    coverSetUploadedImage (image: string) {
-		this.coverImg = image;
-		Storage.set('coverImg', this.coverImg);
 	};
 
     coverSetDefault () {
