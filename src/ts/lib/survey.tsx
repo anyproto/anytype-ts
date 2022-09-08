@@ -75,6 +75,17 @@ class Survey {
         }
     }
 
+    PMF () {
+        const lastSurveyTime = Number(Storage.get('lastSurveyTime')) || 0;
+        const lastSurveyCanceled = Number(Storage.get('lastSurveyCanceled')) || 0;
+        const askSurvey = Number(Storage.get('askSurvey')) || 0;
+        const days = lastSurveyTime ? 90 : 30;
+
+        if (askSurvey && !popupStore.isOpen() && !lastSurveyCanceled && (lastSurveyTime <= Util.time() - 86400 * days)) {
+            this.show('pmf');
+        };
+    }
+
 }
 
 export default new Survey();

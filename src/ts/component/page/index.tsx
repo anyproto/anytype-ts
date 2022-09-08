@@ -183,10 +183,6 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 		const isMainIndex = isMain && (match.params.action == 'index');
 		const isPinCheck = isAuth && (match.params.action == 'pin-check');
 		const pin = Storage.get('pin');
-		const lastSurveyTime = Number(Storage.get('lastSurveyTime')) || 0;
-		const lastSurveyCanceled = Number(Storage.get('lastSurveyCanceled')) || 0;
-		const askSurvey = Number(Storage.get('askSurvey')) || 0;
-		const days = lastSurveyTime ? 90 : 30;
 		const win = $(window);
 		const path = [ match.params.page, match.params.action ].join('/');
 		const Component = Components[path];
@@ -251,11 +247,7 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 			};
 
 			if (isMainIndex) {
-				if (askSurvey && !popupStore.isOpen() && !lastSurveyCanceled && (lastSurveyTime <= Util.time() - 86400 * days)) {
-
-					Survey.show('pmf');
-
-				};
+				Survey.PMF();
 
 				this.shareCheck();
 				Storage.delete('redirect');
