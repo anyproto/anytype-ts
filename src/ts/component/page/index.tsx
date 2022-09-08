@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { I, Onboarding, Util, Storage, analytics, keyboard, Renderer, sidebar } from 'Lib';
+import { I, Onboarding, Util, Storage, analytics, keyboard, Renderer, sidebar, Survey } from 'Lib';
 import { Sidebar } from 'Component';
 import { authStore, commonStore, menuStore, popupStore, blockStore } from 'Store';
 import { observer } from 'mobx-react';
@@ -252,30 +252,9 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 
 			if (isMainIndex) {
 				if (askSurvey && !popupStore.isOpen() && !lastSurveyCanceled && (lastSurveyTime <= Util.time() - 86400 * days)) {
-					analytics.event('SurveyShow');
 
-					const onClose = () => {
-						Storage.set('lastSurveyCanceled', 1);
-						Storage.set('lastSurveyTime', Util.time());
-					};
+					Survey.show('pmf');
 
-					popupStore.open('confirm', {
-						onClose: onClose,
-						data: {
-							title: 'We need your opinion',
-							text: 'Hi there! We\'d love if you\'d help us improve Anytype by taking part in this 5-minute survey.',
-							textConfirm: 'Let\'s go!',
-							textCancel: 'Skip',
-							canCancel: true,
-							onConfirm: () => {
-								Renderer.send('urlOpen', Util.sprintf(Url.survey.pmf, account.id));
-								Storage.set('lastSurveyTime', Util.time());
-
-								analytics.event('SurveyOpen');
-							},
-							onCancel: onClose,
-						},
-					});
 				};
 
 				this.shareCheck();
