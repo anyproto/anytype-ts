@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, Util, analytics } from 'Lib';
+import { I, Util, analytics, Storage } from 'Lib';
 import { Dimmer } from 'Component';
 import { menuStore, popupStore } from 'Store';
 import { RouteComponentProps } from 'react-router';
@@ -32,6 +32,8 @@ class Popup extends React.Component<Props, {}> {
 
 		this.position = this.position.bind(this);
 		this.close = this.close.bind(this);
+		this.storageGet = this.storageGet.bind(this);
+		this.storageSet = this.storageSet.bind(this);
 		this.getId = this.getId.bind(this);
 	};
 
@@ -67,6 +69,8 @@ class Popup extends React.Component<Props, {}> {
 							{...this.props} 
 							position={this.position} 
 							close={this.close}
+							storageGet={this.storageGet}
+							storageSet={this.storageSet}
 							getId={this.getId} 
 						/>
 					</div>
@@ -147,6 +151,14 @@ class Popup extends React.Component<Props, {}> {
 
 		menuStore.closeAll();
 		popupStore.close(this.props.id);
+	};
+
+	storageGet () {
+		return Storage.get(this.getId()) || {};
+	};
+
+	storageSet (data: any) {
+		Storage.set(this.getId(), data);
 	};
 
 	getId (): string {

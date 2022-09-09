@@ -46,9 +46,12 @@ export interface Menu {
 	id: string;
 	param: MenuParam;
 	dataset?: any;
+	history?: any;
 	setActive?(item?: any, scroll?: boolean): void;
 	setHover?(item?: any, scroll?: boolean): void;
 	onKeyDown?(e: any): void;
+	storageGet?(): any;
+	storageSet?(data: any): void;
 	getId?(): string;
 	getSize?(): { width: number; height: number; };
 	getPosition?(): DOMRect;

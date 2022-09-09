@@ -176,7 +176,9 @@ class MenuSmile extends React.Component<Props, State> {
 	};
 	
 	componentDidMount () {
-		this.skin = Number(Storage.get('skin')) || 1; 
+		const { storageGet } = this.props;
+
+		this.skin = Number(storageGet().skin) || 1;
 
 		if (!this.cache) {
 			const items = this.getItems();
@@ -214,10 +216,11 @@ class MenuSmile extends React.Component<Props, State> {
 	};
 
 	checkRecent (sections: any[]) {
-		const lastIds = Storage.get('lastSmileIds') || [];
+		const { storageGet } = this.props;
+		const recent = storageGet().recent || [];
 
-		if (lastIds && lastIds.length) {
-			sections.unshift({ id: ID_RECENT, name: 'Recently used', children: lastIds });
+		if (recent && recent.length) {
+			sections.unshift({ id: ID_RECENT, name: 'Recently used', children: recent });
 		};
 
 		return sections;
@@ -324,7 +327,9 @@ class MenuSmile extends React.Component<Props, State> {
 	
 	onRandom () {
 		const param = SmileUtil.randomParam();
+
 		this.onSelect(param.id, param.skin);
+		this.forceUpdate();
 	};
 
 	onUpload () {
@@ -357,13 +362,14 @@ class MenuSmile extends React.Component<Props, State> {
 	};
 	
 	onSelect (id: string, skin: number) {
-		const { param } = this.props;
+		const { param, storageSet } = this.props;
 		const { data } = param;
 		const { onSelect } = data;
 		
 		this.skin = Number(skin) || 1;
-		Storage.set('skin', this.skin);
 		this.setLastIds(id, this.skin);
+
+		storageSet({ skin: this.skin });
 
 		if (onSelect) {
 			onSelect(SmileUtil.nativeById(id, this.skin));
@@ -443,8 +449,10 @@ class MenuSmile extends React.Component<Props, State> {
 		if (!id) {
 			return;
 		};
+
+		const { storageGet, storageSet } = this.props;
 		
-		let ids = Storage.get('lastSmileIds') || [];
+		let ids = storageGet().recent || [];
 		
 		ids = ids.map((it: any) => {
 			it.key = [ it.smile, it.skin ].join(',');
@@ -463,8 +471,8 @@ class MenuSmile extends React.Component<Props, State> {
 			delete(it.key);
 			return it;
 		});
-		
-		Storage.set('lastSmileIds', ids, true);
+
+		storageSet({ recent: ids });
 	};
 	
 	onRemove () {

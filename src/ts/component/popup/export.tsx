@@ -93,17 +93,19 @@ const PopupExport = observer(class PopupExport extends React.Component<Props, {}
 	};
 
 	init () {
-		const options = Storage.get(this.props.getId());
-		if (options) {
-			this.format = options.format;
-			this.zip = options.zip;
-			this.nested = options.nested;
-			this.files = options.files;
-		};
+		const { storageGet } = this.props;
+		const options = storageGet();
+
+		this.format = Number(options.format) || I.ExportFormat.Markdown;
+		this.zip = Boolean(options.zip);
+		this.nested = Boolean(options.nested);
+		this.files = Boolean(options.files);
 	};
 
 	save () {
-		Storage.set(this.props.getId(), { format: this.format, zip: this.zip, nested: this.nested, files: this.files }, true);
+		const { storageSet } = this.props;
+
+		storageSet({ format: this.format, zip: this.zip, nested: this.nested, files: this.files });
 	};
 
 	onConfirm (e: any) {

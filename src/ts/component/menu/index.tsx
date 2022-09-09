@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, keyboard, Util, analytics } from 'Lib';
+import { I, keyboard, Util, analytics, Storage } from 'Lib';
 import { Dimmer, Icon } from 'Component';
 import { menuStore, popupStore } from 'Store';
 import { observer } from 'mobx-react';
@@ -66,10 +66,7 @@ import MenuDataviewSource from './dataview/source';
 import MenuDataviewContext from './dataview/context';
 import MenuDataviewCreateBookmark from './dataview/create/bookmark';
 
-interface Props extends I.Menu {
-	dataset?: any;
-	history: any;
-};
+interface Props extends I.Menu {};
 
 interface State {
 	tab: string;
@@ -164,6 +161,8 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 		this.setHover = this.setHover.bind(this);
 		this.setActive = this.setActive.bind(this);
 		this.onKeyDown = this.onKeyDown.bind(this);
+		this.storageGet = this.storageGet.bind(this);
+		this.storageSet = this.storageSet.bind(this);
 		this.getId = this.getId.bind(this);
 		this.getSize = this.getSize.bind(this);
 		this.getPosition = this.getPosition.bind(this);
@@ -249,6 +248,8 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 							setActive={this.setActive}
 							setHover={this.setHover}
 							onKeyDown={this.onKeyDown}
+							storageGet={this.storageGet}
+							storageSet={this.storageSet}
 							getId={this.getId} 
 							getSize={this.getSize}
 							getPosition={this.getPosition}
@@ -877,6 +878,14 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 
 	onTab (tab: string) {
 		this.setState({ tab });
+	};
+
+	storageGet () {
+		return Storage.get(this.getId()) || {};
+	};
+
+	storageSet (data: any) {
+		Storage.set(this.getId(), data);
 	};
 
 	getId (): string {
