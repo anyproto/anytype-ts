@@ -858,15 +858,15 @@ const BlockDataviewSetSource = (contextId: string, blockId: string, sources: str
 
 // ---------------------- HISTORY ---------------------- //
 
-const HistoryShowVersion = (pageId: string, versionId: string, callBack?: (message: any) => void) => {
+const HistoryShowVersion = (objectId: string, versionId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.History.ShowVersion.Request();
 	
-	request.setPageid(pageId);
+	request.setObjectid(objectId);
 	request.setVersionid(versionId);
 
 	dispatcher.request(HistoryShowVersion.name, request, (message: any) => {
 		if (!message.error.code) {
-			dispatcher.onObjectView(pageId, '', message.objectView);
+			dispatcher.onObjectView(objectId, '', message.objectView);
 		};
 
 		if (callBack) {
@@ -875,19 +875,19 @@ const HistoryShowVersion = (pageId: string, versionId: string, callBack?: (messa
 	});
 };
 
-const HistorySetVersion = (pageId: string, versionId: string, callBack?: (message: any) => void) => {
+const HistorySetVersion = (objectId: string, versionId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.History.SetVersion.Request();
 	
-	request.setPageid(pageId);
+	request.setObjectid(objectId);
 	request.setVersionid(versionId);
 
 	dispatcher.request(HistorySetVersion.name, request, callBack);
 };
 
-const HistoryGetVersions = (pageId: string, lastVersionId: string, limit: number, callBack?: (message: any) => void) => {
+const HistoryGetVersions = (objectId: string, lastVersionId: string, limit: number, callBack?: (message: any) => void) => {
 	const request = new Rpc.History.GetVersions.Request();
 	
-	request.setPageid(pageId);
+	request.setObjectid(objectId);
 	request.setLastversionid(lastVersionId);
 	request.setLimit(limit);
 
