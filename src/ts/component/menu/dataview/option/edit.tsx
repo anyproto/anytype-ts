@@ -191,7 +191,7 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<Pro
 		const { param } = this.props;
 		const { data } = param;
 		const { option } = data;
-		const value = this.refName.getValue();
+		const value = this.refName ? this.refName.getValue() : '';
 
 		if (!value) {
 			return;
