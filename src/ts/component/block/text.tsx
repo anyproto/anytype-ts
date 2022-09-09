@@ -293,6 +293,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 				html = Prism.highlight(html, grammar, lang);
 			};
 		} else {
+			html = Mark.fromUnicode(html);
 			html = Mark.toHtml(html, this.marks);
 			html = html.replace(/\n/g, '<br/>');
 		};
