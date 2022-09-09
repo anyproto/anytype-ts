@@ -24,8 +24,19 @@ const Surveys = {
         },
         url: Url.survey.pmf,
         analyticsEvent: 'PMFSurveyOpen'
+    },
+
+    deletion: {
+        text: {
+            title: 'Help us to become better',
+            text: 'We\'d love to learn more about why you\'ve chosen to delete your account. Would you be willing to take 3 minutes to help us improve?',
+            textConfirm: 'Sure, let\'s go',
+            textCancel: 'Skip',
+        },
+        url: Url.survey.deletion,
+        analyticsEvent: 'DeletionSurveyOpen'
     }
-}
+};
 
 class Survey {
 
@@ -54,7 +65,7 @@ class Survey {
                 }
             }
         });
-    }
+    };
 
     onConfirm (type) {
         const { account } = authStore;
@@ -71,8 +82,13 @@ class Survey {
             case 'new':
                 Storage.set('newUserSurveyComplete', 1);
                 break;
+
+            case 'deletion':
+                Storage.set('deletionSurveyComplete', 1);
+                break;
+
         };
-    }
+    };
 
     onSkip (type) {
         switch (type) {
@@ -82,11 +98,15 @@ class Survey {
                 break;
 
             case 'new':
-                // Storage.set('newUserSurveyComplete', 1);
+                Storage.set('newUserSurveyComplete', 1);
+                break;
+
+            case 'deletion':
+                Storage.set('deletionSurveyComplete', 1);
                 break;
 
         };
-    }
+    };
 
     PMF () {
         const lastTime = Number(Storage.get('lastSurveyTime')) || Number(Storage.get('lastPMFSurveyTime')) || 0;
@@ -98,7 +118,7 @@ class Survey {
         if (askSurvey && !popupStore.isOpen() && !lastCanceled && surveyTime) {
             this.show('pmf');
         };
-    }
+    };
 
     newUser () {
         const isComplete = Number(Storage.get('newUserSurveyComplete')) || 0;
@@ -108,7 +128,15 @@ class Survey {
         if (!isComplete && surveyTime && !popupStore.isOpen()) {
             this.show('new');
         };
-    }
+    };
+
+    deletion () {
+        const isComplete = Number(Storage.get('deletionSurveyComplete')) || 0;
+
+        if (!isComplete) {
+            this.show('deletion');
+        };
+    };
 
 }
 
