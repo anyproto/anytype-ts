@@ -1,25 +1,21 @@
 {
   "new": {
     "key": "NewUser",
-    "url": "https://anytype.typeform.com/to/GlS8NAKb",
-    "analyticsEvent": "NewUserSurveyOpen"
+    "url": "https://anytype.typeform.com/to/GlS8NAKb"
   },
 
   "pmf": {
     "key": "PMF",
-    "url": "https://anytype.typeform.com/to/CXu6nG9R#anytypeid=%s",
-    "analyticsEvent": "PMFSurveyOpen"
+    "url": "https://anytype.typeform.com/to/CXu6nG9R#anytypeid=%s"
   },
 
   "deletion": {
     "key": "Deletion",
-    "url": "https://anytype.typeform.com/to/lSyoRr8U",
-    "analyticsEvent": "DeletionSurveyOpen"
+    "url": "https://anytype.typeform.com/to/lSyoRr8U"
   },
 
   "fiftyObjects": {
     "key": "FiftyObjects",
-    "url": "https://anytype.typeform.com/to/edqF9PKQ",
-    "analyticsEvent": "FiftyObjectsSurveyOpen"
+    "url": "https://anytype.typeform.com/to/edqF9PKQ"
   }
 }

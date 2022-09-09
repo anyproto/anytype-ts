@@ -9,7 +9,7 @@ class Survey {
         const survey = Surveys[type];
         const prefix = 'survey' + survey.key;
 
-        analytics.event('SurveyShow');
+        analytics.event(survey.key + 'SurveyShow');
 
         popupStore.open('confirm', {
             onClose: () => {
@@ -37,7 +37,7 @@ class Survey {
         const survey = Surveys[type];
 
         Renderer.send('urlOpen', Util.sprintf(survey.url, account.id));
-        analytics.event(survey.analyticsEvent);
+        analytics.event(survey.key + 'SurveyOpen');
 
         switch (type) {
             case 'pmf':
@@ -60,6 +60,10 @@ class Survey {
     };
 
     onSkip (type) {
+        const survey = Surveys[type];
+
+        analytics.event(survey.key + 'SurveySkip');
+
         switch (type) {
             case 'pmf':
                 Storage.set('lastPMFSurveyCanceled', 1);
