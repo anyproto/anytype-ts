@@ -103,15 +103,12 @@ function createWindow () {
 		};
 		
 		e.preventDefault();
-		if (!is.linux) {
-			if (mainWindow.isFullScreen()) {
-				mainWindow.setFullScreen(false);
-				mainWindow.once('leave-full-screen', () => { mainWindow.hide(); });
-			} else {
-				mainWindow.hide();
-			};
+
+		if (mainWindow.isFullScreen()) {
+			mainWindow.setFullScreen(false);
+			mainWindow.once('leave-full-screen', () => { mainWindow.hide(); });
 		} else {
-			Api.exit(mainWindow, false);
+			mainWindow.hide();
 		};
 		return false;
 	});
@@ -176,17 +173,6 @@ app.on('second-instance', (event, argv, cwd) => {
 		mainWindow.focus();
 	};
 });
-
-/*
-app.on('window-all-closed', (e) => {
-	Util.log('info', 'window-all-closed');
-
-	if (is.linux) {
-		e.preventDefault();
-		Api.exit(mainWindow, false);
-	};
-});
-*/
 
 app.on('before-quit', (e) => {
 	Util.log('info', 'before-quit');
