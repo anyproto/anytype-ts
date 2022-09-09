@@ -1,5 +1,5 @@
-import { I, Storage, Util, analytics, Renderer } from 'Lib';
-import { popupStore, authStore } from 'Store';
+import { C, I, Storage, Util, analytics, Renderer } from 'Lib';
+import { popupStore, authStore, dbStore } from 'Store';
 
 const Url = require('json/url.json');
 
@@ -31,10 +31,21 @@ const Surveys = {
             title: 'Help us to become better',
             text: 'We\'d love to learn more about why you\'ve chosen to delete your account. Would you be willing to take 3 minutes to help us improve?',
             textConfirm: 'Sure, let\'s go',
-            textCancel: 'Skip',
+            textCancel: 'No thanks',
         },
         url: Url.survey.deletion,
         analyticsEvent: 'DeletionSurveyOpen'
+    },
+
+    fiftyObjects: {
+        text: {
+            title: 'Tell us how it\'s going!',
+            text: 'Hi there, we hope you\'re enjoying your experience with Anytype! Would you take 5 minutes to help us improve our product?',
+            textConfirm: 'Sure, let\'s go',
+            textCancel: 'No thanks',
+        },
+        url: Url.survey.fiftyObjects,
+        analyticsEvent: 'FiftyObjectsSurveyOpen'
     }
 };
 
@@ -87,6 +98,10 @@ class Survey {
                 Storage.set('deletionSurveyComplete', 1);
                 break;
 
+            case 'fiftyObjects':
+                Storage.set('fiftyObjectsSurveyComplete', 1);
+                break;
+
         };
     };
 
@@ -103,6 +118,10 @@ class Survey {
 
             case 'deletion':
                 Storage.set('deletionSurveyComplete', 1);
+                break;
+
+            case 'fiftyObjects':
+                Storage.set('fiftyObjectsSurveyComplete', 1);
                 break;
 
         };
@@ -138,6 +157,29 @@ class Survey {
         };
     };
 
+    fiftyObjects () {
+        const isComplete = Number(Storage.get('fiftyObjectsSurveyComplete')) || 0;
+        const registrationTime = Number(Storage.get('registrationTime')) || 0;
+
+        if (!isComplete && registrationTime) {
+            const types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map(it => it.id);
+            const filters: I.Filter[] = [
+                { operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: types },
+                { operator: I.FilterOperator.And, relationKey: 'createdDate', condition: I.FilterCondition.Greater, value: registrationTime + 30 },
+            ];
+
+            C.ObjectSearch(filters, [], [], '', 0, 50, (message: any) => {
+                if (message.error.code) {
+                    return;
+                };
+
+                if (message.records.length >= 50) {
+                    this.show('fiftyObjects');
+                };
+            });
+        };
+    };
+    
 }
 
 export default new Survey();
