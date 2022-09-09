@@ -106,7 +106,7 @@ function createWindow () {
 		if (!is.linux) {
 			if (mainWindow.isFullScreen()) {
 				mainWindow.setFullScreen(false);
-				mainWindow.once('leave-full-screen', () => { win.hide(); });
+				mainWindow.once('leave-full-screen', () => { mainWindow.hide(); });
 			} else {
 				mainWindow.hide();
 			};

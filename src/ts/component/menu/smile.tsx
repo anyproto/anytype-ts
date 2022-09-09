@@ -357,7 +357,7 @@ class MenuSmile extends React.Component<Props, State> {
 	};
 	
 	onSelect (id: string, skin: number) {
-		const { param, close } = this.props;
+		const { param } = this.props;
 		const { data } = param;
 		const { onSelect } = data;
 		
