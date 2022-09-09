@@ -46,7 +46,6 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<P
 	};
 
 	render () {
-		const { isPopup } = this.props;
 		const { versions, isDeleted } = this.state;
 		const rootId = this.getRootId();
 		const groups = this.groupData(versions);
