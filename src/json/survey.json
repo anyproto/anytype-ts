@@ -1,0 +1,25 @@
+{
+  "new": {
+    "key": "NewUser",
+    "url": "https://anytype.typeform.com/to/GlS8NAKb",
+    "analyticsEvent": "NewUserSurveyOpen"
+  },
+
+  "pmf": {
+    "key": "PMF",
+    "url": "https://anytype.typeform.com/to/CXu6nG9R#anytypeid=%s",
+    "analyticsEvent": "PMFSurveyOpen"
+  },
+
+  "deletion": {
+    "key": "Deletion",
+    "url": "https://anytype.typeform.com/to/lSyoRr8U",
+    "analyticsEvent": "DeletionSurveyOpen"
+  },
+
+  "fiftyObjects": {
+    "key": "FiftyObjects",
+    "url": "https://anytype.typeform.com/to/edqF9PKQ",
+    "analyticsEvent": "FiftyObjectsSurveyOpen"
+  }
+}

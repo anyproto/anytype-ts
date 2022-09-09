@@ -1,59 +1,13 @@
-import { C, I, Storage, Util, analytics, Renderer } from 'Lib';
+import { C, I, Storage, Util, analytics, Renderer, translate } from 'Lib';
 import { popupStore, authStore, dbStore } from 'Store';
 
-const Url = require('json/url.json');
-
-const Surveys = {
-    new: {
-        text: {
-            title: 'Time to take a survey!',
-            text: 'Hi there, We hope you\'re enjoying your experience in Anytype! We\'d love to hear your feedback so we can keep improving the product.',
-            textConfirm: 'Let\'s Go!',
-            textCancel: 'Skip',
-        },
-        url: Url.survey.new,
-        analyticsEvent: 'NewUserSurveyOpen'
-    },
-
-    pmf: {
-        text: {
-            title: 'We need your opinion',
-            text: 'Hi there! We\'d love if you\'d help us improve Anytype by taking part in this 5-minute survey.',
-            textConfirm: 'Let\'s Go!',
-            textCancel: 'Skip',
-        },
-        url: Url.survey.pmf,
-        analyticsEvent: 'PMFSurveyOpen'
-    },
-
-    deletion: {
-        text: {
-            title: 'Help us to become better',
-            text: 'We\'d love to learn more about why you\'ve chosen to delete your account. Would you be willing to take 3 minutes to help us improve?',
-            textConfirm: 'Sure, let\'s go',
-            textCancel: 'No thanks',
-        },
-        url: Url.survey.deletion,
-        analyticsEvent: 'DeletionSurveyOpen'
-    },
-
-    fiftyObjects: {
-        text: {
-            title: 'Tell us how it\'s going!',
-            text: 'Hi there, we hope you\'re enjoying your experience with Anytype! Would you take 5 minutes to help us improve our product?',
-            textConfirm: 'Sure, let\'s go',
-            textCancel: 'No thanks',
-        },
-        url: Url.survey.fiftyObjects,
-        analyticsEvent: 'FiftyObjectsSurveyOpen'
-    }
-};
+const Surveys = require('json/survey.json');
 
 class Survey {
 
     show (type: string) {
         const survey = Surveys[type];
-        const text = survey.text;
+        const prefix = 'survey' + survey.key;
 
         analytics.event('SurveyShow');
 
@@ -62,10 +16,10 @@ class Survey {
                 this.onSkip(type);
             },
             data: {
-                title: text.title,
-                text: text.text,
-                textConfirm: text.textConfirm,
-                textCancel: text.textCancel,
+                title: translate(prefix + 'Title'),
+                text: translate(prefix + 'Text'),
+                textConfirm: translate(prefix + 'TextConfirm'),
+                textCancel: translate(prefix + 'TextCancel'),
                 canConfirm: true,
                 canCancel: true,
                 onConfirm: () => {
@@ -179,7 +133,7 @@ class Survey {
             });
         };
     };
-    
+
 }
 
 export default new Survey();
