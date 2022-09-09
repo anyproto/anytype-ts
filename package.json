@@ -13,7 +13,7 @@
 		"start:dev": "npm-run-all --parallel start:watch start:electron-wait-webpack",
 		"start:dev-win": "npm-run-all --parallel start:watch start:electron-wait-webpack-win",
 		"build": "webpack --mode=production --node-env=production --config webpack.config.js",
-		"build:deps": "webpack --config webpack.node.config.js --stats detailed | grep 'node_modules' | sed 's/.*\\(node_modules\\/[^\\/[:space:]]\\{1,\\}\\)\\/.*/\\1/' | uniq | node save-node-deps.js",
+		"build:deps": "webpack --config webpack.node.config.js --stats detailed | grep 'node_modules' | sed -E 's/.*(node_modules[\\/][^\\\\/[:space:]]{1,})[\\\\/].*/\\1/' | uniq | node save-node-deps.js",
 		"dist:mac": "npm run build:deps && webpack --progress --mode=production --node-env=production && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` electron-builder --macos --arm64 --x64",
 		"dist:macarm": "npm run build:deps && webpack --mode=production --node-env=production && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` electron-builder --macos --arm64",
 		"dist:macamd": "npm run build:deps && webpack --mode=production --node-env=production && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` electron-builder --macos --x64",
