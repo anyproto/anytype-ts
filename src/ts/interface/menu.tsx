@@ -1,3 +1,5 @@
+import { I } from 'Lib';
+
 export enum MenuType { Vertical = 1, Horizontal };
 export enum MenuDirection { None, Top, Bottom, Left, Right, Center };
 
@@ -22,7 +24,7 @@ export interface MenuParam {
 	offsetY?: any;
 	width?: number;
 	height?: number;
-	tabs?: MenuTab[];
+	getTabs?(): I.MenuTab[];
 	initialTab?: string;
 	data?: any;
 	isSub?: boolean;

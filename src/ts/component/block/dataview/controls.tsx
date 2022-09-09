@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon, Button } from 'Component';
-import { C, I, Util, analytics, Relation } from 'Lib';
+import { C, I, Util, analytics, Relation, Dataview } from 'Lib';
 import { menuStore, dbStore, blockStore } from 'Store';
 import { observable } from 'mobx';
 import { observer } from 'mobx-react';
@@ -150,22 +150,10 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 		const { rootId, block, readonly, getData, getView } = this.props;
 		const view = getView();
 
-		let tabs: any[] = [];
-		if (id == 'button-manager') {
-			tabs = tabs.concat([
-				{ id: 'relation', name: 'Relations', component: 'dataviewRelationList' },
-				{ id: 'filter', name: 'Filters', component: 'dataviewFilterList' },
-				{ id: 'sort', name: 'Sorts', component: 'dataviewSort' },
-				(view.type == I.ViewType.Board) ? { id: 'group', name: 'Groups', component: 'dataviewGroupList' } : null,
-				{ id: 'view', name: 'View', component: 'dataviewViewEdit' },
-			]);
-		};
-
-		menuStore.open(menu, { 
+		const param: any = { 
 			element: `#${id}`,
 			horizontal: I.MenuDirection.Center,
 			offsetY: 10,
-			tabs: tabs.filter(it => it),
 			noFlipY: true,
 			data: {
 				readonly: readonly,
@@ -175,7 +163,13 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 				getView: getView,
 				view: observable.box(view),
 			},
-		});
+		};
+
+		if (id == 'button-manager') {
+			param.getTabs = () => Dataview.getMenuTabs(rootId, block.id, view.id);
+		};
+
+		menuStore.open(menu, param);
 	};
 
 	onViewAdd (e: any) {

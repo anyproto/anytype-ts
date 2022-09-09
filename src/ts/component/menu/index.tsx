@@ -172,8 +172,9 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 
 	render () {
 		const { id, param } = this.props;
-		const { element, tabs, type, vertical, horizontal, passThrough, noDimmer, component, withArrow } = param;
+		const { element, type, vertical, horizontal, passThrough, noDimmer, component, withArrow, getTabs } = param;
 		const { data } = param;
+		const tabs: I.MenuTab[] = getTabs ? getTabs() : [];
 		
 		let tab = '';
 		if (tabs.length) {
@@ -880,13 +881,14 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 
 	getId (): string {
 		const { param } = this.props;
-		const { tabs } = param;
+		const { getTabs } = param;
 		const { tab } = this.state;
+		const tabs = getTabs ? getTabs() : [];
 
 		let id = '';
 
 		if (tab) {
-			const item = tabs.find((it: I.MenuTab) => { return it.id == tab; });
+			const item = tabs.find(it => it.id == tab);
 			if (item) {
 				id = item.component;
 			};

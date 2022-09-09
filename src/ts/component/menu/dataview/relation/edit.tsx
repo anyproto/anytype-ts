@@ -328,12 +328,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 					element: `#button-manager`,
 					horizontal: I.MenuDirection.Center,
 					offsetY: 10,
-					tabs: [
-						{ id: 'relation', name: 'Relations', component: 'dataviewRelationList' },
-						{ id: 'filter', name: 'Filters', component: 'dataviewFilterList' },
-						{ id: 'sort', name: 'Sorts', component: 'dataviewSort' },
-						{ id: 'view', name: 'View', component: 'dataviewViewEdit' },
-					],
+					getTabs: () => Dataview.getMenuTabs(rootId, blockId, view.id),
 					initialTab: 'filter',
 					data: {
 						...data,

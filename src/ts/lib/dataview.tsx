@@ -133,6 +133,18 @@ class Dataview {
 		});
 	};
 
+	getMenuTabs (rootId: string, blockId: string, viewId: string): I.MenuTab[] {
+		const view = dbStore.getView(rootId, blockId, viewId);
+		const tabs: I.MenuTab[] = [
+			{ id: 'relation', name: 'Relations', component: 'dataviewRelationList' },
+			{ id: 'filter', name: 'Filters', component: 'dataviewFilterList' },
+			{ id: 'sort', name: 'Sorts', component: 'dataviewSort' },
+			(view.type == I.ViewType.Board) ? { id: 'group', name: 'Groups', component: 'dataviewGroupList' } : null,
+			{ id: 'view', name: 'View', component: 'dataviewViewEdit' },
+		];
+		return tabs.filter(it => it);
+	};
+
 };
 
 export default new Dataview();
