@@ -264,10 +264,15 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 	};
 	
 	componentDidMount () {
-		this._isMounted = true;
+		const { isPopup } = this.props;
 
+		this._isMounted = true;
 		this.resize();
 		this.onTab(Storage.get('tabStore') || Tabs[0].id);
+
+		if (!isPopup) {
+			DataUtil.setWindowTitleText('Library');
+		};
 	};
 
 	componentDidUpdate () {
