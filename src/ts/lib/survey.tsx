@@ -63,26 +63,50 @@ class Survey {
         Renderer.send('urlOpen', Util.sprintf(survey.url, account.id));
         analytics.event(survey.analyticsEvent);
 
-        if (type === 'pmf') {
-            Storage.set('lastSurveyTime', Util.time());
-        }
+        switch (type) {
+            case 'pmf':
+                Storage.set('lastPMFSurveyTime', Util.time());
+                break;
+
+            case 'new':
+                Storage.set('newUserSurveyComplete', 1);
+                break;
+        };
     }
 
     onSkip (type) {
-        if (type === 'pmf') {
-            Storage.set('lastSurveyCanceled', 1);
-            Storage.set('lastSurveyTime', Util.time());
-        }
+        switch (type) {
+            case 'pmf':
+                Storage.set('lastPMFSurveyCanceled', 1);
+                Storage.set('lastPMFSurveyTime', Util.time());
+                break;
+
+            case 'new':
+                // Storage.set('newUserSurveyComplete', 1);
+                break;
+
+        };
     }
 
     PMF () {
-        const lastSurveyTime = Number(Storage.get('lastSurveyTime')) || 0;
-        const lastSurveyCanceled = Number(Storage.get('lastSurveyCanceled')) || 0;
+        const lastTime = Number(Storage.get('lastSurveyTime')) || Number(Storage.get('lastPMFSurveyTime')) || 0;
+        const lastCanceled = Number(Storage.get('lastSurveyCanceled')) || Number(Storage.get('lastPMFSurveyCanceled')) || 0;
         const askSurvey = Number(Storage.get('askSurvey')) || 0;
-        const days = lastSurveyTime ? 90 : 30;
+        const days = lastTime ? 90 : 30;
+        const surveyTime = (lastTime <= Util.time() - 86400 * days);
 
-        if (askSurvey && !popupStore.isOpen() && !lastSurveyCanceled && (lastSurveyTime <= Util.time() - 86400 * days)) {
+        if (askSurvey && !popupStore.isOpen() && !lastCanceled && surveyTime) {
             this.show('pmf');
+        };
+    }
+
+    newUser () {
+        const isComplete = Number(Storage.get('newUserSurveyComplete')) || 0;
+        const registrationTime = Number(Storage.get('registrationTime')) || 0;
+        const surveyTime = registrationTime && Util.time() - 86400 * 7 - registrationTime > 0;
+
+        if (!isComplete && surveyTime && !popupStore.isOpen()) {
+            this.show('new');
         };
     }
 

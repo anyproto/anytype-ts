@@ -248,6 +248,7 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 
 			if (isMainIndex) {
 				Survey.PMF();
+				Survey.newUser();
 
 				this.shareCheck();
 				Storage.delete('redirect');
