@@ -61,19 +61,19 @@ class Survey {
 
         switch (type) {
             case I.SurveyType.Register:
-                Storage.set('survey', { surveyRegisterComplete: 1 });
+                Storage.set('survey', { registerComplete: 1 });
                 break;
 
             case I.SurveyType.Pmf:
-                Storage.set('survey', { lastPmfSurveyTime: Util.time() });
+                Storage.set('survey', { pmfCompleteTime: Util.time() });
                 break;
 
             case I.SurveyType.Object:
-                Storage.set('survey', { surveyObjectComplete: 1 });
+                Storage.set('survey', { objectComplete: 1 });
                 break;
 
             case I.SurveyType.Delete:
-                Storage.set('survey', { surveyDeleteComplete: 1 });
+                Storage.set('survey', { deleteComplete: 1 });
                 break;
 
         };
@@ -86,20 +86,20 @@ class Survey {
 
         switch (type) {
             case I.SurveyType.Register:
-                Storage.set('survey', { surveyRegisterComplete: 1 });
+                Storage.set('survey', { registerComplete: 1 });
                 break;
 
             case I.SurveyType.Pmf:
-                Storage.set('survey', { lastPmfSurveyCanceled: 1 });
-                Storage.set('survey', { lastPmfSurveyTime: Util.time() });
+                Storage.set('survey', { pmfCanceled: 1 });
+                Storage.set('survey', { pmfCompleteTime: Util.time() });
                 break;
 
             case I.SurveyType.Object:
-                Storage.set('survey', { surveyObjectComplete: 1 });
+                Storage.set('survey', { objectComplete: 1 });
                 break;
 
             case I.SurveyType.Delete:
-                Storage.set('survey', { surveyDeleteComplete: 1 });
+                Storage.set('survey', { deleteComplete: 1 });
                 break;
 
         };
@@ -107,9 +107,9 @@ class Survey {
 
     checkPmf () {
         const surveyStorage = Storage.get('survey') || {};
-        const lastTime = Number(Storage.get('lastSurveyTime')) || Number(surveyStorage.lastPmfSurveyTime) || 0;
-        const lastCanceled = Number(Storage.get('lastSurveyCanceled')) || Number(surveyStorage.lastPmfSurveyCanceled) || 0;
-        const askPmf = Number(surveyStorage.askSurvey) || 0;
+        const lastTime = Number(Storage.get('lastSurveyTime')) || Number(surveyStorage.pmfCompleteTime) || 0;
+        const lastCanceled = Number(Storage.get('lastSurveyCanceled')) || Number(surveyStorage.pmfCanceled) || 0;
+        const askPmf = Number(surveyStorage.askPmf) || 0;
         const days = lastTime ? 90 : 30;
         const surveyTime = (lastTime <= Util.time() - 86400 * days);
 
@@ -121,7 +121,7 @@ class Survey {
     checkRegister () {
         const timeRegister = Number(Storage.get('timeRegister')) || 0;
         const surveyStorage = Storage.get('survey') || {};
-        const isComplete = surveyStorage.surveyRegisterComplete || 0;
+        const isComplete = surveyStorage.registerComplete || 0;
         const surveyTime = timeRegister && Util.time() - 86400 * 7 - timeRegister > 0;
 
         if (!isComplete && surveyTime && !popupStore.isOpen()) {
@@ -131,7 +131,7 @@ class Survey {
 
     checkDelete () {
         const surveyStorage = Storage.get('survey') || {};
-        const isComplete = Number(surveyStorage.surveyDeleteComplete) || 0;
+        const isComplete = Number(surveyStorage.deleteComplete) || 0;
 
         if (!isComplete) {
             this.show(I.SurveyType.Delete);
@@ -141,7 +141,7 @@ class Survey {
     checkObject () {
         const timeRegister = Number(Storage.get('timeRegister')) || 0;
         const surveyStorage = Storage.get('survey') || {};
-        const isComplete = Number(surveyStorage.surveyObjectComplete) || 0;
+        const isComplete = Number(surveyStorage.objectComplete) || 0;
 
         if (!isComplete && timeRegister) {
             const types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map(it => it.id);
