@@ -136,6 +136,7 @@ export interface Cell {
 	id?: string;
 	idPrefix?: string;
 	relation?: any;
+	relationKey?: string;
 	index?: number;
 	viewType: I.ViewType;
 	readonly?: boolean;

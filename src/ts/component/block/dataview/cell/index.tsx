@@ -12,7 +12,6 @@ import CellFile from './file';
 
 interface Props extends I.Cell {
 	elementId?: string;
-	relationKey?: string;
 	menuClassName?: string;
 	menuClassNameWrap?: string;
 	showTooltip?: boolean;
@@ -486,8 +485,7 @@ class Cell extends React.Component<Props, {}> {
 	};
 
 	getRelation () {
-		const { relation, relationKey } = this.props;
-		return relation ? relation : dbStore.getRelationByKey(relationKey);
+		return dbStore.getRelationByKey(this.props.relationKey);
 	};
 
 	canEdit () {
