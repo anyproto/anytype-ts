@@ -271,7 +271,14 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 		return (
 			<div id={'block-' + id} data-id={id} className={cn.join(' ')} style={css}>
 				<div className="wrapMenu">
-					<Icon id={'button-block-menu-' + id} className="dnd" draggable={true} onDragStart={this.onDragStart} onMouseDown={this.onMenuDown} onClick={this.onMenuClick} onContextMenu={this.onMenuClick} />
+					<Icon 
+						id={'button-block-menu-' + id} 
+						className="dnd" draggable={true} 
+						onDragStart={this.onDragStart} 
+						onMouseDown={this.onMenuDown} 
+						onClick={this.onMenuClick} 
+						onContextMenu={this.onMenuClick} 
+					/>
 				</div>
 				
 				<div className={cd.join(' ')}>
@@ -358,16 +365,14 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 		
 		selection.preventSelect(true);
 
-		const ids: string[] = DataUtil.selectionGet(block.id, false, this.props);
-		onDragStart(e, I.DropType.Block, ids, this);
+		this.ids = DataUtil.selectionGet(block.id, false, this.props);
+		onDragStart(e, I.DropType.Block, this.ids, this);
 	};
 	
 	onMenuDown (e: any) {
 		const { block } = this.props;
 
 		focus.clear(true);
-		Util.previewHide(true);
-
 		this.ids = DataUtil.selectionGet(block.id, true, this.props);
 	};
 	

@@ -68,7 +68,13 @@ const BlockImage = observer(class BlockImage extends React.Component<Props, {}> 
 			case I.FileState.Done:
 				element = (
 					<div id="wrap" className="wrap" style={css}>
-						<img className="media" src={commonStore.imageUrl(hash, Constant.size.image)} onDragStart={(e: any) => { e.preventDefault(); }} onClick={this.onClick} onLoad={this.onLoad} onError={this.onError} />
+						<img 
+							className="media" src={commonStore.imageUrl(hash, Constant.size.image)} 
+							onDragStart={(e: any) => { e.preventDefault(); }} 
+							onClick={this.onClick} 
+							onLoad={this.onLoad} 
+							onError={this.onError} 
+						/>
 						<Icon className="resize" onMouseDown={(e: any) => { this.onResizeStart(e, false); }} />
 					</div>
 				);

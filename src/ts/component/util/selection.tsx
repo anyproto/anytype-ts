@@ -39,7 +39,11 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	render () {
 		const children = this.injectProps(this.props.children);
 		return (
-			<div id="selection" className="selection" onMouseDown={this.onMouseDown}>
+			<div 
+				id="selection" 
+				className="selection" 
+				onMouseDown={this.onMouseDown}
+			>
 				<div id="selection-rect" />
 				{children}
 			</div>
@@ -473,7 +477,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			if (withChildren) {
 				ids.forEach(id => this.getChildrenIds(id, ids));
 			} else {
-				let childrenIds = [];				
+				let childrenIds = [];
 				ids.forEach(id => this.getChildrenIds(id, childrenIds));
 				ids = ids.filter(it => !childrenIds.includes(it));
 			};
@@ -526,7 +530,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 
 		for (let i in I.SelectType) {
 			const type = I.SelectType[i];
-			const ids = this.get(type);
+			const ids = this.get(type, true);
 
 			for (let id of ids) {
 				$(`#selectable-${id}`).addClass('isSelectionSelected');

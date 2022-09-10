@@ -372,7 +372,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			return;
 		};
 		
-		const { rootId } = this.props;
+		const { rootId, dataset, isPopup } = this.props;
+		const { selection } = dataset || {};
 		const root = blockStore.getLeaf(rootId, rootId);
 		const checkType = blockStore.checkBlockTypeExists(rootId);
 		const readonly = this.isReadonly();
@@ -383,7 +384,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			checkType || 
 			(root && root.isLocked()) || 
 			keyboard.isResizing || 
+			keyboard.isDragging || 
+			selection && selection.isSelecting || 
 			menuStore.isOpen() || 
+			(!isPopup && popupStore.isOpen()) ||
 			this.loading
 		) {
 			return;
