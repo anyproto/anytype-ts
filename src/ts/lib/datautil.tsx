@@ -254,6 +254,72 @@ class DataUtil {
 		analytics.profile(account);
 		analytics.event('OpenAccount');
 
+		const subscriptions = [
+			{
+				subId: Constant.subId.deleted,
+				filters: [
+					{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: true },
+				],
+				keys: [ 'isDeleted' ],
+				noDeps: true,
+			},
+			{
+				subId: Constant.subId.type,
+				keys: Constant.defaultRelationKeys.concat(Constant.typeRelationKeys),
+				filters: [
+					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.type },
+					{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
+				],
+				noDeps: true
+			},
+			{
+				subId: Constant.subId.relation,
+				keys: Constant.relationRelationKeys,
+				filters: [
+					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.relation },
+					{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
+				],
+				noDeps: true,
+				onSubscribe: () => {
+					const records = dbStore.getRecords(Constant.subId.relation, '').map(id => dbStore.getRelationById(id));
+					for (let record of records) {
+						dbStore.relationKeyMap[record.relationKey] = record.id;
+					};
+				}
+			},
+			{
+				subId: Constant.subId.option,
+				keys: Constant.optionRelationKeys,
+				filters: [
+					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.option },
+					{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
+				],
+				noDeps: true
+			}
+		];
+
+		let cnt = 0;
+		let cb = (item: any) => {
+			if (item.onSubscribe) {
+				item.onSubscribe();
+			};
+
+			cnt++;
+
+			if (cnt == subscriptions.length) {
+				if (pin && !keyboard.isPinChecked) {
+					Util.route('/auth/pin-check');
+				} else {
+					Util.route(commonStore.redirect ? commonStore.redirect : '/main/index', true);
+					commonStore.redirectSet('');
+				};
+
+				if (callBack) {
+					callBack();
+				};
+			};
+		};
+
 		C.ObjectOpen(root, '', (message: any) => {
 			if (message.error.code == Errors.Code.ANYTYPE_NEEDS_UPGRADE) {
 				Util.onErrorUpdate();
@@ -266,74 +332,21 @@ class DataUtil {
 				return;
 			};
 
-			console.log(object);
-
 			if (object.coverId && (object.coverType != I.CoverType.None)) {
 				commonStore.coverSet(object.coverId, object.coverId, object.coverType);
 			};
 
 			commonStore.workspaceSet(object.workspaceId);
 
-			this.searchSubscribe({
-				subId: Constant.subId.deleted,
-				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: true },
-				],
-				keys: [ 'id', 'isDeleted' ],
-				noDeps: true
-			});
-
-			this.searchSubscribe({
-				subId: Constant.subId.type,
-				keys: Constant.defaultRelationKeys.concat(Constant.typeRelationKeys),
-				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.type },
-					{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
-				],
-				noDeps: true
-			});
-
-			this.searchSubscribe({
-				subId: Constant.subId.relation,
-				keys: Constant.relationRelationKeys,
-				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.relation },
-					{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
-				],
-				noDeps: true,
-			}, () => {
-				const records = dbStore.getRecords(Constant.subId.relation, '').map(id => dbStore.getRelationById(id));
-				for (let record of records) {
-					dbStore.relationKeyMap[record.relationKey] = record.id;
-				};
-			});
-
-			this.searchSubscribe({
-				subId: Constant.subId.option,
-				keys: Constant.optionRelationKeys,
-				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.option },
-					{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
-				],
-				noDeps: true
-			});
+			for (let item of subscriptions) {
+				this.searchSubscribe(item, () => { cb(item); });
+			};
 
 			if (profile) {
 				this.subscribeIds({
 					subId: Constant.subId.profile, 
 					ids: [ profile ], 
 				});
-			};
-
-			if (pin && !keyboard.isPinChecked) {
-				Util.route('/auth/pin-check');
-			} else {
-				Util.route(commonStore.redirect ? commonStore.redirect : '/main/index', true);
-				commonStore.redirectSet('');
-			};
-			
-			if (callBack) {
-				callBack();
 			};
 		});
 	};
