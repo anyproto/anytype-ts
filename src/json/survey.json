@@ -1,21 +1,17 @@
 {
-  "new": {
-    "key": "NewUser",
+  "register": {
     "url": "https://anytype.typeform.com/to/GlS8NAKb"
   },
 
   "pmf": {
-    "key": "PMF",
     "url": "https://anytype.typeform.com/to/CXu6nG9R#anytypeid=%s"
   },
 
-  "deletion": {
-    "key": "Deletion",
+  "delete": {
     "url": "https://anytype.typeform.com/to/lSyoRr8U"
   },
 
-  "fiftyObjects": {
-    "key": "FiftyObjects",
+  "object": {
     "url": "https://anytype.typeform.com/to/edqF9PKQ"
   }
 }

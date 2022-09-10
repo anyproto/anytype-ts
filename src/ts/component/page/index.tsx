@@ -31,6 +31,7 @@ import PageMainStore from './main/store';
 import PageMainGraph from './main/graph';
 import PageMainNavigation from './main/navigation';
 import PageMainCreate from './main/create';
+import {SurveyType} from "ts/interface";
 
 const Constant = require('json/constant.json');
 const Url = require('json/url.json');
@@ -243,13 +244,13 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 			};
 
 			if (isMain && !isMainIndex) {
-				Storage.set('askSurvey', 1);
+				Storage.set('survey', { askPmf: 1 });
 			};
 
 			if (isMainIndex) {
-				Survey.PMF();
-				Survey.newUser();
-				Survey.fiftyObjects();
+				Survey.check(I.SurveyType.Register);
+				Survey.check(I.SurveyType.Pmf);
+				Survey.check(I.SurveyType.Object);
 
 				this.shareCheck();
 				Storage.delete('redirect');

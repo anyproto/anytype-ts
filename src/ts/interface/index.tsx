@@ -17,6 +17,7 @@ import {
 	TabIndex,
 	HeaderComponent,
 	FooterComponent,
+	SurveyType,
 } from './common';
 import { ThreadStatus, ThreadSummary, ThreadDevice, ThreadAccount, ThreadCafe, FilesStatus } from './thread';
 import { Progress, ProgressType, ProgressState } from './progress';
@@ -80,6 +81,8 @@ export {
 	TabIndex,
 	HeaderComponent,
 	FooterComponent,
+
+	SurveyType,
 	
 	ThreadStatus,
 	ThreadSummary,

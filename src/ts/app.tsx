@@ -160,7 +160,6 @@ const memoryHistory = hs.createMemoryHistory;
 const history = memoryHistory();
 const Constant =  require('json/constant.json');
 const Error = require('json/error.json');
-const Url = require('json/url.json');
 
 const Routes: RouteElement[] = require('json/route.json');
 

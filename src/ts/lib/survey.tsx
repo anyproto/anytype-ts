@@ -5,11 +5,30 @@ const Surveys = require('json/survey.json');
 
 class Survey {
 
-    show (type: string) {
-        const survey = Surveys[type];
-        const prefix = 'survey' + survey.key;
+    check (type: I.SurveyType) {
+        switch (type) {
+            case I.SurveyType.Register:
+                this.checkRegister();
+                break;
 
-        analytics.event(survey.key + 'SurveyShow');
+            case I.SurveyType.Pmf:
+                this.checkPmf();
+                break;
+
+            case I.SurveyType.Object:
+                this.checkObject();
+                break;
+
+            case I.SurveyType.Delete:
+                this.checkDelete();
+                break;
+        }
+    };
+
+    show (type: I.SurveyType) {
+        const prefix = Util.toCamelCase('survey-' + type);
+
+        analytics.event(prefix + 'Show');
 
         popupStore.open('confirm', {
             onClose: () => {
@@ -18,8 +37,8 @@ class Survey {
             data: {
                 title: translate(prefix + 'Title'),
                 text: translate(prefix + 'Text'),
-                textConfirm: translate(prefix + 'TextConfirm'),
-                textCancel: translate(prefix + 'TextCancel'),
+                textConfirm: translate(prefix + 'Confirm'),
+                textCancel: translate(prefix + 'Cancel'),
                 canConfirm: true,
                 canCancel: true,
                 onConfirm: () => {
@@ -32,98 +51,103 @@ class Survey {
         });
     };
 
-    onConfirm (type) {
+    onConfirm (type: I.SurveyType) {
         const { account } = authStore;
         const survey = Surveys[type];
+        const prefix = Util.toCamelCase('survey-' + type);
 
         Renderer.send('urlOpen', Util.sprintf(survey.url, account.id));
-        analytics.event(survey.key + 'SurveyOpen');
+        analytics.event(prefix + 'Open');
 
         switch (type) {
-            case 'pmf':
-                Storage.set('lastPMFSurveyTime', Util.time());
+            case I.SurveyType.Register:
+                Storage.set('survey', { surveyRegisterComplete: 1 });
                 break;
 
-            case 'new':
-                Storage.set('newUserSurveyComplete', 1);
+            case I.SurveyType.Pmf:
+                Storage.set('survey', { lastPmfSurveyTime: Util.time() });
                 break;
 
-            case 'deletion':
-                Storage.set('deletionSurveyComplete', 1);
+            case I.SurveyType.Object:
+                Storage.set('survey', { surveyObjectComplete: 1 });
                 break;
 
-            case 'fiftyObjects':
-                Storage.set('fiftyObjectsSurveyComplete', 1);
+            case I.SurveyType.Delete:
+                Storage.set('survey', { surveyDeleteComplete: 1 });
                 break;
 
         };
     };
 
-    onSkip (type) {
-        const survey = Surveys[type];
+    onSkip (type: I.SurveyType) {
+        const prefix = Util.toCamelCase('survey-' + type);
 
-        analytics.event(survey.key + 'SurveySkip');
+        analytics.event(prefix + 'Skip');
 
         switch (type) {
-            case 'pmf':
-                Storage.set('lastPMFSurveyCanceled', 1);
-                Storage.set('lastPMFSurveyTime', Util.time());
+            case I.SurveyType.Register:
+                Storage.set('survey', { surveyRegisterComplete: 1 });
                 break;
 
-            case 'new':
-                Storage.set('newUserSurveyComplete', 1);
+            case I.SurveyType.Pmf:
+                Storage.set('survey', { lastPmfSurveyCanceled: 1 });
+                Storage.set('survey', { lastPmfSurveyTime: Util.time() });
                 break;
 
-            case 'deletion':
-                Storage.set('deletionSurveyComplete', 1);
+            case I.SurveyType.Object:
+                Storage.set('survey', { surveyObjectComplete: 1 });
                 break;
 
-            case 'fiftyObjects':
-                Storage.set('fiftyObjectsSurveyComplete', 1);
+            case I.SurveyType.Delete:
+                Storage.set('survey', { surveyDeleteComplete: 1 });
                 break;
 
         };
     };
 
-    PMF () {
-        const lastTime = Number(Storage.get('lastSurveyTime')) || Number(Storage.get('lastPMFSurveyTime')) || 0;
-        const lastCanceled = Number(Storage.get('lastSurveyCanceled')) || Number(Storage.get('lastPMFSurveyCanceled')) || 0;
-        const askSurvey = Number(Storage.get('askSurvey')) || 0;
+    checkPmf () {
+        const surveyStorage = Storage.get('survey') || {};
+        const lastTime = Number(Storage.get('lastSurveyTime')) || Number(surveyStorage.lastPmfSurveyTime) || 0;
+        const lastCanceled = Number(Storage.get('lastSurveyCanceled')) || Number(surveyStorage.lastPmfSurveyCanceled) || 0;
+        const askPmf = Number(surveyStorage.askSurvey) || 0;
         const days = lastTime ? 90 : 30;
         const surveyTime = (lastTime <= Util.time() - 86400 * days);
 
-        if (askSurvey && !popupStore.isOpen() && !lastCanceled && surveyTime) {
-            this.show('pmf');
+        if (askPmf && !popupStore.isOpen() && !lastCanceled && surveyTime) {
+            this.show(I.SurveyType.Pmf);
         };
     };
 
-    newUser () {
-        const isComplete = Number(Storage.get('newUserSurveyComplete')) || 0;
-        const registrationTime = Number(Storage.get('registrationTime')) || 0;
-        const surveyTime = registrationTime && Util.time() - 86400 * 7 - registrationTime > 0;
+    checkRegister () {
+        const timeRegister = Number(Storage.get('timeRegister')) || 0;
+        const surveyStorage = Storage.get('survey') || {};
+        const isComplete = surveyStorage.surveyRegisterComplete || 0;
+        const surveyTime = timeRegister && Util.time() - 86400 * 7 - timeRegister > 0;
 
         if (!isComplete && surveyTime && !popupStore.isOpen()) {
-            this.show('new');
+            this.show(I.SurveyType.Register);
         };
     };
 
-    deletion () {
-        const isComplete = Number(Storage.get('deletionSurveyComplete')) || 0;
+    checkDelete () {
+        const surveyStorage = Storage.get('survey') || {};
+        const isComplete = Number(surveyStorage.surveyDeleteComplete) || 0;
 
         if (!isComplete) {
-            this.show('deletion');
+            this.show(I.SurveyType.Delete);
         };
     };
 
-    fiftyObjects () {
-        const isComplete = Number(Storage.get('fiftyObjectsSurveyComplete')) || 0;
-        const registrationTime = Number(Storage.get('registrationTime')) || 0;
+    checkObject () {
+        const timeRegister = Number(Storage.get('timeRegister')) || 0;
+        const surveyStorage = Storage.get('survey') || {};
+        const isComplete = Number(surveyStorage.surveyObjectComplete) || 0;
 
-        if (!isComplete && registrationTime) {
+        if (!isComplete && timeRegister) {
             const types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map(it => it.id);
             const filters: I.Filter[] = [
                 { operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: types },
-                { operator: I.FilterOperator.And, relationKey: 'createdDate', condition: I.FilterCondition.Greater, value: registrationTime + 30 },
+                { operator: I.FilterOperator.And, relationKey: 'createdDate', condition: I.FilterCondition.Greater, value: timeRegister + 30 },
             ];
 
             C.ObjectSearch(filters, [], [], '', 0, 50, (message: any) => {
@@ -132,7 +156,7 @@ class Survey {
                 };
 
                 if (message.records.length >= 50) {
-                    this.show('fiftyObjects');
+                    this.show(I.SurveyType.Object);
                 };
             });
         };

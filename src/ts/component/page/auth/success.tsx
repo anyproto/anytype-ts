@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Frame, Cover, Title, Label, Button, Header, Footer, Textarea } from 'Component';
-import { translate, DataUtil, analytics, Util, Storage } from 'Lib';
+import { translate, DataUtil, analytics, Util } from 'Lib';
 import { commonStore, authStore } from 'Store';
 import { observer } from 'mobx-react';
 
@@ -62,7 +62,6 @@ const PageAuthSuccess = observer(class PageAuthSuccess extends React.Component<P
 
 	componentDidMount () {
 		analytics.event('ScreenKeychain', { type: 'FirstSession' });
-		Storage.set('registrationTime', Util.time());
 	};
 
 	onSubmit (e: any) {
