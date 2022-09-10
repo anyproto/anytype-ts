@@ -17,6 +17,7 @@ interface Props extends I.BlockComponent, RouteComponentProps<any> {};
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
+const raf = require('raf');
 
 const BlockDataview = observer(class BlockDataview extends React.Component<Props, {}> {
 
@@ -24,6 +25,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	cellRefs: Map<string, any> = new Map();
 	viewId: string = '';
 	creating: boolean = false;
+	frame: number = 0;
 
 	constructor (props: any) {
 		super(props);
@@ -521,9 +523,15 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	resize () {
-		if (this.viewRef && this.viewRef.resize) {
-			this.viewRef.resize();
+		if (this.frame) {
+			raf.cancel(this.frame);
 		};
+
+		this.frame = raf(() => {
+			if (this.viewRef && this.viewRef.resize) {
+				this.viewRef.resize();
+			};
+		});
 	};
 
 });
