@@ -31,10 +31,8 @@ import PageMainStore from './main/store';
 import PageMainGraph from './main/graph';
 import PageMainNavigation from './main/navigation';
 import PageMainCreate from './main/create';
-import {SurveyType} from "ts/interface";
 
 const Constant = require('json/constant.json');
-const Url = require('json/url.json');
 const $ = require('jquery');
 const raf = require('raf');
 
