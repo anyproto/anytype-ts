@@ -242,7 +242,7 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 			};
 
 			if (isMain && !isMainIndex) {
-				Storage.set('survey', { askPmf: 1 });
+				Storage.set('survey', { askPmf: true });
 			};
 
 			if (isMainIndex) {
