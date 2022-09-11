@@ -143,23 +143,25 @@ class Survey {
         const surveyStorage = Storage.get('survey') || {};
         const isComplete = Number(surveyStorage.objectComplete) || 0;
 
-        if (!isComplete && timeRegister) {
-            const types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map(it => it.id);
-            const filters: I.Filter[] = [
-                { operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: types },
-                { operator: I.FilterOperator.And, relationKey: 'createdDate', condition: I.FilterCondition.Greater, value: timeRegister + 30 },
-            ];
-
-            C.ObjectSearch(filters, [], [], '', 0, 50, (message: any) => {
-                if (message.error.code) {
-                    return;
-                };
-
-                if (message.records.length >= 50) {
-                    this.show(I.SurveyType.Object);
-                };
-            });
+        if (isComplete || !timeRegister) {
+            return;
         };
+
+        const types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map(it => it.id);
+        const filters: I.Filter[] = [
+            { operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: types },
+            { operator: I.FilterOperator.And, relationKey: 'createdDate', condition: I.FilterCondition.Greater, value: timeRegister + 30 },
+        ];
+
+        C.ObjectSearch(filters, [], [], '', 0, 50, (message: any) => {
+            if (message.error.code) {
+                return;
+            };
+
+            if (message.records.length >= 50) {
+                this.show(I.SurveyType.Object);
+            };
+        });
     };
 
 }
