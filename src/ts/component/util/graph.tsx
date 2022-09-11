@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { I, Util, DataUtil, SmileUtil, FileUtil, translate } from 'Lib';
-import { commonStore, blockStore } from 'Store';
+import { commonStore, blockStore, menuStore } from 'Store';
 import { observer } from 'mobx-react';
 import * as d3 from 'd3';
 
@@ -27,6 +27,7 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 	images: any = {};
 	subject: any = null;
 	isDragging: boolean = false;
+	ids: string[] = [];
 
 	forceProps: any = {
 		center: {
@@ -185,14 +186,20 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
         .call(this.zoom)
 		.call(this.zoom.transform, d3.zoomIdentity.translate(x, y).scale(scale))
 		.on('click', (e: any) => {
-			const p = d3.pointer(e);
-			this.send('onClick', { x: p[0], y: p[1] });
+			console.log(e.shiftKey);
+
+			const [ x, y ] = d3.pointer(e);
+			this.send('onClick', { x, y });
 		})
 		.on('mousedown', (e: any) => {
 		})
+		.on('contextmenu', (e: any) => {
+			const [ x, y ] = d3.pointer(e);
+			this.send('onContextMenu', { x, y });
+		})
 		.on('mousemove', (e: any) => {
-			const p = d3.pointer(e);
-			this.send('onMouseMove', { x: p[0], y: p[1] });
+			const [ x, y ] = d3.pointer(e);
+			this.send('onMouseMove', { x, y });
 		});
 	};
 
@@ -282,12 +289,47 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 
 			case 'onMouseMove':
 				if (!this.isDragging) {
-					this.subject = this.nodes.find((d: any) => { return d.id == data.node; });
+					this.subject = this.nodes.find(d => d.id == data.node);
 					this.subject ? body.addClass('cp') : body.removeClass('cp');
 				};
 				break;
 
+			case 'onContextMenu':
+				this.onContextMenu(data.x, data.y, data.node);
+				break;
+
 		};
+	};
+
+	onContextMenu (x: number, y: number, id: string) {
+		const { isPopup } = this.props;
+		const ids = this.ids.length ? this.ids : [ id ];
+
+		menuStore.open('dataviewContext', {
+			recalcRect: () => { 
+				const rect = { width: 0, height: 0, x: x, y: y };
+
+				if (isPopup) {
+					const container = Util.getPageContainer(isPopup);
+					const { left, top } = container.offset();
+
+					rect.x += left;
+					rect.y += top;
+				};
+
+				return rect;
+			},
+			data: {
+				objectIds: ids,
+				getObject: (id: string) => this.nodes.find(d => d.id == id),
+				onSelect: (id: string) => {
+					if (id == 'archive') {
+						this.nodes = this.nodes.filter(d => !ids.includes(d.id));
+						this.init();
+					};
+				},
+			}
+		});
 	};
 
 	imageSrc (d: any) {

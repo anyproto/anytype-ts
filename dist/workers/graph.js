@@ -495,7 +495,22 @@ onMouseMove = ({ x, y }) => {
 	};
 
 	redraw();
-	this.postMessage({ id: 'onMouseMove', node: (d ? d.id : ''), x: x, y: y });
+	this.postMessage({ id: 'onMouseMove', node: (d ? d.id : ''), x, y });
+};
+
+onContextMenu = ({ x, y }) => {
+	const active = nodes.find(d => d.isOver);
+	if (active) {
+		active.isOver = false;
+	};
+
+	const d = simulation.find(transform.invertX(x), transform.invertY(y), 10);
+	if (d) {
+		d.isOver = true;
+	};
+
+	redraw();
+	this.postMessage({ id: 'onContextMenu', node: (d ? d.id : ''), x, y });
 };
 
 resize = (data) => {
