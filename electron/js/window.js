@@ -116,9 +116,11 @@ class WindowManager {
 			const primaryDisplay = screen.getPrimaryDisplay();
 	  		const { width, height } = primaryDisplay.workAreaSize;
 
+		  	const windowPosition = this.getWindowPosition(param, width, height)
+
 			param = Object.assign(param, {
-				x: width / 2 - param.width / 2,
-				y: height / 2 - param.height / 2 + 20,
+				x: windowPosition.x,
+				y: windowPosition.y
 			});
 		};
 
@@ -201,6 +203,23 @@ class WindowManager {
 			Util.send(it, 'native-theme', Util.isDarkTheme());
 		});
 	};
+
+	getWindowPosition (param, displayWidth, displayHeight) {
+		let x = Math.round(displayWidth / 2 - param.width / 2),
+			y = Math.round(displayHeight / 2 - param.height / 2 + 20);
+
+		if (BrowserWindow.getFocusedWindow()) {
+			const current_win = BrowserWindow.getFocusedWindow();
+			const pos = current_win.getPosition();
+			x = pos[0] + 22;
+			y = pos[1] + 22
+		}
+
+		return {
+			x: x,
+			y: y
+		}
+	}
 
 };
 
