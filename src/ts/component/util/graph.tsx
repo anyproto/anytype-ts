@@ -186,12 +186,8 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
         .call(this.zoom)
 		.call(this.zoom.transform, d3.zoomIdentity.translate(x, y).scale(scale))
 		.on('click', (e: any) => {
-			console.log(e.shiftKey);
-
 			const [ x, y ] = d3.pointer(e);
-			this.send('onClick', { x, y });
-		})
-		.on('mousedown', (e: any) => {
+			this.send(e.shiftKey ? 'onSelect' : 'onClick', { x, y });
 		})
 		.on('contextmenu', (e: any) => {
 			const [ x, y ] = d3.pointer(e);
@@ -287,6 +283,15 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 				onClick(data.node);
 				break;
 
+			case 'onSelect':
+				if (data.node.id == blockStore.root) {
+					break;
+				};
+
+				this.ids = this.ids.includes(data.node.id) ? this.ids.filter(id => id != data.node.id) : this.ids.concat([ data.node.id ]);
+				this.send('onSetSelected', { ids: this.ids });
+				break;
+
 			case 'onMouseMove':
 				if (!this.isDragging) {
 					this.subject = this.nodes.find(d => d.id == data.node);
@@ -324,8 +329,11 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 				getObject: (id: string) => this.nodes.find(d => d.id == id),
 				onSelect: (id: string) => {
 					if (id == 'archive') {
+						this.ids = [];
 						this.nodes = this.nodes.filter(d => !ids.includes(d.id));
-						this.init();
+
+						this.send('onRemoveNode', { ids });
+						this.send('onSetSelected', { ids: [] });
 					};
 				},
 			}

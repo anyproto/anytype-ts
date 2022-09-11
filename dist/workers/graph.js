@@ -41,6 +41,7 @@ let theme = '';
 let Color = {};
 let LineWidth = 0.25;
 let frame = 0;
+let selected = [];
 
 addEventListener('message', ({ data }) => { 
 	if (this[data.id]) {
@@ -104,6 +105,7 @@ initColor = () => {
 					1: '#8c9ea5',
 					over: '#ffd15b',
 					targetOver: '#5dd400',
+					selected: '#c4e3fb',
 				},
 				node: {
 					common: '#f3f2ec',
@@ -111,6 +113,7 @@ initColor = () => {
 					focused: '#fef3c5',
 					over: '#ffd15b',
 					targetOver: '#5dd400',
+					selected: '#e3eff4',
 				},
 			}; 
 			break;
@@ -125,6 +128,7 @@ initColor = () => {
 					1: '#8c9ea5',
 					over: '#ffd15b',
 					targetOver: '#5dd400',
+					selected: '#c4e3fb',
 				},
 				node: {
 					common: '#484843',
@@ -132,6 +136,7 @@ initColor = () => {
 					focused: '#fef3c5',
 					over: '#ffd15b',
 					targetOver: '#5dd400',
+					selected: '#e3eff4',
 				},
 			};
 			break;
@@ -344,6 +349,12 @@ drawNode = (d) => {
 		bg = Color.node.focused;
 	};
 
+	if (selected.includes(d.id)) {
+		stroke = Color.link.selected;
+		bg = Color.node.selected;
+		ctx.lineWidth = 1;
+	};
+
 	if (d.isOver) {
 		stroke = Color.node.over;
 		ctx.lineWidth = 1;
@@ -462,7 +473,7 @@ onDragMove = ({ subjectId, active, x, y }) => {
 		return;
 	};
 
-	const d = nodes.find((it) => { return it.id == subjectId; });
+	const d = nodes.find((it) => it.id == subjectId);
 	if (d) {
 		d.fx = transform.invertX(x) - d.radius / 2;
 		d.fy = transform.invertY(y) - d.radius / 2;
@@ -477,9 +488,16 @@ onDragEnd = ({ active }) => {
 };
 
 onClick = ({ x, y }) => {
-  	const d = simulation.find(transform.invertX(x), transform.invertY(y), 10);
+  	const d = getNodeByCoords(x, y);
 	if (d) {
 		this.postMessage({ id: 'onClick', node: d });
+	};
+};
+
+onSelect = ({ x, y }) => {
+  	const d = getNodeByCoords(x, y);
+	if (d) {
+		this.postMessage({ id: 'onSelect', node: d });
 	};
 };
 
@@ -489,7 +507,7 @@ onMouseMove = ({ x, y }) => {
 		active.isOver = false;
 	};
 
-	const d = simulation.find(transform.invertX(x), transform.invertY(y), 10);
+	const d = getNodeByCoords(x, y);
 	if (d) {
 		d.isOver = true;
 	};
@@ -504,13 +522,26 @@ onContextMenu = ({ x, y }) => {
 		active.isOver = false;
 	};
 
-	const d = simulation.find(transform.invertX(x), transform.invertY(y), 10);
+	const d = getNodeByCoords(x, y);
 	if (d) {
 		d.isOver = true;
 	};
 
 	redraw();
 	this.postMessage({ id: 'onContextMenu', node: (d ? d.id : ''), x, y });
+};
+
+onRemoveNode = ({ ids }) => {
+	nodes = nodes.filter(d => !ids.includes(d.id));
+	edges = edges.filter(d => !ids.includes(d.source.id) && !ids.includes(d.target.id));
+};
+
+onSetSelected = ({ ids }) => {
+	selected = ids;
+};
+
+getNodeByCoords = (x, y) => {
+	return simulation.find(transform.invertX(x), transform.invertY(y), 10);
 };
 
 resize = (data) => {
