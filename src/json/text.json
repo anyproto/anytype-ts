@@ -461,6 +461,25 @@
 	"placeholderCell100": { "en": "Select objects" },
 
 	"edgeType0": { "en": "Link" },
-	"edgeType1": { "en": "Relation" }
+	"edgeType1": { "en": "Relation" },
 
+	"surveyRegisterTitle": { "en": "Time to take a survey!" },
+	"surveyRegisterText": { "en": "Hi there, We hope you're enjoying your experience in Anytype! We'd love to hear your feedback so we can keep improving the product." },
+	"surveyRegisterConfirm": { "en": "Let's Go!" },
+	"surveyRegisterCancel": { "en": "Skip" },
+
+	"surveyPmfTitle": { "en": "We need your opinion" },
+	"surveyPmfText": { "en": "Hi there! We'd love if you'd help us improve Anytype by taking part in this 5-minute survey." },
+	"surveyPmfConfirm": { "en": "Let's Go!" },
+	"surveyPmfCancel": { "en": "Skip" },
+
+	"surveyDeleteTitle": { "en": "Help us to become better" },
+	"surveyDeleteText": { "en": "We'd love to learn more about why you've chosen to delete your account. Would you be willing to take 3 minutes to help us improve?" },
+	"surveyDeleteConfirm": { "en": "Sure, let's go" },
+	"surveyDeleteCancel": { "en": "No thanks" },
+
+	"surveyObjectTitle": { "en": "Tell us how it's going!" },
+	"surveyObjectText": { "en": "Hi there, we hope you're enjoying your experience with Anytype! Would you take 5 minutes to help us improve our product?" },
+	"surveyObjectConfirm": { "en": "Sure, let's go" },
+	"surveyObjectCancel": { "en": "No thanks" }
 }
