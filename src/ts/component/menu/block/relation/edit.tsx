@@ -38,24 +38,25 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		const relation = this.getRelation();
 		const isDate = this.format == I.RelationType.Date;
 		const isObject = this.format == I.RelationType.Object;
-		const typeId = this.objectTypes.length ? this.objectTypes[0] : '';
-		const type = dbStore.getType(typeId);
 		const allowed = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
 		const canDelete = allowed && relation && !Constant.systemRelationKeys.includes(relation.relationKey);
 		const isReadonly = this.isReadonly();
 
 		let opts: any = null;
-		let typeProps: any = { name: 'Select object type' };
 
 		if (isObject && !isReadonly) {
-			const l = this.objectTypes.length;
+			const length = this.objectTypes.length;
+			const typeId = length ? this.objectTypes[0] : '';
+			const type = dbStore.getType(typeId);
+			const typeProps: any = { name: 'Select object type' };
 
-			if (!type._empty_) {
+			if (type) {
 				typeProps.name = type.name;
 				typeProps.object = type;
 			};
 
-			typeProps.caption = l > 1 ? '+' + (l - 1) : '';
+			typeProps.caption = length > 1 ? '+' + (length - 1) : '';
+
 			if (typeProps.caption) {
 				typeProps.withCaption = true;
 			};

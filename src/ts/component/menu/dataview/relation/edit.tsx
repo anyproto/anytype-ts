@@ -39,7 +39,6 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		const sections = this.getSections();
 
 		let opts = null;
-		let typeProps: any = { name: 'Select object type' };
 		let ccn = [ 'item' ];
 		
 		if (relation) {
@@ -47,22 +46,24 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		};
 
 		if (isObject && !isReadonly) {
-			const l = this.objectTypes.length;
-			const typeId = l ? this.objectTypes[0] : '';
+			const length = this.objectTypes.length;
+			const typeId = length ? this.objectTypes[0] : '';
 			const type = dbStore.getType(typeId);
+			const typeProps: any = { name: 'Select object type' };
 
-			if (!type._empty_) {
+			if (type) {
 				typeProps.name = type.name;
-				typeProps.object = { ...type, layout: I.ObjectLayout.Type };
+				typeProps.object = type;
 			};
 
-			typeProps.caption = l > 1 ? '+' + (l - 1) : '';
+			typeProps.caption = length > 1 ? '+' + (length - 1) : '';
+
 			if (typeProps.caption) {
 				typeProps.withCaption = true;
 			};
 
 			opts = (
-				<div className="section">
+				<div className="section noLine">
 					<div className="name">Limit object Types</div>
 					<MenuItemVertical
 						id="object-type"
@@ -72,10 +73,6 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 					/>
 				</div>
 			);
-
-			if (isReadonly) {
-				opts = null;
-			};
 		};
 
 		if (isDate && relation) {
