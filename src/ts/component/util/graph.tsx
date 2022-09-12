@@ -307,7 +307,7 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 				break;
 
 			case 'onContextMenu':
-				onContextMenu(data.node.id, {
+				onContextMenu(data.node, {
 					recalcRect: () => { 
 						const rect = { width: 0, height: 0, x: data.x, y: data.y };
 

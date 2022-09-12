@@ -239,6 +239,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 	};
 
 	onContextMenu (id: string, param: any) {
+		const { root } = blockStore;
 		const ids = this.ids.length ? this.ids : [ id ];
 
 		menuStore.open('dataviewContext', {
@@ -257,8 +258,10 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 							ids.forEach((id: string) => {
 								const node = this.data.nodes.find(d => d.id == id);
 								
-								node.isFavorite = true;
-								this.data.edges.push({ type: I.EdgeType.Link, source: blockStore.root, target: id });
+								if (node) {
+									node.isFavorite = true;
+									this.data.edges.push({ type: I.EdgeType.Link, source: root, target: id });
+								};
 							});
 							this.refGraph.send('onSetEdges', { edges: this.data.edges });
 							break;
@@ -266,9 +269,11 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 						case 'unfav':
 							ids.forEach((id: string) => {
 								const node = this.data.nodes.find(d => d.id == id);
-
-								node.isFavorite = false;
-								this.data.edges = this.data.edges.filter(d => d.target != id);
+								
+								if (node) {
+									node.isFavorite = false;
+									this.data.edges = this.data.edges.filter(d => (d.source == root) && (d.target != id));
+								};
 							});
 							this.refGraph.send('onSetEdges', { edges: this.data.edges });
 							break;
