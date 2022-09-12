@@ -54,12 +54,12 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 		},
 		forceX: {
 			enabled: true,
-			strength: 0.1,
+			strength: 0.3,
 			x: 0.3
 		},
 		forceY: {
 			enabled: true,
-			strength: 0.1,
+			strength: 0.3,
 			y: 0.3
 		},
 
@@ -85,6 +85,10 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 				<div id={'graph' + (isPopup ? '-popup' : '')} />
 			</div>
 		);
+	};
+
+	componentDidMount () {
+		window.Lib.Graph = this;
 	};
 
 	componentWillUnmount () {
@@ -328,13 +332,35 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 				objectIds: ids,
 				getObject: (id: string) => this.nodes.find(d => d.id == id),
 				onSelect: (id: string) => {
-					if (id == 'archive') {
-						this.ids = [];
-						this.nodes = this.nodes.filter(d => !ids.includes(d.id));
+					switch (id) {
+						case 'archive':
+							this.nodes = this.nodes.filter(d => !ids.includes(d.id));
+							this.send('onRemoveNode', { ids });
+							break;
 
-						this.send('onRemoveNode', { ids });
-						this.send('onSetSelected', { ids: [] });
+						case 'fav':
+							ids.forEach((id: string) => {
+								const node = this.nodes.find(d => d.id == id);
+								
+								node.isFavorite = true;
+								this.edges.push({ type: I.EdgeType.Link, source: blockStore.root, target: id });
+							});
+							this.send('onSetEdges', { edges: this.edges });
+							break;
+
+						case 'unfav':
+							ids.forEach((id: string) => {
+								const node = this.nodes.find(d => d.id == id);
+
+								node.isFavorite = false;
+								this.edges = this.edges.filter(d => d.target != id);
+							});
+							this.send('onSetEdges', { edges: this.edges });
+							break;
 					};
+
+					this.ids = [];
+					this.send('onSetSelected', { ids: [] });
 				},
 			}
 		});

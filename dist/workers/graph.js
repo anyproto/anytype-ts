@@ -62,12 +62,21 @@ init = (data) => {
 
 	ctx.lineCap = 'round';
 
-	initColor();
 	resize(data);
+	initColor();
+	initNames();
 
 	transform = d3.zoomIdentity.translate(-width, -height).scale(3);
 	simulation = d3.forceSimulation(nodes);
 
+	initForces();
+
+	simulation.on('tick', () => { redraw(); });
+	simulation.on('end', () => { simulation.alphaTarget(1); });
+	simulation.tick(200);
+};
+
+initNames = () => {
 	nodes = nodes.map((d) => {
 		if (d.isRoot) {
 			d.fx = width / 2;
@@ -86,11 +95,6 @@ init = (data) => {
 		d.textBitmap = offscreen.transferToImageBitmap();
 		return d;
 	});
-
-	initForces();
-	simulation.on('tick', () => { redraw(); });
-	simulation.on('end', () => { simulation.alphaTarget(1); });
-	simulation.tick(200);
 };
 
 initColor = () => {
@@ -534,6 +538,20 @@ onContextMenu = ({ x, y }) => {
 onRemoveNode = ({ ids }) => {
 	nodes = nodes.filter(d => !ids.includes(d.id));
 	edges = edges.filter(d => !ids.includes(d.source.id) && !ids.includes(d.target.id));
+	
+	updateForces();
+};
+
+onSetEdges = (data) => {
+	edges = data.edges.map((d) => {
+		return { 
+			...d, 
+			source: nodes.find(n => d.source == n.id),
+			target: nodes.find(n => d.target == n.id),
+		};
+	});
+
+	updateForces();
 };
 
 onSetSelected = ({ ids }) => {
