@@ -207,10 +207,10 @@ class WindowManager {
 		let currentWindow = BrowserWindow.getFocusedWindow();
 
 		if (currentWindow) {
-			const pos = currentWindow.getPosition();
+			const [xPos, yPos] = currentWindow.getPosition();
 
-			x = pos[0] + NEW_WINDOW_SHIFT;
-			y = pos[1] + NEW_WINDOW_SHIFT;
+			x = xPos + NEW_WINDOW_SHIFT;
+			y = yPos + NEW_WINDOW_SHIFT;
 
 			const xLimit = x + param.width > displayWidth;
 			const yLimit = y + param.height > displayHeight;
