@@ -1283,7 +1283,7 @@ class DataUtil {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'workspaceId', condition: I.FilterCondition.Equal, value: commonStore.workspace });
 		};
 
-		fullText = fullText.replace(/\\/g, '');
+		fullText = String(fullText || '').replace(/\\/g, '');
 		fullText = Util.filterFix(fullText);
 
 		C.ObjectSearch(filters, sorts, keys.concat([ idField ]), fullText, offset, limit, callBack);
