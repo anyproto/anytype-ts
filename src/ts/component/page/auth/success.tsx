@@ -1,12 +1,12 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { RouteComponentProps } from 'react-router';
 import { Frame, Cover, Title, Label, Button, Header, Footer, Textarea } from 'Component';
-import { translate, DataUtil, analytics, Util } from 'Lib';
+import { I, translate, DataUtil, analytics, Util } from 'Lib';
 import { commonStore, authStore } from 'Store';
 import { observer } from 'mobx-react';
 
-interface Props extends RouteComponentProps<any> {};
+interface Props extends I.PageComponent {};
+
 interface State {};
 
 const $ = require('jquery');

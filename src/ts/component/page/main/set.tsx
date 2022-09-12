@@ -1,6 +1,5 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader, Block, Deleted } from 'Component';
 import { I, M, C, DataUtil, Util, crumbs, Action } from 'Lib';
@@ -9,10 +8,8 @@ import { blockStore } from 'Store';
 import Controls from 'Component/page/head/controls';
 import HeadSimple from 'Component/page/head/simple';
 
-interface Props extends RouteComponentProps<any> {
+interface Props extends I.PageComponent {
 	rootId: string;
-	isPopup?: boolean;
-	dataset?: any;
 };
 
 interface State {

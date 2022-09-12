@@ -5,7 +5,7 @@ import { dbStore } from 'Store';
 import { observer } from 'mobx-react';
 
 interface Props {
-	rootId: string;
+	rootId?: string;
 	block?: I.Block;
 	relationKey: string;
 	index: number;

@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { RouteComponentProps } from 'react-router';
+import { I } from 'Lib';
 import { observer } from 'mobx-react';
 
-interface Props extends RouteComponentProps<any> {
+interface Props extends I.PageComponent {
 };
 
 const GraphFilters = observer(class PreviewObject extends React.Component<Props, {}> {
@@ -30,6 +30,10 @@ const GraphFilters = observer(class PreviewObject extends React.Component<Props,
 
 	componentWillUnmount () {
 		this._isMounted = false;
+	};
+
+	getItems () {
+		return [];
 	};
 
 });

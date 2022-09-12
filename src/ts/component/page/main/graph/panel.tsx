@@ -3,13 +3,12 @@ import * as ReactDOM from 'react-dom';
 import { I, Util } from 'Lib';
 import { Icon } from 'Component';
 import { observer } from 'mobx-react';
-import { RouteComponentProps } from 'react-router';
 
 import Controls from './controls';
 import Preview from './preview';
 import Filters from './filters';
 
-interface Props extends RouteComponentProps<any> {
+interface Props extends I.PageComponent {
     isPopup?: boolean;
     data: any;
     onFilterChange: (v: string) => void;

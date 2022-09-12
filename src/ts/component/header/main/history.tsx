@@ -5,7 +5,7 @@ import { C, Util, DataUtil, I, translate, analytics } from 'Lib';
 import { detailStore } from 'Store';
 import { observer } from 'mobx-react';
 
-interface Props extends RouteComponentProps<any>, I.HeaderComponent {};
+interface Props extends I.HeaderComponent {};
 
 interface State {
 	version: I.HistoryVersion;

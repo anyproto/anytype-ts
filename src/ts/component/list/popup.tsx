@@ -3,9 +3,8 @@ import { Popup } from 'Component';
 import { popupStore } from 'Store';
 import { observer } from 'mobx-react';
 import { I } from 'Lib';
-import { RouteComponentProps } from 'react-router';
 
-interface Props extends RouteComponentProps<any> {}
+interface Props extends I.PageComponent {};
 
 const $ = require('jquery');
 

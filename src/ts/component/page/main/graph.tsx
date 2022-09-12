@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { RouteComponentProps } from 'react-router';
 import { I, C, Util, analytics, sidebar, DataUtil, keyboard } from 'Lib';
 import { Header, Graph, Icon, Loader } from 'Component';
 import { blockStore, detailStore, menuStore } from 'Store';
@@ -7,9 +6,8 @@ import { observer } from 'mobx-react';
 
 import Panel from './graph/panel';
 
-interface Props extends RouteComponentProps<any> {
+interface Props extends I.PageComponent {
 	rootId: string;
-	isPopup?: boolean;
 	matchPopup?: any;
 };
 
@@ -207,9 +205,10 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 		const hh = Util.sizeHeader();
 		const platform = Util.getPlatform();
 		const isPopup = this.props.isPopup && !obj.hasClass('full');
+		const oh = obj.height();
 		
-		let wh = isPopup ? obj.height() - hh : win.height();
-		let sh = isPopup ? obj.height() : win.height();
+		let wh = isPopup ? oh - hh : win.height();
+		let sh = isPopup ? oh : win.height();
 
 		if (platform == I.Platform.Windows) {
 			wh += 30;

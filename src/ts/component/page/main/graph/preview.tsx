@@ -1,11 +1,9 @@
 import * as React from 'react';
-import { RouteComponentProps } from 'react-router';
 import { Loader, IconObject, Cover, Icon, Block, Button, ObjectName, ObjectDescription } from 'Component';
-import { detailStore } from 'Store';
 import { I, C, M, DataUtil } from 'Lib';
 import { observer } from 'mobx-react';
 
-interface Props extends RouteComponentProps<any> {
+interface Props extends I.PageComponent {
 	rootId: string;
 	onClick?: (e: any) => void;
 	onClose?: (e: any) => void;

@@ -1,6 +1,5 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { RouteComponentProps } from 'react-router';
 import { Block, Icon, Loader, Deleted, DropTarget } from 'Component';
 import { commonStore, blockStore, detailStore, menuStore, popupStore } from 'Store';
 import { I, C, Key, Util, DataUtil, Mark, focus, keyboard, crumbs, Storage, Mapper, Action, translate, analytics, Renderer } from 'Lib';
@@ -10,10 +9,7 @@ import { throttle } from 'lodash';
 import Controls from 'Component/page/head/controls';
 import PageHeadEdit from 'Component/page/head/edit';
 
-interface Props extends RouteComponentProps<any> {
-	dataset?: any;
-	rootId: string;
-	isPopup: boolean;
+interface Props extends I.PageComponent {
 	onOpen?(): void;
 };
 

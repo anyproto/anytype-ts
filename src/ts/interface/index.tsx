@@ -16,6 +16,7 @@ import {
 	GraphView, 
 	TabIndex,
 	HeaderComponent,
+	PageComponent,
 	FooterComponent,
 	SurveyType,
 } from './common';
@@ -80,6 +81,7 @@ export {
 	GraphView,
 	TabIndex,
 	HeaderComponent,
+	PageComponent,
 	FooterComponent,
 
 	SurveyType,

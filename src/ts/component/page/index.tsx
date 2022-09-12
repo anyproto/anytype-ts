@@ -67,12 +67,7 @@ const Components: any = {
 	'main/create':			 PageMainCreate,
 };
 
-interface Props extends RouteComponentProps<any> {
-	dataset?: any;
-	isPopup?: boolean;
-	matchPopup?: any;
-	rootId?: string;
-};
+interface Props extends I.PageComponent {};
 
 const Page = observer(class Page extends React.Component<Props, {}> {
 
@@ -310,11 +305,10 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 		const { isPopup } = this.props;
 		const match = this.getMatch();
 		const page = match.params.page || 'index';
-		const action = match.params.action || 'index';
 		
 		return [ 
 			Util.toCamelCase([ prefix, page ].join('-')),
-			Util.toCamelCase([ prefix, page, action ].join('-')),
+			this.getId(prefix),
 			(isPopup ? 'isPopup' : 'isFull'),
 		].join(' ');
 	};
@@ -340,6 +334,22 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 
 		obj.attr({ class: cn.join(' ') });
 		commonStore.setThemeClass();
+	};
+
+	getId (prefix: string) {
+		const match = this.getMatch();
+		const page = match.params.page || 'index';
+		const action = match.params.action || 'index';
+
+		return Util.toCamelCase([ prefix, page, action ].join('-'));
+	};
+
+	storageGet () {
+		return Storage.get(this.getId('page')) || {};
+	};
+
+	storageSet (data: any) {
+		Storage.set(this.getId('page'), data);
 	};
 	
 	resize () {

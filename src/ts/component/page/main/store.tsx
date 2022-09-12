@@ -6,7 +6,7 @@ import { dbStore, blockStore, detailStore, } from 'Store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
-interface Props extends RouteComponentProps<any> {
+interface Props extends I.PageComponent {
 	isPopup?: boolean;
 };
 

@@ -1,11 +1,10 @@
 import * as React from 'react';
-import { RouteComponentProps } from 'react-router';
 import { Frame, Cover, Title, Label, Button, Header, Footer } from 'Component';
-import { Util, translate } from 'Lib';
+import { I, Util, translate } from 'Lib';
 import { commonStore } from 'Store';
 import { observer } from 'mobx-react';
 
-interface Props extends RouteComponentProps<any> {}
+interface Props extends I.PageComponent {};
 
 const PageAuthNotice = observer(class PageAuthNotice extends React.Component<Props, {}> {
 

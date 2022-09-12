@@ -1,6 +1,5 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { RouteComponentProps } from 'react-router';
 import { Loader } from 'Component';
 import { I, C, focus, DataUtil, Util } from 'Lib';
 import { menuStore, blockStore, detailStore } from 'Store';
@@ -8,11 +7,8 @@ import { observer } from 'mobx-react';
 
 import ControlButtons  from './controlButtons';
 
-interface Props extends RouteComponentProps<any> {
-	rootId: string;
-	isPopup?: boolean;
+interface Props extends I.PageComponent {
 	readonly?: boolean;
-	dataset?: any;
 	resize?: () => void;
 	onLayoutSelect?: (layout: I.ObjectLayout) => void;
 };

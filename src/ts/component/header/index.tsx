@@ -10,7 +10,7 @@ import HeaderMainGraph from './main/graph';
 import HeaderMainNavigation from './main/navigation';
 import HeaderMainStore from './main/store';
 
-interface Props extends RouteComponentProps<any>, I.HeaderComponent {
+interface Props extends I.HeaderComponent {
 	component: string;
 };
 

@@ -5,7 +5,7 @@ import { Icon } from 'Component';
 import { popupStore } from 'Store';
 import { observer } from 'mobx-react';
 
-interface Props extends RouteComponentProps<any>, I.HeaderComponent {};
+interface Props extends I.HeaderComponent {};
 
 const HeaderMainIndex = observer(class HeaderMainIndex extends React.Component<Props, {}> {
 	

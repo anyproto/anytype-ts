@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
 import { Icon, Header, Footer, Loader, ListObjectPreview, ListObject, Select, Deleted } from 'Component';
 import { I, C, DataUtil, Util, focus, crumbs, Action, analytics } from 'Lib';
@@ -7,7 +6,7 @@ import { detailStore, dbStore, menuStore, popupStore, blockStore } from 'Store';
 
 import HeadSimple from 'Component/page/head/simple';
 
-interface Props extends RouteComponentProps<any> {
+interface Props extends I.PageComponent {
 	rootId: string;
 	isPopup?: boolean;
 };

@@ -5,7 +5,7 @@ import { I, Util, DataUtil, keyboard } from 'Lib';
 import { blockStore, detailStore, popupStore } from 'Store';
 import { observer } from 'mobx-react';
 
-interface Props extends RouteComponentProps<any>, I.HeaderComponent {};
+interface Props extends I.HeaderComponent {};
 
 const $ = require('jquery');
 
