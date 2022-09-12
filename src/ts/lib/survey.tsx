@@ -55,54 +55,40 @@ class Survey {
         const { account } = authStore;
         const survey = Surveys[type];
         const prefix = Util.toCamelCase('survey-' + type);
-
-        Renderer.send('urlOpen', Util.sprintf(survey.url, account.id));
-        analytics.event(prefix + 'Open');
+		const param: any = {};
 
         switch (type) {
-            case I.SurveyType.Register:
-                Storage.set('survey', { registerComplete: true });
-                break;
+			default:
+				param[`${type}Complete`] = true;
+				break;
 
             case I.SurveyType.Pmf:
-                Storage.set('survey', { pmfCompleteTime: Util.time() });
+                param.pmfCompleteTime = Util.time();
                 break;
-
-            case I.SurveyType.Object:
-                Storage.set('survey', { objectComplete: true });
-                break;
-
-            case I.SurveyType.Delete:
-                Storage.set('survey', { deleteComplete: true });
-                break;
-
         };
+
+		Storage.set('survey', param);
+		Renderer.send('urlOpen', Util.sprintf(survey.url, account.id));
+        analytics.event(prefix + 'Open');
     };
 
     onSkip (type: I.SurveyType) {
         const prefix = Util.toCamelCase('survey-' + type);
-
-        analytics.event(prefix + 'Skip');
+		const param: any = {};
 
         switch (type) {
-            case I.SurveyType.Register:
-                Storage.set('survey', { registerComplete: true });
-                break;
+			default:
+				param[`${type}Complete`] = true;
+				break;
 
             case I.SurveyType.Pmf:
                 Storage.set('survey', { pmfCanceled: true });
                 Storage.set('survey', { pmfCompleteTime: Util.time() });
                 break;
-
-            case I.SurveyType.Object:
-                Storage.set('survey', { objectComplete: true });
-                break;
-
-            case I.SurveyType.Delete:
-                Storage.set('survey', { deleteComplete: true });
-                break;
-
         };
+
+		Storage.set('survey', param);
+		analytics.event(prefix + 'Skip');
     };
 
     checkPmf () {

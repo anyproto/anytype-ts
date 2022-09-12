@@ -8,6 +8,10 @@
 		.wrap.withLabel {
 			.ReactVirtualized__Grid__innerScrollContainer { margin-top: 0px; }
 		}
+		.wrap.withFilter {
+			.emptySearch { height: calc(100% - 44px); }
+			.loaderWrapper { top: 44px; height: calc(100% - 44px); }
+		}
 
 		.items { height: 100%; }
 		.item {
@@ -15,11 +19,6 @@
 		}
 
 		.filter { flex-shrink: 0; }
-
-		.wrap.withFilter {
-			.emptySearch { height: calc(100% - 44px); }
-			.loaderWrapper { top: 44px; height: calc(100% - 44px); }
-		}
 	}
 
 	.menu.menuSearchObject.single { width: 256px; }
