@@ -189,9 +189,10 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 			value = value.map(valueMapper);
 		};
 
-		value = value.filter((it: any) => { return !it._empty_; });
+		value = value.filter(it => !it._empty_);
+		
 		if (!config.debug.ho) {
-			value = value.filter((it: any) => { return !it.isHidden; });
+			value = value.filter(it => !it.isHidden);
 		};
 
 		value.unshift({ id: 'add', name: (nameAdd || 'Add object') });
@@ -213,7 +214,7 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 	};
 
 	onAdd () {
-		const { param, getId, getSize, close } = this.props;
+		const { param, getId, getSize } = this.props;
 		const { data, className, classNameWrap } = param;
 
 		menuStore.open('dataviewObjectList', {
