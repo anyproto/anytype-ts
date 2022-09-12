@@ -139,12 +139,18 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 	};
 
 	onKeyDown (e: any) {
-		if (!this.ids.length) {
+		const length = this.ids.length;
+		if (!length) {
 			return;
 		};
 
 		keyboard.shortcut('backspace, delete', e, (pressed: string) => {
-			C.ObjectListSetIsArchived(this.ids, true);
+			C.ObjectListSetIsArchived(this.ids, true, (message: any) => {
+				if (!message.error.code) {
+					this.data.nodes = this.data.nodes.filter(d => !this.ids.includes(d.id));
+					this.refGraph.send('onRemoveNode', { ids: this.ids });
+				};
+			});
 			
 			analytics.event('MoveToBin', { count: length });
 		});
