@@ -200,17 +200,7 @@ class DbStore {
 	};
 
     getRelations (rootId: string, blockId: string, param?: any): any[] {
-		let { withHidden } = param || {};
-		let { config } = commonStore;
-		let relations = this.relationMap.get(this.getId(rootId, blockId)) || [];
-
-		relations = relations.map(it => this.getRelationByKey(it.relationKey));
-		if (!withHidden) {
-			relations = relations.filter((it: any) => {
-				return it ? (!config.debug.ho ? !it.isHidden : true) : false;
-			});
-		};
-		return relations;
+		return (this.relationMap.get(this.getId(rootId, blockId)) || []).map(it => this.getRelationByKey(it.relationKey));
 	};
 
     getRelationByKey (relationKey: string): any {

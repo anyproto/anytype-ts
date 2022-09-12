@@ -160,9 +160,14 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId } = data;
+		const { config } = commonStore;
 		const object = detailStore.get(rootId, rootId, [ Constant.relationKey.featured ]);
 		
 		let items = Util.objectCopy(dbStore.getRelations(rootId, rootId)).sort(DataUtil.sortByHidden);
+		items = items.filter((it: any) => {
+			return it ? (!config.debug.ho ? !it.isHidden : true) : false;
+		});
+
 		let featured = object[Constant.relationKey.featured] || [];
 		let sections = [ 
 			{ 

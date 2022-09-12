@@ -51,8 +51,6 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		const items = this.getItems();
 		const placeholderFocus = data.placeholderFocus || 'Filter objects...';
 
-		console.log(items);
-
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
 			const type = dbStore.getType(item.type);

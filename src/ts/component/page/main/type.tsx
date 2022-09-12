@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon, Header, Footer, Loader, ListObjectPreview, ListObject, Select, Deleted } from 'Component';
 import { I, C, DataUtil, Util, focus, crumbs, Action, analytics } from 'Lib';
-import { detailStore, dbStore, menuStore, popupStore, blockStore } from 'Store';
+import { commonStore, detailStore, dbStore, menuStore, popupStore, blockStore } from 'Store';
 
 import HeadSimple from 'Component/page/head/simple';
 
@@ -63,6 +63,7 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 			return <Loader id="loader" />;
 		};
 
+		const { config } = commonStore;
 		const rootId = this.getRootId();
 		const object = Util.objectCopy(detailStore.get(rootId, rootId, [ 'recommendedLayout' ]));
 		const subIdTemplate = this.getSubIdTemplate();
@@ -80,6 +81,9 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 		const allowedTemplate = allowedObject && showTemplates;
 
 		let relations = Util.objectCopy(dbStore.getRelations(rootId, rootId)).sort(DataUtil.sortByHidden);
+		relations = relations.filter((it: any) => {
+			return it ? (!config.debug.ho ? !it.isHidden : true) : false;
+		});
 		relations = relations.filter(it => !Constant.systemRelationKeys.includes(it.relationKey));
 
 		const Relation = (item: any) => (

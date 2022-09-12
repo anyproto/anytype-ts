@@ -12,7 +12,7 @@ class Dataview {
 			return [];
 		};
 
-		let relations = Util.objectCopy(dbStore.getRelations(rootId, blockId, { withHidden: true }));
+		let relations = Util.objectCopy(dbStore.getRelations(rootId, blockId));
 		let order: any = {};
 		let o = 0;
 
@@ -71,19 +71,21 @@ class Dataview {
 			};
 
 			let relation = dbStore.getRelationById(relationId);
-			let rel = view.getRelation(relation.relationKey);
+			let rel: any = view.getRelation(relation.relationKey);
 
 			if (rel) {
 				rel.isVisible = true;
 			} else {
-				relation.relationKey = relation.relationKey;
-				relation.isVisible = true;
-				relation.width = Relation.width(0, relation.format);
+				rel = { 
+					relationKey: relation.relationKey, 
+					width: Relation.width(0, relation.format),
+					isVisible: true,
+				};
 
 				if (index >= 0) {
-					view.relations.splice(index, 0, relation);
+					view.relations.splice(index, 0, rel);
 				} else {
-					view.relations.push(relation);
+					view.relations.push(rel);
 				};
 			};
 

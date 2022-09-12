@@ -283,7 +283,7 @@ class Relation {
 	getCoverOptions (rootId: string, blockId: string) {
 		const { config } = commonStore;
 
-		const options: any[] = dbStore.getRelations(rootId, blockId).filter((it: any) => {
+		const options: any[] = Util.objectCopy(dbStore.getRelations(rootId, blockId)).filter((it: any) => {
 			return !it.isHidden && (it.format == I.RelationType.File);
 		}).map((it: any) => {
 			return { 
