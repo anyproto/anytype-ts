@@ -300,8 +300,6 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 							break;
 
 						case 'unfav':
-							console.log(this.data.edges);
-
 							ids.forEach((id: string) => {
 								const node = this.data.nodes.find(d => d.id == id);
 								
@@ -310,9 +308,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 								};
 							});
 
-							this.data.edges = this.data.edges.filter(d => (d.source == root) && !ids.includes(d.target));
-
-							console.log(this.data.edges);
+							this.data.edges = this.data.edges.filter(d => (d.source != root) && !ids.includes(d.target));
 
 							this.refGraph.send('onSetEdges', { edges: this.data.edges });
 							break;
