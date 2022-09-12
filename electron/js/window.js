@@ -16,6 +16,8 @@ const DEFAULT_HEIGHT = 768;
 const MIN_WIDTH = 800;
 const MIN_HEIGHT = 600;
 
+const NEW_WINDOW_SHIFT = 30;
+
 class WindowManager {
 
 	list = new Set();
@@ -116,9 +118,7 @@ class WindowManager {
 			const primaryDisplay = screen.getPrimaryDisplay();
 	  		const { width, height } = primaryDisplay.workAreaSize;
 
-		  	const windowBounds = this.getWindowPosition(param, width, height)
-
-			param = Object.assign(param, windowBounds);
+			param = Object.assign(param, this.getWindowBounds(param, width, height));
 		};
 
 		const win = this.create(options, param);
@@ -201,20 +201,21 @@ class WindowManager {
 		});
 	};
 
-	getWindowPosition (param, displayWidth, displayHeight) {
+	getWindowBounds (param, displayWidth, displayHeight) {
 		let x = Math.round(displayWidth / 2 - param.width / 2);
 		let y = Math.round(displayHeight / 2 - param.height / 2 + 20);
 		let bounds = { width: param.width, height: param.height };
 
-		if (BrowserWindow.getFocusedWindow()) {
-			const currentWindow = BrowserWindow.getFocusedWindow();
+		const currentWindow = BrowserWindow.getFocusedWindow();
+
+		if (currentWindow) {
 			bounds = currentWindow.getBounds();
 
-			const xLimit = bounds.x + 30 + bounds.width > displayWidth;
-			const yLimit = bounds.y + 30 + bounds.height > displayHeight;
+			x = bounds.x + NEW_WINDOW_SHIFT;
+			y = bounds.y + NEW_WINDOW_SHIFT;
 
-			x = bounds.x + 30;
-			y = bounds.y + 30;
+			const xLimit = x + bounds.width > displayWidth;
+			const yLimit = y + bounds.height > displayHeight;
 
 			if (xLimit || yLimit) {
 				x = 0;
@@ -222,12 +223,7 @@ class WindowManager {
 			};
 		};
 
-		return {
-			x: x,
-			y: y,
-			width: bounds.width,
-			height: bounds.height
-		};
+		return { ...bounds, x, y};
 	};
 
 };
