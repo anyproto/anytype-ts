@@ -132,7 +132,7 @@ initColor = () => {
 					1: '#8c9ea5',
 					over: '#ffd15b',
 					targetOver: '#5dd400',
-					selected: '#c4e3fb',
+					selected: '#212b30',
 				},
 				node: {
 					common: '#484843',
@@ -140,7 +140,7 @@ initColor = () => {
 					focused: '#fef3c5',
 					over: '#ffd15b',
 					targetOver: '#5dd400',
-					selected: '#e3eff4',
+					selected: '#212b30',
 				},
 			};
 			break;
