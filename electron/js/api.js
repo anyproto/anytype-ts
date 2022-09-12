@@ -29,6 +29,8 @@ class Api {
 			isPinChecked: this.isPinChecked,
 			languages: win.webContents.session.availableSpellCheckerLanguages,
 		});
+
+		win.route = '';
 	};
 
 	setConfig (win, config) {

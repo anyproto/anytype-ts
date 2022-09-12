@@ -222,7 +222,7 @@ class WindowManager {
 			};
 		};
 
-		return { ...bounds, x, y};
+		return { ...bounds, x, y };
 	};
 
 };

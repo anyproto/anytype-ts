@@ -117,6 +117,9 @@ const MenuSource = observer(class MenuSource extends React.Component<Props, {}> 
 				filters: [
 					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.relation }
 				],
+				sorts: [
+					{ relationKey: 'name', type: I.SortType.Asc }
+				],
 				onSelect: (item: any) => {
 					const value = this.getObjects().filter((it: any) => { return it.type == Constant.typeId.relation; }).map((it: any) => { return it.id; });
 					
