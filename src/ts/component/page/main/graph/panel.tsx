@@ -14,6 +14,7 @@ interface Props extends RouteComponentProps<any> {
     data: any;
     onFilterChange: (v: string) => void;
     onSwitch: (id: string, v: string) => void;
+	onContextMenu?: (id: string, param: any) => void;
     togglePanel: (v: boolean) => void;
 };
 

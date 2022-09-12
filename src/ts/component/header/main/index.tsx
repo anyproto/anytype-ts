@@ -27,7 +27,7 @@ const HeaderMainIndex = observer(class HeaderMainIndex extends React.Component<P
 				</div>
 
 				<div className="side right">
-					<Icon tooltip="Settings" className="settings" onClick={this.onSettings} />
+					<Icon tooltip="Settings" className="settings big" onClick={this.onSettings} />
 				</div>
 			</React.Fragment>
 		);

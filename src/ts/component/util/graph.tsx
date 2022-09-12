@@ -10,6 +10,8 @@ interface Props {
 	rootId: string;
 	data: any;
 	onClick?: (object: any) => void;
+	onContextMenu?: (id: string, param: any) => void;
+	onSelect?: (id: string) => void;
 };
 
 const $ = require('jquery');
@@ -275,7 +277,7 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
   	};
 
 	onMessage ({ data }) {
-		const { onClick } = this.props;
+		const { isPopup, onClick, onContextMenu, onSelect } = this.props;
 		const body = $('body');
 
 		switch (data.id) {
@@ -293,6 +295,7 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 				};
 
 				this.ids = this.ids.includes(data.node.id) ? this.ids.filter(id => id != data.node.id) : this.ids.concat([ data.node.id ]);
+				onSelect(data.node.id);
 				this.send('onSetSelected', { ids: this.ids });
 				break;
 
@@ -304,66 +307,24 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 				break;
 
 			case 'onContextMenu':
-				this.onContextMenu(data.x, data.y, data.node);
+				onContextMenu(data.node.id, {
+					recalcRect: () => { 
+						const rect = { width: 0, height: 0, x: data.x, y: data.y };
+
+						if (isPopup) {
+							const container = Util.getPageContainer(isPopup);
+							const { left, top } = container.offset();
+
+							rect.x += left;
+							rect.y += top;
+						};
+
+						return rect;
+					},
+				});
 				break;
 
 		};
-	};
-
-	onContextMenu (x: number, y: number, id: string) {
-		const { isPopup } = this.props;
-		const ids = this.ids.length ? this.ids : [ id ];
-
-		menuStore.open('dataviewContext', {
-			recalcRect: () => { 
-				const rect = { width: 0, height: 0, x: x, y: y };
-
-				if (isPopup) {
-					const container = Util.getPageContainer(isPopup);
-					const { left, top } = container.offset();
-
-					rect.x += left;
-					rect.y += top;
-				};
-
-				return rect;
-			},
-			data: {
-				objectIds: ids,
-				getObject: (id: string) => this.nodes.find(d => d.id == id),
-				onSelect: (id: string) => {
-					switch (id) {
-						case 'archive':
-							this.nodes = this.nodes.filter(d => !ids.includes(d.id));
-							this.send('onRemoveNode', { ids });
-							break;
-
-						case 'fav':
-							ids.forEach((id: string) => {
-								const node = this.nodes.find(d => d.id == id);
-								
-								node.isFavorite = true;
-								this.edges.push({ type: I.EdgeType.Link, source: blockStore.root, target: id });
-							});
-							this.send('onSetEdges', { edges: this.edges });
-							break;
-
-						case 'unfav':
-							ids.forEach((id: string) => {
-								const node = this.nodes.find(d => d.id == id);
-
-								node.isFavorite = false;
-								this.edges = this.edges.filter(d => d.target != id);
-							});
-							this.send('onSetEdges', { edges: this.edges });
-							break;
-					};
-
-					this.ids = [];
-					this.send('onSetSelected', { ids: [] });
-				},
-			}
-		});
 	};
 
 	imageSrc (d: any) {

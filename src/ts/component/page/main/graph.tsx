@@ -2,7 +2,7 @@ import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { I, C, Util, analytics, sidebar, DataUtil } from 'Lib';
 import { Header, Graph, Icon, Loader } from 'Component';
-import { blockStore, detailStore } from 'Store';
+import { blockStore, detailStore, menuStore } from 'Store';
 import { observer } from 'mobx-react';
 
 import Panel from './graph/panel';
@@ -29,6 +29,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 		nodes: [],
 		edges: [],
 	};
+	ids: string[] = [];
 	refHeader: any = null;
 	refGraph: any = null;
 	refPanel: any = null;
@@ -39,6 +40,8 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 		this.onSwitch = this.onSwitch.bind(this);
 		this.onClickObject = this.onClickObject.bind(this);
 		this.onFilterChange = this.onFilterChange.bind(this);
+		this.onContextMenu = this.onContextMenu.bind(this);
+		this.onSelect = this.onSelect.bind(this);
 		this.togglePanel = this.togglePanel.bind(this);
 	};
 
@@ -62,6 +65,8 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 							rootId={rootId} 
 							data={this.data}
 							onClick={this.onClickObject}
+							onSelect={this.onSelect}
+							onContextMenu={this.onContextMenu}
 						/>
 					</div>
 
@@ -74,6 +79,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 								data={ref.forceProps}
 								onFilterChange={this.onFilterChange}
 								onSwitch={this.onSwitch}
+								onContextMenu={this.onContextMenu}
 								togglePanel={this.togglePanel}
 							/>
 						) : ''}
@@ -225,6 +231,54 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 		this.refGraph.updateProps();
 
 		analytics.event('SearchQuery', { route: 'ScreenGraph', length: v.length });
+	};
+
+	onSelect (id: string) {
+		this.ids = this.ids.includes(id) ? this.ids.filter(it => it != id) : this.ids.concat([ id ]);
+		this.refGraph.send('onSetSelected', { ids: this.ids });
+	};
+
+	onContextMenu (id: string, param: any) {
+		const ids = this.ids.length ? this.ids : [ id ];
+
+		menuStore.open('dataviewContext', {
+			...param,
+			data: {
+				objectIds: ids,
+				getObject: (id: string) => this.data.nodes.find(d => d.id == id),
+				onSelect: (itemId: string) => {
+					switch (itemId) {
+						case 'archive':
+							this.data.nodes = this.data.nodes.filter(d => !ids.includes(d.id));
+							this.refGraph.send('onRemoveNode', { ids });
+							break;
+
+						case 'fav':
+							ids.forEach((id: string) => {
+								const node = this.data.nodes.find(d => d.id == id);
+								
+								node.isFavorite = true;
+								this.data.edges.push({ type: I.EdgeType.Link, source: blockStore.root, target: id });
+							});
+							this.refGraph.send('onSetEdges', { edges: this.data.edges });
+							break;
+
+						case 'unfav':
+							ids.forEach((id: string) => {
+								const node = this.data.nodes.find(d => d.id == id);
+
+								node.isFavorite = false;
+								this.data.edges = this.data.edges.filter(d => d.target != id);
+							});
+							this.refGraph.send('onSetEdges', { edges: this.data.edges });
+							break;
+					};
+
+					this.ids = [];
+					this.refGraph.send('onSetSelected', { ids: [] });
+				},
+			}
+		});
 	};
 
 });
