@@ -415,6 +415,12 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		const { rootId, blockId, addCommand, onChange } = data;
 
 		C.ObjectCreateRelation(item, [], (message: any) => {
+			if (message.error.code) {
+				return;
+			};
+
+			data.relationId = message.objectId;
+
 			if (addCommand) {
 				addCommand(rootId, blockId, message.objectId, onChange);
 			};
