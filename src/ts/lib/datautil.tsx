@@ -257,10 +257,10 @@ class DataUtil {
 		const subscriptions = [
 			{
 				subId: Constant.subId.deleted,
+				keys: [],
 				filters: [
 					{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: true },
 				],
-				keys: [ 'isDeleted' ],
 				noDeps: true,
 			},
 			{
@@ -1181,12 +1181,15 @@ class DataUtil {
 		};
 
 		let details = [];
-		details = details.concat(message.dependencies.map((it: any) => { return { id: it[idField], details: it }; }));
-		details = details.concat(message.records.map((it: any) => { 
+		let mapper = (it: any) => { 
 			keys.forEach((k: string) => { it[k] = it[k] || ''; });
 			return { id: it[idField], details: it }; 
-		}));
+		};
+
+		details = details.concat(message.dependencies.map(mapper));
+		details = details.concat(message.records.map(mapper));
 		detailStore.set(subId, details);
+		
 		dbStore.recordsSet(subId, '', message.records.map(it => it[idField]));
 	};
 
