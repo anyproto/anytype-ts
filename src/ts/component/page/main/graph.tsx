@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { I, C, Util, analytics, sidebar, DataUtil } from 'Lib';
+import { I, C, Util, analytics, sidebar, DataUtil, keyboard } from 'Lib';
 import { Header, Graph, Icon, Loader } from 'Component';
 import { blockStore, detailStore, menuStore } from 'Store';
 import { observer } from 'mobx-react';
@@ -110,6 +110,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 	componentDidMount () {
 		const { isPopup } = this.props;
 
+		this.rebind();
 		this.resize();
 		this.load();
 
@@ -120,6 +121,33 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 
 	componentDidUpdate () {
 		this.resize();
+	};
+
+	componentWillUnmount () {
+		this.unbind();
+	};
+
+	unbind () {
+		$(window).off(`keydown.graph`);
+	};
+
+	rebind () {
+		const win = $(window);
+
+		this.unbind();
+		win.on(`keydown.graph`, (e: any) => { this.onKeyDown(e); });
+	};
+
+	onKeyDown (e: any) {
+		if (!this.ids.length) {
+			return;
+		};
+
+		keyboard.shortcut('backspace, delete', e, (pressed: string) => {
+			C.ObjectListSetIsArchived(this.ids, true);
+			
+			analytics.event('MoveToBin', { count: length });
+		});
 	};
 
 	load () {
