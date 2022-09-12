@@ -82,8 +82,8 @@ class Survey {
 				break;
 
             case I.SurveyType.Pmf:
-                Storage.set('survey', { pmfCanceled: true });
-                Storage.set('survey', { pmfCompleteTime: Util.time() });
+                param.pmfCanceled = true;
+                param.pmfCompleteTime = Util.time();
                 break;
         };
 
