@@ -89,10 +89,6 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 		);
 	};
 
-	componentDidMount () {
-		window.Lib.Graph = this;
-	};
-
 	componentWillUnmount () {
 		if (this.worker) {
 			this.worker.terminate();
@@ -277,20 +273,19 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
   	};
 
 	onMessage ({ data }) {
+		const { root } = blockStore;
 		const { isPopup, onClick, onContextMenu, onSelect } = this.props;
 		const body = $('body');
 
 		switch (data.id) {
 			case 'onClick':
-				if (data.node.id == blockStore.root) {
-					break;
+				if (data.node.id != root) {
+					onClick(data.node);
 				};
-
-				onClick(data.node);
 				break;
 
 			case 'onSelect':
-				if (data.node.id == blockStore.root) {
+				if (data.node.id == root) {
 					break;
 				};
 
@@ -307,6 +302,10 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 				break;
 
 			case 'onContextMenu':
+				if (data.node == root) {
+					break;
+				};
+
 				onContextMenu(data.node, {
 					recalcRect: () => { 
 						const rect = { width: 0, height: 0, x: data.x, y: data.y };
