@@ -52,7 +52,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		const { param } = this.props;
 		const { data } = param;
 		const { value, placeholder, label, isBig, noFilter, noIcon } = data;
-		const items = this.getItems(label);
+		const items = this.getItems();
 		const cn = [ 'wrap' ];
 		const placeholderFocus = data.placeholderFocus || 'Filter objects...';
 
@@ -239,8 +239,12 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		}, 15);
 	};
 
-	getItems (label?: any) {
+	getItems () {
 		const { filter } = this.state;
+		const { param } = this.props;
+		const { data } = param;
+		const { label } = data;
+
 		let items = [].concat(this.items);
 
 		if (label && items.length) {
@@ -427,9 +431,6 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 
 	getRowHeight (item: any) {
 		let h = HEIGHT_ITEM;
-		if (item.isSection) {
-			console.log('SECTION: ', item)
-		}
 		if (item.isSection) h = HEIGHT_SECTION;
 		if (item.isBig) h = HEIGHT_ITEM_BIG;
 		if (item.isDiv) h = HEIGHT_DIV;
