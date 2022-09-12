@@ -24,6 +24,7 @@ import { crumbs } from './crumbs';
 import { history } from './history';
 import Action from './action';
 import Onboarding from './onboarding';
+import Survey from './survey';
 
 const Constant = require('json/constant.json');
 const Text = require('json/text.json');
@@ -69,4 +70,5 @@ export {
 	Action,
 	Onboarding,
 	Renderer,
+	Survey,
 };

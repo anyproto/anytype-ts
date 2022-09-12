@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { I, Onboarding, Util, Storage, analytics, keyboard, Renderer, sidebar } from 'Lib';
+import { I, Onboarding, Util, Storage, analytics, keyboard, Renderer, sidebar, Survey } from 'Lib';
 import { Sidebar } from 'Component';
 import { authStore, commonStore, menuStore, popupStore, blockStore } from 'Store';
 import { observer } from 'mobx-react';
@@ -33,7 +33,6 @@ import PageMainNavigation from './main/navigation';
 import PageMainCreate from './main/create';
 
 const Constant = require('json/constant.json');
-const Url = require('json/url.json');
 const $ = require('jquery');
 const raf = require('raf');
 
@@ -183,10 +182,6 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 		const isMainIndex = isMain && (match.params.action == 'index');
 		const isPinCheck = isAuth && (match.params.action == 'pin-check');
 		const pin = Storage.get('pin');
-		const lastSurveyTime = Number(Storage.get('lastSurveyTime')) || 0;
-		const lastSurveyCanceled = Number(Storage.get('lastSurveyCanceled')) || 0;
-		const askSurvey = Number(Storage.get('askSurvey')) || 0;
-		const days = lastSurveyTime ? 90 : 14;
 		const win = $(window);
 		const path = [ match.params.page, match.params.action ].join('/');
 		const Component = Components[path];
@@ -235,7 +230,7 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 			let popupNewBlock = Storage.get('popupNewBlock');
 			let onboarding = Storage.get('onboarding');
 
-			if (isMain && account) {
+			if (isMain) {
 				if (!onboarding) {
 					popupNewBlock = true;
 				};
@@ -247,36 +242,13 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 			};
 
 			if (isMain && !isMainIndex) {
-				Storage.set('askSurvey', 1);
+				Storage.set('survey', { askPmf: true });
 			};
 
 			if (isMainIndex) {
-				if (account && askSurvey && !popupStore.isOpen() && !lastSurveyCanceled && (lastSurveyTime <= Util.time() - 86400 * days)) {
-					analytics.event('SurveyShow');
-
-					const onClose = () => {
-						Storage.set('lastSurveyCanceled', 1);
-						Storage.set('lastSurveyTime', Util.time());
-					};
-
-					popupStore.open('confirm', {
-						onClose: onClose,
-						data: {
-							title: 'We need your opinion',
-							text: 'Please, tell us what you think about Anytype. Participate in 1 min survey',
-							textConfirm: 'Let\'s go!',
-							textCancel: 'Skip',
-							canCancel: true,
-							onConfirm: () => {
-								Renderer.send('urlOpen', Util.sprintf(Url.survey, account.id));
-								Storage.set('lastSurveyTime', Util.time());
-
-								analytics.event('SurveyOpen');
-							},
-							onCancel: onClose,
-						},
-					});
-				};
+				Survey.check(I.SurveyType.Register);
+				Survey.check(I.SurveyType.Pmf);
+				Survey.check(I.SurveyType.Object);
 
 				this.shareCheck();
 				Storage.delete('redirect');

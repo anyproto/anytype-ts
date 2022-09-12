@@ -31,6 +31,7 @@ export enum CrumbsType {
 	Recent	 = 'recent',
 };
 
+
 export enum NavigationType {
 	Go		 = 0,
 	Move	 = 1,
@@ -118,4 +119,11 @@ export interface HeaderComponent {
 
 export interface FooterComponent {
 	onHelp?: (e: any) => void;
+};
+
+export enum SurveyType {
+	Register 	= 'register',
+	Delete 		= 'delete',
+	Pmf 		= 'pmf',
+	Object 		= 'object',
 };

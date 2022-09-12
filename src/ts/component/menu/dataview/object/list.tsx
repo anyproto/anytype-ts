@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { Filter, MenuItemVertical, Icon, Loader, ObjectName } from 'Component';
-import { I, C, Util, keyboard, DataUtil, Relation } from 'Lib';
+import { Filter, MenuItemVertical, Icon, Loader, ObjectName, EmptySearch } from 'Component';
+import { I, C, Util, keyboard, DataUtil, Relation, translate } from 'Lib';
 import { commonStore, menuStore, dbStore } from 'Store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
@@ -51,6 +51,8 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		const items = this.getItems();
 		const placeholderFocus = data.placeholderFocus || 'Filter objects...';
 
+		console.log(items);
+
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
 			const type = dbStore.getType(item.type);
@@ -94,7 +96,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		};
 
 		return (
-			<div className={[ 'wrap', (noFilter ? 'noFilter' : '') ].join(' ')}>
+			<div className={[ 'wrap', (!noFilter ? 'withFilter' : '') ].join(' ')}>
 				{!noFilter ? (
 					<Filter 
 						ref={(ref: any) => { this.refFilter = ref; }} 
@@ -104,7 +106,13 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 					/>
 				) : ''}
 
-				{loading ? <Loader /> : (
+				{loading ? <Loader /> : ''}
+
+				{!items.length && !loading ? (
+					<EmptySearch text={filter ? Util.sprintf(translate('popupSearchEmptyFilter'), filter) : translate('popupSearchEmpty')} />
+				) : ''}
+
+				{this.cache && items.length && !loading ? (
 					<div className="items">
 						<InfiniteLoader
 							rowCount={items.length + 1}
@@ -132,7 +140,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 							)}
 						</InfiniteLoader>
 					</div>
-				)}
+				) : ''}
 			</div>
 		);
 	};
@@ -367,7 +375,8 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		const items = this.getItems();
 		const obj = $(`#${getId()} .content`);
 		const offset = noFilter ? 16 : 58;
-		const height = Math.max(HEIGHT, Math.min(360, items.length * HEIGHT + offset));
+		const min = noFilter ? 28 + 16 : 300;
+		const height = Math.max(min, Math.min(360, items.length * HEIGHT + offset));
 
 		obj.css({ height });
 		position();
