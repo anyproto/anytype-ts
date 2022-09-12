@@ -275,22 +275,17 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId } = data;
-		
-		let relations = dbStore.getRelations(rootId, rootId).sort(DataUtil.sortByName).filter((it: any) => {
-			return [ I.RelationScope.Object, I.RelationScope.Type ].includes(it.scope);
-		});
+		const relations = dbStore.getRelations(rootId, rootId).sort(DataUtil.sortByName);
 
 		let items = [
 			{ id: 'add', name: 'New relation', isRelationAdd: true },
 		];
-
 		items = items.concat(relations).map((it: any) => {
 			it.type = I.BlockType.Relation;
 			it.isRelation = true;
 			it.isBlock = true;
 			return it;
 		});
-
 		return items;
 	};
 	
