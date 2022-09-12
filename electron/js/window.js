@@ -205,7 +205,7 @@ class WindowManager {
 		let x = Math.round(displayWidth / 2 - param.width / 2);
 		let y = Math.round(displayHeight / 2 - param.height / 2 + 20);
 		let bounds = { width: param.width, height: param.height };
-		const currentWindow = BrowserWindow.getFocusedWindow();
+		let currentWindow = BrowserWindow.getFocusedWindow();
 
 		if (currentWindow) {
 			bounds = currentWindow.getBounds();
