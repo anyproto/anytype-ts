@@ -33,7 +33,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { rootId, block, getView, readonly, onRecordAdd, isPopup } = this.props;
+		const { rootId, block, getView, readonly, onRecordAdd, isPopup, isInline } = this.props;
 		const view = getView();
 		const relations = view.relations.filter((it: any) => { return it && it.isVisible; });
 		const subId = dbStore.getSubId(rootId, block.id);
@@ -41,6 +41,69 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 		const allowed = blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.Object ]);
 		const { total } = dbStore.getMeta(dbStore.getSubId(rootId, block.id), '');
 		const length = records.length;
+
+		let content = null;
+		if (isInline) {
+			content = (
+				<div>
+					{records.map((id: string, index: number) => (
+						<BodyRow 
+							key={'grid-row-' + view.id + index} 
+							{...this.props} 
+							readonly={readonly || !allowed}
+							index={index} 
+							cellPosition={this.cellPosition}
+						/>
+					))}
+				</div>
+			);
+		} else {
+			content = (
+				<InfiniteLoader
+					isRowLoaded={({ index }) => !!records[index]}
+					loadMoreRows={() => {}}
+					rowCount={total}
+					threshold={10}
+				>
+					{({ onRowsRendered, registerChild }) => (
+						<WindowScroller scrollElement={isPopup ? $('#popupPage-innerWrap').get(0) : window}>
+							{({ height, isScrolling, registerChild, scrollTop }) => {
+								return (
+									<AutoSizer disableHeight={true}>
+										{({ width }) => {
+											return (
+												<div ref={registerChild}>
+													<List
+														autoHeight={true}
+														height={Number(height) || 0}
+														width={Number(width) || 0}
+														isScrolling={isScrolling}
+														rowCount={length}
+														rowHeight={HEIGHT}
+														onRowsRendered={onRowsRendered}
+														rowRenderer={({ key, index, style }) => (
+															<BodyRow 
+																key={'grid-row-' + view.id + index} 
+																{...this.props} 
+																readonly={readonly || !allowed}
+																index={index} 
+																style={{ ...style, top: style.top + 2 }}
+																cellPosition={this.cellPosition}
+															/>
+														)}
+														scrollTop={scrollTop}
+													/>
+												</div>
+											);
+										}}
+									</AutoSizer>
+								);
+							}}
+						</WindowScroller>
+					)}
+				</InfiniteLoader>
+			);
+		};
 
 		return (
 			<div className="wrap">
@@ -55,49 +118,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 								onResizeStart={this.onResizeStart}
 							/>
 
-							<InfiniteLoader
-								isRowLoaded={({ index }) => !!records[index]}
-								loadMoreRows={() => {}}
-								rowCount={total}
-								threshold={10}
-							>
-								{({ onRowsRendered, registerChild }) => (
-									<WindowScroller scrollElement={isPopup ? $('#popupPage-innerWrap').get(0) : window}>
-										{({ height, isScrolling, registerChild, scrollTop }) => {
-											return (
-												<AutoSizer disableHeight={true}>
-													{({ width }) => {
-														return (
-															<div ref={registerChild}>
-																<List
-																	autoHeight={true}
-																	height={Number(height) || 0}
-																	width={Number(width) || 0}
-																	isScrolling={isScrolling}
-																	rowCount={length}
-																	rowHeight={HEIGHT}
-																	onRowsRendered={onRowsRendered}
-																	rowRenderer={({ key, index, style }) => (
-																		<BodyRow 
-																			key={'grid-row-' + view.id + index} 
-																			{...this.props} 
-																			readonly={readonly || !allowed}
-																			index={index} 
-																			style={{ ...style, top: style.top + 2 }}
-																			cellPosition={this.cellPosition}
-																		/>
-																	)}
-																	scrollTop={scrollTop}
-																/>
-															</div>
-														);
-													}}
-												</AutoSizer>
-											);
-										}}
-									</WindowScroller>
-								)}
-							</InfiniteLoader>
+							{content}
 
 							{!readonly && allowed ? (
 								<div className="row add">
