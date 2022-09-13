@@ -1100,10 +1100,6 @@ const ObjectSetDetails = (contextId: string, details: any[], callBack?: (message
 const ObjectSearch = (filters: I.Filter[], sorts: I.Sort[], keys: string[], fullText: string, offset: number, limit: number, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.Search.Request();
 
-	filters = filters.concat([
-		{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
-	]);
-	
 	request.setFiltersList(filters.map(Mapper.To.Filter));
 	request.setSortsList(sorts.map(Mapper.To.Sort));
 	request.setFulltext(fullText);

@@ -310,9 +310,6 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 		if (skipIds && skipIds.length) {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: skipIds });
 		};
-		if (!config.debug.ho) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true });
-		};
 
 		if (clear) {
 			this.setState({ loading: true });

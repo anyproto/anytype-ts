@@ -219,10 +219,6 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 			{ relationKey: 'name', type: I.SortType.Asc },
 		];
 
-		if (!config.debug.ho) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true });
-		};
-
 		if (clear) {
 			this.setState({ loading: true });
 		};

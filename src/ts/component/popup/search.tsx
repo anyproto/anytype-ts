@@ -353,10 +353,6 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
 		];
 
-		if (!config.debug.ho) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.Equal, value: false });
-		};
-
 		if (clear) {
 			this.setState({ loading: true });
 		};

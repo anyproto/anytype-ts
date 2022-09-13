@@ -256,9 +256,6 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		if (skipIds && skipIds.length) {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: skipIds });
 		};
-		if (!config.debug.ho) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.Equal, value: false });
-		};
 		if ([ I.NavigationType.Move, I.NavigationType.LinkTo ].includes(type)) {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'isReadonly', condition: I.FilterCondition.Equal, value: false });
 		};

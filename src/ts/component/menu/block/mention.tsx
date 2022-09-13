@@ -219,10 +219,6 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		];
 		const filter = commonStore.filter.text.replace(/\\/g, '');
 
-		if (!config.debug.ho) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true });
-		};
-
 		if (skipIds && skipIds.length) {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: skipIds });
 		};

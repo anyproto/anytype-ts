@@ -202,13 +202,10 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 
 			case Tab.Library:
 				const filters: I.Filter[] = [
-					{ operator: I.FilterOperator.And, relationKey: 'workspaceId', condition: I.FilterCondition.Empty, value: null },
 					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.image },
 					{ operator: I.FilterOperator.And, relationKey: 'widthInPixels', condition: I.FilterCondition.GreaterOrEqual, value: 1000 },
 					{ operator: I.FilterOperator.And, relationKey: 'heightInPixels', condition: I.FilterCondition.GreaterOrEqual, value: 500 },
-					{ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.Equal, value: false },
 					{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
-					{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
 				];
 				const sorts = [ 
 					{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
@@ -222,9 +219,8 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 					fullText: filter,
 					limit: 300,
 				}, (message: any) => {
-					this.setState({ loading: false });
-
 					if (message.error.code) {
+						this.setState({ loading: false });
 						return;
 					};
 
@@ -237,6 +233,8 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 							coverY: -0.25,
 						});
 					});
+
+					this.setState({ loading: false });
 				});
 				break;
 		};

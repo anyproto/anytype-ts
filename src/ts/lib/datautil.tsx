@@ -1269,6 +1269,8 @@ class DataUtil {
 	};
 
 	search (param: any, callBack?: (message: any) => void) {
+		const { config } = commonStore;
+
 		param = Object.assign({
 			idField: 'id',
 			fullText: '',
@@ -1284,6 +1286,12 @@ class DataUtil {
 
 		if (!ignoreWorkspace) {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'workspaceId', condition: I.FilterCondition.Equal, value: commonStore.workspace });
+		};
+
+		filters.push({ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false });
+
+		if (!config.debug.ho) {
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true });
 		};
 
 		fullText = String(fullText || '').replace(/\\/g, '');

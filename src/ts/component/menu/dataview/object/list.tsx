@@ -249,10 +249,6 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 			{ relationKey: 'name', type: I.SortType.Asc },
 		];
 
-		if (!config.debug.ho) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true });
-		};
-
 		if (types && types.length) {
 			filters.push({ relationKey: 'type', operator: I.FilterOperator.And, condition: I.FilterCondition.In, value: types });
 		} else {
