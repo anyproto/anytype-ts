@@ -836,12 +836,12 @@ const BlockDataviewRelationAdd = (contextId: string, blockId: string, relationId
 	dispatcher.request(BlockDataviewRelationAdd.name, request, callBack);
 };
 
-const BlockDataviewRelationDelete = (contextId: string, blockId: string, relationKey: string, callBack?: (message: any) => void) => {
+const BlockDataviewRelationDelete = (contextId: string, blockId: string, relationId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockDataview.Relation.Delete.Request();
 	
 	request.setContextid(contextId);
 	request.setBlockid(blockId);
-	request.setRelationkey(relationKey);
+	request.setRelationid(relationId);
 
 	dispatcher.request(BlockDataviewRelationDelete.name, request, callBack);
 };
