@@ -1,6 +1,7 @@
 import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import { Icon } from 'Component';
-import { I, C } from 'Lib';
+import { I, C, keyboard } from 'Lib';
 import { menuStore } from 'Store';
 import { observable } from 'mobx';
 import { observer } from 'mobx-react';
@@ -12,7 +13,10 @@ const Constant = require('json/constant.json');
 
 const Head = observer(class Head extends React.Component<Props, {}> {
 
+	_isMounted: boolean = false;
 	menuContext: any = null;
+	composition: boolean = false;
+	timeout: number = 0;
 
 	constructor (props: any) {
 		super(props);
@@ -21,6 +25,12 @@ const Head = observer(class Head extends React.Component<Props, {}> {
 		this.onOver = this.onOver.bind(this);
 		this.onSource = this.onSource.bind(this);
 		this.onView = this.onView.bind(this);
+		this.onKeyDown = this.onKeyDown.bind(this);
+		this.onKeyUp = this.onKeyUp.bind(this);
+		this.onFocus = this.onFocus.bind(this);
+		this.onBlur = this.onBlur.bind(this);
+		this.onCompositionStart = this.onCompositionStart.bind(this);
+		this.onCompositionEnd = this.onCompositionEnd.bind(this);
 	};
 
 	render () {
@@ -51,14 +61,20 @@ const Head = observer(class Head extends React.Component<Props, {}> {
 
 		return (
 			<div className="dataviewHead">
-				<div className="title">
+				<div id="title" className="title">
 					<div 
 						className="value" 
 						contentEditable="true" 
 						suppressContentEditableWarning={true}
+						onFocus={this.onFocus}
+						onBlur={this.onBlur}
+						onKeyDown={this.onKeyDown}
+						onKeyUp={this.onKeyUp}
+						onCompositionStart={this.onCompositionStart}
+						onCompositionEnd={this.onCompositionEnd}
 					>
 					</div>
-					<div className="placeholder">New set</div>
+					<div id="placeholder" className="placeholder">New set</div>
 				</div>
 
 				{icon}
@@ -69,6 +85,15 @@ const Head = observer(class Head extends React.Component<Props, {}> {
 				</div>
 			</div>
 		);
+	};
+
+	componentDidMount () {
+		this._isMounted = true;
+	};
+
+	componentWillUnmount () {
+		this._isMounted = false;
+		window.clearTimeout(this.timeout);
 	};
 
 	onView (e: any) {
@@ -180,6 +205,76 @@ const Head = observer(class Head extends React.Component<Props, {}> {
 				}
 			}); 
 		});
+	};
+
+	onFocus (e: any) {
+		keyboard.setFocus(true);
+	};
+
+	onBlur (e: any) {
+		keyboard.setFocus(false);
+	};
+
+	onCompositionStart (e: any) {
+		this.composition = true;
+		window.clearTimeout(this.timeout);
+	};
+
+	onCompositionEnd (e: any) {
+		this.composition = false;
+	};
+
+	onKeyDown (e: any) {
+		this.placeholderCheck();
+	};
+
+	onKeyUp (e: any) {
+		if (this.composition) {
+			return;
+		};
+
+		this.placeholderCheck();
+
+		window.clearTimeout(this.timeout);
+		this.timeout = window.setTimeout(() => { this.save(); }, 500);
+	};
+
+	getValue (): string {
+		if (!this._isMounted) {
+			return '';
+		};
+
+		const node = $(ReactDOM.findDOMNode(this));
+		const value = node.find('#title');
+
+		return value.length ? String(value.get(0).innerText || '') : '';
+	};
+
+	placeholderCheck () {
+		const value = this.getValue();
+		value ? this.placeholderHide() : this.placeholderShow();
+	};
+
+	placeholderHide () {
+		if (!this._isMounted) {
+			return;
+		};
+
+		const node = $(ReactDOM.findDOMNode(this));
+		node.find('#placeholder').hide();
+	};
+	
+	placeholderShow () {
+		if (!this._isMounted) {
+			return;
+		};
+
+		const node = $(ReactDOM.findDOMNode(this));
+		node.find('#placeholder').show();
+	};
+
+	save () {
+		//DataUtil.blockSetText(rootId, 'title', this.getValue(id), [], true);
 	};
 
 });
