@@ -91,6 +91,7 @@ const Head = observer(class Head extends React.Component<Props, {}> {
 					<div className="side right">
 						<Icon id="head-customize" className="manager" tooltip="Customize" onClick={this.onManager} />
 						{!readonly && allowedObject ? <Button color="orange" icon="plus-small" className="c28" tooltip="New object" text="New" onClick={(e: any) => { onRecordAdd(e, -1); }} /> : ''}
+						<Button color="blank" className="c28" text="See all" />
 					</div>
 				</div>
 			</div>
@@ -221,7 +222,7 @@ const Head = observer(class Head extends React.Component<Props, {}> {
 		const { rootId, block, readonly, getData, getView } = this.props;
 		const view = getView();
 
-		const param: any = { 
+		menuStore.open('dataviewRelationList', { 
 			element: `#block-${block.id} #head-customize`,
 			horizontal: I.MenuDirection.Center,
 			offsetY: 10,
@@ -235,9 +236,7 @@ const Head = observer(class Head extends React.Component<Props, {}> {
 				getView: getView,
 				view: observable.box(view),
 			},
-		};
-
-		menuStore.open('dataviewRelationList', param);
+		});
 	};
 
 	onFocus (e: any) {

@@ -15,7 +15,9 @@ import ViewBoard from './dataview/view/board';
 import ViewGallery from './dataview/view/gallery';
 import ViewList from './dataview/view/list';
 
-interface Props extends I.BlockComponent, RouteComponentProps<any> {};
+interface Props extends I.BlockComponent, RouteComponentProps<any> {
+	isInline?: boolean;
+};
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
@@ -45,7 +47,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	render () {
-		const { rootId, block, isPopup } = this.props;
+		const { rootId, block, isPopup, isInline } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
 		const views = dbStore.getViews(rootId, block.id);
 
@@ -59,7 +61,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		let sources = block.content.sources || [];
-		let isInline = !(root.isObjectSet() || root.isObjectSpace());
 		let { groupRelationKey } = view;
 		let ViewComponent: any = null;
 		let className = '';
@@ -253,22 +254,25 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		this.viewId = newViewId;
 
-		const { rootId, block } = this.props;
+		const { rootId, block, isInline } = this.props;
 		const subId = dbStore.getSubId(rootId, block.id);
 		const view = this.getView(newViewId);
 		const keys = this.getKeys(newViewId);
 
 		let limit = 0;
 		if ([ I.ViewType.Grid, I.ViewType.List ].includes(view.type)) {
-			limit = Constant.limit.dataview.records + offset;
+			//limit = Constant.limit.dataview.records + offset;
 			offset = 0;
+		};
+		if (isInline) {
+			limit = 6;
 		};
 
 		dbStore.recordsSet(subId, '', []);
 		dbStore.metaSet(subId, '', { offset: offset, viewId: newViewId });
 
 		if (![ I.ViewType.Board ].includes(view.type)) {
-			Dataview.getData(rootId, block.id, newViewId, keys, 0, 0, false, callBack);
+			Dataview.getData(rootId, block.id, newViewId, keys, 0, limit, false, callBack);
 		} else 
 		if (this.viewRef.loadGroupList) {
 			this.viewRef.loadGroupList();

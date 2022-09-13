@@ -21,6 +21,7 @@
 				vertical-align: middle;
 			}
 		}
+		.button.blank { border: 0px; padding: 0px; color: $colorDarkGrey; }
 
 		.dataviewHead, .dataviewControls {
 			.sides, .side { display: flex; flex-direction: row; align-items: center; }
@@ -61,7 +62,7 @@
 				.value { min-width: 70px; }
 			}
 
-			.select { border: 0px; }
+			.select { border: 0px; font-weight: 600; }
 		}
 
 		.dataviewControls { font-weight: 500; color: $colorMediumGrey; position: relative; }
