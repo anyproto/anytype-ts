@@ -1,12 +1,12 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Icon } from 'Component';
-import { I, C, Util, keyboard } from 'Lib';
+import { I, C, Util, keyboard, Relation, analytics } from 'Lib';
 import { menuStore, dbStore, blockStore } from 'Store';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
 import arrayMove from 'array-move';
+import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCache } from 'react-virtualized';
 
 interface Props extends I.Menu {};
@@ -217,7 +217,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<Props> 
 	onAdd () {
 		const { param, getId } = this.props;
 		const { data } = param;
-		const { getView } = data;
+		const { rootId, blockId, getView } = data;
 		const view = getView();
 		const relations = Util.objectCopy(view.relations);
 		const filters: I.Filter[] = [];
@@ -235,20 +235,29 @@ const MenuViewList = observer(class MenuViewList extends React.Component<Props> 
 			});
 		};
 
-		menuStore.open('dataviewViewEdit', {
-			element: `#${getId()} #item-add`,
-			horizontal: I.MenuDirection.Center,
-			data: {
-				...data,
-				view: observable.box({ 
-					type: I.ViewType.Grid,
-					relations: relations,
-					filters: filters,
-				}),
-				onSave: () => {
-					this.forceUpdate();
+		const newView = {
+			name: `New view`,
+			type: I.ViewType.Grid,
+			groupRelationKey: Relation.getGroupOption(rootId, blockId, '')?.id,
+			filters,
+		};
+
+		C.BlockDataviewViewCreate(rootId, blockId, newView, (message: any) => {
+			const view = dbStore.getView(rootId, blockId, message.viewId);
+
+			menuStore.open('dataviewViewEdit', {
+				element: `#${getId()} #item-add`,
+				horizontal: I.MenuDirection.Center,
+				data: {
+					...data,
+					view: observable.box(view),
+					onSave: () => {
+						this.forceUpdate();
+					},
 				},
-			},
+			});
+
+			analytics.event('AddView', { type: view.type });
 		});
 	};
 

@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Icon } from 'Component';
 import { I, C } from 'Lib';
 import { menuStore } from 'Store';
+import { observable } from 'mobx';
 import { observer } from 'mobx-react';
 
 interface Props extends I.ViewComponent {
@@ -19,12 +20,14 @@ const Head = observer(class Head extends React.Component<Props, {}> {
 		this.onSelect = this.onSelect.bind(this);
 		this.onOver = this.onOver.bind(this);
 		this.onSource = this.onSource.bind(this);
+		this.onView = this.onView.bind(this);
 	};
 
 	render () {
-		const { rootId, block, readonly } = this.props;
+		const { rootId, block, readonly, getView } = this.props;
 		const sources = block.content.sources || [];
 		const length = sources.length;
+		const view = getView();
 
 		let icon = null;
 		let onClick = null;
@@ -42,9 +45,10 @@ const Head = observer(class Head extends React.Component<Props, {}> {
 					</React.Fragment>
 				);
 			};
-			icon = <div id="head-source-select" className="iconWrap" onClick={onClick}>{icon}</div>
+
+			icon = <div id="head-source-select" className="iconWrap" onClick={onClick}>{icon}</div>;
 		};
-		
+
 		return (
 			<div className="dataviewHead">
 				<div className="title">
@@ -58,8 +62,32 @@ const Head = observer(class Head extends React.Component<Props, {}> {
 				</div>
 
 				{icon}
+				
+				<div id="head-view-select" className="select" onClick={this.onView}>
+					<div className="name">{view.name}</div>
+					<Icon className="arrow dark" />
+				</div>
 			</div>
 		);
+	};
+
+	onView (e: any) {
+		const { rootId, block, readonly, getData, getView } = this.props;
+		const view = getView();
+
+		menuStore.open('dataviewViewList', { 
+			element: `#block-${block.id} #head-view-select`,
+			horizontal: I.MenuDirection.Center,
+			noFlipY: true,
+			data: {
+				readonly: readonly,
+				rootId: rootId,
+				blockId: block.id, 
+				getData: getData,
+				getView: getView,
+				view: observable.box(view),
+			},
+		});
 	};
 
 	onSelect () {
