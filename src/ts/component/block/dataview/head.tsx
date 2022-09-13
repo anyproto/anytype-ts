@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon, Button } from 'Component';
-import { I, C, keyboard } from 'Lib';
+import { I, C, keyboard, Dataview } from 'Lib';
 import { menuStore, blockStore } from 'Store';
 import { observable } from 'mobx';
 import { observer } from 'mobx-react';
@@ -29,6 +29,7 @@ const Head = observer(class Head extends React.Component<Props, {}> {
 		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onFocus = this.onFocus.bind(this);
 		this.onBlur = this.onBlur.bind(this);
+		this.onManager = this.onManager.bind(this);
 		this.onCompositionStart = this.onCompositionStart.bind(this);
 		this.onCompositionEnd = this.onCompositionEnd.bind(this);
 	};
@@ -88,7 +89,7 @@ const Head = observer(class Head extends React.Component<Props, {}> {
 						</div>
 					</div>
 					<div className="side right">
-						<Icon className="manager" />
+						<Icon id="head-customize" className="manager" tooltip="Customize" onClick={this.onManager} />
 						{!readonly && allowedObject ? <Button color="orange" icon="plus-small" className="c28" tooltip="New object" text="New" onClick={(e: any) => { onRecordAdd(e, -1); }} /> : ''}
 					</div>
 				</div>
@@ -214,6 +215,29 @@ const Head = observer(class Head extends React.Component<Props, {}> {
 				}
 			}); 
 		});
+	};
+
+	onManager (e: any) {
+		const { rootId, block, readonly, getData, getView } = this.props;
+		const view = getView();
+
+		const param: any = { 
+			element: `#block-${block.id} #head-customize`,
+			horizontal: I.MenuDirection.Center,
+			offsetY: 10,
+			noFlipY: true,
+			getTabs: () => Dataview.getMenuTabs(rootId, block.id, view.id),
+			data: {
+				readonly: readonly,
+				rootId: rootId,
+				blockId: block.id, 
+				getData: getData,
+				getView: getView,
+				view: observable.box(view),
+			},
+		};
+
+		menuStore.open('dataviewRelationList', param);
 	};
 
 	onFocus (e: any) {
