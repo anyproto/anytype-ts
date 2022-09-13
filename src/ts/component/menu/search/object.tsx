@@ -16,6 +16,12 @@ const $ = require('jquery');
 const Constant = require('json/constant.json');
 const LIMIT_HEIGHT = 10;
 
+const HEIGHT_SECTION = 28;
+const HEIGHT_ITEM = 28;
+const HEIGHT_ITEM_BIG = 56;
+const HEIGHT_DIV = 16;
+const HEIGHT_FILTER = 44;
+
 const MenuSearchObject = observer(class MenuSearchObject extends React.Component<Props, State> {
 
 	state = {
@@ -49,7 +55,6 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		const items = this.getItems();
 		const cn = [ 'wrap' ];
 		const placeholderFocus = data.placeholderFocus || 'Filter objects...';
-		const rowHeight = this.getHeight();
 
 		if (label) {
 			cn.push('withLabel');
@@ -62,34 +67,55 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 			const item: any = items[param.index];
 			const type = dbStore.getType(item.type);
 			const cn = [];
-			
-			if (item.id == 'add') {
-				cn.push('add');
-			};
-			if (item.isHidden) {
-				cn.push('isHidden');
-			};
-			if (value == item.id) {
-				cn.push('active');
-			};
+			let content = null;
 
-			const props = {
-				...item,
-				object: (item.id == 'add' ? undefined : item),
-			};
-
-			if (isBig) {
-				props.withDescription = true;
-				props.forceLetter = true;
-				props.iconSize = 40;
+			if (item.isSection) {
+				content = <div className={[ 'sectionName', (param.index == 0 ? 'first' : '') ].join(' ')} style={param.style}>{item.name}</div>;
+			} else
+			if (item.isDiv) {
+				content = (
+					<div className="separator" style={param.style}>
+						<div className="inner" />
+					</div>
+				);
 			} else {
-				props.withCaption = true;
-				props.caption = (type ? type.name : undefined);
-			};
+				if (item.id == 'add') {
+					cn.push('add');
+				};
+				if (item.isHidden) {
+					cn.push('isHidden');
+				};
+				if (value == item.id) {
+					cn.push('active');
+				};
 
-			if (noIcon) {
-				props.object = undefined;
-			};
+				const props = {
+					...item,
+					object: (item.id == 'add' ? undefined : item),
+				};
+
+				if (isBig) {
+					props.withDescription = true;
+					props.forceLetter = true;
+					props.iconSize = 40;
+				} else {
+					props.withCaption = true;
+					props.caption = (type ? type.name : undefined);
+				};
+
+				if (noIcon) {
+					props.object = undefined;
+				};
+
+				content = <MenuItemVertical
+					{...props}
+					name={<ObjectName object={item} />}
+					onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }}
+					onClick={(e: any) => { this.onClick(e, item); }}
+					style={param.style}
+					className={cn.join(' ')}
+				/>;
+			}
 
 			return (
 				<CellMeasurer
@@ -100,14 +126,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 					rowIndex={param.index}
 					hasFixedWidth={() => {}}
 				>
-					<MenuItemVertical 
-						{...props}
-						name={<ObjectName object={item} />}
-						onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }} 
-						onClick={(e: any) => { this.onClick(e, item); }}
-						style={param.style}
-						className={cn.join(' ')}
-					/>
+					{content}
 				</CellMeasurer>
 			);
 		};
@@ -132,7 +151,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 
 				{this.cache && items.length && !loading ? (
 					<React.Fragment>
-						{label ? <div className="sectionName">{label}</div> : ''}
+						{/*{label ? <div className="sectionName">{label}</div> : ''}*/}
 
 						<div className="items">
 							<InfiniteLoader
@@ -150,7 +169,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 												height={height}
 												deferredMeasurmentCache={this.cache}
 												rowCount={items.length}
-												rowHeight={rowHeight}
+												rowHeight={({ index }) => this.getRowHeight(items[index])}
 												rowRenderer={rowRenderer}
 												onRowsRendered={onRowsRendered}
 												overscanRowCount={10}
@@ -177,7 +196,6 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 	componentDidUpdate () {
 		const { filter } = this.state;
 		const items = this.getItems();
-		const rowHeight = this.getHeight();
 
 		if (this.filter != filter) {
 			this.filter = filter;
@@ -189,7 +207,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 
 		this.cache = new CellMeasurerCache({
 			fixedWidth: true,
-			defaultHeight: rowHeight,
+			defaultHeight: HEIGHT_ITEM,
 			keyMapper: (i: number) => { return (items[i] || {}).id; },
 		});
 
@@ -222,7 +240,26 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 	};
 
 	getItems () {
-		return this.items;
+		const { filter } = this.state;
+		const { param } = this.props;
+		const { data } = param;
+		const { label } = data;
+
+		let items = [].concat(this.items);
+
+		if (label && items.length) {
+			items.unshift({ isSection: true, name: label });
+		}
+
+		if (filter.length) {
+			if (items.length) {
+				items.push({isDiv: true});
+			}
+
+			items.push({ id: 'add', name: `Create object "${filter}"`, icon: 'plus' })
+		}
+
+		return items;
 	};
 
 	loadMoreRows ({ startIndex, stopIndex }) {
@@ -397,27 +434,38 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		}, force ? 0 : 500);
 	};
 
+	getRowHeight (item: any) {
+		let h = HEIGHT_ITEM;
+		if (item.isSection) h = HEIGHT_SECTION;
+		if (item.isBig) h = HEIGHT_ITEM_BIG;
+		if (item.isDiv) h = HEIGHT_DIV;
+		return h;
+	};
+
+	getListHeight (items: any) {
+		return items.reduce((res: number, item: any) => {
+			res += this.getRowHeight(item);
+
+			if (res >= 300) {
+				return 300;
+			}
+
+			return res;
+		}, 0);
+	}
+
 	resize () {
 		if (!this._isMounted) {
 			return;
 		};
 
-		const { param, getId, position } = this.props;
-		const { data } = param;
-		const { noFilter, label } = data;
+		const { getId, position } = this.props;
 		const items = this.getItems();
 		const obj = $(`#${getId()} .content`);
-		const h = this.getHeight();
-		const min = noFilter ? 44 + 28 : 300;
-		const l = items.length + (label ? 1 : 0);
-		const height = Math.max(min, Math.min(h * LIMIT_HEIGHT, l * h + 16));
+		let height = this.getListHeight(items) + HEIGHT_FILTER + 16;
 
 		obj.css({ height });
 		position();
-	};
-
-	getHeight () {
-		return this.props.param.data.isBig ? 56 : 28;
 	};
 	
 });
