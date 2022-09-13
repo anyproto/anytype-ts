@@ -134,3 +134,9 @@
 html.platformLinux {
 	.blocks .block.blockDataview .viewItem.viewBoard .column .body { overflow-y: auto; }
 }
+
+.blocks {
+	.block.blockDataview.isInline {
+		.viewItem.viewBoard { padding: 16px 0px 0px 0px; }
+	}
+}

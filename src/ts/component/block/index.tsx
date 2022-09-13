@@ -167,7 +167,10 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 				break;
 			
 			case I.BlockType.Dataview:
-				canSelect = !root.isObjectSet() && !root.isObjectSpace();
+				canSelect = !(root.isObjectSet() || root.isObjectSpace());
+				if (canSelect) {
+					cn.push('isInline');
+				};
 				blockComponent = <BlockDataview key={`block-${block.id}-component`} ref={setRef} {...this.props} />;
 				break;
 				
