@@ -1,11 +1,13 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
+import { Input, Icon } from 'Component';
 import { I, C, Util, DataUtil, analytics, Dataview, keyboard, Onboarding, Relation, Renderer } from 'Lib';
-import { observer } from 'mobx-react';
 import { blockStore, menuStore, dbStore, detailStore, popupStore } from 'Store';
+import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 import arrayMove from 'array-move';
 
+import Head from './dataview/head';
 import Controls from './dataview/controls';
 
 import ViewGrid from './dataview/view/grid';
@@ -42,6 +44,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 	render () {
 		const { rootId, block, isPopup } = this.props;
+		const root = blockStore.getLeaf(rootId, rootId);
 		const views = dbStore.getViews(rootId, block.id);
 
 		if (!views.length) {
@@ -53,9 +56,13 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			return null;
 		};
 
+		let sources = block.content.sources || [];
+		let isInline = !(root.isObjectSet() || root.isObjectSpace());
 		let { groupRelationKey } = view;
 		let ViewComponent: any = null;
 		let className = '';
+		let head = null;
+		let content = null;
 
 		switch (view.type) {
 			default:
@@ -80,8 +87,20 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				break;
 		};
 
-		return (
-			<div>
+		if (isInline) {
+			head = (
+				<Head 
+					{...this.props} 
+					readonly={false} 
+					getData={this.getData} 
+					getView={this.getView} 
+					getRecord={this.getRecord}
+					onRecordAdd={this.onRecordAdd}
+					isInline={isInline}
+				/>
+			);
+		} else {
+			head = (
 				<Controls 
 					{...this.props} 
 					className={className}
@@ -90,7 +109,13 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					getView={this.getView} 
 					getRecord={this.getRecord}
 					onRecordAdd={this.onRecordAdd}
+					isInline={isInline}
 				/>
+			);
+		};
+
+		if ((isInline && sources.length) || !isInline) {
+			content = (
 				<div className="content">
 					<ViewComponent 
 						key={'view' + view.id}
@@ -108,8 +133,16 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 						onCellClick={this.onCellClick}
 						onCellChange={this.onCellChange}
 						onContext={this.onContext}
+						isInline={isInline}
 					/>
 				</div>
+			);
+		};
+
+		return (
+			<div>
+				{head}
+				{content}
 			</div>
 		);
 	};

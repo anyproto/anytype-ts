@@ -12,17 +12,9 @@ interface Props extends I.ViewComponent {
 	className?: string;
 };
 
-interface State {
-	page: number;
-};
-
 const $ = require('jquery');
 
-const Controls = observer(class Controls extends React.Component<Props, State> {
-
-	state = {
-		page: 0,
-	};
+const Controls = observer(class Controls extends React.Component<Props, {}> {
 
 	constructor (props: any) {
 		super(props);

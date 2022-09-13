@@ -386,7 +386,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 		if (menuId && !menuStore.isOpen(menuId)) {
 			if (menuStore.isOpen(menuId)) {
-				menuStore.open(menuId, param);
+				menuStore.open(menuId, menuParam);
 			} else {
 				menuStore.closeAll(Constant.menuIds.featuredType, () => {
 					menuStore.open(menuId, menuParam);

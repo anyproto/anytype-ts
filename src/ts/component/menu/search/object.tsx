@@ -239,7 +239,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 
 		const { param } = this.props;
 		const { data } = param;
-		const { type, dataMapper, dataSort, skipIds } = data;
+		const { type, dataMapper, dataSort, skipIds, keys } = data;
 		const { filter } = this.state;
 		const { config } = commonStore;
 		
@@ -270,6 +270,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		DataUtil.search({
 			filters,
 			sorts,
+			keys: keys || Constant.defaultRelationKeys,
 			fullText: filter,
 			offset: this.offset,
 			limit: Constant.limit.menu,
