@@ -48,14 +48,15 @@
 			.side.right { gap: 0px 18px; justify-content: flex-end; }
 
 			.iconWrap { 
-				padding: 0px 8px; border-radius: 12px; background-color: $colorVeryLightGrey; transition: $transitionFast; cursor: pointer; 
+				padding: 4px 8px; border-radius: 12px; background-color: $colorVeryLightGrey; transition: $transitionFast; cursor: pointer; 
 				display: flex; align-items: center; line-height: 20px; color: $colorDarkGrey; gap: 0px 2px;
 			}
 			.iconWrap:hover { background-color: $colorLightGrey; }
 			.iconWrap.icon { flex-shrink: 0; }
 
 			.icon.set { width: 12px; height: 12px; background-image: url('~img/icon/dataview/head/set.svg'); }
-			.icon.plus:hover { background-image: url('~img/icon/plus/menu0.svg'); }
+			.icon.plus { width: 12px; height: 12px; background-image: url('~img/icon/dataview/head/plus.svg'); }
+			.icon.plus:hover {  background-image: url('~img/icon/dataview/head/plus.svg'); }
 
 			.title { @include text-header3; font-weight: 700; position: relative; }
 			.title {
