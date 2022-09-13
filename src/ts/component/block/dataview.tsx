@@ -24,6 +24,8 @@ const raf = require('raf');
 const BlockDataview = observer(class BlockDataview extends React.Component<Props, {}> {
 
 	viewRef: any = null;
+	controlRef: any = null;
+	headRef: any = null;
 	cellRefs: Map<string, any> = new Map();
 	viewId: string = '';
 	creating: boolean = false;
@@ -90,6 +92,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		if (isInline) {
 			head = (
 				<Head 
+					ref={(ref: any) => { this.headRef = ref; }} 
 					{...this.props} 
 					readonly={false} 
 					getData={this.getData} 
@@ -102,6 +105,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		} else {
 			head = (
 				<Controls 
+					ref={(ref: any) => { this.controlRef = ref; }} 
 					{...this.props} 
 					className={className}
 					readonly={false} 
@@ -561,6 +565,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		this.frame = raf(() => {
+			if (this.controlRef && this.controlRef.resize) {
+				this.controlRef.resize();
+			};
+
 			if (this.viewRef && this.viewRef.resize) {
 				this.viewRef.resize();
 			};

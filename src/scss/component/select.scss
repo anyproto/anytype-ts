@@ -10,7 +10,7 @@
 .select {
 	.icon { transition: none; }
 	.icon.arrow {
-		margin: -10px 0px 0px 0px !important; right: 0px !important; width: 20px !important; height: 20px !important; position: absolute; top: 50%;
+		margin: -10px 0px 0px 0px !important; right: 0px !important; width: 20px !important; height: 20px !important; position: absolute !important; top: 50%;
 		background-image: url('~img/arrow/select/dark.svg') !important; 
 	}
 	.icon.arrow.light { background-image: url('~img/arrow/select/light.svg') !important; }
@@ -20,4 +20,5 @@
 		.icon, .iconObject { transition: none; margin-right: 6px; flex-shrink: 0; }
 		.name { width: 100%; @include text-overflow-nw; }
 	}
+	.item::before { display: none; }
 }

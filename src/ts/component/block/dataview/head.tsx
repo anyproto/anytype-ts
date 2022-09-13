@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Icon } from 'Component';
+import { Icon, Button } from 'Component';
 import { I, C, keyboard } from 'Lib';
-import { menuStore } from 'Store';
+import { menuStore, blockStore } from 'Store';
 import { observable } from 'mobx';
 import { observer } from 'mobx-react';
 
@@ -34,10 +34,11 @@ const Head = observer(class Head extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { rootId, block, readonly, getView } = this.props;
+		const { rootId, block, readonly, getView, onRecordAdd } = this.props;
 		const sources = block.content.sources || [];
 		const length = sources.length;
 		const view = getView();
+		const allowedObject = blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.Object ]);
 
 		let icon = null;
 		let onClick = null;
@@ -61,27 +62,35 @@ const Head = observer(class Head extends React.Component<Props, {}> {
 
 		return (
 			<div className="dataviewHead">
-				<div id="title" className="title">
-					<div 
-						className="value" 
-						contentEditable="true" 
-						suppressContentEditableWarning={true}
-						onFocus={this.onFocus}
-						onBlur={this.onBlur}
-						onKeyDown={this.onKeyDown}
-						onKeyUp={this.onKeyUp}
-						onCompositionStart={this.onCompositionStart}
-						onCompositionEnd={this.onCompositionEnd}
-					>
-					</div>
-					<div id="placeholder" className="placeholder">New set</div>
-				</div>
+				<div className="sides">
+					<div className="side left">
+						<div id="title" className="title">
+							<div 
+								className="value" 
+								contentEditable="true" 
+								suppressContentEditableWarning={true}
+								onFocus={this.onFocus}
+								onBlur={this.onBlur}
+								onKeyDown={this.onKeyDown}
+								onKeyUp={this.onKeyUp}
+								onCompositionStart={this.onCompositionStart}
+								onCompositionEnd={this.onCompositionEnd}
+							>
+							</div>
+							<div id="placeholder" className="placeholder">New set</div>
+						</div>
 
-				{icon}
-				
-				<div id="head-view-select" className="select" onClick={this.onView}>
-					<div className="name">{view.name}</div>
-					<Icon className="arrow dark" />
+						{icon}
+						
+						<div id="head-view-select" className="select" onClick={this.onView}>
+							<div className="name">{view.name}</div>
+							<Icon className="arrow dark" />
+						</div>
+					</div>
+					<div className="side right">
+						<Icon className="manager" />
+						{!readonly && allowedObject ? <Button color="orange" icon="plus-small" className="c28" tooltip="New object" text="New" onClick={(e: any) => { onRecordAdd(e, -1); }} /> : ''}
+					</div>
 				</div>
 			</div>
 		);

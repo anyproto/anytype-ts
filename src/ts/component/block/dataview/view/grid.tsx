@@ -298,7 +298,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 		const { rootId, block, readonly, getData, getView } = this.props;
 
 		menuStore.open('dataviewRelationList', { 
-			element: `#cell-add`,
+			element: `#block-${block.id} #cell-add`,
 			horizontal: I.MenuDirection.Center,
 			offsetY: 10,
 			data: {
