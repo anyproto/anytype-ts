@@ -238,9 +238,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		const { param } = this.props;
 		const { data } = param;
 		const { types, filter } = data;
-		const filters: I.Filter[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: DataUtil.getSystemTypes(), },
-		];
+		const filters: I.Filter[] = [];
 		const sorts = [
 			{ relationKey: 'name', type: I.SortType.Asc },
 		];
@@ -251,6 +249,8 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 
 		if (types && types.length) {
 			filters.push({ relationKey: 'type', operator: I.FilterOperator.And, condition: I.FilterCondition.In, value: types });
+		} else {
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: DataUtil.getSystemTypes() });
 		};
 
 		if (clear) {
