@@ -24,10 +24,6 @@ const HeadRow = observer(class HeadRow extends React.Component<Props, {}> {
 		const relations = view.relations.filter(it => it.isVisible);
 		const allowed = blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.Relation ]);
 
-		relations.forEach((it: any) => {
-			const { width } = it;
-		});
-		
 		const Row = SortableContainer((item: any) => (
 			<div className="rowHead" >
 				{relations.map((relation: any, i: number) => (

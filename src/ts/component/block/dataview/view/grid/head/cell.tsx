@@ -27,15 +27,9 @@ const HeadCell = observer(class HeadCell extends React.Component<Props, {}> {
 		const { relationKey, index, onResizeStart } = this.props;
 		const relation: any = dbStore.getRelationByKey(relationKey) || {};
 		const { format, name } = relation;
-		const width = Relation.width(this.props.width, format);
-		const size = Constant.size.dataview.cell;
 
 		const Cell = SortableElement((item: any) => {
 			const cn = [ 'cellHead', DataUtil.relationClass(format) ];
-			
-			if (width <= size.icon) {
-				cn.push('small');
-			};
 
 			return (
 				<div id={Relation.cellId('head', relationKey, '')} className={cn.join(' ')}>

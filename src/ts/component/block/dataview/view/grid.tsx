@@ -208,12 +208,20 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 		const view = getView();
 		const node = $(ReactDOM.findDOMNode(this));
 		const relations = view.relations.filter(it => it.isVisible);
+		const size = Constant.size.dataview.cell;
+		
 		const columns = relations.map(it => {
 			const relation: any = dbStore.getRelationByKey(it.relationKey) || {};
+			const el = node.find(`#${Relation.cellId('head', it.relationKey, '')}`);
+
 			if (relationKey && (it.relationKey == relationKey)) {
 				it.width = width;
 			};
-			return Relation.width(it.width, relation.format) + 'px';
+
+			it.width = Relation.width(it.width, relation.format);
+			it.width <= size.icon ? el.addClass('small') : el.removeClass('small');
+
+			return it.width + 'px';
 		}).concat([ 'auto' ]).join(' ');
 
 		node.find('.rowHead').css({ gridTemplateColumns: columns });
@@ -266,13 +274,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 		e.preventDefault();
 		e.stopPropagation();
 
-		const node = $(ReactDOM.findDOMNode(this));
-		const width = this.checkWidth(e.pageX - this.ox);
-		const size = Constant.size.dataview.cell;
-		const el = node.find(`#${Relation.cellId('head', relationKey, '')}`);
-
-		this.resizeColumns(relationKey, width);
-		width <= size.icon ? el.addClass('small') : el.removeClass('small');
+		this.resizeColumns(relationKey, this.checkWidth(e.pageX - this.ox));
 	};
 
 	onResizeEnd (e: any, relationKey: string) {

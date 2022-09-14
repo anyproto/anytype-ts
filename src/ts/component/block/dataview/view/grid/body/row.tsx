@@ -20,7 +20,6 @@ const BodyRow = observer(class BodyRow extends React.Component<Props, {}> {
 		const relations = view.relations.filter((it: any) => { 
 			return it.isVisible && dbStore.getRelationByKey(it.relationKey); 
 		});
-		const columns = relations.map(it => it.width + 'px').concat([ 'auto' ]);
 		const record = getRecord(index);
 		const cn = [ 'row' ];
 
@@ -46,7 +45,6 @@ const BodyRow = observer(class BodyRow extends React.Component<Props, {}> {
 					className={[ 'selectable', 'type-' + I.SelectType.Record ].join(' ')} 
 					data-id={record.id}
 					data-type={I.SelectType.Record}
-					style={{ gridTemplateColumns: columns.join(' ') }}
 				>
 					{relations.map((relation: any, i: number) => (
 						<Cell 

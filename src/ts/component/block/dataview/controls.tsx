@@ -183,6 +183,9 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 			type: I.ViewType.Grid,
 			groupRelationKey: Relation.getGroupOption(rootId, block.id, '')?.id,
 			filters,
+			relations: [
+				{ relationKey: 'name', isVisible: true }
+			]
 		};
 
 		C.BlockDataviewViewCreate(rootId, block.id, newView, (message: any) => {
