@@ -198,7 +198,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 	};
 
 	onRelation (e: any) {
-		const { isPopup, rootId } = this.props;
+		const { isPopup, rootId, readonly } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
 		const container = Util.getScrollContainer(isPopup);
 		const cnw = [ 'fixed' ];
@@ -230,8 +230,9 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 				menuStore.closeAll();
 			},
 			data: {
-				isPopup: isPopup,
-				rootId: rootId,
+				isPopup,
+				rootId,
+				readonly,
 			},
 		};
 
