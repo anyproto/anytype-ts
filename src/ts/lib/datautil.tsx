@@ -1338,7 +1338,7 @@ class DataUtil {
 	};
 
 	setWindowTitleText (name: string) {
-		document.title = [ name, Constant.appName ].join(' | ');
+		document.title = [ Util.shorten(name, 60), Constant.appName ].join(' - ');
 	};
 
 };
