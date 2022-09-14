@@ -266,7 +266,12 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 
 		sideLeft.removeClass('small');
 
-		const width = sideLeft.offset().left + sideLeft.outerWidth() + sideRight.outerWidth();
+		let width = sideLeft.offset().left + sideLeft.outerWidth() + sideRight.outerWidth();
+
+		if (isPopup) {
+			width -= container.offset().left;
+		};
+
 		if (width >= container.width()) {
 			sideLeft.addClass('small');
 		};
