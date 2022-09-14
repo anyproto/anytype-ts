@@ -139,6 +139,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 									onRowsRendered={onRowsRendered}
 									overscanRowCount={10}
 									onScroll={this.onScroll}
+									scrollToAlignment="center"
 								/>
 							)}
 						</AutoSizer>

@@ -154,6 +154,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 												rowRenderer={rowRenderer}
 												onRowsRendered={onRowsRendered}
 												overscanRowCount={10}
+												scrollToAlignment="center"
 											/>
 										)}
 									</AutoSizer>

@@ -189,6 +189,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 														onRowsRendered={onRowsRendered}
 														overscanRowCount={10}
 														scrollToIndex={this.panel == Panel.Left ? n : 0}
+														scrollToAlignment="start"
 													/>
 												)}
 											</AutoSizer>
@@ -230,6 +231,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 												onRowsRendered={onRowsRendered}
 												overscanRowCount={10}
 												scrollToIndex={this.panel == Panel.Right ? n : 0}
+												scrollToAlignment="start"
 											/>
 										)}
 									</AutoSizer>

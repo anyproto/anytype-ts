@@ -251,6 +251,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 												rowRenderer={rowRenderer}
 												onRowsRendered={onRowsRendered}
 												overscanRowCount={10}
+												scrollToAlignment="center"
 											/>
 										)}
 									</AutoSizer>

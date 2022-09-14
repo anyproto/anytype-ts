@@ -65,7 +65,7 @@ class Dataview {
 			return;
 		};
 
-		C.BlockDataviewRelationAdd(rootId, blockId, relationId, (message: any) => {
+		C.BlockDataviewRelationAdd(rootId, blockId, [ relationId ], (message: any) => {
 			if (message.error.code) {
 				return;
 			};

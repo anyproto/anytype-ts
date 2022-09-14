@@ -114,6 +114,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 										rowRenderer={rowRenderer}
 										onRowsRendered={onRowsRendered}
 										overscanRowCount={LIMIT}
+										scrollToAlignment="center"
 									/>
 								)}
 							</AutoSizer>

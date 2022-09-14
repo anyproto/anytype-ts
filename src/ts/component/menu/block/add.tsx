@@ -188,6 +188,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 											rowRenderer={rowRenderer}
 											onRowsRendered={onRowsRendered}
 											overscanRowCount={20}
+											scrollToAlignment="center"
 										/>
 									)}
 								</AutoSizer>

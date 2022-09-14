@@ -150,6 +150,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 											rowRenderer={rowRenderer}
 											onRowsRendered={onRowsRendered}
 											onScroll={this.onScroll}
+											scrollToAlignment="center"
 											overscanRowCount={10}
 										/>
 									)}

@@ -126,6 +126,7 @@ const MenuSort = observer(class MenuSort extends React.Component<Props, {}> {
 											onRowsRendered={onRowsRendered}
 											overscanRowCount={LIMIT}
 											onScroll={this.onScroll}
+											scrollToAlignment="center"
 										/>
 									)}
 								</AutoSizer>

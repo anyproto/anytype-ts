@@ -132,6 +132,7 @@ const MenuGroupList = observer(class MenuGroupList extends React.Component<Props
 										onRowsRendered={onRowsRendered}
 										overscanRowCount={LIMIT}
 										onScroll={this.onScroll}
+										scrollToAlignment="center"
 									/>
 								)}
 							</AutoSizer>

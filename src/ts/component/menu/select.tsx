@@ -126,6 +126,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 										rowRenderer={rowRenderer}
 										onRowsRendered={onRowsRendered}
 										onScroll={this.onScroll}
+										scrollToAlignment="center"
 										overscanRowCount={10}
 									/>
 								)}

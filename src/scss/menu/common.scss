@@ -50,7 +50,7 @@
 	.menu.vertical { width: 224px; }
 	.menu.vertical {
 		.content { overflow-y: overlay; max-height: 450px; padding: 8px 0px; border-radius: inherit; transform: none; }
-		.ReactVirtualized__Grid__innerScrollContainer { margin: 8px 0px; }
+		.ReactVirtualized__List { padding: 8px 0px; }
 
 		.loaderWrapper { 
 			position: absolute; left: 0px; top: 0px; z-index: 20; width: 100%; height: 100%; border-radius: 12px;

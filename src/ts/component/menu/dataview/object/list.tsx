@@ -132,6 +132,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 											onRowsRendered={onRowsRendered}
 											overscanRowCount={LIMIT_HEIGHT}
 											onScroll={this.onScroll}
+											scrollToAlignment="center"
 										/>
 									)}
 								</AutoSizer>

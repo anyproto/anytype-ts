@@ -121,6 +121,7 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 											onRowsRendered={onRowsRendered}
 											overscanRowCount={LIMIT_HEIGHT}
 											onScroll={this.onScroll}
+											scrollToAlignment="center"
 										/>
 									)}
 								</AutoSizer>

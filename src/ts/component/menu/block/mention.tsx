@@ -119,6 +119,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 										rowRenderer={rowRenderer}
 										onRowsRendered={onRowsRendered}
 										overscanRowCount={10}
+										scrollToAlignment="center"
 									/>
 								)}
 							</AutoSizer>

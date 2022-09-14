@@ -117,6 +117,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<Props> 
 											onRowsRendered={onRowsRendered}
 											overscanRowCount={LIMIT}
 											onScroll={this.onScroll}
+											scrollToAlignment="center"
 										/>
 									)}
 								</AutoSizer>

@@ -121,6 +121,7 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 										onRowsRendered={onRowsRendered}
 										overscanRowCount={LIMIT}
 										onScroll={this.onScroll}
+										scrollToAlignment="center"
 									/>
 								)}
 							</AutoSizer>

@@ -109,6 +109,7 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<Pro
 											onRowsRendered={onRowsRendered}
 											overscanRowCount={LIMIT}
 											onScroll={this.onScroll}
+											scrollToAlignment="center"
 										/>
 									)}
 								</AutoSizer>

@@ -4,7 +4,7 @@
 	.menu.menuSmile { width: 384px; user-select: none; }
 	.menu.menuSmile {
 		.content { overflow: visible; padding-bottom: 0px; }
-		.ReactVirtualized__Grid__innerScrollContainer { margin: 0px; }
+		.ReactVirtualized__List { padding: 0px; }
 
 		.head { color: $colorMediumGrey; font-weight: 500; padding: 3px 16px 10px 16px; border-bottom: 1px solid $colorLightGrey; }
 		.head {

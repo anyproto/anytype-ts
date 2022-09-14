@@ -302,7 +302,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 				break;
 
 			case 'remove':
-				C.BlockDataviewRelationDelete(rootId, blockId, relation.id, (message: any) => {
+				C.BlockDataviewRelationDelete(rootId, blockId, [ relation.id ], (message: any) => {
 					if (!message.error.code) {
 						view.relations = view.relations.filter((it => it.relationKey != relation.relationKey));
 						C.BlockDataviewViewUpdate(rootId, blockId, view.id, view);
