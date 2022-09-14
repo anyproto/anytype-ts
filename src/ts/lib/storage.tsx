@@ -17,6 +17,8 @@ class Storage {
 	};
 	
 	set (key: string, obj: any, del?: boolean): void {
+		console.log('[Storage].set', key, obj, del);
+
 		if (!key) {
 			console.log('[Storage].set: key not specified');
 			return;
@@ -38,6 +40,8 @@ class Storage {
 	};
 	
 	delete (key: string) {
+		console.log('[Storage].delete', key);
+
 		delete(this.storage[key]);
 	};
 
