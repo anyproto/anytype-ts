@@ -249,7 +249,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 
 		if (label && items.length) {
 			items.unshift({ isSection: true, name: label });
-		}
+		};
 
 		if (filter.length) {
 			if (items.length) {
