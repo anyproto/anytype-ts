@@ -217,7 +217,6 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 				};
 				return rect;
 			},
-			horizontal: I.MenuDirection.Left,
 			noFlipX: true,
 			noFlipY: true,
 			subIds: Constant.menuIds.cell,

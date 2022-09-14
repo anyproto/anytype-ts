@@ -73,9 +73,9 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 								onEdit={this.onEdit}
 								onRef={(id: string, ref: any) => { this.cellRefs.set(id, ref); }}
 								onFav={this.onFav}
-								readonly={!(allowedValue && !item.isReadonlyValue)}
-								canEdit={allowedRelation && !item.isReadonlyRelation}
-								canDrag={allowedBlock}
+								readonly={!(allowedValue && !item.isReadonlyValue && !readonly)}
+								canEdit={allowedRelation && !item.isReadonlyRelatione && !readonly}
+								canDrag={allowedBlock && !readonly}
 								canFav={canFav}
 								isFeatured={section.id == 'featured'}
 								classNameWrap={classNameWrap}
