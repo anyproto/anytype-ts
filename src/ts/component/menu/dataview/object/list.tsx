@@ -13,10 +13,15 @@ interface State {
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
-const HEIGHT = 28;
 const MENU_ID = 'dataviewObjectValues';
 
+const HEIGHT = 28;
 const LIMIT_HEIGHT = 20;
+
+const HEIGHT_SECTION = 28;
+const HEIGHT_ITEM = 28;
+const HEIGHT_ITEM_BIG = 56;
+const HEIGHT_DIV = 16;
 
 const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends React.Component<Props, State> {
 
@@ -57,7 +62,13 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 			const name = <ObjectName object={item} />;
 
 			let content = null;
-			if (item.id == 'add') {
+			if (item.isDiv) {
+				content = (
+					<div className="separator" style={param.style}>
+						<div className="inner" />
+					</div>
+				);
+			} else if (item.id == 'add') {
 				content =  (
 					<div id="item-add" className="item add" onMouseEnter={(e: any) => { this.onOver(e, item); }} onClick={(e: any) => { this.onClick(e, item); }} style={param.style}>
 						<Icon className="plus" />
@@ -127,7 +138,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 											height={height}
 											deferredMeasurmentCache={this.cache}
 											rowCount={items.length}
-											rowHeight={HEIGHT}
+											rowHeight={({ index }) => this.getRowHeight(items[index])}
 											rowRenderer={rowRenderer}
 											onRowsRendered={onRowsRendered}
 											overscanRowCount={LIMIT_HEIGHT}
@@ -233,7 +244,10 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		ret = ret.filter((it: any) => { return value.indexOf(it.id) < 0; });
 
 		if (data.filter && canAdd) {
-			ret.unshift({ id: 'add', name: `Create object named "${data.filter}"` });
+			if (ret.length) {
+				ret.push({ isDiv: true });
+			};
+			ret.push({ id: 'add', name: `Create object "${data.filter}"` });
 		};
 
 		return ret;
@@ -362,6 +376,22 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		};
 	};
 
+	getRowHeight (item: any) {
+		let h = HEIGHT_ITEM;
+
+		if (item.isBig) h = HEIGHT_ITEM_BIG;
+		if (item.isSection) h = HEIGHT_SECTION;
+		if (item.isDiv) h = HEIGHT_DIV;
+		return h;
+	};
+
+	getListHeight (items: any) {
+		return items.reduce((res: number, item: any) => {
+			res += this.getRowHeight(item);
+			return res;
+		}, 0);
+	}
+
 	resize () {
 		const { getId, position, param } = this.props;
 		const { data } = param;
@@ -370,7 +400,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		const obj = $(`#${getId()} .content`);
 		const offset = noFilter ? 16 : 58;
 		const min = noFilter ? 28 + 16 : 300;
-		const height = Math.max(min, Math.min(360, items.length * HEIGHT + offset));
+		const height = Math.max(min, Math.min(360, this.getListHeight(items) + offset));
 
 		obj.css({ height });
 		position();

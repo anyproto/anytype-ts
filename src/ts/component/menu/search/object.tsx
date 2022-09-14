@@ -253,11 +253,11 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 
 		if (filter.length) {
 			if (items.length) {
-				items.push({isDiv: true});
-			}
+				items.push({ isDiv: true });
+			};
 
-			items.push({ id: 'add', name: `Create object "${filter}"`, icon: 'plus' })
-		}
+			items.push({ id: 'add', name: `Create object "${filter}"`, icon: 'plus' });
+		};
 
 		return items;
 	};
@@ -435,23 +435,23 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 	};
 
 	getRowHeight (item: any) {
+		const { param } = this.props;
+		const { data } = param;
+		const { isBig } = data;
+
 		let h = HEIGHT_ITEM;
+
+		if (isBig || item.isBig) h = HEIGHT_ITEM_BIG;
 		if (item.isSection) h = HEIGHT_SECTION;
-		if (item.isBig) h = HEIGHT_ITEM_BIG;
 		if (item.isDiv) h = HEIGHT_DIV;
 		return h;
 	};
 
 	getListHeight (items: any) {
-		return items.reduce((res: number, item: any) => {
+		return Math.min(300, items.reduce((res: number, item: any) => {
 			res += this.getRowHeight(item);
-
-			if (res >= 300) {
-				return 300;
-			}
-
 			return res;
-		}, 0);
+		}, 0));
 	}
 
 	resize () {
@@ -462,7 +462,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		const { getId, position } = this.props;
 		const items = this.getItems();
 		const obj = $(`#${getId()} .content`);
-		let height = this.getListHeight(items) + HEIGHT_FILTER + 16;
+		const height = this.getListHeight(items) + HEIGHT_FILTER + 16;
 
 		obj.css({ height });
 		position();
