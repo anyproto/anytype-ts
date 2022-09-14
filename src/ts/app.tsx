@@ -353,16 +353,10 @@ class App extends React.Component<Props, State> {
 
 	initStorage () {
 		const lastSurveyTime = Number(Storage.get('lastSurveyTime')) || 0;
-		const redirect = Storage.get('redirect');
 		const restoreKeys = [ 'pinTime', 'defaultType', 'autoSidebar' ];
 
 		if (!lastSurveyTime) {
 			Storage.set('lastSurveyTime', Util.time());
-		};
-
-		if (redirect) {
-			commonStore.redirectSet(redirect);
-			Storage.delete('redirect');
 		};
 
 		Storage.delete('lastSurveyCanceled');
@@ -428,6 +422,7 @@ class App extends React.Component<Props, State> {
 		const loader = node.find('#root-loader');
 		const logo = loader.find('#logo');
 		const accountId = Storage.get('accountId');
+		const redirect = Storage.get('redirect');
 
 		commonStore.configSet(config, true);
 		commonStore.nativeThemeSet(isDark);
@@ -439,6 +434,10 @@ class App extends React.Component<Props, State> {
 
 		this.initStorage();
 		this.initTheme(config.theme);
+
+		if (redirect) {
+			Storage.delete('redirect');
+		};
 
 		const cb = () => {
 			window.setTimeout(() => { 
@@ -456,7 +455,7 @@ class App extends React.Component<Props, State> {
 				authStore.phraseSet(phrase);
 
 				DataUtil.createSession(() => {
-					commonStore.redirectSet(route || '');
+					commonStore.redirectSet(route || redirect || '');
 					keyboard.setPinChecked(isPinChecked);
 
 					DataUtil.onAuth(account, cb);
@@ -475,7 +474,9 @@ class App extends React.Component<Props, State> {
 					return false;
 				});
 			} else {
+				commonStore.redirectSet(redirect || '');
 				Renderer.send('keytarGet', accountId);
+
 				cb();
 			};
 		} else {
