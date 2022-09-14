@@ -362,17 +362,10 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		const { param, close } = this.props;
 		const { data } = param;
 		const { rootId, type, blockId, blockIds, position, onSelect, noClose } = data;
+		const { filter } = this.state;
 
 		if (!noClose) {
 			close();
-		};
-
-		if (onSelect) {
-			onSelect(item);
-		};
-
-		if (!type) {
-			return;
 		};
 
 		let newBlock: any = {};
@@ -383,47 +376,102 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 			};
 		};
 
-		switch (type) {
-			case I.NavigationType.Go:
-				DataUtil.objectOpenEvent(e, item);
-				break;
+		const process = (targetId?: string, newObject?: any) => {
+			const itemId = targetId || item.id;
+			const targetItem = newObject || item;
 
-			case I.NavigationType.Move:
-				Action.move(rootId, item.id, '', blockIds, I.BlockPosition.Bottom);
-				break;
+			if (onSelect) {
+				onSelect(targetItem);
+			};
 
-			case I.NavigationType.Link:
-				switch (item.type) {
-					case Constant.typeId.bookmark:
-						newBlock.type = I.BlockType.Bookmark;
-						newBlock.content = { 
-							state: I.BookmarkState.Done,
-							targetObjectId: item.id,
-						};
-						break;
+			if (!type) {
+				return;
+			};
 
-					default:
-						newBlock.type = I.BlockType.Link;
-						newBlock.content = {
+			switch (type) {
+				case I.NavigationType.Go:
+					DataUtil.objectOpenEvent(e, item);
+					break;
+
+				case I.NavigationType.Move:
+					Action.move(rootId, itemId, '', blockIds, I.BlockPosition.Bottom);
+					break;
+
+				case I.NavigationType.Link:
+					switch (item.type) {
+						case Constant.typeId.bookmark:
+							newBlock.type = I.BlockType.Bookmark;
+							newBlock.content = {
+								state: I.BookmarkState.Done,
+								targetObjectId: item.id,
+							};
+							break;
+
+						default:
+							newBlock.type = I.BlockType.Link;
+							newBlock.content = {
+								...DataUtil.defaultLinkSettings(),
+								targetBlockId: itemId,
+							};
+							break;
+					};
+
+					C.BlockCreate(rootId, blockId, position, newBlock, cb);
+					break;
+
+				case I.NavigationType.LinkTo:
+					newBlock = {
+						type: I.BlockType.Link,
+						content: {
 							...DataUtil.defaultLinkSettings(),
-							targetBlockId: item.id,
-						};
-						break;
-				};
+							targetBlockId: blockId,
+						}
+					};
+					C.BlockCreate(item.id, '', position, newBlock);
+					break;
+			};
+		};
 
-				C.BlockCreate(rootId, blockId, position, newBlock, cb);
-				break;
+		const createObject = (cb: any) => {
+			let details: any = { name: filter };
+			let typeId = '';
+			let flags: I.ObjectFlag[] = [];
 
-			case I.NavigationType.LinkTo:
-				newBlock = {
-					type: I.BlockType.Link,
-					content: {
-						...DataUtil.defaultLinkSettings(),
-						targetBlockId: blockId,
-					}
+			if (typeId) {
+				details.typeId = typeId;
+			} else {
+				flags.push(I.ObjectFlag.SelectType);
+			};
+
+			DataUtil.pageCreate('', '', details, I.BlockPosition.Bottom, '', {}, flags, (message: any) => {
+				cb(message.targetId);
+				close();
+			});
+		};
+
+		const getNewObject = (id: string, cb: any) => {
+			const filters: I.Filter[] = [
+				{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.Equal, value: id },
+			];
+
+			C.ObjectSearch(filters, [], [], '', 0, 50, (message: any) => {
+				if (message.error.code) {
+					return;
 				};
-				C.BlockCreate(item.id, '', position, newBlock);
-				break;
+				if (message.records.length) {
+					cb(message.records[0]);
+				};
+			});
+		};
+
+		if (item.id == 'add') {
+			createObject((targetId) => {
+				getNewObject(targetId, (object) => {
+					process(targetId, object);
+				});
+			});
+		} else {
+			process();
 		};
 	};
 
