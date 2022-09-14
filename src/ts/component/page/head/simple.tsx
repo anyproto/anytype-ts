@@ -193,13 +193,8 @@ const HeadSimple = observer(class Controls extends React.Component<Props, {}> {
 
 	save () {
 		const { rootId } = this.props;
-		const root = blockStore.getLeaf(rootId, rootId);
-		const update: any = {};
-
 		for (let id of EDITOR_IDS) {
-			const value = this.getValue(id);
-			DataUtil.blockSetText(rootId, id, value, [], true);
-			update[id] = value;
+			DataUtil.blockSetText(rootId, id, this.getValue(id), [], true);
 		};
 	};
 
@@ -244,7 +239,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props, {}> {
 
 	placeholderCheck (id: string) {
 		const value = this.getValue(id);
-		value.length ? this.placeholderHide(id) : this.placeholderShow(id);			
+		value ? this.placeholderHide(id) : this.placeholderShow(id);			
 	};
 
 	placeholderHide (id: string) {

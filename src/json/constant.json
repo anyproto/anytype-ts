@@ -87,6 +87,9 @@
 		],
 		"featuredType": [
 			"searchObject"
+		],
+		"dataviewHead": [
+			"dataviewSource", "searchObject"
 		]
 	},
 

@@ -12,17 +12,11 @@ interface Props extends I.ViewComponent {
 	className?: string;
 };
 
-interface State {
-	page: number;
-};
-
 const $ = require('jquery');
 
-const Controls = observer(class Controls extends React.Component<Props, State> {
+const Controls = observer(class Controls extends React.Component<Props, {}> {
 
-	state = {
-		page: 0,
-	};
+	_isMounted: boolean = false;
 
 	constructor (props: any) {
 		super(props);
@@ -46,15 +40,14 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 
 		const buttons: any[] = [
 			//{ id: 'search', name: 'Search', menu: '' },
-			{ id: 'manager', name: 'Customize view', menu: 'dataviewRelationList', on: (filterCnt > 0 || sortCnt > 0) },
+			{ id: 'manager', name: 'Customize view', menu: 'dataviewRelationList' },
 		];
 
 		const ButtonItem = (item: any) => {
-			let cn = [ item.id, (item.on ? 'on' : '') ];
 			return (
 				<Icon 
 					id={'button-' + item.id} 
-					className={cn.join(' ')}
+					className={item.id}
 					tooltip={item.name}
 					onClick={(e: any) => { this.onButton(e, `button-${item.id}`, item.menu); }}
 				/>
@@ -90,17 +83,14 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 			<div className={cn.join(' ')}>
 				<div className="sides">
 					<div id="sideLeft" className="side left">
-						<span />
-						<div className="first">
-							<div 
-								id={'view-item-' + view.id} 
-								className="viewItem active" 
-								onClick={(e: any) => { this.onButton(e, `view-item-${view.id}`, 'dataviewViewList'); }} 
-								onContextMenu={(e: any) => { this.onViewEdit(e, '.first #view-item-' + view.id, view); }}
-							>
-								{view.name}
-								<Icon className="arrow" />
-							</div>
+						<div 
+							id={'view-item-' + view.id} 
+							className="viewSelect select"
+							onClick={(e: any) => { this.onButton(e, `view-item-${view.id}`, 'dataviewViewList'); }} 
+							onContextMenu={(e: any) => { this.onViewEdit(e, '.first #view-item-' + view.id, view); }}
+						>
+							<div className="name">{view.name}</div>
+							<Icon className="arrow dark" />
 						</div>
 
 						<Views 
@@ -130,16 +120,11 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 	};
 
 	componentDidMount () {
-		this.resize();
-		$(window).off('resize.controls').on('resize.controls', () => { this.resize(); });
-	};
-
-	componentDidUpdate () {
-		this.resize();
+		this._isMounted = true;
 	};
 
 	componentWillUnmount () {
-		$(window).off('resize.controls');
+		this._isMounted = false;
 	};
 	
 	onButton (e: any, id: string, menu: string) {
@@ -203,7 +188,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 		C.BlockDataviewViewCreate(rootId, block.id, newView, (message: any) => {
 			const view = dbStore.getView(rootId, block.id, message.viewId);
 			
-			this.onViewEdit(e, `#views #view-item-${message.viewId}`, view);
+			this.onViewEdit(e, `#block-${block.id} #views #view-item-${message.viewId}`, view);
 			analytics.event('AddView', { type: view.type });
 		});
 	};
@@ -266,11 +251,22 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 	};
 
 	resize () {
-		const node = $(ReactDOM.findDOMNode(this));
-		const views = node.find('#views');
-		const sideLeft = node.find('#sideLeft');
+		if (!this._isMounted) {
+			return;
+		};
 
-		views.width() > sideLeft.outerWidth() ? sideLeft.addClass('small') : sideLeft.removeClass('small');
+		const { isPopup } = this.props;
+		const node = $(ReactDOM.findDOMNode(this));
+		const sideLeft = node.find('#sideLeft');
+		const sideRight = node.find('#sideRight');
+		const container = Util.getPageContainer(isPopup);
+
+		sideLeft.removeClass('small');
+
+		const width = sideLeft.offset().left + sideLeft.outerWidth() + sideRight.outerWidth();
+		if (width >= container.width()) {
+			sideLeft.addClass('small');
+		};
 	};
 
 });

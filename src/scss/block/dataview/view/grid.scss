@@ -49,7 +49,7 @@
 			.icon.plus { background-image: url('~img/icon/plus/menu1.svg'); }
 		}
 
-        .viewItem.viewGrid { display: table; width: 100%; position: relative; box-shadow: 0px -1px #e0ded2 inset; }
+        .viewItem.viewGrid { width: 100%; position: relative; box-shadow: 0px -1px #e0ded2 inset; }
 		.viewItem.viewGrid {
 			.rowHead { display: grid; white-space: nowrap; width: calc(100% - 4px); margin-left: 2px; height: 46px; }
 
@@ -57,8 +57,7 @@
 			.icon.edit { width: 36px; height: 48px; position: absolute; right: 0px; top: 0px; }
 
 			.row { 
-				display: table-row; white-space: nowrap; box-shadow: 0px 1px #e0ded2 inset; left: 2px !important; width: calc(100% - 4px) !important; 
-				height: 48px;
+				white-space: nowrap; box-shadow: 0px 1px #e0ded2 inset; left: 2px !important; width: calc(100% - 4px) !important; height: 48px;
 			}
 			.row.add { border: 0px; }
 			.row.isArchived *, .row.isDeleted * { text-decoration: line-through; color: $colorMediumGrey; }

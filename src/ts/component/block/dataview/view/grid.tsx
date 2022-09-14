@@ -33,7 +33,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { rootId, block, getView, readonly, onRecordAdd, isPopup } = this.props;
+		const { rootId, block, getView, readonly, onRecordAdd, isPopup, isInline } = this.props;
 		const view = getView();
 		const relations = view.relations.filter((it: any) => { return it && it.isVisible; });
 		const subId = dbStore.getSubId(rootId, block.id);
@@ -41,6 +41,69 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 		const allowed = blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.Object ]);
 		const { total } = dbStore.getMeta(dbStore.getSubId(rootId, block.id), '');
 		const length = records.length;
+
+		let content = null;
+		if (isInline) {
+			content = (
+				<div>
+					{records.map((id: string, index: number) => (
+						<BodyRow 
+							key={'grid-row-' + view.id + index} 
+							{...this.props} 
+							readonly={readonly || !allowed}
+							index={index} 
+							cellPosition={this.cellPosition}
+						/>
+					))}
+				</div>
+			);
+		} else {
+			content = (
+				<InfiniteLoader
+					isRowLoaded={({ index }) => !!records[index]}
+					loadMoreRows={() => {}}
+					rowCount={total}
+					threshold={10}
+				>
+					{({ onRowsRendered, registerChild }) => (
+						<WindowScroller scrollElement={isPopup ? $('#popupPage-innerWrap').get(0) : window}>
+							{({ height, isScrolling, registerChild, scrollTop }) => {
+								return (
+									<AutoSizer disableHeight={true}>
+										{({ width }) => {
+											return (
+												<div ref={registerChild}>
+													<List
+														autoHeight={true}
+														height={Number(height) || 0}
+														width={Number(width) || 0}
+														isScrolling={isScrolling}
+														rowCount={length}
+														rowHeight={HEIGHT}
+														onRowsRendered={onRowsRendered}
+														rowRenderer={({ key, index, style }) => (
+															<BodyRow 
+																key={'grid-row-' + view.id + index} 
+																{...this.props} 
+																readonly={readonly || !allowed}
+																index={index} 
+																style={{ ...style, top: style.top + 2 }}
+																cellPosition={this.cellPosition}
+															/>
+														)}
+														scrollTop={scrollTop}
+													/>
+												</div>
+											);
+										}}
+									</AutoSizer>
+								);
+							}}
+						</WindowScroller>
+					)}
+				</InfiniteLoader>
+			);
+		};
 
 		return (
 			<div className="wrap">
@@ -55,49 +118,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 								onResizeStart={this.onResizeStart}
 							/>
 
-							<InfiniteLoader
-								isRowLoaded={({ index }) => !!records[index]}
-								loadMoreRows={() => {}}
-								rowCount={total}
-								threshold={10}
-							>
-								{({ onRowsRendered, registerChild }) => (
-									<WindowScroller scrollElement={isPopup ? $('#popupPage-innerWrap').get(0) : window}>
-										{({ height, isScrolling, registerChild, scrollTop }) => {
-											return (
-												<AutoSizer disableHeight={true}>
-													{({ width }) => {
-														return (
-															<div ref={registerChild}>
-																<List
-																	autoHeight={true}
-																	height={Number(height) || 0}
-																	width={Number(width) || 0}
-																	isScrolling={isScrolling}
-																	rowCount={length}
-																	rowHeight={HEIGHT}
-																	onRowsRendered={onRowsRendered}
-																	rowRenderer={({ key, index, style }) => (
-																		<BodyRow 
-																			key={'grid-row-' + view.id + index} 
-																			{...this.props} 
-																			readonly={readonly || !allowed}
-																			index={index} 
-																			style={{ ...style, top: style.top + 2 }}
-																			cellPosition={this.cellPosition}
-																		/>
-																	)}
-																	scrollTop={scrollTop}
-																/>
-															</div>
-														);
-													}}
-												</AutoSizer>
-											);
-										}}
-									</WindowScroller>
-								)}
-							</InfiniteLoader>
+							{content}
 
 							{!readonly && allowed ? (
 								<div className="row add">
@@ -178,6 +199,25 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 		scroll.css({ width: ww - 4, marginLeft: -margin - 2, paddingLeft: margin });
 		wrap.css({ width: vw, paddingRight: pr });
 		grid.css({ height: length * HEIGHT + 4, maxHeight: length * HEIGHT + 4 });
+
+		this.resizeColumns('', 0);
+	};
+
+	resizeColumns (relationKey: string, width: number) {
+		const { getView } = this.props;
+		const view = getView();
+		const node = $(ReactDOM.findDOMNode(this));
+		const relations = view.relations.filter(it => it.isVisible);
+		const columns = relations.map(it => {
+			const relation: any = dbStore.getRelationByKey(it.relationKey) || {};
+			if (relationKey && (it.relationKey == relationKey)) {
+				it.width = width;
+			};
+			return Relation.width(it.width, relation.format) + 'px';
+		}).concat([ 'auto' ]).join(' ');
+
+		node.find('.rowHead').css({ gridTemplateColumns: columns });
+		node.find('.row > .selectable').css({ gridTemplateColumns: columns });
 	};
 
 	cellPosition (cellId: string) {
@@ -226,26 +266,12 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { getView } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
-		const view = getView();
 		const width = this.checkWidth(e.pageX - this.ox);
 		const size = Constant.size.dataview.cell;
 		const el = node.find(`#${Relation.cellId('head', relationKey, '')}`);
 
-		const relations = view.relations.filter((it: any) => { 
-			return it.isVisible && dbStore.getRelationByKey(it.relationKey); 
-		});
-		const columns = relations.map((it: any) => {
-			if (it.relationKey == relationKey) {
-				it.width = width;
-			};
-			return it.width + 'px';
-		}).concat([ 'auto' ]).join(' ');
-
-		node.find('.rowHead').css({ gridTemplateColumns: columns });
-		node.find('.row > .selectable').css({ gridTemplateColumns: columns });
-
+		this.resizeColumns(relationKey, width);
 		width <= size.icon ? el.addClass('small') : el.removeClass('small');
 	};
 
@@ -272,7 +298,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 		const { rootId, block, readonly, getData, getView } = this.props;
 
 		menuStore.open('dataviewRelationList', { 
-			element: `#cell-add`,
+			element: `#block-${block.id} #cell-add`,
 			horizontal: I.MenuDirection.Center,
 			offsetY: 10,
 			data: {

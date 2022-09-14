@@ -1,11 +1,13 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
+import { Input, Icon } from 'Component';
 import { I, C, Util, DataUtil, analytics, Dataview, keyboard, Onboarding, Relation, Renderer } from 'Lib';
-import { observer } from 'mobx-react';
 import { blockStore, menuStore, dbStore, detailStore, popupStore } from 'Store';
+import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 import arrayMove from 'array-move';
 
+import Head from './dataview/head';
 import Controls from './dataview/controls';
 
 import ViewGrid from './dataview/view/grid';
@@ -13,7 +15,9 @@ import ViewBoard from './dataview/view/board';
 import ViewGallery from './dataview/view/gallery';
 import ViewList from './dataview/view/list';
 
-interface Props extends I.BlockComponent, RouteComponentProps<any> {};
+interface Props extends I.BlockComponent, RouteComponentProps<any> {
+	isInline?: boolean;
+};
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
@@ -22,6 +26,8 @@ const raf = require('raf');
 const BlockDataview = observer(class BlockDataview extends React.Component<Props, {}> {
 
 	viewRef: any = null;
+	controlRef: any = null;
+	headRef: any = null;
 	cellRefs: Map<string, any> = new Map();
 	viewId: string = '';
 	creating: boolean = false;
@@ -41,7 +47,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	render () {
-		const { rootId, block, isPopup } = this.props;
+		const { rootId, block, isPopup, isInline } = this.props;
+		const root = blockStore.getLeaf(rootId, rootId);
 		const views = dbStore.getViews(rootId, block.id);
 
 		if (!views.length) {
@@ -53,9 +60,12 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			return null;
 		};
 
+		let sources = block.content.sources || [];
 		let { groupRelationKey } = view;
 		let ViewComponent: any = null;
 		let className = '';
+		let head = null;
+		let content = null;
 
 		switch (view.type) {
 			default:
@@ -80,9 +90,23 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				break;
 		};
 
-		return (
-			<div>
+		if (isInline) {
+			head = (
+				<Head 
+					ref={(ref: any) => { this.headRef = ref; }} 
+					{...this.props} 
+					readonly={false} 
+					getData={this.getData} 
+					getView={this.getView} 
+					getRecord={this.getRecord}
+					onRecordAdd={this.onRecordAdd}
+					isInline={isInline}
+				/>
+			);
+		} else {
+			head = (
 				<Controls 
+					ref={(ref: any) => { this.controlRef = ref; }} 
 					{...this.props} 
 					className={className}
 					readonly={false} 
@@ -90,7 +114,13 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					getView={this.getView} 
 					getRecord={this.getRecord}
 					onRecordAdd={this.onRecordAdd}
+					isInline={isInline}
 				/>
+			);
+		};
+
+		if ((isInline && sources.length) || !isInline) {
+			content = (
 				<div className="content">
 					<ViewComponent 
 						key={'view' + view.id}
@@ -108,8 +138,16 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 						onCellClick={this.onCellClick}
 						onCellChange={this.onCellChange}
 						onContext={this.onContext}
+						isInline={isInline}
 					/>
 				</div>
+			);
+		};
+
+		return (
+			<div>
+				{head}
+				{content}
 			</div>
 		);
 	};
@@ -216,22 +254,25 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		this.viewId = newViewId;
 
-		const { rootId, block } = this.props;
+		const { rootId, block, isInline } = this.props;
 		const subId = dbStore.getSubId(rootId, block.id);
 		const view = this.getView(newViewId);
 		const keys = this.getKeys(newViewId);
 
 		let limit = 0;
 		if ([ I.ViewType.Grid, I.ViewType.List ].includes(view.type)) {
-			limit = Constant.limit.dataview.records + offset;
+			//limit = Constant.limit.dataview.records + offset;
 			offset = 0;
+		};
+		if (isInline) {
+			limit = 6;
 		};
 
 		dbStore.recordsSet(subId, '', []);
 		dbStore.metaSet(subId, '', { offset: offset, viewId: newViewId });
 
 		if (![ I.ViewType.Board ].includes(view.type)) {
-			Dataview.getData(rootId, block.id, newViewId, keys, 0, 0, false, callBack);
+			Dataview.getData(rootId, block.id, newViewId, keys, 0, limit, false, callBack);
 		} else 
 		if (this.viewRef.loadGroupList) {
 			this.viewRef.loadGroupList();
@@ -528,6 +569,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		this.frame = raf(() => {
+			if (this.controlRef && this.controlRef.resize) {
+				this.controlRef.resize();
+			};
+
 			if (this.viewRef && this.viewRef.resize) {
 				this.viewRef.resize();
 			};
