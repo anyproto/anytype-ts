@@ -974,11 +974,15 @@ class DataUtil {
 
 		if (!config.debug.ho) {
 			relations = relations.filter((it: I.Relation) => { 
-				if ([ Constant.relationKey.name ].indexOf(it.relationKey) >= 0) {
+				if ([ 'name' ].indexOf(it.relationKey) >= 0) {
 					return true;
 				};
 				return !it.isHidden; 
 			});
+		};
+
+		if (!relations.find(it => it.relationKey == 'name')) {
+			relations.unshift({ relationKey: 'name' });
 		};
 
 		for (let i = 0; i < view.relations.length; ++i) {

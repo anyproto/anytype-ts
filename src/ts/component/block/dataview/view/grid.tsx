@@ -178,6 +178,31 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 		scroll.css({ width: ww - 4, marginLeft: -margin - 2, paddingLeft: margin });
 		wrap.css({ width: vw, paddingRight: pr });
 		grid.css({ height: length * HEIGHT + 4, maxHeight: length * HEIGHT + 4 });
+
+		this.resizeColumns('', 0);
+	};
+
+	resizeColumns (relationKey: string, width: number) {
+		const { getView } = this.props;
+		const view = getView();
+		const node = $(ReactDOM.findDOMNode(this));
+		const relations = view.relations.filter(it => it.isVisible);
+		const size = Constant.size.dataview.cell;
+		const columns = relations.map(it => {
+			const el = node.find(`#${Relation.cellId('head', it.relationKey, '')}`);
+
+			if (relationKey && (it.relationKey == relationKey)) {
+				it.width = width;
+			};
+
+			it.width = Relation.width(it.width, null);
+			it.width <= size.icon ? el.addClass('small') : el.removeClass('small');
+
+			return it.width + 'px';
+		}).concat([ 'auto' ]).join(' ');
+
+		node.find('.rowHead').css({ gridTemplateColumns: columns });
+		node.find('.row > .selectable').css({ gridTemplateColumns: columns });
 	};
 
 	cellPosition (cellId: string) {
@@ -226,27 +251,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { rootId, block, getView } = this.props;
-		const node = $(ReactDOM.findDOMNode(this));
-		const view = getView();
-		const width = this.checkWidth(e.pageX - this.ox);
-		const size = Constant.size.dataview.cell;
-		const el = node.find(`#${Relation.cellId('head', relationKey, '')}`);
-
-		const relations = view.relations.filter((it: any) => { 
-			return it.isVisible && dbStore.getRelation(rootId, block.id, it.relationKey); 
-		});
-		const columns = relations.map((it: any) => {
-			if (it.relationKey == relationKey) {
-				it.width = width;
-			};
-			return it.width + 'px';
-		}).concat([ 'auto' ]).join(' ');
-
-		node.find('.rowHead').css({ gridTemplateColumns: columns });
-		node.find('.row > .selectable').css({ gridTemplateColumns: columns });
-
-		width <= size.icon ? el.addClass('small') : el.removeClass('small');
+		this.resizeColumns(relationKey, this.checkWidth(e.pageX - this.ox));
 	};
 
 	onResizeEnd (e: any, relationKey: string) {
