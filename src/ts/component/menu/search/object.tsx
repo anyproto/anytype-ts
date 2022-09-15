@@ -21,6 +21,7 @@ const HEIGHT_ITEM = 28;
 const HEIGHT_ITEM_BIG = 56;
 const HEIGHT_DIV = 16;
 const HEIGHT_FILTER = 44;
+const HEIGHT_EMPTY = 98;
 
 const MenuSearchObject = observer(class MenuSearchObject extends React.Component<Props, State> {
 
@@ -77,6 +78,11 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 					<div className="separator" style={param.style}>
 						<div className="inner" />
 					</div>
+				);
+			} else
+			if (item.isEmpty && !loading) {
+				content = (
+					<EmptySearch text={filter ? Util.sprintf(translate('popupSearchEmptyFilter'), filter) : translate('popupSearchEmpty')} />
 				);
 			} else {
 				if (item.id == 'add') {
@@ -144,10 +150,6 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 				) : ''}
 
 				{loading ? <Loader /> : ''}
-
-				{!items.length && !loading ? (
-					<EmptySearch text={filter ? Util.sprintf(translate('popupSearchEmptyFilter'), filter) : translate('popupSearchEmpty')} />
-				) : ''}
 
 				{this.cache && items.length && !loading ? (
 					<React.Fragment>
@@ -243,7 +245,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		const { filter } = this.state;
 		const { param } = this.props;
 		const { data } = param;
-		const { label } = data;
+		const { label, canNotAdd } = data;
 
 		let items = [].concat(this.items);
 
@@ -251,13 +253,17 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 			items.unshift({ isSection: true, name: label });
 		};
 
-		if (filter.length) {
+		if (filter.length && !canNotAdd) {
 			if (items.length) {
 				items.push({ isDiv: true });
 			};
 
 			items.push({ id: 'add', name: `Create object "${filter}"`, icon: 'plus' });
 		};
+
+		if (!items.length) {
+			items.push({ isEmpty: true });
+		}
 
 		return items;
 	};
@@ -403,7 +409,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 							newBlock.type = I.BlockType.Bookmark;
 							newBlock.content = {
 								state: I.BookmarkState.Done,
-								targetObjectId: item.id,
+								targetObjectId: itemId,
 							};
 							break;
 
@@ -490,6 +496,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		let h = HEIGHT_ITEM;
 
 		if (isBig || item.isBig) h = HEIGHT_ITEM_BIG;
+		if (item.isEmpty) h = HEIGHT_EMPTY;
 		if (item.isSection) h = HEIGHT_SECTION;
 		if (item.isDiv) h = HEIGHT_DIV;
 		return h;
