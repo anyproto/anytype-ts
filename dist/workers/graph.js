@@ -155,7 +155,9 @@ image = ({ src, bitmap }) => {
 
 updateProps = (data) => {
 	forceProps = data.forceProps;
-	redraw();
+	
+	updateForces();
+	restart(1);
 };
 
 initForces = () => {
@@ -168,6 +170,7 @@ initForces = () => {
 	.force('forceY', d3.forceY());
 
 	updateForces();
+	restart(1);
 };
 
 updateForces = () => {
@@ -212,8 +215,6 @@ updateForces = () => {
 		return hasLinks ? 0 : forceY.strength * forceY.enabled;
 	})
 	.y(height * forceY.y);
-
-	simulation.alpha(1).restart();
 };
 
 draw = () => {
@@ -464,13 +465,13 @@ onZoom = (data) => {
 
 onDragStart = ({ active }) => {
 	if (!active) {
-		simulation.alphaTarget(0.3).restart();
+		restart(0.5);
 	};
 };
 
 onDragMove = ({ subjectId, active, x, y }) => {
 	if (!active) {
-		simulation.alphaTarget(0.3).restart();
+		restart(0.5);
 	};
 
 	if (!subjectId) {
@@ -540,6 +541,7 @@ onRemoveNode = ({ ids }) => {
 	edges = edges.filter(d => !ids.includes(d.source.id) && !ids.includes(d.target.id));
 	
 	updateForces();
+	restart(0.5);
 };
 
 onSetEdges = (data) => {
@@ -552,6 +554,7 @@ onSetEdges = (data) => {
 	});
 
 	updateForces();
+	restart(0.5);
 };
 
 onSetSelected = ({ ids }) => {
@@ -560,6 +563,10 @@ onSetSelected = ({ ids }) => {
 
 getNodeByCoords = (x, y) => {
 	return simulation.find(transform.invertX(x), transform.invertY(y), 10);
+};
+
+restart = (alpha) => {
+	simulation.alpha(alpha).restart();
 };
 
 resize = (data) => {
