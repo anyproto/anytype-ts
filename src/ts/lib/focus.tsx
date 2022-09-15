@@ -107,8 +107,12 @@ class Focus {
 		const no = node.offset().top;
 		const o = Constant.size.lastBlock + Util.sizeHeader();
 		const st = container.scrollTop();
+<<<<<<< Updated upstream
 		
 		let y = isPopup ? (no - container.offset().top + st) : no;
+=======
+		const y = isPopup ? (no - container.offset().top + st) : no;
+>>>>>>> Stashed changes
 
 		if ((y >= st) && (y <= st + h - o)) {
 			return;

@@ -202,7 +202,7 @@
 		"blockMenu": 48,
 		"image": 2048,
 		"header": 38,
-		"lastBlock": 60,
+		"lastBlock": 80,
 		"cover": 1920,
 		"sidebar": {
 			"unfix": 992,

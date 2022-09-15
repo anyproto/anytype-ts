@@ -1811,7 +1811,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			};
 
 			if (next) {
-				this.focus(blockId, to, to, false);
+				this.focus(blockId, to, to, true);
 			};
 
 			analytics.event('DeleteBlock', { count: 1 });
@@ -1923,7 +1923,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 				
 				if (next) {
 					let length = next.getLength();
-					this.focus(next.id, length, length, false);
+					this.focus(next.id, length, length, true);
 				};
 			});
 		};
@@ -1967,7 +1967,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		if (create) {
 			this.blockCreate('', I.BlockPosition.Bottom, { type: I.BlockType.Text });
 		} else {
-			this.focus(last.id, length, length, false);
+			this.focus(last.id, length, length, true);
 		};
 	};
 	

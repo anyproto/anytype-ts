@@ -687,7 +687,7 @@ class App extends React.Component<Props, State> {
 			case 'debugSync':
 				C.DebugSync(100, (message: any) => {
 					if (!message.error.code) {
-						window.Electron.fileWrite('debug-sync.json', JSON.stringify(message, null, 5), 'text');
+						window.Electron.fileWrite('debug-sync.json', JSON.stringify(message, null, 5), 'utf8');
 
 						Renderer.send('pathOpen', tmpPath);
 					};
