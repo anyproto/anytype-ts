@@ -156,7 +156,7 @@ class Relation {
 				break;
 
 			case I.RelationType.Number:
-				value = String(value || '').replace(/,\s?/g, '.').replace(/[^\d\.e+]*/gi, '');
+				value = String(value || '').replace(/,\s?/g, '.').replace(/[^\d\.e+-]*/gi, '');
 				if ((value === '') || (value === undefined)) {
 					value = null;
 				};
