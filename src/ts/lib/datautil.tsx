@@ -135,7 +135,7 @@ class DataUtil {
 	};
 
 	relationTypeName (v: I.RelationType): string {
-		return Util.toCamelCase(I.RelationType[v]);
+		return Util.toCamelCase(I.RelationType[v || I.RelationType.LongText]);
 	};
 
 	relationClass (v: I.RelationType): string {
