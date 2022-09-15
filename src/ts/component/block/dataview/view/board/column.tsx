@@ -81,7 +81,7 @@ const Column = observer(class Column extends React.Component<Props, State> {
 					<div className="sides">
 						<div 
 							className="side left"
-							draggable={config.experimental}
+							draggable={true}
 							onDragStart={(e: any) => { onDragStartColumn(e, id); }}
 						>
 							<Cell 

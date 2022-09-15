@@ -32,7 +32,7 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 				id={`card-${record.id}`}
 				className={cn.join(' ')} 
 				data-id={record.id}
-				draggable={config.experimental}
+				draggable={true}
 				onDragStart={(e: any) => { onDragStartCard(e, groupId, record); }}
 				onClick={(e: any) => { this.onClick(e); }}
 				onContextMenu={(e: any) => { onContext(e, record.id); }}
