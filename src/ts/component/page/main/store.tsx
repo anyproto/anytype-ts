@@ -369,6 +369,8 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 				return;
 			};
 
+			dbStore.objectTypesSet([ message.objectType ]);
+
 			this.onClick(e, { ...message.objectType, layout: I.ObjectLayout.Type });
 			analytics.event('CreateType');
 		});
