@@ -150,10 +150,13 @@ class DetailStore {
 		} else
 		if (object.type == Constant.typeId.relation) {
 			object.relationFormat = Number(object.relationFormat) || I.RelationType.LongText;
+			object.relationMaxCount = Number(object.relationMaxCount) || 0;
 			object.isReadonlyRelation = Boolean(object.isReadonly);
 			//object.isReadonlyValue = Boolean(object.readonlyValue);
 			//object.scope = Number(object.scope) || I.RelationScope.Object;
+
 			object.format = object.relationFormat;
+			object.maxCount = object.relationMaxCount;
 			object.objectTypes = object.relationFormatObjectTypes || [];
 		} else
 		if (object.type == Constant.typeId.option) {
