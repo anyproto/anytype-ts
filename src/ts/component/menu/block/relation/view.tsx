@@ -162,41 +162,42 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const { rootId } = data;
 		const { config } = commonStore;
 		const object = detailStore.get(rootId, rootId, [ Constant.relationKey.featured ]);
+		const type = dbStore.getType(object.type);
+
+		let featured = object[Constant.relationKey.featured] || [];
+		let objectRelations = dbStore.getRelations(rootId, rootId).map(it => it.id);
+		let typeRelations = type ? type.recommendedRelations : [];
+		let items = dbStore.getRelations(rootId, rootId).map((it: any) => {
+			return { ...it, scope: I.RelationScope.Object };
+		});
+
+		typeRelations = typeRelations.filter(it => !objectRelations.includes(it));
+
+		items = items.concat(typeRelations.map(it => {
+			it = dbStore.getRelationById(it);
+			return { ...it, scope: I.RelationScope.Type };
+		}));
 		
-		let items = Util.objectCopy(dbStore.getRelations(rootId, rootId)).sort(DataUtil.sortByHidden);
-		items = items.filter((it: any) => {
+		items = Util.objectCopy(items).sort(DataUtil.sortByHidden).filter((it: any) => {
 			return it ? (!config.debug.ho ? !it.isHidden : true) : false;
 		});
 
-		let featured = object[Constant.relationKey.featured] || [];
 		let sections = [ 
 			{ 
 				id: 'featured', name: 'Featured relations', 
-				children: items.filter((it: any) => { return featured.indexOf(it.relationKey) >= 0; }),
+				children: items.filter(it => featured.includes(it.relationKey)),
 			},
 			{ 
 				id: 'object', name: 'In this object', 
-				children: items.filter((it: any) => { return (it.scope == I.RelationScope.Object) && (featured.indexOf(it.relationKey) < 0); }),
+				children: items.filter(it => !featured.includes(it.relationKey) && (it.scope == I.RelationScope.Object)),
 			},
 			{ 
-				id: 'type', name: 'Type', 
-				children: items.filter((it: any) => { return (it.scope == I.RelationScope.Type) && (featured.indexOf(it.relationKey) < 0); }),
-			},
-			{ 
-				id: 'setType', name: 'Suggested', 
-				children: items.filter((it: any) => { return (it.scope == I.RelationScope.SetOfTheSameType) && (featured.indexOf(it.relationKey) < 0); }),
-			},
-			{ 
-				id: 'objectType', name: 'Objects of the same type', 
-				children: items.filter((it: any) => { return (it.scope == I.RelationScope.ObjectsOfTheSameType) && (featured.indexOf(it.relationKey) < 0); }),
-			},
-			{ 
-				id: 'library', name: 'Library', 
-				children: items.filter((it: any) => { return (it.scope == I.RelationScope.Library) && (featured.indexOf(it.relationKey) < 0); }),
+				id: 'type', name: `From type ${type.name}`,
+				children: items.filter(it => !featured.includes(it.relationKey) && (it.scope == I.RelationScope.Type)),
 			},
 		];
 
-		sections = sections.filter((it: any) => { return it.children.length; });
+		sections = sections.filter(it => it.children.length);
 		return sections;
 	};
 

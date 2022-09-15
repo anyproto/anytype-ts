@@ -143,6 +143,7 @@ class DetailStore {
 		if (object.type == Constant.typeId.type) {
 			object.smartblockTypes = object.smartblockTypes || [];
 			object.recommendedLayout = Number(object.recommendedLayout) || I.ObjectLayout.Page;
+			object.recommendedRelations = object.recommendedRelations || [];
 
 			if (object.isDeleted) {
 				name = translate('commonDeletedType');
