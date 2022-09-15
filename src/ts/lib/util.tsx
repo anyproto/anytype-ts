@@ -240,6 +240,9 @@ class Util {
 		const map = new Map();
 		
 		for (const item of a) {
+			if (!item) {
+				return;
+			};
 			if (!map.has(item[k])){
 				map.set(item[k], true);
 				res.push(item);

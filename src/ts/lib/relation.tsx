@@ -311,7 +311,7 @@ class Relation {
 		let options: any[] = dbStore.getRelations(rootId, blockId);
 
 		options = options.filter((it: any) => {
-			return formats.includes(it.format) && (!it.isHidden || [ Constant.relationKey.done ].includes(it.relationKey));
+			return it && formats.includes(it.format) && (!it.isHidden || [ Constant.relationKey.done ].includes(it.relationKey));
 		});
 
 		options.sort((c1: any, c2: any) => {
