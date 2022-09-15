@@ -198,11 +198,14 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 				mark = Mark.getInRange(marks, type, { from: from, to: to });
 
 				menuParam = Object.assign(menuParam, {
+					element: null,
 					offsetY: param.offsetY,
 					recalcRect: param.recalcRect,
 					width: getSize().width,
 					noFlipY: true,
 				});
+
+				console.log(menuParam);
 
 				menuParam.data = Object.assign(menuParam.data, {
 					filter: mark ? mark.param : '',
