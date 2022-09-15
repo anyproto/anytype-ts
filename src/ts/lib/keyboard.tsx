@@ -290,26 +290,38 @@ class Keyboard {
 				});
 			};
 		} else {
-			const prev = Util.history.entries[Util.history.index - 1];
+			let prev = Util.history.entries[Util.history.index - 1];
+
+			if (account && !prev) {
+				Util.route('/main/index');
+				return;
+			};
+
 			if (prev) {
 				let route = Util.getRoute(prev.pathname);
+
 				if ([ 'index', 'auth' ].includes(route.page) && account) {
 					return;
 				};
+
 				if ((route.page == 'main') && !account) {
 					return;
 				};
 
-				Util.history.goBack();
-			} else 
-			if (account) {
-				Util.route('/main/index');
+				if ((route.page == 'main') && (route.action == 'history')) {
+					prev = Util.history.entries[Util.history.index - 3];
+					if (prev) {
+						Util.route(prev.pathname);
+					};
+					return;
+				};
+
+				Util.route(prev.pathname);
 			};
 		};
 
 		menuStore.closeAll();
 		this.restoreSource();
-
 		analytics.event('HistoryBack');
 	};
 
