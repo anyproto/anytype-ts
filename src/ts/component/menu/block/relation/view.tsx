@@ -273,12 +273,8 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 			data: {
 				...data,
 				relationId: id,
-				addCommand: (rootId: string, blockId: string, relation: any, onChange?: (relation: any) => void) => {
-					C.ObjectRelationAdd(rootId, [ relation.id ], () => {
-						if (onChange) {
-							onChange(relation);
-						};
-					});
+				addCommand: (rootId: string, blockId: string, relationId: string) => {
+					C.ObjectRelationAdd(rootId, [ relationId ]);
 				},
 				deleteCommand: () => {
 					C.ObjectRelationDelete(rootId, id);

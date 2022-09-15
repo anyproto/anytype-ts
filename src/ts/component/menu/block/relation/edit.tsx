@@ -354,9 +354,12 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 	onCopy (e: any) {
 		const { close } = this.props;
 		const relation = this.getRelation();
-		const newRelation: any = { name: relation.name, format: relation.format };
 
-		this.add(newRelation);
+		this.add({
+			name: relation.name,
+			relationFormat: relation.format,
+			relationFormatObjectTypes: relation.objectTypes,
+		});
 		close();
 
 		analytics.event('DuplicateRelation');
