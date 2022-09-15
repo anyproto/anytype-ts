@@ -205,8 +205,6 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 					noFlipY: true,
 				});
 
-				console.log(menuParam);
-
 				menuParam.data = Object.assign(menuParam.data, {
 					filter: mark ? mark.param : '',
 					type: mark ? mark.type : null,

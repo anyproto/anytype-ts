@@ -200,7 +200,6 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 	onRelation (e: any) {
 		const { isPopup, rootId, readonly } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
-		const container = Util.getScrollContainer(isPopup);
 		const cnw = [ 'fixed' ];
 
 		if (!isPopup) {
@@ -209,7 +208,9 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 
 		const param: any = {
 			recalcRect: () => {
+				const container = Util.getScrollContainer(isPopup);
 				const rect = { x: container.width() / 2 , y: Util.sizeHeader() + container.scrollTop(), width: 1, height: 1 };
+
 				if (isPopup) {
 					const offset = container.offset();
 					rect.x += offset.left;

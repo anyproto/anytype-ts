@@ -139,6 +139,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		const { selection } = dataset || {};
 		const win = $(window);
 		const namespace = isPopup ? '-popup' : '';
+		const container = Util.getScrollContainer(isPopup);
 
 		this._isMounted = true;
 
@@ -157,6 +158,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		});
 		win.on('focus.editor' + namespace, (e: any) => {
 			let ids: string[] = [];
+			
 			if (selection) {
 				ids = selection.get(I.SelectType.Block, true);
 			};
@@ -164,11 +166,12 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 				focus.restore();
 				focus.apply(); 
 			};
-			Util.getScrollContainer(isPopup).scrollTop(this.scrollTop);
+
+			container.scrollTop(this.scrollTop);
 		});
 
 		win.on('resize.editor' + namespace, (e: any) => { this.resize(); });
-		Util.getScrollContainer(isPopup).on('scroll.editor' + namespace, throttle((e: any) => { this.onScroll(e); }, THROTTLE));
+		container.on('scroll.editor' + namespace, (e: any) => { this.onScroll(e); });
 
 		Renderer.remove('commandEditor');
 		Renderer.on('commandEditor', (e: any, cmd: string, arg: any) => { this.onCommand(cmd, arg); });
@@ -180,15 +183,15 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		const resizable = node.find('.resizable');
 		
 		this.open();
-		
 		focus.apply();
-		Util.getScrollContainer(isPopup).scrollTop(this.scrollTop);
 
 		if (resizable.length) {
 			resizable.trigger('resizeInit');
 		};
 
 		this.resize();
+
+		Util.getScrollContainer(isPopup).scrollTop(this.scrollTop);
 	};
 	
 	componentWillUnmount () {
@@ -1419,6 +1422,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		const top = Util.getScrollContainer(isPopup).scrollTop();
 
 		this.scrollTop = top;
+
 		Storage.setScroll('editor' + (isPopup ? 'Popup' : ''), rootId, top);
 		Util.previewHide(false);
 	};
