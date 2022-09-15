@@ -4,5 +4,5 @@
 #selection * { user-select: none; }
 #selection-rect { 
 	position: absolute; left: 0px; top: 0px; width: 0px; height: 0px; display: none; z-index: 102; background: rgba(42, 167, 238, 0.15); 
-	border: 0.05em solid #2aa7ee;
+	border: 0.05em solid #2aa7ee; pointer-events: none;
 }
