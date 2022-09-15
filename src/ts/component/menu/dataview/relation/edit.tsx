@@ -298,7 +298,11 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 				break;
 
 			case 'copy':
-				this.add({ name: relation.name, format: relation.format });
+				this.add({ 
+					name: relation.name, 
+					relationFormat: relation.format,
+					relationFormatObjectTypes: (relation.format == I.RelationType.Object) ? relation.objectTypes || [] : [],
+				});
 				break;
 
 			case 'remove':
@@ -548,50 +552,48 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 	};
 
 	save () {
-		const { param, close } = this.props;
-		const { data } = param;
-		const { rootId, blockId } = data;
 		const name = this.ref ? this.ref.getValue() : '';
-		const block = blockStore.getLeaf(rootId, blockId);
-
-		if (!name || !block) {
+		if (!name) {
 			return;
 		};
 
 		const relation = this.getViewRelation();
-		const newRelation: any = { name: name, format: this.format };
-
-		if (this.format == I.RelationType.Object) {
-			newRelation.objectTypes = this.objectTypes;
+		const item: any = { 
+			name: name, 
+			relationFormat: this.format,
+			relationFormatObjectTypes: (this.format == I.RelationType.Object) ? this.objectTypes || [] : [],
 		};
 
-		relation ? this.update(newRelation) : this.add(newRelation);
+		relation ? this.update(item) : this.add(item);
 	};
 
-	add (newRelation: any) {
+	add (item: any) {
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, blockId, addCommand, onChange } = data;
 
-		const details = { 
-			name: newRelation.name, 
-			relationFormat: newRelation.format,
-		};
+		C.ObjectCreateRelation(item, [], (message: any) => {
+			if (message.error.code) {
+				return;
+			};
 
-		C.ObjectCreateRelation(details, [], (message: any) => {
+			data.relationId = message.objectId;
+
 			if (addCommand) {
 				addCommand(rootId, blockId, message.objectId, onChange);
 			};
 		});
 	};
 
-	update (newRelation: any) {
+	update (item: any) {
 		const { param } = this.props;
 		const { data } = param;
 		const { relationId } = data;
-		const details = [ 
-			{ key: 'name', value: newRelation.name },
-		];
+		const details: any[] = [];
+
+		for (let k in item) {
+			details.push({ key: k, value: item[k] });
+		};
 
 		C.ObjectSetDetails(relationId, details);
 	};
