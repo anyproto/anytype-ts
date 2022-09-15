@@ -86,6 +86,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 					key="editorControls" 
 					{...this.props} 
 					resize={this.resize} 
+					readonly={readonly}
 					onLayoutSelect={(layout: I.ObjectLayout) => { this.focusTitle(); }} 
 				/>
 				
