@@ -620,7 +620,11 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 					});
 				} else 
 				if (item.isObject) {
-					const details = { type: item.objectTypeId };
+					const details: any = { type: item.objectTypeId };
+
+					if (item.objectTypeId == Constant.typeId.set) {
+						details.layout = I.ObjectLayout.Set;
+					};
 
 					const create = (template: any) => {
 
