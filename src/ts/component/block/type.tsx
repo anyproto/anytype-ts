@@ -77,10 +77,14 @@ const BlockType = observer(class BlockType extends React.Component<Props, {}> {
 	onKeyDown (e: any) {
 		const { onKeyDown } = this.props;
 		const items = this.getItems();
+		const cmd = keyboard.ctrlKey();
 
 		keyboard.disableMouse(true);
 
 		keyboard.shortcut('arrowup, arrowleft', e, (pressed: string) => {
+			e.preventDefault();
+			e.key = 'arrowup';
+
 			this.n--;
 
 			if (this.n < 0) {
@@ -97,6 +101,7 @@ const BlockType = observer(class BlockType extends React.Component<Props, {}> {
 
 		keyboard.shortcut('arrowdown, arrowright', e, (pressed: string) => {
 			e.preventDefault();
+			e.key = 'arrowdown';
 
 			this.n++;
 
@@ -119,6 +124,15 @@ const BlockType = observer(class BlockType extends React.Component<Props, {}> {
 				this.onClick(e, items[this.n]);
 			};
 		});
+
+		for (let i = 1; i <= 4; ++i) {
+			keyboard.shortcut(`${cmd}+${i}`, e, (pressed: string) => {
+				const item = items[(i - 1)];
+				if (item) {
+					this.onClick(e, item);
+				};
+			});
+		};
 	};
 	
 	onFocus () {
@@ -158,9 +172,7 @@ const BlockType = observer(class BlockType extends React.Component<Props, {}> {
 
 	onMenu (e: any) {
 		const { rootId, block } = this.props;
-		const types = DataUtil.getObjectTypesForNewObject().map(it => it.id).filter((id: string) => {
-			return ![ Constant.typeId.page, Constant.typeId.task, Constant.typeId.set ].includes(id);
-		});
+		const types = DataUtil.getObjectTypesForNewObject().map(it => it.id);
 		const element = `#block-${block.id} #item-menu`;
 		const obj = $(element);
 
@@ -182,17 +194,12 @@ const BlockType = observer(class BlockType extends React.Component<Props, {}> {
 				filters: [
 					{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: types }
 				],
+				sorts: [
+					{ relationKey: 'name', type: I.SortType.Asc }
+				],
 				onSelect: (item: any) => {
 					this.onClick(e, item);
-				},
-				dataSort: (c1: any, c2: any) => {
-					let i1 = types.indexOf(c1.id);
-					let i2 = types.indexOf(c2.id);
-
-					if (i1 > i2) return 1;
-					if (i1 < i2) return -1;
-					return 0;
-				},
+				}
 			}
 		});
 	};

@@ -247,9 +247,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
 		].concat(data.filters || []);
 
-		const sorts = [
-			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
-		].concat(data.sorts || []);
+		const sorts = data.sorts && data.sorts.length ? data.sorts : [ { relationKey: 'lastOpenedDate', type: I.SortType.Desc } ];
 
 		if (skipIds && skipIds.length) {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: skipIds });
