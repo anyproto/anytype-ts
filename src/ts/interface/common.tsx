@@ -127,3 +127,10 @@ export enum SurveyType {
 	Pmf 		= 'pmf',
 	Object 		= 'object',
 };
+
+export enum SliceOperation {
+	Add		 = 0,
+    Move	 = 1,
+	Remove	 = 2,
+    Replace	 = 3,
+};

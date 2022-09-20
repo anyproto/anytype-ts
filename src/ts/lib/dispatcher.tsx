@@ -115,6 +115,7 @@ class Dispatcher {
 		if (v == V.BLOCKDATAVIEWRELATIONSET)	 t = 'blockDataviewRelationSet';
 		if (v == V.BLOCKDATAVIEWRELATIONDELETE)	 t = 'blockDataviewRelationDelete';
 		if (v == V.BLOCKDATAVIEWGROUPORDERUPDATE)	 t = 'blockDataviewGroupOrderUpdate';
+		if (v == V.BLOCKDATAVIEWOBJECTORDERUPDATE)	 t = 'blockDataviewObjectOrderUpdate';
 
 		if (v == V.SUBSCRIPTIONADD)				 t = 'subscriptionAdd';
 		if (v == V.SUBSCRIPTIONREMOVE)			 t = 'subscriptionRemove';
@@ -556,6 +557,46 @@ class Dispatcher {
 							el.groups = order.groups;
 						};
 					};
+
+					blockStore.update(rootId, block);
+					break;
+
+				case 'blockDataviewObjectOrderUpdate':
+					id = data.getId();
+					block = blockStore.getLeaf(rootId, id);
+					if (!block) {
+						break;
+					};
+
+					viewId = data.getViewid();
+
+					const changes = data.getSlicechangesList() || [];
+					const el = block.content.objectOrder.find(it => it.viewId == viewId);
+
+					console.log(el);
+					if (!el) {
+						break;
+					};
+
+					changes.forEach((it: any) => {
+						const op = it.getOp();
+						const ids = it.getIdsList() || [];
+						const afterId = it.getAfterid();
+
+						console.log(op, ids, afterId);
+
+						switch (op) {
+							case I.SliceOperation.Add:
+								break;
+							case I.SliceOperation.Move:
+								break;
+							case I.SliceOperation.Remove:
+								break;
+							case I.SliceOperation.Replace:
+								el.objectIds = ids;
+								break;
+						};
+					});
 
 					blockStore.update(rootId, block);
 					break;
