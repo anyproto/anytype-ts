@@ -6,10 +6,10 @@
 		.wrapMenu { visibility: hidden; }
 		.focusable.isFocused { background: none; }
 
-		.wrap { display: flex; justify-content: flex-start; gap: 10px; }
+		.wrap { display: flex; justify-content: flex-start; gap: 8px; }
 
 		.item { 
-			position: relative; padding: 4px 8px; cursor: pointer; border-radius: 2px; border-radius: 6px; border: 1px solid $colorBorderDark; 
+			position: relative; padding: 3px 8px; cursor: pointer; border-radius: 2px; border-radius: 6px; border: 1px solid $colorBorderDark; 
 			display: inline-block; display: flex; align-items: center; gap: 0px 4px; color: $colorDarkGrey;
 		}
 		.item.hover, .item.active { background: $colorHover; }

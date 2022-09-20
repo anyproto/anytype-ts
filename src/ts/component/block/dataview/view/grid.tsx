@@ -29,6 +29,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 		this.onResizeStart = this.onResizeStart.bind(this);
 		this.onSortStart = this.onSortStart.bind(this);
 		this.onSortEnd = this.onSortEnd.bind(this);
+		this.onScroll = this.onScroll.bind(this);
 		this.loadMoreRows = this.loadMoreRows.bind(this);
 	};
 
@@ -176,6 +177,8 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 		for (let menu of menuStore.list) {
 			win.trigger('resize.' + Util.toCamelCase('menu-' + menu.id));
 		};
+
+		this.resizeColumns('', 0);
 	};
 
 	resize () {
