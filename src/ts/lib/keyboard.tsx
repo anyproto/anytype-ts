@@ -171,12 +171,14 @@ class Keyboard {
 				if (popupStore.isOpen('search') || !this.isPinChecked) {
 					return;
 				};
-				keyboard.onSearchPopup();
+				this.onSearchPopup();
 			});
 
 			// Text search
 			this.shortcut(`${cmd}+f`, e, (pressed: string) => {
-				this.onSearch();
+				if (!this.isFocused) {
+					this.onSearchMenu('');
+				};
 			});
 
 			// Navigation links
@@ -371,7 +373,7 @@ class Keyboard {
 
 		switch (cmd) {
 			case 'search':
-				this.onSearch();
+				this.onSearchMenu('');
 				break;
 
 			case 'graph':
@@ -466,7 +468,7 @@ class Keyboard {
 		Renderer.send('winCommand', 'saveAsHTML', { name: object.name });
 	};
 
-	onSearch () {
+	onSearchMenu (value: string) {
 		const isPopup = this.isPopup();
 		const popupMatch = this.getPopupMatch();
 
@@ -485,6 +487,7 @@ class Keyboard {
 				classNameWrap: 'fromHeader',
 				data: {
 					isPopup,
+					value,
 				},
 			});
 		}, Constant.delay.menu);
