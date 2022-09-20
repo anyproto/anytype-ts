@@ -12,8 +12,8 @@
 		}
 
 		.icon.resize {
-			width: 20px; height: 20px; position: absolute; right: 2px; bottom: 2px; z-index: 1;
-			background-image: url('~img/icon/resize.svg'); opacity: 0; cursor: nwse-resize;
+			width: 20px; height: 20px; position: absolute; right: 0px; bottom: 0px; z-index: 1;
+			background-image: url('~img/icon/resize-corner.svg'); opacity: 0; cursor: nwse-resize;
 		}
 
 		.icon.download {
