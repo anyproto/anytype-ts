@@ -582,16 +582,26 @@ class Dispatcher {
 						const op = it.getOp();
 						const ids = it.getIdsList() || [];
 						const afterId = it.getAfterid();
-
-						console.log(op, ids, afterId);
+						const idx = Math.max(0, el.objectIds.indexOf(afterId));
 
 						switch (op) {
 							case I.SliceOperation.Add:
+								ids.forEach((id: string, i: number) => {
+									el.objectIds.splice(idx + i, 0, id);
+								});
 								break;
+
 							case I.SliceOperation.Move:
+								ids.forEach((id: string, i: number) => {
+									const oidx = Math.max(0, el.objectIds.indexOf(id));
+									el.objectIds = arrayMove(el.objectIds, oidx, idx + i);
+								});
 								break;
+
 							case I.SliceOperation.Remove:
+								el.objectIds = el.objectIds.filter(id => !ids.includes(id));
 								break;
+
 							case I.SliceOperation.Replace:
 								el.objectIds = ids;
 								break;
