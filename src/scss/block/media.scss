@@ -16,6 +16,11 @@
 			background-image: url('~img/icon/resize.svg'); opacity: 0; cursor: nwse-resize;
 		}
 
+		.icon.download {
+			width: 28px; height: 28px; position: absolute; right: 8px; top: 9px; z-index: 1;
+			background-image: url('~img/icon/download.svg'); opacity: 0; cursor: pointer;
+		}
+
 		.loaderWrapper { border-radius: 4px; border: solid 1px $colorBorderDark; height: 48px; width: 100%; }
 		.error { margin: 0px; @include text-small; line-height: 22px; }
 		
@@ -38,6 +43,7 @@
 			}
 			
 			.icon.resize { display: none; }
+			.icon.download { display: none; }
 		}
 
 		.audioControls { width: 100%; min-width: 160px; white-space: nowrap; position: relative; text-align: left; }
@@ -138,19 +144,23 @@
 	.block.blockMedia > .wrapContent > .selectable > .dropTarget { line-height: 0px; }
 
 	.block.blockMedia.isReadonly > .wrapContent > .selectable > .dropTarget .icon.resize { display: none; }
+	.block.blockMedia.isReadonly > .wrapContent > .selectable > .dropTarget .icon.download { display: none; }
 	
 	.block.blockMedia:hover {
 		.icon.resize { opacity: 1; }
+		.icon.download { opacity: 1; }
 		.icon.dots { opacity: 1; }
 	}
 	
 	.block.blockMedia > .wrapContent > .selectable.isSelectionSelected > .dropTarget > .focusable > .wrap {
 		.icon.resize { opacity: 1; }
+		.icon.download { opacity: 1; }
 		.icon.dots { opacity: 1; }
 	}
 	
 	.block.blockMedia.isVideo > .wrapContent > .selectable > .dropTarget > .focusable.isPlaying > .wrap {
 		.icon.resize { display: none; }
+		.icon.download { display: none; }
 		.icon.dots { display: none; }
 		.icon.play { display: none; }
 	}

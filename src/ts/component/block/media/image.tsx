@@ -27,6 +27,7 @@ const BlockImage = observer(class BlockImage extends React.Component<Props, {}> 
 		this.onChangeFile = this.onChangeFile.bind(this);
 		this.onClick = this.onClick.bind(this);
 		this.onLoad = this.onLoad.bind(this);
+		this.onDownload = this.onDownload.bind(this);
 		this.onError = this.onError.bind(this);
 	};
 
@@ -75,6 +76,7 @@ const BlockImage = observer(class BlockImage extends React.Component<Props, {}> 
 							onLoad={this.onLoad} 
 							onError={this.onError} 
 						/>
+						<Icon className="download" onClick={this.onDownload} />
 						<Icon className="resize" onMouseDown={(e: any) => { this.onResizeStart(e, false); }} />
 					</div>
 				);
@@ -225,6 +227,12 @@ const BlockImage = observer(class BlockImage extends React.Component<Props, {}> 
 			popupStore.open('preview', { data: { block: this.props.block } });
 		};
 	};
+
+	onDownload () {
+		const { block } = this.props;
+
+		Action.download(block, 'block');
+	}
 	
 	getWidth (checkMax: boolean, v: number): number {
 		const { block } = this.props;
