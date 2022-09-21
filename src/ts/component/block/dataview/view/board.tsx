@@ -343,6 +343,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 
 		keyboard.setDragging(true);
 		selection.preventSelect(true);
+		selection.clear();
 		preventCommonDrop(true);
 	};
 
