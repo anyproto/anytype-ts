@@ -49,7 +49,7 @@ class Cell extends React.Component<Props, {}> {
 		const relation = this.getRelation();
 		const record = getRecord(index);
 
-		if (!relation) {
+		if (!relation || !record) {
 			return null;
 		};
 
