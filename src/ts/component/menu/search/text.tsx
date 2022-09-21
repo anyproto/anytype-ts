@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Icon, Input, Button } from 'Component';
-import { I, Util, keyboard, translate, analytics } from 'Lib';
+import { Icon, Input } from 'Component';
+import { I, Util, keyboard, translate, analytics, Storage } from 'Lib';
 
 interface Props extends I.Menu {};
 
@@ -31,13 +31,19 @@ class MenuSearchText extends React.Component<Props, {}> {
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { value } = data;
+		const value = String(data.value || Storage.get('search') || '');
 		
 		return (
 			<div className="flex">
 				<Icon className="search" />
 
-				<Input ref={(ref: any) => { this.ref = ref; }} value={value} placeholder={translate('commonSearch')} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp} />
+				<Input 
+					ref={(ref: any) => { this.ref = ref; }} 
+					value={value} 
+					placeholder={translate('commonSearch')} 
+					onKeyDown={this.onKeyDown} 
+					onKeyUp={this.onKeyUp} 
+				/>
 				<div className="buttons">
 
 					<div id="switcher" className="switcher">
@@ -123,6 +129,7 @@ class MenuSearchText extends React.Component<Props, {}> {
 			this.clear();
 		};
 		this.last = value;
+		Storage.set('search', value);
 
 		if (!value) {
 			return;
@@ -166,6 +173,8 @@ class MenuSearchText extends React.Component<Props, {}> {
 	onClear () {
 		this.ref.setValue('');
 		this.clear();
+
+		Storage.delete('search');
 	};
 
 	clear () {
