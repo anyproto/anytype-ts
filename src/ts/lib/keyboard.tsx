@@ -485,7 +485,6 @@ class Keyboard {
 				horizontal: I.MenuDirection.Right,
 				offsetX: 10,
 				classNameWrap: 'fromHeader',
-				passThrough: true,
 				data: {
 					isPopup,
 					value,
