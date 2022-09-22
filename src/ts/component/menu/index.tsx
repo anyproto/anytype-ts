@@ -418,13 +418,20 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 			const isFixed = (menu.css('position') == 'fixed') || (node.css('position') == 'fixed');
 			const offsetX = Number('function' == typeof(param.offsetX) ? param.offsetX() : param.offsetX) || 0;
 			const offsetY = Number('function' == typeof(param.offsetY) ? param.offsetY() : param.offsetY) || 0;
-			const rect = recalcRect ? recalcRect() : param.rect;
-
+			
 			let ew = 0;
 			let eh = 0;
 			let ox = 0;
 			let oy = 0;
 			let minY = Util.sizeHeader();
+			let rect = null;
+
+			if (recalcRect) {
+				rect = recalcRect();
+			};
+			if (!rect) {
+				rect = param.rect;
+			};
 
 			if (rect) {
 				ew = Number(rect.width) || 0;
