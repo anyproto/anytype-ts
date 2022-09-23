@@ -98,7 +98,7 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<Pro
 	};
 	
 	unbind () {
-		$(window).off('down.menu');
+		$(window).off('keydown.menu');
 	};
 
 	getSections () {
