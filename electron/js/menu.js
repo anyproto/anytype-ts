@@ -74,7 +74,7 @@ class MenuManager {
 
 					Separator,
 
-					{ label: 'Profile debug', click: () => { Util.send(this.win, 'command', 'debugSync'); } },
+					{ label: 'Account debug', click: () => { Util.send(this.win, 'command', 'debugSync'); } },
 					{ label: 'Current object debug', click: () => { this.win.show(); Util.send(this.win, 'command', 'debugTree'); } },
 
 					Separator,
