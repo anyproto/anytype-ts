@@ -204,8 +204,8 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 	unbind () {
 		const { getId } = this.props;
 
-		$(window).off('down.menu');
-		$(`#${getId()}`).off('ck.menu');
+		$(window).off('keydown.menu');
+		$(`#${getId()}`).off('click.menu');
 	};
 
 	focus () {

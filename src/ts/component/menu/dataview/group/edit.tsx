@@ -83,7 +83,7 @@ const MenuGroupEdit = observer(class MenuGroupEdit extends React.Component<Props
 	};
 	
 	unbind () {
-		$(window).off('down.menu');
+		$(window).off('keydown.menu');
 	};
 
 	getSections () {

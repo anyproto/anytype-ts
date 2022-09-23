@@ -164,6 +164,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 
 	componentWillUnmount () {
 		this._isMounted = false;
+		this.unbind();
 	};
 
 	focus () {
@@ -186,7 +187,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 	unbind () {
 		const { getId } = this.props;
 
-		$(window).off('down.menu');
+		$(window).off('keydown.menu');
 		$(`#${getId()}`).off('ck');
 	};
 

@@ -60,7 +60,7 @@ const MenuBlockStyle = observer(class MenuBlockStyle extends React.Component<Pro
 	};
 	
 	unbind () {
-		$(window).off('down.menu');
+		$(window).off('keydown.menu');
 	};
 	
 	getActive (): number {
