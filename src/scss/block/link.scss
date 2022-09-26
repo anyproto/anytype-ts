@@ -59,7 +59,7 @@
 				.txt { line-height: 24px; vertical-align: top; }
 			}
 
-			.cardName .name { @include clamp1; border-bottom: 0.05em solid $colorMediumGrey; }
+			.cardName .name { @include clamp1; font-weight: 500; }
 		}
 
 		.linkCard.card { margin: 6px 0px; }
