@@ -573,7 +573,6 @@ class Dispatcher {
 					const changes = data.getSlicechangesList() || [];
 					const el = block.content.objectOrder.find(it => it.viewId == viewId);
 
-					console.log(el);
 					if (!el) {
 						break;
 					};

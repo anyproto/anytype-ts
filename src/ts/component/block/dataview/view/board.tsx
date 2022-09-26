@@ -528,9 +528,10 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 		const change = current.groupId != this.newGroupId;
 
 		const setOrder = () => {
+
 			C.BlockDataviewObjectOrderUpdate(rootId, block.id, orders, () => {
 				orders.forEach((it: any) => {
-					let old = block.content.objectOrder.find(item => item.groupId == it.groupId);
+					let old = block.content.objectOrder.find(item => (item.groupId == it.groupId));
 					if (old) {
 						set(old, it);
 					} else {
@@ -569,8 +570,9 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 	};
 
 	applyGroupOrder (groupId: string) {
-		const { block } = this.props;
-		const order = block.content.objectOrder.find(it => it.groupId == groupId);
+		const { block, getView } = this.props;
+		const view = getView();
+		const order = block.content.objectOrder.find(it => (it.viewId == view.id) && (it.groupId == groupId));
 		const subId = this.getSubId(groupId);
 
 		if (!order) {
@@ -580,8 +582,8 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 		let records = dbStore.getRecords(subId, '');
 
 		records.sort((c1: any, c2: any) => {
-			let idx1 = order.objectIds.indexOf(c1.id);
-			let idx2 = order.objectIds.indexOf(c2.id);
+			let idx1 = order.objectIds.indexOf(c1);
+			let idx2 = order.objectIds.indexOf(c2);
 			if (idx1 > idx2) return 1;
 			if (idx1 < idx2) return -1;
 			return 0;
