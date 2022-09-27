@@ -152,7 +152,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		if (filter != this.filter) {
 			this.filter = filter;
 			this.n = -1;
-			this.props.setActive();
+			this.forceUpdate();
 			return;
 		};
 
