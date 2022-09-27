@@ -129,8 +129,9 @@ export enum SurveyType {
 };
 
 export enum SliceOperation {
-	Add		 = 0,
-    Move	 = 1,
-	Remove	 = 2,
-    Replace	 = 3,
+	None	 = 0,
+	Add		 = 1,
+    Move	 = 2,
+	Remove	 = 3,
+    Replace	 = 4,
 };
