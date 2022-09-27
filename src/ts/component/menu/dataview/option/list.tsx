@@ -230,6 +230,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 		};
 
 		item.id == 'add' ? this.onOptionAdd() : this.onValueAdd(item.id);
+		this.onFilterChange('');
 	};
 
 	onValueAdd (id: string) {
