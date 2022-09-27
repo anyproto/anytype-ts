@@ -58,11 +58,18 @@ const LinkCard = observer(class LinkCard extends React.Component<Props, {}> {
 			if (description == I.LinkDescription.Content) {
 				descr = object.snippet;
 			};
+			console.log('DESCRIPTION: ', descr)
 		};
 
 		if (isArchived) {
 			archive = <div className="tagItem isTag archive">{translate('blockLinkArchived')}</div>;
 		};
+
+		const div = cardStyle == I.LinkCardStyle.Text ? (
+			<div className="div">
+				<div className="inner" />
+			</div>
+		) : '';
 
 		return (
 			<div className={cn.join(' ')} onMouseDown={onClick}>
@@ -86,10 +93,22 @@ const LinkCard = observer(class LinkCard extends React.Component<Props, {}> {
 
 								{archive}
 							</div>
-							{descr ? <div className="cardDescription">{descr}</div> : ''}
+							{descr ? (
+								<React.Fragment>
+									{div}
+									<div className="cardDescription">
+										<span className="description">{descr}</span>
+									</div>
+								</React.Fragment>
+							) : ''}
 
 							<div className="cardFeatured">
-								{withType && type ? <div className="item">{type.name}</div> : ''}
+								{withType && type ? (
+									<React.Fragment>
+										{div}
+										<div className="item">{type.name}</div>
+									</React.Fragment>
+								) : ''}
 								{/*withTags ? <div className="item"></div> : ''*/}
 							</div>
 						</div>
