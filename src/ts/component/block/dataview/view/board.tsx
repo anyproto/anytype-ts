@@ -528,10 +528,9 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 		const change = current.groupId != this.newGroupId;
 
 		const setOrder = () => {
-
 			C.BlockDataviewObjectOrderUpdate(rootId, block.id, orders, () => {
 				orders.forEach((it: any) => {
-					let old = block.content.objectOrder.find(item => (item.groupId == it.groupId));
+					let old = block.content.objectOrder.find(item => (view.id == item.viewId) && (item.groupId == it.groupId));
 					if (old) {
 						set(old, it);
 					} else {
