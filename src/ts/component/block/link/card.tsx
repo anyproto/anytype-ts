@@ -58,7 +58,6 @@ const LinkCard = observer(class LinkCard extends React.Component<Props, {}> {
 			if (description == I.LinkDescription.Content) {
 				descr = object.snippet;
 			};
-			console.log('DESCRIPTION: ', descr)
 		};
 
 		if (isArchived) {
