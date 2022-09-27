@@ -732,6 +732,11 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 				keyboard.onRedo(rootId, (message: any) => { focus.clear(true); });
 			});
 
+			// Search
+			keyboard.shortcut(`${cmd}+f`, e, (pressed: string) => {
+				keyboard.onSearchMenu(text.substr(range.from, range.to - range.from));
+			});
+
 		};
 
 		// History

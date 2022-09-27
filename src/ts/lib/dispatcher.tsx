@@ -115,6 +115,7 @@ class Dispatcher {
 		if (v == V.BLOCKDATAVIEWRELATIONSET)	 t = 'blockDataviewRelationSet';
 		if (v == V.BLOCKDATAVIEWRELATIONDELETE)	 t = 'blockDataviewRelationDelete';
 		if (v == V.BLOCKDATAVIEWGROUPORDERUPDATE)	 t = 'blockDataviewGroupOrderUpdate';
+		if (v == V.BLOCKDATAVIEWOBJECTORDERUPDATE)	 t = 'blockDataviewObjectOrderUpdate';
 
 		if (v == V.SUBSCRIPTIONADD)				 t = 'subscriptionAdd';
 		if (v == V.SUBSCRIPTIONREMOVE)			 t = 'subscriptionRemove';
@@ -567,6 +568,55 @@ class Dispatcher {
 				case 'blockDataviewRelationSet':
 					id = data.getId();
 					dbStore.relationsSet(rootId, id, (data.getRelationlinksList() || []).map(Mapper.From.RelationLink));
+					break;
+
+				case 'blockDataviewObjectOrderUpdate':
+					id = data.getId();
+					block = blockStore.getLeaf(rootId, id);
+					if (!block) {
+						break;
+					};
+
+					viewId = data.getViewid();
+
+					const changes = data.getSlicechangesList() || [];
+					const el = block.content.objectOrder.find(it => it.viewId == viewId);
+
+					if (!el) {
+						break;
+					};
+
+					changes.forEach((it: any) => {
+						const op = it.getOp();
+						const ids = it.getIdsList() || [];
+						const afterId = it.getAfterid();
+						const idx = Math.max(0, el.objectIds.indexOf(afterId));
+
+						switch (op) {
+							case I.SliceOperation.Add:
+								ids.forEach((id: string, i: number) => {
+									el.objectIds.splice(idx + i, 0, id);
+								});
+								break;
+
+							case I.SliceOperation.Move:
+								ids.forEach((id: string, i: number) => {
+									const oidx = Math.max(0, el.objectIds.indexOf(id));
+									el.objectIds = arrayMove(el.objectIds, oidx, idx + i);
+								});
+								break;
+
+							case I.SliceOperation.Remove:
+								el.objectIds = el.objectIds.filter(id => !ids.includes(id));
+								break;
+
+							case I.SliceOperation.Replace:
+								el.objectIds = ids;
+								break;
+						};
+					});
+
+					blockStore.update(rootId, block);
 					break;
 
 				case 'objectDetailsSet':

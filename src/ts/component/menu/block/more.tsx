@@ -406,7 +406,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				break;
 			
 			case 'search':
-				keyboard.onSearch();
+				keyboard.onSearchMenu('');
 				break;
 
 			case 'pageCopy':

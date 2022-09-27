@@ -157,7 +157,7 @@ const Column = observer(class Column extends React.Component<Props, State> {
 			return;
 		};
 
-		const { rootId, block, getView, getKeys, getSubId, applyGroupOrder } = this.props;
+		const { rootId, block, getView, getKeys, getSubId, applyGroupOrder, id } = this.props;
 		const view = getView();
 		const relation = dbStore.getRelationByKey(view.groupRelationKey);
 		const subId = getSubId();
