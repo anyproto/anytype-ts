@@ -140,6 +140,10 @@ class Dataview {
 
 	getMenuTabs (rootId: string, blockId: string, viewId: string): I.MenuTab[] {
 		const view = dbStore.getView(rootId, blockId, viewId);
+		if (!view) {
+			return [];
+		};
+
 		const tabs: I.MenuTab[] = [
 			{ id: 'relation', name: 'Relations', component: 'dataviewRelationList' },
 			{ id: 'filter', name: 'Filters', component: 'dataviewFilterList' },
