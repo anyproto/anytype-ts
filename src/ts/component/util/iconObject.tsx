@@ -288,6 +288,8 @@ const IconObject = observer(class IconObject extends React.Component<Props, {}> 
 				onMouseDown={this.onMouseDown} 
 				onMouseEnter={this.onMouseEnter} 
 				onMouseLeave={this.onMouseLeave}
+				draggable={true}
+				onDragStart={(e: any) => { e.preventDefault(); e.stopPropagation(); }}
 			>
 				{icon}
 			</div>
