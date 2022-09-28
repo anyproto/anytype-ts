@@ -12,8 +12,7 @@ import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCac
 interface Props extends I.Menu {};
 
 const $ = require('jquery');
-const HEIGHT_SECTION = 28;
-const HEIGHT_ITEM = 40;
+const HEIGHT = 28;
 const LIMIT = 20;
 
 const MenuViewList = observer(class MenuViewList extends React.Component<Props> {
@@ -48,7 +47,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<Props> 
 		const Item = SortableElement((item: any) => (
 			<div 
 				id={'item-' + item.id} 
-				className="item big" 
+				className="item" 
 				onMouseEnter={(e: any) => { this.onOver(e, item); }}
 				style={item.style}
 			>
@@ -109,10 +108,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<Props> 
 											height={height}
 											deferredMeasurmentCache={this.cache}
 											rowCount={items.length}
-											rowHeight={({ index }) => {
-												const item = items[index];
-												return item.isSection ? HEIGHT_SECTION : HEIGHT_ITEM;
-											}}
+											rowHeight={HEIGHT}
 											rowRenderer={rowRenderer}
 											onRowsRendered={onRowsRendered}
 											overscanRowCount={LIMIT}
@@ -167,7 +163,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<Props> 
 
 		this.cache = new CellMeasurerCache({
 			fixedWidth: true,
-			defaultHeight: HEIGHT_ITEM,
+			defaultHeight: HEIGHT,
 			keyMapper: (i: number) => { return (items[i] || {}).id; },
 		});
 
@@ -322,8 +318,8 @@ const MenuViewList = observer(class MenuViewList extends React.Component<Props> 
 		const { getId, position } = this.props;
 		const items = this.getItems();
 		const obj = $(`#${getId()} .content`);
-		const offset = 50;
-		const height = Math.max(HEIGHT_ITEM + offset, Math.min(360, items.length * HEIGHT_ITEM + offset));
+		const offset = 58;
+		const height = Math.max(HEIGHT + offset, Math.min(360, items.length * HEIGHT + offset));
 
 		obj.css({ height });
 		position();
