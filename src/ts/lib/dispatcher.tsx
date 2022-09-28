@@ -579,10 +579,10 @@ class Dispatcher {
 					};
 
 					changes.forEach((it: any) => {
-						const op = it.getOp();
-						const ids = it.getIdsList() || [];
-						const afterId = it.getAfterid();
-						const idx = Math.max(0, el.objectIds.indexOf(afterId));
+						let op = it.getOp();
+						let ids = it.getIdsList() || [];
+						let afterId = it.getAfterid();
+						let idx = Math.max(0, el.objectIds.indexOf(afterId));
 
 						switch (op) {
 							case I.SliceOperation.Add:
@@ -709,7 +709,7 @@ class Dispatcher {
 					afterId = data.getAfterid();
 					subId = data.getSubid();
 
-					this.subscriptionPosition(subId, id, afterId);
+					this.subscriptionPosition(subId, id, afterId, true);
 					break;
 
 				case 'subscriptionRemove':
@@ -728,7 +728,7 @@ class Dispatcher {
 					afterId = data.getAfterid();
 					subId = data.getSubid();
 
-					this.subscriptionPosition(subId, id, afterId);
+					this.subscriptionPosition(subId, id, afterId, false);
 					break;
 
 				case 'subscriptionCounters':
@@ -782,7 +782,7 @@ class Dispatcher {
 		}, 10);
 	};
 
-	subscriptionPosition (subId: string, id: string, afterId: string) {
+	subscriptionPosition (subId: string, id: string, afterId: string, isAdding: boolean): void {
 		const [ sid, dep ] = subId.split('/');
 
 		if (dep) {
@@ -792,6 +792,10 @@ class Dispatcher {
 		let records = dbStore.getRecords(sid, '');
 		let oldIndex = records.findIndex((it => it == id));
 		let newIndex = 0;
+
+		if (isAdding && (oldIndex >= 0)) {
+			return;
+		};
 
 		if (afterId) {
 			newIndex = records.findIndex(it => it == afterId);
