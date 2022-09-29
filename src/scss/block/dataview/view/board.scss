@@ -97,10 +97,6 @@
 					.name:empty { display: none; }
 				}
 
-				.cellContent.c-shortText {
-					.name { height: 24px; }
-				}
-
 				.cellContent.c-longText {
 					.name { @include clamp3; }
 				}
