@@ -11,11 +11,14 @@ export default [
 	{ text: `Throughout September, our backend and platform teams have been occupied with refactoring relations aka the ‘Relations as an Object' project. This effort, though not visible in this month's release, is essential to unblocking long-awaited features such as Relations deletion/modification and in-line Sets (we promise, it's coming!).` },
 	{ text: `Meanwhile, the improvements and bug fixes in this release are primarily geared towards editor polishing and responses to your feedback from our last release. Thanks to everyone who's tested new features, created bug reports, and let us know your concerns.` },
 
-	{ style: I.TextStyle.Header2, text: `💻 Tech` },
-	{ style: I.TextStyle.Bulleted, text: `Electron was updated to 20.1.1` },
+	{ style: I.TextStyle.Header2, text: `💎 Highlights of this Release` },
+	{ text: `We know that a clean interface is essential to productivity for many of you. In this release, we simplified our Type selection interface from + button Object creation flow to reduce friction in quickly capturing your thoughts & ideas. Keyboard arrows or <span class="highlight">${cmd} + 1-4</span> will allow you to quickly navigate between the Types or jump directly to the search menu for your Types.` },
 
 	{ style: I.TextStyle.Header2, text: `⚡ Quality-of-Life Improvements` },
+	{ style: I.TextStyle.Bulleted, text: `Relations now updating automatically using drag & drop between columns from Kanban view` },
+	{ text: `<video src="./img/help/kanban-dnd.mp4" controls autoplay loop class="full" />` },
 	{ style: I.TextStyle.Bulleted, text: `Selection frame when selecting block is now visible` },
+	{ text: `<img src="./img/help/selection.png" class="full screen" />` },
 	{ style: I.TextStyle.Bulleted, text: `When scrolling content of page opened inside popups, menus positions are now correctly updated` },
 	{ style: I.TextStyle.Bulleted, text: `Added page overscrolling for better readability, so content now ends in the middle of the screen rather than the bottom` },
 	{ style: I.TextStyle.Bulleted, text: `Added multilingual spellcheck support` },
@@ -34,8 +37,11 @@ export default [
 	{ style: I.TextStyle.Bulleted, text: `Added document name to window title for better navigation between open windows` },
 	{ style: I.TextStyle.Bulleted, text: `Removed automatic sidebar-hiding when window is too small` },
 
+	{ style: I.TextStyle.Header2, text: `💻 Tech` },
+	{ style: I.TextStyle.Bulleted, text: `Electron was updated to 20.1.1` },
+
 	{ style: I.TextStyle.Header2, text: `🐛 Bug Fixes` },
-	{ style: I.TextStyle.Bulleted, text: `Fixed: Relations now updating automatically using drag & drop between columns from Kanban view` },
+	
 	{ style: I.TextStyle.Bulleted, text: `Fixed: Set column width is now working again. Thanks, <a href="https://community.anytype.io/t/i-cant-adjust-the-width-of-the-graph/7327/5">@Konstantin</a>` },
 	{ style: I.TextStyle.Bulleted, text: `Fixed: Bug that was causing two relations in one direction to overlay in graph view. Thanks, <a href="https://community.anytype.io/t/superimposing-the-text-of-two-relationship-names/7329">@Konstantin</a>` },
 	{ style: I.TextStyle.Bulleted, text: `Fixed: Block focus loss after block link creation. Thanks, <a href="https://community.anytype.io/t/all-blocks-should-get-focus-after-creation/5776">@sambouwer</a>` },
