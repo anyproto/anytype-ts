@@ -425,7 +425,8 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 			if (rect && this.cache[groupId] && Util.rectsCollide({ x: e.pageX, y: e.pageY, width: current.width, height: current.height }, rect)) {
 				isLeft = e.pageX <= rect.x + rect.width / 2;
 				hoverId = group.id;
-				this.newIndex = isLeft ? rect.index : rect.index + 1;
+
+				this.newIndex = rect.index;
 				break;
 			};
 		};
@@ -499,15 +500,11 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 			};
 
 			if (Util.rectsCollide({ x: e.pageX, y: e.pageY, width: current.width, height: current.height + 8 }, rect)) {
-				isTop = e.pageY <= rect.y + rect.height / 2;
-				if (rect.isAdd) {
-					isTop = true;
-				};
-
+				isTop = rect.isAdd ? true : (e.pageY <= rect.y + rect.height / 2);
 				hoverId = rect.id;
 
 				this.newGroupId = rect.groupId;
-				this.newIndex = isTop ? rect.index : rect.index + 1;
+				this.newIndex = rect.index;
 				break;
 			};
 		};
@@ -548,10 +545,9 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 		const change = current.groupId != this.newGroupId;
 
 		const setOrder = () => {
-
 			C.BlockDataviewObjectOrderUpdate(rootId, block.id, orders, () => {
 				orders.forEach((it: any) => {
-					let old = block.content.objectOrder.find(item => (item.groupId == it.groupId));
+					let old = block.content.objectOrder.find(item => (view.id == item.viewId) && (item.groupId == it.groupId));
 					if (old) {
 						set(old, it);
 					} else {

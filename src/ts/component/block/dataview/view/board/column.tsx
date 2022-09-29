@@ -157,7 +157,7 @@ const Column = observer(class Column extends React.Component<Props, State> {
 			return;
 		};
 
-		const { rootId, block, getView, getKeys, getSubId, applyGroupOrder, id } = this.props;
+		const { rootId, block, getView, getKeys, getSubId, applyGroupOrder } = this.props;
 		const view = getView();
 		const relation = dbStore.getRelationByKey(view.groupRelationKey);
 		const subId = getSubId();
@@ -235,15 +235,18 @@ const Column = observer(class Column extends React.Component<Props, State> {
 	};
 
 	onScroll (e: any) {
+		const { getSubId } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
 		const body = node.find('.body');
 		const st = body.scrollTop();
+		const subId = getSubId();
+		const meta = dbStore.getMeta(subId, '');
 
 		if (keyboard.isDragging) {
 			this.props.onScrollColumn();
 		};
 
-		if (st >= body.get(0).scrollHeight - body.height() - 100) {
+		if ((this.offset < meta.total) && (st >= body.get(0).scrollHeight - body.height() - 100)) {
 			this.offset += Constant.limit.dataview.records;
 			this.load(false);
 		};
