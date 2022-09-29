@@ -40,9 +40,7 @@
 			.icon.plus:hover, .icon.plus.active { background-image: url('~img/icon/dataview/button/plus1.svg'); }
 		}
 
-		.dataviewHead { 
-			display: flex; flex-direction: row; align-items: center; padding: 10px 0px; border-bottom: 1px solid $colorBorderDark; 
-		}
+		.dataviewHead { display: flex; flex-direction: row; align-items: center; padding: 10px 0px; border-bottom: 1px solid $colorBorderDark; }
 		.dataviewHead {
 			.side.left { gap: 0px 8px; justify-content: flex-start; }
 			.side.right { gap: 0px 18px; justify-content: flex-end; }
@@ -70,6 +68,7 @@
 		.dataviewControls {
 			.line { height: 1px; width: calc(100% - 14px); background: $colorLightGrey; margin-left: 14px; }
 
+			.sides { gap: 0px 16px; }
 			.side { padding: 23px 0px; white-space: nowrap; line-height: 28px; }
 			.side.left { padding-left: 14px; }
 

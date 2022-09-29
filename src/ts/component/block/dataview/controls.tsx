@@ -49,7 +49,7 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 					id={'button-' + item.id} 
 					className={item.id}
 					tooltip={item.name}
-					onClick={(e: any) => { this.onButton(e, `button-${item.id}`, item.menu); }}
+					onClick={(e: any) => { this.onButton(e, `#button-${item.id}`, item.menu, true); }}
 				/>
 			);
 		};
@@ -84,10 +84,10 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 				<div className="sides">
 					<div id="sideLeft" className="side left">
 						<div 
-							id={'view-item-' + view.id} 
+							id="view-selector"
 							className="viewSelect select"
-							onClick={(e: any) => { this.onButton(e, `view-item-${view.id}`, 'dataviewViewList'); }} 
-							onContextMenu={(e: any) => { this.onViewEdit(e, '.first #view-item-' + view.id, view); }}
+							onClick={(e: any) => { this.onButton(e, '#view-selector', 'dataviewViewList', false); }} 
+							onContextMenu={(e: any) => { this.onViewEdit(e, '#view-selector', view); }}
 						>
 							<div className="name">{view.name}</div>
 							<Icon className="arrow dark" />
@@ -127,7 +127,7 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 		this._isMounted = false;
 	};
 	
-	onButton (e: any, id: string, menu: string) {
+	onButton (e: any, element: string, menu: string, withTabs: boolean) {
 		if (!menu) {
 			return;
 		};
@@ -136,7 +136,7 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 		const view = getView();
 
 		const param: any = { 
-			element: `#${id}`,
+			element,
 			horizontal: I.MenuDirection.Center,
 			offsetY: 10,
 			noFlipY: true,
@@ -150,7 +150,7 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 			},
 		};
 
-		if (id == 'button-manager') {
+		if (withTabs) {
 			param.getTabs = () => Dataview.getMenuTabs(rootId, block.id, view.id);
 		};
 

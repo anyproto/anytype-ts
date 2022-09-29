@@ -212,9 +212,9 @@ const MenuViewList = observer(class MenuViewList extends React.Component<Props> 
 	};
 
 	onAdd () {
-		const { param, getId } = this.props;
+		const { param, getId, getSize, close } = this.props;
 		const { data } = param;
-		const { rootId, blockId, getView } = data;
+		const { rootId, blockId, getView, getData } = data;
 		const view = getView();
 		const relations = Util.objectCopy(view.relations);
 		const filters: I.Filter[] = [];
@@ -243,13 +243,14 @@ const MenuViewList = observer(class MenuViewList extends React.Component<Props> 
 			const view = dbStore.getView(rootId, blockId, message.viewId);
 
 			menuStore.open('dataviewViewEdit', {
-				element: `#${getId()} #item-add`,
-				horizontal: I.MenuDirection.Center,
+				element: `#${getId()}`,
+				offsetX: getSize().width,
+				offsetY: -getSize().height,
 				data: {
 					...data,
 					view: observable.box(view),
 					onSave: () => {
-						this.forceUpdate();
+						getData(view.id, 0);
 					},
 				},
 			});
@@ -261,14 +262,15 @@ const MenuViewList = observer(class MenuViewList extends React.Component<Props> 
 	onEdit (e: any, item: any) {
 		e.stopPropagation();
 
-		const { param, getId } = this.props;
+		const { param, getId, getSize } = this.props;
 		const { data } = param;
 		const { rootId, blockId } = data;
 		const allowed = blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
 
 		menuStore.open('dataviewViewEdit', { 
-			element: `#${getId()} #item-${item.id}`,
-			horizontal: I.MenuDirection.Center,
+			element: `#${getId()}`,
+			offsetX: getSize().width,
+			offsetY: -getSize().height,
 			data: {
 				...data,
 				readonly: !allowed,
