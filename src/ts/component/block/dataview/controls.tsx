@@ -28,7 +28,7 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { className, rootId, block, getView, readonly, onRecordAdd } = this.props;
+		const { className, rootId, block, getView, readonly, onRecordAdd, isInline } = this.props;
 		const views = dbStore.getViews(rootId, block.id);
 		const view = getView();
 		const sortCnt = view.sorts.length;
@@ -36,7 +36,15 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 		const filterCnt = filters.length;
 		const allowedObject = blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.Object ]);
 		const allowedView = blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.View ]);
-		const cn = [ 'dataviewControls', (className ? className : '') ];
+		const cn = [ 'dataviewControls' ];
+
+		if (className) {
+			cn.push(className);
+		};
+
+		if (isInline) {
+			cn.push('isInline');
+		};
 
 		const buttons: any[] = [
 			//{ id: 'search', name: 'Search', menu: '' },

@@ -40,28 +40,23 @@
 			.icon.plus:hover, .icon.plus.active { background-image: url('~img/icon/dataview/button/plus1.svg'); }
 		}
 
-		.dataviewHead { display: flex; flex-direction: row; align-items: center; padding: 10px 0px; border-bottom: 1px solid $colorBorderDark; }
+		.dataviewHead { display: flex; flex-direction: row; align-items: center; padding: 10px 14px; border-bottom: 1px solid $colorBorderDark; gap: 0px 6px; }
 		.dataviewHead {
-			.side.left { gap: 0px 8px; justify-content: flex-start; }
-			.side.right { gap: 0px 18px; justify-content: flex-end; }
-
 			.iconWrap { 
-				padding: 4px 8px; border-radius: 12px; background-color: $colorVeryLightGrey; transition: $transitionFast; cursor: pointer; 
+				padding: 4px 6px 4px 3px; border-radius: 4px; background-color: $colorVeryLightGrey; transition: $transitionFast; cursor: pointer; 
 				display: flex; align-items: center; line-height: 20px; color: $colorDarkGrey; gap: 0px 2px;
 			}
 			.iconWrap:hover { background-color: $colorLightGrey; }
 			.iconWrap.icon { flex-shrink: 0; }
-
-			.icon.set { width: 12px; height: 12px; background-image: url('~img/icon/dataview/head/set.svg'); }
-			.icon.plus { width: 12px; height: 12px; background-image: url('~img/icon/dataview/head/plus.svg'); }
-			.icon.plus:hover {  background-image: url('~img/icon/dataview/head/plus.svg'); }
+			.iconWrap {
+				.icon { width: 20px; height: 20px; }
+				.icon.set { background-image: url('~img/icon/dataview/head/set.svg'); }
+			}
 
 			.title { @include text-header3; font-weight: 700; position: relative; }
 			.title {
 				.value { min-width: 70px; }
 			}
-
-			.select { border: 0px; font-weight: 600; }
 		}
 
 		.dataviewControls { font-weight: 500; color: $colorMediumGrey; position: relative; }
@@ -73,13 +68,12 @@
 			.side.left { padding-left: 14px; }
 
 			.views { 
-				white-space: nowrap; display: flex; line-height: 20px; gap: 0px 18px; flex-direction: row; align-items: center; 
-				justify-content: flex-start;
+				white-space: nowrap; display: flex; line-height: 28px; gap: 0px 18px; flex-direction: row; align-items: center; justify-content: flex-start;
 			}
 			.views {
 				.viewItem { 
 					display: inline-block; vertical-align: top; transition: color 0.2s ease-in-out; cursor: pointer; 
-					white-space: nowrap; @include text-header3; @include text-overflow-nw; max-width: 300px; color: $colorMediumGrey; line-height: 20px; 
+					white-space: nowrap; @include text-header3; @include text-overflow-nw; max-width: 300px; color: $colorMediumGrey; line-height: 28px; 
 				}
 				.viewItem { 
 					.icon.arrow { width: 20px; height: 20px; background-image: url('~img/arrow/view.svg'); }
@@ -88,7 +82,6 @@
 				.viewItem:hover, .viewItem.active { color: $colorBlack; }
 				
 				.viewItem.isDragging { background: rgba(255,255,255,0.5); padding: 0px 4px; border-radius: 4px; width: auto !important; }
-				.viewItem.btn { line-height: 20px; }
 
 				.icon.plus { opacity: 0; }
 			}
@@ -109,9 +102,13 @@
 			}
 		}
 
+		.dataviewControls.isInline {
+			.side { padding-top: 9px; padding-bottom: 0px; }
+			.line { display: none; }
+		}
+
 		.content {
 			.scroll { overflow-x: overlay; overflow-y: visible; transform: translate3d(0px,0px,0px); }
-			.view { border-top: 1px solid #e0ded2; }
 		}
 	}	
 }

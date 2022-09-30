@@ -41,58 +41,27 @@ const Head = observer(class Head extends React.Component<Props, {}> {
 		const view = getView();
 		const allowedObject = blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.Object ]);
 
-		let icon = null;
-		let onClick = null;
-
-		if (!readonly) {
-			if (!length) {
-				onClick = this.onSelect;
-				icon = <Icon className="plus" />;
-			} else {
-				onClick = this.onSource;
-				icon = (
-					<React.Fragment>
-						<Icon className="set" />
-						{length}
-					</React.Fragment>
-				);
-			};
-
-			icon = <div id="head-source-select" className="iconWrap" onClick={onClick}>{icon}</div>;
-		};
-
 		return (
 			<div className="dataviewHead">
-				<div className="sides">
-					<div className="side left">
-						<div id="title" className="title">
-							<div 
-								className="value" 
-								contentEditable="true" 
-								suppressContentEditableWarning={true}
-								onFocus={this.onFocus}
-								onBlur={this.onBlur}
-								onKeyDown={this.onKeyDown}
-								onKeyUp={this.onKeyUp}
-								onCompositionStart={this.onCompositionStart}
-								onCompositionEnd={this.onCompositionEnd}
-							>
-							</div>
-							<div id="placeholder" className="placeholder">New set</div>
-						</div>
+				<div id="title" className="title">
+					<div 
+						className="value" 
+						contentEditable="true" 
+						suppressContentEditableWarning={true}
+						onFocus={this.onFocus}
+						onBlur={this.onBlur}
+						onKeyDown={this.onKeyDown}
+						onKeyUp={this.onKeyUp}
+						onCompositionStart={this.onCompositionStart}
+						onCompositionEnd={this.onCompositionEnd}
+					>
+					</div>
+					<div id="placeholder" className="placeholder">New set</div>
+				</div>
 
-						{icon}
-						
-						<div id="head-view-select" className="select" onClick={this.onView}>
-							<div className="name">{view.name}</div>
-							<Icon className="arrow dark" />
-						</div>
-					</div>
-					<div className="side right">
-						<Icon id="head-customize" className="manager" tooltip="Customize" onClick={this.onManager} />
-						{!readonly && allowedObject ? <Button color="orange" icon="plus-small" className="c28" tooltip="New object" text="New" onClick={(e: any) => { onRecordAdd(e, -1); }} /> : ''}
-						<Button color="blank" className="c28" text="See all" />
-					</div>
+				<div id="head-source-select" className="iconWrap" onClick={this.onSource}>
+					<Icon className="set" />
+					{length}
 				</div>
 			</div>
 		);
