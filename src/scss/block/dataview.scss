@@ -102,7 +102,11 @@
 
 		.dataviewControls.isInline {
 			.side { padding-top: 9px; padding-bottom: 0px; }
+			.side.right { transition: opacity 0.2s ease-in-out; opacity: 0; }
 			.line { display: none; }
+		}
+		.dataviewControls.isInline:hover {
+			.side.right { opacity: 1; }
 		}
 
 		.content {
