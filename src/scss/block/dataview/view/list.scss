@@ -28,7 +28,7 @@
 
             .cellContent.isName { @include text-paragraph; display: inline-block; color: $colorBlack; }
 			.cellContent.isName {
-				.name { display: inline-block; line-height: 24px; vertical-align: top; max-width: 500px; }
+				.name { display: inline-block; line-height: 24px; vertical-align: top; font-weight: 500; max-width: 500px; }
 			}
 
 			.cellContent.c-select, 
