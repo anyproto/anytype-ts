@@ -105,7 +105,7 @@
 			.side.right { transition: opacity 0.2s ease-in-out; opacity: 0; }
 			.line { display: none; }
 		}
-		.dataviewControls.isInline:hover {
+		.dataviewControls.isInline:hover, .dataviewControls.isInline.active {
 			.side.right { opacity: 1; }
 		}
 

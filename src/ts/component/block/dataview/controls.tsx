@@ -144,6 +144,7 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 		const { rootId, block, readonly, getData, getView } = this.props;
 		const view = getView();
 		const obj = $(element);
+		const node = $(ReactDOM.findDOMNode(this));
 
 		const param: any = { 
 			element,
@@ -151,9 +152,11 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 			offsetY: 10,
 			noFlipY: true,
 			onOpen: () => {
+				node.addClass('active');
 				obj.addClass('active');
 			},
 			onClose: () => {
+				node.removeClass('active');
 				obj.removeClass('active');
 			},
 			data: {
