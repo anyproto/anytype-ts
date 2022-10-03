@@ -53,10 +53,12 @@ class Pin extends React.Component<Props, {}> {
 
 	componentDidMount () {
 		this.init();
+		this.rebind();
 	};
 
 	componentWillUnmount () {
 		window.clearTimeout(this.timeout);
+		this.unbind();
 	};
 
 	init () {
@@ -64,6 +66,15 @@ class Pin extends React.Component<Props, {}> {
 			this.focus();
 		};
 	};
+
+	rebind () {
+		this.unbind();
+		$(window).on('mousedown.pin', (e: any) => { e.preventDefault(); });
+	};
+
+	unbind () {
+		$(window).off('mousedown.pin');
+	}; 
 
 	focus () {
 		this.refObj[(this.n || 1)].focus();
