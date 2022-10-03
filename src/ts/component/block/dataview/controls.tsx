@@ -48,7 +48,9 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 
 		const buttons: any[] = [
 			//{ id: 'search', name: 'Search', menu: '' },
-			{ id: 'manager', name: 'Customize view', menu: 'dataviewRelationList' },
+			{ id: 'filter', name: 'Filters', menu: 'dataviewFilterList' },
+			{ id: 'sort', name: 'Sorts', menu: 'dataviewSort' },
+			{ id: 'settings', name: 'Sorts', menu: 'dataviewViewEdit' },
 		];
 
 		const ButtonItem = (item: any) => {
@@ -135,19 +137,30 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 		this._isMounted = false;
 	};
 	
-	onButton (e: any, element: string, menu: string, withTabs: boolean) {
-		if (!menu) {
+	onButton (e: any, element: string, id: string, withTabs: boolean) {
+		console.log(id);
+
+		if (!id) {
 			return;
 		};
 
 		const { rootId, block, readonly, getData, getView } = this.props;
 		const view = getView();
+		const tabs = Dataview.getMenuTabs(rootId, block.id, view.id);
+		const obj = $(element);
 
 		const param: any = { 
 			element,
 			horizontal: I.MenuDirection.Center,
 			offsetY: 10,
 			noFlipY: true,
+			initialTab: id,
+			onOpen: () => {
+				obj.addClass('active');
+			},
+			onClose: () => {
+				obj.removeClass('active');
+			},
 			data: {
 				readonly: readonly,
 				rootId: rootId,
@@ -160,9 +173,10 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 
 		if (withTabs) {
 			param.getTabs = () => Dataview.getMenuTabs(rootId, block.id, view.id);
+			param.initialTab = tabs.find(it => it.component == id)?.id;
 		};
 
-		menuStore.open(menu, param);
+		menuStore.open(id, param);
 	};
 
 	onViewAdd (e: any) {

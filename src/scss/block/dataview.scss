@@ -6,7 +6,6 @@
 		.scrollWrap { padding-bottom: 14px; }
 
 		.icon.plus { width: 20px; height: 20px; background-image: url('~img/icon/plus/menu0.svg'); cursor: pointer; }
-		.icon.plus:hover { background-image: url('~img/icon/plus/menu1.svg'); }
 		
 		.icon.edit { 
 			display: none; flex-shrink: 0; width: 20px; height: 20px; background-image: url('~img/icon/dataview/button/edit0.svg'); cursor: pointer; 
@@ -28,16 +27,6 @@
 			.sides { justify-content: stretch; width: 100%; }
 			.side.left { flex-grow: 1; }
 			.side.right { flex-shrink: 0; gap: 0px 18px; justify-content: flex-end; }
-
-			.icon { cursor: pointer; transition: $transitionFast; position: relative; width: 20px; height: 20px; }
-
-			.icon.search { background-image: url('~img/icon/dataview/button/search0.svg'); }
-			.icon.manager { background-image: url('~img/icon/dataview/button/manager0.svg'); }
-			.icon.plus { background-image: url('~img/icon/dataview/button/plus0.svg'); }
-
-			.icon.search:hover, .icon.search.active { background-image: url('~img/icon/dataview/button/search1.svg'); }
-			.icon.manager:hover, .icon.manager.active { background-image: url('~img/icon/dataview/button/manager1.svg'); }
-			.icon.plus:hover, .icon.plus.active { background-image: url('~img/icon/dataview/button/plus1.svg'); }
 		}
 
 		.dataviewHead { display: flex; flex-direction: row; align-items: center; padding: 10px 14px; border-bottom: 1px solid $colorBorderDark; gap: 0px 6px; }
@@ -67,6 +56,16 @@
 			.side { padding: 23px 0px; white-space: nowrap; line-height: 28px; }
 			.side.left { padding-left: 14px; }
 
+			.icon { 
+				cursor: pointer; transition: $transitionFast; position: relative; width: 28px; height: 28px; background-size: 20px; 
+				border-radius: 4px; transition: $transitionFast;
+			}
+			.icon:hover, .icon.active { background-color: $colorHover; }
+
+			.icon.filter { background-image: url('~img/icon/dataview/button/filter.svg'); }
+			.icon.sort { background-image: url('~img/icon/dataview/button/sort.svg'); }
+			.icon.settings { background-image: url('~img/icon/dataview/button/settings.svg'); }
+
 			.views { 
 				white-space: nowrap; display: flex; line-height: 28px; gap: 0px 18px; flex-direction: row; align-items: center; justify-content: flex-start;
 			}
@@ -80,7 +79,6 @@
 				}
 				.viewItem:last-child { margin: 0px; }
 				.viewItem:hover, .viewItem.active { color: $colorBlack; }
-				
 				.viewItem.isDragging { background: rgba(255,255,255,0.5); padding: 0px 4px; border-radius: 4px; width: auto !important; }
 
 				.icon.plus { opacity: 0; }
