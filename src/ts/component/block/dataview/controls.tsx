@@ -225,7 +225,7 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 
 			const view = dbStore.getView(rootId, block.id, message.viewId);
 
-			this.onViewEdit(e, `#block-${block.id} #views #view-item-${message.viewId}`, view);
+			this.onViewEdit(e, `#views #view-item-${block.id}-${message.viewId}`, view);
 			analytics.event('AddView', { type: view.type });
 		});
 	};
