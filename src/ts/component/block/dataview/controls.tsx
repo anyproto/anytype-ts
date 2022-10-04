@@ -53,38 +53,37 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 		];
 
 		const ButtonItem = (item: any) => {
+			const elementId = `button-${block.id}-${item.id}`;
 			return (
 				<Icon 
-					id={'button-' + item.id} 
+					id={elementId} 
 					className={item.id}
 					tooltip={item.name}
-					onClick={(e: any) => { this.onButton(e, `#button-${item.id}`, item.menu, item.withTabs); }}
+					onClick={(e: any) => { this.onButton(e, '#' + elementId, item.menu, item.withTabs); }}
 				/>
 			);
 		};
 
-		const ViewItem = SortableElement((item: any) => (
-			<div 
-				id={'view-item-' + item.id} 
-				className={'viewItem ' + (item.id == view.id ? 'active' : '')} 
-				onClick={(e: any) => { this.onViewSet(item); }} 
-				onContextMenu={(e: any) => { this.onViewEdit(e, '#views #view-item-' + item.id, item); }}
-			>
-				{item.name}
-			</div>
-		));
+		const ViewItem = SortableElement((item: any) => {
+			const elementId = `view-item-${block.id}-${item.id}`;
+			return (
+				<div 
+					id={elementId} 
+					className={'viewItem ' + (item.id == view.id ? 'active' : '')} 
+					onClick={(e: any) => { this.onViewSet(item); }} 
+					onContextMenu={(e: any) => { this.onViewEdit(e, '#views #' + elementId, item); }}
+				>
+					{item.name}
+				</div>
+			);
+		});
 
 		const Views = SortableContainer((item: any) => (
 			<div id="views" className="views">
 				{views.map((item: I.View, i: number) => (
-					<ViewItem 
-						key={i} 
-						{...item} 
-						index={i} 
-					/>
+					<ViewItem key={i} {...item} index={i} />
 				))}
-
-				{allowedView ? <Icon id="button-view-add" className="plus" tooltip="Create new view" onClick={this.onViewAdd} /> : ''}
+				{allowedView ? <Icon id={`button-${block.id}-view-add`} className="plus" tooltip="Create new view" onClick={this.onViewAdd} /> : ''}
 			</div>
 		));
 		
@@ -119,7 +118,16 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 						{buttons.map((item: any, i: number) => (
 							<ButtonItem key={item.id} {...item} />
 						))}	
-						{!readonly && allowedObject ? <Button color="orange" icon="plus-small" className="c28" tooltip="New object" text="New" onClick={(e: any) => { onRecordAdd(e, -1); }} /> : ''}
+						{!readonly && allowedObject ? (
+							<Button 
+								color="orange" 
+								icon="plus-small" 
+								className="c28" 
+								tooltip="New object" 
+								text="New" 
+								onClick={(e: any) => { onRecordAdd(e, -1); }} 
+							/>
+ 						) : ''}
 					</div>
 				</div>
 
@@ -174,6 +182,8 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 			param.initialTab = param.getTabs().find(it => it.component == id)?.id;
 		};
 
+		console.log(param);
+
 		menuStore.open(id, param);
 	};
 
@@ -209,8 +219,12 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 		};
 
 		C.BlockDataviewViewCreate(rootId, block.id, newView, (message: any) => {
+			if (message.error.code) {
+				return;
+			};
+
 			const view = dbStore.getView(rootId, block.id, message.viewId);
-			
+
 			this.onViewEdit(e, `#block-${block.id} #views #view-item-${message.viewId}`, view);
 			analytics.event('AddView', { type: view.type });
 		});
