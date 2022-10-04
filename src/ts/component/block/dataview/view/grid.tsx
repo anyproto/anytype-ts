@@ -7,6 +7,7 @@ import { AutoSizer, WindowScroller, List, InfiniteLoader } from 'react-virtualiz
 import { observer } from 'mobx-react';
 import arrayMove from 'array-move';
 
+import Empty from '../empty';
 import HeadRow from './grid/head/row';
 import BodyRow from './grid/body/row';
 
@@ -36,14 +37,19 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 	render () {
 		const { rootId, block, getView, readonly, onRecordAdd, isPopup, isInline } = this.props;
 		const view = getView();
-		const relations = view.relations.filter((it: any) => { return it && it.isVisible; });
+		const relations = view.relations.filter(it => it && it.isVisible);
 		const subId = dbStore.getSubId(rootId, block.id);
 		const records = dbStore.getRecords(subId, '');
 		const allowed = blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.Object ]);
 		const { total } = dbStore.getMeta(dbStore.getSubId(rootId, block.id), '');
 		const length = records.length;
 
+		if (!length) {
+			return <Empty {...this.props} />;
+		};
+
 		let content = null;
+
 		if (isInline) {
 			content = (
 				<div>

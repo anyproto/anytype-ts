@@ -6,6 +6,7 @@ import { Icon } from 'Component';
 import { translate } from 'Lib';
 import { AutoSizer, WindowScroller, List, InfiniteLoader } from 'react-virtualized';
 
+import Empty from '../empty';
 import Row from './list/row';
 
 interface Props extends I.ViewComponent {};
@@ -32,6 +33,10 @@ const ViewList = observer(class ViewList extends React.Component<Props, {}> {
 		const allowed = blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.Object ]);
 		const { total } = dbStore.getMeta(dbStore.getSubId(rootId, block.id), '');
 		const length = records.length;
+
+		if (!length) {
+			return <Empty {...this.props} />;
+		};
 
 		return (
 			<div className="wrap">
