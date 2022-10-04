@@ -142,7 +142,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		const container = Util.getScrollContainer(isPopup);
 
 		this._isMounted = true;
-
 		this.resize();
 		this.unbind();
 		this.open();
@@ -158,7 +157,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		});
 		win.on('focus.editor' + namespace, (e: any) => {
 			let ids: string[] = [];
-			
 			if (selection) {
 				ids = selection.get(I.SelectType.Block, true);
 			};
@@ -166,7 +164,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 				focus.restore();
 				focus.apply(); 
 			};
-
 			container.scrollTop(this.scrollTop);
 		});
 
@@ -190,7 +187,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		};
 
 		this.resize();
-
 		Util.getScrollContainer(isPopup).scrollTop(this.scrollTop);
 	};
 	
@@ -223,11 +219,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			return;
 		};
 
+		this.id = rootId;
 		this.loading = true;
 		this.isDeleted = false;
 		this.forceUpdate();
-		
-		this.id = rootId;
 
 		C.ObjectOpen(this.id, '', (message: any) => {
 			if (message.error.code) {
@@ -245,11 +240,12 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 			crumbs.addRecent(rootId);
 			
+			this.scrollTop = Storage.getScroll('editor' + (isPopup ? 'Popup' : ''), rootId);
 			this.loading = false;
 			this.focusTitle();
 			this.forceUpdate();
 			
-			Util.getScrollContainer(isPopup).scrollTop(Storage.getScroll('editor' + (isPopup ? 'Popup' : ''), rootId));
+			Util.getScrollContainer(isPopup).scrollTop(this.scrollTop);
 
 			if (onOpen) {
 				onOpen();
@@ -2007,8 +2003,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		this.setLayoutWidth(root?.fields?.width);
 
 		if (blocks.length && last.length) {
-			last.css({ height: '' });
-
 			const ct = isPopup ? container.offset().top : 0;
 			const ch = container.height();
 			const height = Math.max(ch / 2, ch - blocks.outerHeight() - blocks.offset().top - ct);
