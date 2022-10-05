@@ -49,7 +49,7 @@ class DbStore {
 			relations.push(item);
 		};
 
-		this.relationMap.set(key, Util.arrayUniqueObjects(relations, 'id'));
+		this.relationMap.set(key, Util.arrayUniqueObjects(relations, 'relationKey'));
 	};
 
     relationDelete (rootId: string, blockId: string, id: string) {
