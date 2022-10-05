@@ -250,8 +250,8 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 				ref: 'menu',
 				menuIdEdit: 'blockRelationEdit',
 				skipIds: relations.map(it => it.relationKey),
-				addCommand: (rootId: string, blockId: string, relationId: string) => {
-					C.ObjectRelationAdd(rootId, [ relationId ]);
+				addCommand: (rootId: string, blockId: string, relationKey: string) => {
+					C.ObjectRelationAdd(rootId, [ relationKey ]);
 				},
 			}
 		});
@@ -262,23 +262,24 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const { data, classNameWrap } = param;
 		const { rootId } = data;
 		const allowed = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
+		const relation = dbStore.getRelationById(id);
 
-		if (!allowed) {
+		if (!relation || !allowed) {
 			return;
 		};
-		
+
 		menuStore.open('blockRelationEdit', { 
 			element: `#${getId()} #item-${id}`,
 			horizontal: I.MenuDirection.Center,
-			classNameWrap: classNameWrap,
+			classNameWrap,
 			data: {
 				...data,
 				relationId: id,
-				addCommand: (rootId: string, blockId: string, relationId: string) => {
-					C.ObjectRelationAdd(rootId, [ relationId ]);
+				addCommand: (rootId: string, blockId: string, relationKey: string) => {
+					C.ObjectRelationAdd(rootId, [ relationKey ]);
 				},
 				deleteCommand: () => {
-					C.ObjectRelationDelete(rootId, id);
+					C.ObjectRelationDelete(rootId, relation.relationKey);
 				},
 			}
 		});

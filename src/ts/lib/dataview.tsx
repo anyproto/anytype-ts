@@ -63,34 +63,36 @@ class Dataview {
 		return Util.arrayUniqueObjects(ret, 'relationKey');
 	};
 
-	relationAdd (rootId: string, blockId: string, relationId: string, index: number, view?: I.View, callBack?: (message: any) => void) {
+	relationAdd (rootId: string, blockId: string, relationKeys: string[], index: number, view?: I.View, callBack?: (message: any) => void) {
 		if (!view) {
 			return;
 		};
 
-		C.BlockDataviewRelationAdd(rootId, blockId, [ relationId ], (message: any) => {
+		C.BlockDataviewRelationAdd(rootId, blockId, relationKeys, (message: any) => {
 			if (message.error.code) {
 				return;
 			};
 
-			let relation = dbStore.getRelationById(relationId);
-			let rel: any = view.getRelation(relation.relationKey);
+			relationKeys.forEach((relationKey: string) => {
+				let rel: any = view.getRelation(relationKey);
 
-			if (rel) {
-				rel.isVisible = true;
-			} else {
-				rel = { 
-					relationKey: relation.relationKey, 
-					width: Relation.width(0, relation.format),
-					isVisible: true,
-				};
-
-				if (index >= 0) {
-					view.relations.splice(index, 0, rel);
+				if (rel) {
+					rel.isVisible = true;
 				} else {
-					view.relations.push(rel);
+					rel = { 
+						relationKey,
+						width: Constant.size.dataview.cell.default,
+						isVisible: true,
+					};
+
+					if (index >= 0) {
+						view.relations.splice(index, 0, rel);
+					} else {
+						view.relations.push(rel);
+					};
 				};
-			};
+
+			});
 
 			C.BlockDataviewViewUpdate(rootId, blockId, view.id, view, callBack);
 		});
