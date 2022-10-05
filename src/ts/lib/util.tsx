@@ -348,10 +348,6 @@ class Util {
 		return this.timestamp(y, m, d);
 	};
 
-	timezoneOffset (): number {
-		return new Date().getTimezoneOffset() * 60;
-	};
-
 	parseDate (value: string, format?: I.DateFormat): number {
 		let [ date, time ] = String(value || '').split(' ');
 		let d: any = 0;
