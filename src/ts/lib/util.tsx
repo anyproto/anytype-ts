@@ -163,7 +163,7 @@ class Util {
 	};
 	
 	objectLength (o: any) {
-		return o.hasOwnProperty('length') ? o.length : Object.keys(o).length;
+		return (o || {}).hasOwnProperty('length') ? o.length : Object.keys(o).length;
 	};
 
 	// Clear object for smaller console output
