@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { I, C, Util, analytics, sidebar, DataUtil, keyboard } from 'Lib';
 import { Header, Graph, Icon, Loader } from 'Component';
-import { blockStore, detailStore, menuStore } from 'Store';
+import { blockStore, detailStore, menuStore, dbStore } from 'Store';
 import { observer } from 'mobx-react';
 
 import Panel from './graph/panel';
@@ -281,11 +281,58 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 		const { root } = blockStore;
 		const ids = this.ids.length ? this.ids : [ id ];
 
+		const subIds = [ 'searchObject' ];
+		let types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map(it => it.id);
+		let menuContext = null;
+
+		const onArrow = (elementId) => {
+			const filters = [
+				{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: types }
+			];
+
+			menuStore.open('searchObject', {
+				element: `#menuDataviewContext #item-${elementId}`,
+				offsetX: menuContext.getSize().width,
+				vertical: I.MenuDirection.Center,
+				isSub: true,
+				data: {
+					filters,
+					rebind: menuContext.ref.rebind,
+					rootId: id,
+					blockId: id,
+					blockIds: [ id ],
+					type: I.NavigationType.LinkTo,
+					skipIds: [ id ],
+					position: I.BlockPosition.Bottom,
+					onSelect: (el: any) => {
+						this.data.edges.push({ type: I.EdgeType.Link, source: el.id, target: id });
+						this.refGraph.send('onSetEdges', { edges: this.data.edges });
+
+						menuContext.close();
+					}
+				}
+			});
+		};
+
+		const onOver = (e: any, el: any) => {
+			menuStore.closeAll(subIds, () => {
+				if (!el.arrow) {
+					return;
+				}
+
+				onArrow(el.id);
+			});
+		};
+
 		menuStore.open('dataviewContext', {
 			...param,
+			onOpen: (context: any) => {
+				menuContext = context;
+			},
 			data: {
 				objectIds: ids,
 				getObject: (id: string) => this.data.nodes.find(d => d.id == id),
+				onOver,
 				onSelect: (itemId: string) => {
 					switch (itemId) {
 						case 'archive':
