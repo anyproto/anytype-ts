@@ -252,7 +252,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		} else 
 		if (addCommand) {
 			close(); 
-			addCommand(rootId, blockId, item.id);
+			addCommand(rootId, blockId, item.relationKey);
 			analytics.event('AddExistingRelation', { format: item.format, type: ref });
 		};
 	};
