@@ -1344,7 +1344,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 				this.focusNextBlock(blockStore.getLeaf(rootId, nextCellId), dir);
 			};
 
-			if (rowElement.childrenIds.length - 1 < idx) {
+			if (rowElement.childrenIds.length - 1 <= idx) {
 				fill(element.parentId, cb);
 			} else {
 				cb();
