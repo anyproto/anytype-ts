@@ -732,8 +732,6 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 				blockId = item._object_.id;
 			};
 
-			console.log('CONTEXT: ', menuContext)
-
 			menuStore.open('searchObject', {
 				element: `#menuSelect #item-${id}`,
 				offsetX: menuContext.getSize().width,
