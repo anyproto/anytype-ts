@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Input, Icon } from 'Component';
+import { Loader } from 'Component';
 import { I, C, Util, DataUtil, analytics, Dataview, keyboard, Onboarding, Relation, Renderer } from 'Lib';
 import { blockStore, menuStore, dbStore, detailStore, popupStore } from 'Store';
 import { observer } from 'mobx-react';
@@ -19,12 +19,19 @@ interface Props extends I.BlockComponent, RouteComponentProps<any> {
 	isInline?: boolean;
 };
 
+interface State {
+	loading: boolean;
+};
+
 const $ = require('jquery');
 const Constant = require('json/constant.json');
 const raf = require('raf');
 
-const BlockDataview = observer(class BlockDataview extends React.Component<Props, {}> {
+const BlockDataview = observer(class BlockDataview extends React.Component<Props, State> {
 
+	state = {
+		loading: false,
+	};
 	viewRef: any = null;
 	controlRef: any = null;
 	headRef: any = null;
@@ -48,7 +55,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 	render () {
 		const { rootId, block, isPopup, isInline } = this.props;
-		const root = blockStore.getLeaf(rootId, rootId);
+		const { loading } = this.state;
 		const views = dbStore.getViews(rootId, block.id);
 
 		if (!views.length) {
@@ -119,6 +126,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			);
 		};
 
+		if (loading) {
+			content = <Loader />
+		} else 
 		if ((isInline && sources.length) || !isInline) {
 			content = (
 				<div className="content">
@@ -248,17 +258,17 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		return Util.arrayUnique(keys);
 	};
 
-	getData (newViewId: string, offset: number, callBack?: (message: any) => void) {
-		if (!newViewId) {
+	getData (viewId: string, offset: number, callBack?: (message: any) => void) {
+		if (!viewId) {
 			return;
 		};
 
-		this.viewId = newViewId;
+		this.viewId = viewId;
 
 		const { rootId, block, isInline } = this.props;
 		const subId = dbStore.getSubId(rootId, block.id);
-		const view = this.getView(newViewId);
-		const keys = this.getKeys(newViewId);
+		const view = this.getView(viewId);
+		const keys = this.getKeys(viewId);
 
 		let limit = 0;
 		if ([ I.ViewType.Grid, I.ViewType.List ].includes(view.type)) {
@@ -269,11 +279,19 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			limit = 6;
 		};
 
+		this.setState({ loading: true });
+
 		dbStore.recordsSet(subId, '', []);
-		dbStore.metaSet(subId, '', { offset: offset, viewId: newViewId });
+		dbStore.metaSet(subId, '', { offset, viewId });
 
 		if (![ I.ViewType.Board ].includes(view.type)) {
-			Dataview.getData(rootId, block.id, newViewId, keys, 0, limit, false, callBack);
+			Dataview.getData(rootId, block.id, viewId, keys, 0, limit, false, (message: any) => {
+				this.setState({ loading: false });
+
+				if (callBack) {
+					callBack(message);
+				};
+			});
 		} else 
 		if (this.viewRef.loadGroupList) {
 			this.viewRef.loadGroupList();

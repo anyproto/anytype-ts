@@ -97,15 +97,16 @@ class Dataview {
 
 	getData (rootId: string, blockId: string, id: string, keys: string[], offset: number, limit: number, clear: boolean, callBack?: (message: any) => void) {
 		const view = dbStore.getView(rootId, blockId, id);
-		if (!view) {
+		const block = blockStore.getLeaf(rootId, blockId);
+
+		if (!view || !block) {
 			return;
 		};
 
 		const subId = dbStore.getSubId(rootId, blockId);
 		const { viewId } = dbStore.getMeta(subId, '');
 		const viewChange = id != viewId;
-		const meta: any = { offset: offset };
-		const block = blockStore.getLeaf(rootId, blockId);
+		const meta: any = { offset };
 		const filters = view.filters.concat([
 			{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
 		]);
@@ -134,7 +135,7 @@ class Dataview {
 			sources: block.content.sources,
 			offset,
 			limit,
-		});
+		}, callBack);
 	};
 
 	getMenuTabs (rootId: string, blockId: string, viewId: string): I.MenuTab[] {
