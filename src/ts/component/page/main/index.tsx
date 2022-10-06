@@ -648,6 +648,10 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		this.selectionRender();
 	};
 
+	onSelectionLinkToObject () {
+
+	};
+
 	onSelectionClose (e: any) {
 		this.selected = [];
 		this.selectionRender();
@@ -680,6 +684,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		let archive = null;
 		let link = null;
 		let remove = null;
+		let linkTo = { id: 'linkTo', icon: 'existing', name: 'Link To', arrow: true };
 		let move = { id: 'move', icon: 'move', name: 'Move to', arrow: true };
 		let types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map(it => it.id);
 		
@@ -691,6 +696,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 		if (object.isArchived) {
 			link = null;
+			linkTo = null;
 			remove = { id: 'remove', icon: 'remove', name: 'Delete' };
 			archive = { id: 'unarchive', icon: 'undo', name: 'Restore from bin' };
 		} else {
@@ -709,8 +715,43 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 			archive,
 			remove,
 			move,
+			linkTo,
 			link,
 		];
+
+		const onArrow = (id) => {
+			const filters = [
+				{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: types }
+			];
+
+			let type = I.NavigationType.Move;
+			let blockId = item.id;
+
+			if (id == 'linkTo') {
+				type = I.NavigationType.LinkTo;
+				blockId = item._object_.id;
+			};
+
+			console.log('CONTEXT: ', menuContext)
+
+			menuStore.open('searchObject', {
+				element: `#menuSelect #item-${id}`,
+				offsetX: menuContext.getSize().width,
+				vertical: I.MenuDirection.Center,
+				isSub: true,
+				data: {
+					rootId,
+					blockId,
+					type,
+					filters,
+					rebind: menuContext.ref.rebind,
+					blockIds: [ item.id ],
+					skipIds: [ item._object_.id ],
+					position: I.BlockPosition.Bottom,
+					onSelect: (el: any) => { menuContext.close(); }
+				}
+			});
+		};
 
 		menuStore.open('select', { 
 			element: `#button-${item.id}-more`,
@@ -724,29 +765,11 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 				options: options,
 				onOver: (e: any, el: any) => {
 					menuStore.closeAll(subIds, () => {
-						if (el.id == 'move') {
-							const filters = [
-								{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: types }
-							];
-
-							menuStore.open('searchObject', {
-								element: `#menuSelect #item-${el.id}`,
-								offsetX: menuContext.getSize().width,
-								vertical: I.MenuDirection.Center,
-								isSub: true,
-								data: {
-									rebind: menuContext.ref.rebind,
-									rootId: rootId,
-									blockId: item.id,
-									blockIds: [ item.id ],
-									type: I.NavigationType.Move, 
-									skipIds: [ item._object_.id ],
-									filters: filters,
-									position: I.BlockPosition.Bottom,
-									onSelect: (el: any) => { menuContext.close(); }
-								}
-							});
+						if (!el.arrow) {
+							return;
 						};
+
+						onArrow(el.id);
 					});
 				},
 				onSelect: (e: any, el: any) => {
@@ -767,7 +790,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 						case 'unarchive':
 							this.onSelectionArchive(false);
 
-							analytics.event('RemoveFromFavorites', { count: 1 });
+							analytics.event('RestoreFromBin', { count: 1 });
 							break;
 
 						case 'fav':

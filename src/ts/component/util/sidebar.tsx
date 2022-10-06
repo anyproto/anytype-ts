@@ -485,15 +485,56 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 
 		this.setActive(item.id);
 
+		const subIds = [ 'searchObject' ];
+		let types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map(it => it.id);
+		let menuContext = null;
+
+		const onArrow = (id) => {
+			const filters = [
+				{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: types }
+			];
+
+			console.log('CONTEXT: ', menuContext)
+			menuStore.open('searchObject', {
+				element: `#menuDataviewContext #item-${id}`,
+				offsetX: menuContext.getSize().width,
+				vertical: I.MenuDirection.Center,
+				isSub: true,
+				data: {
+					rebind: menuContext.ref.rebind,
+					rootId: item.id,
+					blockId: item.id,
+					blockIds: [ item.id ],
+					type: I.NavigationType.LinkTo,
+					skipIds: [ item.id ],
+					filters: filters,
+					position: I.BlockPosition.Bottom,
+					onSelect: (el: any) => { menuContext.close(); }
+				}
+			});
+		};
+
 		menuStore.open('dataviewContext', {
 			recalcRect: () => {
 				const { x, y } = keyboard.mouse.page;
 				return { width: 0, height: 0, x: x + 4, y: y };
 			},
+			onOpen: (context: any) => {
+				menuContext = context;
+			},
 			onClose: () => { this.setActive(this.id); },
 			data: {
 				objectIds: [ item.id ],
 				subId: dbStore.getSubId(Constant.subId.sidebar, item.parentId),
+				onOver: (e: any, el: any) => {
+					menuStore.closeAll(subIds, () => {
+						if (!el.arrow) {
+							return;
+						}
+
+						onArrow(el.id);
+					});
+				},
 			}
 		});
 	};

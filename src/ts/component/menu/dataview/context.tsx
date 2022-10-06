@@ -79,6 +79,7 @@ class MenuContext extends React.Component<Props, {}> {
 
 		let pageCopy = { id: 'copy', icon: 'copy', name: 'Duplicate' };
 		let open = { id: 'open', icon: 'expand', name: 'Open as object' };
+		let linkTo = { id: 'linkTo', icon: 'existing', name: 'Link To', arrow: true };
 		let archive = null;
 		let archiveCnt = 0;
 		let fav = null;
@@ -127,6 +128,7 @@ class MenuContext extends React.Component<Props, {}> {
 
 		if (archiveCnt == length) {
 			open = null;
+			linkTo = null;
 			archive = { id: 'unarchive', icon: 'restore', name: 'Restore from bin' };
 		} else {
 			archive = { id: 'archive', icon: 'remove', name: 'Move to bin' };
@@ -137,7 +139,7 @@ class MenuContext extends React.Component<Props, {}> {
 		if (!allowedCopy)		 pageCopy = null;
 
 		let sections = [
-			{ children: [ open, fav, pageCopy, archive ] },
+			{ children: [ open, fav, linkTo, pageCopy, archive ] },
 		];
 
 		sections = sections.filter((section: any) => {
@@ -160,9 +162,16 @@ class MenuContext extends React.Component<Props, {}> {
 	};
 
 	onMouseEnter (e: any, item: any) {
+		const { param } = this.props;
+		const { data } = param;
+		const { onOver } = data;
 		if (!keyboard.isMouseDisabled) {
 			this.props.setActive(item, false);
 		};
+
+		if (onOver) {
+			onOver(e, item);
+		}
 	};
 
 	onClick (e: any, item: any) {
