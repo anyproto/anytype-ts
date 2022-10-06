@@ -684,7 +684,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		let archive = null;
 		let link = null;
 		let remove = null;
-		let linkTo = { id: 'linkTo', icon: 'existing', name: 'Link To', arrow: true };
+		let linkTo = { id: 'linkTo', icon: 'existing', name: 'Link to', arrow: true };
 		let move = { id: 'move', icon: 'move', name: 'Move to', arrow: true };
 		let types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map(it => it.id);
 		
