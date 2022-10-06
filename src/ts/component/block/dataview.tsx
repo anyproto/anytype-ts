@@ -127,7 +127,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		if (loading) {
-			content = <Loader />
+			content = <Loader id="set-loader" />
 		} else 
 		if ((isInline && sources.length) || !isInline) {
 			content = (
