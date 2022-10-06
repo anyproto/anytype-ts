@@ -494,20 +494,19 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 				{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: types }
 			];
 
-			console.log('CONTEXT: ', menuContext)
 			menuStore.open('searchObject', {
 				element: `#menuDataviewContext #item-${id}`,
 				offsetX: menuContext.getSize().width,
 				vertical: I.MenuDirection.Center,
 				isSub: true,
 				data: {
+					filters,
 					rebind: menuContext.ref.rebind,
 					rootId: item.id,
 					blockId: item.id,
 					blockIds: [ item.id ],
 					type: I.NavigationType.LinkTo,
 					skipIds: [ item.id ],
-					filters: filters,
 					position: I.BlockPosition.Bottom,
 					onSelect: (el: any) => { menuContext.close(); }
 				}
