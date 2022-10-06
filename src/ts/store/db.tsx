@@ -200,7 +200,7 @@ class DbStore {
 	};
 
     getRelations (rootId: string, blockId: string, param?: any): any[] {
-		return (this.relationMap.get(this.getId(rootId, blockId)) || []).map(it => this.getRelationByKey(it.relationKey));
+		return (this.relationMap.get(this.getId(rootId, blockId)) || []).map(it => this.getRelationByKey(it.relationKey)).filter(it => it);
 	};
 
     getRelationByKey (relationKey: string): any {

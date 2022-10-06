@@ -18,9 +18,6 @@ class Dataview {
 
 		if (!config.debug.ho) {
 			relations = relations.filter((it: any) => { 
-				if (!it) {
-					return false;
-				};
 				if ([ Constant.relationKey.name ].includes(it.relationKey)) {
 					return true;
 				};
