@@ -1547,8 +1547,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 					});
 					cb();
 				};
-				reader.onerror = function(e) {
-				};
 				reader.readAsBinaryString(file);
 			};
 		};
@@ -1570,7 +1568,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			data = this.getClipboardData(e);
 		};
 
-		if (files.length) {
+		if (files.length && !data.files.length) {
 			this.saveClipboardFiles(e, data, (data: any) => {
 				this.onPaste(e, props, force, data);
 			});

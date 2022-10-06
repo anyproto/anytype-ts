@@ -370,13 +370,12 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const { data } = param;
 		const { blockId, rootId, onSelect, isPopup } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
+		const object = detailStore.get(rootId, rootId);
 		
 		if (!block || item.arrow) {
 			return;
 		};
 		
-		const object = detailStore.get(rootId, rootId);
-
 		let close = true;
 		
 		if (onSelect) {

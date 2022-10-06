@@ -92,16 +92,16 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		const controls = (
 			<Controls 
-					ref={(ref: any) => { this.controlRef = ref; }} 
-					{...this.props} 
-					className={className}
-					readonly={false} 
-					getData={this.getData} 
-					getView={this.getView} 
-					getRecord={this.getRecord}
-					onRecordAdd={this.onRecordAdd}
-					isInline={isInline}
-				/>
+				ref={(ref: any) => { this.controlRef = ref; }} 
+				{...this.props} 
+				className={className}
+				readonly={false} 
+				getData={this.getData} 
+				getView={this.getView} 
+				getRecord={this.getRecord}
+				onRecordAdd={this.onRecordAdd}
+				isInline={isInline}
+			/>
 		);
 
 		if (isInline) {
