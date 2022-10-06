@@ -33,7 +33,7 @@ class Dataview {
 		});
 
 		relations.forEach((it: any) => {
-			if (undefined === order[it.relationKey]) {
+			if (it && (undefined === order[it.relationKey])) {
 				order[it.relationKey] = o++;
 			};
 		});

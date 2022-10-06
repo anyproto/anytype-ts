@@ -230,9 +230,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	getKeys (id: string): string[] {
-		const view = this.getView(id);
-
+		let view = this.getView(id);
 		let keys = Constant.defaultRelationKeys.concat(Constant.coverRelationKeys);
+
 		if (view) {
 			keys = keys.concat((view.relations || []).map(it => it.relationKey));
 
