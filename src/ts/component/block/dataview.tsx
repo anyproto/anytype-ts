@@ -574,7 +574,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					type: I.NavigationType.LinkTo,
 					skipIds: [ id ],
 					position: I.BlockPosition.Bottom,
-					onSelect: (el: any) => { menuContext.close(); }
+					onSelect: (el: any) => {
+						analytics.event('LinkedToObject', { count: 1 });
+						menuContext.close();
+					}
 				}
 			});
 		};

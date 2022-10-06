@@ -308,6 +308,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 						this.data.edges.push({ type: I.EdgeType.Link, source: el.id, target: id });
 						this.refGraph.send('onSetEdges', { edges: this.data.edges });
 
+						analytics.event('LinkedToObject', { count: 1 });
 						menuContext.close();
 					}
 				}

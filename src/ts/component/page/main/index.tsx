@@ -684,7 +684,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		let archive = null;
 		let link = null;
 		let remove = null;
-		let linkTo = { id: 'linkTo', icon: 'existing', name: 'Link to', arrow: true };
+		let linkTo = { id: 'linkTo', icon: 'linkTo', name: 'Link to', arrow: true };
 		let move = { id: 'move', icon: 'move', name: 'Move to', arrow: true };
 		let types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map(it => it.id);
 		
@@ -746,7 +746,10 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 					blockIds: [ item.id ],
 					skipIds: [ item._object_.id ],
 					position: I.BlockPosition.Bottom,
-					onSelect: (el: any) => { menuContext.close(); }
+					onSelect: (el: any) => {
+						analytics.event('LinkedToObject', { count: 1 });
+						menuContext.close();
+					}
 				}
 			});
 		};

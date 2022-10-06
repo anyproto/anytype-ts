@@ -123,7 +123,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		let highlight = null;
 		let pageLock = null;
 
-		let linkTo = { id: 'linkTo', icon: 'existing', name: 'Link to', arrow: true };
+		let linkTo = { id: 'linkTo', icon: 'linkTo', name: 'Link to', arrow: true };
 		let undo = { id: 'undo', name: 'Undo', withCaption: true, caption: `${cmd}+Z` };
 		let redo = { id: 'redo', name: 'Redo', withCaption: true, caption: `${cmd}+Shift+Z` };
 		let print = { id: 'print', name: 'Print', withCaption: true, caption: `${cmd}+P` };
