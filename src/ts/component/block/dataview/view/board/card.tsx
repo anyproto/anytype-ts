@@ -18,10 +18,9 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 	_isMounted: boolean = false;
 
 	render () {
-		const { config } = commonStore;
 		const { rootId, block, groupId, id, getView, onContext, onRef, onDragStartCard } = this.props;
 		const view = getView();
-		const relations = view.relations.filter((it: any) => { return it.isVisible; });
+		const relations = view.getVisibleRelations();
 		const idPrefix = 'dataviewCell';
 		const subId = dbStore.getSubId(rootId, [ block.id, groupId ].join(':'));
 		const record = detailStore.get(subId, id);

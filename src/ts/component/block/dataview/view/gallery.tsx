@@ -36,7 +36,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<Props, {}
 	render () {
 		const { rootId, block, getData, getView, getKeys, isPopup, isInline } = this.props;
 		const view = getView();
-		const viewRelations = view.relations.filter(it => it.isVisible && dbStore.getRelationByKey(it.relationKey));
+		const relations = view.getVisibleRelations();
 		const subId = dbStore.getSubId(rootId, block.id);
 		const records = dbStore.getRecords(subId, '');
 		const { coverRelationKey, cardSize, hideIcon } = view;

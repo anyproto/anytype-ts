@@ -21,9 +21,7 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 		const { rootId, block, index, getView, getRecord, onRef, style, onContext, onCellClick } = this.props;
 		const view = getView();
 		const { cardSize, coverFit, hideIcon } = view;
-		const relations = view.relations.filter((it: any) => { 
-			return it.isVisible && dbStore.getRelationByKey(it.relationKey); 
-		});
+		const relations = view.getVisibleRelations();
 		const idPrefix = 'dataviewCell';
 		const record = getRecord(index);
 		const cn = [ 'card', DataUtil.layoutClass(record.id, record.layout), DataUtil.cardSizeClass(cardSize) ];

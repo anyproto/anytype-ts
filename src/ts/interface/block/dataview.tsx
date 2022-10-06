@@ -127,7 +127,8 @@ export interface View {
 	sorts: Sort[];
 	filters: Filter[];
 	relations: any[];
-	getRelation?:(relationKey: string) => I.ViewRelation;
+	getVisibleRelations?: () => I.ViewRelation[];
+	getRelation?: (relationKey: string) => I.ViewRelation;
 };
 
 export interface Cell {

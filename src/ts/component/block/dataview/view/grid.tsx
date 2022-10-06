@@ -32,12 +32,13 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 		this.onSortEnd = this.onSortEnd.bind(this);
 		this.onScroll = this.onScroll.bind(this);
 		this.loadMoreRows = this.loadMoreRows.bind(this);
+		this.getColumnWidths = this.getColumnWidths.bind(this);
 	};
 
 	render () {
 		const { rootId, block, getView, readonly, onRecordAdd, isPopup, isInline } = this.props;
 		const view = getView();
-		const relations = view.relations.filter(it => it && it.isVisible);
+		const relations = view.getVisibleRelations();
 		const subId = dbStore.getSubId(rootId, block.id);
 		const records = dbStore.getRecords(subId, '');
 		const allowed = blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.Object ]);
@@ -60,6 +61,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 							readonly={readonly || !allowed}
 							index={index} 
 							cellPosition={this.cellPosition}
+							getColumnWidths={this.getColumnWidths}
 						/>
 					))}
 				</div>
@@ -96,6 +98,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 																index={index} 
 																style={{ ...style, top: style.top + 2 }}
 																cellPosition={this.cellPosition}
+																getColumnWidths={this.getColumnWidths}
 															/>
 														)}
 														scrollTop={scrollTop}
@@ -123,6 +126,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 								onSortStart={this.onSortStart} 
 								onSortEnd={this.onSortEnd} 
 								onResizeStart={this.onResizeStart}
+								getColumnWidths={this.getColumnWidths}
 							/>
 
 							{content}
@@ -199,7 +203,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 		const mw = ww - PADDING * 2;
 		const length = dbStore.getRecords(dbStore.getSubId(rootId, block.id), '').length;
 		const margin = (ww - mw) / 2;
-		const width = view.relations.filter(it => it.isVisible).reduce((res: number, current: any) => { 
+		const width = view.getVisibleRelations().reduce((res: number, current: any) => { 
 			return res + current.width;
 		}, Constant.size.blockMenu);
 		const vw = Math.max(mw, width) + (width > mw ? PADDING : 0);
@@ -216,25 +220,37 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 		const { getView } = this.props;
 		const view = getView();
 		const node = $(ReactDOM.findDOMNode(this));
-		const relations = view.relations.filter(it => it.isVisible);
+		const relations = view.getVisibleRelations();
 		const size = Constant.size.dataview.cell;
-		
-		const columns = relations.map(it => {
-			const relation: any = dbStore.getRelationByKey(it.relationKey) || {};
+		const widths = this.getColumnWidths(relationKey, width);
+		const str = relations.map(it => widths[it.relationKey] + 'px').concat([ 'auto' ]).join(' ');
+
+		relations.forEach(it => {
+			const width = widths[it.relationKey];
 			const el = node.find(`#${Relation.cellId('head', it.relationKey, '')}`);
 
+			width <= size.icon ? el.addClass('small') : el.removeClass('small');
+		});
+
+		node.find('.rowHead').css({ gridTemplateColumns: str });
+		node.find('.row > .selectable').css({ gridTemplateColumns: str });
+	};
+
+	getColumnWidths (relationKey: string, width: number): any {
+		const { getView } = this.props;
+		const view = getView();
+		const relations = view.getVisibleRelations();
+		const columns: any = {};
+		
+		relations.forEach(it => {
+			const relation: any = dbStore.getRelationByKey(it.relationKey) || {};
 			if (relationKey && (it.relationKey == relationKey)) {
 				it.width = width;
 			};
+			columns[it.relationKey] = Relation.width(it.width, relation.format);
+		});
 
-			it.width = Relation.width(it.width, relation.format);
-			it.width <= size.icon ? el.addClass('small') : el.removeClass('small');
-
-			return it.width + 'px';
-		}).concat([ 'auto' ]).join(' ');
-
-		node.find('.rowHead').css({ gridTemplateColumns: columns });
-		node.find('.row > .selectable').css({ gridTemplateColumns: columns });
+		return columns;
 	};
 
 	cellPosition (cellId: string) {
@@ -335,9 +351,9 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 		const { selection } = dataset;
 		const { oldIndex, newIndex } = result;
 		const view = getView();
-		const filtered = view.relations.filter((it: any) => { return it.isVisible; });
-		const oldIdx = view.relations.findIndex((it: I.ViewRelation) => { return it.relationKey == filtered[oldIndex].relationKey; });
-		const newIdx = view.relations.findIndex((it: I.ViewRelation) => { return it.relationKey == filtered[newIndex].relationKey; });
+		const filtered = view.getVisibleRelations();
+		const oldIdx = view.relations.findIndex(it => it.relationKey == filtered[oldIndex].relationKey);
+		const newIdx = view.relations.findIndex(it => it.relationKey == filtered[newIndex].relationKey);
 		
 		view.relations = arrayMove(view.relations, oldIdx, newIdx);
 		C.BlockDataviewViewUpdate(rootId, block.id, view.id, view);
