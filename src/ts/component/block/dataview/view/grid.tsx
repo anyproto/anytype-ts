@@ -192,70 +192,36 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 		this.resizeColumns('', 0);
 	};
 
-	/*
 	resize () {
 		const { rootId, block, getView, isPopup } = this.props;
+		const element = blockStore.getMapElement(rootId, block.id);
+		const parent = blockStore.getLeaf(rootId, element.parentId);
 		const view = getView();
 		const node = $(ReactDOM.findDOMNode(this));
 		const scroll = node.find('#scroll');
 		const wrap = node.find('#scrollWrap');
 		const grid = node.find('.ReactVirtualized__Grid__innerScrollContainer');
 		const container = Util.getPageContainer(isPopup);
-		const ww = container.width();
-		const mw = ww - PADDING * 2;
-		const length = dbStore.getRecords(dbStore.getSubId(rootId, block.id), '').length;
-		const margin = (ww - mw) / 2;
-		const width = view.getVisibleRelations().reduce((res: number, current: any) => { 
-			return res + current.width;
-		}, Constant.size.blockMenu);
-		const vw = Math.max(mw, width) + (width > mw ? PADDING : 0);
-		const pr = width > mw ? PADDING : 0;
+		const width = view.getVisibleRelations().reduce((res: number, current: any) => { return res + current.width; }, Constant.size.blockMenu);
 
-		scroll.css({ width: ww - 4, marginLeft: -margin - 2, paddingLeft: margin });
-		wrap.css({ width: vw, paddingRight: pr });
-		grid.css({ height: length * HEIGHT + 4, maxHeight: length * HEIGHT + 4 });
-
-		this.resizeColumns('', 0);
-	};
-	*/
-
-	resize () {
-		const { isPopup, rootId, block, getWrapperWidth, getView } = this.props;
-		const widths = this.getColumnWidths('', 0);
-		const element = blockStore.getMapElement(rootId, block.id);
-		const parent = blockStore.getLeaf(rootId, element.parentId);
-		const node = $(ReactDOM.findDOMNode(this));
-		const wrap = node.find('#scrollWrap');
-
-		let width = Constant.size.blockMenu + 58;
-		let maxWidth = 0;
-		let wrapperWidth = 0;
-
-		for (let i in widths) {
-			width += widths[i];
-		};
-		
 		if (parent.isPage() || parent.isLayoutDiv()) {
-			const obj = $(`#block-${block.id}`);
-			const container = Util.getPageContainer(isPopup);
+			const ww = container.width();
+			const mw = ww - PADDING * 2;
+			const vw = Math.max(mw, width) + (width > mw ? PADDING : 0);
 
-			maxWidth = container.width() - PADDING;
-			wrapperWidth = getWrapperWidth() + Constant.size.blockMenu;
+			const length = dbStore.getRecords(dbStore.getSubId(rootId, block.id), '').length;
+			const margin = (ww - mw) / 2;
+			const pr = width > mw ? PADDING : 0;
 
-			width > maxWidth ? wrap.addClass('withScroll') : wrap.removeClass('withScroll');
-			width = Math.max(wrapperWidth, Math.min(maxWidth, width));
+			scroll.css({ width: ww - 4, marginLeft: -margin - 2, paddingLeft: margin });
+			wrap.css({ width: vw, paddingRight: pr });
+			grid.css({ height: length * HEIGHT + 4, maxHeight: length * HEIGHT + 4 });
 
-			obj.css({
-				width: (width >= wrapperWidth) ? width : 'auto',
-				marginLeft: (width >= wrapperWidth) ? Math.min(0, (wrapperWidth - width) / 2) : '',
-			});
 		} else {
-			const parentObj = $(`#block-${parent.id}`);
-			if (parentObj.length) {
-				maxWidth = parentObj.width() - Constant.size.blockMenu;
-			};
+			let parentObj = $(`#block-${parent.id}`);
+			let vw = parentObj.width() - Constant.size.blockMenu;
 
-			width > maxWidth ? wrap.addClass('withScroll') : wrap.removeClass('withScroll');
+			wrap.css({ width: Math.max(vw, width) });
 		};
 
 		this.resizeColumns('', 0);
