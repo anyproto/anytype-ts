@@ -11,7 +11,9 @@ import Empty from '../empty';
 import HeadRow from './grid/head/row';
 import BodyRow from './grid/body/row';
 
-interface Props extends I.ViewComponent {};
+interface Props extends I.ViewComponent {
+	getWrapperWidth?(): number;
+};
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
@@ -117,8 +119,8 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 
 		return (
 			<div className="wrap">
-				<div className="scroll">
-					<div className="scrollWrap">
+				<div id="scroll" className="scroll">
+					<div id="scrollWrap" className="scrollWrap">
 						<div className="viewItem viewGrid">
 							<HeadRow 
 								{...this.props} 
@@ -169,16 +171,15 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 
 	rebind () {
 		const node = $(ReactDOM.findDOMNode(this));
-		const scroll = node.find('.scroll');
 
-		scroll.off('.scroll').scroll(this.onScroll);
+		this.unbind();
+		node.find('#scroll').on('scroll', () => { this.onScroll(); });
 	};
 
 	unbind () {
 		const node = $(ReactDOM.findDOMNode(this));
-		const scroll = node.find('.scroll');
 
-		scroll.off('.scroll');
+		node.find('#scroll').off('scroll');
 	};
 
 	onScroll () {
@@ -191,12 +192,13 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 		this.resizeColumns('', 0);
 	};
 
+	/*
 	resize () {
 		const { rootId, block, getView, isPopup } = this.props;
 		const view = getView();
 		const node = $(ReactDOM.findDOMNode(this));
-		const scroll = node.find('.scroll');
-		const wrap = node.find('.scrollWrap');
+		const scroll = node.find('#scroll');
+		const wrap = node.find('#scrollWrap');
 		const grid = node.find('.ReactVirtualized__Grid__innerScrollContainer');
 		const container = Util.getPageContainer(isPopup);
 		const ww = container.width();
@@ -212,6 +214,49 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 		scroll.css({ width: ww - 4, marginLeft: -margin - 2, paddingLeft: margin });
 		wrap.css({ width: vw, paddingRight: pr });
 		grid.css({ height: length * HEIGHT + 4, maxHeight: length * HEIGHT + 4 });
+
+		this.resizeColumns('', 0);
+	};
+	*/
+
+	resize () {
+		const { isPopup, rootId, block, getWrapperWidth, getView } = this.props;
+		const widths = this.getColumnWidths('', 0);
+		const element = blockStore.getMapElement(rootId, block.id);
+		const parent = blockStore.getLeaf(rootId, element.parentId);
+		const node = $(ReactDOM.findDOMNode(this));
+		const wrap = node.find('#scrollWrap');
+
+		let width = Constant.size.blockMenu + 58;
+		let maxWidth = 0;
+		let wrapperWidth = 0;
+
+		for (let i in widths) {
+			width += widths[i];
+		};
+		
+		if (parent.isPage() || parent.isLayoutDiv()) {
+			const obj = $(`#block-${block.id}`);
+			const container = Util.getPageContainer(isPopup);
+
+			maxWidth = container.width() - PADDING;
+			wrapperWidth = getWrapperWidth() + Constant.size.blockMenu;
+
+			width > maxWidth ? wrap.addClass('withScroll') : wrap.removeClass('withScroll');
+			width = Math.max(wrapperWidth, Math.min(maxWidth, width));
+
+			obj.css({
+				width: (width >= wrapperWidth) ? width : 'auto',
+				marginLeft: (width >= wrapperWidth) ? Math.min(0, (wrapperWidth - width) / 2) : '',
+			});
+		} else {
+			const parentObj = $(`#block-${parent.id}`);
+			if (parentObj.length) {
+				maxWidth = parentObj.width() - Constant.size.blockMenu;
+			};
+
+			width > maxWidth ? wrap.addClass('withScroll') : wrap.removeClass('withScroll');
+		};
 
 		this.resizeColumns('', 0);
 	};
@@ -261,7 +306,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 
 		const { isPopup } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
-		const scroll = node.find('.scroll');
+		const scroll = node.find('#scroll');
 		const content = cell.find('.cellContent');
 		const x = cell.position().left;
 		const width = content.outerWidth();
