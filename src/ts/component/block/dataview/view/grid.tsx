@@ -203,20 +203,17 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 		const grid = node.find('.ReactVirtualized__Grid__innerScrollContainer');
 		const container = Util.getPageContainer(isPopup);
 		const width = view.getVisibleRelations().reduce((res: number, current: any) => { return res + current.width; }, Constant.size.blockMenu);
+		const length = dbStore.getRecords(dbStore.getSubId(rootId, block.id), '').length;
 
 		if (parent.isPage() || parent.isLayoutDiv()) {
 			const ww = container.width();
 			const mw = ww - PADDING * 2;
 			const vw = Math.max(mw, width) + (width > mw ? PADDING : 0);
-
-			const length = dbStore.getRecords(dbStore.getSubId(rootId, block.id), '').length;
 			const margin = (ww - mw) / 2;
 			const pr = width > mw ? PADDING : 0;
 
 			scroll.css({ width: ww - 4, marginLeft: -margin - 2, paddingLeft: margin });
 			wrap.css({ width: vw, paddingRight: pr });
-			grid.css({ height: length * HEIGHT + 4, maxHeight: length * HEIGHT + 4 });
-
 		} else {
 			let parentObj = $(`#block-${parent.id}`);
 			let vw = parentObj.width() - Constant.size.blockMenu;
@@ -224,6 +221,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 			wrap.css({ width: Math.max(vw, width) });
 		};
 
+		grid.css({ height: length * HEIGHT + 4, maxHeight: length * HEIGHT + 4 });
 		this.resizeColumns('', 0);
 	};
 

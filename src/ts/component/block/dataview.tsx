@@ -275,8 +275,17 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			//limit = Constant.limit.dataview.records + offset;
 			offset = 0;
 		};
+
 		if (isInline) {
-			limit = 6;
+			if (view.type == I.ViewType.Gallery) {
+				switch (view.cardSize) {
+					case I.CardSize.Small:	 limit = 8; break;
+					case I.CardSize.Medium:	 limit = 6; break;
+					case I.CardSize.Large:	 limit = 6; break;
+				};
+			} else {
+				limit = 6;
+			};
 		};
 
 		this.setState({ loading: true });
