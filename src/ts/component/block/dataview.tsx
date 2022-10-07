@@ -279,23 +279,17 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		if (isInline) {
-			if (view.type == I.ViewType.Gallery) {
-				switch (view.cardSize) {
-					case I.CardSize.Small:	 limit = 8; break;
-					case I.CardSize.Medium:	 limit = 6; break;
-					case I.CardSize.Large:	 limit = 6; break;
-				};
-			} else {
-				limit = 6;
-			};
+			limit = view.type == I.ViewType.Gallery ? 12 : 10;
 		};
-
-		this.setState({ loading: true });
 
 		dbStore.recordsSet(subId, '', []);
 		dbStore.metaSet(subId, '', { offset, viewId });
 
+		console.log(this.viewRef);
+
 		if (![ I.ViewType.Board ].includes(view.type)) {
+			this.setState({ loading: true });
+
 			Dataview.getData(rootId, block.id, viewId, keys, 0, limit, false, (message: any) => {
 				this.setState({ loading: false });
 
@@ -304,7 +298,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				};
 			});
 		} else 
-		if (this.viewRef.loadGroupList) {
+		if (this.viewRef && this.viewRef.loadGroupList) {
 			this.viewRef.loadGroupList();
 		};
 	};
