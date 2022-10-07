@@ -4,9 +4,6 @@
 	.block.blockDataview { @include text-common; }
 	.block.blockDataview {
 		#set-loader { margin: 24px auto; }
-
-		.scrollWrap { padding-bottom: 14px; }
-
 		.icon.plus { width: 20px; height: 20px; background-image: url('~img/icon/plus/menu0.svg'); cursor: pointer; }
 		
 		.icon.edit { 
@@ -110,17 +107,22 @@
 			}
 		}
 
-		.dataviewControls.isInline {
+		.content {
+			.scroll { overflow-x: overlay; overflow-y: visible; transform: translate3d(0px,0px,0px); }
+			.scrollWrap { background: #fff; padding-bottom: 14px; }
+		}
+	}
+
+	.block.blockDataview.isInline {
+		.wrapContent { z-index: 2; }
+
+		.dataviewControls {
 			.side { padding-top: 9px; padding-bottom: 0px; }
 			.side.right { transition: opacity 0.2s ease-in-out; opacity: 0; }
 			.line { display: none; }
 		}
-		.dataviewControls.isInline:hover, .dataviewControls.isInline.active {
+		.dataviewControls:hover, .dataviewControls.active {
 			.side.right { opacity: 1; }
 		}
-
-		.content {
-			.scroll { overflow-x: overlay; overflow-y: visible; transform: translate3d(0px,0px,0px); }
-		}
-	}	
+	}
 }

@@ -193,7 +193,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 	};
 
 	resize () {
-		const { rootId, block, getView, isPopup } = this.props;
+		const { rootId, block, getView, isPopup, isInline } = this.props;
 		const element = blockStore.getMapElement(rootId, block.id);
 		const parent = blockStore.getLeaf(rootId, element.parentId);
 		const view = getView();
@@ -204,21 +204,32 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 		const container = Util.getPageContainer(isPopup);
 		const width = view.getVisibleRelations().reduce((res: number, current: any) => { return res + current.width; }, Constant.size.blockMenu);
 		const length = dbStore.getRecords(dbStore.getSubId(rootId, block.id), '').length;
+		const cw = container.width();
 
-		if (parent.isPage() || parent.isLayoutDiv()) {
-			const ww = container.width();
-			const mw = ww - PADDING * 2;
+		if (isInline) {
+			if (parent.isPage() || parent.isLayoutDiv()) {
+				const wrapper = $('#editorWrapper');
+				const ww = wrapper.width();
+				const vw = Math.max(ww, width) + (width > ww ? PADDING : 0);
+				const margin = (cw - ww) / 2;
+				const pr = width > ww ? PADDING : 0;
+
+				scroll.css({ width: cw - 4, marginLeft: -margin - 2, paddingLeft: margin });
+				wrap.css({ width: vw, paddingRight: pr });
+			} else {
+				const parentObj = $(`#block-${parent.id}`);
+				const vw = parentObj.length ? (parentObj.width() - Constant.size.blockMenu) : 0;
+
+				wrap.css({ width: Math.max(vw, width) });
+			};
+		} else {
+			const mw = cw - PADDING * 2;
 			const vw = Math.max(mw, width) + (width > mw ? PADDING : 0);
-			const margin = (ww - mw) / 2;
+			const margin = (cw - mw) / 2;
 			const pr = width > mw ? PADDING : 0;
 
-			scroll.css({ width: ww - 4, marginLeft: -margin - 2, paddingLeft: margin });
+			scroll.css({ width: cw - 4, marginLeft: -margin - 2, paddingLeft: margin });
 			wrap.css({ width: vw, paddingRight: pr });
-		} else {
-			let parentObj = $(`#block-${parent.id}`);
-			let vw = parentObj.width() - Constant.size.blockMenu;
-
-			wrap.css({ width: Math.max(vw, width) });
 		};
 
 		grid.css({ height: length * HEIGHT + 4, maxHeight: length * HEIGHT + 4 });
