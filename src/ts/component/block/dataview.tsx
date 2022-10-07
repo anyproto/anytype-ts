@@ -47,6 +47,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		this.getRecord = this.getRecord.bind(this);
 		this.getView = this.getView.bind(this);
 		this.getKeys = this.getKeys.bind(this);
+		this.getIdPrefix = this.getIdPrefix.bind(this);
 		this.onRecordAdd = this.onRecordAdd.bind(this);
 		this.onCellClick = this.onCellClick.bind(this);
 		this.onCellChange = this.onCellChange.bind(this);
@@ -144,6 +145,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 						getRecord={this.getRecord}
 						getView={this.getView} 
 						getKeys={this.getKeys}
+						getIdPrefix={this.getIdPrefix}
 						onRecordAdd={this.onRecordAdd}
 						onCellClick={this.onCellClick}
 						onCellChange={this.onCellChange}
@@ -416,7 +418,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					dbStore.recordsSet(subId, '', arrayMove(records, oldIndex, newIndex));
 				};
 
-				const id = Relation.cellId('dataviewCell', 'name', newIndex);
+				const id = Relation.cellId(this.getIdPrefix(), 'name', newIndex);
 				const ref = this.cellRefs.get(id);
 
 				if (ref && (view.type == I.ViewType.Grid)) {
@@ -509,10 +511,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			return;
 		};
 
-		const { dataset } = this.props;
+		const { block, dataset } = this.props;
 		const { selection } = dataset || {};
 		const relation = dbStore.getRelationByKey(relationKey);
-		const id = Relation.cellId('dataviewCell', relationKey, index);
+		const id = Relation.cellId(this.getIdPrefix(), relationKey, index);
 		const ref = this.cellRefs.get(id);
 		const record = this.getRecord(index);
 		const view = this.getView();
@@ -589,6 +591,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				subId,
 			}
 		});
+	};
+
+	getIdPrefix () {
+		return [ 'dataviewCell', this.props.block.id ].join('-');
 	};
 
 	resize () {
