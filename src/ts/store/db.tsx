@@ -43,13 +43,15 @@ class DbStore {
 
     relationsSet (rootId: string, blockId: string, list: any[]) {
 		const key = this.getId(rootId, blockId);
-		const relations = this.getRelations(rootId, blockId);
+		const relations = this.relationMap.get(this.getId(rootId, blockId)) || [];
 
 		for (let item of list) {
 			relations.push(item);
 		};
 
 		this.relationMap.set(key, Util.arrayUniqueObjects(relations, 'relationKey'));
+
+		console.log(key, this.relationMap.get(key));
 	};
 
     relationDelete (rootId: string, blockId: string, id: string) {
@@ -199,7 +201,7 @@ class DbStore {
 			filter(it => !it._empty_ && (it.smartblockTypes || []).includes(SBType) && !it.isArchived && !it.isDeleted);
 	};
 
-    getRelations (rootId: string, blockId: string, param?: any): any[] {
+    getRelations (rootId: string, blockId: string): any[] {
 		return (this.relationMap.get(this.getId(rootId, blockId)) || []).map(it => this.getRelationByKey(it.relationKey)).filter(it => it);
 	};
 
