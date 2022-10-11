@@ -277,17 +277,13 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const view = this.getView(viewId);
 		const keys = this.getKeys(viewId);
 
-		if ([ I.ViewType.Grid, I.ViewType.List ].includes(view.type)) {
-			offset = 0;
-		};
-
 		dbStore.recordsSet(subId, '', []);
 		dbStore.metaSet(subId, '', { offset, viewId });
 
 		if (![ I.ViewType.Board ].includes(view.type)) {
 			this.setState({ loading: true });
 
-			Dataview.getData(rootId, block.id, viewId, keys, 0, this.getLimit(viewId), false, (message: any) => {
+			Dataview.getData(rootId, block.id, viewId, keys, 0, offset + this.getLimit(viewId), false, (message: any) => {
 				this.setState({ loading: false });
 
 				if (callBack) {
@@ -312,7 +308,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		switch (view.type) {
 			default:
-				limit = isInline ? 10 : 0;
+				limit = isInline ? 1 : 0;
 				break;
 
 			case I.ViewType.Board:

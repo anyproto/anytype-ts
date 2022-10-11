@@ -18,7 +18,6 @@ interface Props extends I.ViewComponent {
 const $ = require('jquery');
 const Constant = require('json/constant.json');
 const PADDING = 46;
-const HEIGHT = 48;
 
 const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 
@@ -44,7 +43,8 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 		const subId = dbStore.getSubId(rootId, block.id);
 		const records = dbStore.getRecords(subId, '');
 		const allowed = blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.Object ]);
-		const { total } = dbStore.getMeta(dbStore.getSubId(rootId, block.id), '');
+		const { offset, total } = dbStore.getMeta(dbStore.getSubId(rootId, block.id), '');
+		const limit = getLimit();
 		const length = records.length;
 
 		if (!length) {
@@ -90,7 +90,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 														width={Number(width) || 0}
 														isScrolling={isScrolling}
 														rowCount={length}
-														rowHeight={HEIGHT}
+														rowHeight={this.getRowHeight()}
 														onRowsRendered={onRowsRendered}
 														rowRenderer={({ key, index, style }) => (
 															<BodyRow 
@@ -133,8 +133,8 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 
 							{content}
 
-							{isInline ? (
-								<LoadMore limit={getLimit()} />
+							{isInline && (limit + offset < total) ? (
+								<LoadMore limit={getLimit()} onClick={this.loadMoreRows} />
 							) : ''}
 
 							{!readonly && allowed ? (
@@ -209,6 +209,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 		const width = view.getVisibleRelations().reduce((res: number, current: any) => { return res + current.width; }, Constant.size.blockMenu);
 		const length = dbStore.getRecords(dbStore.getSubId(rootId, block.id), '').length;
 		const cw = container.width();
+		const rh = this.getRowHeight();
 
 		if (isInline) {
 			if (parent.isPage() || parent.isLayoutDiv()) {
@@ -236,7 +237,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 			wrap.css({ width: vw, paddingRight: pr });
 		};
 
-		grid.css({ height: length * HEIGHT + 4, maxHeight: length * HEIGHT + 4 });
+		grid.css({ height: length * rh + 4, maxHeight: length * rh + 4 });
 		this.resizeColumns('', 0);
 	};
 
@@ -275,6 +276,10 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 		});
 
 		return columns;
+	};
+
+	getRowHeight () {
+		return this.props.isInline ? 40 : 48;
 	};
 
 	cellPosition (cellId: string) {
@@ -386,12 +391,15 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 	};
 
 	loadMoreRows ({ startIndex, stopIndex }) {
-		const { rootId, block, getData, getView, getLimit } = this.props;
-		const { offset } = dbStore.getMeta(dbStore.getSubId(rootId, block.id), '');
-		const view = getView();
+		let { rootId, block, getData, getView, getLimit } = this.props;
+		let subId = dbStore.getSubId(rootId, block.id);
+		let { offset } = dbStore.getMeta(subId, '');
+		let view = getView();
 
         return new Promise((resolve, reject) => {
-			getData(view.id, offset + getLimit(), resolve);
+			offset += getLimit();
+			getData(view.id, offset, resolve);
+			dbStore.metaSet(subId, '', { offset });
 		});
 	};
 	
