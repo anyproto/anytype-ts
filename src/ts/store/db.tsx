@@ -50,8 +50,6 @@ class DbStore {
 		};
 
 		this.relationMap.set(key, Util.arrayUniqueObjects(relations, 'relationKey'));
-
-		console.log(key, this.relationMap.get(key));
 	};
 
     relationDelete (rootId: string, blockId: string, id: string) {
