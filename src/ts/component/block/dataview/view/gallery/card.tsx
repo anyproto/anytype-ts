@@ -19,8 +19,6 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 
 	render () {
 		const { rootId, block, index, getView, getRecord, onRef, style, onContext, onCellClick, getIdPrefix } = this.props;
-
-		console.log(this.props);
 		const view = getView();
 		const { cardSize, coverFit, hideIcon } = view;
 		const relations = view.getVisibleRelations();

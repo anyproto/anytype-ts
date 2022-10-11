@@ -43,7 +43,6 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 		this.onDragStartColumn = this.onDragStartColumn.bind(this);
 		this.onDragStartCard = this.onDragStartCard.bind(this);
 		this.getSubId = this.getSubId.bind(this);
-		this.onScrollColumn = this.onScrollColumn.bind(this);
 	};
 
 	render () {
@@ -65,7 +64,6 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 										onRecordAdd={this.onRecordAdd} 
 										onDragStartColumn={this.onDragStartColumn}
 										onDragStartCard={this.onDragStartCard}
-										onScrollColumn={() => { return this.onScrollColumn(group.id); }}
 										applyGroupOrder={() => { return this.applyGroupOrder(group.id); }}
 										getSubId={() => { return this.getSubId(group.id); }}
 									/>
@@ -659,20 +657,6 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 	clear () {
 		const node = $(ReactDOM.findDOMNode(this));
 		node.find('.isOver').removeClass('isOver top bottom left right');
-	};
-
-	onScrollColumn (groupId: string) {
-		const node = $(ReactDOM.findDOMNode(this));
-
-		for (let i in this.cache) {
-			let item = this.cache[i];
-			if (item.groupId != groupId) {
-				continue;
-			};
-
-			let el = node.find(`#card-${item.id}`);
-			item.y = el.offset().top;
-		};
 	};
 
 	resize () {

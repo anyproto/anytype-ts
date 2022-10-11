@@ -20,6 +20,19 @@
 			}
 		}
 
+		.loadMore { 
+			display: flex; align-items: center; @include text-small; line-height: 20px; padding: 4px 2px; color: $colorDarkGrey; 
+			transition: $transitionFast; cursor: pointer;
+		}
+		.loadMore {
+			.icon { flex-shrink: 0; width: 20px; height: 20px; background-image: url('~img/arrow/loadMore0.svg'); }
+		}
+
+		.loadMore:hover { color: $colorBlack; }
+		.loadMore:hover { 
+			.icon { background-image: url('~img/arrow/loadMore1.svg'); }
+		}
+
 		.dataviewEmpty { 
 			color: $colorDarkGrey; height: 230px; display: flex; align-items: center; justify-content: center; border-bottom: 1px solid $colorLightGrey;
 		}
