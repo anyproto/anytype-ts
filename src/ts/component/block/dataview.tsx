@@ -171,7 +171,12 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	componentDidMount () {
-		const { rootId, block, isPopup } = this.props;
+		const { rootId, block, isPopup, isDragging } = this.props;
+
+		if (isDragging) {
+			return;
+		};
+
 		const view = this.getView();
 		const root = blockStore.getLeaf(rootId, rootId);
 
