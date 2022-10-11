@@ -6,7 +6,7 @@ const Constant = require('json/constant.json');
 
 class DbStore {
 
-    public relationMap: Map<string, any[]> = observable.map(new Map());
+    public relationMap: Map<string, any[]> = observable(new Map());
 	public relationKeyMap: any = {};
     public viewMap: Map<string, I.View[]> = observable.map(new Map());
     public recordMap: Map<string, string[]> = observable.map(new Map());
