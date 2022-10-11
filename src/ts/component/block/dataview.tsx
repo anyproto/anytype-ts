@@ -17,6 +17,7 @@ import ViewList from './dataview/view/list';
 
 interface Props extends I.BlockComponent, RouteComponentProps<any> {
 	isInline?: boolean;
+	isDragging?: boolean
 };
 
 interface State {
@@ -55,7 +56,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	render () {
-		const { rootId, block, isPopup, isInline } = this.props;
+		const { rootId, block, isPopup, isInline, isDragging } = this.props;
 		const { loading } = this.state;
 		const views = dbStore.getViews(rootId, block.id);
 
@@ -73,6 +74,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		let ViewComponent: any = null;
 		let className = '';
 		let head = null;
+		let controls = null;
 		let content = null;
 
 		switch (view.type) {
@@ -98,20 +100,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				break;
 		};
 
-		const controls = (
-			<Controls 
-				ref={(ref: any) => { this.controlRef = ref; }} 
-				{...this.props} 
-				className={className}
-				readonly={false} 
-				getData={this.getData} 
-				getView={this.getView} 
-				getRecord={this.getRecord}
-				onRecordAdd={this.onRecordAdd}
-				isInline={isInline}
-			/>
-		);
-
 		if (isInline) {
 			head = (
 				<Head 
@@ -127,33 +115,49 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			);
 		};
 
-		if (loading) {
-			content = <Loader id="set-loader" />
-		} else 
-		if ((isInline && sources.length) || !isInline) {
-			content = (
-				<div className="content">
-					<ViewComponent 
-						key={'view' + view.id}
-						ref={(ref: any) => { this.viewRef = ref; }} 
-						onRef={(ref: any, id: string) => { this.cellRefs.set(id, ref); }} 
-						{...this.props} 
-						bodyContainer={Util.getBodyContainer(isPopup ? 'popup' : 'page')}
-						pageContainer={Util.getCellContainer(isPopup ? 'popup' : 'page')}
-						readonly={false} 
-						getData={this.getData} 
-						getRecord={this.getRecord}
-						getView={this.getView} 
-						getKeys={this.getKeys}
-						getIdPrefix={this.getIdPrefix}
-						onRecordAdd={this.onRecordAdd}
-						onCellClick={this.onCellClick}
-						onCellChange={this.onCellChange}
-						onContext={this.onContext}
-						isInline={isInline}
-					/>
-				</div>
+		if (!isDragging) {
+			controls = (
+				<Controls 
+					ref={(ref: any) => { this.controlRef = ref; }} 
+					{...this.props} 
+					className={className}
+					readonly={false} 
+					getData={this.getData} 
+					getView={this.getView} 
+					getRecord={this.getRecord}
+					onRecordAdd={this.onRecordAdd}
+					isInline={isInline}
+				/>
 			);
+
+			if (loading) {
+				content = <Loader id="set-loader" />
+			} else 
+			if ((isInline && sources.length) || !isInline) {
+				content = (
+					<div className="content">
+						<ViewComponent 
+							key={'view' + view.id}
+							ref={(ref: any) => { this.viewRef = ref; }} 
+							onRef={(ref: any, id: string) => { this.cellRefs.set(id, ref); }} 
+							{...this.props} 
+							bodyContainer={Util.getBodyContainer(isPopup ? 'popup' : 'page')}
+							pageContainer={Util.getCellContainer(isPopup ? 'popup' : 'page')}
+							readonly={false} 
+							getData={this.getData} 
+							getRecord={this.getRecord}
+							getView={this.getView} 
+							getKeys={this.getKeys}
+							getIdPrefix={this.getIdPrefix}
+							onRecordAdd={this.onRecordAdd}
+							onCellClick={this.onCellClick}
+							onCellChange={this.onCellChange}
+							onContext={this.onContext}
+							isInline={isInline}
+						/>
+					</div>
+				);
+			};
 		};
 
 		return (
@@ -284,8 +288,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		dbStore.recordsSet(subId, '', []);
 		dbStore.metaSet(subId, '', { offset, viewId });
-
-		console.log(this.viewRef);
 
 		if (![ I.ViewType.Board ].includes(view.type)) {
 			this.setState({ loading: true });

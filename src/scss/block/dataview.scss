@@ -114,8 +114,6 @@
 	}
 
 	.block.blockDataview.isInline {
-		.wrapContent { z-index: 2; }
-
 		.dataviewControls {
 			.side { padding-top: 9px; padding-bottom: 0px; }
 			.side.right { transition: opacity 0.2s ease-in-out; opacity: 0; }
