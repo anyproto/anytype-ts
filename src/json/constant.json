@@ -4,7 +4,6 @@
 	"sentry": "https://44e6df81644c4e36b21b1dbea62b8a1a@sentry.anytype.io/3",
 	"amplitude": "1ba981d1a9afb8af8c81847ef3383a20",
 	"protocol": "anytype",
-
 	"appName": "Anytype",
 
 	"platforms": {
@@ -14,6 +13,7 @@
 	},
 
 	"coverCnt": 13,
+	"limitMenuRecords": 100,
 
 	"default": {
 		"lang": "en",
@@ -29,7 +29,6 @@
 	"delay": {
 		"menu": 60,
 		"popup": 60,
-		"header": 2000,
 		"tooltip": 200
 	},
 	
@@ -39,17 +38,6 @@
 		"cover": [ "jpg", "jpeg", "png" ],
 		"audio": [ "mp3", "m4a", "flac", "ogg", "wav" ],
 		"pdf": [ "pdf" ]
-	},
-
-	"limit": {
-		"dataview": {
-			"records": 50,
-			"viewName": 32
-		},
-		"store": {
-			"records": 50
-		},
-		"menu": 100
 	},
 
 	"menuIds": {
