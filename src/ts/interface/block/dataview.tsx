@@ -109,6 +109,7 @@ export interface ViewComponent {
 	getView?(): View;
 	getKeys?(viewId: string): string[];
 	getIdPrefix?(): string;
+	getLimit?(): number;
 	onRecordAdd?: (e: any, dir: number, withPopup?: boolean) => void;
 	onCellClick?(e: any, key: string, index: number): void;
 	onContext?(e: any, id: string): void;

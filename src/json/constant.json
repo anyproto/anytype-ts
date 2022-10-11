@@ -43,7 +43,7 @@
 
 	"limit": {
 		"dataview": {
-			"records": 1,
+			"records": 50,
 			"viewName": 32
 		},
 		"store": {

@@ -149,6 +149,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 							getView={this.getView} 
 							getKeys={this.getKeys}
 							getIdPrefix={this.getIdPrefix}
+							getLimit={() => this.getLimit(view.id)}
 							onRecordAdd={this.onRecordAdd}
 							onCellClick={this.onCellClick}
 							onCellChange={this.onCellChange}
@@ -271,19 +272,13 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		this.viewId = viewId;
 
-		const { rootId, block, isInline } = this.props;
+		const { rootId, block } = this.props;
 		const subId = dbStore.getSubId(rootId, block.id);
 		const view = this.getView(viewId);
 		const keys = this.getKeys(viewId);
 
-		let limit = 0;
 		if ([ I.ViewType.Grid, I.ViewType.List ].includes(view.type)) {
-			//limit = Constant.limit.dataview.records + offset;
 			offset = 0;
-		};
-
-		if (isInline) {
-			limit = view.type == I.ViewType.Gallery ? 12 : 10;
 		};
 
 		dbStore.recordsSet(subId, '', []);
@@ -292,7 +287,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		if (![ I.ViewType.Board ].includes(view.type)) {
 			this.setState({ loading: true });
 
-			Dataview.getData(rootId, block.id, viewId, keys, 0, limit, false, (message: any) => {
+			Dataview.getData(rootId, block.id, viewId, keys, 0, this.getLimit(viewId), false, (message: any) => {
 				this.setState({ loading: false });
 
 				if (callBack) {
@@ -303,6 +298,32 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		if (this.viewRef && this.viewRef.loadGroupList) {
 			this.viewRef.loadGroupList();
 		};
+	};
+
+	getLimit (viewId: string): number {
+		const view = this.getView(viewId);
+		const { isInline } = this.props;
+
+		if (!view) {
+			return;
+		};
+
+		let limit = 0;
+
+		switch (view.type) {
+			default:
+				limit = isInline ? 10 : 0;
+				break;
+
+			case I.ViewType.Board:
+				limit = 10;
+				break;
+			
+			case I.ViewType.Gallery:
+				limit = isInline ? 12 : 0;
+				break;
+		};
+		return limit;
 	};
 
 	getRecord (index: number) {

@@ -45,14 +45,14 @@ const Column = observer(class Column extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { rootId, block, id, getSubId, getView, onRecordAdd, value, onDragStartColumn } = this.props;
+		const { rootId, block, id, getSubId, getView, getLimit, onRecordAdd, value, onDragStartColumn } = this.props;
 		const { loading } = this.state;
 		const view = getView();
 		const subId = getSubId();
 		const records = dbStore.getRecords(subId, '');
 		const items = this.getItems();
 		const { offset, total } = dbStore.getMeta(subId, '');
-		const limit = Constant.limit.dataview.records + this.offset;
+		const limit = getLimit();
 		const group = dbStore.getGroup(rootId, block.id, id);
 		const head = {};
 		const cn = [ 'column' ];
@@ -111,21 +111,17 @@ const Column = observer(class Column extends React.Component<Props, State> {
 					<div className="bg">
 						{loading ? <Loader / > : (
 							<React.Fragment>
-								{items.map((item: any, i: number) => {
-									let key = [ 'board', view.id, id, item.id ].join('-');
+								{items.map((item: any, i: number) => (
+									<Card 
+										key={[ 'board', view.id, id, item.id ].join('-')} 
+										{...this.props} 
+										id={item.id} 
+										groupId={id}
+										index={i}
+									/>
+								))}
 
-									return (
-										<Card 
-											key={key} 
-											{...this.props} 
-											id={item.id} 
-											groupId={id}
-											index={i}
-										/>
-									);
-								})}
-
-								{limit < total ? <LoadMore limit={Constant.limit.dataview.records} onClick={this.onLoadMore} /> : ''}
+								{limit + this.offset < total ? <LoadMore limit={limit} onClick={this.onLoadMore} /> : ''}
 
 								<div id={`card-${id}-add`} className="card add" onClick={() => { onRecordAdd(id, 1); }}>
 									<Icon className="plus" />
@@ -153,11 +149,11 @@ const Column = observer(class Column extends React.Component<Props, State> {
 			return;
 		};
 
-		const { rootId, block, getView, getKeys, getSubId, applyGroupOrder } = this.props;
+		const { rootId, block, getView, getKeys, getSubId, applyGroupOrder, getLimit } = this.props;
 		const view = getView();
 		const relation = dbStore.getRelationByKey(view.groupRelationKey);
 		const subId = getSubId();
-		const limit = Constant.limit.dataview.records + this.offset;
+		const limit = getLimit() + this.offset;
 
 		if (!relation) {
 			return;
@@ -228,7 +224,9 @@ const Column = observer(class Column extends React.Component<Props, State> {
 	};
 
 	onLoadMore (e: any) {
-		this.offset += Constant.limit.dataview.records;
+		const { getLimit } = this.props;
+
+		this.offset += getLimit();
 		this.load(false);
 	};
 

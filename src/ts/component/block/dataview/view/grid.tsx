@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Icon } from 'Component';
+import { Icon, LoadMore } from 'Component';
 import { I, C, Util, translate, keyboard, Relation } from 'Lib';
 import { dbStore, menuStore, blockStore } from 'Store';
 import { AutoSizer, WindowScroller, List, InfiniteLoader } from 'react-virtualized';
@@ -38,7 +38,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { rootId, block, getView, readonly, onRecordAdd, isPopup, isInline } = this.props;
+		const { rootId, block, getView, readonly, onRecordAdd, isPopup, isInline, getLimit } = this.props;
 		const view = getView();
 		const relations = view.getVisibleRelations();
 		const subId = dbStore.getSubId(rootId, block.id);
@@ -132,6 +132,10 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 							/>
 
 							{content}
+
+							{isInline ? (
+								<LoadMore limit={getLimit()} />
+							) : ''}
 
 							{!readonly && allowed ? (
 								<div className="row add">
@@ -349,10 +353,10 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 			horizontal: I.MenuDirection.Center,
 			offsetY: 10,
 			data: {
-				readonly: readonly,
-				getData: getData,
-				getView: getView,
-				rootId: rootId,
+				readonly,
+				getData,
+				getView,
+				rootId,
 				blockId: block.id,
 				onAdd: () => { menuStore.closeAll(Constant.menuIds.cellAdd); }
 			}
@@ -382,12 +386,12 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 	};
 
 	loadMoreRows ({ startIndex, stopIndex }) {
-		const { rootId, block, getData, getView } = this.props;
+		const { rootId, block, getData, getView, getLimit } = this.props;
 		const { offset } = dbStore.getMeta(dbStore.getSubId(rootId, block.id), '');
 		const view = getView();
 
         return new Promise((resolve, reject) => {
-			getData(view.id, offset + Constant.limit.dataview.records, resolve);
+			getData(view.id, offset + getLimit(), resolve);
 		});
 	};
 	
