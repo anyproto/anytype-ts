@@ -14,7 +14,8 @@ class Util {
 	init (history: any) {
 		this.history = history;
 	};
-	
+
+	timeoutToast: number = 0;
 	timeoutTooltip: number = 0;
 	timeoutPreviewShow: number = 0;
 	timeoutPreviewHide: number = 0;
@@ -685,6 +686,50 @@ class Util {
 			obj.removeClass('top bottom withImage'); 
 
 			commonStore.previewClear();
+		}, 250);
+	};
+
+	toastShow (param: any) {
+		const obj = $('#toast');
+
+		commonStore.toastSet(param);
+
+		obj.show().css({ opacity: 0 });
+
+		let win = $(window);
+		let ow = obj.outerWidth();
+		let oh = obj.outerHeight();
+		let x = win.width() / 2 - ow / 2;
+		let y = win.height() - oh - 24;
+
+		window.setTimeout(() => {
+			obj.css({ left: x, top: y, opacity: 1 });
+		}, 10);
+
+
+		this.timeoutToast = window.setTimeout(this.toastHide, Constant.delay.toast);
+		obj.off('mouseenter').on('mouseenter', (e: any) => {
+			window.clearTimeout(this.timeoutToast);
+		});
+
+		obj.off('mouseleave').on('mouseleave', (e: any) => {
+			this.timeoutToast = window.setTimeout(this.toastHide, Constant.delay.toast);
+		});
+	};
+
+	toastHide (force: boolean) {
+		window.clearTimeout(this.timeoutToast);
+
+		const obj = $('#toast');
+
+		if (force) {
+			obj.hide();
+			return;
+		};
+
+		obj.css({ opacity: 0 });
+		this.timeoutToast = window.setTimeout(() => {
+			obj.hide();
 		}, 250);
 	};
 

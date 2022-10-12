@@ -45,6 +45,7 @@ import Textarea from './util/textarea';
 import Button from './util/button';
 import Error from './util/error';
 import Select from './util/select';
+import Toast from './util/toast';
 import Tooltip from './util/tooltip';
 import Drag from './util/drag';
 import Marker from './util/marker';
@@ -96,6 +97,7 @@ export {
 	Textarea,
 	Button,
 	Select,
+	Toast,
 	Tooltip,
 	Drag,
 	Marker,

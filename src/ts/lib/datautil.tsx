@@ -1331,6 +1331,12 @@ class DataUtil {
 		return name;
 	}
 
+	getObjectById (id: string, callBack?: (message: any) => void) {
+		const filters = [{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.Equal, value: id }];
+
+		C.ObjectSearch(filters, [], [], '', 0, 0, callBack);
+	};
+
 	setWindowTitle (rootId: string) {
 		const object = detailStore.get(rootId, rootId, []);
 		const name = this.getObjectName(object);

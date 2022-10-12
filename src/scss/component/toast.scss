@@ -1,0 +1,20 @@
+@import "~scss/_vars";
+
+.toast {
+  position: fixed; left: 0px; top: 0px; border-radius: 8px; background: $colorBlack; padding: 15px 18px; text-transform: none;
+  @include text-common; color: $colorWhite; display: none; z-index: 1000; white-space: nowrap; transition: opacity 0.05s ease-in-out;
+}
+
+.toast .inner { display: flex; justify-content: space-between; }
+.toast .inner {
+  .message,
+  .buttons { display: flex; gap: 6px; }
+}
+
+.toast .inner .message {
+  .objectName,
+  .targetName { max-width: 140px; text-overflow: ellipsis; overflow: hidden; }
+}
+
+.toast .inner .buttons { margin-left: 27px; }
+.toast .inner .buttons .toastButton { cursor: pointer; }

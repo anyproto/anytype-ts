@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { MenuItemVertical, Filter, Loader, ObjectName, EmptySearch } from 'Component';
 import { I, C, keyboard, Util, DataUtil, translate, analytics, Action, focus } from 'Lib';
-import { commonStore, dbStore } from 'Store';
+import { commonStore, dbStore, detailStore, blockStore } from 'Store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
@@ -341,10 +341,23 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		};
 
 		let newBlock: any = {};
+
+		let showToast: boolean = false;
+		let toastParam: any = {};
+		let toast = (message: any) => {
+			if (!message.error.code) {
+				Util.toastShow(toastParam);
+			};
+		};
+
 		let cb = (message: any) => {
 			if (!message.error.code) {
 				focus.set(message.blockId, { from: 0, to: 0 });
 				focus.apply();
+
+				if (showToast) {
+					toast(message);
+				};
 			};
 		};
 
@@ -354,7 +367,14 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 				break;
 
 			case I.NavigationType.Move:
-				Action.move(rootId, item.id, '', blockIds, I.BlockPosition.Bottom);
+				const block = blockStore.getBlocks(rootId, it => it.id == blockId);
+				toastParam = {
+					objectId: block[0].content.targetBlockId,
+					action: 'moved to',
+					targetId: item.id
+				};
+
+				Action.move(rootId, item.id, '', blockIds, I.BlockPosition.Bottom, toast);
 				break;
 
 			case I.NavigationType.Link:
@@ -372,6 +392,14 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 						newBlock.content = {
 							...DataUtil.defaultLinkSettings(),
 							targetBlockId: item.id,
+						};
+
+						showToast = true;
+						toastParam = {
+							objectId: item.id,
+							action: 'linked to',
+							targetId: rootId,
+							noButtons: true,
 						};
 						break;
 				};

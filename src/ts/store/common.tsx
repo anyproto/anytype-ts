@@ -24,6 +24,16 @@ interface Cover {
 	type: I.CoverType;
 };
 
+interface Toast {
+	objectId: string;
+	targetId: string;
+	action: string;
+	noButtons?: boolean;
+	noUndo?: boolean;
+	noOpen?: boolean;
+	onUndo?(): void;
+}
+
 const Constant = require('json/constant.json');
 const $ = require('jquery');
 
@@ -34,6 +44,7 @@ class CommonStore {
     public filterObj: Filter = { from: 0, text: '' };
     public gatewayUrl: string = '';
     public previewObj: Preview = { type: 0, param: '', element: null, range: { from: 0, to: 0 }, marks: [] };
+	public toastObj: Toast = { objectId: '', targetId: '', action: '' };
     public configObj: any = {};
     public cellId: string = '';
 	public themeId: string = '';
@@ -53,6 +64,7 @@ class CommonStore {
             filterObj: observable,
             gatewayUrl: observable,
             previewObj: observable,
+			toastObj: observable,
             configObj: observable,
 			themeId: observable,
 			nativeThemeIsDark: observable,
@@ -62,6 +74,7 @@ class CommonStore {
             config: computed,
             progress: computed,
             preview: computed,
+			toast: computed,
             filter: computed,
             cover: computed,
             gateway: computed,
@@ -76,6 +89,7 @@ class CommonStore {
             filterSetText: action,
             filterSet: action,
             previewSet: action,
+			toastSet: action,
 			themeSet: action,
 			nativeThemeSet: action,
 			workspaceSet: action,
@@ -92,6 +106,10 @@ class CommonStore {
 
     get preview(): Preview {
 		return this.previewObj;
+	};
+
+	get toast(): Toast {
+		return this.toastObj;
 	};
 
     get filter(): Filter {
@@ -186,6 +204,10 @@ class CommonStore {
     previewSet (preview: Preview) {
 		this.previewObj = preview;
 	};
+
+	toastSet (toast: Toast) {
+		this.toastObj = toast;
+	}
 
 	workspaceSet (id: string) {
 		this.workspaceId = String(id || '');
