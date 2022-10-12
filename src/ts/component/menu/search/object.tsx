@@ -373,10 +373,12 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 					action: 'moved to',
 					targetId: item.id,
 					undo: (() => {
+						analytics.event('LinkToAlertUndo');
 						C.ObjectUndo(rootId);
 					})
 				};
 
+				analytics.event('LinkToAlertMove');
 				Action.move(rootId, item.id, '', blockIds, I.BlockPosition.Bottom, toast);
 				break;
 
@@ -407,6 +409,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 						break;
 				};
 
+				analytics.event('LinkToAlertMove');
 				C.BlockCreate(rootId, blockId, position, newBlock, cb);
 				break;
 

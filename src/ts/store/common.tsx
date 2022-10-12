@@ -217,6 +217,10 @@ class CommonStore {
 		this.previewObj = { type: 0, param: '', element: null, range: { from: 0, to: 0 }, marks: [] };
 	};
 
+	toastClear () {
+		this.toastObj = { objectId: '', targetId: '', action: '' };
+	};
+
 	defaultTypeSet (v: string) {
 		this.typeId = String(v || '');
 		Storage.set('defaultType', this.typeId);

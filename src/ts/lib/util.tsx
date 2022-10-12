@@ -724,12 +724,14 @@ class Util {
 
 		if (force) {
 			obj.hide();
+			commonStore.toastClear();
 			return;
 		};
 
 		obj.css({ opacity: 0 });
 		this.timeoutToast = window.setTimeout(() => {
 			obj.hide();
+			commonStore.toastClear();
 		}, 250);
 	};
 
