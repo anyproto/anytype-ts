@@ -35,6 +35,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 	columnRefs: any = {};
 	isDraggingColumn: boolean = false;
 	isDraggingCard: boolean = false;
+	ox: number = 0;
 
 	constructor (props: any) {
 		super(props);
@@ -54,7 +55,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 				<div className="scroll">
 					<div className="viewItem viewBoard">
 						{loading ? <Loader /> : (
-							<div className="columns">
+							<div id="columns" className="columns">
 								{groups.map((group: any, i: number) => (
 									<Column 
 										key={`board-column-${group.id}`} 
@@ -345,10 +346,11 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 
 		const { dataset } = this.props;
 		const { selection, preventCommonDrop } = dataset || {};
-		
 		const node = $(ReactDOM.findDOMNode(this));
 		const viewItem = node.find('.viewItem');
 		const clone = target.clone();
+		
+		this.ox =  node.find('#columns').offset().left;
 
 		target.addClass('isDragging');
 		clone.attr({ id: '' }).addClass('isClone').css({ zIndex: 10000, position: 'fixed', left: -10000, top: -10000 });
@@ -377,7 +379,6 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 
 		node.find('.isClone').remove();
 		node.find('.isDragging').removeClass('isDragging');
-		node.find('.isOver').removeClass('isOver top bottom left right');
 		node.find(`.ghost`).remove();
 
 		selection.preventSelect(false);
@@ -437,10 +438,19 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 			node.find('.ghost.isColumn').remove();
 
 			if (hoverId) {
+				const rect = this.cache[hoverId];
 				const el = node.find(`#column-${hoverId}`);
+				const css: any = {};
 
-				isLeft ? el.before(ghost) : el.after(ghost);
-				ghost.css({ height: current.height });
+				if (isLeft) {
+					el.before(ghost);
+					css.left = rect.x - this.ox - 4;
+				} else {
+					el.after(ghost);
+					css.left = rect.x + rect.width - this.ox + 4;
+				};
+
+				ghost.css(css);
 			};
 		});
 	};
@@ -516,8 +526,6 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 
 			if (hoverId) {
 				const card = node.find(`#card-${hoverId}`);
-
-				ghost.css({ height: current.height });
 				isTop ? card.before(ghost) : card.after(ghost);
 			};
 		});
@@ -652,11 +660,6 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 	getSubId (groupId: string) {
 		const { rootId, block } = this.props;
 		return dbStore.getSubId(rootId, [ block.id, groupId ].join(':'));
-	};
-
-	clear () {
-		const node = $(ReactDOM.findDOMNode(this));
-		node.find('.isOver').removeClass('isOver top bottom left right');
 	};
 
 	resize () {
