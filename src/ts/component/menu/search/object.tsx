@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { MenuItemVertical, Filter, Loader, ObjectName, EmptySearch } from 'Component';
 import { I, C, keyboard, Util, DataUtil, translate, analytics, Action, focus } from 'Lib';
-import { commonStore, dbStore, detailStore, blockStore } from 'Store';
+import { commonStore, dbStore, blockStore } from 'Store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
@@ -371,7 +371,10 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 				toastParam = {
 					objectId: block[0].content.targetBlockId,
 					action: 'moved to',
-					targetId: item.id
+					targetId: item.id,
+					undo: (() => {
+						C.ObjectUndo(rootId);
+					})
 				};
 
 				Action.move(rootId, item.id, '', blockIds, I.BlockPosition.Bottom, toast);

@@ -88,7 +88,13 @@ const Toast = observer(class Toast extends React.Component<any, State> {
     };
 
     onUndo () {
+        const { toast } = commonStore;
+        const { undo } = toast;
 
+        if (undo) {
+            undo();
+        };
+        Util.toastHide(true);
     };
 
     onOpen () {

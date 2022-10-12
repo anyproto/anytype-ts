@@ -31,7 +31,7 @@ interface Toast {
 	noButtons?: boolean;
 	noUndo?: boolean;
 	noOpen?: boolean;
-	onUndo?(): void;
+	undo?(): void;
 }
 
 const Constant = require('json/constant.json');
