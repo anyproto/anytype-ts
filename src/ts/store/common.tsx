@@ -28,6 +28,7 @@ interface Toast {
 	objectId: string;
 	targetId: string;
 	action: string;
+	objectsLength?: number;
 	noButtons?: boolean;
 	noUndo?: boolean;
 	noOpen?: boolean;
@@ -90,6 +91,7 @@ class CommonStore {
             filterSet: action,
             previewSet: action,
 			toastSet: action,
+			toastClear: action,
 			themeSet: action,
 			nativeThemeSet: action,
 			workspaceSet: action,

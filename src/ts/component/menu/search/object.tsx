@@ -372,6 +372,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 					objectId: block[0].content.targetBlockId,
 					action: 'moved to',
 					targetId: item.id,
+					objectsLength: blockIds.length,
 					undo: (() => {
 						analytics.event('LinkToAlertUndo');
 						C.ObjectUndo(rootId);

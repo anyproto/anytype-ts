@@ -23,7 +23,7 @@ const Toast = observer(class Toast extends React.Component<any, State> {
 
     render () {
         const { toast } = commonStore;
-        const { action, noButtons, noOpen, noUndo } = toast;
+        const { objectsLength, action, noButtons, noOpen, noUndo } = toast;
         const { object, target } = this.state;
 
         const undo = !noUndo ? <div onClick={this.onUndo} className="toastButton">Undo</div> : '';
@@ -34,11 +34,13 @@ const Toast = observer(class Toast extends React.Component<any, State> {
             {undo}
         </div> : '';
 
+        const objectName = objectsLength && objectsLength > 1 ? `${objectsLength} items` : DataUtil.getObjectName(object);
+
         return (
             <div id="toast" className="toast">
                 <div className="inner">
                     <div className="message">
-                        <div className="objectName">{DataUtil.getObjectName(object)}</div>
+                        <div className="objectName">{objectName}</div>
                         <div className="action">{action}</div>
                         <div className="targetName">{DataUtil.getObjectName(target)}</div>
                     </div>
@@ -58,7 +60,12 @@ const Toast = observer(class Toast extends React.Component<any, State> {
         const { objectId } = toast;
         const { object } = this.state;
 
-        if (objectId === object.id) {
+        if (objectId === object.id || !object.id) {
+            return;
+        };
+
+        if (!objectId) {
+            this.setState({ object: { id: null, name: '' }});
             return;
         };
 
@@ -66,7 +73,7 @@ const Toast = observer(class Toast extends React.Component<any, State> {
             if (message.error.code) {
                 return;
             };
-            this.setState({object: message.records[0]});
+            this.setState({ object: message.records[0] });
         });
     };
 
@@ -75,7 +82,12 @@ const Toast = observer(class Toast extends React.Component<any, State> {
         const { targetId } = toast;
         const { target } = this.state;
 
-        if (targetId === target.id) {
+        if (targetId === target.id || !target.id) {
+            return;
+        };
+
+        if (!targetId) {
+            this.setState({ target: { id: null, name: '' }});
             return;
         };
 
@@ -83,7 +95,7 @@ const Toast = observer(class Toast extends React.Component<any, State> {
             if (message.error.code) {
                 return;
             };
-            this.setState({target: message.records[0]});
+            this.setState({ target: message.records[0] });
         });
     };
 
