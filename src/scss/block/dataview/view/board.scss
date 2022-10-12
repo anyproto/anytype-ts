@@ -91,16 +91,16 @@
 			
             .card { width: 240px; display: flex; flex-direction: column; margin: 0px auto 8px auto; position: relative; z-index: 1; }
 			.card {
+				.cellContent.isName {
+					.name { @include clamp3; white-space: normal; line-height: 22px; }
+				}
+
 				.cardContent { 
 					border: 1px solid $colorBorderDark; border-radius: 12px; padding: 16px; background: $colorWhite; transition: border-color 0.2s ease-in-out;
 				}
 
 				.cellContent {
 					.name:empty { display: none; }
-				}
-
-				.cellContent.c-shortText {
-					.name { height: 24px; }
 				}
 
 				.cellContent.c-longText {
