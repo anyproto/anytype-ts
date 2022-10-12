@@ -104,7 +104,7 @@ export interface ViewComponent {
 	isPopup?: boolean;
 	isInline?: boolean;
 	onRef?(ref: any, id: string): void;
-	getData(viewId: string, offset: number, callBack?: (message: any) => void): void;
+	getData(viewId: string, offset: number, clear: boolean, callBack?: (message: any) => void): void;
 	getRecord(index: number): any;
 	getView?(): View;
 	getKeys?(viewId: string): string[];

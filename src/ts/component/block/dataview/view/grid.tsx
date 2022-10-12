@@ -398,7 +398,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 
         return new Promise((resolve, reject) => {
 			offset += getLimit();
-			getData(view.id, offset, resolve);
+			getData(view.id, offset, false, resolve);
 			dbStore.metaSet(subId, '', { offset });
 		});
 	};

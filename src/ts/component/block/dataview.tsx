@@ -182,7 +182,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		if (view) {
 			dbStore.metaSet(rootId, block.id, { viewId: view.id, offset: 0, total: 0 });
-			this.getData(view.id, 0);
+			this.getData(view.id, 0, true);
 		};
 
 		if (root.isObjectSet()) {
@@ -198,7 +198,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const { viewId } = dbStore.getMeta(dbStore.getSubId(rootId, block.id), '');
 
 		if (viewId != this.viewId) {
-			this.getData(viewId, 0);
+			this.getData(viewId, 0, false);
 		};
 
 		this.resize();
@@ -270,7 +270,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		return Util.arrayUnique(keys);
 	};
 
-	getData (viewId: string, offset: number, callBack?: (message: any) => void) {
+	getData (viewId: string, offset: number, clear: boolean, callBack?: (message: any) => void) {
 		if (!viewId) {
 			return;
 		};
@@ -282,14 +282,21 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const view = this.getView(viewId);
 		const keys = this.getKeys(viewId);
 
-		dbStore.recordsSet(subId, '', []);
+		if (clear) {
+			dbStore.recordsSet(subId, '', []);
+		};
+
 		dbStore.metaSet(subId, '', { offset, viewId });
 
 		if (![ I.ViewType.Board ].includes(view.type)) {
-			this.setState({ loading: true });
+			if (clear) {
+				this.setState({ loading: true });
+			};
 
-			Dataview.getData(rootId, block.id, viewId, keys, 0, offset + this.getLimit(viewId), false, (message: any) => {
-				this.setState({ loading: false });
+			Dataview.getData(rootId, block.id, viewId, keys, 0, offset + this.getLimit(viewId), clear, (message: any) => {
+				if (clear) {
+					this.setState({ loading: false });
+				};
 
 				if (callBack) {
 					callBack(message);
