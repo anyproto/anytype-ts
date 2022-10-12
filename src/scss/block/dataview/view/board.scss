@@ -92,7 +92,7 @@
             .card { width: 240px; display: flex; flex-direction: column; margin: 0px auto 8px auto; position: relative; z-index: 1; }
 			.card {
 				.cellContent.isName {
-					.name { @include clamp3; white-space: normal; line-height: 22px; }
+					.name { @include clamp2; white-space: normal; line-height: 22px; }
 				}
 
 				.cardContent { 
