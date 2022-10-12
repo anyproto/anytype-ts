@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
+import { IconObject } from 'Component';
 import { commonStore } from 'Store';
 import { Util, DataUtil } from 'Lib';
 
@@ -34,16 +35,24 @@ const Toast = observer(class Toast extends React.Component<any, State> {
             {undo}
         </div> : '';
 
-        const objectName = objectsLength && objectsLength > 1 ? `${objectsLength} items` : DataUtil.getObjectName(object);
+        const isMultiple = objectsLength && objectsLength > 1;
+        const objectName = isMultiple ? `${objectsLength} items` : DataUtil.getObjectName(object);
 
         return (
             <div id="toast" className="toast">
                 <div className="inner">
                     <div className="message">
-                        <div className="objectName">{objectName}</div>
+                        <div className="name">
+                            <IconObject object={object} size={18} />
+                            {objectName}
+                        </div>
                         <div className="action">{action}</div>
-                        <div className="targetName">{DataUtil.getObjectName(target)}</div>
+                        <div className="name">
+                            <IconObject object={target} size={18} />
+                            {DataUtil.getObjectName(target)}
+                        </div>
                     </div>
+
                     {buttons}
                 </div>
             </div>
@@ -60,7 +69,7 @@ const Toast = observer(class Toast extends React.Component<any, State> {
         const { objectId } = toast;
         const { object } = this.state;
 
-        if (objectId === object.id || !object.id) {
+        if (objectId === object.id || (!objectId && !object.id) ) {
             return;
         };
 
@@ -82,7 +91,7 @@ const Toast = observer(class Toast extends React.Component<any, State> {
         const { targetId } = toast;
         const { target } = this.state;
 
-        if (targetId === target.id || !target.id) {
+        if (targetId === target.id || (!targetId && !target.id)) {
             return;
         };
 
