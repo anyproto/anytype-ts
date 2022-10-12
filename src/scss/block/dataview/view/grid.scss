@@ -90,7 +90,7 @@
 
 			.cell.isEditing {
 				.cellContent { height: 100% !important; min-width: 300px; padding: 14px; border-radius: 4px; }
-				.cellContent.isName { padding: 0px 14px; }
+				.cellContent.isName { padding: 0px 14px !important; }
 				.cellContent.isName {
 					.iconObject { margin: 14px 4px 14px 0px; }
 					.input-text { height: 47px; width: calc(100% - 26px) !important; }
@@ -123,6 +123,17 @@
 		.viewItem.viewGrid {
 			.row { height: 40px; }
 			.cell { height: 40px; padding: 9px 14px; }
+			.cell.isEditing { padding: 0px; }
+			.cell.isEditing {
+				.cellContent { padding: 9px 14px; }
+
+				.cellContent.isName {
+					.iconObject { margin-top: 9px; margin-bottom: 9px; }
+					.input-text { height: 39px; }
+				}
+			}
+
+			.icon.edit { height: 40px; }
 		}
 	}
 }
