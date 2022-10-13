@@ -666,7 +666,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 	};
 
 	resize () {
-		const { isPopup } = this.props;
+		const { isPopup, isInline } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
 		const scroll = node.find('.scroll');
 		const viewItem = node.find('.viewItem');
@@ -678,8 +678,10 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 		const width = 30 + groups.length * (size.card + size.margin);
 		const margin = width >= mw ? (ww - mw) / 2 : 0;
 
-		scroll.css({ width: ww, marginLeft: -margin / 2 , paddingLeft: margin / 2 });
-		viewItem.css({ width: width < mw ? mw : width });
+		if (!isInline) {
+			scroll.css({ width: ww, marginLeft: -margin / 2, paddingLeft: margin / 2 + 8 });
+			viewItem.css({ width: width < mw ? mw : width });
+		};
 	};
 	
 });
