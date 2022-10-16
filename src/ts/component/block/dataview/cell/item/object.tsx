@@ -34,7 +34,7 @@ const ItemObject = observer(class ItemObject extends React.Component<Props, {}> 
 		};
 		if (canEdit) {
 			cn.push('canEdit');
-			icon = <Icon className="objectRemove" onMouseDown={this.onRemove} />;
+			icon = <Icon className="objectRemove" onClick={this.onRemove} />;
 		};
 
 		return (
