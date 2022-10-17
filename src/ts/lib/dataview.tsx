@@ -18,9 +18,6 @@ class Dataview {
 
 		if (!config.debug.ho) {
 			relations = relations.filter((it: any) => { 
-				if (!it) {
-					return false;
-				};
 				if ([ Constant.relationKey.name ].includes(it.relationKey)) {
 					return true;
 				};
@@ -33,7 +30,7 @@ class Dataview {
 		});
 
 		relations.forEach((it: any) => {
-			if (undefined === order[it.relationKey]) {
+			if (it && (undefined === order[it.relationKey])) {
 				order[it.relationKey] = o++;
 			};
 		});
@@ -63,34 +60,36 @@ class Dataview {
 		return Util.arrayUniqueObjects(ret, 'relationKey');
 	};
 
-	relationAdd (rootId: string, blockId: string, relationId: string, index: number, view?: I.View, callBack?: (message: any) => void) {
+	relationAdd (rootId: string, blockId: string, relationKeys: string[], index: number, view?: I.View, callBack?: (message: any) => void) {
 		if (!view) {
 			return;
 		};
 
-		C.BlockDataviewRelationAdd(rootId, blockId, [ relationId ], (message: any) => {
+		C.BlockDataviewRelationAdd(rootId, blockId, relationKeys, (message: any) => {
 			if (message.error.code) {
 				return;
 			};
 
-			let relation = dbStore.getRelationById(relationId);
-			let rel: any = view.getRelation(relation.relationKey);
+			relationKeys.forEach((relationKey: string) => {
+				let rel: any = view.getRelation(relationKey);
 
-			if (rel) {
-				rel.isVisible = true;
-			} else {
-				rel = { 
-					relationKey: relation.relationKey, 
-					width: Relation.width(0, relation.format),
-					isVisible: true,
-				};
-
-				if (index >= 0) {
-					view.relations.splice(index, 0, rel);
+				if (rel) {
+					rel.isVisible = true;
 				} else {
-					view.relations.push(rel);
+					rel = { 
+						relationKey,
+						width: Constant.size.dataview.cell.default,
+						isVisible: true,
+					};
+
+					if (index >= 0) {
+						view.relations.splice(index, 0, rel);
+					} else {
+						view.relations.push(rel);
+					};
 				};
-			};
+
+			});
 
 			C.BlockDataviewViewUpdate(rootId, blockId, view.id, view, callBack);
 		});
@@ -98,15 +97,16 @@ class Dataview {
 
 	getData (rootId: string, blockId: string, id: string, keys: string[], offset: number, limit: number, clear: boolean, callBack?: (message: any) => void) {
 		const view = dbStore.getView(rootId, blockId, id);
-		if (!view) {
+		const block = blockStore.getLeaf(rootId, blockId);
+
+		if (!view || !block) {
 			return;
 		};
 
 		const subId = dbStore.getSubId(rootId, blockId);
 		const { viewId } = dbStore.getMeta(subId, '');
 		const viewChange = id != viewId;
-		const meta: any = { offset: offset };
-		const block = blockStore.getLeaf(rootId, blockId);
+		const meta: any = { offset };
 		const filters = view.filters.concat([
 			{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
 		]);
@@ -135,7 +135,7 @@ class Dataview {
 			sources: block.content.sources,
 			offset,
 			limit,
-		});
+		}, callBack);
 	};
 
 	getMenuTabs (rootId: string, blockId: string, viewId: string): I.MenuTab[] {

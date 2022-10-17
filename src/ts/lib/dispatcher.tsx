@@ -543,6 +543,11 @@ class Dispatcher {
 					dbStore.relationListDelete(rootId, id, data.getRelationidsList() || []);
 					break;
 
+				case 'blockDataviewRelationSet':
+					id = data.getId();
+					dbStore.relationsSet(rootId, id, (data.getRelationlinksList() || []).map(Mapper.From.RelationLink));
+					break;
+
 				case 'blockDataviewGroupOrderUpdate':
 					id = data.getId();
 					block = blockStore.getLeaf(rootId, id);
@@ -563,11 +568,6 @@ class Dispatcher {
 					};
 
 					blockStore.updateContent(rootId, id, { groupOrder: block.content.groupOrder });
-					break;
-
-				case 'blockDataviewRelationSet':
-					id = data.getId();
-					dbStore.relationsSet(rootId, id, (data.getRelationlinksList() || []).map(Mapper.From.RelationLink));
 					break;
 
 				case 'blockDataviewObjectOrderUpdate':

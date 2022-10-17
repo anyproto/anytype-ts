@@ -306,7 +306,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 				break;
 
 			case 'remove':
-				C.BlockDataviewRelationDelete(rootId, blockId, [ relation.id ], (message: any) => {
+				C.BlockDataviewRelationDelete(rootId, blockId, [ relation.relationKey ], (message: any) => {
 					if (!message.error.code) {
 						view.relations = view.relations.filter((it => it.relationKey != relation.relationKey));
 						C.BlockDataviewViewUpdate(rootId, blockId, view.id, view);
@@ -360,8 +360,8 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 						filter: '',
 						ref: 'dataview',
 						skipIds: relations.map(it => it.relationKey),
-						addCommand: (rootId: string, blockId: string, relationId: string) => {
-							Dataview.relationAdd(rootId, blockId, relationId, Math.max(0, idx + item.dir), view, () => {
+						addCommand: (rootId: string, blockId: string, relationKey: string) => {
+							Dataview.relationAdd(rootId, blockId, [ relationKey ], Math.max(0, idx + item.dir), view, () => {
 								menuStore.closeAll([ this.props.id, 'relationSuggest' ]);
 								getData(view.id, 0);
 							});
@@ -580,7 +580,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 			data.relationId = message.objectId;
 
 			if (addCommand) {
-				addCommand(rootId, blockId, message.objectId, onChange);
+				addCommand(rootId, blockId, message.relationKey, onChange);
 			};
 		});
 	};

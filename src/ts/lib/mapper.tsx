@@ -267,8 +267,8 @@ const Mapper = {
 
 		RelationLink: (obj: any): any => {
 			return {
-				id: obj.getId(),
 				relationKey: obj.getKey(),
+				format: obj.getFormat(),
 			};
 		},
 

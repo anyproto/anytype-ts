@@ -289,7 +289,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 	
 	loadMoreRows ({ startIndex, stopIndex }) {
         return new Promise((resolve, reject) => {
-			this.offset += Constant.limit.menu;
+			this.offset += Constant.limitMenuRecords;
 			this.load(false, resolve);
 		});
 	};
@@ -321,7 +321,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 			sorts,
 			fullText: filter,
 			offset: this.offset,
-			limit: Constant.limit.menu,
+			limit: Constant.limitMenuRecords,
 		}, (message: any) => {
 			if (callBack) {
 				callBack(null);

@@ -270,7 +270,7 @@ class App extends React.Component<Props, State> {
 		this.onKeytarGet = this.onKeytarGet.bind(this);
 		this.onImport = this.onImport.bind(this);
 		this.onPopup = this.onPopup.bind(this);
-		this.onUpdate = this.onUpdate.bind(this);
+		this.onUpdateCheck = this.onUpdateCheck.bind(this);
 		this.onUpdateConfirm = this.onUpdateConfirm.bind(this);
 		this.onUpdateAvailable = this.onUpdateAvailable.bind(this);
 		this.onUpdateUnavailable = this.onUpdateUnavailable.bind(this);
@@ -389,13 +389,13 @@ class App extends React.Component<Props, State> {
 		Renderer.on('keytarGet', this.onKeytarGet);
 		Renderer.on('route', (e: any, route: string) => { Util.route(route); });
 		Renderer.on('popup', this.onPopup);
-		Renderer.on('checking-for-update', this.onUpdate);
+		Renderer.on('checking-for-update', this.onUpdateCheck);
 		Renderer.on('update-available', this.onUpdateAvailable);
 		Renderer.on('update-confirm', this.onUpdateConfirm);
 		Renderer.on('update-not-available', this.onUpdateUnavailable);
-		Renderer.on('download-progress', this.onUpdateProgress);
 		Renderer.on('update-downloaded', (e: any, text: string) => { commonStore.progressClear(); });
 		Renderer.on('update-error', this.onUpdateError);
+		Renderer.on('download-progress', this.onUpdateProgress);
 		Renderer.on('import', this.onImport);
 		Renderer.on('export', this.onExport);
 		Renderer.on('command', this.onCommand);
@@ -518,7 +518,7 @@ class App extends React.Component<Props, State> {
 		window.setTimeout(() => { popupStore.open(id, param); }, Constant.delay.popup);
 	};
 
-	onUpdate (e: any, auto: boolean) {
+	onUpdateCheck (e: any, auto: boolean) {
 		if (auto) {
 			return;
 		};
