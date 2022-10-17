@@ -41,6 +41,8 @@ const HeadSimple = observer(class Controls extends React.Component<Props, {}> {
 			description: 'Add a description',
 		};
 
+		console.log(rootId, check);
+
 		const featured: any = new M.Block({ id: rootId + '-featured', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
 
 		const Editor = (item: any) => {

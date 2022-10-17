@@ -231,7 +231,14 @@ class DbStore {
 	};
 
     getMeta (rootId: string, blockId: string) {
-		return this.metaMap.get(this.getId(rootId, blockId)) || {};
+		const map = this.metaMap.get(this.getId(rootId, blockId)) || {};
+
+		return {
+			total: Number(map.total) || 0,
+			offset: Number(map.offset) || 0,
+			viewId: String(map.viewId || ''),
+			keys: map.keys || [],
+		};
 	};
 
     getRecords (rootId: string, blockId: string) {
