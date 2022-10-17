@@ -103,7 +103,7 @@ class Cell extends React.Component<Props, {}> {
 				CellComponent = CellText;
 				break;
 		};
-		
+
 		return (
 			<div 
 				id={elementId} 

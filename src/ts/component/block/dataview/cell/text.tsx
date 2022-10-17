@@ -334,8 +334,8 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 			return;
 		};
 
-		if ([ I.RelationType.Url, I.RelationType.Phone, I.RelationType.Email ].indexOf(relation.format) >= 0) {
-			menuStore.updateData('button', { disabled: !value });
+		if ([ I.RelationType.Url, I.RelationType.Phone, I.RelationType.Email ].includes(relation.format)) {
+			menuStore.updateData('select', { disabled: !value });
 		};
 
 		this.setValue(value);

@@ -49,7 +49,7 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 		const buttons: any[] = [
 			{ id: 'filter', name: 'Filters', menu: 'dataviewFilterList', withTabs: false },
 			{ id: 'sort', name: 'Sorts', menu: 'dataviewSort', withTabs: false },
-			{ id: 'settings', name: 'Sorts', menu: 'dataviewRelationList', withTabs: true },
+			{ id: 'settings', name: 'Settings', menu: 'dataviewRelationList', withTabs: true },
 		];
 
 		const ButtonItem = (item: any) => {
@@ -182,8 +182,6 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 			param.initialTab = param.getTabs().find(it => it.component == id)?.id;
 		};
 
-		console.log(param);
-
 		menuStore.open(id, param);
 	};
 
@@ -224,6 +222,9 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 			};
 
 			const view = dbStore.getView(rootId, block.id, message.viewId);
+			if (!view) {
+				return;
+			};
 
 			this.onViewEdit(e, `#views #view-item-${block.id}-${message.viewId}`, view);
 			analytics.event('AddView', { type: view.type });

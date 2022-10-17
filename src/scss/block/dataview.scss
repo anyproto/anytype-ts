@@ -4,9 +4,6 @@
 	.block.blockDataview { @include text-common; }
 	.block.blockDataview {
 		#set-loader { margin: 24px auto; }
-
-		.scrollWrap { padding-bottom: 14px; }
-
 		.icon.plus { width: 20px; height: 20px; background-image: url('~img/icon/plus/menu0.svg'); cursor: pointer; }
 		
 		.icon.edit { 
@@ -21,6 +18,19 @@
 				margin: 0px 4px 0px 0px; width: 12px; height: 12px; background-image: url('~img/icon/dataview/button/plus-small.svg'); 
 				vertical-align: middle;
 			}
+		}
+
+		.loadMore { 
+			display: flex; align-items: center; @include text-small; line-height: 20px; padding: 4px 2px; color: $colorDarkGrey; 
+			transition: $transitionFast; cursor: pointer;
+		}
+		.loadMore {
+			.icon { flex-shrink: 0; width: 20px; height: 20px; background-image: url('~img/arrow/loadMore0.svg'); }
+		}
+
+		.loadMore:hover { color: $colorBlack; }
+		.loadMore:hover { 
+			.icon { background-image: url('~img/arrow/loadMore1.svg'); }
 		}
 
 		.dataviewEmpty { 
@@ -110,17 +120,20 @@
 			}
 		}
 
-		.dataviewControls.isInline {
+		.content {
+			.scroll { overflow-x: overlay; overflow-y: visible; transform: translate3d(0px,0px,0px); }
+			.scrollWrap { background: #fff; padding-bottom: 14px; }
+		}
+	}
+
+	.block.blockDataview.isInline {
+		.dataviewControls {
 			.side { padding-top: 9px; padding-bottom: 0px; }
 			.side.right { transition: opacity 0.2s ease-in-out; opacity: 0; }
 			.line { display: none; }
 		}
-		.dataviewControls.isInline:hover, .dataviewControls.isInline.active {
+		.dataviewControls:hover, .dataviewControls.active {
 			.side.right { opacity: 1; }
 		}
-
-		.content {
-			.scroll { overflow-x: overlay; overflow-y: visible; transform: translate3d(0px,0px,0px); }
-		}
-	}	
+	}
 }

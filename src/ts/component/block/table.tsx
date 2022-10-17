@@ -1505,11 +1505,10 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		const wrap = node.find('#scrollWrap');
 		const row = node.find('.row').first();
 
-		let width = 0;
+		let width = Constant.size.blockMenu + 10;
 		let maxWidth = 0;
 		let wrapperWidth = 0;
 
-		width += Constant.size.blockMenu + 10;
 		String(row.css('grid-template-columns') || '').split(' ').forEach((it: string) => {
 			width += parseInt(it);
 		});

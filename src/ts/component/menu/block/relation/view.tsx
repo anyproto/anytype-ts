@@ -165,20 +165,16 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const type = dbStore.getType(object.type);
 
 		let featured = object[Constant.relationKey.featured] || [];
-		let objectRelations = dbStore.getRelations(rootId, rootId).map(it => it.id);
-		let typeRelations = type ? type.recommendedRelations : [];
-		let items = dbStore.getRelations(rootId, rootId).map((it: any) => {
-			return { ...it, scope: I.RelationScope.Object };
-		});
-
-		typeRelations = typeRelations.filter(it => !objectRelations.includes(it));
-
-		items = items.concat(typeRelations.map(it => {
+		let relations = dbStore.getRelations(rootId, rootId);
+		let relationKeys = relations.map(it => it.relationKey);
+		let items = relations.map((it: any) => { return { ...it, scope: I.RelationScope.Object }; });
+		let typeRelations = (type ? type.recommendedRelations : []).map(it => {
 			it = dbStore.getRelationById(it);
 			return { ...it, scope: I.RelationScope.Type };
-		}));
-		
-		items = Util.objectCopy(items).sort(DataUtil.sortByHidden).filter((it: any) => {
+		}).filter(it => !relationKeys.includes(it.relationKey));
+
+		items = items.concat(typeRelations);
+		items = items.sort(DataUtil.sortByHidden).filter((it: any) => {
 			return it ? (!config.debug.ho ? !it.isHidden : true) : false;
 		});
 
@@ -250,8 +246,8 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 				ref: 'menu',
 				menuIdEdit: 'blockRelationEdit',
 				skipIds: relations.map(it => it.relationKey),
-				addCommand: (rootId: string, blockId: string, relationKey: string) => {
-					C.ObjectRelationAdd(rootId, [ relationKey ]);
+				addCommand: (rootId: string, blockId: string, relationKey: string, onChange: (message: any) => void) => {
+					C.ObjectRelationAdd(rootId, [ relationKey ], onChange);
 				},
 			}
 		});
@@ -275,8 +271,8 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 			data: {
 				...data,
 				relationId: id,
-				addCommand: (rootId: string, blockId: string, relationKey: string) => {
-					C.ObjectRelationAdd(rootId, [ relationKey ]);
+				addCommand: (rootId: string, blockId: string, relationKey: string, onChange: (message: any) => void) => {
+					C.ObjectRelationAdd(rootId, [ relationKey ], onChange);
 				},
 				deleteCommand: () => {
 					C.ObjectRelationDelete(rootId, relation.relationKey);

@@ -203,9 +203,6 @@ class Util {
 				o[a[i][0]] = v;
 			};
 		};
-		if ((a.length) <= 3) {
-			return JSON.stringify(o);
-		};
 		return o;
 	};
 
@@ -228,8 +225,7 @@ class Util {
 		v1.sort(sort);
 		v2.sort(sort);
 		
-		return (JSON.stringify(k1) === JSON.stringify(k2)) && 
-			(JSON.stringify(v1) === JSON.stringify(v2));
+		return (JSON.stringify(k1) === JSON.stringify(k2)) && (JSON.stringify(v1) === JSON.stringify(v2));
 	};
 
 	arrayUnique (a: any[]) {

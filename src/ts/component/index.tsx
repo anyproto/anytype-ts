@@ -52,6 +52,7 @@ import Marker from './util/marker';
 import Pin from './util/pin';
 import Sync from './util/sync';
 import Filter from './util/filter';
+import LoadMore from './util/loadMore';
 
 import Icon from './util/icon';
 import IconObject from './util/iconObject';
@@ -93,6 +94,7 @@ export {
 	Pin,
 	Sync,
 	Filter,
+	LoadMore,
 	Checkbox,
 	Textarea,
 	Button,

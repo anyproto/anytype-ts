@@ -229,7 +229,7 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 			sorts,
 			fullText: filter,
 			offset: this.offset,
-			limit: Constant.limit.menu,
+			limit: Constant.limitMenuRecords,
 		}, (message: any) => {
 			if (callBack) {
 				callBack(message);
@@ -254,7 +254,7 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 
 	loadMoreRows ({ startIndex, stopIndex }) {
         return new Promise((resolve, reject) => {
-			this.offset += Constant.limit.menu;
+			this.offset += Constant.limitMenuRecords;
 			this.load(false, resolve);
 		});
 	};

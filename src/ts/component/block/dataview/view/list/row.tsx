@@ -17,10 +17,10 @@ const Row = observer(class Row extends React.Component<Props, {}> {
 	_isMounted: boolean = false;
 
 	render () {
-		const { rootId, block, index, getView, onCellClick, onRef, style, getRecord, onContext } = this.props;
+		const { rootId, block, index, getView, onCellClick, onRef, style, getRecord, onContext, getIdPrefix } = this.props;
 		const view = getView();
 		const relations = view.getVisibleRelations();
-		const idPrefix = 'dataviewCell';
+		const idPrefix = getIdPrefix();
 		const { hideIcon } = view;
 		const subId = dbStore.getSubId(rootId, block.id);
 		const record = getRecord(index);

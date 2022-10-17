@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Icon } from 'Component';
+import { Icon, LoadMore } from 'Component';
 import { I, C, Util, translate, keyboard, Relation } from 'Lib';
 import { dbStore, menuStore, blockStore } from 'Store';
 import { AutoSizer, WindowScroller, List, InfiniteLoader } from 'react-virtualized';
@@ -11,12 +11,13 @@ import Empty from '../empty';
 import HeadRow from './grid/head/row';
 import BodyRow from './grid/body/row';
 
-interface Props extends I.ViewComponent {};
+interface Props extends I.ViewComponent {
+	getWrapperWidth?(): number;
+};
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
 const PADDING = 46;
-const HEIGHT = 48;
 
 const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 
@@ -36,13 +37,14 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { rootId, block, getView, readonly, onRecordAdd, isPopup, isInline } = this.props;
+		const { rootId, block, getView, readonly, onRecordAdd, isPopup, isInline, getLimit } = this.props;
 		const view = getView();
 		const relations = view.getVisibleRelations();
 		const subId = dbStore.getSubId(rootId, block.id);
 		const records = dbStore.getRecords(subId, '');
 		const allowed = blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.Object ]);
-		const { total } = dbStore.getMeta(dbStore.getSubId(rootId, block.id), '');
+		const { offset, total } = dbStore.getMeta(dbStore.getSubId(rootId, block.id), '');
+		const limit = getLimit();
 		const length = records.length;
 
 		if (!length) {
@@ -88,7 +90,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 														width={Number(width) || 0}
 														isScrolling={isScrolling}
 														rowCount={length}
-														rowHeight={HEIGHT}
+														rowHeight={this.getRowHeight()}
 														onRowsRendered={onRowsRendered}
 														rowRenderer={({ key, index, style }) => (
 															<BodyRow 
@@ -117,8 +119,8 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 
 		return (
 			<div className="wrap">
-				<div className="scroll">
-					<div className="scrollWrap">
+				<div id="scroll" className="scroll">
+					<div id="scrollWrap" className="scrollWrap">
 						<div className="viewItem viewGrid">
 							<HeadRow 
 								{...this.props} 
@@ -130,6 +132,10 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 							/>
 
 							{content}
+
+							{isInline && (limit + offset < total) ? (
+								<LoadMore limit={getLimit()} onClick={this.loadMoreRows} />
+							) : ''}
 
 							{!readonly && allowed ? (
 								<div className="row add">
@@ -169,16 +175,15 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 
 	rebind () {
 		const node = $(ReactDOM.findDOMNode(this));
-		const scroll = node.find('.scroll');
 
-		scroll.off('.scroll').scroll(this.onScroll);
+		this.unbind();
+		node.find('#scroll').on('scroll', () => { this.onScroll(); });
 	};
 
 	unbind () {
 		const node = $(ReactDOM.findDOMNode(this));
-		const scroll = node.find('.scroll');
 
-		scroll.off('.scroll');
+		node.find('#scroll').off('scroll');
 	};
 
 	onScroll () {
@@ -192,27 +197,47 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 	};
 
 	resize () {
-		const { rootId, block, getView, isPopup } = this.props;
+		const { rootId, block, getView, isPopup, isInline } = this.props;
+		const element = blockStore.getMapElement(rootId, block.id);
+		const parent = blockStore.getLeaf(rootId, element.parentId);
 		const view = getView();
 		const node = $(ReactDOM.findDOMNode(this));
-		const scroll = node.find('.scroll');
-		const wrap = node.find('.scrollWrap');
+		const scroll = node.find('#scroll');
+		const wrap = node.find('#scrollWrap');
 		const grid = node.find('.ReactVirtualized__Grid__innerScrollContainer');
 		const container = Util.getPageContainer(isPopup);
-		const ww = container.width();
-		const mw = ww - PADDING * 2;
+		const width = view.getVisibleRelations().reduce((res: number, current: any) => { return res + current.width; }, Constant.size.blockMenu);
 		const length = dbStore.getRecords(dbStore.getSubId(rootId, block.id), '').length;
-		const margin = (ww - mw) / 2;
-		const width = view.getVisibleRelations().reduce((res: number, current: any) => { 
-			return res + current.width;
-		}, Constant.size.blockMenu);
-		const vw = Math.max(mw, width) + (width > mw ? PADDING : 0);
-		const pr = width > mw ? PADDING : 0;
+		const cw = container.width();
+		const rh = this.getRowHeight();
 
-		scroll.css({ width: ww - 4, marginLeft: -margin - 2, paddingLeft: margin });
-		wrap.css({ width: vw, paddingRight: pr });
-		grid.css({ height: length * HEIGHT + 4, maxHeight: length * HEIGHT + 4 });
+		if (isInline) {
+			if (parent.isPage() || parent.isLayoutDiv()) {
+				const wrapper = $('#editorWrapper');
+				const ww = wrapper.width();
+				const vw = Math.max(ww, width) + (width > ww ? PADDING : 0);
+				const margin = (cw - ww) / 2;
+				const pr = width > ww ? PADDING : 0;
 
+				scroll.css({ width: cw - 4, marginLeft: -margin - 2, paddingLeft: margin });
+				wrap.css({ width: vw, paddingRight: pr });
+			} else {
+				const parentObj = $(`#block-${parent.id}`);
+				const vw = parentObj.length ? (parentObj.width() - Constant.size.blockMenu) : 0;
+
+				wrap.css({ width: Math.max(vw, width) });
+			};
+		} else {
+			const mw = cw - PADDING * 2;
+			const vw = Math.max(mw, width) + (width > mw ? PADDING : 0);
+			const margin = (cw - mw) / 2;
+			const pr = width > mw ? PADDING : 0;
+
+			scroll.css({ width: cw - 4, marginLeft: -margin - 2, paddingLeft: margin });
+			wrap.css({ width: vw, paddingRight: pr });
+		};
+
+		grid.css({ height: length * rh + 4, maxHeight: length * rh + 4 });
 		this.resizeColumns('', 0);
 	};
 
@@ -253,6 +278,10 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 		return columns;
 	};
 
+	getRowHeight () {
+		return this.props.isInline ? 40 : 48;
+	};
+
 	cellPosition (cellId: string) {
 		const cell = $(`#${cellId}`);
 		if (!cell.hasClass('isEditing')) {
@@ -261,7 +290,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 
 		const { isPopup } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
-		const scroll = node.find('.scroll');
+		const scroll = node.find('#scroll');
 		const content = cell.find('.cellContent');
 		const x = cell.position().left;
 		const width = content.outerWidth();
@@ -329,10 +358,10 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 			horizontal: I.MenuDirection.Center,
 			offsetY: 10,
 			data: {
-				readonly: readonly,
-				getData: getData,
-				getView: getView,
-				rootId: rootId,
+				readonly,
+				getData,
+				getView,
+				rootId,
 				blockId: block.id,
 				onAdd: () => { menuStore.closeAll(Constant.menuIds.cellAdd); }
 			}
@@ -362,12 +391,15 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 	};
 
 	loadMoreRows ({ startIndex, stopIndex }) {
-		const { rootId, block, getData, getView } = this.props;
-		const { offset } = dbStore.getMeta(dbStore.getSubId(rootId, block.id), '');
-		const view = getView();
+		let { rootId, block, getData, getView, getLimit } = this.props;
+		let subId = dbStore.getSubId(rootId, block.id);
+		let { offset } = dbStore.getMeta(subId, '');
+		let view = getView();
 
         return new Promise((resolve, reject) => {
-			getData(view.id, offset + Constant.limit.dataview.records, resolve);
+			offset += getLimit();
+			getData(view.id, offset, false, resolve);
+			dbStore.metaSet(subId, '', { offset });
 		});
 	};
 	

@@ -35,6 +35,10 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 	columnRefs: any = {};
 	isDraggingColumn: boolean = false;
 	isDraggingCard: boolean = false;
+	hoverId: string = '';
+	isLeft: boolean = false;
+	isTop: boolean = false;
+	ox: number = 0;
 
 	constructor (props: any) {
 		super(props);
@@ -43,7 +47,6 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 		this.onDragStartColumn = this.onDragStartColumn.bind(this);
 		this.onDragStartCard = this.onDragStartCard.bind(this);
 		this.getSubId = this.getSubId.bind(this);
-		this.onScrollColumn = this.onScrollColumn.bind(this);
 	};
 
 	render () {
@@ -52,10 +55,10 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 
 		return (
 			<div className="wrap">
-				<div className="scroll">
+				<div id="scroll" className="scroll">
 					<div className="viewItem viewBoard">
 						{loading ? <Loader /> : (
-							<div className="columns">
+							<div id="columns" className="columns">
 								{groups.map((group: any, i: number) => (
 									<Column 
 										key={`board-column-${group.id}`} 
@@ -65,7 +68,6 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 										onRecordAdd={this.onRecordAdd} 
 										onDragStartColumn={this.onDragStartColumn}
 										onDragStartCard={this.onDragStartCard}
-										onScrollColumn={() => { return this.onScrollColumn(group.id); }}
 										applyGroupOrder={() => { return this.applyGroupOrder(group.id); }}
 										getSubId={() => { return this.getSubId(group.id); }}
 									/>
@@ -104,21 +106,15 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 	};
 
 	rebind () {
-		const node = $(ReactDOM.findDOMNode(this));
-		const scroll = node.find('.scroll');
-
 		this.unbind();
 
-		scroll.on('scroll', (e: any) => { this.onScrollView(); });
+		const node = $(ReactDOM.findDOMNode(this));
+		node.find('#scroll').on('scroll', (e: any) => { this.onScrollView(); });
 	};
 
 	unbind () {
-		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
-		const scroll = node.find('.scroll');
-
-		win.off('scroll.board');
-		scroll.off('scroll');
+		node.find('#scroll').off('scroll');
 	};
 
 	loadGroupList () {
@@ -321,6 +317,9 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 			};
 
 			const items = column.getItems() || [];
+
+			items.push({ id: `${group.id}-add` });
+
 			items.forEach((item: any, i: number) => {
 				const el = node.find(`#card-${item.id}`);
 				if (!el.length) {
@@ -347,10 +346,11 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 
 		const { dataset } = this.props;
 		const { selection, preventCommonDrop } = dataset || {};
-		
 		const node = $(ReactDOM.findDOMNode(this));
 		const viewItem = node.find('.viewItem');
 		const clone = target.clone();
+		
+		this.ox =  node.find('#columns').offset().left;
 
 		target.addClass('isDragging');
 		clone.attr({ id: '' }).addClass('isClone').css({ zIndex: 10000, position: 'fixed', left: -10000, top: -10000 });
@@ -379,7 +379,6 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 
 		node.find('.isClone').remove();
 		node.find('.isDragging').removeClass('isDragging');
-		node.find('.isOver').removeClass('isOver top bottom left right');
 		node.find(`.ghost`).remove();
 
 		selection.preventSelect(false);
@@ -413,8 +412,8 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 			return;
 		};
 
-		let isLeft = false;
-		let hoverId = '';
+		this.isLeft = false;
+		this.hoverId = '';
 
 		for (let group of groups) {
 			const rect = this.cache[group.id];
@@ -423,8 +422,8 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 			};
 
 			if (rect && this.cache[groupId] && Util.rectsCollide({ x: e.pageX, y: e.pageY, width: current.width, height: current.height }, rect)) {
-				isLeft = e.pageX <= rect.x + rect.width / 2;
-				hoverId = group.id;
+				this.isLeft = e.pageX <= rect.x + rect.width / 2;
+				this.hoverId = group.id;
 
 				this.newIndex = rect.index;
 				break;
@@ -438,12 +437,23 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 		this.frame = raf(() => {
 			node.find('.ghost.isColumn').remove();
 
-			if (hoverId) {
-				const el = node.find(`#column-${hoverId}`);
-
-				isLeft ? el.before(ghost) : el.after(ghost);
-				ghost.css({ height: current.height });
+			if (!this.hoverId) {
+				return;
 			};
+
+			const rect = this.cache[this.hoverId];
+			const el = node.find(`#column-${this.hoverId}`);
+			const css: any = {};
+
+			if (this.isLeft) {
+				el.before(ghost);
+				css.left = rect.x - this.ox - 4;
+			} else {
+				el.after(ghost);
+				css.left = rect.x + rect.width - this.ox + 4;
+			};
+
+			ghost.css(css);
 		});
 	};
 
@@ -490,8 +500,8 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 			return;
 		};
 
-		let isTop = false;
-		let hoverId = '';
+		this.isTop = false;
+		this.hoverId = '';
 
 		for (let i in this.cache) {
 			const rect = this.cache[i];
@@ -500,8 +510,8 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 			};
 
 			if (Util.rectsCollide({ x: e.pageX, y: e.pageY, width: current.width, height: current.height + 8 }, rect)) {
-				isTop = rect.isAdd ? true : (e.pageY <= rect.y + rect.height / 2);
-				hoverId = rect.id;
+				this.isTop = rect.isAdd ? true : (e.pageY <= rect.y + rect.height / 2);
+				this.hoverId = rect.id;
 
 				this.newGroupId = rect.groupId;
 				this.newIndex = rect.index;
@@ -516,11 +526,9 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 		this.frame = raf(() => {
 			node.find(`.ghost.isCard`).remove();
 
-			if (hoverId) {
-				const card = node.find(`#card-${hoverId}`);
-
-				ghost.css({ height: current.height });
-				isTop ? card.before(ghost) : card.after(ghost);
+			if (this.hoverId) {
+				const card = node.find(`#card-${this.hoverId}`);
+				this.isTop ? card.before(ghost) : card.after(ghost);
 			};
 		});
 	};
@@ -613,8 +621,11 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 		const node = $(ReactDOM.findDOMNode(this));
 
 		if (this.isDraggingColumn) {
+			const ghost = node.find('.ghost');
+
 			groups.forEach((group: any, i: number) => {
-				if (!this.cache[group.id]) {
+				const rect = this.cache[group.id];
+				if (!rect) {
 					return;
 				};
 
@@ -624,8 +635,18 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 				};
 
 				const { left, top } = el.offset();
-				this.cache[group.id].x = left;
-				this.cache[group.id].y = top;
+				rect.x = left;
+				rect.y = top;
+
+				if (group.id == this.hoverId) {
+					const css: any = {};
+					if (this.isLeft) {
+						css.left = rect.x - this.ox - 4;
+					} else {
+						css.left = rect.x + rect.width - this.ox + 4;
+					};
+					ghost.css(css);
+				};
 			});
 		};
 
@@ -656,27 +677,8 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 		return dbStore.getSubId(rootId, [ block.id, groupId ].join(':'));
 	};
 
-	clear () {
-		const node = $(ReactDOM.findDOMNode(this));
-		node.find('.isOver').removeClass('isOver top bottom left right');
-	};
-
-	onScrollColumn (groupId: string) {
-		const node = $(ReactDOM.findDOMNode(this));
-
-		for (let i in this.cache) {
-			let item = this.cache[i];
-			if (item.groupId != groupId) {
-				continue;
-			};
-
-			let el = node.find(`#card-${item.id}`);
-			item.y = el.offset().top;
-		};
-	};
-
 	resize () {
-		const { isPopup } = this.props;
+		const { isPopup, isInline } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
 		const scroll = node.find('.scroll');
 		const viewItem = node.find('.viewItem');
@@ -688,8 +690,12 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 		const width = 30 + groups.length * (size.card + size.margin);
 		const margin = width >= mw ? (ww - mw) / 2 : 0;
 
-		scroll.css({ width: ww, marginLeft: -margin / 2 , paddingLeft: margin / 2 });
-		viewItem.css({ width: width < mw ? mw : width });
+		if (!isInline) {
+			scroll.css({ width: ww, marginLeft: -margin / 2, paddingLeft: margin / 2 + 8 });
+			viewItem.css({ width: width < mw ? mw : width });
+		} else {
+			scroll.css({ paddingLeft: 8 });
+		};
 	};
 	
 });
