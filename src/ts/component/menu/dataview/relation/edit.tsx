@@ -214,7 +214,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		let sections: any[] = [
 			{
 				children: [
-					{ id: 'open', icon: 'expand', name: 'Open relation' },
+					{ id: 'open', icon: 'expand', name: 'Open as object' },
 					allowed ? { id: 'copy', icon: 'copy', name: 'Duplicate' } : null,
 					canDelete ? { id: 'remove', icon: 'remove', name: 'Delete' } : null,
 				]
