@@ -3,8 +3,7 @@
 .blocks {
 	.block.blockDataview { @include text-common; }
 	.block.blockDataview {
-		.scrollWrap { padding-bottom: 14px; }
-
+		#set-loader { margin: 24px auto; }
 		.icon.plus { width: 20px; height: 20px; background-image: url('~img/icon/plus/menu0.svg'); cursor: pointer; }
 		
 		.icon.edit { 
@@ -20,7 +19,28 @@
 				vertical-align: middle;
 			}
 		}
-		.button.blank { border: 0px; padding: 0px; color: $colorDarkGrey; }
+
+		.loadMore { 
+			display: flex; align-items: center; @include text-small; line-height: 20px; padding: 4px 2px; color: $colorDarkGrey; 
+			transition: $transitionFast; cursor: pointer;
+		}
+		.loadMore {
+			.icon { flex-shrink: 0; width: 20px; height: 20px; background-image: url('~img/arrow/loadMore0.svg'); }
+		}
+
+		.loadMore:hover { color: $colorBlack; }
+		.loadMore:hover { 
+			.icon { background-image: url('~img/arrow/loadMore1.svg'); }
+		}
+
+		.dataviewEmpty { 
+			color: $colorDarkGrey; height: 230px; display: flex; align-items: center; justify-content: center; border-bottom: 1px solid $colorLightGrey;
+		}
+		.dataviewEmpty {
+			.inner { width: 174px; text-align: center; }
+			.name { font-weight: 500; margin: 0px 0px 2px 0px; }
+			.descr { @include text-small; margin: 0px 0px 12px 0px; }
+		}
 
 		.dataviewHead, .dataviewControls {
 			.sides, .side { display: flex; flex-direction: row; align-items: center; }
@@ -100,17 +120,20 @@
 			}
 		}
 
-		.dataviewControls.isInline {
+		.content {
+			.scroll { overflow-x: overlay; overflow-y: visible; transform: translate3d(0px,0px,0px); }
+			.scrollWrap { background: #fff; padding-bottom: 14px; }
+		}
+	}
+
+	.block.blockDataview.isInline {
+		.dataviewControls {
 			.side { padding-top: 9px; padding-bottom: 0px; }
 			.side.right { transition: opacity 0.2s ease-in-out; opacity: 0; }
 			.line { display: none; }
 		}
-		.dataviewControls.isInline:hover, .dataviewControls.isInline.active {
+		.dataviewControls:hover, .dataviewControls.active {
 			.side.right { opacity: 1; }
 		}
-
-		.content {
-			.scroll { overflow-x: overlay; overflow-y: visible; transform: translate3d(0px,0px,0px); }
-		}
-	}	
+	}
 }

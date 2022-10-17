@@ -41,7 +41,7 @@ class MenuManager {
 
 					Separator,
 
-					{ label: 'Check for updates', click: () => { UpdateManager.checkUpdate(false); } },
+					{ label: 'Check for updates', click: () => { Api.updateCheck(this.win); } },
 					{ label: 'Settings', click: () => { Util.send(this.win, 'popup', 'settings', {}); } },
 
 					Separator,

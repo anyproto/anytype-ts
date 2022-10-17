@@ -415,8 +415,8 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 				ref: 'type',
 				menuIdEdit: 'blockRelationEdit',
 				skipIds: relations.map(it => it.relationKey),
-				addCommand: (rootId: string, blockId: string, relationId: string) => {
-					C.ObjectTypeRelationAdd(rootId, [ relationId ], () => { 
+				addCommand: (rootId: string, blockId: string, relationKey: string) => {
+					C.ObjectTypeRelationAdd(rootId, [ relationKey ], () => { 
 						menuStore.close('relationSuggest'); 
 					});
 				},
@@ -435,10 +435,10 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 				rootId: rootId,
 				relationId: id,
 				readonly: !allowed,
-				addCommand: (rootId: string, blockId: string, relationId: string, onChange?: (relation: any) => void) => {
-					C.ObjectTypeRelationAdd(rootId, [ relationId ], () => {
+				addCommand: (rootId: string, blockId: string, relationKey: string, onChange?: (relation: any) => void) => {
+					C.ObjectTypeRelationAdd(rootId, [ relationKey ], () => {
 						if (onChange) {
-							onChange(relationId);
+							onChange(relationKey);
 						};
 					});
 				},

@@ -104,11 +104,13 @@ export interface ViewComponent {
 	isPopup?: boolean;
 	isInline?: boolean;
 	onRef?(ref: any, id: string): void;
-	getData(viewId: string, offset: number, callBack?: (message: any) => void): void;
+	getData(viewId: string, offset: number, clear: boolean, callBack?: (message: any) => void): void;
 	getRecord(index: number): any;
 	getView?(): View;
 	getKeys?(viewId: string): string[];
-	onRecordAdd?: (e: any, dir: number) => void;
+	getIdPrefix?(): string;
+	getLimit?(): number;
+	onRecordAdd?: (e: any, dir: number, withPopup?: boolean) => void;
 	onCellClick?(e: any, key: string, index: number): void;
 	onContext?(e: any, id: string): void;
 	onCellChange?: (id: string, key: string, value: any, callBack?: (message: any) => void) => void;
@@ -127,7 +129,8 @@ export interface View {
 	sorts: Sort[];
 	filters: Filter[];
 	relations: any[];
-	getRelation?:(relationKey: string) => I.ViewRelation;
+	getVisibleRelations?: () => I.ViewRelation[];
+	getRelation?: (relationKey: string) => I.ViewRelation;
 };
 
 export interface Cell {

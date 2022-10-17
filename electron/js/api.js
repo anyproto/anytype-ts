@@ -93,6 +93,12 @@ class Api {
 		keytar.deletePassword(KEYTAR_SERVICE, key);
 	};
 
+	updateCheck (win) {
+		if (this.isPinChecked) {
+			UpdateManager.checkUpdate(false);
+		};
+	};
+
 	updateDownload (win) {
 		UpdateManager.download();
 	};
