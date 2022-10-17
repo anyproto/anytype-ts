@@ -444,7 +444,7 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 					});
 				},
 				deleteCommand: () => {
-					C.ObjectTypeRelationRemove(rootId, relation.relationKey);
+					C.ObjectTypeRelationRemove(rootId, [ relation.relationKey ]);
 				},
 			}
 		});
