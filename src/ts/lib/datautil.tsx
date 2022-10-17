@@ -336,8 +336,6 @@ class DataUtil {
 				commonStore.coverSet(object.coverId, object.coverId, object.coverType);
 			};
 
-			commonStore.workspaceSet(object.workspaceId);
-
 			for (let item of subscriptions) {
 				this.searchSubscribe(item, () => { cb(item); });
 			};
@@ -1204,7 +1202,7 @@ class DataUtil {
 			sources: [],
 			offset: 0,
 			limit: 0,
-			ignoreWorkspace: true,
+			ignoreWorkspace: false,
 			afterId: '',
 			beforeId: '',
 			noDeps: false,
