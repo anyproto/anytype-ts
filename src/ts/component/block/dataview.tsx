@@ -293,7 +293,15 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				this.setState({ loading: true });
 			};
 
-			Dataview.getData(rootId, block.id, viewId, keys, 0, offset + this.getLimit(viewId), clear, (message: any) => {
+			Dataview.getData({
+				rootId, 
+				blockId: block.id, 
+				newViewId: viewId, 
+				keys, 
+				limit: 0, 
+				offset: offset + this.getLimit(viewId), 
+				clear,
+			}, (message: any) => {
 				if (clear) {
 					this.setState({ loading: false });
 				};

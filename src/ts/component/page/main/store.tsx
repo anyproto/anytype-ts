@@ -381,8 +381,16 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 	onCreateTemplate () {
 	};
 
-	getData (id: string, clear: boolean, callBack?: (message: any) => void) {
-		Dataview.getData(this.getRootId(), BLOCK_ID, id, [ 'creator' ].concat(Constant.defaultRelationKeys), 0, 0, clear, callBack);
+	getData (newViewId: string, clear: boolean, callBack?: (message: any) => void) {
+		Dataview.getData({
+			rootId: this.getRootId(), 
+			blockId: BLOCK_ID, 
+			newViewId, 
+			keys: [ 'creator' ].concat(Constant.defaultRelationKeys), 
+			limit: 0, 
+			offset: 0, 
+			clear,
+		}, callBack);
 	};
 
 	loadMoreRows ({ startIndex, stopIndex }) {
