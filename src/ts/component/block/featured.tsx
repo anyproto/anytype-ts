@@ -508,8 +508,10 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 	};
 
 	getStoreId (): string {
-		const { rootId, traceId } = this.props;
-		return String(rootId || '').replace('-' + traceId, '');
+		const rootId = String(this.props.rootId || '');
+		const traceId = String(this.props.traceId || '');
+
+		return traceId ? rootId.replace('-' + traceId, '') : rootId;
 	};
 	
 });
