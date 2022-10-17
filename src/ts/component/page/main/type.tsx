@@ -427,6 +427,7 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 	onRelationEdit (e: any, id: string) {
 		const rootId = this.getRootId();
 		const allowed = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
+		const relation = dbStore.getRelationById(id);
 		
 		menuStore.open('blockRelationEdit', { 
 			element: $(e.currentTarget),
@@ -443,7 +444,7 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 					});
 				},
 				deleteCommand: () => {
-					C.ObjectTypeRelationRemove(rootId, id);
+					C.ObjectTypeRelationRemove(rootId, relation.relationKey);
 				},
 			}
 		});

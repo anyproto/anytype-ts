@@ -69,6 +69,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 					<MenuItemVertical
 						id="object-type"
 						onMouseEnter={this.onObjectType}
+						onClick={this.onObjectType}
 						arrow={!isReadonly}
 						{...typeProps}
 					/>
@@ -251,6 +252,9 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 	};
 
 	onObjectType (e: any) {
+		e.preventDefault();
+		e.stopPropagation();
+
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, blockId } = data;
@@ -293,6 +297,9 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 	};
 
 	onDateSettings (e: any) {
+		e.preventDefault();
+		e.stopPropagation();
+
 		const { param, getId } = this.props;
 		const { data } = param;
 		const relation = this.getRelation();
