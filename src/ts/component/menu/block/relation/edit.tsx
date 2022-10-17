@@ -423,7 +423,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 			data.relationId = message.objectId;
 
 			if (addCommand) {
-				addCommand(rootId, blockId, message.objectId, onChange);
+				addCommand(rootId, blockId, message.relationKey, onChange);
 			};
 		});
 	};

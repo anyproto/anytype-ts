@@ -7,21 +7,16 @@
 		.wrap { height: 100%; display: flex; flex-direction: column; }
 		.items { flex-grow: 1; }
 
-		.item.big { display: flex; padding: 4px 10px; line-height: 40px; align-items: center; }
-		.item.big {
-			.icon.dnd { height: 26px; background-size: 20px; vertical-align: middle; }
+		.item { display: flex; padding: 4px 10px; line-height: 40px; align-items: center; }
+		.item {
+			.icon.dnd { height: 20px; background-size: 20px; vertical-align: middle; }
 			.buttons {
 				.icon { vertical-align: middle; }
 			}
 
-			.name { 
-				@include text-header3; @include text-overflow-nw; vertical-align: middle; 
-				width: 100%;
-			}
-
 			.clickable { width: calc(100% - 22px); margin-right: 10px; display: flex; align-items: center; }
 		}
-		.item.big.hover {
+		.item.hover {
 			.clickable { width: calc(100% - 52px); }
 		}
 

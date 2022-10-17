@@ -351,13 +351,13 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 		this.setState({ tab: id, loading: true });
 
 		C.ObjectOpen(this.getRootId(), '', (message: any) => {
-			this.getDataviewData('library', true);
+			this.getData('library', true);
 			this.setState({ loading: false });
 		});
 	};
 
 	onView (e: any, item: any) {
-		this.getDataviewData(item.id, true);
+		this.getData(item.id, true);
 	};
 
 	onClick (e: any, item: any) {
@@ -381,7 +381,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 	onCreateTemplate () {
 	};
 
-	getDataviewData (id: string, clear: boolean, callBack?: (message: any) => void) {
+	getData (id: string, clear: boolean, callBack?: (message: any) => void) {
 		Dataview.getData(this.getRootId(), BLOCK_ID, id, [ 'creator' ].concat(Constant.defaultRelationKeys), 0, 0, clear, callBack);
 	};
 
@@ -391,7 +391,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 
         return new Promise((resolve, reject) => {
 			this.offset += 25 * this.getRowLimit();
-			this.getDataviewData(viewId, false, resolve);
+			this.getData(viewId, false, resolve);
 		});
 	};
 
