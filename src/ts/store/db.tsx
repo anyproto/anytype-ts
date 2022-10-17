@@ -42,8 +42,8 @@ class DbStore {
 	};
 
     relationsSet (rootId: string, blockId: string, list: any[]) {
-		const key = this.getId(rootId, blockId);
-		const relations = this.relationMap.get(this.getId(rootId, blockId)) || [];
+		let key = this.getId(rootId, blockId);
+		let relations = this.relationMap.get(this.getId(rootId, blockId)) || [];
 
 		for (let item of list) {
 			relations.push(item);
