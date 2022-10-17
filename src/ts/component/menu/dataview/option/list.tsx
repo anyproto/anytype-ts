@@ -166,6 +166,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 
 	componentWillUnmount () {
 		this._isMounted = false;
+		this.unbind();
 	};
 
 	focus () {
@@ -188,7 +189,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 	unbind () {
 		const { getId } = this.props;
 
-		$(window).off('down.menu');
+		$(window).off('keydown.menu');
 		$(`#${getId()}`).off('ck');
 	};
 
@@ -230,6 +231,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 		};
 
 		item.id == 'add' ? this.onOptionAdd() : this.onValueAdd(item.id);
+		this.onFilterChange('');
 	};
 
 	onValueAdd (id: string) {

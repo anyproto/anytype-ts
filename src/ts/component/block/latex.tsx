@@ -227,7 +227,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 		const range = getRange(el);
 
 		keyboard.shortcut('backspace', e, (pressed: string) => {
-			if (range.start == filter.from) {
+			if (range && (range.start == filter.from)) {
 				menuStore.close('blockLatex');
 			};
 		});

@@ -115,6 +115,7 @@ class Dispatcher {
 		if (v == V.BLOCKDATAVIEWRELATIONSET)	 t = 'blockDataviewRelationSet';
 		if (v == V.BLOCKDATAVIEWRELATIONDELETE)	 t = 'blockDataviewRelationDelete';
 		if (v == V.BLOCKDATAVIEWGROUPORDERUPDATE)	 t = 'blockDataviewGroupOrderUpdate';
+		if (v == V.BLOCKDATAVIEWOBJECTORDERUPDATE)	 t = 'blockDataviewObjectOrderUpdate';
 
 		if (v == V.SUBSCRIPTIONADD)				 t = 'subscriptionAdd';
 		if (v == V.SUBSCRIPTIONREMOVE)			 t = 'subscriptionRemove';
@@ -542,6 +543,11 @@ class Dispatcher {
 					dbStore.relationListDelete(rootId, id, data.getRelationidsList() || []);
 					break;
 
+				case 'blockDataviewRelationSet':
+					id = data.getId();
+					dbStore.relationsSet(rootId, id, (data.getRelationlinksList() || []).map(Mapper.From.RelationLink));
+					break;
+
 				case 'blockDataviewGroupOrderUpdate':
 					id = data.getId();
 					block = blockStore.getLeaf(rootId, id);
@@ -564,9 +570,58 @@ class Dispatcher {
 					blockStore.updateContent(rootId, id, { groupOrder: block.content.groupOrder });
 					break;
 
-				case 'blockDataviewRelationSet':
+				case 'blockDataviewObjectOrderUpdate':
 					id = data.getId();
-					dbStore.relationsSet(rootId, id, (data.getRelationlinksList() || []).map(Mapper.From.RelationLink));
+					block = blockStore.getLeaf(rootId, id);
+					if (!block) {
+						break;
+					};
+
+					viewId = data.getViewid();
+					
+					const groupId = data.getGroupid();
+					const changes = data.getSlicechangesList() || [];
+					const el = block.content.objectOrder.find(it => (it.viewId == viewId) && (it.groupId == groupId));
+
+					if (!el) {
+						break;
+					};
+
+					changes.forEach((it: any) => {
+						let op = it.getOp();
+						let ids = it.getIdsList() || [];
+						let afterId = it.getAfterid();
+						let idx = el.objectIds.indexOf(afterId);
+
+						switch (op) {
+							case I.SliceOperation.Add:
+								ids.forEach((id: string, i: number) => {
+									idx >= 0 ? el.objectIds.splice(idx + i, 0, id) : el.objectIds.unshift(id);
+								});
+								break;
+
+							case I.SliceOperation.Move:
+								if (idx >= 0) {
+									ids.forEach((id: string, i: number) => {
+										const oidx = el.objectIds.indexOf(id);
+										if (oidx >= 0) {
+											el.objectIds = arrayMove(el.objectIds, oidx, idx + i);
+										};
+									});
+								};
+								break;
+
+							case I.SliceOperation.Remove:
+								el.objectIds = el.objectIds.filter(id => !ids.includes(id));
+								break;
+
+							case I.SliceOperation.Replace:
+								el.objectIds = ids;
+								break;
+						};
+					});
+
+					blockStore.update(rootId, block);
 					break;
 
 				case 'objectDetailsSet':
@@ -648,7 +703,7 @@ class Dispatcher {
 					afterId = data.getAfterid();
 					subId = data.getSubid();
 
-					this.subscriptionPosition(subId, id, afterId);
+					this.subscriptionPosition(subId, id, afterId, true);
 					break;
 
 				case 'subscriptionRemove':
@@ -667,7 +722,7 @@ class Dispatcher {
 					afterId = data.getAfterid();
 					subId = data.getSubid();
 
-					this.subscriptionPosition(subId, id, afterId);
+					this.subscriptionPosition(subId, id, afterId, false);
 					break;
 
 				case 'subscriptionCounters':
@@ -721,7 +776,7 @@ class Dispatcher {
 		}, 10);
 	};
 
-	subscriptionPosition (subId: string, id: string, afterId: string) {
+	subscriptionPosition (subId: string, id: string, afterId: string, isAdding: boolean): void {
 		const [ sid, dep ] = subId.split('/');
 
 		if (dep) {
@@ -731,6 +786,10 @@ class Dispatcher {
 		let records = dbStore.getRecords(sid, '');
 		let oldIndex = records.findIndex((it => it == id));
 		let newIndex = 0;
+
+		if (isAdding && (oldIndex >= 0)) {
+			return;
+		};
 
 		if (afterId) {
 			newIndex = records.findIndex(it => it == afterId);

@@ -36,7 +36,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { filter, value } = data;
+		const { filter, value, disabled } = data;
 		const items = this.getItems(true);
 		const withFilter = this.isWithFilter();
 
@@ -53,6 +53,9 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 			};
 			if (item.isHidden) {
 				cn.push('isHidden');
+			};
+			if (disabled) {
+				cn.push('disabled');
 			};
 
 			let content = null;
@@ -276,7 +279,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 	onClick (e: any, item: any) {
 		const { param, close } = this.props;
 		const { data } = param;
-		const { onSelect, canSelectInitial, noClose } = data;
+		const { onSelect, canSelectInitial, noClose, disabled } = data;
 
 		if (item.isInitial && !canSelectInitial) {
 			return;
@@ -286,7 +289,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 			close();
 		};
 		
-		if (onSelect) {
+		if (!disabled && onSelect) {
 			onSelect(e, item);
 		};
 	};

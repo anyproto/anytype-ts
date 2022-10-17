@@ -28,7 +28,7 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { className, rootId, block, getView, readonly, onRecordAdd } = this.props;
+		const { className, rootId, block, getView, readonly, onRecordAdd, isInline } = this.props;
 		const views = dbStore.getViews(rootId, block.id);
 		const view = getView();
 		const sortCnt = view.sorts.length;
@@ -36,46 +36,54 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 		const filterCnt = filters.length;
 		const allowedObject = blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.Object ]);
 		const allowedView = blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.View ]);
-		const cn = [ 'dataviewControls', (className ? className : '') ];
+		const cn = [ 'dataviewControls' ];
+
+		if (className) {
+			cn.push(className);
+		};
+
+		if (isInline) {
+			cn.push('isInline');
+		};
 
 		const buttons: any[] = [
-			//{ id: 'search', name: 'Search', menu: '' },
-			{ id: 'manager', name: 'Customize view', menu: 'dataviewRelationList' },
+			{ id: 'filter', name: 'Filters', menu: 'dataviewFilterList', withTabs: false },
+			{ id: 'sort', name: 'Sorts', menu: 'dataviewSort', withTabs: false },
+			{ id: 'settings', name: 'Settings', menu: 'dataviewRelationList', withTabs: true },
 		];
 
 		const ButtonItem = (item: any) => {
+			const elementId = `button-${block.id}-${item.id}`;
 			return (
 				<Icon 
-					id={'button-' + item.id} 
+					id={elementId} 
 					className={item.id}
 					tooltip={item.name}
-					onClick={(e: any) => { this.onButton(e, `button-${item.id}`, item.menu); }}
+					onClick={(e: any) => { this.onButton(e, '#' + elementId, item.menu, item.withTabs); }}
 				/>
 			);
 		};
 
-		const ViewItem = SortableElement((item: any) => (
-			<div 
-				id={'view-item-' + item.id} 
-				className={'viewItem ' + (item.id == view.id ? 'active' : '')} 
-				onClick={(e: any) => { this.onViewSet(item); }} 
-				onContextMenu={(e: any) => { this.onViewEdit(e, '#views #view-item-' + item.id, item); }}
-			>
-				{item.name}
-			</div>
-		));
+		const ViewItem = SortableElement((item: any) => {
+			const elementId = `view-item-${block.id}-${item.id}`;
+			return (
+				<div 
+					id={elementId} 
+					className={'viewItem ' + (item.id == view.id ? 'active' : '')} 
+					onClick={(e: any) => { this.onViewSet(item); }} 
+					onContextMenu={(e: any) => { this.onViewEdit(e, '#views #' + elementId, item); }}
+				>
+					{item.name}
+				</div>
+			);
+		});
 
 		const Views = SortableContainer((item: any) => (
 			<div id="views" className="views">
 				{views.map((item: I.View, i: number) => (
-					<ViewItem 
-						key={i} 
-						{...item} 
-						index={i} 
-					/>
+					<ViewItem key={i} {...item} index={i} />
 				))}
-
-				{allowedView ? <Icon id="button-view-add" className="plus" tooltip="Create new view" onClick={this.onViewAdd} /> : ''}
+				{allowedView ? <Icon id={`button-${block.id}-view-add`} className="plus" tooltip="Create new view" onClick={this.onViewAdd} /> : ''}
 			</div>
 		));
 		
@@ -84,10 +92,10 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 				<div className="sides">
 					<div id="sideLeft" className="side left">
 						<div 
-							id={'view-item-' + view.id} 
+							id="view-selector"
 							className="viewSelect select"
-							onClick={(e: any) => { this.onButton(e, `view-item-${view.id}`, 'dataviewViewList'); }} 
-							onContextMenu={(e: any) => { this.onViewEdit(e, '.first #view-item-' + view.id, view); }}
+							onClick={(e: any) => { this.onButton(e, '#view-selector', 'dataviewViewList', false); }} 
+							onContextMenu={(e: any) => { this.onViewEdit(e, '#view-selector', view); }}
 						>
 							<div className="name">{view.name}</div>
 							<Icon className="arrow dark" />
@@ -110,7 +118,16 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 						{buttons.map((item: any, i: number) => (
 							<ButtonItem key={item.id} {...item} />
 						))}	
-						{!readonly && allowedObject ? <Button color="orange" icon="plus-small" className="c28" tooltip="New object" text="New" onClick={(e: any) => { onRecordAdd(e, -1); }} /> : ''}
+						{!readonly && allowedObject ? (
+							<Button 
+								color="orange" 
+								icon="plus-small" 
+								className="c28" 
+								tooltip="New object" 
+								text="New" 
+								onClick={(e: any) => { onRecordAdd(e, -1); }} 
+							/>
+ 						) : ''}
 					</div>
 				</div>
 
@@ -127,19 +144,29 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 		this._isMounted = false;
 	};
 	
-	onButton (e: any, id: string, menu: string) {
-		if (!menu) {
+	onButton (e: any, element: string, id: string, withTabs: boolean) {
+		if (!id) {
 			return;
 		};
 
 		const { rootId, block, readonly, getData, getView } = this.props;
 		const view = getView();
+		const obj = $(element);
+		const node = $(ReactDOM.findDOMNode(this));
 
 		const param: any = { 
-			element: `#${id}`,
+			element,
 			horizontal: I.MenuDirection.Center,
 			offsetY: 10,
 			noFlipY: true,
+			onOpen: () => {
+				node.addClass('active');
+				obj.addClass('active');
+			},
+			onClose: () => {
+				node.removeClass('active');
+				obj.removeClass('active');
+			},
 			data: {
 				readonly: readonly,
 				rootId: rootId,
@@ -150,11 +177,12 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 			},
 		};
 
-		if (id == 'button-manager') {
+		if (withTabs) {
 			param.getTabs = () => Dataview.getMenuTabs(rootId, block.id, view.id);
+			param.initialTab = param.getTabs().find(it => it.component == id)?.id;
 		};
 
-		menuStore.open(menu, param);
+		menuStore.open(id, param);
 	};
 
 	onViewAdd (e: any) {
@@ -189,9 +217,16 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 		};
 
 		C.BlockDataviewViewCreate(rootId, block.id, newView, (message: any) => {
+			if (message.error.code) {
+				return;
+			};
+
 			const view = dbStore.getView(rootId, block.id, message.viewId);
-			
-			this.onViewEdit(e, `#block-${block.id} #views #view-item-${message.viewId}`, view);
+			if (!view) {
+				return;
+			};
+
+			this.onViewEdit(e, `#views #view-item-${block.id}-${message.viewId}`, view);
 			analytics.event('AddView', { type: view.type });
 		});
 	};

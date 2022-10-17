@@ -695,9 +695,10 @@ class DataUtil {
 
 	menuGetBlockDataview () {
 		return [
-			{ id: I.ViewType.Grid, icon: '', lang: 'Table' },
-			{ id: I.ViewType.Gallery, icon: '', lang: 'Gallery' },
-			{ id: I.ViewType.List, icon: '', lang: 'List' },
+			{ id: I.ViewType.Grid, icon: 'dataview-grid', lang: 'Table' },
+			{ id: I.ViewType.Gallery, icon: 'dataview-gallery', lang: 'Gallery' },
+			{ id: I.ViewType.List, icon: 'dataview-list', lang: 'List' },
+			{ id: I.ViewType.Board, icon: 'dataview-board', lang: 'Board' },
 		].map((it: any) => {
 			it.type = I.BlockType.Dataview;
 			return this.menuMapperBlock(it);
