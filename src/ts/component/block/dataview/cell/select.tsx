@@ -197,6 +197,10 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 			value.existing.pop();
 			this.setValue(value.existing);
 		});
+
+		this.placeholderCheck();
+		this.resize();
+		this.scrollToBottom();
 	};
 
 	onKeyUp (e: any) {
