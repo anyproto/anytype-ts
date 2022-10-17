@@ -23,13 +23,10 @@ const Head = observer(class Head extends React.Component<Props, {}> {
 
 		this.onSelect = this.onSelect.bind(this);
 		this.onOver = this.onOver.bind(this);
-		this.onSource = this.onSource.bind(this);
-		this.onView = this.onView.bind(this);
 		this.onKeyDown = this.onKeyDown.bind(this);
 		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onFocus = this.onFocus.bind(this);
 		this.onBlur = this.onBlur.bind(this);
-		this.onManager = this.onManager.bind(this);
 		this.onCompositionStart = this.onCompositionStart.bind(this);
 		this.onCompositionEnd = this.onCompositionEnd.bind(this);
 	};
@@ -37,62 +34,30 @@ const Head = observer(class Head extends React.Component<Props, {}> {
 	render () {
 		const { rootId, block, readonly, getView, onRecordAdd } = this.props;
 		const sources = block.content.sources || [];
-		const length = sources.length;
 		const view = getView();
 		const allowedObject = blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.Object ]);
 
-		let icon = null;
-		let onClick = null;
-
-		if (!readonly) {
-			if (!length) {
-				onClick = this.onSelect;
-				icon = <Icon className="plus" />;
-			} else {
-				onClick = this.onSource;
-				icon = (
-					<React.Fragment>
-						<Icon className="set" />
-						{length}
-					</React.Fragment>
-				);
-			};
-
-			icon = <div id="head-source-select" className="iconWrap" onClick={onClick}>{icon}</div>;
-		};
-
 		return (
 			<div className="dataviewHead">
-				<div className="sides">
-					<div className="side left">
-						<div id="title" className="title">
-							<div 
-								className="value" 
-								contentEditable="true" 
-								suppressContentEditableWarning={true}
-								onFocus={this.onFocus}
-								onBlur={this.onBlur}
-								onKeyDown={this.onKeyDown}
-								onKeyUp={this.onKeyUp}
-								onCompositionStart={this.onCompositionStart}
-								onCompositionEnd={this.onCompositionEnd}
-							>
-							</div>
-							<div id="placeholder" className="placeholder">New set</div>
-						</div>
+				<div id="title" className="title">
+					<div 
+						className="value" 
+						contentEditable="true" 
+						suppressContentEditableWarning={true}
+						onFocus={this.onFocus}
+						onBlur={this.onBlur}
+						onKeyDown={this.onKeyDown}
+						onKeyUp={this.onKeyUp}
+						onCompositionStart={this.onCompositionStart}
+						onCompositionEnd={this.onCompositionEnd}
+					>
+					</div>
+					<div id="placeholder" className="placeholder">New set</div>
+				</div>
 
-						{icon}
-						
-						<div id="head-view-select" className="select" onClick={this.onView}>
-							<div className="name">{view.name}</div>
-							<Icon className="arrow dark" />
-						</div>
-					</div>
-					<div className="side right">
-						<Icon id="head-customize" className="manager" tooltip="Customize" onClick={this.onManager} />
-						{!readonly && allowedObject ? <Button color="orange" icon="plus-small" className="c28" tooltip="New object" text="New" onClick={(e: any) => { onRecordAdd(e, -1); }} /> : ''}
-						<Button color="blank" className="c28" text="See all" />
-					</div>
+				<div id="head-source-select" className="iconWrap" onClick={this.onSelect}>
+					<Icon className="set" />
+					{sources.length}
 				</div>
 			</div>
 		);
@@ -105,25 +70,6 @@ const Head = observer(class Head extends React.Component<Props, {}> {
 	componentWillUnmount () {
 		this._isMounted = false;
 		window.clearTimeout(this.timeout);
-	};
-
-	onView (e: any) {
-		const { rootId, block, readonly, getData, getView } = this.props;
-		const view = getView();
-
-		menuStore.open('dataviewViewList', { 
-			element: `#block-${block.id} #head-view-select`,
-			horizontal: I.MenuDirection.Center,
-			noFlipY: true,
-			data: {
-				readonly: readonly,
-				rootId: rootId,
-				blockId: block.id, 
-				getData: getData,
-				getView: getView,
-				view: observable.box(view),
-			},
-		});
 	};
 
 	onSelect () {
@@ -196,47 +142,6 @@ const Head = observer(class Head extends React.Component<Props, {}> {
 				});
 			};
 		};
-	};
-
-	onSource (e: any) {
-		const { rootId, block, readonly } = this.props;
-
-		if (readonly) {
-			return;
-		};
-
-		menuStore.closeAll(null, () => { 
-			menuStore.open('dataviewSource', {
-				element: `#block-${block.id} #head-source-select`,
-				className: 'big single',
-				horizontal: I.MenuDirection.Center,
-				data: {
-					rootId: rootId,
-					blockId: block.id,
-				}
-			}); 
-		});
-	};
-
-	onManager (e: any) {
-		const { rootId, block, readonly, getData, getView } = this.props;
-		const view = getView();
-
-		menuStore.open('dataviewRelationList', { 
-			element: `#block-${block.id} #head-customize`,
-			horizontal: I.MenuDirection.Center,
-			offsetY: 10,
-			noFlipY: true,
-			getTabs: () => Dataview.getMenuTabs(rootId, block.id, view.id),
-			data: {
-				readonly: readonly,
-				rootId: rootId,
-				blockId: block.id, 
-				getData: getData,
-				getView: getView,
-				view: observable.box(view),
-			},
-		});
 	};
 
 	onFocus (e: any) {

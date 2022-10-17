@@ -1,4 +1,5 @@
 import { I, M, Util, DataUtil } from 'Lib';
+import { dbStore } from 'Store';
 import { observable, intercept, makeObservable } from 'mobx';
 
 class View implements I.View {
@@ -49,6 +50,10 @@ class View implements I.View {
 		});
 
 		intercept(self as any, (change: any) => { return Util.intercept(self, change); });
+	};
+
+	getVisibleRelations () {
+		return this.relations.filter(it => it && it.isVisible && dbStore.getRelationByKey(it.relationKey));
 	};
 
 	getRelation (relationKey: string) {

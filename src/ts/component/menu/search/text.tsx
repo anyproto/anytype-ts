@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Icon, Input, Button } from 'Component';
-import { I, Util, keyboard, translate, analytics } from 'Lib';
+import { Icon, Input } from 'Component';
+import { I, Util, keyboard, translate, analytics, Storage } from 'Lib';
 
 interface Props extends I.Menu {};
 
@@ -31,19 +31,25 @@ class MenuSearchText extends React.Component<Props, {}> {
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { value } = data;
+		const value = String(data.value || Storage.get('search') || '');
 		
 		return (
 			<div className="flex">
 				<Icon className="search" />
 
-				<Input ref={(ref: any) => { this.ref = ref; }} value={value} placeholder={translate('commonSearch')} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp} />
+				<Input 
+					ref={(ref: any) => { this.ref = ref; }} 
+					value={value} 
+					placeholder={translate('commonSearch')} 
+					onKeyDown={this.onKeyDown} 
+					onKeyUp={this.onKeyUp} 
+				/>
 				<div className="buttons">
 
 					<div id="switcher" className="switcher">
-						<Icon className="arrow left" onClick={() => { this.n--; this.focus(); }} />
+						<Icon className="arrow left" onClick={() => { this.onArrow(-1); }} />
 						<div id="cnt" className="cnt"></div>
-						<Icon className="arrow right" onClick={() => { this.n++; this.focus(); }} />
+						<Icon className="arrow right" onClick={() => { this.onArrow(1); }} />
 					</div>
 
 					<div className="line" />
@@ -55,6 +61,8 @@ class MenuSearchText extends React.Component<Props, {}> {
 	};
 	
 	componentDidMount () {
+		this.search();
+
 		window.setTimeout(() => { 
 			if (this.ref) {
 				this.ref.focus(); 
@@ -78,8 +86,7 @@ class MenuSearchText extends React.Component<Props, {}> {
 		
 		let ret = false;
 		keyboard.shortcut('arrowup, arrowdown, tab, enter', e, (pressed: string) => {
-			this.focus();
-			this.n += pressed == 'arrowup' ? -1 : 1;
+			this.onArrow(pressed == 'arrowup' ? -1 : 1);
 			ret = true;
 		});
 
@@ -90,10 +97,25 @@ class MenuSearchText extends React.Component<Props, {}> {
 		this.search();
 	};
 
+	onArrow (dir: number) {
+		const items = this.getItems();
+		const max = items.length - 1;
+
+		this.n += dir;
+
+		if (this.n < 0) {
+			this.n = max;
+		};
+		if (this.n > max) {
+			this.n = 0;
+		};
+
+		this.search();
+	};
+
 	onSearch (e: any) {
 		this.focus();
-		this.n++;
-		this.search();
+		this.onArrow(1);
 	};
 
 	search () {
@@ -107,6 +129,7 @@ class MenuSearchText extends React.Component<Props, {}> {
 			this.clear();
 		};
 		this.last = value;
+		Storage.set('search', value);
 
 		if (!value) {
 			return;
@@ -135,10 +158,8 @@ class MenuSearchText extends React.Component<Props, {}> {
 
 		const items = this.getItems();
 
-		if (items.length) {
-			switcher.addClass('active');
-			this.setCnt();
-		};
+		items.length ? switcher.addClass('active') : switcher.removeClass('active');
+		this.focus();
 	};
 
 	setCnt () {
@@ -152,6 +173,8 @@ class MenuSearchText extends React.Component<Props, {}> {
 	onClear () {
 		this.ref.setValue('');
 		this.clear();
+
+		Storage.delete('search');
 	};
 
 	clear () {
@@ -207,11 +230,8 @@ class MenuSearchText extends React.Component<Props, {}> {
 		const items = this.getItems();
 		const offset = Constant.size.lastBlock + Util.sizeHeader();
 
-		if (this.n > items.length - 1) {
-			this.n = 0;
-		};
-
 		searchContainer.find('search.active').removeClass('active');
+
 		this.setCnt();
 
 		const next = $(items.get(this.n));

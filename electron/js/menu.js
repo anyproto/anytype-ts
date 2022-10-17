@@ -41,7 +41,7 @@ class MenuManager {
 
 					Separator,
 
-					{ label: 'Check for updates', click: () => { UpdateManager.checkUpdate(false); } },
+					{ label: 'Check for updates', click: () => { Api.updateCheck(this.win); } },
 					{ label: 'Settings', click: () => { Util.send(this.win, 'popup', 'settings', {}); } },
 
 					Separator,
@@ -74,8 +74,8 @@ class MenuManager {
 
 					Separator,
 
-					{ label: 'Object diagnostics', click: () => { Util.send(this.win, 'command', 'debugSync'); } },
-					{ label: 'Tree diagnostics', click: () => { this.win.show(); Util.send(this.win, 'command', 'debugTree'); } },
+					{ label: 'Account debug', click: () => { Util.send(this.win, 'command', 'debugSync'); } },
+					{ label: 'Current object debug', click: () => { this.win.show(); Util.send(this.win, 'command', 'debugTree'); } },
 
 					Separator,
 

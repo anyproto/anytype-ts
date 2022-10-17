@@ -4,6 +4,7 @@ import { observer } from 'mobx-react';
 import { dbStore, detailStore } from 'Store';
 import { AutoSizer, WindowScroller, Masonry, CellMeasurer, CellMeasurerCache, createMasonryCellPositioner } from 'react-virtualized';
 
+import Empty from '../empty';
 import Card from './gallery/card';
 
 interface Props extends I.ViewComponent {};
@@ -35,11 +36,16 @@ const ViewGallery = observer(class ViewGallery extends React.Component<Props, {}
 	render () {
 		const { rootId, block, getData, getView, getKeys, isPopup, isInline } = this.props;
 		const view = getView();
-		const viewRelations = view.relations.filter(it => it.isVisible && dbStore.getRelationByKey(it.relationKey));
+		const relations = view.getVisibleRelations();
 		const subId = dbStore.getSubId(rootId, block.id);
 		const records = dbStore.getRecords(subId, '');
 		const { coverRelationKey, cardSize, hideIcon } = view;
 		const { offset, total } = dbStore.getMeta(subId, '');
+		const length = records.length;
+
+		if (!length) {
+			return <Empty {...this.props} />;
+		};
 
 		// Subscriptions on dependent objects
 		for (let id of records) {
@@ -141,7 +147,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<Props, {}
 
 	reset () {
 		const { isInline } = this.props;
-		if (isInline) {
+		if (isInline || !this.ref) {
 			return;
 		};
 
@@ -185,6 +191,10 @@ const ViewGallery = observer(class ViewGallery extends React.Component<Props, {}
 	};
 
 	resetPositioner () {
+		if (!this.cellPositioner) {
+			return;
+		};
+
 		this.cellPositioner.reset({
 			columnCount: this.columnCount,
 			columnWidth: this.columnWidth,

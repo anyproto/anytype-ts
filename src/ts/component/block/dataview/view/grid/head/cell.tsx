@@ -54,7 +54,7 @@ const HeadCell = observer(class HeadCell extends React.Component<Props, {}> {
 			return;
 		};
 
-		const element = `#${Relation.cellId('head', relationKey, '')}`;
+		const element = `#block-${block.id} #${Relation.cellId('head', relationKey, '')}`;
 		const obj = $(element);
 
 		menuStore.open('dataviewRelationEdit', { 
@@ -71,8 +71,8 @@ const HeadCell = observer(class HeadCell extends React.Component<Props, {}> {
 				relationId: relation.id,
 				readonly: readonly,
 				extendedOptions: true,
-				addCommand: (rootId: string, blockId: string, relationId: string) => {
-					Dataview.relationAdd(rootId, blockId, relationId, -1, getView());
+				addCommand: (rootId: string, blockId: string, relationKey: string) => {
+					Dataview.relationAdd(rootId, blockId, [ relationKey ], -1, getView());
 				},
 			}
 		});

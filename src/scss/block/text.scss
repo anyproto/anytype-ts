@@ -140,8 +140,10 @@
 	.block.blockText.textCallout { min-width: 130px; }
 	.block.blockText.textCallout > .wrapContent { background: $colorVeryLightGrey; border-radius: 6px; margin: 6px 0px; }
 	.block.blockText.textCallout > .wrapContent > .selectable > .dropTarget { padding: 16px 16px 0px 16px; }
+	.block.blockText.textCallout > .wrapContent > .selectable > .dropTarget > .flex { gap: 0px 14px; }
 	.block.blockText.textCallout > .wrapContent > .selectable > .dropTarget > .flex {
-		.additional { margin-right: 14px; }	
+		.markers { display: none; }
+		.additional { flex-shrink: 0; }
 		.additional {
 			.iconObject { margin-top: 2px; }
 		}

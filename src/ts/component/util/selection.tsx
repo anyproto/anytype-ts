@@ -155,10 +155,6 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			this.cacheRect(node);
 		});
 
-		if (this.nodes.length) {
-			this.show();
-		};
-
 		if (keyboard.isShift()) {
 			let target = $(e.target).closest('.selectable');
 			let type = target.attr('data-type');
@@ -319,11 +315,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		if (range) {
 			el.hide();
 		} else {
-			el.show().css({ 
-				transform: `translate3d(${rect.x}px, ${rect.y}px, 0px)`,
-				width: rect.width, 
-				height: rect.height,
-			});
+			el.show().css({ transform: `translate3d(${rect.x}px, ${rect.y}px, 0px)`, width: rect.width, height: rect.height });
 		};
 	};
 	
@@ -446,10 +438,6 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		};
 	};
 
-	show () {
-		$('#selection-rect').css({ transform: 'translate3d(0px, 0px, 0px)', width: 0, height: 0 }).show();
-	};
-	
 	hide () {
 		$('#selection-rect').hide();
 		this.unbindMouse();
