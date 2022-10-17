@@ -99,6 +99,7 @@ const ObjectCreateObjectType = (response: any) => {
 const ObjectCreateRelation = (response: any) => {
 	return {
 		objectId: response.getObjectid(),
+		relationKey: response.getKey(),
 	};
 };
 

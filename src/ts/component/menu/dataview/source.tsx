@@ -56,7 +56,7 @@ const MenuSource = observer(class MenuSource extends React.Component<Props, {}> 
 					) : ''}
 				</div>
 				
-				{!types.length && config.experimental ? (
+				{!types.length ? (
 					<div className="bottom">
 						<div className="line" />
 						<div 

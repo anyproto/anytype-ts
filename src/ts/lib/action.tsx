@@ -38,8 +38,9 @@ class Action {
 
 		dbStore.metaClear(rootId, '');
 		dbStore.recordsClear(rootId, '');
-
 		detailStore.clear(rootId);
+
+		C.ObjectSearchUnsubscribe([ rootId ]);
 	};
 
 	dbClearBlock (rootId: string, blockId: string) {

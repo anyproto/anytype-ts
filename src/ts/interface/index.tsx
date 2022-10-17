@@ -19,6 +19,7 @@ import {
 	PageComponent,
 	FooterComponent,
 	SurveyType,
+	SliceOperation,
 } from './common';
 import { ThreadStatus, ThreadSummary, ThreadDevice, ThreadAccount, ThreadCafe, FilesStatus } from './thread';
 import { Progress, ProgressType, ProgressState } from './progress';
@@ -83,8 +84,8 @@ export {
 	HeaderComponent,
 	PageComponent,
 	FooterComponent,
-
 	SurveyType,
+	SliceOperation,
 	
 	ThreadStatus,
 	ThreadSummary,

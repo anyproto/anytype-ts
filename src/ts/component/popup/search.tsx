@@ -336,7 +336,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 
 	loadMoreRows ({ startIndex, stopIndex }) {
         return new Promise((resolve, reject) => {
-			this.offset += Constant.limit.menu;
+			this.offset += Constant.limitMenuRecords;
 			this.load(false, resolve);
 		});
 	};
@@ -363,7 +363,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 			sorts,
 			fullText: filter,
 			offset: this.offset,
-			limit: Constant.limit.menu,
+			limit: Constant.limitMenuRecords,
 		}, (message: any) => {
 			if (message.error.code) {
 				this.setState({ loading: false });
