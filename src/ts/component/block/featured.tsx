@@ -398,7 +398,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 		switch (item.id) {
 			case 'open':
-				DataUtil.objectOpenPopup({ id: object.type, layout: I.ObjectLayout.Type });
+				DataUtil.objectOpenPopup(type);
 				break;
 
 			case 'setOpen':
