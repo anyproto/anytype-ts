@@ -56,6 +56,12 @@
 			.cellContent.c-email, 
 			.cellContent.c-phone { color: $colorDarkGrey; cursor: pointer !important; }
 
+			.cellContent.c-url, 
+			.cellContent.c-email, 
+			.cellContent.c-phone {
+				.name { border: 0px; }
+			}
+
 			.cellContent.c-url:hover, 
 			.cellContent.c-email:hover, 
 			.cellContent.c-phone:hover {
