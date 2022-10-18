@@ -8,16 +8,16 @@
     .menu { background: $colorBgLight; box-shadow: 0px 4px 16px rgb(0 0 0 / 20%), 0px 0px 0px 1px #393933 inset; }
 
     .menu {
-        .icon.paragraph { background-image: url('#{$themePath}/icon/menu/action/block/paragraph0.svg'); }
+        .icon.textParagraph { background-image: url('#{$themePath}/icon/menu/action/block/paragraph0.svg'); }
 		
-		.icon.header1 { background-image: url('#{$themePath}/icon/menu/action/block/header10.svg'); }
-		.icon.header2 { background-image: url('#{$themePath}/icon/menu/action/block/header20.svg'); }
-		.icon.header3 { background-image: url('#{$themePath}/icon/menu/action/block/header30.svg'); }
-		.icon.quote { background-image: url('#{$themePath}/icon/menu/action/block/quote0.svg'); }
+		.icon.textHeader1 { background-image: url('#{$themePath}/icon/menu/action/block/header10.svg'); }
+		.icon.textHeader2 { background-image: url('#{$themePath}/icon/menu/action/block/header20.svg'); }
+		.icon.textHeader3 { background-image: url('#{$themePath}/icon/menu/action/block/header30.svg'); }
+		.icon.textQuote { background-image: url('#{$themePath}/icon/menu/action/block/quote0.svg'); }
 		
-        .icon.bulleted { background-image: url('#{$themePath}/icon/menu/action/block/bulleted0.svg'); }
-		.icon.numbered { background-image: url('#{$themePath}/icon/menu/action/block/numbered0.svg'); }
-		.icon.toggle { background-image: url('#{$themePath}/icon/menu/action/block/toggle0.svg'); }
+        .icon.textBulleted { background-image: url('#{$themePath}/icon/menu/action/block/bulleted0.svg'); }
+		.icon.textNumbered { background-image: url('#{$themePath}/icon/menu/action/block/numbered0.svg'); }
+		.icon.textToggle { background-image: url('#{$themePath}/icon/menu/action/block/toggle0.svg'); }
 
         .icon.color {
             .inner.textColor-default { background-color: $colorPrimary; }
