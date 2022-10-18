@@ -146,7 +146,7 @@
 
 	"relationRelationKeys": [
 		"id", "type", "layout", "name", "relationFormat", "relationKey", "scope", "isReadonly", "isHidden", "isDeleted", "isArchived", "isFavorite", "restrictions",
-		"relationMaxCount", "relationReadonly", "relationDefaultValue", "relationFormatObjectTypes"
+		"relationMaxCount", "relationReadonly", "relationReadonlyValue", "relationDefaultValue", "relationFormatObjectTypes"
 	],
 
 	"optionRelationKeys": [
