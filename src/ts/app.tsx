@@ -203,6 +203,7 @@ window.Lib = {
 	dispatcher,
 	keyboard,
 	Renderer,
+	DataUtil,
 };
 
 /*
