@@ -23,7 +23,6 @@ const MenuSource = observer(class MenuSource extends React.Component<Props, {}> 
 	};
 	
 	render () {
-		const { config } = commonStore;
 		const items = this.getItems();
 		const types = this.getObjects().filter(it => it.type == Constant.typeId.type);
 		
@@ -111,7 +110,7 @@ const MenuSource = observer(class MenuSource extends React.Component<Props, {}> 
 			data: {
 				skipIds: value,
 				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.relation }
+					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.relation },
 				],
 				sorts: [
 					{ relationKey: 'name', type: I.SortType.Asc }

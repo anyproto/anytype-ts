@@ -242,7 +242,6 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		const { data } = param;
 		const { type, dataMapper, dataSort, skipIds, keys } = data;
 		const { filter } = this.state;
-		const { config } = commonStore;
 		
 		const filters: any[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
