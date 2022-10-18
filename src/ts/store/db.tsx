@@ -46,7 +46,7 @@ class DbStore {
 		let relations = this.relationMap.get(this.getId(rootId, blockId)) || [];
 
 		for (let item of list) {
-			relations.push(item);
+			relations.push({ relationKey: item.relationKey, format: item.format });
 		};
 
 		this.relationMap.set(key, Util.arrayUniqueObjects(relations, 'relationKey'));
