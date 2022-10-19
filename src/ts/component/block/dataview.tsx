@@ -544,7 +544,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			return;
 		};
 
-		const { block, dataset } = this.props;
+		const { dataset } = this.props;
 		const { selection } = dataset || {};
 		const relation = dbStore.getRelationByKey(relationKey);
 		const id = Relation.cellId(this.getIdPrefix(), relationKey, index);
@@ -556,10 +556,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			return;
 		};
 
-		if ([ I.ViewType.List, I.ViewType.Gallery ].includes(view.type) && ([ I.RelationType.Url, I.RelationType.Email, I.RelationType.Phone ].indexOf(relation.format) >= 0)) {
-			const scheme = Relation.getUrlScheme(relation.format, record[relationKey]);
-
-			Renderer.send('urlOpen', scheme + record[relationKey]);
+		if ([ I.ViewType.List, I.ViewType.Gallery, I.ViewType.Board ].includes(view.type) && Relation.isUrl(relation.format)) {
+			Renderer.send('urlOpen', Relation.getUrlScheme(relation.format, record[relationKey]) + record[relationKey]);
 			return;
 		};
 
