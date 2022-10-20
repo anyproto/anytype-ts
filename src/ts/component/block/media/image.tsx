@@ -229,10 +229,8 @@ const BlockImage = observer(class BlockImage extends React.Component<Props, {}> 
 	};
 
 	onDownload () {
-		const { block } = this.props;
-
-		Action.download(block, 'block');
-	}
+		Action.download(this.props.block, 'block');
+	};
 	
 	getWidth (checkMax: boolean, v: number): number {
 		const { block } = this.props;
