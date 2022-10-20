@@ -5,6 +5,7 @@ importScripts('./d3/d3-dispatch.min.js');
 importScripts('./d3/d3-timer.min.js');
 importScripts('./d3/d3-selection.min.js');
 importScripts('./d3/d3-force.min.js');
+importScripts('./d3/forceInBox.js');
 
 // CONSTANTS
 
@@ -42,6 +43,7 @@ let Color = {};
 let LineWidth = 0.25;
 let frame = 0;
 let selected = [];
+let groupForce = null;
 
 addEventListener('message', ({ data }) => { 
 	if (this[data.id]) {
@@ -161,13 +163,20 @@ updateProps = (data) => {
 };
 
 initForces = () => {
+	groupForce = forceInABox().template('force')
+	.strength(0.3) 
+	.groupBy('layout')
+	.enableGrouping(true)
+	.size([ width, height ]);
+
 	simulation
 	.force('link', d3.forceLink())
 	.force('charge', d3.forceManyBody())
 	.force('collide', d3.forceCollide(nodes))
 	.force('center', d3.forceCenter())
 	.force('forceX', d3.forceX())
-	.force('forceY', d3.forceY());
+	.force('forceY', d3.forceY())
+	.force('forceInABox', groupForce);
 
 	updateForces();
 	restart(1);
@@ -198,7 +207,7 @@ updateForces = () => {
 	simulation.force('link')
 	.id(d => d.id)
 	.distance(link.distance)
-	.strength(link.strength * link.enabled)
+	.strength(d => simulation.force('forceInABox').getLinkStrength(d) * link.enabled)
 	.iterations(link.iterations)
 	.links(link.enabled ? edges : []);
 
