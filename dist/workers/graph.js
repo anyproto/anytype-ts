@@ -163,11 +163,13 @@ updateProps = (data) => {
 };
 
 initForces = () => {
+	/*
 	groupForce = forceInABox().template('force')
 	.strength(0.3) 
 	.groupBy('layout')
 	.enableGrouping(true)
 	.size([ width, height ]);
+	*/
 
 	simulation
 	.force('link', d3.forceLink())
@@ -207,7 +209,8 @@ updateForces = () => {
 	simulation.force('link')
 	.id(d => d.id)
 	.distance(link.distance)
-	.strength(d => simulation.force('forceInABox').getLinkStrength(d) * link.enabled)
+	//.strength(d => simulation.force('forceInABox').getLinkStrength(d) * link.enabled)
+	.strength(link.strength * link.enabled)
 	.iterations(link.iterations)
 	.links(link.enabled ? edges : []);
 
