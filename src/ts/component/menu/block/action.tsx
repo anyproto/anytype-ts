@@ -607,7 +607,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 
 		switch (item.itemId) {
 			case 'download':
-				Action.download(block);
+				Action.download(block, 'menu');
 				break;
 
 			case 'openBookmarkAsObject':
