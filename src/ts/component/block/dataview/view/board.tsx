@@ -2,8 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Loader } from 'Component';
 import { I, C, Util, DataUtil, analytics, keyboard, Relation } from 'Lib';
-import { dbStore, detailStore, popupStore, menuStore } from 'Store';
-import { throttle } from 'lodash';
+import { dbStore, detailStore, popupStore, menuStore, commonStore } from 'Store';
 import { observer } from 'mobx-react';
 import arrayMove from 'array-move';
 import { set } from 'mobx';
@@ -197,7 +196,9 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 		const element = node.find(`#card-${groupId}-add`);
 		const types = Relation.getSetOfObjects(rootId, rootId, Constant.typeId.type);
 		const relations = Relation.getSetOfObjects(rootId, rootId, Constant.typeId.relation);
-		const details: any = {};
+		const details: any = {
+			type: types.length ? types[0].id : commonStore.type,
+		};
 
 		details[view.groupRelationKey] = group.value;
 
@@ -233,14 +234,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 			});
 		};
 
-		if (!setOf.length) {
-			create(null);
-			return;
-		};
-
-		const first = setOf[0];
-
-		if (first == Constant.typeId.bookmark) {
+		if (details.type == Constant.typeId.bookmark) {
 			menuStore.open('dataviewCreateBookmark', {
 				type: I.MenuType.Horizontal,
 				element,
@@ -257,7 +251,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 
 		DataUtil.checkTemplateCnt(setOf, (message: any) => {
 			if (message.records.length > 1) {
-				popupStore.open('template', { data: { typeId: first, onSelect: create } });
+				popupStore.open('template', { data: { typeId: details.type, onSelect: create } });
 			} else {
 				create(message.records.length ? message.records[0] : '');
 			};

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Loader } from 'Component';
 import { I, C, Util, DataUtil, analytics, Dataview, keyboard, Onboarding, Relation, Renderer } from 'Lib';
-import { blockStore, menuStore, dbStore, detailStore, popupStore } from 'Store';
+import { blockStore, menuStore, dbStore, detailStore, popupStore, commonStore } from 'Store';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 import arrayMove from 'array-move';
@@ -405,10 +405,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		const types = Relation.getSetOfObjects(rootId, rootId, Constant.typeId.type);
 		const relations = Relation.getSetOfObjects(rootId, rootId, Constant.typeId.relation);
-		const details: any = {};
-
-		if (types.length) {
-			details.type = types[0].id
+		const details: any = {
+			type: types.length ? types[0].id : commonStore.type,
 		};
 
 		if (relations.length) {
@@ -467,14 +465,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			});
 		};
 
-		if (!setOf.length) {
-			create(null);
-			return;
-		};
-
-		const first = setOf[0];
-
-		if (first == Constant.typeId.bookmark) {
+		if (details.type == Constant.typeId.bookmark) {
 			menuStore.open('dataviewCreateBookmark', {
 				type: I.MenuType.Horizontal,
 				element,
@@ -490,7 +481,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		const showPopup = () => {
-			popupStore.open('template', { data: { typeId: first, onSelect: create } });
+			popupStore.open('template', { data: { typeId: details.type, onSelect: create } });
 		};
 
 		const showMenu = () => {
