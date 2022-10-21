@@ -32,7 +32,7 @@
 		.icon.checkbox { width: 20px; height: 20px; vertical-align: top; background-image: url('~img/icon/dataview/checkbox0.svg'); }
 		.icon.checkbox.active { background-image: url('~img/icon/dataview/checkbox1.svg'); }
 
-		.sides { display: flex; }
+		.sides { display: flex; align-items: center; gap: 0px 6px; }
 
 		.content { overflow: hidden; max-height: unset; padding: 0px; }
 		.input { @include text-common; line-height: 20px; vertical-align: top; display: inline-block; height: 21px; padding: 0px; border: 0px; padding: 0px; }
@@ -49,10 +49,10 @@
 		#section-featured::after { display: block; }
 
 		.scrollWrap { padding: 22px 0px 16px 0px; height: calc(100% - 45px); overflow-x: hidden; overflow-y: overlay; }
-		.item { padding: 0px 32px; cursor: default; }
+		.item { padding: 0px 26px; cursor: default; }
 		.item {
-			.icon.plus { margin-right: 4px; }
-			.icon.lock { margin-right: 6px; }
+			.icon.plus { margin: 0px; }
+			.icon.lock { margin: 0px; }
 
 			.icon.fav {
 				width: 32px; height: 32px; background-size: 20px; background-image: url('~img/icon/fav0.svg'); cursor: pointer; flex-shrink: 0; border-radius: 4px; 
@@ -63,7 +63,7 @@
 
 			.info { 
 				width: 192px; @include text-overflow-nw; line-height: 20px; border-radius: 4px; transition: background 0.2s ease-in-out; 
-				flex-shrink: 0; margin-right: 6px; padding: 6px 0px; color: $colorDarkGrey;
+				flex-shrink: 0; padding: 6px; color: $colorDarkGrey; display: flex; gap: 0px 6px; align-items: center;
 			}
 			.info.canEdit { cursor: pointer; }
 			.info.canEdit:hover { background: $colorHover; }
@@ -146,7 +146,7 @@
 			}
 		}
 
-		.item.add { padding: 7px 32px 8px 32px; cursor: pointer; background: none; }
+		.item.add { padding: 7px 26px 8px 26px; cursor: pointer; background: none; }
 		.item.add {
 			.line { margin: 0px; position: absolute; top: 0px; left: 32px; width: calc(100% - 64px); }
 			.info { width: 100%; }
