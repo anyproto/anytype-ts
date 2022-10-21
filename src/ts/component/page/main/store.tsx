@@ -75,7 +75,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 		const rootId = this.getRootId();
 		const subId = dbStore.getSubId(rootId, BLOCK_ID);
 		const block = blockStore.getLeaf(rootId, BLOCK_ID) || {};
-		const meta = dbStore.getMeta(rootId, block.id);
+		const meta = dbStore.getMeta(subId, '');
 		const views = block.content?.views || [];
 		const items = this.getItems();
 
@@ -94,7 +94,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 			);
 		};
 
-		const tabs = (
+		const TabList = (item: any) => (
 			<div className="tabs">
 				{views.map((item: any, i: number) => (
 					<div key={item.id} className={[ 'item', (item.id == meta.viewId ? 'active' : '') ].join(' ')} onClick={(e: any) => { this.onView(e, item); }}>
@@ -122,7 +122,6 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 								</div>
 								<div className="line" />
 							</div>
-							<Button className="blank c28" text="Add" />
 						</div>
 					);
 				};
@@ -182,7 +181,6 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 								</div>
 								<div className="line" />
 							</div>
-							<Button className="blank c28" text="Add" />
 						</div>
 					);
 				};
@@ -215,6 +213,9 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 							if (item.id == 'mid') {
 								return <Mid key={i} {...item} />;
 							};
+							if (item.id == 'tabs') {
+								return <TabList key={i} {...item} />;
+							};
 							return <Item key={i} {...item} />;
 						})}
 					</div>
@@ -227,7 +228,6 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 				<Header component="mainStore" {...this.props} rootId={rootId} tabs={Tabs} tab={tab} onTab={this.onTab} />
 
 				<div className="body">
-					{tabs}
 
 					{loading ? 
 						<Loader id="loader" />
@@ -317,14 +317,29 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 		const { index } = param;
 
 		let h = 0;
-		if (tab == Tab.Type) {
-			h = index == 0 ? 238 : 96;
-		};
-		if (tab == Tab.Template) {
-			h = 280;
-		};
-		if (tab == Tab.Relation) {
-			h = index == 0 ? 180 : 64;
+
+		switch (index) {
+			// Mid
+			case 0:
+				switch (tab) {
+					case Tab.Type: h = 238; break;
+					case Tab.Template: h = 280; break;
+					case Tab.Relation: h = 180; break;
+				};
+				break;
+
+			// Tabs
+			case 1:
+				h = 70;
+				break;
+
+			default:
+				switch (tab) {
+					case Tab.Type: h = 96; break;
+					case Tab.Template: h = 280; break;
+					case Tab.Relation: h = 64; break;
+				};
+				break;
 		};
 		return h;
 	};
@@ -420,7 +435,8 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 		});
 
 		let ret: any[] = [
-			{ children: [ { id: 'mid' } ] }
+			{ children: [ { id: 'mid' } ] },
+			{ children: [ { id: 'tabs' } ] }
 		];
 		let n = 0;
 		let row = { children: [] };
