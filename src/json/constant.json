@@ -150,7 +150,7 @@
 	],
 
 	"optionRelationKeys": [
-		"id", "type", "layout", "relationOptionText", "relationOptionColor", "relationKey"
+		"id", "type", "layout", "name", "relationOptionColor", "relationKey"
 	],
 
 	"relationKey": {

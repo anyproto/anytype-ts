@@ -277,7 +277,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 
 		C.ObjectCreateRelationOption({
 			relationKey: relation.relationKey,
-			relationOptionText: option.text,
+			name: option.text,
 			relationOptionColor: option.color,
 		}, (message: any) => {
 			if (message.error.code) {

@@ -162,10 +162,9 @@ class DetailStore {
 			delete(object.relationReadonlyValue);
 		} else
 		if (object.type == Constant.typeId.option) {
-			object.text = Relation.getStringValue(object.relationOptionText);
+			object.text = Relation.getStringValue(object.name);
 			object.color = Relation.getStringValue(object.relationOptionColor);
 
-			delete(object.relationOptionText);
 			delete(object.relationOptionColor);
 		};
 
