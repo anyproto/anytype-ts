@@ -500,7 +500,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		Util.previewHide(true);
 		
 		const ids = selection.get(I.SelectType.Block);
-		const cmd = keyboard.ctrlKey();
+		const cmd = keyboard.cmdKey();
 		const readonly = this.isReadonly();
 
 		// Select all
@@ -675,7 +675,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		};
 
 		const platform = Util.getPlatform();
-		const cmd = keyboard.ctrlKey();
+		const cmd = keyboard.cmdKey();
 
 		// Last line break doesn't expand range.to
 		let length = String(text || '').length;
@@ -845,7 +845,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 	};
 
 	getMarkParam () {
-		const cmd = keyboard.ctrlKey();
+		const cmd = keyboard.cmdKey();
 		return [
 			{ key: `${cmd}+b`,		 type: I.MarkType.Bold,		 param: '' },
 			{ key: `${cmd}+i`,		 type: I.MarkType.Italic,	 param: '' },

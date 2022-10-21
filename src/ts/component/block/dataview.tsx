@@ -229,7 +229,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const { rootId, dataset } = this.props;
 		const { selection } = dataset || {};
 		const root = blockStore.getLeaf(rootId, rootId);
-		const cmd = keyboard.ctrlKey();
+		const cmd = keyboard.cmdKey();
 		const ids = selection ? selection.get(I.SelectType.Block) : [];
 		const length = ids.length;
 

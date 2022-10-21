@@ -33,7 +33,10 @@ const CellObject = observer(class CellObject extends React.Component<Props, Stat
 		this.onKeyPress = this.onKeyPress.bind(this);
 		this.onKeyDown = this.onKeyDown.bind(this);
 		this.onKeyUp = this.onKeyUp.bind(this);
+		this.onInput = this.onInput.bind(this);
 		this.onFocus = this.onFocus.bind(this);
+		this.onBlur = this.onBlur.bind(this);
+		this.focus = this.focus.bind(this);
 		this.onDragEnd = this.onDragEnd.bind(this);
 	};
 
@@ -61,7 +64,7 @@ const CellObject = observer(class CellObject extends React.Component<Props, Stat
 		let content = null;
 		if (isEditing) {
 			content = (
-				<div id="value" onClick={this.onFocus}>
+				<div id="value" onClick={this.focus}>
 					<div id="placeholder" className="placeholder">{placeholder}</div>
 
 					<span id="list">
@@ -93,6 +96,9 @@ const CellObject = observer(class CellObject extends React.Component<Props, Stat
 						id="entry" 
 						contentEditable={true}
 						suppressContentEditableWarning={true} 
+						onFocus={this.onFocus}
+						onBlur={this.onBlur}
+						onInput={this.onInput}
 						onKeyPress={this.onKeyPress}
 						onKeyDown={this.onKeyDown}
 						onKeyUp={this.onKeyUp}
@@ -161,7 +167,7 @@ const CellObject = observer(class CellObject extends React.Component<Props, Stat
 			this.setState({ isEditing: v });
 
 			if (v) {
-				window.setTimeout(() => { this.onFocus(); }, 15);
+				window.setTimeout(() => { this.focus(); }, 15);
 			};
 		};
 	};
@@ -259,7 +265,7 @@ const CellObject = observer(class CellObject extends React.Component<Props, Stat
 		};
 	};
 
-	onFocus () {
+	focus () {
 		if (!this._isMounted) {
 			return;
 		};
@@ -334,6 +340,10 @@ const CellObject = observer(class CellObject extends React.Component<Props, Stat
 		this.scrollToBottom();
 	};
 
+	onInput () {
+		this.placeholderCheck();
+	};
+
 	onValueAdd (id: string) {
 		this.setValue(this.getItemIds().concat([ id ]));
 	};
@@ -375,6 +385,14 @@ const CellObject = observer(class CellObject extends React.Component<Props, Stat
 		});
 	};
 
+	onFocus () {
+		keyboard.setFocus(true);
+	};
+
+	onBlur () {
+		keyboard.setFocus(false);
+	};
+
 	clear () {
 		if (!this._isMounted) {
 			return;
@@ -384,7 +402,7 @@ const CellObject = observer(class CellObject extends React.Component<Props, Stat
 		node.find('#entry').text(' ');
 
 		menuStore.updateData('dataviewObjectList', { filter: '' });
-		this.onFocus();
+		this.focus();
 	};
 
 	blur () {

@@ -150,7 +150,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 		const { rootId, blockIds, blockRemove } = data;
 		const { filter } = this.state;
 		const { focused } = focus.state;
-		const cmd = keyboard.ctrlKey();
+		const cmd = keyboard.cmdKey();
 
 		let ret = false;
 
