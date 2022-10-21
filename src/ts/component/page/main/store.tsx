@@ -366,7 +366,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 		this.setState({ tab: id, loading: true });
 
 		C.ObjectOpen(this.getRootId(), '', (message: any) => {
-			this.getData('library', true);
+			this.getData('marketplace', true);
 			this.setState({ loading: false });
 		});
 	};
