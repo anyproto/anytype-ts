@@ -438,9 +438,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					return;
 				};
 
+				const object = message.details;
 				const records = dbStore.getRecords(subId, '');
-				const object = detailStore.get(subId, message.objectId, []);
-				const oldIndex = records.findIndex(it => it == object.id);
+				const oldIndex = records.findIndex(it => it == message.objectId);
 				const newIndex = dir > 0 ? records.length - 1 : 0;
 
 				if (oldIndex < 0) {

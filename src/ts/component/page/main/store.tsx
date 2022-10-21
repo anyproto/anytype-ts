@@ -380,14 +380,9 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 	};
 
 	onCreateType (e: any) {
-		const details: any = { 
-			name: '',
-			layout: I.ObjectLayout.Page, 
-		};
-
-		C.ObjectCreateObjectType(details, [ I.ObjectFlag.DeleteEmpty ], (message: any) => {
+		C.ObjectCreateObjectType({}, [ I.ObjectFlag.DeleteEmpty ], (message: any) => {
 			if (!message.error.code) {
-				this.onClick(e, { id: message.objectId, layout: I.ObjectLayout.Type });
+				this.onClick(e, message.details);
 				analytics.event('CreateType');
 			};
 		});

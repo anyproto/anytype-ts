@@ -408,7 +408,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			case 'setCreate':
 				C.ObjectCreateSet([ object.type ], { name: type.name + ' set', iconEmoji: type.iconEmoji }, '', (message: any) => {
 					if (!message.error.code) {
-						DataUtil.objectOpenPopup({ id: message.objectId, layout: I.ObjectLayout.Set });
+						DataUtil.objectOpenPopup(message.details);
 					};
 				});
 				break;
