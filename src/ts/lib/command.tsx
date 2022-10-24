@@ -1143,6 +1143,23 @@ const ObjectImportMarkdown = (contextId: string, path: string, callBack?: (messa
 	dispatcher.request(ObjectImportMarkdown.name, request, callBack);
 };
 
+const ObjectImportList = (callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.ImportList.Request();
+	
+	dispatcher.request(ObjectImportList.name, request, callBack);
+};
+
+const ObjectImport = (params: any, snapshots: any[], existing: boolean, type: I.ImportType, mode: I.ImportMode, callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.Import.Request();
+
+	request.setSnapshotsList((snapshots || []).map(Mapper.To.Snapshot));
+	request.setUpdateexistingobjects(existing);
+	request.setType(type);
+	request.setMode(mode);
+	
+	dispatcher.request(ObjectImport.name, request, callBack);
+};
+
 const ObjectSetDetails = (contextId: string, details: any[], callBack?: (message: any) => void) => {
 	details = details.map(Mapper.To.Details);
 
@@ -1729,6 +1746,8 @@ export {
 	ObjectDuplicate,
 	ObjectApplyTemplate,
 	ObjectImportMarkdown,
+	ObjectImportList,
+	ObjectImport,
 	ObjectBookmarkFetch,
 
 	ObjectCreate,

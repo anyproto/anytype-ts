@@ -19,6 +19,8 @@ import {
 	FooterComponent,
 	SurveyType,
 	SliceOperation,
+	ImportType,
+	ImportMode,
 } from './common';
 import { ThreadStatus, ThreadSummary, ThreadDevice, ThreadAccount, ThreadCafe, FilesStatus } from './thread';
 import { Progress, ProgressType, ProgressState } from './progress';
@@ -84,6 +86,9 @@ export {
 	FooterComponent,
 	SurveyType,
 	SliceOperation,
+
+	ImportType,
+	ImportMode,
 	
 	ThreadStatus,
 	ThreadSummary,

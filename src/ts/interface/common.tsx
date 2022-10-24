@@ -135,3 +135,14 @@ export enum SliceOperation {
 	Remove	 = 3,
     Replace	 = 4,
 };
+
+export enum ImportMode {
+	allOrNothing = 0,
+	ignoreErrors = 1,
+};
+
+export enum ImportType {
+	Protobuf	 = 0,
+	Markdown	 = 1,
+	External	 = 2,
+};
