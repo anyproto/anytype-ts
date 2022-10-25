@@ -1144,13 +1144,24 @@ const ObjectImportMarkdown = (contextId: string, path: string, callBack?: (messa
 };
 
 const ObjectImportList = (callBack?: (message: any) => void) => {
-	const request = new Rpc.Object.ImportList.Request();
+	const request = new Commands.Empty();
 	
 	dispatcher.request(ObjectImportList.name, request, callBack);
 };
 
 const ObjectImport = (params: any, snapshots: any[], existing: boolean, type: I.ImportType, mode: I.ImportMode, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.Import.Request();
+
+	switch (type) {
+		case I.ImportType.Protobuf:
+			break;
+
+		case I.ImportType.Markdown:
+			break;
+
+		case I.ImportType.External:
+			break;
+	};
 
 	request.setSnapshotsList((snapshots || []).map(Mapper.To.Snapshot));
 	request.setUpdateexistingobjects(existing);

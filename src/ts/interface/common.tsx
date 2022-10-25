@@ -62,8 +62,16 @@ export interface PreviewLink {
 	imageUrl: string;
 };
 
-export enum ImportFormat {
-	Notion = 0,
+export enum ImportMode {
+	allOrNothing = 0,
+	ignoreErrors = 1,
+};
+
+export enum ImportType {
+	Protobuf	 = 0,
+	Markdown	 = 1,
+	External	 = 2,
+	Notion		 = 3,
 };
 
 export enum ExportFormat {
@@ -134,15 +142,4 @@ export enum SliceOperation {
     Move	 = 2,
 	Remove	 = 3,
     Replace	 = 4,
-};
-
-export enum ImportMode {
-	allOrNothing = 0,
-	ignoreErrors = 1,
-};
-
-export enum ImportType {
-	Protobuf	 = 0,
-	Markdown	 = 1,
-	External	 = 2,
 };

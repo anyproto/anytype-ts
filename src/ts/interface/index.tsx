@@ -9,7 +9,8 @@ import {
 	Option, 
 	HistoryVersion, 
 	PreviewLink, 
-	ImportFormat,
+	ImportType,
+	ImportMode,
 	ExportFormat, 
 	Source, 
 	EdgeType, 
@@ -19,8 +20,6 @@ import {
 	FooterComponent,
 	SurveyType,
 	SliceOperation,
-	ImportType,
-	ImportMode,
 } from './common';
 import { ThreadStatus, ThreadSummary, ThreadDevice, ThreadAccount, ThreadCafe, FilesStatus } from './thread';
 import { Progress, ProgressType, ProgressState } from './progress';
@@ -76,8 +75,6 @@ export {
 	Option,
 	HistoryVersion,
 	PreviewLink,
-	ImportFormat,
-	ExportFormat,
 	Source,
 	EdgeType,
 	GraphView,
@@ -89,6 +86,7 @@ export {
 
 	ImportType,
 	ImportMode,
+	ExportFormat,
 	
 	ThreadStatus,
 	ThreadSummary,

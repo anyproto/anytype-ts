@@ -20,6 +20,7 @@ import PagePinConfirm from './page/settings/pin/confirm';
 
 import PageImportIndex from './page/settings/import/index';
 import PageImportNotion from './page/settings/import/notion';
+import PageImportProtobuf from './page/settings/import/protobuf';
 
 import PageExportMarkdown from './page/settings/export/markdown';
 
@@ -47,6 +48,7 @@ const Components: any = {
 
 	importIndex:		 PageImportIndex,
 	importNotion:		 PageImportNotion,
+	importProtobuf:		 PageImportProtobuf,
 
 	exportMarkdown:		 PageExportMarkdown,
 };
@@ -174,7 +176,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 		analytics.event('settings', { params: { id } });
 	};
 
-	onImport (format: I.ImportFormat) {
+	onImport (type: I.ImportType) {
 		const platform = Util.getPlatform();
 		const { close } = this.props;
 		const { root } = blockStore;
