@@ -197,7 +197,9 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 			close();
 
 			C.ObjectImport({ path: files[0] }, [], true, type, I.ImportMode.IgnoreErrors, (message: any) => {
-				analytics.event('Import', { middleTime: message.middleTime, type });
+				if (!message.error.code) {
+					analytics.event('Import', { middleTime: message.middleTime, type });
+				};
 			});
 		});
 	};
