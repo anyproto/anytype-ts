@@ -63,15 +63,13 @@ export interface PreviewLink {
 };
 
 export enum ImportMode {
-	allOrNothing = 0,
-	ignoreErrors = 1,
+	AllOrNothing = 0,
+	IgnoreErrors = 1,
 };
 
 export enum ImportType {
-	Protobuf	 = 0,
-	Markdown	 = 1,
-	External	 = 2,
-	Notion		 = 3,
+	Notion	 = 0,
+	External = 1,
 };
 
 export enum ExportFormat {

@@ -20,7 +20,6 @@ import PagePinConfirm from './page/settings/pin/confirm';
 
 import PageImportIndex from './page/settings/import/index';
 import PageImportNotion from './page/settings/import/notion';
-import PageImportProtobuf from './page/settings/import/protobuf';
 
 import PageExportMarkdown from './page/settings/export/markdown';
 
@@ -48,7 +47,6 @@ const Components: any = {
 
 	importIndex:		 PageImportIndex,
 	importNotion:		 PageImportNotion,
-	importProtobuf:		 PageImportProtobuf,
 
 	exportMarkdown:		 PageExportMarkdown,
 };
@@ -179,7 +177,6 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 	onImport (type: I.ImportType) {
 		const platform = Util.getPlatform();
 		const { close } = this.props;
-		const { root } = blockStore;
 		const options: any = { 
 			properties: [ 'openFile' ],
 			filters: [
@@ -198,8 +195,9 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 			};
 
 			close();
-			C.ObjectImportMarkdown(root, files[0], (message: any) => {
-				analytics.event('ImportFromNotion', { middleTime: message.middleTime });
+
+			C.ObjectImport({ path: files[0] }, [], true, type, I.ImportMode.IgnoreErrors, (message: any) => {
+				analytics.event('Import', { middleTime: message.middleTime, type });
 			});
 		});
 	};

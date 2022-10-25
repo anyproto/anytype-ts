@@ -17,7 +17,6 @@ const PopupSettingsPageImportIndex = observer(class PopupSettingsPageImportIndex
 	render () {
 		const { onPage } = this.props;
 		const items = [
-			{ id: 'protobuf', name: 'Protobuf', disabled: false },
 			{ id: 'notion', name: 'Notion', disabled: false },
 		];
 

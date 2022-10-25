@@ -1149,18 +1149,19 @@ const ObjectImportList = (callBack?: (message: any) => void) => {
 	dispatcher.request(ObjectImportList.name, request, callBack);
 };
 
-const ObjectImport = (params: any, snapshots: any[], existing: boolean, type: I.ImportType, mode: I.ImportMode, callBack?: (message: any) => void) => {
+const ObjectImport = (options: any, snapshots: any[], existing: boolean, type: I.ImportType, mode: I.ImportMode, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.Import.Request();
 
+	let params = null;
+
 	switch (type) {
-		case I.ImportType.Protobuf:
+		case I.ImportType.Notion:
+			params = new Rpc.Object.Import.Request.NotionParams();
+			params.setPath(options.path);
+
+			request.setPath(params);
 			break;
 
-		case I.ImportType.Markdown:
-			break;
-
-		case I.ImportType.External:
-			break;
 	};
 
 	request.setSnapshotsList((snapshots || []).map(Mapper.To.Snapshot));
