@@ -1159,7 +1159,7 @@ const ObjectImport = (options: any, snapshots: any[], existing: boolean, type: I
 			params = new Rpc.Object.Import.Request.NotionParams();
 			params.setPath(options.path);
 
-			request.setPath(params);
+			request.setNotionparams(params);
 			break;
 
 	};
