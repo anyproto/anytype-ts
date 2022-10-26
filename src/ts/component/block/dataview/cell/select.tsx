@@ -83,7 +83,8 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 								>
 									<Tag 
 										key={item.id}
-										{...item} 
+										text={item.name}
+										color={item.color}
 										canEdit={true} 
 										className={DataUtil.tagClass(relation.format)}
 										onRemove={(e: any, id: string) => { this.onValueRemove(id); }}

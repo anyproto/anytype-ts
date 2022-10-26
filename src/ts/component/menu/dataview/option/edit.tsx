@@ -52,7 +52,7 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<Pro
 					placeholder={translate('menuDataviewOptionEditPlaceholder')}
 					placeholderFocus={translate('menuDataviewOptionEditPlaceholder')}
 					className={'textColor-' + this.color}
-					value={option.text}
+					value={option.name}
 					onKeyUp={(e: any, v: string) => { this.onKeyUp(e, v); }}
 				/>
 

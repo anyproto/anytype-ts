@@ -60,7 +60,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 				content = (
 					<div id={'item-' + item.id} className="item" style={param.style} onMouseEnter={(e: any) => { this.onOver(e, item); }}>
 						<div className="clickable" onClick={(e: any) => { this.onClick(e, item); }}>
-							<Tag text={item.text} color={item.color} className={DataUtil.tagClass(relation.format)} />
+							<Tag text={item.name} color={item.color} className={DataUtil.tagClass(relation.format)} />
 						</div>
 						<div className="buttons">
 							<Icon className="more" onClick={(e: any) => { this.onEdit(e, item); }} />
@@ -261,14 +261,14 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 		const { filter } = data;
 		const relation = data.relation.get();
 		const colors = DataUtil.menuGetBgColors();
-		const option = { text: filter, color: colors[Util.rand(1, colors.length - 1)].value };
+		const option = { name: filter, color: colors[Util.rand(1, colors.length - 1)].value };
 
-		if (!option.text) {
+		if (!option.name) {
 			return;
 		};
 
 		const items = this.getItems();
-		const match = items.find(it => it.text == option.text);
+		const match = items.find(it => it.name == option.name);
 
 		if (match) {
 			this.onValueAdd(match.id);
@@ -277,7 +277,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 
 		C.ObjectCreateRelationOption({
 			relationKey: relation.relationKey,
-			name: option.text,
+			name: option.name,
 			relationOptionColor: option.color,
 		}, (message: any) => {
 			if (message.error.code) {
@@ -339,8 +339,8 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 		if (data.filter) {
 			const filter = new RegExp(Util.filterFix(data.filter), 'gi');
 			
-			check = items.filter(it => it.text.toLowerCase() == data.filter.toLowerCase());
-			items = items.filter(it => it.text.match(filter));
+			check = items.filter(it => it.name.toLowerCase() == data.filter.toLowerCase());
+			items = items.filter(it => it.name.match(filter));
 
 			if (canAdd && !check.length) {
 				ret.unshift({ id: 'add', name: isStatus ? `Set status "${data.filter}"` : `Create option "${data.filter}"` });
