@@ -285,6 +285,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		
 		const filters: any[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
+			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: [ Constant.typeId.option ] },
 		].concat(data.filters || []);
 
 		const sorts = [].concat(data.sorts || []);
