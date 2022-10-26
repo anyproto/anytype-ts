@@ -150,7 +150,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 		const { rootId, blockIds, blockRemove } = data;
 		const { filter } = this.state;
 		const { focused } = focus.state;
-		const cmd = keyboard.ctrlKey();
+		const cmd = keyboard.cmdKey();
 
 		let ret = false;
 
@@ -481,6 +481,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 				menuParam.data = Object.assign(menuParam.data, {
 					placeholder: 'Find a type of object...',
 					label: 'Your object type library',
+					canNotAdd: true,
 					filters: filters,
 					onSelect: (item: any) => {
 						this.moveToPage(item.id);
@@ -607,7 +608,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 
 		switch (item.itemId) {
 			case 'download':
-				Action.download(block);
+				Action.download(block, 'menu');
 				break;
 
 			case 'openBookmarkAsObject':

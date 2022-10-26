@@ -28,7 +28,7 @@
 
             .cellContent.isName { @include text-paragraph; display: inline-block; color: $colorBlack; }
 			.cellContent.isName {
-				.name { display: inline-block; line-height: 24px; vertical-align: top; max-width: 500px; }
+				.name { display: inline-block; line-height: 24px; vertical-align: top; font-weight: 500; max-width: 500px; }
 			}
 
 			.cellContent.c-select, 
@@ -55,6 +55,12 @@
 			.cellContent.c-url, 
 			.cellContent.c-email, 
 			.cellContent.c-phone { color: $colorDarkGrey; cursor: pointer !important; }
+
+			.cellContent.c-url, 
+			.cellContent.c-email, 
+			.cellContent.c-phone {
+				.name { border: 0px; }
+			}
 
 			.cellContent.c-url:hover, 
 			.cellContent.c-email:hover, 

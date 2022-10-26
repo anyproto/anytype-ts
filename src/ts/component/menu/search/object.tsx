@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { MenuItemVertical, Filter, Loader, ObjectName, EmptySearch } from 'Component';
 import { I, C, keyboard, Util, DataUtil, translate, analytics, Action, focus } from 'Lib';
-import { commonStore, dbStore } from 'Store';
+import { dbStore, commonStore } from 'Store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
@@ -15,6 +15,13 @@ interface State {
 const $ = require('jquery');
 const Constant = require('json/constant.json');
 const LIMIT_HEIGHT = 10;
+
+const HEIGHT_SECTION = 28;
+const HEIGHT_ITEM = 28;
+const HEIGHT_ITEM_BIG = 56;
+const HEIGHT_DIV = 16;
+const HEIGHT_FILTER = 44;
+const HEIGHT_EMPTY = 98;
 
 const MenuSearchObject = observer(class MenuSearchObject extends React.Component<Props, State> {
 
@@ -49,7 +56,6 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		const items = this.getItems();
 		const cn = [ 'wrap' ];
 		const placeholderFocus = data.placeholderFocus || 'Filter objects...';
-		const rowHeight = this.getHeight();
 
 		if (label) {
 			cn.push('withLabel');
@@ -62,34 +68,61 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 			const item: any = items[param.index];
 			const type = dbStore.getType(item.type);
 			const cn = [];
-			
-			if (item.id == 'add') {
-				cn.push('add');
-			};
-			if (item.isHidden) {
-				cn.push('isHidden');
-			};
-			if (value == item.id) {
-				cn.push('active');
-			};
 
-			const props = {
-				...item,
-				object: (item.id == 'add' ? undefined : item),
-			};
+			let content = null;
 
-			if (isBig) {
-				props.withDescription = true;
-				props.forceLetter = true;
-				props.iconSize = 40;
+			if (item.isSection) {
+				content = <div className={[ 'sectionName', (param.index == 0 ? 'first' : '') ].join(' ')} style={param.style}>{item.name}</div>;
+			} else
+			if (item.isDiv) {
+				content = (
+					<div className="separator" style={param.style}>
+						<div className="inner" />
+					</div>
+				);
+			} else
+			if (item.isEmpty && !loading) {
+				content = (
+					<EmptySearch text={filter ? Util.sprintf(translate('popupSearchEmptyFilter'), filter) : translate('popupSearchEmpty')} />
+				);
 			} else {
-				props.withCaption = true;
-				props.caption = (type ? type.name : undefined);
-			};
+				if (item.id == 'add') {
+					cn.push('add');
+				};
+				if (item.isHidden) {
+					cn.push('isHidden');
+				};
+				if (value == item.id) {
+					cn.push('active');
+				};
 
-			if (noIcon) {
-				props.object = undefined;
-			};
+				const props = {
+					...item,
+					object: (item.id == 'add' ? undefined : item),
+				};
+
+				if (isBig) {
+					props.withDescription = true;
+					props.forceLetter = true;
+					props.iconSize = 40;
+				} else {
+					props.withCaption = true;
+					props.caption = (type ? type.name : undefined);
+				};
+
+				if (noIcon) {
+					props.object = undefined;
+				};
+
+				content = <MenuItemVertical
+					{...props}
+					name={<ObjectName object={item} />}
+					onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }}
+					onClick={(e: any) => { this.onClick(e, item); }}
+					style={param.style}
+					className={cn.join(' ')}
+				/>;
+			}
 
 			return (
 				<CellMeasurer
@@ -100,14 +133,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 					rowIndex={param.index}
 					hasFixedWidth={() => {}}
 				>
-					<MenuItemVertical 
-						{...props}
-						name={<ObjectName object={item} />}
-						onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }} 
-						onClick={(e: any) => { this.onClick(e, item); }}
-						style={param.style}
-						className={cn.join(' ')}
-					/>
+					{content}
 				</CellMeasurer>
 			);
 		};
@@ -126,42 +152,34 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 
 				{loading ? <Loader /> : ''}
 
-				{!items.length && !loading ? (
-					<EmptySearch text={filter ? Util.sprintf(translate('popupSearchEmptyFilter'), filter) : translate('popupSearchEmpty')} />
-				) : ''}
-
 				{this.cache && items.length && !loading ? (
-					<React.Fragment>
-						{label ? <div className="sectionName">{label}</div> : ''}
-
-						<div className="items">
-							<InfiniteLoader
-								rowCount={items.length + 1}
-								loadMoreRows={this.loadMoreRows}
-								isRowLoaded={({ index }) => !!this.items[index]}
-								threshold={LIMIT_HEIGHT}
-							>
-								{({ onRowsRendered, registerChild }) => (
-									<AutoSizer className="scrollArea">
-										{({ width, height }) => (
-											<List
-												ref={(ref: any) => { this.refList = ref; }}
-												width={width}
-												height={height}
-												deferredMeasurmentCache={this.cache}
-												rowCount={items.length}
-												rowHeight={rowHeight}
-												rowRenderer={rowRenderer}
-												onRowsRendered={onRowsRendered}
-												overscanRowCount={10}
-												scrollToAlignment="center"
-											/>
-										)}
-									</AutoSizer>
-								)}
-							</InfiniteLoader>
-						</div>
-					</React.Fragment>
+					<div className="items">
+						<InfiniteLoader
+							rowCount={items.length + 1}
+							loadMoreRows={this.loadMoreRows}
+							isRowLoaded={({ index }) => !!this.items[index]}
+							threshold={LIMIT_HEIGHT}
+						>
+							{({ onRowsRendered, registerChild }) => (
+								<AutoSizer className="scrollArea">
+									{({ width, height }) => (
+										<List
+											ref={(ref: any) => { this.refList = ref; }}
+											width={width}
+											height={height}
+											deferredMeasurmentCache={this.cache}
+											rowCount={items.length}
+											rowHeight={({ index }) => this.getRowHeight(items[index])}
+											rowRenderer={rowRenderer}
+											onRowsRendered={onRowsRendered}
+											overscanRowCount={10}
+											scrollToAlignment="center"
+										/>
+									)}
+								</AutoSizer>
+							)}
+						</InfiniteLoader>
+					</div>
 				) : ''}
 			</div>
 		);
@@ -178,7 +196,6 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 	componentDidUpdate () {
 		const { filter } = this.state;
 		const items = this.getItems();
-		const rowHeight = this.getHeight();
 
 		if (this.filter != filter) {
 			this.filter = filter;
@@ -190,7 +207,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 
 		this.cache = new CellMeasurerCache({
 			fixedWidth: true,
-			defaultHeight: rowHeight,
+			defaultHeight: HEIGHT_ITEM,
 			keyMapper: (i: number) => { return (items[i] || {}).id; },
 		});
 
@@ -223,7 +240,30 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 	};
 
 	getItems () {
-		return this.items;
+		const { filter } = this.state;
+		const { param } = this.props;
+		const { data } = param;
+		const { label, canNotAdd } = data;
+
+		let items = [].concat(this.items);
+
+		if (label && items.length) {
+			items.unshift({ isSection: true, name: label });
+		};
+
+		if (filter.length && !canNotAdd) {
+			if (items.length) {
+				items.push({ isDiv: true });
+			};
+
+			items.push({ id: 'add', icon: 'plus', name: `Create object "${filter}"` });
+		};
+
+		if (!items.length) {
+			items.push({ isEmpty: true });
+		};
+
+		return items;
 	};
 
 	loadMoreRows ({ startIndex, stopIndex }) {
@@ -242,7 +282,6 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		const { data } = param;
 		const { type, dataMapper, dataSort, skipIds, keys } = data;
 		const { filter } = this.state;
-		const { config } = commonStore;
 		
 		const filters: any[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
@@ -327,17 +366,10 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		const { param, close } = this.props;
 		const { data } = param;
 		const { rootId, type, blockId, blockIds, position, onSelect, noClose } = data;
+		const { filter } = this.state;
 
 		if (!noClose) {
 			close();
-		};
-
-		if (onSelect) {
-			onSelect(item);
-		};
-
-		if (!type) {
-			return;
 		};
 
 		let newBlock: any = {};
@@ -348,47 +380,83 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 			};
 		};
 
-		switch (type) {
-			case I.NavigationType.Go:
-				DataUtil.objectOpenEvent(e, item);
-				break;
+		const process = (itemId: string, targetItem: any) => {
+			if (onSelect) {
+				onSelect(targetItem);
+			};
 
-			case I.NavigationType.Move:
-				Action.move(rootId, item.id, '', blockIds, I.BlockPosition.Bottom);
-				break;
+			if (!type) {
+				return;
+			};
 
-			case I.NavigationType.Link:
-				switch (item.type) {
-					case Constant.typeId.bookmark:
-						newBlock.type = I.BlockType.Bookmark;
-						newBlock.content = { 
-							state: I.BookmarkState.Done,
-							targetObjectId: item.id,
-						};
-						break;
+			switch (type) {
+				case I.NavigationType.Go:
+					DataUtil.objectOpenEvent(e, item);
+					break;
 
-					default:
-						newBlock.type = I.BlockType.Link;
-						newBlock.content = {
+				case I.NavigationType.Move:
+					Action.move(rootId, itemId, '', blockIds, I.BlockPosition.Bottom);
+					break;
+
+				case I.NavigationType.Link:
+					switch (item.type) {
+						case Constant.typeId.bookmark:
+							newBlock.type = I.BlockType.Bookmark;
+							newBlock.content = {
+								state: I.BookmarkState.Done,
+								targetObjectId: itemId,
+							};
+							break;
+
+						default:
+							newBlock.type = I.BlockType.Link;
+							newBlock.content = {
+								...DataUtil.defaultLinkSettings(),
+								targetBlockId: itemId,
+							};
+							break;
+					};
+
+					C.BlockCreate(rootId, blockId, position, newBlock, cb);
+					break;
+
+				case I.NavigationType.LinkTo:
+					newBlock = {
+						type: I.BlockType.Link,
+						content: {
 							...DataUtil.defaultLinkSettings(),
-							targetBlockId: item.id,
-						};
-						break;
-				};
+							targetBlockId: blockId,
+						}
+					};
+					C.BlockCreate(item.id, '', position, newBlock);
+					break;
+			};
+		};
 
-				C.BlockCreate(rootId, blockId, position, newBlock, cb);
-				break;
+		const getNewObject = (id: string, callBack: (object: any) => void) => {
+			const filters: I.Filter[] = [
+				{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.Equal, value: id },
+			];
 
-			case I.NavigationType.LinkTo:
-				newBlock = {
-					type: I.BlockType.Link,
-					content: {
-						...DataUtil.defaultLinkSettings(),
-						targetBlockId: blockId,
-					}
+			C.ObjectSearch(filters, [], [], '', 0, 50, (message: any) => {
+				if (message.error.code) {
+					return;
 				};
-				C.BlockCreate(item.id, '', position, newBlock);
-				break;
+				if (message.records.length) {
+					callBack(message.records[0]);
+				};
+			});
+		};
+
+		if (item.id == 'add') {
+			const details: any = { name: filter, type: commonStore.type };
+
+			DataUtil.pageCreate('', '', details, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.SelectType ], (message: any) => {
+				getNewObject(message.targetId, object => process(message.targetId, object));
+				close();
+			});
+		} else {
+			process(item.id, item);
 		};
 	};
 
@@ -399,27 +467,40 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		}, force ? 0 : 500);
 	};
 
+	getRowHeight (item: any) {
+		const { param } = this.props;
+		const { data } = param;
+		const { isBig } = data;
+
+		let h = HEIGHT_ITEM;
+
+		if (isBig || item.isBig)	 h = HEIGHT_ITEM_BIG;
+		if (item.isEmpty)			 h = HEIGHT_EMPTY;
+		if (item.isSection)			 h = HEIGHT_SECTION;
+		if (item.isDiv)				 h = HEIGHT_DIV;
+
+		return h;
+	};
+
+	getListHeight (items: any) {
+		return Math.min(300, items.reduce((res: number, item: any) => {
+			res += this.getRowHeight(item);
+			return res;
+		}, 0));
+	};
+
 	resize () {
 		if (!this._isMounted) {
 			return;
 		};
 
-		const { param, getId, position } = this.props;
-		const { data } = param;
-		const { noFilter, label } = data;
+		const { getId, position } = this.props;
 		const items = this.getItems();
 		const obj = $(`#${getId()} .content`);
-		const h = this.getHeight();
-		const min = noFilter ? 44 + 28 : 300;
-		const l = items.length + (label ? 1 : 0);
-		const height = Math.max(min, Math.min(h * LIMIT_HEIGHT, l * h + 16));
+		const height = this.getListHeight(items) + HEIGHT_FILTER + 16;
 
 		obj.css({ height });
 		position();
-	};
-
-	getHeight () {
-		return this.props.param.data.isBig ? 56 : 28;
 	};
 	
 });
