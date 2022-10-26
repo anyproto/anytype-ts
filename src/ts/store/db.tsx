@@ -1,13 +1,13 @@
 import { observable, action, computed, set, intercept, makeObservable } from 'mobx';
-import { I, M, DataUtil } from 'ts/lib';
-import { detailStore } from 'ts/store';
+import { I, M, DataUtil, Util, Dataview } from 'ts/lib';
+import { detailStore, commonStore } from 'ts/store';
 
 const Constant = require('json/constant.json');
 
 class DbStore {
 
-    public objectTypeList: I.ObjectType[] = observable.array([]);
-    public relationMap: Map<string, I.Relation[]> = observable.map(new Map());
+    public relationMap: Map<string, any[]> = observable(new Map());
+	public relationKeyMap: any = {};
     public viewMap: Map<string, I.View[]> = observable.map(new Map());
     public recordMap: Map<string, string[]> = observable.map(new Map());
     public metaMap: Map<string, any> = observable.map(new Map());
@@ -15,13 +15,8 @@ class DbStore {
 
     constructor() {
         makeObservable(this, {
-            objectTypes: computed,
 			clearAll: action,
-            objectTypesSet: action,
-            relationsSet: action,
-            relationsClear: action,
-            relationAdd: action,
-            relationUpdate: action,
+			relationsSet: action,
             relationDelete: action,
             viewsSet: action,
 			viewsSort: action,
@@ -39,76 +34,30 @@ class DbStore {
         });
     }
 
-    get objectTypes(): I.ObjectType[] {
-		return this.objectTypeList;
-	};
-
 	clearAll () {
-		this.objectTypeList = observable.array([]);
     	this.relationMap.clear();
     	this.viewMap.clear();
     	this.recordMap.clear();
     	this.metaMap.clear();
 	};
 
-    objectTypesSet (types: I.ObjectType[]) {
-		for (let type of types) {
-			const check = this.getObjectType(type.id);
-			if (check) {
-				set(check, type);
-			} else {
-				this.objectTypeList.push(new M.ObjectType(type));
-			};
-		};
-	};
+    relationsSet (rootId: string, blockId: string, list: any[]) {
+		let key = this.getId(rootId, blockId);
+		let relations = this.relationMap.get(this.getId(rootId, blockId)) || [];
 
-    relationsSet (rootId: string, blockId: string, list: I.Relation[]) {
-		const key = this.getId(rootId, blockId);
-		const relations = this.getRelations(rootId, blockId);
-
-		list = list.map((it: I.Relation) => { return new M.Relation(it); });
 		for (let item of list) {
-			const check = this.getRelation(rootId, blockId, item.relationKey);
-			if (check) {
-				this.relationUpdate(rootId, blockId, item);
-			} else {
-				relations.push(item);
-			};
-		};
-		
-		this.relationMap.set(key, relations);
-	};
-
-    relationsClear (rootId: string, blockId: string) {
-		this.relationMap.delete(this.getId(rootId, blockId));
-	};
-
-    relationAdd (rootId: string, blockId: string, item: any) {
-		const relations = this.getRelations(rootId, blockId);
-		const relation = this.getRelation(rootId, blockId, item.relationKey);
-
-		if (relation) {
-			this.relationUpdate(rootId, blockId, item);
-		} else {
-			relations.push(new M.Relation(item));
-		};
-	};
-
-    relationUpdate (rootId: string, blockId: string, item: any) {
-		const relations = this.getRelations(rootId, blockId);
-		const idx = relations.findIndex((it: I.Relation) => { return it.relationKey == item.relationKey; });
-
-		if (idx < 0) {
-			return;
+			relations.push({ relationKey: item.relationKey, format: item.format });
 		};
 
-		set(relations[idx], item);
+		this.relationMap.set(key, Util.arrayUniqueObjects(relations, 'relationKey'));
 	};
 
-    relationDelete (rootId: string, blockId: string, key: string) {
-		let relations = this.getRelations(rootId, blockId);
-		relations = relations.filter((it: I.Relation) => { return it.relationKey != key; });
-		this.relationMap.set(this.getId(rootId, blockId), relations);
+    relationDelete (rootId: string, blockId: string, id: string) {
+		this.relationMap.set(this.getId(rootId, blockId), this.getRelations(rootId, blockId).filter(it => it.id != id));
+	};
+
+	relationListDelete (rootId: string, blockId: string, ids: string[]) {
+		this.relationMap.set(this.getId(rootId, blockId), this.getRelations(rootId, blockId).filter(it => !ids.includes(it.id)));
 	};
 
     viewsSet (rootId: string, blockId: string, list: I.View[]) {
@@ -116,7 +65,7 @@ class DbStore {
 		const views = this.getViews(rootId, blockId);
 
 		list = list.map((it: I.View) => { 
-			it.relations = DataUtil.viewGetRelations(rootId, blockId, it);
+			it.relations = Dataview.viewGetRelations(rootId, blockId, it);
 			return new M.View(it); 
 		});
 
@@ -168,7 +117,7 @@ class DbStore {
 			return;
 		};
 
-		item.relations = DataUtil.viewGetRelations(rootId, blockId, item);
+		item.relations = Dataview.viewGetRelations(rootId, blockId, item);
 		set(views[idx], item);
 	};
 
@@ -240,23 +189,36 @@ class DbStore {
 		this.groupsSet(rootId, blockId, []);
 	};
 
-    getObjectType (id: string): I.ObjectType {
-		return this.objectTypeList.find((it: I.ObjectType) => { return it.id == id; });
+	getType (id: string) {
+		const object = detailStore.get(Constant.subId.type, id, Constant.typeRelationKeys);
+		return object._empty_ ? null : object;
 	};
 
     getObjectTypesForSBType (SBType: I.SmartBlockType): any[] {
-		return dbStore.getRecords(Constant.subId.type, '').
-			map(id => detailStore.get(Constant.subId.type, id, [])).
-			filter(it => (it._smartBlockTypes_ || []).includes(SBType) && !it.isArchived && !it.isDeleted && !it._empty_);
+		return dbStore.getRecords(Constant.subId.type, '').map(id => this.getType(id)).
+			filter(it => !it._empty_ && (it.smartblockTypes || []).includes(SBType) && !it.isArchived && !it.isDeleted);
 	};
 
-    getRelations (rootId: string, blockId: string): I.Relation[] {
-		return this.relationMap.get(this.getId(rootId, blockId)) || [];
+    getRelations (rootId: string, blockId: string): any[] {
+		return (this.relationMap.get(this.getId(rootId, blockId)) || []).map(it => this.getRelationByKey(it.relationKey)).filter(it => it);
 	};
 
-    getRelation (rootId: string, blockId: string, relationKey: string): I.Relation {
-		const relations = this.getRelations(rootId, blockId);
-		return relations.find((it: I.Relation) => { return it.relationKey == relationKey; });
+    getRelationByKey (relationKey: string): any {
+		return relationKey ? this.getRelationById(this.relationKeyMap[relationKey]) : null;
+	};
+
+	getRelationById (id: string): any {
+		if (!id) {
+			return null;
+		};
+
+		const object = detailStore.get(Constant.subId.relation, id, Constant.relationRelationKeys, true);
+		return object._empty_ ? null : object;
+	};
+
+	getOption (id: string) {
+		const object = detailStore.get(Constant.subId.option, id, Constant.optionRelationKeys, true);
+		return object._empty_ ? null : object;
 	};
 
     getViews (rootId: string, blockId: string): I.View[] {
@@ -269,7 +231,14 @@ class DbStore {
 	};
 
     getMeta (rootId: string, blockId: string) {
-		return this.metaMap.get(this.getId(rootId, blockId)) || {};
+		const map = this.metaMap.get(this.getId(rootId, blockId)) || {};
+
+		return {
+			total: Number(map.total) || 0,
+			offset: Number(map.offset) || 0,
+			viewId: String(map.viewId || ''),
+			keys: map.keys || [],
+		};
 	};
 
     getRecords (rootId: string, blockId: string) {

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, analytics, DataUtil, translate } from 'Lib';
+import { I, C, analytics, DataUtil, translate } from 'Lib';
 import { Input, MenuItemVertical, Button, Icon } from 'Component';
 import { dbStore, menuStore, blockStore, detailStore } from 'Store';
 import { observer } from 'mobx-react';
@@ -28,6 +28,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		this.onCopy = this.onCopy.bind(this);
 		this.onRemove = this.onRemove.bind(this);
 		this.onChange = this.onChange.bind(this);
+		this.menuClose = this.menuClose.bind(this);
 	};
 
 	render () {
@@ -36,26 +37,28 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		const { rootId } = data;
 
 		const relation = this.getRelation();
+		const root = blockStore.getLeaf(rootId, rootId);
 		const isDate = this.format == I.RelationType.Date;
 		const isObject = this.format == I.RelationType.Object;
-		const typeId = this.objectTypes.length ? this.objectTypes[0] : '';
-		const type = detailStore.get(Constant.subId.type, typeId, []);
-		const allowed = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
-		const canDelete = allowed && relation && Constant.systemRelationKeys.indexOf(relation.relationKey) < 0;
+		const allowed = !root.isLocked() && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
+		const canDelete = allowed && relation && !Constant.systemRelationKeys.includes(relation.relationKey);
 		const isReadonly = this.isReadonly();
 
 		let opts: any = null;
-		let typeProps: any = { name: 'Select object type' };
 
 		if (isObject && !isReadonly) {
-			const l = this.objectTypes.length;
+			const length = this.objectTypes.length;
+			const typeId = length ? this.objectTypes[0] : '';
+			const type = dbStore.getType(typeId);
+			const typeProps: any = { name: 'Select object type' };
 
-			if (!type._empty_) {
+			if (type) {
 				typeProps.name = type.name;
 				typeProps.object = type;
 			};
 
-			typeProps.caption = l > 1 ? '+' + (l - 1) : '';
+			typeProps.caption = length > 1 ? '+' + (length - 1) : '';
+
 			if (typeProps.caption) {
 				typeProps.withCaption = true;
 			};
@@ -66,6 +69,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 					<MenuItemVertical
 						id="object-type"
 						onMouseEnter={this.onObjectType}
+						onClick={this.onObjectType}
 						arrow={!isReadonly}
 						{...typeProps}
 					/>
@@ -99,7 +103,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		*/
 
 		return (
-			<form onSubmit={this.onSubmit}>
+			<form className="form" onSubmit={this.onSubmit} onMouseDown={this.menuClose}>
 				<div className="section">
 					<div className="name">Relation name</div>
 
@@ -127,6 +131,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 						icon={this.format === null ? undefined : 'relation ' + DataUtil.relationClass(this.format)} 
 						name={this.format === null ? 'Select relation type' : translate('relationName' + this.format)} 
 						onMouseEnter={this.onRelationType} 
+						onClick={this.onRelationType} 
 						readonly={isReadonly}
 						arrow={!relation}
 					/>
@@ -144,7 +149,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 
 				{relation && (allowed || canDelete) ? (
 					<div className="section">
-						{/*<MenuItemVertical icon="expand" name="Open as object" onClick={this.onOpen} onMouseEnter={this.menuClose} />*/}
+						<MenuItemVertical icon="expand" name="Open as object" onClick={this.onOpen} onMouseEnter={this.menuClose} />
 						{allowed ? <MenuItemVertical icon="copy" name="Duplicate" onClick={this.onCopy} onMouseEnter={this.menuClose} /> : ''}
 						{canDelete ? <MenuItemVertical icon="remove" name="Delete" onClick={this.onRemove} onMouseEnter={this.menuClose} /> : ''}
 					</div>
@@ -169,7 +174,6 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 			this.ref.setValue(filter);
 		};
 
-		this.rebind();
 		this.checkButton();
 		this.focus();
 	};
@@ -182,21 +186,6 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 
 	componentWillUnmount () {
 		this.menuClose();
-	};
-
-	rebind () {
-		const { getId } = this.props;
-
-		this.unbind();
-
-		$(`#${getId()}`).on('click.menu', () => { this.menuClose(); });
-	};
-
-	unbind () {
-		const { getId } = this.props;
-
-		$(window).off('keydown.menu');
-		$(`#${getId()}`).off('click.menu');
 	};
 
 	focus () {
@@ -225,7 +214,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 	};
 
 	isReadonly () {
-		const { param, getId } = this.props;
+		const { param } = this.props;
 		const { data } = param;
 		const { rootId, readonly } = data;
 		const relation = this.getRelation();
@@ -235,6 +224,9 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 	};
 	
 	onRelationType (e: any) {
+		e.preventDefault();
+		e.stopPropagation();
+
 		const { param, getId } = this.props;
 		const { data } = param;
 		const relation = this.getRelation();
@@ -260,6 +252,9 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 	};
 
 	onObjectType (e: any) {
+		e.preventDefault();
+		e.stopPropagation();
+
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, blockId } = data;
@@ -287,7 +282,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 				value: this.objectTypes, 
 				types: [ Constant.typeId.type ],
 				relation: observable.box(relation),
-				valueMapper: it => detailStore.get(Constant.subId.type, it.id, []),
+				valueMapper: it => dbStore.getType(it.id),
 				onChange: (value: any, callBack?: () => void) => {
 					this.objectTypes = value;
 					this.save();
@@ -302,6 +297,9 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 	};
 
 	onDateSettings (e: any) {
+		e.preventDefault();
+		e.stopPropagation();
+
 		const { param, getId } = this.props;
 		const { data } = param;
 		const relation = this.getRelation();
@@ -329,7 +327,6 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		const { classNameWrap } = param;
 
 		options.isSub = true;
-		options.passThrough = true;
 		options.offsetX = getSize().width;
 		options.vertical = I.MenuDirection.Center;
 		options.classNameWrap = classNameWrap;
@@ -342,20 +339,23 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 	};
 
 	menuClose () {
-		 menuStore.closeAll(Constant.menuIds.relationEdit);
+		menuStore.closeAll(Constant.menuIds.relationEdit);
 	};
 
 	onOpen (e: any) {
 		const relation = this.getRelation();
-		DataUtil.objectOpenPopup({ id: relation.objectId, layout: I.ObjectLayout.Relation });
+		DataUtil.objectOpenPopup(relation);
 	};
 
 	onCopy (e: any) {
 		const { close } = this.props;
 		const relation = this.getRelation();
-		const newRelation: any = { name: relation.name, format: relation.format };
 
-		this.add(newRelation);
+		this.add({ 
+			name: relation.name, 
+			relationFormat: relation.format,
+			relationFormatObjectTypes: (relation.format == I.RelationType.Object) ? relation.objectTypes || [] : [],
+		});
 		close();
 
 		analytics.event('DuplicateRelation');
@@ -364,10 +364,10 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 	onRemove (e: any) {
 		const { close, param } = this.props;
 		const { data } = param;
-		const { rootId, relationKey, blockId, deleteCommand } = data;
+		const { deleteCommand } = data;
 
 		if (deleteCommand) {
-			deleteCommand(rootId, blockId, relationKey);
+			deleteCommand();
 		};
 		close();
 
@@ -396,42 +396,59 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		};
 
 		const relation = this.getRelation();
-		const newRelation: any = { name: name, format: this.format };
-
-		if (this.format == I.RelationType.Object) {
-			newRelation.objectTypes = this.objectTypes;
+		const item: any = { 
+			name: name, 
+			relationFormat: this.format,
+			relationFormatObjectTypes: (this.format == I.RelationType.Object) ? this.objectTypes || [] : [],
 		};
 
-		relation ? this.update(newRelation) : this.add(newRelation);
+		relation ? this.update(item) : this.add(item);
 	};
 
-	add (newRelation: any) {
+	add (item: any) {
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, blockId, addCommand, onChange } = data;
 
-		if (addCommand) {
-			addCommand(rootId, blockId, newRelation, onChange);
-		};
+		C.ObjectCreateRelation(item, [], (message: any) => {
+			if (message.error.code) {
+				return;
+			};
+
+			data.relationId = message.objectId;
+
+			/*
+			const details = detailStore.check(message.details);
+
+			dbStore.relationsSet(rootId, blockId, [ details ]);
+			detailStore.update(Constant.subId.relation, { id: message.objectId, details: message.details }, false);
+			*/
+
+			if (addCommand) {
+				addCommand(rootId, blockId, message.relationKey, onChange);
+			};
+		});
 	};
 
-	update (newRelation: any) {
+	update (item: any) {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, updateCommand } = data;
-		const relation = this.getRelation();
-		
-		if (updateCommand) {
-			updateCommand(rootId, blockId, Object.assign(relation, newRelation));
+		const { relationId } = data;
+		const details: any[] = [];
+
+		for (let k in item) {
+			details.push({ key: k, value: item[k] });
 		};
+
+		C.ObjectSetDetails(relationId, details);
 	};
 
 	getRelation () {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, relationKey } = data;
+		const { relationId } = data;
 
-		return dbStore.getRelation(rootId, rootId, relationKey);
+		return dbStore.getRelationById(relationId);
 	};
 
 });

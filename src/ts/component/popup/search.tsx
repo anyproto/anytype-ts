@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon, Input, Loader, IconObject, ObjectName, ObjectDescription, EmptySearch } from 'Component';
 import { I, C, Util, DataUtil, keyboard, Key, focus, translate, analytics } from 'Lib';
-import { commonStore, detailStore } from 'Store';
+import { commonStore, dbStore } from 'Store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
@@ -58,7 +58,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 		);
 
 		const Item = (item: any) => {
-			const type = detailStore.get(Constant.subId.type, item.type, []);
+			const type = dbStore.getType(item.type);
 			const description = (item.layout != I.ObjectLayout.Note) ? (item.description || item.snippet) : '';
 
 			return (
@@ -72,7 +72,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 					<ObjectName object={item} />
 
 					{div}
-					<div className="type">{type._empty_ || type.isDeleted ? translate('commonDeletedType') : type.name}</div>
+					<div className="type">{!type || type.isDeleted ? translate('commonDeletedType') : type.name}</div>
 
 					{description ? (
 						<React.Fragment>
@@ -150,6 +150,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 											rowRenderer={rowRenderer}
 											onRowsRendered={onRowsRendered}
 											onScroll={this.onScroll}
+											scrollToAlignment="center"
 											overscanRowCount={10}
 										/>
 									)}
@@ -240,7 +241,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 
 	onKeyDown (e: any) {
 		const items = this.getItems();
-		const cmd = keyboard.ctrlKey();
+		const cmd = keyboard.cmdKey();
 
 		keyboard.disableMouse(true);
 
@@ -335,7 +336,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 
 	loadMoreRows ({ startIndex, stopIndex }) {
         return new Promise((resolve, reject) => {
-			this.offset += Constant.limit.menu;
+			this.offset += Constant.limitMenuRecords;
 			this.load(false, resolve);
 		});
 	};
@@ -343,12 +344,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 	load (clear: boolean, callBack?: (value: any) => void) {
 		const { config } = commonStore;
 		const { filter } = this.state;
-		const skipTypes = [
-			Constant.typeId.file,
-			Constant.typeId.image,
-			Constant.typeId.video,
-			Constant.typeId.audio,
-		].concat(DataUtil.getSystemTypes());
+		const skipTypes = [].concat(DataUtil.getFileTypes()).concat(DataUtil.getSystemTypes());
 
 		const filters: any[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
@@ -358,15 +354,17 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
 		];
 
-		if (!config.debug.ho) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.Equal, value: false });
-		};
-
 		if (clear) {
 			this.setState({ loading: true });
 		};
 
-		C.ObjectSearch(filters, sorts, Constant.defaultRelationKeys, filter, this.offset, Constant.limit.menu, (message: any) => {
+		DataUtil.search({
+			filters,
+			sorts,
+			fullText: filter,
+			offset: this.offset,
+			limit: Constant.limitMenuRecords,
+		}, (message: any) => {
 			if (message.error.code) {
 				this.setState({ loading: false });
 				return;

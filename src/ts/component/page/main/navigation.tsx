@@ -1,15 +1,13 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { RouteComponentProps } from 'react-router';
 import { Icon, Button, Cover, Loader, IconObject, Header, ObjectName, ObjectDescription } from 'Component';
 import { I, C, DataUtil, Util, keyboard, Key, focus, translate, sidebar } from 'Lib';
 import { blockStore, popupStore, commonStore } from 'Store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
-interface Props extends RouteComponentProps<any> {
+interface Props extends I.PageComponent {
 	rootId: string;
-	isPopup?: boolean;
 	matchPopup?: any;
 };
 
@@ -191,6 +189,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 														onRowsRendered={onRowsRendered}
 														overscanRowCount={10}
 														scrollToIndex={this.panel == Panel.Left ? n : 0}
+														scrollToAlignment="start"
 													/>
 												)}
 											</AutoSizer>
@@ -232,6 +231,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 												onRowsRendered={onRowsRendered}
 												overscanRowCount={10}
 												scrollToIndex={this.panel == Panel.Right ? n : 0}
+												scrollToAlignment="start"
 											/>
 										)}
 									</AutoSizer>
@@ -255,6 +255,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 	};
 	
 	componentDidMount () {
+		const { isPopup } = this.props;
 		const rootId = this.getRootId();
 
 		this._isMounted = true;
@@ -264,6 +265,10 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 
 		focus.clear(true);
 		keyboard.setFocus(true);
+
+		if (!isPopup) {
+			DataUtil.setWindowTitleText('Navigation');
+		};
 	};
 	
 	componentDidUpdate () {

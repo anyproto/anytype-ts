@@ -12,15 +12,12 @@ import CellFile from './file';
 
 interface Props extends I.Cell {
 	elementId?: string;
-	relationKey?: string;
-	storeId?: string;
 	menuClassName?: string;
 	menuClassNameWrap?: string;
 	showTooltip?: boolean;
 	tooltipX?: I.MenuDirection;
 	tooltipY?: I.MenuDirection;
 	maxWidth?: number;
-	optionCommand?: (code: string, rootId: string, blockId: string, relationKey: string, recordId: string, option: I.SelectOption, callBack?: (message: any) => void) => void;
 };
 
 const $ = require('jquery');
@@ -52,7 +49,7 @@ class Cell extends React.Component<Props, {}> {
 		const relation = this.getRelation();
 		const record = getRecord(index);
 
-		if (!relation) {
+		if (!relation || !record) {
 			return null;
 		};
 
@@ -106,7 +103,7 @@ class Cell extends React.Component<Props, {}> {
 				CellComponent = CellText;
 				break;
 		};
-		
+
 		return (
 			<div 
 				id={elementId} 
@@ -150,26 +147,17 @@ class Cell extends React.Component<Props, {}> {
 	onClick (e: any) {
 		e.stopPropagation();
 
-		const { rootId, subId, block, index, getRecord, maxWidth, menuClassName, menuClassNameWrap, idPrefix, pageContainer, bodyContainer, optionCommand, cellPosition, placeholder } = this.props;
+		const { rootId, subId, block, index, getRecord, maxWidth, menuClassName, menuClassNameWrap, idPrefix, pageContainer, bodyContainer, cellPosition, placeholder } = this.props;
 		const relation = this.getRelation();
 		const record = getRecord(index);
 		const { config } = commonStore;
 		const cellId = Relation.cellId(idPrefix, relation.relationKey, index);
 		const value = record[relation.relationKey] || '';
 
-		if (!this.canEdit()) {
-
-			switch (relation.format) {
-				case I.RelationType.Url:
-				case I.RelationType.Email:
-				case I.RelationType.Phone:
-					if (value) {
-						const scheme = Relation.getUrlScheme(relation.format, value);
-						Renderer.send('urlOpen', scheme + value);
-						break;
-					};
+		if (!this.canEdit() && Relation.isUrl(relation.format)) {
+			if (value) {
+				Renderer.send('urlOpen', Relation.getUrlScheme(relation.format, value) + value);
 			};
-
 			return;
 		};
 
@@ -248,7 +236,6 @@ class Cell extends React.Component<Props, {}> {
 				value, 
 				relation: observable.box(relation),
 				record,
-				optionCommand,
 				placeholder,
 				onChange: (value: any, callBack?: (message: any) => void) => {
 					if (this.ref && this.ref.onChange) {
@@ -489,8 +476,7 @@ class Cell extends React.Component<Props, {}> {
 	};
 
 	getRelation () {
-		const { rootId, storeId, relation, block, relationKey } = this.props;
-		return relation ? relation : dbStore.getRelation(rootId, (storeId || block.id), relationKey);
+		return dbStore.getRelationByKey(this.props.relationKey);
 	};
 
 	canEdit () {
@@ -507,7 +493,7 @@ class Cell extends React.Component<Props, {}> {
 		if ((record.layout == I.ObjectLayout.Note) && (relation.relationKey == Constant.relationKey.name)) {
 			return false;
 		};
-		return (viewType == I.ViewType.Grid);
+		return viewType == I.ViewType.Grid;
 	};
 	
 };

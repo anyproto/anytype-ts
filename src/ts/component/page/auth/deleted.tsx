@@ -1,14 +1,14 @@
 import * as React from 'react';
-import { RouteComponentProps } from 'react-router';
 import { Frame, Cover, Title, Label, Error, Header, Footer } from 'Component';
-import { I, Util, C, Action, analytics, Survey } from 'Lib';
+import { I, Util, C, Action, Survey } from 'Lib';
 import { commonStore, authStore, popupStore } from 'Store';
 import { observer } from 'mobx-react';
 import { PieChart } from 'react-minimal-pie-chart';
 
 const Constant = require('json/constant.json');
 
-interface Props extends RouteComponentProps<any> {}
+interface Props extends I.PageComponent {};
+
 interface State {
 	error: string;
 };

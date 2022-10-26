@@ -121,6 +121,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 											onRowsRendered={onRowsRendered}
 											overscanRowCount={LIMIT}
 											onScroll={this.onScroll}
+											scrollToAlignment="center"
 										/>
 									)}
 								</AutoSizer>
@@ -208,7 +209,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
 			{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
 			{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: [ '_anytype_profile', profile, root ] },
-			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: SKIP_TYPES_LOAD.concat(DataUtil.getSystemTypes()) },
+			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: SKIP_TYPES_LOAD },
 		];
 
 		let n = 0;
@@ -229,6 +230,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 			switch (section.id) {
 				case I.TabIndex.Favorite:
 					sectionFilters = [
+						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: DataUtil.getSystemTypes() },
 						{ operator: I.FilterOperator.And, relationKey: 'isFavorite', condition: I.FilterCondition.Equal, value: true }
 					];
 					sorts = [];
@@ -245,6 +247,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 
 				case I.TabIndex.Set:
 					sectionFilters = [
+						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: DataUtil.getSystemTypes() },
 						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.set }
 					];
 					sorts = [
@@ -253,9 +256,16 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 					break;
 
 			};
-			
+
 			this.subscriptionIds[section.id] = '';
-			C.ObjectSearchSubscribe(subId, filters.concat(sectionFilters), sorts, Constant.sidebarRelationKeys, [], 0, section.limit, true, '', '', true, cb);
+			DataUtil.searchSubscribe({
+				subId,
+				filters: filters.concat(sectionFilters),
+				sorts,
+				keys: Constant.sidebarRelationKeys,
+				limit: section.limit,
+				noDeps: true,
+			}, cb);
 		});
 	};
 
@@ -272,7 +282,11 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		};
 
 		this.subscriptionIds[id] = hash;
-		C.ObjectSubscribeIds(subId, links, Constant.sidebarRelationKeys, true);
+		DataUtil.subscribeIds({
+			subId, 
+			ids: links, 
+			keys: Constant.sidebarRelationKeys,
+		});
 	};
 
 	getRecords (subId: string) {

@@ -3,19 +3,18 @@ import * as ReactDOM from 'react-dom';
 import { Tag, Icon, DragBox } from 'Component';
 import { I, Relation, DataUtil, translate, keyboard, Util } from 'Lib';
 import { observer } from 'mobx-react';
-import { menuStore } from 'Store';
+import { menuStore, detailStore } from 'Store';
 import { getRange, setRange } from 'selection-ranges';
 import arrayMove from 'array-move';
 
-interface Props extends I.Cell {
-	optionCommand?: (code: string, rootId: string, blockId: string, relationKey: string, recordId: string, option: any, callBack?: (message: any) => void) => void;
-};
+interface Props extends I.Cell {};
+
 interface State { 
 	isEditing: boolean; 
 };
 
 const $ = require('jquery');
-
+const Constant = require('json/constant.json');
 const MAX_LENGTH = 32;
 
 const CellSelect = observer(class CellSelect extends React.Component<Props, State> {
@@ -32,8 +31,11 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 		this.onKeyPress = this.onKeyPress.bind(this);
 		this.onKeyDown = this.onKeyDown.bind(this);
 		this.onKeyUp = this.onKeyUp.bind(this);
+		this.onInput = this.onInput.bind(this);
 		this.onFocus = this.onFocus.bind(this);
+		this.onBlur = this.onBlur.bind(this);
 		this.onDragEnd = this.onDragEnd.bind(this);
+		this.focus = this.focus.bind(this);
 	};
 
 	render () {
@@ -50,6 +52,7 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 		let placeholder = this.props.placeholder || translate(`placeholderCell${relation.format}`);
 		let value = this.getItems();
 		let length = value.length;
+		let content = null;
 
 		if (elementMapper) {
 			value = value.map((it: any) => { return elementMapper(relation, it); });
@@ -62,10 +65,9 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 			};
 		};
 
-		let content = null;
 		if (isEditing) {
 			content = (
-				<div id="value" onClick={this.onFocus}>
+				<div id="value" onClick={this.focus}>
 					<div id="placeholder" className="placeholder">{placeholder}</div>
 
 					<span id="list">
@@ -81,7 +83,8 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 								>
 									<Tag 
 										key={item.id}
-										{...item} 
+										text={item.name}
+										color={item.color}
 										canEdit={true} 
 										className={DataUtil.tagClass(relation.format)}
 										onRemove={(e: any, id: string) => { this.onValueRemove(id); }}
@@ -95,6 +98,9 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 						id="entry" 
 						contentEditable={true}
 						suppressContentEditableWarning={true} 
+						onFocus={this.onFocus}
+						onBlur={this.onBlur}
+						onInput={this.onInput}
 						onKeyPress={this.onKeyPress}
 						onKeyDown={this.onKeyDown}
 						onKeyUp={this.onKeyUp}
@@ -158,7 +164,7 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 			this.setState({ isEditing: v });
 			
 			if (v) {
-				window.setTimeout(() => { this.onFocus(); }, 15);
+				window.setTimeout(() => { this.focus(); }, 15);
 			};
 		};
 	}; 
@@ -198,6 +204,10 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 			value.existing.pop();
 			this.setValue(value.existing);
 		});
+
+		this.placeholderCheck();
+		this.resize();
+		this.scrollToBottom();
 	};
 
 	onKeyUp (e: any) {
@@ -206,6 +216,10 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 		this.placeholderCheck();
 		this.resize();
 		this.scrollToBottom();
+	};
+
+	onInput () {
+		this.placeholderCheck();
 	};
 
 	placeholderCheck () {
@@ -239,7 +253,7 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 		const node = $(ReactDOM.findDOMNode(this));
 		node.find('#entry').text(' ');
 
-		this.onFocus();
+		this.focus();
 	};
 
 	onValueRemove (id: string) {
@@ -251,6 +265,14 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 	};
 
 	onFocus () {
+		keyboard.setFocus(true);
+	};
+
+	onBlur () {
+		keyboard.setFocus(false);
+	};
+
+	focus () {
 		if (!this._isMounted) {
 			return;
 		};
@@ -287,16 +309,7 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 		const { relation, getRecord, index } = this.props;
 		const record = getRecord(index);
 
-		if (!relation || !record) {
-			return [];
-		};
-
-		let value: any = Relation.getArrayValue(record[relation.relationKey]);
-		value = value.map((id: string) => { 
-			return (relation.selectDict || []).find(it => it.id == id);
-		});
-		value = value.filter(it => it && it.id);
-		return value;
+		return record && relation ? Relation.getOptions(record[relation.relationKey]) : [];
 	};
 
 	getItemIds (): string[] {

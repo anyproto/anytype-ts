@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { I, Util, DataUtil, SmileUtil, FileUtil, translate } from 'Lib';
-import { commonStore, blockStore } from 'Store';
+import { commonStore, blockStore, menuStore } from 'Store';
 import { observer } from 'mobx-react';
 import * as d3 from 'd3';
 
@@ -10,6 +10,8 @@ interface Props {
 	rootId: string;
 	data: any;
 	onClick?: (object: any) => void;
+	onContextMenu?: (id: string, param: any) => void;
+	onSelect?: (id: string) => void;
 };
 
 const $ = require('jquery');
@@ -27,6 +29,7 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 	images: any = {};
 	subject: any = null;
 	isDragging: boolean = false;
+	ids: string[] = [];
 
 	forceProps: any = {
 		center: {
@@ -54,12 +57,12 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 		forceX: {
 			enabled: true,
 			strength: 0.3,
-			x: 0.3
+			x: 0.4
 		},
 		forceY: {
 			enabled: true,
 			strength: 0.3,
-			y: 0.3
+			y: 0.4
 		},
 
 		orphans: true,
@@ -185,14 +188,16 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
         .call(this.zoom)
 		.call(this.zoom.transform, d3.zoomIdentity.translate(x, y).scale(scale))
 		.on('click', (e: any) => {
-			const p = d3.pointer(e);
-			this.send('onClick', { x: p[0], y: p[1] });
+			const [ x, y ] = d3.pointer(e);
+			this.send(e.shiftKey ? 'onSelect' : 'onClick', { x, y });
 		})
-		.on('mousedown', (e: any) => {
+		.on('contextmenu', (e: any) => {
+			const [ x, y ] = d3.pointer(e);
+			this.send('onContextMenu', { x, y });
 		})
 		.on('mousemove', (e: any) => {
-			const p = d3.pointer(e);
-			this.send('onMouseMove', { x: p[0], y: p[1] });
+			const [ x, y ] = d3.pointer(e);
+			this.send('onMouseMove', { x, y });
 		});
 	};
 
@@ -225,11 +230,6 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 
 	updateProps () {
 		this.send('updateProps', { forceProps: this.forceProps } );
-	};
-
-	updateForces () {
-		this.updateProps();
-		this.send('updateForces', {});
 	};
 
 	onDragStart (e: any, d: any) {
@@ -268,23 +268,50 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
   	};
 
 	onMessage ({ data }) {
-		const { onClick } = this.props;
+		const { root } = blockStore;
+		const { isPopup, onClick, onContextMenu, onSelect } = this.props;
 		const body = $('body');
 
 		switch (data.id) {
 			case 'onClick':
-				if (data.node.id == blockStore.root) {
-					break;
+				if (data.node.id != root) {
+					onClick(data.node);
 				};
+				break;
 
-				onClick(data.node);
+			case 'onSelect':
+				if (data.node.id != root) {
+					onSelect(data.node.id);
+				};
 				break;
 
 			case 'onMouseMove':
 				if (!this.isDragging) {
-					this.subject = this.nodes.find((d: any) => { return d.id == data.node; });
+					this.subject = this.nodes.find(d => d.id == data.node);
 					this.subject ? body.addClass('cp') : body.removeClass('cp');
 				};
+				break;
+
+			case 'onContextMenu':
+				if (data.node == root) {
+					break;
+				};
+
+				onContextMenu(data.node, {
+					recalcRect: () => { 
+						const rect = { width: 0, height: 0, x: data.x, y: data.y };
+
+						if (isPopup) {
+							const container = Util.getPageContainer(isPopup);
+							const { left, top } = container.offset();
+
+							rect.x += left;
+							rect.y += top;
+						};
+
+						return rect;
+					},
+				});
 				break;
 
 		};

@@ -1,11 +1,10 @@
 import * as React from 'react';
-import { RouteComponentProps } from 'react-router';
 import { Frame, Cover, Title, Error, Pin, Header, Footer } from 'Component';
-import { Util, Storage, translate, keyboard } from 'Lib';
+import { I, Util, Storage, translate, keyboard } from 'Lib';
 import { authStore, commonStore } from 'Store';
 import { observer } from 'mobx-react';
 
-interface Props extends RouteComponentProps<any> {};
+interface Props extends I.PageComponent {};
 
 interface State {
 	error: string;

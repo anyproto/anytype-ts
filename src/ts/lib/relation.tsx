@@ -1,5 +1,5 @@
-import { I, DataUtil, Util, FileUtil, translate } from 'Lib';
-import { dbStore, commonStore } from 'Store';
+import { I, DataUtil, Util, FileUtil, translate, Dataview } from 'Lib';
+import { dbStore, commonStore, detailStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -238,9 +238,13 @@ class Relation {
 		return null;
 	};
 
-	getOptions (rootId: string, blockId: string, view: I.View) {
-		let relations: any[] = DataUtil.viewGetRelations(rootId, blockId, view).filter((it: I.ViewRelation) => { 
-			const relation = dbStore.getRelation(rootId, blockId, it.relationKey);
+	getOptions (value: any[]) {
+		return this.getArrayValue(value).map(id => dbStore.getOption(id)).filter(it => it && !it._empty_);
+	};
+
+	getFilterOptions (rootId: string, blockId: string, view: I.View) {
+		let relations: any[] = Dataview.viewGetRelations(rootId, blockId, view).filter((it: I.ViewRelation) => { 
+			const relation = dbStore.getRelationByKey(it.relationKey);
 			return relation && (relation.format != I.RelationType.File) && (it.relationKey != Constant.relationKey.done);
 		});
 		let idxName = relations.findIndex((it: any) => { return it.relationKey == Constant.relationKey.name; });
@@ -251,7 +255,7 @@ class Relation {
 
 		let ret: any[] = [];
 		relations.forEach((it: I.ViewRelation) => {
-			const relation: any = dbStore.getRelation(rootId, blockId, it.relationKey);
+			const relation: any = dbStore.getRelationByKey(it.relationKey);
 			if (!relation) {
 				return;
 			};
@@ -278,7 +282,8 @@ class Relation {
 
 	getCoverOptions (rootId: string, blockId: string) {
 		const { config } = commonStore;
-		const options: any[] = dbStore.getRelations(rootId, blockId).filter((it: I.Relation) => {
+
+		const options: any[] = Util.objectCopy(dbStore.getRelations(rootId, blockId)).filter((it: any) => {
 			return !it.isHidden && (it.format == I.RelationType.File);
 		}).map((it: any) => {
 			return { 
@@ -305,8 +310,8 @@ class Relation {
 		
 		let options: any[] = dbStore.getRelations(rootId, blockId);
 
-		options = options.filter((it: I.Relation) => {
-			return formats.includes(it.format) && (!it.isHidden || [ Constant.relationKey.done ].includes(it.relationKey));
+		options = options.filter((it: any) => {
+			return it && formats.includes(it.format) && (!it.isHidden || [ Constant.relationKey.done ].includes(it.relationKey));
 		});
 
 		options.sort((c1: any, c2: any) => {
@@ -364,6 +369,10 @@ class Relation {
 		return (v === null) || (v === undefined) || (v === '');
 	};
 
+	isUrl (type: I.RelationType) {
+		return [ I.RelationType.Url, I.RelationType.Email, I.RelationType.Phone ].includes(type);
+	};
+
 	getUrlScheme (type: I.RelationType, value: any): string {
 		value = String(value || '');
 
@@ -378,6 +387,25 @@ class Relation {
 			ret = 'tel:';
 		};
 		return ret;
+	};
+
+	getSetOfObjects (rootId: string, objectId: string, typeId: string) {
+		const object = detailStore.get(rootId, objectId, [ 'setOf' ]);
+		const setOf = this.getArrayValue(object.setOf);
+		const ret = [];
+
+		setOf.forEach((id: string) => {
+			let el = dbStore.getType(id);
+			if (!el) {
+				el = dbStore.getRelationById(id);
+			};
+
+			if (el) {
+				ret.push(el);
+			};
+		});
+
+		return ret.filter(it => typeId == it.type);
 	};
 	
 };

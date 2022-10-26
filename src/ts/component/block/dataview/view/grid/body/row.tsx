@@ -10,17 +10,18 @@ interface Props extends I.ViewComponent {
 	style?: any;
 	cellPosition?: (cellId: string) => void;
 	onRef?(ref: any, id: string): void;
+	getColumnWidths?: (relationId: string, width: number) => any;
 };
 
 const BodyRow = observer(class BodyRow extends React.Component<Props, {}> {
 
 	render () {
-		const { rootId, block, index, getView, getRecord, style, onContext } = this.props;
+		const { rootId, block, index, getView, getRecord, style, onContext, getColumnWidths } = this.props;
 		const view = getView();
-		const relations = view.relations.filter((it: any) => { 
-			return it.isVisible && dbStore.getRelation(rootId, block.id, it.relationKey); 
-		});
+		const relations = view.getVisibleRelations();
 		const record = getRecord(index);
+		const widths = getColumnWidths('', 0);
+		const str = relations.map(it => widths[it.relationKey] + 'px').concat([ 'auto' ]).join(' ');
 		const cn = [ 'row' ];
 
 		if ((record.layout == I.ObjectLayout.Task) && record.done) {
@@ -45,6 +46,7 @@ const BodyRow = observer(class BodyRow extends React.Component<Props, {}> {
 					className={[ 'selectable', 'type-' + I.SelectType.Record ].join(' ')} 
 					data-id={record.id}
 					data-type={I.SelectType.Record}
+					style={{ gridTemplateColumns: str }}
 				>
 					{relations.map((relation: any, i: number) => (
 						<Cell 

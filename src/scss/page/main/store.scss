@@ -17,7 +17,7 @@
 			}
 		}
 
-		.tabs { white-space: nowrap; margin-bottom: 26px; margin: 0px auto; display: none; }
+		.tabs { white-space: nowrap; margin: 0px 0px 26px 0px; text-align: left; }
 		.tabs {
 			.item { 
 				display: inline-block; margin-right: 20px; font-weight: 700; cursor: pointer; font-size: 18px; line-height: 26px; letter-spacing: -0.16px;
@@ -28,7 +28,6 @@
 		}
 
 		.loaderWrapper { position: relative !important; }
-
 		.ReactVirtualized__List { padding: 48px 104px; }
 
 		.items { height: 100%; }
@@ -37,7 +36,7 @@
 
 			.item { display: inline-block; vertical-align: top; position: relative; cursor: pointer; }
 			.item {
-				.iconObject.isObjectType, .iconObject.isRelation { position: absolute; left: 0px; top: 0px; }
+				.iconObject.isType, .iconObject.isRelation { position: absolute; left: 0px; top: 0px; }
 
 				.info { height: 100%; position: relative; display: flex; align-items: center; }
 				.info {

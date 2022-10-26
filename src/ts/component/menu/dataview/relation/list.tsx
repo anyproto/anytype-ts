@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Icon, Switch } from 'Component';
-import { I, C, DataUtil, keyboard } from 'Lib';
+import { I, C, DataUtil, keyboard, Dataview } from 'Lib';
 import { menuStore, dbStore, blockStore } from 'Store';
 import { observer } from 'mobx-react';
 import arrayMove from 'array-move';
@@ -98,37 +98,36 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 			);
 		};
 		
-		const List = SortableContainer((item: any) => {
-			return (
-				<div className="items">
-					<InfiniteLoader
-						rowCount={items.length}
-						loadMoreRows={() => {}}
-						isRowLoaded={() => { return true; }}
-						threshold={LIMIT}
-					>
-						{({ onRowsRendered, registerChild }) => (
-							<AutoSizer className="scrollArea">
-								{({ width, height }) => (
-									<VList
-										ref={(ref: any) => { this.refList = ref; }}
-										width={width}
-										height={height}
-										deferredMeasurmentCache={this.cache}
-										rowCount={items.length}
-										rowHeight={HEIGHT}
-										rowRenderer={rowRenderer}
-										onRowsRendered={onRowsRendered}
-										overscanRowCount={LIMIT}
-										onScroll={this.onScroll}
-									/>
-								)}
-							</AutoSizer>
-						)}
-					</InfiniteLoader>
-				</div>
-			);
-		});
+		const List = SortableContainer((item: any) => (
+			<div className="items">
+				<InfiniteLoader
+					rowCount={items.length}
+					loadMoreRows={() => {}}
+					isRowLoaded={() => { return true; }}
+					threshold={LIMIT}
+				>
+					{({ onRowsRendered, registerChild }) => (
+						<AutoSizer className="scrollArea">
+							{({ width, height }) => (
+								<VList
+									ref={(ref: any) => { this.refList = ref; }}
+									width={width}
+									height={height}
+									deferredMeasurmentCache={this.cache}
+									rowCount={items.length}
+									rowHeight={HEIGHT}
+									rowRenderer={rowRenderer}
+									onRowsRendered={onRowsRendered}
+									overscanRowCount={LIMIT}
+									onScroll={this.onScroll}
+									scrollToAlignment="center"
+								/>
+							)}
+						</AutoSizer>
+					)}
+				</InfiniteLoader>
+			</div>
+		));
 		
 		return (
 			<div className="wrap">
@@ -227,8 +226,7 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 		const { data } = param;
 		const { rootId, blockId, getData, getView } = data;
 		const view = getView();
-		const relations = DataUtil.viewGetRelations(rootId, blockId, view);
-		const menuIdEdit = 'dataviewRelationEdit';
+		const relations = Dataview.viewGetRelations(rootId, blockId, view);
 
 		const onAdd = () => {
 			getData(getView().id, 0);
@@ -247,22 +245,15 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 			noFlipY: true,
 			data: {
 				...data,
-				menuIdEdit: menuIdEdit,
+				menuIdEdit: 'dataviewRelationEdit',
 				filter: '',
 				ref: 'dataview',
-				skipIds: relations.map((it: I.ViewRelation) => { return it.relationKey; }),
+				skipIds: relations.map(it => it.relationKey),
 				onAdd: onAdd,
-				addCommand: (rootId: string, blockId: string, relation: any, onChange?: (relation: any) => void) => {
-					DataUtil.dataviewRelationAdd(rootId, blockId, relation, -1, getView(), () => {
+				addCommand: (rootId: string, blockId: string, relationKey: string) => {
+					Dataview.relationAdd(rootId, blockId, [ relationKey ], -1, getView(), () => {
 						onAdd();
-
-						if (onChange) {
-							onChange(relation);
-						};
 					});
-				},
-				listCommand: (rootId: string, blockId: string, callBack?: (message: any) => void) => {
-					C.BlockDataviewRelationListAvailable(rootId, blockId, callBack);
 				},
 			}
 		});
@@ -277,9 +268,10 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 	onClick (e: any, item: any) {
 		const { param, getId } = this.props;
 		const { data } = param;
-		const { readonly, getView } = data;
+		const { readonly } = data;
+		const relation = dbStore.getRelationByKey(item.relationKey);
 
-		if (readonly) {
+		if (!relation || readonly) {
 			return;
 		};
 		
@@ -289,10 +281,7 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 			noAnimation: true,
 			data: {
 				...data,
-				relationKey: item.relationKey,
-				updateCommand: (rootId: string, blockId: string, relation: any) => {
-					DataUtil.dataviewRelationUpdate(rootId, blockId, relation, getView());
-				},
+				relationId: relation.id,
 			}
 		});
 	};
@@ -351,9 +340,9 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 		const { rootId, blockId, getView } = data;
 		const view = getView();
 
-		return DataUtil.viewGetRelations(rootId, blockId, view).map((it: any) => {
+		return Dataview.viewGetRelations(rootId, blockId, view).map((it: any) => {
 			it.id = it.relationKey;
-			it.relation = dbStore.getRelation(rootId, blockId, it.relationKey) || {};
+			it.relation = dbStore.getRelationByKey(it.relationKey) || {};
 			return it;
 		});
 	};

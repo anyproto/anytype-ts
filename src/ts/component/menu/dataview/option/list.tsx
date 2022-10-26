@@ -1,13 +1,14 @@
 import * as React from 'react';
 import { Icon, Tag, Filter } from 'Component';
-import { I, Util, DataUtil, keyboard, Relation } from 'Lib';
-import { menuStore } from 'Store';
+import { I, C, Util, DataUtil, keyboard, Relation } from 'Lib';
+import { menuStore, dbStore, detailStore } from 'Store';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {};
 
 const $ = require('jquery');
+const Constant = require('json/constant.json');
 const HEIGHT = 28;
 const LIMIT = 40;
 
@@ -33,7 +34,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 		const { filter, canAdd, noFilter } = data;
 		const relation = data.relation.get();
 		const value = data.value || [];
-		const items = this.getItems(true);
+		const items = this.getItems();
 		const placeholder = canAdd ? 'Filter or create options...' : 'Filter options...';
 
 		if (!this.cache) {
@@ -59,7 +60,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 				content = (
 					<div id={'item-' + item.id} className="item" style={param.style} onMouseEnter={(e: any) => { this.onOver(e, item); }}>
 						<div className="clickable" onClick={(e: any) => { this.onClick(e, item); }}>
-							<Tag text={item.text} color={item.color} className={DataUtil.tagClass(relation.format)} />
+							<Tag text={item.name} color={item.color} className={DataUtil.tagClass(relation.format)} />
 						</div>
 						<div className="buttons">
 							<Icon className="more" onClick={(e: any) => { this.onEdit(e, item); }} />
@@ -115,6 +116,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 											rowRenderer={rowRenderer}
 											onRowsRendered={onRowsRendered}
 											overscanRowCount={10}
+											scrollToAlignment="center"
 										/>
 									)}
 								</AutoSizer>
@@ -131,7 +133,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 	};
 	
 	componentDidMount () {
-		const items = this.getItems(true);
+		const items = this.getItems();
 
 		this._isMounted = true;
 		this.focus();
@@ -192,7 +194,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 	};
 
 	onKeyDown (e: any) {
-		let item = this.getItems(false)[this.n];
+		let item = this.getItems()[this.n];
 		let ret = false;
 
 		keyboard.shortcut('arrowright', e, (pressed: string) => {
@@ -229,6 +231,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 		};
 
 		item.id == 'add' ? this.onOptionAdd() : this.onValueAdd(item.id);
+		this.onFilterChange('');
 	};
 
 	onValueAdd (id: string) {
@@ -255,24 +258,28 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 	onOptionAdd () {
 		const { param } = this.props;
 		const { data } = param;
-		const { filter, rootId, blockId, record, optionCommand } = data;
+		const { filter } = data;
 		const relation = data.relation.get();
 		const colors = DataUtil.menuGetBgColors();
-		const option = { text: filter, color: colors[Util.rand(1, colors.length - 1)].value };
+		const option = { name: filter, color: colors[Util.rand(1, colors.length - 1)].value };
 
-		if (!option.text) {
+		if (!option.name) {
 			return;
 		};
 
-		const items = this.getItems(false);
-		const match = items.find((it: any) => { return it.text == option.text; });
+		const items = this.getItems();
+		const match = items.find(it => it.name == option.name);
 
 		if (match) {
 			this.onValueAdd(match.id);
 			return;
 		};
 
-		optionCommand('add', rootId, blockId, relation.relationKey, record.id, option, (message: any) => {
+		C.ObjectCreateRelationOption({
+			relationKey: relation.relationKey,
+			name: option.name,
+			relationOptionColor: option.color,
+		}, (message: any) => {
 			if (message.error.code) {
 				return;
 			};
@@ -281,7 +288,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 				this.refFilter.setValue('');
 			};
 			this.onFilterChange('');
-			this.onValueAdd(message.option.id);
+			this.onValueAdd(message.objectId);
 
 			window.setTimeout(() => { this.resize(); }, 50);
 		});
@@ -313,7 +320,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 		});
 	};
 
-	getItems (withSections: boolean): I.SelectOption[] {
+	getItems (): any[] {
 		const { param } = this.props;
 		const { data } = param;
 		const { canAdd, filterMapper } = data;
@@ -321,13 +328,9 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 		const isStatus = relation.format == I.RelationType.Status;
 		const value = Relation.getArrayValue(data.value);
 
-		let items = Util.objectCopy(relation.selectDict || []);
-		let sections: any = {};
+		let items = Relation.getOptions(dbStore.getRecords(Constant.subId.option, '')).filter(it => it.relationKey == relation.relationKey);
 		let ret = [];
 		let check = [];
-
-		sections[I.OptionScope.Local] = { id: I.OptionScope.Local, name: 'Select option', children: [] };
-		sections[I.OptionScope.Relation] = { id: I.OptionScope.Relation, name: 'Everywhere', children: [] };
 
 		if (filterMapper) {
 			items = items.filter(filterMapper);
@@ -335,43 +338,25 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 
 		if (data.filter) {
 			const filter = new RegExp(Util.filterFix(data.filter), 'gi');
-			check = items.filter((it: I.SelectOption) => { return it.text.toLowerCase() == data.filter.toLowerCase(); });
-			items = items.filter((it: I.SelectOption) => { return it.text.match(filter); });
+			
+			check = items.filter(it => it.name.toLowerCase() == data.filter.toLowerCase());
+			items = items.filter(it => it.name.match(filter));
 
 			if (canAdd && !check.length) {
-				const name = isStatus ? `Set status "${data.filter}"` : `Create option "${data.filter}"`;
-				ret.unshift({ id: 'add', name: name });
+				ret.unshift({ id: 'add', name: isStatus ? `Set status "${data.filter}"` : `Create option "${data.filter}"` });
 			};
 		};
 
-		items = items.filter((it: I.SelectOption) => { return value.indexOf(it.id) < 0; });
+		items = items.filter(it => !value.includes(it.id));
 
-		for (let item of items) {
-			if (!sections[item.scope]) {
-				continue;
-			};
-			sections[item.scope].children.push(item);
-		};
-
-		for (let i in sections) {
-			let section = sections[i];
-			if (!section.children.length) {
-				continue;
-			};
-			if (withSections) {
-				ret.push({ id: section.id, name: section.name, isSection: true });
-			};
-			ret = ret.concat(section.children);
-		};
-
-		return ret;
+		return ret.concat(items);
 	};
 
 	resize () {
 		const { getId, position, param } = this.props;
 		const { data } = param;
 		const { noFilter } = data;
-		const items = this.getItems(true);
+		const items = this.getItems();
 		const obj = $(`#${getId()} .content`);
 		const offset = noFilter ? 16 : 58;
 		const height = Math.max(HEIGHT + offset, Math.min(360, items.length * HEIGHT + offset));

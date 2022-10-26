@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Filter, MenuItemVertical, Icon, Loader } from 'Component';
 import { I, C, Util, Relation, keyboard, DataUtil } from 'Lib';
-import { commonStore, menuStore, detailStore } from 'Store';
+import { commonStore, menuStore, dbStore } from 'Store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
@@ -51,7 +51,7 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
-			const type = detailStore.get(Constant.subId.type, item.type, []);
+			const type = dbStore.getType(item.type);
 
 			let content = null;
 			if (item.id == 'add') {
@@ -121,6 +121,7 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 											onRowsRendered={onRowsRendered}
 											overscanRowCount={LIMIT_HEIGHT}
 											onScroll={this.onScroll}
+											scrollToAlignment="center"
 										/>
 									)}
 								</AutoSizer>
@@ -203,7 +204,7 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 		const value = Relation.getArrayValue(data.value);
 
 		let ret = Util.objectCopy(this.items);
-		ret = ret.filter((it: I.SelectOption) => { return value.indexOf(it.id) < 0; });
+		ret = ret.filter((it: any) => { return value.indexOf(it.id) < 0; });
 		return ret;
 	};
 	
@@ -219,15 +220,17 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 			{ relationKey: 'name', type: I.SortType.Asc },
 		];
 
-		if (!config.debug.ho) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true });
-		};
-
 		if (clear) {
 			this.setState({ loading: true });
 		};
 
-		C.ObjectSearch(filters, sorts, Constant.defaultRelationKeys, filter, this.offset, Constant.limit.menu, (message: any) => {
+		DataUtil.search({
+			filters,
+			sorts,
+			fullText: filter,
+			offset: this.offset,
+			limit: Constant.limitMenuRecords,
+		}, (message: any) => {
 			if (callBack) {
 				callBack(message);
 			};
@@ -251,7 +254,7 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 
 	loadMoreRows ({ startIndex, stopIndex }) {
         return new Promise((resolve, reject) => {
-			this.offset += Constant.limit.menu;
+			this.offset += Constant.limitMenuRecords;
 			this.load(false, resolve);
 		});
 	};

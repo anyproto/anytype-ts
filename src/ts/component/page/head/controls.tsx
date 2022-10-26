@@ -1,6 +1,5 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { RouteComponentProps } from 'react-router';
 import { Loader } from 'Component';
 import { I, C, focus, DataUtil, Util } from 'Lib';
 import { menuStore, blockStore, detailStore } from 'Store';
@@ -8,11 +7,8 @@ import { observer } from 'mobx-react';
 
 import ControlButtons  from './controlButtons';
 
-interface Props extends RouteComponentProps<any> {
-	rootId: string;
-	isPopup?: boolean;
+interface Props extends I.PageComponent {
 	readonly?: boolean;
-	dataset?: any;
 	resize?: () => void;
 	onLayoutSelect?: (layout: I.ObjectLayout) => void;
 };
@@ -202,9 +198,8 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 	};
 
 	onRelation (e: any) {
-		const { isPopup, rootId } = this.props;
+		const { isPopup, rootId, readonly } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
-		const container = Util.getScrollContainer(isPopup);
 		const cnw = [ 'fixed' ];
 
 		if (!isPopup) {
@@ -213,7 +208,9 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 
 		const param: any = {
 			recalcRect: () => {
+				const container = Util.getScrollContainer(isPopup);
 				const rect = { x: container.width() / 2 , y: Util.sizeHeader() + container.scrollTop(), width: 1, height: 1 };
+
 				if (isPopup) {
 					const offset = container.offset();
 					rect.x += offset.left;
@@ -221,7 +218,6 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 				};
 				return rect;
 			},
-			horizontal: I.MenuDirection.Left,
 			noFlipX: true,
 			noFlipY: true,
 			subIds: Constant.menuIds.cell,
@@ -234,8 +230,9 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 				menuStore.closeAll();
 			},
 			data: {
-				isPopup: isPopup,
-				rootId: rootId,
+				isPopup,
+				rootId,
+				readonly,
 			},
 		};
 

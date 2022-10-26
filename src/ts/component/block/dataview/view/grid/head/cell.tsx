@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { I, DataUtil, keyboard, Relation } from 'Lib';
+import { I, DataUtil, keyboard, Relation, Dataview } from 'Lib';
 import { SortableElement } from 'react-sortable-hoc';
 import { menuStore, dbStore } from 'Store';
 import { observer } from 'mobx-react';
@@ -11,9 +11,7 @@ interface Props extends I.ViewComponent, I.ViewRelation {
 	block?: I.Block;
 	index: number;
 	onResizeStart(e: any, key: string): void;
-}
-
-const Constant = require('json/constant.json');
+};
 
 const HeadCell = observer(class HeadCell extends React.Component<Props, {}> {
 
@@ -24,9 +22,15 @@ const HeadCell = observer(class HeadCell extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { rootId, block, relationKey, index, onResizeStart } = this.props;
-		const relation: any = dbStore.getRelation(rootId, block.id, relationKey) || {};
+		const { relationKey, index, onResizeStart } = this.props;
+		const relation = dbStore.getRelationByKey(relationKey);
+		
+		if (!relation) {
+			return;
+		};
+
 		const { format, name } = relation;
+		const readonly = relation.isReadonlyValue;
 
 		const Cell = SortableElement((item: any) => {
 			const cn = [ 'cellHead', DataUtil.relationClass(format) ];
@@ -34,7 +38,7 @@ const HeadCell = observer(class HeadCell extends React.Component<Props, {}> {
 			return (
 				<div id={Relation.cellId('head', relationKey, '')} className={cn.join(' ')}>
 					<div className="cellContent">
-						<Handle {...relation} onClick={this.onEdit} />
+						<Handle name={name} format={format} readonly={readonly} onClick={this.onEdit} />
 						<div className="resize" onMouseDown={(e: any) => { onResizeStart(e, relationKey); }}>
 							<div className="line" />
 						</div>
@@ -48,12 +52,13 @@ const HeadCell = observer(class HeadCell extends React.Component<Props, {}> {
 
 	onEdit (e: any) {
 		const { rootId, block, readonly, getData, getView, relationKey } = this.props;
+		const relation = dbStore.getRelationByKey(relationKey);
 
-		if (keyboard.isResizing) {
+		if (!relation || keyboard.isResizing) {
 			return;
 		};
 
-		const element = `#${Relation.cellId('head', relationKey, '')}`;
+		const element = `#block-${block.id} #${Relation.cellId('head', relationKey, '')}`;
 		const obj = $(element);
 
 		menuStore.open('dataviewRelationEdit', { 
@@ -67,18 +72,11 @@ const HeadCell = observer(class HeadCell extends React.Component<Props, {}> {
 				getView: getView,
 				rootId: rootId,
 				blockId: block.id,
-				relationKey: relationKey,
+				relationId: relation.id,
 				readonly: readonly,
 				extendedOptions: true,
-				addCommand: (rootId: string, blockId: string, relation: any, onChange?: (relation: any) => void) => {
-					DataUtil.dataviewRelationAdd(rootId, blockId, relation, -1, getView(), () => {
-						if (onChange) {
-							onChange(relation);
-						};
-					});
-				},
-				updateCommand: (rootId: string, blockId: string, relation: any) => {
-					DataUtil.dataviewRelationUpdate(rootId, blockId, relation, getView());
+				addCommand: (rootId: string, blockId: string, relationKey: string) => {
+					Dataview.relationAdd(rootId, blockId, [ relationKey ], -1, getView());
 				},
 			}
 		});

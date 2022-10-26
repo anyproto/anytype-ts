@@ -1,9 +1,8 @@
 import * as React from 'react';
-import { RouteComponentProps } from 'react-router';
 import { IconObject } from 'Component';
 import { Util } from 'Lib';
 
-interface Props extends RouteComponentProps<any> {
+interface Props {
 	icon?: string;
 	name?: string;
 	contentId?: string;

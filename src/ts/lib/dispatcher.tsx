@@ -230,7 +230,7 @@ class Dispatcher {
 						block = Mapper.From.Block(block);
 
 						if (block.type == I.BlockType.Dataview) {
-							dbStore.relationsSet(rootId, block.id, block.content.relations);
+							dbStore.relationsSet(rootId, block.id, block.content.relationLinks);
 							dbStore.viewsSet(rootId, block.id, block.content.views);
 						};
 
@@ -528,37 +528,46 @@ class Dispatcher {
 					blockStore.update(rootId, block);
 					break;
 
-				case 'blockDataviewRelationSet':
-					id = data.getId();
-
-					const relation = Mapper.From.Relation(data.getRelation());
-					const item = dbStore.getRelation(rootId, id, relation.relationKey);
-
-					item ? dbStore.relationUpdate(rootId, id, relation) : dbStore.relationAdd(rootId, id, relation);
-					break;
-
 				case 'blockDataviewRelationDelete':
 					id = data.getId();
-					dbStore.relationDelete(rootId, id, data.getRelationkey());
+					dbStore.relationListDelete(rootId, id, data.getRelationidsList() || []);
+					break;
+
+				case 'objectRelationsAmend':
+					id = data.getId();
+					dbStore.relationsSet(rootId, id, (data.getRelationlinksList() || []).map(Mapper.From.RelationLink));
+					break;
+
+				case 'objectRelationsRemove':
+					id = data.getId();
+					dbStore.relationListDelete(rootId, id, data.getRelationidsList() || []);
+					break;
+
+				case 'blockDataviewRelationSet':
+					id = data.getId();
+					dbStore.relationsSet(rootId, id, (data.getRelationlinksList() || []).map(Mapper.From.RelationLink));
 					break;
 
 				case 'blockDataviewGroupOrderUpdate':
 					id = data.getId();
 					block = blockStore.getLeaf(rootId, id);
+
 					if (!block) {
 						break;
 					};
 
 					if (data.hasGrouporder()) {
 						const order = Mapper.From.GroupOrder(data.getGrouporder());
-						const el = block.content.groupOrder.find(it => it.viewId == order.viewId);
+						const idx = block.content.groupOrder.findIndex(it => it.viewId == order.viewId);
 
-						if (el) {
-							el.groups = order.groups;
+						if (idx >= 0) {
+							block.content.groupOrder[idx] = order;
+						} else {
+							block.content.groupOrder.push(order);
 						};
 					};
 
-					blockStore.update(rootId, block);
+					blockStore.updateContent(rootId, id, { groupOrder: block.content.groupOrder });
 					break;
 
 				case 'blockDataviewObjectOrderUpdate':
@@ -620,6 +629,10 @@ class Dispatcher {
 					subIds = data.getSubidsList() || [];
 					block = blockStore.getLeaf(rootId, id);
 					details = Decode.decodeStruct(data.getDetails());
+
+					if (details.type == Constant.typeId.relation) {
+						dbStore.relationKeyMap[details.relationKey] = details.id;
+					};
 					
 					// Subscriptions
 					if (subIds.length) {
@@ -684,29 +697,6 @@ class Dispatcher {
 					};
 					break;
 
-				case 'objectRelationsSet':
-				case 'objectRelationsAmend':
-					id = data.getId();
-					block = blockStore.getLeaf(rootId, id);
-					if (!block) {
-						break;
-					};
-
-					if (type == 'objectRelationsSet') {
-						dbStore.relationsClear(rootId, rootId);
-					};
-
-					dbStore.relationsSet(rootId, rootId, (data.getRelationsList() || []).map(Mapper.From.Relation));
-					break;
-
-				case 'objectRelationsRemove':
-					id = data.getId();
-					keys = data.getKeysList() || [];
-
-					for (let key of keys) {
-						dbStore.relationDelete(rootId, id, key);
-					};
-					break;
 
 				case 'subscriptionAdd':
 					id = data.getId();
@@ -810,13 +800,13 @@ class Dispatcher {
 		};
 
 		if (oldIndex !== newIndex) {
-			dbStore.recordsSet(sid, '', arrayMove(records, oldIndex, newIndex));
+			dbStore.recordsSet(sid, '', arrayMove(records, oldIndex, newIndex + 1));
 		};
 	};
 
 	sort (c1: any, c2: any) {
-		let idx1 = SORT_IDS.findIndex((it: string) => { return it == this.eventType(c1.getValueCase()); });
-		let idx2 = SORT_IDS.findIndex((it: string) => { return it == this.eventType(c2.getValueCase()); });
+		let idx1 = SORT_IDS.findIndex(it => it == this.eventType(c1.getValueCase()));
+		let idx2 = SORT_IDS.findIndex(it => it == this.eventType(c2.getValueCase()));
 
 		if (idx1 > idx2) return 1;
 		if (idx1 < idx2) return -1;
@@ -824,7 +814,7 @@ class Dispatcher {
 	};
 
 	onObjectView (rootId: string, traceId: string, objectView: any) {
-		let { blocks, details, restrictions } = objectView;
+		let { blocks, details, restrictions, relationLinks } = objectView;
 		let root = blocks.find(it => it.id == rootId);
 		let structure: any[] = [];
 		let contextId = [ rootId, traceId ].filter(it => it).join('-');
@@ -833,8 +823,7 @@ class Dispatcher {
 			analytics.setContext(root.fields.analyticsContext, root.fields.analyticsOriginalId);
 		};
 
-		dbStore.relationsSet(contextId, rootId, objectView.relations);
-		dbStore.objectTypesSet(objectView.objectTypes);
+		dbStore.relationsSet(rootId, rootId, relationLinks);
 
 		detailStore.set(contextId, details);
 		blockStore.restrictionsSet(contextId, restrictions);
@@ -848,8 +837,8 @@ class Dispatcher {
 
 		blocks = blocks.map((it: any) => {
 			if (it.type == I.BlockType.Dataview) {
-				dbStore.relationsSet(contextId, it.id, it.content.relations);
-				dbStore.viewsSet(contextId, it.id, it.content.views);
+				dbStore.relationsSet(rootId, it.id, it.content.relationLinks);
+				dbStore.viewsSet(rootId, it.id, it.content.views);
 			};
 
 			structure.push({ id: it.id, childrenIds: it.childrenIds });

@@ -83,6 +83,11 @@
     .panelPreview {
         .loaderWrapper { width: 100%; height: 100%; }
         .cover { position: absolute; height: 86px; }
+		.icon.more { 
+			width: 28px; height: 28px; background-size: 20px; background-image: url('~img/icon/menu/action/more0.svg'); position: absolute; right: 10px; top: 10px;
+			cursor: pointer; transition: $transitionFast; border-radius: 6px; z-index: 2;
+		}
+		.icon.more:hover { background-color: $colorHover; }
 
         .block {
 			.wrapMenu { display: none; }

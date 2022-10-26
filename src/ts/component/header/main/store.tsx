@@ -5,7 +5,7 @@ import { I, Util, DataUtil, keyboard } from 'Lib';
 import { popupStore } from 'Store';
 import { observer } from 'mobx-react';
 
-interface Props extends RouteComponentProps<any>, I.HeaderComponent {};
+interface Props extends I.HeaderComponent {};
 
 const HeaderMainStore = observer(class HeaderMainStore extends React.Component<Props, {}> {
 

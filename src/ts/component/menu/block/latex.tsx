@@ -115,6 +115,7 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<Pro
 										rowRenderer={rowRenderer}
 										onRowsRendered={onRowsRendered}
 										overscanRowCount={10}
+										scrollToAlignment="center"
 									/>
 								)}
 							</AutoSizer>

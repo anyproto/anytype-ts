@@ -7,7 +7,7 @@ import FooterAuthIndex from './auth';
 import FooterMainIndex from './main/index';
 import FooterMainEdit from './main/edit';
 
-interface Props extends RouteComponentProps<any>, I.FooterComponent {
+interface Props extends I.FooterComponent {
 	component: string;
 };
 

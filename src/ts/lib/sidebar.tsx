@@ -51,7 +51,7 @@ class Sidebar {
 
 		this.set({
 			height,
-			width: 0,
+			width: Constant.size.sidebar.width.default,
 			y,
 			x: 0,
 			fixed: true,
@@ -170,7 +170,7 @@ class Sidebar {
 		let show = false;
 		let hide = false;
 
-		if ((snap == I.MenuDirection.Left) && (ww > Constant.size.sidebar.unfix)) {
+		if (snap == I.MenuDirection.Left) {
 			if (x <= SHOW_THRESHOLD) {
 				show = true;
 			}
@@ -328,20 +328,9 @@ class Sidebar {
 
 	resize () {
 		const { fixed, snap, width } = this.data;
-		const { unfix } = Constant.size.sidebar;
 		const win = $(window);
 		const ww = win.width();
 		const set: any = {};
-
-		if ((ww > unfix) && !fixed && this.fixed) {
-			this.fixed = false;
-		};
-		if ((ww <= unfix) && fixed && !this.fixed) {
-			this.obj.addClass('anim').removeClass('active fixed');
-			this.setFixed(false);
-			this.removeAnimation();
-			this.fixed = true;
-		};
 
 		if (!fixed) {
 			set.height = this.maxHeight();

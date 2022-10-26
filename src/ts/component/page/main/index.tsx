@@ -1,15 +1,12 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { RouteComponentProps } from 'react-router';
 import { Icon, IconObject, ListIndex, Cover, Header, Footer, Filter, EmptySearch } from 'Component';
 import { commonStore, blockStore, detailStore, menuStore, dbStore, popupStore, authStore } from 'Store';
 import { observer } from 'mobx-react';
 import { I, C, Util, DataUtil, translate, crumbs, Storage, analytics, keyboard, Action } from 'Lib';
 import arrayMove from 'array-move';
 
-interface Props extends RouteComponentProps<any> {
-	dataset?: any;
-};
+interface Props extends I.PageComponent {};
 
 interface State {
 	tab: I.TabIndex;
@@ -391,7 +388,12 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 		this.setState({ loading: true });
 
-		C.ObjectSearchSubscribe(Constant.subId.index, filters, sorts, Constant.defaultRelationKeys, [], 0, 100, true, '', '', false, (message: any) => {
+		DataUtil.searchSubscribe({
+			subId: Constant.subId.index,
+			filters,
+			sorts,
+			limit: 100,
+		}, (message: any) => {
 			if (!this._isMounted || message.error.code) {
 				return;
 			};
@@ -873,7 +875,6 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 	getList () {
 		const { root, recent } = blockStore;
-		const { config } = commonStore;
 		const { tab, filter } = this.state;
 		const records = dbStore.getRecords(Constant.subId.index, '');
 		const isRecent = tab == I.TabIndex.Recent;
@@ -906,10 +907,6 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 					if (reg && name && !name.match(reg)) {
 						return false;
 					};
-					if (isRecent && DataUtil.getSystemTypes().includes(type)) {
-						return false;
-					};
-
 					return !isArchived && !isDeleted;
 				}).map((it: any) => {
 					it._object_ = detailStore.get(rootId, it.content.targetBlockId, [ 'templateIsBundled', 'lastModifiedDate' ]);

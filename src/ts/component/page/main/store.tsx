@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Title, Label, Button, IconObject, Loader, Cover, Header } from 'Component';
-import { I, C, DataUtil, Util, Storage, Action, Onboarding, analytics } from 'Lib';
+import { I, C, DataUtil, Util, Dataview, Storage, Action, Onboarding, analytics } from 'Lib';
 import { dbStore, blockStore, detailStore, } from 'Store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
-interface Props extends RouteComponentProps<any> {
+interface Props extends I.PageComponent {
 	isPopup?: boolean;
 };
 
@@ -75,7 +75,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 		const rootId = this.getRootId();
 		const subId = dbStore.getSubId(rootId, BLOCK_ID);
 		const block = blockStore.getLeaf(rootId, BLOCK_ID) || {};
-		const meta = dbStore.getMeta(rootId, block.id);
+		const meta = dbStore.getMeta(subId, '');
 		const views = block.content?.views || [];
 		const items = this.getItems();
 
@@ -94,7 +94,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 			);
 		};
 
-		const tabs = (
+		const TabList = (item: any) => (
 			<div className="tabs">
 				{views.map((item: any, i: number) => (
 					<div key={item.id} className={[ 'item', (item.id == meta.viewId ? 'active' : '') ].join(' ')} onClick={(e: any) => { this.onView(e, item); }}>
@@ -122,7 +122,6 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 								</div>
 								<div className="line" />
 							</div>
-							<Button className="blank c28" text="Add" />
 						</div>
 					);
 				};
@@ -182,7 +181,6 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 								</div>
 								<div className="line" />
 							</div>
-							<Button className="blank c28" text="Add" />
 						</div>
 					);
 				};
@@ -215,6 +213,9 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 							if (item.id == 'mid') {
 								return <Mid key={i} {...item} />;
 							};
+							if (item.id == 'tabs') {
+								return <TabList key={i} {...item} />;
+							};
 							return <Item key={i} {...item} />;
 						})}
 					</div>
@@ -227,7 +228,6 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 				<Header component="mainStore" {...this.props} rootId={rootId} tabs={Tabs} tab={tab} onTab={this.onTab} />
 
 				<div className="body">
-					{tabs}
 
 					{loading ? 
 						<Loader id="loader" />
@@ -251,6 +251,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 												rowRenderer={rowRenderer}
 												onRowsRendered={onRowsRendered}
 												overscanRowCount={10}
+												scrollToAlignment="center"
 											/>
 										)}
 									</AutoSizer>
@@ -264,10 +265,15 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 	};
 	
 	componentDidMount () {
-		this._isMounted = true;
+		const { isPopup } = this.props;
 
+		this._isMounted = true;
 		this.resize();
 		this.onTab(Storage.get('tabStore') || Tabs[0].id);
+
+		if (!isPopup) {
+			DataUtil.setWindowTitleText('Library');
+		};
 	};
 
 	componentDidUpdate () {
@@ -311,14 +317,29 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 		const { index } = param;
 
 		let h = 0;
-		if (tab == Tab.Type) {
-			h = index == 0 ? 238 : 96;
-		};
-		if (tab == Tab.Template) {
-			h = 280;
-		};
-		if (tab == Tab.Relation) {
-			h = index == 0 ? 180 : 64;
+
+		switch (index) {
+			// Mid
+			case 0:
+				switch (tab) {
+					case Tab.Type: h = 238; break;
+					case Tab.Template: h = 280; break;
+					case Tab.Relation: h = 180; break;
+				};
+				break;
+
+			// Tabs
+			case 1:
+				h = 70;
+				break;
+
+			default:
+				switch (tab) {
+					case Tab.Type: h = 96; break;
+					case Tab.Template: h = 280; break;
+					case Tab.Relation: h = 64; break;
+				};
+				break;
 		};
 		return h;
 	};
@@ -345,13 +366,13 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 		this.setState({ tab: id, loading: true });
 
 		C.ObjectOpen(this.getRootId(), '', (message: any) => {
-			this.getDataviewData('library', true);
+			this.getData('marketplace', true);
 			this.setState({ loading: false });
 		});
 	};
 
 	onView (e: any, item: any) {
-		this.getDataviewData(item.id, true);
+		this.getData(item.id, true);
 	};
 
 	onClick (e: any, item: any) {
@@ -359,28 +380,27 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 	};
 
 	onCreateType (e: any) {
-		const details: any = { 
-			name: '',
-			layout: I.ObjectLayout.Page, 
-		};
-
-		C.ObjectTypeCreate(details, [ I.ObjectFlag.DeleteEmpty ], (message: any) => {
-			if (message.error.code) {
-				return;
+		C.ObjectCreateObjectType({}, [ I.ObjectFlag.DeleteEmpty ], (message: any) => {
+			if (!message.error.code) {
+				this.onClick(e, message.details);
+				analytics.event('CreateType');
 			};
-
-			dbStore.objectTypesSet([ message.objectType ]);
-
-			this.onClick(e, { ...message.objectType, layout: I.ObjectLayout.Type });
-			analytics.event('CreateType');
 		});
 	};
 
 	onCreateTemplate () {
 	};
 
-	getDataviewData (id: string, clear: boolean, callBack?: (message: any) => void) {
-		DataUtil.getDataviewData(this.getRootId(), BLOCK_ID, id, [ 'creator' ].concat(Constant.defaultRelationKeys), 0, 0, clear, callBack);
+	getData (newViewId: string, clear: boolean, callBack?: (message: any) => void) {
+		Dataview.getData({
+			rootId: this.getRootId(), 
+			blockId: BLOCK_ID, 
+			newViewId, 
+			keys: [ 'creator' ].concat(Constant.defaultRelationKeys), 
+			limit: 0, 
+			offset: 0, 
+			clear,
+		}, callBack);
 	};
 
 	loadMoreRows ({ startIndex, stopIndex }) {
@@ -389,7 +409,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 
         return new Promise((resolve, reject) => {
 			this.offset += 25 * this.getRowLimit();
-			this.getDataviewData(viewId, false, resolve);
+			this.getData(viewId, false, resolve);
 		});
 	};
 
@@ -410,7 +430,8 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 		});
 
 		let ret: any[] = [
-			{ children: [ { id: 'mid' } ] }
+			{ children: [ { id: 'mid' } ] },
+			{ children: [ { id: 'tabs' } ] }
 		];
 		let n = 0;
 		let row = { children: [] };

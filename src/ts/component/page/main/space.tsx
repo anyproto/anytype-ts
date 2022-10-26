@@ -1,17 +1,15 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader, Block, ListObjectPreview, Deleted } from 'Component';
 import { I, M, C, DataUtil, Util, crumbs, Action } from 'Lib';
-import { blockStore, detailStore, dbStore, menuStore } from 'Store';
+import { blockStore, detailStore, dbStore } from 'Store';
 
 import Controls from 'Component/page/head/controls';
 import HeadSimple from 'Component/page/head/simple';
 
-interface Props extends RouteComponentProps<any> {
+interface Props extends I.PageComponent {
 	rootId: string;
-	isPopup?: boolean;
 };
 
 interface State {
@@ -165,8 +163,13 @@ const PageMainSpace = observer(class PageMainSpace extends React.Component<Props
 			const filters = view.filters.concat([
 				{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
 			]);
-
-			C.ObjectSearchSubscribe(this.getSubIdHighlighted(), filters, view.sorts, [ 'id' ], block.content.sources, 0, 0, true, '', '', false);
+			DataUtil.searchSubscribe({
+				subId: this.getSubIdHighlighted(),
+				filters,
+				sorts: view.sorts,
+				keys: [ 'id' ],
+				sources: block.content.sources,
+			});
 		};
 	};
 
@@ -182,55 +185,6 @@ const PageMainSpace = observer(class PageMainSpace extends React.Component<Props
 		if (close) {
 			Action.pageClose(rootId, true);
 		};
-	};
-
-	onAdd (e: any) {
-		const rootId = this.getRootId();
-		const relations = dbStore.getRelations(rootId, rootId);
-
-		menuStore.open('relationSuggest', { 
-			element: $(e.currentTarget),
-			offsetX: 32,
-			data: {
-				filter: '',
-				rootId: rootId,
-				ref: 'space',
-				menuIdEdit: 'blockRelationEdit',
-				skipIds: relations.map((it: I.Relation) => { return it.relationKey; }),
-				listCommand: (rootId: string, blockId: string, callBack?: (message: any) => void) => {
-					C.ObjectRelationListAvailable(rootId, callBack);
-				},
-				addCommand: (rootId: string, blockId: string, relation: any, onChange?: (relation: any) => void) => {
-					C.ObjectRelationAdd(rootId, relation, () => { 
-						menuStore.close('relationSuggest'); 
-
-						if (onChange) {
-							onChange(relation);
-						};
-					});
-				},
-			}
-		});
-	};
-
-	onEdit (e: any, relationKey: string) {
-		const rootId = this.getRootId();
-		
-		menuStore.open('blockRelationEdit', { 
-			element: $(e.currentTarget),
-			horizontal: I.MenuDirection.Center,
-			data: {
-				rootId: rootId,
-				relationKey: relationKey,
-				readonly: false,
-				updateCommand: (rootId: string, blockId: string, relation: any) => {
-					C.ObjectRelationUpdate(rootId, relation);
-				},
-				deleteCommand: (rootId: string, blockId: string, relationKey: string) => {
-					C.ObjectRelationDelete(rootId, relationKey);
-				},
-			}
-		});
 	};
 
 	getRootId () {

@@ -139,7 +139,7 @@ class Util {
 	};
 	
 	toCamelCase (str: string) {
-		const s = str.replace(/[_\-\s]([a-zA-Z]{1})/g, (s: string, p1: string) => {
+		const s = String(str || '').replace(/[_\-\s]([a-zA-Z]{1})/g, (s: string, p1: string) => {
 			return String(p1 || '').toUpperCase();
 		});
 		return s.substr(0, 1).toLowerCase() + s.substr(1, s.length);
@@ -163,7 +163,7 @@ class Util {
 	};
 	
 	objectLength (o: any) {
-		return o.hasOwnProperty('length') ? o.length : Object.keys(o).length;
+		return (o || {}).hasOwnProperty('length') ? o.length : Object.keys(o).length;
 	};
 
 	// Clear object for smaller console output
@@ -202,9 +202,6 @@ class Util {
 				o[a[i][0]] = v;
 			};
 		};
-		if ((a.length) <= 3) {
-			return JSON.stringify(o);
-		};
 		return o;
 	};
 
@@ -227,8 +224,7 @@ class Util {
 		v1.sort(sort);
 		v2.sort(sort);
 		
-		return (JSON.stringify(k1) === JSON.stringify(k2)) && 
-			(JSON.stringify(v1) === JSON.stringify(v2));
+		return (JSON.stringify(k1) === JSON.stringify(k2)) && (JSON.stringify(v1) === JSON.stringify(v2));
 	};
 
 	arrayUnique (a: any[]) {
@@ -240,6 +236,9 @@ class Util {
 		const map = new Map();
 		
 		for (const item of a) {
+			if (!item) {
+				return;
+			};
 			if (!map.has(item[k])){
 				map.set(item[k], true);
 				res.push(item);

@@ -1,15 +1,13 @@
 import * as React from 'react';
-import { RouteComponentProps } from 'react-router';
-import { I, C, Util, analytics, sidebar } from 'Lib';
+import { I, C, Util, analytics, sidebar, DataUtil, keyboard } from 'Lib';
 import { Header, Graph, Icon, Loader } from 'Component';
-import { blockStore, detailStore } from 'Store';
+import { blockStore, detailStore, menuStore } from 'Store';
 import { observer } from 'mobx-react';
 
 import Panel from './graph/panel';
 
-interface Props extends RouteComponentProps<any> {
+interface Props extends I.PageComponent {
 	rootId: string;
-	isPopup?: boolean;
 	matchPopup?: any;
 };
 
@@ -29,6 +27,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 		nodes: [],
 		edges: [],
 	};
+	ids: string[] = [];
 	refHeader: any = null;
 	refGraph: any = null;
 	refPanel: any = null;
@@ -39,6 +38,8 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 		this.onSwitch = this.onSwitch.bind(this);
 		this.onClickObject = this.onClickObject.bind(this);
 		this.onFilterChange = this.onFilterChange.bind(this);
+		this.onContextMenu = this.onContextMenu.bind(this);
+		this.onSelect = this.onSelect.bind(this);
 		this.togglePanel = this.togglePanel.bind(this);
 	};
 
@@ -62,6 +63,8 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 							rootId={rootId} 
 							data={this.data}
 							onClick={this.onClickObject}
+							onSelect={this.onSelect}
+							onContextMenu={this.onContextMenu}
 						/>
 					</div>
 
@@ -74,6 +77,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 								data={ref.forceProps}
 								onFilterChange={this.onFilterChange}
 								onSwitch={this.onSwitch}
+								onContextMenu={this.onContextMenu}
 								togglePanel={this.togglePanel}
 							/>
 						) : ''}
@@ -102,12 +106,57 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 	};
 
 	componentDidMount () {
+		const { isPopup } = this.props;
+
+		this.rebind();
 		this.resize();
 		this.load();
+
+		if (!isPopup) {
+			DataUtil.setWindowTitleText('Graph');
+		};
 	};
 
 	componentDidUpdate () {
 		this.resize();
+	};
+
+	componentWillUnmount () {
+		this.unbind();
+	};
+
+	unbind () {
+		$(window).off(`keydown.graph`);
+	};
+
+	rebind () {
+		const win = $(window);
+
+		this.unbind();
+		win.on(`keydown.graph`, (e: any) => { this.onKeyDown(e); });
+	};
+
+	onKeyDown (e: any) {
+		const length = this.ids.length;
+		if (!length) {
+			return;
+		};
+
+		keyboard.shortcut('escape', e, (pressed: string) => {
+			this.ids = [];
+			this.refGraph.send('onSetSelected', { ids: this.ids });
+		});
+
+		keyboard.shortcut('backspace, delete', e, (pressed: string) => {
+			C.ObjectListSetIsArchived(this.ids, true, (message: any) => {
+				if (!message.error.code) {
+					this.data.nodes = this.data.nodes.filter(d => !this.ids.includes(d.id));
+					this.refGraph.send('onRemoveNode', { ids: this.ids });
+				};
+			});
+			
+			analytics.event('MoveToBin', { count: length });
+		});
 	};
 
 	load () {
@@ -117,17 +166,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 			{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
 			{ 
 				operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, 
-				value: [ 
-					Constant.typeId.relation,
-					Constant.typeId.type,
-					Constant.typeId.template,
-					Constant.typeId.space,
-					
-					Constant.typeId.file,
-					Constant.typeId.image,
-					Constant.typeId.video,
-					Constant.typeId.audio,
-				] 
+				value: [ Constant.typeId.space ].concat(DataUtil.getFileTypes()).concat(DataUtil.getSystemTypes())
 			},
 			{ 
 				operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, 
@@ -171,9 +210,10 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 		const hh = Util.sizeHeader();
 		const platform = Util.getPlatform();
 		const isPopup = this.props.isPopup && !obj.hasClass('full');
+		const oh = obj.height();
 		
-		let wh = isPopup ? obj.height() - hh : win.height();
-		let sh = isPopup ? obj.height() : win.height();
+		let wh = isPopup ? oh - hh : win.height();
+		let sh = isPopup ? oh : win.height();
 
 		if (platform == I.Platform.Windows) {
 			wh += 30;
@@ -206,9 +246,10 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 	};
 
 	onClickObject (object: any) {
+		this.ids = [];
 		this.togglePanel(true);
 		this.refPanel.setState({ view: I.GraphView.Preview, rootId: object.id });
-
+		this.refGraph.send('onSetSelected', { ids: this.ids });
 		analytics.event('GraphSelectNode');
 	};
 
@@ -229,6 +270,66 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 		this.refGraph.updateProps();
 
 		analytics.event('SearchQuery', { route: 'ScreenGraph', length: v.length });
+	};
+
+	onSelect (id: string) {
+		this.ids = this.ids.includes(id) ? this.ids.filter(it => it != id) : this.ids.concat([ id ]);
+		this.refGraph.send('onSetSelected', { ids: this.ids });
+	};
+
+	onContextMenu (id: string, param: any) {
+		const { root } = blockStore;
+		const ids = this.ids.length ? this.ids : [ id ];
+
+		menuStore.open('dataviewContext', {
+			...param,
+			data: {
+				objectIds: ids,
+				getObject: (id: string) => this.data.nodes.find(d => d.id == id),
+				onSelect: (itemId: string) => {
+					switch (itemId) {
+						case 'archive':
+							this.data.nodes = this.data.nodes.filter(d => !ids.includes(d.id));
+							this.refGraph.send('onRemoveNode', { ids });
+							break;
+
+						case 'fav':
+							ids.forEach((id: string) => {
+								const node = this.data.nodes.find(d => d.id == id);
+								
+								if (node) {
+									node.isFavorite = true;
+									this.data.edges.push({ type: I.EdgeType.Link, source: root, target: id });
+								};
+							});
+							this.refGraph.send('onSetEdges', { edges: this.data.edges });
+							break;
+
+						case 'unfav':
+							ids.forEach((id: string) => {
+								const node = this.data.nodes.find(d => d.id == id);
+								
+								if (node) {
+									node.isFavorite = false;
+								};
+							});
+
+							this.data.edges = this.data.edges.filter(d => {
+								if ((d.source == root) && ids.includes(d.target)) {
+									return false;
+								};
+								return true;
+							});
+
+							this.refGraph.send('onSetEdges', { edges: this.data.edges });
+							break;
+					};
+
+					this.ids = [];
+					this.refGraph.send('onSetSelected', { ids: this.ids });
+				},
+			}
+		});
 	};
 
 });

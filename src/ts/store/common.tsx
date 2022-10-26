@@ -30,7 +30,6 @@ const $ = require('jquery');
 class CommonStore {
 
     public coverObj: Cover = { id: '', type: 0, image: '' };
-    public coverImg: string = '';
     public progressObj: I.Progress = null;
     public filterObj: Filter = { from: 0, text: '' };
     public gatewayUrl: string = '';
@@ -45,11 +44,11 @@ class CommonStore {
 	public autoSidebarValue: boolean = false;
 	public redirect: string = '';
 	public languages: string[] = [];
+	public workspaceId: string = '';
 
     constructor() {
         makeObservable(this, {
             coverObj: observable,
-            coverImg: observable,
             progressObj: observable,
             filterObj: observable,
             gatewayUrl: observable,
@@ -59,17 +58,17 @@ class CommonStore {
 			nativeThemeIsDark: observable,
 			typeId: observable,
 			isFullScreen: observable,
+			workspaceId: observable,
             config: computed,
             progress: computed,
             preview: computed,
             filter: computed,
             cover: computed,
-            coverImage: computed,
             gateway: computed,
 			theme: computed,
 			nativeTheme: computed,
+			workspace: computed,
             coverSet: action,
-            coverSetUploadedImage: action,
             gatewaySet: action,
             progressSet: action,
             progressClear: action,
@@ -79,6 +78,7 @@ class CommonStore {
             previewSet: action,
 			themeSet: action,
 			nativeThemeSet: action,
+			workspaceSet: action,
         });
     };
 
@@ -100,10 +100,6 @@ class CommonStore {
 
     get cover(): Cover {
 		return this.coverObj;
-	};
-
-    get coverImage(): string {
-		return this.coverImg;
 	};
 
     get gateway(): string {
@@ -134,18 +130,12 @@ class CommonStore {
 		return this.nativeThemeIsDark ? 'dark' : '';
 	};
 
-    coverSet (id: string, image: string, type: I.CoverType) {
-		this.coverObj = { id, image, type };
-		Storage.set('cover', this.coverObj);
-
-		if (type == I.CoverType.Upload) {
-			this.coverSetUploadedImage(image);
-		};
+	get workspace(): string {
+		return String(this.workspaceId || '');
 	};
 
-    coverSetUploadedImage (image: string) {
-		this.coverImg = image;
-		Storage.set('coverImg', this.coverImg);
+    coverSet (id: string, image: string, type: I.CoverType) {
+		this.coverObj = { id, image, type };
 	};
 
     coverSetDefault () {
@@ -195,6 +185,10 @@ class CommonStore {
 
     previewSet (preview: Preview) {
 		this.previewObj = preview;
+	};
+
+	workspaceSet (id: string) {
+		this.workspaceId = String(id || '');
 	};
 
 	previewClear () {
@@ -268,6 +262,7 @@ class CommonStore {
 		blockStore.storeSetRelation(info.marketplaceRelationObjectId);
 
 		this.gatewaySet(info.gatewayUrl);
+		this.workspaceSet(info.accountSpaceId);
 
 		analytics.device(info.deviceId);
 	};

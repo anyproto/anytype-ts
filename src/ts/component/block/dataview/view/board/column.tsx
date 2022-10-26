@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Icon, Loader } from 'Component';
-import { I, C, Util, translate, keyboard, Relation } from 'Lib';
+import { Icon, Loader, LoadMore } from 'Component';
+import { I, translate, keyboard, Relation, DataUtil } from 'Lib';
 import { observer } from 'mobx-react';
 import { dbStore, detailStore, menuStore, commonStore } from 'Store';
 
@@ -13,7 +13,6 @@ interface Props extends I.ViewComponent {
 	value: any;
 	onRecordAdd (groupId: string, dir: number): void;
 	onDragStartColumn?: (e: any, groupId: string) => void;
-	onScrollColumn?: () => void;
 	onDragStartCard?: (e: any, groupId: string, record: any) => void;
 	getSubId?: () => string;
 	applyGroupOrder?: () => void;
@@ -41,19 +40,19 @@ const Column = observer(class Column extends React.Component<Props, State> {
 	constructor(props: Props) {
 		super(props);
 
-		this.onScroll = this.onScroll.bind(this);
+		this.onLoadMore = this.onLoadMore.bind(this);
 		this.onMore = this.onMore.bind(this);
 	};
 
 	render () {
-		const { config } = commonStore;
-		const { rootId, block, id, getSubId, getView, onRecordAdd, value, onDragStartColumn } = this.props;
+		const { rootId, block, id, getSubId, getView, getLimit, onRecordAdd, value, onDragStartColumn } = this.props;
 		const { loading } = this.state;
 		const view = getView();
 		const subId = getSubId();
 		const records = dbStore.getRecords(subId, '');
 		const items = this.getItems();
 		const { offset, total } = dbStore.getMeta(subId, '');
+		const limit = getLimit();
 		const group = dbStore.getGroup(rootId, block.id, id);
 		const head = {};
 		const cn = [ 'column' ];
@@ -108,33 +107,26 @@ const Column = observer(class Column extends React.Component<Props, State> {
 					<div className={cnbg.join(' ')} />
 				</div>
 
-				<div className="body" onScroll={this.onScroll}>
+				<div className="body">
 					<div className="bg">
 						{loading ? <Loader / > : (
 							<React.Fragment>
-								{items.map((item: any, i: number) => {
-									let content = null;
-									let key = [ 'board', view.id, id, item.id ].join('-');
+								{items.map((item: any, i: number) => (
+									<Card 
+										key={[ 'board', view.id, id, item.id ].join('-')} 
+										{...this.props} 
+										id={item.id} 
+										groupId={id}
+										index={i}
+									/>
+								))}
 
-									if (item.isAdd) {
-										content = (
-											<div key={key}  id={`card-${id}-add`} className="card add" onClick={() => { onRecordAdd(id, 1); }}>
-												<Icon className="plus" />
-											</div>
-										);
-									} else {
-										content = (
-											<Card 
-												key={key} 
-												{...this.props} 
-												id={item.id} 
-												groupId={id}
-												index={i}
-											/>
-										);
-									};
-									return content;
-								})}
+								{limit + this.offset < total ? <LoadMore limit={limit} onClick={this.onLoadMore} /> : ''}
+
+								<div id={`card-${id}-add`} className="card add" onClick={() => { onRecordAdd(id, 1); }}>
+									<Icon className="plus" />
+								</div>
+
 							</React.Fragment>
 						)}
 						<div className={cnbg.join(' ')} />
@@ -157,11 +149,11 @@ const Column = observer(class Column extends React.Component<Props, State> {
 			return;
 		};
 
-		const { rootId, block, getView, getKeys, getSubId, applyGroupOrder } = this.props;
+		const { rootId, block, getView, getKeys, getSubId, applyGroupOrder, getLimit } = this.props;
 		const view = getView();
-		const relation = dbStore.getRelation(rootId, block.id, view.groupRelationKey);
+		const relation = dbStore.getRelationByKey(view.groupRelationKey);
 		const subId = getSubId();
-		const limit = Constant.limit.dataview.records + this.offset;
+		const limit = getLimit() + this.offset;
 
 		if (!relation) {
 			return;
@@ -203,7 +195,14 @@ const Column = observer(class Column extends React.Component<Props, State> {
 
 		this.loading = true;
 
-		C.ObjectSearchSubscribe(subId, filters, view.sorts, getKeys(view.id), block.content.sources, 0, limit, true, '', '', false, () => {
+		DataUtil.searchSubscribe({
+			subId,
+			filters,
+			sorts: view.sorts,
+			keys: getKeys(view.id),
+			sources: block.content.sources,
+			limit,
+		}, () => {
 			applyGroupOrder();
 
 			if (clear) {
@@ -220,29 +219,15 @@ const Column = observer(class Column extends React.Component<Props, State> {
 	};
 
 	getItems () {
-		const { getSubId, id } = this.props;
-		const items = Util.objectCopy(dbStore.getRecords(getSubId(), '')).map(id => { return { id }; });
-
-		items.push({ id: `${id}-add`, isAdd: true });
-		return items;
+		const { getSubId } = this.props;
+		return dbStore.getRecords(getSubId(), '').map(id => { return { id }; });
 	};
 
-	onScroll (e: any) {
-		const { getSubId } = this.props;
-		const node = $(ReactDOM.findDOMNode(this));
-		const body = node.find('.body');
-		const st = body.scrollTop();
-		const subId = getSubId();
-		const meta = dbStore.getMeta(subId, '');
+	onLoadMore (e: any) {
+		const { getLimit } = this.props;
 
-		if (keyboard.isDragging) {
-			this.props.onScrollColumn();
-		};
-
-		if ((this.offset < meta.total) && (st >= body.get(0).scrollHeight - body.height() - 100)) {
-			this.offset += Constant.limit.dataview.records;
-			this.load(false);
-		};
+		this.offset += getLimit();
+		this.load(false);
 	};
 
 	onMore (e: any) {

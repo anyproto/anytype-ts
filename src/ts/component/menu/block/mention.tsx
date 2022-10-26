@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { MenuItemVertical, Loader, ObjectName } from 'Component';
 import { I, C, keyboard, Util, DataUtil, Mark, analytics } from 'Lib';
-import { commonStore, detailStore } from 'Store';
+import { commonStore, detailStore, dbStore } from 'Store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
@@ -48,7 +48,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
-			const type = detailStore.get(Constant.subId.type, item.type, []);
+			const type = dbStore.getType(item.type);
 
 			let content = null;
 
@@ -119,6 +119,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 										rowRenderer={rowRenderer}
 										onRowsRendered={onRowsRendered}
 										overscanRowCount={10}
+										scrollToAlignment="center"
 									/>
 								)}
 							</AutoSizer>
@@ -219,10 +220,6 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		];
 		const filter = commonStore.filter.text.replace(/\\/g, '');
 
-		if (!config.debug.ho) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true });
-		};
-
 		if (skipIds && skipIds.length) {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: skipIds });
 		};
@@ -231,7 +228,13 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 			this.setState({ loading: true });
 		};
 
-		C.ObjectSearch(filters, sorts, Constant.defaultRelationKeys, filter, this.offset, Constant.limit.menu, (message: any) => {
+		DataUtil.search({
+			filters,
+			sorts,
+			fullText: filter,
+			offset: this.offset,
+			limit: Constant.limitMenuRecords,
+		}, (message: any) => {
 			if (callBack) {
 				callBack(null);
 			};
@@ -253,7 +256,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 
 	loadMoreRows ({ startIndex, stopIndex }) {
         return new Promise((resolve, reject) => {
-			this.offset += Constant.limit.menu;
+			this.offset += Constant.limitMenuRecords;
 			this.load(false, resolve);
 		});
 	};
@@ -297,7 +300,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		};
 
 		if (item.itemId == 'add') {
-			const type = detailStore.get(Constant.subId.type, commonStore.type, []);
+			const type = dbStore.getType(commonStore.type);
 			const name = filter.text.replace(/\\/g, '');
 
 			DataUtil.pageCreate('', '', { name: name }, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.SelectType ], (message: any) => {

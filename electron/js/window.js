@@ -221,7 +221,7 @@ class WindowManager {
 			};
 		};
 
-		return { x, y};
+		return { x, y };
 	};
 
 };

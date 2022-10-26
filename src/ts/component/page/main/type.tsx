@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
 import { Icon, Header, Footer, Loader, ListObjectPreview, ListObject, Select, Deleted } from 'Component';
 import { I, C, DataUtil, Util, focus, crumbs, Action, analytics } from 'Lib';
@@ -7,7 +6,7 @@ import { commonStore, detailStore, dbStore, menuStore, popupStore, blockStore } 
 
 import HeadSimple from 'Component/page/head/simple';
 
-interface Props extends RouteComponentProps<any> {
+interface Props extends I.PageComponent {
 	rootId: string;
 	isPopup?: boolean;
 };
@@ -25,13 +24,9 @@ const BLOCK_ID_TEMPLATE = 'templates';
 
 const NO_TEMPLATES = [ 
 	Constant.typeId.note, 
-	Constant.typeId.image, 
-	Constant.typeId.file, 
-	Constant.typeId.video, 
-	Constant.typeId.type, 
 	Constant.typeId.set, 
 	Constant.typeId.bookmark,
-];
+].concat(DataUtil.getFileTypes()).concat(DataUtil.getSystemTypes());
 
 const PageMainType = observer(class PageMainType extends React.Component<Props, State> {
 
@@ -73,28 +68,27 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 		const object = Util.objectCopy(detailStore.get(rootId, rootId, [ 'recommendedLayout' ]));
 		const subIdTemplate = this.getSubIdTemplate();
 
-		const type = detailStore.get(Constant.subId.type, rootId, []);
+		const type = dbStore.getType(rootId);
 		const templates = dbStore.getRecords(subIdTemplate, '').map(id => detailStore.get(subIdTemplate, id, []));
 		const totalTemplate = dbStore.getMeta(subIdTemplate, '').total;
 		const totalObject = dbStore.getMeta(this.getSubIdObject(), '').total;
 		const layout: any = DataUtil.menuGetLayouts().find(it => it.id == object.recommendedLayout) || {};
 		const showTemplates = !NO_TEMPLATES.includes(rootId);
 
-		const allowedObject = (type._smartBlockTypes_ || []).includes(I.SmartBlockType.Page);
+		const allowedObject = (type.smartblockTypes || []).includes(I.SmartBlockType.Page);
 		const allowedDetails = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const allowedRelation = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
 		const allowedTemplate = allowedObject && showTemplates;
 
-		let relations = Util.objectCopy(dbStore.getRelations(rootId, rootId));
-		if (!config.debug.ho) {
-			relations = relations.filter(it => !it.isHidden);
-		};
+		let relations = Util.objectCopy(dbStore.getRelations(rootId, rootId)).sort(DataUtil.sortByHidden);
+		relations = relations.filter((it: any) => {
+			return it ? (!config.debug.ho ? !it.isHidden : true) : false;
+		});
 		relations = relations.filter(it => !Constant.systemRelationKeys.includes(it.relationKey));
-		relations.sort(DataUtil.sortByHidden);
 
 		const Relation = (item: any) => (
-			<div id={'item-' + item.relationKey} className={[ 'item', (item.isHidden ? 'isHidden' : ''), 'canEdit' ].join(' ')}>
-				<div className="clickable" onClick={(e: any) => { this.onRelationEdit(e, item.relationKey); }}>
+			<div id={'item-' + item.id} className={[ 'item', (item.isHidden ? 'isHidden' : ''), 'canEdit' ].join(' ')}>
+				<div className="clickable" onClick={(e: any) => { this.onRelationEdit(e, item.id); }}>
 					<Icon className={[ 'relation', DataUtil.relationClass(item.format) ].join(' ')} />
 					<div className="name">{item.name}</div>
 				</div>
@@ -257,8 +251,13 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 			const filters = view.filters.concat([
 				{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
 			]);
-
-			C.ObjectSearchSubscribe(this.getSubIdTemplate(), filters, view.sorts, [ 'id' ], block.content.sources, 0, 0, true, '', '', false);
+			DataUtil.searchSubscribe({
+				subId: this.getSubIdTemplate(),
+				filters,
+				sorts: view.sorts,
+				keys: [ 'id' ],
+				sources: block.content.sources,
+			});
 		};
 	};
 
@@ -278,20 +277,24 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 
 	onTemplateAdd () {
 		const rootId = this.getRootId();
+		const details: any = { 
+			type: Constant.typeId.template, 
+			targetObjectType: rootId,
+		};
 
-		C.BlockDataviewRecordCreate(rootId, BLOCK_ID_TEMPLATE, { targetObjectType: rootId }, '', (message) => {
+		C.ObjectCreate(details, [], '', (message) => {
 			if (message.error.code) {
 				return;
 			};
 
 			focus.clear(true);
-			dbStore.recordAdd(rootId, BLOCK_ID_TEMPLATE, message.record.id, 1);
+			dbStore.recordAdd(rootId, BLOCK_ID_TEMPLATE, message.objectId, 1);
 			analytics.event('CreateTemplate', { objectType: rootId });
 
-			DataUtil.objectOpenPopup(message.record, {
+			DataUtil.objectOpenPopup(message.details, {
 				onClose: () => {
 					if (this.refListPreview) {
-						this.refListPreview.updateItem(message.record.id);
+						this.refListPreview.updateItem(message.objectId);
 					};
 				}
 			});
@@ -300,8 +303,8 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 
 	onCreate () {
 		const rootId = this.getRootId();
-		const type = detailStore.get(Constant.subId.type, rootId, []);
-		const allowedObject = (type._smartBlockTypes_ || []).indexOf(I.SmartBlockType.Page) >= 0;
+		const type = dbStore.getType(rootId);
+		const allowedObject = (type.smartblockTypes || []).indexOf(I.SmartBlockType.Page) >= 0;
 		const options = [];
 
 		if (allowedObject) {
@@ -378,8 +381,8 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 			element: `#button-create`,
 			horizontal: I.MenuDirection.Right,
 			data: {
-				command: (url: string, callBack: (message: any) => void) => {
-					C.ObjectCreateBookmark(url, callBack);
+				command: (source: string, callBack: (message: any) => void) => {
+					C.ObjectCreateBookmark({ source }, callBack);
 				}
 			},
 		});
@@ -388,11 +391,15 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 	onSetAdd () {
 		const rootId = this.getRootId();
 		const object = detailStore.get(rootId, rootId);
+		const details = { 
+			name: object.name + ' set', 
+			iconEmoji: String(object.iconEmoji || ''),
+		};
 
-		C.ObjectCreateSet([ rootId ], { name: object.name + ' set', iconEmoji: object.iconEmoji }, '', (message: any) => {
+		C.ObjectCreateSet([ rootId ], details, '', (message: any) => {
 			if (!message.error.code) {
 				focus.clear(true);
-				DataUtil.objectOpenPopup({ id: message.id, layout: I.ObjectLayout.Set });
+				DataUtil.objectOpenPopup(message.details);
 			};
 		});
 	};
@@ -409,46 +416,37 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 				rootId: rootId,
 				ref: 'type',
 				menuIdEdit: 'blockRelationEdit',
-				skipIds: relations.map((it: I.Relation) => { return it.relationKey; }),
-				listCommand: (rootId: string, blockId: string, callBack?: (message: any) => void) => {
-					C.ObjectRelationListAvailable(rootId, callBack);
-				},
-				addCommand: (rootId: string, blockId: string, relation: any, onChange?: (relation: any) => void) => {
-					C.ObjectTypeRelationAdd(rootId, [ relation ], () => { 
+				skipIds: relations.map(it => it.relationKey),
+				addCommand: (rootId: string, blockId: string, relationKey: string) => {
+					C.ObjectTypeRelationAdd(rootId, [ relationKey ], () => { 
 						menuStore.close('relationSuggest'); 
-
-						if (onChange) {
-							onChange(relation);
-						};
 					});
 				},
 			}
 		});
 	};
 
-	onRelationEdit (e: any, relationKey: string) {
+	onRelationEdit (e: any, id: string) {
 		const rootId = this.getRootId();
 		const allowed = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
+		const relation = dbStore.getRelationById(id);
 		
 		menuStore.open('blockRelationEdit', { 
 			element: $(e.currentTarget),
 			horizontal: I.MenuDirection.Center,
 			data: {
 				rootId: rootId,
-				relationKey: relationKey,
+				relationId: id,
 				readonly: !allowed,
-				updateCommand: (rootId: string, blockId: string, relation: any) => {
-					C.ObjectRelationUpdate(rootId, relation);
-				},
-				addCommand: (rootId: string, blockId: string, relation: any, onChange?: (relation: any) => void) => {
-					C.ObjectTypeRelationAdd(rootId, [ relation ], () => {
+				addCommand: (rootId: string, blockId: string, relationKey: string, onChange?: (relation: any) => void) => {
+					C.ObjectTypeRelationAdd(rootId, [ relationKey ], () => {
 						if (onChange) {
-							onChange(relation);
+							onChange(relationKey);
 						};
 					});
 				},
-				deleteCommand: (rootId: string, blockId: string, relationKey: string) => {
-					C.ObjectTypeRelationRemove(rootId, relationKey);
+				deleteCommand: () => {
+					C.ObjectTypeRelationRemove(rootId, [ relation.relationKey ]);
 				},
 			}
 		});

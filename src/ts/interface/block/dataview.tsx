@@ -95,23 +95,25 @@ export interface ViewRelation {
 };
 
 export interface ViewComponent {
-	rootId: string;
+	rootId?: string;
 	block?: I.Block;
 	readonly: boolean;
 	bodyContainer?: string;
 	pageContainer?: string;
 	dataset?: any;
 	isPopup?: boolean;
+	isInline?: boolean;
 	onRef?(ref: any, id: string): void;
-	getData(viewId: string, offset: number, callBack?: (message: any) => void): void;
+	getData(viewId: string, offset: number, clear: boolean, callBack?: (message: any) => void): void;
 	getRecord(index: number): any;
 	getView?(): View;
 	getKeys?(viewId: string): string[];
-	onRecordAdd?: (e: any, dir: number) => void;
+	getIdPrefix?(): string;
+	getLimit?(): number;
+	onRecordAdd?: (e: any, dir: number, withPopup?: boolean) => void;
 	onCellClick?(e: any, key: string, index: number): void;
 	onContext?(e: any, id: string): void;
 	onCellChange?: (id: string, key: string, value: any, callBack?: (message: any) => void) => void;
-	optionCommand?: (code: string, rootId: string, blockId: string, relationKey: string, recordId: string, option: I.SelectOption, callBack?: (message: any) => void) => void;
 };
 
 export interface View {
@@ -127,16 +129,18 @@ export interface View {
 	sorts: Sort[];
 	filters: Filter[];
 	relations: any[];
-	getRelation?:(relationKey: string) => I.ViewRelation;
+	getVisibleRelations?: () => I.ViewRelation[];
+	getRelation?: (relationKey: string) => I.ViewRelation;
 };
 
 export interface Cell {
-	rootId: string;
+	rootId?: string;
 	subId: string;
 	block?: I.Block;
 	id?: string;
 	idPrefix?: string;
-	relation?: I.Relation;
+	relation?: any;
+	relationKey?: string;
 	index?: number;
 	viewType: I.ViewType;
 	readonly?: boolean;
@@ -170,6 +174,7 @@ export interface BoardGroup {
 export interface ContentDataview {
 	sources: string[];
 	views: View[];
+	relationLinks: any[];
 	groupOrder: any[];
 	objectOrder: any[];
 };

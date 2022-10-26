@@ -1,5 +1,4 @@
 import { I, Util, Mark, dispatcher, Encode, Mapper } from 'Lib';
-import { dbStore, detailStore } from 'Store';
 
 const Commands = require('lib/pb/protos/commands_pb');
 const Model = require('lib/pkg/lib/pb/model/protos/models_pb.js');
@@ -807,16 +806,6 @@ const BlockDataviewObjectOrderUpdate = (contextId: string, blockId: string, orde
 	dispatcher.request(BlockDataviewObjectOrderUpdate.name, request, callBack);
 };
 
-const BlockDataviewRecordCreate = (contextId: string, blockId: string, record: any, templateId: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.BlockDataviewRecord.Create.Request();
-	
-	request.setContextid(contextId);
-	request.setBlockid(blockId);
-	request.setRecord(Encode.encodeStruct(record));
-	request.setTemplateid(templateId);
-
-	dispatcher.request(BlockDataviewRecordCreate.name, request, callBack);
-};
 
 const BlockDataviewRelationListAvailable = (contextId: string, blockId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockDataview.Relation.ListAvailable.Request();
@@ -837,71 +826,24 @@ const BlockRelationSetKey = (contextId: string, blockId: string, relationKey: st
 	dispatcher.request(BlockRelationSetKey.name, request, callBack);
 };
 
-const BlockDataviewRelationAdd = (contextId: string, blockId: string, relation: any, callBack?: (message: any) => void) => {
+const BlockDataviewRelationAdd = (contextId: string, blockId: string, relationKeys: string[], callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockDataview.Relation.Add.Request();
 	
 	request.setContextid(contextId);
 	request.setBlockid(blockId);
-	request.setRelation(Mapper.To.Relation(relation));
+	request.setRelationkeysList(relationKeys);
 
 	dispatcher.request(BlockDataviewRelationAdd.name, request, callBack);
 };
 
-const BlockDataviewRelationUpdate = (contextId: string, blockId: string, relationKey: string, relation: any, callBack?: (message: any) => void) => {
-	const request = new Rpc.BlockDataview.Relation.Update.Request();
-	
-	request.setContextid(contextId);
-	request.setBlockid(blockId);
-	request.setRelationkey(relationKey);
-	request.setRelation(Mapper.To.Relation(relation));
-
-	dispatcher.request(BlockDataviewRelationUpdate.name, request, callBack);
-};
-
-const BlockDataviewRelationDelete = (contextId: string, blockId: string, relationKey: string, callBack?: (message: any) => void) => {
+const BlockDataviewRelationDelete = (contextId: string, blockId: string, relationKeys: string[], callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockDataview.Relation.Delete.Request();
 	
 	request.setContextid(contextId);
 	request.setBlockid(blockId);
-	request.setRelationkey(relationKey);
+	request.setRelationkeysList(relationKeys);
 
 	dispatcher.request(BlockDataviewRelationDelete.name, request, callBack);
-};
-
-const BlockDataviewRecordRelationOptionAdd = (contextId: string, blockId: string, relationKey: string, recordId: string, option: any, callBack?: (message: any) => void) => {
-	const request = new Rpc.BlockDataviewRecord.RelationOption.Add.Request();
-	
-	request.setContextid(contextId);
-	request.setBlockid(blockId);
-	request.setRelationkey(relationKey);
-	request.setRecordid(recordId);
-	request.setOption(Mapper.To.SelectOption(option));
-
-	dispatcher.request(BlockDataviewRecordRelationOptionAdd.name, request, callBack);
-};
-
-const BlockDataviewRecordRelationOptionUpdate = (contextId: string, blockId: string, relationKey: string, recordId: string, option: I.SelectOption, callBack?: (message: any) => void) => {
-	const request = new Rpc.BlockDataviewRecord.RelationOption.Update.Request();
-	
-	request.setContextid(contextId);
-	request.setBlockid(blockId);
-	request.setRelationkey(relationKey);
-	request.setRecordid(recordId);
-	request.setOption(Mapper.To.SelectOption(option));
-
-	dispatcher.request(BlockDataviewRecordRelationOptionUpdate.name, request, callBack);
-};
-
-const BlockDataviewRecordRelationOptionDelete = (contextId: string, blockId: string, relationKey: string, recordId: string, optionId: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.BlockDataviewRecord.RelationOption.Delete.Request();
-	
-	request.setContextid(contextId);
-	request.setBlockid(blockId);
-	request.setRelationkey(relationKey);
-	request.setRecordid(recordId);
-	request.setOptionid(optionId);
-
-	dispatcher.request(BlockDataviewRecordRelationOptionDelete.name, request, callBack);
 };
 
 const BlockDataviewSetSource = (contextId: string, blockId: string, sources: string[], callBack?: (message: any) => void) => {
@@ -916,15 +858,15 @@ const BlockDataviewSetSource = (contextId: string, blockId: string, sources: str
 
 // ---------------------- HISTORY ---------------------- //
 
-const HistoryShowVersion = (pageId: string, versionId: string, callBack?: (message: any) => void) => {
+const HistoryShowVersion = (objectId: string, versionId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.History.ShowVersion.Request();
 	
-	request.setPageid(pageId);
+	request.setObjectid(objectId);
 	request.setVersionid(versionId);
 
 	dispatcher.request(HistoryShowVersion.name, request, (message: any) => {
 		if (!message.error.code) {
-			dispatcher.onObjectView(pageId, '', message.objectView);
+			dispatcher.onObjectView(objectId, '', message.objectView);
 		};
 
 		if (callBack) {
@@ -933,19 +875,19 @@ const HistoryShowVersion = (pageId: string, versionId: string, callBack?: (messa
 	});
 };
 
-const HistorySetVersion = (pageId: string, versionId: string, callBack?: (message: any) => void) => {
+const HistorySetVersion = (objectId: string, versionId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.History.SetVersion.Request();
 	
-	request.setPageid(pageId);
+	request.setObjectid(objectId);
 	request.setVersionid(versionId);
 
 	dispatcher.request(HistorySetVersion.name, request, callBack);
 };
 
-const HistoryGetVersions = (pageId: string, lastVersionId: string, limit: number, callBack?: (message: any) => void) => {
+const HistoryGetVersions = (objectId: string, lastVersionId: string, limit: number, callBack?: (message: any) => void) => {
 	const request = new Rpc.History.GetVersions.Request();
 	
-	request.setPageid(pageId);
+	request.setObjectid(objectId);
 	request.setLastversionid(lastVersionId);
 	request.setLimit(limit);
 
@@ -954,65 +896,32 @@ const HistoryGetVersions = (pageId: string, lastVersionId: string, limit: number
 
 // ---------------------- OBJECT TYPE ---------------------- //
 
-const ObjectTypeList = (callBack?: (message: any) => void) => {
-	const request = new Rpc.ObjectType.List.Request();
-	
-	dispatcher.request(ObjectTypeList.name, request, callBack);
-};
-
-const ObjectTypeCreate = (details: any, flags: I.ObjectFlag[], callBack?: (message: any) => void) => {
-	const request = new Rpc.ObjectType.Create.Request();
-	
-	request.setObjecttype(Mapper.To.ObjectType(details));
-	//request.setDetails(Encode.encodeStruct(details));
-	//request.setInternalflagsList(flags.map(Mapper.To.InternalFlag))
-
-	dispatcher.request(ObjectTypeCreate.name, request, callBack);
-};
-
-const ObjectTypeRelationList = (objectTypeId: string, otherTypes: boolean, callBack?: (message: any) => void) => {
-	const request = new Rpc.ObjectType.Relation.List.Request();
-	
-	request.setObjecttypeurl(objectTypeId);
-	request.setAppendrelationsfromothertypes(otherTypes);
-
-	dispatcher.request(ObjectTypeRelationList.name, request, callBack);
-};
-
-const ObjectTypeRelationAdd = (objectTypeId: string, relations: any[], callBack?: (message: any) => void) => {
+const ObjectTypeRelationAdd = (objectTypeId: string, relationKeys: string[], callBack?: (message: any) => void) => {
 	const request = new Rpc.ObjectType.Relation.Add.Request();
 	
 	request.setObjecttypeurl(objectTypeId);
-	request.setRelationsList(relations.map(Mapper.To.Relation));
+	request.setRelationkeysList(relationKeys);
 
 	dispatcher.request(ObjectTypeRelationAdd.name, request, callBack);
 };
 
-const ObjectTypeRelationUpdate = (objectTypeId: string, relation: any, callBack?: (message: any) => void) => {
-	const request = new Rpc.ObjectType.Relation.Update.Request();
-	
-	request.setObjecttypeurl(objectTypeId);
-	request.setRelation(Mapper.To.Relation(relation));
-
-	dispatcher.request(ObjectTypeRelationUpdate.name, request, callBack);
-};
-
-const ObjectTypeRelationRemove = (objectTypeId: string, relationKey: string, callBack?: (message: any) => void) => {
+const ObjectTypeRelationRemove = (objectTypeId: string, relationKeys: string[], callBack?: (message: any) => void) => {
 	const request = new Rpc.ObjectType.Relation.Remove.Request();
 	
 	request.setObjecttypeurl(objectTypeId);
-	request.setRelationkey(relationKey);
+	request.setRelationkeysList(relationKeys);
 
 	dispatcher.request(ObjectTypeRelationRemove.name, request, callBack);
 };
 
 // ---------------------- OBJECT ---------------------- //
 
-const ObjectCreate = (details: any, flags: I.ObjectFlag[], callBack?: (message: any) => void) => {
+const ObjectCreate = (details: any, flags: I.ObjectFlag[], templateId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.Create.Request();
 	
 	request.setDetails(Encode.encodeStruct(details));
 	request.setInternalflagsList(flags.map(Mapper.To.InternalFlag));
+	request.setTemplateid(templateId);
 
 	dispatcher.request(ObjectCreate.name, request, callBack);
 };
@@ -1027,12 +936,46 @@ const ObjectCreateSet = (sources: string[], details: any, templateId: string, ca
 	dispatcher.request(ObjectCreateSet.name, request, callBack);
 };
 
-const ObjectCreateBookmark = (url: string, callBack?: (message: any) => void) => {
+const ObjectCreateBookmark = (details: any, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.CreateBookmark.Request();
 	
-	request.setUrl(url);
+	request.setDetails(Encode.encodeStruct(details));
 
 	dispatcher.request(ObjectCreateBookmark.name, request, callBack);
+};
+
+const ObjectCreateObjectType = (details: any, flags: I.ObjectFlag[], callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.CreateObjectType.Request();
+	
+	request.setDetails(Encode.encodeStruct(details));
+	request.setInternalflagsList(flags.map(Mapper.To.InternalFlag));
+
+	dispatcher.request(ObjectCreateObjectType.name, request, callBack);
+};
+
+const ObjectCreateRelation = (details: any, flags: I.ObjectFlag[], callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.CreateRelation.Request();
+	
+	request.setDetails(Encode.encodeStruct(details));
+
+	dispatcher.request(ObjectCreateRelation.name, request, callBack);
+};
+
+const ObjectCreateRelationOption = (details: any, callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.CreateRelation.Request();
+	
+	request.setDetails(Encode.encodeStruct(details));
+
+	dispatcher.request(ObjectCreateRelationOption.name, request, callBack);
+};
+
+const RelationListRemoveOption = (optionIds: string[], checkInObjects: boolean, callBack?: (message: any) => void) => {
+	const request = new Rpc.Relation.ListRemoveOption.Request();
+	
+	request.setOptionidsList(optionIds);
+	request.setCheckinobjects(checkInObjects);
+
+	dispatcher.request(RelationListRemoveOption.name, request, callBack);
 };
 
 const ObjectBookmarkFetch = (contextId: string, url: string, callBack?: (message: any) => void) => {
@@ -1154,32 +1097,9 @@ const ObjectSetDetails = (contextId: string, details: any[], callBack?: (message
 	dispatcher.request(ObjectSetDetails.name, request, callBack);
 };
 
-const OnSubscribe = (subId: string, keys: string[], message: any) => {
-	if (message.error.code) {
-		return;
-	};
-
-	if (message.counters) {
-		dbStore.metaSet(subId, '', { total: message.counters.total, keys: keys });
-	};
-
-	let details = [];
-	details = details.concat(message.dependencies.map((it: any) => { return { id: it.id, details: it }; }));
-	details = details.concat(message.records.map((it: any) => { 
-		keys.forEach((k: string) => { it[k] = it[k] || ''; });
-		return { id: it.id, details: it }; 
-	}));
-	detailStore.set(subId, details);
-	dbStore.recordsSet(subId, '', message.records.map(it => it.id));
-};
-
 const ObjectSearch = (filters: I.Filter[], sorts: I.Sort[], keys: string[], fullText: string, offset: number, limit: number, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.Search.Request();
 
-	filters = filters.concat([
-		{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
-	]);
-	
 	request.setFiltersList(filters.map(Mapper.To.Filter));
 	request.setSortsList(sorts.map(Mapper.To.Sort));
 	request.setFulltext(fullText);
@@ -1200,10 +1120,6 @@ const ObjectRelationSearchDistinct = (relationKey: string, filters: I.Filter[], 
 };
 
 const ObjectSearchSubscribe = (subId: string, filters: I.Filter[], sorts: I.Sort[], keys: string[], sources: string[], offset: number, limit: number, ignoreWorkspace: boolean, afterId: string, beforeId: string, noDeps: boolean, callBack?: (message: any) => void) => {
-	if (!subId) {
-		console.error('[ObjectSearchSubscribe] subId is empty');
-	};
-
 	const request = new Rpc.Object.SearchSubscribe.Request();
 
 	request.setSubid(subId);
@@ -1211,29 +1127,17 @@ const ObjectSearchSubscribe = (subId: string, filters: I.Filter[], sorts: I.Sort
 	request.setSortsList(sorts.map(Mapper.To.Sort));
 	request.setOffset(offset);
 	request.setLimit(limit);
-	request.setKeysList(keys);
+	request.setKeysList(Util.arrayUnique(keys));
 	request.setSourceList(sources);
 	request.setIgnoreworkspace(ignoreWorkspace);
 	request.setAfterid(afterId);
 	request.setBeforeid(beforeId);
 	request.setNodepsubscription(noDeps);
 
-	const cb = (message: any) => {
-		OnSubscribe(subId, keys, message);
-
-		if (callBack) {
-			callBack(message);
-		};
-	};
-
-	dispatcher.request(ObjectSearchSubscribe.name, request, cb);
+	dispatcher.request(ObjectSearchSubscribe.name, request, callBack);
 };
 
 const ObjectSubscribeIds = (subId: string, ids: string[], keys: string[], ignoreWorkspace: boolean, callBack?: (message: any) => void) => {
-	if (!subId) {
-		console.error('[ObjectSubscribeIds] subId is empty');
-	};
-
 	const request = new Rpc.Object.SubscribeIds.Request();
 
 	request.setSubid(subId);
@@ -1241,23 +1145,7 @@ const ObjectSubscribeIds = (subId: string, ids: string[], keys: string[], ignore
 	request.setKeysList(keys);
 	request.setIgnoreworkspace(ignoreWorkspace);
 
-	const cb = (message: any) => {
-		message.records.sort((c1: any, c2: any) => {
-			const i1 = ids.indexOf(c1.id);
-			const i2 = ids.indexOf(c2.id);
-			if (i1 > i2) return 1; 
-			if (i1 < i2) return -1;
-			return 0;
-		});
-
-		OnSubscribe(subId, keys, message);
-
-		if (callBack) {
-			callBack(message);
-		};
-	};
-
-	dispatcher.request(ObjectSubscribeIds.name, request, cb);
+	dispatcher.request(ObjectSubscribeIds.name, request, callBack);
 };
 
 const ObjectSearchUnsubscribe = (subIds: string[], callBack?: (message: any) => void) => {
@@ -1268,53 +1156,13 @@ const ObjectSearchUnsubscribe = (subIds: string[], callBack?: (message: any) => 
 	dispatcher.request(ObjectSearchUnsubscribe.name, request, callBack);
 };
 
-const ObjectRelationOptionAdd = (contextId: string, relationKey: string, option: any, callBack?: (message: any) => void) => {
-	const request = new Rpc.ObjectRelationOption.Add.Request();
-	
-	request.setContextid(contextId);
-	request.setRelationkey(relationKey);
-	request.setOption(Mapper.To.SelectOption(option));
-
-	dispatcher.request(ObjectRelationOptionAdd.name, request, callBack);
-};
-
-const ObjectRelationOptionUpdate = (contextId: string, relationKey: string, option: I.SelectOption, callBack?: (message: any) => void) => {
-	const request = new Rpc.ObjectRelationOption.Update.Request();
-	
-	request.setContextid(contextId);
-	request.setRelationkey(relationKey);
-	request.setOption(Mapper.To.SelectOption(option));
-
-	dispatcher.request(ObjectRelationOptionUpdate.name, request, callBack);
-};
-
-const ObjectRelationOptionDelete = (contextId: string, relationKey: string, optionId: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.ObjectRelationOption.Delete.Request();
-	
-	request.setContextid(contextId);
-	request.setRelationkey(relationKey);
-	request.setOptionid(optionId);
-
-	dispatcher.request(ObjectRelationOptionDelete.name, request, callBack);
-};
-
-const ObjectRelationAdd = (contextId: string, relation: any, callBack?: (message: any) => void) => {
+const ObjectRelationAdd = (contextId: string, relationKeys: string[], callBack?: (message: any) => void) => {
 	const request = new Rpc.ObjectRelation.Add.Request();
 	
 	request.setContextid(contextId);
-	request.setRelation(Mapper.To.Relation(relation));
+	request.setRelationkeysList(relationKeys);
 
 	dispatcher.request(ObjectRelationAdd.name, request, callBack);
-};
-
-const ObjectRelationUpdate = (contextId: string, relation: any, callBack?: (message: any) => void) => {
-	const request = new Rpc.ObjectRelation.Update.Request();
-	
-	request.setContextid(contextId);
-	request.setRelationkey(relation.relationKey);
-	request.setRelation(Mapper.To.Relation(relation));
-
-	dispatcher.request(ObjectRelationUpdate.name, request, callBack);
 };
 
 const ObjectRelationDelete = (contextId: string, relationKey: string, callBack?: (message: any) => void) => {
@@ -1324,14 +1172,6 @@ const ObjectRelationDelete = (contextId: string, relationKey: string, callBack?:
 	request.setRelationkey(relationKey);
 
 	dispatcher.request(ObjectRelationDelete.name, request, callBack);
-};
-
-const ObjectRelationListAvailable = (contextId: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.ObjectRelation.ListAvailable.Request();
-	
-	request.setContextid(contextId);
-
-	dispatcher.request(ObjectRelationListAvailable.name, request, callBack);
 };
 
 const ObjectRelationAddFeatured = (contextId: string, keys: string[], callBack?: (message: any) => void) => {
@@ -1678,36 +1518,20 @@ export {
 	BlockDataviewObjectOrderUpdate,
 
 	BlockDataviewRelationAdd,
-	BlockDataviewRelationUpdate,
 	BlockDataviewRelationDelete,
 	BlockDataviewRelationListAvailable,
 
-	BlockDataviewRecordRelationOptionAdd,
-	BlockDataviewRecordRelationOptionUpdate,
-	BlockDataviewRecordRelationOptionDelete,
-
-	BlockDataviewRecordCreate,
 	BlockDataviewSetSource,
 
 	HistoryGetVersions,	
 	HistoryShowVersion,
 	HistorySetVersion,
 
-	ObjectTypeList,
-	ObjectTypeCreate,
-	ObjectTypeRelationList,
 	ObjectTypeRelationAdd,
-	ObjectTypeRelationUpdate,
 	ObjectTypeRelationRemove,
 
-	ObjectRelationOptionAdd,
-    ObjectRelationOptionUpdate,
-    ObjectRelationOptionDelete,
-
 	ObjectRelationAdd,
-	ObjectRelationUpdate,
 	ObjectRelationDelete,
-	ObjectRelationListAvailable,
 
 	ObjectOpen,
 	ObjectShow,
@@ -1734,6 +1558,11 @@ export {
 	ObjectCreate,
 	ObjectCreateSet,
 	ObjectCreateBookmark,
+	ObjectCreateObjectType,
+	ObjectCreateRelation,
+	ObjectCreateRelationOption,
+
+	RelationListRemoveOption,
 
 	ObjectToSet,
 	ObjectToBookmark,

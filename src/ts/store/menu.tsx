@@ -34,7 +34,6 @@ class MenuStore {
 		param.type = Number(param.type) || I.MenuType.Vertical;
 		param.vertical = Number(param.vertical) || I.MenuDirection.Bottom;
 		param.horizontal = Number(param.horizontal) || I.MenuDirection.Left;
-		param.tabs = param.tabs || [];
 		param.data = param.data || {};
 
 		if (param.isSub) {

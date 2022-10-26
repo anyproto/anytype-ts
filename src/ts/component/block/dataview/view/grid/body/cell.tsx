@@ -5,7 +5,7 @@ import { dbStore } from 'Store';
 import { observer } from 'mobx-react';
 
 interface Props {
-	rootId: string;
+	rootId?: string;
 	block?: I.Block;
 	relationKey: string;
 	index: number;
@@ -13,6 +13,7 @@ interface Props {
 	width: number;
 	className?: string;
 	getRecord(index: number): any;
+	getIdPrefix?(): string;
 	onRef?(ref: any, id: string): void;
 	onCellClick?(e: any, key: string, index: number): void;
 	onCellChange?(id: string, key: string, value: any, callBack?: (message: any) => void): void;
@@ -23,10 +24,10 @@ const Constant = require('json/constant.json');
 const BodyCell = observer(class BodyCell extends React.Component<Props, {}> {
 
 	render () {
-		const { rootId, block, className, relationKey, index, readonly, onRef, onCellClick, onCellChange } = this.props;
-		const relation: any = dbStore.getRelation(rootId, block.id, relationKey) || {};
+		const { rootId, block, className, relationKey, index, readonly, onRef, onCellClick, onCellChange, getIdPrefix } = this.props;
+		const relation: any = dbStore.getRelationByKey(relationKey) || {};
 		const cn = [ 'cell', DataUtil.relationClass(relation.format), (!readonly ? 'canEdit' : '') ];
-		const idPrefix = 'dataviewCell';
+		const idPrefix = getIdPrefix();
 		const id = Relation.cellId(idPrefix, relation.relationKey, index);
 		const width = Relation.width(this.props.width, relation.format);
 		const size = Constant.size.dataview.cell;

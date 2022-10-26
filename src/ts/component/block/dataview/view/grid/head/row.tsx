@@ -12,22 +12,26 @@ interface Props extends I.ViewComponent {
 	onSortStart(): void;
 	onSortEnd(result: any): void;
 	onResizeStart(e: any, key: string): void;
-}
+	getColumnWidths?: (relationId: string, width: number) => any;
+};
 
 const $ = require('jquery');
 
 const HeadRow = observer(class HeadRow extends React.Component<Props, {}> {
 
 	render () {
-		const { rootId, block, readonly, getView, onCellAdd, onSortStart, onSortEnd, onResizeStart } = this.props;
+		const { rootId, block, readonly, getView, onCellAdd, onSortStart, onSortEnd, onResizeStart, getColumnWidths } = this.props;
 		const view = getView();
-		const relations = view.relations.filter((it: any) => { 
-			return it.isVisible && dbStore.getRelation(rootId, block.id, it.relationKey); 
-		});
+		const widths = getColumnWidths('', 0);
+		const relations = view.getVisibleRelations();
+		const str = relations.map(it => widths[it.relationKey] + 'px').concat([ 'auto' ]).join(' ');
 		const allowed = blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.Relation ]);
 
 		const Row = SortableContainer((item: any) => (
-			<div className="rowHead" >
+			<div 
+				className="rowHead"
+				style={{ gridTemplateColumns: str }}
+			>
 				{relations.map((relation: any, i: number) => (
 					<Cell 
 						key={'grid-head-' + relation.relationKey} 

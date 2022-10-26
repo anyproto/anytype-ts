@@ -6,45 +6,24 @@ const Errors = require('json/error.json');
 
 class DataUtil {
 
-	map (list: any[], field: string): any {
-		list = list|| [] as any[];
-		
-		let map = {} as any;
-		for (let item of list) {
-			map[item[field]] = map[item[field]] || [];
-			map[item[field]].push(item);
-		};
-		return map;
+	blockTextClass (v: I.TextStyle): string {
+		return Util.toCamelCase('text-' + String(I.TextStyle[v] || 'paragraph'));
 	};
 	
-	unique (list: any[], field: string) {
-		list = list|| [] as any[];
-		
-		let map = {} as any;
-		for (let item of list) {
-			map[item[field]] = item;
-		};
-		return map;
-	};
-	
-	unmap (map: any) {
-		let ret: any[] = [] as any[];
-		for (let field in map) {
-			ret = ret.concat(map[field]);
-		};
-		return ret;
+	blockDivClass (v: I.DivStyle): string {
+		return Util.toCamelCase('div-' + String(I.DivStyle[v]));
 	};
 
-	textClass (v: I.TextStyle): string {
-		return String(I.TextStyle[v] || 'paragraph').toLowerCase();
+	blockLayoutClass (v: I.LayoutStyle): string {
+		return Util.toCamelCase('layout-' + String(I.LayoutStyle[v]));
 	};
-	
+
 	styleIcon (type: I.BlockType, v: number): string {
 		let icon = '';
 		switch (type) {
 			case I.BlockType.Text:
 				switch (v) {
-					default:					 icon = this.textClass(v); break;
+					default:					 icon = this.blockTextClass(v); break;
 					case I.TextStyle.Code:		 icon = 'kbd'; break;
 				};
 				break;
@@ -63,54 +42,34 @@ class DataUtil {
 	blockClass (block: any, isDragging?: boolean) {
 		const { content } = block;
 		const { style, type, state } = content;
+		const dc = Util.toCamelCase('block-' + block.type);
 
 		let c = [];
-		switch (block.type) {
-			case I.BlockType.Text:					 c.push('blockText ' + this.textClass(style)); break;
-			case I.BlockType.Layout:				 c.push('blockLayout c' + style); break;
-			case I.BlockType.IconPage:				 c.push('blockIconPage'); break;
-			case I.BlockType.IconUser:				 c.push('blockIconUser'); break;
-			case I.BlockType.Bookmark:				 c.push('blockBookmark'); break;
-			case I.BlockType.Dataview:				 c.push('blockDataview'); break;
-			case I.BlockType.Div:					 c.push('blockDiv c' + style); break;
-			case I.BlockType.Link:					 c.push('blockLink'); break;
-			case I.BlockType.Cover:					 c.push('blockCover'); break;
-			case I.BlockType.Relation:				 c.push('blockRelation'); break;
-			case I.BlockType.Featured:				 c.push('blockFeatured'); break;
-			case I.BlockType.Type:					 c.push('blockType'); break;
-			case I.BlockType.Latex:					 c.push('blockLatex'); break;
-			case I.BlockType.Table:					 c.push('blockTable'); break;
-			case I.BlockType.TableOfContents:		 c.push('blockTableOfContents'); break;
+		if (block.type == I.BlockType.File) {
+			if (state == I.FileState.Done) {
+				c.push('withFile');
+			};
 
-			case I.BlockType.File:
-				if (state == I.FileState.Done) {
-					c.push('withFile');
-				};
-
-				if (isDragging || (style == I.FileStyle.Link)) {
-					c.push('blockFile');
-					break;
-				};
+			if (isDragging || (style == I.FileStyle.Link) || (type == I.FileType.File)) {
+				c.push(dc);
+			} else {
+				c.push('blockMedia');
 
 				switch (type) {
-					default: 
-					case I.FileType.File: 
-						c.push('blockFile');
-						break;
-					case I.FileType.Image: 
-						c.push('blockMedia isImage');
-						break;
-					case I.FileType.Video: 
-						c.push('blockMedia isVideo');
-						break;
-					case I.FileType.Audio: 
-						c.push('blockMedia isAudio');
-						break;
-					case I.FileType.Pdf: 
-						c.push('blockMedia isPdf');
-						break;
+					case I.FileType.Image:	 c.push('isImage'); break;
+					case I.FileType.Video:	 c.push('isVideo'); break;
+					case I.FileType.Audio:	 c.push('isAudio'); break;
+					case I.FileType.Pdf:	 c.push('isPdf'); break;
 				};
-				break;
+			};
+		} else {
+			c.push(dc);
+
+			switch (block.type) {
+				case I.BlockType.Text:					 c.push(this.blockTextClass(style)); break;
+				case I.BlockType.Layout:				 c.push(this.blockLayoutClass(style)); break;
+				case I.BlockType.Div:					 c.push(this.blockDivClass(style)); break;
+			};
 		};
 
 		return c.join(' ');
@@ -119,17 +78,8 @@ class DataUtil {
 	layoutClass (id: string, layout: I.ObjectLayout) {
 		let c = '';
 		switch (layout) {
-			default:
-			case I.ObjectLayout.Page:		 c = 'isPage'; break;
-			case I.ObjectLayout.Human:		 c = 'isHuman'; break;
-			case I.ObjectLayout.Task:		 c = 'isTask'; break;
-			case I.ObjectLayout.Type:		 c = 'isObjectType'; break;
-			case I.ObjectLayout.Relation:	 c = 'isRelation'; break;
-			case I.ObjectLayout.Set:		 c = 'isSet'; break;
+			default: c = Util.toCamelCase('is-' + I.ObjectLayout[layout]); break;
 			case I.ObjectLayout.Image:		 c = (id ? 'isImage' : 'isFile'); break;
-			case I.ObjectLayout.File:		 c = 'isFile'; break;
-			case I.ObjectLayout.Note:		 c = 'isNote'; break;
-			case I.ObjectLayout.Bookmark:	 c = 'isBookmark'; break;
 		};
 		return c;
 	};
@@ -303,21 +253,71 @@ class DataUtil {
 
 		analytics.profile(account);
 		analytics.event('OpenAccount');
-		
-		C.ObjectTypeList((message: any) => {
-			dbStore.objectTypesSet(message.objectTypes);
-		});
 
-		C.ObjectSearchSubscribe(Constant.subId.deleted, [
-			{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: true }
-		], [], [ 'id', 'isDeleted' ], [], 0, 0, true, '', '', true);
+		const subscriptions = [
+			{
+				subId: Constant.subId.deleted,
+				keys: [],
+				filters: [
+					{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: true },
+				],
+				noDeps: true,
+			},
+			{
+				subId: Constant.subId.type,
+				keys: Constant.defaultRelationKeys.concat(Constant.typeRelationKeys),
+				filters: [
+					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.type },
+					{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
+				],
+				noDeps: true
+			},
+			{
+				subId: Constant.subId.relation,
+				keys: Constant.relationRelationKeys,
+				filters: [
+					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.relation },
+					{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
+				],
+				noDeps: true,
+				onSubscribe: () => {
+					const records = dbStore.getRecords(Constant.subId.relation, '').map(id => dbStore.getRelationById(id));
+					for (let record of records) {
+						dbStore.relationKeyMap[record.relationKey] = record.id;
+					};
+				}
+			},
+			{
+				subId: Constant.subId.option,
+				keys: Constant.optionRelationKeys,
+				filters: [
+					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.option },
+					{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
+				],
+				noDeps: true
+			}
+		];
 
-		C.ObjectSearchSubscribe(Constant.subId.type, [
-			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.type }
-		], [], Constant.defaultRelationKeys, [], 0, 0, true, '', '', true);
-		
-		if (profile) {
-			C.ObjectSubscribeIds(Constant.subId.profile, [ profile ], Constant.defaultRelationKeys, true);
+		let cnt = 0;
+		let cb = (item: any) => {
+			if (item.onSubscribe) {
+				item.onSubscribe();
+			};
+
+			cnt++;
+
+			if (cnt == subscriptions.length) {
+				if (pin && !keyboard.isPinChecked) {
+					Util.route('/auth/pin-check');
+				} else {
+					Util.route(commonStore.redirect ? commonStore.redirect : '/main/index', true);
+					commonStore.redirectSet('');
+				};
+
+				if (callBack) {
+					callBack();
+				};
+			};
 		};
 
 		C.ObjectOpen(root, '', (message: any) => {
@@ -326,21 +326,25 @@ class DataUtil {
 				return;
 			};
 
-			const object = detailStore.get(root, root, Constant.coverRelationKeys);
+			const object = detailStore.get(root, root);
+			if (object._empty_) {
+				console.error('Dashboard is empty');
+				return;
+			};
 
-			if (!object._empty_ && object.coverId && (object.coverType != I.CoverType.None)) {
+			if (object.coverId && (object.coverType != I.CoverType.None)) {
 				commonStore.coverSet(object.coverId, object.coverId, object.coverType);
 			};
 
-			if (pin) {
-				Util.route('/auth/pin-check');
-			} else {
-				Util.route(commonStore.redirect ? commonStore.redirect : '/main/index', true);
-				commonStore.redirectSet('');
+			for (let item of subscriptions) {
+				this.searchSubscribe(item, () => { cb(item); });
 			};
-			
-			if (callBack) {
-				callBack();
+
+			if (profile) {
+				this.subscribeIds({
+					subId: Constant.subId.profile, 
+					ids: [ profile ], 
+				});
 			};
 		});
 	};
@@ -570,7 +574,7 @@ class DataUtil {
 		
 		return ret.map((it: any) => {
 			it.type = I.BlockType.Text;
-			it.icon = this.textClass(it.id);
+			it.icon = this.blockTextClass(it.id);
 			return this.menuMapperBlock(it);
 		});
 	};
@@ -583,7 +587,7 @@ class DataUtil {
 			{ id: I.TextStyle.Toggle, lang: 'Toggle' },
 		].map((it: any) => {
 			it.type = I.BlockType.Text;
-			it.icon = this.textClass(it.id);
+			it.icon = this.blockTextClass(it.id);
 			return this.menuMapperBlock(it);
 		});
 	};
@@ -605,11 +609,11 @@ class DataUtil {
 	getObjectTypesForNewObject (param?: any) {
 		const { withSet, withBookmark, withDefault } = param || {};
 		const { config } = commonStore;
-		const page = detailStore.get(Constant.subId.type, Constant.typeId.page, []);
-		const note = detailStore.get(Constant.subId.type, Constant.typeId.note, []);
-		const set = detailStore.get(Constant.subId.type, Constant.typeId.set, []);
-		const task = detailStore.get(Constant.subId.type, Constant.typeId.task, []);
-		const bookmark = detailStore.get(Constant.subId.type, Constant.typeId.bookmark, []);
+		const page = dbStore.getType(Constant.typeId.page);
+		const note = dbStore.getType(Constant.typeId.note);
+		const set = dbStore.getType(Constant.typeId.set);
+		const task = dbStore.getType(Constant.typeId.task);
+		const bookmark = dbStore.getType(Constant.typeId.bookmark);
 
 		const skip = [ 
 			Constant.typeId.note, 
@@ -630,21 +634,21 @@ class DataUtil {
 			}));
 		};
 
-		if (withBookmark && !bookmark._empty_) {
+		if (withBookmark && bookmark) {
 			items.unshift(bookmark);
 		};
 
 		items.sort(this.sortByName);
 
-		if (withSet && !set._empty_) {
+		if (withSet && set) {
 			items.unshift(set);
 		};
 
-		if (!task._empty_) {
+		if (task) {
 			items.unshift(task);
 		};
 
-		if (!page._empty_ && !note._empty_) {
+		if (page && note) {
 			if (commonStore.type == Constant.typeId.note) {
 				items = [ page, note ].concat(items);
 			} else {
@@ -689,9 +693,10 @@ class DataUtil {
 
 	menuGetBlockDataview () {
 		return [
-			{ id: I.ViewType.Grid, icon: '', lang: 'Table' },
-			{ id: I.ViewType.Gallery, icon: '', lang: 'Gallery' },
-			{ id: I.ViewType.List, icon: '', lang: 'List' },
+			{ id: I.ViewType.Grid, icon: 'dataview-grid', lang: 'Table' },
+			{ id: I.ViewType.Gallery, icon: 'dataview-gallery', lang: 'Gallery' },
+			{ id: I.ViewType.List, icon: 'dataview-list', lang: 'List' },
+			{ id: I.ViewType.Board, icon: 'dataview-board', lang: 'Board' },
 		].map((it: any) => {
 			it.type = I.BlockType.Dataview;
 			return this.menuMapperBlock(it);
@@ -961,123 +966,6 @@ class DataUtil {
 		return sections;
 	};
 	
-	viewGetRelations (rootId: string, blockId: string, view: I.View): I.ViewRelation[] {
-		const { config } = commonStore;
-
-		if (!view) {
-			return [];
-		};
-
-		let relations = Util.objectCopy(dbStore.getRelations(rootId, blockId));
-		let order: any = {};
-		let o = 0;
-
-		if (!config.debug.ho) {
-			relations = relations.filter((it: I.Relation) => { 
-				if ([ 'name' ].indexOf(it.relationKey) >= 0) {
-					return true;
-				};
-				return !it.isHidden; 
-			});
-		};
-
-		if (!relations.find(it => it.relationKey == 'name')) {
-			relations.unshift({ relationKey: 'name' });
-		};
-
-		for (let i = 0; i < view.relations.length; ++i) {
-			order[view.relations[i].relationKey] = o++;
-		};
-
-		for (let i = 0; i < relations.length; ++i) {
-			if (undefined === order[relations[i].relationKey]) {
-				order[relations[i].relationKey] = o++;
-			};
-		};
-
-		relations.sort((c1: any, c2: any) => {
-			let o1 = order[c1.relationKey];
-			let o2 = order[c2.relationKey];
-			if (o1 > o2) return 1;
-			if (o1 < o2) return -1;
-			return 0;
-		});
-
-		let ret = relations.map((relation: any) => {
-			const vr = view.relations.find((it: I.Relation) => { return it.relationKey == relation.relationKey; }) || {};
-			
-			if ([ Constant.relationKey.name ].indexOf(relation.relationKey) >= 0) {
-				vr.isVisible = true;
-			};
-
-			return new M.ViewRelation({
-				...vr,
-				relationKey: relation.relationKey,
-				width: Relation.width(vr.width, relation.format),
-			});
-		});
-
-		return Util.arrayUniqueObjects(ret, 'relationKey');
-	};
-
-	dataviewRelationAdd (rootId: string, blockId: string, relation: any, index: number, view?: I.View, callBack?: (message: any) => void) {
-		relation = new M.Relation(relation);
-
-		C.BlockDataviewRelationAdd(rootId, blockId, relation, (message: any) => {
-			if (message.error.code || !view) {
-				return;
-			};
-
-			let rel = view.getRelation(message.relationKey);
-			if (rel) {
-				rel.isVisible = true;
-			} else {
-				relation.relationKey = message.relationKey;
-				relation.isVisible = true;
-				relation.width = Relation.width(0, relation.format);
-
-				if (index >= 0) {
-					view.relations.splice(index, 0, relation);
-				} else {
-					view.relations.push(relation);
-				};
-			};
-
-			if (callBack) {
-				callBack(message);
-			};
-
-			C.BlockDataviewViewUpdate(rootId, blockId, view.id, view);
-		});
-	};
-
-	dataviewRelationUpdate (rootId: string, blockId: string, relation: any, view?: I.View, callBack?: (message: any) => void) {
-		C.BlockDataviewRelationUpdate(rootId, blockId, relation.relationKey, new M.Relation(relation), (message: any) => {
-			if (message.error.code || !view) {
-				return;
-			};
-			
-			if (callBack) {
-				callBack(message);
-			};
-		});
-	};
-
-	dataviewRelationDelete (rootId: string, blockId: string, relationKey: string, view?: I.View, callBack?: (message: any) => void) {
-		C.BlockDataviewRelationDelete(rootId, blockId, relationKey, (message: any) => {
-			if (message.error.code || !view) {
-				return;
-			};
-			
-			if (callBack) {
-				callBack(message);
-			};
-
-			view.relations = view.relations.filter((it: I.ViewRelation) => { return it.relationKey != relationKey; });
-			C.BlockDataviewViewUpdate(rootId, blockId, view.id, view);
-		});
-	};
-
 	checkDetails (rootId: string, blockId?: string) {
 		blockId = blockId || rootId;
 
@@ -1186,7 +1074,10 @@ class DataUtil {
 			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
 		];
 
-		C.ObjectSearch(filters, [], [], '', 0, limit, (message: any) => {
+		this.search({
+			filters,
+			limit,
+		}, (message: any) => {
 			if (message.error.code) {
 				return;
 			};
@@ -1254,50 +1145,21 @@ class DataUtil {
 		return content;
 	};
 
-	getDataviewData (rootId: string, blockId: string, id: string, keys: string[], offset: number, limit: number, clear: boolean, callBack?: (message: any) => void) {
-		const view = dbStore.getView(rootId, blockId, id);
-		if (!view) {
-			return;
-		};
-
-		const subId = dbStore.getSubId(rootId, blockId);
-		const { viewId } = dbStore.getMeta(subId, '');
-		const viewChange = id != viewId;
-		const meta: any = { offset: offset };
-		const block = blockStore.getLeaf(rootId, blockId);
-		const filters = view.filters.concat([
-			{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
-		]);
-		const sorts = view.sorts.map((it: I.Sort) => {
-			const relation = view.getRelation(it.relationKey);
-			if (relation) {
-				it.includeTime = relation.includeTime;
-			};
-			return it;
-		});
-
-		if (viewChange) {
-			meta.viewId = id;
-		};
-		if (viewChange || clear) {
-			dbStore.recordsSet(subId, '', []);
-		};
-
-		dbStore.metaSet(subId, '', meta);
-		C.ObjectSearchSubscribe(subId, filters, sorts, keys, block.content.sources, offset, limit, true, '', '', false);
-	};
-
 	coverIsImage (type: I.CoverType) {
 		return [ I.CoverType.Upload, I.CoverType.Image, I.CoverType.Source ].includes(type);
 	};
 
 	isFileType (type: string) {
-		return [ 
+		return this.getFileTypes().includes(type);
+	};
+
+	getFileTypes () {
+		return [
 			Constant.typeId.file, 
 			Constant.typeId.image, 
 			Constant.typeId.audio, 
 			Constant.typeId.video,
-		].includes(type);
+		];
 	};
 
 	getSystemTypes () {
@@ -1305,7 +1167,136 @@ class DataUtil {
 			Constant.typeId.type,
 			Constant.typeId.template,
 			Constant.typeId.relation,
+			Constant.typeId.option,
 		];
+	};
+
+	onSubscribe (subId: string, idField: string, keys: string[], message: any) {
+		if (message.error.code) {
+			return;
+		};
+		if (message.counters) {
+			dbStore.metaSet(subId, '', { total: message.counters.total, keys: keys });
+		};
+
+		let details = [];
+		let mapper = (it: any) => { 
+			keys.forEach((k: string) => { it[k] = it[k] || ''; });
+			return { id: it[idField], details: it }; 
+		};
+
+		details = details.concat(message.dependencies.map(mapper));
+		details = details.concat(message.records.map(mapper));
+		detailStore.set(subId, details);
+		
+		dbStore.recordsSet(subId, '', message.records.map(it => it[idField]));
+	};
+
+	searchSubscribe (param: any, callBack?: (message: any) => void) {
+		param = Object.assign({
+			subId: '',
+			idField: 'id',
+			filters: [],
+			sorts: [],
+			keys: Constant.defaultRelationKeys,
+			sources: [],
+			offset: 0,
+			limit: 0,
+			ignoreWorkspace: true,
+			afterId: '',
+			beforeId: '',
+			noDeps: false,
+		}, param);
+
+		const { subId, idField, filters, sorts, keys, sources, offset, limit, ignoreWorkspace, afterId, beforeId, noDeps } = param;
+
+		if (!subId) {
+			console.error('[DataUtil].searchSubscribe: subId is empty');
+			return;
+		};
+
+		if (!ignoreWorkspace && commonStore.workspace) {
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'workspaceId', condition: I.FilterCondition.Equal, value: commonStore.workspace });
+		};
+
+		keys.push(idField);
+
+		C.ObjectSearchSubscribe(subId, filters, sorts, keys, sources, offset, limit, ignoreWorkspace, afterId, beforeId, noDeps, (message: any) => {
+			this.onSubscribe(subId, idField, keys, message);
+
+			if (callBack) {
+				callBack(message);
+			};
+		});
+	};
+
+	subscribeIds (param: any, callBack?: (message: any) => void) {
+		param = Object.assign({
+			subId: '',
+			ids: [],
+			keys: Constant.defaultRelationKeys,
+		}, param);
+
+		let { subId, ids, keys } = param;
+
+		ids = Util.arrayUnique(ids.filter(it => it));
+
+		if (!subId) {
+			console.error('[DataUtil].subscribeIds: subId is empty');
+			return;
+		};
+		if (!ids.length) {
+			console.error('[DataUtil].subscribeIds: ids list is empty');
+			return;
+		};
+
+		C.ObjectSubscribeIds(subId, ids, keys, true, (message: any) => {
+			message.records.sort((c1: any, c2: any) => {
+				const i1 = ids.indexOf(c1.id);
+				const i2 = ids.indexOf(c2.id);
+				if (i1 > i2) return 1; 
+				if (i1 < i2) return -1;
+				return 0;
+			});
+
+			this.onSubscribe(subId, 'id', keys, message);
+
+			if (callBack) {
+				callBack(message);
+			};
+		});
+	};
+
+	search (param: any, callBack?: (message: any) => void) {
+		const { config } = commonStore;
+
+		param = Object.assign({
+			idField: 'id',
+			fullText: '',
+			filters: [],
+			sorts: [],
+			keys: Constant.defaultRelationKeys,
+			offset: 0,
+			limit: 0,
+			ignoreWorkspace: true,
+		}, param);
+
+		let { idField, filters, sorts, keys, fullText, offset, limit, ignoreWorkspace } = param;
+
+		if (!ignoreWorkspace) {
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'workspaceId', condition: I.FilterCondition.Equal, value: commonStore.workspace });
+		};
+
+		filters.push({ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false });
+
+		if (!config.debug.ho) {
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true });
+		};
+
+		fullText = String(fullText || '').replace(/\\/g, '');
+		fullText = Util.filterFix(fullText);
+
+		C.ObjectSearch(filters, sorts, keys.concat([ idField ]), fullText, offset, limit, callBack);
 	};
 
 	dataviewGroupUpdate (rootId: string, blockId: string, viewId: string, groups: any[]) {
@@ -1346,7 +1337,7 @@ class DataUtil {
 	};
 
 	setWindowTitleText (name: string) {
-		document.title = [ name, Constant.appName ].join(' | ');
+		document.title = [ Util.shorten(name, 60), Constant.appName ].join(' - ');
 	};
 
 };

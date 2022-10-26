@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, keyboard, Util, analytics } from 'Lib';
+import { I, keyboard, Util, analytics, Storage } from 'Lib';
 import { Dimmer, Icon } from 'Component';
 import { menuStore, popupStore } from 'Store';
 import { observer } from 'mobx-react';
@@ -66,10 +66,7 @@ import MenuDataviewSource from './dataview/source';
 import MenuDataviewContext from './dataview/context';
 import MenuDataviewCreateBookmark from './dataview/create/bookmark';
 
-interface Props extends I.Menu {
-	dataset?: any;
-	history: any;
-};
+interface Props extends I.Menu {};
 
 interface State {
 	tab: string;
@@ -164,6 +161,8 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 		this.setHover = this.setHover.bind(this);
 		this.setActive = this.setActive.bind(this);
 		this.onKeyDown = this.onKeyDown.bind(this);
+		this.storageGet = this.storageGet.bind(this);
+		this.storageSet = this.storageSet.bind(this);
 		this.getId = this.getId.bind(this);
 		this.getSize = this.getSize.bind(this);
 		this.getPosition = this.getPosition.bind(this);
@@ -172,8 +171,9 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 
 	render () {
 		const { id, param } = this.props;
-		const { element, tabs, type, vertical, horizontal, passThrough, noDimmer, component, withArrow } = param;
+		const { element, type, vertical, horizontal, passThrough, noDimmer, component, withArrow, getTabs } = param;
 		const { data } = param;
+		const tabs: I.MenuTab[] = getTabs ? getTabs() : [];
 		
 		let tab = '';
 		if (tabs.length) {
@@ -248,6 +248,8 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 							setActive={this.setActive}
 							setHover={this.setHover}
 							onKeyDown={this.onKeyDown}
+							storageGet={this.storageGet}
+							storageSet={this.storageSet}
 							getId={this.getId} 
 							getSize={this.getSize}
 							getPosition={this.getPosition}
@@ -631,8 +633,10 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 		keyboard.disableMouse(true);
 
 		const { param } = this.props;
-		const { commonFilter, isSub } = param;
+		const { commonFilter } = param;
 		const refInput = this.ref.refFilter || this.ref.refName;
+		const shortcutClose = [ 'escape' ];
+		const shortcutSelect = [ 'tab', 'enter' ];
 
 		let ret = false;
 
@@ -649,6 +653,19 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 
 					ret = true;
 				});
+
+				if (this.ref && this.ref.onClick) {	
+					keyboard.shortcut(shortcutSelect.join(', '), e, (pressed: string) => {
+						e.preventDefault();
+
+						const items = this.ref.getItems();
+						const item = items.length ? items[0] : null;
+
+						if (item) {
+							item.arrow && this.ref.onOver ? this.ref.onOver(e, item) : this.ref.onClick(e, item);
+						};
+					});
+				};
 
 				keyboard.shortcut('arrowup', e, (pressed: string) => {
 					if (!this.ref.getItems) {
@@ -677,9 +694,6 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 		if (ret) {
 			return;
 		};
-
-		const shortcutClose = [ 'escape' ];
-		const shortcutSelect = [ 'tab', 'enter' ];
 
 		if (!commonFilter) {
 			shortcutClose.push('arrowleft');
@@ -854,9 +868,9 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 			return;
 		};
 
-		let el = menu.find(`#item-${item.itemId}`);
+		let el = menu.find(`#item-${$.escapeSelector(item.itemId)}`);
 		if (!el.length) {
-			el = menu.find(`#item-${item.id}`);
+			el = menu.find(`#item-${$.escapeSelector(item.id)}`);
 		};
 
 		if (!el.length) {
@@ -885,15 +899,24 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 		this.setState({ tab });
 	};
 
+	storageGet () {
+		return Storage.get(this.getId()) || {};
+	};
+
+	storageSet (data: any) {
+		Storage.set(this.getId(), data);
+	};
+
 	getId (): string {
 		const { param } = this.props;
-		const { tabs } = param;
+		const { getTabs } = param;
 		const { tab } = this.state;
+		const tabs = getTabs ? getTabs() : [];
 
 		let id = '';
 
 		if (tab) {
-			const item = tabs.find((it: I.MenuTab) => { return it.id == tab; });
+			const item = tabs.find(it => it.id == tab);
 			if (item) {
 				id = item.component;
 			};

@@ -23,7 +23,6 @@ const MenuSource = observer(class MenuSource extends React.Component<Props, {}> 
 	};
 	
 	render () {
-		const { config } = commonStore;
 		const items = this.getItems();
 		const types = this.getObjects().filter(it => it.type == Constant.typeId.type);
 		
@@ -56,7 +55,7 @@ const MenuSource = observer(class MenuSource extends React.Component<Props, {}> 
 					) : ''}
 				</div>
 				
-				{!types.length && config.experimental ? (
+				{!types.length ? (
 					<div className="bottom">
 						<div className="line" />
 						<div 
@@ -85,14 +84,10 @@ const MenuSource = observer(class MenuSource extends React.Component<Props, {}> 
 
 	componentWillUnmount () {
 		this.unbind();
-		menuStore.closeAll(Constant.menuIds.cell);
 	};
 
 	rebind () {
 		const { getId } = this.props;
-		const obj = $(`#${getId()} .content`);
-
-		obj.off('click').on('click', () => { menuStore.closeAll(Constant.menuIds.cell); });
 
 		this.unbind();
 		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
@@ -115,7 +110,10 @@ const MenuSource = observer(class MenuSource extends React.Component<Props, {}> 
 			data: {
 				skipIds: value,
 				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.relation }
+					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.relation },
+				],
+				sorts: [
+					{ relationKey: 'name', type: I.SortType.Asc }
 				],
 				onSelect: (item: any) => {
 					const value = this.getObjects().filter((it: any) => { return it.type == Constant.typeId.relation; }).map((it: any) => { return it.id; });
@@ -143,44 +141,42 @@ const MenuSource = observer(class MenuSource extends React.Component<Props, {}> 
 		const { data } = param;
 		const { rootId, blockId, readonly } = data;
 
-		if (item.itemId == 'type') {
-			if (readonly) {
-				return;
-			};
-
-			const types = DataUtil.getObjectTypesForNewObject({ withSet: true, withBookmark: true }).map(it => it.id);
-			const filters = [
-				{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: types }
-			];
-	
-			menuStore.open('searchObject', {
-				element: `#${getId()} #item-${item.itemId}`,
-				className: 'big single',
-				horizontal: I.MenuDirection.Center,
-				offsetX: getSize().width,
-				offsetY: -56,
-				data: {
-					isBig: true,
-					rootId: rootId,
-					blockId: blockId,
-					blockIds: [ blockId ],
-					placeholder: 'Change object type',
-					placeholderFocus: 'Change object type',
-					filters: filters,
-					dataSort: (c1: any, c2: any) => {
-						let i1 = types.indexOf(c1.id);
-						let i2 = types.indexOf(c2.id);
-
-						if (i1 > i2) return 1;
-						if (i1 < i2) return -1;
-						return 0;
-					},
-					onSelect: (item: any) => {
-						this.save([ item.id ]);
-					}
-				}
-			}); 
+		if ((item.itemId != 'type') || readonly) {
+			return;
 		};
+
+		const types = DataUtil.getObjectTypesForNewObject({ withSet: true, withBookmark: true }).map(it => it.id);
+		const filters = [
+			{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: types }
+		];
+
+		menuStore.open('searchObject', {
+			element: `#${getId()} #item-${item.itemId}`,
+			className: 'big single',
+			horizontal: I.MenuDirection.Center,
+			offsetX: getSize().width,
+			offsetY: -56,
+			data: {
+				isBig: true,
+				rootId: rootId,
+				blockId: blockId,
+				blockIds: [ blockId ],
+				placeholder: 'Change object type',
+				placeholderFocus: 'Change object type',
+				filters: filters,
+				dataSort: (c1: any, c2: any) => {
+					let i1 = types.indexOf(c1.id);
+					let i2 = types.indexOf(c2.id);
+
+					if (i1 > i2) return 1;
+					if (i1 < i2) return -1;
+					return 0;
+				},
+				onSelect: (item: any) => {
+					this.save([ item.id ]);
+				}
+			}
+		}); 
 	};
 
 	save (value: string[]) {

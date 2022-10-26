@@ -76,16 +76,18 @@ const MenuItemFilter = observer(class MenuItemFilter extends React.Component<Pro
 
 			case I.RelationType.Tag:
 			case I.RelationType.Status:
-				list = Relation.getArrayValue(value).map((id: string) => { 
-					return (relation.selectDict || []).find((it: any) => { return it.id == id; });
-				});
-				list = list.filter((it: any) => { return it && it.id; });
+				list = Relation.getOptions(value);
 
 				if (list.length) {
 					v = (
 						<React.Fragment>
 							{list.map((item: any) => (
-								<Tag {...item} key={item.id} className={DataUtil.tagClass(relation.format)} />
+								<Tag 
+									key={item.id}
+									text={item.name}
+									color={item.color}
+									className={DataUtil.tagClass(relation.format)} 
+								/>
 							))}
 						</React.Fragment>
 					);
@@ -106,8 +108,8 @@ const MenuItemFilter = observer(class MenuItemFilter extends React.Component<Pro
 					);
 				};
 
-				list = Relation.getArrayValue(value).map((it: string) => { return detailStore.get(subId, it, []); });
-				list = list.filter((it: any) => { return !it._empty_; });
+				list = Relation.getArrayValue(value).map(it => detailStore.get(subId, it, []));
+				list = list.filter(it => !it._empty_);
 
 				v = (
 					<React.Fragment>
@@ -119,7 +121,7 @@ const MenuItemFilter = observer(class MenuItemFilter extends React.Component<Pro
 				break;
 		};
 
-		if ([ I.FilterCondition.None, I.FilterCondition.Empty, I.FilterCondition.NotEmpty ].indexOf(condition) >= 0) {
+		if ([ I.FilterCondition.None, I.FilterCondition.Empty, I.FilterCondition.NotEmpty ].includes(condition)) {
 			v = null;
 		};
 

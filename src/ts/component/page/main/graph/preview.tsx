@@ -1,14 +1,13 @@
 import * as React from 'react';
-import { RouteComponentProps } from 'react-router';
 import { Loader, IconObject, Cover, Icon, Block, Button, ObjectName, ObjectDescription } from 'Component';
-import { detailStore } from 'Store';
 import { I, C, M, DataUtil } from 'Lib';
 import { observer } from 'mobx-react';
 
-interface Props extends RouteComponentProps<any> {
+interface Props extends I.PageComponent {
 	rootId: string;
 	onClick?: (e: any) => void;
 	onClose?: (e: any) => void;
+	onContextMenu?: (id: string, param: any) => void;
 	setState?: (state: any) => void;
 };
 
@@ -29,6 +28,8 @@ const GraphPreview = observer(class PreviewObject extends React.Component<Props,
 
 	constructor (props: any) {
 		super(props);
+
+		this.onMore = this.onMore.bind(this);
 	};
 	
 	render () {
@@ -43,16 +44,26 @@ const GraphPreview = observer(class PreviewObject extends React.Component<Props,
 		const cn = [ 'panelPreview', 'blocks', check.className, ];
 		const featured: any = new M.Block({ id: rootId + '-featured', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
 
-		let name = object.name;
-		if ([ I.ObjectLayout.File, I.ObjectLayout.Image ].indexOf(layout) >= 0) {
-			name += '.' + fileExt;
-		};
-
 		let icon = null;
+		let title = null;
+		let descr = null;
+
 		if (isTask || isBookmark) {
 			icon = <IconObject size={24} object={object} />;
 		} else {
 			icon = <IconObject size={48} iconSize={32} object={object} />;
+		};
+
+		if (layout == I.ObjectLayout.Note) {
+			title = <ObjectName object={object} className="description" />;
+		} else {
+			title = (
+				<div className="titleWrap">
+					{icon}
+					<ObjectName object={object} className="title" />
+				</div>
+			);
+			descr = <ObjectDescription object={object} className="description" />;
 		};
 
 		return (
@@ -60,18 +71,11 @@ const GraphPreview = observer(class PreviewObject extends React.Component<Props,
 				{loading ? <Loader /> : (
 					<React.Fragment>
 						{coverType && coverId ? <Cover type={coverType} id={coverId} image={coverId} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={false} /> : ''}
+						<Icon id="button-graph-more" className="more" onClick={this.onMore} />
+
 						<div className="heading">
-							{layout == I.ObjectLayout.Note ? (
-								<ObjectName object={object} className="description" />
-							) : (
-								<React.Fragment>
-									<div className="titleWrap">
-										{icon}
-										<ObjectName object={object} className="title" />
-									</div>
-									<ObjectDescription object={object} className="description" />
-								</React.Fragment>
-							)}
+							{title}
+							{descr}
 							<Block {...this.props} key={featured.id} rootId={contextId} traceId={TRACE} iconSize={20} block={featured} readonly={true} />
 						</div>
 						<div className="buttons">
@@ -121,6 +125,12 @@ const GraphPreview = observer(class PreviewObject extends React.Component<Props,
 	getRootId () {
 		const { rootId } = this.props;
 		return [ rootId, TRACE ].join('-');
+	};
+
+	onMore (e: any) {
+		const { onContextMenu, rootId } = this.props;
+
+		onContextMenu(rootId, { element: '#button-graph-more' });
 	};
 
 });

@@ -21,7 +21,10 @@ stdin.on('end', function() {
 	lines = [ ...new Set(lines) ];
 	lines = lines.filter((el) => { 
 		return el && el.match(/^node_modules/) && !el.match(new RegExp(`^node_modules/(${skipIds.join('|')})$`)); 
-	}).map((it) => { return { from: it, to: it }; });
+	}).map((it) => { 
+		it = it.replace(/\\/g, '/');
+		return { from: it, to: it }; 
+	});
 
 	console.log(lines);
 

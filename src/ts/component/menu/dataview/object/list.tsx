@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { Filter, MenuItemVertical, Icon, Loader, ObjectName } from 'Component';
-import { I, C, Util, keyboard, DataUtil, Relation } from 'Lib';
-import { commonStore, menuStore, detailStore } from 'Store';
+import { Filter, MenuItemVertical, Icon, Loader, ObjectName, EmptySearch } from 'Component';
+import { I, C, Util, keyboard, DataUtil, Relation, translate } from 'Lib';
+import { commonStore, menuStore, dbStore } from 'Store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
@@ -53,7 +53,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
-			const type = detailStore.get(Constant.subId.type, item.type, []);
+			const type = dbStore.getType(item.type);
 			const name = <ObjectName object={item} />;
 
 			let content = null;
@@ -94,7 +94,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		};
 
 		return (
-			<div className={[ 'wrap', (noFilter ? 'noFilter' : '') ].join(' ')}>
+			<div className={[ 'wrap', (!noFilter ? 'withFilter' : '') ].join(' ')}>
 				{!noFilter ? (
 					<Filter 
 						ref={(ref: any) => { this.refFilter = ref; }} 
@@ -104,7 +104,13 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 					/>
 				) : ''}
 
-				{loading ? <Loader /> : (
+				{loading ? <Loader /> : ''}
+
+				{!items.length && !loading ? (
+					<EmptySearch text={filter ? Util.sprintf(translate('popupSearchEmptyFilter'), filter) : translate('popupSearchEmpty')} />
+				) : ''}
+
+				{this.cache && items.length && !loading ? (
 					<div className="items">
 						<InfiniteLoader
 							rowCount={items.length + 1}
@@ -126,13 +132,14 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 											onRowsRendered={onRowsRendered}
 											overscanRowCount={LIMIT_HEIGHT}
 											onScroll={this.onScroll}
+											scrollToAlignment="center"
 										/>
 									)}
 								</AutoSizer>
 							)}
 						</InfiniteLoader>
 					</div>
-				)}
+				) : ''}
 			</div>
 		);
 	};
@@ -224,7 +231,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		
 		let ret = Util.objectCopy(this.items);
 
-		ret = ret.filter((it: I.SelectOption) => { return value.indexOf(it.id) < 0; });
+		ret = ret.filter((it: any) => { return value.indexOf(it.id) < 0; });
 
 		if (data.filter && canAdd) {
 			ret.unshift({ id: 'add', name: `Create object named "${data.filter}"` });
@@ -243,10 +250,6 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 			{ relationKey: 'name', type: I.SortType.Asc },
 		];
 
-		if (!config.debug.ho) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true });
-		};
-
 		if (types && types.length) {
 			filters.push({ relationKey: 'type', operator: I.FilterOperator.And, condition: I.FilterCondition.In, value: types });
 		} else {
@@ -257,7 +260,13 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 			this.setState({ loading: true });
 		};
 
-		C.ObjectSearch(filters, sorts, Constant.defaultRelationKeys, filter, this.offset, Constant.limit.menu, (message: any) => {
+		DataUtil.search({
+			filters,
+			sorts,
+			fullText: filter,
+			offset: this.offset,
+			limit: Constant.limitMenuRecords,
+		}, (message: any) => {
 			if (callBack) {
 				callBack(message);
 			};
@@ -281,7 +290,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 
 	loadMoreRows ({ startIndex, stopIndex }) {
         return new Promise((resolve, reject) => {
-			this.offset += Constant.limit.menu;
+			this.offset += Constant.limitMenuRecords;
 			this.load(false, resolve);
 		});
 	};
@@ -361,7 +370,8 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		const items = this.getItems();
 		const obj = $(`#${getId()} .content`);
 		const offset = noFilter ? 16 : 58;
-		const height = Math.max(HEIGHT, Math.min(360, items.length * HEIGHT + offset));
+		const min = noFilter ? 28 + 16 : 300;
+		const height = Math.max(min, Math.min(360, items.length * HEIGHT + offset));
 
 		obj.css({ height });
 		position();

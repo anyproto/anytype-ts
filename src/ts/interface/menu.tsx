@@ -1,3 +1,5 @@
+import { I } from 'Lib';
+
 export enum MenuType { Vertical = 1, Horizontal };
 export enum MenuDirection { None, Top, Bottom, Left, Right, Center };
 
@@ -22,7 +24,7 @@ export interface MenuParam {
 	offsetY?: any;
 	width?: number;
 	height?: number;
-	tabs?: MenuTab[];
+	getTabs?(): I.MenuTab[];
 	initialTab?: string;
 	data?: any;
 	isSub?: boolean;
@@ -44,9 +46,12 @@ export interface Menu {
 	id: string;
 	param: MenuParam;
 	dataset?: any;
+	history?: any;
 	setActive?(item?: any, scroll?: boolean): void;
 	setHover?(item?: any, scroll?: boolean): void;
 	onKeyDown?(e: any): void;
+	storageGet?(): any;
+	storageSet?(data: any): void;
 	getId?(): string;
 	getSize?(): { width: number; height: number; };
 	getPosition?(): DOMRect;

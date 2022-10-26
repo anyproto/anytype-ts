@@ -9,5 +9,7 @@ export interface Popup {
 	param: PopupParam;
 	position? (): void;
 	close? (): void;
+	storageGet?(): any;
+	storageSet?(data: any): void;
 	getId?(): string;
 };

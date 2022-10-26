@@ -74,19 +74,44 @@ const AccountDelete = (response: any) => {
 
 const ObjectCreate = (response: any) => {
 	return {
-		pageId: response.getPageid(),
+		objectId: response.getObjectid(),
+		details: Decode.decodeStruct(response.getDetails()),
 	};
 };
 
 const ObjectCreateSet = (response: any) => {
 	return {
-		id: response.getId(),
+		objectId: response.getObjectid(),
+		details: Decode.decodeStruct(response.getDetails()),
 	};
 };
 
 const ObjectCreateBookmark = (response: any) => {
 	return {
-		pageId: response.getPageid(),
+		objectId: response.getObjectid(),
+		details: Decode.decodeStruct(response.getDetails()),
+	};
+};
+
+const ObjectCreateObjectType = (response: any) => {
+	return {
+		objectId: response.getObjectid(),
+		details: Decode.decodeStruct(response.getDetails()),
+	};
+};
+
+const ObjectCreateRelation = (response: any) => {
+	return {
+		objectId: response.getObjectid(),
+		relationKey: response.getKey(),
+		details: Decode.decodeStruct(response.getDetails()),
+	};
+};
+
+const ObjectCreateRelationOption = (response: any) => {
+	return {
+		objectId: response.getObjectid(),
+		details: Decode.decodeStruct(response.getDetails()),
 	};
 };
 
@@ -204,27 +229,8 @@ const BlockDataviewViewCreate = (response: any) => {
 	};
 };
 
-const BlockDataviewRecordCreate = (response: any) => {
-	return {
-		record: Mapper.From.Record(response.getRecord()),
-	};
-};
-
-const BlockDataviewRelationAdd = (response: any) => {
-	return {
-		relationKey: response.getRelationkey(),
-	};
-};
-
 const BlockDataviewRelationListAvailable = (response: any) => {
 	return {
-		relations: (response.getRelationsList() || []).map(Mapper.From.Relation),
-	};
-};
-
-const BlockDataviewRecordRelationOptionAdd = (response: any) => {
-	return {
-		option: Mapper.From.SelectOption(response.getOption()),
 	};
 };
 
@@ -239,25 +245,6 @@ const HistoryShowVersion = (response: any) => {
 	return {
 		version: version ? Mapper.From.HistoryVersion(response.getVersion()) : null,
 		objectView: Mapper.From.ObjectView(response.getObjectview()),
-	};
-};
-
-const ObjectTypeList = (response: any) => {
-	return {
-		objectTypes: (response.getObjecttypesList() || []).map(Mapper.From.ObjectType),
-	};
-};
-
-const ObjectTypeCreate = (response: any) => {
-	return {
-		//objectType: Decode.decodeStruct(response.getNewdetails()),
-		objectType: Mapper.From.ObjectType(response.getObjecttype()),
-	};
-};
- 
-const ObjectTypeRelationAdd = (response: any) => {
-	return {
-		relations: (response.getRelationsList() || []).map(Mapper.From.Relation),
 	};
 };
 
@@ -297,24 +284,6 @@ const ObjectGraph = (response: any) => {
 	return {
 		edges: (response.getEdgesList() || []).map(Mapper.From.GraphEdge),
 		nodes: (response.getNodesList() || []).map(Decode.decodeStruct),
-	};
-};
-
-const ObjectRelationAdd = (response: any) => {
-	return {
-		relation: Mapper.From.Relation(response.getRelation()),
-	};
-};
-
-const ObjectRelationListAvailable = (response: any) => {
-	return {
-		relations: (response.getRelationsList() || []).map(Mapper.From.Relation),
-	};
-};
-
-const ObjectRelationOptionAdd = (response: any) => {
-	return {
-		option: Mapper.From.SelectOption(response.getOption()),
 	};
 };
 
@@ -398,18 +367,15 @@ export {
 	ObjectCreate,
 	ObjectCreateSet,
 	ObjectCreateBookmark,
-	ObjectTypeList,
-	ObjectTypeCreate,
-	ObjectTypeRelationAdd,
+	ObjectCreateObjectType,
+	ObjectCreateRelation,
+	ObjectCreateRelationOption,
 
 	ObjectSearch,
 	ObjectSearchSubscribe,
 	ObjectSubscribeIds,
 	ObjectGraph,
 
-	ObjectRelationAdd,
-	ObjectRelationListAvailable,
-	ObjectRelationOptionAdd,
 	ObjectRelationSearchDistinct,
 
 	ObjectToSet,
@@ -437,10 +403,7 @@ export {
 	BlockCreate,
 	BlockDataviewViewCreate,
 
-	BlockDataviewRecordCreate,
-	BlockDataviewRelationAdd,
 	BlockDataviewRelationListAvailable,
-	BlockDataviewRecordRelationOptionAdd,
 
 	BlockListDuplicate,
 	BlockListConvertToObjects,

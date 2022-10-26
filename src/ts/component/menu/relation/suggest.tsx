@@ -1,15 +1,11 @@
 import * as React from 'react';
-import { Filter, Icon, Loader } from 'Component';
-import { I, Util, DataUtil, analytics, keyboard } from 'Lib';
-import { commonStore, menuStore } from 'Store';
+import { Filter, Icon, MenuItemVertical } from 'Component';
+import { I, Util, analytics, keyboard } from 'Lib';
+import { commonStore, menuStore, detailStore, dbStore } from 'Store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
 interface Props extends I.Menu {};
-
-interface State {
-	loading: boolean;
-};
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
@@ -17,14 +13,11 @@ const Constant = require('json/constant.json');
 const HEIGHT = 28;
 const LIMIT = 20;
 
-const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Component<Props, State> {
+const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Component<Props, {}> {
 
-	state = {
-		loading: false,
-	};
 	_isMounted: boolean = false;	
 	filter: string = '';
-	cache: any = {};
+	cache: any = null;
 	items: any[] = [];
 	refFilter: any = null;
 	refList: any = null;
@@ -40,10 +33,13 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 	
 	render () {
 		const { param } = this.props;
-		const { loading } = this.state;
 		const { data } = param;
 		const { filter } = data;
 		const items = this.getItems();
+
+		if (!this.cache) {
+			return null;
+		};
 
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
@@ -64,16 +60,14 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 				);
 			} else {
 				content = (
-					<div 
-						id={'item-' + item.relationKey} 
-						className={[ 'item', (item.isHidden ? 'isHidden' : '') ].join(' ')}
+					<MenuItemVertical 
+						{...item}
+						className={item.isHidden ? 'isHidden' : ''}
 						style={param.style}
+						object={item}
 						onMouseEnter={(e: any) => { this.onOver(e, item); }} 
 						onClick={(e: any) => { this.onClick(e, item); }}
-					>
-						<Icon className={'relation ' + DataUtil.relationClass(item.format)} />
-						<div className="name">{item.name}</div>
-					</div>
+					/>
 				);
 			};
 
@@ -101,32 +95,31 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 				/>
 
 				<div className="items">
-					{loading ? <Loader / > : (
-						<InfiniteLoader
-							rowCount={items.length}
-							loadMoreRows={() => {}}
-							isRowLoaded={() => { return true; }}
-							threshold={LIMIT}
-						>
-							{({ onRowsRendered, registerChild }) => (
-								<AutoSizer className="scrollArea">
-									{({ width, height }) => (
-										<List
-											ref={(ref: any) => { this.refList = ref; }}
-											width={width}
-											height={height}
-											deferredMeasurmentCache={this.cache}
-											rowCount={items.length}
-											rowHeight={HEIGHT}
-											rowRenderer={rowRenderer}
-											onRowsRendered={onRowsRendered}
-											overscanRowCount={LIMIT}
-										/>
-									)}
-								</AutoSizer>
-							)}
-						</InfiniteLoader>
-					)}
+					<InfiniteLoader
+						rowCount={items.length}
+						loadMoreRows={() => {}}
+						isRowLoaded={() => { return true; }}
+						threshold={LIMIT}
+					>
+						{({ onRowsRendered, registerChild }) => (
+							<AutoSizer className="scrollArea">
+								{({ width, height }) => (
+									<List
+										ref={(ref: any) => { this.refList = ref; }}
+										width={width}
+										height={height}
+										deferredMeasurmentCache={this.cache}
+										rowCount={items.length}
+										rowHeight={HEIGHT}
+										rowRenderer={rowRenderer}
+										onRowsRendered={onRowsRendered}
+										overscanRowCount={LIMIT}
+										scrollToAlignment="center"
+									/>
+								)}
+							</AutoSizer>
+						)}
+					</InfiniteLoader>
 				</div>
 			</div>
 		);
@@ -134,10 +127,20 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 	
 	componentDidMount () {
 		this._isMounted = true;
+
+		const items = this.getItems();
+
 		this.rebind();
 		this.resize();
 		this.focus();
-		this.load();
+
+		this.cache = new CellMeasurerCache({
+			fixedWidth: true,
+			defaultHeight: HEIGHT,
+			keyMapper: (i: number) => { return (items[i] || {}).id; },
+		});
+
+		this.forceUpdate();
 	};
 
 	componentDidUpdate () {
@@ -147,10 +150,9 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		const { filter } = data;
 
 		if (filter != this.filter) {
-			this.load();
 			this.filter = filter;
 			this.n = -1;
-			this.props.setActive();
+			this.forceUpdate();
 			return;
 		};
 
@@ -193,44 +195,21 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		const { data } = param;
 		const skipIds = (data.skipIds || []).concat(Constant.systemRelationKeys);
 		const name = data.filter ? `Create relation "${data.filter}"` : 'Create from scratch';
+		const records = dbStore.getRecords(Constant.subId.relation, '');
+		const items = records.map(id => dbStore.getRelationById(id)).filter(it => it && !skipIds.includes(it.relationKey));
 
-		let ret: any[] = [ { relationKey: 'add', name: name } ];
-
-		ret = ret.concat(this.items);
-		ret = ret.filter((it: any) => { return skipIds.indexOf(it.relationKey) < 0; });
-
+		let ret: any[] = [].concat(items);
 		if (data.filter) {
 			const filter = new RegExp(Util.filterFix(data.filter), 'gi');
 			ret = ret.filter(it => it.name.match(filter));
 		};
-
 		if (!config.debug.ho) {
 			ret = ret.filter(it => !it.isHidden);
 		};
-
-		ret = ret.map((it: any) => {
-			it.id = it.relationKey;
-			return it;
-		});
-
+		ret.unshift({ id: 'add', name: name });
 		return ret;
 	};
 	
-	load () {
-		const { param } = this.props;
-		const { data } = param;
-		const { rootId, blockId, listCommand } = data;
-
-		this.setState({ loading: true });
-
-		if (listCommand) {
-			listCommand(rootId, blockId, (message: any) => {
-				this.items = (message.relations || []).sort(DataUtil.sortByName);
-				this.setState({ loading: false });
-			});
-		};
-	};
-
 	onFilterChange (v: string) {
 		this.props.param.data.filter = v;
 	};
@@ -242,9 +221,9 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 	};
 	
 	onClick (e: any, item: any) {
-		const { close, param, getId } = this.props;
+		const { close, param, getId, getSize } = this.props;
 		const { data, classNameWrap } = param;
-		const { rootId, blockId, menuIdEdit, addCommand, onAdd, ref, onChange } = data;
+		const { rootId, blockId, menuIdEdit, addCommand, ref } = data;
 
 		e.preventDefault();
 		e.stopPropagation();
@@ -255,32 +234,25 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		};
 
 		if (item.id == 'add') {
-			const obj = $(`#${getId()}`);
-
 			menuStore.open(menuIdEdit, { 
 				element: `#${getId()} #item-${item.id}`,
-				offsetX: obj.outerWidth(),
-				offsetY: -76,
+				offsetX: getSize().width,
+				offsetY: -80,
 				noAnimation: true,
 				classNameWrap: classNameWrap,
 				data: {
 					...data,
+					rebind: this.rebind,
 					onChange: (relation: any) => { 
 						close(); 
-						
-						if (onAdd) {
-							onAdd();
-						};
-
 						analytics.event('CreateRelation', { format: relation.format, type: ref });
 					},
-					rebind: this.rebind,
 				}
 			});
 		} else 
 		if (addCommand) {
 			close(); 
-			addCommand(rootId, blockId, item, onChange);
+			addCommand(rootId, blockId, item.relationKey);
 			analytics.event('AddExistingRelation', { format: item.format, type: ref });
 		};
 	};

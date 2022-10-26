@@ -84,7 +84,7 @@ const MenuDataviewDate = observer(class MenuDataviewDate extends React.Component
 			const view = getView();
 			relation = view.getRelation(relationKey);
 		} else {
-			relation = dbStore.getRelation(rootId, rootId, relationKey);
+			relation = dbStore.getRelationByKey(relationKey);
 		};
 
 		if (!relation) {
@@ -165,7 +165,7 @@ const MenuDataviewDate = observer(class MenuDataviewDate extends React.Component
 
 			relation = view.getRelation(relationKey);
 		} else {
-			relation = dbStore.getRelation(rootId, rootId, relationKey);
+			relation = dbStore.getRelationByKey(relationKey);
 		};
 
 		const options = this.getOptions(item.itemId);

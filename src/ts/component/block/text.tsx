@@ -293,6 +293,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 				html = Prism.highlight(html, grammar, lang);
 			};
 		} else {
+			html = Mark.fromUnicode(html);
 			html = Mark.toHtml(html, this.marks);
 			html = html.replace(/\n/g, '<br/>');
 		};
@@ -664,7 +665,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 
 		const range = this.getRange();
 		const symbolBefore = range ? value[range.from - 1] : '';
-		const cmd = keyboard.ctrlKey();
+		const cmd = keyboard.cmdKey();
 		
 		const menuOpen = menuStore.isOpen();
 		const menuOpenAdd = menuStore.isOpen('blockAdd');
@@ -1032,11 +1033,13 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 	};
 
 	onSmile () {
-		const { rootId, block } = this.props;
-		const win = $(window);
+		let { rootId, block } = this.props;
+		let win = $(window);
+		let range = this.getRange();
+		let value = this.getValue();
 
 		menuStore.open('smile', {
-			element: '#block-' + block.id,
+			element: `#block-${block.id}`,
 			recalcRect: () => {
 				const rect = Util.selectionRect();
 				return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
@@ -1050,9 +1053,6 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 				rootId: rootId,
 				blockId: block.id,
 				onSelect: (icon: string) => {
-					let range = this.getRange();
-					let value = this.getValue();
-
 					this.marks = Mark.adjust(this.marks, range.from, 1);
 					this.marks = Mark.toggle(this.marks, { 
 						type: I.MarkType.Emoji, 

@@ -38,8 +38,9 @@ class Action {
 
 		dbStore.metaClear(rootId, '');
 		dbStore.recordsClear(rootId, '');
-
 		detailStore.clear(rootId);
+
+		C.ObjectSearchUnsubscribe([ rootId ]);
 	};
 
 	dbClearBlock (rootId: string, blockId: string) {
@@ -69,7 +70,7 @@ class Action {
 		});
 	};
 	
-	download (block: I.Block) {
+	download (block: I.Block, route: string) {
 		const { content } = block;
 		const { type, hash } = content;
 
@@ -80,7 +81,7 @@ class Action {
 		const url = block.isFileImage() ? commonStore.imageUrl(hash, Constant.size.image) : commonStore.fileUrl(hash);
 		Renderer.send('download', url);
 
-		analytics.event('DownloadMedia', { type });
+		analytics.event('DownloadMedia', { type, route });
 	};
 
 	duplicate (rootId: string, targetContextId: string, blockId: string, blockIds: string[], position: I.BlockPosition, callBack?: (message: any) => void) {

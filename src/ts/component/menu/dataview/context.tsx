@@ -74,7 +74,7 @@ class MenuContext extends React.Component<Props, {}> {
 	getSections () {
 		const { param } = this.props;
 		const { data } = param;
-		const { subId, objectIds } = data;
+		const { subId, objectIds, getObject } = data;
 		const length = objectIds.length;
 
 		let pageCopy = { id: 'copy', icon: 'copy', name: 'Duplicate' };
@@ -89,7 +89,17 @@ class MenuContext extends React.Component<Props, {}> {
 		let allowedCopy = true;
 
 		objectIds.forEach((it: string) => {
-			const object = detailStore.get(subId, it);
+			let object = null; 
+			if (subId) {
+				object = detailStore.get(subId, it);
+			} else 
+			if (getObject) {
+				object = getObject(it);
+			};
+
+			if (!object || object._empty_) {
+				return;
+			};
 
 			if (object.isFavorite) favCnt++;
 			if (object.isArchived) archiveCnt++;
@@ -158,8 +168,13 @@ class MenuContext extends React.Component<Props, {}> {
 	onClick (e: any, item: any) {
 		const { param, close } = this.props;
 		const { data } = param;
-		const { subId, objectIds } = data;
+		const { subId, objectIds, onSelect } = data;
 		const length = objectIds.length;
+		const cb = () => {
+			if (onSelect) {
+				onSelect(item.id);
+			};
+		};
 
 		focus.clear(false);
 		
@@ -174,30 +189,36 @@ class MenuContext extends React.Component<Props, {}> {
 					if (length == 1) {
 						DataUtil.objectOpenPopup(detailStore.get(subId, message.ids[0], []));
 					};
+
+					cb();
 					analytics.event('DuplicateObject', { count: length });
 				});
 				break;
 
 			case 'archive':
 				C.ObjectListSetIsArchived(objectIds, true, (message: any) => {
+					cb();
 					analytics.event('MoveToBin', { count: length });
 				});
 				break;
 
 			case 'unarchive':
 				C.ObjectListSetIsArchived(objectIds, false, (message: any) => {
+					cb();
 					analytics.event('RestoreFromBin', { count: length });
 				});
 				break;
 
 			case 'fav':
 				C.ObjectListSetIsFavorite(objectIds, true, () => {
+					cb();
 					analytics.event('AddToFavorites', { count: length });
 				});
 				break;
 
 			case 'unfav':
 				C.ObjectListSetIsFavorite(objectIds, false, () => {
+					cb();
 					analytics.event('RemoveFromFavorites', { count: length });
 				});
 				break;

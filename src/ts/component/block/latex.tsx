@@ -185,7 +185,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 	onKeyDownBlock (e: any) {
 		const { rootId, onKeyDown } = this.props;
 		const { isEditing } = this.state;
-		const cmd = keyboard.ctrlKey();
+		const cmd = keyboard.cmdKey();
 
 		if (isEditing) {
 			// Undo
@@ -227,7 +227,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 		const range = getRange(el);
 
 		keyboard.shortcut('backspace', e, (pressed: string) => {
-			if (range.start == filter.from) {
+			if (range && (range.start == filter.from)) {
 				menuStore.close('blockLatex');
 			};
 		});

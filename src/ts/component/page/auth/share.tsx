@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Util } from 'Lib';
+import { I, Util } from 'Lib';
 import { observer } from 'mobx-react';
 
-interface Props extends RouteComponentProps<any> {};
+interface Props extends I.PageComponent {};
 
 const PageAuthShare = observer(class PageAuthShare extends React.Component<Props, {}> {
 

@@ -27,6 +27,7 @@ const BlockImage = observer(class BlockImage extends React.Component<Props, {}> 
 		this.onChangeFile = this.onChangeFile.bind(this);
 		this.onClick = this.onClick.bind(this);
 		this.onLoad = this.onLoad.bind(this);
+		this.onDownload = this.onDownload.bind(this);
 		this.onError = this.onError.bind(this);
 	};
 
@@ -68,7 +69,14 @@ const BlockImage = observer(class BlockImage extends React.Component<Props, {}> 
 			case I.FileState.Done:
 				element = (
 					<div id="wrap" className="wrap" style={css}>
-						<img className="media" src={commonStore.imageUrl(hash, Constant.size.image)} onDragStart={(e: any) => { e.preventDefault(); }} onClick={this.onClick} onLoad={this.onLoad} onError={this.onError} />
+						<img 
+							className="media" src={commonStore.imageUrl(hash, Constant.size.image)} 
+							onDragStart={(e: any) => { e.preventDefault(); }} 
+							onClick={this.onClick} 
+							onLoad={this.onLoad} 
+							onError={this.onError} 
+						/>
+						<Icon className="download" onClick={this.onDownload} />
 						<Icon className="resize" onMouseDown={(e: any) => { this.onResizeStart(e, false); }} />
 					</div>
 				);
@@ -218,6 +226,10 @@ const BlockImage = observer(class BlockImage extends React.Component<Props, {}> 
 		if (!keyboard.withCommand(e)) {
 			popupStore.open('preview', { data: { block: this.props.block } });
 		};
+	};
+
+	onDownload () {
+		Action.download(this.props.block, 'block');
 	};
 	
 	getWidth (checkMax: boolean, v: number): number {

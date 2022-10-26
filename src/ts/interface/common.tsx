@@ -1,3 +1,5 @@
+import { RouteComponentProps } from 'react-router';
+
 export enum Platform {
 	Windows = 'Windows',
 	Mac = 'Mac',
@@ -102,7 +104,7 @@ export enum TabIndex {
 	Archive		 = 'archive',
 };
 
-export interface HeaderComponent {
+export interface HeaderComponent extends RouteComponentProps<any> {
 	rootId?: string;
 	isPopup?: boolean;
 	dataset?: any;
@@ -117,7 +119,16 @@ export interface HeaderComponent {
 	onGraph?: (e: any) => void;
 };
 
-export interface FooterComponent {
+export interface PageComponent extends RouteComponentProps<any> {
+	rootId?: string;
+	isPopup?: boolean;
+	matchPopup?: any;
+	dataset?: any;
+	storageGet?(): any;
+	storageSet?(data: any): void;
+};
+
+export interface FooterComponent extends RouteComponentProps<any> {
 	onHelp?: (e: any) => void;
 };
 

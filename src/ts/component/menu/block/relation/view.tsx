@@ -25,7 +25,6 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		this.onEdit = this.onEdit.bind(this);
 		this.onCellClick = this.onCellClick.bind(this);
 		this.onCellChange = this.onCellChange.bind(this);
-		this.optionCommand = this.optionCommand.bind(this);
 	};
 
 	render () {
@@ -74,15 +73,14 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 								onEdit={this.onEdit}
 								onRef={(id: string, ref: any) => { this.cellRefs.set(id, ref); }}
 								onFav={this.onFav}
-								readonly={!(allowedValue && !item.isReadonlyValue)}
-								canEdit={allowedRelation && !item.isReadonlyRelation}
-								canDrag={allowedBlock}
+								readonly={!(allowedValue && !item.isReadonlyValue && !readonly)}
+								canEdit={allowedRelation && !item.isReadonlyRelatione && !readonly}
+								canDrag={allowedBlock && !readonly}
 								canFav={canFav}
 								isFeatured={section.id == 'featured'}
 								classNameWrap={classNameWrap}
 								onCellClick={this.onCellClick}
 								onCellChange={this.onCellChange}
-								optionCommand={this.optionCommand}
 							/>
 						);
 					})}
@@ -159,48 +157,43 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 	};
 
 	getSections () {
-		const { config } = commonStore;
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId } = data;
+		const { config } = commonStore;
 		const object = detailStore.get(rootId, rootId, [ Constant.relationKey.featured ]);
-		
-		let items = Util.objectCopy(dbStore.getRelations(rootId, rootId));
-		let featured = object[Constant.relationKey.featured] || [];
+		const type = dbStore.getType(object.type);
 
-		if (!config.debug.ho) {
-			items = items.filter((it: any) => { return !it.isHidden; });
-		};
-		items.sort(DataUtil.sortByHidden);
+		let featured = object[Constant.relationKey.featured] || [];
+		let relations = dbStore.getRelations(rootId, rootId);
+		let relationKeys = relations.map(it => it.relationKey);
+		let items = relations.map((it: any) => { return { ...it, scope: I.RelationScope.Object }; });
+		let typeRelations = (type ? type.recommendedRelations : []).map(it => {
+			it = dbStore.getRelationById(it);
+			return { ...it, scope: I.RelationScope.Type };
+		}).filter(it => !relationKeys.includes(it.relationKey));
+
+		items = items.concat(typeRelations);
+		items = items.sort(DataUtil.sortByHidden).filter((it: any) => {
+			return it ? (!config.debug.ho ? !it.isHidden : true) : false;
+		});
 
 		let sections = [ 
 			{ 
 				id: 'featured', name: 'Featured relations', 
-				children: items.filter((it: any) => { return featured.indexOf(it.relationKey) >= 0; }),
+				children: items.filter(it => featured.includes(it.relationKey)),
 			},
 			{ 
 				id: 'object', name: 'In this object', 
-				children: items.filter((it: any) => { return (it.scope == I.RelationScope.Object) && (featured.indexOf(it.relationKey) < 0); }),
+				children: items.filter(it => !featured.includes(it.relationKey) && (it.scope == I.RelationScope.Object)),
 			},
 			{ 
-				id: 'type', name: 'Type', 
-				children: items.filter((it: any) => { return (it.scope == I.RelationScope.Type) && (featured.indexOf(it.relationKey) < 0); }),
-			},
-			{ 
-				id: 'setType', name: 'Suggested', 
-				children: items.filter((it: any) => { return (it.scope == I.RelationScope.SetOfTheSameType) && (featured.indexOf(it.relationKey) < 0); }),
-			},
-			{ 
-				id: 'objectType', name: 'Objects of the same type', 
-				children: items.filter((it: any) => { return (it.scope == I.RelationScope.ObjectsOfTheSameType) && (featured.indexOf(it.relationKey) < 0); }),
-			},
-			{ 
-				id: 'library', name: 'Library', 
-				children: items.filter((it: any) => { return (it.scope == I.RelationScope.Library) && (featured.indexOf(it.relationKey) < 0); }),
+				id: 'type', name: `From type ${type.name}`,
+				children: items.filter(it => !featured.includes(it.relationKey) && (it.scope == I.RelationScope.Type)),
 			},
 		];
 
-		sections = sections.filter((it: any) => { return it.children.length; });
+		sections = sections.filter(it => it.children.length);
 		return sections;
 	};
 
@@ -245,58 +238,44 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		menuStore.open('relationSuggest', { 
 			element: `#${getId()} #item-add .info`,
 			classNameWrap: classNameWrap,
-			offsetY: 8,
+			offsetY: -8,
+			vertical: I.MenuDirection.Top,
 			data: {
 				...data,
 				filter: '',
 				ref: 'menu',
 				menuIdEdit: 'blockRelationEdit',
 				skipIds: relations.map(it => it.relationKey),
-				listCommand: (rootId: string, blockId: string, callBack?: (message: any) => void) => {
-					C.ObjectRelationListAvailable(rootId, callBack);
-				},
-				addCommand: (rootId: string, blockId: string, relation: any, onChange?: (relation: any) => void) => {
-					C.ObjectRelationAdd(rootId, relation, () => { 
-						menuStore.close('relationSuggest'); 
-
-						if (onChange) {
-							onChange(relation);
-						};
-					});
+				addCommand: (rootId: string, blockId: string, relationKey: string, onChange: (message: any) => void) => {
+					C.ObjectRelationAdd(rootId, [ relationKey ], onChange);
 				},
 			}
 		});
 	};
 
-	onEdit (e: any, relationKey: string) {
+	onEdit (e: any, id: string) {
 		const { param, getId } = this.props;
 		const { data, classNameWrap } = param;
 		const { rootId } = data;
 		const allowed = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
+		const relation = dbStore.getRelationById(id);
 
-		if (!allowed) {
+		if (!relation || !allowed) {
 			return;
 		};
-		
+
 		menuStore.open('blockRelationEdit', { 
-			element: `#${getId()} #item-${relationKey}`,
+			element: `#${getId()} #item-${id}`,
 			horizontal: I.MenuDirection.Center,
-			classNameWrap: classNameWrap,
+			classNameWrap,
 			data: {
 				...data,
-				relationKey: relationKey,
-				addCommand: (rootId: string, blockId: string, relation: any, onChange?: (relation: any) => void) => {
-					C.ObjectRelationAdd(rootId, relation, () => {
-						if (onChange) {
-							onChange(relation);
-						};
-					});
+				relationId: id,
+				addCommand: (rootId: string, blockId: string, relationKey: string, onChange: (message: any) => void) => {
+					C.ObjectRelationAdd(rootId, [ relationKey ], onChange);
 				},
-				updateCommand: (rootId: string, blockId: string, relation: any) => {
-					C.ObjectRelationUpdate(rootId, relation);
-				},
-				deleteCommand: (rootId: string, blockId: string, relationKey: string) => {
-					C.ObjectRelationDelete(rootId, relationKey);
+				deleteCommand: () => {
+					C.ObjectRelationDelete(rootId, relation.relationKey);
 				},
 			}
 		});
@@ -305,8 +284,8 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 	onCellClick (e: any, relationKey: string, index: number) {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, readonly } = data;
-		const relation = dbStore.getRelation(rootId, rootId, relationKey);
+		const { readonly } = data;
+		const relation = dbStore.getRelationByKey(relationKey);
 
 		if (!relation || readonly || relation.isReadonlyValue) {
 			return;
@@ -339,7 +318,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId } = data;
-		const relation = dbStore.getRelation(rootId, rootId, relationKey);
+		const relation = dbStore.getRelationByKey(relationKey);
 		const details = [ 
 			{ key: relationKey, value: Relation.formatValue(relation, value, true) },
 		];
@@ -347,22 +326,6 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 
 		const key = Relation.checkRelationValue(relation, value) ? 'ChangeRelationValue' : 'DeleteRelationValue';	
 		analytics.event(key, { type: 'menu' });
-	};
-
-	optionCommand (code: string, rootId: string, blockId: string, relationKey: string, recordId: string, option: I.SelectOption, callBack?: (message: any) => void) {
-		switch (code) {
-			case 'add':
-				C.ObjectRelationOptionAdd(rootId, relationKey, option, callBack);
-				break;
-
-			case 'update':
-				C.ObjectRelationOptionUpdate(rootId, relationKey, option, callBack);
-				break;
-
-			case 'delete':
-				C.ObjectRelationOptionDelete(rootId, relationKey, option.id, callBack);
-				break;
-		};
 	};
 
 	resize () {

@@ -34,7 +34,7 @@
 		.content { min-height: 100%; }
 		#wrap { height: 100%; }
 
-		.page { padding: 0px; height: 100%; }
+		.page { padding: 0px; }
 		.footer { display: none; }
 
 		.pageMainEdit {
@@ -61,6 +61,10 @@
 
 		.pageMainStore {
 			.ReactVirtualized__List { padding-top: 0px; }
+		}
+
+		.pageMainGraph {
+			.footer { display: block; position: absolute; bottom: 0px; }
 		}
 
 	}	

@@ -58,7 +58,7 @@ const MenuSort = observer(class MenuSort extends React.Component<Props, {}> {
 		));
 		
 		const Item = SortableElement((item: any) => {
-			const relation: any = dbStore.getRelation(rootId, blockId, item.relationKey) || {};
+			const relation: any = dbStore.getRelationByKey(item.relationKey) || {};
 			return (
 				<div 
 					id={'item-' + item.id} 
@@ -126,6 +126,7 @@ const MenuSort = observer(class MenuSort extends React.Component<Props, {}> {
 											onRowsRendered={onRowsRendered}
 											overscanRowCount={LIMIT}
 											onScroll={this.onScroll}
+											scrollToAlignment="center"
 										/>
 									)}
 								</AutoSizer>
@@ -229,7 +230,7 @@ const MenuSort = observer(class MenuSort extends React.Component<Props, {}> {
 		const { data } = param;
 		const { rootId, blockId, getView } = data;
 
-		return Relation.getOptions(rootId, blockId, getView());
+		return Relation.getFilterOptions(rootId, blockId, getView());
 	};
 
 	onOver (e: any, item: any) {

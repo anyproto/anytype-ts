@@ -5,6 +5,7 @@ importScripts('./d3/d3-dispatch.min.js');
 importScripts('./d3/d3-timer.min.js');
 importScripts('./d3/d3-selection.min.js');
 importScripts('./d3/d3-force.min.js');
+importScripts('./d3/forceInBox.js');
 
 // CONSTANTS
 
@@ -41,6 +42,8 @@ let theme = '';
 let Color = {};
 let LineWidth = 0.25;
 let frame = 0;
+let selected = [];
+let groupForce = null;
 
 addEventListener('message', ({ data }) => { 
 	if (this[data.id]) {
@@ -61,12 +64,21 @@ init = (data) => {
 
 	ctx.lineCap = 'round';
 
-	initColor();
 	resize(data);
+	initColor();
+	initNames();
 
 	transform = d3.zoomIdentity.translate(-width, -height).scale(3);
 	simulation = d3.forceSimulation(nodes);
 
+	initForces();
+
+	simulation.on('tick', () => { redraw(); });
+	simulation.on('end', () => { simulation.alphaTarget(1); });
+	simulation.tick(200);
+};
+
+initNames = () => {
 	nodes = nodes.map((d) => {
 		if (d.isRoot) {
 			d.fx = width / 2;
@@ -85,11 +97,6 @@ init = (data) => {
 		d.textBitmap = offscreen.transferToImageBitmap();
 		return d;
 	});
-
-	initForces();
-	simulation.on('tick', () => { redraw(); });
-	simulation.on('end', () => { simulation.alphaTarget(1); });
-	simulation.tick(200);
 };
 
 initColor = () => {
@@ -104,6 +111,7 @@ initColor = () => {
 					1: '#8c9ea5',
 					over: '#ffd15b',
 					targetOver: '#5dd400',
+					selected: '#c4e3fb',
 				},
 				node: {
 					common: '#f3f2ec',
@@ -111,6 +119,7 @@ initColor = () => {
 					focused: '#fef3c5',
 					over: '#ffd15b',
 					targetOver: '#5dd400',
+					selected: '#e3eff4',
 				},
 			}; 
 			break;
@@ -125,6 +134,7 @@ initColor = () => {
 					1: '#8c9ea5',
 					over: '#ffd15b',
 					targetOver: '#5dd400',
+					selected: '#212b30',
 				},
 				node: {
 					common: '#484843',
@@ -132,6 +142,7 @@ initColor = () => {
 					focused: '#fef3c5',
 					over: '#ffd15b',
 					targetOver: '#5dd400',
+					selected: '#212b30',
 				},
 			};
 			break;
@@ -146,19 +157,31 @@ image = ({ src, bitmap }) => {
 
 updateProps = (data) => {
 	forceProps = data.forceProps;
-	redraw();
+	
+	updateForces();
+	restart(1);
 };
 
 initForces = () => {
+	/*
+	groupForce = forceInABox().template('force')
+	.strength(0.3) 
+	.groupBy('layout')
+	.enableGrouping(true)
+	.size([ width, height ]);
+	*/
+
 	simulation
 	.force('link', d3.forceLink())
 	.force('charge', d3.forceManyBody())
 	.force('collide', d3.forceCollide(nodes))
 	.force('center', d3.forceCenter())
 	.force('forceX', d3.forceX())
-	.force('forceY', d3.forceY());
+	.force('forceY', d3.forceY())
+	.force('forceInABox', groupForce);
 
 	updateForces();
+	restart(1);
 };
 
 updateForces = () => {
@@ -186,6 +209,7 @@ updateForces = () => {
 	simulation.force('link')
 	.id(d => d.id)
 	.distance(link.distance)
+	//.strength(d => simulation.force('forceInABox').getLinkStrength(d) * link.enabled)
 	.strength(link.strength * link.enabled)
 	.iterations(link.iterations)
 	.links(link.enabled ? edges : []);
@@ -203,8 +227,6 @@ updateForces = () => {
 		return hasLinks ? 0 : forceY.strength * forceY.enabled;
 	})
 	.y(height * forceY.y);
-
-	simulation.alpha(1).restart();
 };
 
 draw = () => {
@@ -344,6 +366,12 @@ drawNode = (d) => {
 		bg = Color.node.focused;
 	};
 
+	if (selected.includes(d.id)) {
+		stroke = Color.link.selected;
+		bg = Color.node.selected;
+		ctx.lineWidth = 1;
+	};
+
 	if (d.isOver) {
 		stroke = Color.node.over;
 		ctx.lineWidth = 1;
@@ -449,20 +477,20 @@ onZoom = (data) => {
 
 onDragStart = ({ active }) => {
 	if (!active) {
-		simulation.alphaTarget(0.3).restart();
+		restart(0.5);
 	};
 };
 
 onDragMove = ({ subjectId, active, x, y }) => {
 	if (!active) {
-		simulation.alphaTarget(0.3).restart();
+		restart(0.5);
 	};
 
 	if (!subjectId) {
 		return;
 	};
 
-	const d = nodes.find((it) => { return it.id == subjectId; });
+	const d = nodes.find((it) => it.id == subjectId);
 	if (d) {
 		d.fx = transform.invertX(x) - d.radius / 2;
 		d.fy = transform.invertY(y) - d.radius / 2;
@@ -477,9 +505,16 @@ onDragEnd = ({ active }) => {
 };
 
 onClick = ({ x, y }) => {
-  	const d = simulation.find(transform.invertX(x), transform.invertY(y), 10);
+  	const d = getNodeByCoords(x, y);
 	if (d) {
 		this.postMessage({ id: 'onClick', node: d });
+	};
+};
+
+onSelect = ({ x, y }) => {
+  	const d = getNodeByCoords(x, y);
+	if (d) {
+		this.postMessage({ id: 'onSelect', node: d });
 	};
 };
 
@@ -489,13 +524,61 @@ onMouseMove = ({ x, y }) => {
 		active.isOver = false;
 	};
 
-	const d = simulation.find(transform.invertX(x), transform.invertY(y), 10);
+	const d = getNodeByCoords(x, y);
 	if (d) {
 		d.isOver = true;
 	};
 
 	redraw();
-	this.postMessage({ id: 'onMouseMove', node: (d ? d.id : ''), x: x, y: y });
+	this.postMessage({ id: 'onMouseMove', node: (d ? d.id : ''), x, y });
+};
+
+onContextMenu = ({ x, y }) => {
+	const active = nodes.find(d => d.isOver);
+	if (active) {
+		active.isOver = false;
+	};
+
+	const d = getNodeByCoords(x, y);
+	if (d) {
+		d.isOver = true;
+	};
+
+	redraw();
+	this.postMessage({ id: 'onContextMenu', node: (d ? d.id : ''), x, y });
+};
+
+onRemoveNode = ({ ids }) => {
+	nodes = nodes.filter(d => !ids.includes(d.id));
+	edges = edges.filter(d => !ids.includes(d.source.id) && !ids.includes(d.target.id));
+	
+	updateForces();
+	restart(0.5);
+};
+
+onSetEdges = (data) => {
+	edges = data.edges.map((d) => {
+		return { 
+			...d, 
+			source: nodes.find(n => d.source == n.id),
+			target: nodes.find(n => d.target == n.id),
+		};
+	});
+
+	updateForces();
+	restart(0.5);
+};
+
+onSetSelected = ({ ids }) => {
+	selected = ids;
+};
+
+getNodeByCoords = (x, y) => {
+	return simulation.find(transform.invertX(x), transform.invertY(y), 10);
+};
+
+restart = (alpha) => {
+	simulation.alpha(alpha).restart();
 };
 
 resize = (data) => {

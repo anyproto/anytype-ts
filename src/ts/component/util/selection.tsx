@@ -39,7 +39,11 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	render () {
 		const children = this.injectProps(this.props.children);
 		return (
-			<div id="selection" className="selection" onMouseDown={this.onMouseDown}>
+			<div 
+				id="selection" 
+				className="selection" 
+				onMouseDown={this.onMouseDown}
+			>
 				<div id="selection-rect" />
 				{children}
 			</div>
@@ -150,10 +154,6 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			this.nodes.push(node);
 			this.cacheRect(node);
 		});
-
-		if (this.nodes.length) {
-			this.show();
-		};
 
 		if (keyboard.isShift()) {
 			let target = $(e.target).closest('.selectable');
@@ -315,11 +315,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		if (range) {
 			el.hide();
 		} else {
-			el.show().css({ 
-				transform: `translate3d(${rect.x}px, ${rect.y}px, 0px)`,
-				width: rect.width, 
-				height: rect.height,
-			});
+			el.show().css({ transform: `translate3d(${rect.x}px, ${rect.y}px, 0px)`, width: rect.width, height: rect.height });
 		};
 	};
 	
@@ -442,10 +438,6 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		};
 	};
 
-	show () {
-		$('#selection-rect').css({ transform: 'translate3d(0px, 0px, 0px)', width: 0, height: 0 }).show();
-	};
-	
 	hide () {
 		$('#selection-rect').hide();
 		this.unbindMouse();
@@ -473,7 +465,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			if (withChildren) {
 				ids.forEach(id => this.getChildrenIds(id, ids));
 			} else {
-				let childrenIds = [];				
+				let childrenIds = [];
 				ids.forEach(id => this.getChildrenIds(id, childrenIds));
 				ids = ids.filter(it => !childrenIds.includes(it));
 			};
@@ -526,7 +518,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 
 		for (let i in I.SelectType) {
 			const type = I.SelectType[i];
-			const ids = this.get(type);
+			const ids = this.get(type, true);
 
 			for (let id of ids) {
 				$(`#selectable-${id}`).addClass('isSelectionSelected');

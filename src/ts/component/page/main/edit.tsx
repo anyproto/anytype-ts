@@ -1,12 +1,9 @@
 import * as React from 'react';
-import { RouteComponentProps } from 'react-router';
 import { Header, Footer, EditorPage } from 'Component';
+import { I, Onboarding } from 'Lib';
 import { detailStore, blockStore } from 'Store';
-import { Onboarding } from 'Lib';
 
-interface Props extends RouteComponentProps<any> {
-	rootId: string;
-	isPopup?: boolean;
+interface Props extends I.PageComponent {
 	refSidebar?: any;
 };
 

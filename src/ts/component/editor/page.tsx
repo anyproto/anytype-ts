@@ -1,6 +1,5 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { RouteComponentProps } from 'react-router';
 import { Block, Icon, Loader, Deleted, DropTarget } from 'Component';
 import { commonStore, blockStore, detailStore, menuStore, popupStore } from 'Store';
 import { I, C, Key, Util, DataUtil, Mark, focus, keyboard, crumbs, Storage, Mapper, Action, translate, analytics, Renderer } from 'Lib';
@@ -10,10 +9,7 @@ import { throttle } from 'lodash';
 import Controls from 'Component/page/head/controls';
 import PageHeadEdit from 'Component/page/head/edit';
 
-interface Props extends RouteComponentProps<any> {
-	dataset?: any;
-	rootId: string;
-	isPopup: boolean;
+interface Props extends I.PageComponent {
 	onOpen?(): void;
 };
 
@@ -59,6 +55,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		this.resize = this.resize.bind(this);
 		this.focusTitle = this.focusTitle.bind(this);
 		this.blockRemove = this.blockRemove.bind(this);
+		this.setLayoutWidth = this.setLayoutWidth.bind(this);
 	};
 
 	render () {
@@ -89,6 +86,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 					key="editorControls" 
 					{...this.props} 
 					resize={this.resize} 
+					readonly={readonly}
 					onLayoutSelect={(layout: I.ObjectLayout) => { this.focusTitle(); }} 
 				/>
 				
@@ -103,7 +101,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 							onKeyUp={this.onKeyUpBlock}  
 							onMenuAdd={this.onMenuAdd}
 							onPaste={this.onPaste}
-							onResize={(v: number) => { this.onResize(v); }}
+							setLayoutWidth={this.setLayoutWidth}
 							readonly={readonly}
 							getWrapper={this.getWrapper}
 							getWrapperWidth={this.getWrapperWidth}
@@ -141,9 +139,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		const { selection } = dataset || {};
 		const win = $(window);
 		const namespace = isPopup ? '-popup' : '';
+		const container = Util.getScrollContainer(isPopup);
 
 		this._isMounted = true;
-
 		this.resize();
 		this.unbind();
 		this.open();
@@ -166,12 +164,11 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 				focus.restore();
 				focus.apply(); 
 			};
-			Util.getScrollContainer(isPopup).scrollTop(this.scrollTop);
+			container.scrollTop(this.scrollTop);
 		});
 
-		this.resize();
 		win.on('resize.editor' + namespace, (e: any) => { this.resize(); });
-		Util.getScrollContainer(isPopup).on('scroll.editor' + namespace, throttle((e: any) => { this.onScroll(e); }, THROTTLE));
+		container.on('scroll.editor' + namespace, (e: any) => { this.onScroll(e); });
 
 		Renderer.remove('commandEditor');
 		Renderer.on('commandEditor', (e: any, cmd: string, arg: any) => { this.onCommand(cmd, arg); });
@@ -183,15 +180,14 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		const resizable = node.find('.resizable');
 		
 		this.open();
-		
 		focus.apply();
-		Util.getScrollContainer(isPopup).scrollTop(this.scrollTop);
 
 		if (resizable.length) {
 			resizable.trigger('resizeInit');
 		};
 
 		this.resize();
+		Util.getScrollContainer(isPopup).scrollTop(this.scrollTop);
 	};
 	
 	componentWillUnmount () {
@@ -210,7 +206,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 	};
 
 	getWrapperWidth (): number {
-		return this.width;
+		const { rootId } = this.props;
+		const root = blockStore.getLeaf(rootId, rootId);
+
+		return this.getWidth(root?.fields?.width);
 	};
 
 	open () {
@@ -220,11 +219,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			return;
 		};
 
+		this.id = rootId;
 		this.loading = true;
 		this.isDeleted = false;
 		this.forceUpdate();
-		
-		this.id = rootId;
 
 		C.ObjectOpen(this.id, '', (message: any) => {
 			if (message.error.code) {
@@ -242,19 +240,22 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 			crumbs.addRecent(rootId);
 			
+			this.scrollTop = Storage.getScroll('editor' + (isPopup ? 'Popup' : ''), rootId);
 			this.loading = false;
 			this.focusTitle();
 			this.forceUpdate();
 			
-			Util.getScrollContainer(isPopup).scrollTop(Storage.getScroll('editor' + (isPopup ? 'Popup' : ''), rootId));
+			Util.getScrollContainer(isPopup).scrollTop(this.scrollTop);
 
 			if (onOpen) {
 				onOpen();
 			};
 
 			window.clearTimeout(this.timeoutMove);
-			window.setTimeout(() => { this.uiShow(); }, 10);
-			this.resize();
+			window.setTimeout(() => { 
+				this.uiShow(); 
+				this.resize();
+			}, 15);
 		});
 	};
 
@@ -367,7 +368,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			return;
 		};
 		
-		const { rootId } = this.props;
+		const { rootId, dataset, isPopup } = this.props;
+		const { selection } = dataset || {};
 		const root = blockStore.getLeaf(rootId, rootId);
 		const checkType = blockStore.checkBlockTypeExists(rootId);
 		const readonly = this.isReadonly();
@@ -378,7 +380,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			checkType || 
 			(root && root.isLocked()) || 
 			keyboard.isResizing || 
+			keyboard.isDragging || 
+			selection && selection.isSelecting || 
 			menuStore.isOpen() || 
+			(!isPopup && popupStore.isOpen()) ||
 			this.loading
 		) {
 			return;
@@ -495,7 +500,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		Util.previewHide(true);
 		
 		const ids = selection.get(I.SelectType.Block);
-		const cmd = keyboard.ctrlKey();
+		const cmd = keyboard.cmdKey();
 		const readonly = this.isReadonly();
 
 		// Select all
@@ -670,7 +675,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		};
 
 		const platform = Util.getPlatform();
-		const cmd = keyboard.ctrlKey();
+		const cmd = keyboard.cmdKey();
 
 		// Last line break doesn't expand range.to
 		let length = String(text || '').length;
@@ -796,7 +801,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 			// Backspace
 			keyboard.shortcut('backspace, delete', e, (pressed: string) => {
-				this.onBackspaceBlock(e, range, pressed, props);
+				this.onBackspaceBlock(e, range, pressed, length, props);
 			});
 
 			keyboard.shortcut('arrowup, arrowdown', e, (pressed: string) => {
@@ -840,7 +845,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 	};
 
 	getMarkParam () {
-		const cmd = keyboard.ctrlKey();
+		const cmd = keyboard.cmdKey();
 		return [
 			{ key: `${cmd}+b`,		 type: I.MarkType.Bold,		 param: '' },
 			{ key: `${cmd}+i`,		 type: I.MarkType.Italic,	 param: '' },
@@ -1078,7 +1083,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 	};
 
 	// Backspace / Delete
-	onBackspaceBlock (e: any, range: I.TextRange, pressed: string, props: any) {
+	onBackspaceBlock (e: any, range: I.TextRange, pressed: string, length: number, props: any) {
 		const { dataset, rootId } = this.props;
 		const { isInsideTable } = props;
 		const { selection } = dataset || {};
@@ -1091,19 +1096,18 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 		const isDelete = pressed == 'delete';
 		const ids = selection.get(I.SelectType.Block, true);
-		const length = block.getLength();
 
 		if (block.isText()) {
 			if (!isDelete && !range.to) {
 				if (block.isTextList() || block.isTextQuote() || block.isTextCallout()) {
 					C.BlockListTurnInto(rootId, [ block.id ], I.TextStyle.Paragraph);
 				} else {
-					ids.length ? this.blockRemove(block) : this.blockMerge(block, -1);
+					ids.length ? this.blockRemove(block) : this.blockMerge(block, -1, length);
 				};
 			};
 
 			if (isDelete && (range.to == length)) {
-				ids.length ? this.blockRemove(block) : this.blockMerge(block, 1);
+				ids.length ? this.blockRemove(block) : this.blockMerge(block, 1, length);
 			};
 		};
 		if (!block.isText() && !keyboard.isFocused) {
@@ -1418,6 +1422,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		const top = Util.getScrollContainer(isPopup).scrollTop();
 
 		this.scrollTop = top;
+
 		Storage.setScroll('editor' + (isPopup ? 'Popup' : ''), rootId, top);
 		Util.previewHide(false);
 	};
@@ -1541,8 +1546,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 					});
 					cb();
 				};
-				reader.onerror = function(e) {
-				};
 				reader.readAsBinaryString(file);
 			};
 		};
@@ -1564,7 +1567,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			data = this.getClipboardData(e);
 		};
 
-		if (files.length) {
+		if (files.length && !data.files.length) {
 			this.saveClipboardFiles(e, data, (data: any) => {
 				this.onPaste(e, props, force, data);
 			});
@@ -1787,7 +1790,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		});
 	};
 	
-	blockMerge (focused: I.Block, dir: number) {
+	blockMerge (focused: I.Block, dir: number, length: number) {
 		const { rootId } = this.props;
 		const next = blockStore.getNextBlock(rootId, focused.id, dir, it => it.isFocusable());
 
@@ -1798,7 +1801,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		let blockId = '';
 		let targetId = '';
 		let to = 0;
-		let length = focused.getLength();
 
 		if (dir < 0) {
 			blockId = next.id;
@@ -1994,9 +1996,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		const container = Util.getScrollContainer(isPopup);
 		const hh = isPopup ? header.height() : Util.sizeHeader();
 
-		if (blocks.length && last.length) {
-			last.css({ height: '' });
+		this.setLayoutWidth(root?.fields?.width);
 
+		if (blocks.length && last.length) {
 			const ct = isPopup ? container.offset().top : 0;
 			const ch = container.height();
 			const height = Math.max(ch / 2, ch - blocks.outerHeight() - blocks.offset().top - ct);
@@ -2013,8 +2015,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		if (cover.length) {
 			cover.css({ top: hh });
 		};
-
-		this.onResize(root?.fields?.width);
 	};
 
 	getContainer () {
@@ -2045,26 +2045,17 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		this.focus(next.id, from, from, true);
 	};
 
-	onResize (v: number) {
+	setLayoutWidth (v: number) {
 		v = Number(v) || 0;
 
-		const { rootId } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
 		const width = this.getWidth(v);
 		const elements = node.find('#elements');
-		const blocks = blockStore.getBlocks(rootId, it => it.isTable());
 
-		node.css({ width: width });
-		elements.css({ width: width, marginLeft: -width / 2 });
+		this.width = width;
 
-		/*
-		blocks.forEach((block: I.Block) => {
-			const el = node.find(`#block-${block.id} #wrap`);
-			if (el.length) {
-				el.trigger('resize');
-			};
-		});
-		*/
+		node.css({ width });
+		elements.css({ width, marginLeft: -width / 2 });
 
 		if (this.refHeader && this.refHeader.refDrag) {
 			this.refHeader.refDrag.setValue(v);
@@ -2073,25 +2064,25 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 	};
 
 	getWidth (w: number) {
+		w = Number(w) || 0;
+
 		const { isPopup, rootId } = this.props;
 		const container = Util.getPageContainer(isPopup);
 		const root = blockStore.getLeaf(rootId, rootId);
 		const size = Constant.size.editor;
 
 		let mw = container.width();
+		let width = 0;
 
 		if (root && root.isObjectSet()) {
-			this.width = mw - 192;
+			width = mw - 192;
 		} else {
 			mw -= 120;
-
-			w = Number(w) || 0;
 			w = (mw - size) * w;
-
-			this.width = Math.max(size, Math.min(mw, size + w));
+			width = Math.max(size, Math.min(mw, size + w));
 		};
 
-		return this.width;
+		return width;
 	};
 
 	isReadonly () {

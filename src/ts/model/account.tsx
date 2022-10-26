@@ -11,6 +11,7 @@ class AccountInfo implements I.AccountInfo {
 	marketplaceRelationObjectId: string = '';
 	deviceId: string = '';
 	localStoragePath: string = '';
+	accountSpaceId: string = '';
 	
 	constructor (props: I.AccountInfo) {
 		let self = this;
@@ -23,6 +24,7 @@ class AccountInfo implements I.AccountInfo {
 		self.marketplaceRelationObjectId = String(props.marketplaceRelationObjectId || '');
 		self.deviceId = String(props.deviceId || '');
 		self.localStoragePath = String(props.localStoragePath || '');
+		self.accountSpaceId = String(props.accountSpaceId || '');
 
 		makeObservable(self, {
 			homeObjectId: observable,
@@ -33,6 +35,7 @@ class AccountInfo implements I.AccountInfo {
 			marketplaceTemplateObjectId: observable,
 			deviceId: observable,
 			localStoragePath: observable,
+			accountSpaceId: observable,
 		});
 
 		intercept(self as any, (change: any) => { return Util.intercept(self, change); });

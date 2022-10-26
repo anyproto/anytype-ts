@@ -109,6 +109,7 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<Pro
 											onRowsRendered={onRowsRendered}
 											overscanRowCount={LIMIT}
 											onScroll={this.onScroll}
+											scrollToAlignment="center"
 										/>
 									)}
 								</AutoSizer>
@@ -144,7 +145,7 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<Pro
 							onMouseLeave={() => { this.props.setHover(); }}
 						>
 							<Icon className="plus" />
-							<div className="name">Add a filter</div>
+							<div className="name">New filter</div>
 						</div>
 					</div>
 				) : ''}
@@ -300,7 +301,7 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<Pro
 	getItems () {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, getView } = data;
+		const { getView } = data;
 		const view = getView();
 
 		if (!view) {
@@ -312,9 +313,9 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<Pro
 			return { 
 				...it, 
 				id: n++,
-				relation: dbStore.getRelation(rootId, blockId, it.relationKey),
+				relation: dbStore.getRelationByKey(it.relationKey),
 			};
-		}).filter((it: any) => { return it.relation; });
+		}).filter(it => it.relation);
 	};
 
 	getRelationOptions () {
@@ -322,7 +323,7 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<Pro
 		const { data } = param;
 		const { rootId, blockId, getView } = data;
 
-		return Relation.getOptions(rootId, blockId, getView());
+		return Relation.getFilterOptions(rootId, blockId, getView());
 	};
 
 	onScroll ({ clientHeight, scrollHeight, scrollTop }) {

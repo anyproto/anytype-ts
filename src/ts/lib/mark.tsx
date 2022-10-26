@@ -16,14 +16,21 @@ const Tags = [
 ];
 
 const Patterns = {
-	'-->': '⟶',
-	'<--': '⟵',
-	'<-->': '⟷',
-	'->': '→',
-	'<-': '←',
-	'--': '—',
+	'-→': '⟶',
 	'—>': '⟶',
+	'->': '→',
+
+	'←-': '⟵',
 	'<—': '⟵',
+	'<-': '←',
+	
+	'←→': '⟷',
+	'<-->': '⟷',
+	'⟵>': '⟷',
+	'<⟶': '⟷',
+
+	'--': '—',
+
 	'(c)': '©',
 	'(r)': '®',
 	'(tm)': '™',
@@ -474,12 +481,17 @@ class Mark {
 	// Unicode symbols
 	fromUnicode (html: string): string {
 		let text = html;
-		let keys = Object.keys(Patterns).map((it: any) => { return Util.filterFix(it) });
-		let reg = new RegExp('(' + keys.join('|') + ')\\s', 'g');
+		let keys = Object.keys(Patterns).map(it => Util.filterFix(it));
+		let reg = new RegExp('(' + keys.join('|') + ')', 'g');
+		let test = reg.test(text);
+
+		if (!test) {
+			return text;
+		};
 
 		html.replace(reg, (s: string, p: string) => {
 			if (Patterns[p]) {
-				text = text.replace(s, Patterns[p] + ' ');
+				text = text.replace(s, Patterns[p]);
 			};
 			return '';
 		});

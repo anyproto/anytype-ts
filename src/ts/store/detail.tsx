@@ -70,7 +70,7 @@ class DetailStore {
 		};
 
 		for (let k in item.details) {
-			let el = list.find((it: Detail) => { return it.relationKey == k; });
+			let el = list.find(it => it.relationKey == k);
 			if (el) {
 				set(el, { value: item.details[k] });
 			} else {
@@ -113,6 +113,7 @@ class DetailStore {
 		};
 		
 		if (keys) {
+			keys.push('id');
 			if (!forceKeys) {
 				keys = keys.concat(Constant.defaultRelationKeys);
 			};
@@ -124,7 +125,7 @@ class DetailStore {
 	check (object: any) {
 		let layout = Number(object.layout) || I.ObjectLayout.Page;
 		let name = String(object.name || DataUtil.defaultName('page'));
-		let snippet = String(object.snippet || '').replace(/\n/g, ' ');
+		let snippet = Relation.getStringValue(object.snippet).replace(/\n/g, ' ');
 
 		if (layout == I.ObjectLayout.Note) {
 			object.coverType = I.CoverType.None;
@@ -140,12 +141,31 @@ class DetailStore {
 		};
 
 		if (object.type == Constant.typeId.type) {
-			const type = dbStore.getObjectType(object.id);
-			object._smartBlockTypes_ = type ? type.types || [] : [];
+			object.smartblockTypes = Relation.getArrayValue(object.smartblockTypes);
+			object.recommendedLayout = Number(object.recommendedLayout) || I.ObjectLayout.Page;
+			object.recommendedRelations = Relation.getArrayValue(object.recommendedRelations);
 
 			if (object.isDeleted) {
 				name = translate('commonDeletedType');
 			};
+		} else
+		if (object.type == Constant.typeId.relation) {
+			object.relationFormat = Number(object.relationFormat) || I.RelationType.LongText;
+			object.format = object.relationFormat;
+			object.maxCount = Number(object.relationMaxCount) || 0;
+			object.objectTypes = Relation.getArrayValue(object.relationFormatObjectTypes);
+			object.isReadonlyRelation = Boolean(object.isReadonly);
+			object.isReadonlyValue = Boolean(object.relationReadonlyValue);
+
+			delete(object.relationMaxCount);
+			delete(object.isReadonly);
+			delete(object.relationReadonlyValue);
+		} else
+		if (object.type == Constant.typeId.option) {
+			object.text = Relation.getStringValue(object.name);
+			object.color = Relation.getStringValue(object.relationOptionColor);
+
+			delete(object.relationOptionColor);
 		};
 
 		return {
@@ -156,12 +176,13 @@ class DetailStore {
 			type: Relation.getStringValue(object.type),
 			iconImage: Relation.getStringValue(object.iconImage),
 			layoutAlign: Number(object.layoutAlign) || I.BlockHAlign.Left,
-			recommendedLayout: Number(object.recommendedLayout) || I.ObjectLayout.Page,
-			relationFormat: Number(object.relationFormat) || I.RelationType.LongText,
 			coverX: Number(object.coverX) || 0,
 			coverY: Number(object.coverY) || 0,
 			coverScale: Number(object.coverScale) || 0,
 			coverType: Number(object.coverType) || I.CoverType.None,
+			isArchived: Boolean(object.isArchived),
+			isFavorite: Boolean(object.isFavorite),
+			isHidden: Boolean(object.isHidden),
 		};
 	};
 

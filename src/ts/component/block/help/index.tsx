@@ -2,7 +2,7 @@ import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { I, DataUtil } from 'Lib';
 
-interface Props extends RouteComponentProps<any> {
+interface Props {
 	type: I.BlockType;
 	style?: any;
 	icon?: string;

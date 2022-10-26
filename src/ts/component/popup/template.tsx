@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Loader, Title, Label, ListObjectPreview } from 'Component';
-import { I, C, focus, Util } from 'Lib';
-import { detailStore } from 'Store';
+import { I, focus, Util, DataUtil } from 'Lib';
+import { dbStore } from 'Store';
 
 interface Props extends I.Popup, RouteComponentProps<any> {};
 
@@ -37,7 +37,7 @@ class PopupTemplate extends React.Component<Props, State> {
 		const { param } = this.props;
 		const { data } = param;
 		const { typeId } = data;
-		const type = detailStore.get(Constant.subId.type, typeId, []);
+		const type = dbStore.getType(typeId);
 		const length = items.length;
 
 		if (loading) {
@@ -105,7 +105,10 @@ class PopupTemplate extends React.Component<Props, State> {
 		];
 
 		this.setState({ loading: true });
-		C.ObjectSearch(filters, sorts, [], '', 0, 0, (message: any) => {
+		DataUtil.search({
+			filters,
+			sorts,
+		}, (message: any) => {
 			this.setState({ loading: false, items: message.records });
 		});
 	};

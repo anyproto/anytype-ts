@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { I, DataUtil, Relation, translate, keyboard } from 'Lib';
+import { I, C, DataUtil, Relation, translate, keyboard } from 'Lib';
 import { Filter, MenuItemVertical } from 'Component';
 import { menuStore } from 'Store';
 import { observer } from 'mobx-react';
@@ -20,7 +20,6 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<Pro
 		const { param } = this.props;
 		const { data } = param;
 		const { option } = data;
-		const relation = data.relation.get();
 		const sections = this.getSections();
 
 		const Section = (item: any) => (
@@ -53,7 +52,7 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<Pro
 					placeholder={translate('menuDataviewOptionEditPlaceholder')}
 					placeholderFocus={translate('menuDataviewOptionEditPlaceholder')}
 					className={'textColor-' + this.color}
-					value={option.text}
+					value={option.name}
 					onKeyUp={(e: any, v: string) => { this.onKeyUp(e, v); }}
 				/>
 
@@ -170,14 +169,13 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<Pro
 	remove () {
 		const { param, close, id } = this.props;
 		const { data } = param;
-		const { option, rootId, blockId, record, onChange, optionCommand } = data;
+		const { option, onChange } = data;
 		const relation = data.relation.get();
 		
 		let value = Relation.getArrayValue(data.value);
 		value = value.filter(it => it != option.id);
 
-		relation.selectDict = relation.selectDict.filter(it => it.id != option.id);
-		optionCommand('delete', rootId, blockId, relation.relationKey, record.id, option);
+		C.RelationListRemoveOption([ option.id ], false);
 
 		menuStore.updateData(id, { value });
 		menuStore.updateData('dataviewOptionList', { 
@@ -192,23 +190,17 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<Pro
 	save () {
 		const { param } = this.props;
 		const { data } = param;
-		const { option, rootId, blockId, record, optionCommand } = data;
-		const relation = data.relation.get();
-		const idx = relation.selectDict.findIndex(it => it.id == option.id);
-		const value = this.refName.getValue();
+		const { option } = data;
+		const value = this.refName ? this.refName.getValue() : '';
 
 		if (!value) {
 			return;
 		};
 
-		option.text = value;
-		option.color = this.color;
-
-		relation.selectDict[idx] = option;
-		optionCommand('update', rootId, blockId, relation.relationKey, record.id, relation.selectDict[idx]);
-
-		this.props.param.data.option = option;
-		menuStore.updateData('dataviewOptionList', { relation: observable.box(relation) });
+		C.ObjectSetDetails(option.id, [ 
+			{ key: 'name', value },
+			{ key: 'relationOptionColor', value: this.color },
+		]);
 	};
 	
 });

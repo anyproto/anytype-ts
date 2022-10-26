@@ -1,17 +1,14 @@
 import * as React from 'react';
-import { RouteComponentProps } from 'react-router';
 import { Frame, Cover, Title, Label, Error, Pin, Header, Footer } from 'Component';
-import { translate, Util } from 'Lib';
+import { I, translate, Util } from 'Lib';
 import { commonStore, authStore } from 'Store';
 import { observer } from 'mobx-react';
 
-interface Props extends RouteComponentProps<any> {}
+interface Props extends I.PageComponent {};
 
 interface State {
 	error: string;
 }
-
-const Constant: any = require('json/constant.json');
 
 const PageAuthPinSelect = observer(class PageAuthPinSelect extends React.Component<Props, State> {
 	

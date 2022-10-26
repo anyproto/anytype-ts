@@ -1,12 +1,11 @@
 import * as React from 'react';
-import { RouteComponentProps } from 'react-router';
 import { Loader, Frame } from 'Component';
 import { I, DataUtil } from 'Lib';
 import { observer } from 'mobx-react';
 
-interface Props extends RouteComponentProps<any> {};
+interface Props extends I.PageComponent {};
 
-const PageMainCreate = observer(class PageMainStore extends React.Component<Props, {}> {
+const PageMainCreate = observer(class PageMainCreate extends React.Component<Props, {}> {
 
 	render () {
 		return (

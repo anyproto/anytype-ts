@@ -5,29 +5,24 @@
 		.viewItem.viewBoard { padding: 16px 0px 0px 14px; }
         .viewItem.viewBoard {
 
-			.ghost { border: 1px dotted $colorBorderDark; border-radius: 12px; flex-shrink: 0; }
-			.ghost.isColumn { width: 240px; height: 100%; margin: 0px 14px 0px 0px; }
-			.ghost.isCard { margin-bottom: 8px; }
+			.ghost { flex-shrink: 0; position: relative; z-index: 1; }
+			.ghost.isColumn { width: 0px; height: 100%; position: absolute; left: 0px; top: 0px; }
+			.ghost.isColumn::after {
+				content: ""; position: absolute; left: -2px; top: 0px; background: $colorOrange; height: 100%; width: 4px;
+				border-radius: 2px;
+			}
+			.ghost.isCard { height: 0px; }
+			.ghost.isCard::after {
+				content: ""; position: absolute; left: 0px; top: -6px; background: $colorOrange; width: 100%; height: 4px;
+				border-radius: 2px;
+			}
 			
-			.isOver.left {
-				.ghost.left { display: block; }
-			}
-			.isOver.right {
-				.ghost.right { display: block; }
-			}
-			.isOver.top {
-				.ghost.top { display: block; }
-			}
-			.isOver.bottom {
-				.ghost.bottom { display: block; }
-			}
-
-            .columns { display: flex; flex-direction: row; gap: 0px 8px; align-items: flex-start; }
+            .columns { display: flex; flex-direction: row; gap: 0px 8px; align-items: flex-start; position: relative; }
             .column { width: 254px; flex-shrink: 0; display: flex; flex-direction: column; position: relative; }
             .column {
 				.bgColor { position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; opacity: 0.5; }
 
-                .head { cursor: grab; color: $colorDarkGrey; width: 100%; position: relative; padding: 8px 10px 8px 16px; }
+                .head { cursor: grab; color: $colorDarkGrey; width: 100%; position: relative; padding: 8px 16px 0px 16px; }
 				.head * { cursor: grab; }
 				.head {
 					.sides { display: flex; width: 100%; gap: 0px 6px; line-height: 24px; position: relative; z-index: 1; }
@@ -38,7 +33,7 @@
 
 					.cellContent { width: 100%; display: inline; }
 					.cellContent {
-						.empty { display: block; line-height: 24px; }
+						.empty { display: block; line-height: 24px; color: #8c9ea5; }
 						.wrap { display: inline-block; white-space: nowrap; max-width: 100%; }
 
 						.tagItem { margin: 3px 8px 0px 0px; }
@@ -57,7 +52,7 @@
 							flex-shrink: 0; width: 24px; height: 24px; background-size: 20px; border-radius: 4px; cursor: pointer; vertical-align: top; 
 							opacity: 0; 
 						}
-						.icon:hover { background-color: $colorVeryLightGrey; }
+						.icon:hover { background-color: $colorHover; }
 
 						.icon.more { background-image: url('~img/icon/menu/action/more0.svg'); }
 						.icon.add { background-image: url('~img/icon/plus/menu0.svg'); }
@@ -66,11 +61,13 @@
 					.bgColor { border-radius: 4px 4px 0px 0px; }
 				}
 
-				.body { overflow-y: overlay; max-height: 1500px; position: relative; z-index: 1; }
+				.body { position: relative; z-index: 1; }
 				.body {
-					.bg { position: relative; padding: 0px 8px 8px 8px; }
+					.bg { position: relative; padding: 7px; }
 					.bgColor { border-radius: 0px 0px 4px 4px; }
 				}
+
+				.loadMore { margin-bottom: 8px; position: relative; z-index: 1; }
             }
 			.column:hover, .column.active {
 				.head .side.right .icon { opacity: 1; }
@@ -82,23 +79,23 @@
 			.column.isDragging { opacity: 0.3; }
 			.column.isClone {
 				.body { overflow: visible; max-height: unset; }
-				.card { box-shadow: 0px 0px; }
+				.card { display: none; }
 			}
 
 			.column > .ghost { margin-top: 42px; width: 240px; flex-shrink: 0; }
 			
             .card { width: 240px; display: flex; flex-direction: column; margin: 0px auto 8px auto; position: relative; z-index: 1; }
 			.card {
+				.cellContent.isName {
+					.name { @include clamp2; white-space: normal; line-height: 22px; }
+				}
+
 				.cardContent { 
 					border: 1px solid $colorBorderDark; border-radius: 12px; padding: 16px; background: $colorWhite; transition: border-color 0.2s ease-in-out;
 				}
 
 				.cellContent {
 					.name:empty { display: none; }
-				}
-
-				.cellContent.c-shortText {
-					.name { height: 24px; }
 				}
 
 				.cellContent.c-longText {
@@ -133,4 +130,10 @@
 
 html.platformLinux {
 	.blocks .block.blockDataview .viewItem.viewBoard .column .body { overflow-y: auto; }
+}
+
+.blocks {
+	.block.blockDataview.isInline {
+		.viewItem.viewBoard { padding: 16px 0px 0px 0px; }
+	}
 }

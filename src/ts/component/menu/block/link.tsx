@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { MenuItemVertical, Filter, ObjectName } from 'Component';
 import { I, C, Util, keyboard, DataUtil, analytics, focus } from 'Lib';
-import { commonStore, menuStore, detailStore } from 'Store';
+import { commonStore, menuStore, detailStore, dbStore } from 'Store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
@@ -57,7 +57,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
-			const type = detailStore.get(Constant.subId.type, item.type, []);
+			const type = dbStore.getType(item.type);
 			const cn = [];
 
 			let object = { ...item, id: item.itemId };
@@ -139,6 +139,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 									onRowsRendered={onRowsRendered}
 									overscanRowCount={10}
 									onScroll={this.onScroll}
+									scrollToAlignment="center"
 								/>
 							)}
 						</AutoSizer>
@@ -288,7 +289,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 	
 	loadMoreRows ({ startIndex, stopIndex }) {
         return new Promise((resolve, reject) => {
-			this.offset += Constant.limit.menu;
+			this.offset += Constant.limitMenuRecords;
 			this.load(false, resolve);
 		});
 	};
@@ -310,15 +311,18 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 		if (skipIds && skipIds.length) {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: skipIds });
 		};
-		if (!config.debug.ho) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true });
-		};
 
 		if (clear) {
 			this.setState({ loading: true });
 		};
 
-		C.ObjectSearch(filters, sorts, Constant.defaultRelationKeys, filter.replace(/\\/g, ''), this.offset, Constant.limit.menu, (message: any) => {
+		DataUtil.search({
+			filters,
+			sorts,
+			fullText: filter,
+			offset: this.offset,
+			limit: Constant.limitMenuRecords,
+		}, (message: any) => {
 			if (callBack) {
 				callBack(null);
 			};
@@ -360,7 +364,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 			onChange(I.MarkType.Link, filter);
 		} else
 		if (item.itemId == 'add') {
-			const type = detailStore.get(Constant.subId.type, commonStore.type, []);
+			const type = dbStore.getType(commonStore.type);
 
 			DataUtil.pageCreate('', '', { name: filter }, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.SelectType ], (message: any) => {
 				if (message.error.code) {

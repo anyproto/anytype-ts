@@ -1,5 +1,3 @@
-import { I } from 'Lib';
-
 export enum SmartBlockType {
     Breadcrumbs		 = 0,
 
@@ -37,6 +35,8 @@ export enum ObjectLayout {
 	Note		 = 9,
 	Space		 = 10,
 	Bookmark	 = 11,
+	OptionList	 = 12,
+	Option		 = 13,
 	
 	Database	 = 20,
 
@@ -83,42 +83,4 @@ export enum ObjectFlag {
 	DeleteEmpty		 = 0,
 	SelectType		 = 1,
     SelectTemplate	 = 2,
-};
-
-export interface ObjectType {
-	id: string;
-	name: string;
-	description?: string;
-	layout: ObjectLayout;
-	iconEmoji: string;
-	isHidden: boolean;
-	isArchived: boolean;
-	isReadonly: boolean;
-	relations: Relation[];
-	types: SmartBlockType[];
-};
-
-export interface Relation {
-	relationKey: string;
-	format: RelationType;
-	name: string;
-	isHidden: boolean;
-	isReadonlyValue?: boolean;
-	isReadonlyRelation?: boolean;
-	objectId?: string;
-	dataSource?: number;
-	objectTypes?: string[];
-	selectDict?: any[];
-	maxCount?: number;
-	scope?: RelationScope;
-	includeTime?: boolean;
-	dateFormat?: I.DateFormat;
-	timeFormat?: I.TimeFormat;
-};
-
-export interface SelectOption {
-	id: string;
-	text: string;
-	color: string;
-	scope: I.OptionScope;
 };

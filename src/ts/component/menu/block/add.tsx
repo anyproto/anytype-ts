@@ -7,10 +7,6 @@ import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from
 
 interface Props extends I.Menu {};
 
-interface State {
-	loading: boolean;
-};
-
 const $ = require('jquery');
 const Constant = require('json/constant.json');
 const HEIGHT_ITEM = 28;
@@ -19,17 +15,12 @@ const HEIGHT_DESCRIPTION = 56;
 const HEIGHT_RELATION = 32;
 const LIMIT = 40;
 
-const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, State> {
+const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, {}> {
 	
 	_isMounted = false;
-		state = {
-		loading: false,
-	};
-
 	emptyLength: number = 0;
 	timeout: number = 0;
 	cache: any = {};
-	relations: any[] = [];
 	refList: any = null;
 	n: number = 0;
 	filter: string = '';
@@ -95,7 +86,6 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 							<Cell 
 								rootId={rootId}
 								subId={rootId}
-								storeId={rootId}
 								block={block}
 								relationKey={item.relationKey}
 								getRecord={() => { return record; }}
@@ -198,6 +188,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 											rowRenderer={rowRenderer}
 											onRowsRendered={onRowsRendered}
 											overscanRowCount={20}
+											scrollToAlignment="center"
 										/>
 									)}
 								</AutoSizer>
@@ -217,7 +208,6 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 		this.rebind();
 		this.checkFilter();
 		this.resize();
-		this.load();
 
 		this.cache = new CellMeasurerCache({
 			fixedWidth: true,
@@ -265,42 +255,6 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 		menuStore.closeAll(Constant.menuIds.add);
 	};
 
-	load () {
-		const { param } = this.props;
-		const { data } = param;
-		const { rootId } = data;
-		const { config } = commonStore;
-
-		this.setState({ loading: true });
-
-		C.ObjectRelationListAvailable(rootId, (message: any) => {
-			this.relations = message.relations.sort(DataUtil.sortByName).map((it: any) => {
-				it.id = it.relationKey;
-				it.type = I.BlockType.Relation;
-				it.isRelation = true;
-				it.isBlock = true;
-				return it;
-			});
-
-			this.relations = this.relations.filter((it: any) => {
-				if (!config.debug.ho && it.isHidden) {
-					return false;
-				};
-				return [ I.RelationScope.Object, I.RelationScope.Type ].indexOf(it.scope) >= 0;
-			});
-
-			this.relations.unshift({
-				id: 'add',
-				name: 'New relation',
-				type: I.BlockType.Relation,
-				isRelationAdd: true,
-				isBlock: true,
-			});
-
-			this.setState({ loading: false });
-		});
-	};
-	
 	checkFilter () {
 		const { filter } = commonStore;
 		const obj = $('#menuBlockAdd');
@@ -316,6 +270,30 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 	
 	unbind () {
 		$(window).off('keydown.menu');
+	};
+
+	getRelations () {
+		const { param } = this.props;
+		const { data } = param;
+		const { rootId } = data;
+		const { config } = commonStore;
+	
+		let relations = dbStore.getRelations(rootId, rootId).sort(DataUtil.sortByName);
+		
+		relations = relations.filter((it: any) => {
+			return it ? (!config.debug.ho ? !it.isHidden : true) : false;
+		});
+
+		let items = [
+			{ id: 'add', name: 'New relation', isRelationAdd: true },
+		];
+		items = items.concat(relations).map((it: any) => {
+			it.type = I.BlockType.Relation;
+			it.isRelation = true;
+			it.isBlock = true;
+			return it;
+		});
+		return items;
 	};
 	
 	getSections () {
@@ -339,7 +317,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 		];
 
 		if (config.experimental) {
-			sections.push({ id: 'dataview', name: 'Set', children: DataUtil.menuGetBlockDataview() });
+			sections.push({ id: 'dataview', name: 'Inline set', children: DataUtil.menuGetBlockDataview() });
 		};
 
 		sections = sections.map((s: any) => {
@@ -351,7 +329,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 		});
 
 		sections = sections.concat([
-			{ id: 'relation', name: 'Relations', children: this.relations },
+			{ id: 'relation', name: 'Relations', children: this.getRelations() },
 		]);
 		
 		if (filter && filter.text) {
@@ -552,7 +530,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 			if (item.isAction) {
 				switch (item.itemId) {
 					case 'download':
-						Action.download(block);
+						Action.download(block, 'menu');
 						break;
 
 					case 'copy':

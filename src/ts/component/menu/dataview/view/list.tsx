@@ -1,19 +1,18 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Icon } from 'Component';
-import { I, C, Util, keyboard } from 'Lib';
+import { I, C, Util, keyboard, Relation, analytics } from 'Lib';
 import { menuStore, dbStore, blockStore } from 'Store';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
 import arrayMove from 'array-move';
+import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCache } from 'react-virtualized';
 
 interface Props extends I.Menu {};
 
 const $ = require('jquery');
-const HEIGHT_SECTION = 28;
-const HEIGHT_ITEM = 40;
+const HEIGHT = 28;
 const LIMIT = 20;
 
 const MenuViewList = observer(class MenuViewList extends React.Component<Props> {
@@ -48,7 +47,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<Props> 
 		const Item = SortableElement((item: any) => (
 			<div 
 				id={'item-' + item.id} 
-				className="item big" 
+				className="item" 
 				onMouseEnter={(e: any) => { this.onOver(e, item); }}
 				style={item.style}
 			>
@@ -109,14 +108,12 @@ const MenuViewList = observer(class MenuViewList extends React.Component<Props> 
 											height={height}
 											deferredMeasurmentCache={this.cache}
 											rowCount={items.length}
-											rowHeight={({ index }) => {
-												const item = items[index];
-												return item.isSection ? HEIGHT_SECTION : HEIGHT_ITEM;
-											}}
+											rowHeight={HEIGHT}
 											rowRenderer={rowRenderer}
 											onRowsRendered={onRowsRendered}
 											overscanRowCount={LIMIT}
 											onScroll={this.onScroll}
+											scrollToAlignment="center"
 										/>
 									)}
 								</AutoSizer>
@@ -166,7 +163,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<Props> 
 
 		this.cache = new CellMeasurerCache({
 			fixedWidth: true,
-			defaultHeight: HEIGHT_ITEM,
+			defaultHeight: HEIGHT,
 			keyMapper: (i: number) => { return (items[i] || {}).id; },
 		});
 
@@ -215,9 +212,9 @@ const MenuViewList = observer(class MenuViewList extends React.Component<Props> 
 	};
 
 	onAdd () {
-		const { param, getId } = this.props;
+		const { param, getId, getSize, close } = this.props;
 		const { data } = param;
-		const { getView } = data;
+		const { rootId, blockId, getView, getData } = data;
 		const view = getView();
 		const relations = Util.objectCopy(view.relations);
 		const filters: I.Filter[] = [];
@@ -235,34 +232,45 @@ const MenuViewList = observer(class MenuViewList extends React.Component<Props> 
 			});
 		};
 
-		menuStore.open('dataviewViewEdit', {
-			element: `#${getId()} #item-add`,
-			horizontal: I.MenuDirection.Center,
-			data: {
-				...data,
-				view: observable.box({ 
-					type: I.ViewType.Grid,
-					relations: relations,
-					filters: filters,
-				}),
-				onSave: () => {
-					this.forceUpdate();
+		const newView = {
+			name: `New view`,
+			type: I.ViewType.Grid,
+			groupRelationKey: Relation.getGroupOption(rootId, blockId, '')?.id,
+			filters,
+		};
+
+		C.BlockDataviewViewCreate(rootId, blockId, newView, (message: any) => {
+			const view = dbStore.getView(rootId, blockId, message.viewId);
+
+			menuStore.open('dataviewViewEdit', {
+				element: `#${getId()}`,
+				offsetX: getSize().width,
+				offsetY: -getSize().height,
+				data: {
+					...data,
+					view: observable.box(view),
+					onSave: () => {
+						getData(view.id, 0);
+					},
 				},
-			},
+			});
+
+			analytics.event('AddView', { type: view.type });
 		});
 	};
 
 	onEdit (e: any, item: any) {
 		e.stopPropagation();
 
-		const { param, getId } = this.props;
+		const { param, getId, getSize } = this.props;
 		const { data } = param;
 		const { rootId, blockId } = data;
 		const allowed = blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
 
 		menuStore.open('dataviewViewEdit', { 
-			element: `#${getId()} #item-${item.id}`,
-			horizontal: I.MenuDirection.Center,
+			element: `#${getId()}`,
+			offsetX: getSize().width,
+			offsetY: -getSize().height,
 			data: {
 				...data,
 				readonly: !allowed,
@@ -312,8 +320,8 @@ const MenuViewList = observer(class MenuViewList extends React.Component<Props> 
 		const { getId, position } = this.props;
 		const items = this.getItems();
 		const obj = $(`#${getId()} .content`);
-		const offset = 50;
-		const height = Math.max(HEIGHT_ITEM + offset, Math.min(360, items.length * HEIGHT_ITEM + offset));
+		const offset = 58;
+		const height = Math.max(HEIGHT + offset, Math.min(360, items.length * HEIGHT + offset));
 
 		obj.css({ height });
 		position();

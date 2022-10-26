@@ -6,18 +6,21 @@
 	.menu.menuDataviewObjectList {
 		.content { padding: 0px; transition: none; }
 		
-		.wrap { padding-top: 8px; height: 100%; display: flex; flex-direction: column; }
-		.wrap.noFilter { padding-top: 0px; }
-		.wrap.noFilter {
-			.content { padding: 0px; }
-			.items { height: 100%; }
+		.wrap { height: 100%; display: flex; flex-direction: column; }
+		.wrap.withFilter { padding-top: 8px; }
+		.wrap.withFilter {
+			.items { height: calc(100% - 44px); }
+			.emptySearch { height: calc(100% - 44px); }
+			.loaderWrapper { top: 44px; height: calc(100% - 44px); }
 		}
 
-		.items { height: calc(100% - 34px); }
+		.items { height: 100%; }
 		.item {
 			.name { @include text-overflow-nw; width: calc(100% - 26px); }
 		}
 		.label { color: $colorMediumGrey; @include text-common; padding: 0px 16px; }
+
+		.filter { flex-shrink: 0; }
 	}
 
 	.menu.menuDataviewObjectList.single { width: 256px; }

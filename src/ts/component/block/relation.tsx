@@ -1,13 +1,12 @@
 import * as React from 'react';
 import { Cell, Icon } from 'Component';
-import { I, C, DataUtil, Util, focus, analytics, Relation } from 'Lib';
+import { I, C, DataUtil, Util, focus, analytics, Relation, keyboard } from 'Lib';
 import { observer } from 'mobx-react';
 import { menuStore, detailStore, dbStore, blockStore } from 'Store';
 
 interface Props extends I.BlockComponent {}
 
 const Constant = require('json/constant.json');
-const $ = require('jquery');
 
 const BlockRelation = observer(class BlockRelation extends React.Component<Props, {}> {
 
@@ -22,14 +21,13 @@ const BlockRelation = observer(class BlockRelation extends React.Component<Props
 		this.onMenu = this.onMenu.bind(this);
 		this.onCellClick = this.onCellClick.bind(this);
 		this.onCellChange = this.onCellChange.bind(this);
-		this.optionCommand = this.optionCommand.bind(this);
 	};
 
 	render (): any {
 		const { rootId, block, readonly, isPopup } = this.props;
 		const { content } = block;
 		const { key } = content;
-		const relation = dbStore.getRelation(rootId, rootId, key);
+		const relation = dbStore.getRelationByKey(key);
 		const idPrefix = 'blockRelationCell' + block.id;
 		const id = Relation.cellId(idPrefix, key, '0');
 		const allowedValue = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]) && relation && !relation.isReadonlyValue;
@@ -57,7 +55,6 @@ const BlockRelation = observer(class BlockRelation extends React.Component<Props
 								ref={(ref: any) => { this.refCell = ref; }}
 								rootId={rootId}
 								subId={rootId}
-								storeId={rootId}
 								block={block}
 								relationKey={relation.relationKey}
 								getRecord={() => { return detailStore.get(rootId, rootId, [ relation.relationKey ], true); }}
@@ -69,7 +66,6 @@ const BlockRelation = observer(class BlockRelation extends React.Component<Props
 								onCellChange={this.onCellChange}
 								bodyContainer={Util.getBodyContainer(isPopup ? 'popup' : 'page')}
 								pageContainer={Util.getCellContainer(isPopup ? 'popup' : 'page')}
-								optionCommand={this.optionCommand}
 							/>
 						</div>
 					</div>
@@ -80,8 +76,15 @@ const BlockRelation = observer(class BlockRelation extends React.Component<Props
 
 	onKeyDown (e: any) {
 		const { onKeyDown } = this.props;
+		const cmd = keyboard.cmdKey();
 
-		if (onKeyDown) {
+		let ret = false;
+
+		keyboard.shortcut(`${cmd}+z, ${cmd}+shift+z, ${cmd}+v, ${cmd}+x`, e, (pressed: string) => {
+			ret = true;
+		});
+
+		if (!ret && onKeyDown) {
 			onKeyDown(e, '', [], { from: 0, to: 0 }, this.props);
 		};
 	};
@@ -117,21 +120,12 @@ const BlockRelation = observer(class BlockRelation extends React.Component<Props
 				menuIdEdit: 'blockRelationEdit',
 				skipIds: relations.map(it => it.relationKey),
 				ref: 'block',
-				listCommand: (rootId: string, blockId: string, callBack?: (message: any) => void) => {
-					C.ObjectRelationListAvailable(rootId, callBack);
-				},
-				addCommand: (rootId: string, blockId: string, relation: any, onChange?: (relation: any) => void) => {
-					C.ObjectRelationAdd(rootId, relation, (message: any) => {
-						if (message.error.code) {
-							return;
-						};
-
-						C.BlockRelationSetKey(rootId, block.id, message.relation.relationKey, () => { 
-							menuStore.close('relationSuggest'); 
-						});
-
-						if (onChange) {
-							onChange(relation);
+				addCommand: (rootId: string, blockId: string, relationKey: string) => {
+					C.ObjectRelationAdd(rootId, [ relationKey ], (message: any) => {
+						if (!message.error.code) {
+							C.BlockRelationSetKey(rootId, block.id, relationKey, () => { 
+								menuStore.close('relationSuggest'); 
+							});
 						};
 					});
 				},
@@ -141,7 +135,7 @@ const BlockRelation = observer(class BlockRelation extends React.Component<Props
 
 	onCellChange (id: string, relationKey: string, value: any, callBack?: (message: any) => void) {
 		const { rootId } = this.props;
-		const relation = dbStore.getRelation(rootId, rootId, relationKey);
+		const relation = dbStore.getRelationByKey(relationKey);
 		const details = [ 
 			{ key: relationKey, value: Relation.formatValue(relation, value, true) },
 		];
@@ -159,22 +153,6 @@ const BlockRelation = observer(class BlockRelation extends React.Component<Props
 		};
 
 		focus.set(block.id, { from: 0, to: 0 });
-	};
-
-	optionCommand (code: string, rootId: string, blockId: string, relationKey: string, recordId: string, option: I.SelectOption, callBack?: (message: any) => void) {
-		switch (code) {
-			case 'add':
-				C.ObjectRelationOptionAdd(rootId, relationKey, option, callBack);
-				break;
-
-			case 'update':
-				C.ObjectRelationOptionUpdate(rootId, relationKey, option, callBack);
-				break;
-
-			case 'delete':
-				C.ObjectRelationOptionDelete(rootId, relationKey, option.id, callBack);
-				break;
-		};
 	};
 
 });

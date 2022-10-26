@@ -60,6 +60,7 @@ const Mapper = {
 				marketplaceRelationObjectId: obj.getMarketplacerelationobjectid(),
 				deviceId: obj.getMarketplacerelationobjectid(),
 				localStoragePath: obj.getLocalstoragepath(),
+				accountSpaceId: obj.getAccountspaceid(),
 			};
 		},
 
@@ -190,9 +191,9 @@ const Mapper = {
 			return {
 				sources: obj.getSourceList(),
 				views: (obj.getViewsList() || []).map(Mapper.From.View),
-				relations: (obj.getRelationsList() || []).map(Mapper.From.Relation),
-				groupOrder: (obj.getGroupordersList() || []).map(Mapper.From.GroupOrder),
-				objectOrder: (obj.getObjectordersList() || []).map(Mapper.From.ObjectOrder),
+				relationLinks: (obj.getRelationlinksList() || []).map(Mapper.From.RelationLink),
+				groupOrder: [], //(obj.getGroupordersList() || []).map(Mapper.From.GroupOrder),
+				objectOrder: [], //(obj.getObjectordersList() || []).map(Mapper.From.ObjectOrder),
 			};
 		},
 
@@ -265,44 +266,10 @@ const Mapper = {
 			};
 		},
 
-		ObjectType: (obj: any): I.ObjectType => {
+		RelationLink: (obj: any): any => {
 			return {
-				id: obj.getUrl(),
-				name: obj.getName(),
-				description: obj.getDescription(),
-				layout: obj.getLayout(),
-				iconEmoji: obj.getIconemoji(),
-				isHidden: obj.getHidden(),
-				isArchived: obj.getIsarchived(),
-				isReadonly: obj.getReadonly(),
-				types: obj.getTypesList(),
-				relations: (obj.getRelationsList() || []).map(Mapper.From.Relation),
-			};
-		},
-
-		Relation: (obj: any): I.Relation => {
-			return {
-				objectId: '',
 				relationKey: obj.getKey(),
 				format: obj.getFormat(),
-				name: obj.getName(),
-				dataSource: obj.getDatasource(),
-				isHidden: obj.getHidden(),
-				isReadonlyValue: obj.getReadonly(),
-				isReadonlyRelation: obj.getReadonlyrelation(),
-				maxCount: obj.getMaxcount(),
-				objectTypes: obj.getObjecttypesList(),
-				scope: obj.getScope(),
-				selectDict: (obj.getSelectdictList() || []).map(Mapper.From.SelectOption),
-			};
-		},
-
-		SelectOption: (obj: any) => {
-			return {
-				id: obj.getId(),
-				text: obj.getText(),
-				color: obj.getColor(),
-				scope: obj.getScope(),
 			};
 		},
 
@@ -435,8 +402,7 @@ const Mapper = {
 				rootId: obj.getRootid(),
 				blocks: (obj.getBlocksList() || []).map(Mapper.From.Block),
 				details: (obj.getDetailsList() || []).map(Mapper.From.Details),
-				objectTypes: (obj.getObjecttypesList() || []).map(Mapper.From.ObjectType),
-				relations: (obj.getRelationsList() || []).map(Mapper.From.Relation),
+				relationLinks: (obj.getRelationlinksList() || []).map(Mapper.From.RelationLink),
 				restrictions: Mapper.From.Restrictions(obj.getRestrictions()),
 			};
 		},
@@ -733,46 +699,6 @@ const Mapper = {
 
 			item.setName(obj.name);
 			item.setLocalpath(obj.path);
-
-			return item;
-		},
-
-		ObjectType: (obj: any) => {
-			const item = new Model.ObjectType();
-			
-			item.setUrl(obj.id);
-			item.setName(obj.name);
-			item.setLayout(obj.layout);
-			item.setIconemoji(obj.iconEmoji);
-			item.setHidden(obj.isHidden);
-			item.setRelationsList((obj.relations || []).map(Mapper.To.Relation));
-
-			return item;
-		},
-
-		Relation: (obj: any) => {
-			const item = new Model.Relation();
-			
-			item.setKey(obj.relationKey);
-			item.setFormat(obj.format);
-			item.setName(obj.name);
-			item.setDefaultvalue(obj.defaultValue);
-			item.setDatasource(obj.dataSource);
-			item.setHidden(obj.isHidden);
-			item.setReadonly(obj.isReadonly);
-			item.setMaxcount(obj.maxCount);
-			item.setObjecttypesList(obj.objectTypes);
-			item.setSelectdictList((obj.selectDict || []).map(Mapper.To.SelectOption));
-
-			return item;
-		},
-
-		SelectOption: (obj: any) => {
-			const item = new Model.Relation.Option();
-
-			item.setId(obj.id);
-			item.setText(obj.text);
-			item.setColor(obj.color);
 
 			return item;
 		},
