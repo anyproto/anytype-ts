@@ -74,13 +74,13 @@ class Keyboard {
 		const { focused } = focus.state;
 
 		// Mouse back
-		if (e.buttons & 8) {
+		if (e.buttons & 8 && !this.isNavigationDisabled) {
 			e.preventDefault();
 			this.onBack();
 		};
 
 		// Mouse forward
-		if (e.buttons & 16) {
+		if (e.buttons & 16 && !this.isNavigationDisabled) {
 			e.preventDefault();
 			this.onForward();
 		};
