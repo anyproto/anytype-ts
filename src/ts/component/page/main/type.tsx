@@ -391,8 +391,12 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 	onSetAdd () {
 		const rootId = this.getRootId();
 		const object = detailStore.get(rootId, rootId);
+		const details = { 
+			name: object.name + ' set', 
+			iconEmoji: String(object.iconEmoji || ''),
+		};
 
-		C.ObjectCreateSet([ rootId ], { name: object.name + ' set', iconEmoji: object.iconEmoji }, '', (message: any) => {
+		C.ObjectCreateSet([ rootId ], details, '', (message: any) => {
 			if (!message.error.code) {
 				focus.clear(true);
 				DataUtil.objectOpenPopup(message.details);
