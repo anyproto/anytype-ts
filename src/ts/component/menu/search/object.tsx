@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { MenuItemVertical, Filter, Loader, ObjectName, EmptySearch } from 'Component';
 import { I, C, keyboard, Util, DataUtil, translate, analytics, Action, focus } from 'Lib';
-import { commonStore, dbStore } from 'Store';
+import { dbStore, commonStore } from 'Store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
@@ -68,6 +68,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 			const item: any = items[param.index];
 			const type = dbStore.getType(item.type);
 			const cn = [];
+
 			let content = null;
 
 			if (item.isSection) {
@@ -152,37 +153,33 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 				{loading ? <Loader /> : ''}
 
 				{this.cache && items.length && !loading ? (
-					<React.Fragment>
-						{/*{label ? <div className="sectionName">{label}</div> : ''}*/}
-
-						<div className="items">
-							<InfiniteLoader
-								rowCount={items.length + 1}
-								loadMoreRows={this.loadMoreRows}
-								isRowLoaded={({ index }) => !!this.items[index]}
-								threshold={LIMIT_HEIGHT}
-							>
-								{({ onRowsRendered, registerChild }) => (
-									<AutoSizer className="scrollArea">
-										{({ width, height }) => (
-											<List
-												ref={(ref: any) => { this.refList = ref; }}
-												width={width}
-												height={height}
-												deferredMeasurmentCache={this.cache}
-												rowCount={items.length}
-												rowHeight={({ index }) => this.getRowHeight(items[index])}
-												rowRenderer={rowRenderer}
-												onRowsRendered={onRowsRendered}
-												overscanRowCount={10}
-												scrollToAlignment="center"
-											/>
-										)}
-									</AutoSizer>
-								)}
-							</InfiniteLoader>
-						</div>
-					</React.Fragment>
+					<div className="items">
+						<InfiniteLoader
+							rowCount={items.length + 1}
+							loadMoreRows={this.loadMoreRows}
+							isRowLoaded={({ index }) => !!this.items[index]}
+							threshold={LIMIT_HEIGHT}
+						>
+							{({ onRowsRendered, registerChild }) => (
+								<AutoSizer className="scrollArea">
+									{({ width, height }) => (
+										<List
+											ref={(ref: any) => { this.refList = ref; }}
+											width={width}
+											height={height}
+											deferredMeasurmentCache={this.cache}
+											rowCount={items.length}
+											rowHeight={({ index }) => this.getRowHeight(items[index])}
+											rowRenderer={rowRenderer}
+											onRowsRendered={onRowsRendered}
+											overscanRowCount={10}
+											scrollToAlignment="center"
+										/>
+									)}
+								</AutoSizer>
+							)}
+						</InfiniteLoader>
+					</div>
 				) : ''}
 			</div>
 		);
@@ -259,12 +256,12 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 				items.push({ isDiv: true });
 			};
 
-			items.push({ id: 'add', name: `Create object "${filter}"`, icon: 'plus' });
+			items.push({ id: 'add', icon: 'plus', name: `Create object "${filter}"` });
 		};
 
 		if (!items.length) {
 			items.push({ isEmpty: true });
-		}
+		};
 
 		return items;
 	};
@@ -383,10 +380,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 			};
 		};
 
-		const process = (targetId?: string, newObject?: any) => {
-			const itemId = targetId || item.id;
-			const targetItem = newObject || item;
-
+		const process = (itemId: string, targetItem: any) => {
 			if (onSelect) {
 				onSelect(targetItem);
 			};
@@ -439,24 +433,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 			};
 		};
 
-		const createObject = (cb: any) => {
-			let details: any = { name: filter };
-			let typeId = '';
-			let flags: I.ObjectFlag[] = [];
-
-			if (typeId) {
-				details.typeId = typeId;
-			} else {
-				flags.push(I.ObjectFlag.SelectType);
-			};
-
-			DataUtil.pageCreate('', '', details, I.BlockPosition.Bottom, '', {}, flags, (message: any) => {
-				cb(message.targetId);
-				close();
-			});
-		};
-
-		const getNewObject = (id: string, cb: any) => {
+		const getNewObject = (id: string, callBack: (object: any) => void) => {
 			const filters: I.Filter[] = [
 				{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.Equal, value: id },
 			];
@@ -466,19 +443,20 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 					return;
 				};
 				if (message.records.length) {
-					cb(message.records[0]);
+					callBack(message.records[0]);
 				};
 			});
 		};
 
 		if (item.id == 'add') {
-			createObject((targetId) => {
-				getNewObject(targetId, (object) => {
-					process(targetId, object);
-				});
+			const details: any = { name: filter, type: commonStore.type };
+
+			DataUtil.pageCreate('', '', details, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.SelectType ], (message: any) => {
+				getNewObject(message.targetId, object => process(message.targetId, object));
+				close();
 			});
 		} else {
-			process();
+			process(item.id, item);
 		};
 	};
 
@@ -496,10 +474,11 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 
 		let h = HEIGHT_ITEM;
 
-		if (isBig || item.isBig) h = HEIGHT_ITEM_BIG;
-		if (item.isEmpty) h = HEIGHT_EMPTY;
-		if (item.isSection) h = HEIGHT_SECTION;
-		if (item.isDiv) h = HEIGHT_DIV;
+		if (isBig || item.isBig)	 h = HEIGHT_ITEM_BIG;
+		if (item.isEmpty)			 h = HEIGHT_EMPTY;
+		if (item.isSection)			 h = HEIGHT_SECTION;
+		if (item.isDiv)				 h = HEIGHT_DIV;
+
 		return h;
 	};
 
@@ -508,7 +487,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 			res += this.getRowHeight(item);
 			return res;
 		}, 0));
-	}
+	};
 
 	resize () {
 		if (!this._isMounted) {
