@@ -56,19 +56,14 @@
 
 		.linkCard.text {
 			.side.left {
-				.txt { line-height: 24px; vertical-align: top; }
+				.txt { line-height: 24px; vertical-align: top; display: flex; gap: 0px 6px; align-items: center; }
 			}
 
-			.cardName .name { @include clamp1; font-weight: 500; }
-
-		}
-
-		.linkCard.text .side.left .txt {
-			display: flex; gap: 0px 6px; align-items: center;
-
+			.cardName { display: flex; flex-wrap: nowrap; vertical-align: top; flex-shrink: 0; flex-grow: 0; max-width: 50%; }
 			.cardName {
-				display: flex; flex-wrap: nowrap; vertical-align: top; flex-shrink: 0; flex-grow: 0; max-width: 50%;
+				.name { @include clamp1; font-weight: 500; }
 			}
+
 			.cardDescription {
 				@include text-small; @include text-overflow-nw; flex-shrink: 1; flex-grow: 0; margin-top: 0; white-space: normal;
 				.description { @include clamp1; }
