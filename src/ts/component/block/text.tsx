@@ -925,32 +925,28 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 				const reg = new RegExp(`^(${k} )`);
 				const style = Markdown[k];
 
-				if ((style == I.TextStyle.Numbered) && block.isTextHeader()) {
+				if (!value.match(reg) || ((style == I.TextStyle.Numbered) && block.isTextHeader())) {
 					continue;
 				};
 
-				if (value.match(reg)) {
-					value = value.replace(reg, (s: string, p: string) => { return s.replace(p, ''); });
+				value = value.replace(reg, (s: string, p: string) => { return s.replace(p, ''); });
 
-					if (style == I.TextStyle.Code) {
-						this.marks = [];
-					} else {
-						this.marks = Mark.adjust(this.marks, 0, -(Length[style] + 1));
-					};
+				this.marks = style == I.TextStyle.Code ? [] : Mark.adjust(this.marks, 0, -(Length[style] + 1));
+				this.setValue(value);
 
-					this.setValue(value);
-
-					DataUtil.blockSetText(rootId, id, value, this.marks, true, () => {
-						C.BlockListTurnInto(rootId, [ id ], style);
-
-						if (style == I.TextStyle.Toggle) {
-							blockStore.toggle(rootId, id, true);
-						};
+				DataUtil.blockSetText(rootId, id, value, this.marks, true, () => {
+					C.BlockListTurnInto(rootId, [ id ], style, () => {
+						focus.set(block.id, { from: 0, to: 0 });
+						focus.apply();
 					});
 
-					cmdParsed = true;
-					break;
-				};
+					if (style == I.TextStyle.Toggle) {
+						blockStore.toggle(rootId, id, true);
+					};
+				});
+
+				cmdParsed = true;
+				break;
 			};
 		};
 		
