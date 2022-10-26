@@ -86,9 +86,6 @@
 	.iconObject { z-index: 1; cursor: pointer; }
 	.name { line-height: 20px; @include text-overflow-nw; width: 100%; }
 }
-.cellContent.isName.withIcon {
-	.name { width: calc(100% - 24px) !important; }
-}
 
 .cellContent.c-link {
 	.icon.user { margin-right: 5px; }
