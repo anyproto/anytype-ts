@@ -154,19 +154,10 @@ class Cell extends React.Component<Props, {}> {
 		const cellId = Relation.cellId(idPrefix, relation.relationKey, index);
 		const value = record[relation.relationKey] || '';
 
-		if (!this.canEdit()) {
-
-			switch (relation.format) {
-				case I.RelationType.Url:
-				case I.RelationType.Email:
-				case I.RelationType.Phone:
-					if (value) {
-						const scheme = Relation.getUrlScheme(relation.format, value);
-						Renderer.send('urlOpen', scheme + value);
-						break;
-					};
+		if (!this.canEdit() && Relation.isUrl(relation.format)) {
+			if (value) {
+				Renderer.send('urlOpen', Relation.getUrlScheme(relation.format, value) + value);
 			};
-
 			return;
 		};
 
@@ -502,7 +493,7 @@ class Cell extends React.Component<Props, {}> {
 		if ((record.layout == I.ObjectLayout.Note) && (relation.relationKey == Constant.relationKey.name)) {
 			return false;
 		};
-		return (viewType == I.ViewType.Grid);
+		return viewType == I.ViewType.Grid;
 	};
 	
 };

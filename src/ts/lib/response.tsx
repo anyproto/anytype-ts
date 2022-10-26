@@ -75,24 +75,28 @@ const AccountDelete = (response: any) => {
 const ObjectCreate = (response: any) => {
 	return {
 		objectId: response.getObjectid(),
+		details: Decode.decodeStruct(response.getDetails()),
 	};
 };
 
 const ObjectCreateSet = (response: any) => {
 	return {
 		objectId: response.getObjectid(),
+		details: Decode.decodeStruct(response.getDetails()),
 	};
 };
 
 const ObjectCreateBookmark = (response: any) => {
 	return {
 		objectId: response.getObjectid(),
+		details: Decode.decodeStruct(response.getDetails()),
 	};
 };
 
 const ObjectCreateObjectType = (response: any) => {
 	return {
 		objectId: response.getObjectid(),
+		details: Decode.decodeStruct(response.getDetails()),
 	};
 };
 
@@ -100,12 +104,14 @@ const ObjectCreateRelation = (response: any) => {
 	return {
 		objectId: response.getObjectid(),
 		relationKey: response.getKey(),
+		details: Decode.decodeStruct(response.getDetails()),
 	};
 };
 
 const ObjectCreateRelationOption = (response: any) => {
 	return {
 		objectId: response.getObjectid(),
+		details: Decode.decodeStruct(response.getDetails()),
 	};
 };
 

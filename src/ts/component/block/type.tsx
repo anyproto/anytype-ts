@@ -77,7 +77,7 @@ const BlockType = observer(class BlockType extends React.Component<Props, {}> {
 	onKeyDown (e: any) {
 		const { onKeyDown } = this.props;
 		const items = this.getItems();
-		const cmd = keyboard.ctrlKey();
+		const cmd = keyboard.cmdKey();
 
 		keyboard.disableMouse(true);
 

@@ -633,8 +633,10 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 		keyboard.disableMouse(true);
 
 		const { param } = this.props;
-		const { commonFilter, isSub } = param;
+		const { commonFilter } = param;
 		const refInput = this.ref.refFilter || this.ref.refName;
+		const shortcutClose = [ 'escape' ];
+		const shortcutSelect = [ 'tab', 'enter' ];
 
 		let ret = false;
 
@@ -651,6 +653,19 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 
 					ret = true;
 				});
+
+				if (this.ref && this.ref.onClick) {	
+					keyboard.shortcut(shortcutSelect.join(', '), e, (pressed: string) => {
+						e.preventDefault();
+
+						const items = this.ref.getItems();
+						const item = items.length ? items[0] : null;
+
+						if (item) {
+							item.arrow && this.ref.onOver ? this.ref.onOver(e, item) : this.ref.onClick(e, item);
+						};
+					});
+				};
 
 				keyboard.shortcut('arrowup', e, (pressed: string) => {
 					if (!this.ref.getItems) {
@@ -679,9 +694,6 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 		if (ret) {
 			return;
 		};
-
-		const shortcutClose = [ 'escape' ];
-		const shortcutSelect = [ 'tab', 'enter' ];
 
 		if (!commonFilter) {
 			shortcutClose.push('arrowleft');

@@ -1,13 +1,12 @@
 import * as React from 'react';
 import { Cell, Icon } from 'Component';
-import { I, C, DataUtil, Util, focus, analytics, Relation } from 'Lib';
+import { I, C, DataUtil, Util, focus, analytics, Relation, keyboard } from 'Lib';
 import { observer } from 'mobx-react';
 import { menuStore, detailStore, dbStore, blockStore } from 'Store';
 
 interface Props extends I.BlockComponent {}
 
 const Constant = require('json/constant.json');
-const $ = require('jquery');
 
 const BlockRelation = observer(class BlockRelation extends React.Component<Props, {}> {
 
@@ -77,8 +76,15 @@ const BlockRelation = observer(class BlockRelation extends React.Component<Props
 
 	onKeyDown (e: any) {
 		const { onKeyDown } = this.props;
+		const cmd = keyboard.cmdKey();
 
-		if (onKeyDown) {
+		let ret = false;
+
+		keyboard.shortcut(`${cmd}+z, ${cmd}+shift+z, ${cmd}+v, ${cmd}+x`, e, (pressed: string) => {
+			ret = true;
+		});
+
+		if (!ret && onKeyDown) {
 			onKeyDown(e, '', [], { from: 0, to: 0 }, this.props);
 		};
 	};

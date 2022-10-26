@@ -23,6 +23,8 @@
 	
 	.menu.menuDataviewRelationEdit { width: 224px; }
 	.menu.menuDataviewRelationEdit {
+		.content { padding: 0px; }
+		.form { padding: 8px 0px; }
 		.switch { position: absolute; right: 16px; top: 50%; margin-top: -8px; }
 		.button { width: 100%; }
 		.button.grey { cursor: default; }
