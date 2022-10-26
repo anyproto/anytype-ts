@@ -91,7 +91,11 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 							}}
 						>
 							<div className="clickable" onClick={(e: any) => { this.onTag(e, element); }}>
-								<Tag {...element} className={DataUtil.tagClass(relation.format)} />
+								<Tag
+									text={element.name}
+									color={element.color}
+									className={DataUtil.tagClass(relation.format)} 
+								/>
 							</div>
 							<div className="buttons">
 								<Icon className="delete" onClick={(e: any) => { this.onDelete(e, element); }} />

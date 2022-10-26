@@ -7,7 +7,7 @@ interface Props {
 	className?: string;
 	color?: string;
 	canEdit?: boolean;
-	onRemove?: (e: any, id: string) => void;
+	onRemove?: (e: any) => void;
 };
 
 const $ = require('jquery');
@@ -82,9 +82,9 @@ class Tag extends React.Component<Props, {}> {
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { id, canEdit, onRemove } = this.props;
+		const { canEdit, onRemove } = this.props;
 		if (canEdit && onRemove) {
-			onRemove(e, id);
+			onRemove(e);
 		};
 	};
 	
