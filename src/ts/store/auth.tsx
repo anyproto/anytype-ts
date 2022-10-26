@@ -188,13 +188,15 @@ class AuthStore {
 		analytics.profile({ id: '' });
 
 		keyboard.setPinChecked(false);
+
 		commonStore.coverSetDefault();
+		commonStore.workspaceSet('');
 
 		blockStore.clearAll();
 		detailStore.clearAll();
 		dbStore.clearAll();
-		this.clearAll();
 
+		this.clearAll();
 		Storage.logout();
     };
 

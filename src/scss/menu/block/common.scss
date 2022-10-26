@@ -63,25 +63,20 @@
 			.iconObject { background-color: $colorVeryLightGrey; }
 		}
 		.item.isBig {
-			.icon.paragraph { background-image: url('~img/icon/menu/action/block/paragraph1.svg'); }
+			.icon.textParagraph { background-image: url('~img/icon/menu/action/block/paragraph1.svg'); }
 			
-			.icon.header1 { background-image: url('~img/icon/menu/action/block/header11.svg'); }
-			.icon.header2 { background-image: url('~img/icon/menu/action/block/header21.svg'); }
-			.icon.header3 { background-image: url('~img/icon/menu/action/block/header31.svg'); }
-			.icon.quote { background-image: url('~img/icon/menu/action/block/quote1.svg'); }
-			.icon.callout { background-image: url('~img/icon/menu/action/block/callout1.svg'); }
+			.icon.textHeader1 { background-image: url('~img/icon/menu/action/block/header11.svg'); }
+			.icon.textHeader2 { background-image: url('~img/icon/menu/action/block/header21.svg'); }
+			.icon.textHeader3 { background-image: url('~img/icon/menu/action/block/header31.svg'); }
+			.icon.textQuote { background-image: url('~img/icon/menu/action/block/quote1.svg'); }
+			.icon.textCallout { background-image: url('~img/icon/menu/action/block/callout1.svg'); }
 			
-			.icon.page { background-image: url('~img/icon/menu/action/block/page1.svg'); }
-			.icon.task { background-image: url('~img/icon/menu/action/block/task1.svg'); }
-			.icon.set { background-image: url('~img/icon/menu/action/block/set1.svg'); }
-			.icon.human { background-image: url('~img/icon/menu/action/block/human1.svg'); }
+			.icon.textBulleted { background-image: url('~img/icon/menu/action/block/bulleted1.svg'); }
+			.icon.textCheckbox { background-image: url('~img/icon/menu/action/block/checkbox1.svg'); }
+			.icon.textNumbered { background-image: url('~img/icon/menu/action/block/numbered1.svg'); }
+			.icon.textToggle { background-image: url('~img/icon/menu/action/block/toggle1.svg'); }
+			
 			.icon.existing { background-image: url('~img/icon/menu/action/block/existing1.svg'); }
-			
-			.icon.bulleted { background-image: url('~img/icon/menu/action/block/bulleted1.svg'); }
-			.icon.checkbox { background-image: url('~img/icon/menu/action/block/checkbox1.svg'); }
-			.icon.numbered { background-image: url('~img/icon/menu/action/block/numbered1.svg'); }
-			.icon.toggle { background-image: url('~img/icon/menu/action/block/toggle1.svg'); }
-			
 			.icon.file { background-image: url('~img/icon/menu/action/block/file1.svg'); }
 			.icon.image { background-image: url('~img/icon/menu/action/block/image1.svg'); }
 			.icon.video { background-image: url('~img/icon/menu/action/block/video1.svg'); }

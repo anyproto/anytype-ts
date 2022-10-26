@@ -232,17 +232,10 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 		const itemTags = { id: 'tag', name: 'Tags', icon: 'relation ' + DataUtil.relationClass(I.RelationType.Tag), withSwitch: true, switchValue: this.hasRelationKey('tag') };
 		const itemType = { id: 'type', name: 'Object type', icon: 'relation ' + DataUtil.relationClass(I.RelationType.Object), withSwitch: true, switchValue: this.hasRelationKey('type') };
 
-		let sections: any[] = [];
-		if (style.id == I.LinkCardStyle.Text) {
-			sections = [
-				{ children: [ itemStyle ] }
-			];
-		} else {
-			sections = [
-				{ children: [ itemStyle, itemSize, itemCover ] },
-				{ name: 'Featured relations', children: [ itemName, itemDescription, itemType ] },
-			];
-		};
+		let sections: any[] = [
+			{ children: [ itemStyle, itemSize, itemCover ] },
+			{ name: 'Featured relations', children: [ itemName, itemDescription, itemType ] },
+		];
 
 		sections = sections.map((s: any) => {
 			s.children = s.children.filter(it => it);

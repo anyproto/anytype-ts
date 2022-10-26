@@ -95,17 +95,28 @@ class Dataview {
 		});
 	};
 
-	getData (rootId: string, blockId: string, id: string, keys: string[], offset: number, limit: number, clear: boolean, callBack?: (message: any) => void) {
-		const view = dbStore.getView(rootId, blockId, id);
+	getData (param: any, callBack?: (message: any) => void) {
+		param = Object.assign({
+			rootId: '',
+			blockId: '',
+			newViewId: '',
+			keys: Constant.defaultRelationKeys,
+			offset: 0,
+			limit: 0,
+		}, param);
+
+		const { rootId, blockId, newViewId, keys, offset, limit, clear } = param;
+		const view = dbStore.getView(rootId, blockId, newViewId);
 		const block = blockStore.getLeaf(rootId, blockId);
 
 		if (!view || !block) {
 			return;
 		};
 
+		const { config } = commonStore;
 		const subId = dbStore.getSubId(rootId, blockId);
 		const { viewId } = dbStore.getMeta(subId, '');
-		const viewChange = id != viewId;
+		const viewChange = newViewId != viewId;
 		const meta: any = { offset };
 		const filters = view.filters.concat([
 			{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
@@ -118,8 +129,12 @@ class Dataview {
 			return it;
 		});
 
+		if (!config.debug.ho) {
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.Equal, value: false });
+		};
+
 		if (viewChange) {
-			meta.viewId = id;
+			meta.viewId = newViewId;
 		};
 		if (viewChange || clear) {
 			dbStore.recordsSet(subId, '', []);

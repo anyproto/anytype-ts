@@ -98,38 +98,36 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 			);
 		};
 		
-		const List = SortableContainer((item: any) => {
-			return (
-				<div className="items">
-					<InfiniteLoader
-						rowCount={items.length}
-						loadMoreRows={() => {}}
-						isRowLoaded={() => { return true; }}
-						threshold={LIMIT}
-					>
-						{({ onRowsRendered, registerChild }) => (
-							<AutoSizer className="scrollArea">
-								{({ width, height }) => (
-									<VList
-										ref={(ref: any) => { this.refList = ref; }}
-										width={width}
-										height={height}
-										deferredMeasurmentCache={this.cache}
-										rowCount={items.length}
-										rowHeight={HEIGHT}
-										rowRenderer={rowRenderer}
-										onRowsRendered={onRowsRendered}
-										overscanRowCount={LIMIT}
-										onScroll={this.onScroll}
-										scrollToAlignment="center"
-									/>
-								)}
-							</AutoSizer>
-						)}
-					</InfiniteLoader>
-				</div>
-			);
-		});
+		const List = SortableContainer((item: any) => (
+			<div className="items">
+				<InfiniteLoader
+					rowCount={items.length}
+					loadMoreRows={() => {}}
+					isRowLoaded={() => { return true; }}
+					threshold={LIMIT}
+				>
+					{({ onRowsRendered, registerChild }) => (
+						<AutoSizer className="scrollArea">
+							{({ width, height }) => (
+								<VList
+									ref={(ref: any) => { this.refList = ref; }}
+									width={width}
+									height={height}
+									deferredMeasurmentCache={this.cache}
+									rowCount={items.length}
+									rowHeight={HEIGHT}
+									rowRenderer={rowRenderer}
+									onRowsRendered={onRowsRendered}
+									overscanRowCount={LIMIT}
+									onScroll={this.onScroll}
+									scrollToAlignment="center"
+								/>
+							)}
+						</AutoSizer>
+					)}
+				</InfiniteLoader>
+			</div>
+		));
 		
 		return (
 			<div className="wrap">

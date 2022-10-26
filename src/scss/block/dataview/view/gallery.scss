@@ -7,13 +7,13 @@
 			.galleryWrap { margin-left: 14px; }
 
 			.card { 
-				width: 260px; border: 1px solid $colorBorderDark; border-radius: 12px; display: inline-block; cursor: pointer; 
+				width: 260px; border: 1px solid $colorHover; border-radius: 16px; display: inline-block; cursor: pointer;
 				background: $colorWhite; overflow: hidden;
 			}
 			.card {
 				.cover { 
 					position: relative; height: 144px; background-position: top center; display: flex; align-items: center;
-					background-color: $colorHover; width: 100%; border-bottom: 1px solid $colorBorderDark; justify-content: center;
+					background-color: $colorHover; width: 100%; justify-content: center;
 				}
 
 				.cover {

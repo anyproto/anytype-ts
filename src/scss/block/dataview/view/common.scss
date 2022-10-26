@@ -22,21 +22,24 @@
 		.viewItem.viewBoard {
 			.card { white-space: normal; }
 			.card {
-				.cellContent { cursor: pointer; margin-bottom: 6px; @include text-small; color: $colorDarkGrey; }
+				.cellContent { cursor: pointer; margin-bottom: 4px; @include text-small; color: $colorDarkGrey; }
 				.cellContent:empty, .cellContent.isEmpty { display: none; }
 				.cellContent.last { margin: 0px; }
 				.cellContent {
 					.more { margin-top: 0px; vertical-align: top; }
 				}
 
-				.cellContent.isName { @include text-paragraph; color: $colorBlack; display: flex; gap: 0px 6px; }
+				.cellContent.isName { @include text-paragraph; color: $colorBlack; display: flex; gap: 0px 6px; position: relative; }
 				.cellContent.isName {
-					.iconObject { margin: 0px; }
-					.name { line-height: 24px; vertical-align: top; }
+					.iconObject { position: absolute; left: -3px; top: -3px; margin: 0px; }
+					.name {
+						line-height: 20px; font-weight: 500; letter-spacing: -0.12px;
+						vertical-align: top; white-space: normal; overflow: hidden; @include clamp3;
+					}
 				}
 
 				.cellContent.isName.withIcon {
-					.name { width: calc(100% - 30px); }
+					.name { text-indent: 24px; }
 				}
 
 				.cellContent.c-select { line-height: 18px; }

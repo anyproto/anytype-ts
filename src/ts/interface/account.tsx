@@ -21,6 +21,7 @@ export interface AccountInfo {
 	marketplaceRelationObjectId: string;
 	deviceId: string;
 	localStoragePath: string;
+	accountSpaceId: string;
 };
 
 export interface AccountConfig {

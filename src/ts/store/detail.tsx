@@ -125,7 +125,7 @@ class DetailStore {
 	check (object: any) {
 		let layout = Number(object.layout) || I.ObjectLayout.Page;
 		let name = String(object.name || DataUtil.defaultName('page'));
-		let snippet = String(object.snippet || '').replace(/\n/g, ' ');
+		let snippet = Relation.getStringValue(object.snippet).replace(/\n/g, ' ');
 
 		if (layout == I.ObjectLayout.Note) {
 			object.coverType = I.CoverType.None;
@@ -141,9 +141,9 @@ class DetailStore {
 		};
 
 		if (object.type == Constant.typeId.type) {
-			object.smartblockTypes = object.smartblockTypes || [];
+			object.smartblockTypes = Relation.getArrayValue(object.smartblockTypes);
 			object.recommendedLayout = Number(object.recommendedLayout) || I.ObjectLayout.Page;
-			object.recommendedRelations = object.recommendedRelations || [];
+			object.recommendedRelations = Relation.getArrayValue(object.recommendedRelations);
 
 			if (object.isDeleted) {
 				name = translate('commonDeletedType');
@@ -151,18 +151,21 @@ class DetailStore {
 		} else
 		if (object.type == Constant.typeId.relation) {
 			object.relationFormat = Number(object.relationFormat) || I.RelationType.LongText;
-			object.relationMaxCount = Number(object.relationMaxCount) || 0;
-			object.isReadonlyRelation = Boolean(object.isReadonly);
-			//object.isReadonlyValue = Boolean(object.readonlyValue);
-			//object.scope = Number(object.scope) || I.RelationScope.Object;
-
 			object.format = object.relationFormat;
-			object.maxCount = object.relationMaxCount;
-			object.objectTypes = object.relationFormatObjectTypes || [];
+			object.maxCount = Number(object.relationMaxCount) || 0;
+			object.objectTypes = Relation.getArrayValue(object.relationFormatObjectTypes);
+			object.isReadonlyRelation = Boolean(object.isReadonly);
+			object.isReadonlyValue = Boolean(object.relationReadonlyValue);
+
+			delete(object.relationMaxCount);
+			delete(object.isReadonly);
+			delete(object.relationReadonlyValue);
 		} else
 		if (object.type == Constant.typeId.option) {
-			object.text = String(object.relationOptionText || '');
-			object.color = String(object.relationOptionColor || '');
+			object.text = Relation.getStringValue(object.name);
+			object.color = Relation.getStringValue(object.relationOptionColor);
+
+			delete(object.relationOptionColor);
 		};
 
 		return {

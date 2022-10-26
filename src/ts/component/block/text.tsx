@@ -665,7 +665,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 
 		const range = this.getRange();
 		const symbolBefore = range ? value[range.from - 1] : '';
-		const cmd = keyboard.ctrlKey();
+		const cmd = keyboard.cmdKey();
 		
 		const menuOpen = menuStore.isOpen();
 		const menuOpenAdd = menuStore.isOpen('blockAdd');

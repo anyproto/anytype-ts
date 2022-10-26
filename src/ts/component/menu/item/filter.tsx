@@ -17,8 +17,6 @@ interface Props extends I.Filter {
 	onRemove?: (e: any) => void;
 };
 
-const Constant = require('json/constant.json');
-
 const MenuItemFilter = observer(class MenuItemFilter extends React.Component<Props, {}> {
 
 	_isMounted: boolean = false;
@@ -84,7 +82,12 @@ const MenuItemFilter = observer(class MenuItemFilter extends React.Component<Pro
 					v = (
 						<React.Fragment>
 							{list.map((item: any) => (
-								<Tag {...item} key={item.id} className={DataUtil.tagClass(relation.format)} />
+								<Tag 
+									key={item.id}
+									text={item.name}
+									color={item.color}
+									className={DataUtil.tagClass(relation.format)} 
+								/>
 							))}
 						</React.Fragment>
 					);
