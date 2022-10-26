@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, C, analytics, DataUtil, translate } from 'Lib';
+import { I, C, analytics, DataUtil, translate, keyboard } from 'Lib';
 import { Input, MenuItemVertical, Button, Icon } from 'Component';
 import { dbStore, menuStore, blockStore, detailStore } from 'Store';
 import { observer } from 'mobx-react';
@@ -24,6 +24,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		this.onDateSettings = this.onDateSettings.bind(this);
 		this.onObjectType = this.onObjectType.bind(this);
 		this.onSubmit = this.onSubmit.bind(this);
+		this.onKeyDown = this.onKeyDown.bind(this);
 		this.onOpen = this.onOpen.bind(this);
 		this.onCopy = this.onCopy.bind(this);
 		this.onRemove = this.onRemove.bind(this);
@@ -111,7 +112,8 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 						<div className="inputWrap">
 							<Input 
 								ref={(ref: any) => { this.ref = ref; }} 
-								value={relation ? relation.name : ''} 
+								value={relation ? relation.name : ''}
+								onKeyDown={this.onKeyDown}
 								onChange={this.onChange} 
 								onMouseEnter={this.menuClose}
 							/>
@@ -194,10 +196,6 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 				this.ref.focus();
 			};
 		}, 15);
-	};
-
-	onChange () {
-		this.checkButton();
 	};
 
 	checkButton () {
@@ -317,6 +315,16 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		});
 	};
 
+	onKeyDown (e: any) {
+		keyboard.shortcut('enter', e, (pressed: string) => {
+			this.onSubmit(e);
+		});
+	};
+
+	onChange () {
+		this.checkButton();
+	};
+
 	onChangeTime (v: boolean) {
 		const relation = this.getRelation();
 		relation.includeTime = v;
@@ -416,13 +424,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 			};
 
 			data.relationId = message.objectId;
-
-			/*
-			const details = detailStore.check(message.details);
-
-			dbStore.relationsSet(rootId, blockId, [ details ]);
 			detailStore.update(Constant.subId.relation, { id: message.objectId, details: message.details }, false);
-			*/
 
 			if (addCommand) {
 				addCommand(rootId, blockId, message.relationKey, onChange);
