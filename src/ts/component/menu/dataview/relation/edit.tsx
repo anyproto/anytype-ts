@@ -576,6 +576,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 			};
 
 			data.relationId = message.objectId;
+			detailStore.update(Constant.subId.relation, { id: message.objectId, details: message.details }, false);
 
 			if (addCommand) {
 				addCommand(rootId, blockId, message.relationKey, onChange);
