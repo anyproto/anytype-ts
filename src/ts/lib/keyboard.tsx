@@ -394,9 +394,13 @@ class Keyboard {
 					data: {
 						title: 'Anytype ID',
 						text: account.id,
-						textConfirm: 'Ok',
+						textConfirm: 'Copy',
+						textCancel: 'Close',
 						canConfirm: true,
-						canCancel: false,
+						canCancel: true,
+						onConfirm: () => {
+							Util.clipboardCopy({ text: account.id });
+						},
 					}
 				});
 				break;
