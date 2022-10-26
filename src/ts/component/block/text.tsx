@@ -778,7 +778,11 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			if (!range) {
 				return;
 			};
-			if (range.to && ((range.from != range.to) || (range.to != value.length))) {
+
+			if (range.to && ((range.from != range.to) || (range.to == value.length))) {
+				DataUtil.blockSetText(rootId, block.id, value, this.marks, true, () => {
+					onKeyDown(e, value, this.marks, range, this.props);
+				});
 				ret = true;
 			};
 		});
