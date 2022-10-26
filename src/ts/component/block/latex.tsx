@@ -185,7 +185,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 	onKeyDownBlock (e: any) {
 		const { rootId, onKeyDown } = this.props;
 		const { isEditing } = this.state;
-		const cmd = keyboard.ctrlKey();
+		const cmd = keyboard.cmdKey();
 
 		if (isEditing) {
 			// Undo

@@ -77,6 +77,7 @@
 	.element { display: inline-block; margin: 0px 8px 2px 0px; vertical-align: top; max-width: 100%; line-height: 20px; white-space: nowrap; cursor: pointer; }
 	.element:last-child { margin-right: 0px; }
 	.element {
+		.flex { align-items: center; }
 		.name { line-height: 20px; width: 100%; @include text-overflow-nw; }
 	}
 }
@@ -84,9 +85,6 @@
 .cellContent.isName {
 	.iconObject { z-index: 1; cursor: pointer; }
 	.name { line-height: 20px; @include text-overflow-nw; width: 100%; }
-}
-.cellContent.isName.withIcon {
-	.name { width: calc(100% - 24px) !important; }
 }
 
 .cellContent.c-link {

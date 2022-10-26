@@ -104,7 +104,7 @@ class Keyboard {
 		const platform = Util.getPlatform();
 		const isMac = platform == I.Platform.Mac;
 		const key = e.key.toLowerCase();
-		const cmd = this.ctrlKey();
+		const cmd = this.cmdKey();
 		const isMain = this.isMain();
 
 		this.pressed.push(key);
@@ -394,9 +394,13 @@ class Keyboard {
 					data: {
 						title: 'Anytype ID',
 						text: account.id,
-						textConfirm: 'Ok',
+						textConfirm: 'Copy',
+						textCancel: 'Close',
 						canConfirm: true,
-						canCancel: false,
+						canCancel: true,
+						onConfirm: () => {
+							Util.clipboardCopy({ text: account.id });
+						},
 					}
 				});
 				break;
@@ -735,9 +739,8 @@ class Keyboard {
 		return platform == I.Platform.Mac ? '&#8984;' : 'Ctrl';
 	};
 
-	ctrlKey () {
-		const platform = Util.getPlatform();
-		return platform == I.Platform.Mac ? 'cmd' : 'ctrl';
+	cmdKey () {
+		return Util.getPlatform() == I.Platform.Mac ? 'cmd' : 'ctrl';
 	};
 
 	checkPressed (key: string) {

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Loader } from 'Component';
 import { I, C, Util, DataUtil, analytics, Dataview, keyboard, Onboarding, Relation, Renderer } from 'Lib';
-import { blockStore, menuStore, dbStore, detailStore, popupStore } from 'Store';
+import { blockStore, menuStore, dbStore, detailStore, popupStore, commonStore } from 'Store';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 import arrayMove from 'array-move';
@@ -229,7 +229,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const { rootId, dataset } = this.props;
 		const { selection } = dataset || {};
 		const root = blockStore.getLeaf(rootId, rootId);
-		const cmd = keyboard.ctrlKey();
+		const cmd = keyboard.cmdKey();
 		const ids = selection ? selection.get(I.SelectType.Block) : [];
 		const length = ids.length;
 
@@ -293,7 +293,15 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				this.setState({ loading: true });
 			};
 
-			Dataview.getData(rootId, block.id, viewId, keys, 0, offset + this.getLimit(viewId), clear, (message: any) => {
+			Dataview.getData({
+				rootId, 
+				blockId: block.id, 
+				newViewId: viewId, 
+				keys, 
+				limit: 0, 
+				offset: offset + this.getLimit(viewId), 
+				clear,
+			}, (message: any) => {
 				if (clear) {
 					this.setState({ loading: false });
 				};
@@ -397,10 +405,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		const types = Relation.getSetOfObjects(rootId, rootId, Constant.typeId.type);
 		const relations = Relation.getSetOfObjects(rootId, rootId, Constant.typeId.relation);
-		const details: any = {};
-
-		if (types.length) {
-			details.type = types[0].id
+		const details: any = {
+			type: types.length ? types[0].id : commonStore.type,
 		};
 
 		if (relations.length) {
@@ -432,9 +438,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					return;
 				};
 
+				const object = message.details;
 				const records = dbStore.getRecords(subId, '');
-				const object = detailStore.get(subId, message.objectId, []);
-				const oldIndex = records.findIndex(it => it == object.id);
+				const oldIndex = records.findIndex(it => it == message.objectId);
 				const newIndex = dir > 0 ? records.length - 1 : 0;
 
 				if (oldIndex < 0) {
@@ -459,14 +465,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			});
 		};
 
-		if (!setOf.length) {
-			create(null);
-			return;
-		};
-
-		const first = setOf[0];
-
-		if (first == Constant.typeId.bookmark) {
+		if (details.type == Constant.typeId.bookmark) {
 			menuStore.open('dataviewCreateBookmark', {
 				type: I.MenuType.Horizontal,
 				element,
@@ -482,7 +481,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		const showPopup = () => {
-			popupStore.open('template', { data: { typeId: first, onSelect: create } });
+			popupStore.open('template', { data: { typeId: details.type, onSelect: create } });
 		};
 
 		const showMenu = () => {
@@ -536,7 +535,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			return;
 		};
 
-		const { block, dataset } = this.props;
+		const { dataset } = this.props;
 		const { selection } = dataset || {};
 		const relation = dbStore.getRelationByKey(relationKey);
 		const id = Relation.cellId(this.getIdPrefix(), relationKey, index);
@@ -548,10 +547,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			return;
 		};
 
-		if ([ I.ViewType.List, I.ViewType.Gallery ].includes(view.type) && ([ I.RelationType.Url, I.RelationType.Email, I.RelationType.Phone ].indexOf(relation.format) >= 0)) {
-			const scheme = Relation.getUrlScheme(relation.format, record[relationKey]);
-
-			Renderer.send('urlOpen', scheme + record[relationKey]);
+		if ([ I.ViewType.List, I.ViewType.Gallery, I.ViewType.Board ].includes(view.type) && Relation.isUrl(relation.format)) {
+			Renderer.send('urlOpen', Relation.getUrlScheme(relation.format, record[relationKey]) + record[relationKey]);
 			return;
 		};
 

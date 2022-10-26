@@ -130,7 +130,7 @@ const ListObject = observer(class ListObject extends React.Component<Props, {}> 
 		const { rootId, blockId } = this.props;
 		const views = dbStore.getViews(rootId, blockId);
 
-		return views.length ? views[0] : null;		
+		return views.length ? views[0] : null;
 	};
 
 	getItems () {

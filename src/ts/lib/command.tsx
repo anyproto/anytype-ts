@@ -896,20 +896,20 @@ const HistoryGetVersions = (objectId: string, lastVersionId: string, limit: numb
 
 // ---------------------- OBJECT TYPE ---------------------- //
 
-const ObjectTypeRelationAdd = (objectTypeId: string, relationIds: string[], callBack?: (message: any) => void) => {
+const ObjectTypeRelationAdd = (objectTypeId: string, relationKeys: string[], callBack?: (message: any) => void) => {
 	const request = new Rpc.ObjectType.Relation.Add.Request();
 	
 	request.setObjecttypeurl(objectTypeId);
-	request.setRelationidsList(relationIds);
+	request.setRelationkeysList(relationKeys);
 
 	dispatcher.request(ObjectTypeRelationAdd.name, request, callBack);
 };
 
-const ObjectTypeRelationRemove = (objectTypeId: string, relationId: string, callBack?: (message: any) => void) => {
+const ObjectTypeRelationRemove = (objectTypeId: string, relationKeys: string[], callBack?: (message: any) => void) => {
 	const request = new Rpc.ObjectType.Relation.Remove.Request();
 	
 	request.setObjecttypeurl(objectTypeId);
-	request.setRelationid(relationId);
+	request.setRelationkeysList(relationKeys);
 
 	dispatcher.request(ObjectTypeRelationRemove.name, request, callBack);
 };

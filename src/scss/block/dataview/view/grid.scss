@@ -8,8 +8,10 @@
 		}
 		.cellHead {
 			.cellContent { cursor: grab; height: 46px !important; overflow: visible !important; }
-			.flex { padding: 14px; }
+			.flex { padding: 14px; gap: 0px 6px; align-items: center; }
 			.iconObject { width: 20px; height: 20px; margin: 0px; vertical-align: top; flex-shrink: 0; display: none; }
+			.icon.lock { flex-shrink: 0; }
+
 			.name { 
 				display: inline-block; line-height: 20px; height: 20px; vertical-align: top; width: 100%; 
 				@include text-overflow-nw;
@@ -24,6 +26,7 @@
 			.flex { display: inline-block; }
 			.iconObject { display: block; }
 			.name { display: none; }
+			.icon.lock { display: none; }
 		}
 		.cellHead.last { overflow: visible; cursor: pointer; padding: 14px; }
 		.cellHead.last {

@@ -146,11 +146,11 @@
 
 	"relationRelationKeys": [
 		"id", "type", "layout", "name", "relationFormat", "relationKey", "scope", "isReadonly", "isHidden", "isDeleted", "isArchived", "isFavorite", "restrictions",
-		"relationMaxCount", "relationReadonly", "relationDefaultValue", "relationFormatObjectTypes"
+		"relationMaxCount", "relationReadonly", "relationReadonlyValue", "relationDefaultValue", "relationFormatObjectTypes"
 	],
 
 	"optionRelationKeys": [
-		"id", "type", "layout", "relationOptionText", "relationOptionColor", "relationKey"
+		"id", "type", "layout", "name", "relationOptionColor", "relationKey"
 	],
 
 	"relationKey": {
