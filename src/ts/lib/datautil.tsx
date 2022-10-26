@@ -1123,12 +1123,6 @@ class DataUtil {
 		content.cardStyle = Number(content.cardStyle) || I.LinkCardStyle.Text;
 		content.relations = (content.relations || []).filter(it => relationKeys.includes(it));
 
-		if (content.cardStyle == I.LinkCardStyle.Text) {
-			content.iconSize = I.LinkIconSize.Small;
-			content.description = I.LinkDescription.None;
-			content.relations = [];
-        };
-
 		if (layout == I.ObjectLayout.Task) {
 			content.iconSize = I.LinkIconSize.Small;
 		};
