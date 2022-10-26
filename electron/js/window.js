@@ -158,8 +158,6 @@ class WindowManager {
 			shell.openExternal(url);
 		});
 
-		win.toggleDevTools();
-
 		return win;
 	};
 

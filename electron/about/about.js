@@ -1,6 +1,6 @@
 var param = getParam();
 var year = document.getElementById('year');
-var close = document.getElementById('close');
+var closeButton = document.getElementById('close');
 var version = document.getElementById('version');
 var versionButton = document.getElementById('version-button');
 var versionText = 'Version: ' + param.version;
@@ -9,7 +9,7 @@ document.title = 'Anytype';
 year.innerText = new Date().getFullYear();
 version.innerText = versionText;
 
-close.addEventListener('click', e => {
+closeButton.addEventListener('click', e => {
     e.preventDefault();
     window.close();
 });
