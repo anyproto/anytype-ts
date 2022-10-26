@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { I } from 'Lib';
-import { IconObject } from 'Component';
+import { Icon, IconObject } from 'Component';
 import { SortableHandle } from 'react-sortable-hoc';
 import { observer } from 'mobx-react';
 import { menuStore } from 'Store';
@@ -8,6 +8,7 @@ import { menuStore } from 'Store';
 interface Props {
 	format: I.RelationType;
 	name: string;
+	readonly: boolean;
 	onClick?: (e: any) => void;
 }
 
@@ -22,10 +23,11 @@ const HeadHandle = observer(class HeadHandle extends React.Component<Props, {}> 
 	}
 
 	render () {
-		const { format, name, onClick } = this.props;
+		const { format, name, readonly, onClick } = this.props;
 
 		const Handle = SortableHandle(() => (
 			<div className="flex" onMouseDown={this.onMouseDown} onClick={onClick}>
+				{readonly ? <Icon className="lock" /> : ''}
 				<IconObject object={{ relationFormat: format, layout: I.ObjectLayout.Relation }} tooltip={name} />
 				<div className="name">{name}</div>
 			</div>

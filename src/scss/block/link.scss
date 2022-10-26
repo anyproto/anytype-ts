@@ -56,10 +56,27 @@
 
 		.linkCard.text {
 			.side.left {
-				.txt { line-height: 24px; vertical-align: top; }
+				.txt { line-height: 24px; vertical-align: top; display: flex; gap: 0px 6px; align-items: center; }
 			}
 
-			.cardName .name { @include clamp1; border-bottom: 0.05em solid $colorMediumGrey; }
+			.cardName { display: flex; flex-wrap: nowrap; vertical-align: top; flex-shrink: 0; flex-grow: 0; max-width: 50%; }
+			.cardName {
+				.name { @include clamp1; font-weight: 500; }
+			}
+
+			.cardDescription {
+				@include text-small; @include text-overflow-nw; flex-shrink: 1; flex-grow: 0; margin-top: 0; white-space: normal;
+				.description { @include clamp1; }
+			}
+			.cardFeatured {
+				@include text-small; @include text-overflow-nw; color: $colorDarkGrey; flex-shrink: 0; max-width: 33%; flex-grow: 0; margin-top: 0;
+				display: flex; gap: 0px 6px; align-items: center;
+			}
+
+			.div { width: 2px; height: 18px; line-height: 18px; display: inline-block; vertical-align: top; flex-shrink: 0; flex-grow: 0; }
+			.div {
+				.inner { width: 2px; height: 2px; border-radius: 100%; display: inline-block; vertical-align: middle; background: $colorMediumGrey; }
+			}
 		}
 
 		.linkCard.card { margin: 6px 0px; }

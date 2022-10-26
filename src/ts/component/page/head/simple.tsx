@@ -40,8 +40,12 @@ const HeadSimple = observer(class Controls extends React.Component<Props, {}> {
 			title: DataUtil.defaultName(type),
 			description: 'Add a description',
 		};
-
 		const featured: any = new M.Block({ id: rootId + '-featured', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
+
+		let canEditIcon = allowDetails;
+		if (object.type == Constant.typeId.relation) {
+			canEditIcon = false;
+		};
 
 		const Editor = (item: any) => {
 			return (
@@ -83,7 +87,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props, {}> {
 			<div className="headSimple">
 				{check.withIcon ? (
 					<div className="side left">
-						<IconObject id={'block-icon-' + rootId} size={object.iconImage ? 112 : 96} object={object} canEdit={allowDetails} onSelect={this.onSelect} onUpload={this.onUpload} />
+						<IconObject id={'block-icon-' + rootId} size={object.iconImage ? 112 : 96} object={object} canEdit={canEditIcon} onSelect={this.onSelect} onUpload={this.onUpload} />
 					</div>
 				) : ''}
 

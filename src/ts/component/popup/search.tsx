@@ -241,7 +241,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 
 	onKeyDown (e: any) {
 		const items = this.getItems();
-		const cmd = keyboard.ctrlKey();
+		const cmd = keyboard.cmdKey();
 
 		keyboard.disableMouse(true);
 

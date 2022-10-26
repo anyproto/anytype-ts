@@ -94,6 +94,11 @@
 
 .pageMainStore {
     .body {
+		.tabs {
+			.item { color: $colorSecondary; }
+			.item:hover, .item.active { color: $colorPrimary; }
+		}
+
         .items {
             .item {
                 .info {

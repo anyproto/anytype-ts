@@ -28,6 +28,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		this.onSubmit = this.onSubmit.bind(this);
 		this.onChange = this.onChange.bind(this);
 		this.onClick = this.onClick.bind(this);
+		this.menuClose = this.menuClose.bind(this);
 	};
 
 	render () {
@@ -68,6 +69,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 					<MenuItemVertical
 						id="object-type"
 						onMouseEnter={this.onObjectType}
+						onClick={this.onObjectType}
 						arrow={!isReadonly}
 						{...typeProps}
 					/>
@@ -94,13 +96,14 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 						name="Preferences" 
 						arrow={true} 
 						onMouseEnter={this.onDateSettings} 
+						onClick={this.onDateSettings} 
 					/>
 				</div>
 			);
 		};
 
 		return (
-			<form onSubmit={this.onSubmit}>
+			<form className="form" onSubmit={this.onSubmit} onMouseDown={this.menuClose}>
 				<div className="section">
 					<div className="name">Relation name</div>
 					{!isReadonly ? (
@@ -174,7 +177,6 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 			this.ref.setValue(filter);
 		};
 
-		this.rebind();
 		this.focus();
 		this.checkButton();
 	};
@@ -187,22 +189,6 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 
 	componentWillUnmount () {
 		this.menuClose();
-		this.unbind();
-	};
-
-	rebind () {
-		const { getId } = this.props;
-
-		this.unbind();
-
-		$(`#${getId()}`).on('click.menu', () => { this.menuClose(); });
-	};
-
-	unbind () {
-		const { getId } = this.props;
-
-		$(window).off('keydown.menu');
-		$(`#${getId()}`).off('click.menu');
 	};
 
 	focus () {
@@ -228,7 +214,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		let sections: any[] = [
 			{
 				children: [
-					// { id: 'open', icon: 'expand', name: 'Open relation' },
+					{ id: 'open', icon: 'expand', name: 'Open as object' },
 					allowed ? { id: 'copy', icon: 'copy', name: 'Duplicate' } : null,
 					canDelete ? { id: 'remove', icon: 'remove', name: 'Delete' } : null,
 				]
@@ -268,6 +254,9 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 	};
 
 	onClick (e: any, item: any) {
+		e.preventDefault();
+		e.stopPropagation();
+
 		const { param, getId, getSize } = this.props;
 		const { data } = param;
 		const { rootId, blockId, getView, getData } = data;
@@ -294,7 +283,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 
 		switch (item.id) {
 			case 'open':
-				DataUtil.objectOpenPopup({ id: relation.objectId, layout: I.ObjectLayout.Relation });
+				DataUtil.objectOpenPopup(relation);
 				break;
 
 			case 'copy':
@@ -391,6 +380,9 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 	};
 
 	onRelationType (e: any) {
+		e.preventDefault();
+		e.stopPropagation();
+
 		const { param, getId } = this.props;
 		const { data } = param;
 		const relation = this.getViewRelation();
@@ -416,6 +408,9 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 	};
 
 	onObjectType (e: any) {
+		e.preventDefault();
+		e.stopPropagation();
+
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, blockId } = data;
@@ -463,6 +458,9 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 	};
 
 	onDateSettings (e: any) {
+		e.preventDefault();
+		e.stopPropagation();
+
 		const { param, getId } = this.props;
 		const { data } = param;
 

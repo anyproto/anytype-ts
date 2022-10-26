@@ -398,7 +398,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 		switch (item.id) {
 			case 'open':
-				DataUtil.objectOpenPopup({ id: object.type, layout: I.ObjectLayout.Type });
+				DataUtil.objectOpenPopup(type);
 				break;
 
 			case 'setOpen':
@@ -408,7 +408,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			case 'setCreate':
 				C.ObjectCreateSet([ object.type ], { name: type.name + ' set', iconEmoji: type.iconEmoji }, '', (message: any) => {
 					if (!message.error.code) {
-						DataUtil.objectOpenPopup({ id: message.objectId, layout: I.ObjectLayout.Set });
+						DataUtil.objectOpenPopup(message.details);
 					};
 				});
 				break;
@@ -508,8 +508,10 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 	};
 
 	getStoreId (): string {
-		const { rootId, traceId } = this.props;
-		return String(rootId || '').replace('-' + traceId, '');
+		const rootId = String(this.props.rootId || '');
+		const traceId = String(this.props.traceId || '');
+
+		return traceId ? rootId.replace('-' + traceId, '') : rootId;
 	};
 	
 });
