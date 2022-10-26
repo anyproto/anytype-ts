@@ -2,7 +2,7 @@
 
 .popups {
 	.popup.popupSearch {
-		.ReactVirtualized__Grid__innerScrollContainer { margin: 8px 0px; }
+		.ReactVirtualized__List { padding: 8px 0px; }
 
 		.content { height: 432px; overflow: visible; transition: none; transform: translate3d(0px,0px,0px); }
 		.wrap { height: 100%; }

@@ -266,24 +266,26 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 	};
 
 	onRelation () {
-		const { isPopup, rootId } = this.props;
+		const { isPopup, rootId, readonly } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
 		const elements = node.find('#elements');
 		const container = Util.getScrollContainer(isPopup);
-		const rect = { x: container.width() / 2 , y: Util.sizeHeader(), width: 0, height: 0 };
 		const cnw = [ 'fixed' ];
 
-		if (isPopup) {
-			const offset = container.offset();
-			rect.x += offset.left;
-			rect.y += offset.top;
-		} else {
+		if (!isPopup) {
 			cnw.push('fromHeader');
 		};
 
 		const param: any = {
-			rect: rect,
-			horizontal: I.MenuDirection.Left,
+			recalcRect: () => {
+				const rect = { x: container.width() / 2 , y: Util.sizeHeader(), width: 0, height: 0 };
+				if (isPopup) {
+					const offset = container.offset();
+					rect.x += offset.left;
+					rect.y += offset.top;
+				};
+				return rect;
+			},
 			noFlipX: true,
 			noFlipY: true,
 			subIds: Constant.menuIds.cell,
@@ -293,11 +295,11 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 			},
 			onClose: () => {
 				elements.removeClass('hover');
-				menuStore.closeAll();
 			},
 			data: {
 				rootId,
 				isPopup,
+				readonly,
 			},
 		};
 

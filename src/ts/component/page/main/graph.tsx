@@ -142,6 +142,11 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 			return;
 		};
 
+		keyboard.shortcut('escape', e, (pressed: string) => {
+			this.ids = [];
+			this.refGraph.send('onSetSelected', { ids: this.ids });
+		});
+
 		keyboard.shortcut('backspace, delete', e, (pressed: string) => {
 			C.ObjectListSetIsArchived(this.ids, true, (message: any) => {
 				if (!message.error.code) {
@@ -241,9 +246,10 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 	};
 
 	onClickObject (object: any) {
+		this.ids = [];
 		this.togglePanel(true);
 		this.refPanel.setState({ view: I.GraphView.Preview, rootId: object.id });
-
+		this.refGraph.send('onSetSelected', { ids: this.ids });
 		analytics.event('GraphSelectNode');
 	};
 
@@ -308,14 +314,19 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 								};
 							});
 
-							this.data.edges = this.data.edges.filter(d => (d.source != root) && !ids.includes(d.target));
+							this.data.edges = this.data.edges.filter(d => {
+								if ((d.source == root) && ids.includes(d.target)) {
+									return false;
+								};
+								return true;
+							});
 
 							this.refGraph.send('onSetEdges', { edges: this.data.edges });
 							break;
 					};
 
 					this.ids = [];
-					this.refGraph.send('onSetSelected', { ids: [] });
+					this.refGraph.send('onSetSelected', { ids: this.ids });
 				},
 			}
 		});

@@ -826,22 +826,22 @@ const BlockRelationSetKey = (contextId: string, blockId: string, relationKey: st
 	dispatcher.request(BlockRelationSetKey.name, request, callBack);
 };
 
-const BlockDataviewRelationAdd = (contextId: string, blockId: string, relationId: string, callBack?: (message: any) => void) => {
+const BlockDataviewRelationAdd = (contextId: string, blockId: string, relationKeys: string[], callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockDataview.Relation.Add.Request();
 	
 	request.setContextid(contextId);
 	request.setBlockid(blockId);
-	request.setRelationid(relationId);
+	request.setRelationkeysList(relationKeys);
 
 	dispatcher.request(BlockDataviewRelationAdd.name, request, callBack);
 };
 
-const BlockDataviewRelationDelete = (contextId: string, blockId: string, relationId: string, callBack?: (message: any) => void) => {
+const BlockDataviewRelationDelete = (contextId: string, blockId: string, relationKeys: string[], callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockDataview.Relation.Delete.Request();
 	
 	request.setContextid(contextId);
 	request.setBlockid(blockId);
-	request.setRelationid(relationId);
+	request.setRelationkeysList(relationKeys);
 
 	dispatcher.request(BlockDataviewRelationDelete.name, request, callBack);
 };
@@ -896,20 +896,20 @@ const HistoryGetVersions = (objectId: string, lastVersionId: string, limit: numb
 
 // ---------------------- OBJECT TYPE ---------------------- //
 
-const ObjectTypeRelationAdd = (objectTypeId: string, relationIds: string[], callBack?: (message: any) => void) => {
+const ObjectTypeRelationAdd = (objectTypeId: string, relationKeys: string[], callBack?: (message: any) => void) => {
 	const request = new Rpc.ObjectType.Relation.Add.Request();
 	
 	request.setObjecttypeurl(objectTypeId);
-	request.setRelationidsList(relationIds);
+	request.setRelationkeysList(relationKeys);
 
 	dispatcher.request(ObjectTypeRelationAdd.name, request, callBack);
 };
 
-const ObjectTypeRelationRemove = (objectTypeId: string, relationId: string, callBack?: (message: any) => void) => {
+const ObjectTypeRelationRemove = (objectTypeId: string, relationKeys: string[], callBack?: (message: any) => void) => {
 	const request = new Rpc.ObjectType.Relation.Remove.Request();
 	
 	request.setObjecttypeurl(objectTypeId);
-	request.setRelationid(relationId);
+	request.setRelationkeysList(relationKeys);
 
 	dispatcher.request(ObjectTypeRelationRemove.name, request, callBack);
 };
@@ -1156,20 +1156,20 @@ const ObjectSearchUnsubscribe = (subIds: string[], callBack?: (message: any) => 
 	dispatcher.request(ObjectSearchUnsubscribe.name, request, callBack);
 };
 
-const ObjectRelationAdd = (contextId: string, relationIds: string[], callBack?: (message: any) => void) => {
+const ObjectRelationAdd = (contextId: string, relationKeys: string[], callBack?: (message: any) => void) => {
 	const request = new Rpc.ObjectRelation.Add.Request();
 	
 	request.setContextid(contextId);
-	request.setRelationidsList(relationIds);
+	request.setRelationkeysList(relationKeys);
 
 	dispatcher.request(ObjectRelationAdd.name, request, callBack);
 };
 
-const ObjectRelationDelete = (contextId: string, relationId: string, callBack?: (message: any) => void) => {
+const ObjectRelationDelete = (contextId: string, relationKey: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.ObjectRelation.Delete.Request();
 	
 	request.setContextid(contextId);
-	request.setRelationid(relationId);
+	request.setRelationkey(relationKey);
 
 	dispatcher.request(ObjectRelationDelete.name, request, callBack);
 };

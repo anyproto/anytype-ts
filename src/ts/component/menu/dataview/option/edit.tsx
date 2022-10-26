@@ -52,7 +52,7 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<Pro
 					placeholder={translate('menuDataviewOptionEditPlaceholder')}
 					placeholderFocus={translate('menuDataviewOptionEditPlaceholder')}
 					className={'textColor-' + this.color}
-					value={option.text}
+					value={option.name}
 					onKeyUp={(e: any, v: string) => { this.onKeyUp(e, v); }}
 				/>
 
@@ -97,7 +97,7 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<Pro
 	};
 	
 	unbind () {
-		$(window).off('down.menu');
+		$(window).off('keydown.menu');
 	};
 
 	getSections () {
@@ -198,7 +198,7 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<Pro
 		};
 
 		C.ObjectSetDetails(option.id, [ 
-			{ key: 'relationOptionText', value },
+			{ key: 'name', value },
 			{ key: 'relationOptionColor', value: this.color },
 		]);
 	};

@@ -12,17 +12,11 @@ interface Props extends I.ViewComponent {
 	className?: string;
 };
 
-interface State {
-	page: number;
-};
-
 const $ = require('jquery');
 
-const Controls = observer(class Controls extends React.Component<Props, State> {
+const Controls = observer(class Controls extends React.Component<Props, {}> {
 
-	state = {
-		page: 0,
-	};
+	_isMounted: boolean = false;
 
 	constructor (props: any) {
 		super(props);
@@ -34,7 +28,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { className, rootId, block, getView, readonly, onRecordAdd } = this.props;
+		const { className, rootId, block, getView, readonly, onRecordAdd, isInline } = this.props;
 		const views = dbStore.getViews(rootId, block.id);
 		const view = getView();
 		const sortCnt = view.sorts.length;
@@ -42,47 +36,54 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 		const filterCnt = filters.length;
 		const allowedObject = blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.Object ]);
 		const allowedView = blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.View ]);
-		const cn = [ 'dataviewControls', (className ? className : '') ];
+		const cn = [ 'dataviewControls' ];
+
+		if (className) {
+			cn.push(className);
+		};
+
+		if (isInline) {
+			cn.push('isInline');
+		};
 
 		const buttons: any[] = [
-			//{ id: 'search', name: 'Search', menu: '' },
-			{ id: 'manager', name: 'Customize view', menu: 'dataviewRelationList', on: (filterCnt > 0 || sortCnt > 0) },
+			{ id: 'filter', name: 'Filters', menu: 'dataviewFilterList', withTabs: false },
+			{ id: 'sort', name: 'Sorts', menu: 'dataviewSort', withTabs: false },
+			{ id: 'settings', name: 'Settings', menu: 'dataviewRelationList', withTabs: true },
 		];
 
 		const ButtonItem = (item: any) => {
-			let cn = [ item.id, (item.on ? 'on' : '') ];
+			const elementId = `button-${block.id}-${item.id}`;
 			return (
 				<Icon 
-					id={'button-' + item.id} 
-					className={cn.join(' ')}
+					id={elementId} 
+					className={item.id}
 					tooltip={item.name}
-					onClick={(e: any) => { this.onButton(e, `button-${item.id}`, item.menu); }}
+					onClick={(e: any) => { this.onButton(e, '#' + elementId, item.menu, item.withTabs); }}
 				/>
 			);
 		};
 
-		const ViewItem = SortableElement((item: any) => (
-			<div 
-				id={'view-item-' + item.id} 
-				className={'viewItem ' + (item.id == view.id ? 'active' : '')} 
-				onClick={(e: any) => { this.onViewSet(item); }} 
-				onContextMenu={(e: any) => { this.onViewEdit(e, '#views #view-item-' + item.id, item); }}
-			>
-				{item.name}
-			</div>
-		));
+		const ViewItem = SortableElement((item: any) => {
+			const elementId = `view-item-${block.id}-${item.id}`;
+			return (
+				<div 
+					id={elementId} 
+					className={'viewItem ' + (item.id == view.id ? 'active' : '')} 
+					onClick={(e: any) => { this.onViewSet(item); }} 
+					onContextMenu={(e: any) => { this.onViewEdit(e, '#views #' + elementId, item); }}
+				>
+					{item.name}
+				</div>
+			);
+		});
 
 		const Views = SortableContainer((item: any) => (
 			<div id="views" className="views">
 				{views.map((item: I.View, i: number) => (
-					<ViewItem 
-						key={i} 
-						{...item} 
-						index={i} 
-					/>
+					<ViewItem key={i} {...item} index={i} />
 				))}
-
-				{allowedView ? <Icon id="button-view-add" className="plus" tooltip="Create new view" onClick={this.onViewAdd} /> : ''}
+				{allowedView ? <Icon id={`button-${block.id}-view-add`} className="plus" tooltip="Create new view" onClick={this.onViewAdd} /> : ''}
 			</div>
 		));
 		
@@ -90,17 +91,14 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 			<div className={cn.join(' ')}>
 				<div className="sides">
 					<div id="sideLeft" className="side left">
-						<span />
-						<div className="first">
-							<div 
-								id={'view-item-' + view.id} 
-								className="viewItem active" 
-								onClick={(e: any) => { this.onButton(e, `view-item-${view.id}`, 'dataviewViewList'); }} 
-								onContextMenu={(e: any) => { this.onViewEdit(e, '.first #view-item-' + view.id, view); }}
-							>
-								{view.name}
-								<Icon className="arrow" />
-							</div>
+						<div 
+							id="view-selector"
+							className="viewSelect select"
+							onClick={(e: any) => { this.onButton(e, '#view-selector', 'dataviewViewList', false); }} 
+							onContextMenu={(e: any) => { this.onViewEdit(e, '#view-selector', view); }}
+						>
+							<div className="name">{view.name}</div>
+							<Icon className="arrow dark" />
 						</div>
 
 						<Views 
@@ -120,7 +118,16 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 						{buttons.map((item: any, i: number) => (
 							<ButtonItem key={item.id} {...item} />
 						))}	
-						{!readonly && allowedObject ? <Button color="orange" icon="plus-small" className="c28" tooltip="New object" text="New" onClick={(e: any) => { onRecordAdd(e, -1); }} /> : ''}
+						{!readonly && allowedObject ? (
+							<Button 
+								color="orange" 
+								icon="plus-small" 
+								className="c28" 
+								tooltip="New object" 
+								text="New" 
+								onClick={(e: any) => { onRecordAdd(e, -1); }} 
+							/>
+ 						) : ''}
 					</div>
 				</div>
 
@@ -130,31 +137,36 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 	};
 
 	componentDidMount () {
-		this.resize();
-		$(window).off('resize.controls').on('resize.controls', () => { this.resize(); });
-	};
-
-	componentDidUpdate () {
-		this.resize();
+		this._isMounted = true;
 	};
 
 	componentWillUnmount () {
-		$(window).off('resize.controls');
+		this._isMounted = false;
 	};
 	
-	onButton (e: any, id: string, menu: string) {
-		if (!menu) {
+	onButton (e: any, element: string, id: string, withTabs: boolean) {
+		if (!id) {
 			return;
 		};
 
 		const { rootId, block, readonly, getData, getView } = this.props;
 		const view = getView();
+		const obj = $(element);
+		const node = $(ReactDOM.findDOMNode(this));
 
 		const param: any = { 
-			element: `#${id}`,
+			element,
 			horizontal: I.MenuDirection.Center,
 			offsetY: 10,
 			noFlipY: true,
+			onOpen: () => {
+				node.addClass('active');
+				obj.addClass('active');
+			},
+			onClose: () => {
+				node.removeClass('active');
+				obj.removeClass('active');
+			},
 			data: {
 				readonly: readonly,
 				rootId: rootId,
@@ -165,11 +177,12 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 			},
 		};
 
-		if (id == 'button-manager') {
+		if (withTabs) {
 			param.getTabs = () => Dataview.getMenuTabs(rootId, block.id, view.id);
+			param.initialTab = param.getTabs().find(it => it.component == id)?.id;
 		};
 
-		menuStore.open(menu, param);
+		menuStore.open(id, param);
 	};
 
 	onViewAdd (e: any) {
@@ -198,12 +211,22 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 			type: I.ViewType.Grid,
 			groupRelationKey: Relation.getGroupOption(rootId, block.id, '')?.id,
 			filters,
+			relations: [
+				{ relationKey: 'name', isVisible: true }
+			]
 		};
 
 		C.BlockDataviewViewCreate(rootId, block.id, newView, (message: any) => {
+			if (message.error.code) {
+				return;
+			};
+
 			const view = dbStore.getView(rootId, block.id, message.viewId);
-			
-			this.onViewEdit(e, `#views #view-item-${message.viewId}`, view);
+			if (!view) {
+				return;
+			};
+
+			this.onViewEdit(e, `#views #view-item-${block.id}-${message.viewId}`, view);
 			analytics.event('AddView', { type: view.type });
 		});
 	};
@@ -266,11 +289,27 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 	};
 
 	resize () {
-		const node = $(ReactDOM.findDOMNode(this));
-		const views = node.find('#views');
-		const sideLeft = node.find('#sideLeft');
+		if (!this._isMounted) {
+			return;
+		};
 
-		views.width() > sideLeft.outerWidth() ? sideLeft.addClass('small') : sideLeft.removeClass('small');
+		const { isPopup } = this.props;
+		const node = $(ReactDOM.findDOMNode(this));
+		const sideLeft = node.find('#sideLeft');
+		const sideRight = node.find('#sideRight');
+		const container = Util.getPageContainer(isPopup);
+
+		sideLeft.removeClass('small');
+
+		let width = sideLeft.offset().left + sideLeft.outerWidth() + sideRight.outerWidth();
+
+		if (isPopup) {
+			width -= container.offset().left;
+		};
+
+		if (width >= container.width()) {
+			sideLeft.addClass('small');
+		};
 	};
 
 });

@@ -188,6 +188,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 											rowRenderer={rowRenderer}
 											onRowsRendered={onRowsRendered}
 											overscanRowCount={20}
+											scrollToAlignment="center"
 										/>
 									)}
 								</AutoSizer>
@@ -316,7 +317,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 		];
 
 		if (config.experimental) {
-			sections.push({ id: 'dataview', name: 'Set', children: DataUtil.menuGetBlockDataview() });
+			sections.push({ id: 'dataview', name: 'Inline set', children: DataUtil.menuGetBlockDataview() });
 		};
 
 		sections = sections.map((s: any) => {
@@ -530,7 +531,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 			if (item.isAction) {
 				switch (item.itemId) {
 					case 'download':
-						Action.download(block);
+						Action.download(block, 'menu');
 						break;
 
 					case 'copy':
@@ -598,7 +599,11 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 					});
 				} else 
 				if (item.isObject) {
-					const details = { type: item.objectTypeId };
+					const details: any = { type: item.objectTypeId };
+
+					if (item.objectTypeId == Constant.typeId.set) {
+						details.layout = I.ObjectLayout.Set;
+					};
 
 					const create = (template: any) => {
 

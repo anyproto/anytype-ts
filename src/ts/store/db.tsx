@@ -6,7 +6,7 @@ const Constant = require('json/constant.json');
 
 class DbStore {
 
-    public relationMap: Map<string, any[]> = observable.map(new Map());
+    public relationMap: Map<string, any[]> = observable(new Map());
 	public relationKeyMap: any = {};
     public viewMap: Map<string, I.View[]> = observable.map(new Map());
     public recordMap: Map<string, string[]> = observable.map(new Map());
@@ -42,14 +42,14 @@ class DbStore {
 	};
 
     relationsSet (rootId: string, blockId: string, list: any[]) {
-		const key = this.getId(rootId, blockId);
-		const relations = this.getRelations(rootId, blockId);
+		let key = this.getId(rootId, blockId);
+		let relations = this.relationMap.get(this.getId(rootId, blockId)) || [];
 
 		for (let item of list) {
-			relations.push(item);
+			relations.push({ relationKey: item.relationKey, format: item.format });
 		};
 
-		this.relationMap.set(key, Util.arrayUniqueObjects(relations, 'id'));
+		this.relationMap.set(key, Util.arrayUniqueObjects(relations, 'relationKey'));
 	};
 
     relationDelete (rootId: string, blockId: string, id: string) {
@@ -199,8 +199,8 @@ class DbStore {
 			filter(it => !it._empty_ && (it.smartblockTypes || []).includes(SBType) && !it.isArchived && !it.isDeleted);
 	};
 
-    getRelations (rootId: string, blockId: string, param?: any): any[] {
-		return (this.relationMap.get(this.getId(rootId, blockId)) || []).map(it => this.getRelationByKey(it.relationKey));
+    getRelations (rootId: string, blockId: string): any[] {
+		return (this.relationMap.get(this.getId(rootId, blockId)) || []).map(it => this.getRelationByKey(it.relationKey)).filter(it => it);
 	};
 
     getRelationByKey (relationKey: string): any {
@@ -231,7 +231,14 @@ class DbStore {
 	};
 
     getMeta (rootId: string, blockId: string) {
-		return this.metaMap.get(this.getId(rootId, blockId)) || {};
+		const map = this.metaMap.get(this.getId(rootId, blockId)) || {};
+
+		return {
+			total: Number(map.total) || 0,
+			offset: Number(map.offset) || 0,
+			viewId: String(map.viewId || ''),
+			keys: map.keys || [],
+		};
 	};
 
     getRecords (rootId: string, blockId: string) {

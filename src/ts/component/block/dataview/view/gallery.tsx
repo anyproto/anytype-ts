@@ -1,9 +1,10 @@
 import * as React from 'react';
-import { I, Relation } from 'Lib';
+import { I, Relation, DataUtil } from 'Lib';
 import { observer } from 'mobx-react';
 import { dbStore, detailStore } from 'Store';
 import { AutoSizer, WindowScroller, Masonry, CellMeasurer, CellMeasurerCache, createMasonryCellPositioner } from 'react-virtualized';
 
+import Empty from '../empty';
 import Card from './gallery/card';
 
 interface Props extends I.ViewComponent {};
@@ -33,13 +34,18 @@ const ViewGallery = observer(class ViewGallery extends React.Component<Props, {}
 	};
 
 	render () {
-		const { rootId, block, getData, getView, getKeys, isPopup } = this.props;
+		const { rootId, block, getData, getView, getKeys, isPopup, isInline } = this.props;
 		const view = getView();
-		const viewRelations = view.relations.filter(it => it.isVisible && dbStore.getRelationByKey(it.relationKey));
+		const relations = view.getVisibleRelations();
 		const subId = dbStore.getSubId(rootId, block.id);
 		const records = dbStore.getRecords(subId, '');
 		const { coverRelationKey, cardSize, hideIcon } = view;
 		const { offset, total } = dbStore.getMeta(subId, '');
+		const length = records.length;
+
+		if (!length) {
+			return <Empty {...this.props} />;
+		};
 
 		// Subscriptions on dependent objects
 		for (let id of records) {
@@ -60,55 +66,75 @@ const ViewGallery = observer(class ViewGallery extends React.Component<Props, {}
 			};
 		};
 
+		let content = null;
+
+		if (isInline) {
+			content = (
+				<React.Fragment>
+					{records.map((id: string, index: number) => (
+						<Card 
+							key={'gallery-card-' + view.id + index} 
+							{...this.props} 
+							index={index} 
+						/>
+					))}
+				</React.Fragment>
+			);
+		} else {
+			content = (
+				<WindowScroller scrollElement={isPopup ? $('#popupPage-innerWrap').get(0) : window}>
+					{({ height, isScrolling, registerChild, scrollTop }) => {
+						return (
+							<AutoSizer 
+								disableHeight={true}
+								onResize={this.onResize} 
+								overscanByPixels={200}
+							>
+								{({ width }) => {
+									this.width = width;
+									this.setDimensions();
+									this.initPositioner();
+
+									return (
+										<div ref={registerChild}>
+											<Masonry
+												ref={(ref: any) => { this.ref = ref; }}
+												autoHeight={true}
+												height={Number(height) || 0}
+												width={Number(width) || 0}
+												isScrolling={isScrolling}
+												cellCount={records.length}
+												cellMeasurerCache={this.cache}
+												cellPositioner={this.cellPositioner}
+												cellRenderer={({ key, index, parent, style }) => {
+													return (
+														<CellMeasurer cache={this.cache} index={index} key={'gallery-card-measurer-' + view.id + index} parent={parent}>
+															<Card 
+																key={'gallery-card-' + view.id + index} 
+																{...this.props} 
+																index={index} 
+																style={{ ...style, width: this.columnWidth }}
+															/>
+														</CellMeasurer>
+													);
+												}}
+												scrollTop={scrollTop}
+											/>
+										</div>
+									);
+								}}
+							</AutoSizer>
+						);
+					}}
+				</WindowScroller>
+			);
+		};
+
 		return (
 			<div className="wrap">
 				<div className="viewItem viewGallery">
-					<div className="galleryWrap">
-						<WindowScroller scrollElement={isPopup ? $('#popupPage-innerWrap').get(0) : window}>
-							{({ height, isScrolling, registerChild, scrollTop }) => {
-								return (
-									<AutoSizer 
-										disableHeight={true}
-										onResize={this.onResize} 
-										overscanByPixels={200}
-									>
-										{({ width }) => {
-											this.width = width;
-											this.setDimensions();
-											this.initPositioner();
-
-											return (
-												<div ref={registerChild}>
-													<Masonry
-														ref={(ref: any) => { this.ref = ref; }}
-														autoHeight={true}
-														height={Number(height) || 0}
-														width={Number(width) || 0}
-														isScrolling={isScrolling}
-														cellCount={records.length}
-														cellMeasurerCache={this.cache}
-														cellPositioner={this.cellPositioner}
-														cellRenderer={({ key, index, parent, style }) => {
-															return (
-																<CellMeasurer cache={this.cache} index={index} key={'gallery-card-measurer-' + view.id + index} parent={parent}>
-																	<Card 
-																		key={'gallery-card-' + view.id + index} 
-																		{...this.props} 
-																		index={index} 
-																		style={{ ...style, width: this.columnWidth }}
-																	/>
-																</CellMeasurer>
-															);
-														}}
-														scrollTop={scrollTop}
-													/>
-												</div>
-											);
-										}}
-									</AutoSizer>
-								);
-							}}
-						</WindowScroller>
+					<div className={[ 'galleryWrap', DataUtil.cardSizeClass(cardSize) ].join(' ')}>
+						{content}
 					</div>
 				</div>
 			</div>
@@ -120,6 +146,11 @@ const ViewGallery = observer(class ViewGallery extends React.Component<Props, {}
 	};
 
 	reset () {
+		const { isInline } = this.props;
+		if (isInline || !this.ref) {
+			return;
+		};
+
 		this.setDimensions();
 		this.cache.clearAll();
 		this.resetPositioner();
@@ -160,6 +191,10 @@ const ViewGallery = observer(class ViewGallery extends React.Component<Props, {}
 	};
 
 	resetPositioner () {
+		if (!this.cellPositioner) {
+			return;
+		};
+
 		this.cellPositioner.reset({
 			columnCount: this.columnCount,
 			columnWidth: this.columnWidth,

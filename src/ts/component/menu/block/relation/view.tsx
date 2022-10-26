@@ -73,9 +73,9 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 								onEdit={this.onEdit}
 								onRef={(id: string, ref: any) => { this.cellRefs.set(id, ref); }}
 								onFav={this.onFav}
-								readonly={!(allowedValue && !item.isReadonlyValue)}
-								canEdit={allowedRelation && !item.isReadonlyRelation}
-								canDrag={allowedBlock}
+								readonly={!(allowedValue && !item.isReadonlyValue && !readonly)}
+								canEdit={allowedRelation && !item.isReadonlyRelatione && !readonly}
+								canDrag={allowedBlock && !readonly}
 								canFav={canFav}
 								isFeatured={section.id == 'featured'}
 								classNameWrap={classNameWrap}
@@ -162,41 +162,38 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const { rootId } = data;
 		const { config } = commonStore;
 		const object = detailStore.get(rootId, rootId, [ Constant.relationKey.featured ]);
-		
-		let items = Util.objectCopy(dbStore.getRelations(rootId, rootId)).sort(DataUtil.sortByHidden);
-		items = items.filter((it: any) => {
+		const type = dbStore.getType(object.type);
+
+		let featured = object[Constant.relationKey.featured] || [];
+		let relations = dbStore.getRelations(rootId, rootId);
+		let relationKeys = relations.map(it => it.relationKey);
+		let items = relations.map((it: any) => { return { ...it, scope: I.RelationScope.Object }; });
+		let typeRelations = (type ? type.recommendedRelations : []).map(it => {
+			it = dbStore.getRelationById(it);
+			return { ...it, scope: I.RelationScope.Type };
+		}).filter(it => !relationKeys.includes(it.relationKey));
+
+		items = items.concat(typeRelations);
+		items = items.sort(DataUtil.sortByHidden).filter((it: any) => {
 			return it ? (!config.debug.ho ? !it.isHidden : true) : false;
 		});
 
-		let featured = object[Constant.relationKey.featured] || [];
 		let sections = [ 
 			{ 
 				id: 'featured', name: 'Featured relations', 
-				children: items.filter((it: any) => { return featured.indexOf(it.relationKey) >= 0; }),
+				children: items.filter(it => featured.includes(it.relationKey)),
 			},
 			{ 
 				id: 'object', name: 'In this object', 
-				children: items.filter((it: any) => { return (it.scope == I.RelationScope.Object) && (featured.indexOf(it.relationKey) < 0); }),
+				children: items.filter(it => !featured.includes(it.relationKey) && (it.scope == I.RelationScope.Object)),
 			},
 			{ 
-				id: 'type', name: 'Type', 
-				children: items.filter((it: any) => { return (it.scope == I.RelationScope.Type) && (featured.indexOf(it.relationKey) < 0); }),
-			},
-			{ 
-				id: 'setType', name: 'Suggested', 
-				children: items.filter((it: any) => { return (it.scope == I.RelationScope.SetOfTheSameType) && (featured.indexOf(it.relationKey) < 0); }),
-			},
-			{ 
-				id: 'objectType', name: 'Objects of the same type', 
-				children: items.filter((it: any) => { return (it.scope == I.RelationScope.ObjectsOfTheSameType) && (featured.indexOf(it.relationKey) < 0); }),
-			},
-			{ 
-				id: 'library', name: 'Library', 
-				children: items.filter((it: any) => { return (it.scope == I.RelationScope.Library) && (featured.indexOf(it.relationKey) < 0); }),
+				id: 'type', name: `From type ${type.name}`,
+				children: items.filter(it => !featured.includes(it.relationKey) && (it.scope == I.RelationScope.Type)),
 			},
 		];
 
-		sections = sections.filter((it: any) => { return it.children.length; });
+		sections = sections.filter(it => it.children.length);
 		return sections;
 	};
 
@@ -249,8 +246,8 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 				ref: 'menu',
 				menuIdEdit: 'blockRelationEdit',
 				skipIds: relations.map(it => it.relationKey),
-				addCommand: (rootId: string, blockId: string, relationId: string) => {
-					C.ObjectRelationAdd(rootId, [ relationId ]);
+				addCommand: (rootId: string, blockId: string, relationKey: string, onChange: (message: any) => void) => {
+					C.ObjectRelationAdd(rootId, [ relationKey ], onChange);
 				},
 			}
 		});
@@ -261,27 +258,24 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const { data, classNameWrap } = param;
 		const { rootId } = data;
 		const allowed = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
+		const relation = dbStore.getRelationById(id);
 
-		if (!allowed) {
+		if (!relation || !allowed) {
 			return;
 		};
-		
+
 		menuStore.open('blockRelationEdit', { 
 			element: `#${getId()} #item-${id}`,
 			horizontal: I.MenuDirection.Center,
-			classNameWrap: classNameWrap,
+			classNameWrap,
 			data: {
 				...data,
 				relationId: id,
-				addCommand: (rootId: string, blockId: string, relation: any, onChange?: (relation: any) => void) => {
-					C.ObjectRelationAdd(rootId, [ relation.id ], () => {
-						if (onChange) {
-							onChange(relation);
-						};
-					});
+				addCommand: (rootId: string, blockId: string, relationKey: string, onChange: (message: any) => void) => {
+					C.ObjectRelationAdd(rootId, [ relationKey ], onChange);
 				},
 				deleteCommand: () => {
-					C.ObjectRelationDelete(rootId, id);
+					C.ObjectRelationDelete(rootId, relation.relationKey);
 				},
 			}
 		});
@@ -290,7 +284,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 	onCellClick (e: any, relationKey: string, index: number) {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, readonly } = data;
+		const { readonly } = data;
 		const relation = dbStore.getRelationByKey(relationKey);
 
 		if (!relation || readonly || relation.isReadonlyValue) {

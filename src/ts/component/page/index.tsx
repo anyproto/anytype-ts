@@ -225,19 +225,16 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 			let popupNewBlock = Storage.get('popupNewBlock');
 			let onboarding = Storage.get('onboarding');
 
-			if (isMain) {
-				if (!onboarding) {
-					popupNewBlock = true;
-				};
-				if (!popupNewBlock && onboarding) {
-					popupStore.open('help', { data: { document: 'whatsNew' } });
-					Storage.set('popupNewBlock', true);
-				};
-				Storage.set('redirect', history.location.pathname);
+			if (!isMain) {
+				return;
 			};
 
-			if (isMain && !isMainIndex) {
-				Storage.set('survey', { askPmf: true });
+			if (!onboarding) {
+				popupNewBlock = true;
+			};
+			if (!popupNewBlock && onboarding) {
+				popupStore.open('help', { data: { document: 'whatsNew' } });
+				Storage.set('popupNewBlock', true);
 			};
 
 			if (isMainIndex) {
@@ -247,6 +244,9 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 
 				this.shareCheck();
 				Storage.delete('redirect');
+			} else {
+				Storage.set('survey', { askPmf: true });
+				Storage.set('redirect', history.location.pathname);
 			};
 		}, Constant.delay.popup);
 	};

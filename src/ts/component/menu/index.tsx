@@ -420,13 +420,20 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 			const isFixed = (menu.css('position') == 'fixed') || (node.css('position') == 'fixed');
 			const offsetX = Number('function' == typeof(param.offsetX) ? param.offsetX() : param.offsetX) || 0;
 			const offsetY = Number('function' == typeof(param.offsetY) ? param.offsetY() : param.offsetY) || 0;
-			const rect = recalcRect ? recalcRect() : param.rect;
-
+			
 			let ew = 0;
 			let eh = 0;
 			let ox = 0;
 			let oy = 0;
 			let minY = Util.sizeHeader();
+			let rect = null;
+
+			if (recalcRect) {
+				rect = recalcRect();
+			};
+			if (!rect) {
+				rect = param.rect;
+			};
 
 			if (rect) {
 				ew = Number(rect.width) || 0;
@@ -626,8 +633,10 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 		keyboard.disableMouse(true);
 
 		const { param } = this.props;
-		const { commonFilter, isSub } = param;
+		const { commonFilter } = param;
 		const refInput = this.ref.refFilter || this.ref.refName;
+		const shortcutClose = [ 'escape' ];
+		const shortcutSelect = [ 'tab', 'enter' ];
 
 		let ret = false;
 
@@ -644,6 +653,19 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 
 					ret = true;
 				});
+
+				if (this.ref && this.ref.onClick) {	
+					keyboard.shortcut(shortcutSelect.join(', '), e, (pressed: string) => {
+						e.preventDefault();
+
+						const items = this.ref.getItems();
+						const item = items.length ? items[0] : null;
+
+						if (item) {
+							item.arrow && this.ref.onOver ? this.ref.onOver(e, item) : this.ref.onClick(e, item);
+						};
+					});
+				};
 
 				keyboard.shortcut('arrowup', e, (pressed: string) => {
 					if (!this.ref.getItems) {
@@ -672,9 +694,6 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 		if (ret) {
 			return;
 		};
-
-		const shortcutClose = [ 'escape' ];
-		const shortcutSelect = [ 'tab', 'enter' ];
 
 		if (!commonFilter) {
 			shortcutClose.push('arrowleft');

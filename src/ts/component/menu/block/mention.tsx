@@ -119,6 +119,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 										rowRenderer={rowRenderer}
 										onRowsRendered={onRowsRendered}
 										overscanRowCount={10}
+										scrollToAlignment="center"
 									/>
 								)}
 							</AutoSizer>
@@ -232,7 +233,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 			sorts,
 			fullText: filter,
 			offset: this.offset,
-			limit: Constant.limit.menu,
+			limit: Constant.limitMenuRecords,
 		}, (message: any) => {
 			if (callBack) {
 				callBack(null);
@@ -255,7 +256,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 
 	loadMoreRows ({ startIndex, stopIndex }) {
         return new Promise((resolve, reject) => {
-			this.offset += Constant.limit.menu;
+			this.offset += Constant.limitMenuRecords;
 			this.load(false, resolve);
 		});
 	};

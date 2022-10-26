@@ -199,7 +199,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 
 				menuParam = Object.assign(menuParam, {
 					offsetY: param.offsetY,
-					recalcRect: param.recalcRect,
+					rect: param.recalcRect(),
 					width: getSize().width,
 					noFlipY: true,
 				});
@@ -218,7 +218,6 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 				});
 
 				menuId = 'blockLink';
-
 				closeContext = true;
 				focusApply = false;
 				break;

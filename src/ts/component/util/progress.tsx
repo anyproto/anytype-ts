@@ -5,12 +5,11 @@ import { Util, C, Storage } from 'Lib';
 import { commonStore } from 'Store';
 import { observer } from 'mobx-react';
 
-interface Props {}
-
 const $ = require('jquery');
 
-const Progress = observer(class Progress extends React.Component<Props, {}> {
+const Progress = observer(class Progress extends React.Component<{}, {}> {
 	
+	_isMounted: boolean = false;
 	obj: any = null;
 	dx: number = 0;
 	dy: number = 0;
@@ -49,9 +48,9 @@ const Progress = observer(class Progress extends React.Component<Props, {}> {
 	};
 
 	componentDidMount () {
-		$(window).off('resize.progress').on('resize.progress', () => { this.resize(); });
+		this._isMounted = true;
 	};
-	
+
 	componentDidUpdate () {
 		const { progress } = commonStore;
 		if (!progress) {
@@ -59,22 +58,26 @@ const Progress = observer(class Progress extends React.Component<Props, {}> {
 		};
 
 		const { current, total } = progress;
+		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
 
-		this.resize();
-		
 		node.removeClass('hide');
+		this.resize();
+
+		win.off('resize.progress').on('resize.progress', () => { this.resize(); });
 		
 		if (total && (current >= total)) {
 			node.addClass('hide');
-			setTimeout(() => { commonStore.progressClear(); }, 200);
+			win.off('resize.progress');
+
+			window.setTimeout(() => { commonStore.progressClear(); }, 200);
 		};
 	};
 
 	componentWillUnmount () {
-		$(window).off('resize.progress');
+		this._isMounted = false;
 	};
-	
+
 	onCancel (e: any) {
 		const { progress } = commonStore;
 		const { id } = progress;
@@ -83,6 +86,10 @@ const Progress = observer(class Progress extends React.Component<Props, {}> {
 	};
 
 	resize () {
+		if (!this._isMounted) {
+			return;
+		};
+
 		const node = $(ReactDOM.findDOMNode(this));
 		const coords = Storage.get('progress');
 
@@ -121,14 +128,16 @@ const Progress = observer(class Progress extends React.Component<Props, {}> {
 
 	checkCoords (x: number, y: number): { x: number, y: number } {
 		const win = $(window);
+		const ww = win.width();
+		const wh = win.height();
 
-		x = Number(x);
+		x = Number(x) || 0;
 		x = Math.max(0, x);
-		x = Math.min(win.width() - this.width, x);
+		x = Math.min(ww - this.width, x);
 
-		y = Number(y);
+		y = Number(y) || 0;
 		y = Math.max(Util.sizeHeader(), y);
-		y = Math.min(win.height() - this.height, y);
+		y = Math.min(wh - this.height, y);
 
 		return { x, y };
 	};

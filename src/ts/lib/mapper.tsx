@@ -60,6 +60,7 @@ const Mapper = {
 				marketplaceRelationObjectId: obj.getMarketplacerelationobjectid(),
 				deviceId: obj.getMarketplacerelationobjectid(),
 				localStoragePath: obj.getLocalstoragepath(),
+				accountSpaceId: obj.getAccountspaceid(),
 			};
 		},
 
@@ -267,8 +268,8 @@ const Mapper = {
 
 		RelationLink: (obj: any): any => {
 			return {
-				id: obj.getId(),
 				relationKey: obj.getKey(),
+				format: obj.getFormat(),
 			};
 		},
 

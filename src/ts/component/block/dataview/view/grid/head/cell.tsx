@@ -13,8 +13,6 @@ interface Props extends I.ViewComponent, I.ViewRelation {
 	onResizeStart(e: any, key: string): void;
 };
 
-const Constant = require('json/constant.json');
-
 const HeadCell = observer(class HeadCell extends React.Component<Props, {}> {
 
 	constructor (props: any) {
@@ -25,22 +23,22 @@ const HeadCell = observer(class HeadCell extends React.Component<Props, {}> {
 
 	render () {
 		const { relationKey, index, onResizeStart } = this.props;
-		const relation: any = dbStore.getRelationByKey(relationKey) || {};
+		const relation = dbStore.getRelationByKey(relationKey);
+		
+		if (!relation) {
+			return;
+		};
+
 		const { format, name } = relation;
-		const width = Relation.width(this.props.width, format);
-		const size = Constant.size.dataview.cell;
+		const readonly = relation.isReadonlyValue;
 
 		const Cell = SortableElement((item: any) => {
 			const cn = [ 'cellHead', DataUtil.relationClass(format) ];
-			
-			if (width <= size.icon) {
-				cn.push('small');
-			};
 
 			return (
-				<div id={Relation.cellId('head', relationKey, '')} className={cn.join(' ')} style={{ width: width }}>
+				<div id={Relation.cellId('head', relationKey, '')} className={cn.join(' ')}>
 					<div className="cellContent">
-						<Handle {...relation} onClick={this.onEdit} />
+						<Handle name={name} format={format} readonly={readonly} onClick={this.onEdit} />
 						<div className="resize" onMouseDown={(e: any) => { onResizeStart(e, relationKey); }}>
 							<div className="line" />
 						</div>
@@ -60,7 +58,7 @@ const HeadCell = observer(class HeadCell extends React.Component<Props, {}> {
 			return;
 		};
 
-		const element = `#${Relation.cellId('head', relationKey, '')}`;
+		const element = `#block-${block.id} #${Relation.cellId('head', relationKey, '')}`;
 		const obj = $(element);
 
 		menuStore.open('dataviewRelationEdit', { 
@@ -77,8 +75,8 @@ const HeadCell = observer(class HeadCell extends React.Component<Props, {}> {
 				relationId: relation.id,
 				readonly: readonly,
 				extendedOptions: true,
-				addCommand: (rootId: string, blockId: string, relationId: string) => {
-					Dataview.relationAdd(rootId, blockId, relationId, -1, getView());
+				addCommand: (rootId: string, blockId: string, relationKey: string) => {
+					Dataview.relationAdd(rootId, blockId, [ relationKey ], -1, getView());
 				},
 			}
 		});

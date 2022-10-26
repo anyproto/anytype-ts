@@ -287,16 +287,14 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 				return;
 			};
 
-			const object = detailStore.get(rootId, message.objectId, []);
-
 			focus.clear(true);
-			dbStore.recordAdd(rootId, BLOCK_ID_TEMPLATE, object.id, 1);
+			dbStore.recordAdd(rootId, BLOCK_ID_TEMPLATE, message.objectId, 1);
 			analytics.event('CreateTemplate', { objectType: rootId });
 
-			DataUtil.objectOpenPopup(object, {
+			DataUtil.objectOpenPopup(message.details, {
 				onClose: () => {
 					if (this.refListPreview) {
-						this.refListPreview.updateItem(object.id);
+						this.refListPreview.updateItem(message.objectId);
 					};
 				}
 			});
@@ -393,11 +391,15 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 	onSetAdd () {
 		const rootId = this.getRootId();
 		const object = detailStore.get(rootId, rootId);
+		const details = { 
+			name: object.name + ' set', 
+			iconEmoji: String(object.iconEmoji || ''),
+		};
 
-		C.ObjectCreateSet([ rootId ], { name: object.name + ' set', iconEmoji: object.iconEmoji }, '', (message: any) => {
+		C.ObjectCreateSet([ rootId ], details, '', (message: any) => {
 			if (!message.error.code) {
 				focus.clear(true);
-				DataUtil.objectOpenPopup({ id: message.objectId, layout: I.ObjectLayout.Set });
+				DataUtil.objectOpenPopup(message.details);
 			};
 		});
 	};
@@ -415,8 +417,8 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 				ref: 'type',
 				menuIdEdit: 'blockRelationEdit',
 				skipIds: relations.map(it => it.relationKey),
-				addCommand: (rootId: string, blockId: string, relationId: string) => {
-					C.ObjectTypeRelationAdd(rootId, [ relationId ], () => { 
+				addCommand: (rootId: string, blockId: string, relationKey: string) => {
+					C.ObjectTypeRelationAdd(rootId, [ relationKey ], () => { 
 						menuStore.close('relationSuggest'); 
 					});
 				},
@@ -427,6 +429,7 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 	onRelationEdit (e: any, id: string) {
 		const rootId = this.getRootId();
 		const allowed = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
+		const relation = dbStore.getRelationById(id);
 		
 		menuStore.open('blockRelationEdit', { 
 			element: $(e.currentTarget),
@@ -435,15 +438,15 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 				rootId: rootId,
 				relationId: id,
 				readonly: !allowed,
-				addCommand: (rootId: string, blockId: string, relationId: string, onChange?: (relation: any) => void) => {
-					C.ObjectTypeRelationAdd(rootId, [ relationId ], () => {
+				addCommand: (rootId: string, blockId: string, relationKey: string, onChange?: (relation: any) => void) => {
+					C.ObjectTypeRelationAdd(rootId, [ relationKey ], () => {
 						if (onChange) {
-							onChange(relationId);
+							onChange(relationKey);
 						};
 					});
 				},
 				deleteCommand: () => {
-					C.ObjectTypeRelationRemove(rootId, id);
+					C.ObjectTypeRelationRemove(rootId, [ relation.relationKey ]);
 				},
 			}
 		});

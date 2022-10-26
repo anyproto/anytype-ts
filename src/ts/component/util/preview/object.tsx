@@ -63,11 +63,12 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 			let inner = null;
 			let isRow = false;
 			let cn = [ 'element', DataUtil.blockClass(item), item.className ];
+			let line = <div className="line" />;
 
 			switch (item.type) {
 				case I.BlockType.Text:
 					if (!text) {
-						break;
+						line = null;
 					};
 
 					if ([ I.TextStyle.Checkbox, I.TextStyle.Bulleted, I.TextStyle.Numbered, I.TextStyle.Quote ].indexOf(style) >= 0) {
@@ -76,7 +77,7 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 
 					switch (style) {
 						default:
-							inner = <div className="line" />;
+							inner = line;
 							break;
 
 						case I.TextStyle.Header1:
@@ -89,7 +90,7 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 							inner = (
 								<React.Fragment>
 									<Icon className={[ 'check', (checked ? 'active' : '') ].join(' ')} />
-									<div className="line" />
+									{line}
 								</React.Fragment>
 							);
 							break;
@@ -98,7 +99,7 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 							inner = (
 								<React.Fragment>
 									<Icon className="hl" />
-									<div className="line" />
+									{line}
 								</React.Fragment>
 							);
 							break;
@@ -107,7 +108,7 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 							inner = (
 								<React.Fragment>
 									<Icon className="bullet" />
-									<div className="line" />
+									{line}
 								</React.Fragment>
 							);
 							break;
@@ -116,7 +117,7 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 							inner = (
 								<React.Fragment>
 									<Icon className="toggle" />
-									<div className="line" />
+									{line}
 								</React.Fragment>
 							);
 							break;
@@ -125,7 +126,7 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 							inner = (
 								<React.Fragment>
 									<div id={'marker-' + item.id} className="number" />
-									<div className="line" />
+									{line}
 								</React.Fragment>
 							);
 							break;
@@ -141,8 +142,8 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 				case I.BlockType.Relation:
 					inner = (
 						<React.Fragment>
-							<div className="line" />
-							<div className="line" />
+							{line}
+							{line}
 						</React.Fragment>
 					);
 					break;
@@ -159,7 +160,7 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 							inner = (
 								<React.Fragment>
 									<Icon className="color" inner={bullet} />
-									<div className="line" />
+									{line}
 								</React.Fragment>
 							);
 
@@ -188,7 +189,7 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 					inner = (
 						<React.Fragment>
 							<Icon className="color" inner={bullet} />
-							<div className="line" />
+							{line}
 						</React.Fragment>
 					);
 

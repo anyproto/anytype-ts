@@ -175,6 +175,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 												rowRenderer={rowRenderer}
 												onRowsRendered={onRowsRendered}
 												overscanRowCount={10}
+												scrollToAlignment="center"
 											/>
 										)}
 									</AutoSizer>
@@ -270,7 +271,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 
 	loadMoreRows ({ startIndex, stopIndex }) {
         return new Promise((resolve, reject) => {
-			this.offset += Constant.limit.menu;
+			this.offset += Constant.limitMenuRecords;
 			this.load(false, resolve);
 		});
 	};
@@ -282,9 +283,8 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 
 		const { param } = this.props;
 		const { data } = param;
-		const { type, dataMapper, dataSort, skipIds } = data;
+		const { type, dataMapper, dataSort, skipIds, keys } = data;
 		const { filter } = this.state;
-		const { config } = commonStore;
 		
 		const filters: any[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
@@ -310,9 +310,10 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		DataUtil.search({
 			filters,
 			sorts,
+			keys: keys || Constant.defaultRelationKeys,
 			fullText: filter,
 			offset: this.offset,
-			limit: Constant.limit.menu,
+			limit: Constant.limitMenuRecords,
 		}, (message: any) => {
 			if (!this._isMounted) {
 				return;

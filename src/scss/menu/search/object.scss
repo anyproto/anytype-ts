@@ -6,7 +6,7 @@
 		.content { transition: none; padding: 8px 0px 0px 0px; }
 		.wrap { height: 100%; display: flex; flex-direction: column; }
 		.wrap.withLabel {
-			.ReactVirtualized__Grid__innerScrollContainer { margin-top: 0px; }
+			.ReactVirtualized__List { padding-top: 0px; }
 		}
 		.wrap.withFilter {
 			.emptySearch { height: calc(100% - 44px); }

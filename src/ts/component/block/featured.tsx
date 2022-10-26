@@ -46,11 +46,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 	render () {
 		const { rootId, block, iconSize, isPopup, readonly } = this.props;
 		const storeId = this.getStoreId();
-		const object = detailStore.get(rootId, storeId, [ 
-			Constant.relationKey.featured, 
-			Constant.relationKey.space, 
-			Constant.relationKey.setOf, 
-		]);
+		const object = detailStore.get(rootId, storeId);
 		const items = this.getItems();
 		const type = dbStore.getType(object.type);
 		const bullet = <div className="bullet" />;
@@ -119,10 +115,9 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				{items.map((relationKey: any, i: any) => {
 					const id = Relation.cellId(PREFIX + block.id, relationKey, 0);
 					const relation = dbStore.getRelationByKey(relationKey);
-					const canEdit = !readonly && allowedValue && !relation.isReadonlyValue;
+					const canEdit = allowedValue && !relation.isReadonlyValue;
 					const cn = [ 'cell', (canEdit ? 'canEdit' : '') ];
-					const record = detailStore.get(rootId, storeId, [ relationKey ]);
-					const check = Relation.checkRelationValue(relation, record[relationKey]);
+					const check = Relation.checkRelationValue(relation, object[relationKey]);
 
 					if (!check && !canEdit) {
 						return null;
@@ -149,7 +144,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 									subId={rootId}
 									block={block}
 									relationKey={relationKey}
-									getRecord={() => { return record; }}
+									getRecord={() => { return object; }}
 									viewType={I.ViewType.Grid}
 									index={0}
 									bodyContainer={Util.getBodyContainer(isPopup ? 'popup' : 'page')}
@@ -164,6 +159,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 									arrayLimit={2}
 									textLimit={150}
 									onMouseLeave={this.onMouseLeave}
+									placeholder={translate('placeholderCellCommon')}
 								/>
 							</span>
 						</React.Fragment>
@@ -206,14 +202,8 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 		return (object[Constant.relationKey.featured] || []).filter((it: any) => {
 			const relation = dbStore.getRelationByKey(it);
-			if (!relation) {
+			if (!relation || skipIds.includes(it)) {
 				return false;
-			};
-			if (skipIds.indexOf(it) >=  0) {
-				return false;
-			};
-			if (relation.format == I.RelationType.Checkbox) {
-				return true;
 			};
 			return true;
 		});
@@ -386,7 +376,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 		if (menuId && !menuStore.isOpen(menuId)) {
 			if (menuStore.isOpen(menuId)) {
-				menuStore.open(menuId, param);
+				menuStore.open(menuId, menuParam);
 			} else {
 				menuStore.closeAll(Constant.menuIds.featuredType, () => {
 					menuStore.open(menuId, menuParam);
@@ -408,7 +398,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 		switch (item.id) {
 			case 'open':
-				DataUtil.objectOpenPopup({ id: object.type, layout: I.ObjectLayout.Type });
+				DataUtil.objectOpenPopup(type);
 				break;
 
 			case 'setOpen':
@@ -418,7 +408,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			case 'setCreate':
 				C.ObjectCreateSet([ object.type ], { name: type.name + ' set', iconEmoji: type.iconEmoji }, '', (message: any) => {
 					if (!message.error.code) {
-						DataUtil.objectOpenPopup({ id: message.objectId, layout: I.ObjectLayout.Set });
+						DataUtil.objectOpenPopup(message.details);
 					};
 				});
 				break;
@@ -518,8 +508,10 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 	};
 
 	getStoreId (): string {
-		const { rootId, traceId } = this.props;
-		return String(rootId || '').replace('-' + traceId, '');
+		const rootId = String(this.props.rootId || '');
+		const traceId = String(this.props.traceId || '');
+
+		return traceId ? rootId.replace('-' + traceId, '') : rootId;
 	};
 	
 });

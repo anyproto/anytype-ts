@@ -85,7 +85,7 @@ class DataUtil {
 	};
 
 	relationTypeName (v: I.RelationType): string {
-		return Util.toCamelCase(I.RelationType[v]);
+		return Util.toCamelCase(I.RelationType[v || I.RelationType.LongText]);
 	};
 
 	relationClass (v: I.RelationType): string {
@@ -335,8 +335,6 @@ class DataUtil {
 			if (object.coverId && (object.coverType != I.CoverType.None)) {
 				commonStore.coverSet(object.coverId, object.coverId, object.coverType);
 			};
-
-			commonStore.workspaceSet(object.workspaceId);
 
 			for (let item of subscriptions) {
 				this.searchSubscribe(item, () => { cb(item); });
@@ -636,21 +634,21 @@ class DataUtil {
 			}));
 		};
 
-		if (withBookmark && !bookmark._empty_) {
+		if (withBookmark && bookmark) {
 			items.unshift(bookmark);
 		};
 
 		items.sort(this.sortByName);
 
-		if (withSet && !set._empty_) {
+		if (withSet && set) {
 			items.unshift(set);
 		};
 
-		if (!task._empty_) {
+		if (task) {
 			items.unshift(task);
 		};
 
-		if (!page._empty_ && !note._empty_) {
+		if (page && note) {
 			if (commonStore.type == Constant.typeId.note) {
 				items = [ page, note ].concat(items);
 			} else {
@@ -695,9 +693,10 @@ class DataUtil {
 
 	menuGetBlockDataview () {
 		return [
-			{ id: I.ViewType.Grid, icon: '', lang: 'Table' },
-			{ id: I.ViewType.Gallery, icon: '', lang: 'Gallery' },
-			{ id: I.ViewType.List, icon: '', lang: 'List' },
+			{ id: I.ViewType.Grid, icon: 'dataview-grid', lang: 'Table' },
+			{ id: I.ViewType.Gallery, icon: 'dataview-gallery', lang: 'Gallery' },
+			{ id: I.ViewType.List, icon: 'dataview-list', lang: 'List' },
+			{ id: I.ViewType.Board, icon: 'dataview-board', lang: 'Board' },
 		].map((it: any) => {
 			it.type = I.BlockType.Dataview;
 			return this.menuMapperBlock(it);
@@ -1216,7 +1215,7 @@ class DataUtil {
 			return;
 		};
 
-		if (!ignoreWorkspace) {
+		if (!ignoreWorkspace && commonStore.workspace) {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'workspaceId', condition: I.FilterCondition.Equal, value: commonStore.workspace });
 		};
 
@@ -1338,7 +1337,7 @@ class DataUtil {
 	};
 
 	setWindowTitleText (name: string) {
-		document.title = [ name, Constant.appName ].join(' | ');
+		document.title = [ Util.shorten(name, 60), Constant.appName ].join(' - ');
 	};
 
 };

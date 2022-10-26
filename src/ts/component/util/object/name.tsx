@@ -13,17 +13,15 @@ class Name extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { object, className } = this.props;
-		const { layout, snippet, type, isDeleted } = object;
+		let { object, className } = this.props;
+		let { name, layout, snippet, isDeleted } = object;
 
-		let name = '';
-		if (!isDeleted && DataUtil.isFileType(type)) {
-			name = DataUtil.fileName(object);
-		} else
-		if (layout == I.ObjectLayout.Note) {
-			name = snippet || <span className="empty">{translate('commonEmpty')}</span>;
-		} else {
-			name = object.name || DataUtil.defaultName('page');
+		if (!isDeleted) {
+			if (layout == I.ObjectLayout.Note) {
+				name = snippet || <span className="empty">{translate('commonEmpty')}</span>;
+			} else {
+				name = DataUtil.getObjectName(object);
+			};
 		};
 		
 		return (

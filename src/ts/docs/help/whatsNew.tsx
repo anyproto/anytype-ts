@@ -6,7 +6,63 @@ export default [
 	{ type: I.BlockType.Cover, param: { type: I.CoverType.Gradient, id: 'pinkOrange' } },
 	{ type: I.BlockType.IconPage, icon: '👋' },
 
-	{ style: I.TextStyle.Title, text: `Your Workflows Just Got a Major Upgrade!` },
+	{ style: I.TextStyle.Title, text: `September: Preparation and Polish 💅` },
+
+	{ text: `Throughout September, our backend and platform teams have been occupied with refactoring relations aka the ‘Relations as an Object' project. This effort, though not visible in this month's release, is essential to unblocking long-awaited features such as Relations deletion/modification and in-line Sets (we promise, it's coming!).` },
+	{ text: `Meanwhile, the improvements and bug fixes in this release are primarily geared towards editor polishing and responses to your feedback from our last release. Thanks to everyone who's tested new features, created bug reports, and let us know your concerns.` },
+
+	{ style: I.TextStyle.Header2, text: `💎 Highlights of this Release` },
+	{ text: `We know that a clean interface is essential to productivity for many of you. In this release, we simplified our Type selection interface from + button Object creation flow to reduce friction in quickly capturing your thoughts & ideas. Keyboard arrows or <span class="highlight">${cmd} + 1-4</span> will allow you to quickly navigate between the Types or jump directly to the search menu for your Types.` },
+
+	{ style: I.TextStyle.Header2, text: `⚡ Quality-of-Life Improvements` },
+	{ style: I.TextStyle.Bulleted, text: `Relations now updating automatically using drag & drop between columns from Kanban view` },
+	{ text: `<video src="./img/help/kanban-dnd.mp4" controls autoplay loop class="full" />` },
+	{ style: I.TextStyle.Bulleted, text: `Selection frame when selecting block is now visible` },
+	{ text: `<img src="./img/help/selection.png" class="full screen" />` },
+	{ style: I.TextStyle.Bulleted, text: `When scrolling content of page opened inside popups, menus positions are now correctly updated` },
+	{ style: I.TextStyle.Bulleted, text: `Added page overscrolling for better readability, so content now ends in the middle of the screen rather than the bottom` },
+	{ style: I.TextStyle.Bulleted, text: `Added multilingual spellcheck support` },
+	{ text: `<img src="./img/help/multi-lang.png" class="half screen" />` },
+	{ style: I.TextStyle.Bulleted, text: `Updated in-page search design to include number of matching results and scrolling` },
+	{ text: `<img src="./img/help/search.png" class="half screen" />` },
+	{ style: I.TextStyle.Bulleted, text: `Updated toggle block design so toggles are default open when applying block style changes` },
+	{ style: I.TextStyle.Bulleted, text: `Added possibility to open new windows from search interface when pressing <span class="highlight">${cmd} + Enter</span>` },
+	{ style: I.TextStyle.Bulleted, text: `Simplified type-selection interface from + button Object creation flow to reduce friction in quick capture of thoughts & ideas` },
+	{ text: `<video src="./img/help/type-selection.mp4" controls autoplay loop class="full" />` },
+	{ style: I.TextStyle.Bulleted, text: `Export settings are now saved from one export to another` },
+	{ style: I.TextStyle.Bulleted, text: `In-app survey and logic was re-worked to reduce frequency and increase relevance towards new users, veteran users, and exiting users` },
+	{ style: I.TextStyle.Bulleted, text: `New windows now open by default with a slight position shift so your windows aren't stacked on top of each other` },
+	{ style: I.TextStyle.Bulleted, text: `File names created from the web are now more pretty` },
+	{ style: I.TextStyle.Bulleted, text: `Added table support when exporting to markdown` },
+	{ style: I.TextStyle.Bulleted, text: `Added document name to window title for better navigation between open windows` },
+	{ style: I.TextStyle.Bulleted, text: `Removed automatic sidebar-hiding when window is too small` },
+
+	{ style: I.TextStyle.Header2, text: `💻 Tech` },
+	{ style: I.TextStyle.Bulleted, text: `Electron was updated to 20.1.1` },
+
+	{ style: I.TextStyle.Header2, text: `🐛 Bug Fixes` },
+	
+	{ style: I.TextStyle.Bulleted, text: `Fixed: Set column width is now working again. Thanks, <a href="https://community.anytype.io/t/i-cant-adjust-the-width-of-the-graph/7327/5">@Konstantin</a>` },
+	{ style: I.TextStyle.Bulleted, text: `Fixed: Bug that was causing two relations in one direction to overlay in graph view. Thanks, <a href="https://community.anytype.io/t/superimposing-the-text-of-two-relationship-names/7329">@Konstantin</a>` },
+	{ style: I.TextStyle.Bulleted, text: `Fixed: Block focus loss after block link creation. Thanks, <a href="https://community.anytype.io/t/all-blocks-should-get-focus-after-creation/5776">@sambouwer</a>` },
+	{ style: I.TextStyle.Bulleted, text: `Fixed: Top toolbar button was missing in fullscreen mode. Thanks, <a href="https://community.anytype.io/t/top-toolbar-button-missing-in-full-screen-mode-in-ubuntu">@Aleph1</a>` },
+	{ style: I.TextStyle.Bulleted, text: `Fixed: Date selector was setting incorrect dates. Thanks, <a href="https://community.anytype.io/t/names-of-days-on-date-picker-incorrect-off-by-one-day/7289">@dannyg</a>` },
+	{ style: I.TextStyle.Bulleted, text: `Fixed: Shortcuts to duplicate and delete blocks are now working. Thanks, <a href="https://community.anytype.io/t/shortcuts-dont-work-when-block-menu-is-open/4480">@david</a>` },
+	{ style: I.TextStyle.Bulleted, text: `Fixed: Ability to open new windows with <span class="highlight">${cmd} + Click</span> is now restored in all cases` },
+	{ style: I.TextStyle.Bulleted, text: `Fixed: Zoom-in window action hotkey was updated to <span class="highlight">${cmd} + =</span> to work correctly on Windows. Thanks, <a href="https://community.anytype.io/t/after-update-0-28-0-it-is-not-possible-to-enlarge-text-by-ctrl-also-contains-suggestions/7341/4">@akta</a>` },
+	{ style: I.TextStyle.Bulleted, text: `Fixed: Relation creation flow for Relation-type: Object was not working after the previous release. Thanks, <a href="https://community.anytype.io/t/object-relation-is-broken-after-the-0-28-update/7381">@dzlg</a>` },
+	{ style: I.TextStyle.Bulleted, text: `Fixed: Pasting images from clipboard is now working again` },
+	{ style: I.TextStyle.Bulleted, text: `Fixed: Emojis are now correctly pasted when copied from outside of Anytype` },
+	{ style: I.TextStyle.Bulleted, text: `Fixed: Underline paste support` },
+	{ style: I.TextStyle.Bulleted, text: `Fixed: Link blocks are now correctly removed when using <span class="highlight">${cmd} + X</span> command` },
+	{ style: I.TextStyle.Bulleted, text: `Updated: Markdown is now being parsed automatically on paste` },
+	{ style: I.TextStyle.Bulleted, text: `Fixed: Export with <span class="highlight">Include Files</span> flag toggled on, no longer creates files directory` },
+	{ style: I.TextStyle.Bulleted, text: `Removed: An ability to create new page title blocks in certain situations` },
+
+	{ type: I.BlockType.Div, style: I.DivStyle.Dot },
+	// --------------------------------------------//
+
+	{ style: I.TextStyle.Header1, text: `Your Workflows Just Got a Major Upgrade!` },
 	{ text: `Hey, Anytypers!` },
 	{ text: `We just couldn't let August go by without another monster release. Hold on tight, 'cause this one's packed with updates that we hope will make your workflows all the more enjoyable` },
 
@@ -15,13 +71,13 @@ export default [
 	{ style: I.TextStyle.Header2, text: `💎 Highlights of this Release` },
 
 	{ text: `Kanban: Task management just got way easier with Kanban views for Sets. In this first iteration, you can group your Objects according to Relations: Status, Tag, or Checkbox. Dragging Objects between columns will automatically update the Relations` },
-	{ text: `<video src="./img/help/kanban.mp4" controls autoplay loop class="full">` },
+	{ text: `<video src="./img/help/kanban.mp4" controls autoplay loop class="full" />` },
 
 	{ text: `Multi-window display: By simply holding <span class="highlight">${cmd}</span> and clicking on any Object in your workspace, you can now open it in a new window. Even better, drag and drop blocks between windows for some seriously efficient workflows` },
-	{ text: `<img src="./img/help/multi-window.png" class="full">` },
+	{ text: `<img src="./img/help/multi-window.png" class="full" />` },
 
 	{ text: `Spellcheck: Your dreams of typo-free note taking just came true. Choose your input language by heading to <span class="highlight">Settings > Personalization > Spellcheck language</span> and - depending on your typing accuracy - get ready to see some corrections` },
-	{ text: `<img src="./img/help/spellcheck.png" class="full">` },
+	{ text: `<img src="./img/help/spellcheck.png" class="full" />` },
 
 	{ style: I.TextStyle.Header2, text: `🚀 Quality-of-life Improvements:` },
 
@@ -71,10 +127,10 @@ export default [
 
 	{ style: I.TextStyle.Header2, text: `💎 Highlights of this Release` },
 	{ text: `Simple tables are here! As one of our most popular feature requests, we're so excited to introduce simple tables across all platforms. From the editor, simply type <span class="highlight">/table</span> and customize the number of cells, column widths, and background colors to your liking. You can use shortcut <span class="highlight">/table{x}-{y}</span> to create table with <span class="highlight">X</span> rows and <span class="highlight">Y</span> columns as well.` },
-	{ text: `<video src="./img/help/table.mp4" controls autoplay loop class="full">` },
+	{ text: `<video src="./img/help/table.mp4" controls autoplay loop class="full" />` },
 
 	{ text: `Bookmarks as Objects: To help keep track of links you've bookmarked around the web, you can now create Sets with Type: Bookmark, so you can view and sort them all in one place. Say goodbye to lost links forever!` },
-	{ text: `<img src="./img/help/bookmark.png" class="full">` },
+	{ text: `<img src="./img/help/bookmark.png" class="full" />` },
 
 	{ text: `New <span class="highlight">Getting Started</span> Objects (New Users only): Upon registration, new users will see an updated <span class="highlight">Get Started</span> page and <span class="highlight">Advanced</span> page, with concise explanations of core concepts and a set of bookmarked demo videos for typical use cases.` },
 	{ text: `For everyone else who's interested in honing your Anytype superpowers, check out our demo videos and let us know what other kind of content or use cases you'd like to see!` },
@@ -82,7 +138,7 @@ export default [
 	{ style: I.TextStyle.Header2, text: `🚀 Features & Enhancements` },
 	{ style: I.TextStyle.Bulleted, text: `Text underline: The underline option is here. Underline away, friends!` },
 	{ style: I.TextStyle.Bulleted, text: `Callout blocks: By using <span class="highlight">/callout</span> in our editor, you can now create Callout Blocks as a way to highlight specific bits of information, like this:` },
-	{ text: `<img src="./img/help/callout.png" class="full">` },
+	{ text: `<img src="./img/help/callout.png" class="full" />` },
 
 	{ style: I.TextStyle.Header2, text: `⚡ Quality-of-Life Improvements` },
 	{ style: I.TextStyle.Bulleted, text: `Text letter spacings were corrected for improved readability` },
@@ -149,7 +205,7 @@ export default [
 	{ style: I.TextStyle.Header2, text: `Ludicrous-mode for Relations` },
 	{ text: `Organizing, filtering, and focusing on certain objects just became faster with our new Relations menu.` },
 	{ text: `By clicking the column name in Grid View, you can now directly sort and filter your objects according to the chosen relation. Moreover, with the new menu you can create and insert relations anywhere within a Set, allowing for greater flexibility.` },
-	{ text: `<video src="./img/help/relation-menu.mp4" controls autoplay loop class="full">` },
+	{ text: `<video src="./img/help/relation-menu.mp4" controls autoplay loop class="full" />` },
 	{ text: `We hope these improvements unlock many new and novel use-cases for Anytype, and help our power-users all the more powerful. 🦸` },
 
 	{ style: I.TextStyle.Header2, text: `Other notable improvements` },
@@ -402,20 +458,20 @@ export default [
 
 	{ style: I.TextStyle.Header2, text: `Deletion` },
 	{ text: `Say hello to our most incredible innovation since object creation: object deletion. Anytype now supports the permanent deleting of objects! 🥳 🗑♻️. Moving objects to the bin will remove them from navigation. From the bin, you can choose to select, delete, and restore your objects. <b>This action is irrevocable, so please be careful.</b> ` },
-	{ text: `<img src="./img/help/delete.png" class="full">` },
+	{ text: `<img src="./img/help/delete.png" class="full" />` },
 	{ text: `At present, only objects created inside Anytype can be deleted. Other files like media, and those that come with Anytype (types, relations) will be supported in future releases.` },
 
 	{ style: I.TextStyle.Header2, text: `New defaults` },
 	{ text: `Speed and convenience are central to this update. Drafts have been replaced with a new default type, <span class="highlight">the Note</span>. Designed to capture thoughts quickly. You can now choose any type of object as your default type in Settings. An update we hope will provide you with even more customization and workflow options.` },
-	{ text: `<img src="./img/help/note.png" class="full">` },
+	{ text: `<img src="./img/help/note.png" class="full" />` },
 
 	{ style: I.TextStyle.Header2, text: `Sets creation` },
 	{ text: `You can now create a Set from the dashboard, using the bottom-left + button, or even in-line using the <span class="highlight">/</span> menu. From there, you can choose which type of object your new Set is for. For example, viewing your current projects, or building a reading list of books.` },
-	{ text: `<video src="./img/help/set-creation.mp4" controls autoplay loop class="full">` },
+	{ text: `<video src="./img/help/set-creation.mp4" controls autoplay loop class="full" />` },
 
 	{ style: I.TextStyle.Header2, text: `Darkmode` },
 	{ text: `Just in-time for winter, our long-awaited dark mode is here. This feature has graced our devices (and eyes) in recent years, and has really become a way of life for some. Night owls rejoice! To enable dark mode, simply open the Settings pane, navigate to other settings → theme → and choose Dark.` },
-	{ text: `<img src="./img/help/dark-mode.png" class="full">` },
+	{ text: `<img src="./img/help/dark-mode.png" class="full" />` },
 
 	{ style: I.TextStyle.Header2, text: `Fresh docs` },
 	{ text: `We've launched a brand <a href="https://doc.anytype.io/d/">new hub</a> for Anytype docs. You can find it in the <span class="highlight">+</span> menu and in the <span class="highlight">?</span> icon at the bottom-right of your screen. This is our first draft, and we look forward to your feedback!` },
@@ -489,17 +545,17 @@ export default [
 	{ text: `Use the search function at the bottom of the panel to the right if you want to find a particular object. Matching objects will be highlighted in the network view.` },
 	{ text: `To access the Graph Mode, look for the <img src="./img/icon/graph.svg" class="icon" /> icon in the top-left corner from any opened object or just press <span class="highlight">⌘ + Option + O / Ctrl + Alt + O</span>.` },
 	{ text: `What does your graph look like? Share it in the community!` },
-	{ text: `<img src="./img/help/graph.png" class="full">` },
+	{ text: `<img src="./img/help/graph.png" class="full" />` },
 
 	{ style: I.TextStyle.Header2, text: `LaTeX block` },
 	{ text: `LaTeX is here! Have you been frustrated trying to work with LaTeX functions in other tools? With Anytype, you don't have to worry about errors ever again thanks to a real-time preview and example functions in the editor. You can write code and view the formula output at the same time. Now fully enjoy your studies using Anytype for your Math and Chemistry class notes!` },
-	{ text: `<img src="./img/help/latex.png" class="full">` },
+	{ text: `<img src="./img/help/latex.png" class="full" />` },
 
 	{ style: I.TextStyle.Header2, text: `List & Gallery views` },
 	{ text: `Meet the new and highly-requested Views for Sets! To create a new view, click the <img src="./img/icon/plus.svg" class="icon" /> icon at the top-left of your Set (next to "All"), give it a name in the field at the top of the pop-up, then select the type of view you want (currently Grid, Gallery, or List, with more coming soon). After you create it, you can change options for the View by using the Customize View icon at the top-right of your set.` },
 	{ text: `For Gallery views, the card image can be shown from the Attachment Relation or the object's cover image. You can set this in Customize View, and the selected image source will appear at the top of each gallery card. ` },
 	{ text: `You can also «right mouse» click on the view name to open options faster. ` },
-	{ text: `<img src="./img/help/gallery.png" class="full">` },
+	{ text: `<img src="./img/help/gallery.png" class="full" />` },
 
 	{ style: I.TextStyle.Header2, text: `Enhancements` },
 	{ style: I.TextStyle.Bulleted, text: `Tabs: We did some research and rearranged the tabs in Home in order of popularity. The Inbox tab was removed and will come back reimagined later. Recent tab is now called History and no longer contains archived objects.` },
@@ -534,11 +590,11 @@ export default [
 	{ style: I.TextStyle.Header2, text: `New features:` },
 	{ style: I.TextStyle.Header3, text: `Play that funky music, Anytype` },
 	{ text: `You can now upload your favorite music with formats: <span class="highlight">.wav</span>, <span class="highlight">.mp3</span>, <span class="highlight">.ogg</span>, <span class="highlight">.m4a</span> and <span class="highlight">.flac</span> into a new media block. Audio files are available on canvas and as objects inside Anytype, which you can collect into sets.` },
-	{ text: `<img src="./img/help/audioblock.png" class="full">` },
+	{ text: `<img src="./img/help/audioblock.png" class="full" />` },
 
 	{ style: I.TextStyle.Header3, text: `Custom views for links and bookmarks` },
 	{ text: `You can change the appearance of cards to make them yours. Links and cards can now show cover images, different icon sizes, and descriptions under the text.` },
-	{ text: `<img src="./img/help/link-object.png" class="full">` },
+	{ text: `<img src="./img/help/link-object.png" class="full" />` },
 
 	{ style: I.TextStyle.Header3, text: `Open attached files in Anytype` },
 	{ text: `You can now open the attached files directly in Anytype instead of having to download them. So now you don't need to download files and then find them in the file system. They open just from Anytype! Thanks, <a href="https://community.anytype.io/d/51-open-attached-files-directly-instead-of-downloading-them">bzimor, reuseman</a>` },
@@ -829,7 +885,7 @@ export default [
 
 	{ style: I.TextStyle.Header3, text:  `Enhancements:` },
 	{ style: I.TextStyle.Bulleted, text: `The page icon is now moving with the title, so you can make a page with a centered layout.` },
-	{ text: `<img src="./img/help/centered.png" class="full">` },
+	{ text: `<img src="./img/help/centered.png" class="full" />` },
 	{ style: I.TextStyle.Bulleted, text: `We moved page cover controls position in a more convenient place.` },
 	{ style: I.TextStyle.Bulleted, text: `Mentions now have the ability to break into a new line.` },
 	{ style: I.TextStyle.Bulleted, text: `We have enabled dropping blocks into the page.` },
@@ -1026,7 +1082,7 @@ export default [
 	{ style: I.TextStyle.Header1, text: `Updates for 10 June, 2020` },
 	{ text: `We value your time and develop a great timesaver for you — now you can transfer data from other sources into Anytype!` },
 	{ text: `Open settings in the dashboard or use <span class="highlight">File → Import</span> in the System menu and try. You can import all your data from Notion with the same structure for now, later we will develop more sources.` },
-	{ text: `<img src="./img/help/import.png" class="full">` },
+	{ text: `<img src="./img/help/import.png" class="full" />` },
 	{ text: `A friendly reminder. Without any imports, you can save note from another app or an article from Wikipedia, and store it forever on your computer. Just copy it there and paste into Anytype. <i>Voila!<i>` },
 	{ text: `Please, write us what you think and what source you want to import in&nbsp;Anytype!` },
 

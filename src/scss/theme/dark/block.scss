@@ -88,6 +88,8 @@
         .icon.plus { background-image: url('#{$themePath}/icon/plus/menu0.svg'); }
         .icon.plus:hover { background-image: url('#{$themePath}/icon/plus/menu1.svg'); }
 
+		.dataviewEmpty { border-color: $colorLineSecondary; }
+
         .dataviewControls {
             .line { background: $colorLineSecondary; }
             .viewItem { color: $colorSecondary; }
@@ -164,6 +166,10 @@
                 .icon { background-image: url('#{$themePath}/icon/plus/column1.svg'); }
             }
         }
+
+		.content {
+			.scrollWrap { background: $colorBlack; }
+		}
     }
 
     /* BlockType */

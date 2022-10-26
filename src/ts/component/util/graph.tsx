@@ -57,12 +57,12 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 		forceX: {
 			enabled: true,
 			strength: 0.3,
-			x: 0.3
+			x: 0.4
 		},
 		forceY: {
 			enabled: true,
 			strength: 0.3,
-			y: 0.3
+			y: 0.4
 		},
 
 		orphans: true,
@@ -232,11 +232,6 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 		this.send('updateProps', { forceProps: this.forceProps } );
 	};
 
-	updateForces () {
-		this.updateProps();
-		this.send('updateForces', {});
-	};
-
 	onDragStart (e: any, d: any) {
 		this.isDragging = true;
 		this.send('onDragStart', { active: e.active });
@@ -285,13 +280,9 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 				break;
 
 			case 'onSelect':
-				if (data.node.id == root) {
-					break;
+				if (data.node.id != root) {
+					onSelect(data.node.id);
 				};
-
-				this.ids = this.ids.includes(data.node.id) ? this.ids.filter(id => id != data.node.id) : this.ids.concat([ data.node.id ]);
-				onSelect(data.node.id);
-				this.send('onSetSelected', { ids: this.ids });
 				break;
 
 			case 'onMouseMove':

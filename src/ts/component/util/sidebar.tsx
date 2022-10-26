@@ -121,6 +121,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 											onRowsRendered={onRowsRendered}
 											overscanRowCount={LIMIT}
 											onScroll={this.onScroll}
+											scrollToAlignment="center"
 										/>
 									)}
 								</AutoSizer>

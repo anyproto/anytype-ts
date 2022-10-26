@@ -156,7 +156,7 @@ class Relation {
 				break;
 
 			case I.RelationType.Number:
-				value = String(value || '').replace(/,\s?/g, '.').replace(/[^\d\.e+]*/gi, '');
+				value = String(value || '').replace(/,\s?/g, '.').replace(/[^\d\.e+-]*/gi, '');
 				if ((value === '') || (value === undefined)) {
 					value = null;
 				};
@@ -311,7 +311,7 @@ class Relation {
 		let options: any[] = dbStore.getRelations(rootId, blockId);
 
 		options = options.filter((it: any) => {
-			return formats.includes(it.format) && (!it.isHidden || [ Constant.relationKey.done ].includes(it.relationKey));
+			return it && formats.includes(it.format) && (!it.isHidden || [ Constant.relationKey.done ].includes(it.relationKey));
 		});
 
 		options.sort((c1: any, c2: any) => {
@@ -367,6 +367,10 @@ class Relation {
 
 	isEmpty (v: any) {
 		return (v === null) || (v === undefined) || (v === '');
+	};
+
+	isUrl (type: I.RelationType) {
+		return [ I.RelationType.Url, I.RelationType.Email, I.RelationType.Phone ].includes(type);
 	};
 
 	getUrlScheme (type: I.RelationType, value: any): string {

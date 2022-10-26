@@ -10,6 +10,7 @@ interface Props {
 };
 
 const Constant = require('json/constant.json');
+const LIMIT = 50;
 
 const ListObject = observer(class ListObject extends React.Component<Props, {}> {
 
@@ -28,7 +29,7 @@ const ListObject = observer(class ListObject extends React.Component<Props, {}> 
 			pager = (
 				<Pager 
 					offset={offset} 
-					limit={Constant.limit.dataview.records} 
+					limit={LIMIT} 
 					total={total} 
 					onChange={(page: number) => { this.getData(page); }} 
 				/>
@@ -129,7 +130,7 @@ const ListObject = observer(class ListObject extends React.Component<Props, {}> 
 		const { rootId, blockId } = this.props;
 		const views = dbStore.getViews(rootId, blockId);
 
-		return views.length ? views[0] : null;		
+		return views.length ? views[0] : null;
 	};
 
 	getItems () {
@@ -153,8 +154,7 @@ const ListObject = observer(class ListObject extends React.Component<Props, {}> 
 		};
 
 		const { rootId, blockId } = this.props;
-		const limit = Constant.limit.dataview.records;
-		const offset = (page - 1) * limit;
+		const offset = (page - 1) * LIMIT;
 		const block = blockStore.getLeaf(rootId, blockId);
 		const subId = this.getSubId();
 		const filters = view.filters.concat([
@@ -170,7 +170,7 @@ const ListObject = observer(class ListObject extends React.Component<Props, {}> 
 			keys: this.getKeys(),
 			sources: block.content.sources,
 			offset,
-			limit,
+			limit: LIMIT,
 		}, callBack);
 	};
 

@@ -203,6 +203,7 @@ window.Lib = {
 	dispatcher,
 	keyboard,
 	Renderer,
+	DataUtil,
 };
 
 /*
@@ -270,7 +271,7 @@ class App extends React.Component<Props, State> {
 		this.onKeytarGet = this.onKeytarGet.bind(this);
 		this.onImport = this.onImport.bind(this);
 		this.onPopup = this.onPopup.bind(this);
-		this.onUpdate = this.onUpdate.bind(this);
+		this.onUpdateCheck = this.onUpdateCheck.bind(this);
 		this.onUpdateConfirm = this.onUpdateConfirm.bind(this);
 		this.onUpdateAvailable = this.onUpdateAvailable.bind(this);
 		this.onUpdateUnavailable = this.onUpdateUnavailable.bind(this);
@@ -353,16 +354,10 @@ class App extends React.Component<Props, State> {
 
 	initStorage () {
 		const lastSurveyTime = Number(Storage.get('lastSurveyTime')) || 0;
-		const redirect = Storage.get('redirect');
 		const restoreKeys = [ 'pinTime', 'defaultType', 'autoSidebar' ];
 
 		if (!lastSurveyTime) {
 			Storage.set('lastSurveyTime', Util.time());
-		};
-
-		if (redirect) {
-			commonStore.redirectSet(redirect);
-			Storage.delete('redirect');
 		};
 
 		Storage.delete('lastSurveyCanceled');
@@ -395,13 +390,13 @@ class App extends React.Component<Props, State> {
 		Renderer.on('keytarGet', this.onKeytarGet);
 		Renderer.on('route', (e: any, route: string) => { Util.route(route); });
 		Renderer.on('popup', this.onPopup);
-		Renderer.on('checking-for-update', this.onUpdate);
+		Renderer.on('checking-for-update', this.onUpdateCheck);
 		Renderer.on('update-available', this.onUpdateAvailable);
 		Renderer.on('update-confirm', this.onUpdateConfirm);
 		Renderer.on('update-not-available', this.onUpdateUnavailable);
-		Renderer.on('download-progress', this.onUpdateProgress);
 		Renderer.on('update-downloaded', (e: any, text: string) => { commonStore.progressClear(); });
 		Renderer.on('update-error', this.onUpdateError);
+		Renderer.on('download-progress', this.onUpdateProgress);
 		Renderer.on('import', this.onImport);
 		Renderer.on('export', this.onExport);
 		Renderer.on('command', this.onCommand);
@@ -428,6 +423,7 @@ class App extends React.Component<Props, State> {
 		const loader = node.find('#root-loader');
 		const logo = loader.find('#logo');
 		const accountId = Storage.get('accountId');
+		const redirect = Storage.get('redirect');
 
 		commonStore.configSet(config, true);
 		commonStore.nativeThemeSet(isDark);
@@ -439,6 +435,10 @@ class App extends React.Component<Props, State> {
 
 		this.initStorage();
 		this.initTheme(config.theme);
+
+		if (redirect) {
+			Storage.delete('redirect');
+		};
 
 		const cb = () => {
 			window.setTimeout(() => { 
@@ -456,7 +456,7 @@ class App extends React.Component<Props, State> {
 				authStore.phraseSet(phrase);
 
 				DataUtil.createSession(() => {
-					commonStore.redirectSet(route || '');
+					commonStore.redirectSet(route || redirect || '');
 					keyboard.setPinChecked(isPinChecked);
 
 					DataUtil.onAuth(account, cb);
@@ -475,7 +475,9 @@ class App extends React.Component<Props, State> {
 					return false;
 				});
 			} else {
+				commonStore.redirectSet(redirect || '');
 				Renderer.send('keytarGet', accountId);
+
 				cb();
 			};
 		} else {
@@ -517,7 +519,7 @@ class App extends React.Component<Props, State> {
 		window.setTimeout(() => { popupStore.open(id, param); }, Constant.delay.popup);
 	};
 
-	onUpdate (e: any, auto: boolean) {
+	onUpdateCheck (e: any, auto: boolean) {
 		if (auto) {
 			return;
 		};
@@ -626,11 +628,15 @@ class App extends React.Component<Props, State> {
 
 		switch (key) {
 			case 'undo':
-				keyboard.onUndo(rootId);
+				if (!keyboard.isFocused) {
+					keyboard.onUndo(rootId);
+				};
 				break;
 
 			case 'redo':
-				keyboard.onRedo(rootId);
+				if (!keyboard.isFocused) {
+					keyboard.onRedo(rootId);
+				};
 				break;
 
 			case 'create':
@@ -688,7 +694,7 @@ class App extends React.Component<Props, State> {
 			case 'debugSync':
 				C.DebugSync(100, (message: any) => {
 					if (!message.error.code) {
-						window.Electron.fileWrite('debug-sync.json', JSON.stringify(message, null, 5), 'text');
+						window.Electron.fileWrite('debug-sync.json', JSON.stringify(message, null, 5), 'utf8');
 
 						Renderer.send('pathOpen', tmpPath);
 					};

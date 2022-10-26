@@ -104,7 +104,7 @@ class Keyboard {
 		const platform = Util.getPlatform();
 		const isMac = platform == I.Platform.Mac;
 		const key = e.key.toLowerCase();
-		const cmd = this.ctrlKey();
+		const cmd = this.cmdKey();
 		const isMain = this.isMain();
 
 		this.pressed.push(key);
@@ -171,12 +171,14 @@ class Keyboard {
 				if (popupStore.isOpen('search') || !this.isPinChecked) {
 					return;
 				};
-				keyboard.onSearchPopup();
+				this.onSearchPopup();
 			});
 
 			// Text search
 			this.shortcut(`${cmd}+f`, e, (pressed: string) => {
-				this.onSearch();
+				if (!this.isFocused) {
+					this.onSearchMenu('');
+				};
 			});
 
 			// Navigation links
@@ -194,7 +196,7 @@ class Keyboard {
 			// Go to dashboard
 			this.shortcut('cmd+enter, alt+h', e, (pressed: string) => {
 				let check = isMac ? pressed == 'cmd+enter' : true;
-				if (check && !authStore.account && !popupStore.isOpen('search')) {
+				if (check && authStore.account && !popupStore.isOpen('search')) {
 					Util.route('/main/index');
 				};
 			});
@@ -290,26 +292,38 @@ class Keyboard {
 				});
 			};
 		} else {
-			const prev = Util.history.entries[Util.history.index - 1];
+			let prev = Util.history.entries[Util.history.index - 1];
+
+			if (account && !prev) {
+				Util.route('/main/index');
+				return;
+			};
+
 			if (prev) {
 				let route = Util.getRoute(prev.pathname);
+
 				if ([ 'index', 'auth' ].includes(route.page) && account) {
 					return;
 				};
+
 				if ((route.page == 'main') && !account) {
 					return;
 				};
 
-				Util.history.goBack();
-			} else 
-			if (account) {
-				Util.route('/main/index');
+				if ((route.page == 'main') && (route.action == 'history')) {
+					prev = Util.history.entries[Util.history.index - 3];
+					if (prev) {
+						Util.route(prev.pathname);
+					};
+					return;
+				};
+
+				Util.route(prev.pathname);
 			};
 		};
 
 		menuStore.closeAll();
 		this.restoreSource();
-
 		analytics.event('HistoryBack');
 	};
 
@@ -359,7 +373,7 @@ class Keyboard {
 
 		switch (cmd) {
 			case 'search':
-				this.onSearch();
+				this.onSearchMenu('');
 				break;
 
 			case 'graph':
@@ -380,9 +394,13 @@ class Keyboard {
 					data: {
 						title: 'Anytype ID',
 						text: account.id,
-						textConfirm: 'Ok',
+						textConfirm: 'Copy',
+						textCancel: 'Close',
 						canConfirm: true,
-						canCancel: false,
+						canCancel: true,
+						onConfirm: () => {
+							Util.clipboardCopy({ text: account.id });
+						},
 					}
 				});
 				break;
@@ -454,7 +472,7 @@ class Keyboard {
 		Renderer.send('winCommand', 'saveAsHTML', { name: object.name });
 	};
 
-	onSearch () {
+	onSearchMenu (value: string) {
 		const isPopup = this.isPopup();
 		const popupMatch = this.getPopupMatch();
 
@@ -473,6 +491,7 @@ class Keyboard {
 				classNameWrap: 'fromHeader',
 				data: {
 					isPopup,
+					value,
 				},
 			});
 		}, Constant.delay.menu);
@@ -720,9 +739,8 @@ class Keyboard {
 		return platform == I.Platform.Mac ? '&#8984;' : 'Ctrl';
 	};
 
-	ctrlKey () {
-		const platform = Util.getPlatform();
-		return platform == I.Platform.Mac ? 'cmd' : 'ctrl';
+	cmdKey () {
+		return Util.getPlatform() == I.Platform.Mac ? 'cmd' : 'ctrl';
 	};
 
 	checkPressed (key: string) {

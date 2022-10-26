@@ -109,6 +109,7 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<Pro
 											onRowsRendered={onRowsRendered}
 											overscanRowCount={LIMIT}
 											onScroll={this.onScroll}
+											scrollToAlignment="center"
 										/>
 									)}
 								</AutoSizer>
@@ -144,7 +145,7 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<Pro
 							onMouseLeave={() => { this.props.setHover(); }}
 						>
 							<Icon className="plus" />
-							<div className="name">Add a filter</div>
+							<div className="name">New filter</div>
 						</div>
 					</div>
 				) : ''}
