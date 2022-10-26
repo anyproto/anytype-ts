@@ -481,6 +481,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 				menuParam.data = Object.assign(menuParam.data, {
 					placeholder: 'Find a type of object...',
 					label: 'Your object type library',
+					canNotAdd: true,
 					filters: filters,
 					onSelect: (item: any) => {
 						this.moveToPage(item.id);
