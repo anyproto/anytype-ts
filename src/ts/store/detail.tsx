@@ -175,6 +175,7 @@ class DetailStore {
 			snippet,
 			type: Relation.getStringValue(object.type),
 			iconImage: Relation.getStringValue(object.iconImage),
+			iconEmoji: Relation.getStringValue(object.iconEmoji),
 			layoutAlign: Number(object.layoutAlign) || I.BlockHAlign.Left,
 			coverX: Number(object.coverX) || 0,
 			coverY: Number(object.coverY) || 0,

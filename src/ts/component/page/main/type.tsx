@@ -393,7 +393,7 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 		const object = detailStore.get(rootId, rootId);
 		const details = { 
 			name: object.name + ' set', 
-			iconEmoji: String(object.iconEmoji || ''),
+			iconEmoji: object.iconEmoji,
 		};
 
 		C.ObjectCreateSet([ rootId ], details, '', (message: any) => {
