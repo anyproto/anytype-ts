@@ -187,11 +187,14 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 				id: 'object', name: 'In this object', 
 				children: items.filter(it => !featured.includes(it.relationKey) && (it.scope == I.RelationScope.Object)),
 			},
-			{ 
+		];
+
+		if (type) {
+			sections.push({ 
 				id: 'type', name: `From type ${type.name}`,
 				children: items.filter(it => !featured.includes(it.relationKey) && (it.scope == I.RelationScope.Type)),
-			},
-		];
+			});
+		};
 
 		sections = sections.filter(it => it.children.length);
 		return sections;

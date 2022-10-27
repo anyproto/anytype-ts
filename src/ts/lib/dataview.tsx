@@ -103,6 +103,8 @@ class Dataview {
 			keys: Constant.defaultRelationKeys,
 			offset: 0,
 			limit: 0,
+			ignoreWorkspace: false,
+			clear: false,
 		}, param);
 
 		const { rootId, blockId, newViewId, keys, offset, limit, clear } = param;
@@ -143,13 +145,13 @@ class Dataview {
 		dbStore.metaSet(subId, '', meta);
 
 		DataUtil.searchSubscribe({
+			param,
 			subId,
 			filters,
 			sorts,
 			keys,
 			sources: block.content.sources,
 			offset,
-			limit,
 		}, callBack);
 	};
 

@@ -400,6 +400,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 			limit: 0, 
 			offset: 0, 
 			clear,
+			ignoreWorkspace: true,
 		}, callBack);
 	};
 
