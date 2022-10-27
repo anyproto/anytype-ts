@@ -370,8 +370,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 
 		node.find('.isClone').remove();
 		node.find('.isDragging').removeClass('isDragging');
-		node.find(`.ghost`).remove();
-		node.find('.isOver').removeClass('isOver left right');
+		node.find('.isOver').removeClass('isOver left right top bottom');
 
 		selection.preventSelect(false);
 		preventCommonDrop(false);
@@ -471,7 +470,6 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 
 	onDragMoveCard (e: any, record: any) {
 		const node = $(ReactDOM.findDOMNode(this));
-		const ghost = $('<div />').addClass('ghost isCard');
 		const current = this.cache[record.id];
 
 		if (!current) {
@@ -502,11 +500,11 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 		};
 
 		this.frame = raf(() => {
-			node.find(`.ghost.isCard`).remove();
+			node.find('.isOver').removeClass('isOver top bottom');
 
 			if (hoverId) {
-				const card = node.find(`#card-${hoverId}`);
-				isTop ? card.before(ghost) : card.after(ghost);
+				const el = node.find(`#card-${hoverId}`);
+				el.addClass('isOver ' + (isTop ? 'top' : 'bottom'));
 			};
 		});
 	};

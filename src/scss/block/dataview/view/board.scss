@@ -5,13 +5,6 @@
 		.viewItem.viewBoard { padding: 16px 0px 0px 14px; }
         .viewItem.viewBoard {
 
-			.ghost { flex-shrink: 0; position: relative; z-index: 1; }
-			.ghost.isCard { height: 0px; }
-			.ghost.isCard::after {
-				content: ""; position: absolute; left: 0px; top: -6px; background: $colorOrange; width: 100%; height: 4px;
-				border-radius: 2px;
-			}
-			
             .columns { display: flex; flex-direction: row; gap: 0px 8px; position: relative; }
             .column { width: 254px; flex-shrink: 0; display: flex; flex-direction: column; position: relative; }
 
@@ -108,6 +101,10 @@
 			}
 			.card:last-child { margin: 0px; }
 			.card.add:hover, .card:hover .cardContent { border-color: $colorBlack; }
+
+			.card.isOver::before { content: ""; position: absolute; background: $colorOrange; height: 4px; width: 100%; border-radius: 2px; left: 0px; } 
+			.card.isOver.top::before { top: -6px; }
+			.card.isOver.bottom::before { bottom: -6px; }
 
 			.card.isDragging {
 				.cardContent { opacity: 0.3; }
