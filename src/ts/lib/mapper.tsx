@@ -655,10 +655,12 @@ const Mapper = {
 			const item = new Model.Block.Content.Dataview.Filter();
 			
 			item.setRelationkey(obj.relationKey);
+			item.setFormat(obj.format);
 			item.setOperator(obj.operator);
 			item.setCondition(obj.condition);
 			item.setQuickoption(obj.quickOption);
 			item.setValue(Encode.encodeValue(obj.value));
+			item.setIncludetime(obj.includeTime);
 
 			return item;
 		},
