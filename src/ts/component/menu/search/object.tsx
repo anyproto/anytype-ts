@@ -450,9 +450,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		};
 
 		if (item.id == 'add') {
-			const details: any = { name: filter, type: commonStore.type };
-
-			DataUtil.pageCreate('', '', details, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.SelectType ], (message: any) => {
+			DataUtil.pageCreate('', '', { name: filter, type: commonStore.type }, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.SelectType ], (message: any) => {
 				getNewObject(message.targetId, object => process(message.targetId, object));
 				close();
 			});
