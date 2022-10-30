@@ -9,6 +9,38 @@
         "experimentalDecorators": false,
         "allowSyntheticDefaultImports": true,
         "allowJs": true,
-        "baseUrl": "./src"
+        "baseUrl": "./src",
+        "paths": {
+            "Component/*": [
+                "ts/component/*"
+            ],
+            "Component": [
+                "ts/component"
+            ],
+            "Interface/*": [
+                "ts/interface/*"
+            ],
+            "Interface": [
+                "ts/interface"
+            ],
+            "Lib/*": [
+              "ts/lib/*"
+            ],
+            "Lib": [
+                "ts/lib"
+              ],
+            "Model/*": [
+              "ts/model/*"
+            ],
+            "Model": [
+                "ts/model"
+              ],
+            "Store/*": [
+                "ts/store/*",
+            ],
+            "Store": [
+                "ts/store",
+            ],
+          }
     }
 }
