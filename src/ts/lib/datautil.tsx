@@ -1323,10 +1323,12 @@ class DataUtil {
 		return name;
 	}
 
-	getObjectById (id: string, callBack?: (message: any) => void) {
-		const filters = [{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.Equal, value: id }];
+	getObjectsByIds (ids: string[], callBack?: (message: any) => void) {
+		let filters = [{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: ids }];
 
-		C.ObjectSearch(filters, [], [], '', 0, 0, callBack);
+		C.ObjectSearch(filters, [], [], '', 0, 0, (message) => {
+			callBack(message);
+		});
 	};
 
 	setWindowTitle (rootId: string) {

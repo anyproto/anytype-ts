@@ -1,20 +1,22 @@
 @import "~scss/_vars";
 
 .toast {
-  position: fixed; left: 0px; top: 0px; border-radius: 8px; background: $colorBlack; padding: 15px 18px; text-transform: none;
-  @include text-common; color: $colorWhite; display: none; z-index: 1000; white-space: nowrap; transition: opacity 0.05s ease-in-out;
+    position: fixed; left: 0px; top: 0px; border-radius: 8px; background: $colorBlack; padding: 15px 18px; text-transform: none;
+    @include text-common; color: $colorWhite; display: none; z-index: 1000; white-space: nowrap; transition: opacity 0.2s ease-in-out;
 }
 
 .toast .inner { display: flex; justify-content: space-between; }
 .toast .inner {
-  .message,
-  .buttons { display: flex; gap: 6px; }
+    .message,
+    .buttons { display: flex; gap: 6px; }
 
-  .message {
-    .name { max-width: 140px; text-overflow: ellipsis; overflow: hidden; }
-    .name .iconObject { margin: 1px 6px 0px 0px; }
-  }
+    .message {
+        .name { max-width: 140px; text-overflow: ellipsis; overflow: hidden; }
+        .name .iconObject { margin: 1px 6px 0px 0px; }
+    }
 
-  .buttons { margin-left: 27px; }
-  .buttons .toastButton { cursor: pointer; }
+    .buttons { margin-left: 27px; }
+    .buttons {
+        .toastButton { cursor: pointer; }
+    }
 }

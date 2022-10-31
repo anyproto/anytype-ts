@@ -1,7 +1,6 @@
-import { observable, action, computed, set, makeObservable } from 'mobx';
-import { I, Storage, Util } from 'Lib';
-import { analytics } from 'Lib';
-import { blockStore } from 'Store';
+import {action, computed, makeObservable, observable, set} from 'mobx';
+import {analytics, I, Storage, Util} from 'Lib';
+import {blockStore} from 'Store';
 
 interface Preview {
 	type: I.MarkType,
@@ -25,14 +24,11 @@ interface Cover {
 };
 
 interface Toast {
-	objectId: string;
 	targetId: string;
-	action: string;
+	action: I.ToastAction;
+	objectId?: string;
+	originId?: string;
 	objectsLength?: number;
-	noButtons?: boolean;
-	noUndo?: boolean;
-	noOpen?: boolean;
-	undo?(): void;
 }
 
 const Constant = require('json/constant.json');
@@ -45,7 +41,7 @@ class CommonStore {
     public filterObj: Filter = { from: 0, text: '' };
     public gatewayUrl: string = '';
     public previewObj: Preview = { type: 0, param: '', element: null, range: { from: 0, to: 0 }, marks: [] };
-	public toastObj: Toast = { objectId: '', targetId: '', action: '' };
+	public toastObj: Toast = { objectId: '', targetId: '', originId: '', action: I.ToastAction.Default };
     public configObj: any = {};
     public cellId: string = '';
 	public themeId: string = '';
@@ -220,7 +216,7 @@ class CommonStore {
 	};
 
 	toastClear () {
-		this.toastObj = { objectId: '', targetId: '', action: '' };
+		this.toastObj = { objectId: '', targetId: '', originId: '', action: I.ToastAction.Default };
 	};
 
 	defaultTypeSet (v: string) {

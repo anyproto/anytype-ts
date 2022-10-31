@@ -693,14 +693,14 @@ class Util {
 		obj.show().css({ opacity: 0 });
 
 		let win = $(window);
-		let ow = obj.outerWidth();
-		let oh = obj.outerHeight();
-		let x = win.width() / 2 - ow / 2;
-		let y = win.height() - oh - 24;
 
 		window.setTimeout(() => {
+			let ow = obj.outerWidth();
+			let oh = obj.outerHeight();
+			let x = win.width() / 2 - ow / 2;
+			let y = win.height() - oh - 24;
 			obj.css({ left: x, top: y, opacity: 1 });
-		}, 10);
+		}, 30);
 
 
 		this.timeoutToast = window.setTimeout(this.toastHide, Constant.delay.toast);

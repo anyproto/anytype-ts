@@ -4,7 +4,6 @@ import { I, C, keyboard, Util, DataUtil, translate, analytics, Action, focus } f
 import { commonStore, dbStore, blockStore } from 'Store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import {ToastActions} from "Interface/common";
 
 interface Props extends I.Menu {};
 
@@ -411,15 +410,11 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 					break;
 
 				case I.NavigationType.Move:
-					const block = blockStore.getLeaf(rootId, blockId);
 					toastParam = {
-						objectId: block.content.targetBlockId,
-						action: I.ToastActions.Move,
+						action: I.ToastAction.Move,
 						targetId: item.id,
 						objectsLength: blockIds.length,
-						undo: (() => {
-							C.ObjectUndo(rootId);
-						})
+						originId: rootId
 					};
 
 					Action.move(rootId, item.id, '', blockIds, I.BlockPosition.Bottom, toast);
@@ -445,7 +440,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 							showToast = true;
 							toastParam = {
 								objectId: item.id,
-								action: I.ToastActions.Link,
+								action: I.ToastAction.Link,
 								targetId: rootId,
 								noButtons: true,
 							};

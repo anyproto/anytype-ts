@@ -40,9 +40,10 @@ export enum NavigationType {
 	LinkTo	 = 3,
 };
 
-export enum ToastActions {
-	Move	 = 'moved to',
-	Link	 = 'linked to'
+export enum ToastAction {
+	Default	 = 0,
+	Move	 = 1,
+	Link	 = 2,
 };
 
 export interface Option {

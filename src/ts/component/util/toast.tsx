@@ -2,42 +2,80 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject } from 'Component';
 import { commonStore } from 'Store';
-import { C, Util, DataUtil } from 'Lib';
+import {C, Util, DataUtil, I} from 'Lib';
 
-interface ToastStateObject {
-    id?: string,
-    name?: string
-}
-
-interface State {
-    object: ToastStateObject,
-    target: ToastStateObject
-};
-
-const Toast = observer(class Toast extends React.Component<any, State> {
+const Toast = observer(class Toast extends React.Component<any, any> {
 
     state = {
-        object: {
-            id: null,
-            name: ''
-        },
-        target: {
-            id: null,
-            name: ''
-        }
+        object: null,
+        target: null,
+        origin: null
     };
 
     render () {
         const { toast } = commonStore;
-        const { objectsLength, action, noButtons, noOpen, noUndo } = toast;
-        const { object, target } = this.state;
+        const { objectsLength, action } = toast;
+        const { object, target, origin } = this.state;
+        let withButtons = false;
 
-        const undo = !noUndo ? <div onClick={this.onUndo} className="toastButton">Undo</div> : '';
-        const open = !noOpen ? <div onClick={this.onOpen} className="toastButton">Open</div> : '';
+        const undo = <div onClick={() => this.onClick('undo')} className="toastButton">Undo</div>;
+        const open = <div onClick={() => this.onClick('open')} className="toastButton">Open</div>;
 
         let buttons = null;
+        let textObject = null;
+        let textAction = null;
+        let textOrigin = null;
+        let textActionTo = null;
+        let textTarget = null;
 
-        if (!noButtons && (undo || open)) {
+        switch (action) {
+            case I.ToastAction.Move:
+                if (target) {
+                    withButtons = true;
+
+                    textObject = <div>
+                        {objectsLength} {Util.cntWord(objectsLength, 'block', 'blocks')}
+                    </div>;
+
+                    textAction = 'moved to';
+
+                    textTarget = <div className="name">
+                        <IconObject object={target} size={18} />
+                        {DataUtil.getObjectName(target)}
+                    </div>;
+
+
+                    if (origin) {
+                        textAction = 'moved from';
+
+                        textOrigin = <div className="name">
+                            <IconObject object={origin} size={18} />
+                            {DataUtil.getObjectName(origin)}
+                        </div>;
+
+                        textActionTo = 'to';
+                    }
+                };
+                break;
+
+            case I.ToastAction.Link:
+                if (object && target) {
+                    textObject = <div className="name">
+                        <IconObject object={object} size={18} />
+                        {DataUtil.getObjectName(object)}
+                    </div>;
+
+                    textAction = 'linked to';
+
+                    textTarget = <div className="name">
+                        <IconObject object={target} size={18} />
+                        {DataUtil.getObjectName(target)}
+                    </div>;
+                };
+                break;
+        };
+
+        if (withButtons) {
             buttons = (
                 <div className="buttons">
                     {open}
@@ -46,22 +84,15 @@ const Toast = observer(class Toast extends React.Component<any, State> {
             );
         };
 
-        const isMultiple = objectsLength && (objectsLength > 1);
-        const objectName = isMultiple ? `${objectsLength} items` : DataUtil.getObjectName(object);
-
         return (
             <div id="toast" className="toast">
                 <div className="inner">
                     <div className="message">
-                        <div className="name">
-                            <IconObject object={object} size={18} />
-                            {objectName}
-                        </div>
-                        <div className="action">{action}</div>
-                        <div className="name">
-                            <IconObject object={target} size={18} />
-                            {DataUtil.getObjectName(target)}
-                        </div>
+                        {textObject}
+                        {textAction}
+                        {textOrigin}
+                        {textActionTo}
+                        {textTarget}
                     </div>
 
                     {buttons}
@@ -71,62 +102,110 @@ const Toast = observer(class Toast extends React.Component<any, State> {
     };
 
     componentDidUpdate () {
-        this.updateObject();
-        this.updateTarget();
+        this.update();
     };
 
-    updateObject () {
+    update () {
         const { toast } = commonStore;
-        const { objectId } = toast;
-        const { object } = this.state;
+        const { objectId, targetId, originId, action } = toast;
+        const { object, target } = this.state;
 
-        if (objectId === object.id || (!objectId && !object.id) ) {
-            return;
+        let ids = [];
+
+        const noObject = !objectId && !object;
+        const noTarget = !targetId && !target;
+
+        const objectRendered = object && (objectId === object.id);
+        const targetRendered = target && (targetId === target.id);
+
+        switch (action) {
+            case I.ToastAction.Move:
+                if (targetRendered || noTarget) {
+                    return;
+                }
+                if (!targetId) {
+                    this.setState({ target: null});
+                    return;
+                };
+
+                ids.push(targetId);
+                ids.push(originId);
+                break;
+
+            case I.ToastAction.Link:
+                if ((targetRendered && objectRendered) || noTarget || noObject) {
+                    return;
+                }
+                if (!objectId || !targetId) {
+                    this.setState({ object: null, target: null});
+                    return;
+                };
+
+                ids.push(objectId);
+                ids.push(targetId);
+                break;
         };
 
-        if (!objectId) {
-            this.setState({ object: { id: null, name: '' }});
-            return;
-        };
+        if (ids.length) {
+            DataUtil.getObjectsByIds(ids, (message) => {
+                if (message.error.code) {
+                    return;
+                };
 
-        DataUtil.getObjectById(objectId, (message) => {
-            if (message.error.code) {
-                return null;
-            };
-            this.setState({ object: message.records[0] });
-        });
+                this.setState(this.mapRecords(message.records));
+            });
+        }
     };
 
-    updateTarget () {
+    mapRecords (records: any) {
         const { toast } = commonStore;
-        const { targetId } = toast;
-        const { target } = this.state;
+        const { objectId, targetId, originId } = toast;
+        const recordsObj = this.toObject(records, 'id');
 
-        if (targetId === target.id || (!targetId && !target.id)) {
-            return;
+        const state: any = {
+            target: recordsObj[targetId]
         };
 
-        if (!targetId) {
-            this.setState({ target: { id: null, name: '' }});
-            return;
+        if (objectId && recordsObj[objectId]) {
+            state.object = recordsObj[objectId];
         };
 
-        DataUtil.getObjectById(targetId, (message) => {
-            if (message.error.code) {
-                return;
-            };
-            this.setState({ target: message.records[0] });
-        });
+        if (originId && recordsObj[originId]) {
+            state.origin = recordsObj[originId];
+        }
+
+        return state;
+    };
+
+    toObject (arr: any, key: string) {
+        const obj = {};
+        for (let i=0;i<arr.length;i++) {
+            obj[arr[i][key]] = arr[i];
+        }
+
+        return obj
+    };
+
+    onClick (action) {
+
+        switch (action) {
+            case 'open':
+                this.onOpen();
+                break;
+
+            case 'undo':
+                this.onUndo();
+                break;
+        };
+
+        Util.toastHide(true);
     };
 
     onUndo () {
         const { toast } = commonStore;
-        const { undo } = toast;
+        const { originId } = toast;
 
-        if (undo) {
-            undo();
-        };
-        Util.toastHide(true);
+        C.ObjectUndo(originId);
     };
 
     onOpen () {
@@ -134,7 +213,6 @@ const Toast = observer(class Toast extends React.Component<any, State> {
         const { targetId } = toast;
 
         DataUtil.objectOpenRoute({id: targetId});
-        Util.toastHide(true);
     };
 
 });
