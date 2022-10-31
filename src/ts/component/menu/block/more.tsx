@@ -303,6 +303,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				menuParam.data = Object.assign(menuParam.data, {
 					placeholder: 'Find a type of object...',
 					label: 'Your object type library',
+					canNotAdd: true,
 					filters: filters,
 					onSelect: (item: any) => {
 						C.BlockListConvertToObjects(rootId, [ blockId ], item.id);

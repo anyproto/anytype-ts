@@ -204,6 +204,7 @@ window.Lib = {
 	dispatcher,
 	keyboard,
 	Renderer,
+	DataUtil,
 };
 
 /*
@@ -629,11 +630,15 @@ class App extends React.Component<Props, State> {
 
 		switch (key) {
 			case 'undo':
-				keyboard.onUndo(rootId);
+				if (!keyboard.isFocused) {
+					keyboard.onUndo(rootId);
+				};
 				break;
 
 			case 'redo':
-				keyboard.onRedo(rootId);
+				if (!keyboard.isFocused) {
+					keyboard.onRedo(rootId);
+				};
 				break;
 
 			case 'create':

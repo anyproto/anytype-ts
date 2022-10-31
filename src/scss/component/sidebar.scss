@@ -136,3 +136,9 @@ html.platformMac {
         }
     }
 }
+
+html.platformWindows {
+	.sidebar {
+		.head { -webkit-app-region: drag; }
+	}
+}

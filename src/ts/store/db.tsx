@@ -42,11 +42,11 @@ class DbStore {
 	};
 
     relationsSet (rootId: string, blockId: string, list: any[]) {
-		const key = this.getId(rootId, blockId);
-		const relations = this.relationMap.get(this.getId(rootId, blockId)) || [];
+		let key = this.getId(rootId, blockId);
+		let relations = this.relationMap.get(this.getId(rootId, blockId)) || [];
 
 		for (let item of list) {
-			relations.push(item);
+			relations.push({ relationKey: item.relationKey, format: item.format });
 		};
 
 		this.relationMap.set(key, Util.arrayUniqueObjects(relations, 'relationKey'));
@@ -231,7 +231,14 @@ class DbStore {
 	};
 
     getMeta (rootId: string, blockId: string) {
-		return this.metaMap.get(this.getId(rootId, blockId)) || {};
+		const map = this.metaMap.get(this.getId(rootId, blockId)) || {};
+
+		return {
+			total: Number(map.total) || 0,
+			offset: Number(map.offset) || 0,
+			viewId: String(map.viewId || ''),
+			keys: map.keys || [],
+		};
 	};
 
     getRecords (rootId: string, blockId: string) {

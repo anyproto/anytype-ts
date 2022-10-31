@@ -31,8 +31,11 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 		this.onKeyPress = this.onKeyPress.bind(this);
 		this.onKeyDown = this.onKeyDown.bind(this);
 		this.onKeyUp = this.onKeyUp.bind(this);
+		this.onInput = this.onInput.bind(this);
 		this.onFocus = this.onFocus.bind(this);
+		this.onBlur = this.onBlur.bind(this);
 		this.onDragEnd = this.onDragEnd.bind(this);
+		this.focus = this.focus.bind(this);
 	};
 
 	render () {
@@ -64,7 +67,7 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 
 		if (isEditing) {
 			content = (
-				<div id="value" onClick={this.onFocus}>
+				<div id="value" onClick={this.focus}>
 					<div id="placeholder" className="placeholder">{placeholder}</div>
 
 					<span id="list">
@@ -80,10 +83,11 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 								>
 									<Tag 
 										key={item.id}
-										{...item} 
+										text={item.name}
+										color={item.color}
 										canEdit={true} 
 										className={DataUtil.tagClass(relation.format)}
-										onRemove={(e: any, id: string) => { this.onValueRemove(id); }}
+										onRemove={(e: any) => { this.onValueRemove(item.id); }}
 									/>
 								</span>
 							))}
@@ -94,6 +98,9 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 						id="entry" 
 						contentEditable={true}
 						suppressContentEditableWarning={true} 
+						onFocus={this.onFocus}
+						onBlur={this.onBlur}
+						onInput={this.onInput}
 						onKeyPress={this.onKeyPress}
 						onKeyDown={this.onKeyDown}
 						onKeyUp={this.onKeyUp}
@@ -111,7 +118,12 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 				content = (
 					<span className="over">
 						{value.map((item: any, i: number) => (
-							<Tag {...item} key={item.id} className={DataUtil.tagClass(relation.format)} />
+							<Tag 
+								key={item.id} 
+								text={item.name} 
+								color={item.color}
+								className={DataUtil.tagClass(relation.format)} 
+							/>
 						))}
 						{arrayLimit && (length > arrayLimit) ? <div className="more">+{length - arrayLimit}</div> : ''}
 					</span>
@@ -157,7 +169,7 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 			this.setState({ isEditing: v });
 			
 			if (v) {
-				window.setTimeout(() => { this.onFocus(); }, 15);
+				window.setTimeout(() => { this.focus(); }, 15);
 			};
 		};
 	}; 
@@ -197,6 +209,10 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 			value.existing.pop();
 			this.setValue(value.existing);
 		});
+
+		this.placeholderCheck();
+		this.resize();
+		this.scrollToBottom();
 	};
 
 	onKeyUp (e: any) {
@@ -205,6 +221,10 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 		this.placeholderCheck();
 		this.resize();
 		this.scrollToBottom();
+	};
+
+	onInput () {
+		this.placeholderCheck();
 	};
 
 	placeholderCheck () {
@@ -238,7 +258,7 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 		const node = $(ReactDOM.findDOMNode(this));
 		node.find('#entry').text(' ');
 
-		this.onFocus();
+		this.focus();
 	};
 
 	onValueRemove (id: string) {
@@ -250,6 +270,14 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 	};
 
 	onFocus () {
+		keyboard.setFocus(true);
+	};
+
+	onBlur () {
+		keyboard.setFocus(false);
+	};
+
+	focus () {
 		if (!this._isMounted) {
 			return;
 		};

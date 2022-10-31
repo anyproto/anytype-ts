@@ -369,6 +369,10 @@ class Relation {
 		return (v === null) || (v === undefined) || (v === '');
 	};
 
+	isUrl (type: I.RelationType) {
+		return [ I.RelationType.Url, I.RelationType.Email, I.RelationType.Phone ].includes(type);
+	};
+
 	getUrlScheme (type: I.RelationType, value: any): string {
 		value = String(value || '');
 

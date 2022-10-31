@@ -2,8 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Loader } from 'Component';
 import { I, C, Util, DataUtil, analytics, keyboard, Relation } from 'Lib';
-import { dbStore, detailStore, popupStore, menuStore } from 'Store';
-import { throttle } from 'lodash';
+import { dbStore, detailStore, popupStore, menuStore, commonStore } from 'Store';
 import { observer } from 'mobx-react';
 import arrayMove from 'array-move';
 import { set } from 'mobx';
@@ -35,9 +34,6 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 	columnRefs: any = {};
 	isDraggingColumn: boolean = false;
 	isDraggingCard: boolean = false;
-	hoverId: string = '';
-	isLeft: boolean = false;
-	isTop: boolean = false;
 	ox: number = 0;
 
 	constructor (props: any) {
@@ -197,7 +193,9 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 		const element = node.find(`#card-${groupId}-add`);
 		const types = Relation.getSetOfObjects(rootId, rootId, Constant.typeId.type);
 		const relations = Relation.getSetOfObjects(rootId, rootId, Constant.typeId.relation);
-		const details: any = {};
+		const details: any = {
+			type: types.length ? types[0].id : commonStore.type,
+		};
 
 		details[view.groupRelationKey] = group.value;
 
@@ -233,14 +231,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 			});
 		};
 
-		if (!setOf.length) {
-			create(null);
-			return;
-		};
-
-		const first = setOf[0];
-
-		if (first == Constant.typeId.bookmark) {
+		if (details.type == Constant.typeId.bookmark) {
 			menuStore.open('dataviewCreateBookmark', {
 				type: I.MenuType.Horizontal,
 				element,
@@ -257,7 +248,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 
 		DataUtil.checkTemplateCnt(setOf, (message: any) => {
 			if (message.records.length > 1) {
-				popupStore.open('template', { data: { typeId: first, onSelect: create } });
+				popupStore.open('template', { data: { typeId: details.type, onSelect: create } });
 			} else {
 				create(message.records.length ? message.records[0] : '');
 			};
@@ -379,7 +370,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 
 		node.find('.isClone').remove();
 		node.find('.isDragging').removeClass('isDragging');
-		node.find(`.ghost`).remove();
+		node.find('.isOver').removeClass('isOver left right top bottom');
 
 		selection.preventSelect(false);
 		preventCommonDrop(false);
@@ -404,7 +395,6 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 
 	onDragMoveColumn (e: any, groupId: any) {
 		const node = $(ReactDOM.findDOMNode(this));
-		const ghost = $('<div />').addClass('ghost isColumn');
 		const current = this.cache[groupId];
 		const groups = this.getGroups(false);
 
@@ -412,8 +402,8 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 			return;
 		};
 
-		this.isLeft = false;
-		this.hoverId = '';
+		let isLeft = false;
+		let hoverId = '';
 
 		for (let group of groups) {
 			const rect = this.cache[group.id];
@@ -422,8 +412,8 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 			};
 
 			if (rect && this.cache[groupId] && Util.rectsCollide({ x: e.pageX, y: e.pageY, width: current.width, height: current.height }, rect)) {
-				this.isLeft = e.pageX <= rect.x + rect.width / 2;
-				this.hoverId = group.id;
+				isLeft = e.pageX <= rect.x + rect.width / 2;
+				hoverId = group.id;
 
 				this.newIndex = rect.index;
 				break;
@@ -435,25 +425,12 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 		};
 
 		this.frame = raf(() => {
-			node.find('.ghost.isColumn').remove();
+			node.find('.isOver').removeClass('isOver left right');
 
-			if (!this.hoverId) {
-				return;
+			if (hoverId) {
+				const el = node.find(`#column-${hoverId}`);
+				el.addClass('isOver ' + (isLeft ? 'left' : 'right'));
 			};
-
-			const rect = this.cache[this.hoverId];
-			const el = node.find(`#column-${this.hoverId}`);
-			const css: any = {};
-
-			if (this.isLeft) {
-				el.before(ghost);
-				css.left = rect.x - this.ox - 4;
-			} else {
-				el.after(ghost);
-				css.left = rect.x + rect.width - this.ox + 4;
-			};
-
-			ghost.css(css);
 		});
 	};
 
@@ -493,15 +470,14 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 
 	onDragMoveCard (e: any, record: any) {
 		const node = $(ReactDOM.findDOMNode(this));
-		const ghost = $('<div />').addClass('ghost isCard');
 		const current = this.cache[record.id];
 
 		if (!current) {
 			return;
 		};
 
-		this.isTop = false;
-		this.hoverId = '';
+		let isTop = false;
+		let hoverId = '';
 
 		for (let i in this.cache) {
 			const rect = this.cache[i];
@@ -510,8 +486,8 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 			};
 
 			if (Util.rectsCollide({ x: e.pageX, y: e.pageY, width: current.width, height: current.height + 8 }, rect)) {
-				this.isTop = rect.isAdd ? true : (e.pageY <= rect.y + rect.height / 2);
-				this.hoverId = rect.id;
+				isTop = rect.isAdd ? true : (e.pageY <= rect.y + rect.height / 2);
+				hoverId = rect.id;
 
 				this.newGroupId = rect.groupId;
 				this.newIndex = rect.index;
@@ -524,11 +500,11 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 		};
 
 		this.frame = raf(() => {
-			node.find(`.ghost.isCard`).remove();
+			node.find('.isOver').removeClass('isOver top bottom');
 
-			if (this.hoverId) {
-				const card = node.find(`#card-${this.hoverId}`);
-				this.isTop ? card.before(ghost) : card.after(ghost);
+			if (hoverId) {
+				const el = node.find(`#card-${hoverId}`);
+				el.addClass('isOver ' + (isTop ? 'top' : 'bottom'));
 			};
 		});
 	};
@@ -621,8 +597,6 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 		const node = $(ReactDOM.findDOMNode(this));
 
 		if (this.isDraggingColumn) {
-			const ghost = node.find('.ghost');
-
 			groups.forEach((group: any, i: number) => {
 				const rect = this.cache[group.id];
 				if (!rect) {
@@ -637,19 +611,8 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 				const { left, top } = el.offset();
 				rect.x = left;
 				rect.y = top;
-
-				if (group.id == this.hoverId) {
-					const css: any = {};
-					if (this.isLeft) {
-						css.left = rect.x - this.ox - 4;
-					} else {
-						css.left = rect.x + rect.width - this.ox + 4;
-					};
-					ghost.css(css);
-				};
 			});
-		};
-
+		} else
 		if (this.isDraggingCard) {
 			groups.forEach((group: any, i: number) => {
 				const column = this.columnRefs[group.id];
@@ -657,7 +620,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 					return;
 				};
 
-				const items = column.getItems() || [];
+				const items = column.getItems();
 				items.forEach((item: any, i: number) => {
 					const el = node.find(`#card-${item.id}`);
 					if (!el.length) {

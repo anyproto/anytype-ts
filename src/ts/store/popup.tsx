@@ -1,5 +1,5 @@
 import { observable, action, computed, set, makeObservable } from 'mobx';
-import { I, Util, analytics } from 'Lib';
+import { I, Util, focus } from 'Lib';
 import { menuStore } from 'Store';
 
 const Constant = require('json/constant.json');
@@ -30,14 +30,15 @@ class PopupStore {
     open (id: string, param: I.PopupParam) {
 		param.data = param.data || {};
 
+		menuStore.closeAll();
+		focus.clear(true);
+
 		const item = this.get(id);
 		if (item) {
 			this.update(id, param);
 		} else {
 			this.popupList.push({ id: id, param: param });
 		};
-
-		menuStore.closeAll();
 	};
 
     get (id: string): I.Popup {

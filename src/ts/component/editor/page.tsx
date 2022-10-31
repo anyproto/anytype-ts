@@ -155,12 +155,16 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 				this.onPaste(e, {});
 			};
 		});
+
 		win.on('focus.editor' + namespace, (e: any) => {
+			const isPopupOpen = popupStore.isOpen();
+			const isMenuOpen = menuStore.isOpen();
+
 			let ids: string[] = [];
 			if (selection) {
 				ids = selection.get(I.SelectType.Block, true);
 			};
-			if (!ids.length && !menuStore.isOpen()) {
+			if (!ids.length && !isMenuOpen && !isPopupOpen) {
 				focus.restore();
 				focus.apply(); 
 			};
@@ -500,7 +504,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		Util.previewHide(true);
 		
 		const ids = selection.get(I.SelectType.Block);
-		const cmd = keyboard.ctrlKey();
+		const cmd = keyboard.cmdKey();
 		const readonly = this.isReadonly();
 
 		// Select all
@@ -675,7 +679,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		};
 
 		const platform = Util.getPlatform();
-		const cmd = keyboard.ctrlKey();
+		const cmd = keyboard.cmdKey();
 
 		// Last line break doesn't expand range.to
 		let length = String(text || '').length;
@@ -801,7 +805,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 			// Backspace
 			keyboard.shortcut('backspace, delete', e, (pressed: string) => {
-				this.onBackspaceBlock(e, range, pressed, props);
+				this.onBackspaceBlock(e, range, pressed, length, props);
 			});
 
 			keyboard.shortcut('arrowup, arrowdown', e, (pressed: string) => {
@@ -845,7 +849,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 	};
 
 	getMarkParam () {
-		const cmd = keyboard.ctrlKey();
+		const cmd = keyboard.cmdKey();
 		return [
 			{ key: `${cmd}+b`,		 type: I.MarkType.Bold,		 param: '' },
 			{ key: `${cmd}+i`,		 type: I.MarkType.Italic,	 param: '' },
@@ -1083,7 +1087,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 	};
 
 	// Backspace / Delete
-	onBackspaceBlock (e: any, range: I.TextRange, pressed: string, props: any) {
+	onBackspaceBlock (e: any, range: I.TextRange, pressed: string, length: number, props: any) {
 		const { dataset, rootId } = this.props;
 		const { isInsideTable } = props;
 		const { selection } = dataset || {};
@@ -1096,19 +1100,18 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 		const isDelete = pressed == 'delete';
 		const ids = selection.get(I.SelectType.Block, true);
-		const length = block.getLength();
 
 		if (block.isText()) {
 			if (!isDelete && !range.to) {
 				if (block.isTextList() || block.isTextQuote() || block.isTextCallout()) {
 					C.BlockListTurnInto(rootId, [ block.id ], I.TextStyle.Paragraph);
 				} else {
-					ids.length ? this.blockRemove(block) : this.blockMerge(block, -1);
+					ids.length ? this.blockRemove(block) : this.blockMerge(block, -1, length);
 				};
 			};
 
 			if (isDelete && (range.to == length)) {
-				ids.length ? this.blockRemove(block) : this.blockMerge(block, 1);
+				ids.length ? this.blockRemove(block) : this.blockMerge(block, 1, length);
 			};
 		};
 		if (!block.isText() && !keyboard.isFocused) {
@@ -1791,7 +1794,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		});
 	};
 	
-	blockMerge (focused: I.Block, dir: number) {
+	blockMerge (focused: I.Block, dir: number, length: number) {
 		const { rootId } = this.props;
 		const next = blockStore.getNextBlock(rootId, focused.id, dir, it => it.isFocusable());
 
@@ -1802,7 +1805,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		let blockId = '';
 		let targetId = '';
 		let to = 0;
-		let length = focused.getLength();
 
 		if (dir < 0) {
 			blockId = next.id;
@@ -1838,10 +1840,12 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 					return;
 				};
 
-				const next = blockStore.getNextBlock(rootId, focused.id, -1, it => it.isFocusable());
-				if (next) {
-					const nl = dir < 0 ? next.getLength() : 0;
-					this.focus(next.id, nl, nl, false);
+				if (dir < 0) {
+					const next = blockStore.getNextBlock(rootId, focused.id, -1, it => it.isFocusable());
+					if (next) {
+						const nl = dir < 0 ? next.getLength() : 0;
+						this.focus(next.id, nl, nl, false);
+					};
 				};
 			});
 		};
@@ -1916,26 +1920,28 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			blockIds = [ focused.id ];
 		};
 
-		const next = blockStore.getNextBlock(rootId, blockIds[0], -1, it => it.isFocusable());
-
 		blockIds = blockIds.filter((it: string) => {  
 			let block = blockStore.getLeaf(rootId, it);
 			return block && block.isDeletable();
 		});
 
-		if (blockIds.length) {
-			focus.clear(true);
-			C.BlockListDelete(rootId, blockIds, (message: any) => {
-				if (message.error.code) {
-					return;
-				};
-				
-				if (next) {
-					let length = next.getLength();
-					this.focus(next.id, length, length, true);
-				};
-			});
+		if (!blockIds.length) {
+			return;
 		};
+
+		focus.clear(true);
+		const next = blockStore.getNextBlock(rootId, blockIds[0], -1, it => it.isFocusable());
+
+		C.BlockListDelete(rootId, blockIds, (message: any) => {
+			if (message.error.code) {
+				return;
+			};
+			
+			if (next) {
+				let length = next.getLength();
+				this.focus(next.id, length, length, true);
+			};
+		});
 	};
 	
 	onLastClick (e: any) {

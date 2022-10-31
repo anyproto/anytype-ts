@@ -290,6 +290,7 @@ class CommonStore {
 		blockStore.storeSetRelation(info.marketplaceRelationObjectId);
 
 		this.gatewaySet(info.gatewayUrl);
+		this.workspaceSet(info.accountSpaceId);
 
 		analytics.device(info.deviceId);
 	};

@@ -241,30 +241,15 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 
 	onKeyDown (e: any) {
 		const items = this.getItems();
-		const cmd = keyboard.ctrlKey();
-
-		keyboard.disableMouse(true);
+		const cmd = keyboard.cmdKey();
 
 		let k = keyboard.eventKey(e);
-
-		if (k == Key.tab) {
-			k = e.shiftKey ? Key.up : Key.down;
-		};
-
-		if ((k == Key.down) && (this.n == -1)) {
-			this.refFilter.blur();
-		};
-
-		if ((k == Key.up) && (this.n == 0)) {
-			this.refFilter.focus();
-			this.unsetActive();
-			this.n = -1;
-			return;
-		};
 
 		if ((k != Key.down) && (this.n == -1)) {
 			return;
 		};
+
+		keyboard.disableMouse(true);
 
 		keyboard.shortcut('arrowup, arrowdown', e, (pressed: string) => {
 			this.onArrow(pressed.match(Key.up) ? -1 : 1);
@@ -276,15 +261,22 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 				this.onClick(e, item);
 			};
 		});
-
-		keyboard.shortcut('escape', e, (pressed: string) => {
-			this.props.close();
-		});
 	};
 
 	onArrow (dir: number) {
 		const items = this.getItems();
 		const l = items.length;
+
+		if ((dir > 0) && (this.n == -1)) {
+			this.refFilter.blur();
+		};
+
+		if ((dir < 0) && (this.n == 0)) {
+			this.refFilter.focus();
+			this.unsetActive();
+			this.n = -1;
+			return;
+		};
 
 		this.n += dir;
 
