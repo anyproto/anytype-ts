@@ -27,14 +27,14 @@
               "ts/lib/*"
             ],
             "Lib": [
-                "ts/lib"
-              ],
+				"ts/lib"
+            ],
             "Model/*": [
               "ts/model/*"
             ],
             "Model": [
-                "ts/model"
-              ],
+				"ts/model"
+            ],
             "Store/*": [
                 "ts/store/*",
             ],

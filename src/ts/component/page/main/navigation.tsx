@@ -314,7 +314,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 		
 		const win = $(window);
 		win.on('keydown.navigation', (e: any) => { this.onKeyDown(e); });
-		win.off('resize.navigation').on('resize.navigation', () => { this.resize(); });
+		win.on('resize.navigation', () => { this.resize(); });
 	};
 
 	unbind () {
@@ -352,8 +352,6 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 		let { n } = this.state;
 
 		keyboard.disableMouse(true);
-
-		e.preventDefault();
 
 		keyboard.shortcut('arrowup, arrowdown', e, (pressed: string) => {
 			const dir = pressed.match(Key.up) ? -1 : 1;
