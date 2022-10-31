@@ -155,12 +155,16 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 				this.onPaste(e, {});
 			};
 		});
+
 		win.on('focus.editor' + namespace, (e: any) => {
+			const isPopupOpen = popupStore.isOpen();
+			const isMenuOpen = menuStore.isOpen();
+
 			let ids: string[] = [];
 			if (selection) {
 				ids = selection.get(I.SelectType.Block, true);
 			};
-			if (!ids.length && !menuStore.isOpen()) {
+			if (!ids.length && !isMenuOpen && !isPopupOpen) {
 				focus.restore();
 				focus.apply(); 
 			};
