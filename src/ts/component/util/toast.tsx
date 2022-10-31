@@ -2,11 +2,16 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject } from 'Component';
 import { commonStore } from 'Store';
-import { Util, DataUtil } from 'Lib';
+import { C, Util, DataUtil } from 'Lib';
+
+interface ToastStateObject {
+    id?: string,
+    name?: string
+}
 
 interface State {
-    object: any,
-    target: any
+    object: ToastStateObject,
+    target: ToastStateObject
 };
 
 const Toast = observer(class Toast extends React.Component<any, State> {
@@ -30,12 +35,18 @@ const Toast = observer(class Toast extends React.Component<any, State> {
         const undo = !noUndo ? <div onClick={this.onUndo} className="toastButton">Undo</div> : '';
         const open = !noOpen ? <div onClick={this.onOpen} className="toastButton">Open</div> : '';
 
-        const buttons = !noButtons ? <div className="buttons">
-            {open}
-            {undo}
-        </div> : '';
+        let buttons = null;
 
-        const isMultiple = objectsLength && objectsLength > 1;
+        if (!noButtons && (undo || open)) {
+            buttons = (
+                <div className="buttons">
+                    {open}
+                    {undo}
+                </div>
+            );
+        };
+
+        const isMultiple = objectsLength && (objectsLength > 1);
         const objectName = isMultiple ? `${objectsLength} items` : DataUtil.getObjectName(object);
 
         return (
@@ -80,7 +91,7 @@ const Toast = observer(class Toast extends React.Component<any, State> {
 
         DataUtil.getObjectById(objectId, (message) => {
             if (message.error.code) {
-                return;
+                return null;
             };
             this.setState({ object: message.records[0] });
         });

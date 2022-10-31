@@ -14,7 +14,7 @@
     .name { max-width: 140px; text-overflow: ellipsis; overflow: hidden; }
     .name .iconObject { margin: 1px 6px 0px 0px; }
   }
-}
 
-.toast .inner .buttons { margin-left: 27px; }
-.toast .inner .buttons .toastButton { cursor: pointer; }
+  .buttons { margin-left: 27px; }
+  .buttons .toastButton { cursor: pointer; }
+}

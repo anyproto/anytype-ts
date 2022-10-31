@@ -33,12 +33,16 @@ export enum CrumbsType {
 	Recent	 = 'recent',
 };
 
-
 export enum NavigationType {
 	Go		 = 0,
 	Move	 = 1,
 	Link	 = 2,
 	LinkTo	 = 3,
+};
+
+export enum ToastActions {
+	Move	 = 'moved to',
+	Link	 = 'linked to'
 };
 
 export interface Option {

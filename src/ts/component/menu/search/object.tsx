@@ -4,6 +4,7 @@ import { I, C, keyboard, Util, DataUtil, translate, analytics, Action, focus } f
 import { commonStore, dbStore, blockStore } from 'Store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
+import {ToastActions} from "Interface/common";
 
 interface Props extends I.Menu {};
 
@@ -378,19 +379,20 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		let showToast: boolean = false;
 		let toastParam: any = {};
 		let toast = (message: any) => {
-			if (!message.error.code) {
-				Util.toastShow(toastParam);
+			if (message.error.code) {
+				return;
 			};
+
+			Util.toastShow(toastParam);
 		};
 
 		let cb = (message: any) => {
-			if (!message.error.code) {
-				focus.set(message.blockId, { from: 0, to: 0 });
-				focus.apply();
 
-				if (showToast) {
-					toast(message);
-				};
+			focus.set(message.blockId, { from: 0, to: 0 });
+			focus.apply();
+
+			if (showToast) {
+				toast(message);
 			};
 		};
 
@@ -409,19 +411,17 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 					break;
 
 				case I.NavigationType.Move:
-					const block = blockStore.getBlocks(rootId, it => it.id == blockId);
+					const block = blockStore.getLeaf(rootId, blockId);
 					toastParam = {
-						objectId: block[0].content.targetBlockId,
-						action: 'moved to',
+						objectId: block.content.targetBlockId,
+						action: I.ToastActions.Move,
 						targetId: item.id,
 						objectsLength: blockIds.length,
 						undo: (() => {
-							analytics.event('LinkToAlertUndo');
 							C.ObjectUndo(rootId);
 						})
 					};
 
-					analytics.event('LinkToAlertMove');
 					Action.move(rootId, item.id, '', blockIds, I.BlockPosition.Bottom, toast);
 					break;
 
@@ -445,14 +445,13 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 							showToast = true;
 							toastParam = {
 								objectId: item.id,
-								action: 'linked to',
+								action: I.ToastActions.Link,
 								targetId: rootId,
 								noButtons: true,
 							};
 							break;
 					};
 
-					analytics.event('LinkToAlertMove');
 					C.BlockCreate(rootId, blockId, position, newBlock, cb);
 					break;
 
