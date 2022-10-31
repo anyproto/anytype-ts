@@ -562,11 +562,11 @@ class Util {
 		v = Number(v) || 0;
 
 		let ret = String(v || '');
-		let parts = new Intl.NumberFormat('en-GB').formatToParts(v);
-					
+		let parts = new Intl.NumberFormat('en-GB', { maximumFractionDigits: 8 }).formatToParts(v);
+
 		if (parts && parts.length) {
 			parts = parts.map((it: any) => {
-				if (it.value == ',') {
+				if (it.type == 'group') {
 					it.value = '&thinsp;';
 				};
 				return it.value;
