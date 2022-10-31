@@ -91,7 +91,7 @@ class Server {
 						console.log('failed to save a file');
 					};
 					
-					dialog.showErrorBox('Anytype helper crashed', 'You will be redirected to the crash log file. You can send it to Anytype developers: dev@anytype.io');
+					dialog.showErrorBox('Anytype helper crashed', 'You will be redirected to the crash log file. You can send it to Anytype developers by creating issue at community.anytype.io');
 					shell.showItemInFolder(crashReport);
 					
 					app.exit(0);
