@@ -714,6 +714,7 @@ class Util {
 	};
 
 	toastHide (force: boolean) {
+		return;
 		window.clearTimeout(this.timeoutToast);
 
 		const obj = $('#toast');
