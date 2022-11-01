@@ -751,7 +751,7 @@ class Util {
 		return s.toString().replace(new RegExp(/\n+/gi), '<br/>');
 	};
 	
-	map (list: any[], field: string): any {
+	mapToArray (list: any[], field: string): any {
 		list = list|| [] as any[];
 		
 		let map = {} as any;
@@ -761,6 +761,14 @@ class Util {
 		};
 		return map;
 	};
+
+	mapToObject (list: any[], field: string) {
+        const obj: any = {};
+        for (let i = 0; i < list.length; i++) {
+            obj[list[i][field]] = list[i];
+        };
+        return obj;
+    };
 	
 	unmap (map: any) {
 		let ret: any[] = [] as any[];

@@ -375,26 +375,6 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 
 		let newBlock: any = {};
 
-		let showToast: boolean = false;
-		let toastParam: any = {};
-		let toast = (message: any) => {
-			if (message.error.code) {
-				return;
-			};
-
-			Util.toastShow(toastParam);
-		};
-
-		let cb = (message: any) => {
-
-			focus.set(message.blockId, { from: 0, to: 0 });
-			focus.apply();
-
-			if (showToast) {
-				toast(message);
-			};
-		};
-
 		const process = (itemId: string, targetItem: any) => {
 			if (onSelect) {
 				onSelect(targetItem);
@@ -410,14 +390,18 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 					break;
 
 				case I.NavigationType.Move:
-					toastParam = {
-						action: I.ToastAction.Move,
-						targetId: item.id,
-						objectsLength: blockIds.length,
-						originId: rootId
-					};
+					Action.move(rootId, item.id, '', blockIds, I.BlockPosition.Bottom, (message: any) => {
+						if (message.error.code) {
+							return;
+						};
 
-					Action.move(rootId, item.id, '', blockIds, I.BlockPosition.Bottom, toast);
+						Util.toastShow({
+							action: I.ToastAction.Move,
+							targetId: itemId,
+							objectsLength: blockIds.length,
+							originId: rootId,
+						});
+					});
 					break;
 
 				case I.NavigationType.Link:
@@ -436,18 +420,24 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 								...DataUtil.defaultLinkSettings(),
 								targetBlockId: item.id,
 							};
-
-							showToast = true;
-							toastParam = {
-								objectId: item.id,
-								action: I.ToastAction.Link,
-								targetId: rootId,
-								noButtons: true,
-							};
 							break;
 					};
 
-					C.BlockCreate(rootId, blockId, position, newBlock, cb);
+					C.BlockCreate(rootId, blockId, position, newBlock, (message: any) => {
+						if (message.error.code) {
+							return;
+						};
+
+						focus.set(message.blockId, { from: 0, to: 0 });
+						focus.apply();
+
+						Util.toastShow({
+							objectId: itemId,
+							action: I.ToastAction.Link,
+							targetId: rootId,
+							noButtons: true,
+						});
+					});
 					break;
 
 				case I.NavigationType.LinkTo:
@@ -469,10 +459,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 			];
 
 			C.ObjectSearch(filters, [], [], '', 0, 50, (message: any) => {
-				if (message.error.code) {
-					return;
-				};
-				if (message.records.length) {
+				if (!message.error.code && message.records.length) {
 					callBack(message.records[0]);
 				};
 			});
