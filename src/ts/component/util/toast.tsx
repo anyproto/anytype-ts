@@ -41,18 +41,14 @@ const Toast = observer(class Toast extends React.Component<any, any> {
 					break;
 				};
 
+				let cnt = `${count} ${Util.cntWord(count, 'block', 'blocks')}`;
+
 				withButtons = true;
-				textAction = 'moved to';
+				textAction = `${cnt} moved to`;
 				textTarget = <Element {...target} />;
 
-				textObject = (
-					<div className="name">
-						{count} {Util.cntWord(count, 'block', 'blocks')}
-					</div>
-				);
-
 				if (origin) {
-					textAction = 'moved from';
+					textAction = `${cnt} moved from`;
 					textActionTo = 'to';
 					textOrigin = <Element {...origin} />;
 				};
