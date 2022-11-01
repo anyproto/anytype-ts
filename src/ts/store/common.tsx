@@ -1,6 +1,5 @@
-import { observable, action, computed, set, makeObservable } from 'mobx';
-import { I, Storage, Util } from 'Lib';
-import { analytics } from 'Lib';
+import { action, computed, makeObservable, observable, set } from 'mobx';
+import { analytics, I, Storage, Util } from 'Lib';
 import { blockStore } from 'Store';
 
 interface Preview {
@@ -24,6 +23,14 @@ interface Cover {
 	type: I.CoverType;
 };
 
+interface Toast {
+	targetId: string;
+	action: I.ToastAction;
+	objectId?: string;
+	originId?: string;
+	count?: number;
+};
+
 const Constant = require('json/constant.json');
 const $ = require('jquery');
 
@@ -34,6 +41,7 @@ class CommonStore {
     public filterObj: Filter = { from: 0, text: '' };
     public gatewayUrl: string = '';
     public previewObj: Preview = { type: 0, param: '', element: null, range: { from: 0, to: 0 }, marks: [] };
+	public toastObj: Toast = { objectId: '', targetId: '', originId: '', action: I.ToastAction.Default, count: 0 };
     public configObj: any = {};
     public cellId: string = '';
 	public themeId: string = '';
@@ -53,6 +61,7 @@ class CommonStore {
             filterObj: observable,
             gatewayUrl: observable,
             previewObj: observable,
+			toastObj: observable,
             configObj: observable,
 			themeId: observable,
 			nativeThemeIsDark: observable,
@@ -62,6 +71,7 @@ class CommonStore {
             config: computed,
             progress: computed,
             preview: computed,
+			toast: computed,
             filter: computed,
             cover: computed,
             gateway: computed,
@@ -76,6 +86,8 @@ class CommonStore {
             filterSetText: action,
             filterSet: action,
             previewSet: action,
+			toastSet: action,
+			toastClear: action,
 			themeSet: action,
 			nativeThemeSet: action,
 			workspaceSet: action,
@@ -92,6 +104,10 @@ class CommonStore {
 
     get preview(): Preview {
 		return this.previewObj;
+	};
+
+	get toast(): Toast {
+		return this.toastObj;
 	};
 
     get filter(): Filter {
@@ -187,12 +203,20 @@ class CommonStore {
 		this.previewObj = preview;
 	};
 
+	toastSet (toast: Toast) {
+		this.toastObj = toast;
+	}
+
 	workspaceSet (id: string) {
 		this.workspaceId = String(id || '');
 	};
 
 	previewClear () {
 		this.previewObj = { type: 0, param: '', element: null, range: { from: 0, to: 0 }, marks: [] };
+	};
+
+	toastClear () {
+		this.toastObj = { objectId: '', targetId: '', originId: '', action: I.ToastAction.Default };
 	};
 
 	defaultTypeSet (v: string) {

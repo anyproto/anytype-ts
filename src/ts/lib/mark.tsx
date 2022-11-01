@@ -92,7 +92,7 @@ class Mark {
 			return marks;	
 		};
 
-		let map = Util.map(marks, 'type');
+		let map = Util.mapToArray(marks, 'type');
 		let type = mark.type;
 		let add = true;
 
@@ -246,7 +246,7 @@ class Mark {
 	};
 	
 	getInRange (marks: I.Mark[], type: I.MarkType, range: I.TextRange): any {
-		let map = Util.map(marks, 'type');
+		let map = Util.mapToArray(marks, 'type');
 		if (!map[type] || !map[type].length) {
 			return null;
 		};

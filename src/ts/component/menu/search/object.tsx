@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { MenuItemVertical, Filter, Loader, ObjectName, EmptySearch } from 'Component';
 import { I, C, keyboard, Util, DataUtil, translate, analytics, Action, focus } from 'Lib';
-import { dbStore, commonStore } from 'Store';
+import { commonStore, dbStore, blockStore } from 'Store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
@@ -374,12 +374,6 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		};
 
 		let newBlock: any = {};
-		let cb = (message: any) => {
-			if (!message.error.code) {
-				focus.set(message.blockId, { from: 0, to: 0 });
-				focus.apply();
-			};
-		};
 
 		const process = (itemId: string, targetItem: any) => {
 			if (onSelect) {
@@ -396,7 +390,18 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 					break;
 
 				case I.NavigationType.Move:
-					Action.move(rootId, itemId, '', blockIds, I.BlockPosition.Bottom);
+					Action.move(rootId, item.id, '', blockIds, I.BlockPosition.Bottom, (message: any) => {
+						if (message.error.code) {
+							return;
+						};
+
+						Util.toastShow({
+							action: I.ToastAction.Move,
+							targetId: itemId,
+							count: blockIds.length,
+							originId: rootId,
+						});
+					});
 					break;
 
 				case I.NavigationType.Link:
@@ -405,7 +410,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 							newBlock.type = I.BlockType.Bookmark;
 							newBlock.content = {
 								state: I.BookmarkState.Done,
-								targetObjectId: itemId,
+								targetObjectId: item.id,
 							};
 							break;
 
@@ -413,12 +418,26 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 							newBlock.type = I.BlockType.Link;
 							newBlock.content = {
 								...DataUtil.defaultLinkSettings(),
-								targetBlockId: itemId,
+								targetBlockId: item.id,
 							};
 							break;
 					};
 
-					C.BlockCreate(rootId, blockId, position, newBlock, cb);
+					C.BlockCreate(rootId, blockId, position, newBlock, (message: any) => {
+						if (message.error.code) {
+							return;
+						};
+
+						focus.set(message.blockId, { from: 0, to: 0 });
+						focus.apply();
+
+						Util.toastShow({
+							objectId: itemId,
+							action: I.ToastAction.Link,
+							targetId: rootId,
+							noButtons: true,
+						});
+					});
 					break;
 
 				case I.NavigationType.LinkTo:
@@ -440,10 +459,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 			];
 
 			C.ObjectSearch(filters, [], [], '', 0, 50, (message: any) => {
-				if (message.error.code) {
-					return;
-				};
-				if (message.records.length) {
+				if (!message.error.code && message.records.length) {
 					callBack(message.records[0]);
 				};
 			});

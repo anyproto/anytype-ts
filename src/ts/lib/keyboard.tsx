@@ -420,12 +420,14 @@ class Keyboard {
 
 	onUndo (rootId: string, callBack?: (message: any) => void) {
 		C.ObjectUndo(rootId, callBack);
-		analytics.event('Undo');
+
+		analytics.event('Undo', { route: 'editor' });
 	};
 
 	onRedo (rootId: string, callBack?: (message: any) => void) {
 		C.ObjectRedo(rootId, callBack);
-		analytics.event('Redo');
+
+		analytics.event('Redo', { route: 'editor' });
 	};
 
 	printApply (className: string, clearTheme: boolean) {

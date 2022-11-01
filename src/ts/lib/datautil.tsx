@@ -1323,6 +1323,14 @@ class DataUtil {
 		return name;
 	}
 
+	getObjectsByIds (ids: string[], callBack?: (message: any) => void) {
+		let filters = [{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: ids }];
+
+		C.ObjectSearch(filters, [], [], '', 0, 0, (message) => {
+			callBack(message);
+		});
+	};
+
 	setWindowTitle (rootId: string) {
 		const object = detailStore.get(rootId, rootId, []);
 		const name = this.getObjectName(object);

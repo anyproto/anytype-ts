@@ -14,7 +14,8 @@ class Util {
 	init (history: any) {
 		this.history = history;
 	};
-	
+
+	timeoutToast: number = 0;
 	timeoutTooltip: number = 0;
 	timeoutPreviewShow: number = 0;
 	timeoutPreviewHide: number = 0;
@@ -684,6 +685,52 @@ class Util {
 		}, 250);
 	};
 
+	toastShow (param: any) {
+		const win = $(window);
+		const obj = $('#toast');
+
+		commonStore.toastSet(param);
+
+		obj.show().css({ opacity: 0 });
+
+		window.setTimeout(() => {
+			let ow = obj.outerWidth();
+			let oh = obj.outerHeight();
+			let x = win.width() / 2 - ow / 2;
+			let y = win.height() - oh - 24;
+
+			obj.css({ left: x, top: y, opacity: 1 });
+		}, 30);
+
+		this.timeoutToast = window.setTimeout(this.toastHide, Constant.delay.toast);
+
+		obj.off('mouseenter').on('mouseenter', (e: any) => {
+			window.clearTimeout(this.timeoutToast);
+		});
+
+		obj.off('mouseleave').on('mouseleave', (e: any) => {
+			this.timeoutToast = window.setTimeout(this.toastHide, Constant.delay.toast);
+		});
+	};
+
+	toastHide (force: boolean) {
+		window.clearTimeout(this.timeoutToast);
+
+		const obj = $('#toast');
+
+		if (force) {
+			obj.hide();
+			commonStore.toastClear();
+			return;
+		};
+
+		obj.css({ opacity: 0 });
+		this.timeoutToast = window.setTimeout(() => {
+			obj.hide();
+			commonStore.toastClear();
+		}, 250);
+	};
+
 	textStyle (obj: any, param: any) {
 		const color = String(obj.css('color') || '').replace(/\s/g, '');
 		const rgb = color.match(/rgba?\(([^\(]+)\)/);
@@ -704,7 +751,7 @@ class Util {
 		return s.toString().replace(new RegExp(/\n+/gi), '<br/>');
 	};
 	
-	map (list: any[], field: string): any {
+	mapToArray (list: any[], field: string): any {
 		list = list|| [] as any[];
 		
 		let map = {} as any;
@@ -714,6 +761,14 @@ class Util {
 		};
 		return map;
 	};
+
+	mapToObject (list: any[], field: string) {
+        const obj: any = {};
+        for (let i = 0; i < list.length; i++) {
+            obj[list[i][field]] = list[i];
+        };
+        return obj;
+    };
 	
 	unmap (map: any) {
 		let ret: any[] = [] as any[];
