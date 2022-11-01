@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, ObjectName } from 'Component';
 import { commonStore } from 'Store';
-import { C, Util, DataUtil, I } from 'Lib';
+import { C, Util, DataUtil, I, analytics } from 'Lib';
 
 const Toast = observer(class Toast extends React.Component<any, any> {
 
@@ -17,8 +17,8 @@ const Toast = observer(class Toast extends React.Component<any, any> {
         const { count, action } = toast;
         const { object, target, origin } = this.state;
 
-        const undo = <div className="toastButton" onClick={() => this.onClick('undo')}>Undo</div>;
-        const open = <div className="toastButton" onClick={() => this.onClick('open')}>Open</div>;
+        const undo = <div className="toastButton" onClick={(e: any) => this.onClick(e, 'undo')}>Undo</div>;
+        const open = <div className="toastButton" onClick={(e: any) => this.onClick(e, 'open')}>Open</div>;
 
 		let withButtons = false;
         let buttons = null;
@@ -170,33 +170,33 @@ const Toast = observer(class Toast extends React.Component<any, any> {
         this.setState(state);
     };
 
-    onClick (action: string) {
+    onClick (e: any, action: string) {
        
 		switch (action) {
             case 'open':
-                this.onOpen();
+                this.onOpen(e);
                 break;
 
             case 'undo':
-                this.onUndo();
+                this.onUndo(e);
                 break;
         };
 
         Util.toastHide(true);
     };
 
-    onUndo () {
+    onUndo (e: any) {
         const { toast } = commonStore;
         const { originId } = toast;
 
         C.ObjectUndo(originId);
+		analytics.event('Undo', { route: 'toast' });
     };
 
-    onOpen () {
-        const { toast } = commonStore;
-        const { targetId } = toast;
+    onOpen (e: any) {
+        const { target } = this.state;
 
-        DataUtil.objectOpenRoute({ id: targetId });
+        DataUtil.objectOpenEvent(e, target);
     };
 
 });
