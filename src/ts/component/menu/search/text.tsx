@@ -29,9 +29,9 @@ class MenuSearchText extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { param } = this.props;
+		const { param, storageGet } = this.props;
 		const { data } = param;
-		const value = String(data.value || Storage.get('search') || '');
+		const value = String(data.value || storageGet().search || '');
 		
 		return (
 			<div className="flex">
@@ -119,6 +119,7 @@ class MenuSearchText extends React.Component<Props, {}> {
 	};
 
 	search () {
+		const { storageSet } = this.props;
 		const searchContainer = this.getSearchContainer();
 		const value = Util.filterFix(this.ref.getValue());
 		const node = $(ReactDOM.findDOMNode(this));
@@ -129,7 +130,8 @@ class MenuSearchText extends React.Component<Props, {}> {
 			this.clear();
 		};
 		this.last = value;
-		Storage.set('search', value);
+		
+		storageSet({ search: value });
 
 		if (!value) {
 			return;
@@ -173,8 +175,7 @@ class MenuSearchText extends React.Component<Props, {}> {
 	onClear () {
 		this.ref.setValue('');
 		this.clear();
-
-		Storage.delete('search');
+		this.props.storageSet({ search: '' });
 	};
 
 	clear () {
