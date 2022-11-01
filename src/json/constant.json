@@ -29,7 +29,6 @@
 	"delay": {
 		"menu": 60,
 		"popup": 60,
-		"header": 2000,
 		"tooltip": 200,
 		"toast": 2500
 	},
