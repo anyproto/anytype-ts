@@ -398,7 +398,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 						Util.toastShow({
 							action: I.ToastAction.Move,
 							targetId: itemId,
-							objectsLength: blockIds.length,
+							count: blockIds.length,
 							originId: rootId,
 						});
 					});

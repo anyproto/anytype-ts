@@ -1,6 +1,6 @@
-import {action, computed, makeObservable, observable, set} from 'mobx';
-import {analytics, I, Storage, Util} from 'Lib';
-import {blockStore} from 'Store';
+import { action, computed, makeObservable, observable, set } from 'mobx';
+import { analytics, I, Storage, Util } from 'Lib';
+import { blockStore } from 'Store';
 
 interface Preview {
 	type: I.MarkType,
@@ -28,8 +28,8 @@ interface Toast {
 	action: I.ToastAction;
 	objectId?: string;
 	originId?: string;
-	objectsLength?: number;
-}
+	count?: number;
+};
 
 const Constant = require('json/constant.json');
 const $ = require('jquery');

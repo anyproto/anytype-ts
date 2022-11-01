@@ -686,24 +686,24 @@ class Util {
 	};
 
 	toastShow (param: any) {
+		const win = $(window);
 		const obj = $('#toast');
 
 		commonStore.toastSet(param);
 
 		obj.show().css({ opacity: 0 });
 
-		let win = $(window);
-
 		window.setTimeout(() => {
 			let ow = obj.outerWidth();
 			let oh = obj.outerHeight();
 			let x = win.width() / 2 - ow / 2;
 			let y = win.height() - oh - 24;
+
 			obj.css({ left: x, top: y, opacity: 1 });
 		}, 30);
 
-
 		this.timeoutToast = window.setTimeout(this.toastHide, Constant.delay.toast);
+
 		obj.off('mouseenter').on('mouseenter', (e: any) => {
 			window.clearTimeout(this.timeoutToast);
 		});

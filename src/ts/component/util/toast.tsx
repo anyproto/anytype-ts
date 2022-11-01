@@ -14,7 +14,7 @@ const Toast = observer(class Toast extends React.Component<any, any> {
 
     render () {
         const { toast } = commonStore;
-        const { objectsLength, action } = toast;
+        const { count, action } = toast;
         const { object, target, origin } = this.state;
 
         const undo = <div className="toastButton" onClick={() => this.onClick('undo')}>Undo</div>;
@@ -47,7 +47,7 @@ const Toast = observer(class Toast extends React.Component<any, any> {
 
 				textObject = (
 					<div className="name">
-						{objectsLength} {Util.cntWord(objectsLength, 'block', 'blocks')}
+						{count} {Util.cntWord(count, 'block', 'blocks')}
 					</div>
 				);
 
