@@ -41,7 +41,7 @@ class CommonStore {
     public filterObj: Filter = { from: 0, text: '' };
     public gatewayUrl: string = '';
     public previewObj: Preview = { type: 0, param: '', element: null, range: { from: 0, to: 0 }, marks: [] };
-	public toastObj: Toast = { objectId: '', targetId: '', originId: '', action: I.ToastAction.Default };
+	public toastObj: Toast = { objectId: '', targetId: '', originId: '', action: I.ToastAction.Default, count: 0 };
     public configObj: any = {};
     public cellId: string = '';
 	public themeId: string = '';
