@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, ObjectName } from 'Component';
 import { commonStore } from 'Store';
-import { C, Util, DataUtil, I, analytics } from 'Lib';
+import { C, Util, DataUtil, I, analytics, translate } from 'Lib';
 
 const Toast = observer(class Toast extends React.Component<any, any> {
 
@@ -49,7 +49,7 @@ const Toast = observer(class Toast extends React.Component<any, any> {
 
 				if (origin) {
 					textAction = `${cnt} moved from`;
-					textActionTo = 'to';
+					textActionTo = translate('commonTo');
 					textOrigin = <Element {...origin} />;
 				};
                 break;
