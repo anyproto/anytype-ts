@@ -1183,7 +1183,7 @@ class DataUtil {
 		details = details.concat(message.records.map(mapper));
 		detailStore.set(subId, details);
 		
-		dbStore.recordsSet(subId, '', message.records.map(it => it[idField]));
+		dbStore.recordsSet(subId, '', message.records.map(it => it[idField]).filter(it => it));
 	};
 
 	searchSubscribe (param: any, callBack?: (message: any) => void) {
