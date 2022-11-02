@@ -318,7 +318,7 @@ class Keyboard {
 					return;
 				};
 
-				Util.route(prev.pathname);
+				Util.history.goBack();
 			};
 		};
 
