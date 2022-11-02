@@ -36,6 +36,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 	refLang: any = null;
 	timeoutContext: number = 0;
 	timeoutClick: number = 0;
+	timeoutFilter: number = 0;
 	marks: I.Mark[] = [];
 	text: string = '';
 	clicks: number = 0;
@@ -859,31 +860,30 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		this.preventMenu = false;
 		this.marks = parsed.marks;
 
-		if (menuOpenAdd) {
-			if (k == Key.space) {
-				commonStore.filterSet(0, '');
-				menuStore.close('blockAdd');
-			} else {
-				const d = range.from - filter.from;
-				if (d >= 0) {
-					const part = value.substr(filter.from, d).replace(/^\//, '');
-					commonStore.filterSetText(part);
-				};
-			};
-			return;
-		};
+		if (menuOpenAdd || menuOpenMention) {
+			window.clearTimeout(this.timeoutFilter);
+			this.timeoutFilter = window.setTimeout(() => {
+				let ret = false;
 
-		if (menuOpenMention) {
-			if (k == Key.space) {
-				commonStore.filterSet(0, '');
-				menuStore.close('blockMention');
-			} else {
-				const d = range.from - filter.from;
-				if (d >= 0) {
-					const part = value.substr(filter.from, d).replace(/^@/, '');
-					commonStore.filterSetText(part);
+				keyboard.shortcut('space', e, (pressed: string) => {
+					commonStore.filterSet(0, '');
+					if (menuOpenAdd) {
+						menuStore.close('blockAdd');
+					};
+					if (menuOpenMention) {
+						menuStore.close('blockMention');
+					};
+					ret = true;
+				});
+
+				if (!ret) {
+					const d = range.from - filter.from;
+					if (d >= 0) {
+						const part = value.substr(filter.from, d).replace(/^\//, '');
+						commonStore.filterSetText(part);
+					};
 				};
-			};
+			}, 30);
 			return;
 		};
 

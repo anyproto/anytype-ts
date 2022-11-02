@@ -598,6 +598,11 @@ class Keyboard {
 	initPinCheck () {
 		const { account } = authStore;
 		const { pinTime } = commonStore;
+		const pin = Storage.get('pin');
+		if (!pin) {
+			return;
+		};
+
 		const check = () => {
 			const pin = Storage.get('pin');
 			if (!pin) {
