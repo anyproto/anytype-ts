@@ -276,7 +276,8 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 				<div className="wrapMenu">
 					<Icon 
 						id={'button-block-menu-' + id} 
-						className="dnd" draggable={true} 
+						className="dnd" 
+						draggable={true} 
 						onDragStart={this.onDragStart} 
 						onMouseDown={this.onMenuDown} 
 						onClick={this.onMenuClick} 

@@ -48,7 +48,7 @@ class MenuSearchText extends React.Component<Props, {}> {
 
 					<div id="switcher" className="switcher">
 						<Icon className="arrow left" onClick={() => { this.onArrow(-1); }} />
-						<div id="cnt" className="cnt"></div>
+						<div id="cnt" className="cnt" />
 						<Icon className="arrow right" onClick={() => { this.onArrow(1); }} />
 					</div>
 

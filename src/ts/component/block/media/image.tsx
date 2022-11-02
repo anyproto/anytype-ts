@@ -70,7 +70,8 @@ const BlockImage = observer(class BlockImage extends React.Component<Props, {}> 
 				element = (
 					<div id="wrap" className="wrap" style={css}>
 						<img 
-							className="media" src={commonStore.imageUrl(hash, Constant.size.image)} 
+							className="media" 
+							src={commonStore.imageUrl(hash, Constant.size.image)} 
 							onDragStart={(e: any) => { e.preventDefault(); }} 
 							onClick={this.onClick} 
 							onLoad={this.onLoad} 

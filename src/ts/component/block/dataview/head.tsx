@@ -50,8 +50,7 @@ const Head = observer(class Head extends React.Component<Props, {}> {
 						onKeyUp={this.onKeyUp}
 						onCompositionStart={this.onCompositionStart}
 						onCompositionEnd={this.onCompositionEnd}
-					>
-					</div>
+					/>
 					<div id="placeholder" className="placeholder">New set</div>
 				</div>
 
