@@ -204,6 +204,10 @@ class Analytics {
 					};
 				};
 				break;
+
+			case 'ObjectImport':
+				data.type = I.ImportType[data.type];
+				break;
 		};
 
 		param.middleTime = Number(data.middleTime) || 0;

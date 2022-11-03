@@ -9,7 +9,7 @@ import Head from '../head';
 interface Props extends I.Popup, RouteComponentProps<any> {
 	prevPage: string;
 	onPage: (id: string) => void;
-	onImport: (format: I.ImportFormat) => void;
+	onImport: (type: I.ImportType) => void;
 };
 
 const PopupSettingsPageImportNotion = observer(class PopupSettingsPageImportNotion extends React.Component<Props, {}> {
@@ -31,7 +31,7 @@ const PopupSettingsPageImportNotion = observer(class PopupSettingsPageImportNoti
 
 				<Label className="last" text={translate('popupSettingsImportZip')} />
 				
-				<Button text={translate('popupSettingsImportOk')} onClick={() => { onImport(I.ImportFormat.Notion); }} />
+				<Button text={translate('popupSettingsImportOk')} onClick={() => { onImport(I.ImportType.Notion); }} />
 
 				<Label className="last" text={translate('popupSettingsImportWarning')} />
 			</div>

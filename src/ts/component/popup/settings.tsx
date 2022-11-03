@@ -175,10 +175,9 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 		analytics.event('settings', { params: { id } });
 	};
 
-	onImport (format: I.ImportFormat) {
+	onImport (type: I.ImportType) {
 		const platform = Util.getPlatform();
 		const { close } = this.props;
-		const { root } = blockStore;
 		const options: any = { 
 			properties: [ 'openFile' ],
 			filters: [
@@ -197,8 +196,11 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 			};
 
 			close();
-			C.ObjectImportMarkdown(root, files[0], (message: any) => {
-				analytics.event('ImportFromNotion', { middleTime: message.middleTime });
+
+			C.ObjectImport({ path: files[0] }, [], true, type, I.ImportMode.IgnoreErrors, (message: any) => {
+				if (!message.error.code) {
+					analytics.event('Import', { middleTime: message.middleTime, type });
+				};
 			});
 		});
 	};

@@ -9,7 +9,7 @@ import Head from '../head';
 interface Props extends I.Popup, RouteComponentProps<any> {
 	prevPage: string;
 	onPage: (id: string) => void;
-	onImport: (format: I.ImportFormat) => void;
+	onImport: (type: I.ImportType) => void;
 };
 
 const PopupSettingsPageImportIndex = observer(class PopupSettingsPageImportIndex extends React.Component<Props, {}> {
@@ -18,12 +18,6 @@ const PopupSettingsPageImportIndex = observer(class PopupSettingsPageImportIndex
 		const { onPage } = this.props;
 		const items = [
 			{ id: 'notion', name: 'Notion', disabled: false },
-			{ id: 'evernote', name: 'Evernote', disabled: true },
-			{ id: 'roam', name: 'Roam Research', disabled: true },
-			{ id: 'word', name: 'Word', disabled: true },
-			{ id: 'text', name: 'Text & Markdown', disabled: true },
-			{ id: 'html', name: 'HTML', disabled: true },
-			{ id: 'csv', name: 'CSV', disabled: true },
 		];
 
 		const Item = (item: any) => {
