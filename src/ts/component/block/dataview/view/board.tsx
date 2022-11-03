@@ -92,7 +92,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 		const ids = [];
 
 		groups.forEach((it: any) => {
-			ids.push(dbStore.getSubId(rootId, [ block.id, it.id ].join(':')));
+			ids.push(dbStore.getSubId(rootId, [ block.id, it.id ].join('-')));
 		});
 
 		C.ObjectSearchUnsubscribe(ids);
@@ -116,6 +116,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 	loadGroupList () {
 		const { rootId, block, getView } = this.props;
 		const view = getView();
+		const subId = [ rootId, block.id, 'groups' ].join('-');
 
 		dbStore.groupsClear(rootId, block.id);
 		this.groupRelationKey = view.groupRelationKey;
@@ -139,7 +140,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 
 		this.setState({ loading: true });
 
-		C.ObjectRelationSearchDistinct(view.groupRelationKey, view.filters, (message: any) => {
+		C.ObjectGroupsSubscribe(subId, view.groupRelationKey, view.filters, (message: any) => {
 			if (message.error.code) {
 				return;
 			};
@@ -637,7 +638,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 
 	getSubId (groupId: string) {
 		const { rootId, block } = this.props;
-		return dbStore.getSubId(rootId, [ block.id, groupId ].join(':'));
+		return dbStore.getSubId(rootId, [ block.id, groupId ].join('-'));
 	};
 
 	resize () {

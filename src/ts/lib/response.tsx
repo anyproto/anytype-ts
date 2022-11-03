@@ -254,8 +254,9 @@ const ObjectSearch = (response: any) => {
 	};
 };
 
-const ObjectRelationSearchDistinct = (response: any) => {
+const ObjectGroupsSubscribe = (response: any) => {
 	return {
+		subId: response.getSubid(),
 		groups: (response.getGroupsList() || []).map(Mapper.From.BoardGroup),
 	};
 };
@@ -373,10 +374,9 @@ export {
 
 	ObjectSearch,
 	ObjectSearchSubscribe,
+	ObjectGroupsSubscribe,
 	ObjectSubscribeIds,
 	ObjectGraph,
-
-	ObjectRelationSearchDistinct,
 
 	ObjectToSet,
 	ObjectShareByLink,

@@ -30,6 +30,9 @@ class DbStore {
             recordAdd: action,
             recordDelete: action,
 			groupsSet: action,
+			groupsAdd: action,
+			groupsRemove: action,
+			groupsClear: action,
         });
     }
 
@@ -172,18 +175,38 @@ class DbStore {
 	};
 
 	groupsSet (rootId: string, blockId: string, groups: any[]) {
-		this.groupMap.set(this.getId(rootId, blockId), observable(groups));
+		const subId = this.getGroupSubId(rootId, blockId);
+		this.groupMap.set(subId, observable(groups));
 	};
 
-	groupsClear (rootId: string, blockId: string) {
+	groupsAdd (rootId: string, blockId: string, groups: any[]) {
+		const subId = this.getGroupSubId(rootId, blockId);
+		const list = this.getGroups(rootId, blockId);
+
+		for (let group of groups) {
+			if (list.find(it => it.id == group.id)) {
+				continue;
+			};
+
+			list.push(group);
+		};
+
+		this.groupMap.set(subId, list);
+	};
+
+	groupsRemove (rootId: string, blockId: string, ids: string[]) {
 		const groups = this.getGroups(rootId, blockId);
 
-		groups.forEach((it: any) => {
-			const subId = this.getSubId(rootId, [ blockId, it.id ].join(':'));
+		ids.forEach((id: string) => {
+			const subId = this.getSubId(rootId, [ blockId, id ].join('-'));
 			dbStore.recordsClear(subId, '');
 		});
 
-		this.groupsSet(rootId, blockId, []);
+		this.groupsSet(rootId, blockId, groups.filter(it => !ids.includes(it.id)));
+	};
+
+	groupsClear (rootId: string, blockId: string) {
+		this.groupsRemove(rootId, blockId, this.getGroups(rootId, blockId).map(it => it.id));
 	};
 
 	getType (id: string) {
@@ -243,7 +266,7 @@ class DbStore {
 	};
 
 	getGroups (rootId: string, blockId: string) {
-		return this.groupMap.get(this.getId(rootId, blockId)) || [];
+		return this.groupMap.get(this.getGroupSubId(rootId, blockId)) || [];
 	};
 
 	getGroup (rootId: string, blockId: string, groupId: string) {
@@ -256,6 +279,10 @@ class DbStore {
 
 	getSubId (rootId: string, blockId: string) {
 		return this.getId(rootId, blockId);
+	};
+
+	getGroupSubId (rootId: string, blockId: string) {
+		return [ this.getId(rootId, blockId), 'groups' ].join('-');
 	};
 };
 

@@ -1110,15 +1110,6 @@ const ObjectSearch = (filters: I.Filter[], sorts: I.Sort[], keys: string[], full
 	dispatcher.request(ObjectSearch.name, request, callBack);
 };
 
-const ObjectRelationSearchDistinct = (relationKey: string, filters: I.Filter[], callBack?: (message: any) => void) => {
-	const request = new Rpc.Object.RelationSearchDistinct.Request();
-
-	request.setRelationkey(relationKey);
-	request.setFiltersList(filters.map(Mapper.To.Filter));
-
-	dispatcher.request(ObjectRelationSearchDistinct.name, request, callBack);
-};
-
 const ObjectSearchSubscribe = (subId: string, filters: I.Filter[], sorts: I.Sort[], keys: string[], sources: string[], offset: number, limit: number, ignoreWorkspace: boolean, afterId: string, beforeId: string, noDeps: boolean, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.SearchSubscribe.Request();
 
@@ -1135,6 +1126,16 @@ const ObjectSearchSubscribe = (subId: string, filters: I.Filter[], sorts: I.Sort
 	request.setNodepsubscription(noDeps);
 
 	dispatcher.request(ObjectSearchSubscribe.name, request, callBack);
+};
+
+const ObjectGroupsSubscribe = (subId: string, relationKey: string, filters: I.Filter[], callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.GroupsSubscribe.Request();
+
+	request.setSubid(subId);
+	request.setRelationkey(relationKey);
+	request.setFiltersList(filters.map(Mapper.To.Filter));
+
+	dispatcher.request(ObjectGroupsSubscribe.name, request, callBack);
 };
 
 const ObjectSubscribeIds = (subId: string, ids: string[], keys: string[], ignoreWorkspace: boolean, callBack?: (message: any) => void) => {
@@ -1546,10 +1547,10 @@ export {
 	ObjectAddWithObjectId,
 	ObjectShareByLink,
 	ObjectSearch,
-	ObjectRelationSearchDistinct,
 	ObjectSearchSubscribe,
 	ObjectSubscribeIds,
 	ObjectSearchUnsubscribe,
+	ObjectGroupsSubscribe,
 	ObjectDuplicate,
 	ObjectApplyTemplate,
 	ObjectImportMarkdown,

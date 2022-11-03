@@ -121,6 +121,7 @@ class Dispatcher {
 		if (v == V.SUBSCRIPTIONREMOVE)			 t = 'subscriptionRemove';
 		if (v == V.SUBSCRIPTIONPOSITION)		 t = 'subscriptionPosition';
 		if (v == V.SUBSCRIPTIONCOUNTERS)		 t = 'subscriptionCounters';
+		if (v == V.SUBSCRIPTIONGROUPS)			 t = 'subscriptionGroups';
 
 		if (v == V.PROCESSNEW)					 t = 'processNew';
 		if (v == V.PROCESSUPDATE)				 t = 'processUpdate';
@@ -734,6 +735,17 @@ class Dispatcher {
 							dbStore.metaSet(subId, '', { total: total });
 						};
 					})();
+					break;
+
+				case 'subscriptionGroups':
+					const [ rid, bid, key ] = data.getSubid().split('-');
+					const group = Mapper.From.BoardGroup(data.getGroup());
+
+					if (data.getRemove()) {
+						dbStore.groupsRemove(rid, bid, [ group.id ]);
+					} else {
+						dbStore.groupsAdd(rid, bid, [ group ]);
+					};
 					break;
 
 				case 'processNew':

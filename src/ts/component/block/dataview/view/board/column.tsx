@@ -92,7 +92,7 @@ const Column = observer(class Column extends React.Component<Props, State> {
 								viewType={I.ViewType.Board}
 								getRecord={() => { return head; }}
 								readonly={true} 
-								arrayLimit={2}
+								arrayLimit={4}
 								withLabel={true}
 								placeholder={translate('commonEmpty')}
 							/>
