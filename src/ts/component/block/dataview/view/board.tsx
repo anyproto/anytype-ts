@@ -43,6 +43,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 		this.onDragStartColumn = this.onDragStartColumn.bind(this);
 		this.onDragStartCard = this.onDragStartCard.bind(this);
 		this.getSubId = this.getSubId.bind(this);
+		this.applyObjectOrder = this.applyObjectOrder.bind(this);
 	};
 
 	render () {
@@ -65,7 +66,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 										onRecordAdd={this.onRecordAdd} 
 										onDragStartColumn={this.onDragStartColumn}
 										onDragStartCard={this.onDragStartCard}
-										applyObjectOrder={() => { return this.applyObjectOrder(group.id); }}
+										applyObjectOrder={this.applyObjectOrder}
 										getSubId={() => { return this.getSubId(group.id); }}
 									/>
 								))}
@@ -523,6 +524,8 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 		const newGroup = dbStore.getGroup(rootId, block.id, this.newGroupId);
 		const change = current.groupId != this.newGroupId;
 
+		let records: any[] = [];
+
 		const setOrder = () => {
 			C.BlockDataviewObjectOrderUpdate(rootId, block.id, orders, () => {
 				orders.forEach((it: any) => {
@@ -533,12 +536,10 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 						block.content.objectOrder.push(it);
 					};
 
-					window.setTimeout(() => { this.applyObjectOrder(it.groupId); }, 30);
+					window.setTimeout(() => { this.applyObjectOrder(it.groupId, records); }, 30);
 				});
 			});
 		};
-
-		let records: any[] = [];
 
 		if (change) {
 			dbStore.recordDelete(oldSubId, '', record.id);
@@ -585,27 +586,21 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 		return groups;
 	};
 
-	applyObjectOrder (groupId: string) {
+	applyObjectOrder (groupId: string, records: any[]) {
 		const { block, getView } = this.props;
 		const view = getView();
-		const order = block.content.objectOrder.find(it => (it.viewId == view.id) && (it.groupId == groupId));
-		const subId = this.getSubId(groupId);
-
-		if (!order) {
-			return;
-		};
-
-		let records = dbStore.getRecords(subId, '');
+		const el = block.content.objectOrder.find(it => (it.viewId == view.id) && (it.groupId == groupId));
+		const objectIds = el ? el.objectIds || [] : [];
 
 		records.sort((c1: any, c2: any) => {
-			let idx1 = order.objectIds.indexOf(c1);
-			let idx2 = order.objectIds.indexOf(c2);
+			let idx1 = objectIds.indexOf(c1);
+			let idx2 = objectIds.indexOf(c2);
 			if (idx1 > idx2) return 1;
 			if (idx1 < idx2) return -1;
 			return 0;
 		});
-
-		dbStore.recordsSet(subId, '', records);
+		
+		return records;
 	};
 
 	onScrollView () {

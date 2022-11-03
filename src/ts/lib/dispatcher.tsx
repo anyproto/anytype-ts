@@ -582,10 +582,11 @@ class Dispatcher {
 					
 					const groupId = data.getGroupid();
 					const changes = data.getSlicechangesList() || [];
-					const el = block.content.objectOrder.find(it => (it.viewId == viewId) && (it.groupId == groupId));
-
+					
+					let el = block.content.objectOrder.find(it => (it.viewId == viewId) && (it.groupId == groupId));
 					if (!el) {
-						break;
+						el = { viewId, groupId, objectIds: [] };
+						block.content.objectOrder.push(el);
 					};
 
 					changes.forEach((it: any) => {

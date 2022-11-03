@@ -15,7 +15,7 @@ interface Props extends I.ViewComponent {
 	onDragStartColumn?: (e: any, groupId: string) => void;
 	onDragStartCard?: (e: any, groupId: string, record: any) => void;
 	getSubId?: () => string;
-	applyObjectOrder?: () => void;
+	applyObjectOrder?: (groupId: string, records: any[]) => any[];
 };
 
 interface State {
@@ -23,7 +23,6 @@ interface State {
 };
 
 const $ = require('jquery');
-const Constant = require('json/constant.json');
 
 const Column = observer(class Column extends React.Component<Props, State> {
 
@@ -149,7 +148,7 @@ const Column = observer(class Column extends React.Component<Props, State> {
 			return;
 		};
 
-		const { rootId, block, getView, getKeys, getSubId, applyObjectOrder, getLimit } = this.props;
+		const { id, block, getView, getKeys, getSubId, applyObjectOrder, getLimit } = this.props;
 		const view = getView();
 		const relation = dbStore.getRelationByKey(view.groupRelationKey);
 		const subId = getSubId();
@@ -203,7 +202,8 @@ const Column = observer(class Column extends React.Component<Props, State> {
 			sources: block.content.sources,
 			limit,
 		}, () => {
-			applyObjectOrder();
+			const records = dbStore.getRecords(subId, '');
+			dbStore.recordsSet(subId, '', applyObjectOrder(id, records));
 
 			if (clear) {
 				this.setState({ loading: false });
