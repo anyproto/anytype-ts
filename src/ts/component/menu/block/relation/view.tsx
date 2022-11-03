@@ -278,7 +278,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 					C.ObjectRelationAdd(rootId, [ relationKey ], onChange);
 				},
 				deleteCommand: () => {
-					C.ObjectRelationDelete(rootId, relation.relationKey);
+					C.ObjectRelationDelete(rootId, [ relation.relationKey ]);
 				},
 			}
 		});

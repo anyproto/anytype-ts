@@ -224,6 +224,16 @@ class Dispatcher {
 					crumbs.removeItems(I.CrumbsType.Recent, ids);
 					break;
 
+				case 'objectRelationsAmend':
+					id = data.getId();
+					dbStore.relationsSet(rootId, id, (data.getRelationlinksList() || []).map(Mapper.From.RelationLink));
+					break;
+
+				case 'objectRelationsRemove':
+					id = data.getId();
+					dbStore.relationListDelete(rootId, id, data.getRelationkeysList() || []);
+					break;
+
 				case 'blockAdd':
 					blocks = data.getBlocksList() || [];
 					for (let block of blocks) {
@@ -530,17 +540,7 @@ class Dispatcher {
 
 				case 'blockDataviewRelationDelete':
 					id = data.getId();
-					dbStore.relationListDelete(rootId, id, data.getRelationidsList() || []);
-					break;
-
-				case 'objectRelationsAmend':
-					id = data.getId();
-					dbStore.relationsSet(rootId, id, (data.getRelationlinksList() || []).map(Mapper.From.RelationLink));
-					break;
-
-				case 'objectRelationsRemove':
-					id = data.getId();
-					dbStore.relationListDelete(rootId, id, data.getRelationidsList() || []);
+					dbStore.relationListDelete(rootId, id, data.getRelationkeysList() || []);
 					break;
 
 				case 'blockDataviewRelationSet':

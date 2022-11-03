@@ -48,9 +48,9 @@ class DbStore {
 		this.relationMap.set(key, Util.arrayUniqueObjects(relations, 'relationKey'));
 	};
 
-	relationListDelete (rootId: string, blockId: string, ids: string[]) {
+	relationListDelete (rootId: string, blockId: string, keys: string[]) {
 		let key = this.getId(rootId, blockId);
-		let relations = this.getRelations(rootId, blockId).filter(it => !ids.includes(it.relationKey));
+		let relations = this.getRelations(rootId, blockId).filter(it => !keys.includes(it.relationKey));
 		
 		this.relationMap.set(key, relations.map((it: any) => { 
 			return { relationKey: it.relationKey, format: it.format };
