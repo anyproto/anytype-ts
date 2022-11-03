@@ -98,7 +98,7 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 							onContextMenu={(e: any) => { this.onViewEdit(e, '#view-selector', view); }}
 						>
 							<div className="name">{view.name}</div>
-							<Icon className="arrow dark" />
+							<Icon className="arrow light" />
 						</div>
 
 						<Views 

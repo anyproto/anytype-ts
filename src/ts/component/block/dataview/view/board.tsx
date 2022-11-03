@@ -47,8 +47,9 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 
 	render () {
 		const { loading } = this.state;
+		const { block, getView } = this.props;
 		const groups = this.getGroups(false);
-
+		
 		return (
 			<div className="wrap">
 				<div id="scroll" className="scroll">
@@ -64,7 +65,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 										onRecordAdd={this.onRecordAdd} 
 										onDragStartColumn={this.onDragStartColumn}
 										onDragStartCard={this.onDragStartCard}
-										applyGroupOrder={() => { return this.applyGroupOrder(group.id); }}
+										applyObjectOrder={() => { return this.applyObjectOrder(group.id); }}
 										getSubId={() => { return this.getSubId(group.id); }}
 									/>
 								))}
@@ -145,7 +146,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 				return;
 			};
 
-			const groups = (message.groups || []).map((it: any) => {
+			let groups = (message.groups || []).map((it: any) => {
 				let bgColor = 'grey';
 				let value: any = it.value;
 				let option: any = null;
@@ -170,15 +171,8 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 				return it;
 			});
 
-			groups.sort((c1: any, c2: any) => {
-				const idx1 = groupOrder[c1.id]?.index;
-				const idx2 = groupOrder[c2.id]?.index;
-				if (idx1 > idx2) return 1;
-				if (idx1 < idx2) return -1;
-				return 0;
-			});
+			dbStore.groupsSet(rootId, block.id, this.applyGroupOrder(groups));
 
-			dbStore.groupsSet(rootId, block.id, groups);
 			this.setState({ loading: false });
 		});
 	};
@@ -258,7 +252,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 
 	getGroups (withHidden: boolean) {
 		let { rootId, block } = this.props;
-		let groups = dbStore.getGroups(rootId, block.id)
+		let groups = this.applyGroupOrder(Util.objectCopy(dbStore.getGroups(rootId, block.id)));
 
 		if (!withHidden) {
 			groups = groups.filter(it => !it.isHidden);
@@ -539,7 +533,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 						block.content.objectOrder.push(it);
 					};
 
-					window.setTimeout(() => { this.applyGroupOrder(it.groupId); }, 30);
+					window.setTimeout(() => { this.applyObjectOrder(it.groupId); }, 30);
 				});
 			});
 		};
@@ -570,7 +564,28 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 		};
 	};
 
-	applyGroupOrder (groupId: string) {
+	applyGroupOrder (groups: any[]) {
+		let { block, getView } = this.props;
+		let view = getView();
+ 		let el = block.content.groupOrder.find(it => it.viewId == view.id);
+		let groupOrder: any = {};
+
+		if (el) {
+			el.groups.forEach(it => groupOrder[it.groupId] = it);
+		};
+
+		groups.sort((c1: any, c2: any) => {
+			const idx1 = groupOrder[c1.id]?.index;
+			const idx2 = groupOrder[c2.id]?.index;
+			if (idx1 > idx2) return 1;
+			if (idx1 < idx2) return -1;
+			return 0;
+		});
+
+		return groups;
+	};
+
+	applyObjectOrder (groupId: string) {
 		const { block, getView } = this.props;
 		const view = getView();
 		const order = block.content.objectOrder.find(it => (it.viewId == view.id) && (it.groupId == groupId));

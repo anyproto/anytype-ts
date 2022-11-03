@@ -15,7 +15,7 @@ interface Props extends I.ViewComponent {
 	onDragStartColumn?: (e: any, groupId: string) => void;
 	onDragStartCard?: (e: any, groupId: string, record: any) => void;
 	getSubId?: () => string;
-	applyGroupOrder?: () => void;
+	applyObjectOrder?: () => void;
 };
 
 interface State {
@@ -149,7 +149,7 @@ const Column = observer(class Column extends React.Component<Props, State> {
 			return;
 		};
 
-		const { rootId, block, getView, getKeys, getSubId, applyGroupOrder, getLimit } = this.props;
+		const { rootId, block, getView, getKeys, getSubId, applyObjectOrder, getLimit } = this.props;
 		const view = getView();
 		const relation = dbStore.getRelationByKey(view.groupRelationKey);
 		const subId = getSubId();
@@ -203,7 +203,7 @@ const Column = observer(class Column extends React.Component<Props, State> {
 			sources: block.content.sources,
 			limit,
 		}, () => {
-			applyGroupOrder();
+			applyObjectOrder();
 
 			if (clear) {
 				this.setState({ loading: false });

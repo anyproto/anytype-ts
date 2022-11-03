@@ -105,6 +105,9 @@
 			}
 
 			.viewSelect { display: none; border: 0px; @include text-header3; }
+			.viewSelect {
+				.icon:hover { background-color: none; }
+			}
 
 			.side.left.small {
 				.views { display: none; }
