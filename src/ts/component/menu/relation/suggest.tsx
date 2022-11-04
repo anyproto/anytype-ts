@@ -243,9 +243,8 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 				data: {
 					...data,
 					rebind: this.rebind,
-					onChange: (relation: any) => { 
+					onChange: () => { 
 						close(); 
-						analytics.event('CreateRelation', { format: relation.format, type: ref });
 					},
 				}
 			});
