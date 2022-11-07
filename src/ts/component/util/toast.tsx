@@ -36,6 +36,14 @@ const Toast = observer(class Toast extends React.Component<any, any> {
 		);
 
         switch (action) {
+            case I.ToastAction.CopyToClipboard:
+                if (!object) {
+                    break;
+                };
+
+                textAction = `${object.name} copied to clipboard`;
+                break;
+
             case I.ToastAction.Move:
                 if (!target) {
 					break;
@@ -97,7 +105,7 @@ const Toast = observer(class Toast extends React.Component<any, any> {
 
     update () {
         const { toast } = commonStore;
-        const { objectId, targetId, originId, action } = toast;
+        const { objectId, targetId, originId, objectName, action } = toast;
         const { object, target } = this.state;
 
         const noObject = !objectId && !object;
@@ -108,6 +116,14 @@ const Toast = observer(class Toast extends React.Component<any, any> {
 		let ids = [];
 
         switch (action) {
+            case I.ToastAction.CopyToClipboard:
+                if (object && object.name && object.name === objectName) {
+                    return;
+                };
+                this.setState({object: {name: objectName}});
+
+                break;
+
             case I.ToastAction.Move:
                 if (targetRendered || noTarget) {
                     return;
