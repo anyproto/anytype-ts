@@ -58,6 +58,7 @@
 			.side.left {
 				.txt { line-height: 24px; vertical-align: top; display: flex; gap: 0px 6px; align-items: center; }
 			}
+			.side.right { display: none !important; }
 
 			.cardName { display: flex; flex-wrap: nowrap; vertical-align: top; flex-shrink: 0; flex-grow: 0; max-width: 50%; }
 			.cardName {
