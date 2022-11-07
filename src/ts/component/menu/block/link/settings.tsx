@@ -195,7 +195,7 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
         const object = detailStore.get(rootId, block.content.targetBlockId);
         const content = this.getContent();
 
-        const canIcon = ![ I.ObjectLayout.Task, I.ObjectLayout.Note ].includes(object.layout);
+        const canIcon = ![ I.ObjectLayout.Task, I.ObjectLayout.Note ].includes(object.layout) && (content.cardStyle == I.LinkCardStyle.Card);
         const canCover = ![ I.ObjectLayout.Note ].includes(object.layout) && (content.cardStyle == I.LinkCardStyle.Card);
         const canDescription = ![ I.ObjectLayout.Note ].includes(object.layout);
 
