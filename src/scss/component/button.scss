@@ -24,12 +24,6 @@
 
 .button.c28 { @include text-small; height: 28px; line-height: 28px; border-radius: 6px; }
 
-.button.toastButton { @include text-common; line-height: 20px; height: auto; padding: 0; background-color: transparent; }
-.button.toastButton:hover {background-color: transparent; }
-.button.toastButton:hover {
-	.txt { text-decoration: underline; }
-}
-
 input.button { line-height: 1; }
 
 .button {

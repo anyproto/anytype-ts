@@ -106,10 +106,7 @@ const PopupSettingsPageLogout = observer(class PopupSettingsPageLogout extends R
 	onCopy (e: any) {
 		this.refPhrase.focus();
 		Util.clipboardCopy({ text: authStore.phrase });
-		Util.toastShow({
-			action: I.ToastAction.CopyToClipboard,
-			objectName: 'Recovery Phrase'
-		});
+		Util.toastShow({ action: I.ToastAction.Copy, text: 'Recovery phrase' });
 
 		analytics.event('KeychainCopy', { type: 'BeforeLogout' });
 	};

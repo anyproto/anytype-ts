@@ -25,7 +25,7 @@ interface Cover {
 
 interface Toast {
 	action: I.ToastAction;
-	objectName?: string;
+	text?: string;
 	objectId?: string;
 	targetId?: string;
 	originId?: string;

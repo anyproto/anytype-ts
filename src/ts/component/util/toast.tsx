@@ -14,13 +14,10 @@ const Toast = observer(class Toast extends React.Component<any, any> {
 
     render () {
         const { toast } = commonStore;
-        const { count, action } = toast;
+        const { count, action, text } = toast;
         const { object, target, origin } = this.state;
 
-        const undo = <Button text="Undo" onClick={(e: any) => this.onClick(e, 'undo')} className="toastButton" />;
-        const open = <Button text="Open" onClick={(e: any) => this.onClick(e, 'open')} className="toastButton" />;
-
-		let withButtons = false;
+        let buttonsList = [];
         let buttons = null;
         let textObject = null;
         let textAction = null;
@@ -35,13 +32,19 @@ const Toast = observer(class Toast extends React.Component<any, any> {
 			</div>
 		);
 
-        switch (action) {
-            case I.ToastAction.CopyToClipboard:
-                if (!object) {
-                    break;
-                };
+        const ToastButton = (item: any) => (
+            <Button text={item.label} onClick={(e: any) => this.onClick(e, item.action)} className="toastButton" />
+        );
 
-                textAction = `${object.name} copied to clipboard`;
+        const buttonsMapper = (item, idx) => {
+            return (
+                <ToastButton {...item} key={idx}  />
+            );
+        };
+
+        switch (action) {
+            case I.ToastAction.Copy:
+                textAction = `${text} copied to clipboard`;
                 break;
 
             case I.ToastAction.Move:
@@ -51,7 +54,6 @@ const Toast = observer(class Toast extends React.Component<any, any> {
 
 				let cnt = `${count} ${Util.cntWord(count, 'block', 'blocks')}`;
 
-				withButtons = true;
 				textAction = `${cnt} moved to`;
 				textTarget = <Element {...target} />;
 
@@ -60,6 +62,10 @@ const Toast = observer(class Toast extends React.Component<any, any> {
 					textActionTo = translate('commonTo');
 					textOrigin = <Element {...origin} />;
 				};
+
+                buttonsList.push({ action: 'open', label: 'Open' });
+                buttonsList.push({ action: 'undo', label: 'Undo' });
+
                 break;
 
             case I.ToastAction.Link:
@@ -73,11 +79,10 @@ const Toast = observer(class Toast extends React.Component<any, any> {
                 break;
         };
 
-        if (withButtons) {
+        if (buttonsList.length) {
             buttons = (
                 <div className="buttons">
-                    {open}
-                    {undo}
+                    {buttonsList.map(buttonsMapper)}
                 </div>
             );
         };
@@ -105,7 +110,7 @@ const Toast = observer(class Toast extends React.Component<any, any> {
 
     update () {
         const { toast } = commonStore;
-        const { objectId, targetId, originId, objectName, action } = toast;
+        const { objectId, targetId, originId, action } = toast;
         const { object, target } = this.state;
 
         const noObject = !objectId && !object;
@@ -116,14 +121,6 @@ const Toast = observer(class Toast extends React.Component<any, any> {
 		let ids = [];
 
         switch (action) {
-            case I.ToastAction.CopyToClipboard:
-                if (object && object.name && object.name === objectName) {
-                    return;
-                };
-                this.setState({object: {name: objectName}});
-
-                break;
-
             case I.ToastAction.Move:
                 if (targetRendered || noTarget) {
                     return;

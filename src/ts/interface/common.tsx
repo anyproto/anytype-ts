@@ -44,7 +44,7 @@ export enum ToastAction {
 	Default	 = 0,
 	Move	 = 1,
 	Link	 = 2,
-	CopyToClipboard
+	Copy
 };
 
 export interface Option {
