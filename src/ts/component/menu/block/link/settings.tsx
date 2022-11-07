@@ -150,10 +150,9 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 
 	getStyles () {
 		return [
-			{ id: I.LinkCardStyle.Card, name: 'Card', icon: 'style-card', description: 'Object with icon & featured relations' },
-            { id: I.LinkCardStyle.Text, name: 'Text', icon: 'style-text', description: 'An inline link matching other text' },
+			{ id: I.LinkCardStyle.Card, name: 'Card', icon: 'style-card' },
+            { id: I.LinkCardStyle.Text, name: 'Text', icon: 'style-text' },
         ].map((it: any) => {
-			it.withDescription = false;
 			it.icon = 'linkStyle' + it.id;
 			return it;
 		});
@@ -173,13 +172,10 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 
 	getDescriptions () {
 		return [
-			{ id: I.LinkDescription.None, name: 'None', description: 'Don\'t show description' },
-			{ id: I.LinkDescription.Added, name: 'Only description', description: 'Show "description" value' },
-			{ id: I.LinkDescription.Content, name: 'Content preview', description: 'Show first sentence of the object' },
-		].map((it: any) => {
-			it.withDescription = false;
-			return it;
-		});
+			{ id: I.LinkDescription.None, name: 'None' },
+			{ id: I.LinkDescription.Added, name: 'Only description' },
+			{ id: I.LinkDescription.Content, name: 'Content preview' },
+		];
 	};
 
 	getSections () {

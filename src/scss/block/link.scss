@@ -112,7 +112,7 @@
 				width: calc(100% - 200px); border-radius: 16px 0px 0px 16px; border-right-width: 0px;
 				display: flex; align-items: center;
 			}
-			.side.right { width: 200px; min-height: 90px; height: 100%; display: block; border: 1px solid $colorBorderDark; }
+			.side.right { width: 200px; min-height: 90px; height: 100%; display: block; border: 1px solid $colorBorderDark; border-left: 0px; }
 		}
 
 		.linkCard.vertical { display: block; }
