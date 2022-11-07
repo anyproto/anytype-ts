@@ -150,10 +150,10 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 
 	getStyles () {
 		return [
+			{ id: I.LinkCardStyle.Card, name: 'Card', icon: 'style-card', description: 'Object with icon & featured relations' },
             { id: I.LinkCardStyle.Text, name: 'Text', icon: 'style-text', description: 'An inline link matching other text' },
-            { id: I.LinkCardStyle.Card, name: 'Card', icon: 'style-card', description: 'Object with icon & featured relations' },
         ].map((it: any) => {
-			it.withDescription = true;
+			it.withDescription = false;
 			it.icon = 'linkStyle' + it.id;
 			return it;
 		});
@@ -174,10 +174,10 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 	getDescriptions () {
 		return [
 			{ id: I.LinkDescription.None, name: 'None', description: 'Don\'t show description' },
-			{ id: I.LinkDescription.Added, name: 'Only added', description: 'Show "description" value' },
+			{ id: I.LinkDescription.Added, name: 'Only description', description: 'Show "description" value' },
 			{ id: I.LinkDescription.Content, name: 'Content preview', description: 'Show first sentence of the object' },
 		].map((it: any) => {
-			it.withDescription = true;
+			it.withDescription = false;
 			return it;
 		});
 	};
@@ -222,7 +222,7 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 		};
 
 		const itemStyle = { id: 'cardStyle', name: 'Preview layout', caption: style.name, withCaption: true, arrow: true };
-		const itemSize = canIcon ? { id: 'iconSize', name: 'Icon size', caption: icon.name, withCaption: true, arrow: true } : null;
+		const itemSize = canIcon ? { id: 'iconSize', name: 'Icon', caption: icon.name, withCaption: true, arrow: true } : null;
 		const itemCover = canCover ? { id: 'cover', name: 'Cover', withSwitch: true, switchValue: this.hasRelationKey('cover') } : null;
 		const itemName = { id: 'name', name: 'Name', icon: 'relation ' + DataUtil.relationClass(I.RelationType.ShortText) };
 		const itemDescription = canDescription ? { 
