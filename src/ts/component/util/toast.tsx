@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { IconObject, ObjectName } from 'Component';
+import { Button, IconObject, ObjectName } from 'Component';
 import { commonStore } from 'Store';
 import { C, Util, DataUtil, I, analytics, translate } from 'Lib';
 
@@ -14,14 +14,10 @@ const Toast = observer(class Toast extends React.Component<any, any> {
 
     render () {
         const { toast } = commonStore;
-        const { count, action } = toast;
+        const { count, action, text } = toast;
         const { object, target, origin } = this.state;
 
-        const undo = <div className="toastButton" onClick={(e: any) => this.onClick(e, 'undo')}>Undo</div>;
-        const open = <div className="toastButton" onClick={(e: any) => this.onClick(e, 'open')}>Open</div>;
-
-		let withButtons = false;
-        let buttons = null;
+        let buttons = [];
         let textObject = null;
         let textAction = null;
         let textOrigin = null;
@@ -36,6 +32,10 @@ const Toast = observer(class Toast extends React.Component<any, any> {
 		);
 
         switch (action) {
+            case I.ToastAction.Copy:
+                textAction = `${text} copied to clipboard`;
+                break;
+
             case I.ToastAction.Move:
                 if (!target) {
 					break;
@@ -43,7 +43,6 @@ const Toast = observer(class Toast extends React.Component<any, any> {
 
 				let cnt = `${count} ${Util.cntWord(count, 'block', 'blocks')}`;
 
-				withButtons = true;
 				textAction = `${cnt} moved to`;
 				textTarget = <Element {...target} />;
 
@@ -52,6 +51,11 @@ const Toast = observer(class Toast extends React.Component<any, any> {
 					textActionTo = translate('commonTo');
 					textOrigin = <Element {...origin} />;
 				};
+
+				buttons = buttons.concat([
+					{ action: 'open', label: 'Open' },
+					{ action: 'undo', label: 'Undo' }
+				]);
                 break;
 
             case I.ToastAction.Link:
@@ -65,15 +69,6 @@ const Toast = observer(class Toast extends React.Component<any, any> {
                 break;
         };
 
-        if (withButtons) {
-            buttons = (
-                <div className="buttons">
-                    {open}
-                    {undo}
-                </div>
-            );
-        };
-
         return (
             <div id="toast" className="toast">
                 <div className="inner">
@@ -85,7 +80,13 @@ const Toast = observer(class Toast extends React.Component<any, any> {
                         {textTarget}
                     </div>
 
-                    {buttons}
+                    {buttons.length ? (
+						<div className="buttons">
+							{buttons.map((item: any, i: number) => (
+								<Button text={item.label} onClick={(e: any) => this.onClick(e, item.action)} className="toastButton" />
+							))}
+						</div>
+					) : ''}
                 </div>
             </div>
         );
