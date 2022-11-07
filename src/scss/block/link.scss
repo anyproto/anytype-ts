@@ -7,8 +7,6 @@
             .cardName span::before { display: none; }
 		}
 
-		.focusable.br { border-radius: 12px; }
-
         .loading, .deleted { color: $colorMediumGrey; display: flex; gap: 0px 6px; align-items: center; }
         .loading, .deleted {
             .name { display: inline-block; vertical-align: top; max-width: calc(100% - 26px); position: relative; @include text-overflow-nw; }
