@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { IconObject, ObjectName } from 'Component';
+import { Button, IconObject, ObjectName } from 'Component';
 import { commonStore } from 'Store';
 import { C, Util, DataUtil, I, analytics, translate } from 'Lib';
 
@@ -17,8 +17,8 @@ const Toast = observer(class Toast extends React.Component<any, any> {
         const { count, action } = toast;
         const { object, target, origin } = this.state;
 
-        const undo = <div className="toastButton" onClick={(e: any) => this.onClick(e, 'undo')}>Undo</div>;
-        const open = <div className="toastButton" onClick={(e: any) => this.onClick(e, 'open')}>Open</div>;
+        const undo = <Button text="Undo" onClick={(e: any) => this.onClick(e, 'undo')} className="toastButton" />;
+        const open = <Button text="Open" onClick={(e: any) => this.onClick(e, 'open')} className="toastButton" />;
 
 		let withButtons = false;
         let buttons = null;
