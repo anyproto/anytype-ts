@@ -17,8 +17,7 @@ const Toast = observer(class Toast extends React.Component<any, any> {
         const { count, action, text } = toast;
         const { object, target, origin } = this.state;
 
-        let buttonsList = [];
-        let buttons = null;
+        let buttons = [];
         let textObject = null;
         let textAction = null;
         let textOrigin = null;
@@ -31,16 +30,6 @@ const Toast = observer(class Toast extends React.Component<any, any> {
 				<ObjectName object={item} />
 			</div>
 		);
-
-        const ToastButton = (item: any) => (
-            <Button text={item.label} onClick={(e: any) => this.onClick(e, item.action)} className="toastButton" />
-        );
-
-        const buttonsMapper = (item, idx) => {
-            return (
-                <ToastButton {...item} key={idx}  />
-            );
-        };
 
         switch (action) {
             case I.ToastAction.Copy:
@@ -63,9 +52,10 @@ const Toast = observer(class Toast extends React.Component<any, any> {
 					textOrigin = <Element {...origin} />;
 				};
 
-                buttonsList.push({ action: 'open', label: 'Open' });
-                buttonsList.push({ action: 'undo', label: 'Undo' });
-
+				buttons = buttons.concat([
+					{ action: 'open', label: 'Open' },
+					{ action: 'undo', label: 'Undo' }
+				]);
                 break;
 
             case I.ToastAction.Link:
@@ -79,14 +69,6 @@ const Toast = observer(class Toast extends React.Component<any, any> {
                 break;
         };
 
-        if (buttonsList.length) {
-            buttons = (
-                <div className="buttons">
-                    {buttonsList.map(buttonsMapper)}
-                </div>
-            );
-        };
-
         return (
             <div id="toast" className="toast">
                 <div className="inner">
@@ -98,7 +80,13 @@ const Toast = observer(class Toast extends React.Component<any, any> {
                         {textTarget}
                     </div>
 
-                    {buttons}
+                    {buttons.length ? (
+						<div className="buttons">
+							{buttons.map((item: any, i: number) => (
+								<Button text={item.label} onClick={(e: any) => this.onClick(e, item.action)} className="toastButton" />
+							))}
+						</div>
+					) : ''}
                 </div>
             </div>
         );
