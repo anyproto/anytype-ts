@@ -169,10 +169,8 @@ class MenuContext extends React.Component<Props, {}> {
 		const { param, getSize, close } = this.props;
 		const { data } = param;
 		const { objectIds, linkToCallback } = data;
-		const itemId = objectIds[0];
-
 		const subIds = [ 'searchObject' ];
-		let types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map(it => it.id);
+		const types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map(it => it.id);
 
 		if (!keyboard.isMouseDisabled) {
 			this.props.setActive(item, false);
@@ -180,6 +178,11 @@ class MenuContext extends React.Component<Props, {}> {
 		if (!item.arrow) {
 			return;
 		};
+		if (!objectIds.length) {
+			return;
+		};
+
+		const itemId = objectIds[0];
 
 		switch (item.id) {
 			case 'linkTo':

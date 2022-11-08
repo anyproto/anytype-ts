@@ -648,10 +648,6 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		this.selectionRender();
 	};
 
-	onSelectionLinkToObject () {
-
-	};
-
 	onSelectionClose (e: any) {
 		this.selected = [];
 		this.selectionRender();
