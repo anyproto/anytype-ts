@@ -175,10 +175,7 @@ class MenuContext extends React.Component<Props, {}> {
 		if (!keyboard.isMouseDisabled) {
 			this.props.setActive(item, false);
 		};
-		if (!item.arrow) {
-			return;
-		};
-		if (!objectIds.length) {
+		if (!item.arrow || !objectIds.length) {
 			return;
 		};
 
