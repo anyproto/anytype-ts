@@ -5,7 +5,7 @@ type UniversalNodeProperties = {
     numChildren: number; // the number of children of the node
     isOpen: boolean; // whether the node is toggled open or closed
     withPadding: boolean; // whether the node should be padded
-}
+};
 
 export type TreeSection = {
     id: I.TabIndex; 

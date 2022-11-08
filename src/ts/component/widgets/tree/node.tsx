@@ -12,9 +12,7 @@ import { I, Storage, keyboard } from 'Lib';
 import { Icon, IconObject, ObjectName, DropTarget } from 'Component';
 
 // Models
-import {TreeNode} from './model';
-
-const Constant = require('json/constant.json');
+import { TreeNode } from './model';
 
 type Props = {
 	index: number;
@@ -26,6 +24,8 @@ type Props = {
 } & TreeNode;
 
 type State = {};
+
+const Constant = require('json/constant.json');
 
 const Node = observer(class Node extends React.Component<Props, State> {
 
@@ -122,6 +122,7 @@ const Node = observer(class Node extends React.Component<Props, State> {
 		const parentId = this.props.isSection === true ? "" : this.props.parentId;
 		const subId = dbStore.getSubId(Constant.subId.sidebar, parentId);
 		const object = detailStore.get(subId, id, Constant.sidebarRelationKeys, true);
+
 		onToggle(e, { ...this.props, details: object });
 	};
 	

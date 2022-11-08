@@ -17,7 +17,6 @@ import Node from './node';
 // Models
 import { TreeChild, TreeNode, TreeSection } from './model';
 
-
 interface Props {
 	dataset?: any;
 };
@@ -38,15 +37,6 @@ const SKIP_TYPES_LOAD = [
 ]; // Types of objects to skip loading
 
 const Tree = observer(class Tree extends React.Component<Props, State> {
-	static sections: TreeSection[] =
-	[
-		{ id: I.TabIndex.Favorite, name: 'Favorites', limit: 0, isSection: true, depth: 0, numChildren: 0, isOpen: true, withPadding: false},
-		{ id: I.TabIndex.Recent, name: 'Recent', limit: 10, isSection: true, depth: 0, numChildren: 0, isOpen: true, withPadding: false  },
-		{ id: I.TabIndex.Set, name: 'Sets', limit: 0, isSection: true, depth: 0, numChildren: 0, isOpen: true, withPadding: false  },
-	];
-	static getSection (sectionId: I.TabIndex): TreeSection {
-		return Tree.sections.find(section => section.id === sectionId);
-	};
 	private _isMounted: boolean = false;
 	state = {
 		loading: false,
@@ -55,9 +45,20 @@ const Tree = observer(class Tree extends React.Component<Props, State> {
 	id: string = '';
 	cache: CellMeasurerCache = {};
 	subId: string = '';
-	subscriptionIds: { [key: string]: string } = {};
+	subscriptionIds: { [ key: string ]: string } = {};
 	branches: string[] = [];
 	refList: React.Ref<HTMLElement> = null;
+
+	static sections: TreeSection[] =
+	[
+		{ id: I.TabIndex.Favorite, name: 'Favorites', limit: 0, isSection: true, depth: 0, numChildren: 0, isOpen: true, withPadding: false},
+		{ id: I.TabIndex.Recent, name: 'Recent', limit: 10, isSection: true, depth: 0, numChildren: 0, isOpen: true, withPadding: false  },
+		{ id: I.TabIndex.Set, name: 'Sets', limit: 0, isSection: true, depth: 0, numChildren: 0, isOpen: true, withPadding: false  },
+	];
+
+	static getSection (sectionId: I.TabIndex): TreeSection {
+		return Tree.sections.find(section => section.id === sectionId);
+	};
 
 	constructor (props: Props) {
 		super(props);
@@ -162,7 +163,7 @@ const Tree = observer(class Tree extends React.Component<Props, State> {
 		// Util.tooltipHide(true);
 	};
 
-	// restores the scroll position and the keyboard focus
+	// Restores the scroll position and the keyboard focus
 	restoreUIState () {
 		const node = $(ReactDOM.findDOMNode(this));
 		const body = node.find('#body');
@@ -411,6 +412,7 @@ const Tree = observer(class Tree extends React.Component<Props, State> {
 
 		const treeId = this.getTreeId(node);
 		const isOpen = Storage.checkToggle(Constant.subId.sidebar, treeId);
+
 		Storage.setToggle(Constant.subId.sidebar, treeId, !isOpen);
 
 		let eventId = '';
