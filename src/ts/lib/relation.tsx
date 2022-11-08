@@ -353,6 +353,10 @@ class Relation {
 
 	getArrayValue (value: any): string[] {
 		value = Util.objectCopy(value);
+		
+		if (this.isEmpty(value)) {
+			value = [];
+		};
 
 		if ('object' != typeof(value)) {
 			value = !this.isEmpty(value) ? [ value ] : [];
