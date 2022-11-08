@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { MenuItemVertical } from 'Component';
 import { I, C, keyboard, analytics, DataUtil, focus } from 'Lib';
-import { detailStore, menuStore, blockStore } from 'Store';
+import {detailStore, menuStore, blockStore, dbStore} from 'Store';
 
 interface Props extends I.Menu {
 	history?: any;
@@ -162,19 +162,66 @@ class MenuContext extends React.Component<Props, {}> {
 	};
 
 	onMouseEnter (e: any, item: any) {
-		const { param } = this.props;
+		this.onOver(e, item);
+	};
+
+	onOver (e: any, item: any) {
+		const { param, getSize, close } = this.props;
 		const { data } = param;
-		const { onOver } = data;
+		const { objectIds, linkToCallback } = data;
+		const itemId = objectIds[0];
+
+		const subIds = [ 'searchObject' ];
+		let types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map(it => it.id);
+
 		if (!keyboard.isMouseDisabled) {
 			this.props.setActive(item, false);
 		};
+		if (!item.arrow) {
+			return;
+		};
 
-		if (onOver) {
-			onOver(e, item);
+		switch (item.id) {
+			case 'linkTo':
+				menuStore.closeAll(subIds, () => {
+					const filters = [
+						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: types }
+					];
+
+					menuStore.open('searchObject', {
+						element: `#menuDataviewContext #item-${item.id}`,
+						offsetX: getSize().width,
+						vertical: I.MenuDirection.Center,
+						isSub: true,
+						data: {
+							filters,
+							rebind: this.rebind,
+							rootId: itemId,
+							blockId: itemId,
+							blockIds: [ itemId ],
+							type: I.NavigationType.LinkTo,
+							skipIds: [ itemId ],
+							position: I.BlockPosition.Bottom,
+							onSelect: (el: any) => {
+								if (linkToCallback) {
+									linkToCallback(itemId, el.id);
+								}
+								analytics.event('LinkedToObject', { count: 1 });
+								close();
+							}
+						}
+					});
+				});
+
+				break;
 		};
 	};
 
 	onClick (e: any, item: any) {
+		if (item.arrow) {
+			return;
+		};
+
 		const { param, close } = this.props;
 		const { data } = param;
 		const { subId, objectIds, onSelect } = data;
