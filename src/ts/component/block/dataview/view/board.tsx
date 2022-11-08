@@ -554,8 +554,6 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 			orders.push({ viewId: view.id, groupId: current.groupId, objectIds: dbStore.getRecords(oldSubId, '') });
 			orders.push({ viewId: view.id, groupId: this.newGroupId, objectIds: records });
 
-			console.log(JSON.stringify(newGroup, null, 3));
-
 			C.ObjectSetDetails(record.id, [ { key: view.groupRelationKey, value: newGroup.value } ], setOrder);
 		} else {
 			records = arrayMove(dbStore.getRecords(oldSubId, ''), current.index, this.newIndex);
