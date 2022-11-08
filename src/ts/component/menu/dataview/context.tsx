@@ -168,13 +168,13 @@ class MenuContext extends React.Component<Props, {}> {
 	onOver (e: any, item: any) {
 		const { param, getSize, close } = this.props;
 		const { data } = param;
-		const { objectIds, linkToCallback } = data;
-		const subIds = [ 'searchObject' ];
+		const { objectIds, onLinkTo } = data;
 		const types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map(it => it.id);
 
 		if (!keyboard.isMouseDisabled) {
 			this.props.setActive(item, false);
 		};
+
 		if (!item.arrow || !objectIds.length) {
 			return;
 		};
@@ -183,7 +183,7 @@ class MenuContext extends React.Component<Props, {}> {
 
 		switch (item.id) {
 			case 'linkTo':
-				menuStore.closeAll(subIds, () => {
+				menuStore.closeAll([ 'searchObject' ], () => {
 					const filters = [
 						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: types }
 					];
@@ -203,16 +203,15 @@ class MenuContext extends React.Component<Props, {}> {
 							skipIds: [ itemId ],
 							position: I.BlockPosition.Bottom,
 							onSelect: (el: any) => {
-								if (linkToCallback) {
-									linkToCallback(itemId, el.id);
-								}
-								analytics.event('LinkedToObject', { count: 1 });
+								if (onLinkTo) {
+									onLinkTo(itemId, el.id);
+								};
+
 								close();
 							}
 						}
 					});
 				});
-
 				break;
 		};
 	};
