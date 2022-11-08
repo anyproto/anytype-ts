@@ -286,7 +286,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 			data: {
 				objectIds: ids,
 				getObject: (id: string) => this.data.nodes.find(d => d.id == id),
-				linkToCallback: (sourceId: string, targetId: string) => {
+				onLinkTo: (sourceId: string, targetId: string) => {
 					this.data.edges.push({ type: I.EdgeType.Link, source: sourceId, target: targetId });
 					this.refGraph.send('onSetEdges', { edges: this.data.edges });
 				},
