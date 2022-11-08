@@ -4,7 +4,7 @@ import { RouteComponentProps } from 'react-router';
 import { Router, Route, Switch, Redirect } from 'react-router-dom';
 import { Provider } from 'mobx-react';
 import { enableLogging } from 'mobx-logger';
-import { Page, SelectionProvider, DragProvider, Progress, Tooltip, Preview, Icon, ListPopup, ListMenu } from './component';
+import { Page, SelectionProvider, DragProvider, Progress, Tooltip, Toast, Preview, Icon, ListPopup, ListMenu } from './component';
 import { commonStore, authStore, blockStore, detailStore, dbStore, menuStore, popupStore } from './store';
 import { I, C, Util, FileUtil, keyboard, Storage, analytics, dispatcher, translate, Action, Renderer, DataUtil, focus, Mark } from 'Lib';
 import * as Sentry from '@sentry/browser';
@@ -45,6 +45,7 @@ import 'scss/component/loader.scss';
 import 'scss/component/deleted.scss';
 import 'scss/component/progress.scss';
 import 'scss/component/editor.scss';
+import 'scss/component/toast.scss';
 import 'scss/component/tooltip.scss';
 import 'scss/component/drag.scss';
 import 'scss/component/pager.scss';
@@ -302,6 +303,7 @@ class App extends React.Component<Props, State> {
 						<Preview />
 						<Progress />
 						<Tooltip />
+						<Toast />
 						
 						<div id="drag">
 							<div className="sides">
@@ -403,7 +405,11 @@ class App extends React.Component<Props, State> {
 		Renderer.on('spellcheck', this.onSpellcheck);
 		Renderer.on('enter-full-screen', () => { commonStore.fullscreenSet(true); });
 		Renderer.on('leave-full-screen', () => { commonStore.fullscreenSet(false); });
-		Renderer.on('shutdownStart', (e: any) => { this.setState({ loading: true }); });
+		Renderer.on('shutdownStart', (e: any) => { 
+			this.setState({ loading: true }); 
+
+			Storage.delete('menuSearchText');
+		});
 
 		Renderer.on('config', (e: any, config: any) => { 
 			commonStore.configSet(config, true);

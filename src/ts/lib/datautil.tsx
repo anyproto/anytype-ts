@@ -774,10 +774,6 @@ class DataUtil {
 			items.push({ id: 'openBookmarkAsObject', icon: 'expand', name: 'Open as object' });
 		};
 
-		if (hasLink) {
-			items.push({ id: 'linkSettings', icon: 'customize', name: 'Appearance', arrow: true });
-		};
-
 		items = items.map((it: any) => {
 			it.isAction = true;
 			return it;
@@ -1183,7 +1179,7 @@ class DataUtil {
 		details = details.concat(message.records.map(mapper));
 		detailStore.set(subId, details);
 		
-		dbStore.recordsSet(subId, '', message.records.map(it => it[idField]));
+		dbStore.recordsSet(subId, '', message.records.map(it => it[idField]).filter(it => it));
 	};
 
 	searchSubscribe (param: any, callBack?: (message: any) => void) {
@@ -1322,6 +1318,14 @@ class DataUtil {
 
 		return name;
 	}
+
+	getObjectsByIds (ids: string[], callBack?: (message: any) => void) {
+		let filters = [{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: ids }];
+
+		C.ObjectSearch(filters, [], [], '', 0, 0, (message) => {
+			callBack(message);
+		});
+	};
 
 	setWindowTitle (rootId: string) {
 		const object = detailStore.get(rootId, rootId, []);

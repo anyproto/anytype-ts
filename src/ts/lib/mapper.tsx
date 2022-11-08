@@ -655,10 +655,12 @@ const Mapper = {
 			const item = new Model.Block.Content.Dataview.Filter();
 			
 			item.setRelationkey(obj.relationKey);
+			item.setFormat(obj.format);
 			item.setOperator(obj.operator);
 			item.setCondition(obj.condition);
 			item.setQuickoption(obj.quickOption);
 			item.setValue(Encode.encodeValue(obj.value));
+			item.setIncludetime(obj.includeTime);
 
 			return item;
 		},
@@ -735,6 +737,15 @@ const Mapper = {
 			const item = new Model.InternalFlag();
 
 			item.setValue(value);
+
+			return item;
+		},
+
+		Snapshot: (obj: any) => {
+			const item = new Rpc.Object.Import.Request.Snapshot();
+
+			item.setId(obj.id);
+			item.setSnapshot(obj.snapshot);
 
 			return item;
 		},

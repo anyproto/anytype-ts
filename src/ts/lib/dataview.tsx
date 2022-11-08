@@ -103,6 +103,8 @@ class Dataview {
 			keys: Constant.defaultRelationKeys,
 			offset: 0,
 			limit: 0,
+			ignoreWorkspace: false,
+			clear: false,
 		}, param);
 
 		const { rootId, blockId, newViewId, keys, offset, limit, clear } = param;
@@ -113,6 +115,19 @@ class Dataview {
 			return;
 		};
 
+		const mapper = (it: any) => {
+			const relation = dbStore.getRelationByKey(it.relationKey);
+			const vr = view.getRelation(it.relationKey);
+
+			if (relation) {
+				it.format = relation.format;
+			};
+			if (vr) {
+				it.includeTime = vr.includeTime;
+			};
+			return it;
+		};
+
 		const { config } = commonStore;
 		const subId = dbStore.getSubId(rootId, blockId);
 		const { viewId } = dbStore.getMeta(subId, '');
@@ -121,13 +136,6 @@ class Dataview {
 		const filters = view.filters.concat([
 			{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
 		]);
-		const sorts = view.sorts.map((it: I.Sort) => {
-			const relation = view.getRelation(it.relationKey);
-			if (relation) {
-				it.includeTime = relation.includeTime;
-			};
-			return it;
-		});
 
 		if (!config.debug.ho) {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.Equal, value: false });
@@ -143,13 +151,13 @@ class Dataview {
 		dbStore.metaSet(subId, '', meta);
 
 		DataUtil.searchSubscribe({
+			param,
 			subId,
-			filters,
-			sorts,
+			filters: filters.map(mapper),
+			sorts: view.sorts.map(mapper),
 			keys,
 			sources: block.content.sources,
 			offset,
-			limit,
 		}, callBack);
 	};
 

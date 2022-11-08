@@ -188,7 +188,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 		};
 
 		this.resize();
-		this.setActive();
+		this.setActive(items[this.n]);
 
 		this.cache = new CellMeasurerCache({
 			fixedWidth: true,
@@ -243,28 +243,13 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 		const items = this.getItems();
 		const cmd = keyboard.cmdKey();
 
-		keyboard.disableMouse(true);
-
 		let k = keyboard.eventKey(e);
-
-		if (k == Key.tab) {
-			k = e.shiftKey ? Key.up : Key.down;
-		};
-
-		if ((k == Key.down) && (this.n == -1)) {
-			this.refFilter.blur();
-		};
-
-		if ((k == Key.up) && (this.n == 0)) {
-			this.refFilter.focus();
-			this.unsetActive();
-			this.n = -1;
-			return;
-		};
 
 		if ((k != Key.down) && (this.n == -1)) {
 			return;
 		};
+
+		keyboard.disableMouse(true);
 
 		keyboard.shortcut('arrowup, arrowdown', e, (pressed: string) => {
 			this.onArrow(pressed.match(Key.up) ? -1 : 1);
@@ -276,48 +261,44 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 				this.onClick(e, item);
 			};
 		});
-
-		keyboard.shortcut('escape', e, (pressed: string) => {
-			this.props.close();
-		});
 	};
 
 	onArrow (dir: number) {
 		const items = this.getItems();
 		const l = items.length;
 
+		if ((dir > 0) && (this.n == -1)) {
+			this.refFilter.blur();
+		};
+
 		this.n += dir;
 
-		if (this.n < 0) {
-			this.n = l - 1;
+		if (((dir < 0) && (this.n == -1)) || ((dir > 0) && (this.n > l - 1))) {
+			this.n = -1;
+			this.refFilter.focus();
+			this.refList.scrollToRow(0);
+			this.unsetActive();
+			return;
 		};
 
-		if (this.n > l - 1) {
-			this.n = 0;
-		};
-
-		if (items[this.n].isSection) {
+		const item = items[this.n];
+		if (item.isSection) {
 			this.onArrow(dir);
 			return;
 		};
 
-		this.setActive();
 		this.refList.scrollToRow(Math.max(0, this.n));
+		this.setActive(item);
 	};
 
-	setActive (item?: any) {
-		const items = this.getItems();
-
-		if (!item) {
-			item = items[this.n];
-		};
+	setActive (item: any) {
 		if (!item) {
 			return;
 		};
 
-		this.n = items.findIndex(it => it.id == item.id);
+		this.n = this.getItems().findIndex(it => it.id == item.id);
 		this.unsetActive();
-		
+
 		const node = $(ReactDOM.findDOMNode(this));
 		node.find(`#item-${item.id}`).addClass('active');
 	};
@@ -412,7 +393,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 	onOver (e: any, item: any) {
 		if (!keyboard.isMouseDisabled) {
 			this.n = item.index;
-			this.setActive();
+			this.setActive(item);
 		};
 	};
 

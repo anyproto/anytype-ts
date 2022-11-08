@@ -94,6 +94,8 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 
 	componentWillUnmount () {
 		this.unbind();
+		this.save();
+
 		menuStore.closeAll(Constant.menuIds.viewEdit);
 	};
 

@@ -74,13 +74,13 @@ class Keyboard {
 		const { focused } = focus.state;
 
 		// Mouse back
-		if (e.buttons & 8) {
+		if (e.buttons & 8 && !this.isNavigationDisabled) {
 			e.preventDefault();
 			this.onBack();
 		};
 
 		// Mouse forward
-		if (e.buttons & 16) {
+		if (e.buttons & 16 && !this.isNavigationDisabled) {
 			e.preventDefault();
 			this.onForward();
 		};
@@ -318,7 +318,7 @@ class Keyboard {
 					return;
 				};
 
-				Util.route(prev.pathname);
+				Util.history.goBack();
 			};
 		};
 
@@ -400,6 +400,7 @@ class Keyboard {
 						canCancel: true,
 						onConfirm: () => {
 							Util.clipboardCopy({ text: account.id });
+							Util.toastShow({ action: I.ToastAction.Copy, text: 'Anytype ID' });
 						},
 					}
 				});
@@ -420,12 +421,14 @@ class Keyboard {
 
 	onUndo (rootId: string, callBack?: (message: any) => void) {
 		C.ObjectUndo(rootId, callBack);
-		analytics.event('Undo');
+
+		analytics.event('Undo', { route: 'editor' });
 	};
 
 	onRedo (rootId: string, callBack?: (message: any) => void) {
 		C.ObjectRedo(rootId, callBack);
-		analytics.event('Redo');
+
+		analytics.event('Redo', { route: 'editor' });
 	};
 
 	printApply (className: string, clearTheme: boolean) {
@@ -596,6 +599,11 @@ class Keyboard {
 	initPinCheck () {
 		const { account } = authStore;
 		const { pinTime } = commonStore;
+		const pin = Storage.get('pin');
+		if (!pin) {
+			return;
+		};
+
 		const check = () => {
 			const pin = Storage.get('pin');
 			if (!pin) {

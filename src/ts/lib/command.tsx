@@ -1086,6 +1086,35 @@ const ObjectImportMarkdown = (contextId: string, path: string, callBack?: (messa
 	dispatcher.request(ObjectImportMarkdown.name, request, callBack);
 };
 
+const ObjectImportList = (callBack?: (message: any) => void) => {
+	const request = new Commands.Empty();
+	
+	dispatcher.request(ObjectImportList.name, request, callBack);
+};
+
+const ObjectImport = (options: any, snapshots: any[], existing: boolean, type: I.ImportType, mode: I.ImportMode, callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.Import.Request();
+
+	let params = null;
+
+	switch (type) {
+		case I.ImportType.Notion:
+			params = new Rpc.Object.Import.Request.NotionParams();
+			params.setPath(options.path);
+
+			request.setNotionparams(params);
+			break;
+
+	};
+
+	request.setSnapshotsList((snapshots || []).map(Mapper.To.Snapshot));
+	request.setUpdateexistingobjects(existing);
+	request.setType(type);
+	request.setMode(mode);
+	
+	dispatcher.request(ObjectImport.name, request, callBack);
+};
+
 const ObjectSetDetails = (contextId: string, details: any[], callBack?: (message: any) => void) => {
 	details = details.map(Mapper.To.Details);
 
@@ -1165,11 +1194,11 @@ const ObjectRelationAdd = (contextId: string, relationKeys: string[], callBack?:
 	dispatcher.request(ObjectRelationAdd.name, request, callBack);
 };
 
-const ObjectRelationDelete = (contextId: string, relationKey: string, callBack?: (message: any) => void) => {
+const ObjectRelationDelete = (contextId: string, relationKeys: string[], callBack?: (message: any) => void) => {
 	const request = new Rpc.ObjectRelation.Delete.Request();
 	
 	request.setContextid(contextId);
-	request.setRelationkey(relationKey);
+	request.setRelationkeysList(relationKeys);
 
 	dispatcher.request(ObjectRelationDelete.name, request, callBack);
 };
@@ -1553,6 +1582,8 @@ export {
 	ObjectDuplicate,
 	ObjectApplyTemplate,
 	ObjectImportMarkdown,
+	ObjectImportList,
+	ObjectImport,
 	ObjectBookmarkFetch,
 
 	ObjectCreate,

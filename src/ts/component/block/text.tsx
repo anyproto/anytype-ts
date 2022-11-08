@@ -36,6 +36,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 	refLang: any = null;
 	timeoutContext: number = 0;
 	timeoutClick: number = 0;
+	timeoutFilter: number = 0;
 	marks: I.Mark[] = [];
 	text: string = '';
 	clicks: number = 0;
@@ -778,7 +779,11 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			if (!range) {
 				return;
 			};
-			if (range.to && ((range.from != range.to) || (range.to != value.length))) {
+
+			if (range.to && ((range.from != range.to) || (range.to == value.length))) {
+				DataUtil.blockSetText(rootId, block.id, value, this.marks, true, () => {
+					onKeyDown(e, value, this.marks, range, this.props);
+				});
 				ret = true;
 			};
 		});
@@ -855,31 +860,30 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		this.preventMenu = false;
 		this.marks = parsed.marks;
 
-		if (menuOpenAdd) {
-			if (k == Key.space) {
-				commonStore.filterSet(0, '');
-				menuStore.close('blockAdd');
-			} else {
-				const d = range.from - filter.from;
-				if (d >= 0) {
-					const part = value.substr(filter.from, d).replace(/^\//, '');
-					commonStore.filterSetText(part);
-				};
-			};
-			return;
-		};
+		if (menuOpenAdd || menuOpenMention) {
+			window.clearTimeout(this.timeoutFilter);
+			this.timeoutFilter = window.setTimeout(() => {
+				let ret = false;
 
-		if (menuOpenMention) {
-			if (k == Key.space) {
-				commonStore.filterSet(0, '');
-				menuStore.close('blockMention');
-			} else {
-				const d = range.from - filter.from;
-				if (d >= 0) {
-					const part = value.substr(filter.from, d).replace(/^@/, '');
-					commonStore.filterSetText(part);
+				keyboard.shortcut('space', e, (pressed: string) => {
+					commonStore.filterSet(0, '');
+					if (menuOpenAdd) {
+						menuStore.close('blockAdd');
+					};
+					if (menuOpenMention) {
+						menuStore.close('blockMention');
+					};
+					ret = true;
+				});
+
+				if (!ret) {
+					const d = range.from - filter.from;
+					if (d >= 0) {
+						const part = value.substr(filter.from, d).replace(/^\//, '');
+						commonStore.filterSetText(part);
+					};
 				};
-			};
+			}, 30);
 			return;
 		};
 
@@ -921,32 +925,28 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 				const reg = new RegExp(`^(${k} )`);
 				const style = Markdown[k];
 
-				if ((style == I.TextStyle.Numbered) && block.isTextHeader()) {
+				if (!value.match(reg) || ((style == I.TextStyle.Numbered) && block.isTextHeader())) {
 					continue;
 				};
 
-				if (value.match(reg)) {
-					value = value.replace(reg, (s: string, p: string) => { return s.replace(p, ''); });
+				value = value.replace(reg, (s: string, p: string) => { return s.replace(p, ''); });
 
-					if (style == I.TextStyle.Code) {
-						this.marks = [];
-					} else {
-						this.marks = Mark.adjust(this.marks, 0, -(Length[style] + 1));
-					};
+				this.marks = style == I.TextStyle.Code ? [] : Mark.adjust(this.marks, 0, -(Length[style] + 1));
+				this.setValue(value);
 
-					this.setValue(value);
-
-					DataUtil.blockSetText(rootId, id, value, this.marks, true, () => {
-						C.BlockListTurnInto(rootId, [ id ], style);
-
-						if (style == I.TextStyle.Toggle) {
-							blockStore.toggle(rootId, id, true);
-						};
+				DataUtil.blockSetText(rootId, id, value, this.marks, true, () => {
+					C.BlockListTurnInto(rootId, [ id ], style, () => {
+						focus.set(block.id, { from: 0, to: 0 });
+						focus.apply();
 					});
 
-					cmdParsed = true;
-					break;
-				};
+					if (style == I.TextStyle.Toggle) {
+						blockStore.toggle(rootId, id, true);
+					};
+				});
+
+				cmdParsed = true;
+				break;
 			};
 		};
 		

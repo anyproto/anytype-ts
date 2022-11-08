@@ -211,6 +211,14 @@ const ObjectImportMarkdown = (response: any) => {
 	};
 };
 
+const ObjectImportList = (response: any) => {
+	return {
+		list: (response.getResponseList() || []).map(it => { 
+			return { type: it.getType() };
+		}),
+	};
+};
+
 const BlockListDuplicate = (response: any) => {
 	return {
 		blockIds: response.getBlockidsList(),
@@ -390,6 +398,7 @@ export {
 	ObjectShow,
 	ObjectOpenBreadcrumbs,
 	ObjectImportMarkdown,
+	ObjectImportList,
 	
 	BlockSplit,
 	BlockCopy,

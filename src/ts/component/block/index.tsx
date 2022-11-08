@@ -559,27 +559,24 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 	};
 	
 	onMouseMove (e: any) {
-		if (!this._isMounted|| keyboard.isResizing) {
-			return;
-		};
-		
 		const { rootId, block, readonly } = this.props;
-		if (!block.isLayoutRow() || keyboard.isDragging || readonly) {
+
+		if (!this._isMounted || keyboard.isDragging || keyboard.isResizing || readonly || !block.isLayoutRow()) {
 			return;
 		};
 		
 		const sm = Constant.size.blockMenu;
 		const node = $(ReactDOM.findDOMNode(this));
-		const width = $('#editorWrapper').width();
 		const childrenIds = blockStore.getChildrenIds(rootId, block.id);
 		const length = childrenIds.length;
 		const children = blockStore.getChildren(rootId, block.id);
 		const rect = node.get(0).getBoundingClientRect() as DOMRect;
-		const p = e.pageX - rect.x - sm;
+		const { x, width } = rect;
+		const p = e.pageX - x - sm;
 
 		let c = 0;
 		let num = 0;
-		
+
 		for (let i in children) {
 			const child = children[i];
 
@@ -589,7 +586,7 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 				break;
 			};
 		};
-		
+
 		node.find('.colResize.active').removeClass('active');
 		if (num) {
 			node.find('.colResize.c' + num).addClass('active');

@@ -6,8 +6,8 @@ import { blockStore, dbStore, detailStore, menuStore } from 'Store';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { observer } from 'mobx-react';
 
-import Item from './sidebar/item';
-import Footer from './sidebar/footer';
+import Item from './item';
+import Footer from './footer';
 
 interface Props {
 	isPopup?: boolean;

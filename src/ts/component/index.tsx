@@ -19,6 +19,7 @@ import ListObject from './list/object';
 
 import Header from './header';
 import Footer from './footer';
+import Sidebar from './sidebar';
 
 import Menu from './menu';
 import MenuItemVertical from './menu/item/vertical';
@@ -45,6 +46,7 @@ import Textarea from './util/textarea';
 import Button from './util/button';
 import Error from './util/error';
 import Select from './util/select';
+import Toast from './util/toast';
 import Tooltip from './util/tooltip';
 import Drag from './util/drag';
 import Marker from './util/marker';
@@ -55,8 +57,6 @@ import LoadMore from './util/loadMore';
 
 import Icon from './util/icon';
 import IconObject from './util/iconObject';
-
-import Sidebar from './util/sidebar';
 
 import Preview from './util/preview';
 import PreviewLink from './util/preview/link';
@@ -98,6 +98,7 @@ export {
 	Textarea,
 	Button,
 	Select,
+	Toast,
 	Tooltip,
 	Drag,
 	Marker,

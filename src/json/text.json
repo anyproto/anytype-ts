@@ -1,6 +1,7 @@
 {
 	"commonError": { "en": "Error" },
 	"commonOr": { "en": "or" },
+	"commonTo": { "en": "to" },
 	"commonOk": { "en": "Ok" },
 	"commonCreate": { "en": "Create" },
 	"commonSave": { "en": "Save" },

@@ -352,10 +352,14 @@ class Relation {
 	};
 
 	getArrayValue (value: any): string[] {
-		value = Util.objectCopy(value);
+		if (this.isEmpty(value)) {
+			value = [];
+		};
 
+		value = Util.objectCopy(value);
+		
 		if ('object' != typeof(value)) {
-			value = !this.isEmpty(value) ? [ value ] : [];
+			value = [ value ];
 		} else 
 		if (!Util.objectLength(value)) {
 			value = [];

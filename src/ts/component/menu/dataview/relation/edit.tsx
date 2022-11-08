@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, C, DataUtil, Relation, translate, Dataview } from 'Lib';
+import { I, C, DataUtil, Relation, translate, Dataview, keyboard, analytics } from 'Lib';
 import { Icon, Input, MenuItemVertical, Button } from 'Component';
 import { blockStore, dbStore, menuStore, detailStore } from 'Store';
 import { observer } from 'mobx-react';
@@ -29,6 +29,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		this.onChange = this.onChange.bind(this);
 		this.onClick = this.onClick.bind(this);
 		this.menuClose = this.menuClose.bind(this);
+		this.rebind = this.rebind.bind(this);
 	};
 
 	render () {
@@ -179,6 +180,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 
 		this.focus();
 		this.checkButton();
+		this.rebind();
 	};
 
 	componentDidUpdate () {
@@ -189,6 +191,16 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 
 	componentWillUnmount () {
 		this.menuClose();
+		this.unbind();
+	};
+
+	rebind () {
+		this.unbind();
+		$(window).on('keydown.menu', (e: any) => { this.onKeyDown(e); });
+	};
+	
+	unbind () {
+		$(window).off('keydown.menu');
 	};
 
 	focus () {
@@ -214,7 +226,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		let sections: any[] = [
 			{
 				children: [
-					{ id: 'open', icon: 'expand', name: 'Open as object' },
+					relation ? { id: 'open', icon: 'expand', name: 'Open as object' } : null,
 					allowed ? { id: 'copy', icon: 'copy', name: 'Duplicate' } : null,
 					canDelete ? { id: 'remove', icon: 'remove', name: 'Delete' } : null,
 				]
@@ -349,10 +361,14 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 						filter: '',
 						ref: 'dataview',
 						skipIds: relations.map(it => it.relationKey),
-						addCommand: (rootId: string, blockId: string, relationKey: string) => {
-							Dataview.relationAdd(rootId, blockId, [ relationKey ], Math.max(0, idx + item.dir), view, () => {
+						addCommand: (rootId: string, blockId: string, relationKey: string, onChange: (message: any) => void) => {
+							Dataview.relationAdd(rootId, blockId, [ relationKey ], Math.max(0, idx + item.dir), view, (message: any) => {
 								menuStore.closeAll([ this.props.id, 'relationSuggest' ]);
 								getData(view.id, 0);
+
+								if (onChange) {
+									onChange(message);
+								};
 							});
 						},
 					}
@@ -469,7 +485,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 			onClose: () => {
 				menuStore.close('select');
 			},
-			data: data
+			data
 		});
 	};
 
@@ -477,11 +493,17 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		const { getSize, param } = this.props;
 		const { classNameWrap } = param;
 
-		options.isSub = true;
-		options.passThrough = true;
-		options.offsetX = getSize().width;
-		options.vertical = I.MenuDirection.Center;
-		options.classNameWrap = classNameWrap;
+		options = Object.assign(options, {
+			isSub: true,
+			passThrough: true,
+			offsetX: getSize().width,
+			vertical: I.MenuDirection.Center,
+			classNameWrap,
+		});
+
+		options.data = Object.assign(options.data, {
+			rebind: this.rebind,
+		});
 
 		if (!menuStore.isOpen(id)) {
 			menuStore.closeAll(Constant.menuIds.relationEdit, () => {
@@ -518,12 +540,17 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		};
 
 		this.save();
-		this.menuClose();
 		this.props.close();
 	};
 
 	onChange () {
 		this.checkButton();
+	};
+
+	onKeyDown (e: any) {
+		keyboard.shortcut('enter', e, (pressed: string) => {
+			this.onSubmit(e);
+		});
 	};
 
 	checkButton () {
@@ -532,11 +559,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		const button = node.find('#button');
 		const canSave = name.length && (this.format !== null) && !this.isReadonly();
 
-		if (canSave) {
-			button.addClass('orange').removeClass('grey');
-		} else {
-			button.removeClass('orange').addClass('grey');
-		};
+		button.removeClass('orange grey').addClass(canSave ? 'orange' : 'grey');
 	};
 
 	isReadonly () {
@@ -568,7 +591,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 	add (item: any) {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, addCommand, onChange } = data;
+		const { rootId, blockId, addCommand, onChange, ref } = data;
 
 		C.ObjectCreateRelation(item, [], (message: any) => {
 			if (message.error.code) {
@@ -576,10 +599,13 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 			};
 
 			data.relationId = message.objectId;
+			detailStore.update(Constant.subId.relation, { id: message.objectId, details: message.details }, false);
 
 			if (addCommand) {
 				addCommand(rootId, blockId, message.relationKey, onChange);
 			};
+
+			analytics.event('CreateRelation', { format: item.format, type: ref });
 		});
 	};
 

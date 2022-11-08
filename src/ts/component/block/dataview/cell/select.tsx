@@ -87,7 +87,7 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 										color={item.color}
 										canEdit={true} 
 										className={DataUtil.tagClass(relation.format)}
-										onRemove={(e: any, id: string) => { this.onValueRemove(id); }}
+										onRemove={(e: any) => { this.onValueRemove(item.id); }}
 									/>
 								</span>
 							))}
@@ -118,7 +118,12 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 				content = (
 					<span className="over">
 						{value.map((item: any, i: number) => (
-							<Tag {...item} key={item.id} className={DataUtil.tagClass(relation.format)} />
+							<Tag 
+								key={item.id} 
+								text={item.name} 
+								color={item.color}
+								className={DataUtil.tagClass(relation.format)} 
+							/>
 						))}
 						{arrayLimit && (length > arrayLimit) ? <div className="more">+{length - arrayLimit}</div> : ''}
 					</span>

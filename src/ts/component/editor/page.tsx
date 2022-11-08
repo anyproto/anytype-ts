@@ -155,12 +155,16 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 				this.onPaste(e, {});
 			};
 		});
+
 		win.on('focus.editor' + namespace, (e: any) => {
+			const isPopupOpen = popupStore.isOpen();
+			const isMenuOpen = menuStore.isOpen();
+
 			let ids: string[] = [];
 			if (selection) {
 				ids = selection.get(I.SelectType.Block, true);
 			};
-			if (!ids.length && !menuStore.isOpen()) {
+			if (!ids.length && !isMenuOpen && !isPopupOpen) {
 				focus.restore();
 				focus.apply(); 
 			};
@@ -1836,10 +1840,12 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 					return;
 				};
 
-				const next = blockStore.getNextBlock(rootId, focused.id, -1, it => it.isFocusable());
-				if (next) {
-					const nl = dir < 0 ? next.getLength() : 0;
-					this.focus(next.id, nl, nl, false);
+				if (dir < 0) {
+					const next = blockStore.getNextBlock(rootId, focused.id, -1, it => it.isFocusable());
+					if (next) {
+						const nl = dir < 0 ? next.getLength() : 0;
+						this.focus(next.id, nl, nl, false);
+					};
 				};
 			});
 		};
@@ -1914,26 +1920,28 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			blockIds = [ focused.id ];
 		};
 
-		const next = blockStore.getNextBlock(rootId, blockIds[0], -1, it => it.isFocusable());
-
 		blockIds = blockIds.filter((it: string) => {  
 			let block = blockStore.getLeaf(rootId, it);
 			return block && block.isDeletable();
 		});
 
-		if (blockIds.length) {
-			focus.clear(true);
-			C.BlockListDelete(rootId, blockIds, (message: any) => {
-				if (message.error.code) {
-					return;
-				};
-				
-				if (next) {
-					let length = next.getLength();
-					this.focus(next.id, length, length, true);
-				};
-			});
+		if (!blockIds.length) {
+			return;
 		};
+
+		focus.clear(true);
+		const next = blockStore.getNextBlock(rootId, blockIds[0], -1, it => it.isFocusable());
+
+		C.BlockListDelete(rootId, blockIds, (message: any) => {
+			if (message.error.code) {
+				return;
+			};
+			
+			if (next) {
+				let length = next.getLength();
+				this.focus(next.id, length, length, true);
+			};
+		});
 	};
 	
 	onLastClick (e: any) {

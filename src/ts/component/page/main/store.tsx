@@ -400,6 +400,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 			limit: 0, 
 			offset: 0, 
 			clear,
+			ignoreWorkspace: true,
 		}, callBack);
 	};
 
@@ -466,7 +467,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 		let wh = isPopup ? container.height() - hh : win.height();
 
 		if (platform == I.Platform.Windows) {
-			wh += 30;
+			wh -= 30;
 		};
 
 		wrapper.css({ height: wh });

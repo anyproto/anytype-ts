@@ -393,7 +393,7 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 		const object = detailStore.get(rootId, rootId);
 		const details = { 
 			name: object.name + ' set', 
-			iconEmoji: String(object.iconEmoji || ''),
+			iconEmoji: object.iconEmoji,
 		};
 
 		C.ObjectCreateSet([ rootId ], details, '', (message: any) => {
@@ -417,9 +417,13 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 				ref: 'type',
 				menuIdEdit: 'blockRelationEdit',
 				skipIds: relations.map(it => it.relationKey),
-				addCommand: (rootId: string, blockId: string, relationKey: string) => {
-					C.ObjectTypeRelationAdd(rootId, [ relationKey ], () => { 
+				addCommand: (rootId: string, blockId: string, relationKey: string, onChange: (message: any) => void) => {
+					C.ObjectTypeRelationAdd(rootId, [ relationKey ], (message: any) => { 
 						menuStore.close('relationSuggest'); 
+
+						if (onChange) {
+							onChange(message);
+						};
 					});
 				},
 			}

@@ -132,10 +132,11 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 		this.unbind();
 		win.on('resize.settings', () => { this.props.position(); });
 		win.on('keydown.settings', (e: any) => { this.onKeyDown(e); });
+		win.on('mousedown.settings', (e: any) => { this.onMouseDown(e); });
 	};
 
 	unbind () {
-		$(window).off('resize.settings keydown.settings');
+		$(window).off('resize.settings keydown.settings mousedown.settings');
 	};
 
 	setConfirmPin (v: () => void) {
@@ -174,10 +175,9 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 		analytics.event('settings', { params: { id } });
 	};
 
-	onImport (format: I.ImportFormat) {
+	onImport (type: I.ImportType) {
 		const platform = Util.getPlatform();
 		const { close } = this.props;
-		const { root } = blockStore;
 		const options: any = { 
 			properties: [ 'openFile' ],
 			filters: [
@@ -196,8 +196,11 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 			};
 
 			close();
-			C.ObjectImportMarkdown(root, files[0], (message: any) => {
-				analytics.event('ImportFromNotion', { middleTime: message.middleTime });
+
+			C.ObjectImport({ path: files[0] }, [], true, type, I.ImportMode.IgnoreErrors, (message: any) => {
+				if (!message.error.code) {
+					analytics.event('Import', { middleTime: message.middleTime, type });
+				};
 			});
 		});
 	};
@@ -211,6 +214,14 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 		const isMac = platform == I.Platform.Mac;
 
 		keyboard.shortcut(isMac ? 'cmd+[' : 'alt+arrowleft', e, (pressed: string) => { this.onBack(); });
+	};
+
+	onMouseDown (e: any) {
+		// Mouse back
+		if (e.buttons & 8) {
+			e.preventDefault();
+			this.onBack();
+		};
 	};
 
 	onBack () {

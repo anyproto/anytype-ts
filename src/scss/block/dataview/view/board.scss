@@ -5,20 +5,13 @@
 		.viewItem.viewBoard { padding: 16px 0px 0px 14px; }
         .viewItem.viewBoard {
 
-			.ghost { flex-shrink: 0; position: relative; z-index: 1; }
-			.ghost.isColumn { width: 0px; height: 100%; position: absolute; left: 0px; top: 0px; }
-			.ghost.isColumn::after {
-				content: ""; position: absolute; left: -2px; top: 0px; background: $colorOrange; height: 100%; width: 4px;
-				border-radius: 2px;
-			}
-			.ghost.isCard { height: 0px; }
-			.ghost.isCard::after {
-				content: ""; position: absolute; left: 0px; top: -6px; background: $colorOrange; width: 100%; height: 4px;
-				border-radius: 2px;
-			}
-			
-            .columns { display: flex; flex-direction: row; gap: 0px 8px; align-items: flex-start; position: relative; }
-            .column { width: 254px; flex-shrink: 0; display: flex; flex-direction: column; position: relative; }
+            .columns { display: flex; flex-direction: row; gap: 0px 8px; position: relative; }
+            .column { width: 240px; flex-shrink: 0; display: flex; flex-direction: column; position: relative; }
+
+			.column.isOver::before { content: ""; position: absolute; background: $colorOrange; width: 4px; height: 100%; border-radius: 2px; top: 0px; } 
+			.column.isOver.left::before { left: -6px; }
+			.column.isOver.right::before { right: -6px; }
+
             .column {
 				.bgColor { position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; opacity: 0.5; }
 
@@ -84,10 +77,10 @@
 
 			.column > .ghost { margin-top: 42px; width: 240px; flex-shrink: 0; }
 			
-            .card { width: 240px; display: flex; flex-direction: column; margin: 0px auto 8px auto; position: relative; z-index: 1; }
+            .card { width: 224px; display: flex; flex-direction: column; margin: 0px auto 8px auto; position: relative; z-index: 1; }
 			.card {
 				.cellContent.isName {
-					.name { @include clamp2; white-space: normal; line-height: 22px; }
+					.name { @include clamp2; white-space: normal; }
 				}
 
 				.cardContent { 
@@ -108,6 +101,10 @@
 			}
 			.card:last-child { margin: 0px; }
 			.card.add:hover, .card:hover .cardContent { border-color: $colorBlack; }
+
+			.card.isOver::before { content: ""; position: absolute; background: $colorOrange; height: 4px; width: 100%; border-radius: 2px; left: 0px; } 
+			.card.isOver.top::before { top: -6px; }
+			.card.isOver.bottom::before { bottom: -6px; }
 
 			.card.isDragging {
 				.cardContent { opacity: 0.3; }

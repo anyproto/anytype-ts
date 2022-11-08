@@ -17,7 +17,6 @@ class DbStore {
         makeObservable(this, {
 			clearAll: action,
 			relationsSet: action,
-            relationDelete: action,
             viewsSet: action,
 			viewsSort: action,
             viewsClear: action,
@@ -42,22 +41,20 @@ class DbStore {
 	};
 
     relationsSet (rootId: string, blockId: string, list: any[]) {
-		let key = this.getId(rootId, blockId);
-		let relations = this.relationMap.get(this.getId(rootId, blockId)) || [];
-
-		for (let item of list) {
-			relations.push({ relationKey: item.relationKey, format: item.format });
-		};
-
+		const key = this.getId(rootId, blockId);
+		const relations = (this.relationMap.get(this.getId(rootId, blockId)) || []).concat(list.map((it: any) => {
+			return { relationKey: it.relationKey, format: it.format };
+		}));
 		this.relationMap.set(key, Util.arrayUniqueObjects(relations, 'relationKey'));
 	};
 
-    relationDelete (rootId: string, blockId: string, id: string) {
-		this.relationMap.set(this.getId(rootId, blockId), this.getRelations(rootId, blockId).filter(it => it.id != id));
-	};
-
-	relationListDelete (rootId: string, blockId: string, ids: string[]) {
-		this.relationMap.set(this.getId(rootId, blockId), this.getRelations(rootId, blockId).filter(it => !ids.includes(it.id)));
+	relationListDelete (rootId: string, blockId: string, keys: string[]) {
+		let key = this.getId(rootId, blockId);
+		let relations = this.getRelations(rootId, blockId).filter(it => !keys.includes(it.relationKey));
+		
+		this.relationMap.set(key, relations.map((it: any) => { 
+			return { relationKey: it.relationKey, format: it.format };
+		}));
 	};
 
     viewsSet (rootId: string, blockId: string, list: I.View[]) {
