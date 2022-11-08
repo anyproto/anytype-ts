@@ -431,13 +431,8 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 						focus.set(message.blockId, { from: 0, to: 0 });
 						focus.apply();
 
-						Util.toastShow({
-							objectId: itemId,
-							action: I.ToastAction.Link,
-							targetId: rootId,
-						});
-
-						analytics.event('LinkToObject');
+						Util.toastShow({ objectId: itemId, action: I.ToastAction.Link, targetId: rootId });
+						analytics.event('CreateLink');
 					});
 					break;
 
@@ -449,7 +444,13 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 							targetBlockId: blockId,
 						}
 					};
-					C.BlockCreate(item.id, '', position, newBlock);
+
+					C.BlockCreate(item.id, '', position, newBlock, (message: any) => {
+						if (!message.error.code) {
+							Util.toastShow({ objectId: blockId, action: I.ToastAction.Link, targetId: itemId });
+							analytics.event('LinkToObject');
+						};
+					});
 					break;
 			};
 		};

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { MenuItemVertical } from 'Component';
 import { I, C, keyboard, analytics, DataUtil, focus } from 'Lib';
-import { detailStore, menuStore, blockStore } from 'Store';
+import { detailStore, menuStore, blockStore, dbStore } from 'Store';
 
 interface Props extends I.Menu {
 	history?: any;
@@ -79,6 +79,7 @@ class MenuContext extends React.Component<Props, {}> {
 
 		let pageCopy = { id: 'copy', icon: 'copy', name: 'Duplicate' };
 		let open = { id: 'open', icon: 'expand', name: 'Open as object' };
+		let linkTo = { id: 'linkTo', icon: 'linkTo', name: 'Link to', arrow: true };
 		let archive = null;
 		let archiveCnt = 0;
 		let fav = null;
@@ -123,10 +124,12 @@ class MenuContext extends React.Component<Props, {}> {
 
 		if (length > 1) {
 			open = null;
+			linkTo = null;
 		};
 
 		if (archiveCnt == length) {
 			open = null;
+			linkTo = null;
 			archive = { id: 'unarchive', icon: 'restore', name: 'Restore from bin' };
 		} else {
 			archive = { id: 'archive', icon: 'remove', name: 'Move to bin' };
@@ -137,7 +140,7 @@ class MenuContext extends React.Component<Props, {}> {
 		if (!allowedCopy)		 pageCopy = null;
 
 		let sections = [
-			{ children: [ open, fav, pageCopy, archive ] },
+			{ children: [ open, fav, linkTo, pageCopy, archive ] },
 		];
 
 		sections = sections.filter((section: any) => {
@@ -160,12 +163,72 @@ class MenuContext extends React.Component<Props, {}> {
 	};
 
 	onMouseEnter (e: any, item: any) {
+		this.onOver(e, item);
+	};
+
+	onOver (e: any, item: any) {
+		const { param, getId, getSize, close } = this.props;
+		const { data } = param;
+		const { objectIds, onLinkTo } = data;
+		const types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map(it => it.id);
+
 		if (!keyboard.isMouseDisabled) {
 			this.props.setActive(item, false);
+		};
+
+		if (!item.arrow || !objectIds.length) {
+			return;
+		};
+
+		let itemId = objectIds[0];
+		let menuId = '';
+		let menuParam = {
+			element: `#${getId()} #item-${item.id}`,
+			offsetX: getSize().width,
+			vertical: I.MenuDirection.Center,
+			isSub: true,
+			data: {
+				rebind: this.rebind,
+			}
+		};
+
+		switch (item.id) {
+			case 'linkTo':
+				menuId = 'searchObject';
+				menuParam.data = Object.assign(menuParam.data, {
+					filters: [
+						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: types },
+						{ operator: I.FilterOperator.And, relationKey: 'isReadonly', condition: I.FilterCondition.Equal, value: false }
+					],
+					rootId: itemId,
+					blockId: itemId,
+					blockIds: [ itemId ],
+					type: I.NavigationType.LinkTo,
+					skipIds: [ itemId ],
+					position: I.BlockPosition.Bottom,
+					onSelect: (el: any) => {
+						if (onLinkTo) {
+							onLinkTo(itemId, el.id);
+						};
+
+						close();
+					}
+				});
+				break;
+		};
+
+		if (menuId && !menuStore.isOpen(menuId, item.id)) {
+			menuStore.closeAll(Constant.menuIds.more, () => {
+				menuStore.open(menuId, menuParam);
+			});
 		};
 	};
 
 	onClick (e: any, item: any) {
+		if (item.arrow) {
+			return;
+		};
+
 		const { param, close } = this.props;
 		const { data } = param;
 		const { subId, objectIds, onSelect } = data;

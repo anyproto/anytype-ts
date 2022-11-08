@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { I, C, Util, analytics, sidebar, DataUtil, keyboard } from 'Lib';
 import { Header, Graph, Icon, Loader } from 'Component';
-import { blockStore, detailStore, menuStore } from 'Store';
+import { blockStore, detailStore, menuStore, dbStore } from 'Store';
 import { observer } from 'mobx-react';
 
 import Panel from './graph/panel';
@@ -286,6 +286,10 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 			data: {
 				objectIds: ids,
 				getObject: (id: string) => this.data.nodes.find(d => d.id == id),
+				onLinkTo: (sourceId: string, targetId: string) => {
+					this.data.edges.push({ type: I.EdgeType.Link, source: sourceId, target: targetId });
+					this.refGraph.send('onSetEdges', { edges: this.data.edges });
+				},
 				onSelect: (itemId: string) => {
 					switch (itemId) {
 						case 'archive':
