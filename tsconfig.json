@@ -23,6 +23,12 @@
             "Interface": [
                 "ts/interface"
             ],
+            "Docs/*": [
+                "ts/interface/*"
+            ],
+            "Docs": [
+                "ts/interface"
+            ],
             "Lib/*": [
               "ts/lib/*"
             ],
