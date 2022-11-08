@@ -6,7 +6,7 @@
         .viewItem.viewBoard {
 
             .columns { display: flex; flex-direction: row; gap: 0px 8px; position: relative; }
-            .column { width: 254px; flex-shrink: 0; display: flex; flex-direction: column; position: relative; }
+            .column { width: 240px; flex-shrink: 0; display: flex; flex-direction: column; position: relative; }
 
 			.column.isOver::before { content: ""; position: absolute; background: $colorOrange; width: 4px; height: 100%; border-radius: 2px; top: 0px; } 
 			.column.isOver.left::before { left: -6px; }
@@ -77,10 +77,10 @@
 
 			.column > .ghost { margin-top: 42px; width: 240px; flex-shrink: 0; }
 			
-            .card { width: 240px; display: flex; flex-direction: column; margin: 0px auto 8px auto; position: relative; z-index: 1; }
+            .card { width: 224px; display: flex; flex-direction: column; margin: 0px auto 8px auto; position: relative; z-index: 1; }
 			.card {
 				.cellContent.isName {
-					.name { @include clamp2; white-space: normal; line-height: 22px; }
+					.name { @include clamp2; white-space: normal; }
 				}
 
 				.cardContent { 

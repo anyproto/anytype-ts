@@ -437,8 +437,9 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 							objectId: itemId,
 							action: I.ToastAction.Link,
 							targetId: rootId,
-							noButtons: true,
 						});
+
+						analytics.event('LinkToObject');
 					});
 					break;
 

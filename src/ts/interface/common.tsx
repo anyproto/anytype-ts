@@ -44,6 +44,7 @@ export enum ToastAction {
 	Default	 = 0,
 	Move	 = 1,
 	Link	 = 2,
+	Copy
 };
 
 export interface Option {
@@ -69,8 +70,14 @@ export interface PreviewLink {
 	imageUrl: string;
 };
 
-export enum ImportFormat {
-	Notion = 0,
+export enum ImportMode {
+	AllOrNothing = 0,
+	IgnoreErrors = 1,
+};
+
+export enum ImportType {
+	Notion	 = 0,
+	External = 1,
 };
 
 export enum ExportFormat {

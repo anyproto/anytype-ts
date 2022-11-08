@@ -334,6 +334,10 @@ class MenuBlockAction extends React.Component<Props, State> {
 				children: DataUtil.menuGetActions({ hasText, hasFile, hasLink, hasBookmark, hasTurnObject })
 			};
 
+			if (hasLink) {
+				section2.children.push({ id: 'linkSettings', icon: 'linkStyle' + content.cardStyle, name: 'Preview', arrow: true });
+			};
+
 			if (hasFile) {
 				section2.children.push({ id: 'turnStyle', icon: 'customize', name: 'Appearance', arrow: true, isFile: true },);
 			};

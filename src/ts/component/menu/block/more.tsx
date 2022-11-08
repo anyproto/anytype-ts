@@ -489,6 +489,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 							textConfirm: 'Copy',
 							onChange: (v: string) => {
 								Util.clipboardCopy({ text: v });
+								Util.toastShow({ action: I.ToastAction.Copy, text: 'Link to share' });
 							}
 						}
 					});

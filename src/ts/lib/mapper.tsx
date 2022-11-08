@@ -741,6 +741,15 @@ const Mapper = {
 			return item;
 		},
 
+		Snapshot: (obj: any) => {
+			const item = new Rpc.Object.Import.Request.Snapshot();
+
+			item.setId(obj.id);
+			item.setSnapshot(obj.snapshot);
+
+			return item;
+		},
+
 	}
 
 };

@@ -24,12 +24,12 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		this.onDateSettings = this.onDateSettings.bind(this);
 		this.onObjectType = this.onObjectType.bind(this);
 		this.onSubmit = this.onSubmit.bind(this);
-		this.onKeyDown = this.onKeyDown.bind(this);
 		this.onOpen = this.onOpen.bind(this);
 		this.onCopy = this.onCopy.bind(this);
 		this.onRemove = this.onRemove.bind(this);
 		this.onChange = this.onChange.bind(this);
 		this.menuClose = this.menuClose.bind(this);
+		this.rebind = this.rebind.bind(this);
 	};
 
 	render () {
@@ -113,7 +113,6 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 							<Input 
 								ref={(ref: any) => { this.ref = ref; }} 
 								value={relation ? relation.name : ''}
-								onKeyDown={this.onKeyDown}
 								onChange={this.onChange} 
 								onMouseEnter={this.menuClose}
 							/>
@@ -151,7 +150,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 
 				{relation && (allowed || canDelete) ? (
 					<div className="section">
-						<MenuItemVertical icon="expand" name="Open as object" onClick={this.onOpen} onMouseEnter={this.menuClose} />
+						{relation ? <MenuItemVertical icon="expand" name="Open as object" onClick={this.onOpen} onMouseEnter={this.menuClose} /> : ''}
 						{allowed ? <MenuItemVertical icon="copy" name="Duplicate" onClick={this.onCopy} onMouseEnter={this.menuClose} /> : ''}
 						{canDelete ? <MenuItemVertical icon="remove" name="Delete" onClick={this.onRemove} onMouseEnter={this.menuClose} /> : ''}
 					</div>
@@ -178,6 +177,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 
 		this.checkButton();
 		this.focus();
+		this.rebind();
 	};
 
 	componentDidUpdate () {
@@ -188,6 +188,16 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 
 	componentWillUnmount () {
 		this.menuClose();
+		this.unbind();
+	};
+
+	rebind () {
+		this.unbind();
+		$(window).on('keydown.menu', (e: any) => { this.onKeyDown(e); });
+	};
+	
+	unbind () {
+		$(window).off('keydown.menu');
 	};
 
 	focus () {
@@ -204,11 +214,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		const button = node.find('#button');
 		const canSave = name.length && (this.format !== null) && !this.isReadonly();
 
-		if (canSave) {
-			button.addClass('orange').removeClass('grey');
-		} else {
-			button.removeClass('orange').addClass('grey');
-		};
+		button.removeClass('orange grey').addClass(canSave ? 'orange' : 'grey');
 	};
 
 	isReadonly () {
@@ -311,7 +317,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 			onClose: () => {
 				menuStore.close('select');
 			},
-			data: data
+			data,
 		});
 	};
 
@@ -334,10 +340,17 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		const { getSize, param } = this.props;
 		const { classNameWrap } = param;
 
-		options.isSub = true;
-		options.offsetX = getSize().width;
-		options.vertical = I.MenuDirection.Center;
-		options.classNameWrap = classNameWrap;
+		options = Object.assign(options, {
+			isSub: true,
+			passThrough: true,
+			offsetX: getSize().width,
+			vertical: I.MenuDirection.Center,
+			classNameWrap,
+		});
+
+		options.data = Object.assign(options.data, {
+			rebind: this.rebind,
+		});
 
 		if (!menuStore.isOpen(id)) {
 			menuStore.closeAll(Constant.menuIds.relationEdit, () => {
@@ -364,8 +377,8 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 			relationFormat: relation.format,
 			relationFormatObjectTypes: (relation.format == I.RelationType.Object) ? relation.objectTypes || [] : [],
 		});
-		close();
 
+		close();
 		analytics.event('DuplicateRelation');
 	};
 
@@ -377,8 +390,8 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		if (deleteCommand) {
 			deleteCommand();
 		};
-		close();
 
+		close();
 		analytics.event('DeleteRelation');
 	};
 
@@ -393,7 +406,6 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		};
 
 		this.save();
-		this.menuClose();
 		this.props.close();
 	};
 
@@ -416,7 +428,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 	add (item: any) {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, addCommand, onChange } = data;
+		const { rootId, blockId, addCommand, onChange, ref } = data;
 
 		C.ObjectCreateRelation(item, [], (message: any) => {
 			if (message.error.code) {
@@ -429,6 +441,8 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 			if (addCommand) {
 				addCommand(rootId, blockId, message.relationKey, onChange);
 			};
+
+			analytics.event('CreateRelation', { format: item.format, type: ref });
 		});
 	};
 
