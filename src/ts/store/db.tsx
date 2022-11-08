@@ -175,12 +175,10 @@ class DbStore {
 	};
 
 	groupsSet (rootId: string, blockId: string, groups: any[]) {
-		const subId = this.getGroupSubId(rootId, blockId);
-		this.groupMap.set(subId, observable(groups));
+		this.groupMap.set(this.getGroupSubId(rootId, blockId, 'groups'), observable(groups));
 	};
 
 	groupsAdd (rootId: string, blockId: string, groups: any[]) {
-		const subId = this.getGroupSubId(rootId, blockId);
 		const list = this.getGroups(rootId, blockId);
 
 		for (let group of groups) {
@@ -191,7 +189,7 @@ class DbStore {
 			list.push(group);
 		};
 
-		this.groupMap.set(subId, list);
+		this.groupMap.set(this.getGroupSubId(rootId, blockId, 'groups'), list);
 	};
 
 	groupsRemove (rootId: string, blockId: string, ids: string[]) {
@@ -246,8 +244,7 @@ class DbStore {
 	};
 
     getView (rootId: string, blockId: string, id: string): I.View {
-		const views = this.getViews(rootId, blockId);
-		return views.find(it => it.id == id);
+		return this.getViews(rootId, blockId).find(it => it.id == id);
 	};
 
     getMeta (rootId: string, blockId: string) {
@@ -266,7 +263,7 @@ class DbStore {
 	};
 
 	getGroups (rootId: string, blockId: string) {
-		return this.groupMap.get(this.getGroupSubId(rootId, blockId)) || [];
+		return this.groupMap.get(this.getGroupSubId(rootId, blockId, 'groups')) || [];
 	};
 
 	getGroup (rootId: string, blockId: string, groupId: string) {
@@ -281,8 +278,8 @@ class DbStore {
 		return this.getId(rootId, blockId);
 	};
 
-	getGroupSubId (rootId: string, blockId: string) {
-		return [ this.getId(rootId, blockId), 'groups' ].join('-');
+	getGroupSubId (rootId: string, blockId: string, groupId: string): string {
+		return [ rootId, blockId, groupId ].join('-');
 	};
 };
 
