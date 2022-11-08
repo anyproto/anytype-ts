@@ -24,9 +24,10 @@ interface Cover {
 };
 
 interface Toast {
-	targetId: string;
 	action: I.ToastAction;
+	text?: string;
 	objectId?: string;
+	targetId?: string;
 	originId?: string;
 	count?: number;
 };

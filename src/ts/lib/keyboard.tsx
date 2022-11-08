@@ -400,6 +400,7 @@ class Keyboard {
 						canCancel: true,
 						onConfirm: () => {
 							Util.clipboardCopy({ text: account.id });
+							Util.toastShow({ action: I.ToastAction.Copy, text: 'Anytype ID' });
 						},
 					}
 				});
