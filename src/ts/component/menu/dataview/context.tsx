@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { MenuItemVertical } from 'Component';
 import { I, C, keyboard, analytics, DataUtil, focus } from 'Lib';
-import {detailStore, menuStore, blockStore, dbStore} from 'Store';
+import { detailStore, menuStore, blockStore, dbStore } from 'Store';
 
 interface Props extends I.Menu {
 	history?: any;
