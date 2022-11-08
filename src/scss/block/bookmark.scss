@@ -39,8 +39,9 @@
 		}
 
 		.inner.withImage {
+			.sides { align-items: stretch; }
 			.side.left { width: calc(100% - 200px); }
-			.side.right { width: 200px; height: 100%; min-height: 90px; display: block; }
+			.side.right { width: 200px; min-height: 90px; display: block; }
 		}
 
 		.inner.withImage.vertical { padding-top: 116px; }

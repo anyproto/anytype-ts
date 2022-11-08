@@ -19,8 +19,11 @@
 
 		.buttons { margin-left: 28px; }
 		.buttons {
-			.toastButton { cursor: pointer; }
-			.toastButton:hover { text-decoration: underline; }
+			.button.toastButton { @include text-common; line-height: 20px; border: 0 solid; height: auto; padding: 0; background: none; }
+			.button.toastButton:hover { background-color: transparent; }
+			.button.toastButton:hover {
+				.txt { text-decoration: underline; }
+			}
 		}
 	}
 }

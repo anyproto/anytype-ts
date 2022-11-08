@@ -160,7 +160,10 @@ class Util {
 	};
 
 	objectCopy (o: any): any {
-		return JSON.parse(JSON.stringify(o || {}));
+		if ('undefined' == typeof(o)) {
+			o = {};
+		};
+		return JSON.parse(JSON.stringify(o));
 	};
 	
 	objectLength (o: any) {

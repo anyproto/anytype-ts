@@ -359,7 +359,7 @@ class Relation {
 		value = Util.objectCopy(value);
 		
 		if ('object' != typeof(value)) {
-			value = !this.isEmpty(value) ? [ value ] : [];
+			value = [ value ];
 		} else 
 		if (!Util.objectLength(value)) {
 			value = [];

@@ -774,10 +774,6 @@ class DataUtil {
 			items.push({ id: 'openBookmarkAsObject', icon: 'expand', name: 'Open as object' });
 		};
 
-		if (hasLink) {
-			items.push({ id: 'linkSettings', icon: 'customize', name: 'Appearance', arrow: true });
-		};
-
 		items = items.map((it: any) => {
 			it.isAction = true;
 			return it;
