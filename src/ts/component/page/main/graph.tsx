@@ -25,6 +25,8 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 	refHeader: any = null;
 	refGraph: any = null;
 	refPanel: any = null;
+	loading: boolean = false;
+	timeoutLoading: number = 0;
 
 	constructor (props: any) {
 		super(props);
@@ -110,11 +112,16 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 
 	componentDidUpdate () {
 		this.resize();
-		window.setTimeout(() => { this.setLoading(false); }, 1000);
+
+		if (this.loading) {
+			window.clearTimeout(this.timeoutLoading);
+			this.timeoutLoading = window.setTimeout(() => { this.setLoading(false); }, 1000);
+		};
 	};
 
 	componentWillUnmount () {
 		this.unbind();
+		window.clearTimeout(this.timeoutLoading);
 	};
 
 	unbind () {
@@ -197,6 +204,8 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 	setLoading (v: boolean) {
 		const node = $(ReactDOM.findDOMNode(this));
 		const loader = node.find('#loader');
+
+		this.loading = v;
 
 		if (v) {
 			loader.show().css({ opacity: 1 });
