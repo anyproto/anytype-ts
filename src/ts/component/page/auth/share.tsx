@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { RouteComponentProps } from 'react-router';
 import { I, Util } from 'Lib';
 import { observer } from 'mobx-react';
 

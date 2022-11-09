@@ -471,11 +471,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				element,
 				vertical: dir > 0 ? I.MenuDirection.Top : I.MenuDirection.Bottom,
 				horizontal: dir > 0 ? I.MenuDirection.Left : I.MenuDirection.Right,
-				data: {
-					command: (source: string, callBack: (message: any) => void) => {
-						C.ObjectCreateBookmark({ source }, callBack);
-					}
-				},
 			});
 			return;
 		};
