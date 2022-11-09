@@ -44,7 +44,7 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 		},
 		collide: {
 			enabled: true,
-			strength: 0.5,
+			strength: 0.3,
 			iterations: 1,
 			radius: 0.5
 		},
@@ -52,7 +52,7 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 			enabled: true,
 			strength: 0.3,
 			distance: 50,
-			iterations: 3
+			iterations: 1
 		},
 		forceX: {
 			enabled: true,

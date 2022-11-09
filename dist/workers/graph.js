@@ -66,7 +66,7 @@ init = (data) => {
 
 	resize(data);
 	initColor();
-	initNames();
+	requestAnimationFrame(initNames);
 
 	transform = d3.zoomIdentity.translate(-width, -height).scale(3);
 	simulation = d3.forceSimulation(nodes);
@@ -75,7 +75,7 @@ init = (data) => {
 
 	simulation.on('tick', () => { redraw(); });
 	simulation.on('end', () => { simulation.alphaTarget(1); });
-	simulation.tick(200);
+	simulation.tick(100);
 };
 
 initNames = () => {
@@ -483,15 +483,11 @@ onZoom = (data) => {
 
 onDragStart = ({ active }) => {
 	if (!active) {
-		restart(0.5);
+		simulation.alphaTarget(0.3).restart();
 	};
 };
 
 onDragMove = ({ subjectId, active, x, y }) => {
-	if (!active) {
-		restart(0.5);
-	};
-
 	if (!subjectId) {
 		return;
 	};
@@ -559,7 +555,7 @@ onRemoveNode = ({ ids }) => {
 	edges = edges.filter(d => !ids.includes(d.source.id) && !ids.includes(d.target.id));
 	
 	updateForces();
-	restart(0.5);
+	restart(0.1);
 };
 
 onSetEdges = (data) => {
@@ -572,7 +568,7 @@ onSetEdges = (data) => {
 	});
 
 	updateForces();
-	restart(0.5);
+	restart(0.1);
 };
 
 onSetSelected = ({ ids }) => {
