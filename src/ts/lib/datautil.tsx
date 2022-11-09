@@ -1324,7 +1324,7 @@ class DataUtil {
 			{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: ids }
 		];
 
-		C.ObjectSearch(filters, [], [], '', 0, 0, (message) => {
+		C.ObjectSearch(filters, [], [], '', 0, 0, (message: any) => {
 			if (message.error.code || !message.records.length) {
 				console.log('[DataUtil.getObjectsByIds] No objects found');
 				return;
