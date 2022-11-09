@@ -277,6 +277,25 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 		this.refGraph.send('onSetSelected', { ids: this.ids });
 	};
 
+	getNode (id: string) {
+		// if (!this.data.nodes.find(d => d.id == id)) {
+		// 	const filters: any[] = [
+		// 		{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.Equal, value: id }
+		// 	];
+		//
+		// 	C.ObjectGraph(filters, 0, [], Constant.defaultRelationKeys.concat([ 'links' ]), (message: any) => {
+		// 		if (message.error.code) {
+		// 			return;
+		// 		};
+		//
+		// 		console.log('NEW NODE: ', message)
+		//
+		// 		// this.data.nodes = message.nodes.map(it => detailStore.check(it));
+		// 	});
+		// }
+		return this.data.nodes.find(d => d.id == id) || null;
+	};
+
 	onContextMenu (id: string, param: any) {
 		const { root } = blockStore;
 		const ids = this.ids.length ? this.ids : [ id ];
@@ -287,8 +306,13 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 				objectIds: ids,
 				getObject: (id: string) => this.data.nodes.find(d => d.id == id),
 				linkToCallback: (sourceId: string, targetId: string) => {
-					this.data.edges.push({ type: I.EdgeType.Link, source: sourceId, target: targetId });
-					this.refGraph.send('onSetEdges', { edges: this.data.edges });
+					const sourceNode = this.getNode(sourceId);
+					const targetNode = this.getNode(targetId);
+
+					if (sourceNode && targetNode) {
+						this.data.edges.push({ type: I.EdgeType.Link, source: sourceId, target: targetId });
+						this.refGraph.send('onSetEdges', { edges: this.data.edges });
+					}
 				},
 				onSelect: (itemId: string) => {
 					switch (itemId) {
