@@ -192,8 +192,15 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 			if (!view || (view && !view.hideIcon)) {
 				let size = iconSize;
 
-				if ([ I.ViewType.List, I.ViewType.Gallery, I.ViewType.Board ].includes(viewType)) {
-					size = 24;
+				switch (viewType) {
+					case I.ViewType.List:
+						size = 24;
+						break;
+
+					case I.ViewType.Gallery:
+					case I.ViewType.Board:
+						size = 18;
+						break;
 				};
 
 				icon = (
