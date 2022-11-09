@@ -176,6 +176,7 @@ class MenuContext extends React.Component<Props, {}> {
 			this.props.setActive(item, false);
 		};
 		if (!item.arrow || !objectIds.length) {
+			menuStore.closeAll(subIds)
 			return;
 		};
 
@@ -204,7 +205,7 @@ class MenuContext extends React.Component<Props, {}> {
 							position: I.BlockPosition.Bottom,
 							onSelect: (el: any) => {
 								if (linkToCallback) {
-									linkToCallback(itemId, el.id);
+									// linkToCallback(itemId, el.id);
 								}
 								analytics.event('LinkedToObject', { count: 1 });
 								close();

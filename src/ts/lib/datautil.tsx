@@ -1323,7 +1323,13 @@ class DataUtil {
 		let filters = [{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: ids }];
 
 		C.ObjectSearch(filters, [], [], '', 0, 0, (message) => {
-			callBack(message);
+			if (!message.records.length) {
+				console.log('[OBJECTS SEARCH]: No object(s) with such ID(s)');
+				return;
+			}
+			if (!message.error.code) {
+				callBack(message);
+			}
 		});
 	};
 
