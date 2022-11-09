@@ -1,5 +1,5 @@
 export enum SmartBlockType {
-    Breadcrumbs		 = 0,
+    Breadcrumbs			 = 0,
 
     Page				 = 0x10,
     ProfilePage			 = 0x11,

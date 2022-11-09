@@ -17,7 +17,7 @@
 	"rulesDirectory": [],
 	"linterOptions": {
 		"exclude": [
-			"node_modules/**/*.ts"
+			"node_modules/**/*"
 		]
 	}
 }

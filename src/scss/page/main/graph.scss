@@ -34,7 +34,7 @@
 
     #graphWrapper { height: 100%; }
     #graph { width: 100%; height: 100%; }
-    canvas { width: 100%; height: 100%; background: $colorWhite; }
+    canvas { width: 100%; height: 100%; background: $colorWhite; display: block; }
 
     .tabs { 
         padding: 0px 16px; border-bottom: 1px solid $colorLightGrey; white-space: nowrap; font-weight: 600; color: $colorMediumGrey; 
@@ -146,7 +146,7 @@
 
 .pageMainGraph > .body { overflow: hidden; }
 .pageMainGraph > .body > #loader { 
-    position: fixed; top: 0px; width: 100%; height: 100%; background: $colorWhite; z-index: 11; 
+    position: fixed; top: 0px; width: 100%; height: 100%; background: $colorWhite; z-index: 11; transition: opacity 0.2s ease-in-out;
 }
 
 html.platformWindows {

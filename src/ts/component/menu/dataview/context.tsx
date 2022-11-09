@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { MenuItemVertical } from 'Component';
 import { I, C, keyboard, analytics, DataUtil, focus } from 'Lib';
-import {detailStore, menuStore, blockStore, dbStore} from 'Store';
+import { detailStore, menuStore, blockStore, dbStore } from 'Store';
 
 interface Props extends I.Menu {
 	history?: any;
@@ -124,6 +124,7 @@ class MenuContext extends React.Component<Props, {}> {
 
 		if (length > 1) {
 			open = null;
+			linkTo = null;
 		};
 
 		if (archiveCnt == length) {
@@ -166,55 +167,61 @@ class MenuContext extends React.Component<Props, {}> {
 	};
 
 	onOver (e: any, item: any) {
-		const { param, getSize, close } = this.props;
+		const { param, getId, getSize, close } = this.props;
 		const { data } = param;
-		const { objectIds, linkToCallback } = data;
-		const subIds = [ 'searchObject' ];
+		const { objectIds, onLinkTo } = data;
 		const types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map(it => it.id);
 
 		if (!keyboard.isMouseDisabled) {
 			this.props.setActive(item, false);
 		};
+
 		if (!item.arrow || !objectIds.length) {
-			menuStore.closeAll(subIds)
+			menuStore.closeAll(Constant.menuIds.more)
 			return;
 		};
 
-		const itemId = objectIds[0];
+		let itemId = objectIds[0];
+		let menuId = '';
+		let menuParam = {
+			element: `#${getId()} #item-${item.id}`,
+			offsetX: getSize().width,
+			vertical: I.MenuDirection.Center,
+			isSub: true,
+			data: {
+				rebind: this.rebind,
+			}
+		};
 
 		switch (item.id) {
 			case 'linkTo':
-				menuStore.closeAll(subIds, () => {
-					const filters = [
-						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: types }
-					];
+				menuId = 'searchObject';
+				menuParam.data = Object.assign(menuParam.data, {
+					filters: [
+						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: types },
+						{ operator: I.FilterOperator.And, relationKey: 'isReadonly', condition: I.FilterCondition.Equal, value: false }
+					],
+					rootId: itemId,
+					blockId: itemId,
+					blockIds: [ itemId ],
+					type: I.NavigationType.LinkTo,
+					skipIds: [ itemId ],
+					position: I.BlockPosition.Bottom,
+					onSelect: (el: any) => {
+						if (onLinkTo) {
+							onLinkTo(itemId, el.id);
+						};
 
-					menuStore.open('searchObject', {
-						element: `#menuDataviewContext #item-${item.id}`,
-						offsetX: getSize().width,
-						vertical: I.MenuDirection.Center,
-						isSub: true,
-						data: {
-							filters,
-							rebind: this.rebind,
-							rootId: itemId,
-							blockId: itemId,
-							blockIds: [ itemId ],
-							type: I.NavigationType.LinkTo,
-							skipIds: [ itemId ],
-							position: I.BlockPosition.Bottom,
-							onSelect: (el: any) => {
-								if (linkToCallback) {
-									linkToCallback(itemId, el.id);
-								}
-								analytics.event('LinkedToObject', { count: 1 });
-								close();
-							}
-						}
-					});
+						close();
+					}
 				});
-
 				break;
+		};
+
+		if (menuId && !menuStore.isOpen(menuId, item.id)) {
+			menuStore.closeAll(Constant.menuIds.more, () => {
+				menuStore.open(menuId, menuParam);
+			});
 		};
 	};
 
