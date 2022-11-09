@@ -53,7 +53,6 @@ addEventListener('message', ({ data }) => {
 
 init = (data) => {
 	canvas = data.canvas;
-	ctx = canvas.getContext('2d');
 	forceProps = data.forceProps;
 	nodes = data.nodes;
 	edges = data.edges;
@@ -62,6 +61,7 @@ init = (data) => {
 	offscreen = new OffscreenCanvas(250, 40);
 	octx = offscreen.getContext('2d');
 
+	ctx = canvas.getContext('2d');
 	ctx.lineCap = 'round';
 
 	resize(data);
@@ -231,7 +231,6 @@ updateForces = () => {
 
 draw = () => {
 	ctx.save();
-
 	ctx.clearRect(0, 0, width, height);
 	ctx.translate(transform.x, transform.y);
 	ctx.scale(transform.k, transform.k);
@@ -353,6 +352,13 @@ drawLine = (d, aWidth, aLength, arrowStart, arrowEnd) => {
 };
 
 drawNode = (d) => {
+	const w = width * transform.k;
+	const h = height * transform.k;
+
+	if (((d.x < transform.x) || (d.x > transform.x + w)) && ((d.y < transform.y) || (d.y > transform.y + h))) {
+		return;
+	};
+
 	let bg = Color.node.common;
 	let stroke = '';
 	let img = images[d.src];
