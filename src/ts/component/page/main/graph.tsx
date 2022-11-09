@@ -216,7 +216,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 		const oh = obj.height();
 		
 		let wh = isPopup ? oh - hh : win.height();
-		let sh = isPopup ? oh : win.height();
+		let sh = wh;
 
 		if (platform == I.Platform.Windows) {
 			wh -= 30;

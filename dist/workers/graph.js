@@ -242,6 +242,9 @@ draw = () => {
 		if (!forceProps.relations && (d.type == EdgeType.Relation)) {
 			return;
 		};
+		if (!checkNodeInViewport(d.source) && !checkNodeInViewport(d.target)) {
+			return;
+		};
 
 		drawLine(d, 1, 1, false, forceProps.markers);
 	});
@@ -250,10 +253,13 @@ draw = () => {
 		if (!forceProps.orphans && d.isOrphan && !d.isRoot) {
 			return;
 		};
+		if (!checkNodeInViewport(d)) {
+			return;
+		};
 
 		drawNode(d);
 	});
-	
+
 	ctx.restore();
 };
 
@@ -269,7 +275,16 @@ drawLine = (d, aWidth, aLength, arrowStart, arrowEnd) => {
 	let x2 = d.target.x;
 	let y2 = d.target.y;
 	let r2 = d.target.radius + 3;
+	let w = width * transform.k;
+	let h = height * transform.k;
 	let bg = Color.link[d.type] || Color.link[0];
+
+	if (((x1 < transform.x) || (x1 > transform.x + w)) && ((y1 < transform.y) || (y1 > transform.y + h))) {
+		return;
+	};
+	if (((x2 < transform.x) || (x2 > transform.x + w)) && ((y2 < transform.y) || (y2 > transform.y + h))) {
+		return;
+	};
 
 	ctx.globalAlpha = 1;
 
@@ -351,14 +366,15 @@ drawLine = (d, aWidth, aLength, arrowStart, arrowEnd) => {
 	};
 };
 
+checkNodeInViewport = (d) => {
+	const dr = d.radius * transform.k;
+	const distX = transform.x + d.x * transform.k - dr;
+	const distY = transform.y + d.y * transform.k - dr;
+
+	return (distX >= -dr * 2) && (distX <= width) && (distY >= -dr * 2) && (distY <= height);
+};
+
 drawNode = (d) => {
-	const w = width * transform.k;
-	const h = height * transform.k;
-
-	if (((d.x < transform.x) || (d.x > transform.x + w)) && ((d.y < transform.y) || (d.y > transform.y + h))) {
-		return;
-	};
-
 	let bg = Color.node.common;
 	let stroke = '';
 	let img = images[d.src];
@@ -468,6 +484,16 @@ roundedRect = (x, y, width, height, radius) => {
 	ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
 	ctx.lineTo(x, y + radius);
 	ctx.quadraticCurveTo(x, y, x + radius, y);
+	ctx.closePath();
+};
+
+rect = (x, y, width, height) => {
+	ctx.beginPath();
+	ctx.moveTo(x, y);
+	ctx.lineTo(x + width, y);
+	ctx.lineTo(x + width, y + height);
+	ctx.lineTo(x, y + height);
+	ctx.lineTo(x, y);
 	ctx.closePath();
 };
 
