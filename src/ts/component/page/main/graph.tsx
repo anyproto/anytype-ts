@@ -295,6 +295,10 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 		this.refGraph.send('onSetSelected', { ids: this.ids });
 	};
 
+	getNode (id: string) {
+		return this.data.nodes.find(d => d.id == id) || null;
+	};
+
 	onContextMenu (id: string, param: any) {
 		const { root } = blockStore;
 		const ids = this.ids.length ? this.ids : [ id ];
@@ -305,8 +309,13 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 				objectIds: ids,
 				getObject: (id: string) => this.data.nodes.find(d => d.id == id),
 				onLinkTo: (sourceId: string, targetId: string) => {
-					this.data.edges.push({ type: I.EdgeType.Link, source: sourceId, target: targetId });
-					this.refGraph.send('onSetEdges', { edges: this.data.edges });
+					const sourceNode = this.getNode(sourceId);
+					const targetNode = this.getNode(targetId);
+
+					if (sourceNode && targetNode) {
+						this.data.edges.push({ type: I.EdgeType.Link, source: sourceId, target: targetId });
+						this.refGraph.send('onSetEdges', { edges: this.data.edges });
+					};
 				},
 				onSelect: (itemId: string) => {
 					switch (itemId) {

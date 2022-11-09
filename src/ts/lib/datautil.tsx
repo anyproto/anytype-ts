@@ -1320,10 +1320,17 @@ class DataUtil {
 	}
 
 	getObjectsByIds (ids: string[], callBack?: (message: any) => void) {
-		let filters = [{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: ids }];
+		const filters = [
+			{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: ids }
+		];
 
-		C.ObjectSearch(filters, [], [], '', 0, 0, (message) => {
-			callBack(message);
+		C.ObjectSearch(filters, [], [], '', 0, 0, (message: any) => {
+			if (message.error.code || !message.records.length) {
+				console.log('[DataUtil.getObjectsByIds] No objects found');
+				return;
+			};
+
+			callBack(message.records);
 		});
 	};
 

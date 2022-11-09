@@ -177,6 +177,7 @@ class MenuContext extends React.Component<Props, {}> {
 		};
 
 		if (!item.arrow || !objectIds.length) {
+			menuStore.closeAll(Constant.menuIds.more)
 			return;
 		};
 
