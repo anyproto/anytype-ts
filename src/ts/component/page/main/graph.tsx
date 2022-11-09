@@ -202,7 +202,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 			loader.show().css({ opacity: 1 });
 		} else {
 			loader.css({ opacity: 0 });
-			window.setTimeout(() => { loader.hide(); }, 200);
+			window.setTimeout(() => { loader.hide(); }, 500);
 		};
 	};
 

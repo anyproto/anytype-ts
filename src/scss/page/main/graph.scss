@@ -2,6 +2,11 @@
 
 .pageMainGraph {
 
+	#loader { 
+		position: fixed; top: 0px; width: 100%; height: 100%; background: $colorWhite !important; z-index: 11; 
+		transition: opacity 0.5s ease-in-out;
+	}
+
     .wrapper { display: flex; height: 100%; overflow: hidden; }
     .wrapper {
         .side { height: 100%; }
@@ -145,9 +150,6 @@
 }
 
 .pageMainGraph > .body { overflow: hidden; }
-.pageMainGraph > .body > #loader { 
-    position: fixed; top: 0px; width: 100%; height: 100%; background: $colorWhite; z-index: 11; transition: opacity 0.2s ease-in-out;
-}
 
 html.platformWindows {
     .pageMainGraph {
