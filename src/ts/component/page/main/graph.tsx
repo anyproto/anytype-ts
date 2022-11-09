@@ -306,7 +306,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 					if (sourceNode && targetNode) {
 						this.data.edges.push({ type: I.EdgeType.Link, source: sourceId, target: targetId });
 						this.refGraph.send('onSetEdges', { edges: this.data.edges });
-					}
+					};
 				},
 				onSelect: (itemId: string) => {
 					switch (itemId) {

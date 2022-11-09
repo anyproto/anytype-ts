@@ -457,8 +457,8 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 
 		if (item.id == 'add') {
 			DataUtil.pageCreate('', '', { name: filter, type: commonStore.type }, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.SelectType ], (message: any) => {
-				DataUtil.getObjectsByIds([message.targetId], (objects) => {
-					process(objects.records[0])
+				DataUtil.getObjectsByIds([ message.targetId ], (objects: any[]) => {
+					process(objects[0]);
 				});
 				close();
 			});
