@@ -275,16 +275,7 @@ drawLine = (d, aWidth, aLength, arrowStart, arrowEnd) => {
 	let x2 = d.target.x;
 	let y2 = d.target.y;
 	let r2 = d.target.radius + 3;
-	let w = width * transform.k;
-	let h = height * transform.k;
 	let bg = Color.link[d.type] || Color.link[0];
-
-	if (((x1 < transform.x) || (x1 > transform.x + w)) && ((y1 < transform.y) || (y1 > transform.y + h))) {
-		return;
-	};
-	if (((x2 < transform.x) || (x2 > transform.x + w)) && ((y2 < transform.y) || (y2 > transform.y + h))) {
-		return;
-	};
 
 	ctx.globalAlpha = 1;
 
