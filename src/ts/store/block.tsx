@@ -430,6 +430,7 @@ class BlockStore {
 
 	updateMarkup (rootId: string) {
 		let blocks = Util.objectCopy(this.getBlocks(rootId, it => it.isText()));
+
 		for (let block of blocks) {
 			let text = block.content.text;
 			let marks = block.content.marks || [];
@@ -440,6 +441,8 @@ class BlockStore {
 
 			marks.sort(Mark.sort);
 
+			let update = false;
+
 			for (let n = 0; n < marks.length; ++n) {
 				let mark = marks[n];
 				if ((mark.type != I.MarkType.Mention) || !mark.param) {
@@ -447,7 +450,7 @@ class BlockStore {
 				};
 
 				const { from, to } = mark.range;
-				const object = detailStore.get(rootId, mark.param, []);
+				const object = detailStore.get(rootId, mark.param, [ 'layout', 'name' ], true);
 
 				if (object._empty_) {
 					continue;
@@ -478,10 +481,14 @@ class BlockStore {
 							marks[i].range.to -= d;
 						};
 					};
+
+					update = true;
 				};
 			};
 
-			this.update(rootId, { id: block.id, content: { ...block.content, text: text, marks: marks } });
+			if (update) {
+				this.update(rootId, { id: block.id, content: { ...block.content, text: text, marks: marks } });
+			};
 		};
 	};
 

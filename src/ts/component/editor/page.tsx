@@ -2097,6 +2097,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		const { rootId } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
 		const allowed = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Block ]);
+
 		return root?.isLocked() || !allowed;
 	};
 
