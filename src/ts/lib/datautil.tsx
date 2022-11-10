@@ -1319,7 +1319,15 @@ class DataUtil {
 		return name;
 	}
 
-	getObjectsByIds (ids: string[], callBack?: (message: any) => void) {
+	getObjectById (id: string, callBack: (object: any) => void) {
+		this.getObjectsByIds([ id ], (objects) => {
+			if (callBack) {
+				callBack(objects[0]);
+			};
+		});
+	};
+
+	getObjectsByIds (ids: string[], callBack: (objects: any[]) => void) {
 		const filters = [
 			{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: ids }
 		];
@@ -1330,7 +1338,9 @@ class DataUtil {
 				return;
 			};
 
-			callBack(message.records);
+			if (callBack) {
+				callBack(message.records);
+			};
 		});
 	};
 
