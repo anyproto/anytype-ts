@@ -603,8 +603,6 @@ class Dispatcher {
 								break;
 
 							case I.SliceOperation.Move:
-								console.log('Move', idx);
-
 								if (idx >= 0) {
 									ids.forEach((id: string, i: number) => {
 										const oidx = el.objectIds.indexOf(id);

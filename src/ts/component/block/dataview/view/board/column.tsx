@@ -219,8 +219,8 @@ const Column = observer(class Column extends React.Component<Props, State> {
 	};
 
 	getItems () {
-		const { getSubId } = this.props;
-		return dbStore.getRecords(getSubId(), '').map(id => { return { id }; });
+		const { id, getSubId, applyObjectOrder } = this.props;
+		return applyObjectOrder(id, dbStore.getRecords(getSubId(), '').map(id => { return { id }; }));
 	};
 
 	onLoadMore (e: any) {
