@@ -5,6 +5,8 @@ import { commonStore, dbStore, blockStore } from 'Store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
+import Constant from 'json/constant.json';
+
 interface Props extends I.Menu {};
 
 interface State {
@@ -13,7 +15,6 @@ interface State {
 };
 
 const $ = require('jquery');
-const Constant = require('json/constant.json');
 const LIMIT_HEIGHT = 10;
 
 const HEIGHT_SECTION = 28;

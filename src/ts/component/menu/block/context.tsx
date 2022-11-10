@@ -4,10 +4,11 @@ import { I, C, Mark, DataUtil, focus, keyboard, Storage } from 'Lib';
 import { blockStore, menuStore, commonStore } from 'Store';
 import { observer } from 'mobx-react';
 
+import Constant from 'json/constant.json';
+
 interface Props extends I.Menu {};
 
 const $ = require('jquery');
-const Constant = require('json/constant.json');
 
 const MenuBlockContext = observer(class MenuBlockContext extends React.Component<Props, {}> {
 	

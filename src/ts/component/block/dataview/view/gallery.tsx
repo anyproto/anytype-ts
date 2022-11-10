@@ -7,10 +7,11 @@ import { AutoSizer, WindowScroller, Masonry, CellMeasurer, CellMeasurerCache, cr
 import Empty from '../empty';
 import Card from './gallery/card';
 
+import Constant from 'json/constant.json';
+
 interface Props extends I.ViewComponent {};
 
 const $ = require('jquery');
-const Constant = require('json/constant.json');
 
 const ViewGallery = observer(class ViewGallery extends React.Component<Props, {}> {
 

@@ -5,6 +5,9 @@ import { blockStore, detailStore } from 'Store';
 import { I, M, C, Util, DataUtil } from 'Lib';
 import { observer } from 'mobx-react';
 
+import Constant from 'json/constant.json';
+import Errors from 'json/error.json';
+
 interface Props extends I.PageComponent {
 	rootId: string;
 }
@@ -16,8 +19,6 @@ interface State {
 };
 
 const $ = require('jquery');
-const Constant = require('json/constant.json');
-const Errors = require('json/error.json');
 
 const LIMIT = 100;
 const GROUP_OFFSET = 300;

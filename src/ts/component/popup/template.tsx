@@ -4,6 +4,8 @@ import { Loader, Title, Label, ListObjectPreview } from 'Component';
 import { I, focus, Util, DataUtil } from 'Lib';
 import { dbStore } from 'Store';
 
+import Constant from 'json/constant.json';
+
 interface Props extends I.Popup, RouteComponentProps<any> {};
 
 interface State {
@@ -12,7 +14,6 @@ interface State {
 };
 
 const $ = require('jquery');
-const Constant = require('json/constant.json');
 
 class PopupTemplate extends React.Component<Props, State> {
 

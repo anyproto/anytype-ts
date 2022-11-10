@@ -4,12 +4,13 @@ import { IconObject, Pager, ObjectName } from 'Component';
 import { detailStore, dbStore, blockStore } from 'Store';
 import { observer } from 'mobx-react';
 
+import Constant from 'json/constant.json';
+
 interface Props {
 	rootId: string;
 	blockId: string;
 };
 
-const Constant = require('json/constant.json');
 const LIMIT = 50;
 
 const ListObject = observer(class ListObject extends React.Component<Props, {}> {

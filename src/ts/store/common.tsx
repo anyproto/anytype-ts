@@ -2,6 +2,8 @@ import { action, computed, makeObservable, observable, set } from 'mobx';
 import { analytics, I, Storage, Util } from 'Lib';
 import { blockStore } from 'Store';
 
+import Constant from 'json/constant.json';
+
 interface Preview {
 	type: I.MarkType,
 	param: string;
@@ -33,7 +35,6 @@ interface Toast {
 	value?: boolean;
 };
 
-const Constant = require('json/constant.json');
 const $ = require('jquery');
 
 class CommonStore {

@@ -6,9 +6,10 @@ import { dbStore, menuStore, blockStore, detailStore } from 'Store';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
 
+import Constant from 'json/constant.json';
+
 interface Props extends I.Menu {};
 
-const Constant = require('json/constant.json');
 const $ = require('jquery');
 
 const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React.Component<Props, {}> {

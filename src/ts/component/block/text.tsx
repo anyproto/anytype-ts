@@ -8,12 +8,13 @@ import { getRange } from 'selection-ranges';
 import { commonStore, blockStore, detailStore, menuStore, dbStore } from 'Store';
 import * as Prism from 'prismjs';
 
+import Constant from 'json/constant.json';
+
 interface Props extends I.BlockComponent, RouteComponentProps<any> {
 	index?: any;
 	onToggle?(e: any): void;
 };
 
-const Constant = require('json/constant.json');
 const $ = require('jquery');
 const raf = require('raf');
 

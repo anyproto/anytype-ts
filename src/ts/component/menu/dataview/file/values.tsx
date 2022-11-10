@@ -7,10 +7,11 @@ import { observer } from 'mobx-react';
 import { commonStore, detailStore, menuStore } from 'Store';
 import arrayMove from 'array-move';
 
+import Constant from 'json/constant.json';
+
 interface Props extends I.Menu {}
 
 const $ = require('jquery');
-const Constant = require('json/constant.json');
 const MENU_ID = 'dataviewFileList';
 
 const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends React.Component<Props, {}> {

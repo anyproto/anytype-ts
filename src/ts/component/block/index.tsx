@@ -27,6 +27,8 @@ import BlockVideo from './media/video';
 import BlockAudio from './media/audio';
 import BlockPdf from './media/pdf'; 
 
+import Constant from 'json/constant.json';
+
 interface Props extends I.BlockComponent, RouteComponentProps<any> {
 	css?: any;
 	iconSize?: number;
@@ -34,7 +36,6 @@ interface Props extends I.BlockComponent, RouteComponentProps<any> {
 };
 
 const $ = require('jquery');
-const Constant = require('json/constant.json');
 const SNAP = 0.01;
 
 const Block = observer(class Block extends React.Component<Props, {}> {

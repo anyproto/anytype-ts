@@ -4,9 +4,10 @@ import { Input, MenuItemVertical } from 'Component';
 import { blockStore, dbStore, menuStore } from 'Store';
 import { observer } from 'mobx-react';
 
+import Constant from 'json/constant.json';
+
 interface Props extends I.Menu {};
 
-const Constant = require('json/constant.json');
 const $ = require('jquery');
 
 const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> {

@@ -4,6 +4,8 @@ import { commonStore, detailStore, blockStore, dbStore } from 'Store';
 import { I, C, DataUtil, Action, translate, Util } from 'Lib';
 import { observer } from 'mobx-react';
 
+import Constant from 'json/constant.json';
+
 interface Props {
 	rootId: string;
 	className?: string;
@@ -16,7 +18,6 @@ interface State {
 	loading: boolean;
 };
 
-const Constant = require('json/constant.json');
 const Colors = [ 'yellow', 'red', 'ice', 'lime' ];
 
 const PreviewObject = observer(class PreviewObject extends React.Component<Props, State> {

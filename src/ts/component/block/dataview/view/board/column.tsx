@@ -23,7 +23,6 @@ interface State {
 };
 
 const $ = require('jquery');
-const Constant = require('json/constant.json');
 
 const Column = observer(class Column extends React.Component<Props, State> {
 

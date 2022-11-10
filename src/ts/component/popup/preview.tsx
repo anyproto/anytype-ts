@@ -5,10 +5,11 @@ import { Loader, Block } from 'Component';
 import { I } from 'Lib';
 import { commonStore } from 'Store';
 
+import Constant from 'json/constant.json';
+
 interface Props extends I.Popup, RouteComponentProps<any> {}; 
 
 const $ = require('jquery');
-const Constant = require('json/constant.json');
 const BORDER = 16;
 
 class PopupPreview extends React.Component<Props, {}> {

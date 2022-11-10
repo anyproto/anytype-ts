@@ -6,6 +6,8 @@ import { commonStore, dbStore } from 'Store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
+import Constant from 'json/constant.json';
+
 interface Props extends I.Popup {};
 
 interface State {
@@ -14,7 +16,6 @@ interface State {
 };
 
 const $ = require('jquery');
-const Constant = require('json/constant.json');
 
 const HEIGHT = 32;
 const LIMIT_HEIGHT = 14;

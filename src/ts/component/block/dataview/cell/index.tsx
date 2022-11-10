@@ -10,6 +10,8 @@ import CellCheckbox from './checkbox';
 import CellObject from './object';
 import CellFile from './file';
 
+import Constant from 'json/constant.json';
+
 interface Props extends I.Cell {
 	elementId?: string;
 	menuClassName?: string;
@@ -21,7 +23,6 @@ interface Props extends I.Cell {
 };
 
 const $ = require('jquery');
-const Constant = require('json/constant.json');
 
 class Cell extends React.Component<Props, {}> {
 

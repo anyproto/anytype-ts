@@ -7,6 +7,8 @@ import { observer } from 'mobx-react';
 
 import ControlButtons  from './controlButtons';
 
+import Constant from 'json/constant.json';
+
 interface Props extends I.PageComponent {
 	readonly?: boolean;
 	resize?: () => void;
@@ -17,7 +19,6 @@ interface State {
 	loading: boolean;
 };
 
-const Constant = require('json/constant.json');
 const $ = require('jquery');
 
 const Controls = observer(class Controls extends React.Component<Props, State> {

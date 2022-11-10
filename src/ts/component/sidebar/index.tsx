@@ -9,6 +9,8 @@ import { observer } from 'mobx-react';
 import Item from './item';
 import Footer from './footer';
 
+import Constant from 'json/constant.json';
+
 interface Props {
 	isPopup?: boolean;
 	dataset?: any;
@@ -19,7 +21,6 @@ interface State {
 };
 
 const $ = require('jquery');
-const Constant = require('json/constant.json');
 const sha1 = require('sha1');
 
 const MAX_DEPTH = 15;

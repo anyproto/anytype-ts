@@ -4,13 +4,14 @@ import { I, C, DataUtil } from 'Lib';
 import { menuStore, detailStore } from 'Store';
 import { observer } from 'mobx-react';
 
+import Constant from 'json/constant.json';
+
 interface Props extends I.BlockComponent {};
 
 interface State {
 	loading: boolean;
 };
 
-const Constant = require('json/constant.json');
 
 const BlockIconUser = observer(class BlockIconUser extends React.Component<Props, State> {
 

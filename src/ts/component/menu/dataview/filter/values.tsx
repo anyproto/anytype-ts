@@ -6,10 +6,11 @@ import { menuStore, dbStore, detailStore } from 'Store';
 import { observable } from 'mobx';
 import { observer } from 'mobx-react';
 
+import Constant from 'json/constant.json';
+
 interface Props extends I.Menu {}
 
 const $ = require('jquery');
-const Constant = require('json/constant.json');
 const TIMEOUT = 500;
 
 const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends React.Component<Props, {}> {

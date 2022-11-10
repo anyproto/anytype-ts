@@ -3,6 +3,8 @@ import { I } from 'Lib';
 import { Icon, Block } from 'Component';
 import { observer } from 'mobx-react';
 
+import Constant from 'json/constant.json';
+
 interface Props extends I.BlockComponentTable {
 	rowIdx: number;
 	row: I.Block;
@@ -10,7 +12,6 @@ interface Props extends I.BlockComponentTable {
 	column: I.Block;
 };
 
-const Constant = require('json/constant.json');
 
 const BlockTableCell = observer(class BlockTableCell extends React.Component<Props, {}> {
 

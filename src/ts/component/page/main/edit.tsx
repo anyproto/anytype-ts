@@ -3,11 +3,12 @@ import { Header, Footer, EditorPage } from 'Component';
 import { I, Onboarding } from 'Lib';
 import { detailStore, blockStore } from 'Store';
 
+import Constant from 'json/constant.json';
+
 interface Props extends I.PageComponent {
 	refSidebar?: any;
 };
 
-const Constant = require('json/constant.json');
 
 class PageMainEdit extends React.Component<Props, {}> {
 	

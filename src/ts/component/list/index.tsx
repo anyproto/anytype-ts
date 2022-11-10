@@ -6,6 +6,8 @@ import { blockStore, dbStore, detailStore } from 'Store';
 import { observer } from 'mobx-react';
 import { I, DataUtil } from 'Lib';
 
+import Constant from 'json/constant.json';
+
 interface Props {
 	canDrag: boolean;
 	getList?(): any[];
@@ -19,7 +21,6 @@ interface Props {
 }
 
 const $ = require('jquery');
-const Constant = require('json/constant.json');
 
 const ListIndex = observer(class ListIndex extends React.Component<Props, {}> {
 	

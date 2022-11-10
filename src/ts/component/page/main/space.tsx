@@ -8,6 +8,9 @@ import { blockStore, detailStore, dbStore } from 'Store';
 import Controls from 'Component/page/head/controls';
 import HeadSimple from 'Component/page/head/simple';
 
+import Constant from 'json/constant.json';
+import Errors from 'json/error.json';
+
 interface Props extends I.PageComponent {
 	rootId: string;
 };
@@ -17,8 +20,6 @@ interface State {
 };
 
 const $ = require('jquery');
-const Errors = require('json/error.json');
-const Constant = require('json/constant.json');
 
 const BLOCK_ID_HIGHLIGHTED = 'highlighted';
 

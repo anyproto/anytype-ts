@@ -5,9 +5,10 @@ import { Util, keyboard } from 'Lib';
 import { observer } from 'mobx-react';
 import { detailStore, menuStore, commonStore } from 'Store';
 
+import Constant from 'json/constant.json';
+
 interface Props extends I.Menu {};
 
-const Constant = require('json/constant.json');
 const $ = require('jquery');
 
 const MenuSource = observer(class MenuSource extends React.Component<Props, {}> {

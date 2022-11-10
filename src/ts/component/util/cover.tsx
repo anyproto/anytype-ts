@@ -2,6 +2,8 @@ import * as React from 'react';
 import { I, Util } from 'Lib';
 import { commonStore } from 'Store';
 
+import Constant from 'json/constant.json';
+
 interface Props {
 	id?: string;
 	image?: string;
@@ -17,7 +19,6 @@ interface Props {
 	onMouseDown?(e: any): void;
 };
 
-const Constant = require('json/constant.json');
 
 class Cover extends React.Component<Props, {}> {
 

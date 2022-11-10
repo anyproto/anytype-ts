@@ -2,6 +2,8 @@ import * as React from 'react';
 import { Input } from  'Component';
 import { keyboard } from 'Lib';
 
+import Constant from "json/constant.json";
+
 interface Props {
 	size?: number;
 	value?: string;
@@ -10,7 +12,6 @@ interface Props {
 	onError?: () => void;
 };
 
-const Constant: any = require('json/constant.json');
 const sha1 = require('sha1');
 
 class Pin extends React.Component<Props, {}> {

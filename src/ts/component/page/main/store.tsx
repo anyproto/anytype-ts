@@ -6,6 +6,8 @@ import { dbStore, blockStore, detailStore, } from 'Store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
+import Constant from 'json/constant.json';
+
 interface Props extends I.PageComponent {
 	isPopup?: boolean;
 };
@@ -49,7 +51,6 @@ const Tabs = [
 ];
 
 const BLOCK_ID = 'dataview';
-const Constant = require('json/constant.json');
 
 const PageMainStore = observer(class PageMainStore extends React.Component<Props, State> {
 
