@@ -25,7 +25,7 @@ const Toast = observer(class Toast extends React.Component<any, any> {
         let textTarget = null;
 
 		const Element = (item: any) => (
-			<div className="name">
+			<div className="chunk">
 				<IconObject object={item} size={18} />
 				<ObjectName object={item} />
 			</div>
