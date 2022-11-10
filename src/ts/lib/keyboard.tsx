@@ -516,7 +516,8 @@ class Keyboard {
 		C.BlockListSetFields(rootId, [
 			{ blockId: rootId, fields: { ...block.fields, isLocked: v } },
 		]);
-		
+
+		Util.toastShow({ objectId: rootId, action: I.ToastAction.Lock, value: v });
 		analytics.event((v ? 'LockPage' : 'UnlockPage'));
 	};
 
