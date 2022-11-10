@@ -15,6 +15,7 @@ interface Props {
 };
 
 const $ = require('jquery');
+const FONT = 'Helvetica';
 
 const Graph = observer(class Graph extends React.Component<Props, {}> {
 
@@ -77,6 +78,7 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 		super(props);
 
 		this.onMessage = this.onMessage.bind(this);
+		this.nodeMapper = this.nodeMapper.bind(this);
 	};
 
 	render () {
@@ -98,12 +100,11 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 	};
 
 	init () {
-		const { rootId, data, isPopup } = this.props;
+		const { data, isPopup } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
 		const density = window.devicePixelRatio;
 		const elementId = '#graph' + (isPopup ? '-popup' : '');
 		const transform: any = {};
-		const fontFamily = 'Helvetica';
 		
 		this.width = node.width();
 		this.height = node.height();
@@ -115,43 +116,8 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 		const x = transform.x || -w * 2;
 		const y = transform.y || -h * 2;
 
-		this.edges = (data.edges || []).map((d: any) => {
-			d.type = Number(d.type) || 0;
-			d.typeName = translate('edgeType' + d.type);
-			return d;
-		});
-
-		this.nodes = (data.nodes || []).map((d: any) => {
-			const sourceCnt = this.edges.filter((it: any) => { return it.source == d.id; }).length;
-			const targetCnt = this.edges.filter((it: any) => { return it.target == d.id; }).length;
-
-			d.layout = Number(d.layout) || 0;
-			d.radius = Math.max(3, Math.min(8, sourceCnt + targetCnt));
-			d.isRoot = d.id == rootId;
-			d.isOrphan = !targetCnt && !sourceCnt;
-			d.src = this.imageSrc(d);
-			d.sourceCnt = sourceCnt;
-			d.targetCnt = targetCnt;
-
-			if (d.layout == I.ObjectLayout.Note) {
-				d.name = d.snippet || translate('commonEmpty');
-			} else {
-				d.name = d.name || DataUtil.defaultName('page');
-			};
-
-			d.name = SmileUtil.strip(d.name);
-			d.shortName = Util.shorten(d.name, 16);
-			d.letter = d.name.trim().substr(0, 1).toUpperCase();
-			d.font = `${d.radius}px ${fontFamily}`;
-
-			// Clear icon props to fix image size
-			if (d.layout == I.ObjectLayout.Task) {
-				d.iconImage = '';
-				d.iconEmoji = '';
-			};
-
-			return d;
-		});
+		this.edges = (data.edges || []).map(this.edgeMapper);
+		this.nodes = (data.nodes || []).map(this.nodeMapper);
 
 		this.canvas = d3.select(elementId).append('canvas')
 		.attr('width', (this.width * density) + 'px')
@@ -165,18 +131,15 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 		this.worker.addEventListener('message', (data) => { this.onMessage(data); });
 
 		this.send('init', { 
-			id: 'init',
 			canvas: transfer, 
 			width: this.width,
 			height: this.height,
-			density: density,
+			density,
 			nodes: this.nodes,
 			edges: this.edges,
 			forceProps: this.forceProps,
 			theme: commonStore.getThemeClass(),
 		}, [ transfer ]);
-
-		this.initImages();
 
 		d3.select(this.canvas)
         .call(d3.drag().
@@ -201,12 +164,37 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 		});
 	};
 
-	initImages () {
-		this.nodes.map((d: any) => {
-			if (this.images[d.src]) {
-				return;
-			};
+	nodeMapper (d: any) {
+		const { rootId } = this.props;
+		const sourceCnt = this.edges.filter((it: any) => { return it.source == d.id; }).length;
+		const targetCnt = this.edges.filter((it: any) => { return it.target == d.id; }).length;
 
+		d.layout = Number(d.layout) || 0;
+		d.radius = Math.max(3, Math.min(8, sourceCnt + targetCnt));
+		d.isRoot = d.id == rootId;
+		d.isOrphan = !targetCnt && !sourceCnt;
+		d.src = this.imageSrc(d);
+		d.sourceCnt = sourceCnt;
+		d.targetCnt = targetCnt;
+
+		if (d.layout == I.ObjectLayout.Note) {
+			d.name = d.snippet || translate('commonEmpty');
+		} else {
+			d.name = d.name || DataUtil.defaultName('page');
+		};
+
+		d.name = SmileUtil.strip(d.name);
+		d.shortName = Util.shorten(d.name, 16);
+		d.letter = d.name.trim().substr(0, 1).toUpperCase();
+		d.font = `${d.radius}px ${FONT}`;
+
+		// Clear icon props to fix image size
+		if (d.layout == I.ObjectLayout.Task) {
+			d.iconImage = '';
+			d.iconEmoji = '';
+		};
+
+		if (!this.images[d.src]) {
 			const img = new Image();
 
 			img.onload = () => {
@@ -225,7 +213,15 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 			};
 			img.crossOrigin = '';
 			img.src = d.src;
-		});
+		};
+
+		return d;
+	};
+
+	edgeMapper (d: any) {
+		d.type = Number(d.type) || 0;
+		d.typeName = translate('edgeType' + d.type);
+		return d;
 	};
 
 	updateProps () {

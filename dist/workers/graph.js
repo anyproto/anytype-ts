@@ -66,7 +66,9 @@ init = (data) => {
 
 	resize(data);
 	initColor();
-	requestAnimationFrame(initNames);
+	requestAnimationFrame(() => {
+		nodes = nodes.map(nameMapper);
+	});
 
 	transform = d3.zoomIdentity.translate(-width, -height).scale(3);
 	simulation = d3.forceSimulation(nodes);
@@ -78,25 +80,23 @@ init = (data) => {
 	simulation.tick(100);
 };
 
-initNames = () => {
-	nodes = nodes.map((d) => {
-		if (d.isRoot) {
-			d.fx = width / 2;
-			d.fy = height / 2;
-			d.radius = 10;
-		};
+nameMapper = (d) => {
+	if (d.isRoot) {
+		d.fx = width / 2;
+		d.fy = height / 2;
+		d.radius = 10;
+	};
 
-		octx.save();
-		octx.clearRect(0, 0, 250, 40);
-		octx.font = fontBig;
-		octx.fillStyle = Color.text;
-		octx.textAlign = 'center';
-		octx.fillText(d.shortName, 125, 20);
-		octx.restore();
+	octx.save();
+	octx.clearRect(0, 0, 250, 40);
+	octx.font = fontBig;
+	octx.fillStyle = Color.text;
+	octx.textAlign = 'center';
+	octx.fillText(d.shortName, 125, 20);
+	octx.restore();
 
-		d.textBitmap = offscreen.transferToImageBitmap();
-		return d;
-	});
+	d.textBitmap = offscreen.transferToImageBitmap();
+	return d;
 };
 
 initColor = () => {
@@ -565,6 +565,33 @@ onContextMenu = ({ x, y }) => {
 
 	redraw();
 	this.postMessage({ id: 'onContextMenu', node: (d ? d.id : ''), x, y });
+};
+
+onAddNode = (data) => {
+	const { sourceId, target } = data;
+	const id = nodes.length;
+	const source = nodes.find(it => it.id == sourceId);
+
+	if (!source) {
+		return;
+	};
+
+	const node = nameMapper({
+		...target,
+		index: id, 
+		x: source.x + target.radius * 2, 
+		y: source.y + target.radius * 2, 
+		vx: 1, 
+		vy: 1,
+	});
+
+	nodes.push(node);
+
+	simulation.nodes(nodes);
+	edges.push({ type: EdgeType.Link, source: source.id, target: target.id });
+
+	updateForces();
+	restart(0.1);
 };
 
 onRemoveNode = ({ ids }) => {
