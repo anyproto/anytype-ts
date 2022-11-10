@@ -106,7 +106,7 @@
 
 			.viewSelect { display: none; border: 0px; @include text-header3; }
 			.viewSelect {
-				.icon:hover { background-color: none; }
+				.icon:hover { background-color: none !important; }
 			}
 
 			.side.left.small {

@@ -582,18 +582,23 @@ class Dispatcher {
 					
 					const groupId = data.getGroupid();
 					const changes = data.getSlicechangesList() || [];
+
+					console.log('viewId', viewId, 'groupId', groupId);
+					console.log(JSON.stringify(block, null, 3));
 					
 					let el = block.content.objectOrder.find(it => (it.viewId == viewId) && (it.groupId == groupId));
 					if (!el) {
 						el = { viewId, groupId, objectIds: [] };
 						block.content.objectOrder.push(el);
+
+						console.log('Creating element');
 					};
 
 					changes.forEach((it: any) => {
 						let op = it.getOp();
 						let ids = it.getIdsList() || [];
 						let afterId = it.getAfterid();
-						let idx = el.objectIds.indexOf(afterId);
+						let idx = afterId ? el.objectIds.indexOf(afterId) : 0;
 
 						switch (op) {
 							case I.SliceOperation.Add:
@@ -603,6 +608,8 @@ class Dispatcher {
 								break;
 
 							case I.SliceOperation.Move:
+								console.log('Move', idx);
+
 								if (idx >= 0) {
 									ids.forEach((id: string, i: number) => {
 										const oidx = el.objectIds.indexOf(id);

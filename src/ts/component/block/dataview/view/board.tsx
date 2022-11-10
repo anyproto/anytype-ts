@@ -536,15 +536,15 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 		};
 
 		if (change) {
+			detailStore.update(newSubId, { id: record.id, details: record }, true);
+			detailStore.delete(oldSubId, record.id, Object.keys(record));
+
 			dbStore.recordDelete(oldSubId, '', record.id);
 			dbStore.recordAdd(newSubId, '', record.id, 1);
 
 			records = dbStore.getRecords(newSubId, '');
 			records = arrayMove(records, records.findIndex(it => it.id == record.id), this.newIndex);
 			dbStore.recordsSet(newSubId, '', records);
-
-			detailStore.update(newSubId, { id: record.id, details: record }, true);
-			detailStore.delete(oldSubId, record.id, Object.keys(record));
 
 			orders.push({ viewId: view.id, groupId: current.groupId, objectIds: dbStore.getRecords(oldSubId, '') });
 			orders.push({ viewId: view.id, groupId: this.newGroupId, objectIds: records });
