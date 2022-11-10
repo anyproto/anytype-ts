@@ -309,12 +309,19 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 				objectIds: ids,
 				getObject: (id: string) => this.data.nodes.find(d => d.id == id),
 				onLinkTo: (sourceId: string, targetId: string) => {
-					const sourceNode = this.getNode(sourceId);
-					const targetNode = this.getNode(targetId);
-
-					if (sourceNode && targetNode) {
-						this.data.edges.push({ type: I.EdgeType.Link, source: sourceId, target: targetId });
+					let target = this.getNode(targetId);
+					let cb = () => {
+						this.data.edges.push(this.refGraph.edgeMapper({ type: I.EdgeType.Link, source: sourceId, target: targetId }));
 						this.refGraph.send('onSetEdges', { edges: this.data.edges });
+					};
+
+					if (!target) {
+						DataUtil.getObjectsByIds([ targetId ], (objects: any[]) => {
+							target = this.refGraph.nodeMapper(objects[0]);
+							this.refGraph.send('onAddNode', { sourceId, target });
+						});
+					} else {
+						cb();
 					};
 				},
 				onSelect: (itemId: string) => {
