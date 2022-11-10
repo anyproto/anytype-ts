@@ -139,29 +139,27 @@ const Toast = observer(class Toast extends React.Component<any, any> {
         };
 
         if (ids.length) {
-            DataUtil.getObjectsByIds(ids, (message: any) => {
-                if (!message.error.code) {
-                    this.setRecords(message.records);
-                };
+            DataUtil.getObjectsByIds(ids, (objects: any[]) => {
+				this.setObjects(objects);
             });
         }
     };
 
-    setRecords (records: any) {
+    setObjects (objects: any) {
         const { toast } = commonStore;
         const { objectId, targetId, originId } = toast;
-        const recordsObj = Util.mapToObject(records, 'id');
+        const map = Util.mapToObject(objects, 'id');
 
         const state: any = {
-            target: recordsObj[targetId]
+            target: map[targetId]
         };
 
-        if (objectId && recordsObj[objectId]) {
-            state.object = recordsObj[objectId];
+        if (objectId && map[objectId]) {
+            state.object = map[objectId];
         };
 
-        if (originId && recordsObj[originId]) {
-            state.origin = recordsObj[originId];
+        if (originId && map[originId]) {
+            state.origin = map[originId];
         };
 
         this.setState(state);

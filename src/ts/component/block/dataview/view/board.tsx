@@ -237,11 +237,6 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 				element,
 				vertical: dir > 0 ? I.MenuDirection.Top : I.MenuDirection.Bottom,
 				horizontal: dir > 0 ? I.MenuDirection.Left : I.MenuDirection.Right,
-				data: {
-					command: (source: string, callBack: (message: any) => void) => {
-						C.ObjectCreateBookmark({ ...details, source }, callBack);
-					}
-				},
 			});
 			return;
 		};

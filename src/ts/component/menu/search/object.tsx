@@ -375,9 +375,9 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 
 		let newBlock: any = {};
 
-		const process = (itemId: string, targetItem: any) => {
+		const process = (target: any) => {
 			if (onSelect) {
-				onSelect(targetItem);
+				onSelect(target);
 			};
 
 			if (!type) {
@@ -386,18 +386,18 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 
 			switch (type) {
 				case I.NavigationType.Go:
-					DataUtil.objectOpenEvent(e, item);
+					DataUtil.objectOpenEvent(e, target);
 					break;
 
 				case I.NavigationType.Move:
-					Action.move(rootId, item.id, '', blockIds, I.BlockPosition.Bottom, (message: any) => {
+					Action.move(rootId, target.id, '', blockIds, I.BlockPosition.Bottom, (message: any) => {
 						if (message.error.code) {
 							return;
 						};
 
 						Util.toastShow({
 							action: I.ToastAction.Move,
-							targetId: itemId,
+							targetId: target.id,
 							count: blockIds.length,
 							originId: rootId,
 						});
@@ -410,7 +410,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 							newBlock.type = I.BlockType.Bookmark;
 							newBlock.content = {
 								state: I.BookmarkState.Done,
-								targetObjectId: item.id,
+								targetObjectId: target.id,
 							};
 							break;
 
@@ -418,7 +418,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 							newBlock.type = I.BlockType.Link;
 							newBlock.content = {
 								...DataUtil.defaultLinkSettings(),
-								targetBlockId: item.id,
+								targetBlockId: target.id,
 							};
 							break;
 					};
@@ -431,13 +431,8 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 						focus.set(message.blockId, { from: 0, to: 0 });
 						focus.apply();
 
-						Util.toastShow({
-							objectId: itemId,
-							action: I.ToastAction.Link,
-							targetId: rootId,
-						});
-
-						analytics.event('LinkToObject');
+						Util.toastShow({ objectId: target.id, action: I.ToastAction.Link, targetId: rootId });
+						analytics.event('CreateLink');
 					});
 					break;
 
@@ -449,30 +444,26 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 							targetBlockId: blockId,
 						}
 					};
-					C.BlockCreate(item.id, '', position, newBlock);
+
+					C.BlockCreate(target.id, '', position, newBlock, (message: any) => {
+						if (!message.error.code) {
+							Util.toastShow({ objectId: blockId, action: I.ToastAction.Link, targetId: target.id });
+							analytics.event('LinkToObject');
+						};
+					});
 					break;
 			};
 		};
 
-		const getNewObject = (id: string, callBack: (object: any) => void) => {
-			const filters: I.Filter[] = [
-				{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.Equal, value: id },
-			];
-
-			C.ObjectSearch(filters, [], [], '', 0, 50, (message: any) => {
-				if (!message.error.code && message.records.length) {
-					callBack(message.records[0]);
-				};
-			});
-		};
-
 		if (item.id == 'add') {
 			DataUtil.pageCreate('', '', { name: filter, type: commonStore.type }, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.SelectType ], (message: any) => {
-				getNewObject(message.targetId, object => process(message.targetId, object));
+				DataUtil.getObjectsByIds([ message.targetId ], (objects: any[]) => {
+					process(objects[0]);
+				});
 				close();
 			});
 		} else {
-			process(item.id, item);
+			process(item);
 		};
 	};
 

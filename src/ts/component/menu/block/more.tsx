@@ -123,6 +123,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		let highlight = null;
 		let pageLock = null;
 
+		let linkTo = { id: 'linkTo', icon: 'linkTo', name: 'Link to', arrow: true };
 		let undo = { id: 'undo', name: 'Undo', withCaption: true, caption: `${cmd}+Z` };
 		let redo = { id: 'redo', name: 'Redo', withCaption: true, caption: `${cmd}+Shift+Z` };
 		let print = { id: 'print', name: 'Print', withCaption: true, caption: `${cmd}+P` };
@@ -152,6 +153,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		};
 
 		if (object.isArchived) {
+			linkTo = null;
 			archive = { id: 'pageUnarchive', icon: 'restore', name: 'Restore from bin' };
 		} else {
 			archive = { id: 'pageArchive', icon: 'remove', name: 'Move to bin' };
@@ -207,7 +209,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 
 			sections = [
 				{ children: [ archive, pageRemove ] },
-				{ children: [ fav, pageLink, pageCopy, highlight ] },
+				{ children: [ fav, pageLink, linkTo, pageCopy, highlight ] },
 				{ children: [ search ] },
 				{ children: [ print ] },
 				{ children: [ share, highlight ] },
@@ -216,7 +218,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		if (block.isPage()) {
 			sections = [
 				{ children: [ undo, redo, history, archive, pageRemove ] },
-				{ children: [ fav, pageLink, pageCopy, template, pageLock ] },
+				{ children: [ fav, pageLink, linkTo, pageCopy, template, pageLock ] },
 				{ children: [ search ] },
 				{ children: [ print, pageExport, pageReload ] },
 				{ children: [ highlight ] },
@@ -354,6 +356,20 @@ class MenuBlockMore extends React.Component<Props, {}> {
 							onMenuSelect(item);
 						};
 					}
+				});
+				break;
+
+			case 'linkTo':
+				menuId = 'searchObject';
+
+				menuParam.data = Object.assign(menuParam.data, {
+					type: I.NavigationType.LinkTo,
+					filters: [
+						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: types }
+					],
+					onSelect: close,
+					skipIds: [ rootId ],
+					position: I.BlockPosition.Bottom,
 				});
 				break;
 

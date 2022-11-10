@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Input, Button, Loader } from 'Component';
 import { I, C, keyboard, translate } from 'Lib';
+import { popupStore } from 'Store';
 
 interface Props extends I.Menu {};
 
@@ -54,9 +55,7 @@ class MenuDataviewCreateBookmark extends React.Component<Props, State> {
 	onSubmit (e: any) {
 		e.preventDefault();
 
-		const { param, close } = this.props;
-		const { data } = param;
-		const { command, onCreate } = data;
+		const { close } = this.props;
 		const value = this.ref.getValue();
 
 		if (!value) {
@@ -65,9 +64,21 @@ class MenuDataviewCreateBookmark extends React.Component<Props, State> {
 
 		this.setState({ loading: true });
 
-		command(value, (message: any) => {
+		C.ObjectCreateBookmark({ source: value }, (message: any) => {
 			this.setState({ loading: false });
-			close();
+
+			if (message.error.code) {
+				popupStore.open('confirm', {
+					data: {
+						title: 'Oops - something went wrong!',
+						text: 'Please try again',
+						textConfirm: 'Ok',
+						canCancel: false,
+					},
+				});
+			} else {
+				close();
+			};
 		});
 	};
 
