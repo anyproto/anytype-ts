@@ -536,11 +536,11 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 		};
 
 		if (change) {
-			detailStore.update(newSubId, { id: record.id, details: record }, true);
-			detailStore.delete(oldSubId, record.id, Object.keys(record));
-
 			dbStore.recordDelete(oldSubId, '', record.id);
 			dbStore.recordAdd(newSubId, '', record.id, 1);
+
+			detailStore.update(newSubId, { id: record.id, details: record }, true);
+			detailStore.delete(oldSubId, record.id, Object.keys(record));
 
 			records = dbStore.getRecords(newSubId, '');
 			records = arrayMove(records, records.findIndex(it => it.id == record.id), this.newIndex);

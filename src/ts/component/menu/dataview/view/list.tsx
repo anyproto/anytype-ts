@@ -284,9 +284,12 @@ const MenuViewList = observer(class MenuViewList extends React.Component<Props> 
 	onClick (e: any, item: any) {
 		const { close, param } = this.props;
 		const { data } = param;
-		const { getData } = data;
+		const { rootId, blockId } = data;
+		const subId = dbStore.getSubId(rootId, blockId);
 
-		getData(item.id, 0);
+		dbStore.metaSet(subId, '', { viewId: item.id });
+		analytics.event('SwitchView', { type: item.type });
+
 		close();
 	};
 
