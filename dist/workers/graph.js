@@ -53,7 +53,6 @@ addEventListener('message', ({ data }) => {
 
 init = (data) => {
 	canvas = data.canvas;
-	ctx = canvas.getContext('2d');
 	forceProps = data.forceProps;
 	nodes = data.nodes;
 	edges = data.edges;
@@ -62,11 +61,14 @@ init = (data) => {
 	offscreen = new OffscreenCanvas(250, 40);
 	octx = offscreen.getContext('2d');
 
+	ctx = canvas.getContext('2d');
 	ctx.lineCap = 'round';
 
 	resize(data);
 	initColor();
-	initNames();
+	requestAnimationFrame(() => {
+		nodes = nodes.map(nameMapper);
+	});
 
 	transform = d3.zoomIdentity.translate(-width, -height).scale(3);
 	simulation = d3.forceSimulation(nodes);
@@ -75,28 +77,26 @@ init = (data) => {
 
 	simulation.on('tick', () => { redraw(); });
 	simulation.on('end', () => { simulation.alphaTarget(1); });
-	simulation.tick(200);
+	simulation.tick(100);
 };
 
-initNames = () => {
-	nodes = nodes.map((d) => {
-		if (d.isRoot) {
-			d.fx = width / 2;
-			d.fy = height / 2;
-			d.radius = 10;
-		};
+nameMapper = (d) => {
+	if (d.isRoot) {
+		d.fx = width / 2;
+		d.fy = height / 2;
+		d.radius = 10;
+	};
 
-		octx.save();
-		octx.clearRect(0, 0, 250, 40);
-		octx.font = fontBig;
-		octx.fillStyle = Color.text;
-		octx.textAlign = 'center';
-		octx.fillText(d.shortName, 125, 20);
-		octx.restore();
+	octx.save();
+	octx.clearRect(0, 0, 250, 40);
+	octx.font = fontBig;
+	octx.fillStyle = Color.text;
+	octx.textAlign = 'center';
+	octx.fillText(d.shortName, 125, 20);
+	octx.restore();
 
-		d.textBitmap = offscreen.transferToImageBitmap();
-		return d;
-	});
+	d.textBitmap = offscreen.transferToImageBitmap();
+	return d;
 };
 
 initColor = () => {
@@ -231,7 +231,6 @@ updateForces = () => {
 
 draw = () => {
 	ctx.save();
-
 	ctx.clearRect(0, 0, width, height);
 	ctx.translate(transform.x, transform.y);
 	ctx.scale(transform.k, transform.k);
@@ -243,6 +242,9 @@ draw = () => {
 		if (!forceProps.relations && (d.type == EdgeType.Relation)) {
 			return;
 		};
+		if (!checkNodeInViewport(d.source) && !checkNodeInViewport(d.target)) {
+			return;
+		};
 
 		drawLine(d, 1, 1, false, forceProps.markers);
 	});
@@ -251,10 +253,13 @@ draw = () => {
 		if (!forceProps.orphans && d.isOrphan && !d.isRoot) {
 			return;
 		};
+		if (!checkNodeInViewport(d)) {
+			return;
+		};
 
 		drawNode(d);
 	});
-	
+
 	ctx.restore();
 };
 
@@ -350,6 +355,14 @@ drawLine = (d, aWidth, aLength, arrowStart, arrowEnd) => {
 
 		ctx.restore();
 	};
+};
+
+checkNodeInViewport = (d) => {
+	const dr = d.radius * transform.k;
+	const distX = transform.x + d.x * transform.k - dr;
+	const distY = transform.y + d.y * transform.k - dr;
+
+	return (distX >= -dr * 2) && (distX <= width) && (distY >= -dr * 2) && (distY <= height);
 };
 
 drawNode = (d) => {
@@ -465,6 +478,16 @@ roundedRect = (x, y, width, height, radius) => {
 	ctx.closePath();
 };
 
+rect = (x, y, width, height) => {
+	ctx.beginPath();
+	ctx.moveTo(x, y);
+	ctx.lineTo(x + width, y);
+	ctx.lineTo(x + width, y + height);
+	ctx.lineTo(x, y + height);
+	ctx.lineTo(x, y);
+	ctx.closePath();
+};
+
 onZoom = (data) => {
 	const { x, y, k } = data.transform;
 
@@ -477,15 +500,11 @@ onZoom = (data) => {
 
 onDragStart = ({ active }) => {
 	if (!active) {
-		restart(0.5);
+		simulation.alphaTarget(0.3).restart();
 	};
 };
 
 onDragMove = ({ subjectId, active, x, y }) => {
-	if (!active) {
-		restart(0.5);
-	};
-
 	if (!subjectId) {
 		return;
 	};
@@ -548,12 +567,39 @@ onContextMenu = ({ x, y }) => {
 	this.postMessage({ id: 'onContextMenu', node: (d ? d.id : ''), x, y });
 };
 
+onAddNode = (data) => {
+	const { sourceId, target } = data;
+	const id = nodes.length;
+	const source = nodes.find(it => it.id == sourceId);
+
+	if (!source) {
+		return;
+	};
+
+	const node = nameMapper({
+		...target,
+		index: id, 
+		x: source.x + target.radius * 2, 
+		y: source.y + target.radius * 2, 
+		vx: 1, 
+		vy: 1,
+	});
+
+	nodes.push(node);
+
+	simulation.nodes(nodes);
+	edges.push({ type: EdgeType.Link, source: source.id, target: target.id });
+
+	updateForces();
+	restart(0.1);
+};
+
 onRemoveNode = ({ ids }) => {
 	nodes = nodes.filter(d => !ids.includes(d.id));
 	edges = edges.filter(d => !ids.includes(d.source.id) && !ids.includes(d.target.id));
 	
 	updateForces();
-	restart(0.5);
+	restart(0.1);
 };
 
 onSetEdges = (data) => {
@@ -566,7 +612,7 @@ onSetEdges = (data) => {
 	});
 
 	updateForces();
-	restart(0.5);
+	restart(0.1);
 };
 
 onSetSelected = ({ ids }) => {

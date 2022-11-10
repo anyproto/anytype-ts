@@ -446,7 +446,7 @@
 	"defaultNameSet": { "en": "New set" },
 	"defaultNameType": { "en": "New type" },
 	"defaultNameRelation": { "en": "New relation" },
-	"defaultNameBookmark": { "en": "New bookmark" },
+	"defaultNameBookmark": { "en": "Paste link" },
 	"defaultNameView": { "en": "New view" },
 
 	"placeholderBlock": { "en": "Type text or / for commands" },

@@ -14,7 +14,10 @@
 		.buttons { display: flex; gap: 6px; }
 
 		.message {
-			.name { max-width: 140px; @include text-overflow-nw; display: flex; align-items: center; gap: 0px 6px; }
+			.chunk { @include text-overflow-nw; display: flex; align-items: center; gap: 0px 6px; }
+			.chunk {
+				.name { max-width: 140px; @include text-overflow-nw; }
+			}
 		}
 
 		.buttons { margin-left: 28px; }

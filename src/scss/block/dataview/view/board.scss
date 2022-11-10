@@ -121,6 +121,8 @@
             .card.add:hover {
                 .icon { background-image: url('~img/icon/plus/column1.svg'); }
             }
+
+			.card.add.isOver.bottom::before { top: -6px; }
         }
     }
 }

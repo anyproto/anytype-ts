@@ -380,11 +380,6 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 			type: I.MenuType.Horizontal,
 			element: `#button-create`,
 			horizontal: I.MenuDirection.Right,
-			data: {
-				command: (source: string, callBack: (message: any) => void) => {
-					C.ObjectCreateBookmark({ source }, callBack);
-				}
-			},
 		});
 	};
 

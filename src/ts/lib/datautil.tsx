@@ -1319,11 +1319,28 @@ class DataUtil {
 		return name;
 	}
 
-	getObjectsByIds (ids: string[], callBack?: (message: any) => void) {
-		let filters = [{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: ids }];
+	getObjectById (id: string, callBack: (object: any) => void) {
+		this.getObjectsByIds([ id ], (objects) => {
+			if (callBack) {
+				callBack(objects[0]);
+			};
+		});
+	};
 
-		C.ObjectSearch(filters, [], [], '', 0, 0, (message) => {
-			callBack(message);
+	getObjectsByIds (ids: string[], callBack: (objects: any[]) => void) {
+		const filters = [
+			{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: ids }
+		];
+
+		C.ObjectSearch(filters, [], [], '', 0, 0, (message: any) => {
+			if (message.error.code || !message.records.length) {
+				console.log('[DataUtil.getObjectsByIds] No objects found');
+				return;
+			};
+
+			if (callBack) {
+				callBack(message.records);
+			};
 		});
 	};
 

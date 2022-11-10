@@ -1,7 +1,8 @@
 import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import { I, C, Util, analytics, sidebar, DataUtil, keyboard } from 'Lib';
 import { Header, Graph, Icon, Loader } from 'Component';
-import { blockStore, detailStore, menuStore } from 'Store';
+import { blockStore, detailStore, menuStore, dbStore } from 'Store';
 import { observer } from 'mobx-react';
 
 import Panel from './graph/panel';
@@ -11,18 +12,11 @@ interface Props extends I.PageComponent {
 	matchPopup?: any;
 };
 
-interface State {
-	loading: boolean;
-};
-
 const Constant = require('json/constant.json');
 const $ = require('jquery');
 
-const PageMainGraph = observer(class PageMainGraph extends React.Component<Props, State> {
+const PageMainGraph = observer(class PageMainGraph extends React.Component<Props, {}> {
 
-	state = {
-		loading: false,
-	};
 	data: any = {
 		nodes: [],
 		edges: [],
@@ -31,6 +25,8 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 	refHeader: any = null;
 	refGraph: any = null;
 	refPanel: any = null;
+	loading: boolean = false;
+	timeoutLoading: number = 0;
 
 	constructor (props: any) {
 		super(props);
@@ -44,15 +40,12 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 	};
 
 	render () {
-		const { loading } = this.state;
 		const rootId = this.getRootId();
-		const ref = this.refGraph;
 
 		return (
 			<div className="body">
 				<Header component="mainGraph" ref={(ref: any) => { this.refHeader = ref; }} {...this.props} rootId={rootId} />
-
-				{loading ? <Loader id="loader" /> : ''}
+				<Loader id="loader" />
 
 				<div className="wrapper">
 					<div className="side left">
@@ -69,12 +62,12 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 					</div>
 
 					<div id="sideRight" className="side right">
-						{ref ? (
+						{this.refGraph ? (
 							<Panel
 								key="panel"
 								{...this.props} 
 								ref={(ref: any) => { this.refPanel = ref; }}
-								data={ref.forceProps}
+								data={this.refGraph.forceProps}
 								onFilterChange={this.onFilterChange}
 								onSwitch={this.onSwitch}
 								onContextMenu={this.onContextMenu}
@@ -119,10 +112,16 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 
 	componentDidUpdate () {
 		this.resize();
+
+		if (this.loading) {
+			window.clearTimeout(this.timeoutLoading);
+			this.timeoutLoading = window.setTimeout(() => { this.setLoading(false); }, 1000);
+		};
 	};
 
 	componentWillUnmount () {
 		this.unbind();
+		window.clearTimeout(this.timeoutLoading);
 	};
 
 	unbind () {
@@ -164,10 +163,10 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 			{ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.Equal, value: false },
 			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
 			{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
-			/*{ 
+			{ 
 				operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, 
 				value: [ Constant.typeId.space ].concat(DataUtil.getFileTypes()).concat(DataUtil.getSystemTypes())
-			},*/
+			},
 			{ 
 				operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, 
 				value: [
@@ -177,7 +176,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 			},
 		];
 
-		this.setState({ loading: true });
+		this.setLoading(true);
 
 		C.ObjectGraph(filters, 0, [], Constant.defaultRelationKeys.concat([ 'links' ]), (message: any) => {
 			if (message.error.code) {
@@ -185,7 +184,6 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 			};
 
 			const hashes: any = [];
-
 			this.data.edges = message.edges.filter(d => { 
 				const hash = [ d.source, d.target ].join('-');
 				if (hashes.includes(hash)) {
@@ -196,11 +194,25 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 				return (d.source !== d.target); 
 			});
 
+			this.resize();
 			this.data.nodes = message.nodes.map(it => detailStore.check(it));
 			this.refGraph.init();
-
-			window.setTimeout(() => { this.setState({ loading: false }); }, 250);
+			this.forceUpdate();
 		});
+	};
+
+	setLoading (v: boolean) {
+		const node = $(ReactDOM.findDOMNode(this));
+		const loader = node.find('#loader');
+
+		this.loading = v;
+
+		if (v) {
+			loader.show().css({ opacity: 1 });
+		} else {
+			loader.css({ opacity: 0 });
+			window.setTimeout(() => { loader.hide(); }, 500);
+		};
 	};
 
 	resize () {
@@ -213,7 +225,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 		const oh = obj.height();
 		
 		let wh = isPopup ? oh - hh : win.height();
-		let sh = isPopup ? oh : win.height();
+		let sh = wh;
 
 		if (platform == I.Platform.Windows) {
 			wh -= 30;
@@ -248,8 +260,14 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 	onClickObject (object: any) {
 		this.ids = [];
 		this.togglePanel(true);
-		this.refPanel.setState({ view: I.GraphView.Preview, rootId: object.id });
-		this.refGraph.send('onSetSelected', { ids: this.ids });
+
+		if (this.refPanel) {
+			this.refPanel.setState({ view: I.GraphView.Preview, rootId: object.id });
+		};
+		if (this.refGraph) {
+			this.refGraph.send('onSetSelected', { ids: this.ids });
+		};
+		
 		analytics.event('GraphSelectNode');
 	};
 
@@ -277,6 +295,10 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 		this.refGraph.send('onSetSelected', { ids: this.ids });
 	};
 
+	getNode (id: string) {
+		return this.data.nodes.find(d => d.id == id) || null;
+	};
+
 	onContextMenu (id: string, param: any) {
 		const { root } = blockStore;
 		const ids = this.ids.length ? this.ids : [ id ];
@@ -286,6 +308,18 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 			data: {
 				objectIds: ids,
 				getObject: (id: string) => this.data.nodes.find(d => d.id == id),
+				onLinkTo: (sourceId: string, targetId: string) => {
+					let target = this.getNode(targetId);
+					if (target) {
+						this.data.edges.push(this.refGraph.edgeMapper({ type: I.EdgeType.Link, source: sourceId, target: targetId }));
+						this.refGraph.send('onSetEdges', { edges: this.data.edges });
+					} else {
+						DataUtil.getObjectById(targetId, (object: any) => {
+							target = this.refGraph.nodeMapper(object);
+							this.refGraph.send('onAddNode', { sourceId, target });
+						});
+					};
+				},
 				onSelect: (itemId: string) => {
 					switch (itemId) {
 						case 'archive':
