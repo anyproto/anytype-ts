@@ -30,6 +30,7 @@ interface Toast {
 	targetId?: string;
 	originId?: string;
 	count?: number;
+	value?: boolean;
 };
 
 const Constant = require('json/constant.json');
