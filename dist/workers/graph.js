@@ -67,6 +67,7 @@ init = (data) => {
 
 	resize(data);
 	initColor();
+
 	requestAnimationFrame(() => {
 		nodes = nodes.map(nameMapper);
 	});
