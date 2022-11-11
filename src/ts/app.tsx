@@ -154,15 +154,16 @@ import 'scss/media/print.scss';
 
 import 'scss/theme/dark/common.scss';
 
+import Constant from 'json/constant.json';
+import Errors from 'json/error.json';
+import Routes from 'json/route.json';
+
 const $ = require('jquery');
 const raf = require('raf');
 const hs = require('history');
 const memoryHistory = hs.createMemoryHistory;
 const history = memoryHistory();
-const Constant =  require('json/constant.json');
-const Error = require('json/error.json');
 
-const Routes: RouteElement[] = require('json/route.json');
 
 interface RouteElement { path: string; };
 interface Props {};
@@ -613,7 +614,7 @@ class App extends React.Component<Props, State> {
 		popupStore.open('confirm', {
 			data: {
 				title: translate('popupConfirmUpdateErrorTitle'),
-				text: Util.sprintf(translate('popupConfirmUpdateErrorText'), Error[err] || err),
+				text: Util.sprintf(translate('popupConfirmUpdateErrorText'), Errors[err] || err),
 				textConfirm: 'Retry',
 				textCancel: 'Later',
 				onConfirm: () => {

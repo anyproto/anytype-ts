@@ -5,6 +5,8 @@ import { commonStore, menuStore, dbStore } from 'Store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
+import Constant from 'json/constant.json';
+
 interface Props extends I.Menu {};
 
 interface State {
@@ -12,7 +14,6 @@ interface State {
 };
 
 const $ = require('jquery');
-const Constant = require('json/constant.json');
 const MENU_ID = 'dataviewObjectValues';
 
 const HEIGHT = 28;

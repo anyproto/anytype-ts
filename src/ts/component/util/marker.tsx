@@ -3,6 +3,8 @@ import { I } from 'Lib';
 import { commonStore } from 'Store';
 import { observer } from 'mobx-react';
 
+import Constant from 'json/constant.json';
+
 interface Props {
 	id: string;
 	type: any;
@@ -12,7 +14,6 @@ interface Props {
 	onClick?(): void;
 };
 
-const Constant = require('json/constant.json');
 const Icons = {
 	bullets: {
 		default: require('img/icon/bullet/default.svg').default,

@@ -8,6 +8,8 @@ import { observer } from 'mobx-react';
 
 import Head from './head';
 
+import Constant from 'json/constant.json';
+
 interface Props extends I.Popup, RouteComponentProps<any> {
 	prevPage: string;
 	isLogout: boolean;
@@ -20,7 +22,6 @@ interface State {
 	showCode: boolean;
 };
 
-const Constant = require('json/constant.json');
 
 const PopupSettingsPageLogout = observer(class PopupSettingsPageLogout extends React.Component<Props, State> {
 

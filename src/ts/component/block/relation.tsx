@@ -4,9 +4,10 @@ import { I, C, DataUtil, Util, focus, analytics, Relation, keyboard } from 'Lib'
 import { observer } from 'mobx-react';
 import { menuStore, detailStore, dbStore, blockStore } from 'Store';
 
+import Constant from 'json/constant.json';
+
 interface Props extends I.BlockComponent {}
 
-const Constant = require('json/constant.json');
 
 const BlockRelation = observer(class BlockRelation extends React.Component<Props, {}> {
 

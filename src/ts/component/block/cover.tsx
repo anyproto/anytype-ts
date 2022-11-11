@@ -7,6 +7,9 @@ import { observer } from 'mobx-react';
 
 import ControlButtons  from 'Component/page/head/controlButtons';
 
+import Constant from 'json/constant.json';
+import Url from 'json/url.json';
+
 interface Props extends I.BlockComponent {};
 
 interface State {
@@ -15,8 +18,6 @@ interface State {
 };
 
 const $ = require('jquery');
-const Constant = require('json/constant.json');
-const Url = require('json/url.json');
 
 const BlockCover = observer(class BlockCover extends React.Component<Props, State> {
 	

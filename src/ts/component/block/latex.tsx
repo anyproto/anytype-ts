@@ -11,6 +11,8 @@ import * as Prism from 'prismjs';
 import 'katex/dist/katex.min.css';
 import 'prismjs/themes/prism.css';
 
+import Constant from 'json/constant.json';
+
 interface Props extends I.BlockComponent, RouteComponentProps<any> {};
 interface State {
 	isEditing: boolean;
@@ -19,9 +21,8 @@ interface State {
 const raf = require('raf');
 const $ = require('jquery');
 const katex = require('katex');
-const Constant = require('json/constant.json');
 
-require(`prismjs/components/prism-latex.js`);
+require('prismjs/components/prism-latex.js');
 require('katex/dist/contrib/mhchem.min.js');
 
 const BlockLatex = observer(class BlockLatex extends React.Component<Props, State> {

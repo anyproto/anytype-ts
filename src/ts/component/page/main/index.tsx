@@ -6,6 +6,8 @@ import { observer } from 'mobx-react';
 import { I, C, Util, DataUtil, translate, crumbs, Storage, analytics, keyboard, Action } from 'Lib';
 import arrayMove from 'array-move';
 
+import Constant from 'json/constant.json';
+
 interface Props extends I.PageComponent {};
 
 interface State {
@@ -13,8 +15,6 @@ interface State {
 	filter: string;
 	loading: boolean;
 };
-
-const Constant: any = require('json/constant.json');
 
 const PageMainIndex = observer(class PageMainIndex extends React.Component<Props, State> {
 	

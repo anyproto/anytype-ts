@@ -4,6 +4,8 @@ import { Icon, Input, IconObject } from 'Component';
 import { commonStore, menuStore } from 'Store';
 import { observer } from 'mobx-react';
 
+import Constant from 'json/constant.json';
+
 interface Props extends I.Cell {};
 
 interface State { 
@@ -11,7 +13,6 @@ interface State {
 };
 
 const $ = require('jquery');
-const Constant = require('json/constant.json');
 const MENU_ID = 'dataviewCalendar';
 
 const CellText = observer(class CellText extends React.Component<Props, State> {

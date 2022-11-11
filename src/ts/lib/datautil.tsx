@@ -1,8 +1,8 @@
 import { I, C, M, keyboard, crumbs, translate, Util, history as historyPopup, Storage, analytics, Relation, dispatcher, Renderer, Mark } from 'Lib';
 import { commonStore, blockStore, detailStore, dbStore, popupStore, authStore } from 'Store';
 
-const Constant = require('json/constant.json');
-const Errors = require('json/error.json');
+import Constant from 'json/constant.json';
+import Errors from 'json/error.json';
 
 class DataUtil {
 

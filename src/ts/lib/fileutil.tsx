@@ -1,6 +1,7 @@
 import { Util } from 'Lib';
 
-const Constant = require('json/constant.json');
+import Constant from 'json/constant.json';
+
 const loadImage = require('blueimp-load-image');
 
 class FileUtil {

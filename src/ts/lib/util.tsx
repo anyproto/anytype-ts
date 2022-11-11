@@ -2,10 +2,11 @@ import { I, keyboard, Renderer } from 'Lib';
 import { commonStore, popupStore, menuStore } from 'Store';
 import { translate } from '.';
 
+import Constant from 'json/constant.json';
+import Errors from 'json/error.json';
+import Cover from "json/cover.json";
+
 const $ = require('jquery');
-const Constant = require('json/constant.json');
-const Errors = require('json/error.json');
-const Cover = require('json/cover.json');
 
 class Util {
 

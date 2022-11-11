@@ -66,6 +66,8 @@ import MenuDataviewSource from './dataview/source';
 import MenuDataviewContext from './dataview/context';
 import MenuDataviewCreateBookmark from './dataview/create/bookmark';
 
+import Constant from 'json/constant.json';
+
 interface Props extends I.Menu {};
 
 interface State {
@@ -74,7 +76,6 @@ interface State {
 
 const $ = require('jquery');
 const raf = require('raf');
-const Constant = require('json/constant.json');
 const BORDER = 10;
 const ARROW_WIDTH = 17;
 const ARROW_HEIGHT = 8;

@@ -6,6 +6,8 @@ import { detailStore, dbStore } from 'Store';
 
 import HeadSimple from 'Component/page/head/simple';
 
+import Errors from 'json/error.json';
+
 interface Props extends I.PageComponent {
 	rootId?: string;
 };
@@ -14,7 +16,6 @@ interface State {
 	isDeleted: boolean;
 };
 
-const Errors = require('json/error.json');
 const BLOCK_ID_OBJECT = 'dataview';
 
 const PageMainRelation = observer(class PageMainRelation extends React.Component<Props, State> {

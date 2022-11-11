@@ -4,10 +4,11 @@ import { blockStore } from 'Store';
 import { I, keyboard, analytics, DataUtil } from 'Lib';
 import { detailStore, menuStore } from 'Store';
 
+import Constant from 'json/constant.json';
+
 interface Props extends I.Menu {};
 
 const $ = require('jquery');
-const Constant = require('json/constant.json');
 
 class MenuBlockLayout extends React.Component<Props, {}> {
 	

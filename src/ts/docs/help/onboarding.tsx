@@ -1,7 +1,5 @@
 import { I } from 'Lib';
 
-const Constant = require('json/constant.json');
-
 export default {
     mainIndex: [
         {

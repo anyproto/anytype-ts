@@ -18,7 +18,6 @@ interface State {
 	error: string;
 };
 
-const Constant: any = require('json/constant.json');
 
 const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends React.Component<Props, State> {
 

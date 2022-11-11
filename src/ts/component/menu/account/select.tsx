@@ -3,6 +3,7 @@ import { Icon, IconObject, Error } from 'Component';
 import { authStore } from 'Store';
 import { observer } from 'mobx-react';
 import { I, C, Util, DataUtil, Storage, translate } from 'Lib';
+import Errors from 'json/error.json';
 
 interface Props extends I.Menu {};
 
@@ -10,7 +11,6 @@ interface State {
     error: string;
 };
 
-const Errors = require('json/error.json');
 
 const MenuAccountSelect = observer(class MenuAccountSelect extends React.Component<Props, State> {
 

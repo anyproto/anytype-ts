@@ -15,6 +15,8 @@ import ViewBoard from './dataview/view/board';
 import ViewGallery from './dataview/view/gallery';
 import ViewList from './dataview/view/list';
 
+import Constant from 'json/constant.json';
+
 interface Props extends I.BlockComponent, RouteComponentProps<any> {
 	isInline?: boolean;
 	isDragging?: boolean
@@ -25,7 +27,6 @@ interface State {
 };
 
 const $ = require('jquery');
-const Constant = require('json/constant.json');
 const raf = require('raf');
 
 const BlockDataview = observer(class BlockDataview extends React.Component<Props, State> {

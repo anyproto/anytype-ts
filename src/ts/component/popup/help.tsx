@@ -6,13 +6,15 @@ import { I, Util, translate } from 'Lib';
 import * as Docs from 'Docs';
 import Block from 'Component/block/help';
 
+import Url from 'json/url.json';
+
 interface Props extends I.Popup, RouteComponentProps<any> {};
 
 interface State {
 	showFull: boolean;
 };
 
-const Url = require('json/url.json');
+
 const $ = require('jquery');
 const raf = require('raf');
 

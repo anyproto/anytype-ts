@@ -1,9 +1,10 @@
 import { I, C, Util, DataUtil, Storage, focus, history as historyPopup, analytics, Renderer, sidebar } from 'Lib';
 import { commonStore, authStore, blockStore, detailStore, menuStore, popupStore } from 'Store';
 
+import Constant from 'json/constant.json';
+import KeyCode from 'json/key.json';
+
 const $ = require('jquery');
-const KeyCode = require('json/key.json');
-const Constant = require('json/constant.json');
 
 class Keyboard {
 	

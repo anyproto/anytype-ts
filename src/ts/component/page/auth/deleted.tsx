@@ -5,7 +5,7 @@ import { commonStore, authStore, popupStore } from 'Store';
 import { observer } from 'mobx-react';
 import { PieChart } from 'react-minimal-pie-chart';
 
-const Constant = require('json/constant.json');
+import Constant from 'json/constant.json';
 
 interface Props extends I.PageComponent {};
 

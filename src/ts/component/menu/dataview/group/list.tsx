@@ -10,10 +10,11 @@ import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCac
 
 import Cell from 'Component/block/dataview/cell';
 
+import Constant from 'json/constant.json';
+
 interface Props extends I.Menu {};
 
 const $ = require('jquery');
-const Constant = require('json/constant.json');
 const HEIGHT = 28;
 const LIMIT = 20;
 

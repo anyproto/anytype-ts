@@ -9,12 +9,13 @@ import { throttle } from 'lodash';
 import Controls from 'Component/page/head/controls';
 import PageHeadEdit from 'Component/page/head/edit';
 
+import Constant from 'json/constant.json';
+import Errors from 'json/error.json';
+
 interface Props extends I.PageComponent {
 	onOpen?(): void;
 };
 
-const Constant = require('json/constant.json');
-const Errors = require('json/error.json');
 const $ = require('jquery');
 const raf = require('raf');
 

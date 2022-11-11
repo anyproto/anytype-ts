@@ -4,6 +4,8 @@ import { I, DataUtil, translate, analytics, focus } from 'Lib';
 import { blockStore, menuStore, detailStore } from 'Store';
 import { observer } from 'mobx-react';
 
+import Constant from 'json/constant.json';
+
 interface Props {
 	rootId: string;
 	readonly?: boolean;
@@ -18,7 +20,6 @@ interface Props {
 	onUpload: (type: I.CoverType, hash: string) => void;
 };
 
-const Constant = require('json/constant.json');
 
 const ControlButtons = observer(class ControlButtons extends React.Component<Props, {}> {
 	

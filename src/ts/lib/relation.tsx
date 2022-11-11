@@ -1,7 +1,7 @@
 import { I, DataUtil, Util, FileUtil, translate, Dataview } from 'Lib';
 import { dbStore, commonStore, detailStore } from 'Store';
 
-const Constant = require('json/constant.json');
+import Constant from 'json/constant.json';
 
 class Relation {
 
