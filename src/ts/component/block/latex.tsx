@@ -19,7 +19,7 @@ interface State {
 };
 
 const raf = require('raf');
-const $ = require('jquery');
+const $ = require('jquery') as JQueryStatic;
 const katex = require('katex');
 
 require('prismjs/components/prism-latex.js');
@@ -98,10 +98,18 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 			</div>
 		);
 	};
+
+	get node() {
+		return $(ReactDOM.findDOMNode(this));
+	}
+
+	get win() {
+		return $(window);
+	}
 	
 	componentDidMount () {
 		const { block } = this.props;
-		const node = $(ReactDOM.findDOMNode(this));
+		
 
 		this.text = String(block.content.text || '');
 		const length = this.text.length;
@@ -110,7 +118,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 		this.setRange({ start: length, end: length });
 		this.setValue(this.text);
 
-		node.off('resize').on('resize', (e: any) => { this.resize(); });
+		this.node.off('resize').on('resize', (e: any) => { this.resize(); });
 	};
 
 	componentDidUpdate () {
@@ -138,7 +146,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 
 		this.unbind();
 
-		$(window).on('click.latex', (e: any) => {
+		this.win.on('click.latex', (e: any) => {
 			if (!this._isMounted) {
 				return;
 			};
@@ -160,7 +168,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 	};
 
 	unbind () {
-		$(window).off('click.latex');
+		this.win.off('click.latex');
 	};
 
 	focus () {
@@ -168,8 +176,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 			return;
 		};
 
-		const node = $(ReactDOM.findDOMNode(this));
-		const input = node.find('#input');
+		const input = this.node.find('#input');
 
 		if (input.length && this.range) {
 			setRange(input.get(0), this.range);
@@ -222,8 +229,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 		};
 
 		const { filter } = commonStore;
-		const node = $(ReactDOM.findDOMNode(this));
-		const input = node.find('#input');
+		const input = this.node.find('#input');
 		const el: any = input.get(0);
 		const range = getRange(el);
 
@@ -241,8 +247,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 
 		const { filter } = commonStore;
 		const value = this.getValue();
-		const node = $(ReactDOM.findDOMNode(this));
-		const input = node.find('#input');
+		const input = this.node.find('#input');
 		const el: any = input.get(0);
 		const range = getRange(el);
 		const symbolBefore = value[range?.start - 1];
@@ -267,7 +272,6 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 	};
 
 	updateRect () {
-		const win = $(window);
 		const rect = Util.selectionRect();
 
 		if (!rect || !menuStore.isOpen('blockLatex')) {
@@ -275,7 +279,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 		};
 
 		menuStore.update('blockLatex', { 
-			rect: { ...rect, y: rect.y + win.scrollTop() }
+			rect: { ...rect, y: rect.y + this.win.scrollTop() }
 		});
 	};
 
@@ -290,8 +294,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 
 		e.preventDefault();
 
-		const node = $(ReactDOM.findDOMNode(this));
-		const input = node.find('#input');
+		const input = this.node.find('#input');
 		const el: any = input.get(0);
 		const range = getRange(el);
 		const cb = e.clipboardData || e.originalEvent.clipboardData;
@@ -319,8 +322,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 			return;
 		};
 
-		const node = $(ReactDOM.findDOMNode(this));
-		const input = node.find('#input');
+		const input = this.node.find('#input');
 		const el: any = input.get(0);
 		const range = getRange(el);
 
@@ -334,7 +336,6 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 		};
 
 		const { rootId, block } = this.props;
-		const win = $(window);
 
 		raf(() => {
 			let rect = null;
@@ -344,7 +345,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 					if (element == 'input') {
 						rect = Util.selectionRect();
 					};
-					return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
+					return rect ? { ...rect, y: rect.y + this.win.scrollTop() } : null;
 				},
 				element: `#block-${block.id} #${element}`,
 				offsetY: 4,
@@ -379,9 +380,8 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 		if (!this._isMounted) {
 			return '';
 		};
-		
-		const node = $(ReactDOM.findDOMNode(this));
-		const input = node.find('#input');
+
+		const input = this.node.find('#input');
 
 		if (input.length) {
 			input.get(0).innerHTML = Prism.highlight(value, Prism.languages.latex, 'latex');
@@ -395,8 +395,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 			return '';
 		};
 		
-		const node = $(ReactDOM.findDOMNode(this));
-		return String(node.find('#input').get(0).innerText || '');
+		return String(this.node.find('#input').get(0).innerText || '');
 	};
 
 	setContent (value: string) {
@@ -404,8 +403,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 			return '';
 		};
 
-		const node = $(ReactDOM.findDOMNode(this));
-		const val = node.find('#value');
+		const val = this.node.find('#value');
 
 		value = String(value || '');
 		this.text = value;
@@ -434,8 +432,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 	};
 
 	placeholderCheck (value: string) {
-		const node = $(ReactDOM.findDOMNode(this));
-		const empty = node.find('#empty');
+		const empty = this.node.find('#empty');
 
 		value = value.trim();
 		value.length ? empty.hide() : empty.show();
@@ -474,17 +471,15 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 
 		const { dataset } = this.props;
 		const { selection } = dataset || {};
-		const node = $(ReactDOM.findDOMNode(this));
-		const input = node.find('#input');
-		const win = $(window);
+		const input = this.node.find('#input');
 
 		this.setRange(getRange(input.get(0)));
 		
 		selection.preventSelect(true);
 
-		win.off('mouseup.latex').on('mouseup.latex', (e: any) => {	
+		this.win.off('mouseup.latex').on('mouseup.latex', (e: any) => {	
 			selection.preventSelect(false);
-			win.off('mouseup.latex');
+			this.win.off('mouseup.latex');
 		});
 	};
 
@@ -493,8 +488,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 			return;
 		};
 
-		const node = $(ReactDOM.findDOMNode(this));
-		const value = node.find('#value');
+		const value = this.node.find('#value');
 
 		value.css({ height: 'auto' });
 		value.css({ height: value.height() + 20 });
