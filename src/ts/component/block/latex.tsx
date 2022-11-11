@@ -27,7 +27,6 @@ require('katex/dist/contrib/mhchem.min.js');
 
 const BlockLatex = observer(class BlockLatex extends React.Component<Props, State> {
 	_isMounted: boolean = false;
-	ref: any = null;
 	range: any = { start: 0, end: 0 };
 	text: string = '';
 	timeout: number = 0;
@@ -35,7 +34,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 		isEditing: false,
 	};
 
-	constructor (props: any) {
+	constructor (props: Props) {
 		super(props);
 
 		this.onKeyDownBlock = this.onKeyDownBlock.bind(this);
@@ -79,7 +78,6 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 					id="input"
 					contentEditable={!readonly}
 					suppressContentEditableWarning={true}
-					ref={(ref: any) => { this.ref = ref; }}
 					placeholder="Enter text in format LaTeX" 
 					onSelect={this.onSelect}
 					onFocus={this.onFocusInput}
