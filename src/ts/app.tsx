@@ -3,12 +3,14 @@ import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Router, Route, Switch, Redirect } from 'react-router-dom';
 import { Provider } from 'mobx-react';
-import { enableLogging } from 'mobx-logger';
+import $ from 'jquery';
+import raf from "raf";
+import * as hs from "history";
+import * as Sentry from '@sentry/browser';
 import { Page, SelectionProvider, DragProvider, Progress, Tooltip, Toast, Preview, Icon, ListPopup, ListMenu } from './component';
 import { commonStore, authStore, blockStore, detailStore, dbStore, menuStore, popupStore } from './store';
 import { I, C, Util, FileUtil, keyboard, Storage, analytics, dispatcher, translate, Action, Renderer, DataUtil, focus, Mark } from 'Lib';
-import * as Sentry from '@sentry/browser';
-import { configure, spy } from 'mobx';
+import { configure } from 'mobx';
 
 configure({ enforceActions: 'never' });
 
@@ -158,9 +160,6 @@ import Constant from 'json/constant.json';
 import Errors from 'json/error.json';
 import Routes from 'json/route.json';
 
-const $ = require('jquery');
-const raf = require('raf');
-const hs = require('history');
 const memoryHistory = hs.createMemoryHistory;
 const history = memoryHistory();
 

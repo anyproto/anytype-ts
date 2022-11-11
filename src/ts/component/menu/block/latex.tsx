@@ -1,15 +1,13 @@
 import * as React from 'react';
-import { I, keyboard, DataUtil, Util } from 'Lib';
-import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { observer } from 'mobx-react';
+import $ from 'jquery';
+import katex from "katex";
+import { I, keyboard, DataUtil } from 'Lib';
+import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { commonStore, menuStore } from 'Store';
-
 import Sections from 'json/latex.json';
 
 interface Props extends I.Menu {};
-
-const $ = require('jquery');
-const katex = require('katex');
 
 const HEIGHT_SECTION = 28;
 const HEIGHT_ITEM_BIG = 80;

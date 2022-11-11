@@ -1,22 +1,20 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Select, Marker, Loader, IconObject, Icon } from 'Component';
-import { I, C, keyboard, Key, Util, DataUtil, Mark, focus, Storage, translate, analytics, Renderer } from 'Lib';
 import { observer, } from 'mobx-react';
 import { getRange } from 'selection-ranges';
-import { commonStore, blockStore, detailStore, menuStore, dbStore } from 'Store';
 import * as Prism from 'prismjs';
-
+import $ from 'jquery';
+import raf from "raf";
+import { Select, Marker, Loader, IconObject, Icon } from 'Component';
+import { I, C, keyboard, Key, Util, DataUtil, Mark, focus, Storage, translate, analytics, Renderer } from 'Lib';
+import { commonStore, blockStore, detailStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
 interface Props extends I.BlockComponent, RouteComponentProps<any> {
 	index?: any;
 	onToggle?(e: any): void;
 };
-
-const $ = require('jquery');
-const raf = require('raf');
 
 // Prism languages
 const langs = [

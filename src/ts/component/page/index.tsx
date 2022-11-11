@@ -1,9 +1,10 @@
 import * as React from 'react';
-import { RouteComponentProps } from 'react-router';
-import { I, Onboarding, Util, Storage, analytics, keyboard, Renderer, sidebar, Survey } from 'Lib';
+import { observer } from 'mobx-react';
+import $ from 'jquery';
+import raf from 'raf';
+import { I, Onboarding, Util, Storage, analytics, keyboard, sidebar, Survey } from 'Lib';
 import { Sidebar } from 'Component';
 import { authStore, commonStore, menuStore, popupStore, blockStore } from 'Store';
-import { observer } from 'mobx-react';
 
 import PageAuthInvite from './auth/invite';
 import PageAuthNotice from './auth/notice';
@@ -33,9 +34,6 @@ import PageMainNavigation from './main/navigation';
 import PageMainCreate from './main/create';
 
 import Constant from 'json/constant.json';
-
-const $ = require('jquery');
-const raf = require('raf');
 
 const Components: any = {
 	'/':					 PageAuthSelect,

@@ -1,8 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import $ from 'jquery';
 import { keyboard } from 'Lib';
-
-const $ = require('jquery');
 
 interface Props {
 	id?: string;
@@ -139,6 +138,10 @@ class Textarea extends React.Component<Props, State> {
 			this.props.onCopy(e, this.state.value);
 		};
 	};
+
+	getTextAreaElement() {
+		return $(ReactDOM.findDOMNode(this)).get(0) as HTMLTextAreaElement;
+	}
 	
 	focus () {
 		window.setTimeout(() => { 
@@ -146,7 +149,7 @@ class Textarea extends React.Component<Props, State> {
 				return;
 			};
 
-			$(ReactDOM.findDOMNode(this)).get(0).focus({ preventScroll: true });
+			this.getTextAreaElement().focus({ preventScroll: true });
 		});
 	};
 	
@@ -156,8 +159,7 @@ class Textarea extends React.Component<Props, State> {
 				return;
 			};
 
-			const node = $(ReactDOM.findDOMNode(this));
-			node.get(0).select();
+			this.getTextAreaElement().select();
 		});
 	};
 	

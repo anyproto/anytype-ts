@@ -1,15 +1,13 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Icon } from 'Component';
-import { I, C, DataUtil, Util, Onboarding, focus, keyboard, analytics, history as historyPopup, Storage } from 'Lib';
-import { popupStore, detailStore, blockStore, menuStore } from 'Store';
 import { observer } from 'mobx-react';
-
+import $ from 'jquery';
+import { Icon } from 'Component';
+import { I, C, DataUtil, Onboarding, focus, keyboard, analytics, history as historyPopup } from 'Lib';
+import { popupStore, detailStore, blockStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
 interface Props extends I.BlockComponent {}
-
-const $ = require('jquery');
 
 const BlockType = observer(class BlockType extends React.Component<Props, {}> {
 

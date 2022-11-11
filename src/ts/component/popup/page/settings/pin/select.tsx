@@ -1,17 +1,15 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
+import { observer } from 'mobx-react';
+import sha1 from "sha1";
 import { Title, Label, Pin } from 'Component';
 import { I, Storage, translate } from 'Lib';
-import { observer } from 'mobx-react';
-
 import Head from '../head';
 
 interface Props extends I.Popup, RouteComponentProps<any> {
 	prevPage: string;
 	onPage: (id: string) => void;
 };
-
-const sha1 = require('sha1');
 
 const PopupSettingsPagePinSelect = observer(class PopupSettingsPagePinSelect extends React.Component<Props, {}> {
 

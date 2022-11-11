@@ -1,6 +1,6 @@
+import $ from 'jquery';
 import { I, Util, analytics } from 'Lib';
 
-const $ = require('jquery');
 const Tags = [ 
 	'strike', 
 	'kbd', 

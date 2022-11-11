@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { MenuItemVertical, Filter, ObjectName } from 'Component';
-import { I, C, Util, keyboard, DataUtil, analytics, focus } from 'Lib';
-import { commonStore, menuStore, detailStore, dbStore } from 'Store';
 import { observer } from 'mobx-react';
+import $ from 'jquery';
+import { MenuItemVertical, Filter, ObjectName } from 'Component';
+import { I, Util, keyboard, DataUtil, analytics, focus } from 'Lib';
+import { commonStore, menuStore, dbStore } from 'Store';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-
 import Constant from 'json/constant.json';
 
 interface Props extends I.Menu {};
@@ -13,7 +13,6 @@ interface State {
 	loading: boolean;
 };
 
-const $ = require('jquery');
 
 const HEIGHT_SECTION = 28;
 const HEIGHT_ITEM = 28;

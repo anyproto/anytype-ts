@@ -1,11 +1,11 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import { observer } from 'mobx-react';
+import $ from 'jquery';
 import { Icon, Label } from 'Component';
 import { Util, C, Storage } from 'Lib';
 import { commonStore } from 'Store';
-import { observer } from 'mobx-react';
 
-const $ = require('jquery');
 
 const Progress = observer(class Progress extends React.Component<{}, {}> {
 	

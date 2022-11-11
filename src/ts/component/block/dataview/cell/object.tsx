@@ -1,11 +1,12 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { DragBox } from 'Component';
-import { I, Relation, DataUtil, translate, Util, keyboard, analytics } from 'Lib';
-import { menuStore, detailStore, dbStore } from 'Store';
 import { observer } from 'mobx-react';
 import { getRange, setRange } from 'selection-ranges';
 import arrayMove from 'array-move';
+import $ from 'jquery';
+import { DragBox } from 'Component';
+import { I, Relation, DataUtil, translate, Util, keyboard, analytics } from 'Lib';
+import { menuStore, detailStore } from 'Store';
 
 import ItemObject from './item/object';
 
@@ -13,8 +14,6 @@ interface Props extends I.Cell {};
 interface State { 
 	isEditing: boolean; 
 };
-
-const $ = require('jquery');
 
 const MAX_LENGTH = 32;
 

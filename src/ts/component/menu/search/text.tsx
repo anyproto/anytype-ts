@@ -1,14 +1,13 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import $ from 'jquery';
+import findAndReplaceDOMText from 'findandreplacedomtext';
 import { Icon, Input } from 'Component';
 import { I, Util, keyboard, translate, analytics, Storage } from 'Lib';
-
 import Constant from 'json/constant.json';
 
 interface Props extends I.Menu {};
 
-const $ = require('jquery');
-const findAndReplaceDOMText = require('findandreplacedomtext');
 const SKIP = [ 
 	'span', 'div', 'name', 'mention', 'color', 'bgcolor', 'strike', 'kbd', 'italic', 'bold', 
 	'underline', 'lnk', 'emoji', 'obj',

@@ -1,14 +1,11 @@
 import * as React from 'react';
-import { Filter, MenuItemVertical } from 'Component';
-import { I, Util, Relation, keyboard } from 'Lib';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-
-import Constant from 'json/constant.json';
+import $ from 'jquery';
+import { Filter, MenuItemVertical } from 'Component';
+import { I, Util, Relation, keyboard } from 'Lib';
 
 interface Props extends I.Menu {}
-
-const $ = require('jquery');
 
 const HEIGHT_ITEM = 28;
 const HEIGHT_SECTION = 28;

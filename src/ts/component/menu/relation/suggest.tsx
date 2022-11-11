@@ -1,15 +1,14 @@
 import * as React from 'react';
-import { Filter, Icon, MenuItemVertical } from 'Component';
-import { I, Util, analytics, keyboard } from 'Lib';
-import { commonStore, menuStore, detailStore, dbStore } from 'Store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-
+import $ from 'jquery';
+import { Filter, Icon, MenuItemVertical } from 'Component';
+import { I, Util, analytics, keyboard } from 'Lib';
+import { commonStore, menuStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
 interface Props extends I.Menu {};
 
-const $ = require('jquery');
 
 const HEIGHT = 28;
 const LIMIT = 20;

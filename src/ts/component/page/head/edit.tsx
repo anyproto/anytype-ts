@@ -1,15 +1,15 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import { observer } from 'mobx-react';
+import $ from 'jquery';
 import { I, M, C, DataUtil, analytics } from 'Lib';
 import { Block, Drag, Button } from 'Component';
 import { blockStore, detailStore } from 'Store';
-import { observer } from 'mobx-react';
 
 interface Props extends I.BlockComponent {
 	setLayoutWidth?(v: number): void;
 };
 
-const $ = require('jquery');
 
 const PageHeadEdit = observer(class PageHeadEdit extends React.Component<Props, {}> {
 	

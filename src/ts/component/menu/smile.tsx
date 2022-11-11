@@ -1,10 +1,10 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Filter, Icon, IconEmoji, EmptySearch } from 'Component';
-import { I, C, Util, SmileUtil, keyboard, Storage, translate, analytics } from 'Lib';
-import { menuStore } from 'Store';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-
+import $ from 'jquery';
+import { Filter, Icon, IconEmoji, EmptySearch } from 'Component';
+import { I, C, Util, SmileUtil, keyboard, translate, analytics } from 'Lib';
+import { menuStore } from 'Store';
 import Constant from 'json/constant.json';
 import EmojiData from 'json/emoji.json';
 
@@ -14,7 +14,6 @@ interface State {
 	page: number;
 };
 
-const $ = require('jquery');
 
 const LIMIT_RECENT = 18;
 const LIMIT_ROW = 9;

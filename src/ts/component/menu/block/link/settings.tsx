@@ -1,14 +1,13 @@
 import * as React from 'react';
+import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
-import { I, C, Util, DataUtil, Storage, keyboard } from 'Lib';
+import { I, C, Util, DataUtil, keyboard } from 'Lib';
 import { blockStore, detailStore, menuStore } from 'Store';
 import { observer } from 'mobx-react';
-
 import Constant from 'json/constant.json';
 
 interface Props extends I.Menu {};
 
-const $ = require('jquery');
 
 const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React.Component<Props, {}> {
 	

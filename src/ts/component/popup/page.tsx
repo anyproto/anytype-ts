@@ -1,14 +1,14 @@
 import * as React from 'react';
-import { I, history as historyPopup, Util } from 'Lib';
-import { RouteComponentProps } from 'react-router';
-import { Page } from 'Component';
 import { observer } from 'mobx-react';
+import { RouteComponentProps } from 'react-router';
+import $ from 'jquery';
+import raf from 'raf';
+import { I, history as historyPopup, Util } from 'Lib';
+import { Page } from 'Component';
 import { menuStore } from 'Store';
 
 interface Props extends I.Popup, RouteComponentProps<any> {};
 
-const $ = require('jquery');
-const raf = require('raf');
 
 const PopupPage = observer(class PopupPage extends React.Component<Props, {}> {
 

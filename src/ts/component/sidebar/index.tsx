@@ -1,14 +1,14 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import { observer } from 'mobx-react';
+import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
+import $ from 'jquery';
+import sha1 from "sha1";
 import { I, C, DataUtil, Util, keyboard, Storage, Relation, analytics, sidebar } from 'Lib';
 import { Loader } from 'Component';
 import { blockStore, dbStore, detailStore, menuStore } from 'Store';
-import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { observer } from 'mobx-react';
-
 import Item from './item';
 import Footer from './footer';
-
 import Constant from 'json/constant.json';
 
 interface Props {
@@ -19,9 +19,6 @@ interface Props {
 interface State {
 	loading: boolean;
 };
-
-const $ = require('jquery');
-const sha1 = require('sha1');
 
 const MAX_DEPTH = 15;
 const LIMIT = 20;

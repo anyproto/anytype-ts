@@ -1,19 +1,16 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import { observer } from 'mobx-react';
+import $ from 'jquery';
+import raf from "raf";
+import { throttle } from 'lodash';
 import { Icon } from 'Component';
 import { I, C, keyboard, focus, Util, Mark, Action } from 'Lib';
-import { observer } from 'mobx-react';
 import { menuStore, blockStore } from 'Store';
-import { throttle } from 'lodash';
-
 import Row from './table/row';
-
 import Constant from 'json/constant.json';
 
 interface Props extends I.BlockComponent {};
-
-const $ = require('jquery');
-const raf = require('raf');
 
 const PADDING = 46;
 const SNAP = 10;

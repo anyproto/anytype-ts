@@ -1,7 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, Relation } from 'Lib';
 import { observer } from 'mobx-react';
+import $ from 'jquery';
+import { I, Relation } from 'Lib';
 import { Cell } from 'Component';
 import { dbStore } from 'Store';
 
@@ -9,8 +10,6 @@ interface Props extends I.ViewComponent {
 	index: number;
 	style?: any;
 };
-
-const $ = require('jquery');
 
 const Row = observer(class Row extends React.Component<Props, {}> {
 

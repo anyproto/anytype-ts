@@ -1,15 +1,14 @@
 import * as React from 'react';
+import { observer } from 'mobx-react';
+import $ from 'jquery';
 import { Icon, IconObject } from 'Component';
 import { I, C, DataUtil, Relation } from 'Lib';
 import { Util, keyboard } from 'Lib';
-import { observer } from 'mobx-react';
-import { detailStore, menuStore, commonStore } from 'Store';
-
+import { detailStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
 interface Props extends I.Menu {};
 
-const $ = require('jquery');
 
 const MenuSource = observer(class MenuSource extends React.Component<Props, {}> {
 	

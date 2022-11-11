@@ -1,8 +1,4 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
-import { keyboard } from 'Lib';
-
-const $ = require('jquery');
 
 interface Props {
 	id?: string;

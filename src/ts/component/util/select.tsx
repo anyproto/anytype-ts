@@ -1,4 +1,5 @@
 import * as React from 'react';
+import $ from 'jquery';
 import { I, Relation } from 'Lib';
 import { Icon, MenuItemVertical } from 'Component';
 import { menuStore } from 'Store';
@@ -25,7 +26,6 @@ interface State {
 	options: I.Option[];
 };
 
-const $ = require('jquery');
 
 class Select extends React.Component<Props, State> {
 	

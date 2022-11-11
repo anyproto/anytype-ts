@@ -1,23 +1,21 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Icon, LoadMore } from 'Component';
-import { I, C, Util, translate, keyboard, Relation } from 'Lib';
-import { dbStore, menuStore, blockStore } from 'Store';
 import { AutoSizer, WindowScroller, List, InfiniteLoader } from 'react-virtualized';
 import { observer } from 'mobx-react';
 import arrayMove from 'array-move';
-
+import $ from 'jquery';
+import { Icon, LoadMore } from 'Component';
+import { I, C, Util, translate, keyboard, Relation } from 'Lib';
+import { dbStore, menuStore, blockStore } from 'Store';
 import Empty from '../empty';
 import HeadRow from './grid/head/row';
 import BodyRow from './grid/body/row';
-
 import Constant from 'json/constant.json';
 
 interface Props extends I.ViewComponent {
 	getWrapperWidth?(): number;
 };
 
-const $ = require('jquery');
 const PADDING = 46;
 
 const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {

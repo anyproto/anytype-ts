@@ -1,10 +1,11 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import { RouteComponentProps } from 'react-router';
+import $ from 'jquery';
+import raf from 'raf';
 import { I, Util, analytics, Storage } from 'Lib';
 import { Dimmer } from 'Component';
 import { menuStore, popupStore } from 'Store';
-import { RouteComponentProps } from 'react-router';
-
 import PopupSettings from './settings';
 import PopupSearch from './search';
 import PopupHelp from './help';
@@ -15,13 +16,9 @@ import PopupShortcut from './shortcut';
 import PopupPage from './page';
 import PopupTemplate from './template';
 import PopupExport from './export';
-
 import Constant from 'json/constant.json';
 
 interface Props extends I.Popup, RouteComponentProps<any> {};
-
-const $ = require('jquery');
-const raf = require('raf');
 
 class Popup extends React.Component<Props, {}> {
 

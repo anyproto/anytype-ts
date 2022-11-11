@@ -1,17 +1,15 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
+import { observer } from 'mobx-react';
+import $ from 'jquery';
 import { Icon, Loader } from 'Component';
 import { I, DataUtil, translate, keyboard } from 'Lib';
 import { detailStore, blockStore } from 'Store';
-import { observer } from 'mobx-react';
 import { focus } from 'Lib';
-
 import LinkCard from './link/card';
 
 interface Props extends I.BlockComponent, RouteComponentProps<any> {};
-
-const $ = require('jquery');
 
 const BlockLink = observer(class BlockLink extends React.Component<Props, {}> {
 	
@@ -185,7 +183,7 @@ const BlockLink = observer(class BlockLink extends React.Component<Props, {}> {
 		const node = $(ReactDOM.findDOMNode(this));
 		const card = node.find('.linkCard');
 		const icon = node.find('.iconObject');
-		const rect = node.get(0).getBoundingClientRect() as DOMRect;
+		const rect = (node.get(0) as Element).getBoundingClientRect();
 		const width = rect.width;
 		const mw = getWrapperWidth();
 

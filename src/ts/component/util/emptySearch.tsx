@@ -1,12 +1,11 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import $ from 'jquery';
+import raf from 'raf';
 
 interface Props {
 	text: string;
 };
-
-const $ = require('jquery');
-const raf = require('raf');
 
 class EmptySearch extends React.Component<Props, {}> {
 

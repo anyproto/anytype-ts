@@ -1,13 +1,11 @@
 import * as React from 'react';
-import { RouteComponentProps } from 'react-router';
+import { observer } from 'mobx-react';
+import $ from 'jquery';
 import { Icon, IconObject } from 'Component';
 import { I, Util, DataUtil, keyboard } from 'Lib';
-import { blockStore, detailStore, popupStore } from 'Store';
-import { observer } from 'mobx-react';
+import { detailStore, popupStore } from 'Store';
 
 interface Props extends I.HeaderComponent {};
-
-const $ = require('jquery');
 
 const HeaderMainGraph = observer(class HeaderMainGraph extends React.Component<Props, {}> {
 

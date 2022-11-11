@@ -1,12 +1,11 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import { observer } from 'mobx-react';
+import $ from 'jquery';
 import { Loader } from 'Component';
 import { I, C, focus, DataUtil, Util } from 'Lib';
 import { menuStore, blockStore, detailStore } from 'Store';
-import { observer } from 'mobx-react';
-
 import ControlButtons  from './controlButtons';
-
 import Constant from 'json/constant.json';
 
 interface Props extends I.PageComponent {
@@ -19,7 +18,6 @@ interface State {
 	loading: boolean;
 };
 
-const $ = require('jquery');
 
 const Controls = observer(class Controls extends React.Component<Props, State> {
 	

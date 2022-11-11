@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import $ from 'jquery';
 
 interface Props {
 	id?: string;
@@ -10,7 +11,6 @@ interface Props {
 	onRemove?: (e: any) => void;
 };
 
-const $ = require('jquery');
 
 class Tag extends React.Component<Props, {}> {
 

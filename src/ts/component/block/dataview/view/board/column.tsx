@@ -1,10 +1,10 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Icon, Loader, LoadMore } from 'Component';
-import { I, translate, keyboard, Relation, DataUtil } from 'Lib';
 import { observer } from 'mobx-react';
-import { dbStore, detailStore, menuStore, commonStore } from 'Store';
-
+import $ from 'jquery';
+import { Icon, Loader, LoadMore } from 'Component';
+import { I, translate, Relation, DataUtil } from 'Lib';
+import { dbStore, detailStore, menuStore } from 'Store';
 import Card from './card';
 import Cell from 'Component/block/dataview/cell';
 
@@ -21,8 +21,6 @@ interface Props extends I.ViewComponent {
 interface State {
 	loading: boolean;
 };
-
-const $ = require('jquery');
 
 const Column = observer(class Column extends React.Component<Props, State> {
 

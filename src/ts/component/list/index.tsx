@@ -1,11 +1,11 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import { observer } from 'mobx-react';
+import $ from 'jquery';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import { Icon, IconObject, ObjectName } from 'Component';
-import { blockStore, dbStore, detailStore } from 'Store';
-import { observer } from 'mobx-react';
+import { blockStore, dbStore } from 'Store';
 import { I, DataUtil } from 'Lib';
-
 import Constant from 'json/constant.json';
 
 interface Props {
@@ -19,8 +19,6 @@ interface Props {
 	onSortEnd?(result: any): void;
 	helperContainer?(): any;
 }
-
-const $ = require('jquery');
 
 const ListIndex = observer(class ListIndex extends React.Component<Props, {}> {
 	

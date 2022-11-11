@@ -1,10 +1,11 @@
 import * as React from 'react';
+import { observer } from 'mobx-react';
+import $ from 'jquery';
 import { getRange } from 'selection-ranges';
 import { I, M, focus, keyboard, scrollOnMove, Util } from 'Lib';
-import { observer } from 'mobx-react';
 import { blockStore, menuStore, popupStore } from 'Store';
+import { SelectType } from 'Interface';
 
-const $ = require('jquery');
 const THRESHOLD = 10;
 
 const SelectionProvider = observer(class SelectionProvider extends React.Component<{}, {}> {
@@ -77,7 +78,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		const isPopup = keyboard.isPopup();
 
 		$(window).off('keydown.selection keyup.selection');
-		Util.getScrollContainer(isPopup).off('scroll.selection');
+		(Util.getScrollContainer(isPopup) as JQuery<HTMLElement>).off('scroll.selection');
 	};
 
 	preventSelect (v: boolean) {
@@ -157,7 +158,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 
 		if (keyboard.isShift()) {
 			let target = $(e.target).closest('.selectable');
-			let type = target.attr('data-type');
+			let type = target.attr('data-type') as SelectType;
 			let id = target.attr('data-id');
 			let ids = this.get(type);
 

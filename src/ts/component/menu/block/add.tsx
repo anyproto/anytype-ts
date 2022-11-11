@@ -1,15 +1,14 @@
 import * as React from 'react';
-import { MenuItemVertical, Icon, Cell } from 'Component';
-import { I, M, Mark, keyboard, C, focus, Action, Util, DataUtil, Storage, translate, analytics, Relation } from 'Lib';
-import { blockStore, commonStore, dbStore, menuStore, detailStore, popupStore } from 'Store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-
+import $ from 'jquery';
+import { MenuItemVertical, Icon, Cell } from 'Component';
+import { I, Mark, keyboard, C, focus, Action, Util, DataUtil, Storage, translate, analytics, Relation } from 'Lib';
+import { blockStore, commonStore, dbStore, menuStore, detailStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 
 interface Props extends I.Menu {};
 
-const $ = require('jquery');
 const HEIGHT_ITEM = 28;
 const HEIGHT_SECTION = 42;
 const HEIGHT_DESCRIPTION = 56;

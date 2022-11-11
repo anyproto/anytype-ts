@@ -1,11 +1,10 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
+import $ from 'jquery';
 import { Icon, Header, Footer, Loader, ListObjectPreview, ListObject, Select, Deleted } from 'Component';
 import { I, C, DataUtil, Util, focus, crumbs, Action, analytics } from 'Lib';
 import { commonStore, detailStore, dbStore, menuStore, popupStore, blockStore } from 'Store';
-
 import HeadSimple from 'Component/page/head/simple';
-
 import Constant from 'json/constant.json';
 import Errors from 'json/error.json';
 
@@ -19,7 +18,6 @@ interface State {
 	isDeleted: boolean;
 };
 
-const $ = require('jquery');
 
 const BLOCK_ID_OBJECT = 'dataview';
 const BLOCK_ID_TEMPLATE = 'templates';

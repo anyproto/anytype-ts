@@ -1,9 +1,8 @@
-import { I, keyboard, Util } from 'Lib';
+import $ from 'jquery';
 import { setRange } from 'selection-ranges';
-
+import { I, keyboard, Util } from 'Lib';
 import Constant from 'json/constant.json';
 
-const $ = require('jquery');
 
 interface State {
 	focused: string;
@@ -84,7 +83,7 @@ class Focus {
 		el.focus({ preventScroll: true });
 
 		if (node.hasClass('input')) {
-			window.setTimeout(() => { el.setSelectionRange(range.from, range.to); });
+			window.setTimeout(() => { (el as HTMLInputElement).setSelectionRange(range.from, range.to); });
 		} else
 		if (node.attr('contenteditable')) {
 			keyboard.setFocus(true);

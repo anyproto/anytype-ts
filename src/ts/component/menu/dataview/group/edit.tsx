@@ -1,12 +1,11 @@
 import * as React from 'react';
+import { observer } from 'mobx-react';
+import $ from 'jquery';
 import { I, C, DataUtil, keyboard } from 'Lib';
 import { MenuItemVertical } from 'Component';
-import { dbStore, blockStore } from 'Store';
-import { observer } from 'mobx-react';
+import { dbStore } from 'Store';
 
 interface Props extends I.Menu {};
-
-const $ = require('jquery');
 
 const MenuGroupEdit = observer(class MenuGroupEdit extends React.Component<Props, {}> {
 	

@@ -1,10 +1,10 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader, Block, Button, IconObject, Deleted, ObjectName } from 'Component';
 import { I, M, C, Util, crumbs, Action, Renderer } from 'Lib';
 import { commonStore, blockStore, detailStore } from 'Store';
-
 import Errors from 'json/error.json';
 
 interface Props extends I.PageComponent {
@@ -15,7 +15,6 @@ interface State {
 	isDeleted: boolean;
 };
 
-const $ = require('jquery');
 
 const MAX_HEIGHT = 396;
 

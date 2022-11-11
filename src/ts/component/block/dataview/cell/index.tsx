@@ -1,15 +1,14 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import { observable } from 'mobx';
+import $ from 'jquery';
 import { I, C, analytics, DataUtil, Util, keyboard, Relation, Renderer } from 'Lib';
 import { commonStore, menuStore, dbStore } from 'Store';
-import { observable } from 'mobx';
-
 import CellText from './text';
 import CellSelect from './select';
 import CellCheckbox from './checkbox';
 import CellObject from './object';
 import CellFile from './file';
-
 import Constant from 'json/constant.json';
 
 interface Props extends I.Cell {
@@ -22,7 +21,6 @@ interface Props extends I.Cell {
 	maxWidth?: number;
 };
 
-const $ = require('jquery');
 
 class Cell extends React.Component<Props, {}> {
 

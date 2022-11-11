@@ -1,13 +1,13 @@
 import * as React from 'react';
+import { observer } from 'mobx-react';
+import { observable } from 'mobx';
 import { I, C, DataUtil, Relation, translate, keyboard } from 'Lib';
 import { Filter, MenuItemVertical } from 'Component';
 import { menuStore } from 'Store';
-import { observer } from 'mobx-react';
-import { observable } from 'mobx';
 
 interface Props extends I.Menu {};
 
-const $ = require('jquery');
+import $ from 'jquery';
 
 const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<Props, {}> {
 	
