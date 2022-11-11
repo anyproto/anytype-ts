@@ -33,13 +33,13 @@
 				.cellContent.isName {
 					.iconObject { position: absolute; left: 0px; top: 0px; margin: 0px; }
 					.name {
-						line-height: 18px; font-size: 14px; font-weight: 500; letter-spacing: -0.12px;
+						line-height: 20x; font-size: 14px; font-weight: 500; letter-spacing: -0.12px;
 						vertical-align: top; white-space: normal; overflow: hidden; @include clamp3;
 					}
 				}
 
 				.cellContent.isName.withIcon {
-					.name { text-indent: 24px; }
+					.name { text-indent: 22px; }
 				}
 
 				.cellContent.c-select { line-height: 18px; }
