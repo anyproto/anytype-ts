@@ -432,7 +432,6 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 						focus.set(message.blockId, { from: 0, to: 0 });
 						focus.apply();
 
-						Util.toastShow({ objectId: target.id, action: I.ToastAction.Link, targetId: rootId });
 						analytics.event('CreateLink');
 					});
 					break;
