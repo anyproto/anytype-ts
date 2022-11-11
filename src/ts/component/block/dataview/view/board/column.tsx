@@ -1,9 +1,9 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon, Loader, LoadMore } from 'Component';
-import { I, translate, keyboard, Relation, DataUtil } from 'Lib';
+import { I, translate, Util, Relation, DataUtil } from 'Lib';
+import { dbStore, detailStore, menuStore } from 'Store';
 import { observer } from 'mobx-react';
-import { dbStore, detailStore, menuStore, commonStore } from 'Store';
 
 import Card from './card';
 import Cell from 'Component/block/dataview/cell';
@@ -220,7 +220,7 @@ const Column = observer(class Column extends React.Component<Props, State> {
 
 	getItems () {
 		const { id, getSubId, applyObjectOrder } = this.props;
-		return applyObjectOrder(id, dbStore.getRecords(getSubId(), '').map(id => { return { id }; }));
+		return applyObjectOrder(id, Util.objectCopy(dbStore.getRecords(getSubId(), ''))).map(id => { return { id }; });
 	};
 
 	onLoadMore (e: any) {

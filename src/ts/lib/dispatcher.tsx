@@ -1,6 +1,6 @@
 import { authStore, commonStore, blockStore, detailStore, dbStore } from 'Store';
 import { Util, I, M, Decode, translate, analytics, Response, Mapper, crumbs, Renderer, Action } from 'Lib';
-import { set } from 'mobx';
+import { set, observable } from 'mobx';
 import * as Sentry from '@sentry/browser';
 import arrayMove from 'array-move';
 
@@ -582,10 +582,12 @@ class Dispatcher {
 					
 					const groupId = data.getGroupid();
 					const changes = data.getSlicechangesList() || [];
+					const cb = it => (it.viewId == viewId) && (it.groupId == groupId);
+					const index = block.content.objectOrder.findIndex(cb);
 
-					let el = block.content.objectOrder.find(it => (it.viewId == viewId) && (it.groupId == groupId));
+					let el = block.content.objectOrder.find(cb);
 					if (!el) {
-						el = { viewId, groupId, objectIds: [] };
+						el = { viewId, groupId, objectIds: observable.array([]) };
 						block.content.objectOrder.push(el);
 					};
 
@@ -623,7 +625,8 @@ class Dispatcher {
 						};
 					});
 
-					blockStore.update(rootId, block);
+					block.content.objectOrder[index] = el;
+					blockStore.updateContent(rootId, id, { objectOrder: block.content.objectOrder });
 					break;
 
 				case 'objectDetailsSet':

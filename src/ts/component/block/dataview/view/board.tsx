@@ -298,8 +298,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 
 			const items = column.getItems() || [];
 
-			items.push({ id: `${group.id}-add` });
-
+			items.push({ id: `${group.id}-add`, isAdd: true });
 			items.forEach((item: any, i: number) => {
 				const el = node.find(`#card-${item.id}`);
 				if (!el.length) {

@@ -154,6 +154,20 @@
 		"id", "type", "layout", "name", "relationOptionColor", "relationKey"
 	],
 
+	"graphRelationKeys": [ 
+		"id", 
+		"name", 
+		"snippet",
+		"iconEmoji", 
+		"iconImage", 
+		"relationFormat", 
+		"type", 
+		"layout", 
+		"done", 
+		"fileExt", 
+		"fileMimeType"
+	],
+
 	"relationKey": {
 		"name": "name",
 		"description": "description",
