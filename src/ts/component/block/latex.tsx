@@ -141,7 +141,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 	rebind () {
 		const { block } = this.props;
 		this.unbind();
-		this.win.on('click.latex', (e: any) => {
+		this.win.on(`click.c${block.id}`, (e: any) => {
 			if (!this._isMounted) {
 				return;
 			};
@@ -159,7 +159,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 	};
 
 	unbind () {
-		this.win.off('click.latex');
+		this.win.off(`click.c${this.props.block.id}`);
 	};
 
 	focus () {
