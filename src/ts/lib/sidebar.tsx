@@ -44,10 +44,6 @@ class Sidebar {
 		const height = this.maxHeight();
 		const y = (wh - offset) / 2 - height / 2 + offset;
 
-		Storage.setToggle(Constant.subId.sidebar, 'favorite', true);
-		Storage.setToggle(Constant.subId.sidebar, 'recent', true);
-		Storage.setToggle(Constant.subId.sidebar, 'set', true);
-
 		this.set({
 			height,
 			width: Constant.size.sidebar.width.default,
