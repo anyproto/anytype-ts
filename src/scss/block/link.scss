@@ -32,8 +32,8 @@
 			}
 
 			.cover { position: relative; min-height: 90px; height: 100%; background-size: cover !important; background-color: unset; }
-			.cardName { display: flex; flex-direction: row; gap: 0px 6px; align-items: center; }
-			.cardName .name  { transition: color 0.2s ease-in-out, border-color 0.2s ease-in-out; }
+			.cardName { display: flex; flex-direction: row; gap: 0px 6px; align-items: center; position: static; }
+			.cardName .name  { transition: color 0.2s ease-in-out, border-color 0.2s ease-in-out; font-weight: 500; }
 			.cardDescription { @include text-small; line-height: 16px; @include clamp2; margin: 2px 0px 0px 0px; }
 			.cardDescription:empty { margin: 0px; }
 
@@ -53,29 +53,28 @@
         }
 
 		.linkCard.text {
-			.side.left {
-				.txt { line-height: 24px; vertical-align: top; display: flex; gap: 0px 6px; align-items: center; }
-			}
+			.side.left { line-height: 24px; vertical-align: top; display: flex; gap: 0px 6px; align-items: center; }
 			.side.right { display: none !important; }
 
-			.cardName { display: flex; flex-wrap: nowrap; vertical-align: top; flex-shrink: 0; flex-grow: 0; max-width: 50%; }
+			.flex { display: flex; align-items: center; gap: 0px 6px; }
+			.flex {
+				.div { width: 2px; height: 18px; line-height: 18px; display: inline-block; vertical-align: top; flex-shrink: 0; flex-grow: 0; }
+				.div {
+					.inner { width: 2px; height: 2px; border-radius: 100%; display: inline-block; vertical-align: middle; background: $colorMediumGrey; }
+				}
+			}
+
+			.cardName { flex-wrap: nowrap; vertical-align: top; flex-grow: 1; max-width: 50%; }
 			.cardName {
-				.name { @include clamp1; font-weight: 500; }
+				.name { @include text-overflow-nw; }
 			}
 
+			.cardDescription { @include text-small; flex-shrink: 1; flex-grow: 0; max-width: 50%; }
 			.cardDescription {
-				@include text-small; @include text-overflow-nw; flex-shrink: 1; flex-grow: 0; margin-top: 0; white-space: normal;
-				.description { @include clamp1; }
-			}
-			.cardFeatured {
-				@include text-small; @include text-overflow-nw; color: $colorDarkGrey; flex-shrink: 0; max-width: 33%; flex-grow: 0; margin-top: 0;
-				display: flex; gap: 0px 6px; align-items: center;
+				.description { @include text-overflow-nw; width: 100%; }
 			}
 
-			.div { width: 2px; height: 18px; line-height: 18px; display: inline-block; vertical-align: top; flex-shrink: 0; flex-grow: 0; }
-			.div {
-				.inner { width: 2px; height: 2px; border-radius: 100%; display: inline-block; vertical-align: middle; background: $colorMediumGrey; }
-			}
+			.cardFeatured { @include text-small; @include text-overflow-nw; color: $colorDarkGrey; flex-shrink: 0; flex-grow: 0; max-width: 33%; }
 		}
 
 		.linkCard.card { margin: 8px 0px; }

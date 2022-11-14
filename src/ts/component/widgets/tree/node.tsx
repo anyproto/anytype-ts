@@ -1,51 +1,54 @@
+// Third Party
 import * as React from 'react';
-import { Icon, IconObject, ObjectName, DropTarget } from 'Component';
-import { I, Storage, keyboard } from 'Lib';
-import { dbStore, detailStore, blockStore } from 'Store';
 import { observer } from 'mobx-react';
+
+// Data Layer
+import { dbStore, detailStore, blockStore } from 'Store';
+
+// Libraries
+import { I, Storage, keyboard } from 'Lib';
+
+// UI Components
+import { Icon, IconObject, ObjectName, DropTarget } from 'Component';
+
+// Models
+import { TreeNode } from './model';
 
 import Constant from 'json/constant.json';
 
-interface Props {
-	id: string;
+type Props = {
 	index: number;
-	parentId: string;
-	elementId: string;
-	depth: number;
-	length: number;
-	isSection?: boolean;
+	treeId: string;
 	style: any;
-	details: any;
-	withPadding?: boolean;
-	onClick?(e: any, item: any): void;
-	onToggle?(e: any, item: any): void;
-	onContext?(e: any, item: any): void;
-};
+	onClick?(e: React.MouseEvent, props: any): void;
+	onToggle?(e: React.MouseEvent, props: any): void;
+	onContext?(e: React.MouseEvent, props: any): void;
+} & TreeNode;
+
+type State = {};
 
 
-const Item = observer(class Item extends React.Component<Props, {}> {
+const Node = observer(class Node extends React.Component<Props, State> {
 
-	timeout: number = 0;
-
-	constructor (props: any) {
+	constructor (props: Props) {
 		super(props);
-
 		this.onToggle = this.onToggle.bind(this);
 	};
 
 	render () {
-		const { id, parentId, elementId, depth, style, length, details, isSection, withPadding, onClick, onContext } = this.props;
+		const { id, treeId, depth, style, numChildren, withPadding, onClick, onContext } = this.props;
+		const parentId = this.props.isSection === true ? "" : this.props.parentId;
 		const subId = dbStore.getSubId(Constant.subId.sidebar, parentId);
-		const check = Storage.checkToggle(Constant.subId.sidebar, elementId);
+		const isOpen = Storage.checkToggle(Constant.subId.sidebar, treeId);
 		const object = detailStore.get(subId, id, Constant.sidebarRelationKeys, true);
-		const cn = [ 'item', 'c' + id, (check ? 'active' : '') ];
+		const cn = [ 'item', 'c' + id, (isOpen ? 'active' : '') ];
 		const rootId = keyboard.getRootId();
-		const canDrop = !isSection && blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Block ]) && ![ Constant.typeId.bookmark ].includes(object.type);
+		const canDrop = !this.props.isSection && blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Block ]) && ![ Constant.typeId.bookmark ].includes(object.type);
 
 		let content = null;
 		let paddingLeft = 10 + depth * 12;
 
-		if (isSection) {
+		if (this.props.isSection) {
 			paddingLeft += 6;
 			cn.push('isSection');
 			
@@ -55,13 +58,13 @@ const Item = observer(class Item extends React.Component<Props, {}> {
 
 			content = (
 				<div className="clickable" onClick={this.onToggle}>
-					<div className="name">{details.name}</div>
+					<div className="name">{this.props.name}</div>
 					<Icon className="arrow" />
 				</div>
 			);
 		} else {
 			let arrow = null;
-			if (length) {
+			if (numChildren > 0) {
 				arrow = <Icon className="arrow" onClick={this.onToggle} />;
 			} else 
 			if (object.type == Constant.typeId.set) {
@@ -71,7 +74,7 @@ const Item = observer(class Item extends React.Component<Props, {}> {
 			};
 
 			content = (
-				<div className="clickable" onClick={(e: any) => { onClick(e, { ...this.props, details: object }); }}>
+				<div className="clickable" onClick={(e: React.MouseEvent) => { onClick(e, { ...this.props, details: object }); }}>
 					{arrow}
 					<IconObject object={object} size={20} />
 					<ObjectName object={object} />
@@ -88,7 +91,7 @@ const Item = observer(class Item extends React.Component<Props, {}> {
 		if (canDrop) {
 			inner = (
 				<DropTarget 
-					cacheKey={elementId}
+					cacheKey={treeId}
 					id={object.id}
 					rootId={rootId}
 					targetContextId={object.id}
@@ -102,21 +105,22 @@ const Item = observer(class Item extends React.Component<Props, {}> {
 
 		return (
 			<div 
-				id={elementId}
+				id={treeId}
 				className={cn.join(' ')} 
 				style={style} 
-				onContextMenu={(e: any) => { onContext(e, { ...this.props, details: object }); }}
+				onContextMenu={(e: React.MouseEvent) => { onContext(e, { ...this.props, details: object }); }}
 			>
 				{inner}
 			</div>
 		);
 	};
 
-	onToggle (e: any) {
+	onToggle (e: React.MouseEvent) {
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { id, parentId, onToggle } = this.props;
+		const { id, onToggle } = this.props;
+		const parentId = this.props.isSection === true ? "" : this.props.parentId;
 		const subId = dbStore.getSubId(Constant.subId.sidebar, parentId);
 		const object = detailStore.get(subId, id, Constant.sidebarRelationKeys, true);
 
@@ -125,4 +129,4 @@ const Item = observer(class Item extends React.Component<Props, {}> {
 	
 });
 
-export default Item;
+export default Node;
