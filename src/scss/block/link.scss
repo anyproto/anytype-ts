@@ -32,7 +32,7 @@
 			}
 
 			.cover { position: relative; min-height: 90px; height: 100%; background-size: cover !important; background-color: unset; }
-			.cardName { display: flex; flex-direction: row; gap: 0px 6px; align-items: center; }
+			.cardName { display: flex; flex-direction: row; gap: 0px 6px; align-items: center; position: static; }
 			.cardName .name  { transition: color 0.2s ease-in-out, border-color 0.2s ease-in-out; font-weight: 500; }
 			.cardDescription { @include text-small; line-height: 16px; @include clamp2; margin: 2px 0px 0px 0px; }
 			.cardDescription:empty { margin: 0px; }
