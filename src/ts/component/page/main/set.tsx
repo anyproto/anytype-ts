@@ -8,6 +8,8 @@ import { blockStore } from 'Store';
 import Controls from 'Component/page/head/controls';
 import HeadSimple from 'Component/page/head/simple';
 
+import Errors from 'json/error.json';
+
 interface Props extends I.PageComponent {
 	rootId: string;
 };
@@ -18,7 +20,6 @@ interface State {
 
 const $ = require('jquery');
 const raf = require('raf');
-const Errors = require('json/error.json');
 
 const PageMainSet = observer(class PageMainSet extends React.Component<Props, State> {
 

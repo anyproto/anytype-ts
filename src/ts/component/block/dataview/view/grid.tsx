@@ -11,12 +11,13 @@ import Empty from '../empty';
 import HeadRow from './grid/head/row';
 import BodyRow from './grid/body/row';
 
+import Constant from 'json/constant.json';
+
 interface Props extends I.ViewComponent {
 	getWrapperWidth?(): number;
 };
 
 const $ = require('jquery');
-const Constant = require('json/constant.json');
 const PADDING = 46;
 
 const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {

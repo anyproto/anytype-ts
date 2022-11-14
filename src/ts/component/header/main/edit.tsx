@@ -5,10 +5,11 @@ import { I, Util, DataUtil, keyboard } from 'Lib';
 import { blockStore, detailStore, menuStore, popupStore } from 'Store';
 import { observer } from 'mobx-react';
 
+import Constant from 'json/constant.json';
+
 interface Props extends I.HeaderComponent {};
 
 const $ = require('jquery');
-const Constant = require('json/constant.json');
 
 const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<Props, {}> {
 

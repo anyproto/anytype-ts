@@ -4,6 +4,8 @@ import { Cell } from 'Component';
 import { dbStore } from 'Store';
 import { observer } from 'mobx-react';
 
+import Constant from 'json/constant.json';
+
 interface Props {
 	rootId?: string;
 	block?: I.Block;
@@ -18,8 +20,6 @@ interface Props {
 	onCellClick?(e: any, key: string, index: number): void;
 	onCellChange?(id: string, key: string, value: any, callBack?: (message: any) => void): void;
 };
-
-const Constant = require('json/constant.json');
 
 const BodyCell = observer(class BodyCell extends React.Component<Props, {}> {
 

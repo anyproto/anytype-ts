@@ -5,10 +5,11 @@ import { I, C, DataUtil, Util, Onboarding, focus, keyboard, analytics, history a
 import { popupStore, detailStore, blockStore, menuStore } from 'Store';
 import { observer } from 'mobx-react';
 
+import Constant from 'json/constant.json';
+
 interface Props extends I.BlockComponent {}
 
 const $ = require('jquery');
-const Constant = require('json/constant.json');
 
 const BlockType = observer(class BlockType extends React.Component<Props, {}> {
 

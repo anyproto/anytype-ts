@@ -1,6 +1,8 @@
 import { I, Storage, Util, keyboard } from 'Lib';
 import { commonStore, menuStore, popupStore } from 'Store';
 
+import Constant from 'json/constant.json';
+
 interface SidebarData {
 	x: number;
 	y: number;
@@ -12,7 +14,7 @@ interface SidebarData {
 
 const raf = require('raf');
 const $ = require('jquery');
-const Constant = require('json/constant.json');
+
 
 const SNAP_THRESHOLD = 30;
 const SHOW_THRESHOLD = 30;

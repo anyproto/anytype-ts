@@ -7,11 +7,12 @@ import { observer } from 'mobx-react';
 import { Document, Page } from 'react-pdf';
 import { pdfjs } from 'react-pdf';
 
+import Constant from 'json/constant.json';
+
 pdfjs.GlobalWorkerOptions.workerSrc = 'workers/pdf.min.js';
 
 interface Props extends I.BlockComponent {};
 
-const Constant = require('json/constant.json');
 
 interface State {
 	pages: number;

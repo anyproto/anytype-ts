@@ -1,8 +1,8 @@
 import { I, C, M, keyboard, crumbs, translate, Util, history as historyPopup, Storage, analytics, Relation, dispatcher, Renderer, Mark } from 'Lib';
 import { commonStore, blockStore, detailStore, dbStore, popupStore, authStore } from 'Store';
 
-const Constant = require('json/constant.json');
-const Errors = require('json/error.json');
+import Constant from 'json/constant.json';
+import Errors from 'json/error.json';
 
 class DataUtil {
 
@@ -1105,9 +1105,9 @@ class DataUtil {
 	defaultLinkSettings () {
 		return {
 			iconSize: I.LinkIconSize.Small,
-			cardStyle: I.LinkCardStyle.Card,
-			description: I.LinkDescription.Content,
-			relations: [ 'cover' ],
+			cardStyle: I.LinkCardStyle.Text,
+			description: I.LinkDescription.None,
+			relations: [],
 		};
 	};
 
@@ -1319,7 +1319,15 @@ class DataUtil {
 		return name;
 	}
 
-	getObjectsByIds (ids: string[], callBack?: (message: any) => void) {
+	getObjectById (id: string, callBack: (object: any) => void) {
+		this.getObjectsByIds([ id ], (objects) => {
+			if (callBack) {
+				callBack(objects[0]);
+			};
+		});
+	};
+
+	getObjectsByIds (ids: string[], callBack: (objects: any[]) => void) {
 		const filters = [
 			{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: ids }
 		];
@@ -1330,7 +1338,9 @@ class DataUtil {
 				return;
 			};
 
-			callBack(message.records);
+			if (callBack) {
+				callBack(message.records);
+			};
 		});
 	};
 

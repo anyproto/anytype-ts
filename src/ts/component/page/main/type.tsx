@@ -6,6 +6,10 @@ import { commonStore, detailStore, dbStore, menuStore, popupStore, blockStore } 
 
 import HeadSimple from 'Component/page/head/simple';
 
+import Constant from 'json/constant.json';
+import Errors from 'json/error.json';
+
+
 interface Props extends I.PageComponent {
 	rootId: string;
 	isPopup?: boolean;
@@ -16,8 +20,6 @@ interface State {
 };
 
 const $ = require('jquery');
-const Constant = require('json/constant.json');
-const Errors = require('json/error.json');
 
 const BLOCK_ID_OBJECT = 'dataview';
 const BLOCK_ID_TEMPLATE = 'templates';

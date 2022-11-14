@@ -14,6 +14,8 @@ import { Icon, IconObject, ObjectName, DropTarget } from 'Component';
 // Models
 import { TreeNode } from './model';
 
+import Constant from 'json/constant.json';
+
 type Props = {
 	index: number;
 	treeId: string;
@@ -25,7 +27,6 @@ type Props = {
 
 type State = {};
 
-const Constant = require('json/constant.json');
 
 const Node = observer(class Node extends React.Component<Props, State> {
 

@@ -3,10 +3,11 @@ import { Util, I, M, Decode, translate, analytics, Response, Mapper, crumbs, Ren
 import * as Sentry from '@sentry/browser';
 import arrayMove from 'array-move';
 
+import Constant from 'json/constant.json';
+
 const Service = require('lib/pb/protos/service/service_grpc_web_pb');
 const Commands = require('lib/pb/protos/commands_pb');
 const Events = require('lib/pb/protos/events_pb');
-const Constant = require('json/constant.json');
 
 const SORT_IDS = [ 
 	'objectShow', 

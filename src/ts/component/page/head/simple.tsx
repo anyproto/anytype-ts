@@ -6,13 +6,14 @@ import { blockStore, detailStore, dbStore } from 'Store';
 import { observer } from 'mobx-react';
 import { getRange } from 'selection-ranges';
 
+import Constant from 'json/constant.json';
+
 interface Props {
 	rootId: string;
 	type: string;
 	onCreate?: () => void;
 };
 
-const Constant = require('json/constant.json');
 const EDITOR_IDS = [ 'title', 'description' ];
 
 const HeadSimple = observer(class Controls extends React.Component<Props, {}> {

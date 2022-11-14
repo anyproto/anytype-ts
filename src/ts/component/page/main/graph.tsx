@@ -7,12 +7,13 @@ import { observer } from 'mobx-react';
 
 import Panel from './graph/panel';
 
+import Constant from 'json/constant.json';
+
 interface Props extends I.PageComponent {
 	rootId: string;
 	matchPopup?: any;
 };
 
-const Constant = require('json/constant.json');
 const $ = require('jquery');
 
 const PageMainGraph = observer(class PageMainGraph extends React.Component<Props, {}> {
@@ -309,12 +310,15 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 				objectIds: ids,
 				getObject: (id: string) => this.data.nodes.find(d => d.id == id),
 				onLinkTo: (sourceId: string, targetId: string) => {
-					const sourceNode = this.getNode(sourceId);
-					const targetNode = this.getNode(targetId);
-
-					if (sourceNode && targetNode) {
-						this.data.edges.push({ type: I.EdgeType.Link, source: sourceId, target: targetId });
+					let target = this.getNode(targetId);
+					if (target) {
+						this.data.edges.push(this.refGraph.edgeMapper({ type: I.EdgeType.Link, source: sourceId, target: targetId }));
 						this.refGraph.send('onSetEdges', { edges: this.data.edges });
+					} else {
+						DataUtil.getObjectById(targetId, (object: any) => {
+							target = this.refGraph.nodeMapper(object);
+							this.refGraph.send('onAddNode', { sourceId, target });
+						});
 					};
 				},
 				onSelect: (itemId: string) => {

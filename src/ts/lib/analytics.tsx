@@ -2,7 +2,7 @@ import * as amplitude from 'amplitude-js';
 import { I, C, Util, Storage } from 'Lib';
 import { commonStore } from 'Store';
 
-const Constant = require('json/constant.json');
+import Constant from 'json/constant.json';
 
 const KEYS = [ 
 	'method', 'id', 'action', 'style', 'code', 'route', 'format', 'color',

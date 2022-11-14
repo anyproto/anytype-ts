@@ -5,13 +5,14 @@ import { I, DataUtil, Relation, keyboard } from 'Lib';
 import { observer } from 'mobx-react';
 import { commonStore, detailStore, dbStore } from 'Store';
 
+import Constant from 'json/constant.json';
+
 interface Props extends I.ViewComponent {
 	index: number;
 	style?: any;
 };
 
 const $ = require('jquery');
-const Constant = require('json/constant.json');
 
 const Card = observer(class Card extends React.Component<Props, {}> {
 

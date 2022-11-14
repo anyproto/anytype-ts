@@ -4,10 +4,11 @@ import { I, C, Util, DataUtil, Storage, keyboard } from 'Lib';
 import { blockStore, detailStore, menuStore } from 'Store';
 import { observer } from 'mobx-react';
 
+import Constant from 'json/constant.json';
+
 interface Props extends I.Menu {};
 
 const $ = require('jquery');
-const Constant = require('json/constant.json');
 
 const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React.Component<Props, {}> {
 	
@@ -92,6 +93,7 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 
 		const { getId, getSize } = this.props;
 		const content = this.getContent();
+		const menuId = 'select';
 
 		const menuParam: any = {
 			element: `#${getId()} #item-${item.id}`,
@@ -117,7 +119,6 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 
 			case 'cardStyle':
 				options = this.getStyles();
-				menuParam.width = 320;
 				break;
 
 			case 'cover': 
@@ -126,16 +127,16 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 
 			case 'description':
 				options = this.getDescriptions();
-				menuParam.width = 320;
 				break;
 		};
 
 		menuParam.data = Object.assign(menuParam.data, { options });
 
-		menuStore.close('select', () => {
-			window.clearTimeout(this.timeout);
-			this.timeout = window.setTimeout(() => { menuStore.open('select', menuParam); }, Constant.delay.menu);
-		});
+		if (!menuStore.isOpen(menuId, item.id)) {
+			menuStore.closeAll(Constant.menuIds.more, () => {
+				menuStore.open(menuId, menuParam);
+			});
+		};
 	};
 
 	getContent () {

@@ -5,6 +5,8 @@ import { commonStore, detailStore, dbStore } from 'Store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
+import Constant from 'json/constant.json';
+
 interface Props extends I.Menu {};
 
 interface State {
@@ -12,7 +14,6 @@ interface State {
 }
 
 const $ = require('jquery');
-const Constant = require('json/constant.json');
 const HEIGHT_ITEM = 28;
 const HEIGHT_DIV = 16;
 

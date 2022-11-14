@@ -19,7 +19,6 @@ interface Props {
 interface State {
 };
 
-
 const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 	private _isMounted: boolean = false;
     ox: number = 0;

@@ -1,7 +1,7 @@
 import { C, I, Storage, Util, analytics, Renderer, translate } from 'Lib';
 import { popupStore, authStore, dbStore } from 'Store';
 
-const Surveys = require('json/survey.json');
+import Surveys from 'json/survey.json';
 
 class Survey {
 

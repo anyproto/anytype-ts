@@ -1,7 +1,8 @@
 import { Util } from 'Lib';
 import { getEmojiDataFromNative } from 'emoji-mart';
 
-const EmojiData = require('json/emoji.json');
+import EmojiData from 'json/emoji.json';
+
 const MAX_SIZE = 0x4000;
 const SKINS = [ '1F3FA', '1F3FB', '1F3FC', '1F3FD', '1F3FE', '1F3FF' ];
 const DIV = 65039;

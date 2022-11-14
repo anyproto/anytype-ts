@@ -4,6 +4,8 @@ import { I, C, Util, translate, DataUtil, Renderer } from 'Lib';
 import { commonStore, authStore } from 'Store';
 import { observer } from 'mobx-react';
 
+import Errors from 'json/error.json';
+
 interface Props extends I.PageComponent {};
 
 interface State {
@@ -11,7 +13,6 @@ interface State {
 	loading: boolean;
 };
 
-const Errors = require('json/error.json');
 
 const PageAccountSelect = observer(class PageAccountSelect extends React.Component<Props, State> {
 

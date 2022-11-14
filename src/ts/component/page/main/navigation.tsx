@@ -6,6 +6,8 @@ import { blockStore, popupStore, commonStore } from 'Store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
+import Constant from 'json/constant.json';
+
 interface Props extends I.PageComponent {
 	rootId: string;
 	matchPopup?: any;
@@ -21,7 +23,6 @@ interface State {
 
 const $ = require('jquery');
 const raf = require('raf');
-const Constant = require('json/constant.json');
 const HEIGHT = 96;
 
 enum Panel { 

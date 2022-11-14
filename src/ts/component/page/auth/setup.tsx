@@ -5,6 +5,9 @@ import { I, Storage, translate, C, DataUtil, Util, analytics, Renderer } from 'L
 import { commonStore, authStore } from 'Store';
 import { observer } from 'mobx-react';
 
+import Constant from 'json/constant.json';
+import Errors from 'json/error.json';
+
 interface Props extends I.PageComponent {};
 
 interface State {
@@ -13,8 +16,6 @@ interface State {
 };
 
 const $ = require('jquery');
-const Constant = require('json/constant.json');
-const Errors = require('json/error.json');
 
 const PageAuthSetup = observer(class PageAuthSetup extends React.Component<Props, State> {
 

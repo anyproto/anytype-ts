@@ -32,7 +32,8 @@ import PageMainGraph from './main/graph';
 import PageMainNavigation from './main/navigation';
 import PageMainCreate from './main/create';
 
-const Constant = require('json/constant.json');
+import Constant from 'json/constant.json';
+
 const $ = require('jquery');
 const raf = require('raf');
 

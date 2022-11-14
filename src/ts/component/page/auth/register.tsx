@@ -4,13 +4,14 @@ import { FileUtil, Util, translate, I } from 'Lib';
 import { commonStore, authStore, menuStore } from 'Store';
 import { observer } from 'mobx-react';
 
+import Constant from 'json/constant.json';
+
 interface Props extends I.PageComponent {};
 
 interface State {
 	error: string;
 };
 
-const Constant = require('json/constant.json');
 
 const PageAuthRegister = observer(class PageAuthRegister extends React.Component<Props, State> {
 

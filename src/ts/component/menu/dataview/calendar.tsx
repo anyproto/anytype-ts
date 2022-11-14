@@ -4,7 +4,7 @@ import { Select } from 'Component';
 import { observer } from 'mobx-react';
 import { menuStore } from 'Store';
 
-const Constant = require('json/constant.json');
+import Constant from 'json/constant.json';
 
 interface Props extends I.Menu {};
 

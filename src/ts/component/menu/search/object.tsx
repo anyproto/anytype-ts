@@ -5,6 +5,8 @@ import { commonStore, dbStore, blockStore } from 'Store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
+import Constant from 'json/constant.json';
+
 interface Props extends I.Menu {};
 
 interface State {
@@ -13,7 +15,6 @@ interface State {
 };
 
 const $ = require('jquery');
-const Constant = require('json/constant.json');
 const LIMIT_HEIGHT = 10;
 
 const HEIGHT_SECTION = 28;
@@ -431,7 +432,6 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 						focus.set(message.blockId, { from: 0, to: 0 });
 						focus.apply();
 
-						Util.toastShow({ objectId: target.id, action: I.ToastAction.Link, targetId: rootId });
 						analytics.event('CreateLink');
 					});
 					break;
@@ -457,9 +457,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 
 		if (item.id == 'add') {
 			DataUtil.pageCreate('', '', { name: filter, type: commonStore.type }, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.SelectType ], (message: any) => {
-				DataUtil.getObjectsByIds([ message.targetId ], (objects: any[]) => {
-					process(objects[0]);
-				});
+				DataUtil.getObjectById(message.targetId, process);
 				close();
 			});
 		} else {

@@ -14,7 +14,7 @@ const Toast = observer(class Toast extends React.Component<any, any> {
 
     render () {
         const { toast } = commonStore;
-        const { count, action, text } = toast;
+        const { count, action, text, value } = toast;
         const { object, target, origin } = this.state;
 
         let buttons = [];
@@ -25,13 +25,24 @@ const Toast = observer(class Toast extends React.Component<any, any> {
         let textTarget = null;
 
 		const Element = (item: any) => (
-			<div className="name">
+			<div className="chunk">
 				<IconObject object={item} size={18} />
 				<ObjectName object={item} />
 			</div>
 		);
 
         switch (action) {
+            case I.ToastAction.Lock:
+                if (!object) {
+                    break;
+                };
+
+                const textLocked = value ? 'locked' : 'unlocked';
+
+                textObject = <Element {...object} />;
+                textAction = `is ${textLocked}`;
+                break;
+
             case I.ToastAction.Copy:
                 textAction = `${text} copied to clipboard`;
                 break;
@@ -109,6 +120,19 @@ const Toast = observer(class Toast extends React.Component<any, any> {
 		let ids = [];
 
         switch (action) {
+            case I.ToastAction.Lock:
+                if (objectRendered || noObject) {
+                    return;
+                };
+
+                if (!objectId) {
+                    this.setState({ object: null });
+                    return;
+                };
+
+                ids.push(objectId);
+                break;
+
             case I.ToastAction.Move:
                 if (targetRendered || noTarget) {
                     return;

@@ -6,13 +6,14 @@ import { blockStore } from 'Store';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 
+import Constant from 'json/constant.json';
+
 interface Props {
 	dataset?: any;
 };
 
 const $ = require('jquery');
 const raf = require('raf');
-const Constant = require('json/constant.json');
 
 const OFFSET = 100;
 

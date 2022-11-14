@@ -4,9 +4,10 @@ import { I, DataUtil, sidebar } from 'Lib';
 import { blockStore, detailStore, popupStore } from 'Store';
 import { observer } from 'mobx-react';
 
+import Constant from 'json/constant.json';
+
 interface Props {};
 
-const Constant = require('json/constant.json');
 
 const Footer = observer(class Item extends React.Component<Props, {}> {
 

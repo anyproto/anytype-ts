@@ -4,12 +4,13 @@ import { Cell } from 'Component';
 import { blockStore, detailStore, dbStore, menuStore } from 'Store';
 import { observer } from 'mobx-react';
 
+import Constant from 'json/constant.json';
+
 interface Props extends I.BlockComponent {
 	iconSize?: number;
 };
 
 const $ = require('jquery');
-const Constant = require('json/constant.json');
 
 const PREFIX = 'blockFeatured';
 const BLOCK_ID_DATAVIEW = 'dataview';
