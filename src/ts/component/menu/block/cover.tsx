@@ -5,6 +5,8 @@ import { Cover, Filter, Icon, Label, EmptySearch, Loader } from 'Component';
 import { detailStore, commonStore } from 'Store';
 import { observer } from 'mobx-react';
 
+import Constant from 'json/constant.json';
+
 interface Props extends I.Menu {};
 
 enum Tab {
@@ -20,7 +22,6 @@ interface State {
 	loading: boolean;
 };
 
-const Constant = require('json/constant.json');
 const $ = require('jquery');
 
 const LIMIT = 36;

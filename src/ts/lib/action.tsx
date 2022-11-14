@@ -1,7 +1,7 @@
 import { I, C, focus, analytics, Renderer } from 'Lib';
 import { commonStore, authStore, blockStore, detailStore, dbStore } from 'Store';
 
-const Constant = require('json/constant.json');
+import Constant from 'json/constant.json';
 
 class Action {
 

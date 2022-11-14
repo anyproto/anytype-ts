@@ -6,6 +6,8 @@ import { blockStore, dbStore } from 'Store';
 
 import RelationItem from 'Component/menu/item/relationView';
 
+import Constant from 'json/constant.json';
+
 interface State {
 	rootId: string;
 	type: I.DropType;
@@ -14,7 +16,6 @@ interface State {
 };
 
 const $ = require('jquery');
-const Constant = require('json/constant.json');
 
 class DragLayer extends React.Component<{}, State> {
 	

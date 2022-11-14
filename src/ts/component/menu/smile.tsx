@@ -5,6 +5,9 @@ import { I, C, Util, SmileUtil, keyboard, Storage, translate, analytics } from '
 import { menuStore } from 'Store';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
+import Constant from 'json/constant.json';
+import EmojiData from 'json/emoji.json';
+
 interface Props extends I.Menu {};
 interface State {
 	filter: string;
@@ -12,8 +15,6 @@ interface State {
 };
 
 const $ = require('jquery');
-const EmojiData = require('json/emoji.json');
-const Constant = require('json/constant.json');
 
 const LIMIT_RECENT = 18;
 const LIMIT_ROW = 9;

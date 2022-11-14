@@ -3,14 +3,19 @@
         "outDir": "./dist/",
         "sourceMap": true,
         "noImplicitAny": false,
-        "module": "commonjs",
+        "module": "ES2020",
         "target": "es6",
         "jsx": "react",
+        "resolveJsonModule": true,
+        "moduleResolution": "Node",
         "experimentalDecorators": false,
         "allowSyntheticDefaultImports": true,
         "allowJs": true,
         "baseUrl": "./src",
         "paths": {
+            "json": [
+                "json"
+            ],
             "Component/*": [
                 "ts/component/*"
             ],
@@ -24,10 +29,10 @@
                 "ts/interface"
             ],
             "Docs/*": [
-                "ts/interface/*"
+                "ts/docs/*"
             ],
             "Docs": [
-                "ts/interface"
+                "ts/docs"
             ],
             "Lib/*": [
               "ts/lib/*"

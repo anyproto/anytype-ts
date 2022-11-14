@@ -3,10 +3,10 @@ import { MenuItemVertical } from 'Component';
 import { I, Util, Onboarding, keyboard, analytics, Renderer } from 'Lib';
 import { popupStore, blockStore, detailStore } from 'Store';
 
-interface Props extends I.Menu {};
+import Constant from 'json/constant.json';
+import Url from 'json/url.json';
 
-const Url = require('json/url.json');
-const Constant = require('json/constant.json');
+interface Props extends I.Menu {};
 
 class MenuHelp extends React.Component<Props, {}> {
 

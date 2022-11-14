@@ -5,10 +5,11 @@ import { I, translate, focus, Util, keyboard, Action } from 'Lib';
 import { commonStore } from 'Store';
 import { observer } from 'mobx-react';
 
+import Constant from 'json/constant.json';
+
 interface Props extends I.BlockComponent {}
 
 const $ = require('jquery');
-const Constant = require('json/constant.json');
 
 const BlockAudio = observer(class BlockAudio extends React.Component<Props, {}> {
 

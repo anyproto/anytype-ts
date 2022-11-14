@@ -4,9 +4,10 @@ import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from
 import { observer } from 'mobx-react';
 import { commonStore, menuStore } from 'Store';
 
+import Sections from 'json/latex.json';
+
 interface Props extends I.Menu {};
 
-const Sections = require('json/latex.json');
 const $ = require('jquery');
 const katex = require('katex');
 

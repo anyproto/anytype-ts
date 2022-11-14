@@ -7,13 +7,14 @@ import { observer } from 'mobx-react';
 
 import Head from './head';
 
+import Constant from 'json/constant.json';
+
 interface Props extends I.Popup, RouteComponentProps<any> {
 	prevPage: string;
 	onPage: (id: string) => void;
 	setLoading: (v: boolean) => void;
 };
 
-const Constant = require('json/constant.json');
 
 const PopupSettingsPageWallpaper = observer(class PopupSettingsPageWallpaper extends React.Component<Props, {}> {
 

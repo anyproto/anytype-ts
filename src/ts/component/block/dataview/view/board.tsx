@@ -9,6 +9,8 @@ import { set } from 'mobx';
 
 import Column from './board/column';
 
+import Constant from 'json/constant.json';
+
 interface Props extends I.ViewComponent {
 	dataset?: any;
 };
@@ -19,7 +21,6 @@ interface State {
 
 const $ = require('jquery');
 const raf = require('raf');
-const Constant = require('json/constant.json');
 
 const ViewBoard = observer(class ViewBoard extends React.Component<Props, State> {
 

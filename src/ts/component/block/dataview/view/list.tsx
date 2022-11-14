@@ -9,10 +9,11 @@ import { AutoSizer, WindowScroller, List, InfiniteLoader } from 'react-virtualiz
 import Empty from '../empty';
 import Row from './list/row';
 
+import Constant from 'json/constant.json';
+
 interface Props extends I.ViewComponent {};
 
 const $ = require('jquery');
-const Constant = require('json/constant.json');
 const HEIGHT = 32;
 
 const ViewList = observer(class ViewList extends React.Component<Props, {}> {

@@ -4,6 +4,8 @@ import { commonStore, menuStore } from 'Store';
 import { SmileUtil } from 'Lib';
 import { observer } from 'mobx-react';
 
+import Constant from 'json/constant.json';
+
 interface Props {
 	id?: string;
 	icon?: string;
@@ -21,7 +23,6 @@ interface Props {
 	onUpload?(hash: string): void;
 }
 
-const Constant = require('json/constant.json');
 const IconSrc = {
 };
 

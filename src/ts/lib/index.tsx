@@ -26,8 +26,8 @@ import Action from './action';
 import Onboarding from './onboarding';
 import Survey from './survey';
 
-const Constant = require('json/constant.json');
-const Text = require('json/text.json');
+import Constant from 'json/constant.json';
+import Text from 'json/text.json';
 
 const translate = (key: string): string => {
 	const lang = Storage.get('lang') || Constant.default.lang;

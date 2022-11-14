@@ -19,7 +19,7 @@ interface Props extends I.BlockComponent, RouteComponentProps<any> {
     onClick?(e: any): void;
 };
 
-const Constant = require('json/constant.json');
+import Constant from 'json/constant.json';
 
 const LinkCard = observer(class LinkCard extends React.Component<Props, {}> {
 

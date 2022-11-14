@@ -7,12 +7,13 @@ import { observer } from 'mobx-react';
 
 import Head from './head';
 
+import Constant from 'json/constant.json';
+
 interface Props extends I.Popup, RouteComponentProps<any> {
 	prevPage: string;
 	onPage: (id: string) => void;
 };
 
-const Constant = require('json/constant.json');
 
 const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal extends React.Component<Props, {}> {
 

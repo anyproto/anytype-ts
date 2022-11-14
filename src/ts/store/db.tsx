@@ -2,7 +2,7 @@ import { observable, action, computed, set, intercept, makeObservable } from 'mo
 import { I, M, DataUtil, Util, Dataview } from 'ts/lib';
 import { detailStore, commonStore } from 'ts/store';
 
-const Constant = require('json/constant.json');
+import Constant from 'json/constant.json';
 
 class DbStore {
 

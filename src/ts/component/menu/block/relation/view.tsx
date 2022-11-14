@@ -7,10 +7,11 @@ import { observer } from 'mobx-react';
 
 import Item from 'Component/menu/item/relationView';
 
+import Constant from 'json/constant.json';
+
 interface Props extends I.Menu {};
 
 const $ = require('jquery');
-const Constant = require('json/constant.json');
 const PREFIX = 'menuBlockRelationView';
 
 const MenuBlockRelationView = observer(class MenuBlockRelationView extends React.Component<Props, {}> {

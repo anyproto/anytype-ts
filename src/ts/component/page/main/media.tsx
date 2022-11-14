@@ -5,6 +5,8 @@ import { Header, Footer, Loader, Block, Button, IconObject, Deleted, ObjectName 
 import { I, M, C, Util, crumbs, Action, Renderer } from 'Lib';
 import { commonStore, blockStore, detailStore } from 'Store';
 
+import Errors from 'json/error.json';
+
 interface Props extends I.PageComponent {
 	rootId: string;
 };
@@ -14,7 +16,6 @@ interface State {
 };
 
 const $ = require('jquery');
-const Errors = require('json/error.json');
 
 const MAX_HEIGHT = 396;
 

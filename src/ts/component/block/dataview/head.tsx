@@ -6,10 +6,11 @@ import { menuStore, blockStore } from 'Store';
 import { observable } from 'mobx';
 import { observer } from 'mobx-react';
 
+import Constant from 'json/constant.json';
+
 interface Props extends I.ViewComponent {
 };
 
-const Constant = require('json/constant.json');
 
 const Head = observer(class Head extends React.Component<Props, {}> {
 

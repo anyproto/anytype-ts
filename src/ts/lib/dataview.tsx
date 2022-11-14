@@ -1,7 +1,7 @@
 import { dbStore, commonStore, blockStore } from 'Store';
 import { I, M, C, Util, DataUtil, Relation } from 'Lib';
 
-const Constant = require('json/constant.json');
+import Constant from 'json/constant.json';
 
 class Dataview {
 

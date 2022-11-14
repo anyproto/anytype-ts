@@ -4,6 +4,8 @@ import { I, Storage, keyboard } from 'Lib';
 import { dbStore, detailStore, blockStore } from 'Store';
 import { observer } from 'mobx-react';
 
+import Constant from 'json/constant.json';
+
 interface Props {
 	id: string;
 	index: number;
@@ -20,7 +22,6 @@ interface Props {
 	onContext?(e: any, item: any): void;
 };
 
-const Constant = require('json/constant.json');
 
 const Item = observer(class Item extends React.Component<Props, {}> {
 

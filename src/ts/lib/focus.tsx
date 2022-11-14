@@ -1,8 +1,9 @@
 import { I, keyboard, Util } from 'Lib';
 import { setRange } from 'selection-ranges';
 
+import Constant from 'json/constant.json';
+
 const $ = require('jquery');
-const Constant = require('json/constant.json');
 
 interface State {
 	focused: string;

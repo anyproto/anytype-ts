@@ -7,12 +7,13 @@ import { observer } from 'mobx-react';
 
 import Panel from './graph/panel';
 
+import Constant from 'json/constant.json';
+
 interface Props extends I.PageComponent {
 	rootId: string;
 	matchPopup?: any;
 };
 
-const Constant = require('json/constant.json');
 const $ = require('jquery');
 
 const PageMainGraph = observer(class PageMainGraph extends React.Component<Props, {}> {

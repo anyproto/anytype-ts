@@ -3,12 +3,13 @@ import { MenuItemVertical } from 'Component';
 import { I, C, keyboard, analytics, DataUtil, focus } from 'Lib';
 import { detailStore, menuStore, blockStore, dbStore } from 'Store';
 
+import Constant from 'json/constant.json';
+
 interface Props extends I.Menu {
 	history?: any;
 };
 
 const $ = require('jquery');
-const Constant = require('json/constant.json');
 
 class MenuContext extends React.Component<Props, {}> {
 	

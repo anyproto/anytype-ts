@@ -14,7 +14,6 @@ interface State {
 };
 
 const $ = require('jquery');
-const Constant = require('json/constant.json');
 const MAX_LENGTH = 32;
 
 const CellSelect = observer(class CellSelect extends React.Component<Props, State> {

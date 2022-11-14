@@ -8,11 +8,12 @@ import { throttle } from 'lodash';
 
 import Row from './table/row';
 
+import Constant from 'json/constant.json';
+
 interface Props extends I.BlockComponent {};
 
 const $ = require('jquery');
 const raf = require('raf');
-const Constant = require('json/constant.json');
 
 const PADDING = 46;
 const SNAP = 10;
