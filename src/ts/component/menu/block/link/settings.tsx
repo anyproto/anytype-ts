@@ -96,6 +96,7 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 		const menuId = 'select';
 
 		const menuParam: any = {
+			menuKey: item.id,
 			element: `#${getId()} #item-${item.id}`,
 			offsetX: getSize().width,
 			vertical: I.MenuDirection.Center,
@@ -132,7 +133,7 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 
 		menuParam.data = Object.assign(menuParam.data, { options });
 
-		if (!menuStore.isOpen(menuId)) {
+		if (!menuStore.isOpen(menuId, item.id)) {
 			menuStore.closeAll(Constant.menuIds.more, () => {
 				menuStore.open(menuId, menuParam);
 			});
