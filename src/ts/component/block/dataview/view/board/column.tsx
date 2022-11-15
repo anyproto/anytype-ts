@@ -108,13 +108,13 @@ const Column = observer(class Column extends React.Component<Props, State> {
 
 				<div className="body">
 					<div className="bg">
-						{loading ? <Loader / > : (
+						{loading ? <Loader /> : (
 							<React.Fragment>
 								{items.map((item: any, i: number) => (
-									<Card 
-										key={[ 'board', view.id, id, item.id ].join('-')} 
-										{...this.props} 
-										id={item.id} 
+									<Card
+										key={[ 'board', view.id, id, item.id ].join('-')}
+										{...this.props}
+										id={item.id}
 										groupId={id}
 										index={i}
 									/>
