@@ -157,6 +157,7 @@ class Dataview {
 			sorts: view.sorts.map(mapper),
 			keys,
 			sources: block.content.sources,
+			limit,
 			offset,
 		}, callBack);
 	};
