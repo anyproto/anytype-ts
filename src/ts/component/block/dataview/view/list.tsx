@@ -97,7 +97,7 @@ const ViewList = observer(class ViewList extends React.Component<Props, {}> {
 					)}
 				</InfiniteLoader>
 			);
-		}
+		};
 
 		return (
 			<div className="wrap">
@@ -106,7 +106,7 @@ const ViewList = observer(class ViewList extends React.Component<Props, {}> {
 					{content}
 
 					{isInline && (limit + offset < total) ? (
-						<LoadMore limit={getLimit()} onClick={this.loadMoreRows} />
+						<LoadMore limit={getLimit()} loaded={records.length} total={total} onClick={this.loadMoreRows} />
 					) : ''}
 
 					{!readonly && allowed ? (

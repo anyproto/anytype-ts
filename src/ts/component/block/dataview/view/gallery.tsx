@@ -3,6 +3,7 @@ import { I, Relation, DataUtil } from 'Lib';
 import { observer } from 'mobx-react';
 import { dbStore, detailStore } from 'Store';
 import { AutoSizer, WindowScroller, Masonry, CellMeasurer, CellMeasurerCache, createMasonryCellPositioner } from 'react-virtualized';
+import { LoadMore } from 'Component';
 
 import Empty from '../empty';
 import Card from './gallery/card';
@@ -32,16 +33,18 @@ const ViewGallery = observer(class ViewGallery extends React.Component<Props, {}
 		});
 
 		this.onResize = this.onResize.bind(this);
+		this.loadMoreCards = this.loadMoreCards.bind(this);
 	};
 
 	render () {
-		const { rootId, block, getData, getView, getKeys, isPopup, isInline } = this.props;
+		const { rootId, block, getData, getView, getKeys, isPopup, isInline, getLimit } = this.props;
 		const view = getView();
 		const relations = view.getVisibleRelations();
 		const subId = dbStore.getSubId(rootId, block.id);
 		const records = dbStore.getRecords(subId, '');
 		const { coverRelationKey, cardSize, hideIcon } = view;
 		const { offset, total } = dbStore.getMeta(subId, '');
+		const limit = getLimit();
 		const length = records.length;
 
 		if (!length) {
@@ -137,6 +140,10 @@ const ViewGallery = observer(class ViewGallery extends React.Component<Props, {}
 					<div className={[ 'galleryWrap', DataUtil.cardSizeClass(cardSize) ].join(' ')}>
 						{content}
 					</div>
+
+					{isInline && (limit + offset < total) ? (
+						<LoadMore limit={getLimit()} loaded={records.length} total={total} onClick={this.loadMoreCards} />
+					) : ''}
 				</div>
 			</div>
 		);
@@ -206,6 +213,19 @@ const ViewGallery = observer(class ViewGallery extends React.Component<Props, {}
 	onResize ({ width }) {
 		this.width = width;
 		this.reset();
+	};
+
+	loadMoreCards ({ startIndex, stopIndex }) {
+		let { rootId, block, getData, getView, getLimit } = this.props;
+		let subId = dbStore.getSubId(rootId, block.id);
+		let { offset } = dbStore.getMeta(subId, '');
+		let view = getView();
+
+		return new Promise((resolve, reject) => {
+			offset += getLimit();
+			getData(view.id, offset, false, resolve);
+			dbStore.metaSet(subId, '', { offset });
+		});
 	};
 
 });

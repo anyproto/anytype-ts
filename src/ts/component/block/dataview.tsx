@@ -332,7 +332,11 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				break;
 			
 			case I.ViewType.Gallery:
-				limit = isInline ? 12 : 0;
+				limit = isInline ? 5 : 0;
+				break;
+
+			case I.ViewType.List:
+				limit = isInline ? 5 : 0;
 				break;
 		};
 		return limit;
