@@ -21,6 +21,8 @@ import Header from './header';
 import Footer from './footer';
 import Sidebar from './sidebar';
 
+import { Tree } from './widgets';
+
 import Menu from './menu';
 import MenuItemVertical from './menu/item/vertical';
 
@@ -125,6 +127,7 @@ export {
 
 	Graph,
 	Cell,
+	Tree,
 	Sidebar,
 
 	ObjectName,

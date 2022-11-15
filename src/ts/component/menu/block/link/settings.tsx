@@ -93,8 +93,10 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 
 		const { getId, getSize } = this.props;
 		const content = this.getContent();
+		const menuId = 'select';
 
 		const menuParam: any = {
+			menuKey: item.id,
 			element: `#${getId()} #item-${item.id}`,
 			offsetX: getSize().width,
 			vertical: I.MenuDirection.Center,
@@ -118,7 +120,6 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 
 			case 'cardStyle':
 				options = this.getStyles();
-				menuParam.width = 320;
 				break;
 
 			case 'cover': 
@@ -127,16 +128,16 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 
 			case 'description':
 				options = this.getDescriptions();
-				menuParam.width = 320;
 				break;
 		};
 
 		menuParam.data = Object.assign(menuParam.data, { options });
 
-		menuStore.close('select', () => {
-			window.clearTimeout(this.timeout);
-			this.timeout = window.setTimeout(() => { menuStore.open('select', menuParam); }, Constant.delay.menu);
-		});
+		if (!menuStore.isOpen(menuId, item.id)) {
+			menuStore.closeAll(Constant.menuIds.more, () => {
+				menuStore.open(menuId, menuParam);
+			});
+		};
 	};
 
 	getContent () {

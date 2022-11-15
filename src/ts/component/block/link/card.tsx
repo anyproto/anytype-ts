@@ -19,8 +19,6 @@ interface Props extends I.BlockComponent, RouteComponentProps<any> {
     onClick?(e: any): void;
 };
 
-import Constant from 'json/constant.json';
-
 const LinkCard = observer(class LinkCard extends React.Component<Props, {}> {
 
 	render () {
@@ -50,6 +48,7 @@ const LinkCard = observer(class LinkCard extends React.Component<Props, {}> {
 
 		let descr = '';
 		let archive = null;
+		let icon = null;
 
 		if (canDescription) {
 			if (description == I.LinkDescription.Added) {
@@ -64,6 +63,21 @@ const LinkCard = observer(class LinkCard extends React.Component<Props, {}> {
 			archive = <div className="tagItem isTag archive">{translate('blockLinkArchived')}</div>;
 		};
 
+		if (withIcon) {
+			icon = (
+				<IconObject 
+					id={`block-${block.id}-icon`}
+					size={size}
+					iconSize={iconSize}
+					object={object} 
+					canEdit={canEdit} 
+					onSelect={onSelect} 
+					onUpload={onUpload} 
+					onCheckbox={onCheckbox} 
+				/>
+			);
+		};
+
 		const div = cardStyle == I.LinkCardStyle.Text ? (
 			<div className="div">
 				<div className="inner" />
@@ -74,44 +88,30 @@ const LinkCard = observer(class LinkCard extends React.Component<Props, {}> {
 			<div className={cn.join(' ')} onMouseDown={onClick}>
 				<div id="sides" className={cns.join(' ')}>
 					<div key="sideLeft" className={cnl.join(' ')}>
-						<div className="txt">
-							<div className="cardName">
-								{withIcon ? (
-									<IconObject 
-										id={`block-${block.id}-icon`}
-										size={size}
-										iconSize={iconSize}
-										object={object} 
-										canEdit={canEdit} 
-										onSelect={onSelect} 
-										onUpload={onUpload} 
-										onCheckbox={onCheckbox} 
-									/>
-								) : ''}
-								<ObjectName object={object} />
+						<div className="flex cardName">
+							{icon}
+							<ObjectName object={object} />
+							{archive}
+						</div>
 
-								{archive}
+						{descr ? (
+							<div className="flex cardDescription">
+								{div}
+								<div className="description">{descr}</div>
 							</div>
-							{descr ? (
+						) : ''}
+
+						<div className="flex cardFeatured">
+							{withType && type ? (
 								<React.Fragment>
 									{div}
-									<div className="cardDescription">
-										<span className="description">{descr}</span>
-									</div>
+									<div className="item">{type.name}</div>
 								</React.Fragment>
 							) : ''}
-
-							<div className="cardFeatured">
-								{withType && type ? (
-									<React.Fragment>
-										{div}
-										<div className="item">{type.name}</div>
-									</React.Fragment>
-								) : ''}
-								{/*withTags ? <div className="item"></div> : ''*/}
-							</div>
+							{/*withTags ? <div className="item"></div> : ''*/}
 						</div>
 					</div>
+
 					{withCover ? (
 						<div className="side right">
 							<Cover 
