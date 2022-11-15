@@ -448,7 +448,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, {}> 
 		const { dataset } = this.props;
 		const { selection } = dataset || {};
 
-		this.setRange(getRange(this.input));
+		this.setRange(getRange(this.inputElement));
 
 		selection.preventSelect(true);
 
