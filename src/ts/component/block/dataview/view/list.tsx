@@ -2,7 +2,7 @@ import * as React from 'react';
 import { I } from 'Lib';
 import { observer } from 'mobx-react';
 import { dbStore, blockStore } from 'Store';
-import { Icon } from 'Component';
+import { Icon, LoadMore } from 'Component';
 import { translate } from 'Lib';
 import { AutoSizer, WindowScroller, List, InfiniteLoader } from 'react-virtualized';
 
@@ -27,59 +27,87 @@ const ViewList = observer(class ViewList extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { rootId, block, getView, isPopup, readonly, onRecordAdd } = this.props;
+		const { rootId, block, getView, isPopup, readonly, onRecordAdd, isInline, getLimit } = this.props;
 		const view = getView();
 		const subId = dbStore.getSubId(rootId, block.id);
 		const records = dbStore.getRecords(subId, '');
 		const allowed = blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.Object ]);
-		const { total } = dbStore.getMeta(dbStore.getSubId(rootId, block.id), '');
+		const { offset, total } = dbStore.getMeta(dbStore.getSubId(rootId, block.id), '');
+		const limit = getLimit();
 		const length = records.length;
 
 		if (!length) {
 			return <Empty {...this.props} />;
 		};
 
+		let content = null;
+
+		if (isInline) {
+			content = (
+				<div>
+					{records.map((id: string, index: number) => (
+						<Row
+							key={'grid-row-' + view.id + index}
+							{...this.props}
+							style={{height: HEIGHT}}
+							readonly={readonly || !allowed}
+							index={index}
+						/>
+					))}
+				</div>
+			);
+		} else {
+			content = (
+				<InfiniteLoader
+					isRowLoaded={({ index }) => !!records[index]}
+					loadMoreRows={this.loadMoreRows}
+					rowCount={total}
+					threshold={10}
+				>
+					{({ onRowsRendered, registerChild }) => (
+						<WindowScroller scrollElement={isPopup ? $('#popupPage-innerWrap').get(0) : window}>
+							{({ height, isScrolling, registerChild, scrollTop }) => {
+								return (
+									<AutoSizer disableHeight={true}>
+										{({ width }) => (
+											<List
+												ref={(ref: any) => { this.ref = ref; }}
+												autoHeight={true}
+												height={Number(height) || 0}
+												width={Number(width) || 0}
+												isScrolling={isScrolling}
+												rowCount={records.length}
+												rowHeight={HEIGHT}
+												onRowsRendered={onRowsRendered}
+												rowRenderer={({ key, index, style }) => (
+													<div className="listItem" key={'grid-row-' + view.id + index} style={style}>
+														<Row
+															{...this.props}
+															index={index}
+														/>
+													</div>
+												)}
+												scrollTop={scrollTop}
+											/>
+										)}
+									</AutoSizer>
+								);
+							}}
+						</WindowScroller>
+					)}
+				</InfiniteLoader>
+			);
+		}
+
 		return (
 			<div className="wrap">
 				<div className="viewItem viewList">
-					<InfiniteLoader
-						isRowLoaded={({ index }) => !!records[index]}
-						loadMoreRows={this.loadMoreRows}
-						rowCount={total}
-						threshold={10}
-					>
-						{({ onRowsRendered, registerChild }) => (
-							<WindowScroller scrollElement={isPopup ? $('#popupPage-innerWrap').get(0) : window}>
-								{({ height, isScrolling, registerChild, scrollTop }) => {
-									return (
-										<AutoSizer disableHeight={true}>
-											{({ width }) => (
-												<List
-													ref={(ref: any) => { this.ref = ref; }}
-													autoHeight={true}
-													height={Number(height) || 0}
-													width={Number(width) || 0}
-													isScrolling={isScrolling}
-													rowCount={records.length}
-													rowHeight={HEIGHT}
-													onRowsRendered={onRowsRendered}
-													rowRenderer={({ key, index, style }) => (
-														<div className="listItem" key={'grid-row-' + view.id + index} style={style}>
-															<Row 
-																{...this.props}
-																index={index}
-															/>
-														</div>
-													)}
-													scrollTop={scrollTop}
-												/>
-											)}
-										</AutoSizer>
-									);
-								}}
-							</WindowScroller>
-						)}
-					</InfiniteLoader>
+
+					{content}
+
+					{isInline && (limit + offset < total) ? (
+						<LoadMore limit={getLimit()} onClick={this.loadMoreRows} />
+					) : ''}
 
 					{!readonly && allowed ? (
 						<div className="row add">
