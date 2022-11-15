@@ -91,7 +91,11 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, {}> 
 	};
 
 	get input () {
-		return this.node.find('#input').get(0);
+		return this.node.find('#input');
+	};
+
+	get inputElement () {
+		return this.input.get(0);
 	};
 
 	get value () {
@@ -107,6 +111,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, {}> 
 		const { block } = this.props;
 		
 		this.text = String(block.content.text || '');
+
 		const length = this.text.length;
 
 		this.setRange({ start: length, end: length });
@@ -158,7 +163,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, {}> 
 
 	focus () {
 		if (this._isMounted && this.range) {
-			setRange(this.input, this.range);
+			setRange(this.inputElement, this.range);
 		};
 	};
 
@@ -212,7 +217,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, {}> 
 		};
 
 		const { filter } = commonStore;
-		const range = getRange(this.input);
+		const range = getRange(this.inputElement);
 
 		keyboard.shortcut('backspace', e, (pressed: string) => {
 			if (range && (range.start == filter.from)) {
@@ -228,7 +233,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, {}> 
 
 		const { filter } = commonStore;
 		const value = this.getValue();
-		const range = getRange(this.input);
+		const range = getRange(this.inputElement);
 		const symbolBefore = value[range?.start - 1];
 		const menuOpen = menuStore.isOpen('blockLatex');
 
@@ -271,7 +276,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, {}> 
 
 		e.preventDefault();
 
-		const range = getRange(this.input);
+		const range = getRange(this.inputElement);
 		const cb = e.clipboardData || e.originalEvent.clipboardData;
 
 		this.setValue(Util.stringInsert(this.getValue(), cb.getData('text/plain'), range.start, range.end));
@@ -298,7 +303,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, {}> 
 			return;
 		};
 
-		const range = getRange(this.input);
+		const range = getRange(this.inputElement);
 
 		commonStore.filterSet(range?.start, '');
 		this.onMenu(e, 'select', true);
@@ -360,7 +365,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, {}> 
 			return '';
 		};
 
-		this.input.innerHTML = Prism.highlight(value, Prism.languages.latex, 'latex');
+		this.inputElement.innerHTML = Prism.highlight(value, Prism.languages.latex, 'latex');
 		this.setContent(value);
 	};
 
@@ -368,7 +373,8 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, {}> 
 		if (!this._isMounted) {
 			return '';
 		};
-		return String(this.input.innerText || '');
+
+		return String(this.inputElement.innerText || '');
 	};
 
 	setContent (text: string) {
