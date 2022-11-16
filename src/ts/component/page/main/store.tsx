@@ -288,7 +288,6 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 		});
 
 		Onboarding.start(Util.toCamelCase('store-' + tab), this.props.isPopup);
-
 		this.resize();
 	};
 
