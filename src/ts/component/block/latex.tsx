@@ -25,6 +25,11 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, {}> 
 	range: any = { start: 0, end: 0 };
 	text: string = '';
 	timeout: number = 0;
+	node: any = null;
+	win: any = null;
+	input: any = null;
+	value: any = null;
+	empty: any = null;
 
 	constructor (props: Props) {
 		super(props);
@@ -82,35 +87,17 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, {}> 
 		);
 	};
 
-	get node () {
-		return $(ReactDOM.findDOMNode(this));
-	};
-
-	get win () {
-		return $(window);
-	};
-
-	get input () {
-		return this.node.find('#input');
-	};
-
-	get inputElement () {
-		return this.input.get(0);
-	};
-
-	get value () {
-		return this.node.find('#value');
-	};
-
-	get empty () {
-		return this.node.find('#empty');
-	};
-	
 	componentDidMount () {
 		this._isMounted = true;
+
 		const { block } = this.props;
-		
+
+		this.win = $(window);
+		this.node = $(ReactDOM.findDOMNode(this));
 		this.text = String(block.content.text || '');
+		this.empty = this.node.find('#empty');
+		this.value = this.node.find('#value');
+		this.input = this.node.find('#input').get(0);
 
 		const length = this.text.length;
 
@@ -163,7 +150,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, {}> 
 
 	focus () {
 		if (this._isMounted && this.range) {
-			setRange(this.inputElement, this.range);
+			setRange(this.input, this.range);
 		};
 	};
 
@@ -217,7 +204,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, {}> 
 		};
 
 		const { filter } = commonStore;
-		const range = getRange(this.inputElement);
+		const range = getRange(this.input);
 
 		keyboard.shortcut('backspace', e, (pressed: string) => {
 			if (range && (range.start == filter.from)) {
@@ -233,7 +220,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, {}> 
 
 		const { filter } = commonStore;
 		const value = this.getValue();
-		const range = getRange(this.inputElement);
+		const range = getRange(this.input);
 		const symbolBefore = value[range?.start - 1];
 		const menuOpen = menuStore.isOpen('blockLatex');
 
@@ -276,7 +263,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, {}> 
 
 		e.preventDefault();
 
-		const range = getRange(this.inputElement);
+		const range = getRange(this.input);
 		const cb = e.clipboardData || e.originalEvent.clipboardData;
 
 		this.setValue(Util.stringInsert(this.getValue(), cb.getData('text/plain'), range.start, range.end));
@@ -303,7 +290,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, {}> 
 			return;
 		};
 
-		const range = getRange(this.inputElement);
+		const range = getRange(this.input);
 
 		commonStore.filterSet(range?.start, '');
 		this.onMenu(e, 'select', true);
@@ -365,7 +352,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, {}> 
 			return '';
 		};
 
-		this.inputElement.innerHTML = Prism.highlight(value, Prism.languages.latex, 'latex');
+		this.input.innerHTML = Prism.highlight(value, Prism.languages.latex, 'latex');
 		this.setContent(value);
 	};
 
@@ -374,7 +361,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, {}> 
 			return '';
 		};
 
-		return String(this.inputElement.innerText || '');
+		return String(this.input.innerText || '');
 	};
 
 	setContent (text: string) {
@@ -448,7 +435,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, {}> 
 		const { dataset } = this.props;
 		const { selection } = dataset || {};
 
-		this.setRange(getRange(this.inputElement));
+		this.setRange(getRange(this.input));
 
 		selection.preventSelect(true);
 
