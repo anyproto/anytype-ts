@@ -106,19 +106,19 @@ const Column = observer(class Column extends React.Component<Props, State> {
 
 				<div className="body">
 					<div className="bg">
-						{loading ? <Loader / > : (
+						{loading ? <Loader /> : (
 							<React.Fragment>
 								{items.map((item: any, i: number) => (
-									<Card 
-										key={[ 'board', view.id, id, item.id ].join('-')} 
-										{...this.props} 
-										id={item.id} 
+									<Card
+										key={[ 'board', view.id, id, item.id ].join('-')}
+										{...this.props}
+										id={item.id}
 										groupId={id}
 										index={i}
 									/>
 								))}
 
-								{limit + this.offset < total ? <LoadMore limit={limit} onClick={this.onLoadMore} /> : ''}
+								{limit + this.offset < total ? <LoadMore limit={limit} loaded={items.length} total={total} onClick={this.onLoadMore} /> : ''}
 
 								<div id={`card-${id}-add`} className="card add" onClick={() => { onRecordAdd(id, 1); }}>
 									<Icon className="plus" />
