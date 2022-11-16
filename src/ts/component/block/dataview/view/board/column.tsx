@@ -31,7 +31,6 @@ const Column = observer(class Column extends React.Component<Props, State> {
 	columnWidth: number = 0;
 	columnCount: number = 0;
 	offset: number = 0;
-	loading: boolean = false;
 	state = {
 		loading: false,
 	};
@@ -48,9 +47,8 @@ const Column = observer(class Column extends React.Component<Props, State> {
 		const { loading } = this.state;
 		const view = getView();
 		const subId = getSubId();
-		const records = dbStore.getRecords(subId, '');
 		const items = this.getItems();
-		const { offset, total } = dbStore.getMeta(subId, '');
+		const { total } = dbStore.getMeta(subId, '');
 		const limit = getLimit();
 		const group = dbStore.getGroup(rootId, block.id, id);
 		const head = {};
@@ -65,8 +63,8 @@ const Column = observer(class Column extends React.Component<Props, State> {
 		head[view.groupRelationKey] = value;
 
 		// Subscriptions
-		records.forEach((id: string) => {
-			const object = detailStore.get(subId, id, [ view.groupRelationKey ]);
+		items.forEach((item: any) => {
+			const object = detailStore.get(subId, item.id, [ view.groupRelationKey ]);
 		});
 
 		return (
@@ -144,10 +142,6 @@ const Column = observer(class Column extends React.Component<Props, State> {
 	};
 
 	load (clear: boolean) {
-		if (this.loading) {
-			return;
-		};
-
 		const { rootId, block, getView, getKeys, getSubId, applyGroupOrder, getLimit } = this.props;
 		const view = getView();
 		const relation = dbStore.getRelationByKey(view.groupRelationKey);
@@ -192,8 +186,6 @@ const Column = observer(class Column extends React.Component<Props, State> {
 			this.setState({ loading: true });
 		};
 
-		this.loading = true;
-
 		DataUtil.searchSubscribe({
 			subId,
 			filters,
@@ -207,8 +199,6 @@ const Column = observer(class Column extends React.Component<Props, State> {
 			if (clear) {
 				this.setState({ loading: false });
 			};
-
-			this.loading = false;
 		});
 	};
 
