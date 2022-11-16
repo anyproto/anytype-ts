@@ -120,7 +120,7 @@ const Column = observer(class Column extends React.Component<Props, State> {
 									/>
 								))}
 
-								{limit + this.offset < total ? <LoadMore limit={limit} onClick={this.onLoadMore} /> : ''}
+								{limit + this.offset < total ? <LoadMore limit={limit} loaded={items.length} total={total} onClick={this.onLoadMore} /> : ''}
 
 								<div id={`card-${id}-add`} className="card add" onClick={() => { onRecordAdd(id, 1); }}>
 									<Icon className="plus" />
