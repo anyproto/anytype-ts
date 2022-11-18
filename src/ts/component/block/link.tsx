@@ -3,10 +3,9 @@ import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
 import $ from 'jquery';
-import { Icon, Loader } from 'Component';
-import { I, DataUtil, translate, keyboard } from 'Lib';
-import { detailStore, blockStore } from 'Store';
-import { focus } from 'Lib';
+import { Icon, IconObject, Loader, ObjectName, Cover } from 'Component';
+import { I, DataUtil, translate, keyboard, focus } from 'Lib';
+import { detailStore, blockStore, dbStore } from 'Store';
 import LinkCard from './link/card';
 
 interface Props extends I.BlockComponent, RouteComponentProps<any> {};
@@ -30,10 +29,18 @@ const BlockLink = observer(class BlockLink extends React.Component<Props, {}> {
 	render() {
 		const { rootId, block } = this.props;
 		const object = detailStore.get(rootId, block.content.targetBlockId);
-		const { _empty_, isArchived, isDeleted, done, layout } = object;
-		const cn = [ 'focusable', 'c' + block.id, 'resizable' ];
+		const { _empty_, isArchived, isDeleted, done, layout, coverId, coverType, coverX, coverY, coverScale } = object;
 		const content = DataUtil.checkLinkSettings(block.content, layout);
 		const readonly = this.props.readonly || !blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Details ]);
+		const { description, cardStyle, relations } = content;
+		const { size, iconSize } = this.getIconSize();
+		const type = dbStore.getType(object.type);
+		const cn = [ 'focusable', 'c' + block.id, 'resizable' ];
+
+		const canDescription = ![ I.ObjectLayout.Note ].includes(object.layout);
+		const withIcon = content.iconSize != I.LinkIconSize.None;
+		const withType = relations.includes('type');
+        const withCover = relations.includes('cover') && coverId && coverType;
 
 		if ((layout == I.ObjectLayout.Task) && done) {
 			cn.push('isDone');
@@ -64,17 +71,103 @@ const BlockLink = observer(class BlockLink extends React.Component<Props, {}> {
 				cn.push('cp');
 			};
 
+			const cnc = [ 'linkCard', DataUtil.layoutClass(object.id, layout), 'c' + size, DataUtil.linkCardClass(cardStyle) ];
+			const cns = [ 'sides' ];
+			const cnl = [ 'side', 'left' ];
+			
+			if (withCover) {
+				cnc.push('withCover');
+			};
+
+			if (block.bgColor) {
+				cns.push('withBgColor');
+				cnl.push('bgColor bgColor-' + block.bgColor);
+			};
+
+			let descr = '';
+			let archive = null;
+			let icon = null;
+			let div = null;
+
+			if (canDescription) {
+				if (description == I.LinkDescription.Added) {
+					descr = object.description;
+				};
+				if (description == I.LinkDescription.Content) {
+					descr = object.snippet;
+				};
+			};
+
+			if (isArchived) {
+				archive = <div className="tagItem isTag archive">{translate('blockLinkArchived')}</div>;
+			};
+
+			if (cardStyle == I.LinkCardStyle.Text) {
+				div = (
+					<div className="div">
+						<div className="inner" />
+					</div>
+				);
+			};
+
+			if (withIcon) {
+				icon = (
+					<IconObject 
+						id={`block-${block.id}-icon`}
+						size={size}
+						iconSize={iconSize}
+						object={object} 
+						canEdit={!readonly && !isArchived} 
+						onSelect={this.onSelect} 
+						onUpload={this.onUpload} 
+						onCheckbox={this.onCheckbox} 
+					/>
+				);
+			};
+
 			element = (
-				<LinkCard 
-					{...this.props} 
-					{...content}
-					object={object} 
-					canEdit={!readonly && !isArchived} 
-					onClick={this.onClick}
-					onSelect={this.onSelect} 
-					onUpload={this.onUpload}
-					onCheckbox={this.onCheckbox} 
-				/>
+				<div className={cnc.join(' ')} onMouseDown={this.onClick}>
+					<div id="sides" className={cns.join(' ')}>
+						<div key="sideLeft" className={cnl.join(' ')}>
+							<div className="flex cardName">
+								{icon}
+								<ObjectName object={object} />
+								{archive}
+							</div>
+
+							{descr ? (
+								<div className="flex cardDescription">
+									{div}
+									<div className="description">{descr}</div>
+								</div>
+							) : ''}
+
+							<div className="flex cardFeatured">
+								{withType && type ? (
+									<React.Fragment>
+										{div}
+										<div className="item">{type.name}</div>
+									</React.Fragment>
+								) : ''}
+							</div>
+						</div>
+
+						{withCover ? (
+							<div className="side right">
+								<Cover 
+									type={coverType} 
+									id={coverId} 
+									image={coverId} 
+									className={coverId} 
+									x={coverX} 
+									y={coverY} 
+									scale={coverScale} 
+									withScale={true}
+								/>
+							</div>
+						) : ''}
+					</div>
+				</div>
 			);
 		};
 
@@ -190,7 +283,32 @@ const BlockLink = observer(class BlockLink extends React.Component<Props, {}> {
 		icon.length ? card.addClass('withIcon') : card.removeClass('withIcon');
 		width <= mw / 2 ? card.addClass('vertical') : card.removeClass('vertical');
 	};
-	
+
+	getIconSize () {
+		const { rootId, block } = this.props;
+		const object = detailStore.get(rootId, block.content.targetBlockId);
+		const content = DataUtil.checkLinkSettings(block.content, object.layout);
+		const { iconSize, cardStyle } = content;
+
+		let size = 24;
+		let is = 0;
+
+		if (cardStyle != I.LinkCardStyle.Text) {
+			switch (iconSize) {
+				default:
+					size = 18;
+					break;
+
+				case I.LinkIconSize.Medium:
+					size = 48;
+					is = 28;
+					break;
+			};
+		};
+
+		return { size, iconSize: is };
+	};
+
 });
 
 export default BlockLink;

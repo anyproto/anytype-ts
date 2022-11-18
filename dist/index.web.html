@@ -6,17 +6,36 @@
 
 		<script type="text/javascript">
 			window.isWebVersion = true;
-			window.serverAddress = 'http://127.0.0.1:50397'
+			window.serverAddress = 'http://127.0.0.1:64809';
 
-			document.body.onload = function () {
-				RendererEvents.dataPath(null, '/');
+			window.Electron = {
+				platform: 'Windows',
+				version: {
+				},
+				isMaximized: () => {},
+				getGlobal: () => {},
 			};
 		</script>
 
 		<script src="./polyfill.js" type="text/javascript"></script>
 	</head>
-	<body>
+	<body onload="onload();">
 		<div id="root"></div>
 		<script src="./run.js" type="text/javascript"></script>
+		<script type="text/javascript">
+			function onload () {
+				RendererEvents.init(null, {
+					dataPath: '/Users/admin/Library/Application Support/anytype2/dev/data',
+					config: {},
+					isDark: false,
+					isChild: false,
+					route: '',
+					account: null,
+					phrase: '',
+					languages: [],
+					isPinChecked: false,
+				});
+			};
+		</script>
 	</body>
 </html>

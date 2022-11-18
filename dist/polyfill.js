@@ -6,12 +6,27 @@ window.Config = {
     },
 };
 
-window.Renderer = {
-    send: function () {},
-    removeAllListeners: function () {},
-    on: function (id, callBack) {
+window.Electron = {
+	platform: 'Windows',
+	version: {
+	},
+	isMaximized: () => {},
+	getGlobal: (v) => {
+		switch (v) {
+			case 'serverAddress':
+				return window.serverAddress;
+		};
+	},
+	removeAllListeners: function () {},
+	on: function (id, callBack) {
         RendererEvents[id] = callBack;
+		console.log(RendererEvents);
     },
+	send: function () {},
+	currentWindow: function () {
+		return { windowId: 1 };
+	},
+	Api: () => {},
 };
 
 window.require = window.require || function (mod) {
@@ -28,12 +43,6 @@ window.require = window.require || function (mod) {
                 getSystemVersion: function () { return ''; },
             };
 
-            ret.getGlobal = function (v) {
-                switch (v) {
-                    case 'serverAddress':
-                        return window.serverAddress;
-                };
-            };
             break;
 
         case 'os':

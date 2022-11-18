@@ -4,6 +4,8 @@ import { Util } from 'Lib';
 
 interface Props {
 	limit: number;
+	loaded?: number;
+	total?: number;
 	onClick?(e: any): void;
 };
 
@@ -14,12 +16,18 @@ class LoadMore extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { limit, onClick } = this.props;
+		const { limit, loaded, total, onClick } = this.props;
+
+		let number = limit;
+		if (loaded && total) {
+			let objectsLeft = total - loaded;
+			number = limit < objectsLeft ? limit : objectsLeft;
+		};
 
 		return (
 			<div className="loadMore" onClick={onClick}>
 				<Icon />
-				<div className="name">Show {limit} more {Util.cntWord(limit, 'object', 'objects')}</div>
+				<div className="name">Show {number} more {Util.cntWord(number, 'object', 'objects')}</div>
 			</div>
 		);
 	};

@@ -535,7 +535,7 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 
 				let w = Math.abs(x - coords.x) - 4;
 				let t = '';
-				let l = coords.x + 4;
+				let l = coords.x + 8;
 
 				if (flipX) {
 					w -= width;

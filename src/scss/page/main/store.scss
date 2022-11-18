@@ -61,7 +61,6 @@
 			}
 
 			.item.marketplace {
-				.info { padding-right: 80px; }
 				.button { display: block; }
 			}
 
@@ -81,6 +80,7 @@
 			.item.relation { width: calc((100% - 32px) / 3); margin-right: 16px; padding-left: 60px; height: 48px; line-height: 48px; }
 			.item.relation:last-child { margin-right: 0px; }
 			.item.relation {
+				.info {}
 				.line { bottom: -8px; }
 			}
 

@@ -133,7 +133,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 							{content}
 
 							{isInline && (limit + offset < total) ? (
-								<LoadMore limit={getLimit()} onClick={this.loadMoreRows} />
+								<LoadMore limit={getLimit()} loaded={records.length} total={total} onClick={this.loadMoreRows} />
 							) : ''}
 
 							{!readonly && allowed ? (

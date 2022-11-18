@@ -95,6 +95,7 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 		const menuId = 'select';
 
 		const menuParam: any = {
+			menuKey: item.id,
 			element: `#${getId()} #item-${item.id}`,
 			offsetX: getSize().width,
 			vertical: I.MenuDirection.Center,

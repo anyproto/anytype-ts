@@ -64,17 +64,17 @@
 				}
 			}
 
-			.cardName { flex-wrap: nowrap; vertical-align: top; flex-grow: 1; max-width: 50%; }
+			.cardName { flex-wrap: nowrap; vertical-align: top; max-width: 40%; }
 			.cardName {
 				.name { @include text-overflow-nw; }
 			}
 
-			.cardDescription { @include text-small; flex-shrink: 1; flex-grow: 0; max-width: 50%; }
+			.cardDescription { @include text-small; max-width: 40%; }
 			.cardDescription {
 				.description { @include text-overflow-nw; width: 100%; }
 			}
 
-			.cardFeatured { @include text-small; @include text-overflow-nw; color: $colorDarkGrey; flex-shrink: 0; flex-grow: 0; max-width: 33%; }
+			.cardFeatured { @include text-small; @include text-overflow-nw; color: $colorDarkGrey; flex-shrink: 0; flex-grow: 0; max-width: 20%; }
 		}
 
 		.linkCard.card { margin: 8px 0px; }

@@ -147,7 +147,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 							getView={this.getView} 
 							getKeys={this.getKeys}
 							getIdPrefix={this.getIdPrefix}
-							getLimit={() => this.getLimit(view.id)}
+							getLimit={() => this.getLimit(view.type)}
 							onRecordAdd={this.onRecordAdd}
 							onCellClick={this.onCellClick}
 							onCellChange={this.onCellChange}
@@ -296,8 +296,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				blockId: block.id, 
 				newViewId: viewId, 
 				keys, 
-				limit: 0, 
-				offset: offset + this.getLimit(viewId), 
+				offset: 0, 
+				limit: offset + this.getLimit(view.type), 
 				clear,
 			}, (message: any) => {
 				if (clear) {
@@ -314,27 +314,26 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 	};
 
-	getLimit (viewId: string): number {
-		const view = this.getView(viewId);
+	getLimit (type: I.ViewType): number {
 		const { isInline } = this.props;
-
-		if (!view) {
-			return;
-		};
 
 		let limit = 0;
 
-		switch (view.type) {
+		switch (type) {
 			default:
 				limit = isInline ? 1 : 0;
 				break;
 
 			case I.ViewType.Board:
-				limit = isInline ? 1 : 50;
+				limit = isInline ? 3 : 50;
 				break;
 			
 			case I.ViewType.Gallery:
 				limit = isInline ? 12 : 0;
+				break;
+
+			case I.ViewType.List:
+				limit = isInline ? 5 : 0;
 				break;
 		};
 		return limit;
