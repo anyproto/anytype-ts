@@ -18,13 +18,48 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 	_isMounted: boolean = false;
 
 	render () {
-		const { rootId, block, groupId, id, getView, onContext, onRef, onDragStartCard, getIdPrefix } = this.props;
+		const { rootId, block, groupId, id, getView, onContext, onRef, onDragStartCard, getIdPrefix, isInline } = this.props;
 		const view = getView();
 		const relations = view.getVisibleRelations();
 		const idPrefix = getIdPrefix();
 		const subId = dbStore.getSubId(rootId, [ block.id, groupId ].join(':'));
 		const record = detailStore.get(subId, id);
 		const cn = [ 'card', DataUtil.layoutClass(record.id, record.layout) ];
+
+		const CardContent = () => (
+			<div className="cardContent">
+				{relations.map((relation: any, i: number) => {
+					const id = Relation.cellId(idPrefix, relation.relationKey, 0);
+					return (
+						<Cell
+							key={'board-cell-' + view.id + relation.relationKey}
+							{...this.props}
+							getRecord={() => { return record; }}
+							subId={subId}
+							ref={(ref: any) => { onRef(ref, id); }}
+							relationKey={relation.relationKey}
+							index={0}
+							viewType={view.type}
+							idPrefix={idPrefix}
+							arrayLimit={2}
+							showTooltip={true}
+							tooltipX={I.MenuDirection.Left}
+						/>
+					);
+				})}
+			</div>
+		);
+
+		const Selectable = () => (
+			<div
+				id={'selectable-' + record.id}
+				className={[ 'selectable', 'type-' + I.SelectType.Record ].join(' ')}
+				data-id={record.id}
+				data-type={I.SelectType.Record}
+			>
+				<CardContent />
+			</div>
+		);
 
 		return (
 			<div 
@@ -36,34 +71,7 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 				onClick={(e: any) => { this.onClick(e); }}
 				onContextMenu={(e: any) => { onContext(e, record.id); }}
 			>
-				<div 
-					id={'selectable-' + record.id} 
-					className={[ 'selectable', 'type-' + I.SelectType.Record ].join(' ')} 
-					data-id={record.id}
-					data-type={I.SelectType.Record}
-				>
-					<div className="cardContent">
-						{relations.map((relation: any, i: number) => {
-							const id = Relation.cellId(idPrefix, relation.relationKey, 0);
-							return (
-								<Cell 
-									key={'board-cell-' + view.id + relation.relationKey} 
-									{...this.props}
-									getRecord={() => { return record; }}
-									subId={subId}
-									ref={(ref: any) => { onRef(ref, id); }} 
-									relationKey={relation.relationKey}
-									index={0}
-									viewType={view.type}
-									idPrefix={idPrefix}
-									arrayLimit={2}
-									showTooltip={true}
-									tooltipX={I.MenuDirection.Left}
-								/>
-							);
-						})}
-					</div>
-				</div>
+				{isInline ? <CardContent /> : <Selectable />}
 			</div>
 		);
 	};
