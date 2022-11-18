@@ -4,7 +4,6 @@ import $ from 'jquery';
 import { getRange } from 'selection-ranges';
 import { I, M, focus, keyboard, scrollOnMove, Util } from 'Lib';
 import { blockStore, menuStore, popupStore } from 'Store';
-import { SelectType } from 'Interface';
 
 const THRESHOLD = 10;
 
@@ -158,7 +157,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 
 		if (keyboard.isShift()) {
 			let target = $(e.target).closest('.selectable');
-			let type = target.attr('data-type') as SelectType;
+			let type = target.attr('data-type') as I.SelectType;
 			let id = target.attr('data-id');
 			let ids = this.get(type);
 
