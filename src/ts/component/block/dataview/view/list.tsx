@@ -4,13 +4,11 @@ import { observer } from 'mobx-react';
 import $ from 'jquery';
 import { dbStore, blockStore } from 'Store';
 import { Icon, LoadMore } from 'Component';
-import { translate } from 'Lib';
+import { I, translate } from 'Lib';
 import Empty from '../empty';
 import Row from './list/row';
 
-interface Props extends 
-
-ViewComponent {};
+interface Props extends I.ViewComponent {};
 
 const HEIGHT = 32;
 

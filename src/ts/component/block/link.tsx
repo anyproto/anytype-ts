@@ -6,7 +6,6 @@ import $ from 'jquery';
 import { Icon, IconObject, Loader, ObjectName, Cover } from 'Component';
 import { I, DataUtil, translate, keyboard, focus } from 'Lib';
 import { detailStore, blockStore, dbStore } from 'Store';
-import LinkCard from './link/card';
 
 interface Props extends I.BlockComponent, RouteComponentProps<any> {};
 
