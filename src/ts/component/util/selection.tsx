@@ -77,7 +77,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		const isPopup = keyboard.isPopup();
 
 		$(window).off('keydown.selection keyup.selection');
-		(Util.getScrollContainer(isPopup) as JQuery<HTMLElement>).off('scroll.selection');
+		(Util.getScrollContainer(isPopup)).off('scroll.selection');
 	};
 
 	preventSelect (v: boolean) {
