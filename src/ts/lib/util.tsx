@@ -4,7 +4,7 @@ import { commonStore, popupStore, menuStore } from 'Store';
 import { translate } from '.';
 import Constant from 'json/constant.json';
 import Errors from 'json/error.json';
-import Cover from "json/cover.json";
+import Cover from 'json/cover.json';
 
 
 class Util {

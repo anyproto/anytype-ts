@@ -5,7 +5,7 @@ import { observer, } from 'mobx-react';
 import { getRange } from 'selection-ranges';
 import * as Prism from 'prismjs';
 import $ from 'jquery';
-import raf from "raf";
+import raf from 'raf';
 import { Select, Marker, Loader, IconObject, Icon } from 'Component';
 import { I, C, keyboard, Key, Util, DataUtil, Mark, focus, Storage, translate, analytics, Renderer } from 'Lib';
 import { commonStore, blockStore, detailStore, menuStore } from 'Store';

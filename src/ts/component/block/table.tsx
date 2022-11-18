@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { observer } from 'mobx-react';
 import $ from 'jquery';
-import raf from "raf";
+import raf from 'raf';
 import { throttle } from 'lodash';
 import { Icon } from 'Component';
 import { I, C, keyboard, focus, Util, Mark, Action } from 'Lib';

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import sha1 from "sha1";
+import sha1 from 'sha1';
 import { Frame, Cover, Title, Label, Error, Pin, Header, Footer } from 'Component';
 import { I, Storage, Util, translate } from 'Lib';
 import { commonStore, authStore } from 'Store';

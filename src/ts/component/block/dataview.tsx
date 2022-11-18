@@ -3,7 +3,7 @@ import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 import $ from 'jquery';
-import raf from "raf";
+import raf from 'raf';
 import arrayMove from 'array-move';
 import { Loader } from 'Component';
 import { I, C, Util, DataUtil, analytics, Dataview, keyboard, Onboarding, Relation, Renderer } from 'Lib';

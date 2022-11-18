@@ -4,7 +4,7 @@ import { set } from 'mobx';
 import { observer } from 'mobx-react';
 import arrayMove from 'array-move';
 import $ from 'jquery';
-import raf from "raf";
+import raf from 'raf';
 import { Loader } from 'Component';
 import { I, C, Util, DataUtil, analytics, keyboard, Relation } from 'Lib';
 import { dbStore, detailStore, popupStore, menuStore, commonStore } from 'Store';
