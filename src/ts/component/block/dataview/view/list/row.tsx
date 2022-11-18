@@ -17,7 +17,7 @@ const Row = observer(class Row extends React.Component<Props, {}> {
 	_isMounted: boolean = false;
 
 	render () {
-		const { rootId, block, index, getView, onCellClick, onRef, style, getRecord, onContext, getIdPrefix } = this.props;
+		const { rootId, block, index, getView, onCellClick, onRef, style, getRecord, onContext, getIdPrefix, isInline } = this.props;
 		const view = getView();
 		const relations = view.getVisibleRelations();
 		const idPrefix = getIdPrefix();
@@ -25,39 +25,49 @@ const Row = observer(class Row extends React.Component<Props, {}> {
 		const subId = dbStore.getSubId(rootId, block.id);
 		const record = getRecord(index);
 
+		const Cells = () => (
+			<div>
+				{relations.map((relation: any, i: number) => {
+					const id = Relation.cellId(idPrefix, relation.relationKey, index);
+					return (
+						<Cell
+							key={'list-cell-' + relation.relationKey}
+							elementId={id}
+							ref={(ref: any) => { onRef(ref, id); }}
+							{...this.props}
+							subId={subId}
+							relationKey={relation.relationKey}
+							viewType={I.ViewType.List}
+							idPrefix={idPrefix}
+							onClick={(e: any) => { onCellClick(e, relation.relationKey, index); }}
+							index={index}
+							isInline={true}
+							showTooltip={true}
+							arrayLimit={2}
+						/>
+					);
+				})}
+			</div>
+		);
+
+		const Selectable = () => (
+			<div
+				id={'selectable-' + record.id}
+				className={[ 'selectable', 'type-' + I.SelectType.Record ].join(' ')}
+				data-id={record.id}
+				data-type={I.SelectType.Record}
+			>
+				<Cells />
+			</div>
+		);
+
 		return (
 			<div 
 				className="row" 
 				style={style}
 				onContextMenu={(e: any) => { onContext(e, record.id); }}
 			>
-				<div 
-					id={'selectable-' + record.id} 
-					className={[ 'selectable', 'type-' + I.SelectType.Record ].join(' ')} 
-					data-id={record.id}
-					data-type={I.SelectType.Record}
-				>
-					{relations.map((relation: any, i: number) => {
-						const id = Relation.cellId(idPrefix, relation.relationKey, index);
-						return (
-							<Cell 
-								key={'list-cell-' + relation.relationKey}
-								elementId={id}
-								ref={(ref: any) => { onRef(ref, id); }} 
-								{...this.props}
-								subId={subId}
-								relationKey={relation.relationKey}
-								viewType={I.ViewType.List}
-								idPrefix={idPrefix}
-								onClick={(e: any) => { onCellClick(e, relation.relationKey, index); }}
-								index={index}
-								isInline={true}
-								showTooltip={true}
-								arrayLimit={2}
-							/>
-						);
-					})}
-				</div>
+				{isInline ? <Cells /> : <Selectable />}
 			</div>
 		);
 	};
