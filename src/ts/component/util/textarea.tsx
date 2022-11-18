@@ -29,6 +29,7 @@ interface State {
 class Textarea extends React.Component<Props, State> {
 
 	_isMounted = false;
+	textAreaElement: HTMLTextAreaElement;
 	public static defaultProps = {
 		value: ''
 	};
@@ -83,6 +84,7 @@ class Textarea extends React.Component<Props, State> {
 	
 	componentDidMount () {
 		this._isMounted = true;
+		this.textAreaElement = $(ReactDOM.findDOMNode(this)).get(0) as HTMLTextAreaElement;
 		this.setValue(this.props.value ? this.props.value : '');
 	};
 
@@ -138,10 +140,6 @@ class Textarea extends React.Component<Props, State> {
 			this.props.onCopy(e, this.state.value);
 		};
 	};
-
-	getTextAreaElement() {
-		return $(ReactDOM.findDOMNode(this)).get(0) as HTMLTextAreaElement;
-	}
 	
 	focus () {
 		window.setTimeout(() => { 
@@ -149,7 +147,7 @@ class Textarea extends React.Component<Props, State> {
 				return;
 			};
 
-			this.getTextAreaElement().focus({ preventScroll: true });
+			this.textAreaElement.focus({ preventScroll: true });
 		});
 	};
 	
@@ -159,7 +157,7 @@ class Textarea extends React.Component<Props, State> {
 				return;
 			};
 
-			this.getTextAreaElement().select();
+			this.textAreaElement.select();
 		});
 	};
 	
