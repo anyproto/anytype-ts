@@ -10,8 +10,6 @@ import { Icon } from 'Component';
 import { I, keyboard, Util, C, focus, Renderer } from 'Lib';
 import { menuStore, commonStore, blockStore } from 'Store';
 import { getRange, setRange } from 'selection-ranges';
-import 'prismjs/themes/prism.css';
-import 'katex/dist/katex.min.css';
 import Constant from 'json/constant.json';
 
 interface Props extends I.BlockComponent, RouteComponentProps<any> {};
