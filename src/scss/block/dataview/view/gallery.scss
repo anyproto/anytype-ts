@@ -36,7 +36,7 @@
 					}
 				}
 			}
-			.card > .selectable > .inner { padding: 16px; }
+			.card .inner { padding: 16px; }
 			.card:hover {
 				.cover {
 					.inner { color: $colorBlack; }

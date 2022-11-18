@@ -48,7 +48,6 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 
 	render () {
 		const { loading } = this.state;
-		const { isInline } = this.props;
 		const groups = this.getGroups(false);
 
 		return (
@@ -63,7 +62,6 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 										ref={(ref: any) => { this.columnRefs[group.id] = ref; }}
 										{...this.props} 
 										{...group}
-										{...isInline}
 										onRecordAdd={this.onRecordAdd} 
 										onDragStartColumn={this.onDragStartColumn}
 										onDragStartCard={this.onDragStartCard}

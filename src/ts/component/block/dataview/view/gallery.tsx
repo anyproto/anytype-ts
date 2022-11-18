@@ -79,7 +79,6 @@ const ViewGallery = observer(class ViewGallery extends React.Component<Props, {}
 						<Card 
 							key={'gallery-card-' + view.id + index} 
 							{...this.props}
-							{...isInline}
 							index={index} 
 						/>
 					))}
