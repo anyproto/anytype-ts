@@ -1,18 +1,17 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
-import { Icon, IconObject, Select } from 'Component';
-import { I, C, Relation, Util, keyboard, analytics } from 'Lib';
-import arrayMove from 'array-move';
-import { menuStore, dbStore, blockStore } from 'Store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCache } from 'react-virtualized';
-
+import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
+import arrayMove from 'array-move';
+import $ from 'jquery';
+import { Icon, IconObject, Select } from 'Component';
+import { I, C, Relation, Util, keyboard, analytics } from 'Lib';
+import { menuStore, dbStore, blockStore } from 'Store';
 import Constant from 'json/constant.json';
 
 interface Props extends I.Menu {};
 
-const $ = require('jquery');
 const HEIGHT = 48;
 const LIMIT = 20;
 

@@ -1,8 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import $ from 'jquery';
 import { keyboard } from 'Lib';
-
-const $ = require('jquery');
 
 interface Props {
 	id?: string;
@@ -30,6 +29,7 @@ interface State {
 class Textarea extends React.Component<Props, State> {
 
 	_isMounted = false;
+	textAreaElement: HTMLTextAreaElement;
 	public static defaultProps = {
 		value: ''
 	};
@@ -84,6 +84,7 @@ class Textarea extends React.Component<Props, State> {
 	
 	componentDidMount () {
 		this._isMounted = true;
+		this.textAreaElement = $(ReactDOM.findDOMNode(this)).get(0) as HTMLTextAreaElement;
 		this.setValue(this.props.value ? this.props.value : '');
 	};
 
@@ -146,7 +147,7 @@ class Textarea extends React.Component<Props, State> {
 				return;
 			};
 
-			$(ReactDOM.findDOMNode(this)).get(0).focus({ preventScroll: true });
+			this.textAreaElement.focus({ preventScroll: true });
 		});
 	};
 	
@@ -156,8 +157,7 @@ class Textarea extends React.Component<Props, State> {
 				return;
 			};
 
-			const node = $(ReactDOM.findDOMNode(this));
-			node.get(0).select();
+			this.textAreaElement.select();
 		});
 	};
 	

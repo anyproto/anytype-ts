@@ -1,8 +1,9 @@
 import * as React from 'react';
+import { observer } from 'mobx-react';
+import $ from 'jquery';
 import { I, Util, DataUtil, keyboard, translate, Relation } from 'Lib';
 import { Icon, Input, IconObject } from 'Component';
 import { commonStore, menuStore } from 'Store';
-import { observer } from 'mobx-react';
 
 import Constant from 'json/constant.json';
 
@@ -12,7 +13,6 @@ interface State {
 	isEditing: boolean; 
 };
 
-const $ = require('jquery');
 const MENU_ID = 'dataviewCalendar';
 
 const CellText = observer(class CellText extends React.Component<Props, State> {

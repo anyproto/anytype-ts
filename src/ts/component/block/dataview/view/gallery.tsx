@@ -1,18 +1,15 @@
 import * as React from 'react';
-import { I, Relation, DataUtil } from 'Lib';
 import { observer } from 'mobx-react';
-import { dbStore, detailStore } from 'Store';
 import { AutoSizer, WindowScroller, Masonry, CellMeasurer, CellMeasurerCache, createMasonryCellPositioner } from 'react-virtualized';
+import $ from 'jquery';
+import { I, Relation, DataUtil } from 'Lib';
+import { dbStore, detailStore } from 'Store';
 import { LoadMore } from 'Component';
-
 import Empty from '../empty';
 import Card from './gallery/card';
-
 import Constant from 'json/constant.json';
 
 interface Props extends I.ViewComponent {};
-
-const $ = require('jquery');
 
 const ViewGallery = observer(class ViewGallery extends React.Component<Props, {}> {
 

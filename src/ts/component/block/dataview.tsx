@@ -1,20 +1,19 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
+import { observer } from 'mobx-react';
+import { throttle } from 'lodash';
+import $ from 'jquery';
+import raf from 'raf';
+import arrayMove from 'array-move';
 import { Loader } from 'Component';
 import { I, C, Util, DataUtil, analytics, Dataview, keyboard, Onboarding, Relation, Renderer } from 'Lib';
 import { blockStore, menuStore, dbStore, detailStore, popupStore, commonStore } from 'Store';
-import { observer } from 'mobx-react';
-import { throttle } from 'lodash';
-import arrayMove from 'array-move';
-
 import Head from './dataview/head';
 import Controls from './dataview/controls';
-
 import ViewGrid from './dataview/view/grid';
 import ViewBoard from './dataview/view/board';
 import ViewGallery from './dataview/view/gallery';
 import ViewList from './dataview/view/list';
-
 import Constant from 'json/constant.json';
 
 interface Props extends I.BlockComponent, RouteComponentProps<any> {
@@ -26,8 +25,6 @@ interface State {
 	loading: boolean;
 };
 
-const $ = require('jquery');
-const raf = require('raf');
 
 const BlockDataview = observer(class BlockDataview extends React.Component<Props, State> {
 

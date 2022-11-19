@@ -1,12 +1,11 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import { observer } from 'mobx-react';
+import $ from 'jquery';
 import { I, C, Util, analytics, sidebar, DataUtil, keyboard } from 'Lib';
 import { Header, Graph, Icon, Loader } from 'Component';
-import { blockStore, detailStore, menuStore, dbStore } from 'Store';
-import { observer } from 'mobx-react';
-
+import { blockStore, detailStore, menuStore } from 'Store';
 import Panel from './graph/panel';
-
 import Constant from 'json/constant.json';
 
 interface Props extends I.PageComponent {
@@ -14,7 +13,6 @@ interface Props extends I.PageComponent {
 	matchPopup?: any;
 };
 
-const $ = require('jquery');
 
 const PageMainGraph = observer(class PageMainGraph extends React.Component<Props, {}> {
 

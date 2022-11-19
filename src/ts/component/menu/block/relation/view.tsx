@@ -1,17 +1,15 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import { observer } from 'mobx-react';
+import $ from 'jquery';
 import { I, C, DataUtil, Util, Relation, analytics } from 'Lib';
 import { commonStore, blockStore, detailStore, dbStore, menuStore } from 'Store';
 import { Icon } from 'Component';
-import { observer } from 'mobx-react';
-
 import Item from 'Component/menu/item/relationView';
-
 import Constant from 'json/constant.json';
 
 interface Props extends I.Menu {};
 
-const $ = require('jquery');
 const PREFIX = 'menuBlockRelationView';
 
 const MenuBlockRelationView = observer(class MenuBlockRelationView extends React.Component<Props, {}> {

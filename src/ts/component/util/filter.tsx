@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import $ from 'jquery';
 import { Input, Icon } from 'Component';
 import { I, translate } from 'Lib';
 
@@ -17,7 +18,6 @@ interface Props {
 	onClear?(): void;
 };
 
-const $ = require('jquery');
 
 class Filter extends React.Component<Props, {}> {
 

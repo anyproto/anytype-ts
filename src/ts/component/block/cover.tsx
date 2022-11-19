@@ -1,12 +1,11 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import { observer } from 'mobx-react';
+import $ from 'jquery';
 import { Icon, Drag, Cover, Loader } from 'Component';
 import { I, C, Util, DataUtil, focus, translate } from 'Lib';
 import { commonStore, blockStore, detailStore, menuStore } from 'Store';
-import { observer } from 'mobx-react';
-
 import ControlButtons  from 'Component/page/head/controlButtons';
-
 import Constant from 'json/constant.json';
 import Url from 'json/url.json';
 
@@ -17,7 +16,6 @@ interface State {
 	justUploaded: boolean;
 };
 
-const $ = require('jquery');
 
 const BlockCover = observer(class BlockCover extends React.Component<Props, State> {
 	

@@ -1,7 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, keyboard } from 'Lib';
+import $ from 'jquery';
 import Inputmask from 'inputmask';
+import { I, keyboard } from 'Lib';
 
 interface Props {
 	id?: string;
@@ -32,8 +33,6 @@ interface State {
 	value: string;
 	type: string;
 };
-
-const $ = require('jquery');
 
 class Input extends React.Component<Props, State> {
 	
@@ -179,6 +178,10 @@ class Input extends React.Component<Props, State> {
 			this.props.onSelect(e, this.state.value);
 		};
 	};
+
+	getInputElement() {
+		return $(ReactDOM.findDOMNode(this)).get(0) as HTMLInputElement;
+	}
 	
 	focus () {
 		window.setTimeout(() => {
@@ -186,8 +189,7 @@ class Input extends React.Component<Props, State> {
 				return;
 			};
 
-			const node = $(ReactDOM.findDOMNode(this));
-			node.get(0).focus({ preventScroll: true }); 
+			this.getInputElement().focus({ preventScroll: true }); 
 		});
 	};
 	
@@ -205,9 +207,8 @@ class Input extends React.Component<Props, State> {
 		if (!this._isMounted) {
 			return;
 		};
-		
-		const node = $(ReactDOM.findDOMNode(this));
-		window.setTimeout(() => { node.get(0).select();	});
+
+		window.setTimeout(() => { this.getInputElement().select();	});
 	};
 	
 	setValue (v: string) {
@@ -246,8 +247,7 @@ class Input extends React.Component<Props, State> {
 				return;
 			};
 
-			const node = $(ReactDOM.findDOMNode(this));
-			const el = node.get(0);
+			const el = this.getInputElement();
 
 			el.focus({ preventScroll: true }); 
 			el.setSelectionRange(range.from, range.to); 

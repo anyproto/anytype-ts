@@ -1,13 +1,12 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, Util, keyboard, translate } from 'Lib';
 import { observer } from 'mobx-react';
+import $ from 'jquery';
+import raf from 'raf';
 import { setRange } from 'selection-ranges';
+import { I, Util, keyboard, translate } from 'Lib';
 
 interface Props extends I.Menu {}
-
-const $ = require('jquery');
-const raf = require('raf');
 
 const MenuText = observer(class MenuText extends React.Component<Props, {}> {
 	

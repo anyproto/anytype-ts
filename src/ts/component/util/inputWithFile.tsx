@@ -1,5 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import $ from 'jquery';
+import raf from 'raf';
 import { Icon, Input, Button } from 'Component';
 import { I, keyboard, focus, translate } from 'Lib';
 
@@ -21,8 +23,6 @@ interface State {
 	size: Size;
 };
 
-const $ = require('jquery');
-const raf = require('raf');
 const SMALL_WIDTH = 248;
 const ICON_WIDTH = 60;
 
@@ -183,7 +183,7 @@ class InputWithFile extends React.Component<Props, State> {
 			};
 			
 			const node = $(ReactDOM.findDOMNode(this));
-			const rect = node.get(0).getBoundingClientRect() as DOMRect;
+			const rect = (node.get(0) as HTMLInputElement).getBoundingClientRect();
 			
 			let size = Size.Full;
 			if (rect.width <= SMALL_WIDTH) {

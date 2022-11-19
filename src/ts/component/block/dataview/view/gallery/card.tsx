@@ -1,18 +1,16 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import { observer } from 'mobx-react';
+import $ from 'jquery';
 import { Cell, Cover, Icon } from 'Component';
 import { I, DataUtil, Relation, keyboard } from 'Lib';
-import { observer } from 'mobx-react';
 import { commonStore, detailStore, dbStore } from 'Store';
-
 import Constant from 'json/constant.json';
 
 interface Props extends I.ViewComponent {
 	index: number;
 	style?: any;
 };
-
-const $ = require('jquery');
 
 const Card = observer(class Card extends React.Component<Props, {}> {
 

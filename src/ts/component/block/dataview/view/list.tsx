@@ -1,19 +1,15 @@
 import * as React from 'react';
-import { I } from 'Lib';
+import { AutoSizer, WindowScroller, List, InfiniteLoader } from 'react-virtualized';
 import { observer } from 'mobx-react';
+import $ from 'jquery';
 import { dbStore, blockStore } from 'Store';
 import { Icon, LoadMore } from 'Component';
-import { translate } from 'Lib';
-import { AutoSizer, WindowScroller, List, InfiniteLoader } from 'react-virtualized';
-
+import { I, translate } from 'Lib';
 import Empty from '../empty';
 import Row from './list/row';
 
-import Constant from 'json/constant.json';
-
 interface Props extends I.ViewComponent {};
 
-const $ = require('jquery');
 const HEIGHT = 32;
 
 const ViewList = observer(class ViewList extends React.Component<Props, {}> {

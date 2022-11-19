@@ -43,11 +43,13 @@
 		"@types/history": "^4.7.8",
 		"@types/i18n": "^0.8.7",
 		"@types/is": "0.0.21",
-		"@types/jquery": "^3.5.1",
+		"@types/jquery": "^3.5.14",
+		"@types/katex": "^0.14.0",
 		"@types/lodash": "^4.14.165",
 		"@types/long": "^4.0.1",
 		"@types/node": "^12.19.4",
 		"@types/prismjs": "^1.16.1",
+		"@types/raf": "^3.4.0",
 		"@types/react": "^16.14.31",
 		"@types/react-beautiful-dnd": "^11.0.5",
 		"@types/react-dnd": "^3.0.2",
@@ -61,6 +63,7 @@
 		"electron-notarize": "^0.2.1",
 		"file-loader": "^6.2.0",
 		"git-revision-webpack-plugin": "^3.0.6",
+		"husky": "^8.0.0",
 		"json-loader": "^0.5.7",
 		"lint-staged": "^13.0.3",
 		"prettier": "^2.7.1",
@@ -74,8 +77,7 @@
 		"webpack": "^5.74.0",
 		"webpack-bundle-analyzer": "^4.5.0",
 		"webpack-cli": "^4.10.0",
-		"webpack-dev-server": "^4.9.3",
-		"husky": "^8.0.0"
+		"webpack-dev-server": "^4.9.3"
 	},
 	"dependencies": {
 		"@electron/remote": "^2.0.8",

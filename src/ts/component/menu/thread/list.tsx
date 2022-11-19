@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import $ from 'jquery';
 import { Icon, IconObject } from 'Component';
 import { authStore, menuStore } from 'Store';
 import { observer } from 'mobx-react';
@@ -7,7 +8,6 @@ import { I, DataUtil, translate, Util } from 'Lib';
 
 interface Props extends I.Menu {}
 
-const $ = require('jquery');
 const MENU_ID = 'threadStatus';
 
 const MenuThreadList = observer(class MenuThreadList extends React.Component<Props, {}> {

@@ -1,16 +1,14 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import { observable } from 'mobx';
+import { observer } from 'mobx-react';
+import $ from 'jquery';
 import { I, C, analytics, DataUtil, translate, keyboard } from 'Lib';
 import { Input, MenuItemVertical, Button, Icon } from 'Component';
 import { dbStore, menuStore, blockStore, detailStore } from 'Store';
-import { observer } from 'mobx-react';
-import { observable } from 'mobx';
-
 import Constant from 'json/constant.json';
 
 interface Props extends I.Menu {};
-
-const $ = require('jquery');
 
 const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React.Component<Props, {}> {
 

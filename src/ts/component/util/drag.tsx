@@ -1,7 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Util } from 'Lib';
-import { Icon } from 'Component';
+import $ from 'jquery';
 
 interface Props {
 	id?: string;
@@ -12,9 +11,6 @@ interface Props {
 	onMove?(e: any, v: number): void;
 	onEnd?(e: any, v: number): void;
 };
-
-const $ = require('jquery');
-const raf = require('raf');
 
 class Drag extends React.Component<Props, {}> {
 

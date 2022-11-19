@@ -1,9 +1,10 @@
 import * as React from 'react';
+import { observer } from 'mobx-react';
 import { RouteComponentProps } from 'react-router';
+import $ from 'jquery';
 import { Loader } from 'Component';
 import { I, C, Storage, Util, analytics, Action, keyboard } from 'Lib';
-import { blockStore, popupStore } from 'Store';
-import { observer } from 'mobx-react';
+import { popupStore } from 'Store';
 
 import PageIndex from './page/settings/index';
 import PageAccount from './page/settings/account';
@@ -29,7 +30,6 @@ interface State {
 	loading: boolean;
 };
 
-const $ = require('jquery');
 
 const Components: any = {
 	index:				 PageIndex,

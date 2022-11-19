@@ -1,11 +1,12 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
+import { observer } from 'mobx-react';
+import $ from 'jquery';
+import raf from 'raf';
 import { Icon, Button, Cover, Loader, IconObject, Header, ObjectName, ObjectDescription } from 'Component';
 import { I, C, DataUtil, Util, keyboard, Key, focus, translate, sidebar } from 'Lib';
 import { blockStore, popupStore, commonStore } from 'Store';
-import { observer } from 'mobx-react';
-import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-
 import Constant from 'json/constant.json';
 
 interface Props extends I.PageComponent {
@@ -21,8 +22,6 @@ interface State {
 	n: number;
 };
 
-const $ = require('jquery');
-const raf = require('raf');
 const HEIGHT = 96;
 
 enum Panel { 

@@ -1,10 +1,9 @@
 import { observable, action, computed, set, makeObservable } from 'mobx';
+import $ from 'jquery';
 import { I, M, Util, Storage, Mark, translate } from 'Lib';
 import { detailStore } from 'Store';
-
 import Constant from 'json/constant.json';
 
-const $ = require('jquery');
 
 class BlockStore {
 

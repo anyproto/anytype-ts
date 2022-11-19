@@ -1,16 +1,14 @@
 import * as React from 'react';
+import $ from 'jquery';
+import { observer } from 'mobx-react';
 import { I, C, DataUtil, Util, focus, analytics, Relation, translate } from 'Lib';
 import { Cell } from 'Component';
 import { blockStore, detailStore, dbStore, menuStore } from 'Store';
-import { observer } from 'mobx-react';
-
 import Constant from 'json/constant.json';
 
 interface Props extends I.BlockComponent {
 	iconSize?: number;
 };
-
-const $ = require('jquery');
 
 const PREFIX = 'blockFeatured';
 const BLOCK_ID_DATAVIEW = 'dataview';

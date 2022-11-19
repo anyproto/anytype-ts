@@ -1,11 +1,11 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
+import { observer } from 'mobx-react';
+import QRCode from 'qrcode.react';
 import { Title, Label, Textarea, Button } from 'Component';
 import { I, C, translate, analytics, Util } from 'Lib';
 import { commonStore, authStore } from 'Store';
-import { observer } from 'mobx-react';
-
 import Head from './head';
 
 interface Props extends I.Popup, RouteComponentProps<any> {
@@ -18,7 +18,6 @@ interface State {
 	showCode: boolean;
 };
 
-const QRCode = require('qrcode.react');
 const QRColor = {
 	'': '#fff',
 	dark: '#aca996',

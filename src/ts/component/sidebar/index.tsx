@@ -2,15 +2,10 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { observer } from 'mobx-react';
-
-// Libraries
+import $ from 'jquery';
 import { keyboard, sidebar, I, Util } from 'Lib';
-
-// UI Components
 import Footer from './footer';
 import { Tree } from '../widgets';
-
-const $ = require('jquery');
 
 interface Props {
 	dataset?: any;

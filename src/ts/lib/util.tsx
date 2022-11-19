@@ -1,12 +1,11 @@
+import * as $ from 'jquery';
 import { I, keyboard, Renderer } from 'Lib';
 import { commonStore, popupStore, menuStore } from 'Store';
 import { translate } from '.';
-
 import Constant from 'json/constant.json';
 import Errors from 'json/error.json';
-import Cover from "json/cover.json";
+import Cover from 'json/cover.json';
 
-const $ = require('jquery');
 
 class Util {
 
@@ -945,7 +944,7 @@ class Util {
 	};
 
 	getScrollContainer (isPopup: boolean) {
-		return $(isPopup ? '#popupPage-innerWrap' : window);
+		return (isPopup ? $('#popupPage-innerWrap') : $(window)) as JQuery<HTMLElement>;
 	};
 
 	getPageContainer (isPopup: boolean) {

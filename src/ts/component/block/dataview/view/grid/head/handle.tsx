@@ -1,8 +1,9 @@
 import * as React from 'react';
-import { I } from 'Lib';
-import { Icon, IconObject } from 'Component';
 import { SortableHandle } from 'react-sortable-hoc';
 import { observer } from 'mobx-react';
+import $ from 'jquery';
+import { Icon, IconObject } from 'Component';
+import { I } from 'Lib';
 import { menuStore } from 'Store';
 
 interface Props {
@@ -11,8 +12,6 @@ interface Props {
 	readonly: boolean;
 	onClick?: (e: any) => void;
 }
-
-const $ = require('jquery');
 
 const HeadHandle = observer(class HeadHandle extends React.Component<Props, {}> {
 

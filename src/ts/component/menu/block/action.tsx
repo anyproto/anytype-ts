@@ -1,9 +1,9 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import $ from 'jquery';
 import { Filter, MenuItemVertical } from 'Component';
 import { detailStore, blockStore, menuStore } from 'Store';
 import { I, C, keyboard, DataUtil, focus, Action, translate, analytics } from 'Lib';
-
 import Constant from 'json/constant.json';
 
 interface Props extends I.Menu {};
@@ -11,7 +11,6 @@ interface State {
 	filter: string;
 };
 
-const $ = require('jquery');
 
 class MenuBlockAction extends React.Component<Props, State> {
 	

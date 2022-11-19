@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { Filter, MenuItemVertical, Icon, Loader } from 'Component';
-import { I, C, Util, Relation, keyboard, DataUtil } from 'Lib';
-import { commonStore, menuStore, dbStore } from 'Store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-
+import $ from 'jquery';
+import { Filter, MenuItemVertical, Icon, Loader } from 'Component';
+import { I, Util, Relation, keyboard, DataUtil } from 'Lib';
+import { commonStore, menuStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
 interface Props extends I.Menu {};
@@ -13,7 +13,6 @@ interface State {
 	loading: boolean;
 };
 
-const $ = require('jquery');
 const HEIGHT = 28;
 const MENU_ID = 'dataviewFileValues';
 const LIMIT_HEIGHT = 20;

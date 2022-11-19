@@ -1,10 +1,10 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import $ from 'jquery';
 import { Frame, Cover, Title, Error, Button, Header, Footer } from 'Component';
 import { I, Storage, translate, C, DataUtil, Util, analytics, Renderer } from 'Lib';
 import { commonStore, authStore } from 'Store';
 import { observer } from 'mobx-react';
-
 import Constant from 'json/constant.json';
 import Errors from 'json/error.json';
 
@@ -14,8 +14,6 @@ interface State {
 	index: number;
 	error: string;
 };
-
-const $ = require('jquery');
 
 const PageAuthSetup = observer(class PageAuthSetup extends React.Component<Props, State> {
 

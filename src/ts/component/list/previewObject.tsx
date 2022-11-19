@@ -1,7 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import $ from 'jquery';
 import { PreviewObject, Icon } from 'Component';
-import { keyboard, Action } from 'Lib';
+import { keyboard } from 'Lib';
 
 interface Props {
 	getItems: () => any[];
@@ -10,8 +11,6 @@ interface Props {
 	onClick?: (e: any, item: any) => void;
 	onAdd?: (e: any) => void;
 };
-
-const $ = require('jquery');
 
 const WIDTH = 344;
 

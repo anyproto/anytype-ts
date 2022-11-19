@@ -1,18 +1,17 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import { observer } from 'mobx-react';
+import { observable } from 'mobx';
+import $ from 'jquery';
 import { Icon, Button } from 'Component';
 import { C, I, Util, analytics, Relation, Dataview } from 'Lib';
 import { menuStore, dbStore, blockStore } from 'Store';
-import { observable } from 'mobx';
-import { observer } from 'mobx-react';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import arrayMove from 'array-move';
 
 interface Props extends I.ViewComponent {
 	className?: string;
 };
-
-const $ = require('jquery');
 
 const Controls = observer(class Controls extends React.Component<Props, {}> {
 
