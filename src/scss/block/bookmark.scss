@@ -14,10 +14,10 @@
         }
 
 		.inner { 
-			display: flex; border: 1px solid $colorLightGrey; transition: border-color 0.2s ease-in-out;
+			display: flex; border: 1px solid $colorBorderSemiTransparent; transition: border-color 0.2s ease-in-out;
 			cursor: pointer; position: relative; border-radius: 16px; overflow: hidden;
 		}
-		.inner:hover { border-color: $colorMediumGrey; }
+		.inner:hover { border-color: $colorBorderDark; }
 		.inner.bgColor { border: 0px; }
 		
 		.inner {
