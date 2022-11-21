@@ -128,20 +128,20 @@ const BlockLink = observer(class BlockLink extends React.Component<Props, {}> {
 				<div className={cnc.join(' ')} onMouseDown={this.onClick}>
 					<div id="sides" className={cns.join(' ')}>
 						<div key="sideLeft" className={cnl.join(' ')}>
-							<div className="flex cardName">
+							<div className="relationItem cardName">
 								{icon}
 								<ObjectName object={object} />
 								{archive}
 							</div>
 
 							{descr ? (
-								<div className="flex cardDescription">
+								<div className="relationItem cardDescription">
 									{div}
 									<div className="description">{descr}</div>
 								</div>
 							) : ''}
 
-							<div className="flex cardFeatured">
+							<div className="relationItem cardFeatured">
 								{withType && type ? (
 									<React.Fragment>
 										{div}
