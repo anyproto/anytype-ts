@@ -51,7 +51,11 @@ const BodyRow = observer(class BodyRow extends React.Component<Props, {}> {
 		);
 
 		if (isInline) {
-			content = <div style={{ gridTemplateColumns: str, display: 'grid' }}>{content}</div>;
+			content = (
+				<div style={{ gridTemplateColumns: str, display: 'grid' }}>
+					{content}
+				</div>
+			);
 		} else {
 			content = (
 				<div

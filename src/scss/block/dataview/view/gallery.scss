@@ -11,6 +11,8 @@
 				background: $colorWhite; overflow: hidden;
 			}
 			.card {
+				.itemContent > .inner { padding: 16px; }
+
 				.cover { 
 					position: relative; height: 144px; background-position: top center; display: flex; align-items: center;
 					background-color: $colorHover; width: 100%; justify-content: center;
@@ -36,7 +38,6 @@
 					}
 				}
 			}
-			.card .itemContent > .inner { padding: 16px; }
 			.card:hover {
 				.cover {
 					.inner { color: $colorBlack; }

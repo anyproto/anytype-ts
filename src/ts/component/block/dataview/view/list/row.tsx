@@ -26,7 +26,7 @@ const Row = observer(class Row extends React.Component<Props, {}> {
 		const record = getRecord(index);
 
 		let content = (
-			<div>
+			<React.Fragment>
 				{relations.map((relation: any, i: number) => {
 					const id = Relation.cellId(idPrefix, relation.relationKey, index);
 					return (
@@ -47,7 +47,7 @@ const Row = observer(class Row extends React.Component<Props, {}> {
 						/>
 					);
 				})}
-			</div>
+			</React.Fragment>
 		);
 
 		if (!isInline) {
