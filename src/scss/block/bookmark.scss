@@ -14,7 +14,7 @@
         }
 
 		.inner { 
-			display: flex; border: 1px solid $colorBorderSemiTransparent; transition: border-color 0.2s ease-in-out;
+			display: flex; border: 1px solid $colorHover; transition: border-color 0.2s ease-in-out;
 			cursor: pointer; position: relative; border-radius: 16px; overflow: hidden;
 		}
 		.inner:hover { border-color: $colorBorderDark; }
