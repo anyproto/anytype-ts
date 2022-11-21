@@ -108,6 +108,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					getView={this.getView} 
 					getRecord={this.getRecord}
 					onRecordAdd={this.onRecordAdd}
+					className={className}
 					isInline={isInline}
 				/>
 			);

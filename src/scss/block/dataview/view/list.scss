@@ -72,6 +72,12 @@
 				.icon.checkbox { width: 20px; height: 20px; vertical-align: top; margin-top: 2px; }
 			}
 			.cellContent.c-checkbox.canEdit { cursor: pointer !important; }
+
+			.loadMore { margin-top: 2px; }
         }
     }
+
+	.block.blockDataview.isInline {
+		.viewItem.viewList { padding: 14px 0px 0px 12px; }
+	}
 }
