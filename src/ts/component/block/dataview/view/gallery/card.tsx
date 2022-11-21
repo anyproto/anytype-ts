@@ -68,7 +68,7 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 		};
 
 		let content = (
-			<div>
+			<div className="itemContent">
 				{cover}
 				<div className="inner">
 					{relations.map((relation: any, i: number) => {
