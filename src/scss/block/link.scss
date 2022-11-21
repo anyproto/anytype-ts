@@ -85,7 +85,7 @@
 				.side { border: 0px; }
 			}
 
-			.cardName { @include text-common; line-height: 18px; }
+			.cardName { @include text-common; line-height: 20px; }
 			.cardName .name { @include clamp2; font-weight: 500; }
 
 			.archive { position: absolute; right: 10px; top: 10px; z-index: 1; }
