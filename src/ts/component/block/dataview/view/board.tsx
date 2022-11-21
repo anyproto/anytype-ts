@@ -58,7 +58,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 										key={`board-column-${group.id}`} 
 										ref={(ref: any) => { this.columnRefs[group.id] = ref; }}
 										{...this.props} 
-										{...group} 
+										{...group}
 										onRecordAdd={this.onRecordAdd} 
 										onDragStartColumn={this.onDragStartColumn}
 										onDragStartCard={this.onDragStartCard}
