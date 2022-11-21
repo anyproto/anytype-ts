@@ -56,8 +56,8 @@
 			.side.left { line-height: 24px; vertical-align: top; display: flex; gap: 0px 6px; align-items: center; }
 			.side.right { display: none !important; }
 
-			.flex { display: flex; align-items: center; gap: 0px 6px; }
-			.flex {
+			.relationItem { display: flex; align-items: center; gap: 0px 6px; }
+			.relationItem {
 				.div { width: 2px; height: 18px; line-height: 18px; display: inline-block; vertical-align: top; flex-shrink: 0; flex-grow: 0; }
 				.div {
 					.inner { width: 2px; height: 2px; border-radius: 100%; display: inline-block; vertical-align: middle; background: $colorMediumGrey; }
@@ -79,7 +79,7 @@
 
 		.linkCard.card { margin: 8px 0px; }
 		.linkCard.card {
-			.side.left { padding: 16px; border: 1px solid $colorBorderDark; border-radius: 16px; }
+			.side.left { padding: 16px; border: 1px solid $colorBorderDark; border-radius: 16px; display: block !important; }
 			.side.right { border-radius: 0px 16px 16px 0px; }
 			.sides.withBgColor {
 				.side { border: 0px; }
