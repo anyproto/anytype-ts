@@ -34,8 +34,8 @@ const BodyRow = observer(class BodyRow extends React.Component<Props, {}> {
 			cn.push('isDeleted');
 		};
 
-		const Cells = () => (
-			<div style={{ gridTemplateColumns: str, display: 'grid' }}>
+		let content = (
+			<React.Fragment>
 				{relations.map((relation: any, i: number) => (
 					<Cell
 						key={'grid-cell-' + relation.relationKey + record.id}
@@ -47,20 +47,24 @@ const BodyRow = observer(class BodyRow extends React.Component<Props, {}> {
 					/>
 				))}
 				<div className="cell last" />
-			</div>
+			</React.Fragment>
 		);
 
-		const Selectable = () => (
-			<div
-				id={'selectable-' + record.id}
-				className={[ 'selectable', 'type-' + I.SelectType.Record ].join(' ')}
-				data-id={record.id}
-				data-type={I.SelectType.Record}
-				style={{ gridTemplateColumns: str }}
-			>
-				<Cells />
-			</div>
-		);
+		if (isInline) {
+			content = <div style={{ gridTemplateColumns: str, display: 'grid' }}>{content}</div>;
+		} else {
+			content = (
+				<div
+					id={'selectable-' + record.id}
+					className={[ 'selectable', 'type-' + I.SelectType.Record ].join(' ')}
+					data-id={record.id}
+					data-type={I.SelectType.Record}
+					style={{ gridTemplateColumns: str }}
+				>
+					{content}
+				</div>
+			);
+		};
 
 		return (
 			<div 
@@ -69,7 +73,7 @@ const BodyRow = observer(class BodyRow extends React.Component<Props, {}> {
 				style={style} 
 				onContextMenu={(e: any) => { onContext(e, record.id); }}
 			>
-				{isInline ? <Cells /> : <Selectable />}
+				{content}
 			</div>
 		);
 	};

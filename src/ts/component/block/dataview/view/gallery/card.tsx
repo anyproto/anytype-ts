@@ -67,7 +67,7 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 			};
 		};
 
-		const Inner = () => (
+		let content = (
 			<div>
 				{cover}
 				<div className="inner">
@@ -98,16 +98,18 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 			</div>
 		);
 
-		const Selectable = () => (
-			<div
-				id={'selectable-' + record.id}
-				className={[ 'selectable', 'type-' + I.SelectType.Record ].join(' ')}
-				data-id={record.id}
-				data-type={I.SelectType.Record}
-			>
-				<Inner />
-			</div>
-		);
+		if (!isInline) {
+			content = (
+				<div
+					id={'selectable-' + record.id}
+					className={[ 'selectable', 'type-' + I.SelectType.Record ].join(' ')}
+					data-id={record.id}
+					data-type={I.SelectType.Record}
+				>
+					{content}
+				</div>
+			);
+		};
 
 		return (
 			<div 
@@ -116,7 +118,7 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 				onClick={(e: any) => { this.onClick(e); }}
 				onContextMenu={(e: any) => { onContext(e, record.id); }}
 			>
-				{isInline ? <Inner /> : <Selectable />}
+				{content}
 			</div>
 		);
 	};

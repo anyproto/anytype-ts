@@ -26,7 +26,7 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 		const record = detailStore.get(subId, id);
 		const cn = [ 'card', DataUtil.layoutClass(record.id, record.layout) ];
 
-		const CardContent = () => (
+		let content = (
 			<div className="cardContent">
 				{relations.map((relation: any, i: number) => {
 					const id = Relation.cellId(idPrefix, relation.relationKey, 0);
@@ -50,16 +50,18 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 			</div>
 		);
 
-		const Selectable = () => (
-			<div
-				id={'selectable-' + record.id}
-				className={[ 'selectable', 'type-' + I.SelectType.Record ].join(' ')}
-				data-id={record.id}
-				data-type={I.SelectType.Record}
-			>
-				<CardContent />
-			</div>
-		);
+		if (!isInline) {
+			content = (
+				<div
+					id={'selectable-' + record.id}
+					className={[ 'selectable', 'type-' + I.SelectType.Record ].join(' ')}
+					data-id={record.id}
+					data-type={I.SelectType.Record}
+				>
+					{content}
+				</div>
+			);
+		};
 
 		return (
 			<div 
@@ -71,7 +73,7 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 				onClick={(e: any) => { this.onClick(e); }}
 				onContextMenu={(e: any) => { onContext(e, record.id); }}
 			>
-				{isInline ? <CardContent /> : <Selectable />}
+				{content}
 			</div>
 		);
 	};

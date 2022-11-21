@@ -25,7 +25,7 @@ const Row = observer(class Row extends React.Component<Props, {}> {
 		const subId = dbStore.getSubId(rootId, block.id);
 		const record = getRecord(index);
 
-		const Cells = () => (
+		let content = (
 			<div>
 				{relations.map((relation: any, i: number) => {
 					const id = Relation.cellId(idPrefix, relation.relationKey, index);
@@ -50,16 +50,18 @@ const Row = observer(class Row extends React.Component<Props, {}> {
 			</div>
 		);
 
-		const Selectable = () => (
-			<div
-				id={'selectable-' + record.id}
-				className={[ 'selectable', 'type-' + I.SelectType.Record ].join(' ')}
-				data-id={record.id}
-				data-type={I.SelectType.Record}
-			>
-				<Cells />
-			</div>
-		);
+		if (!isInline) {
+			content = (
+				<div
+					id={'selectable-' + record.id}
+					className={[ 'selectable', 'type-' + I.SelectType.Record ].join(' ')}
+					data-id={record.id}
+					data-type={I.SelectType.Record}
+				>
+					{content}
+				</div>
+			)
+		};
 
 		return (
 			<div 
@@ -67,7 +69,7 @@ const Row = observer(class Row extends React.Component<Props, {}> {
 				style={style}
 				onContextMenu={(e: any) => { onContext(e, record.id); }}
 			>
-				{isInline ? <Cells /> : <Selectable />}
+				{content}
 			</div>
 		);
 	};
