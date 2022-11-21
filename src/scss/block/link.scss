@@ -107,7 +107,7 @@
 			.iconObject { position: absolute; left: 16px; top: 16px; background-color: $colorVeryLightGrey; border-radius: 10px; }
 		}
 
-		.linkCard.c48.withIcon.withCover {
+		.linkCard.c48.withIcon.withCover.vertical {
 			.cardName { min-height: unset; }
 			.sides { min-height: 62px; }
 			.side.left { padding: 24px 16px 16px 16px; z-index: 10; }
