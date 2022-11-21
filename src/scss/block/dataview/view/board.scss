@@ -27,9 +27,9 @@
 					.cellContent { width: 100%; display: inline; }
 					.cellContent {
 						.empty { display: block; line-height: 24px; color: #8c9ea5; }
-						.wrap { display: inline-block; white-space: nowrap; max-width: 100%; }
+						.wrap { display: inline-block; white-space: nowrap; width: 100%; }
 
-						.tagItem { margin: 3px 8px 0px 0px; }
+						.tagItem { margin: 3px 8px 0px 0px; max-width: 100%; }
 						.tagItem:last-child { margin-right: 0px; }
 
 						.more { vertical-align: top; margin: 3px 0px 0px 0px; }

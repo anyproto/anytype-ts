@@ -1,5 +1,6 @@
 import { authStore, commonStore, blockStore, detailStore, dbStore } from 'Store';
 import { Util, I, M, Decode, translate, analytics, Response, Mapper, crumbs, Renderer, Action } from 'Lib';
+import { set, observable } from 'mobx';
 import * as Sentry from '@sentry/browser';
 import arrayMove from 'array-move';
 
@@ -122,6 +123,7 @@ class Dispatcher {
 		if (v == V.SUBSCRIPTIONREMOVE)			 t = 'subscriptionRemove';
 		if (v == V.SUBSCRIPTIONPOSITION)		 t = 'subscriptionPosition';
 		if (v == V.SUBSCRIPTIONCOUNTERS)		 t = 'subscriptionCounters';
+		if (v == V.SUBSCRIPTIONGROUPS)			 t = 'subscriptionGroups';
 
 		if (v == V.PROCESSNEW)					 t = 'processNew';
 		if (v == V.PROCESSUPDATE)				 t = 'processUpdate';
@@ -553,22 +555,21 @@ class Dispatcher {
 					id = data.getId();
 					block = blockStore.getLeaf(rootId, id);
 
-					if (!block) {
+					if (!block || !data.hasGrouporder()) {
 						break;
 					};
 
-					if (data.hasGrouporder()) {
-						const order = Mapper.From.GroupOrder(data.getGrouporder());
-						const idx = block.content.groupOrder.findIndex(it => it.viewId == order.viewId);
+					let groupOrder = block.content.groupOrder;						
+					let order = Mapper.From.GroupOrder(data.getGrouporder());
+					let idx = groupOrder.findIndex(it => it.viewId == order.viewId);
 
-						if (idx >= 0) {
-							block.content.groupOrder[idx] = order;
-						} else {
-							block.content.groupOrder.push(order);
-						};
+					if (idx >= 0) {
+						set(groupOrder[idx], order);
+					} else {
+						groupOrder.push(order);
 					};
 
-					blockStore.updateContent(rootId, id, { groupOrder: block.content.groupOrder });
+					blockStore.updateContent(rootId, id, { groupOrder });
 					break;
 
 				case 'blockDataviewObjectOrderUpdate':
@@ -582,17 +583,20 @@ class Dispatcher {
 					
 					const groupId = data.getGroupid();
 					const changes = data.getSlicechangesList() || [];
-					const el = block.content.objectOrder.find(it => (it.viewId == viewId) && (it.groupId == groupId));
+					const cb = it => (it.viewId == viewId) && (it.groupId == groupId);
+					const index = block.content.objectOrder.findIndex(cb);
 
+					let el = block.content.objectOrder.find(cb);
 					if (!el) {
-						break;
+						el = { viewId, groupId, objectIds: observable.array([]) };
+						block.content.objectOrder.push(el);
 					};
 
 					changes.forEach((it: any) => {
 						let op = it.getOp();
 						let ids = it.getIdsList() || [];
 						let afterId = it.getAfterid();
-						let idx = el.objectIds.indexOf(afterId);
+						let idx = afterId ? el.objectIds.indexOf(afterId) : 0;
 
 						switch (op) {
 							case I.SliceOperation.Add:
@@ -622,7 +626,8 @@ class Dispatcher {
 						};
 					});
 
-					blockStore.update(rootId, block);
+					block.content.objectOrder[index] = el;
+					blockStore.updateContent(rootId, id, { objectOrder: block.content.objectOrder });
 					break;
 
 				case 'objectDetailsSet':
@@ -735,6 +740,17 @@ class Dispatcher {
 							dbStore.metaSet(subId, '', { total: total });
 						};
 					})();
+					break;
+
+				case 'subscriptionGroups':
+					const [ rid, bid, key ] = data.getSubid().split('-');
+					const group = Mapper.From.BoardGroup(data.getGroup());
+
+					if (data.getRemove()) {
+						dbStore.groupsRemove(rid, bid, [ group.id ]);
+					} else {
+						dbStore.groupsAdd(rid, bid, [ group ]);
+					};
 					break;
 
 				case 'processNew':

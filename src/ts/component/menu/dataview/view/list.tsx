@@ -48,6 +48,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<Props> 
 			<div 
 				id={'item-' + item.id} 
 				className="item" 
+				onClick={(e: any) => { this.onClick(e, item); }}
 				onMouseEnter={(e: any) => { this.onOver(e, item); }}
 				style={item.style}
 			>
@@ -212,7 +213,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<Props> 
 	};
 
 	onAdd () {
-		const { param, getId, getSize, close } = this.props;
+		const { param, getId, getSize } = this.props;
 		const { data } = param;
 		const { rootId, blockId, getView, getData } = data;
 		const view = getView();
@@ -281,7 +282,13 @@ const MenuViewList = observer(class MenuViewList extends React.Component<Props> 
 	};
 
 	onClick (e: any, item: any) {
-		const { close } = this.props;
+		const { close, param } = this.props;
+		const { data } = param;
+		const { rootId, blockId } = data;
+		const subId = dbStore.getSubId(rootId, blockId);
+
+		dbStore.metaSet(subId, '', { viewId: item.id });
+		analytics.event('SwitchView', { type: item.type });
 
 		close();
 	};

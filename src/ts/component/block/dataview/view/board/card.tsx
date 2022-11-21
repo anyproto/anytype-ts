@@ -22,7 +22,7 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 		const view = getView();
 		const relations = view.getVisibleRelations();
 		const idPrefix = getIdPrefix();
-		const subId = dbStore.getSubId(rootId, [ block.id, groupId ].join(':'));
+		const subId = dbStore.getGroupSubId(rootId, block.id, groupId);
 		const record = detailStore.get(subId, id);
 		const cn = [ 'card', DataUtil.layoutClass(record.id, record.layout) ];
 
@@ -96,7 +96,7 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 
 		const { rootId, block, groupId, id, onContext, dataset } = this.props;
 		const { selection } = dataset || {};
-		const subId = dbStore.getSubId(rootId, [ block.id, groupId ].join(':'));
+		const subId = dbStore.getGroupSubId(rootId, block.id, groupId);
 		const record = detailStore.get(subId, id);
 		const cb = {
 			0: () => {
