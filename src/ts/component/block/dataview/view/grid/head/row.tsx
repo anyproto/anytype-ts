@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { I } from 'Lib';
-import { Icon } from 'Component';
-import { blockStore, dbStore } from 'Store';
 import { SortableContainer } from 'react-sortable-hoc';
 import { observer } from 'mobx-react';
-
+import $ from 'jquery';
+import { I } from 'Lib';
+import { Icon } from 'Component';
+import { blockStore } from 'Store';
 import Cell from './cell';
 
 interface Props extends I.ViewComponent {
@@ -15,7 +15,6 @@ interface Props extends I.ViewComponent {
 	getColumnWidths?: (relationId: string, width: number) => any;
 };
 
-const $ = require('jquery');
 
 const HeadRow = observer(class HeadRow extends React.Component<Props, {}> {
 

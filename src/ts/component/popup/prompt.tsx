@@ -1,11 +1,11 @@
 import * as React from 'react';
+import { observer } from 'mobx-react';
+import $ from 'jquery';
 import { Title, Label, Input, Button } from 'Component';
 import { I, translate } from 'Lib';
-import { observer } from 'mobx-react';
 
 interface Props extends I.Popup {};
 
-const $ = require('jquery');
 
 const PopupPrompt = observer(class PopupPrompt extends React.Component<Props, {}> {
 	

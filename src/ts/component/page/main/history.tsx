@@ -1,10 +1,10 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import $ from 'jquery';
 import { Header, Footer, Block, Loader, Icon, Deleted } from 'Component';
 import { blockStore, detailStore } from 'Store';
 import { I, M, C, Util, DataUtil } from 'Lib';
 import { observer } from 'mobx-react';
-
 import Constant from 'json/constant.json';
 import Errors from 'json/error.json';
 
@@ -18,7 +18,6 @@ interface State {
 	isDeleted: boolean;
 };
 
-const $ = require('jquery');
 
 const LIMIT = 100;
 const GROUP_OFFSET = 300;

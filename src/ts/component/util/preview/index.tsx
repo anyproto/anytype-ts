@@ -1,16 +1,15 @@
 import * as React from 'react';
+import { observer } from 'mobx-react';
+import $ from 'jquery';
+import raf from 'raf';
 import { PreviewLink, PreviewObject } from 'Component';
 import { I, Util, DataUtil, Mark, translate, Renderer } from 'Lib';
-import { observer } from 'mobx-react';
 import { commonStore, menuStore } from 'Store';
 
 interface Props {}
 interface State {
 	object: any;
 };
-
-const $ = require('jquery');
-const raf = require('raf');
 
 const OFFSET_Y = 8;
 const BORDER = 12;

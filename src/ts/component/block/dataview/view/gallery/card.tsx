@@ -1,10 +1,10 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import { observer } from 'mobx-react';
+import $ from 'jquery';
 import { Cell, Cover, Icon } from 'Component';
 import { I, DataUtil, Relation, keyboard } from 'Lib';
-import { observer } from 'mobx-react';
 import { commonStore, detailStore, dbStore } from 'Store';
-
 import Constant from 'json/constant.json';
 
 interface Props extends I.ViewComponent {
@@ -12,14 +12,12 @@ interface Props extends I.ViewComponent {
 	style?: any;
 };
 
-const $ = require('jquery');
-
 const Card = observer(class Card extends React.Component<Props, {}> {
 
 	_isMounted: boolean = false;
 
 	render () {
-		const { rootId, block, index, getView, getRecord, onRef, style, onContext, onCellClick, getIdPrefix } = this.props;
+		const { rootId, block, index, getView, getRecord, onRef, style, onContext, onCellClick, getIdPrefix, isInline } = this.props;
 		const view = getView();
 		const { cardSize, coverFit, hideIcon } = view;
 		const relations = view.getVisibleRelations();
@@ -67,6 +65,50 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 			};
 		};
 
+		let content = (
+			<div className="itemContent">
+				{cover}
+				<div className="inner">
+					{relations.map((relation: any, i: number) => {
+						const id = Relation.cellId(idPrefix, relation.relationKey, index);
+						return (
+							<Cell
+								elementId={id}
+								key={'list-cell-' + view.id + relation.relationKey}
+								{...this.props}
+								subId={subId}
+								ref={(ref: any) => { onRef(ref, id); }}
+								relationKey={relation.relationKey}
+								viewType={view.type}
+								idPrefix={idPrefix}
+								index={index}
+								arrayLimit={2}
+								showTooltip={true}
+								onClick={(e: any) => {
+									e.stopPropagation();
+									onCellClick(e, relation.relationKey, index);
+								}}
+								tooltipX={I.MenuDirection.Left}
+							/>
+						);
+					})}
+				</div>
+			</div>
+		);
+
+		if (!isInline) {
+			content = (
+				<div
+					id={'selectable-' + record.id}
+					className={[ 'selectable', 'type-' + I.SelectType.Record ].join(' ')}
+					data-id={record.id}
+					data-type={I.SelectType.Record}
+				>
+					{content}
+				</div>
+			);
+		};
+
 		return (
 			<div 
 				className={cn.join(' ')} 
@@ -74,39 +116,7 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 				onClick={(e: any) => { this.onClick(e); }}
 				onContextMenu={(e: any) => { onContext(e, record.id); }}
 			>
-				<div 
-					id={'selectable-' + record.id} 
-					className={[ 'selectable', 'type-' + I.SelectType.Record ].join(' ')} 
-					data-id={record.id}
-					data-type={I.SelectType.Record}
-				>
-					{cover}
-					<div className="inner">
-						{relations.map((relation: any, i: number) => {
-							const id = Relation.cellId(idPrefix, relation.relationKey, index);
-							return (
-								<Cell 
-									elementId={id}
-									key={'list-cell-' + view.id + relation.relationKey} 
-									{...this.props}
-									subId={subId}
-									ref={(ref: any) => { onRef(ref, id); }} 
-									relationKey={relation.relationKey}
-									viewType={view.type}
-									idPrefix={idPrefix}
-									index={index}
-									arrayLimit={2}
-									showTooltip={true}
-									onClick={(e: any) => { 
-										e.stopPropagation();
-										onCellClick(e, relation.relationKey, index); 
-									}}
-									tooltipX={I.MenuDirection.Left}
-								/>
-							);
-						})}
-					</div>
-				</div>
+				{content}
 			</div>
 		);
 	};

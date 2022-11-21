@@ -1,11 +1,12 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import $ from 'jquery';
+import raf from 'raf';
 import { RouteComponentProps } from 'react-router';
 import { Label, Icon, Cover, Button } from 'Component';
 import { I, Util, translate } from 'Lib';
 import * as Docs from 'Docs';
 import Block from 'Component/block/help';
-
 import Url from 'json/url.json';
 
 interface Props extends I.Popup, RouteComponentProps<any> {};
@@ -15,8 +16,6 @@ interface State {
 };
 
 
-const $ = require('jquery');
-const raf = require('raf');
 
 class PopupHelp extends React.Component<Props, State> {
 

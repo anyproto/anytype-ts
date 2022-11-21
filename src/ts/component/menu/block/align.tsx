@@ -1,11 +1,11 @@
 import * as React from 'react';
+import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
-import { I, keyboard, Key, DataUtil } from 'Lib';
+import { I, keyboard, DataUtil } from 'Lib';
 import { blockStore } from 'Store';
 
 interface Props extends I.Menu {};
 
-const $ = require('jquery');
 
 class MenuBlockHAlign extends React.Component<Props, {}> {
 	

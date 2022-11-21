@@ -1,5 +1,5 @@
-const raf = require('raf');
-const $ = require('jquery');
+import $ from 'jquery';
+import raf from 'raf';
 
 const BORDER = 100;
 

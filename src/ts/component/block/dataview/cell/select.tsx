@@ -1,11 +1,12 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Tag, Icon, DragBox } from 'Component';
-import { I, Relation, DataUtil, translate, keyboard, Util } from 'Lib';
 import { observer } from 'mobx-react';
-import { menuStore, detailStore } from 'Store';
+import $ from 'jquery';
 import { getRange, setRange } from 'selection-ranges';
 import arrayMove from 'array-move';
+import { Tag, Icon, DragBox } from 'Component';
+import { I, Relation, DataUtil, translate, keyboard, Util } from 'Lib';
+import { menuStore } from 'Store';
 
 interface Props extends I.Cell {};
 
@@ -13,7 +14,6 @@ interface State {
 	isEditing: boolean; 
 };
 
-const $ = require('jquery');
 const MAX_LENGTH = 32;
 
 const CellSelect = observer(class CellSelect extends React.Component<Props, State> {

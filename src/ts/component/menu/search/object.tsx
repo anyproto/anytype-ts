@@ -1,9 +1,10 @@
 import * as React from 'react';
-import { MenuItemVertical, Filter, Loader, ObjectName, EmptySearch } from 'Component';
-import { I, C, keyboard, Util, DataUtil, translate, analytics, Action, focus } from 'Lib';
-import { commonStore, dbStore, blockStore } from 'Store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
+import $ from 'jquery';
+import { MenuItemVertical, Filter, Loader, ObjectName, EmptySearch } from 'Component';
+import { I, C, keyboard, Util, DataUtil, translate, analytics, Action, focus } from 'Lib';
+import { commonStore, dbStore } from 'Store';
 
 import Constant from 'json/constant.json';
 
@@ -14,7 +15,6 @@ interface State {
 	filter: string;
 };
 
-const $ = require('jquery');
 const LIMIT_HEIGHT = 10;
 
 const HEIGHT_SECTION = 28;

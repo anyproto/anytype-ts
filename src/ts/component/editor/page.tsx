@@ -1,23 +1,20 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import { observer } from 'mobx-react';
+import { throttle } from 'lodash';
+import $ from 'jquery';
+import raf from 'raf';
 import { Block, Icon, Loader, Deleted, DropTarget } from 'Component';
 import { commonStore, blockStore, detailStore, menuStore, popupStore } from 'Store';
 import { I, C, Key, Util, DataUtil, Mark, focus, keyboard, crumbs, Storage, Mapper, Action, translate, analytics, Renderer } from 'Lib';
-import { observer } from 'mobx-react';
-import { throttle } from 'lodash';
-
 import Controls from 'Component/page/head/controls';
 import PageHeadEdit from 'Component/page/head/edit';
-
 import Constant from 'json/constant.json';
 import Errors from 'json/error.json';
 
 interface Props extends I.PageComponent {
 	onOpen?(): void;
 };
-
-const $ = require('jquery');
-const raf = require('raf');
 
 const THROTTLE = 40;
 const BUTTON_OFFSET = 10;

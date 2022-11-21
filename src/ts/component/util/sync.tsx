@@ -1,8 +1,9 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import { observer } from 'mobx-react';
+import $ from 'jquery';
 import { I, Util, DataUtil, translate } from 'Lib';
 import { authStore } from 'Store';
-import { observer } from 'mobx-react';
 
 interface Props {
 	id?: string;
@@ -11,7 +12,6 @@ interface Props {
 	onClick: (e: any) => void;
 }
 
-const $ = require('jquery');
 
 const Sync = observer(class Sync extends React.Component<Props, {}> {
 

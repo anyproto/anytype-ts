@@ -1,6 +1,7 @@
+import $ from 'jquery';
+import raf from 'raf';
 import { I, Storage, Util, keyboard } from 'Lib';
 import { commonStore, menuStore, popupStore } from 'Store';
-
 import Constant from 'json/constant.json';
 
 interface SidebarData {
@@ -11,10 +12,6 @@ interface SidebarData {
 	fixed: boolean;
 	snap: I.MenuDirection;
 };
-
-const raf = require('raf');
-const $ = require('jquery');
-
 
 const SNAP_THRESHOLD = 30;
 const SHOW_THRESHOLD = 30;

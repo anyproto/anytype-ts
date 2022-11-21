@@ -1,11 +1,8 @@
 import * as React from 'react';
 import { I } from 'Lib';
-
-import 'katex/dist/katex.min.css';
+import katex from 'katex';
 
 interface Props extends I.Menu {};
-
-const katex = require('katex');
 
 class MenuPreviewLatex extends React.Component<Props, {}> {
 

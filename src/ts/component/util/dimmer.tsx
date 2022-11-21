@@ -1,8 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-
-const $ = require('jquery');
-const raf = require('raf');
+import $ from 'jquery';
+import raf from 'raf';
 
 interface Props {
 	className?: string;

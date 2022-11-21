@@ -1,16 +1,15 @@
 import * as React from 'react';
+import { observer } from 'mobx-react';
+import sha1 from 'sha1';
 import { Frame, Cover, Title, Label, Error, Pin, Header, Footer } from 'Component';
 import { I, Storage, Util, translate } from 'Lib';
 import { commonStore, authStore } from 'Store';
-import { observer } from 'mobx-react';
 
 interface Props extends I.PageComponent {};
 
 interface State {
 	error: string;
 }
-
-const sha1 = require('sha1');
 
 const PageAuthPinConfirm = observer(class PageAuthPinConfirm extends React.Component<Props, State> {
 	

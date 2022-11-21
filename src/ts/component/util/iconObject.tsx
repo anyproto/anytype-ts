@@ -1,9 +1,10 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import { observer } from 'mobx-react';
+import $ from 'jquery';
 import { IconEmoji } from 'Component';
 import { I, Util, SmileUtil, DataUtil, FileUtil } from 'Lib';
 import { commonStore, menuStore } from 'Store';
-import { observer } from 'mobx-react';
 
 interface Props {
 	id?: string;
@@ -142,7 +143,6 @@ const Theme = {
 	}
 };
 
-const $ = require('jquery');
 
 const IconObject = observer(class IconObject extends React.Component<Props, {}> {
 

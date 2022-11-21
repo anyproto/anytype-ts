@@ -1,13 +1,12 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
-import { MenuItemVertical } from 'Component';
-import { I, C, Key, keyboard, Util, DataUtil } from 'Lib';
-import { menuStore, dbStore } from 'Store';
 import { observer } from 'mobx-react';
+import $ from 'jquery';
+import { MenuItemVertical } from 'Component';
+import { I, C, keyboard, Util, DataUtil } from 'Lib';
+import { menuStore, dbStore } from 'Store';
 
 interface Props extends I.Menu {}
 
-const $ = require('jquery');
 
 const MenuDataviewDate = observer(class MenuDataviewDate extends React.Component<Props, {}> {
 

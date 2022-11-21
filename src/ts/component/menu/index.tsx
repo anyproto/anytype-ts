@@ -1,9 +1,11 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, keyboard, Util, analytics, Storage } from 'Lib';
-import { Dimmer, Icon } from 'Component';
-import { menuStore, popupStore } from 'Store';
 import { observer } from 'mobx-react';
+import $ from 'jquery';
+import raf from 'raf';
+import { Dimmer, Icon } from 'Component';
+import { I, keyboard, Util, analytics, Storage } from 'Lib';
+import { menuStore, popupStore } from 'Store';
 
 import MenuHelp from './help';
 import MenuOnboarding from './onboarding';
@@ -74,8 +76,6 @@ interface State {
 	tab: string;
 };
 
-const $ = require('jquery');
-const raf = require('raf');
 const BORDER = 10;
 const ARROW_WIDTH = 17;
 const ARROW_HEIGHT = 8;

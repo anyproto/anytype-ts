@@ -1,15 +1,13 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import { observer } from 'mobx-react';
+import $ from 'jquery';
 import { InputWithFile, Loader, Icon, Error } from 'Component';
 import { I, C, translate, focus, Action, keyboard } from 'Lib';
 import { commonStore, popupStore } from 'Store';
-import { observer } from 'mobx-react';
-
 import Constant from 'json/constant.json';
 
 interface Props extends I.BlockComponent {}
-
-const $ = require('jquery');
 
 const BlockImage = observer(class BlockImage extends React.Component<Props, {}> {
 

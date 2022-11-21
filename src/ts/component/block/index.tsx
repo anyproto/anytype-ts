@@ -1,11 +1,11 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
+import $ from 'jquery';
 import { I, C, DataUtil, keyboard, focus, Storage, Util } from 'Lib';
 import { DropTarget, ListChildren, Icon } from 'Component';
 import { observer } from 'mobx-react';
 import { menuStore, blockStore, detailStore } from 'Store';
-
 import BlockDataview from './dataview';
 import BlockText from './text';
 import BlockIconPage from './iconPage';
@@ -20,13 +20,11 @@ import BlockType from './type';
 import BlockLatex from './latex';
 import BlockTable from './table';
 import BlockTableOfContents from './tableOfContents';
-
 import BlockFile from './media/file';
 import BlockImage from './media/image';
 import BlockVideo from './media/video';
 import BlockAudio from './media/audio';
 import BlockPdf from './media/pdf'; 
-
 import Constant from 'json/constant.json';
 
 interface Props extends I.BlockComponent, RouteComponentProps<any> {
@@ -35,7 +33,6 @@ interface Props extends I.BlockComponent, RouteComponentProps<any> {
 	isDragging?: boolean;
 };
 
-const $ = require('jquery');
 const SNAP = 0.01;
 
 const Block = observer(class Block extends React.Component<Props, {}> {
@@ -571,7 +568,7 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 		const childrenIds = blockStore.getChildrenIds(rootId, block.id);
 		const length = childrenIds.length;
 		const children = blockStore.getChildren(rootId, block.id);
-		const rect = node.get(0).getBoundingClientRect() as DOMRect;
+		const rect = (node.get(0) as Element).getBoundingClientRect();
 		const { x, width } = rect;
 		const p = e.pageX - x - sm;
 

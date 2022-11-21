@@ -1,16 +1,15 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import { observable } from 'mobx';
+import { observer } from 'mobx-react';
+import $ from 'jquery';
 import { I, DataUtil, Util, translate, keyboard, analytics, Relation } from 'Lib';
 import { Select, Tag, Icon, IconObject, Input, MenuItemVertical } from 'Component';
 import { menuStore, dbStore, detailStore } from 'Store';
-import { observable } from 'mobx';
-import { observer } from 'mobx-react';
-
 import Constant from 'json/constant.json';
 
 interface Props extends I.Menu {}
 
-const $ = require('jquery');
 const TIMEOUT = 500;
 
 const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends React.Component<Props, {}> {

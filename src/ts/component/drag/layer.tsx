@@ -1,11 +1,10 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import $ from 'jquery';
 import { Block } from 'Component';
 import { I, M, Util } from 'Lib';
 import { blockStore, dbStore } from 'Store';
-
 import RelationItem from 'Component/menu/item/relationView';
-
 import Constant from 'json/constant.json';
 
 interface State {
@@ -14,8 +13,6 @@ interface State {
 	width: number;
 	ids: string[];
 };
-
-const $ = require('jquery');
 
 class DragLayer extends React.Component<{}, State> {
 	
@@ -122,7 +119,7 @@ class DragLayer extends React.Component<{}, State> {
 		};
 		
 		const comp = $(ReactDOM.findDOMNode(component));
-		const rect = comp.get(0).getBoundingClientRect() as DOMRect;
+		const rect = (comp.get(0) as Element).getBoundingClientRect();
 		
 		this.setState({ rootId: rootId, type: type, width: rect.width - Constant.size.blockMenu, ids: ids });
 	};

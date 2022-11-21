@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
+import $ from 'jquery';
 import { Loader, Title, Label, ListObjectPreview } from 'Component';
 import { I, focus, Util, DataUtil } from 'Lib';
 import { dbStore } from 'Store';
-
 import Constant from 'json/constant.json';
 
 interface Props extends I.Popup, RouteComponentProps<any> {};
@@ -13,7 +13,6 @@ interface State {
 	loading: boolean;
 };
 
-const $ = require('jquery');
 
 class PopupTemplate extends React.Component<Props, State> {
 

@@ -1,11 +1,10 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import $ from 'jquery';
 import { Icon, IconObject, Switch } from 'Component';
 import { I } from 'Lib';
 
 interface Props extends I.MenuItem {};
-
-const $ = require('jquery');
 
 class MenuItemVertical extends React.Component<Props, {}> {
 

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import $ from 'jquery';
 import { I, Util } from 'Lib';
 
 interface Props {
@@ -20,8 +21,6 @@ interface Props {
 	onDragStart?(e: any): void;
 	onContextMenu?(e: any): void;
 };
-
-const $ = require('jquery');
 
 class Icon extends React.Component<Props, {}> {
 	

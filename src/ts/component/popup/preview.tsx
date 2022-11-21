@@ -1,15 +1,13 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Loader, Block } from 'Component';
+import $ from 'jquery';
+import { Loader, } from 'Component';
 import { I } from 'Lib';
 import { commonStore } from 'Store';
-
 import Constant from 'json/constant.json';
 
 interface Props extends I.Popup, RouteComponentProps<any> {}; 
 
-const $ = require('jquery');
 const BORDER = 16;
 
 class PopupPreview extends React.Component<Props, {}> {

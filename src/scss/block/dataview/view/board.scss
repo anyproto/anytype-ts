@@ -60,7 +60,7 @@
 					.bgColor { border-radius: 0px 0px 4px 4px; }
 				}
 
-				.loadMore { margin-bottom: 8px; position: relative; z-index: 1; }
+				.loadMore { margin-bottom: 8px; position: relative; z-index: 1; border-bottom: 0px; }
             }
 			.column:hover, .column.active {
 				.head .side.right .icon { opacity: 1; }

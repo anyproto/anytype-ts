@@ -1,13 +1,12 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader, Block, ListObjectPreview, Deleted } from 'Component';
 import { I, M, C, DataUtil, Util, crumbs, Action } from 'Lib';
 import { blockStore, detailStore, dbStore } from 'Store';
-
 import Controls from 'Component/page/head/controls';
 import HeadSimple from 'Component/page/head/simple';
-
 import Constant from 'json/constant.json';
 import Errors from 'json/error.json';
 
@@ -19,7 +18,6 @@ interface State {
 	isDeleted: boolean;
 };
 
-const $ = require('jquery');
 
 const BLOCK_ID_HIGHLIGHTED = 'highlighted';
 

@@ -1,5 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
+import $ from 'jquery';
+import raf from 'raf';
 import { I, Util } from 'Lib';
 
 interface Props extends I.Popup, RouteComponentProps<any> {};
@@ -7,9 +9,6 @@ interface Props extends I.Popup, RouteComponentProps<any> {};
 interface State {
 	page: string;
 };
-
-const $ = require('jquery');
-const raf = require('raf');
 
 class PopupShortcut extends React.Component<Props, State> {
 

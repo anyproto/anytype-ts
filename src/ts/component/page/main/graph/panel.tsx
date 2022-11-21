@@ -1,9 +1,9 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import { observer } from 'mobx-react';
+import $ from 'jquery';
 import { I, Util } from 'Lib';
 import { Icon } from 'Component';
-import { observer } from 'mobx-react';
-
 import Controls from './controls';
 import Preview from './preview';
 import Filters from './filters';
@@ -22,7 +22,6 @@ interface State {
     rootId: string;
 };
 
-const $ = require('jquery');
 const Tabs = [
     { id: I.GraphView.Controls, name: 'View' },
     //{ id: I.GraphView.Filter, name: 'Filters' },

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import $ from 'jquery';
 import { Util } from 'Lib';
 
 interface Props {
@@ -9,7 +10,6 @@ interface Props {
 	onClick?: (e: any) => void;
 };
 
-const $ = require('jquery');
 
 class Label extends React.Component<Props, {}> {
 

@@ -1,26 +1,20 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { I, keyboard, Util, C, focus, Renderer } from 'Lib';
-import { Icon } from 'Component';
 import { observer } from 'mobx-react';
+import $ from 'jquery';
+import Prism from 'prismjs';
+import katex from 'katex';
+import raf from 'raf';
+import { Icon } from 'Component';
+import { I, keyboard, Util, C, focus, Renderer } from 'Lib';
 import { menuStore, commonStore, blockStore } from 'Store';
 import { getRange, setRange } from 'selection-ranges';
-import * as Prism from 'prismjs';
-
 import Constant from 'json/constant.json';
 
 interface Props extends I.BlockComponent, RouteComponentProps<any> {};
 
-const raf = require('raf');
-const $ = require('jquery') as JQueryStatic;
-const katex = require('katex');
-
-require('prismjs/components/prism-latex.js');
-require('katex/dist/contrib/mhchem.min.js');
-
 const BlockLatex = observer(class BlockLatex extends React.Component<Props, {}> {
-	
 	_isMounted: boolean = false;
 	range: any = { start: 0, end: 0 };
 	text: string = '';

@@ -33,13 +33,18 @@ const Head = observer(class Head extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { rootId, block, readonly, getView, onRecordAdd } = this.props;
+		const { rootId, block, readonly, getView, onRecordAdd, className } = this.props;
 		const sources = block.content.sources || [];
 		const view = getView();
 		const allowedObject = blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.Object ]);
+		const cn = [ 'dataviewHead' ];
 
+		if (className) {
+			cn.push(className);
+		};
+		
 		return (
-			<div className="dataviewHead">
+			<div className={cn.join(' ')}>
 				<div id="title" className="title">
 					<div 
 						className="value" 

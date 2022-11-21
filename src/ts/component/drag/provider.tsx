@@ -1,19 +1,18 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { DragLayer } from 'Component';
-import { I, C, focus, keyboard, Util, scrollOnMove, analytics, Action } from 'Lib';
-import { blockStore } from 'Store';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
+import $ from 'jquery';
+import raf from 'raf';
+import { DragLayer } from 'Component';
+import { I, C, focus, keyboard, Util, scrollOnMove, Action } from 'Lib';
+import { blockStore } from 'Store';
 
 import Constant from 'json/constant.json';
 
 interface Props {
 	dataset?: any;
 };
-
-const $ = require('jquery');
-const raf = require('raf');
 
 const OFFSET = 100;
 

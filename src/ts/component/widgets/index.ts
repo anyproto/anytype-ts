@@ -1,3 +1,3 @@
-import Tree from './Tree';
+import Tree from './tree';
 
 export { Tree };

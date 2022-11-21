@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import $ from 'jquery';
 import { Icon, Loader } from 'Component';
 import { C, Util } from 'Lib';
 import { observer } from 'mobx-react';
@@ -18,7 +19,6 @@ interface State {
 	imageUrl: string;
 };
 
-const $ = require('jquery');
 const ALLOWED_SCHEME = [ 'http', 'https' ];
 
 const PreviewLink = observer(class PreviewLink extends React.Component<Props, State> {

@@ -1,14 +1,14 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import { set } from 'mobx';
+import { observer } from 'mobx-react';
+import arrayMove from 'array-move';
+import $ from 'jquery';
+import raf from 'raf';
 import { Loader } from 'Component';
 import { I, C, Util, DataUtil, analytics, keyboard, Relation } from 'Lib';
 import { dbStore, detailStore, popupStore, menuStore, commonStore } from 'Store';
-import { observer } from 'mobx-react';
-import arrayMove from 'array-move';
-import { set } from 'mobx';
-
 import Column from './board/column';
-
 import Constant from 'json/constant.json';
 
 interface Props extends I.ViewComponent {
@@ -18,9 +18,6 @@ interface Props extends I.ViewComponent {
 interface State {
 	loading: boolean;
 };
-
-const $ = require('jquery');
-const raf = require('raf');
 
 const ViewBoard = observer(class ViewBoard extends React.Component<Props, State> {
 
@@ -61,7 +58,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 										key={`board-column-${group.id}`} 
 										ref={(ref: any) => { this.columnRefs[group.id] = ref; }}
 										{...this.props} 
-										{...group} 
+										{...group}
 										onRecordAdd={this.onRecordAdd} 
 										onDragStartColumn={this.onDragStartColumn}
 										onDragStartCard={this.onDragStartCard}

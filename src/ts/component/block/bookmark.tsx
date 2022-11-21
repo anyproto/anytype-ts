@@ -1,13 +1,13 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { InputWithFile, ObjectName, ObjectDescription, Loader, Error, Icon } from 'ts/component';
-import { I, C, focus, Util, translate, analytics, Renderer } from 'ts/lib';
-import { commonStore, detailStore } from 'ts/store';
 import { observer } from 'mobx-react';
+import $ from 'jquery';
+import { InputWithFile, ObjectName, ObjectDescription, Loader, Error, Icon } from 'Component';
+import { I, C, focus, Util, translate, analytics, Renderer } from 'Lib';
+import { commonStore, detailStore } from 'Store';
 
 interface Props extends I.BlockComponent {};
 
-const $ = require('jquery');
 
 const BlockBookmark = observer(class BlockBookmark extends React.Component<Props, {}> {
 
@@ -198,7 +198,7 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<Props
 		const { getWrapperWidth } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
 		const inner = node.find('.inner');
-		const rect = node.get(0).getBoundingClientRect() as DOMRect;
+		const rect = (node.get(0) as Element).getBoundingClientRect();
 		const width = rect.width;
 		const mw = getWrapperWidth();
 

@@ -1,9 +1,10 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, Util, DataUtil, SmileUtil, FileUtil, translate } from 'Lib';
-import { commonStore, blockStore, menuStore } from 'Store';
 import { observer } from 'mobx-react';
+import $ from 'jquery';
 import * as d3 from 'd3';
+import { I, Util, DataUtil, SmileUtil, FileUtil, translate } from 'Lib';
+import { commonStore, blockStore } from 'Store';
 
 interface Props {
 	isPopup?: boolean;
@@ -14,7 +15,6 @@ interface Props {
 	onSelect?: (id: string) => void;
 };
 
-const $ = require('jquery');
 const FONT = 'Helvetica';
 
 const Graph = observer(class Graph extends React.Component<Props, {}> {

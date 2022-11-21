@@ -1,15 +1,14 @@
 import * as React from 'react';
+import { observer } from 'mobx-react';
+import $ from 'jquery';
 import { IconObject } from 'Component';
 import { I, DataUtil, translate, Relation } from 'Lib';
-import { observer } from 'mobx-react';
-import { detailStore, dbStore } from 'Store';
+import { detailStore } from 'Store';
 
 interface Props extends I.Cell {}
 interface State { 
 	isEditing: boolean; 
 }
-
-const $ = require('jquery');
 
 const CellFile = observer(class CellFile extends React.Component<Props, State> {
 

@@ -1,4 +1,4 @@
-const Struct = require('google-protobuf/google/protobuf/struct_pb.js');
+import Struct from 'google-protobuf/google/protobuf/struct_pb.js';
 
 export class Encode {
 

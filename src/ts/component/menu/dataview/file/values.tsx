@@ -1,17 +1,16 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import { observer } from 'mobx-react';
+import $ from 'jquery';
+import arrayMove from 'array-move';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Icon, IconObject, MenuItemVertical } from 'Component';
 import { I, C, Util, DataUtil, Relation, Renderer } from 'Lib';
-import { observer } from 'mobx-react';
 import { commonStore, detailStore, menuStore } from 'Store';
-import arrayMove from 'array-move';
-
 import Constant from 'json/constant.json';
 
 interface Props extends I.Menu {}
 
-const $ = require('jquery');
 const MENU_ID = 'dataviewFileList';
 
 const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends React.Component<Props, {}> {

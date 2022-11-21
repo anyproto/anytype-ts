@@ -1,16 +1,14 @@
 import * as React from 'react';
+import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
 import { I, C, keyboard, analytics, DataUtil, Util, focus } from 'Lib';
 import { blockStore, detailStore, commonStore, dbStore, menuStore, popupStore } from 'Store';
-
 import Constant from 'json/constant.json';
 import Url from 'json/url.json';
 
 interface Props extends I.Menu {
 	history?: any;
 };
-
-const $ = require('jquery');
 
 class MenuBlockMore extends React.Component<Props, {}> {
 	
