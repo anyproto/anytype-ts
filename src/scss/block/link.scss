@@ -79,13 +79,13 @@
 
 		.linkCard.card { margin: 8px 0px; }
 		.linkCard.card {
-			.side.left { padding: 16px; border: 1px solid $colorBorderDark; border-radius: 16px; display: block !important; }
+			.side.left { padding: 16px; border: 1px solid $colorHover; border-radius: 16px; display: block !important; }
 			.side.right { border-radius: 0px 16px 16px 0px; }
 			.sides.withBgColor {
 				.side { border: 0px; }
 			}
 
-			.cardName { @include text-common; line-height: 18px; }
+			.cardName { @include text-common; line-height: 20px; }
 			.cardName .name { @include clamp2; font-weight: 500; }
 
 			.archive { position: absolute; right: 10px; top: 10px; z-index: 1; }
@@ -100,10 +100,19 @@
 		}
 
 		.linkCard.c48.withIcon {
+			.cardName { min-height: 48px; }
 			.sides { min-height: 80px; }
 			.side.left { padding: 16px 16px 16px 76px; line-height: 44px; }
 
 			.iconObject { position: absolute; left: 16px; top: 16px; background-color: $colorVeryLightGrey; border-radius: 10px; }
+		}
+
+		.linkCard.c48.withIcon.withCover.vertical {
+			.cardName { min-height: unset; }
+			.sides { min-height: 62px; }
+			.side.left { padding: 24px 16px 16px 16px; z-index: 10; }
+
+			.iconObject { top: -32px; }
 		}
 
 		.linkCard.withCover {
@@ -112,22 +121,24 @@
 				width: calc(100% - 200px); border-radius: 16px 0px 0px 16px; border-right-width: 0px;
 				display: flex; align-items: center;
 			}
-			.side.right { width: 200px; min-height: 90px; display: block; border: 1px solid $colorBorderDark; border-left: 0px; }
+			.side.right { width: 200px; min-height: 90px; display: block; border: 1px solid $colorHover; border-left: 0px; }
 		}
 
 		.linkCard.vertical { display: block; }
 		.linkCard.vertical {
 			.side.left { width: 100%; border-right-width: 1px; }
 			.side.right { 
-				position: absolute; top: 0px; left: 0px; height: 116px; width: 100%; border-radius: 12px 12px 0px 0px;
+				position: absolute; top: 0px; left: 0px; height: 116px; width: 100%; border-radius: 16px 16px 0px 0px;
 				border: 1px solid $colorBorderDark; border-bottom: 0px;
 			}
 		}
 
 		.linkCard.withCover.vertical { padding-top: 116px; }
 		.linkCard.withCover.vertical {
-			.side.left { border-radius: 0px 0px 12px 12px }
+			.side.left { border-radius: 0px 0px 16px 16px; }
 		}
+
+		.linkCard.withCover.vertical.text { padding-top: 0px; }
 
 	}
 
@@ -136,7 +147,7 @@
 			.cardName .name { border-color: $colorBlack; }
 		}
 		.linkCard.card {
-			.side.left, .side.right { border-color: $colorBlack; }
+			.side.left, .side.right { border-color: $colorBorderDark; }
 		}
 	}
 
