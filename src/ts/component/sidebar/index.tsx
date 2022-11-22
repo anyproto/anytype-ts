@@ -38,8 +38,8 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
                 className={cn.join(' ')} 
             >
                 <div id="head" className="head" onMouseDown={this.onDragStart} />
-                <Footer ref={(ref: any) => { this.refFooter = ref; }} />
 				<Tree dataset={this.props.dataset}></Tree>
+                <Footer ref={(ref: any) => { this.refFooter = ref; }} />
 				<div className="resize-h" onMouseDown={(e: any) => { this.onResizeStart(e, I.MenuType.Horizontal); }} />
 				{/*<div className="resize-v" onMouseDown={(e: any) => { this.onResizeStart(e, I.MenuType.Vertical); }} />*/}
             </div>);
