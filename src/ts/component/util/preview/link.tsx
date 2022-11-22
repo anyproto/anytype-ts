@@ -14,7 +14,6 @@ interface State {
 	loading: boolean;
 	title: string;
 	description: string;
-	param: string;
 	faviconUrl: string;
 	imageUrl: string;
 };
@@ -28,7 +27,6 @@ const PreviewLink = observer(class PreviewLink extends React.Component<Props, St
 		loading: false,
 		title: '',
 		description: '',
-		param: '',
 		faviconUrl: '',
 		imageUrl: '',
 	};
@@ -36,7 +34,7 @@ const PreviewLink = observer(class PreviewLink extends React.Component<Props, St
 	
 	render () {
 		const { url } = this.props;
-		const { loading, title, description, param, faviconUrl, imageUrl } = this.state;
+		const { loading, title, description, faviconUrl, imageUrl } = this.state;
 		
 		return (
 			<div className="previewLink">

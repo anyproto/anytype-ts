@@ -116,12 +116,12 @@ const Preview = observer(class Preview extends React.Component<Props, State> {
 		const { marks, range, onChange } = preview;
 		const mark = Mark.getInRange(marks, I.MarkType.Link, { from: range.from, to: range.to });
 		const win = $(window);
+		const rect = Util.objectCopy($('#preview').get(0).getBoundingClientRect());
+
+		console.log(rect);
 
 		menuStore.open('blockLink', {
-			recalcRect: () => { 
-				const rect = Util.objectCopy($('#preview').get(0).getBoundingClientRect());
-				return rect ? { ...rect, height: 0, y: rect.y + win.scrollTop() } : null; 
-			},
+			rect: rect ? { ...rect, height: 0, y: rect.y + win.scrollTop() } : null, 
 			horizontal: I.MenuDirection.Center,
 			onOpen: () => { Util.previewHide(true); },
 			data: {
