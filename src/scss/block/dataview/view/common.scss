@@ -31,9 +31,9 @@
 
 				.cellContent.isName { @include text-paragraph; color: $colorBlack; display: flex; gap: 0px 6px; position: relative; }
 				.cellContent.isName {
-					.iconObject { position: absolute; left: -3px; top: -3px; margin: 0px; }
+					.iconObject { position: absolute; left: 0px; top: 0px; margin: 0px; }
 					.name {
-						line-height: 18px; font-size: 14px; font-weight: 500; letter-spacing: -0.12px;
+						line-height: 20px; font-size: 14px; font-weight: 500; letter-spacing: -0.12px;
 						vertical-align: top; white-space: normal; overflow: hidden; @include clamp3;
 					}
 				}

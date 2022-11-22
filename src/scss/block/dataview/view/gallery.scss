@@ -14,7 +14,7 @@
 				.itemContent > .inner { padding: 16px; }
 
 				.cover { 
-					position: relative; height: 144px; background-position: top center; display: flex; align-items: center;
+					position: relative; aspect-ratio: 2/1; background-position: top center; display: flex; align-items: center;
 					background-color: $colorHover; width: 100%; justify-content: center;
 				}
 
@@ -48,18 +48,6 @@
 			.card.coverFit {
 				.cover { background-size: contain; background-position: center center; }
 				.cover img { width: auto; height: auto; max-height: 100%; max-width: 100%; object-fit: contain; }
-			}
-
-			.card.small {
-				.cover { height: 144px; }
-			}
-
-			.card.medium {
-				.cover { height: 216px; }
-			}
-
-			.card.large {
-				.cover { height: 288px; }
 			}
 
 			.cellContent.c-longText {

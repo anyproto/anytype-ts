@@ -188,11 +188,11 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 			switch (viewType) {
 				case I.ViewType.Gallery:
 				case I.ViewType.List:
-					size = 24;
+					size = 22;
 					break;
 
 				case I.ViewType.Board:
-					size = 24;
+					size = 22;
 					break;
 			};
 
