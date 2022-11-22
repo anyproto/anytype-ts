@@ -39,12 +39,13 @@
 				}
 
 				.cellContent.isName.withIcon {
-					.name { text-indent: 24px; }
+					.name { text-indent: 22px; }
 				}
 
 				.cellContent.c-select { line-height: 18px; }
 				.cellContent.c-select {
 					.tagItem { max-width: 40%; margin-bottom: 0px; @include text-small; }
+					.over { height: 18px; }
 				}
 
 				.cellContent.c-object, .cellContent.c-file {
@@ -58,13 +59,11 @@
 					.name { width: auto; max-width: 100%; }
 				}
 
-				.cellContent.c-select, 
 				.cellContent.c-object, 
 				.cellContent.c-file {
 					.over { display: flex; height: 20px; }
-
 					.wrap.overLimit {
-						.tagItem, .element { max-width: 40%; }
+						.element { max-width: 40%; }
 					}
 				}
 			}

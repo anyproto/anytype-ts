@@ -13,6 +13,7 @@ const fontFamily = 'Helvetica';
 const font = `3px ${fontFamily}`;
 const fontBig = `20px ${fontFamily}`;
 const fontItalic = `italic ${font}`;
+const transformThreshold = 2.5;
 
 const ObjectLayout = {
 	Human:	 1,
@@ -66,6 +67,7 @@ init = (data) => {
 
 	resize(data);
 	initColor();
+
 	requestAnimationFrame(() => {
 		nodes = nodes.map(nameMapper);
 	});
@@ -333,7 +335,7 @@ drawLine = (d, aWidth, aLength, arrowStart, arrowEnd) => {
     };
 
 	// draw name
-	if (d.name && forceProps.labels && (transform.k > 1.5)) {
+	if (d.name && forceProps.labels && (transform.k >= transformThreshold)) {
 		ctx.save();
 		ctx.translate(mx, my);
 		ctx.font = fontItalic;
@@ -416,7 +418,7 @@ drawNode = (d) => {
 	ctx.fillStyle = bg;
 	ctx.fill();
 
-	if (forceProps.labels && d.textBitmap && (transform.k > 1.5)) {
+	if (forceProps.labels && d.textBitmap && (transform.k >= transformThreshold)) {
 		const h = 5;
 		const div = 6.25;
 		ctx.drawImage(d.textBitmap, 0, 0, 250, 40, d.x - h * div / 2, d.y + d.radius + 1, h * div, h);
@@ -457,7 +459,7 @@ drawNode = (d) => {
 	
 		ctx.drawImage(img, 0, 0, img.width, img.height, x, y, w, h);
 	} else 
-	if (isLayoutHuman(d)) {
+	if (isLayoutHuman(d) && (transform.k >= transformThreshold)) {
 		nameCircleIcon(d);
 	};
 

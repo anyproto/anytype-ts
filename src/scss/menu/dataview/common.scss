@@ -16,7 +16,7 @@
 			.icon.dnd { margin-right: 2px; }
 		}
 
-		.item.empty { padding: 11px 16px; height: auto; line-height: 22px; border-radius: 8px; }
+		.item.empty { padding: 11px 16px; height: auto; line-height: 22px; border-radius: 8px; @include text-overflow-nw; display: block; }
 		.item.empty:hover::before { opacity: 0; }
 
 		.filter { padding-top: 8px; }

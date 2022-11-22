@@ -1183,6 +1183,8 @@ class DataUtil {
 	};
 
 	searchSubscribe (param: any, callBack?: (message: any) => void) {
+		const { config, workspace } = commonStore;
+
 		param = Object.assign({
 			subId: '',
 			idField: 'id',
@@ -1205,8 +1207,12 @@ class DataUtil {
 			return;
 		};
 
-		if (!ignoreWorkspace && commonStore.workspace) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'workspaceId', condition: I.FilterCondition.Equal, value: commonStore.workspace });
+		if (!ignoreWorkspace && workspace) {
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'workspaceId', condition: I.FilterCondition.Equal, value: workspace });
+		};
+
+		if (!config.debug.ho) {
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true });
 		};
 
 		keys.push(idField);
@@ -1258,7 +1264,7 @@ class DataUtil {
 	};
 
 	search (param: any, callBack?: (message: any) => void) {
-		const { config } = commonStore;
+		const { config, workspace } = commonStore;
 
 		param = Object.assign({
 			idField: 'id',
@@ -1273,8 +1279,8 @@ class DataUtil {
 
 		let { idField, filters, sorts, keys, fullText, offset, limit, ignoreWorkspace } = param;
 
-		if (!ignoreWorkspace) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'workspaceId', condition: I.FilterCondition.Equal, value: commonStore.workspace });
+		if (!ignoreWorkspace && workspace) {
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'workspaceId', condition: I.FilterCondition.Equal, value: workspace });
 		};
 
 		filters.push({ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false });

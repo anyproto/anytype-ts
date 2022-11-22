@@ -184,6 +184,7 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 
 		if (relation.relationKey == Constant.relationKey.name) {
 			let size = iconSize;
+			let icon = null;
 
 			switch (viewType) {
 				case I.ViewType.Gallery:
@@ -201,21 +202,38 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 				value = record.snippet || `<span class="emptyText">${translate('commonEmpty')}</span>`;
 			};
 
+			if (!view || (view && !view.hideIcon)) {
+				let size = iconSize;
+
+				switch (viewType) {
+					case I.ViewType.List:
+						size = 24;
+						break;
+
+					case I.ViewType.Gallery:
+					case I.ViewType.Board:
+						size = 18;
+						break;
+				};
+
+				icon = (
+					<IconObject 
+						id={[ relation.relationKey, record.id ].join('-')} 
+						onSelect={this.onIconSelect} 
+						onUpload={this.onIconUpload}
+						onCheckbox={this.onCheckbox}
+						size={size} 
+						canEdit={!record.isReadonly} 
+						offsetY={4} 
+						object={record} 
+						noClick={true}
+					/>
+				);
+			};
+
 			content = (
 				<React.Fragment>
-					{!view || (view && !view.hideIcon) ? (
-						<IconObject 
-							id={[ relation.relationKey, record.id ].join('-')} 
-							onSelect={this.onIconSelect} 
-							onUpload={this.onIconUpload}
-							onCheckbox={this.onCheckbox}
-							size={size} 
-							canEdit={!record.isReadonly} 
-							offsetY={4} 
-							object={record} 
-							noClick={true}
-						/>
-					) : ''}
+					{icon}
 					<Name name={value} />
 					<Icon 
 						className="edit" 
@@ -258,13 +276,9 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 			let value = this.value;
 
 			if (relation.format == I.RelationType.Date) {
-				let format = [];
-				if (viewRelation.dateFormat == I.DateFormat.ShortUS) {
-					format.push('m.d.Y');
-				} else {
-					format.push('d.m.Y');
-				};
-
+				let format = [
+					(viewRelation.dateFormat == I.DateFormat.ShortUS) ? 'm.d.Y' : 'd.m.Y'
+				];
 				if (viewRelation.includeTime) {
 					format.push('H:i');
 				};
