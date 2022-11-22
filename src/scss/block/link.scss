@@ -126,14 +126,14 @@
 
 		.linkCard.vertical { display: block; }
 		.linkCard.vertical {
+			.sides { flex-direction: column-reverse; }
 			.side.left { width: 100%; border-right-width: 1px; }
 			.side.right { 
-				position: absolute; top: 0px; left: 0px; height: 116px; width: 100%; border-radius: 16px 16px 0px 0px;
+				aspect-ratio: 2/1; width: 100%; border-radius: 16px 16px 0px 0px;
 				border: 1px solid $colorBorderDark; border-bottom: 0px;
 			}
 		}
 
-		.linkCard.withCover.vertical { padding-top: 116px; }
 		.linkCard.withCover.vertical {
 			.side.left { border-radius: 0px 0px 16px 16px; }
 		}
