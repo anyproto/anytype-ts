@@ -479,13 +479,17 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 
 		const { param, getId } = this.props;
 		const { data } = param;
+		const relation = this.getRelation();
 
 		this.menuOpen('dataviewDate', { 
 			element: `#${getId()} #item-date-settings`,
 			onClose: () => {
 				menuStore.close('select');
 			},
-			data
+			data: {
+				...data,
+				relationKey: relation.relationKey,
+			}
 		});
 	};
 
