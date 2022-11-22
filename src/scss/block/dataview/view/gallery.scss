@@ -7,7 +7,7 @@
 			.galleryWrap { margin-left: 14px; }
 
 			.card { 
-				width: 260px; border: 1px solid $colorHover; border-radius: 16px; display: inline-block; cursor: pointer;
+				width: 260px; border: 1px solid $colorHover; transition: border-color 0.2s ease-in-out; border-radius: 16px; display: inline-block; cursor: pointer;
 				background: $colorWhite; overflow: hidden;
 			}
 			.card {
@@ -38,6 +38,7 @@
 					}
 				}
 			}
+			.card:hover { border: 1px solid $colorBorderDark; }
 			.card:hover {
 				.cover {
 					.inner { color: $colorBlack; }
