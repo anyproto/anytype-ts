@@ -29,11 +29,11 @@
 			.archive { position: absolute; right: 10px; top: 10px; z-index: 1; }
 		}
 		
-		.inner.vertical { display: block; }
+		.inner.vertical { display: flex; flex-direction: column-reverse; }
 		.inner.vertical {
 			.side.left { width: 100%; border-radius: 0px; }
 			.side.right { 
-				position: absolute !important; top: 0px; left: 0px; height: 116px; width: 100%; border-radius: 0px;
+				aspect-ratio: 2/1; width: 100%; border-radius: 0px;
 				border-bottom: 0.05em solid $colorLightGrey; 
 			}
 		}
@@ -44,10 +44,12 @@
 			.side.right { width: 200px; min-height: 90px; display: block; position: relative; overflow: hidden; }
 		}
 
-		.inner.withImage.vertical { padding-top: 116px; }
 		.inner.withImage.vertical {
 			.side.left { width: 100%; }
-			.side.right { width: 100%; height: 116px; }
+			.side.right { width: 100%; }
+		}
+
+		.inner.withImage.vertical {
 		}
 
 		.link { 
