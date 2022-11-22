@@ -220,11 +220,11 @@ class Analytics {
 			};
 		};
 
-		if (converted.objectType && !converted.objectType.match(/^_/)) {
+		if (converted.objectType && !converted.objectType.match(/^ot-/)) {
 			converted.objectType = 'custom';
 		};
 
-		if (converted.relationKey && !converted.relationKey.match(/^_/)) {
+		if (converted.relationKey && !converted.relationKey.match(/^rel-/)) {
 			converted.relationKey = 'custom';
 		};
 

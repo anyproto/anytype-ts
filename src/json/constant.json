@@ -178,20 +178,20 @@
 	},
 
 	"typeId": {
-		"page": "_otpage",
-		"set": "_otset",
-		"space": "_otspace",
-		"template": "_ottemplate",
-		"type": "_otobjectType",
-		"image": "_otimage",
-		"file": "_otfile",
-		"video": "_otvideo",
-		"audio": "_otaudio",
-		"relation": "_otrelation",
-		"note": "_otnote",
-		"task": "_ottask",
-		"bookmark": "_otbookmark",
-		"option": "_otrelationOption"
+		"page": "ot-page",
+		"set": "ot-set",
+		"space": "ot-space",
+		"template": "ot-template",
+		"type": "ot-objectType",
+		"image": "ot-image",
+		"file": "ot-file",
+		"video": "ot-video",
+		"audio": "ot-audio",
+		"relation": "ot-relation",
+		"note": "ot-note",
+		"task": "ot-task",
+		"bookmark": "ot-bookmark",
+		"option": "ot-relationOption"
 	},
 
 	"blockId": {

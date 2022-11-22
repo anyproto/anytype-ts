@@ -1192,7 +1192,7 @@ class DataUtil {
 			sources: [],
 			offset: 0,
 			limit: 0,
-			ignoreWorkspace: true,
+			ignoreWorkspace: false,
 			afterId: '',
 			beforeId: '',
 			noDeps: false,
@@ -1268,7 +1268,7 @@ class DataUtil {
 			keys: Constant.defaultRelationKeys,
 			offset: 0,
 			limit: 0,
-			ignoreWorkspace: true,
+			ignoreWorkspace: false,
 		}, param);
 
 		let { idField, filters, sorts, keys, fullText, offset, limit, ignoreWorkspace } = param;
