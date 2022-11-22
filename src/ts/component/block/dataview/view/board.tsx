@@ -88,7 +88,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 	componentWillUnmount () {
 		const { rootId, block } = this.props;
 		const groups = this.getGroups(true);
-		const ids = [];
+		const ids = [ dbStore.getGroupSubId(rootId, block.id, 'groups') ];
 
 		groups.forEach((it: any) => {
 			ids.push(dbStore.getGroupSubId(rootId, block.id, it.id));
