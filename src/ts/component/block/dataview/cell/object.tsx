@@ -15,7 +15,7 @@ interface State {
 	isEditing: boolean; 
 };
 
-const MAX_LENGTH = 32;
+const MAX_LENGTH = 320;
 
 const CellObject = observer(class CellObject extends React.Component<Props, State> {
 

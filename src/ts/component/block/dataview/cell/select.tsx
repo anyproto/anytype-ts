@@ -14,7 +14,7 @@ interface State {
 	isEditing: boolean; 
 };
 
-const MAX_LENGTH = 32;
+const MAX_LENGTH = 320;
 
 const CellSelect = observer(class CellSelect extends React.Component<Props, State> {
 
