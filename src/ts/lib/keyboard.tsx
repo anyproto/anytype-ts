@@ -456,6 +456,7 @@ class Keyboard {
 
 		$('html').removeClass('withPopup printMedia print save');
 		Util.addBodyClass('theme', theme);
+		$(window).trigger('resize');
 	};
 
 	onPrint () {
@@ -480,7 +481,7 @@ class Keyboard {
 		const object = detailStore.get(rootId, rootId);
 
 		this.printApply('print', true);
-		Renderer.send('winCommand', 'printToPDF', { name: object.name })
+		Renderer.send('winCommand', 'printToPDF', { name: object.name });
 	};
 
 	onSearchMenu (value: string) {

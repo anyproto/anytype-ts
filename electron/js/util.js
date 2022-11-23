@@ -180,7 +180,7 @@ class Util {
 
 		win.webContents.printToPDF(options).then(data => {
 			fs.writeFile(pdfPath, data, (error) => {
-				if (error) throw error
+				if (error) throw error;
 
 				shell.openPath(exportPath).catch(err => {
 					this.log('info', err);
@@ -192,8 +192,7 @@ class Util {
 			this.send(win, 'command', 'saveAsHTMLSuccess');
 			this.log('info', err);
 		});
-	}
-
+	};
 };
 
 module.exports = new Util();
