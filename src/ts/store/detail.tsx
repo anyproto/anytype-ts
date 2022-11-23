@@ -140,7 +140,7 @@ class DetailStore {
 			name = translate('commonDeletedObject');
 		};
 
-		if (object.type == Constant.typeId.type) {
+		if ([ Constant.typeId.type, Constant.storeTypeId.type ].includes(object.type)) {
 			object.smartblockTypes = Relation.getArrayValue(object.smartblockTypes);
 			object.recommendedLayout = Number(object.recommendedLayout) || I.ObjectLayout.Page;
 			object.recommendedRelations = Relation.getArrayValue(object.recommendedRelations);
@@ -149,7 +149,7 @@ class DetailStore {
 				name = translate('commonDeletedType');
 			};
 		} else
-		if (object.type == Constant.typeId.relation) {
+		if ([ Constant.typeId.relation, Constant.storeTypeId.relation ].includes(object.type)) {
 			object.relationFormat = Number(object.relationFormat) || I.RelationType.LongText;
 			object.format = object.relationFormat;
 			object.maxCount = Number(object.relationMaxCount) || 0;

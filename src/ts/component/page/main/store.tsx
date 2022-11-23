@@ -13,7 +13,7 @@ interface Props extends I.PageComponent {
 
 interface State {
 	tab: Tab;
-	viewId: View;
+	view: View;
 	loading: boolean;
 };
 
@@ -59,7 +59,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 
 	state = {
 		tab: Tab.None,
-		viewId: View.Marketplace,
+		view: View.Marketplace,
 		loading: false,
 	};
 
@@ -76,7 +76,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 	};
 	
 	render () {
-		const { tab, viewId, loading } = this.state;
+		const { tab, view, loading } = this.state;
 		const items = this.getItems();
 		const views = [
 			{ id: View.Marketplace, name: 'Marketplace' },
@@ -105,7 +105,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 		const TabList = (item: any) => (
 			<div className="tabs">
 				{views.map((item: any, i: number) => (
-					<div key={item.id} className={[ 'item', (item.id == viewId ? 'active' : '') ].join(' ')} onClick={(e: any) => { this.onView(e, item); }}>
+					<div key={item.id} className={[ 'item', (item.id == view ? 'active' : '') ].join(' ')} onClick={(e: any) => { this.onView(e, item); }}>
 						{item.name}
 					</div>
 				))}
@@ -120,7 +120,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 					const author = detailStore.get(Constant.subId.store, item.creator, []);
 
 					return (
-						<div className={[ 'item', tab, viewId ].join(' ')} onClick={(e: any) => { this.onClick(e, item); }}>
+						<div className={[ 'item', tab, view ].join(' ')} onClick={(e: any) => { this.onClick(e, item); }}>
 							<IconObject size={64} iconSize={40} object={item} />
 							<div className="info">
 								<div className="txt">
@@ -150,7 +150,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 					const author = detailStore.get(Constant.subId.store, item.creator, []);
 
 					return (
-						<div className={[ 'item', tab, viewId ].join(' ')} onClick={(e: any) => { this.onClick(e, item); }}>
+						<div className={[ 'item', tab, view ].join(' ')} onClick={(e: any) => { this.onClick(e, item); }}>
 							<div className="img">
 								{coverId && coverType ? <Cover type={coverType} id={coverId} image={coverId} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={true} /> : ''}
 							</div>
@@ -179,7 +179,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 					const author = detailStore.get(Constant.subId.store, item.creator, []);
 					
 					return (
-						<div className={[ 'item', tab, viewId ].join(' ')} onClick={(e: any) => { this.onClick(e, item); }}>
+						<div className={[ 'item', tab, view ].join(' ')} onClick={(e: any) => { this.onClick(e, item); }}>
 							<IconObject size={48} iconSize={28} object={item} />
 							<div className="info">
 								<div className="txt">
@@ -255,7 +255,6 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 											rowRenderer={rowRenderer}
 											onRowsRendered={onRowsRendered}
 											overscanRowCount={10}
-											scrollToAlignment="center"
 										/>
 									)}
 								</AutoSizer>
@@ -347,13 +346,13 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 		analytics.event(Util.toUpperCamelCase([ 'ScreenLibrary', id ].join('-')));
 
 		this.state.tab = id;
-		this.state.viewId = View.Marketplace;
+		this.state.view = View.Marketplace;
 		this.setState(this.state);
 		this.getData(true);
 	};
 
 	onView (e: any, item: any) {
-		this.state.viewId = item.id;
+		this.state.view = item.id;
 		this.setState(this.state);
 		this.getData(true);
 	};
@@ -375,7 +374,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 	};
 
 	getData (clear: boolean, callBack?: (message: any) => void) {
-		const { viewId } = this.state;
+		const { view } = this.state;
 		const { workspace } = commonStore;
 		const filters = [
 			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: this.getTabType() },
@@ -387,9 +386,9 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 			{ type: I.SortType.Asc, relationKey: 'name' },
 		];
 
-		switch (viewId) {
+		switch (view) {
 			case View.Marketplace:
-				filters.push({ operator: I.FilterOperator.And, relationKey: Constant.relationKey.space, condition: I.FilterCondition.Equal, value: Constant.spaceIdMarketplace });
+				filters.push({ operator: I.FilterOperator.And, relationKey: Constant.relationKey.space, condition: I.FilterCondition.Equal, value: Constant.storeSpaceId });
 				break;
 
 			case View.Library:
@@ -424,11 +423,25 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 	};
 
 	getTabType () {
+		let { tab, view } = this.state;
 		let type = '';
-		switch (this.state.tab) {
-			case Tab.Type:		 type = Constant.typeId.type; break;
-			case Tab.Template:	 type = Constant.typeId.template; break;
-			case Tab.Relation:	 type = Constant.typeId.relation; break;
+
+		switch (view) {
+			case View.Marketplace:
+				switch (tab) {
+					case Tab.Type:		 type = Constant.storeTypeId.type; break;
+					case Tab.Template:	 type = Constant.storeTypeId.template; break;
+					case Tab.Relation:	 type = Constant.storeTypeId.relation; break;
+				};
+				break;
+
+			case View.Library:
+				switch (tab) {
+					case Tab.Type:		 type = Constant.typeId.type; break;
+					case Tab.Template:	 type = Constant.typeId.template; break;
+					case Tab.Relation:	 type = Constant.typeId.relation; break;
+				};
+				break;
 		};
 		return type;
 	};

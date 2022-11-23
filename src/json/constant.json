@@ -5,7 +5,6 @@
 	"amplitude": "1ba981d1a9afb8af8c81847ef3383a20",
 	"protocol": "anytype",
 	"appName": "Anytype",
-	"spaceIdMarketplace": "_anytype_marketplace",
 
 	"platforms": {
 		"win32": 	"Windows",
@@ -195,6 +194,14 @@
 		"bookmark": "ot-bookmark",
 		"option": "ot-relationOption"
 	},
+
+	"storeTypeId": {
+		"relation": "_otrelation",
+		"type": "_otobjectType",
+		"template": "_ottemplate"
+	},
+
+	"storeSpaceId": "_anytype_marketplace",
 
 	"blockId": {
 		"title": "title",
