@@ -139,7 +139,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 
 		this.setState({ loading: true });
 
-		C.ObjectGroupsSubscribe(subId, view.groupRelationKey, view.filters, (message: any) => {
+		C.ObjectGroupsSubscribe(subId, view.groupRelationKey, view.filters, block.content.sources, (message: any) => {
 			if (message.error.code) {
 				return;
 			};
