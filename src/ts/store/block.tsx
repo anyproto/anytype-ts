@@ -10,9 +10,6 @@ class BlockStore {
     public rootId: string = '';
     public profileId: string = '';
     public recentId: string = '';
-    public storeIdType: string = '';
-    public storeIdTemplate: string = '';
-    public storeIdRelation: string = '';
 
     public treeMap: Map<string, Map<string, I.BlockStructure>> = new Map();
     public blockMap: Map<string, Map<string, I.Block>> = new Map();
@@ -23,20 +20,11 @@ class BlockStore {
             rootId: observable,
             profileId: observable,
             recentId: observable,
-            storeIdType: observable,
-            storeIdTemplate: observable,
-            storeIdRelation: observable,
             root: computed,
             profile: computed,
             recent: computed,
-            storeType: computed,
-            storeTemplate: computed,
-            storeRelation: computed,
             rootSet: action,
             profileSet: action,
-            storeSetType: action,
-            storeSetTemplate: action,
-            storeSetRelation: action,
             recentSet: action,
             set: action,
             clear: action,
@@ -61,36 +49,12 @@ class BlockStore {
 		return this.recentId;
 	};
 
-    get storeType (): string {
-		return this.storeIdType;
-	};
-
-    get storeTemplate (): string {
-		return this.storeIdTemplate;
-	};
-
-    get storeRelation (): string {
-		return this.storeIdRelation;
-	};
-
     rootSet (id: string) {
 		this.rootId = String(id || '');
 	};
 
 	profileSet (id: string) {
 		this.profileId = String(id || '');
-	};
-
-    storeSetType (id: string) {
-		this.storeIdType = String(id || '');
-	};
-
-    storeSetTemplate (id: string) {
-		this.storeIdTemplate = String(id || '');
-	};
-
-    storeSetRelation (id: string) {
-		this.storeIdRelation = String(id || '');
 	};
 
     recentSet (id: string) {
@@ -136,9 +100,6 @@ class BlockStore {
 
     clearAll () {
 		this.profileSet('');
-		this.storeSetType('');
-		this.storeSetTemplate('');
-		this.storeSetRelation('');
 		this.recentSet('');
 		this.rootSet('');
 

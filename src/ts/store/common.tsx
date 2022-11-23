@@ -282,10 +282,6 @@ class CommonStore {
 		blockStore.rootSet(info.homeObjectId);
 		blockStore.profileSet(info.profileObjectId);
 
-		blockStore.storeSetType(info.marketplaceTypeObjectId);
-		blockStore.storeSetTemplate(info.marketplaceTemplateObjectId);
-		blockStore.storeSetRelation(info.marketplaceRelationObjectId);
-
 		this.gatewaySet(info.gatewayUrl);
 		this.workspaceSet(info.accountSpaceId);
 

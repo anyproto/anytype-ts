@@ -1,8 +1,7 @@
 import * as React from 'react';
-import { RouteComponentProps } from 'react-router';
 import { Title, Label, Button, IconObject, Loader, Cover, Header } from 'Component';
-import { I, C, DataUtil, Util, Dataview, Storage, Action, Onboarding, analytics } from 'Lib';
-import { dbStore, blockStore, detailStore, } from 'Store';
+import { I, C, DataUtil, Util, Storage, Action, Onboarding, analytics } from 'Lib';
+import { dbStore, blockStore, detailStore, commonStore } from 'Store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
@@ -13,7 +12,8 @@ interface Props extends I.PageComponent {
 };
 
 interface State {
-	tab: string;
+	tab: Tab;
+	viewId: View;
 	loading: boolean;
 };
 
@@ -22,6 +22,11 @@ enum Tab {
 	Type = 'type',
 	Template = 'template',
 	Relation = 'relation',
+};
+
+enum View {
+	Marketplace = 'marketplace',
+	Library = 'library',
 };
 
 const Tabs = [
@@ -50,12 +55,11 @@ const Tabs = [
 	},
 ];
 
-const BLOCK_ID = 'dataview';
-
 const PageMainStore = observer(class PageMainStore extends React.Component<Props, State> {
 
 	state = {
-		tab: '',
+		tab: Tab.None,
+		viewId: View.Marketplace,
 		loading: false,
 	};
 
@@ -72,13 +76,16 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 	};
 	
 	render () {
-		const { tab, loading } = this.state;
-		const rootId = this.getRootId();
-		const subId = dbStore.getSubId(rootId, BLOCK_ID);
-		const block = blockStore.getLeaf(rootId, BLOCK_ID) || {};
-		const meta = dbStore.getMeta(subId, '');
-		const views = block.content?.views || [];
+		const { tab, viewId, loading } = this.state;
 		const items = this.getItems();
+		const views = [
+			{ id: View.Marketplace, name: 'Marketplace' },
+			{ id: View.Library, name: 'Library' },
+		];
+
+		if (!this.cache) {
+			return null;
+		};
 
 		let Item = null;
 		let Mid: any = null;
@@ -98,7 +105,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 		const TabList = (item: any) => (
 			<div className="tabs">
 				{views.map((item: any, i: number) => (
-					<div key={item.id} className={[ 'item', (item.id == meta.viewId ? 'active' : '') ].join(' ')} onClick={(e: any) => { this.onView(e, item); }}>
+					<div key={item.id} className={[ 'item', (item.id == viewId ? 'active' : '') ].join(' ')} onClick={(e: any) => { this.onView(e, item); }}>
 						{item.name}
 					</div>
 				))}
@@ -110,10 +117,10 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 			default:
 			case Tab.Type:
 				Item = (item: any) => {
-					const author = detailStore.get(subId, item.creator, []);
+					const author = detailStore.get(Constant.subId.store, item.creator, []);
 
 					return (
-						<div className={[ 'item', tab, meta.viewId ].join(' ')} onClick={(e: any) => { this.onClick(e, item); }}>
+						<div className={[ 'item', tab, viewId ].join(' ')} onClick={(e: any) => { this.onClick(e, item); }}>
 							<IconObject size={64} iconSize={40} object={item} />
 							<div className="info">
 								<div className="txt">
@@ -140,10 +147,10 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 			case Tab.Template:
 				Item = (item: any) => {
 					const { name, description, coverType, coverId, coverX, coverY, coverScale } = item;
-					const author = detailStore.get(subId, item.creator, []);
+					const author = detailStore.get(Constant.subId.store, item.creator, []);
 
 					return (
-						<div className={[ 'item', tab, meta.viewId ].join(' ')} onClick={(e: any) => { this.onClick(e, item); }}>
+						<div className={[ 'item', tab, viewId ].join(' ')} onClick={(e: any) => { this.onClick(e, item); }}>
 							<div className="img">
 								{coverId && coverType ? <Cover type={coverType} id={coverId} image={coverId} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={true} /> : ''}
 							</div>
@@ -169,10 +176,10 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 			case Tab.Relation:
 				Item = (item: any) => {
 					const { name, description } = item;
-					const author = detailStore.get(subId, item.creator, []);
+					const author = detailStore.get(Constant.subId.store, item.creator, []);
 					
 					return (
-						<div className={[ 'item', tab, meta.viewId ].join(' ')} onClick={(e: any) => { this.onClick(e, item); }}>
+						<div className={[ 'item', tab, viewId ].join(' ')} onClick={(e: any) => { this.onClick(e, item); }}>
 							<IconObject size={48} iconSize={28} object={item} />
 							<div className="info">
 								<div className="txt">
@@ -226,40 +233,35 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 
 		return (
 			<div className={[ 'wrapper', tab ].join(' ')}>
-				<Header component="mainStore" {...this.props} rootId={rootId} tabs={Tabs} tab={tab} onTab={this.onTab} />
+				<Header component="mainStore" {...this.props} tabs={Tabs} tab={tab} onTab={this.onTab} />
 
 				<div className="body">
-
-					{loading ? 
-						<Loader id="loader" />
-					: (
-						<div className="items">
-							<InfiniteLoader
-								rowCount={items.length}
-								loadMoreRows={this.loadMoreRows}
-								isRowLoaded={({ index }) => !!items[index]}
-							>
-								{({ onRowsRendered, registerChild }) => (
-									<AutoSizer className="scrollArea">
-										{({ width, height }) => (
-											<List
-												ref={registerChild}
-												width={width}
-												height={height}
-												deferredMeasurmentCache={this.cache}
-												rowCount={items.length}
-												rowHeight={this.getRowHeight}
-												rowRenderer={rowRenderer}
-												onRowsRendered={onRowsRendered}
-												overscanRowCount={10}
-												scrollToAlignment="center"
-											/>
-										)}
-									</AutoSizer>
-								)}
-							</InfiniteLoader>
-						</div>
-					)}
+					<div className="items">
+						<InfiniteLoader
+							rowCount={items.length}
+							loadMoreRows={this.loadMoreRows}
+							isRowLoaded={({ index }) => !!items[index]}
+						>
+							{({ onRowsRendered, registerChild }) => (
+								<AutoSizer className="scrollArea">
+									{({ width, height }) => (
+										<List
+											ref={registerChild}
+											width={width}
+											height={height}
+											deferredMeasurmentCache={this.cache}
+											rowCount={items.length}
+											rowHeight={this.getRowHeight}
+											rowRenderer={rowRenderer}
+											onRowsRendered={onRowsRendered}
+											overscanRowCount={10}
+											scrollToAlignment="center"
+										/>
+									)}
+								</AutoSizer>
+							)}
+						</InfiniteLoader>
+					</div>
 				</div>
 			</div>
 		);
@@ -267,10 +269,9 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 	
 	componentDidMount () {
 		const { isPopup } = this.props;
-
 		this._isMounted = true;
 		this.resize();
-		this.onTab(Storage.get('tabStore') || Tabs[0].id);
+		this.onTab(Storage.get('tabStore') || Tab.Type);
 
 		if (!isPopup) {
 			DataUtil.setWindowTitleText('Library');
@@ -292,24 +293,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 	};
 
 	componentWillUnmount () {
-		const { storeType, storeRelation, storeTemplate } = blockStore;
-
 		this._isMounted = false;
-
-		Action.pageClose(storeType, true);
-		Action.pageClose(storeRelation, true);
-		Action.pageClose(storeTemplate, true);
-	};
-
-	getRootId () {
-		const { tab } = this.state;
-		const { storeType, storeRelation, storeTemplate } = blockStore;
-
-		let id = '';
-		if (tab == Tab.Type) id = storeType;
-		if (tab == Tab.Template) id = storeTemplate;
-		if (tab == Tab.Relation) id = storeRelation;
-		return id;
 	};
 
 	getRowHeight (param: any) {
@@ -363,16 +347,15 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 		analytics.event(Util.toUpperCamelCase([ 'ScreenLibrary', id ].join('-')));
 
 		this.state.tab = id;
-		this.setState({ tab: id, loading: true });
-
-		C.ObjectOpen(this.getRootId(), '', (message: any) => {
-			this.getData('marketplace', true);
-			this.setState({ loading: false });
-		});
+		this.state.viewId = View.Marketplace;
+		this.setState(this.state);
+		this.getData(true);
 	};
 
 	onView (e: any, item: any) {
-		this.getData(item.id, true);
+		this.state.viewId = item.id;
+		this.setState(this.state);
+		this.getData(true);
 	};
 
 	onClick (e: any, item: any) {
@@ -391,35 +374,69 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 	onCreateTemplate () {
 	};
 
-	getData (newViewId: string, clear: boolean, callBack?: (message: any) => void) {
-		Dataview.getData({
-			rootId: this.getRootId(), 
-			blockId: BLOCK_ID, 
-			newViewId, 
-			keys: [ 'creator' ].concat(Constant.defaultRelationKeys), 
-			limit: 0, 
-			offset: 0, 
-			clear,
+	getData (clear: boolean, callBack?: (message: any) => void) {
+		const { viewId } = this.state;
+		const { workspace } = commonStore;
+		const filters = [
+			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: this.getTabType() },
+			{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
+			{ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.Equal, value: false },
+			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
+		];
+		const sorts = [
+			{ type: I.SortType.Asc, relationKey: 'name' },
+		];
+
+		switch (viewId) {
+			case View.Marketplace:
+				filters.push({ operator: I.FilterOperator.And, relationKey: Constant.relationKey.space, condition: I.FilterCondition.Equal, value: Constant.spaceIdMarketplace });
+				break;
+
+			case View.Library:
+				filters.push({ operator: I.FilterOperator.And, relationKey: Constant.relationKey.space, condition: I.FilterCondition.Equal, value: workspace });
+				break;
+		};
+
+		if (clear) {
+			this.setState({ loading: true });
+		};
+
+		DataUtil.searchSubscribe({
+			subId: Constant.subId.store,
+			filters,
+			sorts,
+			keys: Constant.defaultRelationKeys.concat([ 'creator' ]),
 			ignoreWorkspace: true,
-		}, callBack);
+		}, (message: any) => {
+			this.setState({ loading: false });
+
+			if (callBack) {
+				callBack(message);
+			};
+		});
 	};
 
 	loadMoreRows ({ startIndex, stopIndex }) {
-		const rootId = this.getRootId();
-		const { viewId } = dbStore.getMeta(rootId, BLOCK_ID);
-
         return new Promise((resolve, reject) => {
 			this.offset += 25 * this.getRowLimit();
-			this.getData(viewId, false, resolve);
+			this.getData(false, resolve);
 		});
+	};
+
+	getTabType () {
+		let type = '';
+		switch (this.state.tab) {
+			case Tab.Type:		 type = Constant.typeId.type; break;
+			case Tab.Template:	 type = Constant.typeId.template; break;
+			case Tab.Relation:	 type = Constant.typeId.relation; break;
+		};
+		return type;
 	};
 
 	getItems () {
 		const { profile } = blockStore;
 		const limit = this.getRowLimit();
-		const rootId = this.getRootId();
-		const subId = dbStore.getSubId(rootId, BLOCK_ID);
-		const records = dbStore.getRecords(subId, '').map(id => detailStore.get(subId, id));
+		const records = dbStore.getRecords(Constant.subId.store, '').map(id => detailStore.get(Constant.subId.store, id));
 
 		records.sort((c1: any, c2: any) => {
 			const cr1 = c1.creator;

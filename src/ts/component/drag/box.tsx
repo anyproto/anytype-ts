@@ -140,7 +140,7 @@ class DragBox extends React.Component<Props, {}> {
 		};
 
 		const node = $(ReactDOM.findDOMNode(this));
-		const { onDragEnd, onClick } = this.props;
+		const { onDragEnd } = this.props;
 
 		node.find('.isDraggable.isClone').remove();
 		node.find('.isDraggable.isDragging').removeClass('isDragging');

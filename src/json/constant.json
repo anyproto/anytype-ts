@@ -5,6 +5,7 @@
 	"amplitude": "1ba981d1a9afb8af8c81847ef3383a20",
 	"protocol": "anytype",
 	"appName": "Anytype",
+	"spaceIdMarketplace": "_anytype_marketplace",
 
 	"platforms": {
 		"win32": 	"Windows",
@@ -174,7 +175,8 @@
 		"sidebar": "sidebar",
 		"type": "type",
 		"relation": "relation",
-		"option": "option"
+		"option": "option",
+		"store": "store"
 	},
 
 	"typeId": {
