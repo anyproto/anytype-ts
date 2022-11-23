@@ -74,6 +74,8 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		const length = list.length;
 		const isDeleted = authStore.accountIsDeleted();
 
+		console.log(profile);
+
 		// Subscriptions
 		list.forEach((it: any) => {
 			const { name, iconEmoji, iconImage, type, layout, relationFormat } = it;
