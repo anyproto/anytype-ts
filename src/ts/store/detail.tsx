@@ -144,7 +144,6 @@ class DetailStore {
 			object.smartblockTypes = Relation.getArrayValue(object.smartblockTypes);
 			object.recommendedLayout = Number(object.recommendedLayout) || I.ObjectLayout.Page;
 			object.recommendedRelations = Relation.getArrayValue(object.recommendedRelations);
-			object.isInstalled = object.workspaceId != Constant.storeSpaceId;
 
 			if (object.isDeleted) {
 				name = translate('commonDeletedType');
@@ -157,7 +156,6 @@ class DetailStore {
 			object.objectTypes = Relation.getArrayValue(object.relationFormatObjectTypes);
 			object.isReadonlyRelation = Boolean(object.isReadonly);
 			object.isReadonlyValue = Boolean(object.relationReadonlyValue);
-			object.isInstalled = object.workspaceId != Constant.storeSpaceId;
 
 			delete(object.relationMaxCount);
 			delete(object.isReadonly);
@@ -186,6 +184,7 @@ class DetailStore {
 			isArchived: Boolean(object.isArchived),
 			isFavorite: Boolean(object.isFavorite),
 			isHidden: Boolean(object.isHidden),
+			isInstalled: object.workspaceId != Constant.storeSpaceId,
 		};
 	};
 
