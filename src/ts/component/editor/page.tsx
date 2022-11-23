@@ -1303,15 +1303,15 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			return;
 		};
 
-		if (block.isTextToggle()) {
-			if ((dir < 0) && (range.to == 0)) {
-				blockStore.toggle(rootId, block.id, false);
-			};
-			if ((dir > 0) && (range.to == length)) {
-				blockStore.toggle(rootId, block.id, true);
-			};
-		} else 
-		if (isInsideTable && ((dir < 0) && (range.to == 0) || (dir > 0) && (range.to == length))) {
+		if ((dir < 0) && range.to) {
+			return;
+		};
+
+		if ((dir > 0) && (range.to != length)) {
+			return;
+		};
+
+		if (isInsideTable) {
 			const element = blockStore.getMapElement(rootId, block.id);
 			const rowElement = blockStore.getMapElement(rootId, element.parentId);
 			const idx = rowElement.childrenIds.indexOf(block.id);
@@ -1350,6 +1350,17 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			} else {
 				cb();
 			};
+		} else {
+			if (block.isTextToggle()) {
+				if ((dir < 0) && (range.to == 0)) {
+					blockStore.toggle(rootId, block.id, false);
+				};
+				if ((dir > 0) && (range.to == length)) {
+					blockStore.toggle(rootId, block.id, true);
+				};
+			};
+
+			this.onArrowVertical(e, (dir < 0 ? 'arrowup' : 'arrowdown'), range, length, props);
 		};
 	};
 
