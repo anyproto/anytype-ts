@@ -1360,7 +1360,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 				};
 			};
 
-			this.onArrowVertical(e, pressed, range, length, props;
+			this.onArrowVertical(e, pressed, range, length, props);
 		};
 	};
 
