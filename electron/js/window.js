@@ -192,6 +192,18 @@ class WindowManager {
 					};
 				});
 				break;
+
+			case 'printToPDF':
+				dialog.showOpenDialog({ properties: [ 'openDirectory' ] }).then((result) => {
+					const files = result.filePaths;
+
+					if ((files == undefined) || !files.length) {
+						Util.send(win, 'command', 'saveAsHTMLSuccess');
+					} else {
+						Util.printPDF(win, files[0], param.name);
+					};
+				});
+				break;
 		};
 	};
 

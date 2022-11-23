@@ -2,6 +2,7 @@ const { app, shell, nativeTheme } = require('electron');
 const { is } = require('electron-util');
 const log = require('electron-log');
 const path = require('path');
+const fs = require('fs');
 const protocol = 'anytype';
 const userPath = app.getPath('userData');
 
@@ -170,6 +171,28 @@ class Util {
 			this.log('info', err); 
 		});
 	};
+
+	printPDF (win, exportPath, name) {
+		name = String(name || 'untitled').replace(/[^\w -\._]/gi, ' ').trim();
+
+		let options = {};
+		let pdfPath = path.join(exportPath, name + '.pdf');
+
+		win.webContents.printToPDF(options).then(data => {
+			fs.writeFile(pdfPath, data, (error) => {
+				if (error) throw error
+
+				shell.openPath(exportPath).catch(err => {
+					this.log('info', err);
+				});
+
+				this.send(win, 'command', 'saveAsHTMLSuccess');
+			});
+		}).catch(err => {
+			this.send(win, 'command', 'saveAsHTMLSuccess');
+			this.log('info', err);
+		});
+	}
 
 };
 

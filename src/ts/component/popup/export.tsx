@@ -25,6 +25,7 @@ const PopupExport = observer(class PopupExport extends React.Component<Props, {}
 		const formats = [
 			{ id: I.ExportFormat.Markdown, name: 'Markdown' },
 			(config.experimental ? { id: I.ExportFormat.Html, name: 'HTML' } : null),
+			(config.experimental ? { id: I.ExportFormat.Pdf, name: 'PDF' } : null),
 		];
 
 		this.init();
@@ -120,6 +121,10 @@ const PopupExport = observer(class PopupExport extends React.Component<Props, {}
 
 			case I.ExportFormat.Html:
 				keyboard.onSaveAsHTML();
+				break;
+
+			case I.ExportFormat.Pdf:
+				keyboard.onPrintToPDF();
 				break;
 		};
 		
