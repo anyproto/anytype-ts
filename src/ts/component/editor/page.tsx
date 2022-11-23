@@ -1351,8 +1351,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 				cb();
 			};
 		} else {
-			let next: I.Block = null;
-
 			if (block.isTextToggle()) {
 				if ((dir < 0) && (range.to == 0)) {
 					blockStore.toggle(rootId, block.id, false);
@@ -1362,27 +1360,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 				};
 			};
 
-			// If block is closed toggle - find next block on the same level
-			if (block && block.isTextToggle() && !Storage.checkToggle(rootId, block.id)) {
-				next = blockStore.getNextBlock(rootId, focused, dir, it => (it.parentId != block.id) && it.isFocusable());
-			} else {
-				next = blockStore.getNextBlock(rootId, focused, dir, it => it.isFocusable());
-			};
-
-			if (!next) {
-				return;
-			};
-
-			e.preventDefault();
-
-			const parent = blockStore.getHighestParent(rootId, next.id);
-
-			// If highest parent is closed toggle, next is parent
-			if (parent && parent.isTextToggle() && !Storage.checkToggle(rootId, parent.id)) {
-				next = parent;
-			};
-
-			this.focusNextBlock(next, dir);
+			this.onArrowVertical(e, pressed, range, length, props;
 		};
 	};
 
