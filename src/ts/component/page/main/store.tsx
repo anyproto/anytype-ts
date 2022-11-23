@@ -12,13 +12,10 @@ interface Props extends I.PageComponent {
 };
 
 interface State {
-	tab: Tab;
-	view: View;
 	loading: boolean;
 };
 
 enum Tab {
-	None = '',
 	Type = 'type',
 	Template = 'template',
 	Relation = 'relation',
@@ -55,33 +52,37 @@ const Tabs = [
 	},
 ];
 
+const Views = [
+	{ id: View.Marketplace, name: 'Marketplace' },
+	{ id: View.Library, name: 'Library' },
+];
+
 const PageMainStore = observer(class PageMainStore extends React.Component<Props, State> {
 
 	state = {
-		tab: Tab.None,
-		view: View.Marketplace,
 		loading: false,
 	};
 
+	top: number = 0;
 	offset: number = 0;
 	cache: any = null;
+	refList: any = null;
+	tab: Tab = Tab.Type;
+	view: View = View.Marketplace;
+
 	_isMounted: boolean = false;
 
-	constructor (props: any) {
+	constructor (props: Props) {
 		super(props);
 
-		this.loadMoreRows = this.loadMoreRows.bind(this);
 		this.getRowHeight = this.getRowHeight.bind(this);
 		this.onTab = this.onTab.bind(this);
+		this.onScroll = this.onScroll.bind(this);
 	};
 	
 	render () {
-		const { tab, view, loading } = this.state;
 		const items = this.getItems();
-		const views = [
-			{ id: View.Marketplace, name: 'Marketplace' },
-			{ id: View.Library, name: 'Library' },
-		];
+		const icn = [ 'item', this.tab, this.view ].join(' ');
 
 		if (!this.cache) {
 			return null;
@@ -104,15 +105,15 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 
 		const TabList = (item: any) => (
 			<div className="tabs">
-				{views.map((item: any, i: number) => (
-					<div key={item.id} className={[ 'item', (item.id == view ? 'active' : '') ].join(' ')} onClick={(e: any) => { this.onView(e, item); }}>
+				{Views.map((item: any, i: number) => (
+					<div key={item.id} className={[ 'item', (item.id == this.view ? 'active' : '') ].join(' ')} onClick={(e: any) => { this.onView(item.id); }}>
 						{item.name}
 					</div>
 				))}
 			</div>
 		);
 
-		switch (tab) {
+		switch (this.tab) {
 
 			default:
 			case Tab.Type:
@@ -120,7 +121,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 					const author = detailStore.get(Constant.subId.store, item.creator, []);
 
 					return (
-						<div className={[ 'item', tab, view ].join(' ')} onClick={(e: any) => { this.onClick(e, item); }}>
+						<div className={icn} onClick={(e: any) => { this.onClick(e, item); }}>
 							<IconObject size={64} iconSize={40} object={item} />
 							<div className="info">
 								<div className="txt">
@@ -138,7 +139,6 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 					<div className="mid">
 						<Title text="Type every object" />
 						<Label text="Anytype includes many popular types of objects for you to get started" />
-
 						<Button text="Create a new type" onClick={(e: any) => { this.onCreateType(e); }} />
 					</div>
 				);
@@ -150,7 +150,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 					const author = detailStore.get(Constant.subId.store, item.creator, []);
 
 					return (
-						<div className={[ 'item', tab, view ].join(' ')} onClick={(e: any) => { this.onClick(e, item); }}>
+						<div className={icn} onClick={(e: any) => { this.onClick(e, item); }}>
 							<div className="img">
 								{coverId && coverType ? <Cover type={coverType} id={coverId} image={coverId} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={true} /> : ''}
 							</div>
@@ -167,7 +167,6 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 					<div className="mid">
 						<Title text="Template space" />
 						<Label text="Our beautifully-designed templates come with hundreds" />
-
 						<Button text="Create a new template" onClick={(e: any) => { this.onCreateTemplate(); }} />
 					</div>
 				);
@@ -179,7 +178,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 					const author = detailStore.get(Constant.subId.store, item.creator, []);
 					
 					return (
-						<div className={[ 'item', tab, view ].join(' ')} onClick={(e: any) => { this.onClick(e, item); }}>
+						<div className={icn} onClick={(e: any) => { this.onClick(e, item); }}>
 							<IconObject size={48} iconSize={28} object={item} />
 							<div className="info">
 								<div className="txt">
@@ -197,7 +196,6 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 					<div className="mid">
 						<Title text="All objects are connected" />
 						<Label text="Use relations to build connections between objects" />
-
 						<Button text="Create a new type" />
 					</div>
 				);
@@ -232,21 +230,21 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 		};
 
 		return (
-			<div className={[ 'wrapper', tab ].join(' ')}>
-				<Header component="mainStore" {...this.props} tabs={Tabs} tab={tab} onTab={this.onTab} />
+			<div className={[ 'wrapper', this.tab ].join(' ')}>
+				<Header component="mainStore" {...this.props} tabs={Tabs} tab={this.tab} onTab={this.onTab} />
 
 				<div className="body">
 					<div className="items">
 						<InfiniteLoader
 							rowCount={items.length}
-							loadMoreRows={this.loadMoreRows}
-							isRowLoaded={({ index }) => !!items[index]}
+							loadMoreRows={() => {}}
+							isRowLoaded={({ index }) => true}
 						>
 							{({ onRowsRendered, registerChild }) => (
 								<AutoSizer className="scrollArea">
 									{({ width, height }) => (
 										<List
-											ref={registerChild}
+											ref={(ref: any) => { this.refList = ref; }}
 											width={width}
 											height={height}
 											deferredMeasurmentCache={this.cache}
@@ -255,6 +253,8 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 											rowRenderer={rowRenderer}
 											onRowsRendered={onRowsRendered}
 											overscanRowCount={10}
+											onScroll={this.onScroll}
+											scrollToAlignment="start"
 										/>
 									)}
 								</AutoSizer>
@@ -267,8 +267,17 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 	};
 	
 	componentDidMount () {
-		const { isPopup } = this.props;
 		this._isMounted = true;
+
+		const { isPopup } = this.props;
+		const items = this.getItems();
+
+		this.cache = new CellMeasurerCache({
+			fixedWidth: true,
+			defaultHeight: 64,
+			keyMapper: (i: number) => { return (items[i] || {}).id; },
+		});
+
 		this.resize();
 		this.onTab(Storage.get('tabStore') || Tab.Type);
 
@@ -278,17 +287,12 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 	};
 
 	componentDidUpdate () {
-		const { tab } = this.state;
-		const items = this.getItems();
+		const { isPopup } = this.props;
 
-		this.cache = new CellMeasurerCache({
-			fixedWidth: true,
-			defaultHeight: 64,
-			keyMapper: (i: number) => { return (items[i] || {}).id; },
-		});
-
-		Onboarding.start(Util.toCamelCase('store-' + tab), this.props.isPopup);
 		this.resize();
+		this.refList.recomputeRowHeights();
+
+		Onboarding.start(Util.toCamelCase('store-' + this.tab), isPopup);
 	};
 
 	componentWillUnmount () {
@@ -296,7 +300,6 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 	};
 
 	getRowHeight (param: any) {
-		const { tab } = this.state;
 		const { index } = param;
 
 		let h = 0;
@@ -304,7 +307,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 		switch (index) {
 			// Mid
 			case 0:
-				switch (tab) {
+				switch (this.tab) {
 					case Tab.Type: h = 238; break;
 					case Tab.Template: h = 280; break;
 					case Tab.Relation: h = 180; break;
@@ -317,7 +320,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 				break;
 
 			default:
-				switch (tab) {
+				switch (this.tab) {
 					case Tab.Type: h = 96; break;
 					case Tab.Template: h = 280; break;
 					case Tab.Relation: h = 64; break;
@@ -328,32 +331,23 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 	};
 
 	getRowLimit () {
-		const { tab } = this.state;
-
 		let l = 0;
-		if (tab == Tab.Type) l = 2;
-		if (tab == Tab.Template) l = 3;
-		if (tab == Tab.Relation) l = 3;
+		if (this.tab == Tab.Type) l = 2;
+		if (this.tab == Tab.Template) l = 3;
+		if (this.tab == Tab.Relation) l = 3;
 		return l;
 	};
 
 	onTab (id: Tab) {
-		if (this.state.tab == id) {
-			return;
-		};
+		this.tab = id;
+		this.onView(View.Marketplace);
 
 		Storage.set('tabStore', id);
 		analytics.event(Util.toUpperCamelCase([ 'ScreenLibrary', id ].join('-')));
-
-		this.state.tab = id;
-		this.state.view = View.Marketplace;
-		this.setState(this.state);
-		this.getData(true);
 	};
 
-	onView (e: any, item: any) {
-		this.state.view = item.id;
-		this.setState(this.state);
+	onView (id: View) {
+		this.view = id;
 		this.getData(true);
 	};
 
@@ -374,7 +368,6 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 	};
 
 	getData (clear: boolean, callBack?: (message: any) => void) {
-		const { view } = this.state;
 		const { workspace } = commonStore;
 		const filters = [
 			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: this.getTabType() },
@@ -386,7 +379,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 			{ type: I.SortType.Asc, relationKey: 'name' },
 		];
 
-		switch (view) {
+		switch (this.view) {
 			case View.Marketplace:
 				filters.push({ operator: I.FilterOperator.And, relationKey: Constant.relationKey.space, condition: I.FilterCondition.Equal, value: Constant.storeSpaceId });
 				break;
@@ -416,20 +409,11 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 		});
 	};
 
-	loadMoreRows ({ startIndex, stopIndex }) {
-        return new Promise((resolve, reject) => {
-			this.offset += 25 * this.getRowLimit();
-			this.getData(false, resolve);
-		});
-	};
-
 	getTabType () {
-		let { tab, view } = this.state;
 		let type = '';
-
-		switch (view) {
+		switch (this.view) {
 			case View.Marketplace:
-				switch (tab) {
+				switch (this.tab) {
 					case Tab.Type:		 type = Constant.storeTypeId.type; break;
 					case Tab.Template:	 type = Constant.storeTypeId.template; break;
 					case Tab.Relation:	 type = Constant.storeTypeId.relation; break;
@@ -437,7 +421,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 				break;
 
 			case View.Library:
-				switch (tab) {
+				switch (this.tab) {
 					case Tab.Type:		 type = Constant.typeId.type; break;
 					case Tab.Template:	 type = Constant.typeId.template; break;
 					case Tab.Relation:	 type = Constant.typeId.relation; break;
@@ -483,8 +467,14 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 			ret.push(row);
 		};
 
-		ret = ret.filter((it: any) => { return it.children.length > 0; });
+		ret = ret.filter(it => it.children.length > 0);
 		return ret;
+	};
+
+	onScroll ({ clientHeight, scrollHeight, scrollTop }) {
+		if (scrollTop) {
+			this.top = scrollTop;
+		};
 	};
 
 	resize () {
@@ -496,7 +486,11 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 		const hh = Util.sizeHeader();
 		const platform = Util.getPlatform();
 		const isPopup = this.props.isPopup && !container.hasClass('full');
-		const wh = isPopup ? container.height() : win.height();
+		
+		let wh = isPopup ? container.height() : win.height();
+		if (platform == I.Platform.Windows) {
+			wh -= Constant.size.headerWindows;
+		};
 
 		node.css({ height: wh });
 		

@@ -227,7 +227,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 		let sh = wh;
 
 		if (platform == I.Platform.Windows) {
-			wh -= 30;
+			wh -= Constant.size.headerWindows;
 		};
 
 		wrapper.css({ height: wh });
