@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { Title, Label, Button, IconObject, Loader, Cover, Header } from 'Component';
-import { I, C, DataUtil, Util, Storage, Action, Onboarding, analytics } from 'Lib';
-import { dbStore, blockStore, detailStore, commonStore } from 'Store';
+import * as ReactDOM from 'react-dom';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-
+import { Title, Label, Button, IconObject, Cover, Header } from 'Component';
+import { I, C, DataUtil, Util, Storage, Onboarding, analytics } from 'Lib';
+import { dbStore, blockStore, detailStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
 
 interface Props extends I.PageComponent {
@@ -490,22 +490,22 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 	resize () {
 		const win = $(window);
 		const container = Util.getPageContainer(this.props.isPopup);
-		const wrapper = container.find('.wrapper');
+		const node = $(ReactDOM.findDOMNode(this));
+		const content = $('#popupPage .content');
+		const body = node.find('.body');
 		const hh = Util.sizeHeader();
 		const platform = Util.getPlatform();
 		const isPopup = this.props.isPopup && !container.hasClass('full');
-		
-		let wh = isPopup ? container.height() - hh : win.height();
+		const wh = isPopup ? container.height() : win.height();
 
-		if (platform == I.Platform.Windows) {
-			wh -= 30;
-		};
-
-		wrapper.css({ height: wh });
+		node.css({ height: wh });
 		
 		if (isPopup) {
-			const element = $('#popupPage .content');
-			element.css({ minHeight: 'unset', height: '100%' });
+			body.css({ height: wh - hh });
+			content.css({ minHeight: 'unset', height: '100%' });
+		} else {
+			body.css({ height: '' });
+			content.css({ minHeight: '', height: '' });
 		};
 	};
 

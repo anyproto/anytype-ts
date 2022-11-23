@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { IconObject, Block, Button } from 'Component';
-import { I, M, DataUtil, focus, keyboard } from 'Lib';
-import { blockStore, detailStore, dbStore } from 'Store';
+import { I, M, C, DataUtil, focus, keyboard } from 'Lib';
+import { blockStore, detailStore } from 'Store';
 import { observer } from 'mobx-react';
 import { getRange } from 'selection-ranges';
 
@@ -27,6 +27,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props, {}> {
 
 		this.onSelect = this.onSelect.bind(this);
 		this.onUpload = this.onUpload.bind(this);
+		this.onInstall = this.onInstall.bind(this);
 		this.onCompositionStart = this.onCompositionStart.bind(this);
 		this.onCompositionEnd = this.onCompositionEnd.bind(this);
 	};
@@ -82,6 +83,9 @@ const HeadSimple = observer(class Controls extends React.Component<Props, {}> {
 		};
 		if (object.type == Constant.typeId.relation) {
 			button = <Button id="button-create" text="Create set" onClick={onCreate} />;
+		};
+		if ([ Constant.storeTypeId.type, Constant.storeTypeId.relation ].includes(object.type)) {
+			button = <Button id="button-install" text="Install" onClick={this.onInstall} />;
 		};
 
 		return (
@@ -263,6 +267,16 @@ const HeadSimple = observer(class Controls extends React.Component<Props, {}> {
 
 		const node = $(ReactDOM.findDOMNode(this));
 		node.find('.placeholder.c' + id).show();
+	};
+
+	onInstall () {
+		const { rootId } = this.props;
+
+		C.WorkspaceObjectAdd(rootId, (message: any) => {
+			if (!message.error.code) {
+				DataUtil.objectOpenAuto(message.details);
+			};
+		});
 	};
 
 });

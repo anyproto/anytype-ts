@@ -343,6 +343,13 @@ const WorkspaceCreate = (response: any) => {
 	};
 };
 
+const WorkspaceObjectAdd = (response: any) => {
+	return {
+		objectId: response.getObjectid(),
+		details: Decode.decodeStruct(response.getDetails()),
+	};
+};
+
 const UnsplashSearch = (response: any) => {
 	return {
 		pictures: (response.getPicturesList() || []).map(Mapper.From.UnsplashPicture),
@@ -425,6 +432,7 @@ export {
 	TemplateClone,
 
 	WorkspaceCreate,
+	WorkspaceObjectAdd,
 
 	UnsplashSearch,
 	UnsplashDownload,

@@ -373,6 +373,14 @@ class DataUtil {
 			this.objectOpenRoute(object);
 		};
 	};
+
+	objectOpenAuto (object: any, popupParam?: any) {
+		if (popupStore.isOpen('page')) {
+			this.objectOpenPopup(object, popupParam);
+		} else {
+			this.objectOpenRoute(object);
+		};
+	};
 	
 	objectRoute (object: any): string {
 		if (!object) {

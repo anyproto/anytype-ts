@@ -68,17 +68,17 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 		const object = Util.objectCopy(detailStore.get(rootId, rootId, [ 'recommendedLayout' ]));
 		const subIdTemplate = this.getSubIdTemplate();
 
-		const type = dbStore.getType(rootId);
+		const type = detailStore.get(rootId, rootId);
 		const templates = dbStore.getRecords(subIdTemplate, '').map(id => detailStore.get(subIdTemplate, id, []));
 		const totalTemplate = dbStore.getMeta(subIdTemplate, '').total;
 		const totalObject = dbStore.getMeta(this.getSubIdObject(), '').total;
 		const layout: any = DataUtil.menuGetLayouts().find(it => it.id == object.recommendedLayout) || {};
 		const showTemplates = !NO_TEMPLATES.includes(rootId);
 
-		const allowedObject = (type.smartblockTypes || []).includes(I.SmartBlockType.Page);
-		const allowedDetails = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
-		const allowedRelation = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
-		const allowedTemplate = allowedObject && showTemplates;
+		const allowedObject = object.isInstalled && (type.smartblockTypes || []).includes(I.SmartBlockType.Page);
+		const allowedDetails = object.isInstalled && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
+		const allowedRelation = object.isInstalled && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
+		const allowedTemplate = object.isInstalled && allowedObject && showTemplates;
 
 		let relations = Util.objectCopy(dbStore.getRelations(rootId, rootId)).sort(DataUtil.sortByHidden);
 		relations = relations.filter((it: any) => {

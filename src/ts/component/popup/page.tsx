@@ -87,20 +87,17 @@ const PopupPage = observer(class PopupPage extends React.Component<Props, {}> {
 		};
 
 		const { getId, position } = this.props;
+		const win = $(window);
+		const obj = $(`#${getId()}-innerWrap`);
+		const loader = obj.find('#loader');
+		const ww = win.width();
+		const width = Math.max(1096, Math.min(1096, ww - 128));
 
-		raf(() => {
-			const win = $(window);
-			const obj = $(`#${getId()}-innerWrap`);
-			const loader = obj.find('#loader');
-			const ww = win.width();
-			const width = Math.max(1096, Math.min(1096, ww - 128));
+		width >= ww ? obj.addClass('full') : obj.removeClass('full');
 
-			width >= ww ? obj.addClass('full') : obj.removeClass('full');
-
-			obj.css({ width: width });
-			loader.css({ width: width, height: obj.height() });
-			position();
-		});
+		obj.css({ width: width });
+		loader.css({ width: width, height: obj.height() });
+		position();
 	};
 
 });

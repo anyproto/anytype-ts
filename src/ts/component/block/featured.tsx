@@ -47,7 +47,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		const storeId = this.getStoreId();
 		const object = detailStore.get(rootId, storeId);
 		const items = this.getItems();
-		const type = dbStore.getType(object.type);
+		const type = detailStore.get(rootId, object.type);
 		const bullet = <div className="bullet" />;
 		const allowedValue = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 
