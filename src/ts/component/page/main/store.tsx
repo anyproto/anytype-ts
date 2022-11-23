@@ -398,6 +398,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 
 		if (clear) {
 			this.setState({ loading: true });
+			dbStore.recordsSet(Constant.subId.store, '', []);
 		};
 
 		DataUtil.searchSubscribe({
