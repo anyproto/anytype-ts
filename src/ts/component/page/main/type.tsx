@@ -177,12 +177,14 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 						</div>
 					</div>
 
-					<div className="section set">
-						<div className="title">{totalObject} {Util.cntWord(totalObject, 'object', 'objects')}</div>
-						<div className="content">
-							<ListObject rootId={rootId} blockId={BLOCK_ID_OBJECT} />
+					{object.isInstalled ? (
+						<div className="section set">
+							<div className="title">{totalObject} {Util.cntWord(totalObject, 'object', 'objects')}</div>
+							<div className="content">
+								<ListObject rootId={rootId} blockId={BLOCK_ID_OBJECT} />
+							</div>
 						</div>
-					</div>
+					) : ''}
 				</div>
 
 				<Footer component="mainEdit" {...this.props} />
@@ -246,19 +248,26 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 		const views = dbStore.getViews(rootId, blockId);
 		const block = blockStore.getLeaf(rootId, blockId);
 
-		if (views.length) {
-			const view = views[0];
-			const filters = view.filters.concat([
-				{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
-			]);
-			DataUtil.searchSubscribe({
-				subId: this.getSubIdTemplate(),
-				filters,
-				sorts: view.sorts,
-				keys: [ 'id' ],
-				sources: block.content.sources,
-			});
+		if (!block || !views.length) {
+			return;
 		};
+
+		const { workspace } = commonStore;
+		const object = detailStore.get(rootId, rootId);
+		const view = views[0];
+		const filters = view.filters.concat([
+			{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
+			{ operator: I.FilterOperator.And, relationKey: 'workspaceId', condition: I.FilterCondition.Equal, value: object.isInstalled ? workspace : Constant.storeSpaceId },
+		]);
+
+		DataUtil.searchSubscribe({
+			subId: this.getSubIdTemplate(),
+			filters,
+			sorts: view.sorts,
+			keys: [ 'id' ],
+			sources: block.content.sources,
+			ignoreWorkspace: true,
+		});
 	};
 
 	close () {

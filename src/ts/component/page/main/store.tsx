@@ -381,11 +381,11 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 
 		switch (this.view) {
 			case View.Marketplace:
-				filters.push({ operator: I.FilterOperator.And, relationKey: Constant.relationKey.space, condition: I.FilterCondition.Equal, value: Constant.storeSpaceId });
+				filters.push({ operator: I.FilterOperator.And, relationKey: 'workspaceId', condition: I.FilterCondition.Equal, value: Constant.storeSpaceId });
 				break;
 
 			case View.Library:
-				filters.push({ operator: I.FilterOperator.And, relationKey: Constant.relationKey.space, condition: I.FilterCondition.Equal, value: workspace });
+				filters.push({ operator: I.FilterOperator.And, relationKey: 'workspaceId', condition: I.FilterCondition.Equal, value: workspace });
 				break;
 		};
 
