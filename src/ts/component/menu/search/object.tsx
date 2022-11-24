@@ -252,7 +252,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 			items.unshift({ isSection: true, name: label });
 		};
 
-		if (filter.length && !canNotAdd) {
+		if (filter && !canNotAdd) {
 			if (items.length) {
 				items.push({ isDiv: true });
 			};
@@ -281,7 +281,8 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 
 		const { param } = this.props;
 		const { data } = param;
-		const { filter, type, dataMapper, dataSort, skipIds, keys } = data;
+		const { type, dataMapper, dataSort, skipIds, keys } = data;
+		const filter = String(data.filter || '');
 		
 		const filters: any[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },

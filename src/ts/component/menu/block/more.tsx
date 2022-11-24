@@ -121,6 +121,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		let fav = null;
 		let highlight = null;
 		let pageLock = null;
+		let pageInstall = null;
 
 		let linkTo = { id: 'linkTo', icon: 'linkTo', name: 'Link to', arrow: true };
 		let undo = { id: 'undo', name: 'Undo', withCaption: true, caption: `${cmd}+Z` };
@@ -170,11 +171,17 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			pageLock = { id: 'pageLock', icon: 'pageLock', name: 'Lock page', caption: `Ctrl+Shift+L` };
 		};
 
+		if (object.isInstalled) {
+			pageInstall = { id: 'pageUninstall', icon: 'remove', name: 'Uninstall object' };
+		} else {
+			pageInstall = { id: 'pageInstall', icon: 'remove', name: 'Install object' };
+		};
+
 		// Restrictions
 
 		const allowedBlock = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Block ]);
 		const allowedArchive = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Delete ]);
-		const allowedDelete = allowedArchive && object.isArchived;
+		const allowedDelete = object.isInstalled && allowedArchive && object.isArchived;
 		const allowedShare = block.isObjectSpace() && config.allowSpaces;
 		const allowedSearch = !block.isObjectSet() && !block.isObjectSpace();
 		const allowedHighlight = !(!object.workspaceId || block.isObjectSpace() || !config.allowSpaces);
@@ -185,6 +192,9 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const allowedLink = config.experimental;
 		const allowedCopy = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Duplicate ]);
 		const allowedReload = object.source && block.isObjectBookmark();
+		const allowedLinkTo = object.isInstalled;
+		const allowedInstall = !object.isInstalled;
+		const allowedUninstall = object.isInstalled && [ Constant.typeId.type, Constant.typeId.relation ].includes(object.type);
 
 		if (!allowedArchive)	 archive = null;
 		if (!allowedDelete)		 pageRemove = null;
@@ -199,6 +209,9 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		if (!allowedBlock)		 undo = redo = null;
 		if (!allowedTemplate)	 template = null;
 		if (!allowedFav)		 fav = null;
+		if (!allowedLinkTo)		 linkTo = null;
+		if (!allowedInstall && !allowedUninstall)	 pageInstall = null;
+		if (allowedUninstall)	 archive = null;
 
 		let sections = [];
 		if (block.isObjectType() || block.isObjectRelation() || block.isObjectFileKind() || block.isObjectSet() || block.isObjectSpace()) {
@@ -207,7 +220,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			};
 
 			sections = [
-				{ children: [ archive, pageRemove ] },
+				{ children: [ archive, pageRemove, pageInstall ] },
 				{ children: [ fav, pageLink, linkTo, pageCopy, highlight ] },
 				{ children: [ search ] },
 				{ children: [ print ] },
@@ -518,6 +531,20 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			case 'pageReload':
 				C.ObjectBookmarkFetch(rootId, object.source, () => {
 					analytics.event('ReloadSourceData');
+				});
+				break;
+
+			case 'pageInstall':
+				C.WorkspaceObjectAdd(object.id, (message: any) => {
+					if (!message.error.code) {
+						DataUtil.objectOpenAuto(message.details);
+					};
+				});
+				break;
+
+			case 'pageUninstall':
+				C.WorkspaceObjectListRemove([ object.id ], (message: any) => {
+					Util.route('/main/index');
 				});
 				break;
 
