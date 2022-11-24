@@ -727,7 +727,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 			if (id == 'linkTo') {
 				type = I.NavigationType.LinkTo;
-				blockId = item._object_.id;
+				blockId = object.id;
 			};
 
 			menuStore.open('searchObject', {
@@ -742,7 +742,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 					filters,
 					rebind: menuContext.ref.rebind,
 					blockIds: [ item.id ],
-					skipIds: [ item._object_.id ],
+					skipIds: [ object.id ],
 					position: I.BlockPosition.Bottom,
 					onSelect: (el: any) => {
 						analytics.event('LinkedToObject', { count: 1 });
