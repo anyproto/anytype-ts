@@ -65,26 +65,26 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 
 		const { config } = commonStore;
 		const rootId = this.getRootId();
-		const object = Util.objectCopy(detailStore.get(rootId, rootId, [ 'recommendedLayout' ]));
+		const object = Util.objectCopy(detailStore.get(rootId, rootId));
 		const subIdTemplate = this.getSubIdTemplate();
 
-		const type = detailStore.get(rootId, rootId);
 		const templates = dbStore.getRecords(subIdTemplate, '').map(id => detailStore.get(subIdTemplate, id, []));
 		const totalTemplate = dbStore.getMeta(subIdTemplate, '').total;
 		const totalObject = dbStore.getMeta(this.getSubIdObject(), '').total;
 		const layout: any = DataUtil.menuGetLayouts().find(it => it.id == object.recommendedLayout) || {};
 		const showTemplates = !NO_TEMPLATES.includes(rootId);
 
-		const allowedObject = object.isInstalled && (type.smartblockTypes || []).includes(I.SmartBlockType.Page);
+		const allowedObject = object.isInstalled && (object.smartblockTypes || []).includes(I.SmartBlockType.Page);
 		const allowedDetails = object.isInstalled && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const allowedRelation = object.isInstalled && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
 		const allowedTemplate = object.isInstalled && allowedObject && showTemplates;
 
-		let relations = Util.objectCopy(dbStore.getObjectRelations(rootId, rootId)).sort(DataUtil.sortByHidden);
-		relations = relations.filter((it: any) => {
-			return it ? (!config.debug.ho ? !it.isHidden : true) : false;
+		const relations = (object.recommendedRelations || []).map(relationKey => dbStore.getRelationByKey(relationKey)).filter((it: any) => {
+			if (!it || Constant.systemRelationKeys.includes(it.relationKey)) {
+				return false;
+			};
+			return config.debug.ho ? true : !it.isHidden;
 		});
-		relations = relations.filter(it => !Constant.systemRelationKeys.includes(it.relationKey));
 
 		const Relation = (item: any) => (
 			<div id={'item-' + item.id} className={[ 'item', (item.isHidden ? 'isHidden' : ''), 'canEdit' ].join(' ')}>

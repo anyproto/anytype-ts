@@ -81,12 +81,11 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 	};
 	
 	render () {
-		const items = this.getItems();
-		const icn = [ 'item', this.tab, this.view ].join(' ');
-
 		if (!this.cache) {
 			return null;
 		};
+
+		const items = this.getItems();
 
 		let Item = null;
 		let Mid: any = null;
@@ -106,7 +105,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 		const TabList = (item: any) => (
 			<div className="tabs">
 				{Views.map((item: any, i: number) => (
-					<div key={item.id} className={[ 'item', (item.id == this.view ? 'active' : '') ].join(' ')} onClick={(e: any) => { this.onView(item.id); }}>
+					<div key={item.id} className={[ 'tab', (item.id == this.view ? 'active' : '') ].join(' ')} onClick={(e: any) => { this.onView(item.id); }}>
 						{item.name}
 					</div>
 				))}
@@ -121,7 +120,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 					const author = detailStore.get(Constant.subId.store, item.creator, []);
 
 					return (
-						<div className={icn} onClick={(e: any) => { this.onClick(e, item); }}>
+						<div className="item" onClick={(e: any) => { this.onClick(e, item); }}>
 							<IconObject size={64} iconSize={40} object={item} />
 							<div className="info">
 								<div className="txt">
@@ -150,7 +149,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 					const author = detailStore.get(Constant.subId.store, item.creator, []);
 
 					return (
-						<div className={icn} onClick={(e: any) => { this.onClick(e, item); }}>
+						<div className="item" onClick={(e: any) => { this.onClick(e, item); }}>
 							<div className="img">
 								{coverId && coverType ? <Cover type={coverType} id={coverId} image={coverId} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={true} /> : ''}
 							</div>
@@ -178,7 +177,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 					const author = detailStore.get(Constant.subId.store, item.creator, []);
 					
 					return (
-						<div className={icn} onClick={(e: any) => { this.onClick(e, item); }}>
+						<div className="item" onClick={(e: any) => { this.onClick(e, item); }}>
 							<IconObject size={48} iconSize={28} object={item} />
 							<div className="info">
 								<div className="txt">
@@ -204,7 +203,13 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 		};
 
 		const rowRenderer = (param: any) => {
-			const item = items[param.index];
+			let item = items[param.index];
+			let cn = [ 'row' ];
+
+			if (item.className) {
+				cn.push(item.className);
+			};
+
 			return (
 				<CellMeasurer
 					key={param.key}
@@ -214,7 +219,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 					rowIndex={param.index}
 					hasFixedWidth={() => {}}
 				>
-					<div className="row" style={param.style}>
+					<div className={cn.join(' ')} style={param.style}>
 						{item.children.map((item: any, i: number) => {
 							if (item.id == 'mid') {
 								return <Mid key={i} {...item} />;
@@ -461,8 +466,8 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 		});
 
 		let ret: any[] = [
-			{ children: [ { id: 'mid' } ] },
-			{ children: [ { id: 'tabs' } ] }
+			{ className: 'block', children: [ { id: 'mid' } ] },
+			{ className: 'block', children: [ { id: 'tabs' } ] }
 		];
 		let n = 0;
 		let row = { children: [] };

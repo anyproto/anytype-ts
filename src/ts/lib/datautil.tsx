@@ -267,19 +267,21 @@ class DataUtil {
 				subId: Constant.subId.type,
 				keys: Constant.defaultRelationKeys.concat(Constant.typeRelationKeys),
 				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.type },
+					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: [ Constant.typeId.type, Constant.storeTypeId.type ] },
 					{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
 				],
-				noDeps: true
+				noDeps: true,
+				ignoreWorkspace: true,
 			},
 			{
 				subId: Constant.subId.relation,
 				keys: Constant.relationRelationKeys,
 				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.relation },
+					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: [ Constant.typeId.relation, Constant.storeTypeId.relation ] },
 					{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
 				],
 				noDeps: true,
+				ignoreWorkspace: true,
 				onSubscribe: () => {
 					dbStore.getRelations().forEach(it => dbStore.relationKeyMap[it.relationKey] = it.id);
 				}
@@ -1182,6 +1184,7 @@ class DataUtil {
 
 		details = details.concat(message.dependencies.map(mapper));
 		details = details.concat(message.records.map(mapper));
+
 		detailStore.set(subId, details);
 		
 		dbStore.recordsSet(subId, '', message.records.map(it => it[idField]).filter(it => it));

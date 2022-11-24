@@ -1,6 +1,5 @@
 import { observable, action, set, intercept, makeObservable } from 'mobx';
 import { I, Relation, DataUtil, translate } from 'Lib';
-import { dbStore } from 'Store';
 
 import Constant from 'json/constant.json';
 
@@ -22,11 +21,7 @@ class DetailStore {
     };
 
     set (rootId: string, details: any[]) {
-		let map = this.map.get(rootId);
-
-		if (!map) {
-			map = observable.map(new Map());
-		};
+		const map = observable.map(new Map());
 
 		for (let item of details) {
 			const list: Detail[] = [];
