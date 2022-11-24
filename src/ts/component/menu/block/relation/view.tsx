@@ -164,7 +164,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const type = dbStore.getType(object.type);
 
 		let featured = object[Constant.relationKey.featured] || [];
-		let relations = dbStore.getRelations(rootId, rootId);
+		let relations = dbStore.getObjectRelations(rootId, rootId);
 		let relationKeys = relations.map(it => it.relationKey);
 		let items = relations.map((it: any) => { return { ...it, scope: I.RelationScope.Object }; });
 		let typeRelations = (type ? type.recommendedRelations : []).map(it => {
@@ -235,7 +235,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const { param, getId } = this.props;
 		const { data, classNameWrap } = param;
 		const { rootId } = data;
-		const relations = dbStore.getRelations(rootId, rootId);
+		const relations = dbStore.getObjectRelations(rootId, rootId);
 
 		menuStore.open('relationSuggest', { 
 			element: `#${getId()} #item-add .info`,

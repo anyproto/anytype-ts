@@ -283,7 +283,7 @@ class Relation {
 	getCoverOptions (rootId: string, blockId: string) {
 		const { config } = commonStore;
 
-		const options: any[] = Util.objectCopy(dbStore.getRelations(rootId, blockId)).filter((it: any) => {
+		const options: any[] = Util.objectCopy(dbStore.getObjectRelations(rootId, blockId)).filter((it: any) => {
 			return !it.isHidden && (it.format == I.RelationType.File);
 		}).map((it: any) => {
 			return { 
@@ -308,7 +308,7 @@ class Relation {
 	getGroupOptions (rootId: string, blockId: string) {
 		const formats = [ I.RelationType.Status, I.RelationType.Tag, I.RelationType.Checkbox ];
 		
-		let options: any[] = dbStore.getRelations(rootId, blockId);
+		let options: any[] = dbStore.getObjectRelations(rootId, blockId);
 
 		options = options.filter((it: any) => {
 			return it && formats.includes(it.format) && (!it.isHidden || [ Constant.relationKey.done ].includes(it.relationKey));

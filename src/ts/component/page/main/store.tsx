@@ -369,29 +369,34 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 
 	getData (clear: boolean, callBack?: (message: any) => void) {
 		const { workspace } = commonStore;
-		const filters = [
+		const filters: I.Filter[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: this.getTabType() },
 			{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
 			{ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.Equal, value: false },
 			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
 		];
-		const sorts = [
+		const sorts: I.Sort[] = [
 			{ type: I.SortType.Asc, relationKey: 'name' },
 		];
 
+		let sources: string[] = [];
+
 		switch (this.view) {
 			case View.Marketplace:
-				filters.push({ operator: I.FilterOperator.And, relationKey: 'workspaceId', condition: I.FilterCondition.Equal, value: Constant.storeSpaceId });
-
 				switch (this.tab) {
 					case Tab.Type:
-						
+						sources = dbStore.getTypes().map(it => it.source);
 						break;
 
 					case Tab.Relation:
+						sources = dbStore.getRelations().map(it => it.source);
 						break;
 				};
 
+				filters.push({ operator: I.FilterOperator.And, relationKey: 'workspaceId', condition: I.FilterCondition.Equal, value: Constant.storeSpaceId });
+				if (sources.length) {
+					filters.push({ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: sources });
+				};
 				break;
 
 			case View.Library:

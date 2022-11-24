@@ -80,7 +80,7 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 		const allowedRelation = object.isInstalled && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
 		const allowedTemplate = object.isInstalled && allowedObject && showTemplates;
 
-		let relations = Util.objectCopy(dbStore.getRelations(rootId, rootId)).sort(DataUtil.sortByHidden);
+		let relations = Util.objectCopy(dbStore.getObjectRelations(rootId, rootId)).sort(DataUtil.sortByHidden);
 		relations = relations.filter((it: any) => {
 			return it ? (!config.debug.ho ? !it.isHidden : true) : false;
 		});
@@ -410,7 +410,7 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 
 	onRelationAdd (e: any) {
 		const rootId = this.getRootId();
-		const relations = dbStore.getRelations(rootId, rootId);
+		const relations = dbStore.getObjectRelations(rootId, rootId);
 
 		menuStore.open('relationSuggest', { 
 			element: $(e.currentTarget),

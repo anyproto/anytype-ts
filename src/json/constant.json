@@ -143,11 +143,11 @@
 		"relationFormat", "fileExt", "fileMimeType", "links", "restrictions"
 	],
 
-	"typeRelationKeys": [ "smartblockTypes", "recommendedRelations" ],
+	"typeRelationKeys": [ "smartblockTypes", "recommendedRelations", "source" ],
 
 	"relationRelationKeys": [
 		"id", "type", "layout", "name", "relationFormat", "relationKey", "scope", "isReadonly", "isHidden", "isDeleted", "isArchived", "isFavorite", "restrictions",
-		"relationMaxCount", "relationReadonly", "relationReadonlyValue", "relationDefaultValue", "relationFormatObjectTypes"
+		"relationMaxCount", "relationReadonly", "relationReadonlyValue", "relationDefaultValue", "relationFormatObjectTypes", "source"
 	],
 
 	"optionRelationKeys": [

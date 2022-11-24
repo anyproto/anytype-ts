@@ -278,7 +278,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 		const { rootId } = data;
 		const { config } = commonStore;
 	
-		let relations = dbStore.getRelations(rootId, rootId).sort(DataUtil.sortByName);
+		let relations = dbStore.getObjectRelations(rootId, rootId).sort(DataUtil.sortByName);
 		
 		relations = relations.filter((it: any) => {
 			return it ? (!config.debug.ho ? !it.isHidden : true) : false;

@@ -281,10 +281,7 @@ class DataUtil {
 				],
 				noDeps: true,
 				onSubscribe: () => {
-					const records = dbStore.getRecords(Constant.subId.relation, '').map(id => dbStore.getRelationById(id));
-					for (let record of records) {
-						dbStore.relationKeyMap[record.relationKey] = record.id;
-					};
+					dbStore.getRelations().forEach(it => dbStore.relationKeyMap[it.relationKey] = it.id);
 				}
 			},
 			{
