@@ -182,7 +182,7 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 
 		let content: any = null;
 
-		if (relation.relationKey == Constant.relationKey.name) {
+		if (relation.relationKey == 'name') {
 			let size = iconSize;
 
 			switch (viewType) {
@@ -439,7 +439,7 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 		const { index, getRecord, onCellChange } = this.props;
 		const record = getRecord(index);
 
-		onCellChange(record.id, Constant.relationKey.done, !record.done);
+		onCellChange(record.id, 'done', !record.done);
 	};
 
 });

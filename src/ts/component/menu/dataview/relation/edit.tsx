@@ -221,7 +221,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		const canDelete = allowed && Constant.systemRelationKeys.indexOf(relation.relationKey) < 0;
 		const canFilter = !isFile;
 		const canSort = !isFile;
-		const canHide = relation && (relation.relationKey != Constant.relationKey.name);
+		const canHide = relation && (relation.relationKey != 'name');
 
 		let sections: any[] = [
 			{

@@ -519,7 +519,7 @@ class DataUtil {
 		done = Boolean(done);
 
 		const details = [ 
-			{ key: Constant.relationKey.done, value: done },
+			{ key: 'done', value: done },
 		];
 		C.ObjectSetDetails(rootId, details, callBack);
 	};
@@ -1022,7 +1022,7 @@ class DataUtil {
 			ret.className.push('noSystemBlocks');
 		};
 
-		if ((object[Constant.relationKey.featured] || []).indexOf(Constant.relationKey.description) >= 0) {
+		if ((object.featuredRelations || []).includes('description')) {
 			ret.className.push('withDescription');
 		};
 

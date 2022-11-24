@@ -33,7 +33,7 @@ const BodyCell = observer(class BodyCell extends React.Component<Props, {}> {
 		const size = Constant.size.dataview.cell;
 		const subId = dbStore.getSubId(rootId, block.id);
 
-		if (relation.relationKey == Constant.relationKey.name) {
+		if (relation.relationKey == 'name') {
 			cn.push('isName');
 		};
 

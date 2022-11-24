@@ -49,7 +49,7 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 		));
 
 		const Item = SortableElement((item: any) => {
-			const canHide = allowedView && (item.relationKey != Constant.relationKey.name);
+			const canHide = allowedView && (item.relationKey != 'name');
 			const canEdit = !readonly && allowedView;
 			const cn = [ 'item' ];
 			

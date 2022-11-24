@@ -78,10 +78,10 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			<div className={[ 'wrap', 'focusable', 'c' + block.id ].join(' ')} tabIndex={0} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp}>
 				<span className="cell canEdit first">
 					<div 
-						id={Relation.cellId(PREFIX, Constant.relationKey.type, 0)} 
+						id={Relation.cellId(PREFIX, 'type', 0)} 
 						className="cellContent type"
 						onClick={this.onType}
-						onMouseEnter={(e: any) => { this.onMouseEnter(e, Constant.relationKey.type); }}
+						onMouseEnter={(e: any) => { this.onMouseEnter(e, 'type'); }}
 						onMouseLeave={this.onMouseLeave}
 					>
 						<div className="name">{type ? Util.shorten(type.name, 32) : translate('commonDeletedType')}</div>
@@ -92,10 +92,10 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 					<span className={[ 'cell', (!readonly ? 'canEdit' : '') ].join(' ')}>
 						{bullet}
 						<div 
-							id={Relation.cellId(PREFIX, Constant.relationKey.setOf, 0)} 
+							id={Relation.cellId(PREFIX, 'setOf', 0)} 
 							className="cellContent setOf"
 							onClick={this.onSource}
-							onMouseEnter={(e: any) => { this.onMouseEnter(e, Constant.relationKey.setOf); }}
+							onMouseEnter={(e: any) => { this.onMouseEnter(e, 'setOf'); }}
 							onMouseLeave={this.onMouseLeave}
 						>
 							{setOfString.length ? (
@@ -170,8 +170,8 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 	
 	componentDidMount () {
 		const { rootId } = this.props;
-		const object = detailStore.get(rootId, rootId, [ Constant.relationKey.setOf ]);
-		const setOf = Relation.getArrayValue(object[Constant.relationKey.setOf]);
+		const object = detailStore.get(rootId, rootId, [ 'setOf' ]);
+		const setOf = Relation.getArrayValue(object.setOf);
 
 		this._isMounted = true;
 
@@ -194,12 +194,12 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		const storeId = this.getStoreId();
 		const object = detailStore.get(rootId, storeId);
 		const skipIds = [ 
-			Constant.relationKey.type, 
-			Constant.relationKey.description,
-			Constant.relationKey.setOf, 
+			'type', 
+			'description',
+			'setOf', 
 		];
 
-		return (object[Constant.relationKey.featured] || []).filter((it: any) => {
+		return (object.featuredRelations || []).filter((it: any) => {
 			const relation = dbStore.getRelationByKey(it);
 			if (!relation || skipIds.includes(it)) {
 				return false;
@@ -258,7 +258,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		e.stopPropagation();
 
 		const { rootId, block, readonly } = this.props;
-		const object = detailStore.get(rootId, rootId, [ Constant.relationKey.setOf ]);
+		const object = detailStore.get(rootId, rootId, [ 'setOf' ]);
 		const type = detailStore.get(rootId, object.type, []);
 		const allowed = ![ Constant.typeId.bookmark ].includes(object.type) && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Type ]);
 		const options: any[] = [];
@@ -273,7 +273,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 		const showMenu = () => {
 			menuStore.open('select', { 
-				element: `#block-${block.id} #${Relation.cellId(PREFIX, Constant.relationKey.type, 0)}`,
+				element: `#block-${block.id} #${Relation.cellId(PREFIX, 'type', 0)}`,
 				offsetY: 8,
 				subIds: Constant.menuIds.featuredType,
 				onOpen: (context: any) => {
@@ -314,7 +314,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			return;
 		};
 
-		const object = detailStore.get(rootId, rootId, [ Constant.relationKey.setOf ]);
+		const object = detailStore.get(rootId, rootId, [ 'setOf' ]);
 		const types = DataUtil.getObjectTypesForNewObject().map(it => it.id);
 
 		let menuId = '';
@@ -363,8 +363,8 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				menuId = 'searchObject';
 				menuParam.data = Object.assign(menuParam.data, {
 					filters: [
-						{ operator: I.FilterOperator.And, relationKey: Constant.relationKey.type, condition: I.FilterCondition.Equal, value: Constant.typeId.set },
-						{ operator: I.FilterOperator.And, relationKey: Constant.relationKey.setOf, condition: I.FilterCondition.In, value: [ object.type ] }
+						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.set },
+						{ operator: I.FilterOperator.And, relationKey: 'setOf', condition: I.FilterCondition.In, value: [ object.type ] }
 					],
 					onSelect: (item: any) => {
 						DataUtil.objectOpenPopup({ id: item.id, layout: I.ObjectLayout.Set });
@@ -390,7 +390,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		};
 
 		const { rootId } = this.props;
-		const object = detailStore.get(rootId, rootId, [ Constant.relationKey.setOf ]);
+		const object = detailStore.get(rootId, rootId, [ 'setOf' ]);
 		const type = dbStore.getType(object.type);
 
 		this.menuContext.close();
@@ -423,7 +423,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 		menuStore.closeAll(null, () => { 
 			menuStore.open('dataviewSource', {
-				element: `#block-${block.id} #${Relation.cellId(PREFIX, Constant.relationKey.setOf, 0)}`,
+				element: `#block-${block.id} #${Relation.cellId(PREFIX, 'setOf', 0)}`,
 				className: 'big single',
 				horizontal: I.MenuDirection.Center,
 				data: {

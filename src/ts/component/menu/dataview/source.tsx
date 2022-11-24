@@ -191,9 +191,9 @@ const MenuSource = observer(class MenuSource extends React.Component<Props, {}> 
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId } = data;
-		const object = detailStore.get(rootId, rootId, [ Constant.relationKey.setOf ]);
+		const object = detailStore.get(rootId, rootId, [ 'setOf' ]);
 
-		return Util.arrayUnique(Relation.getArrayValue(object[Constant.relationKey.setOf]).filter((it: string) => {
+		return Util.arrayUnique(Relation.getArrayValue(object['setOf']).filter((it: string) => {
 			const object = detailStore.get(rootId, it, []);
 			return !object._empty_;
 		}));

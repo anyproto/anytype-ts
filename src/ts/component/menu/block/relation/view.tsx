@@ -32,7 +32,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const { rootId, readonly } = data;
 		const sections = this.getSections();
 		const root = blockStore.getLeaf(rootId, rootId);
-		const object = detailStore.get(rootId, rootId, [ Constant.relationKey.featured ]);
+		const object = detailStore.get(rootId, rootId, [ 'featuredRelations' ]);
 
 		if (!root) {
 			return null;
@@ -58,7 +58,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 						const id = Relation.cellId(PREFIX, item.relationKey, '0');
 						
 						let canFav = allowedValue;
-						if (([ I.ObjectLayout.Set ].indexOf(object.layout) >= 0) && (item.relationKey == Constant.relationKey.description)) {
+						if (([ I.ObjectLayout.Set ].indexOf(object.layout) >= 0) && (item.relationKey == 'description')) {
 							canFav = false;
 						};
 
@@ -160,10 +160,10 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const { data } = param;
 		const { rootId } = data;
 		const { config } = commonStore;
-		const object = detailStore.get(rootId, rootId, [ Constant.relationKey.featured ]);
+		const object = detailStore.get(rootId, rootId, [ 'featuredRelations' ]);
 		const type = dbStore.getType(object.type);
 
-		let featured = object[Constant.relationKey.featured] || [];
+		let featured = object.featuredRelations || [];
 		let relations = dbStore.getObjectRelations(rootId, rootId);
 		let relationKeys = relations.map(it => it.relationKey);
 		let items = relations.map((it: any) => { return { ...it, scope: I.RelationScope.Object }; });
@@ -216,8 +216,8 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId } = data;
-		const object = detailStore.get(rootId, rootId, [ Constant.relationKey.featured ], true);
-		const featured = Util.objectCopy(object[Constant.relationKey.featured] || []);
+		const object = detailStore.get(rootId, rootId, [ 'featuredRelations' ], true);
+		const featured = Util.objectCopy(object.featuredRelations || []);
 		const idx = featured.findIndex((it: string) => { return it == relationKey; });
 
 		if (idx < 0) {

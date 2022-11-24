@@ -56,7 +56,7 @@ class Cell extends React.Component<Props, {}> {
 		const canEdit = this.canEdit();
 
 		let check = Relation.checkRelationValue(relation, record[relation.relationKey]);
-		if (relation.relationKey == Constant.relationKey.name) {
+		if (relation.relationKey == 'name') {
 			check = true;
 		};
 
@@ -65,7 +65,7 @@ class Cell extends React.Component<Props, {}> {
 			'c-' + relation.relationKey,
 			DataUtil.relationClass(relation.format), 
 			(canEdit ? 'canEdit' : ''), 
-			(relationKey == Constant.relationKey.name ? 'isName' : ''),
+			(relationKey == 'name' ? 'isName' : ''),
 			(!check ? 'isEmpty' :  ''),
 		];
 
@@ -351,7 +351,7 @@ class Cell extends React.Component<Props, {}> {
 					{ id: 'go', icon: 'browse', name: name },
 					{ id: 'copy', icon: 'copy', name: 'Copy link' },
 				];
-				if (relation.relationKey == Constant.relationKey.source) {
+				if (relation.relationKey == 'source') {
 					options.push({ id: 'reload', icon: 'reload', name: 'Reload from source' });
 				};
 
@@ -489,7 +489,7 @@ class Cell extends React.Component<Props, {}> {
 		if (relation.format == I.RelationType.Checkbox) {
 			return true;
 		};
-		if ((record.layout == I.ObjectLayout.Note) && (relation.relationKey == Constant.relationKey.name)) {
+		if ((record.layout == I.ObjectLayout.Note) && (relation.relationKey == 'name')) {
 			return false;
 		};
 		return viewType == I.ViewType.Grid;

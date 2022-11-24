@@ -245,12 +245,12 @@ class Relation {
 	getFilterOptions (rootId: string, blockId: string, view: I.View) {
 		let relations: any[] = Dataview.viewGetRelations(rootId, blockId, view).filter((it: I.ViewRelation) => { 
 			const relation = dbStore.getRelationByKey(it.relationKey);
-			return relation && (relation.format != I.RelationType.File) && (it.relationKey != Constant.relationKey.done);
+			return relation && (relation.format != I.RelationType.File) && (it.relationKey != 'done');
 		});
-		let idxName = relations.findIndex((it: any) => { return it.relationKey == Constant.relationKey.name; });
+		let idxName = relations.findIndex(it => it.relationKey == 'name');
 
 		relations.splice((idxName >= 0 ? idxName + 1 : 0), 0, {
-			relationKey: Constant.relationKey.done,
+			relationKey: 'done',
 		});
 
 		let ret: any[] = [];
@@ -311,7 +311,7 @@ class Relation {
 		let options: any[] = dbStore.getObjectRelations(rootId, blockId);
 
 		options = options.filter((it: any) => {
-			return it && formats.includes(it.format) && (!it.isHidden || [ Constant.relationKey.done ].includes(it.relationKey));
+			return it && formats.includes(it.format) && (!it.isHidden || [ 'done' ].includes(it.relationKey));
 		});
 
 		options.sort((c1: any, c2: any) => {

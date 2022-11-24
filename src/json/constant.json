@@ -154,18 +154,6 @@
 		"id", "type", "layout", "name", "relationOptionColor", "relationKey"
 	],
 
-	"relationKey": {
-		"name": "name",
-		"description": "description",
-		"featured": "featuredRelations",
-		"type": "type",
-		"done": "done",
-		"space": "workspaceId",
-		"creator": "creator",
-		"setOf": "setOf",
-		"source": "source"
-	},
-
 	"subId": {
 		"index": "index",
 		"search": "search",
