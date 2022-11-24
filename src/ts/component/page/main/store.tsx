@@ -382,6 +382,16 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 		switch (this.view) {
 			case View.Marketplace:
 				filters.push({ operator: I.FilterOperator.And, relationKey: 'workspaceId', condition: I.FilterCondition.Equal, value: Constant.storeSpaceId });
+
+				switch (this.tab) {
+					case Tab.Type:
+						
+						break;
+
+					case Tab.Relation:
+						break;
+				};
+
 				break;
 
 			case View.Library:
