@@ -12,7 +12,6 @@ interface Props extends I.Menu {};
 
 interface State {
 	loading: boolean;
-	filter: string;
 };
 
 const LIMIT_HEIGHT = 10;
@@ -28,7 +27,6 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 
 	state = {
 		loading: false,
-		filter: '',
 	};
 
 	_isMounted: boolean = false;	
@@ -46,14 +44,15 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		super(props);
 		
 		this.onClick = this.onClick.bind(this);
+		this.onFilterChange = this.onFilterChange.bind(this);
 		this.loadMoreRows = this.loadMoreRows.bind(this);
 	};
 	
 	render () {
-		const { loading, filter } = this.state;
+		const { loading } = this.state;
 		const { param } = this.props;
 		const { data } = param;
-		const { value, placeholder, label, isBig, noFilter, noIcon } = data;
+		const { filter, value, placeholder, label, isBig, noFilter, noIcon } = data;
 		const items = this.getItems();
 		const cn = [ 'wrap' ];
 		const placeholderFocus = data.placeholderFocus || 'Filter objects...';
@@ -147,7 +146,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 						placeholder={placeholder} 
 						placeholderFocus={placeholderFocus} 
 						value={filter}
-						onChange={(e: any) => { this.onKeyUp(e, false); }} 
+						onChange={this.onFilterChange} 
 					/>
 				) : ''}
 
@@ -195,7 +194,9 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 	};
 
 	componentDidUpdate () {
-		const { filter } = this.state;
+		const { param } = this.props;
+		const { data } = param;
+		const { filter } = data;
 		const items = this.getItems();
 
 		if (this.filter != filter) {
@@ -241,10 +242,9 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 	};
 
 	getItems () {
-		const { filter } = this.state;
 		const { param } = this.props;
 		const { data } = param;
-		const { label, canNotAdd } = data;
+		const { filter, label, canNotAdd } = data;
 
 		let items = [].concat(this.items);
 
@@ -281,8 +281,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 
 		const { param } = this.props;
 		const { data } = param;
-		const { type, dataMapper, dataSort, skipIds, keys } = data;
-		const { filter } = this.state;
+		const { filter, type, dataMapper, dataSort, skipIds, keys } = data;
 		
 		const filters: any[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
@@ -367,8 +366,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 
 		const { param, close } = this.props;
 		const { data } = param;
-		const { rootId, type, blockId, blockIds, position, onSelect, noClose } = data;
-		const { filter } = this.state;
+		const { filter, rootId, type, blockId, blockIds, position, onSelect, noClose } = data;
 
 		if (!noClose) {
 			close();
@@ -465,11 +463,11 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		};
 	};
 
-	onKeyUp (e: any, force: boolean) {
+	onFilterChange (v: string) {
 		window.clearTimeout(this.timeoutFilter);
 		this.timeoutFilter = window.setTimeout(() => {
-			this.setState({ filter: this.refFilter.getValue() });
-		}, force ? 0 : 500);
+			this.props.param.data.filter = this.refFilter.getValue();
+		}, 500);
 	};
 
 	getRowHeight (item: any) {
