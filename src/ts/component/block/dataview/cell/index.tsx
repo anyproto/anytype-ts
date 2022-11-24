@@ -153,8 +153,8 @@ class Cell extends React.Component<Props, {}> {
 		const cellId = Relation.cellId(idPrefix, relation.relationKey, index);
 		const value = record[relation.relationKey] || '';
 
-		if (!this.canEdit() && Relation.isUrl(relation.format)) {
-			if (value) {
+		if (!this.canEdit()) {
+			if (Relation.isUrl(relation.format) && value) {
 				Renderer.send('urlOpen', Relation.getUrlScheme(relation.format, value) + value);
 			};
 			return;

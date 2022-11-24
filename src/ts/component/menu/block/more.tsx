@@ -174,7 +174,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		if (object.isInstalled) {
 			pageInstall = { id: 'pageUninstall', icon: 'remove', name: 'Uninstall object' };
 		} else {
-			pageInstall = { id: 'pageInstall', icon: 'remove', name: 'Install object' };
+			pageInstall = { id: 'pageInstall', icon: 'install', name: 'Install object' };
 		};
 
 		// Restrictions

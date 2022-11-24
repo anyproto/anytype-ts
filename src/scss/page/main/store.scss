@@ -48,7 +48,7 @@
 					.descr:empty { display: none; }
 					
 					.author { 
-						@include text-overflow-nw; width: 100%; @include text-small; color: $colorDarkGrey; line-height: 18px;
+						@include text-overflow-nw; width: 100%; @include text-small; color: $colorDarkGrey; line-height: 16px;
 						display: flex; gap: 0px 4px;
 					}
 					.author {
