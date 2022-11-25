@@ -44,8 +44,7 @@ export enum ToastAction {
 	Default	 = 0,
 	Move	 = 1,
 	Link	 = 2,
-	Copy	 = 3,
-	Lock 	 = 4
+	Lock 	 = 3,
 };
 
 export interface Option {

@@ -32,6 +32,10 @@ const Toast = observer(class Toast extends React.Component<any, any> {
 		);
 
         switch (action) {
+			default:
+				textAction = text;
+				break;
+
             case I.ToastAction.Lock:
                 if (!object) {
                     break;
@@ -41,10 +45,6 @@ const Toast = observer(class Toast extends React.Component<any, any> {
 
                 textObject = <Element {...object} />;
                 textAction = `is ${textLocked}`;
-                break;
-
-            case I.ToastAction.Copy:
-                textAction = `${text} copied to clipboard`;
                 break;
 
             case I.ToastAction.Move:
