@@ -73,30 +73,35 @@ const MenuDataviewDate = observer(class MenuDataviewDate extends React.Component
 	getSections () {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, getView, relationKey } = data;
-
-		let relation = null;
-		let dateFormat = null;
-		let timeFormat = null;
-
-		if (getView) {
-			const view = getView();
-			relation = view.getRelation(relationKey);
-		} else {
-			relation = dbStore.getRelationByKey(relationKey);
-		};
+		const { getView, relationId } = data;
+		const relation = dbStore.getRelationById(relationId);
+		const dateOptions = this.getOptions('dateFormat');
+		const timeOptions = this.getOptions('timeFormat');
 
 		if (!relation) {
 			return [];
 		};
 
-		if (relation) {
-			const dateOptions = this.getOptions('dateFormat');
-			const timeOptions = this.getOptions('timeFormat');
+		let df = null;
+		let tf = null;
+		let dateFormat = null;
+		let timeFormat = null;
 
-			dateFormat = dateOptions.find((it: any) => { return it.id == relation.dateFormat; }) || dateOptions[0];
-			timeFormat = timeOptions.find((it: any) => { return it.id == relation.timeFormat; }) || timeOptions[0];
+		if (getView) {
+			const view = getView();
+			const vr = view.getRelation(relation.relationKey);
+
+			if (vr) {
+				df = vr.dateFormat;
+				tf = vr.timeFormat;
+			};
+		} else {
+			df = relation.dateFormat;
+			tf = relation.timeFormat;
 		};
+
+		dateFormat = dateOptions.find(it => it.id == df) || dateOptions[0];
+		timeFormat = timeOptions.find(it => it.id == tf) || timeOptions[0];
 
 		let sections = [
 			{ 

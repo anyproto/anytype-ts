@@ -3,8 +3,9 @@ import * as ReactDOM from 'react-dom';
 import { observer } from 'mobx-react';
 import $ from 'jquery';
 import { Icon, Loader, LoadMore } from 'Component';
-import { I, translate, Relation, DataUtil } from 'Lib';
+import { I, translate, Relation, DataUtil, Util } from 'Lib';
 import { dbStore, detailStore, menuStore } from 'Store';
+
 import Card from './card';
 import Cell from 'Component/block/dataview/cell';
 
@@ -15,7 +16,7 @@ interface Props extends I.ViewComponent {
 	onDragStartColumn?: (e: any, groupId: string) => void;
 	onDragStartCard?: (e: any, groupId: string, record: any) => void;
 	getSubId?: () => string;
-	applyGroupOrder?: () => void;
+	applyObjectOrder?: (groupId: string, records: any[]) => any[];
 };
 
 interface State {
@@ -140,7 +141,7 @@ const Column = observer(class Column extends React.Component<Props, State> {
 	};
 
 	load (clear: boolean) {
-		const { rootId, block, getView, getKeys, getSubId, applyGroupOrder, getLimit } = this.props;
+		const { id, block, getView, getKeys, getSubId, applyObjectOrder, getLimit } = this.props;
 		const view = getView();
 		const relation = dbStore.getRelationByKey(view.groupRelationKey);
 		const subId = getSubId();
@@ -192,7 +193,8 @@ const Column = observer(class Column extends React.Component<Props, State> {
 			sources: block.content.sources,
 			limit,
 		}, () => {
-			applyGroupOrder();
+			const records = dbStore.getRecords(subId, '');
+			dbStore.recordsSet(subId, '', applyObjectOrder(id, records));
 
 			if (clear) {
 				this.setState({ loading: false });
@@ -206,8 +208,8 @@ const Column = observer(class Column extends React.Component<Props, State> {
 	};
 
 	getItems () {
-		const { getSubId } = this.props;
-		return dbStore.getRecords(getSubId(), '').map(id => { return { id }; });
+		const { id, getSubId, applyObjectOrder } = this.props;
+		return applyObjectOrder(id, Util.objectCopy(dbStore.getRecords(getSubId(), ''))).map(id => { return { id }; });
 	};
 
 	onLoadMore (e: any) {
