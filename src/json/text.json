@@ -22,6 +22,7 @@
 
 	"commonDeletedObject": { "en": "Non-existent object" },
 	"commonDeletedType": { "en": "Deleted type" },
+	"commonDeletedRelation": { "en": "Deleted relation" },
 
 	"month1": { "en": "January" },
 	"month2": { "en": "February" },

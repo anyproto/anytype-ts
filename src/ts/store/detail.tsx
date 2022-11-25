@@ -157,6 +157,10 @@ class DetailStore {
 			object.isInstalled = object.workspaceId != Constant.storeSpaceId;
 			object.source = String(object.source || '');
 
+			if (object.isDeleted) {
+				name = translate('commonDeletedRelation');
+			};
+
 			delete(object.relationMaxCount);
 			delete(object.isReadonly);
 			delete(object.relationReadonlyValue);
