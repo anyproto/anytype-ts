@@ -22,9 +22,10 @@
 		.viewItem.viewBoard {
 			.card { white-space: normal; }
 			.card {
-				.cellContent { cursor: pointer; margin-bottom: 4px; @include text-small; color: $colorDarkGrey; }
+				.cellContent { cursor: pointer; margin-bottom: 4px; @include text-small; color: $colorDarkGrey; line-height: 16px; }
 				.cellContent:empty, .cellContent.isEmpty { display: none; }
 				.cellContent.last { margin: 0px; }
+				.cellContent.c-description { color: $colorBlack; }
 				.cellContent {
 					.more { margin-top: 0px; vertical-align: top; }
 				}
@@ -33,13 +34,13 @@
 				.cellContent.isName {
 					.iconObject { position: absolute; left: 0px; top: 0px; margin: 0px; }
 					.name {
-						line-height: 20x; font-size: 14px; font-weight: 500; letter-spacing: -0.12px;
+						line-height: 20px; font-size: 14px; font-weight: 500; letter-spacing: -0.12px;
 						vertical-align: top; white-space: normal; overflow: hidden; @include clamp3;
 					}
 				}
 
 				.cellContent.isName.withIcon {
-					.name { text-indent: 22px; }
+					.name { text-indent: 24px; }
 				}
 
 				.cellContent.c-select { line-height: 18px; }

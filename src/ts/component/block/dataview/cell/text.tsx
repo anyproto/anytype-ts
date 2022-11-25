@@ -183,7 +183,19 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 		let content: any = null;
 
 		if (relation.relationKey == Constant.relationKey.name) {
+			let size = iconSize;
 			let icon = null;
+
+			switch (viewType) {
+				case I.ViewType.Gallery:
+				case I.ViewType.List:
+					size = 22;
+					break;
+
+				case I.ViewType.Board:
+					size = 22;
+					break;
+			};
 
 			value = value || DataUtil.defaultName('page');
 			if (record.layout == I.ObjectLayout.Note) {

@@ -84,7 +84,7 @@
 				}
 
 				.cardContent { 
-					border: 1px solid $colorBorderDark; border-radius: 12px; padding: 16px; background: $colorWhite; transition: border-color 0.2s ease-in-out;
+					border: 1px solid $colorHover; border-radius: 16px; padding: 16px; background: $colorWhite; transition: border-color 0.2s ease-in-out;
 				}
 
 				.cellContent {
@@ -100,7 +100,7 @@
 				}
 			}
 			.card:last-child { margin: 0px; }
-			.card.add:hover, .card:hover .cardContent { border-color: $colorBlack; }
+			.card.add:hover, .card:hover .cardContent { border-color: $colorDarkGrey; }
 
 			.card.isOver::before { content: ""; position: absolute; background: $colorOrange; height: 4px; width: 100%; border-radius: 2px; left: 0px; } 
 			.card.isOver.top::before { top: -6px; }
