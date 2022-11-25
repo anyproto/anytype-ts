@@ -18,10 +18,7 @@ class Dataview {
 
 		if (!config.debug.ho) {
 			relations = relations.filter((it: any) => { 
-				if ([ 'name' ].includes(it.relationKey)) {
-					return true;
-				};
-				return !it.isHidden; 
+				return (it.relationKey == 'name') || !it.isHidden; 
 			});
 		};
 
@@ -46,7 +43,7 @@ class Dataview {
 		let ret = relations.map((relation: any) => {
 			const vr = view.relations.find(it => it.relationKey == relation.relationKey) || {};
 			
-			if ([ 'name' ].indexOf(relation.relationKey) >= 0) {
+			if (relation.relationKey == 'name') {
 				vr.isVisible = true;
 			};
 

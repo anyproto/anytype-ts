@@ -114,14 +114,16 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 					props.object = undefined;
 				};
 
-				content = <MenuItemVertical
-					{...props}
-					name={<ObjectName object={item} />}
-					onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }}
-					onClick={(e: any) => { this.onClick(e, item); }}
-					style={param.style}
-					className={cn.join(' ')}
-				/>;
+				content = (
+					<MenuItemVertical
+						{...props}
+						name={<ObjectName object={item} />}
+						onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }}
+						onClick={(e: any) => { this.onClick(e, item); }}
+						style={param.style}
+						className={cn.join(' ')}
+					/>
+				);
 			}
 
 			return (

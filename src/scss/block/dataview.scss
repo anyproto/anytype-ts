@@ -21,7 +21,8 @@
 		}
 
 		.loadMore { 
-			display: flex; align-items: center; @include text-small; line-height: 20px; padding: 4px 2px; color: $colorDarkGrey; 
+			display: flex; align-items: center; @include text-small; line-height: 20px; width: 100%; margin-top: 10px; padding: 4px 2px; color: $colorDarkGrey;
+			border-bottom: 1px solid $colorLightGrey;
 			transition: $transitionFast; cursor: pointer;
 		}
 		.loadMore {
@@ -105,6 +106,9 @@
 			}
 
 			.viewSelect { display: none; border: 0px; @include text-header3; }
+			.viewSelect {
+				.icon:hover, .icon.active { background-color: transparent !important; }
+			}
 
 			.side.left.small {
 				.views { display: none; }

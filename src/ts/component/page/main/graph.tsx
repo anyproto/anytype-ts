@@ -158,26 +158,21 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 	};
 
 	load () {
+		const skipTypes = [ Constant.typeId.space ].concat(DataUtil.getFileTypes()).concat(DataUtil.getSystemTypes()).filter((it: string) => {
+			return ![ Constant.typeId.option ].includes(it);
+		});
+		const skipIds = [ '_anytype_profile', blockStore.profile ];
 		const filters: any[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.Equal, value: false },
 			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
 			{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
-			{ 
-				operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, 
-				value: [ Constant.typeId.space ].concat(DataUtil.getFileTypes()).concat(DataUtil.getSystemTypes())
-			},
-			{ 
-				operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, 
-				value: [
-					'_anytype_profile',
-					blockStore.profile,
-				] 
-			},
+			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: skipTypes },
+			{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: skipIds },
 		];
 
 		this.setLoading(true);
 
-		C.ObjectGraph(filters, 0, [], Constant.defaultRelationKeys.concat([ 'links' ]), (message: any) => {
+		C.ObjectGraph(filters, 0, [], Constant.graphRelationKeys, (message: any) => {
 			if (message.error.code) {
 				return;
 			};

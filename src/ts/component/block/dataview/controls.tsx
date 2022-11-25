@@ -97,7 +97,7 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 							onContextMenu={(e: any) => { this.onViewEdit(e, '#view-selector', view); }}
 						>
 							<div className="name">{view.name}</div>
-							<Icon className="arrow dark" />
+							<Icon className="arrow light" />
 						</div>
 
 						<Views 
@@ -234,7 +234,7 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 		const { rootId, block } = this.props;
 		const subId = dbStore.getSubId(rootId, block.id);
 
-		dbStore.metaSet(subId, '', { ...dbStore.getMeta(subId, ''), viewId: item.id });
+		dbStore.metaSet(subId, '', { viewId: item.id });
 		analytics.event('SwitchView', { type: item.type });
 	};
 

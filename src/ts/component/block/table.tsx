@@ -179,16 +179,6 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		return { columnContainer, columns, rowContainer, rows };
 	};
 
-	getRowColumn (cellId: string) {
-		const { rootId } = this.props;
-		const { columns } = this.getData();
-		const cellElement = blockStore.getMapElement(rootId, cellId);
-		const rowElement = blockStore.getMapElement(rootId, cellElement.parentId);
-		const idx = rowElement.childrenIds.indexOf(cellId);
-		
-		return { rowId: cellElement.parentId, columnId: columns[idx].id };
-	};
-
 	onHandleColumn (e: any, type: I.BlockType, rowId: string, columnId: string, cellId: string) {
 		e.persist();
 		e.preventDefault();

@@ -70,7 +70,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		let sources = block.content.sources || [];
 		let { groupRelationKey } = view;
 		let ViewComponent: any = null;
-		let className = '';
+		let className = Util.toCamelCase('view-' + I.ViewType[view.type]);
 		let head = null;
 		let controls = null;
 		let content = null;
@@ -79,22 +79,18 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			default:
 			case I.ViewType.Grid:
 				ViewComponent = ViewGrid;
-				className = 'viewGrid';
 				break;
 				
 			case I.ViewType.Board:
 				ViewComponent = ViewBoard;
-				className = 'viewBoard';
 				break;
 				
 			case I.ViewType.Gallery:
 				ViewComponent = ViewGallery;
-				className = 'viewGallery';
 				break;
 			
 			case I.ViewType.List:
 				ViewComponent = ViewList;
-				className = 'viewList';
 				break;
 		};
 
@@ -108,6 +104,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					getView={this.getView} 
 					getRecord={this.getRecord}
 					onRecordAdd={this.onRecordAdd}
+					className={className}
 					isInline={isInline}
 				/>
 			);
@@ -286,7 +283,14 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		dbStore.metaSet(subId, '', { offset, viewId });
 
-		if (![ I.ViewType.Board ].includes(view.type)) {
+		if ([ I.ViewType.Board ].includes(view.type)) {
+			if (this.viewRef && this.viewRef.loadGroupList) {
+				this.viewRef.loadGroupList();
+			} else {
+				this.viewId = '';
+				this.forceUpdate();
+			};
+		} else {
 			if (clear) {
 				this.setState({ loading: true });
 			};
@@ -308,9 +312,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					callBack(message);
 				};
 			});
-		} else 
-		if (this.viewRef && this.viewRef.loadGroupList) {
-			this.viewRef.loadGroupList();
 		};
 	};
 

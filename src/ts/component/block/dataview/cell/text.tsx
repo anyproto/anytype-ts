@@ -183,17 +183,22 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 		let content: any = null;
 
 		if (relation.relationKey == 'name') {
-			let size = iconSize;
+			let icon = null;
 
-			switch (viewType) {
-				case I.ViewType.Gallery:
-				case I.ViewType.List:
-					size = 24;
-					break;
-
-				case I.ViewType.Board:
-					size = 24;
-					break;
+			if (!view || (view && !view.hideIcon)) {
+				icon = (
+					<IconObject 
+						id={[ relation.relationKey, record.id ].join('-')} 
+						onSelect={this.onIconSelect} 
+						onUpload={this.onIconUpload}
+						onCheckbox={this.onCheckbox}
+						size={iconSize} 
+						canEdit={!record.isReadonly} 
+						offsetY={4} 
+						object={record} 
+						noClick={true}
+					/>
+				);
 			};
 
 			value = value || DataUtil.defaultName('page');
@@ -203,19 +208,7 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 
 			content = (
 				<React.Fragment>
-					{!view || (view && !view.hideIcon) ? (
-						<IconObject 
-							id={[ relation.relationKey, record.id ].join('-')} 
-							onSelect={this.onIconSelect} 
-							onUpload={this.onIconUpload}
-							onCheckbox={this.onCheckbox}
-							size={size} 
-							canEdit={!record.isReadonly} 
-							offsetY={4} 
-							object={record} 
-							noClick={true}
-						/>
-					) : ''}
+					{icon}
 					<Name name={value} />
 					<Icon 
 						className="edit" 
@@ -258,13 +251,9 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 			let value = this.value;
 
 			if (relation.format == I.RelationType.Date) {
-				let format = [];
-				if (viewRelation.dateFormat == I.DateFormat.ShortUS) {
-					format.push('m.d.Y');
-				} else {
-					format.push('d.m.Y');
-				};
-
+				let format = [
+					(viewRelation.dateFormat == I.DateFormat.ShortUS) ? 'm.d.Y' : 'd.m.Y'
+				];
 				if (viewRelation.includeTime) {
 					format.push('H:i');
 				};

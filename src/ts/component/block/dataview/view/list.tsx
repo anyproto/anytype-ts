@@ -105,7 +105,7 @@ const ViewList = observer(class ViewList extends React.Component<Props, {}> {
 						<LoadMore limit={getLimit()} loaded={records.length} total={total} onClick={this.loadMoreRows} />
 					) : ''}
 
-					{!readonly && allowed ? (
+					{!readonly && allowed && !isInline ? (
 						<div className="row add">
 							<div className="cell add">
 								<div className="btn" onClick={(e: any) => { onRecordAdd(e, 1); }}>
