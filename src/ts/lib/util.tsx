@@ -1031,6 +1031,96 @@ class Util {
 		return url.match(reg);
 	};
 
+	getDataTransferFiles (items: any[]): any[] {
+		if (!items || !items.length) {
+			return [];
+		};
+
+		const files: any[] = [];
+		for (let item of items) {
+			if (item.kind != 'file') {
+				continue;
+			};
+
+			const file = item.getAsFile();
+			if (file) {
+				files.push(file);
+			};
+		};
+		return files;
+	};
+
+	getDataTransferItems (items: any[]) {
+		if (!items || !items.length) {
+			return [];
+		};
+
+		let ret = [];
+		for (let item of items) {
+			if (item.kind == 'string') {
+				ret.push(item);
+			};
+		};
+		return items;
+	};
+
+	getDataTransferString (items: any[], callBack: (data: string) => void) {
+		if (!items || !items.length) {
+			return;
+		};
+
+		console.log(items, items.length);
+
+		const length = items.length;
+		const ret = [];
+		const cb = (data: string) => {
+			ret.push(data);
+
+			if (ret.length == length) {
+				callBack(ret.join('\n'));
+			};
+		};
+
+		for (let item of items) {
+			console.log(item);
+			item.getAsString(cb);
+		};
+	};
+
+	saveClipboardFiles (items: any[], data: any, callBack: (data: any) => void) {
+		const ret = [];
+
+		if (!items.length) {
+			return;
+		};
+
+		let n = 0;
+		let cb = () => {
+			if (n == items.length) {
+				callBack({ ...data, files: ret });
+			};
+			n++;
+		};
+
+		for (let item of items) {
+			if (item.path) {
+				ret.push({ name: item.name, path: item.path });
+				cb();
+			} else {
+				const reader = new FileReader();
+				reader.onload = function(e) {
+					ret.push({ 
+						name: item.name, 
+						path: window.Electron.fileWrite(item.name, reader.result, 'binary'),
+					});
+					cb();
+				};
+				reader.onerror = cb;
+				reader.readAsBinaryString(item);
+			};
+		};
+	};
+
 };
 
 export default new Util();

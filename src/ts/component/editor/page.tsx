@@ -1513,62 +1513,11 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		analytics.event(cut ? 'CutBlock' : 'CopyBlock');
 	};
 
-	getClipboardFiles (e: any) {
-		const items = (e.clipboardData || e.originalEvent.clipboardData).items;
-		const files = [];
-
-		if (items && items.length) {
-			for (let item of items) {
-				if (item.kind != 'file') {
-					continue;
-				};
-
-				const file = item.getAsFile();
-				if (file) {
-					files.push(file);
-				};
-			};
-		};
-		return files;
-	};
-
-	saveClipboardFiles (e: any, data: any, callBack: (data: any) => void) {
-		const files = this.getClipboardFiles(e);
-		const ret = [];
-
-		if (!files.length) {
-			return;
-		};
-
-		const cb = () => {
-			if (ret.length == files.length) {
-				callBack({ ...data, files: ret });
-			};
-		};
-
-		for (let file of files) {
-			if (file.path) {
-				ret.push({ name: file.name, path: file.path });
-				cb();
-			} else {
-				const reader = new FileReader();
-				reader.onload = function(e) {
-					ret.push({ 
-						name: file.name, 
-						path: window.Electron.fileWrite(file.name, reader.result, 'binary'),
-					});
-					cb();
-				};
-				reader.readAsBinaryString(file);
-			};
-		};
-	};
-	
 	onPaste (e: any, props: any, force?: boolean, data?: any) {
 		const { dataset, rootId } = this.props;
 		const { selection } = dataset || {};
 		const { focused, range } = focus.state;
-		const files = this.getClipboardFiles(e);
+		const files = Util.getDataTransferFiles((e.clipboardData || e.originalEvent.clipboardData).items);
 
 		menuStore.closeAll([ 'blockAdd' ]);
 
@@ -1581,7 +1530,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		};
 
 		if (files.length && !data.files.length) {
-			this.saveClipboardFiles(e, data, (data: any) => {
+			Util.saveClipboardFiles(files, data, (data: any) => {
 				this.onPaste(e, props, force, data);
 			});
 			return;
