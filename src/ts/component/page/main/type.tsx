@@ -86,6 +86,9 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 			return config.debug.ho ? true : !it.isHidden;
 		});
 
+		console.log(object.recommendedRelations);
+		console.log((object.recommendedRelations || []).map(relationKey => dbStore.getRelationByKey(relationKey)));
+
 		const Relation = (item: any) => (
 			<div id={'item-' + item.id} className={[ 'item', (item.isHidden ? 'isHidden' : ''), 'canEdit' ].join(' ')}>
 				<div className="clickable" onClick={(e: any) => { this.onRelationEdit(e, item.id); }}>

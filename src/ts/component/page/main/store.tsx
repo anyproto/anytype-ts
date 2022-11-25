@@ -180,7 +180,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 								</div>
 
 								<div className="buttons">
-									<Icon className="remove" tooltip="Uninstall relation" onClick={(e: any) => { this.onRemove(e, item); }} />
+									<Icon className="remove" tooltip="Delete" onClick={(e: any) => { this.onRemove(e, item); }} />
 								</div>
 								<div className="line" />
 							</div>
