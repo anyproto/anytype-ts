@@ -180,6 +180,7 @@ class DetailStore {
 			isFavorite: Boolean(object.isFavorite),
 			isHidden: Boolean(object.isHidden),
 			isInstalled: object.workspaceId != Constant.storeSpaceId,
+			source: String(object.source || ''),
 		};
 	};
 
