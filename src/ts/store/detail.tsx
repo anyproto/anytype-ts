@@ -135,15 +135,18 @@ class DetailStore {
 			name = translate('commonDeletedObject');
 		};
 
+		// Object type
 		if ([ Constant.typeId.type, Constant.storeTypeId.type ].includes(object.type)) {
 			object.smartblockTypes = Relation.getArrayValue(object.smartblockTypes);
 			object.recommendedLayout = Number(object.recommendedLayout) || I.ObjectLayout.Page;
 			object.recommendedRelations = Relation.getArrayValue(object.recommendedRelations);
+			object.isInstalled = object.workspaceId != Constant.storeSpaceId;
+			object.source = String(object.source || '');
 
 			if (object.isDeleted) {
 				name = translate('commonDeletedType');
 			};
-		} else
+		} else // Relation
 		if ([ Constant.typeId.relation, Constant.storeTypeId.relation ].includes(object.type)) {
 			object.relationFormat = Number(object.relationFormat) || I.RelationType.LongText;
 			object.format = object.relationFormat;
@@ -151,11 +154,13 @@ class DetailStore {
 			object.objectTypes = Relation.getArrayValue(object.relationFormatObjectTypes);
 			object.isReadonlyRelation = Boolean(object.isReadonly);
 			object.isReadonlyValue = Boolean(object.relationReadonlyValue);
+			object.isInstalled = object.workspaceId != Constant.storeSpaceId;
+			object.source = String(object.source || '');
 
 			delete(object.relationMaxCount);
 			delete(object.isReadonly);
 			delete(object.relationReadonlyValue);
-		} else
+		} else // Relation option
 		if (object.type == Constant.typeId.option) {
 			object.text = Relation.getStringValue(object.name);
 			object.color = Relation.getStringValue(object.relationOptionColor);
@@ -179,8 +184,6 @@ class DetailStore {
 			isArchived: Boolean(object.isArchived),
 			isFavorite: Boolean(object.isFavorite),
 			isHidden: Boolean(object.isHidden),
-			isInstalled: object.workspaceId != Constant.storeSpaceId,
-			source: String(object.source || ''),
 		};
 	};
 
