@@ -725,7 +725,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 			if (id == 'linkTo') {
 				type = I.NavigationType.LinkTo;
-				blockId = item._object_.id;
+				blockId = object.id;
 			};
 
 			menuStore.open('searchObject', {
@@ -740,7 +740,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 					filters,
 					rebind: menuContext.ref.rebind,
 					blockIds: [ item.id ],
-					skipIds: [ item._object_.id ],
+					skipIds: [ object.id ],
 					position: I.BlockPosition.Bottom,
 					onSelect: (el: any) => {
 						analytics.event('LinkedToObject', { count: 1 });
@@ -836,17 +836,17 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		const list = this.getList();
 		const current = list[oldIndex];
 		const target = list[newIndex];
-		const element = blockStore.getMapElement(root, root);
 		
-		if (!current || !target || !element) {
+		if (!current || !target) {
 			return;
 		};
 		
+		const childrenIds = blockStore.getChildrenIds(root, root);
 		const position = newIndex < oldIndex ? I.BlockPosition.Top : I.BlockPosition.Bottom;
-		const oidx = element.childrenIds.indexOf(current.id);
-		const nidx = element.childrenIds.indexOf(target.id);
+		const oidx = childrenIds.indexOf(current.id);
+		const nidx = childrenIds.indexOf(target.id);
 
-		blockStore.updateStructure(root, root, arrayMove(element.childrenIds, oidx, nidx));
+		blockStore.updateStructure(root, root, arrayMove(childrenIds, oidx, nidx));
 		Action.move(root, root, target.id, [ current.id ], position);
 	};
 	

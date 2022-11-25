@@ -514,6 +514,10 @@ class App extends React.Component<Props, State> {
 	};
 
 	onPopup (e: any, id: string, param: any, close?: boolean) {
+		if (Constant.popupPinIds.includes(id) && !keyboard.isPinChecked) {
+			return;
+		};
+
 		param = param || {};
 		param.data = param.data || {};
 		param.data.rootId = keyboard.getRootId();

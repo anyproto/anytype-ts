@@ -82,6 +82,10 @@
 		]
 	},
 
+	"popupPinIds": [
+		"search"
+	],
+
 	"coverRelationKeys": [
 		"coverId",
 		"coverType",

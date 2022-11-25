@@ -1157,12 +1157,13 @@ const ObjectSearchSubscribe = (subId: string, filters: I.Filter[], sorts: I.Sort
 	dispatcher.request(ObjectSearchSubscribe.name, request, callBack);
 };
 
-const ObjectGroupsSubscribe = (subId: string, relationKey: string, filters: I.Filter[], callBack?: (message: any) => void) => {
+const ObjectGroupsSubscribe = (subId: string, relationKey: string, filters: I.Filter[], sources: string[], callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.GroupsSubscribe.Request();
 
 	request.setSubid(subId);
 	request.setRelationkey(relationKey);
 	request.setFiltersList(filters.map(Mapper.To.Filter));
+	request.setSourceList(sources);
 
 	dispatcher.request(ObjectGroupsSubscribe.name, request, callBack);
 };
