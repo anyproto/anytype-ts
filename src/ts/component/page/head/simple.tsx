@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { IconObject, Block, Button } from 'Component';
-import { I, M, C, DataUtil, focus, keyboard } from 'Lib';
+import { I, M, Action, DataUtil, focus, keyboard } from 'Lib';
 import { blockStore, detailStore } from 'Store';
 import { observer } from 'mobx-react';
 import { getRange } from 'selection-ranges';
@@ -271,11 +271,10 @@ const HeadSimple = observer(class Controls extends React.Component<Props, {}> {
 
 	onInstall () {
 		const { rootId } = this.props;
+		const object = detailStore.get(rootId, rootId);
 
-		C.WorkspaceObjectAdd(rootId, (message: any) => {
-			if (!message.error.code) {
-				DataUtil.objectOpenAuto(message.details);
-			};
+		Action.install(object, (message: any) => {
+			DataUtil.objectOpenAuto(message.details);
 		});
 	};
 

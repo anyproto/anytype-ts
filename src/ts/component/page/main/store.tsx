@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Title, Label, Button, Icon, IconObject, Cover, Header } from 'Component';
-import { I, C, DataUtil, Util, Storage, Onboarding, analytics } from 'Lib';
+import { I, C, DataUtil, Util, Storage, Onboarding, analytics, Action } from 'Lib';
 import { dbStore, blockStore, detailStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -510,7 +510,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 		e.preventDefault();
 		e.stopPropagation();
 
-		C.WorkspaceObjectListRemove([ item.id ]);
+		Action.uninstall([ item.id ], item.type);
 	};
 
 	onScroll ({ clientHeight, scrollHeight, scrollTop }) {

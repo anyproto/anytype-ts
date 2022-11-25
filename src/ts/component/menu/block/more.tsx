@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
-import { I, C, keyboard, analytics, DataUtil, Util, focus } from 'Lib';
+import { I, C, keyboard, analytics, DataUtil, Util, focus, Action } from 'Lib';
 import { blockStore, detailStore, commonStore, dbStore, menuStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 import Url from 'json/url.json';
@@ -535,15 +535,13 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				break;
 
 			case 'pageInstall':
-				C.WorkspaceObjectAdd(object.id, (message: any) => {
-					if (!message.error.code) {
-						DataUtil.objectOpenAuto(message.details);
-					};
+				Action.install(object, (message: any) => {
+					DataUtil.objectOpenAuto(message.details);
 				});
 				break;
 
 			case 'pageUninstall':
-				C.WorkspaceObjectListRemove([ object.id ], (message: any) => {
+				Action.uninstall([ object.id ], object.type, (message: any) => {
 					Util.route('/main/index');
 				});
 				break;

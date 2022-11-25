@@ -1,5 +1,5 @@
 import { I, C, focus, analytics, Renderer } from 'Lib';
-import { commonStore, authStore, blockStore, detailStore, dbStore } from 'Store';
+import { commonStore, authStore, blockStore, detailStore, dbStore, popupStore } from 'Store';
 
 import Constant from 'json/constant.json';
 
@@ -172,6 +172,61 @@ class Action {
 				};
 			});
 		});
+	};
+
+	install (object: any, callBack?: (message: any) => void) {
+		C.WorkspaceObjectAdd(object.id, (message: any) => {
+			if (message.error.code) {
+				return;
+			};
+
+			if (callBack) {
+				callBack(message);
+			};
+
+			analytics.event('ObjectInstall', { objectType: object.type, relationKey: object.relationKey });
+		});
+	};
+
+	uninstall (ids: string[], type: string, callBack?: (message: any) => void) {
+		let title = '';
+		let text = '';
+
+		switch (type) {
+			case Constant.typeId.type:
+				title = 'Are you sure you want to remove this Type?';
+				text = 'This Type and any associated Templates will be removed. If you have created any Objects with this Type, they may become more difficult to locate.';
+				break;
+
+			case Constant.typeId.relation:
+				title = 'Are you sure you want to remove this Relation?';
+				text = 'This Relation will be removed from your Library. If you have created any Objects with which use this Relation, you will no longer be able to edit the Relation value.';
+				break;
+		};
+
+		popupStore.open('confirm', {
+			data: {
+				title,
+				text,
+				textConfirm: 'Remove',
+				colorConfirm: 'red',
+				onConfirm: () => {
+					C.WorkspaceObjectListRemove(ids, (message: any) => {
+						if (message.error.code) {
+							return;
+						};
+
+						if (callBack) {
+							callBack(message);
+						};
+
+						analytics.event('ObjectUninstall', { objectType: type });
+					});
+				},
+			},
+		});
+
+		
 	};
 
 };
