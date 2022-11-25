@@ -183,52 +183,27 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 		let content: any = null;
 
 		if (relation.relationKey == Constant.relationKey.name) {
-			let size = iconSize;
 			let icon = null;
 
-			switch (viewType) {
-				case I.ViewType.Gallery:
-				case I.ViewType.List:
-					size = 22;
-					break;
-
-				case I.ViewType.Board:
-					size = 22;
-					break;
-			};
-
-			value = value || DataUtil.defaultName('page');
-			if (record.layout == I.ObjectLayout.Note) {
-				value = record.snippet || `<span class="emptyText">${translate('commonEmpty')}</span>`;
-			};
-
 			if (!view || (view && !view.hideIcon)) {
-				let size = iconSize;
-
-				switch (viewType) {
-					case I.ViewType.List:
-						size = 24;
-						break;
-
-					case I.ViewType.Gallery:
-					case I.ViewType.Board:
-						size = 18;
-						break;
-				};
-
 				icon = (
 					<IconObject 
 						id={[ relation.relationKey, record.id ].join('-')} 
 						onSelect={this.onIconSelect} 
 						onUpload={this.onIconUpload}
 						onCheckbox={this.onCheckbox}
-						size={size} 
+						size={iconSize} 
 						canEdit={!record.isReadonly} 
 						offsetY={4} 
 						object={record} 
 						noClick={true}
 					/>
 				);
+			};
+
+			value = value || DataUtil.defaultName('page');
+			if (record.layout == I.ObjectLayout.Note) {
+				value = record.snippet || `<span class="emptyText">${translate('commonEmpty')}</span>`;
 			};
 
 			content = (
