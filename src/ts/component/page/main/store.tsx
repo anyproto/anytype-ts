@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { Title, Label, Button, IconObject, Cover, Header } from 'Component';
+import { Title, Label, Button, Icon, IconObject, Cover, Header } from 'Component';
 import { I, C, DataUtil, Util, Storage, Onboarding, analytics } from 'Lib';
 import { dbStore, blockStore, detailStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -52,11 +52,6 @@ const Tabs = [
 	},
 ];
 
-const Views = [
-	{ id: View.Marketplace, name: 'Marketplace' },
-	{ id: View.Library, name: 'Library' },
-];
-
 const PageMainStore = observer(class PageMainStore extends React.Component<Props, State> {
 
 	state = {
@@ -85,6 +80,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 			return null;
 		};
 
+		const views = this.getViews();
 		const items = this.getItems();
 
 		let Item = null;
@@ -96,7 +92,6 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 			};
 			return (
 				<div className="author">
-					<IconObject object={item} size={16} />
 					{item.name}
 				</div>
 			);
@@ -104,7 +99,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 
 		const TabList = (item: any) => (
 			<div className="tabs">
-				{Views.map((item: any, i: number) => (
+				{views.map((item: any, i: number) => (
 					<div key={item.id} className={[ 'tab', (item.id == this.view ? 'active' : '') ].join(' ')} onClick={(e: any) => { this.onView(item.id); }}>
 						{item.name}
 					</div>
@@ -174,7 +169,6 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 			case Tab.Relation:
 				Item = (item: any) => {
 					const { name, description } = item;
-					const author = detailStore.get(Constant.subId.store, item.creator, []);
 					
 					return (
 						<div className="item" onClick={(e: any) => { this.onClick(e, item); }}>
@@ -183,7 +177,10 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 								<div className="txt">
 									<div className="name">{name}</div>
 									<div className="descr">{description}</div>
-									<Author {...author} />
+								</div>
+
+								<div className="buttons">
+									<Icon className="remove" tooltip="Uninstall relation" onClick={(e: any) => { this.onRemove(e, item); }} />
 								</div>
 								<div className="line" />
 							</div>
@@ -235,7 +232,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 		};
 
 		return (
-			<div className={[ 'wrapper', this.tab ].join(' ')}>
+			<div className={[ 'wrapper', this.tab, this.view ].join(' ')}>
 				<Header component="mainStore" {...this.props} tabs={Tabs} tab={this.tab} onTab={this.onTab} />
 
 				<div className="body">
@@ -345,7 +342,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 
 	onTab (id: Tab) {
 		this.tab = id;
-		this.onView(View.Marketplace);
+		this.onView(View.Library);
 
 		Storage.set('tabStore', id);
 		analytics.event(Util.toUpperCamelCase([ 'ScreenLibrary', id ].join('-')));
@@ -489,6 +486,31 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 
 		ret = ret.filter(it => it.children.length > 0);
 		return ret;
+	};
+
+	getViews (): any[] {
+		const views: any[] = [];
+
+		switch (this.tab) {
+			case Tab.Type:
+				views.push({ id: View.Library, name: 'My types' });
+				break;
+
+			case Tab.Relation:
+				views.push({ id: View.Library, name: 'My relations' });
+				break;
+		};
+
+		views.push({ id: View.Marketplace, name: 'Marketplace' });
+
+		return views;
+	};
+
+	onRemove (e: any, item: any) {
+		e.preventDefault();
+		e.stopPropagation();
+
+		C.WorkspaceObjectListRemove([ item.id ]);
 	};
 
 	onScroll ({ clientHeight, scrollHeight, scrollTop }) {
