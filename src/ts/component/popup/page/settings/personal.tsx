@@ -115,6 +115,7 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 
 	onTypeChange (id: string) {
 		commonStore.defaultTypeSet(id);
+
 		analytics.event('DefaultTypeChange', { objectType: id });
 	};
 

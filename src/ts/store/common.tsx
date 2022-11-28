@@ -1,7 +1,7 @@
 import { action, computed, makeObservable, observable, set } from 'mobx';
 import $ from 'jquery';
 import { analytics, I, Storage, Util } from 'Lib';
-import { blockStore } from 'Store';
+import { blockStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
 interface Preview {
@@ -124,7 +124,21 @@ class CommonStore {
 	};
 
 	get type(): string {
-		return String(this.typeId || Constant.typeId.page);
+		let typeId = String(this.typeId || '');
+
+		if (!typeId) {
+			return Constant.typeId.note;
+		};
+
+		let type = dbStore.getType(typeId);
+
+		console.log(type);
+
+		if (!type || !type.isInstalled) {
+			return Constant.typeId.note;
+		};
+
+		return typeId;
 	};
 
 	get fullscreen(): boolean {
@@ -157,6 +171,7 @@ class CommonStore {
 
     coverSetDefault () {
 		const cover = this.coverGetDefault();
+
 		this.coverSet(cover.id, '', cover.type);
 	};
 
@@ -170,12 +185,14 @@ class CommonStore {
 
     fileUrl (hash: string) {
 		hash = String(hash || '');
+
 		return this.gateway + '/file/' + hash;
 	};
 
     imageUrl (hash: string, width: number) {
 		hash = String(hash || '');
 		width = Number(width) || 0;
+
 		return `${this.gateway}/image/${hash}?width=${width}`;
 	};
 
@@ -222,6 +239,7 @@ class CommonStore {
 
 	defaultTypeSet (v: string) {
 		this.typeId = String(v || '');
+
 		Storage.set('defaultType', this.typeId);
 	};
 
