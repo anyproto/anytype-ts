@@ -86,63 +86,19 @@
 		"search"
 	],
 
-	"coverRelationKeys": [
-		"coverId",
-		"coverType",
-		"coverX",
-		"coverY",
-		"coverScale"
-	],
-
 	"systemRelationKeys": [ 
-		"id",
-		"name", 
-		"description", 
-		"iconEmoji",
-		"iconImage",
-		"creator", 
-		"createdDate", 
-		"type", 
-		"layout",
-		"layoutAlign",
-		"lastOpenedDate",
-		"lastModifiedBy", 
-		"lastModifiedDate", 
-		"addedDate",
-		"coverId",
-		"coverScale",
-		"coverType",
-		"coverX",
-		"coverY",
-		"featuredRelations",
-		"isHidden",
-		"isArchived",
-		"workspaceId",
-		"source",
-		"done"
+		"id", "name", "description", "iconEmoji", "iconImage", "creator",  "createdDate", "type", "layout", "layoutAlign", "lastOpenedDate", "lastModifiedBy", 
+		"lastModifiedDate", "addedDate", "coverId", "coverScale", "coverType", "coverX", "coverY", "featuredRelations", "isHidden", "isArchived", "workspaceId",
+		"source", "done"
 	],
 
 	"defaultRelationKeys": [ 
-		"id", 
-		"workspaceId",
-		"name", 
-		"description", 
-		"snippet",
-		"iconEmoji", 
-		"iconImage", 
-		"relationFormat", 
-		"type", 
-		"layout", 
-		"isHidden", 
-		"isArchived", 
-		"isReadonly", 
-		"isDeleted",
-		"isFavorite",
-		"done", 
-		"fileExt", 
-		"fileMimeType",
-		"sizeInBytes",
-		"restrictions"
+		"id", "workspaceId", "name", "description", "snippet", "iconEmoji", "iconImage", "relationFormat", "type", "layout", "isHidden", "isArchived", 
+		"isReadonly", "isDeleted", "isFavorite", "done", "fileExt", "fileMimeType", "sizeInBytes", "restrictions"
+	],
+
+	"coverRelationKeys": [
+		"coverId", "coverType", "coverX", "coverY", "coverScale"
 	],
 
 	"sidebarRelationKeys": [
