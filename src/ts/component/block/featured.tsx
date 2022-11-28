@@ -315,7 +315,6 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		};
 
 		const object = detailStore.get(rootId, rootId, [ 'setOf' ]);
-		const types = DataUtil.getObjectTypesForNewObject().map(it => it.id);
 
 		let menuId = '';
 		let menuParam = {
@@ -335,27 +334,15 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 		switch (item.id) {
 			case 'change':
-				menuId = 'searchObject';
+				menuId = 'typeSuggest';
 				menuParam.data = Object.assign(menuParam.data, {
-					placeholder: 'Change object type',
-					placeholderFocus: 'Change object type',
-					filters: [
-						{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: types }
-					],
-					onSelect: (item: any) => {
+					filter: '',
+					onClick: (item: any) => {
 						C.ObjectSetObjectType(rootId, item.id);
 						this.menuContext.close();
 
 						analytics.event('ChangeObjectType', { objectType: item.id });
 					},
-					dataSort: (c1: any, c2: any) => {
-						let i1 = types.indexOf(c1.id);
-						let i2 = types.indexOf(c2.id);
-
-						if (i1 > i2) return 1;
-						if (i1 < i2) return -1;
-						return 0;
-					}
 				});
 				break;
 

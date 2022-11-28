@@ -3,8 +3,8 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, Icon, MenuItemVertical, Loader } from 'Component';
-import { I, analytics, keyboard, DataUtil, Action } from 'Lib';
-import { commonStore, menuStore, detailStore } from 'Store';
+import { I, C, analytics, keyboard, DataUtil, Action } from 'Lib';
+import { commonStore, dbStore, detailStore } from 'Store';
 import Constant from 'json/constant.json';
 
 interface Props extends I.Menu {};
@@ -243,7 +243,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<P
 		DataUtil.search({
 			filters,
 			sorts,
-			keys: Constant.defaultRelationKeys,
+			keys: Constant.defaultRelationKeys.concat(Constant.typeRelationKeys),
 			fullText: filter,
 			offset: this.offset,
 			limit: Constant.limitMenuRecords,
@@ -274,12 +274,13 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<P
 
 	getSections () {
 		const { workspace } = commonStore;
-		const library = this.items.filter(it => it.workspaceId == workspace);
+		const types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map(it => it.id);
+		const library = this.items.filter(it => (it.workspaceId == workspace) && types.includes(it.id));
 		const librarySources = library.map(it => it.source);
-		const marketplace = this.items.filter(it => (it.workspaceId == Constant.storeSpaceId) && !librarySources.includes(it.id));
-		
+		const marketplace = this.items.filter(it => (it.workspaceId == Constant.storeSpaceId) && types.includes(it.id) && !librarySources.includes(it.id));
+
 		return [
-			{ id: 'library', name: 'My relations', children: library },
+			{ id: 'library', name: 'My types', children: library },
 			{ id: 'marketplace', name: 'Marketplace', children: marketplace },
 		].filter((section: any) => {
 			section.children = section.children.filter(it => it);
@@ -291,7 +292,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<P
 		const { param } = this.props;
 		const { data } = param;
 		const { filter } = data;
-		const name = filter ? `Create relation "${filter}"` : 'Create from scratch';
+		const name = filter ? `Create object type "${filter}"` : 'Create new object type';
 		const sections = this.getSections();
 
 		let items: any[] = [];
@@ -321,45 +322,33 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<P
 	};
 	
 	onClick (e: any, item: any) {
-		const { close, param, getId, getSize } = this.props;
-		const { data, classNameWrap } = param;
-		const { rootId, blockId, menuIdEdit, addCommand, ref } = data;
+		const { close, param } = this.props;
+		const { data } = param;
+		const { filter, onClick } = data;
 
 		e.preventDefault();
 		e.stopPropagation();
 
-		if (!item) {
-			close();
-			return;
+		const cb  = (item: any) => {
+			close(); 
+
+			if (onClick) {
+				onClick(item);
+			};
 		};
 
 		if (item.id == 'add') {
-			menuStore.open(menuIdEdit, { 
-				element: `#${getId()} #item-${item.id}`,
-				offsetX: getSize().width,
-				offsetY: -80,
-				noAnimation: true,
-				classNameWrap: classNameWrap,
-				data: {
-					...data,
-					rebind: this.rebind,
-					onChange: () => { 
-						close(); 
-					},
-				}
+			C.ObjectCreateObjectType({ name: filter }, [ I.ObjectFlag.DeleteEmpty ], (message: any) => {
+				if (!message.error.code) {
+					cb(message.details);
+					analytics.event('CreateType');
+				};
 			});
-		} else 
-		if (addCommand) {
-			const cb  = () => {
-				close(); 
-				addCommand(rootId, blockId, item.relationKey);
-			};
-
+		} else {
 			if (item.isInstalled) {
-				cb();
-				analytics.event('AddExistingRelation', { format: item.format, type: ref });
+				cb(item);
 			} else {
-				Action.install(item, cb);
+				Action.install(item, (message: any) => { cb(message.details); });
 			};
 		};
 	};

@@ -75,7 +75,8 @@
 			"select" 
 		],
 		"featuredType": [
-			"searchObject"
+			"searchObject",
+			"typeSuggest"
 		],
 		"dataviewHead": [
 			"dataviewSource", "searchObject"

@@ -351,16 +351,16 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 			});
 		} else 
 		if (addCommand) {
-			const cb  = () => {
+			const cb  = (item: any) => {
 				close(); 
 				addCommand(rootId, blockId, item.relationKey);
 			};
 
 			if (item.isInstalled) {
-				cb();
+				cb(item);
 				analytics.event('AddExistingRelation', { format: item.format, type: ref });
 			} else {
-				Action.install(item, cb);
+				Action.install(item, (message: any) => { cb(message.details); });
 			};
 		};
 	};

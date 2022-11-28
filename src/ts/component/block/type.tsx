@@ -170,14 +170,12 @@ const BlockType = observer(class BlockType extends React.Component<Props, {}> {
 	};
 
 	onMenu (e: any) {
-		const { rootId, block } = this.props;
-		const types = DataUtil.getObjectTypesForNewObject().map(it => it.id);
+		const { block } = this.props;
 		const element = `#block-${block.id} #item-menu`;
 		const obj = $(element);
 
 		menuStore.open('typeSuggest', {
-			element,
-			className: 'big single',
+			element: `#block-${block.id} #item-menu`,
 			onOpen: () => { obj.addClass('active'); },
 			onClose: () => { 
 				obj.removeClass('active'); 
@@ -185,44 +183,11 @@ const BlockType = observer(class BlockType extends React.Component<Props, {}> {
 			},
 			data: {
 				filter: '',
-				isBig: true,
-				rootId: rootId,
-				blockId: block.id,
-				blockIds: [ block.id ],
-				onSelect: (item: any) => {
+				onClick: (item: any) => {
 					this.onClick(e, item);
 				}
 			}
 		});
-
-		/*
-		menuStore.open('searchObject', {
-			element,
-			className: 'big single',
-			onOpen: () => { obj.addClass('active'); },
-			onClose: () => { 
-				obj.removeClass('active'); 
-				focus.apply();
-			},
-			data: {
-				isBig: true,
-				rootId: rootId,
-				blockId: block.id,
-				blockIds: [ block.id ],
-				placeholder: 'Change object type',
-				placeholderFocus: 'Change object type',
-				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: types }
-				],
-				sorts: [
-					{ relationKey: 'name', type: I.SortType.Asc }
-				],
-				onSelect: (item: any) => {
-					this.onClick(e, item);
-				}
-			}
-		});
-		*/
 	};
 
 	onClick (e: any, item: any) {
