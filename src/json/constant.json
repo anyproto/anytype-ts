@@ -116,7 +116,10 @@
 		"coverY",
 		"featuredRelations",
 		"isHidden",
-		"isArchived"
+		"isArchived",
+		"workspaceId",
+		"source",
+		"done"
 	],
 
 	"defaultRelationKeys": [ 
