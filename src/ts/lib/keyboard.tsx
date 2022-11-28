@@ -224,7 +224,7 @@ class Keyboard {
 		let position = I.BlockPosition.Bottom;
 		let rootId = '';
 		let root: any = null;
-		let details: any = { isDraft: true };
+		let details: any = {};
 		let flags: I.ObjectFlag[] = [ I.ObjectFlag.SelectType ];
 		
 		if (this.isMainEditor()) {

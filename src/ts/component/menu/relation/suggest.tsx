@@ -3,8 +3,8 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, Icon, MenuItemVertical, Loader } from 'Component';
-import { I, Util, analytics, keyboard, DataUtil } from 'Lib';
-import { commonStore, menuStore, dbStore } from 'Store';
+import { I, analytics, keyboard, DataUtil, Action } from 'Lib';
+import { commonStore, menuStore, detailStore } from 'Store';
 import Constant from 'json/constant.json';
 
 interface Props extends I.Menu {};
@@ -13,7 +13,8 @@ interface State {
 	loading: boolean;
 };
 
-const HEIGHT = 28;
+const HEIGHT_ITEM = 28;
+const HEIGHT_DIV = 16;
 const LIMIT = 20;
 
 const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Component<Props, State> {
@@ -69,6 +70,16 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 						<div className="name">{item.name}</div>
 					</div>
 				);
+			} else
+			if (item.isDiv) {
+				content = (
+					<div className="separator" style={param.style}>
+						<div className="inner" />
+					</div>
+				);
+			} else
+			if (item.isSection) {
+				content = <div className={[ 'sectionName', (param.index == 0 ? 'first' : '') ].join(' ')} style={param.style}>{item.name}</div>;
 			} else {
 				content = (
 					<MenuItemVertical 
@@ -111,7 +122,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 					<InfiniteLoader
 						rowCount={items.length + 1}
 						loadMoreRows={this.loadMoreRows}
-						isRowLoaded={({ index }) => !!this.items[index]}
+						isRowLoaded={({ index }) => !!items[index]}
 						threshold={LIMIT}
 					>
 						{({ onRowsRendered, registerChild }) => (
@@ -123,7 +134,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 										height={height}
 										deferredMeasurmentCache={this.cache}
 										rowCount={items.length}
-										rowHeight={HEIGHT}
+										rowHeight={({ index }) => this.getRowHeight(items[index])}
 										rowRenderer={rowRenderer}
 										onRowsRendered={onRowsRendered}
 										overscanRowCount={LIMIT}
@@ -165,7 +176,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 
 		this.cache = new CellMeasurerCache({
 			fixedWidth: true,
-			defaultHeight: HEIGHT,
+			defaultHeight: HEIGHT_ITEM,
 			keyMapper: (i: number) => { return (items[i] || {}).id; },
 		});
 
@@ -215,7 +226,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		
 		const filters: any[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
-			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: [ Constant.typeId.relation ] },
+			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: [ Constant.typeId.relation, Constant.storeTypeId.relation ] },
 			{ operator: I.FilterOperator.And, relationKey: 'relationKey', condition: I.FilterCondition.NotIn, value: Constant.systemRelationKeys },
 		];
 
@@ -238,6 +249,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 			fullText: filter,
 			offset: this.offset,
 			limit: Constant.limitMenuRecords,
+			ignoreWorkspace: true,
 		}, (message: any) => {
 			if (!this._isMounted) {
 				return;
@@ -251,7 +263,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 				this.items = [];
 			};
 
-			this.items = this.items.concat(message.records);
+			this.items = this.items.concat(message.records.map(it => detailStore.check(it)));
 
 			if (clear) {
 				this.setState({ loading: false });
@@ -262,20 +274,41 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		});
 	};
 
+	getSections () {
+		const { workspace } = commonStore;
+		const library = this.items.filter(it => it.workspaceId == workspace);
+		const librarySources = library.map(it => it.source);
+		const marketplace = this.items.filter(it => (it.workspaceId == Constant.storeSpaceId) && !librarySources.includes(it.id));
+		
+		return [
+			{ id: 'library', name: 'My relations', children: library },
+			{ id: 'marketplace', name: 'Marketplace', children: marketplace },
+		].filter((section: any) => {
+			section.children = section.children.filter(it => it);
+			return section.children.length > 0;
+		});
+	};
+	
 	getItems () {
 		const { param } = this.props;
 		const { data } = param;
-		const name = data.filter ? `Create relation "${data.filter}"` : 'Create from scratch';
+		const { filter } = data;
+		const name = filter ? `Create relation "${filter}"` : 'Create from scratch';
+		const sections = this.getSections();
 
-		let ret: any[] = [].concat(this.items);
-		if (data.filter) {
-			const reg = new RegExp(Util.filterFix(data.filter), 'gi');
-			ret = ret.filter(it => it.name.match(reg));
+		let items: any[] = [];
+		for (let section of sections) {
+			if (section.name && section) {
+				items.push({ id: section.id, name: section.name, isSection: true });
+			};
+			items = items.concat(section.children);
+			items.push({ isDiv: true });
 		};
-		ret.unshift({ id: 'add', name: name });
-		return ret;
+
+		items.push({ id: 'add', name: name });
+		return items;
 	};
-	
+
 	onFilterChange (v: string) {
 		window.clearTimeout(this.timeoutFilter);
 		this.timeoutFilter = window.setTimeout(() => {
@@ -319,18 +352,31 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 			});
 		} else 
 		if (addCommand) {
-			close(); 
-			addCommand(rootId, blockId, item.relationKey);
-			analytics.event('AddExistingRelation', { format: item.format, type: ref });
+			const cb  = () => {
+				close(); 
+				addCommand(rootId, blockId, item.relationKey);
+			};
+
+			if (item.isInstalled) {
+				cb();
+				analytics.event('AddExistingRelation', { format: item.format, type: ref });
+			} else {
+				Action.install(item, cb);
+			};
 		};
+	};
+
+	getRowHeight (item: any) {
+		let h = HEIGHT_ITEM;
+		if (item.isDiv) h = HEIGHT_DIV;
+		return h;
 	};
 
 	resize () {
 		const { getId, position } = this.props;
 		const items = this.getItems();
 		const obj = $(`#${getId()} .content`);
-		const offset = 60;
-		const height = Math.max(HEIGHT * 1 + offset, Math.min(360, items.length * HEIGHT + offset));
+		const height = items.reduce((res: number, current: any) => { return res + this.getRowHeight(current); }, 60);
 
 		obj.css({ height });
 		position();

@@ -206,7 +206,6 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 	};
 
 	load (clear: boolean, callBack?: (value: any) => void) {
-		const { config } = commonStore;
 		const { param } = this.props;
 		const { data } = param;
 		const { skipIds } = data;
