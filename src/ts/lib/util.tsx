@@ -1069,8 +1069,6 @@ class Util {
 			return;
 		};
 
-		console.log(items, items.length);
-
 		const length = items.length;
 		const ret = [];
 		const cb = (data: string) => {
@@ -1082,7 +1080,6 @@ class Util {
 		};
 
 		for (let item of items) {
-			console.log(item);
 			item.getAsString(cb);
 		};
 	};

@@ -123,6 +123,11 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 									<div className="descr">{item.description}</div>
 									<Author {...author} />
 								</div>
+
+								<div className="buttons">
+									<Icon className="remove" tooltip="Delete" onClick={(e: any) => { this.onRemove(e, item); }} />
+								</div>
+
 								<div className="line" />
 							</div>
 						</div>
@@ -182,6 +187,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 								<div className="buttons">
 									<Icon className="remove" tooltip="Delete" onClick={(e: any) => { this.onRemove(e, item); }} />
 								</div>
+
 								<div className="line" />
 							</div>
 						</div>

@@ -139,8 +139,6 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 			position = I.BlockPosition.Bottom;
 		};
 
-		console.log(items);
-
 		if (data) {
 			targetId = String(data.id || '');
 			target = blockStore.getLeaf(rootId, targetId);
@@ -155,8 +153,6 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 		// String items drop
 		if (items && items.length) {
 			Util.getDataTransferString(items, (html: string) => {
-				console.log('HTML', html);
-
 				C.BlockPaste(rootId, targetId, { from: 0, to: 0 }, [], false, { html });
 			});
 

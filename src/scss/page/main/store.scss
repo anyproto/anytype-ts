@@ -53,16 +53,13 @@
 			
 					.line { width: 100%; height: 1px; background: $colorBorderLight; position: absolute; left: 0px; }
 
-					.buttons { flex-shrink: 0; opacity: 0; display: none; transition: $transitionFast; }
+					.buttons { flex-shrink: 0; display: none;}
 					.buttons {
-						.icon { width: 28px; height: 28px; background-size: 20px; border-radius: 4px; transition: $transitionFast; }
+						.icon { width: 28px; height: 28px; background-size: 20px; border-radius: 4px; transition: background-color 0.2s ease-in-out; }
 						.icon.remove { background-image: url('~img/icon/menu/action/remove0.svg'); }
 						.icon:hover { background-color: $colorHover; }
 					}
 				}
-			}
-			.item:hover {
-				.info .buttons { opacity: 1; }
 			}
 
 			.item.template { margin: 0px 24px 28px 0px; width: 304px; height: 252px; }
@@ -75,11 +72,17 @@
 	}
 
 	.wrapper.type {
-		.row {  grid-template-columns: repeat(2, calc(50% - 16px)); grid-column-gap: 32px; }
+		.row { grid-template-columns: repeat(2, calc(50% - 16px)); grid-column-gap: 32px; }
 
 		.item { height: 64px; padding-left: 80px; line-height: 64px; }
 		.item {
 			.line { bottom: -16px; }
+		}
+
+		.item:hover {
+			.info {
+				.txt { width: calc(100% - 32px); }
+			}
 		}
 	}
 
@@ -99,7 +102,7 @@
 	}
 
 	.wrapper.library {
-		.item {
+		.item:hover {
 			.info .buttons { display: block; }
 		}
 	}

@@ -118,8 +118,6 @@ const Preview = observer(class Preview extends React.Component<Props, State> {
 		const win = $(window);
 		const rect = Util.objectCopy($('#preview').get(0).getBoundingClientRect());
 
-		console.log(rect);
-
 		menuStore.open('blockLink', {
 			rect: rect ? { ...rect, height: 0, y: rect.y + win.scrollTop() } : null, 
 			horizontal: I.MenuDirection.Center,

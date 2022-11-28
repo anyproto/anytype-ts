@@ -194,7 +194,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const allowedReload = object.source && block.isObjectBookmark();
 		const allowedLinkTo = object.isInstalled;
 		const allowedInstall = !object.isInstalled;
-		const allowedUninstall = object.isInstalled && [ Constant.typeId.type, Constant.typeId.relation ].includes(object.type);
+		const allowedUninstall = object.isInstalled && [ Constant.typeId.type, Constant.typeId.relation ].includes(object.type) && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Delete ]);
 
 		if (!allowedArchive)	 archive = null;
 		if (!allowedDelete)		 pageRemove = null;
