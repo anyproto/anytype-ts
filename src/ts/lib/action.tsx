@@ -1,4 +1,4 @@
-import { I, C, focus, analytics, Renderer } from 'Lib';
+import { I, C, focus, analytics, Renderer, Util } from 'Lib';
 import { commonStore, authStore, blockStore, detailStore, dbStore, popupStore } from 'Store';
 
 import Constant from 'json/constant.json';
@@ -220,6 +220,7 @@ class Action {
 							callBack(message);
 						};
 
+						Util.toastShow({ text: 'Object has been removed from your space' });
 						analytics.event('ObjectUninstall', { objectType: type });
 					});
 				},
