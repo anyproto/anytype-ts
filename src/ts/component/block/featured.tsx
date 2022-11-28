@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, C, DataUtil, Util, focus, analytics, Relation, translate } from 'Lib';
+import { I, C, DataUtil, Util, focus, analytics, Relation, translate, Onboarding } from 'Lib';
 import { Cell } from 'Component';
 import { blockStore, detailStore, dbStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -84,7 +84,13 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 						onMouseEnter={(e: any) => { this.onMouseEnter(e, 'type'); }}
 						onMouseLeave={this.onMouseLeave}
 					>
-						<div className="name">{type ? Util.shorten(type.name, 32) : translate('commonDeletedType')}</div>
+						<div className="name">
+							{type && !type.isDeleted ? Util.shorten(type.name, 32) : (
+								<span className="textColor-red">
+									{translate('commonDeletedType')}
+								</span>
+							)}
+						</div>
 					</div>
 				</span>
 
@@ -169,14 +175,20 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 	};
 	
 	componentDidMount () {
-		const { rootId } = this.props;
-		const object = detailStore.get(rootId, rootId, [ 'setOf' ]);
-		const setOf = Relation.getArrayValue(object.setOf);
-
 		this._isMounted = true;
+
+		const { rootId, isPopup } = this.props;
+		const storeId = this.getStoreId();
+		const object = detailStore.get(rootId, storeId);
+		const setOf = Relation.getArrayValue(object.setOf);
+		const type = detailStore.get(rootId, object.type);
 
 		if ((object.layout == I.ObjectLayout.Set) && !setOf.length) {
 			window.setTimeout(() => { this.onSource(); }, Constant.delay.menu);
+		};
+
+		if (!type || type.isDeleted) {
+			Onboarding.start('typeDeleted', isPopup);
 		};
 	};
 

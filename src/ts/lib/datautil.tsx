@@ -1290,11 +1290,11 @@ class DataUtil {
 
 		let { idField, filters, sorts, keys, fullText, offset, limit, ignoreWorkspace, withArchived } = param;
 
+		filters.push({ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false });
+
 		if (!ignoreWorkspace && workspace) {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'workspaceId', condition: I.FilterCondition.Equal, value: workspace });
 		};
-
-		filters.push({ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false });
 
 		if (!config.debug.ho) {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true });

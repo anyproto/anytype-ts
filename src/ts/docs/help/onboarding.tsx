@@ -292,22 +292,14 @@ export default {
         }
     ],
 
-    typeSelect: [
+    typeDeleted: [
         {
-            name: 'Choose a Type for Object',
-            description: 'Types define objects through layouts, templates, and relations. You have Note by default',
+            name: 'This Type has been deleted',
+            description: 'If you want to keep using this Object, change this Object Type.',
             param: {
-                common: {
-                    container: true,
-                    containerVertical: I.MenuDirection.Top,
-                    classNameWrap: 'fixed',
-                    horizontal: I.MenuDirection.Center,
-                    offsetY: 8,
-                },
-                popup: {
-                    classNameWrap: 'fixed fromPopup',
-                }
+                element: '#block-featuredRelations #blockFeatured-type-0',
+                offsetY: 10,
             }
-        }
+        },
     ],
 }

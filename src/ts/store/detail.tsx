@@ -88,11 +88,11 @@ class DetailStore {
 		};
 	};
 
-    delete (rootId: string, id: string, keys: string[]) {
+    delete (rootId: string, id: string, keys?: string[]) {
 		let map = this.map.get(rootId) || new Map();
 		let list = this.getArray(rootId, id);
 
-		list = list.filter(it => !keys.includes(it.relationKey));
+		list = keys && keys.length ? list.filter(it => !keys.includes(it.relationKey)) : [];
 		map.set(id, list);
 	};
 
