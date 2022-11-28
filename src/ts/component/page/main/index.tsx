@@ -912,22 +912,17 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 				const childrenIds = blockStore.getChildrenIds(rootId, rootId);
 				const length = childrenIds.length;
 
-				list = blockStore.getChildren(rootId, rootId, (it: any) => {
-					if (!it.content.targetBlockId) {
-						return false;
-					};
-
-					const object = detailStore.get(rootId, it.content.targetBlockId, []);
-					const { name, isArchived, isDeleted } = object;
+				list = blockStore.getChildren(rootId, rootId, it => it.isLink() && it.content.targetBlockId).map((it: any) => {
+					it._object_ = detailStore.get(rootId, it.content.targetBlockId);
+					it.isBlock = true;
+					return it;
+				}).filter((it: any) => {
+					const { name, isArchived, isDeleted } = it._object_;
 
 					if (reg && name && !name.match(reg)) {
 						return false;
 					};
 					return !isArchived && !isDeleted;
-				}).map((it: any) => {
-					it._object_ = detailStore.get(rootId, it.content.targetBlockId);
-					it.isBlock = true;
-					return it;
 				});
 
 				if (isRecent) {
