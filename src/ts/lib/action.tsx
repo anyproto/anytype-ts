@@ -175,22 +175,6 @@ class Action {
 	};
 
 	install (object: any, callBack?: (message: any) => void) {
-		let subId = '';
-
-		switch (object.type) {
-			case Constant.typeId.type:
-				subId = Constant.subId.type;
-				break;
-
-			case Constant.typeId.relation:
-				subId = Constant.subId.relation;
-				break;
-		};
-
-		if (subId) {
-			detailStore.delete(subId, object.id);
-		};
-
 		C.WorkspaceObjectAdd(object.id, (message: any) => {
 			if (message.error.code) {
 				return;

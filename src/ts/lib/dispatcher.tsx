@@ -719,6 +719,7 @@ class Dispatcher {
 						const [ subId, dep ] = data.getSubid().split('/');
 						if (!dep) {
 							dbStore.recordDelete(subId, '', id);
+							detailStore.delete(subId, id);
 						};
 					})();
 					break;

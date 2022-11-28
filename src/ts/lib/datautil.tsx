@@ -1204,10 +1204,10 @@ class DataUtil {
 			offset: 0,
 			limit: 0,
 			ignoreWorkspace: false,
+			ignoreArchive: false,
+			noDeps: false,
 			afterId: '',
 			beforeId: '',
-			noDeps: false,
-			withArchived: false,
 		}, param);
 
 		const { subId, idField, filters, sorts, keys, sources, offset, limit, ignoreWorkspace, afterId, beforeId, noDeps, withArchived } = param;

@@ -358,6 +358,12 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 		const filters: any[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
+			{
+				operator: I.FilterOperator.And, 
+				relationKey: 'isArchived', 
+				condition: (tab.id == I.TabIndex.Archive ? I.FilterCondition.Equal : I.FilterCondition.NotEqual), 
+				value: true,
+			}
 		];
 		const sorts = [
 			{ relationKey: 'lastModifiedDate', type: I.SortType.Desc }
@@ -392,6 +398,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 			filters,
 			sorts,
 			limit: 100,
+			withArchived: true,
 		}, (message: any) => {
 			if (!this._isMounted || message.error.code) {
 				return;
