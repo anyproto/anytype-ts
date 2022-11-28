@@ -131,10 +131,7 @@ class CommonStore {
 		};
 
 		let type = dbStore.getType(typeId);
-
-		console.log(type);
-
-		if (!type || !type.isInstalled) {
+		if (!type || !type.isInstalled || !type.smartblockTypes.includes(I.SmartBlockType.Page)) {
 			return Constant.typeId.note;
 		};
 

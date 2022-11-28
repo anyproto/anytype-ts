@@ -363,11 +363,10 @@ class App extends React.Component<Props, State> {
 		};
 
 		Storage.delete('lastSurveyCanceled');
-
 		commonStore.coverSetDefault();
 
-		restoreKeys.forEach((it: string) => {
-			commonStore[Util.toCamelCase(it + '-Set')](Storage.get(it));
+		restoreKeys.forEach((key: string) => {
+			commonStore[Util.toCamelCase(key + '-Set')](Storage.get(key));
 		});
 	};
 

@@ -306,6 +306,8 @@ class DataUtil {
 			cnt++;
 
 			if (cnt == subscriptions.length) {
+				commonStore.defaultTypeSet(commonStore.type);
+
 				if (pin && !keyboard.isPinChecked) {
 					Util.route('/auth/pin-check');
 				} else {
