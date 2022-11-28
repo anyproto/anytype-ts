@@ -1074,7 +1074,6 @@ class DataUtil {
 		const filters: I.Filter[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: type },
 			{ operator: I.FilterOperator.And, relationKey: relationKey, condition: I.FilterCondition.In, value: ids },
-			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
 		];
 
 		this.search({
@@ -1206,9 +1205,10 @@ class DataUtil {
 			afterId: '',
 			beforeId: '',
 			noDeps: false,
+			withArchived: false,
 		}, param);
 
-		const { subId, idField, filters, sorts, keys, sources, offset, limit, ignoreWorkspace, afterId, beforeId, noDeps } = param;
+		const { subId, idField, filters, sorts, keys, sources, offset, limit, ignoreWorkspace, afterId, beforeId, noDeps, withArchived } = param;
 
 		if (!subId) {
 			console.error('[DataUtil].searchSubscribe: subId is empty');
@@ -1217,6 +1217,10 @@ class DataUtil {
 
 		if (!ignoreWorkspace && workspace) {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'workspaceId', condition: I.FilterCondition.Equal, value: workspace });
+		};
+
+		if (!withArchived) {
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.NotEqual, value: true });
 		};
 
 		keys.push(idField);
@@ -1279,9 +1283,10 @@ class DataUtil {
 			offset: 0,
 			limit: 0,
 			ignoreWorkspace: false,
+			withArchived: false,
 		}, param);
 
-		let { idField, filters, sorts, keys, fullText, offset, limit, ignoreWorkspace } = param;
+		let { idField, filters, sorts, keys, fullText, offset, limit, ignoreWorkspace, withArchived } = param;
 
 		if (!ignoreWorkspace && workspace) {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'workspaceId', condition: I.FilterCondition.Equal, value: workspace });
@@ -1291,6 +1296,10 @@ class DataUtil {
 
 		if (!config.debug.ho) {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true });
+		};
+
+		if (!withArchived) {
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.NotEqual, value: true });
 		};
 
 		fullText = String(fullText || '').replace(/\\/g, '');

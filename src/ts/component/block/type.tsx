@@ -175,6 +175,27 @@ const BlockType = observer(class BlockType extends React.Component<Props, {}> {
 		const element = `#block-${block.id} #item-menu`;
 		const obj = $(element);
 
+		menuStore.open('typeSuggest', {
+			element,
+			className: 'big single',
+			onOpen: () => { obj.addClass('active'); },
+			onClose: () => { 
+				obj.removeClass('active'); 
+				focus.apply();
+			},
+			data: {
+				filter: '',
+				isBig: true,
+				rootId: rootId,
+				blockId: block.id,
+				blockIds: [ block.id ],
+				onSelect: (item: any) => {
+					this.onClick(e, item);
+				}
+			}
+		});
+
+		/*
 		menuStore.open('searchObject', {
 			element,
 			className: 'big single',
@@ -201,6 +222,7 @@ const BlockType = observer(class BlockType extends React.Component<Props, {}> {
 				}
 			}
 		});
+		*/
 	};
 
 	onClick (e: any, item: any) {

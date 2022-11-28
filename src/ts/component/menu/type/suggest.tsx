@@ -17,7 +17,7 @@ const HEIGHT_ITEM = 28;
 const HEIGHT_DIV = 16;
 const LIMIT = 20;
 
-const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Component<Props, State> {
+const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<Props, State> {
 
 	state = {
 		loading: false,
@@ -225,8 +225,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		const { filter, skipIds } = data;
 		
 		const filters: any[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: [ Constant.typeId.relation, Constant.storeTypeId.relation ] },
-			{ operator: I.FilterOperator.And, relationKey: 'relationKey', condition: I.FilterCondition.NotIn, value: Constant.systemRelationKeys },
+			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: [ Constant.typeId.type, Constant.storeTypeId.type ] },
 		];
 
 		const sorts = [
@@ -234,7 +233,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		];
 
 		if (skipIds && skipIds.length) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'relationKey', condition: I.FilterCondition.NotIn, value: skipIds });
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: skipIds });
 		};
 
 		if (clear) {
@@ -244,7 +243,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		DataUtil.search({
 			filters,
 			sorts,
-			keys: Constant.relationRelationKeys,
+			keys: Constant.defaultRelationKeys,
 			fullText: filter,
 			offset: this.offset,
 			limit: Constant.limitMenuRecords,
@@ -383,4 +382,4 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 
 });
 
-export default MenuRelationSuggest;
+export default MenuTypeSuggest;

@@ -45,6 +45,7 @@ import MenuBlockRelationEdit from './block/relation/edit';
 import MenuBlockRelationView from './block/relation/view';
 
 import MenuRelationSuggest from './relation/suggest';
+import MenuTypeSuggest from './type/suggest';
 
 import MenuDataviewRelationList from './dataview/relation/list';
 import MenuDataviewRelationEdit from './dataview/relation/edit';
@@ -119,6 +120,7 @@ const Components: any = {
 	blockRelationView:		 MenuBlockRelationView,
 
 	relationSuggest:		 MenuRelationSuggest,
+	typeSuggest:			 MenuTypeSuggest,
 
 	dataviewRelationList:	 MenuDataviewRelationList,
 	dataviewRelationEdit:	 MenuDataviewRelationEdit,

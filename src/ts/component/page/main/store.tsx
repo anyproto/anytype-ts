@@ -113,6 +113,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 			case Tab.Type:
 				Item = (item: any) => {
 					const author = detailStore.get(Constant.subId.store, item.creator, []);
+					const allowedDelete = blockStore.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ]);
 
 					return (
 						<div className="item" onClick={(e: any) => { this.onClick(e, item); }}>
@@ -125,7 +126,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 								</div>
 
 								<div className="buttons">
-									<Icon className="remove" tooltip="Delete" onClick={(e: any) => { this.onRemove(e, item); }} />
+									{allowedDelete ? <Icon className="remove" tooltip="Delete" onClick={(e: any) => { this.onRemove(e, item); }} /> : ''}
 								</div>
 
 								<div className="line" />
@@ -174,6 +175,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 			case Tab.Relation:
 				Item = (item: any) => {
 					const { name, description } = item;
+					const allowedDelete = blockStore.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ]);
 					
 					return (
 						<div className="item" onClick={(e: any) => { this.onClick(e, item); }}>
@@ -185,7 +187,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 								</div>
 
 								<div className="buttons">
-									<Icon className="remove" tooltip="Delete" onClick={(e: any) => { this.onRemove(e, item); }} />
+									{allowedDelete ? <Icon className="remove" tooltip="Delete" onClick={(e: any) => { this.onRemove(e, item); }} /> : ''}
 								</div>
 
 								<div className="line" />
@@ -381,7 +383,6 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: this.getTabType() },
 			{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
 			{ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.Equal, value: false },
-			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
 		];
 		const sorts: I.Sort[] = [
 			{ type: I.SortType.Asc, relationKey: 'name' },

@@ -152,7 +152,6 @@ const Column = observer(class Column extends React.Component<Props, State> {
 		};
 
 		const filters: I.Filter[] = view.filters.concat([
-			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
 			{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
 			{ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.Equal, value: false },
 		]);

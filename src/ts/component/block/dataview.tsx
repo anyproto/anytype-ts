@@ -491,7 +491,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					filters: [
 						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.template },
 						{ operator: I.FilterOperator.And, relationKey: 'targetObjectType', condition: I.FilterCondition.In, value: setOf },
-						{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
 					],
 					sorts: [
 						{ relationKey: 'name', type: I.SortType.Asc },

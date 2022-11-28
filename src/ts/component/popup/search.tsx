@@ -329,7 +329,6 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 		const skipTypes = [].concat(DataUtil.getFileTypes()).concat(DataUtil.getSystemTypes());
 
 		const filters: any[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
 			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: skipTypes },
 		];
 		const sorts = [

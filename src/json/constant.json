@@ -110,7 +110,7 @@
 
 	"relationRelationKeys": [
 		"id", "workspaceId", "type", "layout", "name", "relationFormat", "relationKey", "scope", "isReadonly", "isHidden", "isDeleted", "isArchived", "isFavorite", "restrictions",
-		"relationMaxCount", "relationReadonly", "relationReadonlyValue", "relationDefaultValue", "relationFormatObjectTypes", "source"
+		"relationMaxCount", "relationReadonly", "relationReadonlyValue", "relationDefaultValue", "relationFormatObjectTypes", "source", "restrictions"
 	],
 
 	"optionRelationKeys": [
