@@ -220,7 +220,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		];
 
 		const sorts = [
-			{ relationKey: 'name', type: I.SortType.Desc }
+			{ relationKey: 'name', type: I.SortType.Asc }
 		];
 
 		if (skipIds && skipIds.length) {
