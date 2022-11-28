@@ -87,9 +87,9 @@
 	],
 
 	"systemRelationKeys": [ 
-		"id", "name", "description", "iconEmoji", "iconImage", "creator",  "createdDate", "type", "layout", "layoutAlign", "lastOpenedDate", "lastModifiedBy", 
-		"lastModifiedDate", "addedDate", "coverId", "coverScale", "coverType", "coverX", "coverY", "featuredRelations", "isHidden", "isArchived", "workspaceId",
-		"source", "done"
+		"id", "name", "description", "snippet", "iconEmoji", "iconImage", "creator",  "createdDate", "type", "layout", "layoutAlign", "lastOpenedDate", "lastModifiedBy", 
+		"lastModifiedDate", "addedDate", "coverId", "coverScale", "coverType", "coverX", "coverY", "featuredRelations", "isHidden", "isArchived", "isFavorite",  "workspaceId",
+		"sourceObject", "done", "links", "internalFlags"
 	],
 
 	"defaultRelationKeys": [ 

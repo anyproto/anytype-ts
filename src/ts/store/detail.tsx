@@ -154,7 +154,6 @@ class DetailStore {
 			object.objectTypes = Relation.getArrayValue(object.relationFormatObjectTypes);
 			object.isReadonlyRelation = Boolean(object.isReadonly);
 			object.isReadonlyValue = Boolean(object.relationReadonlyValue);
-			object.isInstalled = object.workspaceId != Constant.storeSpaceId;
 			object.source = String(object.source || '');
 
 			if (object.isDeleted) {
@@ -185,6 +184,7 @@ class DetailStore {
 			coverY: Number(object.coverY) || 0,
 			coverScale: Number(object.coverScale) || 0,
 			coverType: Number(object.coverType) || I.CoverType.None,
+			isInstalled: object.workspaceId != Constant.storeSpaceId,
 			isArchived: Boolean(object.isArchived),
 			isFavorite: Boolean(object.isFavorite),
 			isHidden: Boolean(object.isHidden),

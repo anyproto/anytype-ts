@@ -924,12 +924,12 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 					};
 
 					const object = detailStore.get(rootId, it.content.targetBlockId, []);
-					const { name, isArchived, isDeleted, isInstalled } = object;
+					const { name, isArchived, isDeleted } = object;
 
 					if (reg && name && !name.match(reg)) {
 						return false;
 					};
-					return !isArchived && !isDeleted && isInstalled;
+					return !isArchived && !isDeleted;
 				}).map((it: any) => {
 					it._object_ = detailStore.get(rootId, it.content.targetBlockId, [ 'templateIsBundled', 'lastModifiedDate' ]);
 					it.isBlock = true;

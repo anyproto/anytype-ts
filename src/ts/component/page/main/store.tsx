@@ -406,6 +406,12 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 				break;
 		};
 
+		switch (this.tab) {
+			case Tab.Relation:
+				filters.push({ operator: I.FilterOperator.And, relationKey: 'relationKey', condition: I.FilterCondition.NotIn, value: Constant.systemRelationKeys });
+				break;
+		};
+
 		if (clear) {
 			this.setState({ loading: true });
 			dbStore.recordsSet(Constant.subId.store, '', []);
