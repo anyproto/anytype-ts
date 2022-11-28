@@ -175,6 +175,22 @@ class Action {
 	};
 
 	install (object: any, callBack?: (message: any) => void) {
+		let subId = '';
+
+		switch (object.type) {
+			case Constant.typeId.type:
+				subId = Constant.subId.type;
+				break;
+
+			case Constant.typeId.relation:
+				subId = Constant.subId.relation;
+				break;
+		};
+
+		if (subId) {
+			detailStore.delete(subId, object.id);
+		};
+
 		C.WorkspaceObjectAdd(object.id, (message: any) => {
 			if (message.error.code) {
 				return;
@@ -191,19 +207,16 @@ class Action {
 	uninstall (ids: string[], type: string, callBack?: (message: any) => void) {
 		let title = '';
 		let text = '';
-		let subId = '';
-
+		
 		switch (type) {
 			case Constant.typeId.type:
 				title = 'Are you sure you want to remove this Type?';
 				text = 'This Type and any associated Templates will be removed. If you have created any Objects with this Type, they may become more difficult to locate.';
-				subId = Constant.subId.type;
 				break;
 
 			case Constant.typeId.relation:
 				title = 'Are you sure you want to remove this Relation?';
 				text = 'This Relation will be removed from your Library. If you have created any Objects with which use this Relation, you will no longer be able to edit the Relation value.';
-				subId = Constant.subId.relation;
 				break;
 		};
 
@@ -222,8 +235,6 @@ class Action {
 						if (callBack) {
 							callBack(message);
 						};
-
-						ids.forEach(id => detailStore.delete(subId, id));
 
 						Util.toastShow({ text: 'Object has been removed from your space' });
 						analytics.event('ObjectUninstall', { objectType: type, count: ids.length });

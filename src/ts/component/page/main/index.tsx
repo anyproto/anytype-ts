@@ -350,7 +350,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		const { filter } = this.state;
 		const { config } = commonStore;
 		const tabs = this.getTabs();
-		const tab = tabs.find((it: any) => { return it.id == this.state.tab; });
+		const tab = tabs.find(it => it.id == this.state.tab);
 
 		if (!tab.load) {
 			return;
@@ -900,8 +900,6 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 		let reg = null;
 		let list: any[] = [];
-		let rootId = root;
-		let recentIds = [];
 
 		if (filter) {
 			reg = new RegExp(Util.filterFix(filter), 'gi');
@@ -910,10 +908,9 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		switch (tab) {
 			case I.TabIndex.Favorite:
 			case I.TabIndex.Recent:
-				if (isRecent) {
-					rootId = recent;
-					recentIds = crumbs.get(I.CrumbsType.Recent).ids;
-				};
+				const rootId = isRecent ? recent : root;
+				const childrenIds = blockStore.getChildrenIds(rootId, rootId);
+				const length = childrenIds.length;
 
 				list = blockStore.getChildren(rootId, rootId, (it: any) => {
 					if (!it.content.targetBlockId) {
@@ -928,7 +925,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 					};
 					return !isArchived && !isDeleted;
 				}).map((it: any) => {
-					it._object_ = detailStore.get(rootId, it.content.targetBlockId, [ 'templateIsBundled', 'lastModifiedDate' ]);
+					it._object_ = detailStore.get(rootId, it.content.targetBlockId);
 					it.isBlock = true;
 					return it;
 				});
@@ -940,6 +937,14 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 						return 0;
 					});
 				};
+
+				list = list.filter((it: any) => {
+					if ([ Constant.storeTypeId.type, Constant.storeTypeId.relation ].includes(it._object_.type) && !it._object_.isInstalled) {
+						return false;
+					};
+					return true;
+				});
+
 				break;
 
 			default:
