@@ -1,12 +1,12 @@
 @import "~scss/_vars";
 
 .menus {
-	.menu.menuOnboarding { width: 288px; background: #000; color: #fff; }
+	.menu.menuOnboarding { width: 334px; background: #fff; color: $colorBlack; }
 	.menu.menuOnboarding {
 		.content { padding: 12px 16px; }
 		.wrap { display: flex; flex-direction: column; }
 
-		.name { @include text-paragraph; letter-spacing: -0.2px; font-weight: 600; margin-bottom: 6px; width: calc(100% - 20px); }
+		.name { @include text-paragraph; letter-spacing: -0.2px; font-weight: 600; margin-bottom: 2px; width: calc(100% - 20px); }
 		.descr { line-height: 18px; }
 		.descr {
 			.icon { width: 16px; height: 16px; margin: -2px 0px 0px 0px; }
@@ -15,22 +15,42 @@
 		a { color: #fff; text-decoration: underline; }
 
 		.icon.close { 
-			width: 16px; height: 16px; position: absolute; right: 14px; top: 16px; background-image: url('~img/icon/menu/onboarding/close0.svg'); 
+			width: 16px; height: 16px; position: absolute; right: 10px; top: 10px; background-image: url('~img/icon/menu/onboarding/close0.svg');
 			cursor: pointer;
 		}
 		.icon.close:hover { background-image: url('~img/icon/menu/onboarding/close1.svg'); }
 		
-		.bottom { display: flex; flex-direction: row; align-items: stretch; margin: 10px -2px 0px -2px; }
+		.bottom { display: flex; flex-direction: row; align-items: stretch; justify-content: space-between; margin-top: 20px; }
 		.bottom {
-			.icon.arrow { 
-				width: 16px; height: 18px; flex-shrink: 0; background-image: url('~img/arrow/onboarding0.svg'); 
-				cursor: pointer; background-size: 16px 16px; background-position: left center;
+			.round {
+				display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; flex-shrink: 0; border-radius: 50%; cursor: pointer;
+				background: $colorOrange; transition: $transitionFast;
 			}
-			.icon.arrow:hover { background-image: url('~img/arrow/onboarding1.svg'); }
-			.icon.arrow.disabled { opacity: 0; }
-			.icon.arrow.disabled:hover { background-image: url('~img/arrow/onboarding0.svg'); }
+			.round:hover { background: #F09C0E; }
+			.round {
+				.icon.arrow {
+					width: 20px; height: 20px; background-image: url('~img/arrow/onboarding.svg');
+					background-size: 20px 20px; background-position: center center;
+				}
+				.icon.tick {
+					width: 14px; height: 14px; background-image: url('~img/icon/menu/onboarding/tick.svg');
+					background-size: 14px 14px; background-position: center center;
+				}
+			}
 
-			.icon.arrow.right { transform: rotateZ(180deg); }
+			.steps { display: flex; flex-wrap: nowrap; margin-bottom: 4px; }
+			.steps {
+				.step {
+					width: 8px; height: 8px; border-radius: 50%; margin-right: 4px; cursor: pointer;
+					background: $colorVeryLightGrey; transition: $transitionFast;
+				}
+				.step:hover { background: $colorBorderDark; }
+				.step.active,
+				.step.active:hover { background: $colorOrange; cursor: default; }
+				.step:last-of-type { margin-right: 0px; }
+			}
+
+			.category { @include text-extra-small; }
 			
 			.number { @include text-small; flex-grow: 1; text-align: center; color: $colorMediumGrey;  }
 		}

@@ -20,11 +20,18 @@ class MenuOnboarding extends React.Component<Props, {}> {
 		const { param } = this.props;
 		const { data } = param;
 		const { key, current } = data;
-		const items = Docs.Help.Onboarding[key];
+		const items = Docs.Help.Onboarding[key].items;
+		const category = Docs.Help.Onboarding[key].category;
 		const item = items[current];
 		const l = items.length;
-		const cnl = [ 'arrow', 'left', (current == 0 ? 'disabled' : '') ];
-		const cnr = [ 'arrow', 'right', (current == l - 1 ? 'disabled' : '') ];
+
+		const Steps = () => (
+			<div className="steps">
+				{[...Array(l)].map((e, i) => {
+					return <div className={i === current ? 'step active' : 'step'} onClick={(e: any) => { this.onClick(e, i)}} key={i} />
+				})}
+			</div>
+		);
 
 		return (
 			<div className="wrap">
@@ -35,9 +42,13 @@ class MenuOnboarding extends React.Component<Props, {}> {
 
 				{l > 1 ? (
 					<div className="bottom">
-						<Icon className={cnl.join(' ')} onClick={(e: any) => { this.onArrow(e, -1); }} />
-						<div className="number">{current + 1} of {l}</div>
-						<Icon className={cnr.join(' ')} onClick={(e: any) => { this.onArrow(e, 1); }} />
+						<div>
+							<Steps />
+							{category ? <div className="category"><strong>Onboarding: </strong>{category}</div> : ''}
+						</div>
+						<div className="round" onClick={(e: any) => { this.onArrow(e, 1); }}>
+							<Icon className={current == l - 1 ? 'tick' : 'arrow'} />
+						</div>
 					</div>
 				) : ''}
 			</div>
@@ -116,15 +127,26 @@ class MenuOnboarding extends React.Component<Props, {}> {
 	};
 
 	onArrow (e: any, dir: number) {
-		const { data, onOpen, onClose } = this.props.param;
-		const { key, current, isPopup } = data;
-		const items = Docs.Help.Onboarding[key];
+		const { data } = this.props.param;
+		const { key, current } = data;
+		const items = Docs.Help.Onboarding[key].items;
 
-		if (((dir < 0) && (current == 0)) || ((dir > 0) && (current == items.length - 1))) {
+		if ((dir < 0) && (current == 0)) {
 			return;
 		};
 
-		const next = current + dir;
+		if ((dir > 0) && (current == items.length - 1)) {
+			this.onClose();
+			return;
+		};
+
+		this.onClick(e, current + dir);
+	};
+
+	onClick (e: any, next: number) {
+		const { data, onOpen, onClose } = this.props.param;
+		const { key, isPopup } = data;
+		const items = Docs.Help.Onboarding[key].items;
 		const item = items[next];
 
 		if (!item) {
