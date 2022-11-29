@@ -357,7 +357,6 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		};
 
 		const filters: any[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
 			{
 				operator: I.FilterOperator.And, 
 				relationKey: 'isArchived', 
@@ -383,10 +382,6 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHighlighted', condition: I.FilterCondition.Equal, value: true });
 		};
 
-		if (!config.debug.ho) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.Equal, value: false });
-		};
-
 		if (filter) {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'name', condition: I.FilterCondition.Like, value: filter });
 		};
@@ -399,6 +394,8 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 			sorts,
 			limit: 100,
 			withArchived: true,
+			ignoreDeleted: true,
+			ignoreHidden: true,
 		}, (message: any) => {
 			if (!this._isMounted || message.error.code) {
 				return;

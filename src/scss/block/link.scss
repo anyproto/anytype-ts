@@ -129,8 +129,7 @@
 			.sides { flex-direction: column-reverse; }
 			.side.left { width: 100%; border-right-width: 1px; }
 			.side.right { 
-				aspect-ratio: 2/1; width: 100%; border-radius: 16px 16px 0px 0px;
-				border: 1px solid $colorBorderDark; border-bottom: 0px;
+				aspect-ratio: 7/3; width: 100%; border-radius: 16px 16px 0px 0px; border: 1px solid $colorBorderDark; border-bottom: 0px;
 			}
 		}
 

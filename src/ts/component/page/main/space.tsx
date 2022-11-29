@@ -157,19 +157,20 @@ const PageMainSpace = observer(class PageMainSpace extends React.Component<Props
 		const views = dbStore.getViews(rootId, blockId);
 		const block = blockStore.getLeaf(rootId, blockId);
 
-		if (views.length) {
-			const view = views[0];
-			const filters = view.filters.concat([
-				{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
-			]);
-			DataUtil.searchSubscribe({
-				subId: this.getSubIdHighlighted(),
-				filters,
-				sorts: view.sorts,
-				keys: [ 'id' ],
-				sources: block.content.sources,
-			});
+		if (!views.length) {
+			return;
 		};
+
+		const view = views[0];
+
+		DataUtil.searchSubscribe({
+			subId: this.getSubIdHighlighted(),
+			filters: view.filters,
+			sorts: view.sorts,
+			keys: [ 'id' ],
+			sources: block.content.sources,
+			ignoreDeleted: true,
+		});
 	};
 
 	close () {

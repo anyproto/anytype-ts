@@ -381,8 +381,6 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 		const { workspace } = commonStore;
 		const filters: I.Filter[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: this.getTabType() },
-			{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
-			{ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.Equal, value: false },
 		];
 		const sorts: I.Sort[] = [
 			{ type: I.SortType.Asc, relationKey: 'name' },
@@ -430,6 +428,8 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 			sorts,
 			keys: Constant.defaultRelationKeys.concat([ 'creator' ]),
 			ignoreWorkspace: true,
+			ignoreDeleted: true,
+			ignoreHidden: true,
 		}, (message: any) => {
 			this.setState({ loading: false });
 

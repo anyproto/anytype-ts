@@ -158,9 +158,7 @@ const ListObject = observer(class ListObject extends React.Component<Props, {}> 
 		const offset = (page - 1) * LIMIT;
 		const block = blockStore.getLeaf(rootId, blockId);
 		const subId = this.getSubId();
-		const filters = view.filters.concat([
-			{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
-		]);
+		const filters = [].concat(view.filters);
 
 		dbStore.metaSet(subId, '', { offset: offset });
 
@@ -172,6 +170,8 @@ const ListObject = observer(class ListObject extends React.Component<Props, {}> 
 			sources: block.content.sources,
 			offset,
 			limit: LIMIT,
+			ignoreHidden: true,
+			ignoreDeleted: true,
 		}, callBack);
 	};
 

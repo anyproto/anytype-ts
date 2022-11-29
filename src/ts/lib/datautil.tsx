@@ -268,20 +268,20 @@ class DataUtil {
 				keys: Constant.defaultRelationKeys.concat(Constant.typeRelationKeys),
 				filters: [
 					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: [ Constant.typeId.type, Constant.storeTypeId.type ] },
-					{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
 				],
 				noDeps: true,
 				ignoreWorkspace: true,
+				ignoreDeleted: true,
 			},
 			{
 				subId: Constant.subId.relation,
 				keys: Constant.relationRelationKeys,
 				filters: [
 					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: [ Constant.typeId.relation, Constant.storeTypeId.relation ] },
-					{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
 				],
 				noDeps: true,
 				ignoreWorkspace: true,
+				ignoreDeleted: true,
 				onSubscribe: () => {
 					dbStore.getRelations().forEach(it => dbStore.relationKeyMap[it.relationKey] = it.id);
 				}
@@ -291,9 +291,9 @@ class DataUtil {
 				keys: Constant.optionRelationKeys,
 				filters: [
 					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.option },
-					{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
 				],
-				noDeps: true
+				noDeps: true,
+				ignoreDeleted: true,
 			}
 		];
 
@@ -1192,7 +1192,7 @@ class DataUtil {
 	};
 
 	searchSubscribe (param: any, callBack?: (message: any) => void) {
-		const { workspace } = commonStore;
+		const { config, workspace } = commonStore;
 
 		param = Object.assign({
 			subId: '',
@@ -1204,13 +1204,15 @@ class DataUtil {
 			offset: 0,
 			limit: 0,
 			ignoreWorkspace: false,
-			ignoreArchive: false,
+			ignoreHidden: false,
+			ignoreDeleted: false,
+			withArchived: false,
 			noDeps: false,
 			afterId: '',
 			beforeId: '',
 		}, param);
 
-		const { subId, idField, filters, sorts, sources, offset, limit, ignoreWorkspace, afterId, beforeId, noDeps, withArchived } = param;
+		const { subId, idField, filters, sorts, sources, offset, limit, ignoreWorkspace, ignoreHidden, ignoreDeleted, afterId, beforeId, noDeps, withArchived } = param;
 		const keys: string[] = [ ...new Set(param.keys as string[]) ];
 
 		if (!subId) {
@@ -1220,6 +1222,14 @@ class DataUtil {
 
 		if (!ignoreWorkspace && workspace) {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'workspaceId', condition: I.FilterCondition.Equal, value: workspace });
+		};
+
+		if (ignoreHidden && !config.debug.ho) {
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true });
+		};
+
+		if (ignoreDeleted) {
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false });
 		};
 
 		if (!withArchived) {
@@ -1286,10 +1296,12 @@ class DataUtil {
 			offset: 0,
 			limit: 0,
 			ignoreWorkspace: false,
+			ignoreHidden: true,
+			ignoreDeleted: true,
 			withArchived: false,
 		}, param);
 
-		let { idField, filters, sorts, fullText, offset, limit, ignoreWorkspace, withArchived } = param;
+		let { idField, filters, sorts, fullText, offset, limit, ignoreWorkspace, ignoreDeleted, ignoreHidden, withArchived } = param;
 		let keys: string[] = [ ...new Set(param.keys as string[]) ];
 
 		filters.push({ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false });
@@ -1298,8 +1310,12 @@ class DataUtil {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'workspaceId', condition: I.FilterCondition.Equal, value: workspace });
 		};
 
-		if (!config.debug.ho) {
+		if (ignoreHidden && !config.debug.ho) {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true });
+		};
+
+		if (ignoreDeleted) {
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false });
 		};
 
 		if (!withArchived) {

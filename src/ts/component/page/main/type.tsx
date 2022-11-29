@@ -256,7 +256,6 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 		const object = detailStore.get(rootId, rootId);
 		const view = views[0];
 		const filters = view.filters.concat([
-			{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
 			{ operator: I.FilterOperator.And, relationKey: 'workspaceId', condition: I.FilterCondition.Equal, value: object.isInstalled ? workspace : Constant.storeSpaceId },
 		]);
 
@@ -267,6 +266,7 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 			keys: [ 'id' ],
 			sources: block.content.sources,
 			ignoreWorkspace: true,
+			ignoreDeleted: true,
 		});
 	};
 
@@ -464,7 +464,6 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 		const rootId = this.getRootId();
 
 		C.ObjectSetDetails(rootId, [ { key: 'recommendedLayout', value: layout } ]);
-
 		analytics.event('ChangeRecommendedLayout', { objectType: rootId, layout: layout });
 	};
 

@@ -125,18 +125,10 @@ class Dataview {
 			return it;
 		};
 
-		const { config } = commonStore;
 		const subId = dbStore.getSubId(rootId, blockId);
 		const { viewId } = dbStore.getMeta(subId, '');
 		const viewChange = newViewId != viewId;
 		const meta: any = { offset };
-		const filters = view.filters.concat([
-			{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
-		]);
-
-		if (!config.debug.ho) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.Equal, value: false });
-		};
 
 		if (viewChange) {
 			meta.viewId = newViewId;
@@ -150,12 +142,14 @@ class Dataview {
 		DataUtil.searchSubscribe({
 			param,
 			subId,
-			filters: filters.map(mapper),
+			filters: view.filters.map(mapper),
 			sorts: view.sorts.map(mapper),
 			keys,
 			sources: block.content.sources,
 			limit,
 			offset,
+			ignoreDeleted: true,
+			ignoreHidden: true,
 		}, callBack);
 	};
 

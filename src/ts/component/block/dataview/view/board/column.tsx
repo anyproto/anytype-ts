@@ -144,17 +144,14 @@ const Column = observer(class Column extends React.Component<Props, State> {
 		const { id, block, getView, getKeys, getSubId, applyObjectOrder, getLimit } = this.props;
 		const view = getView();
 		const relation = dbStore.getRelationByKey(view.groupRelationKey);
-		const subId = getSubId();
-		const limit = getLimit() + this.offset;
-
-		if (!relation) {
+		
+		if (!relation || !view) {
 			return;
 		};
 
-		const filters: I.Filter[] = view.filters.concat([
-			{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
-			{ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.Equal, value: false },
-		]);
+		const subId = getSubId();
+		const limit = getLimit() + this.offset;
+		const filters: I.Filter[] = [].concat(view.filters);
 
 		let value = this.props.value;
 		let filter: any = { operator: I.FilterOperator.And, relationKey: relation.relationKey };
@@ -191,6 +188,8 @@ const Column = observer(class Column extends React.Component<Props, State> {
 			keys: getKeys(view.id),
 			sources: block.content.sources,
 			limit,
+			ignoreHidden: true,
+			ignoreDeleted: true,
 		}, () => {
 			const records = dbStore.getRecords(subId, '');
 			dbStore.recordsSet(subId, '', applyObjectOrder(id, records));
