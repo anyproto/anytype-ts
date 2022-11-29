@@ -26,6 +26,7 @@ $transitionFast: all 0.2s ease-in-out;
 @mixin text-overflow { overflow: hidden; text-overflow: ellipsis; }
 @mixin text-overflow-nw { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
+@mixin text-extra-small { font-size: 10px; line-height: 18px; letter-spacing: 0.1px; color: $colorSecondary; }
 @mixin text-very-small { font-size: 11px; line-height: 18px; letter-spacing: 0.2px; color: $colorMediumGrey; }
 @mixin text-small { font-size: 12px; line-height: 18px; letter-spacing: 0px; }
 @mixin text-common { font-size: 14px; line-height: 22px; letter-spacing: -0.12px; }
