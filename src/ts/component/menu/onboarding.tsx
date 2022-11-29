@@ -20,8 +20,7 @@ class MenuOnboarding extends React.Component<Props, {}> {
 		const { param } = this.props;
 		const { data } = param;
 		const { key, current } = data;
-		const items = Docs.Help.Onboarding[key].items;
-		const category = Docs.Help.Onboarding[key].category;
+		const { items, category } = Docs.Help.Onboarding[key] || {};
 		const item = items[current];
 		const l = items.length;
 
@@ -35,7 +34,7 @@ class MenuOnboarding extends React.Component<Props, {}> {
 
 		return (
 			<div className="wrap">
-				<div className="name"  dangerouslySetInnerHTML={{ __html: item.name }} />
+				<div className="name" dangerouslySetInnerHTML={{ __html: item.name }} />
 				<div className="descr" dangerouslySetInnerHTML={{ __html: item.description }} />
 
 				<Icon className="close" onClick={this.onClose} />
@@ -44,7 +43,11 @@ class MenuOnboarding extends React.Component<Props, {}> {
 					<div className="bottom">
 						<div>
 							<Steps />
-							{category ? <div className="category"><strong>Onboarding: </strong>{category}</div> : ''}
+							{category ? (
+								<div className="category">
+									<b>Onboarding:</b> {category}
+								</div>
+							) : ''}
 						</div>
 						<div className="round" onClick={(e: any) => { this.onArrow(e, 1); }}>
 							<Icon className={current == l - 1 ? 'tick' : 'arrow'} />
