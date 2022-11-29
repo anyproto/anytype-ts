@@ -13,6 +13,7 @@ interface State {
 	loading: boolean;
 };
 
+const HEIGHT_FILTER = 44;
 const HEIGHT_ITEM = 28;
 const HEIGHT_DIV = 16;
 const LIMIT = 20;
@@ -229,6 +230,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<P
 		
 		const filters: any[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: [ Constant.typeId.type, Constant.storeTypeId.type ] },
+			{ operator: I.FilterOperator.And, relationKey: 'smartblockTypes', condition: I.FilterCondition.In, value: [ I.SmartBlockType.Page ] },
 		];
 
 		const sorts = [
@@ -280,9 +282,8 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<P
 		const { param } = this.props;
 		const { data } = param;
 		const { filter } = data;
-		const types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map(it => it.id);
 		const items = Util.objectCopy(this.items || []).map(it => { return { ...it, object: it }; });
-		const library = items.filter(it => (it.workspaceId == workspace) && types.includes(it.id));
+		const library = items.filter(it => (it.workspaceId == workspace));
 		const librarySources = library.map(it => it.source);
 
 		let sections: any[] = [
@@ -290,7 +291,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<P
 		];
 
 		if (filter) {
-			const marketplace = items.filter(it => (it.workspaceId == Constant.storeSpaceId) && types.includes(it.id) && !librarySources.includes(it.id));
+			const marketplace = items.filter(it => (it.workspaceId == Constant.storeSpaceId) && !librarySources.includes(it.id));
 			sections = sections.concat([
 				{ id: 'marketplace', name: 'Marketplace', children: marketplace },
 				{ children: [ { id: 'add', name: `Create type "${filter}"` } ] }
@@ -358,7 +359,8 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<P
 		let menuParam: I.MenuParam = {
 			element: `#${getId()}`,
 			offsetX: getSize().width,
-			offsetY: -getSize().height,
+			offsetY: getSize().height,
+			vertical: I.MenuDirection.Top,
 			isSub: true,
 			noFlipY: true,
 			data: {
@@ -387,7 +389,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<P
 						{ relationKey: 'name', type: I.SortType.Asc },
 					],
 					onSelect: (item: any) => {
-						console.log(item);
+						this.onClick(e, detailStore.check(item));
 					},
 				});
 				break;
@@ -454,7 +456,10 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<P
 		const { getId, position } = this.props;
 		const items = this.getItems();
 		const obj = $(`#${getId()} .content`);
-		const height = items.reduce((res: number, current: any) => { return res + this.getRowHeight(current); }, 60);
+		const height = Math.min(360, items.reduce((res: number, item: any) => {
+			res += this.getRowHeight(item);
+			return res;
+		}, HEIGHT_FILTER + 16));
 
 		obj.css({ height });
 		position();

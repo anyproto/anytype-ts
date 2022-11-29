@@ -488,13 +488,6 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		return h;
 	};
 
-	getListHeight (items: any) {
-		return Math.min(300, items.reduce((res: number, item: any) => {
-			res += this.getRowHeight(item);
-			return res;
-		}, 0));
-	};
-
 	resize () {
 		if (!this._isMounted) {
 			return;
@@ -503,7 +496,10 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		const { getId, position } = this.props;
 		const items = this.getItems();
 		const obj = $(`#${getId()} .content`);
-		const height = this.getListHeight(items) + HEIGHT_FILTER + 16;
+		const height = Math.min(360, items.reduce((res: number, item: any) => {
+			res += this.getRowHeight(item);
+			return res;
+		}, HEIGHT_FILTER + 16));
 
 		obj.css({ height });
 		position();
