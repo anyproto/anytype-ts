@@ -234,7 +234,8 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<P
 		];
 
 		const sorts = [
-			{ relationKey: 'name', type: I.SortType.Asc }
+			{ relationKey: 'workspaceId', type: I.SortType.Desc },
+			{ relationKey: 'name', type: I.SortType.Asc },
 		];
 
 		if (skipIds && skipIds.length) {
@@ -348,7 +349,12 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<P
 	};
 
 	onOver (e: any, item: any) {
-		if (!this._isMounted || !item.arrow) {
+		if (!this._isMounted) {
+			return;
+		};
+
+		if (!item.arrow) {
+			menuStore.closeAll([ 'searchObject' ]);
 			return;
 		};
 
@@ -357,10 +363,9 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<P
 
 		let menuId = '';
 		let menuParam: I.MenuParam = {
-			element: `#${getId()}`,
+			element: `#${getId()} #item-${item.id}`,
 			offsetX: getSize().width,
-			offsetY: getSize().height,
-			vertical: I.MenuDirection.Top,
+			offsetY: -getSize().height + 8,
 			isSub: true,
 			noFlipY: true,
 			data: {
@@ -374,15 +379,13 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<P
 				menuId = 'searchObject';
 				menuParam.className = 'single';
 
-				console.log(Constant.defaultRelationKeys);
-
 				menuParam.data = Object.assign(menuParam.data, {
 					ignoreWorkspace: true,
 					keys: Constant.defaultRelationKeys.concat(Constant.typeRelationKeys),
 					filters: [
 						{ operator: I.FilterOperator.And, relationKey: 'workspaceId', condition: I.FilterCondition.Equal, value: Constant.storeSpaceId },
 						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.storeTypeId.type },
-						{ operator: I.FilterOperator.And, relationKey: 'source', condition: I.FilterCondition.NotIn, value: sources },
+						{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: sources },
 						{ operator: I.FilterOperator.And, relationKey: 'smartblockTypes', condition: I.FilterCondition.In, value: [ I.SmartBlockType.Page ] },
 					],
 					sorts: [
