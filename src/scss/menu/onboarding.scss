@@ -1,10 +1,8 @@
 @import "~scss/_vars";
 
 .menus {
-	.menu.menuOnboarding { width: 288px; background: #fff; color: #2C2B27; }
+	.menu.menuOnboarding { width: 288px; background: #fff; color: $colorBlack; }
 	.menu.menuOnboarding {
-		.arrowDirection { background-image: url('~img/arrow/tooltipDirection.svg'); }
-
 		.content { padding: 12px 16px; }
 		.wrap { display: flex; flex-direction: column; }
 

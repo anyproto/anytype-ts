@@ -25,8 +25,6 @@ class MenuOnboarding extends React.Component<Props, {}> {
 		const item = items[current];
 		const l = items.length;
 
-		console.log('CATEGORY: ', category)
-
 		const Steps = () => (
 			<div className="steps">
 				{[...Array(l)].map((e, i) => {
@@ -140,7 +138,7 @@ class MenuOnboarding extends React.Component<Props, {}> {
 		if ((dir > 0) && (current == items.length - 1)) {
 			this.onClose();
 			return;
-		}
+		};
 
 		this.onClick(e, current + dir);
 	};
