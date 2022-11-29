@@ -476,12 +476,12 @@ class Keyboard {
 		Renderer.send('winCommand', 'saveAsHTML', { name: object.name });
 	};
 
-	onPrintToPDF () {
+	onPrintToPDF (options) {
 		const rootId = this.getRootId();
 		const object = detailStore.get(rootId, rootId);
 
 		this.printApply('print', true);
-		Renderer.send('winCommand', 'printToPDF', { name: object.name });
+		Renderer.send('winCommand', 'printToPDF', { name: object.name, options: options });
 	};
 
 	onSearchMenu (value: string) {

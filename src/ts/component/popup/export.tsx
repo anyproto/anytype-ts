@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { I, Action, keyboard, Storage } from 'Lib';
+import {I, Action, keyboard, Storage, Renderer} from 'Lib';
 import { Title, Select, Button, Switch } from 'Component';
 import { commonStore } from 'Store';
 import { observer } from 'mobx-react';
@@ -12,6 +12,9 @@ const PopupExport = observer(class PopupExport extends React.Component<Props, {}
 	zip: boolean = false;
 	nested: boolean = false;
 	files: boolean = true;
+	landscape: boolean = false;
+	pageSize: any = { id: 'A4', name: 'A4'};
+	printBackground: boolean = true;
 
 	constructor(props: any) {
 		super(props);
@@ -28,33 +31,87 @@ const PopupExport = observer(class PopupExport extends React.Component<Props, {}
 			(config.experimental ? { id: I.ExportFormat.Pdf, name: 'PDF' } : null),
 		];
 
+		const pageSize = [
+			{ id: 'A3', name: 'A3'},
+			{ id: 'A4', name: 'A4'},
+			{ id: 'A5', name: 'A5'},
+			{ id: 'legal', name: 'Legal'},
+			{ id: 'letter', name: 'Letter'},
+			{ id: 'tabloid', name: 'Tabloid'},
+		];
+
+		const exportOptions = (item: any, i: number) => {
+			let control = null;
+
+			switch (item.control) {
+				case 'switch':
+					control = (
+						<Switch
+							className="big"
+							value={this[item.id]}
+							onChange={(e: any, v: boolean) => {
+								this[item.id] = v;
+								this.save();
+							}}
+						/>
+					);
+					break;
+
+				case 'select':
+					control = (
+						<Select
+							id={item.id}
+							value={this[item.id].id}
+							options={item.options}
+							onChange={(v: any) => {
+								this[item.id] = v;
+								this.save();
+							}}
+							arrowClassName="light"
+							menuWidth={300}
+							isMultiple={false}
+						/>
+					);
+					break;
+			};
+
+			return (
+				<div key={i} className="row">
+					<div className="name">{item.name}</div>
+					<div className="value">
+						{control}
+					</div>
+				</div>
+			);
+		};
+
 		this.init();
 
+		let items = null;
 		let options = null;
-		if (this.format == I.ExportFormat.Markdown) {
-			const items = [
-				{ id: 'zip', name: 'Zip archive' },
-				{ id: 'nested', name: 'Include linked objects' },
-				{ id: 'files', name: 'Include files' },
-			];
 
+		switch (this.format) {
+			case I.ExportFormat.Markdown:
+				items = [
+					{ id: 'zip', name: 'Zip archive', control: 'switch' },
+					{ id: 'nested', name: 'Include linked objects', control: 'switch' },
+					{ id: 'files', name: 'Include files', control: 'switch' },
+				];
+				break;
+
+			case I.ExportFormat.Pdf:
+				items = [
+					{ id: 'pageSize', name: 'Page size', control: 'select', options: pageSize },
+					{ id: 'landscape', name: 'Landscape', control: 'switch' },
+					{ id: 'printBackground', name: 'Print background', control: 'switch' },
+				];
+				break;
+		};
+
+		if (items) {
 			options = (
 				<React.Fragment>
-					{items.map((item: any, i: number) => (
-						<div key={i} className="row">
-							<div className="name">{item.name}</div>
-							<div className="value">
-								<Switch 
-									className="big" 
-									value={this[item.id]} 
-									onChange={(e: any, v: boolean) => { 
-										this[item.id] = v; 
-										this.save();
-									}} 
-								/>
-							</div>
-						</div>
-					))}
+					{items.map(exportOptions)}
 				</React.Fragment>
 			);
 		};
@@ -124,7 +181,11 @@ const PopupExport = observer(class PopupExport extends React.Component<Props, {}
 				break;
 
 			case I.ExportFormat.Pdf:
-				keyboard.onPrintToPDF();
+				keyboard.onPrintToPDF({
+					landscape: this.landscape,
+					printBackground: this.printBackground,
+					pageSize: this.pageSize.id
+				});
 				break;
 		};
 		

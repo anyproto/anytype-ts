@@ -200,7 +200,7 @@ class WindowManager {
 					if ((files == undefined) || !files.length) {
 						Util.send(win, 'command', 'saveAsHTMLSuccess');
 					} else {
-						Util.printPDF(win, files[0], param.name);
+						Util.printPDF(win, files[0], param.name, param.options);
 					};
 				});
 				break;

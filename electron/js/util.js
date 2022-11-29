@@ -172,10 +172,9 @@ class Util {
 		});
 	};
 
-	printPDF (win, exportPath, name) {
+	printPDF (win, exportPath, name, options) {
 		name = String(name || 'untitled').replace(/[^\w -\._]/gi, ' ').trim();
 
-		let options = {};
 		let pdfPath = path.join(exportPath, name + '.pdf');
 
 		win.webContents.printToPDF(options).then(data => {
