@@ -567,7 +567,7 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 				const arrowDirection = this.getArrowDirection();
 				const size = this.getSize();
 				const { width, height } = size;
-				const min = 6;
+				const min = 8;
 				const css: any = { left: '', right: '', top: '', bottom: '' };
 
 				switch (arrowDirection) {

@@ -393,15 +393,22 @@ class Relation {
 		return ret;
 	};
 
-	getSetOfObjects (rootId: string, objectId: string, typeId: string) {
+	getSetOfObjects (rootId: string, objectId: string, type: string) {
 		const object = detailStore.get(rootId, objectId, [ 'setOf' ]);
 		const setOf = this.getArrayValue(object.setOf);
 		const ret = [];
 
 		setOf.forEach((id: string) => {
-			let el = dbStore.getType(id);
-			if (!el) {
-				el = dbStore.getRelationById(id);
+			let el = null;
+
+			switch (type) {
+				case Constant.typeId.type:
+					el = dbStore.getType(id);
+					break;
+
+				case Constant.typeId.relation:
+					el = dbStore.getRelationById(id);
+					break;
 			};
 
 			if (el) {
@@ -409,7 +416,7 @@ class Relation {
 			};
 		});
 
-		return ret.filter(it => typeId == it.type);
+		return ret;
 	};
 	
 };

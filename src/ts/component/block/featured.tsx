@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { I, C, DataUtil, Util, focus, analytics, Relation, translate, Onboarding } from 'Lib';
@@ -175,30 +176,51 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 	};
 	
 	componentDidMount () {
+		const { isInsidePreview } = this.props;
 		this._isMounted = true;
 
-		const { rootId, isPopup } = this.props;
-		const storeId = this.getStoreId();
-		const object = detailStore.get(rootId, storeId);
-		const setOf = Relation.getArrayValue(object.setOf);
-		const type = detailStore.get(rootId, object.type);
-
-		if ((object.layout == I.ObjectLayout.Set) && !setOf.length) {
-			window.setTimeout(() => { this.onSource(); }, Constant.delay.menu);
-		};
-
-		if (!type || type.isDeleted) {
-			Onboarding.start('typeDeleted', isPopup);
+		if (!isInsidePreview) {
+			window.setTimeout(() => {
+				this.checkType();
+				this.checkSource();
+			}, Constant.delay.menu);
 		};
 	};
 
 	componentWillUnmount () {
 		this._isMounted = false;
 	};
+
+	checkType () {
+		const { rootId, isPopup } = this.props;
+		const storeId = this.getStoreId();
+		const object = detailStore.get(rootId, storeId);
+		const type = detailStore.get(rootId, object.type);
+
+		if (!type || type.isDeleted) {
+			Onboarding.start('typeDeleted', isPopup);
+		};
+	};
 	
-	onFocus () {
-		const { block } = this.props;
-		focus.set(block.id, { from: 0, to: 0 });
+	checkSource () {
+		const { rootId, isPopup } = this.props;
+		const storeId = this.getStoreId();
+		const object = detailStore.get(rootId, storeId);
+
+		if (!object || object._empty_ || (object.layout != I.ObjectLayout.Set)) {
+			return;
+		};
+
+		const setOf = Relation.getArrayValue(object.setOf);
+		const types = Relation.getSetOfObjects(rootId, rootId, Constant.typeId.type);
+		const relations = Relation.getSetOfObjects(rootId, rootId, Constant.typeId.relation);
+
+		if (!setOf.length) {
+			this.onSource();
+		} else 
+		if (setOf.length && (setOf.length > (types.length + relations.length))) {
+			Onboarding.start('sourceDeleted', isPopup, true);
+		};
 	};
 
 	getItems () {
@@ -218,6 +240,11 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			};
 			return true;
 		});
+	};
+
+	onFocus () {
+		const { block } = this.props;
+		focus.set(block.id, { from: 0, to: 0 });
 	};
 
 	onKeyDown (e: any) {

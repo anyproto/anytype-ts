@@ -42,7 +42,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props, {}> {
 			title: DataUtil.defaultName(type),
 			description: 'Add a description',
 		};
-		const featured: any = new M.Block({ id: rootId + '-featured', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
+		const featured: any = new M.Block({ id: 'featuredRelations', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
 
 		let canEditIcon = allowDetails;
 		if (object.type == Constant.typeId.relation) {

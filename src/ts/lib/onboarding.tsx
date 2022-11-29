@@ -24,7 +24,7 @@ class Onboarding {
 					noFlipY: true,
 					noFlipX: true,
 					onClose: () => { 
-						this.start(this.getReminderKey(key), isPopup, false);
+						this.start(this.getReminderKey(key), isPopup, force);
 						
 						Storage.setOnboarding(key); 
 					},

@@ -76,7 +76,7 @@ const GraphPreview = observer(class PreviewObject extends React.Component<Props,
 						<div className="heading">
 							{title}
 							{descr}
-							<Block {...this.props} key={featured.id} rootId={contextId} traceId={TRACE} iconSize={20} block={featured} readonly={true} />
+							<Block {...this.props} key={featured.id} rootId={contextId} traceId={TRACE} iconSize={20} block={featured} readonly={true} isInsidePreview={true} />
 						</div>
 						<div className="buttons">
 							<Button text="Open" onClick={(e: any) => { DataUtil.objectOpenPopup(object); }} />

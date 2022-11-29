@@ -302,4 +302,15 @@ export default {
             }
         },
     ],
+
+	sourceDeleted: [
+        {
+            name: 'Please check your Installed Types & Relations',
+            description: 'Some Objects in this Set use Types or Relations that have been removed from your Space. Visit the Marketplace to re-install these entities and continue using your Set.',
+            param: {
+                element: '#block-featuredRelations #blockFeatured-setOf-0',
+                offsetY: 10,
+            }
+        },
+    ],
 }
