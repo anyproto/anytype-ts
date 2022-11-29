@@ -7,11 +7,12 @@ import Constant from 'json/constant.json';
 class Onboarding {
 	
 	start (key: string, isPopup: boolean, force?: boolean) {
-		const items = Docs.Help.Onboarding[key];
-		if (!items || !items.length || (!force && Storage.getOnboarding(key))) {
+		const section = Docs.Help.Onboarding[key];
+		if (!section || !section.items || !section.items.length || (!force && Storage.getOnboarding(key))) {
 			return;
 		};
 
+		const items = section.items;
 		const t = isPopup ? Constant.delay.popup : 0;
 
 		menuStore.close('onboarding', () => {

@@ -281,15 +281,21 @@
 
     /* MenuOnboarding */
 
-	.menu.menuOnboarding { width: 288px; background: #fff; color: #000; box-shadow: 0px 4px 16px rgb(0 0 0 / 20%); }
+	.menu.menuOnboarding { width: 288px; background: $colorBlack; color: #fff; box-shadow: 0px 4px 16px rgb(0 0 0 / 20%); }
 	.menu.menuOnboarding {
-		a { color: #000; }
-
+		a { color: #fff; }
         .icon.close:hover { background-image: url('#{$themePath}/icon/menu/onboarding/close1.svg'); }
 
         .bottom {
-			.icon.arrow:hover { background-image: url('#{$themePath}/arrow/onboarding1.svg'); }
-			.icon.arrow.disabled:hover { background-image: url('~img/arrow/onboarding0.svg'); }
+            .round {
+                .icon.arrow { background-image: url('#{$themePath}/arrow/onboarding.svg'); }
+                .icon.tick { background-image: url('#{$themePath}/icon/menu/onboarding/tick.svg'); }
+            }
+            .steps {
+                .step:not(.active) { background: #3A3935; }
+                .step:not(.active):hover { background: $colorLinePrimary; }
+            }
+            .category { color: #5C5A54; }
         }
 	}
 
