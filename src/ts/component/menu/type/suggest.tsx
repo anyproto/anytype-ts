@@ -3,8 +3,8 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, Icon, MenuItemVertical, Loader } from 'Component';
-import { I, C, analytics, keyboard, DataUtil, Action } from 'Lib';
-import { commonStore, dbStore, detailStore } from 'Store';
+import { I, C, analytics, keyboard, DataUtil, Action, Util } from 'Lib';
+import { commonStore, dbStore, detailStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
 interface Props extends I.Menu {};
@@ -62,7 +62,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<P
 					<div 
 						id="item-add" 
 						className="item add" 
-						onMouseEnter={(e: any) => { this.onOver(e, item); }} 
+						onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }} 
 						onClick={(e: any) => { this.onClick(e, item); }} 
 						style={param.style}
 					>
@@ -86,8 +86,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<P
 						{...item}
 						className={item.isHidden ? 'isHidden' : ''}
 						style={param.style}
-						object={item}
-						onMouseEnter={(e: any) => { this.onOver(e, item); }} 
+						onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }} 
 						onClick={(e: any) => { this.onClick(e, item); }}
 					/>
 				);
@@ -187,6 +186,10 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<P
 	
 	componentWillUnmount () {
 		this._isMounted = false;
+
+		menuStore.closeAll([ 'searchObject' ]);
+		menuStore.clearTimeout();
+
 		window.clearTimeout(this.timeoutFilter);
 	};
 
@@ -274,37 +277,58 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<P
 
 	getSections () {
 		const { workspace } = commonStore;
-		const types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map(it => it.id);
-		const library = this.items.filter(it => (it.workspaceId == workspace) && types.includes(it.id));
-		const librarySources = library.map(it => it.source);
-		const marketplace = this.items.filter(it => (it.workspaceId == Constant.storeSpaceId) && types.includes(it.id) && !librarySources.includes(it.id));
-
-		return [
-			{ id: 'library', name: 'My types', children: library },
-			{ id: 'marketplace', name: 'Marketplace', children: marketplace },
-		].filter((section: any) => {
-			section.children = section.children.filter(it => it);
-			return section.children.length > 0;
-		});
-	};
-	
-	getItems () {
 		const { param } = this.props;
 		const { data } = param;
 		const { filter } = data;
-		const name = filter ? `Create object type "${filter}"` : 'Create new object type';
-		const sections = this.getSections();
+		const types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map(it => it.id);
+		const items = Util.objectCopy(this.items || []).map(it => { return { ...it, object: it }; });
+		const library = items.filter(it => (it.workspaceId == workspace) && types.includes(it.id));
+		const librarySources = library.map(it => it.source);
 
+		let sections: any[] = [
+			{ id: 'library', name: 'My types', children: library },
+		];
+
+		if (filter) {
+			const marketplace = items.filter(it => (it.workspaceId == Constant.storeSpaceId) && types.includes(it.id) && !librarySources.includes(it.id));
+			sections = sections.concat([
+				{ id: 'marketplace', name: 'Marketplace', children: marketplace },
+				{ children: [ { id: 'add', name: `Create type "${filter}"` } ] }
+			]);
+		} else {
+			sections = sections.concat([
+				{ 
+					children: [
+						{ id: 'marketplace', icon: 'folder', name: 'Marketplace', arrow: true }
+					] 
+				},
+			])
+		};
+
+		sections = sections.filter((section: any) => {
+			section.children = section.children.filter(it => it);
+			return section.children.length > 0;
+		});
+
+		return sections;
+	};
+	
+	getItems () {
+		let sections = this.getSections();
 		let items: any[] = [];
-		for (let section of sections) {
+
+		sections.forEach((section: any, i: number) => {
 			if (section.name && section) {
 				items.push({ id: section.id, name: section.name, isSection: true });
 			};
-			items = items.concat(section.children);
-			items.push({ isDiv: true });
-		};
 
-		items.push({ id: 'add', name: name });
+			items = items.concat(section.children);
+
+			if (i < sections.length - 1) {
+				items.push({ isDiv: true });
+			};
+		});
+
 		return items;
 	};
 
@@ -315,9 +339,64 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<P
 		}, 500);
 	};
 
-	onOver (e: any, item: any) {
+	onMouseEnter (e: any, item: any) {
 		if (!keyboard.isMouseDisabled) {
 			this.props.setActive(item, false);
+			this.onOver(e, item);
+		};
+	};
+
+	onOver (e: any, item: any) {
+		if (!this._isMounted || !item.arrow) {
+			return;
+		};
+
+		const { getId, getSize } = this.props;
+		const sources = this.getLibrarySources();
+
+		let menuId = '';
+		let menuParam: I.MenuParam = {
+			element: `#${getId()}`,
+			offsetX: getSize().width,
+			offsetY: -getSize().height,
+			isSub: true,
+			noFlipY: true,
+			data: {
+				rebind: this.rebind,
+				ignoreWorkspace: true,
+			},
+		};
+
+		switch (item.id) {
+			case 'marketplace':
+				menuId = 'searchObject';
+				menuParam.className = 'single';
+
+				console.log(Constant.defaultRelationKeys);
+
+				menuParam.data = Object.assign(menuParam.data, {
+					ignoreWorkspace: true,
+					keys: Constant.defaultRelationKeys.concat(Constant.typeRelationKeys),
+					filters: [
+						{ operator: I.FilterOperator.And, relationKey: 'workspaceId', condition: I.FilterCondition.Equal, value: Constant.storeSpaceId },
+						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.storeTypeId.type },
+						{ operator: I.FilterOperator.And, relationKey: 'source', condition: I.FilterCondition.NotIn, value: sources },
+						{ operator: I.FilterOperator.And, relationKey: 'smartblockTypes', condition: I.FilterCondition.In, value: [ I.SmartBlockType.Page ] },
+					],
+					sorts: [
+						{ relationKey: 'name', type: I.SortType.Asc },
+					],
+					onSelect: (item: any) => {
+						console.log(item);
+					},
+				});
+				break;
+		};
+
+		if (menuId && !menuStore.isOpen(menuId, item.id)) {
+			menuStore.closeAll([ 'searchObject' ], () => {
+				menuStore.open(menuId, menuParam);
+			});
 		};
 	};
 	
@@ -325,6 +404,10 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<P
 		const { close, param } = this.props;
 		const { data } = param;
 		const { filter, onClick } = data;
+
+		if (item.arrow) {
+			return;
+		};
 
 		e.preventDefault();
 		e.stopPropagation();
@@ -357,6 +440,14 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<P
 		let h = HEIGHT_ITEM;
 		if (item.isDiv) h = HEIGHT_DIV;
 		return h;
+	};
+
+	getLibrarySources () {
+		const { workspace } = commonStore;
+		const types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map(it => it.id);
+		const library = this.items.filter(it => (it.workspaceId == workspace) && types.includes(it.id));
+
+		return library.map(it => it.source);
 	};
 
 	resize () {

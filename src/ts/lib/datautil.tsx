@@ -1192,7 +1192,7 @@ class DataUtil {
 	};
 
 	searchSubscribe (param: any, callBack?: (message: any) => void) {
-		const { config, workspace } = commonStore;
+		const { workspace } = commonStore;
 
 		param = Object.assign({
 			subId: '',
@@ -1210,7 +1210,8 @@ class DataUtil {
 			beforeId: '',
 		}, param);
 
-		const { subId, idField, filters, sorts, keys, sources, offset, limit, ignoreWorkspace, afterId, beforeId, noDeps, withArchived } = param;
+		const { subId, idField, filters, sorts, sources, offset, limit, ignoreWorkspace, afterId, beforeId, noDeps, withArchived } = param;
+		const keys: string[] = [ ...new Set(param.keys as string[]) ];
 
 		if (!subId) {
 			console.error('[DataUtil].searchSubscribe: subId is empty');
@@ -1288,7 +1289,8 @@ class DataUtil {
 			withArchived: false,
 		}, param);
 
-		let { idField, filters, sorts, keys, fullText, offset, limit, ignoreWorkspace, withArchived } = param;
+		let { idField, filters, sorts, fullText, offset, limit, ignoreWorkspace, withArchived } = param;
+		let keys: string[] = [ ...new Set(param.keys as string[]) ];
 
 		filters.push({ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false });
 

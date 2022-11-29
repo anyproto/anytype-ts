@@ -283,7 +283,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 
 		const { param } = this.props;
 		const { data } = param;
-		const { type, dataMapper, dataSort, skipIds, keys } = data;
+		const { type, dataMapper, dataSort, skipIds, keys, ignoreWorkspace } = data;
 		const filter = String(data.filter || '');
 		
 		const filters: any[] = [
@@ -314,6 +314,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 			fullText: filter,
 			offset: this.offset,
 			limit: Constant.limitMenuRecords,
+			ignoreWorkspace: ('undefined' == typeof(ignoreWorkspace) ? false : ignoreWorkspace),
 		}, (message: any) => {
 			if (!this._isMounted) {
 				return;
