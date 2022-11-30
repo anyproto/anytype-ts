@@ -1057,11 +1057,11 @@ class Util {
 
 		let ret = [];
 		for (let item of items) {
-			if (item.kind == 'string') {
+			if ((item.kind == 'string') && (item.type == 'text/html')) {
 				ret.push(item);
 			};
 		};
-		return items;
+		return ret;
 	};
 
 	getDataTransferString (items: any[], callBack: (data: string) => void) {
