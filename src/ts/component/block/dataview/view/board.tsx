@@ -2,12 +2,14 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { set } from 'mobx';
 import { observer } from 'mobx-react';
+import { observable } from 'mobx';
 import arrayMove from 'array-move';
 import $ from 'jquery';
 import raf from 'raf';
 import { Loader } from 'Component';
 import { I, C, Util, DataUtil, analytics, keyboard, Relation } from 'Lib';
-import { dbStore, detailStore, popupStore, menuStore, commonStore } from 'Store';
+import { dbStore, detailStore, popupStore, menuStore, commonStore, blockStore } from 'Store';
+import Empty from '../empty';
 import Column from './board/column';
 import Constant from 'json/constant.json';
 
@@ -37,6 +39,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 	constructor (props: any) {
 		super(props);
 		
+		this.onView = this.onView.bind(this);
 		this.onRecordAdd = this.onRecordAdd.bind(this);
 		this.onDragStartColumn = this.onDragStartColumn.bind(this);
 		this.onDragStartCard = this.onDragStartCard.bind(this);
@@ -45,8 +48,22 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 
 	render () {
 		const { loading } = this.state;
-		const { rootId, block } = this.props;
+		const { rootId, block, getView } = this.props;
+		const view = getView();
 		const groups = this.getGroups(false);
+		const relation = dbStore.getRelationByKey(view.groupRelationKey);
+
+		if (!relation || !relation.isInstalled) {
+			return (
+				<Empty 
+					{...this.props}
+					title="Relation has been deleted" 
+					description="Choose another relation to group the canban"
+					button="Open view settings"
+					onClick={this.onView}
+				/>
+			);
+		};
 
 		return (
 			<div className="wrap">
@@ -635,6 +652,26 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 				});
 			});
 		};
+	};
+
+	onView (e: any) {
+		e.stopPropagation();
+
+		const { rootId, block, getView } = this.props;
+		const view = getView();
+		const allowed = blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.View ]);
+
+		menuStore.open('dataviewViewEdit', { 
+			element: `#dataviewEmpty-${block.id} .button`,
+			horizontal: I.MenuDirection.Center,
+			offsetY: 10,
+			data: {
+				readonly: !allowed,
+				view: observable.box(view),
+				getView,
+				onSave: () => { this.forceUpdate(); },
+			}
+		});
 	};
 
 	resize () {

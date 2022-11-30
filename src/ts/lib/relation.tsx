@@ -243,17 +243,18 @@ class Relation {
 	};
 
 	getFilterOptions (rootId: string, blockId: string, view: I.View) {
-		let relations: any[] = Dataview.viewGetRelations(rootId, blockId, view).filter((it: I.ViewRelation) => { 
+		const formats = [ I.RelationType.File ];
+		const ret: any[] = [];
+		const relations: any[] = Dataview.viewGetRelations(rootId, blockId, view).filter((it: I.ViewRelation) => { 
 			const relation = dbStore.getRelationByKey(it.relationKey);
-			return relation && (relation.format != I.RelationType.File) && (it.relationKey != 'done');
+			return relation && !formats.includes(relation.format) && (it.relationKey != 'done');
 		});
-		let idxName = relations.findIndex(it => it.relationKey == 'name');
+		const idxName = relations.findIndex(it => it.relationKey == 'name');
 
 		relations.splice((idxName >= 0 ? idxName + 1 : 0), 0, {
 			relationKey: 'done',
 		});
 
-		let ret: any[] = [];
 		relations.forEach((it: I.ViewRelation) => {
 			const relation: any = dbStore.getRelationByKey(it.relationKey);
 			if (!relation) {
@@ -282,9 +283,10 @@ class Relation {
 
 	getCoverOptions (rootId: string, blockId: string) {
 		const { config } = commonStore;
+		const formats = [ I.RelationType.File ];
 
 		const options: any[] = Util.objectCopy(dbStore.getObjectRelations(rootId, blockId)).filter((it: any) => {
-			return !it.isHidden && (it.format == I.RelationType.File);
+			return it.isInstalled && !it.isHidden && formats.includes(it.format);
 		}).map((it: any) => {
 			return { 
 				id: it.relationKey, 
@@ -308,22 +310,22 @@ class Relation {
 	getGroupOptions (rootId: string, blockId: string) {
 		const formats = [ I.RelationType.Status, I.RelationType.Tag, I.RelationType.Checkbox ];
 		
-		let options: any[] = dbStore.getObjectRelations(rootId, blockId);
-
-		options = options.filter((it: any) => {
-			return it && formats.includes(it.format) && (!it.isHidden || [ 'done' ].includes(it.relationKey));
+		let options: any[] = dbStore.getObjectRelations(rootId, blockId).filter((it: any) => {
+			return it.isInstalled && formats.includes(it.format) && (!it.isHidden || [ 'done' ].includes(it.relationKey));
 		});
 
 		options.sort((c1: any, c2: any) => {
-			if ((c1.format == I.RelationType.Status) && (c2.format != I.RelationType.Status)) return -1;
-			if ((c1.format != I.RelationType.Status) && (c2.format == I.RelationType.Status)) return 1;
+			const f1 = c1.format;
+			const f2 = c2.format;
 
-			if ((c1.format == I.RelationType.Tag) && (c2.format != I.RelationType.Tag)) return -1;
-			if ((c1.format != I.RelationType.Tag) && (c2.format == I.RelationType.Tag)) return 1;
+			if ((f1 == I.RelationType.Status) && (f2 != I.RelationType.Status)) return -1;
+			if ((f1 != I.RelationType.Status) && (f2 == I.RelationType.Status)) return 1;
 
-			if ((c1.format == I.RelationType.Checkbox) && (c2.format != I.RelationType.Checkbox)) return -1;
-			if ((c1.format != I.RelationType.Checkbox) && (c2.format == I.RelationType.Checkbox)) return 1;
+			if ((f1 == I.RelationType.Tag) && (f2 != I.RelationType.Tag)) return -1;
+			if ((f1 != I.RelationType.Tag) && (f2 == I.RelationType.Tag)) return 1;
 
+			if ((f1 == I.RelationType.Checkbox) && (f2 != I.RelationType.Checkbox)) return -1;
+			if ((f1 != I.RelationType.Checkbox) && (f2 == I.RelationType.Checkbox)) return 1;
 			return 0;
 		});
 

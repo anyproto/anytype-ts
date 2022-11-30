@@ -34,7 +34,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<Props, {}
 	};
 
 	render () {
-		const { rootId, block, getData, getView, getKeys, isPopup, isInline, getLimit } = this.props;
+		const { rootId, block, getView, getKeys, isPopup, isInline, getLimit, onRecordAdd } = this.props;
 		const view = getView();
 		const relations = view.getVisibleRelations();
 		const subId = dbStore.getSubId(rootId, block.id);
@@ -45,7 +45,15 @@ const ViewGallery = observer(class ViewGallery extends React.Component<Props, {}
 		const length = records.length;
 
 		if (!length) {
-			return <Empty {...this.props} />;
+			return (
+				<Empty 
+					{...this.props}
+					title="No objects of this type" 
+					description="Create the first object of this type to start your set"
+					button="Add a new object"
+					onClick={(e: any) => onRecordAdd(e, 1)}
+				/>
+			);
 		};
 
 		// Subscriptions on dependent objects

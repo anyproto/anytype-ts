@@ -36,9 +36,9 @@
 
 		.dataviewEmpty { 
 			color: $colorDarkGrey; height: 230px; display: flex; align-items: center; justify-content: center; border-bottom: 1px solid $colorLightGrey;
+			text-align: center;
 		}
 		.dataviewEmpty {
-			.inner { width: 174px; text-align: center; }
 			.name { font-weight: 500; margin: 0px 0px 2px 0px; }
 			.descr { @include text-small; margin: 0px 0px 12px 0px; }
 		}
