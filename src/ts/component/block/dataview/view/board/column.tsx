@@ -149,9 +149,16 @@ const Column = observer(class Column extends React.Component<Props, State> {
 			return;
 		};
 
+		const el = block.content.objectOrder.find(it => (it.viewId == view.id) && (it.groupId == id));
+		const objectIds = el ? el.objectIds || [] : [];
 		const subId = getSubId();
 		const limit = getLimit() + this.offset;
 		const filters: I.Filter[] = [].concat(view.filters);
+		const sorts: I.Sort[] = [].concat(view.sorts);
+
+		if (objectIds.length) {
+			sorts.unshift({ relationKey: '', type: I.SortType.Custom, customOrder: objectIds });
+		};
 
 		let value = this.props.value;
 		let filter: any = { operator: I.FilterOperator.And, relationKey: relation.relationKey };
@@ -184,7 +191,7 @@ const Column = observer(class Column extends React.Component<Props, State> {
 		DataUtil.searchSubscribe({
 			subId,
 			filters,
-			sorts: view.sorts,
+			sorts,
 			keys: getKeys(view.id),
 			sources: block.content.sources,
 			limit,
