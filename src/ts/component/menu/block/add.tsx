@@ -277,23 +277,22 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 		const { data } = param;
 		const { rootId } = data;
 		const { config } = commonStore;
-	
-		let relations = dbStore.getObjectRelations(rootId, rootId).sort(DataUtil.sortByName);
-		
-		relations = relations.filter((it: any) => {
-			return it ? (!config.debug.ho ? !it.isHidden : true) : false;
-		});
-
-		let items = [
-			{ id: 'add', name: 'New relation', isRelationAdd: true },
-		];
-		items = items.concat(relations).map((it: any) => {
+		const relations = dbStore.getObjectRelations(rootId, rootId).filter((it: any) => {
+			if (!config.debug.ho && it.isHidden) {
+				return false;
+			};
+			return it.isInstalled;
+		}).sort(DataUtil.sortByName).map((it: any) => {
 			it.type = I.BlockType.Relation;
 			it.isRelation = true;
 			it.isBlock = true;
 			return it;
 		});
-		return items;
+
+		return [
+			{ id: 'add', name: 'New relation', isRelationAdd: true },
+			...relations,
+		];
 	};
 	
 	getSections () {

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Cell, Icon } from 'Component';
-import { I, C, DataUtil, Util, focus, analytics, Relation, keyboard } from 'Lib';
+import { I, C, DataUtil, Util, focus, analytics, Relation, keyboard, translate } from 'Lib';
 import { observer } from 'mobx-react';
 import { menuStore, detailStore, dbStore, blockStore } from 'Store';
 
@@ -32,9 +32,21 @@ const BlockRelation = observer(class BlockRelation extends React.Component<Props
 		const idPrefix = 'blockRelationCell' + block.id;
 		const id = Relation.cellId(idPrefix, key, '0');
 		const allowedValue = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]) && relation && !relation.isReadonlyValue;
+		const isDeleted = !relation || !relation.isInstalled;
+		const name = isDeleted ? translate('commonDeletedRelation') : relation.name;
+		const cn = [ 'wrap', 'focusable', 'c' + block.id ];
+
+		let icon = null;
+		if (isDeleted) {
+			icon = <Icon className="ghost" />;
+			cn.push('isDeleted');
+		} else 
+		if (!allowedValue) {
+			icon = <Icon className="lock" />;
+		};
 
 		return (
-			<div className={[ 'wrap', 'focusable', 'c' + block.id ].join(' ')} tabIndex={0} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp} onFocus={this.onFocus}>
+			<div className={cn.join(' ')} tabIndex={0} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp} onFocus={this.onFocus}>
 				{!relation ? 
 				(
 					<div className="sides">
@@ -44,8 +56,8 @@ const BlockRelation = observer(class BlockRelation extends React.Component<Props
 				(
 					<div className="sides">
 						<div className="info">
-							{!allowedValue ? <Icon className="lock" /> : ''}
-							<div className="name">{relation.name}</div>
+							{icon}
+							<div className="name">{name}</div>
 						</div>
 						<div 
 							id={id} 
