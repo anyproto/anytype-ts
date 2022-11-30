@@ -90,7 +90,7 @@
 	"systemRelationKeys": [ 
 		"id", "name", "description", "snippet", "iconEmoji", "iconImage", "creator",  "createdDate", "type", "layout", "layoutAlign", "lastOpenedDate", "lastModifiedBy", 
 		"lastModifiedDate", "addedDate", "coverId", "coverScale", "coverType", "coverX", "coverY", "featuredRelations", "isHidden", "isArchived", "isFavorite",  "workspaceId",
-		"source", "done", "links", "internalFlags"
+		"sourceObject", "done", "links", "internalFlags"
 	],
 
 	"defaultRelationKeys": [ 
@@ -107,11 +107,11 @@
 		"relationFormat", "fileExt", "fileMimeType", "links", "restrictions"
 	],
 
-	"typeRelationKeys": [ "smartblockTypes", "recommendedRelations", "source" ],
+	"typeRelationKeys": [ "smartblockTypes", "recommendedRelations", "sourceObject" ],
 
 	"relationRelationKeys": [
 		"id", "workspaceId", "type", "layout", "name", "relationFormat", "relationKey", "scope", "isReadonly", "isHidden", "isDeleted", "isArchived", "isFavorite", "restrictions",
-		"relationMaxCount", "relationReadonly", "relationReadonlyValue", "relationDefaultValue", "relationFormatObjectTypes", "source", "restrictions"
+		"relationMaxCount", "relationReadonly", "relationReadonlyValue", "relationDefaultValue", "relationFormatObjectTypes", "sourceObject", "restrictions"
 	],
 
 	"optionRelationKeys": [

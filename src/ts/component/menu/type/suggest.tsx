@@ -285,7 +285,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<P
 		const { filter } = data;
 		const items = Util.objectCopy(this.items || []).map(it => { return { ...it, object: it }; });
 		const library = items.filter(it => (it.workspaceId == workspace));
-		const librarySources = library.map(it => it.source);
+		const librarySources = library.map(it => it.sourceObject);
 
 		let sections: any[] = [
 			{ id: 'library', name: 'My types', children: library },

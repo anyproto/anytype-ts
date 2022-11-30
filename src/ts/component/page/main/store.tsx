@@ -393,15 +393,13 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 			case View.Marketplace:
 				switch (this.tab) {
 					case Tab.Type:
-						sources = dbStore.getTypes().map(it => it.source);
+						sources = dbStore.getTypes().map(it => it.sourceObject);
 						break;
 
 					case Tab.Relation:
-						sources = dbStore.getRelations().map(it => it.source);
+						sources = dbStore.getRelations().map(it => it.sourceObject);
 						break;
 				};
-
-				console.log(sources);
 
 				filters.push({ operator: I.FilterOperator.And, relationKey: 'workspaceId', condition: I.FilterCondition.Equal, value: Constant.storeSpaceId });
 				if (sources.length) {

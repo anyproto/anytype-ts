@@ -277,7 +277,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 	getSections () {
 		const { workspace } = commonStore;
 		const library = this.items.filter(it => it.workspaceId == workspace);
-		const librarySources = library.map(it => it.source);
+		const librarySources = library.map(it => it.sourceObject);
 		const marketplace = this.items.filter(it => (it.workspaceId == Constant.storeSpaceId) && !librarySources.includes(it.id));
 		
 		return [
