@@ -18,10 +18,6 @@ interface State {
 	isDeleted: boolean;
 };
 
-
-const BLOCK_ID_OBJECT = 'dataview';
-const BLOCK_ID_TEMPLATE = 'templates';
-
 const NO_TEMPLATES = [ 
 	Constant.typeId.note, 
 	Constant.typeId.set, 
@@ -181,7 +177,7 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 						<div className="section set">
 							<div className="title">{totalObject} {Util.cntWord(totalObject, 'object', 'objects')}</div>
 							<div className="content">
-								<ListObject rootId={rootId} blockId={BLOCK_ID_OBJECT} />
+								<ListObject rootId={rootId} />
 							</div>
 						</div>
 					) : ''}
@@ -229,9 +225,8 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 
 			crumbs.addRecent(rootId);
 
-			this.getDataviewData(BLOCK_ID_TEMPLATE, 0);
-
 			this.loading = false;
+			this.loadTemplates();
 			this.forceUpdate();
 
 			if (this.refHeader) {
@@ -243,28 +238,22 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 		});
 	};
 
-	getDataviewData (blockId: string, limit: number) {
-		const rootId = this.getRootId();
-		const views = dbStore.getViews(rootId, blockId);
-		const block = blockStore.getLeaf(rootId, blockId);
-
-		if (!block || !views.length) {
-			return;
-		};
-
+	loadTemplates () {
 		const { workspace } = commonStore;
+		const rootId = this.getRootId();
 		const object = detailStore.get(rootId, rootId);
-		const view = views[0];
-		const filters = view.filters.concat([
-			{ operator: I.FilterOperator.And, relationKey: 'workspaceId', condition: I.FilterCondition.Equal, value: object.isInstalled ? workspace : Constant.storeSpaceId },
-		]);
 
 		DataUtil.searchSubscribe({
 			subId: this.getSubIdTemplate(),
-			filters,
-			sorts: view.sorts,
+			filters: [
+				{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: [ Constant.storeTypeId.template, Constant.typeId.template ] },
+				{ operator: I.FilterOperator.And, relationKey: 'targetObjectType', condition: I.FilterCondition.Equal, value: rootId },
+				{ operator: I.FilterOperator.And, relationKey: 'workspaceId', condition: I.FilterCondition.Equal, value: object.isInstalled ? workspace : Constant.storeSpaceId },
+			],
+			sorts: [
+				{ relationKey: 'lastModifiedDate', type: I.SortType.Desc }
+			],
 			keys: [ 'id' ],
-			sources: block.content.sources,
 			ignoreWorkspace: true,
 			ignoreDeleted: true,
 		});
@@ -297,7 +286,6 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 			};
 
 			focus.clear(true);
-			dbStore.recordAdd(rootId, BLOCK_ID_TEMPLATE, message.objectId, 1);
 			analytics.event('CreateTemplate', { objectType: rootId });
 
 			DataUtil.objectOpenPopup(message.details, {
@@ -473,11 +461,11 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 	};
 
 	getSubIdTemplate () {
-		return dbStore.getSubId(this.getRootId(), BLOCK_ID_TEMPLATE);
+		return dbStore.getSubId(this.getRootId(), 'templates');
 	};
 
 	getSubIdObject () {
-		return dbStore.getSubId(this.getRootId(), BLOCK_ID_OBJECT);
+		return dbStore.getSubId(this.getRootId(), 'data');
 	};
 
 });

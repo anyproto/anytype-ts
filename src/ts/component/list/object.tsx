@@ -1,23 +1,18 @@
 import * as React from 'react';
 import { I, C, DataUtil, Util } from 'Lib';
 import { IconObject, Pager, ObjectName } from 'Component';
-import { detailStore, dbStore, blockStore } from 'Store';
+import { detailStore, dbStore } from 'Store';
 import { observer } from 'mobx-react';
-
 import Constant from 'json/constant.json';
 
 interface Props {
 	rootId: string;
-	blockId: string;
 };
 
 const LIMIT = 50;
 
 const ListObject = observer(class ListObject extends React.Component<Props, {}> {
 
-	public static defaultProps = {
-	};
-	
 	render () {
 		const { rootId } = this.props;
 		const subId = this.getSubId();
@@ -124,14 +119,7 @@ const ListObject = observer(class ListObject extends React.Component<Props, {}> 
 	};
 
 	componentDidMount () {
-		this.getData(0);
-	};
-
-	getView () {
-		const { rootId, blockId } = this.props;
-		const views = dbStore.getViews(rootId, blockId);
-
-		return views.length ? views[0] : null;
+		this.getData(1);
 	};
 
 	getItems () {
@@ -140,8 +128,7 @@ const ListObject = observer(class ListObject extends React.Component<Props, {}> 
 	};
 
 	getSubId () {
-		const { rootId, blockId } = this.props;
-		return dbStore.getSubId(rootId, blockId);
+		return dbStore.getSubId(this.props.rootId, 'data');
 	};
 
 	getKeys () {
@@ -149,25 +136,19 @@ const ListObject = observer(class ListObject extends React.Component<Props, {}> 
 	};
 
 	getData (page: number, callBack?: (message: any) => void) {
-		const view = this.getView();
-		if (!view) {
-			return;
-		};
-
-		const { rootId, blockId } = this.props;
+		const { rootId } = this.props;
 		const offset = (page - 1) * LIMIT;
-		const block = blockStore.getLeaf(rootId, blockId);
 		const subId = this.getSubId();
-		const filters = [].concat(view.filters);
 
 		dbStore.metaSet(subId, '', { offset: offset });
 
 		DataUtil.searchSubscribe({
 			subId,
-			filters,
-			sorts: view.sorts,
+			sorts: [
+				{ relationKey: 'lastModifiedDate', type: I.SortType.Desc }
+			],
 			keys: this.getKeys(),
-			sources: block.content.sources,
+			sources: [ rootId ],
 			offset,
 			limit: LIMIT,
 			ignoreHidden: true,

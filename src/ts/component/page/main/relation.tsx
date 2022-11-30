@@ -45,7 +45,8 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 		};
 
 		const rootId = this.getRootId();
-		const { total } = dbStore.getMeta(dbStore.getSubId(rootId, BLOCK_ID_OBJECT), '');
+		const subId = dbStore.getSubId(rootId, 'data');
+		const { total } = dbStore.getMeta(subId, '');
 
 		return (
 			<div>
@@ -57,7 +58,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 					<div className="section set">
 						<div className="title">{total} {Util.cntWord(total, 'object', 'objects')}</div>
 						<div className="content">
-							<ListObject rootId={rootId} blockId={BLOCK_ID_OBJECT} />
+							<ListObject rootId={rootId} />
 						</div>
 					</div>
 				</div>

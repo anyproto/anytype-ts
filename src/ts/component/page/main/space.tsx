@@ -136,7 +136,7 @@ const PageMainSpace = observer(class PageMainSpace extends React.Component<Props
 
 			crumbs.addRecent(rootId);
 
-			this.getDataviewData(BLOCK_ID_HIGHLIGHTED, 0);
+			this.getHighlighted();
 
 			this.loading = false;
 			this.forceUpdate();
@@ -152,10 +152,10 @@ const PageMainSpace = observer(class PageMainSpace extends React.Component<Props
 		});
 	};
 
-	getDataviewData (blockId: string, limit: number) {
+	getHighlighted () {
 		const rootId = this.getRootId();
-		const views = dbStore.getViews(rootId, blockId);
-		const block = blockStore.getLeaf(rootId, blockId);
+		const views = dbStore.getViews(rootId, BLOCK_ID_HIGHLIGHTED);
+		const block = blockStore.getLeaf(rootId, BLOCK_ID_HIGHLIGHTED);
 
 		if (!views.length) {
 			return;

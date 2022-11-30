@@ -24,6 +24,7 @@
 .button.blank:hover { border-color: $colorBlack; }
 
 .button.blank.red { color: $colorRed; }
+.button.blank.red:hover { background-color: transparent; }
 
 .button.c28 { @include text-small; height: 28px; line-height: 28px; border-radius: 6px; }
 
