@@ -57,7 +57,7 @@
 
 .pageMainGraph {
     canvas { background: $colorBlack; }
-	#loader { background: $colorBlack; }
+	#loader { background: $colorBlack !important; }
 
     .tabs { border-color: $colorLineSecondary; }
     .tabs {
