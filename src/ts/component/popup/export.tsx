@@ -25,11 +25,16 @@ const PopupExport = observer(class PopupExport extends React.Component<Props, {}
 
 	render() {
 		const { config } = commonStore;
-		const formats = [
+		
+		let formats = [
 			{ id: I.ExportFormat.Markdown, name: 'Markdown' },
-			(config.experimental ? { id: I.ExportFormat.Html, name: 'HTML' } : null),
-			(config.experimental ? { id: I.ExportFormat.Pdf, name: 'PDF' } : null),
 		];
+		if (config.experimental) {
+			formats = formats.concat([
+				{ id: I.ExportFormat.Html, name: 'HTML' },
+				{ id: I.ExportFormat.Pdf, name: 'PDF' },
+			]);
+		};
 
 		const pageSize = [
 			{ id: 'A3', name: 'A3'},
@@ -40,7 +45,7 @@ const PopupExport = observer(class PopupExport extends React.Component<Props, {}
 			{ id: 'tabloid', name: 'Tabloid'},
 		];
 
-		const exportOptions = (item: any, i: number) => {
+		const Option = (item: any) => {
 			let control = null;
 
 			switch (item.control) {
@@ -76,7 +81,7 @@ const PopupExport = observer(class PopupExport extends React.Component<Props, {}
 			};
 
 			return (
-				<div key={i} className="row">
+				<div className="row">
 					<div className="name">{item.name}</div>
 					<div className="value">
 						{control}
@@ -87,8 +92,7 @@ const PopupExport = observer(class PopupExport extends React.Component<Props, {}
 
 		this.init();
 
-		let items = null;
-		let options = null;
+		let items: any[] = [];
 
 		switch (this.format) {
 			case I.ExportFormat.Markdown:
@@ -108,14 +112,6 @@ const PopupExport = observer(class PopupExport extends React.Component<Props, {}
 				break;
 		};
 
-		if (items) {
-			options = (
-				<React.Fragment>
-					{items.map(exportOptions)}
-				</React.Fragment>
-			);
-		};
-		
 		return (
 			<React.Fragment>
 				<Title text="Export" />
@@ -136,7 +132,9 @@ const PopupExport = observer(class PopupExport extends React.Component<Props, {}
 					</div>
 				</div>
 
-				{options}
+				{items.map((item: any, i: number) => (
+					<Option key={i} {...item} />
+				))}
 
 				<div className="buttons">
 					<Button color="orange" text="Export" onClick={this.onConfirm} />
