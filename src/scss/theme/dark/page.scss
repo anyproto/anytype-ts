@@ -57,6 +57,7 @@
 
 .pageMainGraph {
     canvas { background: $colorBlack; }
+	#loader { background: $colorBlack; }
 
     .tabs { border-color: $colorLineSecondary; }
     .tabs {
@@ -88,7 +89,6 @@
         .icon { background-color: $colorBgIcon; }
     }
 }
-.pageMainGraph > .body > #loader { background: $colorBlack; }
 
 /* PageMainStore */
 

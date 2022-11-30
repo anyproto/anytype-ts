@@ -219,14 +219,11 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 		const oh = obj.height();
 		
 		let wh = isPopup ? oh - hh : win.height();
-		let sh = wh;
-
 		if (platform == I.Platform.Windows) {
 			wh -= Constant.size.headerWindows;
 		};
 
 		wrapper.css({ height: wh });
-		wrapper.find('.side').css({ height: sh });
 		
 		if (isPopup) {
 			const element = $('#popupPage .content');
