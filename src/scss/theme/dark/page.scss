@@ -95,8 +95,8 @@
 .pageMainStore {
     .body {
 		.tabs {
-			.item { color: $colorSecondary; }
-			.item:hover, .item.active { color: $colorPrimary; }
+			.tab { color: $colorSecondary; }
+			.tab:hover, .tab.active { color: $colorPrimary; }
 		}
 
         .items {

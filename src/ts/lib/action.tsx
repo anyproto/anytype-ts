@@ -184,6 +184,7 @@ class Action {
 				callBack(message);
 			};
 
+			Util.toastShow({ text: 'Object has been added to your library' });
 			analytics.event('ObjectInstall', { objectType: object.type, relationKey: object.relationKey });
 		});
 	};
@@ -220,7 +221,7 @@ class Action {
 							callBack(message);
 						};
 
-						Util.toastShow({ text: 'Object has been removed from your space' });
+						Util.toastShow({ text: 'Object has been removed from your library' });
 						analytics.event('ObjectUninstall', { objectType: type, count: ids.length });
 					});
 				},

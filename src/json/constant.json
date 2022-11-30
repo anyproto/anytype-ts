@@ -90,7 +90,7 @@
 	"systemRelationKeys": [ 
 		"id", "name", "description", "snippet", "iconEmoji", "iconImage", "creator",  "createdDate", "type", "layout", "layoutAlign", "lastOpenedDate", "lastModifiedBy", 
 		"lastModifiedDate", "addedDate", "coverId", "coverScale", "coverType", "coverX", "coverY", "featuredRelations", "isHidden", "isArchived", "isFavorite",  "workspaceId",
-		"sourceObject", "done", "links", "internalFlags"
+		"source", "done", "links", "internalFlags"
 	],
 
 	"defaultRelationKeys": [ 

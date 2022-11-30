@@ -387,6 +387,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 		];
 
 		let sources: string[] = [];
+		let keys: string[] = Constant.defaultRelationKeys.concat([ 'creator' ]);
 
 		switch (this.view) {
 			case View.Marketplace:
@@ -400,6 +401,8 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 						break;
 				};
 
+				console.log(sources);
+
 				filters.push({ operator: I.FilterOperator.And, relationKey: 'workspaceId', condition: I.FilterCondition.Equal, value: Constant.storeSpaceId });
 				if (sources.length) {
 					filters.push({ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: sources });
@@ -412,7 +415,12 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 		};
 
 		switch (this.tab) {
+			case Tab.Type:
+				keys = keys.concat(Constant.typeRelationKeys);
+				break;
+
 			case Tab.Relation:
+				keys = keys.concat(Constant.relationRelationKeys);
 				filters.push({ operator: I.FilterOperator.And, relationKey: 'relationKey', condition: I.FilterCondition.NotIn, value: Constant.systemRelationKeys });
 				break;
 		};
@@ -426,7 +434,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 			subId: Constant.subId.store,
 			filters,
 			sorts,
-			keys: Constant.defaultRelationKeys.concat([ 'creator' ]),
+			keys,
 			ignoreWorkspace: true,
 			ignoreDeleted: true,
 			ignoreHidden: true,

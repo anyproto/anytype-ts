@@ -419,11 +419,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			};
 			
 			const relation = dbStore.getRelationByKey(filter.relationKey);
-			if (!relation || relation.isReadonlyValue) {
-				continue;
+			if (relation && !relation.isReadonlyValue) {
+				details[filter.relationKey] = Relation.formatValue(relation, filter.value, true);
 			};
-
-			details[filter.relationKey] = Relation.formatValue(relation, filter.value, true);
 		};
 
 		this.creating = true;

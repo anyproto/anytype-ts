@@ -45,6 +45,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 		};
 
 		const rootId = this.getRootId();
+		const object = detailStore.get(rootId, rootId);
 		const subId = dbStore.getSubId(rootId, 'data');
 		const { total } = dbStore.getMeta(subId, '');
 
@@ -55,12 +56,14 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 				<div className="blocks wrapper">
 					<HeadSimple ref={(ref: any) => { this.refHead = ref;}} type="relation" rootId={rootId} onCreate={this.onCreate} />
 
-					<div className="section set">
-						<div className="title">{total} {Util.cntWord(total, 'object', 'objects')}</div>
-						<div className="content">
-							<ListObject rootId={rootId} />
+					{object.isInstalled ? (
+						<div className="section set">
+							<div className="title">{total} {Util.cntWord(total, 'object', 'objects')}</div>
+							<div className="content">
+								<ListObject rootId={rootId} />
+							</div>
 						</div>
-					</div>
+					) : ''}
 				</div>
 
 				<Footer component="mainEdit" {...this.props} />
