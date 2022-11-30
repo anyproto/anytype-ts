@@ -4,7 +4,6 @@
 	.block.blockBookmark { padding: 6px 0px; }
 	.block.blockBookmark {
 		.focusable { border-radius: 6px; }
-
 		.loaderWrapper { border-radius: 4px; border: solid 1px $colorBorderDark; height: 48px; width: 100%; }
 
 		.deleted { display: flex; gap: 0px 6px; align-items: center; color: $colorMediumGrey; }
@@ -32,10 +31,7 @@
 		.inner.vertical { display: flex; flex-direction: column-reverse; }
 		.inner.vertical {
 			.side.left { width: 100%; border-radius: 0px; }
-			.side.right { 
-				aspect-ratio: 7/3; width: 100%; border-radius: 0px;
-				border-bottom: 0.05em solid $colorLightGrey; 
-			}
+			.side.right { aspect-ratio: 7/3; width: 100%; border-radius: 0px; border-bottom: 0.05em solid $colorLightGrey; }
 		}
 
 		.inner.withImage {
@@ -49,15 +45,12 @@
 			.side.right { width: 100%; }
 		}
 
-		.inner.withImage.vertical {
-		}
-
 		.link { 
-			@include text-small; height: 16px; line-height: 16px; color: $colorDarkGrey; @include text-overflow-nw; display: flex; gap: 0px 6px;
+			@include text-small; height: 18px; line-height: 18px; color: $colorDarkGrey; @include text-overflow-nw; display: flex; gap: 0px 6px;
 			align-items: center; 
 		}
 		.img { position: absolute; width: 100%; height: 100%; object-fit: cover; display: block; }
-		.fav { width: 16px; height: 16px; object-fit: cover; }
+		.fav { width: 14px; height: 14px; object-fit: cover; }
 	}
 	
 	.block.blockBookmark > .wrapContent { border-radius: 6px; }

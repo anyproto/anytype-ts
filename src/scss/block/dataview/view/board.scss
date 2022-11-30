@@ -100,7 +100,7 @@
 				}
 			}
 			.card:last-child { margin: 0px; }
-			.card.add:hover, .card:hover .cardContent { border-color: $colorDarkGrey; }
+			.card.add:hover, .card:hover .cardContent { border-color: $colorBorderDark; }
 
 			.card.isOver::before { content: ""; position: absolute; background: $colorOrange; height: 4px; width: 100%; border-radius: 2px; left: 0px; } 
 			.card.isOver.top::before { top: -6px; }
