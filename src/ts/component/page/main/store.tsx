@@ -386,22 +386,24 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 			{ type: I.SortType.Asc, relationKey: 'name' },
 		];
 
-		let sources: string[] = [];
+		let sources: any[] = [];
 		let keys: string[] = Constant.defaultRelationKeys.concat([ 'creator' ]);
 
 		switch (this.view) {
 			case View.Marketplace:
+				filters.push({ operator: I.FilterOperator.And, relationKey: 'workspaceId', condition: I.FilterCondition.Equal, value: Constant.storeSpaceId });
+
 				switch (this.tab) {
 					case Tab.Type:
-						sources = dbStore.getTypes().map(it => it.sourceObject);
+						sources = dbStore.getTypes();
 						break;
 
 					case Tab.Relation:
-						sources = dbStore.getRelations().map(it => it.sourceObject);
+						sources = dbStore.getRelations();
 						break;
 				};
 
-				filters.push({ operator: I.FilterOperator.And, relationKey: 'workspaceId', condition: I.FilterCondition.Equal, value: Constant.storeSpaceId });
+				sources = sources.filter(it => it.sourceObject).map(it => it.sourceObject);
 				if (sources.length) {
 					filters.push({ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: sources });
 				};
