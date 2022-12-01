@@ -136,9 +136,8 @@ const PageMainSpace = observer(class PageMainSpace extends React.Component<Props
 
 			crumbs.addRecent(rootId);
 
-			this.getHighlighted();
-
 			this.loading = false;
+			this.loadHighlighted();
 			this.forceUpdate();
 
 			if (this.refHeader) {
@@ -152,23 +151,21 @@ const PageMainSpace = observer(class PageMainSpace extends React.Component<Props
 		});
 	};
 
-	getHighlighted () {
+	loadHighlighted () {
 		const rootId = this.getRootId();
-		const views = dbStore.getViews(rootId, BLOCK_ID_HIGHLIGHTED);
-		const block = blockStore.getLeaf(rootId, BLOCK_ID_HIGHLIGHTED);
-
-		if (!views.length) {
-			return;
-		};
-
-		const view = views[0];
 
 		DataUtil.searchSubscribe({
 			subId: this.getSubIdHighlighted(),
-			filters: view.filters,
-			sorts: view.sorts,
+			filters: [
+				{ operator: I.FilterOperator.And, relationKey: 'isHighlighted', condition: I.FilterCondition.Equal, value: true },
+				{ operator: I.FilterOperator.And, relationKey: 'targetObjectType', condition: I.FilterCondition.Equal, value: rootId },
+				{ operator: I.FilterOperator.And, relationKey: 'workspaceId', condition: I.FilterCondition.Equal, value: rootId },
+			],
+			sorts: [
+				{ relationKey: 'lastModifiedDate', type: I.SortType.Desc }
+			],
 			keys: [ 'id' ],
-			sources: block.content.sources,
+			ignoreWorkspace: true,
 			ignoreDeleted: true,
 		});
 	};
