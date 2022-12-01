@@ -296,7 +296,10 @@ class App extends React.Component<Props, State> {
 					<div>
 						{loading ? (
 							<div id="root-loader" className="loaderWrapper">
-								<div id="logo" className="logo" />
+								<div className="inner">
+									<div className="logo anim from" />
+									<div className="version anim from">{window.Electron.version.app}</div>
+								</div>
 							</div>
 						) : ''}
 
@@ -426,7 +429,7 @@ class App extends React.Component<Props, State> {
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
 		const loader = node.find('#root-loader');
-		const logo = loader.find('#logo');
+		const anim = loader.find('.anim');
 		const accountId = Storage.get('accountId');
 		const redirect = Storage.get('redirect');
 
@@ -445,15 +448,17 @@ class App extends React.Component<Props, State> {
 			Storage.delete('redirect');
 		};
 
+		raf(() => { anim.removeClass('from'); })
+
 		const cb = () => {
 			window.setTimeout(() => { 
-				logo.css({ opacity: 0 });
+				anim.addClass('to');
 
 				window.setTimeout(() => { 
 					loader.css({ opacity: 0 }); 
 					window.setTimeout(() => { loader.remove(); }, 500);
 				}, 750);
-			}, 1000);
+			}, 2000);
 		};
 
 		if (accountId) {
