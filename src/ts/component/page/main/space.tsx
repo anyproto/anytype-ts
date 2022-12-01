@@ -18,9 +18,6 @@ interface State {
 	isDeleted: boolean;
 };
 
-
-const BLOCK_ID_HIGHLIGHTED = 'highlighted';
-
 const PageMainSpace = observer(class PageMainSpace extends React.Component<Props, State> {
 
 	_isMounted: boolean = false;
@@ -211,7 +208,7 @@ const PageMainSpace = observer(class PageMainSpace extends React.Component<Props
 	};
 
 	getSubIdHighlighted () {
-		return dbStore.getSubId(this.getRootId(), BLOCK_ID_HIGHLIGHTED);
+		return dbStore.getSubId(this.getRootId(), 'highlighted');
 	};
 
 });

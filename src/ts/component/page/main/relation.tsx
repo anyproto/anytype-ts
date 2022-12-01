@@ -16,8 +16,6 @@ interface State {
 	isDeleted: boolean;
 };
 
-const BLOCK_ID_OBJECT = 'dataview';
-
 const PageMainRelation = observer(class PageMainRelation extends React.Component<Props, State> {
 
 	id: string = '';

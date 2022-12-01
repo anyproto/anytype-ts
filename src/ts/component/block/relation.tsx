@@ -33,8 +33,7 @@ const BlockRelation = observer(class BlockRelation extends React.Component<Props
 
 		let relation = dbStore.getRelationByKey(relationKey);
 		if (!relation) {
-			const relations = dbStore.getRelations();
-			relation = relations.find(it => it.relationKey == relationKey);
+			relation = dbStore.getRelations().find(it => it.relationKey == relationKey);
 		};
 
 		const allowedValue = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]) && relation && !relation.isReadonlyValue;

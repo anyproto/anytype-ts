@@ -1,6 +1,6 @@
-import { observable, action, computed, set, intercept, makeObservable } from 'mobx';
-import { I, M, DataUtil, Util, Dataview } from 'ts/lib';
-import { detailStore, commonStore } from 'ts/store';
+import { observable, action, set, intercept, makeObservable } from 'mobx';
+import { I, M, Util, Dataview } from 'ts/lib';
+import { detailStore } from 'ts/store';
 
 import Constant from 'json/constant.json';
 

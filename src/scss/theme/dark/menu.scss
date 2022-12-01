@@ -62,18 +62,18 @@
         .item.isBig {
             .iconObject { background: $colorBgIcon; }
 
-            .icon.paragraph { background-image: url('#{$themePath}/icon/menu/action/block/paragraph1.svg'); }
+            .icon.textParagraph { background-image: url('#{$themePath}/icon/menu/action/block/paragraph1.svg'); }
             
-            .icon.header1 { background-image: url('#{$themePath}/icon/menu/action/block/header11.svg'); }
-            .icon.header2 { background-image: url('#{$themePath}/icon/menu/action/block/header21.svg'); }
-            .icon.header3 { background-image: url('#{$themePath}/icon/menu/action/block/header31.svg'); }
-            .icon.quote { background-image: url('#{$themePath}/icon/menu/action/block/quote1.svg'); }
+            .icon.textHeader1 { background-image: url('#{$themePath}/icon/menu/action/block/header11.svg'); }
+            .icon.textHeader2 { background-image: url('#{$themePath}/icon/menu/action/block/header21.svg'); }
+            .icon.textHeader3 { background-image: url('#{$themePath}/icon/menu/action/block/header31.svg'); }
+            .icon.textQuote { background-image: url('#{$themePath}/icon/menu/action/block/quote1.svg'); }
             
-            .icon.bulleted { background-image: url('#{$themePath}/icon/menu/action/block/bulleted1.svg'); }
-            .icon.numbered { background-image: url('#{$themePath}/icon/menu/action/block/numbered1.svg'); }
-            .icon.toggle { background-image: url('#{$themePath}/icon/menu/action/block/toggle1.svg'); }
+            .icon.textBulleted { background-image: url('#{$themePath}/icon/menu/action/block/bulleted1.svg'); }
+            .icon.textNumbered { background-image: url('#{$themePath}/icon/menu/action/block/numbered1.svg'); }
+            .icon.textToggle { background-image: url('#{$themePath}/icon/menu/action/block/toggle1.svg'); }
 
-			.icon.callout { background-image: url('#{$themePath}/icon/menu/action/block/callout1.svg'); }
+			.icon.textCallout { background-image: url('#{$themePath}/icon/menu/action/block/callout1.svg'); }
         }
 
         .sectionName::before { background-color: $colorLineSecondary; }

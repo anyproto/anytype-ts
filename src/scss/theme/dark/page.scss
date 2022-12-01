@@ -99,6 +99,10 @@
 			.tab:hover, .tab.active { color: $colorPrimary; }
 		}
 
+		.mid {
+			.filter { border-color: $colorLinePrimary; }
+		}
+
         .items {
             .item {
                 .info {

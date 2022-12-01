@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { I, C, DataUtil, Util, focus, analytics, Relation, translate, Onboarding } from 'Lib';
@@ -12,7 +11,6 @@ interface Props extends I.BlockComponent {
 };
 
 const PREFIX = 'blockFeatured';
-const BLOCK_ID_DATAVIEW = 'dataview';
 const SOURCE_LIMIT = 1;
 
 const BlockFeatured = observer(class BlockFeatured extends React.Component<Props, {}> {
@@ -453,8 +451,8 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				className: 'big single',
 				horizontal: I.MenuDirection.Center,
 				data: {
-					rootId: rootId,
-					blockId: BLOCK_ID_DATAVIEW,
+					rootId,
+					blockId: 'dataview',
 				}
 			}); 
 		});

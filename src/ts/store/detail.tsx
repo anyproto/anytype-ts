@@ -79,14 +79,14 @@ class DetailStore {
 				return (change.newValue === el[change.name] ? null : change); 
 			});
 
-			// Update relationKeyMap in dbStore to keep consistency
-			if ((item.type == Constant.typeId.relation) && item.relationKey && item.id) {
-				dbStore.relationKeyMap[item.relationKey] = item.id;
-			};
-
 			if (createList) {
 				map.set(item.id, list);
 			};
+		};
+
+		// Update relationKeyMap in dbStore to keep consistency
+		if ((item.details.type == Constant.typeId.relation) && item.details.relationKey && item.details.id) {
+			dbStore.relationKeyMap[item.details.relationKey] = item.details.id;
 		};
 
 		if (createMap) {
