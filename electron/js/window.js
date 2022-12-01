@@ -182,13 +182,25 @@ class WindowManager {
 				break;
 
 			case 'saveAsHTML':
-				dialog.showOpenDialog({ properties: [ 'openDirectory' ] }).then((result) => {
+				this.openDialog('openDirectory', (result) => {
 					const files = result.filePaths;
 
 					if ((files == undefined) || !files.length) {
 						Util.send(win, 'command', 'saveAsHTMLSuccess');
 					} else {
 						Util.savePage(win, files[0], param.name);
+					};
+				});
+				break;
+
+			case 'printToPDF':
+				this.openDialog('openDirectory', (result) => {
+					const files = result.filePaths;
+
+					if ((files == undefined) || !files.length) {
+						Util.send(win, 'command', 'saveAsHTMLSuccess');
+					} else {
+						Util.printPDF(win, files[0], param.name, param.options);
 					};
 				});
 				break;
@@ -200,6 +212,10 @@ class WindowManager {
 			Util.send(it, 'native-theme', Util.isDarkTheme());
 		});
 	};
+
+	openDialog (prop, cb) {
+		dialog.showOpenDialog({ properties: [ prop ] }).then(cb);
+	}
 
 	getWindowPosition (param, displayWidth, displayHeight) {
 		let x = Math.round(displayWidth / 2 - param.width / 2);
