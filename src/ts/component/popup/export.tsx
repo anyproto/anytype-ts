@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { I, Action, keyboard, Storage } from 'Lib';
+import {I, Action, keyboard, Storage, Renderer} from 'Lib';
 import { Title, Select, Button, Switch } from 'Component';
 import { commonStore } from 'Store';
 import { observer } from 'mobx-react';
@@ -12,6 +12,9 @@ const PopupExport = observer(class PopupExport extends React.Component<Props, {}
 	zip: boolean = false;
 	nested: boolean = false;
 	files: boolean = true;
+	landscape: boolean = false;
+	pageSize: any = { id: 'A4', name: 'A4'};
+	printBackground: boolean = true;
 
 	constructor(props: any) {
 		super(props);
@@ -22,42 +25,93 @@ const PopupExport = observer(class PopupExport extends React.Component<Props, {}
 
 	render() {
 		const { config } = commonStore;
-		const formats = [
+		
+		let formats = [
 			{ id: I.ExportFormat.Markdown, name: 'Markdown' },
-			(config.experimental ? { id: I.ExportFormat.Html, name: 'HTML' } : null),
 		];
+		if (config.experimental) {
+			formats = formats.concat([
+				{ id: I.ExportFormat.Html, name: 'HTML' },
+				{ id: I.ExportFormat.Pdf, name: 'PDF' },
+			]);
+		};
+
+		const pageSize = [
+			{ id: 'A3', name: 'A3'},
+			{ id: 'A4', name: 'A4'},
+			{ id: 'A5', name: 'A5'},
+			{ id: 'legal', name: 'Legal'},
+			{ id: 'letter', name: 'Letter'},
+			{ id: 'tabloid', name: 'Tabloid'},
+		];
+
+		const Option = (item: any) => {
+			let control = null;
+
+			switch (item.control) {
+				case 'switch':
+					control = (
+						<Switch
+							className="big"
+							value={this[item.id]}
+							onChange={(e: any, v: boolean) => {
+								this[item.id] = v;
+								this.save();
+							}}
+						/>
+					);
+					break;
+
+				case 'select':
+					control = (
+						<Select
+							id={item.id}
+							value={this[item.id].id}
+							options={item.options}
+							onChange={(v: any) => {
+								this[item.id] = v;
+								this.save();
+							}}
+							arrowClassName="light"
+							menuWidth={300}
+							isMultiple={false}
+						/>
+					);
+					break;
+			};
+
+			return (
+				<div className="row">
+					<div className="name">{item.name}</div>
+					<div className="value">
+						{control}
+					</div>
+				</div>
+			);
+		};
 
 		this.init();
 
-		let options = null;
-		if (this.format == I.ExportFormat.Markdown) {
-			const items = [
-				{ id: 'zip', name: 'Zip archive' },
-				{ id: 'nested', name: 'Include linked objects' },
-				{ id: 'files', name: 'Include files' },
-			];
+		let items: any[] = [];
 
-			options = (
-				<React.Fragment>
-					{items.map((item: any, i: number) => (
-						<div key={i} className="row">
-							<div className="name">{item.name}</div>
-							<div className="value">
-								<Switch 
-									className="big" 
-									value={this[item.id]} 
-									onChange={(e: any, v: boolean) => { 
-										this[item.id] = v; 
-										this.save();
-									}} 
-								/>
-							</div>
-						</div>
-					))}
-				</React.Fragment>
-			);
+		switch (this.format) {
+			case I.ExportFormat.Markdown:
+				items = [
+					{ id: 'zip', name: 'Zip archive', control: 'switch' },
+					{ id: 'nested', name: 'Include linked objects', control: 'switch' },
+					{ id: 'files', name: 'Include files', control: 'switch' },
+				];
+				break;
+
+			case I.ExportFormat.Pdf:
+				items = [
+					{ id: 'pageSize', name: 'Page size', control: 'select', options: pageSize },
+					{ id: 'landscape', name: 'Landscape', control: 'switch' },
+					{ id: 'printBackground', name: 'Print background', control: 'switch' },
+				];
+				break;
 		};
-		
+
 		return (
 			<React.Fragment>
 				<Title text="Export" />
@@ -78,7 +132,9 @@ const PopupExport = observer(class PopupExport extends React.Component<Props, {}
 					</div>
 				</div>
 
-				{options}
+				{items.map((item: any, i: number) => (
+					<Option key={i} {...item} />
+				))}
 
 				<div className="buttons">
 					<Button color="orange" text="Export" onClick={this.onConfirm} />
@@ -120,6 +176,14 @@ const PopupExport = observer(class PopupExport extends React.Component<Props, {}
 
 			case I.ExportFormat.Html:
 				keyboard.onSaveAsHTML();
+				break;
+
+			case I.ExportFormat.Pdf:
+				keyboard.onPrintToPDF({
+					landscape: this.landscape,
+					printBackground: this.printBackground,
+					pageSize: this.pageSize.id
+				});
 				break;
 		};
 		

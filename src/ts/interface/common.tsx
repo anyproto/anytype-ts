@@ -89,6 +89,7 @@ export enum ExportFormat {
 	GraphJson = 5,
 
 	Html	 = 100,
+	Pdf		 = 110,
 };
 
 export enum Source {
