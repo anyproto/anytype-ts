@@ -158,7 +158,12 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 	};
 
 	load () {
-		const skipTypes = [ Constant.typeId.space ].concat(DataUtil.getFileTypes()).concat(DataUtil.getSystemTypes()).filter((it: string) => {
+		const skipTypes = [ 
+			Constant.typeId.space, 
+			Constant.storeTypeId.type,
+			Constant.storeTypeId.relation, 
+			Constant.storeTypeId.template, 
+		].concat(DataUtil.getFileTypes()).concat(DataUtil.getSystemTypes()).filter((it: string) => {
 			return ![ Constant.typeId.option ].includes(it);
 		});
 		const skipIds = [ '_anytype_profile', blockStore.profile ];

@@ -262,7 +262,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const allowed = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
 		const relation = dbStore.getRelationById(id);
 
-		if (!relation || !allowed) {
+		if (!relation) {
 			return;
 		};
 
@@ -272,6 +272,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 			classNameWrap,
 			data: {
 				...data,
+				readonly: !allowed,
 				relationId: id,
 				addCommand: (rootId: string, blockId: string, relationKey: string, onChange: (message: any) => void) => {
 					C.ObjectRelationAdd(rootId, [ relationKey ], onChange);

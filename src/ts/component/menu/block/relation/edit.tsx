@@ -216,16 +216,6 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		button.removeClass('orange grey').addClass(canSave ? 'orange' : 'grey');
 	};
 
-	isReadonly () {
-		const { param } = this.props;
-		const { data } = param;
-		const { rootId, readonly } = data;
-		const relation = this.getRelation();
-		const allowed = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
-
-		return readonly || !allowed || (relation && relation.isReadonlyRelation);
-	};
-	
 	onRelationType (e: any) {
 		e.preventDefault();
 		e.stopPropagation();
@@ -465,6 +455,18 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 
 		return dbStore.getRelationById(relationId);
 	};
+	
+	isReadonly () {
+		const { param } = this.props;
+		const { data } = param;
+		const { rootId, readonly } = data;
+		const relation = this.getRelation();
+		const allowed = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
+
+		return readonly || !allowed || (relation && relation.isReadonlyRelation);
+	};
+
+
 
 });
 
