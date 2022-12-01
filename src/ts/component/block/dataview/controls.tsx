@@ -119,7 +119,8 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 						))}	
 						{!readonly && allowedObject ? (
 							<Button 
-								color="orange" 
+								id={`button-${block.id}-add-record`}
+								color="addRecord orange" 
 								icon="plus-small" 
 								className="c28" 
 								tooltip="New object" 
@@ -143,8 +144,8 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 		this._isMounted = false;
 	};
 	
-	onButton (e: any, element: string, id: string, withTabs: boolean) {
-		if (!id) {
+	onButton (e: any, element: string, component: string, withTabs: boolean) {
+		if (!component) {
 			return;
 		};
 
@@ -176,12 +177,27 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 			},
 		};
 
-		if (withTabs) {
-			param.getTabs = () => Dataview.getMenuTabs(rootId, block.id, view.id);
-			param.initialTab = param.getTabs().find(it => it.component == id)?.id;
-		};
+		param.getTabs = () => {
+			let tabs: any[] = [];
 
-		menuStore.open(id, param);
+			switch (component) {
+				case 'dataviewFilterList':
+					tabs = [ { id: 'filter', name: 'Filters', component } ];
+					break;
+				case 'dataviewSort':
+					tabs = [ { id: 'sort', name: 'Sorts', component } ];
+					break;
+
+				default:
+					tabs = Dataview.getMenuTabs(rootId, block.id, view.id);
+					break;
+			};
+
+			return tabs;
+		};
+		param.initialTab = param.getTabs().find(it => it.component == component)?.id;
+
+		menuStore.open(component, param);
 	};
 
 	onViewAdd (e: any) {

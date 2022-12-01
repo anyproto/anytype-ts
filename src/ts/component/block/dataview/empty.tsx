@@ -20,7 +20,7 @@ const Empty = observer(class Empty extends React.Component<Props, {}> {
 				<div className="inner">
 					<Label className="name" text={title} />
 					<Label className="descr" text={description} />
-					<Button color="blank" text={button} onClick={onClick} />
+					<Button color="blank" className="c28" text={button} onClick={onClick} />
 				</div>
 			</div>
 		);
