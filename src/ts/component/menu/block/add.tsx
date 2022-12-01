@@ -497,8 +497,6 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 			return;
 		};
 
-		console.log(item);
-
 		keyboard.setFocus(false);
 
 		let text = String(data.text || '');
