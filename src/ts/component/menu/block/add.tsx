@@ -289,10 +289,14 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 			return it;
 		});
 
-		return [
-			{ id: 'add', name: 'New relation', isRelationAdd: true },
-			...relations,
-		];
+		relations.unshift({ id: 'add', name: 'New relation', isRelationAdd: true });
+
+		return relations.map((it: any) => {
+			it.type = I.BlockType.Relation;
+			it.isRelation = true;
+			it.isBlock = true;
+			return it;
+		});
 	};
 	
 	getSections () {
@@ -388,7 +392,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 		const { param, getId, getSize, close } = this.props;
 		const { data } = param;
 		const { rootId, blockId } = data;
-		const { config, filter } = commonStore;
+		const { filter } = commonStore;
 		const types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map(it => it.id);
 		const block = blockStore.getLeaf(rootId, blockId);
 
@@ -492,6 +496,8 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 		if (!block) {
 			return;
 		};
+
+		console.log(item);
 
 		keyboard.setFocus(false);
 
