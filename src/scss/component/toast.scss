@@ -10,15 +10,15 @@
 }
 .toast {
 	.inner {
-		.message { display: flex; gap: 4px; }
+		.message { display: flex; gap: 0px 4px; }
 		.message {
-			.chunk { @include text-overflow-nw; display: flex; align-items: center; gap: 0px 6px; }
+			.chunk { @include text-overflow-nw; display: flex; align-items: center; gap: 0px 4px; }
 			.chunk {
 				.name { max-width: 140px; @include text-overflow-nw; }
 			}
 		}
 
-		.buttons { display: flex; gap: 12px; margin-left: 32px; }
+		.buttons { display: flex; gap: 0px 12px; margin-left: 32px; }
 		.buttons {
 			.button.toastButton { @include text-common; font-weight: 500; line-height: 20px; border: 0 solid; height: auto; padding: 0; background: none; }
 			.button.toastButton:hover { background-color: transparent; }
