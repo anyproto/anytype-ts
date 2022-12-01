@@ -1,5 +1,6 @@
 import { observable, action, set, intercept, makeObservable } from 'mobx';
 import { I, Relation, DataUtil, translate } from 'Lib';
+import { dbStore } from 'Store';
 
 import Constant from 'json/constant.json';
 
@@ -77,6 +78,11 @@ class DetailStore {
 			intercept(el as any, (change: any) => { 
 				return (change.newValue === el[change.name] ? null : change); 
 			});
+
+			// Update relationKeyMap in dbStore to keep consistency
+			if ((item.type == Constant.typeId.relation) && item.relationKey && item.id) {
+				dbStore.relationKeyMap[item.relationKey] = item.id;
+			};
 
 			if (createList) {
 				map.set(item.id, list);

@@ -605,7 +605,6 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 			const { details } = message;
 			
 			data.relationId = details.id;
-			dbStore.relationKeyMap[details.relationKey] = details.id;
 			detailStore.update(Constant.subId.relation, { id: details.id, details }, false);
 
 			if (addCommand) {

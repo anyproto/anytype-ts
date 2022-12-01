@@ -185,8 +185,6 @@ class Action {
 			};
 
 			const { details } = message;
-
-			dbStore.relationKeyMap[details.relationKey] = details.id;
 			detailStore.update(Constant.subId.relation, { id: details.id, details }, false);
 
 			Util.toastShow({ text: 'Object has been added to your library' });

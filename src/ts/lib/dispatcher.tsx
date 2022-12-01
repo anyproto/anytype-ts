@@ -636,10 +636,6 @@ class Dispatcher {
 					block = blockStore.getLeaf(rootId, id);
 					details = Decode.decodeStruct(data.getDetails());
 
-					if (details.type == Constant.typeId.relation) {
-						dbStore.relationKeyMap[details.relationKey] = details.id;
-					};
-					
 					// Subscriptions
 					if (subIds.length) {
 						uniqueSubIds = subIds.map((it: string) => { return it.split('/')[0]; });

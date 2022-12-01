@@ -427,7 +427,6 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 			const { details } = message;
 			
 			data.relationId = details.id;
-			dbStore.relationKeyMap[details.relationKey] = details.id;
 			detailStore.update(Constant.subId.relation, { id: details.id, details }, false);
 
 			if (addCommand) {
