@@ -5,6 +5,7 @@ import { Input, Icon } from 'Component';
 import { I, translate } from 'Lib';
 
 interface Props {
+	id?: string;
 	className?: string;
 	inputClassName?: string;
 	value?: string;
@@ -40,11 +41,11 @@ class Filter extends React.Component<Props, {}> {
 	};
 	
 	render () {
-		const { value, placeholder, className, inputClassName, onKeyDown, onKeyUp } = this.props;
+		const { id, value, placeholder, className, inputClassName, onKeyDown, onKeyUp } = this.props;
 		const cn = [ 'filter', className ];
 
 		return (
-			<div className={cn.join(' ')}>
+			<div id={id} className={cn.join(' ')}>
 				<div className="inner">
 					<Input 
 						ref={(ref: any) => { this.ref = ref; }} 

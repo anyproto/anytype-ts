@@ -20,7 +20,7 @@
 		.content { padding: 0px; transition: none; }
 		.wrap { height: 100%; display: flex; flex-direction: column; }
 
-		.items { height: calc(100% - 34px); }
+		.items { height: 100%; }
 		.item {
 			.name { @include text-overflow-nw; width: calc(100% - 26px); }
 		}

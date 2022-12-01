@@ -2,9 +2,9 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { Title, Label, Button, Icon, IconObject, Cover, Header } from 'Component';
+import { Title, Label, Button, Icon, IconObject, Cover, Header, Filter } from 'Component';
 import { I, C, DataUtil, Util, Storage, Onboarding, analytics, Action } from 'Lib';
-import { dbStore, blockStore, detailStore, commonStore } from 'Store';
+import { dbStore, blockStore, detailStore, commonStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
 interface Props extends I.PageComponent {
@@ -73,6 +73,9 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 		this.getRowHeight = this.getRowHeight.bind(this);
 		this.onTab = this.onTab.bind(this);
 		this.onScroll = this.onScroll.bind(this);
+		this.onFilterChange = this.onFilterChange.bind(this);
+		this.onFilterFocus = this.onFilterFocus.bind(this);
+		this.onFilterClear = this.onFilterClear.bind(this);
 	};
 	
 	render () {
@@ -83,8 +86,18 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 		const views = this.getViews();
 		const items = this.getItems();
 
+
 		let Item = null;
 		let Mid: any = null;
+
+		const filter = (
+			<Filter 
+				id="store-filter"
+				onFocus={this.onFilterFocus}
+				onChange={this.onFilterChange}
+				onClear={this.onFilterClear}
+			/>
+		);
 
 		const Author = (item: any) => {
 			if (item._empty_) {
@@ -137,9 +150,9 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 
 				Mid = () => (
 					<div className="mid">
-						<Title text="Type every object" />
-						<Label text="Anytype includes many popular types of objects for you to get started" />
-						<Button text="Create a new type" onClick={(e: any) => { this.onCreateType(e); }} />
+						<Title text="Types Library" />
+						<Label text="Types are like categories that help you group and manage your Objects.<br/>Create your own or add some from our Marketplace." />
+						{filter}
 					</div>
 				);
 				break;
@@ -198,9 +211,9 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 
 				Mid = () => (
 					<div className="mid">
-						<Title text="All objects are connected" />
-						<Label text="Use relations to build connections between objects" />
-						<Button text="Create a new type" />
+						<Title text="Relations library" />
+						<Label text="Relation is a link with a name. They make sense when you are connecting objects, so you can only create a new one from Relations menu in object" />
+						{filter}
 					</div>
 				);
 				break;
@@ -307,6 +320,8 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 
 	componentWillUnmount () {
 		this._isMounted = false;
+
+		menuStore.closeAll(Constant.menuIds.store);
 	};
 
 	getRowHeight (param: any) {
@@ -318,9 +333,9 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 			// Mid
 			case 0:
 				switch (this.tab) {
-					case Tab.Type: h = 238; break;
+					case Tab.Type: h = 264; break;
 					case Tab.Template: h = 280; break;
-					case Tab.Relation: h = 180; break;
+					case Tab.Relation: h = 264; break;
 				};
 				break;
 
@@ -359,6 +374,8 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 	onView (id: View) {
 		this.view = id;
 		this.getData(true);
+
+		menuStore.closeAll(Constant.menuIds.store);
 	};
 
 	onClick (e: any, item: any) {
@@ -375,6 +392,52 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 	};
 
 	onCreateTemplate () {
+	};
+
+	onFilterChange (v: string) {
+		menuStore.updateData(this.getMenuId(), { filter: v });
+	};
+
+	onFilterClear () {	
+		menuStore.closeAll(Constant.menuIds.store);
+	};
+
+	onFilterFocus () {
+		let menuParam: any = {
+			element: '#store-filter',
+			commonFilter: true,
+			horizontal: I.MenuDirection.Center,
+			isSub: true,
+			width: 386,
+			offsetY: 4,
+			data: {
+				noFilter: true,
+			}
+		};
+
+		switch (this.tab) {
+			case Tab.Type:
+				break;
+
+			case Tab.Relation:
+				break;
+		};
+
+		menuStore.open(this.getMenuId(), menuParam);
+	};
+
+	getMenuId () {
+		let menuId = '';
+		switch (this.tab) {
+			case Tab.Type:
+				menuId = 'typeSuggest';
+				break;
+
+			case Tab.Relation:
+				menuId = 'relationSuggest';
+				break;
+		};
+		return menuId;
 	};
 
 	getData (clear: boolean, callBack?: (message: any) => void) {

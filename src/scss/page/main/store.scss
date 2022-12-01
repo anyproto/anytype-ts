@@ -10,10 +10,14 @@
 		.mid { text-align: center; padding: 44px 0px 56px 0px; margin: 0px auto; }
 		.mid {
 			.title { margin-bottom: 8px; }
-			.label { @include text-paragraph; margin-bottom: 18px; }
-			.button { width: 208px; border-radius: 8px; }
-			.button {
-				.txt { @include text-paragraph; font-weight: 500; }
+			.label { @include text-paragraph; margin: 0px auto 24px auto; width: 610px; }
+
+			.filter { width: 386px; height: 40px; margin: 0px auto; border: 1px solid $colorBorderDark; border-radius: 6px; padding: 0px; }
+			.filter {
+				.line { display: none; }
+				.inner { height: 100%; text-align: left; padding: 0px 16px; }
+				.input { height: 100%; }
+				.icon.clear { top: 50%; right: 10px; margin-top: -10px; }
 			}
 		}
 
@@ -87,11 +91,6 @@
 	}
 
 	.wrapper.relation {
-		.mid {
-			.label { margin: 0px; }
-			.button { display: none; }
-		}
-
 		.row {  grid-template-columns: repeat(3, calc(33% - 10px)); grid-column-gap: 16px; }
 
 		.item { padding-left: 60px; height: 48px; line-height: 48px; }

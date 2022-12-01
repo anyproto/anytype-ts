@@ -46,7 +46,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		const { loading } = this.state;
 		const { param } = this.props;
 		const { data } = param;
-		const { filter } = data;
+		const { filter, noFilter } = data;
 		const items = this.getItems();
 
 		if (!this.cache) {
@@ -109,12 +109,14 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 
 		return (
 			<div className="wrap">
-				<Filter 
-					ref={(ref: any) => { this.refFilter = ref; }} 
-					placeholderFocus="Filter objects..." 
-					value={filter}
-					onChange={this.onFilterChange} 
-				/>
+				{!noFilter ? (
+					<Filter 
+						ref={(ref: any) => { this.refFilter = ref; }} 
+						placeholderFocus="Filter objects..." 
+						value={filter}
+						onChange={this.onFilterChange} 
+					/>
+				) : ''}
 
 				{loading ? <Loader /> : ''}
 
@@ -222,7 +224,8 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 
 		const { param } = this.props;
 		const { data } = param;
-		const { filter, skipIds } = data;
+		const { skipIds } = data;
+		const filter = String(data.filter || '');
 		
 		const filters: any[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: [ Constant.typeId.relation, Constant.storeTypeId.relation ] },
@@ -373,10 +376,12 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 	};
 
 	resize () {
-		const { getId, position } = this.props;
+		const { getId, position, param } = this.props;
+		const { data } = param;
+		const { noFilter } = data;
 		const items = this.getItems();
 		const obj = $(`#${getId()} .content`);
-		const height = items.reduce((res: number, current: any) => { return res + this.getRowHeight(current); }, 60);
+		const height = items.reduce((res: number, current: any) => { return res + this.getRowHeight(current); }, noFilter ? 16 : 60);
 
 		obj.css({ height });
 		position();

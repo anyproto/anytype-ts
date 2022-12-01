@@ -13,7 +13,6 @@ interface State {
 	loading: boolean;
 };
 
-const HEIGHT_FILTER = 44;
 const HEIGHT_ITEM = 28;
 const HEIGHT_DIV = 16;
 const LIMIT = 20;
@@ -47,7 +46,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<P
 		const { loading } = this.state;
 		const { param } = this.props;
 		const { data } = param;
-		const { filter } = data;
+		const { filter, noFilter } = data;
 		const items = this.getItems();
 
 		if (!this.cache) {
@@ -109,12 +108,14 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<P
 
 		return (
 			<div className="wrap">
-				<Filter 
-					ref={(ref: any) => { this.refFilter = ref; }} 
-					placeholderFocus="Filter objects..." 
-					value={filter}
-					onChange={this.onFilterChange} 
-				/>
+				{!noFilter ? (
+					<Filter 
+						ref={(ref: any) => { this.refFilter = ref; }} 
+						placeholderFocus="Filter objects..." 
+						value={filter}
+						onChange={this.onFilterChange} 
+					/>
+				) : ''}
 
 				{loading ? <Loader /> : ''}
 
@@ -226,7 +227,8 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<P
 
 		const { param } = this.props;
 		const { data } = param;
-		const { filter, skipIds } = data;
+		const { skipIds } = data;
+		const filter = String(data.filter || '');
 		
 		const filters: any[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: [ Constant.typeId.type, Constant.storeTypeId.type ] },
@@ -456,13 +458,12 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<P
 	};
 
 	resize () {
-		const { getId, position } = this.props;
+		const { getId, position, param } = this.props;
+		const { data } = param;
+		const { noFilter } = data;
 		const items = this.getItems();
 		const obj = $(`#${getId()} .content`);
-		const height = Math.min(360, items.reduce((res: number, item: any) => {
-			res += this.getRowHeight(item);
-			return res;
-		}, HEIGHT_FILTER + 16));
+		const height = items.reduce((res: number, current: any) => { return res + this.getRowHeight(current); }, noFilter ? 16 : 60);
 
 		obj.css({ height });
 		position();

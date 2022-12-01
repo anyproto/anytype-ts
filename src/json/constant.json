@@ -47,40 +47,18 @@
 			"dataviewOptionList", "dataviewOptionEdit", "dataviewFileList", "dataviewFileValues", "dataviewCalendar", "relationSuggest"
 		],
 		"cellAdd": [ "dataviewRelationEdit", "dataviewRelationSuggest", "dataviewRelationList" ],
-		"context": [
-			"select", "blockStyle", "blockMore", "blockLink", "blockColor", "blockBackground"
-		],
-		"add": [
-			"searchObject", "blockRelationEdit"
-		],
-		"action": [
-			"blockStyle", "blockColor", "blockBackground", "blockAlign", "blockLinkSettings", "searchObject"
-		],
-		"more": [
-			"select", "searchObject", "blockAlign"
-		],
-		"index": [
-			"searchObject"
-		],
-		"relationEdit": [
-			"select", "searchObject", "dataviewDate", "dataviewObjectValues", "dataviewObjectList"
-		],
-		"layout": [
-			"blockAlign"
-		],
-		"latex": [
-			"previewLatex"
-		],
-		"viewEdit": [ 
-			"select" 
-		],
-		"featuredType": [
-			"searchObject",
-			"typeSuggest"
-		],
-		"dataviewHead": [
-			"dataviewSource", "searchObject"
-		]
+		"context": [ "select", "blockStyle", "blockMore", "blockLink", "blockColor", "blockBackground" ],
+		"add": [ "searchObject", "blockRelationEdit" ],
+		"action": [ "blockStyle", "blockColor", "blockBackground", "blockAlign", "blockLinkSettings", "searchObject" ],
+		"more": [ "select", "searchObject", "blockAlign" ],
+		"index": [ "searchObject" ],
+		"relationEdit": [ "select", "searchObject", "dataviewDate", "dataviewObjectValues", "dataviewObjectList" ],
+		"layout": [ "blockAlign" ],
+		"latex": [ "previewLatex" ],
+		"viewEdit": [ "select" ],
+		"featuredType": [ "searchObject", "typeSuggest" ],
+		"dataviewHead": [ "dataviewSource", "searchObject" ],
+		"store": [ "typeSuggest", "relationSuggest" ]
 	},
 
 	"popupPinIds": [
