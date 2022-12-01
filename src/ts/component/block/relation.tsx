@@ -36,6 +36,8 @@ const BlockRelation = observer(class BlockRelation extends React.Component<Props
 		const name = isDeleted ? translate('commonDeletedRelation') : relation.name;
 		const cn = [ 'wrap', 'focusable', 'c' + block.id ];
 
+		console.log(key, relation);
+
 		let icon = null;
 		if (isDeleted) {
 			icon = <Icon className="ghost" />;
