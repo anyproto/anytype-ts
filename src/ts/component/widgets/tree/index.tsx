@@ -258,7 +258,7 @@ const Tree = observer(class Tree extends React.Component<Props, State> {
 	};
 
 	filterDeletedLinks (ids: string[]): string[] {
-		return ids.filter(id => !dbStore.getRecords(Constant.subId.deleted, "").includes(id));
+		return ids.filter(id => !dbStore.getRecords(Constant.subId.deleted, '').includes(id));
 	};
 
 	getRecords (subId: string): any[] {
@@ -366,7 +366,7 @@ const Tree = observer(class Tree extends React.Component<Props, State> {
 		} else {
 			const { sectionId, parentId, id, depth } = node;
 			return [ sectionId, parentId, id, depth ].join('-');
-		}
+		};
 	};
 
 	getRowHeight (node: TreeNode): number {

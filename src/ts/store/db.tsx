@@ -219,7 +219,7 @@ class DbStore {
 
 	getRelations () {
 		return dbStore.getRecords(Constant.subId.relation, '').map(id => this.getRelationById(id)).
-			filter(it => it && !it.isArchived && !it.isDeleted);
+			filter(it => it && !it.isArchived);
 	};
 
     getObjectTypesForSBType (SBType: I.SmartBlockType): any[] {
@@ -236,16 +236,22 @@ class DbStore {
 		};
 
 		let id = this.relationKeyMap[relationKey];
-		let ret = null;
+		let relation = null;
 
 		if (id) {
-			ret = this.getRelationById(id);
-		};
-		if (!ret) {
-			ret = this.getRelations().find(it => it.relationKey == relationKey);
+			relation = this.getRelationById(id);
 		};
 
-		return ret || null;
+		// try to fallback to bundled relation
+		if (!relation) {
+			relation = this.getRelations().find(it => it.relationKey == relationKey);
+
+			if (relation) {
+				this.relationKeyMap[relation.relationKey] = relation.id;
+			};
+		};
+
+		return relation;
 	};
 
 	getRelationById (id: string): any {
