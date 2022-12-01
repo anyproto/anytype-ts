@@ -235,11 +235,17 @@ class DbStore {
 			return null;
 		};
 
-		const id = this.relationKeyMap[relationKey];
+		let id = this.relationKeyMap[relationKey];
+		let ret = null;
+
 		if (id) {
-			return this.getRelationById(id);
+			ret = this.getRelationById(id);
 		};
-		return this.getRelations().find(it => it.relationKey == relationKey);
+		if (!ret) {
+			ret = this.getRelations().find(it => it.relationKey == relationKey);
+		};
+
+		return ret || null;
 	};
 
 	getRelationById (id: string): any {
