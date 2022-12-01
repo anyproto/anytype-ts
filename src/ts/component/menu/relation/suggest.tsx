@@ -357,7 +357,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		if (addCommand) {
 			const cb  = (item: any) => {
 				close(); 
-				addCommand(rootId, blockId, item.relationKey);
+				addCommand(rootId, blockId, item);
 			};
 
 			if (item.isInstalled) {

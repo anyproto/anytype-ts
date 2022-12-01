@@ -424,11 +424,14 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 				return;
 			};
 
-			data.relationId = message.objectId;
-			detailStore.update(Constant.subId.relation, { id: message.objectId, details: message.details }, false);
+			const { details } = message;
+			
+			data.relationId = details.id;
+			dbStore.relationKeyMap[details.relationKey] = details.id;
+			detailStore.update(Constant.subId.relation, { id: details.id, details }, false);
 
 			if (addCommand) {
-				addCommand(rootId, blockId, message.relationKey, onChange);
+				addCommand(rootId, blockId, details, onChange);
 			};
 
 			analytics.event('CreateRelation', { format: item.format, type: ref });

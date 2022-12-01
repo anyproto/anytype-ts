@@ -62,6 +62,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 	offset: number = 0;
 	cache: any = null;
 	refList: any = null;
+	refFilter: any = null;
 	tab: Tab = Tab.Type;
 	view: View = View.Marketplace;
 
@@ -92,7 +93,9 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 
 		const filter = (
 			<Filter 
+				ref={(ref: any) => { this.refFilter = ref; }}
 				id="store-filter"
+				icon="search"
 				onFocus={this.onFilterFocus}
 				onChange={this.onFilterChange}
 				onClear={this.onFilterClear}
@@ -402,24 +405,34 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 		menuStore.closeAll(Constant.menuIds.store);
 	};
 
-	onFilterFocus () {
-		let menuParam: any = {
+	onFilterFocus (e: any) {
+		const menuParam: any = {
 			element: '#store-filter',
 			commonFilter: true,
 			horizontal: I.MenuDirection.Center,
-			isSub: true,
 			width: 386,
 			offsetY: 4,
 			data: {
+				filter: this.refFilter.getValue(),
 				noFilter: true,
 			}
 		};
 
 		switch (this.tab) {
 			case Tab.Type:
+				menuParam.data = Object.assign(menuParam.data, {
+					onClick: (item: any) => {
+						this.onClick(e, item);
+					}
+				});
 				break;
 
 			case Tab.Relation:
+				menuParam.data = Object.assign(menuParam.data, {
+					addCommand: (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {
+						this.onClick(e, relation);
+					},
+				});
 				break;
 		};
 
@@ -586,7 +599,6 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 		};
 
 		views.push({ id: View.Marketplace, name: 'Marketplace' });
-
 		return views;
 	};
 
@@ -598,8 +610,15 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 	};
 
 	onScroll ({ clientHeight, scrollHeight, scrollTop }) {
+		const win = $(window);
+		const { list } = menuStore;
+
 		if (scrollTop) {
 			this.top = scrollTop;
+		};
+
+		for (let menu of list) {
+			win.trigger('resize.' + Util.toCamelCase('menu-' + menu.id));
 		};
 	};
 

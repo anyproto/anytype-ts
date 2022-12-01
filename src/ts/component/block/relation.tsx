@@ -145,10 +145,10 @@ const BlockRelation = observer(class BlockRelation extends React.Component<Props
 				menuIdEdit: 'blockRelationEdit',
 				skipIds: relations.map(it => it.relationKey),
 				ref: 'block',
-				addCommand: (rootId: string, blockId: string, relationKey: string, onChange: (message: any) => void) => {
-					C.ObjectRelationAdd(rootId, [ relationKey ], (message: any) => {
+				addCommand: (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {
+					C.ObjectRelationAdd(rootId, [ relation.relationKey ], (message: any) => {
 						if (!message.error.code) {
-							C.BlockRelationSetKey(rootId, block.id, relationKey, () => { 
+							C.BlockRelationSetKey(rootId, block.id, relation.relationKey, () => { 
 								menuStore.close('relationSuggest'); 
 							});
 
