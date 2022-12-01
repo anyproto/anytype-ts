@@ -27,12 +27,18 @@ const BlockRelation = observer(class BlockRelation extends React.Component<Props
 	render (): any {
 		const { rootId, block, readonly, isPopup } = this.props;
 		const relationKey = block.content.key;
-		const relation = dbStore.getRelationByKey(relationKey);
 		const idPrefix = 'blockRelationCell' + block.id;
 		const id = Relation.cellId(idPrefix, relationKey, '0');
+		const cn = [ 'wrap', 'focusable', 'c' + block.id ];
+
+		let relation = dbStore.getRelationByKey(relationKey);
+		if (!relation) {
+			const relations = dbStore.getRelations();
+			relation = relations.find(it => it.relationKey == relationKey);
+		};
+
 		const allowedValue = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]) && relation && !relation.isReadonlyValue;
 		const isDeleted = !relation || !relation.isInstalled;
-		const cn = [ 'wrap', 'focusable', 'c' + block.id ];
 
 		if (isDeleted) {
 			cn.push('isDeleted');

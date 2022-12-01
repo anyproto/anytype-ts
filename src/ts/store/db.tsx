@@ -231,27 +231,8 @@ class DbStore {
 	};
 
     getRelationByKey (relationKey: string): any {
-		if (!relationKey) {
-			return null;
-		};
-
-		let id = this.relationKeyMap[relationKey];
-		let relation = null;
-
-		if (id) {
-			relation = this.getRelationById(id);
-		};
-
-		// try to fallback to bundled relation
-		if (!relation) {
-			relation = this.getRelations().find(it => it.relationKey == relationKey);
-
-			if (relation) {
-				this.relationKeyMap[relation.relationKey] = relation.id;
-			};
-		};
-
-		return relation;
+		const id = relationKey ? this.relationKeyMap[relationKey] : '';
+		return id ? this.getRelationById(id) : null;
 	};
 
 	getRelationById (id: string): any {
