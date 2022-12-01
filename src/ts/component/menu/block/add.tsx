@@ -486,7 +486,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 		
 		const { param, close } = this.props;
 		const { data } = param;
-		const { rootId, blockId, onSelect, blockCreate } = data;
+		const { rootId, blockId, onSelect, blockCreate, blockDataviewCreateWithObject } = data;
 		const { filter } = commonStore;
 		const block = blockStore.getLeaf(rootId, blockId);
 

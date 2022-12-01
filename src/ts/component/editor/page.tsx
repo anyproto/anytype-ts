@@ -1781,16 +1781,16 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 	blockCreate (blockId: string, position: I.BlockPosition, param: any, callBack?: (blockId: string) => void) {
 		const { rootId } = this.props;
 
-		C.BlockCreate(rootId, blockId, position, param, (message: any) => {
+		const cb = (message: any) => {
 			this.focus(message.blockId, 0, 0, false);
 
 			if (callBack) {
 				callBack(message.blockId);
 			};
 
-			const event: any =  { 
-				middleTime: message.middleTime, 
-				type: param.type, 
+			const event: any =  {
+				middleTime: message.middleTime,
+				type: param.type,
 				style: param.content?.style,
 				params: {},
 			};
@@ -1800,7 +1800,13 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			};
 
 			analytics.event('CreateBlock', event);
-		});
+		};
+
+		if (param.type == I.BlockType.Dataview) {
+			C.BlockDataviewCreateWithObject(rootId, blockId, position, param, cb);
+		} else {
+			C.BlockCreate(rootId, blockId, position, param, cb);
+		}
 	};
 	
 	blockMerge (focused: I.Block, dir: number, length: number) {

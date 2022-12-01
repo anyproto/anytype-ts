@@ -227,6 +227,17 @@ const BlockCreate = (contextId: string, targetId: string, position: I.BlockPosit
 	dispatcher.request(BlockCreate.name, request, callBack);
 };
 
+const BlockDataviewCreateWithObject = (contextId: string, targetId: string, position: I.BlockPosition, block: any, callBack?: (message: any) => void) => {
+	const request = new Rpc.BlockDataview.CreateWithObject.Request();
+
+	request.setContextid(contextId);
+	request.setTargetid(targetId);
+	request.setPosition(position);
+	request.setBlock(Mapper.To.Block(block));
+
+	dispatcher.request(BlockDataviewCreateWithObject.name, request, callBack);
+};
+
 // ---------------------- BLOCK TEXT ---------------------- //
 
 const BlockTextSetText = (contextId: string, blockId: string, text: string, marks: I.Mark[], callBack?: (message: any) => void) => {
@@ -1487,6 +1498,7 @@ export {
 	BlockCut,
 	BlockPaste,
 	BlockCreate,
+	BlockDataviewCreateWithObject,
 	BlockSetFields,
 
 	BlockListMoveToExistingObject,
