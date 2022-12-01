@@ -26,63 +26,69 @@ const BlockRelation = observer(class BlockRelation extends React.Component<Props
 
 	render (): any {
 		const { rootId, block, readonly, isPopup } = this.props;
-		const { content } = block;
-		const { key } = content;
-		const relation = dbStore.getRelationByKey(key);
+		const relationKey = block.content.key;
+		const relation = dbStore.getRelationByKey(relationKey);
 		const idPrefix = 'blockRelationCell' + block.id;
-		const id = Relation.cellId(idPrefix, key, '0');
+		const id = Relation.cellId(idPrefix, relationKey, '0');
 		const allowedValue = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]) && relation && !relation.isReadonlyValue;
 		const isDeleted = !relation || !relation.isInstalled;
-		const name = isDeleted ? translate('commonDeletedRelation') : relation.name;
 		const cn = [ 'wrap', 'focusable', 'c' + block.id ];
 
-		let icon = null;
 		if (isDeleted) {
-			icon = <Icon className="ghost" />;
 			cn.push('isDeleted');
-		} else 
-		if (!allowedValue) {
-			icon = <Icon className="lock" />;
+		};
+
+		let content = null;
+
+		if (isDeleted) {
+			content = (
+				<div className="sides">
+					<div className={[ 'info', 'noValue', (!readonly ? 'canEdit' : '') ].join(' ')} onClick={this.onMenu}>
+						{relation ? (
+							<React.Fragment>
+								<Icon className="ghost" />
+								{translate('commonDeletedRelation')}
+							</React.Fragment>
+						) : 'New relation'} 
+					</div>
+				</div>
+			);
+		} else {
+			content = (
+				<div className="sides">
+					<div className="info">
+						{!allowedValue ? <Icon className="lock" /> : ''}
+						<div className="name">{relation.name}</div>
+					</div>
+					<div 
+						id={id} 
+						className={[ 'cell', DataUtil.relationClass(relation.format), (!readonly && allowedValue ? 'canEdit' : '') ].join(' ')} 
+						onClick={this.onCellClick}
+					>
+						<Cell 
+							ref={(ref: any) => { this.refCell = ref; }}
+							rootId={rootId}
+							subId={rootId}
+							block={block}
+							relationKey={relation.relationKey}
+							getRecord={() => { return detailStore.get(rootId, rootId, [ relation.relationKey ], true); }}
+							viewType={I.ViewType.Grid}
+							readonly={readonly || !allowedValue}
+							index={0}
+							idPrefix={idPrefix}
+							menuClassName="fromBlock"
+							onCellChange={this.onCellChange}
+							bodyContainer={Util.getBodyContainer(isPopup ? 'popup' : 'page')}
+							pageContainer={Util.getCellContainer(isPopup ? 'popup' : 'page')}
+						/>
+					</div>
+				</div>
+			);
 		};
 
 		return (
 			<div className={cn.join(' ')} tabIndex={0} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp} onFocus={this.onFocus}>
-				{!relation ? 
-				(
-					<div className="sides">
-						<div className={[ 'info', 'noValue', (!readonly ? 'canEdit' : '') ].join(' ')} onClick={this.onMenu}>New relation</div>
-					</div>
-				) : 
-				(
-					<div className="sides">
-						<div className="info">
-							{icon}
-							<div className="name">{name}</div>
-						</div>
-						<div 
-							id={id} 
-							className={[ 'cell', DataUtil.relationClass(relation.format), (!readonly && allowedValue ? 'canEdit' : '') ].join(' ')} 
-							onClick={this.onCellClick}
-						>
-							<Cell 
-								ref={(ref: any) => { this.refCell = ref; }}
-								rootId={rootId}
-								subId={rootId}
-								block={block}
-								relationKey={relation.relationKey}
-								getRecord={() => { return detailStore.get(rootId, rootId, [ relation.relationKey ], true); }}
-								viewType={I.ViewType.Grid}
-								readonly={readonly || !allowedValue}
-								index={0}
-								idPrefix={idPrefix}
-								menuClassName="fromBlock"
-								onCellChange={this.onCellChange}
-								bodyContainer={Util.getBodyContainer(isPopup ? 'popup' : 'page')}
-								pageContainer={Util.getCellContainer(isPopup ? 'popup' : 'page')}
-							/>
-						</div>
-					</div>
-				)}
+				{content}
 			</div>
 		);
 	};
