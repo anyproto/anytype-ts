@@ -174,7 +174,7 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 	getDescriptions () {
 		return [
 			{ id: I.LinkDescription.None, name: 'None' },
-			{ id: I.LinkDescription.Added, name: 'Only description' },
+			{ id: I.LinkDescription.Added, name: 'Relation description' },
 			{ id: I.LinkDescription.Content, name: 'Content preview' },
 		];
 	};
