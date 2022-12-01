@@ -283,8 +283,6 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		const librarySources = library.map(it => it.sourceObject);
 		const marketplace = this.items.filter(it => (it.workspaceId == Constant.storeSpaceId) && !librarySources.includes(it.id));
 
-		console.log(librarySources);
-		
 		return [
 			{ id: 'library', name: 'My relations', children: library },
 			{ id: 'marketplace', name: 'Marketplace', children: marketplace },
