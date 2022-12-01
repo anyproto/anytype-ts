@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Button, IconObject, ObjectName } from 'Component';
 import { commonStore } from 'Store';
-import { C, Util, DataUtil, I, analytics, translate } from 'Lib';
+import { C, Util, DataUtil, I, analytics, translate, keyboard } from 'Lib';
 
 const Toast = observer(class Toast extends React.Component<any, any> {
 
@@ -16,6 +16,7 @@ const Toast = observer(class Toast extends React.Component<any, any> {
         const { toast } = commonStore;
         const { count, action, text, value } = toast;
         const { object, target, origin } = this.state;
+        const { rootId } = this.props;
 
         let buttons = [];
         let textObject = null;
@@ -77,6 +78,12 @@ const Toast = observer(class Toast extends React.Component<any, any> {
 				textAction = 'linked to';
 				textObject = <Element {...object} />;
 				textTarget = <Element {...target} />;
+
+                if (target.id !== keyboard.getRootId()) {
+                    buttons = buttons.concat([
+                        { action: 'open', label: 'Open' }
+                    ]);
+                };
                 break;
         };
 
@@ -94,7 +101,7 @@ const Toast = observer(class Toast extends React.Component<any, any> {
                     {buttons.length ? (
 						<div className="buttons">
 							{buttons.map((item: any, i: number) => (
-								<Button text={item.label} onClick={(e: any) => this.onClick(e, item.action)} className="toastButton" />
+								<Button text={item.label} onClick={(e: any) => this.onClick(e, item.action)} key={i} className="toastButton" />
 							))}
 						</div>
 					) : ''}
