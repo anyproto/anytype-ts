@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { IconObject, Block, Button } from 'Component';
 import { I, M, Action, DataUtil, focus, keyboard } from 'Lib';
-import { blockStore, detailStore } from 'Store';
+import { blockStore, detailStore, dbStore } from 'Store';
 import { observer } from 'mobx-react';
 import { getRange } from 'selection-ranges';
 
@@ -85,7 +85,11 @@ const HeadSimple = observer(class Controls extends React.Component<Props, {}> {
 			button = <Button id="button-create" text="Create set" onClick={onCreate} />;
 		};
 		if ([ Constant.storeTypeId.type, Constant.storeTypeId.relation ].includes(object.type)) {
-			button = <Button id="button-install" text="Install" onClick={this.onInstall} />;
+			if (this.isInstalled()) {
+				button = <Button id="button-install" text="Install" className="grey disabled" />;
+			} else {
+				button = <Button id="button-install" text="Install" onClick={this.onInstall} />;
+			};
 		};
 
 		return (
@@ -276,6 +280,25 @@ const HeadSimple = observer(class Controls extends React.Component<Props, {}> {
 		Action.install(object, (message: any) => {
 			DataUtil.objectOpenAuto(message.details);
 		});
+	};
+
+	isInstalled () {
+		const { rootId } = this.props;
+		const object = detailStore.get(rootId, rootId);
+
+		let sources: string[] = [];
+
+		switch (object.type) {
+			case Constant.storeTypeId.type:
+				sources = dbStore.getTypes().map(it => it.sourceObject);
+				break;
+
+			case Constant.storeTypeId.relation:
+				sources = dbStore.getRelations().map(it => it.sourceObject);
+				break;
+		};
+
+		return sources.includes(rootId);
 	};
 
 });
