@@ -143,7 +143,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 								</div>
 
 								<div className="buttons">
-									{allowedDelete ? <Icon className="remove" tooltip="Delete type" onClick={(e: any) => { this.onRemove(e, item); }} /> : ''}
+									<Icon className={allowedDelete ? 'remove' : 'lock'} tooltip="Delete type" onClick={(e: any) => { this.onRemove(e, item); }} />
 								</div>
 
 								<div className="line" />
@@ -204,7 +204,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 								</div>
 
 								<div className="buttons">
-									{allowedDelete ? <Icon className="remove" tooltip="Delete relation" onClick={(e: any) => { this.onRemove(e, item); }} /> : ''}
+									<Icon className={allowedDelete ? 'remove' : 'lock'} tooltip="Delete relation" onClick={(e: any) => { this.onRemove(e, item); }} />
 								</div>
 
 								<div className="line" />
@@ -607,7 +607,9 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 		e.preventDefault();
 		e.stopPropagation();
 
-		Action.uninstall([ item.id ], item.type);
+		if (blockStore.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ])) {
+			Action.uninstall([ item.id ], item.type);
+		};
 	};
 
 	onScroll ({ clientHeight, scrollHeight, scrollTop }) {

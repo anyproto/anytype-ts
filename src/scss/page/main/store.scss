@@ -58,8 +58,9 @@
 
 					.buttons { flex-shrink: 0; display: none;}
 					.buttons {
-						.icon { width: 28px; height: 28px; background-size: 20px; border-radius: 4px; transition: background-color 0.2s ease-in-out; }
+						.icon { width: 28px !important; height: 28px !important; background-size: 20px; border-radius: 4px; transition: background-color 0.2s ease-in-out; }
 						.icon.remove { background-image: url('~img/icon/menu/action/remove0.svg'); }
+						.icon.lock { background-image: url('~img/icon/menu/action/pageLock0.svg'); }
 						.icon:hover { background-color: $colorHover; }
 					}
 				}
