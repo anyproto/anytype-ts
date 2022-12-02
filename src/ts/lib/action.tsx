@@ -184,10 +184,22 @@ class Action {
 				callBack(message);
 			};
 
-			const { details } = message;
+			let { details } = message;
+			let text = '';
+
 			detailStore.update(Constant.subId.relation, { id: details.id, details }, false);
 
-			Util.toastShow({ text: 'Object has been added to your library' });
+			switch (object.type) {
+				case Constant.storeTypeId.type:
+					text = `Object type <b>${object.name}</b> has been added to your library`;
+					break;
+
+				case Constant.storeTypeId.relation:
+					text = `Relation <b>${object.name}</b> has been added to your library`;
+					break;
+			};
+
+			Util.toastShow({ text });
 			analytics.event('ObjectInstall', { objectType: object.type, relationKey: object.relationKey });
 		});
 	};

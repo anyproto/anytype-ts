@@ -450,11 +450,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<P
 	};
 
 	getLibrarySources () {
-		const { workspace } = commonStore;
-		const types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map(it => it.id);
-		const library = this.items.filter(it => (it.workspaceId == workspace) && types.includes(it.id));
-
-		return library.map(it => it.source);
+		return this.items.filter(it => (it.workspaceId == commonStore.workspace)).map(it => it.sourceObject).filter(it => it);
 	};
 
 	resize () {

@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
 import $ from 'jquery';
-import { I, C, DataUtil, Relation, translate, Dataview, keyboard, analytics } from 'Lib';
+import { I, C, DataUtil, Relation, translate, Dataview, keyboard, analytics, Util } from 'Lib';
 import { Icon, Input, MenuItemVertical, Button } from 'Component';
 import { blockStore, dbStore, menuStore, detailStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -611,6 +611,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 				addCommand(rootId, blockId, details, onChange);
 			};
 
+			Util.toastShow({ text: `Relation <b>${details.name}</b> has been created and added to your library` });
 			analytics.event('CreateRelation', { format: item.format, type: ref });
 		});
 	};

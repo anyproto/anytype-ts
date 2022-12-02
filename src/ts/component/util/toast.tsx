@@ -92,9 +92,9 @@ const Toast = observer(class Toast extends React.Component<any, any> {
                 <div className="inner">
                     <div className="message">
                         {textObject}
-                        {textAction}
+                        <span dangerouslySetInnerHTML={{ __html: textAction }} />
                         {textOrigin}
-                        {textActionTo}
+						<span dangerouslySetInnerHTML={{ __html: textActionTo }} />
                         {textTarget}
                     </div>
 
