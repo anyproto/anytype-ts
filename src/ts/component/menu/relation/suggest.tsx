@@ -188,6 +188,8 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 	
 	componentWillUnmount () {
 		this._isMounted = false;
+
+		menuStore.closeAll([ 'searchObject' ]);
 		window.clearTimeout(this.timeoutFilter);
 	};
 

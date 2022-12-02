@@ -353,8 +353,8 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 	};
 
 	onOpen (e: any) {
-		const relation = this.getRelation();
-		DataUtil.objectOpenPopup(relation);
+		this.props.close();
+		DataUtil.objectOpenPopup(this.getRelation());
 	};
 
 	onCopy (e: any) {
