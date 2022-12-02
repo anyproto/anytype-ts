@@ -87,7 +87,6 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 		const views = this.getViews();
 		const items = this.getItems();
 
-
 		let Item = null;
 		let Mid: any = null;
 
@@ -107,16 +106,18 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 				return null;
 			};
 			return (
-				<div className="author">
-					{item.name}
-				</div>
+				<div className="author">{item.name}</div>
 			);
 		};
 
 		const TabList = (item: any) => (
 			<div className="tabs">
 				{views.map((item: any, i: number) => (
-					<div key={item.id} className={[ 'tab', (item.id == this.view ? 'active' : '') ].join(' ')} onClick={(e: any) => { this.onView(item.id); }}>
+					<div 
+						key={item.id} 
+						className={[ 'tab', (item.id == this.view ? 'active' : '') ].join(' ')} 
+						onClick={(e: any) => { this.onView(item.id); }}
+					>
 						{item.name}
 					</div>
 				))}
@@ -142,7 +143,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 								</div>
 
 								<div className="buttons">
-									{allowedDelete ? <Icon className="remove" tooltip="Delete" onClick={(e: any) => { this.onRemove(e, item); }} /> : ''}
+									{allowedDelete ? <Icon className="remove" tooltip="Delete type" onClick={(e: any) => { this.onRemove(e, item); }} /> : ''}
 								</div>
 
 								<div className="line" />
@@ -203,7 +204,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 								</div>
 
 								<div className="buttons">
-									{allowedDelete ? <Icon className="remove" tooltip="Delete" onClick={(e: any) => { this.onRemove(e, item); }} /> : ''}
+									{allowedDelete ? <Icon className="remove" tooltip="Delete relation" onClick={(e: any) => { this.onRemove(e, item); }} /> : ''}
 								</div>
 
 								<div className="line" />
