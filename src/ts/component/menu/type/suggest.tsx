@@ -444,9 +444,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<P
 	};
 
 	getRowHeight (item: any) {
-		let h = HEIGHT_ITEM;
-		if (item.isDiv) h = HEIGHT_DIV;
-		return h;
+		return item.isDiv ? HEIGHT_DIV : HEIGHT_ITEM;
 	};
 
 	getLibrarySources () {
@@ -459,7 +457,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<P
 		const { noFilter } = data;
 		const items = this.getItems();
 		const obj = $(`#${getId()} .content`);
-		const height = items.reduce((res: number, current: any) => { return res + this.getRowHeight(current); }, noFilter ? 16 : 60);
+		const height = items.reduce((res: number, current: any) => { return res + this.getRowHeight(current); }, noFilter ? 24 : 60);
 
 		obj.css({ height });
 		position();

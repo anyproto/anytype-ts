@@ -142,7 +142,7 @@ const BlockRelation = observer(class BlockRelation extends React.Component<Props
 				blockId: block.id,
 				filter: '',
 				menuIdEdit: 'blockRelationEdit',
-				skipIds: relations.map(it => it.relationKey),
+				skipKeys: relations.map(it => it.relationKey),
 				ref: 'block',
 				addCommand: (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {
 					C.ObjectRelationAdd(rootId, [ relation.relationKey ], (message: any) => {
