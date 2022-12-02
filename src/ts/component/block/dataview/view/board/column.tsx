@@ -198,8 +198,7 @@ const Column = observer(class Column extends React.Component<Props, State> {
 			ignoreHidden: true,
 			ignoreDeleted: true,
 		}, () => {
-			const records = dbStore.getRecords(subId, '');
-			dbStore.recordsSet(subId, '', applyObjectOrder(id, records));
+			dbStore.recordsSet(subId, '', applyObjectOrder(id, dbStore.getRecords(subId, '')));
 
 			if (clear) {
 				this.setState({ loading: false });
