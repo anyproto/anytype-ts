@@ -124,6 +124,11 @@ const BlockLink = observer(class BlockLink extends React.Component<Props, {}> {
 				);
 			};
 
+			let n = 1;
+			if (descr) n++;
+			if (withType && type) n++;
+			cnc.push('c' + n);
+
 			element = (
 				<div className={cnc.join(' ')} onMouseDown={this.onClick}>
 					<div id="sides" className={cns.join(' ')}>
@@ -141,14 +146,12 @@ const BlockLink = observer(class BlockLink extends React.Component<Props, {}> {
 								</div>
 							) : ''}
 
-							<div className="relationItem cardFeatured">
-								{withType && type ? (
-									<React.Fragment>
-										{div}
-										<div className="item">{type.name}</div>
-									</React.Fragment>
-								) : ''}
-							</div>
+							{withType && type ? (
+								<div className="relationItem cardType">
+									{div}
+									<div className="item">{type.name}</div>
+								</div>
+							) : ''}
 						</div>
 
 						{withCover ? (
