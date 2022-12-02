@@ -86,7 +86,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props, {}> {
 		};
 		if ([ Constant.storeTypeId.type, Constant.storeTypeId.relation ].includes(object.type)) {
 			if (this.isInstalled()) {
-				button = <Button id="button-install" text="Install" className="grey disabled" />;
+				button = <Button id="button-install" text="Install" className="grey filled disabled" />;
 			} else {
 				button = <Button id="button-install" text="Install" onClick={this.onInstall} />;
 			};
