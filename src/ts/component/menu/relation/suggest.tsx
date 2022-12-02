@@ -343,6 +343,8 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 	};
 
 	onOver (e: any, item: any) {
+		e.persist();
+
 		if (!this._isMounted) {
 			return;
 		};

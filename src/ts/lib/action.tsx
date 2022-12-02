@@ -185,38 +185,41 @@ class Action {
 			};
 
 			let { details } = message;
-			let text = '';
+			let toast = '';
 
 			detailStore.update(Constant.subId.relation, { id: details.id, details }, false);
 
 			switch (object.type) {
 				case Constant.storeTypeId.type:
-					text = `Object type <b>${object.name}</b> has been added to your library`;
+					toast = `Object type <b>${object.name}</b> has been added to your library`;
 					break;
 
 				case Constant.storeTypeId.relation:
-					text = `Relation <b>${object.name}</b> has been added to your library`;
+					toast = `Relation <b>${object.name}</b> has been added to your library`;
 					break;
 			};
 
-			Util.toastShow({ text });
+			Util.toastShow({ text: toast });
 			analytics.event('ObjectInstall', { objectType: object.type, relationKey: object.relationKey });
 		});
 	};
 
-	uninstall (ids: string[], type: string, callBack?: (message: any) => void) {
+	uninstall (object: any, callBack?: (message: any) => void) {
 		let title = '';
 		let text = '';
+		let toast = '';
 		
-		switch (type) {
+		switch (object.type) {
 			case Constant.typeId.type:
 				title = 'Are you sure you want to remove this Type?';
 				text = 'This Type and any associated Templates will be removed. If you have created any Objects with this Type, they may become more difficult to locate.';
+				toast = `Object type <b>${object.name}</b> has been removed from your library`;
 				break;
 
 			case Constant.typeId.relation:
 				title = 'Are you sure you want to remove this Relation?';
 				text = 'This Relation will be removed from your Library. If you have created any Objects with which use this Relation, you will no longer be able to edit the Relation value.';
+				toast = `Relation <b>${object.name}</b> has been removed from your library`;
 				break;
 		};
 
@@ -227,7 +230,7 @@ class Action {
 				textConfirm: 'Remove',
 				colorConfirm: 'red',
 				onConfirm: () => {
-					C.WorkspaceObjectListRemove(ids, (message: any) => {
+					C.WorkspaceObjectListRemove([ object.id ], (message: any) => {
 						if (message.error.code) {
 							return;
 						};
@@ -236,8 +239,8 @@ class Action {
 							callBack(message);
 						};
 
-						Util.toastShow({ text: 'Object has been removed from your library' });
-						analytics.event('ObjectUninstall', { objectType: type, count: ids.length });
+						Util.toastShow({ text: toast });
+						analytics.event('ObjectUninstall', { objectType: object.type, count: 1 });
 					});
 				},
 			},
