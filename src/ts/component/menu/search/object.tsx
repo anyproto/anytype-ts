@@ -20,7 +20,6 @@ const HEIGHT_SECTION = 28;
 const HEIGHT_ITEM = 28;
 const HEIGHT_ITEM_BIG = 56;
 const HEIGHT_DIV = 16;
-const HEIGHT_FILTER = 44;
 const HEIGHT_EMPTY = 98;
 
 const MenuSearchObject = observer(class MenuSearchObject extends React.Component<Props, State> {
@@ -479,27 +478,20 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		const { isBig } = data;
 
 		let h = HEIGHT_ITEM;
-
 		if (isBig || item.isBig)	 h = HEIGHT_ITEM_BIG;
 		if (item.isEmpty)			 h = HEIGHT_EMPTY;
 		if (item.isSection)			 h = HEIGHT_SECTION;
 		if (item.isDiv)				 h = HEIGHT_DIV;
-
 		return h;
 	};
 
 	resize () {
-		if (!this._isMounted) {
-			return;
-		};
-
-		const { getId, position } = this.props;
+		const { getId, position, param } = this.props;
+		const { data } = param;
+		const { noFilter } = data;
 		const items = this.getItems();
 		const obj = $(`#${getId()} .content`);
-		const height = Math.min(360, items.reduce((res: number, item: any) => {
-			res += this.getRowHeight(item);
-			return res;
-		}, HEIGHT_FILTER + 16));
+		const height = Math.max(300, items.reduce((res: number, current: any) => { return res + this.getRowHeight(current); }, HEIGHT_ITEM + 16 + (noFilter ? 0 : 44)));
 
 		obj.css({ height });
 		position();

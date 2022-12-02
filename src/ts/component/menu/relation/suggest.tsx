@@ -359,6 +359,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		let sources = (data.skipKeys || []).concat(this.getLibrarySources());
 		let menuId = '';
 		let menuParam: I.MenuParam = {
+			menuKey: item.id,
 			element: `#${getId()} #item-${item.id}`,
 			offsetX: getSize().width,
 			offsetY: -getSize().height + 8,

@@ -274,6 +274,9 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 				placeholderFocus: 'Filter object types...',
 				value: this.objectTypes, 
 				types: [ Constant.typeId.type ],
+				filters: [
+					{ operator: I.FilterOperator.And, relationKey: 'smartblockTypes', condition: I.FilterCondition.In, value: [ I.SmartBlockType.Page ] },
+				],
 				relation: observable.box(relation),
 				valueMapper: it => dbStore.getType(it.id),
 				onChange: (value: any, callBack?: () => void) => {

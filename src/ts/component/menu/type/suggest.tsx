@@ -365,6 +365,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<P
 
 		let menuId = '';
 		let menuParam: I.MenuParam = {
+			menuKey: item.itemId,
 			element: `#${getId()} #item-${item.id}`,
 			offsetX: getSize().width,
 			offsetY: -getSize().height + 8,

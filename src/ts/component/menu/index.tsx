@@ -543,7 +543,7 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 
 				if (flipX) {
 					w -= width;
-					l -= w + offset;
+					l -= w + offset * 2;
 					t = 'scaleX(-1)';
 				};
 

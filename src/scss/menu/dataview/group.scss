@@ -3,7 +3,7 @@
 .menus {
 	.menu.menuDataviewGroupList { width: 360px; }
 	.menu.menuDataviewGroupList {
-		.content { max-height: unset; padding: 0px; }
+		.content { padding: 0px; }
 		.wrap { height: 100%; display: flex; flex-direction: column; padding: 0px; }
 
 		.items { flex-grow: 1; }

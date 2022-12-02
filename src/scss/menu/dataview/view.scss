@@ -3,7 +3,7 @@
 .menus {
 	.menu.menuDataviewViewList { width: 360px; }
 	.menu.menuDataviewViewList {
-		.content { overflow: hidden; max-height: unset; padding: 0px; }
+		.content { overflow: hidden; padding: 0px; }
 		.wrap { height: 100%; display: flex; flex-direction: column; }
 		.items { flex-grow: 1; }
 

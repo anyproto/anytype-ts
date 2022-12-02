@@ -255,11 +255,10 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 	};
 	
 	load (clear: boolean, callBack?: (message: any) => void) {
-		const { config } = commonStore;
 		const { param } = this.props;
 		const { data } = param;
 		const { types, filter } = data;
-		const filters: I.Filter[] = [];
+		const filters: I.Filter[] = [].concat(data.filters || []);
 		const sorts = [
 			{ relationKey: 'name', type: I.SortType.Asc },
 		];
@@ -379,19 +378,11 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 
 	getRowHeight (item: any) {
 		let h = HEIGHT_ITEM;
-
 		if (item.isBig) h = HEIGHT_ITEM_BIG;
 		if (item.isSection) h = HEIGHT_SECTION;
 		if (item.isDiv) h = HEIGHT_DIV;
 		return h;
 	};
-
-	getListHeight (items: any) {
-		return items.reduce((res: number, item: any) => {
-			res += this.getRowHeight(item);
-			return res;
-		}, 0);
-	}
 
 	resize () {
 		const { getId, position, param } = this.props;
@@ -399,9 +390,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		const { noFilter } = data;
 		const items = this.getItems();
 		const obj = $(`#${getId()} .content`);
-		const offset = noFilter ? 16 : 58;
-		const min = noFilter ? 28 + 16 : 300;
-		const height = Math.max(min, Math.min(360, this.getListHeight(items) + offset));
+		const height = Math.max(300, items.reduce((res: number, current: any) => { return res + this.getRowHeight(current); }, HEIGHT_ITEM + 16 + (noFilter ? 0 : 44)));
 
 		obj.css({ height });
 		position();
