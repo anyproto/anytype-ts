@@ -541,7 +541,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				break;
 
 			case 'pageUninstall':
-				Action.uninstall([ object.id ], object.type, (message: any) => {
+				Action.uninstall(object, (message: any) => {
 					Util.route('/main/index');
 				});
 				break;
