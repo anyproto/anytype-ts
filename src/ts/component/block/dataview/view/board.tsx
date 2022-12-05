@@ -422,7 +422,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 				isLeft = e.pageX <= rect.x + rect.width / 2;
 				hoverId = group.id;
 
-				this.newIndex = rect.index;
+				this.newIndex = isLeft ? rect.index : rect.index + 1;
 				break;
 			};
 		};
@@ -435,8 +435,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 			node.find('.isOver').removeClass('isOver left right');
 
 			if (hoverId) {
-				const el = node.find(`#column-${hoverId}`);
-				el.addClass('isOver ' + (isLeft ? 'left' : 'right'));
+				node.find(`#column-${hoverId}`).addClass('isOver ' + (isLeft ? 'left' : 'right'));
 			};
 		});
 	};
@@ -493,11 +492,11 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 			};
 
 			if (Util.rectsCollide({ x: e.pageX, y: e.pageY, width: current.width, height: current.height + 8 }, rect)) {
-				isTop = rect.isAdd ? true : (e.pageY <= rect.y + rect.height / 2);
+				isTop = rect.isAdd || (e.pageY <= rect.y + rect.height / 2);
 				hoverId = rect.id;
 
 				this.newGroupId = rect.groupId;
-				this.newIndex = rect.index;
+				this.newIndex = isTop ? rect.index : rect.index + 1;
 				break;
 			};
 		};
@@ -510,8 +509,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 			node.find('.isOver').removeClass('isOver top bottom');
 
 			if (hoverId) {
-				const el = node.find(`#card-${hoverId}`);
-				el.addClass('isOver ' + (isTop ? 'top' : 'bottom'));
+				node.find(`#card-${hoverId}`).addClass('isOver ' + (isTop ? 'top' : 'bottom'));
 			};
 		});
 	};
@@ -552,20 +550,16 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 		};
 
 		if (change) {
-			dbStore.recordDelete(oldSubId, '', record.id);
-			dbStore.recordAdd(newSubId, '', record.id, 1);
-
 			detailStore.update(newSubId, { id: record.id, details: record }, true);
 			detailStore.delete(oldSubId, record.id, Object.keys(record));
 
-			records = dbStore.getRecords(newSubId, '');
-			records = arrayMove(records, records.findIndex(it => it.id == record.id), this.newIndex);
-			dbStore.recordsSet(newSubId, '', records);
+			dbStore.recordDelete(oldSubId, '', record.id);
+			dbStore.recordAdd(newSubId, '', record.id, this.newIndex);
 
 			C.ObjectSetDetails(record.id, [ { key: view.groupRelationKey, value: newGroup.value } ], () => {
 				setOrder([
 					{ viewId: view.id, groupId: current.groupId, objectIds: dbStore.getRecords(oldSubId, '') },
-					{ viewId: view.id, groupId: this.newGroupId, objectIds: records }
+					{ viewId: view.id, groupId: this.newGroupId, objectIds: dbStore.getRecords(newSubId, '') }
 				]);
 			});
 		} else {

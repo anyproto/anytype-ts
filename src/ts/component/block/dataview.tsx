@@ -436,11 +436,11 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 				const object = message.details;
 				const records = dbStore.getRecords(subId, '');
-				const oldIndex = records.findIndex(it => it == message.objectId);
+				const oldIndex = records.indexOf(message.objectId);
 				const newIndex = dir > 0 ? records.length - 1 : 0;
 
 				if (oldIndex < 0) {
-					dbStore.recordAdd (subId, '', object.id, dir);
+					dbStore.recordAdd(subId, '', object.id, newIndex);
 				} else {
 					dbStore.recordsSet(subId, '', arrayMove(records, oldIndex, newIndex));
 				};

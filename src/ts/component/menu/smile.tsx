@@ -14,7 +14,6 @@ interface State {
 	page: number;
 };
 
-
 const LIMIT_RECENT = 18;
 const LIMIT_ROW = 9;
 const LIMIT_SEARCH = 12;

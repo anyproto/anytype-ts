@@ -163,11 +163,11 @@ class DbStore {
 		this.recordMap.delete(this.getId(rootId, blockId));
 	};
 
-    recordAdd (rootId: string, blockId: string, id: string, dir: number): number {
+    recordAdd (rootId: string, blockId: string, id: string, index: number) {
 		const records = this.getRecords(rootId, blockId);
 		
-		dir > 0 ? records.push(id) : records.unshift(id);
-		return dir > 0 ? records.length - 1 : 0;
+		records.splice(index, 0, id);
+		this.recordsSet(rootId, blockId, records);
 	};
 
     recordDelete (rootId: string, blockId: string, id: string) {

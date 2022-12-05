@@ -798,7 +798,7 @@ class Dispatcher {
 		};
 
 		let records = dbStore.getRecords(sid, '');
-		let oldIndex = records.findIndex((it => it == id));
+		let oldIndex = records.indexOf(id);
 		let newIndex = 0;
 
 		if (isAdding && (oldIndex >= 0)) {
@@ -806,7 +806,7 @@ class Dispatcher {
 		};
 
 		if (afterId) {
-			newIndex = records.findIndex(it => it == afterId);
+			newIndex = records.indexOf(afterId);
 		};
 
 		if (oldIndex < 0) {
