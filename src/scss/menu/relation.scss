@@ -2,7 +2,7 @@
 
 .menus {
 	.menu.menuRelationSuggest {
-		.content { padding: 0px; transition: none; }
+		.content { max-height: unset; overflow: hidden; padding: 0px; transition: none; }
 		.wrap { height: 100%; display: flex; flex-direction: column; }
 		.items { height: 100%; }
 

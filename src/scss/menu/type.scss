@@ -17,7 +17,7 @@
 	.menu.menuTypeSuggest { width: 360px; }
 	.menu.menuTypeSuggest {
 		.filter { padding-top: 8px; }
-		.content { padding: 0px; transition: none; }
+		.content { max-height: unset; overflow: hidden; padding: 0px; transition: none; }
 		.wrap { height: 100%; display: flex; flex-direction: column; }
 
 		.items { height: 100%; }

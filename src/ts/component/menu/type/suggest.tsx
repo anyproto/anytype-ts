@@ -365,7 +365,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<P
 
 		let menuId = '';
 		let menuParam: I.MenuParam = {
-			menuKey: item.itemId,
+			menuKey: item.id,
 			element: `#${getId()} #item-${item.id}`,
 			offsetX: getSize().width,
 			offsetY: -getSize().height + 8,
@@ -458,7 +458,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<P
 		const { noFilter } = data;
 		const items = this.getItems();
 		const obj = $(`#${getId()} .content`);
-		const height = items.reduce((res: number, current: any) => { return res + this.getRowHeight(current); }, noFilter ? 24 : 60);
+		const height = Math.min(376, items.reduce((res: number, current: any) => { return res + this.getRowHeight(current); }, 16 + (!noFilter ? 44 : 0)));
 
 		obj.css({ height });
 		position();
