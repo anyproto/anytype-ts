@@ -58,8 +58,8 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 				<Empty 
 					{...this.props}
 					title="Relation has been deleted" 
-					description="Choose another relation to group the canban"
-					button="Open view settings"
+					description="Choose another relation to group your Kanban"
+					button="Open view menu"
 					onClick={this.onView}
 				/>
 			);
@@ -666,6 +666,8 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 			horizontal: I.MenuDirection.Center,
 			offsetY: 10,
 			data: {
+				rootId,
+				blockId: block.id,
 				readonly: !allowed,
 				view: observable.box(view),
 				getView,
