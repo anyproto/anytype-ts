@@ -84,7 +84,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 						onMouseLeave={this.onMouseLeave}
 					>
 						<div className="name">
-							{type && !type.isDeleted ? Util.shorten(type.name, 32) : (
+							{type && !type.isDeleted && !type._empty_ ? Util.shorten(type.name, 32) : (
 								<span className="textColor-red">
 									{translate('commonDeletedType')}
 								</span>
