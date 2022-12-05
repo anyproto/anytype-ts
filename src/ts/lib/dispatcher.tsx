@@ -601,7 +601,7 @@ class Dispatcher {
 						switch (op) {
 							case I.SliceOperation.Add:
 								ids.forEach((id: string, i: number) => {
-									idx >= 0 ? el.objectIds.splice(idx + i, 0, id) : el.objectIds.unshift(id);
+									idx >= 0 ? el.objectIds.splice(idx + i + 1, 0, id) : el.objectIds.unshift(id);
 								});
 								break;
 

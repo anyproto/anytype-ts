@@ -226,10 +226,13 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 
 				const object = detailStore.get(subId, message.objectId, []);
 				const records = dbStore.getRecords(subId, '');
-				const oldIndex = records.findIndex(it => it == object.id);
-				const newIndex = dir > 0 ? records.length - 1 : 0;
+				const oldIndex = records.indexOf(message.objectId);
+				const newIndex = dir > 0 ? records.length : 0;
+				const update = arrayMove(records, oldIndex, newIndex);
 
-				dbStore.recordsSet(subId, '', arrayMove(records, oldIndex, newIndex));
+				C.BlockDataviewObjectOrderUpdate(rootId, block.id, [ { viewId: view.id, groupId, objectIds: update } ], () => {
+					dbStore.recordsSet(subId, '', update);
+				});
 
 				analytics.event('CreateObject', {
 					route: 'Set',
@@ -601,13 +604,14 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 		const objectIds = el ? el.objectIds || [] : [];
 
 		records.sort((c1: any, c2: any) => {
-			let idx1 = objectIds.indexOf(c1);
-			let idx2 = objectIds.indexOf(c2);
+			const idx1 = objectIds.indexOf(c1);
+			const idx2 = objectIds.indexOf(c2);
+
 			if (idx1 > idx2) return 1;
 			if (idx1 < idx2) return -1;
 			return 0;
 		});
-		
+
 		return records;
 	};
 

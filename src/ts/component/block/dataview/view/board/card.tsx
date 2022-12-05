@@ -25,6 +25,7 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 		const subId = dbStore.getGroupSubId(rootId, block.id, groupId);
 		const record = detailStore.get(subId, id);
 		const cn = [ 'card', DataUtil.layoutClass(record.id, record.layout) ];
+		const { done } = record;
 
 		let content = (
 			<div className="cardContent">
