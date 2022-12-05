@@ -529,7 +529,6 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 
 		const { rootId, block, getView } = this.props;
 		const view = getView();
-		const orders: any[] = [];
 		const oldSubId = dbStore.getGroupSubId(rootId, block.id, current.groupId);
 		const newSubId = dbStore.getGroupSubId(rootId, block.id, this.newGroupId);
 		const newGroup = dbStore.getGroup(rootId, block.id, this.newGroupId);
@@ -537,7 +536,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 
 		let records: any[] = [];
 
-		const setOrder = () => {
+		const setOrder = (orders: any[]) => {
 			C.BlockDataviewObjectOrderUpdate(rootId, block.id, orders, () => {
 				orders.forEach((it: any) => {
 					let old = block.content.objectOrder.find(item => (view.id == item.viewId) && (item.groupId == it.groupId));
@@ -563,16 +562,21 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 			records = arrayMove(records, records.findIndex(it => it.id == record.id), this.newIndex);
 			dbStore.recordsSet(newSubId, '', records);
 
-			orders.push({ viewId: view.id, groupId: current.groupId, objectIds: dbStore.getRecords(oldSubId, '') });
-			orders.push({ viewId: view.id, groupId: this.newGroupId, objectIds: records });
-
-			C.ObjectSetDetails(record.id, [ { key: view.groupRelationKey, value: newGroup.value } ], setOrder);
+			C.ObjectSetDetails(record.id, [ { key: view.groupRelationKey, value: newGroup.value } ], () => {
+				setOrder([
+					{ viewId: view.id, groupId: current.groupId, objectIds: dbStore.getRecords(oldSubId, '') },
+					{ viewId: view.id, groupId: this.newGroupId, objectIds: records }
+				]);
+			});
 		} else {
+			if (current.index + 1 == this.newIndex) {
+				return;
+			};
+
 			records = arrayMove(dbStore.getRecords(oldSubId, ''), current.index, this.newIndex);
 			dbStore.recordsSet(oldSubId, '', records);
 
-			orders.push({ viewId: view.id, groupId: current.groupId, objectIds: records });			
-			setOrder();
+			setOrder([ { viewId: view.id, groupId: current.groupId, objectIds: records } ]);
 		};
 	};
 
