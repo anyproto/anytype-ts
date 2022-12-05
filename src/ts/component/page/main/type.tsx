@@ -398,7 +398,8 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 
 	onRelationAdd (e: any) {
 		const rootId = this.getRootId();
-		const relations = dbStore.getObjectRelations(rootId, rootId);
+		const object = detailStore.get(rootId, rootId);
+		const relations = (object.recommendedRelations || []).map(it => dbStore.getRelationById(it)).filter(it => it);
 
 		menuStore.open('relationSuggest', { 
 			element: $(e.currentTarget),
