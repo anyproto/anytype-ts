@@ -642,15 +642,25 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 				} else {
 					keyboard.setFocus(false);
 
-					blockCreate(blockId, position, param, (newBlockId: string) => {
-						focus.set(newBlockId, { from: length, to: length });
-						focus.apply();
+					if (param.type == I.BlockType.Dataview) {
+						blockDataviewCreateWithObject(blockId, position, param, (newBlockId: string, targetObjectId: string) => {
+							focus.set(newBlockId, { from: length, to: length });
+							focus.apply();
 
-						// Auto-open BlockRelation suggest menu
-						if ((param.type == I.BlockType.Relation) && !param.content.key) {
-							window.setTimeout(() => { $(`#block-${newBlockId} .info`).trigger('click'); }, Constant.delay.menu);
-						};
-					});
+							console.log('TARGET OBJECT ID: ', targetObjectId);
+						});
+
+					} else {
+						blockCreate(blockId, position, param, (newBlockId: string) => {
+							focus.set(newBlockId, { from: length, to: length });
+							focus.apply();
+
+							// Auto-open BlockRelation suggest menu
+							if ((param.type == I.BlockType.Relation) && !param.content.key) {
+								window.setTimeout(() => { $(`#block-${newBlockId} .info`).trigger('click'); }, Constant.delay.menu);
+							};
+						});
+					};
 				};
 			};
 

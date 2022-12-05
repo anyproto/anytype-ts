@@ -48,6 +48,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		this.onPaste = this.onPaste.bind(this);
 		this.onLastClick = this.onLastClick.bind(this);
 		this.blockCreate = this.blockCreate.bind(this);
+		this.blockDataviewCreateWithObject = this.blockDataviewCreateWithObject.bind(this);
 		this.getWrapper = this.getWrapper.bind(this);
 		this.getWrapperWidth = this.getWrapperWidth.bind(this);
 		this.resize = this.resize.bind(this);
@@ -1426,6 +1427,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 				text,
 				marks,
 				blockCreate: this.blockCreate,
+				blockDataviewCreateWithObject: this.blockDataviewCreateWithObject
 			},
 		});
 	};
@@ -1781,7 +1783,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 	blockCreate (blockId: string, position: I.BlockPosition, param: any, callBack?: (blockId: string) => void) {
 		const { rootId } = this.props;
 
-		const cb = (message: any) => {
+		C.BlockCreate(rootId, blockId, position, param, (message: any) => {
 			this.focus(message.blockId, 0, 0, false);
 
 			if (callBack) {
@@ -1800,13 +1802,28 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			};
 
 			analytics.event('CreateBlock', event);
-		};
+		});
+	};
 
-		if (param.type == I.BlockType.Dataview) {
-			C.BlockDataviewCreateWithObject(rootId, blockId, position, param, cb);
-		} else {
-			C.BlockCreate(rootId, blockId, position, param, cb);
-		}
+	blockDataviewCreateWithObject (blockId: string, position: I.BlockPosition, param: any, callBack?: (blockId: string, targetObjectId: string) => void) {
+		const { rootId } = this.props;
+
+		C.BlockDataviewCreateWithObject(rootId, blockId, position, param, (message: any) => {
+			this.focus(message.blockId, 0, 0, false);
+
+			if (callBack) {
+				callBack(message.blockId, message.targetObjectId);
+			};
+
+			const event: any =  {
+				middleTime: message.middleTime,
+				type: param.type,
+				style: param.content?.style,
+				params: {},
+			};
+
+			analytics.event('CreateBlockDataviewWithObject', event);
+		});
 	};
 	
 	blockMerge (focused: I.Block, dir: number, length: number) {

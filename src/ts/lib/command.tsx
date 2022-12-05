@@ -234,6 +234,9 @@ const BlockDataviewCreateWithObject = (contextId: string, targetId: string, posi
 	request.setTargetid(targetId);
 	request.setPosition(position);
 	request.setBlock(Mapper.To.Block(block));
+	// request.setDetails(Encode.encodeStruct({}));
+	// request.setTemplateid('');
+	// request.setInternalflagsList([].map(Mapper.To.InternalFlag));
 
 	dispatcher.request(BlockDataviewCreateWithObject.name, request, callBack);
 };

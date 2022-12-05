@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon, Button } from 'Component';
-import { I, C, keyboard, Dataview } from 'Lib';
-import { menuStore, blockStore } from 'Store';
+import { I, C, keyboard, Dataview, DataUtil } from 'Lib';
+import {menuStore, blockStore, dbStore} from 'Store';
 import { observable } from 'mobx';
 import { observer } from 'mobx-react';
 
@@ -216,7 +216,8 @@ const Head = observer(class Head extends React.Component<Props, {}> {
 	};
 
 	save () {
-		//DataUtil.blockSetText(rootId, 'title', this.getValue(id), [], true);
+		const { rootId, block } = this.props;
+		// DataUtil.blockSetText(rootId, 'title', this.getValue(id), [], true);
 	};
 
 });
