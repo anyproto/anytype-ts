@@ -336,6 +336,8 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 	};
 
 	onMouseEnter (e: any, item: any) {
+		e.persist();
+
 		if (!keyboard.isMouseDisabled) {
 			this.props.setActive(item, false);
 			this.onOver(e, item);
@@ -343,8 +345,6 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 	};
 
 	onOver (e: any, item: any) {
-		e.persist();
-
 		if (!this._isMounted) {
 			return;
 		};
@@ -363,8 +363,8 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		let menuParam: I.MenuParam = {
 			menuKey: item.id,
 			element: `#${getId()} #item-${item.id}`,
-			offsetX: getSize().width,
-			offsetY: -getSize().height + 8,
+			offsetX: () => getSize().width,
+			offsetY: () => -getSize().height + 8,
 			isSub: true,
 			noFlipY: true,
 			classNameWrap,

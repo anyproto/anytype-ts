@@ -156,7 +156,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 			element: `#${getId()}`,
 			className: 'single',
 			offsetX: param.width,
-			offsetY: () => { return -getSize().height; },
+			offsetY: () => -getSize().height,
 			classNameWrap: classNameWrap,
 			passThrough: true,
 			noFlipY: true,

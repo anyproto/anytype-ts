@@ -344,6 +344,8 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<P
 	};
 
 	onMouseEnter (e: any, item: any) {
+		e.persist();
+
 		if (!keyboard.isMouseDisabled) {
 			this.props.setActive(item, false);
 			this.onOver(e, item);
@@ -367,8 +369,8 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<P
 		let menuParam: I.MenuParam = {
 			menuKey: item.id,
 			element: `#${getId()} #item-${item.id}`,
-			offsetX: getSize().width,
-			offsetY: -getSize().height + 8,
+			offsetX: () => getSize().width,
+			offsetY: () => -getSize().height + 8,
 			isSub: true,
 			noFlipY: true,
 			data: {

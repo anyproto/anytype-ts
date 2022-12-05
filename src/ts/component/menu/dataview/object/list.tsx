@@ -341,10 +341,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 				return;
 			};
 
-			let value = Relation.getArrayValue(data.value);
-			value.push(id);
-			value = Util.arrayUnique(value);
-
+			let value = Util.arrayUnique(Relation.getArrayValue(data.value).concat([ id ]));
 			if (maxCount) {
 				value = value.slice(value.length - maxCount, value.length);
 			};
@@ -352,6 +349,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 			onChange(value, () => {
 				menuStore.updateData(this.props.id, { value });
 				menuStore.updateData(MENU_ID, { value });
+
 				position();
 			});
 		};

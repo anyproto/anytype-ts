@@ -222,7 +222,7 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 			element: `#${getId()}`,
 			width: 0,
 			offsetX: param.width,
-			offsetY: () => { return -getSize().height; },
+			offsetY: () => -getSize().height,
 			passThrough: true,
 			noFlipY: true,
 			noAnimation: true,
