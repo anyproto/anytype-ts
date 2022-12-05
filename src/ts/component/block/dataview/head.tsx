@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon, Button } from 'Component';
 import { I, C, keyboard, Dataview, DataUtil } from 'Lib';
-import {menuStore, blockStore, dbStore} from 'Store';
+import {menuStore, blockStore, dbStore, detailStore} from 'Store';
 import { observable } from 'mobx';
 import { observer } from 'mobx-react';
 
@@ -46,7 +46,7 @@ const Head = observer(class Head extends React.Component<Props, {}> {
 		return (
 			<div className={cn.join(' ')}>
 				<div id="title" className="title">
-					<div 
+					<div
 						className="value" 
 						contentEditable="true" 
 						suppressContentEditableWarning={true}
@@ -70,6 +70,7 @@ const Head = observer(class Head extends React.Component<Props, {}> {
 
 	componentDidMount () {
 		this._isMounted = true;
+		this.setValue();
 	};
 
 	componentWillUnmount () {
@@ -181,7 +182,33 @@ const Head = observer(class Head extends React.Component<Props, {}> {
 		this.timeout = window.setTimeout(() => { this.save(); }, 500);
 	};
 
-	getValue (): string {
+	setValue () {
+		const { rootId, block } = this.props;
+		if (!this._isMounted) {
+			return '';
+		};
+
+		let node = $(ReactDOM.findDOMNode(this));
+		let item = node.find('#title');
+
+		let targetObjectId: string = block.content.targetObjectId;
+		let object: any = {};
+		let name: string = '';
+
+		if (targetObjectId) {
+			object = detailStore.get(rootId, targetObjectId);
+			name = object.name;
+
+			if (!name || name === DataUtil.defaultName('page') || name === DataUtil.defaultName('set')) {
+				return;
+			};
+
+			item.text(object.name);
+			this.placeholderCheck();
+		};
+	};
+
+	getValue () {
 		if (!this._isMounted) {
 			return '';
 		};
@@ -217,7 +244,12 @@ const Head = observer(class Head extends React.Component<Props, {}> {
 
 	save () {
 		const { rootId, block } = this.props;
-		// DataUtil.blockSetText(rootId, 'title', this.getValue(id), [], true);
+		const { targetObjectId } = block.content;
+		if (!targetObjectId) {
+			return;
+		}
+
+		DataUtil.blockSetText(targetObjectId, 'title', this.getValue(), [], true);
 	};
 
 });

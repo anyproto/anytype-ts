@@ -10,6 +10,7 @@ class BlockContentDataview implements I.ContentDataview {
 	relationLinks: any[] = [];
 	groupOrder: any[] = [];
 	objectOrder: any[] = [];
+	targetObjectId: string = '';
 	
 	constructor (props: I.ContentDataview) {
 		let self = this;
@@ -19,7 +20,8 @@ class BlockContentDataview implements I.ContentDataview {
 		self.relationLinks = props.relationLinks || [];
 		self.groupOrder = props.groupOrder || [];
 		self.objectOrder = props.objectOrder || [];
-		
+		self.targetObjectId = props.targetObjectId || '';
+
 		makeObservable(self, {
 			sources: observable,
 			views: observable,

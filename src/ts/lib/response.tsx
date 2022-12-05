@@ -157,7 +157,6 @@ const BlockCreate = (response: any) => {
 };
 
 const BlockDataviewCreateWithObject = (response: any) => {
-	console.log('RESPONSE: ', response)
 	return {
 		blockId: response.getBlockid(),
 		targetObjectId: response.getTargetobjectid(),

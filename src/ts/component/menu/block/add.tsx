@@ -486,7 +486,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 		
 		const { param, close } = this.props;
 		const { data } = param;
-		const { rootId, blockId, onSelect, blockCreate, blockDataviewCreateWithObject } = data;
+		const { rootId, blockId, onSelect, blockCreate } = data;
 		const { filter } = commonStore;
 		const block = blockStore.getLeaf(rootId, blockId);
 
@@ -643,13 +643,20 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 					keyboard.setFocus(false);
 
 					if (param.type == I.BlockType.Dataview) {
-						blockDataviewCreateWithObject(blockId, position, param, (newBlockId: string, targetObjectId: string) => {
-							focus.set(newBlockId, { from: length, to: length });
+						C.BlockDataviewCreateWithObject(rootId, blockId, position, param, (message: any) => {
+							const { blockId, targetObjectId } = message;
+							focus.set(blockId, { from: length, to: length });
 							focus.apply();
 
-							console.log('TARGET OBJECT ID: ', targetObjectId);
-						});
+							const event: any =  {
+								middleTime: message.middleTime,
+								type: param.type,
+								style: param.content?.style,
+								params: {},
+							};
 
+							analytics.event('CreateBlockDataviewWithObject', event);
+						});
 					} else {
 						blockCreate(blockId, position, param, (newBlockId: string) => {
 							focus.set(newBlockId, { from: length, to: length });
