@@ -49,11 +49,13 @@ const Column = observer(class Column extends React.Component<Props, State> {
 		const items = this.getItems();
 		const { total } = dbStore.getMeta(subId, '');
 		const limit = getLimit();
-		const group = dbStore.getGroup(rootId, block.id, id);
 		const head = {};
 		const cn = [ 'column' ];
 		const cnbg = [];
-		
+		const { groupOrder } = block.content;
+		const order = groupOrder.find(it => it.viewId == view.id);
+		const group = order.groups.find(it => it.groupId == id);
+
 		if (view.groupBackgroundColors) {
 			cn.push('withColor');
 			cnbg.push('bgColor bgColor-' + (group.bgColor || 'grey'));

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import $ from 'jquery';
-import { I, C, DataUtil, keyboard } from 'Lib';
+import { I, C, DataUtil, keyboard, Relation } from 'Lib';
 import { MenuItemVertical } from 'Component';
 import { dbStore } from 'Store';
 
@@ -15,8 +15,6 @@ const MenuGroupEdit = observer(class MenuGroupEdit extends React.Component<Props
 	n: number = -1;
 
 	render () {
-		const { param } = this.props;
-		const { data } = param;
 		const sections = this.getSections();
 
 		const Section = (item: any) => (
@@ -132,6 +130,7 @@ const MenuGroupEdit = observer(class MenuGroupEdit extends React.Component<Props
 		const { data } = param;
 		const { rootId, blockId, groupId, getView } = data;
 		const view = getView();
+		const relation = dbStore.getRelationByKey(view.groupRelationKey);
 		const groups = dbStore.getGroups(rootId, blockId);
 		const update: any[] = [];
 
@@ -144,12 +143,21 @@ const MenuGroupEdit = observer(class MenuGroupEdit extends React.Component<Props
 			update.push(item);
 		});
 
-		dbStore.groupsSet(rootId, blockId, update);
-		DataUtil.dataviewGroupUpdate(rootId, blockId, view.id, update);
 		C.BlockDataviewGroupOrderUpdate(rootId, blockId, { viewId: view.id, groups: update });
 
 		if (!view.groupBackgroundColors && this.color) {
 			C.BlockDataviewViewUpdate(rootId, blockId, view.id, { ...view, groupBackgroundColors: true });
+		};
+
+		if ([ I.RelationType.Tag, I.RelationType.Status ].includes(relation.format)) {
+			const group = groups.find(it => it.id == groupId);
+			const value = Relation.getArrayValue(group.value);
+
+			if (value.length) {
+				C.ObjectSetDetails(value[0], [ 
+					{ key: 'relationOptionColor', value: this.color },
+				]);
+			};
 		};
 
 		this.forceUpdate();

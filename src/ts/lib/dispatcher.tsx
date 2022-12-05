@@ -1,5 +1,5 @@
 import { authStore, commonStore, blockStore, detailStore, dbStore } from 'Store';
-import { Util, I, M, Decode, translate, analytics, Response, Mapper, crumbs, Renderer, Action } from 'Lib';
+import { Util, I, M, Decode, translate, analytics, Response, Mapper, crumbs, Renderer, Action, Dataview } from 'Lib';
 import { set, observable } from 'mobx';
 import * as Sentry from '@sentry/browser';
 import arrayMove from 'array-move';
@@ -559,17 +559,9 @@ class Dispatcher {
 						break;
 					};
 
-					let groupOrder = block.content.groupOrder;						
-					let order = Mapper.From.GroupOrder(data.getGrouporder());
-					let idx = groupOrder.findIndex(it => it.viewId == order.viewId);
+					const order = Mapper.From.GroupOrder(data.getGrouporder());
 
-					if (idx >= 0) {
-						set(groupOrder[idx], order);
-					} else {
-						groupOrder.push(order);
-					};
-
-					blockStore.updateContent(rootId, id, { groupOrder });
+					Dataview.groupUpdate(rootId, id, order.viewId, order.groups);
 					break;
 
 				case 'blockDataviewObjectOrderUpdate':

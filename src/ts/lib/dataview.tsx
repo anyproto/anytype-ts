@@ -167,6 +167,24 @@ class Dataview {
 		return tabs.filter(it => it);
 	};
 
+	groupUpdate (rootId: string, blockId: string, viewId: string, groups: any[]) {
+		const block = blockStore.getLeaf(rootId, blockId);
+		if (!block) {
+			return;
+		};
+
+		const groupOrder = Util.objectCopy(block.content.groupOrder);
+		const idx = groupOrder.findIndex(it => it.viewId == viewId);
+
+		if (idx >= 0) {
+			groupOrder[idx].groups = groups;
+		} else {
+			groupOrder.push({ viewId, groups });
+		};
+
+		blockStore.updateContent(rootId, blockId, { groupOrder });
+	};
+
 };
 
 export default new Dataview();
