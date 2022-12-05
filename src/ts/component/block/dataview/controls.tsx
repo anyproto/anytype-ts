@@ -123,7 +123,7 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 								color="addRecord orange" 
 								icon="plus-small" 
 								className="c28" 
-								tooltip="New object" 
+								tooltip="Create new object" 
 								text="New" 
 								onClick={(e: any) => { onRecordAdd(e, -1); }} 
 							/>

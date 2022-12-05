@@ -242,7 +242,7 @@
 	"blockLinkSyncing": { "en": "Syncing..." },
 	"blockLinkArchived": { "en": "Deleted" },
 
-	"blockDataviewNew": { "en": "New" },
+	"blockDataviewNew": { "en": "Create new object" },
 
 	"blockCoverDrag": { "en": "Drag image to reposition" },
 	"blockCoverSave": { "en": "Save changes" },
