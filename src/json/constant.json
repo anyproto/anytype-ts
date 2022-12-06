@@ -42,28 +42,31 @@
 	},
 
 	"menuIds": {
-		"cell": [ 
+		"cell":	 [ 
 			"select", "button", "dataviewText", "dataviewRelationEdit", "dataviewObjectList", "dataviewObjectValues", 
 			"dataviewOptionList", "dataviewOptionEdit", "dataviewFileList", "dataviewFileValues", "dataviewCalendar", "relationSuggest"
 		],
-		"cellAdd": [ "dataviewRelationEdit", "dataviewRelationSuggest", "dataviewRelationList" ],
-		"context": [ "select", "blockStyle", "blockMore", "blockLink", "blockColor", "blockBackground" ],
-		"add": [ "searchObject", "blockRelationEdit", "typeSuggest" ],
-		"action": [ "blockStyle", "blockColor", "blockBackground", "blockAlign", "blockLinkSettings", "searchObject", "typeSuggest" ],
-		"more": [ "select", "searchObject", "blockAlign", "typeSuggest" ],
-		"index": [ "searchObject" ],
-		"relationEdit": [ "select", "searchObject", "dataviewDate", "dataviewObjectValues", "dataviewObjectList" ],
-		"layout": [ "blockAlign" ],
-		"latex": [ "previewLatex" ],
-		"viewEdit": [ "select" ],
-		"featuredType": [ "searchObject", "typeSuggest" ],
-		"dataviewHead": [ "dataviewSource", "searchObject" ],
-		"store": [ "typeSuggest", "relationSuggest" ]
+		"cellAdd":		 [ "dataviewRelationEdit", "dataviewRelationSuggest", "dataviewRelationList" ],
+		"context":		 [ "select", "blockStyle", "blockMore", "blockLink", "blockColor", "blockBackground" ],
+		"add":			 [ "searchObject", "blockRelationEdit", "typeSuggest" ],
+		"action":		 [ "blockStyle", "blockColor", "blockBackground", "blockAlign", "blockLinkSettings", "searchObject", "typeSuggest" ],
+		"more":			 [ "select", "searchObject", "blockAlign", "typeSuggest" ],
+		"index":		 [ "searchObject" ],
+		"relationEdit":	 [ "select", "searchObject", "dataviewDate", "dataviewObjectValues", "dataviewObjectList" ],
+		"layout":		 [ "blockAlign" ],
+		"latex":		 [ "previewLatex" ],
+		"viewEdit":		 [ "select" ],
+		"featuredType":	 [ "searchObject", "typeSuggest" ],
+		"dataviewHead":	 [ "dataviewSource", "searchObject" ],
+		"store":		 [ "typeSuggest", "relationSuggest" ]
 	},
 
-	"popupPinIds": [
-		"search"
-	],
+	"popupPinIds": [ "search" ],
+
+	"coverRelationKeys":	 [ "coverId", "coverType", "coverX", "coverY", "coverScale" ],
+	"optionRelationKeys":	 [ "id", "type", "layout", "name", "relationOptionColor", "relationKey" ],
+	"typeRelationKeys":		 [ "smartblockTypes", "recommendedRelations", "sourceObject" ],
+	"graphRelationKeys":	 [ "id", "name", "snippet", "iconEmoji", "iconImage", "relationFormat", "type", "layout", "done", "fileExt", "fileMimeType" ],
 
 	"systemRelationKeys": [ 
 		"id", "name", "description", "snippet", "iconEmoji", "iconImage", "creator",  "createdDate", "type", "layout", "layoutAlign", "lastOpenedDate", "lastModifiedBy", 
@@ -76,38 +79,14 @@
 		"isReadonly", "isDeleted", "isFavorite", "done", "fileExt", "fileMimeType", "sizeInBytes", "restrictions"
 	],
 
-	"coverRelationKeys": [
-		"coverId", "coverType", "coverX", "coverY", "coverScale"
-	],
-
 	"sidebarRelationKeys": [
 		"id", "name", "snippet", "layout", "type", "iconEmoji", "iconImage", "isReadonly", "isHidden", "isDeleted", "isArchived", "isFavorite", "done", 
 		"relationFormat", "fileExt", "fileMimeType", "links", "restrictions"
 	],
 
-	"typeRelationKeys": [ "smartblockTypes", "recommendedRelations", "sourceObject" ],
-
 	"relationRelationKeys": [
 		"id", "workspaceId", "type", "layout", "name", "relationFormat", "relationKey", "scope", "isReadonly", "isHidden", "isDeleted", "isArchived", "isFavorite", "restrictions",
 		"relationMaxCount", "relationReadonly", "relationReadonlyValue", "relationDefaultValue", "relationFormatObjectTypes", "sourceObject", "restrictions"
-	],
-
-	"optionRelationKeys": [
-		"id", "type", "layout", "name", "relationOptionColor", "relationKey"
-	],
-
-	"graphRelationKeys": [ 
-		"id", 
-		"name", 
-		"snippet",
-		"iconEmoji", 
-		"iconImage", 
-		"relationFormat", 
-		"type", 
-		"layout", 
-		"done", 
-		"fileExt", 
-		"fileMimeType"
 	],
 
 	"subId": {
