@@ -160,7 +160,7 @@ const Tree = observer(class Tree extends React.Component<Props, State> {
 		if (subIds.length) {
 			C.ObjectSearchUnsubscribe(subIds);
 		};
-		// Util.tooltipHide(true);
+		// Preview.tooltipHide(true);
 	};
 
 	// Restores the scroll position and the keyboard focus

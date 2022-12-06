@@ -1,9 +1,9 @@
 import * as React from 'react';
+import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import $ from 'jquery';
 import { MenuItemVertical, Filter, Loader, ObjectName, EmptySearch } from 'Component';
-import { I, C, keyboard, Util, DataUtil, translate, analytics, Action, focus } from 'Lib';
+import { I, C, keyboard, Util, DataUtil, translate, analytics, Action, focus, Preview } from 'Lib';
 import { commonStore, dbStore } from 'Store';
 
 import Constant from 'json/constant.json';
@@ -396,7 +396,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 							return;
 						};
 
-						Util.toastShow({
+						Preview.toastShow({
 							action: I.ToastAction.Move,
 							targetId: target.id,
 							count: blockIds.length,
@@ -447,7 +447,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 
 					C.BlockCreate(target.id, '', position, newBlock, (message: any) => {
 						if (!message.error.code) {
-							Util.toastShow({ objectId: blockId, action: I.ToastAction.Link, targetId: target.id });
+							Preview.toastShow({ objectId: blockId, action: I.ToastAction.Link, targetId: target.id });
 							analytics.event('LinkToObject');
 						};
 					});

@@ -5,7 +5,7 @@ import { throttle } from 'lodash';
 import $ from 'jquery';
 import raf from 'raf';
 import { DragLayer } from 'Component';
-import { I, C, focus, keyboard, Util, scrollOnMove, Action } from 'Lib';
+import { I, C, focus, keyboard, Util, scrollOnMove, Action, Preview } from 'Lib';
 import { blockStore } from 'Store';
 
 import Constant from 'json/constant.json';
@@ -212,7 +212,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 		node.addClass('isDragging');
 		body.addClass('isDragging');
 		keyboard.setDragging(true);
-		Util.previewHide(false);
+		Preview.hideAll();
 
 		win.on('dragend.drag', (e: any) => { this.onDragEnd(e); });
 

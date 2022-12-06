@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { Icon, IconObject } from 'Component';
-import { I, Util, DataUtil, keyboard } from 'Lib';
+import { I, Preview, DataUtil, keyboard } from 'Lib';
 import { detailStore, popupStore } from 'Store';
 import { observer } from 'mobx-react';
 
@@ -56,11 +56,11 @@ const HeaderMainNavigation = observer(class HeaderMainNavigation extends React.C
 	};
 
 	onPathOver (e: any) {
-		Util.tooltipShow('Click to search', $(e.currentTarget), I.MenuDirection.Center, I.MenuDirection.Bottom);
+		Preview.tooltipShow('Click to search', $(e.currentTarget), I.MenuDirection.Center, I.MenuDirection.Bottom);
 	};
 
 	onPathOut () {
-		Util.tooltipHide(false);
+		Preview.tooltipHide(false);
 	};
 
 });

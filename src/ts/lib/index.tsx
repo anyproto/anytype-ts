@@ -25,6 +25,7 @@ import { history } from './history';
 import Action from './action';
 import Onboarding from './onboarding';
 import Survey from './survey';
+import Preview from './preview';
 
 import Constant from 'json/constant.json';
 import Text from 'json/text.json';
@@ -71,4 +72,5 @@ export {
 	Onboarding,
 	Renderer,
 	Survey,
+	Preview,
 };

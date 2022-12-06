@@ -3,7 +3,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { observer } from 'mobx-react';
 import $ from 'jquery';
-import { keyboard, sidebar, I, Util } from 'Lib';
+import { keyboard, sidebar, I, Preview } from 'Lib';
 import Footer from './footer';
 import { Tree } from '../widgets';
 
@@ -11,10 +11,7 @@ interface Props {
 	dataset?: any;
 };
 
-interface State {
-};
-
-const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
+const Sidebar = observer(class Sidebar extends React.Component<Props, {}> {
 	private _isMounted: boolean = false;
     ox: number = 0;
 	oy: number = 0;
@@ -58,7 +55,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 	componentWillUnmount (): void {
 		this._isMounted = false;
 		this.unbind();
-		Util.tooltipHide(true);
+		Preview.tooltipHide(true);
 	};
 
 	setActive (id: string):  void {

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Button, IconObject, ObjectName } from 'Component';
 import { commonStore } from 'Store';
-import { C, Util, DataUtil, I, analytics, translate, keyboard } from 'Lib';
+import { C, Util, DataUtil, I, analytics, translate, keyboard, Preview } from 'Lib';
 
 interface State {
 	object: any;
@@ -141,7 +141,7 @@ const Toast = observer(class Toast extends React.Component<{}, State> {
     };
 
 	close () {
-		Util.toastHide(true);
+		Preview.toastHide(true);
 	};
 
     setObjects (objects: any[]) {
