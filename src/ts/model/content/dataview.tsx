@@ -21,6 +21,7 @@ class BlockContentDataview implements I.ContentDataview {
 		self.relationLinks = props.relationLinks || [];
 		self.groupOrder = props.groupOrder || [];
 		self.objectOrder = props.objectOrder || [];
+		self.targetObjectId = String(props.targetObjectId || '');
 
 		makeObservable(self, {
 			sources: observable,
