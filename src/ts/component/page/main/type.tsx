@@ -246,7 +246,7 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 		const views = dbStore.getViews(rootId, blockId);
 		const block = blockStore.getLeaf(rootId, blockId);
 		const { targetObjectId } = block.content;
-		const object = detailStore.get(rootId, targetObjectId ? targetObjectId : rootId, [ Constant.relationKey.setOf ]);
+		const object = detailStore.get(rootId, targetObjectId ? targetObjectId : rootId, [ 'setOf' ]);
 
 		if (views.length) {
 			const view = views[0];
@@ -258,7 +258,7 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 				filters,
 				sorts: view.sorts,
 				keys: [ 'id' ],
-				sources: object[Constant.relationKey.setOf],
+				sources: object.setOf || [],
 			});
 		};
 	};

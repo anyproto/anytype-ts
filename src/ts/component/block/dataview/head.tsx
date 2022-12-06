@@ -31,8 +31,8 @@ const Head = observer(class Head extends React.Component<Props, {}> {
 	render () {
 		const { rootId, block, readonly, getView, className } = this.props;
 		const { targetObjectId } = block.content;
-		const object = detailStore.get(rootId, targetObjectId, [ Constant.relationKey.setOf ]);
-		const sources = object[Constant.relationKey.setOf] || [];
+		const object = detailStore.get(rootId, targetObjectId, [ 'setOf' ]);
+		const sources = object.setOf || [];
 		const view = getView();
 		const cn = [ 'dataviewHead' ];
 

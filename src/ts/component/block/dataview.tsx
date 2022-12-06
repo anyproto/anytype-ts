@@ -68,8 +68,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			return null;
 		};
 
-		let object = detailStore.get(rootId, isInline ? targetObjectId : rootId, [ Constant.relationKey.setOf ]);
-		let sources = object[Constant.relationKey.setOf] || [];
+		let object = detailStore.get(rootId, isInline ? targetObjectId : rootId, [ 'setOf' ]);
+		let sources = object.setOf || [];
 		let { groupRelationKey } = view;
 		let ViewComponent: any = null;
 		let className = Util.toCamelCase('view-' + I.ViewType[view.type]);
