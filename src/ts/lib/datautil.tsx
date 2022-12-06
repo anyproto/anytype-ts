@@ -1381,7 +1381,8 @@ class DataUtil {
 			};
 
 			if (callBack) {
-				callBack(message.records);
+				const records = message.records.map(it => detailStore.check(it)).filter(it => !it._empty_);
+				callBack(records);
 			};
 		});
 	};
