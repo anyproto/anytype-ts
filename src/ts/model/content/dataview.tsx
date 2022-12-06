@@ -15,12 +15,12 @@ class BlockContentDataview implements I.ContentDataview {
 	constructor (props: I.ContentDataview) {
 		let self = this;
 
+		self.targetObjectId = String(props.targetObjectId || '');
 		self.sources = props.sources || [];
 		self.views = (props.views || []).map(it => new View(it));
 		self.relationLinks = props.relationLinks || [];
 		self.groupOrder = props.groupOrder || [];
 		self.objectOrder = props.objectOrder || [];
-		self.targetObjectId = props.targetObjectId || '';
 
 		makeObservable(self, {
 			sources: observable,

@@ -577,7 +577,8 @@ const Mapper = {
 
 		BlockDataview: (obj: any) => {
 			const content = new Model.Block.Content.Dataview();
-	
+
+			content.setTargetobjectid(obj.targetObjectId);
 			content.setViewsList(obj.views.map(Mapper.To.View));
 	
 			return content;
