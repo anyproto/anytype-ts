@@ -307,27 +307,18 @@ class MenuBlockMore extends React.Component<Props, {}> {
 
 		switch (item.id) {
 			case 'turnObject':
-				menuId = 'searchObject';
-				menuParam.className = [ param.className, 'single' ].join(' ');
-
-				filters = [
-					{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: types },
-				];
-
+				menuId = 'typeSuggest';
 				menuParam.data = Object.assign(menuParam.data, {
-					placeholder: 'Find a type of object...',
-					label: 'Your object type library',
-					canNotAdd: true,
-					filters: filters,
-					onSelect: (item: any) => {
+					filter: '',
+					onClick: (item: any) => {
 						C.BlockListConvertToObjects(rootId, [ blockId ], item.id);
 						close();
 
 						if (onMenuSelect) {
 							onMenuSelect(item);
 						};
-					}
-				});
+					},
+				})
 				break;
 
 			case 'move':

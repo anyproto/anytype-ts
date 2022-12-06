@@ -1,11 +1,10 @@
 import * as React from 'react';
+import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import $ from 'jquery';
-import { MenuItemVertical, Filter, Loader, ObjectName, EmptySearch } from 'Component';
-import { I, C, keyboard, Util, DataUtil, translate, analytics, Action, focus } from 'Lib';
+import { MenuItemVertical, Filter, Loader, ObjectName } from 'Component';
+import { I, C, keyboard, Util, DataUtil, analytics, Action, focus } from 'Lib';
 import { commonStore, dbStore } from 'Store';
-
 import Constant from 'json/constant.json';
 
 interface Props extends I.Menu {};
@@ -15,12 +14,10 @@ interface State {
 };
 
 const LIMIT_HEIGHT = 10;
-
 const HEIGHT_SECTION = 28;
 const HEIGHT_ITEM = 28;
 const HEIGHT_ITEM_BIG = 56;
 const HEIGHT_DIV = 16;
-const HEIGHT_EMPTY = 98;
 
 const MenuSearchObject = observer(class MenuSearchObject extends React.Component<Props, State> {
 
@@ -79,13 +76,13 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 						<div className="inner" />
 					</div>
 				);
-			} else
-			if (item.isEmpty && !loading) {
-				content = (
-					<EmptySearch text={filter ? Util.sprintf(translate('popupSearchEmptyFilter'), filter) : translate('popupSearchEmpty')} />
-				);
 			} else {
-				if (item.id == 'add') {
+				const props = {
+					...item,
+					object: (item.isAdd ? undefined : item),
+				};
+
+				if (item.isAdd) {
 					cn.push('add');
 				};
 				if (item.isHidden) {
@@ -95,12 +92,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 					cn.push('active');
 				};
 
-				const props = {
-					...item,
-					object: (item.id == 'add' ? undefined : item),
-				};
-
-				if (isBig) {
+				if (isBig && !item.isAdd) {
 					props.withDescription = true;
 					props.forceLetter = true;
 					props.iconSize = 40;
@@ -245,24 +237,20 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 	getItems () {
 		const { param } = this.props;
 		const { data } = param;
-		const { filter, label, canNotAdd } = data;
+		const { filter, label } = data;
 
 		let items = [].concat(this.items);
+		let length = items.length;
 
-		if (label && items.length) {
+		if (label && length) {
 			items.unshift({ isSection: true, name: label });
 		};
 
-		if (filter && !canNotAdd) {
-			if (items.length) {
+		if (filter) {
+			if (length) {
 				items.push({ isDiv: true });
 			};
-
-			items.push({ id: 'add', icon: 'plus', name: `Create object "${filter}"` });
-		};
-
-		if (!items.length) {
-			items.push({ isEmpty: true });
+			items.push({ id: 'add', icon: 'plus', name: `Create object "${filter}"`, isAdd: true });
 		};
 
 		return items;
@@ -455,7 +443,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 			};
 		};
 
-		if (item.id == 'add') {
+		if (item.isAdd) {
 			DataUtil.pageCreate('', '', { name: filter, type: commonStore.type }, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.SelectType ], (message: any) => {
 				DataUtil.getObjectById(message.targetId, process);
 				close();
@@ -478,10 +466,9 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		const { isBig } = data;
 
 		let h = HEIGHT_ITEM;
-		if (isBig || item.isBig)	 h = HEIGHT_ITEM_BIG;
-		if (item.isEmpty)			 h = HEIGHT_EMPTY;
-		if (item.isSection)			 h = HEIGHT_SECTION;
-		if (item.isDiv)				 h = HEIGHT_DIV;
+		if ((isBig || item.isBig) && !item.isAdd)	 h = HEIGHT_ITEM_BIG;
+		if (item.isSection)							 h = HEIGHT_SECTION;
+		if (item.isDiv)								 h = HEIGHT_DIV;
 		return h;
 	};
 
@@ -491,7 +478,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		const { noFilter } = data;
 		const items = this.getItems();
 		const obj = $(`#${getId()} .content`);
-		const height = Math.max(300, items.reduce((res: number, current: any) => { return res + this.getRowHeight(current); }, HEIGHT_ITEM + 16 + (noFilter ? 0 : 44)));
+		const height = items.reduce((res: number, current: any) => { return res + this.getRowHeight(current); }, 16 + (noFilter ? 0 : 44));
 
 		obj.css({ height });
 		position();

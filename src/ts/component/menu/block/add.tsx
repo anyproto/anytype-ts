@@ -452,22 +452,13 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 				break;
 
 			case 'turnObject':
-				menuId = 'searchObject';
-				menuParam.className = 'single';
-
-				filters = [
-					{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: types }
-				];
-
+				menuId = 'typeSuggest';
 				menuParam.data = Object.assign(menuParam.data, {
-					placeholder: 'Find a type of object...',
-					label: 'Your object type library',
-					canNotAdd: true,
-					filters: filters,
-					onSelect: (item: any) => {
+					filter: '',
+					onClick: (item: any) => {
 						this.moveToPage(item.id);
 						close();
-					}
+					},
 				});
 				break;
 
