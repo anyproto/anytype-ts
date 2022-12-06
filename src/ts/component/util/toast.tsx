@@ -163,6 +163,7 @@ const Toast = observer(class Toast extends React.Component<{}, State> {
         };
 
 		this.setState(state);
+		Preview.toastPosition();
     };
 
     onClick (e: any, action: string) {

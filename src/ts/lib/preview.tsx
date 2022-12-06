@@ -2,152 +2,130 @@ import { I, Util, keyboard } from 'Lib';
 import { commonStore } from 'Store';
 import Constant from 'json/constant.json';
 
+const BORDER = 12;
+
 class Preview {
 
-	timeoutToast: number = 0;
-	timeoutTooltip: number = 0;
-	timeoutPreviewShow: number = 0;
-	timeoutPreviewHide: number = 0;
-	isPreviewOpen: boolean = false;
+	timeout: any = {
+		toast: 0,
+		tooltip: 0,
+		preview: 0,
+	};
 
-	tooltipShow (text: string, node: any, typeX: I.MenuDirection, typeY: I.MenuDirection) {
-		if (!node.length || keyboard.isResizing) {
+	tooltipShow (text: string, element: any, typeX: I.MenuDirection, typeY: I.MenuDirection) {
+		if (!element.length || keyboard.isResizing) {
 			return;
 		};
 
-		window.clearTimeout(this.timeoutTooltip);
-		this.timeoutTooltip = window.setTimeout(() => {
-			let win = $(window);
-			let obj = $('#tooltip');
-			let offset = node.offset();
-			let st = win.scrollTop(); 
-			let nw = node.outerWidth();
-			let nh = node.outerHeight();
+		text = text.toString().replace(/\\n/, '\n');
 
-			text = text.toString().replace(/\\n/, '\n');
-			
+		window.clearTimeout(this.timeout.tooltip);
+		this.timeout.tooltip = window.setTimeout(() => {
+			const win = $(window);
+			const obj = $('#tooltip');
+			const { left, top } = element.offset();
+			const st = win.scrollTop(); 
+			const ew = element.outerWidth();
+			const eh = element.outerHeight();
+
 			obj.find('.txt').html(Util.lbBr(text));
 			obj.show().css({ opacity: 0 });
 			
-			let ow = obj.outerWidth();
-			let oh = obj.outerHeight();
-			let x = 0;
-			let y = 0;
+			const ow = obj.outerWidth();
+			const oh = obj.outerHeight();
+
+			let x = left;
+			let y = top;
 
 			switch (typeX) {
-				case I.MenuDirection.Left:
-					x = offset.left;
-					break;
-
 				default:
 				case I.MenuDirection.Center:
-					x = offset.left - ow / 2 + nw / 2;
+					x += ew / 2 - ow / 2;
+					break;
+
+				case I.MenuDirection.Left:
 					break;
 
 				case I.MenuDirection.Right:
-					x = offset.left + ow - nw;
+					x += ow - ew;
 					break;
 			};
 
 			switch (typeY) {
 				default:
 				case I.MenuDirection.Top:
-					y = offset.top - oh - 6 - st;
+					y -= oh + 6 + st;
 					break;
 				
 				case I.MenuDirection.Bottom:
-					y = offset.top + nh + 6 - st;
+					y += eh + 6 - st;
 					break;
 			};
 			
-			x = Math.max(12, x);
-			x = Math.min(win.width() - obj.outerWidth() - 12, x);
+			x = Math.max(BORDER, x);
+			x = Math.min(win.width() - obj.outerWidth() - BORDER, x);
 
 			obj.css({ left: x, top: y, opacity: 1 });
 		}, 250);
 	};
 
 	tooltipHide (force: boolean) {
-		let obj = $('#tooltip');
+		const obj = $('#tooltip');
 
 		obj.css({ opacity: 0 });
-		window.clearTimeout(this.timeoutTooltip);
-		this.timeoutTooltip = window.setTimeout(() => { obj.hide(); }, force ? 0 : Constant.delay.tooltip);
+		window.clearTimeout(this.timeout.tooltip);
+		this.timeout.tooltip = window.setTimeout(() => { obj.hide(); }, force ? 0 : Constant.delay.tooltip);
 	};
 
-	previewShow (node: any, param: any) {
-		if (!node.length || keyboard.isPreviewDisabled) {
+	previewShow (element: any, param: any) {
+		if (!element.length || keyboard.isPreviewDisabled) {
 			return;
 		};
 		
 		const obj = $('#preview');
 		
-		node.off('mouseleave.link').on('mouseleave.link', (e: any) => {
-			window.clearTimeout(this.timeoutPreviewShow);
-		});
-		
-		obj.off('mouseleave.link').on('mouseleave.link', (e: any) => {
-			this.previewHide(false);
-		});
+		element.off('mouseleave.link').on('mouseleave.link', () => { window.clearTimeout(this.timeout.preview); });
+		obj.off('mouseleave.link').on('mouseleave.link', () => { this.previewHide(false); });
 		
 		this.previewHide(false);
 		
-		window.clearTimeout(this.timeoutPreviewShow);
-		this.timeoutPreviewShow = window.setTimeout(() => {
-			this.isPreviewOpen = true;
-			commonStore.previewSet({ ...param, element: node });
-		}, 500);
+		window.clearTimeout(this.timeout.preview);
+		this.timeout.preview = window.setTimeout(() => { commonStore.previewSet({ ...param, element }); }, 500);
 	};
 
 	previewHide (force: boolean) {
-		this.isPreviewOpen = false;
-		window.clearTimeout(this.timeoutPreviewShow);
+		window.clearTimeout(this.timeout.preview);
 
 		const obj = $('#preview');
-		if (force) {
-			obj.hide();
-			return;
-		};
+		const t = force ? 0 : 250;
 
 		obj.css({ opacity: 0 });
-		this.timeoutPreviewHide = window.setTimeout(() => { 
+		this.timeout.preview = window.setTimeout(() => { 
 			obj.hide();
 			obj.removeClass('top bottom withImage'); 
 
 			commonStore.previewClear();
-		}, 250);
+		}, t);
 	};
 
 	toastShow (param: any) {
-		const win = $(window);
 		const obj = $('#toast');
+		const setTimeout = () => {
+			this.timeout.toast = window.setTimeout(() => { this.toastHide(false); }, Constant.delay.toast);
+		};
 
 		commonStore.toastSet(param);
-
 		obj.show().css({ opacity: 0 });
 
-		window.setTimeout(() => {
-			let ow = obj.outerWidth();
-			let oh = obj.outerHeight();
-			let x = win.width() / 2 - ow / 2;
-			let y = win.height() - oh - 24;
+		setTimeout();
 
-			obj.css({ left: x, top: y, opacity: 1 });
-		}, 30);
-
-		this.timeoutToast = window.setTimeout(this.toastHide, Constant.delay.toast);
-
-		obj.off('mouseenter').on('mouseenter', (e: any) => {
-			window.clearTimeout(this.timeoutToast);
-		});
-
-		obj.off('mouseleave').on('mouseleave', (e: any) => {
-			this.timeoutToast = window.setTimeout(this.toastHide, Constant.delay.toast);
-		});
+		obj.off('mouseenter mouseleave');
+		obj.on('mouseenter', () => { window.clearTimeout(this.timeout.toast); });
+		obj.on('mouseleave', () => { setTimeout(); });
 	};
 
 	toastHide (force: boolean) {
-		window.clearTimeout(this.timeoutToast);
+		window.clearTimeout(this.timeout.toast);
 
 		const obj = $('#toast');
 
@@ -158,10 +136,21 @@ class Preview {
 		};
 
 		obj.css({ opacity: 0 });
-		this.timeoutToast = window.setTimeout(() => {
+		this.timeout.toast = window.setTimeout(() => {
 			obj.hide();
 			commonStore.toastClear();
 		}, 250);
+	};
+
+	toastPosition () {
+		const win = $(window);
+		const obj = $('#toast');
+
+		obj.css({ 
+			left: win.width() / 2 - obj.outerWidth() / 2, 
+			top: win.height() - obj.outerHeight() - BORDER * 2,
+			opacity: 1,
+		});
 	};
 
 	hideAll () {

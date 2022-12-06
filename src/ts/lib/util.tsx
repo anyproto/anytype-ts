@@ -14,12 +14,6 @@ class Util {
 		this.history = history;
 	};
 
-	timeoutToast: number = 0;
-	timeoutTooltip: number = 0;
-	timeoutPreviewShow: number = 0;
-	timeoutPreviewHide: number = 0;
-	isPreviewOpen: boolean = false;
-
 	sprintf (...args: any[]) {
 		let regex = /%%|%(\d+\$)?([-+#0 ]*)(\*\d+\$|\*|\d+)?(\.(\*\d+\$|\*|\d+))?([scboxXuidfegEG])/g;
 		let a = arguments, i = 0, format = a[i++];
