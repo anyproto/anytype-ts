@@ -575,9 +575,20 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 				};
 
 				if (item.type == I.BlockType.Dataview) {
-					param.content.views = [ {  name: item.name, type: item.itemId } ];
+					param.content.views = [ { name: item.name, type: item.itemId } ];
 				};
 
+				if (item.type == I.BlockType.Dataview) {
+					C.BlockDataviewCreateWithObject(rootId, blockId, position, param, (message: any) => {
+						focus.set(message.blockId, { from: length, to: length });
+						focus.apply();
+
+						analytics.event('CreateBlock', {
+							middleTime: message.middleTime,
+							type: param.type,
+						});
+					});
+				} else
 				if (item.type == I.BlockType.Table) {
 					C.BlockTableCreate(rootId, blockId, position, Number(item.rowCnt) || 3, Number(item.columnCnt) || 3, false, (message: any) => {
 						analytics.event('CreateBlock', { 
@@ -594,7 +605,6 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 							middleTime: message.middleTime, 
 							type: param.type, 
 							style: param.content?.style,
-							params: {},
 						});
 					});
 				} else 
@@ -606,7 +616,6 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 					};
 
 					const create = (template: any) => {
-
 						DataUtil.pageCreate(rootId, blockId, details, position, template?.id, DataUtil.defaultLinkSettings(), [], (message: any) => {
 							if (message.error.code) {
 								return;
@@ -623,18 +632,14 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 						});
 					};
 
-					const showMenu = () => {
-						popupStore.open('template', {
-							data: {
-								typeId: item.objectTypeId,
-								onSelect: create,
-							},
-						});
-					};
-
 					DataUtil.checkTemplateCnt([ item.objectTypeId ], (message: any) => {
 						if (message.records.length > 1) {
-							showMenu();
+							popupStore.open('template', {
+								data: { 
+									typeId: item.objectTypeId,
+									onSelect: create,
+								},
+							});
 						} else {
 							create(message.records.length ? message.records[0] : '');
 						};
@@ -642,32 +647,15 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 				} else {
 					keyboard.setFocus(false);
 
-					if (param.type == I.BlockType.Dataview) {
-						C.BlockDataviewCreateWithObject(rootId, blockId, position, param, (message: any) => {
-							const { blockId, targetObjectId } = message;
-							focus.set(blockId, { from: length, to: length });
-							focus.apply();
+					blockCreate(blockId, position, param, (newBlockId: string) => {
+						focus.set(newBlockId, { from: length, to: length });
+						focus.apply();
 
-							const event: any =  {
-								middleTime: message.middleTime,
-								type: param.type,
-								style: param.content?.style,
-								params: {},
-							};
-
-							analytics.event('CreateBlockDataviewWithObject', event);
-						});
-					} else {
-						blockCreate(blockId, position, param, (newBlockId: string) => {
-							focus.set(newBlockId, { from: length, to: length });
-							focus.apply();
-
-							// Auto-open BlockRelation suggest menu
-							if ((param.type == I.BlockType.Relation) && !param.content.key) {
-								window.setTimeout(() => { $(`#block-${newBlockId} .info`).trigger('click'); }, Constant.delay.menu);
-							};
-						});
-					};
+						// Auto-open BlockRelation suggest menu
+						if ((param.type == I.BlockType.Relation) && !param.content.key) {
+							window.setTimeout(() => { $(`#block-${newBlockId} .info`).trigger('click'); }, Constant.delay.menu);
+						};
+					});
 				};
 			};
 
