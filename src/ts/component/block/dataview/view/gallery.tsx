@@ -3,7 +3,7 @@ import { observer } from 'mobx-react';
 import { AutoSizer, WindowScroller, Masonry, CellMeasurer, CellMeasurerCache, createMasonryCellPositioner } from 'react-virtualized';
 import $ from 'jquery';
 import { I, Relation, DataUtil } from 'Lib';
-import { dbStore, detailStore } from 'Store';
+import { dbStore, detailStore, blockStore } from 'Store';
 import { LoadMore } from 'Component';
 import Empty from '../empty';
 import Card from './gallery/card';
@@ -41,6 +41,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<Props, {}
 		const records = dbStore.getRecords(subId, '');
 		const { coverRelationKey, cardSize, hideIcon } = view;
 		const { offset, total } = dbStore.getMeta(subId, '');
+		const allowed = blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.Object ]);
 		const limit = getLimit();
 		const length = records.length;
 
@@ -51,6 +52,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<Props, {}
 					title="No objects of this type" 
 					description="Create the first object of this type to start your set"
 					button="Add a new object"
+					withButton={allowed}
 					onClick={(e: any) => onRecordAdd(e, 1)}
 				/>
 			);

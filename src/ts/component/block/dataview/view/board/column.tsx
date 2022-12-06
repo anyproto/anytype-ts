@@ -54,7 +54,7 @@ const Column = observer(class Column extends React.Component<Props, State> {
 		const cnbg = [];
 		const { groupOrder } = block.content;
 		const order = groupOrder.find(it => it.viewId == view.id);
-		const group = order.groups.find(it => it.groupId == id) || {};
+		const group = (order?.groups || []).find(it => it.groupId == id) || {};
 
 		if (view.groupBackgroundColors) {
 			cn.push('withColor');
