@@ -157,6 +157,8 @@ const ListObject = observer(class ListObject extends React.Component<Props, {}> 
 		const { rootId, blockId } = this.props;
 		const offset = (page - 1) * LIMIT;
 		const block = blockStore.getLeaf(rootId, blockId);
+		const { targetObjectId } = block.content;
+		const object = detailStore.get(rootId, targetObjectId ? targetObjectId : rootId, [ Constant.relationKey.setOf ]);
 		const subId = this.getSubId();
 		const filters = view.filters.concat([
 			{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
@@ -169,7 +171,7 @@ const ListObject = observer(class ListObject extends React.Component<Props, {}> 
 			filters,
 			sorts: view.sorts,
 			keys: this.getKeys(),
-			sources: block.content.sources,
+			sources: object[Constant.relationKey.setOf],
 			offset,
 			limit: LIMIT,
 		}, callBack);

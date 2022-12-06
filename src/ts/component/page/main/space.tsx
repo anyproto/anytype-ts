@@ -156,6 +156,8 @@ const PageMainSpace = observer(class PageMainSpace extends React.Component<Props
 		const rootId = this.getRootId();
 		const views = dbStore.getViews(rootId, blockId);
 		const block = blockStore.getLeaf(rootId, blockId);
+		const { targetObjectId } = block.content;
+		const object = detailStore.get(rootId, targetObjectId ? targetObjectId : rootId, [ Constant.relationKey.setOf ]);
 
 		if (views.length) {
 			const view = views[0];
@@ -167,7 +169,7 @@ const PageMainSpace = observer(class PageMainSpace extends React.Component<Props
 				filters,
 				sorts: view.sorts,
 				keys: [ 'id' ],
-				sources: block.content.sources,
+				sources: object[Constant.relationKey.setOf],
 			});
 		};
 	};

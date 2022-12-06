@@ -56,6 +56,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	render () {
 		const { rootId, block, isPopup, isInline, isDragging } = this.props;
 		const { loading } = this.state;
+		const { targetObjectId } = block.content;
 		const views = dbStore.getViews(rootId, block.id);
 
 		if (!views.length) {
@@ -67,7 +68,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			return null;
 		};
 
-		let sources = block.content.sources || [];
+		let object = detailStore.get(rootId, isInline ? targetObjectId : rootId, [ Constant.relationKey.setOf ]);
+		let sources = object[Constant.relationKey.setOf] || [];
 		let { groupRelationKey } = view;
 		let ViewComponent: any = null;
 		let className = Util.toCamelCase('view-' + I.ViewType[view.type]);

@@ -30,10 +30,11 @@ const Head = observer(class Head extends React.Component<Props, {}> {
 
 	render () {
 		const { rootId, block, readonly, getView, className } = this.props;
-		const { sources, targetObjectId } = block.content;
+		const { targetObjectId } = block.content;
+		const object = detailStore.get(rootId, targetObjectId, [ Constant.relationKey.setOf ]);
+		const sources = object[Constant.relationKey.setOf] || [];
 		const view = getView();
 		const cn = [ 'dataviewHead' ];
-		const object = detailStore.get(targetObjectId, targetObjectId);
 
 		if (className) {
 			cn.push(className);

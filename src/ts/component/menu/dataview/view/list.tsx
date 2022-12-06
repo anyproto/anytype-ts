@@ -8,7 +8,8 @@ import $ from 'jquery';
 import arrayMove from 'array-move';
 import { Icon } from 'Component';
 import { I, C, Util, keyboard, Relation, analytics } from 'Lib';
-import { menuStore, dbStore, blockStore } from 'Store';
+import {menuStore, dbStore, blockStore, detailStore} from 'Store';
+import Constant from "json/constant.json";
 
 interface Props extends I.Menu {};
 
@@ -216,6 +217,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<Props> 
 		const { param, getId, getSize } = this.props;
 		const { data } = param;
 		const { rootId, blockId, getView, getData } = data;
+
 		const view = getView();
 		const relations = Util.objectCopy(view.relations);
 		const filters: I.Filter[] = [];
@@ -241,6 +243,10 @@ const MenuViewList = observer(class MenuViewList extends React.Component<Props> 
 		};
 
 		C.BlockDataviewViewCreate(rootId, blockId, newView, (message: any) => {
+			if (message.error.code) {
+				return;
+			};
+
 			const view = dbStore.getView(rootId, blockId, message.viewId);
 
 			menuStore.open('dataviewViewEdit', {

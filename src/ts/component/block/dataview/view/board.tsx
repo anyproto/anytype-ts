@@ -113,7 +113,9 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 	};
 
 	loadGroupList () {
-		const { rootId, block, getView } = this.props;
+		const { rootId, block, getView, isInline } = this.props;
+		const { targetObjectId } = block.content;
+		const object = detailStore.get(rootId, isInline ? targetObjectId : rootId, [ Constant.relationKey.setOf ]);
 		const view = getView();
 		const subId = dbStore.getGroupSubId(rootId, block.id, 'groups');
 
@@ -139,7 +141,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 
 		this.setState({ loading: true });
 
-		C.ObjectGroupsSubscribe(subId, view.groupRelationKey, view.filters, block.content.sources, (message: any) => {
+		C.ObjectGroupsSubscribe(subId, view.groupRelationKey, view.filters, object[Constant.relationKey.setOf], (message: any) => {
 			if (message.error.code) {
 				return;
 			};
