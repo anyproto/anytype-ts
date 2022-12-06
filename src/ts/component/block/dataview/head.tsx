@@ -1,16 +1,12 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Icon, Button } from 'Component';
-import { I, C, keyboard, Dataview, DataUtil } from 'Lib';
-import {menuStore, blockStore, dbStore, detailStore} from 'Store';
-import { observable } from 'mobx';
 import { observer } from 'mobx-react';
-
+import { Icon } from 'Component';
+import { I, C, keyboard, DataUtil } from 'Lib';
+import { menuStore, blockStore, detailStore } from 'Store';
 import Constant from 'json/constant.json';
 
-interface Props extends I.ViewComponent {
-};
-
+interface Props extends I.ViewComponent {};
 
 const Head = observer(class Head extends React.Component<Props, {}> {
 
@@ -33,11 +29,11 @@ const Head = observer(class Head extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { rootId, block, readonly, getView, onRecordAdd, className } = this.props;
-		const sources = block.content.sources || [];
+		const { rootId, block, readonly, getView, className } = this.props;
+		const { sources, targetObjectId } = block.content;
 		const view = getView();
-		const allowedObject = blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.Object ]);
 		const cn = [ 'dataviewHead' ];
+		const object = detailStore.get(targetObjectId, targetObjectId);
 
 		if (className) {
 			cn.push(className);
@@ -105,6 +101,7 @@ const Head = observer(class Head extends React.Component<Props, {}> {
 
 		let menuId = '';
 		let menuParam = {
+			menuKey: item.id,
 			element: `#${this.menuContext.getId()} #item-${item.id}`,
 			offsetX: this.menuContext.getSize().width,
 			className: 'big single',
@@ -139,14 +136,10 @@ const Head = observer(class Head extends React.Component<Props, {}> {
 				break;
 		};
 
-		if (menuId && !menuStore.isOpen(menuId)) {
-			if (menuStore.isOpen(menuId)) {
-				menuStore.open(menuId, param);
-			} else {
-				menuStore.closeAll(Constant.menuIds.dataviewHead, () => {
-					menuStore.open(menuId, menuParam);
-				});
-			};
+		if (menuId && !menuStore.isOpen(menuId, item.id)) {
+			menuStore.closeAll(Constant.menuIds.dataviewHead, () => {
+				menuStore.open(menuId, menuParam);
+			});
 		};
 	};
 
@@ -183,29 +176,28 @@ const Head = observer(class Head extends React.Component<Props, {}> {
 	};
 
 	setValue () {
-		const { rootId, block } = this.props;
 		if (!this._isMounted) {
-			return '';
+			return;
 		};
 
-		let node = $(ReactDOM.findDOMNode(this));
-		let item = node.find('#title');
+		const { rootId, block } = this.props;
+		const node = $(ReactDOM.findDOMNode(this));
+		const item = node.find('#title');
+		const { targetObjectId } = block.content;
 
-		let targetObjectId: string = block.content.targetObjectId;
-		let object: any = {};
-		let name: string = '';
-
-		if (targetObjectId) {
-			object = detailStore.get(rootId, targetObjectId);
-			name = object.name;
-
-			if (!name || name === DataUtil.defaultName('page') || name === DataUtil.defaultName('set')) {
-				return;
-			};
-
-			item.text(object.name);
-			this.placeholderCheck();
+		if (!targetObjectId) {
+			return;
 		};
+
+		const object = detailStore.get(rootId, targetObjectId);
+		const { name } = object;
+
+		if (!name || (name == DataUtil.defaultName('page')) || (name == DataUtil.defaultName('set'))) {
+			return;
+		};
+
+		item.text(object.name);
+		this.placeholderCheck();
 	};
 
 	getValue () {
@@ -243,11 +235,12 @@ const Head = observer(class Head extends React.Component<Props, {}> {
 	};
 
 	save () {
-		const { rootId, block } = this.props;
+		const { block } = this.props;
 		const { targetObjectId } = block.content;
+
 		if (!targetObjectId) {
 			return;
-		}
+		};
 
 		DataUtil.blockSetText(targetObjectId, 'title', this.getValue(), [], true);
 	};

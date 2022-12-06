@@ -15,6 +15,7 @@ class BlockContentDataview implements I.ContentDataview {
 	constructor (props: I.ContentDataview) {
 		let self = this;
 
+		self.targetObjectId = String(props.targetObjectId || '');
 		self.sources = props.sources || [];
 		self.views = (props.views || []).map(it => new View(it));
 		self.relationLinks = props.relationLinks || [];
