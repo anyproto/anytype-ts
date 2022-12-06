@@ -60,10 +60,10 @@
 
 		.body.upload { padding: 16px; }
 		.body.upload {
-			.loaderWrapper { height: 330px; }
+			.loaderWrapper { height: 336px; }
 
 			.dropzone { 
-				height: 330px; display: flex; align-items: center; border-radius: 2px; background: rgba(80, 73, 28, 0.08);
+				height: 336px; display: flex; align-items: center; border-radius: 2px; background: rgba(80, 73, 28, 0.08);
 				justify-content: center; flex-direction: column; gap: 6px 0px; cursor: pointer;
 			}
 			.dropzone.isDraggingOver { background: rgba(255,187,44,0.3); }
