@@ -166,11 +166,10 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		let featured = object.featuredRelations || [];
 		let relations = dbStore.getObjectRelations(rootId, rootId);
 		let relationKeys = relations.map(it => it.relationKey);
-		let items = relations.map((it: any) => { return { ...it, scope: I.RelationScope.Object }; });
-		let typeRelations = (type ? type.recommendedRelations : []).map(it => {
-			it = dbStore.getRelationById(it);
-			return { ...it, scope: I.RelationScope.Type };
-		}).filter(it => !relationKeys.includes(it.relationKey));
+		let items = relations.map(it => { return { ...it, scope: I.RelationScope.Object }; });
+		let typeRelations = (type ? type.recommendedRelations || [] : []).map(it => {
+			return { ...dbStore.getRelationById(it), scope: I.RelationScope.Type };
+		}).filter(it => it.relationKey && !relationKeys.includes(it.relationKey));
 
 		items = items.concat(typeRelations);
 		items = items.sort(DataUtil.sortByHidden).filter((it: any) => {
