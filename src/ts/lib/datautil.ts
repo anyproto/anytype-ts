@@ -487,18 +487,14 @@ class DataUtil {
 	};
 	
 	pageSetIcon (rootId: string, emoji: string, image: string, callBack?: (message: any) => void) {
-		const details = [ 
-			{ key: 'iconEmoji', value: emoji },
-			{ key: 'iconImage', value: image },
-		];
-		C.ObjectSetDetails(rootId, details, callBack);
+		C.ObjectSetDetails(rootId, [ 
+			{ key: 'iconEmoji', value: String(emoji || '') },
+			{ key: 'iconImage', value: String(image || '') },
+		], callBack);
 	};
 	
 	pageSetName (rootId: string, name: string, callBack?: (message: any) => void) {
-		const details = [ 
-			{ key: 'name', value: name },
-		];
-		C.ObjectSetDetails(rootId, details, callBack);
+		C.ObjectSetDetails(rootId, [ { key: 'name', value: String(name || '') } ], callBack);
 	};
 	
 	pageSetCover (rootId: string, type: I.CoverType, id: string, x?: number, y?: number, scale?: number, callBack?: (message: any) => void) {
@@ -517,12 +513,7 @@ class DataUtil {
 	};
 
 	pageSetDone (rootId: string, done: boolean, callBack?: (message: any) => void) {
-		done = Boolean(done);
-
-		const details = [ 
-			{ key: 'done', value: done },
-		];
-		C.ObjectSetDetails(rootId, details, callBack);
+		C.ObjectSetDetails(rootId, [ { key: 'done', value: Boolean(done) } ], callBack);
 	};
 
 	pageSetLayout (rootId: string, layout: I.ObjectLayout, callBack?: (message: any) => void) {
