@@ -577,6 +577,11 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 	applyGroupOrder (groups: any[]) {
 		let { block, getView } = this.props;
 		let view = getView();
+		
+		if (!view) {
+			return [];
+		};
+
  		let el = block.content.groupOrder.find(it => it.viewId == view.id);
 		let groupOrder: any = {};
 
