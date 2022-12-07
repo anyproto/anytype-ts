@@ -183,6 +183,7 @@ const BlockType = observer(class BlockType extends React.Component<Props, {}> {
 			},
 			data: {
 				filter: '',
+				smartblockTypes: [ I.SmartBlockType.Page ],
 				onClick: (item: any) => {
 					this.onClick(e, item);
 				}

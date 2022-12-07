@@ -310,6 +310,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				menuId = 'typeSuggest';
 				menuParam.data = Object.assign(menuParam.data, {
 					filter: '',
+					smartblockTypes: [ I.SmartBlockType.Page ],
 					onClick: (item: any) => {
 						C.BlockListConvertToObjects(rootId, [ blockId ], item.id);
 						close();

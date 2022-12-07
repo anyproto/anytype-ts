@@ -477,6 +477,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 				menuId = 'typeSuggest';
 				menuParam.data = Object.assign(menuParam.data, {
 					filter: '',
+					smartblockTypes: [ I.SmartBlockType.Page ],
 					onClick: (item: any) => {
 						this.moveToPage(item.id);
 						close();
