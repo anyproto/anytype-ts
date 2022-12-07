@@ -121,9 +121,8 @@
 
 		.linkCard.c48.withIcon.withCover.vertical {
 			.sides { min-height: 62px; }
-			.side.left { padding: 24px 16px 16px 16px; z-index: 10; }
-
-			.iconObject { top: -32px; }
+			.side.left { padding: 24px 16px 16px 16px; z-index: 10; display: block !important; }
+			.iconObject { top: -32px; transform: none; }
 		}
 
 		.linkCard.withCover {
