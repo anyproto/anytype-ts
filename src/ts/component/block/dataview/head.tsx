@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { observer } from 'mobx-react';
-import { Icon } from 'Component';
+import { Icon, IconObject } from 'Component';
 import { I, C, keyboard, DataUtil } from 'Lib';
 import { menuStore, blockStore, detailStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -26,6 +26,7 @@ const Head = observer(class Head extends React.Component<Props, {}> {
 		this.onBlur = this.onBlur.bind(this);
 		this.onCompositionStart = this.onCompositionStart.bind(this);
 		this.onCompositionEnd = this.onCompositionEnd.bind(this);
+		this.onIconSelect = this.onIconSelect.bind(this);
 	};
 
 	render () {
@@ -42,6 +43,7 @@ const Head = observer(class Head extends React.Component<Props, {}> {
 		
 		return (
 			<div className={cn.join(' ')}>
+				<IconObject id={`icon-set-${targetObjectId}`} object={object} size={18} canEdit={!readonly} onSelect={this.onIconSelect} />
 				<div id="title" className="title">
 					<div
 						className="value" 
@@ -250,6 +252,17 @@ const Head = observer(class Head extends React.Component<Props, {}> {
 		};
 
 		DataUtil.blockSetText(targetObjectId, 'title', this.getValue(), [], true);
+	};
+
+	onIconSelect (icon: string) {
+		const { block } = this.props;
+		const { targetObjectId } = block.content;
+
+		if (!targetObjectId) {
+			return;
+		};
+
+		DataUtil.pageSetIcon(targetObjectId, icon, '');
 	};
 
 });
