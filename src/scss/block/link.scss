@@ -24,7 +24,7 @@
         .linkCard {
             .sides { display: flex; flex-direction: row; }
 			.side { transition: border-color 0.2s ease-in-out; }
-			.side.left { width: 100%; position: relative; }
+			.side.left { width: 100%; position: relative; display: flex; }
 			.side.right { display: none; overflow: hidden; }
 
 			.side.left {
@@ -55,7 +55,7 @@
         }
 
 		.linkCard.text {
-			.side.left { line-height: 24px; vertical-align: top; display: flex; gap: 0px 6px; align-items: center; }
+			.side.left { line-height: 24px; vertical-align: top; gap: 0px 6px; flex-direction: row; align-items: center;  }
 			.side.right { display: none !important; }
 
 			.relationItem { display: flex; align-items: center; gap: 0px 6px; }
@@ -93,8 +93,9 @@
 
 		.linkCard.card { margin: 8px 0px; }
 		.linkCard.card {
-			.side.left { padding: 16px; border: 1px solid $colorHover; border-radius: 16px; display: block !important; }
+			.side.left { padding: 16px; border: 1px solid $colorHover; border-radius: 16px; flex-direction: column; justify-content: center; }
 			.side.right { border-radius: 0px 16px 16px 0px; }
+
 			.sides.withBgColor {
 				.side { border: 0px; }
 			}
@@ -115,22 +116,19 @@
 
 		.linkCard.c48.withIcon {
 			.sides { min-height: 80px; }
-			.side.left { padding: 16px 16px 16px 76px; line-height: 44px; display: flex !important; }
+			.side.left { padding: 16px 16px 16px 76px; line-height: 44px; }
 			.iconObject { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); background-color: $colorVeryLightGrey; border-radius: 10px; }
 		}
 
 		.linkCard.c48.withIcon.withCover.vertical {
 			.sides { min-height: 62px; }
-			.side.left { padding: 24px 16px 16px 16px; z-index: 10; display: block !important; }
+			.side.left { padding: 24px 16px 16px 16px; z-index: 10; }
 			.iconObject { top: -32px; transform: none; }
 		}
 
 		.linkCard.withCover {
-			.sides {  align-items: stretch; }
-			.side.left {
-				width: calc(100% - 200px); border-radius: 16px 0px 0px 16px; border-right-width: 0px;
-				display: flex; align-items: center;
-			}
+			.sides { align-items: stretch; }
+			.side.left { width: calc(100% - 200px); border-radius: 16px 0px 0px 16px; border-right-width: 0px; }
 			.side.right { width: 200px; min-height: 90px; display: block; border: 1px solid $colorHover; border-left: 0px; }
 		}
 
