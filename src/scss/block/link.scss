@@ -31,7 +31,7 @@
 				.txt { width: 100%; }
 			}
 
-			.cover { position: relative; min-height: 90px; height: 100%; background-size: cover !important; background-color: unset; }
+			.cover { position: relative; height: 100%; background-size: cover !important; background-color: unset; }
 			.cardName { display: flex; flex-direction: row; gap: 0px 6px; align-items: center; position: static; }
 			.cardName {
 				.name { transition: color 0.2s ease-in-out, border-color 0.2s ease-in-out; font-weight: 500; }
@@ -116,8 +116,8 @@
 
 		.linkCard.c48.withIcon {
 			.sides { min-height: 80px; }
-			.side.left { padding: 16px 16px 16px 76px; line-height: 44px; }
-			.iconObject { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); background-color: $colorVeryLightGrey; border-radius: 10px; }
+			.side.left { padding: 16px 16px 16px 76px; }
+			.iconObject { position: absolute; left: 16px; top: 16px; background-color: $colorVeryLightGrey; border-radius: 10px; }
 		}
 
 		.linkCard.c48.withIcon.withCover.vertical {
@@ -129,7 +129,7 @@
 		.linkCard.withCover {
 			.sides { align-items: stretch; }
 			.side.left { width: calc(100% - 200px); border-radius: 16px 0px 0px 16px; border-right-width: 0px; }
-			.side.right { width: 200px; min-height: 90px; display: block; border: 1px solid $colorHover; border-left: 0px; }
+			.side.right { width: 200px; display: block; border: 1px solid $colorHover; border-left: 0px; }
 		}
 
 		.linkCard.vertical { display: block; }

@@ -109,7 +109,7 @@ class MenuSmile extends React.Component<Props, State> {
 		};
 		
 		return (
-			<div>
+			<div className="wrap">
 				{!noHead ? (
 					<div className="head">
 						<div className="btn" onClick={this.onRandom}>{translate('menuSmileRandom')}</div>
