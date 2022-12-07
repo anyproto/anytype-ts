@@ -182,9 +182,13 @@ const MenuSource = observer(class MenuSource extends React.Component<Props, {}> 
 	save (value: string[]) {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId } = data;
+		const { rootId, blockId, targetObjectId } = data;
 
-		C.BlockDataviewSetSource(rootId, blockId, value);
+		if (targetObjectId) {
+			C.BlockDataviewSetSource(targetObjectId, 'dataview', value);
+		} else {
+			C.BlockDataviewSetSource(rootId, blockId, value);
+		};
 	};
 
 	getValue () {

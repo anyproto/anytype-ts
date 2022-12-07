@@ -99,6 +99,7 @@ const Head = observer(class Head extends React.Component<Props, {}> {
 
 	onOver (e: any, item: any) {
 		const { rootId, block } = this.props;
+		const { targetObjectId } = block.content;
 
 		let menuId = '';
 		let menuParam = {
@@ -120,6 +121,11 @@ const Head = observer(class Head extends React.Component<Props, {}> {
 		switch (item.id) {
 			case 'new':
 				menuId = 'dataviewSource';
+				if (targetObjectId) {
+					menuParam.data = Object.assign(menuParam.data, {
+						targetObjectId: targetObjectId
+					});
+				};
 				break;
 
 			case 'existing':
