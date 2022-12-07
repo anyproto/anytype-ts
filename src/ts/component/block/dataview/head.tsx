@@ -44,7 +44,7 @@ const Head = observer(class Head extends React.Component<Props, {}> {
 		
 		return (
 			<div className={cn.join(' ')}>
-				<IconObject id={`icon-set-${targetObjectId}`} object={object} size={18} canEdit={!readonly} onSelect={this.onIconSelect} onUpload={this.onIconUpload} />
+				<IconObject id={`icon-set-${block.id}`} object={object} size={18} canEdit={!readonly} onSelect={this.onIconSelect} onUpload={this.onIconUpload} />
 				<div id="title" className="title">
 					<div
 						className="value" 
@@ -273,7 +273,7 @@ const Head = observer(class Head extends React.Component<Props, {}> {
 		if (!targetObjectId) {
 			return;
 		};
-		
+
 		DataUtil.pageSetIcon(targetObjectId, '', hash);
 	};
 
