@@ -106,7 +106,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 							{setOfString.length ? (
 								<div className="name">
 									{setOfString.map((it: any, i: number) => (
-										<span key={i}>{it}</span>
+										<div className="element" key={i}>{it}</div>
 									))}
 								</div>
 							) : (
