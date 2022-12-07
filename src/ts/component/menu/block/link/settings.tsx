@@ -151,8 +151,8 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 
 	getStyles () {
 		return [
+			{ id: I.LinkCardStyle.Text, name: 'Text', icon: 'style-text' },
 			{ id: I.LinkCardStyle.Card, name: 'Card', icon: 'style-card' },
-            { id: I.LinkCardStyle.Text, name: 'Text', icon: 'style-text' },
         ].map((it: any) => {
 			it.icon = 'linkStyle' + it.id;
 			return it;

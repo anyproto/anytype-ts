@@ -114,15 +114,12 @@
 		}
 
 		.linkCard.c48.withIcon {
-			.cardName { min-height: 48px; }
 			.sides { min-height: 80px; }
 			.side.left { padding: 16px 16px 16px 76px; line-height: 44px; }
-
 			.iconObject { position: absolute; left: 16px; top: 16px; background-color: $colorVeryLightGrey; border-radius: 10px; }
 		}
 
 		.linkCard.c48.withIcon.withCover.vertical {
-			.cardName { min-height: unset; }
 			.sides { min-height: 62px; }
 			.side.left { padding: 24px 16px 16px 16px; z-index: 10; }
 
