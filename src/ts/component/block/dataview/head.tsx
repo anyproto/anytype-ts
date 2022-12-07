@@ -27,6 +27,7 @@ const Head = observer(class Head extends React.Component<Props, {}> {
 		this.onCompositionStart = this.onCompositionStart.bind(this);
 		this.onCompositionEnd = this.onCompositionEnd.bind(this);
 		this.onIconSelect = this.onIconSelect.bind(this);
+		this.onIconUpload = this.onIconUpload.bind(this);
 	};
 
 	render () {
@@ -43,7 +44,7 @@ const Head = observer(class Head extends React.Component<Props, {}> {
 		
 		return (
 			<div className={cn.join(' ')}>
-				<IconObject id={`icon-set-${targetObjectId}`} object={object} size={18} canEdit={!readonly} onSelect={this.onIconSelect} />
+				<IconObject id={`icon-set-${targetObjectId}`} object={object} size={18} canEdit={!readonly} onSelect={this.onIconSelect} onUpload={this.onIconUpload} />
 				<div id="title" className="title">
 					<div
 						className="value" 
@@ -263,6 +264,17 @@ const Head = observer(class Head extends React.Component<Props, {}> {
 		};
 
 		DataUtil.pageSetIcon(targetObjectId, icon, '');
+	};
+
+	onIconUpload (hash: string) {
+		const { block } = this.props;
+		const { targetObjectId } = block.content;
+
+		if (!targetObjectId) {
+			return;
+		};
+		
+		DataUtil.pageSetIcon(targetObjectId, '', hash);
 	};
 
 });
