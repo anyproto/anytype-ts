@@ -52,13 +52,13 @@ const Column = observer(class Column extends React.Component<Props, State> {
 		const head = {};
 		const cn = [ 'column' ];
 		const cnbg = [];
-		const { groupOrder } = block.content;
-		const order = groupOrder.find(it => it.viewId == view.id);
-		const group = (order?.groups || []).find(it => it.groupId == id) || {};
+		const group = dbStore.getGroup(rootId, block.id, id);
+		const order = (block.content.groupOrder || []).find(it => it.viewId == view.id);
+		const orderGroup = (order?.groups || []).find(it => it.groupId == id) || {};
 
 		if (view.groupBackgroundColors) {
 			cn.push('withColor');
-			cnbg.push('bgColor bgColor-' + (group.bgColor || 'grey'));
+			cnbg.push('bgColor bgColor-' + (orderGroup.bgColor || group.bgColor || 'grey'));
 		};
 
 		head[view.groupRelationKey] = value;
