@@ -137,43 +137,23 @@ const MenuSource = observer(class MenuSource extends React.Component<Props, {}> 
 	};
 
 	onClick (e: any, item: any) {
-		const { param, getId, getSize } = this.props;
+		const { param, getId, getSize, close } = this.props;
 		const { data } = param;
-		const { rootId, blockId, readonly } = data;
+		const { readonly } = data;
 
 		if ((item.itemId != 'type') || readonly) {
 			return;
 		};
 
-		const types = DataUtil.getObjectTypesForNewObject({ withSet: true, withBookmark: true }).map(it => it.id);
-		const filters = [
-			{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: types }
-		];
-
-		menuStore.open('searchObject', {
+		menuStore.open('typeSuggest', {
 			element: `#${getId()} #item-${item.itemId}`,
-			className: 'big single',
-			horizontal: I.MenuDirection.Center,
 			offsetX: getSize().width,
 			offsetY: -56,
 			data: {
-				isBig: true,
-				rootId: rootId,
-				blockId: blockId,
-				blockIds: [ blockId ],
-				placeholder: 'Change object type',
-				placeholderFocus: 'Change object type',
-				filters: filters,
-				dataSort: (c1: any, c2: any) => {
-					let i1 = types.indexOf(c1.id);
-					let i2 = types.indexOf(c2.id);
-
-					if (i1 > i2) return 1;
-					if (i1 < i2) return -1;
-					return 0;
-				},
-				onSelect: (item: any) => {
+				filter: '',
+				onClick: (item: any) => {
 					this.save([ item.id ]);
+					close();
 				}
 			}
 		}); 
@@ -191,9 +171,9 @@ const MenuSource = observer(class MenuSource extends React.Component<Props, {}> 
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId } = data;
-		const object = detailStore.get(rootId, rootId, [ Constant.relationKey.setOf ]);
+		const object = detailStore.get(rootId, rootId, [ 'setOf' ]);
 
-		return Util.arrayUnique(Relation.getArrayValue(object[Constant.relationKey.setOf]).filter((it: string) => {
+		return Util.arrayUnique(Relation.getArrayValue(object['setOf']).filter((it: string) => {
 			const object = detailStore.get(rootId, it, []);
 			return !object._empty_;
 		}));

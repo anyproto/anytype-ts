@@ -4,10 +4,11 @@ import { observer } from 'mobx-react';
 import $ from 'jquery';
 import raf from 'raf';
 import { Header, Footer, Loader, Block, Deleted } from 'Component';
-import { I, M, C, DataUtil, Util, crumbs, Action } from 'Lib';
-import { blockStore } from 'Store';
+import { I, M, C, DataUtil, Util, crumbs, Action, Relation, Onboarding } from 'Lib';
+import { blockStore, detailStore } from 'Store';
 import Controls from 'Component/page/head/controls';
 import HeadSimple from 'Component/page/head/simple';
+import Constant from 'json/constant.json';
 import Errors from 'json/error.json';
 
 interface Props extends I.PageComponent {

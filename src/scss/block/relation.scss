@@ -26,6 +26,11 @@
 				color: $colorVeryDarkGrey; width: 100%;
 			}
 			.icon.lock { width: 8px; height: 20px; background-image: url('~img/icon/lock.svg'); flex-shrink: 0; }
+			.icon.ghost { width: 20px; height: 20px; }
+		}
+
+		.wrap.isDeleted {
+			.info .name { color: $colorDarkGrey; }
 		}
 
 		.cellContent.canEdit {

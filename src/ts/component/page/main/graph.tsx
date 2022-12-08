@@ -1,10 +1,10 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { observer } from 'mobx-react';
 import $ from 'jquery';
+import { observer } from 'mobx-react';
 import { I, C, Util, analytics, sidebar, DataUtil, keyboard } from 'Lib';
 import { Header, Graph, Icon, Loader } from 'Component';
-import { blockStore, detailStore, menuStore } from 'Store';
+import { blockStore, detailStore, menuStore, commonStore } from 'Store';
 import Panel from './graph/panel';
 import Constant from 'json/constant.json';
 
@@ -158,9 +158,9 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 	};
 
 	load () {
-		const skipTypes = [ Constant.typeId.space ].concat(DataUtil.getFileTypes()).concat(DataUtil.getSystemTypes()).filter((it: string) => {
-			return ![ Constant.typeId.option ].includes(it);
-		});
+		const { workspace } = commonStore;
+		const skipTypes = [ Constant.typeId.space ].concat(DataUtil.getFileTypes()).concat(DataUtil.getSystemTypes());
+
 		const skipIds = [ '_anytype_profile', blockStore.profile ];
 		const filters: any[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.Equal, value: false },
@@ -168,6 +168,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 			{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
 			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: skipTypes },
 			{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: skipIds },
+			{ operator: I.FilterOperator.And, relationKey: 'workspaceId', condition: I.FilterCondition.Equal, value: workspace },
 		];
 
 		this.setLoading(true);
@@ -219,14 +220,11 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 		const oh = obj.height();
 		
 		let wh = isPopup ? oh - hh : win.height();
-		let sh = wh;
-
 		if (platform == I.Platform.Windows) {
-			wh -= 30;
+			wh -= Constant.size.headerWindows;
 		};
 
 		wrapper.css({ height: wh });
-		wrapper.find('.side').css({ height: sh });
 		
 		if (isPopup) {
 			const element = $('#popupPage .content');

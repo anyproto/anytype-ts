@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Cell, Icon } from 'Component';
-import { I, C, DataUtil, Util, focus, analytics, Relation, keyboard } from 'Lib';
+import { I, C, DataUtil, Util, focus, analytics, Relation, keyboard, translate } from 'Lib';
 import { observer } from 'mobx-react';
 import { menuStore, detailStore, dbStore, blockStore } from 'Store';
 
@@ -26,51 +26,74 @@ const BlockRelation = observer(class BlockRelation extends React.Component<Props
 
 	render (): any {
 		const { rootId, block, readonly, isPopup } = this.props;
-		const { content } = block;
-		const { key } = content;
-		const relation = dbStore.getRelationByKey(key);
+		const relationKey = block.content.key;
 		const idPrefix = 'blockRelationCell' + block.id;
-		const id = Relation.cellId(idPrefix, key, '0');
+		const id = Relation.cellId(idPrefix, relationKey, '0');
+		const cn = [ 'wrap', 'focusable', 'c' + block.id ];
+
+		let relation = dbStore.getRelationByKey(relationKey);
+		if (!relation) {
+			relation = dbStore.getRelations().find(it => it.relationKey == relationKey);
+		};
+
 		const allowedValue = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]) && relation && !relation.isReadonlyValue;
+		const isDeleted = !relation || !relation.isInstalled;
+
+		if (isDeleted) {
+			cn.push('isDeleted');
+		};
+
+		let content = null;
+
+		if (isDeleted) {
+			content = (
+				<div className="sides">
+					<div className={[ 'info', 'noValue', (!readonly ? 'canEdit' : '') ].join(' ')} onClick={this.onMenu}>
+						{relation ? (
+							<React.Fragment>
+								<Icon className="ghost" />
+								{translate('commonDeletedRelation')}
+							</React.Fragment>
+						) : 'New relation'} 
+					</div>
+				</div>
+			);
+		} else {
+			content = (
+				<div className="sides">
+					<div className="info">
+						{!allowedValue ? <Icon className="lock" /> : ''}
+						<div className="name">{relation.name}</div>
+					</div>
+					<div 
+						id={id} 
+						className={[ 'cell', Relation.className(relation.format), (!readonly && allowedValue ? 'canEdit' : '') ].join(' ')} 
+						onClick={this.onCellClick}
+					>
+						<Cell 
+							ref={(ref: any) => { this.refCell = ref; }}
+							rootId={rootId}
+							subId={rootId}
+							block={block}
+							relationKey={relation.relationKey}
+							getRecord={() => { return detailStore.get(rootId, rootId, [ relation.relationKey ], true); }}
+							viewType={I.ViewType.Grid}
+							readonly={readonly || !allowedValue}
+							index={0}
+							idPrefix={idPrefix}
+							menuClassName="fromBlock"
+							onCellChange={this.onCellChange}
+							bodyContainer={Util.getBodyContainer(isPopup ? 'popup' : 'page')}
+							pageContainer={Util.getCellContainer(isPopup ? 'popup' : 'page')}
+						/>
+					</div>
+				</div>
+			);
+		};
 
 		return (
-			<div className={[ 'wrap', 'focusable', 'c' + block.id ].join(' ')} tabIndex={0} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp} onFocus={this.onFocus}>
-				{!relation ? 
-				(
-					<div className="sides">
-						<div className={[ 'info', 'noValue', (!readonly ? 'canEdit' : '') ].join(' ')} onClick={this.onMenu}>New relation</div>
-					</div>
-				) : 
-				(
-					<div className="sides">
-						<div className="info">
-							{!allowedValue ? <Icon className="lock" /> : ''}
-							<div className="name">{relation.name}</div>
-						</div>
-						<div 
-							id={id} 
-							className={[ 'cell', DataUtil.relationClass(relation.format), (!readonly && allowedValue ? 'canEdit' : '') ].join(' ')} 
-							onClick={this.onCellClick}
-						>
-							<Cell 
-								ref={(ref: any) => { this.refCell = ref; }}
-								rootId={rootId}
-								subId={rootId}
-								block={block}
-								relationKey={relation.relationKey}
-								getRecord={() => { return detailStore.get(rootId, rootId, [ relation.relationKey ], true); }}
-								viewType={I.ViewType.Grid}
-								readonly={readonly || !allowedValue}
-								index={0}
-								idPrefix={idPrefix}
-								menuClassName="fromBlock"
-								onCellChange={this.onCellChange}
-								bodyContainer={Util.getBodyContainer(isPopup ? 'popup' : 'page')}
-								pageContainer={Util.getCellContainer(isPopup ? 'popup' : 'page')}
-							/>
-						</div>
-					</div>
-				)}
+			<div className={cn.join(' ')} tabIndex={0} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp} onFocus={this.onFocus}>
+				{content}
 			</div>
 		);
 	};
@@ -105,7 +128,7 @@ const BlockRelation = observer(class BlockRelation extends React.Component<Props
 
 	onMenu (e: any) {
 		const { rootId, block, readonly } = this.props;
-		const relations = dbStore.getRelations(rootId, rootId);
+		const relations = dbStore.getObjectRelations(rootId, rootId);
 
 		if (readonly) {
 			return;
@@ -119,12 +142,12 @@ const BlockRelation = observer(class BlockRelation extends React.Component<Props
 				blockId: block.id,
 				filter: '',
 				menuIdEdit: 'blockRelationEdit',
-				skipIds: relations.map(it => it.relationKey),
+				skipKeys: relations.map(it => it.relationKey),
 				ref: 'block',
-				addCommand: (rootId: string, blockId: string, relationKey: string, onChange: (message: any) => void) => {
-					C.ObjectRelationAdd(rootId, [ relationKey ], (message: any) => {
+				addCommand: (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {
+					C.ObjectRelationAdd(rootId, [ relation.relationKey ], (message: any) => {
 						if (!message.error.code) {
-							C.BlockRelationSetKey(rootId, block.id, relationKey, () => { 
+							C.BlockRelationSetKey(rootId, block.id, relation.relationKey, () => { 
 								menuStore.close('relationSuggest'); 
 							});
 

@@ -14,7 +14,7 @@ interface State {
 	isEditing: boolean; 
 };
 
-const MAX_LENGTH = 32;
+const MAX_LENGTH = 320;
 
 const CellSelect = observer(class CellSelect extends React.Component<Props, State> {
 
@@ -85,7 +85,7 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 										text={item.name}
 										color={item.color}
 										canEdit={true} 
-										className={DataUtil.tagClass(relation.format)}
+										className={Relation.selectClassName(relation.format)}
 										onRemove={(e: any) => { this.onValueRemove(item.id); }}
 									/>
 								</span>
@@ -121,7 +121,7 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 								key={item.id} 
 								text={item.name} 
 								color={item.color}
-								className={DataUtil.tagClass(relation.format)} 
+								className={Relation.selectClassName(relation.format)} 
 							/>
 						))}
 						{arrayLimit && (length > arrayLimit) ? <div className="more">+{length - arrayLimit}</div> : ''}

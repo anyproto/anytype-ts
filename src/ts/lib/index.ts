@@ -12,9 +12,11 @@ import Storage from './storage';
 import Util from './util';
 import DataUtil from './datautil';
 import SmileUtil from './smileutil';
+import FileUtil from './fileutil';
+import ObjectUtil from './objectutil';
+import MenuUtil from './menuutil';
 import Mark from './mark';
 import Relation from './relation';
-import FileUtil from './fileutil';
 import Dataview from './dataview';
 import { focus } from './focus';
 import { Encode, Decode } from './struct';
@@ -25,6 +27,7 @@ import { history } from './history';
 import Action from './action';
 import Onboarding from './onboarding';
 import Survey from './survey';
+import Preview from './preview';
 
 import Constant from 'json/constant.json';
 import Text from 'json/text.json';
@@ -51,9 +54,11 @@ export {
 	Util,
 	DataUtil,
 	SmileUtil,
+	FileUtil,
+	ObjectUtil,
+	MenuUtil,
 	Mark,
 	Relation,
-	FileUtil,
 	Dataview,
 	I,
 	C,
@@ -71,4 +76,5 @@ export {
 	Onboarding,
 	Renderer,
 	Survey,
+	Preview,
 };

@@ -1,9 +1,24 @@
-import { I, DataUtil, Util, FileUtil, translate, Dataview } from 'Lib';
+import { I, Util, FileUtil, translate, Dataview } from 'Lib';
 import { dbStore, commonStore, detailStore } from 'Store';
-
 import Constant from 'json/constant.json';
 
 class Relation {
+
+	typeName (v: I.RelationType): string {
+		return Util.toCamelCase(I.RelationType[v || I.RelationType.LongText]);
+	};
+
+	className (v: I.RelationType): string {
+		let c = this.typeName(v);
+		if ([ I.RelationType.Status, I.RelationType.Tag ].indexOf(v) >= 0) {
+			c = 'select ' + this.selectClassName(v);
+		};
+		return 'c-' + c;
+	};
+
+	selectClassName (v: I.RelationType): string {
+		return Util.toCamelCase('is-' + I.RelationType[v]);
+	};
 
 	cellId (prefix: string, relationKey: string, id: any) {
 		if (undefined === id) {
@@ -243,17 +258,18 @@ class Relation {
 	};
 
 	getFilterOptions (rootId: string, blockId: string, view: I.View) {
-		let relations: any[] = Dataview.viewGetRelations(rootId, blockId, view).filter((it: I.ViewRelation) => { 
+		const formats = [ I.RelationType.File ];
+		const ret: any[] = [];
+		const relations: any[] = Dataview.viewGetRelations(rootId, blockId, view).filter((it: I.ViewRelation) => { 
 			const relation = dbStore.getRelationByKey(it.relationKey);
-			return relation && (relation.format != I.RelationType.File) && (it.relationKey != Constant.relationKey.done);
+			return relation && !formats.includes(relation.format) && (it.relationKey != 'done');
 		});
-		let idxName = relations.findIndex((it: any) => { return it.relationKey == Constant.relationKey.name; });
+		const idxName = relations.findIndex(it => it.relationKey == 'name');
 
 		relations.splice((idxName >= 0 ? idxName + 1 : 0), 0, {
-			relationKey: Constant.relationKey.done,
+			relationKey: 'done',
 		});
 
-		let ret: any[] = [];
 		relations.forEach((it: I.ViewRelation) => {
 			const relation: any = dbStore.getRelationByKey(it.relationKey);
 			if (!relation) {
@@ -262,7 +278,7 @@ class Relation {
 
 			ret.push({ 
 				id: relation.relationKey, 
-				icon: 'relation ' + DataUtil.relationClass(relation.format),
+				icon: 'relation ' + this.className(relation.format),
 				name: relation.name, 
 				isHidden: relation.isHidden,
 				format: relation.format,
@@ -282,13 +298,14 @@ class Relation {
 
 	getCoverOptions (rootId: string, blockId: string) {
 		const { config } = commonStore;
+		const formats = [ I.RelationType.File ];
 
-		const options: any[] = Util.objectCopy(dbStore.getRelations(rootId, blockId)).filter((it: any) => {
-			return !it.isHidden && (it.format == I.RelationType.File);
+		const options: any[] = Util.objectCopy(dbStore.getObjectRelations(rootId, blockId)).filter((it: any) => {
+			return it.isInstalled && !it.isHidden && formats.includes(it.format);
 		}).map((it: any) => {
 			return { 
 				id: it.relationKey, 
-				icon: 'relation ' + DataUtil.relationClass(it.format),
+				icon: 'relation ' + this.className(it.format),
 				name: it.name, 
 			};
 		});
@@ -308,29 +325,29 @@ class Relation {
 	getGroupOptions (rootId: string, blockId: string) {
 		const formats = [ I.RelationType.Status, I.RelationType.Tag, I.RelationType.Checkbox ];
 		
-		let options: any[] = dbStore.getRelations(rootId, blockId);
-
-		options = options.filter((it: any) => {
-			return it && formats.includes(it.format) && (!it.isHidden || [ Constant.relationKey.done ].includes(it.relationKey));
+		let options: any[] = dbStore.getObjectRelations(rootId, blockId).filter((it: any) => {
+			return it.isInstalled && formats.includes(it.format) && (!it.isHidden || [ 'done' ].includes(it.relationKey));
 		});
 
 		options.sort((c1: any, c2: any) => {
-			if ((c1.format == I.RelationType.Status) && (c2.format != I.RelationType.Status)) return -1;
-			if ((c1.format != I.RelationType.Status) && (c2.format == I.RelationType.Status)) return 1;
+			const f1 = c1.format;
+			const f2 = c2.format;
 
-			if ((c1.format == I.RelationType.Tag) && (c2.format != I.RelationType.Tag)) return -1;
-			if ((c1.format != I.RelationType.Tag) && (c2.format == I.RelationType.Tag)) return 1;
+			if ((f1 == I.RelationType.Status) && (f2 != I.RelationType.Status)) return -1;
+			if ((f1 != I.RelationType.Status) && (f2 == I.RelationType.Status)) return 1;
 
-			if ((c1.format == I.RelationType.Checkbox) && (c2.format != I.RelationType.Checkbox)) return -1;
-			if ((c1.format != I.RelationType.Checkbox) && (c2.format == I.RelationType.Checkbox)) return 1;
+			if ((f1 == I.RelationType.Tag) && (f2 != I.RelationType.Tag)) return -1;
+			if ((f1 != I.RelationType.Tag) && (f2 == I.RelationType.Tag)) return 1;
 
+			if ((f1 == I.RelationType.Checkbox) && (f2 != I.RelationType.Checkbox)) return -1;
+			if ((f1 != I.RelationType.Checkbox) && (f2 == I.RelationType.Checkbox)) return 1;
 			return 0;
 		});
 
 		options = options.map((it: any) => {
 			return { 
 				id: it.relationKey, 
-				icon: 'relation ' + DataUtil.relationClass(it.format),
+				icon: 'relation ' + this.className(it.format),
 				name: it.name, 
 			};
 		});
@@ -393,15 +410,22 @@ class Relation {
 		return ret;
 	};
 
-	getSetOfObjects (rootId: string, objectId: string, typeId: string) {
+	getSetOfObjects (rootId: string, objectId: string, type: string) {
 		const object = detailStore.get(rootId, objectId, [ 'setOf' ]);
 		const setOf = this.getArrayValue(object.setOf);
 		const ret = [];
 
 		setOf.forEach((id: string) => {
-			let el = dbStore.getType(id);
-			if (!el) {
-				el = dbStore.getRelationById(id);
+			let el = null;
+
+			switch (type) {
+				case Constant.typeId.type:
+					el = dbStore.getType(id);
+					break;
+
+				case Constant.typeId.relation:
+					el = dbStore.getRelationById(id);
+					break;
 			};
 
 			if (el) {
@@ -409,7 +433,7 @@ class Relation {
 			};
 		});
 
-		return ret.filter(it => typeId == it.type);
+		return ret;
 	};
 	
 };

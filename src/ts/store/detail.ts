@@ -22,11 +22,7 @@ class DetailStore {
     };
 
     set (rootId: string, details: any[]) {
-		let map = this.map.get(rootId);
-
-		if (!map) {
-			map = observable.map(new Map());
-		};
+		const map = observable.map(new Map());
 
 		for (let item of details) {
 			const list: Detail[] = [];
@@ -88,16 +84,21 @@ class DetailStore {
 			};
 		};
 
+		// Update relationKeyMap in dbStore to keep consistency
+		if ((item.details.type == Constant.typeId.relation) && item.details.relationKey && item.details.id) {
+			dbStore.relationKeyMap[item.details.relationKey] = item.details.id;
+		};
+
 		if (createMap) {
 			this.map.set(rootId, map);
 		};
 	};
 
-    delete (rootId: string, id: string, keys: string[]) {
+    delete (rootId: string, id: string, keys?: string[]) {
 		let map = this.map.get(rootId) || new Map();
 		let list = this.getArray(rootId, id);
 
-		list = list.filter(it => !keys.includes(it.relationKey));
+		list = keys && keys.length ? list.filter(it => !keys.includes(it.relationKey)) : [];
 		map.set(id, list);
 	};
 
@@ -113,6 +114,7 @@ class DetailStore {
 		};
 		
 		if (keys) {
+			keys = [ ...new Set(keys) ];
 			keys.push('id');
 			if (!forceKeys) {
 				keys = keys.concat(Constant.defaultRelationKeys);
@@ -123,56 +125,44 @@ class DetailStore {
 	};
 
 	check (object: any) {
-		let layout = Number(object.layout) || I.ObjectLayout.Page;
-		let name = String(object.name || DataUtil.defaultName('page'));
-		let snippet = Relation.getStringValue(object.snippet).replace(/\n/g, ' ');
+		object.name = String(object.name || DataUtil.defaultName('page'));
+		object.layout = Number(object.layout) || I.ObjectLayout.Page;
+		object.snippet = Relation.getStringValue(object.snippet).replace(/\n/g, ' ');
 
-		if (layout == I.ObjectLayout.Note) {
+		if (object.layout == I.ObjectLayout.Note) {
 			object.coverType = I.CoverType.None;
 			object.coverId = '';
 			object.iconEmoji = '';
 			object.iconImage = '';
-
-			name = snippet;
+			object.name = object.snippet;
 		};
 
 		if (object.isDeleted) {
-			name = translate('commonDeletedObject');
+			object.name = translate('commonDeletedObject');
 		};
 
-		if (object.type == Constant.typeId.type) {
-			object.smartblockTypes = Relation.getArrayValue(object.smartblockTypes);
-			object.recommendedLayout = Number(object.recommendedLayout) || I.ObjectLayout.Page;
-			object.recommendedRelations = Relation.getArrayValue(object.recommendedRelations);
+		switch (object.type) {
+			case Constant.typeId.type:
+			case Constant.storeTypeId.type:
+				object = this.checkType(object);
+				break;
 
-			if (object.isDeleted) {
-				name = translate('commonDeletedType');
-			};
-		} else
-		if (object.type == Constant.typeId.relation) {
-			object.relationFormat = Number(object.relationFormat) || I.RelationType.LongText;
-			object.format = object.relationFormat;
-			object.maxCount = Number(object.relationMaxCount) || 0;
-			object.objectTypes = Relation.getArrayValue(object.relationFormatObjectTypes);
-			object.isReadonlyRelation = Boolean(object.isReadonly);
-			object.isReadonlyValue = Boolean(object.relationReadonlyValue);
+			case Constant.typeId.relation:
+			case Constant.storeTypeId.relation:
+				object = this.checkRelation(object);
+				break;
 
-			delete(object.relationMaxCount);
-			delete(object.isReadonly);
-			delete(object.relationReadonlyValue);
-		} else
-		if (object.type == Constant.typeId.option) {
-			object.text = Relation.getStringValue(object.name);
-			object.color = Relation.getStringValue(object.relationOptionColor);
+			case Constant.typeId.option:
+				object = this.checkOption(object);
+				break;
 
-			delete(object.relationOptionColor);
+			case Constant.typeId.set:
+				object = this.checkSet(object);
+				break;
 		};
 
 		return {
 			...object,
-			name,
-			layout,
-			snippet,
 			type: Relation.getStringValue(object.type),
 			iconImage: Relation.getStringValue(object.iconImage),
 			iconEmoji: Relation.getStringValue(object.iconEmoji),
@@ -185,6 +175,56 @@ class DetailStore {
 			isFavorite: Boolean(object.isFavorite),
 			isHidden: Boolean(object.isHidden),
 		};
+	};
+
+	checkType (object: any) {
+		object.smartblockTypes = Relation.getArrayValue(object.smartblockTypes);
+		object.recommendedLayout = Number(object.recommendedLayout) || I.ObjectLayout.Page;
+		object.recommendedRelations = Relation.getArrayValue(object.recommendedRelations);
+		object.isInstalled = object.workspaceId != Constant.storeSpaceId;
+		object.sourceObject = Relation.getStringValue(object.sourceObject);
+
+		if (object.isDeleted) {
+			object.name = translate('commonDeletedType');
+		};
+
+		return object;
+	};
+
+	checkRelation (object: any) {
+		object.relationFormat = Number(object.relationFormat) || I.RelationType.LongText;
+		object.format = object.relationFormat;
+		object.maxCount = Number(object.relationMaxCount) || 0;
+		object.objectTypes = Relation.getArrayValue(object.relationFormatObjectTypes);
+		object.isReadonlyRelation = Boolean(object.isReadonly);
+		object.isReadonlyValue = Boolean(object.relationReadonlyValue);
+		object.isInstalled = object.workspaceId != Constant.storeSpaceId;
+		object.sourceObject = Relation.getStringValue(object.sourceObject);
+
+		if (object.isDeleted) {
+			object.name = translate('commonDeletedRelation');
+		};
+
+		delete(object.relationMaxCount);
+		delete(object.isReadonly);
+		delete(object.relationReadonlyValue);
+
+		return object;
+	};
+
+	checkOption (object: any) {
+		object.text = Relation.getStringValue(object.name);
+		object.color = Relation.getStringValue(object.relationOptionColor);
+
+		delete(object.relationOptionColor);
+
+		return object;
+	};
+
+	checkSet (object: any) {
+		object.setOf = Relation.getArrayValue(object.setOf);
+
+		return object;
 	};
 
     clear (rootId: string) {

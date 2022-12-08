@@ -89,6 +89,9 @@
         .icon.plus:hover { background-image: url('#{$themePath}/icon/plus/menu1.svg'); }
 
 		.dataviewEmpty { border-color: $colorLineSecondary; }
+		.dataviewEmpty {
+			.button { color: $colorPrimary; }
+		}
 
         .dataviewControls {
             .line { background: $colorLineSecondary; }
@@ -138,6 +141,13 @@
         .viewItem.viewList, .viewItem.viewGallery, .viewItem.viewBoard {
             .cellContent.isName { color: $colorPrimary; }
         }
+
+		.viewItem.viewGallery, 
+		.viewItem.viewBoard {
+			.card {
+				.cellContent.c-description { color: $colorPrimary; }
+			}
+		}
 
         .viewItem.viewGallery {
             .card { background: $colorBlack; border-color: $colorLinePrimary; }

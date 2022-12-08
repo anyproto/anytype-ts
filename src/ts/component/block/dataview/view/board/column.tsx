@@ -49,14 +49,16 @@ const Column = observer(class Column extends React.Component<Props, State> {
 		const items = this.getItems();
 		const { total } = dbStore.getMeta(subId, '');
 		const limit = getLimit();
-		const group = dbStore.getGroup(rootId, block.id, id);
 		const head = {};
 		const cn = [ 'column' ];
 		const cnbg = [];
-		
+		const group = dbStore.getGroup(rootId, block.id, id);
+		const order = (block.content.groupOrder || []).find(it => it.viewId == view.id);
+		const orderGroup = (order?.groups || []).find(it => it.groupId == id) || {};
+
 		if (view.groupBackgroundColors) {
 			cn.push('withColor');
-			cnbg.push('bgColor bgColor-' + (group.bgColor || 'grey'));
+			cnbg.push('bgColor bgColor-' + (orderGroup.bgColor || group.bgColor || 'grey'));
 		};
 
 		head[view.groupRelationKey] = value;
@@ -144,18 +146,21 @@ const Column = observer(class Column extends React.Component<Props, State> {
 		const { id, block, getView, getKeys, getSubId, applyObjectOrder, getLimit } = this.props;
 		const view = getView();
 		const relation = dbStore.getRelationByKey(view.groupRelationKey);
-		const subId = getSubId();
-		const limit = getLimit() + this.offset;
-
-		if (!relation) {
+		
+		if (!relation || !view) {
 			return;
 		};
 
-		const filters: I.Filter[] = view.filters.concat([
-			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
-			{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
-			{ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.Equal, value: false },
-		]);
+		const el = block.content.objectOrder.find(it => (it.viewId == view.id) && (it.groupId == id));
+		const objectIds = el ? el.objectIds || [] : [];
+		const subId = getSubId();
+		const limit = getLimit() + this.offset;
+		const filters: I.Filter[] = [].concat(view.filters);
+		const sorts: I.Sort[] = [].concat(view.sorts);
+
+		if (objectIds.length) {
+			sorts.unshift({ relationKey: '', type: I.SortType.Custom, customOrder: objectIds });
+		};
 
 		let value = this.props.value;
 		let filter: any = { operator: I.FilterOperator.And, relationKey: relation.relationKey };
@@ -188,13 +193,14 @@ const Column = observer(class Column extends React.Component<Props, State> {
 		DataUtil.searchSubscribe({
 			subId,
 			filters,
-			sorts: view.sorts,
+			sorts,
 			keys: getKeys(view.id),
 			sources: block.content.sources,
 			limit,
+			ignoreHidden: true,
+			ignoreDeleted: true,
 		}, () => {
-			const records = dbStore.getRecords(subId, '');
-			dbStore.recordsSet(subId, '', applyObjectOrder(id, records));
+			dbStore.recordsSet(subId, '', applyObjectOrder(id, dbStore.getRecords(subId, '')));
 
 			if (clear) {
 				this.setState({ loading: false });

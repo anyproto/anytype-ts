@@ -12,16 +12,13 @@ class Dataview {
 			return [];
 		};
 
-		let relations = Util.objectCopy(dbStore.getRelations(rootId, blockId));
+		let relations = Util.objectCopy(dbStore.getObjectRelations(rootId, blockId));
 		let order: any = {};
 		let o = 0;
 
 		if (!config.debug.ho) {
 			relations = relations.filter((it: any) => { 
-				if (it.relationKey == Constant.relationKey.name) {
-					return true;
-				};
-				return !it.isHidden; 
+				return (it.relationKey == 'name') || !it.isHidden; 
 			});
 		};
 
@@ -46,7 +43,7 @@ class Dataview {
 		let ret = relations.map((relation: any) => {
 			const vr = view.relations.find(it => it.relationKey == relation.relationKey) || {};
 			
-			if (relation.relationKey == Constant.relationKey.name) {
+			if (relation.relationKey == 'name') {
 				vr.isVisible = true;
 			};
 
@@ -128,18 +125,10 @@ class Dataview {
 			return it;
 		};
 
-		const { config } = commonStore;
 		const subId = dbStore.getSubId(rootId, blockId);
 		const { viewId } = dbStore.getMeta(subId, '');
 		const viewChange = newViewId != viewId;
 		const meta: any = { offset };
-		const filters = view.filters.concat([
-			{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
-		]);
-
-		if (!config.debug.ho) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.Equal, value: false });
-		};
 
 		if (viewChange) {
 			meta.viewId = newViewId;
@@ -153,12 +142,14 @@ class Dataview {
 		DataUtil.searchSubscribe({
 			param,
 			subId,
-			filters: filters.map(mapper),
+			filters: view.filters.map(mapper),
 			sorts: view.sorts.map(mapper),
 			keys,
 			sources: block.content.sources,
 			limit,
 			offset,
+			ignoreDeleted: true,
+			ignoreHidden: true,
 		}, callBack);
 	};
 
@@ -174,6 +165,24 @@ class Dataview {
 			{ id: 'view', name: 'View', component: 'dataviewViewEdit' },
 		];
 		return tabs.filter(it => it);
+	};
+
+	groupUpdate (rootId: string, blockId: string, viewId: string, groups: any[]) {
+		const block = blockStore.getLeaf(rootId, blockId);
+		if (!block) {
+			return;
+		};
+
+		const groupOrder = Util.objectCopy(block.content.groupOrder);
+		const idx = groupOrder.findIndex(it => it.viewId == viewId);
+
+		if (idx >= 0) {
+			groupOrder[idx].groups = groups;
+		} else {
+			groupOrder.push({ viewId, groups });
+		};
+
+		blockStore.updateContent(rootId, blockId, { groupOrder });
 	};
 
 };

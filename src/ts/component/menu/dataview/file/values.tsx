@@ -1,15 +1,15 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { observer } from 'mobx-react';
 import $ from 'jquery';
+import { observer } from 'mobx-react';
 import arrayMove from 'array-move';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Icon, IconObject, MenuItemVertical } from 'Component';
-import { I, C, Util, DataUtil, Relation, Renderer } from 'Lib';
+import { I, C, Util, DataUtil, ObjectUtil, Relation, Renderer } from 'Lib';
 import { commonStore, detailStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
-interface Props extends I.Menu {}
+interface Props extends I.Menu {};
 
 const MENU_ID = 'dataviewFileList';
 
@@ -69,7 +69,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 			return (
 				<div id={'item-' + item.id} className={cn.join(' ')}>
 					<Handle />
-					<div className="clickable" onClick={(e: any) => { DataUtil.objectOpenPopup(item); }}>
+					<div className="clickable" onClick={(e: any) => { ObjectUtil.openPopup(item); }}>
 						{content}
 					</div>
 					<div className="buttons">
@@ -122,7 +122,8 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 
 	componentWillUnmount () {
 		this._isMounted = false;
-		menuStore.close('searchObject');
+
+		menuStore.closeAll([ 'dataviewFileList' ]);
     };
 
 	onSortStart () {
@@ -156,7 +157,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 			element: `#${getId()}`,
 			className: 'single',
 			offsetX: param.width,
-			offsetY: () => { return -getSize().height; },
+			offsetY: () => -getSize().height,
 			classNameWrap: classNameWrap,
 			passThrough: true,
 			noFlipY: true,

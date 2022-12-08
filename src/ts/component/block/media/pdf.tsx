@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { InputWithFile, Loader, Error, Pager } from 'Component';
-import { I, C, translate, focus, Action, Util, DataUtil, FileUtil, Renderer, keyboard } from 'Lib';
+import { I, C, translate, focus, Action, Util, ObjectUtil, FileUtil, Renderer, keyboard } from 'Lib';
 import { commonStore, detailStore } from 'Store';
 import { observer } from 'mobx-react';
 import { Document, Page } from 'react-pdf';
@@ -208,7 +208,7 @@ const BlockPdf = observer(class BlockPdf extends React.Component<Props, State> {
 		const { content } = block;
 		const { hash } = content;
 
-		DataUtil.objectOpenPopup({ id: hash, layout: I.ObjectLayout.Image });
+		ObjectUtil.openPopup({ id: hash, layout: I.ObjectLayout.Image });
 	};
 
 });

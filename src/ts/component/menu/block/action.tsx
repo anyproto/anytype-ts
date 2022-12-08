@@ -3,14 +3,14 @@ import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import { Filter, MenuItemVertical } from 'Component';
 import { detailStore, blockStore, menuStore } from 'Store';
-import { I, C, keyboard, DataUtil, focus, Action, translate, analytics } from 'Lib';
+import { I, C, keyboard, DataUtil, ObjectUtil, MenuUtil, focus, Action, translate, analytics } from 'Lib';
 import Constant from 'json/constant.json';
 
 interface Props extends I.Menu {};
+
 interface State {
 	filter: string;
 };
-
 
 class MenuBlockAction extends React.Component<Props, State> {
 	
@@ -193,15 +193,15 @@ class MenuBlockAction extends React.Component<Props, State> {
 		let sections: any[] = [];
 		
 		if (filter) {
-			const turnText = { id: 'turnText', icon: '', name: 'Text style', children: DataUtil.menuGetBlockText() };
-			const turnList = { id: 'turnList', icon: '', name: 'List style', children: DataUtil.menuGetBlockList() };
-			const turnPage = { id: 'turnPage', icon: '', name: 'Turn into object', children: DataUtil.menuGetTurnPage() };
-			const turnDiv = { id: 'turnDiv', icon: '', name: 'Divider style', children: DataUtil.menuGetTurnDiv() };
-			const turnFile = { id: 'turnFile', icon: '', name: 'File style', children: DataUtil.menuGetTurnFile() };
+			const turnText = { id: 'turnText', icon: '', name: 'Text style', children: MenuUtil.getBlockText() };
+			const turnList = { id: 'turnList', icon: '', name: 'List style', children: MenuUtil.getBlockList() };
+			const turnPage = { id: 'turnPage', icon: '', name: 'Turn into object', children: MenuUtil.getTurnPage() };
+			const turnDiv = { id: 'turnDiv', icon: '', name: 'Divider style', children: MenuUtil.getTurnDiv() };
+			const turnFile = { id: 'turnFile', icon: '', name: 'File style', children: MenuUtil.getTurnFile() };
 			const action = { id: 'action', icon: '', name: 'Actions', children: [] };
 			const align = { id: 'align', icon: '', name: 'Align', children: [] };
-			const bgColor = { id: 'bgColor', icon: '', name: 'Background', children: DataUtil.menuGetBgColors() };
-			const color = { id: 'color', icon: 'color', name: 'Color', arrow: true, children: DataUtil.menuGetTextColors() };
+			const bgColor = { id: 'bgColor', icon: '', name: 'Background', children: MenuUtil.getBgColors() };
+			const color = { id: 'color', icon: 'color', name: 'Color', arrow: true, children: MenuUtil.getTextColors() };
 
 			let hasTurnText = true;
 			let hasTurnObject = true;
@@ -263,16 +263,16 @@ class MenuBlockAction extends React.Component<Props, State> {
 			if (hasBg)			 sections.push(bgColor);
 
 			if (hasAlign) {
-				align.children = DataUtil.menuGetAlign(hasQuote);
+				align.children = MenuUtil.getAlign(hasQuote);
 				sections.push(align);
 			};
 			
 			if (hasAction) {
-				action.children = DataUtil.menuGetActions({ hasText, hasFile, hasLink, hasBookmark });
+				action.children = MenuUtil.getActions({ hasText, hasFile, hasLink, hasBookmark });
 				sections.push(action);
 			};
 
-			sections = DataUtil.menuSectionsFilter(sections, filter);
+			sections = MenuUtil.sectionsFilter(sections, filter);
 		} else {
 			const section2: any = { 
 				children: [
@@ -331,7 +331,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 			};
 
 			const section1: any = { 
-				children: DataUtil.menuGetActions({ hasText, hasFile, hasLink, hasBookmark, hasTurnObject })
+				children: MenuUtil.getActions({ hasText, hasFile, hasLink, hasBookmark, hasTurnObject })
 			};
 
 			if (hasLink) {
@@ -369,7 +369,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 			sections = [ section1, section2 ];
 		};
 
-		return DataUtil.menuSectionsMap(sections);
+		return MenuUtil.sectionsMap(sections);
 	};
 	
 	getItems () {
@@ -474,31 +474,14 @@ class MenuBlockAction extends React.Component<Props, State> {
 				break;
 
 			case 'turnObject':
-				types = DataUtil.getObjectTypesForNewObject({ withSet: true }).map(it => it.id); 
-				menuId = 'searchObject';
-				menuParam.className = 'single';
-
-				filters = [
-					{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: types },
-				];
-
+				menuId = 'typeSuggest';
 				menuParam.data = Object.assign(menuParam.data, {
-					placeholder: 'Find a type of object...',
-					label: 'Your object type library',
-					canNotAdd: true,
-					filters: filters,
-					onSelect: (item: any) => {
+					filter: '',
+					smartblockTypes: [ I.SmartBlockType.Page ],
+					onClick: (item: any) => {
 						this.moveToPage(item.id);
 						close();
 					},
-					dataSort: (c1: any, c2: any) => {
-						let i1 = types.indexOf(c1.id);
-						let i2 = types.indexOf(c2.id);
-
-						if (i1 > i2) return 1;
-						if (i1 < i2) return -1;
-						return 0;
-					}
 				});
 				break;
 
@@ -520,9 +503,10 @@ class MenuBlockAction extends React.Component<Props, State> {
 
 				menuParam.data = Object.assign(menuParam.data, {
 					type: I.NavigationType.Move, 
-					skipIds: skipIds,
 					position: I.BlockPosition.Bottom,
-					filters: filters,
+					skipIds,
+					filters,
+					canAdd: true,
 					onSelect: () => { close(); }
 				});
 				break;
@@ -616,13 +600,13 @@ class MenuBlockAction extends React.Component<Props, State> {
 				break;
 
 			case 'openBookmarkAsObject':
-				DataUtil.objectOpenPopup({ id: block.content.targetObjectId, layout: I.ObjectLayout.Bookmark });
+				ObjectUtil.openPopup({ id: block.content.targetObjectId, layout: I.ObjectLayout.Bookmark });
 
 				analytics.event('OpenAsObject', { type: block.type });
 				break;
 
 			case 'openFileAsObject':
-				DataUtil.objectOpenPopup({ id: block.content.hash, layout: I.ObjectLayout.File });
+				ObjectUtil.openPopup({ id: block.content.hash, layout: I.ObjectLayout.File });
 
 				analytics.event('OpenAsObject', { type: block.type, params: { fileType: block.content.type } });
 				break;

@@ -1,6 +1,6 @@
-import { observable, action, computed, set, intercept, makeObservable } from 'mobx';
-import { I, M, DataUtil, Util, Dataview } from 'ts/lib';
-import { detailStore, commonStore } from 'ts/store';
+import { observable, action, set, intercept, makeObservable } from 'mobx';
+import { I, M, Util, Dataview } from 'ts/lib';
+import { detailStore } from 'ts/store';
 
 import Constant from 'json/constant.json';
 
@@ -53,7 +53,7 @@ class DbStore {
 
 	relationListDelete (rootId: string, blockId: string, keys: string[]) {
 		let key = this.getId(rootId, blockId);
-		let relations = this.getRelations(rootId, blockId).filter(it => !keys.includes(it.relationKey));
+		let relations = this.getObjectRelations(rootId, blockId).filter(it => !keys.includes(it.relationKey));
 		
 		this.relationMap.set(key, relations.map((it: any) => { 
 			return { relationKey: it.relationKey, format: it.format };
@@ -163,11 +163,11 @@ class DbStore {
 		this.recordMap.delete(this.getId(rootId, blockId));
 	};
 
-    recordAdd (rootId: string, blockId: string, id: string, dir: number): number {
+    recordAdd (rootId: string, blockId: string, id: string, index: number) {
 		const records = this.getRecords(rootId, blockId);
 		
-		dir > 0 ? records.push(id) : records.unshift(id);
-		return dir > 0 ? records.length - 1 : 0;
+		records.splice(index, 0, id);
+		this.recordsSet(rootId, blockId, records);
 	};
 
     recordDelete (rootId: string, blockId: string, id: string) {
@@ -212,17 +212,27 @@ class DbStore {
 		return object._empty_ ? null : object;
 	};
 
-    getObjectTypesForSBType (SBType: I.SmartBlockType): any[] {
+	getTypes () {
 		return dbStore.getRecords(Constant.subId.type, '').map(id => this.getType(id)).
-			filter(it => !it._empty_ && (it.smartblockTypes || []).includes(SBType) && !it.isArchived && !it.isDeleted);
+			filter(it => it && !it.isArchived && !it.isDeleted);
 	};
 
-    getRelations (rootId: string, blockId: string): any[] {
+	getRelations () {
+		return dbStore.getRecords(Constant.subId.relation, '').map(id => this.getRelationById(id)).
+			filter(it => it && !it.isArchived);
+	};
+
+    getObjectTypesForSBType (SBType: I.SmartBlockType): any[] {
+		return this.getTypes().filter(it => (it.smartblockTypes || []).includes(SBType));
+	};
+
+    getObjectRelations (rootId: string, blockId: string): any[] {
 		return (this.relationMap.get(this.getId(rootId, blockId)) || []).map(it => this.getRelationByKey(it.relationKey)).filter(it => it);
 	};
 
     getRelationByKey (relationKey: string): any {
-		return relationKey ? this.getRelationById(this.relationKeyMap[relationKey]) : null;
+		const id = relationKey ? this.relationKeyMap[relationKey] : '';
+		return id ? this.getRelationById(id) : null;
 	};
 
 	getRelationById (id: string): any {

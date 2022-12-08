@@ -29,6 +29,7 @@ export enum ViewType {
 export enum SortType { 
 	Asc		 = 0, 
 	Desc	 = 1,
+	Custom	 = 2,
 };
 
 export enum FilterOperator { 
@@ -75,6 +76,7 @@ export interface Sort {
 	relationKey: string;
 	type: SortType;
 	includeTime?: boolean;
+	customOrder?: string[];
 };
 
 export interface Filter {

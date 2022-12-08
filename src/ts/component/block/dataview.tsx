@@ -1,20 +1,22 @@
 import * as React from 'react';
-import { RouteComponentProps } from 'react-router';
-import { observer } from 'mobx-react';
-import { throttle } from 'lodash';
 import $ from 'jquery';
 import raf from 'raf';
 import arrayMove from 'array-move';
+import { RouteComponentProps } from 'react-router';
+import { observer } from 'mobx-react';
+import { throttle } from 'lodash';
 import { Loader } from 'Component';
-import { I, C, Util, DataUtil, analytics, Dataview, keyboard, Onboarding, Relation, Renderer } from 'Lib';
+import { I, C, Util, DataUtil, ObjectUtil, analytics, Dataview, keyboard, Onboarding, Relation, Renderer } from 'Lib';
 import { blockStore, menuStore, dbStore, detailStore, popupStore, commonStore } from 'Store';
+import Constant from 'json/constant.json';
+
 import Head from './dataview/head';
 import Controls from './dataview/controls';
+
 import ViewGrid from './dataview/view/grid';
 import ViewBoard from './dataview/view/board';
 import ViewGallery from './dataview/view/gallery';
 import ViewList from './dataview/view/list';
-import Constant from 'json/constant.json';
 
 interface Props extends I.BlockComponent, RouteComponentProps<any> {
 	isInline?: boolean;
@@ -24,7 +26,6 @@ interface Props extends I.BlockComponent, RouteComponentProps<any> {
 interface State {
 	loading: boolean;
 };
-
 
 const BlockDataview = observer(class BlockDataview extends React.Component<Props, State> {
 
@@ -270,11 +271,15 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			return;
 		};
 
+		const view = this.getView(viewId);
+		if (!view) {
+			return;
+		};
+
 		this.viewId = viewId;
 
 		const { rootId, block } = this.props;
 		const subId = dbStore.getSubId(rootId, block.id);
-		const view = this.getView(viewId);
 		const keys = this.getKeys(viewId);
 
 		if (clear) {
@@ -419,11 +424,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			};
 			
 			const relation = dbStore.getRelationByKey(filter.relationKey);
-			if (!relation || relation.isReadonlyValue) {
-				continue;
+			if (relation && !relation.isReadonlyValue) {
+				details[filter.relationKey] = Relation.formatValue(relation, filter.value, true);
 			};
-
-			details[filter.relationKey] = Relation.formatValue(relation, filter.value, true);
 		};
 
 		this.creating = true;
@@ -438,11 +441,11 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 				const object = message.details;
 				const records = dbStore.getRecords(subId, '');
-				const oldIndex = records.findIndex(it => it == message.objectId);
+				const oldIndex = records.indexOf(message.objectId);
 				const newIndex = dir > 0 ? records.length - 1 : 0;
 
 				if (oldIndex < 0) {
-					dbStore.recordAdd (subId, '', object.id, dir);
+					dbStore.recordAdd(subId, '', object.id, newIndex);
 				} else {
 					dbStore.recordsSet(subId, '', arrayMove(records, oldIndex, newIndex));
 				};
@@ -491,7 +494,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					filters: [
 						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.template },
 						{ operator: I.FilterOperator.And, relationKey: 'targetObjectType', condition: I.FilterCondition.In, value: setOf },
-						{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
 					],
 					sorts: [
 						{ relationKey: 'name', type: I.SortType.Asc },
@@ -551,10 +553,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				if (ids.length) {
 					return;
 				} else {
-					DataUtil.objectOpenWindow(record);
+					ObjectUtil.openWindow(record);
 				};
 			} else {
-				DataUtil.objectOpenPopup(record);
+				ObjectUtil.openPopup(record);
 			};
 		} else {
 			ref.onClick(e);

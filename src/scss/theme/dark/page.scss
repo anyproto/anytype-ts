@@ -57,6 +57,7 @@
 
 .pageMainGraph {
     canvas { background: $colorBlack; }
+	#loader { background: $colorBlack !important; }
 
     .tabs { border-color: $colorLineSecondary; }
     .tabs {
@@ -88,15 +89,18 @@
         .icon { background-color: $colorBgIcon; }
     }
 }
-.pageMainGraph > .body > #loader { background: $colorBlack; }
 
 /* PageMainStore */
 
 .pageMainStore {
     .body {
 		.tabs {
-			.item { color: $colorSecondary; }
-			.item:hover, .item.active { color: $colorPrimary; }
+			.tab { color: $colorSecondary; }
+			.tab:hover, .tab.active { color: $colorPrimary; }
+		}
+
+		.mid {
+			.filter { border-color: $colorLinePrimary; }
 		}
 
         .items {

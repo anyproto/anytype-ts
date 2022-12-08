@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader, Block, ListObjectPreview, Deleted } from 'Component';
-import { I, M, C, DataUtil, Util, crumbs, Action } from 'Lib';
+import { I, M, C, DataUtil, ObjectUtil, Util, crumbs, Action } from 'Lib';
 import { blockStore, detailStore, dbStore } from 'Store';
 import Controls from 'Component/page/head/controls';
 import HeadSimple from 'Component/page/head/simple';
@@ -17,9 +17,6 @@ interface Props extends I.PageComponent {
 interface State {
 	isDeleted: boolean;
 };
-
-
-const BLOCK_ID_HIGHLIGHTED = 'highlighted';
 
 const PageMainSpace = observer(class PageMainSpace extends React.Component<Props, State> {
 
@@ -78,7 +75,7 @@ const PageMainSpace = observer(class PageMainSpace extends React.Component<Props
 									key="listTemplate"
 									getItems={() => { return highlighted; }}
 									canAdd={false}
-									onClick={(e: any, item: any) => { DataUtil.objectOpenPopup(item); }} 
+									onClick={(e: any, item: any) => { ObjectUtil.openPopup(item); }} 
 								/>
 							</div>
 						) : (
@@ -136,9 +133,8 @@ const PageMainSpace = observer(class PageMainSpace extends React.Component<Props
 
 			crumbs.addRecent(rootId);
 
-			this.getDataviewData(BLOCK_ID_HIGHLIGHTED, 0);
-
 			this.loading = false;
+			this.loadHighlighted();
 			this.forceUpdate();
 
 			if (this.refHeader) {
@@ -152,24 +148,23 @@ const PageMainSpace = observer(class PageMainSpace extends React.Component<Props
 		});
 	};
 
-	getDataviewData (blockId: string, limit: number) {
+	loadHighlighted () {
 		const rootId = this.getRootId();
-		const views = dbStore.getViews(rootId, blockId);
-		const block = blockStore.getLeaf(rootId, blockId);
 
-		if (views.length) {
-			const view = views[0];
-			const filters = view.filters.concat([
-				{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
-			]);
-			DataUtil.searchSubscribe({
-				subId: this.getSubIdHighlighted(),
-				filters,
-				sorts: view.sorts,
-				keys: [ 'id' ],
-				sources: block.content.sources,
-			});
-		};
+		DataUtil.searchSubscribe({
+			subId: this.getSubIdHighlighted(),
+			filters: [
+				{ operator: I.FilterOperator.And, relationKey: 'isHighlighted', condition: I.FilterCondition.Equal, value: true },
+				{ operator: I.FilterOperator.And, relationKey: 'targetObjectType', condition: I.FilterCondition.Equal, value: rootId },
+				{ operator: I.FilterOperator.And, relationKey: 'workspaceId', condition: I.FilterCondition.Equal, value: rootId },
+			],
+			sorts: [
+				{ relationKey: 'lastModifiedDate', type: I.SortType.Desc }
+			],
+			keys: [ 'id' ],
+			ignoreWorkspace: true,
+			ignoreDeleted: true,
+		});
 	};
 
 	close () {
@@ -213,7 +208,7 @@ const PageMainSpace = observer(class PageMainSpace extends React.Component<Props
 	};
 
 	getSubIdHighlighted () {
-		return dbStore.getSubId(this.getRootId(), BLOCK_ID_HIGHLIGHTED);
+		return dbStore.getSubId(this.getRootId(), 'highlighted');
 	};
 
 });

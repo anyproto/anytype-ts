@@ -16,7 +16,7 @@
 		.button {
 			.icon.plus-small { 
 				margin: 0px 4px 0px 0px; width: 12px; height: 12px; background-image: url('~img/icon/dataview/button/plus-small.svg'); 
-				vertical-align: middle;
+				vertical-align: middle; background-size: 100%;
 			}
 		}
 
@@ -36,18 +36,19 @@
 
 		.dataviewEmpty { 
 			color: $colorDarkGrey; height: 230px; display: flex; align-items: center; justify-content: center; border-bottom: 1px solid $colorLightGrey;
+			text-align: center;
 		}
 		.dataviewEmpty {
-			.inner { width: 174px; text-align: center; }
 			.name { font-weight: 500; margin: 0px 0px 2px 0px; }
 			.descr { @include text-small; margin: 0px 0px 12px 0px; }
+			.button { color: $colorBlack; }
 		}
 
 		.dataviewHead, .dataviewControls {
 			.sides, .side { display: flex; flex-direction: row; align-items: center; }
 			.sides { justify-content: stretch; width: 100%; }
 			.side.left { flex-grow: 1; }
-			.side.right { flex-shrink: 0; gap: 0px 18px; justify-content: flex-end; }
+			.side.right { flex-shrink: 0; gap: 0px 12px; justify-content: flex-end; }
 		}
 
 		.dataviewHead { display: flex; flex-direction: row; align-items: center; padding: 10px 14px; border-bottom: 1px solid $colorBorderDark; gap: 0px 6px; }
@@ -114,6 +115,8 @@
 				.views { display: none; }
 				.viewSelect { display: inline-block; line-height: 20px; }
 			}
+
+			.button.addRecord { margin-left: 4px; }
 		}
 		.dataviewControls.viewGrid {
 			.line { width: 100%; margin: 0px; }

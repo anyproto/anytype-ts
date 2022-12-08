@@ -86,7 +86,7 @@ const MenuItemFilter = observer(class MenuItemFilter extends React.Component<Pro
 									key={item.id}
 									text={item.name}
 									color={item.color}
-									className={DataUtil.tagClass(relation.format)} 
+									className={Relation.selectClassName(relation.format)} 
 								/>
 							))}
 						</React.Fragment>

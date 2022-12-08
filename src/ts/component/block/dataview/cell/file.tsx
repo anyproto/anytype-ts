@@ -1,14 +1,15 @@
 import * as React from 'react';
-import { observer } from 'mobx-react';
 import $ from 'jquery';
+import { observer } from 'mobx-react';
 import { IconObject } from 'Component';
-import { I, DataUtil, translate, Relation } from 'Lib';
+import { I, DataUtil, ObjectUtil, translate, Relation } from 'Lib';
 import { detailStore } from 'Store';
 
-interface Props extends I.Cell {}
+interface Props extends I.Cell {};
+
 interface State { 
 	isEditing: boolean; 
-}
+};
 
 const CellFile = observer(class CellFile extends React.Component<Props, State> {
 
@@ -99,7 +100,7 @@ const CellFile = observer(class CellFile extends React.Component<Props, State> {
 
 		if (canOpen && !canEdit) {
 			e.stopPropagation();
-			DataUtil.objectOpenPopup(item);
+			ObjectUtil.openPopup(item);
 		};
 	};
 

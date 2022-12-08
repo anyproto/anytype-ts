@@ -1,9 +1,9 @@
 import * as React from 'react';
+import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import $ from 'jquery';
 import { Icon, Tag, Filter } from 'Component';
-import { I, C, Util, DataUtil, keyboard, Relation } from 'Lib';
+import { I, C, Util, MenuUtil, keyboard, Relation } from 'Lib';
 import { menuStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -60,7 +60,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 				content = (
 					<div id={'item-' + item.id} className="item" style={param.style} onMouseEnter={(e: any) => { this.onOver(e, item); }}>
 						<div className="clickable" onClick={(e: any) => { this.onClick(e, item); }}>
-							<Tag text={item.name} color={item.color} className={DataUtil.tagClass(relation.format)} />
+							<Tag text={item.name} color={item.color} className={Relation.selectClassName(relation.format)} />
 						</div>
 						<div className="buttons">
 							<Icon className="more" onClick={(e: any) => { this.onEdit(e, item); }} />
@@ -260,7 +260,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 		const { data } = param;
 		const { filter } = data;
 		const relation = data.relation.get();
-		const colors = DataUtil.menuGetBgColors();
+		const colors = MenuUtil.getBgColors();
 		const option = { name: filter, color: colors[Util.rand(1, colors.length - 1)].value };
 
 		if (!option.name) {

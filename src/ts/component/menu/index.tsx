@@ -45,6 +45,7 @@ import MenuBlockRelationEdit from './block/relation/edit';
 import MenuBlockRelationView from './block/relation/view';
 
 import MenuRelationSuggest from './relation/suggest';
+import MenuTypeSuggest from './type/suggest';
 
 import MenuDataviewRelationList from './dataview/relation/list';
 import MenuDataviewRelationEdit from './dataview/relation/edit';
@@ -119,6 +120,7 @@ const Components: any = {
 	blockRelationView:		 MenuBlockRelationView,
 
 	relationSuggest:		 MenuRelationSuggest,
+	typeSuggest:			 MenuTypeSuggest,
 
 	dataviewRelationList:	 MenuDataviewRelationList,
 	dataviewRelationEdit:	 MenuDataviewRelationEdit,
@@ -149,6 +151,7 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 	timeoutPoly: number = 0;
 	ref: any = null;
 	isAnimating: boolean = false;
+	poly: any = null;
 
 	state = {
 		tab: '',
@@ -271,6 +274,7 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 		const { initialTab, onOpen } = param;
 
 		this._isMounted = true;
+		this.poly = $('#menu-polygon');
 
 		this.setClass();
 		this.position();
@@ -330,7 +334,7 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 		};
 		
 		if (isSub) {
-			$('#menu-polygon').hide();
+			this.poly.hide();
 			window.clearTimeout(this.timeoutPoly);
 		};
 
@@ -531,19 +535,19 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 
 			if (isSub && (type == I.MenuType.Vertical)) {
 				const coords = Util.objectCopy(keyboard.mouse.page);
-				const poly = $('#menu-polygon');
+				const offset = 8;
 
-				let w = Math.abs(x - coords.x) - 4;
+				let w = Math.abs(x - coords.x) - offset;
 				let t = '';
-				let l = coords.x + 8;
+				let l = coords.x + offset;
 
 				if (flipX) {
 					w -= width;
-					l -= w + 8;
+					l -= w + offset * 2;
 					t = 'scaleX(-1)';
 				};
 
-				poly.show().css({
+				this.poly.show().css({
 					width: w,
 					height: height,
 					left: l,
@@ -554,7 +558,7 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 				});
 
 				window.clearTimeout(this.timeoutPoly);
-				this.timeoutPoly = window.setTimeout(() => { poly.hide(); }, 500);
+				this.timeoutPoly = window.setTimeout(() => { this.poly.hide(); }, 500);
 			};
 
 			// Arrow positioning
@@ -563,7 +567,7 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 				const arrowDirection = this.getArrowDirection();
 				const size = this.getSize();
 				const { width, height } = size;
-				const min = 6;
+				const min = 8;
 				const css: any = { left: '', right: '', top: '', bottom: '' };
 
 				switch (arrowDirection) {
@@ -621,7 +625,7 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 		const { isSub } = param;
 		
 		if (isSub) {
-			$('#menu-polygon').hide();
+			//this.poly.hide();
 		};
 	};
 

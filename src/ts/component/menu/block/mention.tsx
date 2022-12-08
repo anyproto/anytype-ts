@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import $ from 'jquery';
 import { MenuItemVertical, Loader, ObjectName } from 'Component';
-import { I, keyboard, Util, DataUtil, Mark, analytics } from 'Lib';
+import { I, keyboard, Util, DataUtil, ObjectUtil, MenuUtil, Mark, analytics } from 'Lib';
 import { commonStore, dbStore } from 'Store';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import Constant from 'json/constant.json';
@@ -11,11 +11,10 @@ interface Props extends I.Menu {};
 
 interface State {
 	loading: boolean;
-}
+};
 
 const HEIGHT_ITEM = 28;
 const HEIGHT_DIV = 16;
-
 const LIMIT_HEIGHT = 10;
 
 const MenuBlockMention = observer(class MenuBlockMention extends React.Component<Props, State> {
@@ -42,8 +41,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 	
 	render () {
 		const { loading } = this.state;
-		const { filter } = commonStore;
-		const { text } = filter;
+		const filter = this.getFilter();
 		const items = this.getItems();
 
 		const rowRenderer = (param: any) => {
@@ -138,11 +136,11 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 	};
 
 	componentDidUpdate () {
-		const { filter } = commonStore;
 		const items = this.getItems();
+		const filer = this.getFilter();
 
-		if (this.filter != filter.text) {
-			this.filter = filter.text;
+		if (this.filter != filer) {
+			this.filter = filer;
 			this.n = -1;
 			this.offset = 0;
 			this.load(true);
@@ -173,26 +171,27 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		$(window).off('keydown.menu');
 	};
 
+	getFilter () {
+		return String(commonStore.filter.text || '').replace(/\\/g, '').replace(/^@/, '');
+	};
+
 	getSections () {
-		const { filter } = commonStore;
+		const filter = this.getFilter();
+		const sections: any[] = [];
 
-		let items = [].concat(this.items);
-		if (items.length) {
-			items.push({ isDiv: true });
+		if (this.items.length) {
+			sections.push({ id: I.MarkType.Object, name: 'Objects', children: this.items.concat({ isDiv: true }) });
 		};
 
-		let sections: any[] = [];
-		if (items.length) {
-			sections.push({ id: I.MarkType.Object, name: 'Objects', children: items });
-		};
-		if (filter.text) {
+		if (filter) {
 			sections.push({ 
 				children: [
-					{ id: 'add', name: `Create object "${filter.text}"`, icon: 'plus' }
+					{ id: 'add', icon: 'plus', name: `Create object "${filter}"` }
 				]
 			});
 		};
-		return DataUtil.menuSectionsMap(sections);
+
+		return MenuUtil.sectionsMap(sections);
 	};
 
 	getItems () {
@@ -206,19 +205,17 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 	};
 
 	load (clear: boolean, callBack?: (value: any) => void) {
-		const { config } = commonStore;
 		const { param } = this.props;
 		const { data } = param;
 		const { skipIds } = data;
+		const filter = this.getFilter();
 
 		const filters: any[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
 			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: DataUtil.getSystemTypes(), },
 		];
 		const sorts = [
 			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
 		];
-		const filter = commonStore.filter.text.replace(/\\/g, '');
 
 		if (skipIds && skipIds.length) {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: skipIds });
@@ -303,7 +300,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 			const type = dbStore.getType(commonStore.type);
 			const name = filter.text.replace(/\\/g, '');
 
-			DataUtil.pageCreate('', '', { name: name }, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.SelectType ], (message: any) => {
+			ObjectUtil.create('', '', { name: name }, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.SelectType ], (message: any) => {
 				if (message.error.code) {
 					return;
 				};

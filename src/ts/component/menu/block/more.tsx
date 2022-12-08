@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
-import { I, C, keyboard, analytics, DataUtil, Util, focus } from 'Lib';
+import { I, C, keyboard, analytics, DataUtil, ObjectUtil, Util, Preview, focus, Action } from 'Lib';
 import { blockStore, detailStore, commonStore, dbStore, menuStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 import Url from 'json/url.json';
@@ -121,6 +121,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		let fav = null;
 		let highlight = null;
 		let pageLock = null;
+		let pageInstall = null;
 
 		let linkTo = { id: 'linkTo', icon: 'linkTo', name: 'Link to', arrow: true };
 		let undo = { id: 'undo', name: 'Undo', withCaption: true, caption: `${cmd}+Z` };
@@ -170,11 +171,17 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			pageLock = { id: 'pageLock', icon: 'pageLock', name: 'Lock page', caption: `Ctrl+Shift+L` };
 		};
 
+		if (object.isInstalled) {
+			pageInstall = { id: 'pageUninstall', icon: 'remove', name: 'Delete' };
+		} else {
+			pageInstall = { id: 'pageInstall', icon: 'install', name: 'Install' };
+		};
+
 		// Restrictions
 
 		const allowedBlock = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Block ]);
 		const allowedArchive = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Delete ]);
-		const allowedDelete = allowedArchive && object.isArchived;
+		const allowedDelete = object.isInstalled && allowedArchive && object.isArchived;
 		const allowedShare = block.isObjectSpace() && config.allowSpaces;
 		const allowedSearch = !block.isObjectSet() && !block.isObjectSpace();
 		const allowedHighlight = !(!object.workspaceId || block.isObjectSpace() || !config.allowSpaces);
@@ -185,6 +192,9 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const allowedLink = config.experimental;
 		const allowedCopy = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Duplicate ]);
 		const allowedReload = object.source && block.isObjectBookmark();
+		const allowedLinkTo = object.isInstalled;
+		const allowedInstall = !object.isInstalled;
+		const allowedUninstall = object.isInstalled && [ Constant.typeId.type, Constant.typeId.relation ].includes(object.type) && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Delete ]);
 
 		if (!allowedArchive)	 archive = null;
 		if (!allowedDelete)		 pageRemove = null;
@@ -199,6 +209,9 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		if (!allowedBlock)		 undo = redo = null;
 		if (!allowedTemplate)	 template = null;
 		if (!allowedFav)		 fav = null;
+		if (!allowedLinkTo)		 linkTo = null;
+		if (!allowedInstall && !allowedUninstall)	 pageInstall = null;
+		if (allowedUninstall)	 archive = null;
 
 		let sections = [];
 		if (block.isObjectType() || block.isObjectRelation() || block.isObjectFileKind() || block.isObjectSet() || block.isObjectSpace()) {
@@ -207,7 +220,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			};
 
 			sections = [
-				{ children: [ archive, pageRemove ] },
+				{ children: [ archive, pageRemove, pageInstall ] },
 				{ children: [ fav, pageLink, linkTo, pageCopy, highlight ] },
 				{ children: [ search ] },
 				{ children: [ print ] },
@@ -294,27 +307,19 @@ class MenuBlockMore extends React.Component<Props, {}> {
 
 		switch (item.id) {
 			case 'turnObject':
-				menuId = 'searchObject';
-				menuParam.className = [ param.className, 'single' ].join(' ');
-
-				filters = [
-					{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: types },
-				];
-
+				menuId = 'typeSuggest';
 				menuParam.data = Object.assign(menuParam.data, {
-					placeholder: 'Find a type of object...',
-					label: 'Your object type library',
-					canNotAdd: true,
-					filters: filters,
-					onSelect: (item: any) => {
+					filter: '',
+					smartblockTypes: [ I.SmartBlockType.Page ],
+					onClick: (item: any) => {
 						C.BlockListConvertToObjects(rootId, [ blockId ], item.id);
 						close();
 
 						if (onMenuSelect) {
 							onMenuSelect(item);
 						};
-					}
-				});
+					},
+				})
 				break;
 
 			case 'move':
@@ -417,7 +422,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				break;
 
 			case 'history':
-				DataUtil.objectOpenEvent(e, { layout: I.ObjectLayout.History, id: object.id });
+				ObjectUtil.openEvent(e, { layout: I.ObjectLayout.History, id: object.id });
 				break;
 			
 			case 'search':
@@ -427,7 +432,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			case 'pageCopy':
 				C.ObjectListDuplicate([ rootId ], (message: any) => {
 					if (!message.error.code && message.ids.length) {
-						DataUtil.objectOpenPopup({ id: message.ids[0], layout: object.layout });
+						ObjectUtil.openPopup({ id: message.ids[0], layout: object.layout });
 					};
 					analytics.event('DuplicateObject', { count: 1 });
 				});
@@ -467,8 +472,8 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				break;
 
 			case 'pageCreate':
-				DataUtil.pageCreate('', '', {}, I.BlockPosition.Bottom, rootId, {}, [], (message: any) => {
-					DataUtil.objectOpenRoute({ id: message.targetId });
+				ObjectUtil.create('', '', {}, I.BlockPosition.Bottom, rootId, {}, [], (message: any) => {
+					ObjectUtil.openRoute({ id: message.targetId });
 
 					analytics.event('CreateObject', {
 						route: 'MenuObject',
@@ -504,7 +509,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 							textConfirm: 'Copy',
 							onChange: (v: string) => {
 								Util.clipboardCopy({ text: v });
-								Util.toastShow({ action: I.ToastAction.Copy, text: 'Link to share' });
+								Preview.toastShow({ text: 'Link to share copied to clipboard' });
 							}
 						}
 					});
@@ -512,12 +517,24 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				break;
 
 			case 'pageLink':
-				Util.clipboardCopy({ text: Url.protocol + DataUtil.objectRoute(object) });
+				Util.clipboardCopy({ text: Url.protocol + ObjectUtil.route(object) });
 				break;
 
 			case 'pageReload':
 				C.ObjectBookmarkFetch(rootId, object.source, () => {
 					analytics.event('ReloadSourceData');
+				});
+				break;
+
+			case 'pageInstall':
+				Action.install(object, (message: any) => {
+					ObjectUtil.openAuto(message.details);
+				});
+				break;
+
+			case 'pageUninstall':
+				Action.uninstall(object, (message: any) => {
+					Util.route('/main/index');
 				});
 				break;
 
@@ -547,7 +564,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 
 			case 'templateCreate':
 				C.TemplateCreateFromObject(rootId, (message: any) => {
-					DataUtil.objectOpenPopup({ id: message.id, layout: object.layout });
+					ObjectUtil.openPopup({ id: message.id, layout: object.layout });
 
 					analytics.event('CreateTemplate', { objectType: object.type });
 				});

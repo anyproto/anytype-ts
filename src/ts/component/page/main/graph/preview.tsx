@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Loader, IconObject, Cover, Icon, Block, Button, ObjectName, ObjectDescription } from 'Component';
-import { I, C, M, DataUtil } from 'Lib';
+import { I, C, M, DataUtil, ObjectUtil } from 'Lib';
 import { observer } from 'mobx-react';
 
 interface Props extends I.PageComponent {
@@ -76,10 +76,10 @@ const GraphPreview = observer(class PreviewObject extends React.Component<Props,
 						<div className="heading">
 							{title}
 							{descr}
-							<Block {...this.props} key={featured.id} rootId={contextId} traceId={TRACE} iconSize={20} block={featured} readonly={true} />
+							<Block {...this.props} key={featured.id} rootId={contextId} traceId={TRACE} iconSize={20} block={featured} readonly={true} isInsidePreview={true} />
 						</div>
 						<div className="buttons">
-							<Button text="Open" onClick={(e: any) => { DataUtil.objectOpenPopup(object); }} />
+							<Button text="Open" onClick={(e: any) => { ObjectUtil.openPopup(object); }} />
 							<Button text="Cancel" color="blank" onClick={onClose} />
 						</div>
 					</React.Fragment>

@@ -1,10 +1,9 @@
 import * as React from 'react';
-import { observer } from 'mobx-react';
 import $ from 'jquery';
-import { I, Util, DataUtil, keyboard, translate, Relation } from 'Lib';
+import { observer } from 'mobx-react';
+import { I, Util, DataUtil, ObjectUtil, keyboard, translate, Relation } from 'Lib';
 import { Icon, Input, IconObject } from 'Component';
 import { commonStore, menuStore } from 'Store';
-
 import Constant from 'json/constant.json';
 
 interface Props extends I.Cell {};
@@ -182,7 +181,7 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 
 		let content: any = null;
 
-		if (relation.relationKey == Constant.relationKey.name) {
+		if (relation.relationKey == 'name') {
 			let icon = null;
 
 			if (!view || (view && !view.hideIcon)) {
@@ -414,21 +413,21 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 		const { index, getRecord } = this.props;
 		const record = getRecord(index);
 
-		DataUtil.pageSetIcon(record.id, icon, '');
+		ObjectUtil.setIcon(record.id, icon, '');
 	};
 
 	onIconUpload (hash: string) {
 		const { index, getRecord } = this.props;
 		const record = getRecord(index);
 
-		DataUtil.pageSetIcon(record.id, '', hash);
+		ObjectUtil.setIcon(record.id, '', hash);
 	};
 
 	onCheckbox () {
 		const { index, getRecord, onCellChange } = this.props;
 		const record = getRecord(index);
 
-		onCellChange(record.id, Constant.relationKey.done, !record.done);
+		onCellChange(record.id, 'done', !record.done);
 	};
 
 });

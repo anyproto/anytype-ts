@@ -32,7 +32,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const { rootId, readonly } = data;
 		const sections = this.getSections();
 		const root = blockStore.getLeaf(rootId, rootId);
-		const object = detailStore.get(rootId, rootId, [ Constant.relationKey.featured ]);
+		const object = detailStore.get(rootId, rootId, [ 'featuredRelations' ]);
 
 		if (!root) {
 			return null;
@@ -58,7 +58,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 						const id = Relation.cellId(PREFIX, item.relationKey, '0');
 						
 						let canFav = allowedValue;
-						if (([ I.ObjectLayout.Set ].indexOf(object.layout) >= 0) && (item.relationKey == Constant.relationKey.description)) {
+						if (([ I.ObjectLayout.Set ].indexOf(object.layout) >= 0) && (item.relationKey == 'description')) {
 							canFav = false;
 						};
 
@@ -160,17 +160,16 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const { data } = param;
 		const { rootId } = data;
 		const { config } = commonStore;
-		const object = detailStore.get(rootId, rootId, [ Constant.relationKey.featured ]);
+		const object = detailStore.get(rootId, rootId, [ 'featuredRelations' ]);
 		const type = dbStore.getType(object.type);
 
-		let featured = object[Constant.relationKey.featured] || [];
-		let relations = dbStore.getRelations(rootId, rootId);
+		let featured = object.featuredRelations || [];
+		let relations = dbStore.getObjectRelations(rootId, rootId);
 		let relationKeys = relations.map(it => it.relationKey);
-		let items = relations.map((it: any) => { return { ...it, scope: I.RelationScope.Object }; });
-		let typeRelations = (type ? type.recommendedRelations : []).map(it => {
-			it = dbStore.getRelationById(it);
-			return { ...it, scope: I.RelationScope.Type };
-		}).filter(it => !relationKeys.includes(it.relationKey));
+		let items = relations.map(it => { return { ...it, scope: I.RelationScope.Object }; });
+		let typeRelations = (type ? type.recommendedRelations || [] : []).map(it => {
+			return { ...dbStore.getRelationById(it), scope: I.RelationScope.Type };
+		}).filter(it => it.relationKey && !relationKeys.includes(it.relationKey));
 
 		items = items.concat(typeRelations);
 		items = items.sort(DataUtil.sortByHidden).filter((it: any) => {
@@ -216,8 +215,8 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId } = data;
-		const object = detailStore.get(rootId, rootId, [ Constant.relationKey.featured ], true);
-		const featured = Util.objectCopy(object[Constant.relationKey.featured] || []);
+		const object = detailStore.get(rootId, rootId, [ 'featuredRelations' ], true);
+		const featured = Util.objectCopy(object.featuredRelations || []);
 		const idx = featured.findIndex((it: string) => { return it == relationKey; });
 
 		if (idx < 0) {
@@ -235,7 +234,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const { param, getId } = this.props;
 		const { data, classNameWrap } = param;
 		const { rootId } = data;
-		const relations = dbStore.getRelations(rootId, rootId);
+		const relations = dbStore.getObjectRelations(rootId, rootId);
 
 		menuStore.open('relationSuggest', { 
 			element: `#${getId()} #item-add .info`,
@@ -247,9 +246,9 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 				filter: '',
 				ref: 'menu',
 				menuIdEdit: 'blockRelationEdit',
-				skipIds: relations.map(it => it.relationKey),
-				addCommand: (rootId: string, blockId: string, relationKey: string, onChange: (message: any) => void) => {
-					C.ObjectRelationAdd(rootId, [ relationKey ], onChange);
+				skipKeys: relations.map(it => it.relationKey),
+				addCommand: (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {
+					C.ObjectRelationAdd(rootId, [ relation.relationKey ], onChange);
 				},
 			}
 		});
@@ -262,7 +261,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const allowed = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
 		const relation = dbStore.getRelationById(id);
 
-		if (!relation || !allowed) {
+		if (!relation) {
 			return;
 		};
 
@@ -272,9 +271,10 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 			classNameWrap,
 			data: {
 				...data,
+				readonly: !allowed,
 				relationId: id,
-				addCommand: (rootId: string, blockId: string, relationKey: string, onChange: (message: any) => void) => {
-					C.ObjectRelationAdd(rootId, [ relationKey ], onChange);
+				addCommand: (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {
+					C.ObjectRelationAdd(rootId, [ relation.relationKey ], onChange);
 				},
 				deleteCommand: () => {
 					C.ObjectRelationDelete(rootId, [ relation.relationKey ]);

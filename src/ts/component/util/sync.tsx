@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { observer } from 'mobx-react';
 import $ from 'jquery';
-import { I, Util, DataUtil, translate } from 'Lib';
+import { I, Preview, DataUtil, translate } from 'Lib';
 import { authStore } from 'Store';
 
 interface Props {
@@ -48,12 +48,12 @@ const Sync = observer(class Sync extends React.Component<Props, {}> {
 		const { summary } = thread;
 
 		if (summary) {
-			Util.tooltipShow(translate('tooltip' + summary.status), node, I.MenuDirection.Center, I.MenuDirection.Bottom);
+			Preview.tooltipShow(translate('tooltip' + summary.status), node, I.MenuDirection.Center, I.MenuDirection.Bottom);
 		};
 	};
 	
 	onMouseLeave (e: any) {
-		Util.tooltipHide(false);
+		Preview.tooltipHide(false);
 	};
 	
 });

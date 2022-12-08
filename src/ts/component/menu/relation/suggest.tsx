@@ -1,27 +1,37 @@
 import * as React from 'react';
+import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import $ from 'jquery';
-import { Filter, Icon, MenuItemVertical } from 'Component';
-import { I, Util, analytics, keyboard } from 'Lib';
-import { commonStore, menuStore, dbStore } from 'Store';
+import { Filter, Icon, MenuItemVertical, Loader } from 'Component';
+import { I, analytics, keyboard, DataUtil, Action, Util } from 'Lib';
+import { commonStore, menuStore, detailStore } from 'Store';
 import Constant from 'json/constant.json';
 
 interface Props extends I.Menu {};
 
+interface State {
+	loading: boolean;
+};
 
-const HEIGHT = 28;
+const HEIGHT_ITEM = 28;
+const HEIGHT_DIV = 16;
 const LIMIT = 20;
 
-const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Component<Props, {}> {
+const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Component<Props, State> {
 
-	_isMounted: boolean = false;	
+	state = {
+		loading: false,
+	};
+
+	_isMounted: boolean = false;
 	filter: string = '';
 	cache: any = null;
 	items: any[] = [];
 	refFilter: any = null;
 	refList: any = null;
 	n: number = -1;
+	offset: number = 0;
+	timeoutFilter: number = 0;
 
 	constructor (props: any) {
 		super(props);
@@ -29,12 +39,14 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		this.rebind = this.rebind.bind(this);
 		this.onClick = this.onClick.bind(this);
 		this.onFilterChange = this.onFilterChange.bind(this);
+		this.loadMoreRows = this.loadMoreRows.bind(this);
 	};
 	
 	render () {
+		const { loading } = this.state;
 		const { param } = this.props;
 		const { data } = param;
-		const { filter } = data;
+		const { filter, noFilter } = data;
 		const items = this.getItems();
 
 		if (!this.cache) {
@@ -50,7 +62,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 					<div 
 						id="item-add" 
 						className="item add" 
-						onMouseEnter={(e: any) => { this.onOver(e, item); }} 
+						onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }} 
 						onClick={(e: any) => { this.onClick(e, item); }} 
 						style={param.style}
 					>
@@ -58,14 +70,23 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 						<div className="name">{item.name}</div>
 					</div>
 				);
+			} else
+			if (item.isDiv) {
+				content = (
+					<div className="separator" style={param.style}>
+						<div className="inner" />
+					</div>
+				);
+			} else
+			if (item.isSection) {
+				content = <div className={[ 'sectionName', (param.index == 0 ? 'first' : '') ].join(' ')} style={param.style}>{item.name}</div>;
 			} else {
 				content = (
 					<MenuItemVertical 
 						{...item}
 						className={item.isHidden ? 'isHidden' : ''}
 						style={param.style}
-						object={item}
-						onMouseEnter={(e: any) => { this.onOver(e, item); }} 
+						onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }} 
 						onClick={(e: any) => { this.onClick(e, item); }}
 					/>
 				);
@@ -87,18 +108,22 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 
 		return (
 			<div className="wrap">
-				<Filter 
-					ref={(ref: any) => { this.refFilter = ref; }} 
-					placeholderFocus="Filter objects..." 
-					value={filter}
-					onChange={this.onFilterChange} 
-				/>
+				{!noFilter ? (
+					<Filter 
+						ref={(ref: any) => { this.refFilter = ref; }} 
+						placeholderFocus="Filter or create a relation..." 
+						value={filter}
+						onChange={this.onFilterChange} 
+					/>
+				) : ''}
+
+				{loading ? <Loader /> : ''}
 
 				<div className="items">
 					<InfiniteLoader
-						rowCount={items.length}
-						loadMoreRows={() => {}}
-						isRowLoaded={() => { return true; }}
+						rowCount={items.length + 1}
+						loadMoreRows={this.loadMoreRows}
+						isRowLoaded={({ index }) => !!items[index]}
 						threshold={LIMIT}
 					>
 						{({ onRowsRendered, registerChild }) => (
@@ -110,7 +135,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 										height={height}
 										deferredMeasurmentCache={this.cache}
 										rowCount={items.length}
-										rowHeight={HEIGHT}
+										rowHeight={({ index }) => this.getRowHeight(items[index])}
 										rowRenderer={rowRenderer}
 										onRowsRendered={onRowsRendered}
 										overscanRowCount={LIMIT}
@@ -128,37 +153,31 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 	componentDidMount () {
 		this._isMounted = true;
 
-		const items = this.getItems();
-
 		this.rebind();
 		this.resize();
 		this.focus();
-
-		this.cache = new CellMeasurerCache({
-			fixedWidth: true,
-			defaultHeight: HEIGHT,
-			keyMapper: (i: number) => { return (items[i] || {}).id; },
-		});
+		this.load(true);
 
 		this.forceUpdate();
 	};
 
 	componentDidUpdate () {
-		const items = this.getItems();
 		const { param } = this.props;
 		const { data } = param;
 		const { filter } = data;
+		const items = this.getItems();
 
 		if (filter != this.filter) {
 			this.filter = filter;
 			this.n = -1;
-			this.forceUpdate();
+			this.offset = 0;
+			this.load(true);
 			return;
 		};
 
 		this.cache = new CellMeasurerCache({
 			fixedWidth: true,
-			defaultHeight: HEIGHT,
+			defaultHeight: HEIGHT_ITEM,
 			keyMapper: (i: number) => { return (items[i] || {}).id; },
 		});
 
@@ -169,6 +188,9 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 	
 	componentWillUnmount () {
 		this._isMounted = false;
+
+		menuStore.closeAll([ 'searchObject' ]);
+		window.clearTimeout(this.timeoutFilter);
 	};
 
 	focus () {
@@ -189,38 +211,211 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		$(window).off('keydown.menu');
 	};
 
-	getItems () {
-		const { config } = commonStore;
+	loadMoreRows ({ startIndex, stopIndex }) {
+        return new Promise((resolve, reject) => {
+			this.offset += Constant.limitMenuRecords;
+			this.load(false, resolve);
+		});
+	};
+
+	load (clear: boolean, callBack?: (message: any) => void) {
+		if (!this._isMounted) {
+			return;
+		};
+
 		const { param } = this.props;
 		const { data } = param;
-		const skipIds = (data.skipIds || []).concat(Constant.systemRelationKeys);
-		const name = data.filter ? `Create relation "${data.filter}"` : 'Create from scratch';
-		const records = dbStore.getRecords(Constant.subId.relation, '');
-		const items = records.map(id => dbStore.getRelationById(id)).filter(it => it && !skipIds.includes(it.relationKey));
+		const filter = String(data.filter || '');
+		const skipKeys = (data.skipKeys || []).concat(Constant.systemRelationKeys);
+		const filters: any[] = [
+			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: [ Constant.typeId.relation, Constant.storeTypeId.relation ] },
+			{ operator: I.FilterOperator.And, relationKey: 'relationKey', condition: I.FilterCondition.NotIn, value: skipKeys },
+		];
+		const sorts = [
+			{ relationKey: 'workspaceId', type: I.SortType.Desc },
+			{ relationKey: 'name', type: I.SortType.Asc },
+		];
 
-		let ret: any[] = [].concat(items);
-		if (data.filter) {
-			const filter = new RegExp(Util.filterFix(data.filter), 'gi');
-			ret = ret.filter(it => it.name.match(filter));
+		if (clear) {
+			this.setState({ loading: true });
 		};
-		if (!config.debug.ho) {
-			ret = ret.filter(it => !it.isHidden);
+
+		DataUtil.search({
+			filters,
+			sorts,
+			keys: Constant.relationRelationKeys,
+			fullText: filter,
+			offset: this.offset,
+			limit: Constant.limitMenuRecords,
+			ignoreWorkspace: true,
+		}, (message: any) => {
+			if (!this._isMounted) {
+				return;
+			};
+
+			if (callBack) {
+				callBack(message);
+			};
+
+			if (clear) {
+				this.items = [];
+			};
+
+			this.items = this.items.concat(message.records.map(it => detailStore.check(it)));
+
+			if (clear) {
+				this.setState({ loading: false });
+				analytics.event('SearchQuery', { route: 'MenuRelation', length: filter.length });
+			} else {
+				this.forceUpdate();
+			};
+		});
+	};
+
+	getSections () {
+		const { workspace } = commonStore;
+		const { param } = this.props;
+		const { data } = param;
+		const { filter } = data;
+		const items = Util.objectCopy(this.items || []).map(it => { return { ...it, object: it }; });
+		const library = items.filter(it => (it.workspaceId == workspace));
+		const librarySources = library.map(it => it.sourceObject);
+
+		let sections: any[] = [
+			{ id: 'library', name: 'My relations', children: library },
+		];
+
+		if (filter) {
+			const marketplace = items.filter(it => (it.workspaceId == Constant.storeSpaceId) && !librarySources.includes(it.id));
+			sections = sections.concat([
+				{ id: 'marketplace', name: 'Marketplace', children: marketplace },
+				{ children: [ { id: 'add', name: `Create relation "${filter}"` } ] }
+			]);
+		} else {
+			sections = sections.concat([
+				{ 
+					children: [
+						{ id: 'marketplace', icon: 'folder', name: 'Marketplace', arrow: true }
+					] 
+				},
+			])
 		};
-		ret.unshift({ id: 'add', name: name });
-		return ret;
+
+		sections = sections.filter((section: any) => {
+			section.children = section.children.filter(it => it);
+			return section.children.length > 0;
+		});
+
+		return sections;
 	};
 	
+	getItems () {
+		let sections = this.getSections();
+		let items: any[] = [];
+
+		sections.forEach((section: any, i: number) => {
+			if (section.name && section) {
+				items.push({ id: section.id, name: section.name, isSection: true });
+			};
+
+			items = items.concat(section.children);
+
+			if (i < sections.length - 1) {
+				items.push({ isDiv: true });
+			};
+		});
+
+		return items;
+	};
+
 	onFilterChange (v: string) {
-		this.props.param.data.filter = v;
+		window.clearTimeout(this.timeoutFilter);
+		this.timeoutFilter = window.setTimeout(() => {
+			this.props.param.data.filter = this.refFilter.getValue();
+		}, 500);
+	};
+
+	onMouseEnter (e: any, item: any) {
+		e.persist();
+
+		if (!keyboard.isMouseDisabled) {
+			this.props.setActive(item, false);
+			this.onOver(e, item);
+		};
 	};
 
 	onOver (e: any, item: any) {
-		if (!keyboard.isMouseDisabled) {
-			this.props.setActive(item, false);
+		if (!this._isMounted) {
+			return;
+		};
+
+		if (!item.arrow) {
+			menuStore.closeAll([ 'searchObject' ]);
+			return;
+		};
+
+		const { getId, getSize, param, close } = this.props;
+		const { classNameWrap, data } = param;
+		const { skipKeys } = data;
+		
+		let sources = (data.skipKeys || []).concat(this.getLibrarySources());
+		let menuId = '';
+		let menuParam: I.MenuParam = {
+			menuKey: item.id,
+			element: `#${getId()} #item-${item.id}`,
+			offsetX: () => getSize().width,
+			offsetY: () => -getSize().height + 8,
+			isSub: true,
+			noFlipY: true,
+			classNameWrap,
+			data: {
+				rebind: this.rebind,
+				ignoreWorkspace: true,
+			},
+		};
+
+		switch (item.id) {
+			case 'marketplace':
+				menuId = 'searchObject';
+				menuParam.className = 'single';
+
+				const filters: I.Filter[] = [
+					{ operator: I.FilterOperator.And, relationKey: 'workspaceId', condition: I.FilterCondition.Equal, value: Constant.storeSpaceId },
+					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.storeTypeId.relation },
+					{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: sources },
+				];
+
+				if (skipKeys && skipKeys.length) {
+					filters.push({ operator: I.FilterOperator.And, relationKey: 'relationKey', condition: I.FilterCondition.NotIn, value: skipKeys });
+				};
+
+				menuParam.data = Object.assign(menuParam.data, {
+					ignoreWorkspace: true,
+					keys: Constant.defaultRelationKeys.concat(Constant.typeRelationKeys),
+					filters,
+					sorts: [
+						{ relationKey: 'name', type: I.SortType.Asc },
+					],
+					onSelect: (item: any) => {
+						this.onClick(e, detailStore.check(item));
+						close();
+					},
+				});
+				break;
+		};
+
+		if (menuId && !menuStore.isOpen(menuId, item.id)) {
+			menuStore.closeAll([ 'searchObject' ], () => {
+				menuStore.open(menuId, menuParam);
+			});
 		};
 	};
 	
 	onClick (e: any, item: any) {
+		if (item.arrow) {
+			return;
+		};
+
 		const { close, param, getId, getSize } = this.props;
 		const { data, classNameWrap } = param;
 		const { rootId, blockId, menuIdEdit, addCommand, ref } = data;
@@ -239,7 +434,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 				offsetX: getSize().width,
 				offsetY: -80,
 				noAnimation: true,
-				classNameWrap: classNameWrap,
+				classNameWrap,
 				data: {
 					...data,
 					rebind: this.rebind,
@@ -250,18 +445,35 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 			});
 		} else 
 		if (addCommand) {
-			close(); 
-			addCommand(rootId, blockId, item.relationKey);
-			analytics.event('AddExistingRelation', { format: item.format, type: ref });
+			const cb  = (item: any) => {
+				close(); 
+				addCommand(rootId, blockId, item);
+			};
+
+			if (item.isInstalled) {
+				cb(item);
+				analytics.event('AddExistingRelation', { format: item.format, type: ref });
+			} else {
+				Action.install(item, (message: any) => { cb(message.details); });
+			};
 		};
 	};
 
+	getRowHeight (item: any) {
+		return item.isDiv ? HEIGHT_DIV : HEIGHT_ITEM;
+	};
+
+	getLibrarySources () {
+		return this.items.filter(it => (it.workspaceId == commonStore.workspace)).map(it => it.sourceObject).filter(it => it);
+	};
+
 	resize () {
-		const { getId, position } = this.props;
+		const { getId, position, param } = this.props;
+		const { data } = param;
+		const { noFilter } = data;
 		const items = this.getItems();
 		const obj = $(`#${getId()} .content`);
-		const offset = 60;
-		const height = Math.max(HEIGHT * 1 + offset, Math.min(360, items.length * HEIGHT + offset));
+		const height = Math.min(376, items.reduce((res: number, current: any) => { return res + this.getRowHeight(current); }, 16 + (!noFilter ? 44 : 0)));
 
 		obj.css({ height });
 		position();

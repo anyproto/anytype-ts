@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { observer } from 'mobx-react';
 import $ from 'jquery';
+import { observer } from 'mobx-react';
 import { MenuItemVertical, Filter, ObjectName } from 'Component';
-import { I, Util, keyboard, DataUtil, analytics, focus } from 'Lib';
+import { I, Util, keyboard, DataUtil, ObjectUtil, MenuUtil, analytics, focus } from 'Lib';
 import { commonStore, menuStore, dbStore } from 'Store';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import Constant from 'json/constant.json';
@@ -13,13 +13,11 @@ interface State {
 	loading: boolean;
 };
 
-
 const HEIGHT_SECTION = 28;
 const HEIGHT_ITEM = 28;
 const HEIGHT_ITEM_BIG = 56;
 const HEIGHT_DIV = 16;
 const HEIGHT_FILTER = 44;
-
 const LIMIT_HEIGHT = 6;
 
 const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props, State> {
@@ -271,7 +269,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 			sections.push({ id: I.MarkType.Object, name: 'Objects', children: items });
 		};
 		sections.push({ id: I.MarkType.Link, name: '', children: buttons });
-		return DataUtil.menuSectionsMap(sections);
+		return MenuUtil.sectionsMap(sections);
 	};
 
 	getItems (withSections: boolean) {
@@ -301,7 +299,6 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 		const { skipIds, filter } = data;
 
 		const filters: any[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
 			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: DataUtil.getSystemTypes(), },
 		];
 		const sorts = [
@@ -366,7 +363,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 		if (item.itemId == 'add') {
 			const type = dbStore.getType(commonStore.type);
 
-			DataUtil.pageCreate('', '', { name: filter }, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.SelectType ], (message: any) => {
+			ObjectUtil.create('', '', { name: filter }, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.SelectType ], (message: any) => {
 				if (message.error.code) {
 					return;
 				};

@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Icon, Title, Label, Switch, Select } from 'Component';
-import { I, translate, DataUtil, analytics, Renderer } from 'Lib';
-import { commonStore, menuStore } from 'Store';
+import { I, translate, analytics, Renderer } from 'Lib';
+import { commonStore, menuStore, dbStore } from 'Store';
 import { observer } from 'mobx-react';
 
 import Head from './head';
@@ -25,13 +25,8 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 
 	render () {
 		const { autoSidebar, config } = commonStore;
-		const types = DataUtil.getObjectTypesForNewObject(false);
-		const type = types.find(it => it.id == commonStore.type);
-		
-		let languages: any[] = [];
-		languages = languages.concat(commonStore.languages || []);
-		languages = languages.map(it => { return { id: it, name: Constant.spellingLang[it] }; });
-		languages.unshift({ id: '', name: 'Disabled' });
+		const type = dbStore.getType(commonStore.type);
+		const languages = this.getLanguages();
 
 		return (
 			<div>
@@ -85,37 +80,33 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 
 	onType (e: any) {
 		const { getId } = this.props;
-		const types = DataUtil.getObjectTypesForNewObject().map(it => it.id);
 
-		menuStore.open('searchObject', {
+		menuStore.open('typeSuggest', {
 			element: `#${getId()} #defaultType`,
-			className: 'big single',
 			data: {
-				isBig: true,
-				placeholder: 'Change object type',
-				placeholderFocus: 'Change object type',
-				value: commonStore.type,
-				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: types }
-				],
-				onSelect: (item: any) => {
+				filter: '',
+				smartblockTypes: [ I.SmartBlockType.Page ],
+				onClick: (item: any) => {
 					this.onTypeChange(item.id);
 				},
-				dataSort: (c1: any, c2: any) => {
-					let i1 = types.indexOf(c1.id);
-					let i2 = types.indexOf(c2.id);
-
-					if (i1 > i2) return 1;
-					if (i1 < i2) return -1;
-					return 0;
-				}
 			}
 		});
 	};
 
 	onTypeChange (id: string) {
 		commonStore.defaultTypeSet(id);
+
 		analytics.event('DefaultTypeChange', { objectType: id });
+	};
+
+	getLanguages () {
+		let languages: any[] = [];
+
+		languages = languages.concat(commonStore.languages || []);
+		languages = languages.map(id => { return { id, name: Constant.spellingLang[id] }; });
+		languages.unshift({ id: '', name: 'Disabled' });
+
+		return languages;
 	};
 
 });

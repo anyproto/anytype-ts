@@ -1,12 +1,11 @@
 import * as React from 'react';
-import { observer } from 'mobx-react';
 import $ from 'jquery';
+import { observer } from 'mobx-react';
 import { MenuItemVertical } from 'Component';
-import { I, C, keyboard, Util, DataUtil } from 'Lib';
+import { I, C, keyboard, Util, MenuUtil } from 'Lib';
 import { menuStore, dbStore } from 'Store';
 
-interface Props extends I.Menu {}
-
+interface Props extends I.Menu {};
 
 const MenuDataviewDate = observer(class MenuDataviewDate extends React.Component<Props, {}> {
 
@@ -116,7 +115,7 @@ const MenuDataviewDate = observer(class MenuDataviewDate extends React.Component
 			},
 		];
 
-		sections = DataUtil.menuSectionsMap(sections);
+		sections = MenuUtil.sectionsMap(sections);
 		return sections;
 	};
 	

@@ -1,11 +1,10 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { IconObject, Block, Button } from 'Component';
-import { I, M, DataUtil, focus, keyboard } from 'Lib';
-import { blockStore, detailStore, dbStore } from 'Store';
 import { observer } from 'mobx-react';
 import { getRange } from 'selection-ranges';
-
+import { IconObject, Block, Button } from 'Component';
+import { I, M, Action, DataUtil, ObjectUtil, focus, keyboard } from 'Lib';
+import { blockStore, detailStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
 interface Props {
@@ -27,6 +26,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props, {}> {
 
 		this.onSelect = this.onSelect.bind(this);
 		this.onUpload = this.onUpload.bind(this);
+		this.onInstall = this.onInstall.bind(this);
 		this.onCompositionStart = this.onCompositionStart.bind(this);
 		this.onCompositionEnd = this.onCompositionEnd.bind(this);
 	};
@@ -41,7 +41,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props, {}> {
 			title: DataUtil.defaultName(type),
 			description: 'Add a description',
 		};
-		const featured: any = new M.Block({ id: rootId + '-featured', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
+		const featured: any = new M.Block({ id: 'featuredRelations', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
 
 		let canEditIcon = allowDetails;
 		if (object.type == Constant.typeId.relation) {
@@ -82,6 +82,13 @@ const HeadSimple = observer(class Controls extends React.Component<Props, {}> {
 		};
 		if (object.type == Constant.typeId.relation) {
 			button = <Button id="button-create" text="Create set" onClick={onCreate} />;
+		};
+		if ([ Constant.storeTypeId.type, Constant.storeTypeId.relation ].includes(object.type)) {
+			if (this.isInstalled()) {
+				button = <Button id="button-install" text="Install" className="grey filled disabled" />;
+			} else {
+				button = <Button id="button-install" text="Install" onClick={this.onInstall} />;
+			};
 		};
 
 		return (
@@ -154,12 +161,12 @@ const HeadSimple = observer(class Controls extends React.Component<Props, {}> {
 
 	onSelect (icon: string) {
 		const { rootId } = this.props;
-		DataUtil.pageSetIcon(rootId, icon, '');
+		ObjectUtil.setIcon(rootId, icon, '');
 	};
 
 	onUpload (hash: string) {
 		const { rootId } = this.props;
-		DataUtil.pageSetIcon(rootId, '', hash);
+		ObjectUtil.setIcon(rootId, '', hash);
 	};
 
 	onKeyDown (e: any, item: any) {
@@ -263,6 +270,34 @@ const HeadSimple = observer(class Controls extends React.Component<Props, {}> {
 
 		const node = $(ReactDOM.findDOMNode(this));
 		node.find('.placeholder.c' + id).show();
+	};
+
+	onInstall () {
+		const { rootId } = this.props;
+		const object = detailStore.get(rootId, rootId);
+
+		Action.install(object, (message: any) => {
+			ObjectUtil.openAuto(message.details);
+		});
+	};
+
+	isInstalled () {
+		const { rootId } = this.props;
+		const object = detailStore.get(rootId, rootId);
+
+		let sources: string[] = [];
+
+		switch (object.type) {
+			case Constant.storeTypeId.type:
+				sources = dbStore.getTypes().map(it => it.sourceObject);
+				break;
+
+			case Constant.storeTypeId.relation:
+				sources = dbStore.getRelations().map(it => it.sourceObject);
+				break;
+		};
+
+		return sources.includes(rootId);
 	};
 
 });

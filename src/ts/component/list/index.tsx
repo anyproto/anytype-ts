@@ -1,11 +1,11 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { observer } from 'mobx-react';
 import $ from 'jquery';
+import { observer } from 'mobx-react';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import { Icon, IconObject, ObjectName } from 'Component';
 import { blockStore, dbStore } from 'Store';
-import { I, DataUtil } from 'Lib';
+import { I, DataUtil, ObjectUtil, translate } from 'Lib';
 import Constant from 'json/constant.json';
 
 interface Props {
@@ -18,7 +18,7 @@ interface Props {
 	onSortStart?(param: any): void;
 	onSortEnd?(result: any): void;
 	helperContainer?(): any;
-}
+};
 
 const ListIndex = observer(class ListIndex extends React.Component<Props, {}> {
 	
@@ -38,24 +38,23 @@ const ListIndex = observer(class ListIndex extends React.Component<Props, {}> {
 		const childrenIds = blockStore.getChildrenIds(root, root);
 		const length = childrenIds.length;
 		const children = getList();
+
+		// Subscriptions
+		children.forEach((item: any) => {
+			const object = item.isBlock ? item._object_ : item;
+			const type = dbStore.getType(object.type);
+
+			const { name, isDeleted } = type || {};
+		});
 		
 		const Item = SortableElement((item: any) => {
-			let object: any = null;
-			let targetId = '';
-			let icon = null;
-
-			if (item.isBlock) {
-				object = item._object_;
-				targetId = item.content.targetBlockId;
-			} else {
-				object = item;
-				targetId = item.id;
-			};
-
-			let { id, _empty_, layout, name, iconEmoji, iconImage, snippet } = object;
-			let type = dbStore.getType(object.type);
-			let cn = [ 'item', DataUtil.layoutClass(id, layout) ];
+			const object = item.isBlock ? item._object_ : item;
+			const targetId = item.isBlock ? item.content.targetBlockId : item.id;
+			const { id, _empty_, layout, name, iconEmoji, iconImage, snippet } = object;
+			const type = dbStore.getType(object.type);
+			const cn = [ 'item', DataUtil.layoutClass(id, layout) ];
 			
+
 			if (_empty_) {
 				return (
 					<div className="item isLoading" data-target-id={targetId}>
@@ -66,6 +65,7 @@ const ListIndex = observer(class ListIndex extends React.Component<Props, {}> {
 				);
 			};
 
+			let icon = null;
 			if ([ I.ObjectLayout.Task, I.ObjectLayout.Bookmark ].includes(layout)) {
 				icon = <IconObject size={18} object={object} canEdit={true} onCheckbox={(e: any) => { this.onCheckbox(e, object); }} />;
 			} else {
@@ -84,7 +84,7 @@ const ListIndex = observer(class ListIndex extends React.Component<Props, {}> {
 					{icon}
 
 					<ObjectName object={object} />
-					<div className="type">{type ? type.name : ''}</div>
+					<div className="type">{!type || type.isDeleted ? translate('commonDeletedType') : type.name}</div>
 
 					<Icon id={'button-' + item.id + '-more'} tooltip="Actions" className="more" onClick={(e: any) => { onMore(e, item); }} />
 					<Icon className="checkbox" onClick={(e: any) => { onSelect(e, item); }} />
@@ -128,7 +128,7 @@ const ListIndex = observer(class ListIndex extends React.Component<Props, {}> {
 		e.preventDefault();
 		e.stopPropagation();
 
-		DataUtil.pageSetDone(item.id, !item.done);
+		ObjectUtil.setDone(item.id, !item.done);
 	};
 	
 	onMouseEnter (e: any, item: any) {

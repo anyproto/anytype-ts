@@ -1,15 +1,16 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { observable } from 'mobx';
 import $ from 'jquery';
-import { I, C, analytics, DataUtil, Util, keyboard, Relation, Renderer } from 'Lib';
+import { observable } from 'mobx';
+import { I, C, analytics, DataUtil, Util, keyboard, Relation, Renderer, Preview } from 'Lib';
 import { commonStore, menuStore, dbStore } from 'Store';
+import Constant from 'json/constant.json';
+
 import CellText from './text';
 import CellSelect from './select';
 import CellCheckbox from './checkbox';
 import CellObject from './object';
 import CellFile from './file';
-import Constant from 'json/constant.json';
 
 interface Props extends I.Cell {
 	elementId?: string;
@@ -20,7 +21,6 @@ interface Props extends I.Cell {
 	tooltipY?: I.MenuDirection;
 	maxWidth?: number;
 };
-
 
 class Cell extends React.Component<Props, {}> {
 
@@ -56,16 +56,16 @@ class Cell extends React.Component<Props, {}> {
 		const canEdit = this.canEdit();
 
 		let check = Relation.checkRelationValue(relation, record[relation.relationKey]);
-		if (relation.relationKey == Constant.relationKey.name) {
+		if (relation.relationKey == 'name') {
 			check = true;
 		};
 
 		const cn = [ 
 			'cellContent', 
 			'c-' + relation.relationKey,
-			DataUtil.relationClass(relation.format), 
+			Relation.className(relation.format), 
 			(canEdit ? 'canEdit' : ''), 
-			(relationKey == Constant.relationKey.name ? 'isName' : ''),
+			(relationKey == 'name' ? 'isName' : ''),
 			(!check ? 'isEmpty' :  ''),
 		];
 
@@ -153,8 +153,8 @@ class Cell extends React.Component<Props, {}> {
 		const cellId = Relation.cellId(idPrefix, relation.relationKey, index);
 		const value = record[relation.relationKey] || '';
 
-		if (!this.canEdit() && Relation.isUrl(relation.format)) {
-			if (value) {
+		if (!this.canEdit()) {
+			if (Relation.isUrl(relation.format) && value) {
 				Renderer.send('urlOpen', Relation.getUrlScheme(relation.format, value) + value);
 			};
 			return;
@@ -351,7 +351,7 @@ class Cell extends React.Component<Props, {}> {
 					{ id: 'go', icon: 'browse', name: name },
 					{ id: 'copy', icon: 'copy', name: 'Copy link' },
 				];
-				if (relation.relationKey == Constant.relationKey.source) {
+				if (relation.relationKey == 'source') {
 					options.push({ id: 'reload', icon: 'reload', name: 'Reload from source' });
 				};
 
@@ -460,7 +460,7 @@ class Cell extends React.Component<Props, {}> {
 		};
 
 		if (showTooltip) {
-			Util.tooltipShow(relation.name, cell, tooltipX, tooltipY);
+			Preview.tooltipShow(relation.name, cell, tooltipX, tooltipY);
 		};
 	};
 	
@@ -471,7 +471,7 @@ class Cell extends React.Component<Props, {}> {
 			onMouseLeave(e);
 		};
 
-		Util.tooltipHide(false);
+		Preview.tooltipHide(false);
 	};
 
 	getRelation () {
@@ -489,7 +489,7 @@ class Cell extends React.Component<Props, {}> {
 		if (relation.format == I.RelationType.Checkbox) {
 			return true;
 		};
-		if ((record.layout == I.ObjectLayout.Note) && (relation.relationKey == Constant.relationKey.name)) {
+		if ((record.layout == I.ObjectLayout.Note) && (relation.relationKey == 'name')) {
 			return false;
 		};
 		return viewType == I.ViewType.Grid;

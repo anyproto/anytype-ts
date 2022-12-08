@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { RouteComponentProps } from 'react-router';
-import { I, DataUtil, Util, keyboard, sidebar } from 'Lib';
+import { I, ObjectUtil, Util, keyboard, sidebar } from 'Lib';
 
 import HeaderAuthIndex from './auth';
 import HeaderMainIndex from './main/index';
@@ -83,11 +82,11 @@ class Header extends React.Component<Props, {}> {
 	};
 
 	onNavigation (e: any) {
-		DataUtil.objectOpenPopup({ id: this.props.rootId, layout: I.ObjectLayout.Navigation });
+		ObjectUtil.openPopup({ id: this.props.rootId, layout: I.ObjectLayout.Navigation });
 	};
 	
 	onGraph (e: any) {
-		DataUtil.objectOpenPopup({ id: this.props.rootId, layout: I.ObjectLayout.Graph });
+		ObjectUtil.openPopup({ id: this.props.rootId, layout: I.ObjectLayout.Graph });
 	};
 
 };

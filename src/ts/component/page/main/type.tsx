@@ -1,13 +1,12 @@
 import * as React from 'react';
-import { observer } from 'mobx-react';
 import $ from 'jquery';
+import { observer } from 'mobx-react';
 import { Icon, Header, Footer, Loader, ListObjectPreview, ListObject, Select, Deleted } from 'Component';
-import { I, C, DataUtil, Util, focus, crumbs, Action, analytics } from 'Lib';
+import { I, C, DataUtil, ObjectUtil, MenuUtil, Util, focus, crumbs, Action, analytics, Relation } from 'Lib';
 import { commonStore, detailStore, dbStore, menuStore, popupStore, blockStore } from 'Store';
 import HeadSimple from 'Component/page/head/simple';
 import Constant from 'json/constant.json';
 import Errors from 'json/error.json';
-
 
 interface Props extends I.PageComponent {
 	rootId: string;
@@ -17,10 +16,6 @@ interface Props extends I.PageComponent {
 interface State {
 	isDeleted: boolean;
 };
-
-
-const BLOCK_ID_OBJECT = 'dataview';
-const BLOCK_ID_TEMPLATE = 'templates';
 
 const NO_TEMPLATES = [ 
 	Constant.typeId.note, 
@@ -65,31 +60,31 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 
 		const { config } = commonStore;
 		const rootId = this.getRootId();
-		const object = Util.objectCopy(detailStore.get(rootId, rootId, [ 'recommendedLayout' ]));
+		const object = Util.objectCopy(detailStore.get(rootId, rootId));
 		const subIdTemplate = this.getSubIdTemplate();
 
-		const type = dbStore.getType(rootId);
 		const templates = dbStore.getRecords(subIdTemplate, '').map(id => detailStore.get(subIdTemplate, id, []));
 		const totalTemplate = dbStore.getMeta(subIdTemplate, '').total;
 		const totalObject = dbStore.getMeta(this.getSubIdObject(), '').total;
-		const layout: any = DataUtil.menuGetLayouts().find(it => it.id == object.recommendedLayout) || {};
+		const layout: any = MenuUtil.getLayouts().find(it => it.id == object.recommendedLayout) || {};
 		const showTemplates = !NO_TEMPLATES.includes(rootId);
 
-		const allowedObject = (type.smartblockTypes || []).includes(I.SmartBlockType.Page);
-		const allowedDetails = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
-		const allowedRelation = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
-		const allowedTemplate = allowedObject && showTemplates;
+		const allowedObject = object.isInstalled && (object.smartblockTypes || []).includes(I.SmartBlockType.Page);
+		const allowedDetails = object.isInstalled && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
+		const allowedRelation = object.isInstalled && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
+		const allowedTemplate = object.isInstalled && allowedObject && showTemplates;
 
-		let relations = Util.objectCopy(dbStore.getRelations(rootId, rootId)).sort(DataUtil.sortByHidden);
-		relations = relations.filter((it: any) => {
-			return it ? (!config.debug.ho ? !it.isHidden : true) : false;
+		const relations = (object.recommendedRelations || []).map(id => dbStore.getRelationById(id)).filter((it: any) => {
+			if (!it || Constant.systemRelationKeys.includes(it.relationKey)) {
+				return false;
+			};
+			return config.debug.ho ? true : !it.isHidden;
 		});
-		relations = relations.filter(it => !Constant.systemRelationKeys.includes(it.relationKey));
 
-		const Relation = (item: any) => (
+		const ItemRelation = (item: any) => (
 			<div id={'item-' + item.id} className={[ 'item', (item.isHidden ? 'isHidden' : ''), 'canEdit' ].join(' ')}>
 				<div className="clickable" onClick={(e: any) => { this.onRelationEdit(e, item.id); }}>
-					<Icon className={[ 'relation', DataUtil.relationClass(item.format) ].join(' ')} />
+					<Icon className={[ 'relation', Relation.className(item.format) ].join(' ')} />
 					<div className="name">{item.name}</div>
 				</div>
 			</div>
@@ -131,7 +126,7 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 										getItems={() => { return templates; }}
 										canAdd={allowedTemplate}
 										onAdd={this.onTemplateAdd}
-										onClick={(e: any, item: any) => { DataUtil.objectOpenPopup(item); }} 
+										onClick={(e: any, item: any) => { ObjectUtil.openPopup(item); }} 
 									/>
 								</div>
 							) : (
@@ -154,7 +149,7 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 								<Select 
 									id="recommendedLayout" 
 									value={object.recommendedLayout} 
-									options={DataUtil.menuTurnLayouts()} 
+									options={MenuUtil.turnLayouts()} 
 									arrowClassName="light" 
 									onChange={this.onLayout} 
 								/>
@@ -171,18 +166,20 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 						<div className="title">{relations.length} {Util.cntWord(relations.length, 'relation', 'relations')}</div>
 						<div className="content">
 							{relations.map((item: any, i: number) => (
-								<Relation key={i} {...item} />
+								<ItemRelation key={i} {...item} />
 							))}
 							{allowedRelation ? <ItemAdd /> : ''}
 						</div>
 					</div>
 
-					<div className="section set">
-						<div className="title">{totalObject} {Util.cntWord(totalObject, 'object', 'objects')}</div>
-						<div className="content">
-							<ListObject rootId={rootId} blockId={BLOCK_ID_OBJECT} />
+					{object.isInstalled ? (
+						<div className="section set">
+							<div className="title">{totalObject} {Util.cntWord(totalObject, 'object', 'objects')}</div>
+							<div className="content">
+								<ListObject rootId={rootId} />
+							</div>
 						</div>
-					</div>
+					) : ''}
 				</div>
 
 				<Footer component="mainEdit" {...this.props} />
@@ -227,9 +224,8 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 
 			crumbs.addRecent(rootId);
 
-			this.getDataviewData(BLOCK_ID_TEMPLATE, 0);
-
 			this.loading = false;
+			this.loadTemplates();
 			this.forceUpdate();
 
 			if (this.refHeader) {
@@ -241,24 +237,25 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 		});
 	};
 
-	getDataviewData (blockId: string, limit: number) {
+	loadTemplates () {
+		const { workspace } = commonStore;
 		const rootId = this.getRootId();
-		const views = dbStore.getViews(rootId, blockId);
-		const block = blockStore.getLeaf(rootId, blockId);
+		const object = detailStore.get(rootId, rootId);
 
-		if (views.length) {
-			const view = views[0];
-			const filters = view.filters.concat([
-				{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
-			]);
-			DataUtil.searchSubscribe({
-				subId: this.getSubIdTemplate(),
-				filters,
-				sorts: view.sorts,
-				keys: [ 'id' ],
-				sources: block.content.sources,
-			});
-		};
+		DataUtil.searchSubscribe({
+			subId: this.getSubIdTemplate(),
+			filters: [
+				{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: [ Constant.storeTypeId.template, Constant.typeId.template ] },
+				{ operator: I.FilterOperator.And, relationKey: 'targetObjectType', condition: I.FilterCondition.Equal, value: rootId },
+				{ operator: I.FilterOperator.And, relationKey: 'workspaceId', condition: I.FilterCondition.Equal, value: object.isInstalled ? workspace : Constant.storeSpaceId },
+			],
+			sorts: [
+				{ relationKey: 'lastModifiedDate', type: I.SortType.Desc }
+			],
+			keys: [ 'id' ],
+			ignoreWorkspace: true,
+			ignoreDeleted: true,
+		});
 	};
 
 	close () {
@@ -288,10 +285,9 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 			};
 
 			focus.clear(true);
-			dbStore.recordAdd(rootId, BLOCK_ID_TEMPLATE, message.objectId, 1);
 			analytics.event('CreateTemplate', { objectType: rootId });
 
-			DataUtil.objectOpenPopup(message.details, {
+			ObjectUtil.openPopup(message.details, {
 				onClose: () => {
 					if (this.refListPreview) {
 						this.refListPreview.updateItem(message.objectId);
@@ -345,8 +341,8 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 		};
 
 		const create = (template: any) => {
-			DataUtil.pageCreate('', '', details, I.BlockPosition.Bottom, template?.id, {}, [], (message: any) => {
-				DataUtil.objectOpenPopup({ ...details, id: message.targetId });
+			ObjectUtil.create('', '', details, I.BlockPosition.Bottom, template?.id, {}, [], (message: any) => {
+				ObjectUtil.openPopup({ ...details, id: message.targetId });
 
 				analytics.event('CreateObject', {
 					route: 'ObjectType',
@@ -394,14 +390,15 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 		C.ObjectCreateSet([ rootId ], details, '', (message: any) => {
 			if (!message.error.code) {
 				focus.clear(true);
-				DataUtil.objectOpenPopup(message.details);
+				ObjectUtil.openPopup(message.details);
 			};
 		});
 	};
 
 	onRelationAdd (e: any) {
 		const rootId = this.getRootId();
-		const relations = dbStore.getRelations(rootId, rootId);
+		const object = detailStore.get(rootId, rootId);
+		const relations = (object.recommendedRelations || []).map(it => dbStore.getRelationById(it)).filter(it => it);
 
 		menuStore.open('relationSuggest', { 
 			element: $(e.currentTarget),
@@ -411,9 +408,9 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 				rootId: rootId,
 				ref: 'type',
 				menuIdEdit: 'blockRelationEdit',
-				skipIds: relations.map(it => it.relationKey),
-				addCommand: (rootId: string, blockId: string, relationKey: string, onChange: (message: any) => void) => {
-					C.ObjectTypeRelationAdd(rootId, [ relationKey ], (message: any) => { 
+				skipKeys: relations.map(it => it.relationKey).concat(Constant.systemRelationKeys),
+				addCommand: (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {
+					C.ObjectTypeRelationAdd(rootId, [ relation.relationKey ], (message: any) => { 
 						menuStore.close('relationSuggest'); 
 
 						if (onChange) {
@@ -437,10 +434,10 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 				rootId: rootId,
 				relationId: id,
 				readonly: !allowed,
-				addCommand: (rootId: string, blockId: string, relationKey: string, onChange?: (relation: any) => void) => {
-					C.ObjectTypeRelationAdd(rootId, [ relationKey ], () => {
+				addCommand: (rootId: string, blockId: string, relation: any, onChange?: (relation: any) => void) => {
+					C.ObjectTypeRelationAdd(rootId, [ relation.relationKey ], () => {
 						if (onChange) {
-							onChange(relationKey);
+							onChange(relation.relationKey);
 						};
 					});
 				},
@@ -455,7 +452,6 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 		const rootId = this.getRootId();
 
 		C.ObjectSetDetails(rootId, [ { key: 'recommendedLayout', value: layout } ]);
-
 		analytics.event('ChangeRecommendedLayout', { objectType: rootId, layout: layout });
 	};
 
@@ -465,11 +461,11 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 	};
 
 	getSubIdTemplate () {
-		return dbStore.getSubId(this.getRootId(), BLOCK_ID_TEMPLATE);
+		return dbStore.getSubId(this.getRootId(), 'templates');
 	};
 
 	getSubIdObject () {
-		return dbStore.getSubId(this.getRootId(), BLOCK_ID_OBJECT);
+		return dbStore.getSubId(this.getRootId(), 'data');
 	};
 
 });
