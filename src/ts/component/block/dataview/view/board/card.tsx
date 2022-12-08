@@ -1,9 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, DataUtil, Relation, keyboard } from 'Lib';
-import { dbStore, detailStore, commonStore } from 'Store';
+import { I, DataUtil, ObjectUtil, Relation, keyboard } from 'Lib';
+import { dbStore, detailStore } from 'Store';
 import { observer } from 'mobx-react';
-
 import Cell from 'Component/block/dataview/cell';
 
 interface Props extends I.ViewComponent {
@@ -102,7 +101,7 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 		const record = detailStore.get(subId, id);
 		const cb = {
 			0: () => {
-				keyboard.withCommand(e) ? DataUtil.objectOpenWindow(record) : ObjectUtil.openPopup(record); 
+				keyboard.withCommand(e) ? ObjectUtil.openWindow(record) : ObjectUtil.openPopup(record); 
 			},
 			2: () => { onContext(e, record.id); }
 		};

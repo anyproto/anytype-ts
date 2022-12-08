@@ -1,13 +1,12 @@
 import * as React from 'react';
-import { observer } from 'mobx-react';
 import $ from 'jquery';
+import { observer } from 'mobx-react';
 import { Icon, Header, Footer, Loader, ListObjectPreview, ListObject, Select, Deleted } from 'Component';
-import { I, C, DataUtil, Util, focus, crumbs, Action, analytics, Relation } from 'Lib';
+import { I, C, DataUtil, ObjectUtil, MenuUtil, Util, focus, crumbs, Action, analytics, Relation } from 'Lib';
 import { commonStore, detailStore, dbStore, menuStore, popupStore, blockStore } from 'Store';
 import HeadSimple from 'Component/page/head/simple';
 import Constant from 'json/constant.json';
 import Errors from 'json/error.json';
-
 
 interface Props extends I.PageComponent {
 	rootId: string;
@@ -67,7 +66,7 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 		const templates = dbStore.getRecords(subIdTemplate, '').map(id => detailStore.get(subIdTemplate, id, []));
 		const totalTemplate = dbStore.getMeta(subIdTemplate, '').total;
 		const totalObject = dbStore.getMeta(this.getSubIdObject(), '').total;
-		const layout: any = DataUtil.menuGetLayouts().find(it => it.id == object.recommendedLayout) || {};
+		const layout: any = MenuUtil.getLayouts().find(it => it.id == object.recommendedLayout) || {};
 		const showTemplates = !NO_TEMPLATES.includes(rootId);
 
 		const allowedObject = object.isInstalled && (object.smartblockTypes || []).includes(I.SmartBlockType.Page);
@@ -150,7 +149,7 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 								<Select 
 									id="recommendedLayout" 
 									value={object.recommendedLayout} 
-									options={DataUtil.menuTurnLayouts()} 
+									options={MenuUtil.turnLayouts()} 
 									arrowClassName="light" 
 									onChange={this.onLayout} 
 								/>

@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { observer } from 'mobx-react';
 import $ from 'jquery';
+import { observer } from 'mobx-react';
 import { MenuItemVertical, Filter, ObjectName } from 'Component';
-import { I, Util, keyboard, DataUtil, ObjectUtil, analytics, focus } from 'Lib';
+import { I, Util, keyboard, DataUtil, ObjectUtil, MenuUtil, analytics, focus } from 'Lib';
 import { commonStore, menuStore, dbStore } from 'Store';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import Constant from 'json/constant.json';

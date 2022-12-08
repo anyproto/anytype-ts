@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { observer } from 'mobx-react';
 import $ from 'jquery';
-import { I, C, DataUtil, analytics, Util, translate } from 'Lib';
+import { I, C, DataUtil, analytics, Util, translate, ObjectUtil } from 'Lib';
 import { Cover, Filter, Icon, Label, EmptySearch, Loader } from 'Component';
 import { detailStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';

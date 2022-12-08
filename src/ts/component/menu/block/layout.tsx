@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
 import { blockStore } from 'Store';
-import { I, keyboard, analytics, DataUtil, ObjectUtil } from 'Lib';
+import { I, keyboard, analytics, DataUtil, ObjectUtil, MenuUtil } from 'Lib';
 import { detailStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -87,7 +87,7 @@ class MenuBlockLayout extends React.Component<Props, {}> {
 
 		let sections = [];
 		if (allowedLayout) {
-			sections.push({ name: 'Choose layout type', children: DataUtil.menuTurnLayouts() });
+			sections.push({ name: 'Choose layout type', children: MenuUtil.turnLayouts() });
 		};
 
 		sections.push({ 

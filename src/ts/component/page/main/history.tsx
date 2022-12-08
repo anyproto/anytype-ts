@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import { Header, Footer, Block, Loader, Icon, Deleted } from 'Component';
 import { blockStore, detailStore } from 'Store';
-import { I, M, C, Util, DataUtil } from 'Lib';
+import { I, M, C, Util, DataUtil, ObjectUtil } from 'Lib';
 import { observer } from 'mobx-react';
 import Constant from 'json/constant.json';
 import Errors from 'json/error.json';
@@ -303,7 +303,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<P
 			this.setState({ loading: false });
 
 			if (message.error.code) {
-				DataUtil.objectOpenRoute({ id: rootId, layout: object.layout });
+				ObjectUtil.openRoute({ id: rootId, layout: object.layout });
 				return;
 			};
 

@@ -8,7 +8,7 @@ import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from
 import { blockStore, dbStore, detailStore, menuStore } from 'Store';
 
 // Libraries
-import { I, C, DataUtil, Util, keyboard, Storage, Relation, analytics } from 'Lib';
+import { I, C, DataUtil, ObjectUtil, Util, keyboard, Storage, Relation, analytics } from 'Lib';
 
 // UI Components
 import { Loader } from 'Component';

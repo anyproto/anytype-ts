@@ -3,10 +3,11 @@ import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import { Filter, MenuItemVertical } from 'Component';
 import { detailStore, blockStore, menuStore } from 'Store';
-import { I, C, keyboard, DataUtil, ObjectUtil, focus, Action, translate, analytics } from 'Lib';
+import { I, C, keyboard, DataUtil, ObjectUtil, MenuUtil, focus, Action, translate, analytics } from 'Lib';
 import Constant from 'json/constant.json';
 
 interface Props extends I.Menu {};
+
 interface State {
 	filter: string;
 };
@@ -192,15 +193,15 @@ class MenuBlockAction extends React.Component<Props, State> {
 		let sections: any[] = [];
 		
 		if (filter) {
-			const turnText = { id: 'turnText', icon: '', name: 'Text style', children: DataUtil.menuGetBlockText() };
-			const turnList = { id: 'turnList', icon: '', name: 'List style', children: DataUtil.menuGetBlockList() };
-			const turnPage = { id: 'turnPage', icon: '', name: 'Turn into object', children: DataUtil.menuGetTurnPage() };
-			const turnDiv = { id: 'turnDiv', icon: '', name: 'Divider style', children: DataUtil.menuGetTurnDiv() };
-			const turnFile = { id: 'turnFile', icon: '', name: 'File style', children: DataUtil.menuGetTurnFile() };
+			const turnText = { id: 'turnText', icon: '', name: 'Text style', children: MenuUtil.getBlockText() };
+			const turnList = { id: 'turnList', icon: '', name: 'List style', children: MenuUtil.getBlockList() };
+			const turnPage = { id: 'turnPage', icon: '', name: 'Turn into object', children: MenuUtil.getTurnPage() };
+			const turnDiv = { id: 'turnDiv', icon: '', name: 'Divider style', children: MenuUtil.getTurnDiv() };
+			const turnFile = { id: 'turnFile', icon: '', name: 'File style', children: MenuUtil.getTurnFile() };
 			const action = { id: 'action', icon: '', name: 'Actions', children: [] };
 			const align = { id: 'align', icon: '', name: 'Align', children: [] };
 			const bgColor = { id: 'bgColor', icon: '', name: 'Background', children: MenuUtil.getBgColors() };
-			const color = { id: 'color', icon: 'color', name: 'Color', arrow: true, children: DataUtil.menuGetTextColors() };
+			const color = { id: 'color', icon: 'color', name: 'Color', arrow: true, children: MenuUtil.getTextColors() };
 
 			let hasTurnText = true;
 			let hasTurnObject = true;
@@ -262,12 +263,12 @@ class MenuBlockAction extends React.Component<Props, State> {
 			if (hasBg)			 sections.push(bgColor);
 
 			if (hasAlign) {
-				align.children = DataUtil.menuGetAlign(hasQuote);
+				align.children = MenuUtil.getAlign(hasQuote);
 				sections.push(align);
 			};
 			
 			if (hasAction) {
-				action.children = DataUtil.menuGetActions({ hasText, hasFile, hasLink, hasBookmark });
+				action.children = MenuUtil.getActions({ hasText, hasFile, hasLink, hasBookmark });
 				sections.push(action);
 			};
 
@@ -330,7 +331,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 			};
 
 			const section1: any = { 
-				children: DataUtil.menuGetActions({ hasText, hasFile, hasLink, hasBookmark, hasTurnObject })
+				children: MenuUtil.getActions({ hasText, hasFile, hasLink, hasBookmark, hasTurnObject })
 			};
 
 			if (hasLink) {

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
-import { I, keyboard, DataUtil, analytics } from 'Lib';
+import { I, keyboard, MenuUtil, analytics } from 'Lib';
 import { blockStore } from 'Store';
 
 interface Props extends I.Menu {}
@@ -86,10 +86,10 @@ const MenuBlockStyle = observer(class MenuBlockStyle extends React.Component<Pro
 		const { data } = param;
 		const { rootId, blockIds } = data;
 
-		const turnText = { id: 'turnText', icon: '', name: 'Turn into text', color: '', children: DataUtil.menuGetBlockText() };
-		const turnList = { id: 'turnList', icon: '', name: 'Turn into list', color: '', children: DataUtil.menuGetBlockList() };
-		const turnDiv = { id: 'turnDiv', icon: '', name: 'Turn into divider', color: '', children: DataUtil.menuGetTurnDiv() };
-		const turnFile = { id: 'turnFile', icon: '', name: 'Turn into file', color: '', children: DataUtil.menuGetTurnFile() };
+		const turnText = { id: 'turnText', icon: '', name: 'Turn into text', color: '', children: MenuUtil.getBlockText() };
+		const turnList = { id: 'turnList', icon: '', name: 'Turn into list', color: '', children: MenuUtil.getBlockList() };
+		const turnDiv = { id: 'turnDiv', icon: '', name: 'Turn into divider', color: '', children: MenuUtil.getTurnDiv() };
+		const turnFile = { id: 'turnFile', icon: '', name: 'Turn into file', color: '', children: MenuUtil.getTurnFile() };
 
 		let hasTurnText = true;
 		let hasTurnList = true;

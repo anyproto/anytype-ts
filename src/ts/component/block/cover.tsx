@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { observer } from 'mobx-react';
 import $ from 'jquery';
 import { Icon, Drag, Cover, Loader } from 'Component';
-import { I, C, Util, DataUtil, focus, translate } from 'Lib';
+import { I, C, Util, DataUtil, ObjectUtil, focus, translate } from 'Lib';
 import { commonStore, blockStore, detailStore, menuStore } from 'Store';
 import ControlButtons  from 'Component/page/head/controlButtons';
 import Constant from 'json/constant.json';
@@ -206,12 +206,12 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 			},
 			data: {
 				onSelect: (icon: string) => {
-					DataUtil.pageSetIcon(rootId, icon, '', () => {
+					ObjectUtil.setIcon(rootId, icon, '', () => {
 						menuStore.update('smile', { element: `#block-icon-${rootId}` });
 					});
 				},
 				onUpload (hash: string) {
-					DataUtil.pageSetIcon(rootId, '', hash, () => {
+					ObjectUtil.setIcon(rootId, '', hash, () => {
 						menuStore.update('smile', { element: `#block-icon-${rootId}` });
 					});
 				},
@@ -237,7 +237,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 					return;
 				};
 				
-				DataUtil.pageSetIcon(rootId, '', message.hash);
+				ObjectUtil.setIcon(rootId, '', message.hash);
 			});
 		});
 	};

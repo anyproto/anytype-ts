@@ -1,11 +1,10 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
-import { I, keyboard, DataUtil } from 'Lib';
+import { I, keyboard, MenuUtil } from 'Lib';
 import { blockStore } from 'Store';
 
 interface Props extends I.Menu {};
-
 
 class MenuBlockHAlign extends React.Component<Props, {}> {
 	
@@ -65,7 +64,7 @@ class MenuBlockHAlign extends React.Component<Props, {}> {
 			};
 		};
 
-		return DataUtil.menuGetAlign(hasQuote);
+		return MenuUtil.getAlign(hasQuote);
 	};
 	
 	onOver (e: any, item: any) {

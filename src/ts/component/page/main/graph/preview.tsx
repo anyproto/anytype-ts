@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Loader, IconObject, Cover, Icon, Block, Button, ObjectName, ObjectDescription } from 'Component';
-import { I, C, M, DataUtil } from 'Lib';
+import { I, C, M, DataUtil, ObjectUtil } from 'Lib';
 import { observer } from 'mobx-react';
 
 interface Props extends I.PageComponent {

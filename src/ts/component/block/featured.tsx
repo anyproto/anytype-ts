@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, C, DataUtil, Util, focus, analytics, Relation, translate, Onboarding } from 'Lib';
+import { I, C, DataUtil, Util, ObjectUtil, focus, analytics, Relation, translate, Onboarding } from 'Lib';
 import { Cell } from 'Component';
 import { blockStore, detailStore, dbStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';

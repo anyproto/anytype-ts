@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Loader, Frame } from 'Component';
-import { I, DataUtil } from 'Lib';
+import { I, ObjectUtil } from 'Lib';
 import { observer } from 'mobx-react';
 
 interface Props extends I.PageComponent {};
@@ -17,7 +17,7 @@ const PageMainCreate = observer(class PageMainCreate extends React.Component<Pro
 	
 	componentDidMount () {
 		ObjectUtil.create('', '', {}, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.DeleteEmpty, I.ObjectFlag.SelectType ], (message: any) => {
-			DataUtil.objectOpenRoute({ id: message.targetId });
+			ObjectUtil.openRoute({ id: message.targetId });
 		});
 	};
 

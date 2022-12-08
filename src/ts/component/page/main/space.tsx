@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader, Block, ListObjectPreview, Deleted } from 'Component';
-import { I, M, C, DataUtil, Util, crumbs, Action } from 'Lib';
+import { I, M, C, DataUtil, ObjectUtil, Util, crumbs, Action } from 'Lib';
 import { blockStore, detailStore, dbStore } from 'Store';
 import Controls from 'Component/page/head/controls';
 import HeadSimple from 'Component/page/head/simple';

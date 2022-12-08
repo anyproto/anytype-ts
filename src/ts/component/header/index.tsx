@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { RouteComponentProps } from 'react-router';
-import { I, DataUtil, Util, keyboard, sidebar } from 'Lib';
+import { I, ObjectUtil, Util, keyboard, sidebar } from 'Lib';
 
 import HeaderAuthIndex from './auth';
 import HeaderMainIndex from './main/index';

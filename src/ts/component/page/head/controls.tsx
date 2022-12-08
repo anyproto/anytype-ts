@@ -1,9 +1,9 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { observer } from 'mobx-react';
 import $ from 'jquery';
+import { observer } from 'mobx-react';
 import { Loader } from 'Component';
-import { I, C, focus, DataUtil, Util } from 'Lib';
+import { I, C, focus, ObjectUtil, Util } from 'Lib';
 import { menuStore, blockStore, detailStore } from 'Store';
 import ControlButtons  from './controlButtons';
 import Constant from 'json/constant.json';
@@ -17,7 +17,6 @@ interface Props extends I.PageComponent {
 interface State {
 	loading: boolean;
 };
-
 
 const Controls = observer(class Controls extends React.Component<Props, State> {
 	
@@ -116,12 +115,12 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 			},
 			data: {
 				onSelect: (icon: string) => {
-					DataUtil.pageSetIcon(rootId, icon, '', () => {
+					ObjectUtil.setIcon(rootId, icon, '', () => {
 						menuStore.update('smile', { element: `#block-icon-${rootId}` });
 					});
 				},
 				onUpload (hash: string) {
-					DataUtil.pageSetIcon(rootId, '', hash, () => {
+					ObjectUtil.setIcon(rootId, '', hash, () => {
 						menuStore.update('smile', { element: `#block-icon-${rootId}` });
 					});
 				},
@@ -144,7 +143,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 			
 			C.FileUpload('', files[0], I.FileType.Image, (message: any) => {
 				if (message.hash) {
-					DataUtil.pageSetIcon(rootId, '', message.hash);
+					ObjectUtil.setIcon(rootId, '', message.hash);
 				};
 			});
 		});

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Icon } from 'Component';
-import { I, DataUtil, translate, analytics, focus } from 'Lib';
+import { I, DataUtil, ObjectUtil, translate, analytics, focus } from 'Lib';
 import { blockStore, menuStore, detailStore } from 'Store';
 import { observer } from 'mobx-react';
 

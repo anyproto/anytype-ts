@@ -1,10 +1,9 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
-import { I, keyboard, DataUtil } from 'Lib';
+import { I, keyboard, MenuUtil } from 'Lib';
 
 interface Props extends I.Menu {};
-
 
 class MenuBlockBackground extends React.Component<Props, {}> {
 	
