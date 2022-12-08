@@ -248,7 +248,7 @@ const BlockType = observer(class BlockType extends React.Component<Props, {}> {
 			route: 'SelectType',
 			objectType: typeId,
 			layout: template?.layout,
-			template: (template && template.isBundledTemplate ? template.id : 'custom'),
+			template: (template && template.templateIsBundled ? template.id : 'custom'),
 		});
 	};
 

@@ -82,7 +82,7 @@
 		"targetObjectType",
 		"recommendedRelations",
 		"recommendedLayout",
-		"isBundledTemplate",
+		"templateIsBundled",
 
 		"layout",
 		"layoutAlign",
