@@ -141,18 +141,24 @@ class DetailStore {
 			object.name = translate('commonDeletedObject');
 		};
 
-		// Object type
-		if ([ Constant.typeId.type, Constant.storeTypeId.type ].includes(object.type)) {
-			object = this.checkType(object);
-		} else // Relation
-		if ([ Constant.typeId.relation, Constant.storeTypeId.relation ].includes(object.type)) {
-			object = this.checkRelation(object);
-		} else // Relation option
-		if (object.type == Constant.typeId.option) {
-			object = this.checkOption(object);
-		} else
-		if (object.type == Constant.typeId.set) {
-			object = this.checkSet(object);
+		switch (object.type) {
+			case Constant.typeId.type:
+			case Constant.storeTypeId.type:
+				object = this.checkType(object);
+				break;
+
+			case Constant.typeId.relation:
+			case Constant.storeTypeId.relation:
+				object = this.checkRelation(object);
+				break;
+
+			case Constant.typeId.option:
+				object = this.checkOption(object);
+				break;
+
+			case Constant.typeId.set:
+				object = this.checkSet(object);
+				break;
 		};
 
 		return {
