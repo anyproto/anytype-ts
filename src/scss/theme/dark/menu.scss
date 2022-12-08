@@ -292,10 +292,10 @@
                 .icon.tick { background-image: url('#{$themePath}/icon/menu/onboarding/tick.svg'); }
             }
             .steps {
-                .step:not(.active) { background: #42413A; }
+                .step:not(.active) { background: $colorLineSecondary; }
                 .step:not(.active):hover { background: $colorLinePrimary; }
             }
-            .category { color: #5C5A54; }
+            .category { color: #5c5A54; }
         }
 	}
 
