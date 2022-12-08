@@ -503,9 +503,10 @@ class MenuBlockAction extends React.Component<Props, State> {
 
 				menuParam.data = Object.assign(menuParam.data, {
 					type: I.NavigationType.Move, 
-					skipIds: skipIds,
 					position: I.BlockPosition.Bottom,
-					filters: filters,
+					skipIds,
+					filters,
+					canAdd: true,
 					onSelect: () => { close(); }
 				});
 				break;

@@ -122,7 +122,8 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 
 	componentWillUnmount () {
 		this._isMounted = false;
-		menuStore.close('searchObject');
+
+		menuStore.closeAll([ 'dataviewFileList' ]);
     };
 
 	onSortStart () {

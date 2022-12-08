@@ -412,6 +412,10 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 	};
 	
 	onClick (e: any, item: any) {
+		if (item.arrow) {
+			return;
+		};
+
 		const { close, param, getId, getSize } = this.props;
 		const { data, classNameWrap } = param;
 		const { rootId, blockId, menuIdEdit, addCommand, ref } = data;
@@ -430,7 +434,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 				offsetX: getSize().width,
 				offsetY: -80,
 				noAnimation: true,
-				classNameWrap: classNameWrap,
+				classNameWrap,
 				data: {
 					...data,
 					rebind: this.rebind,

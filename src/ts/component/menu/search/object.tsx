@@ -2,8 +2,8 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { MenuItemVertical, Filter, Loader, ObjectName } from 'Component';
-import { I, C, keyboard, Util, DataUtil, analytics, Action, focus } from 'Lib';
+import { MenuItemVertical, Filter, Loader, ObjectName, EmptySearch } from 'Component';
+import { I, C, keyboard, Util, DataUtil, analytics, Action, focus, translate } from 'Lib';
 import { commonStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -145,6 +145,10 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 
 				{loading ? <Loader /> : ''}
 
+				{!items.length && !loading ? (
+					<EmptySearch text={filter ? Util.sprintf(translate('popupSearchEmptyFilter'), filter) : translate('popupSearchEmpty')} />
+				) : ''}
+
 				{this.cache && items.length && !loading ? (
 					<div className="items">
 						<InfiniteLoader
@@ -237,7 +241,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 	getItems () {
 		const { param } = this.props;
 		const { data } = param;
-		const { filter, label } = data;
+		const { filter, label, canAdd } = data;
 
 		let items = [].concat(this.items);
 		let length = items.length;
@@ -246,7 +250,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 			items.unshift({ isSection: true, name: label });
 		};
 
-		if (filter) {
+		if (filter && canAdd) {
 			if (length) {
 				items.push({ isDiv: true });
 			};
@@ -478,7 +482,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		const { noFilter } = data;
 		const items = this.getItems();
 		const obj = $(`#${getId()} .content`);
-		const height = items.reduce((res: number, current: any) => { return res + this.getRowHeight(current); }, 16 + (noFilter ? 0 : 44));
+		const height = items.length ? items.reduce((res: number, current: any) => { return res + this.getRowHeight(current); }, 16 + (noFilter ? 0 : 44)) : 300;
 
 		obj.css({ height });
 		position();

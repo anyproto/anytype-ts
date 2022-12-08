@@ -206,6 +206,7 @@ class MenuContext extends React.Component<Props, {}> {
 					type: I.NavigationType.LinkTo,
 					skipIds: [ itemId ],
 					position: I.BlockPosition.Bottom,
+					canAdd: true,
 					onSelect: (el: any) => {
 						if (onLinkTo) {
 							onLinkTo(itemId, el.id);
