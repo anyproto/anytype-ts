@@ -25,16 +25,6 @@ interface Cover {
 	type: I.CoverType;
 };
 
-interface Toast {
-	action: I.ToastAction;
-	text?: string;
-	objectId?: string;
-	targetId?: string;
-	originId?: string;
-	count?: number;
-	value?: boolean;
-};
-
 class CommonStore {
 
     public coverObj: Cover = { id: '', type: 0, image: '' };
@@ -42,7 +32,7 @@ class CommonStore {
     public filterObj: Filter = { from: 0, text: '' };
     public gatewayUrl: string = '';
     public previewObj: Preview = { type: 0, param: '', element: null, range: { from: 0, to: 0 }, marks: [] };
-	public toastObj: Toast = { objectId: '', targetId: '', originId: '', action: I.ToastAction.Default, count: 0 };
+	public toastObj: I.Toast = null;
     public configObj: any = {};
     public cellId: string = '';
 	public themeId: string = '';
@@ -107,7 +97,7 @@ class CommonStore {
 		return this.previewObj;
 	};
 
-	get toast(): Toast {
+	get toast(): I.Toast {
 		return this.toastObj;
 	};
 
@@ -218,7 +208,7 @@ class CommonStore {
 		this.previewObj = preview;
 	};
 
-	toastSet (toast: Toast) {
+	toastSet (toast: I.Toast) {
 		this.toastObj = toast;
 	}
 
@@ -231,7 +221,7 @@ class CommonStore {
 	};
 
 	toastClear () {
-		this.toastObj = { objectId: '', targetId: '', originId: '', action: I.ToastAction.Default };
+		this.toastObj = null;
 	};
 
 	defaultTypeSet (v: string) {
@@ -283,7 +273,6 @@ class CommonStore {
 	};
 
 	nativeThemeSet (isDark: boolean) {
-		console.log('[nativeThemeSet]', isDark);
 		this.nativeThemeIsDark = isDark;
 	};
 

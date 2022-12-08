@@ -1,9 +1,9 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { observer } from 'mobx-react';
 import $ from 'jquery';
+import { observer } from 'mobx-react';
 import { Frame, Cover, Title, Label, Button, Header, Footer, Textarea } from 'Component';
-import { I, translate, DataUtil, analytics, Util } from 'Lib';
+import { I, translate, DataUtil, analytics, Util, Preview } from 'Lib';
 import { commonStore, authStore } from 'Store';
 
 interface Props extends I.PageComponent {};
@@ -90,7 +90,7 @@ const PageAuthSuccess = observer(class PageAuthSuccess extends React.Component<P
 	onCopy () {
 		this.refPhrase.focus();
 		Util.clipboardCopy({ text: authStore.phrase });
-		Util.toastShow({ text: 'Recovery phrase copied to clipboard' });
+		Preview.toastShow({ text: 'Recovery phrase copied to clipboard' });
 
 		analytics.event('KeychainCopy', { type: 'BeforeLogout' });
 	};

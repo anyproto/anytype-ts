@@ -1,15 +1,16 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { observable } from 'mobx';
 import $ from 'jquery';
-import { I, C, analytics, DataUtil, Util, keyboard, Relation, Renderer } from 'Lib';
+import { observable } from 'mobx';
+import { I, C, analytics, DataUtil, Util, keyboard, Relation, Renderer, Preview } from 'Lib';
 import { commonStore, menuStore, dbStore } from 'Store';
+import Constant from 'json/constant.json';
+
 import CellText from './text';
 import CellSelect from './select';
 import CellCheckbox from './checkbox';
 import CellObject from './object';
 import CellFile from './file';
-import Constant from 'json/constant.json';
 
 interface Props extends I.Cell {
 	elementId?: string;
@@ -20,7 +21,6 @@ interface Props extends I.Cell {
 	tooltipY?: I.MenuDirection;
 	maxWidth?: number;
 };
-
 
 class Cell extends React.Component<Props, {}> {
 
@@ -460,7 +460,7 @@ class Cell extends React.Component<Props, {}> {
 		};
 
 		if (showTooltip) {
-			Util.tooltipShow(relation.name, cell, tooltipX, tooltipY);
+			Preview.tooltipShow(relation.name, cell, tooltipX, tooltipY);
 		};
 	};
 	
@@ -471,7 +471,7 @@ class Cell extends React.Component<Props, {}> {
 			onMouseLeave(e);
 		};
 
-		Util.tooltipHide(false);
+		Preview.tooltipHide(false);
 	};
 
 	getRelation () {

@@ -1,12 +1,12 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { observer } from 'mobx-react';
-import { throttle } from 'lodash';
 import $ from 'jquery';
 import raf from 'raf';
+import { observer } from 'mobx-react';
+import { throttle } from 'lodash';
 import { Block, Icon, Loader, Deleted, DropTarget } from 'Component';
 import { commonStore, blockStore, detailStore, menuStore, popupStore } from 'Store';
-import { I, C, Key, Util, DataUtil, Mark, focus, keyboard, crumbs, Storage, Mapper, Action, translate, analytics, Renderer } from 'Lib';
+import { I, C, Key, Util, Preview, DataUtil, Mark, focus, keyboard, crumbs, Storage, Mapper, Action, translate, analytics, Renderer } from 'Lib';
 import Controls from 'Component/page/head/controls';
 import PageHeadEdit from 'Component/page/head/edit';
 import Constant from 'json/constant.json';
@@ -499,7 +499,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			return;
 		};
 
-		Util.previewHide(true);
+		Preview.previewHide(true);
 		
 		const ids = selection.get(I.SelectType.Block);
 		const cmd = keyboard.cmdKey();
@@ -685,7 +685,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			length--;
 		};
 
-		Util.previewHide(true);
+		Preview.previewHide(true);
 		this.uiHide();
 		
 		if (platform == I.Platform.Mac) {
@@ -1437,7 +1437,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		this.scrollTop = top;
 
 		Storage.setScroll('editor' + (isPopup ? 'Popup' : ''), rootId, top);
-		Util.previewHide(false);
+		Preview.previewHide(false);
 	};
 	
 	onCopy (e: any, cut: boolean) {

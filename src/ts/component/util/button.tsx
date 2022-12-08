@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, Util } from 'Lib';
+import { I, Preview } from 'Lib';
 import { Icon } from 'Component';
 
 interface Props {
@@ -74,12 +74,12 @@ class Button extends React.Component<Props, {}> {
 		const node = $(ReactDOM.findDOMNode(this));
 		
 		if (tooltip) {
-			Util.tooltipShow(tooltip, node, tooltipX, tooltipY);
+			Preview.tooltipShow(tooltip, node, tooltipX, tooltipY);
 		};
 	};
 	
 	onMouseLeave (e: any) {
-		Util.tooltipHide(false);
+		Preview.tooltipHide(false);
 	};
 	
 };

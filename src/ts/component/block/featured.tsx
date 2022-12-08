@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, C, DataUtil, Util, focus, analytics, Relation, translate, Onboarding } from 'Lib';
+import { I, C, DataUtil, Util, Preview, focus, analytics, Relation, translate, Onboarding } from 'Lib';
 import { Cell } from 'Component';
 import { blockStore, detailStore, dbStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -281,12 +281,12 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		const relation = dbStore.getRelationByKey(relationKey);
 
 		if (relation) {
-			Util.tooltipShow(relation.name, cell, I.MenuDirection.Center, I.MenuDirection.Top);
+			Preview.tooltipShow(relation.name, cell, I.MenuDirection.Center, I.MenuDirection.Top);
 		};
 	};
 
 	onMouseLeave (e: any) {
-		Util.tooltipHide(false);
+		Preview.tooltipHide(false);
 	};
 
 	onType (e: any) {

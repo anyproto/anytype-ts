@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
-import { I, C, keyboard, analytics, DataUtil, Util, focus, Action } from 'Lib';
+import { I, C, keyboard, analytics, DataUtil, Util, focus, Action, Preview } from 'Lib';
 import { blockStore, detailStore, commonStore, dbStore, menuStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 import Url from 'json/url.json';
@@ -509,7 +509,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 							textConfirm: 'Copy',
 							onChange: (v: string) => {
 								Util.clipboardCopy({ text: v });
-								Util.toastShow({ text: 'Link to share copied to clipboard' });
+								Preview.toastShow({ text: 'Link to share copied to clipboard' });
 							}
 						}
 					});

@@ -25,7 +25,6 @@ interface State {
 	loading: boolean;
 };
 
-
 const BlockDataview = observer(class BlockDataview extends React.Component<Props, State> {
 
 	state = {

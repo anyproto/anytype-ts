@@ -1,4 +1,4 @@
-import { I, C, focus, analytics, Renderer, Util } from 'Lib';
+import { I, C, focus, analytics, Renderer, Preview } from 'Lib';
 import { commonStore, authStore, blockStore, detailStore, dbStore, popupStore } from 'Store';
 
 import Constant from 'json/constant.json';
@@ -199,7 +199,7 @@ class Action {
 					break;
 			};
 
-			Util.toastShow({ text: toast });
+			Preview.toastShow({ text: toast });
 			analytics.event('ObjectInstall', { objectType: object.type, relationKey: object.relationKey });
 		});
 	};
@@ -239,7 +239,7 @@ class Action {
 							callBack(message);
 						};
 
-						Util.toastShow({ text: toast });
+						Preview.toastShow({ text: toast });
 						analytics.event('ObjectUninstall', { objectType: object.type, count: 1 });
 					});
 				},

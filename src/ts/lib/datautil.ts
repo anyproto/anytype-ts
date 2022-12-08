@@ -1367,12 +1367,12 @@ class DataUtil {
 
 		C.ObjectSearch(filters, [], [], '', 0, 0, (message: any) => {
 			if (message.error.code || !message.records.length) {
-				console.log('[DataUtil.getObjectsByIds] No objects found');
 				return;
 			};
 
 			if (callBack) {
-				callBack(message.records);
+				const records = message.records.map(it => detailStore.check(it)).filter(it => !it._empty_);
+				callBack(records);
 			};
 		});
 	};

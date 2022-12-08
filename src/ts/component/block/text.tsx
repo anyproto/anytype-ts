@@ -1,13 +1,13 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { RouteComponentProps } from 'react-router';
-import { observer, } from 'mobx-react';
-import { getRange } from 'selection-ranges';
 import * as Prism from 'prismjs';
 import $ from 'jquery';
 import raf from 'raf';
+import { RouteComponentProps } from 'react-router';
+import { observer, } from 'mobx-react';
+import { getRange } from 'selection-ranges';
 import { Select, Marker, Loader, IconObject, Icon } from 'Component';
-import { I, C, keyboard, Key, Util, DataUtil, Mark, focus, Storage, translate, analytics, Renderer } from 'Lib';
+import { I, C, keyboard, Key, Util, Preview, DataUtil, Mark, focus, Storage, translate, analytics, Renderer } from 'Lib';
 import { commonStore, blockStore, detailStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -372,7 +372,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 				});
 			};
 
-			Util.previewShow(el, param);
+			Preview.previewShow(el, param);
 
 			el.off('click.link').on('click.link', (e: any) => {
 				e.preventDefault();
@@ -419,7 +419,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		});
 
 		items.off('mouseenter.object mouseleave.object');
-		items.on('mouseleave.object', function (e: any) { Util.tooltipHide(false); });
+		items.on('mouseleave.object', function (e: any) { Preview.tooltipHide(false); });
 		items.on('mouseenter.object', function (e: any) {
 			const el = $(this);
 			const data = el.data();
@@ -435,7 +435,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			};
 
 			if (tt) {
-				Util.tooltipShow(tt, el, I.MenuDirection.Center, I.MenuDirection.Top);
+				Preview.tooltipShow(tt, el, I.MenuDirection.Center, I.MenuDirection.Top);
 				return;
 			};
 
@@ -448,7 +448,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 				DataUtil.objectOpenEvent(e, object);
 			});
 
-			Util.previewShow($(this), {
+			Preview.previewShow($(this), {
 				param: object.id,
 				type: I.MarkType.Object,
 				range: { 
@@ -536,7 +536,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 				DataUtil.objectOpenEvent(e, object);
 			});
 
-			Util.previewShow($(this), {
+			Preview.previewShow($(this), {
 				param: object.id,
 				object: object,
 				type: I.MarkType.Object,

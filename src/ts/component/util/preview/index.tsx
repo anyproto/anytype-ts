@@ -3,10 +3,9 @@ import { observer } from 'mobx-react';
 import $ from 'jquery';
 import raf from 'raf';
 import { PreviewLink, PreviewObject } from 'Component';
-import { I, Util, DataUtil, Mark, translate, Renderer } from 'Lib';
+import { I, Util, DataUtil, Mark, translate, Renderer, Preview } from 'Lib';
 import { commonStore, menuStore } from 'Store';
 
-interface Props {}
 interface State {
 	object: any;
 };
@@ -14,7 +13,7 @@ interface State {
 const OFFSET_Y = 8;
 const BORDER = 12;
 
-const Preview = observer(class Preview extends React.Component<Props, State> {
+const PreviewComponent = observer(class PreviewComponent extends React.Component<{}, State> {
 	
 	state = {
 		object: null,
@@ -105,7 +104,7 @@ const Preview = observer(class Preview extends React.Component<Props, State> {
 		const { param } = preview;
 		
 		Util.clipboardCopy({ text: param });
-		Util.previewHide(true);
+		Preview.previewHide(true);
 	};
 	
 	onEdit (e: any) {
@@ -121,7 +120,7 @@ const Preview = observer(class Preview extends React.Component<Props, State> {
 		menuStore.open('blockLink', {
 			rect: rect ? { ...rect, height: 0, y: rect.y + win.scrollTop() } : null, 
 			horizontal: I.MenuDirection.Center,
-			onOpen: () => { Util.previewHide(true); },
+			onOpen: () => { Preview.previewHide(true); },
 			data: {
 				filter: mark ? mark.param : '',
 				type: mark ? mark.type : null,
@@ -137,7 +136,7 @@ const Preview = observer(class Preview extends React.Component<Props, State> {
 		const { type, range, onChange } = preview;
 		
 		onChange(Mark.toggleLink({ type: type, param: '', range: range }, preview.marks));
-		Util.previewHide(true);
+		Preview.previewHide(true);
 	};
 
 	setObject (object: any) {
@@ -214,4 +213,4 @@ const Preview = observer(class Preview extends React.Component<Props, State> {
 
 });
 
-export default Preview;
+export default PreviewComponent;

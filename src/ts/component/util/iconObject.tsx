@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { observer } from 'mobx-react';
 import $ from 'jquery';
 import { IconEmoji } from 'Component';
-import { I, Util, SmileUtil, DataUtil, FileUtil } from 'Lib';
+import { I, Preview, SmileUtil, DataUtil, FileUtil } from 'Lib';
 import { commonStore, menuStore } from 'Store';
 
 interface Props {
@@ -473,7 +473,7 @@ const IconObject = observer(class IconObject extends React.Component<Props, {}> 
 		const node = $(ReactDOM.findDOMNode(this));
 
 		if (tooltip) {
-			Util.tooltipShow(tooltip, node, I.MenuDirection.Center, tooltipY);
+			Preview.tooltipShow(tooltip, node, I.MenuDirection.Center, tooltipY);
 		};
 		
 		if (onMouseEnter) {
@@ -484,7 +484,7 @@ const IconObject = observer(class IconObject extends React.Component<Props, {}> 
 	onMouseLeave (e: any) {
 		const { onMouseLeave } = this.props;
 		
-		Util.tooltipHide(false);
+		Preview.tooltipHide(false);
 		
 		if (onMouseLeave) {
 			onMouseLeave(e);

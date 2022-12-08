@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import $ from 'jquery';
 import raf from 'raf';
-import { I, Onboarding, Util, Storage, analytics, keyboard, sidebar, Survey } from 'Lib';
+import { I, Onboarding, Util, Storage, analytics, keyboard, sidebar, Survey, Preview } from 'Lib';
 import { Sidebar } from 'Component';
 import { authStore, commonStore, menuStore, popupStore, blockStore } from 'Store';
 
@@ -152,8 +152,8 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 		};
 
 		menuStore.closeAll();
-		Util.tooltipHide(true);
-		Util.previewHide(true);
+		Preview.tooltipHide(true);
+		Preview.previewHide(true);
 	};
 
 	getMatch () {
@@ -180,8 +180,8 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 		const path = [ match.params.page, match.params.action ].join('/');
 		const Component = Components[path];
 
-		Util.tooltipHide(true);
-		Util.previewHide(true);
+		Preview.tooltipHide(true);
+		Preview.previewHide(true);
 
 		if (!Component) {
 			Util.route('/main/index');
