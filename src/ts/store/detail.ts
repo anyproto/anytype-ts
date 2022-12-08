@@ -125,70 +125,38 @@ class DetailStore {
 	};
 
 	check (object: any) {
-		let layout = Number(object.layout) || I.ObjectLayout.Page;
-		let name = String(object.name || DataUtil.defaultName('page'));
-		let snippet = Relation.getStringValue(object.snippet).replace(/\n/g, ' ');
+		object.name = String(object.name || DataUtil.defaultName('page'));
+		object.layout = Number(object.layout) || I.ObjectLayout.Page;
+		object.snippet = Relation.getStringValue(object.snippet).replace(/\n/g, ' ');
 
-		if (layout == I.ObjectLayout.Note) {
+		if (object.layout == I.ObjectLayout.Note) {
 			object.coverType = I.CoverType.None;
 			object.coverId = '';
 			object.iconEmoji = '';
 			object.iconImage = '';
-
-			name = snippet;
+			object.name = object.snippet;
 		};
 
 		if (object.isDeleted) {
-			name = translate('commonDeletedObject');
-		};
-
-		// Object type and relation
-		if ([ Constant.typeId.type, Constant.storeTypeId.type, Constant.typeId.relation, Constant.storeTypeId.relation ].includes(object.type)) {
-			object.isInstalled = object.workspaceId != Constant.storeSpaceId;
-			object.sourceObject = Relation.getStringValue(object.sourceObject);
+			object.name = translate('commonDeletedObject');
 		};
 
 		// Object type
 		if ([ Constant.typeId.type, Constant.storeTypeId.type ].includes(object.type)) {
-			object.smartblockTypes = Relation.getArrayValue(object.smartblockTypes);
-			object.recommendedLayout = Number(object.recommendedLayout) || I.ObjectLayout.Page;
-			object.recommendedRelations = Relation.getArrayValue(object.recommendedRelations);
-
-			if (object.isDeleted) {
-				name = translate('commonDeletedType');
-			};
+			object = this.checkType(object);
 		} else // Relation
 		if ([ Constant.typeId.relation, Constant.storeTypeId.relation ].includes(object.type)) {
-			object.relationFormat = Number(object.relationFormat) || I.RelationType.LongText;
-			object.format = object.relationFormat;
-			object.maxCount = Number(object.relationMaxCount) || 0;
-			object.objectTypes = Relation.getArrayValue(object.relationFormatObjectTypes);
-			object.isReadonlyRelation = Boolean(object.isReadonly);
-			object.isReadonlyValue = Boolean(object.relationReadonlyValue);
-
-			if (object.isDeleted) {
-				name = translate('commonDeletedRelation');
-			};
-
-			delete(object.relationMaxCount);
-			delete(object.isReadonly);
-			delete(object.relationReadonlyValue);
+			object = this.checkRelation(object);
 		} else // Relation option
 		if (object.type == Constant.typeId.option) {
-			object.text = Relation.getStringValue(object.name);
-			object.color = Relation.getStringValue(object.relationOptionColor);
-
-			delete(object.relationOptionColor);
+			object = this.checkOption(object);
 		} else
 		if (object.type == Constant.typeId.set) {
-			object.setOf = Relation.getArrayValue(object.setOf);
+			object = this.checkSet(object);
 		};
 
 		return {
 			...object,
-			name,
-			layout,
-			snippet,
 			type: Relation.getStringValue(object.type),
 			iconImage: Relation.getStringValue(object.iconImage),
 			iconEmoji: Relation.getStringValue(object.iconEmoji),
@@ -201,6 +169,56 @@ class DetailStore {
 			isFavorite: Boolean(object.isFavorite),
 			isHidden: Boolean(object.isHidden),
 		};
+	};
+
+	checkType (object: any) {
+		object.smartblockTypes = Relation.getArrayValue(object.smartblockTypes);
+		object.recommendedLayout = Number(object.recommendedLayout) || I.ObjectLayout.Page;
+		object.recommendedRelations = Relation.getArrayValue(object.recommendedRelations);
+		object.isInstalled = object.workspaceId != Constant.storeSpaceId;
+		object.sourceObject = Relation.getStringValue(object.sourceObject);
+
+		if (object.isDeleted) {
+			object.name = translate('commonDeletedType');
+		};
+
+		return object;
+	};
+
+	checkRelation (object: any) {
+		object.relationFormat = Number(object.relationFormat) || I.RelationType.LongText;
+		object.format = object.relationFormat;
+		object.maxCount = Number(object.relationMaxCount) || 0;
+		object.objectTypes = Relation.getArrayValue(object.relationFormatObjectTypes);
+		object.isReadonlyRelation = Boolean(object.isReadonly);
+		object.isReadonlyValue = Boolean(object.relationReadonlyValue);
+		object.isInstalled = object.workspaceId != Constant.storeSpaceId;
+		object.sourceObject = Relation.getStringValue(object.sourceObject);
+
+		if (object.isDeleted) {
+			object.name = translate('commonDeletedRelation');
+		};
+
+		delete(object.relationMaxCount);
+		delete(object.isReadonly);
+		delete(object.relationReadonlyValue);
+
+		return object;
+	};
+
+	checkOption (object: any) {
+		object.text = Relation.getStringValue(object.name);
+		object.color = Relation.getStringValue(object.relationOptionColor);
+
+		delete(object.relationOptionColor);
+
+		return object;
+	};
+
+	checkSet (object: any) {
+		object.setOf = Relation.getArrayValue(object.setOf);
+
+		return object;
 	};
 
     clear (rootId: string) {
