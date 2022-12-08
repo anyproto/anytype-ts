@@ -428,6 +428,8 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 			return;
 		};
 
+		console.log(item);
+
 		if (item.id == 'add') {
 			menuStore.open(menuIdEdit, { 
 				element: `#${getId()} #item-${item.id}`,
