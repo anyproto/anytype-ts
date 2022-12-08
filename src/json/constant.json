@@ -63,15 +63,63 @@
 
 	"popupPinIds": [ "search" ],
 
-	"coverRelationKeys":	 [ "coverId", "coverType", "coverX", "coverY", "coverScale" ],
-	"optionRelationKeys":	 [ "id", "type", "layout", "name", "relationOptionColor", "relationKey" ],
-	"typeRelationKeys":		 [ "smartblockTypes", "recommendedRelations", "sourceObject" ],
-	"graphRelationKeys":	 [ "id", "name", "snippet", "iconEmoji", "iconImage", "relationFormat", "type", "layout", "done", "fileExt", "fileMimeType" ],
-
 	"systemRelationKeys": [ 
-		"id", "name", "description", "snippet", "iconEmoji", "iconImage", "creator",  "createdDate", "type", "layout", "layoutAlign", "lastOpenedDate", "lastModifiedBy", 
-		"lastModifiedDate", "addedDate", "coverId", "coverScale", "coverType", "coverX", "coverY", "featuredRelations", "isHidden", "isArchived", "isFavorite",  "workspaceId",
-		"sourceObject", "done", "links", "internalFlags"
+		"id", 
+		"name", 
+		"description", 
+		"snippet",
+		"type", 
+		"featuredRelations",
+		"workspaceId",
+		"sourceObject", 
+		"done", 
+		"links", 
+		"internalFlags", 
+		"restrictions",
+
+		"setOf", 
+		"smartblockTypes",
+		"targetObjectType",
+		"recommendedRelations",
+		"recommendedLayout",
+		"isBundledTemplate",
+
+		"layout",
+		"layoutAlign",
+
+		"creator",
+		"createdDate",
+		"lastOpenedDate", 
+		"lastModifiedBy",
+		"lastModifiedDate",
+		"addedDate",
+
+		"iconEmoji", 
+		"iconImage",
+		
+		"coverId", 
+		"coverType", 
+		"coverScale", 
+		"coverX", 
+		"coverY", 
+
+		"fileExt", 
+		"fileMimeType", 
+		"sizeInBytes",
+
+		"isHidden", 
+		"isArchived", 
+		"isFavorite",
+		"isReadonly",
+
+		"relationKey", 
+		"relationFormat",
+		"relationMaxCount", 
+		"relationReadonly", 
+		"relationReadonlyValue", 
+		"relationDefaultValue", 
+		"relationFormatObjectTypes",
+		"relationOptionColor"
 	],
 
 	"defaultRelationKeys": [ 
@@ -85,9 +133,14 @@
 	],
 
 	"relationRelationKeys": [
-		"id", "workspaceId", "type", "layout", "name", "relationFormat", "relationKey", "scope", "isReadonly", "isHidden", "isDeleted", "isArchived", "isFavorite", "restrictions",
+		"id", "workspaceId", "type", "layout", "name", "relationFormat", "relationKey", "isReadonly", "isHidden", "isDeleted", "isArchived", "isFavorite", "restrictions",
 		"relationMaxCount", "relationReadonly", "relationReadonlyValue", "relationDefaultValue", "relationFormatObjectTypes", "sourceObject", "restrictions"
 	],
+
+	"coverRelationKeys":	 [ "coverId", "coverType", "coverX", "coverY", "coverScale" ],
+	"optionRelationKeys":	 [ "id", "relationKey", "type", "layout", "name", "relationOptionColor" ],
+	"typeRelationKeys":		 [ "smartblockTypes", "recommendedRelations", "sourceObject" ],
+	"graphRelationKeys":	 [ "id", "name", "snippet", "iconEmoji", "iconImage", "relationFormat", "type", "layout", "done", "fileExt", "fileMimeType" ],
 
 	"subId": {
 		"index": "index",
