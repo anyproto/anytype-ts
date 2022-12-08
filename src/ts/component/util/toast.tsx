@@ -27,6 +27,11 @@ const Toast = observer(class Toast extends React.Component<{}, State> {
 
     render () {
         const { toast } = commonStore;
+
+		if (!toast) {
+			return null;
+		};
+
         const { count, action, text, value } = toast;
         const { object, target, origin } = this.state;
 
@@ -102,9 +107,9 @@ const Toast = observer(class Toast extends React.Component<{}, State> {
                 <div className="inner">
                     <div className="message">
                         {textObject}
-                        <span dangerouslySetInnerHTML={{ __html: textAction }} />
+                        {textAction ? <span dangerouslySetInnerHTML={{ __html: textAction }} /> : ''}
                         {textOrigin}
-						<span dangerouslySetInnerHTML={{ __html: textActionTo }} />
+						{textActionTo ? <span dangerouslySetInnerHTML={{ __html: textActionTo }} /> : ''}
                         {textTarget}
                     </div>
 
@@ -122,6 +127,11 @@ const Toast = observer(class Toast extends React.Component<{}, State> {
 
     componentDidUpdate () {
         const { toast } = commonStore;
+
+		if (!toast) {
+			return;
+		};
+
         const { objectId, targetId, originId } = toast;
         const { object, target, origin } = this.state;
 		const isLoaded: any = {};
@@ -136,8 +146,13 @@ const Toast = observer(class Toast extends React.Component<{}, State> {
 		if (!isLoaded.origin && originId) ids.push(originId);
 
         if (ids.length) {
-            DataUtil.getObjectsByIds(ids, this.setObjects);
-        };
+            DataUtil.getObjectsByIds(ids, (objects: any[]) => {
+				this.setObjects(objects);
+				Preview.toastPosition();
+			});
+        } else {
+			Preview.toastPosition();
+		};
     };
 
 	close () {
@@ -163,7 +178,6 @@ const Toast = observer(class Toast extends React.Component<{}, State> {
         };
 
 		this.setState(state);
-		Preview.toastPosition();
     };
 
     onClick (e: any, action: string) {

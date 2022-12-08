@@ -1,3 +1,5 @@
+import $ from 'jquery';
+import raf from 'raf';
 import { I, Util, keyboard } from 'Lib';
 import { commonStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -31,9 +33,8 @@ class Preview {
 			obj.find('.txt').html(Util.lbBr(text));
 			obj.show().css({ opacity: 0 });
 			
-			const ow = obj.outerWidth();
-			const oh = obj.outerHeight();
-
+			let ow = obj.outerWidth();
+			let oh = obj.outerHeight();
 			let x = left;
 			let y = top;
 
@@ -73,6 +74,7 @@ class Preview {
 		const obj = $('#tooltip');
 
 		obj.css({ opacity: 0 });
+
 		window.clearTimeout(this.timeout.tooltip);
 		this.timeout.tooltip = window.setTimeout(() => { obj.hide(); }, force ? 0 : Constant.delay.tooltip);
 	};
@@ -94,62 +96,59 @@ class Preview {
 	};
 
 	previewHide (force: boolean) {
-		window.clearTimeout(this.timeout.preview);
-
 		const obj = $('#preview');
-		const t = force ? 0 : 250;
 
 		obj.css({ opacity: 0 });
+
+		window.clearTimeout(this.timeout.preview);
 		this.timeout.preview = window.setTimeout(() => { 
 			obj.hide();
 			obj.removeClass('top bottom withImage'); 
 
 			commonStore.previewClear();
-		}, t);
+		}, force ? 0 : 250);
 	};
 
-	toastShow (param: any) {
-		const obj = $('#toast');
+	toastShow (param: I.Toast) {
 		const setTimeout = () => {
+			window.clearTimeout(this.timeout.toast);
 			this.timeout.toast = window.setTimeout(() => { this.toastHide(false); }, Constant.delay.toast);
 		};
 
 		commonStore.toastSet(param);
-		obj.show().css({ opacity: 0 });
+
+		const obj = $('#toast');
 
 		setTimeout();
-
 		obj.off('mouseenter mouseleave');
 		obj.on('mouseenter', () => { window.clearTimeout(this.timeout.toast); });
 		obj.on('mouseleave', () => { setTimeout(); });
 	};
 
 	toastHide (force: boolean) {
-		window.clearTimeout(this.timeout.toast);
-
 		const obj = $('#toast');
 
-		if (force) {
-			obj.hide();
-			commonStore.toastClear();
-			return;
-		};
-
 		obj.css({ opacity: 0 });
+
+		window.clearTimeout(this.timeout.toast);
 		this.timeout.toast = window.setTimeout(() => {
 			obj.hide();
 			commonStore.toastClear();
-		}, 250);
+		}, force ? 0 : 250);
 	};
 
 	toastPosition () {
 		const win = $(window);
 		const obj = $('#toast');
 
-		obj.css({ 
-			left: win.width() / 2 - obj.outerWidth() / 2, 
-			top: win.height() - obj.outerHeight() - BORDER * 2,
-			opacity: 1,
+		obj.show().css({ opacity: 0 });
+
+		raf(() => {
+			obj.css({ 
+				left: win.width() / 2 - obj.outerWidth() / 2, 
+				top: win.height() - obj.outerHeight() - BORDER * 2,
+				opacity: 1,
+			});
 		});
 	};
 

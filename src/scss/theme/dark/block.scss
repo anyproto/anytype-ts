@@ -89,6 +89,9 @@
         .icon.plus:hover { background-image: url('#{$themePath}/icon/plus/menu1.svg'); }
 
 		.dataviewEmpty { border-color: $colorLineSecondary; }
+		.dataviewEmpty {
+			.button { color: $colorPrimary; }
+		}
 
         .dataviewControls {
             .line { background: $colorLineSecondary; }

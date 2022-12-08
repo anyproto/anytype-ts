@@ -40,7 +40,8 @@
 		}
 		.dataviewEmpty {
 			.name { font-weight: 500; margin: 0px 0px 2px 0px; }
-			.descr { @include text-small; margin: 0px 0px 12px 0px; color: $colorBlack; }
+			.descr { @include text-small; margin: 0px 0px 12px 0px; }
+			.button { color: $colorBlack; }
 		}
 
 		.dataviewHead, .dataviewControls {

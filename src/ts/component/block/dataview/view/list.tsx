@@ -39,6 +39,7 @@ const ViewList = observer(class ViewList extends React.Component<Props, {}> {
 					title="No objects of this type" 
 					description="Create the first object of this type to start your set"
 					button="Add a new object"
+					withButton={allowed}
 					onClick={(e: any) => onRecordAdd(e, 1)}
 				/>
 			);

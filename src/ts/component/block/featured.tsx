@@ -106,7 +106,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 							{setOfString.length ? (
 								<div className="name">
 									{setOfString.map((it: any, i: number) => (
-										<span key={i}>{it}</span>
+										<div className="element" key={i}>{it}</div>
 									))}
 								</div>
 							) : (
@@ -374,6 +374,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				menuId = 'typeSuggest';
 				menuParam.data = Object.assign(menuParam.data, {
 					filter: '',
+					smartblockTypes: [ I.SmartBlockType.Page ],
 					onClick: (item: any) => {
 						C.ObjectSetObjectType(rootId, item.id);
 						this.menuContext.close();

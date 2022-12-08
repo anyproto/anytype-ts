@@ -187,8 +187,6 @@ class Action {
 			let { details } = message;
 			let toast = '';
 
-			detailStore.update(Constant.subId.relation, { id: details.id, details }, false);
-
 			switch (object.type) {
 				case Constant.storeTypeId.type:
 					toast = `Object type <b>${object.name}</b> has been added to your library`;
@@ -196,6 +194,8 @@ class Action {
 
 				case Constant.storeTypeId.relation:
 					toast = `Relation <b>${object.name}</b> has been added to your library`;
+
+					detailStore.update(Constant.subId.relation, { id: details.id, details }, false);
 					break;
 			};
 

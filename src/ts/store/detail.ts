@@ -179,6 +179,9 @@ class DetailStore {
 			object.color = Relation.getStringValue(object.relationOptionColor);
 
 			delete(object.relationOptionColor);
+		} else
+		if (object.type == Constant.typeId.set) {
+			object.setOf = Relation.getArrayValue(object.setOf);
 		};
 
 		return {

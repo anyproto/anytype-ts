@@ -474,31 +474,14 @@ class MenuBlockAction extends React.Component<Props, State> {
 				break;
 
 			case 'turnObject':
-				types = DataUtil.getObjectTypesForNewObject({ withSet: true }).map(it => it.id); 
-				menuId = 'searchObject';
-				menuParam.className = 'single';
-
-				filters = [
-					{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: types },
-				];
-
+				menuId = 'typeSuggest';
 				menuParam.data = Object.assign(menuParam.data, {
-					placeholder: 'Find a type of object...',
-					label: 'Your object type library',
-					canNotAdd: true,
-					filters: filters,
-					onSelect: (item: any) => {
+					filter: '',
+					smartblockTypes: [ I.SmartBlockType.Page ],
+					onClick: (item: any) => {
 						this.moveToPage(item.id);
 						close();
 					},
-					dataSort: (c1: any, c2: any) => {
-						let i1 = types.indexOf(c1.id);
-						let i2 = types.indexOf(c2.id);
-
-						if (i1 > i2) return 1;
-						if (i1 < i2) return -1;
-						return 0;
-					}
 				});
 				break;
 
@@ -520,9 +503,10 @@ class MenuBlockAction extends React.Component<Props, State> {
 
 				menuParam.data = Object.assign(menuParam.data, {
 					type: I.NavigationType.Move, 
-					skipIds: skipIds,
 					position: I.BlockPosition.Bottom,
-					filters: filters,
+					skipIds,
+					filters,
+					canAdd: true,
 					onSelect: () => { close(); }
 				});
 				break;

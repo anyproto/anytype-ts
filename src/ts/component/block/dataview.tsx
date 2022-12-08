@@ -269,11 +269,15 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			return;
 		};
 
+		const view = this.getView(viewId);
+		if (!view) {
+			return;
+		};
+
 		this.viewId = viewId;
 
 		const { rootId, block } = this.props;
 		const subId = dbStore.getSubId(rootId, block.id);
-		const view = this.getView(viewId);
 		const keys = this.getKeys(viewId);
 
 		if (clear) {

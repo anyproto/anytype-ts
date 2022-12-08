@@ -745,6 +745,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 					blockIds: [ item.id ],
 					skipIds: [ object.id ],
 					position: I.BlockPosition.Bottom,
+					canAdd: true,
 					onSelect: (el: any) => {
 						analytics.event('LinkedToObject', { count: 1 });
 						menuContext.close();

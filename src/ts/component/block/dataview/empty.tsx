@@ -7,20 +7,25 @@ interface Props extends I.ViewComponent {
 	title: string;
 	description: string;
 	button: string;
+	withButton: boolean;
 	onClick: (e: any) => void;
 };
 
 const Empty = observer(class Empty extends React.Component<Props, {}> {
 
+	public static defaultProps = {
+		withButton: true,
+	};
+
 	render () {
-		const { block, title, description, button, onClick } = this.props;
+		const { block, title, description, button, withButton, onClick } = this.props;
 
 		return (
 			<div id={[ 'dataviewEmpty', block.id ].join('-')} className="dataviewEmpty">
 				<div className="inner">
 					<Label className="name" text={title} />
 					<Label className="descr" text={description} />
-					<Button color="blank" className="c28" text={button} onClick={onClick} />
+					{withButton ? <Button color="blank" className="c28" text={button} onClick={onClick} /> : ''}
 				</div>
 			</div>
 		);

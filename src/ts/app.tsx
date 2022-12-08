@@ -9,9 +9,9 @@ import $ from 'jquery';
 import raf from 'raf';
 import * as hs from 'history';
 import * as Sentry from '@sentry/browser';
-import { Page, SelectionProvider, DragProvider, Progress, Tooltip, Toast, Preview, Icon, ListPopup, ListMenu } from './component';
+import { Page, SelectionProvider, DragProvider, Progress, Tooltip, Toast, Preview as PreviewIndex, Icon, ListPopup, ListMenu } from './component';
 import { commonStore, authStore, blockStore, detailStore, dbStore, menuStore, popupStore } from './store';
-import { I, C, Util, FileUtil, keyboard, Storage, analytics, dispatcher, translate, Action, Renderer, DataUtil, focus } from 'Lib';
+import { I, C, Util, FileUtil, keyboard, Storage, analytics, dispatcher, translate, Action, Renderer, DataUtil, focus, Preview } from 'Lib';
 
 configure({ enforceActions: 'never' });
 
@@ -205,6 +205,7 @@ window.Lib = {
 	keyboard,
 	Renderer,
 	DataUtil,
+	Preview,
 };
 
 /* 
@@ -303,7 +304,7 @@ class App extends React.Component<Props, State> {
 							</div>
 						) : ''}
 
-						<Preview />
+						<PreviewIndex />
 						<Progress />
 						<Tooltip />
 						<Toast />

@@ -438,6 +438,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 
 			case Tab.Relation:
 				menuParam.data = Object.assign(menuParam.data, {
+					menuIdEdit: 'blockRelationEdit',
 					addCommand: (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {
 						this.onClick(e, relation);
 					},

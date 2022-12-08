@@ -242,6 +242,10 @@ const MenuViewList = observer(class MenuViewList extends React.Component<Props> 
 		};
 
 		C.BlockDataviewViewCreate(rootId, blockId, newView, (message: any) => {
+			if (message.error.code) {
+				return;
+			};
+
 			const view = dbStore.getView(rootId, blockId, message.viewId);
 
 			menuStore.open('dataviewViewEdit', {

@@ -111,7 +111,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<P
 				{!noFilter ? (
 					<Filter 
 						ref={(ref: any) => { this.refFilter = ref; }} 
-						placeholderFocus="Filter objects..." 
+						placeholderFocus="Filter types..." 
 						value={filter}
 						onChange={this.onFilterChange} 
 					/>
@@ -227,18 +227,20 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<P
 
 		const { param } = this.props;
 		const { data } = param;
-		const { skipIds } = data;
+		const { skipIds, smartblockTypes } = data;
 		const filter = String(data.filter || '');
 		
 		const filters: any[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: [ Constant.typeId.type, Constant.storeTypeId.type ] },
-			{ operator: I.FilterOperator.And, relationKey: 'smartblockTypes', condition: I.FilterCondition.In, value: [ I.SmartBlockType.Page ] },
 		];
-
 		const sorts = [
 			{ relationKey: 'workspaceId', type: I.SortType.Desc },
 			{ relationKey: 'name', type: I.SortType.Asc },
 		];
+
+		if (smartblockTypes && smartblockTypes.length) {
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'smartblockTypes', condition: I.FilterCondition.In, value: smartblockTypes });
+		};
 
 		if (skipIds && skipIds.length) {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: skipIds });
@@ -362,7 +364,9 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<P
 			return;
 		};
 
-		const { getId, getSize } = this.props;
+		const { getId, getSize, param } = this.props;
+		const { data } = param;
+		const { smartblockTypes } = data;
 		const sources = this.getLibrarySources();
 
 		let menuId = '';
@@ -384,15 +388,19 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<P
 				menuId = 'searchObject';
 				menuParam.className = 'single';
 
+				const filters: I.Filter[] = [
+					{ operator: I.FilterOperator.And, relationKey: 'workspaceId', condition: I.FilterCondition.Equal, value: Constant.storeSpaceId },
+					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.storeTypeId.type },
+					{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: sources },
+				];
+				if (smartblockTypes && smartblockTypes.length) {
+					filters.push({ operator: I.FilterOperator.And, relationKey: 'smartblockTypes', condition: I.FilterCondition.In, value: smartblockTypes });
+				};
+
 				menuParam.data = Object.assign(menuParam.data, {
 					ignoreWorkspace: true,
 					keys: Constant.defaultRelationKeys.concat(Constant.typeRelationKeys),
-					filters: [
-						{ operator: I.FilterOperator.And, relationKey: 'workspaceId', condition: I.FilterCondition.Equal, value: Constant.storeSpaceId },
-						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.storeTypeId.type },
-						{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: sources },
-						{ operator: I.FilterOperator.And, relationKey: 'smartblockTypes', condition: I.FilterCondition.In, value: [ I.SmartBlockType.Page ] },
-					],
+					filters,
 					sorts: [
 						{ relationKey: 'name', type: I.SortType.Asc },
 					],
