@@ -392,7 +392,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 						{ operator: I.FilterOperator.And, relationKey: 'setOf', condition: I.FilterCondition.In, value: [ object.type ] }
 					],
 					onSelect: (item: any) => {
-						DataUtil.objectOpenPopup({ id: item.id, layout: I.ObjectLayout.Set });
+						ObjectUtil.openPopup({ id: item.id, layout: I.ObjectLayout.Set });
 						this.menuContext.close();
 					}
 				});
@@ -422,17 +422,17 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 		switch (item.id) {
 			case 'open':
-				DataUtil.objectOpenPopup(type);
+				ObjectUtil.openPopup(type);
 				break;
 
 			case 'setOpen':
-				DataUtil.objectOpenPopup({ id: this.setId, layout: I.ObjectLayout.Set });
+				ObjectUtil.openPopup({ id: this.setId, layout: I.ObjectLayout.Set });
 				break;
 
 			case 'setCreate':
 				C.ObjectCreateSet([ object.type ], { name: type.name + ' set', iconEmoji: type.iconEmoji }, '', (message: any) => {
 					if (!message.error.code) {
-						DataUtil.objectOpenPopup(message.details);
+						ObjectUtil.openPopup(message.details);
 					};
 				});
 				break;

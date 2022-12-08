@@ -1,20 +1,17 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Cover, Title, Label } from 'Component';
-import { I, C, DataUtil, translate, analytics } from 'Lib';
+import { I, C, DataUtil, ObjectUtil, translate, analytics } from 'Lib';
 import { commonStore, blockStore } from 'Store';
 import { observer } from 'mobx-react';
-
-import Head from './head';
-
 import Constant from 'json/constant.json';
+import Head from './head';
 
 interface Props extends I.Popup, RouteComponentProps<any> {
 	prevPage: string;
 	onPage: (id: string) => void;
 	setLoading: (v: boolean) => void;
 };
-
 
 const PopupSettingsPageWallpaper = observer(class PopupSettingsPageWallpaper extends React.Component<Props, {}> {
 
@@ -104,7 +101,7 @@ const PopupSettingsPageWallpaper = observer(class PopupSettingsPageWallpaper ext
 				setLoading(false);
 
 				commonStore.coverSet('', message.hash, I.CoverType.Upload);
-				DataUtil.pageSetCover(root, I.CoverType.Upload, message.hash);
+				ObjectUtil.setCover(root, I.CoverType.Upload, message.hash);
 
 				analytics.event('SettingsWallpaperUpload', { middleTime: message.middleTime });
 			});
@@ -112,7 +109,7 @@ const PopupSettingsPageWallpaper = observer(class PopupSettingsPageWallpaper ext
 	};
 
 	onCover (item: any) {
-		DataUtil.pageSetCover(blockStore.root, item.type, item.image || item.id);
+		ObjectUtil.setCover(blockStore.root, item.type, item.image || item.id);
 		commonStore.coverSet(item.id, item.image, item.type);
 
 		analytics.event('SettingsWallpaperSet', { type: item.type, id: item.id });

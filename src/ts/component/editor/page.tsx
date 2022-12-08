@@ -1695,7 +1695,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		e.ctrlKey = false;
 		e.metaKey = false;
 
-		DataUtil.objectOpenEvent(e, { layout: I.ObjectLayout.History, id: rootId });
+		ObjectUtil.openEvent(e, { layout: I.ObjectLayout.History, id: rootId });
 	};
 
 	getLayoutIds (ids: string[]) {

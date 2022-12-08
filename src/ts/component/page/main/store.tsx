@@ -391,7 +391,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 	};
 
 	onClick (e: any, item: any) {
-		DataUtil.objectOpenPopup(item);
+		ObjectUtil.openPopup(item);
 	};
 
 	onCreateType (e: any) {

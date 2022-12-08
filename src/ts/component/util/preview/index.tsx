@@ -3,7 +3,7 @@ import { observer } from 'mobx-react';
 import $ from 'jquery';
 import raf from 'raf';
 import { PreviewLink, PreviewObject } from 'Component';
-import { I, Util, DataUtil, Mark, translate, Renderer } from 'Lib';
+import { I, Util, ObjectUtil, Mark, translate, Renderer } from 'Lib';
 import { commonStore, menuStore } from 'Store';
 
 interface Props {}
@@ -95,7 +95,7 @@ const Preview = observer(class Preview extends React.Component<Props, State> {
 				break;
 
 			case I.MarkType.Object:
-				DataUtil.objectOpenEvent(e, object);
+				ObjectUtil.openEvent(e, object);
 				break;
 		};
 	};

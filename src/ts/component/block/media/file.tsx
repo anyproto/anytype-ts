@@ -121,7 +121,7 @@ const BlockFile = observer(class BlockFile extends React.Component<Props, {}> {
 		const { content } = block;
 		const { hash } = content;
 		
-		DataUtil.objectOpenPopup({ id: hash, layout: I.ObjectLayout.File });
+		ObjectUtil.openPopup({ id: hash, layout: I.ObjectLayout.File });
 	};
 	
 });

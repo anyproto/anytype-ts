@@ -1,12 +1,12 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import $ from 'jquery';
 import { observer } from 'mobx-react';
 import arrayMove from 'array-move';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCache } from 'react-virtualized';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
-import $ from 'jquery';
 import { Icon, Switch } from 'Component';
-import { I, C, DataUtil, keyboard, Dataview } from 'Lib';
+import { I, C, Relation, keyboard, Dataview } from 'Lib';
 import { menuStore, dbStore, blockStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -69,7 +69,7 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 				>
 					{allowedView ? <Handle /> : ''}
 					<span className="clickable" onClick={(e: any) => { this.onClick(e, item); }}>
-						<Icon className={'relation ' + DataUtil.relationClass(item.relation.format)} />
+						<Icon className={'relation ' + Relation.className(item.relation.format)} />
 						<div className="name">{item.relation.name}</div>
 					</span>
 					{canHide ? (

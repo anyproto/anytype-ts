@@ -67,7 +67,7 @@ const BlockRelation = observer(class BlockRelation extends React.Component<Props
 					</div>
 					<div 
 						id={id} 
-						className={[ 'cell', DataUtil.relationClass(relation.format), (!readonly && allowedValue ? 'canEdit' : '') ].join(' ')} 
+						className={[ 'cell', Relation.className(relation.format), (!readonly && allowedValue ? 'canEdit' : '') ].join(' ')} 
 						onClick={this.onCellClick}
 					>
 						<Cell 

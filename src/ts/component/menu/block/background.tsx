@@ -59,7 +59,7 @@ class MenuBlockBackground extends React.Component<Props, {}> {
 	};
 
 	getItems () {
-		return DataUtil.menuGetBgColors();
+		return MenuUtil.getBgColors();
 	};
 	
 	onOver (e: any, item: any) {

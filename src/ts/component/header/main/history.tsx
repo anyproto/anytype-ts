@@ -50,7 +50,7 @@ const HeaderMainHistory = observer(class HeaderMainHistory extends React.Compone
 		const { rootId } = this.props;
 		const object = detailStore.get(rootId, rootId, []);
 
-		DataUtil.objectOpenEvent(e, object);
+		ObjectUtil.openEvent(e, object);
 	};
 
 	onRestore (e: any) {
@@ -65,7 +65,7 @@ const HeaderMainHistory = observer(class HeaderMainHistory extends React.Compone
 		};
 
 		C.HistorySetVersion(rootId, version.id, (message: any) => {
-			DataUtil.objectOpenEvent(e, object);
+			ObjectUtil.openEvent(e, object);
 
 			analytics.event('RestoreFromHistory');
 		});

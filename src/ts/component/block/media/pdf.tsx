@@ -208,7 +208,7 @@ const BlockPdf = observer(class BlockPdf extends React.Component<Props, State> {
 		const { content } = block;
 		const { hash } = content;
 
-		DataUtil.objectOpenPopup({ id: hash, layout: I.ObjectLayout.Image });
+		ObjectUtil.openPopup({ id: hash, layout: I.ObjectLayout.Image });
 	};
 
 });

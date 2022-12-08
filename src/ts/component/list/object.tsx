@@ -52,7 +52,7 @@ const ListObject = observer(class ListObject extends React.Component<Props, {}> 
 			return (
 				<tr className={cn.join(' ')}>
 					<td className="cell">
-						<div className="cellContent isName cp" onClick={(e: any) => { DataUtil.objectOpenEvent(e, item); }}>
+						<div className="cellContent isName cp" onClick={(e: any) => { ObjectUtil.openEvent(e, item); }}>
 							<div className="flex">
 								<IconObject object={item} />
 								<ObjectName object={item} />
@@ -69,7 +69,7 @@ const ListObject = observer(class ListObject extends React.Component<Props, {}> 
 					{!isFileType ? (
 						<td className="cell">
 							{!author._empty_ ? (
-								<div className="cellContent cp" onClick={(e: any) => { DataUtil.objectOpenEvent(e, author); }}>
+								<div className="cellContent cp" onClick={(e: any) => { ObjectUtil.openEvent(e, author); }}>
 									<IconObject object={author} />
 									<div className="name">{author.name}</div>
 								</div>

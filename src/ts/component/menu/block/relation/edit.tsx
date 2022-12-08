@@ -1,9 +1,9 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import $ from 'jquery';
 import { observable } from 'mobx';
 import { observer } from 'mobx-react';
-import $ from 'jquery';
-import { I, C, analytics, DataUtil, translate, keyboard, Util } from 'Lib';
+import { I, C, analytics, MenuUtil, ObjectUtil, translate, keyboard, Util, Relation } from 'Lib';
 import { Input, MenuItemVertical, Button, Icon } from 'Component';
 import { dbStore, menuStore, blockStore, detailStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -128,7 +128,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 					<div className="name">Relation type</div>
 					<MenuItemVertical 
 						id="relation-type" 
-						icon={this.format === null ? undefined : 'relation ' + DataUtil.relationClass(this.format)} 
+						icon={this.format === null ? undefined : 'relation ' + Relation.className(this.format)} 
 						name={this.format === null ? 'Select relation type' : translate('relationName' + this.format)} 
 						onMouseEnter={this.onRelationType} 
 						onClick={this.onRelationType} 
@@ -234,7 +234,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 				...data,
 				filter: '',
 				value: this.format,
-				options: DataUtil.menuGetRelationTypes(),
+				options: MenuUtil.getRelationTypes(),
 				noFilter: true,
 				onSelect: (e: any, item: any) => {
 					this.format = item.id;
@@ -357,7 +357,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 
 	onOpen (e: any) {
 		this.props.close();
-		DataUtil.objectOpenPopup(this.getRelation());
+		ObjectUtil.openPopup(this.getRelation());
 	};
 
 	onCopy (e: any) {

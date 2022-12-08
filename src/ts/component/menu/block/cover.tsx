@@ -381,7 +381,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 			preventCommonDrop(false);
 			
 			if (!message.error.code) {
-				DataUtil.pageSetCover(rootId, I.CoverType.Upload, message.hash);
+				ObjectUtil.setCover(rootId, I.CoverType.Upload, message.hash);
 			};
 		
 			close();

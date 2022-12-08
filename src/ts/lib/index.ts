@@ -12,9 +12,11 @@ import Storage from './storage';
 import Util from './util';
 import DataUtil from './datautil';
 import SmileUtil from './smileutil';
+import FileUtil from './fileutil';
+import ObjectUtil from './objectutil';
+import MenuUtil from './menuutil';
 import Mark from './mark';
 import Relation from './relation';
-import FileUtil from './fileutil';
 import Dataview from './dataview';
 import { focus } from './focus';
 import { Encode, Decode } from './struct';
@@ -51,9 +53,11 @@ export {
 	Util,
 	DataUtil,
 	SmileUtil,
+	FileUtil,
+	ObjectUtil,
+	MenuUtil,
 	Mark,
 	Relation,
-	FileUtil,
 	Dataview,
 	I,
 	C,

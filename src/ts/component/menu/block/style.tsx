@@ -113,7 +113,7 @@ const MenuBlockStyle = observer(class MenuBlockStyle extends React.Component<Pro
 		if (hasTurnDiv)		 sections.push(turnDiv);
 		if (hasTurnFile)     sections.push(turnFile);
 
-		return DataUtil.menuSectionsMap(sections);
+		return MenuUtil.sectionsMap(sections);
 	};
 	
 	getItems () {

@@ -102,7 +102,7 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 		const record = detailStore.get(subId, id);
 		const cb = {
 			0: () => {
-				keyboard.withCommand(e) ? DataUtil.objectOpenWindow(record) : DataUtil.objectOpenPopup(record); 
+				keyboard.withCommand(e) ? DataUtil.objectOpenWindow(record) : ObjectUtil.openPopup(record); 
 			},
 			2: () => { onContext(e, record.id); }
 		};

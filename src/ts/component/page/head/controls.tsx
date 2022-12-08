@@ -171,7 +171,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 	onCoverSelect (item: any) {
 		const { rootId } = this.props;
 
-		DataUtil.pageSetCover(rootId, item.type, item.id, item.coverX, item.coverY, item.coverScale);
+		ObjectUtil.setCover(rootId, item.type, item.id, item.coverX, item.coverY, item.coverScale);
 	};
 
 	onLayout (e: any) {
@@ -287,7 +287,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 	onUpload (type: I.CoverType, hash: string) {
 		const { rootId } = this.props;
 
-		DataUtil.pageSetCover(rootId, type, hash, 0, -0.25, 0, () => {
+		ObjectUtil.setCover(rootId, type, hash, 0, -0.25, 0, () => {
 			this.setState({ loading: false });
 		});
 	};

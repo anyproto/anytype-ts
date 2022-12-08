@@ -79,7 +79,7 @@ const GraphPreview = observer(class PreviewObject extends React.Component<Props,
 							<Block {...this.props} key={featured.id} rootId={contextId} traceId={TRACE} iconSize={20} block={featured} readonly={true} isInsidePreview={true} />
 						</div>
 						<div className="buttons">
-							<Button text="Open" onClick={(e: any) => { DataUtil.objectOpenPopup(object); }} />
+							<Button text="Open" onClick={(e: any) => { ObjectUtil.openPopup(object); }} />
 							<Button text="Cancel" color="blank" onClick={onClose} />
 						</div>
 					</React.Fragment>

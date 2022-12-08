@@ -379,7 +379,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 
 			switch (type) {
 				case I.NavigationType.Go:
-					DataUtil.objectOpenEvent(e, target);
+					ObjectUtil.openEvent(e, target);
 					break;
 
 				case I.NavigationType.Move:
@@ -448,7 +448,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		};
 
 		if (item.isAdd) {
-			DataUtil.pageCreate('', '', { name: filter, type: commonStore.type }, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.SelectType ], (message: any) => {
+			ObjectUtil.create('', '', { name: filter, type: commonStore.type }, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.SelectType ], (message: any) => {
 				DataUtil.getObjectById(message.targetId, process);
 				close();
 			});

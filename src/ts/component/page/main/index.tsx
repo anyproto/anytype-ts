@@ -1,9 +1,9 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import { observer } from 'mobx-react';
 import { Icon, IconObject, ListIndex, Cover, Header, Footer, Filter, EmptySearch } from 'Component';
 import { commonStore, blockStore, detailStore, menuStore, dbStore, popupStore, authStore } from 'Store';
-import { observer } from 'mobx-react';
-import { I, C, Util, DataUtil, translate, crumbs, Storage, analytics, keyboard, Action } from 'Lib';
+import { I, C, Util, DataUtil, ObjectUtil, translate, crumbs, Storage, analytics, keyboard, Action } from 'Lib';
 import arrayMove from 'array-move';
 
 import Constant from 'json/constant.json';
@@ -459,7 +459,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 	
 	onProfile (e: any) {
 		const object = detailStore.get(Constant.subId.profile, blockStore.profile);
-		DataUtil.objectOpenEvent(e, object);
+		ObjectUtil.openEvent(e, object);
 	};
 	
 	onClick (e: any, item: any) {
@@ -472,7 +472,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		if (tab == I.TabIndex.Archive) {
 			this.onSelect(e, item);
 		} else {
-			DataUtil.objectOpenEvent(e, object);
+			ObjectUtil.openEvent(e, object);
 		};
 	};
 
@@ -657,12 +657,12 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 	};
 
 	onStore (e: any) {
-		DataUtil.objectOpenPopup({ layout: I.ObjectLayout.Store });
+		ObjectUtil.openPopup({ layout: I.ObjectLayout.Store });
 	};
 	
 	onAdd (e: any) {
-		DataUtil.pageCreate('', '', {}, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.DeleteEmpty, I.ObjectFlag.SelectType ], (message: any) => {
-			DataUtil.objectOpenPopup({ id: message.targetId });
+		ObjectUtil.create('', '', {}, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.DeleteEmpty, I.ObjectFlag.SelectType ], (message: any) => {
+			ObjectUtil.openPopup({ id: message.targetId });
 		});
 	};
 

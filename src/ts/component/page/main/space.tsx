@@ -75,7 +75,7 @@ const PageMainSpace = observer(class PageMainSpace extends React.Component<Props
 									key="listTemplate"
 									getItems={() => { return highlighted; }}
 									canAdd={false}
-									onClick={(e: any, item: any) => { DataUtil.objectOpenPopup(item); }} 
+									onClick={(e: any, item: any) => { ObjectUtil.openPopup(item); }} 
 								/>
 							</div>
 						) : (

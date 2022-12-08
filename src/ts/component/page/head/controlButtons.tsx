@@ -160,7 +160,7 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 							break;
 
 						case 'remove':
-							DataUtil.pageSetCover(rootId, I.CoverType.None, '');
+							ObjectUtil.setCover(rootId, I.CoverType.None, '');
 							analytics.event('RemoveCover');
 							break;
 					};

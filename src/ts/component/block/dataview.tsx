@@ -555,7 +555,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					DataUtil.objectOpenWindow(record);
 				};
 			} else {
-				DataUtil.objectOpenPopup(record);
+				ObjectUtil.openPopup(record);
 			};
 		} else {
 			ref.onClick(e);

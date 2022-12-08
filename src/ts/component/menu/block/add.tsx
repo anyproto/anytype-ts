@@ -81,7 +81,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 						</div>
 						<div
 							id={id} 
-							className={[ 'cell', DataUtil.relationClass(item.format) ].join(' ')} 
+							className={[ 'cell', Relation.className(item.format) ].join(' ')} 
 						>
 							<Cell 
 								rootId={rootId}
@@ -353,13 +353,13 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 				sections.push({ id: 'color', icon: 'color', name: 'Text color', color: '', children: DataUtil.menuGetTextColors() });
 			};
 			if (block.canHaveBackground()) {
-				sections.push({ id: 'bgColor', icon: 'bgColor', name: 'Background color', color: '', children: DataUtil.menuGetBgColors() });
+				sections.push({ id: 'bgColor', icon: 'bgColor', name: 'Background color', color: '', children: MenuUtil.getBgColors() });
 			};
 			
-			sections = DataUtil.menuSectionsFilter(sections, filter.text);
+			sections = MenuUtil.sectionsFilter(sections, filter.text);
 		};
 		
-		sections = DataUtil.menuSectionsMap(sections);
+		sections = MenuUtil.sectionsMap(sections);
 		return sections;
 	};
 	
@@ -602,12 +602,12 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 
 					const create = (template: any) => {
 
-						DataUtil.pageCreate(rootId, blockId, details, position, template?.id, DataUtil.defaultLinkSettings(), [], (message: any) => {
+						ObjectUtil.create(rootId, blockId, details, position, template?.id, DataUtil.defaultLinkSettings(), [], (message: any) => {
 							if (message.error.code) {
 								return;
 							};
 
-							DataUtil.objectOpenPopup({ ...details, id: message.targetId });
+							ObjectUtil.openPopup({ ...details, id: message.targetId });
 
 							analytics.event('CreateObject', {
 								route: 'Powertool',

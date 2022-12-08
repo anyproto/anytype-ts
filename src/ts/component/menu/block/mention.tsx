@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import $ from 'jquery';
 import { MenuItemVertical, Loader, ObjectName } from 'Component';
-import { I, keyboard, Util, DataUtil, Mark, analytics } from 'Lib';
+import { I, keyboard, Util, DataUtil, ObjectUtil, MenuUtil, Mark, analytics } from 'Lib';
 import { commonStore, dbStore } from 'Store';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import Constant from 'json/constant.json';
@@ -11,11 +11,10 @@ interface Props extends I.Menu {};
 
 interface State {
 	loading: boolean;
-}
+};
 
 const HEIGHT_ITEM = 28;
 const HEIGHT_DIV = 16;
-
 const LIMIT_HEIGHT = 10;
 
 const MenuBlockMention = observer(class MenuBlockMention extends React.Component<Props, State> {
@@ -192,7 +191,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 			});
 		};
 
-		return DataUtil.menuSectionsMap(sections);
+		return MenuUtil.sectionsMap(sections);
 	};
 
 	getItems () {
@@ -301,7 +300,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 			const type = dbStore.getType(commonStore.type);
 			const name = filter.text.replace(/\\/g, '');
 
-			DataUtil.pageCreate('', '', { name: name }, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.SelectType ], (message: any) => {
+			ObjectUtil.create('', '', { name: name }, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.SelectType ], (message: any) => {
 				if (message.error.code) {
 					return;
 				};

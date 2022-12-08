@@ -1,10 +1,10 @@
 import * as React from 'react';
+import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import $ from 'jquery';
 import { Filter, MenuItemVertical, Icon, Loader, ObjectName, EmptySearch } from 'Component';
-import { I, Util, keyboard, DataUtil, Relation, translate } from 'Lib';
-import { commonStore, menuStore, dbStore } from 'Store';
+import { I, Util, keyboard, DataUtil, ObjectUtil, Relation, translate } from 'Lib';
+import { menuStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
 interface Props extends I.Menu {};
@@ -14,10 +14,7 @@ interface State {
 };
 
 const MENU_ID = 'dataviewObjectValues';
-
-const HEIGHT = 28;
 const LIMIT_HEIGHT = 20;
-
 const HEIGHT_SECTION = 28;
 const HEIGHT_ITEM = 28;
 const HEIGHT_ITEM_BIG = 56;
@@ -179,7 +176,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 
 		this.cache = new CellMeasurerCache({
 			fixedWidth: true,
-			defaultHeight: HEIGHT,
+			defaultHeight: HEIGHT_ITEM,
 			keyMapper: (i: number) => { return (items[i] || {}).id; },
 		});
 
@@ -365,7 +362,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 				flags.push(I.ObjectFlag.SelectType);
 			};
 
-			DataUtil.pageCreate('', '', details, I.BlockPosition.Bottom, '', {}, flags, (message: any) => {
+			ObjectUtil.create('', '', details, I.BlockPosition.Bottom, '', {}, flags, (message: any) => {
 				cb(message.targetId);
 				close();
 			});

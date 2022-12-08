@@ -249,7 +249,7 @@ const BlockLink = observer(class BlockLink extends React.Component<Props, {}> {
 		};
 		
 		if (!(keyboard.withCommand(e) && ids.length)) {
-			DataUtil.objectOpenEvent(e, object);
+			ObjectUtil.openEvent(e, object);
 		};
 	};
 	

@@ -177,7 +177,7 @@ const CellObject = observer(class CellObject extends React.Component<Props, Stat
 
 		if (canOpen && item) {
 			e.stopPropagation();
-			DataUtil.objectOpenPopup(item);
+			ObjectUtil.openPopup(item);
 		};
 	};
 
@@ -371,7 +371,7 @@ const CellObject = observer(class CellObject extends React.Component<Props, Stat
 			flags.push(I.ObjectFlag.SelectType);
 		};
 
-		DataUtil.pageCreate('', '', details, I.BlockPosition.Bottom, '', {}, flags, (message: any) => {
+		ObjectUtil.create('', '', details, I.BlockPosition.Bottom, '', {}, flags, (message: any) => {
 			if (!message.error.code) {
 				this.onValueAdd(message.targetId);
 			};

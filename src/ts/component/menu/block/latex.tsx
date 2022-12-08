@@ -2,8 +2,8 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import $ from 'jquery';
 import katex from 'katex';
-import { I, keyboard, DataUtil } from 'Lib';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
+import { I, keyboard, DataUtil, MenuUtil } from 'Lib';
 import { commonStore, menuStore } from 'Store';
 import Sections from 'json/latex.json';
 
@@ -247,7 +247,7 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<Pro
 		const { data } = param;
 		const { isTemplate } = data;
 
-		let sections = DataUtil.menuSectionsMap(Sections);
+		let sections = MenuUtil.sectionsMap(Sections);
 		sections = sections.filter((it: any) => { return (it.id == 'templates') == isTemplate; });
 
 		sections = sections.map((it: any) => {
@@ -260,7 +260,7 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<Pro
 		});
 
 		if (filter.text) {
-			sections = DataUtil.menuSectionsFilter(sections, filter.text);
+			sections = MenuUtil.sectionsFilter(sections, filter.text);
 
 			const regS = new RegExp('/^' + filter.text + '/', 'gi');
 			const regC = new RegExp(filter.text, 'gi');

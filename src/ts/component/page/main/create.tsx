@@ -16,7 +16,7 @@ const PageMainCreate = observer(class PageMainCreate extends React.Component<Pro
 	};
 	
 	componentDidMount () {
-		DataUtil.pageCreate('', '', {}, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.DeleteEmpty, I.ObjectFlag.SelectType ], (message: any) => {
+		ObjectUtil.create('', '', {}, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.DeleteEmpty, I.ObjectFlag.SelectType ], (message: any) => {
 			DataUtil.objectOpenRoute({ id: message.targetId });
 		});
 	};

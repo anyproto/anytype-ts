@@ -445,7 +445,7 @@ const Tree = observer(class Tree extends React.Component<Props, State> {
 		e.preventDefault();
 		e.stopPropagation();
 
-		DataUtil.objectOpenEvent(e, node.details);
+		ObjectUtil.openEvent(e, node.details);
 		analytics.event('OpenSidebarObject', { group: Tree.getSection(node.sectionId).name });
 	};
 

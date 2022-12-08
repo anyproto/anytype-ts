@@ -3,14 +3,13 @@ import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import { Filter, MenuItemVertical } from 'Component';
 import { detailStore, blockStore, menuStore } from 'Store';
-import { I, C, keyboard, DataUtil, focus, Action, translate, analytics } from 'Lib';
+import { I, C, keyboard, DataUtil, ObjectUtil, focus, Action, translate, analytics } from 'Lib';
 import Constant from 'json/constant.json';
 
 interface Props extends I.Menu {};
 interface State {
 	filter: string;
 };
-
 
 class MenuBlockAction extends React.Component<Props, State> {
 	
@@ -200,7 +199,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 			const turnFile = { id: 'turnFile', icon: '', name: 'File style', children: DataUtil.menuGetTurnFile() };
 			const action = { id: 'action', icon: '', name: 'Actions', children: [] };
 			const align = { id: 'align', icon: '', name: 'Align', children: [] };
-			const bgColor = { id: 'bgColor', icon: '', name: 'Background', children: DataUtil.menuGetBgColors() };
+			const bgColor = { id: 'bgColor', icon: '', name: 'Background', children: MenuUtil.getBgColors() };
 			const color = { id: 'color', icon: 'color', name: 'Color', arrow: true, children: DataUtil.menuGetTextColors() };
 
 			let hasTurnText = true;
@@ -272,7 +271,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 				sections.push(action);
 			};
 
-			sections = DataUtil.menuSectionsFilter(sections, filter);
+			sections = MenuUtil.sectionsFilter(sections, filter);
 		} else {
 			const section2: any = { 
 				children: [
@@ -369,7 +368,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 			sections = [ section1, section2 ];
 		};
 
-		return DataUtil.menuSectionsMap(sections);
+		return MenuUtil.sectionsMap(sections);
 	};
 	
 	getItems () {
@@ -600,13 +599,13 @@ class MenuBlockAction extends React.Component<Props, State> {
 				break;
 
 			case 'openBookmarkAsObject':
-				DataUtil.objectOpenPopup({ id: block.content.targetObjectId, layout: I.ObjectLayout.Bookmark });
+				ObjectUtil.openPopup({ id: block.content.targetObjectId, layout: I.ObjectLayout.Bookmark });
 
 				analytics.event('OpenAsObject', { type: block.type });
 				break;
 
 			case 'openFileAsObject':
-				DataUtil.objectOpenPopup({ id: block.content.hash, layout: I.ObjectLayout.File });
+				ObjectUtil.openPopup({ id: block.content.hash, layout: I.ObjectLayout.File });
 
 				analytics.event('OpenAsObject', { type: block.type, params: { fileType: block.content.type } });
 				break;

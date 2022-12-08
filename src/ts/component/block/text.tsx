@@ -445,7 +445,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 
 			el.off('click.object').on('click.object', function (e: any) {
 				e.preventDefault();
-				DataUtil.objectOpenEvent(e, object);
+				ObjectUtil.openEvent(e, object);
 			});
 
 			Util.previewShow($(this), {
@@ -533,7 +533,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 
 			el.off('click.mention').on('click.mention', function (e: any) {
 				e.preventDefault();
-				DataUtil.objectOpenEvent(e, object);
+				ObjectUtil.openEvent(e, object);
 			});
 
 			Util.previewShow($(this), {
