@@ -1,9 +1,24 @@
-import { I, DataUtil, Util, FileUtil, translate, Dataview } from 'Lib';
+import { I, Util, FileUtil, translate, Dataview } from 'Lib';
 import { dbStore, commonStore, detailStore } from 'Store';
-
 import Constant from 'json/constant.json';
 
 class Relation {
+
+	typeName (v: I.RelationType): string {
+		return Util.toCamelCase(I.RelationType[v || I.RelationType.LongText]);
+	};
+
+	className (v: I.RelationType): string {
+		let c = this.typeName(v);
+		if ([ I.RelationType.Status, I.RelationType.Tag ].indexOf(v) >= 0) {
+			c = 'select ' + this.selectClassName(v);
+		};
+		return 'c-' + c;
+	};
+
+	selectClassName (v: I.RelationType): string {
+		return Util.toCamelCase('is-' + I.RelationType[v]);
+	};
 
 	cellId (prefix: string, relationKey: string, id: any) {
 		if (undefined === id) {
@@ -263,7 +278,7 @@ class Relation {
 
 			ret.push({ 
 				id: relation.relationKey, 
-				icon: 'relation ' + DataUtil.relationClass(relation.format),
+				icon: 'relation ' + this.className(relation.format),
 				name: relation.name, 
 				isHidden: relation.isHidden,
 				format: relation.format,
@@ -290,7 +305,7 @@ class Relation {
 		}).map((it: any) => {
 			return { 
 				id: it.relationKey, 
-				icon: 'relation ' + DataUtil.relationClass(it.format),
+				icon: 'relation ' + this.className(it.format),
 				name: it.name, 
 			};
 		});
@@ -332,7 +347,7 @@ class Relation {
 		options = options.map((it: any) => {
 			return { 
 				id: it.relationKey, 
-				icon: 'relation ' + DataUtil.relationClass(it.format),
+				icon: 'relation ' + this.className(it.format),
 				name: it.name, 
 			};
 		});

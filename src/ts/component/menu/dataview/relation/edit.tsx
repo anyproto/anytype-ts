@@ -1,9 +1,9 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
-import $ from 'jquery';
-import { I, C, DataUtil, Relation, translate, Dataview, keyboard, analytics, Preview } from 'Lib';
+import { I, C, ObjectUtil, MenuUtil, Relation, translate, Dataview, keyboard, analytics, Preview } from 'Lib';
 import { Icon, Input, MenuItemVertical, Button } from 'Component';
 import { blockStore, dbStore, menuStore, detailStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -127,7 +127,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 					<div className="name">Relation type</div>
 					<MenuItemVertical 
 						id="relation-type" 
-						icon={this.format === null ? undefined : 'relation ' + DataUtil.relationClass(this.format)} 
+						icon={this.format === null ? undefined : 'relation ' + Relation.className(this.format)} 
 						name={this.format === null ? 'Select relation type' : translate('relationName' + this.format)} 
 						onMouseEnter={this.onRelationType} 
 						readonly={isReadonly}
@@ -294,7 +294,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 
 		switch (item.id) {
 			case 'open':
-				DataUtil.objectOpenPopup(relation);
+				ObjectUtil.openPopup(relation);
 				break;
 
 			case 'copy':
@@ -412,7 +412,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 				...data,
 				filter: '',
 				value: this.format,
-				options: DataUtil.menuGetRelationTypes(),
+				options: MenuUtil.getRelationTypes(),
 				noFilter: true,
 				onSelect: (e: any, item: any) => {
 					this.format = item.id;

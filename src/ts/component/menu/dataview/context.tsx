@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
-import { I, C, keyboard, analytics, DataUtil, focus } from 'Lib';
+import { I, C, keyboard, analytics, ObjectUtil, focus } from 'Lib';
 import { detailStore, menuStore, blockStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -245,13 +245,13 @@ class MenuContext extends React.Component<Props, {}> {
 		switch (item.id) {
 
 			case 'open':
-				DataUtil.objectOpenPopup(detailStore.get(subId, objectIds[0], []));
+				ObjectUtil.openPopup(detailStore.get(subId, objectIds[0], []));
 				break;
 
 			case 'copy':
 				C.ObjectListDuplicate(objectIds, (message: any) => {
 					if (length == 1) {
-						DataUtil.objectOpenPopup(detailStore.get(subId, message.ids[0], []));
+						ObjectUtil.openPopup(detailStore.get(subId, message.ids[0], []));
 					};
 
 					cb();

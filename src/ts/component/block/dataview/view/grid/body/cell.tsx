@@ -26,7 +26,7 @@ const BodyCell = observer(class BodyCell extends React.Component<Props, {}> {
 	render () {
 		const { rootId, block, className, relationKey, index, readonly, onRef, onCellClick, onCellChange, getIdPrefix } = this.props;
 		const relation: any = dbStore.getRelationByKey(relationKey) || {};
-		const cn = [ 'cell', DataUtil.relationClass(relation.format), (!readonly ? 'canEdit' : '') ];
+		const cn = [ 'cell', Relation.className(relation.format), (!readonly ? 'canEdit' : '') ];
 		const idPrefix = getIdPrefix();
 		const id = Relation.cellId(idPrefix, relation.relationKey, index);
 		const width = Relation.width(this.props.width, relation.format);

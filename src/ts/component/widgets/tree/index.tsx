@@ -8,7 +8,7 @@ import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from
 import { blockStore, dbStore, detailStore, menuStore } from 'Store';
 
 // Libraries
-import { I, C, DataUtil, Util, keyboard, Storage, Relation, analytics } from 'Lib';
+import { I, C, DataUtil, ObjectUtil, Util, keyboard, Storage, Relation, analytics } from 'Lib';
 
 // UI Components
 import { Loader } from 'Component';
@@ -445,7 +445,7 @@ const Tree = observer(class Tree extends React.Component<Props, State> {
 		e.preventDefault();
 		e.stopPropagation();
 
-		DataUtil.objectOpenEvent(e, node.details);
+		ObjectUtil.openEvent(e, node.details);
 		analytics.event('OpenSidebarObject', { group: Tree.getSection(node.sectionId).name });
 	};
 

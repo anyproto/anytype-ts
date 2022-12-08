@@ -6,7 +6,7 @@ import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 import { Block, Icon, Loader, Deleted, DropTarget } from 'Component';
 import { commonStore, blockStore, detailStore, menuStore, popupStore } from 'Store';
-import { I, C, Key, Util, Preview, DataUtil, Mark, focus, keyboard, crumbs, Storage, Mapper, Action, translate, analytics, Renderer } from 'Lib';
+import { I, C, Key, Util, DataUtil, ObjectUtil, Preview, Mark, focus, keyboard, crumbs, Storage, Mapper, Action, translate, analytics, Renderer } from 'Lib';
 import Controls from 'Component/page/head/controls';
 import PageHeadEdit from 'Component/page/head/edit';
 import Constant from 'json/constant.json';
@@ -1644,7 +1644,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 									return;
 								};
 
-								DataUtil.objectOpenRoute({ id: message.objectId, layout: I.ObjectLayout.Bookmark });
+								ObjectUtil.openRoute({ id: message.objectId, layout: I.ObjectLayout.Bookmark });
 
 								analytics.event('CreateObject', {
 									objectType: Constant.typeId.bookmark,
@@ -1695,7 +1695,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		e.ctrlKey = false;
 		e.metaKey = false;
 
-		DataUtil.objectOpenEvent(e, { layout: I.ObjectLayout.History, id: rootId });
+		ObjectUtil.openEvent(e, { layout: I.ObjectLayout.History, id: rootId });
 	};
 
 	getLayoutIds (ids: string[]) {

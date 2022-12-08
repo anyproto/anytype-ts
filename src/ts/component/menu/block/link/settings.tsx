@@ -1,13 +1,12 @@
 import * as React from 'react';
 import $ from 'jquery';
-import { MenuItemVertical } from 'Component';
-import { I, C, Util, DataUtil, keyboard } from 'Lib';
-import { blockStore, detailStore, menuStore } from 'Store';
 import { observer } from 'mobx-react';
+import { MenuItemVertical } from 'Component';
+import { I, C, Util, DataUtil, MenuUtil, keyboard, Relation } from 'Lib';
+import { blockStore, detailStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
 interface Props extends I.Menu {};
-
 
 const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React.Component<Props, {}> {
 	
@@ -221,13 +220,13 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 		const itemStyle = { id: 'cardStyle', name: 'Preview layout', caption: style.name, withCaption: true, arrow: true };
 		const itemSize = canIcon ? { id: 'iconSize', name: 'Icon', caption: icon.name, withCaption: true, arrow: true } : null;
 		const itemCover = canCover ? { id: 'cover', name: 'Cover', withSwitch: true, switchValue: this.hasRelationKey('cover') } : null;
-		const itemName = { id: 'name', name: 'Name', icon: 'relation ' + DataUtil.relationClass(I.RelationType.ShortText) };
+		const itemName = { id: 'name', name: 'Name', icon: 'relation ' + Relation.className(I.RelationType.ShortText) };
 		const itemDescription = canDescription ? { 
-			id: 'description', name: 'Description', icon: 'relation ' + DataUtil.relationClass(I.RelationType.LongText), 
+			id: 'description', name: 'Description', icon: 'relation ' + Relation.className(I.RelationType.LongText), 
 			caption: description.name, withCaption: true, arrow: true
 		} : null;
-		const itemTags = { id: 'tag', name: 'Tags', icon: 'relation ' + DataUtil.relationClass(I.RelationType.Tag), withSwitch: true, switchValue: this.hasRelationKey('tag') };
-		const itemType = { id: 'type', name: 'Object type', icon: 'relation ' + DataUtil.relationClass(I.RelationType.Object), withSwitch: true, switchValue: this.hasRelationKey('type') };
+		const itemTags = { id: 'tag', name: 'Tags', icon: 'relation ' + Relation.className(I.RelationType.Tag), withSwitch: true, switchValue: this.hasRelationKey('tag') };
+		const itemType = { id: 'type', name: 'Object type', icon: 'relation ' + Relation.className(I.RelationType.Object), withSwitch: true, switchValue: this.hasRelationKey('type') };
 
 		let sections: any[] = [
 			{ children: [ itemStyle, itemSize, itemCover ] },
@@ -238,7 +237,7 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 			s.children = s.children.filter(it => it);
 			return s;
 		});
-		sections = DataUtil.menuSectionsMap(sections);
+		sections = MenuUtil.sectionsMap(sections);
 
 		sections = sections.map((s: any) => {
 			s.children = s.children.map((child: any) => {

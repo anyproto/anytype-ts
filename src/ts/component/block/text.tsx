@@ -7,7 +7,7 @@ import { RouteComponentProps } from 'react-router';
 import { observer, } from 'mobx-react';
 import { getRange } from 'selection-ranges';
 import { Select, Marker, Loader, IconObject, Icon } from 'Component';
-import { I, C, keyboard, Key, Util, Preview, DataUtil, Mark, focus, Storage, translate, analytics, Renderer } from 'Lib';
+import { I, C, keyboard, Key, Util, DataUtil, ObjectUtil, Preview, Mark, focus, Storage, translate, analytics, Renderer } from 'Lib';
 import { commonStore, blockStore, detailStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -445,7 +445,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 
 			el.off('click.object').on('click.object', function (e: any) {
 				e.preventDefault();
-				DataUtil.objectOpenEvent(e, object);
+				ObjectUtil.openEvent(e, object);
 			});
 
 			Preview.previewShow($(this), {
@@ -533,7 +533,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 
 			el.off('click.mention').on('click.mention', function (e: any) {
 				e.preventDefault();
-				DataUtil.objectOpenEvent(e, object);
+				ObjectUtil.openEvent(e, object);
 			});
 
 			Preview.previewShow($(this), {

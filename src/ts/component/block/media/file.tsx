@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { InputWithFile, Loader, IconObject, Error } from 'Component';
-import { I, Util, DataUtil, FileUtil, focus, translate, Action } from 'Lib';
+import { I, Util, ObjectUtil, FileUtil, focus, translate, Action } from 'Lib';
 import { detailStore } from 'Store';
 import { observer } from 'mobx-react';
 
@@ -121,7 +121,7 @@ const BlockFile = observer(class BlockFile extends React.Component<Props, {}> {
 		const { content } = block;
 		const { hash } = content;
 		
-		DataUtil.objectOpenPopup({ id: hash, layout: I.ObjectLayout.File });
+		ObjectUtil.openPopup({ id: hash, layout: I.ObjectLayout.File });
 	};
 	
 });

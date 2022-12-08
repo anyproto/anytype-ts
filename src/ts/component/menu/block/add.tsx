@@ -1,9 +1,9 @@
 import * as React from 'react';
+import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import $ from 'jquery';
 import { MenuItemVertical, Icon, Cell } from 'Component';
-import { I, Mark, keyboard, C, focus, Action, Util, DataUtil, Storage, translate, analytics, Relation } from 'Lib';
+import { I, Mark, keyboard, C, focus, Action, Util, DataUtil, MenuUtil, ObjectUtil, Storage, translate, analytics, Relation } from 'Lib';
 import { blockStore, commonStore, dbStore, menuStore, detailStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -81,7 +81,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 						</div>
 						<div
 							id={id} 
-							className={[ 'cell', DataUtil.relationClass(item.format) ].join(' ')} 
+							className={[ 'cell', Relation.className(item.format) ].join(' ')} 
 						>
 							<Cell 
 								rootId={rootId}
@@ -312,15 +312,15 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 		};
 
 		let sections: any[] = [
-			{ id: 'text', name: 'Text', children: DataUtil.menuGetBlockText() },
-			{ id: 'list', name: 'List', children: DataUtil.menuGetBlockList() },
-			{ id: 'media', name: 'Media', children: DataUtil.menuGetBlockMedia() },
-			{ id: 'other', name: 'Other', children: DataUtil.menuGetBlockOther() },
-			{ id: 'object', name: 'Objects', children: DataUtil.menuGetBlockObject() },
+			{ id: 'text', name: 'Text', children: MenuUtil.getBlockText() },
+			{ id: 'list', name: 'List', children: MenuUtil.getBlockList() },
+			{ id: 'media', name: 'Media', children: MenuUtil.getBlockMedia() },
+			{ id: 'other', name: 'Other', children: MenuUtil.getBlockOther() },
+			{ id: 'object', name: 'Objects', children: MenuUtil.getBlockObject() },
 		];
 
 		if (config.experimental) {
-			sections.push({ id: 'dataview', name: 'Inline set', children: DataUtil.menuGetBlockDataview() });
+			sections.push({ id: 'dataview', name: 'Inline set', children: MenuUtil.getBlockDataview() });
 		};
 
 		sections = sections.map((s: any) => {
@@ -336,7 +336,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 		]);
 		
 		if (filter && filter.text) {
-			const actions = DataUtil.menuGetActions({ hasFile: false, hasLink: false });
+			const actions = MenuUtil.getActions({ hasFile: false, hasLink: false });
 
 			if (block.canTurnPage()) {
 				actions.push({ id: 'turnObject', icon: 'object', name: 'Turn into object', arrow: true });
@@ -347,19 +347,19 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 			]);
 
 			if (block.canHaveAlign()) {
-				sections.push({ id: 'align', icon: 'align', name: 'Align', color: '', children: DataUtil.menuGetAlign(block.isTextQuote()) });
+				sections.push({ id: 'align', icon: 'align', name: 'Align', color: '', children: MenuUtil.getAlign(block.isTextQuote()) });
 			};
 			if (block.canHaveColor()) {
-				sections.push({ id: 'color', icon: 'color', name: 'Text color', color: '', children: DataUtil.menuGetTextColors() });
+				sections.push({ id: 'color', icon: 'color', name: 'Text color', color: '', children: MenuUtil.getTextColors() });
 			};
 			if (block.canHaveBackground()) {
-				sections.push({ id: 'bgColor', icon: 'bgColor', name: 'Background color', color: '', children: DataUtil.menuGetBgColors() });
+				sections.push({ id: 'bgColor', icon: 'bgColor', name: 'Background color', color: '', children: MenuUtil.getBgColors() });
 			};
 			
-			sections = DataUtil.menuSectionsFilter(sections, filter.text);
+			sections = MenuUtil.sectionsFilter(sections, filter.text);
 		};
 		
-		sections = DataUtil.menuSectionsMap(sections);
+		sections = MenuUtil.sectionsMap(sections);
 		return sections;
 	};
 	
@@ -602,12 +602,12 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 
 					const create = (template: any) => {
 
-						DataUtil.pageCreate(rootId, blockId, details, position, template?.id, DataUtil.defaultLinkSettings(), [], (message: any) => {
+						ObjectUtil.create(rootId, blockId, details, position, template?.id, DataUtil.defaultLinkSettings(), [], (message: any) => {
 							if (message.error.code) {
 								return;
 							};
 
-							DataUtil.objectOpenPopup({ ...details, id: message.targetId });
+							ObjectUtil.openPopup({ ...details, id: message.targetId });
 
 							analytics.event('CreateObject', {
 								route: 'Powertool',

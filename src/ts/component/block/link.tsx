@@ -1,10 +1,10 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import $ from 'jquery';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
-import $ from 'jquery';
 import { Icon, IconObject, Loader, ObjectName, Cover } from 'Component';
-import { I, DataUtil, translate, keyboard, focus } from 'Lib';
+import { I, DataUtil, ObjectUtil, translate, keyboard, focus } from 'Lib';
 import { detailStore, blockStore, dbStore } from 'Store';
 
 interface Props extends I.BlockComponent, RouteComponentProps<any> {};
@@ -249,20 +249,20 @@ const BlockLink = observer(class BlockLink extends React.Component<Props, {}> {
 		};
 		
 		if (!(keyboard.withCommand(e) && ids.length)) {
-			DataUtil.objectOpenEvent(e, object);
+			ObjectUtil.openEvent(e, object);
 		};
 	};
 	
 	onSelect (icon: string) {
 		const { block } = this.props;
 
-		DataUtil.pageSetIcon(block.content.targetBlockId, icon, '');
+		ObjectUtil.setIcon(block.content.targetBlockId, icon, '');
 	};
 
 	onUpload (hash: string) {
 		const { block } = this.props;
 
-		DataUtil.pageSetIcon(block.content.targetBlockId, '', hash);
+		ObjectUtil.setIcon(block.content.targetBlockId, '', hash);
 	};
 
 	onCheckbox () {
@@ -270,7 +270,7 @@ const BlockLink = observer(class BlockLink extends React.Component<Props, {}> {
 		const { targetBlockId } = block.content;
 		const object = detailStore.get(rootId, targetBlockId, []);
 
-		DataUtil.pageSetDone(targetBlockId, !object.done);
+		ObjectUtil.setDone(targetBlockId, !object.done);
 	};
 
 	resize () {

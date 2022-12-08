@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
-import { I, C, keyboard, analytics, DataUtil, Util, focus, Action, Preview } from 'Lib';
+import { I, C, keyboard, analytics, DataUtil, ObjectUtil, Util, Preview, focus, Action } from 'Lib';
 import { blockStore, detailStore, commonStore, dbStore, menuStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 import Url from 'json/url.json';
@@ -422,7 +422,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				break;
 
 			case 'history':
-				DataUtil.objectOpenEvent(e, { layout: I.ObjectLayout.History, id: object.id });
+				ObjectUtil.openEvent(e, { layout: I.ObjectLayout.History, id: object.id });
 				break;
 			
 			case 'search':
@@ -432,7 +432,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			case 'pageCopy':
 				C.ObjectListDuplicate([ rootId ], (message: any) => {
 					if (!message.error.code && message.ids.length) {
-						DataUtil.objectOpenPopup({ id: message.ids[0], layout: object.layout });
+						ObjectUtil.openPopup({ id: message.ids[0], layout: object.layout });
 					};
 					analytics.event('DuplicateObject', { count: 1 });
 				});
@@ -472,8 +472,8 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				break;
 
 			case 'pageCreate':
-				DataUtil.pageCreate('', '', {}, I.BlockPosition.Bottom, rootId, {}, [], (message: any) => {
-					DataUtil.objectOpenRoute({ id: message.targetId });
+				ObjectUtil.create('', '', {}, I.BlockPosition.Bottom, rootId, {}, [], (message: any) => {
+					ObjectUtil.openRoute({ id: message.targetId });
 
 					analytics.event('CreateObject', {
 						route: 'MenuObject',
@@ -517,7 +517,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				break;
 
 			case 'pageLink':
-				Util.clipboardCopy({ text: Url.protocol + DataUtil.objectRoute(object) });
+				Util.clipboardCopy({ text: Url.protocol + ObjectUtil.route(object) });
 				break;
 
 			case 'pageReload':
@@ -528,7 +528,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 
 			case 'pageInstall':
 				Action.install(object, (message: any) => {
-					DataUtil.objectOpenAuto(message.details);
+					ObjectUtil.openAuto(message.details);
 				});
 				break;
 
@@ -564,7 +564,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 
 			case 'templateCreate':
 				C.TemplateCreateFromObject(rootId, (message: any) => {
-					DataUtil.objectOpenPopup({ id: message.id, layout: object.layout });
+					ObjectUtil.openPopup({ id: message.id, layout: object.layout });
 
 					analytics.event('CreateTemplate', { objectType: object.type });
 				});

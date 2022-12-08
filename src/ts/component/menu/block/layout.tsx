@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
 import { blockStore } from 'Store';
-import { I, keyboard, analytics, DataUtil } from 'Lib';
+import { I, keyboard, analytics, DataUtil, ObjectUtil, MenuUtil } from 'Lib';
 import { detailStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -87,7 +87,7 @@ class MenuBlockLayout extends React.Component<Props, {}> {
 
 		let sections = [];
 		if (allowedLayout) {
-			sections.push({ name: 'Choose layout type', children: DataUtil.menuTurnLayouts() });
+			sections.push({ name: 'Choose layout type', children: MenuUtil.turnLayouts() });
 		};
 
 		sections.push({ 
@@ -156,7 +156,7 @@ class MenuBlockLayout extends React.Component<Props, {}> {
 				menuParam.data = Object.assign(menuParam.data, {
 					value: object.layoutAlign,
 					onSelect: (align: I.BlockHAlign) => {
-						DataUtil.pageSetAlign(rootId, align);
+						ObjectUtil.setAlign(rootId, align);
 
 						analytics.event('SetLayoutAlign', { align });
 						close();
@@ -189,7 +189,7 @@ class MenuBlockLayout extends React.Component<Props, {}> {
 
 			analytics.event('SetLayoutWidth');
 		} else {
-			DataUtil.pageSetLayout(rootId, item.id, (message: any) => {
+			ObjectUtil.setLayout(rootId, item.id, (message: any) => {
 				if (onLayoutSelect) {
 					onLayoutSelect(item.id);
 				};

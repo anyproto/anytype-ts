@@ -1,14 +1,13 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { observer } from 'mobx-react';
 import $ from 'jquery';
+import { observer } from 'mobx-react';
 import { InputWithFile, Icon, Loader, Error } from 'Component';
 import { I, C, translate, focus, Action } from 'Lib';
 import { commonStore } from 'Store';
 import Constant from 'json/constant.json';
 
 interface Props extends I.BlockComponent {}
-
 
 const BlockVideo = observer(class BlockVideo extends React.Component<Props, {}> {
 

@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader, Block, ListObjectPreview, Deleted } from 'Component';
-import { I, M, C, DataUtil, Util, crumbs, Action } from 'Lib';
+import { I, M, C, DataUtil, ObjectUtil, Util, crumbs, Action } from 'Lib';
 import { blockStore, detailStore, dbStore } from 'Store';
 import Controls from 'Component/page/head/controls';
 import HeadSimple from 'Component/page/head/simple';
@@ -75,7 +75,7 @@ const PageMainSpace = observer(class PageMainSpace extends React.Component<Props
 									key="listTemplate"
 									getItems={() => { return highlighted; }}
 									canAdd={false}
-									onClick={(e: any, item: any) => { DataUtil.objectOpenPopup(item); }} 
+									onClick={(e: any, item: any) => { ObjectUtil.openPopup(item); }} 
 								/>
 							</div>
 						) : (

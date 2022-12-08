@@ -84,7 +84,7 @@ const MenuItemRelationView = observer(class MenuItemRelationView extends React.C
 				</div>
 				<div
 					id={cellId} 
-					className={[ 'cell', DataUtil.relationClass(format), (!readonly ? 'canEdit' : '') ].join(' ')} 
+					className={[ 'cell', Relation.className(format), (!readonly ? 'canEdit' : '') ].join(' ')} 
 				>
 					<Cell 
 						ref={(ref: any) => { onRef(cellId, ref); }} 

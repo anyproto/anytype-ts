@@ -1,12 +1,12 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import $ from 'jquery';
 import arrayMove from 'array-move';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCache } from 'react-virtualized';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
-import $ from 'jquery';
 import { Icon, IconObject, ObjectName } from 'Component';
-import { I, DataUtil, keyboard, Relation } from 'Lib';
+import { I, ObjectUtil, keyboard, Relation } from 'Lib';
 import { commonStore, detailStore, menuStore } from 'Store';
 
 interface Props extends I.Menu {};
@@ -204,7 +204,7 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 		if (item.id == 'add') {
 			this.onAdd();
 		} else {
-			DataUtil.objectOpenEvent(e, item);
+			ObjectUtil.openEvent(e, item);
 		};
 	};
 

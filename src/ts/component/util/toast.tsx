@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Button, IconObject, ObjectName } from 'Component';
 import { commonStore } from 'Store';
-import { C, Util, DataUtil, I, analytics, translate, keyboard, Preview } from 'Lib';
+import { I, C, Util, DataUtil, ObjectUtil, Preview, analytics, translate, keyboard } from 'Lib';
 
 interface State {
 	object: any;
@@ -201,7 +201,7 @@ const Toast = observer(class Toast extends React.Component<{}, State> {
     };
 
     onOpen (e: any) {
-        DataUtil.objectOpenEvent(e, this.state.target);
+        ObjectUtil.openEvent(e, this.state.target);
     };
 
 });

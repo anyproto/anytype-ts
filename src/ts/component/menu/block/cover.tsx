@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { observer } from 'mobx-react';
 import $ from 'jquery';
-import { I, C, DataUtil, analytics, Util, translate } from 'Lib';
+import { I, C, DataUtil, analytics, Util, translate, ObjectUtil } from 'Lib';
 import { Cover, Filter, Icon, Label, EmptySearch, Loader } from 'Component';
 import { detailStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -381,7 +381,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 			preventCommonDrop(false);
 			
 			if (!message.error.code) {
-				DataUtil.pageSetCover(rootId, I.CoverType.Upload, message.hash);
+				ObjectUtil.setCover(rootId, I.CoverType.Upload, message.hash);
 			};
 		
 			close();

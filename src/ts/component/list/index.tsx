@@ -1,11 +1,11 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { observer } from 'mobx-react';
 import $ from 'jquery';
+import { observer } from 'mobx-react';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import { Icon, IconObject, ObjectName } from 'Component';
 import { blockStore, dbStore } from 'Store';
-import { I, DataUtil, translate } from 'Lib';
+import { I, DataUtil, ObjectUtil, translate } from 'Lib';
 import Constant from 'json/constant.json';
 
 interface Props {
@@ -18,7 +18,7 @@ interface Props {
 	onSortStart?(param: any): void;
 	onSortEnd?(result: any): void;
 	helperContainer?(): any;
-}
+};
 
 const ListIndex = observer(class ListIndex extends React.Component<Props, {}> {
 	
@@ -128,7 +128,7 @@ const ListIndex = observer(class ListIndex extends React.Component<Props, {}> {
 		e.preventDefault();
 		e.stopPropagation();
 
-		DataUtil.pageSetDone(item.id, !item.done);
+		ObjectUtil.setDone(item.id, !item.done);
 	};
 	
 	onMouseEnter (e: any, item: any) {

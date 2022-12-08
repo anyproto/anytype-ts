@@ -1,11 +1,11 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { observer } from 'mobx-react';
 import $ from 'jquery';
 import raf from 'raf';
+import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
+import { observer } from 'mobx-react';
 import { Icon, Button, Cover, Loader, IconObject, Header, ObjectName, ObjectDescription } from 'Component';
-import { I, C, DataUtil, Util, keyboard, Key, focus, translate, sidebar } from 'Lib';
+import { I, C, DataUtil, ObjectUtil, Util, keyboard, Key, focus, translate, sidebar } from 'Lib';
 import { blockStore, popupStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -523,7 +523,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 		const { isPopup } = this.props;
 		const obj = { id: item.id, layout: I.ObjectLayout.Navigation };
 
-		isPopup ? DataUtil.objectOpenPopup(obj) : DataUtil.objectOpenRoute(obj);
+		isPopup ? ObjectUtil.openPopup(obj) : ObjectUtil.openRoute(obj);
 	};
 
 	onConfirm (e: any, item: I.PageInfo) {
@@ -531,7 +531,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 			e.persist();
 		};
 
-		DataUtil.objectOpenEvent(e, item);
+		ObjectUtil.openEvent(e, item);
 	};
 
 	getRootId () {

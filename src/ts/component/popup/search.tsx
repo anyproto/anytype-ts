@@ -1,12 +1,11 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import $ from 'jquery';
 import { Icon, Input, Loader, IconObject, ObjectName, ObjectDescription, EmptySearch } from 'Component';
-import { I, Util, DataUtil, keyboard, Key, focus, translate, analytics } from 'Lib';
+import { I, Util, DataUtil, ObjectUtil, keyboard, Key, focus, translate, analytics } from 'Lib';
 import { commonStore, dbStore } from 'Store';
-
 import Constant from 'json/constant.json';
 
 interface Props extends I.Popup {};
@@ -15,7 +14,6 @@ interface State {
 	loading: boolean;
 	filter: string;
 };
-
 
 const HEIGHT = 32;
 const LIMIT_HEIGHT = 14;
@@ -411,7 +409,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 
 		const filter = Util.filterFix(this.refFilter.getValue());
 
-		DataUtil.objectOpenEvent(e, { ...item, id: item.id });
+		ObjectUtil.openEvent(e, { ...item, id: item.id });
 		analytics.event('SearchResult', { index: item.index + 1, length: filter.length });
 	};
 

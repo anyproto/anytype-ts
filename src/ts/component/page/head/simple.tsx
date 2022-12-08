@@ -1,11 +1,10 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { IconObject, Block, Button } from 'Component';
-import { I, M, Action, DataUtil, focus, keyboard } from 'Lib';
-import { blockStore, detailStore, dbStore } from 'Store';
 import { observer } from 'mobx-react';
 import { getRange } from 'selection-ranges';
-
+import { IconObject, Block, Button } from 'Component';
+import { I, M, Action, DataUtil, ObjectUtil, focus, keyboard } from 'Lib';
+import { blockStore, detailStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
 interface Props {
@@ -162,12 +161,12 @@ const HeadSimple = observer(class Controls extends React.Component<Props, {}> {
 
 	onSelect (icon: string) {
 		const { rootId } = this.props;
-		DataUtil.pageSetIcon(rootId, icon, '');
+		ObjectUtil.setIcon(rootId, icon, '');
 	};
 
 	onUpload (hash: string) {
 		const { rootId } = this.props;
-		DataUtil.pageSetIcon(rootId, '', hash);
+		ObjectUtil.setIcon(rootId, '', hash);
 	};
 
 	onKeyDown (e: any, item: any) {
@@ -278,7 +277,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props, {}> {
 		const object = detailStore.get(rootId, rootId);
 
 		Action.install(object, (message: any) => {
-			DataUtil.objectOpenAuto(message.details);
+			ObjectUtil.openAuto(message.details);
 		});
 	};
 

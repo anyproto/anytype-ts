@@ -33,7 +33,7 @@ const HeadCell = observer(class HeadCell extends React.Component<Props, {}> {
 		const readonly = relation.isReadonlyValue;
 
 		const Cell = SortableElement((item: any) => {
-			const cn = [ 'cellHead', DataUtil.relationClass(format) ];
+			const cn = [ 'cellHead', Relation.className(format) ];
 
 			return (
 				<div id={Relation.cellId('head', relationKey, '')} className={cn.join(' ')}>

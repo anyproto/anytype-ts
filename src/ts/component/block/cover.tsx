@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { observer } from 'mobx-react';
 import $ from 'jquery';
 import { Icon, Drag, Cover, Loader } from 'Component';
-import { I, C, Util, DataUtil, focus, translate } from 'Lib';
+import { I, C, Util, DataUtil, ObjectUtil, focus, translate } from 'Lib';
 import { commonStore, blockStore, detailStore, menuStore } from 'Store';
 import ControlButtons  from 'Component/page/head/controlButtons';
 import Constant from 'json/constant.json';
@@ -206,12 +206,12 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 			},
 			data: {
 				onSelect: (icon: string) => {
-					DataUtil.pageSetIcon(rootId, icon, '', () => {
+					ObjectUtil.setIcon(rootId, icon, '', () => {
 						menuStore.update('smile', { element: `#block-icon-${rootId}` });
 					});
 				},
 				onUpload (hash: string) {
-					DataUtil.pageSetIcon(rootId, '', hash, () => {
+					ObjectUtil.setIcon(rootId, '', hash, () => {
 						menuStore.update('smile', { element: `#block-icon-${rootId}` });
 					});
 				},
@@ -237,7 +237,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 					return;
 				};
 				
-				DataUtil.pageSetIcon(rootId, '', message.hash);
+				ObjectUtil.setIcon(rootId, '', message.hash);
 			});
 		});
 	};
@@ -329,7 +329,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 		const { rootId } = this.props;
 
 		this.loaded = false;
-		DataUtil.pageSetCover(rootId, item.type, item.id, item.coverX, item.coverY, item.coverScale);
+		ObjectUtil.setCover(rootId, item.type, item.id, item.coverX, item.coverY, item.coverScale);
 	};
 	
 	onEdit (e: any) {
@@ -366,7 +366,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 		this.coords.y = -0.25;
 		this.scale = 0;
 
-		DataUtil.pageSetCover(rootId, type, hash, this.coords.x, this.coords.y, this.scale, () => {
+		ObjectUtil.setCover(rootId, type, hash, this.coords.x, this.coords.y, this.scale, () => {
 			this.loaded = false;
 			this.setState({ justUploaded: true });
 			this.setLoading(false);
@@ -380,7 +380,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 		const { rootId } = this.props;
 		const object = detailStore.get(rootId, rootId, Constant.coverRelationKeys, true);
 
-		DataUtil.pageSetCover(rootId, object.coverType, object.coverId, this.coords.x, this.coords.y, this.scale, () => {
+		ObjectUtil.setCover(rootId, object.coverType, object.coverId, this.coords.x, this.coords.y, this.scale, () => {
 			this.old = null;
 			this.setState({ isEditing: false, justUploaded: false });
 		});
@@ -394,7 +394,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 		const { justUploaded } = this.state;
 
 		if (justUploaded && this.old) {
-			DataUtil.pageSetCover(rootId, this.old.coverType, this.old.coverId, this.old.coverX, this.old.coverY, this.old.coverScale);
+			ObjectUtil.setCover(rootId, this.old.coverType, this.old.coverId, this.old.coverX, this.old.coverY, this.old.coverScale);
 		};
 		
 		this.old = null;
@@ -616,7 +616,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 			};
 			
 			this.loaded = false;
-			DataUtil.pageSetCover(rootId, I.CoverType.Upload, message.hash);
+			ObjectUtil.setCover(rootId, I.CoverType.Upload, message.hash);
 		});
 	};
 	

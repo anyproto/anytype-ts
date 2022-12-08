@@ -1,13 +1,12 @@
 import * as React from 'react';
-import { observer } from 'mobx-react';
 import $ from 'jquery';
+import { observer } from 'mobx-react';
 import { Icon, Header, Footer, Loader, ListObjectPreview, ListObject, Select, Deleted } from 'Component';
-import { I, C, DataUtil, Util, focus, crumbs, Action, analytics } from 'Lib';
+import { I, C, DataUtil, ObjectUtil, MenuUtil, Util, focus, crumbs, Action, analytics, Relation } from 'Lib';
 import { commonStore, detailStore, dbStore, menuStore, popupStore, blockStore } from 'Store';
 import HeadSimple from 'Component/page/head/simple';
 import Constant from 'json/constant.json';
 import Errors from 'json/error.json';
-
 
 interface Props extends I.PageComponent {
 	rootId: string;
@@ -67,7 +66,7 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 		const templates = dbStore.getRecords(subIdTemplate, '').map(id => detailStore.get(subIdTemplate, id, []));
 		const totalTemplate = dbStore.getMeta(subIdTemplate, '').total;
 		const totalObject = dbStore.getMeta(this.getSubIdObject(), '').total;
-		const layout: any = DataUtil.menuGetLayouts().find(it => it.id == object.recommendedLayout) || {};
+		const layout: any = MenuUtil.getLayouts().find(it => it.id == object.recommendedLayout) || {};
 		const showTemplates = !NO_TEMPLATES.includes(rootId);
 
 		const allowedObject = object.isInstalled && (object.smartblockTypes || []).includes(I.SmartBlockType.Page);
@@ -82,10 +81,10 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 			return config.debug.ho ? true : !it.isHidden;
 		});
 
-		const Relation = (item: any) => (
+		const ItemRelation = (item: any) => (
 			<div id={'item-' + item.id} className={[ 'item', (item.isHidden ? 'isHidden' : ''), 'canEdit' ].join(' ')}>
 				<div className="clickable" onClick={(e: any) => { this.onRelationEdit(e, item.id); }}>
-					<Icon className={[ 'relation', DataUtil.relationClass(item.format) ].join(' ')} />
+					<Icon className={[ 'relation', Relation.className(item.format) ].join(' ')} />
 					<div className="name">{item.name}</div>
 				</div>
 			</div>
@@ -127,7 +126,7 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 										getItems={() => { return templates; }}
 										canAdd={allowedTemplate}
 										onAdd={this.onTemplateAdd}
-										onClick={(e: any, item: any) => { DataUtil.objectOpenPopup(item); }} 
+										onClick={(e: any, item: any) => { ObjectUtil.openPopup(item); }} 
 									/>
 								</div>
 							) : (
@@ -150,7 +149,7 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 								<Select 
 									id="recommendedLayout" 
 									value={object.recommendedLayout} 
-									options={DataUtil.menuTurnLayouts()} 
+									options={MenuUtil.turnLayouts()} 
 									arrowClassName="light" 
 									onChange={this.onLayout} 
 								/>
@@ -167,7 +166,7 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 						<div className="title">{relations.length} {Util.cntWord(relations.length, 'relation', 'relations')}</div>
 						<div className="content">
 							{relations.map((item: any, i: number) => (
-								<Relation key={i} {...item} />
+								<ItemRelation key={i} {...item} />
 							))}
 							{allowedRelation ? <ItemAdd /> : ''}
 						</div>
@@ -288,7 +287,7 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 			focus.clear(true);
 			analytics.event('CreateTemplate', { objectType: rootId });
 
-			DataUtil.objectOpenPopup(message.details, {
+			ObjectUtil.openPopup(message.details, {
 				onClose: () => {
 					if (this.refListPreview) {
 						this.refListPreview.updateItem(message.objectId);
@@ -342,8 +341,8 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 		};
 
 		const create = (template: any) => {
-			DataUtil.pageCreate('', '', details, I.BlockPosition.Bottom, template?.id, {}, [], (message: any) => {
-				DataUtil.objectOpenPopup({ ...details, id: message.targetId });
+			ObjectUtil.create('', '', details, I.BlockPosition.Bottom, template?.id, {}, [], (message: any) => {
+				ObjectUtil.openPopup({ ...details, id: message.targetId });
 
 				analytics.event('CreateObject', {
 					route: 'ObjectType',
@@ -391,7 +390,7 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 		C.ObjectCreateSet([ rootId ], details, '', (message: any) => {
 			if (!message.error.code) {
 				focus.clear(true);
-				DataUtil.objectOpenPopup(message.details);
+				ObjectUtil.openPopup(message.details);
 			};
 		});
 	};

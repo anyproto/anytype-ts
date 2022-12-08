@@ -115,7 +115,6 @@
 		"relationKey", 
 		"relationFormat",
 		"relationMaxCount", 
-		"relationReadonly", 
 		"relationReadonlyValue", 
 		"relationDefaultValue", 
 		"relationFormatObjectTypes",
@@ -134,7 +133,7 @@
 
 	"relationRelationKeys": [
 		"id", "workspaceId", "type", "layout", "name", "relationFormat", "relationKey", "isReadonly", "isHidden", "isDeleted", "isArchived", "isFavorite", "restrictions",
-		"relationMaxCount", "relationReadonly", "relationReadonlyValue", "relationDefaultValue", "relationFormatObjectTypes", "sourceObject", "restrictions"
+		"relationMaxCount", "relationReadonlyValue", "relationDefaultValue", "relationFormatObjectTypes", "sourceObject", "restrictions"
 	],
 
 	"coverRelationKeys":	 [ "coverId", "coverType", "coverX", "coverY", "coverScale" ],

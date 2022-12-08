@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import { I, C, Util, DataUtil, Storage, focus, history as historyPopup, analytics, Renderer, sidebar, Preview } from 'Lib';
+import { I, C, Util, Storage, focus, history as historyPopup, analytics, Renderer, sidebar, ObjectUtil, Preview } from 'Lib';
 import { commonStore, authStore, blockStore, detailStore, menuStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 import KeyCode from 'json/key.json';
@@ -183,13 +183,13 @@ class Keyboard {
 			// Navigation links
 			this.shortcut(`${cmd}+o`, e, (pressed: string) => {
 				e.preventDefault();
-				DataUtil.objectOpenPopup({ id: this.getRootId(), layout: I.ObjectLayout.Navigation });
+				ObjectUtil.openPopup({ id: this.getRootId(), layout: I.ObjectLayout.Navigation });
 			});
 
 			// Graph
 			this.shortcut(`${cmd}+alt+o`, e, (pressed: string) => {
 				e.preventDefault();
-				DataUtil.objectOpenPopup({ id: this.getRootId(), layout: I.ObjectLayout.Graph });
+				ObjectUtil.openPopup({ id: this.getRootId(), layout: I.ObjectLayout.Graph });
 			});
 
 			// Go to dashboard
@@ -255,8 +255,8 @@ class Keyboard {
 			flags = flags.concat([ I.ObjectFlag.DeleteEmpty ]);
 		};
 		
-		DataUtil.pageCreate(rootId, targetId, details, position, '', {}, flags, (message: any) => {
-			DataUtil.objectOpenPopup({ id: message.targetId });
+		ObjectUtil.create(rootId, targetId, details, position, '', {}, flags, (message: any) => {
+			ObjectUtil.openPopup({ id: message.targetId });
 		});
 	};
 
@@ -376,7 +376,7 @@ class Keyboard {
 				break;
 
 			case 'graph':
-				DataUtil.objectOpenPopup({ id: this.getRootId(), layout: I.ObjectLayout.Graph });
+				ObjectUtil.openPopup({ id: this.getRootId(), layout: I.ObjectLayout.Graph });
 				break;
 
 			case 'print':

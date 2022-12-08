@@ -1,13 +1,12 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import $ from 'jquery';
-import { I, C, analytics, keyboard, Key, translate, DataUtil, Relation } from 'Lib';
+import { I, C, analytics, keyboard, Key, translate, DataUtil, MenuUtil, Relation } from 'Lib';
 import { Input, MenuItemVertical } from 'Component';
 import { blockStore, dbStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
 interface Props extends I.Menu {};
-
 
 const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> {
 	
@@ -239,7 +238,7 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 		const { rootId, blockId, readonly } = data;
 		const view = data.view.get();
 		const views = dbStore.getViews(rootId, blockId);
-		const types = DataUtil.menuGetViews().map((it: any) => {
+		const types = MenuUtil.getViews().map((it: any) => {
 			it.sectionId = 'type';
 			it.icon = 'view c' + it.id;
 			return it;
