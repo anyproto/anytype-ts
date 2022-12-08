@@ -142,6 +142,13 @@
             .cellContent.isName { color: $colorPrimary; }
         }
 
+		.viewItem.viewGallery, 
+		.viewItem.viewBoard {
+			.card {
+				.cellContent.c-description { color: $colorPrimary; }
+			}
+		}
+
         .viewItem.viewGallery {
             .card { background: $colorBlack; border-color: $colorLinePrimary; }
             .card {
