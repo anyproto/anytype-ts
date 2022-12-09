@@ -2,8 +2,8 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { observer } from 'mobx-react';
 import { Icon, IconObject } from 'Component';
-import { I, C, keyboard, DataUtil } from 'Lib';
-import { menuStore, blockStore, detailStore } from 'Store';
+import { I, C, keyboard, DataUtil, ObjectUtil } from 'Lib';
+import { menuStore, detailStore } from 'Store';
 import Constant from 'json/constant.json';
 
 interface Props extends I.ViewComponent {};
@@ -263,7 +263,7 @@ const Head = observer(class Head extends React.Component<Props, {}> {
 			return;
 		};
 
-		DataUtil.pageSetIcon(targetObjectId, icon, '');
+		ObjectUtil.setIcon(targetObjectId, icon, '');
 	};
 
 	onIconUpload (hash: string) {
@@ -274,7 +274,7 @@ const Head = observer(class Head extends React.Component<Props, {}> {
 			return;
 		};
 
-		DataUtil.pageSetIcon(targetObjectId, '', hash);
+		ObjectUtil.setIcon(targetObjectId, '', hash);
 	};
 
 });
