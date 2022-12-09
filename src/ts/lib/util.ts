@@ -923,21 +923,21 @@ class Util {
 	};
 
 	saveClipboardFiles (items: any[], data: any, callBack: (data: any) => void) {
-		const ret = [];
-
 		if (!items.length) {
 			return;
 		};
 
+		let ret: any[] = [];
 		let n = 0;
 		let cb = () => {
+			n++;
 			if (n == items.length) {
 				callBack({ ...data, files: ret });
 			};
-			n++;
 		};
 
 		for (let item of items) {
+			console.log(item.path);
 			if (item.path) {
 				ret.push({ name: item.name, path: item.path });
 				cb();
