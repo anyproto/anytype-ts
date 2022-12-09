@@ -1,13 +1,11 @@
 import * as React from 'react';
 import { Icon, IconObject } from 'Component';
-import { I, DataUtil, sidebar } from 'Lib';
+import { I, ObjectUtil, sidebar } from 'Lib';
 import { blockStore, detailStore, popupStore } from 'Store';
 import { observer } from 'mobx-react';
-
 import Constant from 'json/constant.json';
 
 interface Props {};
-
 
 const Footer = observer(class Item extends React.Component<Props, {}> {
 
@@ -36,11 +34,11 @@ const Footer = observer(class Item extends React.Component<Props, {}> {
 
     onProfile (e: any) {
 		const object = detailStore.get(Constant.subId.profile, blockStore.profile);
-		DataUtil.objectOpenEvent(e, object);
+		ObjectUtil.openEvent(e, object);
 	};
 
 	onStore (e: any) {
-		DataUtil.objectOpenPopup({ layout: I.ObjectLayout.Store });
+		ObjectUtil.openPopup({ layout: I.ObjectLayout.Store });
 	};
 
 	onSettings (e: any) {
@@ -48,8 +46,8 @@ const Footer = observer(class Item extends React.Component<Props, {}> {
 	};
 
 	onAdd (e: any) {
-		DataUtil.pageCreate('', '', {}, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.DeleteEmpty, I.ObjectFlag.SelectType ], (message: any) => {
-			DataUtil.objectOpenPopup({ id: message.targetId });
+		ObjectUtil.create('', '', {}, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.DeleteEmpty, I.ObjectFlag.SelectType ], (message: any) => {
+			ObjectUtil.openPopup({ id: message.targetId });
 		});
 	};
 	

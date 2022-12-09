@@ -299,6 +299,7 @@ const Mapper = {
 			return {
 				relationKey: obj.getRelationkey(),
 				type: obj.getType(),
+				customOrder: (obj.getCustomorderList() || []).map(Decode.decodeValue),
 				//includeTime: obj.getIncludetime(),
 			};
 		},
@@ -672,6 +673,7 @@ const Mapper = {
 			
 			item.setRelationkey(obj.relationKey);
 			item.setType(obj.type);
+			item.setCustomorderList((obj.customOrder || []).map(Encode.encodeValue));
 			//item.setIncludetime(obj.includeTime);
 
 			return item;

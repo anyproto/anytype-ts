@@ -4,7 +4,7 @@ import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
 import QRCode from 'qrcode.react';
 import { Title, Label, Textarea, Button } from 'Component';
-import { I, C, translate, analytics, Util } from 'Lib';
+import { I, C, translate, analytics, Util, Preview } from 'Lib';
 import { commonStore, authStore } from 'Store';
 import Head from './head';
 
@@ -123,8 +123,9 @@ const PopupSettingsPagePhrase = observer(class PopupSettingsPagePhrase extends R
 
 	onCopy (e: any) {
 		this.refPhrase.focus();
+
 		Util.clipboardCopy({ text: authStore.phrase });
-		Util.toastShow({ action: I.ToastAction.Copy, text: 'Recovery phrase' });
+		Preview.toastShow({ text: 'Recovery phrase copied to clipboard' });
 
 		analytics.event('KeychainCopy', { type: 'ScreenSettings' });
 	};

@@ -1,12 +1,12 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { observer } from 'mobx-react';
-import { throttle } from 'lodash';
 import $ from 'jquery';
 import raf from 'raf';
+import { observer } from 'mobx-react';
+import { throttle } from 'lodash';
 import { Block, Icon, Loader, Deleted, DropTarget } from 'Component';
 import { commonStore, blockStore, detailStore, menuStore, popupStore } from 'Store';
-import { I, C, Key, Util, DataUtil, Mark, focus, keyboard, crumbs, Storage, Mapper, Action, translate, analytics, Renderer } from 'Lib';
+import { I, C, Key, Util, DataUtil, ObjectUtil, Preview, Mark, focus, keyboard, crumbs, Storage, Mapper, Action, translate, analytics, Renderer } from 'Lib';
 import Controls from 'Component/page/head/controls';
 import PageHeadEdit from 'Component/page/head/edit';
 import Constant from 'json/constant.json';
@@ -499,7 +499,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			return;
 		};
 
-		Util.previewHide(true);
+		Preview.previewHide(true);
 		
 		const ids = selection.get(I.SelectType.Block);
 		const cmd = keyboard.cmdKey();
@@ -685,7 +685,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			length--;
 		};
 
-		Util.previewHide(true);
+		Preview.previewHide(true);
 		this.uiHide();
 		
 		if (platform == I.Platform.Mac) {
@@ -1437,7 +1437,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		this.scrollTop = top;
 
 		Storage.setScroll('editor' + (isPopup ? 'Popup' : ''), rootId, top);
-		Util.previewHide(false);
+		Preview.previewHide(false);
 	};
 	
 	onCopy (e: any, cut: boolean) {
@@ -1513,62 +1513,11 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		analytics.event(cut ? 'CutBlock' : 'CopyBlock');
 	};
 
-	getClipboardFiles (e: any) {
-		const items = (e.clipboardData || e.originalEvent.clipboardData).items;
-		const files = [];
-
-		if (items && items.length) {
-			for (let item of items) {
-				if (item.kind != 'file') {
-					continue;
-				};
-
-				const file = item.getAsFile();
-				if (file) {
-					files.push(file);
-				};
-			};
-		};
-		return files;
-	};
-
-	saveClipboardFiles (e: any, data: any, callBack: (data: any) => void) {
-		const files = this.getClipboardFiles(e);
-		const ret = [];
-
-		if (!files.length) {
-			return;
-		};
-
-		const cb = () => {
-			if (ret.length == files.length) {
-				callBack({ ...data, files: ret });
-			};
-		};
-
-		for (let file of files) {
-			if (file.path) {
-				ret.push({ name: file.name, path: file.path });
-				cb();
-			} else {
-				const reader = new FileReader();
-				reader.onload = function(e) {
-					ret.push({ 
-						name: file.name, 
-						path: window.Electron.fileWrite(file.name, reader.result, 'binary'),
-					});
-					cb();
-				};
-				reader.readAsBinaryString(file);
-			};
-		};
-	};
-	
 	onPaste (e: any, props: any, force?: boolean, data?: any) {
 		const { dataset, rootId } = this.props;
 		const { selection } = dataset || {};
 		const { focused, range } = focus.state;
-		const files = this.getClipboardFiles(e);
+		const files = Util.getDataTransferFiles((e.clipboardData || e.originalEvent.clipboardData).items);
 
 		menuStore.closeAll([ 'blockAdd' ]);
 
@@ -1581,7 +1530,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		};
 
 		if (files.length && !data.files.length) {
-			this.saveClipboardFiles(e, data, (data: any) => {
+			Util.saveClipboardFiles(files, data, (data: any) => {
 				this.onPaste(e, props, force, data);
 			});
 			return;
@@ -1695,7 +1644,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 									return;
 								};
 
-								DataUtil.objectOpenRoute({ id: message.objectId, layout: I.ObjectLayout.Bookmark });
+								ObjectUtil.openRoute({ id: message.objectId, layout: I.ObjectLayout.Bookmark });
 
 								analytics.event('CreateObject', {
 									objectType: Constant.typeId.bookmark,
@@ -1746,7 +1695,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		e.ctrlKey = false;
 		e.metaKey = false;
 
-		DataUtil.objectOpenEvent(e, { layout: I.ObjectLayout.History, id: rootId });
+		ObjectUtil.openEvent(e, { layout: I.ObjectLayout.History, id: rootId });
 	};
 
 	getLayoutIds (ids: string[]) {

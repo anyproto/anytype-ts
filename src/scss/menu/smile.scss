@@ -4,6 +4,7 @@
 	.menu.menuSmile { width: 384px; user-select: none; }
 	.menu.menuSmile {
 		.content { overflow: visible; padding-bottom: 0px; }
+		.wrap { display: flex; flex-direction: column; }
 		.ReactVirtualized__List { padding: 0px; }
 
 		.head { color: $colorMediumGrey; font-weight: 500; padding: 3px 16px 10px 16px; border-bottom: 1px solid $colorLightGrey; }
@@ -18,7 +19,7 @@
 			.inner { height: 35px; }
 		}
 	
-		.items { overflow: overlay; height: 288px; }
+		.items { height: 238px; }
 		
 		.section { padding: 11px 14px !important; border: 0px; }
 		.section > .name { padding: 0px; margin: 0px; }

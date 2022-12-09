@@ -68,6 +68,7 @@ export interface BlockComponent {
 	readonly?: boolean;
 	isPopup?: boolean;
 	isInsideTable?: boolean;
+	isInsidePreview?: boolean;
 	index?: any;
 	className?: string;
 	onKeyDown?(e: any, text: string, marks: I.Mark[], range: I.TextRange, props: any): void;

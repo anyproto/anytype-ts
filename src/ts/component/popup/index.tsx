@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import $ from 'jquery';
 import raf from 'raf';
-import { I, Util, analytics, Storage } from 'Lib';
+import { I, Util, analytics, Storage, Preview } from 'Lib';
 import { Dimmer } from 'Component';
 import { menuStore, popupStore } from 'Store';
 import PopupSettings from './settings';
@@ -144,8 +144,8 @@ class Popup extends React.Component<Props, {}> {
 	};
 
 	close () {
-		Util.previewHide(true);
-		Util.tooltipHide(true);
+		Preview.previewHide(true);
+		Preview.tooltipHide(true);
 
 		menuStore.closeAll();
 		popupStore.close(this.props.id);

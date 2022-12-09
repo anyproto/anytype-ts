@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
-import { I, keyboard, DataUtil } from 'Lib';
+import { I, keyboard, MenuUtil } from 'Lib';
 
 interface Props extends I.Menu {};
 
@@ -58,7 +58,7 @@ class MenuBlockColor extends React.Component<Props, {}> {
 	};
 
 	getItems () {
-		return DataUtil.menuGetTextColors();
+		return MenuUtil.getTextColors();
 	};
 	
 	onOver (e: any, item: any) {

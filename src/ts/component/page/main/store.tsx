@@ -1,11 +1,10 @@
 import * as React from 'react';
-import { RouteComponentProps } from 'react-router';
-import { Title, Label, Button, IconObject, Loader, Cover, Header } from 'Component';
-import { I, C, DataUtil, Util, Dataview, Storage, Action, Onboarding, analytics } from 'Lib';
-import { dbStore, blockStore, detailStore, } from 'Store';
+import * as ReactDOM from 'react-dom';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-
+import { Title, Label, Button, Icon, IconObject, Cover, Header, Filter } from 'Component';
+import { I, C, DataUtil, ObjectUtil, Util, Storage, Onboarding, analytics, Action } from 'Lib';
+import { dbStore, blockStore, detailStore, commonStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
 interface Props extends I.PageComponent {
@@ -13,15 +12,18 @@ interface Props extends I.PageComponent {
 };
 
 interface State {
-	tab: string;
 	loading: boolean;
 };
 
 enum Tab {
-	None = '',
 	Type = 'type',
 	Template = 'template',
 	Relation = 'relation',
+};
+
+enum View {
+	Marketplace = 'marketplace',
+	Library = 'library',
 };
 
 const Tabs = [
@@ -50,70 +52,88 @@ const Tabs = [
 	},
 ];
 
-const BLOCK_ID = 'dataview';
-
 const PageMainStore = observer(class PageMainStore extends React.Component<Props, State> {
 
 	state = {
-		tab: '',
 		loading: false,
 	};
 
+	top: number = 0;
 	offset: number = 0;
 	cache: any = null;
+	refList: any = null;
+	refFilter: any = null;
+	tab: Tab = Tab.Type;
+	view: View = View.Marketplace;
+
 	_isMounted: boolean = false;
 
-	constructor (props: any) {
+	constructor (props: Props) {
 		super(props);
 
-		this.loadMoreRows = this.loadMoreRows.bind(this);
 		this.getRowHeight = this.getRowHeight.bind(this);
 		this.onTab = this.onTab.bind(this);
+		this.onScroll = this.onScroll.bind(this);
+		this.onFilterChange = this.onFilterChange.bind(this);
+		this.onFilterFocus = this.onFilterFocus.bind(this);
+		this.onFilterClear = this.onFilterClear.bind(this);
 	};
 	
 	render () {
-		const { tab, loading } = this.state;
-		const rootId = this.getRootId();
-		const subId = dbStore.getSubId(rootId, BLOCK_ID);
-		const block = blockStore.getLeaf(rootId, BLOCK_ID) || {};
-		const meta = dbStore.getMeta(subId, '');
-		const views = block.content?.views || [];
+		if (!this.cache) {
+			return null;
+		};
+
+		const views = this.getViews();
 		const items = this.getItems();
 
 		let Item = null;
 		let Mid: any = null;
+
+		const filter = (
+			<Filter 
+				ref={(ref: any) => { this.refFilter = ref; }}
+				id="store-filter"
+				icon="search"
+				onFocus={this.onFilterFocus}
+				onChange={this.onFilterChange}
+				onClear={this.onFilterClear}
+			/>
+		);
 
 		const Author = (item: any) => {
 			if (item._empty_) {
 				return null;
 			};
 			return (
-				<div className="author">
-					<IconObject object={item} size={16} />
-					{item.name}
-				</div>
+				<div className="author">{item.name}</div>
 			);
 		};
 
 		const TabList = (item: any) => (
 			<div className="tabs">
 				{views.map((item: any, i: number) => (
-					<div key={item.id} className={[ 'item', (item.id == meta.viewId ? 'active' : '') ].join(' ')} onClick={(e: any) => { this.onView(e, item); }}>
+					<div 
+						key={item.id} 
+						className={[ 'tab', (item.id == this.view ? 'active' : '') ].join(' ')} 
+						onClick={(e: any) => { this.onView(item.id); }}
+					>
 						{item.name}
 					</div>
 				))}
 			</div>
 		);
 
-		switch (tab) {
+		switch (this.tab) {
 
 			default:
 			case Tab.Type:
 				Item = (item: any) => {
-					const author = detailStore.get(subId, item.creator, []);
+					const author = detailStore.get(Constant.subId.store, item.creator, []);
+					const allowedDelete = blockStore.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ]);
 
 					return (
-						<div className={[ 'item', tab, meta.viewId ].join(' ')} onClick={(e: any) => { this.onClick(e, item); }}>
+						<div className="item" onClick={(e: any) => { this.onClick(e, item); }}>
 							<IconObject size={64} iconSize={40} object={item} />
 							<div className="info">
 								<div className="txt">
@@ -121,6 +141,15 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 									<div className="descr">{item.description}</div>
 									<Author {...author} />
 								</div>
+
+								<div className="buttons">
+									<Icon 
+										className={allowedDelete ? 'remove' : 'lock'} 
+										tooltip={allowedDelete ? 'Delete type' : 'Service type'} 
+										onClick={(e: any) => { this.onRemove(e, item); }} 
+									/>
+								</div>
+
 								<div className="line" />
 							</div>
 						</div>
@@ -129,10 +158,9 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 
 				Mid = () => (
 					<div className="mid">
-						<Title text="Type every object" />
-						<Label text="Anytype includes many popular types of objects for you to get started" />
-
-						<Button text="Create a new type" onClick={(e: any) => { this.onCreateType(e); }} />
+						<Title text="Types Library" />
+						<Label text="Types are like categories that help you group and manage your Objects.<br/>Create your own or add some from our Marketplace." />
+						{filter}
 					</div>
 				);
 				break;
@@ -140,10 +168,10 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 			case Tab.Template:
 				Item = (item: any) => {
 					const { name, description, coverType, coverId, coverX, coverY, coverScale } = item;
-					const author = detailStore.get(subId, item.creator, []);
+					const author = detailStore.get(Constant.subId.store, item.creator, []);
 
 					return (
-						<div className={[ 'item', tab, meta.viewId ].join(' ')} onClick={(e: any) => { this.onClick(e, item); }}>
+						<div className="item" onClick={(e: any) => { this.onClick(e, item); }}>
 							<div className="img">
 								{coverId && coverType ? <Cover type={coverType} id={coverId} image={coverId} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={true} /> : ''}
 							</div>
@@ -160,7 +188,6 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 					<div className="mid">
 						<Title text="Template space" />
 						<Label text="Our beautifully-designed templates come with hundreds" />
-
 						<Button text="Create a new template" onClick={(e: any) => { this.onCreateTemplate(); }} />
 					</div>
 				);
@@ -169,17 +196,25 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 			case Tab.Relation:
 				Item = (item: any) => {
 					const { name, description } = item;
-					const author = detailStore.get(subId, item.creator, []);
+					const allowedDelete = blockStore.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ]);
 					
 					return (
-						<div className={[ 'item', tab, meta.viewId ].join(' ')} onClick={(e: any) => { this.onClick(e, item); }}>
+						<div className="item" onClick={(e: any) => { this.onClick(e, item); }}>
 							<IconObject size={48} iconSize={28} object={item} />
 							<div className="info">
 								<div className="txt">
 									<div className="name">{name}</div>
 									<div className="descr">{description}</div>
-									<Author {...author} />
 								</div>
+
+								<div className="buttons">
+									<Icon 
+										className={allowedDelete ? 'remove' : 'lock'} 
+										tooltip={allowedDelete ? 'Delete relation' : 'Service relation'} 
+										onClick={(e: any) => { this.onRemove(e, item); }} 
+									/>
+								</div>
+
 								<div className="line" />
 							</div>
 						</div>
@@ -188,10 +223,9 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 
 				Mid = () => (
 					<div className="mid">
-						<Title text="All objects are connected" />
-						<Label text="Use relations to build connections between objects" />
-
-						<Button text="Create a new type" />
+						<Title text="Relations library" />
+						<Label text="Relation is a link with a name. They make sense when you are connecting objects, so you can only create a new one from Relations menu in object" />
+						{filter}
 					</div>
 				);
 				break;
@@ -199,7 +233,13 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 		};
 
 		const rowRenderer = (param: any) => {
-			const item = items[param.index];
+			let item = items[param.index];
+			let cn = [ 'row' ];
+
+			if (item.className) {
+				cn.push(item.className);
+			};
+
 			return (
 				<CellMeasurer
 					key={param.key}
@@ -209,7 +249,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 					rowIndex={param.index}
 					hasFixedWidth={() => {}}
 				>
-					<div className="row" style={param.style}>
+					<div className={cn.join(' ')} style={param.style}>
 						{item.children.map((item: any, i: number) => {
 							if (item.id == 'mid') {
 								return <Mid key={i} {...item} />;
@@ -225,60 +265,46 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 		};
 
 		return (
-			<div className={[ 'wrapper', tab ].join(' ')}>
-				<Header component="mainStore" {...this.props} rootId={rootId} tabs={Tabs} tab={tab} onTab={this.onTab} />
+			<div className={[ 'wrapper', this.tab, this.view ].join(' ')}>
+				<Header component="mainStore" {...this.props} tabs={Tabs} tab={this.tab} onTab={this.onTab} />
 
 				<div className="body">
-
-					{loading ? 
-						<Loader id="loader" />
-					: (
-						<div className="items">
-							<InfiniteLoader
-								rowCount={items.length}
-								loadMoreRows={this.loadMoreRows}
-								isRowLoaded={({ index }) => !!items[index]}
-							>
-								{({ onRowsRendered, registerChild }) => (
-									<AutoSizer className="scrollArea">
-										{({ width, height }) => (
-											<List
-												ref={registerChild}
-												width={width}
-												height={height}
-												deferredMeasurmentCache={this.cache}
-												rowCount={items.length}
-												rowHeight={this.getRowHeight}
-												rowRenderer={rowRenderer}
-												onRowsRendered={onRowsRendered}
-												overscanRowCount={10}
-												scrollToAlignment="center"
-											/>
-										)}
-									</AutoSizer>
-								)}
-							</InfiniteLoader>
-						</div>
-					)}
+					<div className="items">
+						<InfiniteLoader
+							rowCount={items.length}
+							loadMoreRows={() => {}}
+							isRowLoaded={({ index }) => true}
+						>
+							{({ onRowsRendered, registerChild }) => (
+								<AutoSizer className="scrollArea">
+									{({ width, height }) => (
+										<List
+											ref={(ref: any) => { this.refList = ref; }}
+											width={width}
+											height={height}
+											deferredMeasurmentCache={this.cache}
+											rowCount={items.length}
+											rowHeight={this.getRowHeight}
+											rowRenderer={rowRenderer}
+											onRowsRendered={onRowsRendered}
+											overscanRowCount={10}
+											onScroll={this.onScroll}
+											scrollToAlignment="start"
+										/>
+									)}
+								</AutoSizer>
+							)}
+						</InfiniteLoader>
+					</div>
 				</div>
 			</div>
 		);
 	};
 	
 	componentDidMount () {
-		const { isPopup } = this.props;
-
 		this._isMounted = true;
-		this.resize();
-		this.onTab(Storage.get('tabStore') || Tabs[0].id);
 
-		if (!isPopup) {
-			DataUtil.setWindowTitleText('Library');
-		};
-	};
-
-	componentDidUpdate () {
-		const { tab } = this.state;
+		const { isPopup } = this.props;
 		const items = this.getItems();
 
 		this.cache = new CellMeasurerCache({
@@ -287,33 +313,30 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 			keyMapper: (i: number) => { return (items[i] || {}).id; },
 		});
 
-		Onboarding.start(Util.toCamelCase('store-' + tab), this.props.isPopup);
 		this.resize();
+		this.onTab(Storage.get('tabStore') || Tab.Type);
+
+		if (!isPopup) {
+			DataUtil.setWindowTitleText('Library');
+		};
+	};
+
+	componentDidUpdate () {
+		const { isPopup } = this.props;
+
+		this.resize();
+		this.refList.recomputeRowHeights();
+
+		Onboarding.start(Util.toCamelCase('store-' + this.tab), isPopup);
 	};
 
 	componentWillUnmount () {
-		const { storeType, storeRelation, storeTemplate } = blockStore;
-
 		this._isMounted = false;
 
-		Action.pageClose(storeType, true);
-		Action.pageClose(storeRelation, true);
-		Action.pageClose(storeTemplate, true);
-	};
-
-	getRootId () {
-		const { tab } = this.state;
-		const { storeType, storeRelation, storeTemplate } = blockStore;
-
-		let id = '';
-		if (tab == Tab.Type) id = storeType;
-		if (tab == Tab.Template) id = storeTemplate;
-		if (tab == Tab.Relation) id = storeRelation;
-		return id;
+		menuStore.closeAll(Constant.menuIds.store);
 	};
 
 	getRowHeight (param: any) {
-		const { tab } = this.state;
 		const { index } = param;
 
 		let h = 0;
@@ -321,10 +344,10 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 		switch (index) {
 			// Mid
 			case 0:
-				switch (tab) {
-					case Tab.Type: h = 238; break;
+				switch (this.tab) {
+					case Tab.Type: h = 264; break;
 					case Tab.Template: h = 280; break;
-					case Tab.Relation: h = 180; break;
+					case Tab.Relation: h = 264; break;
 				};
 				break;
 
@@ -334,7 +357,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 				break;
 
 			default:
-				switch (tab) {
+				switch (this.tab) {
 					case Tab.Type: h = 96; break;
 					case Tab.Template: h = 280; break;
 					case Tab.Relation: h = 64; break;
@@ -345,38 +368,30 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 	};
 
 	getRowLimit () {
-		const { tab } = this.state;
-
 		let l = 0;
-		if (tab == Tab.Type) l = 2;
-		if (tab == Tab.Template) l = 3;
-		if (tab == Tab.Relation) l = 3;
+		if (this.tab == Tab.Type) l = 2;
+		if (this.tab == Tab.Template) l = 3;
+		if (this.tab == Tab.Relation) l = 3;
 		return l;
 	};
 
 	onTab (id: Tab) {
-		if (this.state.tab == id) {
-			return;
-		};
+		this.tab = id;
+		this.onView(View.Library);
 
 		Storage.set('tabStore', id);
 		analytics.event(Util.toUpperCamelCase([ 'ScreenLibrary', id ].join('-')));
-
-		this.state.tab = id;
-		this.setState({ tab: id, loading: true });
-
-		C.ObjectOpen(this.getRootId(), '', (message: any) => {
-			this.getData('marketplace', true);
-			this.setState({ loading: false });
-		});
 	};
 
-	onView (e: any, item: any) {
-		this.getData(item.id, true);
+	onView (id: View) {
+		this.view = id;
+		this.getData(true);
+
+		menuStore.closeAll(Constant.menuIds.store);
 	};
 
 	onClick (e: any, item: any) {
-		DataUtil.objectOpenPopup(item);
+		ObjectUtil.openPopup(item);
 	};
 
 	onCreateType (e: any) {
@@ -391,35 +406,159 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 	onCreateTemplate () {
 	};
 
-	getData (newViewId: string, clear: boolean, callBack?: (message: any) => void) {
-		Dataview.getData({
-			rootId: this.getRootId(), 
-			blockId: BLOCK_ID, 
-			newViewId, 
-			keys: [ 'creator' ].concat(Constant.defaultRelationKeys), 
-			limit: 0, 
-			offset: 0, 
-			clear,
-			ignoreWorkspace: true,
-		}, callBack);
+	onFilterChange (v: string) {
+		menuStore.updateData(this.getMenuId(), { filter: v });
 	};
 
-	loadMoreRows ({ startIndex, stopIndex }) {
-		const rootId = this.getRootId();
-		const { viewId } = dbStore.getMeta(rootId, BLOCK_ID);
+	onFilterClear () {	
+		menuStore.closeAll(Constant.menuIds.store);
+	};
 
-        return new Promise((resolve, reject) => {
-			this.offset += 25 * this.getRowLimit();
-			this.getData(viewId, false, resolve);
+	onFilterFocus (e: any) {
+		const menuParam: any = {
+			element: '#store-filter',
+			commonFilter: true,
+			horizontal: I.MenuDirection.Center,
+			width: 386,
+			offsetY: 4,
+			data: {
+				filter: this.refFilter.getValue(),
+				noFilter: true,
+			}
+		};
+
+		switch (this.tab) {
+			case Tab.Type:
+				menuParam.data = Object.assign(menuParam.data, {
+					onClick: (item: any) => {
+						this.onClick(e, item);
+					}
+				});
+				break;
+
+			case Tab.Relation:
+				menuParam.data = Object.assign(menuParam.data, {
+					menuIdEdit: 'blockRelationEdit',
+					addCommand: (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {
+						this.onClick(e, relation);
+					},
+				});
+				break;
+		};
+
+		menuStore.open(this.getMenuId(), menuParam);
+	};
+
+	getMenuId () {
+		let menuId = '';
+		switch (this.tab) {
+			case Tab.Type:
+				menuId = 'typeSuggest';
+				break;
+
+			case Tab.Relation:
+				menuId = 'relationSuggest';
+				break;
+		};
+		return menuId;
+	};
+
+	getData (clear: boolean, callBack?: (message: any) => void) {
+		const { workspace } = commonStore;
+		const filters: I.Filter[] = [
+			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: this.getTabType() },
+		];
+		const sorts: I.Sort[] = [
+			{ type: I.SortType.Asc, relationKey: 'name' },
+		];
+
+		let sources: any[] = [];
+		let keys: string[] = Constant.defaultRelationKeys.concat([ 'creator' ]);
+
+		switch (this.view) {
+			case View.Marketplace:
+				filters.push({ operator: I.FilterOperator.And, relationKey: 'workspaceId', condition: I.FilterCondition.Equal, value: Constant.storeSpaceId });
+
+				switch (this.tab) {
+					case Tab.Type:
+						sources = dbStore.getTypes();
+						break;
+
+					case Tab.Relation:
+						sources = dbStore.getRelations();
+						break;
+				};
+
+				sources = sources.filter(it => it.sourceObject).map(it => it.sourceObject);
+				if (sources.length) {
+					filters.push({ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: sources });
+				};
+				break;
+
+			case View.Library:
+				filters.push({ operator: I.FilterOperator.And, relationKey: 'workspaceId', condition: I.FilterCondition.Equal, value: workspace });
+				break;
+		};
+
+		switch (this.tab) {
+			case Tab.Type:
+				keys = keys.concat(Constant.typeRelationKeys);
+				break;
+
+			case Tab.Relation:
+				keys = keys.concat(Constant.relationRelationKeys);
+				filters.push({ operator: I.FilterOperator.And, relationKey: 'relationKey', condition: I.FilterCondition.NotIn, value: Constant.systemRelationKeys });
+				break;
+		};
+
+		if (clear) {
+			this.setState({ loading: true });
+			dbStore.recordsSet(Constant.subId.store, '', []);
+		};
+
+		DataUtil.searchSubscribe({
+			subId: Constant.subId.store,
+			filters,
+			sorts,
+			keys,
+			ignoreWorkspace: true,
+			ignoreDeleted: true,
+			ignoreHidden: true,
+		}, (message: any) => {
+			this.setState({ loading: false });
+
+			if (callBack) {
+				callBack(message);
+			};
 		});
+	};
+
+	getTabType () {
+		let type = '';
+		switch (this.view) {
+			case View.Marketplace:
+				switch (this.tab) {
+					case Tab.Type:		 type = Constant.storeTypeId.type; break;
+					case Tab.Template:	 type = Constant.storeTypeId.template; break;
+					case Tab.Relation:	 type = Constant.storeTypeId.relation; break;
+				};
+				break;
+
+			case View.Library:
+				switch (this.tab) {
+					case Tab.Type:		 type = Constant.typeId.type; break;
+					case Tab.Template:	 type = Constant.typeId.template; break;
+					case Tab.Relation:	 type = Constant.typeId.relation; break;
+				};
+				break;
+		};
+		return type;
 	};
 
 	getItems () {
 		const { profile } = blockStore;
 		const limit = this.getRowLimit();
-		const rootId = this.getRootId();
-		const subId = dbStore.getSubId(rootId, BLOCK_ID);
-		const records = dbStore.getRecords(subId, '').map(id => detailStore.get(subId, id));
+		const records = dbStore.getRecords(Constant.subId.store, '').map(id => detailStore.get(Constant.subId.store, id));
 
 		records.sort((c1: any, c2: any) => {
 			const cr1 = c1.creator;
@@ -431,8 +570,8 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 		});
 
 		let ret: any[] = [
-			{ children: [ { id: 'mid' } ] },
-			{ children: [ { id: 'tabs' } ] }
+			{ className: 'block', children: [ { id: 'mid' } ] },
+			{ className: 'block', children: [ { id: 'tabs' } ] }
 		];
 		let n = 0;
 		let row = { children: [] };
@@ -452,29 +591,72 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 			ret.push(row);
 		};
 
-		ret = ret.filter((it: any) => { return it.children.length > 0; });
+		ret = ret.filter(it => it.children.length > 0);
 		return ret;
+	};
+
+	getViews (): any[] {
+		const views: any[] = [];
+
+		switch (this.tab) {
+			case Tab.Type:
+				views.push({ id: View.Library, name: 'My types' });
+				break;
+
+			case Tab.Relation:
+				views.push({ id: View.Library, name: 'My relations' });
+				break;
+		};
+
+		views.push({ id: View.Marketplace, name: 'Marketplace' });
+		return views;
+	};
+
+	onRemove (e: any, item: any) {
+		e.preventDefault();
+		e.stopPropagation();
+
+		if (blockStore.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ])) {
+			Action.uninstall(item);
+		};
+	};
+
+	onScroll ({ clientHeight, scrollHeight, scrollTop }) {
+		const win = $(window);
+		const { list } = menuStore;
+
+		if (scrollTop) {
+			this.top = scrollTop;
+		};
+
+		for (let menu of list) {
+			win.trigger('resize.' + Util.toCamelCase('menu-' + menu.id));
+		};
 	};
 
 	resize () {
 		const win = $(window);
 		const container = Util.getPageContainer(this.props.isPopup);
-		const wrapper = container.find('.wrapper');
+		const node = $(ReactDOM.findDOMNode(this));
+		const content = $('#popupPage .content');
+		const body = node.find('.body');
 		const hh = Util.sizeHeader();
 		const platform = Util.getPlatform();
 		const isPopup = this.props.isPopup && !container.hasClass('full');
 		
-		let wh = isPopup ? container.height() - hh : win.height();
-
+		let wh = isPopup ? container.height() : win.height();
 		if (platform == I.Platform.Windows) {
-			wh -= 30;
+			wh -= Constant.size.headerWindows;
 		};
 
-		wrapper.css({ height: wh });
+		node.css({ height: wh });
 		
 		if (isPopup) {
-			const element = $('#popupPage .content');
-			element.css({ minHeight: 'unset', height: '100%' });
+			body.css({ height: wh - hh });
+			content.css({ minHeight: 'unset', height: '100%' });
+		} else {
+			body.css({ height: '' });
+			content.css({ minHeight: '', height: '' });
 		};
 	};
 

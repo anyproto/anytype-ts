@@ -22,6 +22,7 @@
 
 	"commonDeletedObject": { "en": "Non-existent object" },
 	"commonDeletedType": { "en": "Deleted type" },
+	"commonDeletedRelation": { "en": "Deleted relation" },
 
 	"month1": { "en": "January" },
 	"month2": { "en": "February" },
@@ -241,7 +242,7 @@
 	"blockLinkSyncing": { "en": "Syncing..." },
 	"blockLinkArchived": { "en": "Deleted" },
 
-	"blockDataviewNew": { "en": "New" },
+	"blockDataviewNew": { "en": "Create new object" },
 
 	"blockCoverDrag": { "en": "Drag image to reposition" },
 	"blockCoverSave": { "en": "Save changes" },
@@ -451,7 +452,7 @@
 
 	"placeholderBlock": { "en": "Type text or / for commands" },
 	"placeholderFilter": { "en": "Type to filter" },
-	"placeholderCellCommon": { "en": "No field" },
+	"placeholderCellCommon": { "en": "No value" },
 	"placeholderCell0": { "en": "Enter text" },
 	"placeholderCell1": { "en": "Enter name" },	
 	"placeholderCell2": { "en": "Enter number" },	

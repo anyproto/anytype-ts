@@ -42,10 +42,16 @@ input, textarea, select { font-family: 'Inter'; }
 }
 #root-loader { position: fixed; width: 100%; height: 100%; left: 0px; top: 0px; background: #fff; z-index: 1000; transition: opacity 0.5s ease-in-out; }
 #root-loader {
-	.logo { 
-		width: 120px; height: 24px; background: url('~img/logo/color.svg') no-repeat; background-size: 100% 100%; 
-		position: absolute; left: 50%; top: 50%; margin: -12px 0px 0px -60px; transition: opacity 0.5s ease-in-out;
+	.inner { 
+		width: 120px; text-align: center; position: absolute; transform: translate3d(-50%,-50%,0px); display: flex; flex-direction: column; gap: 6px 0px;
+		left: 50%; top: 50%;
 	}
+	.anim { opacity: 1; transform: translate3d(0px,0px,0px); transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out; }
+	.anim.from { opacity: 0; transform: translate3d(0px,40px,0px); }
+	.anim.to { opacity: 0; transform: translate3d(0px,-40px,0px); }
+
+	.logo { width: 120px; height: 24px; background: url('~img/logo/color.svg') no-repeat; background-size: 100%; }
+	.version { @include text-small; color: #75bdec; transition-delay: 0.25s; }
 }
 
 html.platformWindows {

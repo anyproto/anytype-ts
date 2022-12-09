@@ -33,7 +33,7 @@ const HeadCell = observer(class HeadCell extends React.Component<Props, {}> {
 		const readonly = relation.isReadonlyValue;
 
 		const Cell = SortableElement((item: any) => {
-			const cn = [ 'cellHead', DataUtil.relationClass(format) ];
+			const cn = [ 'cellHead', Relation.className(format) ];
 
 			return (
 				<div id={Relation.cellId('head', relationKey, '')} className={cn.join(' ')}>
@@ -75,8 +75,8 @@ const HeadCell = observer(class HeadCell extends React.Component<Props, {}> {
 				relationId: relation.id,
 				readonly: readonly,
 				extendedOptions: true,
-				addCommand: (rootId: string, blockId: string, relationKey: string) => {
-					Dataview.relationAdd(rootId, blockId, [ relationKey ], -1, getView());
+				addCommand: (rootId: string, blockId: string, relation: any) => {
+					Dataview.relationAdd(rootId, blockId, [ relation.relationKey ], -1, getView());
 				},
 			}
 		});

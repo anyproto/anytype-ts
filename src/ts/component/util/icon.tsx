@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
-import { I, Util } from 'Lib';
+import { I, Preview } from 'Lib';
 
 interface Props {
 	id?: string;
@@ -61,7 +61,7 @@ class Icon extends React.Component<Props, {}> {
 	};
 	
 	componentWillUnmount () {
-		Util.tooltipHide(false);
+		Preview.tooltipHide(false);
 	};
 	
 	onMouseEnter (e: any) {
@@ -69,7 +69,7 @@ class Icon extends React.Component<Props, {}> {
 		const node = $(ReactDOM.findDOMNode(this));
 		
 		if (tooltip) {
-			Util.tooltipShow(tooltip, node, tooltipX, tooltipY);
+			Preview.tooltipShow(tooltip, node, tooltipX, tooltipY);
 		};
 		
 		if (onMouseEnter) {
@@ -81,7 +81,7 @@ class Icon extends React.Component<Props, {}> {
 		const { tooltip, onMouseLeave } = this.props;
 		
 		if (tooltip) {
-			Util.tooltipHide(false);
+			Preview.tooltipHide(false);
 		};
 		
 		if (onMouseLeave) {
@@ -92,7 +92,7 @@ class Icon extends React.Component<Props, {}> {
 	onMouseDown (e: any) {
 		const { onMouseDown } = this.props;
 		
-		Util.tooltipHide(true);
+		Preview.tooltipHide(true);
 		
 		if (onMouseDown) {
 			onMouseDown(e);
@@ -102,7 +102,7 @@ class Icon extends React.Component<Props, {}> {
 	onContextMenu (e: any) {
 		const { onContextMenu } = this.props;
 		
-		Util.tooltipHide(true);
+		Preview.tooltipHide(true);
 		
 		if (onContextMenu) {
 			onContextMenu(e);

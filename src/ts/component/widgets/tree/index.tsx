@@ -8,7 +8,7 @@ import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from
 import { blockStore, dbStore, detailStore, menuStore } from 'Store';
 
 // Libraries
-import { I, C, DataUtil, Util, keyboard, Storage, Relation, analytics } from 'Lib';
+import { I, C, DataUtil, ObjectUtil, Util, keyboard, Storage, Relation, analytics } from 'Lib';
 
 // UI Components
 import { Loader } from 'Component';
@@ -160,7 +160,7 @@ const Tree = observer(class Tree extends React.Component<Props, State> {
 		if (subIds.length) {
 			C.ObjectSearchUnsubscribe(subIds);
 		};
-		// Util.tooltipHide(true);
+		// Preview.tooltipHide(true);
 	};
 
 	// Restores the scroll position and the keyboard focus
@@ -178,9 +178,6 @@ const Tree = observer(class Tree extends React.Component<Props, State> {
 		const { root, profile } = blockStore;
 		const { sections } = Tree;
 		const filters: I.Filter[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.Equal, value: false },
-			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
-			{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
 			{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: [ '_anytype_profile', profile, root ] },
 			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: SKIP_TYPES_LOAD },
 		];
@@ -238,6 +235,8 @@ const Tree = observer(class Tree extends React.Component<Props, State> {
 				keys: Constant.sidebarRelationKeys,
 				limit: section.limit,
 				noDeps: true,
+				ignoreDeleted: true,
+				ignoreHidden: true,
 			}, cb);
 		});
 	};
@@ -259,7 +258,7 @@ const Tree = observer(class Tree extends React.Component<Props, State> {
 	};
 
 	filterDeletedLinks (ids: string[]): string[] {
-		return ids.filter(id => !dbStore.getRecords(Constant.subId.deleted, "").includes(id));
+		return ids.filter(id => !dbStore.getRecords(Constant.subId.deleted, '').includes(id));
 	};
 
 	getRecords (subId: string): any[] {
@@ -367,7 +366,7 @@ const Tree = observer(class Tree extends React.Component<Props, State> {
 		} else {
 			const { sectionId, parentId, id, depth } = node;
 			return [ sectionId, parentId, id, depth ].join('-');
-		}
+		};
 	};
 
 	getRowHeight (node: TreeNode): number {
@@ -446,7 +445,7 @@ const Tree = observer(class Tree extends React.Component<Props, State> {
 		e.preventDefault();
 		e.stopPropagation();
 
-		DataUtil.objectOpenEvent(e, node.details);
+		ObjectUtil.openEvent(e, node.details);
 		analytics.event('OpenSidebarObject', { group: Tree.getSection(node.sectionId).name });
 	};
 

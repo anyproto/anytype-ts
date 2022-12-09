@@ -1,4 +1,4 @@
-import { I, C, keyboard, crumbs, translate, Util, history as historyPopup, Storage, analytics, dispatcher, Renderer, Mark } from 'Lib';
+import { I, C, keyboard, crumbs, translate, Util, history as historyPopup, Storage, analytics, dispatcher, Renderer, Mark, Relation } from 'Lib';
 import { commonStore, blockStore, detailStore, dbStore, popupStore, authStore } from 'Store';
 import Constant from 'json/constant.json';
 import Errors from 'json/error.json';
@@ -79,27 +79,6 @@ class DataUtil {
 		switch (layout) {
 			default: c = Util.toCamelCase('is-' + I.ObjectLayout[layout]); break;
 			case I.ObjectLayout.Image:		 c = (id ? 'isImage' : 'isFile'); break;
-		};
-		return c;
-	};
-
-	relationTypeName (v: I.RelationType): string {
-		return Util.toCamelCase(I.RelationType[v || I.RelationType.LongText]);
-	};
-
-	relationClass (v: I.RelationType): string {
-		let c = this.relationTypeName(v);
-		if ([ I.RelationType.Status, I.RelationType.Tag ].indexOf(v) >= 0) {
-			c = 'select ' + this.tagClass(v);
-		};
-		return 'c-' + c;
-	};
-
-	tagClass (v: I.RelationType): string {
-		let c = '';
-		switch (v) {
-			case I.RelationType.Status:		 c = 'isStatus'; break;
-			case I.RelationType.Tag:		 c = 'isTag'; break;
 		};
 		return c;
 	};
@@ -266,24 +245,23 @@ class DataUtil {
 				subId: Constant.subId.type,
 				keys: Constant.defaultRelationKeys.concat(Constant.typeRelationKeys),
 				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.type },
-					{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
+					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: [ Constant.typeId.type, Constant.storeTypeId.type ] },
 				],
-				noDeps: true
+				noDeps: true,
+				ignoreWorkspace: true,
+				ignoreDeleted: true,
 			},
 			{
 				subId: Constant.subId.relation,
 				keys: Constant.relationRelationKeys,
 				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.relation },
-					{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
+					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: [ Constant.typeId.relation, Constant.storeTypeId.relation ] },
 				],
 				noDeps: true,
+				ignoreWorkspace: true,
+				ignoreDeleted: true,
 				onSubscribe: () => {
-					const records = dbStore.getRecords(Constant.subId.relation, '').map(id => dbStore.getRelationById(id));
-					for (let record of records) {
-						dbStore.relationKeyMap[record.relationKey] = record.id;
-					};
+					dbStore.getRelations().forEach(it => dbStore.relationKeyMap[it.relationKey] = it.id);
 				}
 			},
 			{
@@ -291,9 +269,9 @@ class DataUtil {
 				keys: Constant.optionRelationKeys,
 				filters: [
 					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.option },
-					{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
 				],
-				noDeps: true
+				noDeps: true,
+				ignoreDeleted: true,
 			}
 		];
 
@@ -306,6 +284,8 @@ class DataUtil {
 			cnt++;
 
 			if (cnt == subscriptions.length) {
+				commonStore.defaultTypeSet(commonStore.type);
+
 				if (pin && !keyboard.isPinChecked) {
 					Util.route('/auth/pin-check');
 				} else {
@@ -359,172 +339,6 @@ class DataUtil {
 		});
 	};
 
-	objectOpenEvent (e: any, object: any, popupParam?: any) {
-		e.preventDefault();
-		e.stopPropagation();
-
-		if (e.shiftKey || popupStore.isOpen('page')) {
-			this.objectOpenPopup(object, popupParam);
-		} else
-		if ((e.metaKey || e.ctrlKey)) {
-			this.objectOpenWindow(object);
-		} else {
-			this.objectOpenRoute(object);
-		};
-	};
-	
-	objectRoute (object: any): string {
-		if (!object) {
-			return;
-		};
-
-		let action = this.actionByLayout(object.layout);
-		let id = object.id;
-
-		if ((action == 'edit') && (object.id == blockStore.root)) {
-			action = 'index';
-			id = '';
-		};
-
-		if (!action) {
-			return '';
-		};
-
-		const route = [ 'main', action ];
-		if (id) {
-			route.push(id);
-		};
-
-		return route.join('/');
-	};
-
-	objectOpenRoute (object: any) {
-		keyboard.setSource(null);
-
-		const route = this.objectRoute(object);
-		if (route) {
-			Util.route('/' + route);
-		};
-	};
-
-	objectOpenPopup (object: any, popupParam?: any) {
-		const { root } = blockStore;
-		const action = this.actionByLayout(object.layout);
-
-		if ((action == 'edit') && (object.id == root)) {
-			this.objectOpenRoute(object);
-			return;
-		};
-
-		let param: any = Object.assign(popupParam || {}, {});
-		param.data = Object.assign(param.data || {}, { 
-			matchPopup: { 
-				params: {
-					page: 'main',
-					action: action,
-					id: object.id,
-				},
-			},
-		});
-
-		keyboard.setSource(null);
-		historyPopup.pushMatch(param.data.matchPopup);
-		window.setTimeout(() => { popupStore.open('page', param); }, Constant.delay.popup);
-	};
-
-	objectOpenWindow (object: any) {
-		const route = this.objectRoute(object);
-		if (route) {
-			Renderer.send('windowOpen', '/' + route);
-		};
-	};
-
-	actionByLayout (v: I.ObjectLayout): string {
-		v = v || I.ObjectLayout.Page;
-
-		let r = '';
-		switch (v) {
-			default:						 r = 'edit'; break;
-			case I.ObjectLayout.Set:		 r = 'set'; break;
-			case I.ObjectLayout.Space:		 r = 'space'; break;
-			case I.ObjectLayout.Type:		 r = 'type'; break;
-			case I.ObjectLayout.Relation:	 r = 'relation'; break;
-			case I.ObjectLayout.File:
-			case I.ObjectLayout.Image:		 r = 'media'; break;
-			case I.ObjectLayout.Navigation:	 r = 'navigation'; break;
-			case I.ObjectLayout.Graph:		 r = 'graph'; break;
-			case I.ObjectLayout.Store:		 r = 'store'; break;
-			case I.ObjectLayout.History:	 r = 'history'; break;
-		};
-		return r;
-	};
-	
-	pageCreate (rootId: string, targetId: string, details: any, position: I.BlockPosition, templateId: string, fields: any, flags: I.ObjectFlag[], callBack?: (message: any) => void) {
-		details = details || {};
-
-		if (!templateId) {
-			details.type = details.type || commonStore.type;
-		};
-		
-		C.BlockLinkCreateWithObject(rootId, targetId, details, position, templateId, fields, flags, (message: any) => {
-			if (message.error.code) {
-				return;
-			};
-			
-			if (callBack) {
-				callBack(message);
-			};
-		});
-	};
-	
-	pageSetIcon (rootId: string, emoji: string, image: string, callBack?: (message: any) => void) {
-		const details = [ 
-			{ key: 'iconEmoji', value: emoji },
-			{ key: 'iconImage', value: image },
-		];
-		C.ObjectSetDetails(rootId, details, callBack);
-	};
-	
-	pageSetName (rootId: string, name: string, callBack?: (message: any) => void) {
-		const details = [ 
-			{ key: 'name', value: name },
-		];
-		C.ObjectSetDetails(rootId, details, callBack);
-	};
-	
-	pageSetCover (rootId: string, type: I.CoverType, id: string, x?: number, y?: number, scale?: number, callBack?: (message: any) => void) {
-		x = Number(x) || 0;
-		y = Number(y) || 0;
-		scale = Number(scale) || 0;
-
-		const details = [ 
-			{ key: 'coverType', value: type },
-			{ key: 'coverId', value: id },
-			{ key: 'coverX', value: x },
-			{ key: 'coverY', value: y },
-			{ key: 'coverScale', value: scale },
-		];
-		C.ObjectSetDetails(rootId, details, callBack);
-	};
-
-	pageSetDone (rootId: string, done: boolean, callBack?: (message: any) => void) {
-		done = Boolean(done);
-
-		const details = [ 
-			{ key: Constant.relationKey.done, value: done },
-		];
-		C.ObjectSetDetails(rootId, details, callBack);
-	};
-
-	pageSetLayout (rootId: string, layout: I.ObjectLayout, callBack?: (message: any) => void) {
-		blockStore.update(rootId, { id: rootId, layout: layout });
-		C.ObjectSetLayout(rootId, layout, callBack);
-	};
-
-	pageSetAlign (rootId: string, align: I.BlockHAlign, callBack?: (message: any) => void) {
-		C.BlockListSetAlign(rootId, [], align, callBack);
-	};
-
 	blockSetText (rootId: string, blockId: string, text: string, marks: I.Mark[], update: boolean, callBack?: (message: any) => void) {
 		text = String(text || '');
 		marks = marks || [];
@@ -551,58 +365,6 @@ class DataUtil {
 		const marks = Mark.adjust(block.content.marks, 0, diff);
 
 		this.blockSetText(rootId, blockId, text, marks, true, callBack);
-	};
-
-	menuMapperBlock (it: any) {
-		it.isBlock = true;
-		it.name = it.lang ? translate('blockName' + it.lang) : it.name;
-		it.description = it.lang ? translate('blockText' + it.lang) : it.description;
-		return it;
-	};
-	
-	menuGetBlockText () {
-		const { config } = commonStore;
-		const ret: any[] = [
-			{ id: I.TextStyle.Paragraph, lang: 'Paragraph' },
-			{ id: I.TextStyle.Header1, lang: 'Header1', aliases: [ 'h1', 'head1' ] },
-			{ id: I.TextStyle.Header2, lang: 'Header2', aliases: [ 'h2', 'head2' ] },
-			{ id: I.TextStyle.Header3, lang: 'Header3', aliases: [ 'h3', 'head3' ] },
-			{ id: I.TextStyle.Quote, lang: 'Quote' },
-			{ id: I.TextStyle.Callout, lang: 'Callout' },
-		];
-		
-		return ret.map((it: any) => {
-			it.type = I.BlockType.Text;
-			it.icon = this.blockTextClass(it.id);
-			return this.menuMapperBlock(it);
-		});
-	};
-	
-	menuGetBlockList () {
-		return [
-			{ id: I.TextStyle.Checkbox, lang: 'Checkbox', aliases: [ 'todo' ] },
-			{ id: I.TextStyle.Bulleted, lang: 'Bulleted' },
-			{ id: I.TextStyle.Numbered, lang: 'Numbered' },
-			{ id: I.TextStyle.Toggle, lang: 'Toggle' },
-		].map((it: any) => {
-			it.type = I.BlockType.Text;
-			it.icon = this.blockTextClass(it.id);
-			return this.menuMapperBlock(it);
-		});
-	};
-
-	menuGetBlockMedia () {
-		const ret: any[] = [
-			{ type: I.BlockType.File, id: I.FileType.File, icon: 'file', lang: 'File' },
-			{ type: I.BlockType.File, id: I.FileType.Image, icon: 'image', lang: 'Image' },
-			{ type: I.BlockType.File, id: I.FileType.Video, icon: 'video', lang: 'Video' },
-			{ type: I.BlockType.File, id: I.FileType.Audio, icon: 'audio', lang: 'Audio' },
-			{ type: I.BlockType.File, id: I.FileType.Pdf, icon: 'pdf', lang: 'Pdf' },
-			{ type: I.BlockType.Bookmark, id: 'bookmark', icon: 'bookmark', lang: 'Bookmark' },
-			{ type: I.BlockType.Text, id: I.TextStyle.Code, icon: 'code', lang: 'Code' },
-			{ type: I.BlockType.Latex, id: I.BlockType.Latex, icon: 'latex', lang: 'Latex' },
-		];
-		return ret.map(this.menuMapperBlock);
 	};
 
 	getObjectTypesForNewObject (param?: any) {
@@ -657,310 +419,6 @@ class DataUtil {
 		return items;
 	};
 
-	menuGetBlockObject () {
-		let ret: any[] = [
-			{ type: I.BlockType.Page, id: 'existing', icon: 'existing', lang: 'Existing', arrow: true },
-		];
-		let i = 0;
-		let items = this.getObjectTypesForNewObject({ withSet: true });
-
-		for (let type of items) {
-			ret.push({ 
-				type: I.BlockType.Page, 
-				id: 'object' + i++, 
-				objectTypeId: type.id, 
-				iconEmoji: type.iconEmoji, 
-				name: type.name || this.defaultName('page'), 
-				description: type.description,
-				isObject: true,
-				isHidden: type.isHidden,
-			});
-		};
-
-		return ret.map(this.menuMapperBlock);
-	};
-
-	menuGetBlockOther () {
-		const ret: any[] = [
-			{ type: I.BlockType.Div, id: I.DivStyle.Line, icon: 'div-line', lang: 'Line' },
-			{ type: I.BlockType.Div, id: I.DivStyle.Dot, icon: 'dot', lang: 'Dot' },
-			{ type: I.BlockType.TableOfContents, id: I.BlockType.TableOfContents, icon: 'tableOfContents', lang: 'TableOfContents', aliases: [ 'tc', 'toc' ] },
-			{ type: I.BlockType.Table, id: I.BlockType.Table, icon: 'table', lang: 'SimpleTable' }
-		];
-		return ret.map(this.menuMapperBlock);
-	};
-
-	menuGetBlockDataview () {
-		return [
-			{ id: I.ViewType.Grid, icon: 'dataview-grid', lang: 'Table' },
-			{ id: I.ViewType.Gallery, icon: 'dataview-gallery', lang: 'Gallery' },
-			{ id: I.ViewType.List, icon: 'dataview-list', lang: 'List' },
-			{ id: I.ViewType.Board, icon: 'dataview-board', lang: 'Board' },
-		].map((it: any) => {
-			it.type = I.BlockType.Dataview;
-			return this.menuMapperBlock(it);
-		});
-	};
-
-	menuGetTurnPage () {
-		const { config } = commonStore;
-		const ret = [];
-	
-		let types = this.getObjectTypesForNewObject(); 
-		if (!config.debug.ho) {
-			types = types.filter(it => !it.isHidden);
-		};
-		types.sort(this.sortByName);
-
-		let i = 0;
-		for (let type of types) {
-			ret.push({ 
-				type: I.BlockType.Page, 
-				id: 'object' + i++, 
-				objectTypeId: type.id, 
-				iconEmoji: type.iconEmoji, 
-				name: type.name || this.defaultName('page'), 
-				description: type.description,
-				isObject: true,
-				isHidden: type.isHidden,
-			});
-		};
-
-		return ret.map(this.menuMapperBlock);
-	};
-	
-	menuGetTurnDiv () {
-		return [
-			{ type: I.BlockType.Div, id: I.DivStyle.Line, icon: 'div-line', lang: 'Line' },
-			{ type: I.BlockType.Div, id: I.DivStyle.Dot, icon: 'dot', lang: 'Dot' },
-		].map(this.menuMapperBlock);
-	};
-
-	menuGetTurnFile () {
-		return [
-			{ type: I.BlockType.File, id: I.FileStyle.Link, lang: 'Link' },
-			{ type: I.BlockType.File, id: I.FileStyle.Embed, lang: 'Embed' },
-		].map(this.menuMapperBlock);
-	};
-
-	// Action menu
-	menuGetActions (param: any) {
-		let { hasText, hasFile, hasLink, hasBookmark, hasTurnObject } = param;
-		let cmd = keyboard.ctrlSymbol();
-		let items: any[] = [
-			{ id: 'move', icon: 'move', name: 'Move to', arrow: true },
-			{ id: 'copy', icon: 'copy', name: 'Duplicate', caption: `${cmd} + D` },
-			{ id: 'remove', icon: 'remove', name: 'Delete', caption: 'Del' },
-			//{ id: 'comment', icon: 'comment', name: 'Comment' }
-		];
-
-		if (hasTurnObject) {
-			items.push({ id: 'turnObject', icon: 'object', name: 'Turn into object', arrow: true });
-		};
-		
-		if (hasText) {
-			items.push({ id: 'clear', icon: 'clear', name: 'Clear style' });
-		};
-		
-		if (hasFile) {
-			items.push({ id: 'download', icon: 'download', name: 'Download' });
-			items.push({ id: 'openFileAsObject', icon: 'expand', name: 'Open as object' });
-			//items.push({ id: 'rename', icon: 'rename', name: 'Rename' });
-			//items.push({ id: 'replace', icon: 'replace', name: 'Replace' });
-		};
-
-		if (hasBookmark) {
-			items.push({ id: 'openBookmarkAsObject', icon: 'expand', name: 'Open as object' });
-		};
-
-		items = items.map((it: any) => {
-			it.isAction = true;
-			return it;
-		});
-		
-		return items;
-	};
-	
-	menuGetTextColors () {
-		let items: any[] = [
-			{ id: 'color-default', name: 'Default', value: '', className: 'default', isTextColor: true }
-		];
-		for (let color of Constant.textColor) {
-			items.push({ id: 'color-' + color, name: translate('textColor-' + color), value: color, className: color, isTextColor: true });
-		};
-		return items;
-	};
-	
-	menuGetBgColors () {
-		let items: any[] = [
-			{ id: 'bgColor-default', name: 'Default', value: '', className: 'default', isBgColor: true }
-		];
-		for (let color of Constant.textColor) {
-			items.push({ id: 'bgColor-' + color, name: translate('textColor-' + color), value: color, className: color, isBgColor: true });
-		};
-		return items;
-	};
-	
-	menuGetAlign (hasQuote: boolean) {
-		let ret = [
-			{ id: I.BlockHAlign.Left, icon: 'align left', name: 'Align left', isAlign: true },
-			{ id: I.BlockHAlign.Center, icon: 'align center', name: 'Align center', isAlign: true },
-			{ id: I.BlockHAlign.Right, icon: 'align right', name: 'Align right', isAlign: true },
-		];
-
-		if (hasQuote) {
-			ret = ret.filter((it: any) => { return it.id != I.BlockHAlign.Center; });
-		};
-
-		return ret;
-	};
-
-	menuGetLayouts () {
-		return [
-			{ id: I.ObjectLayout.Page, icon: 'page' },
-			{ id: I.ObjectLayout.Human, icon: 'human' },
-			{ id: I.ObjectLayout.Task, icon: 'task' },
-			{ id: I.ObjectLayout.Set, icon: 'set' },
-			{ id: I.ObjectLayout.File, icon: 'file' },
-			{ id: I.ObjectLayout.Image, icon: 'image' },
-			{ id: I.ObjectLayout.Type, icon: 'type' },
-			{ id: I.ObjectLayout.Relation, icon: 'relation' },
-			{ id: I.ObjectLayout.Note, icon: 'note' },
-		].map((it: any) => {
-			it.icon = 'layout c-' + it.icon;
-			it.name = translate('layout' + it.id);
-			return it;
-		});
-	};
-
-	menuTurnLayouts () {
-		return this.menuGetLayouts().filter((it: any) => {
-			return [ I.ObjectLayout.Page, I.ObjectLayout.Human, I.ObjectLayout.Task, I.ObjectLayout.Note ].indexOf(it.id) >= 0;
-		});
-	};
-
-	menuGetViews () {
-		return [
-			{ id: I.ViewType.Grid },
-			{ id: I.ViewType.Gallery },
-			{ id: I.ViewType.List },
-			{ id: I.ViewType.Board },
-		].map((it: any) => {
-			it.name = translate('viewName' + it.id);
-			return it;
-		});
-	};
-
-	menuGetRelationTypes () {
-		return [
-			{ id: I.RelationType.Object },
-			{ id: I.RelationType.LongText },
-			{ id: I.RelationType.Number },
-			{ id: I.RelationType.Status },
-			{ id: I.RelationType.Tag },
-			{ id: I.RelationType.Date },
-			{ id: I.RelationType.File },
-			{ id: I.RelationType.Checkbox },
-			{ id: I.RelationType.Url },
-			{ id: I.RelationType.Email },
-			{ id: I.RelationType.Phone },
-		].map((it: any) => {
-			it.name = translate('relationName' + it.id);
-			it.icon = 'relation ' + this.relationClass(it.id);
-			return it;
-		});
-	};
-	
-	menuSectionsFilter (sections: any[], filter: string) {
-		const f = Util.filterFix(filter);
-		const regS = new RegExp('^' + f, 'gi');
-		const regC = new RegExp(f, 'gi');
-		const getWeight = (s: string) => {
-			let w = 0;
-			if (s.toLowerCase() == f.toLowerCase()) {
-				w = 10000;
-			} else
-			if (s.match(regS)) {
-				w = 1000;
-			} else 
-			if (s.match(regC)) {
-				w = 100;
-			};
-			return w;
-		};
-		
-		sections = sections.filter((s: any) => {
-			if (s.name.match(regC)) {
-				return true;
-			};
-			s._sortWeight_ = 0;
-			s.children = (s.children || []).filter((c: any) => { 
-
-				let ret = false;
-
-				if (c.isBlock && (c.type == I.BlockType.Table)) {
-					const match = filter.match(/table([\d]+)(?:[^\d]{1}([\d]+))?/i);
-					if (match) {
-						c.rowCnt = Math.max(1, Math.min(25, Number(match[1]) || 3));
-						c.columnCnt = Math.max(1, Math.min(25, Number(match[2]) || 3));
-						c.name = `Table ${c.rowCnt}x${c.columnCnt}`;
-
-						ret = true;
-					};
-				};
-
-				c._sortWeight_ = 0;
-				if (c.skipFilter) {
-					ret = true;
-				} else 
-				if (c.name && c.name.match(regC)) {
-					ret = true;
-					c._sortWeight_ = getWeight(c.name);
-				} else 
-				if (c.description && c.description.match(regC)) {
-					ret = true;
-					c._sortWeight_ = getWeight(c.description);
-				} else
-				if (c.aliases && c.aliases.length) {
-					for (let alias of c.aliases) {
-						if (alias.match(regC)) {
-							ret = true;
-							break;
-						};
-					};
-				};
-				s._sortWeight_ += c._sortWeight_;
-				return ret; 
-			});
-			s.children = s.children.sort((c1: any, c2: any) => this.sortByWeight(c1, c2));
-			return s.children.length > 0;
-		});
-
-		sections = sections.sort((c1: any, c2: any) => this.sortByWeight(c1, c2));
-		return sections;
-	};
-	
-	menuSectionsMap (sections: any[]) {
-		sections = Util.objectCopy(sections);
-		sections = sections.filter((it: any) => { return it.children.length > 0; });
-		sections = sections.map((s: any, i: number) => {
-			s.id = (undefined !== s.id) ? s.id : i;
-
-			s.children = s.children.map((c: any, i: number) => {
-				c.id = (undefined !== c.id) ? c.id : i;
-				c.itemId = c.id;
-				c.id = [ s.id, c.id ].join('-');
-				c.color = c.color || s.color || '';
-				return c;
-			});
-
-			s.children = Util.arrayUniqueObjects(s.children, 'itemId');
-			return s;
-		});
-		sections = Util.arrayUniqueObjects(sections, 'id');
-		return sections;
-	};
-	
 	checkDetails (rootId: string, blockId?: string) {
 		blockId = blockId || rootId;
 
@@ -1014,7 +472,7 @@ class DataUtil {
 			ret.className.push('noSystemBlocks');
 		};
 
-		if ((object[Constant.relationKey.featured] || []).indexOf(Constant.relationKey.description) >= 0) {
+		if ((object.featuredRelations || []).includes('description')) {
 			ret.className.push('withDescription');
 		};
 
@@ -1066,7 +524,6 @@ class DataUtil {
 		const filters: I.Filter[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: type },
 			{ operator: I.FilterOperator.And, relationKey: relationKey, condition: I.FilterCondition.In, value: ids },
-			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
 		];
 
 		this.search({
@@ -1117,6 +574,10 @@ class DataUtil {
 		content.iconSize = Number(content.iconSize) || I.LinkIconSize.None;
 		content.cardStyle = Number(content.cardStyle) || I.LinkCardStyle.Text;
 		content.relations = (content.relations || []).filter(it => relationKeys.includes(it));
+
+		if (content.cardStyle == I.LinkCardStyle.Text) {
+			content.iconSize = I.LinkIconSize.Small;
+		};
 
 		if (layout == I.ObjectLayout.Task) {
 			content.iconSize = I.LinkIconSize.Small;
@@ -1176,8 +637,8 @@ class DataUtil {
 
 		details = details.concat(message.dependencies.map(mapper));
 		details = details.concat(message.records.map(mapper));
+
 		detailStore.set(subId, details);
-		
 		dbStore.recordsSet(subId, '', message.records.map(it => it[idField]).filter(it => it));
 	};
 
@@ -1193,13 +654,17 @@ class DataUtil {
 			sources: [],
 			offset: 0,
 			limit: 0,
-			ignoreWorkspace: true,
+			ignoreWorkspace: false,
+			ignoreHidden: false,
+			ignoreDeleted: false,
+			withArchived: false,
+			noDeps: false,
 			afterId: '',
 			beforeId: '',
-			noDeps: false,
 		}, param);
 
-		const { subId, idField, filters, sorts, keys, sources, offset, limit, ignoreWorkspace, afterId, beforeId, noDeps } = param;
+		const { subId, idField, filters, sorts, sources, offset, limit, ignoreWorkspace, ignoreHidden, ignoreDeleted, afterId, beforeId, noDeps, withArchived } = param;
+		const keys: string[] = [ ...new Set(param.keys as string[]) ];
 
 		if (!subId) {
 			console.error('[DataUtil].searchSubscribe: subId is empty');
@@ -1208,6 +673,18 @@ class DataUtil {
 
 		if (!ignoreWorkspace && workspace) {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'workspaceId', condition: I.FilterCondition.Equal, value: workspace });
+		};
+
+		if (ignoreHidden && !config.debug.ho) {
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true });
+		};
+
+		if (ignoreDeleted) {
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.NotEqual, value: true });
+		};
+
+		if (!withArchived) {
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.NotEqual, value: true });
 		};
 
 		keys.push(idField);
@@ -1269,19 +746,31 @@ class DataUtil {
 			keys: Constant.defaultRelationKeys,
 			offset: 0,
 			limit: 0,
-			ignoreWorkspace: true,
+			ignoreWorkspace: false,
+			ignoreHidden: true,
+			ignoreDeleted: true,
+			withArchived: false,
 		}, param);
 
-		let { idField, filters, sorts, keys, fullText, offset, limit, ignoreWorkspace } = param;
+		let { idField, filters, sorts, fullText, offset, limit, ignoreWorkspace, ignoreDeleted, ignoreHidden, withArchived } = param;
+		let keys: string[] = [ ...new Set(param.keys as string[]) ];
+
+		filters.push({ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false });
 
 		if (!ignoreWorkspace && workspace) {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'workspaceId', condition: I.FilterCondition.Equal, value: workspace });
 		};
 
-		filters.push({ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false });
-
-		if (!config.debug.ho) {
+		if (ignoreHidden && !config.debug.ho) {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true });
+		};
+
+		if (ignoreDeleted) {
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false });
+		};
+
+		if (!withArchived) {
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.NotEqual, value: true });
 		};
 
 		fullText = String(fullText || '').replace(/\\/g, '');
@@ -1335,12 +824,12 @@ class DataUtil {
 
 		C.ObjectSearch(filters, [], [], '', 0, 0, (message: any) => {
 			if (message.error.code || !message.records.length) {
-				console.log('[DataUtil.getObjectsByIds] No objects found');
 				return;
 			};
 
 			if (callBack) {
-				callBack(message.records);
+				const records = message.records.map(it => detailStore.check(it)).filter(it => !it._empty_);
+				callBack(records);
 			};
 		});
 	};

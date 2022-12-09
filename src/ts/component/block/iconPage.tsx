@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { IconObject } from 'Component';
-import { I, DataUtil } from 'Lib';
+import { I, ObjectUtil } from 'Lib';
 import { detailStore } from 'Store';
 import { observer } from 'mobx-react';
 
@@ -33,11 +33,11 @@ const BlockIconPage = observer(class BlockIconPage extends React.Component<Props
 	};
 
 	onSelect (icon: string) {
-		DataUtil.pageSetIcon(this.props.rootId, icon, '');
+		ObjectUtil.setIcon(this.props.rootId, icon, '');
 	};
 
 	onUpload (hash: string) {
-		DataUtil.pageSetIcon(this.props.rootId, '', hash);
+		ObjectUtil.setIcon(this.props.rootId, '', hash);
 	};
 	
 });

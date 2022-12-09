@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { observer } from 'mobx-react';
 import $ from 'jquery';
 import * as d3 from 'd3';
-import { I, Util, DataUtil, SmileUtil, FileUtil, translate } from 'Lib';
+import { I, Util, DataUtil, SmileUtil, FileUtil, translate, Relation } from 'Lib';
 import { commonStore, blockStore } from 'Store';
 
 interface Props {
@@ -166,8 +166,8 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 
 	nodeMapper (d: any) {
 		const { rootId } = this.props;
-		const sourceCnt = this.edges.filter((it: any) => { return it.source == d.id; }).length;
-		const targetCnt = this.edges.filter((it: any) => { return it.target == d.id; }).length;
+		const sourceCnt = this.edges.filter(it => it.source == d.id).length;
+		const targetCnt = this.edges.filter(it => it.target == d.id).length;
 
 		d.layout = Number(d.layout) || 0;
 		d.radius = Math.max(3, Math.min(8, sourceCnt + targetCnt));
@@ -322,7 +322,7 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 
 		switch (d.layout) {
 			case I.ObjectLayout.Relation:
-				src = `img/icon/relation/big/${DataUtil.relationTypeName(d.relationFormat)}.svg`;
+				src = `img/icon/relation/big/${Relation.typeName(d.relationFormat)}.svg`;
 				break;
 
 			case I.ObjectLayout.Task:

@@ -33,7 +33,16 @@ const ViewList = observer(class ViewList extends React.Component<Props, {}> {
 		const length = records.length;
 
 		if (!length) {
-			return <Empty {...this.props} />;
+			return (
+				<Empty 
+					{...this.props}
+					title="No objects of this type" 
+					description="Create the first object of this type to start your set"
+					button="Add a new object"
+					withButton={allowed}
+					onClick={(e: any) => onRecordAdd(e, 1)}
+				/>
+			);
 		};
 
 		let content = null;

@@ -22,7 +22,7 @@
 		.viewItem.viewBoard {
 			.card { white-space: normal; }
 			.card {
-				.cellContent { cursor: pointer; margin-bottom: 4px; @include text-small; color: $colorDarkGrey; line-height: 16px; }
+				.cellContent { cursor: pointer; margin-bottom: 4px; @include text-small; color: $colorDarkGrey; }
 				.cellContent:empty, .cellContent.isEmpty { display: none; }
 				.cellContent.last { margin: 0px; }
 				.cellContent.c-description { color: $colorBlack; }

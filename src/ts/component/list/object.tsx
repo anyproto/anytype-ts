@@ -1,23 +1,18 @@
 import * as React from 'react';
-import { I, C, DataUtil, Util } from 'Lib';
-import { IconObject, Pager, ObjectName } from 'Component';
-import { detailStore, dbStore, blockStore } from 'Store';
 import { observer } from 'mobx-react';
-
+import { I, DataUtil, Util, ObjectUtil } from 'Lib';
+import { IconObject, Pager, ObjectName } from 'Component';
+import { detailStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
 interface Props {
 	rootId: string;
-	blockId: string;
 };
 
 const LIMIT = 50;
 
 const ListObject = observer(class ListObject extends React.Component<Props, {}> {
 
-	public static defaultProps = {
-	};
-	
 	render () {
 		const { rootId } = this.props;
 		const subId = this.getSubId();
@@ -57,7 +52,7 @@ const ListObject = observer(class ListObject extends React.Component<Props, {}> 
 			return (
 				<tr className={cn.join(' ')}>
 					<td className="cell">
-						<div className="cellContent isName cp" onClick={(e: any) => { DataUtil.objectOpenEvent(e, item); }}>
+						<div className="cellContent isName cp" onClick={(e: any) => { ObjectUtil.openEvent(e, item); }}>
 							<div className="flex">
 								<IconObject object={item} />
 								<ObjectName object={item} />
@@ -74,7 +69,7 @@ const ListObject = observer(class ListObject extends React.Component<Props, {}> 
 					{!isFileType ? (
 						<td className="cell">
 							{!author._empty_ ? (
-								<div className="cellContent cp" onClick={(e: any) => { DataUtil.objectOpenEvent(e, author); }}>
+								<div className="cellContent cp" onClick={(e: any) => { ObjectUtil.openEvent(e, author); }}>
 									<IconObject object={author} />
 									<div className="name">{author.name}</div>
 								</div>
@@ -124,14 +119,7 @@ const ListObject = observer(class ListObject extends React.Component<Props, {}> 
 	};
 
 	componentDidMount () {
-		this.getData(0);
-	};
-
-	getView () {
-		const { rootId, blockId } = this.props;
-		const views = dbStore.getViews(rootId, blockId);
-
-		return views.length ? views[0] : null;
+		this.getData(1);
 	};
 
 	getItems () {
@@ -140,8 +128,7 @@ const ListObject = observer(class ListObject extends React.Component<Props, {}> 
 	};
 
 	getSubId () {
-		const { rootId, blockId } = this.props;
-		return dbStore.getSubId(rootId, blockId);
+		return dbStore.getSubId(this.props.rootId, 'data');
 	};
 
 	getKeys () {
@@ -149,31 +136,23 @@ const ListObject = observer(class ListObject extends React.Component<Props, {}> 
 	};
 
 	getData (page: number, callBack?: (message: any) => void) {
-		const view = this.getView();
-		if (!view) {
-			return;
-		};
-
-		const { rootId, blockId } = this.props;
+		const { rootId } = this.props;
 		const offset = (page - 1) * LIMIT;
-		const block = blockStore.getLeaf(rootId, blockId);
-		const { targetObjectId } = block.content;
-		const object = detailStore.get(rootId, targetObjectId ? targetObjectId : rootId, [ 'setOf' ]);
 		const subId = this.getSubId();
-		const filters = view.filters.concat([
-			{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
-		]);
 
 		dbStore.metaSet(subId, '', { offset: offset });
 
 		DataUtil.searchSubscribe({
 			subId,
-			filters,
-			sorts: view.sorts,
+			sorts: [
+				{ relationKey: 'lastModifiedDate', type: I.SortType.Desc }
+			],
 			keys: this.getKeys(),
-			sources: object.setOf || [],
+			sources: [ rootId ],
 			offset,
 			limit: LIMIT,
+			ignoreHidden: true,
+			ignoreDeleted: true,
 		}, callBack);
 	};
 

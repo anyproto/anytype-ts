@@ -1,9 +1,9 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { observer } from 'mobx-react';
 import $ from 'jquery';
+import { observer } from 'mobx-react';
 import { Cell, Cover, Icon } from 'Component';
-import { I, DataUtil, Relation, keyboard } from 'Lib';
+import { I, DataUtil, ObjectUtil, Relation, keyboard } from 'Lib';
 import { commonStore, detailStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -157,7 +157,7 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 		const record = getRecord(index);
 		const cb = {
 			0: () => { 
-				keyboard.withCommand(e) ? DataUtil.objectOpenWindow(record) : DataUtil.objectOpenPopup(record); 
+				keyboard.withCommand(e) ? ObjectUtil.openWindow(record) : ObjectUtil.openPopup(record); 
 			},
 			2: () => { onContext(e, record.id); }
 		};

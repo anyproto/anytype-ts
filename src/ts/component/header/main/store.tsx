@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { RouteComponentProps } from 'react-router';
 import { Icon } from 'Component';
-import { I, Util, DataUtil, keyboard } from 'Lib';
+import { I, ObjectUtil, keyboard } from 'Lib';
 import { popupStore } from 'Store';
 import { observer } from 'mobx-react';
 
@@ -45,10 +44,8 @@ const HeaderMainStore = observer(class HeaderMainStore extends React.Component<P
 	};
 
 	onOpen () {
-		const { rootId } = this.props;
-
 		popupStore.closeAll(null, () => {
-			DataUtil.objectOpenRoute({ id: rootId, layout: I.ObjectLayout.Store });
+			ObjectUtil.openRoute({ layout: I.ObjectLayout.Store });
 		});
 	};
 

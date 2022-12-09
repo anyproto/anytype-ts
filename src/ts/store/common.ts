@@ -1,7 +1,7 @@
 import { action, computed, makeObservable, observable, set } from 'mobx';
 import $ from 'jquery';
 import { analytics, I, Storage, Util } from 'Lib';
-import { blockStore } from 'Store';
+import { blockStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
 interface Preview {
@@ -25,16 +25,6 @@ interface Cover {
 	type: I.CoverType;
 };
 
-interface Toast {
-	action: I.ToastAction;
-	text?: string;
-	objectId?: string;
-	targetId?: string;
-	originId?: string;
-	count?: number;
-	value?: boolean;
-};
-
 class CommonStore {
 
     public coverObj: Cover = { id: '', type: 0, image: '' };
@@ -42,7 +32,7 @@ class CommonStore {
     public filterObj: Filter = { from: 0, text: '' };
     public gatewayUrl: string = '';
     public previewObj: Preview = { type: 0, param: '', element: null, range: { from: 0, to: 0 }, marks: [] };
-	public toastObj: Toast = { objectId: '', targetId: '', originId: '', action: I.ToastAction.Default, count: 0 };
+	public toastObj: I.Toast = null;
     public configObj: any = {};
     public cellId: string = '';
 	public themeId: string = '';
@@ -107,7 +97,7 @@ class CommonStore {
 		return this.previewObj;
 	};
 
-	get toast(): Toast {
+	get toast(): I.Toast {
 		return this.toastObj;
 	};
 
@@ -124,7 +114,18 @@ class CommonStore {
 	};
 
 	get type(): string {
-		return String(this.typeId || Constant.typeId.page);
+		let typeId = String(this.typeId || '');
+
+		if (!typeId) {
+			return Constant.typeId.note;
+		};
+
+		let type = dbStore.getType(typeId);
+		if (!type || !type.isInstalled || !type.smartblockTypes.includes(I.SmartBlockType.Page)) {
+			return Constant.typeId.note;
+		};
+
+		return typeId;
 	};
 
 	get fullscreen(): boolean {
@@ -157,6 +158,7 @@ class CommonStore {
 
     coverSetDefault () {
 		const cover = this.coverGetDefault();
+
 		this.coverSet(cover.id, '', cover.type);
 	};
 
@@ -170,12 +172,14 @@ class CommonStore {
 
     fileUrl (hash: string) {
 		hash = String(hash || '');
+
 		return this.gateway + '/file/' + hash;
 	};
 
     imageUrl (hash: string, width: number) {
 		hash = String(hash || '');
 		width = Number(width) || 0;
+
 		return `${this.gateway}/image/${hash}?width=${width}`;
 	};
 
@@ -204,7 +208,7 @@ class CommonStore {
 		this.previewObj = preview;
 	};
 
-	toastSet (toast: Toast) {
+	toastSet (toast: I.Toast) {
 		this.toastObj = toast;
 	}
 
@@ -217,11 +221,12 @@ class CommonStore {
 	};
 
 	toastClear () {
-		this.toastObj = { objectId: '', targetId: '', originId: '', action: I.ToastAction.Default };
+		this.toastObj = null;
 	};
 
 	defaultTypeSet (v: string) {
 		this.typeId = String(v || '');
+
 		Storage.set('defaultType', this.typeId);
 	};
 
@@ -268,7 +273,6 @@ class CommonStore {
 	};
 
 	nativeThemeSet (isDark: boolean) {
-		console.log('[nativeThemeSet]', isDark);
 		this.nativeThemeIsDark = isDark;
 	};
 
@@ -281,10 +285,6 @@ class CommonStore {
 
 		blockStore.rootSet(info.homeObjectId);
 		blockStore.profileSet(info.profileObjectId);
-
-		blockStore.storeSetType(info.marketplaceTypeObjectId);
-		blockStore.storeSetTemplate(info.marketplaceTemplateObjectId);
-		blockStore.storeSetRelation(info.marketplaceRelationObjectId);
 
 		this.gatewaySet(info.gatewayUrl);
 		this.workspaceSet(info.accountSpaceId);

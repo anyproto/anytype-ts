@@ -40,12 +40,20 @@ export enum NavigationType {
 	LinkTo	 = 3,
 };
 
+export interface Toast {
+	action?: ToastAction;
+	text?: string;
+	objectId?: string;
+	targetId?: string;
+	originId?: string;
+	count?: number;
+	value?: boolean;
+};
+
 export enum ToastAction {
-	Default	 = 0,
 	Move	 = 1,
 	Link	 = 2,
-	Copy	 = 3,
-	Lock 	 = 4
+	Lock 	 = 3,
 };
 
 export interface Option {

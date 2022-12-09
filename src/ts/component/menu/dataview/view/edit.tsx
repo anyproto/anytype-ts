@@ -1,13 +1,12 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import $ from 'jquery';
-import { I, C, analytics, keyboard, Key, translate, DataUtil, Relation } from 'Lib';
+import { I, C, analytics, keyboard, Key, translate, DataUtil, MenuUtil, Relation } from 'Lib';
 import { Input, MenuItemVertical } from 'Component';
 import { blockStore, dbStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
 interface Props extends I.Menu {};
-
 
 const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> {
 	
@@ -29,11 +28,10 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId } = data;
+		const { readonly } = data;
 		const view = data.view.get();
 		const { cardSize, coverFit, hideIcon, groupRelationKey, groupBackgroundColors } = view;
 		const sections = this.getSections();
-		const allowedView = blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
 
 		const Section = (item: any) => (
 			<div id={'section-' + item.id} className="section">
@@ -44,7 +42,7 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 							key={i} 
 							{...action} 
 							icon={action.icon}
-							readonly={!allowedView}
+							readonly={readonly}
 							checkbox={(view.type == action.id) && (item.id == 'type')}
 							onMouseEnter={(e: any) => { this.onMouseEnter(e, action); }}
 							onMouseLeave={(e: any) => { this.onMouseLeave(e, action); }}
@@ -62,7 +60,7 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 						<Input 
 							ref={(ref: any) => { this.ref = ref; }} 
 							value={view.name} 
-							readonly={!allowedView}
+							readonly={readonly}
 							placeholder={translate('menuDataviewViewEditName')}
 							maxLength={32} 
 							onKeyUp={this.onKeyUp} 
@@ -196,12 +194,11 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 	save () {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, onSave, getData, getView } = data;
+		const { rootId, blockId, onSave, getData, getView, readonly } = data;
 		const view = getView();
-		const allowedView = blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
 		const block = blockStore.getLeaf(rootId, blockId);
 
-		if (!allowedView || !block) {
+		if (readonly || !block) {
 			return;
 		};
 
@@ -241,8 +238,7 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 		const { rootId, blockId, readonly } = data;
 		const view = data.view.get();
 		const views = dbStore.getViews(rootId, blockId);
-		const allowedView = blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
-		const types = DataUtil.menuGetViews().map((it: any) => {
+		const types = MenuUtil.getViews().map((it: any) => {
 			it.sectionId = 'type';
 			it.icon = 'view c' + it.id;
 			return it;
@@ -286,7 +282,7 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 			{ id: 'type', name: 'View as', children: types }
 		];
 
-		if (view.id && !readonly && allowedView) {
+		if (view.id && !readonly) {
 			sections.push({
 				id: 'actions', children: [
 					{ id: 'copy', icon: 'copy', name: 'Duplicate view' },

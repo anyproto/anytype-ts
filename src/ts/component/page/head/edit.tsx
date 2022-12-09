@@ -1,15 +1,14 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { observer } from 'mobx-react';
 import $ from 'jquery';
-import { I, M, C, DataUtil, analytics } from 'Lib';
+import { observer } from 'mobx-react';
+import { I, M, C, DataUtil, ObjectUtil, analytics } from 'Lib';
 import { Block, Drag, Button } from 'Component';
 import { blockStore, detailStore } from 'Store';
 
 interface Props extends I.BlockComponent {
 	setLayoutWidth?(v: number): void;
 };
-
 
 const PageHeadEdit = observer(class PageHeadEdit extends React.Component<Props, {}> {
 	
@@ -160,7 +159,7 @@ const PageHeadEdit = observer(class PageHeadEdit extends React.Component<Props, 
 
 		C.TemplateClone(rootId, (message: any) => {
 			if (message.id) {
-				DataUtil.objectOpenRoute({ id: message.id });
+				ObjectUtil.openRoute({ id: message.id });
 			};
 
 			analytics.event('CreateTemplate', { objectType: object.targetObjectType });

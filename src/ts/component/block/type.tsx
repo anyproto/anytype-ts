@@ -1,9 +1,9 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { observer } from 'mobx-react';
 import $ from 'jquery';
+import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, C, DataUtil, Onboarding, focus, keyboard, analytics, history as historyPopup } from 'Lib';
+import { I, C, DataUtil, ObjectUtil, Onboarding, focus, keyboard, analytics, history as historyPopup } from 'Lib';
 import { popupStore, detailStore, blockStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -170,33 +170,21 @@ const BlockType = observer(class BlockType extends React.Component<Props, {}> {
 	};
 
 	onMenu (e: any) {
-		const { rootId, block } = this.props;
-		const types = DataUtil.getObjectTypesForNewObject().map(it => it.id);
+		const { block } = this.props;
 		const element = `#block-${block.id} #item-menu`;
 		const obj = $(element);
 
-		menuStore.open('searchObject', {
-			element,
-			className: 'big single',
+		menuStore.open('typeSuggest', {
+			element: `#block-${block.id} #item-menu`,
 			onOpen: () => { obj.addClass('active'); },
 			onClose: () => { 
 				obj.removeClass('active'); 
 				focus.apply();
 			},
 			data: {
-				isBig: true,
-				rootId: rootId,
-				blockId: block.id,
-				blockIds: [ block.id ],
-				placeholder: 'Change object type',
-				placeholderFocus: 'Change object type',
-				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: types }
-				],
-				sorts: [
-					{ relationKey: 'name', type: I.SortType.Asc }
-				],
-				onSelect: (item: any) => {
+				filter: '',
+				smartblockTypes: [ I.SmartBlockType.Page ],
+				onClick: (item: any) => {
 					this.onClick(e, item);
 				}
 			}
@@ -221,7 +209,7 @@ const BlockType = observer(class BlockType extends React.Component<Props, {}> {
 					historyPopup.clear();
 				};
 
-				DataUtil.objectOpenEvent(e, { id: message.id, layout: I.ObjectLayout.Set });
+				ObjectUtil.openEvent(e, { id: message.id, layout: I.ObjectLayout.Set });
 
 				analytics.event('CreateObject', {
 					route: 'SelectType',
@@ -260,7 +248,7 @@ const BlockType = observer(class BlockType extends React.Component<Props, {}> {
 			route: 'SelectType',
 			objectType: typeId,
 			layout: template?.layout,
-			template: (template && template.isBundledTemplate ? template.id : 'custom'),
+			template: (template && template.templateIsBundled ? template.id : 'custom'),
 		});
 	};
 

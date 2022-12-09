@@ -221,6 +221,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<Props> 
 		const view = getView();
 		const relations = Util.objectCopy(view.relations);
 		const filters: I.Filter[] = [];
+		const allowed = blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
 
 		for (let relation of relations) {
 			if (relation.isHidden || !relation.isVisible) {
@@ -255,6 +256,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<Props> 
 				offsetY: -getSize().height,
 				data: {
 					...data,
+					readonly: !allowed,
 					view: observable.box(view),
 					onSave: () => {
 						getData(view.id, 0);

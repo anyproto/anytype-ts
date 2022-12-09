@@ -1,34 +1,28 @@
 import * as React from 'react';
+import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import $ from 'jquery';
 import { MenuItemVertical, Filter, Loader, ObjectName, EmptySearch } from 'Component';
-import { I, C, keyboard, Util, DataUtil, translate, analytics, Action, focus } from 'Lib';
+import { I, C, keyboard, Util, DataUtil, ObjectUtil, Preview, analytics, Action, focus, translate } from 'Lib';
 import { commonStore, dbStore } from 'Store';
-
 import Constant from 'json/constant.json';
 
 interface Props extends I.Menu {};
 
 interface State {
 	loading: boolean;
-	filter: string;
 };
 
 const LIMIT_HEIGHT = 10;
-
 const HEIGHT_SECTION = 28;
 const HEIGHT_ITEM = 28;
 const HEIGHT_ITEM_BIG = 56;
 const HEIGHT_DIV = 16;
-const HEIGHT_FILTER = 44;
-const HEIGHT_EMPTY = 98;
 
 const MenuSearchObject = observer(class MenuSearchObject extends React.Component<Props, State> {
 
 	state = {
 		loading: false,
-		filter: '',
 	};
 
 	_isMounted: boolean = false;	
@@ -46,14 +40,15 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		super(props);
 		
 		this.onClick = this.onClick.bind(this);
+		this.onFilterChange = this.onFilterChange.bind(this);
 		this.loadMoreRows = this.loadMoreRows.bind(this);
 	};
 	
 	render () {
-		const { loading, filter } = this.state;
+		const { loading } = this.state;
 		const { param } = this.props;
 		const { data } = param;
-		const { value, placeholder, label, isBig, noFilter, noIcon } = data;
+		const { filter, value, placeholder, label, isBig, noFilter, noIcon } = data;
 		const items = this.getItems();
 		const cn = [ 'wrap' ];
 		const placeholderFocus = data.placeholderFocus || 'Filter objects...';
@@ -81,13 +76,13 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 						<div className="inner" />
 					</div>
 				);
-			} else
-			if (item.isEmpty && !loading) {
-				content = (
-					<EmptySearch text={filter ? Util.sprintf(translate('popupSearchEmptyFilter'), filter) : translate('popupSearchEmpty')} />
-				);
 			} else {
-				if (item.id == 'add') {
+				const props = {
+					...item,
+					object: (item.isAdd ? undefined : item),
+				};
+
+				if (item.isAdd) {
 					cn.push('add');
 				};
 				if (item.isHidden) {
@@ -97,12 +92,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 					cn.push('active');
 				};
 
-				const props = {
-					...item,
-					object: (item.id == 'add' ? undefined : item),
-				};
-
-				if (isBig) {
+				if (isBig && !item.isAdd) {
 					props.withDescription = true;
 					props.forceLetter = true;
 					props.iconSize = 40;
@@ -149,11 +139,15 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 						placeholder={placeholder} 
 						placeholderFocus={placeholderFocus} 
 						value={filter}
-						onChange={(e: any) => { this.onKeyUp(e, false); }} 
+						onChange={this.onFilterChange} 
 					/>
 				) : ''}
 
 				{loading ? <Loader /> : ''}
+
+				{!items.length && !loading ? (
+					<EmptySearch text={filter ? Util.sprintf(translate('popupSearchEmptyFilter'), filter) : translate('popupSearchEmpty')} />
+				) : ''}
 
 				{this.cache && items.length && !loading ? (
 					<div className="items">
@@ -197,7 +191,9 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 	};
 
 	componentDidUpdate () {
-		const { filter } = this.state;
+		const { param } = this.props;
+		const { data } = param;
+		const { filter } = data;
 		const items = this.getItems();
 
 		if (this.filter != filter) {
@@ -243,27 +239,22 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 	};
 
 	getItems () {
-		const { filter } = this.state;
 		const { param } = this.props;
 		const { data } = param;
-		const { label, canNotAdd } = data;
+		const { filter, label, canAdd } = data;
 
 		let items = [].concat(this.items);
+		let length = items.length;
 
-		if (label && items.length) {
+		if (label && length) {
 			items.unshift({ isSection: true, name: label });
 		};
 
-		if (filter.length && !canNotAdd) {
-			if (items.length) {
+		if (filter && canAdd) {
+			if (length) {
 				items.push({ isDiv: true });
 			};
-
-			items.push({ id: 'add', icon: 'plus', name: `Create object "${filter}"` });
-		};
-
-		if (!items.length) {
-			items.push({ isEmpty: true });
+			items.push({ id: 'add', icon: 'plus', name: `Create object "${filter}"`, isAdd: true });
 		};
 
 		return items;
@@ -283,11 +274,10 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 
 		const { param } = this.props;
 		const { data } = param;
-		const { type, dataMapper, dataSort, skipIds, keys } = data;
-		const { filter } = this.state;
+		const { type, dataMapper, dataSort, skipIds, keys, ignoreWorkspace } = data;
+		const filter = String(data.filter || '');
 		
 		const filters: any[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
 			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: [ Constant.typeId.option ] },
 		].concat(data.filters || []);
 
@@ -315,6 +305,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 			fullText: filter,
 			offset: this.offset,
 			limit: Constant.limitMenuRecords,
+			ignoreWorkspace: ('undefined' == typeof(ignoreWorkspace) ? false : ignoreWorkspace),
 		}, (message: any) => {
 			if (!this._isMounted) {
 				return;
@@ -369,8 +360,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 
 		const { param, close } = this.props;
 		const { data } = param;
-		const { rootId, type, blockId, blockIds, position, onSelect, noClose } = data;
-		const { filter } = this.state;
+		const { filter, rootId, type, blockId, blockIds, position, onSelect, noClose } = data;
 
 		if (!noClose) {
 			close();
@@ -389,7 +379,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 
 			switch (type) {
 				case I.NavigationType.Go:
-					DataUtil.objectOpenEvent(e, target);
+					ObjectUtil.openEvent(e, target);
 					break;
 
 				case I.NavigationType.Move:
@@ -398,7 +388,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 							return;
 						};
 
-						Util.toastShow({
+						Preview.toastShow({
 							action: I.ToastAction.Move,
 							targetId: target.id,
 							count: blockIds.length,
@@ -449,7 +439,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 
 					C.BlockCreate(target.id, '', position, newBlock, (message: any) => {
 						if (!message.error.code) {
-							Util.toastShow({ objectId: blockId, action: I.ToastAction.Link, targetId: target.id });
+							Preview.toastShow({ objectId: blockId, action: I.ToastAction.Link, targetId: target.id });
 							analytics.event('LinkToObject');
 						};
 					});
@@ -457,8 +447,8 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 			};
 		};
 
-		if (item.id == 'add') {
-			DataUtil.pageCreate('', '', { name: filter, type: commonStore.type }, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.SelectType ], (message: any) => {
+		if (item.isAdd) {
+			ObjectUtil.create('', '', { name: filter, type: commonStore.type }, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.SelectType ], (message: any) => {
 				DataUtil.getObjectById(message.targetId, process);
 				close();
 			});
@@ -467,11 +457,11 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		};
 	};
 
-	onKeyUp (e: any, force: boolean) {
+	onFilterChange (v: string) {
 		window.clearTimeout(this.timeoutFilter);
 		this.timeoutFilter = window.setTimeout(() => {
-			this.setState({ filter: this.refFilter.getValue() });
-		}, force ? 0 : 500);
+			this.props.param.data.filter = this.refFilter.getValue();
+		}, 500);
 	};
 
 	getRowHeight (item: any) {
@@ -480,31 +470,19 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		const { isBig } = data;
 
 		let h = HEIGHT_ITEM;
-
-		if (isBig || item.isBig)	 h = HEIGHT_ITEM_BIG;
-		if (item.isEmpty)			 h = HEIGHT_EMPTY;
-		if (item.isSection)			 h = HEIGHT_SECTION;
-		if (item.isDiv)				 h = HEIGHT_DIV;
-
+		if ((isBig || item.isBig) && !item.isAdd)	 h = HEIGHT_ITEM_BIG;
+		if (item.isSection)							 h = HEIGHT_SECTION;
+		if (item.isDiv)								 h = HEIGHT_DIV;
 		return h;
 	};
 
-	getListHeight (items: any) {
-		return Math.min(300, items.reduce((res: number, item: any) => {
-			res += this.getRowHeight(item);
-			return res;
-		}, 0));
-	};
-
 	resize () {
-		if (!this._isMounted) {
-			return;
-		};
-
-		const { getId, position } = this.props;
+		const { getId, position, param } = this.props;
+		const { data } = param;
+		const { noFilter } = data;
 		const items = this.getItems();
 		const obj = $(`#${getId()} .content`);
-		const height = this.getListHeight(items) + HEIGHT_FILTER + 16;
+		const height = items.length ? items.reduce((res: number, current: any) => { return res + this.getRowHeight(current); }, 16 + (noFilter ? 0 : 44)) : 300;
 
 		obj.css({ height });
 		position();

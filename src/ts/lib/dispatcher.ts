@@ -1,5 +1,5 @@
 import { authStore, commonStore, blockStore, detailStore, dbStore } from 'Store';
-import { Util, I, M, Decode, translate, analytics, Response, Mapper, crumbs, Renderer, Action } from 'Lib';
+import { Util, I, M, Decode, translate, analytics, Response, Mapper, crumbs, Renderer, Action, Dataview } from 'Lib';
 import { set, observable } from 'mobx';
 import * as Sentry from '@sentry/browser';
 import arrayMove from 'array-move';
@@ -559,17 +559,9 @@ class Dispatcher {
 						break;
 					};
 
-					let groupOrder = block.content.groupOrder;						
-					let order = Mapper.From.GroupOrder(data.getGrouporder());
-					let idx = groupOrder.findIndex(it => it.viewId == order.viewId);
+					const order = Mapper.From.GroupOrder(data.getGrouporder());
 
-					if (idx >= 0) {
-						set(groupOrder[idx], order);
-					} else {
-						groupOrder.push(order);
-					};
-
-					blockStore.updateContent(rootId, id, { groupOrder });
+					Dataview.groupUpdate(rootId, id, order.viewId, order.groups);
 					break;
 
 				case 'blockDataviewObjectOrderUpdate':
@@ -601,7 +593,7 @@ class Dispatcher {
 						switch (op) {
 							case I.SliceOperation.Add:
 								ids.forEach((id: string, i: number) => {
-									idx >= 0 ? el.objectIds.splice(idx + i, 0, id) : el.objectIds.unshift(id);
+									idx >= 0 ? el.objectIds.splice(idx + i + 1, 0, id) : el.objectIds.unshift(id);
 								});
 								break;
 
@@ -636,10 +628,6 @@ class Dispatcher {
 					block = blockStore.getLeaf(rootId, id);
 					details = Decode.decodeStruct(data.getDetails());
 
-					if (details.type == Constant.typeId.relation) {
-						dbStore.relationKeyMap[details.relationKey] = details.id;
-					};
-					
 					// Subscriptions
 					if (subIds.length) {
 						uniqueSubIds = subIds.map((it: string) => { return it.split('/')[0]; });
@@ -719,6 +707,7 @@ class Dispatcher {
 						const [ subId, dep ] = data.getSubid().split('/');
 						if (!dep) {
 							dbStore.recordDelete(subId, '', id);
+							detailStore.delete(subId, id);
 						};
 					})();
 					break;
@@ -801,7 +790,7 @@ class Dispatcher {
 		};
 
 		let records = dbStore.getRecords(sid, '');
-		let oldIndex = records.findIndex((it => it == id));
+		let oldIndex = records.indexOf(id);
 		let newIndex = 0;
 
 		if (isAdding && (oldIndex >= 0)) {
@@ -809,7 +798,7 @@ class Dispatcher {
 		};
 
 		if (afterId) {
-			newIndex = records.findIndex(it => it == afterId);
+			newIndex = records.indexOf(afterId);
 		};
 
 		if (oldIndex < 0) {

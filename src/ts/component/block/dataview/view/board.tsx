@@ -2,12 +2,14 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { set } from 'mobx';
 import { observer } from 'mobx-react';
+import { observable } from 'mobx';
 import arrayMove from 'array-move';
 import $ from 'jquery';
 import raf from 'raf';
 import { Loader } from 'Component';
 import { I, C, Util, DataUtil, analytics, keyboard, Relation } from 'Lib';
-import { dbStore, detailStore, popupStore, menuStore, commonStore } from 'Store';
+import { dbStore, detailStore, popupStore, menuStore, commonStore, blockStore } from 'Store';
+import Empty from '../empty';
 import Column from './board/column';
 import Constant from 'json/constant.json';
 
@@ -37,6 +39,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 	constructor (props: any) {
 		super(props);
 		
+		this.onView = this.onView.bind(this);
 		this.onRecordAdd = this.onRecordAdd.bind(this);
 		this.onDragStartColumn = this.onDragStartColumn.bind(this);
 		this.onDragStartCard = this.onDragStartCard.bind(this);
@@ -45,8 +48,22 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 
 	render () {
 		const { loading } = this.state;
-		const { rootId, block } = this.props;
+		const { rootId, block, getView } = this.props;
+		const view = getView();
 		const groups = this.getGroups(false);
+		const relation = dbStore.getRelationByKey(view.groupRelationKey);
+
+		if (!relation || !relation.isInstalled) {
+			return (
+				<Empty 
+					{...this.props}
+					title="Relation has been deleted" 
+					description="Choose another relation to group your Kanban"
+					button="Open view menu"
+					onClick={this.onView}
+				/>
+			);
+		};
 
 		return (
 			<div className="wrap">
@@ -211,10 +228,13 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 
 				const object = detailStore.get(subId, message.objectId, []);
 				const records = dbStore.getRecords(subId, '');
-				const oldIndex = records.findIndex(it => it == object.id);
-				const newIndex = dir > 0 ? records.length - 1 : 0;
+				const oldIndex = records.indexOf(message.objectId);
+				const newIndex = dir > 0 ? records.length : 0;
+				const update = arrayMove(records, oldIndex, newIndex);
 
-				dbStore.recordsSet(subId, '', arrayMove(records, oldIndex, newIndex));
+				C.BlockDataviewObjectOrderUpdate(rootId, block.id, [ { viewId: view.id, groupId, objectIds: update } ], () => {
+					dbStore.recordsSet(subId, '', update);
+				});
 
 				analytics.event('CreateObject', {
 					route: 'Set',
@@ -404,7 +424,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 				isLeft = e.pageX <= rect.x + rect.width / 2;
 				hoverId = group.id;
 
-				this.newIndex = rect.index;
+				this.newIndex = isLeft ? rect.index : rect.index + 1;
 				break;
 			};
 		};
@@ -417,8 +437,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 			node.find('.isOver').removeClass('isOver left right');
 
 			if (hoverId) {
-				const el = node.find(`#column-${hoverId}`);
-				el.addClass('isOver ' + (isLeft ? 'left' : 'right'));
+				node.find(`#column-${hoverId}`).addClass('isOver ' + (isLeft ? 'left' : 'right'));
 			};
 		});
 	};
@@ -475,11 +494,11 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 			};
 
 			if (Util.rectsCollide({ x: e.pageX, y: e.pageY, width: current.width, height: current.height + 8 }, rect)) {
-				isTop = rect.isAdd ? true : (e.pageY <= rect.y + rect.height / 2);
+				isTop = rect.isAdd || (e.pageY <= rect.y + rect.height / 2);
 				hoverId = rect.id;
 
 				this.newGroupId = rect.groupId;
-				this.newIndex = rect.index;
+				this.newIndex = isTop ? rect.index : rect.index + 1;
 				break;
 			};
 		};
@@ -492,8 +511,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 			node.find('.isOver').removeClass('isOver top bottom');
 
 			if (hoverId) {
-				const el = node.find(`#card-${hoverId}`);
-				el.addClass('isOver ' + (isTop ? 'top' : 'bottom'));
+				node.find(`#card-${hoverId}`).addClass('isOver ' + (isTop ? 'top' : 'bottom'));
 			};
 		});
 	};
@@ -511,7 +529,6 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 
 		const { rootId, block, getView } = this.props;
 		const view = getView();
-		const orders: any[] = [];
 		const oldSubId = dbStore.getGroupSubId(rootId, block.id, current.groupId);
 		const newSubId = dbStore.getGroupSubId(rootId, block.id, this.newGroupId);
 		const newGroup = dbStore.getGroup(rootId, block.id, this.newGroupId);
@@ -519,7 +536,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 
 		let records: any[] = [];
 
-		const setOrder = () => {
+		const setOrder = (orders: any[]) => {
 			C.BlockDataviewObjectOrderUpdate(rootId, block.id, orders, () => {
 				orders.forEach((it: any) => {
 					let old = block.content.objectOrder.find(item => (view.id == item.viewId) && (item.groupId == it.groupId));
@@ -535,34 +552,40 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 		};
 
 		if (change) {
-			dbStore.recordDelete(oldSubId, '', record.id);
-			dbStore.recordAdd(newSubId, '', record.id, 1);
-
 			detailStore.update(newSubId, { id: record.id, details: record }, true);
 			detailStore.delete(oldSubId, record.id, Object.keys(record));
 
-			records = dbStore.getRecords(newSubId, '');
-			records = arrayMove(records, records.findIndex(it => it.id == record.id), this.newIndex);
-			dbStore.recordsSet(newSubId, '', records);
+			dbStore.recordDelete(oldSubId, '', record.id);
+			dbStore.recordAdd(newSubId, '', record.id, this.newIndex);
 
-			orders.push({ viewId: view.id, groupId: current.groupId, objectIds: dbStore.getRecords(oldSubId, '') });
-			orders.push({ viewId: view.id, groupId: this.newGroupId, objectIds: records });
-
-			C.ObjectSetDetails(record.id, [ { key: view.groupRelationKey, value: newGroup.value } ], setOrder);
+			C.ObjectSetDetails(record.id, [ { key: view.groupRelationKey, value: newGroup.value } ], () => {
+				setOrder([
+					{ viewId: view.id, groupId: current.groupId, objectIds: dbStore.getRecords(oldSubId, '') },
+					{ viewId: view.id, groupId: this.newGroupId, objectIds: dbStore.getRecords(newSubId, '') }
+				]);
+			});
 		} else {
+			if (current.index + 1 == this.newIndex) {
+				return;
+			};
+
 			records = arrayMove(dbStore.getRecords(oldSubId, ''), current.index, this.newIndex);
 			dbStore.recordsSet(oldSubId, '', records);
 
-			orders.push({ viewId: view.id, groupId: current.groupId, objectIds: records });			
-			setOrder();
+			setOrder([ { viewId: view.id, groupId: current.groupId, objectIds: records } ]);
 		};
 	};
 
 	applyGroupOrder (groups: any[]) {
-		let { block, getView } = this.props;
-		let view = getView();
- 		let el = block.content.groupOrder.find(it => it.viewId == view.id);
-		let groupOrder: any = {};
+		const { block, getView } = this.props;
+		const view = getView();
+		
+		if (!view) {
+			return [];
+		};
+
+ 		const el = block.content.groupOrder.find(it => it.viewId == view.id);
+		const groupOrder: any = {};
 
 		if (el) {
 			el.groups.forEach(it => groupOrder[it.groupId] = it);
@@ -586,13 +609,14 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 		const objectIds = el ? el.objectIds || [] : [];
 
 		records.sort((c1: any, c2: any) => {
-			let idx1 = objectIds.indexOf(c1);
-			let idx2 = objectIds.indexOf(c2);
+			const idx1 = objectIds.indexOf(c1);
+			const idx2 = objectIds.indexOf(c2);
+
 			if (idx1 > idx2) return 1;
 			if (idx1 < idx2) return -1;
 			return 0;
 		});
-		
+
 		return records;
 	};
 
@@ -637,6 +661,29 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 				});
 			});
 		};
+	};
+
+	onView (e: any) {
+		e.stopPropagation();
+
+		const { rootId, block, getView, getData } = this.props;
+		const view = getView();
+		const allowed = blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.View ]);
+
+		menuStore.open('dataviewViewEdit', { 
+			element: `#dataviewEmpty-${block.id} .button`,
+			horizontal: I.MenuDirection.Center,
+			offsetY: 10,
+			data: {
+				rootId,
+				blockId: block.id,
+				readonly: !allowed,
+				view: observable.box(view),
+				getView,
+				getData,
+				onSave: () => { this.forceUpdate(); },
+			}
+		});
 	};
 
 	resize () {

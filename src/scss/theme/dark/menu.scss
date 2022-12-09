@@ -62,18 +62,18 @@
         .item.isBig {
             .iconObject { background: $colorBgIcon; }
 
-            .icon.paragraph { background-image: url('#{$themePath}/icon/menu/action/block/paragraph1.svg'); }
+            .icon.textParagraph { background-image: url('#{$themePath}/icon/menu/action/block/paragraph1.svg'); }
             
-            .icon.header1 { background-image: url('#{$themePath}/icon/menu/action/block/header11.svg'); }
-            .icon.header2 { background-image: url('#{$themePath}/icon/menu/action/block/header21.svg'); }
-            .icon.header3 { background-image: url('#{$themePath}/icon/menu/action/block/header31.svg'); }
-            .icon.quote { background-image: url('#{$themePath}/icon/menu/action/block/quote1.svg'); }
+            .icon.textHeader1 { background-image: url('#{$themePath}/icon/menu/action/block/header11.svg'); }
+            .icon.textHeader2 { background-image: url('#{$themePath}/icon/menu/action/block/header21.svg'); }
+            .icon.textHeader3 { background-image: url('#{$themePath}/icon/menu/action/block/header31.svg'); }
+            .icon.textQuote { background-image: url('#{$themePath}/icon/menu/action/block/quote1.svg'); }
             
-            .icon.bulleted { background-image: url('#{$themePath}/icon/menu/action/block/bulleted1.svg'); }
-            .icon.numbered { background-image: url('#{$themePath}/icon/menu/action/block/numbered1.svg'); }
-            .icon.toggle { background-image: url('#{$themePath}/icon/menu/action/block/toggle1.svg'); }
+            .icon.textBulleted { background-image: url('#{$themePath}/icon/menu/action/block/bulleted1.svg'); }
+            .icon.textNumbered { background-image: url('#{$themePath}/icon/menu/action/block/numbered1.svg'); }
+            .icon.textToggle { background-image: url('#{$themePath}/icon/menu/action/block/toggle1.svg'); }
 
-			.icon.callout { background-image: url('#{$themePath}/icon/menu/action/block/callout1.svg'); }
+			.icon.textCallout { background-image: url('#{$themePath}/icon/menu/action/block/callout1.svg'); }
         }
 
         .sectionName::before { background-color: $colorLineSecondary; }
@@ -281,7 +281,7 @@
 
     /* MenuOnboarding */
 
-	.menu.menuOnboarding { width: 288px; background: $colorBlack; color: #fff; box-shadow: 0px 4px 16px rgb(0 0 0 / 20%); }
+	.menu.menuOnboarding { width: 288px; background: #373632; color: #fff; box-shadow: 0px 4px 16px rgb(0 0 0 / 20%); }
 	.menu.menuOnboarding {
 		a { color: #fff; }
         .icon.close:hover { background-image: url('#{$themePath}/icon/menu/onboarding/close1.svg'); }
@@ -292,10 +292,10 @@
                 .icon.tick { background-image: url('#{$themePath}/icon/menu/onboarding/tick.svg'); }
             }
             .steps {
-                .step:not(.active) { background: #3A3935; }
+                .step:not(.active) { background: $colorLineSecondary; }
                 .step:not(.active):hover { background: $colorLinePrimary; }
             }
-            .category { color: #5C5A54; }
+            .category { color: #5c5A54; }
         }
 	}
 

@@ -111,6 +111,22 @@ const WorkspaceSetIsHighlighted = (objectId: string, isHightlighted: boolean, ca
 	dispatcher.request(WorkspaceSetIsHighlighted.name, request, callBack);
 };
 
+const WorkspaceObjectAdd = (objectId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Workspace.Object.Add.Request();
+	
+	request.setObjectid(objectId);
+
+	dispatcher.request(WorkspaceObjectAdd.name, request, callBack);
+};
+
+const WorkspaceObjectListRemove = (objectIds: string[], callBack?: (message: any) => void) => {
+	const request = new Rpc.Workspace.Object.ListRemove.Request();
+	
+	request.setObjectidsList(objectIds);
+
+	dispatcher.request(WorkspaceObjectListRemove.name, request, callBack);
+};
+
 // ---------------------- ACCOUNT ---------------------- //
 
 const AccountCreate = (name: string, avatarPath: string, storePath: string, code: string, callBack?: (message: any) => void) => {
@@ -383,7 +399,7 @@ const BlockPaste = (contextId: string, focusedId: string, range: I.TextRange, bl
     request.setTextslot(data.text);
 	request.setHtmlslot(data.html);
 	request.setAnyslotList((data.anytype || []).map(Mapper.To.Block));
-	request.setFileslotList(data.files.map(Mapper.To.PasteFile));
+	request.setFileslotList((data.files || []).map(Mapper.To.PasteFile));
 
 	dispatcher.request(BlockPaste.name, request, callBack);
 };
@@ -1474,6 +1490,8 @@ export {
 	WorkspaceCreate,
 	WorkspaceSelect,
 	WorkspaceSetIsHighlighted,
+	WorkspaceObjectAdd,
+	WorkspaceObjectListRemove,
 
 	AccountCreate,
 	AccountRecover,

@@ -2,12 +2,11 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
 import $ from 'jquery';
-import { I, C, DataUtil, Relation, translate, keyboard } from 'Lib';
+import { I, C, MenuUtil, Relation, translate, keyboard } from 'Lib';
 import { Filter, MenuItemVertical } from 'Component';
 import { menuStore } from 'Store';
 
 interface Props extends I.Menu {};
-
 
 const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<Props, {}> {
 	
@@ -101,7 +100,7 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<Pro
 	};
 
 	getSections () {
-		const colors = DataUtil.menuGetBgColors().filter((it: any) => { return it.id != 'bgColor-default'; });
+		const colors = MenuUtil.getBgColors().filter((it: any) => { return it.id != 'bgColor-default'; });
 
 		return [
 			{ children: colors },

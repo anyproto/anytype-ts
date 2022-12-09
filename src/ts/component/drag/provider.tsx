@@ -5,7 +5,7 @@ import { throttle } from 'lodash';
 import $ from 'jquery';
 import raf from 'raf';
 import { DragLayer } from 'Component';
-import { I, C, focus, keyboard, Util, scrollOnMove, Action } from 'Lib';
+import { I, C, focus, keyboard, Util, scrollOnMove, Action, Preview } from 'Lib';
 import { blockStore } from 'Store';
 
 import Constant from 'json/constant.json';
@@ -122,6 +122,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 		};
 
 		const dataTransfer = e.dataTransfer;
+		const items = Util.getDataTransferItems(dataTransfer.items);
 		const isFileDrop = dataTransfer.files && dataTransfer.files.length;
 		const last = blockStore.getFirstBlock(rootId, -1, it => it.canCreateBlock());
 
@@ -137,7 +138,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 			data = this.objectData.get([ I.DropType.Block, last.id ].join('-'));
 			position = I.BlockPosition.Bottom;
 		};
-		
+
 		if (data) {
 			targetId = String(data.id || '');
 			target = blockStore.getLeaf(rootId, targetId);
@@ -147,6 +148,16 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 		if (targetId == 'blockLast') {
 			targetId = '';
 			position = I.BlockPosition.Bottom;
+		};
+
+		// String items drop
+		if (items && items.length) {
+			Util.getDataTransferString(items, (html: string) => {
+				C.BlockPaste(rootId, targetId, { from: 0, to: 0 }, [], false, { html });
+			});
+
+			this.clearState();
+			return;
 		};
 
 		if (isFileDrop) {
@@ -201,7 +212,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 		node.addClass('isDragging');
 		body.addClass('isDragging');
 		keyboard.setDragging(true);
-		Util.previewHide(false);
+		Preview.hideAll();
 
 		win.on('dragend.drag', (e: any) => { this.onDragEnd(e); });
 

@@ -323,7 +323,7 @@ export default {
         ]
     },
 
-    typeSelect: {
+	typeSelect: {
         items: [
             {
                 name: 'Choose a Type for Object',
@@ -343,4 +343,31 @@ export default {
             }
         ]
     },
+
+    typeDeleted: {
+		items: [
+			{
+				name: 'This Type has been deleted',
+				description: 'If you want to keep using this Object, change this Object Type.',
+				param: {
+					element: '#block-featuredRelations #blockFeatured-type-0',
+					offsetY: 10,
+				}
+			},
+		],
+	},
+
+	sourceDeleted: {
+		items: [
+			{
+				name: 'Please check your Installed Types & Relations',
+				description: 'Some Objects in this Set use Types or Relations that have been removed from your Space. Visit the Marketplace to re-install these entities and continue using your Set.',
+				param: {
+					element: '#block-featuredRelations #blockFeatured-setOf-0',
+					offsetY: 10,
+				}
+			},
+		],
+	},
+
 }

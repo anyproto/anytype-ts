@@ -3,7 +3,7 @@
 .menus {
 	.menu.menuDataviewFilterList { width: 360px; }
 	.menu.menuDataviewFilterList {
-		.content { overflow: visible; max-height: unset; padding: 0px; }
+		.content { overflow: visible; padding: 0px; }
 		.wrap { height: 100%; display: flex; flex-direction: column; }
 		.items { flex-grow: 1; }
 
@@ -60,8 +60,6 @@
 
 	.menu.menuDataviewFilterValues { width: 288px; }
 	.menu.menuDataviewFilterValues {
-		.content { max-height: 300px; }
-
 		.select { border: 0px; padding: 0px; display: block; width: 100%; }
 		.select:hover, .select.active { background: none; }
 		.select {

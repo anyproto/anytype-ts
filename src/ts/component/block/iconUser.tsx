@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { IconObject, Loader } from 'Component';
-import { I, C, DataUtil } from 'Lib';
+import { I, C, ObjectUtil } from 'Lib';
 import { menuStore, detailStore } from 'Store';
 import { observer } from 'mobx-react';
 
@@ -66,7 +66,7 @@ const BlockIconUser = observer(class BlockIconUser extends React.Component<Props
 				options: options,
 				onSelect: (event: any, item: any) => {
 					if (item.id == 'remove') {
-						DataUtil.pageSetIcon(rootId, '', '');
+						ObjectUtil.setIcon(rootId, '', '');
 					};
 					if (item.id == 'upload') {
 						this.onUpload();
@@ -96,7 +96,7 @@ const BlockIconUser = observer(class BlockIconUser extends React.Component<Props
 					return;
 				};
 				
-				DataUtil.pageSetIcon(rootId, '', message.hash, () => {
+				ObjectUtil.setIcon(rootId, '', message.hash, () => {
 					this.setState({ loading: false });
 				});
 			});

@@ -2,13 +2,11 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Title, Label, Textarea, Button } from 'Component';
-import { I, C, translate, analytics, Util } from 'Lib';
+import { I, C, translate, analytics, Util, Preview } from 'Lib';
 import { authStore } from 'Store';
 import { observer } from 'mobx-react';
-
-import Head from './head';
-
 import Constant from 'json/constant.json';
+import Head from './head';
 
 interface Props extends I.Popup, RouteComponentProps<any> {
 	prevPage: string;
@@ -21,7 +19,6 @@ interface State {
 	entropy: string;
 	showCode: boolean;
 };
-
 
 const PopupSettingsPageLogout = observer(class PopupSettingsPageLogout extends React.Component<Props, State> {
 
@@ -106,8 +103,9 @@ const PopupSettingsPageLogout = observer(class PopupSettingsPageLogout extends R
 
 	onCopy (e: any) {
 		this.refPhrase.focus();
+
 		Util.clipboardCopy({ text: authStore.phrase });
-		Util.toastShow({ action: I.ToastAction.Copy, text: 'Recovery phrase' });
+		Preview.toastShow({ text: 'Recovery phrase copied to clipboard' });
 
 		analytics.event('KeychainCopy', { type: 'BeforeLogout' });
 	};

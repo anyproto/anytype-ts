@@ -46,7 +46,7 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 		const object = check.object;
 		const { name, description, coverType, coverId, coverX, coverY, coverScale } = object;
 		const author = detailStore.get(contextId, object.creator, []);
-		const type = dbStore.getType(object.type);
+		const type = detailStore.get(contextId, object.type);
 		const childBlocks = blockStore.getChildren(contextId, rootId, it => !it.isLayoutHeader()).slice(0, 10);
 		const isTask = object.layout == I.ObjectLayout.Task;
 		const cn = [ 'previewObject' , check.className, className ];
@@ -282,7 +282,11 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 								<div className="name">{name}</div>
 								<div className="description">{description}</div>
 								<div className="featured">
-									{type ? Util.shorten(type.name, 32) : translate('commonDeletedType')}
+									{type && !type.isDeleted ? Util.shorten(type.name, 32) : (
+										<span className="textColor-red">
+											{translate('commonDeletedType')}
+										</span>
+									)}
 									<div className="bullet" />
 									{author.name}
 								</div>

@@ -1,12 +1,10 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader, ListObject, Deleted } from 'Component';
-import { I, C, crumbs, Action, Util, DataUtil } from 'Lib';
+import { I, C, crumbs, Action, Util, ObjectUtil } from 'Lib';
 import { detailStore, dbStore } from 'Store';
-
-import HeadSimple from 'Component/page/head/simple';
-
 import Errors from 'json/error.json';
+import HeadSimple from 'Component/page/head/simple';
 
 interface Props extends I.PageComponent {
 	rootId?: string;
@@ -15,8 +13,6 @@ interface Props extends I.PageComponent {
 interface State {
 	isDeleted: boolean;
 };
-
-const BLOCK_ID_OBJECT = 'dataview';
 
 const PageMainRelation = observer(class PageMainRelation extends React.Component<Props, State> {
 
@@ -45,7 +41,9 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 		};
 
 		const rootId = this.getRootId();
-		const { total } = dbStore.getMeta(dbStore.getSubId(rootId, BLOCK_ID_OBJECT), '');
+		const object = detailStore.get(rootId, rootId);
+		const subId = dbStore.getSubId(rootId, 'data');
+		const { total } = dbStore.getMeta(subId, '');
 
 		return (
 			<div>
@@ -54,12 +52,14 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 				<div className="blocks wrapper">
 					<HeadSimple ref={(ref: any) => { this.refHead = ref;}} type="relation" rootId={rootId} onCreate={this.onCreate} />
 
-					<div className="section set">
-						<div className="title">{total} {Util.cntWord(total, 'object', 'objects')}</div>
-						<div className="content">
-							<ListObject rootId={rootId} blockId={BLOCK_ID_OBJECT} />
+					{object.isInstalled ? (
+						<div className="section set">
+							<div className="title">{total} {Util.cntWord(total, 'object', 'objects')}</div>
+							<div className="content">
+								<ListObject rootId={rootId} />
+							</div>
 						</div>
-					</div>
+					) : ''}
 				</div>
 
 				<Footer component="mainEdit" {...this.props} />
@@ -138,7 +138,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 
 		C.ObjectCreateSet([ rootId ], { name: object.name + ' set' }, '', (message: any) => {
 			if (!message.error.code) {
-				DataUtil.objectOpenPopup(message.details);
+				ObjectUtil.openPopup(message.details);
 			};
 		});
 	};

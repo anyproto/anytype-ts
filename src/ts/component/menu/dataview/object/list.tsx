@@ -1,10 +1,10 @@
 import * as React from 'react';
+import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import $ from 'jquery';
 import { Filter, MenuItemVertical, Icon, Loader, ObjectName, EmptySearch } from 'Component';
-import { I, Util, keyboard, DataUtil, Relation, translate } from 'Lib';
-import { commonStore, menuStore, dbStore } from 'Store';
+import { I, Util, keyboard, DataUtil, ObjectUtil, Relation, translate } from 'Lib';
+import { menuStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
 interface Props extends I.Menu {};
@@ -14,10 +14,7 @@ interface State {
 };
 
 const MENU_ID = 'dataviewObjectValues';
-
-const HEIGHT = 28;
 const LIMIT_HEIGHT = 20;
-
 const HEIGHT_SECTION = 28;
 const HEIGHT_ITEM = 28;
 const HEIGHT_ITEM_BIG = 56;
@@ -179,7 +176,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 
 		this.cache = new CellMeasurerCache({
 			fixedWidth: true,
-			defaultHeight: HEIGHT,
+			defaultHeight: HEIGHT_ITEM,
 			keyMapper: (i: number) => { return (items[i] || {}).id; },
 		});
 
@@ -255,11 +252,10 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 	};
 	
 	load (clear: boolean, callBack?: (message: any) => void) {
-		const { config } = commonStore;
 		const { param } = this.props;
 		const { data } = param;
 		const { types, filter } = data;
-		const filters: I.Filter[] = [];
+		const filters: I.Filter[] = [].concat(data.filters || []);
 		const sorts = [
 			{ relationKey: 'name', type: I.SortType.Asc },
 		];
@@ -342,10 +338,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 				return;
 			};
 
-			let value = Relation.getArrayValue(data.value);
-			value.push(id);
-			value = Util.arrayUnique(value);
-
+			let value = Util.arrayUnique(Relation.getArrayValue(data.value).concat([ id ]));
 			if (maxCount) {
 				value = value.slice(value.length - maxCount, value.length);
 			};
@@ -353,6 +346,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 			onChange(value, () => {
 				menuStore.updateData(this.props.id, { value });
 				menuStore.updateData(MENU_ID, { value });
+
 				position();
 			});
 		};
@@ -368,7 +362,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 				flags.push(I.ObjectFlag.SelectType);
 			};
 
-			DataUtil.pageCreate('', '', details, I.BlockPosition.Bottom, '', {}, flags, (message: any) => {
+			ObjectUtil.create('', '', details, I.BlockPosition.Bottom, '', {}, flags, (message: any) => {
 				cb(message.targetId);
 				close();
 			});
@@ -379,19 +373,11 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 
 	getRowHeight (item: any) {
 		let h = HEIGHT_ITEM;
-
 		if (item.isBig) h = HEIGHT_ITEM_BIG;
 		if (item.isSection) h = HEIGHT_SECTION;
 		if (item.isDiv) h = HEIGHT_DIV;
 		return h;
 	};
-
-	getListHeight (items: any) {
-		return items.reduce((res: number, item: any) => {
-			res += this.getRowHeight(item);
-			return res;
-		}, 0);
-	}
 
 	resize () {
 		const { getId, position, param } = this.props;
@@ -399,9 +385,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		const { noFilter } = data;
 		const items = this.getItems();
 		const obj = $(`#${getId()} .content`);
-		const offset = noFilter ? 16 : 58;
-		const min = noFilter ? 28 + 16 : 300;
-		const height = Math.max(min, Math.min(360, this.getListHeight(items) + offset));
+		const height = Math.max(300, items.reduce((res: number, current: any) => { return res + this.getRowHeight(current); }, HEIGHT_ITEM + 16 + (noFilter ? 0 : 44)));
 
 		obj.css({ height });
 		position();

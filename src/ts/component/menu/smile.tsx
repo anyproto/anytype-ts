@@ -1,9 +1,9 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import $ from 'jquery';
+import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, Icon, IconEmoji, EmptySearch } from 'Component';
-import { I, C, Util, SmileUtil, keyboard, translate, analytics } from 'Lib';
+import { I, C, Util, SmileUtil, keyboard, translate, analytics, Preview } from 'Lib';
 import { menuStore } from 'Store';
 import Constant from 'json/constant.json';
 import EmojiData from 'json/emoji.json';
@@ -13,7 +13,6 @@ interface State {
 	filter: string;
 	page: number;
 };
-
 
 const LIMIT_RECENT = 18;
 const LIMIT_ROW = 9;
@@ -110,7 +109,7 @@ class MenuSmile extends React.Component<Props, State> {
 		};
 		
 		return (
-			<div>
+			<div className="wrap">
 				{!noHead ? (
 					<div className="head">
 						<div className="btn" onClick={this.onRandom}>{translate('menuSmileRandom')}</div>
@@ -379,11 +378,11 @@ class MenuSmile extends React.Component<Props, State> {
 	};
 
 	onMouseEnter (e: any, item: any) {
-		Util.tooltipShow(item.smile, $(e.currentTarget), I.MenuDirection.Center, I.MenuDirection.Top);
+		Preview.tooltipShow(item.smile, $(e.currentTarget), I.MenuDirection.Center, I.MenuDirection.Top);
 	};
 
 	onMouseLeave (e: any) {
-		Util.tooltipHide(false);
+		Preview.tooltipHide(false);
 	};
 	
 	onMouseDown (e: any, n: number, id: string, skin: number) {

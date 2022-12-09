@@ -1,9 +1,8 @@
 import $ from 'jquery';
-import { I, C, Util, DataUtil, Storage, focus, history as historyPopup, analytics, Renderer, sidebar } from 'Lib';
+import { I, C, Util, Storage, focus, history as historyPopup, analytics, Renderer, sidebar, ObjectUtil, Preview } from 'Lib';
 import { commonStore, authStore, blockStore, detailStore, menuStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 import KeyCode from 'json/key.json';
-
 
 class Keyboard {
 	
@@ -50,8 +49,8 @@ class Keyboard {
 		});
 		
 		win.on('blur.common', () => {
-			Util.tooltipHide(true);
-			Util.previewHide(true);
+			Preview.tooltipHide(true);
+			Preview.previewHide(true);
 
 			this.pressed = [];
 		});
@@ -65,7 +64,7 @@ class Keyboard {
 	};
 
 	onScroll (e: any) {
-		Util.tooltipHide(false);
+		Preview.tooltipHide(false);
 
 		$(window).trigger('resize.menuOnboarding');
 	};
@@ -146,7 +145,7 @@ class Keyboard {
 				};
 			};
 			
-			Util.previewHide(false);
+			Preview.previewHide(false);
 		});
 
 		// Shortcuts
@@ -184,13 +183,13 @@ class Keyboard {
 			// Navigation links
 			this.shortcut(`${cmd}+o`, e, (pressed: string) => {
 				e.preventDefault();
-				DataUtil.objectOpenPopup({ id: this.getRootId(), layout: I.ObjectLayout.Navigation });
+				ObjectUtil.openPopup({ id: this.getRootId(), layout: I.ObjectLayout.Navigation });
 			});
 
 			// Graph
 			this.shortcut(`${cmd}+alt+o`, e, (pressed: string) => {
 				e.preventDefault();
-				DataUtil.objectOpenPopup({ id: this.getRootId(), layout: I.ObjectLayout.Graph });
+				ObjectUtil.openPopup({ id: this.getRootId(), layout: I.ObjectLayout.Graph });
 			});
 
 			// Go to dashboard
@@ -224,7 +223,7 @@ class Keyboard {
 		let position = I.BlockPosition.Bottom;
 		let rootId = '';
 		let root: any = null;
-		let details: any = { isDraft: true };
+		let details: any = {};
 		let flags: I.ObjectFlag[] = [ I.ObjectFlag.SelectType ];
 		
 		if (this.isMainEditor()) {
@@ -256,8 +255,8 @@ class Keyboard {
 			flags = flags.concat([ I.ObjectFlag.DeleteEmpty ]);
 		};
 		
-		DataUtil.pageCreate(rootId, targetId, details, position, '', {}, flags, (message: any) => {
-			DataUtil.objectOpenPopup({ id: message.targetId });
+		ObjectUtil.create(rootId, targetId, details, position, '', {}, flags, (message: any) => {
+			ObjectUtil.openPopup({ id: message.targetId });
 		});
 	};
 
@@ -377,7 +376,7 @@ class Keyboard {
 				break;
 
 			case 'graph':
-				DataUtil.objectOpenPopup({ id: this.getRootId(), layout: I.ObjectLayout.Graph });
+				ObjectUtil.openPopup({ id: this.getRootId(), layout: I.ObjectLayout.Graph });
 				break;
 
 			case 'print':
@@ -400,7 +399,7 @@ class Keyboard {
 						canCancel: true,
 						onConfirm: () => {
 							Util.clipboardCopy({ text: account.id });
-							Util.toastShow({ action: I.ToastAction.Copy, text: 'Anytype ID' });
+							Preview.toastShow({ text: 'Anytype ID copied to clipboard' });
 						},
 					}
 				});
@@ -526,7 +525,7 @@ class Keyboard {
 			{ blockId: rootId, fields: { ...block.fields, isLocked: v } },
 		]);
 
-		Util.toastShow({ objectId: rootId, action: I.ToastAction.Lock, value: v });
+		Preview.toastShow({ objectId: rootId, action: I.ToastAction.Lock, value: v });
 		analytics.event((v ? 'LockPage' : 'UnlockPage'));
 	};
 

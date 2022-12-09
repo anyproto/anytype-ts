@@ -1,10 +1,9 @@
 import * as React from 'react';
-import { observer } from 'mobx-react';
 import $ from 'jquery';
+import { observer } from 'mobx-react';
 import { Icon, IconObject, Sync, ObjectName } from 'Component';
-import { I, Util, DataUtil, keyboard } from 'Lib';
+import { I, DataUtil, ObjectUtil, Preview, keyboard } from 'Lib';
 import { blockStore, detailStore, menuStore, popupStore } from 'Store';
-
 import Constant from 'json/constant.json';
 
 interface Props extends I.HeaderComponent {};
@@ -84,7 +83,7 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<Pro
 		const object = detailStore.get(rootId, rootId, []);
 
 		keyboard.disableClose(true);
-		popupStore.closeAll(null, () => { DataUtil.objectOpenRoute(object); });
+		popupStore.closeAll(null, () => { ObjectUtil.openRoute(object); });
 	};
 	
 	onMore (e: any) {
@@ -150,11 +149,11 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<Pro
 	};
 
 	onPathOver (e: any) {
-		Util.tooltipShow('Click to search', $(e.currentTarget), I.MenuDirection.Center, I.MenuDirection.Bottom);
+		Preview.tooltipShow('Click to search', $(e.currentTarget), I.MenuDirection.Center, I.MenuDirection.Bottom);
 	};
 
 	onPathOut () {
-		Util.tooltipHide(false);
+		Preview.tooltipHide(false);
 	};
 
 	getContainer () {

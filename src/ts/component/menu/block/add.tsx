@@ -1,9 +1,9 @@
 import * as React from 'react';
+import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import $ from 'jquery';
 import { MenuItemVertical, Icon, Cell } from 'Component';
-import { I, Mark, keyboard, C, focus, Action, Util, DataUtil, Storage, translate, analytics, Relation } from 'Lib';
+import { I, Mark, keyboard, C, focus, Action, Util, DataUtil, MenuUtil, ObjectUtil, Storage, translate, analytics, Relation } from 'Lib';
 import { blockStore, commonStore, dbStore, menuStore, detailStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -81,7 +81,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 						</div>
 						<div
 							id={id} 
-							className={[ 'cell', DataUtil.relationClass(item.format) ].join(' ')} 
+							className={[ 'cell', Relation.className(item.format) ].join(' ')} 
 						>
 							<Cell 
 								rootId={rootId}
@@ -277,23 +277,26 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 		const { data } = param;
 		const { rootId } = data;
 		const { config } = commonStore;
-	
-		let relations = dbStore.getRelations(rootId, rootId).sort(DataUtil.sortByName);
-		
-		relations = relations.filter((it: any) => {
-			return it ? (!config.debug.ho ? !it.isHidden : true) : false;
-		});
-
-		let items = [
-			{ id: 'add', name: 'New relation', isRelationAdd: true },
-		];
-		items = items.concat(relations).map((it: any) => {
+		const relations = dbStore.getObjectRelations(rootId, rootId).filter((it: any) => {
+			if (!config.debug.ho && it.isHidden) {
+				return false;
+			};
+			return it.isInstalled;
+		}).sort(DataUtil.sortByName).map((it: any) => {
 			it.type = I.BlockType.Relation;
 			it.isRelation = true;
 			it.isBlock = true;
 			return it;
 		});
-		return items;
+
+		relations.unshift({ id: 'add', name: 'New relation', isRelationAdd: true });
+
+		return relations.map((it: any) => {
+			it.type = I.BlockType.Relation;
+			it.isRelation = true;
+			it.isBlock = true;
+			return it;
+		});
 	};
 	
 	getSections () {
@@ -309,15 +312,15 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 		};
 
 		let sections: any[] = [
-			{ id: 'text', name: 'Text', children: DataUtil.menuGetBlockText() },
-			{ id: 'list', name: 'List', children: DataUtil.menuGetBlockList() },
-			{ id: 'media', name: 'Media', children: DataUtil.menuGetBlockMedia() },
-			{ id: 'other', name: 'Other', children: DataUtil.menuGetBlockOther() },
-			{ id: 'object', name: 'Objects', children: DataUtil.menuGetBlockObject() },
+			{ id: 'text', name: 'Text', children: MenuUtil.getBlockText() },
+			{ id: 'list', name: 'List', children: MenuUtil.getBlockList() },
+			{ id: 'media', name: 'Media', children: MenuUtil.getBlockMedia() },
+			{ id: 'other', name: 'Other', children: MenuUtil.getBlockOther() },
+			{ id: 'object', name: 'Objects', children: MenuUtil.getBlockObject() },
 		];
 
 		if (config.experimental) {
-			sections.push({ id: 'dataview', name: 'Inline set', children: DataUtil.menuGetBlockDataview() });
+			sections.push({ id: 'dataview', name: 'Inline set', children: MenuUtil.getBlockDataview() });
 		};
 
 		sections = sections.map((s: any) => {
@@ -333,7 +336,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 		]);
 		
 		if (filter && filter.text) {
-			const actions = DataUtil.menuGetActions({ hasFile: false, hasLink: false });
+			const actions = MenuUtil.getActions({ hasFile: false, hasLink: false });
 
 			if (block.canTurnPage()) {
 				actions.push({ id: 'turnObject', icon: 'object', name: 'Turn into object', arrow: true });
@@ -344,19 +347,19 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 			]);
 
 			if (block.canHaveAlign()) {
-				sections.push({ id: 'align', icon: 'align', name: 'Align', color: '', children: DataUtil.menuGetAlign(block.isTextQuote()) });
+				sections.push({ id: 'align', icon: 'align', name: 'Align', color: '', children: MenuUtil.getAlign(block.isTextQuote()) });
 			};
 			if (block.canHaveColor()) {
-				sections.push({ id: 'color', icon: 'color', name: 'Text color', color: '', children: DataUtil.menuGetTextColors() });
+				sections.push({ id: 'color', icon: 'color', name: 'Text color', color: '', children: MenuUtil.getTextColors() });
 			};
 			if (block.canHaveBackground()) {
-				sections.push({ id: 'bgColor', icon: 'bgColor', name: 'Background color', color: '', children: DataUtil.menuGetBgColors() });
+				sections.push({ id: 'bgColor', icon: 'bgColor', name: 'Background color', color: '', children: MenuUtil.getBgColors() });
 			};
 			
-			sections = DataUtil.menuSectionsFilter(sections, filter.text);
+			sections = MenuUtil.sectionsFilter(sections, filter.text);
 		};
 		
-		sections = DataUtil.menuSectionsMap(sections);
+		sections = MenuUtil.sectionsMap(sections);
 		return sections;
 	};
 	
@@ -389,7 +392,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 		const { param, getId, getSize, close } = this.props;
 		const { data } = param;
 		const { rootId, blockId } = data;
-		const { config, filter } = commonStore;
+		const { filter } = commonStore;
 		const types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map(it => it.id);
 		const block = blockStore.getLeaf(rootId, blockId);
 
@@ -449,22 +452,14 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 				break;
 
 			case 'turnObject':
-				menuId = 'searchObject';
-				menuParam.className = 'single';
-
-				filters = [
-					{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: types }
-				];
-
+				menuId = 'typeSuggest';
 				menuParam.data = Object.assign(menuParam.data, {
-					placeholder: 'Find a type of object...',
-					label: 'Your object type library',
-					canNotAdd: true,
-					filters: filters,
-					onSelect: (item: any) => {
+					filter: '',
+					smartblockTypes: [ I.SmartBlockType.Page ],
+					onClick: (item: any) => {
 						this.moveToPage(item.id);
 						close();
-					}
+					},
 				});
 				break;
 
@@ -616,12 +611,12 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 					};
 
 					const create = (template: any) => {
-						DataUtil.pageCreate(rootId, blockId, details, position, template?.id, DataUtil.defaultLinkSettings(), [], (message: any) => {
+						ObjectUtil.create(rootId, blockId, details, position, template?.id, DataUtil.defaultLinkSettings(), [], (message: any) => {
 							if (message.error.code) {
 								return;
 							};
 
-							DataUtil.objectOpenPopup({ ...details, id: message.targetId });
+							ObjectUtil.openPopup({ ...details, id: message.targetId });
 
 							analytics.event('CreateObject', {
 								route: 'Powertool',
