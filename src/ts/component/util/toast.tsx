@@ -161,6 +161,11 @@ const Toast = observer(class Toast extends React.Component<{}, State> {
 
     setObjects (objects: any[]) {
         const { toast } = commonStore;
+
+		if (!toast) {
+			return;
+		};
+
         const { objectId, targetId, originId } = toast;
         const map = Util.mapToObject(objects, 'id');
         const state: any = { object: null, target: null, origin: null };
