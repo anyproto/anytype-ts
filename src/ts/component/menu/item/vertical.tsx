@@ -93,7 +93,15 @@ class MenuItemVertical extends React.Component<Props, {}> {
 					<React.Fragment>
 						{iconElement}
 						<div className="name">{name}</div>
-						{withCaption ? <div className="caption" dangerouslySetInnerHTML={{ __html: caption }} /> : ''}
+						{withCaption ? (
+							<React.Fragment>
+								{'string' == typeof(caption) ? (
+									<div className="caption" dangerouslySetInnerHTML={{ __html: caption }} />
+								) : (
+									<div className="caption">{caption}</div>
+								)}
+							</React.Fragment>
+						) : ''}
 					</React.Fragment>
 				);
 			};

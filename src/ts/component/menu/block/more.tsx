@@ -192,8 +192,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const allowedLink = config.experimental;
 		const allowedCopy = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Duplicate ]);
 		const allowedReload = object.source && block.isObjectBookmark();
-		const allowedLinkTo = object.isInstalled;
-		const allowedInstall = !object.isInstalled;
+		const allowedInstall = !object.isInstalled && [ Constant.storeTypeId.type, Constant.storeTypeId.relation ].includes(object.type);
 		const allowedUninstall = object.isInstalled && [ Constant.typeId.type, Constant.typeId.relation ].includes(object.type) && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Delete ]);
 
 		if (!allowedArchive)	 archive = null;
@@ -209,8 +208,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		if (!allowedBlock)		 undo = redo = null;
 		if (!allowedTemplate)	 template = null;
 		if (!allowedFav)		 fav = null;
-		if (!allowedLinkTo)		 linkTo = null;
-		if (!allowedInstall && !allowedUninstall)	 pageInstall = null;
+		if (!allowedInstall)	 pageInstall = null;
 		if (allowedUninstall)	 archive = null;
 
 		let sections = [];
