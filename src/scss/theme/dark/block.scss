@@ -197,8 +197,8 @@
 		lnk:hover, obj:hover { border-color: $colorPrimary; }
     }
 
-    .block.blockText.callout > .wrapContent { background: $colorHover; }
-    .block.blockText.code > .wrapContent > .selectable > .dropTarget { background: $colorHover; }
+    .block.blockText.textCallout > .wrapContent { background: $colorHover; }
+    .block.blockText.textCode > .wrapContent > .selectable > .dropTarget { background: $colorHover; }
 
     /* BlockLink */
 
