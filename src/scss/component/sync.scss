@@ -5,7 +5,7 @@
 	color: $colorDarkGrey; white-space: nowrap; height: 18px; display: flex; align-items: center; gap: 0px 4px; cursor: pointer;
 }
 .sync {
-	.bullet { width: 8px; height: 8px; border-radius: 100%; background: $colorLightGrey; }
+	.bullet { width: 8px; height: 8px; border-radius: 100%; background: $colorBorderLight; }
 	.bullet.green { background: $colorGreen; }
 	.bullet.orange { background: $colorOrange; }
 	.bullet.red { background: $colorRed; }

@@ -13,7 +13,7 @@
 .sidebar.left { left: 0px; transform: translate3d(-110%,0px,0px); }
 .sidebar.right { right: 0px; transform: translate3d(110%,0px,0px); }
 .sidebar.fixed { 
-	height: 100% !important; top: 0px !important; border-radius: 0px; box-shadow: 0px 0px rgba(0, 0, 0, 0); border-right: 1px solid $colorLightGrey; 
+	height: 100% !important; top: 0px !important; border-radius: 0px; box-shadow: 0px 0px rgba(0, 0, 0, 0); border-right: 1px solid $colorBorderLight; 
 	transform: translate3d(0px,0px,0px);
 }
 .sidebar.anim { 
@@ -31,7 +31,7 @@
 	}
 }
 
-.sidebar.fixed.right { border-left: 1px solid $colorLightGrey; border-right: 0px; }
+.sidebar.fixed.right { border-left: 1px solid $colorBorderLight; border-right: 0px; }
 .sidebar.fixed {
     .resize-v { display: none; }
 }

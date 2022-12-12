@@ -11,7 +11,7 @@
 
 	.icon.search { width: 20px; height: 20px; background-size: 18px; background-image: url('~img/icon/search.svg'); }
 
-	.line { height: 1px; margin: 0px !important; background: $colorLightGrey; display: block; }
+	.line { height: 1px; margin: 0px !important; background: $colorBorderLight; display: block; }
 }
 .filter.isName .input { font-weight: 600; }
 .filter.active { 

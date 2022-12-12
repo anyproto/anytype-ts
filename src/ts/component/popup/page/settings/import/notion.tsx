@@ -1,43 +1,45 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { IconObject, Title, Label, Button } from 'Component';
+import { Title, Button, Input, Label } from 'Component';
 import { I, translate } from 'Lib';
-import { observer } from 'mobx-react';
 
 import Head from '../head';
 
 interface Props extends I.Popup, RouteComponentProps<any> {
 	prevPage: string;
 	onPage: (id: string) => void;
-	onImport: (type: I.ImportType) => void;
+	onImport: (type: I.ImportType, param: any) => void;
 };
 
-const PopupSettingsPageImportNotion = observer(class PopupSettingsPageImportNotion extends React.Component<Props, {}> {
+class PopupSettingsPageImportNotion extends React.Component<Props, {}> {
+
+	ref: any = null;
+
+	constructor (props: Props) {
+		super(props);
+
+		this.onImport = this.onImport.bind(this);
+	};
 
 	render () {
-		const { onImport } = this.props;
-
 		return (
 			<div>
 				<Head {...this.props} returnTo="importIndex" name={translate('popupSettingsImportTitle')} />
-
 				<Title text={translate('popupSettingsImportHow')} />
-				<Label text={translate('popupSettingsImportFirst')} />
-
-				<div className="path">
-					<b>{translate('popupSettingsImportPageTitle')}</b><br/>
-					Three dots menu on the top-left corner → <IconObject object={{ iconEmoji: ':paperclip:' }} /> Export →  <br/> Export format : "Markdown & CSV".
-				</div>
-
-				<Label className="last" text={translate('popupSettingsImportZip')} />
-				
-				<Button text={translate('popupSettingsImportOk')} onClick={() => { onImport(I.ImportType.Notion); }} />
-
-				<Label className="last" text={translate('popupSettingsImportWarning')} />
+				<Label text="API Key:"/>
+				<Input ref={(ref: any) => { this.ref = ref; }} />
+				<Button text={translate('popupSettingsImportOk')} onClick={this.onImport} />
 			</div>
 		);
 	};
 
-});
+	onImport () {
+		const { close, onImport } = this.props;
+
+		close();
+		onImport(I.ImportType.Notion, { apiKey: this.ref.getValue() });
+	};
+
+};
 
 export default PopupSettingsPageImportNotion;
