@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { MenuItemVertical } from 'Component';
+import { MenuItemVertical, Button } from 'Component';
 import { I, Util, Onboarding, keyboard, analytics, Renderer } from 'Lib';
 import { popupStore, blockStore, detailStore } from 'Store';
 
@@ -10,6 +10,8 @@ interface Props extends I.Menu {};
 
 class MenuHelp extends React.Component<Props, {}> {
 
+	n: number = 0;
+
 	constructor (props: any) {
 		super(props);
 
@@ -17,22 +19,71 @@ class MenuHelp extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const items: any[] = [
-			{ id: 'feedback', name: 'Send Feedback' },
-			{ id: 'tutorial', name: 'Help & Tutorials' },
-			{ id: 'whatsNew', name: 'What\'s new', document: 'whatsNew' },
-			{ id: 'community', name: 'Join our Community' },
-			{ id: 'shortcut', name: 'Keyboard Shortcuts' },
-			{ id: 'hints', name: 'Show hints' },
-		];
+		const items = this.getItems();
 
 		return (
 			<div className="items">
-				{items.map((item: I.MenuItem, i: number) => (
-					<MenuItemVertical key={i} {...item} onClick={(e: any) => { this.onClick(e, item); }} />
-				))}
+				{items.map((item: any, i: number) => {
+					let content = null;
+					
+					if (item.isDiv) {
+						content = (
+							<div key={i} className="separator">
+								<div className="inner" />
+							</div>
+						);
+					} else {
+						content = (
+							<MenuItemVertical 
+								key={i} 
+								{...item} 
+								onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }} 
+								onClick={(e: any) => { this.onClick(e, item); }} 
+							/>
+						);
+					};
+
+					return content;
+				})}
 			</div>
 		);
+	};
+
+	componentDidMount () {
+		this.rebind();
+	};
+
+	componentWillUnmount () {
+		this.unbind();
+	};
+
+	rebind () {
+		this.unbind();
+		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
+		window.setTimeout(() => { this.props.setActive(); }, 15);
+	};
+	
+	unbind () {
+		$(window).off('keydown.menu');
+	};
+
+	getItems () {
+		const btn = <Button color="orange" className="c16" text={window.Electron.version.app} />;
+
+		return [
+			{ id: 'whatsNew', name: 'What\'s new', document: 'whatsNew', caption: btn, withCaption: true },
+			{ id: 'community', name: 'Anytype Community' },
+			{ isDiv: true },
+			{ id: 'shortcut', name: 'Keyboard Shortcuts', caption: 'Ctrl+Space', withCaption: true },
+			{ id: 'hints', name: 'Show hints' },
+			{ id: 'tutorial', name: 'Help & Tutorials' },
+		];
+	};
+
+	onMouseEnter (e: any, item: any) {
+		if (!keyboard.isMouseDisabled) {
+			this.props.setActive(item, false);
+		};
 	};
 
 	onClick (e: any, item: any) {
