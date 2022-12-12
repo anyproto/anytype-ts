@@ -224,7 +224,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 				Mid = () => (
 					<div className="mid">
 						<Title text="Relations library" />
-						<Label text="Relation is a link with a name. They make sense when you are connecting objects, so you can only create a new one from Relations menu in object" />
+						<Label text="Use Relations to define connections and properties of Objects. Create your own or add some from our Marketplace." />
 						{filter}
 					</div>
 				);
