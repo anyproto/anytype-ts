@@ -5,7 +5,7 @@ html, body { height: 100%; }
 
 body {
 	font-family: 'Inter'; @include text-common; color: $colorBlack;
-	overflow-x: hidden; overflow-y: overlay; background: transparent;
+	overflow-x: hidden; overflow-y: overlay; background: #fff;
 	-webkit-font-smoothing: antialiased;
 	backface-visibility: hidden;
 	transform-style: flat;

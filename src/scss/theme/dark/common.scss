@@ -7,7 +7,7 @@ html.themeDark {
     /* Common */
     /* ---------------------------------------------------------------- */
 
-    body { color: $colorPrimary; }
+    body { background: $colorBlack; color: $colorPrimary; }
 
     a { color: $colorPrimary; }
     a:hover { color: $colorOrange; }
