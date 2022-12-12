@@ -1,7 +1,7 @@
 @import "~scss/_vars";
 
 .menus {
-	.menu.menuHelp { position: fixed; }
+	.menu.menuHelp { width: 280px; position: fixed; }
 	.menu.menuHelp {
 		.icon { width: 24px; height: 24px; }
 		.icon.help { background-size: 20px 20px; background-image: url('~img/icon/menu/help/help0.svg'); }
