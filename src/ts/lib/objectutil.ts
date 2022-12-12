@@ -25,6 +25,10 @@ class ObjectUtil {
 	};
 
 	openEvent (e: any, object: any, popupParam?: any) {
+		if (!object) {
+			return;
+		};
+
 		e.preventDefault();
 		e.stopPropagation();
 
@@ -48,7 +52,7 @@ class ObjectUtil {
 	
 	route (object: any): string {
 		if (!object) {
-			return;
+			return '';
 		};
 
 		let action = this.actionByLayout(object.layout);
@@ -88,6 +92,10 @@ class ObjectUtil {
 	};
 
 	openPopup (object: any, popupParam?: any) {
+		if (!object) {
+			return;
+		};
+
 		const { root } = blockStore;
 		const action = this.actionByLayout(object.layout);
 
