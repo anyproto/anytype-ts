@@ -773,9 +773,7 @@ class DataUtil {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.NotEqual, value: true });
 		};
 
-		fullText = String(fullText || '').replace(/\\/g, '');
-		fullText = Util.filterFix(fullText);
-
+		fullText = Util.filterFix(fullText).replace(/\\/g, '');
 		C.ObjectSearch(filters, sorts, keys.concat([ idField ]), fullText, offset, limit, callBack);
 	};
 
