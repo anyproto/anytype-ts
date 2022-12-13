@@ -6,7 +6,7 @@ import raf from 'raf';
 import { RouteComponentProps } from 'react-router';
 import { observer, } from 'mobx-react';
 import { getRange } from 'selection-ranges';
-import { Select, Marker, Loader, IconObject, Icon } from 'Component';
+import { Select, Marker, Loader, IconObject, Icon, Editable } from 'Component';
 import { I, C, keyboard, Key, Util, DataUtil, ObjectUtil, Preview, Mark, focus, Storage, translate, analytics, Renderer } from 'Lib';
 import { commonStore, blockStore, detailStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -33,6 +33,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 
 	_isMounted: boolean = false;
 	refLang: any = null;
+	refEditable: any = null;
 	timeoutContext: number = 0;
 	timeoutClick: number = 0;
 	timeoutFilter: number = 0;
@@ -172,17 +173,24 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 				break;
 		};
 
-		let editor = null;
+		return (
+			<div className="flex">
+				<div className="markers">
+					{marker ? <Marker {...marker} id={id} color={color} /> : ''}
+				</div>
+				{additional ? (
+					<div className="additional">
+						{additional}
+					</div>
+				) : ''}
 
-		if (readonly) {
-			editor = <div id="value" className={cv.join(' ')} />;
-		} else {
-			editor = (
-				<div
+				<Editable 
+					ref={(ref: any) => { this.refEditable = ref; }}
 					id="value"
-					className={cv.join(' ')}
-					contentEditable={true}
-					suppressContentEditableWarning={true}
+					classNameEditor={cv.join(' ')}
+					classNamePlaceholder={'c' + id}
+					readonly={readonly}
+					placeholder={placeholder}
 					onKeyDown={this.onKeyDown}
 					onKeyUp={this.onKeyUp}
 					onFocus={this.onFocus}
@@ -196,23 +204,6 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 					onCompositionEnd={this.onCompositionEnd}
 					onDragStart={(e: any) => { e.preventDefault(); }}
 				/>
-			);
-		};
-		
-		return (
-			<div className="flex">
-				<div className="markers">
-					{marker ? <Marker {...marker} id={id} color={color} /> : ''}
-				</div>
-				{additional ? (
-					<div className="additional">
-						{additional}
-					</div>
-				) : ''}
-				<div className="wrap">
-					<span id="placeholder" className={[ 'placeholder', 'c' + id ].join(' ')}>{placeholder}</span>
-					{editor}
-				</div>
 			</div>
 		);
 	};
@@ -265,8 +256,6 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 	setValue (v: string) {
 		const { block } = this.props;
 		const fields = block.fields || {};
-		const node = $(ReactDOM.findDOMNode(this));
-		const value = node.find('#value');
 		
 		let text = String(v || '');
 		if (text === '\n') {
@@ -298,7 +287,9 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			html = html.replace(/\n/g, '<br/>');
 		};
 
-		value.get(0).innerHTML = html;
+		if (this.refEditable) {
+			this.refEditable.setValue(html);
+		};
 
 		if (!block.isTextCode() && (html != text) && this.marks.length) {
 			if (this.frame) {
@@ -325,8 +316,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 
 		const { rootId } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
-		const value = node.find('#value');
-		const items = value.find('lnk');
+		const items = node.find('lnk');
 		const self = this;
 
 		if (!items.length) {
@@ -392,8 +382,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 
 		const { rootId } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
-		const value = node.find('#value');
-		const items = value.find('obj');
+		const items = node.find('obj');
 		const self = this;
 
 		if (!items.length) {
@@ -469,8 +458,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		};
 
 		const node = $(ReactDOM.findDOMNode(this));
-		const value = node.find('#value');
-		const items = value.find('mention');
+		const items = node.find('mention');
 		
 		if (!items.length) {
 			return;
@@ -559,8 +547,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		};
 
 		const node = $(ReactDOM.findDOMNode(this));
-		const value = node.find('#value');
-		const items = value.find('emoji');
+		const items = node.find('emoji');
 		
 		if (!items.length) {
 			return;
@@ -610,28 +597,23 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 	};
 
 	getValue (): string {
-		if (!this._isMounted) {
-			return '';
-		};
-		
-		const node = $(ReactDOM.findDOMNode(this));
-		const value = node.find('#value');
-		const obj = Mark.cleanHtml(value.html());
+		return this.refEditable ? this.refEditable.getTextValue() : '';
+	};
 
-		return String(obj.get(0).innerText || '');
+	getRange (): I.TextRange {
+		return this.refEditable ? this.refEditable.getRange() : null;
 	};
 	
 	getMarksFromHtml (): { marks: I.Mark[], text: string } {
 		const { block } = this.props;
-		const node = $(ReactDOM.findDOMNode(this));
-		const value = node.find('#value');
+		const value = this.refEditable ? this.refEditable.getHtmlValue() : '';
 		const restricted: I.MarkType[] = [];
 
 		if (block.isTextHeader()) {
 			restricted.push(I.MarkType.Bold);
 		};
 		
-		return Mark.fromHtml(value.html(), restricted);
+		return Mark.fromHtml(value, restricted);
 	};
 
 	onInput (e: any) {
@@ -1335,47 +1317,29 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 	};
 	
 	placeholderCheck () {
-		this.getValue() ? this.placeholderHide() : this.placeholderShow();			
+		if (this.refEditable) {
+			this.refEditable.placeholderCheck();
+		};			
 	};
 
 	placeholderSet (v: string) {
-		if (!this._isMounted) {
-			return;
+		if (this.refEditable) {
+			this.refEditable.placeholderSet(v);
 		};
-		
-		const node = $(ReactDOM.findDOMNode(this));
-		node.find('#placeholder').text(v);
 	};
 	
 	placeholderHide () {
-		if (!this._isMounted) {
-			return;
+		if (this.refEditable) {
+			this.refEditable.placeholderHide();
 		};
-
-		const node = $(ReactDOM.findDOMNode(this));
-		node.find('#placeholder').hide();
 	};
 	
 	placeholderShow () {
-		if (!this._isMounted) {
-			return;
+		if (this.refEditable) {
+			this.refEditable.placeholderShow();
 		};
-		
-		const node = $(ReactDOM.findDOMNode(this));
-		node.find('#placeholder').show();
 	};
 	
-	getRange () {
-		if (!this._isMounted) {
-			return;
-		};
-		
-		const node = $(ReactDOM.findDOMNode(this));
-		const range = getRange(node.find('#value').get(0) as Element);
-
-		return range ? { from: range.start, to: range.end } : null;
-	};
-
 });
 
 export default BlockText;
