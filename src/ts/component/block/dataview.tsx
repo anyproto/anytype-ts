@@ -396,7 +396,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const { targetObjectId } = block.content;
 		const object = detailStore.get(rootId, isInline ? targetObjectId : rootId, [ 'setOf' ]);
 		
-		return object.setOf;
+		return object.setOf || [];
 	};
 
 	onRecordAdd (e: any, dir: number, withPopup?: boolean) {

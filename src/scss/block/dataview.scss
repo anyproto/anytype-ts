@@ -52,6 +52,8 @@
 
 		.dataviewHead { display: flex; flex-direction: row; align-items: center; padding: 10px 14px; border-bottom: 1px solid $colorBorderDark; gap: 0px 6px; }
 		.dataviewHead {
+			.side.left { gap: 0px 12px; }
+
 			.iconWrap { 
 				padding: 4px 6px 4px 3px; border-radius: 4px; transition: $transitionFast; cursor: pointer; display: flex; align-items: center; 
 				line-height: 20px; @include text-small; color: $colorMediumGrey;
