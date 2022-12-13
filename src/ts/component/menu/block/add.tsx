@@ -574,7 +574,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 				};
 
 				if (item.type == I.BlockType.Dataview) {
-					C.BlockDataviewCreateWithObject(rootId, blockId, position, param, (message: any) => {
+					C.BlockCreate(rootId, blockId, position, param, (message: any) => {
 						focus.set(message.blockId, { from: length, to: length });
 						focus.apply();
 
