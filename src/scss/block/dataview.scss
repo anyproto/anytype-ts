@@ -67,6 +67,8 @@
 			.title {
 				.value { min-width: 70px; }
 			}
+
+			.icon.expand { width: 20px; height: 20px; background-image: url('~img/icon/menu/action/expand0.svg'); }
 		}
 
 		.dataviewControls { font-weight: 500; color: $colorMediumGrey; position: relative; }

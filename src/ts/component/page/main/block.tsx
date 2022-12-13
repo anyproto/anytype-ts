@@ -1,0 +1,164 @@
+import * as React from 'react';
+import * as ReactDOM from 'react-dom';
+import { observer } from 'mobx-react';
+import $ from 'jquery';
+import raf from 'raf';
+import { Header, Loader, Block, Deleted } from 'Component';
+import { I, C, Util, crumbs, Action } from 'Lib';
+import { blockStore } from 'Store';
+import Errors from 'json/error.json';
+
+interface Props extends I.PageComponent {
+	rootId: string;
+};
+
+interface State {
+	isDeleted: boolean;
+};
+
+const PageMainBlock = observer(class PageMainBlock extends React.Component<Props, State> {
+
+	_isMounted: boolean = false;
+	id: string = '';
+	refHeader: any = null;
+	loading: boolean = false;
+
+	state = {
+		isDeleted: false,
+	};
+
+	constructor (props: any) {
+		super(props);
+		
+		this.resize = this.resize.bind(this);
+	};
+
+	render () {
+		const { params } = this.getMatch();
+		const { blockId } = params;
+
+		if (this.state.isDeleted) {
+			return <Deleted {...this.props} />;
+		};
+
+		if (this.loading) {
+			return <Loader id="loader" />;
+		};
+
+		const rootId = this.getRootId();
+		const block = blockStore.getLeaf(rootId, blockId);
+
+		console.log(block);
+
+		return (
+			<div className="setWrapper">
+				<Header component="mainEdit" ref={(ref: any) => { this.refHeader = ref; }} {...this.props} rootId={rootId} />
+
+				<div className="blocks wrapper">
+					<Block 
+						{...this.props} 
+						key={block.id} 
+						rootId={rootId} 
+						iconSize={20} 
+						block={block} 
+						className="noPlus" 
+					/>
+				</div>
+			</div>
+		);
+	};
+
+	componentDidMount () {
+		this._isMounted = true;
+		this.open();
+	};
+
+	componentDidUpdate () {
+		this.open();
+		this.resize();
+	};
+
+	componentWillUnmount () {
+		this._isMounted = false;
+		this.close();
+	};
+
+	open () {
+		const rootId = this.getRootId();
+
+		if (this.id == rootId) {
+			return;
+		};
+
+		this.id = rootId;
+		this.loading = true;
+		this.forceUpdate();
+
+		C.ObjectOpen(rootId, '', (message: any) => {
+			if (message.error.code) {
+				if (message.error.code == Errors.Code.NOT_FOUND) {
+					this.setState({ isDeleted: true });
+				} else {
+					Util.route('/main/index');
+				};
+				return;
+			};
+
+			crumbs.addRecent(rootId);
+
+			this.loading = false;
+			this.forceUpdate();
+
+			if (this.refHeader) {
+				this.refHeader.forceUpdate();
+			};
+
+			this.resize();
+		});
+	};
+
+	close () {
+		const { isPopup, match } = this.props;
+		const rootId = this.getRootId();
+		
+		let close = true;
+		if (isPopup && (match.params.id == rootId)) {
+			close = false;
+		};
+		if (close) {
+			Action.pageClose(rootId, true);
+		};
+	};
+
+	getRootId () {
+		const { rootId, match } = this.props;
+		return rootId ? rootId : match.params.id;
+	};
+
+	getMatch () {
+		const { match, matchPopup, isPopup } = this.props;
+		return (isPopup ? matchPopup : match) || { params: {} };
+	};
+
+	resize () {
+		if (this.loading || !this._isMounted) {
+			return;
+		};
+
+		const win = $(window);
+		const { isPopup } = this.props;
+		
+		raf(() => {
+			const node = $(ReactDOM.findDOMNode(this));
+			const container = Util.getPageContainer(isPopup);
+			const header = container.find('#header');
+			const hh = isPopup ? header.height() : Util.sizeHeader();
+
+			container.css({ minHeight: isPopup ? '' : win.height() });
+			node.css({ paddingTop: isPopup && !container.hasClass('full') ? 0 : hh });
+		});
+	};
+
+});
+
+export default PageMainBlock;

@@ -20,6 +20,7 @@ class ObjectUtil {
 			case I.ObjectLayout.Graph:		 r = 'graph'; break;
 			case I.ObjectLayout.Store:		 r = 'store'; break;
 			case I.ObjectLayout.History:	 r = 'history'; break;
+			case I.ObjectLayout.Block:		 r = 'block'; break;
 		};
 		return r;
 	};
@@ -105,6 +106,7 @@ class ObjectUtil {
 		};
 
 		let param: any = Object.assign(popupParam || {}, {});
+
 		param.data = Object.assign(param.data || {}, { 
 			matchPopup: { 
 				params: {
@@ -114,6 +116,12 @@ class ObjectUtil {
 				},
 			},
 		});
+
+		if (object._routeParam_) {
+			param.data.matchPopup.params = Object.assign(param.data.matchPopup.params, object._routeParam_);
+		};
+
+		console.log(param);
 
 		keyboard.setSource(null);
 		historyPopup.pushMatch(param.data.matchPopup);
