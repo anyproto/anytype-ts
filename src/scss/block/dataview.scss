@@ -55,7 +55,7 @@
 			.side.left { gap: 0px 12px; }
 
 			.iconWrap { 
-				padding: 4px 6px 4px 3px; border-radius: 4px; transition: $transitionFast; cursor: pointer; display: flex; align-items: center; 
+				padding: 4px; border-radius: 4px; transition: $transitionFast; cursor: pointer; display: flex; align-items: center;
 				line-height: 20px; @include text-small; color: $colorMediumGrey;
 			}
 			.iconWrap:hover { background-color: $colorHover; }

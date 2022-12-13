@@ -3,13 +3,7 @@ import { I } from 'Lib';
 import { Label, Button } from 'Component';
 import { observer } from 'mobx-react';
 
-interface Props extends I.ViewComponent {
-	title: string;
-	description: string;
-	button: string;
-	withButton: boolean;
-	onClick: (e: any) => void;
-};
+interface Props extends I.ViewEmpty {};
 
 const Empty = observer(class Empty extends React.Component<Props, {}> {
 

@@ -17,6 +17,7 @@ import ViewGrid from './dataview/view/grid';
 import ViewBoard from './dataview/view/board';
 import ViewGallery from './dataview/view/gallery';
 import ViewList from './dataview/view/list';
+import Empty from './dataview/empty';
 
 interface Props extends I.BlockComponent, RouteComponentProps<any> {
 	isInline?: boolean;
@@ -59,6 +60,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const { rootId, block, isPopup, isInline, isDragging } = this.props;
 		const { loading } = this.state;
 		const views = dbStore.getViews(rootId, block.id);
+		const sources = this.getSources();
 
 		if (!views.length) {
 			return null;
@@ -157,6 +159,19 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					</div>
 				);
 			};
+		};
+
+		if (!sources.length) {
+			content = (
+				<Empty
+					{...this.props}
+					title="No data source"
+					description="Select object source or connect existing set"
+					button="Select source"
+					withButton={true}
+					onClick={(e: any) => this.onEmptyClick(e)}
+				/>
+			);
 		};
 
 		return (
@@ -283,6 +298,11 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const { rootId, block } = this.props;
 		const subId = dbStore.getSubId(rootId, block.id);
 		const keys = this.getKeys(viewId);
+		const sources = this.getSources();
+
+		if (!sources.length) {
+			return;
+		}
 
 		if (clear) {
 			dbStore.recordsSet(subId, '', []);
@@ -394,8 +414,13 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	getSources (): string[] {
 		const { rootId, block, isInline } = this.props;
 		const { targetObjectId } = block.content;
-		const object = detailStore.get(rootId, isInline ? targetObjectId : rootId, [ 'setOf' ]);
-		
+
+		if (!targetObjectId) {
+			return [];
+		};
+
+		const object = detailStore.get(rootId, targetObjectId, [ 'setOf' ]);
+
 		return object.setOf || [];
 	};
 
@@ -618,6 +643,11 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				subId,
 			}
 		});
+	};
+
+	onEmptyClick (e) {
+		const element = $(e.currentTarget);
+		console.log('SELECT SOURCE');
 	};
 
 	getIdPrefix () {
