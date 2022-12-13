@@ -28,41 +28,49 @@ const Head = observer(class Head extends React.Component<Props, {}> {
 		this.onCompositionEnd = this.onCompositionEnd.bind(this);
 		this.onIconSelect = this.onIconSelect.bind(this);
 		this.onIconUpload = this.onIconUpload.bind(this);
+		this.onFullscreen = this.onFullscreen.bind(this);
 	};
 
 	render () {
-		const { rootId, block, readonly, getView, className } = this.props;
+		const { rootId, block, readonly, getSources, className } = this.props;
 		const { targetObjectId } = block.content;
-		const object = detailStore.get(rootId, targetObjectId, [ 'setOf' ]);
-		const sources = object.setOf || [];
-		const view = getView();
+		const object = detailStore.get(rootId, targetObjectId);
+		const sources = getSources();
 		const cn = [ 'dataviewHead' ];
 
 		if (className) {
 			cn.push(className);
 		};
-		
+
 		return (
 			<div className={cn.join(' ')}>
-				<IconObject id={`icon-set-${block.id}`} object={object} size={18} canEdit={!readonly} onSelect={this.onIconSelect} onUpload={this.onIconUpload} />
-				<div id="title" className="title">
-					<div
-						className="value" 
-						contentEditable="true" 
-						suppressContentEditableWarning={true}
-						onFocus={this.onFocus}
-						onBlur={this.onBlur}
-						onKeyDown={this.onKeyDown}
-						onKeyUp={this.onKeyUp}
-						onCompositionStart={this.onCompositionStart}
-						onCompositionEnd={this.onCompositionEnd}
-					/>
-					<div id="placeholder" className="placeholder">New set</div>
-				</div>
+				<div className="side left">
+					<IconObject id={`icon-set-${block.id}`} object={object} size={18} canEdit={!readonly} onSelect={this.onIconSelect} onUpload={this.onIconUpload} />
+					
+					<div id="title" className="title">
+						<div
+							className="value" 
+							contentEditable="true" 
+							suppressContentEditableWarning={true}
+							onFocus={this.onFocus}
+							onBlur={this.onBlur}
+							onKeyDown={this.onKeyDown}
+							onKeyUp={this.onKeyUp}
+							onCompositionStart={this.onCompositionStart}
+							onCompositionEnd={this.onCompositionEnd}
+						/>
+						<div id="placeholder" className="placeholder">New set</div>
+					</div>
 
-				<div id="head-source-select" className="iconWrap" onClick={this.onSelect}>
-					<Icon className="set" />
-					{sources.length}
+					<div id="head-source-select" className="iconWrap" onClick={this.onSelect}>
+						<Icon className="set" />
+						{sources.length}
+					</div>
+				</div>
+				<div className="side right">
+					<div className="iconWrap" onClick={this.onFullscreen}>
+						<Icon className="expand" />
+					</div>
 				</div>
 			</div>
 		);
@@ -114,8 +122,8 @@ const Head = observer(class Head extends React.Component<Props, {}> {
 			isSub: true,
 			data: {
 				isBig: true,
-				rootId: rootId,
-				blockId: block.id,
+				rootId,
+				blockId: 'dataview',
 				blockIds: [ block.id ],
 				rebind: this.menuContext.ref.rebind,
 			}
@@ -124,11 +132,9 @@ const Head = observer(class Head extends React.Component<Props, {}> {
 		switch (item.id) {
 			case 'new':
 				menuId = 'dataviewSource';
-				if (targetObjectId) {
-					menuParam.data = Object.assign(menuParam.data, {
-						targetObjectId: targetObjectId
-					});
-				};
+				menuParam.data = Object.assign(menuParam.data, {
+					objectId: targetObjectId,
+				});
 				break;
 
 			case 'existing':
@@ -140,7 +146,7 @@ const Head = observer(class Head extends React.Component<Props, {}> {
 					],
 					keys: Constant.defaultRelationKeys.concat([ 'setOf' ]),
 					onSelect: (item: any) => {
-						C.BlockDataviewSetSource(rootId, block.id, item.setOf);
+						C.BlockDataviewSetSource(targetObjectId, 'dataview', item.setOf);
 					}
 				});
 				break;
@@ -191,9 +197,9 @@ const Head = observer(class Head extends React.Component<Props, {}> {
 		};
 
 		const { rootId, block } = this.props;
+		const { targetObjectId } = block.content;
 		const node = $(ReactDOM.findDOMNode(this));
 		const item = node.find('#title');
-		const { targetObjectId } = block.content;
 
 		if (!targetObjectId) {
 			return;
@@ -275,6 +281,12 @@ const Head = observer(class Head extends React.Component<Props, {}> {
 		};
 
 		ObjectUtil.setIcon(targetObjectId, '', hash);
+	};
+
+	onFullscreen () {
+		const { rootId, block } = this.props;
+
+		ObjectUtil.openPopup({ layout: I.ObjectLayout.Block, id: rootId, _routeParam_: { blockId: block.id } });
 	};
 
 });

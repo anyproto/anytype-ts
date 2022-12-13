@@ -570,7 +570,9 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 				};
 
 				if (item.type == I.BlockType.Dataview) {
-					param.content.views = [ { name: item.name, type: item.itemId } ];
+					param.content.views = [ 
+						{ id: I.ViewType[item.itemId].toLowerCase(), name: item.name, type: item.itemId } 
+					];
 				};
 
 				if (item.type == I.BlockType.Dataview) {

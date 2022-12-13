@@ -181,9 +181,13 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 			let tabs: any[] = [];
 
 			switch (component) {
+				case 'dataviewViewList':
+					break;
+
 				case 'dataviewFilterList':
 					tabs = [ { id: 'filter', name: 'Filters', component } ];
 					break;
+
 				case 'dataviewSort':
 					tabs = [ { id: 'sort', name: 'Sorts', component } ];
 					break;

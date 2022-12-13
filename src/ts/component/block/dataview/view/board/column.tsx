@@ -93,13 +93,13 @@ const Column = observer(class Column extends React.Component<Props, State> {
 								readonly={true} 
 								arrayLimit={4}
 								withLabel={true}
-								placeholder={translate('commonEmpty')}
+								placeholder={translate('placeholderCellCommon')}
 							/>
 						</div>
 
 						<div className="side right">
-							<Icon id={`button-${id}-more`} className="more" onClick={this.onMore} />
-							<Icon className="add"  onClick={() => { onRecordAdd(id, -1); }} />
+							<Icon id={`button-${id}-more`} className="more" tooltip="Column settings" onClick={this.onMore} />
+							<Icon className="add" tooltip="Create new object" onClick={() => { onRecordAdd(id, -1); }} />
 						</div>
 					</div>
 

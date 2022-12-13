@@ -70,7 +70,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<Props> 
 			if (item.isSection) {
 				content = <div className="sectionName" style={param.style}>{item.name}</div>;
 			} else {
-				content = <Item key={item.id} {...item} index={param.index} style={param.style} />;
+				content = <Item key={item.id} {...item} index={param.index - 1} style={param.style} />;
 			};
 
 			return (
@@ -138,6 +138,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<Props> 
 					helperClass="isDragging"
 					helperContainer={() => { return $(ReactDOM.findDOMNode(this)).find('.items').get(0); }}
 				/>
+
 				{allowed ? (
 					<div className="bottom">
 						<div className="line" />
@@ -314,14 +315,12 @@ const MenuViewList = observer(class MenuViewList extends React.Component<Props> 
 		const { data } = param;
 		const { rootId, blockId } = data;
 		const { oldIndex, newIndex } = result;
-
-		let views = dbStore.getViews(rootId, blockId);
-		let view = views[oldIndex];
-		let ids = arrayMove(views.map((it: any) => { return it.id; }), oldIndex, newIndex);
+		const views = dbStore.getViews(rootId, blockId);
+		const view = views[oldIndex];
+		const ids = arrayMove(views.map(it => it.id), oldIndex, newIndex);
 
 		dbStore.viewsSort(rootId, blockId, ids);
 		C.BlockDataviewViewSetPosition(rootId, blockId, view.id, newIndex);
-
 		selection.preventSelect(false);
 	};
 

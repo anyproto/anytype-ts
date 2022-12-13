@@ -29,6 +29,8 @@
 .button.c28 { @include text-small; height: 28px; line-height: 28px; border-radius: 6px; }
 .button.c28.blank { line-height: 26px; }
 
+.button.c16 { @include text-9; height: 16px; line-height: 14px; border-radius: 4px; padding: 0px 4px; }
+
 input.button { line-height: 1; }
 
 .button {

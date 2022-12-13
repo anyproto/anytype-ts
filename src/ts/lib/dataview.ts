@@ -108,7 +108,9 @@ class Dataview {
 		const view = dbStore.getView(rootId, blockId, newViewId);
 		const block = blockStore.getLeaf(rootId, blockId);
 		const { targetObjectId } = block.content;
-		const object = detailStore.get(rootId, targetObjectId ? targetObjectId : rootId, [ 'setOf' ]);
+		const object = detailStore.get(rootId, targetObjectId ? targetObjectId : rootId);
+
+		console.log(object);
 
 		if (!view || !block) {
 			return;
@@ -147,7 +149,7 @@ class Dataview {
 			filters: view.filters.map(mapper),
 			sorts: view.sorts.map(mapper),
 			keys,
-			sources: object.setOf || [],
+			sources: object.setOf,
 			limit,
 			offset,
 			ignoreDeleted: true,
