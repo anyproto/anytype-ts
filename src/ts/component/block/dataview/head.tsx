@@ -32,17 +32,16 @@ const Head = observer(class Head extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { rootId, block, readonly, getView, className } = this.props;
+		const { rootId, block, readonly, getSources, className } = this.props;
 		const { targetObjectId } = block.content;
-		const object = detailStore.get(rootId, targetObjectId, [ 'setOf' ]);
-		const sources = object.setOf || [];
-		const view = getView();
+		const object = detailStore.get(rootId, targetObjectId);
+		const sources = getSources();
 		const cn = [ 'dataviewHead' ];
 
 		if (className) {
 			cn.push(className);
 		};
-		
+
 		return (
 			<div className={cn.join(' ')}>
 				<div className="side left">
@@ -123,8 +122,8 @@ const Head = observer(class Head extends React.Component<Props, {}> {
 			isSub: true,
 			data: {
 				isBig: true,
-				rootId: rootId,
-				blockId: block.id,
+				rootId,
+				blockId: 'dataview',
 				blockIds: [ block.id ],
 				rebind: this.menuContext.ref.rebind,
 			}
@@ -133,11 +132,9 @@ const Head = observer(class Head extends React.Component<Props, {}> {
 		switch (item.id) {
 			case 'new':
 				menuId = 'dataviewSource';
-				if (targetObjectId) {
-					menuParam.data = Object.assign(menuParam.data, {
-						targetObjectId: targetObjectId
-					});
-				};
+				menuParam.data = Object.assign(menuParam.data, {
+					objectId: targetObjectId,
+				});
 				break;
 
 			case 'existing':
@@ -149,7 +146,7 @@ const Head = observer(class Head extends React.Component<Props, {}> {
 					],
 					keys: Constant.defaultRelationKeys.concat([ 'setOf' ]),
 					onSelect: (item: any) => {
-						C.BlockDataviewSetSource(rootId, block.id, item.setOf);
+						C.BlockDataviewSetSource(targetObjectId, 'dataview', item.setOf);
 					}
 				});
 				break;

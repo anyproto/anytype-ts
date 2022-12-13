@@ -24,7 +24,7 @@ const MenuSource = observer(class MenuSource extends React.Component<Props, {}> 
 	
 	render () {
 		const items = this.getItems();
-		const types = this.getObjects().filter(it => it.type == Constant.typeId.type);
+		const types = this.getValue().filter(it => it.type == Constant.typeId.type);
 		
 		const Item = (item: any) => {
 			const canDelete = item.id != 'type';
@@ -48,6 +48,7 @@ const MenuSource = observer(class MenuSource extends React.Component<Props, {}> 
 					{items.map((item: any, i: number) => (
 						<Item key={i} {...item} />
 					))}
+
 					{!items.length ? (
 						<div className="item empty">
 							<div className="inner">Select one or more sources</div>
@@ -87,8 +88,6 @@ const MenuSource = observer(class MenuSource extends React.Component<Props, {}> 
 	};
 
 	rebind () {
-		const { getId } = this.props;
-
 		this.unbind();
 		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
 		window.setTimeout(() => { this.props.setActive(); }, 15);
@@ -116,7 +115,7 @@ const MenuSource = observer(class MenuSource extends React.Component<Props, {}> 
 					{ relationKey: 'name', type: I.SortType.Asc }
 				],
 				onSelect: (item: any) => {
-					const value = this.getObjects().filter((it: any) => { return it.type == Constant.typeId.relation; }).map((it: any) => { return it.id; });
+					const value = this.getValue().filter(it => it.type == Constant.typeId.relation).map(it => it.id);
 					
 					value.push(item.id);
 					this.save(value);
@@ -162,33 +161,21 @@ const MenuSource = observer(class MenuSource extends React.Component<Props, {}> 
 	save (value: string[]) {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, targetObjectId } = data;
+		const { objectId, blockId } = data;
 
-		if (targetObjectId) {
-			C.BlockDataviewSetSource(targetObjectId, 'dataview', value);
-		} else {
-			C.BlockDataviewSetSource(rootId, blockId, value);
-		};
+		C.BlockDataviewSetSource(objectId, blockId, value);
 	};
 
 	getValue () {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId } = data;
-		const object = detailStore.get(rootId, rootId);
+		const { rootId, objectId } = data;
+		const object = detailStore.get(rootId, objectId);
 
-		return Util.arrayUnique(Relation.getArrayValue(object.setOf || []).filter((it: string) => {
+		return (object.setOf || []).filter((it: string) => {
 			const object = detailStore.get(rootId, it, []);
 			return !object._empty_;
-		}));
-	};
-
-	getObjects () {
-		const { param } = this.props;
-		const { data } = param;
-		const { rootId } = data;
-		const value = this.getValue();
-		return value.map((it: string) => { return detailStore.get(rootId, it, []); });
+		});
 	};
 
 	getItems () {

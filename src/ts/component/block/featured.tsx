@@ -453,6 +453,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				horizontal: I.MenuDirection.Center,
 				data: {
 					rootId,
+					objectId: rootId,
 					blockId: 'dataview',
 				}
 			}); 

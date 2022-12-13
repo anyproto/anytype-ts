@@ -110,6 +110,7 @@ export interface ViewComponent {
 	getData(viewId: string, offset: number, clear: boolean, callBack?: (message: any) => void): void;
 	getRecord(index: number): any;
 	getView?(): View;
+	getSources?(): string[];
 	getKeys?(viewId: string): string[];
 	getIdPrefix?(): string;
 	getLimit?(): number;

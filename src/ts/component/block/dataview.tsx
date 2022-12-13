@@ -46,6 +46,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		this.getData = this.getData.bind(this);
 		this.getRecord = this.getRecord.bind(this);
 		this.getView = this.getView.bind(this);
+		this.getSources = this.getSources.bind(this);
 		this.getKeys = this.getKeys.bind(this);
 		this.getIdPrefix = this.getIdPrefix.bind(this);
 		this.onRecordAdd = this.onRecordAdd.bind(this);
@@ -57,7 +58,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	render () {
 		const { rootId, block, isPopup, isInline, isDragging } = this.props;
 		const { loading } = this.state;
-		const { targetObjectId } = block.content;
 		const views = dbStore.getViews(rootId, block.id);
 
 		if (!views.length) {
@@ -69,8 +69,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			return null;
 		};
 
-		let object = detailStore.get(rootId, isInline ? targetObjectId : rootId, [ 'setOf' ]);
-		let sources = object.setOf || [];
 		let { groupRelationKey } = view;
 		let ViewComponent: any = null;
 		let className = Util.toCamelCase('view-' + I.ViewType[view.type]);
@@ -105,6 +103,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					readonly={false} 
 					getData={this.getData} 
 					getView={this.getView} 
+					getSources={this.getSources}
 					getRecord={this.getRecord}
 					onRecordAdd={this.onRecordAdd}
 					className={className}
@@ -122,6 +121,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					readonly={false} 
 					getData={this.getData} 
 					getView={this.getView} 
+					getSources={this.getSources}
 					getRecord={this.getRecord}
 					onRecordAdd={this.onRecordAdd}
 					isInline={isInline}
@@ -130,8 +130,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 			if (loading) {
 				content = <Loader id="set-loader" />
-			} else 
-			if ((isInline && sources.length) || !isInline) {
+			} else {
 				content = (
 					<div className="content">
 						<ViewComponent 
@@ -145,6 +144,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 							getData={this.getData} 
 							getRecord={this.getRecord}
 							getView={this.getView} 
+							getSources={this.getSources}
 							getKeys={this.getKeys}
 							getIdPrefix={this.getIdPrefix}
 							getLimit={() => this.getLimit(view.type)}
@@ -295,7 +295,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				this.viewRef.loadGroupList();
 			} else {
 				this.viewId = '';
-				this.forceUpdate();
+				//this.forceUpdate();
 			};
 		} else {
 			if (clear) {
@@ -389,6 +389,14 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		viewId = viewId || dbStore.getMeta(dbStore.getSubId(rootId, block.id), '').viewId;
 		return dbStore.getView(rootId, block.id, viewId) || views[0];
+	};
+
+	getSources (): string[] {
+		const { rootId, block, isInline } = this.props;
+		const { targetObjectId } = block.content;
+		const object = detailStore.get(rootId, isInline ? targetObjectId : rootId, [ 'setOf' ]);
+		
+		return object.setOf;
 	};
 
 	onRecordAdd (e: any, dir: number, withPopup?: boolean) {
