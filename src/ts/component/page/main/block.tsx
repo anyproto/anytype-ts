@@ -48,8 +48,6 @@ const PageMainBlock = observer(class PageMainBlock extends React.Component<Props
 		const rootId = this.getRootId();
 		const block = blockStore.getLeaf(rootId, blockId);
 
-		console.log(block);
-
 		return (
 			<div className="setWrapper">
 				<Header component="mainEdit" ref={(ref: any) => { this.refHeader = ref; }} {...this.props} rootId={rootId} />

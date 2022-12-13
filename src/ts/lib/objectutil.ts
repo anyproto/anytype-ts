@@ -121,8 +121,6 @@ class ObjectUtil {
 			param.data.matchPopup.params = Object.assign(param.data.matchPopup.params, object._routeParam_);
 		};
 
-		console.log(param);
-
 		keyboard.setSource(null);
 		historyPopup.pushMatch(param.data.matchPopup);
 		window.setTimeout(() => { popupStore.open('page', param); }, Constant.delay.popup);
