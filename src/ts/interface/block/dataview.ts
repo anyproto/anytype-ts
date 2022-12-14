@@ -120,6 +120,16 @@ export interface ViewComponent {
 	onCellChange?: (id: string, key: string, value: any, callBack?: (message: any) => void) => void;
 };
 
+export interface ViewEmpty {
+	rootId?: string;
+	block?: I.Block;
+	title: string;
+	description: string;
+	button: string;
+	withButton: boolean;
+	onClick: (e: any) => void;
+};
+
 export interface View {
 	id: string;
 	name: string;

@@ -110,8 +110,6 @@ class Dataview {
 		const { targetObjectId } = block.content;
 		const object = detailStore.get(rootId, targetObjectId ? targetObjectId : rootId);
 
-		console.log(object);
-
 		if (!view || !block) {
 			return;
 		};

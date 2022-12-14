@@ -93,8 +93,8 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 						<div 
 							id="view-selector"
 							className="viewSelect select"
-							onClick={(e: any) => { this.onButton(e, '#view-selector', 'dataviewViewList', false); }} 
-							onContextMenu={(e: any) => { this.onViewEdit(e, '#view-selector', view); }}
+							onClick={(e: any) => { this.onButton(e, `#block-${block.id} #view-selector`, 'dataviewViewList', false); }}
+							onContextMenu={(e: any) => { this.onViewEdit(e, `#block-${block.id} #view-selector`, view); }}
 						>
 							<div className="name">{view.name}</div>
 							<Icon className="arrow light" />
