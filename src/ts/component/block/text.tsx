@@ -40,7 +40,6 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 	marks: I.Mark[] = [];
 	text: string = '';
 	clicks: number = 0;
-	composition: boolean = false;
 	preventSaveOnBlur: boolean = false;
 	preventMenu: boolean = false;
 	frame: number = 0;
@@ -68,9 +67,6 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		this.onCopy = this.onCopy.bind(this);
 		this.onSelectIcon = this.onSelectIcon.bind(this);
 		this.onUploadIcon = this.onUploadIcon.bind(this);
-
-		this.onCompositionStart = this.onCompositionStart.bind(this);
-		this.onCompositionEnd = this.onCompositionEnd.bind(this);
 	};
 
 	render () {
@@ -200,8 +196,6 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 					onMouseDown={this.onMouseDown}
 					onMouseUp={this.onMouseUp}
 					onInput={this.onInput}
-					onCompositionStart={this.onCompositionStart}
-					onCompositionEnd={this.onCompositionEnd}
 					onDragStart={(e: any) => { e.preventDefault(); }}
 				/>
 			</div>
@@ -245,14 +239,6 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		this._isMounted = false;
 	};
 
-	onCompositionStart (e: any) {
-		this.composition = true;
-	};
-
-	onCompositionEnd (e: any) {
-		this.composition = false;
-	};
-	
 	setValue (v: string) {
 		const { block } = this.props;
 		const fields = block.fields || {};
@@ -618,8 +604,6 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 
 	onInput (e: any) {
 		const { onUpdate } = this.props;
-		
-		this.placeholderCheck();
 
 		if (onUpdate) {
 			onUpdate();
@@ -628,11 +612,6 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 	
 	onKeyDown (e: any) {
 		e.persist();
-
-		// Chinese IME is open
-		if (this.composition) {
-			return;
-		};
 
 		const { onKeyDown, rootId, block } = this.props;
 		const { id } = block;

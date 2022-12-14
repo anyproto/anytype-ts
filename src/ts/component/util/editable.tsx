@@ -19,9 +19,9 @@ interface Props {
 	onMouseDown?: (e: any) => void;
 	onMouseUp?: (e: any) => void;
 	onInput?: (e: any) => void;
+	onDragStart?: (e: any) => void;
 	onCompositionStart?: (e: any) => void;
 	onCompositionEnd?: (e: any) => void;
-	onDragStart?: (e: any) => void;
 };
 
 class Editable extends React.Component<Props, {}> {
@@ -29,18 +29,22 @@ class Editable extends React.Component<Props, {}> {
 	_isMounted: boolean = false;
 	placeholder: any = null;
 	editable: any = null;
-
-	public static defaultProps = {
-    };
+	composition: boolean = false;
 
 	constructor (props: Props) {
 		super(props);
+
+		this.onInput = this.onInput.bind(this);
+		this.onKeyDown = this.onKeyDown.bind(this);
+		this.onKeyUp = this.onKeyUp.bind(this);
+		this.onCompositionStart = this.onCompositionStart.bind(this);
+		this.onCompositionEnd = this.onCompositionEnd.bind(this);
 	};
 
 	render () {
 		const { 
-			id, classNameWrap, classNameEditor, classNamePlaceholder, readonly, placeholder, onKeyDown, onKeyUp, onFocus, onBlur, onSelect, onPaste, 
-			onMouseDown, onMouseUp, onInput, onCompositionStart, onCompositionEnd, onDragStart 
+			id, classNameWrap, classNameEditor, classNamePlaceholder, readonly, placeholder, onFocus, onBlur, onSelect, onPaste, 
+			onMouseDown, onMouseUp, onDragStart
 		} = this.props;
 		const cnw = [ 'editableWrap' ];
 		const cne = [ 'editable' ];
@@ -68,18 +72,18 @@ class Editable extends React.Component<Props, {}> {
 					className={cne.join(' ')}
 					contentEditable={true}
 					suppressContentEditableWarning={true}
-					onKeyDown={onKeyDown}
-					onKeyUp={onKeyUp}
+					onKeyDown={this.onKeyDown}
+					onKeyUp={this.onKeyUp}
 					onFocus={onFocus}
 					onBlur={onBlur}
 					onSelect={onSelect}
 					onPaste={onPaste}
 					onMouseDown={onMouseDown}
 					onMouseUp={onMouseUp}
-					onInput={onInput}
-					onCompositionStart={onCompositionStart}
-					onCompositionEnd={onCompositionEnd}
+					onInput={this.onInput}
 					onDragStart={onDragStart}
+					onCompositionStart={this.onCompositionStart}
+					onCompositionEnd={this.onCompositionEnd}
 				/>
 			);
 		};
@@ -143,6 +147,64 @@ class Editable extends React.Component<Props, {}> {
 
 		el.focus({ preventScroll: true });
 		setRange(el, { start: range.from, end: range.to });
+	};
+
+	onInput (e: any) {
+		const { onInput } = this.props;
+
+		this.placeholderCheck();
+
+		if (onInput) {
+			onInput(e);
+		};
+	};
+
+	onKeyDown (e: any): void {
+		const { onKeyDown } = this.props;
+
+		// Chinese IME is open
+		if (this.composition) {
+			return;
+		};
+
+		if (onKeyDown) {
+			onKeyDown(e);
+		};
+
+		this.placeholderCheck();
+	};
+
+	onKeyUp (e: any): void {
+		const { onKeyUp } = this.props;
+
+		// Chinese IME is open
+		if (this.composition) {
+			return;
+		};
+
+		if (onKeyUp) {
+			onKeyUp(e);
+		};
+
+		this.placeholderCheck();
+	};
+
+	onCompositionStart (e: any) {
+		const { onCompositionStart } = this.props;
+
+		this.composition = true;
+		if (onCompositionStart) {
+			onCompositionStart(e);
+		};
+	};
+
+	onCompositionEnd (e: any) {
+		const { onCompositionEnd } = this.props;
+
+		this.composition = false;
+		if (onCompositionEnd) {
+			onCompositionEnd(e);
+		};
 	};
 
 };

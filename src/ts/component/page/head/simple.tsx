@@ -19,7 +19,6 @@ const HeadSimple = observer(class Controls extends React.Component<Props, {}> {
 	
 	_isMounted: boolean = false;
 	refEditable: any = {};
-	composition: boolean = false;
 	timeout: number = 0;
 
 	constructor (props: any) {
@@ -29,7 +28,6 @@ const HeadSimple = observer(class Controls extends React.Component<Props, {}> {
 		this.onUpload = this.onUpload.bind(this);
 		this.onInstall = this.onInstall.bind(this);
 		this.onCompositionStart = this.onCompositionStart.bind(this);
-		this.onCompositionEnd = this.onCompositionEnd.bind(this);
 	};
 
 	render (): any {
@@ -37,7 +35,6 @@ const HeadSimple = observer(class Controls extends React.Component<Props, {}> {
 		const check = DataUtil.checkDetails(rootId);
 		const object = check.object;
 		const allowDetails = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
-		const allowCreate = rootId != Constant.typeId.set;
 		const placeholder = {
 			title: DataUtil.defaultName(type),
 			description: 'Add a description',
@@ -63,16 +60,14 @@ const HeadSimple = observer(class Controls extends React.Component<Props, {}> {
 					onBlur={(e: any) => { this.onBlur(e, item); }}
 					onKeyDown={(e: any) => { this.onKeyDown(e, item); }}
 					onKeyUp={(e: any) => { this.onKeyUp(e, item); }}
-					onInput={(e: any) => { this.onInput(e, item); }}
 					onSelect={(e: any) => { this.onSelectText(e, item); }}
 					onCompositionStart={this.onCompositionStart}
-					onCompositionEnd={this.onCompositionEnd}
 				/>
 			);
 		};
 
 		let button = null;
-		if (allowCreate && (object.type == Constant.typeId.type)) {
+		if (object.type == Constant.typeId.type) {
 			button = <Button id="button-create" text="Create" onClick={onCreate} />;
 		};
 		if (object.type == Constant.typeId.relation) {
@@ -150,10 +145,6 @@ const HeadSimple = observer(class Controls extends React.Component<Props, {}> {
 		this.save();
 	};
 
-	onInput (e: any, item: any) {
-		this.placeholderCheck(item.id);
-	};
-
 	onSelect (icon: string) {
 		const { rootId } = this.props;
 		ObjectUtil.setIcon(rootId, icon, '');
@@ -165,8 +156,6 @@ const HeadSimple = observer(class Controls extends React.Component<Props, {}> {
 	};
 
 	onKeyDown (e: any, item: any) {
-		this.placeholderCheck(item.id);
-
 		if (item.id == 'title') {
 			keyboard.shortcut('enter', e, (pressed: string) => {
 				e.preventDefault();
@@ -175,12 +164,6 @@ const HeadSimple = observer(class Controls extends React.Component<Props, {}> {
 	};
 
 	onKeyUp (e: any, item: any) {
-		if (this.composition) {
-			return;
-		};
-
-		this.placeholderCheck(item.id);
-
 		window.clearTimeout(this.timeout);
 		this.timeout = window.setTimeout(() => { this.save(); }, 500);
 	};
@@ -190,12 +173,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props, {}> {
 	};
 
 	onCompositionStart (e: any) {
-		this.composition = true;
 		window.clearTimeout(this.timeout);
-	};
-
-	onCompositionEnd (e: any) {
-		this.composition = false;
 	};
 
 	save () {

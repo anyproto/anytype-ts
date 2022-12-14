@@ -65,7 +65,6 @@ const MenuText = observer(class MenuText extends React.Component<Props, {}> {
 
 	onInput (e: any) {
 		this.resize();
-		this.placeholderCheck();
 	};
 
 	onFocus () {
