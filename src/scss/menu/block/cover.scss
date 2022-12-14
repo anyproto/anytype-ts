@@ -13,7 +13,7 @@
 		}
 		.head {
 			.btn { display: inline-block; margin-right: 16px; transition: $transitionFast; cursor: pointer; }
-			.btn:hover, .btn.active { color: $colorBlack }
+			.btn:hover, .btn.active { color: $colorBlack; }
 			.btn:last-child { margin: 0px; }
 		}
 		
