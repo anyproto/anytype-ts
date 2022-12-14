@@ -415,11 +415,11 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const { rootId, block, isInline } = this.props;
 		const { targetObjectId } = block.content;
 
-		if (!targetObjectId) {
+		if (isInline && !targetObjectId) {
 			return [];
 		};
 
-		const object = detailStore.get(rootId, targetObjectId, [ 'setOf' ]);
+		const object = detailStore.get(rootId, isInline ? targetObjectId : rootId, [ 'setOf' ]);
 
 		return object.setOf || [];
 	};
@@ -647,7 +647,40 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 	onEmptyClick (e) {
 		const element = $(e.currentTarget);
-		console.log('SELECT SOURCE');
+		this.onSelectSource(element);
+	};
+
+	onSelectSource (element) {
+		const { rootId, block } = this.props;
+		const { targetObjectId } = block.content;
+
+		const menuParam = {
+			menuKey: block.id,
+			element: element,
+			className: 'small single',
+			horizontal: I.MenuDirection.Center,
+			offsetY: 10,
+			noFlipY: true,
+			data: {
+				isBig: false,
+				rootId,
+				blockId: 'dataview',
+				canAdd: true,
+				blockIds: [ block.id ],
+				filters: [
+					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.set },
+					{ operator: I.FilterOperator.And, relationKey: 'setOf', condition: I.FilterCondition.NotEmpty, value: null },
+				],
+				keys: Constant.defaultRelationKeys.concat([ 'setOf' ]),
+				onSelect: (item: any) => {
+					C.BlockDataviewSetSource(targetObjectId, 'dataview', item.setOf);
+				}
+			}
+		};
+
+		menuStore.closeAll(Constant.menuIds.dataviewHead, () => {
+			menuStore.open('searchObject', menuParam);
+		});
 	};
 
 	getIdPrefix () {
