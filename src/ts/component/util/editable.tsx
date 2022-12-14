@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { getRange } from 'selection-ranges';
+import { getRange, setRange } from 'selection-ranges';
 import { I, Mark } from 'Lib';
 
 interface Props {
@@ -35,8 +35,6 @@ class Editable extends React.Component<Props, {}> {
 
 	constructor (props: Props) {
 		super(props);
-
-
 	};
 
 	render () {
@@ -138,6 +136,13 @@ class Editable extends React.Component<Props, {}> {
 	getRange (): I.TextRange {
 		const range = getRange(this.editable.get(0) as Element);
 		return range ? { from: range.start, to: range.end } : null;
+	};
+
+	setRange (range: I.TextRange) {
+		const el = this.editable.get(0);
+
+		el.focus({ preventScroll: true });
+		setRange(el, { start: range.from, end: range.to });
 	};
 
 };
