@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { observer } from 'mobx-react';
 import { getRange } from 'selection-ranges';
-import { IconObject, Block, Button } from 'Component';
+import { IconObject, Block, Button, Editable } from 'Component';
 import { I, M, Action, DataUtil, ObjectUtil, focus, keyboard } from 'Lib';
 import { blockStore, detailStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -18,6 +18,7 @@ const EDITOR_IDS = [ 'title', 'description' ];
 const HeadSimple = observer(class Controls extends React.Component<Props, {}> {
 	
 	_isMounted: boolean = false;
+	refEditable: any = {};
 	composition: boolean = false;
 	timeout: number = 0;
 
@@ -50,29 +51,23 @@ const HeadSimple = observer(class Controls extends React.Component<Props, {}> {
 
 		const Editor = (item: any) => {
 			return (
-				<div className={[ 'wrap', item.className ].join(' ')}>
-					{!allowDetails ? (
-						<div id={'editor-' + item.id} className={[ 'editor', 'focusable', 'c' + item.id, 'isReadonly' ].join(' ')} />
-					) : (
-						<React.Fragment>
-							<div 
-								id={'editor-' + item.id}
-								className={[ 'editor', 'focusable', 'c' + item.id ].join(' ')}
-								contentEditable={true}
-								suppressContentEditableWarning={true}
-								onFocus={(e: any) => { this.onFocus(e, item); }}
-								onBlur={(e: any) => { this.onBlur(e, item); }}
-								onKeyDown={(e: any) => { this.onKeyDown(e, item); }}
-								onKeyUp={(e: any) => { this.onKeyUp(e, item); }}
-								onInput={(e: any) => { this.onInput(e, item); }}
-								onSelect={(e: any) => { this.onSelectText(e, item); }}
-								onCompositionStart={this.onCompositionStart}
-								onCompositionEnd={this.onCompositionEnd}
-							/>
-							<div className={[ 'placeholder', 'c' + item.id ].join(' ')}>{placeholder[item.id]}</div>
-						</React.Fragment>
-					)}
-				</div>
+				<Editable
+					ref={(ref: any) => { this.refEditable[item.id] = ref; }}
+					id={'editor-' + item.id}
+					placeholder={placeholder[item.id]}
+					readonly={!allowDetails}
+					classNameWrap={item.className}
+					classNameEditor={[ 'focusable', 'c' + item.id ].join(' ')}
+					classNamePlaceholder={'c' + item.id}
+					onFocus={(e: any) => { this.onFocus(e, item); }}
+					onBlur={(e: any) => { this.onBlur(e, item); }}
+					onKeyDown={(e: any) => { this.onKeyDown(e, item); }}
+					onKeyUp={(e: any) => { this.onKeyUp(e, item); }}
+					onInput={(e: any) => { this.onInput(e, item); }}
+					onSelect={(e: any) => { this.onSelectText(e, item); }}
+					onCompositionStart={this.onCompositionStart}
+					onCompositionEnd={this.onCompositionEnd}
+				/>
 			);
 		};
 
@@ -210,66 +205,48 @@ const HeadSimple = observer(class Controls extends React.Component<Props, {}> {
 		};
 	};
 
-	getRange (id: string) {
-		if (!this._isMounted) {
-			return;
-		};
+	getRange (id: string): I.TextRange {
+		return this.refEditable[id] ? this.refEditable[id].getRange() : null;
+	};
 
-		const node = $(ReactDOM.findDOMNode(this));
-		const range = getRange(node.find('#editor-' + id).get(0) as Element);
-		return range ? { from: range.start, to: range.end } : null;
+	getValue (id: string): string {
+		return this.refEditable[id] ? this.refEditable[id].getTextValue() : null;
 	};
 
 	setValue () {
 		const { rootId } = this.props;
-		const node = $(ReactDOM.findDOMNode(this));
 
 		for (let id of EDITOR_IDS) {
-			const item = node.find(`#editor-${id}`);
 			const block = blockStore.getLeaf(rootId, id);
-
-			if (block) {
-				let text = block.content.text;
-				if (text == DataUtil.defaultName('page')) {
-					text = '';
-				};
-				item.text(text);
+			if (!block || !this.refEditable[id]) {
+				continue;
 			};
+
+			let text = block.content.text;
+			if (text == DataUtil.defaultName('page')) {
+				text = '';
+			};
+
+			this.refEditable[id].setValue(text);
 		};
-	};
-
-	getValue (id: string): string {
-		if (!this._isMounted) {
-			return '';
-		};
-
-		const node = $(ReactDOM.findDOMNode(this));
-		const value = node.find('#editor-' + id);
-
-		return value.length ? String(value.get(0).innerText || '') : '';
 	};
 
 	placeholderCheck (id: string) {
-		const value = this.getValue(id);
-		value ? this.placeholderHide(id) : this.placeholderShow(id);			
+		if (this.refEditable[id]) {
+			this.refEditable[id].placeholderCheck();
+		};		
 	};
 
 	placeholderHide (id: string) {
-		if (!this._isMounted) {
-			return;
+		if (this.refEditable[id]) {
+			this.refEditable[id].placeholderHide();
 		};
-
-		const node = $(ReactDOM.findDOMNode(this));
-		node.find('.placeholder.c' + id).hide();
 	};
 	
 	placeholderShow (id: string) {
-		if (!this._isMounted) {
-			return;
+		if (this.refEditable[id]) {
+			this.refEditable[id].placeholderShow();
 		};
-
-		const node = $(ReactDOM.findDOMNode(this));
-		node.find('.placeholder.c' + id).show();
 	};
 
 	onInstall () {
