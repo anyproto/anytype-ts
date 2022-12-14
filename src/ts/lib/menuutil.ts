@@ -141,7 +141,7 @@ class MenuUtil {
 
 	// Action menu
 	getActions (param: any) {
-		let { hasText, hasFile, hasLink, hasBookmark, hasTurnObject } = param;
+		let { hasText, hasFile, hasDataview, hasBookmark, hasTurnObject } = param;
 		let cmd = keyboard.ctrlSymbol();
 		let items: any[] = [
 			{ id: 'move', icon: 'move', name: 'Move to', arrow: true },
@@ -167,6 +167,10 @@ class MenuUtil {
 
 		if (hasBookmark) {
 			items.push({ id: 'openBookmarkAsObject', icon: 'expand', name: 'Open as object' });
+		};
+
+		if (hasDataview) {
+			items.push({ id: 'openDataviewFullscreen', icon: 'expand', name: 'Open fullscreen' });
 		};
 
 		items = items.map((it: any) => {

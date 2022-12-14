@@ -63,7 +63,7 @@ const Head = observer(class Head extends React.Component<Props, {}> {
 				</div>
 				<div className="side right">
 					<div className="iconWrap" onClick={this.onFullscreen}>
-						<Icon className="expand" />
+						<Icon className="expand" tooltip="Open fullscreen" />
 					</div>
 				</div>
 			</div>
