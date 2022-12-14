@@ -22,7 +22,6 @@ const Toast = observer(class Toast extends React.Component<{}, State> {
 		super(props);
 
 		this.close = this.close.bind(this);
-		this.setObjects = this.setObjects.bind(this);
 	};
 
     render () {
@@ -32,8 +31,7 @@ const Toast = observer(class Toast extends React.Component<{}, State> {
 			return null;
 		};
 
-        const { count, action, text, value } = toast;
-        const { object, target, origin } = this.state;
+        const { count, action, text, value, object, target, origin } = toast;
 
         let buttons = [];
         let textObject = null;
@@ -94,6 +92,10 @@ const Toast = observer(class Toast extends React.Component<{}, State> {
 				textObject = <Element {...object} />;
 				textTarget = <Element {...target} />;
 
+				console.log(textAction);
+				console.log(textObject);
+				console.log(textTarget);
+
                 if (target.id != keyboard.getRootId()) {
                     buttons = buttons.concat([
                         { action: 'open', label: 'Open' }
@@ -126,64 +128,12 @@ const Toast = observer(class Toast extends React.Component<{}, State> {
     };
 
     componentDidUpdate () {
-        const { toast } = commonStore;
-
-		if (!toast) {
-			return;
-		};
-
-        const { objectId, targetId, originId } = toast;
-        const { object, target, origin } = this.state;
-		const isLoaded: any = {};
-		const ids: string[] = [];
-
-		if (object && (objectId == object.id)) isLoaded.object = true;
-		if (target && (targetId == target.id)) isLoaded.target = true;
-		if (origin && (originId == origin.id)) isLoaded.origin = true;
-
-		if (!isLoaded.target && targetId) ids.push(targetId);
-		if (!isLoaded.object && objectId) ids.push(objectId);
-		if (!isLoaded.origin && originId) ids.push(originId);
-
-        if (ids.length) {
-            DataUtil.getObjectsByIds(ids, (objects: any[]) => {
-				this.setObjects(objects);
-				Preview.toastPosition();
-			});
-        } else {
-			Preview.toastPosition();
-		};
+        Preview.toastPosition();
     };
 
 	close () {
 		Preview.toastHide(true);
 	};
-
-    setObjects (objects: any[]) {
-        const { toast } = commonStore;
-
-		if (!toast) {
-			return;
-		};
-
-        const { objectId, targetId, originId } = toast;
-        const map = Util.mapToObject(objects, 'id');
-        const state: any = { object: null, target: null, origin: null };
-
-		if (targetId && map[targetId]) {
-			state.target = map[targetId];
-		};
-
-        if (objectId && map[objectId]) {
-            state.object = map[objectId];
-        };
-
-        if (originId && map[originId]) {
-            state.origin = map[originId];
-        };
-
-		this.setState(state);
-    };
 
     onClick (e: any, action: string) {
        
