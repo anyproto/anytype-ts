@@ -163,8 +163,8 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<P
 	componentDidUpdate () {
 		const rootId = this.getRootId();
 		const node = $(ReactDOM.findDOMNode(this));
-		const sideLeft = node.find('#sideLeft');
-		const sideRight = node.find('#sideRight');
+		const sideLeft = node.find('#body > #sideLeft');
+		const sideRight = node.find('#body > #sideRight');
 
 		this.resize();
 
@@ -396,8 +396,8 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<P
 
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
-		const sideLeft = node.find('#sideLeft');
-		const sideRight = node.find('#sideRight');
+		const sideLeft = node.find('#body > #sideLeft');
+		const sideRight = node.find('#body > #sideRight');
 		const cover = node.find('.block.blockCover');
 		const container = Util.getPageContainer(isPopup);
 		const header = container.find('#header');
@@ -405,8 +405,8 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<P
 		const height = win.height();
 		const hh = isPopup ? header.height() : Util.sizeHeader();
 
-		sideLeft.css({ height: height });
-		sideRight.css({ height: height });
+		sideLeft.css({ height });
+		sideRight.css({ height });
 
 		if (cover.length) {
 			cover.css({ top: hh });

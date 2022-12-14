@@ -65,9 +65,9 @@
 				.icon.set { background-image: url('~img/icon/dataview/head/set.svg'); }
 			}
 
-			.title { @include text-header3; font-weight: 700; position: relative; }
-			.title {
-				.value { min-width: 70px; }
+			.editableWrap { @include text-header3; font-weight: 700; position: relative; }
+			.editableWrap {
+				.editable { min-width: 70px; }
 			}
 
 			.icon.expand { width: 20px; height: 20px; background-image: url('~img/icon/menu/action/expand0.svg'); }

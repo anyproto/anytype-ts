@@ -217,6 +217,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 			let hasColor = true;
 			let hasBg = true;
 			let hasBookmark = true;
+			let hasDataview = true;
 
 			for (let id of blockIds) {
 				const block = blockStore.getLeaf(rootId, id);
@@ -248,6 +249,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 				if (!block.canHaveBackground())	 hasBg = false;
 				if (!block.isFile())			 hasFile = false;
 				if (!block.isLink())			 hasLink = false;
+				if (!block.isDataview())		 hasDataview = false;
 
 				if (block.isTextTitle())		 hasAction = false;
 				if (block.isTextDescription())	 hasAction = false;
@@ -268,7 +270,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 			};
 			
 			if (hasAction) {
-				action.children = MenuUtil.getActions({ hasText, hasFile, hasLink, hasBookmark });
+				action.children = MenuUtil.getActions({ hasText, hasFile, hasLink, hasBookmark, hasDataview });
 				sections.push(action);
 			};
 
@@ -285,6 +287,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 			let hasTurnDiv = true;
 			let hasText = true;
 			let hasBookmark = true;
+			let hasDataview = true;
 			let hasFile = true;
 			let hasLink = true;
 			let hasTitle = false;
@@ -321,6 +324,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 				if (!block.isText())			 hasText = false;
 				if (!block.isFile())			 hasFile = false;
 				if (!block.isLink())			 hasLink = false;
+				if (!block.isDataview())		 hasDataview = false;
 				if (!block.canHaveAlign())		 hasAlign = false;
 				if (!block.canHaveColor())		 hasColor = false;
 				if (!block.canHaveBackground())	 hasBg = false;
@@ -331,7 +335,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 			};
 
 			const section1: any = { 
-				children: MenuUtil.getActions({ hasText, hasFile, hasLink, hasBookmark, hasTurnObject })
+				children: MenuUtil.getActions({ hasText, hasFile, hasLink, hasDataview, hasBookmark, hasTurnObject })
 			};
 
 			if (hasLink) {
@@ -609,6 +613,10 @@ class MenuBlockAction extends React.Component<Props, State> {
 				ObjectUtil.openPopup({ id: block.content.hash, layout: I.ObjectLayout.File });
 
 				analytics.event('OpenAsObject', { type: block.type, params: { fileType: block.content.type } });
+				break;
+
+			case 'openDataviewFullscreen':
+				ObjectUtil.openPopup({ layout: I.ObjectLayout.Block, id: block.content.targetObjectId, _routeParam_: { blockId: block.id } });
 				break;
 					
 			case 'copy':

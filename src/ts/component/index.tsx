@@ -43,6 +43,7 @@ import Dimmer from './util/dimmer';
 import Switch from './util/switch';
 import Input from './util/input';
 import InputWithFile from './util/inputWithFile';
+import Editable from './util/editable'
 import Checkbox from './util/checkbox';
 import Textarea from './util/textarea';
 import Button from './util/button';
@@ -92,6 +93,7 @@ export {
 	Switch,
 	Input,
 	InputWithFile,
+	Editable,
 	Pin,
 	Sync,
 	Filter,

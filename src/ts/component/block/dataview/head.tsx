@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { observer } from 'mobx-react';
-import { Icon, IconObject } from 'Component';
+import { Icon, IconObject, Editable } from 'Component';
 import { I, C, keyboard, DataUtil, ObjectUtil } from 'Lib';
 import { menuStore, detailStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -12,20 +12,18 @@ const Head = observer(class Head extends React.Component<Props, {}> {
 
 	_isMounted: boolean = false;
 	menuContext: any = null;
-	composition: boolean = false;
 	timeout: number = 0;
+	ref: any = null;
 
 	constructor (props: any) {
 		super(props);
 
 		this.onSelect = this.onSelect.bind(this);
 		this.onOver = this.onOver.bind(this);
-		this.onKeyDown = this.onKeyDown.bind(this);
 		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onFocus = this.onFocus.bind(this);
 		this.onBlur = this.onBlur.bind(this);
 		this.onCompositionStart = this.onCompositionStart.bind(this);
-		this.onCompositionEnd = this.onCompositionEnd.bind(this);
 		this.onIconSelect = this.onIconSelect.bind(this);
 		this.onIconUpload = this.onIconUpload.bind(this);
 		this.onFullscreen = this.onFullscreen.bind(this);
@@ -47,20 +45,16 @@ const Head = observer(class Head extends React.Component<Props, {}> {
 				<div className="side left">
 					<IconObject id={`icon-set-${block.id}`} object={object} size={18} canEdit={!readonly} onSelect={this.onIconSelect} onUpload={this.onIconUpload} />
 					
-					<div id="title" className="title">
-						<div
-							className="value" 
-							contentEditable="true" 
-							suppressContentEditableWarning={true}
-							onFocus={this.onFocus}
-							onBlur={this.onBlur}
-							onKeyDown={this.onKeyDown}
-							onKeyUp={this.onKeyUp}
-							onCompositionStart={this.onCompositionStart}
-							onCompositionEnd={this.onCompositionEnd}
-						/>
-						<div id="placeholder" className="placeholder">New set</div>
-					</div>
+					<Editable 
+						ref={(ref: any) => { this.ref = ref; }}
+						id="value"
+						readonly={readonly}
+						placeholder={DataUtil.defaultName('set')}
+						onFocus={this.onFocus}
+						onBlur={this.onBlur}
+						onKeyUp={this.onKeyUp}
+						onCompositionStart={this.onCompositionStart}
+					/>
 
 					<div id="head-source-select" className="iconWrap" onClick={this.onSelect}>
 						<Icon className="set" />
@@ -69,7 +63,7 @@ const Head = observer(class Head extends React.Component<Props, {}> {
 				</div>
 				<div className="side right">
 					<div className="iconWrap" onClick={this.onFullscreen}>
-						<Icon className="expand" />
+						<Icon className="expand" tooltip="Open fullscreen" />
 					</div>
 				</div>
 			</div>
@@ -168,25 +162,10 @@ const Head = observer(class Head extends React.Component<Props, {}> {
 	};
 
 	onCompositionStart (e: any) {
-		this.composition = true;
 		window.clearTimeout(this.timeout);
 	};
 
-	onCompositionEnd (e: any) {
-		this.composition = false;
-	};
-
-	onKeyDown (e: any) {
-		this.placeholderCheck();
-	};
-
 	onKeyUp (e: any) {
-		if (this.composition) {
-			return;
-		};
-
-		this.placeholderCheck();
-
 		window.clearTimeout(this.timeout);
 		this.timeout = window.setTimeout(() => { this.save(); }, 500);
 	};
@@ -198,9 +177,6 @@ const Head = observer(class Head extends React.Component<Props, {}> {
 
 		const { rootId, block } = this.props;
 		const { targetObjectId } = block.content;
-		const node = $(ReactDOM.findDOMNode(this));
-		const item = node.find('#title');
-
 		if (!targetObjectId) {
 			return;
 		};
@@ -212,64 +188,51 @@ const Head = observer(class Head extends React.Component<Props, {}> {
 			return;
 		};
 
-		item.text(object.name);
+		if (this.ref) {
+			this.ref.setValue(object.name);
+		};
 		this.placeholderCheck();
+
 	};
 
 	getValue () {
-		if (!this._isMounted) {
-			return '';
-		};
-
-		const node = $(ReactDOM.findDOMNode(this));
-		const value = node.find('#title');
-
-		return value.length ? String(value.get(0).innerText || '') : '';
+		return this.ref ? this.ref.getValue() : '';
 	};
 
 	placeholderCheck () {
-		const value = this.getValue();
-		value ? this.placeholderHide() : this.placeholderShow();
+		if (this.ref) {
+			this.ref.placeholderCheck();
+		};
 	};
 
 	placeholderHide () {
-		if (!this._isMounted) {
-			return;
+		if (this.ref) {
+			this.ref.placeholderHide();
 		};
-
-		const node = $(ReactDOM.findDOMNode(this));
-		node.find('#placeholder').hide();
 	};
 	
 	placeholderShow () {
-		if (!this._isMounted) {
-			return;
+		if (this.ref) {
+			this.ref.placeholderShow();
 		};
-
-		const node = $(ReactDOM.findDOMNode(this));
-		node.find('#placeholder').show();
 	};
 
 	save () {
 		const { block } = this.props;
 		const { targetObjectId } = block.content;
 
-		if (!targetObjectId) {
-			return;
+		if (targetObjectId) {
+			DataUtil.blockSetText(targetObjectId, 'title', this.getValue(), [], true);
 		};
-
-		DataUtil.blockSetText(targetObjectId, 'title', this.getValue(), [], true);
 	};
 
 	onIconSelect (icon: string) {
 		const { block } = this.props;
 		const { targetObjectId } = block.content;
 
-		if (!targetObjectId) {
-			return;
+		if (targetObjectId) {
+			ObjectUtil.setIcon(targetObjectId, icon, '');
 		};
-
-		ObjectUtil.setIcon(targetObjectId, icon, '');
 	};
 
 	onIconUpload (hash: string) {
@@ -280,7 +243,9 @@ const Head = observer(class Head extends React.Component<Props, {}> {
 			return;
 		};
 
-		ObjectUtil.setIcon(targetObjectId, '', hash);
+		if (targetObjectId) {
+			ObjectUtil.setIcon(targetObjectId, '', hash);
+		};
 	};
 
 	onFullscreen () {

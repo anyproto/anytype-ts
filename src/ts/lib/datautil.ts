@@ -369,7 +369,7 @@ class DataUtil {
 
 	getObjectTypesForNewObject (param?: any) {
 		const { withSet, withBookmark, withDefault } = param || {};
-		const { config } = commonStore;
+		const { workspace, config } = commonStore;
 		const page = dbStore.getType(Constant.typeId.page);
 		const note = dbStore.getType(Constant.typeId.note);
 		const set = dbStore.getType(Constant.typeId.set);
@@ -388,7 +388,7 @@ class DataUtil {
 
 		if (!withDefault) {
 			items = items.concat(dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).filter((it: any) => {
-				if (skip.includes(it.id)) {
+				if (skip.includes(it.id) || it.workspaceId != workspace) {
 					return false;
 				};
 				return config.debug.ho ? true : !it.isHidden;
