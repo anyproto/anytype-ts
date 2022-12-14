@@ -88,17 +88,38 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 		const items = this.getItems();
 
 		let Item = null;
-		let Mid: any = null;
+		let title = '';
+		let description = '';
+		let placeholder = '';
 
-		const filter = (
-			<Filter 
-				ref={(ref: any) => { this.refFilter = ref; }}
-				id="store-filter"
-				icon="search"
-				onFocus={this.onFilterFocus}
-				onChange={this.onFilterChange}
-				onClear={this.onFilterClear}
-			/>
+		switch (this.tab) {
+			case Tab.Type:
+				title = 'Types Library';
+				description = 'Types are like categories that help you group and manage your Objects.<br/>Create your own or add some from our Marketplace.';
+				placeholder = 'Search or Create a new Type...';
+				break;
+
+			case Tab.Relation:
+				title = 'Relations library';
+				description = 'Use Relations to define connections and properties of Objects. Create your own or add some from our Marketplace.';
+				placeholder = 'Search or Create a new Relation...';
+				break;
+		};
+
+		const Mid = () => (
+			<div className="mid">
+				<Title text={title} />
+				<Label text={description} />
+				<Filter 
+					ref={(ref: any) => { this.refFilter = ref; }}
+					id="store-filter"
+					icon="search"
+					placeholder={placeholder}
+					onFocus={this.onFilterFocus}
+					onChange={this.onFilterChange}
+					onClear={this.onFilterClear}
+				/>
+			</div>
 		);
 
 		const Author = (item: any) => {
@@ -155,14 +176,6 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 						</div>
 					);
 				};
-
-				Mid = () => (
-					<div className="mid">
-						<Title text="Types Library" />
-						<Label text="Types are like categories that help you group and manage your Objects.<br/>Create your own or add some from our Marketplace." />
-						{filter}
-					</div>
-				);
 				break;
 
 			case Tab.Template:
@@ -183,14 +196,6 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 						</div>
 					);
 				};
-
-				Mid = () => (
-					<div className="mid">
-						<Title text="Template space" />
-						<Label text="Our beautifully-designed templates come with hundreds" />
-						<Button text="Create a new template" onClick={(e: any) => { this.onCreateTemplate(); }} />
-					</div>
-				);
 				break;
 
 			case Tab.Relation:
@@ -220,14 +225,6 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 						</div>
 					);
 				};
-
-				Mid = () => (
-					<div className="mid">
-						<Title text="Relations library" />
-						<Label text="Use Relations to define connections and properties of Objects. Create your own or add some from our Marketplace." />
-						{filter}
-					</div>
-				);
 				break;
 
 		};
