@@ -257,6 +257,16 @@ const BlockDataviewCreateWithObject = (contextId: string, targetId: string, posi
 	dispatcher.request(BlockDataviewCreateWithObject.name, request, callBack);
 };
 
+const BlockDataviewCreateFromExistingObject = (contextId: string, blockId: string, targetObjectId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.BlockDataview.CreateFromExistingObject.Request();
+
+	request.setContextid(contextId);
+	request.setBlockid(blockId);
+	request.setTargetobjectid(targetObjectId);
+
+	dispatcher.request(BlockDataviewCreateFromExistingObject.name, request, callBack);
+};
+
 // ---------------------- BLOCK TEXT ---------------------- //
 
 const BlockTextSetText = (contextId: string, blockId: string, text: string, marks: I.Mark[], callBack?: (message: any) => void) => {
@@ -1519,7 +1529,6 @@ export {
 	BlockCut,
 	BlockPaste,
 	BlockCreate,
-	BlockDataviewCreateWithObject,
 	BlockSetFields,
 
 	BlockListMoveToExistingObject,
@@ -1571,6 +1580,9 @@ export {
 	BlockTableRowListFill,
 	BlockTableRowListClean,
 	BlockTableRowSetHeader,
+
+	BlockDataviewCreateWithObject,
+	BlockDataviewCreateFromExistingObject,
 
 	BlockDataviewViewCreate,
 	BlockDataviewViewUpdate,

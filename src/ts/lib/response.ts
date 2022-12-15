@@ -163,6 +163,12 @@ const BlockDataviewCreateWithObject = (response: any) => {
 	};
 };
 
+const BlockDataviewCreateFromExistingObject = (response: any) => {
+	return {
+		blockId: response.getBlockid()
+	};
+};
+
 const BlockLinkCreateWithObject = (response: any) => {
 	return {
 		blockId: response.getBlockid(),
@@ -425,6 +431,7 @@ export {
 	
 	BlockCreate,
 	BlockDataviewCreateWithObject,
+	BlockDataviewCreateFromExistingObject,
 	BlockDataviewViewCreate,
 
 	BlockDataviewRelationListAvailable,
