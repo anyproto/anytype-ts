@@ -439,7 +439,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 
 					C.BlockCreate(target.id, '', position, newBlock, (message: any) => {
 						if (!message.error.code) {
-							Preview.toastShow({ objectId: blockId, action: I.ToastAction.Link, targetId: target.id });
+							Preview.toastShow({ action: I.ToastAction.Link, objectId: blockId, targetId: target.id });
 							analytics.event('LinkToObject');
 						};
 					});

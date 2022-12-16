@@ -137,10 +137,10 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 
 	componentDidUpdate () {
 		const items = this.getItems();
-		const filer = this.getFilter();
+		const filter = this.getFilter();
 
-		if (this.filter != filer) {
-			this.filter = filer;
+		if (this.filter != filter) {
+			this.filter = filter;
 			this.n = -1;
 			this.offset = 0;
 			this.load(true);
@@ -172,7 +172,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 	};
 
 	getFilter () {
-		return String(commonStore.filter.text || '').replace(/\\/g, '').replace(/^@/, '');
+		return String(commonStore.filter.text || '').replace(/^@/, '');
 	};
 
 	getSections () {
