@@ -654,6 +654,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const { rootId, block } = this.props;
 		const { targetObjectId } = block.content;
 
+		console.log(block)
+
 		const menuParam = {
 			menuKey: block.id,
 			element: element,
@@ -673,7 +675,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				],
 				keys: Constant.defaultRelationKeys.concat([ 'setOf' ]),
 				onSelect: (item: any) => {
-					C.BlockDataviewSetSource(targetObjectId, 'dataview', item.setOf);
+					C.BlockDataviewCreateFromExistingObject(rootId, block.id, item.id, (message) => {
+						console.log('MESSAGE: ', message)
+					});
 				}
 			}
 		};
