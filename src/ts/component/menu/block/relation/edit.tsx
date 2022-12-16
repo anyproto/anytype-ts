@@ -34,7 +34,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId } = data;
+		const { rootId, ref } = data;
 
 		const relation = this.getRelation();
 		const root = blockStore.getLeaf(rootId, rootId);
@@ -45,6 +45,17 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		const isReadonly = this.isReadonly();
 
 		let opts: any = null;
+		let deleteText = 'Delete';
+
+		switch (ref) {
+			case 'type':
+				deleteText = 'Unlink from type';
+				break;
+
+			case 'object':
+				deleteText = 'Unlink from object';
+				break;
+		};
 
 		if (isObject && !isReadonly) {
 			const length = this.objectTypes.length;
@@ -151,7 +162,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 					<div className="section">
 						{relation ? <MenuItemVertical icon="expand" name="Open as object" onClick={this.onOpen} onMouseEnter={this.menuClose} /> : ''}
 						{allowed ? <MenuItemVertical icon="copy" name="Duplicate" onClick={this.onCopy} onMouseEnter={this.menuClose} /> : ''}
-						{canDelete ? <MenuItemVertical icon="remove" name="Delete" onClick={this.onRemove} onMouseEnter={this.menuClose} /> : ''}
+						{canDelete ? <MenuItemVertical icon="remove" name={deleteText} onClick={this.onRemove} onMouseEnter={this.menuClose} /> : ''}
 					</div>
 				) : ''}
 			</form>
