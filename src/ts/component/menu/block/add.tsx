@@ -420,6 +420,9 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 				blockIds: [ blockId ],
 				position: position,
 				onSelect: () => {
+
+					console.log('TEXT', text);
+
 					$(`#block-${blockId} .value`).text(text);
 
 					DataUtil.blockSetText(rootId, block.id, text, block.content.marks, true, () => {
@@ -453,10 +456,13 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 
 			case 'turnObject':
 				menuId = 'typeSuggest';
+
 				menuParam.data = Object.assign(menuParam.data, {
 					filter: '',
 					smartblockTypes: [ I.SmartBlockType.Page ],
 					onClick: (item: any) => {
+						menuParam.data.onSelect();
+
 						this.moveToPage(item.id);
 						close();
 					},
@@ -657,10 +663,9 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 		};
 
 		marks = Mark.adjust(marks, filter.from - 1, -1);
-		
+
 		// Hack to prevent onBlur save
 		$(`#block-${blockId} #value`).first().text(text);
-
 		DataUtil.blockSetText(rootId, block.id, text, marks, true, cb);
 	};
 
