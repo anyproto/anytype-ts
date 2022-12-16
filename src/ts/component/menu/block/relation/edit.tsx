@@ -49,11 +49,11 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 
 		switch (ref) {
 			case 'type':
-				deleteText = 'Unlink from Type';
+				deleteText = 'Unlink from type';
 				break;
 
 			case 'object':
-				deleteText = 'Unlink from Object';
+				deleteText = 'Unlink from object';
 				break;
 		};
 
