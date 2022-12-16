@@ -96,13 +96,13 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 			case Tab.Type:
 				title = 'Types Library';
 				description = 'Types are like categories that help you group and manage your Objects.<br/>Create your own or add some from our Marketplace.';
-				placeholder = 'Search or Create a new Type...';
+				placeholder = 'Search or create a new type...';
 				break;
 
 			case Tab.Relation:
 				title = 'Relations library';
 				description = 'Use Relations to define connections and properties of Objects. Create your own or add some from our Marketplace.';
-				placeholder = 'Search or Create a new Relation...';
+				placeholder = 'Search or create a new relation...';
 				break;
 		};
 
