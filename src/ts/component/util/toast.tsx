@@ -118,7 +118,7 @@ const Toast = observer(class Toast extends React.Component<{}, State> {
                     {buttons.length ? (
 						<div className="buttons">
 							{buttons.map((item: any, i: number) => (
-								<Button text={item.label} onClick={(e: any) => this.onClick(e, item.action)} key={i} className="toastButton" />
+								<Button text={item.label} onClick={(e: any) => { this.onClick(e, item.action); }} key={i} className="toastButton" />
 							))}
 						</div>
 					) : ''}
@@ -156,7 +156,7 @@ const Toast = observer(class Toast extends React.Component<{}, State> {
     };
 
     onOpen (e: any) {
-        ObjectUtil.openEvent(e, this.state.target);
+        ObjectUtil.openEvent(e, commonStore.toast.target);
     };
 
 });
