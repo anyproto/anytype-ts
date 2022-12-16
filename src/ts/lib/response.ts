@@ -165,7 +165,8 @@ const BlockDataviewCreateWithObject = (response: any) => {
 
 const BlockDataviewCreateFromExistingObject = (response: any) => {
 	return {
-		blockId: response.getBlockid()
+		blockId: response.getBlockid(),
+		targetObjectId: response.getTargetobjectid()
 	};
 };
 

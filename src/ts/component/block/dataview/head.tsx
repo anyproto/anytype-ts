@@ -8,8 +8,15 @@ import Constant from 'json/constant.json';
 
 interface Props extends I.ViewComponent {};
 
-const Head = observer(class Head extends React.Component<Props, {}> {
+interface State {
+	titleLocked: boolean
+};
 
+const Head = observer(class Head extends React.Component<Props, State> {
+
+	state = {
+		titleLocked: true
+	};
 	_isMounted: boolean = false;
 	menuContext: any = null;
 	timeout: number = 0;
@@ -27,10 +34,13 @@ const Head = observer(class Head extends React.Component<Props, {}> {
 		this.onIconSelect = this.onIconSelect.bind(this);
 		this.onIconUpload = this.onIconUpload.bind(this);
 		this.onFullscreen = this.onFullscreen.bind(this);
+		this.onTitle = this.onTitle.bind(this);
+		this.titleOptionClick = this.titleOptionClick.bind(this);
 	};
 
 	render () {
 		const { rootId, block, readonly, getSources, className } = this.props;
+		const { titleLocked } = this.state;
 		const { targetObjectId } = block.content;
 		const object = detailStore.get(rootId, targetObjectId);
 		const sources = getSources();
@@ -42,15 +52,16 @@ const Head = observer(class Head extends React.Component<Props, {}> {
 
 		return (
 			<div className={cn.join(' ')}>
-				<div className="side left">
+				<div id="head-title-wrapper" className="side left">
 					<IconObject id={`icon-set-${block.id}`} object={object} size={18} canEdit={!readonly} onSelect={this.onIconSelect} onUpload={this.onIconUpload} />
 					
 					<Editable 
 						ref={(ref: any) => { this.ref = ref; }}
 						id="value"
-						readonly={readonly}
+						readonly={readonly || titleLocked}
 						placeholder={DataUtil.defaultName('set')}
 						onFocus={this.onFocus}
+						onMouseDown={this.onTitle}
 						onBlur={this.onBlur}
 						onKeyUp={this.onKeyUp}
 						onCompositionStart={this.onCompositionStart}
@@ -153,12 +164,68 @@ const Head = observer(class Head extends React.Component<Props, {}> {
 		};
 	};
 
+	onTitle (e: any) {
+		const { block } = this.props;
+		const { targetObjectId } = block.content;
+		const { titleLocked } = this.state;
+
+		if (!titleLocked) {
+			return;
+		};
+
+		const options: any[] = [
+			{ id: 'editTitle', icon: 'editText', name: 'Edit title' },
+		];
+
+		if (targetObjectId) {
+			options.unshift({ id: 'openSource', icon: 'expand', name: 'Open data source' });
+		};
+
+		menuStore.open('select', {
+			element: `#block-${block.id} #head-title-wrapper`,
+			width: 224,
+			horizontal: I.MenuDirection.Left,
+			subIds: Constant.menuIds.dataviewHead,
+			onOpen: (context: any) => {
+				this.menuContext = context;
+			},
+			data: {
+				options: options,
+				onSelect: this.titleOptionClick,
+			},
+		});
+	};
+
+	titleOptionClick (e: any, item: any) {
+		const { block } = this.props;
+		const { targetObjectId } = block.content;
+
+		switch (item.id) {
+			case 'editTitle':
+				this.setState({titleLocked: false}, () => {
+					const value = this.getValue();
+					setTimeout(() => {
+						this.ref.setRange({ from: 0, to: value.length });
+					}, 10);
+				});
+				break;
+
+			case 'openSource':
+				DataUtil.getObjectById(targetObjectId, (object) => {
+					ObjectUtil.openRoute(object);
+				});
+				break;
+
+		};
+	};
+
 	onFocus (e: any) {
 		keyboard.setFocus(true);
 	};
 
 	onBlur (e: any) {
 		keyboard.setFocus(false);
+		this.setState({titleLocked: true});
 	};
 
 	onCompositionStart (e: any) {
@@ -196,7 +263,7 @@ const Head = observer(class Head extends React.Component<Props, {}> {
 	};
 
 	getValue () {
-		return this.ref ? this.ref.getValue() : '';
+		return this.ref ? this.ref.getTextValue() : '';
 	};
 
 	placeholderCheck () {
