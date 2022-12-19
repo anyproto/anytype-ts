@@ -420,9 +420,6 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 				blockIds: [ blockId ],
 				position: position,
 				onSelect: () => {
-
-					console.log('TEXT', text);
-
 					$(`#block-${blockId} .value`).text(text);
 
 					DataUtil.blockSetText(rootId, block.id, text, block.content.marks, true, () => {
