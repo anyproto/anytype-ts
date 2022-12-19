@@ -12,6 +12,7 @@ import Constant from 'json/constant.json';
 
 interface Props {
 	dataset?: any;
+	children?: React.ReactNode;
 };
 
 const OFFSET = 100;
