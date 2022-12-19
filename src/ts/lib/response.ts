@@ -238,8 +238,7 @@ const BlockDataviewViewCreate = (response: any) => {
 };
 
 const BlockDataviewRelationListAvailable = (response: any) => {
-	return {
-	};
+	return {};
 };
 
 const HistoryGetVersions = (response: any) => {

@@ -14,19 +14,17 @@ class AccountInfo implements I.AccountInfo {
 	accountSpaceId: string = '';
 	
 	constructor (props: I.AccountInfo) {
-		const self = this;
-		
-		self.homeObjectId = String(props.homeObjectId || '');
-		self.profileObjectId = String(props.profileObjectId || '');
-		self.gatewayUrl = String(props.gatewayUrl || '');
-		self.marketplaceTypeObjectId = String(props.marketplaceTypeObjectId || '');
-		self.marketplaceTemplateObjectId = String(props.marketplaceTemplateObjectId || '');
-		self.marketplaceRelationObjectId = String(props.marketplaceRelationObjectId || '');
-		self.deviceId = String(props.deviceId || '');
-		self.localStoragePath = String(props.localStoragePath || '');
-		self.accountSpaceId = String(props.accountSpaceId || '');
+		this.homeObjectId = String(props.homeObjectId || '');
+		this.profileObjectId = String(props.profileObjectId || '');
+		this.gatewayUrl = String(props.gatewayUrl || '');
+		this.marketplaceTypeObjectId = String(props.marketplaceTypeObjectId || '');
+		this.marketplaceTemplateObjectId = String(props.marketplaceTemplateObjectId || '');
+		this.marketplaceRelationObjectId = String(props.marketplaceRelationObjectId || '');
+		this.deviceId = String(props.deviceId || '');
+		this.localStoragePath = String(props.localStoragePath || '');
+		this.accountSpaceId = String(props.accountSpaceId || '');
 
-		makeObservable(self, {
+		makeObservable(this, {
 			homeObjectId: observable,
 			profileObjectId: observable,
 			gatewayUrl: observable,
@@ -38,8 +36,8 @@ class AccountInfo implements I.AccountInfo {
 			accountSpaceId: observable,
 		});
 
-		intercept(self as any, (change: any) => { return Util.intercept(self, change); });
-		return self;
+		intercept(this as any, (change: any) => { return Util.intercept(this, change); });
+		return this;
 	};
 
 };
@@ -50,18 +48,16 @@ class AccountConfig implements I.AccountConfig {
 	allowBeta: boolean = false;
 	
 	constructor (props: I.AccountConfig) {
-		const self = this;
-		
-		self.allowSpaces = Boolean(props.allowSpaces);
-		self.allowBeta = Boolean(props.allowBeta);
+		this.allowSpaces = Boolean(props.allowSpaces);
+		this.allowBeta = Boolean(props.allowBeta);
 
-		makeObservable(self, {
+		makeObservable(this, {
 			allowSpaces: observable,
 			allowBeta: observable,
 		});
 
-		intercept(self as any, (change: any) => { return Util.intercept(self, change); });
-		return self;
+		intercept(this as any, (change: any) => { return Util.intercept(this, change); });
+		return this;
 	};
 
 };
@@ -72,18 +68,16 @@ class AccountStatus implements I.AccountStatus {
 	date: number = 0;
 	
 	constructor (props: I.AccountStatus) {
-		const self = this;
-		
-		self.type = Number(props.type) || I.AccountStatusType.Active;
-		self.date = Number(props.date) || 0;
+		this.type = Number(props.type) || I.AccountStatusType.Active;
+		this.date = Number(props.date) || 0;
 
-		makeObservable(self, {
+		makeObservable(this, {
 			type: observable,
 			date: observable,
 		});
 
-		intercept(self as any, (change: any) => { return Util.intercept(self, change); });
-		return self;
+		intercept(this as any, (change: any) => { return Util.intercept(this, change); });
+		return this;
 	};
 
 };
@@ -96,20 +90,18 @@ class Account implements I.Account {
 	status: I.AccountStatus = null;
 	
 	constructor (props: I.Account) {
-		const self = this;
-		
-		self.id = String(props.id || '');
-		self.info = new AccountInfo(props.info);
-		self.config = new AccountConfig(props.config);
-		self.status = new AccountStatus(props.status);
+		this.id = String(props.id || '');
+		this.info = new AccountInfo(props.info);
+		this.config = new AccountConfig(props.config);
+		this.status = new AccountStatus(props.status);
 
-		makeObservable(self, {
+		makeObservable(this, {
 			id: observable,
 			status: observable,
 		});
 
-		intercept(self as any, (change: any) => { return Util.intercept(self, change); });
-		return self;
+		intercept(this as any, (change: any) => { return Util.intercept(this, change); });
+		return this;
 	};
 
 };
