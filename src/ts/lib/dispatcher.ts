@@ -169,7 +169,6 @@ class Dispatcher {
 
 		let blocks: any[] = [];
 		let id: string = '';
-		let self = this;
 		let block: any = null;
 		let details: any = null;
 		let viewId: string = '';
@@ -181,7 +180,7 @@ class Dispatcher {
 		let afterId: string = '';
 		let content: any = {};
 
-		messages.sort((c1: any, c2: any) => { return self.sort(c1, c2); });
+		messages.sort((c1: any, c2: any) => { return this.sort(c1, c2); });
 
 		for (let message of messages) {
 			let type = this.eventType(message.getValueCase());

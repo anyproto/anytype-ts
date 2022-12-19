@@ -13,7 +13,7 @@ interface State {
 const OFFSET_Y = 8;
 const BORDER = 12;
 
-const PreviewComponent = observer(class PreviewComponent extends React.Component<{}, State> {
+const PreviewComponent = observer(class PreviewComponent extends React.Component<object, State> {
 	
 	state = {
 		object: null,

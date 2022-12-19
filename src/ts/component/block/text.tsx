@@ -327,7 +327,6 @@ const BlockText = observer(class BlockText extends React.Component<Props, object
 		const node = $(ReactDOM.findDOMNode(this));
 		const value = node.find('#value');
 		const items = value.find('lnk');
-		const self = this;
 
 		if (!items.length) {
 			return;
@@ -338,9 +337,9 @@ const BlockText = observer(class BlockText extends React.Component<Props, object
 		});
 
 		items.off('mouseenter.link');
-		items.on('mouseenter.link', function (e: any) {
-			let el = $(this);
-			let range = el.data('range').split('-');
+		items.on('mouseenter.link', (e: any) => {
+			let el = $(e.currentTarget);
+			let range = String(el.attr('data-range') || '').split('-');
 			let url = String(el.attr('href') || '');
 			let scheme = Util.getScheme(url);
 			let isInside = scheme == Constant.protocol;
@@ -350,8 +349,8 @@ const BlockText = observer(class BlockText extends React.Component<Props, object
 					from: Number(range[0]) || 0,
 					to: Number(range[1]) || 0, 
 				},
-				marks: self.marks,
-				onChange: (marks: I.Mark[]) => { self.setMarks(marks); },
+				marks: this.marks,
+				onChange: (marks: I.Mark[]) => { this.setMarks(marks); },
 			};
 
 			if (isInside) {
@@ -394,7 +393,6 @@ const BlockText = observer(class BlockText extends React.Component<Props, object
 		const node = $(ReactDOM.findDOMNode(this));
 		const value = node.find('#value');
 		const items = value.find('obj');
-		const self = this;
 
 		if (!items.length) {
 			return;
@@ -419,12 +417,12 @@ const BlockText = observer(class BlockText extends React.Component<Props, object
 		});
 
 		items.off('mouseenter.object mouseleave.object');
-		items.on('mouseleave.object', function (e: any) { Preview.tooltipHide(false); });
-		items.on('mouseenter.object', function (e: any) {
-			const el = $(this);
-			const data = el.data();
-			const range = data.range.split('-');
-			const object = detailStore.get(rootId, data.param, []);
+		items.on('mouseleave.object', () => { Preview.tooltipHide(false); });
+		items.on('mouseenter.object', (e: any) => {
+			const el = $(e.currentTarget);
+			const range = String(el.attr('data-range') || '').split('-');
+			const param = String(el.attr('data-param') || '');
+			const object = detailStore.get(rootId, param, []);
 			
 			let tt = '';
 			if (object.isArchived) {
@@ -439,7 +437,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, object
 				return;
 			};
 
-			if (!data.param || el.hasClass('disabled')) {
+			if (!param || el.hasClass('disabled')) {
 				return;
 			};
 
@@ -448,17 +446,15 @@ const BlockText = observer(class BlockText extends React.Component<Props, object
 				ObjectUtil.openEvent(e, object);
 			});
 
-			Preview.previewShow($(this), {
+			Preview.previewShow(el, {
 				param: object.id,
 				type: I.MarkType.Object,
 				range: { 
 					from: Number(range[0]) || 0,
 					to: Number(range[1]) || 0, 
 				},
-				marks: self.marks,
-				onChange: (marks: I.Mark[]) => {
-					self.setMarks(marks);
-				}
+				marks: this.marks,
+				onChange: (marks: I.Mark[]) => { this.setMarks(marks); }
 			});
 		});
 	};
@@ -478,7 +474,6 @@ const BlockText = observer(class BlockText extends React.Component<Props, object
 
 		const { rootId, block } = this.props;
 		const size = this.emojiParam(block.content.style);
-		const self = this;
 
 		items.each((i: number, item: any) => {
 			item = $(item);
@@ -520,23 +515,23 @@ const BlockText = observer(class BlockText extends React.Component<Props, object
 		
 		items.off('mouseenter.mention');
 
-		items.on('mouseenter.mention', function (e: any) {
-			const el = $(this);
-			const data = el.data();
-			const range = data.range.split('-');
+		items.on('mouseenter.mention', (e: any) => {
+			const el = $(e.currentTarget);
+			const range = String(el.attr('data-range') || '').split('-');
+			const param = String(el.attr('data-param') || '');
 
-			if (!data.param || el.hasClass('disabled')) {
+			if (!param || el.hasClass('disabled')) {
 				return;
 			};
 
-			const object = detailStore.get(rootId, data.param, []);
+			const object = detailStore.get(rootId, param, []);
 
 			el.off('click.mention').on('click.mention', function (e: any) {
 				e.preventDefault();
 				ObjectUtil.openEvent(e, object);
 			});
 
-			Preview.previewShow($(this), {
+			Preview.previewShow(el, {
 				param: object.id,
 				object: object,
 				type: I.MarkType.Object,
@@ -544,11 +539,9 @@ const BlockText = observer(class BlockText extends React.Component<Props, object
 					from: Number(range[0]) || 0,
 					to: Number(range[1]) || 0, 
 				},
-				marks: self.marks,
+				marks: this.marks,
 				noUnlink: true,
-				onChange: (marks: I.Mark[]) => {
-					self.setMarks(marks);
-				}
+				onChange: (marks: I.Mark[]) => { this.setMarks(marks); }
 			});
 		});
 	};

@@ -6,15 +6,13 @@ class BlockContentTableRow implements I.ContentTableRow {
 	isHeader: boolean = false;
 	
 	constructor (props: I.ContentTableRow) {
-		const self = this;
-		
-		self.isHeader = Boolean(props.isHeader);
+		this.isHeader = Boolean(props.isHeader);
 
-		makeObservable(self, {
+		makeObservable(this, {
 			isHeader: observable,
 		});
 
-		intercept(self as any, (change: any) => { return Util.intercept(self, change); });
+		intercept(this as any, (change: any) => { return Util.intercept(this, change); });
 	};
 
 };

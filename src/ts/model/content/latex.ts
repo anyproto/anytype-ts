@@ -6,15 +6,13 @@ class BlockContentLatex implements I.ContentLatex {
 	text: string = '';
 	
 	constructor (props: I.ContentLatex) {
-		const self = this;
-		
-		self.text = String(props.text || '');
+		this.text = String(props.text || '');
 
-		makeObservable(self, {
+		makeObservable(this, {
 			text: observable,
 		});
 
-		intercept(self as any, (change: any) => { return Util.intercept(self, change); });
+		intercept(this as any, (change: any) => { return Util.intercept(this, change); });
 	};
 
 };

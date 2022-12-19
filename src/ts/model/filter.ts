@@ -10,15 +10,13 @@ class Filter implements I.Filter {
 	value: any = {};
 
 	constructor (props: I.Filter) {
-		let self = this;
-		
-		self.relationKey = String(props.relationKey || '');
-		self.operator = Number(props.operator) || I.FilterOperator.And;
-		self.condition = Number(props.condition) || I.FilterCondition.None;
-		self.quickOption = Number(props.quickOption) || I.FilterQuickOption.ExactDate;
-		self.value = props.value;
+		this.relationKey = String(props.relationKey || '');
+		this.operator = Number(props.operator) || I.FilterOperator.And;
+		this.condition = Number(props.condition) || I.FilterCondition.None;
+		this.quickOption = Number(props.quickOption) || I.FilterQuickOption.ExactDate;
+		this.value = props.value;
 
-		makeObservable(self, {
+		makeObservable(this, {
 			relationKey: observable,
 			operator: observable,
 			condition: observable,
@@ -26,7 +24,7 @@ class Filter implements I.Filter {
 			quickOption: observable,
 		});
 
-		intercept(self as any, (change: any) => { return Util.intercept(self, change); });
+		intercept(this as any, (change: any) => { return Util.intercept(this, change); });
 	};
 
 };

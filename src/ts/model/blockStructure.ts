@@ -7,17 +7,15 @@ class BlockStructure implements I.BlockStructure {
 	childrenIds: string[] = [];
 	
 	constructor (props: I.BlockStructure) {
-		let self = this;
-		
-		self.parentId = String(props.parentId || '');
-		self.childrenIds = props.childrenIds || [];
+		this.parentId = String(props.parentId || '');
+		this.childrenIds = props.childrenIds || [];
 
-		makeObservable(self, {
+		makeObservable(this, {
 			parentId: observable,
 			childrenIds: observable,
 		});
 
-		intercept(self as any, (change: any) => { return Util.intercept(self, change); });
+		intercept(this as any, (change: any) => { return Util.intercept(this, change); });
 	};
 
 };

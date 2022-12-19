@@ -25,10 +25,7 @@ type Props = {
 	onContext?(e: React.MouseEvent, props: any): void;
 } & TreeNode;
 
-type State = {};
-
-
-const Node = observer(class Node extends React.Component<Props, State> {
+const Node = observer(class Node extends React.Component<Props, object> {
 
 	constructor (props: Props) {
 		super(props);

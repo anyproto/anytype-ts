@@ -12,22 +12,20 @@ class BlockContentDataview implements I.ContentDataview {
 	objectOrder: any[] = [];
 	
 	constructor (props: I.ContentDataview) {
-		const self = this;
-
-		self.sources = props.sources || [];
-		self.views = (props.views || []).map(it => new View(it));
-		self.relationLinks = props.relationLinks || [];
-		self.groupOrder = props.groupOrder || [];
-		self.objectOrder = props.objectOrder || [];
+		this.sources = props.sources || [];
+		this.views = (props.views || []).map(it => new View(it));
+		this.relationLinks = props.relationLinks || [];
+		this.groupOrder = props.groupOrder || [];
+		this.objectOrder = props.objectOrder || [];
 		
-		makeObservable(self, {
+		makeObservable(this, {
 			sources: observable,
 			views: observable,
 			groupOrder: observable,
 			objectOrder: observable,
 		});
 
-		intercept(self as any, (change: any) => { return Util.intercept(self, change); });
+		intercept(this as any, (change: any) => { return Util.intercept(this, change); });
 	};
 
 };

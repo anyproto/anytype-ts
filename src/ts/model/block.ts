@@ -40,24 +40,22 @@ class Block implements I.Block {
 	content: any = {};
 	
 	constructor (props: I.Block) {
-		let self = this;
-		
-		self.id = String(props.id || '');
-		self.parentId = String(props.parentId || '');
-		self.layout = Number(props.layout) || I.ObjectLayout.Page;
-		self.type = props.type;
-		self.hAlign = Number(props.hAlign) || I.BlockHAlign.Left;
-		self.vAlign = Number(props.vAlign) || I.BlockVAlign.Top;
-		self.bgColor = String(props.bgColor || '');
-		self.fields = props.fields || {};
-		self.childrenIds = props.childrenIds || [];
-		self.content = props.content || {};
+		this.id = String(props.id || '');
+		this.parentId = String(props.parentId || '');
+		this.layout = Number(props.layout) || I.ObjectLayout.Page;
+		this.type = props.type;
+		this.hAlign = Number(props.hAlign) || I.BlockHAlign.Left;
+		this.vAlign = Number(props.vAlign) || I.BlockVAlign.Top;
+		this.bgColor = String(props.bgColor || '');
+		this.fields = props.fields || {};
+		this.childrenIds = props.childrenIds || [];
+		this.content = props.content || {};
 
-		if (ContentModel[self.type]) {
-			self.content = new ContentModel[self.type](self.content);
+		if (ContentModel[this.type]) {
+			this.content = new ContentModel[this.type](this.content);
 		};
 
-		makeObservable(self, {
+		makeObservable(this, {
 			layout: observable,
 			type: observable,
 			hAlign: observable,
@@ -67,8 +65,8 @@ class Block implements I.Block {
 			content: observable,
 		});
 
-		intercept(self as any, (change: any) => { return Util.intercept(self, change); });
-		return self;
+		intercept(this as any, (change: any) => { return Util.intercept(this, change); });
+		return this;
 	};
 
 	isLocked (): boolean {

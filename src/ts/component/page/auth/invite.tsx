@@ -4,13 +4,11 @@ import { I, Util, translate } from 'Lib';
 import { commonStore, authStore } from 'Store';
 import { observer } from 'mobx-react';
 
-interface Props extends I.PageComponent {};
-
 interface State {
 	error: string;
 };
 
-const PageAuthInvite = observer(class PageAuthInvite extends React.Component<Props, State> {
+const PageAuthInvite = observer(class PageAuthInvite extends React.Component<I.PageComponent, State> {
 
 	ref: any;
 
@@ -18,7 +16,7 @@ const PageAuthInvite = observer(class PageAuthInvite extends React.Component<Pro
 		error: ''
 	};
 	
-	constructor (props: any) {
+	constructor (props: I.PageComponent) {
 		super(props);
 
 		this.onSubmit = this.onSubmit.bind(this);

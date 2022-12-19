@@ -18,23 +18,21 @@ class View implements I.View {
 	relations: any[] = [];
 	
 	constructor (props: I.View) {
-		let self = this;
+		this.id = String(props.id || '');
+		this.name = String(props.name || DataUtil.defaultName('view'));
+		this.type = Number(props.type) || I.ViewType.Grid;
+		this.coverRelationKey = String(props.coverRelationKey || '');
+		this.coverFit = Boolean(props.coverFit);
+		this.hideIcon = Boolean(props.hideIcon);
+		this.cardSize = Number(props.cardSize) || I.CardSize.Small;
+		this.groupRelationKey = String(props.groupRelationKey || '');
+		this.groupBackgroundColors = Boolean(props.groupBackgroundColors);
 		
-		self.id = String(props.id || '');
-		self.name = String(props.name || DataUtil.defaultName('view'));
-		self.type = Number(props.type) || I.ViewType.Grid;
-		self.coverRelationKey = String(props.coverRelationKey || '');
-		self.coverFit = Boolean(props.coverFit);
-		self.hideIcon = Boolean(props.hideIcon);
-		self.cardSize = Number(props.cardSize) || I.CardSize.Small;
-		self.groupRelationKey = String(props.groupRelationKey || '');
-		self.groupBackgroundColors = Boolean(props.groupBackgroundColors);
-		
-		self.relations = (props.relations || []).map((it: I.ViewRelation) => { return new M.ViewRelation(it); });
-		self.filters = (props.filters || []).map((it: I.Filter) => { return new M.Filter(it); });
-		self.sorts = (props.sorts || []).map((it: I.Sort) => { return new M.Sort(it); });
+		this.relations = (props.relations || []).map((it: I.ViewRelation) => { return new M.ViewRelation(it); });
+		this.filters = (props.filters || []).map((it: I.Filter) => { return new M.Filter(it); });
+		this.sorts = (props.sorts || []).map((it: I.Sort) => { return new M.Sort(it); });
 
-		makeObservable(self, {
+		makeObservable(this, {
 			id: observable,
 			name: observable,
 			type: observable,
@@ -49,7 +47,7 @@ class View implements I.View {
 			relations: observable,
 		});
 
-		intercept(self as any, (change: any) => { return Util.intercept(self, change); });
+		intercept(this as any, (change: any) => { return Util.intercept(this, change); });
 	};
 
 	getVisibleRelations () {

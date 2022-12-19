@@ -6,15 +6,13 @@ class BlockContentRelation implements I.ContentRelation {
 	key: string = '';
 	
 	constructor (props: I.ContentRelation) {
-		const self = this;
-		
-		self.key = String(props.key || '');
+		this.key = String(props.key || '');
 
-		makeObservable(self, {
+		makeObservable(this, {
 			key: observable,
 		});
 
-		intercept(self as any, (change: any) => { return Util.intercept(self, change); });
+		intercept(this as any, (change: any) => { return Util.intercept(this, change); });
 	};
 
 };

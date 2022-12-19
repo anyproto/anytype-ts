@@ -643,20 +643,15 @@ class Util {
 	};
 	
 	renderLinks (obj: any) {
-		const self = this;
 		const links = obj.find('a');
 
 		links.off('click auxclick');
 		links.on('auxclick', (e: any) => { e.preventDefault(); });
-		links.click(function (e: any) {
-			e.preventDefault();
+		links.click((e: any) => {
+			const el = $(e.currentTarget);
 
-			const el = $(this);
-			if (el.hasClass('path')) {
-				self.onPath(el.attr('href'));
-			} else {
-				self.onUrl(el.attr('href'));
-			};
+			e.preventDefault();
+			el.hasClass('path') ? this.onPath(el.attr('href')) : this.onUrl(el.attr('href'));
 		});
 	};
 	
