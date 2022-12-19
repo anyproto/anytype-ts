@@ -95,7 +95,7 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 
 		const Component = Components[path];
 		if (!Component) {
-			return <div>Page component "{path}" not found</div>;
+			return <div>Page component &quot;{path}&quot; not found</div>;
 		};
 
 		let sb = (

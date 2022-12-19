@@ -167,6 +167,7 @@
     "source-map-loader": "^0.2.4",
     "sprintf-kit": "^2.0.0",
     "typescript": "^3.9.7",
+    "typescript-eslint": "^0.0.1-alpha.0",
     "xhr2": "^0.2.0",
     "xmlhttprequest": "^1.8.0",
     "xtend": "^4.0.2"
@@ -185,7 +186,9 @@
       {
         "name": "Anytype",
         "role": "Editor",
-        "schemes": ["anytype"]
+        "schemes": [
+          "anytype"
+        ]
       }
     ],
     "asarUnpack": [
@@ -511,7 +514,10 @@
       "entitlementsInherit": "electron/entitlements.mac.plist",
       "target": {
         "target": "default",
-        "arch": ["x64", "arm64"]
+        "arch": [
+          "x64",
+          "arm64"
+        ]
       },
       "identity": "6SFR4648FW",
       "category": "public.app-category.productivity",
@@ -549,7 +555,12 @@
     "linux": {
       "icon": "electron/img/icon512x512.png",
       "category": "Utility",
-      "target": ["snap", "AppImage", "deb", "rpm"],
+      "target": [
+        "snap",
+        "AppImage",
+        "deb",
+        "rpm"
+      ],
       "description": "Anytype",
       "publish": [
         {

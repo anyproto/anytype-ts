@@ -1,4 +1,4 @@
-{
+module.exports = {
   "env": {
     "browser": true,
     "es2021": true
@@ -24,5 +24,10 @@
     "semicolon": 0,
     "jsx-no-lambda": 0,
     "jsx-no-multiline-js": 0
+  },
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
   }
 }
