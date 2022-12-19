@@ -1,6 +1,6 @@
 {
   "name": "anytype2",
-  "version": "0.29.11-beta",
+  "version": "0.29.12-beta",
   "description": "Anytype",
   "main": "electron.js",
   "scripts": {
@@ -71,10 +71,12 @@
     "husky": "^8.0.0",
     "json-loader": "^0.5.7",
     "lint-staged": "^13.0.3",
-    "prettier": "^2.8.1",
+    "prettier": "^2.7.1",
     "sass-loader": "^8.0.2",
     "style-loader": "^1.2.1",
     "ts-loader": "^6.2.2",
+    "tslint": "^5.20.1",
+    "tslint-react": "^4.2.0",
     "url-loader": "^4.1.1",
     "wait-for-localhost-cli": "^3.0.0",
     "webpack": "^5.74.0",
@@ -183,9 +185,7 @@
       {
         "name": "Anytype",
         "role": "Editor",
-        "schemes": [
-          "anytype"
-        ]
+        "schemes": ["anytype"]
       }
     ],
     "asarUnpack": [
@@ -511,10 +511,7 @@
       "entitlementsInherit": "electron/entitlements.mac.plist",
       "target": {
         "target": "default",
-        "arch": [
-          "x64",
-          "arm64"
-        ]
+        "arch": ["x64", "arm64"]
       },
       "identity": "6SFR4648FW",
       "category": "public.app-category.productivity",
@@ -552,12 +549,7 @@
     "linux": {
       "icon": "electron/img/icon512x512.png",
       "category": "Utility",
-      "target": [
-        "snap",
-        "AppImage",
-        "deb",
-        "rpm"
-      ],
+      "target": ["snap", "AppImage", "deb", "rpm"],
       "description": "Anytype",
       "publish": [
         {

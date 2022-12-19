@@ -297,8 +297,8 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			classNameWrap: param.classNameWrap,
 			data: {
 				rebind: this.rebind,
-				rootId: rootId,
-				blockId: blockId,
+				rootId,
+				blockId,
 				blockIds: [ blockId ],
 			},
 		};

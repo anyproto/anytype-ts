@@ -294,13 +294,16 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<P
 		let sections: any[] = [
 			{ id: 'library', name: 'My types', children: library },
 		];
+		let name = 'Create new type';
 
 		if (filter) {
 			const marketplace = items.filter(it => (it.workspaceId == Constant.storeSpaceId) && !librarySources.includes(it.id));
+
 			sections = sections.concat([
 				{ id: 'marketplace', name: 'Marketplace', children: marketplace },
-				{ children: [ { id: 'add', name: `Create type "${filter}"` } ] }
 			]);
+
+			name = `Create type "${filter}"`;
 		} else {
 			sections = sections.concat([
 				{ 
@@ -310,6 +313,8 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<P
 				},
 			])
 		};
+
+		sections.unshift({ children: [ { id: 'add', name } ] });
 
 		sections = sections.filter((section: any) => {
 			section.children = section.children.filter(it => it);

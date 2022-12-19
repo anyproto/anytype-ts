@@ -293,7 +293,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				this.viewRef.loadGroupList();
 			} else {
 				this.viewId = '';
-				this.forceUpdate();
+				//this.forceUpdate();
 			};
 		} else {
 			if (clear) {

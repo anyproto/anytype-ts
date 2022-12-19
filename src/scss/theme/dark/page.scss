@@ -108,6 +108,10 @@
                 .info {
                     .line { background: $colorLineSecondary; }
                 }
+
+				.buttons {
+					.icon:hover { background-color: $colorHover; }
+				}
             }
         }
     }
