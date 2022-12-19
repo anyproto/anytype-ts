@@ -92,10 +92,6 @@ const Toast = observer(class Toast extends React.Component<{}, State> {
 				textObject = <Element {...object} />;
 				textTarget = <Element {...target} />;
 
-				console.log(textAction);
-				console.log(textObject);
-				console.log(textTarget);
-
                 if (target.id != keyboard.getRootId()) {
                     buttons = buttons.concat([
                         { action: 'open', label: 'Open' }

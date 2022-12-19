@@ -673,7 +673,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				keys: Constant.defaultRelationKeys.concat([ 'setOf' ]),
 				onSelect: (item: any) => {
 					C.BlockDataviewCreateFromExistingObject(rootId, block.id, item.id, (message) => {
-						console.log('MESSAGE: ', message)
 					});
 				}
 			}

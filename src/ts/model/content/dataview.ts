@@ -15,7 +15,6 @@ class BlockContentDataview implements I.ContentDataview {
 	constructor (props: I.ContentDataview) {
 		let self = this;
 
-		self.targetObjectId = String(props.targetObjectId || '');
 		self.sources = props.sources || [];
 		self.views = (props.views || []).map(it => new View(it));
 		self.relationLinks = props.relationLinks || [];
@@ -28,6 +27,8 @@ class BlockContentDataview implements I.ContentDataview {
 			views: observable,
 			groupOrder: observable,
 			objectOrder: observable,
+			relationLinks: observable,
+			targetObjectId: observable,
 		});
 
 		intercept(self as any, (change: any) => { return Util.intercept(self, change); });

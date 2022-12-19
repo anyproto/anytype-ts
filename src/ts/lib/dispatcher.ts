@@ -107,13 +107,13 @@ class Dispatcher {
 		if (v == V.BLOCKSETRELATION)			 t = 'blockSetRelation';
 		if (v == V.BLOCKSETLATEX)				 t = 'blockSetLatex';
 		if (v == V.BLOCKSETTABLEROW)			 t = 'blockSetTableRow';
-		if (v == V.BLOCKSETDATAVIEW)			 t = 'blockSetDataview';
 
 		if (v == V.BLOCKDATAVIEWVIEWSET)		 t = 'blockDataviewViewSet';
 		if (v == V.BLOCKDATAVIEWVIEWDELETE)		 t = 'blockDataviewViewDelete';
 		if (v == V.BLOCKDATAVIEWVIEWORDER)		 t = 'blockDataviewViewOrder';
 
 		if (v == V.BLOCKDATAVIEWSOURCESET)		 t = 'blockDataviewSourceSet';
+		if (v == V.BLOCKDATAVIEWTARGETOBJECTIDSET)	 t = 'blockDataviewTargetObjectIdSet';
 
 		if (v == V.BLOCKDATAVIEWRELATIONSET)	 t = 'blockDataviewRelationSet';
 		if (v == V.BLOCKDATAVIEWRELATIONDELETE)	 t = 'blockDataviewRelationDelete';
@@ -194,7 +194,7 @@ class Dispatcher {
 			if (rootId.match('virtualBreadcrumbs')) {
 				needLog = false;
 			};
-			
+
 			switch (type) {
 
 				case 'accountShow':
@@ -369,17 +369,14 @@ class Dispatcher {
 					blockStore.updateContent(rootId, id, block.content);
 					break;
 
-				case 'blockSetDataview':
+				case 'blockDataviewTargetObjectIdSet':
 					id = data.getId();
 					block = blockStore.getLeaf(rootId, id);
 					if (!block) {
 						break;
 					};
 
-					if (data.hasTargetobjectid()) {
-						block.content.targetObjectId = data.getTargetobjectid().getValue();
-					};
-
+					block.content.targetObjectId = data.getTargetobjectid();
 					blockStore.updateContent(rootId, id, block.content);
 					break;
 

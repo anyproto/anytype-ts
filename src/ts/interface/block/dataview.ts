@@ -191,7 +191,7 @@ export interface ContentDataview {
 	relationLinks: any[];
 	groupOrder: any[];
 	objectOrder: any[];
-	targetObjectId?: string;
+	targetObjectId: string;
 };
 
 export interface BlockDataview extends I.Block {
