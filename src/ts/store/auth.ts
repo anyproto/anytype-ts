@@ -202,4 +202,4 @@ class AuthStore {
 
 };
 
-export let authStore: AuthStore = new AuthStore();
+ export const authStore: AuthStore = new AuthStore();

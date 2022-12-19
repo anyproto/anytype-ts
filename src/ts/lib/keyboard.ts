@@ -821,4 +821,4 @@ export enum Key {
 	slash		 = '/',
 };
 
-export let keyboard: Keyboard = new Keyboard();
+ export const keyboard: Keyboard = new Keyboard();

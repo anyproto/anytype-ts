@@ -118,4 +118,4 @@ class Focus {
 
 };
 
-export let focus: Focus = new Focus();
+ export const focus: Focus = new Focus();

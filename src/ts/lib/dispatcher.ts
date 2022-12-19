@@ -958,4 +958,4 @@ class Dispatcher {
 
 };
 
-export let dispatcher = new Dispatcher();
+ export const dispatcher = new Dispatcher();

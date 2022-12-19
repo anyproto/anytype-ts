@@ -40,9 +40,8 @@ class Icon extends React.Component<Props, {}> {
 	
 	render () {
 		const { id, icon, arrow, draggable, className, inner, onClick, onDragStart } = this.props;
-		
-		let style = this.props.style || {};
-		let cn = [ 'icon' ];
+		const cn = [ 'icon' ];
+		const style: any = this.props.style || {};
 		
 		if (className) {
 			cn.push(className);

@@ -41,7 +41,6 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 		const { loading } = this.state;
 		const { rootId, className, onClick } = this.props;
 		const contextId = this.getRootId();
-
 		const check = DataUtil.checkDetails(contextId, rootId);
 		const object = check.object;
 		const { name, description, coverType, coverId, coverX, coverY, coverScale } = object;
@@ -50,6 +49,7 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 		const childBlocks = blockStore.getChildren(contextId, rootId, it => !it.isLayoutHeader()).slice(0, 10);
 		const isTask = object.layout == I.ObjectLayout.Task;
 		const cn = [ 'previewObject' , check.className, className ];
+		const line = <div className="line" />;
 
 		let n = 0;
 		let c = 0;
@@ -59,12 +59,11 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 			const { text, style, checked } = content;
 			const childBlocks = blockStore.getChildren(contextId, item.id);
 			const length = childBlocks.length;
+			const cn = [ 'element', DataUtil.blockClass(item), item.className ];
 
 			let bullet = null;
 			let inner = null;
 			let isRow = false;
-			let cn = [ 'element', DataUtil.blockClass(item), item.className ];
-			let line = <div className="line" />;
 
 			switch (item.type) {
 				case I.BlockType.Text:
@@ -172,11 +171,12 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 							break;
 							
 						case I.FileType.Image:
-							let css: any = {};
+							const css: any = {};
 		
 							if (fields.width) {
 								css.width = (fields.width * 100) + '%';
 							};
+
 							inner = <img className="media" src={commonStore.imageUrl(content.hash, Constant.size.image)} style={css} />
 							break;
 							

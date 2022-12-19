@@ -143,4 +143,4 @@ class Crumbs {
 		
 };
 
-export let crumbs: Crumbs = new Crumbs();
+ export const crumbs: Crumbs = new Crumbs();

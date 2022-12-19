@@ -64,4 +64,4 @@ class History {
 
 };
 
-export let history: History = new History();
+ export const history: History = new History();

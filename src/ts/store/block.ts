@@ -481,4 +481,4 @@ class BlockStore {
 
 };
 
-export let blockStore: BlockStore = new BlockStore();
+ export const blockStore: BlockStore = new BlockStore();
