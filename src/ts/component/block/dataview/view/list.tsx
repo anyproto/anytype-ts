@@ -12,7 +12,7 @@ interface Props extends I.ViewComponent {};
 
 const HEIGHT = 32;
 
-const ViewList = observer(class ViewList extends React.Component<Props, {}> {
+const ViewList = observer(class ViewList extends React.Component<Props, object> {
 
 	ref: any = null;
 

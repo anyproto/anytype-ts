@@ -7,7 +7,7 @@ import { blockStore } from 'Store';
 
 interface Props extends I.Menu {}
 
-const MenuBlockStyle = observer(class MenuBlockStyle extends React.Component<Props, {}> {
+const MenuBlockStyle = observer(class MenuBlockStyle extends React.Component<Props, object> {
 	
 	n: number = 0;
 	

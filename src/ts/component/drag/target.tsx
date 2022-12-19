@@ -17,7 +17,7 @@ interface Props {
 	onClick?(e: any): void;
 };
 
-class DropTarget extends React.Component<Props, {}> {
+class DropTarget extends React.Component<Props, object> {
 	
 	constructor (props: any) {
 		super(props);

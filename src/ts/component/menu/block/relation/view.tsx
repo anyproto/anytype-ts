@@ -12,7 +12,7 @@ interface Props extends I.Menu {};
 
 const PREFIX = 'menuBlockRelationView';
 
-const MenuBlockRelationView = observer(class MenuBlockRelationView extends React.Component<Props, {}> {
+const MenuBlockRelationView = observer(class MenuBlockRelationView extends React.Component<Props, object> {
 
 	cellRefs: Map<string, any> = new Map();
 

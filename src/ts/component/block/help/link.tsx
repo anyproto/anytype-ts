@@ -8,7 +8,7 @@ interface Props {
 	contentId?: string;
 };
 
-class ContentLink extends React.Component<Props, {}> {
+class ContentLink extends React.Component<Props, object> {
 
 	constructor (props: any) {
 		super(props);

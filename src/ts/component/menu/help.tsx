@@ -8,7 +8,7 @@ import Url from 'json/url.json';
 
 interface Props extends I.Menu {};
 
-class MenuHelp extends React.Component<Props, {}> {
+class MenuHelp extends React.Component<Props, object> {
 
 	n: number = 0;
 

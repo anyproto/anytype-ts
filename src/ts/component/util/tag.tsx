@@ -12,7 +12,7 @@ interface Props {
 };
 
 
-class Tag extends React.Component<Props, {}> {
+class Tag extends React.Component<Props, object> {
 
 	constructor (props: any) {
 		super(props);

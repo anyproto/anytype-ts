@@ -144,7 +144,7 @@ const Theme = {
 };
 
 
-const IconObject = observer(class IconObject extends React.Component<Props, {}> {
+const IconObject = observer(class IconObject extends React.Component<Props, object> {
 
 	public static defaultProps = {
 		size: 20,

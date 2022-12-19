@@ -5,7 +5,7 @@ import { observer } from 'mobx-react';
 interface Props extends I.PageComponent {
 };
 
-const GraphFilters = observer(class PreviewObject extends React.Component<Props, {}> {
+const GraphFilters = observer(class PreviewObject extends React.Component<Props, object> {
 	
 	state = {
 	};

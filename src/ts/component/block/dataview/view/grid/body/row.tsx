@@ -13,7 +13,7 @@ interface Props extends I.ViewComponent {
 	getColumnWidths?: (relationId: string, width: number) => any;
 };
 
-const BodyRow = observer(class BodyRow extends React.Component<Props, {}> {
+const BodyRow = observer(class BodyRow extends React.Component<Props, object> {
 
 	render () {
 		const { rootId, block, index, getView, getRecord, style, onContext, getColumnWidths, isInline } = this.props;

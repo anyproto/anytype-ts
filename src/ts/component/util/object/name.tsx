@@ -6,7 +6,7 @@ interface Props {
 	className?: string;
 };
 
-class Name extends React.Component<Props, {}> {
+class Name extends React.Component<Props, object> {
 
 	public static defaultProps = {
 		className: 'name',

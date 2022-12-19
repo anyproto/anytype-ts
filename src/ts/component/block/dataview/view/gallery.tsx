@@ -11,7 +11,7 @@ import Constant from 'json/constant.json';
 
 interface Props extends I.ViewComponent {};
 
-const ViewGallery = observer(class ViewGallery extends React.Component<Props, {}> {
+const ViewGallery = observer(class ViewGallery extends React.Component<Props, object> {
 
 	cache: any = {};
 	cellPositioner: any = null;

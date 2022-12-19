@@ -5,7 +5,7 @@ import { observer } from 'mobx-react';
 
 interface Props extends I.PageComponent {};
 
-const PageMainCreate = observer(class PageMainCreate extends React.Component<Props, {}> {
+const PageMainCreate = observer(class PageMainCreate extends React.Component<Props, object> {
 
 	render () {
 		return (

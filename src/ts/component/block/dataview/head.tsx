@@ -12,7 +12,7 @@ interface Props extends I.ViewComponent {
 };
 
 
-const Head = observer(class Head extends React.Component<Props, {}> {
+const Head = observer(class Head extends React.Component<Props, object> {
 
 	_isMounted: boolean = false;
 	menuContext: any = null;

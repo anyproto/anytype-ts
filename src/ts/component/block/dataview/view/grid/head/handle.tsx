@@ -13,7 +13,7 @@ interface Props {
 	onClick?: (e: any) => void;
 }
 
-const HeadHandle = observer(class HeadHandle extends React.Component<Props, {}> {
+const HeadHandle = observer(class HeadHandle extends React.Component<Props, object> {
 
 	constructor (props: any) {
 		super(props);

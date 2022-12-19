@@ -26,7 +26,7 @@ interface Props {
 const IconSrc = {
 };
 
-const IconEmoji = observer(class IconEmoji extends React.Component<Props, {}> {
+const IconEmoji = observer(class IconEmoji extends React.Component<Props, object> {
 	
 	public static defaultProps = {
 		offsetX: 0,

@@ -12,7 +12,7 @@ interface Props extends I.ViewComponent {
 	onDragStartCard?: (e: any, groupId: any, record: any) => void;
 };
 
-const Card = observer(class Card extends React.Component<Props, {}> {
+const Card = observer(class Card extends React.Component<Props, object> {
 
 	_isMounted: boolean = false;
 

@@ -16,7 +16,7 @@ interface Props {
 
 const OFFSET = 100;
 
-const DragProvider = observer(class DragProvider extends React.Component<Props, {}> {
+const DragProvider = observer(class DragProvider extends React.Component<Props, object> {
 
 	refLayer: any = null;
 	commonDropPrevented: boolean = false;

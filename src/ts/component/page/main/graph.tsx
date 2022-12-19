@@ -14,7 +14,7 @@ interface Props extends I.PageComponent {
 };
 
 
-const PageMainGraph = observer(class PageMainGraph extends React.Component<Props, {}> {
+const PageMainGraph = observer(class PageMainGraph extends React.Component<Props, object> {
 
 	data: any = {
 		nodes: [],

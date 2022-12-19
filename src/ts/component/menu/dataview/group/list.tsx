@@ -16,7 +16,7 @@ interface Props extends I.Menu {};
 const HEIGHT = 28;
 const LIMIT = 20;
 
-const MenuGroupList = observer(class MenuGroupList extends React.Component<Props, {}> {
+const MenuGroupList = observer(class MenuGroupList extends React.Component<Props, object> {
 	
 	n: number = 0;
 	top: number = 0;
@@ -272,7 +272,7 @@ const MenuGroupList = observer(class MenuGroupList extends React.Component<Props
 		C.BlockDataviewGroupOrderUpdate(rootId, blockId, { viewId: view.id, groups: update });
 	};
 
-	onScroll ({ clientHeight, scrollHeight, scrollTop }) {
+	onScroll ({ scrollTop }) {
 		if (scrollTop) {
 			this.top = scrollTop;
 		};

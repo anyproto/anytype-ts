@@ -5,7 +5,7 @@ import { observer } from 'mobx-react';
 
 interface Props extends I.BlockComponent {};
 
-const BlockTableOfContents = observer(class BlockTableOfContents extends React.Component<Props, {}> {
+const BlockTableOfContents = observer(class BlockTableOfContents extends React.Component<Props, object> {
 
 	_isMounted: boolean = false;
 

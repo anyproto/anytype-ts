@@ -7,7 +7,7 @@ interface Props {
 	onClick?(e: any, id: string): void;
 };
 
-class DragBox extends React.Component<Props, {}> {
+class DragBox extends React.Component<Props, object> {
 	
 	_isMounted: boolean = false;
 	cache: any = {};

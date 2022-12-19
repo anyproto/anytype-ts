@@ -49,7 +49,6 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 		const childBlocks = blockStore.getChildren(contextId, rootId, it => !it.isLayoutHeader()).slice(0, 10);
 		const isTask = object.layout == I.ObjectLayout.Task;
 		const cn = [ 'previewObject' , check.className, className ];
-		const line = <div className="line" />;
 
 		let n = 0;
 		let c = 0;
@@ -64,6 +63,7 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 			let bullet = null;
 			let inner = null;
 			let isRow = false;
+			let line = <div className="line" />;
 
 			switch (item.type) {
 				case I.BlockType.Text:

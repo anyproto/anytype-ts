@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { I, Relation, DataUtil, Util } from 'Lib';
+import { I, Relation, Util } from 'Lib';
 import { Icon, Tag, IconObject } from 'Component';
 import { detailStore } from 'Store';
 import { SortableHandle, SortableElement } from 'react-sortable-hoc';
@@ -17,7 +17,7 @@ interface Props extends I.Filter {
 	onRemove?: (e: any) => void;
 };
 
-const MenuItemFilter = observer(class MenuItemFilter extends React.Component<Props, {}> {
+const MenuItemFilter = observer(class MenuItemFilter extends React.Component<Props, object> {
 
 	_isMounted: boolean = false;
 

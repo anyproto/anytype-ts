@@ -29,7 +29,7 @@ for (let lang of langs) {
 	require(`prismjs/components/prism-${lang}.js`);
 };
 
-const BlockText = observer(class BlockText extends React.Component<Props, {}> {
+const BlockText = observer(class BlockText extends React.Component<Props, object> {
 
 	_isMounted: boolean = false;
 	refLang: any = null;

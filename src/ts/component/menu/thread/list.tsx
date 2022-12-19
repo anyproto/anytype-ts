@@ -10,7 +10,7 @@ interface Props extends I.Menu {}
 
 const MENU_ID = 'threadStatus';
 
-const MenuThreadList = observer(class MenuThreadList extends React.Component<Props, {}> {
+const MenuThreadList = observer(class MenuThreadList extends React.Component<Props, object> {
 
 	timeoutMenu: number = 0;
 	timeoutClose: number = 0;

@@ -13,7 +13,7 @@ const SKIP = [
 	'underline', 'lnk', 'emoji', 'obj',
 ];
 
-class MenuSearchText extends React.Component<Props, {}> {
+class MenuSearchText extends React.Component<Props, object> {
 	
 	ref: any = null;
 	last: string = '';

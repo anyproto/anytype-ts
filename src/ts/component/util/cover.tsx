@@ -20,7 +20,7 @@ interface Props {
 };
 
 
-class Cover extends React.Component<Props, {}> {
+class Cover extends React.Component<Props, object> {
 
 	private static defaultProps = {
 		type: 0,

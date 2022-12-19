@@ -232,7 +232,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 		this.onKeyUpSearch(e, true);
 	};
 
-	onScroll ({ clientHeight, scrollHeight, scrollTop }) {
+	onScroll ({ scrollTop }) {
 		if (scrollTop) {
 			this.top = scrollTop;
 		};

@@ -13,7 +13,7 @@ interface Props extends I.Popup, RouteComponentProps<any> {
 	onPage: (id: string) => void;
 };
 
-const PopupSettingsPageDelete = observer(class PopupSettingsPageDelete extends React.Component<Props, {}> {
+const PopupSettingsPageDelete = observer(class PopupSettingsPageDelete extends React.Component<Props, object> {
 
 	refCheckbox: any = null;
 

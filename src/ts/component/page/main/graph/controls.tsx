@@ -8,7 +8,7 @@ interface Props {
     onSwitch: (id: string, v: string) => void;
 };
 
-const GraphControls = observer(class GraphControls extends React.Component<Props, {}> {
+const GraphControls = observer(class GraphControls extends React.Component<Props, object> {
 
     refFilter: any = null;
 

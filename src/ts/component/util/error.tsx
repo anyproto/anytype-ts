@@ -4,7 +4,7 @@ interface Props {
 	text: string;
 };
 
-class Error extends React.Component<Props, {}> {
+class Error extends React.Component<Props, object> {
 
 	public static defaultProps = {
 		text: ''

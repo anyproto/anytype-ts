@@ -10,7 +10,7 @@ import Constant from 'json/constant.json';
 
 interface Props extends I.Menu {};
 
-const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React.Component<Props, {}> {
+const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React.Component<Props, object> {
 
 	format: I.RelationType = null;
 	objectTypes: string[] = [];

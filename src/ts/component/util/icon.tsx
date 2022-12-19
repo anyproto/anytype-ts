@@ -22,7 +22,7 @@ interface Props {
 	onContextMenu?(e: any): void;
 };
 
-class Icon extends React.Component<Props, {}> {
+class Icon extends React.Component<Props, object> {
 	
 	public static defaultProps = {
 		tooltipX: I.MenuDirection.Center,

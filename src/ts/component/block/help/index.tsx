@@ -13,7 +13,7 @@ import ContentIcon from './icon';
 import ContentText from './text';
 import ContentLink from './link';
 
-class Block extends React.Component<Props, {}> {
+class Block extends React.Component<Props, object> {
 
 	public static defaultProps = {
 		type: I.BlockType.Text,

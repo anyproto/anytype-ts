@@ -9,7 +9,7 @@ import Constant from 'json/constant.json';
 
 interface Props extends I.BlockComponent {}
 
-const BlockVideo = observer(class BlockVideo extends React.Component<Props, {}> {
+const BlockVideo = observer(class BlockVideo extends React.Component<Props, object> {
 
 	_isMounted: boolean = false;
 	div: number = 0;

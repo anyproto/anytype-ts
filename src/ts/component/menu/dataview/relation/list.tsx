@@ -15,7 +15,7 @@ interface Props extends I.Menu {};
 const HEIGHT = 28;
 const LIMIT = 20;
 
-const MenuRelationList = observer(class MenuRelationList extends React.Component<Props, {}> {
+const MenuRelationList = observer(class MenuRelationList extends React.Component<Props, object> {
 	
 	n: number = 0;
 	top: number = 0;
@@ -332,7 +332,7 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 		C.BlockDataviewViewUpdate(rootId, blockId, view.id, view, onSave);
 	};
 
-	onScroll ({ clientHeight, scrollHeight, scrollTop }) {
+	onScroll ({ scrollTop }) {
 		if (scrollTop) {
 			this.top = scrollTop;
 		};

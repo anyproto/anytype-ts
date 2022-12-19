@@ -604,7 +604,7 @@ export default [
 
 	{ style: I.TextStyle.Header2, text: `Fixes` },
 	{ style: I.TextStyle.Bulleted, text: `The recovery phrase is visible without any password authentication. Thanks, shizoxlife` },
-	{ style: I.TextStyle.Bulleted, text: `Navigating back and forth between objects is unreliable. Thanks, <a href="https://community.anytype.io/d/643-forward-and-back-buttons-stop-working">​​irdinamaztura & abheek</a>` },
+	{ style: I.TextStyle.Bulleted, text: `Navigating back and forth between objects is unreliable. Thanks, <a href="https://community.anytype.io/d/643-forward-and-back-buttons-stop-working">irdinamaztura & abheek</a>` },
 	{ style: I.TextStyle.Bulleted, text: `Carriage returns to the top of the screen whenever I select something in the quick editor. Thanks, <a href="https://community.anytype.io/d/851-selection-jumps-to-top-in-popup-mode/1">bluatruli</a>` },
 	{ style: I.TextStyle.Bulleted, text: `Anytype (Human) version history breaks app login, triggers an infinite loop. Thanks, <a href="https://community.anytype.io/d/805-version-history-of-anytype-page-breaks-the-app/1">selimsandal</a>` },
 	{ style: I.TextStyle.Bulleted, text: `The shortcut for page history is not working. Thanks, <a href="https://community.anytype.io/d/603-page-history-shortcut-not-working/1">lynxlove</a>` },
@@ -703,7 +703,7 @@ export default [
 	{ text: `The big style train keeps on rolling! This latest version features our redesigned dashboard with tabs and inline object filtering.` },
 	{ text: `It also includes features for better keyboard support and fixes for issues relating to sync and page editing. Thanks to our alpha testers for all your bug reports & feature requests. We hope you enjoy this latest build of Anytype and we look forward to your feedback on the new dashboard.` },
 	{ style: I.TextStyle.Header2, text: `New features & enhancements` },
-	{ text: `We've polished writing ​experience to make it smooth around the edges.` },
+	{ text: `We've polished writing experience to make it smooth around the edges.` },
 	{ style: I.TextStyle.Bulleted, text: `Support for <span class="highlight">Inline</span> code and formatting when typing with the keyboard. Also we've add, <span class="highlight">** or __</span> - bold, <span class="highlight">* or _</span> - italic <span class="highlight">~~</span> - strike. Thanks, <a href="https://community.anytype.io/d/273-support-for-inline-code/1">Michael</a>!` },
 	{ style: I.TextStyle.Bulleted, text: `You can use shortcuts to create arrows <span class="highlight">-></span> = <span class="highlight">→</span>, <span class="highlight"><-</span> = <span class="highlight">←</span>, <span class="highlight">--></span> = <span class="highlight">⟶</span>, <span class="highlight"><--</span> = <span class="highlight">⟵</span>, <span class="highlight"><--></span> = <span class="highlight">⟷</span>.` },
 	{ style: I.TextStyle.Bulleted, text: `Sometimes you could end up without a cursor on the page, e.g. after removing a block, and break the keyboard flow. Now you can just press <span class="highlight">Enter</span> or press up and arrow keys and continue no matter what happened.` },

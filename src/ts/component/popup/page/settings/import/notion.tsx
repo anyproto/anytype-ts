@@ -12,7 +12,7 @@ interface Props extends I.Popup, RouteComponentProps<any> {
 	onImport: (type: I.ImportType) => void;
 };
 
-const PopupSettingsPageImportNotion = observer(class PopupSettingsPageImportNotion extends React.Component<Props, {}> {
+const PopupSettingsPageImportNotion = observer(class PopupSettingsPageImportNotion extends React.Component<Props, object> {
 
 	render () {
 		const { onImport } = this.props;

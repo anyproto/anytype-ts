@@ -20,7 +20,7 @@ import Constant from 'json/constant.json';
 
 interface Props extends I.Popup, RouteComponentProps<any> {};
 
-class Popup extends React.Component<Props, {}> {
+class Popup extends React.Component<Props, object> {
 
 	_isMounted: boolean = false;
 	isAnimating: boolean = false;
