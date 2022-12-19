@@ -8,7 +8,7 @@ class Mark implements I.Mark {
 	range: I.TextRange = { from: 0, to: 0 };
 
 	constructor (props: I.Mark) {
-		let self = this;
+		const self = this;
 		
 		self.type = Number(props.type) || I.MarkType.Strike;
 		self.param = String(props.param || '');
@@ -36,7 +36,7 @@ class BlockContentText implements I.ContentText {
 	marks: I.Mark[] = [];
 
 	constructor (props: I.ContentText) {
-		let self = this;
+		const self = this;
 		
 		self.text = String(props.text || '');
 		self.style = Number(props.style) || I.TextStyle.Paragraph;

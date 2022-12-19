@@ -12,7 +12,7 @@ class BlockContentDataview implements I.ContentDataview {
 	objectOrder: any[] = [];
 	
 	constructor (props: I.ContentDataview) {
-		let self = this;
+		const self = this;
 
 		self.sources = props.sources || [];
 		self.views = (props.views || []).map(it => new View(it));

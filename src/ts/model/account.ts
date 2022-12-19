@@ -14,7 +14,7 @@ class AccountInfo implements I.AccountInfo {
 	accountSpaceId: string = '';
 	
 	constructor (props: I.AccountInfo) {
-		let self = this;
+		const self = this;
 		
 		self.homeObjectId = String(props.homeObjectId || '');
 		self.profileObjectId = String(props.profileObjectId || '');
@@ -50,7 +50,7 @@ class AccountConfig implements I.AccountConfig {
 	allowBeta: boolean = false;
 	
 	constructor (props: I.AccountConfig) {
-		let self = this;
+		const self = this;
 		
 		self.allowSpaces = Boolean(props.allowSpaces);
 		self.allowBeta = Boolean(props.allowBeta);
@@ -72,7 +72,7 @@ class AccountStatus implements I.AccountStatus {
 	date: number = 0;
 	
 	constructor (props: I.AccountStatus) {
-		let self = this;
+		const self = this;
 		
 		self.type = Number(props.type) || I.AccountStatusType.Active;
 		self.date = Number(props.date) || 0;
@@ -96,7 +96,7 @@ class Account implements I.Account {
 	status: I.AccountStatus = null;
 	
 	constructor (props: I.Account) {
-		let self = this;
+		const self = this;
 		
 		self.id = String(props.id || '');
 		self.info = new AccountInfo(props.info);

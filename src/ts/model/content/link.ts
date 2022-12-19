@@ -10,7 +10,7 @@ class BlockContentLink implements I.ContentLink {
 	relations: string[] = [];
 	
 	constructor (props: I.ContentLink) {
-		let self = this;
+		const self = this;
 		
 		self.targetBlockId = String(props.targetBlockId || '');
 		self.iconSize = Number(props.iconSize) || I.LinkIconSize.None;

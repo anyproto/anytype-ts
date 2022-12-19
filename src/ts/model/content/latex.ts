@@ -6,7 +6,7 @@ class BlockContentLatex implements I.ContentLatex {
 	text: string = '';
 	
 	constructor (props: I.ContentLatex) {
-		let self = this;
+		const self = this;
 		
 		self.text = String(props.text || '');
 

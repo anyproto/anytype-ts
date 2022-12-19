@@ -16,7 +16,7 @@ class Util {
 
 	sprintf (...args: any[]) {
 		let regex = /%%|%(\d+\$)?([-+#0 ]*)(\*\d+\$|\*|\d+)?(\.(\*\d+\$|\*|\d+))?([scboxXuidfegEG])/g;
-		let a = arguments, i = 0, format = a[i++];
+		let a = args, i = 0, format = a[i++];
 		let pad = function (str, len, chr, leftJustify) {
 			let padding = (str.length >= len) ? '' : Array(1 + len - str.length >>> 0).join(chr);
 			return leftJustify ? str + padding : padding + str;
@@ -826,14 +826,13 @@ class Util {
 	};
 
 	searchParam (url: string): any {
-		var a = url.replace(/^\?/, '').split('&');
-		var param: any = {};
+		const a = url.replace(/^\?/, '').split('&');
+		const param: any = {};
 		
 		a.forEach((s) => {
-			var kv = s.split('=');
-			param[kv[0]] = kv[1];
+			const [ key, value ] = s.split('=');
+			param[key] = value;
 		});
-
 		return param;
 	};
 

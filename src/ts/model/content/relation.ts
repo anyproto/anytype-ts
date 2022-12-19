@@ -6,7 +6,7 @@ class BlockContentRelation implements I.ContentRelation {
 	key: string = '';
 	
 	constructor (props: I.ContentRelation) {
-		let self = this;
+		const self = this;
 		
 		self.key = String(props.key || '');
 

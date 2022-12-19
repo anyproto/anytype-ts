@@ -12,7 +12,7 @@ class BlockContentFile implements I.ContentFile {
 	state: I.FileState = I.FileState.Empty;
 	
 	constructor (props: I.ContentFile) {
-		let self = this;
+		const self = this;
 
 		self.hash = String(props.hash || '');
 		self.name = String(props.name || '');

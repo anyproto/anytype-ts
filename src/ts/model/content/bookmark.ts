@@ -8,7 +8,7 @@ class BlockContentBookmark implements I.ContentBookmark {
 	url: string = '';
 	
 	constructor (props: I.ContentBookmark) {
-		let self = this;
+		const self = this;
 		
 		self.targetObjectId = String(props.targetObjectId || '');
 		self.state = Number(props.state) || I.BookmarkState.Empty;

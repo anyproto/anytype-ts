@@ -6,7 +6,7 @@ class BlockContentDiv implements I.ContentDiv {
 	style: I.DivStyle = I.DivStyle.Line;
 	
 	constructor (props: I.ContentDiv) {
-		let self = this;
+		const self = this;
 		
 		self.style = Number(props.style) || I.DivStyle.Line;
 

@@ -26,7 +26,7 @@ const PopupSettingsPageImportNotion = observer(class PopupSettingsPageImportNoti
 
 				<div className="path">
 					<b>{translate('popupSettingsImportPageTitle')}</b><br/>
-					Three dots menu on the top-left corner → <IconObject object={{ iconEmoji: ':paperclip:' }} /> Export →  <br/> Export format : "Markdown & CSV".
+					Three dots menu on the top-left corner → <IconObject object={{ iconEmoji: ':paperclip:' }} /> Export →  <br/> Export format : &quot;Markdown &amp; CSV&quot;.
 				</div>
 
 				<Label className="last" text={translate('popupSettingsImportZip')} />

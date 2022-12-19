@@ -6,7 +6,7 @@ class BlockContentTableRow implements I.ContentTableRow {
 	isHeader: boolean = false;
 	
 	constructor (props: I.ContentTableRow) {
-		let self = this;
+		const self = this;
 		
 		self.isHeader = Boolean(props.isHeader);
 
