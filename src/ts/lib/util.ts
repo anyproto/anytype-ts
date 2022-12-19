@@ -712,7 +712,6 @@ class Util {
 	};
 
 	getPlatform () {
-		return I.Platform.Windows;
 		return Constant.platforms[window.Electron.platform];
 	};
 
