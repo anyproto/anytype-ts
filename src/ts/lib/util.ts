@@ -712,6 +712,7 @@ class Util {
 	};
 
 	getPlatform () {
+		return I.Platform.Windows;
 		return Constant.platforms[window.Electron.platform];
 	};
 
@@ -937,7 +938,6 @@ class Util {
 		};
 
 		for (let item of items) {
-			console.log(item.path);
 			if (item.path) {
 				ret.push({ name: item.name, path: item.path });
 				cb();
