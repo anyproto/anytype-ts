@@ -107,6 +107,7 @@ class Dispatcher {
 		if (v == V.BLOCKSETRELATION)			 t = 'blockSetRelation';
 		if (v == V.BLOCKSETLATEX)				 t = 'blockSetLatex';
 		if (v == V.BLOCKSETTABLEROW)			 t = 'blockSetTableRow';
+		if (v == V.BLOCKSETDATAVIEW)			 t = 'blockSetDataview';
 
 		if (v == V.BLOCKDATAVIEWVIEWSET)		 t = 'blockDataviewViewSet';
 		if (v == V.BLOCKDATAVIEWVIEWDELETE)		 t = 'blockDataviewViewDelete';
@@ -316,7 +317,7 @@ class Dispatcher {
 						block.content.fields = Decode.decodeStruct(data.getFields());
 					};
 
-					blockStore.update(rootId, block);
+					blockStore.updateContent(rootId, id, block.content);
 					break;
 
 				case 'blockSetText':
@@ -365,7 +366,21 @@ class Dispatcher {
 						block.content.style = data.getStyle().getValue();
 					};
 
-					blockStore.update(rootId, block);
+					blockStore.updateContent(rootId, id, block.content);
+					break;
+
+				case 'blockSetDataview':
+					id = data.getId();
+					block = blockStore.getLeaf(rootId, id);
+					if (!block) {
+						break;
+					};
+
+					if (data.hasTargetobjectid()) {
+						block.content.targetObjectId = data.getTargetobjectid().getValue();
+					};
+
+					blockStore.updateContent(rootId, id, block.content);
 					break;
 
 				case 'blockSetFile':
@@ -403,7 +418,7 @@ class Dispatcher {
 						block.content.state = data.getState().getValue();
 					};
 
-					blockStore.update(rootId, block);
+					blockStore.updateContent(rootId, id, block.content);
 					break;
 
 				case 'blockSetBookmark':
@@ -421,6 +436,7 @@ class Dispatcher {
 						block.content.state = data.getState().getValue();
 					};
 
+					blockStore.updateContent(rootId, id, block.content);
 					break;
 
 				case 'blockSetBackgroundColor':
@@ -467,7 +483,7 @@ class Dispatcher {
 						block.content.key = data.getKey().getValue();
 					};
 
-					blockStore.update(rootId, block);
+					blockStore.updateContent(rootId, id, block.content);
 					break;
 
 				case 'blockSetLatex':
@@ -481,7 +497,7 @@ class Dispatcher {
 						block.content.text = data.getText().getValue();
 					};
 
-					blockStore.update(rootId, block);
+					blockStore.updateContent(rootId, id, block.content);
 					break;
 
 				case 'blockSetTableRow':
@@ -495,7 +511,7 @@ class Dispatcher {
 						block.content.isHeader = data.getIsheader().getValue();
 					};
 
-					blockStore.update(rootId, block);
+					blockStore.updateContent(rootId, id, block.content);
 					break;
 
 				case 'blockDataviewViewSet':
@@ -533,12 +549,13 @@ class Dispatcher {
 					id = data.getId();
 					block = blockStore.getLeaf(rootId, id);
 
-					if (!block || !block.id) {
+					if (!block) {
 						break;
 					};
 
 					block.content.sources = data.getSourceList();
-					blockStore.update(rootId, block);
+
+					blockStore.updateContent(rootId, id, block.content);
 					break;
 
 				case 'blockDataviewRelationDelete':
