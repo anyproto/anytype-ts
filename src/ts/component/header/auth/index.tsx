@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-class HeaderAuthIndex extends React.Component<{}, {}> {
+class HeaderAuthIndex extends React.Component<object, object> {
 	
 	render () {
 		return (

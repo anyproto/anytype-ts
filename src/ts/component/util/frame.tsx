@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import raf from 'raf';
 
-class Frame extends React.Component<{}, {}> {
+class Frame extends React.Component<object, object> {
 
 	_isMounted: boolean = false;
 
