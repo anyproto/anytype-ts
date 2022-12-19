@@ -243,20 +243,6 @@ const BlockCreate = (contextId: string, targetId: string, position: I.BlockPosit
 	dispatcher.request(BlockCreate.name, request, callBack);
 };
 
-const BlockDataviewCreateWithObject = (contextId: string, targetId: string, position: I.BlockPosition, block: any, callBack?: (message: any) => void) => {
-	const request = new Rpc.BlockDataview.CreateWithObject.Request();
-
-	request.setContextid(contextId);
-	request.setTargetid(targetId);
-	request.setPosition(position);
-	request.setBlock(Mapper.To.Block(block));
-	// request.setDetails(Encode.encodeStruct({}));
-	// request.setTemplateid('');
-	// request.setInternalflagsList([].map(Mapper.To.InternalFlag));
-
-	dispatcher.request(BlockDataviewCreateWithObject.name, request, callBack);
-};
-
 const BlockDataviewCreateFromExistingObject = (contextId: string, blockId: string, targetObjectId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockDataview.CreateFromExistingObject.Request();
 
@@ -844,16 +830,6 @@ const BlockDataviewObjectOrderUpdate = (contextId: string, blockId: string, orde
 	request.setObjectordersList(orders.map(Mapper.To.ObjectOrder));
 
 	dispatcher.request(BlockDataviewObjectOrderUpdate.name, request, callBack);
-};
-
-
-const BlockDataviewRelationListAvailable = (contextId: string, blockId: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.BlockDataview.Relation.ListAvailable.Request();
-	
-	request.setContextid(contextId);
-	request.setBlockid(blockId);
-
-	dispatcher.request(BlockDataviewRelationListAvailable.name, request, callBack);
 };
 
 const BlockRelationSetKey = (contextId: string, blockId: string, relationKey: string, callBack?: (message: any) => void) => {
@@ -1581,7 +1557,6 @@ export {
 	BlockTableRowListClean,
 	BlockTableRowSetHeader,
 
-	BlockDataviewCreateWithObject,
 	BlockDataviewCreateFromExistingObject,
 
 	BlockDataviewViewCreate,
@@ -1595,8 +1570,6 @@ export {
 
 	BlockDataviewRelationAdd,
 	BlockDataviewRelationDelete,
-	BlockDataviewRelationListAvailable,
-
 	BlockDataviewSetSource,
 
 	HistoryGetVersions,	
