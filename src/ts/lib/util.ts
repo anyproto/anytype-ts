@@ -160,7 +160,11 @@ class Util {
 	};
 	
 	objectLength (o: any) {
-		return (o || {}).hasOwnProperty('length') ? o.length : Object.keys(o).length;
+		return this.hasOwnProperty(o, 'length') ? o.length : Object.keys(o).length;
+	};
+
+	hasOwnProperty (o: any, p: string) {
+		return Object.prototype.hasOwnProperty.call(o, p);
 	};
 
 	// Clear object for smaller console output
@@ -171,7 +175,7 @@ class Util {
 				if (!this.objectLength(o[k])) {
 					delete(o[k]);
 				} else 
-				if (o[k].hasOwnProperty('fieldsMap')){
+				if (this.hasOwnProperty(o[k], 'fieldsMap')){
 					o[k] = this.fieldsMap(o[k]['fieldsMap']);
 				};
 			} else 
@@ -245,7 +249,7 @@ class Util {
 	};
 
 	arrayValues (a: any) {
-		return a.hasOwnProperty('length') ? a : Object.values(a);
+		return this.hasOwnProperty(a, 'length') ? a : Object.values(a);
 	};
 
 	stringCut (haystack: string, start: number, end: number): string {
