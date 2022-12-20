@@ -466,7 +466,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: this.getTabType() },
 		];
 		const sorts: I.Sort[] = [
-			{ type: I.SortType.Asc, relationKey: 'name' },
+			{ type: I.SortType.Desc, relationKey: 'createdDate' },
 		];
 
 		let sources: any[] = [];

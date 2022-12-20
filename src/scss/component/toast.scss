@@ -16,6 +16,8 @@
 			.chunk {
 				.name { max-width: 140px; @include text-overflow-nw; }
 			}
+
+			b { font-weight: 500; }
 		}
 
 		.buttons { display: flex; gap: 0px 12px; margin-left: 32px; }
