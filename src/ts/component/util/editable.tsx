@@ -126,6 +126,7 @@ class Editable extends React.Component<Props, {}> {
 
 	setValue (html: string) {
 		this.editable.get(0).innerHTML = html;
+		this.placeholderCheck();
 	};
 
 	getTextValue (): string {
@@ -145,8 +146,10 @@ class Editable extends React.Component<Props, {}> {
 	setRange (range: I.TextRange) {
 		const el = this.editable.get(0);
 
-		el.focus({ preventScroll: true });
-		setRange(el, { start: range.from, end: range.to });
+		window.setTimeout(() => {
+			el.focus({ preventScroll: true });
+			setRange(el, { start: range.from, end: range.to });
+		}, 15);
 	};
 
 	onInput (e: any) {

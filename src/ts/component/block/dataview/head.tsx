@@ -9,13 +9,13 @@ import Constant from 'json/constant.json';
 interface Props extends I.ViewComponent {};
 
 interface State {
-	titleLocked: boolean
+	isEditing: boolean;
 };
 
 const Head = observer(class Head extends React.Component<Props, State> {
 
 	state = {
-		titleLocked: true
+		isEditing: false,
 	};
 	_isMounted: boolean = false;
 	menuContext: any = null;
@@ -40,7 +40,7 @@ const Head = observer(class Head extends React.Component<Props, State> {
 
 	render () {
 		const { rootId, block, readonly, getSources, className } = this.props;
-		const { titleLocked } = this.state;
+		const { isEditing } = this.state;
 		const { targetObjectId } = block.content;
 		const object = detailStore.get(rootId, targetObjectId);
 		const sources = getSources();
@@ -50,6 +50,8 @@ const Head = observer(class Head extends React.Component<Props, State> {
 			cn.push(className);
 		};
 
+		console.log(targetObjectId, object);
+
 		return (
 			<div className={cn.join(' ')}>
 				<div id="head-title-wrapper" className="side left">
@@ -58,7 +60,7 @@ const Head = observer(class Head extends React.Component<Props, State> {
 					<Editable 
 						ref={(ref: any) => { this.ref = ref; }}
 						id="value"
-						readonly={readonly || titleLocked}
+						readonly={readonly && !isEditing}
 						placeholder={DataUtil.defaultName('set')}
 						onFocus={this.onFocus}
 						onMouseDown={this.onTitle}
@@ -83,6 +85,10 @@ const Head = observer(class Head extends React.Component<Props, State> {
 
 	componentDidMount () {
 		this._isMounted = true;
+		this.setValue();
+	};
+
+	componentDidUpdate () {
 		this.setValue();
 	};
 
@@ -151,7 +157,8 @@ const Head = observer(class Head extends React.Component<Props, State> {
 					],
 					keys: Constant.defaultRelationKeys.concat([ 'setOf' ]),
 					onSelect: (item: any) => {
-						C.BlockDataviewSetSource(targetObjectId, 'dataview', item.setOf);
+						C.BlockDataviewCreateFromExistingObject(rootId, block.id, item.id);
+						this.menuContext.close();
 					}
 				});
 				break;
@@ -167,9 +174,9 @@ const Head = observer(class Head extends React.Component<Props, State> {
 	onTitle (e: any) {
 		const { block } = this.props;
 		const { targetObjectId } = block.content;
-		const { titleLocked } = this.state;
+		const { isEditing } = this.state;
 
-		if (!titleLocked) {
+		if (isEditing) {
 			return;
 		};
 
@@ -183,7 +190,6 @@ const Head = observer(class Head extends React.Component<Props, State> {
 
 		menuStore.open('select', {
 			element: `#block-${block.id} #head-title-wrapper`,
-			width: 224,
 			horizontal: I.MenuDirection.Left,
 			subIds: Constant.menuIds.dataviewHead,
 			onOpen: (context: any) => {
@@ -197,23 +203,20 @@ const Head = observer(class Head extends React.Component<Props, State> {
 	};
 
 	titleOptionClick (e: any, item: any) {
-		const { block } = this.props;
+		const { rootId, block } = this.props;
 		const { targetObjectId } = block.content;
+		const object = detailStore.get(rootId, targetObjectId);
 
 		switch (item.id) {
 			case 'editTitle':
-				this.setState({titleLocked: false}, () => {
-					const value = this.getValue();
-					setTimeout(() => {
-						this.ref.setRange({ from: 0, to: value.length });
-					}, 10);
+				this.setState({ isEditing: true }, () => {
+					const length = this.getValue().length;
+					this.ref.setRange({ from: length, to: length });
 				});
 				break;
 
 			case 'openSource':
-				DataUtil.getObjectById(targetObjectId, (object) => {
-					ObjectUtil.openRoute(object);
-				});
+				ObjectUtil.openAuto(object);
 				break;
 
 		};
@@ -225,7 +228,7 @@ const Head = observer(class Head extends React.Component<Props, State> {
 
 	onBlur (e: any) {
 		keyboard.setFocus(false);
-		this.setState({titleLocked: true});
+		this.setState({ isEditing: false });
 	};
 
 	onCompositionStart (e: any) {
@@ -244,6 +247,7 @@ const Head = observer(class Head extends React.Component<Props, State> {
 
 		const { rootId, block } = this.props;
 		const { targetObjectId } = block.content;
+
 		if (!targetObjectId) {
 			return;
 		};
@@ -258,30 +262,11 @@ const Head = observer(class Head extends React.Component<Props, State> {
 		if (this.ref) {
 			this.ref.setValue(object.name);
 		};
-		this.placeholderCheck();
 
 	};
 
 	getValue () {
 		return this.ref ? this.ref.getTextValue() : '';
-	};
-
-	placeholderCheck () {
-		if (this.ref) {
-			this.ref.placeholderCheck();
-		};
-	};
-
-	placeholderHide () {
-		if (this.ref) {
-			this.ref.placeholderHide();
-		};
-	};
-	
-	placeholderShow () {
-		if (this.ref) {
-			this.ref.placeholderShow();
-		};
 	};
 
 	save () {
