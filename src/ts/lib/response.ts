@@ -159,7 +159,8 @@ const BlockCreate = (response: any) => {
 const BlockDataviewCreateFromExistingObject = (response: any) => {
 	return {
 		blockId: response.getBlockid(),
-		targetObjectId: response.getTargetobjectid()
+		targetObjectId: response.getTargetobjectid(),
+		views: (response.getViewList() || []).map(Mapper.From.View),
 	};
 };
 

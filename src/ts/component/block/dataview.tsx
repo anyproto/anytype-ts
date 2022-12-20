@@ -424,7 +424,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		const object = detailStore.get(rootId, isInline ? targetObjectId : rootId, [ 'setOf' ]);
-
 		return object.setOf || [];
 	};
 
@@ -673,6 +672,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	onSourceOver (e: any, item: any) {
 		const { rootId, block } = this.props;
 		const { targetObjectId } = block.content;
+		const view = this.getView();
 
 		let menuId = '';
 		let menuParam = {
@@ -708,7 +708,11 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					],
 					keys: Constant.defaultRelationKeys.concat([ 'setOf' ]),
 					onSelect: (item: any) => {
-						C.BlockDataviewCreateFromExistingObject(rootId, block.id, item.id);
+						C.BlockDataviewCreateFromExistingObject(rootId, block.id, item.id, (message: any) => {
+							if (message.views && message.views.length) {
+								this.getData(message.views[0].id, 0, true);
+							};
+						});
 
 						this.menuContext.close();
 					}
