@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Title, Label, Button, Switch } from 'Component';
+import { Title, Label, Button, Switch, Storage } from 'Component';
 import { I, translate } from 'Lib';
 import { observer } from 'mobx-react';
 
@@ -20,12 +20,13 @@ const PopupSettingsPageExportMarkdown = observer(class PopupSettingsPageExportMa
 
 	render () {
 		const { onExport } = this.props;
-
 		const items = [
 			{ id: 'zip', name: 'Zip archive', control: 'switch' },
 			{ id: 'nested', name: 'Include linked objects', control: 'switch' },
 			{ id: 'files', name: 'Include files', control: 'switch' },
 		];
+
+		this.init();
 
 		return (
 			<div>
@@ -51,9 +52,24 @@ const PopupSettingsPageExportMarkdown = observer(class PopupSettingsPageExportMa
 					</div>
 				))}
 
-				<Button text={translate('popupSettingsExportOk')} onClick={() => { onExport(I.ExportFormat.Markdown, { zip: this.zip, nested: this.nested, files: this.files }); }} />
+				<Button 
+					text={translate('popupSettingsExportOk')} 
+					onClick={() => { onExport(I.ExportFormat.Markdown, { zip: this.zip, nested: this.nested, files: this.files }); }} 
+				/>
 			</div>
 		);
+	};
+
+	componentDidMount () {
+		this.init();
+	};
+
+	init () {
+		const options = Storage.get('popupExport') || {};
+
+		this.zip = Boolean(options.zip);
+		this.nested = Boolean(options.nested);
+		this.files = Boolean(options.files);
 	};
 
 });
