@@ -242,12 +242,13 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	onKeyDown (e: any) {
-		const { rootId, dataset } = this.props;
+		const { rootId, block, dataset, isInline } = this.props;
 		const { selection } = dataset || {};
 		const root = blockStore.getLeaf(rootId, rootId);
 		const cmd = keyboard.cmdKey();
-		const ids = selection ? selection.get(I.SelectType.Block) : [];
+		const ids = selection ? selection.get(I.SelectType.Record) : [];
 		const length = ids.length;
+		const subId = dbStore.getSubId(rootId, block.id);
 
 		if (!root || (!root.isObjectSet() && !root.isObjectSpace())) {
 			return;
@@ -255,6 +256,12 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		if (!this.creating) {
 			keyboard.shortcut(`${cmd}+n`, e, (pressed: string) => { this.onRecordAdd(e, -1, true); });
+		};
+
+		if (!isInline) {
+			keyboard.shortcut(`${cmd}+a`, e, (pressed: string) => {
+				selection.set(I.SelectType.Record, dbStore.getRecords(subId, ''));
+			});
 		};
 
 		if (length) {
