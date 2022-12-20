@@ -77,13 +77,12 @@ class MenuUtil {
 	};
 
 	getBlockOther () {
-		const ret: any[] = [
+		return [
 			{ type: I.BlockType.Div, id: I.DivStyle.Line, icon: 'div-line', lang: 'Line' },
 			{ type: I.BlockType.Div, id: I.DivStyle.Dot, icon: 'dot', lang: 'Dot' },
 			{ type: I.BlockType.TableOfContents, id: I.BlockType.TableOfContents, icon: 'tableOfContents', lang: 'TableOfContents', aliases: [ 'tc', 'toc' ] },
 			{ type: I.BlockType.Table, id: I.BlockType.Table, icon: 'table', lang: 'SimpleTable' }
-		];
-		return ret.map(this.mapperBlock);
+		].map(this.mapperBlock);
 	};
 
 	getBlockDataview () {

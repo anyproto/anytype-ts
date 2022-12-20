@@ -27,7 +27,6 @@ class MenuBlockAction extends React.Component<Props, State> {
 		this.rebind = this.rebind.bind(this);
 		this.onOver = this.onOver.bind(this);
 		this.onClick = this.onClick.bind(this);
-		
 		this.onFilterFocus = this.onFilterFocus.bind(this);
 		this.onFilterChange = this.onFilterChange.bind(this);
 	};
@@ -616,7 +615,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 				break;
 
 			case 'openDataviewFullscreen':
-				ObjectUtil.openPopup({ layout: I.ObjectLayout.Block, id: block.content.targetObjectId, _routeParam_: { blockId: block.id } });
+				ObjectUtil.openPopup({ layout: I.ObjectLayout.Block, id: rootId, _routeParam_: { blockId } });
 				break;
 					
 			case 'copy':
