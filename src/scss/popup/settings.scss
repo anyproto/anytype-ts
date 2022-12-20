@@ -40,7 +40,7 @@
 		.sectionName.center { text-align: center; }
 
 		.tabIndex { padding: 24px 48px 48px 48px; }
-		.tabIndex, .tabAccount, .tabAppearance, .tabPersonal, .tabPinIndex, .tabDelete {
+		.tabIndex, .tabAccount, .tabAppearance, .tabPersonal, .tabPinIndex, .tabDelete, .tabExportMarkdown {
 			.row { 
 				padding: 18px 0px 17px 0px; border-bottom: 1px solid $colorBorderLight; cursor: pointer; position: relative; 
 				@include text-paragraph; line-height: 28px;

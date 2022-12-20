@@ -185,8 +185,10 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 		});
 	};
 
-	onExport (format: I.ExportFormat) {
-		Action.export([], format, true, true, true, () => { this.props.close(); });
+	onExport (format: I.ExportFormat, param: any) {
+		const { zip, nested, files } = param;
+
+		Action.export([], format, zip, nested, files, () => { this.props.close(); });
 	};
 
 	onKeyDown (e: any) {
