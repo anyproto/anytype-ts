@@ -22,7 +22,7 @@
 
 		.loadMore { 
 			display: flex; align-items: center; @include text-small; line-height: 20px; width: 100%; margin-top: 10px; padding: 4px 2px; color: $colorDarkGrey;
-			border-bottom: 1px solid $colorLightGrey; transition: $transitionFast; cursor: pointer;
+			border-bottom: 1px solid $colorBorderLight; transition: $transitionFast; cursor: pointer;
 		}
 		.loadMore {
 			.icon { flex-shrink: 0; width: 20px; height: 20px; background-image: url('~img/arrow/loadMore0.svg'); }
@@ -34,7 +34,7 @@
 		}
 
 		.dataviewEmpty { 
-			color: $colorDarkGrey; height: 230px; display: flex; align-items: center; justify-content: center; border-bottom: 1px solid $colorLightGrey;
+			color: $colorDarkGrey; height: 230px; display: flex; align-items: center; justify-content: center; border-bottom: 1px solid $colorBorderLight;
 			text-align: center;
 		}
 		.dataviewEmpty {
@@ -75,7 +75,7 @@
 
 		.dataviewControls { font-weight: 500; color: $colorMediumGrey; position: relative; }
 		.dataviewControls {
-			.line { height: 1px; width: calc(100% - 14px); background: $colorLightGrey; margin-left: 14px; }
+			.line { height: 1px; width: calc(100% - 14px); background: $colorBorderLight; margin-left: 14px; }
 
 			.sides { gap: 0px 16px; }
 			.side { padding: 23px 0px; white-space: nowrap; line-height: 28px; }

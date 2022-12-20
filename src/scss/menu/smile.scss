@@ -7,7 +7,7 @@
 		.wrap { display: flex; flex-direction: column; }
 		.ReactVirtualized__List { padding: 0px; }
 
-		.head { color: $colorMediumGrey; font-weight: 500; padding: 3px 16px 10px 16px; border-bottom: 1px solid $colorLightGrey; }
+		.head { color: $colorMediumGrey; font-weight: 500; padding: 3px 16px 10px 16px; border-bottom: 1px solid $colorBorderLight; }
 		.head {
 			.btn { display: inline-block; vertical-align: top; margin-right: 16px; transition: $transitionFast; cursor: pointer; }
 			.btn:last-child { margin-right: 0px; }
@@ -37,7 +37,7 @@
 			.iconEmoji .emoji-mart-emoji span { margin-top: 2px; }
 		}
 
-		.foot { padding: 5px 16px 6px 16px; border-top: 1px solid $colorLightGrey; display: flex; justify-content: space-between; }
+		.foot { padding: 5px 16px 6px 16px; border-top: 1px solid $colorBorderLight; display: flex; justify-content: space-between; }
 		.foot {
 			.icon { width: 32px; height: 32px; border-radius: 4px; background-size: 20px; flex-shrink: 0; cursor: pointer; transition: $transitionFast; }
 			.icon:hover { background-color: $colorVeryLightGrey; }

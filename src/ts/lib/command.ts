@@ -1093,15 +1093,6 @@ const ObjectSetObjectType = (contextId: string, url: string, callBack?: (message
 	dispatcher.request(ObjectSetObjectType.name, request, callBack);
 };
 
-const ObjectImportMarkdown = (contextId: string, path: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Object.ImportMarkdown.Request();
-	
-	request.setContextid(contextId);
-    request.setImportpath(path);
-
-	dispatcher.request(ObjectImportMarkdown.name, request, callBack);
-};
-
 const ObjectImportList = (callBack?: (message: any) => void) => {
 	const request = new Commands.Empty();
 	
@@ -1116,9 +1107,16 @@ const ObjectImport = (options: any, snapshots: any[], existing: boolean, type: I
 	switch (type) {
 		case I.ImportType.Notion:
 			params = new Rpc.Object.Import.Request.NotionParams();
-			params.setPath(options.path);
+			params.setApikey(options.apiKey);
 
 			request.setNotionparams(params);
+			break;
+
+		case I.ImportType.Markdown:
+			params = new Rpc.Object.Import.Request.MarkdownParams();
+			params.setPath(options.path);
+
+			request.setMarkdownparams(params);
 			break;
 
 	};
@@ -1601,10 +1599,10 @@ export {
 	ObjectGroupsSubscribe,
 	ObjectDuplicate,
 	ObjectApplyTemplate,
-	ObjectImportMarkdown,
+	ObjectBookmarkFetch,
+
 	ObjectImportList,
 	ObjectImport,
-	ObjectBookmarkFetch,
 
 	ObjectCreate,
 	ObjectCreateSet,

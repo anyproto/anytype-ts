@@ -28,7 +28,7 @@
 		.media { width: 100%; display: block; cursor: pointer; }
 
 		.wrap.broken { 
-			@include text-common; position: relative; width: 100% !important; line-height: 20px; padding: 11px 13px; border-radius: 6px; border: solid 1px $colorLightGrey; 
+			@include text-common; position: relative; width: 100% !important; line-height: 20px; padding: 11px 13px; border-radius: 6px; border: solid 1px $colorBorderLight; 
 			color: $colorMediumGrey; height: 44px;
 		}
 		.wrap.broken {

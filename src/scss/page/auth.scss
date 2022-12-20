@@ -119,7 +119,7 @@
 	}
 
 	.row { 
-		padding: 18px 0px 17px 0px; border-bottom: 1px solid $colorLightGrey; cursor: pointer; position: relative; 
+		padding: 18px 0px 17px 0px; border-bottom: 1px solid $colorBorderLight; cursor: pointer; position: relative; 
 		@include text-paragraph; line-height: 28px;
 	}
 	.row.red { color: $colorRed; }

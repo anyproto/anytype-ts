@@ -17,7 +17,7 @@
 		.flex { position: relative; z-index: 2; }
 		.icon.dnd { 
 			width: 12px; height: 100%; background-size: 8px 16px; opacity: 0; cursor: grab; position: absolute; right: 6px; top: 0px;
-			background-image: url('~img/icon/block/menu0.svg'); border: 1px solid $colorLightGrey; border-radius: 12px; 
+			background-image: url('~img/icon/block/menu0.svg'); border: 1px solid $colorBorderLight; border-radius: 12px; 
 		}
 		.icon.dnd:hover { 
 			background-image: url('~img/icon/block/menu2.svg') !important; border-color: $colorOrange; box-shadow: 0px 0px 0px 1px $colorOrange;

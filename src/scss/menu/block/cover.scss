@@ -8,7 +8,7 @@
 		.wrap { display: flex; flex-direction: column; }
 
 		.head { 
-			border-bottom: 1px solid $colorLightGrey; padding: 11px 16px; font-weight: 500; color: $colorMediumGrey; 
+			border-bottom: 1px solid $colorBorderLight; padding: 11px 16px; font-weight: 500; color: $colorMediumGrey; 
 			flex-shrink: 0;
 		}
 		.head {

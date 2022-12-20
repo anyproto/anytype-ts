@@ -178,7 +178,7 @@ search.active { background: orange !important; }
 .bgColor-lime { background: #e3f7d0 !important; }
 
 .isTag.archive { color: $colorDarkGrey; background: $colorVeryLightGrey; }
-.isTag.tagColor-default { color: $colorBlack !important; background: #fff !important; box-shadow: 0px 0px 0px 1px $colorLightGrey inset; }
+.isTag.tagColor-default { color: $colorBlack !important; background: #fff !important; box-shadow: 0px 0px 0px 1px $colorBorderLight inset; }
 .isTag.tagColor-grey { color: #8c9ea5 !important; background: #ebeff1 !important; }
 .isTag.tagColor-yellow { color: #b2a616 !important; background: #fbf5b8 !important; }
 .isTag.tagColor-orange { color: #d3720d !important; background: #ffEcc8 !important; }
