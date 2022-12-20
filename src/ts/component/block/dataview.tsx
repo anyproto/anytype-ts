@@ -56,7 +56,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		this.onCellChange = this.onCellChange.bind(this);
 		this.onContext = this.onContext.bind(this);
 		this.onSourceSelect = this.onSourceSelect.bind(this);
-		this.onSourceOver = this.onSourceOver.bind(this);
 	};
 
 	render () {
@@ -649,82 +648,30 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	onSourceSelect (e: any) {
-		const options: any[] = [
-			{ id: 'new', name: 'Create new source', arrow: true },
-			{ id: 'existing', name: 'Link to source of another set', arrow: true }
-		];
-		
-		menuStore.open('select', { 
-			element: $(e.currentTarget),
-			width: 256,
-			horizontal: I.MenuDirection.Center,
-			subIds: Constant.menuIds.dataviewHead,
-			onOpen: (context: any) => {
-				this.menuContext = context;
-			},
-			data: {
-				options: options,
-				onOver: this.onSourceOver,
-			},
-		});
-	};
-
-	onSourceOver (e: any, item: any) {
 		const { rootId, block } = this.props;
-		const { targetObjectId } = block.content;
-		const view = this.getView();
 
-		let menuId = '';
-		let menuParam = {
-			menuKey: item.id,
-			element: `#${this.menuContext.getId()} #item-${item.id}`,
-			offsetX: this.menuContext.getSize().width,
-			className: 'big single',
-			vertical: I.MenuDirection.Center,
-			isSub: true,
+		menuStore.open('searchObject', {
+			element: $(e.currentTarget),
+			className: 'single',
+			horizontal: I.MenuDirection.Center,
 			data: {
-				isBig: true,
 				rootId,
 				blockId: 'dataview',
 				blockIds: [ block.id ],
-				rebind: this.menuContext.ref.rebind,
+				filters: [
+					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.set },
+					{ operator: I.FilterOperator.And, relationKey: 'setOf', condition: I.FilterCondition.NotEmpty, value: null },
+				],
+				keys: Constant.defaultRelationKeys.concat([ 'setOf' ]),
+				onSelect: (item: any) => {
+					C.BlockDataviewCreateFromExistingObject(rootId, block.id, item.id, (message: any) => {
+						if (message.views && message.views.length) {
+							this.getData(message.views[0].id, 0, true);
+						};
+					});
+				}
 			}
-		};
-
-		switch (item.id) {
-			case 'new':
-				menuId = 'dataviewSource';
-				menuParam.data = Object.assign(menuParam.data, {
-					objectId: targetObjectId,
-				});
-				break;
-
-			case 'existing':
-				menuId = 'searchObject';
-				menuParam.data = Object.assign(menuParam.data, {
-					filters: [
-						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.set },
-						{ operator: I.FilterOperator.And, relationKey: 'setOf', condition: I.FilterCondition.NotEmpty, value: null },
-					],
-					keys: Constant.defaultRelationKeys.concat([ 'setOf' ]),
-					onSelect: (item: any) => {
-						C.BlockDataviewCreateFromExistingObject(rootId, block.id, item.id, (message: any) => {
-							if (message.views && message.views.length) {
-								this.getData(message.views[0].id, 0, true);
-							};
-						});
-
-						this.menuContext.close();
-					}
-				});
-				break;
-		};
-
-		if (menuId && !menuStore.isOpen(menuId, item.id)) {
-			menuStore.closeAll(Constant.menuIds.dataviewHead, () => {
-				menuStore.open(menuId, menuParam);
-			});
-		};
+		});
 	};
 
 	getIdPrefix () {

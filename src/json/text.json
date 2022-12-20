@@ -372,6 +372,10 @@
 
 	"menuDataviewViewEditName": { "en": "View name" },
 
+	"menuDataviewUrlActionGo7": { "en": "Open link" },
+	"menuDataviewUrlActionGo8": { "en": "Mail to" },
+	"menuDataviewUrlActionGo9": { "en": "Call to" },
+
 	"previewCopy": { "en": "Copy link" },
 	"previewEdit": { "en": "Edit link" },
 	"previewUnlink": { "en": "Unlink" },

@@ -357,6 +357,10 @@ class App extends React.Component<Props, State> {
 
 		console.log('[Process] os version:', window.Electron.version.system, 'arch:', window.Electron.arch);
 		console.log('[App] version:', window.Electron.version.app, 'isPackaged', window.Electron.isPackaged);
+
+		$(window).off('resize.app').on('resize.app', () => {
+			this.checkMaximized();
+		});
 	};
 
 	initStorage () {
@@ -389,6 +393,15 @@ class App extends React.Component<Props, State> {
 		};
 
 		Util.addBodyClass('theme', theme);
+	};
+
+	checkMaximized () {
+		const node = $(ReactDOM.findDOMNode(this));
+		const icon = node.find('#minmax');
+		const isMaximized = window.Electron.isMaximized();
+
+		icon.removeClass('max window');
+		isMaximized ? icon.addClass('window') : icon.addClass('max');
 	};
 
 	registerIpcEvents () {
@@ -758,12 +771,7 @@ class App extends React.Component<Props, State> {
 	};
 
 	onMax (e: any) {
-		const node = $(ReactDOM.findDOMNode(this));
-		const icon = node.find('#minmax');
-		const isMaximized = window.Electron.isMaximized();
-
-		icon.removeClass('max window');
-		!isMaximized ? icon.addClass('max') : icon.addClass('window');
+		this.checkMaximized();
 		Renderer.send('winCommand', 'maximize');
 	};
 

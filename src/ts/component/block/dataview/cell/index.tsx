@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import { observable } from 'mobx';
-import { I, C, analytics, DataUtil, Util, keyboard, Relation, Renderer, Preview } from 'Lib';
+import { I, C, analytics, Util, keyboard, Relation, Renderer, Preview, translate } from 'Lib';
 import { commonStore, menuStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -328,16 +328,9 @@ class Cell extends React.Component<Props, {}> {
 			case I.RelationType.Email:
 			case I.RelationType.Phone:
 				param = Object.assign(param, {
-					width: width,
+					commonFilter: true,
+					width,
 				});
-
-				let name = 'Open link';
-				if (relation.format == I.RelationType.Email) {
-					name = 'Mail to';
-				};
-				if (relation.format == I.RelationType.Phone) {
-					name = 'Call to';
-				};
 
 				if (e.shiftKey && value) {
 					const scheme = Relation.getUrlScheme(relation.format, value);
@@ -348,7 +341,7 @@ class Cell extends React.Component<Props, {}> {
 				};
 
 				let options = [
-					{ id: 'go', icon: 'browse', name: name },
+					{ id: 'go', icon: 'browse', name: translate('menuDataviewUrlActionGo' + relation.format) },
 					{ id: 'copy', icon: 'copy', name: 'Copy link' },
 				];
 				if (relation.relationKey == 'source') {
@@ -357,6 +350,7 @@ class Cell extends React.Component<Props, {}> {
 
 				param.data = Object.assign(param.data, {
 					disabled: !value, 
+					noFilter: true,
 					options,
 					onSelect: (event: any, item: any) => {
 						let value = '';

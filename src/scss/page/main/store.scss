@@ -56,7 +56,7 @@
 			
 					.line { width: 100%; height: 1px; background: $colorBorderLight; position: absolute; left: 0px; }
 
-					.buttons { flex-shrink: 0; display: none;}
+					.buttons { flex-shrink: 0; display: none; }
 					.buttons {
 						.icon { width: 28px !important; height: 28px !important; background-size: 20px; border-radius: 4px; transition: background-color 0.2s ease-in-out; }
 						.icon.remove { background-image: url('~img/icon/menu/action/remove0.svg'); }
@@ -82,11 +82,8 @@
 		.item {
 			.line { bottom: -16px; }
 		}
-
 		.item:hover {
-			.info {
-				.txt { width: calc(100% - 32px); }
-			}
+			.info .txt { width: calc(100% - 32px); }
 		}
 	}
 
@@ -97,6 +94,9 @@
 		.item {
 			.line { bottom: -8px; }
 			.descr { display: none; }
+		}
+		.item:hover {
+			.info .txt { width: calc(100% - 32px); }
 		}
 	}
 
