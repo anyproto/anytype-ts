@@ -57,7 +57,7 @@
 			background: rgba(255,255,255, 0.7);
 		}
 
-		.tabs { padding: 10px 14px; border-bottom: 1px solid $colorLightGrey; white-space: nowrap; font-weight: 600; color: $colorMediumGrey; }
+		.tabs { padding: 10px 14px; border-bottom: 1px solid $colorBorderLight; white-space: nowrap; font-weight: 600; color: $colorMediumGrey; }
 		.tabs {
 			.tab { display: inline-block; vertical-align: top; transition: $transitionFast; cursor: pointer; margin-right: 16px; position: relative; }
 			.tab:hover, .tab.active { color: $colorBlack; }
@@ -65,11 +65,11 @@
 		}
 		
 		.inputWrap { padding: 0px 14px 8px 14px; }
-		.input { border: 1px solid $colorLightGrey; padding: 0px 8px; }
+		.input { border: 1px solid $colorBorderLight; padding: 0px 8px; }
 	
 		.title { @include text-small;  margin: 0px; padding: 7px 14px; font-weight: 400; color: $colorMediumGrey; }
 
-		.separator .inner { margin: 8px 14px 7px 14px; height: 1px; background: $colorLightGrey; }
+		.separator .inner { margin: 8px 14px 7px 14px; height: 1px; background: $colorBorderLight; }
 	
 		.item { padding: 4px 14px; @include text-common; line-height: 20px; position: relative; cursor: pointer; width: 100%; background: $colorWhite; }
 		.item.isDragging { box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.2); }
@@ -156,11 +156,11 @@
 			.name { width: calc(100% - 46px); }
 		}
 
-		.line { height: 1px; margin: 8px 14px 7px 14px; background: $colorLightGrey; }
+		.line { height: 1px; margin: 8px 14px 7px 14px; background: $colorBorderLight; }
 		.sectionName { padding: 5px 14px; @include text-small; color: $colorDarkGrey; font-weight: 500; }
 		
 		.section { padding: 8px 0px 0px 0px; }
-		.section::after { content: ""; height: 1px; margin: 8px 14px 0px 14px; background: $colorLightGrey; display: block; }
+		.section::after { content: ""; height: 1px; margin: 8px 14px 0px 14px; background: $colorBorderLight; display: block; }
 		.section:first-child { padding: 0px; }
 		.section:last-child { border: 0px; }
 		.section:last-child::after { display: none; }
@@ -172,7 +172,7 @@
 
 	.menu.horizontal {
 		.content { display: flex; }
-		.section { flex: auto; padding: 12px 18px; height: 44px; border-right: 1px solid $colorLightGrey; white-space: nowrap; position: relative; }
+		.section { flex: auto; padding: 12px 18px; height: 44px; border-right: 1px solid $colorBorderLight; white-space: nowrap; position: relative; }
 		.section:last-child { border: 0px; }
 		
 		.icon { width: 20px; height: 20px; margin-right: 12px; cursor: pointer; }

@@ -21,6 +21,7 @@ import PagePinConfirm from './page/settings/pin/confirm';
 
 import PageImportIndex from './page/settings/import/index';
 import PageImportNotion from './page/settings/import/notion';
+import PageImportMarkdown from './page/settings/import/markdown';
 
 import PageExportMarkdown from './page/settings/export/markdown';
 
@@ -47,6 +48,7 @@ const Components: any = {
 
 	importIndex:		 PageImportIndex,
 	importNotion:		 PageImportNotion,
+	importMarkdown:		 PageImportMarkdown,
 
 	exportMarkdown:		 PageExportMarkdown,
 };
@@ -175,33 +177,11 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 		analytics.event('settings', { params: { id } });
 	};
 
-	onImport (type: I.ImportType) {
-		const platform = Util.getPlatform();
-		const { close } = this.props;
-		const options: any = { 
-			properties: [ 'openFile' ],
-			filters: [
-				{ name: '', extensions: [ 'zip' ] }
-			]
-		};
-
-		if (platform == I.Platform.Mac) {
-			options.properties.push('openDirectory');
-		};
-
-		window.Electron.showOpenDialog(options).then((result: any) => {
-			const files = result.filePaths;
-			if ((files == undefined) || !files.length) {
-				return;
+	onImport (type: I.ImportType, param: any) {
+		C.ObjectImport(param, [], true, type, I.ImportMode.IgnoreErrors, (message: any) => {
+			if (!message.error.code) {
+				analytics.event('Import', { middleTime: message.middleTime, type });
 			};
-
-			close();
-
-			C.ObjectImport({ path: files[0] }, [], true, type, I.ImportMode.IgnoreErrors, (message: any) => {
-				if (!message.error.code) {
-					analytics.event('Import', { middleTime: message.middleTime, type });
-				};
-			});
 		});
 	};
 

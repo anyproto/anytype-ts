@@ -9,7 +9,7 @@
 	#footer.snapLeft { right: 254px; }
 	#footer.snapRight { left: 0px; }
 
-	.list { width: 254px; border-left: 1px solid $colorLightGrey; z-index: 20; position: relative; background: $colorWhite; overflow: overlay; }
+	.list { width: 254px; border-left: 1px solid $colorBorderLight; z-index: 20; position: relative; background: $colorWhite; overflow: overlay; }
 	.list {
 		.section { padding: 11px 16px; }
 		.section {
