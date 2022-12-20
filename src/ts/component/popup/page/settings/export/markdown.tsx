@@ -46,6 +46,7 @@ const PopupSettingsPageExportMarkdown = observer(class PopupSettingsPageExportMa
 								value={this[item.id]}
 								onChange={(e: any, v: boolean) => {
 									this[item.id] = v;
+									this.save();
 								}}
 							/>
 						</div>
@@ -70,6 +71,10 @@ const PopupSettingsPageExportMarkdown = observer(class PopupSettingsPageExportMa
 		this.zip = Boolean(options.zip);
 		this.nested = Boolean(options.nested);
 		this.files = Boolean(options.files);
+	};
+
+	save () {
+		Storage.set('popupExport', { zip: this.zip, nested: this.nested, files: this.files });
 	};
 
 });
