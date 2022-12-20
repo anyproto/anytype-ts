@@ -53,14 +53,14 @@ const PageMainBlock = observer(class PageMainBlock extends React.Component<Props
 				<Header component="mainEdit" ref={(ref: any) => { this.refHeader = ref; }} {...this.props} rootId={rootId} />
 
 				<div className="blocks wrapper">
-					<Block 
+					{block ? <Block 
 						{...this.props} 
 						key={block.id} 
 						rootId={rootId} 
 						iconSize={20} 
 						block={block} 
 						className="noPlus" 
-					/>
+					/> : 'Block not found'}
 				</div>
 			</div>
 		);

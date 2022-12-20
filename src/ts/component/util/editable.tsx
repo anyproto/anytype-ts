@@ -126,7 +126,6 @@ class Editable extends React.Component<Props, {}> {
 
 	setValue (html: string) {
 		this.editable.get(0).innerHTML = html;
-		this.placeholderCheck();
 	};
 
 	getTextValue (): string {

@@ -197,8 +197,8 @@ const Head = observer(class Head extends React.Component<Props, State> {
 
 		if (this.ref) {
 			this.ref.setValue(object.name);
+			this.ref.this.placeholderCheck();
 		};
-
 	};
 
 	getValue () {
