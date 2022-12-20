@@ -1,6 +1,6 @@
 import { action, computed, makeObservable, observable, set } from 'mobx';
 import $ from 'jquery';
-import { analytics, I, Storage, Util } from 'Lib';
+import { analytics, I, Storage, Util, DataUtil } from 'Lib';
 import { blockStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -209,8 +209,31 @@ class CommonStore {
 	};
 
 	toastSet (toast: I.Toast) {
-		this.toastObj = toast;
-	}
+		const { objectId, targetId, originId } = toast;
+		const ids = [ objectId, targetId, originId ].filter(it => it);
+
+		if (ids.length) {
+			DataUtil.getObjectsByIds(ids, (objects: any[]) => {
+				const map = Util.mapToObject(objects, 'id');
+
+				if (targetId && map[targetId]) {
+					toast.target = map[targetId];
+				};
+
+				if (objectId && map[objectId]) {
+					toast.object = map[objectId];
+				};
+
+				if (originId && map[originId]) {
+					toast.origin = map[originId];
+				};
+
+				this.toastObj = toast;
+			});
+		} else {
+			this.toastObj = toast;
+		};
+	};
 
 	workspaceSet (id: string) {
 		this.workspaceId = String(id || '');

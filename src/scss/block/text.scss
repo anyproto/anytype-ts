@@ -84,16 +84,13 @@
 	}
 
 	.block.blockText > .wrapContent > .selectable.isSelectionSelected::after { z-index: 0; }
-
 	.block.blockText > .wrapContent > .selectable > .dropTarget > .flex > .wrap { flex: auto; position: relative; padding: 0px; width: 100%; }	
-
-	.block.blockText > .wrapContent > .selectable > .dropTarget > .flex > #value.isFocused { background: none; }
+	.block.blockText > .wrapContent > .selectable > .dropTarget #value.isFocused { background: none; }
 
 	.block.blockText.isReadonly > .wrapContent > .selectable > .dropTarget .marker.check { cursor: default; }
-	.block.blockText.isReadonly > .wrapContent > .selectable > .dropTarget > .flex > #value { min-height: 24px; cursor: text !important; user-select: text !important; }
+	.block.blockText.isReadonly > .wrapContent > .selectable > .dropTarget #value { min-height: 24px; cursor: text !important; user-select: text !important; }
 	.block.blockText.isReadonly > .wrapContent > .selectable > .dropTarget > .flex > .placeholder { display: none; }
-
-	.block.blockText.isReadonly.textCode > .wrapContent > .selectable > .dropTarget { padding: 15px; }
+	.block.blockText.isReadonly.textCode > .wrapContent > .selectable > .dropTarget #value { padding: 16px; }
 	.block.blockText.isReadonly.textTitle > .wrapContent > .selectable > .dropTarget > .flex > #value { min-height: 1em; }
 
 	.block.blockText.isChecked > .wrapContent > .selectable > .dropTarget * { color: $colorMediumGrey !important; }
@@ -153,7 +150,8 @@
 	.block.blockText.textCallout.last > .wrapContent { margin-bottom: 0px; }
 
 	.block.blockText.textCode { padding: 6px 0px; }
-	.block.blockText.textCode > .wrapContent > .selectable > .dropTarget { padding: 40px 16px 15px 16px; background: rgba(247,245,240,0.5); }
+	.block.blockText.textCode > .wrapContent > .selectable > .dropTarget { padding: 24px 0px 0px 0px; background: rgba(247,245,240,0.5); }
+	.block.blockText.textCode > .wrapContent > .selectable > .dropTarget #value { padding: 16px; }
 	.block.blockText.textCode > .wrapContent > .selectable > .dropTarget > .flex { position: static; } 
 	.block.blockText.textCode > .wrapContent > .selectable > .dropTarget > .flex {
 		#value { font-family: 'Plex'; @include text-common; tab-size: 4; }
@@ -189,12 +187,10 @@
 	.block.blockText.textCode:hover > .wrapContent > .selectable > .dropTarget > .flex {
 		.additional .buttons { opacity: 1; }
 	}
-
 	.block.blockText.textCode.isReadonly > .wrapContent > .selectable > .dropTarget > .flex {
 		#value { white-space: pre !important; }
 		.additional { display: none; }
 	}
-
 	.block.blockText.textCode.isUnwrapped > .wrapContent > .selectable > .dropTarget #value { white-space: nowrap; overflow-x: auto; }
 
 	.block.blockText.textParagraph > .wrapContent > .dropTarget.targetBot.isOver.bottom,

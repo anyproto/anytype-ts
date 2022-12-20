@@ -208,7 +208,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		if (!allowedBlock)		 undo = redo = null;
 		if (!allowedTemplate)	 template = null;
 		if (!allowedFav)		 fav = null;
-		if (!allowedInstall)	 pageInstall = null;
+		if (!allowedInstall && !allowedUninstall)	 pageInstall = null;
 		if (allowedUninstall)	 archive = null;
 
 		let sections = [];
@@ -297,8 +297,8 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			classNameWrap: param.classNameWrap,
 			data: {
 				rebind: this.rebind,
-				rootId: rootId,
-				blockId: blockId,
+				rootId,
+				blockId,
 				blockIds: [ blockId ],
 			},
 		};

@@ -46,6 +46,9 @@ export interface Toast {
 	objectId?: string;
 	targetId?: string;
 	originId?: string;
+	object?: any;
+	target?: any;
+	origin?: any;
 	count?: number;
 	value?: boolean;
 };
