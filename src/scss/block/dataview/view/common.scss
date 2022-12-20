@@ -74,4 +74,13 @@
 			}
 		}
 	}
+
+	.block.blockDataview.isInline {
+		.viewItem.viewGallery, 
+		.viewItem.viewBoard {
+			.cellContent.isName {
+				.name { @include clamp2; }
+			}
+		}
+	}
 }

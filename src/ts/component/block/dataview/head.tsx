@@ -158,6 +158,7 @@ const Head = observer(class Head extends React.Component<Props, State> {
 					keys: Constant.defaultRelationKeys.concat([ 'setOf' ]),
 					onSelect: (item: any) => {
 						C.BlockDataviewCreateFromExistingObject(rootId, block.id, item.id);
+
 						this.menuContext.close();
 					}
 				});
