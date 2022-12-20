@@ -33,10 +33,11 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	state = {
 		loading: false,
 	};
-	viewRef: any = null;
-	controlRef: any = null;
-	headRef: any = null;
-	cellRefs: Map<string, any> = new Map();
+	refView: any = null;
+	refHead: any = null;
+	refControls: any = null;
+	refCells: Map<string, any> = new Map();
+	menuContext: any = null;
 	viewId: string = '';
 	creating: boolean = false;
 	frame: number = 0;
@@ -54,6 +55,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		this.onCellClick = this.onCellClick.bind(this);
 		this.onCellChange = this.onCellChange.bind(this);
 		this.onContext = this.onContext.bind(this);
+		this.onSourceSelect = this.onSourceSelect.bind(this);
+		this.onSourceOver = this.onSourceOver.bind(this);
 	};
 
 	render () {
@@ -100,7 +103,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		if (isInline) {
 			head = (
 				<Head 
-					ref={(ref: any) => { this.headRef = ref; }} 
+					ref={(ref: any) => { this.refHead = ref; }} 
 					{...this.props} 
 					readonly={false} 
 					getData={this.getData} 
@@ -108,6 +111,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					getSources={this.getSources}
 					getRecord={this.getRecord}
 					onRecordAdd={this.onRecordAdd}
+					onSourceSelect={this.onSourceSelect}
 					className={className}
 					isInline={isInline}
 				/>
@@ -117,7 +121,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		if (!isDragging) {
 			controls = (
 				<Controls 
-					ref={(ref: any) => { this.controlRef = ref; }} 
+					ref={(ref: any) => { this.refControls = ref; }} 
 					{...this.props} 
 					className={className}
 					readonly={false} 
@@ -137,8 +141,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					<div className="content">
 						<ViewComponent 
 							key={'view' + view.id}
-							ref={(ref: any) => { this.viewRef = ref; }} 
-							onRef={(ref: any, id: string) => { this.cellRefs.set(id, ref); }} 
+							ref={(ref: any) => { this.refView = ref; }} 
+							onRef={(ref: any, id: string) => { this.refCells.set(id, ref); }} 
 							{...this.props} 
 							bodyContainer={Util.getBodyContainer(isPopup ? 'popup' : 'page')}
 							pageContainer={Util.getCellContainer(isPopup ? 'popup' : 'page')}
@@ -169,7 +173,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					description="Select object source or connect existing set"
 					button="Select source"
 					withButton={true}
-					onClick={(e: any) => this.onEmptyClick(e)}
+					onClick={this.onSourceSelect}
 				/>
 			);
 		};
@@ -311,8 +315,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		dbStore.metaSet(subId, '', { offset, viewId });
 
 		if ([ I.ViewType.Board ].includes(view.type)) {
-			if (this.viewRef && this.viewRef.loadGroupList) {
-				this.viewRef.loadGroupList();
+			if (this.refView && this.refView.loadGroupList) {
+				this.refView.loadGroupList();
 			} else {
 				this.viewId = '';
 				//this.forceUpdate();
@@ -486,7 +490,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				};
 
 				const id = Relation.cellId(this.getIdPrefix(), 'name', newIndex);
-				const ref = this.cellRefs.get(id);
+				const ref = this.refCells.get(id);
 
 				if (ref && (view.type == I.ViewType.Grid)) {
 					window.setTimeout(() => { ref.onClick(e); }, 15);
@@ -569,7 +573,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const { selection } = dataset || {};
 		const relation = dbStore.getRelationByKey(relationKey);
 		const id = Relation.cellId(this.getIdPrefix(), relationKey, index);
-		const ref = this.cellRefs.get(id);
+		const ref = this.refCells.get(id);
 		const record = this.getRecord(index);
 		const view = this.getView();
 
@@ -645,42 +649,78 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		});
 	};
 
-	onEmptyClick (e) {
-		const element = $(e.currentTarget);
-		this.onSelectSource(element);
+	onSourceSelect (e: any) {
+		const options: any[] = [
+			{ id: 'new', name: 'Create new source', arrow: true },
+			{ id: 'existing', name: 'Link to source of another set', arrow: true }
+		];
+		
+		menuStore.open('select', { 
+			element: $(e.currentTarget),
+			width: 256,
+			horizontal: I.MenuDirection.Center,
+			subIds: Constant.menuIds.dataviewHead,
+			onOpen: (context: any) => {
+				this.menuContext = context;
+			},
+			data: {
+				options: options,
+				onOver: this.onSourceOver,
+			},
+		});
 	};
 
-	onSelectSource (element) {
+	onSourceOver (e: any, item: any) {
 		const { rootId, block } = this.props;
+		const { targetObjectId } = block.content;
 
-		const menuParam = {
-			menuKey: block.id,
-			element: element,
-			className: 'small single',
-			horizontal: I.MenuDirection.Center,
-			offsetY: 10,
-			noFlipY: true,
+		let menuId = '';
+		let menuParam = {
+			menuKey: item.id,
+			element: `#${this.menuContext.getId()} #item-${item.id}`,
+			offsetX: this.menuContext.getSize().width,
+			className: 'big single',
+			vertical: I.MenuDirection.Center,
+			isSub: true,
 			data: {
-				isBig: false,
+				isBig: true,
 				rootId,
 				blockId: 'dataview',
-				canAdd: true,
 				blockIds: [ block.id ],
-				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.set },
-					{ operator: I.FilterOperator.And, relationKey: 'setOf', condition: I.FilterCondition.NotEmpty, value: null },
-				],
-				keys: Constant.defaultRelationKeys.concat([ 'setOf' ]),
-				onSelect: (item: any) => {
-					C.BlockDataviewCreateFromExistingObject(rootId, block.id, item.id, (message) => {
-					});
-				}
+				rebind: this.menuContext.ref.rebind,
 			}
 		};
 
-		menuStore.closeAll(Constant.menuIds.dataviewHead, () => {
-			menuStore.open('searchObject', menuParam);
-		});
+		switch (item.id) {
+			case 'new':
+				menuId = 'dataviewSource';
+				menuParam.data = Object.assign(menuParam.data, {
+					objectId: targetObjectId,
+				});
+				break;
+
+			case 'existing':
+				menuId = 'searchObject';
+				menuParam.data = Object.assign(menuParam.data, {
+					filters: [
+						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.set },
+						{ operator: I.FilterOperator.And, relationKey: 'setOf', condition: I.FilterCondition.NotEmpty, value: null },
+					],
+					keys: Constant.defaultRelationKeys.concat([ 'setOf' ]),
+					onSelect: (item: any) => {
+						C.BlockDataviewCreateFromExistingObject(rootId, block.id, item.id);
+
+						this.menuContext.close();
+					}
+				});
+				break;
+		};
+
+		if (menuId && !menuStore.isOpen(menuId, item.id)) {
+			menuStore.closeAll(Constant.menuIds.dataviewHead, () => {
+				menuStore.open(menuId, menuParam);
+			});
+		};
 	};
 
 	getIdPrefix () {
@@ -693,12 +733,12 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		this.frame = raf(() => {
-			if (this.controlRef && this.controlRef.resize) {
-				this.controlRef.resize();
+			if (this.refControls && this.refControls.resize) {
+				this.refControls.resize();
 			};
 
-			if (this.viewRef && this.viewRef.resize) {
-				this.viewRef.resize();
+			if (this.refView && this.refView.resize) {
+				this.refView.resize();
 			};
 		});
 	};

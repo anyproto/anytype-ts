@@ -6,7 +6,9 @@ import { I, C, keyboard, DataUtil, ObjectUtil } from 'Lib';
 import { menuStore, detailStore } from 'Store';
 import Constant from 'json/constant.json';
 
-interface Props extends I.ViewComponent {};
+interface Props extends I.ViewComponent {
+	onSourceSelect?(e: any): void;
+};
 
 interface State {
 	isEditing: boolean;
@@ -27,8 +29,6 @@ const Head = observer(class Head extends React.Component<Props, State> {
 		super(props);
 
 		this.onSelect = this.onSelect.bind(this);
-		this.onSourceSelect = this.onSourceSelect.bind(this);
-		this.onOver = this.onOver.bind(this);
 		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onFocus = this.onFocus.bind(this);
 		this.onBlur = this.onBlur.bind(this);
@@ -41,7 +41,7 @@ const Head = observer(class Head extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { rootId, block, readonly, getSources, className } = this.props;
+		const { rootId, block, readonly, getSources, className, onSourceSelect } = this.props;
 		const { isEditing } = this.state;
 		const { targetObjectId } = block.content;
 		const object = detailStore.get(rootId, targetObjectId);
@@ -70,7 +70,7 @@ const Head = observer(class Head extends React.Component<Props, State> {
 						onCompositionStart={this.onCompositionStart}
 					/>
 
-					<div id="head-source-select" className="iconWrap" onClick={this.onSourceSelect}>
+					<div id="head-source-select" className="iconWrap" onClick={onSourceSelect}>
 						<Icon className="set" />
 						{sources.length}
 					</div>
@@ -100,81 +100,6 @@ const Head = observer(class Head extends React.Component<Props, State> {
 	componentWillUnmount () {
 		this._isMounted = false;
 		window.clearTimeout(this.timeout);
-	};
-
-	onSourceSelect () {
-		const { block } = this.props;
-		const options: any[] = [
-			{ id: 'new', name: 'Create new source', arrow: true },
-			{ id: 'existing', name: 'Link to source of another set', arrow: true }
-		];
-		
-		menuStore.open('select', { 
-			element: `#block-${block.id} #head-source-select`,
-			width: 256,
-			horizontal: I.MenuDirection.Center,
-			subIds: Constant.menuIds.dataviewHead,
-			onOpen: (context: any) => {
-				this.menuContext = context;
-			},
-			data: {
-				options: options,
-				onOver: this.onOver,
-			},
-		});
-	};
-
-	onOver (e: any, item: any) {
-		const { rootId, block } = this.props;
-		const { targetObjectId } = block.content;
-
-		let menuId = '';
-		let menuParam = {
-			menuKey: item.id,
-			element: `#${this.menuContext.getId()} #item-${item.id}`,
-			offsetX: this.menuContext.getSize().width,
-			className: 'big single',
-			vertical: I.MenuDirection.Center,
-			isSub: true,
-			data: {
-				isBig: true,
-				rootId,
-				blockId: 'dataview',
-				blockIds: [ block.id ],
-				rebind: this.menuContext.ref.rebind,
-			}
-		};
-
-		switch (item.id) {
-			case 'new':
-				menuId = 'dataviewSource';
-				menuParam.data = Object.assign(menuParam.data, {
-					objectId: targetObjectId,
-				});
-				break;
-
-			case 'existing':
-				menuId = 'searchObject';
-				menuParam.data = Object.assign(menuParam.data, {
-					filters: [
-						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.set },
-						{ operator: I.FilterOperator.And, relationKey: 'setOf', condition: I.FilterCondition.NotEmpty, value: null },
-					],
-					keys: Constant.defaultRelationKeys.concat([ 'setOf' ]),
-					onSelect: (item: any) => {
-						C.BlockDataviewCreateFromExistingObject(rootId, block.id, item.id);
-
-						this.menuContext.close();
-					}
-				});
-				break;
-		};
-
-		if (menuId && !menuStore.isOpen(menuId, item.id)) {
-			menuStore.closeAll(Constant.menuIds.dataviewHead, () => {
-				menuStore.open(menuId, menuParam);
-			});
-		};
 	};
 
 	onTitle (e: any) {
