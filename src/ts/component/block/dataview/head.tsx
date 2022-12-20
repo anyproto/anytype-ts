@@ -37,7 +37,7 @@ const Head = observer(class Head extends React.Component<Props, State> {
 		this.onIconUpload = this.onIconUpload.bind(this);
 		this.onFullscreen = this.onFullscreen.bind(this);
 		this.onTitle = this.onTitle.bind(this);
-		this.onTitleOptionClick = this.onTitleOptionClick.bind(this);
+		this.onTitleOption = this.onTitleOption.bind(this);
 	};
 
 	render () {
@@ -122,18 +122,17 @@ const Head = observer(class Head extends React.Component<Props, State> {
 		menuStore.open('select', {
 			element: `#block-${block.id} #head-title-wrapper`,
 			horizontal: I.MenuDirection.Left,
-			subIds: Constant.menuIds.dataviewHead,
 			onOpen: (context: any) => {
 				this.menuContext = context;
 			},
 			data: {
 				options: options,
-				onSelect: this.onTitleOptionClick,
+				onSelect: this.onTitleOption,
 			},
 		});
 	};
 
-	onTitleOptionClick (e: any, item: any) {
+	onTitleOption (e: any, item: any) {
 		const { rootId, block } = this.props;
 		const { targetObjectId } = block.content;
 		const object = detailStore.get(rootId, targetObjectId);
