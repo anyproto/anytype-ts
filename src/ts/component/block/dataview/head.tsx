@@ -21,11 +21,13 @@ const Head = observer(class Head extends React.Component<Props, State> {
 	menuContext: any = null;
 	timeout: number = 0;
 	ref: any = null;
+	range: I.TextRange = null;
 
 	constructor (props: any) {
 		super(props);
 
 		this.onSelect = this.onSelect.bind(this);
+		this.onSourceSelect = this.onSourceSelect.bind(this);
 		this.onOver = this.onOver.bind(this);
 		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onFocus = this.onFocus.bind(this);
@@ -35,7 +37,7 @@ const Head = observer(class Head extends React.Component<Props, State> {
 		this.onIconUpload = this.onIconUpload.bind(this);
 		this.onFullscreen = this.onFullscreen.bind(this);
 		this.onTitle = this.onTitle.bind(this);
-		this.titleOptionClick = this.titleOptionClick.bind(this);
+		this.onTitleOptionClick = this.onTitleOptionClick.bind(this);
 	};
 
 	render () {
@@ -50,8 +52,6 @@ const Head = observer(class Head extends React.Component<Props, State> {
 			cn.push(className);
 		};
 
-		console.log(targetObjectId, object);
-
 		return (
 			<div className={cn.join(' ')}>
 				<div id="head-title-wrapper" className="side left">
@@ -60,16 +60,17 @@ const Head = observer(class Head extends React.Component<Props, State> {
 					<Editable 
 						ref={(ref: any) => { this.ref = ref; }}
 						id="value"
-						readonly={readonly && !isEditing}
+						readonly={readonly || !isEditing}
 						placeholder={DataUtil.defaultName('set')}
 						onFocus={this.onFocus}
 						onMouseDown={this.onTitle}
 						onBlur={this.onBlur}
 						onKeyUp={this.onKeyUp}
+						onSelect={this.onSelect}
 						onCompositionStart={this.onCompositionStart}
 					/>
 
-					<div id="head-source-select" className="iconWrap" onClick={this.onSelect}>
+					<div id="head-source-select" className="iconWrap" onClick={this.onSourceSelect}>
 						<Icon className="set" />
 						{sources.length}
 					</div>
@@ -90,6 +91,10 @@ const Head = observer(class Head extends React.Component<Props, State> {
 
 	componentDidUpdate () {
 		this.setValue();
+
+		if (this.ref && this.range) {
+			this.ref.setRange(this.range);
+		};
 	};
 
 	componentWillUnmount () {
@@ -97,7 +102,7 @@ const Head = observer(class Head extends React.Component<Props, State> {
 		window.clearTimeout(this.timeout);
 	};
 
-	onSelect () {
+	onSourceSelect () {
 		const { block } = this.props;
 		const options: any[] = [
 			{ id: 'new', name: 'Create new source', arrow: true },
@@ -198,12 +203,12 @@ const Head = observer(class Head extends React.Component<Props, State> {
 			},
 			data: {
 				options: options,
-				onSelect: this.titleOptionClick,
+				onSelect: this.onTitleOptionClick,
 			},
 		});
 	};
 
-	titleOptionClick (e: any, item: any) {
+	onTitleOptionClick (e: any, item: any) {
 		const { rootId, block } = this.props;
 		const { targetObjectId } = block.content;
 		const object = detailStore.get(rootId, targetObjectId);
@@ -239,6 +244,12 @@ const Head = observer(class Head extends React.Component<Props, State> {
 	onKeyUp (e: any) {
 		window.clearTimeout(this.timeout);
 		this.timeout = window.setTimeout(() => { this.save(); }, 500);
+	};
+
+	onSelect (e: any) {
+		if (this.ref) {
+			this.range = this.ref.getRange();
+		};
 	};
 
 	setValue () {
@@ -292,10 +303,6 @@ const Head = observer(class Head extends React.Component<Props, State> {
 		const { block } = this.props;
 		const { targetObjectId } = block.content;
 
-		if (!targetObjectId) {
-			return;
-		};
-
 		if (targetObjectId) {
 			ObjectUtil.setIcon(targetObjectId, '', hash);
 		};
@@ -303,7 +310,6 @@ const Head = observer(class Head extends React.Component<Props, State> {
 
 	onFullscreen () {
 		const { rootId, block } = this.props;
-
 		ObjectUtil.openPopup({ layout: I.ObjectLayout.Block, id: rootId, _routeParam_: { blockId: block.id } });
 	};
 
