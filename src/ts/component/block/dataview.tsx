@@ -78,6 +78,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		let className = Util.toCamelCase('view-' + I.ViewType[view.type]);
 		let head = null;
 		let controls = null;
+		let body = null;
 		let content = null;
 
 		switch (view.type) {
@@ -134,9 +135,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			);
 
 			if (loading) {
-				content = <Loader id="set-loader" />
+				body = <Loader id="set-loader" />
 			} else {
-				content = (
+				body = (
 					<div className="content">
 						<ViewComponent 
 							key={'view' + view.id}
@@ -175,12 +176,18 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					onClick={this.onSourceSelect}
 				/>
 			);
+		} else {
+			content = (
+				<React.Fragment>
+					{head}
+					{controls}
+					{body}
+				</React.Fragment>
+			);
 		};
 
 		return (
 			<div>
-				{head}
-				{controls}
 				{content}
 			</div>
 		);
@@ -214,7 +221,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const { viewId } = dbStore.getMeta(dbStore.getSubId(rootId, block.id), '');
 
 		if (viewId != this.viewId) {
-			this.getData(viewId, 0, false);
+			this.getData(viewId, 0, true);
 		};
 
 		this.resize();
@@ -237,8 +244,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const win = $(window);
 
 		this.unbind();
-		win.on(`resize.${block.id}`, throttle((e: any) => { this.resize(); }, 20));
+		win.on(`resize.${block.id}`, throttle(() => { this.resize(); }, 20));
 		win.on(`keydown.${block.id}`, throttle((e: any) => { this.onKeyDown(e); }, 100));
+		win.on(`updateDataviewData.${block.id}`, () => { this.getData(this.getView().id, 0, true); });
 	};
 
 	onKeyDown (e: any) {
@@ -663,7 +671,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			horizontal: I.MenuDirection.Center,
 			data: {
 				rootId,
-				blockId: 'dataview',
+				blockId: block.id,
 				blockIds: [ block.id ],
 				filters: [
 					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.set },

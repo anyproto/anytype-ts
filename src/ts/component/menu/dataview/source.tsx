@@ -1,20 +1,17 @@
 import * as React from 'react';
-import { observer } from 'mobx-react';
 import $ from 'jquery';
+import { observer } from 'mobx-react';
 import { Icon, IconObject } from 'Component';
 import { I, C, Relation } from 'Lib';
-import { Util, keyboard } from 'Lib';
+import { keyboard } from 'Lib';
 import { detailStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
-interface Props extends I.Menu {};
-
-
-const MenuSource = observer(class MenuSource extends React.Component<Props, object> {
+const MenuSource = observer(class MenuSource extends React.Component<I.Menu, object> {
 	
 	n: number = 0;
 
-	constructor (props: any) {
+	constructor (props: I.Menu) {
 		super(props);
 		
 		this.save = this.save.bind(this);
@@ -23,8 +20,11 @@ const MenuSource = observer(class MenuSource extends React.Component<Props, obje
 	};
 	
 	render () {
+		const { param } = this.props;
+		const { data } = param;
+		const { rootId, objectId } = data;
 		const items = this.getItems();
-		const types = this.getValue().filter(it => it.type == Constant.typeId.type);
+		const types = Relation.getSetOfObjects(rootId, objectId, Constant.typeId.type);
 		
 		const Item = (item: any) => {
 			const canDelete = item.id != 'type';
@@ -115,18 +115,14 @@ const MenuSource = observer(class MenuSource extends React.Component<Props, obje
 					{ relationKey: 'name', type: I.SortType.Asc }
 				],
 				onSelect: (item: any) => {
-					const value = this.getValue().filter(it => it.type == Constant.typeId.relation).map(it => it.id);
-					
-					value.push(item.id);
-					this.save(value);
+					this.save([ item.id ]);
 				}
 			}
 		});
 	};
 
 	onRemove (e: any, item: any) {
-		const value = this.getValue().filter((it: string) => { return it != item.id; });
-		this.save(value);
+		this.save(this.getValue().filter(it => it != item.id));
 	};
 
 	onOver (e: any, item: any) {
@@ -161,9 +157,13 @@ const MenuSource = observer(class MenuSource extends React.Component<Props, obje
 	save (value: string[]) {
 		const { param } = this.props;
 		const { data } = param;
-		const { objectId } = data;
+		const { objectId, blockId } = data;
 
-		C.ObjectSetSource(objectId, value);
+		C.ObjectSetSource(objectId, value, () => {
+			$(window).trigger(`updateDataviewData.${blockId}`);
+		});
+
+		this.forceUpdate();
 	};
 
 	getValue () {

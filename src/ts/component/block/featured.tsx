@@ -454,7 +454,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				data: {
 					rootId,
 					objectId: rootId,
-					blockId: 'dataview',
+					blockId: Constant.blockId.dataview,
 				}
 			}); 
 		});

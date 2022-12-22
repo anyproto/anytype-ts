@@ -1567,7 +1567,6 @@ export {
 
 	BlockDataviewRelationAdd,
 	BlockDataviewRelationDelete,
-	BlockDataviewSetSource,
 
 	HistoryGetVersions,	
 	HistoryShowVersion,
