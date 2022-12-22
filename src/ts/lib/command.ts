@@ -862,16 +862,6 @@ const BlockDataviewRelationDelete = (contextId: string, blockId: string, relatio
 	dispatcher.request(BlockDataviewRelationDelete.name, request, callBack);
 };
 
-const BlockDataviewSetSource = (contextId: string, blockId: string, sources: string[], callBack?: (message: any) => void) => {
-	const request = new Rpc.BlockDataview.SetSource.Request();
-	
-	request.setContextid(contextId);
-	request.setBlockid(blockId);
-	request.setSourceList(sources);
-
-	dispatcher.request(BlockDataviewSetSource.name, request, callBack);
-};
-
 // ---------------------- HISTORY ---------------------- //
 
 const HistoryShowVersion = (objectId: string, versionId: string, callBack?: (message: any) => void) => {
@@ -1084,15 +1074,6 @@ const ObjectRedo = (contextId: string, callBack?: (message: any) => void) => {
 	dispatcher.request(ObjectRedo.name, request, callBack);
 };
 
-const ObjectSetObjectType = (contextId: string, url: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Object.SetObjectType.Request();
-	
-	request.setContextid(contextId);
-	request.setObjecttypeurl(url);
-
-	dispatcher.request(ObjectSetObjectType.name, request, callBack);
-};
-
 const ObjectImportList = (callBack?: (message: any) => void) => {
 	const request = new Commands.Empty();
 	
@@ -1127,6 +1108,24 @@ const ObjectImport = (options: any, snapshots: any[], existing: boolean, type: I
 	request.setMode(mode);
 	
 	dispatcher.request(ObjectImport.name, request, callBack);
+};
+
+const ObjectSetObjectType = (contextId: string, url: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.SetObjectType.Request();
+	
+	request.setContextid(contextId);
+	request.setObjecttypeurl(url);
+
+	dispatcher.request(ObjectSetObjectType.name, request, callBack);
+};
+
+const ObjectSetSource = (contextId: string, sources: string[], callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.SetSource.Request();
+	
+	request.setContextid(contextId);
+	request.setSourceList(sources);
+
+	dispatcher.request(ObjectSetSource.name, request, callBack);
 };
 
 const ObjectSetDetails = (contextId: string, details: any[], callBack?: (message: any) => void) => {
@@ -1621,6 +1620,7 @@ export {
 	ObjectSetLayout,
 	ObjectSetIsFavorite,
 	ObjectSetIsArchived,
+	ObjectSetSource,
 
 	ObjectListDuplicate,
 	ObjectListDelete,
