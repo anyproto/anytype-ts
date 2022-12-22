@@ -240,7 +240,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 	unbind () {
 		const { block } = this.props;
-		$(window).off(`resize.${block.id} keydown.${block.id}`);
+		$(window).off(`resize.${block.id} keydown.${block.id} updateDataviewData.${block.id}`);
 	};
 
 	rebind () {
