@@ -89,7 +89,8 @@ export enum ImportMode {
 
 export enum ImportType {
 	Notion	 = 0,
-	External = 1,
+	Markdown = 1,
+	External = 2,
 };
 
 export enum ExportFormat {

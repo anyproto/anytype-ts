@@ -19,7 +19,7 @@
 		@include text-overflow-nw; padding: 0px 6px;
 	}
 
-	.tabs { white-space: nowrap; background: $colorLightGrey; display: inline-block; height: 28px; padding: 2px; border-radius: 6px; }
+	.tabs { white-space: nowrap; background: $colorBorderLight; display: inline-block; height: 28px; padding: 2px; border-radius: 6px; }
 	.tabs {
 		.tab { 
 			display: inline-block; margin-right: 4px; width: 124px; border-radius: 4px; height: 24px; line-height: 24px;
@@ -102,10 +102,10 @@
 		.inner { display: flex; flex-direction: row; justify-content: center; align-items: center; gap: 0px 4px; }
 		.name { @include text-overflow-nw; }
 	}
-	.path:hover { border-color: $colorLightGrey; }
+	.path:hover { border-color: $colorBorderLight; }
 }
 .header.isCommon.active {
-	.path { border-color: $colorLightGrey; }
+	.path { border-color: $colorBorderLight; }
 }
 
 .popup {

@@ -1080,6 +1080,10 @@ const BlockText = observer(class BlockText extends React.Component<Props, object
 
 		this.text = value;
 
+		if (menuStore.isOpen()) {
+			return;
+		};
+
 		DataUtil.blockSetText(rootId, block.id, value, marks, update, (message: any) => {
 			if (callBack) {
 				callBack();

@@ -205,12 +205,6 @@ const BlockPaste = (response: any) => {
 	};
 };
 
-const ObjectImportMarkdown = (response: any) => {
-	return {
-		rootLinkIds: response.getRootlinkidsList(),
-	};
-};
-
 const ObjectImportList = (response: any) => {
 	return {
 		list: (response.getResponseList() || []).map(it => { 
@@ -403,7 +397,6 @@ export {
 	ObjectOpen,
 	ObjectShow,
 	ObjectOpenBreadcrumbs,
-	ObjectImportMarkdown,
 	ObjectImportList,
 	
 	BlockSplit,

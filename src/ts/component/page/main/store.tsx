@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { Title, Label, Button, Icon, IconObject, Cover, Header, Filter } from 'Component';
+import { Title, Label, Icon, IconObject, Cover, Header, Filter } from 'Component';
 import { I, C, DataUtil, ObjectUtil, Util, Storage, Onboarding, analytics, Action } from 'Lib';
 import { dbStore, blockStore, detailStore, commonStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -152,9 +152,10 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 				Item = (item: any) => {
 					const author = detailStore.get(Constant.subId.store, item.creator, []);
 					const allowedDelete = blockStore.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ]);
+					const cn = [ 'item', (item.isHidden ? 'isHidden' : '') ];
 
 					return (
-						<div className="item" onClick={(e: any) => { this.onClick(e, item); }}>
+						<div className={cn.join(' ')} onClick={(e: any) => { this.onClick(e, item); }}>
 							<IconObject size={64} iconSize={40} object={item} />
 							<div className="info">
 								<div className="txt">
@@ -182,9 +183,10 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 				Item = (item: any) => {
 					const { name, description, coverType, coverId, coverX, coverY, coverScale } = item;
 					const author = detailStore.get(Constant.subId.store, item.creator, []);
+					const cn = [ 'item', (item.isHidden ? 'isHidden' : '') ];
 
 					return (
-						<div className="item" onClick={(e: any) => { this.onClick(e, item); }}>
+						<div className={cn.join(' ')} onClick={(e: any) => { this.onClick(e, item); }}>
 							<div className="img">
 								{coverId && coverType ? <Cover type={coverType} id={coverId} image={coverId} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={true} /> : ''}
 							</div>
@@ -202,9 +204,10 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 				Item = (item: any) => {
 					const { name, description } = item;
 					const allowedDelete = blockStore.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ]);
+					const cn = [ 'item', (item.isHidden ? 'isHidden' : '') ];
 					
 					return (
-						<div className="item" onClick={(e: any) => { this.onClick(e, item); }}>
+						<div className={cn.join(' ')} onClick={(e: any) => { this.onClick(e, item); }}>
 							<IconObject size={48} iconSize={28} object={item} />
 							<div className="info">
 								<div className="txt">
@@ -466,7 +469,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: this.getTabType() },
 		];
 		const sorts: I.Sort[] = [
-			{ type: I.SortType.Asc, relationKey: 'name' },
+			{ type: I.SortType.Desc, relationKey: 'createdDate' },
 		];
 
 		let sources: any[] = [];

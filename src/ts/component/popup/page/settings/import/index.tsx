@@ -9,7 +9,7 @@ import Head from '../head';
 interface Props extends I.Popup, RouteComponentProps<any> {
 	prevPage: string;
 	onPage: (id: string) => void;
-	onImport: (type: I.ImportType) => void;
+	onImport: (type: I.ImportType, param: any) => void;
 };
 
 const PopupSettingsPageImportIndex = observer(class PopupSettingsPageImportIndex extends React.Component<Props, object> {
@@ -18,6 +18,7 @@ const PopupSettingsPageImportIndex = observer(class PopupSettingsPageImportIndex
 		const { onPage } = this.props;
 		const items = [
 			{ id: 'notion', name: 'Notion', disabled: false },
+			{ id: 'markdown', name: 'Markdown', disabled: false },
 		];
 
 		const Item = (item: any) => {

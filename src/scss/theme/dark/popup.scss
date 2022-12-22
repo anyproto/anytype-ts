@@ -104,11 +104,11 @@
     .popup.popupHelp {
 		.head { color: $colorSecondary; }
 		.head {
-			.icon.telegram { background-image: url('#{$themePath}/icon/telegram0.svg'); }
-			.icon.telegram:hover { background-image: url('#{$themePath}/icon/telegram1.svg'); }
+			.icon.telegram { background-image: url('#{$themePath}/icon/social/telegram0.svg'); }
+			.icon.telegram:hover { background-image: url('#{$themePath}/icon/social/telegram1.svg'); }
 
-			.icon.twitter { background-image: url('#{$themePath}/icon/twitter0.svg'); }
-			.icon.twitter:hover { background-image: url('#{$themePath}/icon/twitter1.svg'); }
+			.icon.twitter { background-image: url('#{$themePath}/icon/social/twitter0.svg'); }
+			.icon.twitter:hover { background-image: url('#{$themePath}/icon/social/twitter1.svg'); }
 		}
 
         .highlight { color: $colorOrange; background: $colorHover; }

@@ -40,9 +40,9 @@
 		.sectionName.center { text-align: center; }
 
 		.tabIndex { padding: 24px 48px 48px 48px; }
-		.tabIndex, .tabAccount, .tabAppearance, .tabPersonal, .tabPinIndex, .tabDelete {
+		.tabIndex, .tabAccount, .tabAppearance, .tabPersonal, .tabPinIndex, .tabDelete, .tabExportMarkdown {
 			.row { 
-				padding: 18px 0px 17px 0px; border-bottom: 1px solid $colorLightGrey; cursor: pointer; position: relative; 
+				padding: 18px 0px 17px 0px; border-bottom: 1px solid $colorBorderLight; cursor: pointer; position: relative; 
 				@include text-paragraph; line-height: 28px;
 			}
 			.row.flex { display: flex; }
@@ -138,14 +138,14 @@
 				position: relative; border: 1px solid rgba(0,0,0,0); border-radius: 4px;
 			}
 			.item:hover, .item.active:hover { border: 2px solid $colorOrange; }
-			.item.active { border: 1px solid $colorLightGrey; }
+			.item.active { border: 1px solid $colorBorderLight; }
 			
 			.item.fileWrap { margin: 0px 0px 0px -2px; }
 			
 			.item {
 				.cover.upload { 
 					background-image: url('~img/icon/popup/settings/upload.svg'); background-size: 24px 24px;
-					border: 1px solid $colorLightGrey; background-position: center center;
+					border: 1px solid $colorBorderLight; background-position: center;
 				}
 			}
 			
@@ -197,7 +197,7 @@
 			
 			.button.blank { 
 				padding: 20px 0px; width: 100%; display: block; height: auto; line-height: 24px; background: none; color: #e89d00;
-				border: 0px; border-radius: 0px; border-bottom: 1px solid $colorLightGrey; @include text-paragraph; font-weight: 400;
+				border: 0px; border-radius: 0px; border-bottom: 1px solid $colorBorderLight; @include text-paragraph; font-weight: 400;
 			}
 			.button.blank:hover { color: $colorBlack; }
 
@@ -213,7 +213,7 @@
 				display: grid; grid-template-columns: repeat(4, 132px); grid-column-gap: 16px; grid-row-gap: 16px;
 			}
 			.item { 
-				width: 132px; height: 84px; border: 1px solid $colorLightGrey; border-radius: 8px; 
+				width: 132px; height: 84px; border: 1px solid $colorBorderLight; border-radius: 8px; 
 				text-align: center; transition: $transitionFast; line-height: 82px;	display: inline-block; cursor: pointer;
 				vertical-align: top; position: relative;
 			}
@@ -221,7 +221,7 @@
 			.item:hover { border-color: $colorBlack; }
 
 			.item.disabled { cursor: no-drop;  }
-			.item.disabled:hover { border-color: $colorLightGrey;  }
+			.item.disabled:hover { border-color: $colorBorderLight;  }
 
 			.item {
 				.icon { 
@@ -244,10 +244,14 @@
 			.item.csv .icon { background-image: url('~img/icon/popup/settings/import/csv.svg'); }
 		}
 
-		.tabImportNotion {
+		.tabImportNotion, .tabImportMarkdown {
 			.label, .path { margin-bottom: 10px; }
 			.label.last { margin: 0px; }
 			.button { margin: 25px 0px; }
+		}
+
+		.tabImportNotion {
+			.input { border: 1px solid $colorBorderLight; border-radius: 6px; }
 		}
 
 		.tabExportMarkdown {

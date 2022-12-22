@@ -25,7 +25,7 @@
 		.item.empty { padding: 14px; }
 
 		.sectionName { padding: 0px 14px 4px 14px; }
-		.sectionName::before { content: ""; display: block; width: 100%; height: 1px; margin: 8px 0px 11px 0px; background: $colorLightGrey; }
+		.sectionName::before { content: ""; display: block; width: 100%; height: 1px; margin: 8px 0px 11px 0px; background: $colorBorderLight; }
 		.sectionName.first { padding-top: 4px; }
 		.sectionName.first::before { display: none; }
 
