@@ -167,14 +167,18 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		if (!sources.length) {
 			content = (
-				<Empty
-					{...this.props}
-					title="No data source"
-					description="Select object source or connect existing set"
-					button="Select source"
-					withButton={true}
-					onClick={this.onSourceSelect}
-				/>
+				<React.Fragment>
+					{head}
+
+					<Empty
+						{...this.props}
+						title="No data source"
+						description="Select object source or connect existing set"
+						button="Select source"
+						withButton={true}
+						onClick={this.onSourceSelect}
+					/>
+				</React.Fragment>
 			);
 		} else {
 			content = (
