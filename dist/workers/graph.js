@@ -502,7 +502,7 @@ onZoom = (data) => {
 
 onDragStart = ({ active }) => {
 	if (!active) {
-		simulation.alphaTarget(0.3).restart();
+		restart(0.3);
 	};
 };
 
