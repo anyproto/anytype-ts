@@ -6,7 +6,7 @@ import { observer } from 'mobx-react';
 
 interface Props extends I.BlockComponent {};
 
-const BlockIconPage = observer(class BlockIconPage extends React.Component<Props, {}> {
+const BlockIconPage = observer(class BlockIconPage extends React.Component<Props, object> {
 
 	constructor (props: any) {
 		super(props);

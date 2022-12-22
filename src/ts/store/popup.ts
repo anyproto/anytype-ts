@@ -132,4 +132,4 @@ class PopupStore {
 
 };
 
-export let popupStore: PopupStore = new PopupStore();
+ export const popupStore: PopupStore = new PopupStore();

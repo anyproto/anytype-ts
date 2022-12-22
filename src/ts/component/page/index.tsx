@@ -68,7 +68,7 @@ const Components: any = {
 
 interface Props extends I.PageComponent {};
 
-const Page = observer(class Page extends React.Component<Props, {}> {
+const Page = observer(class Page extends React.Component<Props, object> {
 
 	_isMounted: boolean = false;
 	refChild: any = null;
@@ -81,8 +81,8 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 		const match = this.getMatch();
 		const { page, action } = match.params || {};
 		const path = [ page, action ].join('/');
-		const showNotice = !Boolean(Storage.get('firstRun'));
-		const showSidebar = (page == 'main');
+		const showNotice = !Storage.get('firstRun');
+		const showSidebar = page == 'main';
 
 		if (account) {
 			const { status } = account || {};
@@ -95,7 +95,7 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 
 		const Component = Components[path];
 		if (!Component) {
-			return <div>Page component "{path}" not found</div>;
+			return <div>Page component &quot;{path}&quot; not found</div>;
 		};
 
 		let sb = (
@@ -281,7 +281,7 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 		let page = String(match.params.page || 'index');
 		let action = String(match.params.action || 'index');
 		let id = String(match.params.id || '');
-		let showNotice = !Boolean(Storage.get('firstRun'));
+		let showNotice = !Storage.get('firstRun');
 		let params: any = { page, action };
 		let isMain = page == 'main';
 		let isMainType = isMain && (action == 'type');

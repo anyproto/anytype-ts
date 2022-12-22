@@ -12,17 +12,15 @@ class BlockContentFile implements I.ContentFile {
 	state: I.FileState = I.FileState.Empty;
 	
 	constructor (props: I.ContentFile) {
-		let self = this;
-
-		self.hash = String(props.hash || '');
-		self.name = String(props.name || '');
-		self.mime = String(props.mime || '');
-		self.size = Number(props.size) || 0;
-		self.type = Number(props.type) || I.FileType.None;
-		self.style = Number(props.style) || I.FileStyle.Auto;
-		self.state = Number(props.state) || I.FileState.Empty;
+		this.hash = String(props.hash || '');
+		this.name = String(props.name || '');
+		this.mime = String(props.mime || '');
+		this.size = Number(props.size) || 0;
+		this.type = Number(props.type) || I.FileType.None;
+		this.style = Number(props.style) || I.FileStyle.Auto;
+		this.state = Number(props.state) || I.FileState.Empty;
 		
-		makeObservable(self, {
+		makeObservable(this, {
 			hash: observable,
 			name: observable,
 			mime: observable,
@@ -32,7 +30,7 @@ class BlockContentFile implements I.ContentFile {
 			state: observable,
 		});
 
-		intercept(self as any, (change: any) => { return Util.intercept(self, change); });
+		intercept(this as any, (change: any) => { return Util.intercept(this, change); });
 	};
 
 };

@@ -310,4 +310,4 @@ class Analytics {
 
 };
 
-export let analytics: Analytics = new Analytics();
+ export const analytics: Analytics = new Analytics();

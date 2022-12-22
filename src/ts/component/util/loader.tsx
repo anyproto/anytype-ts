@@ -5,7 +5,7 @@ interface Props {
 	className?: string;
 };
 
-class Loader extends React.Component<Props, {}> {
+class Loader extends React.Component<Props, object> {
 
 	public static defaultProps = {
 		className: '',

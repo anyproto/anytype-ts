@@ -18,12 +18,11 @@ interface State {
 	error: string;
 };
 
-
 const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends React.Component<Props, State> {
 
 	refPhrase: any = null;
-	pinConfirmed: boolean = false;
-	format: string = '';
+	pinConfirmed = false;
+	format = '';
 	refCheckbox: any = null;
 	state = {
 		error: '',

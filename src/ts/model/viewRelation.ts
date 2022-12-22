@@ -11,16 +11,14 @@ class ViewRelation implements I.ViewRelation {
 	timeFormat: I.TimeFormat = I.TimeFormat.H12;
 
 	constructor (props: I.ViewRelation) {
-		let self = this;
+		this.relationKey = String(props.relationKey || '');
+		this.width = Number(props.width) || 0;
+		this.isVisible = Boolean(props.isVisible);
+		this.includeTime = Boolean(props.includeTime);
+		this.dateFormat = Number(props.dateFormat) || I.DateFormat.MonthAbbrBeforeDay;
+		this.timeFormat = Number(props.timeFormat) || I.TimeFormat.H12;
 
-		self.relationKey = String(props.relationKey || '');
-		self.width = Number(props.width) || 0;
-		self.isVisible = Boolean(props.isVisible);
-		self.includeTime = Boolean(props.includeTime);
-		self.dateFormat = Number(props.dateFormat) || I.DateFormat.MonthAbbrBeforeDay;
-		self.timeFormat = Number(props.timeFormat) || I.TimeFormat.H12;
-
-		makeObservable(self, {
+		makeObservable(this, {
 			width: observable,
 			isVisible: observable,
 			includeTime: observable, 
@@ -28,7 +26,7 @@ class ViewRelation implements I.ViewRelation {
 			timeFormat: observable,
 		});
 
-		intercept(self as any, (change: any) => { return Util.intercept(self, change); });
+		intercept(this as any, (change: any) => { return Util.intercept(this, change); });
 	};
 
 };

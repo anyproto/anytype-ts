@@ -42,7 +42,7 @@ const Theme = {
 	},
 };
 
-const Marker = observer(class Marker extends React.Component<Props, {}> {
+const Marker = observer(class Marker extends React.Component<Props, object> {
 
 	public static defaultProps = {
 		color: 'default',

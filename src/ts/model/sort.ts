@@ -9,21 +9,19 @@ class Sort implements I.Sort {
 	customOrder: string[] = [];
 
 	constructor (props: I.Sort) {
-		let self = this;
-		
-		self.relationKey = String(props.relationKey || '');
-		self.type = Number(props.type) || I.SortType.Asc;
-		self.includeTime = Boolean(props.includeTime);
-		self.customOrder = props.customOrder || [];
+		this.relationKey = String(props.relationKey || '');
+		this.type = Number(props.type) || I.SortType.Asc;
+		this.includeTime = Boolean(props.includeTime);
+		this.customOrder = props.customOrder || [];
 
-		makeObservable(self, {
+		makeObservable(this, {
 			relationKey: observable,
 			type: observable,
 			includeTime: observable,
 			customOrder: observable,
 		});
 
-		intercept(self as any, (change: any) => { return Util.intercept(self, change); });
+		intercept(this as any, (change: any) => { return Util.intercept(this, change); });
 	};
 
 };

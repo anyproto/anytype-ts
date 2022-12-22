@@ -187,7 +187,7 @@ class SmileUtil {
 			if (!data) {
 				data = getEmojiDataFromNative(icon + String.fromCharCode(DIV), 'apple', EmojiData);
 			};
-		} catch (e) {};
+		} catch (e) { /**/ };
 
 		if (data) {
 			this.cache[icon] = { colons: data.colons, skin: data.skin };

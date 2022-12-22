@@ -20,9 +20,7 @@ export class Decode {
 
 	static decodeStruct (struct: any) {
 		let data = {};
-		try { 
-			data = struct ? struct.toJavaScript() : {};
-		} catch (e) {};
+		try { data = struct ? struct.toJavaScript() : {}; } catch (e) { /**/ };
 		return data;
 	};
 

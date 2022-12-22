@@ -323,7 +323,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<Props> 
 		selection.preventSelect(false);
 	};
 
-	onScroll ({ clientHeight, scrollHeight, scrollTop }) {
+	onScroll ({ scrollTop }) {
 		if (scrollTop) {
 			this.top = scrollTop;
 		};

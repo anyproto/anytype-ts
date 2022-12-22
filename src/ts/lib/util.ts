@@ -16,7 +16,7 @@ class Util {
 
 	sprintf (...args: any[]) {
 		let regex = /%%|%(\d+\$)?([-+#0 ]*)(\*\d+\$|\*|\d+)?(\.(\*\d+\$|\*|\d+))?([scboxXuidfegEG])/g;
-		let a = arguments, i = 0, format = a[i++];
+		let a = args, i = 0, format = a[i++];
 		let pad = function (str, len, chr, leftJustify) {
 			let padding = (str.length >= len) ? '' : Array(1 + len - str.length >>> 0).join(chr);
 			return leftJustify ? str + padding : padding + str;
@@ -160,7 +160,11 @@ class Util {
 	};
 	
 	objectLength (o: any) {
-		return (o || {}).hasOwnProperty('length') ? o.length : Object.keys(o).length;
+		return this.hasOwnProperty(o, 'length') ? o.length : Object.keys(o).length;
+	};
+
+	hasOwnProperty (o: any, p: string) {
+		return Object.prototype.hasOwnProperty.call(o, p);
 	};
 
 	// Clear object for smaller console output
@@ -171,7 +175,7 @@ class Util {
 				if (!this.objectLength(o[k])) {
 					delete(o[k]);
 				} else 
-				if (o[k].hasOwnProperty('fieldsMap')){
+				if (this.hasOwnProperty(o[k], 'fieldsMap')){
 					o[k] = this.fieldsMap(o[k]['fieldsMap']);
 				};
 			} else 
@@ -245,7 +249,7 @@ class Util {
 	};
 
 	arrayValues (a: any) {
-		return a.hasOwnProperty('length') ? a : Object.values(a);
+		return this.hasOwnProperty(a, 'length') ? a : Object.values(a);
 	};
 
 	stringCut (haystack: string, start: number, end: number): string {
@@ -639,20 +643,15 @@ class Util {
 	};
 	
 	renderLinks (obj: any) {
-		const self = this;
 		const links = obj.find('a');
 
 		links.off('click auxclick');
 		links.on('auxclick', (e: any) => { e.preventDefault(); });
-		links.click(function (e: any) {
-			e.preventDefault();
+		links.click((e: any) => {
+			const el = $(e.currentTarget);
 
-			const el = $(this);
-			if (el.hasClass('path')) {
-				self.onPath(el.attr('href'));
-			} else {
-				self.onUrl(el.attr('href'));
-			};
+			e.preventDefault();
+			el.hasClass('path') ? this.onPath(el.attr('href')) : this.onUrl(el.attr('href'));
 		});
 	};
 	
@@ -826,14 +825,13 @@ class Util {
 	};
 
 	searchParam (url: string): any {
-		var a = url.replace(/^\?/, '').split('&');
-		var param: any = {};
+		const a = url.replace(/^\?/, '').split('&');
+		const param: any = {};
 		
 		a.forEach((s) => {
-			var kv = s.split('=');
-			param[kv[0]] = kv[1];
+			const [ key, value ] = s.split('=');
+			param[key] = value;
 		});
-
 		return param;
 	};
 

@@ -12,7 +12,7 @@ interface Props extends I.Menu {
 	history: any;
 };
 
-const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component<Props, {}> {
+const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component<Props, object> {
 
 	format: I.RelationType = null;
 	objectTypes: string[] = [];

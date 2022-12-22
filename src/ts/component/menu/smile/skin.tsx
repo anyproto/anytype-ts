@@ -7,7 +7,7 @@ import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {};
 
-class MenuSmileSkin extends React.Component<Props, {}> {
+class MenuSmileSkin extends React.Component<Props, object> {
 
 	ref: any = null;
 	state = {

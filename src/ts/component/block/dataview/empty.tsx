@@ -11,7 +11,7 @@ interface Props extends I.ViewComponent {
 	onClick: (e: any) => void;
 };
 
-const Empty = observer(class Empty extends React.Component<Props, {}> {
+const Empty = observer(class Empty extends React.Component<Props, object> {
 
 	public static defaultProps = {
 		withButton: true,

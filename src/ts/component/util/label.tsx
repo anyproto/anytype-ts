@@ -11,7 +11,7 @@ interface Props {
 };
 
 
-class Label extends React.Component<Props, {}> {
+class Label extends React.Component<Props, object> {
 
 	render () {
 		const { id, text, className, onClick } = this.props;

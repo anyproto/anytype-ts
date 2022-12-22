@@ -12,7 +12,7 @@ interface Props {
 	onRemove?: (e: any, id: string) => void;
 };
 
-const ItemObject = observer(class ItemObject extends React.Component<Props, {}> {
+const ItemObject = observer(class ItemObject extends React.Component<Props, object> {
 
 	constructor (props: any) {
 		super(props);

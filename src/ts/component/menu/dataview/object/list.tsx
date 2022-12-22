@@ -225,7 +225,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		this.props.onKeyDown(e);
 	};
 
-	onScroll ({ clientHeight, scrollHeight, scrollTop }) {
+	onScroll ({ scrollTop }) {
 		if (scrollTop) {
 			this.top = scrollTop;
 		};

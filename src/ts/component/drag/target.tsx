@@ -14,10 +14,11 @@ interface Props {
 	isTargetTop?: boolean;
 	isTargetBottom?: boolean;
 	isTargetColumn?: boolean;
+	children?: React.ReactNode;
 	onClick?(e: any): void;
 };
 
-class DropTarget extends React.Component<Props, {}> {
+class DropTarget extends React.Component<Props, object> {
 	
 	constructor (props: any) {
 		super(props);

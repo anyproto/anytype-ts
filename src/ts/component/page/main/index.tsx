@@ -61,8 +61,8 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		const element = blockStore.getLeaf(root, root);
 		const { filter, loading } = this.state;
 		const tabs = this.getTabs();
-		const tab = tabs.find((it: any) => { return it.id == this.state.tab; });
-		const canDrag = [ I.TabIndex.Favorite ].indexOf(tab.id) >= 0;
+		const tab = tabs.find(it => it.id == this.state.tab);
+		const canDrag = [ I.TabIndex.Favorite ].includes(tab.id);
 		const { allowSpaces } = config;
 
 		if (!element) {

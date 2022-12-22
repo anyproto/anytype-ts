@@ -10,7 +10,7 @@ interface Props {
 	onChange?: (page: number) => void;
 };
 
-class Pager extends React.Component<Props, {}> {
+class Pager extends React.Component<Props, object> {
 
 	public static defaultProps = {
 		pageLimit: 10,

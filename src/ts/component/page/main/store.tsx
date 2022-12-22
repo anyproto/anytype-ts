@@ -621,7 +621,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 		};
 	};
 
-	onScroll ({ clientHeight, scrollHeight, scrollTop }) {
+	onScroll ({ scrollTop }) {
 		const win = $(window);
 		const { list } = menuStore;
 

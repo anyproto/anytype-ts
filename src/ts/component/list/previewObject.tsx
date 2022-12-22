@@ -14,7 +14,7 @@ interface Props {
 
 const WIDTH = 344;
 
-class ListObjectPreview extends React.Component<Props, {}> {
+class ListObjectPreview extends React.Component<Props, object> {
 
 	public static defaultProps = {
 		offsetX: 0,

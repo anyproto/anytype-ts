@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 
 interface Props extends I.PageComponent {};
 
-const PageAuthShare = observer(class PageAuthShare extends React.Component<Props, {}> {
+const PageAuthShare = observer(class PageAuthShare extends React.Component<Props, object> {
 
 	constructor (props: any) {
 		super(props);

@@ -482,4 +482,4 @@ class Sidebar {
 
 };
 
-export let sidebar: Sidebar = new Sidebar();
+ export const sidebar: Sidebar = new Sidebar();

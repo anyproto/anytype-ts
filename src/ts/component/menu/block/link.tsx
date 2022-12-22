@@ -384,7 +384,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 		close();
 	};
 
-	onScroll ({ clientHeight, scrollHeight, scrollTop }) {
+	onScroll ({ scrollTop }) {
 		if (scrollTop) {
 			this.top = scrollTop;
 		};

@@ -15,7 +15,7 @@ interface Props extends I.Menu {};
 const HEIGHT = 48;
 const LIMIT = 20;
 
-const MenuSort = observer(class MenuSort extends React.Component<Props, {}> {
+const MenuSort = observer(class MenuSort extends React.Component<Props, object> {
 	
 	n: number = 0;
 	top: number = 0;
@@ -353,7 +353,7 @@ const MenuSort = observer(class MenuSort extends React.Component<Props, {}> {
 		});
 	};
 
-	onScroll ({ clientHeight, scrollHeight, scrollTop }) {
+	onScroll ({ scrollTop }) {
 		if (scrollTop) {
 			this.top = scrollTop;
 		};

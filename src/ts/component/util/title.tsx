@@ -5,7 +5,7 @@ interface Props {
 	className?: string;
 };
 
-class Title extends React.Component<Props, {}> {
+class Title extends React.Component<Props, object> {
 
 	render () {
 		const { text, className } = this.props;

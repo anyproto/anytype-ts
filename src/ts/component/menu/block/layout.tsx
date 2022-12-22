@@ -8,7 +8,7 @@ import Constant from 'json/constant.json';
 
 interface Props extends I.Menu {};
 
-class MenuBlockLayout extends React.Component<Props, {}> {
+class MenuBlockLayout extends React.Component<Props, object> {
 	
 	n: number = 0;
 	

@@ -12,7 +12,7 @@ class Storage {
 			return;
 		};
 		let ret = '';
-		try { ret = JSON.parse(o); } catch (e) {};
+		try { ret = JSON.parse(o); } catch (e) { /**/ };
 		return ret;
 	};
 	

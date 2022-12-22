@@ -35,7 +35,7 @@ interface Props extends I.BlockComponent, RouteComponentProps<any> {
 
 const SNAP = 0.01;
 
-const Block = observer(class Block extends React.Component<Props, {}> {
+const Block = observer(class Block extends React.Component<Props, object> {
 
 	ref: any = null;
 	ids: string[] = [];

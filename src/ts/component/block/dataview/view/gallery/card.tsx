@@ -12,7 +12,7 @@ interface Props extends I.ViewComponent {
 	style?: any;
 };
 
-const Card = observer(class Card extends React.Component<Props, {}> {
+const Card = observer(class Card extends React.Component<Props, object> {
 
 	_isMounted: boolean = false;
 

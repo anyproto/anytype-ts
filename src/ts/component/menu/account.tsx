@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Icon, IconObject, Error } from 'Component';
-import { authStore, commonStore } from 'Store';
+import { authStore } from 'Store';
 import { observer } from 'mobx-react';
 import { I, C, Util, DataUtil, Storage, translate } from 'Lib';
 import Errors from 'json/error.json';

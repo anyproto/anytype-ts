@@ -6,7 +6,7 @@ import { I } from 'Lib';
 
 interface Props extends I.MenuItem {};
 
-class MenuItemVertical extends React.Component<Props, {}> {
+class MenuItemVertical extends React.Component<Props, object> {
 
 	render () {
 		let { 

@@ -6,15 +6,11 @@ import { Frame, Cover, Title, Label, Button, Header, Footer, Textarea } from 'Co
 import { I, translate, DataUtil, analytics, Util, Preview } from 'Lib';
 import { commonStore, authStore } from 'Store';
 
-interface Props extends I.PageComponent {};
-
-interface State {};
-
-const PageAuthSuccess = observer(class PageAuthSuccess extends React.Component<Props, State> {
+const PageAuthSuccess = observer(class PageAuthSuccess extends React.Component<I.PageComponent, object> {
 
 	refPhrase: any = null;
 
-	constructor (props: any) {
+	constructor (props: I.PageComponent) {
 		super(props);
 
 		this.onFocus = this.onFocus.bind(this);

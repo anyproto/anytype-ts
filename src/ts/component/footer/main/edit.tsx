@@ -5,7 +5,7 @@ import { observer } from 'mobx-react';
 
 interface Props extends I.FooterComponent {};
 
-const FooterMainEdit = observer(class FooterMainEdit extends React.Component<Props, {}> {
+const FooterMainEdit = observer(class FooterMainEdit extends React.Component<Props, object> {
 	
 	render () {
 		const { onHelp } = this.props;

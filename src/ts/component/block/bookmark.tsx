@@ -9,7 +9,7 @@ import { commonStore, detailStore } from 'Store';
 interface Props extends I.BlockComponent {};
 
 
-const BlockBookmark = observer(class BlockBookmark extends React.Component<Props, {}> {
+const BlockBookmark = observer(class BlockBookmark extends React.Component<Props, object> {
 
 	_isMounted: boolean = false;
 

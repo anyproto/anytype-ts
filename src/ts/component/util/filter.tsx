@@ -21,7 +21,7 @@ interface Props {
 };
 
 
-class Filter extends React.Component<Props, {}> {
+class Filter extends React.Component<Props, object> {
 
 	public static defaultProps = {
 		className: '',

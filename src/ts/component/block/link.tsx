@@ -9,7 +9,7 @@ import { detailStore, blockStore, dbStore } from 'Store';
 
 interface Props extends I.BlockComponent, RouteComponentProps<any> {};
 
-const BlockLink = observer(class BlockLink extends React.Component<Props, {}> {
+const BlockLink = observer(class BlockLink extends React.Component<Props, object> {
 	
 	_isMounted: boolean = false;
 

@@ -13,7 +13,7 @@ interface Props {
 }
 
 
-const Sync = observer(class Sync extends React.Component<Props, {}> {
+const Sync = observer(class Sync extends React.Component<Props, object> {
 
 	public static defaultProps = {
 		className: '',

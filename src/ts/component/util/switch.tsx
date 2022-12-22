@@ -10,7 +10,7 @@ interface Props {
 	onChange?(e: any, value: boolean): void;
 };
 
-class Switch extends React.Component<Props, {}> {
+class Switch extends React.Component<Props, object> {
 
 	public static defaultProps = {
 		value: false,

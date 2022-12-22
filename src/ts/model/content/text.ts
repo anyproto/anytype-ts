@@ -8,19 +8,17 @@ class Mark implements I.Mark {
 	range: I.TextRange = { from: 0, to: 0 };
 
 	constructor (props: I.Mark) {
-		let self = this;
-		
-		self.type = Number(props.type) || I.MarkType.Strike;
-		self.param = String(props.param || '');
-		self.range = props.range || { from: 0, to: 0 };
+		this.type = Number(props.type) || I.MarkType.Strike;
+		this.param = String(props.param || '');
+		this.range = props.range || { from: 0, to: 0 };
 
-		makeObservable(self, {
+		makeObservable(this, {
 			type: observable,
 			param: observable,
 			range: observable,
 		});
 
-		intercept(self as any, (change: any) => { return Util.intercept(self, change); });
+		intercept(this as any, (change: any) => { return Util.intercept(this, change); });
 	};
 
 };
@@ -36,17 +34,15 @@ class BlockContentText implements I.ContentText {
 	marks: I.Mark[] = [];
 
 	constructor (props: I.ContentText) {
-		let self = this;
-		
-		self.text = String(props.text || '');
-		self.style = Number(props.style) || I.TextStyle.Paragraph;
-		self.checked = Boolean(props.checked);
-		self.color = String(props.color || '');
-		self.iconEmoji = String(props.iconEmoji || '');
-		self.iconImage = String(props.iconImage || '');
-		self.marks = (props.marks || []).map(it => new Mark(it));
+		this.text = String(props.text || '');
+		this.style = Number(props.style) || I.TextStyle.Paragraph;
+		this.checked = Boolean(props.checked);
+		this.color = String(props.color || '');
+		this.iconEmoji = String(props.iconEmoji || '');
+		this.iconImage = String(props.iconImage || '');
+		this.marks = (props.marks || []).map(it => new Mark(it));
 
-		makeObservable(self, {
+		makeObservable(this, {
 			text: observable,
 			style: observable,
 			checked: observable,
@@ -56,7 +52,7 @@ class BlockContentText implements I.ContentText {
 			marks: observable,
 		});
 
-		intercept(self as any, (change: any) => { return Util.intercept(self, change); });
+		intercept(this as any, (change: any) => { return Util.intercept(this, change); });
 	};
 
 };

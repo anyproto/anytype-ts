@@ -13,7 +13,7 @@ interface State {
 const OFFSET_Y = 8;
 const BORDER = 12;
 
-const PreviewComponent = observer(class PreviewComponent extends React.Component<{}, State> {
+const PreviewComponent = observer(class PreviewComponent extends React.Component<object, State> {
 	
 	state = {
 		object: null,
@@ -162,9 +162,9 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 		const nh = element.outerHeight();
 		const ow = obj.outerWidth();
 		const oh = obj.outerHeight();
+		const css: any = { opacity: 0, left: 0, top: 0 };
+		const pcss: any = { top: 'auto', bottom: 'auto', width: '', left: '', height: nh + OFFSET_Y, clipPath: '' };
 
-		let css: any = { opacity: 0, left: 0, top: 0 };
-		let pcss: any = { top: 'auto', bottom: 'auto', width: '', left: '', height: nh + OFFSET_Y, clipPath: '' };
 		let typeY = I.MenuDirection.Bottom;		
 		let ps = (1 - nw / ow) / 2 * 100;
 		let pe = ps + nw / ow * 100;

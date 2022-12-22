@@ -23,7 +23,7 @@ const Components = {
 	mainStore:			 HeaderMainStore,
 };
 
-class Header extends React.Component<Props, {}> {
+class Header extends React.Component<Props, object> {
 
 	refChild: any = null;
 

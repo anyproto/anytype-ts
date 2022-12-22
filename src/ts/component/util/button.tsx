@@ -17,7 +17,7 @@ interface Props {
 	onClick?(e: any): void;
 };
 
-class Button extends React.Component<Props, {}> {
+class Button extends React.Component<Props, object> {
 
 	public static defaultProps = {
 		subType: 'submit',

@@ -13,7 +13,7 @@ interface Props extends I.Popup, RouteComponentProps<any> {
 	onPage: (id: string) => void;
 };
 
-const PopupSettingsPageDelete = observer(class PopupSettingsPageDelete extends React.Component<Props, {}> {
+const PopupSettingsPageDelete = observer(class PopupSettingsPageDelete extends React.Component<Props, object> {
 
 	refCheckbox: any = null;
 
@@ -31,7 +31,7 @@ const PopupSettingsPageDelete = observer(class PopupSettingsPageDelete extends R
 				<Title text={translate('popupSettingsAccountDeleteTitle')} />
 
 				<div className="text">
-					<b>We're sorry to see you go. Once you request your account to be deleted, you have 30 days to cancel this request.</b>
+					<b>We&apos;re sorry to see you go. Once you request your account to be deleted, you have 30 days to cancel this request.</b>
 					<p>You will be logged out on all other devices. You will have 30 days to recover it. Afterwards it will be deleted permanently</p>
 
 					<div className="check" onClick={this.onCheck}>

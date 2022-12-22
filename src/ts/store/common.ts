@@ -114,13 +114,14 @@ class CommonStore {
 	};
 
 	get type(): string {
-		let typeId = String(this.typeId || '');
+		const typeId = String(this.typeId || '');
 
 		if (!typeId) {
 			return Constant.typeId.note;
 		};
 
-		let type = dbStore.getType(typeId);
+		const type = dbStore.getType(typeId);
+
 		if (!type || !type.isInstalled || !type.smartblockTypes.includes(I.SmartBlockType.Page)) {
 			return Constant.typeId.note;
 		};
@@ -318,13 +319,13 @@ class CommonStore {
 	configSet (config: any, force: boolean) {
 		console.log('[commonStore.configSet]', config, force);
 
-		let obj = $('html');
+		const html = $('html');
+		
 		let newConfig: any = {};
-
 		if (force) {
-			newConfig = config;
+			newConfig = Object.assign(newConfig, config);
 		} else {
-			for (let k in config) {
+			for (const k in config) {
 				if (undefined === this.configObj[k]) {
 					newConfig[k] = config[k];
 				};
@@ -334,9 +335,9 @@ class CommonStore {
 		set(this.configObj, newConfig);
 
 		this.configObj.debug = this.configObj.debug || {};
-		this.configObj.debug.ui ? obj.addClass('debug') : obj.removeClass('debug');
+		this.configObj.debug.ui ? html.addClass('debug') : html.removeClass('debug');
 	};
 
 };
 
-export let commonStore: CommonStore = new CommonStore();
+export const commonStore: CommonStore = new CommonStore();

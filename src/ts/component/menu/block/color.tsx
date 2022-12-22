@@ -5,7 +5,7 @@ import { I, keyboard, MenuUtil } from 'Lib';
 
 interface Props extends I.Menu {};
 
-class MenuBlockColor extends React.Component<Props, {}> {
+class MenuBlockColor extends React.Component<Props, object> {
 	
 	n: number = 0;
 	

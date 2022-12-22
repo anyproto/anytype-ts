@@ -14,7 +14,7 @@ import Constant from 'json/constant.json';
 
 interface Props extends I.BlockComponent, RouteComponentProps<any> {};
 
-const BlockLatex = observer(class BlockLatex extends React.Component<Props, {}> {
+const BlockLatex = observer(class BlockLatex extends React.Component<Props, object> {
 	_isMounted: boolean = false;
 	range: any = { start: 0, end: 0 };
 	text: string = '';

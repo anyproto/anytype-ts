@@ -15,7 +15,7 @@ interface Props {
 
 const EDITOR_IDS = [ 'title', 'description' ];
 
-const HeadSimple = observer(class Controls extends React.Component<Props, {}> {
+const HeadSimple = observer(class Controls extends React.Component<Props, object> {
 	
 	_isMounted: boolean = false;
 	composition: boolean = false;

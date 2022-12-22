@@ -10,15 +10,13 @@ class BlockContentLink implements I.ContentLink {
 	relations: string[] = [];
 	
 	constructor (props: I.ContentLink) {
-		let self = this;
-		
-		self.targetBlockId = String(props.targetBlockId || '');
-		self.iconSize = Number(props.iconSize) || I.LinkIconSize.None;
-		self.cardStyle = Number(props.cardStyle) || I.LinkCardStyle.Text;
-		self.description = Number(props.description) || I.LinkDescription.None;
-		self.relations = props.relations || [];
+		this.targetBlockId = String(props.targetBlockId || '');
+		this.iconSize = Number(props.iconSize) || I.LinkIconSize.None;
+		this.cardStyle = Number(props.cardStyle) || I.LinkCardStyle.Text;
+		this.description = Number(props.description) || I.LinkDescription.None;
+		this.relations = props.relations || [];
 
-		makeObservable(self, {
+		makeObservable(this, {
 			targetBlockId: observable,
 			iconSize: observable,
 			cardStyle: observable,
@@ -26,7 +24,7 @@ class BlockContentLink implements I.ContentLink {
 			relations: observable,
 		});
 
-		intercept(self as any, (change: any) => { return Util.intercept(self, change); });
+		intercept(this as any, (change: any) => { return Util.intercept(this, change); });
 	};
 
 };

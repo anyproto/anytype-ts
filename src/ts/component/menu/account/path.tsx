@@ -6,7 +6,7 @@ import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {};
 
-const MenuAccountPath = observer(class MenuAccountPath extends React.Component<Props, {}> {
+const MenuAccountPath = observer(class MenuAccountPath extends React.Component<Props, object> {
 
     constructor (props: any) {
         super(props);

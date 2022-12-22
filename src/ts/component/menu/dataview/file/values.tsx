@@ -13,7 +13,7 @@ interface Props extends I.Menu {};
 
 const MENU_ID = 'dataviewFileList';
 
-const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends React.Component<Props, {}> {
+const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends React.Component<Props, object> {
 
 	_isMounted: boolean = false;
 

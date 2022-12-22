@@ -7,7 +7,7 @@ import { I } from 'Lib';
 
 interface Props extends I.PageComponent {};
 
-const ListPopup = observer(class ListPopup extends React.Component<Props, {}> {
+const ListPopup = observer(class ListPopup extends React.Component<Props, object> {
 
 	render () {
 		const { list } = popupStore;

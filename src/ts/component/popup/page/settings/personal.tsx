@@ -15,7 +15,7 @@ interface Props extends I.Popup, RouteComponentProps<any> {
 };
 
 
-const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal extends React.Component<Props, {}> {
+const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal extends React.Component<Props, object> {
 
 	constructor (props: any) {
 		super(props);

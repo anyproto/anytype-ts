@@ -7,7 +7,7 @@ import { Util, C, Storage } from 'Lib';
 import { commonStore } from 'Store';
 
 
-const Progress = observer(class Progress extends React.Component<{}, {}> {
+const Progress = observer(class Progress extends React.Component<object, object> {
 	
 	_isMounted: boolean = false;
 	obj: any = null;
