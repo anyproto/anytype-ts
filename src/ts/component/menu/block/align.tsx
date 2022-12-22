@@ -6,7 +6,7 @@ import { blockStore } from 'Store';
 
 interface Props extends I.Menu {};
 
-class MenuBlockHAlign extends React.Component<Props, {}> {
+class MenuBlockHAlign extends React.Component<Props, object> {
 	
 	n: number = 0;
 	

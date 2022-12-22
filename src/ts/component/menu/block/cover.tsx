@@ -18,7 +18,6 @@ enum Tab {
 
 interface State {
 	filter: string;
-	tab: Tab;
 	loading: boolean;
 };
 
@@ -29,13 +28,13 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 	_isMounted: boolean = false;
 	state = {
 		filter: '',
-		tab: Tab.Gallery,
 		loading: false,
 	};
 	items: any[] = [];
 	filter: string = '';
 	refFilter: any = null;
 	timeout: number = 0;
+	tab: Tab = Tab.Gallery;
 
 	constructor (props: any) {
 		super(props);
@@ -49,7 +48,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 	};
 
 	render () {
-		const { filter, tab, loading } = this.state;
+		const { filter, loading } = this.state;
 		const tabs: any[] = [
 			{ id: Tab.Gallery, name: 'Gallery' },
 			{ id: Tab.Unsplash, name: 'Unsplash' },
@@ -79,7 +78,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 		let content = null;
 		let filterElement = null;
 
-		if ([ Tab.Unsplash, Tab.Library ].includes(tab)) {
+		if ([ Tab.Unsplash, Tab.Library ].includes(this.tab)) {
 			filterElement = (
 				<Filter 
 					ref={(ref: any) => { this.refFilter = ref; }}
@@ -89,7 +88,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 			);
 		};
 
-		switch (tab) {
+		switch (this.tab) {
 			case Tab.Gallery:
 			case Tab.Unsplash:
 			case Tab.Library:
@@ -132,7 +131,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 					{tabs.map((item: any, i: number) => (
 						<div 
 							key={item.id} 
-							className={[ 'btn', (item.id == tab ? 'active' : '') ].join(' ')}
+							className={[ 'btn', (item.id == this.tab ? 'active' : '') ].join(' ')}
 							onClick={() => { this.setTab(item.id); }}
 						>
 							{item.name}
@@ -140,7 +139,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 					))}
 				</div>
 
-				<div className={[ 'body', Tab[tab].toLowerCase() ].join(' ')}>
+				<div className={[ 'body', Tab[this.tab].toLowerCase() ].join(' ')}>
 					{filterElement}
 					{content}
 				</div>
@@ -167,16 +166,16 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 	};
 
 	load () {
-		const { filter, tab } = this.state;
+		const { filter } = this.state;
 
 		this.items = [];
 
-		if (![ Tab.Unsplash, Tab.Library ].includes(tab)) {
+		if (![ Tab.Unsplash, Tab.Library ].includes(this.tab)) {
 			this.setState({ loading: false });
 			return;
 		};
 
-		switch (tab) {
+		switch (this.tab) {
 			case Tab.Unsplash:
 				this.setState({ loading: true });
 
@@ -239,8 +238,8 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 	};
 
 	setTab (tab: Tab) {
-		this.state.tab = tab;
-		this.setState({ tab });
+		this.tab = tab;
+		this.forceUpdate();
 		this.load();
 	};
 
@@ -315,10 +314,8 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 	};
 
 	getSections () {
-		const { tab } = this.state;
-		
 		let sections: any[] = [];
-		switch (tab) {
+		switch (this.tab) {
 			case Tab.Gallery:
 				sections = sections.concat([
 					{ name: 'Gradients', children: DataUtil.coverGradients() },

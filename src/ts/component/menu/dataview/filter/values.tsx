@@ -12,7 +12,7 @@ interface Props extends I.Menu {}
 
 const TIMEOUT = 500;
 
-const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends React.Component<Props, {}> {
+const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends React.Component<Props, object> {
 
 	_isMounted: boolean = false;
 	timeoutChange: number = 0;

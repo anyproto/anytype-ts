@@ -7,7 +7,7 @@ import { blockStore, menuStore, popupStore } from 'Store';
 
 const THRESHOLD = 10;
 
-const SelectionProvider = observer(class SelectionProvider extends React.Component<{}, {}> {
+const SelectionProvider = observer(class SelectionProvider extends React.Component<object, object> {
 
 	_isMounted = false;
 	x: number = 0;

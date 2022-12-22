@@ -9,7 +9,7 @@ import Constant from 'json/constant.json';
 
 interface Props extends I.BlockComponent {};
 
-const BlockAudio = observer(class BlockAudio extends React.Component<Props, {}> {
+const BlockAudio = observer(class BlockAudio extends React.Component<Props, object> {
 
 	_isMounted: boolean = false;
 	volume: number = 0;

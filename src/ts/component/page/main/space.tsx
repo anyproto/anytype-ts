@@ -80,7 +80,7 @@ const PageMainSpace = observer(class PageMainSpace extends React.Component<Props
 							</div>
 						) : (
 							<div className="empty">
-								This space doesn't have any highlighted objects
+								This space doesn&apos;t have any highlighted objects
 							</div>
 						)}
 					</div>

@@ -132,7 +132,7 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 								</div>
 							) : (
 								<div className="empty">
-									This object type doesn't have templates
+									This object type doesn&apos;t have templates
 								</div>
 							)}
 						</div>

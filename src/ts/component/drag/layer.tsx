@@ -14,7 +14,7 @@ interface State {
 	ids: string[];
 };
 
-class DragLayer extends React.Component<{}, State> {
+class DragLayer extends React.Component<object, State> {
 	
 	_isMounted: boolean = false;
 	state = {

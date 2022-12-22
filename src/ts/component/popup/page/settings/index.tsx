@@ -10,7 +10,7 @@ interface Props extends I.Popup, RouteComponentProps<any> {
 	onPage: (id: string) => void;
 };
 
-const PopupSettingsPageIndex = observer(class PopupSettingsPageIndex extends React.Component<Props, {}> {
+const PopupSettingsPageIndex = observer(class PopupSettingsPageIndex extends React.Component<Props, object> {
 
 	render () {
 		const { onPage } = this.props;

@@ -6,15 +6,17 @@ interface Props {
 	className?: string;
 };
 
-class Name extends React.Component<Props, {}> {
+class Name extends React.Component<Props, object> {
 
 	public static defaultProps = {
 		className: 'name',
 	};
 
 	render () {
-		let { object, className } = this.props;
-		let { name, layout, snippet, isDeleted } = object;
+		const { object, className } = this.props;
+		const { layout, snippet, isDeleted } = object;
+	
+		let name = String(object.name || '');
 
 		if (!isDeleted) {
 			if (layout == I.ObjectLayout.Note) {

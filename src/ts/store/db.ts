@@ -293,4 +293,4 @@ class DbStore {
 	};
 };
 
-export let dbStore: DbStore = new DbStore();
+ export const dbStore: DbStore = new DbStore();

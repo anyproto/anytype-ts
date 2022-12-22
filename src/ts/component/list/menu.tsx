@@ -9,7 +9,7 @@ interface Props {
 	history: any;
 };
 
-const ListMenu = observer(class ListMenu extends React.Component<Props, {}> {
+const ListMenu = observer(class ListMenu extends React.Component<Props, object> {
 
 	render () {
 		const { list } = menuStore;

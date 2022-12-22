@@ -8,7 +8,7 @@ interface Props {
 	onClick?(e: any): void;
 };
 
-class Dimmer extends React.Component<Props, {}> {
+class Dimmer extends React.Component<Props, object> {
 	
 	_isMounted: boolean = false;
 

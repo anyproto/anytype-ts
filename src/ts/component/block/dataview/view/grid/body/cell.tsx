@@ -21,7 +21,7 @@ interface Props {
 	onCellChange?(id: string, key: string, value: any, callBack?: (message: any) => void): void;
 };
 
-const BodyCell = observer(class BodyCell extends React.Component<Props, {}> {
+const BodyCell = observer(class BodyCell extends React.Component<Props, object> {
 
 	render () {
 		const { rootId, block, className, relationKey, index, readonly, onRef, onCellClick, onCellChange, getIdPrefix } = this.props;

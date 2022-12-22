@@ -6,15 +6,13 @@ class BlockContentLayout implements I.ContentLayout {
 	style: I.LayoutStyle = I.LayoutStyle.Row;
 	
 	constructor (props: I.ContentLayout) {
-		let self = this;
-		
-		self.style = Number(props.style) || I.LayoutStyle.Row;
+		this.style = Number(props.style) || I.LayoutStyle.Row;
 
-		makeObservable(self, {
+		makeObservable(this, {
 			style: observable,
 		});
 
-		intercept(self as any, (change: any) => { return Util.intercept(self, change); });
+		intercept(this as any, (change: any) => { return Util.intercept(this, change); });
 	};
 
 };

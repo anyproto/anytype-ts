@@ -282,7 +282,7 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 		selection.preventSelect(false);
 	};
 
-	onScroll ({ clientHeight, scrollHeight, scrollTop }) {
+	onScroll ({ scrollTop }) {
 		if (scrollTop) {
 			this.top = scrollTop;
 		};

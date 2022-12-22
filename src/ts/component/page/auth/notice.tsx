@@ -4,11 +4,9 @@ import { I, Util, translate } from 'Lib';
 import { commonStore } from 'Store';
 import { observer } from 'mobx-react';
 
-interface Props extends I.PageComponent {};
+const PageAuthNotice = observer(class PageAuthNotice extends React.Component<I.PageComponent, object> {
 
-const PageAuthNotice = observer(class PageAuthNotice extends React.Component<Props, {}> {
-
-	constructor (props: any) {
+	constructor (props: I.PageComponent) {
 		super(props);
 
 		this.onClick = this.onClick.bind(this);

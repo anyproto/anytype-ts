@@ -8,7 +8,7 @@ interface Props {
 	isPopup?: boolean;
 };
 
-class Deleted extends React.Component<Props, {}> {
+class Deleted extends React.Component<Props, object> {
 
 	public static defaultProps = {
 		className: '',

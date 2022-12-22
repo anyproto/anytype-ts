@@ -2,13 +2,10 @@ import * as React from 'react';
 import { I } from 'Lib';
 import { observer } from 'mobx-react';
 
-interface Props extends I.PageComponent {
-};
+interface Props extends I.PageComponent {};
 
-const GraphFilters = observer(class PreviewObject extends React.Component<Props, {}> {
+const GraphFilters = observer(class PreviewObject extends React.Component<Props, object> {
 	
-	state = {
-	};
 	_isMounted: boolean = false;
 
 	constructor (props: any) {
@@ -23,9 +20,6 @@ const GraphFilters = observer(class PreviewObject extends React.Component<Props,
 
 	componentDidMount () {
 		this._isMounted = true;
-	};
-
-	componentDidUpdate () {
 	};
 
 	componentWillUnmount () {

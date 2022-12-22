@@ -169,4 +169,4 @@ class ScrollOnMove {
 	
 };
 
-export let scrollOnMove: ScrollOnMove = new ScrollOnMove();
+ export const scrollOnMove: ScrollOnMove = new ScrollOnMove();

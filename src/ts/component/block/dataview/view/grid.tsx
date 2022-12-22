@@ -18,7 +18,7 @@ interface Props extends I.ViewComponent {
 
 const PADDING = 46;
 
-const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
+const ViewGrid = observer(class ViewGrid extends React.Component<Props, object> {
 
 	ox: number = 0;
 

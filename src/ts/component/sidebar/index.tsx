@@ -11,7 +11,7 @@ interface Props {
 	dataset?: any;
 };
 
-const Sidebar = observer(class Sidebar extends React.Component<Props, {}> {
+const Sidebar = observer(class Sidebar extends React.Component<Props, object> {
 	private _isMounted: boolean = false;
     ox: number = 0;
 	oy: number = 0;

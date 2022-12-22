@@ -9,7 +9,7 @@ import Constant from 'json/constant.json';
 
 interface Props extends I.BlockComponent {}
 
-const BlockType = observer(class BlockType extends React.Component<Props, {}> {
+const BlockType = observer(class BlockType extends React.Component<Props, object> {
 
 	_isMounted: boolean = false;
 	n: number = 0;

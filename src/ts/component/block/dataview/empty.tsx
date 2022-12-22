@@ -5,7 +5,7 @@ import { observer } from 'mobx-react';
 
 interface Props extends I.ViewEmpty {};
 
-const Empty = observer(class Empty extends React.Component<Props, {}> {
+const Empty = observer(class Empty extends React.Component<Props, object> {
 
 	public static defaultProps = {
 		withButton: true,

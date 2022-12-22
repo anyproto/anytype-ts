@@ -164,4 +164,4 @@ class MenuStore {
 
 };
 
-export let menuStore: MenuStore = new MenuStore();
+ export const menuStore: MenuStore = new MenuStore();

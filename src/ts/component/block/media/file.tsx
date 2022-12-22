@@ -6,7 +6,7 @@ import { observer } from 'mobx-react';
 
 interface Props extends I.BlockComponent {};
 
-const BlockFile = observer(class BlockFile extends React.Component<Props, {}> {
+const BlockFile = observer(class BlockFile extends React.Component<Props, object> {
 
 	_isMounted: boolean = false;
 

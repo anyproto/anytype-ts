@@ -9,7 +9,7 @@ import Constant from 'json/constant.json';
 
 interface Props extends I.BlockComponent {}
 
-const BlockImage = observer(class BlockImage extends React.Component<Props, {}> {
+const BlockImage = observer(class BlockImage extends React.Component<Props, object> {
 
 	_isMounted: boolean = false;
 	

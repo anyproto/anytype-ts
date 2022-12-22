@@ -8,7 +8,7 @@ import * as Docs from 'Docs';
 
 interface Props extends I.Menu {};
 
-class MenuOnboarding extends React.Component<Props, {}> {
+class MenuOnboarding extends React.Component<Props, object> {
 
 	constructor (props: any) {
 		super(props);

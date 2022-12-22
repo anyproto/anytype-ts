@@ -12,7 +12,7 @@ interface Props {
 	onEnd?(e: any, v: number): void;
 };
 
-class Drag extends React.Component<Props, {}> {
+class Drag extends React.Component<Props, object> {
 
 	public static defaultProps = {
 		value: 0,

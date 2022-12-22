@@ -124,10 +124,6 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<P
 											rootId={rootId}
 											index={i}
 											block={block}
-											onKeyDown={() => {}}
-											onKeyUp={() => {}} 
-											onMenuAdd={() => {}}
-											onPaste={() => {}}
 											getWrapperWidth={this.getWrapperWidth}
 											readonly={true}
 										/>

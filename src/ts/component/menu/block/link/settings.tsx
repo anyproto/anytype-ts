@@ -8,7 +8,7 @@ import Constant from 'json/constant.json';
 
 interface Props extends I.Menu {};
 
-const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React.Component<Props, {}> {
+const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React.Component<Props, object> {
 	
 	n: number = 0;
 	timeout: number = 0;

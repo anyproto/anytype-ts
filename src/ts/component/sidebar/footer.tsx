@@ -7,7 +7,7 @@ import Constant from 'json/constant.json';
 
 interface Props {};
 
-const Footer = observer(class Item extends React.Component<Props, {}> {
+const Footer = observer(class Item extends React.Component<Props, object> {
 
 	constructor (props: any) {
 		super(props);

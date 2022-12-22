@@ -13,7 +13,7 @@ const HEIGHT_DESCRIPTION = 56;
 const HEIGHT_DIV = 16;
 const LIMIT = 10;
 
-const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> {
+const MenuSelect = observer(class MenuSelect extends React.Component<Props, object> {
 
 	_isMounted: boolean = false;	
 	n: number = -1;
@@ -313,7 +313,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 		return HEIGHT_ITEM;
 	};
 
-	onScroll ({ clientHeight, scrollHeight, scrollTop }) {
+	onScroll ({ scrollTop }) {
 		if (scrollTop) {
 			this.top = scrollTop;
 		};

@@ -236,4 +236,4 @@ class DetailStore {
 	};
 };
 
-export let detailStore: DetailStore = new DetailStore();
+ export const detailStore: DetailStore = new DetailStore();

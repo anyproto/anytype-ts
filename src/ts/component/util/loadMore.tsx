@@ -9,7 +9,7 @@ interface Props {
 	onClick?(e: any): void;
 };
 
-class LoadMore extends React.Component<Props, {}> {
+class LoadMore extends React.Component<Props, object> {
 
 	public static defaultProps = {
 		limit: 10,
@@ -20,8 +20,8 @@ class LoadMore extends React.Component<Props, {}> {
 
 		let number = limit;
 		if (loaded && total) {
-			let objectsLeft = total - loaded;
-			number = limit < objectsLeft ? limit : objectsLeft;
+			const left = total - loaded;
+			number = limit < left ? limit : left;
 		};
 
 		return (

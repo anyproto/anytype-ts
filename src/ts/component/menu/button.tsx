@@ -5,7 +5,7 @@ import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {};
 
-const MenuButton = observer(class MenuButton extends React.Component<Props, {}> {
+const MenuButton = observer(class MenuButton extends React.Component<Props, object> {
 
 	_isMounted: boolean = false;
 	

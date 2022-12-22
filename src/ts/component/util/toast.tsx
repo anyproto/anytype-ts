@@ -10,7 +10,7 @@ interface State {
 	origin: any;
 };
 
-const Toast = observer(class Toast extends React.Component<{}, State> {
+const Toast = observer(class Toast extends React.Component<object, State> {
 
     state = {
         object: null,

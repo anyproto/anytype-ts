@@ -22,7 +22,7 @@ interface Props {
 	onContextMenu?(e: any): void;
 };
 
-class Icon extends React.Component<Props, {}> {
+class Icon extends React.Component<Props, object> {
 	
 	public static defaultProps = {
 		tooltipX: I.MenuDirection.Center,
@@ -40,9 +40,8 @@ class Icon extends React.Component<Props, {}> {
 	
 	render () {
 		const { id, icon, arrow, draggable, className, inner, onClick, onDragStart } = this.props;
-		
-		let style = this.props.style || {};
-		let cn = [ 'icon' ];
+		const cn = [ 'icon' ];
+		const style: any = this.props.style || {};
 		
 		if (className) {
 			cn.push(className);

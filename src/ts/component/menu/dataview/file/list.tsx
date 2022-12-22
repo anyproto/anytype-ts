@@ -192,7 +192,7 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 		$(window).off('keydown.menu');
 	};
 
-	onScroll ({ clientHeight, scrollHeight, scrollTop }) {
+	onScroll ({ scrollTop }) {
 		if (scrollTop) {
 			this.top = scrollTop;
 		};

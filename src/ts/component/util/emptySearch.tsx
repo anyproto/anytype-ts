@@ -7,7 +7,7 @@ interface Props {
 	text: string;
 };
 
-class EmptySearch extends React.Component<Props, {}> {
+class EmptySearch extends React.Component<Props, object> {
 
 	_isMounted: boolean = false;
 

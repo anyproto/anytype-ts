@@ -18,7 +18,7 @@ export type TreeChild = {
     id: string;
     details: { [key: string]: any }; // the object details
     parentId: string; // the id of the parent node
-    sectionId: I.TabIndex; // the id of the section node (root node)
+    sectionId: I.TabIndex; // the id of the section node (root node)
     isSection?: false;
 } & UniversalNodeProperties;
 

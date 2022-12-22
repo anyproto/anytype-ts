@@ -7,7 +7,7 @@ import { I, translate } from 'Lib';
 interface Props extends I.Popup {};
 
 
-const PopupPrompt = observer(class PopupPrompt extends React.Component<Props, {}> {
+const PopupPrompt = observer(class PopupPrompt extends React.Component<Props, object> {
 	
 	refValue: any = null;
 	

@@ -9,7 +9,7 @@ import { I, Util, keyboard, translate } from 'Lib';
 
 interface Props extends I.Menu {}
 
-const MenuText = observer(class MenuText extends React.Component<Props, {}> {
+const MenuText = observer(class MenuText extends React.Component<Props, object> {
 	
 	_isMounted: boolean = false;
 	ref: any = null;

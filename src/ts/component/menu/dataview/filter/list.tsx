@@ -17,7 +17,7 @@ interface Props extends I.Menu {};
 const HEIGHT = 48;
 const LIMIT = 20;
 
-const MenuFilterList = observer(class MenuFilterList extends React.Component<Props, {}> {
+const MenuFilterList = observer(class MenuFilterList extends React.Component<Props, object> {
 	
 	n: number = 0;
 	top: number = 0;
@@ -325,7 +325,7 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<Pro
 		return Relation.getFilterOptions(rootId, blockId, getView());
 	};
 
-	onScroll ({ clientHeight, scrollHeight, scrollTop }) {
+	onScroll ({ scrollTop }) {
 		if (scrollTop) {
 			this.top = scrollTop;
 		};

@@ -12,7 +12,7 @@ interface Props extends I.Menu {};
 const HEIGHT = 28;
 const LIMIT = 40;
 
-const MenuOptionList = observer(class MenuOptionList extends React.Component<Props, {}> {
+const MenuOptionList = observer(class MenuOptionList extends React.Component<Props, object> {
 	
 	_isMounted: boolean = false;
 	refFilter: any = null;

@@ -13,16 +13,14 @@ class BlockContentDataview implements I.ContentDataview {
 	targetObjectId: string = '';
 	
 	constructor (props: I.ContentDataview) {
-		let self = this;
-
-		self.sources = props.sources || [];
-		self.views = (props.views || []).map(it => new View(it));
-		self.relationLinks = props.relationLinks || [];
-		self.groupOrder = props.groupOrder || [];
-		self.objectOrder = props.objectOrder || [];
-		self.targetObjectId = String(props.targetObjectId || '');
-
-		makeObservable(self, {
+		this.sources = props.sources || [];
+		this.views = (props.views || []).map(it => new View(it));
+		this.relationLinks = props.relationLinks || [];
+		this.groupOrder = props.groupOrder || [];
+		this.objectOrder = props.objectOrder || [];
+		this.targetObjectId = String(props.targetObjectId || '');
+		
+		makeObservable(this, {
 			sources: observable,
 			views: observable,
 			groupOrder: observable,
@@ -31,7 +29,7 @@ class BlockContentDataview implements I.ContentDataview {
 			targetObjectId: observable,
 		});
 
-		intercept(self as any, (change: any) => { return Util.intercept(self, change); });
+		intercept(this as any, (change: any) => { return Util.intercept(this, change); });
 	};
 
 };

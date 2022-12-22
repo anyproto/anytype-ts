@@ -4109,7 +4109,7 @@
 
 - Backspace doesn't close the add block menu [\#56](https://github.com/anytypeio/js-anytype/issues/56)
 - Changing style with partially highlighted text not changing block style [\#44](https://github.com/anytypeio/js-anytype/issues/44)
-- Pressing / to initialise add block menu not working with up/arrow keys [\#42](https://github.com/anytypeio/js-anytype/issues/42)
+- Pressing / to initialise add block menu not working with up/arrow keys [\#42](https://github.com/anytypeio/js-anytype/issues/42)
 - Remove line blinking when user dnd block on another block’s border or between blocks [\#39](https://github.com/anytypeio/js-anytype/issues/39)
 - Marks range not working properly [\#35](https://github.com/anytypeio/js-anytype/issues/35)
 - «Backspace» key doesn't work in search bar in emoji menu [\#34](https://github.com/anytypeio/js-anytype/issues/34)

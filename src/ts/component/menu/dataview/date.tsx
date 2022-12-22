@@ -7,7 +7,7 @@ import { menuStore, dbStore } from 'Store';
 
 interface Props extends I.Menu {};
 
-const MenuDataviewDate = observer(class MenuDataviewDate extends React.Component<Props, {}> {
+const MenuDataviewDate = observer(class MenuDataviewDate extends React.Component<Props, object> {
 
 	_isMounted: boolean = false;
 	n: number = 0;

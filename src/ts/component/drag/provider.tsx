@@ -12,11 +12,12 @@ import Constant from 'json/constant.json';
 
 interface Props {
 	dataset?: any;
+	children?: React.ReactNode;
 };
 
 const OFFSET = 100;
 
-const DragProvider = observer(class DragProvider extends React.Component<Props, {}> {
+const DragProvider = observer(class DragProvider extends React.Component<Props, object> {
 
 	refLayer: any = null;
 	commonDropPrevented: boolean = false;
@@ -280,7 +281,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 		const { selection } = dataset || {};
 
 		let data: any = {};
-		try { data = JSON.parse(e.dataTransfer.getData('text/plain')) || {}; } catch (e) {};
+		try { data = JSON.parse(e.dataTransfer.getData('text/plain')) || {}; } catch (e) { /**/ };
 
 		let { rootId, dropType, withAlt } = data;
 		let ids = data.ids || [];
@@ -384,7 +385,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 					break;
 				};
 			};
-		} catch (e) {};
+		} catch (e) { /**/ };
 
 		this.setHoverData(null);
 		this.setPosition(I.BlockPosition.None);

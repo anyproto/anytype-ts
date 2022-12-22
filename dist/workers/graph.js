@@ -593,7 +593,7 @@ onAddNode = (data) => {
 	edges.push({ type: EdgeType.Link, source: source.id, target: target.id });
 
 	updateForces();
-	restart(0.1);
+	restart(0.3);
 };
 
 onRemoveNode = ({ ids }) => {
@@ -601,7 +601,7 @@ onRemoveNode = ({ ids }) => {
 	edges = edges.filter(d => !ids.includes(d.source.id) && !ids.includes(d.target.id));
 	
 	updateForces();
-	restart(0.1);
+	restart(0.3);
 };
 
 onSetEdges = (data) => {
@@ -614,7 +614,7 @@ onSetEdges = (data) => {
 	});
 
 	updateForces();
-	restart(0.1);
+	restart(0.3);
 };
 
 onSetSelected = ({ ids }) => {
@@ -626,7 +626,7 @@ getNodeByCoords = (x, y) => {
 };
 
 restart = (alpha) => {
-	simulation.alpha(alpha).restart();
+	simulation.alphaTarget(alpha).restart();
 };
 
 resize = (data) => {

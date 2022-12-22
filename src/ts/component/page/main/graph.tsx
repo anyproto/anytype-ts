@@ -12,7 +12,7 @@ interface Props extends I.PageComponent {
 	rootId: string;
 };
 
-const PageMainGraph = observer(class PageMainGraph extends React.Component<Props, {}> {
+const PageMainGraph = observer(class PageMainGraph extends React.Component<Props, object> {
 
 	data: any = {
 		nodes: [],

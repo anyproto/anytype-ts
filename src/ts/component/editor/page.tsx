@@ -19,7 +19,7 @@ interface Props extends I.PageComponent {
 const THROTTLE = 40;
 const BUTTON_OFFSET = 10;
 
-const EditorPage = observer(class EditorPage extends React.Component<Props, {}> {
+const EditorPage = observer(class EditorPage extends React.Component<Props, object> {
 	
 	_isMounted: boolean = false;
 	id: string = '';

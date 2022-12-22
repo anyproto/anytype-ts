@@ -8,7 +8,7 @@ import { menuStore } from 'Store';
 
 interface Props extends I.Popup, RouteComponentProps<any> {};
 
-const PopupPage = observer(class PopupPage extends React.Component<Props, {}> {
+const PopupPage = observer(class PopupPage extends React.Component<Props, object> {
 
 	_isMounted: boolean = false;
 	ref: any = null;

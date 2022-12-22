@@ -15,7 +15,7 @@ interface Props extends I.BlockComponent {};
 const PADDING = 46;
 const SNAP = 10;
 
-const BlockTable = observer(class BlockTable extends React.Component<Props, {}> {
+const BlockTable = observer(class BlockTable extends React.Component<Props, object> {
 
 	_isMounted: boolean = false;
 	offsetX: number = 0;

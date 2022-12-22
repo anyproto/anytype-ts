@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-class Tooltip extends React.Component<{}, {}> {
+class Tooltip extends React.Component<object, object> {
 
 	render () {
 		return (

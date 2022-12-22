@@ -13,7 +13,7 @@ interface Props extends I.ViewComponent {
 	className?: string;
 };
 
-const Controls = observer(class Controls extends React.Component<Props, {}> {
+const Controls = observer(class Controls extends React.Component<Props, object> {
 
 	_isMounted: boolean = false;
 

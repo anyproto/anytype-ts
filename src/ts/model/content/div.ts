@@ -6,15 +6,13 @@ class BlockContentDiv implements I.ContentDiv {
 	style: I.DivStyle = I.DivStyle.Line;
 	
 	constructor (props: I.ContentDiv) {
-		let self = this;
-		
-		self.style = Number(props.style) || I.DivStyle.Line;
+		this.style = Number(props.style) || I.DivStyle.Line;
 
-		makeObservable(self, {
+		makeObservable(this, {
 			style: observable,
 		});
 
-		intercept(self as any, (change: any) => { return Util.intercept(self, change); });
+		intercept(this as any, (change: any) => { return Util.intercept(this, change); });
 	};
 
 };

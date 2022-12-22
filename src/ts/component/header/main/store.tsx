@@ -6,7 +6,7 @@ import { observer } from 'mobx-react';
 
 interface Props extends I.HeaderComponent {};
 
-const HeaderMainStore = observer(class HeaderMainStore extends React.Component<Props, {}> {
+const HeaderMainStore = observer(class HeaderMainStore extends React.Component<Props, object> {
 
 	timeout: number = 0;
 

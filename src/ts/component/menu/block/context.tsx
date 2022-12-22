@@ -8,7 +8,7 @@ import Constant from 'json/constant.json';
 
 interface Props extends I.Menu {};
 
-const MenuBlockContext = observer(class MenuBlockContext extends React.Component<Props, {}> {
+const MenuBlockContext = observer(class MenuBlockContext extends React.Component<Props, object> {
 	
 	constructor (props: any) {
 		super(props);

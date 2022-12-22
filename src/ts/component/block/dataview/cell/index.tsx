@@ -22,7 +22,7 @@ interface Props extends I.Cell {
 	maxWidth?: number;
 };
 
-class Cell extends React.Component<Props, {}> {
+class Cell extends React.Component<Props, object> {
 
 	public static defaultProps = {
 		index: 0,

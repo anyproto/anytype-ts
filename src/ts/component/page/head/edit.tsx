@@ -10,7 +10,7 @@ interface Props extends I.BlockComponent {
 	setLayoutWidth?(v: number): void;
 };
 
-const PageHeadEdit = observer(class PageHeadEdit extends React.Component<Props, {}> {
+const PageHeadEdit = observer(class PageHeadEdit extends React.Component<Props, object> {
 	
 	refDrag: any = null;
 

@@ -241,7 +241,7 @@ Sentry.init({
 	]
 });
 
-class RoutePage extends React.Component<RouteComponentProps, {}> { 
+class RoutePage extends React.Component<RouteComponentProps, object> { 
 
 	constructor (props: any) {
 		super(props);

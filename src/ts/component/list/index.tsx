@@ -20,7 +20,7 @@ interface Props {
 	helperContainer?(): any;
 };
 
-const ListIndex = observer(class ListIndex extends React.Component<Props, {}> {
+const ListIndex = observer(class ListIndex extends React.Component<Props, object> {
 	
 	timeout: number = 0;
 

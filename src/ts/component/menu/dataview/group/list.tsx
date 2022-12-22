@@ -16,7 +16,7 @@ interface Props extends I.Menu {};
 const HEIGHT = 28;
 const LIMIT = 20;
 
-const MenuGroupList = observer(class MenuGroupList extends React.Component<Props, {}> {
+const MenuGroupList = observer(class MenuGroupList extends React.Component<Props, object> {
 	
 	n: number = 0;
 	top: number = 0;
@@ -26,7 +26,6 @@ const MenuGroupList = observer(class MenuGroupList extends React.Component<Props
 	constructor (props: any) {
 		super(props);
 		
-		this.onClick = this.onClick.bind(this);
 		this.onSortStart = this.onSortStart.bind(this);
 		this.onSortEnd = this.onSortEnd.bind(this);
 		this.onSwitch = this.onSwitch.bind(this);
@@ -67,7 +66,7 @@ const MenuGroupList = observer(class MenuGroupList extends React.Component<Props
 					style={item.style}
 				>
 					{allowedView ? <Handle /> : ''}
-					<span className="clickable" onClick={(e: any) => { this.onClick(e, item); }}>
+					<span className="clickable">
 						<Cell 
 							id={'menu-group-' + item.id} 
 							rootId={rootId}
@@ -224,9 +223,6 @@ const MenuGroupList = observer(class MenuGroupList extends React.Component<Props
 		};
 	};
 	
-	onClick (e: any, item: any) {
-	};
-
 	onSortStart () {
 		const { dataset } = this.props;
 		const { selection } = dataset;
@@ -272,7 +268,7 @@ const MenuGroupList = observer(class MenuGroupList extends React.Component<Props
 		C.BlockDataviewGroupOrderUpdate(rootId, blockId, { viewId: view.id, groups: update });
 	};
 
-	onScroll ({ clientHeight, scrollHeight, scrollTop }) {
+	onScroll ({ scrollTop }) {
 		if (scrollTop) {
 			this.top = scrollTop;
 		};

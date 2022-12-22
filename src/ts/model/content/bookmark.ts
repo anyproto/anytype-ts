@@ -8,19 +8,17 @@ class BlockContentBookmark implements I.ContentBookmark {
 	url: string = '';
 	
 	constructor (props: I.ContentBookmark) {
-		let self = this;
-		
-		self.targetObjectId = String(props.targetObjectId || '');
-		self.state = Number(props.state) || I.BookmarkState.Empty;
-		self.url = String(props.url || '');
+		this.targetObjectId = String(props.targetObjectId || '');
+		this.state = Number(props.state) || I.BookmarkState.Empty;
+		this.url = String(props.url || '');
 
-		makeObservable(self, {
+		makeObservable(this, {
 			targetObjectId: observable,
 			state: observable,
 			url: observable,
 		});
 
-		intercept(self as any, (change: any) => { return Util.intercept(self, change); });
+		intercept(this as any, (change: any) => { return Util.intercept(this, change); });
 	};
 
 };

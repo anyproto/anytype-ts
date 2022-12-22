@@ -144,7 +144,7 @@ const Theme = {
 };
 
 
-const IconObject = observer(class IconObject extends React.Component<Props, {}> {
+const IconObject = observer(class IconObject extends React.Component<Props, object> {
 
 	public static defaultProps = {
 		size: 20,
@@ -170,6 +170,7 @@ const IconObject = observer(class IconObject extends React.Component<Props, {}> 
 		const layout = Number(object.layout) || I.ObjectLayout.Page;
 		const { id, name, iconEmoji, iconImage, iconClass, done, relationFormat, isDeleted } = object || {};
 		const cn = [ 'iconObject', 'c' + size, DataUtil.layoutClass(object.id, layout) ];
+		const iconSize = this.iconSize();
 		
 		if (className) {
 			cn.push(className);
@@ -178,7 +179,6 @@ const IconObject = observer(class IconObject extends React.Component<Props, {}> 
 			cn.push('canEdit');
 		};
 
-		let iconSize = this.iconSize();
 		let icon = null;
 		let icn = [];
 

@@ -11,7 +11,7 @@ interface Props extends I.ViewComponent {
 	style?: any;
 };
 
-const Row = observer(class Row extends React.Component<Props, {}> {
+const Row = observer(class Row extends React.Component<Props, object> {
 
 	_isMounted: boolean = false;
 

@@ -209,7 +209,7 @@ export default {
         items: [
             {
                 name: 'Template',
-                description: 'Sample objects which have blocks, styles, and relations in-place. <br/><a href="https://doc.anytype.io/d/fundamentals/type/template">Learn more...</a>',
+                description: 'Sample objects which have blocks, styles, and relations in-place. <br/><a href="https://doc.anytype.io/d/fundamentals/type/template">Learn more...</a>',
                 param: {
                     common: {
                         container: true,
