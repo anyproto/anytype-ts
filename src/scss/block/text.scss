@@ -84,7 +84,7 @@
 	}
 
 	.block.blockText > .wrapContent > .selectable.isSelectionSelected::after { z-index: 0; }
-	.block.blockText > .wrapContent > .selectable > .dropTarget > .flex > .wrap { flex: auto; position: relative; padding: 0px; width: 100%; }	
+	.block.blockText > .wrapContent > .selectable > .dropTarget > .flex > .editableWrap { flex: auto; position: relative; padding: 0px; width: 100%; }	
 	.block.blockText > .wrapContent > .selectable > .dropTarget #value.isFocused { background: none; }
 
 	.block.blockText.isReadonly > .wrapContent > .selectable > .dropTarget .marker.check { cursor: default; }
@@ -127,12 +127,12 @@
 	.block.blockText.textQuote > .wrapContent > .additional > .line { 
 		width: 0px; height: 100%; position: absolute; left: 11px; top: 0px; border-left: 2px solid $colorOrange; 
 	}
-	.block.blockText.textQuote > .wrapContent > .selectable > .dropTarget > .flex > .wrap { padding-left: 28px; }
-	.block.blockText.textQuote > .wrapContent > .selectable > .dropTarget > .flex > .wrap > .placeholder { left: 28px; }
+	.block.blockText.textQuote > .wrapContent > .selectable > .dropTarget > .flex > .editableWrap { padding-left: 28px; }
+	.block.blockText.textQuote > .wrapContent > .selectable > .dropTarget > .flex > .editableWrap > .placeholder { left: 28px; }
 
-	.block.blockText.textQuote.align2 > .wrapContent > .selectable > .dropTarget > .flex > .wrap { padding-right: 28px; }
+	.block.blockText.textQuote.align2 > .wrapContent > .selectable > .dropTarget > .flex > .editableWrap { padding-right: 28px; }
 	.block.blockText.textQuote.align2 > .wrapContent > .additional > .line { left: auto; right: 11px; }
-	.block.blockText.textQuote.align2 > .wrapContent > .selectable > .dropTarget > .flex > .wrap > .placeholder { left: auto; right: 28px; }
+	.block.blockText.textQuote.align2 > .wrapContent > .selectable > .dropTarget > .flex > .editableWrap > .placeholder { left: auto; right: 28px; }
 	
 	.block.blockText.textCallout { min-width: 130px; }
 	.block.blockText.textCallout > .wrapContent { background: $colorVeryLightGrey; border-radius: 6px; margin: 6px 0px; }
