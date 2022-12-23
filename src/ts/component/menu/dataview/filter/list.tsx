@@ -216,7 +216,6 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<Pro
 			value: Relation.formatValue(first, null, false),
 		};
 
-		//view.filters.push(newItem);
 		C.BlockDataviewFilterAdd(rootId, blockId, view.id, newItem, () => {
 			getData(view.id, 0);
 		});
