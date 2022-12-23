@@ -539,8 +539,6 @@ class Dispatcher {
 							items.forEach((item: I.Filter, i: number) => {
 								view.filters.splice(idx + i, 0, item);
 							});
-
-							console.log('ADD', op);
 						};
 
 						if (filter.hasMove()) {
@@ -554,14 +552,17 @@ class Dispatcher {
 								const oidx = view.filters.findIndex(it => it.id == id);
 								view.filters = arrayMove(view.filters, oidx, idx + i);
 							});
-
-							console.log('MOVE', op);
 						};
 
 						if (filter.hasUpdate()) {
 							op = filter.getUpdate();
 
-							console.log('UPDATE', op);
+							if (op.hasItem()) {
+								const idx = view.filters.findIndex(it => it.id ==  op.getId());
+								if (idx >= 0) {
+									view.filters[idx] = Mapper.From.Filter(op.getItem());
+								};
+							};
 						};
 
 						if (filter.hasRemove()) {
@@ -572,8 +573,6 @@ class Dispatcher {
 							ids.forEach(id => {
 								view.filters = view.filters.filter(it => it.id != id);
 							});
-
-							console.log('REMOVE', op);
 						};
 					};
 
