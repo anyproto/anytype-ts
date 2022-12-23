@@ -117,7 +117,9 @@ class DbStore {
 			return;
 		};
 
-		item.relations = Dataview.viewGetRelations(rootId, blockId, item);
+		if (item.relations) {
+			item.relations = Dataview.viewGetRelations(rootId, blockId, item);
+		};
 		set(views[idx], item);
 	};
 

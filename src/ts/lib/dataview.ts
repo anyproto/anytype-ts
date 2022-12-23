@@ -22,7 +22,7 @@ class Dataview {
 			});
 		};
 
-		view.relations.forEach((it: any) => {
+		(view.relations || []).forEach((it: any) => {
 			order[it.relationKey] = o++;
 		});
 
@@ -41,7 +41,7 @@ class Dataview {
 		});
 
 		let ret = relations.map((relation: any) => {
-			const vr = view.relations.find(it => it.relationKey == relation.relationKey) || {};
+			const vr = (view.relations || []).find(it => it.relationKey == relation.relationKey) || {};
 			
 			if (relation.relationKey == 'name') {
 				vr.isVisible = true;
