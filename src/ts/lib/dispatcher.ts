@@ -546,11 +546,13 @@ class Dispatcher {
 
 							const afterId = op.getAfterid();
 							const ids = op.getIdsList() || [];
-							const idx = afterId ? view.filters.findIndex(it => it.id == afterId) : view.filters.length;
+							const idx = afterId ? view.filters.findIndex(it => it.id == afterId) : 0;
 
 							ids.forEach((id: string, i: number) => {
 								const oidx = view.filters.findIndex(it => it.id == id);
-								view.filters = arrayMove(view.filters, oidx, idx + i);
+								if (oidx >= 0) {
+									view.filters = arrayMove(view.filters, oidx, idx + i);
+								};
 							});
 						};
 

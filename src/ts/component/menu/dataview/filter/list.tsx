@@ -281,9 +281,9 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<Pro
 		const { rootId, blockId, getView, getData } = data;
 		const view = getView();
 		const { oldIndex, newIndex } = result;
-		const ids = arrayMove(view.filters as I.Filter[], oldIndex, newIndex).map(it => it.id);
-
-		C.BlockDataviewFilterSort(rootId, blockId, view.id, ids, () => { getData(view.id, 0); });
+		
+		view.filters = arrayMove(view.filters as I.Filter[], oldIndex, newIndex);
+		C.BlockDataviewFilterSort(rootId, blockId, view.id, view.filters.map(it => it.id), () => { getData(view.id, 0); });
 
 		selection.preventSelect(false);
 		analytics.event('RepositionFilter');
