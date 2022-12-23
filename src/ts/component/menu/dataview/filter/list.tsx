@@ -198,7 +198,7 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<Pro
 	onAdd (e: any) {
 		const { param, getId } = this.props;
 		const { data } = param;
-		const { getView } = data;
+		const { rootId, blockId, getView, getData } = data;
 		const view = getView();
 		const relationOptions = this.getRelationOptions();
 
@@ -217,7 +217,11 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<Pro
 			value: Relation.formatValue(first, null, false),
 		};
 
-		view.filters.push(newItem);
+		//view.filters.push(newItem);
+		C.BlockDataviewFilterAdd(rootId, blockId, view.id, newItem, () => {
+			getData(view.id, 0);
+		});
+
 		obj.animate({ scrollTop: obj.get(0).scrollHeight }, 50);
 
 		analytics.event('AddFilter', { condition: newItem.condition });
@@ -227,11 +231,12 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<Pro
 	onRemove (e: any, item: any) {
 		const { param } = this.props;
 		const { data } = param;
-		const { getView } = data;
+		const { rootId, blockId, getView, getData } = data;
 		const view = getView();
 
-		view.filters = view.filters.filter((it: any, i: number) => { return i != item.id; });
-		this.save();
+		C.BlockDataviewFilterRemove(rootId, blockId, view.id, [ item.id ], () => {
+			getData(view.id, 0);
+		});
 
 		menuStore.close('select');
 		analytics.event('RemoveFilter');
@@ -246,6 +251,8 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<Pro
 	onClick (e: any, item: any) {
 		const { param, getId } = this.props;
 		const { data } = param;
+		const { rootId, blockId, getData, getView } = data;
+		const view = getView();
 
 		menuStore.open('dataviewFilterValues', {
 			element: `#${getId()} #item-${item.id}`,
@@ -253,7 +260,11 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<Pro
 			noFlipY: true,
 			data: {
 				...data,
-				save: this.save,
+				save: () => {
+					C.BlockDataviewFilterUpdate(rootId, blockId, view.id, view.getFilter(item.id), () => {
+						getData(view.id, 0);
+					});
+				},
 				itemId: item.id,
 			}
 		});
@@ -287,6 +298,7 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<Pro
 		const { getView, getData, rootId, blockId, onSave } = data;
 		const view = getView();
 
+		/*
 		C.BlockDataviewViewUpdate(rootId, blockId, view.id, view, (message: any) => {
 			if (onSave) {
 				onSave(message);
@@ -295,6 +307,7 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<Pro
 
 			getData(view.id, 0);
 		});
+		*/
 	};
 
 	getItems () {

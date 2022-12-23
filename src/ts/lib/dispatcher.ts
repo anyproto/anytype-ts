@@ -180,7 +180,6 @@ class Dispatcher {
 		let subId: string = '';
 		let afterId: string = '';
 		let content: any = {};
-		let fields: any = {};
 
 		messages.sort((c1: any, c2: any) => { return this.sort(c1, c2); });
 
@@ -516,10 +515,54 @@ class Dispatcher {
 						break;
 					};
 
-					dbStore.viewUpdate(rootId, id, { 
-						id: data.getViewid(), 
-						...Mapper.From.ViewFields(data.getFields()),
-					});
+					viewId = data.getViewid();
+
+					let view = dbStore.getView(rootId, id, viewId);
+					let filters = data.getFilterList() || [];
+					let sorts = data.getSortList() || [];
+					let relations = data.getRelationList() || [];
+
+					if (data.hasFields()) {
+						view = Object.assign(view, Mapper.From.ViewFields(data.getFields()));
+					};
+
+					for (const filter of filters) {
+						let op = null;
+
+						if (filter.hasAdd()) {
+							op = filter.getAdd();
+
+							const afterId = op.getAfterid();
+							const items = (op.getItemsList() || []).map(Mapper.From.Filter);
+							const idx = afterId ? view.filters.findIndex(it => it.relationKey == afterId) : view.filters.length;
+
+							items.forEach((item: I.Filter, i: number) => {
+								view.filters.splice(idx + i, 0, item);
+							});
+
+							console.log('ADD', op);
+						};
+
+						if (filter.hasMove()) {
+							op = filter.getMove();
+
+							console.log('MOVE', op);
+						};
+
+						if (filter.hasUpdate()) {
+							op = filter.getUpdate();
+
+							console.log('UPDATE', op);
+						};
+
+						if (filter.hasRemove()) {
+							op = filter.getRemove();
+
+							console.log('REMOVE', op);
+						};
+					};
+
+					dbStore.viewUpdate(rootId, id, view);
 					break;
 
 				case 'blockDataviewViewDelete':

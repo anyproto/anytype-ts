@@ -790,6 +790,50 @@ const BlockDataviewViewSetPosition = (contextId: string, blockId: string, viewId
 	dispatcher.request(BlockDataviewViewSetPosition.name, request, callBack);
 };
 
+const BlockDataviewFilterAdd = (contextId: string, blockId: string, viewId: string, filter: I.Filter, callBack?: (message: any) => void) => {
+	const request = new Rpc.BlockDataview.Filter.Add.Request();
+
+	request.setContextid(contextId);
+	request.setBlockid(blockId);
+	request.setViewid(viewId);
+	request.setFilter(Mapper.To.Filter(filter));
+
+	dispatcher.request(BlockDataviewFilterAdd.name, request, callBack);
+};
+
+const BlockDataviewFilterRemove = (contextId: string, blockId: string, viewId: string, ids: string[], callBack?: (message: any) => void) => {
+	const request = new Rpc.BlockDataview.Filter.Remove.Request();
+
+	request.setContextid(contextId);
+	request.setBlockid(blockId);
+	request.setViewid(viewId);
+	request.setFilteridsList(ids);
+
+	dispatcher.request(BlockDataviewFilterRemove.name, request, callBack);
+};
+
+const BlockDataviewFilterUpdate = (contextId: string, blockId: string, viewId: string, filter: I.Filter, callBack?: (message: any) => void) => {
+	const request = new Rpc.BlockDataview.Filter.Update.Request();
+
+	request.setContextid(contextId);
+	request.setBlockid(blockId);
+	request.setViewid(viewId);
+	request.setFilter(Mapper.To.Filter(filter));
+
+	dispatcher.request(BlockDataviewFilterUpdate.name, request, callBack);
+};
+
+const BlockDataviewFilterSort = (contextId: string, blockId: string, viewId: string, ids: string[], callBack?: (message: any) => void) => {
+	const request = new Rpc.BlockDataview.Filter.Sort.Request();
+
+	request.setContextid(contextId);
+	request.setBlockid(blockId);
+	request.setViewid(viewId);
+	request.setFilteridsList(ids);
+
+	dispatcher.request(BlockDataviewFilterSort.name, request, callBack);
+};
+
 const BlockDataviewViewSetActive = (contextId: string, blockId: string, viewId: string, offset: number, limit: number, callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockDataview.View.SetActive.Request();
 	
@@ -1560,6 +1604,11 @@ export {
 	BlockDataviewViewDelete,
 	BlockDataviewViewSetActive,
 	BlockDataviewViewSetPosition,
+
+	BlockDataviewFilterAdd,
+	BlockDataviewFilterUpdate,
+	BlockDataviewFilterRemove,
+	BlockDataviewFilterSort,
 
 	BlockDataviewGroupOrderUpdate,
 	BlockDataviewObjectOrderUpdate,
