@@ -34,7 +34,7 @@
 	},
 	
 	"extension": {
-		"image": [ "jpg", "jpeg", "png", "gif", "svg", "webp" ],
+		"image": [ "jpg", "jpeg", "png", "gif", "svg", "webp", "heic" ],
 		"video": [ "mp4", "m4v", "mov" ],
 		"cover": [ "jpg", "jpeg", "png" ],
 		"audio": [ "mp3", "m4a", "flac", "ogg", "wav" ],
