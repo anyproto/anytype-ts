@@ -6,7 +6,7 @@ exports.default = async function(context){
     console.log('Build BeforeBuild', platform.name, arch);
 	let folder = "";
 	if (platform.name == 'mac') {
-		folder = arch == 'arm64' ? 'darwin-arm' : 'darwin-amd';
+		folder = arch === 'arm64' ? 'darwin-arm' : 'darwin-amd';
 	} else if (platform.name == 'linux') {
 		folder = arch == 'arm64' ? 'linux-arm' : 'linux-amd';
 	} else {
