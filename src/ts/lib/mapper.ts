@@ -304,7 +304,7 @@ const Mapper = {
 		},
 
 		View: (obj: any): I.View => {
-			return {
+			return Object.assign({
 				id: obj.getId(),
 				type: obj.getType(),
 				name: obj.getName(),
@@ -317,6 +317,19 @@ const Mapper = {
 				sorts: obj.getSortsList().map(Mapper.From.Sort),
 				filters: obj.getFiltersList().map(Mapper.From.Filter),
 				relations: obj.getRelationsList().map(Mapper.From.ViewRelation),
+			}, Mapper.From.ViewFields(obj));
+		},
+
+		ViewFields: (obj: any): any => {
+			return {
+				type: obj.getType(),
+				name: obj.getName(),
+				coverRelationKey: obj.getCoverrelationkey(),
+				coverFit: obj.getCoverfit(),
+				cardSize: obj.getCardsize(),
+				hideIcon: obj.getHideicon(),
+				groupRelationKey: obj.getGrouprelationkey(),
+				groupBackgroundColors: obj.getGroupbackgroundcolors(),
 			};
 		},
 

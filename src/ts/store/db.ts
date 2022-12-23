@@ -111,7 +111,7 @@ class DbStore {
 
     viewUpdate (rootId: string, blockId: string, item: any) {
 		const views = this.getViews(rootId, blockId);
-		const idx = views.findIndex((it: I.View) => { return it.id == item.id; });
+		const idx = views.findIndex(it => it.id == item.id);
 
 		if (idx < 0) {
 			return;

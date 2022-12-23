@@ -109,6 +109,7 @@ class Dispatcher {
 		if (v == V.BLOCKSETTABLEROW)			 t = 'blockSetTableRow';
 
 		if (v == V.BLOCKDATAVIEWVIEWSET)		 t = 'blockDataviewViewSet';
+		if (v == V.BLOCKDATAVIEWVIEWUPDATE)		 t = 'blockDataviewViewUpdate';
 		if (v == V.BLOCKDATAVIEWVIEWDELETE)		 t = 'blockDataviewViewDelete';
 		if (v == V.BLOCKDATAVIEWVIEWORDER)		 t = 'blockDataviewViewOrder';
 
@@ -179,6 +180,7 @@ class Dispatcher {
 		let subId: string = '';
 		let afterId: string = '';
 		let content: any = {};
+		let fields: any = {};
 
 		messages.sort((c1: any, c2: any) => { return this.sort(c1, c2); });
 
@@ -505,6 +507,19 @@ class Dispatcher {
 					};
 
 					dbStore.viewAdd(rootId, id, Mapper.From.View(data.getView()));
+					break;
+
+				case 'blockDataviewViewUpdate':
+					id = data.getId();
+					block = blockStore.getLeaf(rootId, id);
+					if (!block) {
+						break;
+					};
+
+					dbStore.viewUpdate(rootId, id, { 
+						id: data.getViewid(), 
+						...Mapper.From.ViewFields(data.getFields()),
+					});
 					break;
 
 				case 'blockDataviewViewDelete':
