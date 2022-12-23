@@ -812,15 +812,16 @@ const BlockDataviewFilterRemove = (contextId: string, blockId: string, viewId: s
 	dispatcher.request(BlockDataviewFilterRemove.name, request, callBack);
 };
 
-const BlockDataviewFilterUpdate = (contextId: string, blockId: string, viewId: string, filter: I.Filter, callBack?: (message: any) => void) => {
-	const request = new Rpc.BlockDataview.Filter.Update.Request();
+const BlockDataviewFilterReplace = (contextId: string, blockId: string, viewId: string, id: string, filter: I.Filter, callBack?: (message: any) => void) => {
+	const request = new Rpc.BlockDataview.Filter.Replace.Request();
 
 	request.setContextid(contextId);
 	request.setBlockid(blockId);
 	request.setViewid(viewId);
+	request.setFilterid(id);
 	request.setFilter(Mapper.To.Filter(filter));
 
-	dispatcher.request(BlockDataviewFilterUpdate.name, request, callBack);
+	dispatcher.request(BlockDataviewFilterReplace.name, request, callBack);
 };
 
 const BlockDataviewFilterSort = (contextId: string, blockId: string, viewId: string, ids: string[], callBack?: (message: any) => void) => {
@@ -1606,7 +1607,7 @@ export {
 	BlockDataviewViewSetPosition,
 
 	BlockDataviewFilterAdd,
-	BlockDataviewFilterUpdate,
+	BlockDataviewFilterReplace,
 	BlockDataviewFilterRemove,
 	BlockDataviewFilterSort,
 

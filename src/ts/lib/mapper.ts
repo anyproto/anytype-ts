@@ -286,6 +286,7 @@ const Mapper = {
 
 		Filter: (obj: any): I.Filter => {
 			return {
+				id: obj.getId(),
 				relationKey: obj.getRelationkey(),
 				operator: obj.getOperator(),
 				condition: obj.getCondition(),
@@ -660,6 +661,7 @@ const Mapper = {
 		Filter: (obj: any) => {
 			const item = new Model.Block.Content.Dataview.Filter();
 			
+			item.setId(obj.id);
 			item.setRelationkey(obj.relationKey);
 			item.setFormat(obj.format);
 			item.setOperator(obj.operator);

@@ -27,7 +27,6 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<Pro
 	constructor (props: any) {
 		super(props);
 		
-		this.save = this.save.bind(this);
 		this.onAdd = this.onAdd.bind(this);
 		this.onRemove = this.onRemove.bind(this);
 		this.onSortStart = this.onSortStart.bind(this);
@@ -223,9 +222,7 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<Pro
 		});
 
 		obj.animate({ scrollTop: obj.get(0).scrollHeight }, 50);
-
 		analytics.event('AddFilter', { condition: newItem.condition });
-		this.save();
 	};
 
 	onRemove (e: any, item: any) {
@@ -261,7 +258,7 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<Pro
 			data: {
 				...data,
 				save: () => {
-					C.BlockDataviewFilterUpdate(rootId, blockId, view.id, view.getFilter(item.id), () => {
+					C.BlockDataviewFilterReplace(rootId, blockId, view.id, item.id, view.getFilter(item.id), () => {
 						getData(view.id, 0);
 					});
 				},
@@ -281,33 +278,15 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<Pro
 		const { param, dataset } = this.props;
 		const { selection } = dataset;
 		const { data } = param;
-		const { getView } = data;
+		const { rootId, blockId, getView, getData } = data;
 		const view = getView();
 		const { oldIndex, newIndex } = result;
+		const ids = arrayMove(view.filters as I.Filter[], oldIndex, newIndex).map(it => it.id);
 
-		view.filters = arrayMove(view.filters, oldIndex, newIndex);
-		this.save();
+		C.BlockDataviewFilterSort(rootId, blockId, view.id, ids, () => { getData(view.id, 0); });
 
 		selection.preventSelect(false);
 		analytics.event('RepositionFilter');
-	};
-
-	save () {
-		const { param } = this.props;
-		const { data } = param;
-		const { getView, getData, rootId, blockId, onSave } = data;
-		const view = getView();
-
-		/*
-		C.BlockDataviewViewUpdate(rootId, blockId, view.id, view, (message: any) => {
-			if (onSave) {
-				onSave(message);
-			};
-			window.setTimeout(() => { this.forceUpdate(); }, 50);
-
-			getData(view.id, 0);
-		});
-		*/
 	};
 
 	getItems () {
@@ -320,11 +299,9 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<Pro
 			return [];
 		};
 
-		let n = 0;
 		return Util.objectCopy(view.filters || []).map((it: any) => {
 			return { 
 				...it, 
-				id: n++,
 				relation: dbStore.getRelationByKey(it.relationKey),
 			};
 		}).filter(it => it.relation);

@@ -377,7 +377,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 	};
 
-	getView (viewId?: string) {
+	getView (viewId?: string): I.View {
 		const { rootId, block } = this.props;
 		const views = dbStore.getViews(rootId, block.id);
 
