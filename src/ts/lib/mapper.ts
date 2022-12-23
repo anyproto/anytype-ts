@@ -306,14 +306,6 @@ const Mapper = {
 		View: (obj: any): I.View => {
 			return Object.assign({
 				id: obj.getId(),
-				type: obj.getType(),
-				name: obj.getName(),
-				coverRelationKey: obj.getCoverrelationkey(),
-				coverFit: obj.getCoverfit(),
-				cardSize: obj.getCardsize(),
-				hideIcon: obj.getHideicon(),
-				groupRelationKey: obj.getGrouprelationkey(),
-				groupBackgroundColors: obj.getGroupbackgroundcolors(),
 				sorts: obj.getSortsList().map(Mapper.From.Sort),
 				filters: obj.getFiltersList().map(Mapper.From.Filter),
 				relations: obj.getRelationsList().map(Mapper.From.ViewRelation),
