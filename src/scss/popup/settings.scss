@@ -12,7 +12,9 @@
 		.inputs { margin-bottom: 32px; }
 		.textareaWrap { color: $colorIce; }
 		.pin { text-align: center; }
+
 		.label.center { text-align: center; }
+		.label.grey { color: $colorDarkGrey; }
 		
 		.head { 
 			position: absolute; left: 0px; top: 0px; width: 100%; height: 40px; padding: 8px 12px; background: $colorWhite; z-index: 1;
@@ -281,7 +283,6 @@
 				li { margin: 0px 0px 12px 0px; }
 				.label { margin: 0px 0px 4px 0px; }
 				.label:last-child { margin: 0px; }
-				.label.grey { color: $colorDarkGrey; }
 			}
 		}
 
@@ -309,7 +310,6 @@
 				li { margin: 0px 0px 12px 0px; }
 				.label { margin: 0px 0px 4px 0px; }
 				.label:last-child { margin: 0px; }
-				.label.grey { color: $colorDarkGrey; }
 			}
 		}
 

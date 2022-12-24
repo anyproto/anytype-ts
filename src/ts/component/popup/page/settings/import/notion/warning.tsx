@@ -14,6 +14,12 @@ interface Props extends I.Popup, RouteComponentProps<any> {
 
 class PopupSettingsPageImportNotionWarning extends React.Component<Props> {
 
+	constructor (props: Props) {
+		super(props);
+
+		this.onImport = this.onImport.bind(this);
+	};
+
 	render () {
 		return (
 			<div>

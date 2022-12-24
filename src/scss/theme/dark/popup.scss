@@ -38,6 +38,7 @@
 
 		.sectionName { color: $colorSecondary; }
 		.select { color: $colorSecondary; }
+		.label.grey { color: $colorSecondary; }
 
         .tab .row { border-color: $colorLineSecondary; }
         
@@ -62,6 +63,30 @@
             .item.notion .icon { background-image: url('#{$themePath}/icon/popup/settings/import/notion.svg'); }
             .item.roam .icon { background-image: url('#{$themePath}/icon/popup/settings/import/roam.svg'); }
         }
+
+		.tabImportNotion {
+			.inputWrapper { 
+				.input { border-color: $colorLinePrimary; }
+			}
+
+			.line { background-color: $colorLinePrimary; }
+			.btn { color: $colorSecondary; }
+			.btn {
+				.icon.help { background-image: url('#{$themePath}/icon/popup/settings/help0.svg'); }
+			}
+			.btn:hover { color: $colorPrimary; }
+			.btn:hover {
+				.icon.help { background-image: url('#{$themePath}/icon/popup/settings/help1.svg'); }
+			}
+		}
+
+		.tabImportNotionHelp {
+			.icon.notion { background-image: url('#{$themePath}/icon/popup/settings/import/notion.svg'); }
+		}
+
+		.tabImportNotionWarning {
+			.listWrapper { border-color: $colorLineSecondary; }
+		}
     }
     
     /* PopupShortcuts */
