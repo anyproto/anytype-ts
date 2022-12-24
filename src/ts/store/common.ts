@@ -44,6 +44,7 @@ class CommonStore {
 	public redirect: string = '';
 	public languages: string[] = [];
 	public workspaceId: string = '';
+	public token: string = '';
 
     constructor() {
         makeObservable(this, {
@@ -282,6 +283,10 @@ class CommonStore {
 
 	redirectSet (v: string) {
 		this.redirect = v;
+	};
+
+	tokenSet (v: string) {
+		this.token = v;
 	};
 
 	getThemeClass () {

@@ -247,6 +247,10 @@
 			.button { margin: 25px 0px; }
 		}
 
+		.tabImportNotion, .tabImportNotionHelp, .tabImportNotionWarning {
+			.list { margin-left: 1em; }
+		}
+
 		.tabImportNotion {
 			.inputWrapper { flex-direction: row; align-items: center; gap: 0px 8px; margin: 32px 0px; }
 			.inputWrapper { 
@@ -272,7 +276,7 @@
 				}
 			}
 
-			.list { margin-left: 1em; @include text-small; }
+			.list { @include text-small; }
 			.list {
 				li { margin: 0px 0px 12px 0px; }
 				.label { margin: 0px 0px 4px 0px; }
@@ -293,6 +297,19 @@
 				li { margin: 0px 0px 48px 0px; }
 				li:last-child { margin: 0px; }
 				img { margin: 14px 0px 0px 0px; margin-left: -1em; width: 100%; display: block; }
+			}
+		}
+
+		.tabImportNotionWarning {
+			.title { text-align: left; }
+			.listWrapper { padding: 16px; border: 1px solid $colorVeryLightGrey; border-radius: 8px; margin: 32px 0px 24px 0px; }
+
+			.list { @include text-small; }
+			.list {
+				li { margin: 0px 0px 12px 0px; }
+				.label { margin: 0px 0px 4px 0px; }
+				.label:last-child { margin: 0px; }
+				.label.grey { color: $colorDarkGrey; }
 			}
 		}
 
