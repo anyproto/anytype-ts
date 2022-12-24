@@ -595,28 +595,9 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 	};
 
 	onSelectionDelete () {
-		const l = this.selected.length;
-		const ids = this.getSelectedObjectIds();
-
-		const cb = () => {
+		Action.delete(this.getSelectedObjectIds(), () => {
 			this.selected = [];
 			this.selectionRender();
-		};
-
-		analytics.event('ShowDeletionWarning');
-		popupStore.open('confirm', {
-			data: {
-				title: `Are you sure you want to delete ${l} ${Util.cntWord(l, 'object', 'objects')}?`,
-				text: 'These objects will be deleted irrevocably. You can’t undo this action.',
-				textConfirm: 'Delete',
-				onConfirm: () => { 
-					C.ObjectListDelete(ids); 
-					cb();
-
-					analytics.event('RemoveCompletely', { count: l });
-				},
-				onCancel: () => { cb(); }
-			},
 		});
 	};
 	

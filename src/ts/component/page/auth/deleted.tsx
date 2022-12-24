@@ -123,7 +123,7 @@ const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<P
 		popupStore.open('confirm', {
 			data: {
 				title: `Are you sure you want to delete your local account data?`,
-				text: 'These objects will be deleted irrevocably. You can’t undo this action.',
+				text: `These objects will be deleted irrevocably. You can't undo this action.`,
 				textConfirm: 'Delete',
 				onConfirm: () => { 
 					authStore.logout(true);

@@ -29,11 +29,11 @@ class PopupSettingsPageImportNotionWarning extends React.Component<Props> {
 						</li>
 						<li>
 							<Label text="Internal links can be missed" />
-							<Label className="grey" text="Links to documents that aren’t included in this export will be converted as a plain text." />
+							<Label className="grey" text="Links to documents that aren't included in this export will be converted as a plain text." />
 						</li>
 						<li>
 							<Label text="Databases will be converted into Simple Tables" />
-							<Label className="grey" text="Anytype doesn’t support Notion’s format of databases. So that, they will be appear as tables." />
+							<Label className="grey" text="Anytype doesn't support Notion's format of databases. So that, they will be appear as tables." />
 						</li>
 					</ol>
 				</div>
