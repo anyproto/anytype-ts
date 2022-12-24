@@ -42,7 +42,7 @@ class MenuManager {
 					Separator,
 
 					{ label: 'Check for updates', click: () => { Api.updateCheck(this.win); } },
-					{ label: 'Settings', click: () => { Util.send(this.win, 'popup', 'settings', {}); } },
+					{ label: 'Settings', click: () => { Util.send(this.win, 'popup', 'settings', { page: 'index' }); } },
 
 					Separator,
 

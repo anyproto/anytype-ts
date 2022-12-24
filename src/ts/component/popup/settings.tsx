@@ -21,6 +21,7 @@ import PagePinConfirm from './page/settings/pin/confirm';
 
 import PageImportIndex from './page/settings/import/index';
 import PageImportNotion from './page/settings/import/notion';
+import PageImportNotionHelp from './page/settings/import/notion/help';
 import PageImportMarkdown from './page/settings/import/markdown';
 
 import PageExportMarkdown from './page/settings/export/markdown';
@@ -48,6 +49,7 @@ const Components: any = {
 
 	importIndex:		 PageImportIndex,
 	importNotion:		 PageImportNotion,
+	importNotionHelp:	 PageImportNotionHelp,
 	importMarkdown:		 PageImportMarkdown,
 
 	exportMarkdown:		 PageExportMarkdown,

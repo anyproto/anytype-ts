@@ -19,6 +19,7 @@
 	"commonProgress": { "en": "Processing..." },
 	"commonArchived": { "en": "Object is in the bin" },
 	"commonEmpty": { "en": "Empty" },
+	"commonBack": { "en": "Back" },
 
 	"commonDeletedObject": { "en": "Non-existent object" },
 	"commonDeletedType": { "en": "Deleted type" },
@@ -100,7 +101,6 @@
 	"authLoginLabel": { "en": "Type your recovery phrase" },
 	"authLoginPhrase": { "en": "witch collapse practice feed shame open despair creek road again ice least" },
 	"authLoginLogin": { "en": "Continue" },
-	"authLoginBack": { "en": "Back" },
 
 	"authRegisterTitle": { "en": "Add name and profile picture" },
 	"authRegisterLabel": { "en": "New profile" },
@@ -115,7 +115,6 @@
 	"authSetupRegister": { "en": "Creating profile..." },
 	"authSetupSelect": { "en": "Selecting profile..." },
 	"authSetupShare": { "en": "Adding space" },
-	"authSetupBack": { "en": "Back" },
 
 	"authSuccessTitle": { "en": "Congratulations!" },
 	"authSuccessLabel": { "en": "You've created your first profile! It is stored on your device and nobody will know about it until you share it!" },

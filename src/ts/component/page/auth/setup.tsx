@@ -58,7 +58,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<Props
 				<Frame>
 					<Title text={title} />
 					<Error text={error} />
-					{error ? <Button text={translate('authSetupBack')} onClick={() => { Util.route('/'); }} /> : ''}
+					{error ? <Button text={translate('commonBack')} onClick={() => { Util.route('/'); }} /> : ''}
 				</Frame>
 			</div>
 		);
