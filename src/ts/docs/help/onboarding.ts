@@ -6,25 +6,15 @@ export default {
         items: [
             {
                 name: 'Welcome aboard!',
-                description: 'Here are some items to help you get started with Anytype. Use the ← → keys to navigate between these',
+                description: 'Here are some tips to help you get started with Anytype. Use your arrow keys to navigate from one to the next.',
                 param: {
                     element: '#title .side.left span',
                     offsetY: 10,
                 }
             },
             {
-                name: 'Tabs',
-                description: 'Contain your favourite objects, recently-used objects, your Sets, and objects you plan to delete',
-                param: {
-                    element: '#tabWrap .tabs',
-                    vertical: I.MenuDirection.Top,
-                    horizontal: I.MenuDirection.Center,
-                    offsetY: -20,
-                }
-            },
-            {
-                name: 'Settings',
-                description: 'See your recovery phrase, switch to dark mode, import/export, and much more...',
+                name: 'Make yourself at Home',
+                description: 'Choose your wallpaper, play with light or dark settings, and spellcheck language.',
                 param: {
                     element: '#header .icon.settings',
                     classNameWrap: 'fixed fromHeader',
@@ -32,44 +22,25 @@ export default {
                     offsetY: 14,
                 }
             },
-            {
-                name: 'Search',
-                description: 'Easily find objects by searching for their name, contents, or even their relations',
-                param: {
-                    element: '#header .side.center',
-                    classNameWrap: 'fromHeader',
-                    horizontal: I.MenuDirection.Center,
-                    offsetY: 16,
-                }
-            },
-            {
-                name: 'Library',
-                description: 'A place to discover and manage your Types, Templates and Relations',
-                param: {
-                    horizontal: I.MenuDirection.Center,
-                    offsetY: 18,
-                    element: '#button-store',
-                }
-            },
-            {
-                name: 'Create a new object',
-                description: 'Choose from Types including Notes and Tasks. Capture thoughts and ideas when inspiration hits',
-                param: {
-                    element: '#title #button-add',
-                    horizontal: I.MenuDirection.Center,
-                    offsetY: 18,
-                }
-            },
-            {
-                name: 'Want to learn more?',
-                description: 'Here you will find links to our docs, handy shortcuts, and an easy way to submit feedback',
+			{
+                name: 'Never miss an update',
+                description: 'Check this menu for the latest release notes and tooltips to help you on your Anytype journey.',
                 param: {
                     element: '#footer #button-help',
                     vertical: I.MenuDirection.Top,
                     horizontal: I.MenuDirection.Right,
                     offsetY: -14,
                 }
-            }
+            },
+            {
+                name: 'Create your first Object',
+                description: 'Hit the plus button or <span class="highlight">⌘ + N</span> to create a new Object. If you get stuck, check the Get Started and Advanced pages below.',
+                param: {
+                    element: '#title #button-add',
+                    horizontal: I.MenuDirection.Center,
+                    offsetY: 18,
+                }
+            },
         ]
     },
 
@@ -229,51 +200,47 @@ export default {
     editor: {
         category: 'Editor',
         items: [
-            {
-                name: 'This is an object',
-                description: `Write text, add media blocks, and manage your object's relations`,
+			{
+                name: 'Welcome to your first object',
+                description: 'Type <span class="highlight">/</span> to explore all of our different block types.',
                 param: {
-                    common: {
-                        container: true,
-                        containerVertical: I.MenuDirection.Center,
-                        classNameWrap: 'fixed',
-                        horizontal: I.MenuDirection.Center,
-                        vertical: I.MenuDirection.Center,
-                    },
-                    popup: {
-                        classNameWrap: 'fixed fromPopup',
-                    }
+                    element: '#block-featuredRelations #blockFeatured-type-0',
+                    offsetY: 10,
+                }
+            },
+			{
+                name: 'Connect your Objects',
+                description: `Use the <span class="highlight">@</span> key to reference other Objects as you're writing.`,
+                param: {
+                    element: '#block-featuredRelations #blockFeatured-type-0',
+                    offsetY: 10,
                 }
             },
             {
-                name: 'Navigation',
-                description: 'You can go Home and navigate back/forward in your "browsing" history. Here you will find navigation, graph and search',
+                name: 'Did you know?',
+                description: `You can drag &amp; drop files from your computer into the editor window to create new blocks. Give it a try!`,
                 param: {
-                    element: '#header .side.left',
+                    element: '#block-featuredRelations #blockFeatured-type-0',
+                    offsetY: 10,
+                }
+            },
+            {
+                name: 'See your Graph grow',
+                description: 'Click above to see how your new Objects are linked',
+                param: {
+                    element: '#header .side.left .icon.graph',
                     offsetY: 10,
                     classNameWrap: 'fixed fromHeader',
                 }
             },
-            {
-                name: 'Relations',
-                description: 'Here you‘ll see all the relations for this object. They are coming along with suggested relations based on the object Type and related Sets',
+			{
+                name: 'Like what you’re working on?',
+                description: 'Click above to see how your new Objects are linked',
                 param: {
-                    element: '.editorControlElements #button-relation',
+                    element: '#header #button-header-more',
                     offsetY: 10,
-                    onClose: () => { $('.editorControlElements').removeClass('active'); },
-                    data: {
-                        onShow: () => {
-                            $('.editorControlElements').addClass('active');
-                        }
-                    },
-                }
-            },
-            {
-                name: 'Featured relations',
-                description: 'You can change Type and show any other relations here. Click “Relations” above and click ☆ on the right',
-                param: {
-                    element: '#block-featuredRelations #blockFeatured-type-0',
-                    offsetY: 10,
+                    classNameWrap: 'fixed fromHeader',
+					horizontal: I.MenuDirection.Right,
                 }
             },
         ]

@@ -283,7 +283,9 @@
 
 	.menu.menuOnboarding { width: 288px; background: #373632; color: #fff; box-shadow: 0px 4px 16px rgb(0 0 0 / 20%); }
 	.menu.menuOnboarding {
-		a { color: #fff; }
+		a { color: $colorWhite; }
+		.highlight { background: $colorLineSecondary; color: $colorSecondary; }
+
         .icon.close:hover { background-image: url('#{$themePath}/icon/menu/onboarding/close1.svg'); }
 
         .bottom {
