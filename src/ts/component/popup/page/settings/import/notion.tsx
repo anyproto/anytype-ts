@@ -8,7 +8,7 @@ import Head from '../head';
 interface Props extends I.Popup, RouteComponentProps<any> {
 	prevPage: string;
 	onPage: (id: string) => void;
-	onImport: (type: I.ImportType, param: any) => void;
+	onImport: (type: I.ImportType, param: any, callBack?: (message: any) => void) => void;
 };
 
 class PopupSettingsPageImportNotion extends React.Component<Props, object> {
@@ -69,7 +69,11 @@ class PopupSettingsPageImportNotion extends React.Component<Props, object> {
 		const { close, onImport } = this.props;
 
 		close();
-		onImport(I.ImportType.Notion, { apiKey: this.ref.getValue() });
+		onImport(I.ImportType.Notion, { apiKey: this.ref.getValue() }, (message: any) => {
+			if (message.error.code) {
+				this.ref.setError(message.error.description);
+			};
+		});
 	};
 
 };

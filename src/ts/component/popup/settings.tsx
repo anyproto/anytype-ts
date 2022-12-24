@@ -179,8 +179,12 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 		analytics.event('settings', { params: { id } });
 	};
 
-	onImport (type: I.ImportType, param: any) {
+	onImport (type: I.ImportType, param: any, callBack?: (message: any) => void) {
 		C.ObjectImport(param, [], true, type, I.ImportMode.IgnoreErrors, (message: any) => {
+			if (callBack) {
+				callBack(message);
+			};
+
 			if (!message.error.code) {
 				analytics.event('Import', { middleTime: message.middleTime, type });
 			};
