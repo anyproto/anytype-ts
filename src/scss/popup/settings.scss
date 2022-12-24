@@ -3,6 +3,7 @@
 .popups {
 	.popupSettings {
 		.innerWrap { width: 672px; }
+		.innerWrap.scroll { overflow-x: hidden; overflow-y: overlay; }
 		.content { height: 100%; }
 
 		.icon { transition: none; }
@@ -11,6 +12,7 @@
 		.inputs { margin-bottom: 32px; }
 		.textareaWrap { color: $colorIce; }
 		.pin { text-align: center; }
+		.label.center { text-align: center; }
 		
 		.head { 
 			position: absolute; left: 0px; top: 0px; width: 100%; height: 40px; padding: 8px 12px; background: $colorWhite; z-index: 1;
@@ -236,12 +238,7 @@
 			}
 
 			.item.notion .icon {  background-image: url('~img/icon/popup/settings/import/notion.svg'); }
-			.item.evernote .icon { background-image: url('~img/icon/popup/settings/import/evernote.svg'); }
-			.item.roam .icon { background-image: url('~img/icon/popup/settings/import/roam.svg'); }
-			.item.word .icon { background-image: url('~img/icon/popup/settings/import/word.svg'); }
-			.item.text .icon { background-image: url('~img/icon/popup/settings/import/text.svg'); }
-			.item.html .icon { background-image: url('~img/icon/popup/settings/import/html.svg'); }
-			.item.csv .icon { background-image: url('~img/icon/popup/settings/import/csv.svg'); }
+			.item.markdown .icon { background-image: url('~img/icon/popup/settings/import/markdown.svg'); }
 		}
 
 		.tabImportNotion, .tabImportMarkdown {
@@ -250,8 +247,70 @@
 			.button { margin: 25px 0px; }
 		}
 
+		.tabImportNotion, .tabImportNotionHelp, .tabImportNotionWarning {
+			.list { margin-left: 1em; }
+		}
+
 		.tabImportNotion {
-			.input { border: 1px solid $colorBorderLight; border-radius: 6px; }
+			.inputWrapper { flex-direction: row; align-items: center; gap: 0px 8px; margin: 32px 0px; }
+			.inputWrapper { 
+				.input { height: 40px; border: 1px solid $colorBorderDark; border-radius: 6px; }
+				.button { margin: 0px; flex-shrink: 0; }
+			}
+			.line { height: 1px; background: $colorBorderLight; margin: 0px 0px 24px 0px; }
+
+			.helpWrapper { flex-direction: row; align-items: center; gap: 0px 8px; margin: 0px 0px 16px 0px; justify-content: space-between; }
+			.helpWrapper {
+				.title { @include text-paragraph; font-weight: 700; padding: 0px; }
+
+				.btn { 
+					display: flex; flex-direction: row; align-items: center; gap: 0px 6px; @include text-small; color: $colorDarkGrey; 
+					cursor: pointer; transition: $transitionFast;
+				}
+				.btn {
+					.icon.help { width: 14px; height: 14px; background-image: url('~img/icon/popup/settings/help0.svg'); transition: $transitionFast; }
+				}
+				.btn:hover { color: $colorBlack; }
+				.btn:hover {
+					.icon.help { background-image: url('~img/icon/popup/settings/help1.svg'); }
+				}
+			}
+
+			.list { @include text-small; }
+			.list {
+				li { margin: 0px 0px 12px 0px; }
+				.label { margin: 0px 0px 4px 0px; }
+				.label:last-child { margin: 0px; }
+				.label.grey { color: $colorDarkGrey; }
+			}
+		}
+
+		.tabImportNotionHelp { overflow-x: hidden; overflow-y: overlay; padding-top: 76px; }
+		.tabImportNotionHelp {
+			.icon.notion { width: 28px; height: 28px; background-image: url('~img/icon/popup/settings/import/notion.svg'); }
+			.title { text-align: left; }
+			.label.step { @include text-paragraph; font-weight: 700; margin: 0px 0px 16px 0px; }
+
+			.list { margin: 0px 0px 64px 1em; }
+			.list:last-child { margin-bottom: 0px; }
+			.list {
+				li { margin: 0px 0px 48px 0px; }
+				li:last-child { margin: 0px; }
+				img { margin: 14px 0px 0px 0px; margin-left: -1em; width: 100%; display: block; }
+			}
+		}
+
+		.tabImportNotionWarning {
+			.title { text-align: left; }
+			.listWrapper { padding: 16px; border: 1px solid $colorVeryLightGrey; border-radius: 8px; margin: 32px 0px 24px 0px; }
+
+			.list { @include text-small; }
+			.list {
+				li { margin: 0px 0px 12px 0px; }
+				.label { margin: 0px 0px 4px 0px; }
+				.label:last-child { margin: 0px; }
+				.label.grey { color: $colorDarkGrey; }
+			}
 		}
 
 		.tabExportMarkdown {

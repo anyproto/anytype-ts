@@ -231,7 +231,7 @@ export default {
         items: [
             {
                 name: 'This is an object',
-                description: 'Write text, add media blocks, and manage your object’s relations',
+                description: `Write text, add media blocks, and manage your object's relations`,
                 param: {
                     common: {
                         container: true,

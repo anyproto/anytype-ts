@@ -39,7 +39,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<Props
 				<Frame>
 					<div className="authBackWrap" onClick={this.onCancel}>
 						<Icon className="back" />
-						<div className="name">{translate('authLoginBack')}</div>
+						<div className="name">{translate('commonBack')}</div>
 					</div>
 					<Title text={translate('authLoginTitle')} />
 					<Error text={error} />

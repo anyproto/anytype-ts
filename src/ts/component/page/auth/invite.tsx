@@ -35,7 +35,7 @@ const PageAuthInvite = observer(class PageAuthInvite extends React.Component<I.P
 				<Frame>
 					<div className="authBackWrap" onClick={this.onCancel}>
 						<Icon className="back" />
-						<div className="name">{translate('authLoginBack')}</div>
+						<div className="name">{translate('commonBack')}</div>
 					</div>
 
 					<Title text={translate('authInviteTitle')} />

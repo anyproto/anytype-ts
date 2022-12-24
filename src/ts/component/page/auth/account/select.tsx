@@ -63,7 +63,7 @@ const PageAccountSelect = observer(class PageAccountSelect extends React.Compone
 								</div>
 							</div>
 
-							{error ? <Button text={translate('authSetupBack')} onClick={() => { Util.route('/'); }} /> : ''}
+							{error ? <Button text={translate('commonBack')} onClick={() => { Util.route('/'); }} /> : ''}
 						</React.Fragment>
 					)}
 				</Frame>

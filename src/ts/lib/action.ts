@@ -1,4 +1,4 @@
-import { I, C, focus, analytics, Renderer, Preview } from 'Lib';
+import { I, C, focus, analytics, Renderer, Preview, Util } from 'Lib';
 import { commonStore, authStore, blockStore, detailStore, dbStore, popupStore } from 'Store';
 
 import Constant from 'json/constant.json';
@@ -245,8 +245,26 @@ class Action {
 				},
 			},
 		});
+	};
 
-		
+	delete (ids: string[], callBack?: () => void): void {
+		const count = ids.length;
+
+		analytics.event('ShowDeletionWarning');
+
+		popupStore.open('confirm', {
+			data: {
+				title: `Are you sure you want to delete ${length} ${Util.cntWord(length, 'object', 'objects')}?`,
+				text: `These objects will be deleted irrevocably. You can't undo this action.`,
+				textConfirm: 'Delete',
+				onConfirm: () => { 
+					C.ObjectListDelete(ids); 
+					callBack();
+					analytics.event('RemoveCompletely', { count });
+				},
+				onCancel: () => { callBack(); }
+			},
+		});
 	};
 
 };
