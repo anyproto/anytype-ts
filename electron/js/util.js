@@ -106,12 +106,12 @@ class Util {
 		};
 	};
 
-	savePage (win, exportPath, name) {
-		name = String(name || 'untitled').replace(/[^\w -\._]/gi, '-').toLowerCase();
+	printHtml (win, exportPath, name, options) {
+		name = String(name || 'untitled').replace(/[^\w -_]/gi, '-').toLowerCase();
 
-		let fn = `${name}_files`;
-		let filesPath = path.join(exportPath, fn);
-		let exportName = path.join(exportPath, name + '.html');
+		const fn = `${name}_files`;
+		const filesPath = path.join(exportPath, fn);
+		const exportName = path.join(exportPath, name);
 
 		win.webContents.savePage(exportName, 'HTMLComplete').then(() => {
 			let content = fs.readFileSync(exportName, 'utf8');
@@ -172,13 +172,11 @@ class Util {
 		});
 	};
 
-	printPDF (win, exportPath, name, options) {
-		name = String(name || 'untitled').replace(/[^\w -\._]/gi, ' ').trim();
-
-		let pdfPath = path.join(exportPath, name + '.pdf');
+	printPdf (win, exportPath, name, options) {
+		name = String(name || 'untitled').replace(/[^\w -_]/gi, ' ').trim();
 
 		win.webContents.printToPDF(options).then(data => {
-			fs.writeFile(pdfPath, data, (error) => {
+			fs.writeFile(path.join(exportPath, name), data, (error) => {
 				if (error) throw error;
 
 				shell.openPath(exportPath).catch(err => {
