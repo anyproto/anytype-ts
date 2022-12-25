@@ -110,14 +110,14 @@ class Relation {
 		let ret: any[] = [];
 
 		switch (type) {
-			case I.RelationType.Date:
-				let defaultOptions: any[] = [
+			case I.RelationType.Date: {
+				const defaultOptions: I.Option[] = [
 					{ id: I.FilterQuickOption.NumberOfDaysAgo, name: 'Number of days ago' },
 					{ id: I.FilterQuickOption.NumberOfDaysNow, name: 'Number of days from now' },
 					{ id: I.FilterQuickOption.ExactDate, name: 'Exact date' },
 				];
 
-				let extendedOptions: any[] = [
+				const extendedOptions: I.Option[] = [
 					{ id: I.FilterQuickOption.Today,		 name: 'Today' },
 					{ id: I.FilterQuickOption.Tomorrow,		 name: 'Tomorrow' },
 					{ id: I.FilterQuickOption.Yesterday,	 name: 'Yesterday' },
@@ -130,7 +130,7 @@ class Relation {
 				];
 
 				switch (condition) {
-					case I.FilterCondition.Equal:
+					case I.FilterCondition.Equal: {
 						ret = ret.concat([
 							{ id: I.FilterQuickOption.Today, name: 'Today' },
 							{ id: I.FilterQuickOption.Tomorrow, name: 'Tomorrow' },
@@ -138,27 +138,32 @@ class Relation {
 						]);
 						ret = ret.concat(defaultOptions);
 						break;
+					};
 
 					case I.FilterCondition.Greater:
 					case I.FilterCondition.Less:
 					case I.FilterCondition.GreaterOrEqual:
-					case I.FilterCondition.LessOrEqual:
+					case I.FilterCondition.LessOrEqual: {
+						ret = ret.concat(extendedOptions).concat(defaultOptions);
+						break;
+					};
+
+					case I.FilterCondition.In: {
 						ret = ret.concat(extendedOptions);
+						break;
+					};
+
+					case I.FilterCondition.None: {
+						break;
+					};
+
+					default: {
 						ret = ret.concat(defaultOptions);
 						break;
-
-					case I.FilterCondition.In:
-						ret = ret.concat(extendedOptions);
-						break;
-
-					case I.FilterCondition.None:
-						break;
-
-					default: 
-						ret = ret.concat(defaultOptions);
-						break;
+					};
 				};
 				break;
+			};
 		};
 
 		return ret;
@@ -166,11 +171,12 @@ class Relation {
 
 	formatValue (relation: any, value: any, maxCount: boolean) {
 		switch (relation.format) {
-			default:
+			default: {
 				value = String(value || '');
 				break;
+			};
 
-			case I.RelationType.Number:
+			case I.RelationType.Number: {
 				value = String(value || '').replace(/,\s?/g, '.').replace(/[^\d\.e+-]*/gi, '');
 				if ((value === '') || (value === undefined)) {
 					value = null;
@@ -182,7 +188,9 @@ class Relation {
 					value = null;
 				};
 				break;
-			case I.RelationType.Date:
+			};
+
+			case I.RelationType.Date: {
 				if ((value === '') || (value === undefined)) {
 					value = null;
 				};
@@ -190,16 +198,18 @@ class Relation {
 					value = parseFloat(String(value || '0'));
 				};
 				break;
+			};
 
-			case I.RelationType.Checkbox:
+			case I.RelationType.Checkbox: {
 				value = Boolean(value);
 				break;
+			};
 
 			case I.RelationType.Status:
 			case I.RelationType.File:
 			case I.RelationType.Tag:
 			case I.RelationType.Object:
-			case I.RelationType.Relations:
+			case I.RelationType.Relations: {
 				if ('object' !== typeof(value)) {
 					value = value ? [ value ] : [];
 				};
@@ -213,6 +223,7 @@ class Relation {
 					value = value.slice(value.length - relation.maxCount, value.length);
 				};
 				break;
+			};
 		};
 		return value;
 	};
@@ -222,33 +233,38 @@ class Relation {
 
 		let ret = false;
 		switch (relation.format) {
-			default:
+			default: {
 				ret = value ? true : false;
 				break;
+			};
 
 			case I.RelationType.Status:
 			case I.RelationType.File:
 			case I.RelationType.Tag:
 			case I.RelationType.Object:
-			case I.RelationType.Relations:
+			case I.RelationType.Relations: {
 				ret = value.length ? true : false;
 				break;
+			};
 		};
 		return ret;
 	};
 
 	mapValue (relation: any, value: any) {
 		switch (relation.relationKey) {
-			case 'sizeInBytes':
+			case 'sizeInBytes': {
 				return FileUtil.size(value);
+			};
 
 			case 'widthInPixels':
-			case 'heightInPixels':
+			case 'heightInPixels': {
 				return Util.formatNumber(value) + 'px';
+			};
 
-			case 'layout':
+			case 'layout': {
 				value = Number(value) || I.ObjectLayout.Page;
 				return I.ObjectLayout[value];
+			};
 		};
 		return null;
 	};
