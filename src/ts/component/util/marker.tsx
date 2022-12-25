@@ -29,7 +29,7 @@ const Icons = {
 	toggle:		 require('img/icon/marker/toggle.svg').default,
 };
 
-for (let c of Constant.textColor) {
+for (const c of Constant.textColor) {
 	Icons.bullets[c] = require(`img/icon/bullet/${c}.svg`).default;
 };
 
@@ -51,9 +51,9 @@ const Marker = observer(class Marker extends React.Component<Props, object> {
 	render () {
 		const { id, type, color, className, active, onClick } = this.props;
 		const { theme } = commonStore;
-		
-		let cn = [ 'marker' ];
-		let ci = [ 'markerInner', 'c' + type ];
+		const cn = [ 'marker' ];
+		const ci = [ 'markerInner', 'c' + type ];
+
 		let inner: any = null;
 		
 		if (className) {

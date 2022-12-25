@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Button, IconObject, ObjectName } from 'Component';
 import { commonStore } from 'Store';
-import { I, C, Util, DataUtil, ObjectUtil, Preview, analytics, translate, keyboard } from 'Lib';
+import { I, C, Util, ObjectUtil, Preview, analytics, translate, keyboard } from 'Lib';
 
 interface State {
 	object: any;
