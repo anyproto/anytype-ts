@@ -81,19 +81,16 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 
 		let Item = null;
 		let title = '';
-		let description = '';
 		let placeholder = '';
 
 		switch (this.tab) {
 			case Tab.Type:
-				title = 'Types Library';
-				description = 'Types are like categories that help you group and manage your Objects.<br/>Create your own or add some from our Marketplace.';
+				title = 'Types are like categories that help you group and manage your objects.';
 				placeholder = 'Search or create a new type...';
 				break;
 
 			case Tab.Relation:
-				title = 'Relations library';
-				description = 'Use Relations to define connections and properties of Objects. Create your own or add some from our Marketplace.';
+				title = 'All objects are connected.<br />Use relations to build connections between objects.';
 				placeholder = 'Search or create a new relation...';
 				break;
 		};
@@ -101,7 +98,6 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 		const Mid = () => (
 			<div className="mid">
 				<Title text={title} />
-				<Label text={description} />
 				<Filter 
 					ref={(ref: any) => { this.refFilter = ref; }}
 					id="store-filter"
@@ -179,22 +175,16 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 					
 					return (
 						<div className={cn.join(' ')} onClick={(e: any) => { this.onClick(e, item); }}>
-							<IconObject size={48} iconSize={28} object={item} />
-							<div className="info">
-								<div className="txt">
-									<div className="name">{name}</div>
-									<div className="descr">{description}</div>
-								</div>
-
-								<div className="buttons">
-									<Icon 
-										className={allowedDelete ? 'remove' : 'lock'} 
-										tooltip={allowedDelete ? 'Delete relation' : 'Service relation'} 
-										onClick={(e: any) => { this.onRemove(e, item); }} 
-									/>
-								</div>
-
-								<div className="line" />
+							<div className="flex">
+								<IconObject iconSize={20} object={item} />
+								<div className="name">{name}</div>
+							</div>
+							<div className="buttons">
+								<Icon 
+									className={allowedDelete ? 'remove' : 'lock'} 
+									tooltip={allowedDelete ? 'Delete relation' : 'Service relation'} 
+									onClick={(e: any) => { this.onRemove(e, item); }} 
+								/>
 							</div>
 						</div>
 					);

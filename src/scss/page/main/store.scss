@@ -7,7 +7,7 @@
 
 	.body { width: 100%; height: 100%; display: flex; flex-direction: column; }
 	.body {
-		.mid { text-align: center; padding: 44px 0px 56px 0px; margin: 0px auto; }
+		.mid { text-align: center; padding: 44px 0px 56px 0px; margin: 0px auto; width: 640px; }
 		.mid {
 			.title { margin-bottom: 8px; }
 			.label { @include text-paragraph; margin: 0px auto 24px auto; width: 610px; }
@@ -31,53 +31,34 @@
 		}
 
 		.loaderWrapper { position: relative !important; }
-		.ReactVirtualized__List { padding: 48px 104px; }
+		.ReactVirtualized__List { padding: 48px 80px; }
 
 		.items { height: 100%; }
 		.items {
-			.row { display: grid; }
+			.row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-column-gap: 16px; }
 			.row.block { display: block; }
 
-			.item { display: flex; position: relative; cursor: pointer; }
+			.item { display: flex; position: relative; cursor: pointer; justify-content: space-between; }
 			.item {
-				.iconObject.isType, .iconObject.isRelation { position: absolute; left: 0px; top: 0px; }
-
-				.info { height: 100%; width: 100%; position: relative; display: flex; align-items: center; gap: 0px 6px; }
-				.info {
-					.txt { width: 100%; vertical-align: middle; flex-grow: 1;  }
-					.name { @include text-overflow-nw; line-height: 22px; width: 100%; }
-					.descr { width: 100%; @include text-small; color: $colorDarkGrey; @include text-overflow-nw; margin: 2px 0px; }
-					.descr:empty { display: none; }
-					
-					.author { 
-						@include text-overflow-nw; width: 100%; @include text-small; color: $colorDarkGrey; line-height: 16px;
-						display: flex; gap: 0px 4px;
-					}
-			
-					.line { width: 100%; height: 1px; background: $colorBorderLight; position: absolute; left: 0px; }
-
-					.buttons { flex-shrink: 0; display: none; }
-					.buttons {
-						.icon { width: 28px !important; height: 28px !important; background-size: 20px; border-radius: 4px; transition: background-color 0.2s ease-in-out; }
-						.icon.remove { background-image: url('~img/icon/menu/action/remove0.svg'); }
-						.icon.lock { background-image: url('~img/icon/menu/action/pageLock0.svg'); }
-						.icon:hover { background-color: $colorHover; }
-					}
+				.flex { 
+					flex-direction: row; align-items: center; padding: 13px; border: 1px solid $colorBorderDark; border-radius: 10px; font-weight: 600;
+					gap: 0px 8px;
 				}
-			}
 
-			.item.template { margin: 0px 24px 28px 0px; width: 304px; height: 252px; }
-			.item.type:last-child { margin-right: 0px; }
-			.item.template {
-				.img { width: 100%; height: 180px; border-radius: 8px; margin-bottom: 12px; background-color: $colorBlack; }
-				.cover { width: 100%; height: 100%; position: relative; border-radius: inherit; }
+				.name { @include text-overflow-nw; width: 100%; }
+
+				.buttons { flex-shrink: 0; }
+				.buttons {
+					.icon { width: 28px !important; height: 28px !important; background-size: 20px; border-radius: 4px; transition: background-color 0.2s ease-in-out; }
+					.icon.remove { background-image: url('~img/icon/menu/action/remove0.svg'); }
+					.icon.lock { background-image: url('~img/icon/menu/action/pageLock0.svg'); }
+					.icon:hover { background-color: $colorHover; }
+				}
 			}
 		}
 	}
 
 	.wrapper.type {
-		.row { grid-template-columns: repeat(2, calc(50% - 16px)); grid-column-gap: 32px; }
-
 		.item { height: 64px; padding-left: 80px; line-height: 64px; }
 		.item {
 			.line { bottom: -16px; }
@@ -88,15 +69,8 @@
 	}
 
 	.wrapper.relation {
-		.row {  grid-template-columns: repeat(3, calc(33% - 10px)); grid-column-gap: 16px; }
-
-		.item { padding-left: 60px; height: 48px; line-height: 48px; }
-		.item {
-			.line { bottom: -8px; }
-			.descr { display: none; }
-		}
+		.item { height: 48px; line-height: 48px; }
 		.item:hover {
-			.info .txt { width: calc(100% - 32px); }
 		}
 	}
 
