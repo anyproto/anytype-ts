@@ -890,7 +890,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<I.Pag
 
 		switch (tab) {
 			case I.TabIndex.Favorite:
-			case I.TabIndex.Recent:
+			case I.TabIndex.Recent: {
 				const rootId = isRecent ? recent : root;
 				const childrenIds = blockStore.getChildrenIds(rootId, rootId);
 				const length = childrenIds.length;
@@ -922,12 +922,13 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<I.Pag
 					};
 					return true;
 				});
-
 				break;
+			};
 
-			default:
+			default: {
 				list = records.map(id => detailStore.get(Constant.subId.index, id));
 				break;
+			};
 		};
 
 		return list;

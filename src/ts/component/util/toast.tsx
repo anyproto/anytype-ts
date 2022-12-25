@@ -48,11 +48,12 @@ const Toast = observer(class Toast extends React.Component<object, State> {
 		);
 
         switch (action) {
-			default:
+			default: {
 				textAction = text;
 				break;
+			};
 
-            case I.ToastAction.Lock:
+            case I.ToastAction.Lock: {
                 if (!object) {
                     break;
                 };
@@ -60,8 +61,9 @@ const Toast = observer(class Toast extends React.Component<object, State> {
                 textObject = <Element {...object} />;
                 textAction = value ? 'is locked' : 'is unlocked';
                 break;
+			};
 
-            case I.ToastAction.Move:
+            case I.ToastAction.Move: {
                 if (!target) {
 					break;
 				};
@@ -82,8 +84,9 @@ const Toast = observer(class Toast extends React.Component<object, State> {
 					{ action: 'undo', label: 'Undo' }
 				]);
                 break;
+			};
 
-            case I.ToastAction.Link:
+            case I.ToastAction.Link: {
                 if (!object || !target) {
 					break;
 				};
@@ -98,6 +101,7 @@ const Toast = observer(class Toast extends React.Component<object, State> {
                     ]);
                 };
                 break;
+			};
         };
 
         return (

@@ -144,7 +144,7 @@ const Theme = {
 };
 
 
-const IconObject = observer(class IconObject extends React.Component<Props, object> {
+const IconObject = observer(class IconObject extends React.Component<Props> {
 
 	public static defaultProps = {
 		size: 20,
@@ -154,7 +154,7 @@ const IconObject = observer(class IconObject extends React.Component<Props, obje
 		color: 'grey',
 	};
 
-	constructor (props: any) {
+	constructor (props: Props) {
 		super(props);
 
 		this.onClick = this.onClick.bind(this);
@@ -184,7 +184,7 @@ const IconObject = observer(class IconObject extends React.Component<Props, obje
 
 		switch (layout) {
 			default:
-			case I.ObjectLayout.Page:
+			case I.ObjectLayout.Page: {
 				if (iconImage) {
 					cn.push('withImage');
 				};
@@ -198,8 +198,9 @@ const IconObject = observer(class IconObject extends React.Component<Props, obje
 					icon = <img src={this.commonSvg()} className={icn.join(' ')} />;
 				};
 				break;
+			};
 
-			case I.ObjectLayout.Human:
+			case I.ObjectLayout.Human: {
 				if (iconImage) {
 					cn.push('withImage');
 				};
@@ -207,16 +208,19 @@ const IconObject = observer(class IconObject extends React.Component<Props, obje
 				icn = icn.concat([ 'iconImage', 'c' + iconSize ]);
 				icon = <img src={(iconImage ? commonStore.imageUrl(iconImage, iconSize * 2) : this.userSvg())} className={icn.join(' ')} />;
 				break;
+			};
 
-			case I.ObjectLayout.Task:
+			case I.ObjectLayout.Task: {
 				icn = icn.concat([ 'iconCheckbox', 'c' + iconSize ]);
 				icon = <img src={done ? CheckboxTask1 : CheckboxTask0} className={icn.join(' ')} />;
 				break;
+			};
 
-			case I.ObjectLayout.Note:
+			case I.ObjectLayout.Note: {
 				break;
+			};
 
-			case I.ObjectLayout.Type:
+			case I.ObjectLayout.Type: {
 				if (iconEmoji) {
 					icon = <IconEmoji {...this.props} className={icn.join(' ')} iconClass={iconClass} size={iconSize} icon={iconEmoji} hash={iconImage} />;
 				} else {
@@ -225,8 +229,9 @@ const IconObject = observer(class IconObject extends React.Component<Props, obje
 					icon = <img src={this.commonSvg()} className={icn.join(' ')} />;
 				};
 				break;
+			};
 
-			case I.ObjectLayout.Set:
+			case I.ObjectLayout.Set: {
 				if (iconImage) {
 					cn.push('withImage');
 				};
@@ -240,16 +245,18 @@ const IconObject = observer(class IconObject extends React.Component<Props, obje
 					icon = <img src={this.commonSvg()} className={icn.join(' ')} />;
 				};
 				break;
+			};
 
-			case I.ObjectLayout.Relation:
+			case I.ObjectLayout.Relation: {
 				const key = iconSize < 28 ? 'small' : 'big';
 				if (Relation[key][relationFormat]) {
 					icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
 					icon = <img src={Relation[key][relationFormat]} className={icn.join(' ')} />;
 				};
 				break;
+			};
 
-			case I.ObjectLayout.Image:
+			case I.ObjectLayout.Image: {
 				if (id) {
 					cn.push('withImage');
 					icn = icn.concat([ 'iconImage', 'c' + iconSize ]);
@@ -259,16 +266,19 @@ const IconObject = observer(class IconObject extends React.Component<Props, obje
 					icon = <img src={File[FileUtil.icon(object)]} className={icn.join(' ')} />;
 				};
 				break;
+			};
 
-			case I.ObjectLayout.File:
+			case I.ObjectLayout.File: {
 				icn = icn.concat([ 'iconFile', 'c' + iconSize ]);
 				icon = <img src={File[FileUtil.icon(object)]} className={icn.join(' ')} />;
 				break;
+			};
 
-			case I.ObjectLayout.Dashboard:
+			case I.ObjectLayout.Dashboard: {
 				icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
 				icon = <img src={Home} className={icn.join(' ')} />;
 				break;
+			};
 		};
 
 		if (isDeleted) {
