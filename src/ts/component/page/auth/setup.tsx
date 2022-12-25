@@ -8,14 +8,12 @@ import { observer } from 'mobx-react';
 import Constant from 'json/constant.json';
 import Errors from 'json/error.json';
 
-interface Props extends I.PageComponent {};
-
 interface State {
 	index: number;
 	error: string;
 };
 
-const PageAuthSetup = observer(class PageAuthSetup extends React.Component<Props, State> {
+const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.PageComponent, State> {
 
 	i: number = 0;
 	t: number = 0;

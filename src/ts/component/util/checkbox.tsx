@@ -23,7 +23,7 @@ class Checkbox extends React.Component<Props, State> {
 		value: false,
 	};
 	
-	constructor (props: any) {
+	constructor (props: Props) {
         super(props);
 
 		this.onChange = this.onChange.bind(this);
@@ -32,8 +32,8 @@ class Checkbox extends React.Component<Props, State> {
 	render () {
 		const { value } = this.state;
 		const { id, className, readonly } = this.props;
+		const cn = [ 'icon', 'checkbox' ];
 
-		let cn = [ 'icon', 'checkbox' ];
 		if (className) {
 			cn.push(className);
 		};

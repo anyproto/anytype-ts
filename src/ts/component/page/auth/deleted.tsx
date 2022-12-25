@@ -7,21 +7,19 @@ import { PieChart } from 'react-minimal-pie-chart';
 
 import Constant from 'json/constant.json';
 
-interface Props extends I.PageComponent {};
-
 interface State {
 	error: string;
 };
 
 const DAYS = 30;
 
-const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<Props, State> {
+const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<I.PageComponent, State> {
 
 	state = {
 		error: ''
 	};
 
-	constructor (props: any) {
+	constructor (props: I.PageComponent) {
         super(props);
 
 		this.onReset = this.onReset.bind(this);

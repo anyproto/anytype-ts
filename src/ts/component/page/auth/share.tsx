@@ -1,14 +1,7 @@
 import * as React from 'react';
 import { I, Util } from 'Lib';
-import { observer } from 'mobx-react';
 
-interface Props extends I.PageComponent {};
-
-const PageAuthShare = observer(class PageAuthShare extends React.Component<Props, object> {
-
-	constructor (props: any) {
-		super(props);
-	};
+class PageAuthShare extends React.Component<I.PageComponent> {
 
 	render () {
 		return (
@@ -21,6 +14,6 @@ const PageAuthShare = observer(class PageAuthShare extends React.Component<Props
 		Util.route('/auth/setup/share' + location.search);
 	};
 
-});
+};
 
 export default PageAuthShare;

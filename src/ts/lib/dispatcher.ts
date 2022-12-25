@@ -195,48 +195,52 @@ class Dispatcher {
 			
 			switch (type) {
 
-				case 'accountShow':
+				case 'accountShow': {
 					authStore.accountAdd(Mapper.From.Account(data.getAccount()));
 					break;
+				};
 
-				case 'accountDetails':
-					break;
-
-				case 'accountUpdate':
+				case 'accountUpdate': {
 					authStore.accountSet({ status: Mapper.From.AccountStatus(data.getStatus()) });
 					commonStore.configSet(Mapper.From.AccountConfig(data.getConfig()), true);
 
 					Renderer.send('setConfig', Util.objectCopy(commonStore.config));
-					break;
+					break;	
+				};
 
-				case 'accountConfigUpdate':
+				case 'accountConfigUpdate': {
 					commonStore.configSet(Mapper.From.AccountConfig(data.getConfig()), true);
 					break;
+				};
 
-				case 'threadStatus':
+				case 'threadStatus': {
 					authStore.threadSet(rootId, {
 						summary: Mapper.From.ThreadSummary(data.getSummary()),
 						cafe: Mapper.From.ThreadCafe(data.getCafe()),
 						accounts: (data.getAccountsList() || []).map(Mapper.From.ThreadAccount),
 					});
 					break;
+				};
 
-				case 'objectRemove':
+				case 'objectRemove': {
 					ids = data.getIdsList();
 					crumbs.removeItems(I.CrumbsType.Recent, ids);
 					break;
+				};
 
-				case 'objectRelationsAmend':
+				case 'objectRelationsAmend': {
 					id = data.getId();
 					dbStore.relationsSet(rootId, id, (data.getRelationlinksList() || []).map(Mapper.From.RelationLink));
 					break;
+				};
 
-				case 'objectRelationsRemove':
+				case 'objectRelationsRemove': {
 					id = data.getId();
 					dbStore.relationListDelete(rootId, id, data.getRelationkeysList() || []);
 					break;
+				};
 
-				case 'blockAdd':
+				case 'blockAdd': {
 					blocks = data.getBlocksList() || [];
 					for (let block of blocks) {
 						block = Mapper.From.Block(block);
@@ -250,10 +254,12 @@ class Dispatcher {
 						blockStore.updateStructure(rootId, block.id, block.childrenIds);
 					};
 					break;
+				};
 
-				case 'blockDelete':
-					let blockIds = data.getBlockidsList() || [];
-					for (let blockId of blockIds) {
+				case 'blockDelete': {
+					const blockIds = data.getBlockidsList() || [];
+					
+					for (const blockId of blockIds) {
 						const block = blockStore.getLeaf(rootId, blockId);
 						if (!block) {
 							continue;
@@ -266,8 +272,9 @@ class Dispatcher {
 						blockStore.delete(rootId, blockId);
 					};
 					break;
+				};
 
-				case 'blockSetChildrenIds':
+				case 'blockSetChildrenIds': {
 					id = data.getId();
 
 					blockStore.updateStructure(rootId, id, data.getChildrenidsList());
@@ -276,8 +283,9 @@ class Dispatcher {
 						blockStore.checkTypeSelect(rootId);
 					};
 					break;
+				};
 
-				case 'blockSetFields':
+				case 'blockSetFields': {
 					id = data.getId();
 					block = blockStore.getLeaf(rootId, id);
 					if (!block) {
@@ -287,8 +295,9 @@ class Dispatcher {
 					block.fields = data.hasFields() ? Decode.decodeStruct(data.getFields()) : {};
 					blockStore.update(rootId, block);
 					break;
+				};
 
-				case 'blockSetLink':
+				case 'blockSetLink': {
 					id = data.getId();
 					block = blockStore.getLeaf(rootId, id);
 					if (!block) {
@@ -317,8 +326,9 @@ class Dispatcher {
 
 					blockStore.update(rootId, block);
 					break;
+				};
 
-				case 'blockSetText':
+				case 'blockSetText': {
 					id = data.getId();
 					content = {};
 
@@ -352,8 +362,9 @@ class Dispatcher {
 
 					blockStore.updateContent(rootId, id, content);
 					break;
+				};
 
-				case 'blockSetDiv':
+				case 'blockSetDiv': {
 					id = data.getId();
 					block = blockStore.getLeaf(rootId, id);
 					if (!block) {
@@ -366,8 +377,9 @@ class Dispatcher {
 
 					blockStore.update(rootId, block);
 					break;
+				};
 
-				case 'blockSetFile':
+				case 'blockSetFile': {
 					id = data.getId();
 					block = blockStore.getLeaf(rootId, id);
 					if (!block) {
@@ -404,8 +416,9 @@ class Dispatcher {
 
 					blockStore.update(rootId, block);
 					break;
+				};
 
-				case 'blockSetBookmark':
+				case 'blockSetBookmark': {
 					id = data.getId();
 					block = blockStore.getLeaf(rootId, id);
 					if (!block) {
@@ -419,43 +432,43 @@ class Dispatcher {
 					if (data.hasState()) {
 						block.content.state = data.getState().getValue();
 					};
-
 					break;
+				};
 
-				case 'blockSetBackgroundColor':
+				case 'blockSetBackgroundColor': {
 					id = data.getId();
 					block = blockStore.getLeaf(rootId, id);
 					if (!block) {
 						break;
 					};
 
-					block.bgColor = data.getBackgroundcolor();
-					blockStore.update(rootId, block);
+					blockStore.update(rootId, { bgColor: data.getBackgroundcolor() });
 					break;
+				};
 
-				case 'blockSetAlign':
+				case 'blockSetAlign': {
 					id = data.getId();
 					block = blockStore.getLeaf(rootId, id);
 					if (!block) {
 						break;
 					};
 
-					block.hAlign = data.getAlign();
-					blockStore.update(rootId, block);
+					blockStore.update(rootId, { hAlign: data.getAlign() });
 					break;
+				};
 
-				case 'blockSetVerticalAlign':
+				case 'blockSetVerticalAlign': {
 					id = data.getId();
 					block = blockStore.getLeaf(rootId, id);
 					if (!block) {
 						break;
 					};
 
-					block.vAlign = data.getVerticalalign();
-					blockStore.update(rootId, block);
+					blockStore.update(rootId, { vAlign: data.getVerticalalign() });
 					break;
+				};
 
-				case 'blockSetRelation':
+				case 'blockSetRelation': {
 					id = data.getId();
 					block = blockStore.getLeaf(rootId, id);
 					if (!block) {
@@ -466,10 +479,11 @@ class Dispatcher {
 						block.content.key = data.getKey().getValue();
 					};
 
-					blockStore.update(rootId, block);
+					blockStore.updateContent(rootId, id, block.content);
 					break;
+				};
 
-				case 'blockSetLatex':
+				case 'blockSetLatex': {
 					id = data.getId();
 					block = blockStore.getLeaf(rootId, id);
 					if (!block) {
@@ -480,10 +494,11 @@ class Dispatcher {
 						block.content.text = data.getText().getValue();
 					};
 
-					blockStore.update(rootId, block);
+					blockStore.updateContent(rootId, id, block.content);
 					break;
+				};
 
-				case 'blockSetTableRow':
+				case 'blockSetTableRow': {
 					id = data.getId();
 					block = blockStore.getLeaf(rootId, id);
 					if (!block) {
@@ -494,10 +509,11 @@ class Dispatcher {
 						block.content.isHeader = data.getIsheader().getValue();
 					};
 
-					blockStore.update(rootId, block);
+					blockStore.updateContent(rootId, id, block.content);
 					break;
+				};
 
-				case 'blockDataviewViewSet':
+				case 'blockDataviewViewSet': {
 					id = data.getId();
 					block = blockStore.getLeaf(rootId, id);
 					if (!block) {
@@ -506,8 +522,9 @@ class Dispatcher {
 
 					dbStore.viewAdd(rootId, id, Mapper.From.View(data.getView()));
 					break;
+				};
 
-				case 'blockDataviewViewDelete':
+				case 'blockDataviewViewDelete': {
 					id = data.getId();
 					subId = dbStore.getSubId(rootId, id);
 					viewId = dbStore.getMeta(subId, '').viewId;
@@ -522,13 +539,15 @@ class Dispatcher {
 						dbStore.metaSet(subId, '', { viewId: viewId });
 					};
 					break;
+				};
 
-				case 'blockDataviewViewOrder':
+				case 'blockDataviewViewOrder': {
 					id = data.getId();
 					dbStore.viewsSort(rootId, id, data.getViewidsList());
 					break; 
+				};
 
-				case 'blockDataviewSourceSet':
+				case 'blockDataviewSourceSet': {
 					id = data.getId();
 					block = blockStore.getLeaf(rootId, id);
 
@@ -539,18 +558,21 @@ class Dispatcher {
 					block.content.sources = data.getSourceList();
 					blockStore.update(rootId, block);
 					break;
+				};
 
-				case 'blockDataviewRelationDelete':
+				case 'blockDataviewRelationDelete': {
 					id = data.getId();
 					dbStore.relationListDelete(rootId, id, data.getRelationkeysList() || []);
 					break;
+				};
 
-				case 'blockDataviewRelationSet':
+				case 'blockDataviewRelationSet': {
 					id = data.getId();
 					dbStore.relationsSet(rootId, id, (data.getRelationlinksList() || []).map(Mapper.From.RelationLink));
 					break;
+				};
 
-				case 'blockDataviewGroupOrderUpdate':
+				case 'blockDataviewGroupOrderUpdate': {
 					id = data.getId();
 					block = blockStore.getLeaf(rootId, id);
 
@@ -562,8 +584,9 @@ class Dispatcher {
 
 					Dataview.groupUpdate(rootId, id, order.viewId, order.groups);
 					break;
+				};
 
-				case 'blockDataviewObjectOrderUpdate':
+				case 'blockDataviewObjectOrderUpdate': {
 					id = data.getId();
 					block = blockStore.getLeaf(rootId, id);
 					if (!block) {
@@ -620,8 +643,9 @@ class Dispatcher {
 					block.content.objectOrder[index] = el;
 					blockStore.updateContent(rootId, id, { objectOrder: block.content.objectOrder });
 					break;
+				};
 
-				case 'objectDetailsSet':
+				case 'objectDetailsSet': {
 					id = data.getId();
 					subIds = data.getSubidsList() || [];
 					block = blockStore.getLeaf(rootId, id);
@@ -641,8 +665,9 @@ class Dispatcher {
 						};
 					};
 					break;
+				};
 
-				case 'objectDetailsAmend':
+				case 'objectDetailsAmend': {
 					id = data.getId();
 					subIds = data.getSubidsList() || [];
 					block = blockStore.getLeaf(rootId, id);
@@ -671,8 +696,9 @@ class Dispatcher {
 						};
 					};
 					break;
+				};
 
-				case 'objectDetailsUnset':
+				case 'objectDetailsUnset': {
 					id = data.getId();
 					subIds = data.getSubidsList() || [];
 					keys = data.getKeysList() || [];
@@ -689,48 +715,48 @@ class Dispatcher {
 						blockStore.checkTypeSelect(rootId);
 					};
 					break;
+				};
 
-
-				case 'subscriptionAdd':
+				case 'subscriptionAdd': {
 					id = data.getId();
 					afterId = data.getAfterid();
 					subId = data.getSubid();
 
 					this.subscriptionPosition(subId, id, afterId, true);
 					break;
+				};
 
-				case 'subscriptionRemove':
+				case 'subscriptionRemove': {
 					id = data.getId();
+					const [ subId, dep ] = data.getSubid().split('/');
 
-					(() => {
-						const [ subId, dep ] = data.getSubid().split('/');
-						if (!dep) {
-							dbStore.recordDelete(subId, '', id);
-							detailStore.delete(subId, id);
-						};
-					})();
+					if (!dep) {
+						dbStore.recordDelete(subId, '', id);
+						detailStore.delete(subId, id);
+					};
 					break;
+				};
 
-				case 'subscriptionPosition':
+				case 'subscriptionPosition': {
 					id = data.getId();
 					afterId = data.getAfterid();
 					subId = data.getSubid();
 
 					this.subscriptionPosition(subId, id, afterId, false);
 					break;
+				};
 
-				case 'subscriptionCounters':
+				case 'subscriptionCounters': {
 					const total = data.getTotal();
-
-					(() => {
-						const [ subId, dep ] = data.getSubid().split('/');
-						if (!dep) {
-							dbStore.metaSet(subId, '', { total: total });
-						};
-					})();
+					const [ subId, dep ] = data.getSubid().split('/');
+					
+					if (!dep) {
+						dbStore.metaSet(subId, '', { total: total });
+					};
 					break;
+				};
 
-				case 'subscriptionGroups':
+				case 'subscriptionGroups': {
 					const [ rid, bid, key ] = data.getSubid().split('-');
 					const group = Mapper.From.BoardGroup(data.getGroup());
 
@@ -740,10 +766,11 @@ class Dispatcher {
 						dbStore.groupsAdd(rid, bid, [ group ]);
 					};
 					break;
+				};
 
 				case 'processNew':
 				case 'processUpdate':
-				case 'processDone':
+				case 'processDone': {
 					const process = data.getProcess();
 					const progress = process.getProgress();
 					const state = process.getState();
@@ -767,6 +794,7 @@ class Dispatcher {
 							break;
 					};
 					break;
+				};
 			};
 
 			if (needLog) {

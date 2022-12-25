@@ -3,17 +3,13 @@ import { Frame, Cover, Label, Error, Input, Button, Header, Footer, Icon } from 
 import { FileUtil, Util, translate, I } from 'Lib';
 import { commonStore, authStore, menuStore } from 'Store';
 import { observer } from 'mobx-react';
-
 import Constant from 'json/constant.json';
-
-interface Props extends I.PageComponent {};
 
 interface State {
 	error: string;
 };
 
-
-const PageAuthRegister = observer(class PageAuthRegister extends React.Component<Props, State> {
+const PageAuthRegister = observer(class PageAuthRegister extends React.Component<I.PageComponent, State> {
 
 	refName: any = null;
 
@@ -21,7 +17,7 @@ const PageAuthRegister = observer(class PageAuthRegister extends React.Component
 		error: '',
 	};
 	
-	constructor (props: any) {
+	constructor (props: I.PageComponent) {
 		super(props);
 
 		this.onFileClick = this.onFileClick.bind(this);

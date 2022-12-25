@@ -361,7 +361,7 @@ class Relation {
 	};
 
 	getStringValue (value: any) {
-		if (('object' == typeof(value)) && value && Util.hasOwnProperty(value, 'length')) {
+		if (('object' == typeof(value)) && value && Util.hasProperty(value, 'length')) {
 			return String(value.length ? value[0] : '');
 		} else {
 			return String(value || '');

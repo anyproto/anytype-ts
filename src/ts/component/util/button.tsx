@@ -36,9 +36,9 @@ class Button extends React.Component<Props, object> {
 
 	render () {
 		const { id, type, subType, icon, text, className, color, onClick } = this.props;
+		const cn = [ 'button', color, className ];
 
 		let content = null;
-		let cn = [ 'button', color, className ];
 		
 		switch (type) {
 		
