@@ -17,7 +17,6 @@ interface State {
 
 enum Tab {
 	Type = 'type',
-	Template = 'template',
 	Relation = 'relation',
 };
 
@@ -34,15 +33,6 @@ const Tabs = [
 			{ id: 'library', name: 'Library' },
 		]
 	},
-	/*
-	{ 
-		id: Tab.Template, 'name': 'Templates', active: 'library', 
-		children: [
-			{ id: 'market', name: 'Marketplace' },
-			{ id: 'library', name: 'Library' },
-		], 
-	},
-	*/
 	{ 
 		id: Tab.Relation, 'name': 'Relations', active: 'library', 
 		children: [
@@ -51,6 +41,8 @@ const Tabs = [
 		], 
 	},
 ];
+
+const LIMIT = 3;
 
 const PageMainStore = observer(class PageMainStore extends React.Component<Props, State> {
 
@@ -173,27 +165,6 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 								</div>
 
 								<div className="line" />
-							</div>
-						</div>
-					);
-				};
-				break;
-
-			case Tab.Template:
-				Item = (item: any) => {
-					const { name, description, coverType, coverId, coverX, coverY, coverScale } = item;
-					const author = detailStore.get(Constant.subId.store, item.creator, []);
-					const cn = [ 'item', (item.isHidden ? 'isHidden' : '') ];
-
-					return (
-						<div className={cn.join(' ')} onClick={(e: any) => { this.onClick(e, item); }}>
-							<div className="img">
-								{coverId && coverType ? <Cover type={coverType} id={coverId} image={coverId} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={true} /> : ''}
-							</div>
-							<div className="info">
-								<div className="name">{name}</div>
-								<div className="descr">{description}</div>
-								<Author {...author} />
 							</div>
 						</div>
 					);
@@ -346,7 +317,6 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 			case 0:
 				switch (this.tab) {
 					case Tab.Type: h = 264; break;
-					case Tab.Template: h = 280; break;
 					case Tab.Relation: h = 264; break;
 				};
 				break;
@@ -359,20 +329,11 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 			default:
 				switch (this.tab) {
 					case Tab.Type: h = 96; break;
-					case Tab.Template: h = 280; break;
 					case Tab.Relation: h = 64; break;
 				};
 				break;
 		};
 		return h;
-	};
-
-	getRowLimit () {
-		let l = 0;
-		if (this.tab == Tab.Type) l = 2;
-		if (this.tab == Tab.Template) l = 3;
-		if (this.tab == Tab.Relation) l = 3;
-		return l;
 	};
 
 	onTab (id: Tab) {
@@ -401,9 +362,6 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 				analytics.event('CreateType');
 			};
 		});
-	};
-
-	onCreateTemplate () {
 	};
 
 	onFilterChange (v: string) {
@@ -539,7 +497,6 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 			case View.Marketplace:
 				switch (this.tab) {
 					case Tab.Type:		 type = Constant.storeTypeId.type; break;
-					case Tab.Template:	 type = Constant.storeTypeId.template; break;
 					case Tab.Relation:	 type = Constant.storeTypeId.relation; break;
 				};
 				break;
@@ -547,7 +504,6 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 			case View.Library:
 				switch (this.tab) {
 					case Tab.Type:		 type = Constant.typeId.type; break;
-					case Tab.Template:	 type = Constant.typeId.template; break;
 					case Tab.Relation:	 type = Constant.typeId.relation; break;
 				};
 				break;
@@ -557,7 +513,6 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 
 	getItems () {
 		const { profile } = blockStore;
-		const limit = this.getRowLimit();
 		const records = dbStore.getRecords(Constant.subId.store, '').map(id => detailStore.get(Constant.subId.store, id));
 
 		records.sort((c1: any, c2: any) => {
@@ -580,14 +535,14 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 			row.children.push(item);
 
 			n++;
-			if (n == limit) {
+			if (n == LIMIT) {
 				ret.push(row);
 				row = { children: [] };
 				n = 0;
 			};
 		};
 
-		if (row.children.length < limit) {
+		if (row.children.length < LIMIT) {
 			ret.push(row);
 		};
 
