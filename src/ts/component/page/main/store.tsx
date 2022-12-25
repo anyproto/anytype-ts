@@ -85,7 +85,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 
 		switch (this.tab) {
 			case Tab.Type:
-				title = 'Types are like categories that help you group and manage your objects.';
+				title = 'Types are like categories<br/>that help you group and manage<br/>your objects.';
 				placeholder = 'Search or create a new type...';
 				break;
 
@@ -363,11 +363,14 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 	};
 
 	onFilterFocus (e: any) {
+		const node = $(ReactDOM.findDOMNode(this));
+		const filter = node.find('#store-filter');
+
 		const menuParam: any = {
-			element: '#store-filter',
+			element: filter,
 			commonFilter: true,
 			horizontal: I.MenuDirection.Center,
-			width: 386,
+			width: filter.outerWidth(),
 			offsetY: 4,
 			data: {
 				filter: this.refFilter.getValue(),
