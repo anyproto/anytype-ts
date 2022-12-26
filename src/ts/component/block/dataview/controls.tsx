@@ -315,21 +315,26 @@ const Controls = observer(class Controls extends React.Component<Props, object> 
 			return;
 		};
 
-		const { isPopup } = this.props;
+		const { isPopup, isInline } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
 		const sideLeft = node.find('#sideLeft');
 		const sideRight = node.find('#sideRight');
 		const container = Util.getPageContainer(isPopup);
+		const { left } = sideLeft.offset();
 
 		sideLeft.removeClass('small');
 
-		let width = sideLeft.offset().left + sideLeft.outerWidth() + sideRight.outerWidth();
+		let width = sideLeft.outerWidth() + sideRight.outerWidth();
 
 		if (isPopup) {
 			width -= container.offset().left;
 		};
 
-		if (width >= container.width()) {
+		if (left + width >= container.width()) {
+			sideLeft.addClass('small');
+		};
+
+		if (isInline && (width >= node.outerWidth())) {
 			sideLeft.addClass('small');
 		};
 	};
