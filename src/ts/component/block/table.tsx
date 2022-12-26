@@ -569,7 +569,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, obje
 		const table = node.find('#table');
 
 		switch (type) {
-			case I.BlockType.TableColumn:
+			case I.BlockType.TableColumn: {
 				const cells = table.find(`.cell.column${columnId}`);
 
 				cells.addClass('isHighlightedColumn');
@@ -577,8 +577,9 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, obje
 				cells.last().addClass('isLast');
 				cells.find('.handleColumn').addClass('isActive');
 				break;
+			};
 
-			case I.BlockType.TableRow:
+			case I.BlockType.TableRow: {
 				const row = table.find(`#row-${rowId}`);
 
 				this.rowId = rowId;
@@ -586,10 +587,12 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, obje
 				row.addClass('isHighlightedRow');
 				row.find('.handleRow').addClass('isActive');
 				break;
+			};
 
-			default:
+			default: {
 				table.find(`#cell-${cellId}`).addClass('isHighlightedCell');
 				break;
+			};
 		};
 
 		this.frameRemove([ I.BlockPosition.None ]);
@@ -1070,7 +1073,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, obje
 		const node = $(ReactDOM.findDOMNode(this));
 
 		switch (type) {
-			case I.BlockType.TableColumn:
+			case I.BlockType.TableColumn: {
 				columns.forEach((column: I.Block, i: number) => {
 					const cell = node.find(`.cell.column${column.id}`).first();
 					const p = cell.offset();
@@ -1084,8 +1087,9 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, obje
 					};
 				});
 				break;
+			};
 
-			case I.BlockType.TableRow:
+			case I.BlockType.TableRow: {
 				const width = node.width();
 
 				rows.forEach((row: I.Block, i: number) => {
@@ -1101,6 +1105,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, obje
 					};
 				});
 				break;
+			};
 		};
 	};
 

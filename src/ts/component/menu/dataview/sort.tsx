@@ -263,7 +263,7 @@ const MenuSort = observer(class MenuSort extends React.Component<Props, object> 
 	onAdd (e: any) {
 		const { param, getId } = this.props;
 		const { data } = param;
-		const { getView } = data;
+		const { rootId, getView, blockId, getData } = data;
 		const view = getView();
 		const relationOptions = this.getRelationOptions();
 
@@ -278,11 +278,17 @@ const MenuSort = observer(class MenuSort extends React.Component<Props, object> 
 			type: I.SortType.Asc,
 		};
 
-		view.sorts.push(newItem);
-		content.animate({ scrollTop: content.get(0).scrollHeight }, 50);
+		//view.sorts.push(newItem);
+		C.BlockDataviewSortAdd(rootId, blockId, view.id, newItem, () => {
+			getData(view.id, 0, true);
 
-		analytics.event('AddSort', { type: newItem.type });
-		this.save();
+			content.animate({ scrollTop: content.get(0).scrollHeight }, 50);
+			analytics.event('AddSort', { type: newItem.type });
+		});
+
+		//content.animate({ scrollTop: content.get(0).scrollHeight }, 50);
+		//analytics.event('AddSort', { type: newItem.type });
+		//this.save();
 	};
 
 	onChange (id: number, k: string, v: string) {
@@ -366,7 +372,7 @@ const MenuSort = observer(class MenuSort extends React.Component<Props, object> 
 		const offset = 62;
 		const height = Math.max(HEIGHT + offset, Math.min(360, items.length * HEIGHT + offset));
 
-		obj.css({ height: height });
+		obj.css({ height });
 		position();
 	};
 	

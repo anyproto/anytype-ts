@@ -102,7 +102,7 @@ const Block = observer(class Block extends React.Component<Props, object> {
 		};
 
 		switch (type) {
-			case I.BlockType.Text:
+			case I.BlockType.Text: {
 				if (block.isTextCheckbox() && checked) {
 					cn.push('isChecked');
 				};
@@ -115,68 +115,81 @@ const Block = observer(class Block extends React.Component<Props, object> {
 
 				blockComponent = <BlockText key={`block-${block.id}-component`} ref={setRef} {...this.props} onToggle={this.onToggle} />;
 				break;
+			};
 
-			case I.BlockType.Layout:
+			case I.BlockType.Layout: {
 				canSelect = false;
 				break;
+			};
 				
-			case I.BlockType.IconPage:
+			case I.BlockType.IconPage: {
 				canSelect = false;
 				blockComponent = <BlockIconPage key={`block-${block.id}-component`} ref={setRef} {...this.props} />;
 				break;
+			};
 				
-			case I.BlockType.IconUser:
+			case I.BlockType.IconUser: {
 				canSelect = false;
 				blockComponent = <BlockIconUser key={`block-${block.id}-component`} ref={setRef} {...this.props} />;
 				break;
+			};
 				
-			case I.BlockType.File:
+			case I.BlockType.File: {
 				if (isDragging || (style == I.FileStyle.Link)) {
 					blockComponent = <BlockFile key={`block-${block.id}-component`} ref={setRef} {...this.props} />;
 					break;
 				};
 
 				switch (content.type) {
-					default: 
+					default: {
 						blockComponent = <BlockFile key={`block-${block.id}-component`} ref={setRef} {...this.props} />;
 						break;
+					};
 						
-					case I.FileType.Image: 
+					case I.FileType.Image: {
 						blockComponent = <BlockImage key={`block-${block.id}-component`} ref={setRef} {...this.props} />;
 						break;
+					};
 						
-					case I.FileType.Video: 
+					case I.FileType.Video: {
 						blockComponent = <BlockVideo key={`block-${block.id}-component`} ref={setRef} {...this.props} />;
 						break;
+					};
 
-					case I.FileType.Audio: 
+					case I.FileType.Audio: {
 						blockComponent = <BlockAudio key={`block-${block.id}-component`} ref={setRef} {...this.props} />;
 						break;
+					};
 
-					case I.FileType.Pdf:
+					case I.FileType.Pdf: {
 						blockComponent = <BlockPdf key={`block-${block.id}-component`} ref={setRef} {...this.props} />;
 						break;
+					};
 				};
 
 				break;
+			};
 				
-			case I.BlockType.Bookmark:
+			case I.BlockType.Bookmark: {
 				blockComponent = <BlockBookmark key={`block-${block.id}-component`} ref={setRef} {...this.props} />;
 				break;
+			};
 			
-			case I.BlockType.Dataview:
+			case I.BlockType.Dataview: {
 				canSelect = !(root.isObjectSet() || root.isObjectSpace());
 				if (canSelect) {
 					cn.push('isInline');
 				};
 				blockComponent = <BlockDataview key={`block-${block.id}-component`} ref={setRef} isInline={canSelect} {...this.props} />;
 				break;
+			};
 				
-			case I.BlockType.Div:
+			case I.BlockType.Div: {
 				blockComponent = <BlockDiv key={`block-${block.id}-component`} ref={setRef} {...this.props} />;
 				break;
+			};
 				
-			case I.BlockType.Link:
+			case I.BlockType.Link: {
 				const object = detailStore.get(rootId, content.targetBlockId, [ 'restrictions' ]);
 				if (!blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Block ])) {
 					canDropMiddle = false;
@@ -184,38 +197,46 @@ const Block = observer(class Block extends React.Component<Props, object> {
 
 				blockComponent = <BlockLink key={`block-${block.id}-component`} ref={setRef} {...this.props} />;
 				break;
+			};
 				
-			case I.BlockType.Cover:
+			case I.BlockType.Cover: {
 				canSelect = false;
 				blockComponent = <BlockCover key={`block-${block.id}-component`} ref={setRef} {...this.props} />;
 				break;
+			};
 
-			case I.BlockType.Relation:
+			case I.BlockType.Relation: {
 				blockComponent = <BlockRelation key={`block-${block.id}-component`} ref={setRef} {...this.props} />;
 				break;
+			};
 
-			case I.BlockType.Featured:
+			case I.BlockType.Featured: {
 				blockComponent = <BlockFeatured key={`block-${block.id}-component`} ref={setRef} {...this.props} />;
 				break;
+			};
 
-			case I.BlockType.Type:
+			case I.BlockType.Type: {
 				canSelect = false;
 				blockComponent = <BlockType key={`block-${block.id}-component`} ref={setRef} {...this.props} />;
 				break;
+			};
 
-			case I.BlockType.Latex:
+			case I.BlockType.Latex: {
 				blockComponent = <BlockLatex key={`block-${block.id}-component`} ref={setRef} {...this.props} />;
 				break;
+			};
 
-			case I.BlockType.Table:
+			case I.BlockType.Table: {
 				renderChildren = false;
 				canDropMiddle = false;
 				blockComponent = <BlockTable key={`block-${block.id}-component`} ref={setRef} {...this.props} />;
 				break;
+			};
 
-			case I.BlockType.TableOfContents:
+			case I.BlockType.TableOfContents: {
 				blockComponent = <BlockTableOfContents key={`block-${block.id}-component`} ref={setRef} {...this.props} />;
 				break;
+			};
 		};
 
 		let object = null;

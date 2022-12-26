@@ -7,21 +7,19 @@ import { PieChart } from 'react-minimal-pie-chart';
 
 import Constant from 'json/constant.json';
 
-interface Props extends I.PageComponent {};
-
 interface State {
 	error: string;
 };
 
 const DAYS = 30;
 
-const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<Props, State> {
+const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<I.PageComponent, State> {
 
 	state = {
 		error: ''
 	};
 
-	constructor (props: any) {
+	constructor (props: I.PageComponent) {
         super(props);
 
 		this.onReset = this.onReset.bind(this);
@@ -123,7 +121,7 @@ const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<P
 		popupStore.open('confirm', {
 			data: {
 				title: `Are you sure you want to delete your local account data?`,
-				text: 'These objects will be deleted irrevocably. You can’t undo this action.',
+				text: `These objects will be deleted irrevocably. You can't undo this action.`,
 				textConfirm: 'Delete',
 				onConfirm: () => { 
 					authStore.logout(true);

@@ -3,25 +3,21 @@ import { Frame, Icon, Cover, Error, Title, IconObject, Header, Footer, Loader, B
 import { I, C, Util, translate, DataUtil, Renderer } from 'Lib';
 import { commonStore, authStore } from 'Store';
 import { observer } from 'mobx-react';
-
 import Errors from 'json/error.json';
-
-interface Props extends I.PageComponent {};
 
 interface State {
 	error: string;
 	loading: boolean;
 };
 
-
-const PageAccountSelect = observer(class PageAccountSelect extends React.Component<Props, State> {
+const PageAccountSelect = observer(class PageAccountSelect extends React.Component<I.PageComponent, State> {
 
 	state = {
 		error: '',
 		loading: false,
 	};
 
-	constructor (props: any) {
+	constructor (props: I.PageComponent) {
 		super(props);
 
 		this.onSelect = this.onSelect.bind(this);
@@ -63,7 +59,7 @@ const PageAccountSelect = observer(class PageAccountSelect extends React.Compone
 								</div>
 							</div>
 
-							{error ? <Button text={translate('authSetupBack')} onClick={() => { Util.route('/'); }} /> : ''}
+							{error ? <Button text={translate('commonBack')} onClick={() => { Util.route('/'); }} /> : ''}
 						</React.Fragment>
 					)}
 				</Frame>

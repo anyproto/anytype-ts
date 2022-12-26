@@ -21,6 +21,8 @@ import PagePinConfirm from './page/settings/pin/confirm';
 
 import PageImportIndex from './page/settings/import/index';
 import PageImportNotion from './page/settings/import/notion';
+import PageImportNotionHelp from './page/settings/import/notion/help';
+import PageImportNotionWarning from './page/settings/import/notion/warning';
 import PageImportMarkdown from './page/settings/import/markdown';
 
 import PageExportMarkdown from './page/settings/export/markdown';
@@ -48,6 +50,8 @@ const Components: any = {
 
 	importIndex:		 PageImportIndex,
 	importNotion:		 PageImportNotion,
+	importNotionHelp:	 PageImportNotionHelp,
+	importNotionWarning: PageImportNotionWarning,
 	importMarkdown:		 PageImportMarkdown,
 
 	exportMarkdown:		 PageExportMarkdown,
@@ -177,8 +181,12 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 		analytics.event('settings', { params: { id } });
 	};
 
-	onImport (type: I.ImportType, param: any) {
+	onImport (type: I.ImportType, param: any, callBack?: (message: any) => void) {
 		C.ObjectImport(param, [], true, type, I.ImportMode.IgnoreErrors, (message: any) => {
+			if (callBack) {
+				callBack(message);
+			};
+
 			if (!message.error.code) {
 				analytics.event('Import', { middleTime: message.middleTime, type });
 			};

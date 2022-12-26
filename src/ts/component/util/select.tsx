@@ -54,8 +54,7 @@ class Select extends React.Component<Props, State> {
 		const cn = [ 'select', (className ? className : '') ];
 		const acn = [ 'arrow', (arrowClassName ? arrowClassName : '') ];
 		const value = Relation.getArrayValue(this.state.value);
-
-		let current: any[] = [];
+		const current: any[] = [];
 		
 		value.forEach((id: string) => {
 			const option = options.find(item => item.id == id);
@@ -85,14 +84,15 @@ class Select extends React.Component<Props, State> {
 	componentDidMount () {
 		this._isMounted = true;
 
-		let { initial } = this.props;
-		let options = [];
+		const { initial } = this.props;
+		const options = [];
+		
 		let value = Relation.getArrayValue(this.props.value);
 		
 		if (initial) {
 			options.push({ id: '', name: initial, isInitial: true });			
 		};
-		for (let option of this.props.options) {
+		for (const option of this.props.options) {
 			options.push(option);
 		};
 		
@@ -110,6 +110,7 @@ class Select extends React.Component<Props, State> {
 	getValue (): any {
 		const { isMultiple } = this.props;
 		const value = Relation.getArrayValue(this.state.value);
+
 		return isMultiple ? value : value[0];
 	};
 	

@@ -8,14 +8,14 @@ interface Props {
 	onClick?(e: any): void;
 };
 
-class Dimmer extends React.Component<Props, object> {
+class Dimmer extends React.Component<Props> {
 	
 	_isMounted: boolean = false;
 
 	render () {
 		const { className, onClick } = this.props;
-		
-		let cn = [ 'dimmer' ];
+		const cn = [ 'dimmer' ];
+
 		if (className) {
 			cn.push(className);
 		};
