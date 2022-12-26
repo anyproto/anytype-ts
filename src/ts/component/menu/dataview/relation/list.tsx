@@ -304,7 +304,10 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 		const { data } = param;
 		const { rootId, blockId, getView } = data;
 		const view = getView();
-		const relations = Dataview.viewGetRelations(rootId, blockId, view);
+		const relations = view.relations.filter(it => {
+			const relation = dbStore.getRelationByKey(it.relationKey);
+			return !relation.isHidden || (relation.isHidden && (it.relationKey == 'name'));
+		});
 
 		view.relations = arrayMove(relations, oldIndex, newIndex);
 		C.BlockDataviewViewRelationSort(rootId, blockId, view.id, view.relations.map(it => it.relationKey));
