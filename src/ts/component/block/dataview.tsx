@@ -688,6 +688,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 							this.getData(message.views[0].id, 0, true);
 						};
 					});
+
+					analytics.event('InlineSetSetSource');
 				}
 			}
 		});

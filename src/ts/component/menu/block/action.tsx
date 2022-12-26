@@ -616,6 +616,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 
 			case 'openDataviewFullscreen':
 				ObjectUtil.openPopup({ layout: I.ObjectLayout.Block, id: rootId, _routeParam_: { blockId } });
+				analytics.event('InlineSetOpenFullscreen');
 				break;
 					
 			case 'copy':

@@ -1,10 +1,8 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, Editable } from 'Component';
-import { I, C, keyboard, DataUtil, ObjectUtil } from 'Lib';
+import { I, keyboard, DataUtil, ObjectUtil, analytics } from 'Lib';
 import { menuStore, detailStore } from 'Store';
-import Constant from 'json/constant.json';
 
 interface Props extends I.ViewComponent {
 	onSourceSelect?(e: any): void;
@@ -136,18 +134,21 @@ const Head = observer(class Head extends React.Component<Props, State> {
 		const { rootId, block } = this.props;
 		const { targetObjectId } = block.content;
 		const object = detailStore.get(rootId, targetObjectId);
+		const length = this.getValue().length;
 
 		switch (item.id) {
-			case 'editTitle':
+			case 'editTitle': {
 				this.setState({ isEditing: true }, () => {
-					const length = this.getValue().length;
 					this.ref.setRange({ from: length, to: length });
 				});
 				break;
+			};
 
-			case 'openSource':
+			case 'openSource': {
 				ObjectUtil.openAuto(object);
+				analytics.event('InlineSetOpenSource');
 				break;
+			};
 
 		};
 	};
@@ -234,7 +235,9 @@ const Head = observer(class Head extends React.Component<Props, State> {
 
 	onFullscreen () {
 		const { rootId, block } = this.props;
+
 		ObjectUtil.openPopup({ layout: I.ObjectLayout.Block, id: rootId, _routeParam_: { blockId: block.id } });
+		analytics.event('InlineSetOpenFullscreen');
 	};
 
 });
