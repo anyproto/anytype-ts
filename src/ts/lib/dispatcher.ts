@@ -572,7 +572,6 @@ class Dispatcher {
 
 								ids.forEach((id: string, i: number) => {
 									const oidx = list.findIndex(it => it[key.idField] == id);
-									console.log(oidx, key.idField);
 									if (oidx >= 0) {
 										list = arrayMove(list, oidx, idx + i + 1);
 									};
