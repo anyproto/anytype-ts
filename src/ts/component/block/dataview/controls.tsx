@@ -321,16 +321,19 @@ const Controls = observer(class Controls extends React.Component<Props, object> 
 		const sideRight = node.find('#sideRight');
 		const container = Util.getPageContainer(isPopup);
 		const { left } = sideLeft.offset();
+		const sidebar = $('#sidebar');
 
 		sideLeft.removeClass('small');
 
 		let width = sideLeft.outerWidth() + sideRight.outerWidth();
+		let offset = 0;
+		let sw = sidebar.outerWidth();
 
 		if (isPopup) {
-			width -= container.offset().left;
+			offset = container.offset().left;
 		};
 
-		if (left + width >= container.width()) {
+		if (left + width - offset - sw >= container.width()) {
 			sideLeft.addClass('small');
 		};
 
