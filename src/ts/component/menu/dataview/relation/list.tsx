@@ -304,8 +304,9 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 		const { data } = param;
 		const { rootId, blockId, getView } = data;
 		const view = getView();
+		const relations = Dataview.viewGetRelations(rootId, blockId, view);
 
-		view.relations = arrayMove(view.relations, oldIndex, newIndex);
+		view.relations = arrayMove(relations, oldIndex, newIndex);
 		C.BlockDataviewViewRelationSort(rootId, blockId, view.id, view.relations.map(it => it.relationKey));
 
 		selection.preventSelect(false);
