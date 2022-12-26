@@ -535,75 +535,72 @@ class Dispatcher {
 					viewId = data.getViewid();
 
 					let view = dbStore.getView(rootId, id, viewId);
-					let filters = data.getFilterList() || [];
-					let sorts = data.getSortList() || [];
-					let relations = data.getRelationList() || [];
-
+					
 					if (data.hasFields()) {
 						view = Object.assign(view, Mapper.From.ViewFields(data.getFields()));
 					};
 
-					const keys = [ 'filter', 'sort', 'relation' ];
-					const mapper = (key: string, item: any) => {	
-						let list = view[`${key}s`];
-
-						console.log(key, item);
-
-						if (item.hasAdd()) {
-							const op = item.getAdd();
-							const afterId = op.getAfterid();
-							const items = (op.getItemsList() || []).map(Mapper.From.Filter);
-							const idx = afterId ? list.findIndex(it => it.id == afterId) : list.length;
-
-							items.forEach((item: I.Filter, i: number) => { 
-								list.splice(idx + i, 0, item);
-							});
-						};
-
-						if (item.hasMove()) {
-							const op = item.getMove();
-							const afterId = op.getAfterid();
-							const ids = op.getIdsList() || [];
-							const idx = afterId ? list.findIndex(it => it.id == afterId) : 0;
-
-							ids.forEach((id: string, i: number) => {
-								const oidx = list.findIndex(it => it.id == id);
-								if (oidx >= 0) {
-									list = arrayMove(list, oidx, idx + i);
-								};
-							});
-						};
-
-						if (item.hasUpdate()) {
-							const op = item.getUpdate();
-
-							if (op.hasItem()) {
-								const idx = list.findIndex(it => it.id ==  op.getId());
-								if (idx >= 0) {
-									list[idx] = Mapper.From[Util.toUpperCamelCase(key)](op.getItem());
-								};
-							};
-						};
-
-						if (item.hasRemove()) {
-							const op = item.getRemove();
-							const ids = op.getIdsList() || [];
-
-							ids.forEach(id => { 
-								list = list.filter(it => it.id != id);
-							});
-						};
-
-						view[`${key}s`] = list;
-					};
+					const keys = [ 
+						{ id: 'filter', field: 'filters', idField: 'id', mapper: 'Filter' },
+						{ id: 'sort', field: 'sorts', idField: 'relationKey', mapper: 'Sort' },
+						{ id: 'relation', field: 'relations', idField: 'relationKey', mapper: 'ViewRelation' },
+					];
 
 					keys.forEach(key => {
-						const items = data[Util.toCamelCase(`get-${key}-list`)]() || [];
+						const items = data[Util.toCamelCase(`get-${key.id}-list`)]() || [];
+						const mapper = Mapper.From[key.mapper];
 
-						items.forEach(item => mapper(key, item));
+						items.forEach((item: any) => {
+							let list = view[key.field];
+
+							if (item.hasAdd()) {
+								const op = item.getAdd();
+								const afterId = op.getAfterid();
+								const items = (op.getItemsList() || []).map(mapper);
+								const idx = afterId ? list.findIndex(it => it[key.idField] == afterId) : list.length;
+
+								items.forEach((item: any, i: number) => { 
+									list.splice(idx + i, 0, item);
+								});
+							};
+
+							if (item.hasMove()) {
+								const op = item.getMove();
+								const afterId = op.getAfterid();
+								const ids = op.getIdsList() || [];
+								const idx = afterId ? list.findIndex(it => it.id == afterId) : 0;
+
+								ids.forEach((id: string, i: number) => {
+									const oidx = list.findIndex(it => it[key.idField] == id);
+									if (oidx >= 0) {
+										list = arrayMove(list, oidx, idx + i);
+									};
+								});
+							};
+
+							if (item.hasUpdate()) {
+								const op = item.getUpdate();
+
+								if (op.hasItem()) {
+									const idx = list.findIndex(it => it[key.idField] == op.getId());
+									if (idx >= 0) {
+										list[idx] = Mapper.From[key.mapper](op.getItem());
+									};
+								};
+							};
+
+							if (item.hasRemove()) {
+								const op = item.getRemove();
+								const ids = op.getIdsList() || [];
+
+								ids.forEach(id => { 
+									list = list.filter(it => it[key.idField] != id);
+								});
+							};
+
+							view[key.field] = list;
+						});
 					});
-
-					console.log(JSON.stringify(view, null, 3));
 
 					dbStore.viewUpdate(rootId, id, view);
 					break;
