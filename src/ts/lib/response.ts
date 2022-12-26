@@ -291,7 +291,7 @@ const ObjectGraph = (response: any) => {
 
 const ObjectToSet = (response: any) => {
 	return {
-		id: response.getSetid(),
+		objectId: response.getSetid(),
 	};
 };
 
