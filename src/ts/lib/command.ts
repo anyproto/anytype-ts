@@ -1,6 +1,6 @@
 import { I, Util, Mark, dispatcher, Encode, Mapper } from 'Lib';
 
-const Commands = require('lib/pb/protos/commands_pb');
+const Commands = import 'lib/pb/protos/commands_pb';
 const Model = require('lib/pkg/lib/pb/model/protos/models_pb.js');
 const Rpc = Commands.Rpc;
 
