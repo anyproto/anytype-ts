@@ -217,9 +217,9 @@ const MenuViewList = observer(class MenuViewList extends React.Component<Props> 
 	onAdd () {
 		const { param, getId, getSize } = this.props;
 		const { data } = param;
-		const { rootId, blockId, getView, getData } = data;
-
+		const { rootId, blockId, getView, getData, getSources } = data;
 		const view = getView();
+		const sources = getSources();
 		const relations = Util.objectCopy(view.relations);
 		const filters: I.Filter[] = [];
 		const allowed = blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
@@ -244,7 +244,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<Props> 
 			filters,
 		};
 
-		C.BlockDataviewViewCreate(rootId, blockId, newView, (message: any) => {
+		C.BlockDataviewViewCreate(rootId, blockId, newView, sources, (message: any) => {
 			if (message.error.code) {
 				return;
 			};

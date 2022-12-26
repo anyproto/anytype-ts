@@ -4,13 +4,11 @@ import { I, Util, translate, C, keyboard } from 'Lib';
 import { commonStore, authStore } from 'Store';
 import { observer } from 'mobx-react';
 
-interface Props extends I.PageComponent {};
-
 interface State {
 	error: string;
-}
+};
 
-const PageAuthLogin = observer(class PageAuthLogin extends React.Component<Props, State> {
+const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.PageComponent, State> {
 
 	phraseRef: any;
 
@@ -18,7 +16,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<Props
 		error: ''
 	};
 	
-	constructor (props: any) {
+	constructor (props: I.PageComponent) {
 		super(props);
 
 		this.onSubmit = this.onSubmit.bind(this);
@@ -39,7 +37,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<Props
 				<Frame>
 					<div className="authBackWrap" onClick={this.onCancel}>
 						<Icon className="back" />
-						<div className="name">{translate('authLoginBack')}</div>
+						<div className="name">{translate('commonBack')}</div>
 					</div>
 					<Title text={translate('authLoginTitle')} />
 					<Error text={error} />

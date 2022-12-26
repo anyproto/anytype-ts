@@ -164,9 +164,7 @@ import Routes from 'json/route.json';
 const memoryHistory = hs.createMemoryHistory;
 const history = memoryHistory();
 
-
 interface RouteElement { path: string; };
-interface Props {};
 
 interface State {
 	loading: boolean;
@@ -261,7 +259,7 @@ class RoutePage extends React.Component<RouteComponentProps, object> {
 	};
 };
 
-class App extends React.Component<Props, State> {
+class App extends React.Component<object, State> {
 	
 	state = {
 		loading: true

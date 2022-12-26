@@ -371,19 +371,22 @@ class Keyboard {
 		};
 
 		switch (cmd) {
-			case 'search':
+			case 'search': {
 				this.onSearchMenu('');
 				break;
+			};
 
-			case 'graph':
+			case 'graph': {
 				ObjectUtil.openPopup({ id: this.getRootId(), layout: I.ObjectLayout.Graph });
 				break;
+			};
 
-			case 'print':
+			case 'print': {
 				this.onPrint();
 				break;
+			};
 
-			case 'id':
+			case 'id': {
 				const { account } = authStore;
 				if (!account) {
 					break;
@@ -404,8 +407,9 @@ class Keyboard {
 					}
 				});
 				break;
+			};
 
-			case 'workspace':
+			case 'workspace': {
 				popupStore.open('prompt', {
 					data: {
 						title: 'Create Space',
@@ -415,6 +419,7 @@ class Keyboard {
 					}
 				});
 				break;
+			};
 		};
 	};
 
@@ -472,15 +477,15 @@ class Keyboard {
 		const object = detailStore.get(rootId, rootId);
 
 		this.printApply('save', false);
-		Renderer.send('winCommand', 'saveAsHTML', { name: object.name });
+		Renderer.send('winCommand', 'printHtml', { name: object.name });
 	};
 
-	onPrintToPDF (options) {
+	onPrintToPDF (options: any) {
 		const rootId = this.getRootId();
 		const object = detailStore.get(rootId, rootId);
 
 		this.printApply('print', true);
-		Renderer.send('winCommand', 'printToPDF', { name: object.name, options: options });
+		Renderer.send('winCommand', 'printPdf', { name: object.name, options });
 	};
 
 	onSearchMenu (value: string) {

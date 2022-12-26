@@ -1,6 +1,8 @@
 import * as React from 'react';
-import { RouteComponentProps } from 'react-router';
 import { I, DataUtil } from 'Lib';
+import ContentIcon from './icon';
+import ContentText from './text';
+import ContentLink from './link';
 
 interface Props {
 	type: I.BlockType;
@@ -8,10 +10,6 @@ interface Props {
 	icon?: string;
 	align?: I.BlockHAlign;
 };
-
-import ContentIcon from './icon';
-import ContentText from './text';
-import ContentLink from './link';
 
 class Block extends React.Component<Props, object> {
 
@@ -23,24 +21,27 @@ class Block extends React.Component<Props, object> {
 
 	render () {
 		const { type, style, align } = this.props;
-		
-		let cn = [ 'block', DataUtil.blockClass({ type: type, content: { style: style } }), 'align' + align ];
+		const cn = [ 'block', DataUtil.blockClass({ type: type, content: { style: style } }), 'align' + align ];
+
 		let content = null;
 		
 		switch (type) {
-			case I.BlockType.IconPage:
+			case I.BlockType.IconPage: {
 				content = <ContentIcon {...this.props} />;
 				break;
+			};
 				
-			case I.BlockType.Text:
+			case I.BlockType.Text: {
 				content = <ContentText {...this.props} />;
 				break;
+			};
 								
-			case I.BlockType.Link:
+			case I.BlockType.Link: {
 				content = <ContentLink {...this.props} />;
 				break;
+			};
 
-			case I.BlockType.Div:
+			case I.BlockType.Div: {
 				let inner: any = null;
 				switch (style) {
 					case I.DivStyle.Line:
@@ -62,6 +63,7 @@ class Block extends React.Component<Props, object> {
 				
 				content = <div className="wrap">{inner}</div>;
 				break;
+			};
 		};
 		
 		return (

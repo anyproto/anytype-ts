@@ -27,8 +27,8 @@ class Switch extends React.Component<Props, object> {
 	
 	render () {
 		const { id, color, className, readonly } = this.props;
-		
-		let cn = [ 'switch', color ];
+		const cn = [ 'switch', color ];
+
 		if (className) {
 			cn.push(className);
 		};

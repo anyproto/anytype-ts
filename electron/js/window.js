@@ -181,26 +181,20 @@ class WindowManager {
 				win.hide();
 				break;
 
-			case 'saveAsHTML':
-				this.openDialog('openDirectory', (result) => {
-					const files = result.filePaths;
-
-					if ((files == undefined) || !files.length) {
+			case 'printHtml':
+			case 'printPdf':
+				const ext = cmd.replace(/print/, '').toLowerCase();
+				dialog.showSaveDialog(win, {
+					buttonLabel: 'Export',
+					fileFilter: { extensions: [ ext ] },
+					defaultPath: `${app.getPath('documents')}/${param.name}.${ext}`,
+					properties: [ 'createDirectory', 'showOverwriteConfirmation' ],
+				}).then((result) => {
+					const fp = result.filePath;
+					if (!fp) {
 						Util.send(win, 'command', 'saveAsHTMLSuccess');
 					} else {
-						Util.savePage(win, files[0], param.name);
-					};
-				});
-				break;
-
-			case 'printToPDF':
-				this.openDialog('openDirectory', (result) => {
-					const files = result.filePaths;
-
-					if ((files == undefined) || !files.length) {
-						Util.send(win, 'command', 'saveAsHTMLSuccess');
-					} else {
-						Util.printPDF(win, files[0], param.name, param.options);
+						Util[cmd](win, path.dirname(fp), path.basename(fp), param.options);
 					};
 				});
 				break;
@@ -212,10 +206,6 @@ class WindowManager {
 			Util.send(it, 'native-theme', Util.isDarkTheme());
 		});
 	};
-
-	openDialog (prop, cb) {
-		dialog.showOpenDialog({ properties: [ prop ] }).then(cb);
-	}
 
 	getWindowPosition (param, displayWidth, displayHeight) {
 		let x = Math.round(displayWidth / 2 - param.width / 2);

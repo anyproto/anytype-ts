@@ -93,27 +93,32 @@ class MenuHelp extends React.Component<Props, object> {
 		analytics.event(Util.toUpperCamelCase([ getId(), item.id ].join('-')));
 
 		switch (item.id) {
-			case 'whatsNew':
+			case 'whatsNew': {
 				popupStore.open('help', { data: { document: item.document } });
 				break;
+			};
 
-			case 'shortcut':
+			case 'shortcut': {
 				popupStore.open('shortcut', {});
 				break;
+			};
 
-			case 'feedback':
+			case 'feedback': {
 				Renderer.send('urlOpen', Url.feedback);
 				break;
+			};
 
-			case 'community':
+			case 'community': {
 				Renderer.send('urlOpen', Url.community);
 				break;
+			};
 
-			case 'tutorial':
+			case 'tutorial': {
 				Renderer.send('urlOpen', Url.docs);
 				break;
+			};
 
-			case 'hints':
+			case 'hints': {
 				const isPopup = keyboard.isPopup();
 				const rootId = keyboard.getRootId();
 				const object = detailStore.get(rootId, rootId, []);
@@ -139,6 +144,7 @@ class MenuHelp extends React.Component<Props, object> {
 					Onboarding.start(key, isPopup, true);
 				};
 				break;
+			};
 
 		};
 

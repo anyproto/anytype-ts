@@ -758,12 +758,13 @@ const BlockListSetVerticalAlign = (contextId: string, blockIds: string[], align:
 	dispatcher.request(BlockListSetVerticalAlign.name, request, callBack);
 };
 
-const BlockDataviewViewCreate = (contextId: string, blockId: string, view: any, callBack?: (message: any) => void) => {
+const BlockDataviewViewCreate = (contextId: string, blockId: string, view: any, sources: string[], callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockDataview.View.Create.Request();
 	
 	request.setContextid(contextId);
 	request.setBlockid(blockId);
 	request.setView(Mapper.To.View(view));
+	request.setSourceList(sources);
 
 	dispatcher.request(BlockDataviewViewCreate.name, request, callBack);
 };

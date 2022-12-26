@@ -96,19 +96,21 @@ const BlockText = observer(class BlockText extends React.Component<Props, object
 		};
 
 		switch (style) {
-			case I.TextStyle.Title:
+			case I.TextStyle.Title: {
 				placeholder = DataUtil.defaultName('page');
 
 				if (root && root.isObjectTask()) {
 					marker = { type: 'checkboxTask', className: 'check', active: checked, onClick: this.onCheckbox };
 				};
 				break;
+			};
 
-			case I.TextStyle.Description:
+			case I.TextStyle.Description: {
 				placeholder = 'Add a description';
 				break;
+			};
 
-			case I.TextStyle.Callout:
+			case I.TextStyle.Callout: {
 				additional = (
 					<IconObject 
 						id={`block-${id}-icon`}
@@ -120,9 +122,10 @@ const BlockText = observer(class BlockText extends React.Component<Props, object
 					/>
 				);
 				break;
+			};
 				
-			case I.TextStyle.Code:
-				let options = [];
+			case I.TextStyle.Code: {
+				const options: I.Option[] = [];
 				for (let i in Constant.codeLang) {
 					options.push({ id: i, name: Constant.codeLang[i] });
 				};
@@ -151,22 +154,27 @@ const BlockText = observer(class BlockText extends React.Component<Props, object
 					</React.Fragment>
 				);
 				break;
+			};
 				
-			case I.TextStyle.Bulleted:
+			case I.TextStyle.Bulleted: {
 				marker = { type: I.TextStyle.Bulleted, className: 'bullet', active: false, onClick: () => {} };
 				break;
+			};
 				
-			case I.TextStyle.Numbered:
+			case I.TextStyle.Numbered: {
 				marker = { type: I.TextStyle.Numbered, className: 'number', active: false, onClick: () => {} };
 				break;
+			};
 				
-			case I.TextStyle.Toggle:
+			case I.TextStyle.Toggle: {
 				marker = { type: I.TextStyle.Toggle, className: 'toggle', active: false, onClick: this.onToggle };
 				break;
+			};
 				
-			case I.TextStyle.Checkbox:
+			case I.TextStyle.Checkbox: {
 				marker = { type: I.TextStyle.Checkbox, className: 'check', active: checked, onClick: this.onCheckbox };
 				break;
+			};
 		};
 
 		return (

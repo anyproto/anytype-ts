@@ -43,7 +43,7 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<Props
 			switch (state) {
 				default:
 				case I.BookmarkState.Error:
-				case I.BookmarkState.Empty:
+				case I.BookmarkState.Empty: {
 					element = (
 						<React.Fragment>
 							{state == I.BookmarkState.Error ? <Error text={translate('blockBookmarkError')} /> : ''}
@@ -58,14 +58,17 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<Props
 						</React.Fragment>
 					);
 					break;
+				};
 					
-				case I.BookmarkState.Fetching:
+				case I.BookmarkState.Fetching: {
 					element = <Loader />;
 					break;
+				};
 					
-				case I.BookmarkState.Done:
-					let cn = [ 'inner', 'resizable' ];
-					let cnl = [ 'side', 'left' ];
+				case I.BookmarkState.Done: {
+					const cn = [ 'inner', 'resizable' ];
+					const cnl = [ 'side', 'left' ];
+					
 					let archive = null;
 						
 					if (picture) {
@@ -102,6 +105,7 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<Props
 						</div>
 					);
 					break;
+				};
 			};
 		};
 

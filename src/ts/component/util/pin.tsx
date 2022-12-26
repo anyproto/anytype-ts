@@ -141,15 +141,15 @@ class Pin extends React.Component<Props, object> {
 	};
 
 	get () {
-		let c: string[] = [];
-		for (let i in this.refObj) {
+		const c: string[] = [];
+		for (const i in this.refObj) {
 			c.push(this.refObj[i].getValue());
 		};
 		return c.join('');
 	};
 
 	clear () {
-		for (let i in this.refObj) {
+		for (const i in this.refObj) {
 			this.refObj[i].setValue('');
 		};
 	};

@@ -5,11 +5,9 @@ import { blockStore, detailStore, popupStore } from 'Store';
 import { observer } from 'mobx-react';
 import Constant from 'json/constant.json';
 
-interface Props {};
+const Footer = observer(class Item extends React.Component {
 
-const Footer = observer(class Item extends React.Component<Props, object> {
-
-	constructor (props: any) {
+	constructor (props: object) {
 		super(props);
 
         this.onProfile = this.onProfile.bind(this);
