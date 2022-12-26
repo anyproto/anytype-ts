@@ -57,15 +57,15 @@ class InputWithFile extends React.Component<Props, State> {
 	render () {
 		const { focused, size } = this.state;
 		const { icon, textUrl, textFile, withFile, readonly } = this.props;
+		const cn = [ 'inputWithFile', 'resizable' ];		
+		const or = ` ${translate('commonOr')} `;
+		const onBlur = focused ? this.onBlur : () => {};
+		const onFocus = focused ? () => {} : this.onFocus;
+		const isSmall = size == Size.Small;
+		const isIcon = size == Size.Icon;
 
-		let cn = [ 'inputWithFile', 'resizable' ];		
 		let placeholder = textUrl;
-		let onFocus = focused ? () => {} : this.onFocus;
-		let onBlur = focused ? this.onBlur : () => {};
-		let or = ' or ';
 		let onClick = (e: any) => {};
-		let isSmall = size == Size.Small;
-		let isIcon = size == Size.Icon;
 		
 		if (!withFile) {
 			cn.push('noFile');
@@ -194,7 +194,7 @@ class InputWithFile extends React.Component<Props, State> {
 			};
 			
 			if (size != this.state.size) {
-				this.setState({ size: size });	
+				this.setState({ size });	
 			};
 		});
 	};
@@ -231,7 +231,7 @@ class InputWithFile extends React.Component<Props, State> {
 				return;
 			};
 			
-			let url = this.urlRef.getValue() || '';
+			const url = this.urlRef.getValue() || '';
 			if (!url) {
 				return;
 			};
@@ -252,9 +252,8 @@ class InputWithFile extends React.Component<Props, State> {
 			return;
 		};
 		
-		let options: any = { 
+		const options: any = { 
 			properties: [ 'openFile' ], 
-			filters: [  ] 
 		};
 		if (accept) {
 			options.filters = [

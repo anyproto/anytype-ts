@@ -125,14 +125,15 @@ class PopupHelp extends React.Component<Props, State> {
 	getSections (): any[] {
 		const document = this.getDocument();
 		const blocks = this.getBlocks().filter(it => it.type != I.BlockType.Cover);
+		const sections: any[] = [];
 
-		let sections: any[] = [];
 		switch (document) {
-			default: 
+			default: {
 				sections.push({ children: blocks });
 				break;
+			};
 
-			case 'WhatsNew':
+			case 'WhatsNew': {
 				let section = { children: [], header: null };
 				for (let block of blocks) {
 					if (!section.header && [ I.TextStyle.Title, I.TextStyle.Header1, I.TextStyle.Header2, I.TextStyle.Header3 ].includes(block.style)) {
@@ -147,6 +148,7 @@ class PopupHelp extends React.Component<Props, State> {
 					};
 				};
 				break;
+			};
 		};
 
 		return sections;

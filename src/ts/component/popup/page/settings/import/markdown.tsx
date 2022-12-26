@@ -2,7 +2,6 @@ import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { IconObject, Title, Label, Button } from 'Component';
 import { I, Util, translate } from 'Lib';
-
 import Head from '../head';
 
 interface Props extends I.Popup, RouteComponentProps<any> {
@@ -11,7 +10,7 @@ interface Props extends I.Popup, RouteComponentProps<any> {
 	onImport: (type: I.ImportType, param: any, callBack?: (message: any) => void) => void;
 };
 
-class PopupSettingsPageImportMarkdown extends React.Component<Props, {}> {
+class PopupSettingsPageImportMarkdown extends React.Component<Props> {
 
 	constructor (props: Props) {
 		super(props);
@@ -29,7 +28,7 @@ class PopupSettingsPageImportMarkdown extends React.Component<Props, {}> {
 
 				<div className="path">
 					<b>{translate('popupSettingsImportPageTitle')}</b><br/>
-					Three dots menu on the top-left corner → <IconObject object={{ iconEmoji: ':paperclip:' }} /> Export →  <br/> Export format : "Markdown & CSV".
+					Three dots menu on the top-left corner → <IconObject object={{ iconEmoji: ':paperclip:' }} /> Export →  <br/> Export format : &quot;Markdown &amp; CSV&quot;.
 				</div>
 
 				<Label className="last" text={translate('popupSettingsImportZip')} />

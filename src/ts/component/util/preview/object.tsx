@@ -66,7 +66,7 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 			let line = <div className="line" />;
 
 			switch (item.type) {
-				case I.BlockType.Text:
+				case I.BlockType.Text: {
 					if (!text) {
 						line = null;
 					};
@@ -76,17 +76,19 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 					};
 
 					switch (style) {
-						default:
+						default: {
 							inner = line;
 							break;
+						};
 
 						case I.TextStyle.Header1:
 						case I.TextStyle.Header2:
-						case I.TextStyle.Header3:
+						case I.TextStyle.Header3: {
 							inner = text;
 							break;
+						};
 
-						case I.TextStyle.Checkbox:
+						case I.TextStyle.Checkbox: {
 							inner = (
 								<React.Fragment>
 									<Icon className={[ 'check', (checked ? 'active' : '') ].join(' ')} />
@@ -94,8 +96,9 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 								</React.Fragment>
 							);
 							break;
+						};
 
-						case I.TextStyle.Quote:
+						case I.TextStyle.Quote: {
 							inner = (
 								<React.Fragment>
 									<Icon className="hl" />
@@ -103,8 +106,9 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 								</React.Fragment>
 							);
 							break;
+						};
 
-						case I.TextStyle.Bulleted:
+						case I.TextStyle.Bulleted: {
 							inner = (
 								<React.Fragment>
 									<Icon className="bullet" />
@@ -112,8 +116,9 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 								</React.Fragment>
 							);
 							break;
+						};
 
-						case I.TextStyle.Toggle:
+						case I.TextStyle.Toggle: {
 							inner = (
 								<React.Fragment>
 									<Icon className="toggle" />
@@ -121,8 +126,9 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 								</React.Fragment>
 							);
 							break;
+						};
 
-						case I.TextStyle.Numbered:
+						case I.TextStyle.Numbered: {
 							inner = (
 								<React.Fragment>
 									<div id={'marker-' + item.id} className="number" />
@@ -130,16 +136,19 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 								</React.Fragment>
 							);
 							break;
+						};
 					};
 					break;
+				};
 
-				case I.BlockType.Layout:
+				case I.BlockType.Layout: {
 					if (style == I.LayoutStyle.Row) {
 						isRow = true;
 					};
 					break;
+				};
 
-				case I.BlockType.Relation:
+				case I.BlockType.Relation: {
 					inner = (
 						<React.Fragment>
 							{line}
@@ -147,15 +156,16 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 						</React.Fragment>
 					);
 					break;
+				};
 
-				case I.BlockType.File:
+				case I.BlockType.File: {
 					if ([ I.FileState.Empty, I.FileState.Error ].indexOf(content.state) >= 0) {
 						break;
 					};
 
 					switch (content.type) {
 						default: 
-						case I.FileType.File: 
+						case I.FileType.File: {
 							bullet = <div className={[ 'bullet', 'bgColor', 'bgColor-' + Colors[c] ].join(' ')} />
 							inner = (
 								<React.Fragment>
@@ -169,8 +179,9 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 								c = 0;
 							};
 							break;
+						};
 							
-						case I.FileType.Image:
+						case I.FileType.Image: {
 							const css: any = {};
 		
 							if (fields.width) {
@@ -179,13 +190,17 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 
 							inner = <img className="media" src={commonStore.imageUrl(content.hash, Constant.size.image)} style={css} />
 							break;
+						};
 							
-						case I.FileType.Video: 
+						case I.FileType.Video: {
 							break;
+						};
+
 					};
 					break;
+				};
 
-				case I.BlockType.Link:
+				case I.BlockType.Link: {
 					bullet = <div className={[ 'bullet', 'bgColor', 'bgColor-' + Colors[c] ].join(' ')} />
 					inner = (
 						<React.Fragment>
@@ -199,8 +214,9 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 						c = 0;
 					};
 					break;
+				};
 
-				case I.BlockType.Bookmark:
+				case I.BlockType.Bookmark: {
 					if (!content.url) {
 						break;
 					};
@@ -227,6 +243,7 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 						</div>
 					);
 					break;
+				};
 			};
 
 			return (

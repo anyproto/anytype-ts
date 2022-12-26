@@ -4,20 +4,18 @@ import { I, translate, Util } from 'Lib';
 import { commonStore, authStore } from 'Store';
 import { observer } from 'mobx-react';
 
-interface Props extends I.PageComponent {};
-
 interface State {
 	error: string;
-}
+};
 
-const PageAuthPinSelect = observer(class PageAuthPinSelect extends React.Component<Props, State> {
+const PageAuthPinSelect = observer(class PageAuthPinSelect extends React.Component<I.PageComponent, State> {
 	
 	ref: any = null;
 	state = {
 		error: ''
 	};
 
-	constructor (props: any) {
+	constructor (props: I.PageComponent) {
         super(props);
 
 		this.onSuccess = this.onSuccess.bind(this);

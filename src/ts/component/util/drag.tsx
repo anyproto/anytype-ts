@@ -37,8 +37,8 @@ class Drag extends React.Component<Props, object> {
 	
 	render () {
 		const { id, className } = this.props;
-		
-		let cn: string[] = [ 'input-drag' ];
+		const cn = [ 'input-drag' ];
+
 		if (className) {
 			cn.push(className);
 		};

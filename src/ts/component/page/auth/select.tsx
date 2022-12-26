@@ -4,19 +4,17 @@ import { I, Util, translate, C } from 'Lib';
 import { commonStore } from 'Store';
 import { observer } from 'mobx-react';
 
-interface Props extends I.PageComponent {};
-
 interface State {
 	error: string;
-}
+};
 
-const PageAuthSelect = observer(class PageAuthSelect extends React.Component<Props, State> {
+const PageAuthSelect = observer(class PageAuthSelect extends React.Component<I.PageComponent, State> {
 
 	state = {
 		error: ''
 	};
 
-	constructor (props: any) {
+	constructor (props: I.PageComponent) {
         super(props);
 
 		this.onLogin = this.onLogin.bind(this);

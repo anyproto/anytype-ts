@@ -3,9 +3,7 @@ import { Loader, Frame } from 'Component';
 import { I, ObjectUtil } from 'Lib';
 import { observer } from 'mobx-react';
 
-interface Props extends I.PageComponent {};
-
-const PageMainCreate = observer(class PageMainCreate extends React.Component<Props, object> {
+const PageMainCreate = observer(class PageMainCreate extends React.Component<I.PageComponent> {
 
 	render () {
 		return (

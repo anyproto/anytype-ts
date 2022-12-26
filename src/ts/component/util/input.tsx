@@ -63,9 +63,9 @@ class Input extends React.Component<Props, State> {
 
 	render () {
 		const { id, name, placeholder, className, autoComplete, readonly, maxLength, multiple, accept, onClick, onMouseEnter, onMouseLeave } = this.props;
-		
-		let type: string = this.state.type || this.props.type;
-		let cn = [ 'input', 'input-' + type ];
+		const type: string = this.state.type || this.props.type;
+		const cn = [ 'input', 'input-' + type ];
+
 		if (className) {
 			cn.push(className);
 		};
@@ -237,7 +237,7 @@ class Input extends React.Component<Props, State> {
 			return;
 		};
 
-		let node = $(ReactDOM.findDOMNode(this));
+		const node = $(ReactDOM.findDOMNode(this));
 		v ? node.addClass('withError') : node.removeClass('withError');
 	};
 
