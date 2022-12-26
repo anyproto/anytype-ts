@@ -681,7 +681,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.set },
 					{ operator: I.FilterOperator.And, relationKey: 'setOf', condition: I.FilterCondition.NotEmpty, value: null },
 				],
-				keys: Constant.defaultRelationKeys.concat([ 'setOf' ]),
+				canAdd: true,
 				onSelect: (item: any) => {
 					C.BlockDataviewCreateFromExistingObject(rootId, block.id, item.id, (message: any) => {
 						if (message.views && message.views.length) {

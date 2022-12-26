@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, Editable } from 'Component';
-import { I, keyboard, DataUtil, ObjectUtil, analytics } from 'Lib';
+import { I, C, keyboard, DataUtil, ObjectUtil, analytics } from 'Lib';
 import { menuStore, detailStore } from 'Store';
+import Constant from 'json/constant.json';
 
 interface Props extends I.ViewComponent {
 	onSourceSelect?(e: any): void;
@@ -35,7 +36,8 @@ const Head = observer(class Head extends React.Component<Props, State> {
 		this.onIconUpload = this.onIconUpload.bind(this);
 		this.onFullscreen = this.onFullscreen.bind(this);
 		this.onTitle = this.onTitle.bind(this);
-		this.onTitleOption = this.onTitleOption.bind(this);
+		this.onTitleOver = this.onTitleOver.bind(this);
+		this.onTitleSelect = this.onTitleSelect.bind(this);
 	};
 
 	render () {
@@ -50,11 +52,15 @@ const Head = observer(class Head extends React.Component<Props, State> {
 			cn.push(className);
 		};
 
+		if (isEditing) {
+			cn.push('isEditing');
+		};
+
 		return (
 			<div className={cn.join(' ')}>
 				<div id="head-title-wrapper" className="side left">
 					<IconObject id={`icon-set-${block.id}`} object={object} size={18} canEdit={!readonly} onSelect={this.onIconSelect} onUpload={this.onIconUpload} />
-					
+
 					<Editable 
 						ref={(ref: any) => { this.ref = ref; }}
 						id="value"
@@ -111,6 +117,7 @@ const Head = observer(class Head extends React.Component<Props, State> {
 
 		const options: any[] = [
 			{ id: 'editTitle', icon: 'editText', name: 'Edit title' },
+			{ id: 'changeSource', icon: 'folderBlank', name: 'Change source', arrow: true },
 		];
 
 		if (targetObjectId) {
@@ -120,17 +127,75 @@ const Head = observer(class Head extends React.Component<Props, State> {
 		menuStore.open('select', {
 			element: `#block-${block.id} #head-title-wrapper`,
 			horizontal: I.MenuDirection.Left,
+			offsetY: 4,
 			onOpen: (context: any) => {
 				this.menuContext = context;
 			},
 			data: {
-				options: options,
-				onSelect: this.onTitleOption,
+				options,
+				onOver: this.onTitleOver,
+				onSelect: this.onTitleSelect,
 			},
 		});
 	};
 
-	onTitleOption (e: any, item: any) {
+	onTitleOver (e: any, item: any) {
+		const { rootId, block, getData } = this.props;
+
+		if (!item.arrow) {
+			menuStore.closeAll([ 'searchObject' ]);
+			return;
+		};
+
+		let menuId = '';
+		let menuParam: any = {
+			menuKey: item.id,
+			element: `#${this.menuContext.getId()} #item-${item.id}`,
+			offsetX: this.menuContext.getSize().width,
+			vertical: I.MenuDirection.Center,
+			data: {},
+		};
+
+		switch (item.id) {
+			case 'changeSource':
+				menuId = 'searchObject';
+				menuParam.className = 'single';
+				menuParam.data = Object.assign(menuParam.data, {
+					rootId,
+					blockId: block.id,
+					blockIds: [ block.id ],
+					filters: [
+						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.set },
+						{ operator: I.FilterOperator.And, relationKey: 'setOf', condition: I.FilterCondition.NotEmpty, value: null },
+					],
+					canAdd: true,
+					rebind: this.menuContext.ref.rebind,
+					onSelect: (item: any) => {
+						C.BlockDataviewCreateFromExistingObject(rootId, block.id, item.id, (message: any) => {
+							if (message.views && message.views.length) {
+								getData(message.views[0].id, 0, true);
+							};
+						});
+
+						analytics.event('InlineSetSetSource');
+						this.menuContext.close();
+					}
+				});
+				break;
+		};
+
+		if (menuId && !menuStore.isOpen(menuId, item.id)) {
+			menuStore.closeAll([ 'searchObject' ], () => {
+				menuStore.open(menuId, menuParam);
+			});
+		};
+	};
+
+	onTitleSelect (e: any, item: any) {
+		if (item.arrow) {
+			return;
+		};
+
 		const { rootId, block } = this.props;
 		const { targetObjectId } = block.content;
 		const object = detailStore.get(rootId, targetObjectId);

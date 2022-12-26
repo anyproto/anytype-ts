@@ -65,12 +65,15 @@
 				.icon.set { background-image: url('~img/icon/dataview/head/set.svg'); }
 			}
 
-			.editableWrap { @include text-header3; font-weight: 700; position: relative; }
+			.editableWrap { @include text-header3; font-weight: 700; position: relative; cursor: pointer; }
 			.editableWrap {
 				.editable { min-width: 70px; min-height: 26px; }
 			}
 
 			.icon.expand { width: 20px; height: 20px; background-image: url('~img/icon/menu/action/expand0.svg'); }
+		}
+		.dataviewHead.isEditing {
+			.editableWrap { cursor: text; }
 		}
 
 		.dataviewControls { font-weight: 500; color: $colorMediumGrey; position: relative; }
