@@ -337,6 +337,11 @@ class MenuBlockAction extends React.Component<Props, State> {
 				children: MenuUtil.getActions({ hasText, hasFile, hasLink, hasDataview, hasBookmark, hasTurnObject })
 			};
 
+			if (hasDataview) {
+				section2.children.push({ id: 'dataviewSource', icon: 'source', name: 'Source', arrow: true });
+				section2.children.push({ id: 'openDataviewFullscreen', icon: 'expand', name: 'Open fullscreen' });
+			};
+
 			if (hasLink) {
 				section2.children.push({ id: 'linkSettings', icon: 'linkStyle' + content.cardStyle, name: 'Preview', arrow: true });
 			};
@@ -571,6 +576,39 @@ class MenuBlockAction extends React.Component<Props, State> {
 				menuParam.subIds = [ 'select' ];
 				menuParam.offsetY = 0;
 				menuParam.vertical = I.MenuDirection.Center;
+				break;
+
+			case 'dataviewSource':
+				menuId = 'searchObject';
+				menuParam.className = 'single';
+
+				// temporary
+				const { targetObjectId } = block.content;
+
+				filters = [
+					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.set },
+					{ operator: I.FilterOperator.And, relationKey: 'setOf', condition: I.FilterCondition.NotEmpty, value: null },
+				];
+
+				menuParam.data = Object.assign(menuParam.data, {
+					type: I.NavigationType.Move,
+					position: I.BlockPosition.Bottom,
+					rootId,
+					blockId: block.id,
+					skipIds: [ targetObjectId ],
+					blockIds: [ block.id ],
+					filters,
+					canAdd: true,
+					onSelect: (item: any) => {
+						C.BlockDataviewCreateFromExistingObject(rootId, block.id, item.id, (message: any) => {
+							if (message.views && message.views.length) {
+								console.log(message)
+								// this.getData(message.views[0].id, 0, true);
+							};
+						});
+					}
+				});
+
 				break;
 		};
 

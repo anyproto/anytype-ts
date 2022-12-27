@@ -168,10 +168,6 @@ class MenuUtil {
 			items.push({ id: 'openBookmarkAsObject', icon: 'expand', name: 'Open as object' });
 		};
 
-		if (hasDataview) {
-			items.push({ id: 'openDataviewFullscreen', icon: 'expand', name: 'Open fullscreen' });
-		};
-
 		items = items.map((it: any) => {
 			it.isAction = true;
 			return it;
