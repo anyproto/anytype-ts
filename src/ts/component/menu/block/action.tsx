@@ -582,29 +582,24 @@ class MenuBlockAction extends React.Component<Props, State> {
 				menuId = 'searchObject';
 				menuParam.className = 'single';
 
-				// temporary
-				const { targetObjectId } = block.content;
-
 				filters = [
 					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.set },
 					{ operator: I.FilterOperator.And, relationKey: 'setOf', condition: I.FilterCondition.NotEmpty, value: null },
 				];
 
+				const { targetObjectId } = block.content;
 				menuParam.data = Object.assign(menuParam.data, {
 					type: I.NavigationType.Move,
 					position: I.BlockPosition.Bottom,
 					rootId,
 					blockId: block.id,
-					skipIds: [ targetObjectId ],
+					hasCheckbox: targetObjectId,
 					blockIds: [ block.id ],
 					filters,
 					canAdd: true,
 					onSelect: (item: any) => {
 						C.BlockDataviewCreateFromExistingObject(rootId, block.id, item.id, (message: any) => {
-							if (message.views && message.views.length) {
-								console.log(message)
-								// this.getData(message.views[0].id, 0, true);
-							};
+
 						});
 					}
 				});

@@ -48,7 +48,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		const { loading } = this.state;
 		const { param } = this.props;
 		const { data } = param;
-		const { filter, value, placeholder, label, isBig, noFilter, noIcon } = data;
+		const { filter, value, placeholder, label, isBig, noFilter, noIcon, hasCheckbox } = data;
 		const items = this.getItems();
 		const cn = [ 'wrap' ];
 		const placeholderFocus = data.placeholderFocus || 'Filter objects...';
@@ -105,6 +105,14 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 					props.object = undefined;
 				};
 
+				let checkbox = false;
+				let readonly = false;
+
+				if (hasCheckbox  && item.id === hasCheckbox) {
+					checkbox = true;
+					readonly = true;
+				};
+
 				content = (
 					<MenuItemVertical
 						{...props}
@@ -112,6 +120,8 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 						onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }}
 						onClick={(e: any) => { this.onClick(e, item); }}
 						style={param.style}
+						checkbox={checkbox}
+						readonly={readonly}
 						className={cn.join(' ')}
 					/>
 				);
