@@ -175,6 +175,13 @@ class MenuUtil {
 		
 		return items;
 	};
+
+	getDataviewActions () {
+		return [
+			{ id: 'dataviewSource', icon: 'source', name: 'Source', arrow: true },
+			{ id: 'openDataviewFullscreen', icon: 'expand', name: 'Open fullscreen' }
+		];
+	};
 	
 	getTextColors () {
 		let items: any[] = [

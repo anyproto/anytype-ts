@@ -201,6 +201,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 			const align = { id: 'align', icon: '', name: 'Align', children: [] };
 			const bgColor = { id: 'bgColor', icon: '', name: 'Background', children: MenuUtil.getBgColors() };
 			const color = { id: 'color', icon: 'color', name: 'Color', arrow: true, children: MenuUtil.getTextColors() };
+			const dataview = { id: 'dataview', icon: '', name: 'Dataview', children: MenuUtil.getDataviewActions() };
 
 			let hasTurnText = true;
 			let hasTurnObject = true;
@@ -262,6 +263,10 @@ class MenuBlockAction extends React.Component<Props, State> {
 			if (hasTurnFile)	 sections.push(turnFile);
 			if (hasColor)		 sections.push(color);
 			if (hasBg)			 sections.push(bgColor);
+
+			if (hasDataview) {
+				sections.push(dataview);
+			};
 
 			if (hasAlign) {
 				align.children = MenuUtil.getAlign(hasQuote);
@@ -338,8 +343,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 			};
 
 			if (hasDataview) {
-				section2.children.push({ id: 'dataviewSource', icon: 'source', name: 'Source', arrow: true });
-				section2.children.push({ id: 'openDataviewFullscreen', icon: 'expand', name: 'Open fullscreen' });
+				section2.children = section2.children.concat(MenuUtil.getDataviewActions());
 			};
 
 			if (hasLink) {
