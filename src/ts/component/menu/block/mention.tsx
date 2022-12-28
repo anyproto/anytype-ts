@@ -274,18 +274,17 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		};
 
 		const { param } = this.props;
-		const { filter } = commonStore;
 		const { data } = param;
 		const { onChange } = data;
+		const { from } = commonStore.filter;
 
 		const cb = (id: string, name: string) => {
 			name = String(name || DataUtil.defaultName('page'));
 			name = Util.shorten(name, 30);
 
-			let from = filter.from;
-			let to = from + name.length;
-			let marks = Util.objectCopy(data.marks || []);
+			const to = from + name.length;
 
+			let marks = Util.objectCopy(data.marks || []);
 			marks = Mark.adjust(marks, from, name.length);
 			marks = Mark.toggle(marks, { 
 				type: I.MarkType.Mention, 
@@ -298,9 +297,9 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 
 		if (item.itemId == 'add') {
 			const type = dbStore.getType(commonStore.type);
-			const name = filter.text.replace(/\\/g, '');
+			const name = this.getFilter();
 
-			ObjectUtil.create('', '', { name: name }, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.SelectType ], (message: any) => {
+			ObjectUtil.create('', '', { name }, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.SelectType ], (message: any) => {
 				if (message.error.code) {
 					return;
 				};
