@@ -848,30 +848,29 @@ class Dispatcher {
 
 	onObjectView (rootId: string, traceId: string, objectView: any) {
 		let { blocks, details, restrictions, relationLinks } = objectView;
-		let root = blocks.find(it => it.id == rootId);
-		let structure: any[] = [];
-		let contextId = [ rootId, traceId ].filter(it => it).join('-');
+		const root = blocks.find(it => it.id == rootId);
+		const structure: any[] = [];
+		const contextId = [ rootId, traceId ].filter(it => it).join('-');
 
 		if (root && root.fields.analyticsContext) {
 			analytics.setContext(root.fields.analyticsContext, root.fields.analyticsOriginalId);
 		};
 
-		dbStore.relationsSet(rootId, rootId, relationLinks);
-
+		dbStore.relationsSet(contextId, rootId, relationLinks);
 		detailStore.set(contextId, details);
 		blockStore.restrictionsSet(contextId, restrictions);
 
-		if (root) {
-			let object = detailStore.get(contextId, rootId, []);
+		const object = detailStore.get(contextId, rootId, []);
 
+		if (root) {
 			root.type = I.BlockType.Page;
 			root.layout = object.layout;
 		};
 
 		blocks = blocks.map((it: any) => {
 			if (it.type == I.BlockType.Dataview) {
-				dbStore.relationsSet(rootId, it.id, it.content.relationLinks);
-				dbStore.viewsSet(rootId, it.id, it.content.views);
+				dbStore.relationsSet(contextId, it.id, it.content.relationLinks);
+				dbStore.viewsSet(contextId, it.id, it.content.views);
 			};
 
 			structure.push({ id: it.id, childrenIds: it.childrenIds });
