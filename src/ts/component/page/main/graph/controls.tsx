@@ -19,6 +19,7 @@ const GraphControls = observer(class GraphControls extends React.Component<Props
 			{ id: 'links', icon: 'link', name: 'Links' },
 			{ id: 'relations', icon: 'relation', name: 'Relations' },
 			{ id: 'orphans', icon: 'orphan', name: 'Orphans' },
+			{ id: 'icons', icon: 'icon', name: 'Icons' },
 		];
 
 		return (

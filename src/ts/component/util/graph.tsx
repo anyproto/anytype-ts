@@ -66,6 +66,7 @@ const Graph = observer(class Graph extends React.Component<Props, object> {
 			y: 0.4,
 		},
 
+		icons: true,
 		orphans: true,
 		markers: true,
 		labels: true,
@@ -170,7 +171,7 @@ const Graph = observer(class Graph extends React.Component<Props, object> {
 		const targetCnt = this.edges.filter(it => it.target == d.id).length;
 
 		d.layout = Number(d.layout) || 0;
-		d.radius = Math.max(3, Math.min(8, sourceCnt + targetCnt));
+		d.radius = 5;
 		d.isRoot = d.id == rootId;
 		d.isOrphan = !targetCnt && !sourceCnt;
 		d.src = this.imageSrc(d);

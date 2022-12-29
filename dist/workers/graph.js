@@ -67,10 +67,7 @@ init = (data) => {
 
 	resize(data);
 	initColor();
-
-	requestAnimationFrame(() => {
-		nodes = nodes.map(nameMapper);
-	});
+	requestAnimationFrame(() => { nodes = nodes.map(nameMapper); });
 
 	transform = d3.zoomIdentity.translate(-width, -height).scale(3);
 	simulation = d3.forceSimulation(nodes);
@@ -79,14 +76,13 @@ init = (data) => {
 
 	simulation.on('tick', () => { redraw(); });
 	simulation.on('end', () => { simulation.alphaTarget(1); });
-	simulation.tick(100);
+	simulation.tick(200);
 };
 
 nameMapper = (d) => {
 	if (d.isRoot) {
 		d.fx = width / 2;
 		d.fy = height / 2;
-		d.radius = 10;
 	};
 
 	octx.save();
@@ -106,17 +102,17 @@ initColor = () => {
 		default:
 			Color = {
 				bg: '#fff',
-				text: '#2c2b27',
+				text: '#929082',
 				iconText: '#aca996',
 				link: {
-					0: '#dfddd0',
+					0: '#cbc9bd',
 					1: '#8c9ea5',
 					over: '#ffd15b',
 					targetOver: '#5dd400',
 					selected: '#c4e3fb',
 				},
 				node: {
-					common: '#f3f2ec',
+					common: '#aca996',
 					filter: '#e3f7d0',
 					focused: '#fef3c5',
 					over: '#ffd15b',
@@ -161,18 +157,10 @@ updateProps = (data) => {
 	forceProps = data.forceProps;
 	
 	updateForces();
-	restart(1);
+	restart(0.3);
 };
 
 initForces = () => {
-	/*
-	groupForce = forceInABox().template('force')
-	.strength(0.3) 
-	.groupBy('layout')
-	.enableGrouping(true)
-	.size([ width, height ]);
-	*/
-
 	simulation
 	.force('link', d3.forceLink())
 	.force('charge', d3.forceManyBody())
@@ -183,16 +171,11 @@ initForces = () => {
 	.force('forceInABox', groupForce);
 
 	updateForces();
-	restart(1);
+	restart(0.3);
 };
 
 updateForces = () => {
-	const center = forceProps.center;
-	const charge = forceProps.charge;
-	const collide = forceProps.collide;
-	const link = forceProps.link;
-	const forceX = forceProps.forceX;
-	const forceY = forceProps.forceY;
+	const { center, charge, collide, link, forceX, forceY } = forceProps;
 
 	simulation.force('center')
 	.x(width * center.x)
@@ -211,7 +194,6 @@ updateForces = () => {
 	simulation.force('link')
 	.id(d => d.id)
 	.distance(link.distance)
-	//.strength(d => simulation.force('forceInABox').getLinkStrength(d) * link.enabled)
 	.strength(link.strength * link.enabled)
 	.iterations(link.iterations)
 	.links(link.enabled ? edges : []);
@@ -248,7 +230,8 @@ draw = () => {
 			return;
 		};
 
-		drawLine(d, 1, 1, false, forceProps.markers);
+	 	const radius = nodeRadius(d.source) / 3;
+		drawLine(d, radius, radius * 3, false, forceProps.markers);
 	});
 
 	nodes.forEach(d => {
@@ -273,10 +256,10 @@ redraw = () => {
 drawLine = (d, aWidth, aLength, arrowStart, arrowEnd) => {
 	let x1 = d.source.x;
 	let y1 = d.source.y;
-	let r1 = d.source.radius + 3;
+	let r1 = nodeRadius(d.source);
 	let x2 = d.target.x;
 	let y2 = d.target.y;
-	let r2 = d.target.radius + 3;
+	let r2 = nodeRadius(d.target);
 	let bg = Color.link[d.type] || Color.link[0];
 
 	ctx.globalAlpha = 1;
@@ -305,6 +288,8 @@ drawLine = (d, aWidth, aLength, arrowStart, arrowEnd) => {
 
 	ctx.lineWidth = LineWidth;
 	ctx.strokeStyle = bg;
+	ctx.fillStyle = bg;
+
 	ctx.beginPath();
 	ctx.moveTo(sx1, sy1);
 	ctx.lineTo(sx2, sy2);
@@ -324,13 +309,15 @@ drawLine = (d, aWidth, aLength, arrowStart, arrowEnd) => {
 
     if (arrowEnd) {
 		ctx.save();
-		ctx.translate(sx2, sy2);
+		ctx.translate(mx, my);
 		ctx.rotate(a2);
 		ctx.beginPath();
 		ctx.moveTo(aLength, -aWidth);
         ctx.lineTo(0, 0);
         ctx.lineTo(aLength, aWidth);
-		ctx.stroke();
+		ctx.moveTo(aLength, aWidth);
+		ctx.lineTo(aWidth, -aWidth);
+		ctx.fill();
 		ctx.restore();
     };
 
@@ -372,6 +359,7 @@ drawNode = (d) => {
 	let stroke = '';
 	let img = images[d.src];
 	let isMatched = forceProps.filter && d.name.match(forceProps.filter);
+	let radius = nodeRadius(d);
 
 	ctx.save();
 	ctx.lineWidth = 0;
@@ -401,13 +389,11 @@ drawNode = (d) => {
 		ctx.globalAlpha = 0.4;
 	};
 
-	if (isIconCircle(d)) {
+	// Circle background
+	if (!forceProps.icons || !img) {
 		ctx.beginPath();
-		ctx.arc(d.x, d.y, d.radius, 0, 2 * Math.PI, true);
+		ctx.arc(d.x, d.y, radius, 0, 2 * Math.PI, true);
 		ctx.closePath();
-	} else {
-		const r = d.iconImage ? d.radius / 8 : d.radius / 4;
-		roundedRect(d.x - d.radius, d.y - d.radius, d.radius * 2, d.radius * 2, r);
 	};
 
 	if (stroke) {
@@ -421,46 +407,44 @@ drawNode = (d) => {
 	if (forceProps.labels && d.textBitmap && (transform.k >= transformThreshold)) {
 		const h = 5;
 		const div = 6.25;
-		ctx.drawImage(d.textBitmap, 0, 0, 250, 40, d.x - h * div / 2, d.y + d.radius + 1, h * div, h);
+
+		ctx.drawImage(d.textBitmap, 0, 0, 250, 40, d.x - h * div / 2, d.y + radius + 1, h * div, h);
 	};
 
-	if (img) {
-		let x = d.x - d.radius / 2;
-		let y = d.y - d.radius / 2;
-		let w = d.radius;
-		let h = d.radius;
+	if (img && forceProps.icons) {
+		let x = d.x - radius;
+		let y = d.y - radius;
+		let w = radius * 2;
+		let h = radius * 2;
 	
 		if (d.iconImage) {
-			x = d.x - d.radius;
-			y = d.y - d.radius;
+			x = d.x - radius;
+			y = d.y - radius;
 	
 			if (isIconCircle(d)) {
 				ctx.beginPath();
-				ctx.arc(d.x, d.y, d.radius, 0, 2 * Math.PI, true);
+				ctx.arc(d.x, d.y, radius, 0, 2 * Math.PI, true);
 				ctx.closePath();
 			} else {
-				const r = d.iconImage ? d.radius / 8 : d.radius / 4;
-				roundedRect(d.x - d.radius, d.y - d.radius, d.radius * 2, d.radius * 2, r);
+				const r = radius / (d.iconImage ? 8 : 4);
+				roundedRect(d.x - radius, d.y - radius, radius * 2, radius * 2, r);
 			};
 	
 			ctx.fill();
 			ctx.clip();
 	
 			if (img.width > img.height) {
-				h = d.radius * 2;
+				h = radius * 2;
 				w = h * (img.width / img.height)
-				x -= (w - d.radius * 2) / 2;
+				x -= (w - radius * 2) / 2;
 			} else {
-				w = d.radius * 2;
+				w = radius * 2;
 				h = w * (img.height / img.width);
-				y -= (h - d.radius * 2) / 2;
+				y -= (h - radius * 2) / 2;
 			};
 		};
 	
 		ctx.drawImage(img, 0, 0, img.width, img.height, x, y, w, h);
-	} else 
-	if (isLayoutHuman(d) && (transform.k >= transformThreshold)) {
-		nameCircleIcon(d);
 	};
 
 	ctx.restore();
@@ -511,12 +495,17 @@ onDragMove = ({ subjectId, active, x, y }) => {
 		return;
 	};
 
-	const d = nodes.find((it) => it.id == subjectId);
-	if (d) {
-		d.fx = transform.invertX(x) - d.radius / 2;
-		d.fy = transform.invertY(y) - d.radius / 2;
-		redraw();
+	const d = nodes.find(it => it.id == subjectId);
+	if (!d) {
+		return;
 	};
+
+	const radius = nodeRadius(d);
+
+	d.fx = transform.invertX(x) - radius / 2;
+	d.fy = transform.invertY(y) - radius / 2;
+
+	redraw();
 };
 
 onDragEnd = ({ active }) => {
@@ -663,12 +652,6 @@ const isIconCircle = (d) => {
 	return isLayoutHuman(d) || isLayoutTask(d) || isLayoutBookmark(d);
 };
 
-const nameCircleIcon = (d) => {
-	ctx.save();
-	ctx.font = d.font;  
-	ctx.fillStyle = Color.iconText;
-	ctx.textAlign = 'center';
-	ctx.textBaseline = 'middle';
-	ctx.fillText(d.letter, d.x, d.y);
-	ctx.restore();
+const nodeRadius = (d) => {
+	return d.radius / transform.k * (forceProps.icons ? 2 : 1);
 };
