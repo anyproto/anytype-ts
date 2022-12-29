@@ -24,10 +24,7 @@ class Util {
 		ctx.closePath();
 	};
 
-	arrowHead (ctx, x, y, width, height, angle) {
-		ctx.save();
-		ctx.translate(x, y);
-		ctx.rotate(angle);
+	arrowHead (ctx, width, height) {
 		ctx.beginPath();
 		ctx.moveTo(0, 0);
 		ctx.lineTo(height, -width / 2);
@@ -35,7 +32,13 @@ class Util {
 		ctx.lineTo(0, 0);
 		ctx.fill();
 		ctx.closePath();
-		ctx.restore();
+	};
+
+	line (x1, y1, x2, y2) {
+		ctx.beginPath();
+		ctx.moveTo(x1, y1);
+		ctx.lineTo(x2, y2);
+		ctx.closePath();
 	};
 
 };

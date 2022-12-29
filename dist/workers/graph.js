@@ -12,7 +12,7 @@ const util = new Util();
 // CONSTANTS
 
 const fontFamily = 'Helvetica';
-const font = `3px ${fontFamily}`;
+const font = `2.5px ${fontFamily}`;
 const fontBig = `20px ${fontFamily}`;
 const transformThreshold = 2.5;
 
@@ -42,7 +42,6 @@ let images = {};
 let simulation = null;
 let theme = '';
 let Color = {};
-let LineWidth = 0.25;
 let frame = 0;
 let selected = [];
 let groupForce = null;
@@ -103,46 +102,16 @@ initColor = () => {
 		default:
 			Color = {
 				bg: '#fff',
+				link: '#cbc9bd',
+				arrow: '#aca996',
+				node: '#aca996',
 				text: '#929082',
-				iconText: '#aca996',
-				link: {
-					0: '#cbc9bd',
-					1: '#8c9ea5',
-					over: '#ffd15b',
-					targetOver: '#5dd400',
-					selected: '#c4e3fb',
-				},
-				node: {
-					common: '#aca996',
-					filter: '#e3f7d0',
-					focused: '#fef3c5',
-					over: '#ffd15b',
-					targetOver: '#5dd400',
-					selected: '#e3eff4',
-				},
+				highlight: '#ffb522',
 			}; 
 			break;
 
 		case 'dark':
 			Color = {
-				bg: '#2c2b27',
-				text: '#dfddd3',
-				iconText: '#dfddd3',
-				link: {
-					0: '#525148',
-					1: '#8c9ea5',
-					over: '#ffd15b',
-					targetOver: '#5dd400',
-					selected: '#212b30',
-				},
-				node: {
-					common: '#484843',
-					filter: '#e3f7d0',
-					focused: '#fef3c5',
-					over: '#ffd15b',
-					targetOver: '#5dd400',
-					selected: '#212b30',
-				},
 			};
 			break;
 	};
@@ -274,71 +243,78 @@ drawLine = (d, aWidth, aLength, arrowStart, arrowEnd) => {
 	const sx2 = x2 + r2 * cos2;
 	const sy2 = y2 + r2 * sin2;
 
-	ctx.globalAlpha = 1;
+	let colorLink = Color.link;
+	let colorArrow = Color.arrow;
+	let colorText = Color.text;
 
-	if (forceProps.filter && !d.source.name.match(forceProps.filter) && !d.target.name.match(forceProps.filter)) {
-		ctx.globalAlpha = 0.2;
+	if (d.source.isOver || d.target.isOver) {
+		colorLink = Color.highlight;
+		colorArrow = Color.highlight;
+		colorText = Color.highlight;
 	};
 
-	let bg = Color.link[0];
-	if (d.source.isOver) {
-		//bg = Color.link.over;
-	};
-	if (d.target.isOver) {
-		//bg = Color.link.targetOver;
-	};
+	util.line(sx1, sy1, sx2, sy2);
 
-	ctx.lineWidth = LineWidth;
-	ctx.strokeStyle = bg;
-	ctx.fillStyle = bg;
-
-	ctx.beginPath();
-	ctx.moveTo(sx1, sy1);
-	ctx.lineTo(sx2, sy2);
+	ctx.lineWidth = 0.25;
+	ctx.strokeStyle = colorLink;
 	ctx.stroke();
 
 	let tw = 0;
 	let th = 0;
+	let offset = arrowStart && arrowEnd ? 1 : 0;
 
-	// draw name
+	// Relation name
 	if (d.name && forceProps.labels && (transform.k >= transformThreshold)) {
 		const metrics = ctx.measureText(d.name);
-		const left = metrics.actualBoundingBoxLeft * -1;
-		const top = metrics.actualBoundingBoxAscent * -1;
+		const left = -metrics.actualBoundingBoxLeft;
+		const top = -metrics.actualBoundingBoxAscent;
 		const right = metrics.actualBoundingBoxRight;
 		const bottom = metrics.actualBoundingBoxDescent;
 
 		tw = right - left;
 		th = bottom - top;
+		offset = 2;
 
+		// Rectangle
 		ctx.save();
 		ctx.translate(mx, my);
-		ctx.rotate(a1);
-
+		ctx.rotate(Math.abs(a1) <= 1.5 ? a1 : a2);
 		ctx.fillStyle = Color.bg;
-		util.roundedRect(ctx, left - tw / 2 - 1, top, tw + 2, th + 1.5, 1);
-
+		util.roundedRect(ctx, left - tw / 2 - 1, top - 0.5, tw + 2, th + 1.5, 1);
 		ctx.fill();
 		ctx.stroke();
 
-		ctx.fillStyle = bg;
+		// Label
+		ctx.fillStyle = colorText;
 		ctx.textAlign = 'center';
-		ctx.fillText(d.name, 0, 1);
-
+		ctx.fillText(d.name, 0, 0.5);
 		ctx.restore();
 	};
 
-	const sax1 = mx - (aLength - tw / 2 - 2) * cos1;
-	const say1 = my - (aLength - tw / 2 - 2) * sin1;
-	const sax2 = mx - (aLength + tw / 2 + 2) * cos2;
-	const say2 = my - (aLength + tw / 2 + 2) * sin2;
+	// Arrows
+
+	const sax1 = mx - (aLength - tw / 2 - offset) * cos1;
+	const say1 = my - (aLength - tw / 2 - offset) * sin1;
+	const sax2 = mx - (aLength + tw / 2 + offset) * cos2;
+	const say2 = my - (aLength + tw / 2 + offset) * sin2;
+
+	const drawArrow = (x, y, angle) => {
+		ctx.save();
+		ctx.translate(x, y);
+		ctx.rotate(angle);
+
+		util.arrowHead(ctx, aWidth, aLength);
+		
+		ctx.fillStyle = colorArrow;
+		ctx.fill();
+		ctx.restore();
+	};
 
 	if (arrowStart) {
-		util.arrowHead(ctx, sax1, say1, aWidth, aLength, a1);
+		drawArrow(sax1, say1, a1);
     };
-
     if (arrowEnd) {
-		util.arrowHead(ctx, sax2, say2, aWidth, aLength, a2);
+		drawArrow(sax2, say2, a2);
     };
 
 };
@@ -352,63 +328,17 @@ checkNodeInViewport = (d) => {
 };
 
 drawNode = (d) => {
-	let bg = Color.node.common;
-	let stroke = '';
-	let img = images[d.src];
-	let isMatched = forceProps.filter && d.name.match(forceProps.filter);
-	let radius = nodeRadius(d);
-
-	ctx.save();
-	ctx.lineWidth = 0;
-	ctx.globalAlpha = 1;
-
-	if (d.isRoot) {
-		bg = Color.node.focused;
-	};
-
-	if (selected.includes(d.id)) {
-		stroke = Color.link.selected;
-		bg = Color.node.selected;
-		ctx.lineWidth = 1;
-	};
-
-	if (d.isOver) {
-		stroke = Color.node.over;
-		ctx.lineWidth = 1;
-	};
-
-	if (isMatched) {
-		stroke = Color.node.over;
-		ctx.lineWidth = 2;
-	};
-
-	if (forceProps.filter && !isMatched) {
-		ctx.globalAlpha = 0.4;
-	};
-
-	// Circle background
-	if (!forceProps.icons || !img) {
-		ctx.beginPath();
-		ctx.arc(d.x, d.y, radius, 0, 2 * Math.PI, true);
-		ctx.closePath();
-	};
-
-	if (stroke) {
-		ctx.strokeStyle = stroke;
-		ctx.stroke();
-	};
+	const radius = nodeRadius(d);
+	const img = images[d.src];
 	
-	ctx.fillStyle = bg;
-	ctx.fill();
-
-	if (forceProps.labels && d.textBitmap && (transform.k >= transformThreshold)) {
-		const h = 5;
-		const div = 6.25;
-
-		ctx.drawImage(d.textBitmap, 0, 0, 250, 40, d.x - h * div / 2, d.y + radius + 1, h * div, h);
+	let bg = Color.node;
+	if (d.isOver) {
+		bg = Color.highlight;
 	};
 
-	if (img && forceProps.icons) {
+	if (forceProps.icons && img) {
+		ctx.save();
+		
 		let x = d.x - radius;
 		let y = d.y - radius;
 		let w = radius * 2;
@@ -423,8 +353,7 @@ drawNode = (d) => {
 				ctx.arc(d.x, d.y, radius, 0, 2 * Math.PI, true);
 				ctx.closePath();
 			} else {
-				const r = radius / (d.iconImage ? 8 : 4);
-				util.roundedRect(ctx, d.x - radius, d.y - radius, radius * 2, radius * 2, r);
+				util.roundedRect(ctx, d.x - radius, d.y - radius, radius * 2, radius * 2, radius / 8);
 			};
 	
 			ctx.fill();
@@ -442,9 +371,21 @@ drawNode = (d) => {
 		};
 	
 		ctx.drawImage(img, 0, 0, img.width, img.height, x, y, w, h);
+		ctx.restore();
+	} else {
+		ctx.beginPath();
+		ctx.arc(d.x, d.y, radius, 0, 2 * Math.PI, true);
+		ctx.closePath();
+		ctx.fillStyle = bg;
+		ctx.fill();
 	};
 
-	ctx.restore();
+	if (forceProps.labels && d.textBitmap && (transform.k >= transformThreshold)) {
+		const h = 5;
+		const div = 6.25;
+
+		ctx.drawImage(d.textBitmap, 0, 0, 250, 40, d.x - h * div / 2, d.y + radius + 1, h * div, h);
+	};
 };
 
 onZoom = (data) => {
@@ -618,5 +559,5 @@ const isIconCircle = (d) => {
 };
 
 const nodeRadius = (d) => {
-	return d.radius / transform.k * (forceProps.icons && !d.iconImage ? 2 : 1);
+	return d.radius / transform.k * (forceProps.icons && images[d.src] ? 2 : 1);
 };
