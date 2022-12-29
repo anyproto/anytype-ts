@@ -24,6 +24,12 @@ class Util {
 		ctx.closePath();
 	};
 
+	circle (ctx, x, y, radius) {
+		ctx.beginPath();
+		ctx.arc(x, y, radius, 0, 2 * Math.PI, true);
+		ctx.closePath();
+	};
+
 	arrowHead (ctx, width, height) {
 		ctx.beginPath();
 		ctx.moveTo(0, 0);

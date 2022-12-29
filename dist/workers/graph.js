@@ -331,9 +331,12 @@ drawNode = (d) => {
 	const radius = nodeRadius(d);
 	const img = images[d.src];
 	
-	let bg = Color.node;
+	let colorNode = Color.node;
+	let colorText = Color.text;
+
 	if (d.isOver) {
-		bg = Color.highlight;
+		colorNode = Color.highlight;
+		colorText = Color.highlight;
 	};
 
 	if (forceProps.icons && img) {
@@ -373,18 +376,36 @@ drawNode = (d) => {
 		ctx.drawImage(img, 0, 0, img.width, img.height, x, y, w, h);
 		ctx.restore();
 	} else {
-		ctx.beginPath();
-		ctx.arc(d.x, d.y, radius, 0, 2 * Math.PI, true);
-		ctx.closePath();
-		ctx.fillStyle = bg;
+		util.circle(d.x, d.y, radius);
+
+		ctx.fillStyle = colorNode;
 		ctx.fill();
 	};
 
-	if (forceProps.labels && d.textBitmap && (transform.k >= transformThreshold)) {
-		const h = 5;
-		const div = 6.25;
+	// Node name
+	if (forceProps.labels && (transform.k >= transformThreshold)) {
+		const metrics = ctx.measureText(d.name);
+		const left = -metrics.actualBoundingBoxLeft;
+		const top = -metrics.actualBoundingBoxAscent;
+		const right = metrics.actualBoundingBoxRight;
+		const bottom = metrics.actualBoundingBoxDescent;
 
-		ctx.drawImage(d.textBitmap, 0, 0, 250, 40, d.x - h * div / 2, d.y + radius + 1, h * div, h);
+		const tw = right - left;
+		const th = bottom - top;
+
+		// Rectangle
+		ctx.save();
+		ctx.translate(d.x + radius / 2, d.y + radius + 1);
+		ctx.fillStyle = Color.bg;
+		util.roundedRect(ctx, left - tw / 2 - 1, top - 0.5, tw + 2, th + 1.5, 1);
+		ctx.fill();
+		ctx.stroke();
+
+		// Label
+		ctx.fillStyle = colorText;
+		ctx.textAlign = 'center';
+		ctx.fillText(d.name, 0, 0.5);
+		ctx.restore();
 	};
 };
 
