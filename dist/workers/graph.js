@@ -5,14 +5,15 @@ importScripts('./d3/d3-dispatch.min.js');
 importScripts('./d3/d3-timer.min.js');
 importScripts('./d3/d3-selection.min.js');
 importScripts('./d3/d3-force.min.js');
-importScripts('./d3/forceInBox.js');
+importScripts('./util.js');
+
+const util = new Util();
 
 // CONSTANTS
 
 const fontFamily = 'Helvetica';
 const font = `3px ${fontFamily}`;
 const fontBig = `20px ${fontFamily}`;
-const fontItalic = `italic ${font}`;
 const transformThreshold = 2.5;
 
 const ObjectLayout = {
@@ -157,7 +158,6 @@ updateProps = (data) => {
 	forceProps = data.forceProps;
 	
 	updateForces();
-	restart(0.3);
 };
 
 initForces = () => {
@@ -171,7 +171,6 @@ initForces = () => {
 	.force('forceInABox', groupForce);
 
 	updateForces();
-	restart(0.3);
 };
 
 updateForces = () => {
@@ -211,6 +210,8 @@ updateForces = () => {
 		return hasLinks ? 0 : forceY.strength * forceY.enabled;
 	})
 	.y(height * forceY.y);
+
+	restart(0.3);
 };
 
 draw = () => {
@@ -227,11 +228,11 @@ draw = () => {
 			return;
 		};
 		if (!checkNodeInViewport(d.source) && !checkNodeInViewport(d.target)) {
-			return;
+			//return;
 		};
 
-	 	const radius = nodeRadius(d.source) / 3;
-		drawLine(d, radius, radius * 3, false, forceProps.markers);
+	 	const radius = 6 / transform.k;
+		drawLine(d, radius, radius * 2, false, forceProps.markers);
 	});
 
 	nodes.forEach(d => {
@@ -239,7 +240,7 @@ draw = () => {
 			return;
 		};
 		if (!checkNodeInViewport(d)) {
-			return;
+			//return;
 		};
 
 		drawNode(d);
@@ -254,13 +255,24 @@ redraw = () => {
 };
 
 drawLine = (d, aWidth, aLength, arrowStart, arrowEnd) => {
-	let x1 = d.source.x;
-	let y1 = d.source.y;
-	let r1 = nodeRadius(d.source);
-	let x2 = d.target.x;
-	let y2 = d.target.y;
-	let r2 = nodeRadius(d.target);
-	let bg = Color.link[d.type] || Color.link[0];
+	const x1 = d.source.x;
+	const y1 = d.source.y;
+	const r1 = nodeRadius(d.source);
+	const x2 = d.target.x;
+	const y2 = d.target.y;
+	const r2 = nodeRadius(d.target);
+	const a1 = Math.atan2(y2 - y1, x2 - x1);
+	const a2 = Math.atan2(y1 - y2, x1 - x2);
+	const cos1 = Math.cos(a1);
+	const sin1 = Math.sin(a1);
+	const cos2 = Math.cos(a2);
+	const sin2 = Math.sin(a2);
+	const mx = (x1 + x2) / 2;  
+    const my = (y1 + y2) / 2;
+	const sx1 = x1 + r1 * cos1;
+	const sy1 = y1 + r1 * sin1;
+	const sx2 = x2 + r2 * cos2;
+	const sy2 = y2 + r2 * sin2;
 
 	ctx.globalAlpha = 1;
 
@@ -268,23 +280,13 @@ drawLine = (d, aWidth, aLength, arrowStart, arrowEnd) => {
 		ctx.globalAlpha = 0.2;
 	};
 
+	let bg = Color.link[0];
 	if (d.source.isOver) {
-		bg = Color.link.over;
+		//bg = Color.link.over;
 	};
-
 	if (d.target.isOver) {
-		bg = Color.link.targetOver;
+		//bg = Color.link.targetOver;
 	};
-
-    let a1 = Math.atan2(y2 - y1, x2 - x1);
-	let a2 = Math.atan2(y1 - y2, x1 - x2);
-
-	let sx1 = x1 + r1 * Math.cos(a1);
-	let sy1 = y1 + r1 * Math.sin(a1);
-	let sx2 = x2 + r2 * Math.cos(a2);
-	let sy2 = y2 + r2 * Math.sin(a2);
-	let mx = (x1 + x2) / 2;  
-    let my = (y1 + y2) / 2;
 
 	ctx.lineWidth = LineWidth;
 	ctx.strokeStyle = bg;
@@ -295,48 +297,29 @@ drawLine = (d, aWidth, aLength, arrowStart, arrowEnd) => {
 	ctx.lineTo(sx2, sy2);
 	ctx.stroke();
 
-	if (arrowStart) {
-		ctx.save();
-		ctx.translate(sx1, sy1);
-		ctx.rotate(a1);
-		ctx.beginPath();
-		ctx.moveTo(aLength, -aWidth);
-        ctx.lineTo(0, 0);
-        ctx.lineTo(aLength, aWidth);
-		ctx.stroke();
-		ctx.restore();
-    };
-
-    if (arrowEnd) {
-		ctx.save();
-		ctx.translate(mx, my);
-		ctx.rotate(a2);
-		ctx.beginPath();
-		ctx.moveTo(aLength, -aWidth);
-        ctx.lineTo(0, 0);
-        ctx.lineTo(aLength, aWidth);
-		ctx.moveTo(aLength, aWidth);
-		ctx.lineTo(aWidth, -aWidth);
-		ctx.fill();
-		ctx.restore();
-    };
+	let tw = 0;
+	let th = 0;
 
 	// draw name
 	if (d.name && forceProps.labels && (transform.k >= transformThreshold)) {
-		ctx.save();
-		ctx.translate(mx, my);
-		ctx.font = fontItalic;
-
 		const metrics = ctx.measureText(d.name);
 		const left = metrics.actualBoundingBoxLeft * -1;
 		const top = metrics.actualBoundingBoxAscent * -1;
 		const right = metrics.actualBoundingBoxRight;
 		const bottom = metrics.actualBoundingBoxDescent;
-		const width = right - left;
-		const height = bottom - top;
+
+		tw = right - left;
+		th = bottom - top;
+
+		ctx.save();
+		ctx.translate(mx, my);
+		ctx.rotate(a1);
 
 		ctx.fillStyle = Color.bg;
-		ctx.fillRect(left - width / 2 - 1, top + 0.5, width + 2, height + 1);
+		util.roundedRect(ctx, left - tw / 2 - 1, top, tw + 2, th + 1.5, 1);
+
+		ctx.fill();
+		ctx.stroke();
 
 		ctx.fillStyle = bg;
 		ctx.textAlign = 'center';
@@ -344,6 +327,20 @@ drawLine = (d, aWidth, aLength, arrowStart, arrowEnd) => {
 
 		ctx.restore();
 	};
+
+	const sax1 = mx - (aLength - tw / 2 - 2) * cos1;
+	const say1 = my - (aLength - tw / 2 - 2) * sin1;
+	const sax2 = mx - (aLength + tw / 2 + 2) * cos2;
+	const say2 = my - (aLength + tw / 2 + 2) * sin2;
+
+	if (arrowStart) {
+		util.arrowHead(ctx, sax1, say1, aWidth, aLength, a1);
+    };
+
+    if (arrowEnd) {
+		util.arrowHead(ctx, sax2, say2, aWidth, aLength, a2);
+    };
+
 };
 
 checkNodeInViewport = (d) => {
@@ -427,7 +424,7 @@ drawNode = (d) => {
 				ctx.closePath();
 			} else {
 				const r = radius / (d.iconImage ? 8 : 4);
-				roundedRect(d.x - radius, d.y - radius, radius * 2, radius * 2, r);
+				util.roundedRect(ctx, d.x - radius, d.y - radius, radius * 2, radius * 2, r);
 			};
 	
 			ctx.fill();
@@ -450,30 +447,6 @@ drawNode = (d) => {
 	ctx.restore();
 };
 
-roundedRect = (x, y, width, height, radius) => {
-	ctx.beginPath();
-	ctx.moveTo(x + radius, y);
-	ctx.lineTo(x + width - radius, y);
-	ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
-	ctx.lineTo(x + width, y + height - radius);
-	ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
-	ctx.lineTo(x + radius, y + height);
-	ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
-	ctx.lineTo(x, y + radius);
-	ctx.quadraticCurveTo(x, y, x + radius, y);
-	ctx.closePath();
-};
-
-rect = (x, y, width, height) => {
-	ctx.beginPath();
-	ctx.moveTo(x, y);
-	ctx.lineTo(x + width, y);
-	ctx.lineTo(x + width, y + height);
-	ctx.lineTo(x, y + height);
-	ctx.lineTo(x, y);
-	ctx.closePath();
-};
-
 onZoom = (data) => {
 	const { x, y, k } = data.transform;
 
@@ -490,7 +463,7 @@ onDragStart = ({ active }) => {
 	};
 };
 
-onDragMove = ({ subjectId, active, x, y }) => {
+onDragMove = ({ subjectId, x, y }) => {
 	if (!subjectId) {
 		return;
 	};
@@ -539,7 +512,6 @@ onMouseMove = ({ x, y }) => {
 		d.isOver = true;
 	};
 
-	redraw();
 	this.postMessage({ id: 'onMouseMove', node: (d ? d.id : ''), x, y });
 };
 
@@ -554,7 +526,6 @@ onContextMenu = ({ x, y }) => {
 		d.isOver = true;
 	};
 
-	redraw();
 	this.postMessage({ id: 'onContextMenu', node: (d ? d.id : ''), x, y });
 };
 
@@ -567,22 +538,18 @@ onAddNode = (data) => {
 		return;
 	};
 
-	const node = nameMapper({
+	nodes.push(nameMapper({
 		...target,
 		index: id, 
 		x: source.x + target.radius * 2, 
 		y: source.y + target.radius * 2, 
 		vx: 1, 
 		vy: 1,
-	});
-
-	nodes.push(node);
-
+	}));
 	simulation.nodes(nodes);
 	edges.push({ type: EdgeType.Link, source: source.id, target: target.id });
 
 	updateForces();
-	restart(0.3);
 };
 
 onRemoveNode = ({ ids }) => {
@@ -590,7 +557,6 @@ onRemoveNode = ({ ids }) => {
 	edges = edges.filter(d => !ids.includes(d.source.id) && !ids.includes(d.target.id));
 	
 	updateForces();
-	restart(0.3);
 };
 
 onSetEdges = (data) => {
@@ -603,7 +569,6 @@ onSetEdges = (data) => {
 	});
 
 	updateForces();
-	restart(0.3);
 };
 
 onSetSelected = ({ ids }) => {
@@ -653,5 +618,5 @@ const isIconCircle = (d) => {
 };
 
 const nodeRadius = (d) => {
-	return d.radius / transform.k * (forceProps.icons ? 2 : 1);
+	return d.radius / transform.k * (forceProps.icons && !d.iconImage ? 2 : 1);
 };
