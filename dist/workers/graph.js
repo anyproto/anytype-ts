@@ -197,7 +197,7 @@ draw = () => {
 			return;
 		};
 		if (!checkNodeInViewport(d.source) && !checkNodeInViewport(d.target)) {
-			//return;
+			return;
 		};
 
 	 	const radius = 6 / transform.k;
@@ -209,7 +209,7 @@ draw = () => {
 			return;
 		};
 		if (!checkNodeInViewport(d)) {
-			//return;
+			return;
 		};
 
 		drawNode(d);
@@ -333,15 +333,23 @@ drawNode = (d) => {
 	
 	let colorNode = Color.node;
 	let colorText = Color.text;
+	let colorLine = '';
+	let lineWidth = 0;
 
 	if (d.isOver) {
 		colorNode = Color.highlight;
 		colorText = Color.highlight;
+		colorLine = Color.highlight;
+		lineWidth = 0.5;
 	};
 
 	if (forceProps.icons && img) {
 		ctx.save();
-		
+
+		util.roundedRect(ctx, d.x - radius - 0.5, d.y - radius - 0.5, radius * 2 + 1, radius * 2 + 1, radius / 4);
+		ctx.fillStyle = Color.bg;
+		ctx.fill();
+
 		let x = d.x - radius;
 		let y = d.y - radius;
 		let w = radius * 2;
@@ -352,11 +360,9 @@ drawNode = (d) => {
 			y = d.y - radius;
 	
 			if (isIconCircle(d)) {
-				ctx.beginPath();
-				ctx.arc(d.x, d.y, radius, 0, 2 * Math.PI, true);
-				ctx.closePath();
+				util.circle(ctx, d.x, d.y, radius);
 			} else {
-				util.roundedRect(ctx, d.x - radius, d.y - radius, radius * 2, radius * 2, radius / 8);
+				util.roundedRect(ctx, d.x - radius, d.y - radius, radius * 2, radius * 2, radius / 4);
 			};
 	
 			ctx.fill();
@@ -372,39 +378,43 @@ drawNode = (d) => {
 				y -= (h - radius * 2) / 2;
 			};
 		};
-	
+
 		ctx.drawImage(img, 0, 0, img.width, img.height, x, y, w, h);
 		ctx.restore();
 	} else {
-		util.circle(d.x, d.y, radius);
+		util.circle(ctx, d.x, d.y, radius);
 
 		ctx.fillStyle = colorNode;
 		ctx.fill();
 	};
 
+	if (lineWidth) {
+		ctx.strokeStyle = colorLine;
+		ctx.lineWidth = lineWidth;
+		ctx.stroke();
+	};
+
 	// Node name
 	if (forceProps.labels && (transform.k >= transformThreshold)) {
-		const metrics = ctx.measureText(d.name);
+		const metrics = ctx.measureText(d.shortName);
 		const left = -metrics.actualBoundingBoxLeft;
 		const top = -metrics.actualBoundingBoxAscent;
 		const right = metrics.actualBoundingBoxRight;
 		const bottom = metrics.actualBoundingBoxDescent;
-
 		const tw = right - left;
 		const th = bottom - top;
 
 		// Rectangle
 		ctx.save();
-		ctx.translate(d.x + radius / 2, d.y + radius + 1);
+		ctx.translate(d.x, d.y + radius * 2 + 2);
 		ctx.fillStyle = Color.bg;
-		util.roundedRect(ctx, left - tw / 2 - 1, top - 0.5, tw + 2, th + 1.5, 1);
+		util.rect(ctx, left - tw / 2, top, tw, th);
 		ctx.fill();
-		ctx.stroke();
 
 		// Label
 		ctx.fillStyle = colorText;
 		ctx.textAlign = 'center';
-		ctx.fillText(d.name, 0, 0.5);
+		ctx.fillText(d.shortName, 0, 0);
 		ctx.restore();
 	};
 };

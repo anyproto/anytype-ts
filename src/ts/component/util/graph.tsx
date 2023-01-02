@@ -185,7 +185,7 @@ const Graph = observer(class Graph extends React.Component<Props, object> {
 		};
 
 		d.name = SmileUtil.strip(d.name);
-		d.shortName = Util.shorten(d.name, 16);
+		d.shortName = Util.shorten(d.name, 24);
 		d.letter = d.name.trim().substr(0, 1).toUpperCase();
 		d.font = `${d.radius}px ${FONT}`;
 
@@ -327,7 +327,7 @@ const Graph = observer(class Graph extends React.Component<Props, object> {
 				break;
 
 			case I.ObjectLayout.Task:
-				src = `img/icon/checkbox${Number(d.done) || 0}.svg`;
+				src = `img/icon/graph/task.svg`;
 				break;
 
 			case I.ObjectLayout.File:
