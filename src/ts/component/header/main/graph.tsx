@@ -33,15 +33,7 @@ const HeaderMainGraph = observer(class HeaderMainGraph extends React.Component<P
 					<Icon className="nav big" tooltip="Navigation" onClick={onNavigation} />
 				</div>
 
-				<div className="side center">
-					<div id="path" className="path" onClick={onSearch} onMouseOver={this.onPathOver} onMouseOut={this.onPathOut}>
-						<div className="inner">
-							<IconObject object={object} size={18} />
-							<div className="name">{object.name}</div>
-						</div>
-					</div>
-				</div>
-
+				<div className="side center" />
 				<div className="side right" />
 			</React.Fragment>
 		);

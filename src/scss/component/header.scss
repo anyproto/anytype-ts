@@ -108,6 +108,8 @@
 	.path { border-color: $colorBorderLight; }
 }
 
+.header.mainGraph { background: none; position: absolute !important; }
+
 .popup {
 	.header { position: sticky; padding: 0px; border-radius: 12px 12px 0px 0px; top: 0px !important; }
 	.header {
