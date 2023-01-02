@@ -191,7 +191,10 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 
 			this.resize();
 			this.data.nodes = message.nodes.map(it => detailStore.check(it));
-			this.refGraph.init();
+
+			if (this.refGraph) {
+				this.refGraph.init();
+			};
 			this.forceUpdate();
 		});
 	};

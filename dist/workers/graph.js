@@ -107,6 +107,7 @@ initColor = () => {
 				node: '#aca996',
 				text: '#929082',
 				highlight: '#ffb522',
+				green: '#57c600',
 			}; 
 			break;
 
@@ -247,15 +248,20 @@ drawLine = (d, aWidth, aLength, arrowStart, arrowEnd) => {
 	let colorArrow = Color.arrow;
 	let colorText = Color.text;
 
-	if (d.source.isOver || d.target.isOver) {
+	if (d.source.isOver) {
 		colorLink = Color.highlight;
 		colorArrow = Color.highlight;
 		colorText = Color.highlight;
 	};
 
-	util.line(ctx, sx1, sy1, sx2, sy2);
+	if (d.target.isOver) {
+		colorLink = Color.green;
+		colorArrow = Color.green;
+		colorText = Color.green;
+	};
 
-	ctx.lineWidth = 0.25;
+	util.line(ctx, sx1, sy1, sx2, sy2);
+	ctx.lineWidth = r1 / 10;
 	ctx.strokeStyle = colorLink;
 	ctx.stroke();
 
@@ -276,7 +282,7 @@ drawLine = (d, aWidth, aLength, arrowStart, arrowEnd) => {
 		ctx.translate(mx, my);
 		ctx.rotate(Math.abs(a1) <= 1.5 ? a1 : a2);
 		ctx.fillStyle = Color.bg;
-		util.roundedRect(ctx, left - tw / 2 - 1, top, tw + 2, th + 1.5, 1);
+		util.roundedRect(ctx, left - tw / 2 - 1, top, tw + 2, th + 2, 1);
 		ctx.fill();
 		ctx.stroke();
 
@@ -288,8 +294,7 @@ drawLine = (d, aWidth, aLength, arrowStart, arrowEnd) => {
 		ctx.restore();
 	};
 
-	// Arrows
-
+	// Arrow heads
 	const sax1 = mx - (aLength - tw / 2 - offset) * cos1;
 	const say1 = my - (aLength - tw / 2 - offset) * sin1;
 	const sax2 = mx - (aLength + tw / 2 + offset) * cos2;
@@ -337,15 +342,21 @@ drawNode = (d) => {
 		colorNode = Color.highlight;
 		colorText = Color.highlight;
 		colorLine = Color.highlight;
-		lineWidth = 0.5;
+		lineWidth = radius / 5;
 	};
 
 	if (forceProps.icons && img) {
 		ctx.save();
 
-		util.roundedRect(ctx, d.x - radius - 0.5, d.y - radius - 0.5, radius * 2 + 1, radius * 2 + 1, radius / 4);
+		util.roundedRect(ctx, d.x - radius - lineWidth, d.y - radius - lineWidth, radius * 2 + lineWidth * 2, radius * 2 + lineWidth * 2, radius / 4);
 		ctx.fillStyle = Color.bg;
 		ctx.fill();
+
+		if (lineWidth) {
+			ctx.strokeStyle = colorLine;
+			ctx.lineWidth = lineWidth;
+			ctx.stroke();
+		};
 
 		let x = d.x - radius;
 		let y = d.y - radius;
@@ -385,12 +396,6 @@ drawNode = (d) => {
 		ctx.fill();
 	};
 
-	if (lineWidth) {
-		ctx.strokeStyle = colorLine;
-		ctx.lineWidth = lineWidth;
-		ctx.stroke();
-	};
-
 	// Node name
 	if (forceProps.labels && (transform.k >= transformThreshold)) {
 		const { top, bottom, left, right } = util.textMetrics(ctx, d.shortName);
@@ -399,7 +404,7 @@ drawNode = (d) => {
 
 		// Rectangle
 		ctx.save();
-		ctx.translate(d.x, d.y + radius * 2 + 2);
+		ctx.translate(d.x, d.y + radius * 2);
 		ctx.fillStyle = Color.bg;
 		util.rect(ctx, left - tw / 2, top, tw, th);
 		ctx.fill();
@@ -561,7 +566,6 @@ resize = (data) => {
 
 onResize = (data) => {
 	resize(data);
-	redraw();
 };
 
 // Utils
