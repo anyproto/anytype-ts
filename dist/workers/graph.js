@@ -253,7 +253,7 @@ drawLine = (d, aWidth, aLength, arrowStart, arrowEnd) => {
 		colorText = Color.highlight;
 	};
 
-	util.line(sx1, sy1, sx2, sy2);
+	util.line(ctx, sx1, sy1, sx2, sy2);
 
 	ctx.lineWidth = 0.25;
 	ctx.strokeStyle = colorLink;
@@ -265,11 +265,7 @@ drawLine = (d, aWidth, aLength, arrowStart, arrowEnd) => {
 
 	// Relation name
 	if (d.name && forceProps.labels && (transform.k >= transformThreshold)) {
-		const metrics = ctx.measureText(d.name);
-		const left = -metrics.actualBoundingBoxLeft;
-		const top = -metrics.actualBoundingBoxAscent;
-		const right = metrics.actualBoundingBoxRight;
-		const bottom = metrics.actualBoundingBoxDescent;
+		const { top, bottom, left, right } = util.textMetrics(ctx, d.shortName);
 
 		tw = right - left;
 		th = bottom - top;
@@ -280,14 +276,15 @@ drawLine = (d, aWidth, aLength, arrowStart, arrowEnd) => {
 		ctx.translate(mx, my);
 		ctx.rotate(Math.abs(a1) <= 1.5 ? a1 : a2);
 		ctx.fillStyle = Color.bg;
-		util.roundedRect(ctx, left - tw / 2 - 1, top - 0.5, tw + 2, th + 1.5, 1);
+		util.roundedRect(ctx, left - tw / 2 - 1, top, tw + 2, th + 1.5, 1);
 		ctx.fill();
 		ctx.stroke();
 
 		// Label
 		ctx.fillStyle = colorText;
 		ctx.textAlign = 'center';
-		ctx.fillText(d.name, 0, 0.5);
+		ctx.textBaseline = 'middle';
+		ctx.fillText(d.name, 0, 0);
 		ctx.restore();
 	};
 
@@ -396,11 +393,7 @@ drawNode = (d) => {
 
 	// Node name
 	if (forceProps.labels && (transform.k >= transformThreshold)) {
-		const metrics = ctx.measureText(d.shortName);
-		const left = -metrics.actualBoundingBoxLeft;
-		const top = -metrics.actualBoundingBoxAscent;
-		const right = metrics.actualBoundingBoxRight;
-		const bottom = metrics.actualBoundingBoxDescent;
+		const { top, bottom, left, right } = util.textMetrics(ctx, d.shortName);
 		const tw = right - left;
 		const th = bottom - top;
 

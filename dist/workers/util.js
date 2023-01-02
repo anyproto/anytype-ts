@@ -40,11 +40,22 @@ class Util {
 		ctx.closePath();
 	};
 
-	line (x1, y1, x2, y2) {
+	line (ctx, x1, y1, x2, y2) {
 		ctx.beginPath();
 		ctx.moveTo(x1, y1);
 		ctx.lineTo(x2, y2);
 		ctx.closePath();
+	};
+
+	textMetrics (ctx, text) {
+		const metrics = ctx.measureText(text);
+
+		return { 
+			top: -metrics.actualBoundingBoxAscent, 
+			bottom: metrics.actualBoundingBoxDescent, 
+			left: -metrics.actualBoundingBoxLeft, 
+			right: metrics.actualBoundingBoxRight,
+		};
 	};
 
 };
