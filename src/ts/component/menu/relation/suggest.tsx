@@ -360,9 +360,9 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 
 		const { getId, getSize, param, close } = this.props;
 		const { classNameWrap, data } = param;
-		const { skipKeys } = data;
-		
-		let sources = (data.skipKeys || []).concat(this.getLibrarySources());
+		const skipKeys = (data.skipKeys || []).concat(Constant.systemRelationKeys);
+
+		let sources = this.getLibrarySources();
 		let menuId = '';
 		let menuParam: I.MenuParam = {
 			menuKey: item.id,
@@ -388,11 +388,8 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 					{ operator: I.FilterOperator.And, relationKey: 'workspaceId', condition: I.FilterCondition.Equal, value: Constant.storeSpaceId },
 					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.storeTypeId.relation },
 					{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: sources },
+					{ operator: I.FilterOperator.And, relationKey: 'relationKey', condition: I.FilterCondition.NotIn, value: skipKeys },
 				];
-
-				if (skipKeys && skipKeys.length) {
-					filters.push({ operator: I.FilterOperator.And, relationKey: 'relationKey', condition: I.FilterCondition.NotIn, value: skipKeys });
-				};
 
 				menuParam.data = Object.assign(menuParam.data, {
 					ignoreWorkspace: true,

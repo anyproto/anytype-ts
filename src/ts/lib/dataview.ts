@@ -187,6 +187,16 @@ class Dataview {
 		blockStore.updateContent(rootId, blockId, { groupOrder });
 	};
 
+	getView (rootId: string, blockId: string, viewId?: string): I.View {
+		const views = dbStore.getViews(rootId, blockId);
+		if (!views.length) {
+			return null;
+		};
+
+		viewId = viewId || dbStore.getMeta(dbStore.getSubId(rootId, blockId), '').viewId;
+		return dbStore.getView(rootId, blockId, viewId) || views[0];
+	};
+
 };
 
 export default new Dataview();

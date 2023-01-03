@@ -32,7 +32,7 @@ const PopupPage = observer(class PopupPage extends React.Component<Props, object
 	};
 
 	componentDidMount () {
-		const { param, getId } = this.props;
+		const { param } = this.props;
 		const { data } = param;
 		const { matchPopup } = data;
 

@@ -456,7 +456,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<I.Pag
 	
 	onProfile (e: any) {
 		const object = detailStore.get(Constant.subId.profile, blockStore.profile);
-		ObjectUtil.openEvent(e, object);
+		ObjectUtil.openPopup(object);
 	};
 	
 	onClick (e: any, item: any) {
