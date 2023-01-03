@@ -48,7 +48,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		const { loading } = this.state;
 		const { param } = this.props;
 		const { data } = param;
-		const { filter, value, placeholder, label, isBig, noFilter, noIcon, hasCheckbox } = data;
+		const { filter, value, placeholder, label, isBig, noFilter, noIcon } = data;
 		const items = this.getItems();
 		const cn = [ 'wrap' ];
 		const placeholderFocus = data.placeholderFocus || 'Filter objects...';
@@ -66,6 +66,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 			const cn = [];
 
 			let content = null;
+			let checkbox = false;
 
 			if (item.isSection) {
 				content = <div className={[ 'sectionName', (param.index == 0 ? 'first' : '') ].join(' ')} style={param.style}>{item.name}</div>;
@@ -89,7 +90,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 					cn.push('isHidden');
 				};
 				if (value == item.id) {
-					cn.push('active');
+					checkbox = true;
 				};
 
 				if (isBig && !item.isAdd) {
@@ -105,14 +106,6 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 					props.object = undefined;
 				};
 
-				let checkbox = false;
-				let readonly = false;
-
-				if (hasCheckbox  && item.id === hasCheckbox) {
-					checkbox = true;
-					readonly = true;
-				};
-
 				content = (
 					<MenuItemVertical
 						{...props}
@@ -121,7 +114,6 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 						onClick={(e: any) => { this.onClick(e, item); }}
 						style={param.style}
 						checkbox={checkbox}
-						readonly={readonly}
 						className={cn.join(' ')}
 					/>
 				);

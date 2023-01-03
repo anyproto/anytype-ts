@@ -678,7 +678,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				rootId,
 				blockId: block.id,
 				blockIds: [ block.id ],
-				hasCheckbox: targetObjectId,
+				value: targetObjectId,
 				filters: [
 					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.set },
 					{ operator: I.FilterOperator.And, relationKey: 'setOf', condition: I.FilterCondition.NotEmpty, value: null },
