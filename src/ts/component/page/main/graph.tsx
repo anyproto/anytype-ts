@@ -179,6 +179,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 			};
 
 			const hashes: any = [];
+
 			this.data.edges = message.edges.filter(d => { 
 				const hash = [ d.source, d.target ].join('-');
 				if (hashes.includes(hash)) {
@@ -186,11 +187,21 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 				};
 
 				hashes.push(hash);
-				return (d.source !== d.target); 
+				return (d.source != d.target);
 			});
 
-			this.resize();
+			// Find backlinks
+			for (const edge of this.data.edges) {
+				const idx = this.data.edges.findIndex(d => (d.source == edge.target) && (d.target == edge.source));
+				if (idx >= 0) {
+					edge.isDouble = true;
+					this.data.edges.splice(idx, 1);
+				};
+			};
+
 			this.data.nodes = message.nodes.map(it => detailStore.check(it));
+
+			this.resize();
 
 			if (this.refGraph) {
 				this.refGraph.init();

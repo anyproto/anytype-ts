@@ -201,7 +201,7 @@ draw = () => {
 
 	edges.forEach(d => {
 		if (checkNodeInViewport(d.source) || checkNodeInViewport(d.target)) {
-			drawLine(d, radius, diameter, false, forceProps.markers);
+			drawLine(d, radius, diameter, forceProps.markers && d.isDouble, forceProps.markers);
 		};
 	});
 
