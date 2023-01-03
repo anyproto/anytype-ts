@@ -219,7 +219,7 @@ redraw = () => {
 	frame = requestAnimationFrame(draw);
 };
 
-drawLine = (d, aWidth, aLength, arrowStart, arrowEnd) => {
+drawLine = (d, arrowWidth, arrowHeight, arrowStart, arrowEnd) => {
 	const x1 = d.source.x;
 	const y1 = d.source.y;
 	const r1 = getRadius(d.source);
@@ -261,7 +261,7 @@ drawLine = (d, aWidth, aLength, arrowStart, arrowEnd) => {
 
 	let tw = 0;
 	let th = 0;
-	let offset = arrowStart && arrowEnd ? -k * 0.5 : 0;
+	let offset = arrowStart && arrowEnd ? -k : 0;
 
 	// Relation name
 	if (d.name && forceProps.labels && (transform.k >= transformThreshold)) {
@@ -270,9 +270,9 @@ drawLine = (d, aWidth, aLength, arrowStart, arrowEnd) => {
 
 		const { top, bottom, left, right } = util.textMetrics(d.name);
 
-		tw = right - left;
-		th = bottom - top;
-		offset = k * 3;
+		tw = Math.abs(right - left);
+		th = Math.abs(bottom - top);
+		offset = 0;
 
 		// Rectangle
 		ctx.save();
@@ -293,18 +293,18 @@ drawLine = (d, aWidth, aLength, arrowStart, arrowEnd) => {
 	};
 
 	// Arrow heads
-	const move = aLength + tw - offset;
+	const move = arrowHeight * 2 + tw / 2 + offset;
 	const sax1 = mx - move * cos1;
 	const say1 = my - move * sin1;
 	const sax2 = mx - move * cos2;
 	const say2 = my - move * sin2;
 
 	if (arrowStart) {
-		util.arrowHead(sax1, say1, a1, aWidth, aLength, colorArrow);
+		util.arrowHead(sax1, say1, a1, arrowWidth, arrowHeight, colorArrow);
     };
 
     if (arrowEnd) {
-		util.arrowHead(sax2, say2, a2, aWidth, aLength, colorArrow);
+		util.arrowHead(sax2, say2, a2, arrowWidth, arrowHeight, colorArrow);
     };
 };
 
