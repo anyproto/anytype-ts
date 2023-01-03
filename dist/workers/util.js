@@ -2,6 +2,10 @@ class Util {
 
 	ctx = null;
 
+	objectCopy (o) {
+		return JSON.parse(JSON.stringify(o));
+	};
+
 	roundedRect (x, y, width, height, radius) {
 		this.ctx.beginPath();
 		this.ctx.moveTo(x + radius, y);

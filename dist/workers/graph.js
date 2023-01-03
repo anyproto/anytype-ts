@@ -12,7 +12,7 @@ const util = new Util();
 // CONSTANTS
 
 const fontFamily = 'Helvetica';
-const transformThreshold = 2.5;
+const transformThreshold = 2;
 
 const ObjectLayout = {
 	Human:	 1,
@@ -26,6 +26,7 @@ const EdgeType = {
 };
 
 let canvas = null;
+let data = {};
 let ctx = null;
 let width = 0;
 let height = 0;
@@ -33,10 +34,11 @@ let density = 0;
 let transform = null;
 let nodes = [];
 let edges = [];
+let filteredNodes = [];
+let filteredEdges = [];
 let forceProps = {};
 let images = {};
 let simulation = null;
-let theme = '';
 let Color = {};
 let frame = 0;
 let selected = [];
@@ -47,19 +49,17 @@ addEventListener('message', ({ data }) => {
 	};
 });
 
-init = (data) => {
+init = (param) => {
+	data = param;
 	canvas = data.canvas;
 	forceProps = data.forceProps;
-	nodes = data.nodes;
-	edges = data.edges;
-	theme = data.theme;
 
 	ctx = canvas.getContext('2d');
 	ctx.lineCap = 'round';
 
 	util.ctx = ctx;
 	resize(data);
-	initColor();
+	initColor(data.theme);
 
 	transform = d3.zoomIdentity.translate(-width, -height).scale(3);
 	simulation = d3.forceSimulation(nodes);
@@ -68,10 +68,10 @@ init = (data) => {
 
 	simulation.on('tick', () => { redraw(); });
 	simulation.on('end', () => { simulation.alphaTarget(1); });
-	simulation.tick(200);
+	simulation.tick(100);
 };
 
-initColor = () => {
+initColor = (theme) => {
 	switch (theme) {
 		default:
 			Color = {
@@ -98,15 +98,14 @@ image = ({ src, bitmap }) => {
 	};
 };
 
-updateProps = (data) => {
-	forceProps = data.forceProps;
-	
+updateProps = (param) => {
+	forceProps = Object.assign(forceProps, param.forceProps);
 	updateForces();
 };
 
 initForces = () => {
 	simulation
-	.force('link', d3.forceLink())
+	.force('link', d3.forceLink().id(d => d.id))
 	.force('charge', d3.forceManyBody())
 	.force('collide', d3.forceCollide(nodes))
 	.force('center', d3.forceCenter())
@@ -118,6 +117,40 @@ initForces = () => {
 
 updateForces = () => {
 	const { center, charge, collide, link, forceX, forceY } = forceProps;
+	const old = new Map(nodes.map(d => [ d.id, d ]));
+
+	edges = util.objectCopy(data.edges);
+	nodes = util.objectCopy(data.nodes);
+	
+	// Filter links
+	if (!forceProps.links) {
+		edges = edges.filter(d => d.type != EdgeType.Link);
+	};
+
+	// Filter relations
+	if (!forceProps.relations) {
+		edges = edges.filter(d => d.type != EdgeType.Relation);
+	};
+
+	// Filter orphans
+	if (!forceProps.orphans) {
+		nodes = nodes.map(d => {
+			d.sourceCnt = edges.filter(it => it.source == d.id).length;
+			d.targetCnt = edges.filter(it => it.target == d.id).length;
+			d.isOrphan = !d.sourceCnt && !d.targetCnt;
+
+			return Object.assign(old.get(d.id) || {}, d);
+		});
+
+		nodes = nodes.filter(d => !d.isOrphan && !d.isRoot);
+	};
+
+	const needRestart = (edges.length != data.edges.length) || (nodes.length != data.nodes.length);
+	const map = new Map(nodes.map(d => [ d.id, d ]));
+
+	edges = edges.filter(d => map.get(d.source) && map.get(d.target));
+
+	simulation.nodes(nodes);
 
 	simulation.force('center')
 	.x(width * center.x)
@@ -141,20 +174,18 @@ updateForces = () => {
 	.links(link.enabled ? edges : []);
 
 	simulation.force('forceX')
-	.strength((d) => {
-		const hasLinks = (d.sourceCnt + d.targetCnt) > 0;
-		return hasLinks ? 0 : forceX.strength * forceX.enabled;
-	})
+	.strength(d => d.isOrphan ? forceX.strength * forceX.enabled : 0)
 	.x(width * forceX.x);
 
 	simulation.force('forceY')
-	.strength((d) => {
-		const hasLinks = (d.sourceCnt + d.targetCnt) > 0;
-		return hasLinks ? 0 : forceY.strength * forceY.enabled;
-	})
+	.strength(d => d.isOrphan ? forceY.strength * forceY.enabled : 0)
 	.y(height * forceY.y);
 
-	restart(0.3);
+	if (needRestart) {
+		simulation.alpha(1).restart();
+	} else {
+		restart(0.3);
+	};
 };
 
 draw = () => {
@@ -165,30 +196,18 @@ draw = () => {
 	ctx.clearRect(0, 0, width, height);
 	ctx.translate(transform.x, transform.y);
 	ctx.scale(transform.k, transform.k);
+	ctx.font = getFont();
 
 	edges.forEach(d => {
-		if (!forceProps.links && (d.type == EdgeType.Link)) {
-			return;
+		if (checkNodeInViewport(d.source) && checkNodeInViewport(d.target)) {
+			drawLine(d, radius, diameter, false, forceProps.markers);
 		};
-		if (!forceProps.relations && (d.type == EdgeType.Relation)) {
-			return;
-		};
-		if (!checkNodeInViewport(d.source) && !checkNodeInViewport(d.target)) {
-			return;
-		};
-
-		drawLine(d, radius, diameter, false, forceProps.markers);
 	});
 
 	nodes.forEach(d => {
-		if (!forceProps.orphans && d.isOrphan && !d.isRoot) {
-			return;
+		if (checkNodeInViewport(d)) {
+			drawNode(d);
 		};
-		if (!checkNodeInViewport(d)) {
-			return;
-		};
-
-		drawNode(d);
 	});
 
 	ctx.restore();
@@ -245,11 +264,10 @@ drawLine = (d, aWidth, aLength, arrowStart, arrowEnd) => {
 
 	// Relation name
 	if (d.name && forceProps.labels && (transform.k >= transformThreshold)) {
-		ctx.font = getFont();
 		ctx.textAlign = 'center';
 		ctx.textBaseline = 'middle';
 
-		const { top, bottom, left, right } = util.textMetrics(d.shortName);
+		const { top, bottom, left, right } = util.textMetrics(d.name);
 
 		tw = right - left;
 		th = bottom - top;
@@ -356,7 +374,6 @@ drawNode = (d) => {
 
 	// Node name
 	if (forceProps.labels && (transform.k >= transformThreshold)) {
-		ctx.font = getFont();
 		ctx.textAlign = 'center';
 		ctx.textBaseline = 'middle';
 
@@ -368,18 +385,19 @@ drawNode = (d) => {
 		ctx.save();
 		ctx.translate(d.x, d.y);
 		ctx.fillStyle = Color.bg;
-		util.rect(left, top + radius * 2, tw, th);
+		util.rect(left, top + diameter, tw, th);
 		ctx.fill();
 
 		// Label
 		ctx.fillStyle = colorText;
-		ctx.fillText(d.shortName, 0, radius * 2);
+		ctx.fillText(d.shortName, 0, diameter + 4 / transform.k);
 		ctx.restore();
 	};
 };
 
 onZoom = (data) => {
 	transform = Object.assign(transform, data.transform);
+
 	redraw();
 };
 
@@ -481,7 +499,8 @@ onAddNode = (data) => {
 onRemoveNode = ({ ids }) => {
 	nodes = nodes.filter(d => !ids.includes(d.id));
 	edges = edges.filter(d => !ids.includes(d.source.id) && !ids.includes(d.target.id));
-	
+	simulation.nodes(nodes);
+
 	updateForces();
 };
 

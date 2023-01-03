@@ -114,7 +114,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 
 		if (this.loading) {
 			window.clearTimeout(this.timeoutLoading);
-			this.timeoutLoading = window.setTimeout(() => { this.setLoading(false); }, 1000);
+			this.timeoutLoading = window.setTimeout(() => { this.setLoading(false); }, 2000);
 		};
 	};
 

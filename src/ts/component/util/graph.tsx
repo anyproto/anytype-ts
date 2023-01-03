@@ -35,34 +35,34 @@ const Graph = observer(class Graph extends React.Component<Props, object> {
 	forceProps: any = {
 		center: {
 			x: 0.5,
-			y: 0.5
+			y: 0.5,
 		},
 		charge: {
 			enabled: true,
 			strength: -30,
 			distanceMin: 20,
-			distanceMax: 200
+			distanceMax: 200,
 		},
 		collide: {
 			enabled: true,
 			strength: 0.3,
-			iterations: 1,
-			radius: 0.5
+			iterations: 2,
+			radius: 0.5,
 		},
 		link: {
 			enabled: true,
 			strength: 0.3,
-			distance: 50,
-			iterations: 1,
+			distance: 80,
+			iterations: 2,
 		},
 		forceX: {
 			enabled: true,
-			strength: 0.3,
+			strength: 0.1,
 			x: 0.4,
 		},
 		forceY: {
 			enabled: true,
-			strength: 0.3,
+			strength: 0.1,
 			y: 0.4,
 		},
 
@@ -75,7 +75,7 @@ const Graph = observer(class Graph extends React.Component<Props, object> {
 		filter: '',
 	};
 
-	constructor (props: any) {
+	constructor (props: Props) {
 		super(props);
 
 		this.onMessage = this.onMessage.bind(this);
@@ -167,16 +167,14 @@ const Graph = observer(class Graph extends React.Component<Props, object> {
 
 	nodeMapper (d: any) {
 		const { rootId } = this.props;
-		const sourceCnt = this.edges.filter(it => it.source == d.id).length;
-		const targetCnt = this.edges.filter(it => it.target == d.id).length;
 
 		d.layout = Number(d.layout) || 0;
 		d.radius = 5;
 		d.isRoot = d.id == rootId;
-		d.isOrphan = !targetCnt && !sourceCnt;
 		d.src = this.imageSrc(d);
-		d.sourceCnt = sourceCnt;
-		d.targetCnt = targetCnt;
+		d.sourceCnt = this.edges.filter(it => it.source == d.id).length;
+		d.targetCnt = this.edges.filter(it => it.target == d.id).length;
+		d.isOrphan = !d.sourceCnt && !d.targetCnt;
 
 		if (d.layout == I.ObjectLayout.Note) {
 			d.name = d.snippet || translate('commonEmpty');
@@ -347,7 +345,6 @@ const Graph = observer(class Graph extends React.Component<Props, object> {
 				break;
 
 			case I.ObjectLayout.Note:
-				src = 'img/icon/note.svg';
 				break;
 
 			case I.ObjectLayout.Bookmark:
@@ -365,10 +362,6 @@ const Graph = observer(class Graph extends React.Component<Props, object> {
 					};
 					src = src.replace(/^.\//, '');
 				};
-		
-				if (!src) {
-					src = 'img/icon/page.svg';
-				};		
 				break;
 		};
 
