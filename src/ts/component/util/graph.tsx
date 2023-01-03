@@ -57,12 +57,12 @@ const Graph = observer(class Graph extends React.Component<Props, object> {
 		},
 		forceX: {
 			enabled: true,
-			strength: 0.1,
+			strength: 0.05,
 			x: 0.4,
 		},
 		forceY: {
 			enabled: true,
-			strength: 0.1,
+			strength: 0.05,
 			y: 0.4,
 		},
 
@@ -172,9 +172,6 @@ const Graph = observer(class Graph extends React.Component<Props, object> {
 		d.radius = 5;
 		d.isRoot = d.id == rootId;
 		d.src = this.imageSrc(d);
-		d.sourceCnt = this.edges.filter(it => it.source == d.id).length;
-		d.targetCnt = this.edges.filter(it => it.target == d.id).length;
-		d.isOrphan = !d.sourceCnt && !d.targetCnt;
 
 		if (d.layout == I.ObjectLayout.Note) {
 			d.name = d.snippet || translate('commonEmpty');
@@ -184,8 +181,6 @@ const Graph = observer(class Graph extends React.Component<Props, object> {
 
 		d.name = SmileUtil.strip(d.name);
 		d.shortName = Util.shorten(d.name, 24);
-		d.letter = d.name.trim().substr(0, 1).toUpperCase();
-		d.font = `${d.radius}px ${FONT}`;
 
 		// Clear icon props to fix image size
 		if (d.layout == I.ObjectLayout.Task) {

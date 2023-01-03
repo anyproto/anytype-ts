@@ -117,7 +117,7 @@ initForces = () => {
 
 updateForces = () => {
 	const { center, charge, collide, link, forceX, forceY } = forceProps;
-	const old = new Map(nodes.map(d => [ d.id, d ]));
+	const old = getNodeMap();
 
 	edges = util.objectCopy(data.edges);
 	nodes = util.objectCopy(data.nodes);
@@ -132,23 +132,24 @@ updateForces = () => {
 		edges = edges.filter(d => d.type != EdgeType.Relation);
 	};
 
+	nodes = nodes.map(d => {
+		d.sourceCnt = edges.filter(it => it.source == d.id).length;
+		d.targetCnt = edges.filter(it => it.target == d.id).length;
+		d.isOrphan = !d.sourceCnt && !d.targetCnt;
+		return d;
+	});
+
 	// Filter orphans
 	if (!forceProps.orphans) {
-		nodes = nodes.map(d => {
-			d.sourceCnt = edges.filter(it => it.source == d.id).length;
-			d.targetCnt = edges.filter(it => it.target == d.id).length;
-			d.isOrphan = !d.sourceCnt && !d.targetCnt;
-
-			return Object.assign(old.get(d.id) || {}, d);
-		});
-
 		nodes = nodes.filter(d => !d.isOrphan && !d.isRoot);
 	};
 
-	const needRestart = (edges.length != data.edges.length) || (nodes.length != data.nodes.length);
-	const map = new Map(nodes.map(d => [ d.id, d ]));
+	const map = getNodeMap();
 
+	nodes = nodes.map(d => Object.assign(old.get(d.id) || {}, d));
 	edges = edges.filter(d => map.get(d.source) && map.get(d.target));
+
+	const needRestart = (edges.length != data.edges.length) || (nodes.length != data.nodes.length);
 
 	simulation.nodes(nodes);
 
@@ -199,7 +200,7 @@ draw = () => {
 	ctx.font = getFont();
 
 	edges.forEach(d => {
-		if (checkNodeInViewport(d.source) && checkNodeInViewport(d.target)) {
+		if (checkNodeInViewport(d.source) || checkNodeInViewport(d.target)) {
 			drawLine(d, radius, diameter, false, forceProps.markers);
 		};
 	});
@@ -473,46 +474,37 @@ onContextMenu = ({ x, y }) => {
 	this.postMessage({ id: 'onContextMenu', node: (d ? d.id : ''), x, y });
 };
 
-onAddNode = (data) => {
-	const { sourceId, target } = data;
-	const id = nodes.length;
+onAddNode = ({ sourceId, target }) => {
+	const id = data.nodes.length;
 	const source = nodes.find(it => it.id == sourceId);
 
 	if (!source) {
 		return;
 	};
 
-	nodes.push({
-		...target,
+	target = Object.assign(target, {
 		index: id, 
 		x: source.x + target.radius * 2, 
 		y: source.y + target.radius * 2, 
 		vx: 1, 
 		vy: 1,
 	});
-	simulation.nodes(nodes);
-	edges.push({ type: EdgeType.Link, source: source.id, target: target.id });
+
+	data.nodes.push(target);
+	data.edges.push({ type: EdgeType.Link, source: source.id, target: target.id });
 
 	updateForces();
 };
 
 onRemoveNode = ({ ids }) => {
-	nodes = nodes.filter(d => !ids.includes(d.id));
-	edges = edges.filter(d => !ids.includes(d.source.id) && !ids.includes(d.target.id));
-	simulation.nodes(nodes);
+	data.nodes = data.nodes.filter(d => !ids.includes(d.id));
+	data.edges = data.edges.filter(d => !ids.includes(d.source.id) && !ids.includes(d.target.id));
 
 	updateForces();
 };
 
-onSetEdges = (data) => {
-	edges = data.edges.map((d) => {
-		return { 
-			...d, 
-			source: nodes.find(n => d.source == n.id),
-			target: nodes.find(n => d.target == n.id),
-		};
-	});
-
+onSetEdges = (param) => {
+	data.edges = param.edges;
 	updateForces();
 };
 
@@ -568,4 +560,8 @@ const getRadius = (d) => {
 
 const getFont = () => {
 	return `${12 / transform.k}px ${fontFamily}`;
+};
+
+const getNodeMap = () => {
+	return new Map(nodes.map(d => [ d.id, d ]));
 };
