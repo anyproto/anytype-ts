@@ -30,16 +30,6 @@ class Util {
 		ctx.closePath();
 	};
 
-	arrowHead (ctx, width, height) {
-		ctx.beginPath();
-		ctx.moveTo(0, 0);
-		ctx.lineTo(height, -width / 2);
-		ctx.lineTo(height, width / 2);
-		ctx.lineTo(0, 0);
-		ctx.fill();
-		ctx.closePath();
-	};
-
 	line (ctx, x1, y1, x2, y2) {
 		ctx.beginPath();
 		ctx.moveTo(x1, y1);
@@ -56,6 +46,23 @@ class Util {
 			left: -metrics.actualBoundingBoxLeft, 
 			right: metrics.actualBoundingBoxRight,
 		};
+	};
+
+	arrowHead (x, y, angle, width, height, color) {
+		ctx.save();
+		ctx.translate(x, y);
+		ctx.rotate(angle);
+
+		ctx.beginPath();
+		ctx.moveTo(0, 0);
+		ctx.lineTo(height, -width / 2);
+		ctx.lineTo(height, width / 2);
+		ctx.lineTo(0, 0);
+		ctx.closePath();
+		
+		ctx.fillStyle = color;
+		ctx.fill();
+		ctx.restore();
 	};
 
 };

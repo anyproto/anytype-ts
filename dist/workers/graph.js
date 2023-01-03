@@ -157,6 +157,9 @@ updateForces = () => {
 };
 
 draw = () => {
+	const radius = 6 / transform.k;
+	const diameter = radius * 2;
+
 	ctx.save();
 	ctx.clearRect(0, 0, width, height);
 	ctx.translate(transform.x, transform.y);
@@ -173,8 +176,7 @@ draw = () => {
 			return;
 		};
 
-	 	const radius = 6 / transform.k;
-		drawLine(d, radius, radius * 2, false, forceProps.markers);
+		drawLine(d, radius, diameter, false, forceProps.markers);
 	});
 
 	nodes.forEach(d => {
@@ -215,6 +217,7 @@ drawLine = (d, aWidth, aLength, arrowStart, arrowEnd) => {
 	const sy1 = y1 + r1 * sin1;
 	const sx2 = x2 + r2 * cos2;
 	const sy2 = y2 + r2 * sin2;
+	const k = 5 / transform.k;
 
 	let colorLink = Color.link;
 	let colorArrow = Color.arrow;
@@ -239,7 +242,7 @@ drawLine = (d, aWidth, aLength, arrowStart, arrowEnd) => {
 
 	let tw = 0;
 	let th = 0;
-	let offset = arrowStart && arrowEnd ? 1 : 0;
+	let offset = arrowStart && arrowEnd ? -k * 0.5 : 0;
 
 	// Relation name
 	if (d.name && forceProps.labels && (transform.k >= transformThreshold)) {
@@ -248,18 +251,17 @@ drawLine = (d, aWidth, aLength, arrowStart, arrowEnd) => {
 		ctx.textBaseline = 'middle';
 
 		const { top, bottom, left, right } = util.textMetrics(ctx, d.shortName);
-		const k = 5 / transform.k;
 
 		tw = right - left;
 		th = bottom - top;
-		offset = k * 2;
+		offset = k * 3;
 
 		// Rectangle
 		ctx.save();
 		ctx.translate(mx, my);
 		ctx.rotate(Math.abs(a1) <= 1.5 ? a1 : a2);
-		ctx.fillStyle = Color.bg;
 		util.roundedRect(ctx, left - k, top - k, tw + k * 2, th + k * 2, r1 / 4);
+		ctx.fillStyle = Color.bg;
 		ctx.fill();
 		ctx.stroke();
 
@@ -270,38 +272,19 @@ drawLine = (d, aWidth, aLength, arrowStart, arrowEnd) => {
 	};
 
 	// Arrow heads
-	const sax1 = mx - (aLength - tw / 2 - offset) * cos1;
-	const say1 = my - (aLength - tw / 2 - offset) * sin1;
-	const sax2 = mx - (aLength + tw / 2 + offset) * cos2;
-	const say2 = my - (aLength + tw / 2 + offset) * sin2;
-
-	const drawArrow = (x, y, angle) => {
-		ctx.save();
-		ctx.translate(x, y);
-		ctx.rotate(angle);
-
-		util.arrowHead(ctx, aWidth, aLength);
-		
-		ctx.fillStyle = colorArrow;
-		ctx.fill();
-		ctx.restore();
-	};
+	const move = aLength + tw - offset;
+	const sax1 = mx - move * cos1;
+	const say1 = my - move * sin1;
+	const sax2 = mx - move * cos2;
+	const say2 = my - move * sin2;
 
 	if (arrowStart) {
-		drawArrow(sax1, say1, a1);
+		util.arrowHead(sax1, say1, a1, aWidth, aLength, colorArrow);
     };
+
     if (arrowEnd) {
-		drawArrow(sax2, say2, a2);
+		util.arrowHead(sax2, say2, a2, aWidth, aLength, colorArrow);
     };
-
-};
-
-checkNodeInViewport = (d) => {
-	const dr = d.radius * transform.k;
-	const distX = transform.x + d.x * transform.k - dr;
-	const distY = transform.y + d.y * transform.k - dr;
-
-	return (distX >= -dr * 2) && (distX <= width) && (distY >= -dr * 2) && (distY <= height);
 };
 
 drawNode = (d) => {
@@ -396,12 +379,7 @@ drawNode = (d) => {
 };
 
 onZoom = (data) => {
-	const { x, y, k } = data.transform;
-
-	transform.x = x;
-	transform.y = y;
-	transform.k = k;
-
+	transform = Object.assign(transform, data.transform);
 	redraw();
 };
 
@@ -519,12 +497,12 @@ onSetEdges = (data) => {
 	updateForces();
 };
 
-onSetSelected = ({ ids }) => {
+onSelected = ({ ids }) => {
 	selected = ids;
 };
 
-getNodeByCoords = (x, y) => {
-	return simulation.find(transform.invertX(x), transform.invertY(y), 10);
+onResize = (data) => {
+	resize(data);
 };
 
 restart = (alpha) => {
@@ -541,18 +519,16 @@ resize = (data) => {
 	ctx.scale(density, density);
 };
 
-onResize = (data) => {
-	resize(data);
-};
+const checkNodeInViewport = (d) => {
+	const dr = d.radius * transform.k;
+	const distX = transform.x + d.x * transform.k - dr;
+	const distY = transform.y + d.y * transform.k - dr;
 
-// Utils
+	return (distX >= -dr * 2) && (distX <= width) && (distY >= -dr * 2) && (distY <= height);
+};
 
 const isLayoutHuman = (d) => {
 	return d.layout === ObjectLayout.Human;
-};
-
-const isLayoutTask = (d) => {
-	return d.layout === ObjectLayout.Task;
 };
 
 const isLayoutBookmark = (d) => {
@@ -560,7 +536,11 @@ const isLayoutBookmark = (d) => {
 };
 
 const isIconCircle = (d) => {
-	return isLayoutHuman(d) || isLayoutTask(d) || isLayoutBookmark(d);
+	return isLayoutHuman(d) || isLayoutBookmark(d);
+};
+
+const getNodeByCoords = (x, y) => {
+	return simulation.find(transform.invertX(x), transform.invertY(y), 10);
 };
 
 const getRadius = (d) => {
