@@ -25,10 +25,8 @@ const EdgeType = {
 	Relation:	 1,
 };
 
-let offscreen = null;
 let canvas = null;
 let ctx = null;
-let octx = null;
 let width = 0;
 let height = 0;
 let density = 0;
@@ -42,7 +40,6 @@ let theme = '';
 let Color = {};
 let frame = 0;
 let selected = [];
-let groupForce = null;
 
 addEventListener('message', ({ data }) => { 
 	if (this[data.id]) {
@@ -56,9 +53,6 @@ init = (data) => {
 	nodes = data.nodes;
 	edges = data.edges;
 	theme = data.theme;
-
-	offscreen = new OffscreenCanvas(250, 40);
-	octx = offscreen.getContext('2d');
 
 	ctx = canvas.getContext('2d');
 	ctx.lineCap = 'round';
@@ -117,7 +111,6 @@ initForces = () => {
 	.force('center', d3.forceCenter())
 	.force('forceX', d3.forceX())
 	.force('forceY', d3.forceY())
-	.force('forceInABox', groupForce);
 
 	updateForces();
 };
