@@ -228,7 +228,6 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 		const win = $(window);
 		const obj = Util.getPageContainer(this.props.isPopup);
 		const wrapper = obj.find('.wrapper');
-		const hh = Util.sizeHeader();
 		const platform = Util.getPlatform();
 		const isPopup = this.props.isPopup && !obj.hasClass('full');
 		const oh = obj.height();

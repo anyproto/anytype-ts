@@ -15,8 +15,6 @@ interface Props {
 	onSelect?: (id: string) => void;
 };
 
-const FONT = 'Helvetica';
-
 const Graph = observer(class Graph extends React.Component<Props, object> {
 
 	canvas: any = null;
@@ -46,23 +44,23 @@ const Graph = observer(class Graph extends React.Component<Props, object> {
 		collide: {
 			enabled: true,
 			strength: 0.3,
-			iterations: 2,
+			iterations: 1,
 			radius: 0.5,
 		},
 		link: {
 			enabled: true,
 			strength: 0.3,
 			distance: 80,
-			iterations: 2,
+			iterations: 1,
 		},
 		forceX: {
 			enabled: true,
-			strength: 0.05,
+			strength: 0.1,
 			x: 0.4,
 		},
 		forceY: {
 			enabled: true,
-			strength: 0.05,
+			strength: 0.1,
 			y: 0.4,
 		},
 
