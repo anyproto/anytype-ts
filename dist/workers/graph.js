@@ -141,7 +141,7 @@ updateForces = () => {
 
 	// Filter orphans
 	if (!forceProps.orphans) {
-		nodes = nodes.filter(d => !d.isOrphan && !d.isRoot);
+		nodes = nodes.filter(d => !d.isOrphan || d.isRoot);
 	};
 
 	const map = getNodeMap();

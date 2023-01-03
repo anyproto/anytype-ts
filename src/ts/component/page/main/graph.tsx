@@ -283,7 +283,11 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 	};
 
 	onSwitch (id: string, v: any) {
-		this.refGraph.forceProps[id] = v;
+		const { graph } = commonStore;
+
+		graph[id] = v;
+
+		commonStore.graphSet(graph);
 		this.refGraph.updateProps();
 
 		analytics.event('GraphSettings', { id });

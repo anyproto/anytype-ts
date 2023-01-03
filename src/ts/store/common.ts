@@ -25,13 +25,20 @@ interface Cover {
 	type: I.CoverType;
 };
 
+interface Graph {
+	icons: boolean;
+	orphans: boolean;
+	markers: boolean;
+	labels: boolean;
+	relations: boolean;
+	links: boolean;
+};
+
 class CommonStore {
 
-    public coverObj: Cover = { id: '', type: 0, image: '' };
     public progressObj: I.Progress = null;
     public filterObj: Filter = { from: 0, text: '' };
     public gatewayUrl: string = '';
-    public previewObj: Preview = { type: 0, param: '', element: null, range: { from: 0, to: 0 }, marks: [] };
 	public toastObj: I.Toast = null;
     public configObj: any = {};
     public cellId: string = '';
@@ -45,6 +52,29 @@ class CommonStore {
 	public languages: string[] = [];
 	public workspaceId: string = '';
 	public token: string = '';
+
+	public coverObj: Cover = { 
+		id: '', 
+		type: 0, 
+		image: '',
+	};
+
+	public previewObj: Preview = { 
+		type: 0, 
+		param: '', 
+		element: null, 
+		range: { from: 0, to: 0 }, 
+		marks: [],
+	};
+
+	public graphObj: Graph = { 
+		icons: true,
+		orphans: true,
+		markers: true,
+		labels: true,
+		relations: true,
+		links: true,
+	};
 
     constructor() {
         makeObservable(this, {
@@ -154,6 +184,10 @@ class CommonStore {
 		return String(this.workspaceId || '');
 	};
 
+	get graph(): Graph {
+		return Object.assign(this.graphObj, Storage.get('menuGraphSettings') || {});
+	};
+
     coverSet (id: string, image: string, type: I.CoverType) {
 		this.coverObj = { id, image, type };
 	};
@@ -208,6 +242,10 @@ class CommonStore {
 
     previewSet (preview: Preview) {
 		this.previewObj = preview;
+	};
+
+	graphSet (graph: Graph) {
+		this.graphObj = graph;
 	};
 
 	toastSet (toast: I.Toast) {

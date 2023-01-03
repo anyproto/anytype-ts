@@ -19,11 +19,8 @@ const Graph = observer(class Graph extends React.Component<Props, object> {
 
 	canvas: any = null;
 	simulation: any = null;
-	width: number = 0;
-	height: number = 0;
 	edges: any[] = [];
 	nodes: any[] = [];
-	zoom: any = null;
 	worker: any = null;
 	images: any = {};
 	subject: any = null;
@@ -64,12 +61,6 @@ const Graph = observer(class Graph extends React.Component<Props, object> {
 			y: 0.4,
 		},
 
-		icons: true,
-		orphans: true,
-		markers: true,
-		labels: true,
-		relations: true,
-		links: true,
 		filter: '',
 	};
 
@@ -82,12 +73,21 @@ const Graph = observer(class Graph extends React.Component<Props, object> {
 
 	render () {
 		const { isPopup } = this.props;
+		const id = [ 'graph' ];
+
+		if (isPopup) {
+			id.push('popup');
+		};
 
 		return (
 			<div id="graphWrapper">
-				<div id={'graph' + (isPopup ? '-popup' : '')} />
+				<div id={id.join('-')} />
 			</div>
 		);
+	};
+
+	componentDidMount () {
+		this.rebind();
 	};
 
 	componentWillUnmount () {
@@ -96,6 +96,16 @@ const Graph = observer(class Graph extends React.Component<Props, object> {
 		};
 
 		$('body').removeClass('cp');
+		this.unbind();
+	};
+
+	rebind () {
+		this.unbind();
+		$(window).on('updateGraphProps', () => { this.updateProps(); });
+	};
+
+	unbind () {
+		$(window).off('updateGraphProps');
 	};
 
 	init () {
@@ -104,23 +114,19 @@ const Graph = observer(class Graph extends React.Component<Props, object> {
 		const density = window.devicePixelRatio;
 		const elementId = '#graph' + (isPopup ? '-popup' : '');
 		const transform: any = {};
-		
-		this.width = node.width();
-		this.height = node.height();
-		this.zoom = d3.zoom().scaleExtent([ 1, 6 ]).on('zoom', e => this.onZoom(e));
-
+		const width = node.width();
+		const height = node.height();
+		const zoom = d3.zoom().scaleExtent([ 1, 6 ]).on('zoom', e => this.onZoom(e));
 		const scale = transform.k || 5;
-		const w = this.width;
-		const h = this.height;
-		const x = transform.x || -w * 2;
-		const y = transform.y || -h * 2;
+		const x = transform.x || -width * 2;
+		const y = transform.y || -height * 2;
 
 		this.edges = (data.edges || []).map(this.edgeMapper);
 		this.nodes = (data.nodes || []).map(this.nodeMapper);
 
 		this.canvas = d3.select(elementId).append('canvas')
-		.attr('width', (this.width * density) + 'px')
-		.attr('height', (this.height * density) + 'px')
+		.attr('width', (width * density) + 'px')
+		.attr('height', (height * density) + 'px')
 		.node();
 
 		const transfer = node.find('canvas').get(0).transferControlToOffscreen();
@@ -131,12 +137,12 @@ const Graph = observer(class Graph extends React.Component<Props, object> {
 
 		this.send('init', { 
 			canvas: transfer, 
-			width: this.width,
-			height: this.height,
+			width,
+			height,
 			density,
 			nodes: this.nodes,
 			edges: this.edges,
-			forceProps: this.forceProps,
+			forceProps: this.getProps(),
 			theme: commonStore.getThemeClass(),
 		}, [ transfer ]);
 
@@ -147,8 +153,8 @@ const Graph = observer(class Graph extends React.Component<Props, object> {
 			on('drag', (e: any, d: any) => this.onDragMove(e, d)).
 			on('end', (e: any, d: any) => this.onDragEnd(e, d))
 		)
-        .call(this.zoom)
-		.call(this.zoom.transform, d3.zoomIdentity.translate(x, y).scale(scale))
+        .call(zoom)
+		.call(zoom.transform, d3.zoomIdentity.translate(x, y).scale(scale))
 		.on('click', (e: any) => {
 			const [ x, y ] = d3.pointer(e);
 			this.send(e.shiftKey ? 'onSelect' : 'onClick', { x, y });
@@ -216,8 +222,12 @@ const Graph = observer(class Graph extends React.Component<Props, object> {
 		return d;
 	};
 
+	getProps () {
+		return Object.assign(this.forceProps, commonStore.graph);
+	};
+
 	updateProps () {
-		this.send('updateProps', { forceProps: this.forceProps } );
+		this.send('updateProps', { forceProps: this.getProps() } );
 	};
 
 	onDragStart (e: any, d: any) {
@@ -230,16 +240,13 @@ const Graph = observer(class Graph extends React.Component<Props, object> {
 	onDragMove (e: any, d: any) {
 		const p = d3.pointer(e, d3.select(this.canvas));
 		const node = $(ReactDOM.findDOMNode(this));
-		const offset = node.offset();
-		const id = this.subject.id;
-		const x = p[0] - offset.left;
-		const y = p[1] - offset.top;
+		const { left, top } = node.offset();
 
 		this.send('onDragMove', { 
-			subjectId: id, 
+			subjectId: this.subject.id, 
 			active: e.active, 
-			x: x, 
-			y: y,
+			x: p[0] - left, 
+			y: p[1] - top,
 		});
 	};
 			
@@ -369,12 +376,12 @@ const Graph = observer(class Graph extends React.Component<Props, object> {
 
 	resize () {
 		const node = $(ReactDOM.findDOMNode(this));
-		const density = window.devicePixelRatio;
 
-		this.width = node.width();
-		this.height = node.height();
-
-		this.send('onResize', { width: this.width, height: this.height, density: density });
+		this.send('onResize', { 
+			width: node.width(), 
+			height: node.height(), 
+			density: window.devicePixelRatio,
+		});
 	};
 
 });
