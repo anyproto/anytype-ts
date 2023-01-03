@@ -551,7 +551,7 @@ const isIconCircle = (d) => {
 };
 
 const getNodeByCoords = (x, y) => {
-	return simulation.find(transform.invertX(x), transform.invertY(y), 10);
+	return simulation.find(transform.invertX(x), transform.invertY(y), 20 / transform.k);
 };
 
 const getRadius = (d) => {
