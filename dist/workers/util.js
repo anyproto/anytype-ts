@@ -32,11 +32,18 @@ class Util {
 		this.ctx.closePath();
 	};
 
-	line (x1, y1, x2, y2) {
+	line (x1, y1, x2, y2, width, color) {
+		this.ctx.save();
+
 		this.ctx.beginPath();
 		this.ctx.moveTo(x1, y1);
 		this.ctx.lineTo(x2, y2);
 		this.ctx.closePath();
+
+		this.ctx.lineWidth = width;
+		this.ctx.strokeStyle = color;
+		this.ctx.stroke();
+		this.ctx.restore();
 	};
 
 	textMetrics (text) {

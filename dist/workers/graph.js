@@ -219,6 +219,7 @@ drawLine = (d, aWidth, aLength, arrowStart, arrowEnd) => {
 	const sx2 = x2 + r2 * cos2;
 	const sy2 = y2 + r2 * sin2;
 	const k = 5 / transform.k;
+	const lineWidth = r1 / 10;
 
 	let colorLink = Color.link;
 	let colorArrow = Color.arrow;
@@ -236,10 +237,7 @@ drawLine = (d, aWidth, aLength, arrowStart, arrowEnd) => {
 		colorText = Color.green;
 	};
 
-	util.line(sx1, sy1, sx2, sy2);
-	ctx.lineWidth = r1 / 10;
-	ctx.strokeStyle = colorLink;
-	ctx.stroke();
+	util.line(sx1, sy1, sx2, sy2, r1 / 10, colorLink);
 
 	let tw = 0;
 	let th = 0;
@@ -262,6 +260,9 @@ drawLine = (d, aWidth, aLength, arrowStart, arrowEnd) => {
 		ctx.translate(mx, my);
 		ctx.rotate(Math.abs(a1) <= 1.5 ? a1 : a2);
 		util.roundedRect(left - k, top - k, tw + k * 2, th + k * 2, r1 / 4);
+
+		ctx.strokeStyle = colorLink;
+		ctx.lineWidth = lineWidth;
 		ctx.fillStyle = Color.bg;
 		ctx.fill();
 		ctx.stroke();
@@ -291,6 +292,7 @@ drawLine = (d, aWidth, aLength, arrowStart, arrowEnd) => {
 drawNode = (d) => {
 	const radius = getRadius(d);
 	const img = images[d.src];
+	const diameter = radius * 2;
 	
 	let colorNode = Color.node;
 	let colorText = Color.text;
@@ -307,7 +309,7 @@ drawNode = (d) => {
 	if (forceProps.icons && img) {
 		ctx.save();
 
-		util.roundedRect(d.x - radius - lineWidth, d.y - radius - lineWidth, radius * 2 + lineWidth * 2, radius * 2 + lineWidth * 2, radius / 4);
+		util.roundedRect(d.x - radius - lineWidth, d.y - radius - lineWidth, diameter + lineWidth * 2, diameter + lineWidth * 2, radius / 4);
 		ctx.fillStyle = Color.bg;
 		ctx.fill();
 
@@ -319,8 +321,8 @@ drawNode = (d) => {
 
 		let x = d.x - radius;
 		let y = d.y - radius;
-		let w = radius * 2;
-		let h = radius * 2;
+		let w = diameter;
+		let h = diameter;
 	
 		if (d.iconImage) {
 			x = d.x - radius;
@@ -329,20 +331,18 @@ drawNode = (d) => {
 			if (isIconCircle(d)) {
 				util.circle(d.x, d.y, radius);
 			} else {
-				util.roundedRect(d.x - radius, d.y - radius, radius * 2, radius * 2, radius / 4);
+				util.roundedRect(d.x - radius, d.y - radius, diameter, diameter, radius / 4);
 			};
 	
 			ctx.fill();
 			ctx.clip();
 	
 			if (img.width > img.height) {
-				h = radius * 2;
-				w = h * (img.width / img.height)
-				x -= (w - radius * 2) / 2;
+				w = h * (img.width / img.height);
+				x -= (w - diameter) / 2;
 			} else {
-				w = radius * 2;
 				h = w * (img.height / img.width);
-				y -= (h - radius * 2) / 2;
+				y -= (h - diameter) / 2;
 			};
 		};
 
