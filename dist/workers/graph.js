@@ -227,10 +227,10 @@ redraw = () => {
 drawLine = (d, aWidth, aLength, arrowStart, arrowEnd) => {
 	const x1 = d.source.x;
 	const y1 = d.source.y;
-	const r1 = nodeRadius(d.source);
+	const r1 = getRadius(d.source);
 	const x2 = d.target.x;
 	const y2 = d.target.y;
-	const r2 = nodeRadius(d.target);
+	const r2 = getRadius(d.target);
 	const a1 = Math.atan2(y2 - y1, x2 - x1);
 	const a2 = Math.atan2(y1 - y2, x1 - x2);
 	const cos1 = Math.cos(a1);
@@ -271,25 +271,28 @@ drawLine = (d, aWidth, aLength, arrowStart, arrowEnd) => {
 
 	// Relation name
 	if (d.name && forceProps.labels && (transform.k >= transformThreshold)) {
+		ctx.font = getFont();
+		ctx.textAlign = 'center';
+		ctx.textBaseline = 'middle';
+
 		const { top, bottom, left, right } = util.textMetrics(ctx, d.shortName);
+		const k = 5 / transform.k;
 
 		tw = right - left;
 		th = bottom - top;
-		offset = 2;
+		offset = k * 2;
 
 		// Rectangle
 		ctx.save();
 		ctx.translate(mx, my);
 		ctx.rotate(Math.abs(a1) <= 1.5 ? a1 : a2);
 		ctx.fillStyle = Color.bg;
-		util.roundedRect(ctx, left - tw / 2 - 1, top, tw + 2, th + 2, 1);
+		util.roundedRect(ctx, left - k, top - k, tw + k * 2, th + k * 2, r1 / 4);
 		ctx.fill();
 		ctx.stroke();
 
 		// Label
 		ctx.fillStyle = colorText;
-		ctx.textAlign = 'center';
-		ctx.textBaseline = 'middle';
 		ctx.fillText(d.name, 0, 0);
 		ctx.restore();
 	};
@@ -330,7 +333,7 @@ checkNodeInViewport = (d) => {
 };
 
 drawNode = (d) => {
-	const radius = nodeRadius(d);
+	const radius = getRadius(d);
 	const img = images[d.src];
 	
 	let colorNode = Color.node;
@@ -398,21 +401,24 @@ drawNode = (d) => {
 
 	// Node name
 	if (forceProps.labels && (transform.k >= transformThreshold)) {
+		ctx.font = getFont();
+		ctx.textAlign = 'center';
+		ctx.textBaseline = 'middle';
+
 		const { top, bottom, left, right } = util.textMetrics(ctx, d.shortName);
 		const tw = right - left;
 		const th = bottom - top;
 
 		// Rectangle
 		ctx.save();
-		ctx.translate(d.x, d.y + radius * 2);
+		ctx.translate(d.x, d.y);
 		ctx.fillStyle = Color.bg;
-		util.rect(ctx, left - tw / 2, top, tw, th);
+		util.rect(ctx, left, top + radius * 2, tw, th);
 		ctx.fill();
 
 		// Label
 		ctx.fillStyle = colorText;
-		ctx.textAlign = 'center';
-		ctx.fillText(d.shortName, 0, 0);
+		ctx.fillText(d.shortName, 0, radius * 2);
 		ctx.restore();
 	};
 };
@@ -443,7 +449,7 @@ onDragMove = ({ subjectId, x, y }) => {
 		return;
 	};
 
-	const radius = nodeRadius(d);
+	const radius = getRadius(d);
 
 	d.fx = transform.invertX(x) - radius / 2;
 	d.fy = transform.invertY(y) - radius / 2;
@@ -561,7 +567,6 @@ resize = (data) => {
 	ctx.canvas.width = width * density;
 	ctx.canvas.height = height * density;
 	ctx.scale(density, density);
-	ctx.font = font;
 };
 
 onResize = (data) => {
@@ -586,6 +591,10 @@ const isIconCircle = (d) => {
 	return isLayoutHuman(d) || isLayoutTask(d) || isLayoutBookmark(d);
 };
 
-const nodeRadius = (d) => {
+const getRadius = (d) => {
 	return d.radius / transform.k * (forceProps.icons && images[d.src] ? 2 : 1);
+};
+
+const getFont = () => {
+	return `${12 / transform.k}px ${fontFamily}`;
 };
