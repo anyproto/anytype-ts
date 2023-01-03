@@ -407,7 +407,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		if (relations.length) {
 			relations.forEach((it: any) => {
-				details[it.id] = Relation.formatValue(it, null, true);
+				details[it.relationKey] = Relation.formatValue(it, null, true);
 			});
 		};
 
