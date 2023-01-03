@@ -57,6 +57,7 @@ init = (data) => {
 	ctx = canvas.getContext('2d');
 	ctx.lineCap = 'round';
 
+	util.ctx = ctx;
 	resize(data);
 	initColor();
 
@@ -235,7 +236,7 @@ drawLine = (d, aWidth, aLength, arrowStart, arrowEnd) => {
 		colorText = Color.green;
 	};
 
-	util.line(ctx, sx1, sy1, sx2, sy2);
+	util.line(sx1, sy1, sx2, sy2);
 	ctx.lineWidth = r1 / 10;
 	ctx.strokeStyle = colorLink;
 	ctx.stroke();
@@ -250,7 +251,7 @@ drawLine = (d, aWidth, aLength, arrowStart, arrowEnd) => {
 		ctx.textAlign = 'center';
 		ctx.textBaseline = 'middle';
 
-		const { top, bottom, left, right } = util.textMetrics(ctx, d.shortName);
+		const { top, bottom, left, right } = util.textMetrics(d.shortName);
 
 		tw = right - left;
 		th = bottom - top;
@@ -260,7 +261,7 @@ drawLine = (d, aWidth, aLength, arrowStart, arrowEnd) => {
 		ctx.save();
 		ctx.translate(mx, my);
 		ctx.rotate(Math.abs(a1) <= 1.5 ? a1 : a2);
-		util.roundedRect(ctx, left - k, top - k, tw + k * 2, th + k * 2, r1 / 4);
+		util.roundedRect(left - k, top - k, tw + k * 2, th + k * 2, r1 / 4);
 		ctx.fillStyle = Color.bg;
 		ctx.fill();
 		ctx.stroke();
@@ -306,7 +307,7 @@ drawNode = (d) => {
 	if (forceProps.icons && img) {
 		ctx.save();
 
-		util.roundedRect(ctx, d.x - radius - lineWidth, d.y - radius - lineWidth, radius * 2 + lineWidth * 2, radius * 2 + lineWidth * 2, radius / 4);
+		util.roundedRect(d.x - radius - lineWidth, d.y - radius - lineWidth, radius * 2 + lineWidth * 2, radius * 2 + lineWidth * 2, radius / 4);
 		ctx.fillStyle = Color.bg;
 		ctx.fill();
 
@@ -326,9 +327,9 @@ drawNode = (d) => {
 			y = d.y - radius;
 	
 			if (isIconCircle(d)) {
-				util.circle(ctx, d.x, d.y, radius);
+				util.circle(d.x, d.y, radius);
 			} else {
-				util.roundedRect(ctx, d.x - radius, d.y - radius, radius * 2, radius * 2, radius / 4);
+				util.roundedRect(d.x - radius, d.y - radius, radius * 2, radius * 2, radius / 4);
 			};
 	
 			ctx.fill();
@@ -348,8 +349,7 @@ drawNode = (d) => {
 		ctx.drawImage(img, 0, 0, img.width, img.height, x, y, w, h);
 		ctx.restore();
 	} else {
-		util.circle(ctx, d.x, d.y, radius);
-
+		util.circle(d.x, d.y, radius);
 		ctx.fillStyle = colorNode;
 		ctx.fill();
 	};
@@ -360,7 +360,7 @@ drawNode = (d) => {
 		ctx.textAlign = 'center';
 		ctx.textBaseline = 'middle';
 
-		const { top, bottom, left, right } = util.textMetrics(ctx, d.shortName);
+		const { top, bottom, left, right } = util.textMetrics(d.shortName);
 		const tw = right - left;
 		const th = bottom - top;
 
@@ -368,7 +368,7 @@ drawNode = (d) => {
 		ctx.save();
 		ctx.translate(d.x, d.y);
 		ctx.fillStyle = Color.bg;
-		util.rect(ctx, left, top + radius * 2, tw, th);
+		util.rect(left, top + radius * 2, tw, th);
 		ctx.fill();
 
 		// Label
