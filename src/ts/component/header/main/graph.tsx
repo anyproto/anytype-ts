@@ -2,6 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon, Filter } from 'Component';
 import { I, keyboard, DataUtil, ObjectUtil } from 'Lib';
+import { commonStore } from 'Store';
 
 const HeaderMainGraph = observer(class HeaderMainGraph extends React.Component<I.HeaderComponent> {
 
@@ -16,6 +17,7 @@ const HeaderMainGraph = observer(class HeaderMainGraph extends React.Component<I
 
 	render () {
 		const { onHome, onForward, onBack } = this.props;
+		const { graph } = commonStore;
 
 		return (
 			<React.Fragment>
@@ -32,7 +34,7 @@ const HeaderMainGraph = observer(class HeaderMainGraph extends React.Component<I
 					<Icon id="button-header-search" className="search big" tooltip="Search" onClick={this.onSearch} />
 					
 					<div className="filterWrap">
-						<Filter />
+						<Filter onChange={this.onFilterChange} value={graph.filter} />
 					</div>
 
 					<Icon id="button-header-filter" className="filter big" tooltip="Filters" onClick={this.onFilter} />
@@ -56,6 +58,10 @@ const HeaderMainGraph = observer(class HeaderMainGraph extends React.Component<I
 	};
 
 	onFilter () {
+	};
+
+	onFilterChange (v: string) {
+		commonStore.graphSet({ filter: v });
 	};
 
 	onSettings () {

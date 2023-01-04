@@ -15,7 +15,7 @@ interface Props {
 	onSelect?: (id: string) => void;
 };
 
-const Graph = observer(class Graph extends React.Component<Props, object> {
+const Graph = observer(class Graph extends React.Component<Props> {
 
 	canvas: any = null;
 	simulation: any = null;
@@ -60,8 +60,6 @@ const Graph = observer(class Graph extends React.Component<Props, object> {
 			strength: 0.1,
 			y: 0.4,
 		},
-
-		filter: '',
 	};
 
 	constructor (props: Props) {

@@ -32,6 +32,7 @@ interface Graph {
 	label: boolean;
 	relation: boolean;
 	link: boolean;
+	filter: string;
 };
 
 class CommonStore {
@@ -74,6 +75,7 @@ class CommonStore {
 		label: true,
 		relation: true,
 		link: true,
+		filter: '',
 	};
 
     constructor() {
@@ -244,7 +246,7 @@ class CommonStore {
 		this.previewObj = preview;
 	};
 
-	graphSet (graph: Graph) {
+	graphSet (graph: Partial<Graph>) {
 		this.graphObj = Object.assign(this.graphObj, graph);
 
 		Storage.set('graph', this.graphObj);

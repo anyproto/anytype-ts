@@ -141,7 +141,6 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 	load () {
 		const { workspace } = commonStore;
 		const skipTypes = [ Constant.typeId.space ].concat(DataUtil.getFileTypes()).concat(DataUtil.getSystemTypes());
-
 		const skipIds = [ '_anytype_profile', blockStore.profile ];
 		const filters: any[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.Equal, value: false },
@@ -269,7 +268,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 	};
 
 	getNode (id: string) {
-		return this.data.nodes.find(d => d.id == id) || null;
+		return this.data.nodes.find(d => d.id == id);
 	};
 
 	onContextMenu (id: string, param: any) {
@@ -280,7 +279,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 			...param,
 			data: {
 				objectIds: ids,
-				getObject: (id: string) => this.data.nodes.find(d => d.id == id),
+				getObject: (id: string) => this.getNode(id),
 				onLinkTo: (sourceId: string, targetId: string) => {
 					let target = this.getNode(targetId);
 					if (target) {
@@ -302,7 +301,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 
 						case 'fav':
 							ids.forEach((id: string) => {
-								const node = this.data.nodes.find(d => d.id == id);
+								const node = this.getNode(id);
 								
 								if (node) {
 									node.isFavorite = true;
@@ -314,7 +313,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 
 						case 'unfav':
 							ids.forEach((id: string) => {
-								const node = this.data.nodes.find(d => d.id == id);
+								const node = this.getNode(id);
 								
 								if (node) {
 									node.isFavorite = false;

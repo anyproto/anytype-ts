@@ -12,7 +12,7 @@ const util = new Util();
 // CONSTANTS
 
 const fontFamily = 'Helvetica';
-const transformThreshold = 2;
+const transformThreshold = 1.5;
 
 const ObjectLayout = {
 	Human:	 1,
@@ -130,6 +130,17 @@ updateForces = () => {
 	// Filter relations
 	if (!forceProps.flags.relation) {
 		edges = edges.filter(d => d.type != EdgeType.Relation);
+	};
+
+	if (forceProps.flags.filter) {
+		const reg = new RegExp(util.filterFix(forceProps.flags.filter), 'ig');
+		nodes = nodes.filter(d => {
+			d.name = String(d.name || '');
+			d.description = String(d.description || '');
+			d.snippet = String(d.snippet || '');
+
+			return d.name.match(reg) || d.description.match(reg) || d.snippet.match(reg);
+		});
 	};
 
 	nodes = nodes.map(d => {
