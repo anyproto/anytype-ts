@@ -61,7 +61,7 @@ init = (param) => {
 	resize(data);
 	initColor(data.theme);
 
-	transform = d3.zoomIdentity.translate(-width, -height).scale(3);
+	transform = d3.zoomIdentity.translate(-width, -height).scale(1.5);
 	simulation = d3.forceSimulation(nodes);
 
 	initForces();
@@ -132,6 +132,7 @@ updateForces = () => {
 		edges = edges.filter(d => d.type != EdgeType.Relation);
 	};
 
+	// Filter by user input
 	if (forceProps.flags.filter) {
 		const reg = new RegExp(util.filterFix(forceProps.flags.filter), 'ig');
 		nodes = nodes.filter(d => {
@@ -143,6 +144,7 @@ updateForces = () => {
 		});
 	};
 
+	// Recalculate orphans
 	nodes = nodes.map(d => {
 		d.sourceCnt = edges.filter(it => it.source == d.id).length;
 		d.targetCnt = edges.filter(it => it.target == d.id).length;
@@ -159,8 +161,6 @@ updateForces = () => {
 
 	nodes = nodes.map(d => Object.assign(old.get(d.id) || {}, d));
 	edges = edges.filter(d => map.get(d.source) && map.get(d.target));
-
-	const needRestart = (edges.length != data.edges.length) || (nodes.length != data.nodes.length);
 
 	simulation.nodes(nodes);
 
@@ -193,11 +193,7 @@ updateForces = () => {
 	.strength(d => d.isOrphan ? forceY.strength * forceY.enabled : 0)
 	.y(height * forceY.y);
 
-	if (needRestart) {
-		simulation.alpha(1).restart();
-	} else {
-		restart(0.3);
-	};
+	restart(0.3);
 };
 
 draw = () => {
