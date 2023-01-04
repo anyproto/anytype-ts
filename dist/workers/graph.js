@@ -175,7 +175,7 @@ updateForces = () => {
 
 	simulation.force('collide')
 	.strength(collide.strength * collide.enabled)
-	.radius(10 * collide.radius)
+	.radius(collide.radius)
 	.iterations(collide.iterations);
 
 	simulation.force('link')
