@@ -66,26 +66,35 @@ class HeaderMainGraph extends React.Component<I.HeaderComponent> {
 		ObjectUtil.openRoute({ rootId: this.props.rootId, layout: I.ObjectLayout.Graph });
 	};
 
-	onFilterToggle () {
-		const node = $(ReactDOM.findDOMNode(this));
-		const wrap = node.find('#filterWrap');
-
-		wrap.toggleClass('active');
-	};
-
 	onFilterChange (v: string) {
 		commonStore.graphSet({ filter: v });
 	};
 
 	onFilterClear () {
-		const node = $(ReactDOM.findDOMNode(this));
-		const wrap = node.find('#filterWrap');
-
-		wrap.removeClass('active');
+		this.filterHide();
 	};
 
 	onFilterBlur (e: any) {
 		this.refFilter.onClear(e);
+	};
+
+	onFilterToggle () {
+		const node = $(ReactDOM.findDOMNode(this));
+
+		node.find('#filterWrap').hasClass('active') ? this.filterHide() : this.filterShow();
+	};
+
+	filterShow () {
+		const node = $(ReactDOM.findDOMNode(this));
+
+		node.find('#filterWrap').addClass('active');
+		this.refFilter.focus();
+	};
+
+	filterHide () {
+		const node = $(ReactDOM.findDOMNode(this));
+
+		node.find('#filterWrap').removeClass('active');
 	};
 
 	onFilterMenu () {
