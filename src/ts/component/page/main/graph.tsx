@@ -207,10 +207,13 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 	resize () {
 		const win = $(window);
 		const obj = Util.getPageContainer(this.props.isPopup);
+		const node = $(ReactDOM.findDOMNode(this));
 		const wrapper = obj.find('.wrapper');
 		const platform = Util.getPlatform();
 		const isPopup = this.props.isPopup && !obj.hasClass('full');
 		const oh = obj.height();
+		const header = node.find('#header');
+		const hh = header.height();
 		
 		let wh = isPopup ? oh : win.height();
 
@@ -218,7 +221,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 			wh -= Constant.size.headerWindows;
 		};
 
-		wrapper.css({ height: wh });
+		wrapper.css({ height: wh, paddingTop: isPopup ? 0 : hh });
 		
 		if (isPopup) {
 			const element = $('#popupPage .content');

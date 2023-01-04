@@ -211,8 +211,6 @@ const BlockType = observer(class BlockType extends React.Component<Props, object
 
 				ObjectUtil.openEvent(e, { id: message.objectId, layout: I.ObjectLayout.Set });
 
-				console.log({ id: message.objectId, layout: I.ObjectLayout.Set });
-
 				analytics.event('CreateObject', {
 					route: 'SelectType',
 					objectType: Constant.typeId.set,

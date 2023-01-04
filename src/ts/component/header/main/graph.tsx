@@ -1,16 +1,22 @@
 import * as React from 'react';
-import { observer } from 'mobx-react';
+import * as ReactDOM from 'react-dom';
+import $ from 'jquery';
 import { Icon, Filter } from 'Component';
 import { I, keyboard, DataUtil, ObjectUtil } from 'Lib';
 import { commonStore } from 'Store';
 
-const HeaderMainGraph = observer(class HeaderMainGraph extends React.Component<I.HeaderComponent> {
+class HeaderMainGraph extends React.Component<I.HeaderComponent> {
+
+	refFilter: any = null;
 
 	constructor (props: I.HeaderComponent) {
 		super(props);
 		
-		this.onSearch = this.onSearch.bind(this);
-		this.onFilter = this.onFilter.bind(this);
+		this.onFilterToggle = this.onFilterToggle.bind(this);
+		this.onFilterClear = this.onFilterClear.bind(this);
+		this.onFilterChange = this.onFilterChange.bind(this);
+		this.onFilterBlur = this.onFilterBlur.bind(this);
+		this.onFilterMenu = this.onFilterMenu.bind(this);
 		this.onSettings = this.onSettings.bind(this);
 		this.onOpen = this.onOpen.bind(this);
 	};
@@ -20,7 +26,7 @@ const HeaderMainGraph = observer(class HeaderMainGraph extends React.Component<I
 		const { graph } = commonStore;
 
 		return (
-			<React.Fragment>
+			<div className="sides">
 				<div className="side left">
 					<Icon className="expand big" tooltip="Open as object" onClick={this.onOpen} />
 					<Icon className="home big" tooltip="Home" onClick={onHome} />
@@ -31,16 +37,22 @@ const HeaderMainGraph = observer(class HeaderMainGraph extends React.Component<I
 				<div className="side center" />
 
 				<div className="side right">
-					<Icon id="button-header-search" className="search big" tooltip="Search" onClick={this.onSearch} />
+					<Icon id="button-header-search" className="search big" tooltip="Search" onClick={this.onFilterToggle} />
 					
-					<div className="filterWrap">
-						<Filter onChange={this.onFilterChange} value={graph.filter} />
+					<div id="filterWrap" className="filterWrap">
+						<Filter 
+							ref={(ref: any) => { this.refFilter = ref; }}
+							onChange={this.onFilterChange} 
+							onClear={this.onFilterClear}
+							onBlur={this.onFilterBlur}
+							value={graph.filter} 
+						/>
 					</div>
 
-					<Icon id="button-header-filter" className="filter big" tooltip="Filters" onClick={this.onFilter} />
+					<Icon id="button-header-filter" className="filter big" tooltip="Filters" onClick={this.onFilterMenu} />
 					<Icon id="button-header-settings" className="settings big" tooltip="Settings" onClick={this.onSettings} />
 				</div>
-			</React.Fragment>
+			</div>
 		);
 	};
 
@@ -54,14 +66,29 @@ const HeaderMainGraph = observer(class HeaderMainGraph extends React.Component<I
 		ObjectUtil.openRoute({ rootId: this.props.rootId, layout: I.ObjectLayout.Graph });
 	};
 
-	onSearch () {
-	};
+	onFilterToggle () {
+		const node = $(ReactDOM.findDOMNode(this));
+		const wrap = node.find('#filterWrap');
 
-	onFilter () {
+		wrap.toggleClass('active');
 	};
 
 	onFilterChange (v: string) {
 		commonStore.graphSet({ filter: v });
+	};
+
+	onFilterClear () {
+		const node = $(ReactDOM.findDOMNode(this));
+		const wrap = node.find('#filterWrap');
+
+		wrap.removeClass('active');
+	};
+
+	onFilterBlur (e: any) {
+		this.refFilter.onClear(e);
+	};
+
+	onFilterMenu () {
 	};
 
 	onSettings () {
@@ -72,6 +99,6 @@ const HeaderMainGraph = observer(class HeaderMainGraph extends React.Component<I
 		});
 	};
 
-});
+};
 
 export default HeaderMainGraph;
