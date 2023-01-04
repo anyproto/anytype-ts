@@ -18,7 +18,6 @@ interface Props {
 const Graph = observer(class Graph extends React.Component<Props> {
 
 	canvas: any = null;
-	simulation: any = null;
 	edges: any[] = [];
 	nodes: any[] = [];
 	worker: any = null;
@@ -46,8 +45,8 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		},
 		link: {
 			enabled: true,
-			strength: 0.5,
-			distance: 50,
+			strength: 0.3,
+			distance: 80,
 			iterations: 1,
 		},
 		forceX: {
@@ -131,7 +130,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 
 		this.worker = new Worker('workers/graph.js');
 		this.worker.onerror = (e: any) => { console.log(e); };
-		this.worker.addEventListener('message', (data) => { this.onMessage(data); });
+		this.worker.addEventListener('message', (data: any) => { this.onMessage(data); });
 
 		this.send('init', { 
 			canvas: transfer, 
