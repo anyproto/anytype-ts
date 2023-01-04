@@ -335,11 +335,11 @@ drawNode = (d) => {
 	if (forceProps.flags.icon && img) {
 		ctx.save();
 
-		util.roundedRect(d.x - radius - lineWidth, d.y - radius - lineWidth, diameter + lineWidth * 2, diameter + lineWidth * 2, radius / 4);
-		ctx.fillStyle = Color.bg;
-		ctx.fill();
-
 		if (lineWidth) {
+			util.roundedRect(d.x - radius - lineWidth, d.y - radius - lineWidth, diameter + lineWidth * 2, diameter + lineWidth * 2, radius / 4);
+			ctx.fillStyle = Color.bg;
+			ctx.fill();
+
 			ctx.strokeStyle = colorLine;
 			ctx.lineWidth = lineWidth;
 			ctx.stroke();

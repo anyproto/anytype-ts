@@ -55,8 +55,15 @@ class HeaderMainGraph extends React.Component<I.HeaderComponent> {
 	};
 
 	componentDidMount(): void {
-		if (!this.props.isPopup) {
+		const { isPopup } = this.props;
+		const { graph } = commonStore;
+
+		if (!isPopup) {
 			DataUtil.setWindowTitleText('Graph');
+		};
+
+		if (graph.filter) {
+			this.filterShow();
 		};
 	};
 
