@@ -6,7 +6,50 @@ export default [
 	{ type: I.BlockType.Cover, param: { type: I.CoverType.Gradient, id: 'pinkOrange' } },
 	{ type: I.BlockType.IconPage, icon: '👋' },
 
-	{ style: I.TextStyle.Title, text: `September: Preparation and Polish 💅` },
+	{ style: I.TextStyle.Title, text: `2023: Ready, Set... Declutter 😎` },
+	{ text: `Welcome to the first release of the new year! After some major refactoring work in the last quarter of 2022, we’re pleased to deliver an update that we hope will allow you to clear the clutter from your account and start the new year with a clean, productive slate.` },
+
+	{ style: I.TextStyle.Header2, text: `💎 Highlights of this Release` },
+
+	{ style: I.TextStyle.Bulleted, text: `<b>Type & Relation Deletion & Modification</b><br/>We’ve heard you loud & clear - starting with this update, it’s now possible to remove & modify both pre-installed and custom-made Types & Relations from the Library. Any modifications will be reflected in Objects which have already used these Types & Relations.` },
+	{ style: I.TextStyle.Bulleted, text: `<b>Introduction of Marketplace</b><br/>In case you’re wondering where all of those pre-installed Types & Relations have gone, they’re now conveniently stored in the Marketplace for both existing & new users to install to your account (and eventually add your own). Access the Marketplace from the new ‘Marketplace’ tab in the Library.` },
+	{ style: I.TextStyle.Bulleted, text: `<b>Set by Relation</b><br/>Sets are no longer just limited to Types! You can now create Sets by filtering for Objects which share a certain Relation. Quick hack for anyone who wants an overview of all Objects in their account: Create a Set by Relation: Creation Date, and... ta-da!` },
+	{ style: I.TextStyle.Bulleted, text: `<b>Everything as an Object</b><br/>...seriously, everything. Types & Relations are now their own Objects, meaning that it’s possible to create Relations and Sets of Types and…Relations. While you may already start experimenting with these features in the Library by opening each Type/Relation individually, this update also unblocks other highly-requested features such as grouping and tuning relation values.` },
+
+	{ style: I.TextStyle.Header2, text: `⚡ Quality-of-Life Improvements` },
+
+	{ style: I.TextStyle.Bulleted, text: `<b>Multi-select, delete, & link from Graph</b><br/>Say goodbye to rogue Objects hanging around in your graph! It’s now possible to right-click on Objects in the Graph to open a menu of operations, including Delete & Link. Hit Shift + Click to multi-select and bulk-manage these Objects.` },
+	{ style: I.TextStyle.Bulleted, text: `<b>Link-to Feature</b><br/>You now have an easy way to link Objects with each other, which doesn’t require editor blocks. Use the ‘Link to’ option in the Object 3-dots menu or in Graph to create direct links and quicker association between Objects.` },
+	{ style: I.TextStyle.Bulleted, text: `<b>Type creation on-the-fly (Desktop-only)</b><br/>It’s now possible to create or install new Types in Editor without needing to visit the Library. Whether creating an Object for the first time or changing its Type, use the dropdown to turn your Objects into whatever’s top of mind.` },
+	{ style: I.TextStyle.Bulleted, text: `<b>Kanban groups syncing cross-device</b><br/>Groups in Kanban are now correctly updating when changed from another device. Furthermore, if you add or delete any tags your Kanban will receive real-time updates!` },
+	{ style: I.TextStyle.Bulleted, text: `<b>Block navigation via arrow keys</b><br/>Speed through document editing and review by jumping between blocks using your left and right arrow keys.` },
+	{ style: I.TextStyle.Bulleted, text: `<b>Copy button next to Anytype version</b><br/>Bug reports just got that much easier - now, you can copy the version in one click by opening the Anytype → About Anytype window from the application menu.` },
+	{ style: I.TextStyle.Bulleted, text: `<b>Download button for image blocks</b><br/>Any image block in your editor now shows a download icon on hover, in case you would like to download and save images previously added to your Objects.` },
+	{ style: I.TextStyle.Bulleted, text: `<b>Design update: Link & Bookmark Blocks</b><br/>Link & bookmark blocks for URLs pasted from the web got a little facelift with this update - expect to see a small difference in font weights & favicons.` },
+	{ style: I.TextStyle.Bulleted, text: `<b>Design update: Read-only Relations in Sets (Grid View)</b><br/>Relations which cannot be updated (for instance ‘Created by’ or ‘Creation Date’) now have a lock icon displayed to indicate that they cannot be edited.` },
+	{ style: I.TextStyle.Bulleted, text: `<b>Toast notifications</b><br/>For greater clarity on actions you’ve taken in Anytype, we’ve introduced toast notifications for certain operations such as linking between Objects or installing new Types and Relations.` },
+	{ style: I.TextStyle.Bulleted, text: `<b>Link blocks in text mode previews</b><br/>It’s now possible to further customize how linked Objects in text mode appear in your editor. Click the orange handle next to the link block and choose Preview to play around with Description, Type, and/or Content in your Object preview.` },
+	{ style: I.TextStyle.Bulleted, text: `<b>Set view is now updated when view settings menu is closed</b>` },
+
+	{ style: I.TextStyle.Header2, text: `🐛 Bug Fixes` },
+
+	{ style: I.TextStyle.Bulleted, text: `` },
+	{ style: I.TextStyle.Bulleted, text: `` },
+	{ style: I.TextStyle.Bulleted, text: `` },
+	{ style: I.TextStyle.Bulleted, text: `` },
+	{ style: I.TextStyle.Bulleted, text: `` },
+	{ style: I.TextStyle.Bulleted, text: `` },
+	{ style: I.TextStyle.Bulleted, text: `` },
+	{ style: I.TextStyle.Bulleted, text: `` },
+	{ style: I.TextStyle.Bulleted, text: `` },
+	{ style: I.TextStyle.Bulleted, text: `` },
+	{ style: I.TextStyle.Bulleted, text: `` },
+	{ style: I.TextStyle.Bulleted, text: `` },
+
+	{ type: I.BlockType.Div, style: I.DivStyle.Dot },
+	// --------------------------------------------//
+
+	{ style: I.TextStyle.Header1, text: `September: Preparation and Polish 💅` },
 
 	{ text: `Throughout September, our backend and platform teams have been occupied with refactoring relations aka the ‘Relations as an Object' project. This effort, though not visible in this month's release, is essential to unblocking long-awaited features such as Relations deletion/modification and in-line Sets (we promise, it's coming!).` },
 	{ text: `Meanwhile, the improvements and bug fixes in this release are primarily geared towards editor polishing and responses to your feedback from our last release. Thanks to everyone who's tested new features, created bug reports, and let us know your concerns.` },
