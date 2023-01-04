@@ -1,18 +1,13 @@
 import * as React from 'react';
-import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, Sync, ObjectName } from 'Component';
-import { I, DataUtil, ObjectUtil, Preview, keyboard } from 'Lib';
-import { blockStore, detailStore, menuStore, popupStore } from 'Store';
+import { I, DataUtil, ObjectUtil, keyboard } from 'Lib';
+import { blockStore, detailStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 
-interface Props extends I.HeaderComponent {};
+const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<I.HeaderComponent> {
 
-const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<Props, object> {
-
-	timeout: number = 0;
-
-	constructor (props: any) {
+	constructor (props: I.HeaderComponent) {
 		super(props);
 		
 		this.onMore = this.onMore.bind(this);
@@ -83,20 +78,12 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<Pro
 		popupStore.closeAll(null, () => { ObjectUtil.openRoute(object); });
 	};
 	
-	onMore (e: any) {
-		if (menuStore.isOpen()) {
-			menuStore.closeAll();
-			return;
-		};
+	onMore () {
+		const { isPopup, match, rootId, menuOpen } = this.props;
 
-		const { isPopup, match, rootId } = this.props;
-		const st = $(window).scrollTop();
-		const elementId = `${this.getContainer()} #button-header-more`;
-		const param: any = {
-			element: elementId,
+		menuOpen('blockMore', '#button-header-more', {
 			horizontal: I.MenuDirection.Right,
 			subIds: Constant.menuIds.more,
-			offsetY: 4,
 			data: {
 				rootId,
 				blockId: rootId,
@@ -104,47 +91,18 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<Pro
 				match,
 				isPopup,
 			}
-		};
-
-		if (!isPopup) {
-			const element = $(elementId);
-			param.fixedY = element.offset().top + element.height() - st;
-			param.classNameWrap = 'fixed fromHeader';
-		};
-
-		menuStore.closeAll(null, () => { menuStore.open('blockMore', param); });
+		});
 	};
 
-	onSync (e: any) {
-		if (menuStore.isOpen()) {
-			menuStore.closeAll();
-			return;
-		};
+	onSync () {
+		const { rootId, menuOpen } = this.props;
 
-		const { isPopup, rootId } = this.props;
-		const st = $(window).scrollTop();
-		const elementId = `${this.getContainer()} #button-header-sync`;
-		const param: any = {
-			element: elementId,
-			horizontal: I.MenuDirection.Center,
-			offsetY: 4,
+		menuOpen('threadList', '#button-header-sync', {
+			horizontal: I.MenuDirection.Right,
 			data: {
 				rootId,
 			}
-		};
-
-		if (!isPopup) {
-			const element = $(elementId);
-			param.fixedY = element.offset().top + element.height() - st;
-			param.classNameWrap = 'fixed fromHeader';
-		};
-
-		menuStore.closeAll(null, () => { menuStore.open('threadList', param); });
-	};
-
-	getContainer () {
-		const { isPopup } = this.props;
-		return (isPopup ? '.popup' : '') + ' .header';
+		});
 	};
 
 	setTitle () {

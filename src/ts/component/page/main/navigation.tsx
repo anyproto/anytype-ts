@@ -255,7 +255,6 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 	};
 	
 	componentDidMount () {
-		const { isPopup } = this.props;
 		const rootId = this.getRootId();
 
 		this._isMounted = true;
@@ -265,10 +264,6 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 
 		focus.clear(true);
 		keyboard.setFocus(true);
-
-		if (!isPopup) {
-			DataUtil.setWindowTitleText('Navigation');
-		};
 	};
 	
 	componentDidUpdate () {

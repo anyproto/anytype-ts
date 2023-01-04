@@ -1,9 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, keyboard } from 'Lib';
-import { menuStore } from 'Store';
-import Constant from 'json/constant.json';
+import { I, keyboard, DataUtil } from 'Lib';
 
 const HeaderMainGraph = observer(class HeaderMainGraph extends React.Component<I.HeaderComponent> {
 
@@ -39,6 +37,12 @@ const HeaderMainGraph = observer(class HeaderMainGraph extends React.Component<I
 		);
 	};
 
+	componentDidMount(): void {
+		if (!this.props.isPopup) {
+			DataUtil.setWindowTitleText('Graph');
+		};
+	};
+
 	onSearch () {
 	};
 
@@ -46,26 +50,11 @@ const HeaderMainGraph = observer(class HeaderMainGraph extends React.Component<I
 	};
 
 	onSettings () {
-		const { isPopup } = this.props;
-		const st = $(window).scrollTop();
-		const elementId = `${this.getContainer()} #button-header-setttins`;
-		const param: any = {
-			element: elementId,
+		const { menuOpen } = this.props;
+
+		menuOpen('graphSettings', '#button-header-sync', {
 			horizontal: I.MenuDirection.Right,
-			offsetY: 4,
-		};
-
-		if (!isPopup) {
-			const element = $(elementId);
-			param.fixedY = element.offset().top + element.height() - st;
-			param.classNameWrap = 'fixed fromHeader';
-		};
-
-		menuStore.closeAll(Constant.menuIds.graph, () => { menuStore.open('graphSettings', param); });
-	};
-
-	getContainer () {
-		return (this.props.isPopup ? '.popup' : '') + ' .header';
+		});
 	};
 
 });

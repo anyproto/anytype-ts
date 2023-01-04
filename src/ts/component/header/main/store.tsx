@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Icon } from 'Component';
-import { I, keyboard } from 'Lib';
+import { I, keyboard, DataUtil } from 'Lib';
 import { observer } from 'mobx-react';
 
 const HeaderMainStore = observer(class HeaderMainStore extends React.Component<I.HeaderComponent> {
@@ -30,6 +30,12 @@ const HeaderMainStore = observer(class HeaderMainStore extends React.Component<I
 				<div className="side right" />
 			</React.Fragment>
 		);
+	};
+
+	componentDidMount(): void {
+		if (!this.props.isPopup) {
+			DataUtil.setWindowTitleText('Library');
+		};
 	};
 
 });

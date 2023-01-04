@@ -304,7 +304,6 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 	componentDidMount () {
 		this._isMounted = true;
 
-		const { isPopup } = this.props;
 		const items = this.getItems();
 
 		this.cache = new CellMeasurerCache({
@@ -315,10 +314,6 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 
 		this.resize();
 		this.onTab(Storage.get('tabStore') || Tab.Type);
-
-		if (!isPopup) {
-			DataUtil.setWindowTitleText('Library');
-		};
 	};
 
 	componentDidUpdate () {

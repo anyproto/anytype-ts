@@ -1,4 +1,5 @@
 import { RouteComponentProps } from 'react-router';
+import { I } from 'Lib';
 
 export enum Platform {
 	Windows = 'Windows',
@@ -146,6 +147,7 @@ export interface HeaderComponent extends RouteComponentProps<any> {
 	onStore?: () => void;
 	onPathOver?: (e: any) => void;
 	onPathOut?: () => void;
+	menuOpen?: (id: string, elementId: string, param: Partial<I.MenuParam>) => void;
 };
 
 export interface PageComponent extends RouteComponentProps<any> {

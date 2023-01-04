@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { I, ObjectUtil, Util, keyboard, sidebar, Preview } from 'Lib';
+import { menuStore } from 'Store';
 
 import HeaderAuthIndex from './auth';
 import HeaderMainIndex from './main/index';
@@ -37,6 +38,7 @@ class Header extends React.Component<Props, object> {
 		this.onStore = this.onStore.bind(this);
 		this.onPathOver = this.onPathOver.bind(this);
 		this.onPathOut = this.onPathOut.bind(this);
+		this.menuOpen = this.menuOpen.bind(this);
 	};
 	
 	render () {
@@ -60,6 +62,7 @@ class Header extends React.Component<Props, object> {
 					onNavigation={this.onNavigation}
 					onGraph={this.onGraph}
 					onStore={this.onStore}
+					menuOpen={this.menuOpen}
 				/>
 			</div>
 		);
@@ -100,6 +103,32 @@ class Header extends React.Component<Props, object> {
 
 	onPathOut () {
 		Preview.tooltipHide(false);
+	};
+
+	menuOpen (id: string, elementId: string, param: Partial<I.MenuParam>) {
+		if (menuStore.isOpen()) {
+			menuStore.closeAll();
+			return;
+		};
+
+		const { isPopup } = this.props;
+		const st = $(window).scrollTop();
+		const element = $(`${this.getContainer()} ${elementId}`);
+		const menuParam: any = Object.assign({
+			element,
+			offsetY: 4,
+		}, param);
+
+		if (!isPopup) {
+			menuParam.fixedY = element.offset().top + element.height() - st;
+			menuParam.classNameWrap = 'fixed fromHeader';
+		};
+
+		menuStore.closeAll(null, () => { menuStore.open(id, menuParam); });
+	};
+
+	getContainer () {
+		return (this.props.isPopup ? '.popup' : '') + ' .header';
 	};
 
 };

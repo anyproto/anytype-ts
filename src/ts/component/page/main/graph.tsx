@@ -85,15 +85,9 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 	};
 
 	componentDidMount () {
-		const { isPopup } = this.props;
-
 		this.rebind();
 		this.resize();
 		this.load();
-
-		if (!isPopup) {
-			DataUtil.setWindowTitleText('Graph');
-		};
 	};
 
 	componentDidUpdate () {

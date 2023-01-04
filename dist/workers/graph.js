@@ -539,11 +539,11 @@ const checkNodeInViewport = (d) => {
 };
 
 const isLayoutHuman = (d) => {
-	return d.layout === ObjectLayout.Human;
+	return d.layout == ObjectLayout.Human;
 };
 
 const isLayoutBookmark = (d) => {
-	return d.layout === ObjectLayout.Bookmark;
+	return d.layout == ObjectLayout.Bookmark;
 };
 
 const isIconCircle = (d) => {

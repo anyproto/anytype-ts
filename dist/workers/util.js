@@ -78,4 +78,27 @@ class Util {
 		this.ctx.restore();
 	};
 
+	getLines (text, maxWidth) {
+		const words = text.split(' ');
+		if (!words.length) {
+			return [];
+		};
+
+		const lines = [];
+		const current = words[0];
+
+		words.forEach(word => {
+			const width = ctx.measureText([ current, word ].join(' ')).width;
+			if (width < maxWidth) {
+				current += ' ' + word;
+			} else {
+				lines.push(current);
+				current = word;
+			}
+		});
+
+		lines.push(current);
+		return lines;
+	}
+
 };

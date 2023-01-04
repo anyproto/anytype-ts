@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Icon, IconObject } from 'Component';
-import { I, keyboard } from 'Lib';
+import { I, keyboard, DataUtil } from 'Lib';
 import { detailStore } from 'Store';
 import { observer } from 'mobx-react';
 
@@ -32,6 +32,12 @@ const HeaderMainNavigation = observer(class HeaderMainNavigation extends React.C
 				<div className="side right" />
 			</React.Fragment>
 		);
+	};
+
+	componentDidMount(): void {
+		if (!this.props.isPopup) {
+			DataUtil.setWindowTitleText('Navigation');
+		};
 	};
 
 });
