@@ -117,10 +117,11 @@ initForces = () => {
 
 updateForces = () => {
 	const { center, charge, collide, link, forceX, forceY } = forceProps;
-	const old = getNodeMap();
 
 	edges = util.objectCopy(data.edges);
 	nodes = util.objectCopy(data.nodes);
+
+	let map = getNodeMap();
 
 	// Filter links
 	if (!forceProps.flags.link) {
@@ -144,6 +145,9 @@ updateForces = () => {
 		});
 	};
 
+	map = getNodeMap();
+	edges = edges.filter(d => map.get(d.source) && map.get(d.target));
+
 	// Recalculate orphans
 	nodes = nodes.map(d => {
 		d.sourceCnt = edges.filter(it => it.source == d.id).length;
@@ -157,9 +161,8 @@ updateForces = () => {
 		nodes = nodes.filter(d => !d.isOrphan || d.isRoot);
 	};
 
-	const map = getNodeMap();
-
-	nodes = nodes.map(d => Object.assign(old.get(d.id) || {}, d));
+	map = getNodeMap();
+	nodes = nodes.map(d => Object.assign(map.get(d.id) || {}, d));
 	edges = edges.filter(d => map.get(d.source) && map.get(d.target));
 
 	simulation.nodes(nodes);
