@@ -13,7 +13,6 @@ interface Props extends I.PageComponent {
 	matchPopup?: any;
 };
 
-
 const PageMainGraph = observer(class PageMainGraph extends React.Component<Props, object> {
 
 	data: any = {
@@ -30,9 +29,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 	constructor (props: any) {
 		super(props);
 
-		this.onSwitch = this.onSwitch.bind(this);
 		this.onClickObject = this.onClickObject.bind(this);
-		this.onFilterChange = this.onFilterChange.bind(this);
 		this.onContextMenu = this.onContextMenu.bind(this);
 		this.onSelect = this.onSelect.bind(this);
 		this.togglePanel = this.togglePanel.bind(this);
@@ -67,8 +64,6 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 								{...this.props} 
 								ref={(ref: any) => { this.refPanel = ref; }}
 								data={this.refGraph.forceProps}
-								onFilterChange={this.onFilterChange}
-								onSwitch={this.onSwitch}
 								onContextMenu={this.onContextMenu}
 								togglePanel={this.togglePanel}
 							/>
@@ -83,14 +78,6 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 						tooltip="Show sidebar" 
 						tooltipY={I.MenuDirection.Top} 
 						onClick={() => { sidebar.expand(); }} 
-					/>
-
-					<Icon 
-						id="button-manager" 
-						className="big" 
-						tooltip="Sidebar settings"
-						tooltipY={I.MenuDirection.Top} 
-						onClick={() => { this.togglePanel(true); }} 
 					/>
 				</div>
 			</div>
@@ -280,24 +267,6 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 	getRootId () {
 		const { rootId, match } = this.props;
 		return rootId ? rootId : match.params.id;
-	};
-
-	onSwitch (id: string, v: any) {
-		const { graph } = commonStore;
-
-		graph[id] = v;
-
-		commonStore.graphSet(graph);
-		this.refGraph.updateProps();
-
-		analytics.event('GraphSettings', { id });
-	};
-
-	onFilterChange (v: string) {
-		this.refGraph.forceProps.filter = v ? new RegExp(Util.filterFix(v), 'gi') : '';
-		this.refGraph.updateProps();
-
-		analytics.event('SearchQuery', { route: 'ScreenGraph', length: v.length });
 	};
 
 	onSelect (id: string) {

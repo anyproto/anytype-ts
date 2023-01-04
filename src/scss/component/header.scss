@@ -109,6 +109,13 @@
 }
 
 .header.mainGraph { background: none; position: absolute !important; }
+.header.mainGraph {
+	.side.right { gap: 0px 12px; }
+
+	.icon.search { background-image: url('~img/icon/header/search.svg'); }
+	.icon.filter { background-image: url('~img/icon/dataview/button/filter.svg'); }
+	.icon.settings { background-image: url('~img/icon/dataview/button/settings.svg'); }
+}
 
 .popup {
 	.header { position: sticky; padding: 0px; border-radius: 12px 12px 0px 0px; top: 0px !important; }

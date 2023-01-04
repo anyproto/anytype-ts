@@ -223,7 +223,7 @@ const Graph = observer(class Graph extends React.Component<Props, object> {
 	};
 
 	getProps () {
-		return Object.assign(this.forceProps, commonStore.graph);
+		return Object.assign(this.forceProps, { flags: commonStore.graph });
 	};
 
 	updateProps () {

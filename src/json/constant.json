@@ -58,7 +58,8 @@
 		"viewEdit":		 [ "select" ],
 		"featuredType":	 [ "searchObject", "typeSuggest" ],
 		"dataviewHead":	 [ "dataviewSource", "searchObject" ],
-		"store":		 [ "typeSuggest", "relationSuggest" ]
+		"store":		 [ "typeSuggest", "relationSuggest" ],
+		"graph":		 [ "graphSettings" ]
 	},
 
 	"popupPinIds": [ "search" ],

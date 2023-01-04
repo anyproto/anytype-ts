@@ -121,14 +121,14 @@ updateForces = () => {
 
 	edges = util.objectCopy(data.edges);
 	nodes = util.objectCopy(data.nodes);
-	
+
 	// Filter links
-	if (!forceProps.links) {
+	if (!forceProps.flags.link) {
 		edges = edges.filter(d => d.type != EdgeType.Link);
 	};
 
 	// Filter relations
-	if (!forceProps.relations) {
+	if (!forceProps.flags.relation) {
 		edges = edges.filter(d => d.type != EdgeType.Relation);
 	};
 
@@ -140,7 +140,7 @@ updateForces = () => {
 	});
 
 	// Filter orphans
-	if (!forceProps.orphans) {
+	if (!forceProps.flags.orphan) {
 		nodes = nodes.filter(d => !d.isOrphan || d.isRoot);
 	};
 
@@ -201,7 +201,7 @@ draw = () => {
 
 	edges.forEach(d => {
 		if (checkNodeInViewport(d.source) || checkNodeInViewport(d.target)) {
-			drawLine(d, radius, diameter, forceProps.markers && d.isDouble, forceProps.markers);
+			drawLine(d, radius, diameter, forceProps.flags.marker && d.isDouble, forceProps.flags.marker);
 		};
 	});
 
@@ -264,7 +264,7 @@ drawLine = (d, arrowWidth, arrowHeight, arrowStart, arrowEnd) => {
 	let offset = arrowStart && arrowEnd ? -k : 0;
 
 	// Relation name
-	if (d.name && forceProps.labels && (transform.k >= transformThreshold)) {
+	if (d.name && forceProps.flags.label && (transform.k >= transformThreshold)) {
 		ctx.textAlign = 'center';
 		ctx.textBaseline = 'middle';
 
@@ -325,7 +325,7 @@ drawNode = (d) => {
 		lineWidth = radius / 5;
 	};
 
-	if (forceProps.icons && img) {
+	if (forceProps.flags.icon && img) {
 		ctx.save();
 
 		util.roundedRect(d.x - radius - lineWidth, d.y - radius - lineWidth, diameter + lineWidth * 2, diameter + lineWidth * 2, radius / 4);
@@ -374,7 +374,7 @@ drawNode = (d) => {
 	};
 
 	// Node name
-	if (forceProps.labels && (transform.k >= transformThreshold)) {
+	if (forceProps.flags.label && (transform.k >= transformThreshold)) {
 		ctx.textAlign = 'center';
 		ctx.textBaseline = 'middle';
 
@@ -555,7 +555,7 @@ const getNodeByCoords = (x, y) => {
 };
 
 const getRadius = (d) => {
-	return d.radius / transform.k * (forceProps.icons && images[d.src] ? 2 : 1);
+	return d.radius / transform.k * (forceProps.flags.icon && images[d.src] ? 2 : 1);
 };
 
 const getFont = () => {

@@ -47,6 +47,8 @@ import MenuBlockRelationView from './block/relation/view';
 import MenuRelationSuggest from './relation/suggest';
 import MenuTypeSuggest from './type/suggest';
 
+import MenuGraphSettings from './graph/settings';
+
 import MenuDataviewRelationList from './dataview/relation/list';
 import MenuDataviewRelationEdit from './dataview/relation/edit';
 import MenuDataviewGroupList from './dataview/group/list';
@@ -121,6 +123,8 @@ const Components: any = {
 
 	relationSuggest:		 MenuRelationSuggest,
 	typeSuggest:			 MenuTypeSuggest,
+
+	graphSettings:			 MenuGraphSettings,
 
 	dataviewRelationList:	 MenuDataviewRelationList,
 	dataviewRelationEdit:	 MenuDataviewRelationEdit,
@@ -845,7 +849,7 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 
 		const items = this.ref.getItems();
 		if (item) {
-			this.ref.n = items.findIndex((it: any) => { return it.id == item.id; });
+			this.ref.n = items.findIndex(it => it.id == item.id);
 		};
 
 		if (this.ref.refList && scroll) {

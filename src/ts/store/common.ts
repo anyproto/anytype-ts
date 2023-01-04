@@ -26,12 +26,12 @@ interface Cover {
 };
 
 interface Graph {
-	icons: boolean;
-	orphans: boolean;
-	markers: boolean;
-	labels: boolean;
-	relations: boolean;
-	links: boolean;
+	icon: boolean;
+	orphan: boolean;
+	marker: boolean;
+	label: boolean;
+	relation: boolean;
+	link: boolean;
 };
 
 class CommonStore {
@@ -68,12 +68,12 @@ class CommonStore {
 	};
 
 	public graphObj: Graph = { 
-		icons: true,
-		orphans: true,
-		markers: true,
-		labels: true,
-		relations: true,
-		links: true,
+		icon: true,
+		orphan: true,
+		marker: true,
+		label: true,
+		relation: true,
+		link: true,
 	};
 
     constructor() {
@@ -185,7 +185,7 @@ class CommonStore {
 	};
 
 	get graph(): Graph {
-		return Object.assign(this.graphObj, Storage.get('menuGraphSettings') || {});
+		return Object.assign(this.graphObj, Storage.get('graph') || {});
 	};
 
     coverSet (id: string, image: string, type: I.CoverType) {
@@ -245,7 +245,10 @@ class CommonStore {
 	};
 
 	graphSet (graph: Graph) {
-		this.graphObj = graph;
+		this.graphObj = Object.assign(this.graphObj, graph);
+
+		Storage.set('graph', this.graphObj);
+		$(window).trigger('updateGraphProps');
 	};
 
 	toastSet (toast: I.Toast) {

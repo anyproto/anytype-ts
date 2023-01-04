@@ -1,27 +1,25 @@
 import * as React from 'react';
-import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { Icon, IconObject } from 'Component';
-import { I, ObjectUtil, Preview, keyboard } from 'Lib';
-import { detailStore, popupStore } from 'Store';
+import { Icon } from 'Component';
+import { I, ObjectUtil, keyboard } from 'Lib';
+import { popupStore, menuStore } from 'Store';
+import Constant from 'json/constant.json';
 
-interface Props extends I.HeaderComponent {};
-
-const HeaderMainGraph = observer(class HeaderMainGraph extends React.Component<Props, object> {
+const HeaderMainGraph = observer(class HeaderMainGraph extends React.Component<I.HeaderComponent, object> {
 
 	timeout: number = 0;
 
-	constructor (props: any) {
+	constructor (props: I.HeaderComponent) {
 		super(props);
 		
 		this.onOpen = this.onOpen.bind(this);
-		this.onPathOver = this.onPathOver.bind(this);
-		this.onPathOut = this.onPathOut.bind(this);
+		this.onSearch = this.onSearch.bind(this);
+		this.onFilter = this.onFilter.bind(this);
+		this.onSettings = this.onSettings.bind(this);
 	};
 
 	render () {
-		const { rootId, onHome, onForward, onBack, onNavigation, onSearch } = this.props;
-		const object = detailStore.get(rootId, rootId, []);
+		const { onHome, onForward, onBack, onNavigation } = this.props;
 
 		return (
 			<React.Fragment>
@@ -34,7 +32,12 @@ const HeaderMainGraph = observer(class HeaderMainGraph extends React.Component<P
 				</div>
 
 				<div className="side center" />
-				<div className="side right" />
+
+				<div className="side right">
+					<Icon id="button-header-search" className="search big" tooltip="Open as object" onClick={this.onSearch} />
+					<Icon id="button-header-filter" className="filter big" tooltip="Open as object" onClick={this.onFilter} />
+					<Icon id="button-header-setttins" className="settings big" tooltip="Open as object" onClick={this.onSettings} />
+				</div>
 			</React.Fragment>
 		);
 	};
@@ -47,12 +50,34 @@ const HeaderMainGraph = observer(class HeaderMainGraph extends React.Component<P
 		});
 	};
 
-	onPathOver (e: any) {
-		Preview.tooltipShow('Click to search', $(e.currentTarget), I.MenuDirection.Center, I.MenuDirection.Bottom);
+	onSearch () {
 	};
 
-	onPathOut () {
-		Preview.tooltipHide(false);
+	onFilter () {
+	};
+
+	onSettings () {
+		const { isPopup } = this.props;
+
+		const st = $(window).scrollTop();
+		const elementId = `${this.getContainer()} #button-header-setttins`;
+		const param: any = {
+			element: elementId,
+			horizontal: I.MenuDirection.Right,
+			offsetY: 4,
+		};
+
+		if (!isPopup) {
+			const element = $(elementId);
+			param.fixedY = element.offset().top + element.height() - st;
+			param.classNameWrap = 'fixed fromHeader';
+		};
+
+		menuStore.closeAll(Constant.menuIds.graph, () => { menuStore.open('graphSettings', param); });
+	};
+
+	getContainer () {
+		return (this.props.isPopup ? '.popup' : '') + ' .header';
 	};
 
 });
