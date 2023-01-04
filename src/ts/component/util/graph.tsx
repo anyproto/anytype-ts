@@ -41,7 +41,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 			enabled: true,
 			strength: 0.3,
 			iterations: 1,
-			radius: 0.5,
+			radius: 10,
 		},
 		link: {
 			enabled: true,

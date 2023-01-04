@@ -68,7 +68,7 @@ init = (param) => {
 
 	simulation.on('tick', () => { redraw(); });
 	simulation.on('end', () => { simulation.alphaTarget(1); });
-	simulation.tick(100);
+	simulation.tick(200);
 };
 
 initColor = (theme) => {
@@ -178,7 +178,7 @@ updateForces = () => {
 
 	simulation.force('collide')
 	.strength(collide.strength * collide.enabled)
-	.radius(collide.radius)
+	.radius(d => getRadius(d))
 	.iterations(collide.iterations);
 
 	simulation.force('link')
