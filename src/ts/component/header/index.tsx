@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { I, ObjectUtil, Util, keyboard, sidebar } from 'Lib';
+import { I, ObjectUtil, Util, keyboard, sidebar, Preview } from 'Lib';
 
 import HeaderAuthIndex from './auth';
 import HeaderMainIndex from './main/index';
@@ -34,6 +34,9 @@ class Header extends React.Component<Props, object> {
 		this.onSearch = this.onSearch.bind(this);
 		this.onNavigation = this.onNavigation.bind(this);
 		this.onGraph = this.onGraph.bind(this);
+		this.onStore = this.onStore.bind(this);
+		this.onPathOver = this.onPathOver.bind(this);
+		this.onPathOut = this.onPathOut.bind(this);
 	};
 	
 	render () {
@@ -56,6 +59,7 @@ class Header extends React.Component<Props, object> {
 					onSearch={this.onSearch}
 					onNavigation={this.onNavigation}
 					onGraph={this.onGraph}
+					onStore={this.onStore}
 				/>
 			</div>
 		);
@@ -70,23 +74,32 @@ class Header extends React.Component<Props, object> {
 		this.refChild.forceUpdate();
 	};
 
-	onHome (e: any) {
+	onHome () {
 		Util.route('/main/index');
 	};
 	
-	onSearch (e: any) {
-		e.preventDefault();
-		e.stopPropagation();
-
+	onSearch () {
 		keyboard.onSearchPopup();
 	};
 
-	onNavigation (e: any) {
+	onNavigation () {
 		ObjectUtil.openPopup({ id: this.props.rootId, layout: I.ObjectLayout.Navigation });
 	};
 	
-	onGraph (e: any) {
+	onGraph () {
 		ObjectUtil.openPopup({ id: this.props.rootId, layout: I.ObjectLayout.Graph });
+	};
+
+	onStore () {
+		ObjectUtil.openPopup({ id: this.props.rootId, layout: I.ObjectLayout.Store });
+	};
+
+	onPathOver (e: any) {
+		Preview.tooltipShow('Click to search', $(e.currentTarget), I.MenuDirection.Center, I.MenuDirection.Bottom);
+	};
+
+	onPathOut () {
+		Preview.tooltipHide(false);
 	};
 
 };

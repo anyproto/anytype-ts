@@ -1,30 +1,27 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, ObjectUtil, keyboard } from 'Lib';
-import { popupStore, menuStore } from 'Store';
+import { I, keyboard } from 'Lib';
+import { menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
-const HeaderMainGraph = observer(class HeaderMainGraph extends React.Component<I.HeaderComponent, object> {
-
-	timeout: number = 0;
+const HeaderMainGraph = observer(class HeaderMainGraph extends React.Component<I.HeaderComponent> {
 
 	constructor (props: I.HeaderComponent) {
 		super(props);
 		
-		this.onOpen = this.onOpen.bind(this);
 		this.onSearch = this.onSearch.bind(this);
 		this.onFilter = this.onFilter.bind(this);
 		this.onSettings = this.onSettings.bind(this);
 	};
 
 	render () {
-		const { onHome, onForward, onBack, onNavigation } = this.props;
+		const { onHome, onForward, onBack, onGraph, onNavigation } = this.props;
 
 		return (
 			<React.Fragment>
 				<div className="side left">
-					<Icon className="expand big" tooltip="Open as object" onClick={this.onOpen} />
+					<Icon className="expand big" tooltip="Open as object" onClick={onGraph} />
 					<Icon className="home big" tooltip="Home" onClick={onHome} />
 					<Icon className={[ 'back', 'big', (!keyboard.checkBack() ? 'disabled' : '') ].join(' ')} tooltip="Back" onClick={onBack} />
 					<Icon className={[ 'forward', 'big', (!keyboard.checkForward() ? 'disabled' : '') ].join(' ')} tooltip="Forward" onClick={onForward} />
@@ -40,14 +37,6 @@ const HeaderMainGraph = observer(class HeaderMainGraph extends React.Component<I
 				</div>
 			</React.Fragment>
 		);
-	};
-
-	onOpen () {
-		const { rootId } = this.props;
-
-		popupStore.closeAll(null, () => {
-			ObjectUtil.openRoute({ id: rootId, layout: I.ObjectLayout.Graph });
-		});
 	};
 
 	onSearch () {

@@ -137,12 +137,15 @@ export interface HeaderComponent extends RouteComponentProps<any> {
 	tabs?: any[];
 	tab?: string;
 	onTab?: (id: string) => void;
-	onHome?: (e: any) => void;
-	onForward?: (e: any) => void;
-	onBack?: (e: any) => void;
-	onSearch?: (e: any) => void;
-	onNavigation?: (e: any) => void;
-	onGraph?: (e: any) => void;
+	onHome?: () => void;
+	onForward?: () => void;
+	onBack?: () => void;
+	onSearch?: () => void;
+	onNavigation?: () => void;
+	onGraph?: () => void;
+	onStore?: () => void;
+	onPathOver?: (e: any) => void;
+	onPathOut?: () => void;
 };
 
 export interface PageComponent extends RouteComponentProps<any> {

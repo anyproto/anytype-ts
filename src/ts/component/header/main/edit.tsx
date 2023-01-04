@@ -18,13 +18,10 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<Pro
 		this.onMore = this.onMore.bind(this);
 		this.onSync = this.onSync.bind(this);
 		this.onOpen = this.onOpen.bind(this);
-
-		this.onPathOver = this.onPathOver.bind(this);
-		this.onPathOut = this.onPathOut.bind(this);
 	};
 
 	render () {
-		const { rootId, onHome, onForward, onBack, onNavigation, onGraph, onSearch } = this.props;
+		const { rootId, onHome, onForward, onBack, onNavigation, onGraph, onSearch, onPathOver, onPathOut } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
 
 		if (!root) {
@@ -53,7 +50,7 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<Pro
 				</div>
 
 				<div className="side center">
-					<div id="path" className="path" onClick={onSearch} onMouseOver={this.onPathOver} onMouseOut={this.onPathOut}>	
+					<div id="path" className="path" onClick={onSearch} onMouseOver={onPathOver} onMouseOut={onPathOut}>	
 						<div className="inner">
 							<IconObject object={object} size={18} />
 							<ObjectName object={object} />
@@ -99,6 +96,7 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<Pro
 			element: elementId,
 			horizontal: I.MenuDirection.Right,
 			subIds: Constant.menuIds.more,
+			offsetY: 4,
 			data: {
 				rootId,
 				blockId: rootId,
@@ -110,11 +108,8 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<Pro
 
 		if (!isPopup) {
 			const element = $(elementId);
-
-			param.fixedY = element.offset().top + element.height() + 4 - st;
+			param.fixedY = element.offset().top + element.height() - st;
 			param.classNameWrap = 'fixed fromHeader';
-		} else {
-			param.offsetY = 4;
 		};
 
 		menuStore.closeAll(null, () => { menuStore.open('blockMore', param); });
@@ -131,29 +126,20 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<Pro
 		const elementId = `${this.getContainer()} #button-header-sync`;
 		const param: any = {
 			element: elementId,
-			horizontal: I.MenuDirection.Right,
+			horizontal: I.MenuDirection.Center,
+			offsetY: 4,
 			data: {
-				rootId: rootId,
+				rootId,
 			}
 		};
 
 		if (!isPopup) {
 			const element = $(elementId);
-			param.fixedY = element.offset().top + element.height() + 4 - st;
+			param.fixedY = element.offset().top + element.height() - st;
 			param.classNameWrap = 'fixed fromHeader';
-		} else {
-			param.offsetY = 4;
 		};
 
 		menuStore.closeAll(null, () => { menuStore.open('threadList', param); });
-	};
-
-	onPathOver (e: any) {
-		Preview.tooltipShow('Click to search', $(e.currentTarget), I.MenuDirection.Center, I.MenuDirection.Bottom);
-	};
-
-	onPathOut () {
-		Preview.tooltipHide(false);
 	};
 
 	getContainer () {

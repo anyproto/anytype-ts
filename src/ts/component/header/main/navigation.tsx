@@ -1,32 +1,19 @@
 import * as React from 'react';
-import $ from 'jquery';
 import { Icon, IconObject } from 'Component';
-import { I, ObjectUtil, Preview, keyboard } from 'Lib';
-import { detailStore, popupStore } from 'Store';
+import { I, keyboard } from 'Lib';
+import { detailStore } from 'Store';
 import { observer } from 'mobx-react';
 
-interface Props extends I.HeaderComponent {};
-
-const HeaderMainNavigation = observer(class HeaderMainNavigation extends React.Component<Props, object> {
-
-	timeout: number = 0;
-
-	constructor (props: any) {
-		super(props);
-		
-		this.onOpen = this.onOpen.bind(this);
-		this.onPathOver = this.onPathOver.bind(this);
-		this.onPathOut = this.onPathOut.bind(this);
-	};
+const HeaderMainNavigation = observer(class HeaderMainNavigation extends React.Component<I.HeaderComponent> {
 
 	render () {
-		const { rootId, onHome, onForward, onBack, onGraph, onSearch } = this.props;
+		const { rootId, onHome, onForward, onBack, onNavigation, onGraph, onSearch, onPathOver, onPathOut } = this.props;
 		const object = detailStore.get(rootId, rootId, []);
 
 		return (
 			<React.Fragment>
 				<div className="side left">
-					<Icon className="expand big" tooltip="Open as object" onClick={this.onOpen} />
+					<Icon className="expand big" tooltip="Open as object" onClick={onNavigation} />
 					<Icon className="home big" tooltip="Home" onClick={onHome} />
 					<Icon className={[ 'back', 'big', (!keyboard.checkBack() ? 'disabled' : '') ].join(' ')} tooltip="Back" onClick={onBack} />
 					<Icon className={[ 'forward', 'big', (!keyboard.checkForward() ? 'disabled' : '') ].join(' ')} tooltip="Forward" onClick={onForward} />
@@ -34,7 +21,7 @@ const HeaderMainNavigation = observer(class HeaderMainNavigation extends React.C
 				</div>
 
 				<div className="side center">
-					<div id="path" className="path" onClick={onSearch} onMouseOver={this.onPathOver} onMouseOut={this.onPathOut}>
+					<div id="path" className="path" onClick={onSearch} onMouseOver={onPathOver} onMouseOut={onPathOut}>
 						<div className="inner">
 							<IconObject object={object} size={18} />
 							<div className="name">{object.name}</div>
@@ -45,22 +32,6 @@ const HeaderMainNavigation = observer(class HeaderMainNavigation extends React.C
 				<div className="side right" />
 			</React.Fragment>
 		);
-	};
-
-	onOpen () {
-		const { rootId } = this.props;
-
-		popupStore.closeAll(null, () => {
-			ObjectUtil.openRoute({ id: rootId, layout: I.ObjectLayout.Navigation });
-		});
-	};
-
-	onPathOver (e: any) {
-		Preview.tooltipShow('Click to search', $(e.currentTarget), I.MenuDirection.Center, I.MenuDirection.Bottom);
-	};
-
-	onPathOut () {
-		Preview.tooltipHide(false);
 	};
 
 });
