@@ -15,7 +15,6 @@ class HeaderMainGraph extends React.Component<I.HeaderComponent> {
 		this.onFilterToggle = this.onFilterToggle.bind(this);
 		this.onFilterClear = this.onFilterClear.bind(this);
 		this.onFilterChange = this.onFilterChange.bind(this);
-		this.onFilterBlur = this.onFilterBlur.bind(this);
 		this.onFilterMenu = this.onFilterMenu.bind(this);
 		this.onSettings = this.onSettings.bind(this);
 		this.onOpen = this.onOpen.bind(this);
@@ -44,7 +43,6 @@ class HeaderMainGraph extends React.Component<I.HeaderComponent> {
 							ref={(ref: any) => { this.refFilter = ref; }}
 							onChange={this.onFilterChange} 
 							onClear={this.onFilterClear}
-							onBlur={this.onFilterBlur}
 							value={graph.filter} 
 						/>
 					</div>
@@ -72,10 +70,6 @@ class HeaderMainGraph extends React.Component<I.HeaderComponent> {
 
 	onFilterClear () {
 		this.filterHide();
-	};
-
-	onFilterBlur (e: any) {
-		this.refFilter.onClear(e);
 	};
 
 	onFilterToggle () {
