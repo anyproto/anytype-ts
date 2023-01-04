@@ -47,7 +47,7 @@ const HeaderMainNavigation = observer(class HeaderMainNavigation extends React.C
 	};
 
 	onOpen () {
-		ObjectUtil.openRoute({ layout: I.ObjectLayout.Navigation });
+		ObjectUtil.openRoute({ rootId: this.props.rootId, layout: I.ObjectLayout.Navigation });
 	};
 
 });

@@ -49,7 +49,7 @@ const HeaderMainGraph = observer(class HeaderMainGraph extends React.Component<I
 	};
 
 	onOpen () {
-		ObjectUtil.openRoute({ layout: I.ObjectLayout.Graph });
+		ObjectUtil.openRoute({ rootId: this.props.rootId, layout: I.ObjectLayout.Graph });
 	};
 
 	onSearch () {
