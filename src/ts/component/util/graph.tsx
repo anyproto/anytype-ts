@@ -26,41 +26,6 @@ const Graph = observer(class Graph extends React.Component<Props> {
 	isDragging: boolean = false;
 	ids: string[] = [];
 
-	forceProps: any = {
-		center: {
-			x: 0.5,
-			y: 0.5,
-		},
-		charge: {
-			enabled: true,
-			strength: -100,
-			distanceMin: 0,
-			distanceMax: 200,
-		},
-		collide: {
-			enabled: true,
-			strength: 0.3,
-			iterations: 1,
-			radius: 10,
-		},
-		link: {
-			enabled: true,
-			strength: 0.3,
-			distance: 80,
-			iterations: 1,
-		},
-		forceX: {
-			enabled: true,
-			strength: 0.05,
-			x: 0.4,
-		},
-		forceY: {
-			enabled: true,
-			strength: 0.05,
-			y: 0.4,
-		},
-	};
-
 	constructor (props: Props) {
 		super(props);
 
@@ -98,11 +63,11 @@ const Graph = observer(class Graph extends React.Component<Props> {
 
 	rebind () {
 		this.unbind();
-		$(window).on('updateGraphProps', () => { this.updateProps(); });
+		$(window).on('updateGraphSettings', () => { this.updateSettings(); });
 	};
 
 	unbind () {
-		$(window).off('updateGraphProps');
+		$(window).off('updateGraphSettings');
 	};
 
 	init () {
@@ -139,8 +104,8 @@ const Graph = observer(class Graph extends React.Component<Props> {
 			density,
 			nodes: this.nodes,
 			edges: this.edges,
-			forceProps: this.getProps(),
 			theme: commonStore.getThemeClass(),
+			settings: commonStore.graph,
 		}, [ transfer ]);
 
 		d3.select(this.canvas)
@@ -219,12 +184,8 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		return d;
 	};
 
-	getProps () {
-		return Object.assign(this.forceProps, { flags: commonStore.graph });
-	};
-
-	updateProps () {
-		this.send('updateProps', { forceProps: this.getProps() } );
+	updateSettings () {
+		this.send('updateSettings', commonStore.graph);
 	};
 
 	onDragStart (e: any, d: any) {

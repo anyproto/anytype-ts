@@ -25,6 +25,41 @@ const EdgeType = {
 	Relation:	 1,
 };
 
+const forceProps = {
+	center: {
+		x: 0.5,
+		y: 0.5,
+	},
+	charge: {
+		enabled: true,
+		strength: -100,
+		distanceMin: 0,
+		distanceMax: 200,
+	},
+	collide: {
+		enabled: true,
+		strength: 0.3,
+		iterations: 1,
+		radius: 10,
+	},
+	link: {
+		enabled: true,
+		strength: 0.3,
+		distance: 80,
+		iterations: 1,
+	},
+	forceX: {
+		enabled: true,
+		strength: 0.05,
+		x: 0.4,
+	},
+	forceY: {
+		enabled: true,
+		strength: 0.05,
+		y: 0.4,
+	},
+};
+
 let canvas = null;
 let data = {};
 let ctx = null;
@@ -36,12 +71,12 @@ let nodes = [];
 let edges = [];
 let filteredNodes = [];
 let filteredEdges = [];
-let forceProps = {};
 let images = {};
 let simulation = null;
 let Color = {};
 let frame = 0;
 let selected = [];
+let settings = {};
 
 addEventListener('message', ({ data }) => { 
 	if (this[data.id]) {
@@ -52,7 +87,7 @@ addEventListener('message', ({ data }) => {
 init = (param) => {
 	data = param;
 	canvas = data.canvas;
-	forceProps = data.forceProps;
+	settings = data.settings;
 
 	ctx = canvas.getContext('2d');
 	ctx.lineCap = 'round';
@@ -68,7 +103,7 @@ init = (param) => {
 
 	simulation.on('tick', () => { redraw(); });
 	simulation.on('end', () => { simulation.alphaTarget(1); });
-	simulation.tick(200);
+	simulation.tick(100);
 };
 
 initColor = (theme) => {
@@ -98,9 +133,14 @@ image = ({ src, bitmap }) => {
 	};
 };
 
-updateProps = (param) => {
-	forceProps = Object.assign(forceProps, param.forceProps);
-	updateForces();
+updateSettings = (param) => {
+	const needUpdate = (param.link != settings.link) || (param.relation != settings.relation) || (param.orphan != settings.orphan);
+
+	settings = Object.assign(settings, param);
+
+	if (needUpdate) {
+		updateForces();
+	};
 };
 
 initForces = () => {
@@ -124,18 +164,18 @@ updateForces = () => {
 	let map = getNodeMap();
 
 	// Filter links
-	if (!forceProps.flags.link) {
+	if (!settings.link) {
 		edges = edges.filter(d => d.type != EdgeType.Link);
 	};
 
 	// Filter relations
-	if (!forceProps.flags.relation) {
+	if (!settings.relation) {
 		edges = edges.filter(d => d.type != EdgeType.Relation);
 	};
 
 	// Filter by user input
-	if (forceProps.flags.filter) {
-		const reg = new RegExp(util.filterFix(forceProps.flags.filter), 'ig');
+	if (settings.filter) {
+		const reg = new RegExp(util.filterFix(settings.filter), 'ig');
 		nodes = nodes.filter(d => {
 			d.name = String(d.name || '');
 			d.description = String(d.description || '');
@@ -157,15 +197,13 @@ updateForces = () => {
 	});
 
 	// Filter orphans
-	if (!forceProps.flags.orphan) {
+	if (!settings.orphan) {
 		nodes = nodes.filter(d => !d.isOrphan || d.isRoot);
 	};
 
 	map = getNodeMap();
 	nodes = nodes.map(d => Object.assign(map.get(d.id) || {}, d));
 	edges = edges.filter(d => map.get(d.source) && map.get(d.target));
-
-	const needRestart = (edges.length != data.edges.length) || (nodes.length != data.nodes.length);
 
 	simulation.nodes(nodes);
 
@@ -175,12 +213,12 @@ updateForces = () => {
 
 	simulation.force('charge')
 	.strength(charge.strength * charge.enabled)
-	.distanceMin(charge.distanceMin)
-	.distanceMax(charge.distanceMax);
+	//.distanceMin(charge.distanceMin)
+	//.distanceMax(charge.distanceMax);
 
 	simulation.force('collide')
 	.strength(collide.strength * collide.enabled)
-	.radius(d => getRadius(d))
+	.radius(collide.radius)
 	.iterations(collide.iterations);
 
 	simulation.force('link')
@@ -198,7 +236,7 @@ updateForces = () => {
 	.strength(d => d.isOrphan ? forceY.strength * forceY.enabled : 0)
 	.y(height * forceY.y);
 
-	needRestart ? simulation.alpha(1).restart() : restart(0.3);
+	restart(1);
 };
 
 draw = () => {
@@ -213,7 +251,7 @@ draw = () => {
 
 	edges.forEach(d => {
 		if (checkNodeInViewport(d.source) || checkNodeInViewport(d.target)) {
-			drawLine(d, radius, diameter, forceProps.flags.marker && d.isDouble, forceProps.flags.marker);
+			drawLine(d, radius, diameter, settings.marker && d.isDouble, settings.marker);
 		};
 	});
 
@@ -276,7 +314,7 @@ drawLine = (d, arrowWidth, arrowHeight, arrowStart, arrowEnd) => {
 	let offset = arrowStart && arrowEnd ? -k : 0;
 
 	// Relation name
-	if (d.name && forceProps.flags.label && (transform.k >= transformThreshold)) {
+	if (d.name && settings.label && (transform.k >= transformThreshold)) {
 		ctx.textAlign = 'center';
 		ctx.textBaseline = 'middle';
 
@@ -337,7 +375,7 @@ drawNode = (d) => {
 		lineWidth = radius / 5;
 	};
 
-	if (forceProps.flags.icon && img) {
+	if (settings.icon && img) {
 		ctx.save();
 
 		if (lineWidth) {
@@ -386,7 +424,7 @@ drawNode = (d) => {
 	};
 
 	// Node name
-	if (forceProps.flags.label && (transform.k >= transformThreshold)) {
+	if (settings.label && (transform.k >= transformThreshold)) {
 		ctx.textAlign = 'center';
 		ctx.textBaseline = 'middle';
 
@@ -567,7 +605,7 @@ const getNodeByCoords = (x, y) => {
 };
 
 const getRadius = (d) => {
-	return d.radius / transform.k * (forceProps.flags.icon && images[d.src] ? 2 : 1);
+	return d.radius / transform.k * (settings.icon && images[d.src] ? 2 : 1);
 };
 
 const getFont = () => {

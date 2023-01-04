@@ -250,7 +250,7 @@ class CommonStore {
 		this.graphObj = Object.assign(this.graphObj, graph);
 
 		Storage.set('graph', this.graphObj);
-		$(window).trigger('updateGraphProps');
+		$(window).trigger('updateGraphSettings');
 	};
 
 	toastSet (toast: I.Toast) {
