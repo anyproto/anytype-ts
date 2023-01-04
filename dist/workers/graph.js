@@ -165,6 +165,8 @@ updateForces = () => {
 	nodes = nodes.map(d => Object.assign(map.get(d.id) || {}, d));
 	edges = edges.filter(d => map.get(d.source) && map.get(d.target));
 
+	const needRestart = (edges.length != data.edges.length) || (nodes.length != data.nodes.length);
+
 	simulation.nodes(nodes);
 
 	simulation.force('center')
@@ -196,7 +198,7 @@ updateForces = () => {
 	.strength(d => d.isOrphan ? forceY.strength * forceY.enabled : 0)
 	.y(height * forceY.y);
 
-	restart(0.3);
+	needRestart ? simulation.alpha(1).restart() : restart(0.3);
 };
 
 draw = () => {

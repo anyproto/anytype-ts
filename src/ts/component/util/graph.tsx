@@ -33,7 +33,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		},
 		charge: {
 			enabled: true,
-			strength: -30,
+			strength: -100,
 			distanceMin: 0,
 			distanceMax: 200,
 		},
@@ -51,12 +51,12 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		},
 		forceX: {
 			enabled: true,
-			strength: 0.1,
+			strength: 0.05,
 			x: 0.4,
 		},
 		forceY: {
 			enabled: true,
-			strength: 0.1,
+			strength: 0.05,
 			y: 0.4,
 		},
 	};
