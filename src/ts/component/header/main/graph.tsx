@@ -31,7 +31,7 @@ const HeaderMainGraph = observer(class HeaderMainGraph extends React.Component<I
 				<div className="side right">
 					<Icon id="button-header-search" className="search big" tooltip="Search" onClick={this.onSearch} />
 					<Icon id="button-header-filter" className="filter big" tooltip="Filters" onClick={this.onFilter} />
-					<Icon id="button-header-setttins" className="settings big" tooltip="Settings" onClick={this.onSettings} />
+					<Icon id="button-header-settings" className="settings big" tooltip="Settings" onClick={this.onSettings} />
 				</div>
 			</React.Fragment>
 		);
@@ -52,7 +52,7 @@ const HeaderMainGraph = observer(class HeaderMainGraph extends React.Component<I
 	onSettings () {
 		const { menuOpen } = this.props;
 
-		menuOpen('graphSettings', '#button-header-sync', {
+		menuOpen('graphSettings', '#button-header-settings', {
 			horizontal: I.MenuDirection.Right,
 		});
 	};
