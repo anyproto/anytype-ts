@@ -31,31 +31,26 @@ const forceProps = {
 		y: 0.5,
 	},
 	charge: {
-		enabled: true,
-		strength: -100,
+		strength: -50,
 		distanceMin: 0,
 		distanceMax: 200,
 	},
 	collide: {
-		enabled: true,
-		strength: 0.3,
+		strength: 1,
 		iterations: 1,
-		radius: 10,
+		radius: 5,
 	},
 	link: {
-		enabled: true,
-		strength: 0.3,
+		strength: 1,
 		distance: 80,
 		iterations: 1,
 	},
 	forceX: {
-		enabled: true,
-		strength: 0.05,
+		strength: 0.1,
 		x: 0.4,
 	},
 	forceY: {
-		enabled: true,
-		strength: 0.05,
+		strength: 0.1,
 		y: 0.4,
 	},
 };
@@ -146,11 +141,11 @@ updateSettings = (param) => {
 initForces = () => {
 	simulation
 	.force('link', d3.forceLink().id(d => d.id))
-	.force('charge', d3.forceManyBody())
+	.force('charge', d3.forceManyBody(nodes))
 	.force('collide', d3.forceCollide(nodes))
 	.force('center', d3.forceCenter())
-	.force('forceX', d3.forceX())
-	.force('forceY', d3.forceY())
+	.force('forceX', d3.forceX(nodes))
+	.force('forceY', d3.forceY(nodes))
 
 	updateForces();
 };
@@ -193,6 +188,12 @@ updateForces = () => {
 		d.sourceCnt = edges.filter(it => it.source == d.id).length;
 		d.targetCnt = edges.filter(it => it.target == d.id).length;
 		d.isOrphan = !d.sourceCnt && !d.targetCnt;
+
+		if (d.isRoot) {
+			d.fx = width / 2;
+			d.fy = height / 2;
+		};
+
 		return d;
 	});
 
@@ -212,31 +213,31 @@ updateForces = () => {
 	.y(height * center.y);
 
 	simulation.force('charge')
-	.strength(charge.strength * charge.enabled)
+	.strength(charge.strength)
 	//.distanceMin(charge.distanceMin)
 	//.distanceMax(charge.distanceMax);
 
 	simulation.force('collide')
-	.strength(collide.strength * collide.enabled)
+	.strength(collide.strength)
 	.radius(collide.radius)
 	.iterations(collide.iterations);
 
 	simulation.force('link')
 	.id(d => d.id)
 	.distance(link.distance)
-	.strength(link.strength * link.enabled)
+	.strength(link.strength)
 	.iterations(link.iterations)
-	.links(link.enabled ? edges : []);
+	.links(edges);
 
 	simulation.force('forceX')
-	.strength(d => d.isOrphan ? forceX.strength * forceX.enabled : 0)
+	.strength(d => d.isOrphan ? forceX.strength : 0)
 	.x(width * forceX.x);
 
 	simulation.force('forceY')
-	.strength(d => d.isOrphan ? forceY.strength * forceY.enabled : 0)
+	.strength(d => d.isOrphan ? forceY.strength : 0)
 	.y(height * forceY.y);
 
-	restart(1);
+	restart(0.3);
 };
 
 draw = () => {
