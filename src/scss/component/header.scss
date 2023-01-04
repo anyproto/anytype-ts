@@ -110,7 +110,14 @@
 
 .header.mainGraph { background: none; position: absolute !important; }
 .header.mainGraph {
-	.side.right { gap: 0px 12px; }
+	.side.right { gap: 0px 12px; width: auto; }
+
+	.filterWrap { width: 200px; }
+	.filterWrap {
+		.filter { width: 100%; padding: 0px; }
+		.inner { height: 28px; }
+		.line { display: none; }
+	}
 
 	.icon.search { background-image: url('~img/icon/header/search.svg'); }
 	.icon.filter { background-image: url('~img/icon/dataview/button/filter.svg'); }

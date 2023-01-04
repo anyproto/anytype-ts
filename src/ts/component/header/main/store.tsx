@@ -1,9 +1,15 @@
 import * as React from 'react';
 import { Icon } from 'Component';
-import { I, keyboard, DataUtil } from 'Lib';
+import { I, keyboard, DataUtil, ObjectUtil } from 'Lib';
 import { observer } from 'mobx-react';
 
 const HeaderMainStore = observer(class HeaderMainStore extends React.Component<I.HeaderComponent> {
+
+	constructor (props: I.HeaderComponent) {
+		super(props);
+
+		this.onOpen = this.onOpen.bind(this);
+	};
 
 	render () {
 		const { tabs, tab, onTab, onHome, onForward, onBack, onStore } = this.props;
@@ -11,7 +17,7 @@ const HeaderMainStore = observer(class HeaderMainStore extends React.Component<I
 		return (
 			<React.Fragment>
 				<div className="side left">
-					<Icon className="expand big" tooltip="Open as object" onClick={onStore} />
+					<Icon className="expand big" tooltip="Open as object" onClick={this.onOpen} />
 					<Icon className="home big" tooltip="Home" onClick={onHome} />
 					<Icon className={[ 'back', 'big', (!keyboard.checkBack() ? 'disabled' : '') ].join(' ')} tooltip="Back" onClick={onBack} />
 					<Icon className={[ 'forward', 'big', (!keyboard.checkForward() ? 'disabled' : '') ].join(' ')} tooltip="Forward" onClick={onForward} />
@@ -36,6 +42,10 @@ const HeaderMainStore = observer(class HeaderMainStore extends React.Component<I
 		if (!this.props.isPopup) {
 			DataUtil.setWindowTitleText('Library');
 		};
+	};
+
+	onOpen () {
+		ObjectUtil.openRoute({ layout: I.ObjectLayout.Navigation });
 	};
 
 });
