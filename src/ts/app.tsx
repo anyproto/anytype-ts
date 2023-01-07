@@ -362,7 +362,6 @@ class App extends React.Component<object, State> {
 
 	initStorage () {
 		const lastSurveyTime = Number(Storage.get('lastSurveyTime')) || 0;
-		const restoreKeys = [ 'pinTime', 'defaultType', 'autoSidebar' ];
 
 		if (!lastSurveyTime) {
 			Storage.set('lastSurveyTime', Util.time());
@@ -370,10 +369,6 @@ class App extends React.Component<object, State> {
 
 		Storage.delete('lastSurveyCanceled');
 		commonStore.coverSetDefault();
-
-		restoreKeys.forEach((key: string) => {
-			commonStore[Util.toCamelCase(key + '-Set')](Storage.get(key));
-		});
 	};
 
 	initTheme (theme: string) {

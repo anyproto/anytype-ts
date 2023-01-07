@@ -18,7 +18,6 @@ interface State {
 	isDeleted: boolean;
 };
 
-
 const LIMIT = 100;
 const GROUP_OFFSET = 300;
 

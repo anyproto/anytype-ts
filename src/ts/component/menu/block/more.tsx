@@ -28,12 +28,7 @@ class MenuBlockMore extends React.Component<Props, object> {
 		const block = blockStore.getLeaf(rootId, blockId);
 		const { config } = commonStore;
 		const sections = this.getSections();
-		const restrictions = blockStore.getRestrictions(rootId, rootId);
-		const restr: any[] = [];
-
-		for (let r of restrictions) {
-			restr.push(I.RestrictionObject[r]);
-		};
+		const restrictions = blockStore.getRestrictions(rootId, rootId).map(it => I.RestrictionObject[it]);
 
 		const Section = (item: any) => (
 			<div id={'section-' + item.id} className="section">
@@ -56,13 +51,13 @@ class MenuBlockMore extends React.Component<Props, object> {
 		);
 
 		let sectionPage = null;
-		if (block && block.isPage() && config.sudo && restr.length) {
+		if (block && block.isPage() && config.sudo && restrictions.length) {
 			sectionPage = (
 				<React.Fragment>
 					<div className="section">
 						<div className="name">Restrictions</div>
 						<div className="items">
-							{restr.map((item: any, i: number) => (
+							{restrictions.map((item: any, i: number) => (
 								<div className="item" key={i}>{item || 'Empty'}</div>
 							))}
 						</div>
@@ -420,7 +415,8 @@ class MenuBlockMore extends React.Component<Props, object> {
 				break;
 
 			case 'history':
-				ObjectUtil.openEvent(e, { layout: I.ObjectLayout.History, id: object.id });
+				keyboard.disableClose(true);
+				ObjectUtil.openAuto({ layout: I.ObjectLayout.History, id: object.id });
 				break;
 			
 			case 'search':
