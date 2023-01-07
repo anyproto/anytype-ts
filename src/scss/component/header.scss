@@ -113,7 +113,7 @@
 .header.mainGraph {
 	.side.right { gap: 0px 12px; width: auto; }
 
-	.filterWrap { width: 0px; overflow: hidden; transition: $transitionFast; }
+	.filterWrap { width: 0px; overflow: hidden; transition: $transitionFast; display: none; }
 	.filterWrap {
 		.filter { width: 100%; padding: 0px; }
 		.inner { height: 28px; }

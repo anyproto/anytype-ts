@@ -36,13 +36,13 @@ const forceProps = {
 		distanceMax: 200,
 	},
 	collide: {
-		strength: 1,
+		strength: 0.5,
 		iterations: 1,
-		radius: 5,
+		radius: 10,
 	},
 	link: {
-		strength: 1,
-		distance: 80,
+		strength: 0.5,
+		distance: 30,
 		iterations: 1,
 	},
 	forceX: {
@@ -129,7 +129,10 @@ image = ({ src, bitmap }) => {
 };
 
 updateSettings = (param) => {
-	const needUpdate = (param.link != settings.link) || (param.relation != settings.relation) || (param.orphan != settings.orphan);
+	const needUpdate = (param.link != settings.link) || 
+						(param.relation != settings.relation) || 
+						(param.orphan != settings.orphan) || 
+						(param.filter != settings.filter);
 
 	settings = Object.assign(settings, param);
 

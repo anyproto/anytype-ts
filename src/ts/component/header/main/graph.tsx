@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
+import raf from 'raf';
 import { Icon, Filter } from 'Component';
 import { I, keyboard, DataUtil, ObjectUtil } from 'Lib';
 import { commonStore } from 'Store';
@@ -87,15 +88,22 @@ class HeaderMainGraph extends React.Component<I.HeaderComponent> {
 
 	filterShow () {
 		const node = $(ReactDOM.findDOMNode(this));
+		const wrap = node.find('#filterWrap');
 
-		node.find('#filterWrap').addClass('active');
-		this.refFilter.focus();
+		wrap.show();
+
+		raf(() => {
+			wrap.addClass('active');
+			this.refFilter.focus();
+		});
 	};
 
 	filterHide () {
 		const node = $(ReactDOM.findDOMNode(this));
+		const wrap = node.find('#filterWrap');
 
-		node.find('#filterWrap').removeClass('active');
+		wrap.removeClass('active');
+		window.setTimeout(() => { wrap.hide(); }, 200);
 	};
 
 	onFilterMenu () {
