@@ -341,7 +341,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				this.refView.loadGroupList();
 			} else {
 				this.viewId = '';
-				//this.forceUpdate();
 			};
 		} else {
 			if (clear) {
