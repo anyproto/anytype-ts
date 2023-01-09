@@ -11,7 +11,7 @@ class Error extends React.Component<Props, object> {
 	};
 
 	render () {
-		let { text } = this.props;
+		const { text } = this.props;
 		
 		return (
 			<div className="error" dangerouslySetInnerHTML={{ __html: text }} />

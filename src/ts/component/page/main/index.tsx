@@ -5,10 +5,7 @@ import { Icon, IconObject, ListIndex, Cover, Header, Footer, Filter, EmptySearch
 import { commonStore, blockStore, detailStore, menuStore, dbStore, popupStore, authStore } from 'Store';
 import { I, C, Util, DataUtil, ObjectUtil, translate, crumbs, Storage, analytics, keyboard, Action } from 'Lib';
 import arrayMove from 'array-move';
-
 import Constant from 'json/constant.json';
-
-interface Props extends I.PageComponent {};
 
 interface State {
 	tab: I.TabIndex;
@@ -16,7 +13,7 @@ interface State {
 	loading: boolean;
 };
 
-const PageMainIndex = observer(class PageMainIndex extends React.Component<Props, State> {
+const PageMainIndex = observer(class PageMainIndex extends React.Component<I.PageComponent, State> {
 	
 	_isMounted: boolean = false;
 	refFilter: any = null;
@@ -30,7 +27,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		loading: false,
 	};
 
-	constructor (props: any) {
+	constructor (props: I.PageComponent) {
 		super(props);
 		
 		this.getList = this.getList.bind(this);
@@ -459,7 +456,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 	
 	onProfile (e: any) {
 		const object = detailStore.get(Constant.subId.profile, blockStore.profile);
-		ObjectUtil.openEvent(e, object);
+		ObjectUtil.openPopup(object);
 	};
 	
 	onClick (e: any, item: any) {
@@ -893,7 +890,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 		switch (tab) {
 			case I.TabIndex.Favorite:
-			case I.TabIndex.Recent:
+			case I.TabIndex.Recent: {
 				const rootId = isRecent ? recent : root;
 				const childrenIds = blockStore.getChildrenIds(rootId, rootId);
 				const length = childrenIds.length;
@@ -925,12 +922,13 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 					};
 					return true;
 				});
-
 				break;
+			};
 
-			default:
+			default: {
 				list = records.map(id => detailStore.get(Constant.subId.index, id));
 				break;
+			};
 		};
 
 		return list;

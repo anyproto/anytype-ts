@@ -119,7 +119,7 @@ class BlockStore {
 			});
 		});
 
-		for (let [ id, item ] of map.entries()) {
+		for (const [ id, item ] of map.entries()) {
 			(item.childrenIds || []).map((it: string) => {
 				const check = map.get(it);
 				if (check && (check.parentId != id)) {
@@ -129,7 +129,7 @@ class BlockStore {
 			});
 		};
 
-		for (let [ id, item ] of map.entries()) {
+		for (const [ id, item ] of map.entries()) {
 			map.set(id, new M.BlockStructure(item));
 		};
 
@@ -137,9 +137,9 @@ class BlockStore {
 	};
 
     updateStructure (rootId: string, blockId: string, childrenIds: string[]) {
-		let map = this.getMap(rootId);
-		let element = this.getMapElement(rootId, blockId);
+		const map = this.getMap(rootId);
 
+		let element = this.getMapElement(rootId, blockId);
 		if (!element) {
 			element = new M.BlockStructure({ parentId: '', childrenIds: childrenIds });
 		} else {
@@ -149,7 +149,7 @@ class BlockStore {
 		map.set(blockId, element);
 
 		// Update parentId
-		for (let [ id, item ] of map.entries()) {
+		for (const [ id, item ] of map.entries()) {
 			(item.childrenIds || []).map((it: string) => {
 				const check = map.get(it);
 				if (check && (check.parentId != id)) {
@@ -161,8 +161,8 @@ class BlockStore {
 	};
 
     delete (rootId: string, id: string) {
-		let blocks = this.getBlocks(rootId);
-		let map = this.getMap(rootId);
+		const blocks = this.getBlocks(rootId);
+		const map = this.getMap(rootId);
 
 		this.set(rootId, blocks.filter(it => it.id != id));
 		map.delete(id);
@@ -177,7 +177,7 @@ class BlockStore {
 
 		map.set(rootId, restrictions.object);
 
-		for (let item of restrictions.dataview) {
+		for (const item of restrictions.dataview) {
 			map.set(item.blockId, item.restrictions);
 		};
 
@@ -190,16 +190,16 @@ class BlockStore {
 
     getMapElement (rootId: string, blockId: string) {
 		const map = this.getMap(rootId);
-		return map.get(blockId);
+		return map ? map.get(blockId) : null;
 	};
 
     getLeaf (rootId: string, id: string): any {
-		let map = this.blockMap.get(rootId);
+		const map = this.blockMap.get(rootId);
 		return map ? map.get(id) : null;
 	};
 
     getBlocks (rootId: string, filter?: (it: any) => boolean): I.Block[] {
-		let map = this.blockMap.get(rootId);
+		const map = this.blockMap.get(rootId);
 		if (!map) {
 			return [];
 		};
@@ -225,7 +225,7 @@ class BlockStore {
 			list = this.unwrapTree([ this.wrapTree(rootId, rootId) ]);
 		};
 
-		let idx = list.findIndex((item: I.Block) => { return item.id == id; });
+		const idx = list.findIndex((item: I.Block) => { return item.id == id; });
 		if (idx + dir < 0 || idx + dir > list.length - 1) {
 			return null;
 		};
@@ -315,8 +315,8 @@ class BlockStore {
 	};
 
     wrapTree (rootId: string, blockId: string) {
-		let map = this.getMap(rootId);
-		let ret: any = {};
+		const map = this.getMap(rootId);
+		const ret: any = {};
 
 		for (let [ id, item ] of map.entries()) {
 			ret[id] = this.getLeaf(rootId, id);
@@ -333,8 +333,8 @@ class BlockStore {
 		tree = (tree || []).filter((it: any) => { return it; });
 
 		let ret = [] as I.Block[];
-		for (let item of tree) {
-			let cb = item.childBlocks;
+		for (const item of tree) {
+			const cb = item.childBlocks;
 			
 			ret.push(item);
 			
@@ -367,7 +367,7 @@ class BlockStore {
 		restrictions = restrictions || [];
 		flags = flags || [];
 
-		for (let flag of flags) {
+		for (const flag of flags) {
 			if (restrictions.indexOf(flag) >= 0) {
 				return false;
 			};
@@ -386,9 +386,9 @@ class BlockStore {
 	};
 
 	updateMarkup (rootId: string) {
-		let blocks = Util.objectCopy(this.getBlocks(rootId, it => it.isText()));
+		const blocks = Util.objectCopy(this.getBlocks(rootId, it => it.isText()));
 
-		for (let block of blocks) {
+		for (const block of blocks) {
 			let text = block.content.text;
 			let marks = block.content.marks || [];
 

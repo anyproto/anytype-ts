@@ -377,16 +377,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 	};
 
-	getView (viewId?: string) {
+	getView (viewId?: string): I.View {
 		const { rootId, block } = this.props;
-		const views = dbStore.getViews(rootId, block.id);
-
-		if (!views.length) {
-			return null;
-		};
-
-		viewId = viewId || dbStore.getMeta(dbStore.getSubId(rootId, block.id), '').viewId;
-		return dbStore.getView(rootId, block.id, viewId) || views[0];
+		return Dataview.getView(rootId, block.id, viewId);
 	};
 
 	onRecordAdd (e: any, dir: number, withPopup?: boolean) {
@@ -414,7 +407,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		if (relations.length) {
 			relations.forEach((it: any) => {
-				details[it.id] = Relation.formatValue(it, null, true);
+				details[it.relationKey] = Relation.formatValue(it, null, true);
 			});
 		};
 

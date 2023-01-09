@@ -371,19 +371,22 @@ class Keyboard {
 		};
 
 		switch (cmd) {
-			case 'search':
+			case 'search': {
 				this.onSearchMenu('');
 				break;
+			};
 
-			case 'graph':
+			case 'graph': {
 				ObjectUtil.openPopup({ id: this.getRootId(), layout: I.ObjectLayout.Graph });
 				break;
+			};
 
-			case 'print':
+			case 'print': {
 				this.onPrint();
 				break;
+			};
 
-			case 'id':
+			case 'id': {
 				const { account } = authStore;
 				if (!account) {
 					break;
@@ -404,8 +407,9 @@ class Keyboard {
 					}
 				});
 				break;
+			};
 
-			case 'workspace':
+			case 'workspace': {
 				popupStore.open('prompt', {
 					data: {
 						title: 'Create Space',
@@ -415,6 +419,7 @@ class Keyboard {
 					}
 				});
 				break;
+			};
 		};
 	};
 

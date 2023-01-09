@@ -247,7 +247,7 @@ class Cell extends React.Component<Props, object> {
 
 		switch (relation.format) {
 
-			case I.RelationType.Date:
+			case I.RelationType.Date: {
 				param.data = Object.assign(param.data, {
 					value: param.data.value || Util.time(),
 				});
@@ -255,8 +255,9 @@ class Cell extends React.Component<Props, object> {
 				menuId = 'dataviewCalendar';
 				closeIfOpen = false;
 				break;
+			};
 
-			case I.RelationType.File:
+			case I.RelationType.File: {
 				param = Object.assign(param, {
 					width: width,
 				});
@@ -266,9 +267,10 @@ class Cell extends React.Component<Props, object> {
 
 				menuId = 'dataviewFileValues';
 				break;
+			};
 
-			case I.RelationType.Status:
-			case I.RelationType.Tag:
+			case I.RelationType.Status: 
+			case I.RelationType.Tag: {
 				param = Object.assign(param, {
 					width: width,
 					commonFilter: true,
@@ -285,8 +287,9 @@ class Cell extends React.Component<Props, object> {
 
 				closeIfOpen = false;
 				break;
+			};
 					
-			case I.RelationType.Object:
+			case I.RelationType.Object: {
 				param = Object.assign(param, {
 					width: width,
 					commonFilter: true,
@@ -304,8 +307,9 @@ class Cell extends React.Component<Props, object> {
 				
 				closeIfOpen = false;
 				break;
+			};
 
-			case I.RelationType.LongText:
+			case I.RelationType.LongText: {
 				const wh = win.height();
 				const hh = Util.sizeHeader();
 				const height = Math.min(wh - hh - 20, cell.outerHeight());
@@ -323,10 +327,11 @@ class Cell extends React.Component<Props, object> {
 				menuId = 'dataviewText';
 				closeIfOpen = false;
 				break;
+			};
 
 			case I.RelationType.Url:
 			case I.RelationType.Email:
-			case I.RelationType.Phone:
+			case I.RelationType.Phone: {
 				param = Object.assign(param, {
 					commonFilter: true,
 					width,
@@ -382,13 +387,15 @@ class Cell extends React.Component<Props, object> {
 				menuId = 'select';
 				closeIfOpen = false;
 				break;
+			};
 					
-			case I.RelationType.Checkbox:
+			case I.RelationType.Checkbox: {
 				if (this.ref.onClick) {
 					this.ref.onClick();
 				};
 				ret = true;
 				break; 
+			};
 		};
 
 		if (ret) {

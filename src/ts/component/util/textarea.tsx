@@ -38,7 +38,7 @@ class Textarea extends React.Component<Props, State> {
 		value: '',
 	};
 
-	constructor (props: any) {
+	constructor (props: Props) {
 		super(props);
 		
 		this.onChange = this.onChange.bind(this);
@@ -53,8 +53,8 @@ class Textarea extends React.Component<Props, State> {
 	render () {
 		const { id, name, className, placeholder, rows, autoComplete, readonly, maxLength } = this.props;
 		const { value } = this.state;
-		
-		let cn = [ 'textarea' ];
+		const cn = [ 'textarea' ];
+
 		if (className) {
 			cn.push(className);
 		};
@@ -174,7 +174,7 @@ class Textarea extends React.Component<Props, State> {
 			return;
 		};
 
-		let node = $(ReactDOM.findDOMNode(this));
+		const node = $(ReactDOM.findDOMNode(this));
 		v ? node.addClass('withError') : node.removeClass('withError');
 	};
 	
