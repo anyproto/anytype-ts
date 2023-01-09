@@ -83,7 +83,6 @@ const Head = observer(class Head extends React.Component<Props, State> {
 
 					<div id="head-source-select" className="iconWrap" onClick={onSourceSelect}>
 						<Icon className="set" />
-						{sources.length}
 					</div>
 				</div>
 				<div className="side right">
