@@ -26,7 +26,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 	constructor (props: any) {
 		super(props);
-		
+
 		this.onKeyDown = this.onKeyDown.bind(this);
 		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onType = this.onType.bind(this);
@@ -76,8 +76,8 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		return (
 			<div className={[ 'wrap', 'focusable', 'c' + block.id ].join(' ')} tabIndex={0} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp}>
 				<span className="cell canEdit first">
-					<div 
-						id={Relation.cellId(PREFIX, 'type', 0)} 
+					<div
+						id={Relation.cellId(PREFIX, 'type', 0)}
 						className="cellContent type"
 						onClick={this.onType}
 						onMouseEnter={(e: any) => { this.onMouseEnter(e, 'type'); }}
@@ -96,8 +96,8 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				{object.layout == I.ObjectLayout.Set ? (
 					<span className={[ 'cell', (!readonly ? 'canEdit' : '') ].join(' ')}>
 						{bullet}
-						<div 
-							id={Relation.cellId(PREFIX, 'setOf', 0)} 
+						<div
+							id={Relation.cellId(PREFIX, 'setOf', 0)}
 							className="cellContent setOf"
 							onClick={this.onSource}
 							onMouseEnter={(e: any) => { this.onMouseEnter(e, 'setOf'); }}
@@ -134,15 +134,15 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 					return (
 						<React.Fragment key={i}>
 							{bullet}
-							<span 
-								className={cn.join(' ')} 
-								onClick={(e: any) => { 
-									e.persist(); 
-									this.onRelation(e, relationKey); 
+							<span
+								className={cn.join(' ')}
+								onClick={(e: any) => {
+									e.persist();
+									this.onRelation(e, relationKey);
 								}}
 							>
-								<Cell 
-									ref={(ref: any) => { this.cellRefs.set(id, ref); }} 
+								<Cell
+									ref={(ref: any) => { this.cellRefs.set(id, ref); }}
 									elementId={id}
 									rootId={rootId}
 									subId={rootId}
@@ -172,7 +172,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			</div>
 		);
 	};
-	
+
 	componentDidMount () {
 		const { isInsidePreview } = this.props;
 		this._isMounted = true;
@@ -199,7 +199,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			Onboarding.start('typeDeleted', isPopup);
 		};
 	};
-	
+
 	checkSource () {
 		const { rootId, isPopup } = this.props;
 		const storeId = this.getStoreId();
@@ -215,7 +215,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 		if (!setOf.length) {
 			this.onSource();
-		} else 
+		} else
 		if (setOf.length && (setOf.length > (types.length + relations.length))) {
 			Onboarding.start('sourceDeleted', isPopup, true);
 		};
@@ -225,10 +225,10 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		const { rootId } = this.props;
 		const storeId = this.getStoreId();
 		const object = detailStore.get(rootId, storeId);
-		const skipIds = [ 
-			'type', 
+		const skipIds = [
+			'type',
 			'description',
-			'setOf', 
+			'setOf',
 		];
 
 		return (object.featuredRelations || []).filter((it: any) => {
@@ -247,12 +247,12 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 	onKeyDown (e: any) {
 		const { onKeyDown } = this.props;
-		
+
 		if (onKeyDown) {
 			onKeyDown(e, '', [], { from: 0, to: 0 }, this.props);
 		};
 	};
-	
+
 	onKeyUp (e: any) {
 		const { onKeyUp } = this.props;
 
@@ -299,7 +299,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		const type = detailStore.get(rootId, object.type, []);
 		const allowed = ![ Constant.typeId.bookmark ].includes(object.type) && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Type ]);
 		const options: any[] = [];
-		
+
 		if (!type.isArchived && !type.isDeleted) {
 			options.push({ id: 'open', name: 'Open type' });
 		};
@@ -309,7 +309,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		};
 
 		const showMenu = () => {
-			menuStore.open('select', { 
+			menuStore.open('select', {
 				element: `#block-${block.id} #${Relation.cellId(PREFIX, 'type', 0)}`,
 				offsetY: 8,
 				subIds: Constant.menuIds.featuredType,
@@ -331,10 +331,10 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			if (message.records.length == 1) {
 				this.setId = message.records[0].id;
 				options.push({ id: 'setOpen', name: 'Open set' });
-			} else 
+			} else
 			if (message.records.length == 2) {
 				options.push({ id: 'setOpenMenu', name: 'Open set', arrow: true });
-			} else 
+			} else
 			if (type && !type.isDeleted) {
 				options.push({ id: 'setCreate', name: 'Create set' });
 			};
@@ -446,7 +446,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			return;
 		};
 
-		menuStore.closeAll(null, () => { 
+		menuStore.closeAll(null, () => {
 			menuStore.open('dataviewSource', {
 				element: `#block-${block.id} #${Relation.cellId(PREFIX, 'setOf', 0)}`,
 				className: 'big single',
