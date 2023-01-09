@@ -21,6 +21,7 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<Props
 		this.onFocus = this.onFocus.bind(this);
 		this.onChangeUrl = this.onChangeUrl.bind(this);
 		this.onClick = this.onClick.bind(this);
+		this.onMouseDown = this.onMouseDown.bind(this);
 	};
 
 	render () {
