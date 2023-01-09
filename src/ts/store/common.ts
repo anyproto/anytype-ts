@@ -115,7 +115,7 @@ class CommonStore {
 	};
 
 	get type(): string {
-		const typeId = String(this.typeId || '');
+		const typeId = String(this.typeId || Storage.get('defaultType') || '');
 
 		if (!typeId) {
 			return Constant.typeId.note;
@@ -135,11 +135,11 @@ class CommonStore {
 	};
 
 	get pinTime(): number {
-		return (Number(this.pinTimeId) || Constant.default.pinTime) * 1000;
+		return (Number(this.pinTimeId) || Storage.get('pinTime') || Constant.default.pinTime) * 1000;
 	};
 
 	get autoSidebar(): boolean {
-		return Boolean(this.autoSidebarValue);
+		return Boolean(this.autoSidebarValue || Storage.get('autoSidebar'));
 	};
 
 	get theme(): string {
