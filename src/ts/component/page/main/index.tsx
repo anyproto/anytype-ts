@@ -185,6 +185,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<I.Pag
 								{(tab.id == I.TabIndex.Recent) && list.length ? <div className="btn" onClick={this.onClear}>Clear</div> : ''}
 							</div>
 						</div>
+
 						<div id="selectWrap" className="tabWrap">
 							<div className="tabs">
 								<div id="selectCnt" className="side left" />
@@ -198,6 +199,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<I.Pag
 								</div>
 							</div>
 						</div>
+
 						{content}
 					</div>
 				</div>

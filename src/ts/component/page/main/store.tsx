@@ -2,14 +2,10 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { Title, Label, Icon, IconObject, Cover, Header, Filter } from 'Component';
+import { Title, Icon, IconObject, Header, Filter } from 'Component';
 import { I, C, DataUtil, ObjectUtil, Util, Storage, Onboarding, analytics, Action } from 'Lib';
 import { dbStore, blockStore, detailStore, commonStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
-
-interface Props extends I.PageComponent {
-	isPopup?: boolean;
-};
 
 interface State {
 	loading: boolean;
@@ -26,25 +22,13 @@ enum View {
 };
 
 const Tabs = [
-	{ 
-		id: Tab.Type, name: 'Types', active: 'library',
-		children: [
-			{ id: 'market', name: 'Marketplace', disabled: true },
-			{ id: 'library', name: 'Library' },
-		]
-	},
-	{ 
-		id: Tab.Relation, 'name': 'Relations', active: 'library', 
-		children: [
-			{ id: 'market', name: 'Marketplace', disabled: true },
-			{ id: 'library', name: 'Library' },
-		], 
-	},
+	{ id: Tab.Type, name: 'Types' },
+	{ id: Tab.Relation, name: 'Relations' },
 ];
 
 const LIMIT = 3;
 
-const PageMainStore = observer(class PageMainStore extends React.Component<Props, State> {
+const PageMainStore = observer(class PageMainStore extends React.Component<I.PageComponent, State> {
 
 	state = {
 		loading: false,
@@ -60,7 +44,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 
 	_isMounted: boolean = false;
 
-	constructor (props: Props) {
+	constructor (props: I.PageComponent) {
 		super(props);
 
 		this.getRowHeight = this.getRowHeight.bind(this);
@@ -140,7 +124,6 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 		switch (this.tab) {
 
 			default:
-				console.log(sources);
 				Item = (item: any) => {
 					const allowedDelete = blockStore.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ]);
 					const cn = [ 'item', (item.isHidden ? 'isHidden' : '') ];
