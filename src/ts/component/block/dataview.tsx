@@ -6,7 +6,7 @@ import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 import { Loader } from 'Component';
-import { I, C, Util, DataUtil, ObjectUtil, analytics, Dataview, keyboard, Onboarding, Relation, Renderer } from 'Lib';
+import { I, C, Util, DataUtil, ObjectUtil, analytics, Dataview, keyboard, Onboarding, Relation, Renderer, focus } from 'Lib';
 import { blockStore, menuStore, dbStore, detailStore, popupStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -198,7 +198,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	componentDidMount () {
-		const { rootId, block, isPopup, isDragging } = this.props;
+		const { rootId, block, isPopup, isDragging, isInline } = this.props;
+		const { targetObjectId } = block.content;
 
 		if (isDragging) {
 			return;
@@ -659,14 +660,16 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		});
 	};
 
-	onSourceSelect (e: any) {
+	onSourceSelect (e?: any) {
 		const { rootId, block } = this.props;
 		const { targetObjectId } = block.content;
+		const el = e ? $(e.currentTarget) : `#block-${block.id} #head-title-wrapper`;
 
 		menuStore.open('searchObject', {
-			element: $(e.currentTarget),
+			element: el,
 			className: 'single',
-			horizontal: I.MenuDirection.Center,
+			horizontal: I.MenuDirection.Left,
+			offsetY: 4,
 			data: {
 				rootId,
 				blockId: block.id,

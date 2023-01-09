@@ -66,6 +66,8 @@
 				.icon.set { background-image: url('~img/icon/dataview/head/set.svg'); }
 			}
 
+			#sourceTrigger { position: absolute; z-index: -1; width: 0; height: 20px; }
+
 			.editableWrap { @include text-header3; font-weight: 700; position: relative; cursor: pointer; }
 			.editableWrap {
 				.editable { min-width: 70px; min-height: 26px; }

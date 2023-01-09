@@ -68,9 +68,12 @@ const Head = observer(class Head extends React.Component<Props, State> {
 						onUpload={this.onIconUpload} 
 					/>
 
+					<div id="sourceTrigger" onClick={onSourceSelect} />
+
 					<Editable 
 						ref={(ref: any) => { this.ref = ref; }}
 						id="value"
+						classNameWrap="dataviewTitle"
 						readonly={readonly || !isEditing}
 						placeholder={DataUtil.defaultName('set')}
 						onFocus={this.onFocus}
@@ -84,6 +87,7 @@ const Head = observer(class Head extends React.Component<Props, State> {
 					<div id="head-source-select" className="iconWrap" onClick={onSourceSelect}>
 						<Icon className="set" />
 					</div>
+
 				</div>
 				<div className="side right">
 					<div className="iconWrap" onClick={this.onFullscreen}>
@@ -113,7 +117,7 @@ const Head = observer(class Head extends React.Component<Props, State> {
 	};
 
 	onTitle (e: any) {
-		const { block } = this.props;
+		const { block, onSourceSelect } = this.props;
 		const { targetObjectId } = block.content;
 		const { isEditing } = this.state;
 
@@ -124,10 +128,12 @@ const Head = observer(class Head extends React.Component<Props, State> {
 		const options: any[] = [
 			{ id: 'editTitle', icon: 'editText', name: 'Edit title' },
 			{ id: 'changeSource', icon: 'folderBlank', name: 'Change source', arrow: true },
+			{ id: 'openSource', icon: 'expand', name: 'Open data source' }
 		];
 
-		if (targetObjectId) {
-			options.unshift({ id: 'openSource', icon: 'expand', name: 'Open data source' });
+		if (!targetObjectId) {
+			onSourceSelect(e);
+			return;
 		};
 
 		menuStore.open('select', {

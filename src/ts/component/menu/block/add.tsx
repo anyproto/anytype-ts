@@ -583,6 +583,10 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 						focus.set(message.blockId, { from: length, to: length });
 						focus.apply();
 
+						setTimeout(() => {
+							$(`#block-${message.blockId} #sourceTrigger`).trigger('click');
+						}, 1000);
+
 						analytics.event('CreateBlock', {
 							middleTime: message.middleTime,
 							type: param.type,
