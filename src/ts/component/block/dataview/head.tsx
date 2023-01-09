@@ -160,6 +160,7 @@ const Head = observer(class Head extends React.Component<Props, State> {
 			element: `#${this.menuContext.getId()} #item-${item.id}`,
 			offsetX: this.menuContext.getSize().width,
 			vertical: I.MenuDirection.Center,
+			isSub: true,
 			data: {},
 		};
 
