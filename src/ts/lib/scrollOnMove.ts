@@ -83,7 +83,7 @@ class ScrollOnMove {
 
 		let canScrollUp = (currentScrollY > 0);
 		let canScrollDown = (currentScrollY < maxScrollY);
-		let canScrollLeft = (currentScrollX > 0 );
+		let canScrollLeft = (currentScrollX > 0);
 		let canScrollRight = (currentScrollX < maxScrollX);
 		let nextScrollX = currentScrollX;
 		let nextScrollY = currentScrollY;

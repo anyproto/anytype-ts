@@ -215,6 +215,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 		keyboard.setDragging(true);
 		Preview.hideAll();
 
+		win.on('drag.drag', (e: any) => { this.onDrag(e); });
 		win.on('dragend.drag', (e: any) => { this.onDragEnd(e); });
 
 		container.off('scroll.drag').on('scroll.drag', throttle((e: any) => { this.onScroll(); }, 20));
@@ -246,6 +247,10 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 
 		this.initData();
 		this.checkNodes(e, e.pageX, e.pageY + diff);
+	};
+
+	onDrag (e: any) {
+		scrollOnMove.onMouseMove(e.clientX, e.clientY);
 	};
 
 	onDragEnd (e: any) {
