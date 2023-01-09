@@ -47,7 +47,6 @@ export default [
 	bullet(`<b>Toast notifications</b><br/>For greater clarity on actions you've taken in Anytype, we've introduced toast notifications for certain operations such as linking between Objects or installing new Types and Relations.`),
 	img('./img/help/toast.png', 'half screen'),
 	bullet(`<b>Link blocks in text mode previews</b><br/>It's now possible to further customize how linked Objects in text mode appear in your editor. Click the orange handle next to the link block and choose Preview to play around with Description, Type, and/or Content in your Object preview.`),
-	bullet(`<b>Set view is now updated when view settings menu is closed</b>`),
 
 	h2(`🐛 Bug Fixes`),
 	bullet(`Fixed: &quot;Edit URL Link&quot; modal window no longer jumps to top left corner. Thanks, ${link('https://community.anytype.io/t/modal-for-edit-link-locates-at-the-top-left-corner/7820', '@gdbb')}!`),
