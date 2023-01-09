@@ -53,21 +53,16 @@
 
 				.buttons { flex-shrink: 0; }
 				.buttons {
-					.icon { width: 28px !important; height: 28px !important; background-size: 20px; border-radius: 4px; transition: background-color 0.2s ease-in-out; }
+					.icon { width: 28px !important; height: 28px !important; background-size: 20px; border-radius: 4px; transition: $transitionFast; }
 					.icon.remove { background-image: url('~img/icon/menu/action/remove0.svg'); }
 					.icon.lock { background-size: 16px; background-image: url('~img/icon/store/lock.svg'); }
-					.icon.check { background-image: url('~img/icon/store/check.svg'); }
-					.icon.plus { background-image: url('~img/icon/store/plus.svg'); }
+					.icon.check { background-size: 28px; background-image: url('~img/icon/store/check.svg'); }
+					.icon.plus { background-size: 28px; background-image: url('~img/icon/store/plus0.svg'); }
 
-					.icon.remove:hover, .icon.plus:hover { background-color: $colorHover; }
+					.icon.remove:hover { background-color: $colorHover; }
+					.icon.plus:hover { background-image: url('~img/icon/store/plus1.svg'); }
 				}
 			}
-		}
-	}
-
-	.wrapper.library {
-		.item:hover {
-			.buttons { display: block; }
 		}
 	}
 }
