@@ -583,9 +583,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 						focus.set(message.blockId, { from: length, to: length });
 						focus.apply();
 
-						setTimeout(() => {
-							$(`#block-${message.blockId} #sourceTrigger`).trigger('click');
-						}, 1000);
+						window.setTimeout(() => { $(window).trigger(`setDataviewSource.${message.blockId}`); }, Constant.delay.menu);
 
 						analytics.event('CreateBlock', {
 							middleTime: message.middleTime,

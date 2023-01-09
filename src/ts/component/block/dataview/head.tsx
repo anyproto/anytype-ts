@@ -6,7 +6,7 @@ import { menuStore, detailStore } from 'Store';
 import Constant from 'json/constant.json';
 
 interface Props extends I.ViewComponent {
-	onSourceSelect?(e: any): void;
+	onSourceSelect?(element: any, param: Partial<I.MenuParam>): void;
 };
 
 interface State {
@@ -68,8 +68,6 @@ const Head = observer(class Head extends React.Component<Props, State> {
 						onUpload={this.onIconUpload} 
 					/>
 
-					<div id="sourceTrigger" onClick={onSourceSelect} />
-
 					<Editable 
 						ref={(ref: any) => { this.ref = ref; }}
 						id="value"
@@ -84,7 +82,11 @@ const Head = observer(class Head extends React.Component<Props, State> {
 						onCompositionStart={this.onCompositionStart}
 					/>
 
-					<div id="head-source-select" className="iconWrap" onClick={onSourceSelect}>
+					<div 
+						id="head-source-select" 
+						className="iconWrap" 
+						onClick={(e: any) => { onSourceSelect(e.currentTarget, { horizontal: I.MenuDirection.Center }); }}
+					>
 						<Icon className="set" />
 					</div>
 
@@ -132,7 +134,7 @@ const Head = observer(class Head extends React.Component<Props, State> {
 		];
 
 		if (!targetObjectId) {
-			onSourceSelect(e);
+			onSourceSelect(e.currentTarget, {});
 			return;
 		};
 

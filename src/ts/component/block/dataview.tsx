@@ -111,7 +111,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					getSources={this.getSources}
 					getRecord={this.getRecord}
 					onRecordAdd={this.onRecordAdd}
-					onSourceSelect={this.onSourceSelect}
+					onSourceSelect={(e: any) => { this.onSourceSelect(e.currentTarget, { horizontal: I.MenuDirection.Center }); }}
 					className={className}
 					isInline={isInline}
 				/>
@@ -176,7 +176,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 						description="Select object source or connect existing set"
 						button="Select source"
 						withButton={true}
-						onClick={this.onSourceSelect}
+						onClick={(e: any) => { this.onSourceSelect(e.currentTarget, { horizontal: I.MenuDirection.Center }); }}
 					/>
 				</React.Fragment>
 			);
@@ -241,7 +241,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 	unbind () {
 		const { block } = this.props;
-		$(window).off(`resize.${block.id} keydown.${block.id} updateDataviewData.${block.id}`);
+		$(window).off(`resize.${block.id} keydown.${block.id} updateDataviewData.${block.id} setDataviewSource.${block.id}`);
 	};
 
 	rebind () {
@@ -252,6 +252,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		win.on(`resize.${block.id}`, throttle(() => { this.resize(); }, 20));
 		win.on(`keydown.${block.id}`, throttle((e: any) => { this.onKeyDown(e); }, 100));
 		win.on(`updateDataviewData.${block.id}`, () => { this.getData(this.getView().id, 0, true); });
+		win.on(`setDataviewSource.${block.id}`, () => { 
+			this.onSourceSelect(`#block-${block.id} #head-title-wrapper #value`, {}); 
+		});
 	};
 
 	onKeyDown (e: any) {
@@ -660,16 +663,12 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		});
 	};
 
-	onSourceSelect (e?: any) {
+	onSourceSelect (element: any, param?: Partial<I.MenuParam>) {
 		const { rootId, block } = this.props;
 		const { targetObjectId } = block.content;
-		const el = e ? $(e.currentTarget) : `#block-${block.id} #head-title-wrapper`;
-
-		menuStore.open('searchObject', {
-			element: el,
+		const menuParam = Object.assign({
+			element: $(element),
 			className: 'single',
-			horizontal: I.MenuDirection.Left,
-			offsetY: 4,
 			data: {
 				rootId,
 				blockId: block.id,
@@ -690,7 +689,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					analytics.event('InlineSetSetSource');
 				}
 			}
-		});
+		}, param || {});
+
+		menuStore.open('searchObject', menuParam);
 	};
 
 	getIdPrefix () {
