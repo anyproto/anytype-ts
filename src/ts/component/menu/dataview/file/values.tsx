@@ -56,16 +56,19 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 
 			switch (item.layout) {
 				default:
-				case I.ObjectLayout.File:
+				case I.ObjectLayout.File: {
 					cn.push('isFile');
 					content = <File {...item} />;
 					break;
+				};
 
-				case I.ObjectLayout.Image:
+				case I.ObjectLayout.Image: {
 					cn.push('isImage');
 					content = <Image {...item} />;
 					break;
+				};
 			};
+
 			return (
 				<div id={'item-' + item.id} className={cn.join(' ')}>
 					<Handle />
@@ -244,7 +247,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 				onSelect: (event: any, el: any) => {
 
 					switch (el.id) {
-						case 'download':
+						case 'download': {
 							let url = '';
 							switch (item.layout) {
 								case I.ObjectLayout.File:
@@ -259,8 +262,9 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 								Renderer.send('download', url);
 							};
 							break;
+						};
 
-						case 'remove':
+						case 'remove': {
 							value = value.filter(it => it != item.id);
 							value = Util.arrayUnique(value);
 
@@ -270,6 +274,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 								position();
 							});
 							break;
+						};
 					};
 				},
 			}

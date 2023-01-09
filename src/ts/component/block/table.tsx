@@ -215,13 +215,14 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, obje
 		let options: any[] = [];
 
 		switch (type) {
-			case I.BlockType.TableRow:
+			case I.BlockType.TableRow: {
 				options = options.concat(this.optionsRow(rowId));
 				options = options.concat(this.optionsColor(''));
 				options = options.concat(this.optionsAlign(''));
 				break;
+			};
 
-			case I.BlockType.TableColumn:
+			case I.BlockType.TableColumn: {
 				options = options.concat([
 					{ id: 'sort', icon: 'sort', name: 'Sort', arrow: true },
 					{ isDiv: true },
@@ -230,8 +231,9 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, obje
 				options = options.concat(this.optionsColor(''));
 				options = options.concat(this.optionsAlign(''));
 				break;
+			};
 
-			default:
+			default: {
 				options = options.concat([
 					{ id: 'row', name: 'Row', arrow: true },
 					{ id: 'column', name: 'Column', arrow: true },
@@ -240,6 +242,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, obje
 				options = options.concat(this.optionsColor(cellId));
 				options = options.concat(this.optionsAlign(cellId));
 				break;
+			};
 		};
 
 		return options;
@@ -279,7 +282,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, obje
 		let optionsStyle: any[] = [];
 
 		switch (type) {
-			case I.BlockType.TableRow:
+			case I.BlockType.TableRow: {
 				optionsStyle = this.optionsStyle('');
 
 				menuParam = Object.assign(menuParam, {
@@ -292,8 +295,9 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, obje
 					C.BlockTableRowListFill(rootId, [ rowId ], callBack);
 				};
 				break;
+			};
 
-			case I.BlockType.TableColumn:
+			case I.BlockType.TableColumn: {
 				optionsStyle = this.optionsStyle('');
 
 				element = node.find(`#cell-${cellId}`).first();
@@ -308,8 +312,9 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, obje
 					C.BlockTableColumnListFill(rootId, [ columnId ], callBack);
 				};
 				break;
+			};
 
-			default:
+			default: {
 				optionsStyle = this.optionsStyle(cellId);
 
 				element = node.find(`#cell-${cellId} .icon.menu .inner`);
@@ -324,6 +329,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, obje
 					callBack();
 				};
 				break;
+			};
 		};
 
 		menuParam = Object.assign(menuParam, {
@@ -360,7 +366,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, obje
 					};
 
 					switch (item.id) {
-						case 'sort':
+						case 'sort': {
 							menuId = 'select2';
 							menuParam.component = 'select';
 							menuParam.data = Object.assign(menuParam.data, {
@@ -371,8 +377,9 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, obje
 								}
 							});
 							break;
+						};
 
-						case 'row':
+						case 'row': {
 							menuId = 'select2';
 							menuParam.component = 'select';
 							menuParam.data = Object.assign(menuParam.data, {
@@ -394,8 +401,9 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, obje
 								}
 							});
 							break;
+						};
 
-						case 'column':
+						case 'column': {
 							menuId = 'select2';
 							menuParam.component = 'select';
 							menuParam.data = Object.assign(menuParam.data, {
@@ -408,8 +416,9 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, obje
 								}
 							});
 							break;
+						};
 
-						case 'horizontal':
+						case 'horizontal': {
 							menuId = 'select2';
 							menuParam.component = 'select';
 							menuParam.data = Object.assign(menuParam.data, {
@@ -421,8 +430,9 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, obje
 								}
 							});
 							break;
+						};
 
-						case 'vertical':
+						case 'vertical': {
 							menuId = 'select2';
 							menuParam.component = 'select';
 							menuParam.data = Object.assign(menuParam.data, {
@@ -434,8 +444,9 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, obje
 								}
 							});
 							break;
+						};
 
-						case 'color':
+						case 'color': {
 							menuId = 'blockColor';
 							menuParam.data = Object.assign(menuParam.data, {
 								onChange: (id: string) => {
@@ -444,8 +455,9 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, obje
 								}
 							});
 							break;
+						};
 
-						case 'background':
+						case 'background': {
 							menuId = 'blockBackground';
 							menuParam.data = Object.assign(menuParam.data, {
 								onChange: (id: string) => {
@@ -454,8 +466,9 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, obje
 								}
 							});
 							break;
+						};
 
-						case 'style':
+						case 'style': {
 							menuId = 'select2';
 							menuParam.component = 'select';
 							menuParam.data = Object.assign(menuParam.data, {
@@ -466,6 +479,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, obje
 								}
 							});
 							break;
+						};
 					};
 
 					menuStore.closeAll(subIds, () => {
@@ -499,12 +513,13 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, obje
 
 		switch (item.id) {
 			case 'columnBefore':
-			case 'columnAfter':
+			case 'columnAfter': {
 				C.BlockTableColumnCreate(rootId, columnId, (item.id == 'columnBefore' ? I.BlockPosition.Left : I.BlockPosition.Right));
 				break;
+			};
 
 			case 'columnMoveLeft':
-			case 'columnMoveRight':
+			case 'columnMoveRight': {
 				position = (item.id == 'columnMoveLeft') ? I.BlockPosition.Left : I.BlockPosition.Right;
 				idx = columns.findIndex(it => it.id == columnId);
 				nextIdx = idx + (position == I.BlockPosition.Left ? -1 : 1);
@@ -514,22 +529,26 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, obje
 					this.onSortEndColumn(columnId, next.id, position);
 				};
 				break;
+			};
 
-			case 'columnRemove':
+			case 'columnRemove': {
 				C.BlockTableColumnDelete(rootId, columnId);
 				break;
+			};
 
-			case 'columnCopy':
+			case 'columnCopy': {
 				C.BlockTableColumnDuplicate(rootId, columnId, columnId, I.BlockPosition.Right);
 				break;
+			};
 
 			case 'rowBefore':
-			case 'rowAfter':
+			case 'rowAfter': {
 				C.BlockTableRowCreate(rootId, rowId, (item.id == 'rowBefore' ? I.BlockPosition.Top : I.BlockPosition.Bottom));
 				break;
+			};
 
 			case 'rowMoveTop':
-			case 'rowMoveBottom':
+			case 'rowMoveBottom': {
 				position = (item.id == 'rowMoveTop') ? I.BlockPosition.Top : I.BlockPosition.Bottom;
 				idx = rows.findIndex(it => it.id == rowId);
 				nextIdx = idx + (position == I.BlockPosition.Top ? -1 : 1);
@@ -539,22 +558,27 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, obje
 					this.onSortEndRow(rowId, next.id, position);
 				};
 				break;
+			};
 
-			case 'rowCopy':
+			case 'rowCopy': {
 				C.BlockTableRowDuplicate(rootId, rowId, rowId, I.BlockPosition.Bottom);
 				break;
+			};
 
-			case 'rowRemove':
+			case 'rowRemove': {
 				C.BlockListDelete(rootId, [ rowId ]);
 				break;
+			};
 
-			case 'clearStyle':
+			case 'clearStyle': {
 				C.BlockTextListClearStyle(rootId, blockIds);
 				break;
+			};
 
-			case 'clearContent':
+			case 'clearContent': {
 				C.BlockTextListClearContent(rootId, blockIds);
 				break;
+			};
 		};
 	};
 
@@ -1376,7 +1400,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, obje
 		let h = 0;
 
 		switch (type) {
-			case I.BlockType.TableRow:
+			case I.BlockType.TableRow: {
 				if (!rowId) {
 					return;
 				};
@@ -1393,8 +1417,9 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, obje
 				w = obj.outerWidth();
 				h = obj.outerHeight();
 				break;
+			};
 
-			case I.BlockType.TableColumn:
+			case I.BlockType.TableColumn: {
 				if (!columnId) {
 					return;
 				};
@@ -1414,8 +1439,9 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, obje
 					h += obj.outerHeight();
 				});
 				break;
+			};
 
-			default:
+			default: {
 				if (!cellId) {
 					return;
 				};
@@ -1432,6 +1458,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, obje
 				w = obj.outerWidth();
 				h = obj.outerHeight();
 				break;
+			};
 		};
 
 		x -= 1;
