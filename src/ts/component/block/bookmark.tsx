@@ -88,7 +88,7 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<Props
 					};
 
 					element = (
-						<div className={cn.join(' ')} data-href={url} onClick={this.onClick}>
+						<div className={cn.join(' ')} data-href={url} onClick={this.onClick} onMouseDown={this.onMouseDown}>
 							<div className={cnl.join(' ')}>
 								<ObjectName object={object} />
 								<ObjectDescription object={object} />
@@ -168,6 +168,19 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<Props
 
 		Renderer.send('urlOpen', Util.urlFix(this.getUrl()));
 		analytics.event('BlockBookmarkOpenUrl');
+	};
+
+	onMouseDown (e: any) {
+		e.persist();
+
+		// middle mouse click
+		if (e.buttons && 1) {
+			e.preventDefault();
+			e.stopPropagation();
+
+			Renderer.send('urlOpen', Util.urlFix(this.getUrl()));
+			analytics.event('BlockBookmarkOpenUrl');
+		};
 	};
 	
 	onChangeUrl (e: any, url: string) {
