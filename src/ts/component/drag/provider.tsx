@@ -215,6 +215,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 		keyboard.setDragging(true);
 		Preview.hideAll();
 
+		win.on('drag.drag', (e: any) => { this.onDrag(e); });
 		win.on('dragend.drag', (e: any) => { this.onDragEnd(e); });
 
 		container.off('scroll.drag').on('scroll.drag', throttle((e: any) => { this.onScroll(); }, 20));
@@ -246,6 +247,10 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 
 		this.initData();
 		this.checkNodes(e, e.pageX, e.pageY + diff);
+	};
+
+	onDrag (e: any) {
+		scrollOnMove.onMouseMove(e.clientX, e.clientY);
 	};
 
 	onDragEnd (e: any) {
@@ -291,7 +296,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 
 		// DropTarget type
 		switch (type) {
-			case I.DropType.Block:
+			case I.DropType.Block: {
 				const target = blockStore.getLeaf(targetContextId, targetId);
 				
 				if (!target) {
@@ -318,22 +323,25 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 					};
 				};
 				break;
+			};
 
-			case I.DropType.Relation:
+			case I.DropType.Relation: {
 				break;
+			};
 
-			case I.DropType.Menu:
+			case I.DropType.Menu: {
 				targetContextId = targetId;
 				targetId = '';
 				break;
+			};
 		};
 
 		console.log('[DragProvider].onDrop from:', contextId, 'to: ', targetContextId);
 
 		// Source type
 		switch (dropType) {
-			case I.DropType.Block:
-				const cb = (message: any) => {
+			case I.DropType.Block: {
+				const cb = () => {
 					if (isToggle && (position == I.BlockPosition.InnerFirst)) {
 						blockStore.toggle(contextId, targetId, true);
 					};
@@ -349,12 +357,14 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 					Action.move(contextId, targetContextId, targetId, ids, position, cb);
 				};
 				break;
+			};
 
-			case I.DropType.Relation:
+			case I.DropType.Relation: {
 				ids.forEach((key: string) => {
 					C.BlockCreate(targetContextId, targetId, position, { type: I.BlockType.Relation, content: { key } });
 				});
 				break;
+			};
 		};
 	};
 

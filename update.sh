@@ -11,7 +11,7 @@ arch=$4;
 folder="build";
 
 if [ "$platform" = "ubuntu-latest" ]; then
-  arch="linux";
+  arch="linux-$arch";
 elif [ "$platform" = "macos-latest" ]; then
   arch="darwin-$arch";
   folder="$arch";

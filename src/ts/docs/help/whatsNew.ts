@@ -45,9 +45,8 @@ export default [
 	bullet(`<b>Design update: Link &amp; Bookmark Blocks</b><br/>Link &amp; bookmark blocks for URLs pasted from the web got a little facelift with this update - expect to see a small difference in font weights &amp; favicons.`),
 	bullet(`<b>Design update: Read-only Relations in Sets (Grid View)</b><br/>Relations which cannot be updated (for instance &quot;Created by&quot; or &quot;Creation Date&quot;) now have a lock icon displayed to indicate that they cannot be edited.`),
 	bullet(`<b>Toast notifications</b><br/>For greater clarity on actions you've taken in Anytype, we've introduced toast notifications for certain operations such as linking between Objects or installing new Types and Relations.`),
-	img('./img/help/toast.png', 'full screen'),
+	img('./img/help/toast.png', 'half screen'),
 	bullet(`<b>Link blocks in text mode previews</b><br/>It's now possible to further customize how linked Objects in text mode appear in your editor. Click the orange handle next to the link block and choose Preview to play around with Description, Type, and/or Content in your Object preview.`),
-	bullet(`<b>Set view is now updated when view settings menu is closed</b>`),
 
 	h2(`🐛 Bug Fixes`),
 	bullet(`Fixed: &quot;Edit URL Link&quot; modal window no longer jumps to top left corner. Thanks, ${link('https://community.anytype.io/t/modal-for-edit-link-locates-at-the-top-left-corner/7820', '@gdbb')}!`),

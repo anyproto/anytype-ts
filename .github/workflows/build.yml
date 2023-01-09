@@ -32,12 +32,12 @@ jobs:
         run: npm install --save-dev webpack-cli --legacy-peer-deps
 
       - name: Update Addon
-        if: matrix.os != 'macos-latest'
+        if: matrix.os == 'windows-latest'
         shell: bash  
         run: ./update.sh ${{secrets.USER}} ${{secrets.TOKEN}} ${{matrix.os}}
 
       - name: Update Addon
-        if: matrix.os == 'macos-latest'
+        if: matrix.os != 'windows-latest'
         shell: bash  
         run: |
           ./update.sh ${{secrets.USER}} ${{secrets.TOKEN}} ${{matrix.os}} arm
@@ -47,7 +47,7 @@ jobs:
       #  run: npm run build:deps
 
       - name: Build Front
-        if: matrix.os == 'macos-latest'
+        if: matrix.os != 'windows-latest'
         uses: samuelmeuli/action-electron-builder@v1
         with:
           github_token: ${{secrets.TOKEN}}
@@ -64,17 +64,13 @@ jobs:
           USE_HARD_LINKS: false
 
       - name: Build Front
-        if: matrix.os != 'macos-latest'
+        if: matrix.os == 'windows-latest'
         uses: samuelmeuli/action-electron-builder@v1
         with:
           github_token: ${{secrets.TOKEN}}
-          mac_certs: ${{ secrets.MAC_CERT_TEXT }}
-          mac_certs_password: ${{ secrets.MAC_CERT_PASS }}
           release: ${{ startsWith(github.ref, 'refs/tags/v') }}
         env:
           DEBUG: electron-builder
-          APPLEID: ${{ secrets.APPLEID }}
-          APPLEIDPASS: ${{ secrets.APPLEIDPASS }}
           DO_KEY_ID: ${{ secrets.DO_KEY_ID }}
           DO_SECRET_KEY: ${{ secrets.DO_SECRET_KEY }}
           USE_HARD_LINKS: false

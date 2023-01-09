@@ -91,7 +91,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 		switch (this.tab) {
 			case Tab.Gallery:
 			case Tab.Unsplash:
-			case Tab.Library:
+			case Tab.Library: {
 				content = (
 					<React.Fragment>
 						{sections.length ? (
@@ -104,8 +104,9 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 					</React.Fragment>
 				);
 				break;
+			};
 
-			case Tab.Upload:
+			case Tab.Upload: {
 				content = (
 					<div 
 						className="dropzone" 
@@ -119,6 +120,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 					</div>
 				);
 				break;
+			};
 		};
 
 		if (loading) {
@@ -176,7 +178,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 		};
 
 		switch (this.tab) {
-			case Tab.Unsplash:
+			case Tab.Unsplash: {
 				this.setState({ loading: true });
 
 				C.UnsplashSearch(filter, LIMIT, (message: any) => {
@@ -197,8 +199,9 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 					this.setState({ loading: false });
 				});
 				break;
+			};
 
-			case Tab.Library:
+			case Tab.Library: {
 				const filters: I.Filter[] = [
 					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.image },
 					{ operator: I.FilterOperator.And, relationKey: 'widthInPixels', condition: I.FilterCondition.GreaterOrEqual, value: 1000 },
@@ -234,6 +237,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 					this.setState({ loading: false });
 				});
 				break;
+			};
 		};
 	};
 
@@ -316,19 +320,21 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 	getSections () {
 		let sections: any[] = [];
 		switch (this.tab) {
-			case Tab.Gallery:
+			case Tab.Gallery: {
 				sections = sections.concat([
 					{ name: 'Gradients', children: DataUtil.coverGradients() },
 					{ name: 'Solid colors', children: DataUtil.coverColors() },
 				]);
 				break;
+			};
 
 			case Tab.Library:
-			case Tab.Unsplash:
+			case Tab.Unsplash: {
 				if (this.items.length) {
 					sections.push({ children: this.items });
 				};
 				break;
+			};
 		};
 
 		return sections;
