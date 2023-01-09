@@ -63,10 +63,10 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
 			const type = dbStore.getType(item.type);
+			const checkbox = value && value.length && value.includes(item.id);
 			const cn = [];
 
 			let content = null;
-			let checkbox = false;
 
 			if (item.isSection) {
 				content = <div className={[ 'sectionName', (param.index == 0 ? 'first' : '') ].join(' ')} style={param.style}>{item.name}</div>;
@@ -88,9 +88,6 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 				};
 				if (item.isHidden) {
 					cn.push('isHidden');
-				};
-				if (value == item.id) {
-					checkbox = true;
 				};
 
 				if (isBig && !item.isAdd) {
