@@ -82,16 +82,22 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 		let Item = null;
 		let title = '';
 		let placeholder = '';
+		let deleteText = '';
+		let serviceText = '';
 
 		switch (this.tab) {
 			case Tab.Type:
 				title = 'Types are like categories<br/>that help you group and manage<br/>your objects.';
 				placeholder = 'Search or create a new type...';
+				deleteText = 'Delete type';
+				serviceText = 'Service type';
 				break;
 
 			case Tab.Relation:
 				title = 'All objects are connected.<br />Use relations to build connections between objects.';
 				placeholder = 'Search or create a new relation...';
+				deleteText = 'Delete relation';
+				serviceText = 'Service relation';
 				break;
 		};
 
@@ -110,15 +116,6 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 			</div>
 		);
 
-		const Author = (item: any) => {
-			if (item._empty_) {
-				return null;
-			};
-			return (
-				<div className="author">{item.name}</div>
-			);
-		};
-
 		const TabList = (item: any) => (
 			<div className="tabs">
 				{views.map((item: any, i: number) => (
@@ -136,40 +133,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 		switch (this.tab) {
 
 			default:
-			case Tab.Type:
 				Item = (item: any) => {
-					const author = detailStore.get(Constant.subId.store, item.creator, []);
-					const allowedDelete = blockStore.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ]);
-					const cn = [ 'item', (item.isHidden ? 'isHidden' : '') ];
-
-					return (
-						<div className={cn.join(' ')} onClick={(e: any) => { this.onClick(e, item); }}>
-							<IconObject size={64} iconSize={40} object={item} />
-							<div className="info">
-								<div className="txt">
-									<div className="name">{item.name}</div>
-									<div className="descr">{item.description}</div>
-									<Author {...author} />
-								</div>
-
-								<div className="buttons">
-									<Icon 
-										className={allowedDelete ? 'remove' : 'lock'} 
-										tooltip={allowedDelete ? 'Delete type' : 'Service type'} 
-										onClick={(e: any) => { this.onRemove(e, item); }} 
-									/>
-								</div>
-
-								<div className="line" />
-							</div>
-						</div>
-					);
-				};
-				break;
-
-			case Tab.Relation:
-				Item = (item: any) => {
-					const { name, description } = item;
 					const allowedDelete = blockStore.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ]);
 					const cn = [ 'item', (item.isHidden ? 'isHidden' : '') ];
 					
@@ -177,12 +141,13 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 						<div className={cn.join(' ')} onClick={(e: any) => { this.onClick(e, item); }}>
 							<div className="flex">
 								<IconObject iconSize={20} object={item} />
-								<div className="name">{name}</div>
+								<div className="name">{item.name}</div>
 							</div>
+
 							<div className="buttons">
 								<Icon 
 									className={allowedDelete ? 'remove' : 'lock'} 
-									tooltip={allowedDelete ? 'Delete relation' : 'Service relation'} 
+									tooltip={allowedDelete ? deleteText : serviceText} 
 									onClick={(e: any) => { this.onRemove(e, item); }} 
 								/>
 							</div>
@@ -305,22 +270,16 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 		switch (index) {
 			// Mid
 			case 0:
-				switch (this.tab) {
-					case Tab.Type: h = 264; break;
-					case Tab.Relation: h = 264; break;
-				};
+				h = 308;
 				break;
 
 			// Tabs
 			case 1:
-				h = 70;
+				h = 52;
 				break;
 
 			default:
-				switch (this.tab) {
-					case Tab.Type: h = 96; break;
-					case Tab.Relation: h = 64; break;
-				};
+				h = 64;
 				break;
 		};
 		return h;
@@ -556,7 +515,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 				break;
 		};
 
-		views.push({ id: View.Marketplace, name: 'Marketplace' });
+		views.push({ id: View.Marketplace, name: 'Anytype library' });
 		return views;
 	};
 
