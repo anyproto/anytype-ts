@@ -38,7 +38,7 @@ class DragLayer extends React.Component<object, State> {
 		let items: any[] = [];
 		
 		switch (type) {
-			case I.DropType.Block:
+			case I.DropType.Block: {
 				items = ids.map(id => new M.Block(Util.objectCopy(blockStore.getLeaf(rootId, id))));
 
 				content = (
@@ -58,8 +58,9 @@ class DragLayer extends React.Component<object, State> {
 					</div>
 				);
 				break;
+			};
 
-			case I.DropType.Relation:
+			case I.DropType.Relation: {
 				const block = blockStore.getLeaf(rootId, rootId);
 
 				items = ids.map((relationKey: string) => {
@@ -83,6 +84,7 @@ class DragLayer extends React.Component<object, State> {
 					</div>
 				);
 				break;
+			};
 		};
 		
 		return (

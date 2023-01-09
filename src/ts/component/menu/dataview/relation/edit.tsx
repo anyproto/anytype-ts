@@ -293,28 +293,31 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		};
 
 		switch (item.id) {
-			case 'open':
+			case 'open': {
 				ObjectUtil.openPopup(relation);
 				break;
+			};
 
-			case 'copy':
+			case 'copy': {
 				this.add({ 
 					name: relation.name, 
 					relationFormat: relation.format,
 					relationFormatObjectTypes: (relation.format == I.RelationType.Object) ? relation.objectTypes || [] : [],
 				});
 				break;
+			};
 
-			case 'remove':
+			case 'remove': {
 				C.BlockDataviewRelationDelete(rootId, blockId, [ relation.relationKey ], (message: any) => {
 					if (!message.error.code) {
 						view.relations = view.relations.filter((it => it.relationKey != relation.relationKey));
 						C.BlockDataviewViewUpdate(rootId, blockId, view.id, view);
 					};
-				});	
+				});
 				break;
+			};
 
-			case 'filter':
+			case 'filter': {
 				const conditions = Relation.filterConditionsByType(relation.format);
 				const condition = conditions.length ? conditions[0].id : I.FilterCondition.None;
 
@@ -337,17 +340,19 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 					},
 				});
 				break;
+			};
 
 			case 'sort0':
-			case 'sort1':
+			case 'sort1': {
 				view.sorts = [ { relationKey: relation.relationKey, type: item.type } ];
 
 				viewUpdate = true;
 				updateData = true;
 				break;
+			};
 
 			case 'insert-left':
-			case 'insert-right':
+			case 'insert-right': {
 				menuStore.open('relationSuggest', { 
 					element: `#${getId()} #item-${item.id}`,
 					offsetX: getSize().width,
@@ -375,13 +380,15 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 
 				close = false;
 				break;
+			};
 
-			case 'hide':
+			case 'hide': {
 				view.relations[idx].isVisible = false;
 
 				viewUpdate = true;
 				updateData = false;
 				break;
+			};
 		};
 
 		if (viewUpdate) {

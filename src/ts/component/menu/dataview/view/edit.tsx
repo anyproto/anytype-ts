@@ -356,27 +356,30 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 		};
 
 		switch (item.id) {
-			case 'coverRelationKey':
+			case 'coverRelationKey': {
 				menuId = 'select';
 				menuParam.data = Object.assign(menuParam.data, {
 					options: Relation.getCoverOptions(rootId, blockId),
 				});
 				break;
+			};
 
-			case 'groupRelationKey':
+			case 'groupRelationKey': {
 				menuId = 'select';
 				menuParam.data = Object.assign(menuParam.data, {
 					value: Relation.getGroupOption(rootId, blockId, current.groupRelationKey)?.id,
 					options: Relation.getGroupOptions(rootId, blockId),
 				});
 				break;
+			};
 
-			case 'cardSize':
+			case 'cardSize': {
 				menuId = 'select';
 				menuParam.data = Object.assign(menuParam.data, {
 					options: Relation.getSizeOptions(),
 				});
 				break;
+			};
 		};
 
 		if (menuId) {
@@ -415,10 +418,10 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 			};
 		} else 
 		if (view.id) {
-			switch (item.id) {
-				case 'copy':
-					close();
+			close();
 
+			switch (item.id) {
+				case 'copy': {
 					C.BlockDataviewViewCreate(rootId, blockId, view, (message: any) => {
 						if (onSave) {
 							onSave();
@@ -428,10 +431,9 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 						analytics.event('AddView', { type: view.type });
 					});
 					break;
+				};
 
-				case 'remove':
-					close();
-
+				case 'remove': {
 					const views = dbStore.getViews(rootId, blockId);
 					const idx = views.findIndex((it: I.View) => { return it.id == view.id; });
 					const filtered = views.filter((it: I.View) => { return it.id != view.id; });
@@ -451,6 +453,7 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 						});
 					};
 					break;
+				};
 			};
 		};
 

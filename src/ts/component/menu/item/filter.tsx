@@ -42,15 +42,17 @@ const MenuItemFilter = observer(class MenuItemFilter extends React.Component<Pro
 
 		switch (relation.format) {
 
-			default:
+			default: {
 				v = `“${value}”`
 				break;
+			};
 
-			case I.RelationType.Number:
+			case I.RelationType.Number: {
 				v = Number(value) || 0;
 				break;
+			};
 
-			case I.RelationType.Date:
+			case I.RelationType.Date: {
 				v = [];
 
 				let name = String(filterOption.name || '').toLowerCase();
@@ -69,13 +71,15 @@ const MenuItemFilter = observer(class MenuItemFilter extends React.Component<Pro
 
 				v = v.join(' ');
 				break;
+			};
 
-			case I.RelationType.Checkbox:
+			case I.RelationType.Checkbox: {
 				v = value ? 'checked' : 'unchecked';
 				break;
+			};
 
 			case I.RelationType.Tag:
-			case I.RelationType.Status:
+			case I.RelationType.Status: {
 				list = Relation.getOptions(value);
 
 				if (list.length) {
@@ -95,8 +99,9 @@ const MenuItemFilter = observer(class MenuItemFilter extends React.Component<Pro
 					v = 'empty';
 				};
 				break;
+			};
 
-			case I.RelationType.Object:
+			case I.RelationType.Object: {
 				Item = (item: any) => {
 					return (
 						<div className="element">
@@ -119,6 +124,7 @@ const MenuItemFilter = observer(class MenuItemFilter extends React.Component<Pro
 					</React.Fragment>
 				);
 				break;
+			};
 		};
 
 		if ([ I.FilterCondition.None, I.FilterCondition.Empty, I.FilterCondition.NotEmpty ].includes(condition)) {

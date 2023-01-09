@@ -390,7 +390,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<P
 		};
 
 		switch (item.id) {
-			case 'marketplace':
+			case 'marketplace': {
 				menuId = 'searchObject';
 				menuParam.className = 'single';
 
@@ -415,6 +415,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<P
 					},
 				});
 				break;
+			};
 		};
 
 		if (menuId && !menuStore.isOpen(menuId, item.id)) {

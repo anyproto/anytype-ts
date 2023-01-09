@@ -380,7 +380,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		};
 
 		switch (item.id) {
-			case 'marketplace':
+			case 'marketplace': {
 				menuId = 'searchObject';
 				menuParam.className = 'single';
 
@@ -404,6 +404,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 					},
 				});
 				break;
+			};
 		};
 
 		if (menuId && !menuStore.isOpen(menuId, item.id)) {
