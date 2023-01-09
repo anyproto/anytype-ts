@@ -597,7 +597,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 					position: I.BlockPosition.Bottom,
 					rootId,
 					blockId: block.id,
-					hasCheckbox: targetObjectId,
+					value: targetObjectId,
 					blockIds: [ block.id ],
 					filters,
 					canAdd: true,

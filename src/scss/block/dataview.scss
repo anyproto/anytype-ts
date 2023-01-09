@@ -53,6 +53,7 @@
 		.dataviewHead { display: flex; flex-direction: row; align-items: center; padding: 10px 14px; border-bottom: 1px solid $colorBorderDark; gap: 0px 6px; }
 		.dataviewHead {
 			.side.left { gap: 0px 12px; }
+			.side.right { opacity: 0; transition: $transitionFast; }
 
 			.iconWrap { 
 				padding: 4px; border-radius: 4px; transition: $transitionFast; cursor: pointer; display: flex; align-items: center;
@@ -147,8 +148,13 @@
 			.side.right { transition: opacity 0.2s ease-in-out; opacity: 0; }
 			.line { display: none; }
 		}
-		.dataviewControls:hover, .dataviewControls.active {
+		.dataviewControls.active {
 			.side.right { opacity: 1; }
 		}
+	}
+
+	.block.blockDataview:hover {
+		.dataviewControls .side.right, 
+		.dataviewHead .side.right { opacity: 1; }
 	}
 }

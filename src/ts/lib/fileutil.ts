@@ -41,7 +41,7 @@ class FileUtil {
 		const e = String(obj.fileExt || n[n.length - 1] || '').toLowerCase();
 
 		let t: string[] = [];
-		let icon = '';
+		let icon = 'other';
 
 		if (mime) {
 			let a: string[] = mime.split(';');
@@ -75,37 +75,34 @@ class FileUtil {
 		};
 
 		// Detect by extension
-		
-		if (!icon) {
-			if ([ 'm4v' ].indexOf(e) >= 0) {
-				icon = 'video';
-			};
-				
-			if ([ 'csv', 'json', 'txt', 'doc', 'docx', 'md', 'tsx', 'scss' ].indexOf(e) >= 0) {
-				icon = 'text';
-			};
-				
-			if ([ 'zip', 'gzip', 'tar', 'gz', 'rar' ].indexOf(e) >= 0) {
-				icon = 'archive';
-			};
-	
-			if ([ 'xls', 'xlsx', 'sqlite' ].indexOf(e) >= 0) {
-				icon = 'table';
-			};
-	
-			if ([ 'ppt', 'pptx' ].indexOf(e) >= 0) {
-				icon = 'presentation';
-			};
-	
-			for (let k in Constant.extension) {
-				if (Constant.extension[k].indexOf(e) >= 0) {
-					icon = k;
-					break;
-				};
+		if ([ 'm4v' ].indexOf(e) >= 0) {
+			icon = 'video';
+		};
+			
+		if ([ 'csv', 'json', 'txt', 'doc', 'docx', 'md', 'tsx', 'scss' ].indexOf(e) >= 0) {
+			icon = 'text';
+		};
+			
+		if ([ 'zip', 'gzip', 'tar', 'gz', 'rar' ].indexOf(e) >= 0) {
+			icon = 'archive';
+		};
+
+		if ([ 'xls', 'xlsx', 'sqlite' ].indexOf(e) >= 0) {
+			icon = 'table';
+		};
+
+		if ([ 'ppt', 'pptx' ].indexOf(e) >= 0) {
+			icon = 'presentation';
+		};
+
+		for (let k in Constant.extension) {
+			if (Constant.extension[k].indexOf(e) >= 0) {
+				icon = k;
+				break;
 			};
 		};
 
-		return String(icon || 'other');
+		return icon;
 	};
 
 	loadPreviewCanvas (file: any, param: any, success?: (canvas: any) => void) {

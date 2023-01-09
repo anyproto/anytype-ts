@@ -59,7 +59,14 @@ const Head = observer(class Head extends React.Component<Props, State> {
 		return (
 			<div className={cn.join(' ')}>
 				<div id="head-title-wrapper" className="side left">
-					<IconObject id={`icon-set-${block.id}`} object={object} size={18} canEdit={!readonly} onSelect={this.onIconSelect} onUpload={this.onIconUpload} />
+					<IconObject 
+						id={`icon-set-${block.id}`} 
+						object={object} size={20} 
+						iconSize={20} 
+						canEdit={!readonly} 
+						onSelect={this.onIconSelect} 
+						onUpload={this.onIconUpload} 
+					/>
 
 					<Editable 
 						ref={(ref: any) => { this.ref = ref; }}
@@ -153,6 +160,7 @@ const Head = observer(class Head extends React.Component<Props, State> {
 			element: `#${this.menuContext.getId()} #item-${item.id}`,
 			offsetX: this.menuContext.getSize().width,
 			vertical: I.MenuDirection.Center,
+			isSub: true,
 			data: {},
 		};
 

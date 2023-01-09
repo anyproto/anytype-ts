@@ -234,8 +234,8 @@ export default {
                 }
             },
 			{
-                name: 'Like what you’re working on?',
-                description: 'Click above to see how your new Objects are linked',
+                name: `Like what you're working on?`,
+                description: 'Save this format for future use by selecting Save as Template from the three-dots menu',
                 param: {
                     element: '#header #button-header-more',
                     offsetY: 10,
@@ -293,8 +293,8 @@ export default {
 	typeSelect: {
         items: [
             {
-                name: 'Choose a Type for Object',
-                description: 'Types define objects through layouts, templates, and relations. You have Note by default',
+                name: 'Give this Object a Type',
+                description: 'Types define objects through layouts, templates, and relations. Select one from the dropdown - you can always change it later.',
                 param: {
                     common: {
                         container: true,
