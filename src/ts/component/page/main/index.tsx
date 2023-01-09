@@ -453,6 +453,10 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<I.Pag
 			horizontal: I.MenuDirection.Right
 		});
 	};
+
+	onStore (e: any) {
+		ObjectUtil.openEvent(e, { layout: I.ObjectLayout.Store });
+	};
 	
 	onProfile (e: any) {
 		const object = detailStore.get(Constant.subId.profile, blockStore.profile);
@@ -634,10 +638,6 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<I.Pag
 		this.selectionRender();
 	};
 
-	onStore (e: any) {
-		ObjectUtil.openPopup({ layout: I.ObjectLayout.Store });
-	};
-	
 	onAdd (e: any) {
 		ObjectUtil.create('', '', {}, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.DeleteEmpty, I.ObjectFlag.SelectType ], (message: any) => {
 			ObjectUtil.openPopup({ id: message.targetId });

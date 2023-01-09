@@ -78,26 +78,33 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 
 		const views = this.getViews();
 		const items = this.getItems();
+		const sources = this.getSources();
 
 		let Item = null;
 		let title = '';
 		let placeholder = '';
-		let deleteText = '';
-		let serviceText = '';
+		let textDelete = '';
+		let textService = '';
+		let textInstalled = '';
+		let textInstall = '';
 
 		switch (this.tab) {
 			case Tab.Type:
 				title = 'Types are like categories<br/>that help you group and manage<br/>your objects.';
 				placeholder = 'Search or create a new type...';
-				deleteText = 'Delete type';
-				serviceText = 'Service type';
+				textDelete = 'Delete type';
+				textService = 'Service type';
+				textInstalled = 'Type is installed';
+				textInstall = 'Install type';
 				break;
 
 			case Tab.Relation:
 				title = 'All objects are connected.<br />Use relations to build connections between objects.';
 				placeholder = 'Search or create a new relation...';
-				deleteText = 'Delete relation';
-				serviceText = 'Service relation';
+				textDelete = 'Delete relation';
+				textService = 'Service relation';
+				textInstalled = 'Relation is installed';
+				textInstall = 'Install relation';
 				break;
 		};
 
@@ -133,9 +140,31 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 		switch (this.tab) {
 
 			default:
+				console.log(sources);
 				Item = (item: any) => {
 					const allowedDelete = blockStore.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ]);
 					const cn = [ 'item', (item.isHidden ? 'isHidden' : '') ];
+					const buttons: any[] = [];
+
+					switch (this.view) {
+						case View.Library:
+							if (allowedDelete) {
+								buttons.push({ className: 'remove', tooltip: textDelete, onClick: (e: any) => { this.onRemove(e, item); } });
+							} else {
+								buttons.push({ className: 'lock', tooltip: textService });
+							};
+							break;
+
+						case View.Marketplace:
+							if (sources.includes(item.id)) {
+								console.log(item.name, 'is installed');
+								buttons.push({ className: 'check', tooltip: textInstalled });
+							} else {
+								console.log(item.name, 'is library');
+								buttons.push({ className: 'plus', tooltip: textInstall, onClick: (e: any) => { this.onInstall(e, item); } });
+							};
+							break;
+					};
 					
 					return (
 						<div className={cn.join(' ')} onClick={(e: any) => { this.onClick(e, item); }}>
@@ -145,11 +174,9 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 							</div>
 
 							<div className="buttons">
-								<Icon 
-									className={allowedDelete ? 'remove' : 'lock'} 
-									tooltip={allowedDelete ? deleteText : serviceText} 
-									onClick={(e: any) => { this.onRemove(e, item); }} 
-								/>
+								{buttons.map((button: any, i: number) => (
+									<Icon key={i} {...button} />
+								))}
 							</div>
 						</div>
 					);
@@ -382,27 +409,11 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 			{ type: I.SortType.Desc, relationKey: 'createdDate' },
 		];
 
-		let sources: any[] = [];
-		let keys: string[] = Constant.defaultRelationKeys.concat([ 'creator' ]);
+		let keys: string[] = Constant.defaultRelationKeys;
 
 		switch (this.view) {
 			case View.Marketplace:
 				filters.push({ operator: I.FilterOperator.And, relationKey: 'workspaceId', condition: I.FilterCondition.Equal, value: Constant.storeSpaceId });
-
-				switch (this.tab) {
-					case Tab.Type:
-						sources = dbStore.getTypes();
-						break;
-
-					case Tab.Relation:
-						sources = dbStore.getRelations();
-						break;
-				};
-
-				sources = sources.filter(it => it.sourceObject).map(it => it.sourceObject);
-				if (sources.length) {
-					filters.push({ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: sources });
-				};
 				break;
 
 			case View.Library:
@@ -517,6 +528,29 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 
 		views.push({ id: View.Marketplace, name: 'Anytype library' });
 		return views;
+	};
+
+	getSources (): string[] {
+		let sources: any[] = []
+
+		switch (this.tab) {
+			case Tab.Type:
+				sources = dbStore.getTypes();
+				break;
+
+			case Tab.Relation:
+				sources = dbStore.getRelations();
+				break;
+		};
+
+		return sources.map(it => it.sourceObject).filter(it => it);
+	};
+
+	onInstall (e: any, item: any) {
+		e.preventDefault();
+		e.stopPropagation();
+
+		Action.install(item);
 	};
 
 	onRemove (e: any, item: any) {
