@@ -157,10 +157,14 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu, obj
 	save (value: string[]) {
 		const { param } = this.props;
 		const { data } = param;
-		const { objectId, blockId } = data;
+		const { objectId, blockId, onSave } = data;
 
 		C.ObjectSetSource(objectId, value, () => {
 			$(window).trigger(`updateDataviewData.${blockId}`);
+
+			if (onSave) {
+				onSave();
+			};
 		});
 
 		this.forceUpdate();

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, Editable } from 'Component';
-import { I, C, keyboard, DataUtil, ObjectUtil, analytics } from 'Lib';
+import {I, C, keyboard, DataUtil, ObjectUtil, analytics, Relation} from 'Lib';
 import { menuStore, detailStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -38,6 +38,7 @@ const Head = observer(class Head extends React.Component<Props, State> {
 		this.onTitle = this.onTitle.bind(this);
 		this.onTitleOver = this.onTitleOver.bind(this);
 		this.onTitleSelect = this.onTitleSelect.bind(this);
+		this.onSource = this.onSource.bind(this);
 	};
 
 	render () {
@@ -59,16 +60,16 @@ const Head = observer(class Head extends React.Component<Props, State> {
 		return (
 			<div className={cn.join(' ')}>
 				<div id="head-title-wrapper" className="side left">
-					<IconObject 
-						id={`icon-set-${block.id}`} 
-						object={object} size={20} 
-						iconSize={20} 
-						canEdit={!readonly} 
-						onSelect={this.onIconSelect} 
-						onUpload={this.onIconUpload} 
+					<IconObject
+						id={`icon-set-${block.id}`}
+						object={object} size={20}
+						iconSize={20}
+						canEdit={!readonly}
+						onSelect={this.onIconSelect}
+						onUpload={this.onIconUpload}
 					/>
 
-					<Editable 
+					<Editable
 						ref={(ref: any) => { this.ref = ref; }}
 						id="value"
 						classNameWrap="dataviewTitle"
@@ -82,13 +83,11 @@ const Head = observer(class Head extends React.Component<Props, State> {
 						onCompositionStart={this.onCompositionStart}
 					/>
 
-					<div 
-						id="head-source-select" 
-						className="iconWrap" 
-						onClick={(e: any) => { onSourceSelect(e.currentTarget, { horizontal: I.MenuDirection.Center }); }}
-					>
-						<Icon className="set" />
-					</div>
+					{targetObjectId ? <React.Fragment>
+						<div id="head-source-select" className="iconWrap" onClick={this.onSource}>
+							<Icon className="set" />
+						</div>
+					</React.Fragment> : ''}
 
 				</div>
 				<div className="side right">
@@ -122,6 +121,12 @@ const Head = observer(class Head extends React.Component<Props, State> {
 		const { block, onSourceSelect } = this.props;
 		const { targetObjectId } = block.content;
 		const { isEditing } = this.state;
+		const element = `#block-${block.id} #head-title-wrapper`;
+
+		if (!targetObjectId) {
+			onSourceSelect(element, {horizontal: I.MenuDirection.Left});
+			return;
+		};
 
 		if (isEditing) {
 			return;
@@ -133,13 +138,8 @@ const Head = observer(class Head extends React.Component<Props, State> {
 			{ id: 'openSource', icon: 'expand', name: 'Open data source' }
 		];
 
-		if (!targetObjectId) {
-			onSourceSelect(e.currentTarget, {});
-			return;
-		};
-
 		menuStore.open('select', {
-			element: `#block-${block.id} #head-title-wrapper`,
+			element: element,
 			horizontal: I.MenuDirection.Left,
 			offsetY: 4,
 			onOpen: (context: any) => {
@@ -231,6 +231,28 @@ const Head = observer(class Head extends React.Component<Props, State> {
 			};
 
 		};
+	};
+
+	onSource (e: any) {
+		const { block, getData, getView } = this.props;
+		const { targetObjectId } = block.content;
+		const view = getView();
+
+		menuStore.closeAll(null, () => {
+			menuStore.open('dataviewSource', {
+				element: `#block-${block.id} #head-source-select`,
+				className: 'big single',
+				horizontal: I.MenuDirection.Left,
+				data: {
+					targetObjectId,
+					objectId: targetObjectId,
+					blockId: Constant.blockId.dataview,
+					onSave: (() => {
+						getData(view.id, 0, true);
+					}),
+				}
+			});
+		});
 	};
 
 	onFocus (e: any) {

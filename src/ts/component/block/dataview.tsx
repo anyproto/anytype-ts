@@ -111,7 +111,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					getSources={this.getSources}
 					getRecord={this.getRecord}
 					onRecordAdd={this.onRecordAdd}
-					onSourceSelect={(e: any) => { this.onSourceSelect(e.currentTarget, { horizontal: I.MenuDirection.Center }); }}
+					onSourceSelect={this.onSourceSelect}
 					className={className}
 					isInline={isInline}
 				/>
@@ -666,6 +666,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	onSourceSelect (element: any, param?: Partial<I.MenuParam>) {
 		const { rootId, block } = this.props;
 		const { targetObjectId } = block.content;
+
 		const menuParam = Object.assign({
 			element: $(element),
 			className: 'single',
