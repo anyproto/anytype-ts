@@ -455,10 +455,6 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 					rootId,
 					objectId: rootId,
 					blockId: Constant.blockId.dataview,
-					onSave: (() => {
-						console.log('HERE')
-						$(window).trigger(`updateDataviewData.${Constant.blockId.dataview}`);
-					}),
 				}
 			}); 
 		});
