@@ -12,7 +12,7 @@ interface Props extends I.PageComponent {
 	matchPopup?: any;
 };
 
-const PageMainGraph = observer(class PageMainGraph extends React.Component<Props, object> {
+const PageMainGraph = observer(class PageMainGraph extends React.Component<Props> {
 
 	node: any = null;
 	data: any = {

@@ -11,7 +11,7 @@ interface Props extends I.BlockComponent, RouteComponentProps<any> {
 	onResizeStart? (e: any, index: number): void;
 };
 
-const ListChildren = observer(class ListChildren extends React.Component<Props, object> {
+const ListChildren = observer(class ListChildren extends React.Component<Props> {
 	
 	refObj: any = {};
 

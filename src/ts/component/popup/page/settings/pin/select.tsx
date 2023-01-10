@@ -11,7 +11,7 @@ interface Props extends I.Popup, RouteComponentProps<any> {
 	onPage: (id: string) => void;
 };
 
-const PopupSettingsPagePinSelect = observer(class PopupSettingsPagePinSelect extends React.Component<Props, object> {
+const PopupSettingsPagePinSelect = observer(class PopupSettingsPagePinSelect extends React.Component<Props> {
 
 	constructor (props: any) {
 		super(props);

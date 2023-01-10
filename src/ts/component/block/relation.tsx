@@ -9,7 +9,7 @@ import Constant from 'json/constant.json';
 interface Props extends I.BlockComponent {}
 
 
-const BlockRelation = observer(class BlockRelation extends React.Component<Props, object> {
+const BlockRelation = observer(class BlockRelation extends React.Component<Props> {
 
 	refCell: any = null;
 

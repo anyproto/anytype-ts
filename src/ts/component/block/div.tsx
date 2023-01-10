@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 
 interface Props extends I.BlockComponent {}
 
-const BlockDiv = observer(class BlockDiv extends React.Component<Props, object> {
+const BlockDiv = observer(class BlockDiv extends React.Component<Props> {
 
 	_isMounted: boolean = false;
 

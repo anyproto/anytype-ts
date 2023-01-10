@@ -4,7 +4,7 @@ import { PreviewObject } from 'Component';
 
 interface Props extends I.Menu {};
 
-class MenuPreviewObject extends React.Component<Props, object> {
+class MenuPreviewObject extends React.Component<Props> {
 
 	render () {
 		const { param } = this.props;

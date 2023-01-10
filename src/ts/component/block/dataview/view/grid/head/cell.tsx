@@ -13,7 +13,7 @@ interface Props extends I.ViewComponent, I.ViewRelation {
 	onResizeStart(e: any, key: string): void;
 };
 
-const HeadCell = observer(class HeadCell extends React.Component<Props, object> {
+const HeadCell = observer(class HeadCell extends React.Component<Props> {
 
 	constructor (props: any) {
 		super(props);

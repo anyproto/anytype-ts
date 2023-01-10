@@ -17,7 +17,7 @@ const Components = {
 	mainEdit:			 FooterMainEdit,
 };
 
-class Footer extends React.Component<Props, object> {
+class Footer extends React.Component<Props> {
 
 	refChild: any = null;
 

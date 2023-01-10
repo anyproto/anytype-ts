@@ -8,7 +8,7 @@ import { menuStore } from 'Store';
 
 interface Props extends I.Menu {};
 
-const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<Props, object> {
+const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<Props> {
 	
 	refName: any = null;
 	color: string = null;

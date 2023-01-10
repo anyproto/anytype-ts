@@ -7,7 +7,7 @@ import { detailStore, popupStore } from 'Store';
 
 interface Props extends I.HeaderComponent {};
 
-const HeaderMainGraph = observer(class HeaderMainGraph extends React.Component<Props, object> {
+const HeaderMainGraph = observer(class HeaderMainGraph extends React.Component<Props> {
 
 	timeout: number = 0;
 

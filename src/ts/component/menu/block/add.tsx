@@ -15,7 +15,7 @@ const HEIGHT_DESCRIPTION = 56;
 const HEIGHT_RELATION = 32;
 const LIMIT = 40;
 
-const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, object> {
+const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props> {
 	
 	_isMounted = false;
 	emptyLength: number = 0;

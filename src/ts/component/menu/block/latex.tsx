@@ -14,7 +14,7 @@ const HEIGHT_ITEM_BIG = 80;
 const HEIGHT_ITEM_SMALL = 28;
 const LIMIT = 40;
 
-const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<Props, object> {
+const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<Props> {
 	
 	_isMounted: boolean = false;
 	emptyLength: number = 0;

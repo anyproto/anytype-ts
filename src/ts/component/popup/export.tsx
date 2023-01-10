@@ -6,7 +6,7 @@ import { observer } from 'mobx-react';
 
 interface Props extends I.Popup {};
 
-const PopupExport = observer(class PopupExport extends React.Component<Props, object> {
+const PopupExport = observer(class PopupExport extends React.Component<Props> {
 
 	format: I.ExportFormat = I.ExportFormat.Markdown;
 	zip: boolean = false;

@@ -13,7 +13,7 @@ interface Props extends I.Popup, RouteComponentProps<any> {
 	setLoading: (v: boolean) => void;
 };
 
-const PopupSettingsPageWallpaper = observer(class PopupSettingsPageWallpaper extends React.Component<Props, object> {
+const PopupSettingsPageWallpaper = observer(class PopupSettingsPageWallpaper extends React.Component<Props> {
 
 	constructor (props: any) {
 		super(props);

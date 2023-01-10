@@ -9,7 +9,7 @@ interface Props extends I.BlockComponent {
 	setLayoutWidth?(v: number): void;
 };
 
-const PageHeadEdit = observer(class PageHeadEdit extends React.Component<Props, object> {
+const PageHeadEdit = observer(class PageHeadEdit extends React.Component<Props> {
 	
 	node: any = null;
 	refDrag: any = null;
@@ -112,12 +112,10 @@ const PageHeadEdit = observer(class PageHeadEdit extends React.Component<Props, 
 	};
 
 	init () {
-		const { rootId, getWrapper } = this.props;
+		const { rootId } = this.props;
 		const check = DataUtil.checkDetails(rootId);
 
-		console.log(getWrapper());
-
-		getWrapper().attr({ class: [ 'editorWrapper', check.className ].join(' ') });
+		$('#editorWrapper').attr({ class: [ 'editorWrapper', check.className ].join(' ') });
 		$(window).trigger('resize.editor');
 	};
 

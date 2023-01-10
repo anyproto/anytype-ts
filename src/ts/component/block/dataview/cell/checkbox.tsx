@@ -5,7 +5,7 @@ import { observer } from 'mobx-react';
 
 interface Props extends I.Cell {};
 
-const CellCheckbox = observer(class CellCheckbox extends React.Component<Props, object> {
+const CellCheckbox = observer(class CellCheckbox extends React.Component<Props> {
 
 	constructor (props: any) {
 		super(props);

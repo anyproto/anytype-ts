@@ -13,7 +13,7 @@ interface Props extends I.BlockComponentTable {
 };
 
 
-const BlockTableCell = observer(class BlockTableCell extends React.Component<Props, object> {
+const BlockTableCell = observer(class BlockTableCell extends React.Component<Props> {
 
 	constructor(props: Props) {
 		super(props);

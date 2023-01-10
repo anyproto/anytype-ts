@@ -4,7 +4,7 @@ import { I, Util } from 'Lib';
 
 interface Props extends I.FooterComponent {};
 
-class FooterAuthIndex extends React.Component<Props, object> {
+class FooterAuthIndex extends React.Component<Props> {
 	
 	render () {
 		const { onHelp } = this.props;

@@ -13,7 +13,7 @@ interface Props extends I.Popup, RouteComponentProps<any> {
 	setConfirmPin: (v: () => void) => void;
 };
 
-const PopupSettingsPagePinIndex = observer(class PopupSettingsPagePinIndex extends React.Component<Props, object> {
+const PopupSettingsPagePinIndex = observer(class PopupSettingsPagePinIndex extends React.Component<Props> {
 
 	constructor (props: any) {
 		super(props);

@@ -4,7 +4,7 @@ import { I } from 'Lib';
 
 interface Props extends I.FooterComponent  {};
 
-class FooterMainIndex extends React.Component<Props, object> {
+class FooterMainIndex extends React.Component<Props> {
 	
 	render () {
 		const { onHelp } = this.props;

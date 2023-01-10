@@ -7,7 +7,7 @@ import { dbStore } from 'Store';
 
 interface Props extends I.Menu {};
 
-const MenuGroupEdit = observer(class MenuGroupEdit extends React.Component<Props, object> {
+const MenuGroupEdit = observer(class MenuGroupEdit extends React.Component<Props> {
 	
 	color: string = null;
 	isHidden: boolean = false;

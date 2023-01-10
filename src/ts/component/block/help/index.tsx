@@ -11,7 +11,7 @@ interface Props {
 	align?: I.BlockHAlign;
 };
 
-class Block extends React.Component<Props, object> {
+class Block extends React.Component<Props> {
 
 	public static defaultProps = {
 		type: I.BlockType.Text,

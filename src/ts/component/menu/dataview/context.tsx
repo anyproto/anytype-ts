@@ -9,7 +9,7 @@ interface Props extends I.Menu {
 	history?: any;
 };
 
-class MenuContext extends React.Component<Props, object> {
+class MenuContext extends React.Component<Props> {
 	
 	n: number = 0;
 	

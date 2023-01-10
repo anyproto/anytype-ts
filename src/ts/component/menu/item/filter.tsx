@@ -17,7 +17,7 @@ interface Props extends I.Filter {
 	onRemove?: (e: any) => void;
 };
 
-const MenuItemFilter = observer(class MenuItemFilter extends React.Component<Props, object> {
+const MenuItemFilter = observer(class MenuItemFilter extends React.Component<Props> {
 
 	_isMounted: boolean = false;
 

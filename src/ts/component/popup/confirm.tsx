@@ -5,7 +5,7 @@ import { observer } from 'mobx-react';
 
 interface Props extends I.Popup {};
 
-const PopupConfirm = observer(class PopupConfirm extends React.Component<Props, object> {
+const PopupConfirm = observer(class PopupConfirm extends React.Component<Props> {
 
 	constructor(props: any) {
 		super(props);

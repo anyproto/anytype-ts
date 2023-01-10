@@ -13,7 +13,7 @@ const HEIGHT_DESCRIPTION = 56;
 const HEIGHT_DIV = 16;
 const LIMIT = 10;
 
-const MenuSelect = observer(class MenuSelect extends React.Component<Props, object> {
+const MenuSelect = observer(class MenuSelect extends React.Component<Props> {
 
 	_isMounted: boolean = false;	
 	n: number = -1;

@@ -21,7 +21,7 @@ interface Props {
 };
 
 
-const ControlButtons = observer(class ControlButtons extends React.Component<Props, object> {
+const ControlButtons = observer(class ControlButtons extends React.Component<Props> {
 	
 	timeout: number = 0;
 

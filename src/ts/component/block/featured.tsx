@@ -13,7 +13,7 @@ interface Props extends I.BlockComponent {
 const PREFIX = 'blockFeatured';
 const SOURCE_LIMIT = 1;
 
-const BlockFeatured = observer(class BlockFeatured extends React.Component<Props, object> {
+const BlockFeatured = observer(class BlockFeatured extends React.Component<Props> {
 
 	_isMounted: boolean = false;
 	cellRefs: Map<string, any> = new Map();

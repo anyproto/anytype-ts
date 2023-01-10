@@ -18,7 +18,7 @@ interface Props extends I.PageComponent {
 const THROTTLE = 40;
 const BUTTON_OFFSET = 10;
 
-const EditorPage = observer(class EditorPage extends React.Component<Props, object> {
+const EditorPage = observer(class EditorPage extends React.Component<Props> {
 	
 	_isMounted: boolean = false;
 	node: any = null;
@@ -48,7 +48,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, obje
 		this.onPaste = this.onPaste.bind(this);
 		this.onLastClick = this.onLastClick.bind(this);
 		this.blockCreate = this.blockCreate.bind(this);
-		this.getWrapper = this.getWrapper.bind(this);
 		this.getWrapperWidth = this.getWrapperWidth.bind(this);
 		this.resize = this.resize.bind(this);
 		this.focusTitle = this.focusTitle.bind(this);
@@ -104,7 +103,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, obje
 							onPaste={this.onPaste}
 							setLayoutWidth={this.setLayoutWidth}
 							readonly={readonly}
-							getWrapper={this.getWrapper}
 							getWrapperWidth={this.getWrapperWidth}
 						/>
 					
@@ -121,7 +119,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, obje
 								onPaste={this.onPaste}
 								readonly={readonly}
 								blockRemove={this.blockRemove}
-								getWrapper={this.getWrapper}
 								getWrapperWidth={this.getWrapperWidth}
 							/>
 						))}
@@ -204,11 +201,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, obje
 		focus.clear(false);
 		window.clearInterval(this.timeoutScreen);
 		Renderer.remove('commandEditor');
-	};
-
-	getWrapper () {
-		console.log(this.node, $(this.node));
-		return $(this.node);
 	};
 
 	getWrapperWidth (): number {

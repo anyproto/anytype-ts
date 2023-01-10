@@ -4,7 +4,7 @@ import katex from 'katex';
 
 interface Props extends I.Menu {};
 
-class MenuPreviewLatex extends React.Component<Props, object> {
+class MenuPreviewLatex extends React.Component<Props> {
 
 	render () {
 		const { param } = this.props;

@@ -10,7 +10,7 @@ interface Props extends I.Popup, RouteComponentProps<any> {};
 
 const BORDER = 16;
 
-class PopupPreview extends React.Component<Props, object> {
+class PopupPreview extends React.Component<Props> {
 	
 	constructor (props: any) {
 		super (props);

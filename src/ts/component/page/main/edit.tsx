@@ -10,7 +10,7 @@ interface Props extends I.PageComponent {
 };
 
 
-class PageMainEdit extends React.Component<Props, object> {
+class PageMainEdit extends React.Component<Props> {
 	
 	refHeader: any = null;
 	refFooter: any = null;

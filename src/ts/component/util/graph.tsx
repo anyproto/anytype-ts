@@ -16,7 +16,7 @@ interface Props {
 
 const FONT = 'Helvetica';
 
-const Graph = observer(class Graph extends React.Component<Props, object> {
+const Graph = observer(class Graph extends React.Component<Props> {
 
 	node: any = null;
 	canvas: any = null;

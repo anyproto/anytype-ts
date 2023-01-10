@@ -28,7 +28,7 @@ interface Props {
 
 const PREFIX = 'menuBlockRelationView';
 
-const MenuItemRelationView = observer(class MenuItemRelationView extends React.Component<Props, object> {
+const MenuItemRelationView = observer(class MenuItemRelationView extends React.Component<Props> {
 
 	_isMounted: boolean = false;
 

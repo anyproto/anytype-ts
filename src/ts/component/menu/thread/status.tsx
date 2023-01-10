@@ -4,7 +4,7 @@ import { I, Util } from 'Lib';
 
 interface Props extends I.Menu {};
 
-class MenuThreadStatus extends React.Component<Props, object> {
+class MenuThreadStatus extends React.Component<Props> {
 
 	render () {
 		const { param } = this.props;

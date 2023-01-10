@@ -7,7 +7,7 @@ import { observer } from 'mobx-react';
 
 interface Props extends I.HeaderComponent {};
 
-const HeaderMainIndex = observer(class HeaderMainIndex extends React.Component<Props, object> {
+const HeaderMainIndex = observer(class HeaderMainIndex extends React.Component<Props> {
 	
 	constructor (props: any) {
 		super(props);

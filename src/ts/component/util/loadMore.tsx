@@ -9,7 +9,7 @@ interface Props {
 	onClick?(e: any): void;
 };
 
-class LoadMore extends React.Component<Props, object> {
+class LoadMore extends React.Component<Props> {
 
 	public static defaultProps = {
 		limit: 10,

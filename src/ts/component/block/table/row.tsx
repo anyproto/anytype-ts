@@ -9,7 +9,7 @@ interface Props extends I.BlockComponentTable {
 	onRowUpdate: (rowId: string) => void;
 };
 
-const BlockTableRow = observer(class BlockTableRow extends React.Component<Props, object> {
+const BlockTableRow = observer(class BlockTableRow extends React.Component<Props> {
 
 	render () {
 		const { rootId, block, index, getData } = this.props;

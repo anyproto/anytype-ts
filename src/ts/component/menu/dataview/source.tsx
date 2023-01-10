@@ -10,7 +10,7 @@ import Constant from 'json/constant.json';
 interface Props extends I.Menu {};
 
 
-const MenuSource = observer(class MenuSource extends React.Component<Props, object> {
+const MenuSource = observer(class MenuSource extends React.Component<Props> {
 	
 	n: number = 0;
 

@@ -68,7 +68,7 @@ const Components: any = {
 
 interface Props extends I.PageComponent {};
 
-const Page = observer(class Page extends React.Component<Props, object> {
+const Page = observer(class Page extends React.Component<Props> {
 
 	_isMounted: boolean = false;
 	refChild: any = null;
