@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, Editable } from 'Component';
-import {I, C, keyboard, DataUtil, ObjectUtil, analytics, Relation} from 'Lib';
+import {I, C, keyboard, DataUtil, ObjectUtil, analytics} from 'Lib';
 import { menuStore, detailStore } from 'Store';
 import Constant from 'json/constant.json';
 

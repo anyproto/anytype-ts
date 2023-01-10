@@ -254,7 +254,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		this.unbind();
 		win.on(`resize.${block.id}`, throttle(() => { this.resize(); }, 20));
 		win.on(`keydown.${block.id}`, throttle((e: any) => { this.onKeyDown(e); }, 100));
-		win.on(`updateDataviewData.${block.id}`, () => { this.getData(this.getView().id, 0, true); });
+		win.on(`updateDataviewData.${block.id}`, () => { this.getData(this.getView().id, 0, true);});
 		win.on(`setDataviewSource.${block.id}`, () => { 
 			this.onSourceSelect(`#block-${block.id} #head-title-wrapper #value`, {}); 
 		});
@@ -708,9 +708,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	onSourceTypeSelect (element: any, rootId: string) {
-		const { block } = this.props;
-		const { targetObjectId } = block.content;
-		const view = this.getView();
+		const { block, isInline } = this.props;
 
 		menuStore.closeAll(null, () => {
 			menuStore.open('dataviewSource', {
@@ -720,10 +718,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				data: {
 					rootId,
 					objectId: rootId,
-					blockId: Constant.blockId.dataview,
-					onSave: (() => {
-						this.getData(view.id, 0, true);
-					}),
+					blockId: isInline ? block.id : Constant.blockId.dataview,
 				}
 			});
 		});
