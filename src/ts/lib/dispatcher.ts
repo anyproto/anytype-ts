@@ -113,6 +113,7 @@ class Dispatcher {
 		if (v == V.BLOCKDATAVIEWVIEWORDER)		 t = 'blockDataviewViewOrder';
 
 		if (v == V.BLOCKDATAVIEWSOURCESET)		 t = 'blockDataviewSourceSet';
+		if (v == V.BLOCKDATAVIEWTARGETOBJECTIDSET)	 t = 'blockDataviewTargetObjectIdSet';
 
 		if (v == V.BLOCKDATAVIEWRELATIONSET)	 t = 'blockDataviewRelationSet';
 		if (v == V.BLOCKDATAVIEWRELATIONDELETE)	 t = 'blockDataviewRelationDelete';
@@ -192,7 +193,7 @@ class Dispatcher {
 			if (rootId.match('virtualBreadcrumbs')) {
 				needLog = false;
 			};
-			
+
 			switch (type) {
 
 				case 'accountShow': {
@@ -324,7 +325,7 @@ class Dispatcher {
 						block.content.fields = Decode.decodeStruct(data.getFields());
 					};
 
-					blockStore.update(rootId, block);
+					blockStore.updateContent(rootId, id, block.content);
 					break;
 				};
 
@@ -375,7 +376,19 @@ class Dispatcher {
 						block.content.style = data.getStyle().getValue();
 					};
 
-					blockStore.update(rootId, block);
+					blockStore.updateContent(rootId, id, block.content);
+					break;
+				};
+
+				case 'blockDataviewTargetObjectIdSet': {
+					id = data.getId();
+					block = blockStore.getLeaf(rootId, id);
+					if (!block) {
+						break;
+					};
+
+					block.content.targetObjectId = data.getTargetobjectid();
+					blockStore.updateContent(rootId, id, block.content);
 					break;
 				};
 
@@ -414,7 +427,7 @@ class Dispatcher {
 						block.content.state = data.getState().getValue();
 					};
 
-					blockStore.update(rootId, block);
+					blockStore.updateContent(rootId, id, block.content);
 					break;
 				};
 
@@ -432,6 +445,8 @@ class Dispatcher {
 					if (data.hasState()) {
 						block.content.state = data.getState().getValue();
 					};
+
+					blockStore.updateContent(rootId, id, block.content);
 					break;
 				};
 
@@ -551,12 +566,13 @@ class Dispatcher {
 					id = data.getId();
 					block = blockStore.getLeaf(rootId, id);
 
-					if (!block || !block.id) {
+					if (!block) {
 						break;
 					};
 
 					block.content.sources = data.getSourceList();
-					blockStore.update(rootId, block);
+
+					blockStore.updateContent(rootId, id, block.content);
 					break;
 				};
 

@@ -156,6 +156,14 @@ const BlockCreate = (response: any) => {
 	};
 };
 
+const BlockDataviewCreateFromExistingObject = (response: any) => {
+	return {
+		blockId: response.getBlockid(),
+		targetObjectId: response.getTargetobjectid(),
+		views: (response.getViewList() || []).map(Mapper.From.View),
+	};
+};
+
 const BlockLinkCreateWithObject = (response: any) => {
 	return {
 		blockId: response.getBlockid(),
@@ -229,10 +237,6 @@ const BlockDataviewViewCreate = (response: any) => {
 	return {
 		viewId: response.getViewid(),
 	};
-};
-
-const BlockDataviewRelationListAvailable = (response: any) => {
-	return {};
 };
 
 const HistoryGetVersions = (response: any) => {
@@ -409,9 +413,9 @@ export {
 	BlockLinkCreateWithObject,
 	
 	BlockCreate,
-	BlockDataviewViewCreate,
 
-	BlockDataviewRelationListAvailable,
+	BlockDataviewCreateFromExistingObject,
+	BlockDataviewViewCreate,
 
 	BlockListDuplicate,
 	BlockListConvertToObjects,

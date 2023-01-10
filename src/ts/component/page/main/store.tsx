@@ -140,10 +140,8 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 
 						case View.Marketplace:
 							if (sources.includes(item.id)) {
-								console.log(item.name, 'is installed');
 								buttons.push({ className: 'check', tooltip: textInstalled });
 							} else {
-								console.log(item.name, 'is library');
 								buttons.push({ className: 'plus', tooltip: textInstall, onClick: (e: any) => { this.onInstall(e, item); } });
 							};
 							break;
@@ -276,7 +274,6 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		const { index } = param;
 
 		let h = 0;
-
 		switch (index) {
 			// Mid
 			case 0:

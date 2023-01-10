@@ -77,13 +77,12 @@ class MenuUtil {
 	};
 
 	getBlockOther () {
-		const ret: any[] = [
+		return [
 			{ type: I.BlockType.Div, id: I.DivStyle.Line, icon: 'div-line', lang: 'Line' },
 			{ type: I.BlockType.Div, id: I.DivStyle.Dot, icon: 'dot', lang: 'Dot' },
 			{ type: I.BlockType.TableOfContents, id: I.BlockType.TableOfContents, icon: 'tableOfContents', lang: 'TableOfContents', aliases: [ 'tc', 'toc' ] },
 			{ type: I.BlockType.Table, id: I.BlockType.Table, icon: 'table', lang: 'SimpleTable' }
-		];
-		return ret.map(this.mapperBlock);
+		].map(this.mapperBlock);
 	};
 
 	getBlockDataview () {
@@ -141,7 +140,7 @@ class MenuUtil {
 
 	// Action menu
 	getActions (param: any) {
-		let { hasText, hasFile, hasLink, hasBookmark, hasTurnObject } = param;
+		let { hasText, hasFile, hasDataview, hasBookmark, hasTurnObject } = param;
 		let cmd = keyboard.ctrlSymbol();
 		let items: any[] = [
 			{ id: 'move', icon: 'move', name: 'Move to', arrow: true },
@@ -175,6 +174,13 @@ class MenuUtil {
 		});
 		
 		return items;
+	};
+
+	getDataviewActions () {
+		return [
+			{ id: 'dataviewSource', icon: 'source', name: 'Source', arrow: true },
+			{ id: 'openDataviewFullscreen', icon: 'expand', name: 'Open fullscreen' }
+		];
 	};
 	
 	getTextColors () {

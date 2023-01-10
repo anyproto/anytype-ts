@@ -573,9 +573,25 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 				};
 
 				if (item.type == I.BlockType.Dataview) {
-					param.content.views = [ {  name: item.name, type: item.itemId } ];
+					param.content.views = [ 
+						{ id: I.ViewType[item.itemId].toLowerCase(), name: item.name, type: item.itemId } 
+					];
 				};
 
+				if (item.type == I.BlockType.Dataview) {
+					C.BlockCreate(rootId, blockId, position, param, (message: any) => {
+						focus.set(message.blockId, { from: length, to: length });
+						focus.apply();
+
+						window.setTimeout(() => { $(window).trigger(`setDataviewSource.${message.blockId}`); }, Constant.delay.menu);
+
+						analytics.event('CreateBlock', {
+							middleTime: message.middleTime,
+							type: param.type,
+							style: item.itemId,
+						});
+					});
+				} else
 				if (item.type == I.BlockType.Table) {
 					C.BlockTableCreate(rootId, blockId, position, Number(item.rowCnt) || 3, Number(item.columnCnt) || 3, false, (message: any) => {
 						analytics.event('CreateBlock', { 
@@ -592,7 +608,6 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 							middleTime: message.middleTime, 
 							type: param.type, 
 							style: param.content?.style,
-							params: {},
 						});
 					});
 				} else 
@@ -604,7 +619,6 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 					};
 
 					const create = (template: any) => {
-
 						ObjectUtil.create(rootId, blockId, details, position, template?.id, DataUtil.defaultLinkSettings(), [], (message: any) => {
 							if (message.error.code) {
 								return;
@@ -621,18 +635,14 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 						});
 					};
 
-					const showMenu = () => {
-						popupStore.open('template', {
-							data: {
-								typeId: item.objectTypeId,
-								onSelect: create,
-							},
-						});
-					};
-
 					DataUtil.checkTemplateCnt([ item.objectTypeId ], (message: any) => {
 						if (message.records.length > 1) {
-							showMenu();
+							popupStore.open('template', {
+								data: { 
+									typeId: item.objectTypeId,
+									onSelect: create,
+								},
+							});
 						} else {
 							create(message.records.length ? message.records[0] : '');
 						};

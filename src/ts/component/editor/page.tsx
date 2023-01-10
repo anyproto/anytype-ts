@@ -1425,7 +1425,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, obje
 				rootId,
 				text,
 				marks,
-				blockCreate: this.blockCreate,
+				blockCreate: this.blockCreate
 			},
 		});
 	};
@@ -1737,9 +1737,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, obje
 				callBack(message.blockId);
 			};
 
-			const event: any =  { 
-				middleTime: message.middleTime, 
-				type: param.type, 
+			const event: any =  {
+				middleTime: message.middleTime,
+				type: param.type,
 				style: param.content?.style,
 				params: {},
 			};

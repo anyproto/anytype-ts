@@ -194,6 +194,7 @@ const Mapper = {
 				relationLinks: (obj.getRelationlinksList() || []).map(Mapper.From.RelationLink),
 				groupOrder: (obj.getGroupordersList() || []).map(Mapper.From.GroupOrder),
 				objectOrder: (obj.getObjectordersList() || []).map(Mapper.From.ObjectOrder),
+				targetObjectId: obj.getTargetobjectid() || ''
 			};
 		},
 
@@ -404,7 +405,7 @@ const Mapper = {
 				blocks: (obj.getBlocksList() || []).map(Mapper.From.Block),
 				details: (obj.getDetailsList() || []).map(Mapper.From.Details),
 				relationLinks: (obj.getRelationlinksList() || []).map(Mapper.From.RelationLink),
-				restrictions: Mapper.From.Restrictions(obj.getRestrictions()),
+				restrictions: Mapper.From.Restrictions(obj.getRestrictions())
 			};
 		},
 
@@ -577,7 +578,8 @@ const Mapper = {
 
 		BlockDataview: (obj: any) => {
 			const content = new Model.Block.Content.Dataview();
-	
+
+			content.setTargetobjectid(obj.targetObjectId);
 			content.setViewsList(obj.views.map(Mapper.To.View));
 	
 			return content;

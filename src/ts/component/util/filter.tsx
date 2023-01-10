@@ -90,14 +90,13 @@ class Filter extends React.Component<Props, object> {
 
 	onFocus (e: any) {
 		const { placeholderFocus, onFocus } = this.props;
+		const node = $(ReactDOM.findDOMNode(this));
 
 		this.isFocused = true;
+		node.addClass('isFocused');
 
 		if (placeholderFocus) {
-			const node = $(ReactDOM.findDOMNode(this));
-			const input = node.find('.input');
-
-			input.attr({ placeholder: placeholderFocus });
+			node.find('.input').attr({ placeholder: placeholderFocus });
 		};
 
 		if (onFocus) { 
@@ -107,14 +106,13 @@ class Filter extends React.Component<Props, object> {
 	
 	onBlur (e: any) {
 		const { placeholderFocus, placeholder, onBlur } = this.props;
+		const node = $(ReactDOM.findDOMNode(this));
 
 		this.isFocused = false;
+		node.removeClass('isFocused');
 
 		if (placeholderFocus) {
-			const node = $(ReactDOM.findDOMNode(this));
-			const input = node.find('.input');
-
-			input.attr({ placeholder: placeholder });
+			node.find('.input').attr({ placeholder });
 		};
 
 		if (onBlur) {

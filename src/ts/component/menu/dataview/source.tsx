@@ -1,20 +1,17 @@
 import * as React from 'react';
-import { observer } from 'mobx-react';
 import $ from 'jquery';
+import { observer } from 'mobx-react';
 import { Icon, IconObject } from 'Component';
 import { I, C, Relation } from 'Lib';
-import { Util, keyboard } from 'Lib';
+import { keyboard } from 'Lib';
 import { detailStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
-interface Props extends I.Menu {};
-
-
-const MenuSource = observer(class MenuSource extends React.Component<Props, object> {
+const MenuSource = observer(class MenuSource extends React.Component<I.Menu, object> {
 	
 	n: number = 0;
 
-	constructor (props: any) {
+	constructor (props: I.Menu) {
 		super(props);
 		
 		this.save = this.save.bind(this);
@@ -23,8 +20,11 @@ const MenuSource = observer(class MenuSource extends React.Component<Props, obje
 	};
 	
 	render () {
+		const { param } = this.props;
+		const { data } = param;
+		const { rootId, objectId } = data;
 		const items = this.getItems();
-		const types = this.getObjects().filter(it => it.type == Constant.typeId.type);
+		const types = Relation.getSetOfObjects(rootId, objectId, Constant.typeId.type);
 		
 		const Item = (item: any) => {
 			const canDelete = item.id != 'type';
@@ -48,6 +48,7 @@ const MenuSource = observer(class MenuSource extends React.Component<Props, obje
 					{items.map((item: any, i: number) => (
 						<Item key={i} {...item} />
 					))}
+
 					{!items.length ? (
 						<div className="item empty">
 							<div className="inner">Select one or more sources</div>
@@ -87,8 +88,6 @@ const MenuSource = observer(class MenuSource extends React.Component<Props, obje
 	};
 
 	rebind () {
-		const { getId } = this.props;
-
 		this.unbind();
 		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
 		window.setTimeout(() => { this.props.setActive(); }, 15);
@@ -116,18 +115,14 @@ const MenuSource = observer(class MenuSource extends React.Component<Props, obje
 					{ relationKey: 'name', type: I.SortType.Asc }
 				],
 				onSelect: (item: any) => {
-					const value = this.getObjects().filter((it: any) => { return it.type == Constant.typeId.relation; }).map((it: any) => { return it.id; });
-					
-					value.push(item.id);
-					this.save(value);
+					this.save([ item.id ]);
 				}
 			}
 		});
 	};
 
 	onRemove (e: any, item: any) {
-		const value = this.getValue().filter((it: string) => { return it != item.id; });
-		this.save(value);
+		this.save(this.getValue().filter(it => it != item.id));
 	};
 
 	onOver (e: any, item: any) {
@@ -162,29 +157,29 @@ const MenuSource = observer(class MenuSource extends React.Component<Props, obje
 	save (value: string[]) {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId } = data;
+		const { objectId, blockId, onSave } = data;
 
-		C.BlockDataviewSetSource(rootId, blockId, value);
+		C.ObjectSetSource(objectId, value, () => {
+			$(window).trigger(`updateDataviewData.${blockId}`);
+
+			if (onSave) {
+				onSave();
+			};
+		});
+
+		this.forceUpdate();
 	};
 
 	getValue () {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId } = data;
-		const object = detailStore.get(rootId, rootId, [ 'setOf' ]);
+		const { rootId, objectId } = data;
+		const object = detailStore.get(rootId, objectId);
 
-		return Util.arrayUnique(Relation.getArrayValue(object['setOf']).filter((it: string) => {
+		return (object.setOf || []).filter((it: string) => {
 			const object = detailStore.get(rootId, it, []);
 			return !object._empty_;
-		}));
-	};
-
-	getObjects () {
-		const { param } = this.props;
-		const { data } = param;
-		const { rootId } = data;
-		const value = this.getValue();
-		return value.map((it: string) => { return detailStore.get(rootId, it, []); });
+		});
 	};
 
 	getItems () {
