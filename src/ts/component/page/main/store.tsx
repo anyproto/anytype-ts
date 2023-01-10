@@ -475,6 +475,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 
 	getItems () {
 		const { profile } = blockStore;
+		const { loading } = this.state;
 		const records = dbStore.getRecords(Constant.subId.store, '').map(id => detailStore.get(Constant.subId.store, id));
 
 		records.sort((c1: any, c2: any) => {
@@ -493,7 +494,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		let n = 0;
 		let row = { children: [] };
 
-		if (!records.length) {
+		if (!loading && !records.length) {
 			ret.push({ id: 'empty', className: 'block', children: [ { id: 'empty' } ] },);
 		};
 
