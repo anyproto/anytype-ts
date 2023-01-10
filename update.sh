@@ -69,15 +69,14 @@ else
   echo "Moving... "
   rm -rf "$folder"
   mkdir -p "$folder"
-  mkdir -p "$folder/lib"
   mv -fv grpc-server "$folder/anytypeHelper"
 fi;
 
-#rm -rf dist/lib/pb
-#rm -rf dist/lib/pkg
-#rm -rf dist/lib/protos
+rm -rf dist/lib/pb
+rm -rf dist/lib/pkg
+rm -rf dist/lib/protos
 
-mv -fv protobuf/* "$folder/lib/"
+mv -fv protobuf/* "dist/lib/"
 rm -rf protobuf
 rm -rf $FILE
 
