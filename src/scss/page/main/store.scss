@@ -38,7 +38,7 @@
 
 		.items { height: 100%; }
 		.items {
-			.row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-column-gap: 16px; }
+			.row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-column-gap: 32px; }
 			.row.block { display: block; }
 
 			.item { height: 48px; line-height: 48px; display: flex; position: relative; cursor: pointer; justify-content: space-between; }
