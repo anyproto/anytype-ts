@@ -18,8 +18,16 @@
 			}
 			.filter {
 				.line { display: none; }
-				.inner { height: 100%; text-align: left; padding: 0px 16px; }
+				.filterInputWrap { height: 100%; width: auto; }
+				.inner { height: 100%; text-align: left; padding: 0px 16px; justify-content: center; }
 				.input { height: 100%; }
+				.input:empty { display: none; }
+				.placeholder { position: static; }
+			}
+			.filter.isFocused {
+				.input { display: block; }
+				.placeholder { position: absolute; }
+				.filterInputWrap { width: 100%; }
 			}
 		}
 

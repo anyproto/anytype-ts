@@ -656,15 +656,13 @@ class MenuBlockAction extends React.Component<Props, State> {
 
 				analytics.event('OpenAsObject', { type: block.type, params: { fileType: block.content.type } });
 				break;
-<<<<<<< HEAD
 			};
-=======
 
-			case 'openDataviewFullscreen':
+			case 'openDataviewFullscreen': {
 				ObjectUtil.openPopup({ layout: I.ObjectLayout.Block, id: rootId, _routeParam_: { blockId } });
 				analytics.event('InlineSetOpenFullscreen');
 				break;
->>>>>>> f79510317b60de943b84860fdc853a7d2a763dac
+			};
 					
 			case 'copy': {
 				Action.duplicate(rootId, rootId, ids[ids.length - 1], ids, I.BlockPosition.Bottom);

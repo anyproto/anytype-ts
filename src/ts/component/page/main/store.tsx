@@ -52,7 +52,9 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		this.onScroll = this.onScroll.bind(this);
 		this.onFilterChange = this.onFilterChange.bind(this);
 		this.onFilterFocus = this.onFilterFocus.bind(this);
+		this.onFilterBlur = this.onFilterBlur.bind(this);
 		this.onFilterClear = this.onFilterClear.bind(this);
+		this.onFilterClick = this.onFilterClick.bind(this);
 	};
 	
 	render () {
@@ -100,7 +102,9 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 					id="store-filter"
 					icon="search"
 					placeholder={placeholder}
+					onClick={this.onFilterClick}
 					onFocus={this.onFilterFocus}
+					onBlur={this.onFilterBlur}
 					onChange={this.onFilterChange}
 					onClear={this.onFilterClear}
 				/>
@@ -320,6 +324,15 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		});
 	};
 
+	onFilterClick () {
+		const node = $(ReactDOM.findDOMNode(this));
+		const filter = node.find('#store-filter');
+		const input = filter.find('#input');
+
+		input.show();
+		this.refFilter.focus();
+	};
+
 	onFilterChange (v: string) {
 		menuStore.updateData(this.getMenuId(), { filter: v });
 	};
@@ -364,6 +377,14 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		};
 
 		menuStore.open(this.getMenuId(), menuParam);
+	};
+
+	onFilterBlur () {
+		const node = $(ReactDOM.findDOMNode(this));
+		const filter = node.find('#store-filter');
+		const input = filter.find('#input');
+
+		input.css({ display: '' });
 	};
 
 	getMenuId () {
