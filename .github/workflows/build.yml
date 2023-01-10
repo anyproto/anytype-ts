@@ -34,12 +34,14 @@ jobs:
       #- name: Update Deps
       #  run: npm run build:deps
 
-      - name: Update Addon ARM
+      - name: Update Addon
         if: matrix.os != 'windows-latest'
         shell: bash  
-        run: ./update.sh ${{secrets.USER}} ${{secrets.TOKEN}} ${{matrix.os}} arm
+        run: |
+          ./update.sh ${{secrets.USER}} ${{secrets.TOKEN}} ${{matrix.os}} arm
+          ./update.sh ${{secrets.USER}} ${{secrets.TOKEN}} ${{matrix.os}} amd
 
-      - name: Build Front ARM
+      - name: Build Front
         if: matrix.os != 'windows-latest'
         uses: samuelmeuli/action-electron-builder@v1
         with:
@@ -47,29 +49,7 @@ jobs:
           mac_certs: ${{ secrets.MAC_CERT_TEXT }}
           mac_certs_password: ${{ secrets.MAC_CERT_PASS }}
           release: ${{ startsWith(github.ref, 'refs/tags/v') }}
-          args: --arm64
-        env:
-          DEBUG: electron-builder
-          APPLEID: ${{ secrets.APPLEID }}
-          APPLEIDPASS: ${{ secrets.APPLEIDPASS }}
-          DO_KEY_ID: ${{ secrets.DO_KEY_ID }}
-          DO_SECRET_KEY: ${{ secrets.DO_SECRET_KEY }}
-          USE_HARD_LINKS: false
-
-      - name: Update Addon AMD
-        if: matrix.os != 'windows-latest'
-        shell: bash  
-        run: ./update.sh ${{secrets.USER}} ${{secrets.TOKEN}} ${{matrix.os}} amd
-
-      - name: Build Front AMD
-        if: matrix.os != 'windows-latest'
-        uses: samuelmeuli/action-electron-builder@v1
-        with:
-          github_token: ${{secrets.TOKEN}}
-          mac_certs: ${{ secrets.MAC_CERT_TEXT }}
-          mac_certs_password: ${{ secrets.MAC_CERT_PASS }}
-          release: ${{ startsWith(github.ref, 'refs/tags/v') }}
-          args: --x64
+          args: --arm64 --x64
         env:
           DEBUG: electron-builder
           APPLEID: ${{ secrets.APPLEID }}
