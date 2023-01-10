@@ -15,8 +15,8 @@ class Label extends React.Component<Props, object> {
 
 	render () {
 		const { id, text, className, onClick } = this.props;
-		
-		let cn = [ 'label' ];
+		const cn = [ 'label' ];
+
 		if (className) {
 			cn.push(className);
 		};

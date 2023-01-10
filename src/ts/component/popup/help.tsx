@@ -2,10 +2,10 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import raf from 'raf';
+import * as Docs from 'Docs';
 import { RouteComponentProps } from 'react-router';
 import { Label, Icon, Cover, Button } from 'Component';
 import { I, Util, translate } from 'Lib';
-import * as Docs from 'Docs';
 import Block from 'Component/block/help';
 import Url from 'json/url.json';
 
@@ -14,8 +14,6 @@ interface Props extends I.Popup, RouteComponentProps<any> {};
 interface State {
 	showFull: boolean;
 };
-
-
 
 class PopupHelp extends React.Component<Props, State> {
 
@@ -135,7 +133,7 @@ class PopupHelp extends React.Component<Props, State> {
 
 			case 'WhatsNew': {
 				let section = { children: [], header: null };
-				for (let block of blocks) {
+				for (const block of blocks) {
 					if (!section.header && [ I.TextStyle.Title, I.TextStyle.Header1, I.TextStyle.Header2, I.TextStyle.Header3 ].includes(block.style)) {
 						section.header = block;
 					};

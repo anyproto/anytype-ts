@@ -9,8 +9,8 @@ class Title extends React.Component<Props, object> {
 
 	render () {
 		const { text, className } = this.props;
-		
-		let cn = [ 'title' ];
+		const cn = [ 'title' ];
+
 		if (className) {
 			cn.push(className);
 		};

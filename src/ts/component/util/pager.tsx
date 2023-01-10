@@ -10,34 +10,29 @@ interface Props {
 	onChange?: (page: number) => void;
 };
 
-class Pager extends React.Component<Props, object> {
+class Pager extends React.Component<Props> {
 
 	public static defaultProps = {
 		pageLimit: 10,
 	};
 
-	constructor (props: any) {
-		super(props);
-	};
-	
 	render () {
 		const { pageLimit, limit, isShort } = this.props;
-		
-		let offset = Number(this.props.offset) || 0;
-		let total = Number(this.props.total) || 0;
-		let pages = Math.ceil(total / limit);
-		let pageCnt = Math.ceil(pageLimit / 2);
-		let page = Math.ceil(offset / limit) + 1;
+		const offset = Number(this.props.offset) || 0;
+		const total = Number(this.props.total) || 0;
+		const pages = Math.ceil(total / limit);
+		const page = Math.ceil(offset / limit) + 1;
 
+		let pageCnt = Math.ceil(pageLimit / 2);
 		if (page < pageCnt) {
 			pageCnt = pageLimit - page;
 		};
 
-		let start = Math.max(1, page - pageCnt);
-		let end = Math.min(pages, page + pageCnt);
-		let items = [];
+		const start = Math.max(1, page - pageCnt);
+		const end = Math.min(pages, page + pageCnt);
+		const items = [];
 
-		for (let i = start; i <= end ; ++i) {
+		for (let i = start; i <= end ; i++) {
 			items.push({ id: i });
 		};
 

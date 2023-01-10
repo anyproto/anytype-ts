@@ -31,9 +31,8 @@ class Cover extends React.Component<Props, object> {
 
 	render () {
 		const { id, image, src, type, x, y, scale, withScale, className, preview, onClick, onMouseDown, children } = this.props;
-
-		let cn = [ 'cover', 'type' + type, id ];
-		let style: any = {};
+		const cn = [ 'cover', 'type' + type, id ];
+		const style: any = {};
 		
 		if (className) {
 			cn.push(className);

@@ -8,8 +8,6 @@ import { I, Util, DataUtil, ObjectUtil, keyboard, Key, focus, translate, analyti
 import { commonStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
-interface Props extends I.Popup {};
-
 interface State {
 	loading: boolean;
 	filter: string;
@@ -18,7 +16,7 @@ interface State {
 const HEIGHT = 32;
 const LIMIT_HEIGHT = 14;
 
-const PopupSearch = observer(class PopupSearch extends React.Component<Props, State> {
+const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, State> {
 	
 	_isMounted: boolean = false;
 	state = {
@@ -34,7 +32,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 	top: number = 0;
 	offset: number = 0;
 	
-	constructor (props: any) {
+	constructor (props: I.Popup) {
 		super (props);
 
 		this.onKeyUpSearch = this.onKeyUpSearch.bind(this);
@@ -84,9 +82,9 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 		};
 
 		const rowRenderer = ({ index, key, style, parent }) => {
-			let item = items[index];
-			let content = null;
+			const item = items[index];
 
+			let content = null;
 			if (item.isSection) {
 				content = <div className={[ 'sectionName', (index == 0 ? 'first' : '') ].join(' ')} style={style}>{item.name}</div>;
 			} else {
@@ -241,8 +239,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 	onKeyDown (e: any) {
 		const items = this.getItems();
 		const cmd = keyboard.cmdKey();
-
-		let k = keyboard.eventKey(e);
+		const k = keyboard.eventKey(e);
 
 		if ((k != Key.down) && (this.n == -1)) {
 			return;
