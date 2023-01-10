@@ -27,6 +27,7 @@ exports.default = async function (context) {
 
 		if (fs.existsSync(src)) {
 			fs.copySync(src, dst);
+			fs.removeSync(src);
 		};
 	});
 };
