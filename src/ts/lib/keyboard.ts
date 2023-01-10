@@ -194,7 +194,7 @@ class Keyboard {
 
 			// Go to dashboard
 			this.shortcut('cmd+enter, alt+h', e, (pressed: string) => {
-				let check = isMac ? pressed == 'cmd+enter' : true;
+				const check = isMac ? pressed == 'cmd+enter' : true;
 				if (check && authStore.account && !popupStore.isOpen('search')) {
 					Util.route('/main/index');
 				};
@@ -299,7 +299,7 @@ class Keyboard {
 			};
 
 			if (prev) {
-				let route = Util.getRoute(prev.pathname);
+				const route = Util.getRoute(prev.pathname);
 
 				if ([ 'index', 'auth' ].includes(route.page) && account) {
 					return;
@@ -734,9 +734,10 @@ class Keyboard {
 			pressed.push('cmd');
 		};
 
-		for (let item of a) {
+		for (const item of a) {
 			const keys = item.split('+').sort();
-			for (let k of keys) {
+			
+			for (const k of keys) {
 				if (which == KeyCode[k]) {
 					pressed.push(k);
 				} else

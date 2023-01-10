@@ -4,7 +4,6 @@ import { I, Util, focus } from 'Lib';
 import { menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
-
 class PopupStore {
 
     public popupList: I.Popup[] = [];
@@ -70,7 +69,7 @@ class PopupStore {
 	};
 
     isOpenList (ids: string[]) {
-		for (let id of ids) {
+		for (const id of ids) {
 			if (this.isOpen(id)) {
 				return true;
 			};
@@ -109,9 +108,7 @@ class PopupStore {
     closeAll (ids?: string[], callBack?: () => void) {
 		const items = ids && ids.length ? this.popupList.filter((it: I.Popup) => { return ids.includes(it.id); }) : this.popupList;
 
-		for (let item of items) {
-			this.close(item.id);
-		};
+		items.forEach(it => { this.close(it.id); });
 
 		this.clearTimeout();
 

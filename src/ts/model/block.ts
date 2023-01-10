@@ -400,7 +400,8 @@ class Block implements I.Block {
 	getLength (): number {
 		let l = 0;
 		if (this.isText()) {
-			let t = String(this.content.text || '');
+			const t = String(this.content.text || '');
+
 			l = t.length;
 
 			// Last line break doesn't expand range.to

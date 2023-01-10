@@ -24,9 +24,9 @@ class DetailStore {
     set (rootId: string, details: any[]) {
 		const map = observable.map(new Map());
 
-		for (let item of details) {
+		for (const item of details) {
 			const list: Detail[] = [];
-			for (let k in item.details) {
+			for (const k in item.details) {
 				const el = { relationKey: k, value: item.details[k] };
 				makeObservable(el, { value: observable });
 
@@ -65,7 +65,7 @@ class DetailStore {
 			createList = true;
 		};
 
-		for (let k in item.details) {
+		for (const k in item.details) {
 			let el = list.find(it => it.relationKey == k);
 			if (el) {
 				set(el, { value: item.details[k] });
@@ -95,16 +95,16 @@ class DetailStore {
 	};
 
     delete (rootId: string, id: string, keys?: string[]) {
-		let map = this.map.get(rootId) || new Map();
-		let list = this.getArray(rootId, id);
+		const map = this.map.get(rootId) || new Map();
 
+		let list = this.getArray(rootId, id);
 		list = keys && keys.length ? list.filter(it => !keys.includes(it.relationKey)) : [];
+
 		map.set(id, list);
 	};
 
 	getArray (rootId: string, id: string): any[] {
-		let map = this.map.get(rootId) || new Map();
-		return map.get(id) || [];
+		return (this.map.get(rootId) || new Map()).get(id) || [];
 	};
 
     get (rootId: string, id: string, keys?: string[], forceKeys?: boolean): any {
