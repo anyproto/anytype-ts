@@ -1,11 +1,11 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
-import { RouteComponentProps } from 'react-router';
 import $ from 'jquery';
-import { I, C, DataUtil, keyboard, focus, Storage, Util } from 'Lib';
+import { RouteComponentProps } from 'react-router';
+import { I, C, DataUtil, keyboard, focus, Storage } from 'Lib';
 import { DropTarget, ListChildren, Icon } from 'Component';
 import { observer } from 'mobx-react';
 import { menuStore, blockStore, detailStore } from 'Store';
+
 import BlockDataview from './dataview';
 import BlockText from './text';
 import BlockIconPage from './iconPage';
@@ -35,8 +35,9 @@ interface Props extends I.BlockComponent, RouteComponentProps<any> {
 
 const SNAP = 0.01;
 
-const Block = observer(class Block extends React.Component<Props, object> {
+const Block = observer(class Block extends React.Component<Props> {
 
+	node: any = null;
 	ref: any = null;
 	ids: string[] = [];
 
@@ -50,7 +51,7 @@ const Block = observer(class Block extends React.Component<Props, object> {
 
 	_isMounted: boolean = false;
 		
-	constructor (props: any) {
+	constructor (props: Props) {
 		super(props);
 		
 		this.onToggle = this.onToggle.bind(this);
@@ -291,7 +292,13 @@ const Block = observer(class Block extends React.Component<Props, object> {
 		};
 
 		return (
-			<div id={'block-' + id} data-id={id} className={cn.join(' ')} style={css}>
+			<div 
+				ref={node => this.node = node}
+				id={'block-' + id} 
+				data-id={id} 
+				className={cn.join(' ')} 
+				style={css}
+			>
 				<div className="wrapMenu">
 					<Icon 
 						id={'button-block-menu-' + id} 
@@ -361,7 +368,7 @@ const Block = observer(class Block extends React.Component<Props, object> {
 		};
 		
 		const { rootId, block } = this.props;
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		
 		blockStore.toggle(rootId, block.id, !node.hasClass('isToggled'));
 		focus.apply();
@@ -449,7 +456,7 @@ const Block = observer(class Block extends React.Component<Props, object> {
 		const childrenIds = blockStore.getChildrenIds(rootId, id);
 		const { selection } = dataset || {};
 		const win = $(window);
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const prevBlockId = childrenIds[index - 1];
 		const offset = (prevBlockId ? node.find('#block-' + prevBlockId).offset().left : 0) + Constant.size.blockMenu ;
 		const add = $('#button-block-add');
@@ -486,7 +493,7 @@ const Block = observer(class Block extends React.Component<Props, object> {
 		const { id } = block;
 		const childrenIds = blockStore.getChildrenIds(rootId, id);
 		
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const prevBlockId = childrenIds[index - 1];
 		const currentBlockId = childrenIds[index];
 		
@@ -516,7 +523,7 @@ const Block = observer(class Block extends React.Component<Props, object> {
 		const { id } = block;
 		const childrenIds = blockStore.getChildrenIds(rootId, id);
 		const { selection } = dataset || {};
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const prevBlockId = childrenIds[index - 1];
 		const currentBlockId = childrenIds[index];
 		const res = this.calcWidth(e.pageX - offset, index);
@@ -586,7 +593,7 @@ const Block = observer(class Block extends React.Component<Props, object> {
 		};
 		
 		const sm = Constant.size.blockMenu;
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const childrenIds = blockStore.getChildrenIds(rootId, block.id);
 		const length = childrenIds.length;
 		const children = blockStore.getChildren(rootId, block.id);
