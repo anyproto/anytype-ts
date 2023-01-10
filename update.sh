@@ -16,7 +16,7 @@ if [ "$platform" = "ubuntu-latest" ]; then
 elif [ "$platform" = "macos-latest" ]; then
   arch="darwin-$arch";
   folder="$arch";
-if [ "$platform" = "windows-latest" ]; then
+elif [ "$platform" = "windows-latest" ]; then
   arch="windows";
   FILE="addon.zip"
 fi;
