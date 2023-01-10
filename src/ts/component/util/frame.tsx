@@ -2,7 +2,11 @@ import * as React from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 
-class Frame extends React.Component {
+interface Props {
+	children?: React.ReactNode;
+};
+
+class Frame extends React.Component<Props> {
 
 	_isMounted: boolean = false;
 	node: any = null;
