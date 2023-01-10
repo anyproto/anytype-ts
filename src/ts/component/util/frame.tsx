@@ -1,17 +1,20 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import raf from 'raf';
 
-class Frame extends React.Component<object, object> {
+class Frame extends React.Component {
 
 	_isMounted: boolean = false;
+	node: any = null;
 
 	render () {
 		const { children } = this.props;
 
 		return (
-			<div className="frame">
+			<div
+				ref={node => this.node = node}
+				className="frame"
+			>
 				{children}
 			</div>
 		);

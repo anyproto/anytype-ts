@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
@@ -8,17 +7,14 @@ import { Icon, Input, MenuItemVertical, Button } from 'Component';
 import { blockStore, dbStore, menuStore, detailStore } from 'Store';
 import Constant from 'json/constant.json';
 
-interface Props extends I.Menu {
-	history: any;
-};
+const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component<I.Menu> {
 
-const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component<Props, object> {
-
+	node: any = null;
 	format: I.RelationType = null;
 	objectTypes: string[] = [];
 	ref: any = null;
 	
-	constructor(props: any) {
+	constructor (props: I.Menu) {
 		super(props);
 		
 		this.onRelationType = this.onRelationType.bind(this);
@@ -103,7 +99,11 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		};
 
 		return (
-			<form className="form" onSubmit={this.onSubmit} onMouseDown={this.menuClose}>
+			<form 
+				className="form" 
+				onSubmit={this.onSubmit} 
+				onMouseDown={this.menuClose}
+			>
 				<div className="section">
 					<div className="name">Relation name</div>
 					{!isReadonly ? (

@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 
 interface Props {
@@ -12,7 +11,7 @@ interface Props {
 	onEnd?(e: any, v: number): void;
 };
 
-class Drag extends React.Component<Props, object> {
+class Drag extends React.Component<Props> {
 
 	public static defaultProps = {
 		value: 0,
@@ -23,7 +22,6 @@ class Drag extends React.Component<Props, object> {
 	ox: number = 0;
 	nw: number = 0;
 	iw: number = 0;
-	
 	node: any = null;
 	back: any = null;
 	fill: any = null;
@@ -44,7 +42,12 @@ class Drag extends React.Component<Props, object> {
 		};
 		
 		return (
-			<div id={id} className={cn.join(' ')} onMouseDown={this.start}>
+			<div 
+				ref={node => this.node = node}
+				id={id} 
+				className={cn.join(' ')} 
+				onMouseDown={this.start}
+			>
 				<div id="back" className="back" />
 				<div id="fill" className="fill" />
 				<div id="icon" className="icon">
@@ -55,10 +58,11 @@ class Drag extends React.Component<Props, object> {
 	};
 	
 	componentDidMount () {
-		this.node = $(this.node);
-		this.back = this.node.find('#back');
-		this.fill = this.node.find('#fill');
-		this.icon = this.node.find('#icon');
+		const node = $(this.node);
+
+		this.back = node.find('#back');
+		this.fill = node.find('#fill');
+		this.icon = node.find('#icon');
 
 		this.setValue(this.props.value);
 	};
@@ -81,13 +85,14 @@ class Drag extends React.Component<Props, object> {
 		
 		const { onStart, onMove, onEnd } = this.props;
 		const win = $(window);
+		const node = $(this.node);
 		const iw = this.icon.width();
-		const ox = this.node.offset().left;
+		const ox = node.offset().left;
 		
 		$('body').addClass('grab');
 
 		this.move(e.pageX - ox - iw / 2);
-		this.node.addClass('isDragging');
+		node.addClass('isDragging');
 		
 		if (onStart) {
 			onStart(e, this.value);
@@ -112,7 +117,8 @@ class Drag extends React.Component<Props, object> {
 	
 	move (x: number) {
 		const { snap } = this.props;
-		const nw = this.node.width();
+		const node = $(this.node);
+		const nw = node.width();
 		const iw = this.icon.width();
 		const ib = parseInt(this.icon.css('border-width'));
 		const mw = this.maxWidth();
@@ -135,15 +141,17 @@ class Drag extends React.Component<Props, object> {
 	
 	end (e: any) {
 		const win = $(window);
+		const node = $(this.node);
 		
 		win.off('mousemove.drag touchmove.drag mouseup.drag touchend.drag');
 
 		$('body').removeClass('grab');
-		this.node.removeClass('isDragging');
+		node.removeClass('isDragging');
 	};
 
 	maxWidth () {
-		return this.node.width() - this.icon.width();
+		const node = $(this.node);
+		return node.width() - this.icon.width();
 	};
 	
 	checkValue (v: number): number {

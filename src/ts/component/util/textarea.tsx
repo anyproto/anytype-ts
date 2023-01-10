@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import { keyboard } from 'Lib';
 
@@ -28,11 +27,13 @@ interface State {
 
 class Textarea extends React.Component<Props, State> {
 
-	_isMounted = false;
-	textAreaElement: HTMLTextAreaElement;
 	public static defaultProps = {
 		value: ''
 	};
+
+	_isMounted = false;
+	node: any = null;
+	textAreaElement: HTMLTextAreaElement;
 
 	state = {
 		value: '',
@@ -61,6 +62,7 @@ class Textarea extends React.Component<Props, State> {
 		
 		return (
 			<textarea
+				ref={node => this.node = node}
 				name={name}
 				id={id}
 				placeholder={placeholder}

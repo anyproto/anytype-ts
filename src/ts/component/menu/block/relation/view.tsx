@@ -1,22 +1,19 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { observer } from 'mobx-react';
 import $ from 'jquery';
 import { I, C, DataUtil, Util, Relation, analytics } from 'Lib';
 import { commonStore, blockStore, detailStore, dbStore, menuStore } from 'Store';
 import { Icon } from 'Component';
 import Item from 'Component/menu/item/relationView';
-import Constant from 'json/constant.json';
-
-interface Props extends I.Menu {};
 
 const PREFIX = 'menuBlockRelationView';
 
-const MenuBlockRelationView = observer(class MenuBlockRelationView extends React.Component<Props, object> {
+const MenuBlockRelationView = observer(class MenuBlockRelationView extends React.Component<I.Menu> {
 
+	node: any = null;
 	cellRefs: Map<string, any> = new Map();
 
-	constructor (props: any) {
+	constructor (props: I.Menu) {
 		super(props);
 
 		this.scrollTo = this.scrollTo.bind(this);
@@ -98,7 +95,10 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		);
 
 		return (
-			<div className="sections">
+			<div 
+				ref={node => this.node = node}
+				className="sections"
+			>
 				<div id="scrollWrap" className="scrollWrap">
 					{sections.map((item: any, i: number) => {
 						return <Section key={i} {...item} index={i} />;

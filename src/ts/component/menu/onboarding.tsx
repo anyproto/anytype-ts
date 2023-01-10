@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import { Icon } from 'Component';
 import { I, Onboarding, Util, analytics, keyboard } from 'Lib';
@@ -8,7 +7,9 @@ import * as Docs from 'Docs';
 
 interface Props extends I.Menu {};
 
-class MenuOnboarding extends React.Component<Props, object> {
+class MenuOnboarding extends React.Component<I.Menu> {
+
+	node: any = null;
 
 	constructor (props: any) {
 		super(props);
@@ -33,7 +34,10 @@ class MenuOnboarding extends React.Component<Props, object> {
 		);
 
 		return (
-			<div className="wrap">
+			<div 
+				ref={node => this.node = node}
+				className="wrap"
+			>
 				<div className="name" dangerouslySetInnerHTML={{ __html: item.name }} />
 				<div className="descr" dangerouslySetInnerHTML={{ __html: item.description }} />
 

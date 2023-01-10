@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, Icon, IconEmoji, EmptySearch } from 'Component';
@@ -8,7 +7,6 @@ import { menuStore } from 'Store';
 import Constant from 'json/constant.json';
 import EmojiData from 'json/emoji.json';
 
-interface Props extends I.Menu {};
 interface State {
 	filter: string;
 	page: number;
@@ -21,8 +19,9 @@ const HEIGHT_SECTION = 40;
 const HEIGHT_ITEM = 40;
 const ID_RECENT = 'recent';
 
-class MenuSmile extends React.Component<Props, State> {
+class MenuSmile extends React.Component<I.Menu, State> {
 
+	node: any = null;
 	state = {
 		filter: '',
 		page: 0,
@@ -38,7 +37,7 @@ class MenuSmile extends React.Component<Props, State> {
 	cache: any = null;
 	groupCache: any[] = [];
 
-	constructor (props: any) {
+	constructor (props: I.Menu) {
 		super(props);
 		
 		this.onKeyUp = this.onKeyUp.bind(this);
@@ -109,7 +108,10 @@ class MenuSmile extends React.Component<Props, State> {
 		};
 		
 		return (
-			<div className="wrap">
+			<div 
+				ref={node => this.node = node}
+				className="wrap"
+			>
 				{!noHead ? (
 					<div className="head">
 						<div className="btn" onClick={this.onRandom}>{translate('menuSmileRandom')}</div>

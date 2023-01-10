@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import { Util } from 'Lib';
 
@@ -10,8 +9,9 @@ interface Props {
 	onClick?: (e: any) => void;
 };
 
+class Label extends React.Component<Props> {
 
-class Label extends React.Component<Props, object> {
+	node: any = null;
 
 	render () {
 		const { id, text, className, onClick } = this.props;
@@ -22,7 +22,13 @@ class Label extends React.Component<Props, object> {
 		};
 		
 		return (
-			<div id={id} className={cn.join(' ')} dangerouslySetInnerHTML={{ __html: text }} onClick={onClick} />
+			<div 
+				ref={node => this.node = node}
+				id={id} 
+				className={cn.join(' ')} 
+				dangerouslySetInnerHTML={{ __html: text }} 
+				onClick={onClick} 
+			/>
 		);
 	};
 	

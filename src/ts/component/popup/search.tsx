@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
@@ -19,6 +18,7 @@ const LIMIT_HEIGHT = 14;
 const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, State> {
 	
 	_isMounted: boolean = false;
+	node: any = null;
 	state = {
 		loading: false,
 		filter: '',
@@ -110,7 +110,10 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		};
 
 		return (
-			<div className="wrap">
+			<div 
+				ref={node => this.node = node}
+				className="wrap"
+			>
 				{loading ? <Loader id="loader" /> : ''}
 				
 				<form id="head" className="head" onSubmit={this.onSubmit}>

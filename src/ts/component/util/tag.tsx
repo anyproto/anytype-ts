@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 
 interface Props {
@@ -11,10 +10,11 @@ interface Props {
 	onRemove?: (e: any) => void;
 };
 
+class Tag extends React.Component<Props> {
 
-class Tag extends React.Component<Props, object> {
+	node: any = null;
 
-	constructor (props: any) {
+	constructor (props: Props) {
 		super(props);
 
 		this.onRemove = this.onRemove.bind(this);
@@ -41,7 +41,11 @@ class Tag extends React.Component<Props, object> {
 		};
 		
 		return (
-			<span contentEditable={false} className={cn.join(' ')}>
+			<span 
+				ref={node => this.node = node}
+				contentEditable={false} 
+				className={cn.join(' ')}
+			>
 				<span className="inner">{text}</span>
 				{icon}
 			</span>

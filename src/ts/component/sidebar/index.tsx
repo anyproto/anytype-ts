@@ -1,6 +1,4 @@
-// Third Party
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { observer } from 'mobx-react';
 import $ from 'jquery';
 import { keyboard, sidebar, I, Preview } from 'Lib';
@@ -11,8 +9,10 @@ interface Props {
 	dataset?: any;
 };
 
-const Sidebar = observer(class Sidebar extends React.Component<Props, object> {
+const Sidebar = observer(class Sidebar extends React.Component<Props> {
+	
 	private _isMounted: boolean = false;
+	node: any = null;
     ox: number = 0;
 	oy: number = 0;
     refFooter: React.Ref<HTMLUnknownElement> = null;
@@ -26,11 +26,13 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, object> {
 		this.onResizeMove = this.onResizeMove.bind(this)
 		this.onResizeEnd = this.onResizeEnd.bind(this)
 	};
+
     render() {
         const cn = [ 'sidebar' ];
 
         return (
             <div 
+				ref={node => this.node = node}
                 id="sidebar" 
                 className={cn.join(' ')} 
             >
@@ -39,8 +41,9 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, object> {
                 <Footer ref={(ref: any) => { this.refFooter = ref; }} />
 				<div className="resize-h" onMouseDown={(e: any) => { this.onResizeStart(e, I.MenuType.Horizontal); }} />
 				{/*<div className="resize-v" onMouseDown={(e: any) => { this.onResizeStart(e, I.MenuType.Vertical); }} />*/}
-            </div>);
-    }
+            </div>
+		);
+    };
 
 	// Lifecycle Methods
 
@@ -50,7 +53,6 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, object> {
 		sidebar.init();
 		this.rebind();
 	};
-
 
 	componentWillUnmount (): void {
 		this._isMounted = false;
@@ -71,7 +73,6 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, object> {
 			node.find(`.item.c${id}`).addClass('hover');
 		};
 	};
-
 
 	rebind ():  void {
 		this.unbind();

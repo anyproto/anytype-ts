@@ -207,6 +207,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, obje
 	};
 
 	getWrapper () {
+		console.log(this.node, $(this.node));
 		return $(this.node);
 	};
 

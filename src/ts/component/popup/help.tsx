@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import raf from 'raf';
 import * as Docs from 'Docs';
@@ -18,6 +17,7 @@ interface State {
 class PopupHelp extends React.Component<Props, State> {
 
 	_isMounted: boolean = false;
+	node: any = null;
 	state = {
 		showFull: false,
 	};
@@ -44,7 +44,10 @@ class PopupHelp extends React.Component<Props, State> {
 		};
 
 		return (
-			<div className="wrapper">
+			<div 
+				ref={node => this.node = node}
+				className="wrapper"
+			>
 				<div className="head">
 					<div className="side left">
 						{title ? <Label text={title.text} /> : ''}

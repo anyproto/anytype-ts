@@ -1,26 +1,24 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { observable } from 'mobx';
 import { observer } from 'mobx-react';
 import $ from 'jquery';
-import { I, DataUtil, Util, translate, keyboard, analytics, Relation } from 'Lib';
+import { I, Util, translate, keyboard, analytics, Relation } from 'Lib';
 import { Select, Tag, Icon, IconObject, Input, MenuItemVertical } from 'Component';
 import { menuStore, dbStore, detailStore } from 'Store';
 import Constant from 'json/constant.json';
 
-interface Props extends I.Menu {}
-
 const TIMEOUT = 500;
 
-const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends React.Component<Props, object> {
+const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends React.Component<I.Menu> {
 
 	_isMounted: boolean = false;
+	node: any = null;
 	timeoutChange: number = 0;
 	refValue: any = null;
 	range: any = null;
 	n: number = 0;
 
-	constructor (props: any) {
+	constructor (props: I.Menu) {
 		super(props);
 
 		this.rebind = this.rebind.bind(this);

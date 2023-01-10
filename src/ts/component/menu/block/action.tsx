@@ -1,20 +1,18 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import { Filter, MenuItemVertical } from 'Component';
 import { detailStore, blockStore, menuStore } from 'Store';
 import { I, C, keyboard, DataUtil, ObjectUtil, MenuUtil, focus, Action, translate, analytics } from 'Lib';
 import Constant from 'json/constant.json';
 
-interface Props extends I.Menu {};
-
 interface State {
 	filter: string;
 };
 
-class MenuBlockAction extends React.Component<Props, State> {
+class MenuBlockAction extends React.Component<I.Menu, State> {
 	
 	_isMounted: boolean = false;
+	node: any = null;
 	n: number = -1;
 	refFilter: any = null;
 	state = {
@@ -75,7 +73,9 @@ class MenuBlockAction extends React.Component<Props, State> {
 		);
 		
 		return (
-			<div>
+			<div
+				ref={node => this.node = node}
+			>
 				<Filter 
 					ref={(ref: any) => { this.refFilter = ref; }} 
 					placeholderFocus="Filter actions..." 

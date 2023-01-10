@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCache } from 'react-virtualized';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
@@ -15,14 +14,15 @@ interface Props extends I.Menu {};
 const HEIGHT = 48;
 const LIMIT = 20;
 
-const MenuSort = observer(class MenuSort extends React.Component<Props, object> {
+const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 	
+	node: any = null;
 	n: number = 0;
 	top: number = 0;
 	cache: any = {};
 	refList: any = null;
 	
-	constructor (props: any) {
+	constructor (props: I.Menu) {
 		super(props);
 		
 		this.onAdd = this.onAdd.bind(this);
@@ -138,7 +138,10 @@ const MenuSort = observer(class MenuSort extends React.Component<Props, object> 
 		});
 		
 		return (
-			<div className="wrap">
+			<div 
+				ref={node => this.node = node}
+				className="wrap"
+			>
 				<List 
 					axis="y"
 					lockAxis="y"

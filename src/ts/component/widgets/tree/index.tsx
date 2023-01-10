@@ -1,6 +1,5 @@
 // Third Party
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
@@ -38,6 +37,7 @@ const SKIP_TYPES_LOAD = [
 
 const Tree = observer(class Tree extends React.Component<Props, State> {
 	private _isMounted: boolean = false;
+	node: any = null;
 	state = {
 		loading: false,
 	};
@@ -99,7 +99,11 @@ const Tree = observer(class Tree extends React.Component<Props, State> {
 		};
 
 		return (
-			<div id="body" className="body">
+			<div 
+				ref={node => this.node = node}
+				id="body" 
+				className="body"
+			>
 				{loading ? (
 					<Loader />
 				) : (

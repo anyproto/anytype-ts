@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCache } from 'react-virtualized';
 import { observable } from 'mobx';
@@ -10,20 +9,19 @@ import { Icon } from 'Component';
 import { I, C, Util, keyboard, Relation, analytics } from 'Lib';
 import { menuStore, dbStore, blockStore } from 'Store';
 
-interface Props extends I.Menu {};
-
 const HEIGHT = 28;
 const LIMIT = 20;
 
-const MenuViewList = observer(class MenuViewList extends React.Component<Props> {
+const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu> {
 	
 	_isMounted: boolean = false;
+	node: any = null;
 	n: number = 0;
 	top: number = 0;
 	refList: any = null;
 	cache: any = {};
 	
-	constructor (props: any) {
+	constructor (props: I.Menu) {
 		super(props);
 		
 		this.rebind = this.rebind.bind(this);
@@ -126,7 +124,10 @@ const MenuViewList = observer(class MenuViewList extends React.Component<Props> 
 		});
 		
 		return (
-			<div className="wrap">
+			<div 
+				ref={node => this.node = node}
+				className="wrap"
+			>
 				<List 
 					axis="y" 
 					transitionDuration={150}

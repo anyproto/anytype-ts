@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Title, Label, Checkbox } from 'Component';
 import { I, C, translate, Util } from 'Lib';
@@ -13,9 +12,10 @@ interface Props extends I.Popup, RouteComponentProps<any> {
 	onPage: (id: string) => void;
 };
 
-const PopupSettingsPageDelete = observer(class PopupSettingsPageDelete extends React.Component<Props, object> {
+const PopupSettingsPageDelete = observer(class PopupSettingsPageDelete extends React.Component<Props> {
 
 	refCheckbox: any = null;
+	node: any = null;
 
 	constructor (props: any) {
 		super(props);
@@ -26,7 +26,9 @@ const PopupSettingsPageDelete = observer(class PopupSettingsPageDelete extends R
 
 	render () {
 		return (
-			<div>
+			<div
+				ref={node => this.node = node}
+			>
 				<Head {...this.props} returnTo="account" name={translate('commonCancel')} />
 				<Title text={translate('popupSettingsAccountDeleteTitle')} />
 

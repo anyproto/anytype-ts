@@ -115,6 +115,8 @@ const PageHeadEdit = observer(class PageHeadEdit extends React.Component<Props, 
 		const { rootId, getWrapper } = this.props;
 		const check = DataUtil.checkDetails(rootId);
 
+		console.log(getWrapper());
+
 		getWrapper().attr({ class: [ 'editorWrapper', check.className ].join(' ') });
 		$(window).trigger('resize.editor');
 	};

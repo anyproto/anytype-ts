@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import arrayMove from 'array-move';
@@ -10,19 +9,18 @@ import { I, C, Relation, keyboard, Dataview } from 'Lib';
 import { menuStore, dbStore, blockStore } from 'Store';
 import Constant from 'json/constant.json';
 
-interface Props extends I.Menu {};
-
 const HEIGHT = 28;
 const LIMIT = 20;
 
-const MenuRelationList = observer(class MenuRelationList extends React.Component<Props, object> {
+const MenuRelationList = observer(class MenuRelationList extends React.Component<I.Menu> {
 	
+	node: any = null;
 	n: number = 0;
 	top: number = 0;
 	cache: any = {};
 	refList: any = null;
 
-	constructor (props: any) {
+	constructor (props: I.Menu) {
 		super(props);
 		
 		this.onAdd = this.onAdd.bind(this);
@@ -130,7 +128,10 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 		));
 		
 		return (
-			<div className="wrap">
+			<div 
+				ref={node => this.node = node}
+				className="wrap"
+			>
 				<List 
 					axis="y" 
 					lockAxis="y"

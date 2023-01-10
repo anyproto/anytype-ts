@@ -1,12 +1,11 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import { Icon, IconObject, Switch } from 'Component';
 import { I } from 'Lib';
 
-interface Props extends I.MenuItem {};
+class MenuItemVertical extends React.Component<I.MenuItem> {
 
-class MenuItemVertical extends React.Component<Props, object> {
+	node: any = null;
 
 	render () {
 		let { 
@@ -109,6 +108,7 @@ class MenuItemVertical extends React.Component<Props, object> {
 
 		return (
 			<div 
+				ref={node => this.node = node}
 				id={'item-' + id} 
 				className={cn.join(' ')} 
 				onMouseDown={!withSwitch ? onClick : undefined} 
