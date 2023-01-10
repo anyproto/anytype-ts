@@ -12,10 +12,7 @@
 			.title { margin-bottom: 40px; }
 			.label { @include text-paragraph; margin: 0px auto 24px auto; width: 610px; }
 
-			.filter { 
-				width: 512px; height: 40px; margin: 0px auto; border: 1px solid $colorBorderDark; border-radius: 6px; padding: 0px; 
-				text-align: center;
-			}
+			.filter { width: 512px; height: 40px; margin: 0px auto; border: 1px solid $colorBorderDark; border-radius: 6px; padding: 0px; text-align: center; }
 			.filter {
 				.line { display: none; }
 				.filterInputWrap { height: 100%; width: auto; }

@@ -755,8 +755,6 @@ class DataUtil {
 		let { idField, filters, sorts, fullText, offset, limit, ignoreWorkspace, ignoreDeleted, ignoreHidden, withArchived } = param;
 		let keys: string[] = [ ...new Set(param.keys as string[]) ];
 
-		filters.push({ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false });
-
 		if (!ignoreWorkspace && workspace) {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'workspaceId', condition: I.FilterCondition.Equal, value: workspace });
 		};
@@ -766,7 +764,7 @@ class DataUtil {
 		};
 
 		if (ignoreDeleted) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false });
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.NotEqual, value: true });
 		};
 
 		if (!withArchived) {
