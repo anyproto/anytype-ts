@@ -752,8 +752,8 @@ class DataUtil {
 			withArchived: false,
 		}, param);
 
-		let { idField, filters, sorts, fullText, offset, limit, ignoreWorkspace, ignoreDeleted, ignoreHidden, withArchived } = param;
-		let keys: string[] = [ ...new Set(param.keys as string[]) ];
+		const { idField, filters, sorts, offset, limit, ignoreWorkspace, ignoreDeleted, ignoreHidden, withArchived } = param;
+		const keys: string[] = [ ...new Set(param.keys as string[]) ];
 
 		if (!ignoreWorkspace && workspace) {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'workspaceId', condition: I.FilterCondition.Equal, value: workspace });
@@ -771,8 +771,7 @@ class DataUtil {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.NotEqual, value: true });
 		};
 
-		fullText = Util.filterFix(fullText).replace(/\\/g, '');
-		C.ObjectSearch(filters, sorts, keys.concat([ idField ]), fullText, offset, limit, callBack);
+		C.ObjectSearch(filters, sorts, keys.concat([ idField ]), Util.filterFix(param.fullText).replace(/\\/g, ''), offset, limit, callBack);
 	};
 
 	dataviewGroupUpdate (rootId: string, blockId: string, viewId: string, groups: any[]) {

@@ -12,11 +12,13 @@ folder="build";
 
 if [ "$platform" = "ubuntu-latest" ]; then
   arch="linux-$arch";
+  folder="$arch";
 elif [ "$platform" = "macos-latest" ]; then
   arch="darwin-$arch";
   folder="$arch";
 elif [ "$platform" = "windows-latest" ]; then
   arch="windows";
+  folder="dist";
   FILE="addon.zip"
 fi;
 
@@ -58,7 +60,7 @@ if [ "$platform" = "windows-latest" ]; then
   printf "Done\n"
   
   echo "Moving... "
-  mv -fv grpc-server.exe dist/anytypeHelper.exe
+  mv -fv grpc-server.exe "$folder/anytypeHelper.exe"
 else 
   echo -n "Uncompressing... " 
   tar -zxf $FILE
@@ -67,13 +69,15 @@ else
   echo "Moving... "
   rm -rf "$folder"
   mkdir -p "$folder"
-  mv -fv grpc-server dist/anytypeHelper
+  mv -fv grpc-server "$folder/anytypeHelper"
 fi;
 
 rm -rf dist/lib/pb
 rm -rf dist/lib/pkg
 rm -rf dist/lib/protos
-mv -fv protobuf/* dist/lib/
+
+mv -fv protobuf/* "dist/lib/"
 rm -rf protobuf
 rm -rf $FILE
+
 printf "Done\n\n"

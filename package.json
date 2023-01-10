@@ -1,6 +1,6 @@
 {
   "name": "anytype2",
-  "version": "0.29.15-beta",
+  "version": "0.29.22-alpha",
   "description": "Anytype",
   "main": "electron.js",
   "scripts": {
@@ -63,7 +63,7 @@
     "babel-loader": "^8.2.1",
     "babel-preset-env": "^1.7.0",
     "electron": "^22.0.0",
-    "electron-builder": "^23.1.0",
+    "electron-builder": "^23.6.0",
     "electron-notarize": "^0.2.1",
     "eslint": "^8.29.0",
     "eslint-config-prettier": "^8.5.0",
@@ -180,7 +180,6 @@
     "generateUpdatesFilesForAllChannels": true,
     "beforeBuild": "./electron/hook/beforebuild.js",
     "afterSign": "./electron/hook/notarize.js",
-    "afterPack": "./electron/hook/afterpack.js",
     "appId": "com.anytype.anytype2",
     "compression": "normal",
     "productName": "Anytype",
