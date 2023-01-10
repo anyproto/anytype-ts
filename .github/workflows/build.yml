@@ -34,6 +34,11 @@ jobs:
       #- name: Update Deps
       #  run: npm run build:deps
 
+      - name: Update Addon Windows
+        if: matrix.os == 'windows-latest'
+        shell: bash  
+        run: ./update.sh ${{secrets.USER}} ${{secrets.TOKEN}} ${{matrix.os}}
+
       - name: Update Addon
         if: matrix.os != 'windows-latest'
         shell: bash  
@@ -41,8 +46,8 @@ jobs:
           ./update.sh ${{secrets.USER}} ${{secrets.TOKEN}} ${{matrix.os}} arm
           ./update.sh ${{secrets.USER}} ${{secrets.TOKEN}} ${{matrix.os}} amd
 
-      - name: Build Front
-        if: matrix.os != 'windows-latest'
+      - name: Build Front Mac OS
+        if: matrix.os == 'macos-latest'
         uses: samuelmeuli/action-electron-builder@v1
         with:
           github_token: ${{secrets.TOKEN}}
@@ -58,13 +63,8 @@ jobs:
           DO_SECRET_KEY: ${{ secrets.DO_SECRET_KEY }}
           USE_HARD_LINKS: false
 
-      - name: Update Addon Windows
-        if: matrix.os == 'windows-latest'
-        shell: bash  
-        run: ./update.sh ${{secrets.USER}} ${{secrets.TOKEN}} ${{matrix.os}}
-
-      - name: Build Front Windows
-        if: matrix.os == 'windows-latest'
+      - name: Build Front Other
+        if: matrix.os != 'macos-latest'
         uses: samuelmeuli/action-electron-builder@v1
         with:
           github_token: ${{secrets.TOKEN}}
