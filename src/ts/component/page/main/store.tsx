@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { Title, Icon, IconObject, Header, Filter } from 'Component';
+import { Title, Icon, IconObject, Header, Filter, Button, EmptySearch } from 'Component';
 import { I, C, DataUtil, ObjectUtil, Util, Storage, Onboarding, analytics, Action } from 'Lib';
 import { dbStore, blockStore, detailStore, commonStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -69,28 +69,28 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		let Item = null;
 		let title = '';
 		let placeholder = '';
-		let textDelete = '';
 		let textService = '';
 		let textInstalled = '';
 		let textInstall = '';
+		let textEmpty = '';
 
 		switch (this.tab) {
 			case Tab.Type:
 				title = 'Types are like categories<br/>that help you group and manage<br/>your objects.';
 				placeholder = 'Search or create a new type...';
-				textDelete = 'Delete type';
 				textService = 'Service type';
 				textInstalled = 'Type is installed';
 				textInstall = 'Install type';
+				textEmpty = '<b>Your type list is empty</b>Add some from the Anytype Library using the search icon or create your own using the button above';
 				break;
 
 			case Tab.Relation:
 				title = 'All objects are connected.<br />Use relations to build connections between objects.';
 				placeholder = 'Search or create a new relation...';
-				textDelete = 'Delete relation';
 				textService = 'Service relation';
 				textInstalled = 'Relation is installed';
 				textInstall = 'Install relation';
+				textEmpty = '<b>Your relation list is empty</b>Add some from the Anytype Library using the search icon or create your own using the button above';
 				break;
 		};
 
@@ -131,35 +131,39 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 				Item = (item: any) => {
 					const allowedDelete = blockStore.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ]);
 					const cn = [ 'item', (item.isHidden ? 'isHidden' : '') ];
+					const icons: any[] = [];
 					const buttons: any[] = [];
 
 					switch (this.view) {
 						case View.Library:
 							if (allowedDelete) {
-								buttons.push({ className: 'remove', tooltip: textDelete, onClick: (e: any) => { this.onRemove(e, item); } });
+								buttons.push({ text: 'Remove', onClick: (e: any) => { this.onRemove(e, item); } });
 							} else {
-								buttons.push({ className: 'lock', tooltip: textService });
+								icons.push({ className: 'lock', tooltip: textService });
 							};
 							break;
 
 						case View.Marketplace:
 							if (sources.includes(item.id)) {
-								buttons.push({ className: 'check', tooltip: textInstalled });
+								icons.push({ className: 'check', tooltip: textInstalled });
 							} else {
-								buttons.push({ className: 'plus', tooltip: textInstall, onClick: (e: any) => { this.onInstall(e, item); } });
+								icons.push({ className: 'plus', tooltip: textInstall, onClick: (e: any) => { this.onInstall(e, item); } });
 							};
 							break;
 					};
 					
 					return (
-						<div className={cn.join(' ')} onClick={(e: any) => { this.onClick(e, item); }}>
-							<div className="flex">
+						<div className={cn.join(' ')}>
+							<div className="flex" onClick={(e: any) => { this.onClick(e, item); }}>
 								<IconObject iconSize={20} object={item} />
 								<div className="name">{item.name}</div>
 							</div>
 
 							<div className="buttons">
 								{buttons.map((button: any, i: number) => (
+									<Button key={i} {...button} />
+								))}
+								{icons.map((button: any, i: number) => (
 									<Icon key={i} {...button} />
 								))}
 							</div>
@@ -195,6 +199,9 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 							if (item.id == 'tabs') {
 								return <TabList key={i} {...item} />;
 							};
+							if (item.id == 'empty') {
+								return <EmptySearch key={i} text={textEmpty} />;
+							};
 							return <Item key={i} {...item} />;
 						})}
 					</div>
@@ -222,7 +229,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 											height={height}
 											deferredMeasurmentCache={this.cache}
 											rowCount={items.length}
-											rowHeight={this.getRowHeight}
+											rowHeight={({ index }) => { return this.getRowHeight(items[index]); }}
 											rowRenderer={rowRenderer}
 											onRowsRendered={onRowsRendered}
 											overscanRowCount={10}
@@ -263,7 +270,9 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		const { isPopup } = this.props;
 
 		this.resize();
-		this.refList.recomputeRowHeights();
+		if (this.refList) {
+			this.refList.recomputeRowHeights();
+		};
 
 		Onboarding.start(Util.toCamelCase('store-' + this.tab), isPopup);
 	};
@@ -274,24 +283,13 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		menuStore.closeAll(Constant.menuIds.store);
 	};
 
-	getRowHeight (param: any) {
-		const { index } = param;
-
+	getRowHeight (item: any) {
 		let h = 0;
-		switch (index) {
-			// Mid
-			case 0:
-				h = 308;
-				break;
-
-			// Tabs
-			case 1:
-				h = 52;
-				break;
-
-			default:
-				h = 64;
-				break;
+		switch (item.id) {
+			case 'mid':		 h = 308; break;
+			case 'tabs':	 h = 52; break;
+			case 'empty':	 h = 190; break;
+			default:		 h = 64; break;
 		};
 		return h;
 	};
@@ -489,11 +487,15 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		});
 
 		let ret: any[] = [
-			{ className: 'block', children: [ { id: 'mid' } ] },
-			{ className: 'block', children: [ { id: 'tabs' } ] }
+			{ id: 'mid', className: 'block', children: [ { id: 'mid' } ] },
+			{ id: 'tabs', className: 'block', children: [ { id: 'tabs' } ] }
 		];
 		let n = 0;
 		let row = { children: [] };
+
+		if (!records.length) {
+			ret.push({ id: 'empty', className: 'block', children: [ { id: 'empty' } ] },);
+		};
 
 		for (let item of records) {
 			row.children.push(item);
