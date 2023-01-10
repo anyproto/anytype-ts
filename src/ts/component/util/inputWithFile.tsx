@@ -64,7 +64,7 @@ class InputWithFile extends React.Component<Props, State> {
 		const isIcon = size == Size.Icon;
 
 		let placeholder = textUrl;
-		let onClick = (e: any) => {};
+		let onClick = null;
 		
 		if (!withFile) {
 			cn.push('noFile');
@@ -80,7 +80,7 @@ class InputWithFile extends React.Component<Props, State> {
 		
 		if (isIcon) {
 			cn.push('isIcon');
-			onClick = (e: any) => { this.onClickFile(e); };
+			onClick = (e: MouseEvent) => { this.onClickFile(e); };
 		};
 		
 		if (focused) {
