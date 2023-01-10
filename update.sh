@@ -12,10 +12,11 @@ folder="build";
 
 if [ "$platform" = "ubuntu-latest" ]; then
   arch="linux-$arch";
+  folder="$arch";
 elif [ "$platform" = "macos-latest" ]; then
   arch="darwin-$arch";
   folder="$arch";
-elif [ "$platform" = "windows-latest" ]; then
+if [ "$platform" = "windows-latest" ]; then
   arch="windows";
   FILE="addon.zip"
 fi;

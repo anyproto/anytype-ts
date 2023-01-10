@@ -180,7 +180,6 @@
     "generateUpdatesFilesForAllChannels": true,
     "beforeBuild": "./electron/hook/beforebuild.js",
     "afterSign": "./electron/hook/notarize.js",
-    "afterPack": "./electron/hook/afterpack.js",
     "appId": "com.anytype.anytype2",
     "compression": "normal",
     "productName": "Anytype",
