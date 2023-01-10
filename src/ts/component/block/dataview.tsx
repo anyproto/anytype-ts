@@ -56,6 +56,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		this.onCellChange = this.onCellChange.bind(this);
 		this.onContext = this.onContext.bind(this);
 		this.onSourceSelect = this.onSourceSelect.bind(this);
+		this.onSourceTypeSelect = this.onSourceTypeSelect.bind(this);
+		this.onEmpty = this.onEmpty.bind(this);
 	};
 
 	render () {
@@ -112,6 +114,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					getRecord={this.getRecord}
 					onRecordAdd={this.onRecordAdd}
 					onSourceSelect={this.onSourceSelect}
+					onSourceTypeSelect={this.onSourceTypeSelect}
 					className={className}
 					isInline={isInline}
 				/>
@@ -176,7 +179,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 						description="Select object source or connect existing set"
 						button="Select source"
 						withButton={true}
-						onClick={(e: any) => { this.onSourceSelect(e.currentTarget, { horizontal: I.MenuDirection.Center }); }}
+						onClick={this.onEmpty}
 					/>
 				</React.Fragment>
 			);
@@ -441,6 +444,16 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		return object.setOf || [];
 	};
 
+	onEmpty (e: any) {
+		const { rootId, isInline } = this.props;
+
+		if (isInline) {
+			this.onSourceSelect(e.currentTarget, { horizontal: I.MenuDirection.Center });
+		} else {
+			this.onSourceTypeSelect(e.currentTarget, rootId);
+		};
+	};
+
 	onRecordAdd (e: any, dir: number, withPopup?: boolean) {
 		if (e.persist) {
 			e.persist();
@@ -692,6 +705,28 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		}, param || {});
 
 		menuStore.open('searchObject', menuParam);
+	};
+
+	onSourceTypeSelect (element: any, rootId: string) {
+		const { block } = this.props;
+		const { targetObjectId } = block.content;
+		const view = this.getView();
+
+		menuStore.closeAll(null, () => {
+			menuStore.open('dataviewSource', {
+				element: $(element),
+				className: 'big single',
+				horizontal: I.MenuDirection.Left,
+				data: {
+					rootId,
+					objectId: rootId,
+					blockId: Constant.blockId.dataview,
+					onSave: (() => {
+						this.getData(view.id, 0, true);
+					}),
+				}
+			});
+		});
 	};
 
 	getIdPrefix () {
