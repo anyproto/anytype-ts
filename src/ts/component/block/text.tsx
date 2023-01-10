@@ -32,6 +32,7 @@ for (let lang of langs) {
 const BlockText = observer(class BlockText extends React.Component<Props, object> {
 
 	_isMounted: boolean = false;
+	node: any = null;
 	refLang: any = null;
 	timeoutContext: number = 0;
 	timeoutClick: number = 0;
@@ -208,7 +209,10 @@ const BlockText = observer(class BlockText extends React.Component<Props, object
 		};
 		
 		return (
-			<div className="flex">
+			<div 
+				ref={node => this.node = node}
+				className="flex"
+			>
 				<div className="markers">
 					{marker ? <Marker {...marker} id={id} color={color} /> : ''}
 				</div>
@@ -273,7 +277,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, object
 	setValue (v: string) {
 		const { block } = this.props;
 		const fields = block.fields || {};
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const value = node.find('#value');
 		
 		let text = String(v || '');
@@ -332,7 +336,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, object
 		};
 
 		const { rootId } = this.props;
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const value = node.find('#value');
 		const items = value.find('lnk');
 
@@ -398,7 +402,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, object
 		};
 
 		const { rootId } = this.props;
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const value = node.find('#value');
 		const items = value.find('obj');
 
@@ -472,7 +476,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, object
 			return;
 		};
 
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const value = node.find('#value');
 		const items = value.find('mention');
 		
@@ -559,7 +563,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, object
 			return;
 		};
 
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const value = node.find('#value');
 		const items = value.find('emoji');
 		
@@ -615,7 +619,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, object
 			return '';
 		};
 		
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const value = node.find('#value');
 		const obj = Mark.cleanHtml(value.html());
 
@@ -624,7 +628,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, object
 	
 	getMarksFromHtml (): { marks: I.Mark[], text: string } {
 		const { block } = this.props;
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const value = node.find('#value');
 		const restricted: I.MarkType[] = [];
 
@@ -1348,7 +1352,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, object
 			return;
 		};
 		
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		node.find('#placeholder').text(v);
 	};
 	
@@ -1357,7 +1361,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, object
 			return;
 		};
 
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		node.find('#placeholder').hide();
 	};
 	
@@ -1366,7 +1370,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, object
 			return;
 		};
 		
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		node.find('#placeholder').show();
 	};
 	
@@ -1375,7 +1379,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, object
 			return;
 		};
 		
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const range = getRange(node.find('#value').get(0) as Element);
 
 		return range ? { from: range.start, to: range.end } : null;

@@ -59,7 +59,7 @@ const Progress = observer(class Progress extends React.Component<object, object>
 
 		const { current, total } = progress;
 		const win = $(window);
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 
 		node.removeClass('hide');
 		this.resize();
@@ -90,7 +90,7 @@ const Progress = observer(class Progress extends React.Component<object, object>
 			return;
 		};
 
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const coords = Storage.get('progress');
 
 		this.obj = node.find('#inner');

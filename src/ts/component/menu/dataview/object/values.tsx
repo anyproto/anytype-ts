@@ -133,7 +133,7 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 				onSortStart={this.onSortStart}
 				onSortEnd={this.onSortEnd}
 				helperClass="isDragging"
-				helperContainer={() => { return $(ReactDOM.findDOMNode(this)).get(0); }}
+				helperContainer={() => { return $(this.node).get(0); }}
 			/>
 		);
 	};

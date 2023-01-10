@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { observer } from 'mobx-react';
 import $ from 'jquery';
 import { InputWithFile, Loader, Icon, Error } from 'Component';
@@ -9,11 +8,12 @@ import Constant from 'json/constant.json';
 
 interface Props extends I.BlockComponent {}
 
-const BlockImage = observer(class BlockImage extends React.Component<Props, object> {
+const BlockImage = observer(class BlockImage extends React.Component<I.BlockComponent> {
 
 	_isMounted: boolean = false;
+	node: any = null;
 	
-	constructor (props: any) {
+	constructor (props: I.BlockComponent) {
 		super(props);
 		
 		this.onKeyDown = this.onKeyDown.bind(this);
@@ -84,7 +84,14 @@ const BlockImage = observer(class BlockImage extends React.Component<Props, obje
 		};
 		
 		return (
-			<div className={[ 'focusable', 'c' + block.id ].join(' ')} tabIndex={0} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp} onFocus={this.onFocus}>
+			<div 
+				ref={node => this.node = node} 
+				className={[ 'focusable', 'c' + block.id ].join(' ')} 
+				tabIndex={0} 
+				onKeyDown={this.onKeyDown} 
+				onKeyUp={this.onKeyUp} 
+				onFocus={this.onFocus}
+			>
 				{element}
 			</div>
 		);
@@ -144,7 +151,7 @@ const BlockImage = observer(class BlockImage extends React.Component<Props, obje
 		const { dataset, block } = this.props;
 		const { selection } = dataset || {};
 		const win = $(window);
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		
 		focus.set(block.id, { from: 0, to: 0 });
 		win.off('mousemove.media mouseup.media');
@@ -167,7 +174,7 @@ const BlockImage = observer(class BlockImage extends React.Component<Props, obje
 			return;
 		};
 		
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const wrap = node.find('#wrap');
 		
 		if (!wrap.length) {
@@ -188,7 +195,7 @@ const BlockImage = observer(class BlockImage extends React.Component<Props, obje
 		const { dataset, rootId, block } = this.props;
 		const { id } = block;
 		const { selection } = dataset || {};
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const wrap = node.find('#wrap');
 		
 		if (!wrap.length) {
@@ -216,7 +223,7 @@ const BlockImage = observer(class BlockImage extends React.Component<Props, obje
 	};
 
 	onError () {
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const wrap = node.find('#wrap');
 
 		wrap.addClass('broken');

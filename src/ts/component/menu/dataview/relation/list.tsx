@@ -141,7 +141,7 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 					onSortEnd={this.onSortEnd}
 					useDragHandle={true}
 					helperClass="isDragging"
-					helperContainer={() => { return $(ReactDOM.findDOMNode(this)).find('.items').get(0); }}
+					helperContainer={() => { return $(this.node).find('.items').get(0); }}
 				/>
 				{!readonly && allowedView ? (
 					<div className="bottom">

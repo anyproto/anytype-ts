@@ -66,7 +66,7 @@ const PopupSettingsPageDelete = observer(class PopupSettingsPageDelete extends R
 	};
 
 	onCheck () {
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const row = node.find('#row-delete');
 		const value = this.refCheckbox.getValue();
 

@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
@@ -12,6 +11,7 @@ interface Props extends I.BlockComponent, RouteComponentProps<any> {};
 const BlockLink = observer(class BlockLink extends React.Component<Props, object> {
 	
 	_isMounted: boolean = false;
+	node: any = null;
 
 	constructor (props: any) {
 		super(props);
@@ -174,7 +174,14 @@ const BlockLink = observer(class BlockLink extends React.Component<Props, object
 		};
 
 		return (
-			<div className={cn.join(' ')} tabIndex={0} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp} onFocus={this.onFocus}>
+			<div 
+				ref={node => this.node = node}
+				className={cn.join(' ')} 
+				tabIndex={0} 
+				onKeyDown={this.onKeyDown} 
+				onKeyUp={this.onKeyUp} 
+				onFocus={this.onFocus}
+			>
 				{element}
 			</div>
 		);
@@ -202,7 +209,7 @@ const BlockLink = observer(class BlockLink extends React.Component<Props, object
 		};
 		
 		this.unbind();
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		node.on('resize', (e: any) => { this.resize(); });
 	};
 	
@@ -211,7 +218,7 @@ const BlockLink = observer(class BlockLink extends React.Component<Props, object
 			return;
 		};
 		
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		node.off('resize');
 	};
 
@@ -275,7 +282,7 @@ const BlockLink = observer(class BlockLink extends React.Component<Props, object
 
 	resize () {
 		const { getWrapperWidth } = this.props;
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const card = node.find('.linkCard');
 		const icon = node.find('.iconObject');
 		const rect = (node.get(0) as Element).getBoundingClientRect();

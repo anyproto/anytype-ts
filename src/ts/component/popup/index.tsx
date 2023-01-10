@@ -110,7 +110,7 @@ class Popup extends React.Component<Props, object> {
 				return;
 			};
 			
-			const node = $(ReactDOM.findDOMNode(this)); 
+			const node = $(this.node); 
 			const wrap = node.find('.innerWrap');
 
 			node.addClass('show');
@@ -133,7 +133,7 @@ class Popup extends React.Component<Props, object> {
 				return;
 			};
 					
-			const node = $(ReactDOM.findDOMNode(this));
+			const node = $(this.node);
 			const inner = node.find('.innerWrap');
 
 			inner.css({ 

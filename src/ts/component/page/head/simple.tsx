@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { observer } from 'mobx-react';
 import { getRange } from 'selection-ranges';
 import { IconObject, Block, Button } from 'Component';
@@ -18,6 +17,7 @@ const EDITOR_IDS = [ 'title', 'description' ];
 const HeadSimple = observer(class Controls extends React.Component<Props, object> {
 	
 	_isMounted: boolean = false;
+	node: any = null;
 	composition: boolean = false;
 	timeout: number = 0;
 
@@ -92,7 +92,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props, object
 		};
 
 		return (
-			<div className="headSimple">
+			<div ref={node => this.node = node} className="headSimple">
 				{check.withIcon ? (
 					<div className="side left">
 						<IconObject id={'block-icon-' + rootId} size={object.iconImage ? 112 : 96} object={object} canEdit={canEditIcon} onSelect={this.onSelect} onUpload={this.onUpload} />
@@ -215,14 +215,14 @@ const HeadSimple = observer(class Controls extends React.Component<Props, object
 			return;
 		};
 
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const range = getRange(node.find('#editor-' + id).get(0) as Element);
 		return range ? { from: range.start, to: range.end } : null;
 	};
 
 	setValue () {
 		const { rootId } = this.props;
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 
 		for (let id of EDITOR_IDS) {
 			const item = node.find(`#editor-${id}`);
@@ -243,7 +243,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props, object
 			return '';
 		};
 
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const value = node.find('#editor-' + id);
 
 		return value.length ? String(value.get(0).innerText || '') : '';
@@ -259,7 +259,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props, object
 			return;
 		};
 
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		node.find('.placeholder.c' + id).hide();
 	};
 	
@@ -268,7 +268,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props, object
 			return;
 		};
 
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		node.find('.placeholder.c' + id).show();
 	};
 

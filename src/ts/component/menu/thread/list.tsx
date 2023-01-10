@@ -116,7 +116,7 @@ const MenuThreadList = observer(class MenuThreadList extends React.Component<Pro
 
 		const { param, getId } = this.props;
 		const { data, classNameWrap } = param;
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const item = node.find('#item-' + id);
 
 		if (!item.length) {

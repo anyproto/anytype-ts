@@ -111,7 +111,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 							onSortEnd={this.onSortEnd}
 							useDragHandle={true}
 							helperClass="isDragging"
-							helperContainer={() => { return $(ReactDOM.findDOMNode(this)).get(0); }}
+							helperContainer={() => { return $(this.node).get(0); }}
 						/>
 					</div>
 				) : ''}

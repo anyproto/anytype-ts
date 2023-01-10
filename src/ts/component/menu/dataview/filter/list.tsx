@@ -131,7 +131,7 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<Pro
 					onSortEnd={this.onSortEnd}
 					useDragHandle={true}
 					helperClass="isDragging"
-					helperContainer={() => { return $(ReactDOM.findDOMNode(this)).find('.items').get(0); }}
+					helperContainer={() => { return $(this.node).find('.items').get(0); }}
 				/>
 				{allowedView ? (
 					<div className="bottom">

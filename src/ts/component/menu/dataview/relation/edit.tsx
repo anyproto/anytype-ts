@@ -545,7 +545,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 	onSubmit (e: any) {
 		e.preventDefault();
 
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const button = node.find('#button');
 
 		if (button.hasClass('grey')) {
@@ -567,7 +567,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 	};
 
 	checkButton () {
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const name = this.ref ? this.ref.getValue() : '';
 		const button = node.find('#button');
 		const canSave = name.length && (this.format !== null) && !this.isReadonly();

@@ -295,12 +295,12 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		this.n = this.getItems().findIndex(it => it.id == item.id);
 		this.unsetActive();
 
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		node.find(`#item-${item.id}`).addClass('active');
 	};
 
 	unsetActive () {
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		node.find('.active').removeClass('active');
 	};
 

@@ -82,7 +82,7 @@ const PopupSettingsPageLogout = observer(class PopupSettingsPageLogout extends R
 	};
 
 	onFocus () {
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const phrase = node.find('#phrase');
 
 		this.refPhrase.setValue(authStore.phrase);
@@ -92,7 +92,7 @@ const PopupSettingsPageLogout = observer(class PopupSettingsPageLogout extends R
 	};
 
 	onBlur () {
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const phrase = node.find('#phrase');
 
 		this.refPhrase.setValue(translate('popupSettingsPhraseStub'));

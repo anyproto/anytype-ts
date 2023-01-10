@@ -27,7 +27,7 @@ class Label extends React.Component<Props, object> {
 	};
 	
 	componentDidMount () {
-		Util.renderLinks($(ReactDOM.findDOMNode(this)));
+		Util.renderLinks($(this.node));
 	};
 	
 };

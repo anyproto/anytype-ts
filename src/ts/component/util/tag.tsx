@@ -62,7 +62,7 @@ class Tag extends React.Component<Props, object> {
 			return;
 		};
 
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const remove = node.find('#remove');
 		const color = node.css('color');
 

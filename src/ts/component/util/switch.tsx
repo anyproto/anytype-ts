@@ -67,7 +67,7 @@ class Switch extends React.Component<Props, object> {
 	};
 	
 	setValue (value: boolean) {
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 
 		this.value = value;
 		value ? node.addClass('active') : node.removeClass('active');

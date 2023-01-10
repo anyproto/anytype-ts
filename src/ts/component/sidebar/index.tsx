@@ -63,7 +63,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, object> {
 			return;
 		};
 
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 
 		node.find('.item.hover').removeClass('hover');
 
@@ -92,7 +92,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, object> {
 		const { selection } = dataset || {};
 
 		const win = $(window);
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const offset = node.offset();
 
 		this.ox = e.pageX - offset.left;
@@ -143,7 +143,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, object> {
 		const { dataset } = this.props;
 		const { selection } = dataset || {};
 		const { fixed } = sidebar.data;
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const win = $(window);
 		const body = $('body');
 		const offset = node.offset();

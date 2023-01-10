@@ -219,7 +219,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 	};
 
 	checkButton () {
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const name = this.ref ? this.ref.getValue() : '';
 		const button = node.find('#button');
 		const canSave = name.length && (this.format !== null) && !this.isReadonly();
@@ -401,7 +401,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 	onSubmit (e: any) {
 		e.preventDefault();
 
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const button = node.find('#button');
 
 		if (button.hasClass('grey')) {

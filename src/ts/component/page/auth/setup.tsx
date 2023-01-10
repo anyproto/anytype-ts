@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import { Frame, Cover, Title, Error, Button, Header, Footer } from 'Component';
 import { I, Storage, translate, C, DataUtil, Util, analytics, Renderer } from 'Lib';
@@ -15,6 +14,7 @@ interface State {
 
 const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.PageComponent, State> {
 
+	node: any = null;
 	i: number = 0;
 	t: number = 0;
 	state = {
@@ -48,7 +48,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 		};
 		
 		return (
-			<div>
+			<div ref={node => this.node = node}>
 				<Cover {...cover} className="main" />
 				<Header {...this.props} component="authIndex" />
 				<Footer {...this.props} component="authIndex" />
@@ -64,7 +64,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 
 	componentDidMount () {
 		const { match } = this.props;
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const label = node.find('#label');
 		
 		this.clear();

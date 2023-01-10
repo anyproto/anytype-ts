@@ -1,14 +1,11 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { observer } from 'mobx-react';
 import $ from 'jquery';
 import { getRange, setRange } from 'selection-ranges';
 import arrayMove from 'array-move';
 import { Tag, Icon, DragBox } from 'Component';
-import { I, Relation, DataUtil, translate, keyboard, Util } from 'Lib';
+import { I, Relation, translate, keyboard, Util } from 'Lib';
 import { menuStore } from 'Store';
-
-interface Props extends I.Cell {};
 
 interface State { 
 	isEditing: boolean; 
@@ -16,14 +13,15 @@ interface State {
 
 const MAX_LENGTH = 320;
 
-const CellSelect = observer(class CellSelect extends React.Component<Props, State> {
+const CellSelect = observer(class CellSelect extends React.Component<I.Cell, State> {
 
 	_isMounted: boolean = false;
+	node: any = null;
 	state = {
 		isEditing: false,
 	};
 
-	constructor (props: any) {
+	constructor (props: I.Cell) {
 		super(props);
 
 		this.onClear = this.onClear.bind(this);
@@ -131,7 +129,10 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 		};
 
 		return (
-			<div className={cn.join(' ')}>
+			<div 
+				ref={node => this.node = node} 
+				className={cn.join(' ')}
+			>
 				{content}
 			</div>
 		);
@@ -178,7 +179,7 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 			return;
 		};
 
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const entry = node.find('#entry');
 
 		if (entry.length && (entry.text().length >= MAX_LENGTH)) {
@@ -191,7 +192,7 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 			return;
 		};
 
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const entry = node.find('#entry');
 
 		keyboard.shortcut('backspace', e, (pressed: string) => {
@@ -231,7 +232,7 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 			return;
 		};
 
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const value = this.getValue();
 		const list = node.find('#list');
 		const placeholder = node.find('#placeholder');
@@ -254,7 +255,7 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 			return;
 		};
 
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		node.find('#entry').text(' ');
 
 		this.focus();
@@ -281,7 +282,7 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 			return;
 		};
 
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const entry = node.find('#entry');
 		
 		if (entry.length) {
@@ -325,7 +326,7 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 			return;
 		};
 
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const list = node.find('#list');
 		const items = list.find('.itemWrap');
 		const entry = node.find('#entry');

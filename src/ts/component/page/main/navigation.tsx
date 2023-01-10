@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import raf from 'raf';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
@@ -10,7 +9,6 @@ import { blockStore, popupStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
 
 interface Props extends I.PageComponent {
-	rootId: string;
 	matchPopup?: any;
 };
 
@@ -33,6 +31,7 @@ enum Panel {
 const PageMainNavigation = observer(class PageMainNavigation extends React.Component<Props, State> {
 	
 	_isMounted: boolean = false;
+	node: any = null;
 	state = {
 		loading: false,
 		info: null,
@@ -49,7 +48,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 	select: boolean = false;
 	refHeader: any = null;
 	
-	constructor (props: any) {
+	constructor (props: Props) {
 		super (props);
 
 		this.onConfirm = this.onConfirm.bind(this);
@@ -155,7 +154,10 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 		};
 
 		return (
-			<div className="wrapper">
+			<div 
+				ref={node => this.node = node} 
+				className="wrapper"
+			>
 				<Header component="mainNavigation" ref={(ref: any) => { this.refHeader = ref; }} {...this.props} rootId={rootId} />
 
 				{loading ? <Loader id="loader" /> : ''}
@@ -327,7 +329,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 		};
 
 		const { isPopup } = this.props;
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 
 		raf(() => {
 			const container = Util.getScrollContainer(isPopup);
@@ -444,12 +446,12 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 
 		this.unsetActive();
 		
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		node.find(`#panel-${this.panel} #item-${item.id}`).addClass('active');
 	};
 
 	unsetActive () {
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		node.find('.active').removeClass('active');
 	};
 

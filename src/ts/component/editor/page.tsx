@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
@@ -22,6 +21,7 @@ const BUTTON_OFFSET = 10;
 const EditorPage = observer(class EditorPage extends React.Component<Props, object> {
 	
 	_isMounted: boolean = false;
+	node: any = null;
 	id: string = '';
 	timeoutMove: number = 0;
 	timeoutScreen: number = 0;
@@ -36,7 +36,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, obje
 	dir: number = 0;
 	frame: number = 0;
 
-	constructor (props: any) {
+	constructor (props: Props) {
 		super(props);
 		
 		this.onKeyDownBlock = this.onKeyDownBlock.bind(this);
@@ -79,7 +79,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, obje
 		const readonly = this.isReadonly();
 
 		return (
-			<div id="editorWrapper">
+			<div 
+				ref={node => this.node = node} 
+				id="editorWrapper"
+			>
 				<Controls 
 					key="editorControls" 
 					{...this.props} 
@@ -178,7 +181,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, obje
 
 	componentDidUpdate () {
 		const { isPopup } = this.props;
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const resizable = node.find('.resizable');
 		
 		this.open();
@@ -204,7 +207,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, obje
 	};
 
 	getWrapper () {
-		return $(ReactDOM.findDOMNode(this));
+		return $(this.node);
 	};
 
 	getWrapperWidth (): number {
@@ -392,7 +395,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, obje
 		};
 
 		const win = $(window);
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const container = node.find('.editor');
 		
 		if (!container.length) {
@@ -1950,7 +1953,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, obje
 		};
 
 		const { rootId, isPopup } = this.props;
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const note = node.find('#note');
 		const blocks = node.find('.blocks');
 		const last = node.find('#blockLast');
@@ -2014,7 +2017,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, obje
 	setLayoutWidth (v: number) {
 		v = Number(v) || 0;
 
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const width = this.getWidth(v);
 		const elements = node.find('#elements');
 

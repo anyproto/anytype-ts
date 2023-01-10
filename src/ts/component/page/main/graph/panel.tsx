@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { observer } from 'mobx-react';
 import $ from 'jquery';
 import { I, Util } from 'Lib';
@@ -9,7 +8,6 @@ import Preview from './preview';
 import Filters from './filters';
 
 interface Props extends I.PageComponent {
-    isPopup?: boolean;
     data: any;
     onFilterChange: (v: string) => void;
     onSwitch: (id: string, v: string) => void;
@@ -29,13 +27,14 @@ const Tabs = [
 
 const GraphPanel = observer(class Graph extends React.Component<Props, State> {
 
+	node: any = null;
     state = {
         view: I.GraphView.Controls,
         rootId: '',
     };
     ref: any = null;
 
-	constructor (props: any) {
+	constructor (props: Props) {
 		super(props);
 
         this.setState = this.setState.bind(this);
@@ -79,7 +78,10 @@ const GraphPanel = observer(class Graph extends React.Component<Props, State> {
         };
 
 		return (
-			<div id="panel">
+			<div 
+				ref={node => this.node = node} 
+				id="panel"
+			>
                 {tabs}
                 {content}
 			</div>
@@ -108,7 +110,7 @@ const GraphPanel = observer(class Graph extends React.Component<Props, State> {
     };
 
     resize () {
-        const node = $(ReactDOM.findDOMNode(this));
+        const node = $(this.node);
 		const container = Util.getPageContainer(this.props.isPopup);
 		const header = container.find('#header');
 		const tabs = node.find('.tabs');

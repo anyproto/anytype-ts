@@ -40,7 +40,7 @@ class Frame extends React.Component<object, object> {
 				return;
 			};
 			
-			const node = $(ReactDOM.findDOMNode(this));
+			const node = $(this.node);
 			node.css({ 
 				marginTop: -node.outerHeight() / 2,
 				marginLeft: -node.outerWidth() / 2

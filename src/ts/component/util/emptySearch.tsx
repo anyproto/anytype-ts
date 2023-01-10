@@ -40,7 +40,7 @@ class EmptySearch extends React.Component<Props, object> {
 				return;
 			};
 
-			const node = $(ReactDOM.findDOMNode(this));
+			const node = $(this.node);
 			node.css({ lineHeight: node.height() + 'px' });
 		});
 	};

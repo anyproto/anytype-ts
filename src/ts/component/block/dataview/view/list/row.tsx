@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { observer } from 'mobx-react';
 import $ from 'jquery';
 import { I, Relation } from 'Lib';
@@ -11,9 +10,10 @@ interface Props extends I.ViewComponent {
 	style?: any;
 };
 
-const Row = observer(class Row extends React.Component<Props, object> {
+const Row = observer(class Row extends React.Component<Props> {
 
 	_isMounted: boolean = false;
+	node: any = null;
 
 	render () {
 		const { rootId, block, index, getView, onCellClick, onRef, style, getRecord, onContext, getIdPrefix, isInline } = this.props;
@@ -65,6 +65,7 @@ const Row = observer(class Row extends React.Component<Props, object> {
 
 		return (
 			<div 
+				ref={node => this.node = node} 
 				className="row" 
 				style={style}
 				onContextMenu={(e: any) => { onContext(e, record.id); }}
@@ -92,7 +93,7 @@ const Row = observer(class Row extends React.Component<Props, object> {
 			return;
 		};
 
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const first = node.find('.cellContent:not(.isEmpty)').first();
 
 		node.find('.cellContent').removeClass('first');

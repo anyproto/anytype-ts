@@ -413,7 +413,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 			return;
 		};
 
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const el = node.find('#item-' + item.id);
 		const offsetX = node.outerWidth();
 		

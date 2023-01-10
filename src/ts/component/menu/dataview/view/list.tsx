@@ -135,7 +135,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<Props> 
 					onSortStart={this.onSortStart}
 					onSortEnd={this.onSortEnd}
 					helperClass="isDragging"
-					helperContainer={() => { return $(ReactDOM.findDOMNode(this)).find('.items').get(0); }}
+					helperContainer={() => { return $(this.node).find('.items').get(0); }}
 				/>
 				{allowed ? (
 					<div className="bottom">

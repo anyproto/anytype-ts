@@ -84,7 +84,7 @@ class Textarea extends React.Component<Props, State> {
 	
 	componentDidMount () {
 		this._isMounted = true;
-		this.textAreaElement = $(ReactDOM.findDOMNode(this)).get(0) as HTMLTextAreaElement;
+		this.textAreaElement = $(this.node).get(0) as HTMLTextAreaElement;
 		this.setValue(this.props.value ? this.props.value : '');
 	};
 
@@ -174,7 +174,7 @@ class Textarea extends React.Component<Props, State> {
 			return;
 		};
 
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		v ? node.addClass('withError') : node.removeClass('withError');
 	};
 	

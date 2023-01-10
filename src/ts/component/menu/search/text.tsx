@@ -1,20 +1,18 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import findAndReplaceDOMText from 'findandreplacedomtext';
 import { Icon, Input } from 'Component';
-import { I, Util, keyboard, translate, analytics, Storage } from 'Lib';
+import { I, Util, keyboard, translate, analytics } from 'Lib';
 import Constant from 'json/constant.json';
-
-interface Props extends I.Menu {};
 
 const SKIP = [ 
 	'span', 'div', 'name', 'mention', 'color', 'bgcolor', 'strike', 'kbd', 'italic', 'bold', 
 	'underline', 'lnk', 'emoji', 'obj',
 ];
 
-class MenuSearchText extends React.Component<Props, object> {
+class MenuSearchText extends React.Component<I.Menu> {
 	
+	node: any = null;
 	ref: any = null;
 	last: string = '';
 	n: number = 0;
@@ -34,7 +32,10 @@ class MenuSearchText extends React.Component<Props, object> {
 		const value = String(data.value || storageGet().search || '');
 		
 		return (
-			<div className="flex">
+			<div 
+				ref={node => this.node = node}
+				className="flex"
+			>
 				<Icon className="search" />
 
 				<Input 
@@ -122,7 +123,7 @@ class MenuSearchText extends React.Component<Props, object> {
 		const { storageSet } = this.props;
 		const searchContainer = this.getSearchContainer();
 		const value = Util.filterFix(this.ref.getValue());
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const switcher = node.find('#switcher').removeClass('active');
 
 		if (this.last != value) {
@@ -165,7 +166,7 @@ class MenuSearchText extends React.Component<Props, object> {
 	};
 
 	setCnt () {
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const cnt = node.find('#cnt');
 		const items = this.getItems();
 
@@ -179,7 +180,7 @@ class MenuSearchText extends React.Component<Props, object> {
 	};
 
 	clear () {
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const switcher = node.find('#switcher');
 		const items = this.getItems();
 

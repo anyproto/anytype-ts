@@ -40,7 +40,7 @@ class Dimmer extends React.Component<Props> {
 				return;
 			};
 			
-			const node = $(ReactDOM.findDOMNode(this)); 
+			const node = $(this.node); 
 			node.addClass('show'); 
 		});
 	};

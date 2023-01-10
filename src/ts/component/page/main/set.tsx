@@ -1,14 +1,12 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { observer } from 'mobx-react';
 import $ from 'jquery';
 import raf from 'raf';
 import { Header, Footer, Loader, Block, Deleted } from 'Component';
-import { I, M, C, DataUtil, Util, crumbs, Action, Relation, Onboarding } from 'Lib';
-import { blockStore, detailStore } from 'Store';
+import { I, M, C, DataUtil, Util, crumbs, Action } from 'Lib';
+import { blockStore } from 'Store';
 import Controls from 'Component/page/head/controls';
 import HeadSimple from 'Component/page/head/simple';
-import Constant from 'json/constant.json';
 import Errors from 'json/error.json';
 
 interface Props extends I.PageComponent {
@@ -22,6 +20,7 @@ interface State {
 const PageMainSet = observer(class PageMainSet extends React.Component<Props, State> {
 
 	_isMounted: boolean = false;
+	node: any = null;
 	id: string = '';
 	refHeader: any = null;
 	refHead: any = null;
@@ -55,7 +54,10 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, St
 		const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, childrenIds: [], fields: {}, content: {} });
 
 		return (
-			<div className={[ 'setWrapper', check.className ].join(' ')}>
+			<div 
+				ref={node => this.node = node}
+				className={[ 'setWrapper', check.className ].join(' ')}
+			>
 				<Header component="mainEdit" ref={(ref: any) => { this.refHeader = ref; }} {...this.props} rootId={rootId} />
 
 				{check.withCover ? <Block {...this.props} key={cover.id} rootId={rootId} block={cover} /> : ''}
@@ -161,7 +163,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, St
 		const { isPopup } = this.props;
 		
 		raf(() => {
-			const node = $(ReactDOM.findDOMNode(this));
+			const node = $(this.node);
 			const cover = node.find('.block.blockCover');
 			const container = Util.getPageContainer(isPopup);
 			const header = container.find('#header');

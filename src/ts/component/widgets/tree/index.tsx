@@ -165,7 +165,7 @@ const Tree = observer(class Tree extends React.Component<Props, State> {
 
 	// Restores the scroll position and the keyboard focus
 	restoreUIState () {
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const body = node.find('#body');
 
 		this.id = keyboard.getRootId();
@@ -382,7 +382,7 @@ const Tree = observer(class Tree extends React.Component<Props, State> {
 			return;
 		};
 
-		const DOMnode = $(ReactDOM.findDOMNode(this));
+		const DOMnode = $(this.node);
 
 		DOMnode.find('.item.hover').removeClass('hover');
 

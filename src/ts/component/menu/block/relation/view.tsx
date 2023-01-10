@@ -110,7 +110,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 	};
 
 	componentDidMount () {
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const scrollWrap = node.find('#scrollWrap');
 
 		this.resize();

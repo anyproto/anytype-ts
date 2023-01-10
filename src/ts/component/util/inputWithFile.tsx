@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import raf from 'raf';
 import { Icon, Input, Button } from 'Component';
@@ -30,22 +29,22 @@ enum Size { Icon = 0, Small = 1, Full = 2 };
 
 class InputWithFile extends React.Component<Props, State> {
 
-	private static defaultProps = {
+	public static defaultProps = {
 		textUrl: translate('inputWithFileTextUrl'),
 		withFile: true,
 		canResize: true,
 	};
 	
 	_isMounted: boolean = false;
+	node: any = null;
 	state = {
 		focused: false,
 		size: Size.Full,
 	};
-	
 	t = 0;
-	urlRef: any = null;
+	refUrl: any = null;
 
-	constructor (props: any) {
+	constructor (props: Props) {
 		super(props);
 		
 		this.onSubmit = this.onSubmit.bind(this);
@@ -93,14 +92,18 @@ class InputWithFile extends React.Component<Props, State> {
 		};
 		
 		return (
-			<div className={cn.join(' ')} onClick={onClick}>
+			<div 
+				ref={node => this.node = node}
+				className={cn.join(' ')}
+				onClick={onClick}
+			>
 				{icon ? <Icon className={icon} /> : ''}
 			
 				<div id="text" className="txt">
 					<form id="form" onSubmit={this.onSubmit}>
 						{focused ? (
 							<span>
-								<Input id="url" ref={(ref: any) => { this.urlRef = ref; }} placeholder={placeholder} onPaste={(e: any) => { this.onChangeUrl(e, true); }} onFocus={onFocus} onBlur={onBlur} />
+								<Input id="url" ref={(ref: any) => { this.refUrl = ref; }} placeholder={placeholder} onPaste={(e: any) => { this.onChangeUrl(e, true); }} onFocus={onFocus} onBlur={onBlur} />
 								<Button type="input" className="dn" />
 							</span>
 						) : (
@@ -132,8 +135,8 @@ class InputWithFile extends React.Component<Props, State> {
 		this.rebind();
 		
 		if (focused) {
-			if (this.urlRef) {
-				this.urlRef.focus();
+			if (this.refUrl) {
+				this.refUrl.focus();
 			};
 			focus.set(block.id, { from: 0, to: 0 });
 		};
@@ -157,7 +160,7 @@ class InputWithFile extends React.Component<Props, State> {
 			return;
 		};
 		
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		node.off('resize').on('resize', (e: any) => { this.resize(); });
 	};
 	
@@ -167,7 +170,7 @@ class InputWithFile extends React.Component<Props, State> {
 			return;
 		};
 		
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		node.off('resize');
 	};
 	
@@ -182,7 +185,7 @@ class InputWithFile extends React.Component<Props, State> {
 				return;
 			};
 			
-			const node = $(ReactDOM.findDOMNode(this));
+			const node = $(this.node);
 			const rect = (node.get(0) as HTMLInputElement).getBoundingClientRect();
 			
 			let size = Size.Full;
@@ -227,11 +230,11 @@ class InputWithFile extends React.Component<Props, State> {
 		
 		window.clearTimeout(this.t);
 		this.t = window.setTimeout(() => {
-			if (!this.urlRef) {
+			if (!this.refUrl) {
 				return;
 			};
 			
-			const url = this.urlRef.getValue() || '';
+			const url = this.refUrl.getValue() || '';
 			if (!url) {
 				return;
 			};

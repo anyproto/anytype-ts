@@ -197,7 +197,7 @@ class MenuSmile extends React.Component<Props, State> {
 	};
 	
 	componentDidUpdate () {
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		
 		if (this.id) {
 			node.find(`#item-${this.id}`).addClass('active');
@@ -528,7 +528,7 @@ class MenuSmile extends React.Component<Props, State> {
 	};
 
 	setActiveGroup (id: string) {
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const foot = node.find('#foot');
 
 		foot.find('.active').removeClass('active');

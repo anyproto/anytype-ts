@@ -55,7 +55,7 @@ class Drag extends React.Component<Props, object> {
 	};
 	
 	componentDidMount () {
-		this.node = $(ReactDOM.findDOMNode(this));
+		this.node = $(this.node);
 		this.back = this.node.find('#back');
 		this.fill = this.node.find('#fill');
 		this.icon = this.node.find('#icon');

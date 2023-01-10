@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { observer } from 'mobx-react';
 import $ from 'jquery';
 import { InputWithFile, Icon, Loader, Error, Drag } from 'Component';
@@ -7,18 +6,17 @@ import { I, translate, focus, Util, keyboard, Action } from 'Lib';
 import { commonStore } from 'Store';
 import Constant from 'json/constant.json';
 
-interface Props extends I.BlockComponent {};
-
-const BlockAudio = observer(class BlockAudio extends React.Component<Props, object> {
+const BlockAudio = observer(class BlockAudio extends React.Component<I.BlockComponent> {
 
 	_isMounted: boolean = false;
+	node: any = null;
 	volume: number = 0;
 	playOnSeek: boolean = false;
 	refTime: any = null;
 	refVolume: any = null;
 	audioNode: HTMLAudioElement;
 
-	constructor (props: any) {
+	constructor (props: I.BlockComponent) {
 		super(props);
 		
 		this.onKeyDown = this.onKeyDown.bind(this);
@@ -99,7 +97,14 @@ const BlockAudio = observer(class BlockAudio extends React.Component<Props, obje
 		};
 		
 		return (
-			<div className={[ 'focusable', 'c' + id ].join(' ')} tabIndex={0} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp} onFocus={this.onFocus}>
+			<div 
+				ref={node => this.node = node} 
+				className={[ 'focusable', 'c' + id ].join(' ')} 
+				tabIndex={0} 
+				onKeyDown={this.onKeyDown} 
+				onKeyUp={this.onKeyUp} 
+				onFocus={this.onFocus}
+			>
 				{element}
 			</div>
 		);
@@ -128,7 +133,7 @@ const BlockAudio = observer(class BlockAudio extends React.Component<Props, obje
 
 		this.unbind();
 
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const icon = node.find('.icon.play');
 		const el = node.find('#audio');
 		this.audioNode = el.get(0) as HTMLAudioElement;
@@ -153,7 +158,7 @@ const BlockAudio = observer(class BlockAudio extends React.Component<Props, obje
 			return;
 		};
 
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const el = node.find('#audio');
 
 		if (el.length) {
@@ -278,7 +283,7 @@ const BlockAudio = observer(class BlockAudio extends React.Component<Props, obje
 		};
 
 		const el = this.audioNode;
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const icon = node.find('.icon.volume');
 
 		el.volume ? icon.removeClass('active') : icon.addClass('active');
@@ -316,7 +321,7 @@ const BlockAudio = observer(class BlockAudio extends React.Component<Props, obje
 			return;
 		};
 		
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const current = node.find('.time .current');
 		const total = node.find('.time .total');
 

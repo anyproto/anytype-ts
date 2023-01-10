@@ -1,19 +1,17 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { observer } from 'mobx-react';
 import $ from 'jquery';
 import raf from 'raf';
 import { setRange } from 'selection-ranges';
 import { I, Util, keyboard, translate } from 'Lib';
 
-interface Props extends I.Menu {}
-
-const MenuText = observer(class MenuText extends React.Component<Props, object> {
+const MenuText = observer(class MenuText extends React.Component<I.Menu> {
 	
 	_isMounted: boolean = false;
+	node: any = null;
 	ref: any = null;
 
-	constructor (props: any) {
+	constructor (props: I.Menu) {
 		super(props);
 
 		this.onInput = this.onInput.bind(this);
@@ -28,7 +26,9 @@ const MenuText = observer(class MenuText extends React.Component<Props, object> 
 		const relation = data.relation.get();
 
 		return (
-			<div>
+			<div
+				ref={node => this.node = node}
+			>
 				<div 
 					id="input"
 					ref={(ref: any) => { this.ref = ref; }} 
@@ -54,7 +54,7 @@ const MenuText = observer(class MenuText extends React.Component<Props, object> 
 		const { param } = this.props;
 		const { data } = param;
 		const { value } = data;
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const input = node.find('#input').get(0);
 		const length = value.length;
 
@@ -99,7 +99,7 @@ const MenuText = observer(class MenuText extends React.Component<Props, object> 
 			return '';
 		};
 		
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const input = node.find('#input');
 
 		return String(input.get(0).innerText || '');
@@ -114,7 +114,7 @@ const MenuText = observer(class MenuText extends React.Component<Props, object> 
 			return;
 		};
 
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		node.find('#placeholder').hide();
 	};
 	
@@ -123,7 +123,7 @@ const MenuText = observer(class MenuText extends React.Component<Props, object> 
 			return;
 		};
 		
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		node.find('#placeholder').show();
 	};
 

@@ -65,7 +65,7 @@ class Icon extends React.Component<Props, object> {
 	
 	onMouseEnter (e: any) {
 		const { tooltip, tooltipX, tooltipY, onMouseEnter } = this.props;
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		
 		if (tooltip) {
 			Preview.tooltipShow(tooltip, node, tooltipX, tooltipY);

@@ -611,7 +611,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 			return;
 		};
 
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const clear = node.find('.icon.clear');
 
 		v ? clear.addClass('active') : clear.removeClass('active');

@@ -149,7 +149,7 @@ const MenuSort = observer(class MenuSort extends React.Component<Props, object> 
 					onSortEnd={this.onSortEnd}
 					useDragHandle={true}
 					helperClass="isDragging"
-					helperContainer={() => { return $(ReactDOM.findDOMNode(this)).find('.items').get(0); }}
+					helperContainer={() => { return $(this.node).find('.items').get(0); }}
 				/>
 				{allowedView ? (
 					<div className="bottom">
