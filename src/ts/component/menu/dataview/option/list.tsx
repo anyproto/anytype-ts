@@ -36,6 +36,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 		const value = data.value || [];
 		const items = this.getItems();
 		const placeholder = canAdd ? 'Filter or create options...' : 'Filter options...';
+		const empty = canAdd ? 'Type to create a new option' : 'Type to search options';
 
 		if (!this.cache) {
 			return null;
@@ -123,9 +124,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 							)}
 						</InfiniteLoader>
 					) : (
-						<div className="item empty">
-							Type to create a new option
-						</div>
+						<div className="item empty">{empty}</div>
 					)}
 				</div>
 			</div>
