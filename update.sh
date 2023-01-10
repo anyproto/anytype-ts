@@ -18,6 +18,7 @@ elif [ "$platform" = "macos-latest" ]; then
   folder="$arch";
 elif [ "$platform" = "windows-latest" ]; then
   arch="windows";
+  folder="dist";
   FILE="addon.zip"
 fi;
 
@@ -59,7 +60,7 @@ if [ "$platform" = "windows-latest" ]; then
   printf "Done\n"
   
   echo "Moving... "
-  mv -fv grpc-server.exe dist/anytypeHelper.exe
+  mv -fv grpc-server.exe "$folder/anytypeHelper.exe"
 else 
   echo -n "Uncompressing... " 
   tar -zxf $FILE
@@ -68,13 +69,16 @@ else
   echo "Moving... "
   rm -rf "$folder"
   mkdir -p "$folder"
-  mv -fv grpc-server dist/anytypeHelper
+  mkdir -p "$folder/lib"
+  mv -fv grpc-server "$folder/anytypeHelper"
 fi;
 
-rm -rf dist/lib/pb
-rm -rf dist/lib/pkg
-rm -rf dist/lib/protos
-mv -fv protobuf/* dist/lib/
+#rm -rf dist/lib/pb
+#rm -rf dist/lib/pkg
+#rm -rf dist/lib/protos
+
+mv -fv protobuf/* "$folder/lib/"
 rm -rf protobuf
 rm -rf $FILE
+
 printf "Done\n\n"
