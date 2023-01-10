@@ -20,11 +20,13 @@
 				.line { display: none; }
 				.filterInputWrap { height: 100%; width: auto; }
 				.inner { height: 100%; text-align: left; padding: 0px 16px; justify-content: center; }
+
 				.input { height: 100%; }
 				.input:empty { display: none; }
+
 				.placeholder { position: static; }
 			}
-			.filter.isFocused {
+			.filter.isFocused, .filter.active {
 				.input { display: block; }
 				.placeholder { position: absolute; }
 				.filterInputWrap { width: 100%; }

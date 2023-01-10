@@ -87,11 +87,13 @@ class Filter extends React.Component<Props, object> {
 	};
 
 	focus () {
+		this.addFocusedClass();
 		this.ref.focus();
 		this.checkButton();
 	};
 
 	blur () {
+		this.removeFocusedClass();
 		this.ref.blur();
 	};
 
@@ -101,10 +103,9 @@ class Filter extends React.Component<Props, object> {
 
 	onFocus (e: any) {
 		const { placeholderFocus, onFocus } = this.props;
-		const node = $(ReactDOM.findDOMNode(this));
 
 		this.isFocused = true;
-		node.addClass('isFocused');
+		this.addFocusedClass();
 
 		if (placeholderFocus) {
 			this.placeholderSet(placeholderFocus);
@@ -117,10 +118,9 @@ class Filter extends React.Component<Props, object> {
 	
 	onBlur (e: any) {
 		const { placeholderFocus, placeholder, onBlur } = this.props;
-		const node = $(ReactDOM.findDOMNode(this));
 
 		this.isFocused = false;
-		node.removeClass('isFocused');
+		this.removeFocusedClass();
 
 		if (placeholderFocus) {
 			this.placeholderSet(placeholder);
@@ -129,6 +129,16 @@ class Filter extends React.Component<Props, object> {
 		if (onBlur) {
 			onBlur(e);
 		};
+	};
+
+	addFocusedClass () {
+		const node = $(ReactDOM.findDOMNode(this));
+		node.addClass('isFocused');
+	};
+
+	removeFocusedClass () {
+		const node = $(ReactDOM.findDOMNode(this));
+		node.removeClass('isFocused');
 	};
 
 	onClear (e: any) {
