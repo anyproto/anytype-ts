@@ -24,8 +24,7 @@ class PopupSettingsPageImportNotionWarning extends React.Component<Props> {
 		return (
 			<div>
 				<Head {...this.props} returnTo="importNotion" name={translate('commonBack')} />
-				<Title text="Caution" />
-				<Label text="Some data imported from Notion will have differences in Anytype" />
+				<Title text="Some data formats will be imported as text" />
 
 				<div className="listWrapper">
 					<ol className="list">
