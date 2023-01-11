@@ -264,7 +264,7 @@
 	"popupSettingsCodeStub": { "en": "Follow the white rabbit" },
 	"popupSettingsMobileQRSubTitle": { "en": "To use Anytype on Android & iOS:" },
 	"popupSettingsMobileQRText": { "en": "1. Launch Anytype<br/>2. Press \"Login\"<br/>3. Press \"Scan QR code\"<br/>4. Click on the QR code (at the right) to display it clearly<br/>5. Point your phone to this screen" },
-	"popupSettingsPhraseTitle": { "en": "Recovery phrase" },
+	"popupSettingsPhraseTitle": { "en": "Keychain phrase" },
 	"popupSettingsPhraseStub": { "en": "You take the red pill, you stay in Wonderland, and I show you how deep the rabbit hole goes." },
 	"popupSettingsPhraseCopy": { "en": "Show and copy phrase" },
 	"popupSettingsPhraseShowQR": { "en": "Show QR-code" },
