@@ -74,7 +74,6 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 					onCoverSelect={this.onCoverSelect}
 					onLayout={this.onLayout}
 					onRelation={this.onRelation}
-					onEdit={() => {}}
 					onUploadStart={this.onUploadStart}
 					onUpload={this.onUpload}
 				/>

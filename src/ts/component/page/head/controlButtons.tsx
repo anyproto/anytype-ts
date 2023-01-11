@@ -8,15 +8,15 @@ import Constant from 'json/constant.json';
 interface Props {
 	rootId: string;
 	readonly?: boolean;
-	onIcon: (e: any) => void;
-	onCoverOpen: () => void;
-	onCoverClose: () => void;
-	onCoverSelect: (item: any) => void;
-	onLayout: (e: any) => void;
-	onRelation: (e: any) => void;
-	onEdit: (e: any) => void;
-	onUploadStart: (e: any) => void;
-	onUpload: (type: I.CoverType, hash: string) => void;
+	onIcon?: (e: any) => void;
+	onCoverOpen?: () => void;
+	onCoverClose?: () => void;
+	onCoverSelect?: (item: any) => void;
+	onLayout?: (e: any) => void;
+	onRelation?: (e: any) => void;
+	onEdit?: (e: any) => void;
+	onUploadStart?: (e: any) => void;
+	onUpload?: (type: I.CoverType, hash: string) => void;
 };
 
 const ControlButtons = observer(class ControlButtons extends React.Component<Props> {
