@@ -32,10 +32,10 @@ class PopupSettingsPageImportNotionWarning extends React.Component<Props> {
 							All <b>@mentions</b> will be converted to text
 						</li>
 						<li className="label">
-							<b>Date range</b> will be imported as text
+							<b>Date ranges</b> will be imported as text
 						</li>
 						<li className="label">
-							<b>Formulas and rollups</b> will be places as values
+							<b>Formulas and rollups</b> will be placed as values
 						</li>
 						<li className="label">
 							<b>Databases</b> will look as Objects with Relations in Anytype documents
